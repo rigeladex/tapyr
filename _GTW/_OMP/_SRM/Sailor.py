@@ -55,7 +55,6 @@ class Sailor (_Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type          = GTW.OMP.PAP.Person
-            max_links          = 1
 
         # end class left
 

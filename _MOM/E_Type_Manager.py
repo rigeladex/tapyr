@@ -64,6 +64,12 @@
 #    26-Feb-2010 (CT) `Object.singleton` added
 #     3-Mar-2010 (CT) `instance_or_new` added
 #     3-Mar-2010 (CT) Guard for `kw` removed from `instance`
+#    27-Apr-2010 (CT) `Object._cooked_epk` factored and changed to use
+#                     `_cooked_epk_iter` and `_raw_epk_iter`, depending on `raw`
+#    27-Apr-2010 (CT) `Link._cooked_epk` factored;
+#                     s/Link._cooked_epk_iter/Link._raw_epk_iter/
+#    27-Apr-2010 (CT) `Link._role_to_cooked_iter` changed to call `cooked`
+#                     for non-role epk attributes
 #    ««revision-date»»···
 #--
 
@@ -205,17 +211,13 @@ class Object (Id_Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if an object with primary key `epk` exists."""
-        epk, kw = self._etype.epkified (* epk, ** kw)
-        if kw.pop ("raw", False) :
-            epk = tuple (self._cooked_epk_iter (epk))
+        epk, kw = self._cooked_epk (epk, kw)
         return self.__super.exists   (* epk, ** kw)
     # end def exists
 
     def instance (self, * epk, ** kw) :
         """Return the object with primary key `epk` or None."""
-        epk, kw = self._etype.epkified (* epk, ** kw)
-        if kw.pop ("raw", False) :
-            epk = tuple (self._cooked_epk_iter (epk))
+        epk, kw = self._cooked_epk (epk, kw)
         return self.__super.instance (* epk, ** kw)
     # end def instance
 
@@ -229,7 +231,25 @@ class Object (Id_Entity) :
                 pass
     # end def singleton
 
+    def _cooked_epk (self, epk, kw) :
+        epk, kw  = self._etype.epkified (* epk, ** kw)
+        raw      = kw.pop ("raw", False)
+        epk_iter = (self._raw_epk_iter if raw else self._cooked_epk_iter)
+        return tuple (epk_iter (epk)), kw
+    # end def _cooked_epk
+
     def _cooked_epk_iter (self, epk) :
+        for (pka, v) in zip (self._etype.primary, epk) :
+            if v is not None :
+                try :
+                    yield pka.cooked (v)
+                except MOM.Error.No_Such_Object :
+                    yield None
+            else :
+                yield None
+    # end def _cooked_epk_iter
+
+    def _raw_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
             if v is not None :
                 try :
@@ -238,7 +258,7 @@ class Object (Id_Entity) :
                     yield None
             else :
                 yield None
-    # end def _cooked_epk
+    # end def _raw_epk_iter
 
 # end class Object
 
@@ -263,21 +283,13 @@ class Link (Id_Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if a link with primary key `epk` exists."""
-        epk, kw = self._etype.epkified (* epk, ** kw)
-        if kw.pop ("raw", False) :
-            epk = tuple (self._cooked_epk_iter (epk))
-        else :
-            epk = tuple (self._role_to_cooked_iter (epk))
-        return self.__super.exists   (* epk, ** kw)
+        epk, kw = self._cooked_epk (epk, kw)
+        return self.__super.exists (* epk, ** kw)
     # end def exists
 
     def instance (self, * epk, ** kw) :
         """Return the link with primary key `epk` or None."""
-        epk, kw = self._etype.epkified (* epk, ** kw)
-        if kw.pop ("raw", False) :
-            epk = tuple (self._cooked_epk_iter (epk))
-        else :
-            epk = tuple (self._role_to_cooked_iter (epk))
+        epk, kw = self._cooked_epk   (epk, kw)
         return self.__super.instance (* epk, ** kw)
     # end def instance
 
@@ -355,7 +367,7 @@ class Link (Id_Entity) :
 
     def _checked_roles (self, * epk, ** kw) :
         if kw.get ("raw", False) :
-            epk = tuple (self._cooked_epk_iter (epk))
+            epk = tuple (self._raw_epk_iter (epk))
         else :
             epk = tuple (self._role_to_cooked_iter (epk))
         etype = self._etype
@@ -377,19 +389,12 @@ class Link (Id_Entity) :
             raise MOM.Error.Multiplicity_Errors (etype.type_name, errors)
     # end def _checked_roles
 
-    def _cooked_epk_iter (self, epk) :
-        for (pka, v) in zip (self._etype.primary, epk) :
-            try :
-                if getattr (pka, "role_type", None) :
-                    ### Allow role attributes to be passed as objects even if
-                    ### `raw` is specified
-                    v = self._cooked_role (pka, v)
-                elif v is not None :
-                    v = pka.from_string   (v, None)
-            except MOM.Error.No_Such_Object :
-                v = None
-            yield v
-    # end def _cooked_epk_iter
+    def _cooked_epk (self, epk, kw) :
+        epk, kw  = self._etype.epkified (* epk, ** kw)
+        raw      = kw.pop ("raw", False)
+        epk_iter = (self._raw_epk_iter if raw else self._role_to_cooked_iter)
+        return tuple (epk_iter (epk)), kw
+    # end def _cooked_epk
 
     def _cooked_role (self, r, v) :
         result = v
@@ -401,8 +406,23 @@ class Link (Id_Entity) :
         return result
     # end def _cooked_role
 
+    def _raw_epk_iter (self, epk) :
+        for (pka, v) in zip (self._etype.primary, epk) :
+            try :
+                if getattr (pka, "role_type", None) :
+                    ### Allow role attributes to be passed as objects even if
+                    ### `raw` is specified
+                    v = self._cooked_role (pka, v)
+                elif v is not None :
+                    v = pka.from_string   (v, None)
+            except MOM.Error.No_Such_Object :
+                v = None
+            yield v
+    # end def _raw_epk_iter
+
     def _role_to_cooked_iter (self, epk, auto_create = False) :
-        for (r, v) in paired (self._etype.Roles, epk) :
+        for (r, (pka, v)) in paired \
+                (self._etype.Roles, zip (self._etype.primary, epk)) :
             if r is not None :
                 ### Allow role attributes to be passed as raw values even if
                 ### `raw` is not specified
@@ -415,6 +435,11 @@ class Link (Id_Entity) :
                         v     = et (* v, implicit = True, raw = True)
                     else :
                         v = None
+            elif v is not None :
+                try :
+                    v = pka.cooked (v)
+                except MOM.Error.No_Such_Object :
+                    v = None
             yield v
     # end def _role_to_cooked_iter
 

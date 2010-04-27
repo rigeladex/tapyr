@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.__test__.
+# This module is part of the package MOM.__test__.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    GTW.__test__.Boat
+#    MOM.__test__.Person
 #
 # Purpose
-#    Test SRM.Boat creation and querying
+#    Test PAP.Person creation and querying
 #
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
@@ -33,29 +33,23 @@
 _test_code = """
     >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
     Creating new scope MOMT__... in memory
-    >>> SRM = scope.SRM
-    >>> SRM.Boat_Class ("Optimist", max_crew = 1)
-    GTW.OMP.SRM.Boat_Class (u'Optimist')
-    >>> scope.SRM.Boat_Class.count
-    1
-    >>> scope.SRM.Boat_Class.query (name = u'Optimist').all ()
-    [GTW.OMP.SRM.Boat_Class (u'Optimist')]
-    >>> scope.SRM.Boat_Class.instance (u'Optimist')
-    GTW.OMP.SRM.Boat_Class (u'Optimist')
-    >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True) ### 1
-    GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)
-    >>> scope.SRM.Boat.count
-    1
-    >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)]
-    >>> scope.commit ()
+    >>> PAP = scope.PAP
 
-    >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True) ### 2
-    GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)
-    >>> scope.SRM.Boat.count
+    >>> PAP.Person.count
+    0
+    >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 1
+    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    >>> PAP.Person.count
     1
-    >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)]
+    >>> PAP.Person.instance ("Tanzer", "Christian")
+    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    >>> PAP.Person.query_s ().all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+
+    >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 2
+    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    >>> PAP.Person.count
+    1
 
 """
 
@@ -66,4 +60,4 @@ __test__ = dict \
     , SQ  = _test_code % ("'sqlite://'", None)
     )
 
-### __END__ GTW.__test__.Boat
+### __END__ MOM.__test__.Person
