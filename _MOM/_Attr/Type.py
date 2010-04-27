@@ -115,6 +115,7 @@
 #    26-Apr-2010 (CT) `_A_Typed_Collection_._checkers` redefined to call
 #                     `_fix_C_Type`
 #    27-Apr-2010 (CT) Default for `glob` and `locl` changed from `None` to `{}`
+#    27-Apr-2010 (CT) Default for `needs_raw_value` changed to `False`
 #    ««revision-date»»···
 #--
 
@@ -158,7 +159,7 @@ class A_Attr_Type (object) :
     hidden              = False
     kind                = None
     Kind_Mixins         = ()
-    needs_raw_value     = True
+    needs_raw_value     = False
     Pickler             = None
     query               = None
     query_fct           = None

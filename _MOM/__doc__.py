@@ -1276,7 +1276,7 @@ Changing objects and links
          got      value : `one ton -> one ton`
          of       type  : `<type 'str'>`
     >>> m.set_raw (color = "yellow", weight = "42")
-    3
+    2
     >>> m.color, m.weight
     (u'yellow', 42.0)
     >>> print m.as_code ()
@@ -1287,18 +1287,18 @@ Changing objects and links
     ...     print c
     <Create BMT.Mouse (u'Mighty_Mouse',)>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : u''}, new-values = {'weight' : u'10'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : '42'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : ''}, new-values = {'weight' : u'10.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
 
     >>> mm = m.copy ("Magic_Mouse")
     >>> for c in mm.changes ().order_by (csk).all () :
     ...     print c
     <Copy BMT.Mouse (u'Magic_Mouse',)>
         <Create BMT.Mouse (u'Magic_Mouse',)>
-        <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : '42'}>
+        <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
     <Create BMT.Mouse (u'Magic_Mouse',)>
-    <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : '42'}>
+    <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
 
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
@@ -1481,40 +1481,40 @@ Scope queries
     <Create BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
     <Create BMT.Rodent_in_Trap (u"(u'Rutty_Rat',)", u"(u'Y', u'1')")>
     <Create BMT.Rodent_in_Trap (u"(u'Axel',)", u"(u'X', u'2')")>
-    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')")>
-    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')")>
-    <Create BMT.Person_owns_Trap (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')")>
+    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), new-values = {'price' : u'42.00'}>
+    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')"), new-values = {'price' : u'42.00'}>
+    <Create BMT.Person_owns_Trap (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')"), new-values = {'price' : u'42.00'}>
     <Create BMT.Person (u'Tin', u'Tin', '')>
-    <Create BMT.Person_owns_Trap (u"(u'tin', u'tin', u'')", u"(u'Y', u'2')")>
+    <Create BMT.Person_owns_Trap (u"(u'tin', u'tin', u'')", u"(u'Y', u'2')"), new-values = {'price' : u'42.00'}>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")>
     <Modify BMT.Rat (u'betty',), old-values = {'name' : u'Axel'}, new-values = {'name' : u'betty'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : u''}, new-values = {'weight' : u'10'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : '42'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : ''}, new-values = {'weight' : u'10.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
     <Copy BMT.Mouse (u'Magic_Mouse',)>
         <Create BMT.Mouse (u'Magic_Mouse',)>
-        <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : '42'}>
-    <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u''}, new-values = {'max_weight' : u'20'}>
-    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'42.0'}, new-values = {'price' : u'1.20'}>
+        <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : ''}, new-values = {'max_weight' : u'20.0'}>
+    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'42.00'}, new-values = {'price' : u'1.20'}>
     <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
     <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Toothy_Beaver',)"}, new-values = {'left' : u"(u'Mighty_Mouse',)"}>
-    <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : '42'}>
+    <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : u'42.0'}>
         <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
-    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
+    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20.0'}>
         <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
         <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     <Destroy BMT.Trap (u'X', u'2')>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')")>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')"), old-values = {'price' : u'42.00'}>
         <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
         <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')")>
     >>> c = scope.ems.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
     >>> cc
-    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
+    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20.0'}>
         <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
         <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     >>> cc.children
@@ -1524,7 +1524,7 @@ Scope queries
     >>> pckl = c.as_pickle ()
     >>> cc = c.from_pickle (pckl)
     >>> cc
-    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
+    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20.0'}>
     >>> cc.children
     []
     >>> scope.commit ()
