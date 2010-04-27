@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based on SA.Q_Result)
+#    27-Apr-2010 (MG) `filter`: user new `SAS_EQ_Clause` method of SAQ
 #    ««revision-date»»···
 #--
 
@@ -80,17 +81,9 @@ class Q_Result (TFL.Meta.Object) :
             else :
                 sa_criteria.append (c)
         for attr, value in eq_kw.iteritems () :
-            if attr == "pid" :
-                attr  = "id"
-                value = value [-1]
-            elif   attr == "type_name" :
-                attr = "Type_Name"
             sa_criteria.append \
-                (  getattr (self.e_type._SAQ, attr)
-                == getattr (value, "id", value)
-                )
-        if 1 or len (sa_criteria) > 1 :
-            sa_criteria = (sql.expression.and_ (* sa_criteria), )
+                (self.e_type._SAQ.SAS_EQ_Clause (attr, value))
+        sa_criteria = (sql.expression.and_ (* sa_criteria), )
         return self.__class__ \
             (self.e_type, self.session, self.sa_query.where (* sa_criteria))
     # end def filter

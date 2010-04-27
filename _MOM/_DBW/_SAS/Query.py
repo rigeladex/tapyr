@@ -30,6 +30,8 @@
 #    12-Feb-2010 (MG) Creation (based on SA.Query)
 #    18-Feb-2010 (MG) `MOM_Composite_Query`: comperison operators added
 #    24-Mar-2010 (MG) Composite handling fixed
+#    27-Apr-2010 (MG) `SAS_EQ_Clause` method added to support named value
+#                     attributes
 #    ««revision-date»»···
 #--
 
@@ -54,13 +56,39 @@ class Query (TFL.Meta.Object) :
             setattr (self, syn, getattr (self, attr))
     # end def __init__
 
+    def SAS_EQ_Clause (self, attr, value) :
+        return getattr (self, attr) == value
+    # end def SAS_EQ_Clause
+
     def __getattr__ (self, name) :
         return getattr (self._CLASS, name)
     # end def __getattr__
 
 # end class Query
 
-class MOM_Query (TFL.Meta.Object) :
+class _MOM_Query_ (TFL.Meta.Object) :
+    """Base class for all queries for MOM objects"""
+
+    def SAS_EQ_Clause (self, attr, cooked) :
+        db = cooked
+        if attr == "pid" :
+            attr  = "id"
+            db    = cooked [-1]
+        elif   attr == "type_name" :
+            attr = "Type_Name"
+        elif isinstance (cooked, MOM.Id_Entity) :
+            db   = cooked.id
+        else :
+            kind = getattr (self._E_TYPE [0], attr)
+            if isinstance (kind.attr, MOM.Attr._A_Named_Value_) :
+                db = kind.Pickler.as_cargo (None, kind, kind.attr, cooked)
+        return getattr (self, attr) == db
+    # end def SAS_EQ_Clause
+
+# end class class _MOM_Query_
+
+class MOM_Query (_MOM_Query_) :
+    """Query for MOM Entities"""
 
     def __init__ (self, e_type, sa_table, db_attrs, bases) :
         e_type._SAQ        = self
@@ -116,7 +144,7 @@ class MOM_Query (TFL.Meta.Object) :
 
 # end class MOM_Query
 
-class MOM_Composite_Query (TFL.Meta.Object) :
+class MOM_Composite_Query (_MOM_Query_) :
     """Query attributes of an composite attribite"""
 
     def __init__ (self, owner_etype, e_type, kind) :
