@@ -33,6 +33,7 @@
 #    15-Mar-2010 (CT) `A_Weekday_RR._from_string_eval` redefined
 #    16-Mar-2010 (CT) Bugs fixed (`__nonzero__`, `easter_offset.rrule_name`,
 #                     `finish` or `count`, ...)
+#    27-Apr-2010 (CT) Default for `glob` and `locl` changed from `None` to `{}`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class A_Weekday_RR (A_Attr_Type) :
         return value
     # end def cooked
 
-    def from_string (self, s, obj = None, glob = None, locl = None) :
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if s :
             return self.cooked (self._call_eval (s, self.Table, {}))
     # end def from_string

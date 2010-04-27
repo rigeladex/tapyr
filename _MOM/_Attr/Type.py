@@ -108,12 +108,13 @@
 #    22-Mar-2010 (CT) `A_Dirname` and `A_Filename` added (+ `_A_Filename_`)
 #     9-Apr-2010 (CT) `A_Url` added
 #    20-Apr-2010 (CT) Default `Type` added to `_A_Named_Object_.Pickler`
-#    26-Apr-2010 (CT) `_A_Object_._to_cooked` changed to accept a single name
+#    26-Apr-2010 (CT) `_A_Object_._to_cooked` changed to accept a single value
 #                     as plain string instead of as a 1-tuple
 #    26-Apr-2010 (CT) `_A_Typed_Collection_.from_string` redefined
 #    26-Apr-2010 (CT) `_fix_C_Type` added
 #    26-Apr-2010 (CT) `_A_Typed_Collection_._checkers` redefined to call
 #                     `_fix_C_Type`
+#    27-Apr-2010 (CT) Default for `glob` and `locl` changed from `None` to `{}`
 #    ««revision-date»»···
 #--
 
@@ -402,7 +403,7 @@ class _A_Composite_ (A_Attr_Type) :
         return self.C_Type (** self.__super.from_code (s, obj, glob, locl))
     # end def from_code_string
 
-    def from_string (self, s, obj = None, glob = None, locl = None) :
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
         t = s or {}
         if isinstance (t, basestring) :
             t = self._call_eval (t, {}, {})
@@ -470,7 +471,7 @@ class _A_Date_ (A_Attr_Type) :
         return u""
     # end def as_string
 
-    def from_code (self, s, obj = None, glob = None, locl = None) :
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self.from_string (self.__super.from_code (s, obj, glob, locl))
     # end def from_code
 
@@ -515,7 +516,7 @@ class _A_Named_Value_ (A_Attr_Type) :
         return sorted (self.__class__.Table.iterkeys ())
     # end def eligible_raw_values
 
-    def from_code (self, s, obj = None, glob = None, locl = None) :
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self._from_string_eval (self._call_eval (s, glob, locl))
     # end def from_code
 
@@ -673,7 +674,7 @@ class _A_Object_ (A_Attr_Type) :
             return getattr (soc._get_scope (obj), soc.Class.type_name, None)
     # end def etype_manager
 
-    def from_string (self, s, obj = None, glob = None, locl = None) :
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if s :
             return self._to_cooked (s, None, obj, glob, locl)
     # end def from_string
@@ -733,7 +734,7 @@ class _A_Object_ (A_Attr_Type) :
         else :
             try :
                 t  = self._call_eval (s, {}, {})
-            except NameError :
+            except (NameError, SyntaxError) :
                 t = (s, )
         return self._get_object  (obj, t, raw = True)
     # end def _to_cooked
@@ -921,7 +922,7 @@ class _A_Typed_Collection_ (A_Attr_Type) :
         return self.R_Type (self._C_from_code (obj, comps, glob, locl))
     # end def from_code
 
-    def from_string (self, s, obj = None, glob = None, locl = None) :
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
         t = s or []
         if isinstance (t, basestring) :
             result = self._from_string_eval (s, obj, glob, locl)

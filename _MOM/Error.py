@@ -116,7 +116,8 @@ class Name_Clash (Error) :
     arg_sep = " "
 
     def __init__ (self, new, old) :
-        self.args = ("new definition of", new, "clashes with existing", old)
+        self.args = \
+            ("new definition of", new, "clashes with existing", old or "object")
     # end def __init__
 
 # end class Name_Clash

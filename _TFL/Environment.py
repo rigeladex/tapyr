@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -49,68 +49,76 @@
 #    28-Jul-2005 (CT)  `mailname` added
 #     8-Aug-2006 (MSF) fixed [5608]
 #    21-Aug-2007 (CED) practically_infinite introduced
+#    27-Apr-2010 (CT) `exec_python_startup` added
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
+from   _TFL      import sos
 
-import _TFL.sos
 import imp
 import re
 import sys
 
-default_dir = TFL.sos.getcwd       ()
-home_dir    = TFL.sos.environ.get  ("HOME")
+default_dir = sos.getcwd       ()
+home_dir    = sos.environ.get  ("HOME")
 if home_dir is None :
-    home_dir = TFL.sos.environ.get ("USERPROFILE")
+    home_dir = sos.environ.get ("USERPROFILE")
     if home_dir is None :
         home_dir = default_dir
 
-if   TFL.sos.name == "posix"                         :
-    username = TFL.sos.environ.get ("USER",         "")
-    hostname = TFL.sos.environ.get ("HOSTNAME",     "")
+if   sos.name == "posix"                         :
+    username = sos.environ.get ("USER",         "")
+    hostname = sos.environ.get ("HOSTNAME",     "")
     system   = "posix"
-elif (TFL.sos.name == "nt") or (TFL.sos.name == "win32") :
-    username = TFL.sos.environ.get ("USERNAME",     "")
-    hostname = TFL.sos.environ.get ("COMPUTERNAME", "")
+elif (sos.name == "nt") or (sos.name == "win32") :
+    username = sos.environ.get ("USERNAME",     "")
+    hostname = sos.environ.get ("COMPUTERNAME", "")
     system   = "win32"
-elif TFL.sos.name == "mac"                           :
+elif sos.name == "mac"                           :
     username = "" ### ???
     hostname = "" ### ???
     system   = "mac"
 
 if not hostname :
     try :
-        hostname = TFL.sos.uname () [1]
-    except :
+        hostname = sos.uname () [1]
+    except Exception :
         pass
+
+def exec_python_startup () :
+    ps = sos.environ.get ("PYTHONSTARTUP")
+    if ps and sos.path.exists (ps) :
+        with open (ps) as f :
+            exec (f.read ())
+# end def exec_python_startup
 
 def mailname () :
     """Returns the mailname of the system the script is running on."""
     try :
         f = open ("/etc/mailname")
-    except (IOError, TFL.sos.error) :
+    except (IOError, sos.error) :
         pass
     else :
         try :
             return f.read ().strip ()
-        except (IOError, TFL.sos.error) :
+        except (IOError, sos.error) :
             pass
 # end def mailname
 
 def script_name () :
     """Returns the name of the currently running python script."""
-    return TFL.sos.path.basename (sys.argv [0])
+    return sos.path.basename (sys.argv [0])
 # end def script_name
 
 curdir_pat = re.compile (r"\./\.[^\.]")
 
 def script_path () :
     """Returns the path of the currently running python script."""
-    path = TFL.sos.path.dirname (sys.argv [0])
+    path = sos.path.dirname (sys.argv [0])
     path = curdir_pat.sub   (".", path) ### hack around case "./."
     if not path :
-        path = TFL.sos.curdir
+        path = sos.curdir
     return path
 # end def script_path
 
@@ -121,7 +129,7 @@ def path_expanded (filename) :
     """
     path = path_of (filename)
     if path :
-        return TFL.sos.path.join (path, filename)
+        return sos.path.join (path, filename)
     else :
         return filename
 # end def path_expanded
@@ -132,15 +140,17 @@ def path_of (filename) :
        returns the first directory containing `filename'.
     """
     sc_path = script_path ()
-    if path_contains (sc_path, filename)  : return sc_path
+    if path_contains (sc_path, filename) :
+        return sc_path
     for path in sys.path :
-        if path_contains (path, filename) : return path
+        if path_contains (path, filename) :
+            return path
     return ""
 # end def path_of
 
 def path_contains (path, filename) :
     """Returns `path' if there exists a file named `filename' there."""
-    if TFL.sos.path.isfile (TFL.sos.path.join (path, filename)) :
+    if sos.path.isfile (sos.path.join (path, filename)) :
         return path
     else :
         return ""
@@ -169,7 +179,7 @@ def module_path (module) :
              and hasattr (sys.modules [module], "__file__")
              ) :
             p     = sys.modules [module].__file__
-            _path = TFL.sos.path.dirname (p) or TFL.sos.getcwd ()
+            _path = sos.path.dirname (p) or sos.getcwd ()
         else :
             try: #AGO
                 (f, p, d) = imp.find_module (module)
@@ -181,9 +191,9 @@ def module_path (module) :
                 # compressed/packed/frozen.
                 _path = script_path ()
             else: #AGO
-                _path = TFL.sos.path.dirname (p) or TFL.sos.getcwd ()
-        if _path == TFL.sos.curdir :
-            _path = TFL.sos.getcwd ()
+                _path = sos.path.dirname (p) or sos.getcwd ()
+        if _path == sos.curdir :
+            _path = sos.getcwd ()
         _module_pathes [module] = _path
     return _module_pathes [module]
 # end def module_path

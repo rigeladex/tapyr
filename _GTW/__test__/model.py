@@ -27,20 +27,24 @@
 #
 # Revision Dates
 #    21-Apr-2010 (MG) Creation
+#    27-Apr-2010 (CT) `MOM.Scaffold` factored
 #    ««revision-date»»···
 #--
 
-from   _TFL                   import TFL
-import _TFL.Filename
-
 from   _GTW                   import GTW
 from   _MOM                   import MOM
+from   _TFL                   import TFL
+
 from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL                   import sos
 
 import _GTW._OMP._Auth.import_Auth
-import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._EVT.import_EVT
+import _GTW._OMP._PAP.import_PAP
+import _GTW._OMP._SRM.import_SRM
+import _GTW._OMP._SWP.import_SWP
+import _MOM.Scaffold
+import _TFL.Filename
 
 GTW.Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
@@ -62,60 +66,23 @@ GTW.Version = Product_Version \
         )
     )
 
-def app_type (* ems_dbw) :
-    result = MOM.App_Type.Table.get ("MOMT")
-    if result is None :
-        result = MOM.App_Type \
-            ( u"MOMT", GTW
-            , PNS_Aliases = dict
-                ( Auth = GTW.OMP.Auth
-                , PAP  = GTW.OMP.PAP
-                , SWP  = GTW.OMP.SWP
-                , EVT  = GTW.OMP.EVT
-                )
-            )
-    if ems_dbw :
-        result = result.Derived (* ems_dbw)
-    return result
-# end def app_type
+class Scaffold (MOM.Scaffold) :
 
-def app_type_hps () :
-    from _MOM._EMS.Hash         import Manager as EMS
-    from _MOM._DBW._HPS.Manager import Manager as DBW
-    return app_type (EMS, DBW)
-# end def app_type_hps
+    ANS         = GTW
+    nick        = u"MOMT"
+    PNS_Aliases = dict \
+        ( Auth  = GTW.OMP.Auth
+        , EVT   = GTW.OMP.EVT
+        , PAP   = GTW.OMP.PAP
+        , SRM   = GTW.OMP.SRM
+        , SWP   = GTW.OMP.SWP
+        )
 
-def app_type_sas () :
-    from _MOM._EMS.SAS          import Manager as EMS
-    from _MOM._DBW._SAS.Manager import Manager as DBW
-    return app_type (EMS, DBW)
-# end def app_type_sas
+# end class Scaffold
 
-def Scope (db_prefix = None, db_name = None, create = True) :
-    uri = None
-    if db_prefix :
-        apt = app_type_sas  ()
-        if db_prefix.startswith ("sqlite:////") :
-            ### SQLite database with absolute path
-            uri = "".join ((db_prefix, db_name))
-        elif db_name :
-            uri = sos.path.join \
-                (db_prefix, TFL.Filename (db_name).base_ext)
-    else :
-        apt = app_type_hps  ()
-        if db_name :
-            uri = "%s.ams" %    (db_name, )
-        if not uri or not sos.path.exists (uri) :
-            create = True
-    if create :
-        print "Creating new scope", apt, uri or "in memory"
-        if uri :
-            apt.delete_database (uri)
-        scope = MOM.Scope.new   (apt, uri)
-    else :
-        print "Loading scope", apt, uri
-        scope = MOM.Scope.load (apt, uri)
-    return scope
-# end def Scope
+Scope = Scaffold.scope
 
+if __name__ == "__main__" :
+    TFL.Environment.exec_python_startup ()
+    scope = Scope ()
 ### __END__ GTW.__test__.model

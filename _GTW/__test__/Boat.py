@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
 #
@@ -20,29 +20,43 @@
 #
 #++
 # Name
-#    Composite_as_Primary_Optional
+#    GTW.__test__.Boat
 #
 # Purpose
-#    Use composites as primary optional attributes
+#    Test SRM.Boat creation and querying
 #
 # Revision Dates
-#    21-Apr-2010 (MG) Creation
-#    27-Apr-2010 (CT) Test for `sqlite` added, `Scaffold` used
+#    27-Apr-2010 (CT) Creation
 #    ««revision-date»»···
 #--
+
 _test_code = """
     >>> scope = Scaffold.scope (%s) # doctest:+ELLIPSIS
     Creating new scope MOMT__... in memory
-    >>> EVT = scope.EVT
-    >>> SWP = scope.SWP
-    >>> event_page = SWP.Page ("2010-01-01-00:00", text = U"An event")
-    >>> event = EVT.Event (event_page)
-    >>> event.date
-    MOM.Date_Interval ()
-    >>> event.destroy ()
-    >>> event_raw = EVT.Event (event_page.epk_raw, raw = True)
-    >>> event_raw.date
-    MOM.Date_Interval ()
+    >>> SRM = scope.SRM
+    >>> SRM.Boat_Class ("Optimist", max_crew = 1)
+    GTW.OMP.SRM.Boat_Class (u'Optimist')
+    >>> scope.SRM.Boat_Class.count
+    1
+    >>> scope.SRM.Boat_Class.query (name = u'Optimist').all ()
+    [GTW.OMP.SRM.Boat_Class (u'Optimist')]
+    >>> scope.SRM.Boat_Class.instance (u'Optimist')
+    GTW.OMP.SRM.Boat_Class (u'Optimist')
+    >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)
+    >>> scope.SRM.Boat.count
+    1
+    >>> scope.SRM.Boat.query_s ().all ()
+    [GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)]
+    >>> scope.commit ()
+    >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)
+    >>> scope.SRM.Boat.count
+    1
+    >>> scope.SRM.Boat.query_s ().all ()
+    [GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)]
+
+
 """
 
 from _GTW.__test__.model import *
@@ -52,4 +66,4 @@ __test__ = dict \
     , SQ  = _test_code % ("'sqlite://'", )
     )
 
-### __END__ GTW.__test__.Composite_as_Primary_Optional
+### __END__ GTW.__test__.Boat
