@@ -109,8 +109,8 @@ class Race_Result (_Ancestor_Essence) :
 
         # end class discarded
 
-        class rank (A_Int) :
-            """Rank of boat in this race."""
+        class points (A_Int) :
+            """Points of boat in this race."""
 
             kind               = Attr.Required
             min_value          = 1

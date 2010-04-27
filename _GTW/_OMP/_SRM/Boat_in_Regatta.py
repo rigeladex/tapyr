@@ -72,6 +72,14 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
+        class points (A_Int) :
+            """Total points of boat in this regatta."""
+
+            kind               = Attr.Optional
+            min_value          = 1
+
+        # end class rank
+
         class race_results (_A_Typed_List_) :
             """Results of the `boat` in the races of the `regatta`."""
 
@@ -80,14 +88,6 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             kind               = Attr.Optional
 
         # end class race_results
-
-        class rank (A_Int) :
-            """Rank of boat in this race."""
-
-            kind               = Attr.Optional
-            min_value          = 1
-
-        # end class rank
 
         class registration_date (A_Date) :
             """Date of registration."""
