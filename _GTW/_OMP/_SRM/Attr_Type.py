@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#    28-Apr-2010 (CT) `Race_Result.ui_display_format` redefined
 #    ««revision-date»»···
 #--
 
@@ -115,7 +116,7 @@ class Race_Result (_Ancestor_Essence) :
             kind               = Attr.Required
             min_value          = 1
 
-        # end class rank
+        # end class points
 
         class status (A_String) :
             """Status of boat in this race (DNS, DNF, BFD, ...)"""
@@ -126,6 +127,16 @@ class Race_Result (_Ancestor_Essence) :
         # end class status
 
     # end class _Attributes
+
+    @property
+    def ui_display_format (self) :
+        result = "%(points)s"
+        if self.discarded :
+            result = "[" + result + "]"
+        if self.status :
+            result += " %(status)s"
+        return result
+    # end def ui_display_format
 
 # end class Race_Result
 

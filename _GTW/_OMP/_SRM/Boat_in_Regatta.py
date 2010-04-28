@@ -32,7 +32,7 @@
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
-from   _MOM.import_MOM          import _A_Typed_List_
+from   _MOM.import_MOM          import _A_Composite_Collection_
 
 
 from   _GTW._OMP._SRM.Attr_Type import A_Race_Result
@@ -80,7 +80,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class rank
 
-        class race_results (_A_Typed_List_) :
+        class race_results (_A_Composite_Collection_) :
             """Results of the `boat` in the races of the `regatta`."""
 
             typ                = "Race_Results"

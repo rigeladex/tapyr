@@ -57,7 +57,7 @@ class A_Weekday_RR (A_Attr_Type) :
     class Pickler (TFL.Meta.Object) :
 
         class Type (_A_Binary_String_) :
-            max_length = 6
+            max_length = 8
         # end class Type
 
         @classmethod

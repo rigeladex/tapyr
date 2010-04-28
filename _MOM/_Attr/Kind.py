@@ -119,6 +119,7 @@
 #                     `auto_cache`, if any, before chaining up
 #    22-Apr-2010 (CT) `_Composite_Mixin_._set_cooked_value` changed to call
 #                     `reset` if `value is None`
+#    28-Apr-2010 (CT) `_Composite_Collection_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -519,6 +520,39 @@ class _Composite_Mixin_ (Kind) :
     # end def _set_cooked_value
 
 # end class _Composite_Mixin_
+
+class _Composite_Collection_Mixin_ (Kind) :
+    """Mixin for composite collection attributes."""
+
+    def _check_sanity (self, attr_type) :
+        if __debug__ :
+            if isinstance (self, _Primary_) :
+                raise TypeError \
+                    ("%s cannot be of primary kind %" % (attr_type, self.kind))
+            C_Type = attr_type.C_Type
+            if not C_Type :
+                raise TypeError ("%s needs to define `C_Type`" % attr_type)
+            C_C_Type = C_Type.C_Type
+            if not C_C_Type :
+                raise TypeError \
+                    ("%s.C_Type needs to define `C_Type`" % attr_type)
+            if not isinstance (C_Type, MOM.Attr._A_Composite_) :
+                raise TypeError \
+                    ( "The C_Type of a `%s` needs to be derived "
+                      "from _A_Composite_"
+                    % attr_type
+                    )
+            for name in ("computed_default", "default", "raw_default") :
+                d = getattr (attr_type, name)
+                if d :
+                    raise TypeError \
+                        ( "Attribute `%s` of kind %s cannot have %s %r"
+                        % (attr_type, self.kind, name, d)
+                        )
+        self.__super._check_sanity (attr_type)
+    # end def _check_sanity
+
+# end class _Composite_Collection_Mixin_
 
 class _Computed_Mixin_ (Kind) :
     """Mixin to compute attribute value."""

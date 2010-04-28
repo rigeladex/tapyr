@@ -116,6 +116,8 @@
 #                     `_fix_C_Type`
 #    27-Apr-2010 (CT) Default for `glob` and `locl` changed from `None` to `{}`
 #    27-Apr-2010 (CT) Default for `needs_raw_value` changed to `False`
+#    28-Apr-2010 (CT) `_A_Collection_` factored from `_A_Typed_Collection_`
+#    28-Apr-2010 (CT) `_A_Composite_Collection_` added
 #    ««revision-date»»···
 #--
 
@@ -353,6 +355,65 @@ class _A_Binary_String_ (A_Attr_Type) :
 
 # end class _A_Binary_String_
 
+class _A_Collection_ (A_Attr_Type) :
+    """Base class for attributes that hold a collection of values."""
+
+    C_Type          = None ### Type of entities held by collection
+    C_sep           = ","
+    R_Type          = None ### Type of collection
+
+    needs_raw_value = False
+
+    def __init__ (self, kind) :
+        self.__super.__init__     (kind)
+        self.C_Type = self.C_Type (kind)
+    # end def __init__
+
+    def as_code (self, value) :
+        if value is not None :
+            return self.__super.as_code \
+              (self.C_sep.join (self._C_as_code (value)))
+        return u""
+    # end def as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, val) :
+        return soc.R_Type (soc.C_Type.cooked (v) for v in val)
+    # end def cooked
+
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
+        comps = self._C_split (s.strip ())
+        return self.R_Type (self._C_from_code (obj, comps, glob, locl))
+    # end def from_code
+
+    def _C_as_code (self, value) :
+        return (self.C_Type.as_code (v) for v in value)
+    # end def _C_as_code
+
+    def _C_from_code (self, obj, comps, glob, locl) :
+        return (self.C_Type.from_code (obj, c, glob, locl) for c in comps)
+    # end def _C_from_code
+
+    def _C_split (self, s) :
+        if s in ("[]", "") :
+            return []
+        if s.startswith ("[") and s.endswith ("]") :
+            s = s [1:-1]
+        elif s.startswith ("(") and s.endswith (")") :
+            s = s [1:-1]
+        return (x for x in (r.strip () for r in s.split (self.C_sep)) if x)
+    # end def _C_split
+
+    def _from_symbolic_ref (self, s, obj, glob, locl) :
+        raise TypeError \
+            ( "Symbolic cross references not supported for attributes "
+              "of type %s: `%s`"
+            % (self.typ, s)
+            )
+    # end def _from_symbolic_ref
+
+# end class _A_Collection_
+
 class _A_Composite_ (A_Attr_Type) :
     """Common base class for composite attributes of an object."""
 
@@ -449,6 +510,61 @@ class _A_Composite_ (A_Attr_Type) :
     # end def _fix_C_Type
 
 # end class _A_Composite_
+
+class _A_Composite_Collection_ (_A_Collection_) :
+    """Base class for attributes that hold a collection of composite values."""
+
+    Kind_Mixins       = (MOM.Attr._Composite_Collection_Mixin_, )
+    R_Type            = list
+
+    class Pickler (TFL.Meta.Object) :
+
+        __metaclass__ = MOM.Meta.M_Attr_Type__Pickler
+
+        @classmethod
+        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+            if value is not None :
+                R_Type = attr_type.R_Type
+                return tuple (v.as_pickle_cargo () for v in value)
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+            if cargo is not None :
+                R_Type = attr_type.R_Type
+                fpc    = attr_type.C_Type.C_Type.from_pickle_cargo
+                return R_Type (fpc (obj.home_scope, c) for c in cargo)
+        # end def from_cargo
+
+    # end class Pickler
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            return tuple (v.as_string () for v in value)
+        return u""
+    # end def as_string
+
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+        t = s or ()
+        if isinstance (t, basestring) :
+            t = self._call_eval (t, {}, {})
+        if t :
+            C_fs = self.C_Type.from_string
+            return self.R_Type (C_fs (c, obj, glob, locl) for c in t)
+    # end def from_string
+
+    def _checkers (self, e_type, kind) :
+        C_Type = self.C_Type
+        if C_Type :
+            C_C_Type = getattr (C_Type, "C_Type", None)
+            if C_C_Type :
+                C_Type._fix_C_Type (e_type)
+            ### XXX Predicate checking each component for `C_Type._checkers`
+        return ()
+    # end def _checkers
+
+# end class _A_Composite_Collection_
 
 class _A_Date_ (A_Attr_Type) :
     """Common base class for date-valued attributes of an object."""
@@ -873,61 +989,29 @@ class _A_Named_Object_ (_A_Named_Value_) :
 
 # end class _A_Named_Object_
 
-class _A_Typed_Collection_ (A_Attr_Type) :
+class _A_Typed_Collection_ (_A_Collection_) :
     """Base class for attributes that hold a collection of strictly typed
        values.
     """
 
     __metaclass__   = MOM.Meta.M_Attr_Type_Typed_Collection
 
-    C_Type          = None ### Type of entities held by collection
-    C_sep           = ","
-    R_Type          = None ### Type of collection
-
-    needs_raw_value = False
-
-    def __init__ (self, kind) :
-        self.__super.__init__     (kind)
-        self.C_Type = self.C_Type (kind)
-    # end def __init__
-
-    def as_code (self, value) :
-        if value is not None :
-            return self.__super.as_code \
-              (self.C_sep.join (self._C_as_code (value)))
-        return u""
-    # end def as_code
-
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         ### when called for the class, `soc.__super` doesn't
         ### work while `super (_A_Typed_Collection_, soc)` does
         if value is not None :
-            try :
-                return super (_A_Typed_Collection_, soc).as_string \
-                    (soc.C_sep.join (soc._C_as_string (value)))
-            except TypeError, exc :
-                print ">>>", value
-                print "-->", list (soc._C_as_string (value))
-                raise
+            return super (_A_Typed_Collection_, soc).as_string \
+                (soc.C_sep.join (soc._C_as_string (value)))
         return u""
     # end def as_string
 
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, val) :
-        return soc.R_Type (soc.C_Type.cooked (v) for v in val)
-    # end def cooked
-
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        comps = self._C_split (s.strip ())
-        return self.R_Type (self._C_from_code (obj, comps, glob, locl))
-    # end def from_code
-
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        t = s or []
+        result = None
+        t      = s or []
         if isinstance (t, basestring) :
             result = self._from_string_eval (s, obj, glob, locl)
-        else :
+        elif t :
             C_fs = self.C_Type.from_string
             result = self.R_Type (C_fs (c, obj, glob, locl) for c in t)
         return result
@@ -936,49 +1020,27 @@ class _A_Typed_Collection_ (A_Attr_Type) :
     def _checkers (self, e_type, kind) :
         C_Type = self.C_Type
         if C_Type :
-            C_C_Type = getattr (C_Type, "C_Type", None)
-            if C_C_Type :
-                C_Type._fix_C_Type (e_type)
-            ### XXX Predicate checking each component for `C_Type._checkers`
+            if __debug__ :
+                if isinstance (C_Type, _A_Composite_) :
+                    raise TypeError \
+                        ( "For composite collections, you need to derive "
+                          "%s from `_A_Composite_Collection_`"
+                        % self
+                        )
+            pass ### XXX Predicate checking each component for `C_Type._checkers`
         return ()
     # end def _checkers
-
-    def _C_as_code (self, value) :
-        return (self.C_Type.as_code (v) for v in value)
-    # end def _C_as_code
 
     @TFL.Meta.Class_and_Instance_Method
     def _C_as_string (soc, value) :
         return (soc.C_Type.as_string (v) for v in value)
     # end def _C_as_string
 
-    def _C_from_code (self, obj, comps, glob, locl) :
-        return (self.C_Type.from_code (obj, c, glob, locl) for c in comps)
-    # end def _C_from_code
-
-    def _C_split (self, s) :
-        if s in ("[]", "") :
-            return []
-        if s.startswith ("[") and s.endswith ("]") :
-            s = s [1:-1]
-        elif s.startswith ("(") and s.endswith (")") :
-            s = s [1:-1]
-        return (x for x in (r.strip () for r in s.split (self.C_sep)) if x)
-    # end def _C_split
-
     def _from_string_eval (self, s, obj, glob, locl) :
         comps = self._C_split (s.strip ())
         C_fse = self.C_Type._from_string_eval
         return self.R_Type (C_fse (c, obj, glob, locl) for c in comps)
     # end def _from_string
-
-    def _from_symbolic_ref (self, s, obj, glob, locl) :
-        raise TypeError \
-            ( "Symbolic cross references not supported for attributes "
-              "of type %s: `%s`"
-            % (self.typ, s)
-            )
-    # end def _from_symbolic_ref
 
 # end class _A_Typed_Collection_
 

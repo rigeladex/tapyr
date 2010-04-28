@@ -49,6 +49,7 @@
 #    19-Apr-2010 (CT) `_d_rank` added (sequence of attribute definition)
 #    20-Apr-2010 (CT) `M_Attr_Type_Named_Object` changed to create a derived
 #                     `Pickler` to avoid aliasing
+#    28-Apr-2010 (CT) s/_M_Pickler_/M_Attr_Type__Pickler/
 #    ««revision-date»»···
 #--
 
@@ -224,7 +225,7 @@ class M_Attr_Type_String (M_Attr_Type) :
 
 # end class M_Attr_Type_String
 
-class _M_Pickler_ (TFL.Meta.Object.__class__) :
+class M_Attr_Type__Pickler (TFL.Meta.Object.__class__) :
 
     @TFL.Meta.Once_Property
     def Pickle_Mixin (cls) :
@@ -236,14 +237,14 @@ class _M_Pickler_ (TFL.Meta.Object.__class__) :
         return MOM.Attr._A_Binary_String_
     # end def Type
 
-# end class _M_Pickler_
+# end class M_Attr_Type__Pickler
 
 class M_Attr_Type_Typed_Collection (M_Attr_Type) :
     """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
 
     class _Pickler_ (TFL.Meta.Object) :
 
-        __metaclass__ = _M_Pickler_
+        __metaclass__ = M_Attr_Type__Pickler
 
         @classmethod
         def as_cargo (cls, obj, attr_kind, attr_type, value) :
