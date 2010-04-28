@@ -30,6 +30,7 @@
 #    10-Feb-2010 (CT) `A_Date_Interval_N` added
 #    10-Feb-2010 (MG) `query_fct` corrected
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/; s/birth/start/; s/death/finish/
+#    28-Apr-2010 (CT) `Date_Interval.days` added
 #    ««revision-date»»···
 #--
 
@@ -69,13 +70,22 @@ class Date_Interval (_Ancestor_Essence) :
 
         # end class alive
 
-        class start (A_Date) :
-            """Start date of interval"""
+        class days (A_Int) :
+            """Length of interval in days."""
 
-            kind               = Attr.Required
-            rank               = 1
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("finish", "start")
 
-        # end class start
+            def computed (self, obj) :
+                if obj.start :
+                    result = 1
+                    if obj.finish :
+                        result += (obj.finish - obj.start).days
+                    return result
+            # end def computed
+
+        # end class days
 
         class finish (A_Date) :
             """Finish date of interval"""
@@ -84,6 +94,14 @@ class Date_Interval (_Ancestor_Essence) :
             rank               = 2
 
         # end class finish
+
+        class start (A_Date) :
+            """Start date of interval"""
+
+            kind               = Attr.Required
+            rank               = 1
+
+        # end class start
 
     # end class _Attributes
 
@@ -95,7 +113,7 @@ class Date_Interval (_Ancestor_Essence) :
             """The finish date must be later than the start date"""
 
             kind               = Pred.Object
-            assertion          = "start < finish"
+            assertion          = "start <= finish"
             attributes         = ("start", "finish")
 
         # end class finish_after_start

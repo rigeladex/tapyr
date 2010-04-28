@@ -79,7 +79,8 @@ class Admin (object) :
     Boat_in_Regatta = dict \
         ( ETM       = "GTW.OMP.SRM.Boat_in_Regatta"
         , Type      = GTW.NAV.E_Type.Admin
-        , sort_key  = TFL.Sorted_By ("left", "right", "skipper")
+        , sort_key  = TFL.Sorted_By
+            ("-right.date.start", "left.sail_number", "skipper.last_name")
         )
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"
