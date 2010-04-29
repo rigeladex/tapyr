@@ -107,6 +107,20 @@ class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
 
         # end class title
 
+        class year (A_Int) :
+            """Year in which the regatta happens."""
+
+            kind               = Attr.Internal
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("event", )
+
+            def computed (self, obj) :
+                if obj.event :
+                    return obj.event.year
+            # end def computed
+
+        # end class year
+
     # end class _Attributes
 
 Page = _SRM_Page_ # end class

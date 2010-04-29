@@ -242,6 +242,8 @@ class Manager_T_Archive_Y (Manager_T_Archive) :
 
     def _year_filter (self, y) :
         return (Q.year == y, )
+    # end def _year_filter
+
 # end class Manager_T_Archive_Y
 
 if __name__ != "__main__" :
