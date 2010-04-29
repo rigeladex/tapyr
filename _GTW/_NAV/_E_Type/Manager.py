@@ -42,6 +42,8 @@
 #     9-Apr-2010 (CT) `Manager_T_Archive._year_filter` factored
 #     9-Apr-2010 (CT) `Manager_T_Archive_Y` added
 #    12-Apr-2010 (CT) `href_display` changed to use`perma_name` instead of `lid`
+#    29-Apr-2010 (CT) `Manager_T_Archive._get_objects` changed to use
+#                     `top.copyright_start` instead of `cy - 5` as cutoff
 #    ««revision-date»»···
 #--
 
@@ -211,7 +213,7 @@ class Manager_T_Archive (Manager_T) :
         qr = self.ETM.query (sort_key = self.sort_key)
         cy = datetime.date.today ().year
         result = []
-        for y in xrange (cy, cy - 5, -1) :
+        for y in xrange (cy, self.top.copyright_start - 1, -1) :
             qy   = qr.filter (* self._year_filter (y))
             name = str (y)
             Y = self.Year \

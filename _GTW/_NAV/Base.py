@@ -215,6 +215,8 @@
 #    24-Mar-2010 (CT) `_Dir_.rendered` changed to update `nav_page` in
 #                     `handler.context`, too
 #    24-Mar-2010 (CT) `is_current` added
+#    29-Apr-2010 (CT) `Root.__init__` changed to set `copyright_start` and
+#                     `src_root` if not passed in
 #    ««revision-date»»···
 #--
 
@@ -349,11 +351,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
     @Once_Property
     def copyright (self) :
         year  = time.localtime ().tm_year
-        start = self.copyright_start
+        start = int (self.copyright_start)
+        yr    = str (year) if year == start else "%4.4d-%4.4d" % (start, year)
         return dict \
             ( holder = self.owner
             , url    = self.copyright_url or "/"
-            , year   = "-".join ("%s" % y for y in (start, year) if y)
+            , year   = yr
             )
     # end def copyright
 
@@ -849,6 +852,8 @@ class Root (_Dir_) :
     _permission             = None
 
     def __init__ (self, src_dir, HTTP, Templateer, ** kw) :
+        if "copyright_start" not in kw :
+            kw ["copyright_start"] = time.localtime ().tm_year
         _Site_Entity_.top = self
         self.parents      = []
         self.prefix       = ""
@@ -862,6 +867,8 @@ class Root (_Dir_) :
             , Templateer = Templateer
             , ** kw
             )
+        if not self.src_root :
+            self.src_root = src_dir
     # end def __init__
 
     @classmethod
