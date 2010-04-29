@@ -217,6 +217,7 @@
 #    24-Mar-2010 (CT) `is_current` added
 #    29-Apr-2010 (CT) `Root.__init__` changed to set `copyright_start` and
 #                     `src_root` if not passed in
+#    29-Apr-2010 (CT) `page_from_obj` corrected
 #    ««revision-date»»···
 #--
 
@@ -444,14 +445,16 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def obj_href
 
     def page_from_obj (self, obj) :
-        href = self.obj_href (obj)
+        result = None
+        href   = self.obj_href (obj)
         if href :
             top    = self.top
             result = top.Table.get (href)
             if result is None :
                 man = self.etype_manager (obj)
                 if man :
-                    return man.page_from_obj (obj)
+                    result = man.page_from_obj (obj)
+        return result
     # end def page_from_obj
 
     @Once_Property

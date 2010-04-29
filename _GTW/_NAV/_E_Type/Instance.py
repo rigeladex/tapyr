@@ -35,6 +35,8 @@
 #    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` added as ancestor
 #    19-Mar-2010 (CT) `permalink` changed to use the real `E_Type.Manager`
 #    24-Mar-2010 (CT) `Instance_Y` added
+#    29-Apr-2010 (CT) `Instance.permalink` changed to use `man.href_display`
+#                     instead of home-grown code; `Instance_Y.permalink` removed
 #    ««revision-date»»···
 #--
 
@@ -109,7 +111,7 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     @Once_Property
     def permalink (self) :
         man = self.top.E_Types [self.E_Type.type_name]
-        return pjoin (man.abs_href, self.obj.perma_name)
+        return man.href_display (self.obj)
     # end def permalink
 
     def rendered (self, handler, template = None) :
@@ -130,11 +132,6 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
 class Instance_Y (Instance) :
     """Year-specific instance."""
-
-    @Once_Property
-    def permalink (self) :
-        return pjoin (self.parent.permalink, self.obj.perma_name)
-    # end def permalink
 
 # end class Instance_Y
 

@@ -44,6 +44,7 @@
 #    12-Apr-2010 (CT) `href_display` changed to use`perma_name` instead of `lid`
 #    29-Apr-2010 (CT) `Manager_T_Archive._get_objects` changed to use
 #                     `top.copyright_start` instead of `cy - 5` as cutoff
+#    29-Apr-2010 (CT) `Manager_T_Archive_Y.href_display` redefined
 #    ««revision-date»»···
 #--
 
@@ -241,6 +242,12 @@ class Manager_T_Archive (Manager_T) :
 # end class Manager_T_Archive
 
 class Manager_T_Archive_Y (Manager_T_Archive) :
+
+    Page            = GTW.NAV.E_Type.Instance_Y
+
+    def href_display (self, obj) :
+        return pjoin (self.abs_href, str (obj.year), obj.perma_name)
+    # end def href_display
 
     def _year_filter (self, y) :
         return (Q.year == y, )
