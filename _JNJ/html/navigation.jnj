@@ -194,13 +194,14 @@
           {% if link.creator %}<p>Creator: {{ link.creator }}</p>{% endif %}
           {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
           <p>Url: {{ link.href }}</p>
+          <p>Permalink: {{ link.permalink }}</p>
+          <p>Name: {{ link.name }}</p>
           <p>Prefix: {{ link.prefix }}</p>
           <p>Title: {{ link.title }}</p>
           <p>Desc: {{ link.desc }}</p>
           <p>Template: {{ link.template }}</p>
           <p>Type: {{ link.Type }}</p>
           <p>Target: {{ link.target.href }}</p>
-          <p>Permalink: {{ link.permalink }}</p>
           {% if link.pictures %}
             <p>Picture Url: {{ link.pictures [0].href }}</p>
             <p>Picture permalink: {{ link.pictures [0].permalink }}</p>

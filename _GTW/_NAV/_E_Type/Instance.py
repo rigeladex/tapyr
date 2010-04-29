@@ -38,6 +38,7 @@
 #    29-Apr-2010 (CT) `Instance.permalink` changed to use `man.href_display`
 #                     instead of home-grown code
 #    29-Apr-2010 (CT) `Instance_Y` removed
+#    29-Apr-2010 (CT) `__init__` changed to sanitize `name`
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,11 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     attr_mapper     = None
 
     def __init__ (self, manager, obj, ** kw) :
-        name = getattr (obj, "name", str (obj.perma_name))
+        name = getattr (obj, "name", None)
+        if name is None :
+            name = str (obj.perma_name)
+        else :
+            name = TFL.Ascii.sanitized_filename (name)
         self.__super.__init__ \
             ( obj      = obj
             , manager  = manager

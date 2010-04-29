@@ -182,7 +182,7 @@ def _sa_order_by (self, table, joins = None, order_clause = None) :
                       "sorted by objects %s: %r" % (c.__class__, c)
                     )
             else :
-                assert c.count (".") < 2, "Check if we can support more levels"
+                assert c.count (".") < 2, "Check if we can support more levels: " + c
                 self._sa_resolve_attribute (table, c, joins, order_clause)
         self._sa_cache [key] = joins, order_clause
     return self._sa_cache [key]

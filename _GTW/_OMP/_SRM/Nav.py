@@ -85,7 +85,7 @@ class Admin (object) :
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"
         , Type      = GTW.NAV.E_Type.Admin
-        , sort_key  = TFL.Sorted_By ("-event.date.start", "perma_name")
+        , sort_key  = TFL.Sorted_By ("year", "perma_name")
         , Form_args =
             ( AID
                 ( "event"
