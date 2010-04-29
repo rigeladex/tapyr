@@ -36,7 +36,8 @@
 #    19-Mar-2010 (CT) `permalink` changed to use the real `E_Type.Manager`
 #    24-Mar-2010 (CT) `Instance_Y` added
 #    29-Apr-2010 (CT) `Instance.permalink` changed to use `man.href_display`
-#                     instead of home-grown code; `Instance_Y.permalink` removed
+#                     instead of home-grown code
+#    29-Apr-2010 (CT) `Instance_Y` removed
 #    ««revision-date»»···
 #--
 
@@ -129,11 +130,6 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     # end def __getattr__
 
 # end class Instance
-
-class Instance_Y (Instance) :
-    """Year-specific instance."""
-
-# end class Instance_Y
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")

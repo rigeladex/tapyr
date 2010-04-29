@@ -243,8 +243,6 @@ class Manager_T_Archive (Manager_T) :
 
 class Manager_T_Archive_Y (Manager_T_Archive) :
 
-    Page            = GTW.NAV.E_Type.Instance_Y
-
     def href_display (self, obj) :
         return pjoin (self.abs_href, str (obj.year), obj.perma_name)
     # end def href_display
