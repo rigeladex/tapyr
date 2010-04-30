@@ -157,7 +157,7 @@ class Admin (object) :
     Regatta_Event = dict \
         ( ETM       = "GTW.OMP.SRM.Regatta_Event"
         , Type      = GTW.NAV.E_Type.Admin
-        , sort_key  = TFL.Sorted_By ("-date.start", "name")
+        , sort_key  = TFL.Sorted_By ("date.start", "name")
         , Form_args =
             ( FGD ("name", "desc")
             , AID ("date", FGD (widget = "html/form.jnj, fg_tr"))

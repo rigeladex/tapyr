@@ -45,6 +45,10 @@
 #    29-Apr-2010 (CT) `Manager_T_Archive._get_objects` changed to use
 #                     `top.copyright_start` instead of `cy - 5` as cutoff
 #    29-Apr-2010 (CT) `Manager_T_Archive_Y.href_display` redefined
+#    30-Apr-2010 (CT) `_get_objects` changed to pass `page_args` on to each
+#                     `Page`
+#    30-Apr-2010 (CT) `_get_child` added to `Manager_T` and `Manager_T_Archive`
+#    30-Apr-2010 (CT) `_get_grandchild` added to `Manager_T_Archive_Y`
 #    ««revision-date»»···
 #--
 
@@ -160,6 +164,7 @@ class Manager_T (Manager) :
        an archive.
     """
 
+    archive_name      = "Archive"
     query_limit       = 7
 
     def query (self) :
@@ -176,10 +181,20 @@ class Manager_T (Manager) :
         return tuple  (result)
     # end def query_filters
 
+    def _get_child (self, child, * grandchildren) :
+        if child == self.archive_name :
+            archive = self._entries [-1]
+            if not grandchildren :
+                return archive
+            else :
+                return archive._get_child (* grandchildren)
+        return self.__super._get_child (child, * grandchildren)
+    # end def _get_child
+
     def _get_objects (self) :
         T      = self.Page
         kw     = self.page_args
-        name   = "Archive"
+        name   = self.archive_name
         result = [T (self, o, ** kw) for o in self.query ()]
         arch   = Manager_T_Archive \
             ( ETM       = self.ETM
@@ -198,7 +213,7 @@ class Manager_T (Manager) :
 
 # end class Manager_T
 
-class Manager_T_Archive (Manager_T) :
+class Manager_T_Archive (Manager) :
 
     class _Cmd_ (GTW.NAV.Dir) :
         pass
@@ -207,6 +222,38 @@ class Manager_T_Archive (Manager_T) :
     class Year (_Cmd_) :
         pass
     # end class Year
+
+    def _get_child (self, child, * grandchildren) :
+        try :
+            y = int (child)
+        except ValueError :
+            pass
+        else :
+            entries = self._entries
+            try :
+                year = first (e for e in entries if e.year == y)
+            except IndexError :
+                pass
+            else :
+                if not grandchildren :
+                    return year
+                else :
+                    result = self._get_grandchild (y, grandchildren)
+                    if result is not None :
+                        return result
+        return self.__super._get_child (child, * grandchildren)
+    # end def _get_child
+
+    def _get_grandchild (self, y, grandchildren) :
+        if len (grandchildren) == 1 :
+            gc = grandchildren [0]
+            try :
+                obj = self.ETM.query (perma_name = gc).one ()
+            except Exception, exc :
+                pass
+            else :
+                return self.page_from_obj (obj)
+    # end def _get_grandchild
 
     def _get_objects (self) :
         T  = self.Page
@@ -225,7 +272,7 @@ class Manager_T_Archive (Manager_T) :
                 , sub_dir = name
                 , title   = name
                 )
-            _entries = [T (Y, o, ** kw) for o in qy]
+            _entries = [T (Y, o, page_args = kw, ** kw) for o in qy]
             if _entries :
                 Y._entries = _entries
                 result.append (Y)
@@ -246,6 +293,17 @@ class Manager_T_Archive_Y (Manager_T_Archive) :
     def href_display (self, obj) :
         return pjoin (self.abs_href, str (obj.year), obj.perma_name)
     # end def href_display
+
+    def _get_grandchild (self, y, grandchildren) :
+        if len (grandchildren) == 1 :
+            gc = grandchildren [0]
+            try :
+                obj = self.ETM.query (year = y, perma_name = gc).one ()
+            except Exception, exc :
+                pass
+            else :
+                return self.page_from_obj (obj)
+    # end def _get_grandchild
 
     def _year_filter (self, y) :
         return (Q.year == y, )

@@ -63,7 +63,7 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         kw    = self.page_args
         rev   = self.obj
         query = self.scope.SRM.Page.query_s (event = rev)
-        return [T (self, o, ** kw) for o in query]
+        return [T (self, o, page_args = kw, ** kw) for o in query]
     # end def _get_pages
 
 # end class Regatta_Event

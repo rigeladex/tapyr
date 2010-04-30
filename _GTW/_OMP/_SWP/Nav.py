@@ -71,7 +71,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Clip_X"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("perma_name", "title")
+            ( FGD (primary, "title")
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")
@@ -100,7 +100,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Gallery"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("perma_name", "short_title", "title", "directory")
+            ( FGD (primary, "short_title", "title", "directory")
             , AID
                 ( "date"
                 , FGD (widget   = "html/form.jnj, fg_tr")
@@ -124,7 +124,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Page"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("perma_name", "short_title", "title")
+            ( FGD (primary, "short_title", "title")
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")
