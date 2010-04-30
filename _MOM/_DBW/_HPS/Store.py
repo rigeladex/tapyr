@@ -35,6 +35,7 @@
 #     4-Mar-2010 (CT) Classmethod `X_Uri` factored
 #    19-Mar-2010 (CT) `save_objects` and `_load_store` changed to
 #                     save/restore `pid`
+#    30-Apr-2010 (CT) `_load_store` corrected
 #    ««revision-date»»···
 #--
 
@@ -283,12 +284,12 @@ class Store (TFL.Meta.Object) :
                         obj = Type.from_pickle_cargo (scope, e_cargo)
                     except Exception, exc :
                         scope.db_errors.append ((tn, pid, e_cargo))
-                        print exc
+                        print repr (exc)
                         print "   ", tn, pid, e_cargo
-                    if obj is not None :
-                        scope.ems.add (obj, id = pid)
+                        print "Couldn't restore %s %s from %s" % \
+                            (tn, pid, e_cargo)
                     else :
-                        print "Couldn't restore %s from %s" % (tn, pid, e_cargo)
+                        scope.ems.add (obj, id = pid)
     # end def _load_store
 
     @TFL.Contextmanager

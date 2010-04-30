@@ -91,7 +91,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         else :
             apt = cls.app_type_hps ()
             if db_name :
-                uri = ".".join \
+                uri = "".join \
                     ((db_name, cls.ANS.Version.db_version.db_extension))
             if not uri or not sos.path.exists (uri) :
                 create = True

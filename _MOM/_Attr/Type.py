@@ -118,6 +118,9 @@
 #    27-Apr-2010 (CT) Default for `needs_raw_value` changed to `False`
 #    28-Apr-2010 (CT) `_A_Collection_` factored from `_A_Typed_Collection_`
 #    28-Apr-2010 (CT) `_A_Composite_Collection_` added
+#    30-Apr-2010 (CT) `_A_Object_._get_object` changed to improve the message
+#                     passed to `MOM.Error.No_Such_Object`
+#    30-Apr-2010 (CT) `_A_Composite_.from_string` changed to set `raw = True`
 #    ««revision-date»»···
 #--
 
@@ -471,6 +474,7 @@ class _A_Composite_ (A_Attr_Type) :
             t = self._call_eval (t, {}, {})
         if isinstance (t, tuple) :
             t = dict (t)
+        t.setdefault ("raw", True)
         return self.C_Type (** t)
     # end def from_string
 
@@ -836,7 +840,9 @@ class _A_Object_ (A_Attr_Type) :
                     )
         else :
             raise MOM.Error.No_Such_Object, \
-                (_T (u"No object %s %s in scope %s") % (tn, epk, scope.name))
+                (  _T (u"No object of type %s with epk %s in scope %s")
+                % (tn, epk, scope.name)
+                )
     # end def _get_object
 
     @TFL.Meta.Class_and_Instance_Method
