@@ -202,6 +202,7 @@
           <p>Template: {{ link.template }}</p>
           <p>Type: {{ link.Type }}</p>
           <p>Target: {{ link.target.href }}</p>
+          <p>Object: {{ link.obj }}</p>
           {% if link.pictures %}
             <p>Picture Url: {{ link.pictures [0].href }}</p>
             <p>Picture permalink: {{ link.pictures [0].permalink }}</p>

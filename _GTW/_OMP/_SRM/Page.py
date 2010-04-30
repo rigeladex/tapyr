@@ -91,7 +91,7 @@ class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
                     return obj.desc
             # end def computed
 
-        # end class title
+        # end class short_title
 
         class title (A_String) :
             """Title of the web page"""

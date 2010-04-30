@@ -28,6 +28,8 @@
 # Revision Dates
 #    17-Mar-2010 (CT) Creation
 #    12-Apr-2010 (CT) `_get_entries` factored in here
+#    30-Apr-2010 (CT) `Instance_Mixin` added (factored from
+#                     `GTW.NAV.E_Type.Instance_Mixin`)
 #    ««revision-date»»···
 #--
 
@@ -38,6 +40,8 @@ import _GTW._NAV._E_Type
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
+
+from   posixpath                import join  as pjoin
 
 class Mixin (TFL.Meta.Object) :
     """Mixin for classes of GTW.NAV.E_Type."""
@@ -79,12 +83,66 @@ class Mixin (TFL.Meta.Object) :
     _entries = property (lambda s : s._get_entries (), lambda s, v : True)
 
     def _get_objects (self) :
-        T = self.Page
+        T  = self.Page
         kw = self.page_args
         return [T (self, o, ** kw) for o in self.query ()]
     # end def _get_objects
 
 # end class Mixin
+
+class Instance_Mixin (Mixin) :
+
+    attr_mapper     = None
+
+    def __init__ (self, manager, obj, ** kw) :
+        name = getattr (obj, "name", None)
+        if name is None :
+            name = str (obj.perma_name)
+        else :
+            name = TFL.Ascii.sanitized_filename (name)
+        self.__super.__init__ \
+            ( obj      = obj
+            , manager  = manager
+            , name     = name
+            , parent   = manager
+            , ** kw
+            )
+        self.desc  = self.__getattr__ ("desc")
+        self.title = self.__getattr__ ("title")
+    # end def __init__
+
+    @property
+    def admin (self) :
+        return self.manager.admin
+    # end def admin
+
+    @property
+    def h_title (self) :
+        return u"::".join \
+            ((self.obj.short_title or self.name, self.parent.h_title))
+    # end def h_title
+
+    @Once_Property
+    def permalink (self) :
+        man = self.top.E_Types [self.E_Type.type_name]
+        return man.href_display (self.obj)
+    # end def permalink
+
+    def rendered (self, handler, template = None) :
+        with self.LET (FO = GTW.FO (self.obj, self.top.encoding)) :
+            return self.__super.rendered (handler, template)
+    # end def rendered
+
+    def __getattr__ (self, name) :
+        if self.attr_mapper :
+            try :
+                return self.attr_mapper (self.obj.FO, name)
+            except AttributeError :
+                pass
+        return self.__super.__getattr__  (name)
+    # end def __getattr__
+
+# end class Instance_Mixin
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")
