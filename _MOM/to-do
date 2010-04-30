@@ -1,6 +1,11 @@
 MOM To-Do
 =========
 
+- MOM.DBW.HPS.Store:
+
+  * on load, allow for non-existing `pid` and delay restore of the
+    corresponding attribute of type `_A_Object_`
+
 x MOM.SCM:
 
   x etype-specific and change-type-specific callbacks

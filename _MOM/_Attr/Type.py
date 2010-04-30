@@ -121,6 +121,8 @@
 #    30-Apr-2010 (CT) `_A_Object_._get_object` changed to improve the message
 #                     passed to `MOM.Error.No_Such_Object`
 #    30-Apr-2010 (CT) `_A_Composite_.from_string` changed to set `raw = True`
+#    30-Apr-2010 (CT) `A_Date.cooked` and `A_Date_Time.cooked` added to
+#                     enforce the right type
 #    ««revision-date»»···
 #--
 
@@ -1197,6 +1199,15 @@ class A_Date (_A_Date_) :
     _tuple_len     = 3
     _DT_Type       = datetime.date
 
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, datetime.datetime) :
+            value = value.date ()
+        elif not isinstance (value, datetime.date) :
+            raise TypeError ("Date expected, got %r" % (value, ))
+        return value
+    # end def cooked
+
     @classmethod
     def now (cls) :
         return datetime.datetime.now ().date ()
@@ -1246,6 +1257,15 @@ class A_Date_Time (_A_Date_) :
         )
     _tuple_len     = 6
     _DT_Type       = datetime.datetime
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, datetime.date) :
+            value = datetime.datetime (value.year, value.month, value.day)
+        elif not isinstance (value, datetime.datetime) :
+            raise TypeError ("Date expected, got %r" % (value, ))
+        return value
+    # end def cooked
 
     @classmethod
     def now (cls) :
