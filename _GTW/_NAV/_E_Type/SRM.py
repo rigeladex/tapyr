@@ -53,6 +53,8 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         self.__super.__init__ (manager, obj, ** kw)
     # end def __init__
 
+    ### XXX implement _get_child
+
     def _get_objects (self) :
         ### XXX add regatta info (registration list, results, ...)
         return self._get_pages ()
@@ -91,6 +93,8 @@ class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
         comps.append (obj.perma_name)
         return pjoin (* comps)
     # end def href_display
+
+    ### XXX implement _get_child
 
 # end class SRM
 
