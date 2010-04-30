@@ -36,6 +36,8 @@
 #    19-Mar-2010 (CT) `save_objects` and `_load_store` changed to
 #                     save/restore `pid`
 #    30-Apr-2010 (CT) `_load_store` corrected
+#    30-Apr-2010 (CT) `save_objects` changed to store all entities into a
+#                     single store `by_pid` sorted by `pid`
 #    ««revision-date»»···
 #--
 
@@ -209,7 +211,7 @@ class Store (TFL.Meta.Object) :
                 self._load_pending (TFL.Filename (name, x_uri).name)
     # end def load_objects
 
-    def save_objects (self) :
+    def save_objects_by_rr (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
         scope   = self.scope
         info    = self.info
@@ -231,6 +233,29 @@ class Store (TFL.Meta.Object) :
                 with open (s_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
                 stores.append   (s_name.base_ext)
+            info.commits.extend (info.pending)
+            info.pending = []
+    # end def save_objects_by_rr
+
+    def save_objects (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        scope   = self.scope
+        info    = self.info
+        stores  = info.stores = []
+        x_name  = self.x_uri.name
+        max_cid = scope.ems.max_cid
+        max_pid = scope.ems.max_pid
+        scope.ems.commit ()
+        with self._save_context (x_name, scope, info, max_cid, max_pid) :
+            sk     = TFL.Sorted_By ("pid")
+            s_name = TFL.Filename ("by_pid", self.x_uri)
+            cargo  = \
+                [   (e.type_name, e.pid, e.as_pickle_cargo ())
+                for e in sorted (scope.ems._pid_map.itervalues (), key = sk)
+                ]
+            with open (s_name.name, "wb") as file :
+                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+            stores.append   (s_name.base_ext)
             info.commits.extend (info.pending)
             info.pending = []
     # end def save_objects
