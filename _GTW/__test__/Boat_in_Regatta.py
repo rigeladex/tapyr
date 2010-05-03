@@ -23,30 +23,40 @@
 #    GTW.__test__.Boat_in_Regatta
 #
 # Purpose
-#    «text»···
+#    Test creation and querying of Boat_in_Regatta
 #
 # Revision Dates
 #     3-May-2010 (MG) Creation
+#     3-May-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
+
 _test_code = r"""
     >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
     Creating new scope MOMT__... in memory
+    >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
+    >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
-    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, raw = True)
+
+    >>> SRM.Regatta_C.instance (* reg.epk)
+    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    >>> SRM.Regatta.instance (* reg.epk)
+    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
+    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 """
 
 from _GTW.__test__.model import *
-if 0 :
-   __test__ = dict \
-       ( HPS = _test_code % (None, None)
-       , SQ  = _test_code % ("'sqlite://'", None)
-       )
-else :
-    __doc__ = _test_code % (None, None)
 
+__test__ = dict \
+   ( HPS = _test_code % (None, None)
+   , SQ  = _test_code % ("'sqlite://'", None)
+   )
 ### __END__ GTW.__test__.Boat_in_Regatta

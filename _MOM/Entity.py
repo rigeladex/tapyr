@@ -124,6 +124,7 @@
 #                     `None`
 #    26-Apr-2010 (CT) Guard against `raw` added to `Entity.set` and
 #                     `Entity.set_raw`
+#     3-May-2010 (CT) `epk` and `epk_raw` changed to append `type_name`
 #    ««revision-date»»···
 #--
 
@@ -795,7 +796,8 @@ class Id_Entity (Entity) :
     @TFL.Meta.Once_Property
     def epk (self) :
         """Essential primary key"""
-        return tuple (a.get_value (self) for a in self.primary)
+        return \
+            tuple (a.get_value (self) for a in self.primary) + (self.type_name,)
     # end def epk
 
     @property
@@ -836,7 +838,8 @@ class Id_Entity (Entity) :
     @property
     def epk_raw (self) :
         """Essential primary key as raw values"""
-        return tuple (a.get_raw (self) for a in self.primary)
+        return tuple \
+            (a.get_raw (self) for a in self.primary) + (self.type_name,)
     # end def epk_raw
 
     @property
@@ -941,6 +944,8 @@ class Id_Entity (Entity) :
 
     @classmethod
     def epkified (cls, * epk, ** kw) :
+        if epk and isinstance (epk [-1], cls.Type_Name_Type) :
+            epk = epk [:-1]
         ### `epkified_ckd` and `epkified_raw` auto-created by meta machinery
         raw      = bool (kw.get ("raw", False))
         epkifier = (cls.epkified_ckd, cls.epkified_raw) [raw]

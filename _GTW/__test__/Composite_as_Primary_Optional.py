@@ -30,6 +30,7 @@
 #    27-Apr-2010 (CT) Test for `sqlite` added, `Scaffold` used
 #    ««revision-date»»···
 #--
+
 _test_code = """
     >>> scope = Scaffold.scope (%s) # doctest:+ELLIPSIS
     Creating new scope MOMT__... in memory

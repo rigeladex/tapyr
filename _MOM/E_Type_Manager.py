@@ -70,6 +70,8 @@
 #                     s/Link._cooked_epk_iter/Link._raw_epk_iter/
 #    27-Apr-2010 (CT) `Link._role_to_cooked_iter` changed to call `cooked`
 #                     for non-role epk attributes
+#     3-May-2010 (CT) `_epkified` added instead of direct calls to `epkified`
+#     3-May-2010 (CT) `this` added to return of `_cooked_epk`
 #    ««revision-date»»···
 #--
 
@@ -204,6 +206,16 @@ class Id_Entity (Entity) :
         return result
     # end def query_s
 
+    def _epkified (self, epk, kw) :
+        this  = self
+        etype = self._etype
+        if epk and isinstance (epk [-1], etype.Type_Name_Type) :
+            this  = self.home_scope [epk [-1]]
+            epk   = epk [:-1]
+            etype = this._etype
+        return etype.epkified (* epk, ** kw), this
+    # end def _epkified
+
 # end class Id_Entity
 
 class Object (Id_Entity) :
@@ -211,14 +223,14 @@ class Object (Id_Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if an object with primary key `epk` exists."""
-        epk, kw = self._cooked_epk (epk, kw)
-        return self.__super.exists   (* epk, ** kw)
+        epk, kw, this = self._cooked_epk (epk, kw)
+        return this.__super.exists (* epk, ** kw)
     # end def exists
 
     def instance (self, * epk, ** kw) :
         """Return the object with primary key `epk` or None."""
-        epk, kw = self._cooked_epk (epk, kw)
-        return self.__super.instance (* epk, ** kw)
+        epk, kw, this = self._cooked_epk (epk, kw)
+        return this.__super.instance (* epk, ** kw)
     # end def instance
 
     @property
@@ -232,10 +244,10 @@ class Object (Id_Entity) :
     # end def singleton
 
     def _cooked_epk (self, epk, kw) :
-        epk, kw  = self._etype.epkified (* epk, ** kw)
+        (epk, kw), this  = self._epkified (epk, kw)
         raw      = kw.pop ("raw", False)
-        epk_iter = (self._raw_epk_iter if raw else self._cooked_epk_iter)
-        return tuple (epk_iter (epk)), kw
+        epk_iter = (this._raw_epk_iter if raw else this._cooked_epk_iter)
+        return tuple (epk_iter (epk)), kw, this
     # end def _cooked_epk
 
     def _cooked_epk_iter (self, epk) :
@@ -266,7 +278,7 @@ class Link (Id_Entity) :
     """Scope-specific manager for essential link-types."""
 
     def __call__ (self, * args, ** kw) :
-        args, kw = self._etype.epkified (* args, ** kw)
+        (args, kw), this = self._epkified (args, kw)
         self._checked_roles (* args, ** kw)
         if kw.get ("raw", False) :
             args = tuple (self._role_to_raw_iter    (args))
@@ -283,14 +295,14 @@ class Link (Id_Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if a link with primary key `epk` exists."""
-        epk, kw = self._cooked_epk (epk, kw)
-        return self.__super.exists (* epk, ** kw)
+        epk, kw, this = self._cooked_epk (epk, kw)
+        return this.__super.exists (* epk, ** kw)
     # end def exists
 
     def instance (self, * epk, ** kw) :
         """Return the link with primary key `epk` or None."""
-        epk, kw = self._cooked_epk   (epk, kw)
-        return self.__super.instance (* epk, ** kw)
+        epk, kw, this = self._cooked_epk   (epk, kw)
+        return this.__super.instance (* epk, ** kw)
     # end def instance
 
     def r_query (self, * filters, ** kw) :
@@ -390,10 +402,10 @@ class Link (Id_Entity) :
     # end def _checked_roles
 
     def _cooked_epk (self, epk, kw) :
-        epk, kw  = self._etype.epkified (* epk, ** kw)
+        (epk, kw), this = self._epkified (epk, kw)
         raw      = kw.pop ("raw", False)
-        epk_iter = (self._raw_epk_iter if raw else self._role_to_cooked_iter)
-        return tuple (epk_iter (epk)), kw
+        epk_iter = (this._raw_epk_iter if raw else this._role_to_cooked_iter)
+        return tuple (epk_iter (epk)), kw, this
     # end def _cooked_epk
 
     def _cooked_role (self, r, v) :

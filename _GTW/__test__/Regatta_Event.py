@@ -36,7 +36,7 @@ _test_code = """
     >>> SRM = scope.SRM
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> rev.epk_raw
-    ((('start', '2008/05/01'),), u'Himmelfahrt')
+    ((('start', '2008/05/01'),), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
     GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01'), u'Himmelfahrt')
     >>> SRM.Regatta_Event.instance (* rev.epk)
@@ -52,17 +52,3 @@ __test__ = dict \
     )
 
 ### __END__ GTW.__test__.Regatta_Event
-
-"""
-$ /usr/bin/python -i model.py::
-
-rev = scope.SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
-scope.SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-
-
-rev.epk_raw
-
-scope.SRM.Regatta_Event.instance (* rev.epk)
-
-
-"""

@@ -963,8 +963,7 @@ appropriate class:
     >>> RiT (m, t2)
     Traceback (most recent call last):
       ...
-    Multiplicity_Errors: BMT.Rodent_in_Trap, [Maximum number of links
-    for u'Mighty_Mouse' is 1 ((BMT.Mouse (u'Mighty_Mouse'), BMT.Trap (u'X', 2)), [BMT.Rodent_in_Trap ((u'Mighty_Mouse', ), (u'X', 1))])]
+    Multiplicity_Errors: BMT.Rodent_in_Trap, [Maximum number of links for (u'Mighty_Mouse') is 1 ((BMT.Mouse (u'Mighty_Mouse'), BMT.Trap (u'X', 2)), [BMT.Rodent_in_Trap ((u'Mighty_Mouse', ), (u'X', 1))])]
     >>> RiT (r, t3)
     BMT.Rodent_in_Trap ((u'Rutty_Rat', ), (u'Y', 1))
     >>> RiT (axel, t2)
@@ -1285,20 +1284,20 @@ Changing objects and links
     >>> csk = TFL.Sorted_By (Q.parent != None, Q.cid)
     >>> for c in m.changes ().order_by (csk).all () :
     ...     print c
-    <Create BMT.Mouse (u'Mighty_Mouse',)>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : ''}, new-values = {'weight' : u'10.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Create BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse')>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'weight' : ''}, new-values = {'weight' : u'10.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
 
     >>> mm = m.copy ("Magic_Mouse")
     >>> for c in mm.changes ().order_by (csk).all () :
     ...     print c
-    <Copy BMT.Mouse (u'Magic_Mouse',)>
-        <Create BMT.Mouse (u'Magic_Mouse',)>
-        <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
-    <Create BMT.Mouse (u'Magic_Mouse',)>
-    <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Copy BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
+        <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
+        <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
+    <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
 
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
@@ -1465,66 +1464,66 @@ Scope queries
     37
     >>> for c in scope.ems.uncommitted_changes :
     ...     print c
-    <Create BMT.Person (u'Luke', u'Lucky', u'')>
-    <Create BMT.Person (u'Dog', u'Snoopy', u'')>
-    <Create BMT.Location (u'-16.268799', u'48.189956')>
-    <Create BMT.Location (u'-16.74077', u'48.463313')>
-    <Create BMT.Mouse (u'Mighty_Mouse',)>
-    <Create BMT.Beaver (u'Toothy_Beaver',)>
-    <Create BMT.Rat (u'Rutty_Rat',)>
-    <Create BMT.Rat (u'Axel',)>
-    <Create BMT.Trap (u'X', u'1')>
-    <Create BMT.Trap (u'X', u'2')>
-    <Create BMT.Trap (u'Y', u'1')>
-    <Create BMT.Trap (u'Y', u'2')>
-    <Create BMT.Trap (u'Z', u'3')>
-    <Create BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
-    <Create BMT.Rodent_in_Trap (u"(u'Rutty_Rat',)", u"(u'Y', u'1')")>
-    <Create BMT.Rodent_in_Trap (u"(u'Axel',)", u"(u'X', u'2')")>
-    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), new-values = {'price' : u'42.00'}>
-    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')"), new-values = {'price' : u'42.00'}>
-    <Create BMT.Person_owns_Trap (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')"), new-values = {'price' : u'42.00'}>
-    <Create BMT.Person (u'Tin', u'Tin', '')>
-    <Create BMT.Person_owns_Trap (u"(u'tin', u'tin', u'')", u"(u'Y', u'2')"), new-values = {'price' : u'42.00'}>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")>
-    <Modify BMT.Rat (u'betty',), old-values = {'name' : u'Axel'}, new-values = {'name' : u'betty'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : ''}, new-values = {'weight' : u'10.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
-    <Copy BMT.Mouse (u'Magic_Mouse',)>
-        <Create BMT.Mouse (u'Magic_Mouse',)>
-        <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
-    <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : ''}, new-values = {'max_weight' : u'20.0'}>
-    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'42.00'}, new-values = {'price' : u'1.20'}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Toothy_Beaver',)"}, new-values = {'left' : u"(u'Mighty_Mouse',)"}>
-    <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : u'42.0'}>
-        <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
-    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20.0'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
-    <Destroy BMT.Trap (u'X', u'2')>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')"), old-values = {'price' : u'42.00'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
-        <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')")>
+    <Create BMT.Person (u'Luke', u'Lucky', u'', 'BMT.Person')>
+    <Create BMT.Person (u'Dog', u'Snoopy', u'', 'BMT.Person')>
+    <Create BMT.Location (u'-16.268799', u'48.189956', 'BMT.Location')>
+    <Create BMT.Location (u'-16.74077', u'48.463313', 'BMT.Location')>
+    <Create BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse')>
+    <Create BMT.Beaver (u'Toothy_Beaver', 'BMT.Beaver')>
+    <Create BMT.Rat (u'Rutty_Rat', 'BMT.Rat')>
+    <Create BMT.Rat (u'Axel', 'BMT.Rat')>
+    <Create BMT.Trap (u'X', u'1', 'BMT.Trap')>
+    <Create BMT.Trap (u'X', u'2', 'BMT.Trap')>
+    <Create BMT.Trap (u'Y', u'1', 'BMT.Trap')>
+    <Create BMT.Trap (u'Y', u'2', 'BMT.Trap')>
+    <Create BMT.Trap (u'Z', u'3', 'BMT.Trap')>
+    <Create BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap')>
+    <Create BMT.Rodent_in_Trap (u"(u'Rutty_Rat',)", u"(u'Y', u'1')", 'BMT.Rodent_in_Trap')>
+    <Create BMT.Rodent_in_Trap (u"(u'Axel',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap')>
+    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), new-values = {'price' : u'42.00'}>
+    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), new-values = {'price' : u'42.00'}>
+    <Create BMT.Person_owns_Trap (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap'), new-values = {'price' : u'42.00'}>
+    <Create BMT.Person (u'Tin', u'Tin', '', 'BMT.Person')>
+    <Create BMT.Person_owns_Trap (u"(u'tin', u'tin', u'')", u"(u'Y', u'2')", 'BMT.Person_owns_Trap'), new-values = {'price' : u'42.00'}>
+    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>
+    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')>
+    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')>
+    <Modify BMT.Rat (u'betty', 'BMT.Rat'), old-values = {'name' : u'Axel'}, new-values = {'name' : u'betty'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'weight' : ''}, new-values = {'weight' : u'10.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Copy BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
+        <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
+        <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Modify BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : ''}, new-values = {'max_weight' : u'20.0'}>
+    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'42.00'}, new-values = {'price' : u'1.20'}>
+    <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
+    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'left' : u"(u'Toothy_Beaver',)"}, new-values = {'left' : u"(u'Mighty_Mouse',)"}>
+    <Destroy BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+        <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap')>
+    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u'20.0'}>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'1.20'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>
+    <Destroy BMT.Trap (u'X', u'2', 'BMT.Trap')>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'42.00'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')>
+        <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap')>
     >>> c = scope.ems.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
     >>> cc
-    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20.0'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
+    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u'20.0'}>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'1.20'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>
     >>> cc.children
-    [<Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>]
+    [<Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>]
     >>> cc.children [0].parent is cc
     True
     >>> pckl = c.as_pickle ()
     >>> cc = c.from_pickle (pckl)
     >>> cc
-    <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20.0'}>
+    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u'20.0'}>
     >>> cc.children
     []
     >>> scope.commit ()
@@ -1548,18 +1547,18 @@ Replaying changes
 
     >>> t3.max_weight = 25
     >>> sorted (scope.user_diff (scop2).iteritems ())
-    [(('BMT.Trap', (u'Y', u'1')), {'max_weight': (25.0, None)})]
+    [(('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), {'max_weight': (25.0, None)})]
     >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
     1
     >>> sorted (scope.user_diff (scop2).iteritems ())
-    [(('BMT.Trap', (u'Y', u'1')), {'max_weight': (25.0, 42.0)})]
+    [(('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), {'max_weight': (25.0, 42.0)})]
     >>> t3.destroy ()
     >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
     ...     print diff
-    (('BMT.Person_owns_Trap', (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Person_sets_Trap_at_Location', (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Trap', (u'Y', u'1')), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Person_owns_Trap', (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap')), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Person_sets_Trap_at_Location', (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')", 'BMT.Rodent_in_Trap')), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), 'Present in Scope <None>, missing in Scope <None>')
     >>> scope.user_equal (scop2)
     False
 
@@ -1698,7 +1697,7 @@ Changing a composite primary attribute
 
     >>> old_epk = osm.epk
     >>> old_epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18))
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* old_epk)
     BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))
 
@@ -1714,7 +1713,7 @@ Changing a composite primary attribute
     >>> print Ris.instance (* old_epk)
     None
     >>> osm.epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01))
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* osm.epk)
     BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/03/01'))
 

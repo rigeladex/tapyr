@@ -90,6 +90,7 @@
 #     9-Apr-2010 (CT) `M_Id_Entity._m_new_e_type_dict` changed to  filter
 #                     attributes set to `None`
 #    21-Apr-2010 (CT) `M_Id_Entity._m_new_e_type_dict` changed to use `_d_rank`
+#     3-May-2010 (CT) `Type_Name_Type` added and used for `type_name`
 #    ««revision-date»»···
 #--
 
@@ -111,6 +112,13 @@ import _MOM.E_Type_Manager
 
 import sys
 
+class Type_Name_Type (str) :
+    """Type used for `type_name`."""
+
+    pass
+
+# end class Type_Name_Type
+
 class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     """Meta mixin for M_Entity and M_E_Type."""
 
@@ -120,6 +128,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
 
     m_sorted_by    = TFL.Sorted_By ("rank", "i_rank")
+
+    Type_Name_Type = Type_Name_Type
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__      (name, bases, dict)
@@ -237,7 +247,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 
     def _set_type_names (cls, base_name) :
         cls.type_base_name = base_name
-        cls.type_name      = cls.pns_qualified (base_name)
+        cls.type_name      = cls.Type_Name_Type (cls.pns_qualified (base_name))
         cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
     # end def _set_type_names
 
