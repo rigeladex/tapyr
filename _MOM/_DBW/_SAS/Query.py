@@ -37,8 +37,10 @@
 
 from   _TFL                  import TFL
 import _TFL._Meta.Object
+import _TFL.Sorted_By
 
 from   _MOM                  import MOM
+from   _MOM.import_MOM       import Q
 import _MOM._DBW._SAS
 
 from    sqlalchemy           import sql
@@ -57,7 +59,7 @@ class Query (TFL.Meta.Object) :
     # end def __init__
 
     def SAS_EQ_Clause (self, attr, value) :
-        return getattr (self, attr) == value
+        return (), (getattr (self, attr) == value, )
     # end def SAS_EQ_Clause
 
     def __getattr__ (self, name) :
@@ -82,7 +84,7 @@ class _MOM_Query_ (TFL.Meta.Object) :
             kind = getattr (self._E_TYPE [0], attr, None)
             if kind and isinstance (kind.attr, MOM.Attr._A_Named_Value_) :
                 db = kind.Pickler.as_cargo (None, kind, kind.attr, cooked)
-        return getattr (self, attr) == db
+        return (), (getattr (self, attr) == db, )
     # end def SAS_EQ_Clause
 
 # end class class _MOM_Query_
@@ -91,15 +93,16 @@ class MOM_Query (_MOM_Query_) :
     """Query for MOM Entities"""
 
     def __init__ (self, e_type, sa_table, db_attrs, bases) :
-        e_type._SAQ        = self
-        self._E_TYPE       = e_type, bases
-        self._SA_TABLE     = sa_table
-        columns            = sa_table.columns
-        self.id            = columns [e_type._sa_pk_name]
-        self._ATTRIBUTES   = []
-        self._COMPOSITES   = []
-        self._query_fct    = {}
-        delayed            = []
+        e_type._SAQ           = self
+        self._E_TYPE          = e_type, bases
+        self._SA_TABLE        = sa_table
+        columns               = sa_table.columns
+        self.id               = columns [e_type._sa_pk_name]
+        self._ATTRIBUTES      = []
+        self._COMPOSITES      = []
+        self._ID_ENTITY_ATTRS = {}
+        self._query_fct       = {}
+        delayed               = []
         if e_type is e_type.relevant_root :
             self.Type_Name = columns.Type_Name
             self.id        = columns.id
@@ -114,16 +117,25 @@ class MOM_Query (_MOM_Query_) :
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind))
             else :
-                col = columns [kind.attr._sa_col_name]
+                col        = columns [kind.attr._sa_col_name]
+                attr_names = [name]
                 setattr (self, name, col)
                 if isinstance (kind, MOM.Attr.Link_Role) :
-                    setattr (self, kind.role_name, col)
+                    setattr           (self, kind.role_name, col)
+                    attr_names.append (kind.role_name)
+                if isinstance (kind.attr, MOM.Attr._A_Object_) :
+                    join_query = Join_Query (self)
+                    for an in attr_names :
+                        self._ID_ENTITY_ATTRS [an] = join_query
                 self._ATTRIBUTES.append (name)
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
             self._COMPOSITES.extend (b_saq._COMPOSITES)
             for name in b_saq._ATTRIBUTES :
                 setattr                 (self, name, b_saq [name])
                 self._ATTRIBUTES.append (name)
+            for an, jf in b_saq._ID_ENTITY_ATTRS.iteritems () :
+                if an not in self._ID_ENTITY_ATTRS :
+                    self._ID_ENTITY_ATTRS [an] = jf
         for name, kind in delayed :
             query_fct = getattr (kind.attr, "query_fct")
             if query_fct :
@@ -155,6 +167,7 @@ class MOM_Composite_Query (_MOM_Query_) :
         prefix_len                = len (prefix)
         attr_names                = [c.name [prefix_len:] for c in columns]
         self._ATTRIBUTES          = attr_names
+        self._ID_ENTITY_ATTRS     = {}
         for idx, name in \
             (  (i, an) for (i, an) in enumerate (attr_names)
             if not an.startswith ("__raw_")
@@ -205,6 +218,25 @@ class MOM_Composite_Query (_MOM_Query_) :
 
 # end class MOM_Composite_Query
 
+class Join_Query (_MOM_Query_) :
+    """A query which requires the joining of two table."""
+
+    def __init__ (self, source) :
+        self.source     = source
+    # end def __init__
+
+    def __call__ (self, attr_name) :
+        base, sub_attr = attr_name.split (".", 1)
+        column         = getattr (self.source, base)
+        o_SAQ          = column.mom_kind.Class._SAQ
+        fk             = tuple (column.foreign_keys) [0]
+        sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
+        joins, oc      = sub_sb._sa_order_by (o_SAQ)
+        joins.add ((self.source._SA_TABLE, o_SAQ._SA_TABLE))
+        return joins, oc
+    # end def __call__
+
+# end class Join_Query
 
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")

@@ -74,18 +74,27 @@ class Q_Result (TFL.Meta.Object) :
     # end def distinct
 
     def filter (self, * criteria, ** eq_kw) :
-        sa_criteria = []
+        joins         = set ()
+        filter_clause = []
         for c in criteria :
             if not isinstance (c, sql.expression.Operators) :
-                sa_criteria.append (c._sa_filter (self.e_type._SAQ))
+                ajoins, aclause = c._sa_filter (self.e_type._SAQ)
             else :
-                sa_criteria.append (c)
+                ajoins  = ()
+                aclause = (c)
+            joins.update         (ajoins)
+            filter_clause.extend (aclause)
         for attr, value in eq_kw.iteritems () :
-            sa_criteria.append \
-                (self.e_type._SAQ.SAS_EQ_Clause (attr, value))
-        sa_criteria = (sql.expression.and_ (* sa_criteria), )
+            ajoins, aclause = self.e_type._SAQ.SAS_EQ_Clause (attr, value)
+            joins.update         (ajoins)
+            filter_clause.extend (aclause)
+        sa_criteria = (sql.expression.and_ (* filter_clause), )
+        sa_query    = self.sa_query
+        if joins :
+            for src_table, des_table, in joins :
+                sa_query = sa_query.select_from (src_table.join (des_table))
         return self.__class__ \
-            (self.e_type, self.session, self.sa_query.where (* sa_criteria))
+            (self.e_type, self.session, sa_query.where (* sa_criteria))
     # end def filter
 
     def first (self) :
@@ -126,7 +135,8 @@ class Q_Result (TFL.Meta.Object) :
             order_clause        = (criterion, )
         sa_query = self.sa_query
         if joins :
-            sa_query.joins (* joins)
+            for src_table, des_table, in joins :
+                sa_query = sa_query.select_from (src_table.join (des_table))
         return self.__class__ \
             (self.e_type, self.session, sa_query.order_by (* order_clause))
     # end def order_by

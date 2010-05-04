@@ -44,24 +44,32 @@ SAS_Attr_Map = dict \
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
 def _sa_filter (self, SAQ) :
-    return SAS_Attr_Map.get (self.name, self.getter) (SAQ)
+    attr       = self.name.split (".", 1) [0]
+    _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr, None)
+    if _sa_filter :
+        return _sa_filter (self.name)
+    return (), (SAS_Attr_Map.get (self.name, self.getter) (SAQ), )
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
 def _sa_filter (self, SAQ) :
-    args = []
+    args    = []
+    joins   = set ()
     for arg in self.lhs, self.rhs :
         if hasattr (arg, "_sa_filter") :
-            arg = arg._sa_filter (SAQ)
-        args.append (arg)
-    return getattr (args [0], self.op.__name__) (args [1])
+            ajoins, afilter = arg._sa_filter (SAQ)
+            joins.update  (ajoins)
+            args.extend   (afilter)
+        else :
+            args.append (arg)
+    return joins, (getattr (args [0], self.op.__name__) (args [1]), )
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query.Call)
 def _sa_filter (self, SAQ) :
     lhs = self.lhs._sa_filter (SAQ)
     op  = self.op.__name__.lower ()
-    return getattr (lhs, op) (* self.args)
+    return (), (getattr (lhs, op) (* self.args), )
 # end def _sa_filter
 
 TFL._Filter_Q_.predicate_precious_p = True
@@ -71,7 +79,7 @@ def _sa_filter (self, SAQ) :
         ( expression
         , "%s_" % (self.__class__.__name__.rsplit ("_",1) [-1].lower (), )
         )
-    return sa_exp (* (p._sa_filter (SAQ) for p in self.predicates))
+    return (), (sa_exp (* (p._sa_filter (SAQ) for p in self.predicates)), )
 # end def _sa_filter
 
 ### __END__ MOM.DBW.SAS.Filter
