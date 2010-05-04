@@ -832,6 +832,16 @@ existing address object?
     (1, 2, 1)
     >>> for i in sorted (form.instance.addresss) :
     ...     dump_instance (i)
+    street               = u'street'
+    zip                  = u'1010'
+    city                 = u'vienna'
+    country              = u'austria'
+    region               = u''
+    desc                 = u''
+    position:
+      height             = None
+      lat                = None
+      lon                = None
 """
 """
 
