@@ -96,8 +96,12 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def Media (self) :
-        self._setup_javascript ()
-        return self.widget.Media
+        try :
+           self._setup_javascript ()
+           return self.widget.Media
+        except StandardError, e :
+            import pdb; pdb.set_trace ()
+            raise
     # end def Media
 
     def prepare_request_data (self, form, request_data) :

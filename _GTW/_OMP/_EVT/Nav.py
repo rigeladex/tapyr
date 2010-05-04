@@ -58,28 +58,29 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.EVT.Event"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( AID
-                ( "object"
-                , FGD (primary)
-                , widget = "html/form.jnj, fg_tr"
-                )
-            , AID
-                ( "date"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend =
-                    _("Start (and optionally [for recurring events] finish) date")
-                )
-            , AID
-                ( "time"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend = _("Start and finish time")
-                )
-            , FGD ("detail")
-            , AID
-                ( "recurrence"
-                , FGD ()
-                , legend = _("Recurrence rule")
-                )
+            ( FGD
+                ( AID
+                    ( "object"
+                    , FGD (primary, widget = "html/form.jnj, fg_as_table")
+                    )
+                , AID
+                    ( "date"
+                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , legend =
+                        _("Start (and optionally [for recurring events] finish) date")
+                    )
+                , AID
+                    ( "time"
+                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , legend = _("Start and finish time")
+                    )
+                , "detail"
+                , AID
+                    ( "recurrence"
+                    , legend = _("Recurrence rule")
+                    )
+               )
+            ,
             )
         )
 
@@ -87,20 +88,26 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.EVT.Event_occurs"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( AID
-                ( "event"
+            ( FGD
+                ( AID
+                    ( "event"
+                    , FGD
+                        ( AID
+                            ( "object"
+                            , FGD ( primary
+                                  , widget = "html/form.jnj, fg_as_table"
+                                  )
+                            )
+                        )
+                   )
+                , "date"
                 , AID
-                    ( "object"
-                    , FGD (primary)
-                    , widget = "html/form.jnj, fg_tr"
+                    ( "time"
+                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , legend = _("Start and finish time")
                     )
                 )
-            , FGD ("date")
-            , AID
-                ( "time"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend = _("Start and finish time")
-                )
+            ,
             )
         )
 

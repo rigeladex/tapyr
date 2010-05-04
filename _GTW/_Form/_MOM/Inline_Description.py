@@ -77,6 +77,11 @@ class _Inline_Description_ (TFL.Meta.Object) :
     def __init__ (self, link_name, * field_group_descriptions, ** kw) :
         self.link_name = getattr (link_name, "type_name", link_name)
         self.field_group_descriptions = field_group_descriptions
+        widget = kw.pop ("widget", None)
+        if widget and not isinstance (widget, GTW.Form.Widget_Spec) :
+            widget = GTW.Form.Widget_Spec (widget)
+        if widget :
+            self.widget = widget
         self.__dict__.update (kw)
     # end def __init__
 

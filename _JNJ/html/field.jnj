@@ -70,7 +70,7 @@
   {{ X.input.select
       ( name     = id
       , id       = "F_%s"|format (id)
-      , choices  = fi.choices
+      , choices  = fi.choices (fo)
       , selected = fo.get_raw (fi)
       )
   }}

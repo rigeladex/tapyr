@@ -117,6 +117,8 @@ def create_nav (scope) :
                   , GTW.OMP.Auth.Nav.Admin.Account
                   , GTW.OMP.Auth.Nav.Admin.Group
                   , GTW.OMP.Auth.Nav.Admin.Account_in_Group
+                  , GTW.OMP.EVT.Nav.Admin.Event
+                  , GTW.OMP.EVT.Nav.Admin.Event_occurs
                   ]
               , Type            = GTW.NAV.Site_Admin
               )

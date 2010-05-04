@@ -63,9 +63,13 @@ class Field_Group (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def Media (self) :
-        medias = itertools.chain \
-            ((f.Media for f in self.fields), (self.widget.Media, ))
-        return GTW.Media.from_list ([m for m in medias if m])
+        try :
+            medias = itertools.chain \
+                ((f.Media for f in self.fields), (self.widget.Media, ))
+            return GTW.Media.from_list ([m for m in medias if m])
+        except StandardError, e:
+            import pdb; pdb.set_trace ()
+            raise e
     # end def Media
 
     def setup_javascript (self, form) :
