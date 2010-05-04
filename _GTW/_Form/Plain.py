@@ -43,6 +43,7 @@ import _TFL.defaultdict
 
 from   _GTW               import GTW
 import _GTW._Form._Form_
+import _GTW._Form.Widget_Spec
 
 class M_Plain (GTW.Form._Form_.__class__) :
     """Meta class for plain forms"""
@@ -75,6 +76,7 @@ class Plain (GTW.Form._Form_) :
     """A plain form with no object in the background"""
 
     __metaclass__ = M_Plain
+    widget        = GTW.Form.Widget_Spec ("html/jorm.jnj, object")
 
     def __init__ (self, action, instance = None, ** kw) :
         self.__super.__init__ (instance, ** kw)

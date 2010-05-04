@@ -55,6 +55,7 @@
 #    28-Feb-2010 (MG) `Attribute_Inline_Description.__call__`: add attributes
 #                     to `added_fields`
 #    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
+#     1-May-2010 (MG) jQuery related media's are now defined in `GTW.jQuery`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,7 @@ from   _GTW                                 import GTW
 import _GTW.Media
 import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM.Attribute_Inline
+import _GTW.jQuery
 
 class _Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
@@ -87,17 +89,14 @@ class _Inline_Description_ (TFL.Meta.Object) :
 
     media           = GTW.Media \
       ( css_links   =
-          ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css")
+          ( GTW.CSS_Link._.jQuery_UI
           , GTW.CSS_Link ("/media/GTW/css/inline_forms.css")
           )
       , scripts     =
-          ( GTW.Script
-              ( src      = "/media/GTW/js/jquery-1.4.2.min.js"
-              , sort_key = -100
-              )
-          , GTW.Script (src  = "/media/GTW/js/jquery-ui-1.8.min.js")
-          , GTW.Script (src  = "/media/GTW/js/GTW_Form.js")
-          , GTW.Script (src  = "/media/GTW/js/MOM_Auto_Complete.js")
+          ( GTW.Script._.jQuery
+          , GTW.Script._.jQuery_UI
+          , GTW.Script (src = "/media/GTW/js/GTW_Form.js")
+          , GTW.Script (src = "/media/GTW/js/MOM_Auto_Complete.js")
           )
      )
 

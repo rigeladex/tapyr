@@ -39,6 +39,8 @@
 #     2-Feb-2010 (MG) `Media_List.add` added
 #     4-Feb-2010 (MG) `Media.from_list` added
 #    27-Feb-2010 (MG) `sort_key` added to javascript
+#     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of emdia
+#                     objects
 #    ««revision-date»»···
 #--
 
@@ -47,6 +49,7 @@ from   _GTW                               import GTW
 
 import _TFL.predicate
 import _TFL._Meta.Object
+import _TFL._Meta.M_Unique_If_Named
 from   _TFL._Meta.Once_Property           import Once_Property
 from   _TFL._Meta.Property                import Alias_Property
 
@@ -55,7 +58,9 @@ from   posixpath import join as pjoin
 class CSS_Link (TFL.Meta.Object) :
     """Model a CSS link object."""
 
-    def __init__ (self, href, media_type = "all", condition = "") :
+    __metaclass__ = TFL.Meta.M_Unique_If_Named
+
+    def __init__ (self, href, media_type = "all", condition = "", name = None) :
         self.href       = href
         self.media_type = media_type
         self.condition  = condition
@@ -103,13 +108,16 @@ class Rel_Link (TFL.Meta.Object) :
 class Script (TFL.Meta.Object) :
     """Model a script element"""
 
-    href = Alias_Property ("src")
+    __metaclass__ = TFL.Meta.M_Unique_If_Named
+
+    href          = Alias_Property ("src")
 
     def __init__ ( self
                  , src         = ""
                  , body        = ""
                  , script_type = "text/javascript"
                  , sort_key    = 0
+                 , name        = None
                  ) :
         assert src or body
         assert not (src and body)
@@ -144,7 +152,9 @@ class Script (TFL.Meta.Object) :
 class JS_On_Ready (TFL.Meta.Object) :
     """A javascript code which should be executed once the document is loaded"""
 
-    def __init__ (self, code, sort_key = 0) :
+    __metaclass__ = TFL.Meta.M_Unique_If_Named
+
+    def __init__ (self, code, sort_key = 0, name = None) :
         self.code     = code
         self.sort_key = sort_key
     # end def __init__

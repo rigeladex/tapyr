@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
 ##    17-Mar-2010 (CT) `rel="canonical"` for `permalink` added
+##     1-May-2010 (MG) `body` block added
 ##    ««revision-date»»···
 ##--
 #}
@@ -88,6 +89,7 @@
     {%- endblock head_elements %}
   {%- endcall %} {# X.head #}
   <body {{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
+    {%- block body -%}
     {% call X.header (id = "header") -%}
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
@@ -116,6 +118,7 @@
     {% call X.footer (id = "footer") -%}
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
+    {%- endblock body -%}
   </body>
 {%- endcall -%} {#- X.html -#}
 {#- __END__ jinja template: html/base.jnj -#}

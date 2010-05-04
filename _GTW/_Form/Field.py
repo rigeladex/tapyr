@@ -64,7 +64,7 @@ class _Field_ (TFL.Meta.Object) :
 class Field (_Field_) :
     """A free field which should be part of a HTML form."""
 
-    widget  = "html/field.jnj, string"
+    widget  = GTW.Form.Widget_Spec ("html/field.jnj, string")
     hidden  = False
     choices = ()
 
