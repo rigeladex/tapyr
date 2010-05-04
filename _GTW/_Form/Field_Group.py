@@ -31,6 +31,8 @@
 #    29-Jan-2010 (MG) Reference to `field_group_description` added and
 #                     `__getattr__` added to take undefined attrs from the
 #                     `field_group_description`
+#    15-Apr-2010 (MG) `Media` moved in here (was in
+#                     `GTW.Form.Field_Group_Description`)
 #    ««revision-date»»···
 #--
 
@@ -49,6 +51,18 @@ class Field_Group (TFL.Meta.Object) :
         self.fields                  = TFL.NO_List         (fields)
         self.field_group_description = field_group_description
     # end def __init__
+
+    def defaults (self, form, instance, defaults) :
+        ### possible hook for a field group to change the default values
+        ### this hook is execture AFTER the default values of the fields have
+        ### been added to the `defaults` dict
+        pass
+    # end def defaults
+
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        return self.widget.Media
+    # end def Media
 
     def setup_javascript (self, form) :
         pass ### completer support

@@ -20,50 +20,39 @@
 #
 #++
 # Name
-#    GTW.Form.MOM.Instance
+#    GTW.Form.MOM.Attribute_Inline
 #
 # Purpose
-#    A form which creates or changes a MOM object
+#    Handle the creation/modification of an object inside of a other form.
+#    The attribute inline will be treated like a `Field` of a form and not
+#    like a inline group
 #
 # Revision Dates
-#    18-Jan-2010 (MG) Creation
-#    29-Jan-2010 (MG) Use `Widget_Spec` instead of plain text
-#    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
+#    15-Apr-2010 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from   _MOM               import MOM
-
 from   _TFL                                 import TFL
-import _TFL._Meta.Object
-import _TFL.defaultdict
-import _GTW._Form.Field_Error
-
+import _TFL._Meta.Once_Property
+from   _TFL.predicate                       import all_true
 from   _GTW                                 import GTW
+import _GTW._Form.Field
+import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
-class Instance (GTW.Form.MOM._Instance_) :
-    """A form which creates or changes a MOM object.
+class Attribute_Inline (TFL.Meta.Object) :
+    """The `field` instance for attribute inline editing."""
 
-       Instance of this class are always the top level form and can never be
-       used as inlines.
-    """
-
-    css_class     = "Object-Editor"
-    widget        = "html/form.jnj, object"
-
-    def __init__ (self, action, instance = None, ** kw) :
-        self.action = action
-        self.__super.__init__ (instance, ** kw)
+    def __init__ (self, ««py-parameter-declaration»»···) :
+        ««py-doc-string»»
+        «py-statement»···
     # end def __init__
 
-    def _create_object (self) :
-        self._create_or_update ("N")
-    # end def _create_object
+    «py-statement»···
+# end class Attribute_Inline
 
-# end class Instance
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")
-### __END__ GTW.Form.MOM.Instance
+### __END__ GTW.Form.MOM.Attribute_Inline

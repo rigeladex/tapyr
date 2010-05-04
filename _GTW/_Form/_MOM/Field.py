@@ -30,7 +30,7 @@
 #                     GTW.Form.MOM.Field_Group_Description
 #    25-Feb-2010 (CT) `css_class` added
 #    26-Feb-2010 (MG) `get_cooked` added
-##    10-Mar-2010 (CT) s/named_object/named_value/
+#    10-Mar-2010 (CT) s/named_object/named_value/
 #    ««revision-date»»···
 #--
 
@@ -85,25 +85,24 @@ def css_class_len (self) :
     return _css_len_classes [self.ui_length]
 # end def css_class_len
 
-class Field (TFL.Meta.Object) :
+class Field (GTW.Form._Field_) :
     """A wrapper around the attribute of the MOM object used in field groups"""
 
     hidden = False
 
-    def __init__ (self, et_man, attr_name) :
+    def __init__ (self, et_man, attr_name, default = u"") :
         self.html_name      = attr_name
         if "." in attr_name :
             scope           = et_man.home_scope
             role, attr_name = attr_name.split (".")
             et_man          = getattr \
                 (scope, getattr (et_man, role).role_type.type_name)
+        self.__super.__init__ (attr_name, default)
         self.et_man         = et_man
-        self.name           = attr_name
         self.attr_kind      = getattr (et_man._etype, attr_name)
     # end def __init__
 
-    @property
-    def choices (self) :
+    def choices (self, form) :
         attr = self.attr_kind.attr
         if isinstance (attr, MOM.Attr._A_Named_Value_) :
             return sorted (attr.Table)
@@ -112,22 +111,20 @@ class Field (TFL.Meta.Object) :
 
     @property
     def css_class (self) :
-        ak = self.attr_kind
+        ak     = self.attr_kind
         result = " ".join (c for c in (ak.css_class, ak.css_class_len) if c)
         return result
     # end def css_class
 
-    def get_cooked (self, form, instance) :
-        return getattr (instance, self.attr_kind.ckd_name, None)
+    def get_cooked (self, form) :
+        return getattr (form.instance, instance, self.attr_kind.ckd_name, None)
     # end def get_cooked
 
-    def get_raw (self, form, instance) :
-        try :
-            return self.attr_kind.get_raw (instance)
-        except Exception, exc :
-            print exc
-            import pdb; pdb.set_trace ()
-            return "XXX"
+    def get_raw (self, form, defaults) :
+        raw_value = self.attr_kind.get_raw (form.instance)
+        if not raw_value :
+            raw_value = self.default (form, defaults)
+        return raw_value
     # end def get_raw
 
     def __getattr__ (self, name) :

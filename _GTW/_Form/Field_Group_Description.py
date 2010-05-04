@@ -31,6 +31,7 @@
 #     2-Feb-2010 (MG) Use `GTW.Form.Widget_Spec`
 #     2-Feb-2010 (MG) Once property `Media` added
 #     5-Feb-2010 (MG) Convert `widget` to `Widget_Spec`
+#    15-Apr-2010 (MG) `Media` moved to `GTW.Form.Field_Group`
 #    ««revision-date»»···
 #--
 
@@ -58,10 +59,17 @@ class _Form_Field_Group_Description_ (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
-    @TFL.Meta.Once_Property
-    def Media (self) :
-        return self.widget.Media
-    # end def Media
+    def prepare_request_data (self, form) :
+        pass
+    # end def prepare_request_data
+
+    def update_object (self, form) :
+        pass
+    # end def update_object
+
+    def update_raw_attr_dict (self, form) :
+        pass
+    # end def update_raw_attr_dict
 
     def __call__ (self) :
         return (GTW.Form.Field_Group (self.fields, self), )

@@ -35,59 +35,155 @@
 >>> PAP   = scope.PAP
 >>> simp_per_form_cls = GTW.Form.MOM.Instance.New (PAP.Person)
 
-### each form class has a fields NO-List containing all fields of all field
-### groups
->>> [f.name for f in simp_per_form_cls.fields]
-['last_name', 'first_name', 'middle_name', 'title', 'instance_state', 'birth_date']
->>> fields_of_field_groups (simp_per_form_cls)
-['last_name', 'first_name', 'middle_name', 'title', 'instance_state']
-['birth_date']
+Each form class has a fields NO-List containing all fields of all field groups.
 
-### it is also possible to use field group descriptions to define which
-### fields and in what order the fields should be part of the form:
->>> form_cls = GTW.Form.MOM.Instance.New \\
-...     ( PAP.Person
-...     , FGD ("title")
-...     , FGD ("first_name", "last_name", "middle_name")
-...     , FGD ("birth_date")
-...     )
->>> [f.name for f in form_cls.fields]
-['title', 'instance_state', 'first_name', 'last_name', 'middle_name', 'birth_date']
->>> fields_of_field_groups (form_cls)
-['title', 'instance_state']
-['first_name', 'last_name', 'middle_name']
-['birth_date']
+    >>> [f.name for f in simp_per_form_cls.fields]
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state']
+    >>> fields_of_field_groups (simp_per_form_cls)
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime']
 
-### instead of listing the field names it is possible to use wildcard field
-### descriptions::
->>> form_cls = GTW.Form.MOM.Instance.New \\
-...     ( PAP.Person
-...     , FGD ("title")
-...     , FGD ("first_name", "last_name", WF  ())
-...     )
->>> [f.name for f in form_cls.fields]
-['title', 'instance_state', 'first_name', 'last_name', 'middle_name', 'birth_date']
->>> fields_of_field_groups (form_cls)
-['title', 'instance_state']
-['first_name', 'last_name', 'middle_name', 'birth_date']
->>> form_cls = GTW.Form.MOM.Instance.New \\
-...     ( PAP.Person
-...     , FGD (WF ("primary"))
-...     , FGD ()
-...     )
->>> [f.name for f in form_cls.fields]
-['last_name', 'first_name', 'middle_name', 'title', 'instance_state', 'birth_date']
->>> fields_of_field_groups (form_cls)
-['last_name', 'first_name', 'middle_name', 'title', 'instance_state']
-['birth_date']
+It is also possible to use field group descriptions to define which fields
+and in what order the fields should be part of the form:
+
+    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    ...     ( PAP.Person
+    ...     , FGD ("title")
+    ...     , FGD ("first_name", "last_name", "middle_name")
+    ...     , FGD (AID ("lifetime"))
+    ...     )
+    >>> [f.name for f in form_cls.fields]
+    ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'instance_state']
+    >>> fields_of_field_groups (form_cls)
+    ['title']
+    ['first_name', 'last_name', 'middle_name']
+    ['lifetime']
+
+Instead of listing the field names it is possible to use wildcard field
+descriptions:
+
+    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    ...     ( PAP.Person
+    ...     , FGD ("title")
+    ...     , FGD ("first_name", "last_name", WF  ())
+    ...     )
+    >>> [f.name for f in form_cls.fields]
+    ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'instance_state']
+    >>> fields_of_field_groups (form_cls)
+    ['title']
+    ['first_name', 'last_name', 'middle_name', 'lifetime']
+
+    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    ...     ( PAP.Person
+    ...     , FGD (WF ("primary"))
+    ...     , FGD ()
+    ...     )
+    >>> [f.name for f in form_cls.fields]
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state']
+    >>> fields_of_field_groups (form_cls)
+    ['last_name', 'first_name', 'middle_name', 'title']
+    ['lifetime']
+
+The wildcard field can now be place anywhere in the list of field and will
+only expand to the fields not explicitly list in any other field group
+description.
+
+    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    ...     ( PAP.Person
+    ...     , FGD ("title")
+    ...     , FGD ("first_name", WF ())
+    ...     , FGD ("lifetime")
+    ...     )
+    >>> [f.name for f in form_cls.fields]
+    ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'instance_state']
+    >>> fields_of_field_groups (form_cls)
+    ['title']
+    ['first_name', 'last_name', 'middle_name']
+    ['lifetime']
+
+Now that we have learned how the create form classes, let's see what we can
+do with instance of such forms. The form itself expects the post url as first
+parameter and a possible exiting object (for an edit operation) as second
+parameter. But for now, we just consider the create case.
+
+    >>> form = form_cls ("/post-url/")
+
+The raw_values dict holdes the values which will be used as default values
+for the HTML fields
+    >>> for i in sorted (form.raw_values.iteritems ()) : print i
+    ('Person__first_name', u'')
+    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgpWCnNTJ2ZpcnN0X25hbWUnCnAzClYKc1MnbGFzdF9uYW1lJwpwNApWCnNTJ21pZGRsZV9uYW1lJwpwNQpWCnNTJ3RpdGxlJwpwNgpWCnMu')
+    ('Person__last_name', u'')
+    ('Person__lifetime', u'')
+    ('Person__middle_name', u'')
+    ('Person__title', u'')
+
+Once we receive the data from the browser we *call* the form instance and
+pass along the request_data
+    >>> request_data = dict ()
+    >>> #form (request_data)
+    #0
+
+Since we did not pass any request data the process does not report any error
+but will not create any instance as well:
+    >>> form.instance is None
+    True
+
+Now, let's pass some real data to the form:
+    >>> form = form_cls ("/post-url/")
+    >>> request_data ["Person__instance_state"] = "KGRwMQpTJ2xpZmV0aW1lJwpwMgpWCnNTJ2ZpcnN0X25hbWUnCnAzClYKc1MnbGFzdF9uYW1lJwpwNApWCnNTJ21pZGRsZV9uYW1lJwpwNQpWCnNTJ3RpdGxlJwpwNgpWCnMu"
+    >>> request_data ["Person__last_name"]      = "Last name"
+    >>> form (request_data)
+    1
+
+We have one error...
+    >>> dump_form_errors (form)
+    Non field errors:
+      epkified_ckd() takes at least 3 non-keyword arguments (2 given)
+        GTW.OMP.PAP.Person needs the arguments: (last_name, first_name, middle_name = '', title = '', ** kw)
+        Instead it got: (last_name = 'Last name')
+
+Ah, so we need a first name as well.
+    >>> form = form_cls ("/post-url/")
+    >>> request_data ["Person__first_name"] = "First name"
+    >>> form (request_data)
+    0
+    >>> form.instance
+    GTW.OMP.PAP.Person (u'last name', u'first name', u'', u'')
+
+Now let's come back to the change use case. Just pass the instance just
+created to the new form instance.
+
+    >>> form = form_cls ("/post-url/", form.instance)
+    >>> for i in sorted (form.raw_values.iteritems ()) : print i
+    ('Person__first_name', 'First name')
+    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgpWCnNTJ2ZpcnN0X25hbWUnCnAzClMnRmlyc3QgbmFtZScKcDQKc1MnbGFzdF9uYW1lJwpwNQpTJ0xhc3QgbmFtZScKcDYKc1MnbWlkZGxlX25hbWUnCnA3ClYKc1MndGl0bGUnCnA4ClYKcy4=')
+    ('Person__last_name', 'Last name')
+    ('Person__lifetime', u'')
+    ('Person__middle_name', u'')
+    ('Person__title', u'')
+
+    >>> form = form_cls ("/post-url/", form.instance)
+    >>> request_data ["Person__first_name"] = "New first name"
+    >>> form (request_data)
+    0
+    >>> form.instance
+    GTW.OMP.PAP.Person (u'last name', u'new first name', u'', u'')
+
+We have choosen the PAP.Person object for a good reason. It has a so called
+`Composite` attribute: *lifetime*. This attribute is actually an object by
+itself which has two attributes: the *start* and the *end* of the date
+interval (which would be the brith and deathdate of the person):
+
+    >>> form.instance.lifetime
+    MOM.Date_Interval ()
+"""
+
+"""
 
 ### let's use or simple form and simpulate a `POST`. For this, we need to
 ### create an nstance of or form class speicifing the POST url and than call
 ### this instance with a request data dictinary:
 >>> form = simp_per_form_cls ("/post/")
->>> request_data = dict ()
->>> form (request_data)
-0
 
 ### An empty data dict not is treated as an error but no instance is created
 ### as well (and we can see that the form stores the error count internally
@@ -116,7 +212,7 @@ Non field errors:
 >>> form.instance
 GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'')
 >>> form_instance_states (form)
-[('birth_date', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
+[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
 
 ### to make sure we check if the instance is stored in the scope
 >>> PAP.Person.query ().all ()
@@ -134,7 +230,7 @@ GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'Dr. Dr')
 >>> PAP.Person.query ().one () == form.instance
 True
 >>> form_instance_states (form)
-[('birth_date', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', 'Dr. Dr')]
+[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', 'Dr. Dr')]
 
 ### form can also be used to rename an instance
 >>> form   = simp_per_form_cls ("/post/", person)
@@ -155,17 +251,17 @@ Non field errors:
   new definition of (u'New Last Name', u'First Name', u'', u'Dr. Dr') clashes with existing (u'New Last Name', u'First Name', u'', u'Dr. Dr')
 >>> form   = simp_per_form_cls ("/post/")
 >>> request_data ["first_name"] = "New First Name"
->>> request_data ["birth_date"] = "not a birth date"
+>>> request_data ["lifetime"] = "not a birth date"
 >>> form (request_data) ### XXX remove this output, comes from the framework
-`not a birth date` for : `birth_date`
+`not a birth date` for : `lifetime`
      expected type  : `Date`
      got      value : `not a birth date -> not a birth date`
      of       type  : `<type 'unicode'>`
 1
 >>> dump_form_errors (form)
-birth_date
-  Can't set optional attribute <(u'New Last Name', u'New First Name', u'', u'Dr. Dr')>.birth_date to `not a birth date`
-    `not a birth date` for : `birth_date`
+lifetime
+  Can't set optional attribute <(u'New Last Name', u'New First Name', u'', u'Dr. Dr')>.lifetime to `not a birth date`
+    `not a birth date` for : `lifetime`
      expected type  : `Date`
      got      value : `not a birth date -> not a birth date`
      of       type  : `<type 'unicode'>`
@@ -196,7 +292,7 @@ birth_date
 ### an additional form for `Address` which again has some fields on it's own::
 >>> fields_of_field_groups (form_cls)
 ['last_name', 'first_name', 'middle_name', 'title', 'instance_state']
-['birth_date']
+['lifetime']
 Person_has_Address
   ['desc', 'instance_state', '_lid_a_state_']
   Address
@@ -220,7 +316,7 @@ Person_has_Address
 >>> scope.MOM.Id_Entity.query ().all ()
 [GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'')]
 >>> form_instance_states (form)
-[('birth_date', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
+[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
   [('desc', u'')]
     [('city', u''), ('country', u''), ('region', u''), ('street', u''), ('zip', u'')]
 
@@ -299,7 +395,7 @@ Person_has_Address-M0
 >>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
 (1, 2, 1)
 >>> form_instance_states (form)
-[('birth_date', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
+[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
   [('desc', 'home')]
     [('city', 'City'), ('country', 'Country'), ('region', ''), ('street', 'Street'), ('zip', '1111')]
 

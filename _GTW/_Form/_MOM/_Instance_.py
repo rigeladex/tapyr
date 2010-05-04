@@ -95,15 +95,16 @@ import  itertools
 class Instance_State_Field (GTW.Form.Field) :
     """Saves the state of the object to edit before the user made changes"""
 
-    hidden = True
+    hidden   = True
+    electric = True
 
     widget = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
 
-    def get_raw (self, form, instance) :
+    def get_raw (self, form, defaults = {}) :
         state = {}
         for n, f in form.fields.iteritems () :
-            if not f.hidden :
-                state [n] = form.get_raw (f)
+            if not f.electric :
+                state [n] = defaults.get (form.get_id (f), u"")
         return base64.b64encode (cPickle.dumps (state))
     # end def get_raw
 
@@ -118,8 +119,6 @@ class Instance_State_Field (GTW.Form.Field) :
 class M_Instance (GTW.Form._Form_.__class__) :
     """Meta class for MOM object forms"""
 
-    parent_form  = None
-
     def __new__ (mcls, name, bases, dct) :
         et_man                   = dct.get ("et_man", None)
         field_group_descriptions = dct.pop ("field_group_descriptions", ())
@@ -127,44 +126,55 @@ class M_Instance (GTW.Form._Form_.__class__) :
             ("form_name", getattr (et_man, "type_base_name", None))
         result = super (M_Instance, mcls).__new__ (mcls, name, bases, dct)
         if et_man :
+            ### parent must be set during form class creation
+            parent               = result.parent
             result.sub_forms     = sub_forms = {}
-            parent_form          = result.parent_form
-            result.form_path     = result.form_name = form_name
-            if parent_form :
-                result.form_path = "%s/%s" % (parent_form.form_path, form_name)
-            result.prefix        = result.form_path.replace ("/", "__")
+            if parent :
+                result.prefix    = "__".join ((parent.prefix, form_name))
+            else :
+                result.prefix    = form_name
             completers           = []
             field_groups         = []
             medias               = []
-            added                = set ()
+            added_fields         = set ()
             if not field_group_descriptions :
                 ### XXX try to get the default field group descriptions for this
                 ### et-man from somewhere
                 field_group_descriptions = \
                     (GTW.Form.MOM.Field_Group_Description (), )
+            ### make the first pass through all fields groups to resolve the
+            ### callable field specs
+            for fgd in field_group_descriptions :
+                fgd (True, et_man, added_fields)
+            ### now, make the second pass through the field groups
             for fgd in field_group_descriptions :
                 fgs = [   fg
-                      for fg in fgd (et_man, added, parent_form = result) if fg
+                      for fg in fgd
+                          (False, et_man, added_fields, parent = result) if fg
                       ]
                 field_groups.extend (fgs)
                 for fg in fgs :
-                    if isinstance (fg, GTW.Form.Field_Group) and fg.completer :
-                        completers.append (fg.completer)
-                        fg.completer.attach (result)
+                    completer = getattr (fg, "completer", None)
+                    if completer :
+                        completers.append (completer)
+                        completer.attach  (result)
                     media = fg.Media
                     if media :
                         medias.append (media)
-                    sub_form = getattr (fg, "form_cls", None)
-                    if sub_form :
-                        sub_forms [sub_form.form_name] = sub_form
-            result.add_internal_fields    (et_man)
+                    inline_form = getattr (fg, "form_cls", None)
+                    if inline_form :
+                        sub_forms [inline_form.form_name] = inline_form
+            result.add_internal_fields (et_man)
             js_on_ready          = ()
-            if not result.parent_form :
+            if not parent :
                 js_on_ready      = result.javascript.js_on_ready
             result.Media         = GTW.Media.from_list \
                 (medias, js_on_ready = js_on_ready)
             result.field_groups  = field_groups
             result.fields        = result._setup_fields (field_groups)
+            ### XXX chance the cls
+            result.inline_fields = \
+                [f for f in result.fields if isinstance (f, GTW.Form.MOM.Attribute_Inline_Description)]
             if completers :
                 result.completer = GTW.Form.Javascript.Multi_Completer \
                     (** dict ((c.trigger, c) for c in completers))
@@ -195,16 +205,17 @@ class M_Instance (GTW.Form._Form_.__class__) :
 class _Instance_ (GTW.Form._Form_) :
     """Base class for the form's handling any kind of MOM instances."""
 
-    __metaclass__ = M_Instance
-    et_man        = None
-    prototype     = False
-    state         = "N"
+    __metaclass__    = M_Instance
+    et_man           = None
+    prototype        = False
+
+    ### a standard form always needs to look at the data sent from the client
+    needs_processing = True
 
     def __init__ (self, instance = None, parent = None, ** kw) :
         self.__super.__init__ (instance, ** kw)
         scope                        = self.et_man.home_scope
         self.parent                  = parent
-        self._create_update_executed = False
         ### make copies of the inline groups to allow caching of inline forms
         self.inline_groups           = []
         field_groups                 = self.field_groups
@@ -225,45 +236,43 @@ class _Instance_ (GTW.Form._Form_) :
             dict [field.name] = raw
     # end def add_changed_raw
 
-    def _create_instance (self, instance, state, raw_attrs) :
-        if not instance or state == "r" :
-            ### a new instance should be created starting scratch or from a
-            ### rename -> we have to fill in at least all primaries
+    def _create_instance (self, state, on_error) :
+        if not self.instance or state == "r" :
+            ### a new instance should be created starting from scratch or
+            ### from a rename -> we have to fill in at least all primaries
             for attr_kind in self.et_man._etype.primary :
                 n             = attr_kind.attr.name
-                if n not in raw_attrs :
-                    raw_value = attr_kind.get_raw (instance)
+                if n not in self.raw_attr_dict :
+                    raw_value = attr_kind.get_raw (self.instance)
                     if raw_value :
-                        raw_attrs [n] = raw_value
-        return self.et_man (raw = True, ** raw_attrs)
+                        self.raw_attr_dict [n] = raw_value
+        return self.et_man \
+            (raw = True, on_error = on_error, ** self.raw_attr_dict)
     # end def _create_instance
 
-    def _create_or_update (self, add_attrs = {}, force_create = False) :
-        if (   not self._create_update_executed
-           or (not self.instance and force_create and not self.error_count)
-           ) :
-            raw_attrs     = dict (add_attrs)
-            instance      = self.instance
-            state         = self.state
-            for f in (f for f in self.fields if not f.hidden) :
-                self.add_changed_raw (raw_attrs, f)
-            if raw_attrs or force_create :
-                errors = []
-                ### at least on attribute is filled out
-                try :
-                    raw_attrs ["on_error"] = errors.append
-                    if instance and state != "r" :
-                        instance.set_raw (** raw_attrs)
-                    else :
-                        self.instance = self._create_instance \
-                            (instance, state, raw_attrs)
-                except Exception, exc:
-                    if __debug__ :
-                        import traceback
-                        traceback.print_exc ()
-                    errors.append   (exc)
-                self._handle_errors (errors)
-                self._create_update_executed = True
+    def _create_or_update (self, state, force_create = False) :
+        #if (   not self._create_update_executed
+        #   or (not self.instance and force_create and not self.error_count)
+        #   ) :
+        ### XXX
+        if self.raw_attr_dict or force_create :
+            instance = self.instance
+            ### at least on attribute is filled out or the creation is
+            ### forced
+            errors = []
+            try :
+                if instance and state != "r" :
+                    instance.set_raw \
+                        (on_error = errors.append, ** self.raw_attr_dict)
+                else :
+                    self.instance = self._create_instance \
+                        (state, on_error = errors.append)
+            except Exception, exc:
+                if 0 and __debug__ :
+                    import traceback
+                    traceback.print_exc ()
+                errors.append   (exc)
+            self._handle_errors (errors)
         return self.instance
     # end def _create_or_update
 
@@ -290,26 +299,61 @@ class _Instance_ (GTW.Form._Form_) :
             (self.request_data.get (self.get_id (self.instance_state_field)))
     # end def instance_state
 
-    def _prepare_form (self) :
-        return True
-    # end def _prepare_form
+    def prepare_request_data (self) :
+        pass
+    # end def prepare_request_data
+
+    def setup_raw_attr_dict (self) :
+        self.raw_attr_dict = dict ()
+        instance       = self.instance
+        for f in (f for f in self.fields if not f.electric) :
+            self.add_changed_raw (self.raw_attr_dict, f)
+    # end def setup_raw_attr_dict
+
+    def update_object (self) :
+        ### give the field instance a chance to update the object
+        for f in (f for f in self.inline_fields
+                    if hasattr (f, "update_object")
+                 ) :
+            f.update_object (self)
+        ### give the field groups a chance to update the data
+        for fg in self.field_groups :
+            fg.update_object (self)
+    # end def update_object
+
+    def update_raw_attr_dict (self) :
+        ### give the field instance a chance to modfiy the data
+        for f in (f for f in self.inline_fields
+                    if hasattr (f, "update_raw_attr_dict")
+                 ) :
+            f.update_raw_attr_dict (self)
+        ### give the field groups a chance to update the data
+        for fg in self.field_groups :
+            fg.update_raw_attr_dict (self)
+    # end def update_raw_attr_dict
 
     def __call__ (self, request_data) :
         self.request_data = request_data
-        if not self._prepare_form () :
-            ### this form does not need any further processing
-            return 0
-        self.instance = self._create_or_update  ()
-        for ig in self.inline_groups :
-            self.inline_errors += ig (request_data)
-            if (   isinstance (ig, GTW.Form.MOM._Attribute_Inline_)
-               and ig.instance
-               ) :
-                instance  = self._create_or_update (force_create = True)
-                if instance :
-                    old_value = getattr (instance, ig.link_name, None)
-                    if old_value != ig.instance :
-                        instance.set (** {ig.link_name : ig.instance})
+        if self.needs_processing :
+            ### first, we give each form_group the chance of adding/changing
+            ### the request data
+            for fg in self.field_groups :
+                fg.prepare_request_data (self)
+            self.prepare_request_data   ()
+            ### now we build the attr_dict for this form and for all forms in
+            ### the inline groups based on the request_data
+            self.setup_raw_attr_dict ()
+            for ig in self.inline_groups :
+                ig.setup_raw_attr_dict (form)
+            ### Once the raw attr dict for all forms are created let's give the
+            ### fields and field groups a change to update the raw attr dict
+            self.update_raw_attr_dict ()
+            ### it's time to actually create the object based on the raw
+            ### attr dict
+            self._create_object ()
+            ### once the object are created the field groups get one final
+            ### chance to update the created object
+            self.update_object  ()
         return self.error_count
     # end def __call__
 

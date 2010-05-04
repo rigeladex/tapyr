@@ -952,6 +952,7 @@ class Id_Entity (Entity) :
         try :
             return epkifier (* epk, ** kw)
         except TypeError, exc :
+            kw.pop ("on_error", None)
             raise TypeError \
                 ( _T  ( "%s\n    %s needs the arguments: (%s)"
                           "\n    Instead it got: (%s)"

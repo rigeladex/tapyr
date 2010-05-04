@@ -63,8 +63,8 @@ import  itertools
 
 class Wildcard_Field (TFL.Meta.Object) :
     """A place holder in the field group description which will expand to
-       all attributes of the given kinds which have not been added before the
-       wildcard.
+       all attributes of the given kinds which have not been added explicitly.
+
     """
 
     def __init__ (self, * kinds , ** kw) :
@@ -73,7 +73,12 @@ class Wildcard_Field (TFL.Meta.Object) :
         assert not kw, sorted (kw.keys ())
     # end def __init__
 
-    def __call__ (self, et_man, added_fields) :
+    def __call__ (self, first_pass, et_man, added_fields) :
+        if first_pass :
+            ### the wildcard file can only evalue which fields have to be
+            ### added after all other fields have been precessed in the first
+            ### pass
+            return (self, )
         prefix = ""
         if self.prefix :
             et_man = getattr (et_man, self.prefix).role_type
@@ -100,7 +105,10 @@ class Field_Prefixer (TFL.Meta.Object) :
         self.joiner = kw.pop ("joiner", ".")
     # end def __init__
 
-    def __call__ (self, et_man, added_fields) :
+    def __call__ (self, first_pass, et_man, added_fields) :
+        ### the first_pass can be igbore because the `Field_Prefixer`
+        ### replaces itself with the field names and therefore will not be
+        ### called in the second pass anymore
         result = []
         join   = self.joiner.join
         for field in self.fields :
@@ -120,6 +128,7 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     """A field group description for an MOM object"""
 
     _real_name = "Field_Group_Description"
+
     widget     = GTW.Form.Widget_Spec \
         ( GTW.Form.Field_Group_Description.widget
         , inline_table_th     = "html/form.jnj, inline_table_th"
@@ -128,56 +137,44 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         , inline_table_sep_td = "html/form.jnj, inline_table_sep_td"
         )
 
-    def __call__ (self, et_man, added_fields = None, * args, ** kw) :
+    def _field_instance (self, et_man, field, parent) :
+        return GTW.Form.MOM.Field (et_man, field)
+    # end def _field_instance
+
+    def __call__ ( self, first_pass, et_man
+                 , added_fields = None
+                 , parent       = None
+                 , ** kw
+                 ) :
         if added_fields is None :
             added_fields = set ()
         if not self.fields :
-            etype  = et_man._etype
-            if getattr (etype, "Roles", None) :
-                from _GTW._Form._MOM.Inline_Description import \
-                     ( Attribute_Inline_Description as AID
-                     , Link_Inline_Description      as LID
-                     )
-                FGD  = self.__class__
-                fgds = []
-                for r in etype.Roles :
-                    rt = r.role_type
-                    fgds.append \
-                        ( AID
-                            ( r.role_name
-                            , FGD (Wildcard_Field ("primary"))
-                            , legend = r.ui_name
-                            )
-                        )
-                fgds.append (self.__class__ (Wildcard_Field ()))
-                return itertools.chain \
-                    ( * (  fgd (et_man, added_fields, * args, ** kw)
-                        for fgd in fgds
-                        )
-                    )
             self.fields = (Wildcard_Field (), )
         fields_spec = self.fields
         fields      = []
         for f in fields_spec :
             if callable (f) :
-                new_fields = f  (et_man, added_fields)
+                new_fields = f  (first_pass, et_man, added_fields)
                 fields.extend   (new_fields)
             else :
                 new_fields =    (str (f), )
                 fields.append   (f)
             added_fields.update (new_fields)
+        self.fields = fields
+        if first_pass :
+            return
         if fields :
-            if __debug__ :
-                aid_fields = \
-                    [  f for f in fields
-                    if isinstance (f, GTW.Form.MOM.Attribute_Inline_Description)
-                    ]
-                assert not aid_fields, aid_fields
-            return \
-                ( GTW.Form.Field_Group
-                    ([Field (et_man, name) for name in fields], self)
-                ,
-                )
+            field_instances = []
+            for f in self.fields :
+                field = self._field_instance (et_man, f, parent)
+                if __debug__ :
+                    assert not isinstance \
+                        (field, ( GTW.Form.Field_Group_Description
+                                , GTW.Form.Field_Group
+                                )
+                        )
+                field_instances.append (field)
+            return (GTW.Form.Field_Group (field_instances, self), )
         return (None, )
     # end def __call__
 

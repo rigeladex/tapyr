@@ -78,7 +78,7 @@ class Hidden_Fields_List (object) :
 class M_Form (TFL.Meta.Object.__class__) :
     """Meta class for forms."""
 
-    parent_form = None
+    parent = None
 
     def __new__ (mcls, name, bases, dct) :
         result = super (M_Form, mcls).__new__ (mcls, name, bases, dct)
@@ -96,21 +96,24 @@ class M_Form (TFL.Meta.Object.__class__) :
         return result
     # end def _setup_fields
 
+    ### XXX Why do we need thus?
+    ### XXX if we need this -> find a better name for it
     @TFL.Meta.Once_Property
-    def Form (cls) :
-        return getattr (cls.parent_form, "Form", cls)
+    def _XXX_Form (cls) :
+        return getattr (cls.parent, "Form", cls)
     # end def Form
 
     def form_and_completer (cls, path) :
+        ### Return the form class and the complter object for the `path`
+        ### where path is a list of names specifing the way done from the top
+        ### level form to the completer
         form_cls  = cls
         completer = None
         path      = list (path)
         while path :
-            sf = path.pop (0)
-            if sf in form_cls.sub_forms :
-                form_cls      = form_cls.sub_forms [sf]
+            if path [0] in form_cls.sub_forms :
+                form_cls = form_cls.sub_forms [path.pop (0)]
             else :
-                path.insert (0, sf)
                 break
         completer = getattr (form_cls, "completer", None)
         while path :
@@ -127,9 +130,11 @@ class M_Form (TFL.Meta.Object.__class__) :
 
     @TFL.Meta.Once_Property
     def javascript (cls) :
-        if not cls.parent_form :
+        ### if we are the top level form -> create a new javascript object
+        if not cls.parent :
             return GTW.Form.Javascript.Form (cls)
-        return cls.parent_form.javascript
+        ### since we have a parent return the javascript object for this form
+        return cls.parent.javascript
     # end def javascript
 
 # end class M_Form
@@ -160,6 +165,17 @@ class _Form_ (TFL.Meta.Object) :
         return len (self.errors) + len (self.field_errors) + self.inline_errors
     # end def error_count
 
+    def form_defaults (self) :
+        defaults = {}
+        for f in self.fields :
+            defaults [self.get_id (f)] = f.get_raw (self, defaults)
+        ### allow the field groups the change the defaults afer the
+        ### fields-default have been set
+        for fg in self.field_groups :
+            fg.defaults (self, self.instance, defaults)
+        return defaults
+    # end def form_defaults
+
     def get_errors (self, field = None) :
         if field :
             field = getattr (field, "html_name", field)
@@ -171,17 +187,12 @@ class _Form_ (TFL.Meta.Object) :
         if isinstance (field, basestring) :
             field = self.fields [field]
         if self.prefix :
-            return "-".join ((self.prefix, field.html_name))
+            return "__".join ((self.prefix, field.html_name))
         return field.html_name
     # end def get_id
 
     def get_raw (self, field) :
-        if isinstance (field, basestring) :
-            field = self.fields [field]
-        html_name = self.get_id (field)
-        if self.request_data :
-            return self.request_data.get (html_name, u"")
-        return field.get_raw (self, self.instance)
+        return self.raw_values.get (self.get_id (field), u"")
     # end def get_raw
 
     def is_checked (self, field) :
@@ -192,6 +203,16 @@ class _Form_ (TFL.Meta.Object) :
             result ["checked"] = "checked"
         return result
     # end def is_chained
+
+    @TFL.Meta.Once_Property
+    def raw_values (self) :
+        if self.request_data :
+            return self.request_data
+        ### since we don't have any request data the raw values are actually
+        ### the default values.
+        ### A seperate method is used to make overloading much easier
+        return self.form_defaults ()
+    # end def raw_values
 
 # end class _Form_
 

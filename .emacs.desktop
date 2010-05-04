@@ -1,0 +1,231 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Thu Apr 15 18:45:06 2010
+;; Desktop file format version 206
+;; Emacs version 23.1.1
+
+;; Frame configuration section:
+(setq lse-frame:saved-config '(
+(nil ((height . 40) (left . 4) (top . 48) (visibility . t) (width . 80)) (("_GTW:media:js:GTW_Form.js" 18866)) nil)
+
+(nil ((height . 87) (left . 2910) (top . 0) (visibility . t) (width . 80)) (("_GTW:_Form:_MOM:Field_Group_Description.py" 6394) ("_GTW:_Form:_MOM:Inline_Description.py" 4223)) nil)
+
+(nil ((height . 88) (left . 2530) (top . 0) (visibility . t) (width . 80)) (("_GTW:_Form:_MOM:Attribute_Inline.py" 1772)) nil)
+
+(nil ((height . 88) (left . 1920) (top . 0) (visibility . t) (width . 80)) (("_GTW:_Form:_MOM:_Instance_.py" 6692)) nil)
+
+(nil ((height . 82) (left . 700) (top . 25) (visibility . t) (width . 80)) (("_GTW:_Form:_MOM:__test__.py" 2044)) nil)
+
+(t ((height . 83) (left . 1310) (top . 25) (visibility . t) (width . 80)) (("_GTW:_Form:_MOM:Inline.py" 1060)) nil)
+))
+
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring nil)
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Inline.py"
+  "_GTW:_Form:_MOM:Inline.py"
+  'python-mode
+  '(auto-fill-mode)
+  2628
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/__test__.py"
+  "_GTW:_Form:_MOM:__test__.py"
+  'python-mode
+  '(auto-fill-mode)
+  2044
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/_Instance_.py"
+  "_GTW:_Form:_MOM:_Instance_.py"
+  'python-mode
+  '(auto-fill-mode)
+  6692
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Attribute_Inline.py"
+  "_GTW:_Form:_MOM:Attribute_Inline.py"
+  'python-mode
+  '(auto-fill-mode)
+  1772
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Field_Group_Description.py"
+  "_GTW:_Form:_MOM:Field_Group_Description.py"
+  'python-mode
+  '(auto-fill-mode)
+  6394
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Inline_Description.py"
+  "_GTW:_Form:_MOM:Inline_Description.py"
+  'python-mode
+  '(auto-fill-mode)
+  4223
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/media/js/GTW_Form.js"
+  "_GTW:media:js:GTW_Form.js"
+  'text-mode
+  nil
+  18866
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/Field_Group_Description.py"
+  "_GTW:_Form:Field_Group_Description.py"
+  'python-mode
+  '(auto-fill-mode)
+  2575
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_Form_.py"
+  "_GTW:_Form:_Form_.py"
+  'python-mode
+  '(auto-fill-mode)
+  6314
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Inline_Instance.py"
+  "_GTW:_Form:_MOM:Inline_Instance.py"
+  'python-mode
+  '(auto-fill-mode)
+  3598
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Instance.py"
+  "_GTW:_Form:_MOM:Instance.py"
+  'python-mode
+  '(auto-fill-mode)
+  1880
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/_MOM/Field.py"
+  "_GTW:_Form:_MOM:Field.py"
+  'python-mode
+  '(auto-fill-mode)
+  4334
+  '(3043 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_MOM/Entity.py"
+  "_MOM:Entity.py"
+  'python-mode
+  '(auto-fill-mode)
+  33199
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/Field.py"
+  "_GTW:_Form:Field.py"
+  'python-mode
+  '(auto-fill-mode)
+  2200
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_MOM/__doc__.py"
+  "_MOM:__doc__.py"
+  'python-mode
+  '(auto-fill-mode)
+  15218
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/Field_Group.py"
+  "_GTW:_Form:Field_Group.py"
+  'python-mode
+  '(auto-fill-mode)
+  2320
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_Form/Plain.py"
+  "_GTW:_Form:Plain.py"
+  'python-mode
+  '(auto-fill-mode)
+  3322
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+
+(desktop-create-buffer 206
+  "/data/swing/python/_GTW/_OMP/_PAP/Address.py"
+  "_GTW:_OMP:_PAP:Address.py"
+  'python-mode
+  '(auto-fill-mode)
+  3779
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . raw-text-unix)))
+

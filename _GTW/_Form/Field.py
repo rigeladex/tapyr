@@ -29,6 +29,7 @@
 #    30-Dec-2009 (MG) Creation
 #    02-Feb-2010 (MG) `get_raw` paremeter form added
 #    20-Feb-2010 (MG) Parameter `ui_name` added
+#    15-Apr-2010 (MG) `default` method added to allow callable default values
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -37,27 +38,43 @@ from   _GTW               import GTW
 import _GTW._Form
 from   _TFL.I18N          import _T
 
-class Field (TFL.Meta.Object) :
-    """A free field which should be part of a HTML form"""
+class _Field_ (TFL.Meta.Object) :
+    """Base class for form fields."""
 
-    widget = "html/field.jnj, string"
-    hidden = False
+    electric = False
 
-    def __init__ (self, name, default = "", ui_name = None, ** kw) :
+    def __init__ (self, name, default = u"") :
         self.name      = name
+        self._default  = default
+    # end def __init__
+
+    def default (self, form, defaults) :
+        if callable (self._default) :
+            return self._default (form)
+        return self._default
+    # end def default
+# end class _Field_
+
+class Field (_Field_) :
+    """A free field which should be part of a HTML form."""
+
+    widget  = "html/field.jnj, string"
+    hidden  = False
+    choices = ()
+
+    def __init__ (self, name, default = u"", ui_name = None, ** kw) :
+        self.__super.__init__ (name, default)
         self.html_name = name
-        self.default   = default
         self.ui_name   = _T (ui_name or name.capitalize ())
         self.__dict__.update (kw)
     # end def __init__
 
-
-    def get_raw (self, form, obj) :
-        return getattr (obj, self.name, self.default)
+    def get_raw (self, form, defaults) :
+        return getattr (form.instance, self.name, self.default (form, defaults))
     # end def get_raw
 
 # end class Field
 
 if __name__ != "__main__" :
-    GTW.Form._Export ("*")
+    GTW.Form._Export ("_Field_", "Field")
 ### __END__ GTW.Form.Field

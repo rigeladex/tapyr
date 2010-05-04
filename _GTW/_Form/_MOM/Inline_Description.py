@@ -91,16 +91,16 @@ class _Inline_Description_ (TFL.Meta.Object) :
           )
      )
 
-    def __init__ (self, link_name, * field_group_descriptions, ** kw) :
-        self.link_name  = getattr (link_name, "type_name", link_name)
-        self.field_group_descriptions = field_group_descriptions
-        self.__dict__.update (kw)
-    # end def __init__
-
 # end class _Inline_Description_
 
 class Attribute_Inline_Description (_Inline_Description_) :
     """Edit an attribute which refers to an object inline."""
+
+    def __init__ (self, link_name, ** kw) :
+        self.link_name  = getattr (link_name, "type_name", link_name)
+        self.field_group_descriptions = field_group_descriptions
+        self.__dict__.update (kw)
+    # end def __init__
 
     css_class               = "inline-attribute"
     widget                  = GTW.Form.Widget_Spec \
@@ -155,7 +155,9 @@ class Link_Inline_Description (_Inline_Description_) :
 
     def __init__ (self, et_man, * field_group_descriptions, ** kw) :
         self.own_role_name = kw.pop ("own_role_name", None)
-        self.__super.__init__ (et_man, * field_group_descriptions, ** kw)
+        self.link_name     = getattr (et_man, "type_name", et_man)
+        self.field_group_descriptions = field_group_descriptions
+        self.__dict__.update (kw)
     # end def __init__
 
     def __call__ (self, et_man, added_fields, parent_form, ** kw) :
