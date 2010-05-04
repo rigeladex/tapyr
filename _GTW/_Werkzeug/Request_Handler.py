@@ -257,9 +257,14 @@ class NAV_Request_Handler (Request_Handler) :
         top = self.nav_root
         self.set_header ("Content-Type", "text/html")
         if self.application.settings.get ("i18n", False) :
-            I18N.use         (* self.locale_codes)
-        top.universal_view   (self)
-        self.finish          (getattr (top, "scope", None))
+            I18N.use    (* self.locale_codes)
+        scope = getattr (top, "scope", None)
+        try :
+            top.universal_view (self)
+        except top.HTTP._Redirect_, redirect :
+            self.finish      (scope)
+            raise redirect
+        self.finish          (scope)
         return self.response (environ, start_response)
     # end def __call__
 
