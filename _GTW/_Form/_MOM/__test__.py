@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-_obect_test = r"""
+_object_test = r"""
     >>> scope = MOM.Scope.new (apt, None)
     >>> PAP   = scope.PAP
     >>> simp_per_form_cls = GTW.Form.MOM.Instance.New (PAP.Person)
@@ -790,12 +790,15 @@ existing address object?
       height             = None
 """
 
-__test__ = dict \
-    ( object_with_link = _object_with_link_test
-    , link2   = _link2_test
-    , link    = _link_test
-    , object = _obect_test
-    )
+if 1 :
+    __test__ = dict \
+        ( object_with_link = _object_with_link_test
+        , link2            = _link2_test
+        , link             = _link_test
+        , object           = _object_test
+        )
+else :
+    __doc__ = _link_test
 
 from   _MOM._EMS.Hash                           import Manager as EMS
 from   _MOM._DBW._HPS.Manager                   import Manager as DBW

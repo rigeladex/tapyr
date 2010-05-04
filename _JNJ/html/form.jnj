@@ -63,6 +63,8 @@
 ##    10-Mar-2010 (MG) `aid_div_seq` fixed to handle hidden fields correct
 ##    10-Mar-2010 (MG) `inline_table_td`: fixed title attribute of td's
 ##    11-Mar-2010 (MG) `_sep_th/_sep_td` macros added
+##    30-Apr-2010 (MG) Form table rendering changed completely, AID rendering
+##                     changed
 ##    ««revision-date»»···
 ##--
 #}
@@ -113,8 +115,7 @@
       {%- if fo.get_errors () %}
         {{ GTW.call_macro (fo.widget.non_field_errors, fo, None) }}
       {% endif -%}
-      <div class="Formset {{ fg.css_class }}" title="{{
-      fo.et_man.type_name}} {{fg.fields|e}}"
+      <div class="Formset {{ fg.css_class }}"
        {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}
       >
      {{ GTW.call_macro (fg.widget, fo, fg, widget_type = widget_type) }}
@@ -210,6 +211,25 @@
     {{ fg_tr_body (fi.form, fg, "fg_tr_body") }}
   {% endfor -%}
 {%- endmacro -%} {#- td_onion_aid -#}
+
+{%- macro fg_as_table (fo, fg, widget_type = None) -%}
+  <table class="field_group-Horizontal">
+    <thead>
+      <tr>{{ fg_tr_head (fo, fg) }}</tr>
+    </thead>
+    <tbody>
+      <tr>{{ fg_tr_body (fo, fg) }}</tr>
+    </tbody>
+  </table>
+  <div class="field_group-Horizontal-Help">
+    {%- for fi in fg.fields %}
+      {%- set desc = GTW._T (fi.description)|safe %}
+      {%- if fi.description %}
+        <p class="Field-Help Field-Help-{{ fi.name }}">{{ desc }}</p>
+      {% endif -%}
+    {% endfor -%}
+  </div>
+{%- endmacro -%} {#- fg_as_table -#}
 
 {%- macro inlines_as_table (form, inline) -%}
   {%- set proto = inline.prototype_form -%}

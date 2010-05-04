@@ -68,8 +68,9 @@ class Field_Group (TFL.Meta.Object) :
         return GTW.Media.from_list ([m for m in medias if m])
     # end def Media
 
-    def __setup_javascript (self, form) :
-        pass ### completer support
+    def setup_javascript (self, form) :
+        if self.completer :
+            self.completer.attach (form, multi_completer = form.completer)
     # end def setup_javascript
 
     def __getattr__ (self, name) :

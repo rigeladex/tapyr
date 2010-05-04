@@ -35,6 +35,7 @@
 #     8-Feb-2010 (MG) Fixed `Person` form spec: `position` now is a
 #                     composite attribute
 #    27-Feb-2010 (MG) Additional completers added
+#    30-Apr-2010 (MG) Adapted to new form's
 #    ««revision-date»»···
 #--
 
@@ -96,30 +97,32 @@ class Admin (object) :
         , name      = "Phone_Completer"
         )
 
+    def Person_has_LID (link_type_name) :
+        person_completer = GTW.Form.Javascript._Completer_.Person_Completer
+        return LID \
+            ( link_type_name
+            , FGD ( "desc", "person")
+            , legend      = _("Persons")
+            , title       = _("Persons")
+            , field_attrs = dict (person = dict (completer = person_completer))
+            )
+    # end def Person_has_LID
+
     Address         = dict \
         ( ETM       = "GTW.OMP.PAP.Address"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (primary)
-            , FGD ("desc")
-            , AID
-                ( "position"
-                , FGD
-                    ( "lon", "lat", "height"
-                    , widget = "html/form.jnj, fg_tr"
-                    )
-                )
-            , LID
-                ( "PAP.Person_has_Address"
-                , FGD ( "desc")
-                , AID
-                    ( "person"
-                    , FGD (primary)
-                    , completer = person_completer
-                    )
-                , legend    = _("Persons")
-                , title     = _("Persons")
-                )
+            ( FGD ( primary
+                  , "desc"
+                  , AID ( "position"
+                        , FGD
+                            ( "lon", "lat", "height"
+                            , widget = "html/form.jnj, fg_as_table"
+                            )
+                        , legend = _("Position")
+                        )
+                 )
+            , Person_has_LID ("PAP.Person_has_Address")
             )
         , list_display   = ("zip", "city", "street", "desc")
         , sort_key       = TFL.Sorted_By ( "zip", "street")
@@ -131,17 +134,7 @@ class Admin (object) :
         , Form_args =
             ( FGD (primary)
             , FGD ()
-            , LID
-                ( "PAP.Person_has_Email"
-                , FGD ( "desc")
-                , AID
-                    ( "person"
-                    , FGD (primary)
-                    , completer = person_completer
-                    )
-                , legend    = _("Persons")
-                , title     = _("Persons")
-                )
+            , Person_has_LID ("PAP.Person_has_Email")
             )
         , list_display = ("ui_display", "desc")
         )
@@ -156,44 +149,36 @@ class Admin (object) :
                     ( "last_name", ("last_name", )
                     , min_chars = 2
                     )
-                , widget    = "html/form.jnj, fg_tr"
+                , widget    = "html/form.jnj, fg_as_table"
                 )
-            , AID
-                ( "lifetime"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend    = _("Lifetime")
+            , FGD
+                ( AID ( "lifetime"
+                      , FGD (widget    = "html/form.jnj, fg_as_table")
+                      , legend    = _("Lifetime")
+                      )
+                ,
                 )
             , LID
                 ( "PAP.Person_has_Phone"
-                , FGD ( "desc")
-                , AID
-                    ( "phone"
-                    , FGD (primary)
-                    , completer = phone_completer
-                    )
-                , FGD ( "extension")
+                , FGD ("desc", "phone", "extension")
+                , field_attrs = dict
+                    (phone = dict (completer = phone_completer))
                 , legend    = _("Phone numbers")
                 , title     = _("Phone numbers")
                 )
             , LID
                 ( "PAP.Person_has_Email"
-                , FGD ( "desc")
-                , AID
-                    ( "email"
-                    , FGD (primary)
-                    , completer = email_completer
-                    )
+                , FGD ("desc", "email")
+                , field_attrs = dict
+                    (email = dict (completer = email_completer))
                 , legend    = _("Email addresses")
                 , title     = _("Email addresses")
                 )
             , LID
                 ( "PAP.Person_has_Address"
-                , FGD ( "desc")
-                , AID
-                    ( "address"
-                    , FGD (primary)
-                    , completer = address_completer
-                    )
+                , FGD ("desc", "address")
+                , field_attrs = dict
+                    (address = dict (completer = address_completer))
                 , legend    = _("Addresses")
                 , title     = _("Addresses")
                 )
@@ -208,18 +193,7 @@ class Admin (object) :
         , Form_args =
             ( FGD (primary)
             , FGD ()
-            , LID
-                ( "PAP.Person_has_Phone"
-                , FGD ( "desc")
-                , AID
-                    ( "person"
-                    , FGD (primary)
-                    , completer = person_completer
-                    )
-                , FGD ( "extension")
-                , legend    = _("Persons")
-                , title     = _("Persons")
-                )
+            , Person_has_LID ("PAP.Person_has_Phone")
             )
         , list_display = ("ui_display", "desc")
         )

@@ -118,7 +118,7 @@ class Field_Completer (_MOM_Completer_) :
     def js_on_ready (self, form, role_name) :
         form_name    = prefix = form.form_name
         postfix      = ""
-        if form_name.endswith (role_name) :
+        if role_name and form_name.endswith (role_name) :
             prefix   = form_name [: -len(role_name) - 2]
             postfix  = role_name
         parts        = form_name.split ("__", 1)

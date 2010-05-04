@@ -62,14 +62,15 @@
       {
         var data     = {TRIGGER_FIELD : field_name};
         var comp_opt = self.options;
-        var pf       = comp_opt.field_prefix + "-";
-        if (no) pf   = pf + "M" + no;
+        var pf       = comp_opt.field_prefix;
+        if (no) pf   = pf + "-M" + no;
         if (comp_opt.field_postfix)
-            pf       = pf + "__" + comp_opt.field_postfix + "__";
+            pf       = pf + "__" + comp_opt.field_postfix;
+        pf           = pf + "__"
         for (var i = 0;  i < trigger.fields.length; i++)
         {
             var mfn   = trigger.fields [i];
-            var value =  $("[name=" + pf + mfn + "]").attr ("value");
+            var value = $("[name=" + pf + mfn + "]").attr ("value");
             if (value) data [mfn] = value;
         }
         jQuery.getJSON
@@ -88,10 +89,11 @@
       {
         var options = this.options;
         var id      = options.field_prefix + "-comp-list";
-        var pf      = options.field_prefix + "-";
-        if (no) pf   = pf + "M" + no;
+        var pf      = options.field_prefix;
+        if (no) pf  = pf + "-M" + no;
         if (options.field_postfix)
-            pf       = pf + "__" + options.field_postfix + "__";
+            pf      = pf + "__" + options.field_postfix;
+        pf          = pf + "__"
         jQuery.getJSON
             ( options.complete_url, {"lid" : item.lid}
             , function (data, textStatus)

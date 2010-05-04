@@ -117,8 +117,10 @@ class _Completer_ (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def attach (self, form, role_name = None) :
+    def attach (self, form, role_name = None, multi_completer = None) :
         form.javascript.completers.append ((self, form, role_name))
+        if multi_completer :
+            multi_completer._completers [self.trigger] = self
     # end def attach
 
 # end class _Completer_

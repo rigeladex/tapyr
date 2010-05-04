@@ -96,7 +96,6 @@ class Link_Inline (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def Media (self) :
-        self._setup_javascript ()
         return GTW.Media.from_list \
             ([m for m in (self.widget.Media, self.form_cls.Media) if m])
     # end def Media
@@ -176,9 +175,9 @@ class Link_Inline (TFL.Meta.Object) :
         return result
     # end def forms
 
-    def _setup_javascript (self) :
+    def setup_javascript (self, parent_form) :
         GTW.Form.Javascript.Link_Inline (self.form_cls, self)
-    # end def _setup_javascript
+    # end def setup_javascript
 
     def create_object (self, form) :
         for lform in self.forms :

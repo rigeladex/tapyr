@@ -110,21 +110,24 @@ class Attribute_Inline_Description (_Inline_Description_) :
         )
 
     def field (self, et_man, parent, ** kw) :
-        scope         = et_man.home_scope
-        attr_kind     = getattr (et_man._etype, self.link_name)
+        scope            = et_man.home_scope
+        attr_kind        = getattr (et_man._etype, self.link_name)
         if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
-            obj_etype = attr_kind.C_Type
+            obj_etype    = attr_kind.C_Type
+            generic_name = self.link_name
         else :
-            obj_etype = attr_kind.Class
-        obj_et_man    = getattr (scope, obj_etype.type_name)
-        cls                 = GTW.Form.MOM.Id_Attribute_Inline
+            obj_etype    = attr_kind.Class
+            generic_name = attr_kind.name
+        obj_et_man       = getattr (scope, obj_etype.type_name)
+        cls              = GTW.Form.MOM.Id_Attribute_Inline
         if isinstance (obj_et_man, MOM.E_Type_Manager.An_Entity) :
-            cls             = GTW.Form.MOM.An_Attribute_Inline
-        form_cls      = cls.Form_Class.New \
+            cls          = GTW.Form.MOM.An_Attribute_Inline
+        form_cls      =  cls.Form_Class.New \
             ( obj_et_man
             , * self.field_group_descriptions
             , completer     = kw.pop ("completer", self.completer)
             , form_name     = self.link_name
+            , generic_name  = generic_name
             , parent        = parent
             , is_link_role  = issubclass (et_man._etype, MOM.Link)
             , suffix        = et_man.type_base_name

@@ -60,34 +60,6 @@ from   _GTW._Form._MOM.Inline_Description      import \
     )
 import _GTW._Form._MOM.Javascript
 
-address_completer = GTW.Form.Javascript.Multi_Completer \
-    ( GTW.Form.MOM.Javascript.Completer
-        ( fields    = ("street", "city", "zip", "country")
-        , triggers  = dict (street = dict (min_chars = 3))
-        )
-    , zip       = GTW.Form.MOM.Javascript.Field_Completer
-        ( "zip", ("zip", "city", "country", "region")
-        , min_chars = 1
-        )
-    , city      = GTW.Form.MOM.Javascript.Field_Completer
-        ( "city", ("city", "country", "region")
-        , min_chars = 2
-        )
-    , name      = "Test_Address_Completer"
-    )
-
-Person_Form_Args = \
-    ( FGD ()
-    , LID ( "PAP.Person_has_Address"
-          , legend = "Addresses"
-          , field_attrs   = dict
-              (address  = dict (completer = address_completer))
-          )
-    , LID ( "PAP.Person_has_Phone"
-          , legend = "Addresses"
-          )
-   )
-
 def create_nav (scope) :
     home_url_root = "http://localhost:9042"
     site_prefix   = pjoin (home_url_root, "")
@@ -134,22 +106,13 @@ def create_nav (scope) :
               , headline        = u"Admin Page"
               , login_required  = True
               , etypes          =
-                  [ dict ( ETM       = "GTW.OMP.PAP.Person"
-                         , Type      = GTW.NAV.E_Type.Admin
-                         , Form_args = Person_Form_Args
-                         )
-                  , dict ( ETM       = "GTW.OMP.PAP.Address"
-                         , Type      = GTW.NAV.E_Type.Admin
-                         , Form_args = ( FGD ()
-                                       ,
-                                       )
-                         )
-                  , dict ( ETM       = "GTW.OMP.PAP.Person_has_Address"
-                         , Type      = GTW.NAV.E_Type.Admin
-                         , Form_args = ( FGD ()
-                                       ,
-                                       )
-                         )
+                  [ GTW.OMP.PAP.Nav.Admin.Address
+                  , GTW.OMP.PAP.Nav.Admin.Email
+                  , GTW.OMP.PAP.Nav.Admin.Person
+                  , GTW.OMP.PAP.Nav.Admin.Person_has_Address
+                  , GTW.OMP.PAP.Nav.Admin.Person_has_Phone
+                  , GTW.OMP.PAP.Nav.Admin.Person_has_Email
+                  , GTW.OMP.PAP.Nav.Admin.Phone
                   ]
               , Type            = GTW.NAV.Site_Admin
               )

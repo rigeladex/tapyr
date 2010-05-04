@@ -167,6 +167,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
                             inline_form = getattr (f, "form_cls", None)
                             if inline_form :
                                 sub_forms [f.link_name] = inline_form
+                    fg.setup_javascript (result)
             result.add_internal_fields (et_man)
             js_on_ready          = ()
             if not parent :
@@ -184,6 +185,11 @@ class M_Instance (GTW.Form._Form_.__class__) :
             ("instance_state", et_man = et_man)
         cls.hidden_fields.append (cls.instance_state_field)
     # end def add_internal_fields
+
+    @TFL.Meta.Once_Property
+    def completer (cls) :
+        return GTW.Form.Javascript.Multi_Completer ()
+    # end def completer
 
     def New (cls, et_man, * field_group_descriptions, ** kw) :
         suffix        = et_man._etype.type_base_name

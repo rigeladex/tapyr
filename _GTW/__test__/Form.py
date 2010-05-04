@@ -33,24 +33,28 @@ r"""
     >>> scope = Scaffold.scope ()
     Creating new scope MOMT__Hash__HPS in memory
     >>> form_cls = Person_Form (scope)
-    >>> form_cls.sub_forms
-    {'Person_has_Address': <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Address'>}
+    >>> for sf in sorted (form_cls.sub_forms.iteritems ()) : print sf
+    ('Person_has_Address', <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Address'>)
+    ('Person_has_Email', <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Email'>)
+    ('Person_has_Phone', <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Phone'>)
+    ('lifetime', <class '_GTW._Form._MOM.Inline_Instance.An_Attribute_Inline_Instance_Person__Date_Interval'>)
     >>> form = form_cls ("/post/")
     >>> form.form_name
     'Person'
     >>> [il.form_cls.form_name for il in form.inline_groups]
-    ['Person__Person_has_Address']
+    ['Person__Person_has_Phone', 'Person__Person_has_Email', 'Person__Person_has_Address']
     >>> for l in form.Media.js_on_ready : print l
     /* setup form `GTW_OMP_PAP_Person` */
     <BLANKLINE>
     $(".GTW_OMP_PAP_Person").GTW_Form
     <BLANKLINE>
-      ( {"inlines": [{"instance_class": "inline-instance", "prefix": "Person__Person_has_Address", "allow_copy": true}], "completers": []}
+      ( {"inlines": [{"instance_class": "inline-instance", "prefix": "Person__Person_has_Phone", "allow_copy": true}, {"instance_class": "inline-instance", "prefix": "Person__Person_has_Email", "allow_copy": true}, {"instance_class": "inline-instance", "prefix": "Person__Person_has_Address", "allow_copy": true}], "completers": [{"suggest_url": "/Admin/Person/complete/Person_has_Phone__phone", "field_prefix": "Person__Person_has_Phone", "triggers": {"number": {"fields": ["country_code", "area_code", "number"], "min_chars": 2}}, "complete_url": "/Admin/Person/completed/Person_has_Phone__phone", "type": "Completer", "field_postfix": "phone"}, {"suggest_url": "/Admin/Person/complete/Person_has_Email__email", "field_prefix": "Person__Person_has_Email", "triggers": {"address": {"fields": ["address"], "min_chars": 2}}, "complete_url": "/Admin/Person/completed/Person_has_Email__email", "type": "Completer", "field_postfix": "email"}, {"suggest_url": "/Admin/Person/complete/Person_has_Address__address", "field_prefix": "Person__Person_has_Address", "triggers": {"street": {"fields": ["street", "city", "zip", "country"], "min_chars": 3}}, "complete_url": "/Admin/Person/completed/Person_has_Address__address", "type": "Completer", "field_postfix": "address"}, {"suggest_url": "/Admin/Person/complete/Person_has_Address__address/city", "field_prefix": "Person__Person_has_Address", "triggers": {"city": {"fields": ["city", "country", "region"], "min_chars": 2}}, "complete_url": "/Admin/Person/completed/Person_has_Address__address/city", "type": "Field_Completer", "field_postfix": "address"}, {"suggest_url": "/Admin/Person/complete/Person_has_Address__address/zip", "field_prefix": "Person__Person_has_Address", "triggers": {"zip": {"fields": ["zip", "city", "country", "region"], "min_chars": 1}}, "complete_url": "/Admin/Person/completed/Person_has_Address__address/zip", "type": "Field_Completer", "field_postfix": "address"}]}
       );
     <BLANKLINE>
 """
 
-from _GTW.__test__.model import *
+from   _GTW.__test__.model                      import *
+import _GTW._OMP._PAP.Nav
 import _GTW._Form._MOM.Instance
 import _GTW._Form.Javascript
 import _GTW._Form._MOM.Javascript
@@ -65,31 +69,9 @@ from   _GTW._Form._MOM.Field_Group_Description  import \
     )
 
 def Person_Form (scope) :
-    PAP               = scope.PAP
-    address_completer = GTW.Form.Javascript.Multi_Completer \
-        ( GTW.Form.MOM.Javascript.Completer
-            ( fields    = ("street", "city", "zip", "country")
-            , triggers  = dict (street = dict (min_chars = 3))
-            )
-        , zip       = GTW.Form.MOM.Javascript.Field_Completer
-            ( "zip", ("zip", "city", "country", "region")
-            , min_chars = 1
-            )
-        , city      = GTW.Form.MOM.Javascript.Field_Completer
-            ( "city", ("city", "country", "region")
-            , min_chars = 2
-            )
-        , name      = "Address_Completer"
-        )
+    Person_Admin = GTW.OMP.PAP.Nav.Admin.Person
     return GTW.Form.MOM.Instance.New \
-        ( PAP.Person
-        , FGD ()
-        , LID ( "PAP.Person_has_Address"
-              , legend        = "Addresses"
-              , field_attrs   = dict
-                    (address  = dict (completer = address_completer))
-              )
-        )
+        (scope.PAP.Person, * Person_Admin ["Form_args"])
 # end def Person_Form
 
 ### __END__ GTW.__test__.Form

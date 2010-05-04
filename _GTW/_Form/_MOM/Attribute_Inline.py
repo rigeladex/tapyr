@@ -53,27 +53,29 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
         self.form               = form
     # end def __init__
 
-    def create_object (self, form) :
+    def create_object (self, parent_form) :
+        form = self.form
+        parent_form.raw_attr_dict.pop (self.name, None)
         if self.needs_processing :
-            self.form.recursively_run \
-                ("create_object", self.form, reverse = True)
-        if (    not self.form.error_count
-           and (   self.form.instance
-               or (self.form.is_link_role and self.form.raw_attr_dict)
+            form.recursively_run ("create_object", form, reverse = True)
+        if (    not form.error_count
+           and (   form.instance
+               or (form.is_link_role and form.raw_attr_dict)
                )
            ) :
             ### the instance has been created/updated successfully -> update
             ### the raw_attr_dict of the parent
-            form.raw_attr_dict [self.name] = self.form.get_object_raw (form)
+            parent_form.raw_attr_dict [form.generic_name] = \
+                form.get_object_raw (parent_form)
         ### not not move the caching up because the `get_object_raw` could
         ### create additional errors
-        ec = self.form.error_count
-        if ec or not self.form.instance :
+        ec = form.error_count
+        if ec or not form.instance :
             ### an error was detected or the instance has not been
             ### created -> delete the values for this attribute from
             ### parent's raw_attr_dict
-            form.raw_attr_dict.pop (self.name, None)
-        form.inline_errors += ec
+            parent_form.raw_attr_dict.pop (form.generic_name, None)
+        parent_form.inline_errors += ec
     # end def create_object
 
     def clone (self, form) :
