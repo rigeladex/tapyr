@@ -469,14 +469,146 @@ case too. We try to generate the same event as before, which is not allowed:
 Now suprise here. The error is detected and reported correctly.
 """
 
+_link2_test = """
+    >>> scope = MOM.Scope.new (apt, None)
+    >>> PAP   = scope.PAP
+
+Now we know how a link-1 is handled, let's look at a link with more than one
+role, a link-2. We choose the Person_has_Address for the reason that the
+*Person* itself has a composite **lifetime** (and *Address* has a composite
+too, **position**). Just to make it a bit more interesting and challanging
+for the form code.
+
+    >>> form_cls = GTW.Form.MOM.Instance.New (PAP.Person_has_Address)
+    >>> form     = form_cls ("/post/")
+    >>> for i in sorted (form.raw_values.iteritems ()) : print i
+    ('Person_has_Address__desc', u'')
+    ('Person_has_Address__instance_state', 'KGRwMQpTJ2Rlc2MnCnAyClYKc1MncmlnaHQnCnAzCih0c1MnbGVmdCcKcDQKKHRzLg==')
+    ('Person_has_Address__left', ())
+    ('Person_has_Address__right', ())
+    >>> [f.name for f in form_cls.fields]
+    ['left', 'right', 'desc', 'instance_state']
+    >>> fields_of_field_groups (form_cls)
+    ['left', 'right', 'desc']
+    >>> [ai.name for ai in form.inline_fields]
+    ['left', 'right']
+
+As we can see the form basically has 3 user editable fields. The **left** and
+**right** roles of the link and the **desc**. **left** and **right** are
+inline fields, **desc** is a normal field.
+So let's look at inline fields in more detail:
+    >>> for ilf in form.inline_fields :
+    ...     print ilf.name
+    ...     [f.name for f in ilf.form.fields]
+    ...     [ii.name for ii in ilf.form.inline_fields]
+    left
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state', '_lid_a_state_']
+    ['lifetime']
+    right
+    ['street', 'zip', 'city', 'country', 'region', 'desc', 'position', 'instance_state', '_lid_a_state_']
+    ['position']
+
+It's goin to be intersting to see how the key in the request data have to
+look like for all attributes:
+    >>> dump_field_ids (form)
+    P left:
+     P last_name         = 'Person_has_Address__left__last_name'
+     P first_name        = 'Person_has_Address__left__first_name'
+     p middle_name       = 'Person_has_Address__left__middle_name'
+     p title             = 'Person_has_Address__left__title'
+     U lifetime:
+      U start            = 'Person_has_Address__left__lifetime__start'
+      U finish           = 'Person_has_Address__left__lifetime__finish'
+      i instance_state   = 'Person_has_Address__left__lifetime__instance_state'
+      i _lid_a_state_    = 'Person_has_Address__left__lifetime___lid_a_state_'
+     i instance_state    = 'Person_has_Address__left__instance_state'
+     i _lid_a_state_     = 'Person_has_Address__left___lid_a_state_'
+    P right:
+     P street            = 'Person_has_Address__right__street'
+     P zip               = 'Person_has_Address__right__zip'
+     P city              = 'Person_has_Address__right__city'
+     P country           = 'Person_has_Address__right__country'
+     p region            = 'Person_has_Address__right__region'
+     U desc              = 'Person_has_Address__right__desc'
+     U position:
+      U height           = 'Person_has_Address__right__position__height'
+      U lat              = 'Person_has_Address__right__position__lat'
+      U lon              = 'Person_has_Address__right__position__lon'
+      i instance_state   = 'Person_has_Address__right__position__instance_state'
+      i _lid_a_state_    = 'Person_has_Address__right__position___lid_a_state_'
+     i instance_state    = 'Person_has_Address__right__instance_state'
+     i _lid_a_state_     = 'Person_has_Address__right___lid_a_state_'
+    U desc               = 'Person_has_Address__desc'
+    i instance_state     = 'Person_has_Address__instance_state'
+
+Ok, that's a lot of options we have. Luckily not all of them are primary
+(indecated by the *P*).
+
+So let's create request_data dict.
+    >>> request_data = dict ()
+    >>> request_data ["Person_has_Address__left__last_name"]  = "Last name"
+    >>> request_data ["Person_has_Address__left__first_name"] = "First name"
+    >>> request_data ["Person_has_Address__right__street"]    = "Street"
+    >>> request_data ["Person_has_Address__right__zip"]       = "1010"
+    >>> request_data ["Person_has_Address__right__city"]      = "Vienna"
+    >>> request_data ["Person_has_Address__right__country"]   = "Austria"
+    >>> form     = form_cls ("/post/")
+    >>> form (request_data)
+    0
+    >>> dump_form_errors (form)
+    >>> dump_instance (form.instance)
+    left:
+      last_name          = u'last name'
+      first_name         = u'first name'
+      middle_name        = u''
+      title              = u''
+      lifetime:
+        start            = None
+        finish           = None
+    right:
+      street             = u'street'
+      zip                = u'1010'
+      city               = u'vienna'
+      country            = u'austria'
+      region             = u''
+      desc               = u''
+      position:
+        height           = None
+        lat              = None
+        lon              = None
+    desc                 = u''
+
+That was easy.... So let's try to change the position of the newly created
+address using the link and not the address isself.
+    >>> request_data ["Person_has_Address__right__position__height"] = "100"
+    >>> form     = form_cls ("/post/", form.instance)
+    >>> form (request_data)
+    0
+    >>> dump_form_errors (form)
+    >>> dump_instance (form.instance)
+    left:
+      last_name          = u'last name'
+      first_name         = u'first name'
+      middle_name        = u''
+      title              = u''
+      lifetime:
+        start            = None
+        finish           = None
+    right:
+      street             = u'street'
+      zip                = u'1010'
+      city               = u'vienna'
+      country            = u'austria'
+      region             = u''
+      desc               = u''
+      position:
+        height           = 100.0
+        lat              = None
+        lon              = None
+    desc                 = u''
+
 """
-
-
-### before we continue, let's rollback the scope to start with a new, empty
-### scope
->>> scope.rollback ()
->>> scope.MOM.Id_Entity.query ().all ()
-[]
+"""
 
 ### forms also be used to edit an object and link's oto this object in one
 ### form using so called `inlines` (Link_Inline_Description and for the roles
@@ -625,7 +757,8 @@ Person_has_Address-M0
 """
 
 __test__ = dict \
-    ( link   = _link_test
+    ( link2   = _link2_test
+#    , link    = _link_test
 #    , object = _obect_test
     )
 
@@ -748,6 +881,28 @@ def dump_instance (instance, indent = "") :
             else :
                 print "%s%-*s = %r" % (indent, name_len, attr.name, value)
 # end def dump_instance
+
+def dump_field_ids (form, indent = "") :
+    name_len = 18 - len (indent)
+    et_man   = form.et_man
+    for f in form.fields :
+        attr_kind = getattr (et_man, f.name, None)
+        if attr_kind :
+            kind = "U"
+            if isinstance (attr_kind, MOM.Attr.Primary) :
+                kind = "P"
+            elif isinstance (attr_kind, MOM.Attr.Primary_Optional) :
+                kind = "p"
+            elif isinstance (attr_kind, MOM.Attr.Mandatory) :
+                kind = "M"
+        else :
+            kind = "i"
+        if not isinstance (f, GTW.Form.MOM._Attribute_Inline_) :
+            print "%s%s %-*s = %r" % (indent, kind, name_len, f.name, form.get_id (f))
+        else :
+            print "%s%s %s:" % (indent, kind, f.name)
+            dump_field_ids (f.form, indent + " ")
+# end def dump_field_ids
 
 ### __END__ GTW.Form.MOM.__test__
 

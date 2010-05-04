@@ -332,13 +332,13 @@ class _Instance_ (GTW.Form._Form_) :
             self.add_changed_raw (self.raw_attr_dict, f)
     # end def setup_raw_attr_dict
 
-    def _run (self, method_name, * args, ** kw) :
+    def recursively_run (self, method_name, * args, ** kw) :
         lists   = [self], self.inline_groups, self.inline_fields
         if kw.pop ("reverse", False) :
             lists = reversed (lists)
         for obj in itertools.chain (* lists) :
             getattr (obj, method_name) (* args, ** kw)
-    # end def _run
+    # end def recursively_run
 
     def update_object (self, form) :
         pass
@@ -351,19 +351,19 @@ class _Instance_ (GTW.Form._Form_) :
     def __call__ (self, request_data) :
         ### first, we give each form_group the chance of adding/changing
         ### the request data
-        self._run ("prepare_request_data", self, request_data)
+        self.recursively_run ("prepare_request_data", self, request_data)
         ### now we build the attr_dict for this form and for all forms in
         ### the inline groups based on the request_data
-        self._run ("setup_raw_attr_dict", self)
+        self.recursively_run ("setup_raw_attr_dict", self)
         ### Once the raw attr dict for all forms are created let's give the
         ### fields and field groups a change to update the raw attr dict
-        self._run ("update_raw_attr_dict", self)
+        self.recursively_run ("update_raw_attr_dict", self)
         ### it's time to actually create the object based on the raw
         ### attr dict
-        self._run ("create_object",        self, reverse = True)
+        self.recursively_run ("create_object",        self, reverse = True)
         ### once the object are created the field groups get one final
         ### chance to update the created object
-        self._run ("update_object",        self)
+        self.recursively_run ("update_object",        self)
         return self.error_count
     # end def __call__
 

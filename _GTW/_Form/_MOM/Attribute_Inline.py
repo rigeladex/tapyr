@@ -54,7 +54,8 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
 
     def create_object (self, form) :
         if self.needs_processing :
-            self.form.create_object (form)
+            self.form.recursively_run \
+                ("create_object", self.form, reverse = True)
         ec = self.form.error_count
         if not ec :
             ### the instance has been created/updated successfully -> update
@@ -79,19 +80,20 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
     # end def get_raw
 
     def prepare_request_data (self, form, request_data) :
-        self.form.request_data = request_data
+        self.form.recursively_run \
+            ("prepare_request_data", self.form, request_data)
     # end def prepare_request_data
 
     def setup_raw_attr_dict (self, form) :
-        self.form.setup_raw_attr_dict (form)
+        self.form.recursively_run ("setup_raw_attr_dict", self.form)
     # end def setup_raw_attr_dict
 
     def update_object (self, form) :
-        pass
+        self.form.recursively_run ("update_object", self.form)
     # end def setup_raw_attr_dict
 
     def update_raw_attr_dict (self, form) :
-        pass
+        self.form.recursively_run ("update_raw_attr_dict", self.form)
     # end def setup_raw_attr_dict
 
 # end class _Attribute_Inline_
