@@ -108,7 +108,6 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     @TFL.Meta.Once_Property
     def lid (self) :
-        import pdb; pdb.set_trace ()
         lid, state = self.request_data.get \
             (self.get_id (self.lid_and_state_field), ":X").split (":")
         self.state = state
@@ -145,8 +144,10 @@ class Id_Attribute_Inline_Instance (_Inline_Instance_) :
     """A form which handles an attribute of an Id_Entity as a seperate form."""
 
     def _create_instance (self, on_error) :
-        instance = self.instance
-        if not instance :
+        if self.raw_attr_dict :
+            ### if raw data is provided for this form -> let's check if we
+            ### find an instance with this raw data before we try to create
+            ### a new one
             cooked_attrs = self.et_man._etype.cooked_attrs (self.raw_attr_dict)
             instance     = self.et_man.query (** cooked_attrs).first ()
             if instance :

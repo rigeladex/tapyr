@@ -57,11 +57,15 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
         if self.needs_processing :
             self.form.recursively_run \
                 ("create_object", self.form, reverse = True)
-        ec = self.form.error_count
-        if not ec :
+        if (    not self.form.error_count
+           and (self.form.instance or self.form.is_link_role)
+           ) :
             ### the instance has been created/updated successfully -> update
             ### the raw_attr_dict of the parent
             form.raw_attr_dict [self.name] = self.form.get_object_raw (form)
+        ### not not move the caching up because the `get_object_raw` could
+        ### create additional errors
+        ec = self.form.error_count
         if ec or not self.form.instance :
             ### an error was detected or the instance has not been
             ### created -> delete the values for this attribute from
@@ -135,6 +139,7 @@ class Id_Attribute_Inline (_Attribute_Inline_) :
             et_man             = self.form.et_man
             pid                = et_man.pid_from_lid  (self.form.lid)
             self.form.instance = et_man.pid_query     (pid)
+            self.form._create_update_executed = True
             return False
         return True
     # end def needs_processing

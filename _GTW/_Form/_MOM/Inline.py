@@ -211,6 +211,7 @@ class Link_Inline (TFL.Meta.Object) :
         for lform in self.forms :
             lform.recursively_run \
                 ("create_object", lform, reverse = True)
+            form.inline_errors += lform.error_count
     # end def create_object
 
     def prepare_request_data (self, form, request_data) :

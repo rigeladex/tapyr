@@ -285,11 +285,15 @@ OK, let's see how an error in a composite is handled:
         finish = datetime.date(1900, 3, 16)
 """
 
-_link_test = """
+_link_test = r"""
     >>> scope = MOM.Scope.new (apt, None)
     >>> EVT   = scope.EVT
     >>> SWP   = scope.SWP
-    >>> page  = SWP.Page ("test_page", text = "Test page")
+    >>> page  = SWP.Page \
+    ...    ( "test_page"
+    ...    , text = "Test page"
+    ...    , date = scope.MOM.Date_Interval_N (start = "1.1.2010", raw = True)
+    ...    )
 
 Up to now we have not touch links in any way. Let's change that. For a start
 we use the *Link1* *Event*:
@@ -325,24 +329,25 @@ we would need for the *left* part:
 So *Event__left* is the prefix. Ok, so let's try to create an *Event*:
     >>> form     = form_cls ("/post/")
     >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
-    >>> request_data ["Event__left__perma_name"] = "Permaname"
-    >>> request_data ["Event__left__text"]       = "Text"
-    >>> form (request_data)
+    >>> request_data ["Event__left__perma_name"]  = "Permaname"
+    >>> request_data ["Event__left__text"]        = "Text"
+    >>> request_data ["Event__left__date__start"] = "1.1.2010"
+    >>> form (request_data)  ### 1
     0
-    >>> dump_form_errors (form)
+    >>> dump_form_errors (form) ### 1
     >>> dump_instance (form.instance)
     left:
       perma_name         = u'Permaname'
       text               = u'Text'
       creator            = None
       date:
-        start            = datetime.date(2010, 4, 17)
+        start            = datetime.date(2010, 1, 1)
         finish           = None
+      short_title        = u''
+      title              = u''
       format             = <class '_GTW._OMP._SWP.Format.ReST'>
       head_line          = u''
       prio               = 0
-      short_title        = u''
-      title              = u''
     date                 = None
     time                 = None
     detail               = u''
@@ -375,22 +380,22 @@ to reference the page we what:
     >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
     >>> request_data ["Event__left___lid_a_state_"] = "1:L"
     >>> form     = form_cls ("/post/")
-    >>> form (request_data)
+    >>> form (request_data) ### 2
     0
-    >>> dump_form_errors (form)
+    >>> dump_form_errors (form) ### 2
     >>> dump_instance (form.instance)
     left:
       perma_name         = u'test_page'
       text               = u'Test page'
       creator            = None
       date:
-        start            = datetime.date(2010, 4, 17)
+        start            = datetime.date(2010, 1, 1)
         finish           = None
+      short_title        = u''
+      title              = u''
       format             = <class '_GTW._OMP._SWP.Format.ReST'>
       head_line          = u''
       prio               = 0
-      short_title        = u''
-      title              = u''
     date                 = None
     time                 = None
     detail               = u''
@@ -417,22 +422,22 @@ But what if we don't have a smart client that know's how to handle the
     >>> request_data ["Event__left__text"]       = "Text"
     >>> request_data ["Event__date__start"]      = "1.1.2010"
     >>> form     = form_cls ("/post/")
-    >>> form (request_data)
+    >>> form (request_data) ### 3
     0
-    >>> dump_form_errors (form)
+    >>> dump_form_errors (form) ### 3
     >>> dump_instance (form.instance)
     left:
       perma_name         = u'Permaname'
       text               = u'Text'
       creator            = None
       date:
-        start            = datetime.date(2010, 4, 17)
+        start            = datetime.date(2010, 1, 1)
         finish           = None
+      short_title        = u''
+      title              = u''
       format             = <class '_GTW._OMP._SWP.Format.ReST'>
       head_line          = u''
       prio               = 0
-      short_title        = u''
-      title              = u''
     date:
       start              = datetime.date(2010, 1, 1)
       finish             = None
@@ -460,9 +465,9 @@ found, this object will be used instead of creating a new object.
 Up to now we only showed how the good cases work, so let's  look at a bad
 case too. We try to generate the same event as before, which is not allowed:
     >>> form     = form_cls ("/post/")
-    >>> form (request_data)
+    >>> form (request_data) ### 4
     1
-    >>> dump_form_errors (form)
+    >>> dump_form_errors (form) ### 4
     Non field errors:
       new definition of ((u'Permaname', ), dict (start = '2010/01/01'), ) clashes with existing ((u'Permaname', ), dict (start = '2010/01/01'), )
 
@@ -531,9 +536,9 @@ look like for all attributes:
      p region            = 'Person_has_Address__right__region'
      U desc              = 'Person_has_Address__right__desc'
      U position:
-      U height           = 'Person_has_Address__right__position__height'
       U lat              = 'Person_has_Address__right__position__lat'
       U lon              = 'Person_has_Address__right__position__lon'
+      U height           = 'Person_has_Address__right__position__height'
       i instance_state   = 'Person_has_Address__right__position__instance_state'
       i _lid_a_state_    = 'Person_has_Address__right__position___lid_a_state_'
      i instance_state    = 'Person_has_Address__right__instance_state'
@@ -688,9 +693,9 @@ person.
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
     >>> request_data ["Person__Person_has_Address-M0__right__country"] = "Austria"
-    >>> form (request_data)
+    >>> form (request_data) ### 1
     0
-    >>> dump_instance (form.instance)
+    >>> dump_instance (form.instance) ### 1
     last_name            = u'last'
     first_name           = u'first'
     middle_name          = u''
@@ -698,8 +703,8 @@ person.
     lifetime:
       start              = None
       finish             = None
-    >>> for i in sorted (form.instance.addresss) :
-    ...     dump_instance (i)
+    >>> for i in sorted (form.instance.addresses) :
+    ...     dump_instance (i) ### 1
     street               = u'street'
     zip                  = u'1010'
     city                 = u'vienna'
@@ -710,6 +715,9 @@ person.
       lat                = None
       lon                = None
       height             = None
+   >>> for ad in form.instance.addresses :
+   ...     ad.lid
+   '1'
 
 Ok, so with one form we created a person, an address and a link between the
 person and the address.
@@ -721,9 +729,9 @@ object which is linked) using the **_lid_a_state_** field of the link:
     >>> request_data ["Person__last_name"]                             = "Last"
     >>> request_data ["Person__first_name"]                            = "First"
     >>> request_data ["Person__Person_has_Address-M0___lid_a_state_"]  = "3:U"
-    >>> form (request_data)
+    >>> form (request_data) ### 2
     0
-    >>> dump_instance (form.instance)
+    >>> dump_instance (form.instance) ### 2
     last_name            = u'last'
     first_name           = u'first'
     middle_name          = u''
@@ -731,8 +739,8 @@ object which is linked) using the **_lid_a_state_** field of the link:
     lifetime:
       start              = None
       finish             = None
-    >>> for i in sorted (form.instance.addresss) :
-    ...     dump_instance (i)
+    >>> for i in sorted (form.instance.addresses) :
+    ...     dump_instance (i) ### 2
     >>> PAP.Address.query ().all ()
     [GTW.OMP.PAP.Address (u'street', u'1010', u'vienna', u'austria', u'')]
 
@@ -742,9 +750,10 @@ So, let's try to link to this object again:
     >>> request_data = dict ()
     >>> request_data ["Person__last_name"]                             = "Last"
     >>> request_data ["Person__first_name"]                            = "First"
-    >>> request_data ["Person__Person_has_Address-M0__right___lid_a_state_"] = "2:N"
-    >>> form (request_data)
+    >>> request_data ["Person__Person_has_Address-M0__right___lid_a_state_"] = "1:L"
+    >>> form (request_data) ### 3
     0
+    >>> dump_form_errors (form) ### 3
     >>> dump_instance (form.instance)
     last_name            = u'last'
     first_name           = u'first'
@@ -753,7 +762,7 @@ So, let's try to link to this object again:
     lifetime:
       start              = None
       finish             = None
-    >>> for i in sorted (form.instance.addresss) :
+    >>> for i in sorted (form.instance.addresses) :
     ...     dump_instance (i)
     street               = u'street'
     zip                  = u'1010'
@@ -781,7 +790,7 @@ Now, let's try to set the attribute of the link itself
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
     >>> request_data ["Person__Person_has_Address-M0__right__country"] = "Austria"
-    >>> form (request_data)
+    >>> form (request_data) ### 4
     0
     >>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
     (1, 1, 1)
@@ -801,13 +810,23 @@ address):
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
     >>> request_data ["Person__Person_has_Address-M0__right__country"] = "Austria"
-    >>> form (request_data)
+    >>> form (request_data) ### 5
     0
-    >>> for i in sorted (form.instance.addresss) :
-    ...     dump_instance (i)
+    >>> for i in sorted (form.instance.addresses) :
+    ...     dump_instance (i)  ### 5
+    street               = u'street'
+    zip                  = u'1010'
+    city                 = u'vienna'
+    country              = u'austria'
+    region               = u''
+    desc                 = u''
+    position:
+      lat                = None
+      lon                = None
+      height             = None
     >>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
     (1, 2, 1)
-    >>> for a in sorted (PAP.Address.query ()) : print a
+    >>> for a in sorted (PAP.Address.query (), key = lambda a : a.lid) : print a
     (u'street', u'1010', u'vienna', u'austria', u'')
     (u'new street', u'1010', u'vienna', u'austria', u'')
 
@@ -826,12 +845,12 @@ existing address object?
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
     >>> request_data ["Person__Person_has_Address-M0__right__country"] = "Austria"
-    >>> form (request_data)
+    >>> form (request_data) ### 6
     0
     >>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
     (1, 2, 1)
-    >>> for i in sorted (form.instance.addresss) :
-    ...     dump_instance (i)
+    >>> for i in sorted (form.instance.addresses) : ### 6
+    ...     dump_instance (i) ### XXX fix the test once the framework is fixed
     street               = u'street'
     zip                  = u'1010'
     city                 = u'vienna'
@@ -843,159 +862,13 @@ existing address object?
       lon                = None
       height             = None
 """
-"""
-
-### forms also be used to edit an object and link's oto this object in one
-### form using so called `inlines` (Link_Inline_Description and for the roles
-### Attribute_Inline_Description).
->>> form_cls = GTW.Form.MOM.Instance.New \\
-...     ( PAP.Person
-...     , FGD (WF ("primary"))
-...     , FGD ()
-...     , LID
-...         ( "PAP.Person_has_Address"
-...         , FGD ("desc")
-...         , AID ("address", FGD (WF ("primary")))
-...         )
-...     )
-
-### let's see how the structure of such a for looks like.
-### We can see the the main form has normal vields but in addition an
-### sub-form for `Person_has_Address` which itself has a field for `desc` and
-### an additional form for `Address` which again has some fields on it's own::
->>> fields_of_field_groups (form_cls)
-['last_name', 'first_name', 'middle_name', 'title', 'instance_state']
-['lifetime']
-Person_has_Address
-  ['desc', 'instance_state', '_lid_a_state_']
-  Address
-    ['street', 'zip', 'city', 'country', 'region', 'instance_state', '_lid_a_state_']
-
-### in addition to the already seen `instance_state` field we find a new
-### internal field called `_lid_a_state_` which is used by the Javascript
-### code in the browser to handle the deletion/copy/rename/add link features.
-
-### So, lets see how we can create a instance based on this new form.
-### Let's begin with the simple case: Just creating a Person object.
-### This acrually works the same way as before:
->>> request_data = \\
-...   { "first_name" : "First Name"
-...   , "last_name"  : "Last Name"
-...   }
->>> form = form_cls ("/post/")
->>> form (request_data)
-0
->>> dump_form_errors (form)
->>> scope.MOM.Id_Entity.query ().all ()
-[GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'')]
->>> form_instance_states (form)
-[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
-  [('desc', u'')]
-    [('city', u''), ('country', u''), ('region', u''), ('street', u''), ('zip', u'')]
-
->>> scope.rollback () ### delete the create person again
-
-### so, this was easy.... now let's try to add a link as well:
->>> request_data.update \\
-...     ( { "Person_has_Address-M0-desc"               : "home"
-...       , "Person_has_Address-M0-Address-street"     : "Street"
-...       , "Person_has_Address-M0-Address-zip"        : "0000"
-...       , "Person_has_Address-M0-Address-city"       : "City"
-...       , "Person_has_Address-M0-Address-country"    : "Country"
-...       }
-...     )
->>> valid_data = request_data.copy () ### save for later
->>> form = form_cls ("/post/")
->>> form (request_data)
-0
->>> scope.MOM.Id_Entity.query ().all ()
-[GTW.OMP.PAP.Person_has_Address ((u'Last Name', u'First Name', u'', u''), (u'Street', u'0000', u'City', u'Country', u'')), GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u''), GTW.OMP.PAP.Address (u'Street', u'0000', u'City', u'Country', u'')]
-
-### now, lets try to introducte errors on somewhere in the data
->>> scope.rollback ()
->>> error_data = dict \\
-...     (request_data, ** {"Person_has_Address-M0-Address-zip" : ""})
->>> form = form_cls ("/post/")
->>> form (error_data)
-1
->>> dump_form_errors (form)  #doctest: +ELLIPSIS
-Person_has_Address-M0
-  Person_has_Address-M0-Address
-    Non field errors:
-      epkified_raw() takes at least 5 non-keyword arguments (2 given)
-    GTW.OMP.PAP.Address needs the arguments: (street, zip, city, country, region = u'', ** kw)
-    Instead it got: (country = 'Country', raw = True, street = 'Street', on_error = <built-in method append of list object at 0x...>, city = 'City')
->>> scope.MOM.Id_Entity.query ().all ()
-[GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'')]
-
->>> scope.rollback ()
->>> error_data = dict \\
-...     (request_data, ** {"Person_has_Address-M0-desc" : Non_Stringable (1)})
->>> form = form_cls ("/post/")
->>> form (error_data) ### XXX remove the Unicode error once it is removed from the framework
-coercing to Unicode: need string or buffer, int found
-1
->>> dump_form_errors (form)
-Person_has_Address-M0
-  Non field errors:
-    coercing to Unicode: need string or buffer, int found
->>> scope.MOM.Id_Entity.query ().all ()
-[GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u''), GTW.OMP.PAP.Address (u'Street', u'0000', u'City', u'Country', u'')]
-
-### now, let's try to `rename` a link (change one role without creating a
-### new link)
->>> scope.rollback ()
->>> form = form_cls ("/post/")
->>> form (valid_data)
-0
->>> person = form.instance
-
-### to be able to find the instances which have populate the original form
-### the _lid_a_state_ fields will be used.
->>> int_data = internal_field_values (form)
->>> sorted (int_data.iteritems ())
-[('Person_has_Address-M0-Address-_lid_a_state_', '2:L'), ('Person_has_Address-M0-Address-instance_state', 'KGRwMQpTJ2NpdHknCnAyClMnQ2l0eScKcDMKc1MncmVnaW9uJwpwNApTJycKc1Mnc3RyZWV0JwpwNQpTJ1N0cmVldCcKcDYKc1MnemlwJwpwNwpTJzAwMDAnCnA4CnNTJ2NvdW50cnknCnA5ClMnQ291bnRyeScKcDEwCnMu'), ('Person_has_Address-M0-_lid_a_state_', '3:L'), ('Person_has_Address-M0-instance_state', 'KGRwMQpTJ2Rlc2MnCnAyClMnaG9tZScKcDMKcy4='), ('instance_state', 'KGRwMQpTJ2JpcnRoX2RhdGUnCnAyClYKc1MnZmlyc3RfbmFtZScKcDMKUydGaXJzdCBOYW1lJwpwNApzUydsYXN0X25hbWUnCnA1ClMnTGFzdCBOYW1lJwpwNgpzUydtaWRkbGVfbmFtZScKcDcKUycnCnNTJ3RpdGxlJwpwOApTJycKcy4=')]
->>> rename_data = dict \\
-...     (valid_data, ** { "Person_has_Address-M0-Address-zip" : "1111"
-...                     })
->>> del int_data ["Person_has_Address-M0-Address-instance_state"]
->>> int_data ["Person_has_Address-M0-Address-_lid_a_state_"] = ":N"
->>> int_data ["Person_has_Address-M0-_lid_a_state_"]         = "3:C"
->>> rename_data.update (int_data)
->>> form = form_cls ("/post/", person)
->>> form (rename_data)
-0
->>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
-(1, 2, 1)
->>> form_instance_states (form)
-[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
-  [('desc', 'home')]
-    [('city', 'City'), ('country', 'Country'), ('region', ''), ('street', 'Street'), ('zip', '1111')]
-
-### and now we try to delete a link via a `form`
->>> scope.rollback  ()
->>> form = form_cls ("/post/")
->>> form            (valid_data)
-0
->>> person = form.instance
->>> int_data = internal_field_values (form)
->>> rename_data = dict (valid_data)
->>> old_lid = int_data ["Person_has_Address-M0-_lid_a_state_"]
->>> int_data ["Person_has_Address-M0-_lid_a_state_"] = \\
-...     "%s:U" % old_lid.split (":") [0]
->>> rename_data.update (int_data)
->>> form = form_cls ("/post/", person)
->>> form (rename_data)
-0
->>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
-(1, 1, 0)
-"""
 
 __test__ = dict \
-    ( object_with_link = _object_with_link_test
-#    , link2   = _link2_test
-#    , link    = _link_test
-#    , object = _obect_test
+    (
+      object_with_link = _object_with_link_test
+    , link2   = _link2_test
+    , link    = _link_test
+    , object = _obect_test
     )
 
 from   _MOM._EMS.Hash                           import Manager as EMS

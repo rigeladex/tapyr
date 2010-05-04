@@ -126,6 +126,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
             , completer     = self.completer
             , form_name     = self.link_name
             , parent        = parent
+            , is_link_role  = issubclass (et_man._etype, MOM.Link)
             , suffix        = et_man.type_base_name
             )
         return cls (self.link_name, form_cls, self)

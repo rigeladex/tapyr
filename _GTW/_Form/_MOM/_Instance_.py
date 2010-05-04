@@ -205,6 +205,7 @@ class _Instance_ (GTW.Form._Form_) :
     prototype               = False
     ignore_fields           = ()
     _create_update_executed = False
+    raw_attr_dict           = {}
 
     ### a standard form always creates the instance new and does not reuse an
     ### existing instance
@@ -269,7 +270,7 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _create_object
 
     def _create_or_update (self, force_create = False) :
-        if (   not self._create_update_executed
+        if (  (not self._create_update_executed and self.raw_attr_dict)
            or (not self.instance and force_create and not self.error_count)
            ) :
             ### at least on attribute is filled out or the creation is forced
@@ -319,8 +320,12 @@ class _Instance_ (GTW.Form._Form_) :
 
     @TFL.Meta.Once_Property
     def instance_state (self) :
-        return self.instance_state_field.decode \
-            (self.request_data.get (self.get_id (self.instance_state_field)))
+        if self.request_data :
+            state = self.request_data.get \
+                (self.get_id (self.instance_state_field))
+        else :
+            state = self.instance_state_field.get_raw (self)
+        return self.instance_state_field.decode (state)
     # end def instance_state
 
     def prepare_request_data (self, form, request_data) :
@@ -328,8 +333,6 @@ class _Instance_ (GTW.Form._Form_) :
     # end def prepare_request_data
 
     def setup_raw_attr_dict (self, form) :
-        #for inline_field in self.inline_fields :
-        #    inline_field.setup_raw_attr_dict (self)
         self.raw_attr_dict = dict ()
         for f in (f for f in self.fields if not f.electric) :
             self.add_changed_raw (self.raw_attr_dict, f)
@@ -352,6 +355,7 @@ class _Instance_ (GTW.Form._Form_) :
     # end def update_raw_attr_dict
 
     def __call__ (self, request_data) :
+        #import pdb; pdb.set_trace ()
         ### first, we give each form_group the chance of adding/changing
         ### the request data
         self.recursively_run ("prepare_request_data", self, request_data)
