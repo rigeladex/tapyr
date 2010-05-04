@@ -207,8 +207,9 @@ class _Instance_ (GTW.Form._Form_) :
     et_man           = None
     prototype        = False
 
-    ### a standard form always needs to look at the data sent from the client
-    needs_processing = True
+    ### a standard form always creates the instance new and does not reuse an
+    ### existing instance
+    state            = "N"
 
     def __init__ (self, instance = None, parent = None, ** kw) :
         self.__super.__init__ (instance, ** kw)
@@ -248,8 +249,8 @@ class _Instance_ (GTW.Form._Form_) :
             dict [field.name] = raw
     # end def add_changed_raw
 
-    def _create_instance (self, state, on_error) :
-        if not self.instance or state == "r" :
+    def _create_instance (self, on_error) :
+        if not self.instance or self.state == "r" :
             ### a new instance should be created starting from scratch or
             ### from a rename -> we have to fill in at least all primaries
             for attr_kind in self.et_man._etype.primary :
@@ -263,10 +264,10 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _create_instance
 
     def create_object (self, form) :
-        self._create_or_update ("N")
+        self._create_or_update (False)
     # end def _create_object
 
-    def _create_or_update (self, state, force_create = False) :
+    def _create_or_update (self, force_create = False) :
         #if (   not self._create_update_executed
         #   or (not self.instance and force_create and not self.error_count)
         #   ) :
@@ -277,14 +278,14 @@ class _Instance_ (GTW.Form._Form_) :
             ### forced
             errors = []
             try :
-                if instance and state != "r" :
+                if instance and self.state != "r" :
                     instance.set_raw \
                         (on_error = errors.append, ** self.raw_attr_dict)
                 else :
                     self.instance = self._create_instance \
-                        (state, on_error = errors.append)
+                        (on_error = errors.append)
             except Exception, exc:
-                if 0 and __debug__ :
+                if __debug__ :
                     import traceback
                     traceback.print_exc ()
                 errors.append   (exc)
@@ -348,22 +349,21 @@ class _Instance_ (GTW.Form._Form_) :
     # end def update_raw_attr_dict
 
     def __call__ (self, request_data) :
-        if self.needs_processing :
-            ### first, we give each form_group the chance of adding/changing
-            ### the request data
-            self._run ("prepare_request_data", self, request_data)
-            ### now we build the attr_dict for this form and for all forms in
-            ### the inline groups based on the request_data
-            self._run ("setup_raw_attr_dict", self)
-            ### Once the raw attr dict for all forms are created let's give the
-            ### fields and field groups a change to update the raw attr dict
-            self._run ("update_raw_attr_dict", self)
-            ### it's time to actually create the object based on the raw
-            ### attr dict
-            self._run ("create_object",        self, reverse = True)
-            ### once the object are created the field groups get one final
-            ### chance to update the created object
-            self._run ("update_object",        self)
+        ### first, we give each form_group the chance of adding/changing
+        ### the request data
+        self._run ("prepare_request_data", self, request_data)
+        ### now we build the attr_dict for this form and for all forms in
+        ### the inline groups based on the request_data
+        self._run ("setup_raw_attr_dict", self)
+        ### Once the raw attr dict for all forms are created let's give the
+        ### fields and field groups a change to update the raw attr dict
+        self._run ("update_raw_attr_dict", self)
+        ### it's time to actually create the object based on the raw
+        ### attr dict
+        self._run ("create_object",        self, reverse = True)
+        ### once the object are created the field groups get one final
+        ### chance to update the created object
+        self._run ("update_object",        self)
         return self.error_count
     # end def __call__
 

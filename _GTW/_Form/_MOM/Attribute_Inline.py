@@ -53,15 +53,17 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
     # end def __init__
 
     def create_object (self, form) :
-        self.form.create_object (form)
+        if self.needs_processing :
+            self.form.create_object (form)
         ec = self.form.error_count
         if not ec :
-            ### the instance has been created/updaed successfully -> update
+            ### the instance has been created/updated successfully -> update
             ### the raw_attr_dict of the parent
             form.raw_attr_dict [self.name] = self.form.get_object_raw (form)
         if ec or not self.form.instance :
-            ### an error was detected or the instance has not been created ->
-            ### delete the values for this attribute from parent's raw_attr_dict
+            ### an error was detected or the instance has not been
+            ### created -> delete the values for this attribute from
+            ### parent's raw_attr_dict
             form.raw_attr_dict.pop (self.name, None)
         form.inline_errors += ec
     # end def create_object
@@ -98,7 +100,8 @@ class An_Attribute_Inline (_Attribute_Inline_) :
     """Inline of an An_Entity."""
 
 
-    Form_Class = GTW.Form.MOM.An_Attribute_Inline_Instance
+    Form_Class       = GTW.Form.MOM.An_Attribute_Inline_Instance
+    needs_processing = True
 
 # end class An_Attribute_Inline
 
@@ -106,6 +109,26 @@ class Id_Attribute_Inline (_Attribute_Inline_) :
     """Inline for a ID_Entity."""
 
     Form_Class = GTW.Form.MOM.Id_Attribute_Inline_Instance
+
+    @TFL.Meta.Once_Property
+    def needs_processing (self) :
+        state = self.form.state
+        if state == "U" :
+            ### this from handles an instance which should be unlinked
+            ### because we handle an attribute inline we cannot destroy the
+            ### object but just unlink it from the many object
+            self.form.instance = None
+            return False
+        if state == "L" :
+            ### the client side provided information which object should be
+            ### linked -> let's get this object by it's lid and set it in the
+            ### form
+            et_man             = self.form.et_man
+            pid                = et_man.pid_from_lid  (self.form.lid)
+            self.form.instance = et_man.pid_query     (pid)
+            return False
+        return True
+    # end def needs_processing
 
 # end class Id_Attribute_Inline
 

@@ -161,13 +161,14 @@ class An_Attribute_Inline_Instance (_Inline_Instance_) :
 class Id_Attribute_Inline_Instance (_Inline_Instance_) :
     """A form which handles an attribute of an Id_Entity as a seperate form."""
 
-    def _create_instance (self, instance, state, raw_attrs) :
+    def _create_instance (self, on_error) :
+        instance = self.instance
         if not instance :
-            cooked_attrs = self.et_man._etype.cooked_attrs (raw_attrs)
+            cooked_attrs = self.et_man._etype.cooked_attrs (self.raw_attr_dict)
             instance     = self.et_man.query (** cooked_attrs).first ()
             if instance :
                 return instance
-        return self.__super._create_instance (instance, state, raw_attrs)
+        return self.__super._create_instance (on_error)
     # end def _create_instance
 
 # end class Id_Attribute_Inline_Instance
@@ -184,7 +185,7 @@ class Link_Inline_Instance (_Inline_Instance_) :
         return self.parent.Instances.instance_for_lid (self.lid)
     # end def instance
 
-    def __call__ (self, request_data) :
+    def __call1__ (self, request_data) :
         self.request_data = request_data
         if not self._prepare_form () :
             ### this form does not need any further processing

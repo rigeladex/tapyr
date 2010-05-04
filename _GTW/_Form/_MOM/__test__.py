@@ -128,6 +128,7 @@ pass along the request_data
     >>> request_data = dict ()
     >>> form (request_data)
     0
+    >>> dump_form_errors (form)
 
 Since we did not pass any request data the process does not report any error
 but will not create any instance as well:
@@ -153,6 +154,7 @@ Ah, so we need a first name as well.
     >>> request_data ["Person__first_name"] = "First name"
     >>> form (request_data)
     0
+    >>> dump_form_errors (form)
     >>> form.instance
     GTW.OMP.PAP.Person (u'last name', u'first name', u'', u'')
 
@@ -172,6 +174,7 @@ created to the new form instance.
     >>> request_data ["Person__first_name"] = "New first name"
     >>> form (request_data)
     0
+    >>> dump_form_errors (form)
     >>> form.instance
     GTW.OMP.PAP.Person (u'last name', u'new first name', u'', u'')
 
@@ -206,28 +209,34 @@ the fields of the inline from;
     >>> form = form_cls ("/post-url/", form.instance)
     >>> form (request_data)
     0
+    >>> dump_form_errors (form)
     >>> form.instance
     GTW.OMP.PAP.Person (u'last name', u'new first name', u'', u'')
     >>> form.instance.lifetime
     MOM.Date_Interval (start = 1976/03/16)
     >>> dump_instance (form.instance)
-    last_name            = 'Last name'
-    first_name           = 'New first name'
-    middle_name          = ''
-    title                = ''
-    lifetime             = (('start', '1976/03/16'),)
+    last_name            = u'last name'
+    first_name           = u'new first name'
+    middle_name          = u''
+    title                = u''
+    lifetime:
+      start              = datetime.date(1976, 3, 16)
+      finish             = None
 
 Now, let's try to change the value of a composite:
     >>> request_data ["Person__lifetime__finish"] = "16.03.2142"
     >>> form = form_cls ("/post-url/", form.instance)
     >>> form (request_data)
     0
+    >>> dump_form_errors (form)
     >>> dump_instance (form.instance)
-    last_name            = 'Last name'
-    first_name           = 'New first name'
-    middle_name          = ''
-    title                = ''
-    lifetime             = (('finish', '2142/03/16'), ('start', '1976/03/16'))
+    last_name            = u'last name'
+    first_name           = u'new first name'
+    middle_name          = u''
+    title                = u''
+    lifetime:
+      start              = datetime.date(1976, 3, 16)
+      finish             = datetime.date(2142, 3, 16)
 
 Up the now, we have always changed an existing object. Now, Lets check if we
 can rename an existing object as well:
@@ -238,12 +247,15 @@ can rename an existing object as well:
     >>> form = form_cls ("/post-url/", form.instance)
     >>> form (request_data)
     0
+    >>> dump_form_errors (form)
     >>> dump_instance (form.instance)
-    last_name            = 'Test'
-    first_name           = 'New first name'
-    middle_name          = ''
-    title                = ''
-    lifetime             = (('finish', '2142/03/16'), ('start', '1976/03/16'))
+    last_name            = u'test'
+    first_name           = u'new first name'
+    middle_name          = u''
+    title                = u''
+    lifetime:
+      start              = datetime.date(1976, 3, 16)
+      finish             = datetime.date(2142, 3, 16)
     >>> scope.PAP.Person.count
     1
     >>> saved_instance = form.instance
@@ -276,7 +288,8 @@ OK, let's see how an error in a composite is handled:
 _link_test = """
     >>> scope = MOM.Scope.new (apt, None)
     >>> EVT   = scope.EVT
-    >>> page  = scope.SWP.Page ("test_page", text = "Test page")
+    >>> SWP   = scope.SWP
+    >>> page  = SWP.Page ("test_page", text = "Test page")
 
 Up to now we have not touch links in any way. Let's change that. For a start
 we use the *Link1* *Event*:
@@ -303,8 +316,157 @@ the *composite* type we have already seen in the person example.
 But the *left* is a different animal. It's the role of a link, also handled
 by an inline. The difference now is that this inline does handle a
 *Id_Entity* instead of an *An_Entity*.
-So, let's try to create a new *Event*
+So, let's try to create a new *Event*. First, we need to know which **keys**
+we would need for the *left* part:
+    >>> ilf = form.inline_fields [0].form
+    >>> ilf.prefix
+    'Event__left'
 
+So *Event__left* is the prefix. Ok, so let's try to create an *Event*:
+    >>> form     = form_cls ("/post/")
+    >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
+    >>> request_data ["Event__left__perma_name"] = "Permaname"
+    >>> request_data ["Event__left__text"]       = "Text"
+    >>> form (request_data)
+    0
+    >>> dump_form_errors (form)
+    >>> dump_instance (form.instance)
+    left:
+      perma_name         = u'Permaname'
+      text               = u'Text'
+      creator            = None
+      date:
+        start            = datetime.date(2010, 4, 17)
+        finish           = None
+      format             = <class '_GTW._OMP._SWP.Format.ReST'>
+      head_line          = u''
+      prio               = 0
+      short_title        = u''
+      title              = u''
+    date                 = None
+    time                 = None
+    detail               = u''
+    recurrence:
+      period             = 1
+      unit               = 2
+      week_day           = None
+      count              = None
+      restrict_pos       = None
+      month_day          = None
+      month              = None
+      week               = None
+      year_day           = None
+      easter_offset      = None
+    short_title          = u''
+    >>> EVT.Event.count, SWP.Page.count
+    (1, 2)
+
+Up to now we have not touch links in any way. Let's change that. For a start
+we use the *Link1* *Event*:
+
+    >>> form_cls = GTW.Form.MOM.Instance.New (EVT.Event)
+
+Ok, so we have create a new event together with a new page object in one
+step. But how would be reuse an existing page to create a new page. That the
+reason the **_lid_a_state_** field exists (we saw this field already for the
+composite inlines but had no real use for them there). So, if we what to
+reuse an existing page for a new event we just specify the **_lid_a_state_**
+to reference the page we what:
+    >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
+    >>> request_data ["Event__left___lid_a_state_"] = "1:L"
+    >>> form     = form_cls ("/post/")
+    >>> form (request_data)
+    0
+    >>> dump_form_errors (form)
+    >>> dump_instance (form.instance)
+    left:
+      perma_name         = u'test_page'
+      text               = u'Test page'
+      creator            = None
+      date:
+        start            = datetime.date(2010, 4, 17)
+        finish           = None
+      format             = <class '_GTW._OMP._SWP.Format.ReST'>
+      head_line          = u''
+      prio               = 0
+      short_title        = u''
+      title              = u''
+    date                 = None
+    time                 = None
+    detail               = u''
+    recurrence:
+      period             = 1
+      unit               = 2
+      week_day           = None
+      count              = None
+      restrict_pos       = None
+      month_day          = None
+      month              = None
+      week               = None
+      year_day           = None
+      easter_offset      = None
+    short_title          = u''
+    >>> EVT.Event.count, SWP.Page.count
+    (2, 2)
+
+But what if we don't have a smart client that know's how to handle the
+**_lid_a_state_** field:
+
+    >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
+    >>> request_data ["Event__left__perma_name"] = "Permaname"
+    >>> request_data ["Event__left__text"]       = "Text"
+    >>> request_data ["Event__date__start"]      = "1.1.2010"
+    >>> form     = form_cls ("/post/")
+    >>> form (request_data)
+    0
+    >>> dump_form_errors (form)
+    >>> dump_instance (form.instance)
+    left:
+      perma_name         = u'Permaname'
+      text               = u'Text'
+      creator            = None
+      date:
+        start            = datetime.date(2010, 4, 17)
+        finish           = None
+      format             = <class '_GTW._OMP._SWP.Format.ReST'>
+      head_line          = u''
+      prio               = 0
+      short_title        = u''
+      title              = u''
+    date:
+      start              = datetime.date(2010, 1, 1)
+      finish             = None
+    time                 = None
+    detail               = u''
+    recurrence:
+      period             = 1
+      unit               = 2
+      week_day           = None
+      count              = None
+      restrict_pos       = None
+      month_day          = None
+      month              = None
+      week               = None
+      year_day           = None
+      easter_offset      = None
+    short_title          = u''
+    >>> EVT.Event.count, SWP.Page.count
+    (3, 2)
+
+As we can see that form try to find the reference object by matching all the
+data provided by the client against the database to find the object. If it is
+found, this object will be used instead of creating a new object.
+
+Up to now we only showed how the good cases work, so let's  look at a bad
+case too. We try to generate the same event as before, which is not allowed:
+    >>> form     = form_cls ("/post/")
+    >>> form (request_data)
+    1
+    >>> dump_form_errors (form)
+    Non field errors:
+      new definition of ((u'Permaname', ), dict (start = '2010/01/01'), ) clashes with existing ((u'Permaname', ), dict (start = '2010/01/01'), )
+
+Now suprise here. The error is detected and reported correctly.
 """
 
 """
@@ -462,7 +624,10 @@ Person_has_Address-M0
 (1, 1, 0)
 """
 
-__test__ = dict (link = _link_test)
+__test__ = dict \
+    ( link   = _link_test
+#    , object = _obect_test
+    )
 
 from   _MOM._EMS.Hash                           import Manager as EMS
 from   _MOM._DBW._HPS.Manager                   import Manager as DBW
@@ -570,9 +735,18 @@ class Non_Stringable (object) :
 
 # end class Non_Stringable
 
-def dump_instance (instance) :
-    for attr in itertools.chain (instance.primary, instance.user_attr) :
-        print "%-20s = %r" % (attr.name, attr.get_raw (instance))
+def dump_instance (instance, indent = "") :
+    if instance is None :
+        print "%sNone" % (indent, )
+    else :
+        name_len = 20 - len (indent)
+        for attr in itertools.chain (instance.primary, instance.user_attr) :
+            value = getattr (instance, attr.name)
+            if isinstance (value, MOM.Entity) :
+                print "%s%s:" % (indent, attr.name, )
+                dump_instance (value, indent + "  ")
+            else :
+                print "%s%-*s = %r" % (indent, name_len, attr.name, value)
 # end def dump_instance
 
 ### __END__ GTW.Form.MOM.__test__
