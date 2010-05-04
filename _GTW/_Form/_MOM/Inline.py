@@ -51,6 +51,8 @@
 #     6-Mar-2010 (MG) `Attribute_Inline` streamlined
 #    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
 #     3-May-2010 (MG) New form handling implemented
+#     4-May-2010 (CT) `Collection_Inline._linked_instances` changed to not
+#                     return `None`
 #    ««revision-date»»···
 #--
 
@@ -241,7 +243,8 @@ class Collection_Inline (Link_Inline) :
 
     @TFL.Meta.Once_Property
     def _linked_instances (self) :
-        return TFL.Q_Result (getattr (self.owner.instance, self.link_name))
+        return TFL.Q_Result \
+            (getattr (self.owner.instance, self.link_name) or ())
     # end def _linked_instances
 
     @TFL.Meta.Once_Property

@@ -50,6 +50,7 @@
 #    27-Mar-2010 (MG) `polymorphic_epk` added
 #    08-Apr-2010 (MG) Handling of `UniqueConstraint` changed
 #    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
+#     4-May-2010 (CT) `Type_Name_Type` based on `types.TypeDecorator`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,27 @@ if sqlalchemy.__version__.split (".") [1] < "6" :
     # end def inserted_primary_key
     ResultProxy.inserted_primary_key = inserted_primary_key
 
-Type_Name_Type = types.String (length = 30)
+class _Type_Name_Type_ (types.TypeDecorator) :
+    """Trick SQLalchemy into accepting `MOM.Meta.Type_Name_Type`."""
+
+    impl = types.String
+
+    def process_bind_param   (self, value, dialect) :
+        return str (value)
+    # end def process_bind_param
+
+    def process_result_value (self, value, dialect) :
+        if value :
+            return MOM.Meta.Type_Name_Type (value)
+    # end def process_result_value
+
+    def copy (self) :
+        return self.__class__ (self.impl.length)
+    # end def copy
+
+# end class _Type_Name_Type_
+
+Type_Name_Type = _Type_Name_Type_ (length = 60)
 
 class SAS_A_Object_Kind_Mixin (object) :
     """A mixin for special handling of A_Object attributes for this backend."""

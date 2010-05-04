@@ -28,7 +28,7 @@
 #
 # Revision Dates
 #    12-Feb-2010 (MG) Creation (based on SA.Filter)
-#     3-May-2010 (MG) Add support for joins for filering
+#     3-May-2010 (MG) Add support for joins for filtering
 #    ««revision-date»»···
 #--
 
