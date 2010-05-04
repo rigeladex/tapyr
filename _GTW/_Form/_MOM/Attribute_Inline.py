@@ -41,10 +41,11 @@ import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM.Inline_Instance
 
-class _Attribute_Inline_ (TFL.Meta.Object) :
+class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
     """The `field` instance for attribute inline editing."""
 
-    electric = False
+    electric   = False
+    _real_name = "_Attribute_Inline_"
 
     def __init__ (self, name, form_cls, inline_description, form = None) :
         self.name               = self.html_name = name
@@ -132,21 +133,23 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
             raise AttributeError (name)
     # end def __getattr__
 
-# end class _Attribute_Inline_
+_Attribute_Inline_ = _GTW_Attribute_Inline_# end class
 
-class An_Attribute_Inline (_Attribute_Inline_) :
+class GTW_An_Attribute_Inline (_Attribute_Inline_) :
     """Inline of an An_Entity."""
 
 
     Form_Class       = GTW.Form.MOM.An_Attribute_Inline_Instance
     needs_processing = True
+    _real_name       = "An_Attribute_Inline_Instance"
 
-# end class An_Attribute_Inline
+An_Attribute_Inline = GTW_An_Attribute_Inline # end class
 
-class Id_Attribute_Inline (_Attribute_Inline_) :
+class GTW_Id_Attribute_Inline (_Attribute_Inline_) :
     """Inline for a ID_Entity."""
 
     Form_Class = GTW.Form.MOM.Id_Attribute_Inline_Instance
+    _real_name = "Id_Attribute_Inline"
 
     @TFL.Meta.Once_Property
     def needs_processing (self) :
@@ -174,7 +177,7 @@ class Id_Attribute_Inline (_Attribute_Inline_) :
             self.form_cls.completer.attach (self.form_cls, self.link_name)
     # end def _setup_javascript
 
-# end class Id_Attribute_Inline
+Id_Attribute_Inline = GTW_Id_Attribute_Inline # end class
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*", "_Attribute_Inline_")

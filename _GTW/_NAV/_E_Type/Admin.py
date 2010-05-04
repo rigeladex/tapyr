@@ -117,17 +117,23 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             form = self.Form \
                 (self.abs_href, obj, cancel_href = self.parent.abs_href)
             if request.method == "POST" :
-                err_count = form (req_data)
-                if err_count == 0 :
-                    man = self.parent.manager
-                    if man :
-                        man._old_cid = -1
-                    tail = "#pk-%s" % (obj.lid) if obj else ""
-                    raise HTTP.Redirect_302 \
-                        ("%s%s" % (self.parent.abs_href, tail))
-                else :
-                    self._display_errors (form)
+                if req_data.get ("cancel") :
+                    ### the user has clicked on the cancel button and not on
+                    ### the submit button
                     self.top.scope.rollback ()
+                    raise HTTP.Redirect_302 (req_data ["form-cancel-href"])
+                else :
+                    err_count = form (req_data)
+                    if err_count == 0 :
+                        man = self.parent.manager
+                        if man :
+                            man._old_cid = -1
+                        tail = "#pk-%s" % (obj.lid) if obj else ""
+                        raise HTTP.Redirect_302 \
+                            ("%s%s" % (self.parent.abs_href, tail))
+                    else :
+                        self._display_errors (form)
+                        self.top.scope.rollback ()
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
             try :

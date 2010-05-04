@@ -32,6 +32,7 @@
 #    24-Mar-2010 (MG) Composite handling fixed
 #    27-Apr-2010 (MG) `SAS_EQ_Clause` method added to support named value
 #                     attributes
+#     3-May-2010 (MG) Support for joins for filter and order_by added
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,12 @@ class _MOM_Query_ (TFL.Meta.Object) :
         return (), (getattr (self, attr) == db, )
     # end def SAS_EQ_Clause
 
+    def __getattr__ (self, name) :
+        if name in self._query_fct :
+            return self._query_fct [name].query._sa_filter (self)
+        raise AttributeError (name)
+    # end def __getattr__
+
 # end class class _MOM_Query_
 
 class MOM_Query (_MOM_Query_) :
@@ -141,14 +148,9 @@ class MOM_Query (_MOM_Query_) :
             if query_fct :
                 self._query_fct [name] = kind.attr
             else :
-                setattr (self, name, kind.attr.query._sa_filter (self))
+                query = kind.attr.query._sa_filter (self)
+                setattr (self, name, query)
     # end def __init__
-
-    def __getattr__ (self, name) :
-        if name in self._query_fct :
-            return self._query_fct [name].query._sa_filter (self)
-        raise AttributeError (name)
-    # end def __getattr__
 
     def __getitem__ (self, name) :
         return getattr (self, name)
@@ -182,12 +184,6 @@ class MOM_Composite_Query (_MOM_Query_) :
                 else :
                     setattr (self, name, kind.attr.query._sa_filter (self))
     # end def __init__
-
-    def __getattr__ (self, name) :
-        if name in self._query_fct :
-            return self._query_fct [name].query._sa_filter (self)
-        raise AttributeError (name)
-    # end def __getattr__
 
     def __eq__ (self, rhs) :
         result = []

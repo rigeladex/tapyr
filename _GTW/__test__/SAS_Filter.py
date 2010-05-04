@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    30-Apr-2010 (MG) Creation
+#     3-May-2010 (MG) New test for query attributes added
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,12 @@ _link1_role = r"""
     >>> q = EVT.Event_occurs.query ().filter (event = e1)
     >>> for e in q.all () : print e ### filter 3
     (((u'event-1-text', ), dict (start = '2010/04/01'), dict ()), '2010/04/01', dict ())
+    >>> q = EVT.Event.query ().filter (Q.date.alive)
+    >>> for e in q.all () : print e ### filter 4
+    ((u'event-1-text', ), dict (start = '2010/04/01'), dict ())
+    ((u'event-2-text', ), dict (start = '2010/03/01'), dict ())
+    ((u'event-3-text', ), dict (start = '2010/02/01'), dict ())
+    ((u'event-4-text', ), dict (start = '2010/01/01'), dict ())
 """
 
 if 1 :

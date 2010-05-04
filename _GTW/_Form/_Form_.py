@@ -63,6 +63,8 @@ GTW.Form.Widget_Spec.fg_tr_body       = "html/form.jnj, fg_tr_body"
 GTW.Form.Widget_Spec.th_onion         = "html/form.jnj, th_onion"
 GTW.Form.Widget_Spec.td_onion         = "html/form.jnj, td_onion"
 
+GTW.Form.Widget_Spec.field_seq        = "html/form.jnj, field_seq"
+
 class Hidden_Fields_List (object) :
     """A kind of list which handles the hidden fields of a form instance to
        support exactly one iteration over the fields

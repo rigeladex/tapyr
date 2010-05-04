@@ -49,7 +49,7 @@
   {%- do kw.pop ("caller", "") -%}
   {%- for a5 in attr5 %}{%- do kw.pop (a5, "") -%}{% endfor -%}
   <input type="{{ typ }}" class="{{ cls }} {{ kw.pop ('class', '') }}"{{ kw|xmlattr }}{{ kwargs|xmlattr }}/>
-{%- endmacro -%} {#- text -#}
+{%- endmacro -%} {#- _input -#}
 
 {%- macro checkbox () -%}
   {{ _input ("checkbox", "checkbox", kwargs) }}

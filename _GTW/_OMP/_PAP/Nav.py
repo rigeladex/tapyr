@@ -36,6 +36,7 @@
 #                     composite attribute
 #    27-Feb-2010 (MG) Additional completers added
 #    30-Apr-2010 (MG) Adapted to new form's
+#     2-May-2010 (MG) Simplified
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ class Admin (object) :
             ( "city", ("city", "country", "region")
             , min_chars = 2
             )
-        , name      = "Address_Completer"
+        , name      = "GTW.OMP.PAP.Address"
         )
 
     email_completer = GTW.Form.MOM.Javascript.Completer \
@@ -88,7 +89,7 @@ class Admin (object) :
     person_completer = GTW.Form.MOM.Javascript.Completer \
         ( fields    = ("last_name", "first_name", "middle_name", "title")
         , triggers  = dict (last_name = dict (min_chars = 2))
-        , name      = "Person_Completer"
+        , name      = "GTW.OMP.PAP.Person"
         )
 
     phone_completer = GTW.Form.MOM.Javascript.Completer \
@@ -98,7 +99,7 @@ class Admin (object) :
         )
 
     def Person_has_LID (link_type_name) :
-        person_completer = GTW.Form.Javascript._Completer_.Person_Completer
+        person_completer = GTW.Form.Javascript._Completer_ ["GTW.OMP.PAP.Person"]
         return LID \
             ( link_type_name
             , FGD ( "desc", "person")
@@ -112,16 +113,10 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Address"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ( primary
-                  , "desc"
-                  , AID ( "position"
-                        , FGD
-                            ( "lon", "lat", "height"
-                            , widget = "html/form.jnj, fg_as_table"
-                            )
-                        , legend = _("Position")
-                        )
-                 )
+            ( FGD ( primary, "desc", "position"
+                  , field_attrs = dict
+                      (position = dict (widget = "html/form.jnj, fg_as_table"))
+                  )
             , Person_has_LID ("PAP.Person_has_Address")
             )
         , list_display   = ("zip", "city", "street", "desc")
@@ -132,8 +127,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Email"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (primary)
-            , FGD ()
+            ( FGD ()
             , Person_has_LID ("PAP.Person_has_Email")
             )
         , list_display = ("ui_display", "desc")
@@ -152,11 +146,9 @@ class Admin (object) :
                 , widget    = "html/form.jnj, fg_as_table"
                 )
             , FGD
-                ( AID ( "lifetime"
-                      , FGD (widget    = "html/form.jnj, fg_as_table")
-                      , legend    = _("Lifetime")
-                      )
-                ,
+                ( "lifetime"
+                , field_attrs = dict
+                      (lifetime = dict (widget = "html/form.jnj, fg_as_table"))
                 )
             , LID
                 ( "PAP.Person_has_Phone"

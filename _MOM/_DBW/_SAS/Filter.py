@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    12-Feb-2010 (MG) Creation (based on SA.Filter)
+#     3-May-2010 (MG) Add support for joins for filering
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,10 @@ def _sa_filter (self, SAQ) :
     _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr, None)
     if _sa_filter :
         return _sa_filter (self.name)
-    return (), (SAS_Attr_Map.get (self.name, self.getter) (SAQ), )
+    result = SAS_Attr_Map.get (self.name, self.getter) (SAQ)
+    if isinstance (result, (list, tuple)) :
+        return result
+    return (), (result, )
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
@@ -67,9 +71,9 @@ def _sa_filter (self, SAQ) :
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query.Call)
 def _sa_filter (self, SAQ) :
-    lhs = self.lhs._sa_filter (SAQ)
-    op  = self.op.__name__.lower ()
-    return (), (getattr (lhs, op) (* self.args), )
+    joins, clause = self.lhs._sa_filter (SAQ)
+    op            = self.op.__name__.lower ()
+    return joins, (getattr (clause [0], op) (* self.args), )
 # end def _sa_filter
 
 TFL._Filter_Q_.predicate_precious_p = True
@@ -79,7 +83,13 @@ def _sa_filter (self, SAQ) :
         ( expression
         , "%s_" % (self.__class__.__name__.rsplit ("_",1) [-1].lower (), )
         )
-    return (), (sa_exp (* (p._sa_filter (SAQ) for p in self.predicates)), )
+    joins  = set ()
+    clause = []
+    for p in self.predicates :
+            ajoins, afilter = p._sa_filter (SAQ)
+            joins.update   (ajoins)
+            clause.extend  (afilter)
+    return joins, (sa_exp (* clause), )
 # end def _sa_filter
 
 ### __END__ MOM.DBW.SAS.Filter

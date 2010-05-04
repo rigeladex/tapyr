@@ -44,6 +44,7 @@ class Widget_Spec (TFL.Meta.Object) :
     """
 
     default = None
+    Media   = None
 
     def __init__ (self, default, ** kw) :
         if isinstance (default, self.__class__) :
@@ -51,7 +52,7 @@ class Widget_Spec (TFL.Meta.Object) :
         else :
             assert default and isinstance (default, basestring)
             self.default = default
-        self.Media   = kw.pop ("Media", None)
+        self.Media   = kw.pop ("Media", self.Media)
         self.__dict__.update (kw)
     # end def __init__
 

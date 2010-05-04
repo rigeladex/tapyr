@@ -29,6 +29,7 @@
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based on SA.Q_Result)
 #    27-Apr-2010 (MG) `filter`: user new `SAS_EQ_Clause` method of SAQ
+#     3-May-2010 (MG) Support for joins for filter and order_by added
 #    ««revision-date»»···
 #--
 

@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    15-Mar-2010 (CT) Creation
+#    30-Apr-2010 (MG) Adapted to new form's
+#     2-May-2010 (MG) Simplified
 #    ««revision-date»»···
 #--
 
@@ -58,28 +60,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.EVT.Event"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD
-                ( AID
-                    ( "object"
-                    , FGD (primary, widget = "html/form.jnj, fg_as_table")
-                    )
-                , AID
-                    ( "date"
-                    , FGD (widget = "html/form.jnj, fg_as_table")
-                    , legend =
-                        _("Start (and optionally [for recurring events] finish) date")
-                    )
-                , AID
-                    ( "time"
-                    , FGD (widget = "html/form.jnj, fg_as_table")
-                    , legend = _("Start and finish time")
-                    )
-                , "detail"
-                , AID
-                    ( "recurrence"
-                    , legend = _("Recurrence rule")
-                    )
-               )
+            ( FGD ("object", "date", "time", "detail", "recurrence")
             ,
             )
         )
@@ -89,23 +70,9 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
-                ( AID
-                    ( "event"
-                    , FGD
-                        ( AID
-                            ( "object"
-                            , FGD ( primary
-                                  , widget = "html/form.jnj, fg_as_table"
-                                  )
-                            )
-                        )
-                   )
+                ( AID ("event", FGD ("object"))
                 , "date"
-                , AID
-                    ( "time"
-                    , FGD (widget = "html/form.jnj, fg_as_table")
-                    , legend = _("Start and finish time")
-                    )
+                , "time"
                 )
             ,
             )

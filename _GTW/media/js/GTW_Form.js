@@ -386,7 +386,7 @@
             {
                 var options = $.extend ({field : field}, completer);
                 $root.find
-                    ( prefix + "[name$=" + middle + field + "]:visible"
+                    ( prefix + "[name$=" + middle + field + "]"
                     ).MOM_Auto_Complete (options);
             }
         }

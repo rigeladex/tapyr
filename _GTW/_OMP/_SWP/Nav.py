@@ -152,9 +152,8 @@ class Admin (object) :
                 ( "GTW.OMP.EVT.Event"
                 , FGD
                     ( AID ( "date"
-                          , widget = WS
-                              ( AID.widget
-                              , inline_table_th =
+                          , widget = dict
+                              ( inline_table_th =
                                   "html/form.jnj, inline_table_aid_sep_th"
                               , inline_table_td =
                                   "html/form.jnj, inline_table_aid_sep_td"
@@ -163,9 +162,8 @@ class Admin (object) :
                           , title  = _("Date interval")
                           )
                     , AID ( "time"
-                          , widget = WS
-                              ( AID.widget
-                              , inline_table_th =
+                          , widget = dict
+                              ( inline_table_th =
                                   "html/form.jnj, inline_table_aid_sep_th"
                               , inline_table_td =
                                   "html/form.jnj, inline_table_aid_sep_td"
@@ -190,9 +188,8 @@ class Admin (object) :
                     #, widget = "html/form.jnj, fg_div_seq"
                     , AID
                         ( "date_x"
-                        , widget = WS
-                              ( AID.widget
-                              , inline_table_th =
+                        , widget = dict
+                              ( inline_table_th =
                                   "html/form.jnj, inline_table_aid_sep_th"
                               , inline_table_td =
                                   "html/form.jnj, inline_table_aid_sep_td"

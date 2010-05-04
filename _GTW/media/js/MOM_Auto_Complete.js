@@ -88,7 +88,6 @@
       , _update_values : function (item, no)
       {
         var options = this.options;
-        var id      = options.field_prefix + "-comp-list";
         var pf      = options.field_prefix;
         if (no) pf  = pf + "-M" + no;
         if (options.field_postfix)
@@ -98,19 +97,27 @@
             ( options.complete_url, {"lid" : item.lid}
             , function (data, textStatus)
               {
-                  $("#" + id).remove ();
                   if (textStatus == "success")
                   {
                       for (var key in data)
                       {
                           var $field = $("[name=" + pf + key + "]");
-                          var tag_name = $field [0].nodeName.toLowerCase ();
-                          if (tag_name == "input")
-                          {
-                              $field.attr ("value", data [key]);
-                          }
-                          $field.attr ("disabled", "disabled");
+                          if ($field.length)
+                            {
+                              var tag_name = $field [0].nodeName.toLowerCase ();
+                              if (tag_name == "input")
+                              {
+                                  $field.attr ("value", data [key]);
+                              }
+                              $field.attr ("disabled", "disabled");
+                            }
                       }
+                      observers = $field.parents (".inline-instance")
+                           .data ("ac_observers") || [];
+                      for (var i = 0; i < observers.length; i++)
+                        {
+                          observers [i] (data);
+                        }
                   }
               }
             );

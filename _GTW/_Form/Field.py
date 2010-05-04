@@ -41,7 +41,7 @@ from   _TFL.I18N          import _T
 class _Field_ (TFL.Meta.Object) :
     """Base class for form fields."""
 
-    electric = False
+    electric  = False
 
     def __init__ (self, name, default = u"") :
         self.name      = name

@@ -61,6 +61,7 @@ from   _GTW._Form._MOM.Inline_Description   import \
 
 import _GTW._Form._MOM
 from   _GTW._Form._MOM.Field                import Field
+from   _TFL.I18N                            import _T
 
 import  itertools
 
@@ -141,7 +142,17 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         )
 
     def _field_instance (self, et_man, field, parent) :
-        field_kw = parent.field_attrs.get (str (field), {})
+        field_attrs = getattr (self, "field_attrs", parent.field_attrs)
+        field_kw    = field_attrs.get (str (field), {})
+        if not field_kw :
+            kind      = getattr (et_man,    str (field))
+            role_name = getattr (kind.attr, "role_name", None)
+            if role_name :
+                if str (field) != role_name :
+                    fname = role_name
+                else :
+                    fname = kind.attr.name
+                field_kw  = field_attrs.get (fname, {})
         if isinstance (field, basestring) :
             attr_kind = getattr (et_man, field, field)
             if isinstance ( attr_kind
@@ -149,28 +160,26 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                             , MOM.Attr._EPK_Mixin_
                             )
                           ) :
-                fgds = ()
+                attr_fields = field_kw.copy ()
+                field_kw.pop    ("completer", None)
+                attr_fields.pop ("widget",    None)
+                fields = ()
                 if isinstance (attr_kind, MOM.Attr._EPK_Mixin_) :
                     ### of this attribute inline reference an ID-Entity we
                     ### will only display the primary attributes.
                     ### If the user needs more she/he has to create the
                     ### attribute inline description manually
-                    fgds = \
-                        ( GTW.Form.MOM.Field_Group_Description
-                            (Wildcard_Field ("primary"))
-                        ,
-                        )
-                field = AID (field, * fgds, legend = attr_kind.ui_name)
+                    fields = (Wildcard_Field ("primary"), )
+                if "widget" not in field_kw :
+                    field_kw ["widget"] = "html/form.jnj, fg_as_table"
+                field = AID \
+                    ( field
+                    , GTW.Form.MOM.Field_Group_Description
+                            (* fields, ** field_kw)
+                    , legend = _T (attr_kind.ui_name)
+                    )
+                field_kw = attr_fields
         if isinstance (field, AID) :
-            if not field_kw :
-                kind = getattr (et_man, field.link_name)
-                role_name = getattr (kind.attr, "role_name", None)
-                if role_name :
-                    if field.link_name != role_name :
-                        fname = role_name
-                    else :
-                        fname = kind.attr.name
-                    field_kw  = parent.field_attrs.get (fname, {})
             return field.field (et_man, parent, ** field_kw)
         return GTW.Form.MOM.Field (et_man, field, ** field_kw)
     # end def _field_instance

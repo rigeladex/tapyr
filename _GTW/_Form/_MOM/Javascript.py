@@ -202,8 +202,9 @@ class Completer (_MOM_Completer_) :
 
     def _send_result (self, form_cls, handler, obj) :
         form = form_cls (obj)
-        return handler.json \
-            (dict ((f.name, form.get_raw (f)) for f in form.fields))
+        data = dict ((f.name, form.get_raw (f)) for f in form.fields)
+        data ["ui_display"] = getattr (form.instance, "ui_display", u"")
+        return handler.json (data)
     # end def _send_result
 
     @property

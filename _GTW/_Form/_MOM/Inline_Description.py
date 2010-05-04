@@ -70,9 +70,10 @@ import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM.Attribute_Inline
 import _GTW.jQuery
 
-class _Inline_Description_ (TFL.Meta.Object) :
+class _GTW_Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
 
+    PKNS         = GTW.Form.MOM
     completer    = None
     css_class    = "inline-editing"
 
@@ -80,10 +81,10 @@ class _Inline_Description_ (TFL.Meta.Object) :
         self.link_name = getattr (link_name, "type_name", link_name)
         self.field_group_descriptions = field_group_descriptions
         widget = kw.pop ("widget", None)
-        if widget and not isinstance (widget, GTW.Form.Widget_Spec) :
-            widget = GTW.Form.Widget_Spec (widget)
+        if widget and not isinstance (widget, dict) :
+            widget = dict (default = widget)
         if widget :
-            self.widget = widget
+            self.widget = GTW.Form.Widget_Spec (self.widget, ** widget)
         self.__dict__.update (kw)
     # end def __init__
 
@@ -100,11 +101,12 @@ class _Inline_Description_ (TFL.Meta.Object) :
           )
      )
 
-# end class _Inline_Description_
+_Inline_Description_ = _GTW_Inline_Description_ # end class
 
-class Attribute_Inline_Description (_Inline_Description_) :
+class GTW_Attribute_Inline_Description (_Inline_Description_) :
     """Edit an attribute which refers to an object inline."""
 
+    _real_name              = "Attribute_Inline_Description"
     css_class               = "inline-attribute"
     widget                  = GTW.Form.Widget_Spec \
         ( "html/form.jnj, aid_div_seq"
@@ -116,6 +118,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
     def field (self, et_man, parent, ** kw) :
         scope            = et_man.home_scope
         attr_kind        = getattr (et_man._etype, self.link_name)
+        self.ui_name     = attr_kind.ui_name
         if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
             obj_etype    = attr_kind.C_Type
             generic_name = self.link_name
@@ -123,9 +126,9 @@ class Attribute_Inline_Description (_Inline_Description_) :
             obj_etype    = attr_kind.Class
             generic_name = attr_kind.name
         obj_et_man       = getattr (scope, obj_etype.type_name)
-        cls              = GTW.Form.MOM.Id_Attribute_Inline
+        cls              = self.PKNS.Id_Attribute_Inline
         if isinstance (obj_et_man, MOM.E_Type_Manager.An_Entity) :
-            cls          = GTW.Form.MOM.An_Attribute_Inline
+            cls          = self.PKNS.An_Attribute_Inline
         form_cls      =  cls.Form_Class.New \
             ( obj_et_man
             , * self.field_group_descriptions
@@ -143,12 +146,13 @@ class Attribute_Inline_Description (_Inline_Description_) :
         return self.link_name
     # end def __str__
 
-# end class Attribute_Inline_Description
+Attribute_Inline_Description = GTW_Attribute_Inline_Description # end class
 
-class Link_Inline_Description (_Inline_Description_) :
+class GTW_Link_Inline_Description (_Inline_Description_) :
     """Edit a link inline in a form."""
 
-    widget = GTW.Form.Widget_Spec \
+    _real_name   = "Link_Inline_Description"
+    widget       = GTW.Form.Widget_Spec \
         ( "html/form.jnj, inlines_as_table"
         , Media             = _Inline_Description_.media
         )
@@ -183,10 +187,10 @@ class Link_Inline_Description (_Inline_Description_) :
                 , suffix          = et_man.type_base_name
                 , field_attrs     = self.field_attrs
                 )
-            return (GTW.Form.MOM.Link_Inline (self, inline_form), )
+            return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 
-# end class Link_Inline_Description
+Link_Inline_Description = GTW_Link_Inline_Description # end class
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")

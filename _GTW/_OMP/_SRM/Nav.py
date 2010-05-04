@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    19-Apr-2010 (CT) Creation
+#    30-Apr-2010 (MG) Adapted to new form's
+#     2-May-2010 (MG) Simplified
 #    ««revision-date»»···
 #--
 
@@ -98,22 +100,10 @@ class Admin (object) :
                     , completer = regatta_completer
                     )
                 , "perma_name", "desc"
-                , AID
-                    ( "date"
-                    , FGD (widget = "html/form.jnj, fg_as_table")
-                    , legend = _("Publication and expiration date")
-                    )
-                , AID
-                    ( "creator"
-                    , FGD
-                        ( primary
-                        , widget    = "html/form.jnj, fg_as_table"
-                        , css_class = "inline-instance"
-                        )
-                    # completer =  GTW.Form.MOM.Javascript.Completer ["Creator_Info"]
-                    , legend = _("Creator of the contents of the page")
-                    )
-                , "format", "text"
+                , "date"
+                , "creator"
+                , "format"
+                , "text"
                 )
             ,
             )
@@ -169,8 +159,7 @@ class Admin (object) :
         , sort_key  = TFL.Sorted_By ("date.start", "name")
         , Form_args =
             ( FGD
-                ( "name", "desc"
-                , AID ("date", FGD (widget = "html/form.jnj, fg_as_table"))
+                ( "name", "desc", "date"
                 , "short_title", "title", "ui_date", "year"
                 )
             ,

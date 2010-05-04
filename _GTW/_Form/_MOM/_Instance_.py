@@ -74,6 +74,7 @@
 #                     a dict filled with default values even if instance is
 #                     `None`
 #    11-Mar-2010 (MG) `_create_instance` filter empty raw_values
+#     3-May-2010 (MG) Use `e_type.ui_name` instance on `e_type.type_base_name`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
         et_man                   = dct.get ("et_man", None)
         field_group_descriptions = dct.pop ("field_group_descriptions", ())
         form_name                = dct.pop \
-            ("form_name", getattr (et_man, "type_base_name", None))
+            ("form_name", getattr (et_man, "ui_name", None))
         result = super (M_Instance, mcls).__new__ (mcls, name, bases, dct)
         if et_man :
             ### parent must be set during form class creation
@@ -160,7 +161,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
                         medias.append (media)
                     inline_form = getattr (fg, "form_cls", None)
                     if inline_form :
-                        sub_forms [inline_form.et_man.type_base_name] = \
+                        sub_forms [inline_form.et_man.ui_name] = \
                             inline_form
                     else :
                         for f in fg.fields :
@@ -223,7 +224,7 @@ class _Instance_ (GTW.Form._Form_) :
 
     def __init__ (self, instance = None, parent = None, prefix = None, ** kw) :
         if not prefix :
-            prefix                   = self.et_man.type_base_name
+            prefix                   = self.et_man.ui_name
         self.__super.__init__ (instance, prefix = prefix, ** kw)
         scope                        = self.et_man.home_scope
         self.parent                  = parent

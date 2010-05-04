@@ -37,6 +37,7 @@
 #                     cache)
 #    18-Dec-2009 (MG) `_sa_order_by` for `TFL.Q_Exp.*` added
 #    19-Mar-2010 (MG) `_sa_resolve_attribute` fixed
+#     3-May-2010 (MG) Support for joins for order_by added
 #    ««revision-date»»···
 #--
 

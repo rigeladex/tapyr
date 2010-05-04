@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    26-Feb-2010 (CT) Creation
+#    30-Apr-2010 (MG) Adapted to new form's
+#     2-May-2010 (MG) Simplified
 #    ««revision-date»»···
 #--
 
@@ -63,8 +65,7 @@ class Admin (object) :
         ( ETM        = "GTW.OMP.Auth.Account_P"
         , Type       = GTW.NAV.E_Type.Admin
         , Form_args  =
-            ( FGD (primary)
-            , FGD ()
+            ( FGD ()
             , LID
                 ( "GTW.OMP.Auth.Account_in_Group"
                 , FGD ("group")
@@ -80,10 +81,6 @@ class Admin (object) :
     Group            = dict \
         ( ETM        = "GTW.OMP.Auth.Group"
         , Type       = GTW.NAV.E_Type.Admin
-        , Form_args  =
-            ( FGD (primary)
-            , FGD ()
-            )
         , permission = Is_Superuser ()
         )
 
