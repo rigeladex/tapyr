@@ -573,9 +573,9 @@ So let's create request_data dict.
       region             = u''
       desc               = u''
       position:
-        height           = None
         lat              = None
         lon              = None
+        height           = None
     desc                 = u''
 
 That was easy.... So let's try to change the position of the newly created
@@ -602,9 +602,9 @@ address using the link and not the address isself.
       region             = u''
       desc               = u''
       position:
-        height           = 100.0
         lat              = None
         lon              = None
+        height           = 100.0
     desc                 = u''
 """
 """
@@ -707,9 +707,9 @@ person.
     region               = u''
     desc                 = u''
     position:
-      height             = None
       lat                = None
       lon                = None
+      height             = None
 
 Ok, so with one form we created a person, an address and a link between the
 person and the address.
@@ -762,9 +762,9 @@ So, let's try to link to this object again:
     region               = u''
     desc                 = u''
     position:
-      height             = None
       lat                = None
       lon                = None
+      height             = None
 
     >>> PAP.Person_has_Address.query ().first ().lid
     '4'
@@ -839,9 +839,9 @@ existing address object?
     region               = u''
     desc                 = u''
     position:
-      height             = None
       lat                = None
       lon                = None
+      height             = None
 """
 """
 
