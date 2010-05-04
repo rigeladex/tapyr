@@ -162,6 +162,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     if completer.suggestions \
                            (form_cls, handler, request.req_data) :
                         return True ### prevent an 404 Error if we return None
+                if __debug__ :
+                    print "No completer found"
             raise self.top.HTTP.Error_404 (request.path)
         # end def rendered
 

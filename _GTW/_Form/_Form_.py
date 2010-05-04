@@ -105,20 +105,13 @@ class M_Form (TFL.Meta.Object.__class__) :
         return result
     # end def _setup_fields
 
-    ### XXX Why do we need thus?
-    ### XXX if we need this -> find a better name for it
-    @TFL.Meta.Once_Property
-    def _XXX_Form (cls) :
-        return getattr (cls.parent, "Form", cls)
-    # end def Form
-
     def form_and_completer (cls, path) :
         ### Return the form class and the complter object for the `path`
         ### where path is a list of names specifing the way done from the top
         ### level form to the completer
         form_cls  = cls
         completer = None
-        path      = list (path)
+        path      = path [0].split ("__")
         while path :
             if path [0] in form_cls.sub_forms :
                 form_cls = form_cls.sub_forms [path.pop (0)]

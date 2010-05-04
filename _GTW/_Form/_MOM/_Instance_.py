@@ -120,6 +120,8 @@ class Instance_State_Field (GTW.Form.Field) :
 class M_Instance (GTW.Form._Form_.__class__) :
     """Meta class for MOM object forms"""
 
+    field_attrs = dict ()
+
     def __new__ (mcls, name, bases, dct) :
         et_man                   = dct.get ("et_man", None)
         field_group_descriptions = dct.pop ("field_group_descriptions", ())
@@ -129,8 +131,10 @@ class M_Instance (GTW.Form._Form_.__class__) :
         if et_man :
             ### parent must be set during form class creation
             parent               = result.parent
+            if parent :
+                form_name        = "__".join ((parent.form_name, form_name))
+            result.form_name     = form_name
             result.sub_forms     = sub_forms = {}
-            completers           = []
             field_groups         = []
             medias               = []
             added_fields         = set (result.ignore_fields)
@@ -151,10 +155,6 @@ class M_Instance (GTW.Form._Form_.__class__) :
                       ]
                 field_groups.extend (fgs)
                 for fg in fgs :
-                    completer = getattr (fg, "completer", None)
-                    if completer :
-                        completers.append (completer)
-                        completer.attach  (result)
                     media = fg.Media
                     if media :
                         medias.append (media)
@@ -162,6 +162,11 @@ class M_Instance (GTW.Form._Form_.__class__) :
                     if inline_form :
                         sub_forms [inline_form.et_man.type_base_name] = \
                             inline_form
+                    else :
+                        for f in fg.fields :
+                            inline_form = getattr (f, "form_cls", None)
+                            if inline_form :
+                                sub_forms [f.link_name] = inline_form
             result.add_internal_fields (et_man)
             js_on_ready          = ()
             if not parent :
@@ -170,9 +175,6 @@ class M_Instance (GTW.Form._Form_.__class__) :
                 (medias, js_on_ready = js_on_ready)
             result.field_groups  = field_groups
             result.fields        = result._setup_fields (field_groups)
-            if completers :
-                result.completer = GTW.Form.Javascript.Multi_Completer \
-                    (** dict ((c.trigger, c) for c in completers))
         return result
     # end def __new__
 

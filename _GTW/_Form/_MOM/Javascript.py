@@ -115,8 +115,13 @@ class Field_Completer (_MOM_Completer_) :
             )
     # end def _send_suggestions
 
-    def js_on_ready (self, form) :
-        parts        = form.form_path.split ("/", 1)
+    def js_on_ready (self, form, role_name) :
+        form_name    = prefix = form.form_name
+        postfix      = ""
+        if form_name.endswith (role_name) :
+            prefix   = form_name [: -len(role_name) - 2]
+            postfix  = role_name
+        parts        = form_name.split ("__", 1)
         if len (parts) == 2 :
             bname, fname = parts [0], "/" + parts [1]
         else :
@@ -125,12 +130,13 @@ class Field_Completer (_MOM_Completer_) :
             % (self.prefix, bname, fname, self.trigger)
         result = \
             ( dict
-                ( field_prefix = form.prefix
-                , triggers     =
+                ( field_prefix  = prefix
+                , field_postfix = postfix
+                , triggers      =
                     {self.trigger : dict (self.options, fields = self.fields)}
-                , type         = self.__class__.__name__
-                , suggest_url  = url_format % ("complete", )
-                , complete_url = url_format % ("completed", )
+                , type          = self.__class__.__name__
+                , suggest_url   = url_format % ("complete", )
+                , complete_url  = url_format % ("completed", )
                 )
             ,
             )
@@ -161,16 +167,22 @@ class Completer (_MOM_Completer_) :
         self.options   = dict (self.options, ** kw)
     # end def __init__
 
-    def js_on_ready (self, form) :
-        bname, fname = form.form_path.split ("/", 1)
+    def js_on_ready (self, form, role_name) :
+        form_name    = prefix = form.form_name
+        postfix      = ""
+        bname, fname = form_name.split ("__", 1)
         url_format   = "%s/%s/%%s/%s"  % (self.options ["prefix"], bname, fname)
+        if form_name.endswith (role_name) :
+            prefix   = form_name [: -len(role_name) - 2]
+            postfix  = role_name
         return \
             ( dict
-                ( field_prefix = form.prefix
-                , triggers     = self.triggers
-                , type         = self.__class__.__name__
-                , suggest_url  = url_format % ("complete", )
-                , complete_url = url_format % ("completed", )
+                ( field_prefix  = prefix
+                , field_postfix = postfix
+                , triggers      = self.triggers
+                , type          = self.__class__.__name__
+                , suggest_url   = url_format % ("complete", )
+                , complete_url  = url_format % ("completed", )
                 )
             ,
             )

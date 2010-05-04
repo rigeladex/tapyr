@@ -58,6 +58,35 @@ from   _GTW._Form._MOM.Inline_Description      import \
     ( Link_Inline_Description      as LID
     , Attribute_Inline_Description as AID
     )
+import _GTW._Form._MOM.Javascript
+
+address_completer = GTW.Form.Javascript.Multi_Completer \
+    ( GTW.Form.MOM.Javascript.Completer
+        ( fields    = ("street", "city", "zip", "country")
+        , triggers  = dict (street = dict (min_chars = 3))
+        )
+    , zip       = GTW.Form.MOM.Javascript.Field_Completer
+        ( "zip", ("zip", "city", "country", "region")
+        , min_chars = 1
+        )
+    , city      = GTW.Form.MOM.Javascript.Field_Completer
+        ( "city", ("city", "country", "region")
+        , min_chars = 2
+        )
+    , name      = "Test_Address_Completer"
+    )
+
+Person_Form_Args = \
+    ( FGD ()
+    , LID ( "PAP.Person_has_Address"
+          , legend = "Addresses"
+          , field_attrs   = dict
+              (address  = dict (completer = address_completer))
+          )
+    , LID ( "PAP.Person_has_Phone"
+          , legend = "Addresses"
+          )
+   )
 
 def create_nav (scope) :
     home_url_root = "http://localhost:9042"
@@ -65,7 +94,7 @@ def create_nav (scope) :
     GTW.NAV.scope = scope
     result        = GTW.NAV.Root \
         ( anonymous       = scope and scope.Auth.Account_Anonymous.singleton
-        , encoding        = "latin1"
+        , encoding        = "ISO-8859-1"
         , src_dir         = "."
         , site_url        = home_url_root
         , site_prefix     = site_prefix
@@ -107,14 +136,7 @@ def create_nav (scope) :
               , etypes          =
                   [ dict ( ETM       = "GTW.OMP.PAP.Person"
                          , Type      = GTW.NAV.E_Type.Admin
-                         , Form_args = ( FGD ()
-                                       , LID ( "PAP.Person_has_Address"
-                                             , legend = "Addresses"
-                                             )
-                                       , LID ( "PAP.Person_has_Phone"
-                                             , legend = "Addresses"
-                                             )
-                                       )
+                         , Form_args = Person_Form_Args
                          )
                   , dict ( ETM       = "GTW.OMP.PAP.Address"
                          , Type      = GTW.NAV.E_Type.Admin
@@ -179,7 +201,14 @@ def _main () :
         , Session_Class  = GTW.File_Session
         , session_id     = "SESSION_ID"
         , static_handler = media_handler (NAV)
+        , encoding       = NAV.encoding
         )
+    ### XXX remove me
+    PAP = scope.PAP
+    p = scope.PAP.Person (u"Glück", u"Martin", raw = True)
+    a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg",
+                          u"Austria", raw = True)
+    scope.PAP.Person_has_Address (p, a)
     app.run_development_server \
         (port = 9042, use_debugger = True, use_reloader = True)
 # end def _main

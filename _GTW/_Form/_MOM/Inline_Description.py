@@ -29,7 +29,7 @@
 #    19-Jan-2010 (MG) Creation
 #     2-Feb-2010 (MG) Default widget media definition added
 #                     Once property `Media` added
-#    02-Feb-2010 (MG) Location of JS and CSS files changed
+#     2-Feb-2010 (MG) Location of JS and CSS files changed
 #     3-Feb-2010 (MG) `Media` property moved into `Inline`
 #     3-Feb-2010 (MG) Made `own_role_name`  optional
 #     3-Feb-2010 (MG) Set `parent_et_man` in inline form classes
@@ -80,7 +80,7 @@ class _Inline_Description_ (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
-    Media           = GTW.Media \
+    media           = GTW.Media \
       ( css_links   =
           ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css")
           , GTW.CSS_Link ("/media/GTW/css/inline_forms.css")
@@ -106,7 +106,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
         ( "html/form.jnj, aid_div_seq"
         , th_onion          = "html/form.jnj, th_onion_aid"
         , td_onion          = "html/form.jnj, td_onion_aid"
-        , Media             = _Inline_Description_.Media
+        , Media             = _Inline_Description_.media
         )
 
     def field (self, et_man, parent, ** kw) :
@@ -123,7 +123,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
         form_cls      = cls.Form_Class.New \
             ( obj_et_man
             , * self.field_group_descriptions
-            , completer     = self.completer
+            , completer     = kw.pop ("completer", self.completer)
             , form_name     = self.link_name
             , parent        = parent
             , is_link_role  = issubclass (et_man._etype, MOM.Link)
@@ -143,7 +143,7 @@ class Link_Inline_Description (_Inline_Description_) :
 
     widget = GTW.Form.Widget_Spec \
         ( "html/form.jnj, inlines_as_table"
-        , Media             = _Inline_Description_.Media
+        , Media             = _Inline_Description_.media
         )
     css_class    = "inline-link"
 
@@ -152,6 +152,8 @@ class Link_Inline_Description (_Inline_Description_) :
     min_count    = 1
     min_empty    = 0
     min_required = 0
+
+    field_attrs  = dict ()
 
 
     def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
@@ -172,6 +174,7 @@ class Link_Inline_Description (_Inline_Description_) :
                 , completer       = self.completer
                 , parent          = parent
                 , suffix          = et_man.type_base_name
+                , field_attrs     = self.field_attrs
                 )
             return (GTW.Form.MOM.Link_Inline (self, inline_form), )
     # end def __call__

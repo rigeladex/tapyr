@@ -33,7 +33,7 @@
 
 (function ($)
 {
-  var field_no_pat = /-M([\dP]+)-/;
+  var field_no_pat = /-M([\dP]+)_/;
   var Auto_Complete =
     {
       _create : function ()
@@ -63,7 +63,9 @@
         var data     = {TRIGGER_FIELD : field_name};
         var comp_opt = self.options;
         var pf       = comp_opt.field_prefix + "-";
-        if (no) pf   = pf + "M" + no + "-";
+        if (no) pf   = pf + "M" + no;
+        if (comp_opt.field_postfix)
+            pf       = pf + "__" + comp_opt.field_postfix + "__";
         for (var i = 0;  i < trigger.fields.length; i++)
         {
             var mfn   = trigger.fields [i];
@@ -87,7 +89,9 @@
         var options = this.options;
         var id      = options.field_prefix + "-comp-list";
         var pf      = options.field_prefix + "-";
-        if (no) pf  = pf + "M" + no + "-";
+        if (no) pf   = pf + "M" + no;
+        if (options.field_postfix)
+            pf       = pf + "__" + options.field_postfix + "__";
         jQuery.getJSON
             ( options.complete_url, {"lid" : item.lid}
             , function (data, textStatus)

@@ -105,7 +105,7 @@
         }
       ];
 
-  var field_no_pat = /-M([\dP]+)-/;
+  var field_no_pat = /-M([\dP]+)_/;
   var GTW_Form =
     { _create : function ()
       {
@@ -160,8 +160,10 @@
         var $source = $(evt.target).parents (".inline-instance");
         var  $new   = self._copy_form ($inline);
         self._restore_form_state ($new, self._save_form_state ($source));
-        /* set the state if ALL inlines to empty */
+        /* set the state of ALL inlines to empty */
         $new.find ("input[name$=-instance_state]").attr ("value", "");
+        /* set lid/state of ALL lines to New */
+        $new.find ("input[name$=__lid_a_state_]").attr ("value", ":N");
         self._update_button_states ($inline);
         evt.preventDefault         ();
         evt.stopPropagation        ();
@@ -177,8 +179,8 @@
         $inline.data ("cur_count", $inline.data ("cur_count") + 1);
         var cur_number = $inline.data ("cur_number");
         $inline.data ("cur_number", cur_number + 1);
-        var pattern    = /-MP-/;
-        var new_no     = "-M" + cur_number + "-";
+        var pattern    = /-MP_/;
+        var new_no     = "-M" + cur_number + "_";
         var $labels    = $new.find     ("label")
         for (var i = 0; i < $labels.length; i++)
         {
@@ -202,7 +204,7 @@
         this._update_button_states ($inline);
         this._setup_completers     ($inline);
         /* set lid/state of ALL lines to New */
-        $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":N");
+        $new.find ("input[name$=__lid_a_state_]").attr ("value", ":N");
         return $new;
       }
     , _delete_inline : function (evt)
@@ -254,7 +256,7 @@
     , _form_submit : function (evt)
       {
         var  self     = evt.data;
-        var  pattern  = /M\d+-/;
+        var  pattern  = /M\d+_/;
         var $this     = $(this);
         /* re-enumerate the forms */
         /* first, let's renumerate the inline-instance's */
@@ -266,7 +268,7 @@
                 {
                     var $elements      = $(this).find (":input");
                     var  edit_mod_list = ["id", "name"];
-                    var  new_no        = "M" + no + "-";
+                    var  new_no        = "M" + no + "_";
                     for (var i = 0; i < $elements.length; i++)
                     {
                         var $e = $elements.eq (i);
@@ -299,7 +301,7 @@
       {
         return $form.find
           ( "[name^=" + $inline.data ("options").prefix + "-]"
-          + "[name$=-_lid_a_state_]"
+          + "[name$=__lid_a_state_]"
           );
       }
     , _restore_form_state : function ($form, state)
@@ -376,12 +378,15 @@
       for (i = 0; i < completers.length; i++)
         {
           var completer = completers [i];
+          var prefix    = "[name^=" + completer.field_prefix + "]";
+          var middle    = "";
+          if (completer.field_postfix)
+              middle    = completer.field_postfix + "__";
           for (var field in completer.triggers)
             {
                 var options = $.extend ({field : field}, completer);
                 $root.find
-                    ( "[name^=" + completer.field_prefix + "]"
-                    + "[name$=" + field + "]:visible"
+                    ( prefix + "[name$=" + middle + field + "]:visible"
                     ).MOM_Auto_Complete (options);
             }
         }
@@ -424,7 +429,7 @@
               {
                 var $this   = $(this);
                 self._setup_buttons ($this, buttons);
-                var $l_a_s = $this.find  ("input[name$=-_lid_a_state_]");
+                var $l_a_s = $this.find  ("input[name$=__lid_a_state_]");
                 if ($l_a_s.attr ("value").split (":") [0])
                     $this.find (":input").attr ("disabled", "disabled");
               }
@@ -469,7 +474,7 @@
         var $button      = $link.find    ("span");
         var $elements    = $form.find    (":input");
         var  link_prefix = $inline.data ("options").prefix;
-        var name         = $form.find  ("input[name$=-_lid_a_state_]").each
+        var name         = $form.find  ("input[name$=__lid_a_state_]").each
           ( function () {
             var $this      = $(this);
             var lid        = $this.attr ("value").split (":") [0];

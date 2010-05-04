@@ -29,6 +29,7 @@
 #    20-Mar-2010 (MG) Creation
 #    24-Mar-2010 (CT) `__call__` changed to catch `GTW.Werkzeug.Status`
 #                     instead of `Exception`
+#    29-Apr-2010 (MG) Set `charset` of werkzeug reguest und response handlers
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -40,6 +41,7 @@ import _GTW._Werkzeug.Error
 import _GTW._Werkzeug.Request_Handler
 
 from    werkzeug          import ClosingIterator
+from    werkzeug.wrappers import BaseRequest, BaseResponse
 import  warnings
 import  re
 
@@ -58,9 +60,11 @@ class Application (TFL.Meta.Object) :
                  ) :
         if "cookie_secret" not in kw :
             warnings.warn ("Using default `cookie_secret`!", UserWarning)
-        static_handler   = kw.pop ("static_handler", None)
-        self.settings    = dict (self.default_settings, ** kw)
-        self.handlers    = []
+        static_handler      = kw.pop ("static_handler", None)
+        encoding            = kw.pop ("encoding", "utf-8")
+        BaseRequest.charset = BaseResponse.charset = encoding
+        self.settings       = dict (self.default_settings, ** kw)
+        self.handlers       = []
         if static_handler :
             handlers = list (handlers)
             handlers.insert (0, static_handler)

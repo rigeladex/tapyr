@@ -92,10 +92,20 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
         return self.form.get_object_raw (defaults)
     # end def get_raw
 
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        self._setup_javascript ()
+        return self.widget.Media
+    # end def Media
+
     def prepare_request_data (self, form, request_data) :
         self.form.recursively_run \
             ("prepare_request_data", self.form, request_data)
     # end def prepare_request_data
+
+    def _setup_javascript (self) :
+        pass
+    # end def _setup_javascript
 
     def setup_raw_attr_dict (self, form) :
         self.form.recursively_run ("setup_raw_attr_dict", self.form)
@@ -152,6 +162,11 @@ class Id_Attribute_Inline (_Attribute_Inline_) :
             return False
         return True
     # end def needs_processing
+
+    def _setup_javascript (self) :
+        if self.form_cls.completer :
+            self.form_cls.completer.attach (self.form_cls, self.link_name)
+    # end def _setup_javascript
 
 # end class Id_Attribute_Inline
 

@@ -32,44 +32,29 @@
 r"""
     >>> scope = Scaffold.scope ()
     Creating new scope MOMT__Hash__HPS in memory
-    >>> PAP = scope.PAP
-    >>> form_cls = GTW.Form.MOM.Instance.New \
-    ...    ( PAP.Person
-    ...    , FGD ()
-    ...    , LID ( "PAP.Person_has_Address", legend = "Addresses")
-    ...    , LID ( "PAP.Person_has_Phone",   legend = "Phones")
-    ...    )
+    >>> form_cls = Person_Form (scope)
     >>> form_cls.sub_forms
-    {'Person_has_Address': <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Address'>, 'Person_has_Phone': <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Phone'>}
-
-Test if it is possible to only create an person address link and lefting the
-peson has phone fields empty:
+    {'Person_has_Address': <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Address'>}
     >>> form = form_cls ("/post/")
-    >>> PD   = dict ()
-    >>> PD ["Person__last_name"]                             = "Last"
-    >>> PD ["Person__first_name"]                            = "First"
-    >>> PD ["Person__Person_has_Address-M0__right__street"]  = "Street"
-    >>> PD ["Person__Person_has_Address-M0__right__zip"]     = "zip"
-    >>> PD ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
-    >>> PD ["Person__Person_has_Address-M0__right__country"] = "Austria"
-    >>> form (PD)
-    0
-    >>> form.instance
-    GTW.OMP.PAP.Person (u'last', u'first', u'', u'')
-    >>> PAP.Person            .query ().all ()
-    [GTW.OMP.PAP.Person (u'last', u'first', u'', u'')]
-    >>> PAP.Address           .query ().all ()
-    [GTW.OMP.PAP.Address (u'street', u'zip', u'vienna', u'austria', u'')]
-    >>> PAP.Phone             .query ().all ()
-    []
-    >>> PAP.Person_has_Address.query ().all ()
-    [GTW.OMP.PAP.Person_has_Address ((u'last', u'first', u'', u''), (u'street', u'zip', u'vienna', u'austria', u''))]
-    >>> PAP.Person_has_Phone  .query ().all ()
-    []
+    >>> form.form_name
+    'Person'
+    >>> [il.form_cls.form_name for il in form.inline_groups]
+    ['Person__Person_has_Address']
+    >>> for l in form.Media.js_on_ready : print l
+    /* setup form `GTW_OMP_PAP_Person` */
+    <BLANKLINE>
+    $(".GTW_OMP_PAP_Person").GTW_Form
+    <BLANKLINE>
+      ( {"inlines": [{"instance_class": "inline-instance", "prefix": "Person__Person_has_Address", "allow_copy": true}], "completers": []}
+      );
+    <BLANKLINE>
 """
 
 from _GTW.__test__.model import *
 import _GTW._Form._MOM.Instance
+import _GTW._Form.Javascript
+import _GTW._Form._MOM.Javascript
+
 from   _GTW._Form._MOM.Inline_Description       import \
     ( Link_Inline_Description      as LID
     , Attribute_Inline_Description as AID
@@ -78,6 +63,34 @@ from   _GTW._Form._MOM.Field_Group_Description  import \
     ( Field_Group_Description as FGD
     , Wildcard_Field          as WF
     )
+
+def Person_Form (scope) :
+    PAP               = scope.PAP
+    address_completer = GTW.Form.Javascript.Multi_Completer \
+        ( GTW.Form.MOM.Javascript.Completer
+            ( fields    = ("street", "city", "zip", "country")
+            , triggers  = dict (street = dict (min_chars = 3))
+            )
+        , zip       = GTW.Form.MOM.Javascript.Field_Completer
+            ( "zip", ("zip", "city", "country", "region")
+            , min_chars = 1
+            )
+        , city      = GTW.Form.MOM.Javascript.Field_Completer
+            ( "city", ("city", "country", "region")
+            , min_chars = 2
+            )
+        , name      = "Address_Completer"
+        )
+    return GTW.Form.MOM.Instance.New \
+        ( PAP.Person
+        , FGD ()
+        , LID ( "PAP.Person_has_Address"
+              , legend        = "Addresses"
+              , field_attrs   = dict
+                    (address  = dict (completer = address_completer))
+              )
+        )
+# end def Person_Form
 
 ### __END__ GTW.__test__.Form
 

@@ -53,6 +53,12 @@ class _Field_ (TFL.Meta.Object) :
             return self._default (form)
         return self._default
     # end def default
+
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        return self.widget.Media
+    # end def Media
+
 # end class _Field_
 
 class Field (_Field_) :

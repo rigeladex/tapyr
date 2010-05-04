@@ -63,37 +63,6 @@ from   _GTW                                 import GTW
 import _GTW._Form.Field_Error
 import _GTW._Form._MOM
 
-class Instance_Collection (object) :
-
-    def __init__ (self, et_man, instances, lids_used = set ()) :
-        self.et_man     = et_man
-        self.instances  = tuple (i for i in instances if i is not None)
-        self._by_lid    = dict \
-            ((getattr (i, "lid", ""), i) for i in self.instances)
-        self._unused    = \
-            [i for (lid, i) in self._by_lid.iteritems ()
-               if lid not in lids_used
-            ]
-    # end def __init__
-
-    def instance_for_lid (self, lid = "") :
-        instance = self._by_lid.get (lid)
-        if not instance :
-            if lid :
-                et_man             = self.et_man
-                pid                = et_man.pid_from_lid         (lid)
-                self._by_lid [lid] = instance = et_man.pid_query (pid)
-                assert instance not in self._unused
-            else :
-                try :
-                    instance = self._unused.pop (0)
-                except IndexError :
-                    instance = None
-        return instance
-    # end def instance_for_lid
-
-# end class Instance_Collection
-
 class Link_Inline (TFL.Meta.Object) :
     """Handling of all link-forms as a field group of a form.."""
 

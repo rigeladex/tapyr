@@ -113,7 +113,8 @@
       {%- if fo.get_errors () %}
         {{ GTW.call_macro (fo.widget.non_field_errors, fo, None) }}
       {% endif -%}
-      <div class="Formset {{ fg.css_class }}"
+      <div class="Formset {{ fg.css_class }}" title="{{
+      fo.et_man.type_name}} {{fg.fields|e}}"
        {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}
       >
      {{ GTW.call_macro (fg.widget, fo, fg, widget_type = widget_type) }}
@@ -156,9 +157,14 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro form_tr (form, widget_type, class = "") -%}
+{%- macro form_tr (fo, widget_type, class = "") -%}
   <tr{%- if class %} class="{{class}}"{% endif -%}>
-    {{- field_groups (form, widget_type) }}
+    {%- for fg in fo.field_groups %}
+      {%- if fo.get_errors () %}
+        {{ GTW.call_macro (fo.widget.non_field_errors, fo, None) }}
+      {% endif -%}
+     {{ GTW.call_macro (fg.widget, fo, fg, widget_type = widget_type) }}
+    {% endfor -%}
   </tr>
 {%- endmacro -%} {#- form_tr -#}
 
@@ -171,6 +177,13 @@
 {%- endmacro -%} {#- fg_tr_head -#}
 
 {%- macro fg_tr_body (fo, fg, widget_type = None) -%}
+  {%- if fo.hidden_fields %}
+    <td class="ui-helper-hidden">
+    {%- for h in fo.hidden_fields %}
+      {{ GTW.call_macro (h.widget, fo, h) }}
+    {% endfor -%}
+    </td>
+  {% endif -%}
   {%- for fi in fo.fields_of_field_group (fg) %}
     {% call GTW.call_macro (fi.widget.td_onion, fo, fi, widget_type) %}
       {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
@@ -205,7 +218,7 @@
   {%- else %}
     {%- set fform = proto -%}
   {% endif -%}
-  <fieldset class="inline-form-table {{ inline.form_cls.form_path_css }}">
+  <fieldset class="inline-form-table {{ inline.form_cls.form_name }}">
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ GTW._T (inline.legend)|safe }}</legend>
     {% endif -%}

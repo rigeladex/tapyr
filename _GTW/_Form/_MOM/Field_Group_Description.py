@@ -141,6 +141,7 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         )
 
     def _field_instance (self, et_man, field, parent) :
+        field_kw = parent.field_attrs.get (str (field), {})
         if isinstance (field, basestring) :
             attr_kind = getattr (et_man, field, field)
             if isinstance ( attr_kind
@@ -161,8 +162,17 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                         )
                 field = AID (field, * fgds, legend = attr_kind.ui_name)
         if isinstance (field, AID) :
-            return field.field (et_man, parent)
-        return GTW.Form.MOM.Field (et_man, field)
+            if not field_kw :
+                kind = getattr (et_man, field.link_name)
+                role_name = getattr (kind.attr, "role_name", None)
+                if role_name :
+                    if field.link_name != role_name :
+                        fname = role_name
+                    else :
+                        fname = kind.attr.name
+                    field_kw  = parent.field_attrs.get (fname, {})
+            return field.field (et_man, parent, ** field_kw)
+        return GTW.Form.MOM.Field (et_man, field, ** field_kw)
     # end def _field_instance
 
     def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :

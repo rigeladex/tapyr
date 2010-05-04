@@ -54,14 +54,17 @@ class Form (TFL.Meta.Object) :
     def js_on_ready (self) :
         if self.completers or self.inlines :
             form           = self.form
-            id             = getattr \
-                (form, "form_name", str (random.randrange (1, 10000000)))
+            et_man         = getattr (form, "et_man", None)
+            if et_man :
+                id         = et_man.type_name.replace (".", "_")
+            else :
+                id         = str (random.randrange (1, 10000000))
             form.css_class = " ".join \
                 ((getattr (self.form, "css_class", ""), id))
             result     = ["/* setup form `%s` */\n" % (id, )]
             completers = []
-            for c, f in self.completers :
-                completers.extend (c.js_on_ready (f))
+            for c, f, rn in self.completers :
+                completers.extend (c.js_on_ready (f, rn))
             result.append ('$(".%s").GTW_Form\n' % (id, ))
             init    = dict \
                 ( inlines    = [i.js_on_ready ()  for i      in self.inlines]
@@ -82,13 +85,13 @@ class _Inline_ (TFL.Meta.Object) :
     def __init__ (self, form, description) :
         self.form        = form
         self.description = description
-        form.Form.javascript.inlines.append (self)
+        form.javascript.inlines.append (self)
     # end def __init__
 
     def js_on_ready (self) :
         form   = self.form
         result = dict \
-            ( prefix         = form.form_path_css
+            ( prefix         = form.form_name
             , allow_copy     = self.allow_copy
             , instance_class = "inline-instance"
             )
@@ -114,12 +117,11 @@ class _Completer_ (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def attach (self, form) :
-        form.Form.javascript.completers.append ((self, form))
+    def attach (self, form, role_name = None) :
+        form.javascript.completers.append ((self, form, role_name))
     # end def attach
 
 # end class _Completer_
-
 
 class Multi_Completer (_Completer_) :
     """Multiple completers for one inline form"""
@@ -127,8 +129,8 @@ class Multi_Completer (_Completer_) :
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     def __init__ (self, root = None, ** completers) :
-        self.root = root
-        self.name = completers.pop ("name", None)
+        self.root        = root
+        self.name        = completers.pop ("name", None)
         self._completers = completers
     # end def __init__
 
@@ -136,12 +138,12 @@ class Multi_Completer (_Completer_) :
         return self.root.complete (* args, ** kw)
     # end def complete
 
-    def js_on_ready (self, form) :
+    def js_on_ready (self, form, rn) :
         result = []
         if self.root :
-            result.extend (self.root.js_on_ready (form))
+            result.extend (self.root.js_on_ready (form, rn))
         for c in self._completers.itervalues () :
-            result.extend (c.js_on_ready (form))
+            result.extend (c.js_on_ready (form, rn))
         return result
     # end def js_on_ready
 

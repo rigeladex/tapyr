@@ -66,9 +66,9 @@ class Lid_and_State_Field (GTW.Form.Field) :
     electric = True
     widget   = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
 
-    def get_raw (self, form, instance) :
+    def get_raw (self, form, defaults = {}) :
         state = "N"
-        lid   = getattr (instance, "lid", "")
+        lid   = getattr (form.instance, "lid", "")
         if lid :
             state = "L"
         elif form.prototype :
@@ -172,13 +172,14 @@ class Link_Inline_Instance (_Inline_Instance_) :
     def create_object (self, * args, ** kw) :
         state = self.state
         if state == "U" :
-            ### this form handles an link which should be destroyed
-            ### we need to destroy the instance in the database
-            self.instance.destroy ()
-            ### and mark that this form does not have a valid instance
-            ### (needed for the min/max count check's)
-            self.instance = None
-            ### XXX handle deleting of links object's
+            if self.instance :
+                ### this form handles an link which should be destroyed
+                ### we need to destroy the instance in the database
+                self.instance.destroy ()
+                ### and mark that this form does not have a valid instance
+                ### (needed for the min/max count check's)
+                self.instance = None
+                ### XXX handle deleting of links object's
             return
         if state == "L" :
             ### this instance is still linked and was not changed -> no need
