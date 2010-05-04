@@ -42,7 +42,7 @@ import _TFL.SMTP
 import _GTW._OMP._Auth.Nav
 import _GTW._OMP._PAP.Nav
 import _GTW._OMP._EVT.Nav
-#import _GTW._OMP._SRM.Nav
+import _GTW._OMP._SRM.Nav
 import _GTW._OMP._SWP.Nav
 
 from   _TFL.I18N              import _, _T, _Tn
@@ -129,6 +129,14 @@ def create_nav (scope) :
                   , GTW.OMP.SWP.Nav.Admin.Gallery
                   , GTW.OMP.SWP.Nav.Admin.Page
                   , GTW.OMP.SWP.Nav.Admin.Picture
+
+                  , GTW.OMP.SRM.Nav.Admin.Boat
+                  , GTW.OMP.SRM.Nav.Admin.Boat_Class
+                  , GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
+                  , GTW.OMP.SRM.Nav.Admin.Page
+                  , GTW.OMP.SRM.Nav.Admin.Regatta_C
+                  , GTW.OMP.SRM.Nav.Admin.Regatta_H
+                  , GTW.OMP.SRM.Nav.Admin.Regatta_Event
                   ]
               , Type            = GTW.NAV.Site_Admin
               )

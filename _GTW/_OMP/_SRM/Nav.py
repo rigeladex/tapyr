@@ -87,32 +87,35 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("year", "perma_name")
         , Form_args =
-            ( AID
-                ( "event"
-                , FGD
-                    ( primary
-                    , widget    = "html/form.jnj, fg_tr"
-                    , css_class = "inline-instance"
+            ( FGD
+                ( AID
+                    ( "event"
+                    , FGD
+                        ( primary
+                        , widget    = "html/form.jnj, fg_as_table"
+                        , css_class = "inline-instance"
+                        )
+                    , completer = regatta_completer
                     )
-                , completer = regatta_completer
-                )
-            , FGD ("perma_name", "desc")
-            , AID
-                ( "date"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend = _("Publication and expiration date")
-                )
-            , AID
-                ( "creator"
-                , FGD
-                    ( primary
-                    , widget    = "html/form.jnj, fg_tr"
-                    , css_class = "inline-instance"
+                , "perma_name", "desc"
+                , AID
+                    ( "date"
+                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , legend = _("Publication and expiration date")
                     )
-                # completer =  GTW.Form.MOM.Javascript.Completer ["Creator_Info"]
-                , legend = _("Creator of the contents of the page")
+                , AID
+                    ( "creator"
+                    , FGD
+                        ( primary
+                        , widget    = "html/form.jnj, fg_as_table"
+                        , css_class = "inline-instance"
+                        )
+                    # completer =  GTW.Form.MOM.Javascript.Completer ["Creator_Info"]
+                    , legend = _("Creator of the contents of the page")
+                    )
+                , "format", "text"
                 )
-            , FGD ("format", "text")
+            ,
             )
         , list_display   =
             ( "ui_display", "creator", "date", "format", "last_changed")
@@ -123,16 +126,19 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("-event.date.start", "boat_class.name")
         , Form_args =
-            ( AID
-                ( "event"
-                , FGD
-                    ( primary
-                    , widget    = "html/form.jnj, fg_tr"
-                    , css_class = "inline-instance"
+            ( FGD
+                ( AID
+                    ( "event"
+                    , FGD
+                        ( primary
+                        , widget    = "html/form.jnj, fg_as_table"
+                        , css_class = "inline-instance"
+                        )
+                    , completer = regatta_completer
                     )
-                , completer = regatta_completer
+                , WF ()
                 )
-            , FGD ()
+            ,
             )
         )
 
@@ -141,16 +147,19 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("-event.date.start", "handicap")
         , Form_args =
-            ( AID
-                ( "event"
-                , FGD
-                    ( primary
-                    , widget    = "html/form.jnj, fg_tr"
-                    , css_class = "inline-instance"
+            ( FGD
+                ( AID
+                    ( "event"
+                    , FGD
+                        ( primary
+                        , widget    = "html/form.jnj, fg_as_table"
+                        , css_class = "inline-instance"
+                        )
+                    , completer = regatta_completer
                     )
-                , completer = regatta_completer
+                , WF ()
                 )
-            , FGD ()
+            ,
             )
         )
 
@@ -159,9 +168,12 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("date.start", "name")
         , Form_args =
-            ( FGD ("name", "desc")
-            , AID ("date", FGD (widget = "html/form.jnj, fg_tr"))
-            , FGD ("short_title", "title", "ui_date", "year", readonly = True)
+            ( FGD
+                ( "name", "desc"
+                , AID ("date", FGD (widget = "html/form.jnj, fg_as_table"))
+                , "short_title", "title", "ui_date", "year"
+                )
+            ,
             )
         )
 
