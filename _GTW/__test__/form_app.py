@@ -42,6 +42,9 @@ import _TFL.SMTP
 import _GTW._OMP._Auth.Nav
 import _GTW._OMP._PAP.Nav
 import _GTW._OMP._EVT.Nav
+#import _GTW._OMP._SRM.Nav
+import _GTW._OMP._SWP.Nav
+
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL                   import sos
 
@@ -114,11 +117,18 @@ def create_nav (scope) :
                   , GTW.OMP.PAP.Nav.Admin.Person_has_Phone
                   , GTW.OMP.PAP.Nav.Admin.Person_has_Email
                   , GTW.OMP.PAP.Nav.Admin.Phone
+
                   , GTW.OMP.Auth.Nav.Admin.Account
                   , GTW.OMP.Auth.Nav.Admin.Group
                   , GTW.OMP.Auth.Nav.Admin.Account_in_Group
+
                   , GTW.OMP.EVT.Nav.Admin.Event
                   , GTW.OMP.EVT.Nav.Admin.Event_occurs
+
+                  , GTW.OMP.SWP.Nav.Admin.Clip_X
+                  , GTW.OMP.SWP.Nav.Admin.Gallery
+                  , GTW.OMP.SWP.Nav.Admin.Page
+                  , GTW.OMP.SWP.Nav.Admin.Picture
                   ]
               , Type            = GTW.NAV.Site_Admin
               )

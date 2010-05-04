@@ -71,23 +71,26 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Clip_X"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (primary, "title")
-            , AID
-                ( "date"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend = _("Publication and expiration date")
-                )
-            , AID
-                ( "creator"
-                , FGD
-                    ( primary
-                    , widget    = "html/form.jnj, fg_tr"
-                    , css_class = "inline-instance"
+            ( FGD
+                ( primary, "title"
+                , AID
+                    ( "date"
+                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , legend = _("Publication and expiration date")
                     )
-                , completer = creator_completer
-                , legend = _("Creator of the contents of the news clip")
+                , AID
+                    ( "creator"
+                    , FGD
+                        ( primary
+                        , widget    = "html/form.jnj, fg_as_table"
+                        , css_class = "inline-instance"
+                        )
+                    , completer = creator_completer
+                    , legend = _("Creator of the contents of the news clip")
+                    )
+                , "format", "text", "link_to"
                 )
-            , FGD ("format", "text", "link_to")
+            ,
             )
         , list_display   =
             ( "ui_display", "short_title", "date", "creator", "format"
@@ -100,22 +103,25 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Gallery"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (primary, "short_title", "title", "directory")
-            , AID
-                ( "date"
-                , FGD (widget   = "html/form.jnj, fg_tr")
-                , legend        = _("Publication and expiration date")
-                )
-            , AID
-                ( "creator"
-                , FGD
-                    ( primary
-                    , widget    = "html/form.jnj, fg_tr"
-                    , css_class = "inline-instance"
+            ( FGD
+                ( primary, "short_title", "title", "directory"
+                , AID
+                    ( "date"
+                    , FGD (widget   = "html/form.jnj, fg_as_table")
+                    , legend        = _("Publication and expiration date")
                     )
-                , completer     = creator_completer
-                , legend        = _("Photographer")
+                , AID
+                    ( "creator"
+                    , FGD
+                        ( primary
+                        , widget    = "html/form.jnj, fg_as_table"
+                        , css_class = "inline-instance"
+                        )
+                    , completer     = creator_completer
+                    , legend        = _("Photographer")
+                    )
                 )
+            ,
             )
         , sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
         )
@@ -124,75 +130,79 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Page"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (primary, "short_title", "title")
-            , AID
-                ( "date"
-                , FGD (widget = "html/form.jnj, fg_tr")
-                , legend = _("Publication and expiration date")
+            ( FGD
+                ( primary, "short_title", "title"
+                , AID
+                    ( "date"
+                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , legend = _("Publication and expiration date")
+                    )
+                , AID
+                    ( "creator"
+                    , FGD ( primary
+                          , widget    = "html/form.jnj, fg_as_table"
+                          , css_class = "inline-instance"
+                          )
+                    , completer = creator_completer
+                    , legend = _("Creator of the contents of the web page")
+                    )
+                , "head_line", "format", "text"
                 )
-            , AID
-                ( "creator"
-                , FGD ( primary
-                      , widget    = "html/form.jnj, fg_tr"
-                      , css_class = "inline-instance"
-                      )
-                , completer = creator_completer
-                , legend = _("Creator of the contents of the web page")
-                )
-            , FGD ("head_line", "format", "text")
             , LID
                 ( "GTW.OMP.EVT.Event"
-                , AID ( "date"
-                      , widget = WS
-                          ( AID.widget
-                          , inline_table_th =
-                              "html/form.jnj, inline_table_aid_sep_th"
-                          , inline_table_td =
-                              "html/form.jnj, inline_table_aid_sep_td"
+                , FGD
+                    ( AID ( "date"
+                          , widget = WS
+                              ( AID.widget
+                              , inline_table_th =
+                                  "html/form.jnj, inline_table_aid_sep_th"
+                              , inline_table_td =
+                                  "html/form.jnj, inline_table_aid_sep_td"
+                              )
+                          , legend = _("Date interval of event")
+                          , title  = _("Date interval")
                           )
-                      , legend = _("Date interval of event")
-                      , title  = _("Date interval")
-                      )
-                , AID ( "time"
-                      , widget = WS
-                          ( AID.widget
-                          , inline_table_th =
-                              "html/form.jnj, inline_table_aid_sep_th"
-                          , inline_table_td =
-                              "html/form.jnj, inline_table_aid_sep_td"
+                    , AID ( "time"
+                          , widget = WS
+                              ( AID.widget
+                              , inline_table_th =
+                                  "html/form.jnj, inline_table_aid_sep_th"
+                              , inline_table_td =
+                                  "html/form.jnj, inline_table_aid_sep_td"
+                              )
+                          , legend = _("Time interval of event")
+                          , title  = _("Time interval")
                           )
-                      , legend = _("Time interval of event")
-                      , title  = _("Time interval")
-                      )
-                , FGD ("detail")
-                , AID
-                    ( "recurrence"
-                    , FGD ()
-                    , legend = _("Recurrence rule")
+                    , "detail"
+                    , AID
+                        ( "recurrence"
+                        , FGD ()
+                        , legend = _("Recurrence rule")
+                        )
+                    , legend    = _("Events associated to page")
+                    , title     = _("Events")
                     )
-                , legend    = _("Events associated to page")
-                , title     = _("Events")
-                )
+               )
             , LID
                 ( "GTW.OMP.SWP.Clip_O"
                 , FGD
                     ( "abstract"
                     #, widget = "html/form.jnj, fg_div_seq"
+                    , AID
+                        ( "date_x"
+                        , widget = WS
+                              ( AID.widget
+                              , inline_table_th =
+                                  "html/form.jnj, inline_table_aid_sep_th"
+                              , inline_table_td =
+                                  "html/form.jnj, inline_table_aid_sep_td"
+                              )
+                        , legend = _("Date interval of news clip")
+                        , title  = _("Date interval")
+                        )
+                    , legend    = _("News clip for page")
+                    , title     = _("Clip")
                     )
-                , AID
-                    ( "date_x"
-                    , widget = WS
-                          ( AID.widget
-                          , inline_table_th =
-                              "html/form.jnj, inline_table_aid_sep_th"
-                          , inline_table_td =
-                              "html/form.jnj, inline_table_aid_sep_td"
-                          )
-                    , legend = _("Date interval of news clip")
-                    , title  = _("Date interval")
-                    )
-                , legend    = _("News clip for page")
-                , title     = _("Clip")
                 )
             , FGD ()
             )
@@ -207,22 +217,25 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Picture"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( AID
-                ( "gallery"
-                , FGD (primary, widget = "html/form.jnj, fg_tr")
-                , legend        = _("Gallery")
+            ( FGD
+                ( AID
+                    ( "gallery"
+                    , FGD (primary, widget = "html/form.jnj, fg_as_table")
+                    , legend        = _("Gallery")
+                    )
+                , "number"
+                , AID
+                    ( "photo"
+                    , FGD (widget   = "html/form.jnj, fg_as_table")
+                    , legend        = _("Photo")
+                    )
+                , AID
+                    ( "thumb"
+                    , FGD (widget   = "html/form.jnj, fg_as_table")
+                    , legend        = _("Thumbnail")
+                    )
                 )
-            , FGD ("number")
-            , AID
-                ( "photo"
-                , FGD (widget   = "html/form.jnj, fg_tr")
-                , legend        = _("Photo")
-                )
-            , AID
-                ( "thumb"
-                , FGD (widget   = "html/form.jnj, fg_tr")
-                , legend        = _("Thumbnail")
-                )
+            ,
             )
         , sort_key       = TFL.Sorted_By \
             ("-left.date.start", "left.perma_name", "number")

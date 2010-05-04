@@ -40,6 +40,7 @@ import _TFL.defaultdict
 import _GTW._Form.Field_Error
 
 from   _GTW                                 import GTW
+import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
@@ -51,7 +52,7 @@ class Instance (GTW.Form.MOM._Instance_) :
     """
 
     css_class     = "Object-Editor"
-    widget        = "html/form.jnj, object"
+    widget        = GTW.Form.Widget_Spec ("html/form.jnj, object")
 
     def __init__ (self, action, instance = None, ** kw) :
         self.action = action

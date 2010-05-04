@@ -176,6 +176,8 @@ class M_Instance (GTW.Form._Form_.__class__) :
                 (medias, js_on_ready = js_on_ready)
             result.field_groups  = field_groups
             result.fields        = result._setup_fields (field_groups)
+            if isinstance (result.widget, basestring) :
+                result.widget = GTW.Form.Widget_Spec (result.widget)
         return result
     # end def __new__
 
