@@ -52,6 +52,7 @@
 #    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` factored
 #    23-Mar-2010 (CT) Sort `_entries`
 #    24-Mar-2010 (CT) `Changer.rendered` changed to add `last_changed`, if any
+#     3-May-2010 (MG) `Admin.Changer`: support for `calcel` submit added
 #    ««revision-date»»···
 #--
 
@@ -104,7 +105,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request  = handler.request
             req_data = request.req_data
             lid      = req_data.get ("lid") or self.args [0]
-            self.Media
             if lid is not None :
                 try :
                     obj = self.lid_query (ETM, lid)

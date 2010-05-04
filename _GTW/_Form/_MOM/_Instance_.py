@@ -74,6 +74,7 @@
 #                     a dict filled with default values even if instance is
 #                     `None`
 #    11-Mar-2010 (MG) `_create_instance` filter empty raw_values
+#     3-May-2010 (MG) New form handling implemented
 #     3-May-2010 (MG) Use `e_type.ui_name` instance on `e_type.type_base_name`
 #    ««revision-date»»···
 #--

@@ -35,6 +35,7 @@
 #    23-Feb-2010 (CT) `pjoin` added
 #    24-Feb-2010 (CT) `log_stdout` added
 #    10-Mar-2010 (CT) `zip` added
+#     3-May-2010 (MG) `call_macro`: `widget_type` added
 #    ««revision-date»»···
 #--
 

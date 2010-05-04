@@ -94,7 +94,6 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     """Base class for form which are part of a outer form."""
 
     __metaclass__ = M_Inline_Instance
-    keep_instance = True
     widget        = GTW.Form.Widget_Spec \
         ( "html/form.jnj, field_groups"
         , inline_table_tr_head = "html/form.jnj, inline_table_tr_head"
@@ -160,15 +159,6 @@ class Id_Attribute_Inline_Instance (_Inline_Instance_) :
 class Link_Inline_Instance (_Inline_Instance_) :
     """A form which handles an inline link"""
 
-    keep_instance = False
-
-    @TFL.Meta.Once_Property
-    def ainstance (self) :
-        if self.prototype :
-            return None
-        return self.instance_collection.instance_for_lid (self.lid)
-    # end def instance
-
     def create_object (self, * args, ** kw) :
         state = self.state
         if state == "U" :
@@ -194,6 +184,25 @@ class Link_Inline_Instance (_Inline_Instance_) :
     # end def create_object
 
 # end class Link_Inline_Instance
+
+class Collection_Inline_Instance (An_Attribute_Inline_Instance) :
+    """XXX"""
+
+    def create_object (self, * args, ** kw) :
+        state = self.state
+        if state == "U" :
+            if self.instance :
+                self.instance = None
+                ### XXX handle deleting of links object's
+            return
+        if state == "L" :
+            ### this instance is still linked and was not changed -> no need
+            ### to do anything for this form
+            return
+        self.__super.create_object (* args, ** kw)
+    # end def create_object
+
+# end class Collection_Inline_Instance
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")

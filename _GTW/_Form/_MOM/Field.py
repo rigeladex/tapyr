@@ -31,6 +31,7 @@
 #    25-Feb-2010 (CT) `css_class` added
 #    26-Feb-2010 (MG) `get_cooked` added
 #    10-Mar-2010 (CT) s/named_object/named_value/
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 

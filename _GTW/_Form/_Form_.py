@@ -40,6 +40,7 @@
 #     4-Mar-2010 (MG) `error_code` and `Not_Assigned` added
 #     4-Mar-2010 (MG) `Hidden_Fields_List` added and used
 #     6-Mar-2010 (MG) Error handling changed
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 

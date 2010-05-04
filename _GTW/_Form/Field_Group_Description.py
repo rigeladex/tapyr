@@ -32,6 +32,7 @@
 #     2-Feb-2010 (MG) Once property `Media` added
 #     5-Feb-2010 (MG) Convert `widget` to `Widget_Spec`
 #    15-Apr-2010 (MG) `Media` moved to `GTW.Form.Field_Group`
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 

@@ -56,6 +56,7 @@
 #                     to `added_fields`
 #    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
 #     1-May-2010 (MG) jQuery related media's are now defined in `GTW.jQuery`
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 
@@ -191,6 +192,30 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
     # end def __call__
 
 Link_Inline_Description = GTW_Link_Inline_Description # end class
+
+class GTW_Collection_Inline_Description (Link_Inline_Description) :
+    """Edit a collection of a certain type inline."""
+
+    _real_name   =  "Collection_Inline_Description"
+
+    def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
+        if first_pass :
+            added_fields.add (self.link_name)
+        else :
+            scope        = et_man.home_scope
+            coll_e_type  = getattr (et_man, self.link_name).C_Type.C_Type
+            inline_form       = GTW.Form.MOM.Collection_Inline_Instance.New \
+                ( getattr (scope, coll_e_type.type_name)
+                , * self.field_group_descriptions
+                , completer       = self.completer
+                , parent          = parent
+                , suffix          = et_man.type_base_name
+                , field_attrs     = self.field_attrs
+                )
+            return (self.PKNS.Collection_Inline (self, inline_form), )
+    # end def __call__
+
+Collection_Inline_Description = GTW_Collection_Inline_Description # end class
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")

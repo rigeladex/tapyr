@@ -39,8 +39,9 @@ import _GTW._NAV._E_Type.Admin
 import _GTW._Form._MOM.Javascript
 
 from   _GTW._Form._MOM.Inline_Description      import \
-    ( Link_Inline_Description      as LID
-    , Attribute_Inline_Description as AID
+    ( Link_Inline_Description       as LID
+    , Attribute_Inline_Description  as AID
+    , Collection_Inline_Description as CID
     )
 from   _GTW._Form._MOM.Field_Group_Description import \
     ( Field_Group_Description as FGD
@@ -81,6 +82,12 @@ class Admin (object) :
     Boat_in_Regatta = dict \
         ( ETM       = "GTW.OMP.SRM.Boat_in_Regatta"
         , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD ()
+            , CID ( "race_results"
+                  , legend = _("Race Results")
+                  )
+            )
         , sort_key  = TFL.Sorted_By
             ("-right.date.start", "left.sail_number", "skipper.last_name")
         )

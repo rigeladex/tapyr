@@ -50,9 +50,10 @@ class Query (TFL.Meta.Object) :
     """A query object for non MOM objects"""
 
     def __init__ (self, cls, sa_table, ** attr_map) :
-        cls._SAQ    = self
-        self._CLASS = cls
-        columns     = sa_table.columns
+        cls._SAQ              = self
+        self._CLASS           = cls
+        self._ID_ENTITY_ATTRS = dict ()
+        columns               = sa_table.columns
         for col in columns :
             setattr (self, col.name, col)
         for syn, attr in attr_map.iteritems () :

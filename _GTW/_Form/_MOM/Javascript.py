@@ -32,7 +32,8 @@
 #                     `Field_Completer._send_suggestions`
 #    02-Mar-2010 (MG) `Field_Completer.js_on_ready` suuport for top level
 #                     field completion added
-#    02-Mar-2010 (MG) `Multi_Completer` moved into `GTW.Form.Javascript`
+#     2-Mar-2010 (MG) `Multi_Completer` moved into `GTW.Form.Javascript`
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL

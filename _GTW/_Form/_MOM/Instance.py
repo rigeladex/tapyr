@@ -29,6 +29,7 @@
 #    18-Jan-2010 (MG) Creation
 #    29-Jan-2010 (MG) Use `Widget_Spec` instead of plain text
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 

@@ -50,6 +50,7 @@
 #    26-Feb-2010 (MG) Javascript handling changed
 #     6-Mar-2010 (MG) `Attribute_Inline` streamlined
 #    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ class Link_Inline (TFL.Meta.Object) :
         if owner :
             self.prefix         = "__".join ((owner.prefix, self.name))
         self.errors             = GTW.Form.Error_List ()
-        max_count = form_cls.et_man.max_count
+        max_count               = getattr (form_cls.et_man, "max_count", None)
         if max_count :
             self.max_count      = max_count
     # end def __init__
@@ -93,6 +94,12 @@ class Link_Inline (TFL.Meta.Object) :
     def get_errors (self) :
         return self.errors
     # end def get_errors
+
+    @TFL.Meta.Once_Property
+    def _linked_instances (self) :
+        return self.form_cls.et_man.query \
+            (** {self.own_role_name : self.owner.instance})
+    # end def _linked_instances
 
     @TFL.Meta.Once_Property
     def Media (self) :
@@ -124,8 +131,7 @@ class Link_Inline (TFL.Meta.Object) :
         except KeyError :
             owner     = self.owner
             if owner.instance :
-                count = self.min_empty + self.form_cls.et_man.query \
-                    (** {self.own_role_name : owner.instance}).count ()
+                count = self.min_empty + self._linked_instances.count ()
         return min \
             (self.max_count, max (self.min_count, self.min_required, count))
     # end def form_count
@@ -143,10 +149,7 @@ class Link_Inline (TFL.Meta.Object) :
         result         = []
         ### find the links currently linked to the owner
         if owner.instance :
-            instances = dict \
-                ( (i.lid, i)
-                for i in et_man.query (** {self.own_role_name : owner.instance})
-                )
+            instances = dict ((i.lid, i) for i in self._linked_instances)
         else :
             instances = dict ()
         ### find the links which are actively requested by forms
@@ -180,6 +183,7 @@ class Link_Inline (TFL.Meta.Object) :
     # end def setup_javascript
 
     def create_object (self, form) :
+        ### add checks for min/max
         for lform in self.forms :
             lform.recursively_run \
                 ("create_object", lform, reverse = True)
@@ -208,31 +212,6 @@ class Link_Inline (TFL.Meta.Object) :
             lform.recursively_run ("update_raw_attr_dict", lform)
     # end def setup_raw_attr_dict
 
-    def __call__ (self, request_data) :
-        error_count   = sum (ifo (request_data) for ifo in self.forms)
-        correct_forms = []
-        if not error_count :
-            correct_forms = \
-                [ ifo for ifo in self.forms
-                    if ifo.instance and not ifo.error_count
-                ]
-        correct_forms_count = len (correct_forms)
-        if correct_forms_count < self.min_required :
-            self.errors.append \
-                (u"At least %(min)d inline instances are required"
-                  "(%(current)d)"
-                % dict (current = correct_forms_count, min = self.min_required)
-                )
-            error_count += 1
-        if correct_forms_count > self.max_count :
-            self.errors.append \
-                ( u"More that %(max)d instance specified (%(current)d)"
-                % dict (current = correct_forms_count, max = self.max_count)
-                )
-            error_count += 1
-        return error_count
-    # end def __call__
-
     def __getattr__ (self, name) :
         try :
             result = getattr (self.inline_description, name)
@@ -243,6 +222,58 @@ class Link_Inline (TFL.Meta.Object) :
     # end def __getattr__
 
 # end class Link_Inline
+
+class Collection_Inline (Link_Inline) :
+    """Handle the collection of inlines."""
+
+    def create_object (self, form) :
+        ### add checks for min/max
+        form.raw_attr_dict [self.link_name] = raw_values = []
+        for lform in self.forms :
+            lform.recursively_run \
+                ("create_object", lform, reverse = True)
+            form.inline_errors += lform.error_count
+            if lform.instance :
+                raw_values.append (lform.get_object_raw ({}))
+        ### import pdb; pdb.set_trace ()
+    # end def create_object
+
+    @TFL.Meta.Once_Property
+    def _linked_instances (self) :
+        return TFL.Q_Result (getattr (self.owner.instance, self.link_name))
+    # end def _linked_instances
+
+    @TFL.Meta.Once_Property
+    def forms (self) :
+        owner          = self.owner
+        et_man         = self.form_cls.et_man
+        count          = self.form_count
+        form_cls       = self.form_cls
+        prototype      = self.owner.prototype
+        prefix_pat     = "%s-M%%d" % (self.prefix, )
+        result         = []
+        instances = self._linked_instances.all ()
+        for no in xrange (count) :
+            if instances :
+                instance = instances.pop (0)
+            else :
+                instance = None
+            result.append \
+                (  form_cls
+                      ( instance  = instance
+                      , prefix    = prefix_pat % no
+                      , prototype = prototype
+                      , parent    = self.owner
+                      )
+                )
+        return result
+    # end def forms
+
+    def setup_javascript (self, parent_form) :
+        GTW.Form.Javascript.Link_Inline (self.form_cls, self)
+    # end def setup_javascript
+
+# end class Collection_Inline
 
 class _X_Attribute_Inline_ (object) :
     """An inline group handling an attribute which refers to a MOM.Entity"""

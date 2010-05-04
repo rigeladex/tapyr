@@ -44,6 +44,7 @@
 #    28-Feb-2010 (MG) `Field_Group_Description.__call__` fixed to create
 #                     a nicer default for links
 #    11-Mar-2010 (MG) Santiy check added
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 

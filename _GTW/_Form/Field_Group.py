@@ -33,6 +33,7 @@
 #                     `field_group_description`
 #    15-Apr-2010 (MG) `Media` moved in here (was in
 #                     `GTW.Form.Field_Group_Description`)
+#     3-May-2010 (MG) `defaults` added
 #    ««revision-date»»···
 #--
 

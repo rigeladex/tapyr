@@ -29,7 +29,9 @@
 #    30-Dec-2009 (MG) Creation
 #    02-Feb-2010 (MG) `get_raw` paremeter form added
 #    20-Feb-2010 (MG) Parameter `ui_name` added
-#    15-Apr-2010 (MG) `default` method added to allow callable default values
+#     3-May-2010 (MG) `default` method added to allow callable default values
+#                     `_Field_` factored
+#                     `Media` added
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL

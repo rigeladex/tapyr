@@ -29,6 +29,7 @@
 #
 # Revision Dates
 #    15-Apr-2010 (MG) Creation
+#     3-May-2010 (MG) `need_change` added and used
 #    ««revision-date»»···
 #--
 
@@ -44,8 +45,9 @@ import _GTW._Form._MOM.Inline_Instance
 class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
     """The `field` instance for attribute inline editing."""
 
-    electric   = False
-    _real_name = "_Attribute_Inline_"
+    electric    = False
+    _real_name  = "_Attribute_Inline_"
+    need_change = True
 
     def __init__ (self, name, form_cls, inline_description, form = None) :
         self.name               = self.html_name = name
@@ -64,10 +66,13 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                or (form.is_link_role and form.raw_attr_dict)
                )
            ) :
-            ### the instance has been created/updated successfully -> update
-            ### the raw_attr_dict of the parent
-            parent_form.raw_attr_dict [form.generic_name] = \
-                form.get_object_raw (parent_form)
+            if self.need_change :
+                ### the instance has been created/updated successfully ->
+                ### update the raw_attr_dict of the parent
+                parent_form.raw_attr_dict [form.generic_name] = \
+                    form.get_object_raw (parent_form)
+            else :
+                parent_form.raw_attr_dict.pop (form.generic_name, None)
         ### not not move the caching up because the `get_object_raw` could
         ### create additional errors
         ec = form.error_count
@@ -168,6 +173,7 @@ class GTW_Id_Attribute_Inline (_Attribute_Inline_) :
             pid                = et_man.pid_from_lid  (self.form.lid)
             self.form.instance = et_man.pid_query     (pid)
             self.form._create_update_executed = True
+            self.need_change                  = False
             return False
         return True
     # end def needs_processing

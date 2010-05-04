@@ -30,6 +30,8 @@
 #    24-Feb-2010 (CT) Creation continued
 #    11-Mar-2010 (MG) Special widget's used for event date/time
 #    23-Mar-2010 (CT) `Gallery` and `Picture` added
+#    30-Apr-2010 (MG) Adapted to new form's
+#     2-May-2010 (MG) Simplified
 #    ««revision-date»»···
 #--
 

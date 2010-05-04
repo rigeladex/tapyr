@@ -90,8 +90,7 @@ class Event (_Ancestor_Essence) :
             def computed (self, obj) :
                 if obj.rule :
                     return list (obj.rule)
-                elif obj.date and obj.date.start : ### XXX don't know why
-                                                   ### obj.date check is necessary
+                elif obj.date :
                     return [obj.date.start]
                 else :
                     return []

@@ -29,6 +29,7 @@
 #    25-Feb-2010 (MG) Creation
 #    27-Feb-2010 (MG) Cleanup
 #    02-Mar-2010 (MG) `Multi_Completer` moved in here
+#     3-May-2010 (MG) New form handling implemented
 #    ««revision-date»»···
 #--
 
