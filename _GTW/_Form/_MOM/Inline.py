@@ -160,37 +160,80 @@ class Link_Inline (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def forms (self) :
-        owner      = self.owner
-        et_man     = self.form_cls.et_man
-        used_lids  = set ()
-        count      = self.form_count
-        prefix_pat = "%s-M%%d" % (self.prefix, )
-        lid_pat    = "__".join ((prefix_pat, "_lid_a_state_"))
-        for no in xrange (count) :
-            lid = self.request_data.get (prefix_pat % no, ":").split (":") [0]
-            if lid :
-                used_lids.add (int (lid))
+        owner          = self.owner
+        et_man         = self.form_cls.et_man
+        used_instances = dict ()
+        count          = self.form_count
+        form_cls       = self.form_cls
+        prototype      = self.owner.prototype
+        prefix_pat     = "%s-M%%d" % (self.prefix, )
+        lid_pat        = "__".join ((prefix_pat, "_lid_a_state_"))
+        result         = []
+        ### find the links currently linked to the owner
         if owner.instance :
-            instances = et_man.query (** {self.own_role_name : owner.instance})
+            instances = dict \
+                ( (i.lid, i)
+                for i in et_man.query (** {self.own_role_name : owner.instance})
+                )
         else :
-            instances = ()
-        instance_collection = Instance_Collection (et_man, instances, used_lids)
-        form_cls            = self.form_cls
-        prototype           = self.owner.prototype
-        result              = \
-            [   form_cls
-                  ( instance_collection = instance_collection
-                  , prefix              = prefix_pat % no
-                  , prototype           = prototype
-                  )
-            for no in xrange (count)
-            ]
+            instances = dict ()
+        ### find the links which are actively requested by forms
+        for no in xrange (count) :
+            lid = self.request_data.get (lid_pat % no, ":").split (":") [0]
+            if lid :
+                used_instances [lid] = instances.pop (lid, None)
+        instances = sorted (instances.values ())
+        for no in xrange (count) :
+            lid = self.request_data.get (lid_pat % no, ":").split (":") [0]
+            ### assign the correct link to the form or assign a free link
+            if lid in used_instances :
+                instance = used_instances [lid]
+            elif instances :
+                instance = instances.pop (0)
+            else :
+                instance = None
+            result.append \
+                (  form_cls
+                      ( instance  = instance
+                      , prefix    = prefix_pat % no
+                      , prototype = prototype
+                      , parent    = self.owner
+                      )
+                )
         return result
     # end def forms
 
     def _setup_javascript (self) :
         GTW.Form.Javascript.Link_Inline (self.form_cls, self)
     # end def _setup_javascript
+
+    def create_object (self, form) :
+        for lform in self.forms :
+            lform.recursively_run \
+                ("create_object", lform, reverse = True)
+    # end def create_object
+
+    def prepare_request_data (self, form, request_data) :
+        self.request_data = request_data
+        for lform in self.forms :
+            lform.recursively_run \
+                ("prepare_request_data", lform, request_data)
+    # end def prepare_request_data
+
+    def setup_raw_attr_dict (self, form) :
+        for lform in self.forms :
+            lform.recursively_run ("setup_raw_attr_dict", lform)
+    # end def setup_raw_attr_dict
+
+    def update_object (self, form) :
+        for lform in self.forms :
+            lform.recursively_run ("update_object", lform)
+    # end def setup_raw_attr_dict
+
+    def update_raw_attr_dict (self, form) :
+        for lform in self.forms :
+            lform.recursively_run ("update_raw_attr_dict", lform)
+    # end def setup_raw_attr_dict
 
     def __call__ (self, request_data) :
         error_count   = sum (ifo (request_data) for ifo in self.forms)

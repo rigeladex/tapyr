@@ -108,6 +108,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     @TFL.Meta.Once_Property
     def lid (self) :
+        import pdb; pdb.set_trace ()
         lid, state = self.request_data.get \
             (self.get_id (self.lid_and_state_field), ":X").split (":")
         self.state = state
@@ -116,24 +117,6 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     def _prepare_form (self) :
         lid, state = self.lid, self.state
-        if state == "U" :
-            ### this from handles an instance which should be unlinked
-            if not lid or self.keep_instance :
-                ### since this instance was never saved to the database no
-                ### further processing is required
-                self.instance = None
-                return False
-            ### we need to destroy the instance in the database
-            self.instance.destroy ()
-            ### and mark that this form does not have a valid instance
-            ### (needed for the min/max count check's)
-            self.instance = None
-            ### XXX handle deleting of links object's
-            return False
-        if state == "L" :
-            ### this instance is still linked and was not changed -> no need
-            ### to do anything for this form
-            return False
         return True
     # end def _prepare_form
 
@@ -178,52 +161,33 @@ class Link_Inline_Instance (_Inline_Instance_) :
 
     keep_instance = False
 
-    def __init__ (self, * args, ** kw) :
-        self.instance_collection = kw.pop ("instance_collection")
-        self.__super.__init__ (* args, ** kw)
-    # end def __init__
-
     @TFL.Meta.Once_Property
-    def instance (self) :
+    def ainstance (self) :
         if self.prototype :
             return None
         return self.instance_collection.instance_for_lid (self.lid)
     # end def instance
 
-    def __call1__ (self, request_data) :
-        self.request_data = request_data
-        if not self._prepare_form () :
-            ### this form does not need any further processing
-            return 0
-        ### for links we need to handle the inline roles first
-        attr_map = {}
-        for ig in self.inline_groups :
-            self.inline_errors += ig (request_data)
-            if ig.instance and not ig.error_count :
-                ### looks like we have a valid inline attribute form
-                ### let's add it to our attribute map
-                attr_map [ig.generic_name] = ig.instance_as_raw
-        if attr_map :
-            ### look like we need to create/update the link -> let's add the
-            ### parent object as role as well (we use the `force_create` flag
-            ### to make sure that an object creation try will be made to
-            ### generate the correct error message in case the required
-            ### fields for the parent role are not filled out)
-            parent_instance = self.parent.parent._create_or_update \
-                (force_create = True)
-            if parent_instance :
-                attr_map [self.parent.generic_role] = parent_instance.epk_raw
-        ### let's check if all roles are in the attr_map
-        all_roles_correct = all_true \
-            (   r.generic_role_name in attr_map
-            for r in self.et_man.Roles
-            )
-        if all_roles_correct and not self.error_count :
-            ### if no errors are found for the roles, let's try to
-            ### create/update the link itself
-            self.instance = self._create_or_update  (attr_map)
-        return self.error_count
-    # end def __call__
+    def create_object (self, * args, ** kw) :
+        state = self.state
+        if state == "U" :
+            ### this form handles an link which should be destroyed
+            ### we need to destroy the instance in the database
+            self.instance.destroy ()
+            ### and mark that this form does not have a valid instance
+            ### (needed for the min/max count check's)
+            self.instance = None
+            ### XXX handle deleting of links object's
+            return
+        if state == "L" :
+            ### this instance is still linked and was not changed -> no need
+            ### to do anything for this form
+            return
+        ### set the owner role before we create the link
+        self.raw_attr_dict [self.owner_role_name] = \
+            self.parent.get_object_raw ()
+        self.__super.create_object (* args, ** kw)
+    # end def create_object
 
 # end class Link_Inline_Instance
 

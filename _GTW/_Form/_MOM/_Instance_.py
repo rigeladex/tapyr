@@ -200,10 +200,11 @@ class M_Instance (GTW.Form._Form_.__class__) :
 class _Instance_ (GTW.Form._Form_) :
     """Base class for the form's handling any kind of MOM instances."""
 
-    __metaclass__    = M_Instance
-    et_man           = None
-    prototype        = False
-    ignore_fields    = ()
+    __metaclass__           = M_Instance
+    et_man                  = None
+    prototype               = False
+    ignore_fields           = ()
+    _create_update_executed = False
 
     ### a standard form always creates the instance new and does not reuse an
     ### existing instance
@@ -268,14 +269,12 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _create_object
 
     def _create_or_update (self, force_create = False) :
-        #if (   not self._create_update_executed
-        #   or (not self.instance and force_create and not self.error_count)
-        #   ) :
-        ### XXX
-        if self.raw_attr_dict or force_create :
-            instance = self.instance
-            ### at least on attribute is filled out or the creation is
-            ### forced
+        if (   not self._create_update_executed
+           or (not self.instance and force_create and not self.error_count)
+           ) :
+            ### at least on attribute is filled out or the creation is forced
+            self._create_update_executed = True
+            instance                     = self.instance
             errors = []
             try :
                 if instance and self.state != "r" :
@@ -293,8 +292,9 @@ class _Instance_ (GTW.Form._Form_) :
         return self.instance
     # end def _create_or_update
 
-    def get_object_raw (self, defaults) :
-        return getattr (self.instance, "epk_raw", ())
+    def get_object_raw (self, defaults = {}) :
+        instance = self._create_or_update (True)
+        return getattr (instance, "epk_raw", ())
     # end def get_object_raw
 
     def _handle_errors (self, error_list) :
@@ -308,7 +308,10 @@ class _Instance_ (GTW.Form._Form_) :
                 if attr :
                     attributes.append (attr)
                 for attr in attributes :
-                    name = self.fields [attr].html_name
+                    try :
+                        name = self.fields [attr].html_name
+                    except KeyError :
+                        import pdb; pdb.set_trace ()
                     self.field_errors [name].append (error)
                 if not attributes :
                     self.errors.append (error)
@@ -325,8 +328,8 @@ class _Instance_ (GTW.Form._Form_) :
     # end def prepare_request_data
 
     def setup_raw_attr_dict (self, form) :
-        for inline_field in self.inline_fields :
-            inline_field.setup_raw_attr_dict (self)
+        #for inline_field in self.inline_fields :
+        #    inline_field.setup_raw_attr_dict (self)
         self.raw_attr_dict = dict ()
         for f in (f for f in self.fields if not f.electric) :
             self.add_changed_raw (self.raw_attr_dict, f)

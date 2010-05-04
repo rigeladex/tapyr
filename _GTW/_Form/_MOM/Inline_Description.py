@@ -162,10 +162,11 @@ class Link_Inline_Description (_Inline_Description_) :
             inline_form       = GTW.Form.MOM.Link_Inline_Instance.New \
                 ( link_et_man
                 , * self.field_group_descriptions
-                , ignore_fields = (self.own_role_name, self.generic_role)
-                , completer     = self.completer
-                , parent        = parent
-                , suffix        = et_man.type_base_name
+                , ignore_fields   = (self.own_role_name, self.generic_role)
+                , owner_role_name = self.generic_role
+                , completer       = self.completer
+                , parent          = parent
+                , suffix          = et_man.type_base_name
                 )
             return (GTW.Form.MOM.Link_Inline (self, inline_form), )
     # end def __call__
