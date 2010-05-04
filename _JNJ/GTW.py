@@ -62,9 +62,10 @@ class GTW (TFL.Meta.Object) :
 
     def call_macro (self, macro_name, * _args, ** _kw) :
         """Call macro named by `macro_name` passing `* _args, ** _kw`."""
-        templ_name = _kw.pop   ("templ_name", None)
+        templ_name  = _kw.pop ("templ_name",  None)
+        widget_type = _kw.pop ("widget_type", None)
         try :
-            macro  = self.get_macro (macro_name, templ_name)
+            macro  = self.get_macro (macro_name, templ_name, widget_type)
         except ValueError :
             print repr ((macro_name, templ_name, _args, _kw))
             raise
@@ -87,8 +88,10 @@ class GTW (TFL.Meta.Object) :
                 return a
     # end def firstof
 
-    def get_macro (self, macro_name, templ_name = None) :
+    def get_macro (self, macro_name, templ_name = None, widget_type = None) :
         """Return macro `macro_name` from template `templ_name`."""
+        if widget_type :
+            macro_name = getattr (macro_name, widget_type)
         if not isinstance (macro_name, basestring) :
             macro_name = str (macro_name)
         if templ_name is None :

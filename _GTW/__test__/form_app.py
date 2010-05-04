@@ -111,6 +111,21 @@ def create_nav (scope) :
                                        , LID ( "PAP.Person_has_Address"
                                              , legend = "Addresses"
                                              )
+                                       , LID ( "PAP.Person_has_Phone"
+                                             , legend = "Addresses"
+                                             )
+                                       )
+                         )
+                  , dict ( ETM       = "GTW.OMP.PAP.Address"
+                         , Type      = GTW.NAV.E_Type.Admin
+                         , Form_args = ( FGD ()
+                                       ,
+                                       )
+                         )
+                  , dict ( ETM       = "GTW.OMP.PAP.Person_has_Address"
+                         , Type      = GTW.NAV.E_Type.Admin
+                         , Form_args = ( FGD ()
+                                       ,
                                        )
                          )
                   ]

@@ -271,9 +271,15 @@ class _Instance_ (GTW.Form._Form_) :
 
     def _create_or_update (self, force_create = False) :
         if (  (not self._create_update_executed and self.raw_attr_dict)
-           or (not self.instance and force_create and not self.error_count)
+           or (   not self.instance
+              and not self.error_count
+              and self.request_data
+              and force_create
+              )
            ) :
-            ### at least on attribute is filled out or the creation is forced
+            ###    at least on attribute is filled out
+            ### or the creation is forced on a post request if the instance
+            ###    has not been created so far.
             self._create_update_executed = True
             instance                     = self.instance
             errors = []
@@ -355,6 +361,7 @@ class _Instance_ (GTW.Form._Form_) :
     # end def update_raw_attr_dict
 
     def __call__ (self, request_data) :
+        import pdb; pdb.set_trace ()
         ### first, we give each form_group the chance of adding/changing
         ### the request data
         self.recursively_run ("prepare_request_data", self, request_data)

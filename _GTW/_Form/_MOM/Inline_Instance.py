@@ -184,7 +184,7 @@ class Link_Inline_Instance (_Inline_Instance_) :
             ### this instance is still linked and was not changed -> no need
             ### to do anything for this form
             return
-        if not self.instance or self.state == "r" :
+        if self.raw_attr_dict and (not self.instance or self.state == "r") :
             ### this is not a rename ->
             ### set the owner role before we create the link
             self.raw_attr_dict [self.owner_role_name] = \

@@ -69,7 +69,7 @@
 
 {%- import html_version as X -%}
 
-{%- macro aid_div_seq (pfo, aid) -%}
+{%- macro aid_div_seq (pfo, aid, widget_type = None) -%}
   {%- set fo = aid.form -%}
   {%- onion aid.legend %}
     {%- head %}
@@ -93,7 +93,7 @@
   {%- endonion %}
 {%- endmacro -%} {#- aid_div_seq -#}
 
-{%- macro fg_div_seq (fo, fg) -%}
+{%- macro fg_div_seq (fo, fg, widget_type = None) -%}
   {%- for fi in fo.fields_of_field_group (fg) %}
     {%- set desc = GTW._T (fi.description)|safe %}
     <div class="Field Field-{{ fi.name }}" title="{{ desc }}">
@@ -101,66 +101,22 @@
         {{ GTW.call_macro (hf.widget, fo, hf) }}
       {% endfor -%}
       {%- if desc %}<span class="Field-Help">{{ desc }}</span>{% endif -%}
-      {{ _field_label (fo, fi) }}
+      {{ GTW.call_macro (fi.widget.field_label, fo, fi) }}
       {{ GTW.call_macro (fi.widget, fo, fi) }}
-      {{ _field_error (fo, fi) }}
+      {{ GTW.call_macro (fi.widget.field_error, fo, fi) }}
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- fg_div_seq -#}
 
-{%- macro fg_tr (fo, fg) -%}
-  <table class="field_group-Horizontal">
-    <thead>
-      {{ fg_tr_head (fo, fg) }}
-    </thead>
-    <tbody>
-      {{ fg_tr_body (fo, fg) }}
-    </tbody>
-  </table>
-  <div class="field_group-Horizontal-Help">
-    {%- for fi in fo.fields_of_field_group (fg) %}
-      {%- set desc = GTW._T (fi.description)|safe %}
-      {%- if desc %}
-        <p class="Field-Help Field-Help-{{ fi.name }}">{{ desc }}</p>
-      {% endif -%}
-    {% endfor -%}
-  </div>
-{%- endmacro -%} {#- fg_tr -#}
-
-{%- macro fg_tr_body (fo, fg) -%}
-    <tr class="field_group {{ fg.css_class }} {{ kwargs.pop ("class", "") }}"
-      {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
-    >
-      {%- for fi in fo.fields_of_field_group (fg) %}
-        {%- set desc = GTW._T (fi.description)|safe %}
-        <td class="Field Field-{{ fi.name }}" title="{{ desc }}">
-          {%- for h in fo.hidden_fields %}
-            {{ GTW.call_macro (h.widget.inline, fo, h) }}
-          {% endfor -%}
-          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
-        </td>
-      {% endfor -%}
-    </tr>
-{%- endmacro -%} {#- fg_tr_body -#}
-
-{%- macro fg_tr_head (fo, fg) -%}
-    <tr>
-      {%- for fi in fo.fields_of_field_group (fg) %}
-        {%- set desc = GTW._T (fi.description)|safe %}
-        <th title="{{ desc }}">{{ _field_label (fo, fi) }}</th>
-      {% endfor -%}
-    </tr>
-{%- endmacro -%} {#- fg_tr_head -#}
-
-{%- macro field_groups (fo) -%}
+{%- macro field_groups (fo, widget_type = None) -%}
     {%- for fg in fo.field_groups %}
       {%- if fo.get_errors () %}
-        {{ _field_error (fo, None) }}
+        {{ GTW.call_macro (fo.widget.non_field_errors, fo, None) }}
       {% endif -%}
       <div class="Formset {{ fg.css_class }}"
        {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}
       >
-     {{ GTW.call_macro (fg.widget, fo, fg) }}
+     {{ GTW.call_macro (fg.widget, fo, fg, widget_type = widget_type) }}
       </div>
     {% endfor -%}
 {%- endmacro -%} {#- field_groups -#}
@@ -200,8 +156,55 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro inline_table (form, inline) -%}
+{%- macro form_tr (form, widget_type, class = "") -%}
+  <tr{%- if class %} class="{{class}}"{% endif -%}>
+    {{- field_groups (form, widget_type) }}
+  </tr>
+{%- endmacro -%} {#- form_tr -#}
+
+{%- macro fg_tr_head (fo, fg, widget_type = None) -%}
+  {%- for fi in fo.fields_of_field_group (fg) %}
+    {% call GTW.call_macro (fi.widget.th_onion, fo, fi, widget_type) %}
+      {{ GTW.call_macro (fi.widget.field_label, fo, fi) }}
+    {% endcall %}
+  {% endfor -%}
+{%- endmacro -%} {#- fg_tr_head -#}
+
+{%- macro fg_tr_body (fo, fg, widget_type = None) -%}
+  {%- for fi in fo.fields_of_field_group (fg) %}
+    {% call GTW.call_macro (fi.widget.td_onion, fo, fi, widget_type) %}
+      {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
+    {% endcall %}
+  {% endfor -%}
+{%- endmacro -%} {#- fg_tr_body -#}
+
+{%- macro th_onion (fo, fi, widget_type) -%}
+  <th>{{ caller() }}</th>
+{%- endmacro -%} {#- th_onion -#}
+
+{%- macro td_onion (fo, fi, widget_type) -%}
+  <td>{{ caller() }}</td>
+{%- endmacro -%} {#- td_onion -#}
+
+{%- macro th_onion_aid (fo, fi, widget_type, caller = None) -%}
+  {%- for fg in fi.form.field_groups %}
+    {{ fg_tr_head (fi.form, fg, "fg_tr_head") }}
+  {% endfor -%}
+{%- endmacro -%} {#- th_onion_aid -#}
+
+{%- macro td_onion_aid (fo, fi, widget_type, caller = None) -%}
+  {%- for fg in fi.form.field_groups %}
+    {{ fg_tr_body (fi.form, fg, "fg_tr_body") }}
+  {% endfor -%}
+{%- endmacro -%} {#- td_onion_aid -#}
+
+{%- macro inlines_as_table (form, inline) -%}
   {%- set proto = inline.prototype_form -%}
+  {%- if inline.forms %}
+    {%- set fform = inline.forms [0] -%}
+  {%- else %}
+    {%- set fform = proto -%}
+  {% endif -%}
   <fieldset class="inline-form-table {{ inline.form_cls.form_path_css }}">
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ GTW._T (inline.legend)|safe }}</legend>
@@ -215,154 +218,18 @@
         )
     -}}
   <table class="field_group-Horizontal">
-    <thead>
-      {{- GTW.call_macro
-          ( proto.widget.inline_table_tr_head
-          , proto
-          , proto.field_groups
-          )
-      -}}
-    </thead>
+    <thead>{{- form_tr (fform, "fg_tr_head")-}}</thead>
     <tbody>
-      {{ GTW.call_macro
-          ( proto.widget.inline_table_tr_body
-          , proto
-          , proto.field_groups
-          , class = "inline-instance inline-prototype"
-          )
-      }}
+      {{- form_tr
+            (proto, "fg_tr_body", class = "inline-instance inline-prototype")
+      -}}
       {%- for iform in inline.forms %}
-        {{ GTW.call_macro
-          ( iform.widget.inline_table_tr_body
-          , iform
-          , iform.field_groups
-          , class = "inline-instance"
-          ) }}
+        {{- form_tr ( iform, "fg_tr_body", class = "inline-instance") -}}
       {% endfor -%}
     </tbody>
   </table>
   </fieldset>
-{%- endmacro -%} {#- inline_table -#}
-
-{%- macro inline_table_aid_td (fo, fg) -%}
-  {%- set ifo =  fg.forms [0] -%}
-  {%- if fo.hidden_fields %}
-    <td class="ui-helper-hidden">
-      {%- for h in fo.hidden_fields %}
-        {{ GTW.call_macro (h.widget, fo, h) }}
-      {% endfor -%}
-    </td>
-  {% endif -%}
-  {%- for fg in ifo.field_groups %}
-    {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg) }}
-    {%- if ifo.get_errors () %}
-      <td>{{ _field_error (ifo, None) }}</td>
-    {% endif -%}
-  {% endfor  %}
-{%- endmacro -%} {#- inline_table_aid_td -#}
-
-{%- macro inline_table_aid_th (fo, fg) -%}
-  {%- set ifo =  fg.forms [0] -%}
-  {%- for fg in ifo.field_groups %}
-    {{ GTW.call_macro (fg.widget.inline_table_th, ifo, fg)}}
-  {% endfor  %}
-{%- endmacro -%} {#- inline_table_aid_th -#}
-
-{%- macro inline_table_aid_sep_td (fo, fg) -%}
-  {%- set ifo =  fg.forms [0] -%}
-  <td>
-    {%- for h in fo.hidden_fields %}
-      {{ GTW.call_macro (h.widget, fo, h) }}
-    {% endfor -%}
-  {%- for fg in ifo.field_groups %}
-    {{ GTW.call_macro (fg.widget.inline_table_sep_td, ifo, fg) }}
-    {%- if ifo.get_errors () %}
-      {{ _field_error (ifo, None) }}
-    {% endif -%}
-    {%- if not loop.last %}
-      -
-    {% endif -%}
-  {% endfor  %}
-  </td>
-{%- endmacro -%} {#- inline_table_aid_sep_td -#}
-
-{%- macro inline_table_aid_sep_th (fo, fg) -%}
-  {%- set ifo =  fg.forms [0] -%}
-  <th {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}>
-    {%- if fg.title -%}
-      <label>{{ GTW._T (fg.title)|safe }}</label>
-    {%- else %}
-      {%- for fg in ifo.field_groups -%}
-        {{- GTW.call_macro (fg.widget.inline_table_sep_th, ifo, fg) -}}
-        {%- if not loop.last %} - {% endif -%}
-      {%- endfor -%}
-    {%- endif -%}
-  </th>
-{%- endmacro -%} {#- inline_table_aid_sep_th -#}
-
-{%- macro inline_table_td (fo, fg) -%}
-      {%- for fi in fo.fields_of_field_group (fg) %}
-        {%- set desc = GTW._T (fi.description)|safe %}
-        <td class="Field Field-{{ fi.name }}" title="{{ desc }}">
-          {%- for h in fo.hidden_fields %}
-            {{ GTW.call_macro (h.widget, fo, h) }}
-          {% endfor -%}
-          {{fi|e}} {{ fi.widget.inline_table_td }}
-          {{ GTW.call_macro (fi.widget.inline_table_td, fo, fi) }}
-        </td>
-      {% endfor -%}
-{%- endmacro -%} {#- inline_table_td -#}
-
-{%- macro inline_table_th (fo, fg) -%}
-      {%- for fi in fo.fields_of_field_group (fg) %}
-        {%- set help = GTW._T (fi.description)|safe %}
-        <th {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}>{{ _field_label (fo, fi) }}</th>
-      {% endfor -%}
-{%- endmacro -%} {#- inline_table_th -#}
-
-{%- macro inline_table_sep_th (fo, fg) -%}
-      {%- set help = GTW._T (fg.legend)|safe -%}
-      {%- for fi in fo.fields_of_field_group (fg) -%}
-        {{ _field_label (fo, fi) }}
-        {%- if not loop.last %} - {% endif -%}
-      {%- endfor -%}
-{%- endmacro -%} {#- inline_table_sep_th -#}
-
-{%- macro inline_table_sep_td (fo, fg) -%}
-      {%- for fi in fo.fields_of_field_group (fg) -%}
-        {%- set desc = GTW._T (fi.description)|safe %}
-        <span class="Field Field-{{ fi.name }}" title="{{ desc }}">
-          {%- for h in fo.hidden_fields %}
-            {{ GTW.call_macro (h.widget, fo, h) }}
-          {% endfor -%}
-          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
-         {%- if not loop.last %} - {% endif -%}
-        </span>
-      {%- endfor -%}
-{%- endmacro -%} {#- inline_table_sep_td -#}
-
-{%- macro inline_table_tr_body (fo, fgs) -%}
-    <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"
-      {% if fo.legend %}title="{{ GTW._T (fo.legend)|safe }}"{% endif -%}
-    >
-    {%- for fg in fgs %}
-        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg) }}
-    {% endfor -%}
-    {%- if fo.get_errors () %}
-      <td>{{ _field_error (fo, None) }}</td>
-    {% endif -%}
-    </tr>
-{%- endmacro -%} {#- inline_table_tr_body -#}
-
-{%- macro inline_table_tr_head (fo, fgs) -%}
-    <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"
-      {% if fo.legend %}title="{{ GTW._T (fo.legend)|safe }}"{% endif -%}
-    >
-    {%- for fg in fgs %}
-      {{ GTW.call_macro (fg.widget.inline_table_th, fo, fg) }}
-    {% endfor -%}
-    </tr>
-{%- endmacro -%} {#- inline_table_tr_head -#}
+{%- endmacro -%} {#- inlines_as_table -#}
 
 {%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
   {%- set Auth          = page.SC.Auth %}
@@ -485,13 +352,13 @@
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 
-{%- macro _field_label (fo, fi) -%}
+{%- macro field_label (fo, fi) -%}
   <label for="F_{{ fo.get_id (fi) }}">{{ GTW._T (fi.ui_name) }}</label>
-{%- endmacro -%} {#- _field_label -#}
+{%- endmacro -%} {#- field_label -#}
 
-{%- macro _field_error (fo, fi) -%}
+{%- macro field_error (fo, fi) -%}
   {%- set fe = fo.get_errors (fi) -%}
   {{ GTW.call_macro (fe.widget, fe) }}
-{%- endmacro -%} {#- _field_error -#}
+{%- endmacro -%} {#- field_error -#}
 
 {#- __END__ jinja template: form.jnj -#}

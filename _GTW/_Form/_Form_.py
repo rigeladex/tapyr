@@ -53,6 +53,15 @@ import _TFL.Record
 from   _GTW              import GTW
 import _GTW._Form.Field_Error
 import _GTW._Form.Javascript
+import _GTW._Form.Widget_Spec
+
+GTW.Form.Widget_Spec.field_error      = "html/form.jnj, field_error"
+GTW.Form.Widget_Spec.non_field_errors = "html/form.jnj, field_error"
+GTW.Form.Widget_Spec.field_label      = "html/form.jnj, field_label"
+GTW.Form.Widget_Spec.fg_tr_head       = "html/form.jnj, fg_tr_head"
+GTW.Form.Widget_Spec.fg_tr_body       = "html/form.jnj, fg_tr_body"
+GTW.Form.Widget_Spec.th_onion         = "html/form.jnj, th_onion"
+GTW.Form.Widget_Spec.td_onion         = "html/form.jnj, td_onion"
 
 class Hidden_Fields_List (object) :
     """A kind of list which handles the hidden fields of a form instance to

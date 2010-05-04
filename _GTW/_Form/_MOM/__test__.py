@@ -298,7 +298,10 @@ _link_test = r"""
 Up to now we have not touch links in any way. Let's change that. For a start
 we use the *Link1* *Event*:
 
-    >>> form_cls = GTW.Form.MOM.Instance.New (EVT.Event)
+    >>> form_cls = GTW.Form.MOM.Instance.New \
+    ...     ( EVT.Event
+    ...     , FGD (AID ("left", FGD("perma_name", "text", "date")), WF ())
+    ...     )
     >>> form     = form_cls ("/post/")
     >>> for i in sorted (form.raw_values.iteritems ()) : print i
     ('Event__date', {'raw': True})
@@ -314,6 +317,8 @@ we use the *Link1* *Event*:
     ['left', 'date', 'time', 'detail', 'recurrence', 'short_title']
     >>> [ai.name for ai in form.inline_fields]
     ['left', 'date', 'time', 'recurrence']
+    >>> [f.name for f in form.inline_fields [0].form.fields]
+    ['perma_name', 'text', 'date', 'instance_state', '_lid_a_state_']
 
 As we can see we have multiple inlines here. date, time and recurrence are of
 the *composite* type we have already seen in the person example.
@@ -332,6 +337,7 @@ So *Event__left* is the prefix. Ok, so let's try to create an *Event*:
     >>> request_data ["Event__left__perma_name"]  = "Permaname"
     >>> request_data ["Event__left__text"]        = "Text"
     >>> request_data ["Event__left__date__start"] = "1.1.2010"
+    >>> GTW.Form.BREAK = True
     >>> form (request_data)  ### 1
     0
     >>> dump_form_errors (form) ### 1
@@ -518,11 +524,11 @@ So let's look at inline fields in more detail:
     ...     [f.name for f in ilf.form.fields]
     ...     [ii.name for ii in ilf.form.inline_fields]
     left
-    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state', '_lid_a_state_']
-    ['lifetime']
+    ['last_name', 'first_name', 'middle_name', 'title', 'instance_state', '_lid_a_state_']
+    []
     right
-    ['street', 'zip', 'city', 'country', 'region', 'desc', 'position', 'instance_state', '_lid_a_state_']
-    ['position']
+    ['street', 'zip', 'city', 'country', 'region', 'instance_state', '_lid_a_state_']
+    []
 
 It's goin to be intersting to see how the key in the request data have to
 look like for all attributes:
@@ -532,11 +538,6 @@ look like for all attributes:
      P first_name        = 'Person_has_Address__left__first_name'
      p middle_name       = 'Person_has_Address__left__middle_name'
      p title             = 'Person_has_Address__left__title'
-     U lifetime:
-      U start            = 'Person_has_Address__left__lifetime__start'
-      U finish           = 'Person_has_Address__left__lifetime__finish'
-      i instance_state   = 'Person_has_Address__left__lifetime__instance_state'
-      i _lid_a_state_    = 'Person_has_Address__left__lifetime___lid_a_state_'
      i instance_state    = 'Person_has_Address__left__instance_state'
      i _lid_a_state_     = 'Person_has_Address__left___lid_a_state_'
     P right:
@@ -545,13 +546,6 @@ look like for all attributes:
      P city              = 'Person_has_Address__right__city'
      P country           = 'Person_has_Address__right__country'
      p region            = 'Person_has_Address__right__region'
-     U desc              = 'Person_has_Address__right__desc'
-     U position:
-      U lat              = 'Person_has_Address__right__position__lat'
-      U lon              = 'Person_has_Address__right__position__lon'
-      U height           = 'Person_has_Address__right__position__height'
-      i instance_state   = 'Person_has_Address__right__position__instance_state'
-      i _lid_a_state_    = 'Person_has_Address__right__position___lid_a_state_'
      i instance_state    = 'Person_has_Address__right__instance_state'
      i _lid_a_state_     = 'Person_has_Address__right___lid_a_state_'
     U desc               = 'Person_has_Address__desc'
@@ -593,87 +587,8 @@ So let's create request_data dict.
         lon              = None
         height           = None
     desc                 = u''
+"""
 
-That was easy.... So let's try to change the position of the newly created
-address using the link and not the address isself.
-    >>> request_data ["Person_has_Address__right__position__height"] = "100"
-    >>> form     = form_cls ("/post/", form.instance)
-    >>> form (request_data)
-    0
-    >>> dump_form_errors (form)
-    >>> dump_instance (form.instance)
-    left:
-      last_name          = u'last name'
-      first_name         = u'first name'
-      middle_name        = u''
-      title              = u''
-      lifetime:
-        start            = None
-        finish           = None
-    right:
-      street             = u'street'
-      zip                = u'1010'
-      city               = u'vienna'
-      country            = u'austria'
-      region             = u''
-      desc               = u''
-      position:
-        lat              = None
-        lon              = None
-        height           = 100.0
-    desc                 = u''
-"""
-"""
-    >>> form = form_cls ("/post/")
-    >>> [f.name for f in form.fields]
-    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state']
-    >>> [f.name for f in form.inline_fields]
-    ['lifetime']
-    >>> [li.name for li in form.inline_groups]
-    ['Person_has_Address']
-
-Ok, so the differnce is that we now have out first inline group. Let's take a
-closer look at the inline group:
-    >>> ilg = form.inline_groups [0]
-    >>> ilg.own_role_name
-    'person'
-    >>> ilg.form_count
-    1
-    >>> ilg.forms [0].et_man.type_name
-    'GTW.OMP.PAP.Person_has_Address'
-    >>> [f.name for f in ilg.forms [0].fields]
-    ['right', 'desc', 'instance_state', '_lid_a_state_']
-    >>> dump_field_ids (form)
-    P last_name          = 'Person__last_name'
-    P first_name         = 'Person__first_name'
-    p middle_name        = 'Person__middle_name'
-    p title              = 'Person__title'
-    U lifetime:
-     U start             = 'Person__lifetime__start'
-     U finish            = 'Person__lifetime__finish'
-     i instance_state    = 'Person__lifetime__instance_state'
-     i _lid_a_state_     = 'Person__lifetime___lid_a_state_'
-    i instance_state     = 'Person__instance_state'
-    Person_has_Address:
-     P right:
-      P street           = 'Person__Person_has_Address-M0__right__street'
-      P zip              = 'Person__Person_has_Address-M0__right__zip'
-      P city             = 'Person__Person_has_Address-M0__right__city'
-      P country          = 'Person__Person_has_Address-M0__right__country'
-      p region           = 'Person__Person_has_Address-M0__right__region'
-      U desc             = 'Person__Person_has_Address-M0__right__desc'
-      U position:
-       U height          = 'Person__Person_has_Address-M0__right__position__height'
-       U lat             = 'Person__Person_has_Address-M0__right__position__lat'
-       U lon             = 'Person__Person_has_Address-M0__right__position__lon'
-       i instance_state  = 'Person__Person_has_Address-M0__right__position__instance_state'
-       i _lid_a_state_   = 'Person__Person_has_Address-M0__right__position___lid_a_state_'
-      i instance_state   = 'Person__Person_has_Address-M0__right__instance_state'
-      i _lid_a_state_    = 'Person__Person_has_Address-M0__right___lid_a_state_'
-     U desc              = 'Person__Person_has_Address-M0__desc'
-     i instance_state    = 'Person__Person_has_Address-M0__instance_state'
-     i _lid_a_state_     = 'Person__Person_has_Address-M0___lid_a_state_'
-"""
 _object_with_link_test = r"""
     >>> scope = MOM.Scope.new (apt, None)
     >>> PAP   = scope.PAP

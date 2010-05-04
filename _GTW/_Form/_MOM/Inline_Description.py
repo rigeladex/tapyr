@@ -104,8 +104,8 @@ class Attribute_Inline_Description (_Inline_Description_) :
     css_class               = "inline-attribute"
     widget                  = GTW.Form.Widget_Spec \
         ( "html/form.jnj, aid_div_seq"
-        , inline_table_th   = "html/form.jnj, inline_table_aid_th"
-        , inline_table_td   = "html/form.jnj, inline_table_aid_td"
+        , th_onion          = "html/form.jnj, th_onion_aid"
+        , td_onion          = "html/form.jnj, td_onion_aid"
         , Media             = _Inline_Description_.Media
         )
 
@@ -142,7 +142,7 @@ class Link_Inline_Description (_Inline_Description_) :
     """Edit a link inline in a form."""
 
     widget = GTW.Form.Widget_Spec \
-        ( "html/form.jnj, inline_table"
+        ( "html/form.jnj, inlines_as_table"
         , Media             = _Inline_Description_.Media
         )
     css_class    = "inline-link"
