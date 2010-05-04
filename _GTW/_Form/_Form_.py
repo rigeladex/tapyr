@@ -204,7 +204,7 @@ class _Form_ (TFL.Meta.Object) :
         result = dict (value = "yes")
         if isinstance (field, basestring) :
             field = self.fields [field]
-        if field.get_cooked (self, self.instance) :
+        if field.get_cooked (self) :
             result ["checked"] = "checked"
         return result
     # end def is_chained

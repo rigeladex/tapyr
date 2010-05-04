@@ -117,7 +117,7 @@ class Field (GTW.Form._Field_) :
     # end def css_class
 
     def get_cooked (self, form) :
-        return getattr (form.instance, instance, self.attr_kind.ckd_name, None)
+        return getattr (form.instance, self.attr_kind.ckd_name, None)
     # end def get_cooked
 
     def get_raw (self, form, defaults) :

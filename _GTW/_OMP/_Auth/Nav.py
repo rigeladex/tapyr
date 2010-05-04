@@ -67,11 +67,9 @@ class Admin (object) :
             , FGD ()
             , LID
                 ( "GTW.OMP.Auth.Account_in_Group"
-                , AID
-                    ( "group"
-                    , FGD (primary)
-                    , completer = group_completer
-                    )
+                , FGD ("group")
+                , field_attrs = dict
+                    (group = dict (completer = group_completer))
                 , legend    = _("Groups")
                 , title     = _("Groups")
                 )

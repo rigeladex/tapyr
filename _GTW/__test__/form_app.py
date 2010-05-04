@@ -39,6 +39,7 @@ import _GTW._Werkzeug
 import _JNJ.Templateer
 import _TFL.SMTP
 
+import _GTW._OMP._Auth.Nav
 import _GTW._OMP._PAP.Nav
 import _GTW._OMP._EVT.Nav
 from   _TFL.I18N              import _, _T, _Tn
@@ -113,6 +114,9 @@ def create_nav (scope) :
                   , GTW.OMP.PAP.Nav.Admin.Person_has_Phone
                   , GTW.OMP.PAP.Nav.Admin.Person_has_Email
                   , GTW.OMP.PAP.Nav.Admin.Phone
+                  , GTW.OMP.Auth.Nav.Admin.Account
+                  , GTW.OMP.Auth.Nav.Admin.Group
+                  , GTW.OMP.Auth.Nav.Admin.Account_in_Group
                   ]
               , Type            = GTW.NAV.Site_Admin
               )
