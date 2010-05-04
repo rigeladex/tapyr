@@ -104,6 +104,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request  = handler.request
             req_data = request.req_data
             lid      = req_data.get ("lid") or self.args [0]
+            self.Media
             if lid is not None :
                 try :
                     obj = self.lid_query (ETM, lid)

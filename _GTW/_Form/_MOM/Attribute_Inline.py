@@ -107,6 +107,13 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
         self.form.recursively_run ("update_raw_attr_dict", self.form)
     # end def setup_raw_attr_dict
 
+    def __getattr__ (self, name) :
+        try :
+            return getattr (self.inline_description, name)
+        except AttributeError :
+            raise AttributeError (name)
+    # end def __getattr__
+
 # end class _Attribute_Inline_
 
 class An_Attribute_Inline (_Attribute_Inline_) :

@@ -132,6 +132,10 @@ class Attribute_Inline_Description (_Inline_Description_) :
         return cls (self.link_name, form_cls, self)
     # end def field
 
+    def __str__ (self) :
+        return self.link_name
+    # end def __str__
+
 # end class Attribute_Inline_Description
 
 class Link_Inline_Description (_Inline_Description_) :

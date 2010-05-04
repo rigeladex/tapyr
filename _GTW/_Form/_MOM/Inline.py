@@ -117,6 +117,10 @@ class Link_Inline (TFL.Meta.Object) :
             (self.inline_description, self.form_cls, owner = form)
     # end def clone
 
+    def defaults (self, form, instance, defaults = {}) :
+        pass
+    # end def defaults
+
     def get_errors (self) :
         return self.errors
     # end def get_errors

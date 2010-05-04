@@ -148,7 +148,18 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                             , MOM.Attr._EPK_Mixin_
                             )
                           ) :
-                field = AID (field)
+                fgds = ()
+                if isinstance (attr_kind, MOM.Attr._EPK_Mixin_) :
+                    ### of this attribute inline reference an ID-Entity we
+                    ### will only display the primary attributes.
+                    ### If the user needs more she/he has to create the
+                    ### attribute inline description manually
+                    fgds = \
+                        ( GTW.Form.MOM.Field_Group_Description
+                            (Wildcard_Field ("primary"))
+                        ,
+                        )
+                field = AID (field, * fgds, legend = attr_kind.ui_name)
         if isinstance (field, AID) :
             return field.field (et_man, parent)
         return GTW.Form.MOM.Field (et_man, field)

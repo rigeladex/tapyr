@@ -79,7 +79,7 @@ def create_nav (scope) :
             , trim_blocks = True
             , version     = "html/x.jnj"
             )
-        , media           = GTW.Media
+        , Media           = GTW.Media
             ( css_links   =
                 ( GTW.CSS_Link ("screen.css")
                 , GTW.CSS_Link ("/media/GTW/css/jquery.gritter.css", "screen")
@@ -105,9 +105,13 @@ def create_nav (scope) :
               , headline        = u"Admin Page"
               , login_required  = True
               , etypes          =
-                  [ dict ( ETM       = "GTW.OMP.PAP.Address"
+                  [ dict ( ETM       = "GTW.OMP.PAP.Person"
                          , Type      = GTW.NAV.E_Type.Admin
-                         , Form_args = (FGD (WF ("primary")), )
+                         , Form_args = ( FGD ()
+                                       , LID ( "PAP.Person_has_Address"
+                                             , legend = "Addresses"
+                                             )
+                                       )
                          )
                   ]
               , Type            = GTW.NAV.Site_Admin

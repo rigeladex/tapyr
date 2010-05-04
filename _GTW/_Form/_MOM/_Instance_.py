@@ -140,7 +140,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
                 field_group_descriptions = \
                     (GTW.Form.MOM.Field_Group_Description (), )
             ### make the first pass through all fields groups to resolve the
-            ### callable field specs
+            ### callable field spec
             for fgd in field_group_descriptions :
                 fgd (True, et_man, added_fields, parent = result)
             ### now, make the second pass through the field groups

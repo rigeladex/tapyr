@@ -163,6 +163,11 @@ class _Form_ (TFL.Meta.Object) :
         return len (self.errors) + len (self.field_errors) + self.inline_errors
     # end def error_count
 
+    def fields_of_field_group (self, fg) :
+        for f in fg.fields :
+            yield self.fields [f.name]
+    # end def fields_of_field_group
+
     def form_defaults (self) :
         defaults = {}
         for f in self.fields :
