@@ -54,11 +54,16 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
 
     def create_object (self, form) :
         self.form.create_object (form)
-        if self.form.instance :
-            ### since we created an object we need to update the
-            ### raw_attr_dict of the parent form
+        ec = self.form.error_count
+        if not ec :
+            ### the instance has been created/updaed successfully -> update
+            ### the raw_attr_dict of the parent
             form.raw_attr_dict [self.name] = self.form.get_object_raw (form)
-        return self.form.error_count
+        if ec or not self.form.instance :
+            ### an error was detected or the instance has not been created ->
+            ### delete the values for this attribute from parent's raw_attr_dict
+            form.raw_attr_dict.pop (self.name, None)
+        form.inline_errors += ec
     # end def create_object
 
     def clone (self, form) :

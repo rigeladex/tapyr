@@ -543,7 +543,8 @@ class Entity (TFL.Meta.Object) :
                           ( "; object %s, attribute %s: %s [%s]"
                           % (self, name, val, type (val))
                           )
-                        traceback.print_exc ()
+                        if __debug__ :
+                            traceback.print_exc ()
                     else :
                         to_do.append ((attr, val, cooked_val))
                 else :

@@ -30,10 +30,11 @@
 #     6-Feb-2010 (MG) Doctest for renaming a link fixed
 #    ««revision-date»»···
 #--
-"""
->>> scope = MOM.Scope.new (apt, None)
->>> PAP   = scope.PAP
->>> simp_per_form_cls = GTW.Form.MOM.Instance.New (PAP.Person)
+
+_obect_test = """
+    >>> scope = MOM.Scope.new (apt, None)
+    >>> PAP   = scope.PAP
+    >>> simp_per_form_cls = GTW.Form.MOM.Instance.New (PAP.Person)
 
 Each form class has a fields NO-List containing all fields of all field groups.
 
@@ -125,8 +126,8 @@ for the HTML fields
 Once we receive the data from the browser we *call* the form instance and
 pass along the request_data
     >>> request_data = dict ()
-    >>> #form (request_data)
-    #0
+    >>> form (request_data)
+    0
 
 Since we did not pass any request data the process does not report any error
 but will not create any instance as well:
@@ -209,97 +210,105 @@ the fields of the inline from;
     GTW.OMP.PAP.Person (u'last name', u'new first name', u'', u'')
     >>> form.instance.lifetime
     MOM.Date_Interval (start = 1976/03/16)
+    >>> dump_instance (form.instance)
+    last_name            = 'Last name'
+    first_name           = 'New first name'
+    middle_name          = ''
+    title                = ''
+    lifetime             = (('start', '1976/03/16'),)
 
+Now, let's try to change the value of a composite:
+    >>> request_data ["Person__lifetime__finish"] = "16.03.2142"
+    >>> form = form_cls ("/post-url/", form.instance)
+    >>> form (request_data)
+    0
+    >>> dump_instance (form.instance)
+    last_name            = 'Last name'
+    first_name           = 'New first name'
+    middle_name          = ''
+    title                = ''
+    lifetime             = (('finish', '2142/03/16'), ('start', '1976/03/16'))
+
+Up the now, we have always changed an existing object. Now, Lets check if we
+can rename an existing object as well:
+
+    >>> scope.PAP.Person.count
+    1
+    >>> request_data ["Person__last_name"] = "Test"
+    >>> form = form_cls ("/post-url/", form.instance)
+    >>> form (request_data)
+    0
+    >>> dump_instance (form.instance)
+    last_name            = 'Test'
+    first_name           = 'New first name'
+    middle_name          = ''
+    title                = ''
+    lifetime             = (('finish', '2142/03/16'), ('start', '1976/03/16'))
+    >>> scope.PAP.Person.count
+    1
+    >>> saved_instance = form.instance
+
+OK, so what happens if we try to create an instance with the same primary key
+a second time:
+    >>> form = form_cls ("/post-url/")
+    >>> form (request_data)
+    1
+    >>> dump_form_errors (form)
+    Non field errors:
+      new definition of (u'test', u'new first name', u'', u'') clashes with existing (u'test', u'new first name', u'', u'')
+
+OK, let's see how an error in a composite is handled:
+    >>> request_data ["Person__lifetime__finish"] = "16.03.1900"
+    >>> form = form_cls ("/post-url/", saved_instance)
+    >>> form (request_data)
+    2
+    >>> dump_form_errors (form)
+    start
+        Condition `finish_after_start` : The finish date must be later than the start date (start < finish)
+        start = datetime.date(1976, 3, 16)
+        finish = datetime.date(1900, 3, 16)
+    finish
+        Condition `finish_after_start` : The finish date must be later than the start date (start < finish)
+        start = datetime.date(1976, 3, 16)
+        finish = datetime.date(1900, 3, 16)
+"""
+
+_link_test = """
+    >>> scope = MOM.Scope.new (apt, None)
+    >>> EVT   = scope.EVT
+    >>> page  = scope.SWP.Page ("test_page", text = "Test page")
+
+Up to now we have not touch links in any way. Let's change that. For a start
+we use the *Link1* *Event*:
+
+    >>> form_cls = GTW.Form.MOM.Instance.New (EVT.Event)
+    >>> form     = form_cls ("/post/")
+    >>> for i in sorted (form.raw_values.iteritems ()) : print i
+    ('Event__date', {'raw': True})
+    ('Event__detail', u'')
+    ('Event__instance_state', 'KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu')
+    ('Event__left', ())
+    ('Event__recurrence', {'raw': True})
+    ('Event__short_title', u'')
+    ('Event__time', {'raw': True})
+    >>> [f.name for f in form_cls.fields]
+    ['left', 'date', 'time', 'detail', 'recurrence', 'short_title', 'instance_state']
+    >>> fields_of_field_groups (form_cls)
+    ['left', 'date', 'time', 'detail', 'recurrence', 'short_title']
+    >>> [ai.name for ai in form.inline_fields]
+    ['left', 'date', 'time', 'recurrence']
+
+As we can see we have multiple inlines here. date, time and recurrence are of
+the *composite* type we have already seen in the person example.
+But the *left* is a different animal. It's the role of a link, also handled
+by an inline. The difference now is that this inline does handle a
+*Id_Entity* instead of an *An_Entity*.
+So, let's try to create a new *Event*
 
 """
 
 """
 
-### let's use or simple form and simpulate a `POST`. For this, we need to
-### create an nstance of or form class speicifing the POST url and than call
-### this instance with a request data dictinary:
->>> form = simp_per_form_cls ("/post/")
-
-### An empty data dict not is treated as an error but no instance is created
-### as well (and we can see that the form stores the error count internally
-### as well)
->>> form.error_count, form.instance
-(0, None)
-
-### Now, let's try to pas along some real data:
->>> request_data ["last_name"] = "Last Name"
->>> form (request_data)
-1
-
-### this time, the form reports 1 error
->>> dump_form_errors (form) #doctest: +ELLIPSIS
-Non field errors:
-  epkified_raw() takes at least 3 non-keyword arguments (2 given)
-    GTW.OMP.PAP.Person needs the arguments: (last_name, first_name, middle_name = u'', title = u'', ** kw)
-    Instead it got: (raw = True, last_name = 'Last Name', on_error = <built-in method append of list object at 0x...>)
-
-### now we try to pass all required data to the form and let the form create a
-### instance for us
->>> request_data ["first_name"] = "First Name"
->>> form = simp_per_form_cls ("/post/")
->>> form (request_data)
-0
->>> form.instance
-GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'')
->>> form_instance_states (form)
-[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', '')]
-
-### to make sure we check if the instance is stored in the scope
->>> PAP.Person.query ().all ()
-[GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'')]
-
-### now, if what to change an existing instance we can do this by passing the
-### instance to the form constructor:
->>> person = PAP.Person.query ().one ()
->>> form   = simp_per_form_cls ("/post/", person)
->>> request_data ["title"] = "Dr. Dr"
->>> form (request_data)
-0
->>> form.instance
-GTW.OMP.PAP.Person (u'Last Name', u'First Name', u'', u'Dr. Dr')
->>> PAP.Person.query ().one () == form.instance
-True
->>> form_instance_states (form)
-[('lifetime', u''), ('first_name', 'First Name'), ('last_name', 'Last Name'), ('middle_name', ''), ('title', 'Dr. Dr')]
-
-### form can also be used to rename an instance
->>> form   = simp_per_form_cls ("/post/", person)
->>> request_data ["last_name"] = "New Last Name"
->>> form (request_data)
-0
->>> form.instance
-GTW.OMP.PAP.Person (u'New Last Name', u'First Name', u'', u'Dr. Dr')
->>> PAP.Person.query ().all ()
-[GTW.OMP.PAP.Person (u'New Last Name', u'First Name', u'', u'Dr. Dr')]
-
-### let's go back to the error handling:
->>> form   = simp_per_form_cls ("/post/")
->>> form (request_data)
-1
->>> dump_form_errors (form)
-Non field errors:
-  new definition of (u'New Last Name', u'First Name', u'', u'Dr. Dr') clashes with existing (u'New Last Name', u'First Name', u'', u'Dr. Dr')
->>> form   = simp_per_form_cls ("/post/")
->>> request_data ["first_name"] = "New First Name"
->>> request_data ["lifetime"] = "not a birth date"
->>> form (request_data) ### XXX remove this output, comes from the framework
-`not a birth date` for : `lifetime`
-     expected type  : `Date`
-     got      value : `not a birth date -> not a birth date`
-     of       type  : `<type 'unicode'>`
-1
->>> dump_form_errors (form)
-lifetime
-  Can't set optional attribute <(u'New Last Name', u'New First Name', u'', u'Dr. Dr')>.lifetime to `not a birth date`
-    `not a birth date` for : `lifetime`
-     expected type  : `Date`
-     got      value : `not a birth date -> not a birth date`
-     of       type  : `<type 'unicode'>`
 
 ### before we continue, let's rollback the scope to start with a new, empty
 ### scope
@@ -452,6 +461,9 @@ Person_has_Address-M0
 >>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
 (1, 1, 0)
 """
+
+__test__ = dict (link = _link_test)
+
 from   _MOM._EMS.Hash                           import Manager as EMS
 from   _MOM._DBW._HPS.Manager                   import Manager as DBW
 from   _GTW                                     import GTW
@@ -468,6 +480,7 @@ from   _GTW._Form._MOM.Field_Group_Description  import \
 
 from   _MOM                      import MOM
 from   _MOM.Product_Version      import Product_Version, IV_Number
+import  itertools
 
 GTW.Version = Product_Version \
     ( productid           = u"GTW MOM Form Test"
@@ -488,11 +501,15 @@ GTW.Version = Product_Version \
         , db_extension    = ".mft"
         )
     )
-### we use the PAP OMP for our tests
+### import the models we use for the test
 import _GTW._OMP._PAP.import_PAP
+import _GTW._OMP._EVT.import_EVT
+
 ### define an app type
 apt = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP)
+    ( u"HWO", GTW
+    , PNS_Aliases = dict
+       (PAP = GTW.OMP.PAP, EVT = GTW.OMP.EVT, SWP = GTW.OMP.SWP)
     ).Derived (EMS, DBW)
 
 ### define some helper functions
@@ -512,6 +529,8 @@ def dump_form_errors (form, indent = "") :
     for f, errors in form.field_errors.iteritems () :
         print str (f)
         print "\n".join ("  %s%s" % (indent, e) for e in errors)
+    for ifl in form.inline_fields :
+        dump_form_errors (ifl.form, indent + "  ")
     for fg in form.inline_groups :
         for ifo in fg.forms :
             if getattr (ifo, "error_count", 1) :
@@ -540,6 +559,7 @@ def form_instance_states (form, indent = "") :
 # end def form_instance_states
 
 class Non_Stringable (object) :
+    ### Use to generate a form error
     def __init__ (self, value) :
         self.value = value
     # end def __init__
@@ -549,6 +569,11 @@ class Non_Stringable (object) :
     # end def __str__
 
 # end class Non_Stringable
+
+def dump_instance (instance) :
+    for attr in itertools.chain (instance.primary, instance.user_attr) :
+        print "%-20s = %r" % (attr.name, attr.get_raw (instance))
+# end def dump_instance
 
 ### __END__ GTW.Form.MOM.__test__
 

@@ -143,7 +143,11 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     def _field_instance (self, et_man, field, parent) :
         if isinstance (field, basestring) :
             attr_kind = getattr (et_man, field, field)
-            if isinstance (attr_kind, (MOM.Attr._Composite_Mixin_, )) :
+            if isinstance ( attr_kind
+                          , ( MOM.Attr._Composite_Mixin_
+                            , MOM.Attr._EPK_Mixin_
+                            )
+                          ) :
                 field = AID (field)
         if isinstance (field, AID) :
             return field.field (et_man, parent)

@@ -62,9 +62,9 @@ import _GTW._Form._MOM._Instance_
 class Lid_and_State_Field (GTW.Form.Field) :
     """Stores the state of the line form and the lid of edited object/link."""
 
-    hidden = True
-
-    widget = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
+    hidden   = True
+    electric = True
+    widget   = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
 
     def get_raw (self, form, instance) :
         state = "N"
