@@ -123,6 +123,7 @@
 #    30-Apr-2010 (CT) `_A_Composite_.from_string` changed to set `raw = True`
 #    30-Apr-2010 (CT) `A_Date.cooked` and `A_Date_Time.cooked` added to
 #                     enforce the right type
+#     4-May-2010 (CT) `ac_query` and `Q` added
 #    ««revision-date»»···
 #--
 
@@ -138,12 +139,34 @@ from   _TFL                  import sos
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
+import _TFL.Filter
 
 import binascii
 import datetime
 import decimal
 import itertools
 import time
+
+Q = TFL.Attr_Query ()
+
+class _AC_Query_ (TFL.Meta.Object) :
+
+    def __init__ (self, q, cooker = None) :
+        self.q      = q
+        self.cooker = cooker
+    # end def __init__
+
+    def __call__ (self, value) :
+        cooker = self.cooker
+        if cooker is not None :
+            try :
+                value = cooker (value)
+            except (ValueError, TypeError) :
+                return None
+        return self.q (value)
+    # end def __call__
+
+# end class _AC_Query_
 
 class A_Attr_Type (object) :
     """Root class for attribute types for the MOM meta object model."""
@@ -183,6 +206,17 @@ class A_Attr_Type (object) :
 
     _symbolic_default   = False
     _t_rank             = 0
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        if self.needs_raw_value :
+            result = _AC_Query_ \
+                (getattr (Q, self.raw_name).STARTSWITH, unicode)
+        else :
+            result = _AC_Query_ \
+                (getattr (Q, self.name).__eq__, self.cooked)
+        return result
+    # end def ac_query
 
     def __init__ (self, kind) :
         self.kind = kind
@@ -873,6 +907,12 @@ class _A_String_Base_ (A_Attr_Type) :
     max_length        = 0
     ui_length         = TFL.Meta.Once_Property \
         (lambda s : s.max_length or 120)
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        return _AC_Query_ \
+            (getattr (Q, self.name).STARTSWITH, self.simple_cooked)
+    # end def ac_query
 
     def _checkers (self, e_type, kind) :
         for c in self.__super._checkers (e_type, kind) :
@@ -1657,8 +1697,9 @@ Class `MOM.Attr.A_Attr_Type`
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
     if isinstance (v, MOM.Meta.M_Attr_Type)
-    ) + ("decimal", )
+    ) + ("decimal", "Q")
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)
+    MOM._Export      ("Q")
 ### __END__ MOM.Attr.Type

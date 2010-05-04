@@ -33,6 +33,7 @@
 #    22-Oct-2009 (CT) Creation
 #     7-Dec-2009 (CT) `Q` added
 #    22-Dec-2009 (CT) `Sequence_Number` removed
+#     4-May-2010 (CT) `Q` moved to `MOM.Attr.Type`
 #    ««revision-date»»···
 #--
 
@@ -49,9 +50,5 @@ import _MOM.Scope
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
-
-import _TFL.Filter
-
-Q = TFL.Attr_Query ()
 
 ### __END__ MOM.import_MOM
