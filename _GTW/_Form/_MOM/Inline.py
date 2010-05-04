@@ -94,19 +94,27 @@ class Instance_Collection (object) :
 
 # end class Instance_Collection
 
-class _Inline_ (TFL.Meta.Object) :
-    """A Inline `form` inside a real form."""
+class Link_Inline (TFL.Meta.Object) :
+    """Handling of all link-forms as a field group of a form.."""
 
-    def __init__ ( self, inline_description, form_cls, parent = None) :
+    request_data = dict ()
+
+    def __init__ ( self, inline_description, form_cls, owner = None) :
+        self.name               = form_cls.et_man._etype.type_base_name
         self.inline_description = inline_description
         self.form_cls           = form_cls
-        self.parent             = parent
+        self.owner              = owner
+        if owner :
+            self.prefix         = "__".join ((owner.prefix, self.name))
         self.errors             = GTW.Form.Error_List ()
-        self.name               = form_cls.et_man._etype.type_base_name
+        max_count = form_cls.et_man.max_count
+        if max_count :
+            self.max_count      = max_count
     # end def __init__
 
-    def clone (self, parent) :
-        return self.__class__ (self.inline_description, self.form_cls, parent)
+    def clone (self, form) :
+        return self.__class__ \
+            (self.inline_description, self.form_cls, owner = form)
     # end def clone
 
     def get_errors (self) :
@@ -124,100 +132,11 @@ class _Inline_ (TFL.Meta.Object) :
     def prototype_form (self) :
         iform_cls     = self.form_cls
         et_man        = iform_cls.et_man
-        parent        = self.parent
+        owner         = self.owner
+        prefix        = "%s-MP" % (self.prefix, )
         return iform_cls \
-            (None, prefix_sub = "-MP", parent = parent, prototype = True)
+            (None, prefix = prefix, parent = owner, prototype = True)
     # end def prototype_form
-
-    def _setup_javascript (self) :
-        pass
-    # end def _setup_javascript
-
-    def __getattr__ (self, name) :
-        result = getattr (self.inline_description, name)
-        setattr (self, name, result)
-        return result
-    # end def __getattr__
-
-# end class _Inline_
-
-class _X_Attribute_Inline_ (_Inline_) :
-    """An inline group handling an attribute which refers to a MOM.Entity"""
-
-
-    @property
-    def error_count (self) :
-        return self.form.error_count
-    # end def error_count
-
-    @TFL.Meta.Once_Property
-    def form (self) :
-        return self.form_cls \
-            ( prefix_sub = self.parent.prefix_sub
-            , parent     = self
-            , prototype  = self.parent.prototype
-            )
-    # end def form
-
-    @TFL.Meta.Once_Property
-    def forms (self) :
-        return (self.form, )
-    # end def forms
-
-    @TFL.Meta.Once_Property
-    def instance (self) :
-        return self.form.instance
-    # end def instance
-
-    def _setup_javascript (self) :
-        if self.completer :
-            self.completer.attach               (self.form_cls)
-            parent_form = self.form_cls.parent_form
-            if issubclass (parent_form, GTW.Form.MOM.Instance) :
-                GTW.Form.Javascript.Attribute_Inline (self.form_cls, self)
-    # end def _setup_javascript
-
-    @TFL.Meta.Once_Property
-    def Instances (self) :
-        return Instance_Collection \
-            ( self.form_cls.et_man
-            , (getattr (self.parent.instance, self.link_name, None), )
-            )
-    # end def Instances
-
-    def __call__ (self, request_data) :
-        return self.form (request_data)
-    # end def __call__
-
-# end class _X_Attribute_Inline_
-
-class X_An_Attribute_Inline (_X_Attribute_Inline_) :
-    """Handels of An_Entity as attribuites."""
-
-    @property
-    def instance_as_raw (self) :
-        instance = self.instance
-        result   = dict (raw = True)
-        if instance :
-            result.update (instance.raw_attr_dict)
-        return result
-    # end def instance_as_raw
-
-# end class An_Attribute_Inline
-
-class X_Id_Attribute_Inline (_X_Attribute_Inline_) :
-    """Handels of ID_Entity as attribuites."""
-
-    @property
-    def instance_as_raw (self) :
-        instance = self.instance
-        return instance and instance.epk_raw
-    # end def instance_as_raw
-
-# end class Id_Attribute_Inline
-
-class Link_Inline (_Inline_) :
-    """An inline group handling a MOM.Link"""
 
     @TFL.Meta.Once_Property
     def range_field_name (self) :
@@ -225,44 +144,48 @@ class Link_Inline (_Inline_) :
     # end def range_field_name
 
     @TFL.Meta.Once_Property
-    def Instances (self) :
-        parent = self.parent
-        et_man = self.form_cls.et_man
-        if parent.instance :
-            instances = et_man.query (** {self.own_role_name : parent.instance})
-        else :
-            instances = ()
-        return Instance_Collection \
-            (et_man, instances, set (f.lid for f in self.forms))
-    # end def Instances
-
-    @TFL.Meta.Once_Property
     def form_count (self) :
         count         = 0
-        parent        = self.parent
         try :
-            value     = parent.request_data [self.range_field_name]
+            value     = self.request_data [self.range_field_name]
             count     = int (value.split (":") [1])
         except KeyError :
-            if parent.instance :
+            owner     = self.owner
+            if owner.instance :
                 count = self.min_empty + self.form_cls.et_man.query \
-                    (** {self.own_role_name : parent.instance}).count ()
+                    (** {self.own_role_name : owner.instance}).count ()
         return min \
             (self.max_count, max (self.min_count, self.min_required, count))
     # end def form_count
 
     @TFL.Meta.Once_Property
     def forms (self) :
-        form_cls  = self.form_cls
-        prototype = self.parent.prototype
-        return \
+        owner      = self.owner
+        et_man     = self.form_cls.et_man
+        used_lids  = set ()
+        count      = self.form_count
+        prefix_pat = "%s-M%%d" % (self.prefix, )
+        lid_pat    = "__".join ((prefix_pat, "_lid_a_state_"))
+        for no in xrange (count) :
+            lid = self.request_data.get (prefix_pat % no, ":").split (":") [0]
+            if lid :
+                used_lids.add (int (lid))
+        if owner.instance :
+            instances = et_man.query (** {self.own_role_name : owner.instance})
+        else :
+            instances = ()
+        instance_collection = Instance_Collection (et_man, instances, used_lids)
+        form_cls            = self.form_cls
+        prototype           = self.owner.prototype
+        result              = \
             [   form_cls
-                  ( prefix_sub = "-M%s" % (no if not prototype else "P", )
-                  , parent     = self
-                  , prototype  = prototype
+                  ( instance_collection = instance_collection
+                  , prefix              = prefix_pat % no
+                  , prototype           = prototype
                   )
-            for no in xrange (self.form_count)
+            for no in xrange (count)
             ]
+        return result
     # end def forms
 
     def _setup_javascript (self) :
@@ -294,8 +217,31 @@ class Link_Inline (_Inline_) :
         return error_count
     # end def __call__
 
+    def __getattr__ (self, name) :
+        try :
+            result = getattr (self.inline_description, name)
+        except AttributeError :
+            raise AttributeError (name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
+
 # end class Link_Inline
 
+class _X_Attribute_Inline_ (object) :
+    """An inline group handling an attribute which refers to a MOM.Entity"""
+
+    def _setup_javascript (self) :
+        if self.completer :
+            self.completer.attach               (self.form_cls)
+            parent_form = self.form_cls.parent_form
+            if issubclass (parent_form, GTW.Form.MOM.Instance) :
+                GTW.Form.Javascript.Attribute_Inline (self.form_cls, self)
+    # end def _setup_javascript
+
+# end class _X_Attribute_Inline_
+
+
 if __name__ != "__main__" :
-    GTW.Form.MOM._Export ("*", "_Inline_", "_X_Attribute_Inline_")
+    GTW.Form.MOM._Export ("*")
 ### __END__ GTW.Form.MOM.Inline

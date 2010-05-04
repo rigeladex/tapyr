@@ -130,14 +130,10 @@ class M_Instance (GTW.Form._Form_.__class__) :
             ### parent must be set during form class creation
             parent               = result.parent
             result.sub_forms     = sub_forms = {}
-            if parent :
-                result.prefix    = "__".join ((parent.prefix, form_name))
-            else :
-                result.prefix    = form_name
             completers           = []
             field_groups         = []
             medias               = []
-            added_fields         = set ()
+            added_fields         = set (result.ignore_fields)
             if not field_group_descriptions :
                 ### XXX try to get the default field group descriptions for this
                 ### et-man from somewhere
@@ -164,7 +160,8 @@ class M_Instance (GTW.Form._Form_.__class__) :
                         medias.append (media)
                     inline_form = getattr (fg, "form_cls", None)
                     if inline_form :
-                        sub_forms [inline_form.form_name] = inline_form
+                        sub_forms [inline_form.et_man.type_base_name] = \
+                            inline_form
             result.add_internal_fields (et_man)
             js_on_ready          = ()
             if not parent :
@@ -206,13 +203,16 @@ class _Instance_ (GTW.Form._Form_) :
     __metaclass__    = M_Instance
     et_man           = None
     prototype        = False
+    ignore_fields    = ()
 
     ### a standard form always creates the instance new and does not reuse an
     ### existing instance
     state            = "N"
 
-    def __init__ (self, instance = None, parent = None, ** kw) :
-        self.__super.__init__ (instance, ** kw)
+    def __init__ (self, instance = None, parent = None, prefix = None, ** kw) :
+        if not prefix :
+            prefix                   = self.et_man.type_base_name
+        self.__super.__init__ (instance, prefix = prefix, ** kw)
         scope                        = self.et_man.home_scope
         self.parent                  = parent
         ### make a copies of the inline fields/groups to allow caching of the
@@ -226,7 +226,7 @@ class _Instance_ (GTW.Form._Form_) :
             , ( "field_groups"
               , list
               , "inline_groups"
-              , GTW.Form.MOM._Inline_
+              , GTW.Form.MOM.Link_Inline
               )
             ):
             new_src_list                 = src_list_class ()

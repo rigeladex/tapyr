@@ -146,14 +146,12 @@ class _Form_ (TFL.Meta.Object) :
     __metaclass__ = M_Form
     instance      = None
 
-    def __init__ (self, instance = None, prefix_sub = None, ** kw) :
+    def __init__ (self, instance = None, prefix = "", ** kw) :
         if instance is not None :
             self.instance  = instance
+        self.prefix        = prefix
         self.errors        = GTW.Form.Error_List ()
         self.field_errors  = TFL.defaultdict (GTW.Form.Error_List)
-        self.prefix_sub    = prefix_sub
-        if prefix_sub :
-            self.prefix    = "%s%s" % (self.prefix , prefix_sub)
         self.request_data  = {}
         self.hidden_fields = Hidden_Fields_List (self.hidden_fields)
         self.kw            = TFL.Record (** kw)

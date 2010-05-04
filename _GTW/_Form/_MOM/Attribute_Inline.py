@@ -46,10 +46,11 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
 
     electric = False
 
-    def __init__ (self, name, form_cls, form = None) :
-        self.name      = self.html_name = name
-        self.form_cls  = form_cls
-        self.form      = form
+    def __init__ (self, name, form_cls, inline_description, form = None) :
+        self.name               = self.html_name = name
+        self.form_cls           = form_cls
+        self.inline_description = inline_description
+        self.form               = form
     # end def __init__
 
     def create_object (self, form) :
@@ -72,7 +73,13 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
     def clone (self, form) :
         instance = getattr (form.instance, self.name, None)
         return self.__class__ \
-            (self.name, self.form_cls, self.form_cls (instance))
+            ( self.name, self.form_cls, self.inline_description
+            , self.form_cls
+                ( instance
+                , parent = form
+                , prefix = "__".join ((form.prefix, self.name))
+                )
+            )
     # end def clone
 
     def get_raw (self, form, defaults) :

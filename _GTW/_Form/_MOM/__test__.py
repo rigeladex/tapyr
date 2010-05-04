@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-_obect_test = """
+_obect_test = r"""
     >>> scope = MOM.Scope.new (apt, None)
     >>> PAP   = scope.PAP
     >>> simp_per_form_cls = GTW.Form.MOM.Instance.New (PAP.Person)
@@ -51,7 +51,7 @@ is used to check whether the user has actually changed any value.
 It is also possible to use field group descriptions to define which fields
 and in what order the fields should be part of the form:
 
-    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    >>> form_cls = GTW.Form.MOM.Instance.New \
     ...     ( PAP.Person
     ...     , FGD ("title")
     ...     , FGD ("first_name", "last_name", "middle_name")
@@ -67,7 +67,7 @@ and in what order the fields should be part of the form:
 Instead of listing the field names it is possible to use wildcard field
 descriptions:
 
-    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    >>> form_cls = GTW.Form.MOM.Instance.New \
     ...     ( PAP.Person
     ...     , FGD ("title")
     ...     , FGD ("first_name", "last_name", WF  ())
@@ -78,7 +78,7 @@ descriptions:
     ['title']
     ['first_name', 'last_name', 'middle_name', 'lifetime']
 
-    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    >>> form_cls = GTW.Form.MOM.Instance.New \
     ...     ( PAP.Person
     ...     , FGD (WF ("primary"))
     ...     , FGD ()
@@ -93,7 +93,7 @@ The wildcard field can now be place anywhere in the list of field and will
 only expand to the fields not explicitly list in any other field group
 description.
 
-    >>> form_cls = GTW.Form.MOM.Instance.New \\
+    >>> form_cls = GTW.Form.MOM.Instance.New \
     ...     ( PAP.Person
     ...     , FGD ("title")
     ...     , FGD ("first_name", WF ())
@@ -606,7 +606,77 @@ address using the link and not the address isself.
         lat              = None
         lon              = None
     desc                 = u''
+"""
 
+_object_with_link_test = r"""
+    >>> scope = MOM.Scope.new (apt, None)
+    >>> PAP   = scope.PAP
+
+So now it's time to introduce the next feature of the forms. The ability to
+edit links to an object as part of the form of the object itselt. This is
+limited to links where the object the main form is for as a role of the link.
+
+Creating the form class is a little bit more effort here.
+    >>> form_cls = GTW.Form.MOM.Instance.New \
+    ...     ( PAP.Person
+    ...     , FGD ()
+    ...     , LID
+    ...         ( "PAP.Person_has_Address"
+    ...         )
+    ...     )
+    >>> form = form_cls ("/post/")
+    >>> [f.name for f in form.fields]
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state']
+    >>> [f.name for f in form.inline_fields]
+    ['lifetime']
+    >>> [li.name for li in form.inline_groups]
+    ['Person_has_Address']
+
+Ok, so the differnce is that we now have out first inline group. Let's take a
+closer look at the inline group:
+    >>> ilg = form.inline_groups [0]
+    >>> ilg.own_role_name
+    'person'
+    >>> ilg.form_count
+    1
+    >>> ilg.forms [0].et_man.type_name
+    'GTW.OMP.PAP.Person_has_Address'
+    >>> [f.name for f in ilg.forms [0].fields]
+    ['right', 'desc', 'instance_state', '_lid_a_state_']
+    >>> dump_field_ids (form)
+    P last_name          = 'Person__last_name'
+    P first_name         = 'Person__first_name'
+    p middle_name        = 'Person__middle_name'
+    p title              = 'Person__title'
+    U lifetime:
+     U start             = 'Person__lifetime__start'
+     U finish            = 'Person__lifetime__finish'
+     i instance_state    = 'Person__lifetime__instance_state'
+     i _lid_a_state_     = 'Person__lifetime___lid_a_state_'
+    i instance_state     = 'Person__instance_state'
+    Person_has_Address:
+     P right:
+      P street           = 'Person__Person_has_Address-M0__right__street'
+      P zip              = 'Person__Person_has_Address-M0__right__zip'
+      P city             = 'Person__Person_has_Address-M0__right__city'
+      P country          = 'Person__Person_has_Address-M0__right__country'
+      p region           = 'Person__Person_has_Address-M0__right__region'
+      U desc             = 'Person__Person_has_Address-M0__right__desc'
+      U position:
+       U height          = 'Person__Person_has_Address-M0__right__position__height'
+       U lat             = 'Person__Person_has_Address-M0__right__position__lat'
+       U lon             = 'Person__Person_has_Address-M0__right__position__lon'
+       i instance_state  = 'Person__Person_has_Address-M0__right__position__instance_state'
+       i _lid_a_state_   = 'Person__Person_has_Address-M0__right__position___lid_a_state_'
+      i instance_state   = 'Person__Person_has_Address-M0__right__instance_state'
+      i _lid_a_state_    = 'Person__Person_has_Address-M0__right___lid_a_state_'
+     U desc              = 'Person__Person_has_Address-M0__desc'
+     i instance_state    = 'Person__Person_has_Address-M0__instance_state'
+     i _lid_a_state_     = 'Person__Person_has_Address-M0___lid_a_state_'
+
+As we can see, in the form for the link the inline for the left role (->
+person) is missing. This is because this form is part of the toplevel form
+for a person -> the person role is taken from the toplevel form.
 """
 """
 
@@ -757,7 +827,8 @@ Person_has_Address-M0
 """
 
 __test__ = dict \
-    ( link2   = _link2_test
+    ( object_with_link = _object_with_link_test
+#    , link2   = _link2_test
 #    , link    = _link_test
 #    , object = _obect_test
     )
@@ -813,7 +884,7 @@ apt = MOM.App_Type \
 ### define some helper functions
 def fields_of_field_groups (form, indent = "") :
     for fg in form.field_groups :
-        if isinstance (fg, GTW.Form.MOM._Inline_) :
+        if isinstance (fg, GTW.Form.MOM.Link_Inline) :
             print "%s%s" % (indent, fg.form_cls.et_man.type_base_name)
             fields_of_field_groups (fg.form_cls, indent + "  ")
         else :
@@ -902,6 +973,10 @@ def dump_field_ids (form, indent = "") :
         else :
             print "%s%s %s:" % (indent, kind, f.name)
             dump_field_ids (f.form, indent + " ")
+    for ifg in form.inline_groups :
+        print "%s%s:" % (indent, ifg.name)
+        for no, f in enumerate (ifg.forms) :
+            dump_field_ids (f, indent + " ")
 # end def dump_field_ids
 
 ### __END__ GTW.Form.MOM.__test__

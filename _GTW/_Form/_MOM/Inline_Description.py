@@ -128,7 +128,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
             , parent        = parent
             , suffix        = et_man.type_base_name
             )
-        return cls (self.link_name, form_cls)
+        return cls (self.link_name, form_cls, self)
     # end def field
 
 # end class Attribute_Inline_Description
@@ -148,30 +148,26 @@ class Link_Inline_Description (_Inline_Description_) :
     min_empty    = 0
     min_required = 0
 
-    def __init__ (self, et_man, * field_group_descriptions, ** kw) :
-        self.own_role_name = kw.pop ("own_role_name", None)
-        self.__super.__init__ (et_man, * field_group_descriptions, ** kw)
-    # end def __init__
 
-    def __call__ (self, et_man, added_fields, parent_form, ** kw) :
-        scope             = et_man.home_scope
-        link_et_man       = getattr (scope, self.link_name)
-        if not self.own_role_name :
-            roles = tuple (et_man.link_map [link_et_man._etype])
+    def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
+        if not first_pass :
+            scope        = et_man.home_scope
+            link_et_man  = getattr (scope, self.link_name)
+            roles        = tuple (et_man.link_map [link_et_man._etype])
             if len (roles) > 1 :
-                raise TypeError ("More thanb one role to chhose from ?")
+                raise TypeError ("More than one role to choose from ?")
             self.own_role_name = roles [0].role_name
-        self.genric_role  = getattr \
-            (link_et_man, self.own_role_name).generic_role_name
-        inline_form       = GTW.Form.MOM.Link_Inline_Instance.New \
-            ( link_et_man
-            , * self.field_group_descriptions
-            , completer     = self.completer
-            , form_name     = link_et_man._etype.type_base_name
-            , parent_form   = parent_form
-            , suffix        = et_man.type_base_name
-            )
-        return (GTW.Form.MOM.Link_Inline (self, inline_form), )
+            self.generic_role  = getattr \
+                (link_et_man, self.own_role_name).generic_role_name
+            inline_form       = GTW.Form.MOM.Link_Inline_Instance.New \
+                ( link_et_man
+                , * self.field_group_descriptions
+                , ignore_fields = (self.own_role_name, self.generic_role)
+                , completer     = self.completer
+                , parent        = parent
+                , suffix        = et_man.type_base_name
+                )
+            return (GTW.Form.MOM.Link_Inline (self, inline_form), )
     # end def __call__
 
 # end class Link_Inline_Description

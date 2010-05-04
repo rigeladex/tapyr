@@ -178,11 +178,16 @@ class Link_Inline_Instance (_Inline_Instance_) :
 
     keep_instance = False
 
+    def __init__ (self, * args, ** kw) :
+        self.instance_collection = kw.pop ("instance_collection")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
     @TFL.Meta.Once_Property
     def instance (self) :
         if self.prototype :
             return None
-        return self.parent.Instances.instance_for_lid (self.lid)
+        return self.instance_collection.instance_for_lid (self.lid)
     # end def instance
 
     def __call1__ (self, request_data) :
@@ -207,7 +212,7 @@ class Link_Inline_Instance (_Inline_Instance_) :
             parent_instance = self.parent.parent._create_or_update \
                 (force_create = True)
             if parent_instance :
-                attr_map [self.parent.genric_role] = parent_instance.epk_raw
+                attr_map [self.parent.generic_role] = parent_instance.epk_raw
         ### let's check if all roles are in the attr_map
         all_roles_correct = all_true \
             (   r.generic_role_name in attr_map
