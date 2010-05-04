@@ -54,7 +54,8 @@
                   e.stopPropagation ();
                 }
             );
-        var ac_observers = $edit.data ("ac_observers") || [];
+        var $inline      = $edit.find (".inline-instance");
+        var ac_observers = $inline.data ("ac_observers") || [];
         ac_observers.push
           ( function (data)
               {
@@ -64,7 +65,7 @@
                   $edit.hide        ();
               }
           );
-        $edit.data ("ac_observers", ac_observers);
+        $inline.data ("ac_observers", ac_observers);
         $save_link
           .click
             ( function (e)

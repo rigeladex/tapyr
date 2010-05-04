@@ -74,9 +74,10 @@ import _GTW.jQuery
 class _GTW_Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
 
-    PKNS         = GTW.Form.MOM
-    completer    = None
-    css_class    = "inline-editing"
+    PKNS               = GTW.Form.MOM
+    completer          = None
+    css_class          = "inline-editing"
+    javascript_options = dict ()
 
     def __init__ (self, link_name, * field_group_descriptions, ** kw) :
         self.link_name = getattr (link_name, "type_name", link_name)

@@ -103,6 +103,14 @@
         , icon           : "ui-icon-copy"
         , callback       : "_copy_inline"
         }
+      , { name           : "clear"
+        , title          : _("Clear")
+        , add_to_inline  : "lid"
+        , href           : "#clear"
+        , enabled        : "true"
+        , icon           : "ui-icon-circle-close"
+        , callback       : "_clear_inline"
+        }
       ];
 
   var field_no_pat = /-M([\dP]+)_/;
@@ -140,7 +148,7 @@
         var html = '<a href="' + button.href + '"'
                  +   'title="' + title + '"' + css_class
                  + '>'
-                 +   '<span class="ui-icon ' + icon + '">'
+                 +   '<span class="ui-state-default ui-icon ' + icon + '">'
                  +      button.name
                  +   '</span>'
                  + '</a>'
@@ -152,6 +160,21 @@
         var $inline = $(evt.currentTarget).parents (".inline-root");
         evt.data._copy_form ($inline);
         evt.preventDefault  ();
+      }
+    , _clear_inline   : function (evt)
+      {
+        var  self   = evt.data;
+        var $form   = $(evt.target).parents (".inline-instance");
+        var $inputs = $form.find       (":input")
+                           .attr       ("value", "")
+                           .removeAttr ("disabled");
+        /* set the state of ALL inlines to empty */
+        $form.find ("input[name$=-instance_state]").attr ("value", "");
+        /* set lid/state of ALL lines to New */
+        $form.find ("input[name$=__lid_a_state_]").attr ("value", ":N");
+        evt.preventDefault         ();
+        evt.stopPropagation        ();
+        $inputs.eq (0).focus       ();
       }
     , _copy_inline   : function (evt)
       {
@@ -300,7 +323,7 @@
     , _lid_for_inline : function ($inline, $form)
       {
         return $form.find
-          ( "[name^=" + $inline.data ("options").prefix + "-]"
+          ( "[name^=" + $inline.data ("options").prefix + "]"
           + "[name$=__lid_a_state_]"
           );
       }
@@ -395,7 +418,7 @@
       {
         var $inline    = $("." + inline.prefix);
         var $prototype = $inline.find (".inline-prototype")
-        var  buttons   = ["rename", "delete"];
+        var  buttons   = inline ["buttons"];
         $inline.data ("options", inline);
         /* if we have found a prototype we can have the add button */
         if ($prototype.length)
@@ -419,7 +442,6 @@
             $inline.data ("cur_number", 0);
             $inline.data ("max_count",  1);
           }
-        if (inline.allow_copy) buttons.push ("copy");
         $inline.data     ("buttons", buttons);
         $inline.addClass ("inline-root");
         var self = this;
@@ -430,7 +452,9 @@
                 var $this   = $(this);
                 self._setup_buttons ($this, buttons);
                 var $l_a_s = $this.find  ("input[name$=__lid_a_state_]");
-                if ($l_a_s.attr ("value").split (":") [0])
+                if (  inline.initial_disabled
+                   && $l_a_s.attr ("value").split (":") [0]
+                   )
                     $this.find (":input").attr ("disabled", "disabled");
               }
             );

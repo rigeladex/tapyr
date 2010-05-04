@@ -181,6 +181,8 @@ class GTW_Id_Attribute_Inline (_Attribute_Inline_) :
     def _setup_javascript (self) :
         if self.form_cls.completer :
             self.form_cls.completer.attach (self.form_cls, self.link_name)
+            GTW.Form.Javascript.Attribute_Inline \
+                (self.form_cls, self, ** self.javascript_options)
     # end def _setup_javascript
 
 Id_Attribute_Inline = GTW_Id_Attribute_Inline # end class

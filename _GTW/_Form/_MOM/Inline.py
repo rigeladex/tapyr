@@ -179,7 +179,8 @@ class Link_Inline (TFL.Meta.Object) :
     # end def forms
 
     def setup_javascript (self, parent_form) :
-        GTW.Form.Javascript.Link_Inline (self.form_cls, self)
+        GTW.Form.Javascript.Link_Inline \
+            (self.form_cls, self, ** self.javascript_options)
     # end def setup_javascript
 
     def create_object (self, form) :
@@ -270,24 +271,11 @@ class Collection_Inline (Link_Inline) :
     # end def forms
 
     def setup_javascript (self, parent_form) :
-        GTW.Form.Javascript.Link_Inline (self.form_cls, self)
+        GTW.Form.Javascript.Link_Inline \
+            (self.form_cls, self, ** self.javascript_options)
     # end def setup_javascript
 
 # end class Collection_Inline
-
-class _X_Attribute_Inline_ (object) :
-    """An inline group handling an attribute which refers to a MOM.Entity"""
-
-    def _setup_javascript (self) :
-        if self.completer :
-            self.completer.attach               (self.form_cls)
-            parent_form = self.form_cls.parent_form
-            if issubclass (parent_form, GTW.Form.MOM.Instance) :
-                GTW.Form.Javascript.Attribute_Inline (self.form_cls, self)
-    # end def _setup_javascript
-
-# end class _X_Attribute_Inline_
-
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")

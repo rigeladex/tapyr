@@ -81,20 +81,23 @@ class Form (TFL.Meta.Object) :
 class _Inline_ (TFL.Meta.Object) :
     """Base class for the different kind of inline forms"""
 
-    allow_copy = False
+    buttons          = ("rename", "delete", "clear")
+    initial_disabled = True
 
-    def __init__ (self, form, description) :
+    def __init__ (self, form, description, ** kw) :
         self.form        = form
         self.description = description
         form.javascript.inlines.append (self)
+        self.__dict__.update (kw)
     # end def __init__
 
     def js_on_ready (self) :
         form   = self.form
         result = dict \
-            ( prefix         = form.form_name
-            , allow_copy     = self.allow_copy
-            , instance_class = "inline-instance"
+            ( prefix           = form.form_name
+            , buttons          = self.buttons
+            , instance_class   = "inline-instance"
+            , initial_disabled = self.initial_disabled
             )
         return result
     # end def js_on_ready
@@ -109,7 +112,7 @@ class Attribute_Inline (_Inline_) :
 class Link_Inline (_Inline_) :
     """A inline form which models a link."""
 
-    allow_copy = True
+    buttons = ("rename", "delete", "clear", "copy")
 
 # end class Link_Inline
 

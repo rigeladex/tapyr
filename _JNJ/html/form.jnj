@@ -212,13 +212,15 @@
   {% endfor -%}
 {%- endmacro -%} {#- td_onion_aid -#}
 
-{%- macro fg_as_table (fo, fg, widget_type = None) -%}
+{%- macro fg_as_table (fo, fg, widget_type = None, css_class = "") -%}
   <table class="field_group-Horizontal">
     <thead>
       <tr>{{ fg_tr_head (fo, fg) }}</tr>
     </thead>
     <tbody>
-      <tr>{{ fg_tr_body (fo, fg) }}</tr>
+      <tr{%- if css_class %} class="{{ css_class }}"{% endif -%}>
+        {{- fg_tr_body (fo, fg) -}}
+      </tr>
     </tbody>
   </table>
   <div class="field_group-Horizontal-Help">
