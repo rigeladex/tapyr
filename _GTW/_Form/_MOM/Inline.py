@@ -141,7 +141,7 @@ class _Inline_ (TFL.Meta.Object) :
 
 # end class _Inline_
 
-class _Attribute_Inline_ (_Inline_) :
+class _X_Attribute_Inline_ (_Inline_) :
     """An inline group handling an attribute which refers to a MOM.Entity"""
 
 
@@ -189,9 +189,9 @@ class _Attribute_Inline_ (_Inline_) :
         return self.form (request_data)
     # end def __call__
 
-# end class _Attribute_Inline_
+# end class _X_Attribute_Inline_
 
-class An_Attribute_Inline (_Attribute_Inline_) :
+class X_An_Attribute_Inline (_X_Attribute_Inline_) :
     """Handels of An_Entity as attribuites."""
 
     @property
@@ -205,7 +205,7 @@ class An_Attribute_Inline (_Attribute_Inline_) :
 
 # end class An_Attribute_Inline
 
-class Id_Attribute_Inline (_Attribute_Inline_) :
+class X_Id_Attribute_Inline (_X_Attribute_Inline_) :
     """Handels of ID_Entity as attribuites."""
 
     @property
@@ -297,5 +297,5 @@ class Link_Inline (_Inline_) :
 # end class Link_Inline
 
 if __name__ != "__main__" :
-    GTW.Form.MOM._Export ("*", "_Inline_", "_Attribute_Inline_")
+    GTW.Form.MOM._Export ("*", "_Inline_", "_X_Attribute_Inline_")
 ### __END__ GTW.Form.MOM.Inline

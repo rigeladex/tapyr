@@ -66,8 +66,7 @@ from   _MOM                                 import MOM
 from   _GTW                                 import GTW
 import _GTW.Media
 import _GTW._Form.Widget_Spec
-import _GTW._Form._MOM.Inline
-import _GTW._Form._MOM.Inline_Instance
+import _GTW._Form._MOM.Attribute_Inline
 
 class _Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
@@ -75,7 +74,13 @@ class _Inline_Description_ (TFL.Meta.Object) :
     completer    = None
     css_class    = "inline-editing"
 
-    Media        = GTW.Media \
+    def __init__ (self, link_name, * field_group_descriptions, ** kw) :
+        self.link_name = getattr (link_name, "type_name", link_name)
+        self.field_group_descriptions = field_group_descriptions
+        self.__dict__.update (kw)
+    # end def __init__
+
+    Media           = GTW.Media \
       ( css_links   =
           ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css")
           , GTW.CSS_Link ("/media/GTW/css/inline_forms.css")
@@ -96,12 +101,6 @@ class _Inline_Description_ (TFL.Meta.Object) :
 class Attribute_Inline_Description (_Inline_Description_) :
     """Edit an attribute which refers to an object inline."""
 
-    def __init__ (self, link_name, ** kw) :
-        self.link_name  = getattr (link_name, "type_name", link_name)
-        self.field_group_descriptions = field_group_descriptions
-        self.__dict__.update (kw)
-    # end def __init__
-
     css_class               = "inline-attribute"
     widget                  = GTW.Form.Widget_Spec \
         ( "html/form.jnj, aid_div_seq"
@@ -110,31 +109,27 @@ class Attribute_Inline_Description (_Inline_Description_) :
         , Media             = _Inline_Description_.Media
         )
 
-    def __call__ (self, et_man, added_fields, parent_form, ** kw) :
-        scope      = et_man.home_scope
-        attr_kind  = et_man._etype._Attributes._attr_dict.get \
-            (self.link_name, getattr (et_man._etype, self.link_name))
+    def field (self, et_man, parent, ** kw) :
+        scope         = et_man.home_scope
+        attr_kind     = getattr (et_man._etype, self.link_name)
         if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
             obj_etype = attr_kind.C_Type
         else :
             obj_etype = attr_kind.Class
-        obj_et_man = getattr (scope, obj_etype.type_name)
-        self.generic_name = getattr \
-            (attr_kind, "generic_role_name", self.link_name)
-        added_fields.add (self.link_name)
-        added_fields.add (self.generic_name)
-        inline_form       = GTW.Form.MOM.Attribute_Inline_Instance.New \
+        obj_et_man    = getattr (scope, obj_etype.type_name)
+        cls                 = GTW.Form.MOM.Id_Attribute_Inline
+        if isinstance (obj_et_man, MOM.E_Type_Manager.An_Entity) :
+            cls             = GTW.Form.MOM.An_Attribute_Inline
+        form_cls      = cls.Form_Class.New \
             ( obj_et_man
             , * self.field_group_descriptions
             , completer     = self.completer
             , form_name     = self.link_name
-            , parent_form   = parent_form
+            , parent        = parent
             , suffix        = et_man.type_base_name
             )
-        if isinstance (obj_et_man, MOM.E_Type_Manager.An_Entity) :
-            return (GTW.Form.MOM.An_Attribute_Inline (self, inline_form), )
-        return (GTW.Form.MOM.Id_Attribute_Inline (self, inline_form), )
-    # end def __call__
+        return cls (self.link_name, form_cls)
+    # end def field
 
 # end class Attribute_Inline_Description
 
@@ -155,9 +150,7 @@ class Link_Inline_Description (_Inline_Description_) :
 
     def __init__ (self, et_man, * field_group_descriptions, ** kw) :
         self.own_role_name = kw.pop ("own_role_name", None)
-        self.link_name     = getattr (et_man, "type_name", et_man)
-        self.field_group_descriptions = field_group_descriptions
-        self.__dict__.update (kw)
+        self.__super.__init__ (et_man, * field_group_descriptions, ** kw)
     # end def __init__
 
     def __call__ (self, et_man, added_fields, parent_form, ** kw) :

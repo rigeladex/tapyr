@@ -42,6 +42,11 @@ Each form class has a fields NO-List containing all fields of all field groups.
     >>> fields_of_field_groups (simp_per_form_cls)
     ['last_name', 'first_name', 'middle_name', 'title', 'lifetime']
 
+As wen can see, for each user editable attribute a field will be added to the
+form.
+In addtion, a field called *instance_state* will be added as well. This field
+is used to check whether the user has actually changed any value.
+
 It is also possible to use field group descriptions to define which fields
 and in what order the fields should be part of the form:
 
@@ -111,9 +116,9 @@ The raw_values dict holdes the values which will be used as default values
 for the HTML fields
     >>> for i in sorted (form.raw_values.iteritems ()) : print i
     ('Person__first_name', u'')
-    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgpWCnNTJ2ZpcnN0X25hbWUnCnAzClYKc1MnbGFzdF9uYW1lJwpwNApWCnNTJ21pZGRsZV9uYW1lJwpwNQpWCnNTJ3RpdGxlJwpwNgpWCnMu')
+    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgooZHAzClMncmF3JwpwNApJMDEKc3NTJ2ZpcnN0X25hbWUnCnA1ClYKc1MnbGFzdF9uYW1lJwpwNgpWCnNTJ21pZGRsZV9uYW1lJwpwNwpWCnNTJ3RpdGxlJwpwOApWCnMu')
     ('Person__last_name', u'')
-    ('Person__lifetime', u'')
+    ('Person__lifetime', {'raw': True})
     ('Person__middle_name', u'')
     ('Person__title', u'')
 
@@ -156,9 +161,9 @@ created to the new form instance.
     >>> form = form_cls ("/post-url/", form.instance)
     >>> for i in sorted (form.raw_values.iteritems ()) : print i
     ('Person__first_name', 'First name')
-    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgpWCnNTJ2ZpcnN0X25hbWUnCnAzClMnRmlyc3QgbmFtZScKcDQKc1MnbGFzdF9uYW1lJwpwNQpTJ0xhc3QgbmFtZScKcDYKc1MnbWlkZGxlX25hbWUnCnA3ClYKc1MndGl0bGUnCnA4ClYKcy4=')
+    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgooZHAzClMncmF3JwpwNApJMDEKc3NTJ2ZpcnN0X25hbWUnCnA1ClMnRmlyc3QgbmFtZScKcDYKc1MnbGFzdF9uYW1lJwpwNwpTJ0xhc3QgbmFtZScKcDgKc1MnbWlkZGxlX25hbWUnCnA5ClYKc1MndGl0bGUnCnAxMApWCnMu')
     ('Person__last_name', 'Last name')
-    ('Person__lifetime', u'')
+    ('Person__lifetime', {'raw': True})
     ('Person__middle_name', u'')
     ('Person__title', u'')
 
@@ -171,11 +176,41 @@ created to the new form instance.
 
 We have choosen the PAP.Person object for a good reason. It has a so called
 `Composite` attribute: *lifetime*. This attribute is actually an object by
-itself which has two attributes: the *start* and the *end* of the date
-interval (which would be the brith and deathdate of the person):
+itself which has two attributes: the *start* and the *finish* of the date
+interval (which would be the brith- and deathdate of the person):
 
     >>> form.instance.lifetime
     MOM.Date_Interval ()
+
+Editing of objects inside of a form for an other object is called *inline
+editing*. So let' check which inlines we have:
+
+    >>> [ai.name for ai in form.inline_fields]
+    ['lifetime']
+
+Each inline has an embedded form for it's own:
+
+    >>> inline_form_cls = form.inline_fields [0].form_cls
+    >>> [f.name for f in inline_form_cls.fields]
+    ['start', 'finish', 'instance_state', '_lid_a_state_']
+
+The result is not what we execpted.... There is a new fields called
+*_lid_a_state_*. This field is used by the javascript on the client side to
+commiunicate chanes made to this *inline* object.
+
+Now that we know that we have an inline form, let's try to pass some data for
+the fields of the inline from;
+
+    >>> request_data ["Person__lifetime__start"] = "16.03.1976"
+    >>> form = form_cls ("/post-url/", form.instance)
+    >>> form (request_data)
+    0
+    >>> form.instance
+    GTW.OMP.PAP.Person (u'last name', u'new first name', u'', u'')
+    >>> form.instance.lifetime
+    MOM.Date_Interval (start = 1976/03/16)
+
+
 """
 
 """

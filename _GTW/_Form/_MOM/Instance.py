@@ -58,10 +58,6 @@ class Instance (GTW.Form.MOM._Instance_) :
         self.__super.__init__ (instance, ** kw)
     # end def __init__
 
-    def _create_object (self) :
-        self._create_or_update ("N")
-    # end def _create_object
-
 # end class Instance
 
 if __name__ != "__main__" :

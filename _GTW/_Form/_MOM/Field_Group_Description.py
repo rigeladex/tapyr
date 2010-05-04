@@ -56,6 +56,9 @@ import _MOM.Link
 from   _GTW                                 import GTW
 import _GTW._Form.Field_Group
 import _GTW._Form.Field_Group_Description
+from   _GTW._Form._MOM.Inline_Description   import \
+    (Attribute_Inline_Description as AID)
+
 import _GTW._Form._MOM
 from   _GTW._Form._MOM.Field                import Field
 
@@ -138,16 +141,16 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         )
 
     def _field_instance (self, et_man, field, parent) :
+        if isinstance (field, basestring) :
+            attr_kind = getattr (et_man, field, field)
+            if isinstance (attr_kind, (MOM.Attr._Composite_Mixin_, )) :
+                field = AID (field)
+        if isinstance (field, AID) :
+            return field.field (et_man, parent)
         return GTW.Form.MOM.Field (et_man, field)
     # end def _field_instance
 
-    def __call__ ( self, first_pass, et_man
-                 , added_fields = None
-                 , parent       = None
-                 , ** kw
-                 ) :
-        if added_fields is None :
-            added_fields = set ()
+    def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
         if not self.fields :
             self.fields = (Wildcard_Field (), )
         fields_spec = self.fields
@@ -161,21 +164,20 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                 fields.append   (f)
             added_fields.update (new_fields)
         self.fields = fields
-        if first_pass :
-            return
-        if fields :
-            field_instances = []
-            for f in self.fields :
-                field = self._field_instance (et_man, f, parent)
-                if __debug__ :
-                    assert not isinstance \
-                        (field, ( GTW.Form.Field_Group_Description
-                                , GTW.Form.Field_Group
-                                )
-                        )
-                field_instances.append (field)
-            return (GTW.Form.Field_Group (field_instances, self), )
-        return (None, )
+        if not first_pass :
+            if fields :
+                field_instances = []
+                for f in self.fields :
+                    field = self._field_instance (et_man, f, parent)
+                    if __debug__ :
+                        assert not isinstance \
+                            (field, ( GTW.Form.Field_Group_Description
+                                    , GTW.Form.Field_Group
+                                    )
+                            )
+                    field_instances.append (field)
+                return (GTW.Form.Field_Group (field_instances, self), )
+            return (None, )
     # end def __call__
 
 Field_Group_Description = _MOM_Field_Group_Description_ # end class

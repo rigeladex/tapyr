@@ -59,7 +59,7 @@ class _Form_Field_Group_Description_ (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
-    def prepare_request_data (self, form) :
+    def prepare_request_data (self, form, request_data) :
         pass
     # end def prepare_request_data
 

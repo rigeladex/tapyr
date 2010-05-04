@@ -39,20 +39,71 @@ from   _GTW                                 import GTW
 import _GTW._Form.Field
 import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
-import _GTW._Form._MOM._Instance_
+import _GTW._Form._MOM.Inline_Instance
 
-class Attribute_Inline (TFL.Meta.Object) :
+class _Attribute_Inline_ (TFL.Meta.Object) :
     """The `field` instance for attribute inline editing."""
 
-    def __init__ (self, ««py-parameter-declaration»»···) :
-        ««py-doc-string»»
-        «py-statement»···
+    electric = False
+
+    def __init__ (self, name, form_cls, form = None) :
+        self.name      = self.html_name = name
+        self.form_cls  = form_cls
+        self.form      = form
     # end def __init__
 
-    «py-statement»···
-# end class Attribute_Inline
+    def create_object (self, form) :
+        self.form.create_object (form)
+        if self.form.instance :
+            ### since we created an object we need to update the
+            ### raw_attr_dict of the parent form
+            form.raw_attr_dict [self.name] = self.form.get_object_raw (form)
+        return self.form.error_count
+    # end def create_object
 
+    def clone (self, form) :
+        instance = getattr (form.instance, self.name, None)
+        return self.__class__ \
+            (self.name, self.form_cls, self.form_cls (instance))
+    # end def clone
+
+    def get_raw (self, form, defaults) :
+        return self.form.get_object_raw (defaults)
+    # end def get_raw
+
+    def prepare_request_data (self, form, request_data) :
+        self.form.request_data = request_data
+    # end def prepare_request_data
+
+    def setup_raw_attr_dict (self, form) :
+        self.form.setup_raw_attr_dict (form)
+    # end def setup_raw_attr_dict
+
+    def update_object (self, form) :
+        pass
+    # end def setup_raw_attr_dict
+
+    def update_raw_attr_dict (self, form) :
+        pass
+    # end def setup_raw_attr_dict
+
+# end class _Attribute_Inline_
+
+class An_Attribute_Inline (_Attribute_Inline_) :
+    """Inline of an An_Entity."""
+
+
+    Form_Class = GTW.Form.MOM.An_Attribute_Inline_Instance
+
+# end class An_Attribute_Inline
+
+class Id_Attribute_Inline (_Attribute_Inline_) :
+    """Inline for a ID_Entity."""
+
+    Form_Class = GTW.Form.MOM.Id_Attribute_Inline_Instance
+
+# end class Id_Attribute_Inline
 
 if __name__ != "__main__" :
-    GTW.Form.MOM._Export ("*")
+    GTW.Form.MOM._Export ("*", "_Attribute_Inline_")
 ### __END__ GTW.Form.MOM.Attribute_Inline

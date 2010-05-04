@@ -107,13 +107,6 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     # end def __init__
 
     @TFL.Meta.Once_Property
-    def instance (self) :
-        if self.prototype :
-            return None
-        return self.parent.Instances.instance_for_lid (self.lid)
-    # end def instance
-
-    @TFL.Meta.Once_Property
     def lid (self) :
         lid, state = self.request_data.get \
             (self.get_id (self.lid_and_state_field), ":X").split (":")
@@ -154,8 +147,19 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
 # end class _Inline_Instance_
 
-class Attribute_Inline_Instance (_Inline_Instance_) :
-    """A form which handles an attribute of an entity as a seperate form"""
+class An_Attribute_Inline_Instance (_Inline_Instance_) :
+    """A form which handles an attribute of an An_Entity as a seperate form."""
+
+    instance = None
+
+    def get_object_raw (self, defaults) :
+        return dict (getattr (self.instance, "raw_attr_dict", ()), raw = True)
+    # end def get_object_raw
+
+# end class An_Attribute_Inline_Instance
+
+class Id_Attribute_Inline_Instance (_Inline_Instance_) :
+    """A form which handles an attribute of an Id_Entity as a seperate form."""
 
     def _create_instance (self, instance, state, raw_attrs) :
         if not instance :
@@ -166,12 +170,19 @@ class Attribute_Inline_Instance (_Inline_Instance_) :
         return self.__super._create_instance (instance, state, raw_attrs)
     # end def _create_instance
 
-# end class Attribute_Inline_Instance
+# end class Id_Attribute_Inline_Instance
 
 class Link_Inline_Instance (_Inline_Instance_) :
     """A form which handles an inline link"""
 
     keep_instance = False
+
+    @TFL.Meta.Once_Property
+    def instance (self) :
+        if self.prototype :
+            return None
+        return self.parent.Instances.instance_for_lid (self.lid)
+    # end def instance
 
     def __call__ (self, request_data) :
         self.request_data = request_data

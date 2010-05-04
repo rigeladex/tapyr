@@ -86,7 +86,8 @@ import _TFL._Meta.Object
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
 import _GTW._Form.Field
-import _GTW._Form._MOM.Field_Group_Description
+import _GTW._Form.Widget_Spec
+import _GTW._Form._MOM.Inline
 
 import  base64
 import  cPickle
@@ -145,7 +146,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
             ### make the first pass through all fields groups to resolve the
             ### callable field specs
             for fgd in field_group_descriptions :
-                fgd (True, et_man, added_fields)
+                fgd (True, et_man, added_fields, parent = result)
             ### now, make the second pass through the field groups
             for fgd in field_group_descriptions :
                 fgs = [   fg
@@ -172,9 +173,6 @@ class M_Instance (GTW.Form._Form_.__class__) :
                 (medias, js_on_ready = js_on_ready)
             result.field_groups  = field_groups
             result.fields        = result._setup_fields (field_groups)
-            ### XXX chance the cls
-            result.inline_fields = \
-                [f for f in result.fields if isinstance (f, GTW.Form.MOM.Attribute_Inline_Description)]
             if completers :
                 result.completer = GTW.Form.Javascript.Multi_Completer \
                     (** dict ((c.trigger, c) for c in completers))
@@ -216,15 +214,29 @@ class _Instance_ (GTW.Form._Form_) :
         self.__super.__init__ (instance, ** kw)
         scope                        = self.et_man.home_scope
         self.parent                  = parent
-        ### make copies of the inline groups to allow caching of inline forms
-        self.inline_groups           = []
-        field_groups                 = self.field_groups
-        self.field_groups            = []
-        for fg in field_groups :
-            if isinstance (fg, GTW.Form.MOM._Inline_) :
-                fg = fg.clone             (self)
-                self.inline_groups.append (fg)
-            self.field_groups.append      (fg)
+        ### make a copies of the inline fields/groups to allow caching of the
+        ### inline forms
+        for src, src_list_class, iln, iln_cls in \
+            ( ( "fields"
+              , TFL.NO_List
+              , "inline_fields"
+              , GTW.Form.MOM._Attribute_Inline_
+              )
+            , ( "field_groups"
+              , list
+              , "inline_groups"
+              , GTW.Form.MOM._Inline_
+              )
+            ):
+            new_src_list                 = src_list_class ()
+            iln_list                     = []
+            for e in getattr (self, src) :
+                if isinstance (e, iln_cls) :
+                    e = e.clone     (self)
+                    iln_list.append (e)
+                new_src_list.append (e)
+            setattr (self, src, new_src_list)
+            setattr (self, iln, iln_list)
     # end def __init__
 
     def add_changed_raw (self, dict, field) :
@@ -249,6 +261,10 @@ class _Instance_ (GTW.Form._Form_) :
         return self.et_man \
             (raw = True, on_error = on_error, ** self.raw_attr_dict)
     # end def _create_instance
+
+    def create_object (self, form) :
+        self._create_or_update ("N")
+    # end def _create_object
 
     def _create_or_update (self, state, force_create = False) :
         #if (   not self._create_update_executed
@@ -276,6 +292,10 @@ class _Instance_ (GTW.Form._Form_) :
         return self.instance
     # end def _create_or_update
 
+    def get_object_raw (self, defaults) :
+        return getattr (self.instance, "epk_raw", ())
+    # end def get_object_raw
+
     def _handle_errors (self, error_list) :
         for error_or_list in error_list :
             error_list = (error_or_list, )
@@ -299,61 +319,51 @@ class _Instance_ (GTW.Form._Form_) :
             (self.request_data.get (self.get_id (self.instance_state_field)))
     # end def instance_state
 
-    def prepare_request_data (self) :
-        pass
+    def prepare_request_data (self, form, request_data) :
+        self.request_data = request_data
     # end def prepare_request_data
 
-    def setup_raw_attr_dict (self) :
+    def setup_raw_attr_dict (self, form) :
+        for inline_field in self.inline_fields :
+            inline_field.setup_raw_attr_dict (self)
         self.raw_attr_dict = dict ()
-        instance       = self.instance
         for f in (f for f in self.fields if not f.electric) :
             self.add_changed_raw (self.raw_attr_dict, f)
     # end def setup_raw_attr_dict
 
-    def update_object (self) :
-        ### give the field instance a chance to update the object
-        for f in (f for f in self.inline_fields
-                    if hasattr (f, "update_object")
-                 ) :
-            f.update_object (self)
-        ### give the field groups a chance to update the data
-        for fg in self.field_groups :
-            fg.update_object (self)
+    def _run (self, method_name, * args, ** kw) :
+        lists   = [self], self.inline_groups, self.inline_fields
+        if kw.pop ("reverse", False) :
+            lists = reversed (lists)
+        for obj in itertools.chain (* lists) :
+            getattr (obj, method_name) (* args, ** kw)
+    # end def _run
+
+    def update_object (self, form) :
+        pass
     # end def update_object
 
-    def update_raw_attr_dict (self) :
-        ### give the field instance a chance to modfiy the data
-        for f in (f for f in self.inline_fields
-                    if hasattr (f, "update_raw_attr_dict")
-                 ) :
-            f.update_raw_attr_dict (self)
-        ### give the field groups a chance to update the data
-        for fg in self.field_groups :
-            fg.update_raw_attr_dict (self)
+    def update_raw_attr_dict (self, form) :
+        pass
     # end def update_raw_attr_dict
 
     def __call__ (self, request_data) :
-        self.request_data = request_data
         if self.needs_processing :
             ### first, we give each form_group the chance of adding/changing
             ### the request data
-            for fg in self.field_groups :
-                fg.prepare_request_data (self)
-            self.prepare_request_data   ()
+            self._run ("prepare_request_data", self, request_data)
             ### now we build the attr_dict for this form and for all forms in
             ### the inline groups based on the request_data
-            self.setup_raw_attr_dict ()
-            for ig in self.inline_groups :
-                ig.setup_raw_attr_dict (form)
+            self._run ("setup_raw_attr_dict", self)
             ### Once the raw attr dict for all forms are created let's give the
             ### fields and field groups a change to update the raw attr dict
-            self.update_raw_attr_dict ()
+            self._run ("update_raw_attr_dict", self)
             ### it's time to actually create the object based on the raw
             ### attr dict
-            self._create_object ()
+            self._run ("create_object",        self, reverse = True)
             ### once the object are created the field groups get one final
             ### chance to update the created object
-            self.update_object  ()
+            self._run ("update_object",        self)
         return self.error_count
     # end def __call__
 
