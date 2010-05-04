@@ -58,8 +58,9 @@ class _Attribute_Inline_ (TFL.Meta.Object) :
             self.form.recursively_run \
                 ("create_object", self.form, reverse = True)
         if (    not self.form.error_count
-           and (self.form.instance or self.form.is_link_role)
-           and  self.form.raw_attr_dict
+           and (   self.form.instance
+               or (self.form.is_link_role and self.form.raw_attr_dict)
+               )
            ) :
             ### the instance has been created/updated successfully -> update
             ### the raw_attr_dict of the parent

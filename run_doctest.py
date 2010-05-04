@@ -41,6 +41,7 @@
 #    17-Dec-2009 (CT) Pass `optionflags` to `doctest.testmod`:
 #                       `doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF`
 #    18-Dec-2009 (CT) `-nodiff` added to disable `doctest.REPORT_NDIFF`
+#    29-Apr-2010 (MG) Support for running the doctest in optimized mode added
 #    ««revision-date»»···
 #--
 
@@ -119,13 +120,16 @@ def _main (cmd) :
         else :
             print replacer (format % TFL.Caller.Scope ())
     else :
-        path = nodiff = ""
+        path = nodiff = optimize = ""
         if cmd.nodiff :
             nodiff = "-nodiff"
         if cmd_path :
             path = " -path %r" % (",".join (cmd_path), )
-        head = "%s %s -format %r%s%s" % \
+        if sys.flags.optimize :
+            optimize = "-%s" % ("O" * sys.flags.optimize, )
+        head = "%s %s %s -format %r%s%s" % \
             ( sys.executable
+            , optimize
             , sos.path.join
                   (Environment.script_path (), Environment.script_name ())
             , format

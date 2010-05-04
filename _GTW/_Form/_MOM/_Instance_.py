@@ -361,7 +361,6 @@ class _Instance_ (GTW.Form._Form_) :
     # end def update_raw_attr_dict
 
     def __call__ (self, request_data) :
-        import pdb; pdb.set_trace ()
         ### first, we give each form_group the chance of adding/changing
         ### the request data
         self.recursively_run ("prepare_request_data", self, request_data)

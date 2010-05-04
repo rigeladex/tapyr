@@ -276,11 +276,11 @@ OK, let's see how an error in a composite is handled:
     2
     >>> dump_form_errors (form)
     start
-        Condition `finish_after_start` : The finish date must be later than the start date (start < finish)
+        Condition `finish_after_start` : The finish date must be later than the start date (start <= finish)
         start = datetime.date(1976, 3, 16)
         finish = datetime.date(1900, 3, 16)
     finish
-        Condition `finish_after_start` : The finish date must be later than the start date (start < finish)
+        Condition `finish_after_start` : The finish date must be later than the start date (start <= finish)
         start = datetime.date(1976, 3, 16)
         finish = datetime.date(1900, 3, 16)
 """
@@ -337,7 +337,6 @@ So *Event__left* is the prefix. Ok, so let's try to create an *Event*:
     >>> request_data ["Event__left__perma_name"]  = "Permaname"
     >>> request_data ["Event__left__text"]        = "Text"
     >>> request_data ["Event__left__date__start"] = "1.1.2010"
-    >>> GTW.Form.BREAK = True
     >>> form (request_data)  ### 1
     0
     >>> dump_form_errors (form) ### 1
@@ -792,8 +791,7 @@ existing address object?
 """
 
 __test__ = dict \
-    (
-      object_with_link = _object_with_link_test
+    ( object_with_link = _object_with_link_test
     , link2   = _link2_test
     , link    = _link_test
     , object = _obect_test
