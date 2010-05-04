@@ -33,6 +33,8 @@
 #    27-Apr-2010 (MG) `SAS_EQ_Clause` method added to support named value
 #                     attributes
 #     3-May-2010 (MG) Support for joins for filter and order_by added
+#     4-May-2010 (CT) `_add_q` factored from `MOM_Query.__init__`,
+#                     `ckd_name` added
 #    ««revision-date»»···
 #--
 
@@ -116,42 +118,49 @@ class MOM_Query (_MOM_Query_) :
             self.id        = columns.id
             self._ATTRIBUTES.extend (("Type_Name", "id"))
         for name, kind in db_attrs.iteritems () :
+            attr = kind.attr
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
-                self._ATTRIBUTES.append (name)
-                comp_query = MOM_Composite_Query (e_type, kind.C_Type, kind)
-                setattr (self, name, comp_query)
+                comp_query = MOM_Composite_Query (e_type, attr.C_Type, kind)
+                self._add_q (comp_query, name, attr.ckd_name)
             elif isinstance (kind, MOM.Attr.Query) :
-                delayed.append ((name, kind))
+                delayed.append ((name, kind, attr))
             else :
-                col        = columns [kind.attr._sa_col_name]
+                col        = columns [attr._sa_col_name]
                 attr_names = [name]
-                setattr (self, name, col)
+                self._add_q (col, name, attr.ckd_name)
+                if kind.needs_raw_value :
+                    self._add_q (columns [attr._sa_raw_col_name], attr.raw_name)
                 if isinstance (kind, MOM.Attr.Link_Role) :
-                    setattr           (self, kind.role_name, col)
-                    attr_names.append (kind.role_name)
-                if isinstance (kind.attr, MOM.Attr._A_Object_) :
+                    self._add_q       (col, attr.role_name)
+                    attr_names.append (attr.role_name)
+                if isinstance (attr, MOM.Attr._A_Object_) :
                     join_query = Join_Query (self)
                     for an in attr_names :
                         self._ID_ENTITY_ATTRS [an] = join_query
-                self._ATTRIBUTES.append (name)
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
             self._COMPOSITES.extend (b_saq._COMPOSITES)
             for name in b_saq._ATTRIBUTES :
-                setattr                 (self, name, b_saq [name])
+                setattr (self, name, b_saq [name])
                 self._ATTRIBUTES.append (name)
             for an, jf in b_saq._ID_ENTITY_ATTRS.iteritems () :
                 if an not in self._ID_ENTITY_ATTRS :
                     self._ID_ENTITY_ATTRS [an] = jf
-        for name, kind in delayed :
-            query_fct = getattr (kind.attr, "query_fct")
+        for name, kind, attr in delayed :
+            query_fct = getattr (attr, "query_fct")
             if query_fct :
-                self._query_fct [name] = kind.attr
+                self._query_fct [name] = attr
             else :
-                query = kind.attr.query._sa_filter (self)
-                setattr (self, name, query)
+                query = attr.query._sa_filter (self)
+                self._add_q (query, name)
     # end def __init__
+
+    def _add_q (self, q, * names) :
+        for n in names :
+            setattr (self, n, q)
+            self._ATTRIBUTES.append (n)
+    # end def _add_q
 
     def __getitem__ (self, name) :
         return getattr (self, name)

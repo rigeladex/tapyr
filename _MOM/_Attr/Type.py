@@ -214,7 +214,7 @@ class A_Attr_Type (object) :
                 (getattr (Q, self.raw_name).STARTSWITH, unicode)
         else :
             result = _AC_Query_ \
-                (getattr (Q, self.name).__eq__, self.cooked)
+                (getattr (Q, self.ckd_name).__eq__, self.cooked)
         return result
     # end def ac_query
 
@@ -911,7 +911,7 @@ class _A_String_Base_ (A_Attr_Type) :
     @TFL.Meta.Once_Property
     def ac_query (self) :
         return _AC_Query_ \
-            (getattr (Q, self.name).STARTSWITH, self.simple_cooked)
+            (getattr (Q, self.ckd_name).STARTSWITH, self.simple_cooked)
     # end def ac_query
 
     def _checkers (self, e_type, kind) :

@@ -51,6 +51,7 @@
 #    08-Apr-2010 (MG) Handling of `UniqueConstraint` changed
 #    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
 #     4-May-2010 (CT) `Type_Name_Type` based on `types.TypeDecorator`
+#     4-May-2010 (CT) `attr._sa_raw_col_name` added
 #    ««revision-date»»···
 #--
 
@@ -404,6 +405,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     ,** kind._sa_column_attrs ()
                     )
                 )
+            attr._sa_raw_col_name = None
             if kind.needs_raw_value :
                 raw_name       = attr.raw_name
                 if prefix :
@@ -412,6 +414,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     ( raw_name
                     , types.String (length = 60, convert_unicode = True)
                     )
+                attr._sa_raw_col_name = raw_name
                 result.append (col)
         return result
     # end def _setup_columns
