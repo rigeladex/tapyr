@@ -348,8 +348,12 @@ So *Event__left* is the prefix. Ok, so let's try to create an *Event*:
       format             = <class '_GTW._OMP._SWP.Format.ReST'>
       head_line          = u''
       prio               = 0
-    date                 = None
-    time                 = None
+    date:
+      start              = None
+      finish             = None
+    time:
+      start              = None
+      finish             = None
     detail               = u''
     recurrence:
       period             = 1
@@ -396,8 +400,12 @@ to reference the page we what:
       format             = <class '_GTW._OMP._SWP.Format.ReST'>
       head_line          = u''
       prio               = 0
-    date                 = None
-    time                 = None
+    date:
+      start              = None
+      finish             = None
+    time:
+      start              = None
+      finish             = None
     detail               = u''
     recurrence:
       period             = 1
@@ -441,7 +449,9 @@ But what if we don't have a smart client that know's how to handle the
     date:
       start              = datetime.date(2010, 1, 1)
       finish             = None
-    time                 = None
+    time:
+      start              = None
+      finish             = None
     detail               = u''
     recurrence:
       period             = 1
@@ -469,7 +479,8 @@ case too. We try to generate the same event as before, which is not allowed:
     1
     >>> dump_form_errors (form) ### 4
     Non field errors:
-      new definition of ((u'Permaname', ), dict (start = '2010/01/01'), ) clashes with existing ((u'Permaname', ), dict (start = '2010/01/01'), )
+      (<class 'GTW.OMP.EVT.Event' [HWO__Hash__HPS]>, GTW.OMP.EVT.Event ((u'Permaname', ), dict (start = '2010/01/01'), dict ()))
+
 
 Now suprise here. The error is detected and reported correctly.
 """
@@ -812,9 +823,10 @@ address):
     >>> request_data ["Person__Person_has_Address-M0__right__country"] = "Austria"
     >>> form (request_data) ### 5
     0
+    >>> dump_form_errors (form) ### 5
     >>> for i in sorted (form.instance.addresses) :
     ...     dump_instance (i)  ### 5
-    street               = u'street'
+    street               = u'new street'
     zip                  = u'1010'
     city                 = u'vienna'
     country              = u'austria'
@@ -841,16 +853,17 @@ existing address object?
     >>> request_data ["Person__Person_has_Address-M0___lid_a_state_"]  = "4:R"
     >>> request_data ["Person__Person_has_Address-M0__desc"]           = ""
     >>> request_data ["Person__Person_has_Address-M0__right___lid_a_state_"] = "1:L"
-    >>> request_data ["Person__Person_has_Address-M0__right__street"]  = "New Street"
+    >>> request_data ["Person__Person_has_Address-M0__right__street"]  = "Street"
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
     >>> request_data ["Person__Person_has_Address-M0__right__country"] = "Austria"
     >>> form (request_data) ### 6
     0
+    >>> dump_form_errors (form) ### 6
     >>> PAP.Person.count, PAP.Address.count, PAP.Person_has_Address.count
     (1, 2, 1)
-    >>> for i in sorted (form.instance.addresses) : ### 6
-    ...     dump_instance (i) ### XXX fix the test once the framework is fixed
+    >>> for i in sorted (form.instance.addresses) :
+    ...     dump_instance (i) ### 6
     street               = u'street'
     zip                  = u'1010'
     city                 = u'vienna'
@@ -1016,6 +1029,10 @@ def dump_field_ids (form, indent = "") :
         for no, f in enumerate (ifg.forms) :
             dump_field_ids (f, indent + " ")
 # end def dump_field_ids
+
+def test (form) :
+    import pdb; pdb.set_trace ()
+# end def test
 
 ### __END__ GTW.Form.MOM.__test__
 

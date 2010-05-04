@@ -52,6 +52,8 @@ _test_code = """
     GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country', u''))
     >>> sorted (PAP.Person_has_Address.query ().all ())
     [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country', u''))]
+    >>> link.set_raw (right = address1.epk_raw)
+    1
 """
 
 from _GTW.__test__.model import MOM, GTW, Scope

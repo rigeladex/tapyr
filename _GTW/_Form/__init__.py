@@ -33,7 +33,9 @@
 from   _TFL.Package_Namespace import Package_Namespace
 from   _GTW                   import GTW
 
-Form = Package_Namespace ()
+Form       = Package_Namespace ()
+Form.BREAK = False ### used for debugging
+
 GTW._Export ("Form")
 
 del Package_Namespace
