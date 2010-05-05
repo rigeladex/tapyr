@@ -30,6 +30,7 @@
 #    11-Feb-2010 (MG) Creation (based on SA.Q_Result)
 #    27-Apr-2010 (MG) `filter`: user new `SAS_EQ_Clause` method of SAQ
 #     3-May-2010 (MG) Support for joins for filter and order_by added
+#     5-May-2010 (MG) `_join`and `_inner_join` added
 #    ««revision-date»»···
 #--
 
@@ -90,10 +91,7 @@ class Q_Result (TFL.Meta.Object) :
             joins.update         (ajoins)
             filter_clause.extend (aclause)
         sa_criteria = (sql.expression.and_ (* filter_clause), )
-        sa_query    = self.sa_query
-        if joins :
-            for src_table, des_table, in joins :
-                sa_query = sa_query.select_from (src_table.join (des_table))
+        sa_query    = self._joins (joins)
         return self.__class__ \
             (self.e_type, self.session, sa_query.where (* sa_criteria))
     # end def filter
@@ -108,6 +106,24 @@ class Q_Result (TFL.Meta.Object) :
     def _from_row (self, row) :
         return self.session.instance_from_row (self.e_type, row)
     # end def _from_row
+
+    def _inner_join (self, src, join_table, query) :
+        for dst in join_table.pop (src, ()) :
+            query = query.join (dst)
+            query = self._inner_join (dst, join_table, query)
+        return query
+    # end def _inner_join
+
+    def _joins (self, joins) :
+        if joins :
+            join_table = TFL.defaultdict (list)
+            for src, dst in joins :
+                join_table [src].append (dst)
+            src  = self.e_type._sa_table
+            return self.sa_query.select_from \
+                (self._inner_join (src, join_table, src))
+        return self.sa_query
+    # end def _joins
 
     def limit (self, limit) :
         return self.__class__ \
@@ -134,10 +150,7 @@ class Q_Result (TFL.Meta.Object) :
         else :
             joins               = ()
             order_clause        = (criterion, )
-        sa_query = self.sa_query
-        if joins :
-            for src_table, des_table, in joins :
-                sa_query = sa_query.select_from (src_table.join (des_table))
+        sa_query                = self._joins (joins)
         return self.__class__ \
             (self.e_type, self.session, sa_query.order_by (* order_clause))
     # end def order_by
