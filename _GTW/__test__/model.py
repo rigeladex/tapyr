@@ -84,6 +84,5 @@ Scope = Scaffold.scope
 
 if __name__ == "__main__" :
     TFL.Environment.exec_python_startup ()
-    db_prefix = sos.environ.get ("GTW_DB_prefix", None)
-    scope = Scope (db_prefix)
+    scope = Scope ()
 ### __END__ GTW.__test__.model

@@ -93,19 +93,11 @@ _link2_link1 = r"""
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> q = scope.SRM.Boat_in_Regatta.query ()
-    >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
-    >>> q = scope.SRM.Boat_in_Regatta.query ()
-    >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    >>> scope.SRM.Boat_in_Regatta.query ().order_by (Q.right.left.date.start).all ()
+
 """
 
-if 0 :
+if 1 :
     __test__ = dict \
         ( composite   = _composite
         , link1_role  = _link1_role
@@ -114,25 +106,8 @@ if 0 :
 else :
     #__doc__ = _composite
     __doc__ = _link2_link1
-    def test () :pass
-    #test .__doc__ = __doc__
 
 from _GTW.__test__.model import *
 from _MOM.import_MOM     import Q
 
-if __name__ == "__main__" :
-    import doctest, SAS_Sorted_By
-    TFL.Environment.exec_python_startup ()
-    exec (doctest.testsource (SAS_Sorted_By, "SAS_Sorted_By.test"))
-    BIR = scope.SRM.Boat_in_Regatta._etype
-    R   = scope.SRM.Regatta._etype
-    RE  = scope.SRM.Regatta_Event._etype
-
-    BIRs = BIR._sa_table
-    Rs   = R._sa_table
-    REs  = RE._sa_table
-
-    E    = scope.ems.session.execute
-    q = BIR._SAS.select.select_from (BIRs.join (Rs).join (REs))
-    print q
 ### __END__ GTW.__test__.SAS_Sorted_By
