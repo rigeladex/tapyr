@@ -49,6 +49,8 @@
 #                     `Page`
 #    30-Apr-2010 (CT) `_get_child` added to `Manager_T` and `Manager_T_Archive`
 #    30-Apr-2010 (CT) `_get_grandchild` added to `Manager_T_Archive_Y`
+#     5-May-2010 (CT) `Manager_T_Archive._get_objects` changed to not create
+#                     empty `Year` instances
 #    ««revision-date»»···
 #--
 
@@ -262,19 +264,18 @@ class Manager_T_Archive (Manager) :
         cy = datetime.date.today ().year
         result = []
         for y in xrange (cy, self.top.copyright_start - 1, -1) :
-            qy   = qr.filter (* self._year_filter (y))
-            name = str (y)
-            Y = self.Year \
-                ( src_dir = pjoin (self.src_dir, name)
-                , parent  = self
-                , year    = y
-                , name    = name
-                , sub_dir = name
-                , title   = name
-                )
-            _entries = [T (Y, o, page_args = kw, ** kw) for o in qy]
-            if _entries :
-                Y._entries = _entries
+            os = qr.filter (* self._year_filter (y)).all ()
+            if os :
+                name = str (y)
+                Y = self.Year \
+                    ( src_dir = pjoin (self.src_dir, name)
+                    , parent  = self
+                    , year    = y
+                    , name    = name
+                    , sub_dir = name
+                    , title   = name
+                    )
+                Y._entries = [T (Y, o, page_args = kw, ** kw) for o in os]
                 result.append (Y)
         return result
     # end def _get_objects

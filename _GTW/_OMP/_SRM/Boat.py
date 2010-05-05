@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#     5-May-2010 (CT) `sail_number` changed from `A_Int` to
+#                     `A_Numeric_String` to allow autocompletion
 #    ««revision-date»»···
 #--
 
@@ -67,11 +69,11 @@ class Boat (_Ancestor_Essence) :
 
         # end class nation
 
-        class sail_number (A_Int) :
+        class sail_number (A_Numeric_String) :
             """Sail number of boat"""
 
             kind               = Attr.Primary_Optional
-            min_value          = 1
+            min_value          = "1"
 
         # end class sail_number
 

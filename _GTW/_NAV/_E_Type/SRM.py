@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Apr-2010 (CT) Creation
+#     5-May-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -42,8 +43,57 @@ import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import first
 
 from   posixpath                import join  as pjoin
+
+class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
+    """Navigation directory for a single regatta."""
+
+    def __init__ (self, manager, obj, ** kw) :
+        kw ["src_dir"] = kw ["sub_dir"] = obj.perma_name
+        self.__super.__init__ (manager, obj, ** kw)
+        self.name = obj.perma_name
+    # end def __init__
+
+    ### XXX implement _get_child
+
+    def _get_child (self, child, * grandchildren) :
+        entries = self._entries
+        try :
+            result = first (e for e in entries if e.name == child)
+        except IndexError :
+            pass
+        else :
+            if grandchildren :
+                result = result._get_child (* grandchildren)
+            return result
+    # end def _get_child
+
+    def _get_objects (self) :
+        obj    = self.obj
+        result = []
+        sk     = TFL.Sorted_By ("left.nation", "left.sail_number")
+        boats  = self.scope.SRM.Boat_in_Regatta.r_query \
+            (right = obj).order_by (sk).all ()
+        if boats :
+            ### XXX results
+            n = _T (u"Participants")
+            result.append \
+                ( GTW.NAV.Page
+                    ( self
+                    , name        = u"%s.html" % (n.lower (), )
+                    , title       = n
+                    , desc        = u"%s %s" %
+                        ( _T (u"List of participants for"), self.title)
+                    , template    = u"regatta_registration.html"
+                    , regatta     = obj
+                    )
+                )
+        return result
+    # end def _get_objects
+
+# end class Regatta
 
 class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta event."""
@@ -55,9 +105,24 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
 
     ### XXX implement _get_child
 
+    def _get_child (self, child, * grandchildren) :
+        entries = self._entries
+        try :
+            result = first (e for e in entries if e.name == child)
+        except IndexError :
+            pass
+        else :
+            if grandchildren :
+                result = result._get_child (* grandchildren)
+            return result
+    # end def _get_child
+
     def _get_objects (self) :
-        ### XXX add regatta info (registration list, results, ...)
-        return self._get_pages ()
+        result = self._get_pages ()
+        kw     = self.page_args
+        for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
+            result.append (Regatta (self, r, page_args = kw, ** kw))
+        return result
     # end def _get_objects
 
     def _get_pages (self) :
@@ -79,7 +144,7 @@ class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
         self.__super.__init__ (src_dir = src_dir, ** kw)
         top   = self.top
         scope = top.scope
-        for et in (scope.SRM.Page,) : ### XXX ???
+        for et in (scope.SRM.Page, scope.SRM.Regatta_C, scope.SRM.Regatta_H) :
             etn = et.type_name
             if etn not in top.E_Types :
                 top.E_Types [etn] = self
@@ -88,11 +153,19 @@ class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
     def href_display (self, obj) :
         scope = self.top.scope
         comps = [self.abs_href, str (obj.year)]
-        if isinstance (obj, scope.SRM.Page._etype) :
+        if isinstance (obj, (scope.SRM.Page._etype, scope.SRM.Regatta._etype)) :
             comps.append (obj.event.perma_name)
         comps.append (obj.perma_name)
         return pjoin (* comps)
     # end def href_display
+
+    def _get_grandchild (self, y, grandchildren) :
+        gc0, gcs = grandchildren [0], grandchildren [1:]
+        result   = self.__super._get_grandchild (y, (gc0, ))
+        if result and gcs :
+            result = result._get_child (* gcs)
+        return result
+    # end def _get_grandchild
 
     ### XXX implement _get_child
 

@@ -52,6 +52,7 @@
 #    25-Feb-2010 (CT) Redefine `_finish__init__` instead of `_init_epk`
 #     4-Mar-2010 (CT) `_Cacher_.cr_attr` added
 #    22-Apr-2010 (CT) `_rename` redefined to honor `auto_cache_roles`
+#     5-May-2010 (CT) `Link_Cacher._auto_attr_name` changed to call `lower`
 #    ««revision-date»»···
 #--
 
@@ -247,7 +248,7 @@ class Link_Cacher (_Cacher_) :
     # end def setup
 
     def _auto_attr_name (self, Link, role) :
-        return Link.type_base_name
+        return Link.type_base_name.lower ()
     # end def _auto_attr_name
 
 # end class Link_Cacher
