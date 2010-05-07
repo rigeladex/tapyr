@@ -73,7 +73,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         obj    = self.obj
         result = []
         sk     = TFL.Sorted_By ("left.nation", "left.sail_number")
-        boats  = self.scope.SRM.Boat_in_Regatta.r_query \
+        boats  = obj.boats = self.scope.SRM.Boat_in_Regatta.r_query \
             (right = obj).order_by (sk).all ()
         if boats :
             ### XXX results

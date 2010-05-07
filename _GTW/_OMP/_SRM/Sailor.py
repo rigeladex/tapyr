@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#     7-May-2010 (CT) `club` added
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,16 @@ class Sailor (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
 
         # end class mna_number
+
+        ### Non-primary attributes
+
+        class club (A_String) :
+            """Club the sailor is starting for."""
+
+            kind               = Attr.Optional
+            max_length         = 48
+
+        # end class club
 
     # end class _Attributes
 
