@@ -80,7 +80,7 @@ class Regatta_Event (_Ancestor_Essence) :
         class perma_name (A_String) :
             """Name used for perma-link."""
 
-            kind               = Attr.Cached
+            kind               = Attr.Internal
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("name", )
 

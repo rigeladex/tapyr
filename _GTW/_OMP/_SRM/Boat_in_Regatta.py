@@ -59,7 +59,6 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Boat racing in a regatta."""
 
             role_type          = GTW.OMP.SRM.Boat
-            auto_cache         = True
 
         # end class left
 
