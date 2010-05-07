@@ -29,6 +29,7 @@
 #    15-Apr-2010 (CT) Creation
 #     5-May-2010 (CT) Cached attributes added
 #     5-May-2010 (CT) `perma_name` defined as `Attr.Internal` to allow queries
+#     7-May-2010 (CT) `year` added
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,17 @@ class Regatta (_Ancestor_Essence) :
             # end def computed
 
         # end class title
+
+        class year (A_Int) :
+
+            kind               = Attr.Query
+            auto_up_depends    = ("left", )
+
+            def query_fct (self) :
+                return Q.left.year
+            # end def query_fct
+
+        # end class year
 
     # end class _Attributes
 
