@@ -484,7 +484,7 @@ case too. We try to generate the same event as before, which is not allowed:
     1
     >>> dump_form_errors (form) ### 4
     Non field errors:
-      (<class 'GTW.OMP.EVT.Event' [HWO__Hash__HPS]>, GTW.OMP.EVT.Event ((u'Permaname', ), dict (start = '2010/01/01'), dict ()))
+      <class 'GTW.OMP.EVT.Event' [HWO__Hash__HPS]>, ((u'Permaname', ), dict (start = '2010/01/01'), dict ())
 
 
 Now suprise here. The error is detected and reported correctly.
@@ -858,8 +858,9 @@ def fields_of_field_groups (form, indent = "") :
             print "%s%s" % (indent, [f.name for f in fg.fields])
 # end def fields_of_field_groups
 
-def dump_form_errors (form, indent = "") :
+def dump_form_errors (form, indent = "", Break = False) :
     if form.errors :
+        if Break : import pdb; pdb.set_trace ()
         print "%sNon field errors:" % (indent, )
         print "\n".join ("  %s%s" % (indent, e) for e in form.errors)
     for f, errors in form.field_errors.iteritems () :
