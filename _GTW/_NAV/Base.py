@@ -218,6 +218,8 @@
 #    29-Apr-2010 (CT) `Root.__init__` changed to set `copyright_start` and
 #                     `src_root` if not passed in
 #    29-Apr-2010 (CT) `page_from_obj` corrected
+#     7-May-2010 (CT) `_Meta_.__call__` changed to not overwrite existing
+#                     `Table [perma]`
 #    ««revision-date»»···
 #--
 
@@ -249,14 +251,16 @@ class _Meta_ (TFL.Meta.M_Class) :
             pid  = result.pid
             top  = result.top
             if href is not None :
-                top.Table [href] = result
+                Table = top.Table
+                Table [href] = result
                 try :
                     perma = result.permalink.lstrip ("/")
                 except Exception :
                     pass
                 else :
                     if perma != href :
-                        top.Table [perma] = result
+                        if perma not in Table or Table [perma].href == href :
+                            Table [perma] = result
             if pid is not None :
                 setattr (top.SC, pid, result)
         return result

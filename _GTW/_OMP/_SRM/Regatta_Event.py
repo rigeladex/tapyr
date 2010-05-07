@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#     5-May-2010 (CT) `perma_name` changed from `Cache` to `Internal` to
+#                     allow use in queries
 #    ««revision-date»»···
 #--
 

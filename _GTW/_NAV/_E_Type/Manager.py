@@ -51,6 +51,9 @@
 #    30-Apr-2010 (CT) `_get_grandchild` added to `Manager_T_Archive_Y`
 #     5-May-2010 (CT) `Manager_T_Archive._get_objects` changed to not create
 #                     empty `Year` instances
+#     7-May-2010 (CT) `Manager_T_Archive.Year._get_child` added and used
+#     7-May-2010 (CT) `Manager_T_Archive._get_objects` corrected (`manager`
+#                     vs. `parent` for `Y._entries`)
 #    ««revision-date»»···
 #--
 
@@ -222,7 +225,19 @@ class Manager_T_Archive (Manager) :
     # end class _Cmd_
 
     class Year (_Cmd_) :
-        pass
+
+        def _get_child (self, child, * grandchildren) :
+            try :
+                result = first \
+                    (e for e in self._entries if e.perma_name == child)
+            except IndexError :
+                pass
+            else :
+                if grandchildren :
+                    result = result._get_child (* grandchildren)
+                return result
+        # end def _get_child
+
     # end class Year
 
     def _get_child (self, child, * grandchildren) :
@@ -240,7 +255,7 @@ class Manager_T_Archive (Manager) :
                 if not grandchildren :
                     return year
                 else :
-                    result = self._get_grandchild (y, grandchildren)
+                    result = year._get_child (* grandchildren)
                     if result is not None :
                         return result
         return self.__super._get_child (child, * grandchildren)
@@ -258,16 +273,17 @@ class Manager_T_Archive (Manager) :
     # end def _get_grandchild
 
     def _get_objects (self) :
-        T  = self.Page
-        kw = self.page_args
-        qr = self.ETM.query (sort_key = self.sort_key)
-        cy = datetime.date.today ().year
+        T      = self.Page
+        pkw    = self.page_args
+        kw     = dict (pkw)
+        qr     = self.ETM.query (sort_key = self.sort_key)
+        cy     = datetime.date.today ().year
         result = []
         for y in xrange (cy, self.top.copyright_start - 1, -1) :
             os = qr.filter (* self._year_filter (y)).all ()
             if os :
                 name = str (y)
-                Y = self.Year \
+                Y    = kw ["parent"] = self.Year \
                     ( src_dir = pjoin (self.src_dir, name)
                     , parent  = self
                     , year    = y
@@ -275,7 +291,7 @@ class Manager_T_Archive (Manager) :
                     , sub_dir = name
                     , title   = name
                     )
-                Y._entries = [T (Y, o, page_args = kw, ** kw) for o in os]
+                Y._entries = [T (self, o, page_args = pkw, ** kw) for o in os]
                 result.append (Y)
         return result
     # end def _get_objects

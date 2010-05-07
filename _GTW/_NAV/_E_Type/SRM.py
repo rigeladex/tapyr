@@ -28,6 +28,8 @@
 # Revision Dates
 #    30-Apr-2010 (CT) Creation
 #     5-May-2010 (CT) Creation continued
+#     7-May-2010 (CT) `Regatta_Event._get_objects` and `._get_pages` changed
+#                     to set `ETM` and `E_Type` properly
 #    ««revision-date»»···
 #--
 
@@ -54,8 +56,6 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         self.__super.__init__ (manager, obj, ** kw)
         self.name = obj.perma_name
     # end def __init__
-
-    ### XXX implement _get_child
 
     def _get_child (self, child, * grandchildren) :
         entries = self._entries
@@ -102,8 +102,6 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         self.__super.__init__ (manager, obj, ** kw)
     # end def __init__
 
-    ### XXX implement _get_child
-
     def _get_child (self, child, * grandchildren) :
         entries = self._entries
         try :
@@ -115,20 +113,33 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 result = result._get_child (* grandchildren)
             return result
     # end def _get_child
+
     def _get_objects (self) :
+        pkw    = self.page_args
         result = self._get_pages ()
-        kw     = self.page_args
+        scope  = self.obj.home_scope
         for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
-            result.append (Regatta (self, r, page_args = kw, ** kw))
+            kw  = dict \
+                ( pkw
+                , ETM       = scope [r.type_name]
+                , E_Type    = r.__class__
+                )
+            result.append (Regatta (self, r, page_args = pkw, ** kw))
         return result
     # end def _get_objects
 
     def _get_pages (self) :
         T     = GTW.NAV.E_Type.Instance
-        kw    = self.page_args
+        ETM   = self.scope.SRM.Page
+        pkw   = self.page_args
+        kw    = dict \
+            ( pkw
+            , ETM       = ETM
+            , E_Type    = ETM._etype
+            )
         rev   = self.obj
-        query = self.scope.SRM.Page.query_s (event = rev)
-        return [T (self, o, page_args = kw, ** kw) for o in query]
+        query = ETM.query_s (event = rev)
+        return [T (self, o, page_args = pkw, ** kw) for o in query]
     # end def _get_pages
 
 # end class Regatta_Event
@@ -156,6 +167,7 @@ class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
         comps.append (obj.perma_name)
         return pjoin (* comps)
     # end def href_display
+
     def _get_grandchild (self, y, grandchildren) :
         gc0, gcs = grandchildren [0], grandchildren [1:]
         result   = self.__super._get_grandchild (y, (gc0, ))
@@ -163,8 +175,6 @@ class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
             result = result._get_child (* gcs)
         return result
     # end def _get_grandchild
-
-    ### XXX implement _get_child
 
 # end class SRM
 

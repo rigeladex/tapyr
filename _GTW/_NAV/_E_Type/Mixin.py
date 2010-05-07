@@ -30,6 +30,8 @@
 #    12-Apr-2010 (CT) `_get_entries` factored in here
 #    30-Apr-2010 (CT) `Instance_Mixin` added (factored from
 #                     `GTW.NAV.E_Type.Instance_Mixin`)
+#     7-May-2010 (CT) `Instance_Mixin.__init__` changed to take `parent` from
+#                     `kw`, if possible
 #    ««revision-date»»···
 #--
 
@@ -104,7 +106,7 @@ class Instance_Mixin (Mixin) :
             ( obj      = obj
             , manager  = manager
             , name     = name
-            , parent   = manager
+            , parent   = kw.pop ("parent", manager)
             , ** kw
             )
         self.desc  = self.__getattr__ ("desc")
