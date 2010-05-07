@@ -30,6 +30,7 @@
 #    30-Apr-2010 (MG) Creation
 #     3-May-2010 (MG) New test for query attributes added
 #     5-May-2010 (MG) Additional tests added
+#     7-May-2010 (MG) `sail_number` is now a numeric string
 #    ««revision-date»»···
 #--
 
@@ -135,21 +136,21 @@ _link2_link1 = r"""
     >>> date = datetime.date (2009, 1, 1)
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start > date) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start < date) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
     >>> date2 = datetime.date (2009, 12, 31)
     >>> qf = (Q.right.left.date.start >= date ) \
     ...    & (Q.right.left.date.start <= date2)
     >>> for r in q.filter (qf) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
 
     >>> date3 = datetime.date (2010, 05, 13)
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
 
 """
 

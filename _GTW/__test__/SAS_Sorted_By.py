@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    30-Apr-2010 (MG) Creation
+#     7-May-2010 (MG) `sail_number` is now a numeric string
 #    ««revision-date»»···
 #--
 
@@ -95,14 +96,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
 """
 
 if 1 :
