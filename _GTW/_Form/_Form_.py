@@ -41,6 +41,7 @@
 #     4-Mar-2010 (MG) `Hidden_Fields_List` added and used
 #     6-Mar-2010 (MG) Error handling changed
 #     3-May-2010 (MG) New form handling implemented
+#     6-May-2010 (MG) `fgs_need_header` added
 #    ««revision-date»»···
 #--
 
@@ -99,12 +100,15 @@ class M_Form (TFL.Meta.Object.__class__) :
     # end def __new__
 
     def _setup_fields (cls, field_groups) :
-        result = TFL.NO_List ()
+        result          = TFL.NO_List ()
+        fgs_need_header = False
         for fg in (  fg for fg in field_groups
                   if isinstance (fg, GTW.Form.Field_Group)
                   ) :
             result.update (fg.fields)
+            fgs_need_header |= sum (f.needs_header for f in fg.fields) > 0
         result.extend (cls.hidden_fields)
+        cls.fgs_need_header = fgs_need_header
         return result
     # end def _setup_fields
 

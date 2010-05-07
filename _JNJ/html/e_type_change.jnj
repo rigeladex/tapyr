@@ -29,12 +29,13 @@
 ##
 ## Revision Dates
 ##    29-Jan-2010 (CT) Creation
+##     6-May-2010 (MG) Switch to render mode rendering
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block document %}
-  {{ GTW.call_macro (form.widget, form) }}
+  {{ GTW.render_fofi_widget (form, "object", form) }}
 {% endblock -%}
 
 {#- __END__ jinja template: e_type_change.jnj -#}

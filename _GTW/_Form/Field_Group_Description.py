@@ -33,6 +33,7 @@
 #     5-Feb-2010 (MG) Convert `widget` to `Widget_Spec`
 #    15-Apr-2010 (MG) `Media` moved to `GTW.Form.Field_Group`
 #     3-May-2010 (MG) New form handling implemented
+#     6-May-2010 (MG) `widget` replace by `render_mode_description`
 #    ««revision-date»»···
 #--
 
@@ -41,22 +42,22 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 from   _GTW               import GTW
-import _GTW._Form.Widget_Spec
+import _GTW._Form.Render_Mode_Description
 import _GTW._Form.Field_Group
 
 class _Form_Field_Group_Description_ (TFL.Meta.Object) :
     """Abstract definition of a field group."""
 
-    _real_name = "Field_Group_Description"
-    completer  = None
-    widget     = GTW.Form.Widget_Spec ("html/form.jnj, fg_div_seq")
+    _real_name              = "Field_Group_Description"
+    completer               = None
+    media                   = None
+
+    default_render_mode     = "div_seq"
+    render_mode_description = GTW.Form.Render_Mode_Description \
+        (div_seq = GTW.Form.Widget_Spec ("html/form.jnj, fg_div_seq"))
 
     def __init__ (self, * fields, ** kw) :
         self.fields = fields
-        widget      = kw.pop ("widget", self.widget)
-        if isinstance (widget, basestring) :
-            widget  = GTW.Form.Widget_Spec (widget)
-        self.widget = widget
         self.__dict__.update (kw)
     # end def __init__
 

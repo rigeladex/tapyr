@@ -30,6 +30,9 @@
 #    24-Mar-2010 (CT) `__call__` changed to catch `GTW.Werkzeug.Status`
 #                     instead of `Exception`
 #    29-Apr-2010 (MG) Set `charset` of werkzeug reguest und response handlers
+#     6-Mai-2010 (MG) Support for profiling added
+#     6-May-2010 (MG) `url_charset` seperated from `charset` because `GET`
+#                     parameters are by default `utf-8` encoded
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -60,11 +63,12 @@ class Application (TFL.Meta.Object) :
                  ) :
         if "cookie_secret" not in kw :
             warnings.warn ("Using default `cookie_secret`!", UserWarning)
-        static_handler      = kw.pop ("static_handler", None)
-        encoding            = kw.pop ("encoding", "utf-8")
-        BaseRequest.charset = BaseResponse.charset = encoding
-        self.settings       = dict (self.default_settings, ** kw)
-        self.handlers       = []
+        static_handler          = kw.pop ("static_handler", None)
+        encoding                = kw.pop ("encoding", "utf-8")
+        BaseRequest.charset     = BaseResponse.charset = encoding
+        BaseRequest.url_charset = "utf-8"
+        self.settings           = dict (self.default_settings, ** kw)
+        self.handlers           = []
         if static_handler :
             handlers = list (handlers)
             handlers.insert (0, static_handler)
@@ -97,15 +101,41 @@ class Application (TFL.Meta.Object) :
     # end def __call__
 
     def run_development_server ( self
-                               , port         = 8080
-                               , host         = "localhost"
-                               , use_reloader = True
-                               , use_debugger = False
+                               , port                 = 8080
+                               , host                 = "localhost"
+                               , use_reloader         = True
+                               , use_debugger         = False
+                               , use_profiler         = False
+                               , profile_log_files    = ()
+                               , profile_sort_by      = ('time', 'calls')
+                               , profile_restrictions = ()
+                               , profile_delete_logs  = False
                                , ** kw
                                ) :
         from werkzeug import run_simple
+        app = self
+        if use_profiler :
+            from werkzeug.contrib.profiler import \
+                ProfilerMiddleware, MergeStream
+            import os, sys
+            stream       = None
+            file_handles = []
+            for fn in profile_log_files :
+                if hasattr (fn, "write") :
+                    file_handles.append (fn)
+                elif fn == "stderr" :
+                    file_handles.append (sys.stderr)
+                else :
+                    if profile_delete_logs and os.path.isfile (fn) :
+                        os.unlink (fn)
+                    file_handles.append (open (fn, "w"))
+            if file_handles :
+                stream = MergeStream (* file_handles)
+            app    = ProfilerMiddleware \
+                (app, stream, profile_sort_by, profile_restrictions)
+            use_reloader = use_debugger = False
         run_simple \
-            ( host, port, self
+            ( host, port, app
             , use_reloader = use_reloader
             , use_debugger = use_debugger
             )

@@ -32,6 +32,7 @@
 #    23-Mar-2010 (CT) `Gallery` and `Picture` added
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
+#     6-May-2010 (MG) Switch to render mode rendering
 #    ««revision-date»»···
 #--
 
@@ -77,15 +78,15 @@ class Admin (object) :
                 ( primary, "title"
                 , AID
                     ( "date"
-                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , FGD (render_mode = "table")
                     , legend = _("Publication and expiration date")
                     )
                 , AID
                     ( "creator"
                     , FGD
                         ( primary
-                        , widget    = "html/form.jnj, fg_as_table"
-                        , css_class = "inline-instance"
+                        , render_mode = "table"
+                        , css_class   = "inline-instance"
                         )
                     , completer = creator_completer
                     , legend = _("Creator of the contents of the news clip")
@@ -109,18 +110,18 @@ class Admin (object) :
                 ( primary, "short_title", "title", "directory"
                 , AID
                     ( "date"
-                    , FGD (widget   = "html/form.jnj, fg_as_table")
+                    , FGD (render_mode = "table")
                     , legend        = _("Publication and expiration date")
                     )
                 , AID
                     ( "creator"
                     , FGD
                         ( primary
-                        , widget    = "html/form.jnj, fg_as_table"
-                        , css_class = "inline-instance"
+                        , render_mode = "table"
+                        , css_class   = "inline-instance"
                         )
-                    , completer     = creator_completer
-                    , legend        = _("Photographer")
+                    , completer      = creator_completer
+                    , legend         = _("Photographer")
                     )
                 )
             ,
@@ -136,13 +137,13 @@ class Admin (object) :
                 ( primary, "short_title", "title"
                 , AID
                     ( "date"
-                    , FGD (widget = "html/form.jnj, fg_as_table")
+                    , FGD (render_mode = "table")
                     , legend = _("Publication and expiration date")
                     )
                 , AID
                     ( "creator"
                     , FGD ( primary
-                          , widget    = "html/form.jnj, fg_as_table"
+                          , render_mode = "table"
                           , css_class = "inline-instance"
                           )
                     , completer = creator_completer
@@ -154,24 +155,14 @@ class Admin (object) :
                 ( "GTW.OMP.EVT.Event"
                 , FGD
                     ( AID ( "date"
-                          , widget = dict
-                              ( inline_table_th =
-                                  "html/form.jnj, inline_table_aid_sep_th"
-                              , inline_table_td =
-                                  "html/form.jnj, inline_table_aid_sep_td"
-                              )
-                          , legend = _("Date interval of event")
-                          , title  = _("Date interval")
+                          , render_mode = "table"
+                          , legend      = _("Date interval of event")
+                          , title       = _("Date interval")
                           )
                     , AID ( "time"
-                          , widget = dict
-                              ( inline_table_th =
-                                  "html/form.jnj, inline_table_aid_sep_th"
-                              , inline_table_td =
-                                  "html/form.jnj, inline_table_aid_sep_td"
-                              )
-                          , legend = _("Time interval of event")
-                          , title  = _("Time interval")
+                          , render_mode = "table"
+                          , legend      = _("Time interval of event")
+                          , title       = _("Time interval")
                           )
                     , "detail"
                     , AID
@@ -190,14 +181,9 @@ class Admin (object) :
                     #, widget = "html/form.jnj, fg_div_seq"
                     , AID
                         ( "date_x"
-                        , widget = dict
-                              ( inline_table_th =
-                                  "html/form.jnj, inline_table_aid_sep_th"
-                              , inline_table_td =
-                                  "html/form.jnj, inline_table_aid_sep_td"
-                              )
-                        , legend = _("Date interval of news clip")
-                        , title  = _("Date interval")
+                        , render_mode = "table"
+                        , legend      = _("Date interval of news clip")
+                        , title       = _("Date interval")
                         )
                     , legend    = _("News clip for page")
                     , title     = _("Clip")
@@ -219,18 +205,18 @@ class Admin (object) :
             ( FGD
                 ( AID
                     ( "gallery"
-                    , FGD (primary, widget = "html/form.jnj, fg_as_table")
+                    , FGD (primary, render_mode = "table")
                     , legend        = _("Gallery")
                     )
                 , "number"
                 , AID
                     ( "photo"
-                    , FGD (widget   = "html/form.jnj, fg_as_table")
+                    , FGD (render_mode = "table")
                     , legend        = _("Photo")
                     )
                 , AID
                     ( "thumb"
-                    , FGD (widget   = "html/form.jnj, fg_as_table")
+                    , FGD (render_mode = "table")
                     , legend        = _("Thumbnail")
                     )
                 )

@@ -53,6 +53,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     4-May-2010 (CT) `Collection_Inline._linked_instances` changed to not
 #                     return `None`
+#    06-May-2010 (MG) `s/_linked_instances/linked_instances/g`
 #    ««revision-date»»···
 #--
 
@@ -98,15 +99,17 @@ class Link_Inline (TFL.Meta.Object) :
     # end def get_errors
 
     @TFL.Meta.Once_Property
-    def _linked_instances (self) :
-        return self.form_cls.et_man.query \
-            (** {self.own_role_name : self.owner.instance})
-    # end def _linked_instances
+    def linked_instances (self) :
+        if self.owner.instance :
+            return self.form_cls.et_man.query \
+                (** {self.own_role_name : self.owner.instance})
+        return TFL.Q_Result (())
+    # end def linked_instances
 
     @TFL.Meta.Once_Property
     def Media (self) :
         return GTW.Media.from_list \
-            ([m for m in (self.widget.Media, self.form_cls.Media) if m])
+            ([m for m in (self.media, self.form_cls.Media) if m])
     # end def Media
 
     @TFL.Meta.Once_Property
@@ -133,7 +136,7 @@ class Link_Inline (TFL.Meta.Object) :
         except KeyError :
             owner     = self.owner
             if owner.instance :
-                count = self.min_empty + self._linked_instances.count ()
+                count = self.min_empty + self.linked_instances.count ()
         return min \
             (self.max_count, max (self.min_count, self.min_required, count))
     # end def form_count
@@ -151,7 +154,7 @@ class Link_Inline (TFL.Meta.Object) :
         result         = []
         ### find the links currently linked to the owner
         if owner.instance :
-            instances = dict ((i.lid, i) for i in self._linked_instances)
+            instances = dict ((i.lid, i) for i in self.linked_instances)
         else :
             instances = dict ()
         ### find the links which are actively requested by forms
@@ -242,10 +245,10 @@ class Collection_Inline (Link_Inline) :
     # end def create_object
 
     @TFL.Meta.Once_Property
-    def _linked_instances (self) :
+    def linked_instances (self) :
         return TFL.Q_Result \
             (getattr (self.owner.instance, self.link_name) or ())
-    # end def _linked_instances
+    # end def linked_instances
 
     @TFL.Meta.Once_Property
     def forms (self) :
@@ -256,7 +259,7 @@ class Collection_Inline (Link_Inline) :
         prototype      = self.owner.prototype
         prefix_pat     = "%s-M%%d" % (self.prefix, )
         result         = []
-        instances = self._linked_instances.all ()
+        instances      = self.linked_instances.all ()
         for no in xrange (count) :
             if instances :
                 instance = instances.pop (0)

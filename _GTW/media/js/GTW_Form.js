@@ -380,7 +380,8 @@
         var  lid       = $l_a_s.attr ("value").split (":") [0];
         if (first_tag == "tr")
           {
-            var $temp  = $('<td><span class="width-3-icons"></span></td>');
+            var css_class = 'class="width-' + buttons.length + '-icons"';
+            var $temp  = $('<td><span ' + css_class + '</span></td>');
             $first_tag.append ($temp);
             $element = $temp.find ("span");
           }

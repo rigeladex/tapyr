@@ -9,6 +9,10 @@ a.icon-link
     { width           : 54px
     ; display         : block
     }
+.width-4-icons
+    { width           : 80px
+    ; display         : block
+    }
 
 a.inline-form-add
     {  float:   left

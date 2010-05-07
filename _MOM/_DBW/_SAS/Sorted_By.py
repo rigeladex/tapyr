@@ -38,6 +38,7 @@
 #    18-Dec-2009 (MG) `_sa_order_by` for `TFL.Q_Exp.*` added
 #    19-Mar-2010 (MG) `_sa_resolve_attribute` fixed
 #     3-May-2010 (MG) Support for joins for order_by added
+#     5-May-2010 (MG) Bug fixing
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,7 @@ import _TFL.Q_Exp
 TFL.Sorted_By._sa_cache = {}
 
 @TFL.Add_Method (TFL.Sorted_By)
-def _sa_order_by (self, SAQ, joins = None, order_clause = None) :
+def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
     key = (self, SAQ)
     if self not in self._sa_cache :
         if joins        is None :
@@ -176,15 +177,14 @@ def _sa_order_by (self, SAQ, joins = None, order_clause = None) :
             order_clause = []
         for c in self.criteria :
             if hasattr (c, "_sa_order_by") :
-                c._sa_order_by (SAQ, joins, order_clause)
+                c._sa_order_by (SAQ, joins, order_clause, desc)
             elif hasattr (c, "__call__") :
                 raise NotImplementedError \
                     ( "Please implement _sa_order_by for custom "
                       "sorted by objects %s: %r" % (c.__class__, c)
                     )
             else :
-                assert c.count (".") < 2, "Check if we can support more levels: " + c
-                self._sa_resolve_attribute (SAQ, c, joins, order_clause)
+                self._sa_resolve_attribute (SAQ, c, joins, order_clause, desc)
         self._sa_cache [key] = joins, order_clause
     return self._sa_cache [key]
 # end def _sa_order_by
@@ -192,28 +192,37 @@ def _sa_order_by (self, SAQ, joins = None, order_clause = None) :
 Attr_Map = { "pid" : "id", "-pid" : "-id"}
 
 @TFL.Add_Method (TFL.Sorted_By)
-def _sa_resolve_attribute (self, SAQ, c, joins, order_clause) :
+def _sa_resolve_attribute (self, SAQ, c, joins, order_clause, desc = False) :
+    if c.startswith ("-") :
+        desc  = True
+        c     = c [1:]
     parts     = c.split (".", 1)
     attr_name = parts [0]
     if len (parts) > 1 :
-        if attr_name [0] == "-" :
-            attr_name = attr_name [1:]
-            parts [1] = "-" + parts [1]
-        e_type = getattr           (SAQ, attr_name)
-        self._sa_resolve_attribute (e_type, parts [1], joins, order_clause)
+        _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr_name, None)
+        if _sa_filter :
+            aj, ac = _sa_filter (c, desc)
+            joins.update        (aj)
+            order_clause.extend (ac)
+        else :
+            e_type = getattr      (SAQ, attr_name)
+            self._sa_resolve_attribute \
+                (e_type, parts [1], joins, order_clause, desc)
     else :
         attr_name = Attr_Map.get (attr_name, attr_name)
-        if attr_name.startswith ("-") :
-            order_clause.append (getattr (SAQ, attr_name [1:]).desc ())
-        else :
-            order_clause.append (getattr (SAQ, attr_name))
+        column    = getattr (SAQ, attr_name)
+        if desc :
+            column = column.desc ()
+        order_clause.append      (column)
 # end def _sa_resolve_attribute
 
 @TFL.Add_To_Class ( "_sa_order_by"
                   , TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr, TFL.Q_Exp.Get
                   )
-def _sa_order_by (self, SAQ, joins = None, order_clause = None) :
+def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
     jo, oc = self._sa_filter (SAQ)
+    if desc :
+        oc = [c.desc () for c in oc ]
     if order_clause is None :
         return jo, oc
     joins.update        (jo)

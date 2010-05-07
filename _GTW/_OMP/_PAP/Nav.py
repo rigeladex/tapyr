@@ -37,6 +37,7 @@
 #    27-Feb-2010 (MG) Additional completers added
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
+#     6-May-2010 (MG) Switch to render mode rendering
 #    ««revision-date»»···
 #--
 
@@ -113,10 +114,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Address"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ( primary, "desc", "position"
-                  , field_attrs = dict
-                      (position = dict (widget = "html/form.jnj, fg_as_table"))
-                  )
+            ( FGD ( primary, "desc", "position")
             , Person_has_LID ("PAP.Person_has_Address")
             )
         , list_display   = ("zip", "city", "street", "desc")
@@ -143,13 +141,9 @@ class Admin (object) :
                     ( "last_name", ("last_name", )
                     , min_chars = 2
                     )
-                , widget    = "html/form.jnj, fg_as_table"
+                , render_mode = "table"
                 )
-            , FGD
-                ( "lifetime"
-                , field_attrs = dict
-                      (lifetime = dict (widget = "html/form.jnj, fg_as_table"))
-                )
+            , FGD ("lifetime")
             , LID
                 ( "PAP.Person_has_Phone"
                 , FGD ("desc", "phone", "extension")

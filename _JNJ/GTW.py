@@ -36,6 +36,10 @@
 #    24-Feb-2010 (CT) `log_stdout` added
 #    10-Mar-2010 (CT) `zip` added
 #     3-May-2010 (MG) `call_macro`: `widget_type` added
+#     5-May-2010 (MG) `render_fofi_widget` added
+#     5-May-2010 (MG) `default_render_mode` used
+#     5-May-2010 (MG) `render_mode` added
+#     6-May-2010 (MG) `render_fofi_widget` exception handling improoved
 #    ««revision-date»»···
 #--
 
@@ -58,7 +62,8 @@ class GTW (TFL.Meta.Object) :
     from jinja2.runtime import Undefined
 
     def __init__ (self, env) :
-        self.env = env
+        self.env               = env
+        self.render_mode_stack = []
     # end def __init__
 
     def call_macro (self, macro_name, * _args, ** _kw) :
@@ -117,6 +122,40 @@ class GTW (TFL.Meta.Object) :
 
     obfuscated = staticmethod (HTML.obfuscated)
     pjoin      = staticmethod (sos.path.join)
+
+    def render_fofi_widget (self, fofi, widget, * args, ** kw) :
+        pushed     = False
+        obj_render_mode = getattr (fofi, "render_mode", None)
+        kw_render_mode  = kw.pop  ("render_mode",       None)
+        if obj_render_mode :
+            pushed  = True
+            self.render_mode_stack.append (obj_render_mode)
+        elif kw_render_mode :
+            pushed  = True
+            self.render_mode_stack.append (kw_render_mode)
+        elif not self.render_mode_stack :
+            pushed  = True
+            self.render_mode_stack.append (fofi.default_render_mode)
+        render_mode = self.render_mode_stack [-1]
+        try :
+            try :
+                mode_desc   = fofi.render_mode_description [render_mode]
+            except ValueError :
+                raise ValueError \
+                    ("%r does not support render mode %r" % (fofi, render_mode))
+            result      = self.call_macro \
+                (getattr (mode_desc, widget), * args, ** kw)
+            return result
+        finally :
+            if pushed :
+                self.render_mode_stack.pop ()
+    # end def render_fofi_widget
+
+    @TFL.Meta.Once_Property
+    def render_mode (self) :
+        return self.render_mode_stack and self.render_mode_stack [-1]
+    # end def render_mode
+
     sorted     = staticmethod (sorted)
 
     def tel_uri (self, phone_number, text = None, ** kw) :

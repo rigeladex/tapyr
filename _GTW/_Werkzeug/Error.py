@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation (based on GTW.Tornado.Error)
+#     6-May-2010 (MG) `Status.__init__` `* args` added
 #    ««revision-date»»···
 #--
 
@@ -59,8 +60,9 @@ class Status (StandardError, TFL.Meta.Object) :
 
     status_code   = None
 
-    def __init__ (self, description = "") :
+    def __init__ (self, description = "", * args) :
         self.description = description
+        self.args        = args
     # end def __init__
 
 # end class Status

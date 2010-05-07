@@ -29,6 +29,7 @@
 #    19-Apr-2010 (CT) Creation
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
+#     6-May-2010 (MG) Switch to render mode rendering
 #    ««revision-date»»···
 #--
 
@@ -101,8 +102,8 @@ class Admin (object) :
                     ( "event"
                     , FGD
                         ( primary
-                        , widget    = "html/form.jnj, fg_as_table"
-                        , css_class = "inline-instance"
+                        , render_mode = "table"
+                        , css_class   = "inline-instance"
                         )
                     , completer = regatta_completer
                     )
@@ -128,8 +129,8 @@ class Admin (object) :
                     ( "event"
                     , FGD
                         ( primary
-                        , widget    = "html/form.jnj, fg_as_table"
-                        , css_class = "inline-instance"
+                        , render_mode = "table"
+                        , css_class   = "inline-instance"
                         )
                     , completer = regatta_completer
                     )
@@ -149,8 +150,8 @@ class Admin (object) :
                     ( "event"
                     , FGD
                         ( primary
-                        , widget    = "html/form.jnj, fg_as_table"
-                        , css_class = "inline-instance"
+                        , render_mode = "table"
+                        , css_class   = "inline-instance"
                         )
                     , completer = regatta_completer
                     )

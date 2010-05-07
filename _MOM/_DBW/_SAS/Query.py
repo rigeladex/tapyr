@@ -35,6 +35,7 @@
 #     3-May-2010 (MG) Support for joins for filter and order_by added
 #     4-May-2010 (CT) `_add_q` factored from `MOM_Query.__init__`,
 #                     `ckd_name` added
+#     5-May-2010 (MG) `Join_Quer.__call__` fixed to support ordering as well
 #    ««revision-date»»···
 #--
 
@@ -231,13 +232,13 @@ class Join_Query (_MOM_Query_) :
         self.source     = source
     # end def __init__
 
-    def __call__ (self, attr_name) :
+    def __call__ (self, attr_name, desc = False) :
         base, sub_attr = attr_name.split (".", 1)
         column         = getattr (self.source, base)
         o_SAQ          = column.mom_kind.Class._SAQ
         fk             = tuple (column.foreign_keys) [0]
         sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
-        joins, oc      = sub_sb._sa_order_by (o_SAQ)
+        joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
         joins.add ((self.source._SA_TABLE, o_SAQ._SA_TABLE))
         return joins, oc
     # end def __call__

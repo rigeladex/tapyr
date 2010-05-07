@@ -65,6 +65,8 @@
 ##    11-Mar-2010 (MG) `_sep_th/_sep_td` macros added
 ##    30-Apr-2010 (MG) Form table rendering changed completely, AID rendering
 ##                     changed
+##     5-May-2010 (MG) `field_help` added
+##     5-May-2010 (MG) Field help for div-seq and table unified
 ##    ««revision-date»»···
 ##--
 #}
@@ -223,11 +225,11 @@
       </tr>
     </tbody>
   </table>
-  <div class="field_group-Horizontal-Help">
+  <div class="field_group-Horizontal-Help-Table">
     {%- for fi in fg.fields %}
       {%- set desc = GTW._T (fi.description)|safe %}
       {%- if fi.description %}
-        <p class="Field-Help Field-Help-{{ fi.name }}">{{ desc }}</p>
+        <span class="Field-Help Field-Help-{{ fi.name }}">{{ desc }}</span>
       {% endif -%}
     {% endfor -%}
   </div>
@@ -387,13 +389,19 @@
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 
-{%- macro field_label (fo, fi) -%}
-  <label for="F_{{ fo.get_id (fi) }}">{{ GTW._T (fi.ui_name) }}</label>
-{%- endmacro -%} {#- field_label -#}
-
 {%- macro field_error (fo, fi) -%}
   {%- set fe = fo.get_errors (fi) -%}
   {{ GTW.call_macro (fe.widget, fe) }}
 {%- endmacro -%} {#- field_error -#}
+
+{%- macro field_help (fo, fi) -%}
+  {%- if fi.description -%}
+    <span class="Field-Help">{{ GTW._T (fi.description)|safe }}</span>
+  {%- endif -%}
+{%- endmacro -%} {#- field_help -#}
+
+{%- macro field_label (fo, fi) -%}
+  <label for="F_{{ fo.get_id (fi) }}">{{ GTW._T (fi.ui_name) }}</label>
+{%- endmacro -%} {#- field_label -#}
 
 {#- __END__ jinja template: form.jnj -#}

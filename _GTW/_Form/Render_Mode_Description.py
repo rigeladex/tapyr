@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2010 Martin Glueck All rights reserved
+# Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.
 #
@@ -20,16 +20,15 @@
 #
 #++
 # Name
-#    GTW.Form.Widget_Spec
+#    GTW.Form.Render_Mode_Description
 #
 # Purpose
-#    Specification of widget to be used to render a form, field-group, or field
+#    Description of the different render modes for objects used during
+#    rendering. Example render modes are `div_seq`, `table`,  ...
 #
 # Revision Dates
-#    13-Jan-2010 (CT) Creation
-#     2-Feb-2010 (MG) `Media` added
-#     5-Feb-2010 (MG) Allow a `Widget_Spec` instance as `default`
-#     5-May-2010 (MG) `__getitem__` added
+#     5-May-2010 (MG) Creation
+#     5-May-2010 (MG) `widget_spec` instance of `default_mode` added
 #    ««revision-date»»···
 #--
 
@@ -37,43 +36,26 @@ from   _GTW                               import GTW
 from   _TFL                               import TFL
 
 import _TFL._Meta.Object
-import _GTW._Form
+import _GTW._Form.Widget_Spec
 
-class Widget_Spec (TFL.Meta.Object) :
-    """Specification of a widget to be used to render a form, field-group, or
-       field.
-    """
+class Render_Mode_Description (TFL.Meta.Object) :
+    """Render mode description for objects used durign form rendering."""
 
-    default = None
-    Media   = None
-
-    def __init__ (self, default = "html/form.jnj, undefinded", ** kw) :
-        if isinstance (default, self.__class__) :
-            self.__dict__.update (default.__dict__)
-        else :
-            assert isinstance (default, basestring)
-            self.default = default
-        self.Media   = kw.pop ("Media", self.Media)
-        self.__dict__.update (kw)
+    def __init__ (self, parent = None, ** modes) :
+        if parent :
+            raise NotImplementedError ("Inheritance not yet impl")
+        self.__dict__.update (modes)
     # end def __init__
 
     def __getitem__ (self, key) :
         try :
             return getattr (self, key)
-        except AttributeError :
-            raise KeyError (key)
+        except AttributeError:
+            raise ValueError ("No render mode %r defined" % (key, ))
     # end def __getitem__
 
-    def __getattr__ (self, name) :
-        return self.default
-    # end def __getattr__
-
-    def __str__ (self) :
-        return self.default
-    # end def __str__
-
-# end class Widget_Spec
+# end class Render_Mode_Description
 
 if __name__ != "__main__" :
     GTW.Form._Export ("*")
-### __END__ GTW.Form.Widget_Spec
+### __END__ GTW.Form.Render_Mode_Description

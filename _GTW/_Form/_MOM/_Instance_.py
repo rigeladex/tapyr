@@ -76,6 +76,7 @@
 #    11-Mar-2010 (MG) `_create_instance` filter empty raw_values
 #     3-May-2010 (MG) New form handling implemented
 #     3-May-2010 (MG) Use `e_type.ui_name` instance on `e_type.type_base_name`
+#     5-May-2010 (MG) `render_mode_description` added
 #    ««revision-date»»···
 #--
 
@@ -178,8 +179,6 @@ class M_Instance (GTW.Form._Form_.__class__) :
                 (medias, js_on_ready = js_on_ready)
             result.field_groups  = field_groups
             result.fields        = result._setup_fields (field_groups)
-            if isinstance (result.widget, basestring) :
-                result.widget = GTW.Form.Widget_Spec (result.widget)
         return result
     # end def __new__
 
@@ -218,6 +217,13 @@ class _Instance_ (GTW.Form._Form_) :
     ignore_fields           = ()
     _create_update_executed = False
     raw_attr_dict           = {}
+
+    render_mode_description = GTW.Form.Render_Mode_Description \
+        ( div_seq = GTW.Form.Widget_Spec
+              ( object     = "html/rform.jnj, object"
+              , aid_object = "html/rform.jnj, aid_object"
+              )
+        )
 
     ### a standard form always creates the instance new and does not reuse an
     ### existing instance

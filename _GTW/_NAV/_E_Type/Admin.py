@@ -53,6 +53,7 @@
 #    23-Mar-2010 (CT) Sort `_entries`
 #    24-Mar-2010 (CT) `Changer.rendered` changed to add `last_changed`, if any
 #     3-May-2010 (MG) `Admin.Changer`: support for `calcel` submit added
+#     5-May-2010 (MG) `_get_child` support for `child_attrs` added
 #    ««revision-date»»···
 #--
 
@@ -323,20 +324,25 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , complete  = (Completer, "forms")
         , completed = (Completed, "forms")
         )
-
+    child_attrs     = {}
     def _get_child (self, child, * grandchildren) :
+        T  = None
+        kw = {}
         if child in self._child_name_map :
             T, attr = self._child_name_map [child]
             name    = pjoin (* grandchildren)
-            return T \
-                ( parent = self
-                , name   = "%s/%s" % (child, name)
-                , ** {attr : grandchildren}
-                )
+            kw      = \
+                {"name"   : "%s/%s" % (child, name)
+                , attr    : grandchildren
+                }
         if child == "create" and not grandchildren :
-            return self.Changer (parent = self)
+            T = self.Changer
         if child == "delete" and len (grandchildren) == 1 :
-            return self.Deleter (parent = self, args = grandchildren)
+            T = self.Deleter
+            kw ["args"] = grandchildren
+        if T :
+            kw = dict (self.child_attrs.get (T.__name__, {}), ** kw)
+            return T (parent = self, ** kw)
     # end def _get_child
 
 # end class Admin

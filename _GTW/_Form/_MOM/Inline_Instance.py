@@ -94,11 +94,6 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     """Base class for form which are part of a outer form."""
 
     __metaclass__ = M_Inline_Instance
-    widget        = GTW.Form.Widget_Spec \
-        ( "html/form.jnj, field_groups"
-        , inline_table_tr_head = "html/form.jnj, inline_table_tr_head"
-        , inline_table_tr_body = "html/form.jnj, inline_table_tr_body"
-        )
 
     def __init__ ( self, * args, ** kw) :
         self.prototype = kw.pop ("prototype", False)

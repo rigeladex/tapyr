@@ -1,0 +1,281 @@
+{#- jinja template: rform.jnj -#}
+{#
+## Copyright (C) 2010 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+## ****************************************************************************
+## This template is part of the package JNJ/html.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    JNJ/html.rform
+##
+## Purpose
+##    Form rendering based on the render mode description
+##
+## Revision Dates
+##     5-May-2010 (MG) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- import "html/form.jnj" as Form %}
+{%- import html_version    as X   -%}
+
+{%- macro aid_div_seq (pfo, aid, widget_type = None) -%}
+  {%- set fo = aid.form -%}
+  {%- onion aid.legend %}
+    {%- head %}
+      <fieldset class="inline-form {{ aid.form_cls.form_path_css }}">
+        <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
+          {{ GTW._T (aid.legend)|safe }}
+        </legend>
+    {%- else %}
+      <div class="inline-form {{ aid.name }}">
+    {%- body %}
+      {{ GTW.render_fofi_widget (fo, "aid_object", fo) }}
+    {%- tail %}
+      </fieldset>
+    {%- else %}
+      </div>
+  {%- endonion %}
+{%- endmacro -%} {#- aid_div_seq -#}
+
+{%- macro aid_header (fo, aid) -%}
+  <th class="AI-Field-Header" colspan={{ aid.visible_field_count }}>
+    {{- GTW._T (aid.ui_name) -}}
+  </th>
+{%- endmacro -%} {#- aid_header -#}
+
+{%- macro aid_td (fo, aid) -%}
+  {{ form_as_columns (aid.form, "body") }}
+{%- endmacro -%} {#- aid_td -#}
+
+{%- macro aid_th (fo, aid) -%}
+  {{ form_as_columns (aid.form, "head") }}
+{%- endmacro -%} {#- aid_th -#}
+
+{%- macro aid_object (fo) -%}
+   {%- for hf in fo.hidden_fields %}
+     {{ GTW.call_macro (hf.widget, fo, hf) }}
+   {% endfor -%}
+   {%- for fg in fo.field_groups %}
+     {{ GTW.render_fofi_widget (fg, "default", fo, fg) }}
+   {% endfor -%}
+   {%- if object_caller %}
+     {{ object_caller () }}
+   {% endif -%}
+{%- endmacro -%} {#- aid_object -#}
+
+{%- macro fi_div_seq (fo, fi) -%}
+    <div class="Field-Div-Seq Field-{{ fi.name }}"
+         title="{{ GTW._T (fi.description)|safe }}"
+    >
+      {{ GTW.render_fofi_widget (fi, "help",          fo, fi) }}
+      {{ GTW.render_fofi_widget (fi, "label",         fo, fi) }}
+      {{ GTW.call_macro (fi.widget [GTW.render_mode], fo, fi) }}
+      {{ GTW.render_fofi_widget (fi, "error",         fo, fi) }}
+    </div>
+{%- endmacro -%} {#- fi_div_seq -#}
+
+{%- macro fi_header (fo, fi) -%}
+  <th>&nbsp;</th>
+{%- endmacro -%} {#- fi_header -#}
+
+{%- macro fi_th (fo, fi) -%}
+  <th>{{ GTW.render_fofi_widget (fi, "label", fo, fi) }}</th>
+{%- endmacro -%} {#- fi_th -#}
+
+{%- macro fi_td (fo, fi) -%}
+  <td>{{ GTW.call_macro (fi.widget [GTW.render_mode], fo, fi) }}</td>
+{%- endmacro -%} {#- fi_td -#}
+
+{%- macro fg_column (fo, fg, kind) -%}
+  {%- for fi in fo.fields_of_field_group (fg) %}
+    {{ GTW.render_fofi_widget (fi, "field_%s" % (kind, ), fo, fi) }}
+  {% endfor -%}
+{%- endmacro -%} {#- fg_column -#}
+
+{%- macro fg_div_seq (fo, fg) -%}
+  {%- for fi in fo.fields_of_field_group (fg) %}
+    {{ GTW.render_fofi_widget (fi, "field", fo, fi) }}
+  {% endfor -%}
+{%- endmacro -%} {#- fg_div_seq -#}
+
+{%- macro fg_table (fo, fg) -%}
+  <table class="field_group-Horizontal">
+    <thead>
+      <tr>
+        {%- for fi in fo.fields_of_field_group (fg) %}
+          {{ GTW.render_fofi_widget (fi, "field_head", fo, fi) }}
+        {% endfor -%}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {%- for fi in fo.fields_of_field_group (fg) %}
+          {{ GTW.render_fofi_widget (fi, "field_body", fo, fi) }}
+        {% endfor -%}
+      </tr>
+    </tbody>
+  </table>
+  <div class="field_group-Horizontal-Help-Table">
+    {%- for fi in fo.fields_of_field_group (fg) %}
+      {{ GTW.render_fofi_widget (fi, "help", fo, fi) }}
+    {% endfor -%}
+  </div>
+{%- endmacro -%} {#- fg_table -#}
+
+{%- macro form
+        ( action        = ""
+        , cancel_kw     = {}
+        , method        = "post"
+        , next_form_kw  = {}
+        , reset_kw      = {}
+        , submit_kws    = []
+        )
+-%}
+  <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
+    {{ caller () }}
+    <div class="buttons">
+      {%- if next_form_kw %}
+        {{ X.input.hidden (** next_form_kw) }}
+      {% endif -%}
+      {%- for submit_kw in submit_kws %}
+        {%- if submit_kw %}
+          {{ X.input.submit (** submit_kw) }}
+        {% endif -%}
+      {% endfor -%}
+      {%- if reset_kw %}
+        {{ X.input.reset  (** reset_kw) }}
+      {% endif -%}
+      {%- if cancel_kw %}
+        {%- set ckw = cancel_kw %}
+        {{ X.input.submit
+             (name = "cancel", value = ckw.name or GTW._T ("Cancel"))
+        }}
+        {{ X.input.hidden
+            (name  = "form-cancel-href", value = ckw.href)
+       }}
+      {% endif -%}
+    </div>
+  </form>
+{%- endmacro -%} {#- form -#}
+
+{%- macro form_as_columns (fo, kind) -%}
+    {%- if kind == "body" %}
+      <td class="ui-helper-hidden">
+        {%- for hf in fo.hidden_fields %}
+          {{- GTW.call_macro (hf.widget, fo, hf) -}}
+        {% endfor -%}
+      </td>
+    {% endif -%}
+    {%- for fg in fo.field_groups %}
+     {{ GTW.render_fofi_widget (fg, "fg_column", fo, fg, kind) }}
+    {% endfor -%}
+{%- endmacro -%} {#- form_as_columns -#}
+
+{%- macro inline_table (fo, inline) -%}
+  {#- render the form of the inline as row's of a table -#}
+  {%- set proto = inline.prototype_form -%}
+  {%- if inline.forms %}
+    {%- set fform = inline.forms [0] -%}
+  {%- else %}
+    {%- set fform = proto -%}
+  {% endif -%}
+  <fieldset class="inline-form-table {{ inline.form_cls.form_name }}">
+    <legend title="{{ inline.name|capitalize }}">{{ GTW._T (inline.legend)|safe }}</legend>
+    {{- X.input.hidden
+        ( class = " many-2-many-range"
+        , value = "%s:%s:%s"|format
+            (inline.min_required, inline.form_count, inline.max_count)
+        , name  = inline.range_field_name
+        , id    = "F_%s"|format (inline.range_field_name)
+        )
+    -}}
+  <table class="field_group-Horizontal">
+    <thead>
+      {%- if fform.fgs_need_header %}
+        <tr>{{ form_as_columns (fform, "header") }}
+        </tr>
+      {% endif -%}
+      <tr>{{ form_as_columns (fform, "head") }}</tr>
+    </thead>
+    <tbody>
+      <tr class="inline-instance inline-prototype">
+        {{ form_as_columns (proto, "body") }}
+      </tr>
+      {%- for iform in inline.forms %}
+        <tr class="inline-instance">{{ form_as_columns (iform, "body") }}</tr>
+      {% endfor -%}
+    </tbody>
+  </table>
+  </fieldset>
+{%- endmacro -%} {#- inline_table -#}
+
+{%- macro inline_ui_display_table (fo, inline) -%}
+  {#- render the form of the inline as row's of a table -#}
+  {%- set proto = inline.prototype_form -%}
+  <table class="field_group-Horizontal">
+    <caption>
+    {{- X.input.hidden
+        ( class = " many-2-many-range"
+        , value = "%s:%s:%s"|format
+            (inline.min_required, inline.form_count, inline.max_count)
+        , name  = inline.range_field_name
+        , id    = "F_%s"|format (inline.range_field_name)
+        )
+    -}}
+    {{ GTW._T (inline.legend)|safe }}
+    <a href="#add">{{ GTW._T ("Add") }} {{ inline.legend }}</a>
+    </caption>
+    <tbody>
+      {%- for link in inline.linked_instances %}
+      <tr>
+        <td>{{ link.right.ui_display }}</td>
+        <td><a href="#edit">{{ GTW._T ("Edit") }}</td>
+        <td><a href="#delete">{{ GTW._T ("Delete") }}</td>
+      </tr>
+      {% endfor -%}
+    </tbody>
+  </table>
+{%- endmacro -%} {#- inline_ui_display_table -#}
+
+{%- macro object (fo) -%}
+  {#- Create a form for a form-object `fo` -#}
+  {%- set object_caller = kwargs.pop ("caller", None) -%}
+  {%- set cancel_href   = kwargs.pop ("cancel_href", fo.kw.cancel_href) -%}
+  {%- set cancel_kw     = dict
+        ( href  = cancel_href
+        , title = GTW._T ("Discard all changes and leave form")
+        ) if cancel_href else {}
+  -%}
+  {%- set submit_kws    = kwargs.pop ("submit_kws", None) %}
+  {% call form
+      ( action     = fo.action
+      , class      = fo.css_class
+      , cancel_kw  = cancel_kw
+      , reset_kw   = dict
+          ( title  = GTW._T ("Discard all changes")
+          , value  = GTW._T ("Reset")
+          )
+      , submit_kws = submit_kws or [dict (value = GTW._T ("Submit"))]
+      , ** kwargs
+      )
+ -%}
+   {{ GTW.render_fofi_widget (fo, "aid_object", fo) }}
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- object -#}
+{#- __END__ jinja template: JNJ/html.rform.jnj -#}

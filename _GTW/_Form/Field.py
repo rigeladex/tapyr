@@ -32,19 +32,39 @@
 #     3-May-2010 (MG) `default` method added to allow callable default values
 #                     `_Field_` factored
 #                     `Media` added
+#     5-May-2010 (MG) `render_mode_description` added
+#     6-May-2010 (MG) `needs_header` added
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
 import _TFL._Meta.Object
 from   _GTW               import GTW
-import _GTW._Form
+import _GTW._Form.Render_Mode_Description
 from   _TFL.I18N          import _T
 
 class _Field_ (TFL.Meta.Object) :
     """Base class for form fields."""
 
-    electric  = False
+    electric                = False
+    Media                   = None
+    needs_header            = False
 
+    render_mode_description = GTW.Form.Render_Mode_Description \
+        ( div_seq = GTW.Form.Widget_Spec
+            ( error        = "html/form.jnj, field_error"
+            , help         = "html/form.jnj, field_help"
+            , label        = "html/form.jnj, field_label"
+            , field        = "html/rform.jnj, fi_div_seq"
+            )
+        , table   = GTW.Form.Widget_Spec
+            ( error        = "html/form.jnj, field_error"
+            , help         = "html/form.jnj, field_help"
+            , label        = "html/form.jnj, field_label"
+            , field_head   = "html/rform.jnj, fi_th"
+            , field_header = "html/rform.jnj, fi_header"
+            , field_body   = "html/rform.jnj, fi_td"
+            )
+        )
     def __init__ (self, name, default = u"") :
         self.name      = name
         self._default  = default
@@ -55,11 +75,6 @@ class _Field_ (TFL.Meta.Object) :
             return self._default (form)
         return self._default
     # end def default
-
-    @TFL.Meta.Once_Property
-    def Media (self) :
-        return self.widget.Media
-    # end def Media
 
 # end class _Field_
 

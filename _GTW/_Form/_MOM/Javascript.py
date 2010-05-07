@@ -34,6 +34,7 @@
 #                     field completion added
 #     2-Mar-2010 (MG) `Multi_Completer` moved into `GTW.Form.Javascript`
 #     3-May-2010 (MG) New form handling implemented
+#     6-May-2010 (MG) `Field_Completer.js_on_ready` urls fixed
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -124,10 +125,10 @@ class Field_Completer (_MOM_Completer_) :
             postfix  = role_name
         parts        = form_name.split ("__", 1)
         if len (parts) == 2 :
-            bname, fname = parts [0], "/" + parts [1]
+            bname, fname = parts [0], "/" + parts [1] + "__"
         else :
-            bname, fname = parts [0], ""
-        url_format   = "%s/%s/%%s%s/%s" \
+            bname, fname = parts [0], "/"
+        url_format   = "%s/%s/%%s%s%s" \
             % (self.prefix, bname, fname, self.trigger)
         result = \
             ( dict

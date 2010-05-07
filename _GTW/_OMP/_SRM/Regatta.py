@@ -27,8 +27,6 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
-#     5-May-2010 (CT) Cached attributes added
-#     5-May-2010 (CT) `perma_name` defined as `Attr.Internal` to allow queries
 #    ««revision-date»»···
 #--
 
@@ -57,55 +55,10 @@ class Regatta (_Ancestor_Essence) :
             """Regatta event to which this regatta belongs."""
 
             role_type          = GTW.OMP.SRM.Regatta_Event
-            role_name          = "event"
             auto_cache         = True
+            role_name          = "event"
 
         # end class left
-
-        ### Non-primary attributes
-
-        class name (A_String) :
-
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-
-        # end class name
-
-        class perma_name (A_String) :
-
-            kind               = Attr.Internal
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("name", )
-
-            def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.name.lower ())
-            # end def computed
-
-        # end class perma_name
-
-        class short_title (A_String) :
-
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("name", )
-
-            def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.name)
-            # end def computed
-
-        # end class short_title
-
-        class title (A_String) :
-
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("left", "name")
-
-            def computed (self, obj) :
-                return ", ".join ((obj.left.title, obj.name))
-            # end def computed
-
-        # end class title
 
     # end class _Attributes
 
@@ -128,16 +81,6 @@ class Regatta_C (_Ancestor_Essence) :
 
         # end class boat_class
 
-        class name (_Ancestor.name) :
-
-            auto_up_depends    = ("boat_class", )
-
-            def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.boat_class.name)
-            # end def computed
-
-        # end class name
-
     # end class _Attributes
 
 # end class Regatta_C
@@ -158,16 +101,6 @@ class Regatta_H (_Ancestor_Essence) :
             max_length         = 10
 
         # end class handicap
-
-        class name (_Ancestor.name) :
-
-            auto_up_depends    = ("handicap", )
-
-            def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.handicap)
-            # end def computed
-
-        # end class name
 
     # end class _Attributes
 

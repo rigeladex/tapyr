@@ -66,7 +66,7 @@ class Field_Group (TFL.Meta.Object) :
     def Media (self) :
         try :
             medias = itertools.chain \
-                ((f.Media for f in self.fields), (self.widget.Media, ))
+                ((f.Media for f in self.fields), (self.media, ))
             return GTW.Media.from_list ([m for m in medias if m])
         except StandardError, e:
             import pdb; pdb.set_trace ()

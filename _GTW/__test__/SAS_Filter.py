@@ -29,6 +29,7 @@
 # Revision Dates
 #    30-Apr-2010 (MG) Creation
 #     3-May-2010 (MG) New test for query attributes added
+#     5-May-2010 (MG) Additional tests added
 #    ««revision-date»»···
 #--
 
@@ -110,10 +111,53 @@ _link1_role = r"""
     ((u'event-4-text', ), dict (start = '2010/01/01'), dict ())
 """
 
+_link2_link1 = r"""
+    >>> scope = Scaffold.scope ("sqlite://")
+    Creating new scope MOMT__SAS__SAS in memory
+    >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
+    >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
+    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+
+    >>> rev = SRM.Regatta_Event (dict (start = "20090521", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+
+    >>> rev = SRM.Regatta_Event (dict (start = "20100513", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+
+    >>> date = datetime.date (2009, 1, 1)
+    >>> q = scope.SRM.Boat_in_Regatta.query ()
+    >>> for r in q.filter (Q.right.left.date.start > date) : print r
+    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+
+    >>> q = scope.SRM.Boat_in_Regatta.query ()
+    >>> for r in q.filter (Q.right.left.date.start < date) : print r
+    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    >>> date2 = datetime.date (2009, 12, 31)
+    >>> qf = (Q.right.left.date.start >= date ) \
+    ...    & (Q.right.left.date.start <= date2)
+    >>> for r in q.filter (qf) : print r
+    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+
+    >>> date3 = datetime.date (2010, 05, 13)
+    >>> for r in q.filter (Q.right.left.date.start == date3) : print r
+    (((u'Optimist', ), 'AUT', 1107), ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+
+"""
+
 if 1 :
     __test__ = dict \
-        ( composite  = _composite
-        , link1_role = _link1_role
+        ( composite   = _composite
+        , link1_role  = _link1_role
+        , link2_link1 = _link2_link1
         )
 else :
     #__doc__ = _composite

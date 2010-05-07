@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Apr-2010 (MG) Creation
+#     6-Mai-2010 (MG) Support for profiling added
 #    ««revision-date»»···
 #--
 
@@ -45,8 +46,10 @@ import _GTW._OMP._EVT.Nav
 import _GTW._OMP._SRM.Nav
 import _GTW._OMP._SWP.Nav
 
+from   _TFL                   import TFL
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL                   import sos
+import _TFL.CAO
 
 import sys
 import time
@@ -110,33 +113,43 @@ def create_nav (scope) :
               , headline        = u"Admin Page"
               , login_required  = True
               , etypes          =
-                  [ GTW.OMP.PAP.Nav.Admin.Address
-                  , GTW.OMP.PAP.Nav.Admin.Email
-                  , GTW.OMP.PAP.Nav.Admin.Person
-                  , GTW.OMP.PAP.Nav.Admin.Person_has_Address
-                  , GTW.OMP.PAP.Nav.Admin.Person_has_Phone
-                  , GTW.OMP.PAP.Nav.Admin.Person_has_Email
-                  , GTW.OMP.PAP.Nav.Admin.Phone
+                  [ dict
+                      ( ETM       = "GTW.OMP.PAP.Person"
+                      , Form_args =
+                          ( FGD (WF ("primary"), render_mode = "table")
+                          , LID
+                              ( "GTW.OMP.PAP.Person_has_Address"
+                              , render_mode = "ui_display_table"
+                              )
+                          )
+                      )
+                  ##   GTW.OMP.PAP.Nav.Admin.Address
+                  ## , GTW.OMP.PAP.Nav.Admin.Email
+                  ## , GTW.OMP.PAP.Nav.Admin.Person
+                  ## , GTW.OMP.PAP.Nav.Admin.Person_has_Address
+                  ## , GTW.OMP.PAP.Nav.Admin.Person_has_Phone
+                  ## , GTW.OMP.PAP.Nav.Admin.Person_has_Email
+                  ## , GTW.OMP.PAP.Nav.Admin.Phone
 
-                  , GTW.OMP.Auth.Nav.Admin.Account
-                  , GTW.OMP.Auth.Nav.Admin.Group
-                  , GTW.OMP.Auth.Nav.Admin.Account_in_Group
+                  ## , GTW.OMP.Auth.Nav.Admin.Account
+                  ## , GTW.OMP.Auth.Nav.Admin.Group
+                  ## , GTW.OMP.Auth.Nav.Admin.Account_in_Group
 
-                  , GTW.OMP.EVT.Nav.Admin.Event
-                  , GTW.OMP.EVT.Nav.Admin.Event_occurs
+                  ## , GTW.OMP.EVT.Nav.Admin.Event
+                  ## , GTW.OMP.EVT.Nav.Admin.Event_occurs
 
-                  , GTW.OMP.SWP.Nav.Admin.Clip_X
-                  , GTW.OMP.SWP.Nav.Admin.Gallery
-                  , GTW.OMP.SWP.Nav.Admin.Page
-                  , GTW.OMP.SWP.Nav.Admin.Picture
+                  ## , GTW.OMP.SWP.Nav.Admin.Clip_X
+                  ## , GTW.OMP.SWP.Nav.Admin.Gallery
+                  ## , GTW.OMP.SWP.Nav.Admin.Page
+                  ## , GTW.OMP.SWP.Nav.Admin.Picture
 
-                  , GTW.OMP.SRM.Nav.Admin.Boat
-                  , GTW.OMP.SRM.Nav.Admin.Boat_Class
-                  , GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
-                  , GTW.OMP.SRM.Nav.Admin.Page
-                  , GTW.OMP.SRM.Nav.Admin.Regatta_C
-                  , GTW.OMP.SRM.Nav.Admin.Regatta_H
-                  , GTW.OMP.SRM.Nav.Admin.Regatta_Event
+                  ## , GTW.OMP.SRM.Nav.Admin.Boat
+                  ## , GTW.OMP.SRM.Nav.Admin.Boat_Class
+                  ## , GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
+                  ## , GTW.OMP.SRM.Nav.Admin.Page
+                  ## , GTW.OMP.SRM.Nav.Admin.Regatta_C
+                  ## , GTW.OMP.SRM.Nav.Admin.Regatta_H
+                  ## , GTW.OMP.SRM.Nav.Admin.Regatta_Event
                   ]
               , Type            = GTW.NAV.Site_Admin
               )
@@ -172,7 +185,7 @@ def media_handler (nav) :
         )
 # end def media_handler
 
-def _main () :
+def _main (cmd) :
     import _GTW._Werkzeug.Application
     import _GTW._Werkzeug.Static_File_Handler
     import _GTW._Werkzeug.Request_Handler
@@ -192,16 +205,40 @@ def _main () :
         )
     ### XXX remove me
     PAP = scope.PAP
-    p = scope.PAP.Person (u"Glück", u"Martin", raw = True)
-    a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg",
-                          u"Austria", raw = True)
+    p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
+    p = scope.PAP.Person (u"Glücklos",  u"Eddy", raw = True)
+    p = scope.PAP.Person (u"Glück",     u"Martin", raw = True)
+    a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg", u"Austria", raw = True)
+    scope.PAP.Person_has_Address (p, a)
+    a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
     scope.PAP.Person_has_Address (p, a)
     app.run_development_server \
-        (port = 9042, use_debugger = True, use_reloader = True)
+        ( port                 = cmd.port
+        , use_debugger         = cmd.debug
+        , use_reloader         = cmd.reload
+        , use_profiler         = cmd.profiler
+        , profile_log_files    = cmd.p_logs
+        , profile_restrictions = cmd.p_restrictions
+        , profile_sort_by      = cmd.p_sort_by
+        , profile_delete_logs  = cmd.p_delete_logs
+        )
 # end def _main
 
+_Command = TFL.CAO.Cmd \
+    ( _main
+    , opts =
+        ( "debug:B=Yes?Run with werkzeug debugger"
+        , "reload:B=Yes?Run with autoreloader"
+        , "port:I=9042?Port for the webserber"
+        , "profiler:B=no?Run with werkzeug profiler"
+        , "p_logs:S,=stderr,profile.log?Logfile for the profiler"
+        , "p_sort_by:S,=time,calls?Profiling sort order"
+        , "p_restrictions:S,=?Profiling restrictions"
+        , "p_delete_logs:B=no?Delete old profile log files on server start"
+        )
+    )
 if __name__ == "__main__" :
-    _main ()
+    _Command ()
 ### __END__ GTW.__test__.form_app
 
 

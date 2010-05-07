@@ -57,6 +57,10 @@
 #    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
 #     1-May-2010 (MG) jQuery related media's are now defined in `GTW.jQuery`
 #     3-May-2010 (MG) New form handling implemented
+#     5-May-2010 (MG) `render_mode_description` added
+#     6-May-2010 (MG) `table` render mode added
+#     6-May-2010 (MG) `needs_header` added
+#    06-May-2010 (MG) `widget` removed
 #    ««revision-date»»···
 #--
 
@@ -67,7 +71,7 @@ from   _MOM                                 import MOM
 
 from   _GTW                                 import GTW
 import _GTW.Media
-import _GTW._Form.Widget_Spec
+import _GTW._Form.Render_Mode_Description
 import _GTW._Form._MOM.Attribute_Inline
 import _GTW.jQuery
 
@@ -78,15 +82,11 @@ class _GTW_Inline_Description_ (TFL.Meta.Object) :
     completer          = None
     css_class          = "inline-editing"
     javascript_options = dict ()
+    needs_header       = False
 
     def __init__ (self, link_name, * field_group_descriptions, ** kw) :
         self.link_name = getattr (link_name, "type_name", link_name)
         self.field_group_descriptions = field_group_descriptions
-        widget = kw.pop ("widget", None)
-        if widget and not isinstance (widget, dict) :
-            widget = dict (default = widget)
-        if widget :
-            self.widget = GTW.Form.Widget_Spec (self.widget, ** widget)
         self.__dict__.update (kw)
     # end def __init__
 
@@ -110,11 +110,18 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
 
     _real_name              = "Attribute_Inline_Description"
     css_class               = "inline-attribute"
-    widget                  = GTW.Form.Widget_Spec \
-        ( "html/form.jnj, aid_div_seq"
-        , th_onion          = "html/form.jnj, th_onion_aid"
-        , td_onion          = "html/form.jnj, td_onion_aid"
-        , Media             = _Inline_Description_.media
+
+    render_mode_description = GTW.Form.Render_Mode_Description \
+        ( div_seq = GTW.Form.Widget_Spec
+              ( "html/rform.jnj, aid_div_seq"
+              )
+        , table   = GTW.Form.Widget_Spec
+              ( "html/rform.jnj, fg_table"
+              , field_head        = "html/rform.jnj, aid_th"
+              , field_header      = "html/rform.jnj, aid_header"
+              , field_body        = "html/rform.jnj, aid_td"
+              , help              = "html/form.jnj,  field_help"
+              )
         )
 
     def field (self, et_man, parent, ** kw) :
@@ -134,7 +141,7 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
         form_cls      =  cls.Form_Class.New \
             ( obj_et_man
             , * self.field_group_descriptions
-            , completer     = kw.pop ("completer", self.completer)
+            , completer     = kw.get ("completer", self.completer)
             , form_name     = self.link_name
             , generic_name  = generic_name
             , parent        = parent
@@ -153,11 +160,17 @@ Attribute_Inline_Description = GTW_Attribute_Inline_Description # end class
 class GTW_Link_Inline_Description (_Inline_Description_) :
     """Edit a link inline in a form."""
 
-    _real_name   = "Link_Inline_Description"
-    widget       = GTW.Form.Widget_Spec \
-        ( "html/form.jnj, inlines_as_table"
-        , Media             = _Inline_Description_.media
+    _real_name              = "Link_Inline_Description"
+    render_mode             = "table"
+    render_mode_description = GTW.Form.Render_Mode_Description \
+        ( table   = GTW.Form.Widget_Spec
+              ( "html/rform.jnj, inline_table"
+              , Media             = _Inline_Description_.media
+              )
+        , ui_display_table = GTW.Form.Widget_Spec
+              ( "html/rform.jnj, inline_ui_display_table")
         )
+    legend       = None
     css_class    = "inline-link"
 
     max_count    = 256 ### seems to be more than enough for a web-app
@@ -173,6 +186,9 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
         if not first_pass :
             scope        = et_man.home_scope
             link_et_man  = getattr (scope, self.link_name)
+            if not issubclass (link_et_man._etype, MOM.Link) :
+                raise TypeError \
+                    ("%r is not a link" % (link_et_man.type_base_name, ))
             roles        = tuple (et_man.link_map [link_et_man._etype])
             if len (roles) > 1 :
                 raise TypeError ("More than one role to choose from ?")
@@ -189,6 +205,8 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                 , suffix          = et_man.type_base_name
                 , field_attrs     = self.field_attrs
                 )
+            if not self.legend :
+                self.legend = TFL.I18N._T (link_et_man.ui_name)
             return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 

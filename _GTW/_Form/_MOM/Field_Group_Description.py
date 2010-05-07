@@ -45,6 +45,8 @@
 #                     a nicer default for links
 #    11-Mar-2010 (MG) Santiy check added
 #     3-May-2010 (MG) New form handling implemented
+#     5-May-2010 (MG) `render_mode_description` added
+#     6-May-2010 (MG) `table` render mode added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +57,7 @@ from   _MOM                                 import MOM
 import _MOM.Link
 
 from   _GTW                                 import GTW
+import _GTW._Form.Render_Mode_Description
 import _GTW._Form.Field_Group
 import _GTW._Form.Field_Group_Description
 from   _GTW._Form._MOM.Inline_Description   import \
@@ -134,12 +137,13 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
 
     _real_name = "Field_Group_Description"
 
-    widget     = GTW.Form.Widget_Spec \
-        ( GTW.Form.Field_Group_Description.widget
-        , inline_table_th     = "html/form.jnj, inline_table_th"
-        , inline_table_td     = "html/form.jnj, inline_table_td"
-        , inline_table_sep_th = "html/form.jnj, inline_table_sep_th"
-        , inline_table_sep_td = "html/form.jnj, inline_table_sep_td"
+    render_mode_description = GTW.Form.Render_Mode_Description \
+        ( div_seq = GTW.Form.Widget_Spec
+              ("html/rform.jnj, fg_div_seq")
+        , table   = GTW.Form.Widget_Spec
+              ("html/rform.jnj, fg_table"
+              , fg_column = "html/rform.jnj, fg_column"
+              )
         )
 
     def _field_instance (self, et_man, field, parent) :
@@ -161,18 +165,19 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                             , MOM.Attr._EPK_Mixin_
                             )
                           ) :
+                field_kw    = field_kw.copy ()
                 attr_fields = field_kw.copy ()
                 field_kw.pop    ("completer", None)
                 attr_fields.pop ("widget",    None)
                 fields = ()
                 if isinstance (attr_kind, MOM.Attr._EPK_Mixin_) :
-                    ### of this attribute inline reference an ID-Entity we
+                    ### if this attribute inline reference an ID-Entity we
                     ### will only display the primary attributes.
                     ### If the user needs more she/he has to create the
                     ### attribute inline description manually
                     fields = (Wildcard_Field ("primary"), )
-                if "widget" not in field_kw :
-                    field_kw ["widget"] = "html/form.jnj, fg_as_table"
+                if "render_mode" not in field_kw :
+                    field_kw ["render_mode"] = "table"
                 field = AID \
                     ( field
                     , GTW.Form.MOM.Field_Group_Description

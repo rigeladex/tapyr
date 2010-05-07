@@ -30,6 +30,11 @@
 # Revision Dates
 #    15-Apr-2010 (MG) Creation
 #     3-May-2010 (MG) `need_change` added and used
+#     6-May-2010 (MG) `ui_name` and `visible_field_count` added
+#    06-May-2010 (MG) `create_object` change to set the role of the link if
+#                     this instance has not changed but the link does not
+#                     exist yet (this happens if the role has been
+#                     auto-completed)
 #    ««revision-date»»···
 #--
 
@@ -66,7 +71,7 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                or (form.is_link_role and form.raw_attr_dict)
                )
            ) :
-            if self.need_change :
+            if self.need_change or not parent_form.instance :
                 ### the instance has been created/updated successfully ->
                 ### update the raw_attr_dict of the parent
                 parent_form.raw_attr_dict [form.generic_name] = \
@@ -104,11 +109,17 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
     def Media (self) :
         try :
            self._setup_javascript ()
-           return self.widget.Media
+           return self.media
         except StandardError, e :
             import pdb; pdb.set_trace ()
             raise
     # end def Media
+
+    @TFL.Meta.Once_Property
+    def needs_header (self) :
+        return self.inline_description.needs_header \
+            or (self.visible_field_count > 1)
+    # end def needs_header
 
     def prepare_request_data (self, form, request_data) :
         self.form.recursively_run \
@@ -122,6 +133,16 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
     def setup_raw_attr_dict (self, form) :
         self.form.recursively_run ("setup_raw_attr_dict", self.form)
     # end def setup_raw_attr_dict
+
+    @TFL.Meta.Once_Property
+    def visible_field_count (self) :
+        return len ([f for f in self.form_cls.fields if not f.hidden])
+    # end def visible_field_count
+
+    @TFL.Meta.Once_Property
+    def ui_name (self) :
+        return self.form_cls.et_man.ui_name
+    # end def ui_name
 
     def update_object (self, form) :
         self.form.recursively_run ("update_object", self.form)
