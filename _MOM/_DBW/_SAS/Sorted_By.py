@@ -39,6 +39,10 @@
 #    19-Mar-2010 (MG) `_sa_resolve_attribute` fixed
 #     3-May-2010 (MG) Support for joins for order_by added
 #     5-May-2010 (MG) Bug fixing
+#     7-May-2010 (MG) Join handling changed (is now a list instead of a set
+#                     to keep join order)
+#     7-May-2010 (MG) `_sa_order_by` for TFL.Q_Exp.* fixed to support query
+#                     attributes as well
 #    ««revision-date»»···
 #--
 
@@ -172,7 +176,7 @@ def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
     key = (self, SAQ)
     if self not in self._sa_cache :
         if joins        is None :
-            joins        = set ()
+            joins        = []
         if order_clause is None :
             order_clause = []
         for c in self.criteria :
@@ -202,7 +206,7 @@ def _sa_resolve_attribute (self, SAQ, c, joins, order_clause, desc = False) :
         _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr_name, None)
         if _sa_filter :
             aj, ac = _sa_filter (c, desc)
-            joins.update        (aj)
+            joins.extend        (aj)
             order_clause.extend (ac)
         else :
             e_type = getattr      (SAQ, attr_name)
@@ -211,6 +215,9 @@ def _sa_resolve_attribute (self, SAQ, c, joins, order_clause, desc = False) :
     else :
         attr_name = Attr_Map.get (attr_name, attr_name)
         column    = getattr (SAQ, attr_name)
+        if isinstance (column, (list, tuple)) :
+            joins.extend (column [0])
+            column = column [1] [0]
         if desc :
             column = column.desc ()
         order_clause.append      (column)
@@ -225,7 +232,7 @@ def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
         oc = [c.desc () for c in oc ]
     if order_clause is None :
         return jo, oc
-    joins.update        (jo)
+    joins.extend        (jo)
     order_clause.extend (oc)
 # end def _sa_order_by
 

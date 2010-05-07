@@ -36,6 +36,7 @@
 #     4-May-2010 (CT) `_add_q` factored from `MOM_Query.__init__`,
 #                     `ckd_name` added
 #     5-May-2010 (MG) `Join_Quer.__call__` fixed to support ordering as well
+#     7-May-2010 (MG) `MOM_Query.__init__` inherit `_query_fct` dict as well
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,9 @@ class MOM_Query (_MOM_Query_) :
             for an, jf in b_saq._ID_ENTITY_ATTRS.iteritems () :
                 if an not in self._ID_ENTITY_ATTRS :
                     self._ID_ENTITY_ATTRS [an] = jf
+            for an, attr in b_saq._query_fct.iteritems () :
+                if an not in self._query_fct :
+                    self._query_fct [an] = attr
         for name, kind, attr in delayed :
             query_fct = getattr (attr, "query_fct")
             if query_fct :
@@ -239,7 +243,7 @@ class Join_Query (_MOM_Query_) :
         fk             = tuple (column.foreign_keys) [0]
         sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
         joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
-        joins.add ((self.source._SA_TABLE, o_SAQ._SA_TABLE))
+        joins.append ((self.source._SA_TABLE, o_SAQ._SA_TABLE))
         return joins, oc
     # end def __call__
 

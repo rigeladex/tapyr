@@ -31,6 +31,7 @@
 #    27-Apr-2010 (MG) `filter`: user new `SAS_EQ_Clause` method of SAQ
 #     3-May-2010 (MG) Support for joins for filter and order_by added
 #     5-May-2010 (MG) `_join`and `_inner_join` added
+#     7-May-2010 (MG) `_joins` changed: joins is now a list instead of a set
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ class Q_Result (TFL.Meta.Object) :
     # end def distinct
 
     def filter (self, * criteria, ** eq_kw) :
-        joins         = set ()
+        joins         = []
         filter_clause = []
         for c in criteria :
             if not isinstance (c, sql.expression.Operators) :
@@ -84,11 +85,11 @@ class Q_Result (TFL.Meta.Object) :
             else :
                 ajoins  = ()
                 aclause = (c)
-            joins.update         (ajoins)
+            joins.extend         (ajoins)
             filter_clause.extend (aclause)
         for attr, value in eq_kw.iteritems () :
             ajoins, aclause = self.e_type._SAQ.SAS_EQ_Clause (attr, value)
-            joins.update         (ajoins)
+            joins.extend         (ajoins)
             filter_clause.extend (aclause)
         sa_criteria = (sql.expression.and_ (* filter_clause), )
         sa_query    = self._joins (joins)
@@ -107,21 +108,15 @@ class Q_Result (TFL.Meta.Object) :
         return self.session.instance_from_row (self.e_type, row)
     # end def _from_row
 
-    def _inner_join (self, src, join_table, query) :
-        for dst in join_table.pop (src, ()) :
-            query = query.join (dst)
-            query = self._inner_join (dst, join_table, query)
-        return query
-    # end def _inner_join
-
     def _joins (self, joins) :
         if joins :
-            join_table = TFL.defaultdict (list)
-            for src, dst in joins :
-                join_table [src].append (dst)
-            src  = self.e_type._sa_table
-            return self.sa_query.select_from \
-                (self._inner_join (src, join_table, src))
+            joined   = set ()
+            sql_join = self.sa_query.froms [-1]
+            for src, dst in reversed (joins) :
+                if dst not in joined :
+                    joined.add    (dst)
+                    sql_join = sql_join.join (dst)
+            return self.sa_query.select_from (sql_join)
         return self.sa_query
     # end def _joins
 

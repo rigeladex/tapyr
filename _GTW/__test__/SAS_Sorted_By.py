@@ -106,11 +106,48 @@ _link2_link1 = r"""
     (((u'Optimist', ), 'AUT', u'1107'), ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
 """
 
+_query_attr = r"""
+    >>> scope = Scaffold.scope ("sqlite://")
+    Creating new scope MOMT__SAS__SAS in memory
+    >>> PAP  = scope.PAP
+    >>> SRM  = scope.SRM
+    >>> bc   = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> p    = PAP.Person.instance_or_new ("Tanzer", "Christian")
+    >>> s    = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
+    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+
+    >>> rev = SRM.Regatta_Event (dict (start = "20090521", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+
+    >>> rev = SRM.Regatta_Event (dict (start = "20100513", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+
+    >>> q = SRM.Regatta_C.query ()
+    >>> for r in q : print r.year, r
+    2008 ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    >>> for r in q.order_by (Q.year) : print r.year, r
+    2008 ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    >>> for r in q.order_by (TFL.Sorted_By ("-year")) : print r.year, r
+    2010 ((dict (start = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2008 ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+"""
+
 if 1 :
     __test__ = dict \
         ( composite   = _composite
         , link1_role  = _link1_role
         , link2_link1 = _link2_link1
+        , query_attr  = _query_attr
         )
 else :
     #__doc__ = _composite

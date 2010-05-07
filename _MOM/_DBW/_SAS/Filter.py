@@ -29,6 +29,8 @@
 # Revision Dates
 #    12-Feb-2010 (MG) Creation (based on SA.Filter)
 #     3-May-2010 (MG) Add support for joins for filtering
+#     7-May-2010 (MG) Join handling changed (is now a list instead of a set
+#                     to keep join order)
 #    ««revision-date»»···
 #--
 
@@ -58,12 +60,12 @@ def _sa_filter (self, SAQ) :
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
 def _sa_filter (self, SAQ) :
     args    = []
-    joins   = set ()
+    joins   = []
     for arg in self.lhs, self.rhs :
         if hasattr (arg, "_sa_filter") :
             ajoins, afilter = arg._sa_filter (SAQ)
-            joins.update  (ajoins)
-            args.extend   (afilter)
+            joins.extend (ajoins)
+            args.extend  (afilter)
         else :
             args.append (arg)
     return joins, (getattr (args [0], self.op.__name__) (args [1]), )
@@ -83,12 +85,12 @@ def _sa_filter (self, SAQ) :
         ( expression
         , "%s_" % (self.__class__.__name__.rsplit ("_",1) [-1].lower (), )
         )
-    joins  = set ()
+    joins  = []
     clause = []
     for p in self.predicates :
             ajoins, afilter = p._sa_filter (SAQ)
-            joins.update   (ajoins)
-            clause.extend  (afilter)
+            joins.extend  (ajoins)
+            clause.extend (afilter)
     return joins, (sa_exp (* clause), )
 # end def _sa_filter
 
