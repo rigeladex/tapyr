@@ -266,15 +266,15 @@ class Manager_T_Archive (Manager) :
         for y in xrange (cy, self.top.copyright_start - 1, -1) :
             os = qr.filter (* self._year_filter (y)).all ()
             if os :
-            name = str (y)
-            Y = self.Year \
-                ( src_dir = pjoin (self.src_dir, name)
-                , parent  = self
-                , year    = y
-                , name    = name
-                , sub_dir = name
-                , title   = name
-                )
+                name = str (y)
+                Y = self.Year \
+                    ( src_dir = pjoin (self.src_dir, name)
+                    , parent  = self
+                    , year    = y
+                    , name    = name
+                    , sub_dir = name
+                    , title   = name
+                    )
                 Y._entries = [T (Y, o, page_args = kw, ** kw) for o in os]
                 result.append (Y)
         return result
