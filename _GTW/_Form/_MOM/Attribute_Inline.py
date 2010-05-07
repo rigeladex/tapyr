@@ -31,10 +31,11 @@
 #    15-Apr-2010 (MG) Creation
 #     3-May-2010 (MG) `need_change` added and used
 #     6-May-2010 (MG) `ui_name` and `visible_field_count` added
-#    06-May-2010 (MG) `create_object` change to set the role of the link if
+#     6-May-2010 (MG) `create_object` change to set the role of the link if
 #                     this instance has not changed but the link does not
 #                     exist yet (this happens if the role has been
 #                     auto-completed)
+#     7-May-2010 (MG) `need_change` eliminated, `create_object` changed
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,6 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
 
     electric    = False
     _real_name  = "_Attribute_Inline_"
-    need_change = True
 
     def __init__ (self, name, form_cls, inline_description, form = None) :
         self.name               = self.html_name = name
@@ -71,7 +71,9 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                or (form.is_link_role and form.raw_attr_dict)
                )
            ) :
-            if self.need_change or not parent_form.instance :
+            p_instance = form.instance
+            instance   = self.form.instance
+            if getattr (p_instance, form.generic_name, None) != instance :
                 ### the instance has been created/updated successfully ->
                 ### update the raw_attr_dict of the parent
                 parent_form.raw_attr_dict [form.generic_name] = \
@@ -194,7 +196,6 @@ class GTW_Id_Attribute_Inline (_Attribute_Inline_) :
             pid                = et_man.pid_from_lid  (self.form.lid)
             self.form.instance = et_man.pid_query     (pid)
             self.form._create_update_executed = True
-            self.need_change                  = False
             return False
         return True
     # end def needs_processing
