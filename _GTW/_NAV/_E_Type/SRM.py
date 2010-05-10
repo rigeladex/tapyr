@@ -61,6 +61,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     # end def __init__
 
     def _get_child (self, child, * grandchildren) :
+        ### XXX "register"
         entries = self._entries
         try :
             result = first (e for e in entries if e.name == child)
