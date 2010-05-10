@@ -54,7 +54,7 @@ class Regatta_Event (_Ancestor_Essence) :
 
         ### Primary attributes
 
-        class date (A_Date_Interval) :
+        class date (A_Date_Interval_C) :
             """`start`and `finish` date of regatta"""
 
             kind               = Attr.Primary

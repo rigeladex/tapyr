@@ -31,6 +31,7 @@
 #    10-Feb-2010 (MG) `query_fct` corrected
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/; s/birth/start/; s/death/finish/
 #    28-Apr-2010 (CT) `Date_Interval.days` added
+#    10-May-2010 (CT) `A_Date_Interval_C` added
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,28 @@ class Date_Interval (_Ancestor_Essence) :
 
 _Ancestor_Essence = Date_Interval
 
+class Date_Interval_C (_Ancestor_Essence) :
+    """Model a date_interval (start, finish [default: `start`])."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class finish (_Ancestor.finish) :
+
+            Kind_Mixins        = (Attr.Computed_Mixin, )
+
+            def computed (self, obj) :
+                if obj and obj.start :
+                    return obj.start
+            # end def computed
+
+        # end class finish
+
+    # end class _Attributes
+
+# end class Date_Interval_C
+
 class Date_Interval_N (_Ancestor_Essence) :
     """Model a date_interval (start [default: now], finish)."""
 
@@ -156,6 +179,12 @@ class A_Date_Interval (_A_Composite_) :
     typ            = "Date_Interval"
 
 # end class A_Date_Interval
+
+class A_Date_Interval_C (A_Date_Interval) :
+
+    C_Type         = Date_Interval_C
+
+# end class A_Date_Interval_C
 
 class A_Date_Interval_N (A_Date_Interval) :
 

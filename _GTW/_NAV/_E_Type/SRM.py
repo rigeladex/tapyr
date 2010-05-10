@@ -49,6 +49,8 @@ from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 from   posixpath                import join  as pjoin
 
+import datetime
+
 class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta."""
 
@@ -131,13 +133,15 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         pkw    = self.page_args
         result = self._get_pages ()
         scope  = self.obj.home_scope
+        today  = datetime.date.today ()
         for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
-            kw  = dict \
-                ( pkw
-                , ETM       = scope [r.type_name]
-                , E_Type    = r.__class__
-                )
-            result.append (Regatta (self, r, page_args = pkw, ** kw))
+            if r.races or r.event.date.start > today :
+                kw  = dict \
+                    ( pkw
+                    , ETM       = scope [r.type_name]
+                    , E_Type    = r.__class__
+                    )
+                result.append (Regatta (self, r, page_args = pkw, ** kw))
         return result
     # end def _get_objects
 
