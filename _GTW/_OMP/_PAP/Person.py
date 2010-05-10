@@ -32,6 +32,7 @@
 #    10-Feb-2010 (CT) `birth_date (A_Date)` replaced by `date (A_Lifetime)`
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
+#    10-May-2010 (CT) `ui_display_format` redefined
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,18 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
         ### class sex (A_Sex) : ...
 
     # end class _Attributes
+
+    @property
+    def ui_display_format (self) :
+        result = []
+        if self.title :
+            result.append ("%(title)s")
+        result.append ("%(first_name)s")
+        if self.middle_name :
+            result.append ("%(middle_name)s")
+        result.append ("%(last_name)s")
+        return " ".join (result)
+    # end def ui_display_format
 
 Person = _PAP_Person_ # end class
 

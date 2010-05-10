@@ -83,6 +83,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
         # end class city
 
         class country (A_String) :
+            "Country"
 
             kind           = Attr.Primary
             ignore_case    = True

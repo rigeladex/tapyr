@@ -30,6 +30,7 @@
 #     5-May-2010 (CT) Cached attributes added
 #     5-May-2010 (CT) `perma_name` defined as `Attr.Internal` to allow queries
 #     7-May-2010 (CT) `year` added
+#    10-May-2010 (CT) `discards` and `races` added
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,17 @@ class Regatta (_Ancestor_Essence) :
             auto_cache         = True
 
         # end class left
+
         ### Non-primary attributes
+
+        class discards (A_Int) :
+            """Number of discardable races in regatta"""
+
+            kind               = Attr.Optional
+            default            = 0
+            min_value          = 0
+
+        # end class discards
 
         class name (A_String) :
 
@@ -82,6 +93,15 @@ class Regatta (_Ancestor_Essence) :
             # end def computed
 
         # end class perma_name
+
+        class races (A_Int) :
+            """Number of races sailed in regatta"""
+
+            kind               = Attr.Optional
+            default            = 0
+            min_value          = 0
+
+        # end class races
 
         class short_title (A_String) :
 
@@ -148,6 +168,7 @@ class Regatta_C (_Ancestor_Essence) :
             # end def computed
 
         # end class name
+
     # end class _Attributes
 
 # end class Regatta_C

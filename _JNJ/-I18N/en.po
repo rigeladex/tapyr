@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-04-14 09:34+0200\n"
+"PO-Revision-Date: 2010-05-10 13:37+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,7 +22,11 @@ msgstr ""
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:196
+#: _JNJ/html/rform.jnj:242
+msgid "Add"
+msgstr ""
+
+#: _JNJ/html/form.jnj:156 _JNJ/html/rform.jnj:167
 msgid "Cancel"
 msgstr ""
 
@@ -34,7 +38,7 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:447
+#: _JNJ/html/form.jnj:352
 msgid "Change email"
 msgstr ""
 
@@ -42,7 +46,7 @@ msgstr ""
 msgid "Change email for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:446
+#: _JNJ/html/form.jnj:351
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -51,11 +55,11 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:452
+#: _JNJ/html/form.jnj:357
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:451
+#: _JNJ/html/form.jnj:356
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
@@ -69,16 +73,24 @@ msgstr ""
 msgid "Currently selected language is %s"
 msgstr ""
 
+#: _JNJ/html/rform.jnj:249
+msgid "Delete"
+msgstr ""
+
 #: _JNJ/html/e_type_admin.jnj:79
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:473
+#: _JNJ/html/form.jnj:378 _JNJ/html/rform.jnj:271
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:194 _JNJ/html/form.jnj:464
+#: _JNJ/html/form.jnj:154 _JNJ/html/form.jnj:369 _JNJ/html/rform.jnj:262
 msgid "Discard all changes and leave form"
+msgstr ""
+
+#: _JNJ/html/rform.jnj:248
+msgid "Edit"
 msgstr ""
 
 #: _JNJ/html/news.jnj:57
@@ -89,7 +101,7 @@ msgstr ""
 msgid "Gallery"
 msgstr ""
 
-#: _JNJ/html/form.jnj:407 _JNJ/html/login.jnj:65
+#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -107,7 +119,7 @@ msgstr ""
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:398
+#: _JNJ/html/form.jnj:303
 msgid "Log into website or go to account page"
 msgstr ""
 
@@ -124,7 +136,7 @@ msgstr ""
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:399 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:145
+#: _JNJ/html/form.jnj:304 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:145
 msgid "Login"
 msgstr ""
 
@@ -136,7 +148,7 @@ msgstr ""
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:438 _JNJ/html/form.jnj:439
+#: _JNJ/html/form.jnj:343 _JNJ/html/form.jnj:344
 #, python-format
 msgid "Logout %s"
 msgstr ""
@@ -157,7 +169,7 @@ msgstr ""
 msgid "Next picture"
 msgstr ""
 
-#: _JNJ/html/cal/wr_body.jnj:37 _JNJ/html/cal/wr_nav.jnj:36
+#: _JNJ/html/cal/wr_body.jnj:38 _JNJ/html/cal/wr_nav.jnj:36
 msgid "Number of week"
 msgstr ""
 
@@ -169,11 +181,11 @@ msgstr ""
 msgid "Permanent link"
 msgstr ""
 
-#: _JNJ/html/form.jnj:392
+#: _JNJ/html/form.jnj:297
 msgid "Please enter your password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:383
+#: _JNJ/html/form.jnj:288
 msgid "Please enter your username"
 msgstr ""
 
@@ -189,11 +201,11 @@ msgstr ""
 msgid "Read the full article at"
 msgstr ""
 
-#: _JNJ/html/form.jnj:418
+#: _JNJ/html/form.jnj:323
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:417
+#: _JNJ/html/form.jnj:322
 msgid "Register a new account"
 msgstr ""
 
@@ -201,7 +213,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:474
+#: _JNJ/html/form.jnj:379 _JNJ/html/rform.jnj:272
 msgid "Reset"
 msgstr ""
 
@@ -219,7 +231,7 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: _JNJ/html/form.jnj:476
+#: _JNJ/html/form.jnj:381 _JNJ/html/rform.jnj:274
 msgid "Submit"
 msgstr ""
 
@@ -238,7 +250,7 @@ msgstr ""
 msgid "Week %2.2d/%s"
 msgstr ""
 
-#: _JNJ/html/cal/wr_body.jnj:44
+#: _JNJ/html/cal/wr_body.jnj:45
 msgid "Wk"
 msgstr ""
 
@@ -258,7 +270,4 @@ msgstr ""
 #: _JNJ/html/error_404.jnj:47
 msgid "You requested a page that doesn't exist: "
 msgstr ""
-
-#~ msgid "Gallerie"
-#~ msgstr ""
 

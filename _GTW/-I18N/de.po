@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-04-14 09:34+0200\n"
+"PO-Revision-Date: 2010-05-10 13:37+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:112 _GTW/_NAV/_E_Type/Admin.py:203
+#: _GTW/_NAV/_E_Type/Admin.py:114 _GTW/_NAV/_E_Type/Admin.py:213
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_Form/_MOM/Javascript.py:56
+#: _GTW/_Form/_MOM/Javascript.py:58
 #, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr "%s `%s` existiert nicht"
@@ -64,6 +64,18 @@ msgstr "Aug"
 msgid "August"
 msgstr "August"
 
+#: _GTW/__test__/form_app.py:157
+msgid "Auth"
+msgstr ""
+
+#: _GTW/__test__/form_app.py:160
+msgid "Authorization and Account handling"
+msgstr "Anmeldung und Verwaltung des Benutzerkontos"
+
+#: _GTW/__test__/form_app.py:168
+msgid "Choice of language used for localization"
+msgstr "Auswahl der Sprache für Lokalisierung"
+
 #: _GTW/_NAV/Calendar.py:63
 msgid "Dec"
 msgstr "Dez"
@@ -89,7 +101,7 @@ msgstr "Feb"
 msgid "February"
 msgstr "Feber"
 
-#: _GTW/_Form/Plain.py:90
+#: _GTW/_Form/Plain.py:92
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
@@ -126,10 +138,18 @@ msgstr "Jun"
 msgid "June"
 msgstr "Juni"
 
+#: _GTW/__test__/form_app.py:165
+msgid "L10N"
+msgstr ""
+
 #: _GTW/_NAV/L10N.py:68
 #, python-format
 msgid "Language %s selected"
 msgstr "Sprache %s wurde ausgewählt"
+
+#: _GTW/_NAV/_E_Type/SRM.py:99
+msgid "List of participants for"
+msgstr "Liste der Teilnehmer für"
 
 #: _GTW/_NAV/Auth.py:263
 msgid "Logout successful."
@@ -187,6 +207,10 @@ msgstr "Oktober"
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
+#: _GTW/_NAV/_E_Type/SRM.py:78
+msgid "Participants"
+msgstr "Teilnehmer"
+
 #: _GTW/_Form/Auth.py:62 _GTW/_Form/Auth.py:152 _GTW/_Form/Auth.py:185
 msgid "Password"
 msgstr "Kennwort"
@@ -202,6 +226,14 @@ msgstr "Bitte neues Kennwort wiederholen."
 #: _GTW/_Form/Auth.py:122
 msgid "Repeat new password"
 msgstr "Wiederhole neues Kennwort"
+
+#: _GTW/_NAV/_E_Type/SRM.py:79
+msgid "Results"
+msgstr "Resultate"
+
+#: _GTW/_NAV/_E_Type/SRM.py:87
+msgid "Results for"
+msgstr "Resultate für"
 
 #: _GTW/_NAV/Calendar.py:53
 msgid "Sat"

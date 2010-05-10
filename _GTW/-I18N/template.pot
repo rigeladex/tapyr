@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-04-14 09:33+0200\n"
+"POT-Creation-Date: 2010-05-10 13:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:112 _GTW/_NAV/_E_Type/Admin.py:203
+#: _GTW/_NAV/_E_Type/Admin.py:114 _GTW/_NAV/_E_Type/Admin.py:213
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_Form/_MOM/Javascript.py:56
+#: _GTW/_Form/_MOM/Javascript.py:58
 #, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr ""
@@ -64,6 +64,18 @@ msgstr ""
 msgid "August"
 msgstr ""
 
+#: _GTW/__test__/form_app.py:157
+msgid "Auth"
+msgstr ""
+
+#: _GTW/__test__/form_app.py:160
+msgid "Authorization and Account handling"
+msgstr ""
+
+#: _GTW/__test__/form_app.py:168
+msgid "Choice of language used for localization"
+msgstr ""
+
 #: _GTW/_NAV/Calendar.py:63
 msgid "Dec"
 msgstr ""
@@ -89,7 +101,7 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: _GTW/_Form/Plain.py:90
+#: _GTW/_Form/Plain.py:92
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr ""
@@ -126,9 +138,17 @@ msgstr ""
 msgid "June"
 msgstr ""
 
+#: _GTW/__test__/form_app.py:165
+msgid "L10N"
+msgstr ""
+
 #: _GTW/_NAV/L10N.py:68
 #, python-format
 msgid "Language %s selected"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/SRM.py:99
+msgid "List of participants for"
 msgstr ""
 
 #: _GTW/_NAV/Auth.py:263
@@ -187,6 +207,10 @@ msgstr ""
 msgid "One of the passwords is incorrect"
 msgstr ""
 
+#: _GTW/_NAV/_E_Type/SRM.py:78
+msgid "Participants"
+msgstr ""
+
 #: _GTW/_Form/Auth.py:62 _GTW/_Form/Auth.py:152 _GTW/_Form/Auth.py:185
 msgid "Password"
 msgstr ""
@@ -201,6 +225,14 @@ msgstr ""
 
 #: _GTW/_Form/Auth.py:122
 msgid "Repeat new password"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/SRM.py:79
+msgid "Results"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/SRM.py:87
+msgid "Results for"
 msgstr ""
 
 #: _GTW/_NAV/Calendar.py:53

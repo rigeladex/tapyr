@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-04-14 09:34+0200\n"
+"PO-Revision-Date: 2010-05-10 13:37+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:947
+#: _MOM/Entity.py:958
 #, python-format
 msgid ""
 "%s\n"
@@ -27,19 +27,13 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1306
+#: _MOM/_Attr/Type.py:1481
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
 msgstr ""
 "Ein Name beginng mit einem Buchstaben oder Unterstrich, gefolgt\"\n"
 "\"von Buchstaben, Ziffern und Unterstrichen."
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Alive"
-msgid_plural "Alives"
-msgstr[0] "Lebendig"
-msgstr[1] "Lebendig"
 
 #: _MOM.Entity:0
 msgid "All object invariants must be satisfied."
@@ -55,7 +49,7 @@ msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:130
+#: _MOM/_Meta/M_Entity.py:141
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -69,24 +63,18 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:853
+#: _MOM/_Attr/Kind.py:908
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Count"
-msgid_plural "Counts"
-msgstr[0] "Anzahl"
-msgstr[1] "Anzahl"
+msgstr "Anzahl"
 
-#: _MOM/_Attr/Recurrence_Rule.py:209
+#: _MOM/_Attr/Recurrence_Rule.py:210
 msgid "Daily"
 msgstr "Täglich"
-
-#: _MOM.Entity:0
-msgid "Date/time of last change."
-msgstr "Datum und Uhrzeit der letzten Änderung"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Date_Interval"
@@ -100,22 +88,9 @@ msgid_plural "Date_Interval_Ns"
 msgstr[0] "Date_Interval_N"
 msgstr[1] "Date_Interval_N"
 
-#: _MOM.Link:0 _MOM._Attr.Date_Interval:0 _MOM.Object:0
-#: _MOM._Attr.Time_Interval:0 _MOM.Entity:0 _MOM._Attr.Recurrence_Rule:0
-msgid "Display in user interface"
-msgstr "Darstellung in der Benutzeroberfläche"
-
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Easter offset"
-msgid_plural "Easter offsets"
-msgstr[0] "Osterabstand"
-msgstr[1] "Osterabstände"
-
-#: _MOM.Entity:0
-msgid "Electric"
-msgid_plural "Electrics"
-msgstr[0] "elektrisch"
-msgstr[1] "elektrisch"
+msgstr "Osterabstand"
 
 #: _MOM.Entity:0
 msgid "Entity"
@@ -123,15 +98,13 @@ msgid_plural "Entitys"
 msgstr[0] "Entität"
 msgstr[1] "Entitäten"
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "FR"
 msgstr "Fr"
 
 #: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "Finish"
-msgid_plural "Finishs"
-msgstr[0] "Ende"
-msgstr[1] "Enden"
+msgstr "Ende"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Finish date of interval"
@@ -141,44 +114,16 @@ msgstr "Enddatum des Intervalls"
 msgid "Finish time of interval"
 msgstr "Schlusszeit des Intervalls"
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "First day of week"
-msgid_plural "First day of weeks"
-msgstr[0] "Erster Tag der Woche"
-msgstr[1] "Erster Tag der Wochen"
-
-#: _MOM.Entity:0
-msgid "Fo"
-msgid_plural "Fos"
-msgstr[0] ""
-msgstr[1] ""
-
 #: _MOM.Entity:0
 msgid "Id_Entity"
 msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
 
-#: _MOM.Entity:0
-msgid "Indicates if object/link was created automatically or not."
-msgstr "Zeigt an, ob das Objekt/der Link automatisch erzeugt wurde."
-
-#: _MOM/_Attr/Type.py:1006
+#: _MOM/_Attr/Type.py:1163
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
-
-#: _MOM.Entity:0
-msgid "Is used"
-msgid_plural "Is useds"
-msgstr[0] "wird verwendet"
-msgstr[1] "wird verwendet"
-
-#: _MOM.Entity:0
-msgid "Last changed"
-msgid_plural "Last changeds"
-msgstr[0] "Zuletzt geändert"
-msgstr[1] "Zuletzt geändert"
 
 #: _MOM.Link:0
 msgid "Link"
@@ -210,7 +155,7 @@ msgid_plural "Link3s"
 msgstr[0] "3-Verknüpfung"
 msgstr[1] "3-Verknüpfungen"
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "MO"
 msgstr "Mo"
 
@@ -220,25 +165,19 @@ msgstr "Höchstzahl der Wiederholungen."
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Month"
-msgid_plural "Months"
-msgstr[0] "Monatlich"
-msgstr[1] ""
+msgstr "Monatlich"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Month day"
-msgid_plural "Month days"
-msgstr[0] "Monatstag"
-msgstr[1] "Monatstage"
+msgstr "Monatstag"
 
-#: _MOM/_Attr/Recurrence_Rule.py:209
+#: _MOM/_Attr/Recurrence_Rule.py:210
 msgid "Monthly"
 msgstr "Monatlich"
 
 #: _MOM.Object:0
 msgid "Name"
-msgid_plural "Names"
-msgstr[0] "Name"
-msgstr[1] "Namen"
+msgstr "Name"
 
 #: _MOM.Object:0
 msgid "Named_Object"
@@ -246,12 +185,12 @@ msgid_plural "Named_Objects"
 msgstr[0] "Benanntes-Objekt"
 msgstr[1] "Benannte-Objekte"
 
-#: _MOM/_Attr/Type.py:733
+#: _MOM/_Attr/Type.py:879
 #, python-format
-msgid "No object %s %s in scope %s"
+msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/_Attr/Type.py:267
+#: _MOM/_Attr/Type.py:321
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 
@@ -271,16 +210,14 @@ msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Period"
-msgid_plural "Periods"
-msgstr[0] "Periode"
-msgstr[1] "Perioden"
+msgstr "Periode"
 
-#: _MOM/_Attr/Kind.py:728
+#: _MOM/_Attr/Kind.py:773
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:738
+#: _MOM/_Attr/Kind.py:783
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -293,9 +230,7 @@ msgstr[1] "Wiederholungsregeln"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Restrict pos"
-msgid_plural "Restrict poses"
-msgstr[0] "Einschränkung"
-msgstr[1] "Einschränkungen"
+msgstr "Einschränkung"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid ""
@@ -346,45 +281,25 @@ msgstr ""
 msgid "Restrict the recurrences to the week numbers specified."
 msgstr "Beschränke die Wiederholungen auf die angegebenen Wochen."
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "SA"
 msgstr "Sa"
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "SU"
 msgstr "So"
 
 #: _MOM.Link:0
 msgid "Seq no"
-msgid_plural "Seq nos"
-msgstr[0] "Laufende Nummer"
-msgstr[1] "Laufende Nummern"
+msgstr "Laufende Nummer"
 
 #: _MOM.Link:0
 msgid "Sequence number of a link in an ordered association."
 msgstr "Laufende Nummer einer Verknüpfung in einer geordneten Assoziation."
 
-#: _MOM.Entity:0
-msgid "Specifies if object can be changed by user"
-msgstr "Zeigt an ob das Objekt vom Anwender verändert werden kann"
-
-#: _MOM._Attr.Date_Interval:0
-msgid ""
-"Specifies whether entity is currently alive, i.e., the current\n"
-"date lies between `start` and `finish`."
-msgstr ""
-"Gibt an, ob das Ding gegenwärtig lebendig ist, d.h., ob das heutige Datum"
-" zwischen `Anfang` und `Ende` liegt."
-
-#: _MOM.Entity:0
-msgid "Specifies whether entity is used by another entity."
-msgstr "Zeigt an ob eine Entität von einer anderen Entität verwendet wird."
-
 #: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
 msgid "Start"
-msgid_plural "Starts"
-msgstr[0] "Anfang"
-msgstr[1] "Anfänge"
+msgstr "Anfang"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Start date of interval"
@@ -394,11 +309,11 @@ msgstr "Anfangsdatum des Intervalls"
 msgid "Start time of interval"
 msgstr "Anfangszeit des Intervalls"
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "TH"
 msgstr "Do"
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "TU"
 msgstr "Di"
 
@@ -424,16 +339,10 @@ msgid_plural "Time_Intervals"
 msgstr[0] "Zeitraum"
 msgstr[1] "Zeiträume"
 
-#: _MOM/_Attr/Kind.py:287
+#: _MOM/_Attr/Kind.py:295
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
-
-#: _MOM.Entity:0
-msgid "Ui display"
-msgid_plural "Ui displays"
-msgstr[0] "Ui Darstellung"
-msgstr[1] "Ui Darstellungen"
 
 #: _MOM.Object:0
 msgid "Unique name of the object."
@@ -441,9 +350,7 @@ msgstr "Eindeutiger Name des Objekts."
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Unit"
-msgid_plural "Units"
-msgstr[0] "Einheit"
-msgstr[1] "Einheiten"
+msgstr "Einheit"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid ""
@@ -453,7 +360,7 @@ msgstr ""
 "Einheit der Wiederholung. `Periode` wird als Vielfaches von `Einheit` "
 "interpretiert."
 
-#: _MOM/_Attr/Kind.py:729
+#: _MOM/_Attr/Kind.py:774
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
@@ -462,97 +369,61 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:379
+#: _MOM/_Attr/Recurrence_Rule.py:90 _MOM/_Attr/Type.py:492
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
 
-#: _MOM/_Attr/Recurrence_Rule.py:53
+#: _MOM/_Attr/Recurrence_Rule.py:54
 msgid "WE"
 msgstr "Mi"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Week"
-msgid_plural "Weeks"
-msgstr[0] "Woche"
-msgstr[1] "Wochen"
+msgstr "Woche"
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Week day"
-msgid_plural "Week days"
-msgstr[0] "Wochentag"
-msgstr[1] "Wochentage"
+msgstr "Wochentag"
 
-#: _MOM/_Attr/Recurrence_Rule.py:209
+#: _MOM/_Attr/Recurrence_Rule.py:210
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: _MOM.Entity:0
-msgid "X locked"
-msgid_plural "X lockeds"
-msgstr[0] "gesperrt"
-msgstr[1] ""
-
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Year day"
-msgid_plural "Year days"
-msgstr[0] "Tag des Jahres"
-msgstr[1] "Tage des Jahres"
+msgstr "Tag des Jahres"
 
-#: _MOM/_Attr/Recurrence_Rule.py:209
+#: _MOM/_Attr/Recurrence_Rule.py:210
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: _MOM.Link:0
-msgid "_MOM_Link_n_"
-msgid_plural "_MOM_Link_n_s"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _MOM.Entity:0
-msgid ""
-"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
-"or the raw value of `foo`, otherwise."
-msgstr ""
-
 #: _MOM.Entity:0
 msgid "completely_defined"
-msgid_plural "completely_defineds"
-msgstr[0] "vollständig definiert"
-msgstr[1] ""
+msgstr "vollständig definiert"
 
 #: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "finish_after_start"
-msgid_plural "finish_after_starts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _MOM.Link:0
 msgid "left"
-msgid_plural "lefts"
-msgstr[0] "links"
-msgstr[1] "linke"
+msgstr "links"
 
 #: _MOM.Link:0
 msgid "middle"
-msgid_plural "middles"
-msgstr[0] "mittig"
-msgstr[1] "mittlere"
+msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:728
+#: _MOM/_Attr/Type.py:874
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"
 
 #: _MOM.Entity:0
 msgid "object_correct"
-msgid_plural "object_corrects"
-msgstr[0] "Objekt-korrekt"
-msgstr[1] ""
+msgstr "Objekt-korrekt"
 
 #: _MOM.Link:0
 msgid "right"
-msgid_plural "rights"
-msgstr[0] "rechts"
-msgstr[1] "rechte"
+msgstr "rechts"
 

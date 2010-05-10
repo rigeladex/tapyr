@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-04-14 09:34+0200\n"
+"POT-Creation-Date: 2010-05-10 13:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,22 +29,8 @@ msgid "Date of occurrence"
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Dates"
-msgid_plural "Dateses"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._EVT.Event:0
 msgid "Detail"
-msgid_plural "Details"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._EVT.Event:0
-msgid "Essence"
-msgid_plural "Essences"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Event"
@@ -63,56 +49,24 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Generic type for binary attributes that aren't set by the user."
-msgstr ""
-
-#: _GTW._OMP._EVT.Event:0
 msgid "Information about event."
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Models an attribute referring to an object."
-msgstr ""
-
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._EVT.Event:0
 msgid "Object which this event is bound to."
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Occurs"
-msgid_plural "Occurses"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._EVT.Event:0
 msgid "Recurrence"
-msgid_plural "Recurrences"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Recurrence rule defining when and how often the event recurs."
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Rule"
-msgid_plural "Rules"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW/_OMP/_EVT/Nav.py:70
-msgid "Start (and optionally [for recurring events] finish) date"
-msgstr ""
-
-#: _GTW/_OMP/_EVT/Nav.py:75 _GTW/_OMP/_EVT/Nav.py:102
-msgid "Start and finish time"
-msgstr ""
-
-#: _GTW._OMP._EVT.Event:0
 msgid "Time"
-msgid_plural "Times"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Time (interval) of occurrence"

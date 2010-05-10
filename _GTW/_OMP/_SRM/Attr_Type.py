@@ -107,6 +107,7 @@ class Race_Result (_Ancestor_Essence) :
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
             default            = False
+            rank               = 3
 
         # end class discarded
 
@@ -115,6 +116,7 @@ class Race_Result (_Ancestor_Essence) :
 
             kind               = Attr.Required
             min_value          = 1
+            rank               = 1
 
         # end class points
 
@@ -123,6 +125,7 @@ class Race_Result (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 8
+            rank               = 2
 
         # end class status
 

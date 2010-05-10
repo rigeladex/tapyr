@@ -30,6 +30,7 @@
 #     5-May-2010 (CT) Creation continued
 #     7-May-2010 (CT) `Regatta_Event._get_objects` and `._get_pages` changed
 #                     to set `ETM` and `E_Type` properly
+#    10-May-2010 (CT) `Regatta._get_objects` changed to include `Results`
 #    ««revision-date»»···
 #--
 
@@ -75,14 +76,26 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         sk     = TFL.Sorted_By ("left.nation", "left.sail_number")
         boats  = obj.boats = self.scope.SRM.Boat_in_Regatta.r_query \
             (right = obj).order_by (sk).all ()
-        if boats :
-            ### XXX results
-            n = _T (u"Participants")
+        np = _T (u"Participants")
+        nr = _T (u"Results")
+        if obj.races :
             result.append \
                 ( GTW.NAV.Page
                     ( self
-                    , name        = u"%s.html" % (n.lower (), )
-                    , title       = n
+                    , name        = u"%s.html" % (nr.lower (), )
+                    , title       = nr
+                    , desc        = u"%s %s" %
+                        ( _T (u"Results for"), self.title)
+                    , template    = u"regatta_result.html"
+                    , regatta     = obj
+                    )
+                )
+        else :
+            result.append \
+                ( GTW.NAV.Page
+                    ( self
+                    , name        = u"%s.html" % (np.lower (), )
+                    , title       = np
                     , desc        = u"%s %s" %
                         ( _T (u"List of participants for"), self.title)
                     , template    = u"regatta_registration.html"

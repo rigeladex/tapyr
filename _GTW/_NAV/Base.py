@@ -220,6 +220,7 @@
 #    29-Apr-2010 (CT) `page_from_obj` corrected
 #     7-May-2010 (CT) `_Meta_.__call__` changed to not overwrite existing
 #                     `Table [perma]`
+#    10-May-2010 (CT) `Dir.__init__` changed to set `.name` to `.sub_dir`
 #    ««revision-date»»···
 #--
 
@@ -826,6 +827,7 @@ class Dir (_Dir_) :
 
     def __init__ (self, src_dir, parent, ** kw) :
         sub_dir      = kw.get ("sub_dir", "")
+        self.name    = sub_dir
         self.level   = parent.level + 1
         self.parents = parent.parents + [parent]
         self.prefix  = pjoin \

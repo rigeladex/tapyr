@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-04-14 09:34+0200\n"
+"PO-Revision-Date: 2010-05-10 13:37+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -20,9 +20,7 @@ msgstr ""
 
 #: _GTW/_OMP/_PAP/Person.py:93 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
-msgid_plural "Academic titles"
-msgstr[0] "Akademischer Titel"
-msgstr[1] "Akademische Titel"
+msgstr "Akademischer Titel"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Academic title."
@@ -34,27 +32,17 @@ msgid_plural "Addresses"
 msgstr[0] "Adresse"
 msgstr[1] "Adressen"
 
-#: _GTW/_OMP/_PAP/Nav.py:197 _GTW/_OMP/_PAP/Nav.py:198
+#: _GTW/_OMP/_PAP/Nav.py:168 _GTW/_OMP/_PAP/Nav.py:169
 msgid "Addresses"
 msgstr "Adressen"
 
-#: _GTW._OMP._PAP.Person:0
-msgid "Addresss"
-msgid_plural "Addressses"
-msgstr[0] "Adressen"
-msgstr[1] "Adressen"
-
 #: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
-msgid_plural "Area codes"
-msgstr[0] "Vorwahl"
-msgstr[1] "Vorwahlen"
+msgstr "Vorwahl"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "City"
-msgid_plural "Citys"
-msgstr[0] "Stadt"
-msgstr[1] "Städte"
+msgstr "Stadt"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "City, town, or village"
@@ -62,15 +50,11 @@ msgstr "Stadt, Gemeinde, Dorf"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Country"
-msgid_plural "Countrys"
-msgstr[0] "Land"
-msgstr[1] "Länder"
+msgstr "Land"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Country code"
-msgid_plural "Country codes"
-msgstr[0] "Ländervorwahl"
-msgstr[1] "Ländervorwahlen"
+msgstr "Ländervorwahl"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Date of birth [`start`] (and death [`finish`])"
@@ -79,9 +63,7 @@ msgstr "Geburtstag (und Sterbetag)"
 #: _GTW/_OMP/_PAP/Email.py:68 _GTW._OMP._PAP._Person_has_Property_:0
 #: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
 msgid "Description"
-msgid_plural "Descriptions"
-msgstr[0] "Beschreibung"
-msgstr[1] "Beschreibungen"
+msgstr "Beschreibung"
 
 #: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Email:0
 msgid "Email"
@@ -91,29 +73,19 @@ msgstr[1] "Emails"
 
 #: _GTW/_OMP/_PAP/Email.py:59 _GTW._OMP._PAP.Email:0
 msgid "Email address"
-msgid_plural "Email addresses"
-msgstr[0] "Emailadresse"
-msgstr[1] "Emailadressen"
+msgstr "Emailadresse"
 
 #: _GTW._OMP._PAP.Email:0
 msgid "Email address (including domain)"
 msgstr "Emailadresse (inkl. Domain)"
 
-#: _GTW/_OMP/_PAP/Nav.py:186 _GTW/_OMP/_PAP/Nav.py:187
+#: _GTW/_OMP/_PAP/Nav.py:160 _GTW/_OMP/_PAP/Nav.py:161
 msgid "Email addresses"
 msgstr "Emailadressen"
 
-#: _GTW._OMP._PAP.Person:0
-msgid "Emails"
-msgid_plural "Emailses"
-msgstr[0] "Emailadressen"
-msgstr[1] "Emailadressen"
-
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension"
-msgid_plural "Extensions"
-msgstr[0] "Durchwahl"
-msgstr[1] "Durchwahlen"
+msgstr "Durchwahl"
 
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension number used in PBX"
@@ -121,9 +93,7 @@ msgstr "Durchwahl"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "First name"
-msgid_plural "First names"
-msgstr[0] "Vorname"
-msgstr[1] "Vornamen"
+msgstr "Vorname"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "First name of person"
@@ -135,9 +105,7 @@ msgstr "Koordinaten"
 
 #: _MOM._Attr.Position:0
 msgid "Height"
-msgid_plural "Heights"
-msgstr[0] "Höhe"
-msgstr[1] "Höhen"
+msgstr "Höhe"
 
 #: _MOM._Attr.Position:0
 msgid "Height above mean sea level"
@@ -149,9 +117,7 @@ msgstr "Internationale Landesvorwahl (ohne landespezifische Startziffern)"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Last name"
-msgid_plural "Last names"
-msgstr[0] "Nachname"
-msgstr[1] "Nachnamen"
+msgstr "Nachname"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Last name of person"
@@ -159,27 +125,19 @@ msgstr "Nachname"
 
 #: _MOM._Attr.Position:0
 msgid "Latitude"
-msgid_plural "Latitudes"
-msgstr[0] "Breite"
-msgstr[1] "Breiten"
+msgstr "Breite"
 
-#: _GTW/_OMP/_PAP/Nav.py:164 _GTW._OMP._PAP.Person:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Lifetime"
-msgid_plural "Lifetimes"
-msgstr[0] "Lebenszeit"
-msgstr[1] "Lebenszeiten"
+msgstr "Lebenszeit"
 
 #: _MOM._Attr.Position:0
 msgid "Longitude"
-msgid_plural "Longitudes"
-msgstr[0] "Länge"
-msgstr[1] "Längen"
+msgstr "Länge"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name"
-msgid_plural "Middle names"
-msgstr[0] "Mittelname"
-msgstr[1] "Mittelnamen"
+msgstr "Mittelname"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name of person"
@@ -195,9 +153,7 @@ msgstr "Vorwahl"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Number"
-msgid_plural "Numbers"
-msgstr[0] "Nummer"
-msgstr[1] "Nummern"
+msgstr "Nummer"
 
 #: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP._Person_has_Property_:0
 #: _GTW._OMP._PAP.Person:0 _GTW._OMP._PAP.Person_has_Email:0
@@ -225,14 +181,9 @@ msgid_plural "Person_has_Phones"
 msgstr[0] "Person hat Telefon"
 msgstr[1] "Person hat Telefone"
 
-#: _GTW/_OMP/_PAP/Nav.py:120 _GTW/_OMP/_PAP/Nav.py:121
-#: _GTW/_OMP/_PAP/Nav.py:142 _GTW/_OMP/_PAP/Nav.py:143
-#: _GTW/_OMP/_PAP/Nav.py:220 _GTW/_OMP/_PAP/Nav.py:221 _GTW._OMP._PAP.Email:0
-#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Nav.py:107 _GTW/_OMP/_PAP/Nav.py:108
 msgid "Persons"
-msgid_plural "Personses"
-msgstr[0] "Personen"
-msgstr[1] "Personen"
+msgstr "Personen"
 
 #: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Phone"
@@ -244,15 +195,9 @@ msgstr[1] "Telefone"
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr "Telefonnummer (ohne Vorwahl oder Durchwahl)"
 
-#: _GTW/_OMP/_PAP/Nav.py:175 _GTW/_OMP/_PAP/Nav.py:176
+#: _GTW/_OMP/_PAP/Nav.py:152 _GTW/_OMP/_PAP/Nav.py:153
 msgid "Phone numbers"
 msgstr "Telefonnummern"
-
-#: _GTW._OMP._PAP.Person:0
-msgid "Phones"
-msgid_plural "Phoneses"
-msgstr[0] "Telefonnummern"
-msgstr[1] "Telefonnummern"
 
 #: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
 msgid "Position"
@@ -262,9 +207,7 @@ msgstr[1] "Postionen"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Region"
-msgid_plural "Regions"
-msgstr[0] "Region"
-msgstr[1] "Regionen"
+msgstr "Region"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Short description of the address"
@@ -288,9 +231,7 @@ msgstr "Bundesland"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Street"
-msgid_plural "Streets"
-msgstr[0] "Strasse"
-msgstr[1] "Strassen"
+msgstr "Strasse"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Street (or place) and house number"
@@ -298,41 +239,9 @@ msgstr "Strasse (oder Platz) und Hausnummer"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code"
-msgid_plural "Zip codes"
-msgstr[0] "Postleitzahl"
-msgstr[1] "Postleitzahlen"
+msgstr "Postleitzahl"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr "Postleitzahl der Adresse"
-
-#: _GTW._OMP._PAP._Person_has_Property_:0
-msgid "_Person_has_Property_"
-msgid_plural "_Person_has_Property_s"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._PAP.Person:0
-msgid "`Address` linked to `person`"
-msgstr "Adresse einer Person"
-
-#: _GTW._OMP._PAP.Person:0
-msgid "`Email` linked to `person`"
-msgstr "Emailadresse einer Person"
-
-#: _GTW._OMP._PAP.Address:0
-msgid "`Person` linked to `address`"
-msgstr "Telefonnummer einer Person"
-
-#: _GTW._OMP._PAP.Email:0
-msgid "`Person` linked to `email`"
-msgstr "Telefonnummer einer Person"
-
-#: _GTW._OMP._PAP.Phone:0
-msgid "`Person` linked to `phone`"
-msgstr "Telefonnummer einer Person"
-
-#: _GTW._OMP._PAP.Person:0
-msgid "`Phone` linked to `person`"
-msgstr "Telefonnummer einer Person"
 

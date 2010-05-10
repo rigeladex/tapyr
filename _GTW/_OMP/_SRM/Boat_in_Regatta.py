@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Apr-2010 (CT) Creation
+#    10-May-2010 (CT) `place` added
 #    ««revision-date»»···
 #--
 
@@ -71,13 +72,21 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
+        class place (A_Int) :
+            """Place of boat in this regatta."""
+
+            kind               = Attr.Optional
+            min_value          = 1
+
+        # end class place
+
         class points (A_Int) :
             """Total points of boat in this regatta."""
 
             kind               = Attr.Optional
             min_value          = 1
 
-        # end class rank
+        # end class points
 
         class race_results (_A_Composite_Collection_) :
             """Results of the `boat` in the races of the `regatta`."""

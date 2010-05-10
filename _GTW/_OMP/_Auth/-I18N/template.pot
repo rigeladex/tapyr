@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-04-14 09:33+0200\n"
+"POT-Creation-Date: 2010-05-10 13:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgid_plural "Accounts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account which this action is bound to."
 msgstr ""
 
@@ -72,28 +72,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._Auth.Group:0
-msgid "Accounts"
-msgid_plural "Accountses"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Activation"
-msgid_plural "Activations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Active"
-msgid_plural "Actives"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Group:0
 msgid "Desc"
-msgid_plural "Descs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Description of group"
@@ -105,9 +85,7 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Enabled"
-msgid_plural "Enableds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Exipre time of this action"
@@ -115,9 +93,7 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Expires"
-msgid_plural "Expireses"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._Auth.Account_in_Group:0 _GTW._OMP._Auth.Group:0
 msgid "Group"
@@ -126,11 +102,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW/_OMP/_Auth/Nav.py:75 _GTW/_OMP/_Auth/Nav.py:76
-#: _GTW._OMP._Auth.Account:0
 msgid "Groups"
-msgid_plural "Groupses"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Name of group"
@@ -138,44 +111,14 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "New email"
-msgid_plural "New emails"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Password change required"
-msgid_plural "Password change requireds"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Password for this account"
 msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Salt"
-msgid_plural "Salts"
-msgstr[0] ""
-msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Superuser"
-msgid_plural "Superusers"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Suspended"
-msgid_plural "Suspendeds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "The new email address for the linked account."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "The salt used for the password hash."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
@@ -187,44 +130,14 @@ msgid "This account has super-user permissions."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account:0
-msgid "This account is currently active."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
 msgid "This account is currently enabled (the user can login)."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "This account is currently suspended (due to a pending action)."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Token"
-msgid_plural "Tokens"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Unique token which identifies this action."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account_Handling:0
-msgid "_Account_Action_"
-msgid_plural "_Account_Action_s"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account_Handling:0
-msgid "_Account_Token_Action_"
-msgid_plural "_Account_Token_Action_s"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Group:0
-msgid "`Account` linked to `group`"
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "`Group` linked to `account`"
 msgstr ""
 
