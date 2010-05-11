@@ -31,6 +31,7 @@
 #     5-May-2010 (CT) `perma_name` defined as `Attr.Internal` to allow queries
 #     7-May-2010 (CT) `year` added
 #    10-May-2010 (CT) `discards` and `races` added
+#    11-May-2010 (CT) `result` added
 #    ««revision-date»»···
 #--
 

@@ -90,7 +90,7 @@ class Admin (object) :
                   )
             )
         , sort_key  = TFL.Sorted_By
-            ("-right.date.start", "left.sail_number", "skipper.last_name")
+            ("-right.date.start", "skipper.last_name", "skipper.first_name")
         )
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"
@@ -164,12 +164,9 @@ class Admin (object) :
     Regatta_Event = dict \
         ( ETM       = "GTW.OMP.SRM.Regatta_Event"
         , Type      = GTW.NAV.E_Type.Admin
-        , sort_key  = TFL.Sorted_By ("date.start", "name")
+        , sort_key  = TFL.Sorted_By ("-date.start", "name")
         , Form_args =
-            ( FGD
-                ( "name", "desc", "date"
-                , "short_title", "title", "ui_date", "year"
-                )
+            ( FGD ("name", "date", "desc", "club", WF ())
             ,
             )
         )
