@@ -45,6 +45,7 @@
 #    23-Mar-2010 (CT) `_setup_columns` fixed ???
 #                     (s/et/e_type/ in if-clause for `_Composite_Mixin_`)
 #    24-Mar-2010 (MG) `_setup_columns` use new `_sa_prefix` attribute of kind
+#    11-May-2010 (MG) `value_dict` remove items from `attrs` once handled
 #    ««revision-date»»···
 #--
 
@@ -218,7 +219,9 @@ class SAS_Interface (TFL.Meta.Object) :
         if columns is None :
             columns = self.e_type_columns [e_type]
         result      = defaults or {}
-        for attr_name in attrs or [kind.attr.name for kind in columns] :
+        attrs       = attrs or set (kind.attr.name for kind in columns)
+        for attr_name in tuple (attrs) :
+            attrs.remove (attr_name)
             kind = getattr (e_type, attr_name, Type_Name)
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \
