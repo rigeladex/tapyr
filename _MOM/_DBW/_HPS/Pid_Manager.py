@@ -59,7 +59,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         table = self.table
         if pid in table :
             raise ValueError \
-                ( "Cannot reserve pid %s of existing object %r"
+                ( "Cannot reserve pid %s, already used by existing object `%r`"
                 % (pid, table [pid])
                 )
         elif pid <= self.max_pid :
@@ -67,7 +67,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
                 ( "Cannot reserve pid %s < maximum used pid %s"
                 % (pid, self.max_pid)
                 )
-        self.max_pid = pid + 1
+        self.max_pid = pid
         table [pid] = entity
         return pid
     # end def reserve

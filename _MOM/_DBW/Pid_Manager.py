@@ -42,6 +42,14 @@ class _Pid_Manager_ (TFL.Meta.Object) :
 
     _real_name = "Pid_Manager"
 
+    def __call__ (self, entity, pid = None) :
+        if pid is None :
+            pid = self.new (entity)
+        else :
+            self.reserve (entity, pid)
+        return pid
+    # end def __call__
+
     def new (self, entity) :
         """Return a new `pid` to be used for `entity`."""
         raise NotImplementedError
