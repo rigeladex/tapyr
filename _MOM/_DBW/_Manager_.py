@@ -31,12 +31,16 @@
 #     4-Dec-2009 (MG) Renamed from `Session` to `_Manager_`
 #    16-Dec-2009 (MG) `_Manager_.prepare` added
 #    27-Jan-2010 (MG) `update_etype` parameter `app_type` added
+#    11-May-2010 (CT) `Pid_Manager` added
 #    ««revision-date»»···
 #--
 
 from   _TFL       import TFL
 from   _MOM       import MOM
+
 import _MOM._DBW
+import _MOM._DBW.Pid_Manager
+
 import _TFL._Meta.Object
 
 class _M_Manager_ (TFL.Meta.Object.__class__) :
@@ -68,6 +72,8 @@ class _Manager_ (TFL.Meta.Object) :
     """Base class for database backend specific _Manager_ classes"""
 
     __metaclass__ = _M_Manager_
+
+    Pid_Manager   = MOM.DBW.Pid_Manager
 
     type_name     = "Bare"
 

@@ -46,6 +46,7 @@
 #    21-Dec-2009 (CT) `commit` changed to update `scope.db_cid`
 #    21-Dec-2009 (CT) `close` added
 #    19-Jan-2010 (CT) `rollback` added
+#    11-May-2010 (CT) `pid_manager` added to `__init__`
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,8 @@ class _Manager_ (TFL.Meta.Object) :
     def __init__ (self, scope, db_uri) :
         self.scope               = scope
         self.db_uri              = db_uri
-        self.DBW                 = scope.app_type.DBW
+        self.DBW = DBW           = scope.app_type.DBW
+        self.pid_manager         = DBW.Pid_Manager ()
         self.uncommitted_changes = []
     # end def __init__
 

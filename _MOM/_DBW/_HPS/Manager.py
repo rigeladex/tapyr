@@ -33,12 +33,14 @@
 #     2-Feb-2010 (CT) `commit` changed to update `info.max_cid`  even if
 #                     there is no `store`
 #     4-Mar-2010 (CT) `_new_manager` factored; `delete_database` added
+#    11-May-2010 (CT) `Pid_Manager` added
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 from   _TFL       import TFL
 
+import _MOM._DBW._HPS.Pid_Manager
 import _MOM._DBW._HPS.Store
 import _MOM._DBW._Manager_
 
@@ -86,6 +88,8 @@ class Manager (MOM.DBW._Manager_) :
     """Database wrapper for Hash-Pickle-Store."""
 
     __metaclass__ = _M_HPS_Manager_
+
+    Pid_Manager   = MOM.DBW.HPS.Pid_Manager
 
     type_name     = "HPS"
 
