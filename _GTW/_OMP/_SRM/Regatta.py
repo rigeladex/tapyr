@@ -37,6 +37,8 @@
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
+from   _GTW._OMP._SRM.Attr_Type import A_Regatta_Result
+
 import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Regatta_Event
 
@@ -102,6 +104,13 @@ class Regatta (_Ancestor_Essence) :
             min_value          = 0
 
         # end class races
+
+        class result (A_Regatta_Result) :
+            """Information about result."""
+
+            kind               = Attr.Optional
+
+        # end class result
 
         class short_title (A_String) :
 

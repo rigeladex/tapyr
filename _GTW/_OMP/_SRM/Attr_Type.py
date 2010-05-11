@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
 #    28-Apr-2010 (CT) `Race_Result.ui_display_format` redefined
+#    11-May-2010 (CT) `A_Regatta_Result` added
 #    ««revision-date»»···
 #--
 
@@ -143,6 +144,42 @@ class Race_Result (_Ancestor_Essence) :
 
 # end class Race_Result
 
+_Ancestor_Essence = MOM.An_Entity
+
+class Regatta_Result (_Ancestor_Essence) :
+    """Provide information about the result of a regatta."""
+
+    PNS = GTW.OMP.SRM
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class date (A_Date_Time) :
+            """Date of regatta result."""
+
+            kind               = Attr.Required
+
+        # end class date
+
+        class software (A_String) :
+            """Name of software used for managing the regatta."""
+
+            kind               = Attr.Optional
+
+        # end class software
+
+        class status (A_String) :
+            """Status of result (e.g., `preliminary` or `final`)."""
+
+            kind               = Attr.Optional
+
+        # end class status
+
+    # end class _Attributes
+
+# end class Regatta_Result
+
 class A_Race_Result (_A_Composite_) :
     """Result of a boat in a single race."""
 
@@ -151,8 +188,14 @@ class A_Race_Result (_A_Composite_) :
 
 # end class A_Race_Result
 
+class A_Regatta_Result (_A_Composite_) :
+    """Information about a regatta's result."""
+
+    C_Type          = Regatta_Result
+    typ             = "Regatta_Result"
+
+# end class A_Regatta_Result
+
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")
 ### __END__ GTW.OMP.SRM.Attr_Type
-
-

@@ -124,6 +124,9 @@
 #    30-Apr-2010 (CT) `A_Date.cooked` and `A_Date_Time.cooked` added to
 #                     enforce the right type
 #     4-May-2010 (CT) `ac_query` and `Q` added
+#    11-May-2010 (CT) `A_Date_Time.cooked` corrected (an instance of
+#                     `datetime.datetime` is also an instance of
+#                     `datetime.date`!)
 #    ««revision-date»»···
 #--
 
@@ -1300,10 +1303,11 @@ class A_Date_Time (_A_Date_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if isinstance (value, datetime.date) :
-            value = datetime.datetime (value.year, value.month, value.day)
-        elif not isinstance (value, datetime.datetime) :
-            raise TypeError ("Date expected, got %r" % (value, ))
+        if not isinstance (value, datetime.datetime) :
+            if isinstance (value, datetime.date) :
+                value = datetime.datetime (value.year, value.month, value.day)
+            else :
+                raise TypeError ("Date expected, got %r" % (value, ))
         return value
     # end def cooked
 

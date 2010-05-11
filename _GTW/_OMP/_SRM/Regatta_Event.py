@@ -29,6 +29,7 @@
 #    15-Apr-2010 (CT) Creation
 #     5-May-2010 (CT) `perma_name` changed from `Cache` to `Internal` to
 #                     allow use in queries
+#    11-May-2010 (CT) `club` added
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,14 @@ class Regatta_Event (_Ancestor_Essence) :
         # end class name
 
         ### Non-primary attributes
+
+        class club (A_String) :
+            """Club organizing the regatta event."""
+
+            kind               = Attr.Optional
+            max_length         = 8
+
+        # end class club
 
         class desc (A_String) :
             """Short description of the regatta."""

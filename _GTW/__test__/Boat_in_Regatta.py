@@ -43,12 +43,18 @@ _test_code = r"""
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
 
+    >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = u"calculated with REGATTA.yellow8.com", status = "final", raw = True))
+    1
+    >>> reg.FO.result
+    u'2009/05/26 10:20:00, calculated with REGATTA.yellow8.com, final'
+    >>> scope.commit ()
+
     >>> SRM.Regatta_C.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     >>> SRM.Regatta.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
 
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 """

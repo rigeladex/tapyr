@@ -36,11 +36,11 @@ _test_code = """
     >>> SRM = scope.SRM
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> rev.epk_raw
-    ((('start', '2008/05/01'),), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    ((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt')
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt')
 
 """
 
