@@ -41,7 +41,10 @@ _test_code = r"""
     >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
-    >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = "Yardstick",  raw = True)
+    >>> list (r.name for r in sorted (rev.regattas))
+    [u'Optimist', u'Yardstick']
 
     >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = u"calculated with REGATTA.yellow8.com", status = "final", raw = True))
     1

@@ -52,6 +52,8 @@
 #    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
 #     4-May-2010 (CT) `Type_Name_Type` based on `types.TypeDecorator`
 #     4-May-2010 (CT) `attr._sa_raw_col_name` added
+#    11-May-2010 (CT) `update_etype` changed to call `_cached_role` only for
+#                     the etype that first defines the role
 #    ««revision-date»»···
 #--
 
@@ -318,8 +320,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             MOM.DBW.SAS.MOM_Query     (e_type, sa_table, db_attrs, bases)
             e_type._SAS.finish        ()
             for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
-                cls._cached_role \
-                    (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
+                if cr.grn in assoc_et._Attributes._own_names :
+                    ### setup cached role only for the etype first defining the
+                    ### role attribute, not it's descendents
+                    cls._cached_role \
+                        (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
             if unique is not None and not e_type.polymorphic_epk :
                 sa_table.append_constraint (unique)
     # end def update_etype

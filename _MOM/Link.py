@@ -53,6 +53,7 @@
 #     4-Mar-2010 (CT) `_Cacher_.cr_attr` added
 #    22-Apr-2010 (CT) `_rename` redefined to honor `auto_cache_roles`
 #     5-May-2010 (CT) `Link_Cacher._auto_attr_name` changed to call `lower`
+#    11-May-2010 (CT) `_Cacher_.grn` added
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,7 @@ class _Cacher_ (TFL.Meta.Object) :
 
     def __init__ (self, attr_name = None) :
         self.role_name = None
+        self.grn       = None
         self.cr_attr   = None
         self.attr_name = attr_name
     # end def __init__
@@ -209,6 +211,7 @@ class _Cacher_ (TFL.Meta.Object) :
     def setup (self, Link, role) :
         assert self.role_name is None
         self.role_name = role_name = role.role_name
+        self.grn       = role.generic_role_name
         attr_name = self.attr_name
         if attr_name is None or attr_name == True :
             self.attr_name = self._auto_attr_name (Link, role) + self._suffix

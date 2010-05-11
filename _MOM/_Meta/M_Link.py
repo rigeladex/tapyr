@@ -57,6 +57,10 @@
 #                     cached-role attributes
 #    23-Mar-2010 (CT) `_m_setup_etype_auto_props` changed to set
 #                     `role_type.is_relevant` only for non-partial link-types
+#    11-May-2010 (CT) `_m_setup_etype_auto_props` changed to set
+#                     `auto_cache_roles` depending on `_names`, not
+#                     `_own_names` (otherwise, role cachers for inherited
+#                     roles get lost)
 #    ««revision-date»»···
 #--
 
@@ -80,20 +84,21 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 
     def _m_setup_etype_auto_props (cls) :
         cls.__m_super._m_setup_etype_auto_props ()
-        if not cls.is_partial :
-            for a in cls._Attributes._names.itervalues () :
-                if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
+        roles = set ()
+        for a in cls._Attributes._names.itervalues () :
+            if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
+                if a.auto_cache :
+                    roles.add (a)
+                if not cls.is_partial :
                     a.role_type.is_relevant = True
-        auto_cache_roles = set ()
         for a in cls._Attributes._own_names.itervalues () :
             if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
                 rc = a.auto_cache
                 if rc :
                     if not isinstance (rc, MOM._.Link._Cacher_) :
                         rc = a.auto_cache = cls.Cacher (rc)
-                    rc.setup             (cls, a)
-                    auto_cache_roles.add (rc)
-        cls.auto_cache_roles = tuple (auto_cache_roles)
+                    rc.setup (cls, a)
+        cls.auto_cache_roles = tuple (a.auto_cache for a in roles)
     # end def _m_setup_etype_auto_props
 
 # end class M_Link
