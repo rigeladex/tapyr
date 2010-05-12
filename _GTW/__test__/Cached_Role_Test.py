@@ -31,8 +31,8 @@
 #--
 
 _test_code = """
-    >>> scope = Scope (%s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__... in memory
+    >>> scope = Scope (%s, %s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> PAP      = scope.PAP
     >>> person   = PAP.Person  (u"Test", u"Person")
     >>> address1 = PAP.Address (u"Street 1", u"Zip", u"City", u"Country")
@@ -56,12 +56,8 @@ _test_code = """
     1
 """
 
-from _GTW.__test__.model import MOM, GTW, Scope
+from _GTW.__test__.model import *
 
-__test__ = dict \
-    ( HPS = _test_code % ("", )
-    , SAS = _test_code % ("'sqlite://'", )
-    )
+__test__ = Scaffold.create_test_dict (_test_code)
+
 ### __END__ GTW.__test__.Cached_Role_Test
-
-

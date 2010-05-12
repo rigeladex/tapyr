@@ -32,7 +32,7 @@
 
 _test_code = """
     >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__... in memory
+    Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian")
@@ -50,9 +50,6 @@ _test_code = """
 
 from _GTW.__test__.model import *
 
-__test__ = dict \
-    ( HPS = _test_code % (None, None)
-    , SQ  = _test_code % ("'sqlite://'", None)
-    )
+__test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ MOM.__test__.Sailor

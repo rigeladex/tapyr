@@ -32,11 +32,11 @@
 
 _test_code = """
     >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__... in memory
+    Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> SRM.Boat_Class ("Optimist", max_crew = 1)
     GTW.OMP.SRM.Boat_Class (u'Optimist')
-    >>> scope.SRM.Boat_Class.count
+    >>> print scope.SRM.Boat_Class.count
     1
     >>> scope.SRM.Boat_Class.query (name = u'Optimist').all ()
     [GTW.OMP.SRM.Boat_Class (u'Optimist')]
@@ -44,7 +44,7 @@ _test_code = """
     GTW.OMP.SRM.Boat_Class (u'Optimist')
     >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True) ### 1
     GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)
-    >>> scope.SRM.Boat.count
+    >>> print scope.SRM.Boat.count
     1
     >>> scope.SRM.Boat.query_s ().all ()
     [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)]
@@ -52,7 +52,7 @@ _test_code = """
 
     >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True) ### 2
     GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)
-    >>> scope.SRM.Boat.count
+    >>> print scope.SRM.Boat.count
     1
     >>> scope.SRM.Boat.query_s ().all ()
     [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)]
@@ -61,9 +61,6 @@ _test_code = """
 
 from _GTW.__test__.model import *
 
-__test__ = dict \
-    ( HPS = _test_code % (None, None)
-    , SQ  = _test_code % ("'sqlite://'", None)
-    )
+__test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ GTW.__test__.Boat

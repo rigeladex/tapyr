@@ -32,8 +32,8 @@
 #--
 
 _test_code = """
-    >>> scope = Scaffold.scope (%s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__... in memory
+    >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> EVT = scope.EVT
     >>> SWP = scope.SWP
     >>> event_page = SWP.Page ("2010-01-01-00:00", text = U"An event")
@@ -48,9 +48,6 @@ _test_code = """
 
 from _GTW.__test__.model import *
 
-__test__ = dict \
-    ( HPS = _test_code % ("", )
-    , SQ  = _test_code % ("'sqlite://'", )
-    )
+__test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ GTW.__test__.Composite_as_Primary_Optional

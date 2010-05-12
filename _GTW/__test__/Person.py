@@ -32,14 +32,14 @@
 
 _test_code = """
     >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__... in memory
+    Creating new scope MOMT__...
     >>> PAP = scope.PAP
 
-    >>> PAP.Person.count
+    >>> print PAP.Person.count
     0
     >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 1
     GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
-    >>> PAP.Person.count
+    >>> print PAP.Person.count
     1
     >>> PAP.Person.instance ("Tanzer", "Christian")
     GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
@@ -48,16 +48,13 @@ _test_code = """
 
     >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 2
     GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
-    >>> PAP.Person.count
+    >>> print PAP.Person.count
     1
 
 """
 
 from _GTW.__test__.model import *
 
-__test__ = dict \
-    ( HPS = _test_code % (None, None)
-    , SQ  = _test_code % ("'sqlite://'", None)
-    )
+__test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ MOM.__test__.Person

@@ -79,7 +79,7 @@ def run_command (cmd, regex = False) :
     subp = subprocess.Popen \
         ( cmd
         , shell = True
-        , env   = dict (PYTHONPATH = os.path.pathsep.join (sys.path))
+        , env   = dict (os.environ)
         , ** kw
         )
     if regex :

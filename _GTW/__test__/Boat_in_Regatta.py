@@ -33,7 +33,7 @@
 
 _test_code = r"""
     >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__... in memory
+    Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
@@ -64,8 +64,6 @@ _test_code = r"""
 
 from _GTW.__test__.model import *
 
-__test__ = dict \
-   ( HPS = _test_code % (None, None)
-   , SQ  = _test_code % ("'sqlite://'", None)
-   )
+__test__ = Scaffold.create_test_dict (_test_code)
+
 ### __END__ GTW.__test__.Boat_in_Regatta
