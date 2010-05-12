@@ -31,6 +31,7 @@
 #     7-May-2010 (CT) `Regatta_Event._get_objects` and `._get_pages` changed
 #                     to set `ETM` and `E_Type` properly
 #    10-May-2010 (CT) `Regatta._get_objects` changed to include `Results`
+#    12-May-2010 (CT) `Results._get_objects` changed to sort by `skipper`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,8 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     def _get_objects (self) :
         obj    = self.obj
         result = []
-        sk     = TFL.Sorted_By ("left.nation", "left.sail_number")
+        sk     = TFL.Sorted_By \
+            ("skipper.person.last_name", "skipper.person.first_name")
         boats  = obj.boats = self.scope.SRM.Boat_in_Regatta.r_query \
             (right = obj).order_by (sk).all ()
         np = _T (u"Participants")
