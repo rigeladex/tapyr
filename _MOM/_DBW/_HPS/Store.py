@@ -38,6 +38,7 @@
 #    30-Apr-2010 (CT) `_load_store` corrected
 #    30-Apr-2010 (CT) `save_objects` changed to store all entities into a
 #                     single store `by_pid` sorted by `pid`
+#    12-May-2010 (CT) s/ems._pid_map/ems.pm.table/
 #    ««revision-date»»···
 #--
 
@@ -251,7 +252,7 @@ class Store (TFL.Meta.Object) :
             s_name = TFL.Filename ("by_pid", self.x_uri)
             cargo  = \
                 [   (e.type_name, e.pid, e.as_pickle_cargo ())
-                for e in sorted (scope.ems._pid_map.itervalues (), key = sk)
+                for e in sorted (scope.ems.pm.table.itervalues (), key = sk)
                 ]
             with open (s_name.name, "wb") as file :
                 pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)

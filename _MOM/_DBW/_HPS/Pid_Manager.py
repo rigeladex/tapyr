@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    11-May-2010 (CT) Creation
+#    12-May-2010 (CT) `retire` added
+#    12-May-2010 (CT) `reserve` corrected (corner cases)
 #    ««revision-date»»···
 #--
 
@@ -81,21 +83,30 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     def reserve (self, entity, pid) :
         table = self.table
         if pid in table :
+            if table [pid] is entity :
+                return pid
             raise ValueError \
                 ( "Cannot reserve pid %s, already used by existing object `%r`"
                 % (pid, table [pid])
                 )
         elif pid <= self.max_pid :
-            raise ValueError \
+            if pid in table :
+                raise ValueError \
                 ( "Cannot reserve pid %s < maximum used pid %s"
                 % (pid, self.max_pid)
                 )
-        self.max_pid = pid
+        self.max_pid = max (pid, self.max_pid)
         if entity is not None :
             table [pid] = entity
             entity.pid  = pid
         return pid
     # end def reserve
+
+    def retire (self, entity) :
+        if entity.pid in self.table :
+            del self.table [entity.pid]
+        entity.pid = None
+    # end def retire
 
 # end class Pid_Manager
 

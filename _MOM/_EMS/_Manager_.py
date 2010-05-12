@@ -46,7 +46,8 @@
 #    21-Dec-2009 (CT) `commit` changed to update `scope.db_cid`
 #    21-Dec-2009 (CT) `close` added
 #    19-Jan-2010 (CT) `rollback` added
-#    11-May-2010 (CT) `pid_manager` added to `__init__`
+#    11-May-2010 (CT) `Pid_Manager` added to `__init__`
+#    12-May-2010 (CT) `pid_query` rewritten to use `pm.query`
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,7 @@ class _Manager_ (TFL.Meta.Object) :
         self.scope               = scope
         self.db_uri              = db_uri
         self.DBW = DBW           = scope.app_type.DBW
-        self.pid_manager         = DBW.Pid_Manager ()
+        self.pm                  = DBW.Pid_Manager ()
         self.uncommitted_changes = []
     # end def __init__
 
@@ -153,8 +154,13 @@ class _Manager_ (TFL.Meta.Object) :
     # end def load_root
 
     def pid_query (self, pid, Type) :
-        """Redefine if optimization is possible for a specific EMS/DBW."""
-        return self.query (Type, pid = pid).one ()
+        result = self.pm.query (pid)
+        if not isinstance (result, Type.Essence) :
+            raise LookupError \
+                ( "Pid `%s` is instance of type %s, not of type `%s`"
+                % (pid, result.type_name, Type.type_name)
+                )
+        return result
     # end def pid_query
 
     def query (self, Type, * filters, ** kw) :

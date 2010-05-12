@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-May-2010 (CT) Creation
+#    12-May-2010 (CT) `retire` added
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,13 @@ class _Pid_Manager_ (TFL.Meta.Object) :
         """
         raise NotImplementedError
     # end def reserve
+
+    def retire (self, entity) :
+        """Retire any resources held for `entity` (but `entity.pid` won't get
+           reused, ever).
+        """
+        entity.pid = None
+    # end def retire
 
 Pid_Manager = _Pid_Manager_ # end class
 

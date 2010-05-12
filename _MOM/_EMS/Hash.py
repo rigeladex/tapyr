@@ -69,6 +69,7 @@
 #     9-Feb-2010 (CT) `epk_to_hpk` changed to use `get_hash`
 #     3-Mar-2010 (CT) `rename` changed to allow rename to same `epk`
 #    19-Mar-2010 (CT) `_pid_map` added and `pid_query` redefined to use it
+#    12-May-2010 (CT) Use `Pid_Manager` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -97,17 +98,15 @@ class Manager (MOM.EMS._Manager_) :
     type_name = "Hash"
 
     max_cid   = property (TFL.Getter.__cid)
-    max_pid   = property (TFL.Getter.__pid)
+    max_pid   = property (TFL.Getter.pm.max_pid)
 
     def __init__ (self, scope, db_uri) :
         self.__super.__init__ (scope, db_uri)
         self._changes = {}
         self._counts  = TFL.defaultdict (int)
-        self._pid_map = {}
         self._r_map   = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self._tables  = TFL.defaultdict (dict)
         self.__cid    = 0
-        self.__pid    = 0
     # end def __init__
 
     def add (self, entity, id = None) :
@@ -119,12 +118,9 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Name_Clash (entity, table [hpk])
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        if id is None :
-            self.__pid += 1
-            id = self.__pid
-        entity.pid = id
+        self.pm (entity, id)
         count [entity.type_name] += 1
-        table [hpk] = self._pid_map [id] = entity
+        table [hpk] = entity
         if entity.Roles :
             r_map = self._r_map
             for r in entity.Roles :
@@ -201,11 +197,11 @@ class Manager (MOM.EMS._Manager_) :
     # end def instance
 
     def load_root (self) :
-        scope        = self.scope
-        info         = self.session.info
-        self.__cid   = scope.db_cid = info.max_cid
-        self.__pid   = info.max_pid
-        scope.guid   = info.guid
+        scope           = self.scope
+        info            = self.session.info
+        self.__cid      = scope.db_cid = info.max_cid
+        self.pm.max_pid = info.max_pid
+        scope.guid      = info.guid
         scope._setup_root       (scope.app_type, info.root_epk)
         scope.add_init_callback (self._load_objects)
     # end def load_root
@@ -222,16 +218,6 @@ class Manager (MOM.EMS._Manager_) :
             raise
     # end def pid_from_lid
 
-    def pid_query (self, pid, Type) :
-        result = self._pid_map [pid]
-        if not isinstance (result, Type.Essence) :
-            raise LookupError \
-                ( "Pid `%s` is instance of type %s, not of type `%s`"
-                % (pid, result.type_name, Type.type_name)
-                )
-        return result
-    # end def pid_query
-
     def register_change (self, change) :
         self.__cid += 1
         change.cid  = cid = self.__cid
@@ -241,9 +227,8 @@ class Manager (MOM.EMS._Manager_) :
     # end def register_change
 
     def remove (self, entity) :
-        self._remove (entity)
-        del self._pid_map [entity.pid]
-        entity.pid = None
+        self._remove   (entity)
+        self.pm.retire (entity)
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :
@@ -271,8 +256,8 @@ class Manager (MOM.EMS._Manager_) :
                     c.undo (scope)
             for cid in range (info.max_cid + 1, self.__cid + 1) :
                 _changes.pop (cid, None)
-            self.__cid = info.max_cid
-            self.__pid = info.max_pid
+            self.__cid      = info.max_cid
+            self.pm.max_pid = info.max_pid
             self.__super.rollback ()
     # end def rollback
 
