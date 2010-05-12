@@ -56,6 +56,7 @@
 #                     the etype that first defines the role
 #    12-May-2010 (MG) `pid` chaged to be a int, new `pid_manager` used, `pid`
 #                     is now the primary key of the SA-tables
+#    12-May-2010 (MG) Use a explicit sequence for the pid table
 #    ««revision-date»»···
 #--
 
@@ -232,9 +233,15 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_session
 
     def _create_pid_table (cls, metadata) :
-        cls.sa_pid = Table = schema.Table \
+        cls.sa_pid_sequence = schema.Sequence ("pid_seq")
+        cls.sa_pid          = Table = schema.Table \
             ( "pids", metadata
-            , schema.Column ("pid",       types.Integer, primary_key = True)
+            , schema.Column
+                  ( "pid"
+                  , types.Integer
+                  , cls.sa_pid_sequence
+                  , primary_key = True
+                  )
             , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
             )
     # end def _create_pid_table

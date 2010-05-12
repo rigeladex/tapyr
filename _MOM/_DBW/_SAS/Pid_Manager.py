@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-May-2010 (MG) Creation
+#    12-May-2010 (MG) Support for PostgreSQL sequences added
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     def __init__ (self, ems, db_uri) :
         self.__super.__init__ (ems, db_uri)
         db_uri            = db_uri or "sqlite://"
+        self.is_postgres  = db_uri.startswith ("postgresql://")
         if db_uri.startswith ("sqlite://") :
             self.commit   = self.rollback = lambda : None
         sa_table          = self.ems.DBW.sa_pid
@@ -63,15 +65,6 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         self.transaction = result.begin                    ()
         return result
     # end def connection
-
-    def execute (self, sql) :
-        conn   = self.ems.session.engine.connect ()
-        trans  = conn.begin                      ()
-        result = conn.execute                    (sql)
-        trans.commit                             ()
-        conn.close                               ()
-        return result
-    # end def execute
 
     def new (self, entity, commit = True) :
         Type_Name = None
@@ -111,12 +104,16 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def query
 
     def reserve (self, entity, pid) :
-        Type_Name = None
-        if entity :
-            Type_Name = entity.type_name
-        sql    = self.insert.values (Type_Name = Type_Name, pid = pid)
-        result = self.execute       (sql)
-        self.commit                 ()
+        if self.is_postgres :
+            self.connection.execute \
+                ("ALTER SEQUENCE pid_seq RESTART WITH %d" % (pid + 1, ))
+        else :
+            Type_Name = None
+            if entity :
+                Type_Name = entity.type_name
+            sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
+            result = self.connection.execute (sql)
+        self.commit                      ()
         return pid
     # end def reserve
 

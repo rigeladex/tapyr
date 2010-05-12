@@ -44,6 +44,7 @@
 #    29-Apr-2010 (MG) Support for running the doctest in optimized mode added
 #    12-May-2010 (MG) Summary generation added
 #    12-May-2010 (CT) Summary generation fixed
+#    12-May-2010 (MG) Summary generation fixed if some test fails
 #    ««revision-date»»···
 #--
 
@@ -84,18 +85,15 @@ def run_command (cmd, regex = False) :
     if regex :
         while subp.poll () is None :
             out, err = subp.communicate ()
-            if regex.match (out) :
-                f = regex.failed
-                t = regex.total
             sys.stdout.write (out)
         try :
             out, err = subp.communicate ()
-            if regex.match (out) :
-                f = regex.failed
-                t = regex.total
             sys.stdout.write (out)
         except ValueError :
             pass
+        if out and regex.match (out.split ("\n") [-2]) :
+            f = regex.failed
+            t = regex.total
     else :
         subp.wait ()
     return f, t

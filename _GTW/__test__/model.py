@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Apr-2010 (MG) Creation
 #    27-Apr-2010 (CT) `MOM.Scaffold` factored
+#    12-May-2010 (MG) `create_test_dict` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,8 @@ import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
 import _MOM.Scaffold
 import _TFL.Filename
+
+import  os
 
 GTW.Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
@@ -77,6 +80,36 @@ class Scaffold (MOM.Scaffold) :
         , SRM   = GTW.OMP.SRM
         , SWP   = GTW.OMP.SWP
         )
+
+    Backend_Parameters = dict \
+        ( HPS = (None,                                        None)
+        , SQL = ("'sqlite://'",                               None)
+        , POS = ("'postgresql://regtest:regtest@localhost'", "'regtest'")
+        , MYS = ("'mysql://regtest:regtest@localhost'",      "'regtest'")
+        )
+
+    @classmethod
+    def create_test_dict (cls, test_code, * backends) :
+        result            = {}
+        restrict_backends = set (cls.Backend_Parameters)
+        backends          = backends or restrict_backends
+        all_backends      = os.environ.get ("MOM_ALL_BACKENDS", None)
+        if not all_backends :
+            restrict      = os.environ.get ("MOM_RESTRICT_BACKENDS", "")
+            if restrict :
+                restrict_backends = set \
+                    (p.strip () for p in restrict.split (":"))
+            else :
+                restrict_backends = set (("HPS", "SQL"))
+        if not isinstance (test_code, dict) :
+            test_code = {"" : test_code}
+        for backend_name in (bn for bn in backends if bn in restrict_backends) :
+            db_prefix, db_name = cls.Backend_Parameters [backend_name]
+            for test_name, code in test_code.iteritems () :
+                key = "_".join (p for p in (backend_name, test_name) if p)
+                result [key] = code % (db_prefix, db_name)
+        return result
+    # end def create_test_dict
 
 # end class Scaffold
 

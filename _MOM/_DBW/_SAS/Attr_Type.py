@@ -45,6 +45,8 @@
 #    23-Mar-2010 (MG) `owner_etype` added and used in `_sa_columns_composite`
 #    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
 #    12-May-2010 (MG) `pid` is now the primary key of SA tables
+#    12-May-2010 (MG) `_sa_string` use a `Text` type if no `max_length` is
+#                     given to work under MySQL as well
 #    ««revision-date»»···
 #--
 
@@ -157,10 +159,10 @@ def _sa_numeric (cls, attr, kind, ** kw) :
 
 @Add_Classmedthod ("_sa_type", Attr._A_String_Base_)
 def _sa_string (cls, attr, kind, ** kw) :
-    return types.String \
-        ( getattr (attr, "max_length", None)
-        , convert_unicode = True
-        )
+    length = getattr (attr, "max_length", None)
+    if length :
+        return types.String (length, convert_unicode = True)
+    return types.Text (convert_unicode = True)
 # end def _sa_string
 
 @Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
