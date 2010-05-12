@@ -47,6 +47,7 @@
 #    21-Dec-2009 (CT) `close` added
 #    19-Jan-2010 (CT) `rollback` added
 #    11-May-2010 (CT) `Pid_Manager` added to `__init__`
+#    11-May-2010 (MG) Pass `ems` and `db_uri` to `pid_manager`
 #    12-May-2010 (CT) `pid_query` rewritten to use `pm.query`
 #    ««revision-date»»···
 #--
@@ -90,7 +91,7 @@ class _Manager_ (TFL.Meta.Object) :
         self.scope               = scope
         self.db_uri              = db_uri
         self.DBW = DBW           = scope.app_type.DBW
-        self.pm                  = DBW.Pid_Manager ()
+        self.pm                  = DBW.Pid_Manager (self, db_uri)
         self.uncommitted_changes = []
     # end def __init__
 

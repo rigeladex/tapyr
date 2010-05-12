@@ -1637,7 +1637,7 @@ Rollback of uncommited changes
     >>> scope.changes_to_save
     2
     >>> scope.commit ()
-    >>> scope.changes_to_save, scope.ems.max_cid
+    >>> scope.changes_to_save, scope.ems.max_cid ### before rollback
     (0, 50)
     >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
     >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
@@ -1647,7 +1647,7 @@ Rollback of uncommited changes
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.rollback ()
-    >>> scope.changes_to_save, scope.ems.max_cid
+    >>> scope.changes_to_save, scope.ems.max_cid ### after rollback
     (0, 50)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []

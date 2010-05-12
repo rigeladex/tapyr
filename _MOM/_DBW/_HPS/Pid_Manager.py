@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-May-2010 (CT) Creation
+#    11-May-2010 (MG) `ems` and `db_uri` added
 #    12-May-2010 (CT) `retire` added
 #    12-May-2010 (CT) `reserve` corrected (corner cases)
 #    ««revision-date»»···
@@ -63,7 +64,8 @@ import _MOM._DBW.Pid_Manager
 class Pid_Manager (MOM.DBW.Pid_Manager) :
     """HPS specific manager for permanent ids."""
 
-    def __init__ (self) :
+    def __init__ (self, ems, db_uri) :
+        self.__super.__init__ (ems, db_uri)
         self.max_pid = 0
         self.table   = {}
     # end def __init__

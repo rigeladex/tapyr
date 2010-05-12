@@ -54,6 +54,7 @@
 #     4-May-2010 (CT) `Collection_Inline._linked_instances` changed to not
 #                     return `None`
 #    06-May-2010 (MG) `s/_linked_instances/linked_instances/g`
+#    12-May-2010 (MG) `setup_javascript` changed
 #    ««revision-date»»···
 #--
 
@@ -184,8 +185,11 @@ class Link_Inline (TFL.Meta.Object) :
     # end def forms
 
     def setup_javascript (self, parent_form) :
-        GTW.Form.Javascript.Link_Inline \
-            (self.form_cls, self, ** self.javascript_options)
+        if self.render_mode == "ui_display_table" :
+            cls = GTW.Form.Javascript.Link_Inline_UI_Display
+        else :
+            cls = GTW.Form.Javascript.Link_Inline
+        cls (self.form_cls, self, ** self.javascript_options)
     # end def setup_javascript
 
     def create_object (self, form) :

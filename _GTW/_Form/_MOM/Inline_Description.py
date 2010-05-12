@@ -60,7 +60,8 @@
 #     5-May-2010 (MG) `render_mode_description` added
 #     6-May-2010 (MG) `table` render mode added
 #     6-May-2010 (MG) `needs_header` added
-#    06-May-2010 (MG) `widget` removed
+#     6-May-2010 (MG) `widget` removed
+#    12-May-2010 (MG) Automatic `legend` creation added
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,7 @@ class _GTW_Inline_Description_ (TFL.Meta.Object) :
       , scripts     =
           ( GTW.Script._.jQuery
           , GTW.Script._.jQuery_UI
+          , GTW.Script (src = "/media/GTW/js/GTW_Button.js")
           , GTW.Script (src = "/media/GTW/js/GTW_Form.js")
           , GTW.Script (src = "/media/GTW/js/MOM_Auto_Complete.js")
           )
@@ -193,9 +195,9 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
             if len (roles) > 1 :
                 raise TypeError ("More than one role to choose from ?")
             self.own_role_name = roles [0].role_name
-            self.generic_role  = getattr \
-                (link_et_man, self.own_role_name).generic_role_name
-            inline_form       = GTW.Form.MOM.Link_Inline_Instance.New \
+            role_attr_kind     = getattr (link_et_man, self.own_role_name)
+            self.generic_role  = role_attr_kind.generic_role_name
+            inline_form        = GTW.Form.MOM.Link_Inline_Instance.New \
                 ( link_et_man
                 , * self.field_group_descriptions
                 , ignore_fields   = (self.own_role_name, self.generic_role)
@@ -206,7 +208,13 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                 , field_attrs     = self.field_attrs
                 )
             if not self.legend :
-                self.legend = TFL.I18N._T (link_et_man.ui_name)
+                other_roles = \
+                    [r for r in link_et_man.Roles if not r is role_attr_kind]
+                if len (other_roles) == 1 and other_roles [0].auto_cache :
+                    ack = getattr (et_man, other_roles [0].auto_cache.attr_name)
+                    self.legend = TFL.I18N._T (ack.ui_name)
+                else :
+                    self.legend = TFL.I18N._T (link_et_man.ui_name)
             return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 
@@ -239,3 +247,4 @@ Collection_Inline_Description = GTW_Collection_Inline_Description # end class
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")
 ### __END__ GTW.Form.MOM.Inline_Description
+

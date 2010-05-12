@@ -32,6 +32,7 @@
 #     3-May-2010 (MG) Support for joins for filter and order_by added
 #     5-May-2010 (MG) `_join`and `_inner_join` added
 #     7-May-2010 (MG) `_joins` changed: joins is now a list instead of a set
+#    12-May-2010 (MG) New pid style
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ class Q_Result (TFL.Meta.Object) :
     def count (self) :
         ### this is sort of hackish )o;
         #col         = self.sa_query._columns \
-        #    ["%s_id" % (self.e_type._sa_table.name, )]
+        #    ["%s_pid" % (self.e_type._sa_table.name, )]
         count_query = self.sa_query._clone ()
         count_query._columns.clear ()
         count_query._raw_columns = [sql.func.count ("*").label ("count")]
@@ -183,8 +184,7 @@ class Q_Result_Changes (Q_Result) :
     def filter (self, * filter, ** kw) :
         pid = kw.pop ("pid", None)
         if pid is not None :
-            kw ["Type_Name"] = pid.Type_Name
-            kw ["obj_id"]    = pid.id
+            kw ["pid"]    = pid
         return self.__super.filter (* filter, ** kw)
     # end def filter
 

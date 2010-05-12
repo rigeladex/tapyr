@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-May-2010 (CT) Creation
+#    11-May-2010 (MG) `__init__` added
 #    12-May-2010 (CT) `retire` added
 #    ««revision-date»»···
 #--
@@ -42,6 +43,10 @@ class _Pid_Manager_ (TFL.Meta.Object) :
     """Base class for database backend specific manager for permanent ids."""
 
     _real_name = "Pid_Manager"
+
+    def __init__ (self, ems, db_uri) :
+        self.ems = ems
+    # end def __init__
 
     def __call__ (self, entity, pid = None) :
         if pid is None :

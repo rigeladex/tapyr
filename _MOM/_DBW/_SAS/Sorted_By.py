@@ -43,6 +43,7 @@
 #                     to keep join order)
 #     7-May-2010 (MG) `_sa_order_by` for TFL.Q_Exp.* fixed to support query
 #                     attributes as well
+#    12-May-2010 (MG) `Attr_Map` cleared
 #    ««revision-date»»···
 #--
 
@@ -193,7 +194,7 @@ def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
     return self._sa_cache [key]
 # end def _sa_order_by
 
-Attr_Map = { "pid" : "id", "-pid" : "-id"}
+Attr_Map = {}
 
 @TFL.Add_Method (TFL.Sorted_By)
 def _sa_resolve_attribute (self, SAQ, c, joins, order_clause, desc = False) :

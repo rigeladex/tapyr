@@ -37,6 +37,7 @@
 #                     `ckd_name` added
 #     5-May-2010 (MG) `Join_Quer.__call__` fixed to support ordering as well
 #     7-May-2010 (MG) `MOM_Query.__init__` inherit `_query_fct` dict as well
+#    12-May-2010 (MG) New `pid` style
 #    ««revision-date»»···
 #--
 
@@ -79,13 +80,10 @@ class _MOM_Query_ (TFL.Meta.Object) :
 
     def SAS_EQ_Clause (self, attr, cooked) :
         db = cooked
-        if attr == "pid" :
-            attr  = "id"
-            db    = cooked [-1]
-        elif   attr == "type_name" :
+        if   attr == "type_name" :
             attr = "Type_Name"
         elif isinstance (cooked, MOM.Id_Entity) :
-            db   = cooked.id
+            db   = cooked.pid
         else :
             kind = getattr (self._E_TYPE [0], attr, None)
             if kind and isinstance (kind.attr, MOM.Attr._A_Named_Value_) :
@@ -109,7 +107,7 @@ class MOM_Query (_MOM_Query_) :
         self._E_TYPE          = e_type, bases
         self._SA_TABLE        = sa_table
         columns               = sa_table.columns
-        self.id               = columns [e_type._sa_pk_name]
+        self.pid              = columns [e_type._sa_pk_name]
         self._ATTRIBUTES      = []
         self._COMPOSITES      = []
         self._ID_ENTITY_ATTRS = {}
@@ -117,8 +115,8 @@ class MOM_Query (_MOM_Query_) :
         delayed               = []
         if e_type is e_type.relevant_root :
             self.Type_Name = columns.Type_Name
-            self.id        = columns.id
-            self._ATTRIBUTES.extend (("Type_Name", "id"))
+            self.pid       = columns.pid
+            self._ATTRIBUTES.extend (("Type_Name", "pid"))
         for name, kind in db_attrs.iteritems () :
             attr = kind.attr
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :

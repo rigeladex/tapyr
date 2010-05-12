@@ -120,6 +120,7 @@ def create_nav (scope) :
                           , LID
                               ( "GTW.OMP.PAP.Person_has_Address"
                               , render_mode = "ui_display_table"
+                              , collapsable = True
                               )
                           )
                       )

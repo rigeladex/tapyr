@@ -44,6 +44,7 @@
 #                     `_A_Binary_String_`
 #    23-Mar-2010 (MG) `owner_etype` added and used in `_sa_columns_composite`
 #    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
+#    12-May-2010 (MG) `pid` is now the primary key of SA tables
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ def _sa_normal_attr(self) :
 
 @TFL.Add_To_Class ("_sa_column_name", Attr._A_Object_)
 def _sa_object (self) :
-    return "%s_id" % (self.name, )
+    return "%s_pid" % (self.name, )
 # end def _sa_object
 
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)

@@ -10,13 +10,11 @@
 #navigate li.current-section
     { font-weight      : bold
     }
-
 #navigate a.current-section,
 #navigate a.current-section:link,
 #navigate a.current-section:visited
     { color            : #666666
     }
-
 #navigate a, div#marginal a
     { text-decoration  : none
     }
@@ -29,7 +27,6 @@
 #navigate a:hover, div#marginal a:hover
     { background-color : #EFF3FE
     }
-
 #navigate h1, div#marginal h1
     { background-color : #E0E8FB
     ; color            : #666666
@@ -150,6 +147,13 @@ dd p.last
 
 #document
     { margin-left      : 12em
+    ; margin-right     : 12em
+    }
+
+.inline-icon
+    { float            : left
+    ; margin-top       : 5px
+    ; margin-bottom    : auto
     }
 
 /* Styling for grid-tables */
@@ -351,8 +355,37 @@ input.Long, input.Very-Long
 tr.inline-instance
     { white-space      : nowrap
     }
-
 .Object-Editor tr.inline-instance label
     { display          : inline
     }
 
+/* UI-Display Inline Styling */
+div.Inline-UI-Display h3
+    { display          : block
+    ; position         : relative
+    ; margin           : 0
+    ;
+    }
+div.Inline-UI-Display h3 span.ui-icon
+    { position         : absolute
+    ; top              : 50%
+    ; left             : 5px
+    ; margin-top       : -8px
+    }
+div.Inline-UI-Display h3 a.add
+    { position         : absolute
+    ; top              : 50%
+    ; right            : 5px
+    ; margin-top       : -0.5em
+    }
+
+div.Inline-UI-Display h3 a
+    { margin          : 0 0 0 20px
+    ; text-decoration : none
+    }
+div.Inline-UI-Display table
+    { width           : 100%
+    }
+.zero-width
+    { width           : 0px
+    }

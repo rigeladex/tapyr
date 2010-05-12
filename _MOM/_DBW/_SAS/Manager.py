@@ -54,6 +54,8 @@
 #     4-May-2010 (CT) `attr._sa_raw_col_name` added
 #    11-May-2010 (CT) `update_etype` changed to call `_cached_role` only for
 #                     the etype that first defines the role
+#    12-May-2010 (MG) `pid` chaged to be a int, new `pid_manager` used, `pid`
+#                     is now the primary key of the SA-tables
 #    ««revision-date»»···
 #--
 
@@ -65,6 +67,7 @@ import _MOM._DBW._Manager_
 import _MOM._DBW._SAS
 import _MOM._DBW._SAS.Attr_Type
 import _MOM._DBW._SAS.Attr_Kind
+import _MOM._DBW._SAS.Pid_Manager
 import _MOM._DBW._SAS.Query
 import _MOM._DBW._SAS.Session
 import _MOM._SCM.Change
@@ -107,15 +110,15 @@ class SAS_A_Object_Kind_Mixin (object) :
     """A mixin for special handling of A_Object attributes for this backend."""
 
     def set_pickle_cargo (self, obj, cargo) :
-        obj_id = cargo [0]
-        if obj_id :
+        pid = cargo [0]
+        if pid :
             query = MOM.DBW.SAS.Q_Result \
-                (self.Class, obj.home_scope.ems.session).filter (id = obj_id)
+                (self.Class, obj.home_scope.ems.session).filter (pid = pid)
             self._set_cooked_value (obj, query.one (), changed = True)
     # end def set_pickle_cargo
 
     def get_pickle_cargo (self, obj) :
-        return (getattr (self.get_value (obj), "id", None), )
+        return (getattr (self.get_value (obj), "pid", None), )
     # end def get_pickle_cargo
 
 # end class SAS_A_Object_Kind_Mixin
@@ -175,7 +178,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def _create_postgres_connection ( cls, db_uri) :
         import psycopg2.extensions as PE
         engine = cls._create_engine (db_uri + "/postgres")
-        conn   = engine.connect ()
+        conn   = engine.connect     ()
         conn.connection.connection.set_isolation_level \
             (PE.ISOLATION_LEVEL_AUTOCOMMIT)
         return conn, engine
@@ -228,11 +231,19 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return MOM.DBW.SAS.Session (scope, engine)
     # end def _create_session
 
+    def _create_pid_table (cls, metadata) :
+        cls.sa_pid = Table = schema.Table \
+            ( "pids", metadata
+            , schema.Column ("pid",       types.Integer, primary_key = True)
+            , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
+            )
+    # end def _create_pid_table
+
     def _create_scope_table (cls, metadata) :
         cls.sa_scope = Table = schema.Table \
             ( "scope_metadata", metadata
             , schema.Column
-                ("root_id",        types.Integer, primary_key = True)
+                ("root_pid",       types.Integer, primary_key = True)
             , schema.Column
                 ("scope_guid",     types.String (length = 64))
             , schema.Column
@@ -246,7 +257,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             ( "change_history", metadata
             , schema.Column ("cid",       types.Integer,     primary_key = True)
             , schema.Column ("Type_Name", Type_Name_Type,    nullable    = True)
-            , schema.Column ("obj_id",    types.Integer,     nullable    = True)
+            , schema.Column ("pid",       types.Integer,     nullable    = True)
             , schema.Column ("data",      types.LargeBinary, nullable    = True)
             , schema.Column
                   ( "parent_cid"
@@ -305,6 +316,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def etype_decorator
 
     def prepare (cls) :
+        cls._create_pid_table             (cls.metadata)
         cls._create_scope_table           (cls.metadata)
         cls._create_SCM_table             (cls.metadata)
         cls.role_cacher = TFL.defaultdict (set)
@@ -337,13 +349,13 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         scope.guid = si.scope_guid
         if si.root_type_name :
             return getattr \
-                (scope, si.root_type_name).query (id = si.root_it).one ()
+                (scope, si.root_type_name).query (pid = si.root_pid).one ()
     # end def load_root
 
     def register_scope (cls, session,  scope) :
         kw = dict (scope_guid = scope.guid)
         if scope.root :
-            kw ["root_id"]        = scope.root.id
+            kw ["root_pid"]       = scope.root.pid
             kw ["root_type_name"] = scope.root.type_name
         session.execute (cls.sa_scope.insert ().values (** kw))
         session.commit  ()
@@ -374,7 +386,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             ### does not need a primary key
             if e_type is not e_type.relevant_root :
                 base    = bases [0]
-                pk_name = "%s_id" % (base._sa_table.name)
+                pk_name = "%s_pid" % (base._sa_table.name)
                 result.append \
                     ( schema.Column
                         ( pk_name, types.Integer
@@ -384,7 +396,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     )
                 e_type._sa_pk_base [base.type_name] = pk_name
             else :
-                pk_name = "id"
+                pk_name = "pid"
                 result.append \
                     ( schema.Column
                         (pk_name, types.Integer, primary_key = True)
@@ -433,7 +445,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 session = self.home_scope.ems.session
                 query   = MOM.DBW.SAS.Q_Result \
                     ( assoc_et, session
-                    , assoc_et._SAS.select.where (r_attr == self.id)
+                    , assoc_et._SAS.select.where (r_attr == self.pid)
                     )
                 if singleton :
                     return query.first ()
@@ -449,10 +461,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             result_et   = app_type [attr_kind.Class.type_name]
             def computed_crn (self) :
                 session = self.home_scope.ems.session
-                links   = sql.select ((q_attr,)).where (f_attr == self.id)
+                links   = sql.select ((q_attr,)).where (f_attr == self.pid)
                 query   = MOM.DBW.SAS.Q_Result \
                     ( result_et, session
-                    , result_et._SAS.select.where (result_et._SAQ.id.in_(links))
+                    , result_et._SAS.select.where (result_et._SAQ.pid.in_(links))
                     )
                 if singleton :
                     return query.first ()
@@ -468,6 +480,8 @@ class Manager (MOM.DBW._Manager_) :
 
     __metaclass__ = _M_SAS_Manager_
     type_name     = "SAS"
+
+    Pid_Manager   = MOM.DBW.SAS.Pid_Manager
 
 # end class Manager
 

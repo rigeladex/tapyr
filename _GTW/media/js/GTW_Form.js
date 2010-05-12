@@ -28,7 +28,8 @@
 ** Revision Dates
 **    25-Feb-2010 (MG) Creation (based on model_edit_ui.js)
 **    27-Feb-2010 (MG) `_form_submit` renumeration of forms added
-      ««revision-date»»···
+**    12-May-2010 (MG) UI-Display style started
+**    ««revision-date»»···
 **--
 */
 
@@ -121,7 +122,10 @@
         var inlines    = this.options.inlines;
         for (i = 0; i < inlines.length; i++)
           {
-            this._setup_inline (inlines [i]);
+            if (inlines [i].type == "Link_Inline_UI_Display")
+                this._setup_di_inline (inlines [i]);
+            else
+                this._setup_inline (inlines [i]);
           }
         this._setup_completers (this.element);
         this.element.find (":submit").bind ("click", this, this._form_submit);
@@ -415,6 +419,41 @@
             }
         }
     }
+    ,  _setup_di_inline : function (inline)
+      {
+        var $inline = $("." + inline.prefix);
+        var $edit   = $inline.find ("a[href=#edit]");
+        var $delete = $inline.find ("a[href=#delete]");
+
+        $edit.GTW_Button
+            ( { icon      : "ui-icon-pencil"
+              , enabled   : function (btn)
+                  { return true; }
+              }
+            );
+        $delete.GTW_Button
+            ( { states   :
+                  [ { icon      : "ui-icon-trash"
+                    , callback  : this._ui_delete_entity
+                    }
+                  , { icon      : "ui-icon-plus"
+                    , callback  : this._ui_delete_entity
+                    }
+                  ]
+              , data    : { self : this }
+              , enabled : function (btn)
+                  { return true; }
+              , initial_state : 0
+              }
+            );
+      }
+    , _ui_delete_entity : function (evt, data)
+      {
+        var self = data.self;
+        $(evt.target).parents      (".ui-entity-container")
+                     .find         (".ui-display")
+                     .addClass     ("ui-state-disabled");
+      }
     , _setup_inline : function (inline)
       {
         var $inline    = $("." + inline.prefix);

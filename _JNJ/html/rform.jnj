@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##     5-May-2010 (MG) Creation
+##    12-May-2010 (MG) UI-Display style started
 ##    ««revision-date»»···
 ##--
 #}
@@ -227,9 +228,8 @@
 
 {%- macro inline_ui_display_table (fo, inline) -%}
   {#- render the form of the inline as row's of a table -#}
-  {%- set proto = inline.prototype_form -%}
-  <table class="field_group-Horizontal">
-    <caption>
+  <div class="Inline-UI-Display ui-widget {{ inline.form_cls.form_name }}">
+    <h3 class="ui-widget-header">
     {{- X.input.hidden
         ( class = " many-2-many-range"
         , value = "%s:%s:%s"|format
@@ -238,19 +238,29 @@
         , id    = "F_%s"|format (inline.range_field_name)
         )
     -}}
-    {{ GTW._T (inline.legend)|safe }}
-    <a href="#add">{{ GTW._T ("Add") }} {{ inline.legend }}</a>
-    </caption>
+    {%- onion inline.collapsable %}
+      {%- head -%}
+        <span class="ui-icon ui-icon-circle-triangle-s"></span>
+        <a href="#add" class="add">{{ GTW._T ("Add") }}</a>
+        <a href="#hide">
+      {%- body %}
+        {{- GTW._T (inline.legend)|safe -}}
+      {%- tail -%}
+        </a>
+      {%- endonion %}
+  </h3>
+  <table>
     <tbody>
       {%- for link in inline.linked_instances %}
-      <tr>
-        <td>{{ link.right.ui_display }}</td>
-        <td><a href="#edit">{{ GTW._T ("Edit") }}</td>
-        <td><a href="#delete">{{ GTW._T ("Delete") }}</td>
+      <tr class="ui-entity-container">
+        <td class="ui-display">{{ link.right.ui_display }}</td>
+        <td class="zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
+        <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
       </tr>
       {% endfor -%}
     </tbody>
   </table>
+  </div>
 {%- endmacro -%} {#- inline_ui_display_table -#}
 
 {%- macro object (fo) -%}

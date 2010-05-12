@@ -95,6 +95,7 @@ class _Inline_ (TFL.Meta.Object) :
         form   = self.form
         result = dict \
             ( prefix           = form.form_name
+            , type             = self.__class__.__name__
             , buttons          = self.buttons
             , instance_class   = "inline-instance"
             , initial_disabled = self.initial_disabled
@@ -115,6 +116,10 @@ class Link_Inline (_Inline_) :
     buttons = ("rename", "delete", "clear", "copy")
 
 # end class Link_Inline
+
+class Link_Inline_UI_Display (Attribute_Inline) :
+    """XXX"""
+# end class Link_Inline_UI_Display
 
 class _Completer_ (TFL.Meta.Object) :
     """Base class for autocompletion of form/parts of forms."""

@@ -46,6 +46,7 @@
 #                     (s/et/e_type/ in if-clause for `_Composite_Mixin_`)
 #    24-Mar-2010 (MG) `_setup_columns` use new `_sa_prefix` attribute of kind
 #    11-May-2010 (MG) `value_dict` remove items from `attrs` once handled
+#    12-May-2010 (MG) New `pid` style
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,6 @@ import _TFL.Accessor
 
 from   _MOM                  import MOM
 import _MOM._DBW._SAS
-from   _MOM._EMS.SAS         import PID
 
 import  operator
 import  itertools
@@ -102,7 +102,7 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def delete (self, session, entity) :
         session.connection.execute \
-            (self.table.delete ().where (self.pk == entity.id))
+            (self.table.delete ().where (self.pk == entity.pid))
         for b in self.bases :
             b._SAS.delete (session, entity)
     # end def delete
@@ -118,7 +118,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def _gather_columns
 
     def insert (self, session, entity) :
-        base_pks = dict ()
+        base_pks = dict (pid = entity.pid)
         pk_map   = self.e_type._sa_pk_base
         for b in self.bases :
             base_pks [pk_map [b.type_name]] = b._SAS.insert (session, entity)
@@ -134,8 +134,7 @@ class SAS_Interface (TFL.Meta.Object) :
         pickle_cargo = TFL.defaultdict (list)
         self._reconstruct (session, self.e_type_columns, pickle_cargo, row)
         entity     = self.e_type.from_pickle_cargo (scope, pickle_cargo)
-        entity.id  = row [self.e_type._SAQ.id]
-        entity.pid = MOM.EMS.SAS.PID (entity.relevant_root.type_name, entity.id)
+        entity.pid = row [self.e_type._SAQ.pid]
         return entity
     # end def reconstruct
 
@@ -164,9 +163,9 @@ class SAS_Interface (TFL.Meta.Object) :
                 attr    = kind.attr
                 raw_col = None
                 if isinstance (attr, MOM.Attr._A_Object_) :
-                    col = cm.get ("%s%s_id" % (prefix, kind.attr.name), None)
+                    col = cm.get ("%s%s_pid" % (prefix, kind.attr.name), None)
                 else :
-                    col = cm.get ("%s%s"    % (prefix, kind.attr.name), None)
+                    col = cm.get ("%s%s"     % (prefix, kind.attr.name), None)
                     if kind.needs_raw_value :
                         raw_col = cm ["%s%s" % (prefix, kind.attr.raw_name)]
                 et      = col.mom_e_type
@@ -247,7 +246,7 @@ class SAS_Interface (TFL.Meta.Object) :
         if values :
             update = self.table.update ().values (values)
             return session.connection.execute \
-                (update.where (self.pk == entity.id))
+                (update.where (self.pk == entity.pid))
     # end def update
 
 # end class SAS_Interface
@@ -260,13 +259,13 @@ class Session (TFL.Meta.Object) :
     def __init__ (self, scope, engine) :
         self.scope  = scope
         self.engine = engine
-        self.expunge ()
+        self.expunge                 ()
     # end def __init__
 
     def add (self, entity) :
-        entity.id  = entity.__class__._SAS.insert (self, entity)
-        entity.pid = MOM.EMS.SAS.PID (entity.relevant_root.type_name, entity.id)
-        self._id_map  [entity.pid] = entity
+        with self.scope.ems.pm.new_context (entity) :
+            entity.__class__._SAS.insert  (self, entity)
+        self._pid_map [entity.pid] = entity
     # end def add
 
     def add_change (self, change) :
@@ -275,8 +274,7 @@ class Session (TFL.Meta.Object) :
         result = self.connection.execute \
             ( table.insert
                 ( values = dict
-                    ( Type_Name = change.pid.Type_Name
-                    , obj_id    = change.pid.id
+                    ( pid       = change.pid
                     , data      = change.as_pickle ()
                     )
                 )
@@ -299,7 +297,7 @@ class Session (TFL.Meta.Object) :
         result           = self.engine.connect ()
         self.transaction = result.begin        ()
         self._saved = dict \
-            ( id_map  = self._id_map. copy ()
+            ( pid_map = self._pid_map.copy ()
             , cid_map = self._cid_map.copy ()
             )
         return result
@@ -314,19 +312,18 @@ class Session (TFL.Meta.Object) :
 
     def delete (self, entity) :
         self.flush                   ()
-        self._id_map.pop             (entity.pid)
+        self._pid_map.pop            (entity.pid)
         execute = self.connection.execute
         link_map = getattr (entity.__class__, "link_map", {})
         for assoc, roles in link_map.iteritems () :
             role = tuple (roles) [0]
             for row in execute \
                     ( assoc._SAS.select.where
-                        (getattr (assoc._SAQ, role.attr.name) == entity.id)
+                        (getattr (assoc._SAQ, role.attr.name) == entity.pid)
                     ) :
                 self.instance_from_row (assoc, row).destroy ()
         entity.__class__._SAS.delete (self, entity)
         entity.pid = None
-        entity.id  = None
     # end def delete
 
     def execute (self, * args, ** kw) :
@@ -334,7 +331,7 @@ class Session (TFL.Meta.Object) :
     # end def execute
 
     def expunge (self) :
-        self._id_map          = {}
+        self._pid_map         = {}
         ### only used during loading of changes from the database
         self._cid_map         = {}
     # end def expunge
@@ -342,24 +339,20 @@ class Session (TFL.Meta.Object) :
     def flush (self) :
         #self.engine.echo = True
         for pid, attrs in self.scope.attr_changes.iteritems () :
-            entity  = self._id_map.get   (pid, None)
+            entity  = self._pid_map.get  (pid, None)
             entity.__class__._SAS.update (self, entity, attrs)
         self.scope.attr_changes.clear    ()
         #self.engine.echo = False
     # end def flush
 
-    def _instance_from_map (self, type_name, epk) :
-        return self._id_map.get (PID (type_name, epk))
-    # end def instance_from_map
-
     def instance_from_row (self, e_type, row) :
         ### get the real etype for this entity from the database
         e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
-        id     = PID (e_type.relevant_root.type_name, row [e_type._SAQ.id])
-        if id not in self._id_map :
-            entity            = e_type._SAS.reconstruct (self, row)
-            self._id_map [id] = entity
-        return self._id_map [id]
+        pid    = row [e_type._SAQ.pid]
+        if pid not in self._pid_map :
+            entity             = e_type._SAS.reconstruct (self, row)
+            self._pid_map [pid] = entity
+        return self._pid_map [pid]
     # end def instance_from_row
 
     def query (self, Type) :
@@ -386,7 +379,7 @@ class Session (TFL.Meta.Object) :
             self.transaction.rollback ()
             self.connection.close     ()
             self.transaction = None
-            self._id_map     = self._saved ["id_map"]
+            self._pid_map    = self._saved ["pid_map"]
             self._cid_map    = self._saved ["cid_map"]
             del self.connection
     # end def rollback
