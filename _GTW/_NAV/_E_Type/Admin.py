@@ -187,8 +187,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             result  = None
             if request.method == "GET" :
                 form_cls, completer = self.Form.form_and_completer (self.forms)
-                args                = request.req_data
-                pid                 = args.get   ("pid")
+                args = request.req_data
+                pid  = args.get   ("pid")
                 if not any (x is None for x in (form_cls, pid)) :
                     if completer.complete (form_cls, handler, pid) :
                         return True ### prevent an 404 Error if we return None
@@ -289,11 +289,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def href_create
 
     def href_change (self, obj) :
-        return pjoin (self.abs_href, "change", obj.pid)
+        return pjoin (self.abs_href, "change", str (obj.pid))
     # end def href_change
 
     def href_delete (self, obj) :
-        return pjoin (self.abs_href, "delete", obj.pid)
+        return pjoin (self.abs_href, "delete", str (obj.pid))
     # end def href_delete
 
     def href_display (self, obj) :
