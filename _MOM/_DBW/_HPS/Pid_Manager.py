@@ -35,18 +35,19 @@
 """
 Pid manager for Hash-Pickle-Store::
 
-    >>> pm = Pid_Manager()
-    >>> pm.new (None)
+    >>> from _TFL.Record import Record as R
+    >>> pm = Pid_Manager ()
+    >>> pm.new (R ())
     1
-    >>> pm.new (None)
+    >>> pm.new (R ())
     2
-    >>> pm.reserve (None, 5)
+    >>> pm.reserve (R (), 5)
     5
-    >>> pm.reserve (None, 4)
+    >>> pm.reserve (R (), 5)
     Traceback (most recent call last):
       ...
-    ValueError: Cannot reserve pid 4 < maximum used pid 5
-    >>> pm.new (None)
+    ValueError: Cannot reserve pid 5, already used by object `Record (pid = 5)`
+    >>> pm.new (R ())
     6
     >>> pm.max_pid
     6
@@ -83,22 +84,16 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     def reserve (self, entity, pid) :
         table = self.table
         if pid in table :
-            if table [pid] is entity :
-                return pid
-            raise ValueError \
-                ( "Cannot reserve pid %s, already used by existing object `%r`"
-                % (pid, table [pid])
-                )
-        elif pid <= self.max_pid :
-            if pid in table :
+            if table [pid] is not entity :
                 raise ValueError \
-                ( "Cannot reserve pid %s < maximum used pid %s"
-                % (pid, self.max_pid)
-                )
-        self.max_pid = max (pid, self.max_pid)
-        if entity is not None :
-            table [pid] = entity
-            entity.pid  = pid
+                    ( "Cannot reserve pid %s, already used by object `%r`"
+                    % (pid, table [pid])
+                    )
+        else :
+            self.max_pid = max (pid, self.max_pid)
+            if entity is not None :
+                table [pid] = entity
+                entity.pid  = pid
         return pid
     # end def reserve
 
