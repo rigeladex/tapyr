@@ -30,6 +30,27 @@
 #    ««revision-date»»···
 #--
 
+"""
+Pid manager for Hash-Pickle-Store::
+
+    >>> pm = Pid_Manager()
+    >>> pm.new (None)
+    1
+    >>> pm.new (None)
+    2
+    >>> pm.reserve (None, 5)
+    5
+    >>> pm.reserve (None, 4)
+    Traceback (most recent call last):
+      ...
+    ValueError: Cannot reserve pid 4 < maximum used pid 5
+    >>> pm.new (None)
+    6
+    >>> pm.max_pid
+    6
+
+"""
+
 from   _MOM       import MOM
 from   _TFL       import TFL
 
@@ -47,7 +68,9 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     def new (self, entity) :
         self.max_pid += 1
         result = self.max_pid
-        self.table [result] = entity
+        if entity is not None :
+            self.table [result] = entity
+            entity.pid = result
         return result
     # end def new
 
@@ -68,7 +91,9 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
                 % (pid, self.max_pid)
                 )
         self.max_pid = pid
-        table [pid] = entity
+        if entity is not None :
+            table [pid] = entity
+            entity.pid  = pid
         return pid
     # end def reserve
 
