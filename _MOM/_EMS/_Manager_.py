@@ -49,6 +49,7 @@
 #    11-May-2010 (CT) `Pid_Manager` added to `__init__`
 #    11-May-2010 (MG) Pass `ems` and `db_uri` to `pid_manager`
 #    12-May-2010 (CT) `pid_query` rewritten to use `pm.query`
+#    12-May-2010 (CT) `pid_query` changed to apply `int` to `pid`
 #    ««revision-date»»···
 #--
 
@@ -155,10 +156,10 @@ class _Manager_ (TFL.Meta.Object) :
     # end def load_root
 
     def pid_query (self, pid, Type) :
-        result = self.pm.query (pid)
+        result = self.pm.query (int (pid))
         if not isinstance (result, Type.Essence) :
             raise LookupError \
-                ( "Pid `%s` is instance of type %s, not of type `%s`"
+                ( "Pid `%r` is instance of type %s, not of type `%s`"
                 % (pid, result.type_name, Type.type_name)
                 )
         return result

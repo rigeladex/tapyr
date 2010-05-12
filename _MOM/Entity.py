@@ -125,6 +125,7 @@
 #    26-Apr-2010 (CT) Guard against `raw` added to `Entity.set` and
 #                     `Entity.set_raw`
 #     3-May-2010 (CT) `epk` and `epk_raw` changed to append `type_name`
+#    12-May-2010 (CT) `lid` removed
 #    ««revision-date»»···
 #--
 
@@ -858,11 +859,6 @@ class Id_Entity (Entity) :
     def has_warnings (self) :
         return self._pred_man.has_warnings
     # end def has_warnings
-
-    @TFL.Meta.Once_Property
-    def lid (self) :
-        return self.ETM.pid_as_lid (self)
-    # end def lid
 
     @property
     def SCM_Change_Attr (self) :

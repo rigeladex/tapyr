@@ -32,6 +32,7 @@
 #                     `GTW.NAV.E_Type.Instance_Mixin`)
 #     7-May-2010 (CT) `Instance_Mixin.__init__` changed to take `parent` from
 #                     `kw`, if possible
+#    12-May-2010 (CT) `lid_query` removed
 #    ««revision-date»»···
 #--
 
@@ -57,11 +58,6 @@ class Mixin (TFL.Meta.Object) :
         self._objects = []
         self._old_cid = -1
     # end def __init__
-
-    def lid_query (self, ETM, lid) :
-        pid = ETM.pid_from_lid (lid)
-        return ETM.pid_query (pid)
-    # end def lid_query
 
     def query (self) :
         raise NotImplementedError \

@@ -54,6 +54,7 @@
 #    24-Mar-2010 (CT) `Changer.rendered` changed to add `last_changed`, if any
 #     3-May-2010 (MG) `Admin.Changer`: support for `calcel` submit added
 #     5-May-2010 (MG) `_get_child` support for `child_attrs` added
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -105,14 +106,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             obj      = context ["instance"] = None
             request  = handler.request
             req_data = request.req_data
-            lid      = req_data.get ("lid") or self.args [0]
-            if lid is not None :
+            pid      = req_data.get ("pid") or self.args [0]
+            if pid is not None :
                 try :
-                    obj = self.lid_query (ETM, lid)
+                    obj = ETM.pid_query (pid)
                 except LookupError :
                     request.Error = \
                         ( _T ("%s `%s` doesn't exist!")
-                        % (_T (E_Type.ui_name), lid)
+                        % (_T (E_Type.ui_name), pid)
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
             form = self.Form \
@@ -129,7 +130,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         man = self.parent.manager
                         if man :
                             man._old_cid = -1
-                        tail = "#pk-%s" % (obj.lid) if obj else ""
+                        tail = "#pk-%s" % (obj.pid) if obj else ""
                         raise HTTP.Redirect_302 \
                             ("%s%s" % (self.parent.abs_href, tail))
                     else :
@@ -187,9 +188,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             if request.method == "GET" :
                 form_cls, completer = self.Form.form_and_completer (self.forms)
                 args                = request.req_data
-                lid                 = args.get   ("lid")
-                if not any (x is None for x in (form_cls, lid)) :
-                    if completer.complete (form_cls, handler, lid) :
+                pid                 = args.get   ("pid")
+                if not any (x is None for x in (form_cls, pid)) :
+                    if completer.complete (form_cls, handler, pid) :
                         return True ### prevent an 404 Error if we return None
             raise self.top.HTTP.Error_404 (request.path)
         # end def rendered
@@ -204,13 +205,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         def _view (self, request) :
             HTTP = self.top.HTTP
-            lid  = self.args [0]
+            pid  = self.args [0]
             ETM  = self.ETM
             try :
-                obj = self.lid_query (ETM, lid)
+                obj = ETM.pid_query (pid)
             except LookupError :
                 request.Error = \
-                    (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), lid))
+                    (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), pid))
                 raise HTTP.Error_404 (request.path, request.Error)
             obj.destroy ()
             ### XXX ??? Feedback ???
@@ -288,11 +289,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def href_create
 
     def href_change (self, obj) :
-        return pjoin (self.abs_href, "change", obj.lid)
+        return pjoin (self.abs_href, "change", obj.pid)
     # end def href_change
 
     def href_delete (self, obj) :
-        return pjoin (self.abs_href, "delete", obj.lid)
+        return pjoin (self.abs_href, "delete", obj.pid)
     # end def href_delete
 
     def href_display (self, obj) :

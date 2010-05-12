@@ -40,6 +40,7 @@
 #    29-Apr-2010 (CT) `Instance_Y` removed
 #    29-Apr-2010 (CT) `__init__` changed to sanitize `name`
 #    30-Apr-2010 (CT) `Instance_Mixin` factored
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,7 @@ class Instance (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Page) :
     def changer (self) :
         admin = self.admin
         if admin :
-            return admin._get_child ("change", self.obj.lid)
+            return admin._get_child ("change", self.obj.pid)
     # end def changer
 
     def href_change (self) :

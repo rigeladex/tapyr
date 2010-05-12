@@ -47,6 +47,7 @@
 #    27-Feb-2010 (MG) `add_internal_fields` changed
 #     6-Mar-2010 (MG) Error handling changed
 #    11-Mar-2010 (MG) Use new `Attribute_Inline.instance_as_raw`
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -59,8 +60,8 @@ import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
-class Lid_and_State_Field (GTW.Form.Field) :
-    """Stores the state of the line form and the lid of edited object/link."""
+class Pid_and_State_Field (GTW.Form.Field) :
+    """Stores the state of the line form and the pid of edited object/link."""
 
     hidden   = True
     electric = True
@@ -68,24 +69,24 @@ class Lid_and_State_Field (GTW.Form.Field) :
 
     def get_raw (self, form, defaults = {}) :
         state = "N"
-        lid   = getattr (form.instance, "lid", "")
-        if lid :
+        pid   = getattr (form.instance, "pid", "")
+        if pid :
             state = "L"
         elif form.prototype :
             state = "P"
-        return "%s:%s" % (lid, state)
+        return "%s:%s" % (pid, state)
     # end def get_raw
 
-# end class Lid_and_State_Field
+# end class Pid_and_State_Field
 
 class M_Inline_Instance (GTW.Form.MOM._Instance_.__class__) :
     """Add additional internal fields"""
 
     def add_internal_fields (cls, et_man) :
         cls.__m_super.add_internal_fields (et_man)
-        cls.lid_and_state_field = Lid_and_State_Field \
-            ("_lid_a_state_", et_man = et_man)
-        cls.hidden_fields.append (cls.lid_and_state_field)
+        cls.pid_and_state_field = Pid_and_State_Field \
+            ("_pid_a_state_", et_man = et_man)
+        cls.hidden_fields.append (cls.pid_and_state_field)
     # end def add_internal_fields
 
 # end class M_Inline_Instance
@@ -101,23 +102,23 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     # end def __init__
 
     @TFL.Meta.Once_Property
-    def lid (self) :
-        lid, state = self.request_data.get \
-            (self.get_id (self.lid_and_state_field), ":X").split (":")
+    def pid (self) :
+        pid, state = self.request_data.get \
+            (self.get_id (self.pid_and_state_field), ":X").split (":")
         self.state = state
-        return lid
-    # end def lid
+        return pid
+    # end def pid
 
     def _prepare_form (self) :
-        lid, state = self.lid, self.state
+        pid, state = self.pid, self.state
         return True
     # end def _prepare_form
 
     @TFL.Meta.Once_Property
     def state (self) :
-        lid, state = self.request_data.get \
-            (self.get_id (self.lid_and_state_field), ":X").split (":")
-        self.lid   = lid
+        pid, state = self.request_data.get \
+            (self.get_id (self.pid_and_state_field), ":X").split (":")
+        self.pid   = pid
         return state
     # end def state
 
@@ -201,5 +202,4 @@ class Collection_Inline_Instance (An_Attribute_Inline_Instance) :
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")
-
 ### __END__ GTW.Form.MOM.Inline_Instance

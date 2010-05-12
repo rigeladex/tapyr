@@ -38,13 +38,13 @@ _test_code = """
     >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> s
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), 'AUT', u'29676')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676')
     >>> SRM.Sailor.instance (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), 'AUT', u'29676')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), 'AUT', u'29676')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, s.nation, s.mna_number)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), 'AUT', u'29676')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676')
 
 """
 

@@ -54,6 +54,7 @@
 #     7-May-2010 (CT) `Manager_T_Archive.Year._get_child` added and used
 #     7-May-2010 (CT) `Manager_T_Archive._get_objects` corrected (`manager`
 #                     vs. `parent` for `Y._entries`)
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -138,7 +139,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             obj = self.ETM.query (perma_name = child).one ()
         except Exception, exc :
             try :
-                obj = self.lid_query (self.ETM, child)
+                obj = self.ETM.pid_query (child)
             except Exception, exc :
                 pass
             else :

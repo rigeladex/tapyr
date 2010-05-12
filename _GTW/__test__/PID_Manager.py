@@ -48,7 +48,7 @@ _test_code = r"""
     >>> b3 = SRM.Boat       (bc, "Austria", 2) # doctest:+ELLIPSIS
     Traceback (most recent call last):
         ...
-    Duplicate_Link: <class 'GTW.OMP.SRM.Boat' [...]>, ((u'Optimist', ), 'AUT', 2)
+    Duplicate_Link: <class 'GTW.OMP.SRM.Boat' [...]>, ((u'Optimist', ), u'AUT', 2)
     >>> b3 = SRM.Boat       (bc, "Austria", 3)
     >>> b3.pid
     102

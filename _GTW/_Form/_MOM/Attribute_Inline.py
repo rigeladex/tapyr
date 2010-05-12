@@ -36,6 +36,7 @@
 #                     exist yet (this happens if the role has been
 #                     auto-completed)
 #     7-May-2010 (MG) `need_change` eliminated, `create_object` changed
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -192,9 +193,7 @@ class GTW_Id_Attribute_Inline (_Attribute_Inline_) :
             ### the client side provided information which object should be
             ### linked -> let's get this object by it's lid and set it in the
             ### form
-            et_man             = self.form.et_man
-            pid                = et_man.pid_from_lid  (self.form.lid)
-            self.form.instance = et_man.pid_query     (pid)
+            self.form.instance = self.form.et_man.pid_query (self.form.pid)
             self.form._create_update_executed = True
             return False
         return True

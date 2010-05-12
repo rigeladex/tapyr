@@ -55,6 +55,7 @@
 #                     return `None`
 #    06-May-2010 (MG) `s/_linked_instances/linked_instances/g`
 #    12-May-2010 (MG) `setup_javascript` changed
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -151,24 +152,24 @@ class Link_Inline (TFL.Meta.Object) :
         form_cls       = self.form_cls
         prototype      = self.owner.prototype
         prefix_pat     = "%s-M%%d" % (self.prefix, )
-        lid_pat        = "__".join ((prefix_pat, "_lid_a_state_"))
+        pid_pat        = "__".join ((prefix_pat, "_pid_a_state_"))
         result         = []
         ### find the links currently linked to the owner
         if owner.instance :
-            instances = dict ((i.lid, i) for i in self.linked_instances)
+            instances = dict ((str (i.pid), i) for i in self.linked_instances)
         else :
             instances = dict ()
         ### find the links which are actively requested by forms
         for no in xrange (count) :
-            lid = self.request_data.get (lid_pat % no, ":").split (":") [0]
-            if lid :
-                used_instances [lid] = instances.pop (lid, None)
+            pid = self.request_data.get (pid_pat % no, ":").split (":") [0]
+            if pid :
+                used_instances [pid] = instances.pop (pid, None)
         instances = sorted (instances.values ())
         for no in xrange (count) :
-            lid = self.request_data.get (lid_pat % no, ":").split (":") [0]
+            pid = self.request_data.get (pid_pat % no, ":").split (":") [0]
             ### assign the correct link to the form or assign a free link
-            if lid in used_instances :
-                instance = used_instances [lid]
+            if pid in used_instances :
+                instance = used_instances [pid]
             elif instances :
                 instance = instances.pop (0)
             else :

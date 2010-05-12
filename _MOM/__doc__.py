@@ -1652,16 +1652,6 @@ Rollback of uncommited changes
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []
 
-For each object, a database wide unique string id is avaiable
-(called `lid`)::
-
-    >>> obj_lid = r.lid
-    >>> etm_lid = scope.BMT.Rat.pid_as_lid (r)
-    >>> obj_lid == etm_lid
-    True
-    >>> scope.BMT.Rat.pid_from_lid (obj_lid) == r.pid
-    True
-
 Auto-updating attributes
 -------------------------
 

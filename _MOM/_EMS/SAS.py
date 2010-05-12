@@ -29,6 +29,7 @@
 #    11-Feb-2010 (MG) Creation (based of MOM.EMS.SA)
 #    27-Mar-2010 (MG) `add` support for `polymorphic_epk` added
 #    12-May-2010 (MG) Use new `pid_manager`, lid functions changed
+#    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    ««revision-date»»···
 #--
 
@@ -134,14 +135,6 @@ class Manager (MOM.EMS._Manager_) :
             ).fetchone ()
         return (last and last.cid) or 0
     # end def max_cid
-
-    def pid_as_lid (self, obj, e_type) :
-        return str (obj.pid)
-    # end def pid_as_lid
-
-    def pid_from_lid (self, lid, e_type) :
-        return int (lid)
-    # end def pid_from_lid
 
     def register_change (self, change) :
         result      = self.__super.register_change (change)

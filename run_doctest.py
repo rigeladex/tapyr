@@ -43,6 +43,7 @@
 #    18-Dec-2009 (CT) `-nodiff` added to disable `doctest.REPORT_NDIFF`
 #    29-Apr-2010 (MG) Support for running the doctest in optimized mode added
 #    12-May-2010 (MG) Summary generation added
+#    12-May-2010 (CT) Summary generation fixed
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ import _TFL.Record
 
 import _TFL.Caller
 import _TFL.Package_Namespace
+
 import  doctest
 import  sys
 import  subprocess
@@ -154,8 +156,8 @@ def _main (cmd) :
         else :
             print replacer (format % TFL.Caller.Scope ())
     else :
-        regex = None
-        path  = nodiff = optimize = ""
+        regexp = None
+        path   = nodiff = optimize = ""
         if cmd.nodiff :
             nodiff = "-nodiff"
         if cmd_path :
@@ -196,7 +198,8 @@ def _main (cmd) :
                     run (a)
         if cmd.summary :
             print "=" * 79
-            print "%d tests of %d failed" % (failed, total)
+            print "%s fails %d tests of %d doc-tests" % \
+                (" ".join (cmd.argv), failed, total)
 # end def _main
 
 if __name__ == "__main__" :

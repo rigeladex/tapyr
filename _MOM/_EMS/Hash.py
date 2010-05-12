@@ -70,6 +70,7 @@
 #     3-Mar-2010 (CT) `rename` changed to allow rename to same `epk`
 #    19-Mar-2010 (CT) `_pid_map` added and `pid_query` redefined to use it
 #    12-May-2010 (CT) Use `Pid_Manager` instead of home-grown code
+#    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    ««revision-date»»···
 #--
 
@@ -205,18 +206,6 @@ class Manager (MOM.EMS._Manager_) :
         scope._setup_root       (scope.app_type, info.root_epk)
         scope.add_init_callback (self._load_objects)
     # end def load_root
-
-    def pid_as_lid (self, obj, Type) :
-        return str (obj.pid)
-    # end def pid_as_lid
-
-    def pid_from_lid (self, lid, Type) :
-        try :
-            return int (lid)
-        except TypeError :
-            print Type, lid
-            raise
-    # end def pid_from_lid
 
     def register_change (self, change) :
         self.__cid += 1

@@ -72,6 +72,7 @@
 #                     for non-role epk attributes
 #     3-May-2010 (CT) `_epkified` added instead of direct calls to `epkified`
 #     3-May-2010 (CT) `this` added to return of `_cooked_epk`
+#    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    ««revision-date»»···
 #--
 
@@ -159,14 +160,6 @@ class Id_Entity (Entity) :
             result = self (* epk, ** kw)
         return result
     # end def instance_or_new
-
-    def pid_as_lid (self, obj) :
-        return self.ems.pid_as_lid (obj, self._etype)
-    # end def pid_as_lid
-
-    def pid_from_lid (self, lid) :
-        return self.ems.pid_from_lid (lid, self._etype)
-    # end def pid_from_lid
 
     def pid_query (self, pid) :
         """Return entity with persistent id `pid`."""

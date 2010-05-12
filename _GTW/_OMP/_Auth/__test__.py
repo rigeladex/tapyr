@@ -27,8 +27,10 @@
 #
 # Revision Dates
 #    18-Feb-2010 (MG) Creation
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
+
 """
 Test if we can set a e-type specific manager class
     >>> scope.Auth.Account_P.__class__
@@ -176,7 +178,7 @@ Try to verify the `new` passwords
     >> acc2.verify_password (new_password_1), acc2.verify_password (new_password_2)
     False, False
 
-    >>> url = "/account/action/%s/%s" % (acc1.lid, reset_pwd [0].token)
+    >>> url = "/account/action/%s/%s" % (acc1.pid, reset_pwd [0].token)
     >>> handler = GET (url)
     Traceback (most recent call last):
         ....
@@ -186,7 +188,7 @@ Try to verify the `new` passwords
     >>> scope.Auth.Account_Password_Change_Required.query (account = acc2).count ()
     1
     >>> reset_link = reset_pwd [0]
-    >>> url        = "/account/action/%s/%s" % (acc2.lid, reset_link.token)
+    >>> url        = "/account/action/%s/%s" % (acc2.pid, reset_link.token)
     >>> handler    = GET (url)
     Traceback (most recent call last):
         ....
@@ -245,7 +247,7 @@ Account activation
     >>> acc3.activation
 
 Change E-Mail address
-    >>> cp_url  = "/account/change_email/%s" % (acc3.lid, )
+    >>> cp_url  = "/account/change_email/%s" % (acc3.pid, )
     >>> handler = GET  (cp_url)
     >>> handler = POST (cp_url)
     >>> form = handler.context ["form"]
@@ -266,12 +268,12 @@ Change E-Mail address
     >>> verify_links = scope.Auth.Account_EMail_Verification.query ().all ()
     >>> len (verify_links)
     1
-    >>> url = "/account/action/%s/%s" % (acc1.lid, verify_links [0].token)
+    >>> url = "/account/action/%s/%s" % (acc1.pid, verify_links [0].token)
     >>> handler = GET (url)
     Traceback (most recent call last):
         ...
     Error_404
-    >>> url = "/account/action/%s/%s" % (acc3.lid, verify_links [0].token)
+    >>> url = "/account/action/%s/%s" % (acc3.pid, verify_links [0].token)
     >>> handler = GET (url)
     Traceback (most recent call last):
         ...
@@ -322,12 +324,12 @@ Register account
     ...     (account = acc5).all ()
     >>> len (links)
     1
-    >>> url = "/account/action/%s/%s" % (acc1.lid, links [0].token)
+    >>> url = "/account/action/%s/%s" % (acc1.pid, links [0].token)
     >>> handler = GET (url)
     Traceback (most recent call last):
         ...
     Error_404
-    >>> url = "/account/action/%s/%s" % (acc5.lid, links [0].token)
+    >>> url = "/account/action/%s/%s" % (acc5.pid, links [0].token)
     >>> handler = GET (url)
     Traceback (most recent call last):
         ...

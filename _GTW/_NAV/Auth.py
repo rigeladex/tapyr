@@ -42,6 +42,7 @@
 #    23-Feb-2010 (MG) `Login.rendered` password reset handling changed
 #    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
 #    24-Feb-2010 (CT) `own_links` redefined
+#    12-May-2010 (CT) Use `pid`, not `lid`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class Auth (GTW.NAV.Dir) :
             top       = self.top
             HTTP      = top.HTTP
             ETM       = top.account_manager
-            account   = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            account   = ETM.pid_query (self.args [0])
             action    = top.scope.GTW.OMP.Auth._Account_Token_Action_.query \
                 (account = account, token = self.args [1]).first ()
             if action :
@@ -142,7 +143,7 @@ class Auth (GTW.NAV.Dir) :
         def rendered (self, handler, template = None) :
             top     = self.top
             ETM     = top.account_manager
-            account = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            account = ETM.pid_query (self.args [0])
             form    = GTW.Form.Auth.Change_Email (account, self.abs_href)
             context = handler.context
             request = handler.request
@@ -186,7 +187,7 @@ class Auth (GTW.NAV.Dir) :
         def rendered (self, handler, template = None) :
             top     = self.top
             ETM     = top.account_manager
-            account = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            account = ETM.pid_query (self.args [0])
             form    = GTW.Form.Auth.Change_Password (account, self.abs_href)
             context = handler.context
             request = handler.request
@@ -350,7 +351,7 @@ class Auth (GTW.NAV.Dir) :
     # end class Request_Reset_Password
 
     def href_action (self, obj, token) :
-        return pjoin (self.abs_href, self.T.action, obj.lid, token)
+        return pjoin (self.abs_href, self.T.action, str (obj.pid), token)
     # end def href_action
 
     @Once_Property
@@ -359,15 +360,15 @@ class Auth (GTW.NAV.Dir) :
     # end def href
 
     def href_action (self, obj, token) :
-        return pjoin (self.abs_href, self.T.action, obj.lid, token)
+        return pjoin (self.abs_href, self.T.action, str (obj.pid), token)
     # end def href_action
 
     def href_change_email (self, obj) :
-        return pjoin (self.abs_href, self.T.change_email, obj.lid)
+        return pjoin (self.abs_href, self.T.change_email, str (obj.pid))
     # end def href_change_email
 
     def href_change_pass (self, obj) :
-        return pjoin (self.abs_href, self.T.change_password, obj.lid)
+        return pjoin (self.abs_href, self.T.change_password, str (obj.pid))
     # end def href_change_pass
 
     @property
