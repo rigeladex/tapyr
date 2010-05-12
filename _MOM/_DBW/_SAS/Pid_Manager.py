@@ -116,7 +116,8 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
             Type_Name = entity.type_name
         sql    = self.insert.values (Type_Name = Type_Name, pid = pid)
         result = self.execute       (sql)
-        import pdb; pdb.set_trace ()
+        self.commit                 ()
+        return pid
     # end def reserve
 
     def rollback (self) :

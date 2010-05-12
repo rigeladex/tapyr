@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.expand_CSS
+#    GTW.expand_CSS
 #
 # Purpose
 #    Expand a CSS template via the Python `%s` operator
@@ -44,6 +44,7 @@ import _TFL._Meta.Object
 import _TFL.defaultdict
 import _TFL.sos               as     os
 import _TFL.Record
+import _TFL.CAO
 import  re
 import  traceback
 
@@ -126,7 +127,7 @@ def watch_directories (overrides, * directories) :
     import pyinotify
     watch  = pyinotify.WatchManager ()
     events = \
-        pyinotify.EventsCodes.IN_MODIFY | pyinotify.EventsCodes.IN_CREATE
+        pyinotify.IN_MODIFY | pyinotify.IN_CREATE
 
     class Event_Prcoessor (pyinotify.ProcessEvent) :
 
@@ -174,25 +175,8 @@ def watch_directories (overrides, * directories) :
             break
 # end def watch_directories
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec         =
-            ( "template:S"
-            ,
-            )
-        , option_spec      = \
-              ( "watch_directories:P,?List of directories to watch for changes"
-              ,
-              )
-        , min_args         = 0
-        , process_keywords = True
-        , arg_array        = arg_array
-        )
-# end def command_spec
-
 def main (cmd) :
-    keywords    = cmd.keywords
+    keywords    = {} ### XXX cmd.keywords
     directories = set ()
     if cmd.template :
         for f in cmd.argv :
@@ -205,6 +189,15 @@ def main (cmd) :
         watch_directories (keywords, * cmd.watch_directories)
 # end def main
 
+Command = TFL.CAO.Cmd \
+    ( main
+    , args = ("template:P", )
+    , opts =
+          ( "watch_directories:P,?List of directories to watch for changes"
+          ,
+          )
+    )
+
 if __name__ == "__main__":
-    main (command_spec ())
-### __END__ expand_CSS
+    Command ()
+### __END__ GTW.expand_CSS
