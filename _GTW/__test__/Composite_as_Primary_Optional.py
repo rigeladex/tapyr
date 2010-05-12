@@ -36,7 +36,7 @@ _test_code = """
     Creating new scope MOMT__...
     >>> EVT = scope.EVT
     >>> SWP = scope.SWP
-    >>> event_page = SWP.Page ("2010-01-01-00:00", text = U"An event")
+    >>> event_page = SWP.Page (u"2010-01-01-00:00", text = U"An event")
     >>> event = EVT.Event (event_page)
     >>> event.date
     MOM.Date_Interval ()

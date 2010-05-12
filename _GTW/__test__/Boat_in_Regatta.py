@@ -37,12 +37,12 @@ _test_code = r"""
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
-    >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
-    >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
+    >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
+    >>> rev = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
-    >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = "Yardstick",  raw = True)
+    >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> list (r.name for r in sorted (rev.regattas))
     [u'Optimist', u'Yardstick']
 
