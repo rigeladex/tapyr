@@ -62,6 +62,7 @@
 #     6-May-2010 (MG) `needs_header` added
 #     6-May-2010 (MG) `widget` removed
 #    12-May-2010 (MG) Automatic `legend` creation added
+#    13-May-2010 (MG) `Link_Inline_Description.role_name` added
 #    ««revision-date»»···
 #--
 
