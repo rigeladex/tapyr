@@ -56,6 +56,7 @@
 #    06-May-2010 (MG) `s/_linked_instances/linked_instances/g`
 #    12-May-2010 (MG) `setup_javascript` changed
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    13-May-2010 (MG) UI-Display editing style continued
 #    ««revision-date»»···
 #--
 
@@ -74,13 +75,14 @@ class Link_Inline (TFL.Meta.Object) :
 
     request_data = dict ()
 
-    def __init__ ( self, inline_description, form_cls, owner = None) :
+    def __init__ (self, inline_description, form_cls, owner = None) :
         self.name               = form_cls.et_man._etype.type_base_name
         self.inline_description = inline_description
         self.form_cls           = form_cls
         self.owner              = owner
         if owner :
             self.prefix         = "__".join ((owner.prefix, self.name))
+            self.prefix_pat     = "%s-M%%d" % (self.prefix, )
         self.errors             = GTW.Form.Error_List ()
         max_count               = getattr (form_cls.et_man, "max_count", None)
         if max_count :
@@ -100,6 +102,10 @@ class Link_Inline (TFL.Meta.Object) :
         return self.errors
     # end def get_errors
 
+    def role_instance (self, link) :
+        return getattr (link, self.role_name)
+    # end def role_instance
+
     @TFL.Meta.Once_Property
     def linked_instances (self) :
         if self.owner.instance :
@@ -113,6 +119,20 @@ class Link_Inline (TFL.Meta.Object) :
         return GTW.Media.from_list \
             ([m for m in (self.media, self.form_cls.Media) if m])
     # end def Media
+
+    def initial_pid_and_state (self, link, no) :
+        pid_name_pat   = "%s%%s___pid" % (self.prefix_pat % no, )
+        state_name_pat = "%s%%s___state" % (self.prefix_pat % no, )
+        role           = getattr (link, self.role_name)
+        result         = []
+        for inst, attr in ( (link, ""), (role, "__%s" % (self.role_name))) :
+            result.extend \
+                ( ( (inst.pid, pid_name_pat % ("", ))
+                  , ("L",      state_name_pat % ("", ))
+                  )
+                )
+        return result
+    # end def pid_and_state
 
     @TFL.Meta.Once_Property
     def prototype_form (self) :
@@ -151,8 +171,7 @@ class Link_Inline (TFL.Meta.Object) :
         count          = self.form_count
         form_cls       = self.form_cls
         prototype      = self.owner.prototype
-        prefix_pat     = "%s-M%%d" % (self.prefix, )
-        pid_pat        = "__".join ((prefix_pat, "_pid_a_state_"))
+        pid_pat        = "__".join ((self.prefix_pat, "_pid_a_state_"))
         result         = []
         ### find the links currently linked to the owner
         if owner.instance :
@@ -177,7 +196,7 @@ class Link_Inline (TFL.Meta.Object) :
             result.append \
                 (  form_cls
                       ( instance  = instance
-                      , prefix    = prefix_pat % no
+                      , prefix    = self.prefix_pat % no
                       , prototype = prototype
                       , parent    = self.owner
                       )
@@ -262,7 +281,6 @@ class Collection_Inline (Link_Inline) :
         count          = self.form_count
         form_cls       = self.form_cls
         prototype      = self.owner.prototype
-        prefix_pat     = "%s-M%%d" % (self.prefix, )
         result         = []
         instances      = self.linked_instances.all ()
         for no in xrange (count) :
@@ -273,7 +291,7 @@ class Collection_Inline (Link_Inline) :
             result.append \
                 (  form_cls
                       ( instance  = instance
-                      , prefix    = prefix_pat % no
+                      , prefix    = self.prefix_pat % no
                       , prototype = prototype
                       , parent    = self.owner
                       )

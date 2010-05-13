@@ -124,6 +124,7 @@ def create_nav (scope) :
                               )
                           )
                       )
+                  , GTW.OMP.Auth.Nav.Admin.Account
                   ##   GTW.OMP.PAP.Nav.Admin.Address
                   ## , GTW.OMP.PAP.Nav.Admin.Email
                   ## , GTW.OMP.PAP.Nav.Admin.Person
@@ -133,7 +134,6 @@ def create_nav (scope) :
                   ## , GTW.OMP.PAP.Nav.Admin.Phone
 
                   ## , GTW.OMP.Auth.Nav.Admin.Account
-                  ## , GTW.OMP.Auth.Nav.Admin.Group
                   ## , GTW.OMP.Auth.Nav.Admin.Account_in_Group
 
                   ## , GTW.OMP.EVT.Nav.Admin.Event
@@ -210,9 +210,9 @@ def _main (cmd) :
     p = scope.PAP.Person (u"Glücklos",  u"Eddy", raw = True)
     p = scope.PAP.Person (u"Glück",     u"Martin", raw = True)
     a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg", u"Austria", raw = True)
-    scope.PAP.Person_has_Address (p, a)
+    scope.PAP.Person_has_Address (p, a, desc = "Home")
     a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
-    scope.PAP.Person_has_Address (p, a)
+    scope.PAP.Person_has_Address (p, a, desc = "Wien")
     app.run_development_server \
         ( port                 = cmd.port
         , use_debugger         = cmd.debug

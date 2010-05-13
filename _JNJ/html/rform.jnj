@@ -253,7 +253,14 @@
     <tbody>
       {%- for link in inline.linked_instances %}
       <tr class="ui-entity-container">
-        <td class="ui-display">{{ link.right.ui_display }}</td>
+        <td class="ui-display">
+          {%- set role = inline.role_instance (link) -%}
+          {%- for pas, name in inline.initial_pid_and_state (link, loop.index0) %}
+            {{- X.input.hidden ( value = pas, name  = name) -}}
+          {% endfor -%}
+            {{ role.ui_display }} ({{ link.desc }})
+        </td>
+        <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
         <td class="zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
         <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
       </tr>

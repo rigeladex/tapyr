@@ -29,6 +29,9 @@
 **    25-Feb-2010 (MG) Creation (based on model_edit_ui.js)
 **    27-Feb-2010 (MG) `_form_submit` renumeration of forms added
 **    12-May-2010 (MG) UI-Display style started
+**    12-May-2010 (MG) `s/lid/pid/g`
+**    13-May-2010 (MG) Pid and state are now two separate fields, UI-display
+**                     continued
 **    ««revision-date»»···
 **--
 */
@@ -79,7 +82,7 @@
         }
       , { name           : "rename"
         , href           : "#rename"
-        , add_to_inline  : "lid"
+        , add_to_inline  : "pid"
         , default_state  : 0
         , states         :
             [ { name     : "unlock"
@@ -98,7 +101,7 @@
         }
       , { name           : "copy"
         , title          : _("Copy")
-        , add_to_inline  : "lid"
+        , add_to_inline  : "pid"
         , href           : "#copy"
         , enabled        : "cur_count < max_count"
         , icon           : "ui-icon-copy"
@@ -106,7 +109,7 @@
         }
       , { name           : "clear"
         , title          : _("Clear")
-        , add_to_inline  : "lid"
+        , add_to_inline  : "pid"
         , href           : "#clear"
         , enabled        : "true"
         , icon           : "ui-icon-circle-close"
@@ -172,13 +175,21 @@
         var $inputs = $form.find       (":input")
                            .attr       ("value", "")
                            .removeAttr ("disabled");
-        /* set the state of ALL inlines to empty */
-        $form.find ("input[name$=-instance_state]").attr ("value", "");
-        /* set lid/state of ALL lines to New */
-        $form.find ("input[name$=__lid_a_state_]").attr ("value", ":N");
-        evt.preventDefault         ();
-        evt.stopPropagation        ();
-        $inputs.eq (0).focus       ();
+        this._clear_internal_fields    ($form, true);
+        evt.preventDefault             ();
+        evt.stopPropagation            ();
+        $inputs.eq (0).focus           ();
+      }
+    , _clear_internal_fields : function ($form, state)
+      {
+        /* set pid's to undefined, the state to N (new) */
+        $form.find ("input[name$=___pid_]"  ).attr ("value", "");
+        $form.find ("input[name$=___state_]").attr ("value", "N");
+        if (state)
+          {
+            /* set the state of ALL inlines to empty */
+            $form.find ("input[name$=__instance_state]").attr ("value", "");
+          }
       }
     , _copy_inline   : function (evt)
       {
@@ -186,14 +197,11 @@
         var $inline = $(evt.currentTarget).parents (".inline-root");
         var $source = $(evt.target).parents (".inline-instance");
         var  $new   = self._copy_form ($inline);
-        self._restore_form_state ($new, self._save_form_state ($source));
-        /* set the state of ALL inlines to empty */
-        $new.find ("input[name$=-instance_state]").attr ("value", "");
-        /* set lid/state of ALL lines to New */
-        $new.find ("input[name$=__lid_a_state_]").attr ("value", ":N");
-        self._update_button_states ($inline);
-        evt.preventDefault         ();
-        evt.stopPropagation        ();
+        self._restore_form_state      ($new, self._save_form_state ($source));
+        this._clear_internal_fields   ($new, true);
+        self._update_button_states    ($inline);
+        evt.preventDefault            ();
+        evt.stopPropagation           ();
       }
     , _copy_form     : function ($inline)
       {
@@ -226,12 +234,11 @@
             }
         }
         /* we are ready to add the new block at the end */
-        this._setup_buttons        ($new, $inline.data ("buttons"), $inline);
-        $prototype.parent          ().append ($new);
-        this._update_button_states ($inline);
-        this._setup_completers     ($inline);
-        /* set lid/state of ALL lines to New */
-        $new.find ("input[name$=__lid_a_state_]").attr ("value", ":N");
+        this._setup_buttons         ($new, $inline.data ("buttons"), $inline);
+        $prototype.parent           ().append ($new);
+        this._update_button_states  ($inline);
+        this._setup_completers      ($inline);
+        this._clear_internal_fields ($new, false);
         return $new;
       }
     , _delete_inline : function (evt)
@@ -250,14 +257,12 @@
             var $link          = $form.find  ("a[href=" + button.href + "]");
             var $button        = $link.find  ("span");
             var $elements      = $form.find  (":input:not([type=hidden])");
-            var $l_a_s         = self._lid_for_inline ($inline, $form);
-            var  lid           = $l_a_s.attr ("value").split (":") [0];
-            $elements.attr        ("disabled","disabled")
-                     .addClass    ("ui-state-disabled");
-            $link.attr            ("title", _T (button.states [1].title));
-            $button.removeClass   (button.states [0].icon)
-                   .addClass      (button.states [1].icon);
-            $l_a_s.attr ("value", [lid, "U"].join (":"));
+            $elements.attr         ("disabled","disabled")
+                     .addClass     ("ui-state-disabled");
+            $link.attr             ("title", _T (button.states [1].title));
+            $button.removeClass    (button.states [0].icon)
+                   .addClass       (button.states [1].icon);
+            self._state_for_inline ($inline, $form).attr ("value", "U");
         }
         $inline.data ("cur_count", $inline.data ("cur_count") - 1);
         self._update_button_states ($inline);
@@ -324,11 +329,11 @@
         $this.clone ().insertAfter ($this).attr ("disabled","disabled");
         $this.hide  ();
       }
-    , _lid_for_inline : function ($inline, $form)
+    , _pid_for_inline : function ($inline, $form)
       {
         return $form.find
           ( "[name^=" + $inline.data ("options").prefix + "]"
-          + "[name$=__lid_a_state_]"
+          + "[name$=___pid_]"
           );
       }
     , _restore_form_state : function ($form, state)
@@ -380,8 +385,8 @@
         if (! $first_tag.length)
             $first_tag = $element;
         var  first_tag = $first_tag.get (0).tagName.toLowerCase ();
-        var $l_a_s     = this._lid_for_inline ($inline, $inline_instance);
-        var  lid       = $l_a_s.attr ("value").split (":") [0];
+        var  pid       = this._pid_for_inline ($inline, $inline_instance)
+                             .attr ("value");
         if (first_tag == "tr")
           {
             var css_class = 'class="width-' + buttons.length + '-icons"';
@@ -422,16 +427,14 @@
     ,  _setup_di_inline : function (inline)
       {
         var $inline = $("." + inline.prefix);
-        var $edit   = $inline.find ("a[href=#edit]");
-        var $delete = $inline.find ("a[href=#delete]");
 
-        $edit.GTW_Button
+        $inline.find ("a[href=#edit]").GTW_Button
             ( { icon      : "ui-icon-pencil"
               , enabled   : function (btn)
                   { return true; }
               }
             );
-        $delete.GTW_Button
+        $inline.find ("a[href=#delete]").GTW_Button
             ( { states   :
                   [ { icon      : "ui-icon-trash"
                     , callback  : this._ui_delete_entity
@@ -446,13 +449,36 @@
               , initial_state : 0
               }
             );
+        $inline.find ("a[href=#copy]").GTW_Button
+            ( { icon      : "ui-icon-copy"
+              , enabled   : function (btn)
+                  { return true; }
+              }
+            );
+      }
+    , _state_for_inline : function ($inline, $form)
+      {
+        return $form.find
+          ( "[name^=" + $inline.data ("options").prefix + "]"
+          + "[name$=___state_]"
+          );
       }
     , _ui_delete_entity : function (evt, data)
       {
         var self = data.self;
-        $(evt.target).parents      (".ui-entity-container")
-                     .find         (".ui-display")
-                     .addClass     ("ui-state-disabled");
+        var $ui  = $(evt.target).parents (".ui-entity-container")
+                                .find    (".ui-display");
+        var state = "L";
+        if ($ui.hasClass ("ui-state-disabled"))
+          {
+            $ui.removeClass ("ui-state-disabled");
+          }
+        else
+          {
+            $ui.addClass    ("ui-state-disabled");
+            state = "U";
+          }
+        $ui.find ("input:hidden:first[name$=__state]").attr ("value", state);
       }
     , _setup_inline : function (inline)
       {
@@ -490,11 +516,9 @@
             (function ()
               {
                 var $this   = $(this);
-                self._setup_buttons ($this, buttons);
-                var $l_a_s = $this.find  ("input[name$=__lid_a_state_]");
-                if (  inline.initial_disabled
-                   && $l_a_s.attr ("value").split (":") [0]
-                   )
+                self._setup_buttons   ($this, buttons);
+                var $pid = $this.find ("input[name$=___pid_]");
+                if (inline.initial_disabled && $pid.attr ("value"))
                     $this.find (":input").attr ("disabled", "disabled");
               }
             );
@@ -510,17 +534,15 @@
         var $link          = $form.find  ("a[href=" + button.href + "]");
         var $button        = $link.find  ("span");
         var $elements      = $form.find  (":input:not([type=hidden])");
-        var $l_a_s         = self._lid_for_inline ($inline, $form);
-        var  lid           = $l_a_s.attr ("value").split (":") [0];
         var  new_state     = "L";
-        if (! lid)
+        if (! self._pid_for_inline ($inline, $form).attr ("value"))
         {
             new_state      = "N";
             $elements.removeAttr ("disabled")
         }
         $elements.removeClass ("ui-state-disabled");
         $inline.data ("cur_count", $inline.data ("cur_count") + 1);
-        $l_a_s.attr ("value", [lid, new_state].join (":"));
+        self._state_for_inline ($inline, $form).attr ("value", new_state);
         $link.attr                 ("title", _T (button.states [0].title));
         $button.removeClass        (button.states [1].icon)
                .addClass           (button.states [0].icon);
@@ -538,18 +560,17 @@
         var $button      = $link.find    ("span");
         var $elements    = $form.find    (":input");
         var  link_prefix = $inline.data ("options").prefix;
-        var name         = $form.find  ("input[name$=__lid_a_state_]").each
+        $form.find  ("input[name$=___state_]").each
           ( function () {
             var $this      = $(this);
-            var lid        = $this.attr ("value").split (":") [0];
             var name       = $this.attr ("name");
             var new_state  = "r"
-            if (name.split (field_no_pat) [0] == link_prefix)
+            if ($this.hasClass ("mom-link"))
             {
                 /* this is the state field of the link */
                 new_state     = "R";
             }
-            $this.attr ("value", [lid, new_state].join (":"));
+            $this.attr ("value", new_state);
           }).attr ("name");
         $form.data                 ("_state", self._save_form_state ($form));
         $elements.removeAttr       ("disabled")

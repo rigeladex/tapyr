@@ -27,6 +27,7 @@
 **
 ** Revision Dates
 **    24-Feb-2010 (MG) Creation
+**    12-May-2010 (MG) `s/lid/pid/g`
 **    ««revision-date»»···
 **--
 */
@@ -94,7 +95,7 @@
             pf      = pf + "__" + options.field_postfix;
         pf          = pf + "__"
         jQuery.getJSON
-            ( options.complete_url, {"lid" : item.lid}
+            ( options.complete_url, {"pid" : item.pid}
             , function (data, textStatus)
               {
                   if (textStatus == "success")

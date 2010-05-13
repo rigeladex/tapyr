@@ -48,6 +48,8 @@
 #     6-Mar-2010 (MG) Error handling changed
 #    11-Mar-2010 (MG) Use new `Attribute_Inline.instance_as_raw`
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    13-May-2010 (MG) `Pid_and_State` splitted into two fields, special css
+#                     style applied to teh electric fields
 #    ««revision-date»»···
 #--
 
@@ -60,8 +62,21 @@ import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
-class Pid_and_State_Field (GTW.Form.Field) :
-    """Stores the state of the line form and the pid of edited object/link."""
+class Pid_Field (GTW.Form.Field) :
+    """Stores the pid of edited entity."""
+
+    hidden   = True
+    electric = True
+    widget   = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
+
+    def get_raw (self, form, defaults = {}) :
+        return getattr (form.instance, "pid", "")
+    # end def get_raw
+
+# end class Pid_Field
+
+class State_Field (GTW.Form.Field) :
+    """Stores the state of the inline form."""
 
     hidden   = True
     electric = True
@@ -69,24 +84,26 @@ class Pid_and_State_Field (GTW.Form.Field) :
 
     def get_raw (self, form, defaults = {}) :
         state = "N"
-        pid   = getattr (form.instance, "pid", "")
-        if pid :
+        if form.instance :
             state = "L"
         elif form.prototype :
             state = "P"
-        return "%s:%s" % (pid, state)
+        return state
     # end def get_raw
 
-# end class Pid_and_State_Field
+# end class State_Field
 
 class M_Inline_Instance (GTW.Form.MOM._Instance_.__class__) :
     """Add additional internal fields"""
 
     def add_internal_fields (cls, et_man) :
         cls.__m_super.add_internal_fields (et_man)
-        cls.pid_and_state_field = Pid_and_State_Field \
-            ("_pid_a_state_", et_man = et_man)
-        cls.hidden_fields.append (cls.pid_and_state_field)
+        cls.pid_field   = Pid_Field   \
+            ("_pid_",   et_man = et_man, css_class = cls.electric_fields_css)
+        cls.state_field = State_Field \
+            ("_state_", et_man = et_man, css_class = cls.electric_fields_css)
+        cls.hidden_fields.append (cls.pid_field)
+        cls.hidden_fields.append (cls.state_field)
     # end def add_internal_fields
 
 # end class M_Inline_Instance
@@ -94,7 +111,9 @@ class M_Inline_Instance (GTW.Form.MOM._Instance_.__class__) :
 class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     """Base class for form which are part of a outer form."""
 
-    __metaclass__ = M_Inline_Instance
+    __metaclass__       = M_Inline_Instance
+
+    electric_fields_css = "mom-object"
 
     def __init__ ( self, * args, ** kw) :
         self.prototype = kw.pop ("prototype", False)
@@ -103,10 +122,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     @TFL.Meta.Once_Property
     def pid (self) :
-        pid, state = self.request_data.get \
-            (self.get_id (self.pid_and_state_field), ":X").split (":")
-        self.state = state
-        return pid
+        return self.request_data.get (self.get_id (self.pid_field), "")
     # end def pid
 
     def _prepare_form (self) :
@@ -116,10 +132,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     @TFL.Meta.Once_Property
     def state (self) :
-        pid, state = self.request_data.get \
-            (self.get_id (self.pid_and_state_field), ":X").split (":")
-        self.pid   = pid
-        return state
+        return self.request_data.get (self.get_id (self.state_field), "X")
     # end def state
 
 # end class _Inline_Instance_
@@ -154,6 +167,8 @@ class Id_Attribute_Inline_Instance (_Inline_Instance_) :
 
 class Link_Inline_Instance (_Inline_Instance_) :
     """A form which handles an inline link"""
+
+    electric_fields_css = "mom-link"
 
     def create_object (self, * args, ** kw) :
         state = self.state

@@ -173,6 +173,7 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
               ( "html/rform.jnj, inline_ui_display_table")
         )
     legend       = None
+    role_name    = None
     css_class    = "inline-link"
 
     max_count    = 256 ### seems to be more than enough for a web-app
@@ -207,9 +208,13 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                 , suffix          = et_man.type_base_name
                 , field_attrs     = self.field_attrs
                 )
+            other_roles = \
+                [r for r in link_et_man.Roles if not r is role_attr_kind]
+            if not self.role_name :
+                if len (other_roles) > 1 :
+                    raise TypeError ("Cannot determine the main role!")
+                self.role_name = other_roles [0].role_name
             if not self.legend :
-                other_roles = \
-                    [r for r in link_et_man.Roles if not r is role_attr_kind]
                 if len (other_roles) == 1 and other_roles [0].auto_cache :
                     ack = getattr (et_man, other_roles [0].auto_cache.attr_name)
                     self.legend = TFL.I18N._T (ack.ui_name)
