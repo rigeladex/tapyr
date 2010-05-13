@@ -466,8 +466,8 @@
     , _ui_delete_entity : function (evt, data)
       {
         var self = data.self;
-        var $ui  = $(evt.target).parents (".ui-entity-container")
-                                .find    (".ui-display");
+        var $container = $(evt.target).parents (".ui-entity-container")
+        var $ui        = $container.find       (".ui-display");
         var state = "L";
         if ($ui.hasClass ("ui-state-disabled"))
           {
@@ -478,7 +478,8 @@
             $ui.addClass    ("ui-state-disabled");
             state = "U";
           }
-        $ui.find ("input:hidden:first[name$=__state]").attr ("value", state);
+        $container.find ("input:hidden:first[name$=__state_]")
+                  .attr ("value", state);
       }
     , _setup_inline : function (inline)
       {

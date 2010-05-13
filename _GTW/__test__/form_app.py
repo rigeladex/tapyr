@@ -119,8 +119,9 @@ def create_nav (scope) :
                           ( FGD (WF ("primary"), render_mode = "table")
                           , LID
                               ( "GTW.OMP.PAP.Person_has_Address"
-                              , render_mode = "ui_display_table"
-                              , collapsable = True
+                              , render_mode      = "ui_display_table"
+                              , ui_display_attrs = ("desc", "address")
+                              , collapsable      = True
                               )
                           )
                       )

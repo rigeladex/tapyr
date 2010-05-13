@@ -68,7 +68,7 @@
               var self     = evt.data;
               self._update_icon (evt, true);
               return false;
-            }).addClass ("ui-icon");
+            }).addClass ("ui-icon ui-helper-reset");
         this._update_icon (undefined, false);
       }
     , _update_icon : function (evt, trigger)

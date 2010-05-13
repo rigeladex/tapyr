@@ -383,9 +383,15 @@ div.Inline-UI-Display h3 a
     { margin          : 0 0 0 20px
     ; text-decoration : none
     }
+div.Inline-UI-Display table a
+    { margin          : 0
+    }
 div.Inline-UI-Display table
-    { width           : 100%
+    { width           : auto
     }
 .zero-width
     { width           : 0px
+    }
+.first-button
+    { padding-left    : 1em
     }

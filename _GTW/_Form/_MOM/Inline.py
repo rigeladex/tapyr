@@ -83,6 +83,7 @@ class Link_Inline (TFL.Meta.Object) :
         if owner :
             self.prefix         = "__".join ((owner.prefix, self.name))
             self.prefix_pat     = "%s-M%%d" % (self.prefix, )
+            self._initial_pids  = set ()
         self.errors             = GTW.Form.Error_List ()
         max_count               = getattr (form_cls.et_man, "max_count", None)
         if max_count :
@@ -121,18 +122,21 @@ class Link_Inline (TFL.Meta.Object) :
     # end def Media
 
     def initial_pid_and_state (self, link, no) :
-        pid_name_pat   = "%s%%s___pid" % (self.prefix_pat % no, )
-        state_name_pat = "%s%%s___state" % (self.prefix_pat % no, )
-        role           = getattr (link, self.role_name)
-        result         = []
-        for inst, attr in ( (link, ""), (role, "__%s" % (self.role_name))) :
-            result.extend \
-                ( ( (inst.pid, pid_name_pat % ("", ))
-                  , ("L",      state_name_pat % ("", ))
-                  )
-                )
-        return result
-    # end def pid_and_state
+        if link not in self._initial_pids :
+            self._initial_pids.add (link)
+            pid_name_pat   = "%s%%s___pid_"   % (self.prefix_pat % no, )
+            state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
+            role           = getattr (link, self.role_name)
+            result         = []
+            for inst, attr in ( (link, ""), (role, "__%s" % (self.role_name))) :
+                result.extend \
+                    ( ( (inst.pid, pid_name_pat % (attr, ))
+                      , ("L",      state_name_pat % (attr, ))
+                      )
+                    )
+            return result
+        return ()
+    # end def initial_pid_and_state
 
     @TFL.Meta.Once_Property
     def prototype_form (self) :
@@ -231,6 +235,16 @@ class Link_Inline (TFL.Meta.Object) :
         for lform in self.forms :
             lform.recursively_run ("setup_raw_attr_dict", lform)
     # end def setup_raw_attr_dict
+
+    def ui_display (self, link) :
+        for attr in self.ui_display_attrs :
+            value = getattr (link, attr)
+            if hasattr (value, "ui_display") :
+                yield value.ui_display
+            else :
+                kind = getattr (link.__class__, attr)
+                yield kind.get_raw (link)
+    # end def ui_display
 
     def update_object (self, form) :
         for lform in self.forms :
