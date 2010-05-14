@@ -361,10 +361,9 @@ tr.inline-instance
 
 /* UI-Display Inline Styling */
 div.Inline-UI-Display h3
-    { display          : block
-    ; position         : relative
+    { position         : relative
     ; margin           : 0
-    ;
+    ; text-align       : center
     }
 div.Inline-UI-Display h3 span.ui-icon
     { position         : absolute
@@ -376,12 +375,15 @@ div.Inline-UI-Display h3 a.add
     { position         : absolute
     ; top              : 50%
     ; right            : 5px
-    ; margin-top       : -0.5em
+    ; margin-top       : -8px
     }
 
 div.Inline-UI-Display h3 a
-    { margin          : 0 0 0 20px
-    ; text-decoration : none
+    { margin           : 0 0 0 23px
+    ; text-decoration  : none
+    ; border           : 0px
+    ; background-color : transparent
+    ; font-size        : 100%
     }
 div.Inline-UI-Display table a
     { margin          : 0

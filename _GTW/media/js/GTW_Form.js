@@ -427,6 +427,18 @@
     ,  _setup_di_inline : function (inline)
       {
         var $inline = $("." + inline.prefix);
+        var $m2m_range = $inline.find ("input.many-2-many-range:first");
+        if ($m2m_range.length)
+          {
+            var  m2m_range = $m2m_range.attr   ("value").split (":");
+            var  cur_count = parseInt (m2m_range [1]);
+            var  max_count = parseInt (m2m_range [2]);
+            $inline.data ("$m2m_range", $m2m_range);
+            $inline.data ("min_count",  parseInt (m2m_range [0]));
+            $inline.data ("cur_count",  cur_count);
+            $inline.data ("cur_number", cur_count);
+            $inline.data ("max_count",  max_count);
+          }
 
         $inline.find ("a[href=#edit]").GTW_Button
             ( { icon      : "ui-icon-pencil"
@@ -455,6 +467,26 @@
                   { return true; }
               }
             );
+        $inline.find ("a[href=#add]").GTW_Button
+            ( { icon      : "ui-icon-circle-plus"
+              , enabled   : function (btn)
+                  { return true; }
+              }
+            );
+        $inline.find ("span.ui-icon-circle-triangle-s").GTW_Button
+            ( { states   :
+                  [ { icon      : "ui-icon-circle-triangle-s"
+                    , callback  : this._ui_collapse
+                    }
+                  , { icon      : "ui-icon-circle-triangle-e"
+                    , callback  : this._ui_collapse
+                    }
+                  ]
+              , data      : { self : this }
+              , enabled   : function (btn)
+                  { return true; }
+              }
+            );
       }
     , _state_for_inline : function ($inline, $form)
       {
@@ -463,9 +495,33 @@
           + "[name$=___state_]"
           );
       }
+    , _ui_collapse      : function (evt, data)
+      {
+        var self       = data.self;
+        var $container = $(evt.target).parents (".Inline-UI-Display");
+        var $header    = $container.find       ("h3 a[href=#hide]");
+        var  header    = $header.data          ("content");
+        if (! header)
+          {
+            header = $header.html ();
+            $header.data          ("content", header);
+          }
+        var $body      = $container.find       ("table");
+        if ($(evt.target).hasClass ("ui-icon-circle-triangle-e"))
+          {
+            var count = $container.data ("cur_count");
+            $body.slideUp   ();
+            $header.html    (header + " (" + count + ")");
+          }
+        else
+          {
+            $body.slideDown ();
+            $header.html    (header);
+          }
+      }
     , _ui_delete_entity : function (evt, data)
       {
-        var self = data.self;
+        var self       = data.self;
         var $container = $(evt.target).parents (".ui-entity-container")
         var $ui        = $container.find       (".ui-display");
         var state = "L";

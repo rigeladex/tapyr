@@ -243,6 +243,8 @@
         <span class="ui-icon ui-icon-circle-triangle-s"></span>
         <a href="#add" class="add">{{ GTW._T ("Add") }}</a>
         <a href="#hide">
+      {%- else %}
+        <a href="#add" class="add">{{ GTW._T ("Add") }}</a>
       {%- body %}
         {{- GTW._T (inline.legend)|safe -}}
       {%- tail -%}
