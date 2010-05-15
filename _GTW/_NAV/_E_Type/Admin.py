@@ -56,6 +56,7 @@
 #     5-May-2010 (MG) `_get_child` support for `child_attrs` added
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    15-May-2010 (MG) `Form` started
+#    15-May-2010 (MG) `Fields` added
 #    ««revision-date»»···
 #--
 
@@ -236,11 +237,40 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 inline = \
                     [ig for ig in form.inline_groups if ig.prefix == prefix]
                 if len (inline) == 1:
-                    handler.context ["form"] = inline [0].prototype_form
+                    context ["form"] = inline [0].prototype_form
                     return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Form
+
+    class Fields (_Cmd_) :
+        """Return the values of the form fields for an instance."""
+
+        def rendered (self, handler, template = None) :
+            context = handler.context
+            request = handler.request
+            result  = None
+            if request.method == "GET" :
+                pid    = request.req_data.get ("pid")
+                form   = self.Form (self.abs_href, None)
+                prefix = self.forms [0]
+                inline = \
+                    [ig for ig in form.inline_groups if ig.prefix == prefix]
+                if len (inline) == 1:
+                    form_cls = inline [0].form_cls
+                    try :
+                        obj = form_cls.et_man.pid_query (pid)
+                    except LookupError :
+                        request.Error = \
+                            ( _T ("%s `%s` doesn't exist!")
+                            % (_T (E_Type.ui_name), pid)
+                            )
+                        raise HTTP.Error_404 (request.path, request.Error)
+                    return GTW.Form.MOM.Javascript.Completer._send_result \
+                        (form_cls, handler, obj)
+        # end def rendered
+
+    # end class Fields
 
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
@@ -346,6 +376,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         ( change    = (Changer,   "args")
         , complete  = (Completer, "forms")
         , completed = (Completed, "forms")
+        , fields    = (Fields,    "forms")
         , form      = (Form,      "forms")
         )
     child_attrs     = {}

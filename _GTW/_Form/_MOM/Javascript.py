@@ -36,6 +36,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     6-May-2010 (MG) `Field_Completer.js_on_ready` urls fixed
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    15-May-2010 (MG) `_form_as_dict` factored
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class _MOM_Completer_ (GTW.Form.Javascript._Completer_) :
         try :
             obj  = et_man.pid_query (pid)
         except IndexError, exc :
-            error = (_T("%s `%s` existiert nicht!") % (_T(et_man.ui_name), id))
+            error = (_T("%s `%s` does not exist!") % (_T(et_man.ui_name), id))
             raise self.top.HTTP.Error_404 (request.path, error)
         return self._send_result (form, handler, obj)
     # end def complete
@@ -206,12 +207,20 @@ class Completer (_MOM_Completer_) :
             )
     # end def _send_suggestions
 
+    @TFL.Meta.Class_and_Instance_Method
     def _send_result (self, form_cls, handler, obj) :
-        form = form_cls (obj)
-        data = dict ((f.name, form.get_raw (f)) for f in form.fields)
-        data ["ui_display"] = getattr (form.instance, "ui_display", u"")
+        data                = self._form_as_dict (form_cls (obj))
+        data ["ui_display"] = getattr (obj, "ui_display", u"")
         return handler.json (data)
     # end def _send_result
+
+    @classmethod
+    def _form_as_dict (cls, form) :
+        data = dict ((f.name, form.get_raw (f)) for f in form.fields)
+        for ai in form.inline_fields :
+            data [ai.link_name] = cls._form_as_dict (ai.form)
+        return data
+    # end def _form_as_dict
 
     @property
     def triggers (self) :

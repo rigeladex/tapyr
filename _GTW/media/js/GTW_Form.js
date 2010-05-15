@@ -506,6 +506,13 @@
                   { return true; }
               }
             );
+
+        $inline.find (".ui-entity-container").each (function () {
+            var $this = $(this);
+            var $pid  = $this.find ("input[name$=___pid_].mom-link");
+            var fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
+            $this.attr ("id", inline.prefix + "-" + fo_no);
+        });
       }
     , _state_for_inline : function ($inline, $form)
       {
@@ -606,19 +613,50 @@
             self._ui_show_form_for ($inline, no, pid, copy);
         return false;
       }
+    , _ui_set_form_values : function ($entity_root, prefix, data)
+      {
+        for (var key in data)
+          {
+            var name  = prefix + "__" + key;
+            var value = data [key];
+            if (typeof value == "object")
+                this._ui_set_form_values ($entity_root, name, value)
+            else
+                $("[name=" + name + "]").attr ("value", value);
+          }
+      }
     , _ui_show_form_for : function ($inline, no, pid, copy)
       {
          var $new    = this._copy_form_inner ($inline, no)
          var $dialog = this.element.data ("$dialog");
          $dialog.dialog
            ( "option"
-           , { title   : "Edit"
-             , width   : "auto"
+           , { title    : "Edit 1"
+             , width    : "auto"
              }
            );
          $dialog.empty ().append ($new);
+         if (pid)
+           {
+             var  prefix      = $inline.data ("prefix") + "-M" + no;
+             var $entity_root = $("#" + prefix);
+             if (! $entity_root.hasClass ("mom-populated"))
+               {
+                 var url  = $inline.data ("base_url")
+                          + "fields/" + $inline.data ("prefix");
+                 var self = this;
+                 $.ajax
+                   ( { url      : url
+                     , type     : "GET"
+                     , data     : { pid : pid}
+                     , dataType : "json"
+                     , success  : function (data, textStatus, xmlreq)
+                       {self._ui_set_form_values ($entity_root, prefix, data);}
+                     }
+                   );
+               }
+           }
          $dialog.dialog          ("open");
-
       }
     , _setup_inline : function (inline)
       {
