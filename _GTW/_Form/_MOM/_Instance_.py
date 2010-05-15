@@ -77,6 +77,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     3-May-2010 (MG) Use `e_type.ui_name` instance on `e_type.type_base_name`
 #     5-May-2010 (MG) `render_mode_description` added
+#    15-May-2010 (MG) `css_class`, `widget`, and `default_render_mode` added
 #    ««revision-date»»···
 #--
 
@@ -217,6 +218,11 @@ class _Instance_ (GTW.Form._Form_) :
     ignore_fields           = ()
     _create_update_executed = False
     raw_attr_dict           = {}
+
+    css_class               = "Object-Editor"
+    widget                  = GTW.Form.Widget_Spec ("html/form.jnj, object")
+
+    default_render_mode     = "div_seq"
 
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( div_seq = GTW.Form.Widget_Spec

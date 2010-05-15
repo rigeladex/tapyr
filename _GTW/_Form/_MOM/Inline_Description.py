@@ -63,6 +63,7 @@
 #     6-May-2010 (MG) `widget` removed
 #    12-May-2010 (MG) Automatic `legend` creation added
 #    13-May-2010 (MG) `Link_Inline_Description.role_name` added
+#    15-May-2010 (MG) Bug in `Link_Inline_Description` fixed
 #    ««revision-date»»···
 #--
 
@@ -213,9 +214,7 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                 )
             other_roles = \
                 [r for r in link_et_man.Roles if not r is role_attr_kind]
-            if not self.role_name :
-                if len (other_roles) > 1 :
-                    raise TypeError ("Cannot determine the main role!")
+            if not self.role_name and len (other_roles) == 1:
                 r = other_roles [0]
                 self.role_name = \
                     r.role_name if r.role_name in inline_form.fields else r.name
@@ -231,9 +230,6 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                         ]
                 attrs.extend (k.attr.name for k in link_et_man.user_attr)
                 self.ui_display_attrs = attrs
-    # end def ui_display_attrs
-
-
             return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 

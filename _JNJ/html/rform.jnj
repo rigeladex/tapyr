@@ -258,8 +258,8 @@
         {{- GTW.render_fofi_widget
           (inline, "link_ui_display", inline, link, loop.index0)
         -}}
-        <td class="first-button zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
-        <td class="zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
+        <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
+        <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
         <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
       </tr>
       {% endfor -%}
@@ -271,15 +271,15 @@
 {%- macro link_ui_display (inline, link, index) -%}
   {%- for value in inline.ui_display (link) %}
     <td class="ui-display">
-      {%- for pas, name in inline.initial_pid_and_state (link, index) %}
-        {{- X.input.hidden ( value = pas, name  = name) -}}
+      {%- for pas, name, css in inline.initial_pid_and_state (link, index) %}
+        {{- X.input.hidden ( value = pas, name  = name, class= css) -}}
       {% endfor -%}
         {{- value -}}
     </td>
   {% endfor -%}
 {%- endmacro -%} {#- link_ui_display -#}
 
-{%- macro object (fo) -%}
+{%- macro object (fo, render_mode = None) -%}
   {#- Create a form for a form-object `fo` -#}
   {%- set object_caller = kwargs.pop ("caller", None) -%}
   {%- set cancel_href   = kwargs.pop ("cancel_href", fo.kw.cancel_href) -%}
@@ -301,7 +301,10 @@
       , ** kwargs
       )
  -%}
-   {{ GTW.render_fofi_widget (fo, "aid_object", fo) }}
+   {{ GTW.render_fofi_widget
+        (fo, "aid_object", fo, render_mode = render_mode)
+   }}
+    <div id="form-dialog"></div>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 {#- __END__ jinja template: JNJ/html.rform.jnj -#}

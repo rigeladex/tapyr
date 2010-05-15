@@ -30,6 +30,7 @@
 #    29-Jan-2010 (MG) Use `Widget_Spec` instead of plain text
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #     3-May-2010 (MG) New form handling implemented
+#    15-May-2010 (MG) `css_class`, `widget`, and `default_render_mode` removed
 #    ««revision-date»»···
 #--
 
@@ -50,11 +51,6 @@ class Instance (GTW.Form.MOM._Instance_) :
        Instance of this class are always the top level form and can never be
        used as inlines.
     """
-
-    css_class               = "Object-Editor"
-    widget                  = GTW.Form.Widget_Spec ("html/form.jnj, object")
-
-    default_render_mode     = "div_seq"
 
     def __init__ (self, action, instance = None, ** kw) :
         self.action = action

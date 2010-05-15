@@ -55,6 +55,7 @@
 #     3-May-2010 (MG) `Admin.Changer`: support for `calcel` submit added
 #     5-May-2010 (MG) `_get_child` support for `child_attrs` added
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    15-May-2010 (MG) `Form` started
 #    ««revision-date»»···
 #--
 
@@ -220,6 +221,37 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Deleter
 
+    class Form (_Cmd_) :
+        """Generate the html code for editing of an inline on request."""
+
+        template = "dynamic_form"
+
+        def rendered (self, handler, template = None) :
+            context = handler.context
+            request = handler.request
+            result  = None
+            if request.method == "GET" :
+                form   = self.Form (self.abs_href, None)
+                prefix = self.forms [0]
+                inline = \
+                    [ig for ig in form.inline_groups if ig.prefix == prefix]
+                if len (inline) == 1:
+                    inline   = inline [0]
+                    req_data = handler.request.req_data
+                    instance = None
+                    pid      = req_data ["pid"]
+                    if pid :
+                        instance = inline.form_cls.et_man.pid_query (pid)
+                    iform    = inline.form_cls \
+                        ( instance = instance
+                        , prefix   = inline.prefix_pat % req_data ["form_no"]
+                        )
+                    handler.context ["form"] = iform
+                    return self.__super.rendered (handler, template)
+        # end def rendered
+
+    # end class Form
+
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
            E_Type, e.g., displayed as one line of a table.
@@ -324,6 +356,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         ( change    = (Changer,   "args")
         , complete  = (Completer, "forms")
         , completed = (Completed, "forms")
+        , form      = (Form,      "forms")
         )
     child_attrs     = {}
     def _get_child (self, child, * grandchildren) :

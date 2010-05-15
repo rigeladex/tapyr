@@ -31,6 +31,7 @@
 #    18-Jan-2010 (CT) `get_std_template` added; s/Error_Templates/Template_Map/
 #    29-Jan-2010 (CT) `get_template` changed to use `Template_Map`
 #    19-Feb-2010 (CT) `error_405` added
+#    14-May-2010 (MG) `dynamic_form` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,7 @@ class Templateer (TFL.Meta.Object) :
         , calendar_day                 = "html/cal/day.jnj"
         , calendar_week                = "html/cal/week.jnj"
         , default                      = "html/error.jnj"
+        , dynamic_form                 = "html/dynamic_form.jnj"
         , e_type_admin                 = "html/e_type_admin.jnj"
         , e_type_aggregator            = "html/e_type_aggregator.jnj"
         , e_type_change                = "html/e_type_change.jnj"

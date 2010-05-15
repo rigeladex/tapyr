@@ -82,7 +82,7 @@ class Link_Inline (TFL.Meta.Object) :
         self.owner              = owner
         if owner :
             self.prefix         = "__".join ((owner.prefix, self.name))
-            self.prefix_pat     = "%s-M%%d" % (self.prefix, )
+            self.prefix_pat     = "%s-M%%s" % (self.prefix, )
             self._initial_pids  = set ()
         self.errors             = GTW.Form.Error_List ()
         max_count               = getattr (form_cls.et_man, "max_count", None)
@@ -128,10 +128,13 @@ class Link_Inline (TFL.Meta.Object) :
             state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
             role           = getattr (link, self.role_name)
             result         = []
-            for inst, attr in ( (link, ""), (role, "__%s" % (self.role_name))) :
+            for inst, attr, css in \
+                    ( (link, "",                        "mom-link")
+                    , (role, "__%s" % (self.role_name), "mom-object")
+                    ) :
                 result.extend \
-                    ( ( (inst.pid, pid_name_pat % (attr, ))
-                      , ("L",      state_name_pat % (attr, ))
+                    ( ( (inst.pid, pid_name_pat   % (attr, ), css)
+                      , ("L",      state_name_pat % (attr, ), css)
                       )
                     )
             return result

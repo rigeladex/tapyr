@@ -132,6 +132,8 @@
           }
         this._setup_completers (this.element);
         this.element.find (":submit").bind ("click", this, this._form_submit);
+        var $dialog = $("#form-dialog").dialog ({ autoOpen : false});
+        this.element.data ("$dialog", $dialog);
       }
     , _add_button : function ($element, button, prepend)
       {
@@ -368,7 +370,7 @@
     , _save_form_state      : function ($form)
       {
         var $elements = $form.find (":input");
-        var  match    = field_no_pat.exec ($elements.attr ("name"))
+        var  match    = field_no_pat.exec ($elements.attr ("name"));
         var  state    = {_form_no_ :  (match || [""]) [0]};
         for (var i = 0; i < $elements.length; i++)
         {
@@ -426,7 +428,7 @@
     }
     ,  _setup_di_inline : function (inline)
       {
-        var $inline = $("." + inline.prefix);
+        var $inline = $("." + inline.prefix).addClass ("inline-root");
         var $m2m_range = $inline.find ("input.many-2-many-range:first");
         if ($m2m_range.length)
           {
@@ -439,11 +441,17 @@
             $inline.data ("cur_number", cur_count);
             $inline.data ("max_count",  max_count);
           }
-
+        var action = $inline.parents ("form").attr ("action").split ("/");
+        var last   = action.pop ();
+        if (parseInt (last) == last) action.pop ();
+        $inline.data ("base_url", action.join ("/") + "/");
+        $inline.data ("prefix",   inline.prefix);
         $inline.find ("a[href=#edit]").GTW_Button
             ( { icon      : "ui-icon-pencil"
               , enabled   : function (btn)
                   { return true; }
+              , data      : { self : this , $inline : $inline, copy : false}
+              , callback  : this._ui_edit
               }
             );
         $inline.find ("a[href=#delete]").GTW_Button
@@ -458,19 +466,22 @@
               , data    : { self : this }
               , enabled : function (btn)
                   { return true; }
-              , initial_state : 0
               }
             );
         $inline.find ("a[href=#copy]").GTW_Button
             ( { icon      : "ui-icon-copy"
               , enabled   : function (btn)
                   { return true; }
+              , data      : { self : this , $inline : $inline, copy : true}
+              , callback  : this._ui_edit
               }
             );
         $inline.find ("a[href=#add]").GTW_Button
             ( { icon      : "ui-icon-circle-plus"
               , enabled   : function (btn)
                   { return true; }
+              , data      : { self : this , $inline : $inline}
+              , callback  : this._ui_add
               }
             );
         $inline.find ("span.ui-icon-circle-triangle-s").GTW_Button
@@ -494,6 +505,10 @@
           ( "[name^=" + $inline.data ("options").prefix + "]"
           + "[name$=___state_]"
           );
+      }
+    , _ui_add           : function (evt, data)
+      {
+        return data.self._ui_request_form_for ("", data, false, -1);
       }
     , _ui_collapse      : function (evt, data)
       {
@@ -536,6 +551,54 @@
           }
         $container.find ("input:hidden:first[name$=__state_]")
                   .attr ("value", state);
+      }
+    , _ui_edit          : function (evt, data)
+      {
+        var $pid  = $(evt.target).parents (".ui-entity-container")
+                                 .find    ("input[name$=___pid_].mom-link");
+        var fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
+        return data.self._ui_request_form_for
+            ($pid.val (), data, data.copy, fo_no);
+      }
+    , _ui_request_form_for : function (pid, data, copy, no)
+      {
+        var  self       = data.self;
+        var $inline     = data.$inline;
+        var url         = $inline.data ("base_url")
+                        + "form/" + $inline.data ("prefix");
+        console.log (url, pid, copy, no);
+        $.ajax
+            ( { url     : url
+              , data    : {pid : pid, form_no : no}
+              , type    : "GET"
+              , success : function (data, textStatus, xmlreq)
+                  {
+                    var $dialog = self.element.data ("$dialog");
+                    $dialog.dialog
+                      ( "option"
+                      , { title   : "Edit"
+                        , width   : "auto"
+                        }
+                      );
+                    $dialog.empty ().append (data);
+                    $dialog.dialog ("open");
+                  }
+              , error   : function (xmlreq, textStatus, error)
+                  {
+                    var $dialog = self.element.data ("$dialog");
+                    $dialog.dialog
+                      ( "option"
+                      , { title   : "Communication Error"
+                        , buttons :
+                            { "Ok": function() { $(this).dialog("close");}}
+                        }
+                      );
+                    $dialog.dialog ("open");
+                    $dialog.empty ().append ("Error receiving the form!");
+                  }
+              }
+           )
+        return false;
       }
     , _setup_inline : function (inline)
       {
