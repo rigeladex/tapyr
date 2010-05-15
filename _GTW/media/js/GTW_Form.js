@@ -205,19 +205,33 @@
         evt.preventDefault            ();
         evt.stopPropagation           ();
       }
-    , _copy_form     : function ($inline)
+    , _copy_form     : function ($inline, form_no)
       {
-        var state = {};
+        var $prototype = $inline.data ("$prototype");
+        var $new       = this._copy_form_inner ($inline, form_no);
+        /* we are ready to add the new block at the end */
+        this._setup_buttons         ($new, $inline.data ("buttons"), $inline);
+        $prototype.parent           ().append ($new);
+        this._update_button_states  ($inline);
+        this._setup_completers      ($inline);
+        this._clear_internal_fields ($new, false);
+        return $new;
+      }
+    , _copy_form_inner : function ($inline, form_no)
+      {
         var $prototype = $inline.data ("$prototype");
         var $new       = $prototype.clone ().removeClass ("inline-prototype");
         /* now that we have cloned the block, let's change the
         ** name/id/for attributes
         */
-        $inline.data ("cur_count", $inline.data ("cur_count") + 1);
-        var cur_number = $inline.data ("cur_number");
-        $inline.data ("cur_number", cur_number + 1);
         var pattern    = /-MP_/;
-        var new_no     = "-M" + cur_number + "_";
+        if (form_no === undefined)
+          {
+            $inline.data ("cur_count", $inline.data ("cur_count") + 1);
+            var form_no = $inline.data ("cur_number");
+            $inline.data ("cur_number", form_no + 1);
+          }
+        var new_no     = "-M" + form_no + "_";
         var $labels    = $new.find     ("label")
         for (var i = 0; i < $labels.length; i++)
         {
@@ -235,12 +249,6 @@
                 $e.attr (n, $e.attr (n).replace (pattern, new_no));
             }
         }
-        /* we are ready to add the new block at the end */
-        this._setup_buttons         ($new, $inline.data ("buttons"), $inline);
-        $prototype.parent           ().append ($new);
-        this._update_button_states  ($inline);
-        this._setup_completers      ($inline);
-        this._clear_internal_fields ($new, false);
         return $new;
       }
     , _delete_inline : function (evt)
@@ -508,7 +516,7 @@
       }
     , _ui_add           : function (evt, data)
       {
-        return data.self._ui_request_form_for ("", data, false, -1);
+        return data.self._ui_request_form_for ("", data, false, undefined);
       }
     , _ui_collapse      : function (evt, data)
       {
@@ -566,39 +574,51 @@
         var $inline     = data.$inline;
         var url         = $inline.data ("base_url")
                         + "form/" + $inline.data ("prefix");
-        console.log (url, pid, copy, no);
-        $.ajax
-            ( { url     : url
-              , data    : {pid : pid, form_no : no}
-              , type    : "GET"
-              , success : function (data, textStatus, xmlreq)
-                  {
-                    var $dialog = self.element.data ("$dialog");
-                    $dialog.dialog
-                      ( "option"
-                      , { title   : "Edit"
-                        , width   : "auto"
-                        }
-                      );
-                    $dialog.empty ().append (data);
-                    $dialog.dialog ("open");
+        var $prototype  = $inline.data ("$prototype");
+        if (! $prototype)
+          {
+            $.ajax
+                ( { url     : url
+                  , type    : "GET"
+                  , success : function (prototype, textStatus, xmlreq)
+                      {
+                        var $prototype = $(prototype);
+                        $inline.data ("$prototype", $prototype);
+                        self._ui_show_form_for ($inline, no, pid, copy);
+                      }
+                  , error   : function (xmlreq, textStatus, error)
+                      {
+                        var $dialog = self.element.data ("$dialog");
+                        $dialog.dialog
+                          ( "option"
+                          , { title   : "Communication Error"
+                            , buttons :
+                                { "Ok": function() { $(this).dialog("close");}}
+                            }
+                          );
+                        $dialog.empty ().append ("Error receiving the form!");
+                        $dialog.dialog ("open");
+                      }
                   }
-              , error   : function (xmlreq, textStatus, error)
-                  {
-                    var $dialog = self.element.data ("$dialog");
-                    $dialog.dialog
-                      ( "option"
-                      , { title   : "Communication Error"
-                        , buttons :
-                            { "Ok": function() { $(this).dialog("close");}}
-                        }
-                      );
-                    $dialog.dialog ("open");
-                    $dialog.empty ().append ("Error receiving the form!");
-                  }
-              }
-           )
+               )
+          }
+        else
+            self._ui_show_form_for ($inline, no, pid, copy);
         return false;
+      }
+    , _ui_show_form_for : function ($inline, no, pid, copy)
+      {
+         var $new    = this._copy_form_inner ($inline, no)
+         var $dialog = this.element.data ("$dialog");
+         $dialog.dialog
+           ( "option"
+           , { title   : "Edit"
+             , width   : "auto"
+             }
+           );
+         $dialog.empty ().append ($new);
+         $dialog.dialog          ("open");
+
       }
     , _setup_inline : function (inline)
       {

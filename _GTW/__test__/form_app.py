@@ -121,7 +121,10 @@ def create_nav (scope) :
                               ( "GTW.OMP.PAP.Person_has_Address"
                               , FGD
                                   ( "desc"
-                                  , AID ("address", render_mode = "div_seq")
+                                  , AID
+                                      ("address", render_mode = "div_seq"
+                                      , legend = _T ("Address")
+                                      )
                                   )
                               , render_mode      = "ui_display_table"
                               , ui_display_attrs = ("desc", "address")

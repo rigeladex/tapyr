@@ -236,17 +236,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 inline = \
                     [ig for ig in form.inline_groups if ig.prefix == prefix]
                 if len (inline) == 1:
-                    inline   = inline [0]
-                    req_data = handler.request.req_data
-                    instance = None
-                    pid      = req_data ["pid"]
-                    if pid :
-                        instance = inline.form_cls.et_man.pid_query (pid)
-                    iform    = inline.form_cls \
-                        ( instance = instance
-                        , prefix   = inline.prefix_pat % req_data ["form_no"]
-                        )
-                    handler.context ["form"] = iform
+                    handler.context ["form"] = inline [0].prototype_form
                     return self.__super.rendered (handler, template)
         # end def rendered
 
