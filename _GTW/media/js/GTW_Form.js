@@ -208,13 +208,12 @@
     , _copy_form     : function ($inline, form_no)
       {
         var $prototype = $inline.data ("$prototype");
-        var $new       = this._copy_form_inner ($inline, form_no);
+        var $new       = this._copy_form_inner ($inline, form_no) [0];
         /* we are ready to add the new block at the end */
         this._setup_buttons         ($new, $inline.data ("buttons"), $inline);
         $prototype.parent           ().append ($new);
         this._update_button_states  ($inline);
         this._setup_completers      ($inline);
-        this._clear_internal_fields ($new, false);
         return $new;
       }
     , _copy_form_inner : function ($inline, form_no)
@@ -249,7 +248,7 @@
                 $e.attr (n, $e.attr (n).replace (pattern, new_no));
             }
         }
-        return $new;
+        return [$new, form_no];
       }
     , _delete_inline : function (evt)
       {
@@ -523,7 +522,7 @@
       }
     , _ui_add           : function (evt, data)
       {
-        return data.self._ui_request_form_for ("", data, false, undefined);
+        return data.self._ui_request_form_for ("", data, undefined);
       }
     , _ui_collapse      : function (evt, data)
       {
@@ -571,11 +570,12 @@
       {
         var $pid  = $(evt.target).parents (".ui-entity-container")
                                  .find    ("input[name$=___pid_].mom-link");
-        var fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
-        return data.self._ui_request_form_for
-            ($pid.val (), data, data.copy, fo_no);
+        var fo_no = undefined;
+        if (! data.copy)
+            fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
+        return data.self._ui_request_form_for ($pid.val (), data, fo_no);
       }
-    , _ui_request_form_for : function (pid, data, copy, no)
+    , _ui_request_form_for : function (pid, data, no)
       {
         var  self       = data.self;
         var $inline     = data.$inline;
@@ -591,7 +591,7 @@
                       {
                         var $prototype = $(prototype);
                         $inline.data ("$prototype", $prototype);
-                        self._ui_show_form_for ($inline, no, pid, copy);
+                        self._ui_show_form_for ($inline, no, pid);
                       }
                   , error   : function (xmlreq, textStatus, error)
                       {
@@ -610,7 +610,7 @@
                )
           }
         else
-            self._ui_show_form_for ($inline, no, pid, copy);
+            self._ui_show_form_for ($inline, no, pid);
         return false;
       }
     , _ui_set_form_values : function ($entity_root, prefix, data)
@@ -625,13 +625,17 @@
                 $("[name=" + name + "]").attr ("value", value);
           }
       }
-    , _ui_show_form_for : function ($inline, no, pid, copy)
+    , _ui_show_form_for : function ($inline, no, pid)
       {
-         var $new    = this._copy_form_inner ($inline, no)
-         var $dialog = this.element.data ("$dialog");
+         var  add_or_copy = no === undefined;
+         var  temp        = this._copy_form_inner ($inline, no);
+         var $dialog      = this.element.data ("$dialog");
+         var $new         = temp [0];
+         no               = temp [1];
+         if (add_or_copy) this._clear_internal_fields ($new, true);
          $dialog.dialog
            ( "option"
-           , { title    : "Edit 1"
+           , { title    : "New"
              , width    : "auto"
              }
            );
@@ -651,12 +655,19 @@
                      , data     : { pid : pid}
                      , dataType : "json"
                      , success  : function (data, textStatus, xmlreq)
-                       {self._ui_set_form_values ($entity_root, prefix, data);}
+                       {
+                         var tp = (add_or_copy ? "Copy " : "Edit ");
+                         self._ui_set_form_values ($entity_root, prefix, data);
+                         $dialog.dialog
+                             ("option", {title : tp + data.ui_display});
+                         $dialog.dialog ("open");
+                       }
                      }
                    );
                }
            }
-         $dialog.dialog          ("open");
+         else
+             $dialog.dialog ("open");
       }
     , _setup_inline : function (inline)
       {
