@@ -617,12 +617,15 @@
       {
         for (var key in data)
           {
-            var name  = prefix + "__" + key;
-            var value = data [key];
-            if (typeof value == "object")
-                this._ui_set_form_values ($entity_root, name, value)
-            else
-                $("[name=" + name + "]").attr ("value", value);
+            if (key != "_state_")
+              {
+                var name  = prefix + "__" + key;
+                var value = data [key];
+                if (typeof value == "object")
+                    this._ui_set_form_values ($entity_root, name, value)
+                else
+                    $("[name=" + name + "]").attr ("value", value);
+              }
           }
       }
     , _ui_show_form_for : function ($inline, no, pid)
@@ -632,7 +635,7 @@
          var $dialog      = this.element.data ("$dialog");
          var $new         = temp [0];
          no               = temp [1];
-         if (add_or_copy) this._clear_internal_fields ($new, true);
+         this._clear_internal_fields ($new, add_or_copy);
          $dialog.dialog
            ( "option"
            , { title    : "New"
@@ -640,6 +643,11 @@
              }
            );
          $dialog.empty ().append ($new);
+         $new.find  (":submit").bind
+             ( "click"
+             , {self : this, $inline : $inline}
+             , this._ui_submit
+             )
          if (pid)
            {
              var  prefix      = $inline.data ("prefix") + "-M" + no;
@@ -668,6 +676,32 @@
            }
          else
              $dialog.dialog ("open");
+      }
+    , _ui_submit : function (evt)
+      {
+        var  self   = evt.data.self;
+        var $inline = evt.data.$inline;
+        var  data   = {};
+        var url     = $inline.data ("base_url")
+                    + "test/" + $inline.data ("prefix");
+        var name    = $form = $(this).parents (".ui-dialog")
+                       .find (":input")
+                       .each (function () {
+          data [this.name] = $(this).val ();
+        }).attr ("name");
+        data ["__FORM_NO__"] = field_no_pat.exec (name) [1];
+        $.ajax
+          ( { url      : url
+            , data     : data
+            , type     : "POST"
+            , dataType : "json"
+            , success  : function (data, textStatus, xmlreq)
+                {
+                  console.log ("Done");
+                }
+            }
+          );
+        return false;
       }
     , _setup_inline : function (inline)
       {

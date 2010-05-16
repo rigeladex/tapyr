@@ -57,6 +57,7 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    15-May-2010 (MG) `Form` started
 #    15-May-2010 (MG) `Fields` added
+#    15-May-2010 (MG) `Test` added
 #    ««revision-date»»···
 #--
 
@@ -222,55 +223,79 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Deleter
 
-    class Form (_Cmd_) :
+    class _Inline_ (_Cmd_) :
+        """Base class for children with need access to the inline."""
+
+        SUPPORTED_METHODS = set (("GET", ))
+
+        def inline (self) :
+            form   = self.Form (self.abs_href, None)
+            prefix = self.forms [0]
+            inline = \
+                    [ig for ig in form.inline_groups if ig.prefix == prefix]
+            if len (inline) == 1 :
+                return inline [0]
+        # end def inline
+
+        def object (self, inline, pid) :
+            form_cls = inline.form_cls
+            try :
+                return form_cls.et_man.pid_query (pid)
+            except LookupError :
+                request.Error = \
+                    ( _T ("%s `%s` doesn't exist!")
+                    % (_T (E_Type.ui_name), pid)
+                    )
+                raise HTTP.Error_404 (request.path, request.Error)
+        # end def object
+
+    # end class _Inline_
+
+    class Form (_Inline_) :
         """Generate the html code for editing of an inline on request."""
 
         template = "dynamic_form"
 
         def rendered (self, handler, template = None) :
-            context = handler.context
-            request = handler.request
-            result  = None
-            if request.method == "GET" :
-                form   = self.Form (self.abs_href, None)
-                prefix = self.forms [0]
-                inline = \
-                    [ig for ig in form.inline_groups if ig.prefix == prefix]
-                if len (inline) == 1:
-                    context ["form"] = inline [0].prototype_form
-                    return self.__super.rendered (handler, template)
+            inline = self.inline ()
+            if inline :
+                handler.context ["form"] = inline.prototype_form
+                return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Form
 
-    class Fields (_Cmd_) :
+    class Fields (_Inline_) :
         """Return the values of the form fields for an instance."""
 
         def rendered (self, handler, template = None) :
-            context = handler.context
             request = handler.request
-            result  = None
-            if request.method == "GET" :
-                pid    = request.req_data.get ("pid")
-                form   = self.Form (self.abs_href, None)
-                prefix = self.forms [0]
-                inline = \
-                    [ig for ig in form.inline_groups if ig.prefix == prefix]
-                if len (inline) == 1:
-                    form_cls = inline [0].form_cls
-                    try :
-                        obj = form_cls.et_man.pid_query (pid)
-                    except LookupError :
-                        request.Error = \
-                            ( _T ("%s `%s` doesn't exist!")
-                            % (_T (E_Type.ui_name), pid)
-                            )
-                        raise HTTP.Error_404 (request.path, request.Error)
-                    return GTW.Form.MOM.Javascript.Completer._send_result \
-                        (form_cls, handler, obj)
+            inline = self.inline ()
+            if inline :
+                return GTW.Form.MOM.Javascript.Completer._send_result \
+                    ( inline.form_cls
+                    , handler
+                    , self.object (inline, request.req_data.get ("pid"))
+                    )
         # end def rendered
 
     # end class Fields
+
+    class Test (_Inline_) :
+        """Test if a set of changes could be applied without errors."""
+
+        SUPPORTED_METHODS = set (("POST", ))
+        def rendered (self, handler, template = None) :
+            inline = self.inline ()
+            if inline :
+                req_data = handler.request.req_data;
+                form_no  = req_data.get ("__FORM_NO__")
+                form = inline.form_cls \
+                    (None, prefix = inline.prefix_pat % form_no)
+                form (handler.request.req_data)
+        # end def rendered
+
+    # end class Test
 
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
@@ -378,6 +403,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , completed = (Completed, "forms")
         , fields    = (Fields,    "forms")
         , form      = (Form,      "forms")
+        , test      = (Test,      "forms")
         )
     child_attrs     = {}
     def _get_child (self, child, * grandchildren) :
