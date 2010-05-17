@@ -203,7 +203,7 @@ def _main (cmd) :
             print "=" * 79
             print "%s fails %d tests of %d doc-tests:\n    %s" % \
                 ( " ".join (cmd.argv), failed, total
-                , "\n    ".join ("%-72s : %d" % f for f in failures)
+                , "\n    ".join ("%-68s : %d" % f for f in failures)
                 )
 # end def _main
 
