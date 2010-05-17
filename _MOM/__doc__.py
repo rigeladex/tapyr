@@ -853,8 +853,6 @@ The app-type specific entity-types are ready to be used by
  set([Trap `middle`])), (<class 'BMT.Rodent_in_Trap' [BMT__Hash__HPS]>,\
  set([Trap `right`]))]
 
-    .. ### DBW-specific finish
-
 Scope
 -----
 
