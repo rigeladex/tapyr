@@ -30,6 +30,7 @@
 #    27-Mar-2010 (MG) `add` support for `polymorphic_epk` added
 #    12-May-2010 (MG) Use new `pid_manager`, lid functions changed
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
+#    17-May-2010 (CT) Class `PID` removed
 #    ««revision-date»»···
 #--
 
@@ -48,42 +49,6 @@ import itertools
 
 from   sqlalchemy  import exc        as SAS_Exception
 from   sqlalchemy  import sql
-
-class PID (object) :
-    """PID of an entity."""
-
-    _Attrs             = "Type_Name", "id"
-
-    def __init__ (self, Type_Name, id) :
-        self.Type_Name = Type_Name
-        self.id        = id
-    # end def __init__
-
-    def __getitem__ (self, key) :
-        return getattr (self, self._Attrs [key])
-    # end def __getitem__
-
-    def __hash__ (self) :
-        return hash ((self.Type_Name, self.id))
-    # end def __hash__
-
-    def __lt__ (self, rhs) :
-        return (self.Type_Name, self.id)  < (rhs.Type_Name, rhs.id)
-    # end def __lt__
-
-    def __eq__ (self, rhs) :
-        try :
-            rhs = (rhs.Type_Name, rhs.id)
-        except AttributeError :
-            pass
-        return (self.Type_Name, self.id) == rhs
-    # end def __eq__
-
-    def __str__ (self) :
-        return "(%s, %s)" % (self.Type_Name, self.id)
-    # end def __str__
-
-# end class PID
 
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""

@@ -23,11 +23,12 @@
 #    MOM.DBW.SAS.Pid_Manager
 #
 # Purpose
-#    «text»···
+#    SAS specific manager for permanent ids
 #
 # Revision Dates
 #    11-May-2010 (MG) Creation
 #    12-May-2010 (MG) Support for PostgreSQL sequences added
+#    17-May-2010 (CT) `reserve` changed to `insert` for postgresql, too
 #    ««revision-date»»···
 #--
 
@@ -74,9 +75,10 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         result = self.connection.execute (sql)
         if commit :
             self.commit ()
-        pid    = result.inserted_primary_key [0]
+        pid = int (result.inserted_primary_key [0])
         if entity :
             entity.pid = pid
+        return pid
     # end def new
 
     @TFL.Contextmanager
@@ -107,13 +109,13 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         if self.is_postgres :
             self.connection.execute \
                 ("ALTER SEQUENCE pid_seq RESTART WITH %d" % (pid + 1, ))
-        else :
-            Type_Name = None
-            if entity :
-                Type_Name = entity.type_name
-            sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
-            result = self.connection.execute (sql)
-        self.commit                      ()
+        Type_Name = None
+        if entity :
+            Type_Name  = entity.type_name
+            entity.pid = pid
+        sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
+        result = self.connection.execute (sql)
+        self.commit ()
         return pid
     # end def reserve
 

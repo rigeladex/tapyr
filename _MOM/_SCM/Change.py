@@ -49,6 +49,8 @@
 #    12-Mar-2010 (CT) `Attr_Composite.__new__` added to guard for
 #                     `composite.owner`
 #    16-Mar-2010 (CT) `add_callback`, `do_callbacks` and `remove_callback` added
+#    17-May-2010 (CT) Changed `change_count` from class variable into
+#                     instance variable
 #    ««revision-date»»···
 #--
 
@@ -132,8 +134,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     def _pickle_attrs (self) :
         return dict \
-            ( change_count = self.change_count
-            , cid          = self.cid
+            ( cid          = self.cid
             , time         = self.time
             , user         = self.user
             )
@@ -188,13 +189,14 @@ class _Entity_ (Undoable) :
 
     new_attr = old_attr = {}
 
+    change_count = 1
+
     def __init__ (self, entity) :
         self.__super.__init__ ()
         self.epk          = entity.epk_raw
         self.pid          = getattr (entity, "pid", None)
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
-        self.change_count = 1
     # end def __init__
 
     @classmethod

@@ -45,6 +45,7 @@
 #    12-May-2010 (MG) Summary generation added
 #    12-May-2010 (CT) Summary generation fixed
 #    12-May-2010 (MG) Summary generation fixed if some test fails
+#    17-May-2010 (CT) `failures` added to `_main`
 #    ««revision-date»»···
 #--
 
@@ -177,11 +178,15 @@ def _main (cmd) :
             module = TFL.Record (__file__ = ".+?")
             regexp = Regexp \
                 (cmd.format % TFL.Caller.Scope (module = module))
+        failures = []
         def run (a) :
             global total, failed
-            f, t    = run_command ("%s %s" % (head, a), regexp)
-            failed += int (f)
-            total  += int (t)
+            f, t    = tuple \
+                (int (x) for x in run_command ("%s %s" % (head, a), regexp))
+            failed += f
+            total  += t
+            if f :
+                failures.append ((a, f))
         for a in cmd.argv :
             if sos.path.isdir (a) :
                 for f in sorted (sos.listdir_exts (a, ".py")) :
@@ -196,8 +201,10 @@ def _main (cmd) :
                     run (a)
         if cmd.summary :
             print "=" * 79
-            print "%s fails %d tests of %d doc-tests" % \
-                (" ".join (cmd.argv), failed, total)
+            print "%s fails %d tests of %d doc-tests:\n    %s" % \
+                ( " ".join (cmd.argv), failed, total
+                , "\n    ".join ("%-72s : %d" % f for f in failures)
+                )
 # end def _main
 
 if __name__ == "__main__" :
