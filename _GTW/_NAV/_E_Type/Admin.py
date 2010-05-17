@@ -58,6 +58,7 @@
 #    15-May-2010 (MG) `Form` started
 #    15-May-2010 (MG) `Fields` added
 #    15-May-2010 (MG) `Test` added
+#    17-May-2010 (MG) `Test` removed again
 #    ««revision-date»»···
 #--
 
@@ -281,22 +282,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Fields
 
-    class Test (_Inline_) :
-        """Test if a set of changes could be applied without errors."""
-
-        SUPPORTED_METHODS = set (("POST", ))
-        def rendered (self, handler, template = None) :
-            inline = self.inline ()
-            if inline :
-                req_data = handler.request.req_data;
-                form_no  = req_data.get ("__FORM_NO__")
-                form = inline.form_cls \
-                    (None, prefix = inline.prefix_pat % form_no)
-                form (handler.request.req_data)
-        # end def rendered
-
-    # end class Test
-
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
            E_Type, e.g., displayed as one line of a table.
@@ -403,9 +388,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , completed = (Completed, "forms")
         , fields    = (Fields,    "forms")
         , form      = (Form,      "forms")
-        , test      = (Test,      "forms")
         )
     child_attrs     = {}
+
     def _get_child (self, child, * grandchildren) :
         T  = None
         kw = {}

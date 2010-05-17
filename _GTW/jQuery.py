@@ -34,13 +34,21 @@
 from   _GTW import GTW
 import _GTW.Media
 
-GTW.Script \
-    ( src = "/media/GTW/js/jquery-1.4.2.min.js"
-    , sort_key = -100  ## should be loaded first
-    , name     = "jQuery"
-    )
+if __debug__ :
+    GTW.Script \
+        ( src = "/media/GTW/js/jquery-1.4.2.js"
+        , sort_key = -100  ## should be loaded first
+        , name     = "jQuery"
+        )
+    GTW.Script (src = "/media/GTW/js/jquery-ui.js", name = "jQuery_UI")
+else :
+    GTW.Script \
+        ( src = "/media/GTW/js/jquery-1.4.2.min.js"
+        , sort_key = -100  ## should be loaded first
+        , name     = "jQuery"
+        )
+    GTW.Script (src = "/media/GTW/js/jquery-ui-1.8.min.js", name = "jQuery_UI")
 GTW.Script (src = "/media/GTW/js/jquery.gritter.js",    name = "jQuery_Gritter")
-GTW.Script (src = "/media/GTW/js/jquery-ui-1.8.min.js", name = "jQuery_UI")
 
 GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css", name = "jQuery_UI")
 GTW.CSS_Link \

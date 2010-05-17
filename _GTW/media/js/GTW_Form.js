@@ -510,7 +510,7 @@
             var $this = $(this);
             var $pid  = $this.find ("input[name$=___pid_].mom-link");
             var fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
-            $this.attr ("id", inline.prefix + "-" + fo_no);
+            $this.attr ("id", inline.prefix + "-M" + fo_no);
         });
       }
     , _state_for_inline : function ($inline, $form)
@@ -636,6 +636,7 @@
          var $new         = temp [0];
          no               = temp [1];
          this._clear_internal_fields ($new, add_or_copy);
+         $new.addClass ("gtw-ui-popup-form");
          $dialog.dialog
            ( "option"
            , { title    : "New"
@@ -673,34 +674,34 @@
                      }
                    );
                }
+             else
+               {
+                 var tp = (add_or_copy ? "Copy " : "Edit ");
+                 $dialog.dialog
+                     ("option", {title : tp + "XXX"});
+                 $dialog.dialog ("open");
+               }
            }
          else
              $dialog.dialog ("open");
       }
     , _ui_submit : function (evt)
       {
-        var  self   = evt.data.self;
-        var $inline = evt.data.$inline;
-        var  data   = {};
-        var url     = $inline.data ("base_url")
-                    + "test/" + $inline.data ("prefix");
-        var name    = $form = $(this).parents (".ui-dialog")
-                       .find (":input")
-                       .each (function () {
-          data [this.name] = $(this).val ();
-        }).attr ("name");
-        data ["__FORM_NO__"] = field_no_pat.exec (name) [1];
-        $.ajax
-          ( { url      : url
-            , data     : data
-            , type     : "POST"
-            , dataType : "json"
-            , success  : function (data, textStatus, xmlreq)
-                {
-                  console.log ("Done");
-                }
-            }
-          );
+        var  self       = evt.data.self;
+        var $inline      = evt.data.$inline;
+        var  data        = {};
+        var name         = $(this).parents (".ui-dialog")
+                                  .find (":input").attr ("name");
+        var no           = field_no_pat.exec (name) [1];
+        var $entity_root = $("#" + $inline.data ("prefix") + "-M" + no);
+        var $container   = $entity_root.find (".ui-display:first");
+        $container.find (".mom-link, .mom-object").remove ();
+        $entity_root.addClass ("mom-populated");
+        self.element.data ("$dialog")
+                    .find     (".gtw-ui-popup-form")
+                    .addClass ("ui-helper-hidden")
+                    .appendTo ($container);
+       self.element.data ("$dialog").dialog ("close");
         return false;
       }
     , _setup_inline : function (inline)

@@ -35,6 +35,7 @@ from   _GTW.__test__.model import MOM, GTW, Scope
 from   _JNJ                import JNJ
 import _GTW._NAV.import_NAV
 import _GTW.Media
+import _GTW.jQuery
 import _GTW.File_Session
 import _GTW._Werkzeug
 import _JNJ.Templateer
@@ -90,15 +91,15 @@ def create_nav (scope) :
         , Media           = GTW.Media
             ( css_links   =
                 ( GTW.CSS_Link ("screen.css")
-                , GTW.CSS_Link ("/media/GTW/css/jquery.gritter.css", "screen")
+                , GTW.CSS_Link.jQuery_Gritter
                 )
             , js_on_ready =
                 ( '$.gritter.Convert_Patagraphs_to_Gitter ("notifications");'
                 ,
                 )
             , scripts     =
-                ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
-                , GTW.Script (src  = "/media/GTW/js/jquery.gritter.js")
+                ( GTW.Script.jQuery
+                , GTW.Script.jQuery_Gritter
                 )
             )
         , permissive      = False
