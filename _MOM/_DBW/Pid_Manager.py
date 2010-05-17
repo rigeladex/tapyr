@@ -29,6 +29,7 @@
 #    11-May-2010 (CT) Creation
 #    11-May-2010 (MG) `__init__` added
 #    12-May-2010 (CT) `retire` added
+#    17-May-2010 (MG) `kw` added to `__call__`
 #    ««revision-date»»···
 #--
 
@@ -48,11 +49,11 @@ class _Pid_Manager_ (TFL.Meta.Object) :
         self.ems = ems
     # end def __init__
 
-    def __call__ (self, entity, pid = None) :
+    def __call__ (self, entity, pid = None, ** kw) :
         if pid is None :
-            pid = self.new (entity)
+            pid = self.new (entity, ** kw)
         else :
-            self.reserve (entity, pid)
+            self.reserve (entity, pid, ** kw)
         return pid
     # end def __call__
 

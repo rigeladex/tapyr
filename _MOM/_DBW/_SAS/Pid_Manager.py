@@ -29,6 +29,7 @@
 #    11-May-2010 (MG) Creation
 #    12-May-2010 (MG) Support for PostgreSQL sequences added
 #    17-May-2010 (CT) `reserve` changed to `insert` for postgresql, too
+#    17-May-2010 (MG) `new_context` replaced by `context`
 #    ««revision-date»»···
 #--
 
@@ -82,9 +83,9 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def new
 
     @TFL.Contextmanager
-    def new_context (self, entity) :
+    def context (self, entity, pid) :
         try :
-            yield self.new (entity, commit = False)
+            yield self (entity, pid, commit = False)
         except :
             self.rollback ()
             raise
@@ -105,7 +106,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         raise LookupError ("No object with pid `%d` found" % (pid, ))
     # end def query
 
-    def reserve (self, entity, pid) :
+    def reserve (self, entity, pid, commit = True) :
         if self.is_postgres :
             self.connection.execute \
                 ("ALTER SEQUENCE pid_seq RESTART WITH %d" % (pid + 1, ))
@@ -115,7 +116,8 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
             entity.pid = pid
         sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
         result = self.connection.execute (sql)
-        self.commit ()
+        if commit :
+            self.commit ()
         return pid
     # end def reserve
 

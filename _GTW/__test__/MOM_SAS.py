@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Apr-2010 (MG) Creation
+#    17-May-2010 (MG) `__test__` added
 #    ««revision-date»»···
 #--
 """
@@ -34,9 +35,8 @@ This is just to make sure that run_doctest considers this file as a file with
 doctests
     >>> Print
 """
-from _MOM._DBW._SAS.__doc__ import __doc__, MOM, BMT, show, NL, sos
-
-__doc__ = __doc__
+from _MOM._DBW._SAS.__doc__ import \
+     __doc__, __test__, MOM, BMT, show, NL, sos, remove
 
 if __name__ == "__main__" :
     import doctest

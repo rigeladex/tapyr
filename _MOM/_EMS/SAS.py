@@ -31,6 +31,7 @@
 #    12-May-2010 (MG) Use new `pid_manager`, lid functions changed
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    17-May-2010 (CT) Class `PID` removed
+#    17-May-2010 (MG) `add` parameter `id` added
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class Manager (MOM.EMS._Manager_) :
 
     Q_Result  = MOM.DBW.SAS.Q_Result
 
-    def add (self, entity) :
+    def add (self, entity, id = None) :
         ses = self.session
         ses.flush () ### add all pending operations to the database transaction
         if entity.polymorphic_epk :
@@ -71,7 +72,7 @@ class Manager (MOM.EMS._Manager_) :
         if max_c and max_c <= self.query (entity.__class__).count () :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         try :
-            ses.add   (entity)
+            ses.add   (entity, id)
         except SAS_Exception.IntegrityError as exc :
             ses.rollback ()
             if __debug__ :

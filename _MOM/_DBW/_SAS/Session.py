@@ -47,6 +47,7 @@
 #    24-Mar-2010 (MG) `_setup_columns` use new `_sa_prefix` attribute of kind
 #    11-May-2010 (MG) `value_dict` remove items from `attrs` once handled
 #    12-May-2010 (MG) New `pid` style
+#    17-May-2010 (MG) `add` changed to allow `id` parameter
 #    ««revision-date»»···
 #--
 
@@ -262,8 +263,8 @@ class Session (TFL.Meta.Object) :
         self.expunge                 ()
     # end def __init__
 
-    def add (self, entity) :
-        with self.scope.ems.pm.new_context (entity) :
+    def add (self, entity, id = None) :
+        with self.scope.ems.pm.context (entity, id) :
             entity.__class__._SAS.insert  (self, entity)
         self._pid_map [entity.pid] = entity
     # end def add
