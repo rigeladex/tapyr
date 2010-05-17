@@ -119,9 +119,9 @@ __test__ = dict (db_migration = _db_mig_test)
 def remove (file, is_dir = False) :
     if sos.path.exists (file) :
         if is_dir :
-            sos.rmdir (file, deletefiles = True)
+            sos.rmdir  (file, deletefiles = True)
         else :
-            sos.unlink     (file)
+            sos.unlink (file)
 # end def remove
 
 ### __END__ MOM.DBW.SAS.__doc__
