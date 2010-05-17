@@ -126,6 +126,7 @@
 #                     `Entity.set_raw`
 #     3-May-2010 (CT) `epk` and `epk_raw` changed to append `type_name`
 #    12-May-2010 (CT) `lid` removed
+#    17-May-2010 (CT) `copy` changed to not handle other `scope` instances
 #    ««revision-date»»···
 #--
 
@@ -902,10 +903,10 @@ class Id_Entity (Entity) :
 
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
-        scope  = kw.pop  ("scope", self.home_scope)
-        etype  = scope.entity_type (self.type_name)
+        scope  = self.home_scope
+        etype  = self.__class__
         result = etype (* new_epk, scope = scope, ** kw)
-        with result.home_scope.nested_change_recorder \
+        with scope.nested_change_recorder \
                  (MOM.SCM.Change.Copy, result) as change :
             scope.add (result)
             change.pid = result.pid

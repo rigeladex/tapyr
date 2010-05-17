@@ -1545,6 +1545,8 @@ Replaying changes
     []
     >>> scope.user_equal (scop2)
     True
+    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
+    True
 
     >>> t3.max_weight = 25
     >>> sorted (scope.user_diff (scop2).iteritems ())
@@ -1581,6 +1583,8 @@ Saving and re-loading changes from a database
     (12, 12)
     >>> sorted (scop3.user_diff (scope).iteritems ())
     []
+    >>> all ((s.pid, s.as_pickle_cargo ()) == (t.pid, t.as_pickle_cargo ()) for (s, t) in zip (scope, scop3))
+    True
     >>> scop3.destroy ()
 
     >>> scop4 = MOM.Scope.load (apt, db_uri)
@@ -1588,10 +1592,29 @@ Saving and re-loading changes from a database
     (12, 12)
     >>> sorted (scope.user_diff (scop4).iteritems ())
     []
+    >>> all ((s.pid, s.as_pickle_cargo ()) == (t.pid, t.as_pickle_cargo ()) for (s, t) in zip (scope, scop4))
+    True
     >>> scop4.destroy ()
 
-    >>> if sos.path.exists (db_path) :
-    ...     sos.remove (db_path)
+    >>> if sos.path.exists (db_path) : sos.remove (db_path)
+
+Migrating all entities and the complete change history
+------------------------------------------------------
+
+    >>> scope.MOM.Id_Entity.count_transitive
+    12
+    >>> scope.query_changes ().count ()
+    50
+    >>> scop5 = scope.migrate (apt, None)
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop5))
+    (12, 12)
+    >>> tuple (s.query_changes ().count () for s in (scope, scop5))
+    (50, 50)
+    >>> all ((s.pid, s.as_pickle_cargo ()) == (t.pid, t.as_pickle_cargo ()) for (s, t) in zip (scope, scop5))
+    True
+    >>> all ((s.cid, s.pid) == (t.cid, t.pid) for (s, t) in zip (* (s.query_changes () for s in (scope, scop5))))
+    True
+    >>> scop5.destroy ()
 
 Primary key attributes
 -----------------------

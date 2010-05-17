@@ -39,6 +39,7 @@
 #    30-Apr-2010 (CT) `save_objects` changed to store all entities into a
 #                     single store `by_pid` sorted by `pid`
 #    12-May-2010 (CT) s/ems._pid_map/ems.pm.table/
+#    17-May-2010 (CT) `scope.add_from_pickle_cargo` factored from `_load_store`
 #    ««revision-date»»···
 #--
 
@@ -304,18 +305,7 @@ class Store (TFL.Meta.Object) :
             scope   = self.scope
             for tn, pid, e_cargo in cargo :
                 ### XXX Add legacy lifting
-                Type = scope.entity_type (tn)
-                if Type :
-                    try :
-                        obj = Type.from_pickle_cargo (scope, e_cargo)
-                    except Exception, exc :
-                        scope.db_errors.append ((tn, pid, e_cargo))
-                        print repr (exc)
-                        print "   ", tn, pid, e_cargo
-                        print "Couldn't restore %s %s from %s" % \
-                            (tn, pid, e_cargo)
-                    else :
-                        scope.ems.add (obj, id = pid)
+                scope.add_from_pickle_cargo (tn, pid, e_cargo)
     # end def _load_store
 
     @TFL.Contextmanager

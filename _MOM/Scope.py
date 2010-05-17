@@ -62,6 +62,10 @@
 #     8-Feb-2010 (CT) `snapshot` removed
 #    15-Feb-2010 (CT) `attr_changes` added
 #    16-Mar-2010 (CT) `record_change` changed to call `result.callbacks`, if any
+#    17-May-2010 (CT) `add_from_pickle_cargo` added and used for `copy`
+#    17-May-2010 (CT) `migrate` added
+#    17-May-2010 (CT) `nested_change_recorder` and `record_change` changed to
+#                     set `result.user`
 #    ««revision-date»»···
 #--
 
@@ -231,6 +235,21 @@ class Scope (TFL.Meta.Object) :
             self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
 
+    def add_from_pickle_cargo (self, type_name, pid, cargo) :
+        """Add an entity defined by (`type_name`, `pid`, `cargo`)."""
+        Type = self.entity_type (type_name)
+        if Type :
+            try :
+                result = Type.from_pickle_cargo (self, cargo)
+            except Exception, exc :
+                self.db_errors.append ((type_name, pid, cargo))
+                print repr (exc)
+                print "   Couldn't restore %s %s %s" % (type_name, pid, cargo)
+            else :
+                self.ems.add (result, id = pid)
+                return result
+    # end def add_from_pickle_cargo
+
     @TFL.Meta.Class_and_Instance_Method
     def add_init_callback (soc, * callbacks) :
         """Add all `callbacks` to `init_callback`. These
@@ -302,12 +321,14 @@ class Scope (TFL.Meta.Object) :
            entities in `self`.
         """
         assert self.app_type.parent is app_type.parent
-        assert self.db_uri          != db_uri
+        assert self.db_uri != db_uri or db_uri is None
         with self.as_active () :
             result = self.__class__.new \
                 (app_type, db_uri, self.root_epk, user = self.user)
             for e in self :
-                e.copy (* e.epk_raw, raw = True, scope = result)
+                f = result.add_from_pickle_cargo \
+                    (e.type_name, e.pid, e.as_pickle_cargo ())
+                result.record_change (MOM.SCM.Change.Create, f)
         return result
     # end def copy
 
@@ -398,11 +419,30 @@ class Scope (TFL.Meta.Object) :
             return self._check_inv (gauge, "object")
     # end def i_incorrect
 
+    def migrate (self, app_type, db_uri) :
+        """Migrate all entities and change-history  of `self` into a new
+           scope for `app_type` and `db_uri`.
+        """
+        assert self.app_type.parent is app_type.parent
+        assert self.db_uri != db_uri or db_uri is None
+        with self.as_active () :
+            result = self.__class__.new \
+                (app_type, db_uri, self.root_epk, user = self.user)
+            for e in self :
+                result.add_from_pickle_cargo \
+                    (e.type_name, e.pid, e.as_pickle_cargo ())
+            for c in self.query_changes (parent = None).order_by \
+                    (TFL.Sorted_By ("cid")) :
+                result.ems.register_change (c)
+        return result
+    # end def migrate
+
     @TFL.Contextmanager
     def nested_change_recorder (self, Change, * args, ** kw) :
         with self.historian.nested_recorder (Change, * args, ** kw) as c :
             yield c
             if c :
+                c.user = self.user
                 self.ems.register_change (c)
     # end def nested_change_recorder
 
@@ -413,6 +453,7 @@ class Scope (TFL.Meta.Object) :
     def record_change (self, Change, * args, ** kw) :
         result = self.historian.record (Change, * args, ** kw)
         if result is not None :
+            result.user = self.user
             self.ems.register_change (result)
             if result.callbacks :
                 result.do_callbacks (self)

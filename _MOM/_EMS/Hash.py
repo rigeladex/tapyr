@@ -71,6 +71,7 @@
 #    19-Mar-2010 (CT) `_pid_map` added and `pid_query` redefined to use it
 #    12-May-2010 (CT) Use `Pid_Manager` instead of home-grown code
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
+#    17-May-2010 (CT) `register_change` changed to accept `change` with `cid`
 #    ««revision-date»»···
 #--
 
@@ -208,8 +209,14 @@ class Manager (MOM.EMS._Manager_) :
     # end def load_root
 
     def register_change (self, change) :
-        self.__cid += 1
-        change.cid  = cid = self.__cid
+        if change.cid is None :
+            self.__cid += 1
+            change.cid  = cid = self.__cid
+        else :
+            assert change.cid not in self._changes
+            assert change.cid > self.__cid, \
+                "%s <-> %s" % (change.cid, self.__cid)
+            self.__cid = cid = change.cid
         if change.parent is None :
             self._changes [cid] = change
         self.__super.register_change (change)

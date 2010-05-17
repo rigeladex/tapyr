@@ -28,6 +28,8 @@
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.History_Mixin)
 #    17-Dec-2009 (CT) `add_change` added
+#    17-May-2010 (CT) Changed `change_count` from class variable into
+#                     instance variable
 #    ««revision-date»»···
 #--
 

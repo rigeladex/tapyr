@@ -50,6 +50,7 @@
 #    11-May-2010 (MG) Pass `ems` and `db_uri` to `pid_manager`
 #    12-May-2010 (CT) `pid_query` rewritten to use `pm.query`
 #    12-May-2010 (CT) `pid_query` changed to apply `int` to `pid`
+#    17-May-2010 (CT) `register_change` changed to not set `change.user`
 #    ««revision-date»»···
 #--
 
@@ -186,8 +187,6 @@ class _Manager_ (TFL.Meta.Object) :
     def register_change (self, change) :
         if change.parent is None :
             self.uncommitted_changes.append (change)
-        if change.user is None :
-            change.user = self.scope.user
     # end def register_change
 
     def register_scope (self) :
