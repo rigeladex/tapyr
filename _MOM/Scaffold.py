@@ -33,6 +33,7 @@
 from   _MOM.import_MOM        import *
 
 from   _TFL                   import sos
+from    posixpath             import join as pjoin
 
 import _TFL.Filename
 import _TFL._Meta.Object
@@ -86,7 +87,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
                 ### SQLite database with absolute path
                 uri = "".join ((db_prefix, db_name))
             elif db_name :
-                uri = sos.path.join \
+                uri = pjoin \
                     (db_prefix, TFL.Filename (db_name).base_ext)
         else :
             apt = cls.app_type_hps ()

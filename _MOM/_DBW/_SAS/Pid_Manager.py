@@ -133,5 +133,3 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")
 ### __END__ MOM.DBW.SAS.Pid_Manager
-
-
