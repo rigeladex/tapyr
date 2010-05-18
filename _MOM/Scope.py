@@ -66,6 +66,8 @@
 #    17-May-2010 (CT) `migrate` added
 #    17-May-2010 (CT) `nested_change_recorder` and `record_change` changed to
 #                     set `result.user`
+#    18-May-2010 (CT) `migrate` changed to not filter `query_changes` to
+#                     `parent = None`
 #    ««revision-date»»···
 #--
 
@@ -431,8 +433,7 @@ class Scope (TFL.Meta.Object) :
             for e in self :
                 result.add_from_pickle_cargo \
                     (e.type_name, e.pid, e.as_pickle_cargo ())
-            for c in self.query_changes (parent = None).order_by \
-                    (TFL.Sorted_By ("cid")) :
+            for c in self.query_changes ().order_by (TFL.Sorted_By ("cid")) :
                 result.ems.register_change (c)
         return result
     # end def migrate

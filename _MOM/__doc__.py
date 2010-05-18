@@ -50,6 +50,7 @@
 #    18-Feb-2010 (CT) `Rodent_is_sick` added to test unary links
 #    19-Feb-2010 (MG) Test for auto cached links added
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
+#    17-May-2010 (CT) Test for `scope.migrate` added
 #    ««revision-date»»···
 #--
 
