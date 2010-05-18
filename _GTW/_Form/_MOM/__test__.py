@@ -197,11 +197,11 @@ Each inline has an embedded form for it's own:
 
     >>> inline_form_cls = form.inline_fields [0].form_cls
     >>> [f.name for f in inline_form_cls.fields]
-    ['start', 'finish', 'instance_state', '_pid_a_state_']
+    ['start', 'finish', 'instance_state', '_pid_', '_state_']
 
-The result is not what we execpted.... There is a new fields called
-*_pid_a_state_*. This field is used by the javascript on the client side to
-commiunicate chanes made to this *inline* object.
+The result is not what we execpted.... There are two  new fields called
+*_pid_* and *_state_*. These field are used by the javascript on the client
+side to commiunicate changes made to this *inline* object.
 
 Now that we know that we have an inline form, let's try to pass some data for
 the fields of the inline from;
@@ -319,7 +319,7 @@ we use the *Link1* *Event*:
     >>> [ai.name for ai in form.inline_fields]
     ['left', 'date', 'time', 'recurrence']
     >>> [f.name for f in form.inline_fields [0].form.fields]
-    ['perma_name', 'text', 'date', 'instance_state', '_pid_a_state_']
+    ['perma_name', 'text', 'date', 'instance_state', '_pid_', '_state_']
 
 As we can see we have multiple inlines here. date, time and recurrence are of
 the *composite* type we have already seen in the person example.
@@ -382,13 +382,14 @@ we use the *Link1* *Event*:
     >>> form_cls = GTW.Form.MOM.Instance.New (EVT.Event)
 
 Ok, so we have create a new event together with a new page object in one
-step. But how would be reuse an existing page to create a new page. That the
-reason the **_pid_a_state_** field exists (we saw this field already for the
+step. But how would be reuse an existing page to create a new page. That is the
+reason the **_pid_** field exists (we saw this field already for the
 composite inlines but had no real use for them there). So, if we what to
-reuse an existing page for a new event we just specify the **_pid_a_state_**
+reuse an existing page for a new event we just specify the **_pid_**
 to reference the page we what:
     >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
-    >>> request_data ["Event__left___pid_a_state_"] = "1:L"
+    >>> request_data ["Event__left___pid_"]   = "1"
+    >>> request_data ["Event__left___state_"] = "L"
     >>> form     = form_cls ("/post/")
     >>> form (request_data) ### 2
     0
@@ -429,7 +430,7 @@ to reference the page we what:
     (2, 2)
 
 But what if we don't have a smart client that know's how to handle the
-**_pid_a_state_** field:
+**_pid_** and **_state_** fields:
 
     >>> request_data = dict (Event__instance_state = "KGRwMQpTJ2RldGFpbCcKcDIKVgpzUydzaG9ydF90aXRsZScKcDMKVgpzUydyZWN1cnJlbmNlJwpwNAooZHA1ClMncmF3JwpwNgpJMDEKc3NTJ3RpbWUnCnA3CihkcDgKZzYKSTAxCnNzUydkYXRlJwpwOQooZHAxMApnNgpJMDEKc3NTJ2xlZnQnCnAxMQoodHMu")
     >>> request_data ["Event__left__perma_name"] = "Permaname"
@@ -524,10 +525,10 @@ So let's look at inline fields in more detail:
     ...     [f.name for f in ilf.form.fields]
     ...     [ii.name for ii in ilf.form.inline_fields]
     left
-    ['last_name', 'first_name', 'middle_name', 'title', 'instance_state', '_pid_a_state_']
+    ['last_name', 'first_name', 'middle_name', 'title', 'instance_state', '_pid_', '_state_']
     []
     right
-    ['street', 'zip', 'city', 'country', 'region', 'instance_state', '_pid_a_state_']
+    ['street', 'zip', 'city', 'country', 'region', 'instance_state', '_pid_', '_state_']
     []
 
 It's goin to be intersting to see how the key in the request data have to
@@ -539,7 +540,8 @@ look like for all attributes:
      p middle_name       = 'Person_has_Address__left__middle_name'
      p title             = 'Person_has_Address__left__title'
      i instance_state    = 'Person_has_Address__left__instance_state'
-     i _pid_a_state_     = 'Person_has_Address__left___pid_a_state_'
+     i _pid_             = 'Person_has_Address__left___pid_'
+     i _state_           = 'Person_has_Address__left___state_'
     P right:
      P street            = 'Person_has_Address__right__street'
      P zip               = 'Person_has_Address__right__zip'
@@ -547,7 +549,8 @@ look like for all attributes:
      P country           = 'Person_has_Address__right__country'
      p region            = 'Person_has_Address__right__region'
      i instance_state    = 'Person_has_Address__right__instance_state'
-     i _pid_a_state_     = 'Person_has_Address__right___pid_a_state_'
+     i _pid_             = 'Person_has_Address__right___pid_'
+     i _state_           = 'Person_has_Address__right___state_'
     U desc               = 'Person_has_Address__desc'
     i instance_state     = 'Person_has_Address__instance_state'
 
@@ -648,13 +651,13 @@ person.
 Ok, so with one form we created a person, an address and a link between the
 person and the address.
 With this kind of form's it is also possible to delete links (but not the
-object which is linked) using the **_pid_a_state_** field of the link:
+object which is linked) using the **state_** field of the link:
 
     >>> form = form_cls ("/post/", form.instance)
     >>> request_data = dict ()
-    >>> request_data ["Person__last_name"]                             = "Last"
-    >>> request_data ["Person__first_name"]                            = "First"
-    >>> request_data ["Person__Person_has_Address-M0___pid_a_state_"]  = "3:U"
+    >>> request_data ["Person__last_name"]                       = "Last"
+    >>> request_data ["Person__first_name"]                      = "First"
+    >>> request_data ["Person__Person_has_Address-M0___state_"]  = "U"
     >>> form (request_data) ### 2
     0
     >>> dump_instance (form.instance) ### 2
@@ -676,7 +679,8 @@ So, let's try to link to this object again:
     >>> request_data = dict ()
     >>> request_data ["Person__last_name"]                             = "Last"
     >>> request_data ["Person__first_name"]                            = "First"
-    >>> request_data ["Person__Person_has_Address-M0__right___pid_a_state_"] = "1:L"
+    >>> request_data ["Person__Person_has_Address-M0__right___pid_"]   = "1"
+    >>> request_data ["Person__Person_has_Address-M0__right___state_"] = "L"
     >>> form (request_data) ### 3
     0
     >>> dump_form_errors (form) ### 3
@@ -709,9 +713,11 @@ Now, let's try to set the attribute of the link itself
     >>> request_data = dict ()
     >>> request_data ["Person__last_name"]                             = "Last"
     >>> request_data ["Person__first_name"]                            = "First"
-    >>> request_data ["Person__Person_has_Address-M0___pid_a_state_"]  = "4:R"
+    >>> request_data ["Person__Person_has_Address-M0___pid_"]          = "4"
+    >>> request_data ["Person__Person_has_Address-M0___state_"]        = "R"
     >>> request_data ["Person__Person_has_Address-M0__desc"]           = "link-desc"
-    >>> request_data ["Person__Person_has_Address-M0__right___pid_a_state_"] = "2:r"
+    >>> request_data ["Person__Person_has_Address-M0__right___pid_"]   = "2"
+    >>> request_data ["Person__Person_has_Address-M0__right___state_"] = "r"
     >>> request_data ["Person__Person_has_Address-M0__right__street"]  = "Street"
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
@@ -729,9 +735,11 @@ address):
     >>> request_data = dict ()
     >>> request_data ["Person__last_name"]                             = "Last"
     >>> request_data ["Person__first_name"]                            = "First"
-    >>> request_data ["Person__Person_has_Address-M0___pid_a_state_"]  = "4:R"
+    >>> request_data ["Person__Person_has_Address-M0___pid_"]          = "4"
+    >>> request_data ["Person__Person_has_Address-M0___state_"]        = "R"
     >>> request_data ["Person__Person_has_Address-M0__desc"]           = "link-desc"
-    >>> request_data ["Person__Person_has_Address-M0__right___pid_a_state_"] = "2:r"
+    >>> request_data ["Person__Person_has_Address-M0__right___pid_"]   = "2"
+    >>> request_data ["Person__Person_has_Address-M0__right___state_"] = "r"
     >>> request_data ["Person__Person_has_Address-M0__right__street"]  = "New Street"
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
@@ -765,9 +773,11 @@ existing address object?
     >>> request_data = dict ()
     >>> request_data ["Person__last_name"]                             = "Last"
     >>> request_data ["Person__first_name"]                            = "First"
-    >>> request_data ["Person__Person_has_Address-M0___pid_a_state_"]  = "4:R"
+    >>> request_data ["Person__Person_has_Address-M0___pid_"]          = "4"
+    >>> request_data ["Person__Person_has_Address-M0___state_"]        = "R"
     >>> request_data ["Person__Person_has_Address-M0__desc"]           = ""
-    >>> request_data ["Person__Person_has_Address-M0__right___pid_a_state_"] = "1:L"
+    >>> request_data ["Person__Person_has_Address-M0__right___pid_"]   = "1"
+    >>> request_data ["Person__Person_has_Address-M0__right___state_"] = "L"
     >>> request_data ["Person__Person_has_Address-M0__right__street"]  = "Street"
     >>> request_data ["Person__Person_has_Address-M0__right__zip"]     = "1010"
     >>> request_data ["Person__Person_has_Address-M0__right__city"]    = "Vienna"
