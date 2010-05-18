@@ -44,6 +44,8 @@
 #    26-Feb-2010 (CT) `authenticated` defined as alias for `active`
 #    26-Feb-2010 (CT) `kind` of `suspended`, `password`, and `salt` changed
 #                     to `Internal` (set by the application, not the user)
+#    18-May-2010 (CT) `Account_P_Manager.__call__` replaced by
+#                     `Account_P_Manager.create_new_account_x`
 #    ««revision-date»»···
 #--
 
@@ -147,17 +149,17 @@ _Ancestor_Essence = Account
 class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for password accounts"""
 
-    def __call__ (self, name, password = "", ** kw) :
+    def create_new_account_x (self, name, password, ** kw) :
         etype    = self._etype
-        salt     = uuid.uuid4().hex
+        salt     = uuid.uuid4 ().hex
         password = etype.password_hash (password, salt)
-        return self.__super.__call__   \
-            (name, password = password, salt = salt, ** kw)
-    # end def __call__
+        return self (name, password = password, salt = salt, ** kw)
+    # end def create_new_account_x
 
     def create_new_account (self, name, password) :
-        account = self (name, password, enabled = True, suspended = True)
-        AEV     = self.home_scope.GTW.OMP.Auth.Account_EMail_Verification
+        account = self.create_new_account_x \
+            (name, password, enabled = True, suspended = True)
+        AEV = self.home_scope.GTW.OMP.Auth.Account_EMail_Verification
         return account, AEV (account).token
     # end def create_new_account
 
