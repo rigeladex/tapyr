@@ -51,6 +51,8 @@
 #    16-Mar-2010 (CT) `add_callback`, `do_callbacks` and `remove_callback` added
 #    17-May-2010 (CT) Changed `change_count` from class variable into
 #                     instance variable
+#    18-May-2010 (CT) `restore` added
+#    18-May-2010 (CT) `Create` changed to store and use `pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -131,6 +133,11 @@ class _Change_ (MOM.SCM.History_Mixin) :
         for c in self.children :
             c.redo (scope)
     # end def undo
+
+    def restore (self, scope) :
+        for c in self.children :
+            c.restore (scope)
+    # end def restore
 
     def _pickle_attrs (self) :
         return dict \
@@ -226,6 +233,11 @@ class _Entity_ (Undoable) :
                 pass
     # end def remove_callback
 
+    def restore (self, scope) :
+        self._restore        (scope)
+        self.__super.restore (scope)
+    # end def restore
+
     @TFL.Meta.Once_Property
     def type_repr (self) :
         return self.type_name
@@ -233,7 +245,8 @@ class _Entity_ (Undoable) :
 
     def _create (self, scope, attr) :
         etm = scope [self.type_name]
-        etm (* self.epk, raw = True, ** attr)
+        result = etm (* self.epk, raw = True, ** attr)
+        return result
     # end def _create
 
     def _destroy (self, scope) :
@@ -305,7 +318,8 @@ class Create (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.new_attr = self._to_save (entity)
+        self.new_attr     = self._to_save (entity)
+        self.pickle_cargo = entity.as_pickle_cargo ()
     # end def __init__
 
     def redo (self, scope) :
@@ -317,6 +331,19 @@ class Create (_Entity_) :
         self.__super.undo (scope)
         self._destroy     (scope)
     # end def undo
+
+    def _pickle_attrs (self) :
+        return dict \
+            ( self.__super._pickle_attrs ()
+            , pickle_cargo = self.pickle_cargo
+            )
+    # end def _pickle_attrs
+
+    def _restore (self, scope) :
+        ### XXX Add legacy lifting
+        return scope.add_from_pickle_cargo \
+            (self.type_name, self.pid, self.pickle_cargo)
+    # end def _restore
 
 # end class Create
 
@@ -343,13 +370,17 @@ class Destroy (_Entity_) :
 
     def redo (self, scope) :
         self.__super.redo (scope)
-        self._destroy     (scope)
+        self._restore     (scope)
     # end def undo
 
     def undo (self, scope) :
         self._create      (scope, self.old_attr)
         self.__super.undo (scope)
     # end def undo
+
+    def _restore (self, scope) :
+        self._destroy (scope)
+    # end def _restore
 
 # end class Destroy
 
@@ -364,7 +395,7 @@ class _Attr_ (_Entity_) :
     # end def __init__
 
     def redo (self, scope) :
-        self._modify      (scope, self.new_attr)
+        self._restore     (scope)
         self.__super.redo (scope)
     # end def redo
 
@@ -372,6 +403,16 @@ class _Attr_ (_Entity_) :
         self.__super.undo (scope)
         self._modify      (scope, self.old_attr)
     # end def undo
+
+    def _restore (self, scope) :
+        cargo = self.new_attr
+        try :
+            self._modify (scope, cargo)
+        except Exception, exc :
+            print exc
+            print "   ", self.pid, self.epk, sorted (cargo.iteritems())
+            raise
+    # end def _restore
 
 # end class _Attr_
 

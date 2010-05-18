@@ -34,6 +34,7 @@
 #                     there is no `store`
 #     4-Mar-2010 (CT) `_new_manager` factored; `delete_database` added
 #    11-May-2010 (CT) `Pid_Manager` added
+#    18-May-2010 (CT) `Change_Manager` and `load_changes` added
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,9 @@ class Manager (MOM.DBW._Manager_) :
         self.scope = scope
         if store is None :
             self._info = MOM.DBW.HPS.Info.NEW (scope)
+            self.cm    = MOM.DBW.HPS.Change_Manager ()
+        else :
+            self.cm    = store.cm
     # end def __init__
 
     def close (self) :
@@ -122,6 +126,11 @@ class Manager (MOM.DBW._Manager_) :
         else :
             return self._info
     # end def info
+
+    def load_changes (self) :
+        if self.store is not None :
+            self.store.load_changes ()
+    # end def load_changes
 
     def load_objects (self) :
         if self.store is not None :

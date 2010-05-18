@@ -72,6 +72,7 @@
 #    12-May-2010 (CT) Use `Pid_Manager` instead of home-grown code
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    17-May-2010 (CT) `register_change` changed to accept `change` with `cid`
+#    18-May-2010 (CT) Use `Change_Manager` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -99,16 +100,15 @@ class Manager (MOM.EMS._Manager_) :
 
     type_name = "Hash"
 
-    max_cid   = property (TFL.Getter.__cid)
+    cm        = property (TFL.Getter.session.cm)
+    max_cid   = property (TFL.Getter.cm.max_cid)
     max_pid   = property (TFL.Getter.pm.max_pid)
 
     def __init__ (self, scope, db_uri) :
         self.__super.__init__ (scope, db_uri)
-        self._changes = {}
         self._counts  = TFL.defaultdict (int)
         self._r_map   = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self._tables  = TFL.defaultdict (dict)
-        self.__cid    = 0
     # end def __init__
 
     def add (self, entity, id = None) :
@@ -149,7 +149,9 @@ class Manager (MOM.EMS._Manager_) :
     # end def changes
 
     def changes (self, * filters, ** kw) :
-        result = self.Q_Result (itertools.chain (* self._changes.itervalues ()))
+        if self.cm.to_load :
+            self.session.load_changes ()
+        result = self.Q_Result (self.cm)
         if filters or kw :
             result = result.filter (* filters, ** kw)
         return result
@@ -201,7 +203,7 @@ class Manager (MOM.EMS._Manager_) :
     def load_root (self) :
         scope           = self.scope
         info            = self.session.info
-        self.__cid      = scope.db_cid = info.max_cid
+        self.cm.max_cid = scope.db_cid = info.max_cid
         self.pm.max_pid = info.max_pid
         scope.guid      = info.guid
         scope._setup_root       (scope.app_type, info.root_epk)
@@ -209,16 +211,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def load_root
 
     def register_change (self, change) :
-        if change.cid is None :
-            self.__cid += 1
-            change.cid  = cid = self.__cid
-        else :
-            assert change.cid not in self._changes
-            assert change.cid > self.__cid, \
-                "%s <-> %s" % (change.cid, self.__cid)
-            self.__cid = cid = change.cid
-        if change.parent is None :
-            self._changes [cid] = change
+        self.cm.add                  (change)
         self.__super.register_change (change)
     # end def register_change
 
@@ -243,17 +236,10 @@ class Manager (MOM.EMS._Manager_) :
     # end def rename
 
     def rollback (self) :
-        if self.uncommitted_changes :
-            scope    = self.scope
-            info     = self.session.info
-            _changes = self._changes
-            for c in reversed (self.uncommitted_changes) :
-                if c.undoable :
-                    c.undo (scope)
-            for cid in range (info.max_cid + 1, self.__cid + 1) :
-                _changes.pop (cid, None)
-            self.__cid      = info.max_cid
-            self.pm.max_pid = info.max_pid
+        uncommitted_changes = self.uncommitted_changes
+        if uncommitted_changes :
+            self.cm.rollback (self.scope, self.session, uncommitted_changes)
+            self.pm.max_pid = self.session.info.max_pid
             self.__super.rollback ()
     # end def rollback
 

@@ -40,13 +40,17 @@
 #                     single store `by_pid` sorted by `pid`
 #    12-May-2010 (CT) s/ems._pid_map/ems.pm.table/
 #    17-May-2010 (CT) `scope.add_from_pickle_cargo` factored from `_load_store`
+#    18-May-2010 (CT) `Change_Manager` and `load_changes` added
+#    18-May-2010 (CT) `_load_pending` changed to use `.restore` instead of
+#                     `.redo`
+#    18-May-2010 (CT) `save_treshold` added
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 from   _TFL       import TFL
 
-import _MOM._DBW._HPS
+import _MOM._DBW._HPS.Change_Manager
 
 import _TFL._Meta.Object
 import _TFL.Environment
@@ -129,6 +133,8 @@ class Store (TFL.Meta.Object) :
 
     ZF = ZF
 
+    save_treshold = 3
+
     try :
         import zlib
     except ImportError :
@@ -139,6 +145,7 @@ class Store (TFL.Meta.Object) :
 
     def __init__ (self, db_uri, scope) :
         self.Version  = Version = scope.app_type.ANS.Version
+        self.cm       = MOM.DBW.HPS.Change_Manager ()
         self.db_uri   = db_uri
         self.x_uri    = self.X_Uri (db_uri.name)
         self.info_uri = TFL.Filename ("info", self.x_uri)
@@ -151,8 +158,9 @@ class Store (TFL.Meta.Object) :
         bak    = TFL.Filename (".bak", db_uri).name
         info   = self.info
         x_name = self.x_uri.name
-        if info.pending :
-            self.save_objects ()
+        self.scope.ems.commit ()
+        if len (info.pending) > self.save_treshold :
+            self._save_objects ()
         with TFL.lock_file (x_name) :
             self._check_sync (info)
             with TFL.open_to_replace \
@@ -168,7 +176,7 @@ class Store (TFL.Meta.Object) :
         assert not sos.path.exists (self.x_uri.name), self.x_uri.name
         x_name = self.x_uri.name
         with TFL.lock_file (x_name) :
-            sos.mkdir         (x_name)
+            sos.mkdir (x_name)
             self._create_info ()
     # end def create
 
@@ -188,6 +196,18 @@ class Store (TFL.Meta.Object) :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
                 info.pending.append ((max_cid, c_name.base_ext))
     # end def commit
+
+    def load_changes (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        info  = self.info
+        x_uri = self.x_uri
+        with TFL.lock_file (x_uri.name) :
+            for (cid, name) in info.commits :
+                file_name = TFL.Filename (name, x_uri).name
+                for c in self._loaded_changes (file_name) :
+                    pass ### `_loaded_changes` adds the changes to `self.cm`
+        self.cm.to_load = []
+    # end def load_changes
 
     def load_info (self) :
         assert sos.path.exists (self.db_uri.name), self.db_uri.name
@@ -211,56 +231,8 @@ class Store (TFL.Meta.Object) :
                 self._load_store   (TFL.Filename (s, x_uri).name)
             for (cid, name) in info.pending :
                 self._load_pending (TFL.Filename (name, x_uri).name)
+        self.cm.to_load  = [name for (cid, name) in info.commits]
     # end def load_objects
-
-    def save_objects_by_rr (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        scope   = self.scope
-        info    = self.info
-        stores  = info.stores = []
-        x_name  = self.x_uri.name
-        max_cid = scope.ems.max_cid
-        max_pid = scope.ems.max_pid
-        scope.ems.commit ()
-        with self._save_context (x_name, scope, info, max_cid, max_pid) :
-            sk = TFL.Sorted_By ("pid")
-            for rr in scope.relevant_roots :
-                tn     = rr.type_name
-                Type   = scope [tn]
-                s_name = TFL.Filename (tn, self.x_uri)
-                cargo  = \
-                    [   (e.type_name, e.pid, e.as_pickle_cargo ())
-                    for e in Type.query ().order_by (sk)
-                    ]
-                with open (s_name.name, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
-                stores.append   (s_name.base_ext)
-            info.commits.extend (info.pending)
-            info.pending = []
-    # end def save_objects_by_rr
-
-    def save_objects (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        scope   = self.scope
-        info    = self.info
-        stores  = info.stores = []
-        x_name  = self.x_uri.name
-        max_cid = scope.ems.max_cid
-        max_pid = scope.ems.max_pid
-        scope.ems.commit ()
-        with self._save_context (x_name, scope, info, max_cid, max_pid) :
-            sk     = TFL.Sorted_By ("pid")
-            s_name = TFL.Filename ("by_pid", self.x_uri)
-            cargo  = \
-                [   (e.type_name, e.pid, e.as_pickle_cargo ())
-                for e in sorted (scope.ems.pm.table.itervalues (), key = sk)
-                ]
-            with open (s_name.name, "wb") as file :
-                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
-            stores.append   (s_name.base_ext)
-            info.commits.extend (info.pending)
-            info.pending = []
-    # end def save_objects
 
     @classmethod
     def X_Uri (cls, name) :
@@ -282,6 +254,18 @@ class Store (TFL.Meta.Object) :
             pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _create_info
 
+    def _loaded_changes (self, name) :
+        with open (name, "rb") as file :
+            add     = self.cm.add
+            changes = pickle.load (file)
+            for cargo in changes :
+                c = MOM.SCM.Change._Change_.from_pickle_cargo (cargo)
+                yield c
+                add (c)
+                for cc in c.children :
+                    add (cc)
+    # end def _loaded_changes
+
     def _load_info (self) :
         with open (self.info_uri.name, "rb") as file :
             result = pickle.load (file)
@@ -291,12 +275,9 @@ class Store (TFL.Meta.Object) :
     # end def _load_info
 
     def _load_pending (self, name) :
-        with open (name, "rb") as file :
-            changes = pickle.load (file)
-            scope   = self.scope
-            for cargo in changes :
-                c = MOM.SCM.Change._Change_.from_pickle_cargo (cargo)
-                c.redo (scope)
+        scope = self.scope
+        for c in self._loaded_changes (name) :
+            c.restore (scope)
     # end def _load_pending
 
     def _load_store (self, s) :
@@ -320,6 +301,27 @@ class Store (TFL.Meta.Object) :
             with open (self.info_uri.name, "wb") as file :
                 pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _save_context
+
+    def _save_objects (self) :
+        scope   = self.scope
+        info    = self.info
+        stores  = info.stores = []
+        x_name  = self.x_uri.name
+        max_cid = scope.ems.max_cid
+        max_pid = scope.ems.max_pid
+        with self._save_context (x_name, scope, info, max_cid, max_pid) :
+            sk     = TFL.Sorted_By ("pid")
+            s_name = TFL.Filename ("by_pid", self.x_uri)
+            cargo  = \
+                [   (e.type_name, e.pid, e.as_pickle_cargo ())
+                for e in sorted (scope.ems.pm.table.itervalues (), key = sk)
+                ]
+            with open (s_name.name, "wb") as file :
+                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+            stores.append   (s_name.base_ext)
+            info.commits.extend (info.pending)
+            info.pending = []
+    # end def _save_objects
 
 # end class Store
 
