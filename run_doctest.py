@@ -187,7 +187,7 @@ def _main (cmd) :
                     run (a)
         if cmd.summary :
             print "=" * 79
-            print "%s fails %d tests of %d doc-tests:\n    %s" % \
+            print "%s fails %d tests of %d doc-tests\n    %s" % \
                 ( " ".join (cmd.argv), failed, total
                 , "\n    ".join ("%-68s : %d" % f for f in failures)
                 )
