@@ -29,6 +29,8 @@
 #    21-Apr-2010 (MG) Creation
 #    27-Apr-2010 (CT) `MOM.Scaffold` factored
 #    12-May-2010 (MG) `create_test_dict` added
+#    19-May-2010 (CT) `create_test_dict` improved (use dict interpolation,
+#                     parameters `bpt` (backends per test), `combiner`)
 #    ««revision-date»»···
 #--
 
@@ -46,8 +48,7 @@ import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
 import _MOM.Scaffold
 import _TFL.Filename
-
-import  os
+import _TFL.Generators
 
 GTW.Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
@@ -89,25 +90,38 @@ class Scaffold (MOM.Scaffold) :
         )
 
     @classmethod
-    def create_test_dict (cls, test_code, * backends) :
-        result            = {}
-        restrict_backends = set (cls.Backend_Parameters)
-        backends          = backends or restrict_backends
-        all_backends      = os.environ.get ("MOM_ALL_BACKENDS", None)
-        if not all_backends :
-            restrict      = os.environ.get ("MOM_RESTRICT_BACKENDS", "")
-            if restrict :
-                restrict_backends = set \
-                    (p.strip () for p in restrict.split (":"))
+    def _backend_spec (cls, backends) :
+        i = 0
+        for b in backends :
+            i += 1
+            for n, v in zip (("p", "n"), cls.Backend_Parameters [b]) :
+                yield ("%s%d" % (n, i), v)
+    # end def _backend_spec
+
+    @classmethod
+    def combiner (cls, backends, bpt) :
+        if bpt > 1 :
+            backends = backends + [backends [0]]
+        return TFL.window_wise (backends, bpt)
+    # end def combiner
+
+    @classmethod
+    def create_test_dict (cls, test_spec, backends = None, bpt = 1, combiner = None) :
+        result = {}
+        if backends is None :
+            backends = sos.environ.get ("GTW_test_backends", ("HPS:SQL"))
+            if backends == "*" :
+                backends = sorted (cls.Backend_Parameters)
             else :
-                restrict_backends = set (("HPS", "SQL"))
-        if not isinstance (test_code, dict) :
-            test_code = {"" : test_code}
-        for backend_name in (bn for bn in backends if bn in restrict_backends) :
-            db_prefix, db_name = cls.Backend_Parameters [backend_name]
-            for test_name, code in test_code.iteritems () :
-                key = "_".join (p for p in (backend_name, test_name) if p)
-                result [key] = code % (db_prefix, db_name)
+                backends = list (p.strip () for p in backends.split (":"))
+        if combiner is None :
+            combiner = cls.combiner
+        if not isinstance (test_spec, dict) :
+            test_spec = {"" : test_spec}
+        for w in combiner (backends, bpt) :
+            for name, code in test_spec.iteritems () :
+                key = "_".join (p for p in (name, ) + w if p)
+                result [key] = code % dict (cls._backend_spec (backends))
         return result
     # end def create_test_dict
 

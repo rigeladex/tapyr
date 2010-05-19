@@ -31,7 +31,7 @@
 #--
 
 _test_code = """
-    >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)

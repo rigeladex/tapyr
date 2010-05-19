@@ -31,7 +31,7 @@
 #--
 
 _test_code = """
-    >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> SRM.Boat_Class ("Optimist", max_crew = 1)

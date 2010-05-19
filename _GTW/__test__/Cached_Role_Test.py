@@ -31,7 +31,7 @@
 #--
 
 _test_code = """
-    >>> scope = Scope (%s, %s) # doctest:+ELLIPSIS
+    >>> scope = Scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP      = scope.PAP
     >>> person   = PAP.Person  (u"Test", u"Person")

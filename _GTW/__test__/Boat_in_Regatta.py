@@ -32,7 +32,7 @@
 #--
 
 _test_code = r"""
-    >>> scope = Scaffold.scope (%s, %s) # doctest:+ELLIPSIS
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
