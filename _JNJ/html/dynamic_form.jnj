@@ -32,6 +32,7 @@
 ##--
 #}
 {%- import "html/rform.jnj" as RForm %}
-{{ RForm.object (form, render_mode = "div_seq") }}
-{#{{ GTW.render_fofi_widget (form, "aid_object", form, render_mode = "div_seq") }}#}
+<div class="Object-Editor">
+{{ GTW.render_fofi_widget (form, "aid_object", form, render_mode = "div_seq") }}
+</div>
 {#- __END__ jinja template: JNJ/html/dynamic_form.jnj -#}

@@ -613,7 +613,7 @@
             self._ui_show_form_for ($inline, no, pid);
         return false;
       }
-    , _ui_set_form_values : function ($entity_root, prefix, data)
+    , _ui_set_form_values : function (prefix, data)
       {
         for (var key in data)
           {
@@ -622,87 +622,148 @@
                 var name  = prefix + "__" + key;
                 var value = data [key];
                 if (typeof value == "object")
-                    this._ui_set_form_values ($entity_root, name, value)
+                    this._ui_set_form_values (name, value)
                 else
-                    $("[name=" + name + "]").attr ("value", value);
+                    $("[name=" + name + "]").val (value);
               }
           }
       }
     , _ui_show_form_for : function ($inline, no, pid)
       {
          var  add_or_copy = no === undefined;
-         var  temp        = this._copy_form_inner ($inline, no);
          var $dialog      = this.element.data ("$dialog");
-         var $new         = temp [0];
-         no               = temp [1];
-         this._clear_internal_fields ($new, add_or_copy);
-         $new.addClass ("gtw-ui-popup-form");
+         var $entity_root = undefined;
+         var  prefix      = $inline.data ("prefix") + "-M" + no;
+         var $form        = undefined;
+         var  self        = this;
+         $dialog.empty ();
+         if (no)
+             $entity_root = $("#" + prefix);
          $dialog.dialog
            ( "option"
-           , { title    : "New"
-             , width    : "auto"
+           , { title        : "New"
+             , width        : "auto"
+             , "buttons"    :
+                 { "Save"   : function (evt)
+                     { $dialog.data   ("form-save", true).dialog ("close"); }
+                 , "Cancel" : function (evt)
+                     { $dialog.dialog ("close"); }
+                 , "Reset" : function (evt)
+                     {
+                       var prefix = $dialog.data ("form-prefix");
+                       var data   = $dialog.data ("form-data");
+                       if (data)
+                         self._ui_set_form_values (prefix, data)
+                     }
+                 }
              }
-           );
-         $dialog.empty ().append ($new);
-         $new.find  (":submit").bind
-             ( "click"
-             , {self : this, $inline : $inline}
-             , this._ui_submit
-             )
-         if (pid)
+           ).unbind ("dialogclose")
+            .bind   ("dialogclose", function (evt) {
+             if (! $dialog.data ("form-save"))
+               {
+                 var prefix = $dialog.data ("form-prefix");
+                 var data   = $dialog.data ("form-data");
+                 if (data) self._ui_set_form_values (prefix, data);
+               }
+             if ($dialog.data ("form-is-new"))
+                 $inline.data ("cur_count", $inline.data ("cur_count") - 1);
+             evt.data = { self : self, $inline : $inline};
+             self._ui_save_form ($inline);
+           }).data ("form-save", false);
+         if (! $entity_root || ! $entity_root.hasClass ("mom-populated"))
            {
-             var  prefix      = $inline.data ("prefix") + "-M" + no;
-             var $entity_root = $("#" + prefix);
-             if (! $entity_root.hasClass ("mom-populated"))
+             var  temp        = this._copy_form_inner ($inline, no);
+             $dialog.data ("form-is-new", no === undefined);
+             $form            = temp [0];
+             no               = temp [1];
+             prefix           = $inline.data ("prefix") + "-M" + no;
+             this._clear_internal_fields ($form, add_or_copy);
+             $form.addClass ("gtw-ui-popup-form");
+             $dialog.empty ().append ($form);
+             if (pid)
                {
                  var url  = $inline.data ("base_url")
                           + "fields/" + $inline.data ("prefix");
-                 var self = this;
                  $.ajax
                    ( { url      : url
                      , type     : "GET"
-                     , data     : { pid : pid}
+                     , data     : { pid : pid, edit : (add_or_copy ? 0 : 1)}
                      , dataType : "json"
                      , success  : function (data, textStatus, xmlreq)
                        {
-                         var tp = (add_or_copy ? "Copy " : "Edit ");
-                         self._ui_set_form_values ($entity_root, prefix, data);
+                         self._ui_set_form_values (prefix, data);
+                         $dialog.data             ("form-data",   data);
+                         $dialog.data             ("form-prefix", prefix);
                          $dialog.dialog
-                             ("option", {title : tp + data.ui_display});
+                             ( "option", "title"
+                             , data.puf_title_prefix + " " + data.ui_display
+                             );
                          $dialog.dialog ("open");
                        }
                      }
                    );
                }
-             else
-               {
-                 var tp = (add_or_copy ? "Copy " : "Edit ");
-                 $dialog.dialog
-                     ("option", {title : tp + "XXX"});
-                 $dialog.dialog ("open");
-               }
            }
          else
-             $dialog.dialog ("open");
+           {
+             var data = $entity_root.data ("form-data");
+             $dialog.data ("form-is-new", false);
+             $dialog.data ("form-prefix", prefix);
+             $dialog.data ("form-data",   data);
+             $dialog.dialog ( "option", "title"
+                            , data.puf_title_prefix + " " + data.ui_display
+                            );
+             $form = $entity_root.find        (".gtw-ui-popup-form")
+                                 .appendTo    ($dialog)
+                                 .removeClass ("ui-helper-hidden");
+           }
+         $dialog.dialog ("open");
       }
-    , _ui_submit : function (evt)
+    , _ui_save_form : function ($inline)
       {
-        var  self       = evt.data.self;
-        var $inline      = evt.data.$inline;
+        var $dialog      = this.element.data ("$dialog");
         var  data        = {};
-        var name         = $(this).parents (".ui-dialog")
-                                  .find (":input").attr ("name");
+        var name         = $dialog.find (":input").attr ("name");
         var no           = field_no_pat.exec (name) [1];
-        var $entity_root = $("#" + $inline.data ("prefix") + "-M" + no);
-        var $container   = $entity_root.find (".ui-display:first");
-        $container.find (".mom-link, .mom-object").remove ();
-        $entity_root.addClass ("mom-populated");
-        self.element.data ("$dialog")
-                    .find     (".gtw-ui-popup-form")
-                    .addClass ("ui-helper-hidden")
-                    .appendTo ($container);
-       self.element.data ("$dialog").dialog ("close");
+        var prefix       = $inline.data ("prefix") + "-M" + no;
+        var data         = $dialog.data ("form-data");
+        var $entity_root = $("#" + prefix);
+        if (this._ui_update_form_values (prefix, data))
+          {
+            console.log ("Update required !!");
+          }
+        var $container   = $entity_root.data     ("form-data", data)
+                                       .addClass ("mom-populated")
+                                       .find     (".ui-display:first");
+        $container.find  (".mom-link, .mom-object").remove ();
+        $dialog.find     (".gtw-ui-popup-form")
+               .addClass ("ui-helper-hidden")
+               .appendTo ($container);
         return false;
+      }
+    , _ui_update_form_values : function (prefix, data)
+      {
+        var changed = 0;
+        for (var key in data)
+          {
+            if (key != "_state_")
+              {
+                var name      = prefix + "__" + key;
+                var old_value = data [key];
+                if (typeof old_value == "object")
+                    changed += this._ui_update_form_values (name, old_value)
+                else
+                  {
+                    var new_value = $("[name=" + name + "]").val ();
+                    if ((new_value !== undefined) && (old_value != new_value))
+                      {
+                        data [key] = new_value;
+                        changed   += 1
+                      }
+                  }
+              }
+          }
+        return changed;
       }
     , _setup_inline : function (inline)
       {

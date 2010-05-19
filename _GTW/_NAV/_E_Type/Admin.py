@@ -59,6 +59,7 @@
 #    15-May-2010 (MG) `Fields` added
 #    15-May-2010 (MG) `Test` added
 #    17-May-2010 (MG) `Test` removed again
+#    19-May-2010 (MG) `Fields` changed
 #    ««revision-date»»···
 #--
 
@@ -273,11 +274,15 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request = handler.request
             inline = self.inline ()
             if inline :
-                return GTW.Form.MOM.Javascript.Completer._send_result \
-                    ( inline.form_cls
-                    , handler
-                    , self.object (inline, request.req_data.get ("pid"))
-                    )
+                obj  = self.object (inline, request.req_data.get ("pid"))
+                data = GTW.Form.MOM.Javascript.Completer.form_as_dict \
+                    (inline.form_cls (obj))
+                data ["ui_display"] = getattr (obj, "ui_display", u"")
+                if request.req_data.get ("edit", u"1") == u"1":
+                    data ["puf_title_prefix"] = _T ("Edit")
+                else :
+                    data ["puf_title_prefix"] = _T ("Copy")
+                return handler.json (data)
         # end def rendered
 
     # end class Fields

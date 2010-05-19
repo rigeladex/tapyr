@@ -209,18 +209,18 @@ class Completer (_MOM_Completer_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def _send_result (self, form_cls, handler, obj) :
-        data                = self._form_as_dict (form_cls (obj))
+        data                = self.form_as_dict (form_cls (obj))
         data ["ui_display"] = getattr (obj, "ui_display", u"")
         return handler.json (data)
     # end def _send_result
 
     @classmethod
-    def _form_as_dict (cls, form) :
+    def form_as_dict (cls, form) :
         data = dict ((f.name, form.get_raw (f)) for f in form.fields)
         for ai in form.inline_fields :
-            data [ai.link_name] = cls._form_as_dict (ai.form)
+            data [ai.link_name] = cls.form_as_dict (ai.form)
         return data
-    # end def _form_as_dict
+    # end def form_as_dict
 
     @property
     def triggers (self) :
