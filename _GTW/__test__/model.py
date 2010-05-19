@@ -90,15 +90,6 @@ class Scaffold (MOM.Scaffold) :
         )
 
     @classmethod
-    def _backend_spec (cls, backends) :
-        i = 0
-        for b in backends :
-            i += 1
-            for n, v in zip (("p", "n"), cls.Backend_Parameters [b]) :
-                yield ("%s%d" % (n, i), v)
-    # end def _backend_spec
-
-    @classmethod
     def combiner (cls, backends, bpt) :
         if bpt > 1 :
             backends = backends + [backends [0]]
@@ -121,9 +112,18 @@ class Scaffold (MOM.Scaffold) :
         for w in combiner (backends, bpt) :
             for name, code in test_spec.iteritems () :
                 key = "_".join (p for p in (name, ) + w if p)
-                result [key] = code % dict (cls._backend_spec (backends))
+                result [key] = code % dict (cls._backend_spec (w))
         return result
     # end def create_test_dict
+
+    @classmethod
+    def _backend_spec (cls, backends) :
+        i = 0
+        for b in backends :
+            i += 1
+            for n, v in zip (("p", "n"), cls.Backend_Parameters [b]) :
+                yield ("%s%d" % (n, i), v)
+    # end def _backend_spec
 
 # end class Scaffold
 

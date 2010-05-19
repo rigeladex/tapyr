@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
+#    19-May-2010 (CT) `app_type_and_uri` factored
 #    ««revision-date»»···
 #--
 
@@ -64,21 +65,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def app_type
 
     @classmethod
-    def app_type_hps (cls) :
-        from _MOM._EMS.Hash         import Manager as EMS
-        from _MOM._DBW._HPS.Manager import Manager as DBW
-        return cls.app_type (EMS, DBW)
-    # end def app_type_hps
-
-    @classmethod
-    def app_type_sas (cls) :
-        from _MOM._EMS.SAS          import Manager as EMS
-        from _MOM._DBW._SAS.Manager import Manager as DBW
-        return cls.app_type (EMS, DBW)
-    # end def app_type_sas
-
-    @classmethod
-    def scope (cls, db_prefix = None, db_name = None, create = True) :
+    def app_type_and_uri (cls, db_prefix = None, db_name = None) :
         assert cls.ANS is not None
         uri = None
         if db_prefix :
@@ -94,8 +81,28 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
             if db_name :
                 uri = "".join \
                     ((db_name, cls.ANS.Version.db_version.db_extension))
-            if not uri or not sos.path.exists (uri) :
-                create = True
+        return apt, uri
+    # end def app_type_and_uri
+
+    @classmethod
+    def app_type_hps (cls) :
+        from _MOM._EMS.Hash         import Manager as EMS
+        from _MOM._DBW._HPS.Manager import Manager as DBW
+        return cls.app_type (EMS, DBW)
+    # end def app_type_hps
+
+    @classmethod
+    def app_type_sas (cls) :
+        from _MOM._EMS.SAS          import Manager as EMS
+        from _MOM._DBW._SAS.Manager import Manager as DBW
+        return cls.app_type (EMS, DBW)
+    # end def app_type_sas
+
+    @classmethod
+    def scope (cls, db_prefix = None, db_name = None, create = True) :
+        apt, uri = cls.app_type_and_uri (db_prefix, db_name)
+        if not uri or not sos.path.exists (uri) :
+            create = True
         if create :
             print "Creating new scope", apt, uri or "in memory"
             scope = cls._create_scope (apt, uri)

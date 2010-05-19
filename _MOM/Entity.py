@@ -127,6 +127,9 @@
 #     3-May-2010 (CT) `epk` and `epk_raw` changed to append `type_name`
 #    12-May-2010 (CT) `lid` removed
 #    17-May-2010 (CT) `copy` changed to not handle other `scope` instances
+#    19-May-2010 (CT) `user_diff` and `user_equal` rewritten to compare
+#                     `as_pickle_cargo` (otherwise, attributes pointing to
+#                     other entities make trouble)
 #    ««revision-date»»···
 #--
 
@@ -1017,29 +1020,25 @@ class Id_Entity (Entity) :
         undef  = object ()
         if self.type_name != other.type_name :
             result ["type_name"] = (self.type_name, other.type_name)
-        if self.epk_raw != other.epk_raw :
-            for i, (p, q) in enumerate (TFL.paired (self.epk, other.epk)) :
-                if p != q :
-                    result [self.epk_sig [i]] = (p, q)
-        for attr in self.user_attr :
-            p = attr.get_value (self)
-            q = getattr (other, attr.name, undef)
+        pc_s = self.as_pickle_cargo  ()
+        pc_o = other.as_pickle_cargo ()
+        for k in set (pc_s).union (pc_o) :
+            p = pc_s.get (k, undef)
+            q = pc_o.get (k, undef)
             if p != q :
-                result [attr.name] = (p, q if q is not undef else "<Missing>")
+                result [k] = \
+                    ( p if p is not undef else "<Missing>"
+                    , q if q is not undef else "<Missing>"
+                    )
         return result
     # end def user_diff
 
     def user_equal (self, other) :
         """Compare `self` and `other` concerning user attributes."""
-        if self.type_name == other.type_name :
-            if self.epk_raw == other.epk_raw :
-                _ = object ()
-                for attr in self.user_attr :
-                    if attr.get_value (self) != getattr (other, attr.name, _) :
-                        break
-                else :
-                    return True
-        return False
+        return \
+            (   self.type_name          == other.type_name
+            and self.as_pickle_cargo () == other.as_pickle_cargo ()
+            )
     # end def user_equal
 
     def _destroy (self) :
