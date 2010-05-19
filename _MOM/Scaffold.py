@@ -79,8 +79,8 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         else :
             apt = cls.app_type_hps ()
             if db_name :
-                uri = "".join \
-                    ((db_name, cls.ANS.Version.db_version.db_extension))
+                uri = TFL.Filename \
+                    (db_name, cls.ANS.Version.db_version.db_extension).name
         return apt, uri
     # end def app_type_and_uri
 

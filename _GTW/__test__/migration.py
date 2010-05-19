@@ -97,9 +97,11 @@ _test_code = r"""
     >>> int (scope.ems.max_cid)
     32
 
-    Now, we migrate all objects and the change history to a new scope::
+    Now, we migrate all objects and the change history to a new scope. All
+    entities, changes, cids, and pids should be identical::
 
-    >>> apt, uri = Scaffold.app_type_and_uri (%(p2)s, %(n2)s)
+    >>> db_uri = "/tmp/gtw_test.gtw"
+    >>> apt, uri = Scaffold.app_type_and_uri (None, db_uri)
     >>> scop2 = scope.migrate (apt, uri)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (29, 29)
@@ -112,10 +114,50 @@ _test_code = r"""
     >>> int (scop2.ems.max_cid)
     32
 
-    >>> scope.destroy ()
     >>> scop2.destroy ()
+
+    After saving and restoring from `db_uri`, all entities, changes, cids,
+    and pids should still be identical::
+
+    >>> scop3 = MOM.Scope.load (apt, db_uri)
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
+    (29, 29)
+    >>> sorted (scope.user_diff (scop3).iteritems ())
+    []
+    >>> scope.user_equal (scop3)
+    True
+    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop3))
+    True
+    >>> int (scop3.ems.max_cid)
+    32
+
+    Now we delete the original database and then migrate back from `scop3`
+    into that app-type/backend. Again, all entities, changes, cids,
+    and pids should still be identical::
+
+    >>> apt, db_uri = scope.app_type, scope.db_uri
+    >>> scope.destroy ()
+    >>> if db_uri :
+    ...    apt.delete_database (db_uri)
+    >>> scop4 = scop3.migrate (apt, db_uri)
+
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
+    (29, 29)
+    >>> sorted (scop3.user_diff (scop4).iteritems ())
+    []
+    >>> scop3.user_equal (scop4)
+    True
+    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scop3, scop4))
+    True
+    >>> int (scop4.ems.max_cid)
+    32
+
+    Lets clean up::
+
+    >>> scop3.destroy ()
+    >>> scop4.destroy ()
 """
 
-__test__ = Scaffold.create_test_dict (_test_code, bpt = 2)
+__test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ migration

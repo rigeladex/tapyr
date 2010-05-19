@@ -127,6 +127,8 @@
 #    11-May-2010 (CT) `A_Date_Time.cooked` corrected (an instance of
 #                     `datetime.datetime` is also an instance of
 #                     `datetime.date`!)
+#    19-May-2010 (CT) `_A_Object_._check_type` changed to check against
+#                     `etype.Essence`
 #    ««revision-date»»···
 #--
 
@@ -851,7 +853,7 @@ class _A_Object_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def _check_type (soc, etype, value) :
-        if not isinstance (value, etype) :
+        if not isinstance (value, etype.Essence) :
             raise ValueError \
                 ( _T
                     ( u"%s %s not eligible for attribute %s,"
