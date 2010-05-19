@@ -45,6 +45,7 @@
 #    16-Feb-2010 (CT) `Cmd._handle_arg` and `Cmd._setup_args` changed to
 #                     empty `args` spec properly
 #     4-Mar-2010 (CT) `Abs_Path` added
+#    19-May-2010 (CT) `_set_keys` corrected (s/kw/kw.iteritems ()/)
 #    ««revision-date»»···
 #--
 
@@ -1058,7 +1059,7 @@ class CAO (TFL.Meta.Object) :
     # end def _set_opt
 
     def _set_keys (self, kw) :
-        for k, v in kw :
+        for k, v in kw.iteritems () :
             self._key_values [k] = v
     # end def _set_keys
 

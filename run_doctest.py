@@ -46,6 +46,8 @@
 #    12-May-2010 (CT) Summary generation fixed
 #    12-May-2010 (MG) Summary generation fixed if some test fails
 #    17-May-2010 (CT) `failures` added to `_main`
+#    19-May-2010 (CT) Support for keywords->environment added
+#                     (and ported to use TFL.CAO instead of TFL.Command_Line)
 #    ««revision-date»»···
 #--
 
@@ -57,6 +59,7 @@ from   _TFL.Regexp      import *
 import _TFL.Record
 
 import _TFL.Caller
+import _TFL.CAO
 import _TFL.Package_Namespace
 
 import  doctest
@@ -102,30 +105,13 @@ def run_command (cmd, regex = False) :
 
 TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 
-def _command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec    = ("module:S?Module(s) to test")
-        , option_spec =
-            ( "format:S="
-                 """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
-            , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
-            , "path:S,?Path to add to sys.path"
-            , "summary:B?Summary of failed tests"
-            , "transitive:B"
-                "?Include all subdirectories of directories specified "
-                  "as arguments"
-            )
-        , min_args    = 1
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 total = failed = 0
 
 def _main (cmd) :
+    for k, v in cmd._key_values.iteritems () :
+        os.environ [k] = v
     format   = cmd.format
-    cmd_path = list (cmd.path)
+    cmd_path = list (cmd.path or [])
     replacer = Re_Replacer (r"\.py[co]", ".py")
     a        = cmd.argv [0]
     if len (cmd.argv) == 1 and not sos.path.isdir (a) :
@@ -207,6 +193,23 @@ def _main (cmd) :
                 )
 # end def _main
 
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        = ("module:P?Module(s) to test", )
+    , opts        =
+        ( "format:S="
+             """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
+        , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
+        , "path:P?Path to add to sys.path"
+        , "summary:B?Summary of failed tests"
+        , "transitive:B"
+            "?Include all subdirectories of directories specified "
+              "as arguments"
+        )
+    , min_args    = 1
+    , do_keywords = True
+    )
+
 if __name__ == "__main__" :
-    _main (_command_spec ())
+    _Command ()
 ### __END__ run_doctest

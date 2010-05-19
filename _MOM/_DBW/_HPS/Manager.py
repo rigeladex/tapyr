@@ -41,6 +41,7 @@
 from   _MOM       import MOM
 from   _TFL       import TFL
 
+import _MOM._DBW._HPS.Change_Manager
 import _MOM._DBW._HPS.Pid_Manager
 import _MOM._DBW._HPS.Store
 import _MOM._DBW._Manager_
