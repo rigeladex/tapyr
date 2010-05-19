@@ -32,6 +32,7 @@
 #    29-Jan-2010 (CT) `get_template` changed to use `Template_Map`
 #    19-Feb-2010 (CT) `error_405` added
 #    14-May-2010 (MG) `dynamic_form` added
+#    19-May-2010 (MG) `render_string` added
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,10 @@ class Templateer (TFL.Meta.Object) :
             template = self.get_template (template_or_name)
         return template.render (context)
     # end def render
+
+    def render_string (self, template_string, context) :
+        return self.render (self.env.from_string (template_string), context)
+    # end def render_string
 
 # end class Templateer
 

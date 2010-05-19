@@ -130,7 +130,7 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
 
     def field (self, et_man, parent, ** kw) :
         scope            = et_man.home_scope
-        attr_kind        = getattr (et_man._etype, self.link_name)
+        self.attr_kind   = attr_kind = getattr (et_man._etype, self.link_name)
         self.ui_name     = attr_kind.ui_name
         if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
             obj_etype    = attr_kind.C_Type

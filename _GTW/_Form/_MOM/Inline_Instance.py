@@ -137,7 +137,11 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
 # end class _Inline_Instance_
 
-class An_Attribute_Inline_Instance (_Inline_Instance_) :
+class Attribute_Inline_Instance (_Inline_Instance_) :
+    """Base class for attribute inline instances"""
+# end class Attribute_Inline_Instance
+
+class An_Attribute_Inline_Instance (Attribute_Inline_Instance) :
     """A form which handles an attribute of an An_Entity as a seperate form."""
 
     instance = None
@@ -148,8 +152,14 @@ class An_Attribute_Inline_Instance (_Inline_Instance_) :
 
 # end class An_Attribute_Inline_Instance
 
-class Id_Attribute_Inline_Instance (_Inline_Instance_) :
+class Id_Attribute_Inline_Instance (Attribute_Inline_Instance) :
     """A form which handles an attribute of an Id_Entity as a seperate form."""
+
+    def create_object (self, form) :
+        if self.pid and not self.instance :
+            self.instance = self.et_man.pid_query (self.pid)
+        return self.__super.create_object (form)
+    # end def create_object
 
     def _create_instance (self, on_error) :
         if self.raw_attr_dict :
@@ -195,6 +205,25 @@ class Link_Inline_Instance (_Inline_Instance_) :
                 self.parent.get_object_raw ()
         self.__super.create_object (* args, ** kw)
     # end def create_object
+
+    def test (self, data) :
+        self.create_object = self.test_object
+        return self (data)
+    # end def test
+
+    def test_object (self, form) :
+        self.instance = instance = TFL.Record (pid = None)
+        for field in (f for f in self.fields if not f.electric) :
+            if isinstance (field, GTW.Form.MOM._Attribute_Inline_) :
+                value = field.form.instance
+            else :
+                try :
+                    value = field.attr_kind.from_string (self.get_raw (field))
+                except StandardError, error:
+                    self._handle_errors (error, field.name)
+            setattr (instance, field.name,                    value)
+            setattr (instance, field.attr_kind.attr.ckd_name, value)
+    # end def test_object
 
 # end class Link_Inline_Instance
 

@@ -117,7 +117,8 @@ def create_nav (scope) :
                   [ dict
                       ( ETM       = "GTW.OMP.PAP.Person"
                       , Form_args =
-                          ( FGD (WF ("primary"), render_mode = "table")
+                          ( FGD (WF ("primary"),   render_mode = "table")
+                          , FGD (AID ("lifetime"), render_mode = "table")
                           , LID
                               ( "GTW.OMP.PAP.Person_has_Address"
                               , FGD

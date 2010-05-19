@@ -68,6 +68,7 @@
 #                     set `result.user`
 #    18-May-2010 (CT) `migrate` changed to not filter `query_changes` to
 #                     `parent = None`
+#    19-May-2010 (MG) `rollback` clear `attr_changes` added
 #    ««revision-date»»···
 #--
 
@@ -284,7 +285,7 @@ class Scope (TFL.Meta.Object) :
     # end def async_changes
 
     def commit (self) :
-        self.ems.commit ()
+        self.ems.commit         ()
         self.attr_changes.clear ()
     # end def commit
 
@@ -489,8 +490,9 @@ class Scope (TFL.Meta.Object) :
     # end def rename
 
     def rollback (self) :
-        self.ems.rollback ()
-        self.count_change ()
+        self.ems.rollback       ()
+        self.attr_changes.clear ()
+        self.count_change       ()
     # end def rollback
 
     def start_change_recorder (self) :

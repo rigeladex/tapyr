@@ -114,7 +114,7 @@
 {%- macro _field (typ, fo, fi) -%}
   {%- set id   = fo.get_id (fi) -%}
   {%- set cssc = " ".join
-      ((kwargs.pop ("class", ""), fi.css_class or "")).strip ()
+      (( kwargs.pop ("class", ""), fi.css_class or "")).strip ()
   -%}
   {{ typ
       ( id            = "F_%s"|format (id)

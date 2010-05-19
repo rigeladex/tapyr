@@ -78,6 +78,7 @@
 #     3-May-2010 (MG) Use `e_type.ui_name` instance on `e_type.type_base_name`
 #     5-May-2010 (MG) `render_mode_description` added
 #    15-May-2010 (MG) `css_class`, `widget`, and `default_render_mode` added
+#    19-May-2010 (MG) `_handle_errors` option parameter `field` added
 #    ««revision-date»»···
 #--
 
@@ -328,14 +329,14 @@ class _Instance_ (GTW.Form._Form_) :
         return getattr (instance, "epk_raw", ())
     # end def get_object_raw
 
-    def _handle_errors (self, error_list) :
+    def _handle_errors (self, error_list, field = None) :
         for error_or_list in error_list :
             error_list = (error_or_list, )
             if isinstance (error_or_list, MOM.Error.Invariant_Errors) :
                 error_list = error_or_list.args [0]
             for error in error_list :
                 attributes = list (getattr (error, "attributes", ()))
-                attr       = getattr       (error, "attribute", None)
+                attr       = getattr       (error, "attribute",  field)
                 if attr :
                     attributes.append (attr)
                 for attr in attributes :

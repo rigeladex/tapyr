@@ -57,6 +57,7 @@
 #    12-May-2010 (MG) `setup_javascript` changed
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    13-May-2010 (MG) UI-Display editing style continued
+#    19-May-2010 (MG) `test` added
 #    ««revision-date»»···
 #--
 
@@ -102,59 +103,6 @@ class Link_Inline (TFL.Meta.Object) :
     def get_errors (self) :
         return self.errors
     # end def get_errors
-
-    def role_instance (self, link) :
-        return getattr (link, self.role_name)
-    # end def role_instance
-
-    @TFL.Meta.Once_Property
-    def linked_instances (self) :
-        if self.owner.instance :
-            return self.form_cls.et_man.query \
-                (** {self.own_role_name : self.owner.instance})
-        return TFL.Q_Result (())
-    # end def linked_instances
-
-    @TFL.Meta.Once_Property
-    def Media (self) :
-        return GTW.Media.from_list \
-            ([m for m in (self.media, self.form_cls.Media) if m])
-    # end def Media
-
-    def initial_pid_and_state (self, link, no) :
-        if link not in self._initial_pids :
-            self._initial_pids.add (link)
-            pid_name_pat   = "%s%%s___pid_"   % (self.prefix_pat % no, )
-            state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
-            role           = getattr (link, self.role_name)
-            result         = []
-            for inst, attr, css in \
-                    ( (link, "",                        "mom-link")
-                    , (role, "__%s" % (self.role_name), "mom-object")
-                    ) :
-                result.extend \
-                    ( ( (inst.pid, pid_name_pat   % (attr, ), css)
-                      , ("L",      state_name_pat % (attr, ), css)
-                      )
-                    )
-            return result
-        return ()
-    # end def initial_pid_and_state
-
-    @TFL.Meta.Once_Property
-    def prototype_form (self) :
-        iform_cls     = self.form_cls
-        et_man        = iform_cls.et_man
-        owner         = self.owner
-        prefix        = "%s-MP" % (self.prefix, )
-        return iform_cls \
-            (None, prefix = prefix, parent = owner, prototype = True)
-    # end def prototype_form
-
-    @TFL.Meta.Once_Property
-    def range_field_name (self) :
-        return "%s-m2m-range" % (self.form_cls.et_man._etype.type_base_name, )
-    # end def range_field_name
 
     @TFL.Meta.Once_Property
     def form_count (self) :
@@ -211,6 +159,59 @@ class Link_Inline (TFL.Meta.Object) :
         return result
     # end def forms
 
+    @TFL.Meta.Once_Property
+    def linked_instances (self) :
+        if self.owner.instance :
+            return self.form_cls.et_man.query \
+                (** {self.own_role_name : self.owner.instance})
+        return TFL.Q_Result (())
+    # end def linked_instances
+
+    def initial_pid_and_state (self, link, no) :
+        if link.pid and link not in self._initial_pids :
+            self._initial_pids.add (link)
+            pid_name_pat   = "%s%%s___pid_"   % (self.prefix_pat % no, )
+            state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
+            role           = getattr (link, self.role_name)
+            result         = []
+            for inst, attr, css in \
+                    ( (link, "",                        "mom-link")
+                    , (role, "__%s" % (self.role_name), "mom-object")
+                    ) :
+                result.extend \
+                    ( ( (inst.pid, pid_name_pat   % (attr, ), css)
+                      , ("L",      state_name_pat % (attr, ), css)
+                      )
+                    )
+            return result
+        return ()
+    # end def initial_pid_and_state
+
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        return GTW.Media.from_list \
+            ([m for m in (self.media, self.form_cls.Media) if m])
+    # end def Media
+
+    @TFL.Meta.Once_Property
+    def prototype_form (self) :
+        iform_cls     = self.form_cls
+        et_man        = iform_cls.et_man
+        owner         = self.owner
+        prefix        = "%s-MP" % (self.prefix, )
+        return iform_cls \
+            (None, prefix = prefix, parent = owner, prototype = True)
+    # end def prototype_form
+
+    @TFL.Meta.Once_Property
+    def range_field_name (self) :
+        return "%s-m2m-range" % (self.form_cls.et_man._etype.type_base_name, )
+    # end def range_field_name
+
+    def role_instance (self, link) :
+        return getattr (link, self.role_name)
+    # end def role_instance
+
     def setup_javascript (self, parent_form) :
         if self.render_mode == "ui_display_table" :
             cls = GTW.Form.Javascript.Link_Inline_UI_Display
@@ -218,6 +219,12 @@ class Link_Inline (TFL.Meta.Object) :
             cls = GTW.Form.Javascript.Link_Inline
         cls (self.form_cls, self, ** self.javascript_options)
     # end def setup_javascript
+
+    def test (self, no, data) :
+        form = self.form_cls (prefix = self.prefix_pat % no)
+        form.test            (data)
+        return form
+    # end def test
 
     def create_object (self, form) :
         ### add checks for min/max
@@ -240,12 +247,13 @@ class Link_Inline (TFL.Meta.Object) :
     # end def setup_raw_attr_dict
 
     def ui_display (self, link) :
+        etype = self.form_cls.et_man._etype
         for attr in self.ui_display_attrs :
             value = getattr (link, attr)
             if hasattr (value, "ui_display") :
                 yield value.ui_display
             else :
-                kind = getattr (link.__class__, attr)
+                kind = getattr (etype, attr)
                 yield kind.get_raw (link)
     # end def ui_display
 

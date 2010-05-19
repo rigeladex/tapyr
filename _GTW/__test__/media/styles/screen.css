@@ -364,6 +364,9 @@ tr.inline-instance
     }
 
 /* UI-Display Inline Styling */
+.ui-display-changed
+    { font-style       : italic
+    }
 div.Inline-UI-Display h3
     { position         : relative
     ; margin           : 0

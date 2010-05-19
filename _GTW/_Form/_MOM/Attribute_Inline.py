@@ -37,6 +37,7 @@
 #                     auto-completed)
 #     7-May-2010 (MG) `need_change` eliminated, `create_object` changed
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    19-May-2010 (MG) `Id_Attribute_Inline_Instance.create_object` added
 #    ««revision-date»»···
 #--
 

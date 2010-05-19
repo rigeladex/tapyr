@@ -60,6 +60,7 @@
 #    15-May-2010 (MG) `Test` added
 #    17-May-2010 (MG) `Test` removed again
 #    19-May-2010 (MG) `Fields` changed
+#    19-May-2010 (MG) `Test` readded
 #    ««revision-date»»···
 #--
 
@@ -279,13 +280,41 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     (inline.form_cls (obj))
                 data ["ui_display"] = getattr (obj, "ui_display", u"")
                 if request.req_data.get ("edit", u"1") == u"1":
-                    data ["puf_title_prefix"] = _T ("Edit")
+                    title = _T ("Edit")
                 else :
-                    data ["puf_title_prefix"] = _T ("Copy")
+                    title = _T ("Copy")
+                data ["puf_title"] = "%s %s" % (title, obj.ui_display)
                 return handler.json (data)
         # end def rendered
 
     # end class Fields
+
+    class Test (_Inline_) :
+        """Return the values of the form fields for an instance."""
+
+        SUPPORTED_METHODS = set (("POST", ))
+        template          = """
+        {%- import "html/rform.jnj" as RForm %}
+        {{ GTW.render_fofi_widget
+            (inline, "link_ui_display", inline, link, no)
+         }}
+        """
+        def rendered (self, handler, template = None) :
+            request  = handler.request
+            inline   = self.inline ()
+            if inline :
+                no     = request.req_data.get ("__FORM_NO__")
+                form   = inline.test (no, request.req_data)
+                handler.context ["inline"] = inline
+                handler.context ["link"]   = form.instance
+                handler.context ["no"]     = no
+                result = self.top.Templateer.render_string \
+                    (self.template, handler.context).strip ()
+                form.et_man.home_scope.rollback ()
+                return result
+        # end def rendered
+
+    # end class Test
 
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
@@ -393,6 +422,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , completed = (Completed, "forms")
         , fields    = (Fields,    "forms")
         , form      = (Form,      "forms")
+        , test      = (Test,      "forms")
         )
     child_attrs     = {}
 
