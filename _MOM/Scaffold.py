@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
 #    19-May-2010 (CT) `app_type_and_uri` factored
+#    20-May-2010 (CT) `scope` corrected (guard for `if` modifying `create`)
 #    ««revision-date»»···
 #--
 
@@ -101,7 +102,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     @classmethod
     def scope (cls, db_prefix = None, db_name = None, create = True) :
         apt, uri = cls.app_type_and_uri (db_prefix, db_name)
-        if not uri or not sos.path.exists (uri) :
+        if (not db_prefix) and (not uri or not sos.path.exists (uri)) :
             create = True
         if create :
             print "Creating new scope", apt, uri or "in memory"
