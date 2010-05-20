@@ -33,7 +33,7 @@
 #}
 {%- macro error_list (error_list) -%}
   {%- if error_list %}
-  <ul class="errorlist">
+  <ul class="errorlist ui-state-error ui-corner-all">
     {%- for e in error_list %}
       <li>
         {{ GTW.call_macro (e.widget|default("html/field_error.jnj, error"), e)}}

@@ -2,9 +2,6 @@ body
     { font-size        : 1em
     }
 
-.Error-Message
-    { color            : red
-    }
 #navigate li.current-link
     { background-color : rgb(50%,75%,100%)
     ; color            : #EFF3FE
@@ -293,10 +290,6 @@ table.grid-table td
     ; font-size        : small
     }
 
-.Object-Editor ul.errorlist
-    { color            : red
-    }
-
 .Formset-Horizontal th
     { text-align       : left
     }
@@ -403,4 +396,20 @@ div.Inline-UI-Display table
     }
 .first-button
     { padding-left    : 1em
+    }
+
+/* error handling */
+.ui-state-error
+    { padding         : 5px
+    }
+.ui-state-error a
+    { background      : transparent
+    ; border-width    : 0
+    ; font-size       : 100%
+    }
+
+ul.errorlist
+    { list-style      : none
+    ; padding         : 4px
+    ; margin          : 0 0 1em 0
     }

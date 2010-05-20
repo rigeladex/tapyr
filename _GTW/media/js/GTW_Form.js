@@ -212,7 +212,7 @@
         var $new       = this._copy_form_inner ($inline, form_no) [0];
         /* we are ready to add the new block at the end */
         this._setup_buttons         ($new, $inline.data ("buttons"), $inline);
-        $prototype.parent           ().append ($new);
+        $inline.find                (".ui-entities-container").append ($new);
         this._update_button_states  ($inline);
         this._setup_completers      ($inline);
         return $new;

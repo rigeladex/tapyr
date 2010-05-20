@@ -42,6 +42,7 @@
 #     6-Mar-2010 (MG) Error handling changed
 #     3-May-2010 (MG) New form handling implemented
 #     6-May-2010 (MG) `fgs_need_header` added
+#    20-May-2010 (MG) `next_erroneous_field` and `errors_of_field_group` added
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,15 @@ class _Form_ (TFL.Meta.Object) :
         return len (self.errors) + len (self.field_errors) + self.inline_errors
     # end def error_count
 
+    def errors_of_field_group (self, fg) :
+        result = []
+        if self.error_count :
+            for fi in self.fields_of_field_group (fg) :
+                if self.get_errors (fi) :
+                    result.append (fi)
+        return result
+    # end def errors_of_field_group
+
     def fields_of_field_group (self, fg) :
         for f in fg.fields :
             yield self.fields [f.name]
@@ -215,6 +225,23 @@ class _Form_ (TFL.Meta.Object) :
             result ["checked"] = "checked"
         return result
     # end def is_chained
+
+    def next_erroneous_field (self, current = None) :
+        index  = 0
+        result = (None, None)
+        if current :
+            try :
+                index = self.fields.index (current)
+            except ValueError :
+                ### current field not in this form -> no next field in this form
+                return None
+        for index in xrange (index, len (self.fields)) :
+            field = self.fields [index]
+            if self.field_errors.get (field.name) :
+                result = field, self.get_id (field)
+                break
+        return result
+    # end def next_erroneous_field
 
     @TFL.Meta.Once_Property
     def raw_values (self) :

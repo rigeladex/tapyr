@@ -70,6 +70,29 @@
 {%- endmacro -%} {#- aid_th -#}
 
 {%- macro aid_object (fo) -%}
+   {%- if fo.error_count %}
+     <div class="ui-widget ui-state-error ui-corner-all ui-helper-reset">
+        {%- set field, nid = fo.next_erroneous_field () %}
+        {%- onion nid %}
+          {%- head -%}
+          <a href="#F_{{ nid }}"
+             title="{{ GTW._T ("Click to jump to the field with the first error") }}"
+          >
+          {%- body -%}
+            {{ fo.error_count }}
+           {{GTW._Tn ("Error", "Errors", fo.error_count) }}
+          {%- tail -%}
+            </a>
+        {%- endonion -%}
+     </div>
+   {% endif -%}
+   {%- if fo.get_errors () %}
+     <div class="ui-widget ui-state-error ui-corner-all">
+       {%- for e in fo.get_errors () %}
+         {{ GTW.call_macro (e.widget, e) }}
+       {% endfor -%}
+     </div>
+   {% endif -%}
    {%- for hf in fo.hidden_fields %}
      {{ GTW.call_macro (hf.widget, fo, hf) }}
    {% endfor -%}
@@ -117,6 +140,7 @@
 {%- endmacro -%} {#- fg_div_seq -#}
 
 {%- macro fg_table (fo, fg) -%}
+  {%- set errors = [] %}
   <table class="field_group-Horizontal">
     <thead>
       <tr>
@@ -133,6 +157,12 @@
       </tr>
     </tbody>
   </table>
+  {%- set fge = fo.errors_of_field_group (fg) %}
+  {%- if fge  %}
+    {%- for fi in fge -%}
+      {{ GTW.render_fofi_widget (fi, "error",         fo, fi) }}
+    {%- endfor -%}
+  {% endif -%}
   <div class="field_group-Horizontal-Help-Table">
     {%- for fi in fo.fields_of_field_group (fg) %}
       {{ GTW.render_fofi_widget (fi, "help", fo, fi) }}
@@ -215,7 +245,7 @@
       {% endif -%}
       <tr>{{ form_as_columns (fform, "head") }}</tr>
     </thead>
-    <tbody>
+    <tbody class="ui-entities-container">
       <tr class="inline-instance inline-prototype">
         {{ form_as_columns (proto, "body") }}
       </tr>
@@ -224,6 +254,13 @@
       {% endfor -%}
     </tbody>
   </table>
+  ERR
+  {%- set fge = fo.errors_of_field_group (fg) %}
+  {%- if fge  %}
+    {%- for fi in fge -%}
+      {{ GTW.render_fofi_widget (fi, "error",         fo, fi) }}
+    {%- endfor -%}
+  {% endif -%}
   </fieldset>
 {%- endmacro -%} {#- inline_table -#}
 

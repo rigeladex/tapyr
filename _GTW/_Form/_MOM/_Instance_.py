@@ -79,6 +79,7 @@
 #     5-May-2010 (MG) `render_mode_description` added
 #    15-May-2010 (MG) `css_class`, `widget`, and `default_render_mode` added
 #    19-May-2010 (MG) `_handle_errors` option parameter `field` added
+#    20-May-2010 (MG) `next_erroneous_field` added
 #    ««revision-date»»···
 #--
 
@@ -348,6 +349,22 @@ class _Instance_ (GTW.Form._Form_) :
                 if not attributes :
                     self.errors.append (error)
     # end def _handle_errors
+
+    def next_erroneous_field (self, current = None) :
+        next, next_id = self.__super.next_erroneous_field (current)
+        if next is None :
+            ### no erroneus field in this form -> let's try it in one of the
+            ### forms of the inline fields
+            for ifi in self.inline_fields :
+                next, next_id = ifi.form.next_erroneous_field (current)
+                if next :
+                    break
+            if next is None :
+                ### no form of the inline fields has an error after the
+                ### current -> maybe one of the inline grous ?
+                pass
+        return next, next_id
+    # end def next_erroneous_field
 
     @TFL.Meta.Once_Property
     def instance_state (self) :
