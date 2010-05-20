@@ -32,6 +32,7 @@
 **    12-May-2010 (MG) `s/lid/pid/g`
 **    13-May-2010 (MG) Pid and state are now two separate fields, UI-display
 **                     continued
+**    20-May-2010 (MG) UI-Display style finished
 **    ««revision-date»»···
 **--
 */
@@ -301,11 +302,12 @@
         var $this     = $(this);
         /* re-enumerate the forms */
         /* first, let's renumerate the inline-instance's */
-        self.element.find (".inline-form-table").each ( function ()
+        self.element.find (".inline-root").each ( function ()
             {
                 var $this  = $(this);
-                var  no    = -1; /* the first is the prototype */
-                $this.find (".inline-instance").each (function ()
+                var  no    = 0;
+                $this.find (".inline-instance, .ui-entity-container")
+                     .each (function ()
                 {
                     var $elements      = $(this).find (":input");
                     var  edit_mod_list = ["id", "name"];
@@ -453,40 +455,10 @@
         if (parseInt (last) == last) action.pop ();
         $inline.data ("base_url", action.join ("/") + "/");
         $inline.data ("prefix",   inline.prefix);
-        $inline.find ("a[href=#edit]").GTW_Button
-            ( { icon      : "ui-icon-pencil"
-              , enabled   : function (btn)
-                  { return true; }
-              , data      : { self : this , $inline : $inline, copy : false}
-              , callback  : this._ui_edit
-              }
-            );
-        $inline.find ("a[href=#delete]").GTW_Button
-            ( { states   :
-                  [ { icon      : "ui-icon-trash"
-                    , callback  : this._ui_delete_entity
-                    }
-                  , { icon      : "ui-icon-plus"
-                    , callback  : this._ui_delete_entity
-                    }
-                  ]
-              , data    : { self : this }
-              , enabled : function (btn)
-                  { return true; }
-              }
-            );
-        $inline.find ("a[href=#copy]").GTW_Button
-            ( { icon      : "ui-icon-copy"
-              , enabled   : function (btn)
-                  { return true; }
-              , data      : { self : this , $inline : $inline, copy : true}
-              , callback  : this._ui_edit
-              }
-            );
+        var self = this;
         $inline.find ("a[href=#add]").GTW_Button
             ( { icon      : "ui-icon-circle-plus"
-              , enabled   : function (btn)
-                  { return true; }
+              , enabled   : function (btn) { return true; }
               , data      : { self : this , $inline : $inline}
               , callback  : this._ui_add
               }
@@ -501,17 +473,45 @@
                     }
                   ]
               , data      : { self : this }
-              , enabled   : function (btn)
-                  { return true; }
+              , enabled   : function (btn) { return true; }
               }
             );
-
         $inline.find (".ui-entity-container").each (function () {
-            var $this = $(this);
-            var $pid  = $this.find ("input[name$=___pid_].mom-link");
-            var fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
-            $this.attr ("id", inline.prefix + "-M" + fo_no);
+            self._setup_di_entity ($(this), $inline);
         });
+      }
+    , _setup_di_entity : function ($root, $inline)
+      {
+        $root.find ("a[href=#edit]").GTW_Button
+            ( { icon      : "ui-icon-pencil"
+              , enabled   : function (btn) { return true; }
+              , data      : { self : this , $inline : $inline, copy : false}
+              , callback  : this._ui_edit
+              }
+            );
+        $root.find ("a[href=#delete]").GTW_Button
+            ( { states   :
+                  [ { icon      : "ui-icon-trash"
+                    , callback  : this._ui_delete_entity
+                    }
+                  , { icon      : "ui-icon-plus"
+                    , callback  : this._ui_delete_entity
+                    }
+                  ]
+              , data    : { self : this }
+              , enabled : function (btn) { return true; }
+              }
+            );
+        $root.find ("a[href=#copy]").GTW_Button
+            ( { icon      : "ui-icon-copy"
+              , enabled   : function (btn) { return true; }
+              , data      : { self : this , $inline : $inline, copy : true}
+              , callback  : this._ui_edit
+              }
+            );
+        var $pid  = $root.find ("input[name$=___pid_].mom-link");
+        var fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
+        $root.attr ("id", $inline.data ("prefix") + "-M" + fo_no);
       }
     , _state_for_inline : function ($inline, $form)
       {
@@ -575,17 +575,11 @@
             fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
         return data.self._ui_request_form_for ($pid.val (), data, fo_no);
       }
-    , _ui_data_as_post_dict : function (prefix, data, post)
+    , _ui_data_as_post_dict : function ($root, prefix, post)
       {
-        for (var key in data)
-          {
-            var name  = prefix + "__" + key;
-            var value = data [key];
-            if (typeof value == "object")
-                this._ui_data_as_post_dict (name, value, post);
-            else
-                post [name] = value;
-          }
+        $root.find ("[name^=" + name + "]").each (function () {
+          post [this.name] = $(this).val ();
+        });
         return post;
       }
     , _ui_request_form_for : function (pid, data, no)
@@ -635,6 +629,7 @@
         var no           = field_no_pat.exec (name) [1];
         var prefix       = $inline.data ("prefix") + "-M" + no;
         var $entity_root = $("#" + prefix);
+        var new_entity   = $entity_root.length == 0;
         if (!form_save && old_data)
             this._ui_set_form_values (prefix, old_data);
         if ($dialog.data ("form-is-new") && !form_save)
@@ -643,25 +638,51 @@
           }
         var new_data     = {};
         $dialog.data ("form-save", false);
-        if (this._ui_update_form_values (prefix, old_data, new_data))
+        if (  (new_entity && form_save)
+           || this._ui_update_form_values (prefix, old_data, new_data)
+           )
           {
             var url       = $inline.data ("base_url")
                           + "test/" + $inline.data ("prefix");
-            var post_data = {__FORM_NO__ : no};
+            var post_data = {__FORM_NO__ : no, __NEW__ : new_entity};
             var self      = this;
             $.ajax
               ( { url      : url
                 , type     : "POST"
                 , data     : this._ui_data_as_post_dict
-                    (prefix, new_data, post_data)
+                    ($dialog, prefix, post_data)
                 , dataType : "html"
                 , success  : function (data, textStatus, xmlreq)
                    {
-                     $entity_root.data  ("form-data", new_data);
-                     $entity_root.find (".ui-display").remove ()
-                                 .end  ().prepend (data)
-                                 .addClass ("ui-display-changed");
-                     self._ui_hide_form ($entity_root);
+                     var $data = $(data);
+                     if (  $data.hasClass ("ui-display")
+                        || $data.hasClass ("ui-entity-container")
+                        )
+                       {
+                         if (new_entity)
+                           {
+                             $inline.find   (".ui-entities-container")
+                                    .append ($data);
+                             $data.addClass ("ui-display-changed");
+                             $entity_root = $data;
+                           }
+                         else
+                           {
+                             $entity_root.find (".ui-display").remove ()
+                                         .end  ().prepend ($data)
+                                         .addClass ("ui-display-changed");
+                           }
+                         $entity_root.data  ("form-data", new_data);
+                         self._ui_hide_form ($entity_root);
+                         /* must be done after the form is hidden */
+                         if (new_entity)
+                             self._setup_di_entity ($entity_root, $inline);
+                       }
+                     else
+                       {
+                         console.log ("Errors");
+                         $dialog.empty ().append ($data).dialog ("open");
+                       }
                    }
                  }
               );
@@ -729,7 +750,7 @@
              prefix           = $inline.data ("prefix") + "-M" + no;
              this._clear_internal_fields ($form, add_or_copy);
              $form.addClass ("gtw-ui-popup-form");
-             $dialog.empty ().append ($form);
+             $dialog.append ($form);
              if (pid)
                {
                  var url  = $inline.data ("base_url")
@@ -804,7 +825,7 @@
     , _setup_inline : function (inline)
       {
         var $inline    = $("." + inline.prefix);
-        var $prototype = $inline.find (".inline-prototype")
+        var $prototype = $inline.find (".inline-prototype").remove ()
         var  buttons   = inline ["buttons"];
         $inline.data ("options", inline);
         /* if we have found a prototype we can have the add button */

@@ -29,6 +29,7 @@
 ## Revision Dates
 ##     5-May-2010 (MG) Creation
 ##    12-May-2010 (MG) UI-Display style started
+##    20-May-2010 (MG) Refactoring of `link_ui_` macros
 ##    ««revision-date»»···
 ##--
 #}
@@ -252,31 +253,37 @@
       {%- endonion %}
   </h3>
   <table>
-    <tbody>
+    <tbody class="ui-entities-container">
       {%- for link in inline.linked_instances %}
-      <tr class="ui-entity-container">
         {{- GTW.render_fofi_widget
-          (inline, "link_ui_display", inline, link, loop.index0)
+          (inline, "link_ui_display_row", inline, link, loop.index0)
         -}}
-        <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
-        <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
-        <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
-      </tr>
       {% endfor -%}
     </tbody>
   </table>
   </div>
 {%- endmacro -%} {#- inline_ui_display_table -#}
 
+{%- macro link_ui_display_row (inline, link, index) -%}
+  <tr class="ui-entity-container">
+    {{- GTW.render_fofi_widget
+      (inline, "link_ui_display", inline, link, index)
+    -}}
+    <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
+    <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
+    <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
+  </tr>
+{%- endmacro -%} {#- link_ui_display_row -#}
+
 {%- macro link_ui_display (inline, link, index) -%}
-  {%- for value in inline.ui_display (link) %}
+  {%- for value in inline.ui_display (link) -%}
     <td class="ui-display">
-      {%- for pas, name, css in inline.initial_pid_and_state (link, index) %}
+      {%- for pas, name, css in inline.initial_pid_and_state (link, index) -%}
         {{- X.input.hidden ( value = pas, name  = name, class= css) -}}
-      {% endfor -%}
+      {%- endfor -%}
         {{- value -}}
     </td>
-  {% endfor -%}
+  {%- endfor -%}
 {%- endmacro -%} {#- link_ui_display -#}
 
 {%- macro object (fo, render_mode = None) -%}

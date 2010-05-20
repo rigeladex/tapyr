@@ -64,6 +64,8 @@
 #    12-May-2010 (MG) Automatic `legend` creation added
 #    13-May-2010 (MG) `Link_Inline_Description.role_name` added
 #    15-May-2010 (MG) Bug in `Link_Inline_Description` fixed
+#    20-May-2010 (MG) `Link_Inline_Description`: widget for
+#                     `link_ui_display_row` added
 #    ««revision-date»»···
 #--
 
@@ -173,7 +175,8 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
               )
         , ui_display_table = GTW.Form.Widget_Spec
               ( "html/rform.jnj, inline_ui_display_table"
-              , link_ui_display = "html/rform.jnj, link_ui_display"
+              , link_ui_display     = "html/rform.jnj, link_ui_display"
+              , link_ui_display_row = "html/rform.jnj, link_ui_display_row"
               )
         )
     legend           = None

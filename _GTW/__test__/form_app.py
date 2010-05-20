@@ -223,6 +223,7 @@ def _main (cmd) :
     scope.PAP.Person_has_Address (p, a, desc = "Home")
     a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
     scope.PAP.Person_has_Address (p, a, desc = "Wien")
+    scope.commit                 () ### commit my `fixtures`
     app.run_development_server \
         ( port                 = cmd.port
         , use_debugger         = cmd.debug

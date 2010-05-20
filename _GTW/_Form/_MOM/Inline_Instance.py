@@ -50,6 +50,7 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    13-May-2010 (MG) `Pid_and_State` splitted into two fields, special css
 #                     style applied to teh electric fields
+#    20-May-2010 (MG) `test_object` fixed
 #    ««revision-date»»···
 #--
 
@@ -216,6 +217,12 @@ class Link_Inline_Instance (_Inline_Instance_) :
         for field in (f for f in self.fields if not f.electric) :
             if isinstance (field, GTW.Form.MOM._Attribute_Inline_) :
                 value = field.form.instance
+                if value is None and field.form.is_link_role :
+                    ### this is the link role -> force the creation of the
+                    ### object
+                    field.form.get_object_raw ()
+                form.inline_errors += field.form.error_count
+                setattr (instance, field.form.generic_name, value)
             else :
                 try :
                     value = field.attr_kind.from_string (self.get_raw (field))

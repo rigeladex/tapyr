@@ -61,6 +61,7 @@
 #    17-May-2010 (MG) `Test` removed again
 #    19-May-2010 (MG) `Fields` changed
 #    19-May-2010 (MG) `Test` readded
+#    20-May-2010 (MG) `Test` finished
 #    ««revision-date»»···
 #--
 
@@ -231,6 +232,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         SUPPORTED_METHODS = set (("GET", ))
 
+        template          = "dynamic_form"
+
         def inline (self) :
             form   = self.Form (self.abs_href, None)
             prefix = self.forms [0]
@@ -256,8 +259,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     class Form (_Inline_) :
         """Generate the html code for editing of an inline on request."""
-
-        template = "dynamic_form"
 
         def rendered (self, handler, template = None) :
             inline = self.inline ()
@@ -293,23 +294,38 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         """Return the values of the form fields for an instance."""
 
         SUPPORTED_METHODS = set (("POST", ))
-        template          = """
+
+        template_string   = """
         {%- import "html/rform.jnj" as RForm %}
-        {{ GTW.render_fofi_widget
-            (inline, "link_ui_display", inline, link, no)
-         }}
+        {%- if NEW_FORM -%}
+          {{- GTW.render_fofi_widget
+              (inline, "link_ui_display_row", inline, link, no)
+          -}}
+        {%- else -%}
+          {{- GTW.render_fofi_widget
+              (inline, "link_ui_display",     inline, link, no)
+          -}}
+        {%- endif -%}
         """
+
         def rendered (self, handler, template = None) :
             request  = handler.request
             inline   = self.inline ()
             if inline :
-                no     = request.req_data.get ("__FORM_NO__")
-                form   = inline.test (no, request.req_data)
-                handler.context ["inline"] = inline
-                handler.context ["link"]   = form.instance
-                handler.context ["no"]     = no
-                result = self.top.Templateer.render_string \
-                    (self.template, handler.context).strip ()
+                req_data = request.req_data
+                no       = req_data.get ("__FORM_NO__")
+                form   = inline.test (no, req_data)
+                if form.error_count :
+                    handler.context ["form"] = form
+                    result = self.__super.rendered (handler, template)
+                else :
+                    handler.context ["inline"]   = inline
+                    handler.context ["link"]     = form.instance
+                    handler.context ["no"]       = no
+                    handler.context ["NEW_FORM"] = \
+                        req_data.get ("__NEW__") == "true"
+                    result = self.top.Templateer.render_string \
+                        (self.template_string, handler.context).strip ()
                 form.et_man.home_scope.rollback ()
                 return result
         # end def rendered
