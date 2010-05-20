@@ -66,6 +66,8 @@
 #    15-May-2010 (MG) Bug in `Link_Inline_Description` fixed
 #    20-May-2010 (MG) `Link_Inline_Description`: widget for
 #                     `link_ui_display_row` added
+#    20-May-2010 (MG) `Attribute_Inline_Description`: `error` for render mode
+#                     `table` set
 #    ««revision-date»»···
 #--
 
@@ -127,6 +129,7 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
               , field_header      = "html/rform.jnj, aid_header"
               , field_body        = "html/rform.jnj, aid_td"
               , help              = "html/form.jnj,  field_help"
+              , error             = "html/form.jnj,  field_error"
               )
         )
 

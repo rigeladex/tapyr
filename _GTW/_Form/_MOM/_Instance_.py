@@ -346,6 +346,8 @@ class _Instance_ (GTW.Form._Form_) :
                     except KeyError :
                         import pdb; pdb.set_trace ()
                     self.field_errors [name].append (error)
+                    error.form_attributes = attributes
+                    break
                 if not attributes :
                     self.errors.append (error)
     # end def _handle_errors

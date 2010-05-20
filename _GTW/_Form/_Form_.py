@@ -43,6 +43,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     6-May-2010 (MG) `fgs_need_header` added
 #    20-May-2010 (MG) `next_erroneous_field` and `errors_of_field_group` added
+#    20-May-2010 (MG) `get_errors` changed to support inline forms
 #    ««revision-date»»···
 #--
 
@@ -200,7 +201,14 @@ class _Form_ (TFL.Meta.Object) :
 
     def get_errors (self, field = None) :
         if field :
+            form  = getattr (field, "form", None)
             field = getattr (field, "html_name", field)
+            if form and form.error_count :
+                result = GTW.Form.Error_List ()
+                result.extend (form.errors)
+                for fe in form.field_errors.itervalues () :
+                    result.extend (fe)
+                return result
             return self.field_errors [field]
         return self.errors
     # end def get_errors
