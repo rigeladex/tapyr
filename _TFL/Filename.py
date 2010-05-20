@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -85,6 +85,7 @@
 #     7-Nov-2007 (CT)  Doctest fixed (removed `lib/python`)
 #    23-Jun-2009 (CT)  `split_ext` added to deal with changed behavior of
 #                      `os.path.splitext` in Python 2.6+
+#    20-May-2010 (CT) `__main__` added
 #    ««revision-date»»···
 #--
 
@@ -436,4 +437,33 @@ class Dirname (Filename) :
 
 if __name__ != "__main__" :
     TFL._Export ("*")
+else :
+    import _TFL.CAO
+
+    def _main (cmd) :
+        result = Filename \
+            ( * cmd.argv
+            , absolute    = cmd.absolute
+            , default_dir = cmd.default_dir
+            , default_rel = cmd.rel_to_default_dir
+            )
+        if cmd.Directory :
+            result = Dirname (result.name)
+        print result.name
+    # end def _main
+
+    _Command = TFL.CAO.Cmd \
+        ( handler     = _main
+        , args        = ("name:P?Name fragment(s) to assemble", )
+        , opts        =
+            ( "-absolute:B?Convert to an absolute filename"
+            , "-default_dir:P?Default directory"
+            , "-Directory:B?Result is directory name"
+            , "-rel_to_default_dir:B"
+                "?Interpret relative name relative to default_dir"
+            )
+        , min_args    = 1
+        )
+
+    _Command ()
 ### __END__ TFL.Filename
