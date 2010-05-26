@@ -30,6 +30,7 @@
 #     6-Feb-2010 (MG) Doctest for renaming a link fixed
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    23-May-2010 (MG) Test cases adapted for new error handling
+#    26-May-2010 (MG) Test's adapted to new error handling
 #    ««revision-date»»···
 #--
 
@@ -867,13 +868,16 @@ def fields_of_field_groups (form, indent = "") :
 
 def dump_form_errors (form, indent = "", Break = False) :
     if form.errors :
-        for form, errors in form.errors.iteritems () :
-            if Break : import pdb; pdb.set_trace ()
-            print "%sNon field errors for %r:" % (indent, form.form_name)
-            print "\n".join ("  %s%s" % (indent, e) for e in errors)
-    for f, errors in form.field_errors.iteritems () :
-        print str (f)
-        print "\n".join ("  %s%s" % (indent, e) for e in errors)
+        for fo, errors in sorted (form.errors.iteritems ()) :
+            non_field_errors = errors [None]
+            if non_field_errors :
+                if Break : import pdb; pdb.set_trace ()
+                print "%sNon field errors for %r:" % (indent, form.form_name)
+                print "\n".join ("  %s%s" % (indent, e) for e in non_field_errors)
+            for f, fe in errors.iteritems () :
+                if f is not None :
+                    print f.name
+                    print "\n".join ("  %s%s" % (indent, e) for e in fe)
 # end def dump_form_errors
 
 def internal_field_values (form) :
