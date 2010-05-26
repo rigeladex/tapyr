@@ -254,12 +254,6 @@
       {% endfor -%}
     </tbody>
   </table>
-  {%- set fge = fo.fields_with_errors_of_field_group (fg) %}
-  {%- if fge  %}
-    {%- for fi in fge -%}
-      {{ GTW.render_fofi_widget (fi, "error",         fo, fi) }}
-    {%- endfor -%}
-  {% endif -%}
   </fieldset>
 {%- endmacro -%} {#- inline_table -#}
 
