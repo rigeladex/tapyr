@@ -69,6 +69,7 @@
 #    18-May-2010 (CT) `migrate` changed to not filter `query_changes` to
 #                     `parent = None`
 #    19-May-2010 (MG) `rollback` clear `attr_changes` added
+#    26-May-2010 (CT) `self.db_errors = []` added to `_init_context`
 #    ««revision-date»»···
 #--
 
@@ -200,6 +201,7 @@ class Scope (TFL.Meta.Object) :
         self.db_cid         = 0
         self.historian      = MOM.SCM.Tracker (self)
         self.attr_changes   = TFL.mm_set ()
+        self.db_errors      = []
         self._attr_errors   = []
         self._etm           = {}
         self._pkg_ns        = {}
@@ -247,7 +249,8 @@ class Scope (TFL.Meta.Object) :
             except Exception, exc :
                 self.db_errors.append ((type_name, pid, cargo))
                 print repr (exc)
-                print "   Couldn't restore %s %s %s" % (type_name, pid, cargo)
+                print "   Couldn't restore %s %s %s (app-type %s)" % \
+                    (type_name, pid, cargo, self.app_type)
             else :
                 self.ems.add (result, id = pid)
                 return result

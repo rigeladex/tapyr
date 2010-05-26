@@ -36,6 +36,8 @@
 #    22-Oct-2009 (CT) `_effective_prop_kind_mixins` factored
 #    22-Oct-2009 (CT) Use `kind_name`
 #     4-Feb-2010 (CT) Argument `e_type` added to `_effective_prop_kind_mixins`
+#    26-May-2010 (CT) `__init__` changed to copy `_own_names` and `_names`
+#                     from (essential) class to (app-type specific) instance
 #    ««revision-date»»···
 #--
 
@@ -58,6 +60,8 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     _mixed_kinds   = dict ()
 
     def __init__ (self, e_type) :
+        self._own_names = dict  (self._own_names) ### class to instance
+        self._names     = dict  (self._names)     ### class to instance
         self._create_prop_dict  (e_type)
         self._create_properties (e_type)
     # end def __init__

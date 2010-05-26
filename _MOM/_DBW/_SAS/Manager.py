@@ -57,6 +57,9 @@
 #    12-May-2010 (MG) `pid` chaged to be a int, new `pid_manager` used, `pid`
 #                     is now the primary key of the SA-tables
 #    12-May-2010 (MG) Use a explicit sequence for the pid table
+#    26-May-2010 (CT) `etype_decorator` changed to create a `New` app-type
+#                     specific `attr_cls` instead of modifying the essential
+#                     one
 #    ««revision-date»»···
 #--
 
@@ -314,10 +317,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 e_type.auto_cache_roles = ()
             attr_spec = e_type._Attributes
             for name, attr_kind in role_attrs.iteritems () :
-                attr_cls             = attr_spec._own_names [name]
-                attr_cls.kind        = MOM.Attr.Cached
-                attr_cls.Kind_Mixins = (MOM.Attr.Computed_Mixin, )
-                attr_spec._add_prop    (e_type, name, attr_cls)
+                attr_cls = attr_spec._own_names [name]
+                acd      = attr_spec._own_names [name] = attr_cls.New \
+                    ( kind        = MOM.Attr.Cached
+                    , Kind_Mixins = (MOM.Attr.Computed_Mixin, )
+                    )
+                attr_spec._add_prop   (e_type, name, acd)
             MOM.DBW.SAS.SAS_Interface (e_type, columns, bases)
         return e_type
     # end def etype_decorator

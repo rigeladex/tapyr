@@ -31,6 +31,7 @@
 #    12-May-2010 (MG) `create_test_dict` added
 #    19-May-2010 (CT) `create_test_dict` improved (use dict interpolation,
 #                     parameters `bpt` (backends per test), `combiner`)
+#    26-May-2010 (CT) Use anonymous account and database `test` for MySQL
 #    ««revision-date»»···
 #--
 
@@ -86,7 +87,7 @@ class Scaffold (MOM.Scaffold) :
         ( HPS = (None,                                        None)
         , SQL = ("'sqlite://'",                               None)
         , POS = ("'postgresql://regtest:regtest@localhost'", "'regtest'")
-        , MYS = ("'mysql://regtest:regtest@localhost'",      "'regtest'")
+        , MYS = ("'mysql://:@localhost'",                    "'test'")
         )
 
     @classmethod

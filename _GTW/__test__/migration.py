@@ -79,7 +79,7 @@ _test_code = r"""
     29
     >>> int (scope.query_changes ().count ())
     29
-    >>> scope.ems.max_cid
+    >>> int (scope.ems.max_cid)
     29
 
     >>> bc.set (loa = 2.43)
@@ -96,6 +96,8 @@ _test_code = r"""
     32
     >>> int (scope.ems.max_cid)
     32
+    >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
+    2
 
     Now, we migrate all objects and the change history to a new scope. All
     entities, changes, cids, and pids should be identical::
@@ -113,11 +115,13 @@ _test_code = r"""
     True
     >>> int (scop2.ems.max_cid)
     32
-
-    >>> scop2.destroy ()
+    >>> len (scop2.SRM.Regatta_Event.query ().first ().regattas)
+    2
 
     After saving and restoring from `db_uri`, all entities, changes, cids,
     and pids should still be identical::
+
+    >>> scop2.destroy ()
 
     >>> scop3 = MOM.Scope.load (apt, db_uri)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
@@ -130,6 +134,8 @@ _test_code = r"""
     True
     >>> int (scop3.ems.max_cid)
     32
+    >>> len (scop3.SRM.Regatta_Event.query ().first ().regattas)
+    2
 
     Now we delete the original database and then migrate back from `scop3`
     into that app-type/backend. Again, all entities, changes, cids,
@@ -151,6 +157,8 @@ _test_code = r"""
     True
     >>> int (scop4.ems.max_cid)
     32
+    >>> len (scop4.SRM.Regatta_Event.query ().first ().regattas)
+    2
 
     Lets clean up::
 
