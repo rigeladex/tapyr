@@ -49,8 +49,10 @@
 #    11-Mar-2010 (MG) Use new `Attribute_Inline.instance_as_raw`
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    13-May-2010 (MG) `Pid_and_State` splitted into two fields, special css
-#                     style applied to teh electric fields
+#                     style applied to the electric fields
 #    20-May-2010 (MG) `test_object` fixed
+#    26-May-2010 (MG) `instance_or_fake` added to support redering of inline
+#                     forms with errors
 #    ««revision-date»»···
 #--
 
@@ -207,6 +209,13 @@ class Link_Inline_Instance (_Inline_Instance_) :
         self.__super.create_object (* args, ** kw)
     # end def create_object
 
+    @TFL.Meta.Once_Property
+    def instance_or_fake (self) :
+        if not self.instance :
+            self.test_object (None)
+        return self.instance
+    # end def instance_or_fake
+
     def test (self, data) :
         self.create_object = self.test_object
         return self (data)
@@ -221,13 +230,12 @@ class Link_Inline_Instance (_Inline_Instance_) :
                     ### this is the link role -> force the creation of the
                     ### object
                     field.form.get_object_raw ()
-                form.inline_errors += field.form.error_count
                 setattr (instance, field.form.generic_name, value)
             else :
                 try :
                     value = field.attr_kind.from_string (self.get_raw (field))
                 except StandardError, error:
-                    self._handle_errors (error, field.name)
+                    self._handle_errors (error, field)
             setattr (instance, field.name,                    value)
             setattr (instance, field.attr_kind.attr.ckd_name, value)
     # end def test_object

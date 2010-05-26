@@ -67,6 +67,7 @@
 ##                     changed
 ##     5-May-2010 (MG) `field_help` added
 ##     5-May-2010 (MG) Field help for div-seq and table unified
+##    26-May-2010 (MG) Error handling changed
 ##    ««revision-date»»···
 ##--
 #}
@@ -390,8 +391,9 @@
 {%- endmacro -%} {#- object -#}
 
 {%- macro field_error (fo, fi) -%}
+  {%- set field, nid = fo.next_erroneous_field (fi) %}
   {%- set fe = fo.get_errors (fi) -%}
-  {{ GTW.call_macro (fe.widget, fe) }}
+  {{ GTW.call_macro (fe.widget, fe, nid) }}
 {%- endmacro -%} {#- field_error -#}
 
 {%- macro field_help (fo, fi) -%}

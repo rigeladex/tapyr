@@ -403,7 +403,7 @@ div.Inline-UI-Display table
     { padding         : 5px
     }
 .ui-state-error a
-    { background      : transparent
+    { background-color: transparent
     ; border-width    : 0
     ; font-size       : 100%
     }
@@ -412,4 +412,7 @@ ul.errorlist
     { list-style      : none
     ; padding         : 4px
     ; margin          : 0 0 1em 0
+    }
+.gtw-next-error
+    { float           : right
     }

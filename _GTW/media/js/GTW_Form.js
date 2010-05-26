@@ -778,7 +778,8 @@
              $dialog.data   ("form-is-new", false);
              $dialog.data   ("form-prefix", prefix);
              $dialog.data   ("form-data",   data);
-             $dialog.dialog ("option", "title", data.puf_title);
+             if (data)
+                 $dialog.dialog ("option", "title", data.puf_title);
              $form = $entity_root.find        (".gtw-ui-popup-form")
                                  .appendTo    ($dialog)
                                  .removeClass ("ui-helper-hidden");

@@ -58,6 +58,7 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    13-May-2010 (MG) UI-Display editing style continued
 #    19-May-2010 (MG) `test` added
+#    26-May-2010 (MG) Error handling changed
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,6 @@ class Link_Inline (TFL.Meta.Object) :
             self.prefix         = "__".join ((owner.prefix, self.name))
             self.prefix_pat     = "%s-M%%s" % (self.prefix, )
             self._initial_pids  = set ()
-        self.errors             = GTW.Form.Error_List ()
         max_count               = getattr (form_cls.et_man, "max_count", None)
         if max_count :
             self.max_count      = max_count
@@ -99,10 +99,6 @@ class Link_Inline (TFL.Meta.Object) :
     def defaults (self, form, instance, defaults = {}) :
         pass
     # end def defaults
-
-    def get_errors (self) :
-        return self.errors
-    # end def get_errors
 
     @TFL.Meta.Once_Property
     def form_count (self) :
@@ -231,7 +227,6 @@ class Link_Inline (TFL.Meta.Object) :
         for lform in self.forms :
             lform.recursively_run \
                 ("create_object", lform, reverse = True)
-            form.inline_errors += lform.error_count
     # end def create_object
 
     def prepare_request_data (self, form, request_data) :
@@ -287,7 +282,6 @@ class Collection_Inline (Link_Inline) :
         for lform in self.forms :
             lform.recursively_run \
                 ("create_object", lform, reverse = True)
-            form.inline_errors += lform.error_count
             if lform.instance :
                 raw_values.append (lform.get_object_raw ({}))
         ### import pdb; pdb.set_trace ()

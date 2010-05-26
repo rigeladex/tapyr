@@ -29,6 +29,7 @@
 #     5-Feb-2010 (MG) Creation
 #     6-Feb-2010 (MG) Doctest for renaming a link fixed
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    23-May-2010 (MG) Test cases adapted for new error handling
 #    ««revision-date»»···
 #--
 
@@ -145,7 +146,7 @@ Now, let's pass some real data to the form:
 
 We have one error...
     >>> dump_form_errors (form)
-    Non field errors:
+    Non field errors for 'Person':
       epkified_ckd() takes at least 3 non-keyword arguments (2 given)
         GTW.OMP.PAP.Person needs the arguments: (last_name, first_name, middle_name = '', title = '', ** kw)
         Instead it got: (last_name = 'Last name')
@@ -267,20 +268,16 @@ a second time:
     >>> form (request_data)
     1
     >>> dump_form_errors (form)
-    Non field errors:
+    Non field errors for 'Person':
       new definition of (u'test', u'new first name', u'', u'') clashes with existing (u'test', u'new first name', u'', u'')
 
 OK, let's see how an error in a composite is handled:
     >>> request_data ["Person__lifetime__finish"] = "16.03.1900"
     >>> form = form_cls ("/post-url/", saved_instance)
     >>> form (request_data)
-    2
+    1
     >>> dump_form_errors (form)
     start
-        Condition `finish_after_start` : The finish date must be later than the start date (start <= finish)
-        start = datetime.date(1976, 3, 16)
-        finish = datetime.date(1900, 3, 16)
-    finish
         Condition `finish_after_start` : The finish date must be later than the start date (start <= finish)
         start = datetime.date(1976, 3, 16)
         finish = datetime.date(1900, 3, 16)
@@ -485,9 +482,8 @@ case too. We try to generate the same event as before, which is not allowed:
     >>> form (request_data) ### 4
     1
     >>> dump_form_errors (form) ### 4
-    Non field errors:
+    Non field errors for 'Event':
       <class 'GTW.OMP.EVT.Event' [HWO__Hash__HPS]>, ((u'Permaname', ), dict (start = '2010/01/01'), dict ())
-
 
 Now suprise here. The error is detected and reported correctly.
 """
@@ -871,19 +867,13 @@ def fields_of_field_groups (form, indent = "") :
 
 def dump_form_errors (form, indent = "", Break = False) :
     if form.errors :
-        if Break : import pdb; pdb.set_trace ()
-        print "%sNon field errors:" % (indent, )
-        print "\n".join ("  %s%s" % (indent, e) for e in form.errors)
+        for form, errors in form.errors.iteritems () :
+            if Break : import pdb; pdb.set_trace ()
+            print "%sNon field errors for %r:" % (indent, form.form_name)
+            print "\n".join ("  %s%s" % (indent, e) for e in errors)
     for f, errors in form.field_errors.iteritems () :
         print str (f)
         print "\n".join ("  %s%s" % (indent, e) for e in errors)
-    for ifl in form.inline_fields :
-        dump_form_errors (ifl.form, indent + "  ")
-    for fg in form.inline_groups :
-        for ifo in fg.forms :
-            if getattr (ifo, "error_count", 1) :
-                print "%s%s" % (indent, ifo.prefix)
-                dump_form_errors (ifo, indent + "  ")
 # end def dump_form_errors
 
 def internal_field_values (form) :

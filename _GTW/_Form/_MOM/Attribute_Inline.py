@@ -68,7 +68,7 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
         parent_form.raw_attr_dict.pop (self.name, None)
         if self.needs_processing :
             form.recursively_run ("create_object", form, reverse = True)
-        if (    not form.error_count
+        if (    not form.error_count (form)
            and (   form.instance
                or (form.is_link_role and form.raw_attr_dict)
                )
@@ -84,13 +84,13 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                 parent_form.raw_attr_dict.pop (form.generic_name, None)
         ### not not move the caching up because the `get_object_raw` could
         ### create additional errors
-        ec = form.error_count
+        ec = form.error_count (form)
         if ec or not form.instance :
             ### an error was detected or the instance has not been
             ### created -> delete the values for this attribute from
             ### parent's raw_attr_dict
             parent_form.raw_attr_dict.pop (form.generic_name, None)
-        parent_form.inline_errors += ec
+        ##parent_form.inline_errors += ec
     # end def create_object
 
     def clone (self, form) :

@@ -49,6 +49,12 @@ class Error_List (list, TFL.Meta.Object) :
         return error
     # end def add
 
+    def copy (self) :
+        result = self.__class__ ()
+        result.add (self)
+        return result
+    # end def copy
+
 # end class Error_List
 
 if __name__ != "__main__" :

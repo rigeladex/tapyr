@@ -30,6 +30,7 @@
 ##     5-May-2010 (MG) Creation
 ##    12-May-2010 (MG) UI-Display style started
 ##    20-May-2010 (MG) Refactoring of `link_ui_` macros
+##    26-May-2010 (MG) Error handling changed
 ##    ««revision-date»»···
 ##--
 #}
@@ -70,7 +71,7 @@
 {%- endmacro -%} {#- aid_th -#}
 
 {%- macro aid_object (fo) -%}
-   {%- if fo.error_count %}
+   {%- if not fo.parent and fo.error_count () %}
      <div class="ui-widget ui-state-error ui-corner-all ui-helper-reset">
         {%- set field, nid = fo.next_erroneous_field () %}
         {%- onion nid %}
@@ -79,18 +80,17 @@
              title="{{ GTW._T ("Click to jump to the field with the first error") }}"
           >
           {%- body -%}
-            {{ fo.error_count }}
-           {{GTW._Tn ("Error", "Errors", fo.error_count) }}
+            {{ fo.error_count () }}
+           {{GTW._Tn ("Error", "Errors", fo.error_count ()) }}
           {%- tail -%}
             </a>
         {%- endonion -%}
      </div>
    {% endif -%}
-   {%- if fo.get_errors () %}
+   {%- set foe = fo.get_errors () %}
+   {%- if foe %}
      <div class="ui-widget ui-state-error ui-corner-all">
-       {%- for e in fo.get_errors () %}
-         {{ GTW.call_macro (e.widget, e) }}
-       {% endfor -%}
+       {{ GTW.call_macro (foe.widget, foe) }}
      </div>
    {% endif -%}
    {%- for hf in fo.hidden_fields %}
@@ -157,7 +157,7 @@
       </tr>
     </tbody>
   </table>
-  {%- set fge = fo.errors_of_field_group (fg) %}
+  {%- set fge = fo.fields_with_errors_of_field_group (fg, True) %}
   {%- if fge  %}
     {%- for fi in fge -%}
       {{ GTW.render_fofi_widget (fi, "error",         fo, fi) }}
@@ -254,8 +254,7 @@
       {% endfor -%}
     </tbody>
   </table>
-  ERR
-  {%- set fge = fo.errors_of_field_group (fg) %}
+  {%- set fge = fo.fields_with_errors_of_field_group (fg) %}
   {%- if fge  %}
     {%- for fi in fge -%}
       {{ GTW.render_fofi_widget (fi, "error",         fo, fi) }}
@@ -291,9 +290,9 @@
   </h3>
   <table>
     <tbody class="ui-entities-container">
-      {%- for link in inline.linked_instances %}
+      {%- for iform in inline.forms %}
         {{- GTW.render_fofi_widget
-          (inline, "link_ui_display_row", inline, link, loop.index0)
+             (inline, "link_ui_display_row", inline, iform, loop.index0)
         -}}
       {% endfor -%}
     </tbody>
@@ -301,23 +300,41 @@
   </div>
 {%- endmacro -%} {#- inline_ui_display_table -#}
 
-{%- macro link_ui_display_row (inline, link, index) -%}
-  <tr class="ui-entity-container">
+{%- macro link_ui_display_row (inline, iform, index) -%}
+  {%- set ec = iform.error_count (iform) %}
+  <tr class="ui-entity-container {% if ec -%} mom-populated ui-display-changed{%- endif -%}">
     {{- GTW.render_fofi_widget
-      (inline, "link_ui_display", inline, link, index)
+      (inline, "link_ui_display", inline, iform, index, ec)
     -}}
     <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
     <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
     <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
+    {%- if ec -%}
+      <td>
+        <div class="ui-state-error ui-corner-all">
+          <span class="ui-icon ui-icon-alert"
+                title="{{ ec }} {{ GTW._Tn ("Error", "Errors", ec) }}"
+          >Errors</span>
+        </div>
+      </td>
+  {%- endif -%}
   </tr>
 {%- endmacro -%} {#- link_ui_display_row -#}
 
-{%- macro link_ui_display (inline, link, index) -%}
+{%- macro link_ui_display (inline, form, index, ec) -%}
+  {%- set link = form.instance_or_fake -%}
   {%- for value in inline.ui_display (link) -%}
     <td class="ui-display">
-      {%- for pas, name, css in inline.initial_pid_and_state (link, index) -%}
-        {{- X.input.hidden ( value = pas, name  = name, class= css) -}}
-      {%- endfor -%}
+      {%- if loop.first -%}
+        {%- if ec %}
+          {%- set popup_form = True %}
+          {%- include "html/dynamic_form.jnj" with context %}
+        {%- else %}
+          {%- for pas, name, css in inline.initial_pid_and_state (link, index) -%}
+            {{- X.input.hidden ( value = pas, name = name, class= css) -}}
+          {%- endfor -%}
+        {% endif -%}
+      {%- endif -%}
         {{- value -}}
     </td>
   {%- endfor -%}

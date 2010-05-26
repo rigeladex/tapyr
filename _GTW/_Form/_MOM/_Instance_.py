@@ -80,6 +80,7 @@
 #    15-May-2010 (MG) `css_class`, `widget`, and `default_render_mode` added
 #    19-May-2010 (MG) `_handle_errors` option parameter `field` added
 #    20-May-2010 (MG) `next_erroneous_field` added
+#    26-May-2010 (MG) Error handling changed
 #    ««revision-date»»···
 #--
 
@@ -336,37 +337,19 @@ class _Instance_ (GTW.Form._Form_) :
             if isinstance (error_or_list, MOM.Error.Invariant_Errors) :
                 error_list = error_or_list.args [0]
             for error in error_list :
+                field      = None
                 attributes = list (getattr (error, "attributes", ()))
                 attr       = getattr       (error, "attribute",  field)
                 if attr :
                     attributes.append (attr)
                 for attr in attributes :
                     try :
-                        name = self.fields [attr].html_name
+                        field = self.fields [attr]
                     except KeyError :
                         import pdb; pdb.set_trace ()
-                    self.field_errors [name].append (error)
-                    error.form_attributes = attributes
                     break
-                if not attributes :
-                    self.errors.append (error)
+                self.errors.add (self, field, error)
     # end def _handle_errors
-
-    def next_erroneous_field (self, current = None) :
-        next, next_id = self.__super.next_erroneous_field (current)
-        if next is None :
-            ### no erroneus field in this form -> let's try it in one of the
-            ### forms of the inline fields
-            for ifi in self.inline_fields :
-                next, next_id = ifi.form.next_erroneous_field (current)
-                if next :
-                    break
-            if next is None :
-                ### no form of the inline fields has an error after the
-                ### current -> maybe one of the inline grous ?
-                pass
-        return next, next_id
-    # end def next_erroneous_field
 
     @TFL.Meta.Once_Property
     def instance_state (self) :
@@ -420,7 +403,7 @@ class _Instance_ (GTW.Form._Form_) :
         ### once the object are created the field groups get one final
         ### chance to update the created object
         self.recursively_run ("update_object",        self)
-        return self.error_count
+        return self.error_count ()
     # end def __call__
 
 # end class _Instance_

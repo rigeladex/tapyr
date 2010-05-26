@@ -28,11 +28,15 @@
 ##
 ## Revision Dates
 ##    14-May-2010 (MG) Creation
+##    26-May-2010 (MG) Allow the inclusion of this template in the context of
+##                     link inline rendering
 ##    ««revision-date»»···
 ##--
 #}
 {%- import "html/rform.jnj" as RForm %}
-<div class="Object-Editor">
+<div class="Object-Editor {% if popup_form -%}
+    gtw-ui-popup-form ui-helper-hidden
+  {% endif -%}">
 {{ GTW.render_fofi_widget (form, "aid_object", form, render_mode = "div_seq") }}
 </div>
 {#- __END__ jinja template: JNJ/html/dynamic_form.jnj -#}

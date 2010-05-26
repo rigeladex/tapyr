@@ -62,6 +62,7 @@
 #    19-May-2010 (MG) `Fields` changed
 #    19-May-2010 (MG) `Test` readded
 #    20-May-2010 (MG) `Test` finished
+#    26-May-2010 (MG) Error handing changed
 #    ««revision-date»»···
 #--
 
@@ -152,12 +153,18 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return self.__super.rendered (handler, template)
         # end def rendered
 
-        def _display_errors (self, form) :
-            print form.prefix
-            print form.errors, form.field_errors.items ()
+        def _display_errors (self, form, indent = "") :
+            print "%s%s" % (indent, form.prefix)
+            for e in form.errors.of_form (form) :
+                print "%s  %s" % (indent, e)
+            for ifi in form.inline_fields :
+                ifo = ifi.form
+                if form.errors.count (ifo) :
+                    self._display_errors (ifo, indent + "  ")
             for ig in form.inline_groups :
                 for f in ig.forms :
-                    self._display_errors (f)
+                    if form.errors.count (f) :
+                        self._display_errors (f, indent + "  ")
         # end def _display_errors
 
     # end class Changer
@@ -299,11 +306,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         {%- import "html/rform.jnj" as RForm %}
         {%- if NEW_FORM -%}
           {{- GTW.render_fofi_widget
-              (inline, "link_ui_display_row", inline, link, no)
+              (inline, "link_ui_display_row", inline, iform, no)
           -}}
         {%- else -%}
           {{- GTW.render_fofi_widget
-              (inline, "link_ui_display",     inline, link, no)
+              (inline, "link_ui_display",     inline, iform, no, 0)
           -}}
         {%- endif -%}
         """
@@ -315,12 +322,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 req_data = request.req_data
                 no       = req_data.get ("__FORM_NO__")
                 form   = inline.test (no, req_data)
-                if form.error_count :
+                if form.error_count () :
                     handler.context ["form"] = form
                     result = self.__super.rendered (handler, template)
                 else :
                     handler.context ["inline"]   = inline
-                    handler.context ["link"]     = form.instance
+                    handler.context ["iform"]    = form
                     handler.context ["no"]       = no
                     handler.context ["NEW_FORM"] = \
                         req_data.get ("__NEW__") == "true"

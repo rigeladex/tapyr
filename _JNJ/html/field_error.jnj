@@ -28,12 +28,21 @@
 ##
 ## Revision Dates
 ##    15-Jan-2010 (MG) Creation
+##    26-May-2010 (MG) Link to next error added
 ##    ««revision-date»»···
 ##--
 #}
-{%- macro error_list (error_list) -%}
+{%- macro error_list (error_list, nid = None) -%}
   {%- if error_list %}
   <ul class="errorlist ui-state-error ui-corner-all">
+    {%- if nid %}
+      <li class="gtw-next-error">
+        <a href="#F_{{ nid }}"
+           title="{{ GTW._T ("Click to jump to the next error") }}"
+           class="ui-icon ui-icon-circle-arrow-e"
+        >{{ GTW._T ("Next error") }}</a>
+      </li>
+    {% endif -%}
     {%- for e in error_list %}
       <li>
         {{ GTW.call_macro (e.widget|default("html/field_error.jnj, error"), e)}}
