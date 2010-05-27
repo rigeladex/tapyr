@@ -356,7 +356,7 @@ class Entity (TFL.Meta.Object) :
                         result [name] = attr.from_string (value)
                     except (TypeError, ValueError) as err :
                         raise MOM.Error.Invalid_Attribute \
-                            (self, name, value, attr.kind, err)
+                            (soc, name, value, attr.kind, err)
                 except Exception as exc :
                     on_error (exc)
         return result
