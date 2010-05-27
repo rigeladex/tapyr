@@ -53,6 +53,7 @@
 #    20-May-2010 (MG) `test_object` fixed
 #    26-May-2010 (MG) `instance_or_fake` added to support redering of inline
 #                     forms with errors
+#    27-May-2010 (MG) Use new `on_error` for `cooked_attrs`
 #    ««revision-date»»···
 #--
 
@@ -169,10 +170,13 @@ class Id_Attribute_Inline_Instance (Attribute_Inline_Instance) :
             ### if raw data is provided for this form -> let's check if we
             ### find an instance with this raw data before we try to create
             ### a new one
-            cooked_attrs = self.et_man._etype.cooked_attrs (self.raw_attr_dict)
-            instance     = self.et_man.query (** cooked_attrs).first ()
-            if instance :
-                return instance
+            errors       = []
+            cooked_attrs = self.et_man._etype.cooked_attrs \
+                (self.raw_attr_dict, errors.append)
+            if not errors :
+                instance = self.et_man.query (** cooked_attrs).first ()
+                if instance :
+                    return instance
         return self.__super._create_instance (on_error)
     # end def _create_instance
 
