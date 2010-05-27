@@ -130,6 +130,7 @@
 #    19-May-2010 (CT) `user_diff` and `user_equal` rewritten to compare
 #                     `as_pickle_cargo` (otherwise, attributes pointing to
 #                     other entities make trouble)
+#    27-May-2010 (CT) `cooked_attrs` changed to `from_string` instead `cooked`
 #    ««revision-date»»···
 #--
 
@@ -347,7 +348,7 @@ class Entity (TFL.Meta.Object) :
         for name, value in kw.iteritems () :
             attr = attributes.get (name)
             if attr :
-                result [name] = attr.cooked (value)
+                result [name] = attr.from_string (value)
         return result
     # end def cooked_attrs
 
