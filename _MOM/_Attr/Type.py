@@ -129,7 +129,6 @@
 #                     `datetime.date`!)
 #    19-May-2010 (CT) `_A_Object_._check_type` changed to check against
 #                     `etype.Essence`
-#    27-May-2010 (CT) Exception handler added to `A_Attr_Type.from_string`
 #    ««revision-date»»···
 #--
 
@@ -281,12 +280,7 @@ class A_Attr_Type (object) :
     # end def from_code
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        try :
-            return self._to_cooked \
-                (s, self._from_string_resolve, obj, glob, locl)
-        except (TypeError, ValueError) as exc :
-            raise MOM.Error.Attribute_Syntax_Error \
-                (obj, self, "%s" % (s, ), str (exc))
+        return self._to_cooked (s, self._from_string_resolve, obj, glob, locl)
     # end def from_string
 
     def _call_eval (self, s, glob, locl) :

@@ -59,6 +59,7 @@ class M_Format (TFL.Meta.Object.__class__) :
     # end def __init__
 
     def _m_add (cls, name, Table) :
+        name = unicode (name)
         assert name not in Table, "Name clash: `%s` <-> `%s`" % \
             (name, Table [name].__class__)
         Table [name] = cls

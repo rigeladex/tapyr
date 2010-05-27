@@ -131,6 +131,7 @@
 #                     `as_pickle_cargo` (otherwise, attributes pointing to
 #                     other entities make trouble)
 #    27-May-2010 (CT) `cooked_attrs` changed to `from_string` instead `cooked`
+#    27-May-2010 (CT) `on_error` added to `cooked_attrs`
 #    ««revision-date»»···
 #--
 
@@ -342,13 +343,22 @@ class Entity (TFL.Meta.Object) :
     # end def compute_type_defaults_internal
 
     @TFL.Meta.Class_and_Instance_Method
-    def cooked_attrs (soc, kw) :
+    def cooked_attrs (soc, kw, on_error = None) :
         attributes = soc.attributes
         result     = {}
+        if on_error is None :
+            on_error = soc._raise_attr_error
         for name, value in kw.iteritems () :
             attr = attributes.get (name)
             if attr :
-                result [name] = attr.from_string (value)
+                try :
+                    try :
+                        result [name] = attr.from_string (value)
+                    except (TypeError, ValueError) as err :
+                        raise MOM.Error.Invalid_Attribute \
+                            (self, name, value, attr.kind, err)
+                except Exception as exc :
+                    on_error (exc)
         return result
     # end def cooked_attrs
 
@@ -479,7 +489,8 @@ class Entity (TFL.Meta.Object) :
         print self, exc
     # end def _print_attr_err
 
-    def _raise_attr_error (self, exc) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _raise_attr_error (soc, exc) :
         raise exc
     # end def _raise_attr_error
 
