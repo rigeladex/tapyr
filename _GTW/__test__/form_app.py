@@ -106,7 +106,8 @@ def create_nav (scope) :
         , scope           = scope
         )
     result.add_entries \
-        ( [ dict
+        ( [
+            dict
               ( sub_dir         = "Admin"
               , title           = "Admin"
               , pid             = "Admin"
@@ -114,26 +115,27 @@ def create_nav (scope) :
               , headline        = u"Admin Page"
               , login_required  = True
               , etypes          =
-                  [ dict
-                      ( ETM       = "GTW.OMP.PAP.Person"
-                      , Form_args =
-                          ( FGD (WF ("primary"),   render_mode = "table")
-                          , FGD (AID ("lifetime"), render_mode = "table")
-                          , LID
-                              ( "GTW.OMP.PAP.Person_has_Address"
-                              , FGD
-                                  ( "desc"
-                                  , AID
-                                      ("address", render_mode = "div_seq"
-                                      , legend = _T ("Address")
-                                      )
-                                  )
-                              , render_mode      = "ui_display_table"
-                              , ui_display_attrs = ("desc", "address")
-                              , collapsable      = True
-                              )
-                          )
-                      )
+                  [ GTW.OMP.PAP.Nav.Admin.Person
+                    ## dict
+                    ##   ( ETM       = "GTW.OMP.PAP.Person"
+                    ##   , Form_args =
+                    ##       ( FGD (WF ("primary"),   render_mode = "table")
+                    ##       , FGD (AID ("lifetime"), render_mode = "table")
+                    ##       , LID
+                    ##           ( "GTW.OMP.PAP.Person_has_Address"
+                    ##           , FGD
+                    ##               ( "desc"
+                    ##               , AID
+                    ##                   ("address", render_mode = "div_seq"
+                    ##                   , legend = _T ("Address")
+                    ##                   )
+                    ##               )
+                    ##           , render_mode      = "ui_display_table"
+                    ##           , ui_display_attrs = ("desc", "address")
+                    ##           , collapsable      = True
+                    ##           )
+                    ##       )
+                    ##   )
                   , GTW.OMP.Auth.Nav.Admin.Account
                   ##   GTW.OMP.PAP.Nav.Admin.Address
                   ## , GTW.OMP.PAP.Nav.Admin.Email

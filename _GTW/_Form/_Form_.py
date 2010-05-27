@@ -45,6 +45,7 @@
 #    20-May-2010 (MG) `next_erroneous_field` and `errors_of_field_group` added
 #    20-May-2010 (MG) `get_errors` changed to support inline forms
 #    26-May-2010 (MG) Error handling changed
+#    27-May-2010 (MG) `Form_Errors._order` changed
 #    ««revision-date»»···
 #--
 
@@ -156,16 +157,15 @@ class Form_Errors (dict) :
 
     __metaclass__ = TFL.Meta.M_Class
 
-    def __init__ (self) :
+    def __init__ (self, root) :
         self.__super.__init__ ()
-        self._order          = TFL.Ordered_Set ()
+        self.root            = root
         self._no_more_errors = False
     # end def __init__
 
     def add (self, form, field, error) :
         if form not in self :
             self [form] = TFL.defaultdict (GTW.Form.Error_List)
-            self._order.append            (form)
         self [form] [field].append (error)
     # end def add
 
@@ -176,16 +176,11 @@ class Form_Errors (dict) :
         return GTW.Form.Error_List ()
     # end def for_field
 
-    def iterkeys (self) :
-        for k in self._order :
-            yield k
-    # end def iterkeys
-
     def next_field (self, field) :
         result    = None, None
         if self._no_more_errors or not self._order :
             return result
-        form      = getattr (self, "_current_form", self._order [-1])
+        form      = getattr (self, "_current_form", self._order [0])
         if field :
             try :
                 index = form.fields.index (field)
@@ -193,10 +188,14 @@ class Form_Errors (dict) :
                 ### force moving to the next form
                 index = len (form.fields)
         else :
-            index = -1
+            index = -2
         for i in xrange (index + 1, len (form.fields)) :
-            field = form.fields [i]
+            if i < 0 :
+                field = None
+            else :
+                field = form.fields [i]
             if self.count (form, field) :
+                field  = field or form.fields [0]
                 result = field, form.get_id (field)
                 break
         while not result [0] and not self._no_more_errors :
@@ -211,35 +210,70 @@ class Form_Errors (dict) :
     # end def next_field
 
     def _next_form (self, form) :
-        index = self._order.index (form) - 1
-        if index >= 0 :
+        index = self._order.index (form) + 1
+        if index < len (self._order) :
             self._current_form = self._order [index]
             return self._current_form
     # end def _next_form
 
-    def of_form (self, form, field = False) :
-        if form in self :
-            if field is False :
-                 result = GTW.Form.Error_List ()
-                 for el in self [form].itervalues () :
-                     result.add (el)
-                 return result
-            return self [form] [field]
-        return GTW.Form.Error_List ()
-    # end def of_form
+    @TFL.Meta.Once_Property
+    def _order (self) :
+        result = TFL.Ordered_Set ()
+        self._form_order (result, self.root)
+        return result
+    # end def _order
 
-    def count (self, form = None, field = False) :
-        result = 0
+    def _form_order (self, order, root) :
+        order.append (root)
+        for fg in root.field_groups :
+            if not isinstance (fg, GTW.Form.MOM.Link_Inline) :
+                for fi in root.fields_of_field_group (fg) :
+                    form = getattr (fi, "form", None)
+                    if form :
+                        self._form_order (order, form)
+            else :
+                for form in fg.forms :
+                    self._form_order (order, form)
+    # end def _form_order
+
+    def _errors_of_form (self, form = None, field = False, transitive = True) :
         if form is None :
             forms = self.iterkeys ()
         else :
             forms = (form, )
-        for form in forms :
-            ed = self.get (form, TFL.defaultdict (GTW.Form.Error_List))
+        for fo in forms :
+            ed     = self.get (fo, TFL.defaultdict (GTW.Form.Error_List))
+            fields = (field, )
             if field is False :
-                result += sum (len (fe) for fe in ed.itervalues ())
-            else :
-                result += len (ed [field])
+                fields = [None]
+                fields.extend (fo.fields)
+            for f in fields :
+                if f in ed :
+                    yield f, ed [f]
+            if transitive :
+                for ifi in fo.inline_fields :
+                    for fi, el in self._errors_of_form (ifi.form, field, True) :
+                        yield fi, el
+    # end def _fields_of_form
+
+    def of_form (self, form, field = False) :
+        result = GTW.Form.Error_List ()
+        for fi, el in self._errors_of_form (form, field, True) :
+            result.add (el)
+        return result
+    # end def of_form
+
+    def fields_of_form (self, form = None, field = False) :
+        result = []
+        for fi, el in self._fields_of_form (form, field, True) :
+            result.append (fi)
+        return result
+    # end def fields_of_form
+
+    def count (self, form = None, field = False) :
+        result = 0
+        for fi, el in self._errors_of_form (form, field, True) :
+            result += len (el)
         return result
     # end def count
 
@@ -264,7 +298,7 @@ class _Form_ (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def errors (self) :
         if not self.parent :
-            return Form_Errors ()
+            return Form_Errors (self)
         return self.parent.errors
     # end def errors
 

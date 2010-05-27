@@ -31,6 +31,7 @@
 ##    12-May-2010 (MG) UI-Display style started
 ##    20-May-2010 (MG) Refactoring of `link_ui_` macros
 ##    26-May-2010 (MG) Error handling changed
+##    27-May-2010 (MG) `inline_table` error handling added
 ##    ««revision-date»»···
 ##--
 #}
@@ -251,6 +252,14 @@
       </tr>
       {%- for iform in inline.forms %}
         <tr class="inline-instance">{{ form_as_columns (iform, "body") }}</tr>
+        {%- set foe = iform.errors.of_form (iform) %}
+        {%- if foe %}
+          <tr class="ui-state-error">
+            <td colspan="200">
+              {{ GTW.call_macro (foe.widget, foe) }}
+            </td>
+          </tr>
+        {% endif -%}
       {% endfor -%}
     </tbody>
   </table>
