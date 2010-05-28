@@ -32,6 +32,7 @@
 ##    20-May-2010 (MG) Refactoring of `link_ui_` macros
 ##    26-May-2010 (MG) Error handling changed
 ##    27-May-2010 (MG) `inline_table` error handling added
+##    28-May-2010 (MG) `link_ui_display_row` guard against empty instance added
 ##    ««revision-date»»···
 ##--
 #}
@@ -304,24 +305,26 @@
 {%- endmacro -%} {#- inline_ui_display_table -#}
 
 {%- macro link_ui_display_row (inline, iform, index) -%}
-  {%- set ec = iform.error_count (iform) %}
-  <tr class="ui-entity-container {% if ec -%} mom-populated ui-display-changed{%- endif -%}">
-    {{- GTW.render_fofi_widget
-      (inline, "link_ui_display", inline, iform, index, ec)
-    -}}
-    <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
-    <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
-    <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
-    {%- if ec -%}
-      <td>
-        <div class="ui-state-error ui-corner-all">
-          <span class="ui-icon ui-icon-alert"
-                title="{{ ec }} {{ GTW._Tn ("Error", "Errors", ec) }}"
-          >Errors</span>
-        </div>
-      </td>
+  {%- if iform.instance_or_fake -%}
+    {%- set ec = iform.error_count (iform) %}
+    <tr class="ui-entity-container {% if ec -%} mom-populated ui-display-changed{%- endif -%}">
+      {{- GTW.render_fofi_widget
+        (inline, "link_ui_display", inline, iform, index, ec)
+      -}}
+      <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
+      <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
+      <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
+      {%- if ec -%}
+        <td>
+          <div class="ui-state-error ui-corner-all">
+            <span class="ui-icon ui-icon-alert"
+                  title="{{ ec }} {{ GTW._Tn ("Error", "Errors", ec) }}"
+            >Errors</span>
+          </div>
+        </td>
+    {%- endif -%}
+    </tr>
   {%- endif -%}
-  </tr>
 {%- endmacro -%} {#- link_ui_display_row -#}
 
 {%- macro link_ui_display (inline, form, index, ec) -%}

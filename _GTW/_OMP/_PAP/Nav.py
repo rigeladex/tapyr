@@ -172,7 +172,59 @@ class Admin (object) :
         # list_display = ("ui_display", "lifetime")
         , list_display = ("last_name", "first_name", "middle_name", "title", "lifetime")
         )
-
+    Person_New = dict \
+        ( ETM       = "GTW.OMP.PAP.Person"
+        , Form_args =
+            ( FGD
+                ( primary
+                , completer = GTW.Form.MOM.Javascript.Field_Completer
+                    ( "last_name", ("last_name", )
+                    , min_chars = 2
+                    )
+                , render_mode = "table"
+                )
+            , FGD ("lifetime")
+            , LID
+                ( "GTW.OMP.PAP.Person_has_Phone"
+                , FGD
+                    ( "desc"
+                    , AID
+                        ("phone", render_mode = "div_seq"
+                        , legend = _ ("Phone")
+                        )
+                    )
+                , render_mode      = "ui_display_table"
+                , ui_display_attrs = ("desc", "phone")
+                , collapsable      = True
+                )
+            , LID
+                ( "GTW.OMP.PAP.Person_has_Email"
+                , FGD
+                    ( "desc"
+                    , AID
+                        ("email", render_mode = "div_seq"
+                        , legend = _ ("Email")
+                        )
+                    )
+                , render_mode      = "ui_display_table"
+                , ui_display_attrs = ("desc", "email")
+                , collapsable      = True
+                )
+            , LID
+                ( "GTW.OMP.PAP.Person_has_Address"
+                , FGD
+                    ( "desc"
+                    , AID
+                        ("address", render_mode = "div_seq"
+                        , legend = _ ("Address")
+                        )
+                    )
+                , render_mode      = "ui_display_table"
+                , ui_display_attrs = ("desc", "address")
+                , collapsable      = True
+                )
+            )
+        )
     Phone           = dict \
         ( ETM       = "GTW.OMP.PAP.Phone"
         , Type      = GTW.NAV.E_Type.Admin

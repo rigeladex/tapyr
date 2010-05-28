@@ -54,6 +54,8 @@
 #    26-May-2010 (MG) `instance_or_fake` added to support redering of inline
 #                     forms with errors
 #    27-May-2010 (MG) Use new `on_error` for `cooked_attrs`
+#    28-May-2010 (MG) `instance_or_fake` changed to fake the object only in
+#                     case raw data for this for is present
 #    ««revision-date»»···
 #--
 
@@ -215,7 +217,7 @@ class Link_Inline_Instance (_Inline_Instance_) :
 
     @TFL.Meta.Once_Property
     def instance_or_fake (self) :
-        if not self.instance :
+        if not self.instance and self.raw_attr_dict :
             self.test_object (None)
         return self.instance
     # end def instance_or_fake
@@ -236,6 +238,7 @@ class Link_Inline_Instance (_Inline_Instance_) :
                     field.form.get_object_raw ()
                 setattr (instance, field.form.generic_name, value)
             else :
+                value     = ""
                 try :
                     value = field.attr_kind.from_string (self.get_raw (field))
                 except StandardError, error:

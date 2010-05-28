@@ -286,7 +286,7 @@ class _Instance_ (GTW.Form._Form_) :
                 n             = attr_kind.attr.name
                 if n not in self.raw_attr_dict :
                     raw_value = attr_kind.get_raw (self.instance)
-                    if raw_value :
+                    if 1 or raw_value :
                         self.raw_attr_dict [n] = raw_value
         return self.et_man \
             (raw = True, on_error = on_error, ** self.raw_attr_dict)

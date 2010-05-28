@@ -33,7 +33,8 @@
 **    13-May-2010 (MG) Pid and state are now two separate fields, UI-display
 **                     continued
 **    20-May-2010 (MG) UI-Display style finished
-**    ««revision-date»»···
+**    28-May-2010 (MG) New form creation bug fixes
+      ««revision-date»»···
 **--
 */
 
@@ -548,6 +549,18 @@
             $header.html    (header);
           }
       }
+    , _ui_convert_to_flat_data : function (prefix, data, flat)
+      {
+        for (var key in data)
+          {
+            var name  = prefix + "__" + key;
+            var value = (key == "_state_" ? "" : data [key]);
+            if (typeof value == "object")
+                this._ui_convert_to_flat_data (name, value, flat);
+            else
+                flat [name] = value;
+          }
+      }
     , _ui_delete_entity : function (evt, data)
       {
         var self       = data.self;
@@ -577,7 +590,7 @@
       }
     , _ui_data_as_post_dict : function ($root, prefix, post)
       {
-        $root.find ("[name^=" + name + "]").each (function () {
+        $root.find ("[name^=" + prefix + "]").each (function () {
           post [this.name] = $(this).val ();
         });
         return post;
@@ -631,7 +644,7 @@
         var $entity_root = $("#" + prefix);
         var new_entity   = $entity_root.length == 0;
         if (!form_save && old_data)
-            this._ui_set_form_values (prefix, old_data);
+            this._ui_set_form_values ($dialog, prefix, old_data);
         if ($dialog.data ("form-is-new") && !form_save)
           {
             $inline.data ("cur_count", $inline.data ("cur_count") - 1);
@@ -672,7 +685,7 @@
                                          .end  ().prepend ($data)
                                          .addClass ("ui-display-changed");
                            }
-                         $entity_root.data  ("form-data", new_data);
+                         $entity_root.data  ("form-data", post_data);
                          self._ui_hide_form ($entity_root);
                          /* must be done after the form is hidden */
                          if (new_entity)
@@ -693,20 +706,11 @@
             this._ui_hide_form ($entity_root);
           }
       }
-    , _ui_set_form_values : function (prefix, data)
+    , _ui_set_form_values : function ($root, prefix, data)
       {
-        for (var key in data)
-          {
-            if (key != "_state_")
-              {
-                var name  = prefix + "__" + key;
-                var value = data [key];
-                if (typeof value == "object")
-                    this._ui_set_form_values (name, value)
-                else
-                    $("[name=" + name + "]").val (value);
-              }
-          }
+        $root.find ("[name^=" + prefix + "]").each (function () {
+          $(this).val (data [this.name]);
+        });
       }
     , _ui_show_form_for : function ($inline, no, pid)
       {
@@ -733,7 +737,7 @@
                        var prefix = $dialog.data ("form-prefix");
                        var data   = $dialog.data ("form-data");
                        if (data)
-                         self._ui_set_form_values (prefix, data)
+                         self._ui_set_form_values ($dialog, prefix, data)
                      }
                  }
              }
@@ -760,11 +764,13 @@
                      , type     : "GET"
                      , data     : { pid : pid, edit : (add_or_copy ? 0 : 1)}
                      , dataType : "json"
-                     , success  : function (data, textStatus, xmlreq)
+                     , success  : function (hdata, textStatus, xmlreq)
                        {
-                         self._ui_set_form_values (prefix, data);
-                         $dialog.data   ("form-data",   data);
-                         $dialog.data   ("form-prefix", prefix);
+                         var data = {};
+                         self._ui_convert_to_flat_data (prefix, hdata, data);
+                         self._ui_set_form_values  ($dialog, prefix, data);
+                         $dialog.data   ("form-data",       data);
+                         $dialog.data   ("form-prefix",     prefix);
                          $dialog.dialog ("option", "title", data.puf_title);
                          $dialog.dialog ("open");
                        }
@@ -799,26 +805,16 @@
     , _ui_update_form_values : function (prefix, data, new_data)
       {
         var changed = 0;
-        for (var key in data)
+        for (var name in data)
           {
-            if (key != "_state_")
+            var $field = $("[name=" + name + "]");
+            if ( $field.length && (name.substr (name.length - 7) != "_state_"))
               {
-                var name      = prefix + "__" + key;
-                var old_value = data [key];
-                if (typeof old_value == "object")
-                  {
-                    var new_value = {};
-                    changed += this._ui_update_form_values
-                      (name, old_value, new_value);
-                    new_data [key] = new_value;
-                  }
-                else
-                  {
-                    var new_value = $("[name=" + name + "]").val ();
-                    new_data [key] = new_value || old_value;
-                    if ((new_value !== undefined) && (old_value != new_value))
-                        changed   += 1;
-                  }
+                var old_value   = data [name];
+                var new_value   = $field.val ();
+                new_data [name] = new_value || old_value;
+                if ((new_value !== undefined) && (old_value != new_value))
+                    changed   += 1;
               }
           }
         return changed;
