@@ -131,48 +131,7 @@ class Admin (object) :
         , list_display = ("ui_display", "desc")
         )
 
-    Person          = dict \
-        ( ETM       = "GTW.OMP.PAP.Person"
-        , Type      = GTW.NAV.E_Type.Admin
-        , Form_args =
-            ( FGD
-                ( primary
-                , completer = GTW.Form.MOM.Javascript.Field_Completer
-                    ( "last_name", ("last_name", )
-                    , min_chars = 2
-                    )
-                , render_mode = "table"
-                )
-            , FGD ("lifetime")
-            , LID
-                ( "PAP.Person_has_Phone"
-                , FGD ("desc", "phone", "extension")
-                , field_attrs = dict
-                    (phone = dict (completer = phone_completer))
-                , legend    = _("Phone numbers")
-                , title     = _("Phone numbers")
-                )
-            , LID
-                ( "PAP.Person_has_Email"
-                , FGD ("desc", "email")
-                , field_attrs = dict
-                    (email = dict (completer = email_completer))
-                , legend    = _("Email addresses")
-                , title     = _("Email addresses")
-                )
-            , LID
-                ( "PAP.Person_has_Address"
-                , FGD ("desc", "address")
-                , field_attrs = dict
-                    (address = dict (completer = address_completer))
-                , legend    = _("Addresses")
-                , title     = _("Addresses")
-                )
-            )
-        # list_display = ("ui_display", "lifetime")
-        , list_display = ("last_name", "first_name", "middle_name", "title", "lifetime")
-        )
-    Person_New = dict \
+    Person = dict \
         ( ETM       = "GTW.OMP.PAP.Person"
         , Form_args =
             ( FGD
