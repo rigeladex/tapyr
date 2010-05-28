@@ -176,7 +176,8 @@ class Admin (object) :
                         , legend = _ ("Address")
                         )
                     )
-                , list_display     = ("desc", "address")
+                , list_display     =
+                    ("desc", WF ("primary", prefix = "address"))
                 , collapsable      = True
                 )
             )

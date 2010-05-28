@@ -62,6 +62,7 @@
 #    28-May-2010 (MG) Support nexted attributes for `ui_display_attrs`
 #    28-May-2010 (MG) s/ui_display_attrs/list_display/g
 #                     s/ui_display/list_display_values/
+#    28-May-2010 (MG) `list_display_values` fixed
 #    ««revision-date»»···
 #--
 
@@ -253,11 +254,12 @@ class Link_Inline (TFL.Meta.Object) :
                 yield value.ui_display
             else :
                 obj = link
+                oet = etype
                 while "." in attr :
                     kind_name, attr = attr.split (".")
-                    etype           = getattr (etype, kind_name).Class
+                    oet             = getattr (etype, kind_name).Class
                     obj             = getattr (link,  kind_name)
-                kind = getattr (etype, attr)
+                kind = getattr     (oet, attr)
                 yield kind.get_raw (obj)
     # end def list_display_values
 

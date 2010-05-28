@@ -69,6 +69,7 @@
 #    20-May-2010 (MG) `Attribute_Inline_Description`: `error` for render mode
 #                     `table` set
 #    28-May-2010 (MG) Render mode names changed
+#    28-May-2010 (MG) Ise new `GTW.Form.MOM.Field_List` for `list_display`
 #    ««revision-date»»···
 #--
 
@@ -196,6 +197,12 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
     field_attrs      = dict ()
     list_display     = None
 
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.list_display = GTW.Form.MOM.Field_List \
+            (* (self.list_display or ()))
+    # end def __init__
+
     def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
         if not first_pass :
             scope        = et_man.home_scope
@@ -231,12 +238,7 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                     self.legend = TFL.I18N._T (ack.ui_name)
                 else :
                     self.legend = TFL.I18N._T (link_et_man.ui_name)
-            if not self.list_display :
-                attrs = [ k.attr.name for k in link_et_man.primary
-                            if k.attr.name != self.generic_role
-                        ]
-                attrs.extend (k.attr.name for k in link_et_man.user_attr)
-                self.list_display = attrs
+            self.list_display.both_runs (link_et_man)
             return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 
