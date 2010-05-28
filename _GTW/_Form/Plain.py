@@ -77,6 +77,7 @@ class Plain (GTW.Form._Form_) :
 
     __metaclass__ = M_Plain
     widget        = GTW.Form.Widget_Spec ("html/jorm.jnj, object")
+    parent        = None
 
     def __init__ (self, action, instance = None, ** kw) :
         self.__super.__init__ (instance, ** kw)
@@ -102,7 +103,7 @@ class Plain (GTW.Form._Form_) :
     def __call__ (self, request_data) :
         self.request_data = request_data
         self._validate ()
-        error_count = len (self.field_errors) + len (self.errors)
+        error_count = len (self.errors)
         if not error_count and self.creator :
             if not self.instance :
                 self.instance = self.creator (** self.request_data)

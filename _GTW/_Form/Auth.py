@@ -39,6 +39,7 @@
 #    20-Feb-2010 (MG) Remaining forms added
 #    20-Feb-2010 (MG) `ui_name` for fields added
 #    23-Feb-2010 (MG) Debug errors added to `_Login_Mixin_`
+#    28-May-2010 (MG) Adapted to new errors handling
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ class _Login_Mixin_ (TFL.Meta.Object) :
             ("username", _T (u"A user name is required to login."))
         password     = self.get_required \
             ("password", _T (u"The password is required."))
-        if not self.field_errors :
+        if not self.errors :
             if not self._authenticate (username, password) :
                 self.errors.append (_T (u"Username or password incorrect"))
             elif self.active_account_required and not self.account.active :
@@ -91,22 +92,27 @@ class _Login_Mixin_ (TFL.Meta.Object) :
             self.account = self.account_manager.query (name = username).one ()
         except IndexError :
             if debug :
-                self.field_errors ["username"].append \
-                    (u"No account with username `%s` found" % (username, ))
+                self.errors.add \
+                    ( self
+                    , "username"
+                    , u"No account with username `%s` found" % (username, )
+                    )
             ### look's like no account with this username exists
             return False
         result = self.account.verify_password (password)
         if not result and debug :
-            self.field_errors ["password"].append \
-                    ( u"Password is wrong:\n"
-                       "  %s\n"
-                       "  hash db `%s`\n"
-                       "  hash in `%s`"
-                    % ( password
-                      , self.account.password
-                      , self.account.password_hash (password, self.account.salt)
-                      )
+            self.errors.add \
+                ( self
+                , "password"
+                , u"Password is wrong:\n"
+                     "  %s\n"
+                     "  hash db `%s`\n"
+                     "  hash in `%s`"
+                  % ( password
+                    , self.account.password
+                    , self.account.password_hash (password, self.account.salt)
                     )
+                )
         return result
     # end def _authenticate
 
@@ -128,8 +134,8 @@ class _New_Password_ (TFL.Meta.Object) :
             ("npassword1", _T (u"The new password is required."))
         pwd_2             = self.get_required \
             ("npassword2", _T (u"Please repeat the new password."))
-        if not self.field_errors and (pwd_1 != pwd_2) :
-            self.errors.append (_T (u"Passwords don't match."))
+        if not self.errors and (pwd_1 != pwd_2) :
+            self.errors.add (self, None, _T (u"Passwords don't match."))
         else :
             self.new_password = pwd_1
         self.__super._validate ()
@@ -162,11 +168,11 @@ class _Change_Password_Mixin_ (_New_Password_) :
         self.__super._validate ()
         old_pwd      = self.get_required \
             ("password", _T (u"The old password is required."))
-        if (   not (self.field_errors or self.errors)
+        if (   not self.errors
            and not self.account.verify_password (old_pwd)
            ) :
-            self.errors.append \
-                (_T ("One of the passwords is incorrect"))
+            self.errors.add \
+                (self, None, _T ("One of the passwords is incorrect"))
         self.request_data = {}
     # end def _validate
 
@@ -195,11 +201,11 @@ class _Change_EMail_Mixin_ (TFL.Meta.Object) :
             ("password", _T (u"The old password is required."))
         self.new_email = self.get_required \
             ("new_email", _T (u"The new E-Mail address is required."))
-        if (   not self.field_errors
+        if (   not self.errors
            and not self.account.verify_password (old_pwd)
            ) :
-            self.field_errors ["password"].append \
-                (_T ("The password is incorrect"))
+            self.errors.add \
+                (self, "password", _T ("The password is incorrect"))
         self.request_data.pop ("password", None)
     # end def _validate
 
@@ -221,11 +227,11 @@ class _Register_Account_ (_New_Password_) :
     def _validate (self) :
         self.username = username = self.get_required \
             ("username", _T (u"A user name is required to login."))
-        if not self.field_errors :
+        if not self.errors :
             account = self.account_manager.query (name = username).first ()
             if account :
-                self.field_errors ["username"].append \
-                    (_T ("This username is already in use."))
+                self.errors.add \
+                    (self, "username", _T ("This username is already in use."))
         self.__super._validate ()
         self.request_data = {}
     # end def _validate
@@ -246,11 +252,11 @@ class _Reset_Password_Mixin_ (TFL.Meta.Object) :
     def _validate (self) :
         self.account = username = self.get_required \
             ("username", _T (u"A user name is required."))
-        if not self.field_errors and self.account_manager :
+        if not self.errors and self.account_manager :
             self.account = self.account_manager.query (name = username).first ()
             if not self.account :
-                self.field_errors ["username"].append \
-                    (_T ("This username is not registered"))
+                self.errors.add \
+                    (self, "username", _T ("This username is not registered"))
         self.request_data = {}
     # end def _validate
 

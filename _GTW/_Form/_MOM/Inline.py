@@ -59,6 +59,7 @@
 #    13-May-2010 (MG) UI-Display editing style continued
 #    19-May-2010 (MG) `test` added
 #    26-May-2010 (MG) Error handling changed
+#    28-May-2010 (MG) Support nexted attributes for `ui_display_attrs`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ import _TFL._Meta.Once_Property
 from   _GTW                                 import GTW
 import _GTW._Form.Field_Error
 import _GTW._Form._MOM
+import  operator
 
 class Link_Inline (TFL.Meta.Object) :
     """Handling of all link-forms as a field group of a form.."""
@@ -244,12 +246,17 @@ class Link_Inline (TFL.Meta.Object) :
     def ui_display (self, link) :
         etype = self.form_cls.et_man._etype
         for attr in self.ui_display_attrs :
-            value = getattr (link, attr)
+            value = operator.attrgetter (attr) (link)
             if hasattr (value, "ui_display") :
                 yield value.ui_display
             else :
+                obj = link
+                while "." in attr :
+                    kind_name, attr = attr.split (".")
+                    etype           = getattr (etype, kind_name).Class
+                    obj             = getattr (link,  kind_name)
                 kind = getattr (etype, attr)
-                yield kind.get_raw (link)
+                yield kind.get_raw (obj)
     # end def ui_display
 
     def update_object (self, form) :

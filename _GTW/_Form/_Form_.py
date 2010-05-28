@@ -166,6 +166,8 @@ class Form_Errors (dict) :
     def add (self, form, field, error) :
         if form not in self :
             self [form] = TFL.defaultdict (GTW.Form.Error_List)
+        if isinstance (field, basestring) :
+            field = form.fields.get (field, field)
         self [form] [field].append (error)
     # end def add
 
