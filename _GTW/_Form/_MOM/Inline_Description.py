@@ -121,16 +121,16 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
 
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( div_seq = GTW.Form.Widget_Spec
-              ( "html/rform.jnj, aid_div_seq"
-              )
+            ( "html/rform.jnj, aid_div_seq"
+            )
         , table   = GTW.Form.Widget_Spec
-              ( "html/rform.jnj, fg_table"
-              , field_head        = "html/rform.jnj, aid_th"
-              , field_header      = "html/rform.jnj, aid_header"
-              , field_body        = "html/rform.jnj, aid_td"
-              , help              = "html/form.jnj,  field_help"
-              , error             = "html/form.jnj,  field_error"
-              )
+            ( "html/rform.jnj, fg_table"
+            , field_head        = "html/rform.jnj, aid_th"
+            , field_header      = "html/rform.jnj, aid_header"
+            , field_body        = "html/rform.jnj, aid_td"
+            , help              = "html/form.jnj,  field_help"
+            , error             = "html/form.jnj,  field_error"
+            )
         )
 
     def field (self, et_man, parent, ** kw) :
@@ -173,14 +173,14 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
     render_mode             = "table"
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( table   = GTW.Form.Widget_Spec
-              ( "html/rform.jnj, inline_table"
-              , Media             = _Inline_Description_.media
-              )
+            ( "html/rform.jnj, inline_table"
+            , Media             = _Inline_Description_.media
+            )
         , ui_display_table = GTW.Form.Widget_Spec
-              ( "html/rform.jnj, inline_ui_display_table"
-              , link_ui_display     = "html/rform.jnj, link_ui_display"
-              , link_ui_display_row = "html/rform.jnj, link_ui_display_row"
-              )
+            ( "html/rform.jnj, inline_ui_display_table"
+            , link_ui_display     = "html/rform.jnj, link_ui_display"
+            , link_ui_display_row = "html/rform.jnj, link_ui_display_row"
+            )
         )
     legend           = None
     role_name        = None
