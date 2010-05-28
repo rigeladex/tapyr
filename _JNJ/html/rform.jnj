@@ -267,7 +267,7 @@
   </fieldset>
 {%- endmacro -%} {#- inline_table -#}
 
-{%- macro inline_ui_display_table (fo, inline) -%}
+{%- macro inline_list_display_table (fo, inline) -%}
   {#- render the form of the inline as row's of a table -#}
   <div class="Inline-UI-Display ui-widget {{ inline.form_cls.form_name }}">
     <h3 class="ui-widget-header">
@@ -296,20 +296,20 @@
     <tbody class="ui-entities-container">
       {%- for iform in inline.forms %}
         {{- GTW.render_fofi_widget
-             (inline, "link_ui_display_row", inline, iform, loop.index0)
+             (inline, "link_list_display_row", inline, iform, loop.index0)
         -}}
       {% endfor -%}
     </tbody>
   </table>
   </div>
-{%- endmacro -%} {#- inline_ui_display_table -#}
+{%- endmacro -%} {#- inline_list_display_table -#}
 
-{%- macro link_ui_display_row (inline, iform, index) -%}
+{%- macro link_list_display_row (inline, iform, index, include_form = True) -%}
   {%- if iform.instance_or_fake -%}
     {%- set ec = iform.error_count (iform) %}
-    <tr class="ui-entity-container {% if ec -%} mom-populated ui-display-changed{%- endif -%}">
+    <tr class="ui-entity-container {% if include_form and form.raw_attr_dict -%} mom-populated ui-display-changed{%- endif -%}">
       {{- GTW.render_fofi_widget
-        (inline, "link_ui_display", inline, iform, index, ec)
+        (inline, "link_list_display", inline, iform, index, include_form)
       -}}
       <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
       <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
@@ -325,14 +325,14 @@
     {%- endif -%}
     </tr>
   {%- endif -%}
-{%- endmacro -%} {#- link_ui_display_row -#}
+{%- endmacro -%} {#- link_list_display_row -#}
 
-{%- macro link_ui_display (inline, form, index, ec) -%}
+{%- macro link_list_display (inline, form, index, include_form) -%}
   {%- set link = form.instance_or_fake -%}
-  {%- for value in inline.ui_display (link) -%}
+  {%- for value in inline.list_display_values (link) -%}
     <td class="ui-display">
       {%- if loop.first -%}
-        {%- if ec %}
+        {%- if include_form and form.raw_attr_dict %}
           {%- set popup_form = True %}
           {%- include "html/dynamic_form.jnj" with context %}
         {%- else %}
@@ -344,7 +344,7 @@
         {{- value -}}
     </td>
   {%- endfor -%}
-{%- endmacro -%} {#- link_ui_display -#}
+{%- endmacro -%} {#- link_list_display -#}
 
 {%- macro object (fo, render_mode = None) -%}
   {#- Create a form for a form-object `fo` -#}

@@ -115,7 +115,7 @@ def create_nav (scope) :
               , headline        = u"Admin Page"
               , login_required  = True
               , etypes          =
-                  [ GTW.OMP.PAP.Nav.Admin.Person_New
+                  [ GTW.OMP.PAP.Nav.Admin.Person
                     ## dict
                     ##   ( ETM       = "GTW.OMP.PAP.Person"
                     ##   , Form_args =

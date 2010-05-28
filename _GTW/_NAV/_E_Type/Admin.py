@@ -306,11 +306,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         {%- import "html/rform.jnj" as RForm %}
         {%- if NEW_FORM -%}
           {{- GTW.render_fofi_widget
-              (inline, "link_ui_display_row", inline, iform, no)
+              (inline, "link_list_display_row", inline, iform, no, False)
           -}}
         {%- else -%}
           {{- GTW.render_fofi_widget
-              (inline, "link_ui_display",     inline, iform, no, 0)
+              (inline, "link_list_display",     inline, iform, no, False)
           -}}
         {%- endif -%}
         """

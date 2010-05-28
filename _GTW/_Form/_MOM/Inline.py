@@ -60,6 +60,8 @@
 #    19-May-2010 (MG) `test` added
 #    26-May-2010 (MG) Error handling changed
 #    28-May-2010 (MG) Support nexted attributes for `ui_display_attrs`
+#    28-May-2010 (MG) s/ui_display_attrs/list_display/g
+#                     s/ui_display/list_display_values/
 #    ««revision-date»»···
 #--
 
@@ -211,7 +213,7 @@ class Link_Inline (TFL.Meta.Object) :
     # end def role_instance
 
     def setup_javascript (self, parent_form) :
-        if self.render_mode == "ui_display_table" :
+        if self.render_mode == "popup" :
             cls = GTW.Form.Javascript.Link_Inline_UI_Display
         else :
             cls = GTW.Form.Javascript.Link_Inline
@@ -243,9 +245,9 @@ class Link_Inline (TFL.Meta.Object) :
             lform.recursively_run ("setup_raw_attr_dict", lform)
     # end def setup_raw_attr_dict
 
-    def ui_display (self, link) :
+    def list_display_values (self, link) :
         etype = self.form_cls.et_man._etype
-        for attr in self.ui_display_attrs :
+        for attr in self.inline_description.list_display :
             value = operator.attrgetter (attr) (link)
             if hasattr (value, "ui_display") :
                 yield value.ui_display
@@ -257,7 +259,7 @@ class Link_Inline (TFL.Meta.Object) :
                     obj             = getattr (link,  kind_name)
                 kind = getattr (etype, attr)
                 yield kind.get_raw (obj)
-    # end def ui_display
+    # end def list_display_values
 
     def update_object (self, form) :
         for lform in self.forms :

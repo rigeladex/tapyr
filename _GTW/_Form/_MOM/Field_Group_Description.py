@@ -47,6 +47,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     5-May-2010 (MG) `render_mode_description` added
 #     6-May-2010 (MG) `table` render mode added
+#    28-May-2010 (MG) `Field_List` factored
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ from   _MOM                                 import MOM
 import _MOM.Link
 
 from   _GTW                                 import GTW
+from   _GTW._Form._MOM.Field_List           import Wildcard_Field, Field_Prefixer
 import _GTW._Form.Render_Mode_Description
 import _GTW._Form.Field_Group
 import _GTW._Form.Field_Group_Description
@@ -66,71 +68,6 @@ from   _GTW._Form._MOM.Inline_Description   import \
 import _GTW._Form._MOM
 from   _GTW._Form._MOM.Field                import Field
 from   _TFL.I18N                            import _T
-
-import  itertools
-
-class Wildcard_Field (TFL.Meta.Object) :
-    """A place holder in the field group description which will expand to
-       all attributes of the given kinds which have not been added explicitly.
-
-    """
-
-    def __init__ (self, * kinds , ** kw) :
-        self.kinds  = kinds or ("primary", "user_attr")
-        self.prefix = kw.pop ("prefix", None)
-        assert not kw, sorted (kw.keys ())
-    # end def __init__
-
-    def __call__ (self, first_pass, et_man, added_fields) :
-        if first_pass :
-            ### the wildcard file can only evalue which fields have to be
-            ### added after all other fields have been precessed in the first
-            ### pass
-            return (self, )
-        prefix = ""
-        if self.prefix :
-            et_man = getattr (et_man, self.prefix).role_type
-            prefix = self.prefix + "."
-        etype  = et_man._etype
-        return \
-            [   "%s%s" % (prefix, ak.name)
-            for ak in sorted
-               ( itertools.chain (* (getattr (etype, k) for k in self.kinds))
-               , key = lambda ak : ak.rank
-               )
-            if ak.name not in added_fields
-            ]
-    # end def __call__
-
-# end class Wildcard_Field
-
-class Field_Prefixer (TFL.Meta.Object) :
-    """Add a common prefix to all fields."""
-
-    def __init__ (self, prefix, * fields, ** kw) :
-        self.prefix = prefix
-        self.fields = fields
-        self.joiner = kw.pop ("joiner", ".")
-    # end def __init__
-
-    def __call__ (self, first_pass, et_man, added_fields) :
-        ### the first_pass can be igbore because the `Field_Prefixer`
-        ### replaces itself with the field names and therefore will not be
-        ### called in the second pass anymore
-        result = []
-        join   = self.joiner.join
-        for field in self.fields :
-            if callable (field) :
-                result.extend \
-                    (   join ((self.prefix, f))
-                    for f in field (et_man, added_fields)
-                    )
-            else :
-                result.append (self.joiner.join ((self.prefix, field)))
-        return result
-    # end def __call__
-
-# end class Field_Prefixer
 
 class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     """A field group description for an MOM object"""
@@ -145,6 +82,11 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
               , fg_column = "html/rform.jnj, fg_column"
               )
         )
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.fields = GTW.Form.MOM.Field_List (* self.fields)
+    # end def __init__
 
     def _field_instance (self, et_man, field, parent) :
         field_attrs = getattr (self, "field_attrs", parent.field_attrs)
@@ -191,21 +133,9 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     # end def _field_instance
 
     def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
-        if not self.fields :
-            self.fields = (Wildcard_Field (), )
-        fields_spec = self.fields
-        fields      = []
-        for f in fields_spec :
-            if callable (f) :
-                new_fields = f  (first_pass, et_man, added_fields)
-                fields.extend   (new_fields)
-            else :
-                new_fields =    (str (f), )
-                fields.append   (f)
-            added_fields.update (new_fields)
-        self.fields = fields
+        self.fields (et_man, added_fields)
         if not first_pass :
-            if fields :
+            if self.fields :
                 field_instances = []
                 for f in self.fields :
                     field = self._field_instance (et_man, f, parent)

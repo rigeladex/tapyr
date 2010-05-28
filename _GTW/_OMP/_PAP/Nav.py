@@ -152,8 +152,7 @@ class Admin (object) :
                         , legend = _ ("Phone")
                         )
                     )
-                , render_mode      = "ui_display_table"
-                , ui_display_attrs = ("desc", "phone")
+                , list_display     = ("desc", "phone")
                 , collapsable      = True
                 )
             , LID
@@ -165,8 +164,7 @@ class Admin (object) :
                         , legend = _ ("Email")
                         )
                     )
-                , render_mode      = "ui_display_table"
-                , ui_display_attrs = ("desc", "email")
+                , list_display     = ("desc", "email")
                 , collapsable      = True
                 )
             , LID
@@ -178,8 +176,7 @@ class Admin (object) :
                         , legend = _ ("Address")
                         )
                     )
-                , render_mode      = "ui_display_table"
-                , ui_display_attrs = ("desc", "address")
+                , list_display     = ("desc", "address")
                 , collapsable      = True
                 )
             )

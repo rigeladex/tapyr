@@ -68,6 +68,7 @@
 #                     `link_ui_display_row` added
 #    20-May-2010 (MG) `Attribute_Inline_Description`: `error` for render mode
 #                     `table` set
+#    28-May-2010 (MG) Render mode names changed
 #    ««revision-date»»···
 #--
 
@@ -170,16 +171,16 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
     """Edit a link inline in a form."""
 
     _real_name              = "Link_Inline_Description"
-    render_mode             = "table"
+    render_mode             = "popup"
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( table   = GTW.Form.Widget_Spec
             ( "html/rform.jnj, inline_table"
             , Media             = _Inline_Description_.media
             )
-        , ui_display_table = GTW.Form.Widget_Spec
-            ( "html/rform.jnj, inline_ui_display_table"
-            , link_ui_display     = "html/rform.jnj, link_ui_display"
-            , link_ui_display_row = "html/rform.jnj, link_ui_display_row"
+        , popup                 = GTW.Form.Widget_Spec
+            ( "html/rform.jnj, inline_list_display_table"
+            , link_list_display     = "html/rform.jnj, link_list_display"
+            , link_list_display_row = "html/rform.jnj, link_list_display_row"
             )
         )
     legend           = None
@@ -188,12 +189,12 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
 
     max_count        = 256 ### seems to be more than enough for a web-app
                            ### and sys.maxint on a 64 bit is machine way to much
-    min_count        = 1
+    min_count        = 0
     min_empty        = 0
     min_required     = 0
 
     field_attrs      = dict ()
-    ui_display_attrs = None
+    list_display     = None
 
     def __call__ (self, first_pass, et_man, added_fields, parent, ** kw) :
         if not first_pass :
@@ -230,12 +231,12 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                     self.legend = TFL.I18N._T (ack.ui_name)
                 else :
                     self.legend = TFL.I18N._T (link_et_man.ui_name)
-            if not self.ui_display_attrs :
+            if not self.list_display :
                 attrs = [ k.attr.name for k in link_et_man.primary
                             if k.attr.name != self.generic_role
                         ]
                 attrs.extend (k.attr.name for k in link_et_man.user_attr)
-                self.ui_display_attrs = attrs
+                self.list_display = attrs
             return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 
