@@ -113,7 +113,7 @@ def create_nav (scope) :
               , pid             = "Admin"
               , desc            = u"Admin Desc"
               , headline        = u"Admin Page"
-              , login_required  = True
+              , login_required  = False
               , etypes          =
                   [ GTW.OMP.PAP.Nav.Admin.Person
                     ## dict
@@ -204,7 +204,8 @@ def _main (cmd) :
     import _GTW._Werkzeug.Request_Handler
     import _GTW._Werkzeug.Request_Data
     import  threading
-    scope = Scope ()
+    scope = Scope ("sqlite:///", "test")
+    #scope = Scope ()
     NAV   = create_nav (scope)
     app = GTW.Werkzeug.Application \
         ( ("", GTW.Werkzeug.NAV_Request_Handler, (NAV, ))
@@ -225,6 +226,8 @@ def _main (cmd) :
     scope.PAP.Person_has_Address (p, a, desc = "Home")
     a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
     scope.PAP.Person_has_Address (p, a, desc = "Wien")
+    ph = scope.PAP.Phone         ("43", "1", "123456")
+    scope.PAP.Person_has_Phone   (p, ph, desc = "dummy")
     scope.commit                 () ### commit my `fixtures`
     app.run_development_server \
         ( port                 = cmd.port

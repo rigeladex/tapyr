@@ -46,6 +46,7 @@
 #    20-May-2010 (MG) `get_errors` changed to support inline forms
 #    26-May-2010 (MG) Error handling changed
 #    27-May-2010 (MG) `Form_Errors._order` changed
+#     1-Jun-2010 (MG) `get_raw` `default` parameter added
 #    ««revision-date»»···
 #--
 
@@ -358,8 +359,8 @@ class _Form_ (TFL.Meta.Object) :
         return field.html_name
     # end def get_id
 
-    def get_raw (self, field) :
-        return self.raw_values.get (self.get_id (field), u"")
+    def get_raw (self, field, default = u"") :
+        return self.raw_values.get (self.get_id (field), default)
     # end def get_raw
 
     def is_checked (self, field) :

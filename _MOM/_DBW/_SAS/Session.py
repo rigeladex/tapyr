@@ -48,6 +48,7 @@
 #    11-May-2010 (MG) `value_dict` remove items from `attrs` once handled
 #    12-May-2010 (MG) New `pid` style
 #    17-May-2010 (MG) `add` changed to allow `id` parameter
+#     1-Jun-2010 (MG) Rollback handling fixed
 #    ««revision-date»»···
 #--
 
@@ -377,6 +378,10 @@ class Session (TFL.Meta.Object) :
 
     def rollback (self) :
         if self.transaction :
+            scope            = self.scope
+            for c in reversed (scope.ems.uncommitted_changes) :
+                if c.undoable :
+                    c.undo (scope)
             self.transaction.rollback ()
             self.connection.close     ()
             self.transaction = None

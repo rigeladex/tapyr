@@ -73,7 +73,7 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                or (form.is_link_role and form.raw_attr_dict)
                )
            ) :
-            p_instance = form.instance
+            p_instance = parent_form.instance
             instance   = self.form.instance
             if getattr (p_instance, form.generic_name, None) != instance :
                 ### the instance has been created/updated successfully ->

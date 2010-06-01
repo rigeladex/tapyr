@@ -307,9 +307,9 @@
 {%- macro link_list_display_row (inline, iform, index, include_form = True) -%}
   {%- if iform.instance_or_fake -%}
     {%- set ec = iform.error_count (iform) %}
-    <tr class="ui-entity-container {% if include_form and form.raw_attr_dict -%} mom-populated ui-display-changed{%- endif -%}">
+    <tr class="ui-entity-container {% if include_form and iform.has_substance -%} mom-populated ui-display-changed{%- endif -%}">
       {{- GTW.render_fofi_widget
-        (inline, "link_list_display", inline, iform, index, include_form)
+        (inline, "link_list_display", inline, iform, index, include_form and iform.has_substance)
       -}}
       <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
       <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
@@ -332,7 +332,7 @@
   {%- for value in inline.list_display_values (link) -%}
     <td class="ui-display">
       {%- if loop.first -%}
-        {%- if include_form and form.raw_attr_dict %}
+        {%- if include_form %}
           {%- set popup_form = True %}
           {%- include "html/dynamic_form.jnj" with context %}
         {%- else %}

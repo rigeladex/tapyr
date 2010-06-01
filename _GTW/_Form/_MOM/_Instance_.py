@@ -81,6 +81,8 @@
 #    19-May-2010 (MG) `_handle_errors` option parameter `field` added
 #    20-May-2010 (MG) `next_erroneous_field` added
 #    26-May-2010 (MG) Error handling changed
+#     1-Jun-2010 (MG) `add_changed_raw` `attrs_in_request_data` counter
+#                     added, `has_substance` added
 #    ««revision-date»»···
 #--
 
@@ -272,7 +274,11 @@ class _Instance_ (GTW.Form._Form_) :
     def add_changed_raw (self, dict, field) :
         if isinstance (field, basestring) :
             field = self.fields [field]
-        raw       = self.get_raw            (field)
+        raw       = self.get_raw            (field, None)
+        if raw is None :
+            raw   = u""
+        else :
+            self.attrs_in_request_data += 1
         old       = self.instance_state.get (field.name, u"")
         if raw != old :
             dict [field.name] = raw
@@ -331,6 +337,11 @@ class _Instance_ (GTW.Form._Form_) :
         return getattr (instance, "epk_raw", ())
     # end def get_object_raw
 
+    @TFL.Meta.Once_Property
+    def has_substance (self) :
+        return self.request_data and self.attrs_in_request_data > 0
+    # end def has_substance
+
     def _handle_errors (self, error_list, field = None) :
         for error_or_list in error_list :
             error_list = (error_or_list, )
@@ -366,7 +377,8 @@ class _Instance_ (GTW.Form._Form_) :
     # end def prepare_request_data
 
     def setup_raw_attr_dict (self, form) :
-        self.raw_attr_dict = dict ()
+        self.attrs_in_request_data = 0
+        self.raw_attr_dict         = dict ()
         for f in (f for f in self.fields if not f.electric) :
             self.add_changed_raw (self.raw_attr_dict, f)
     # end def setup_raw_attr_dict

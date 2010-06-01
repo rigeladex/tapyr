@@ -321,19 +321,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             if inline :
                 req_data = request.req_data
                 no       = req_data.get ("__FORM_NO__")
-                form   = inline.test (no, req_data)
-                if form.error_count () :
-                    handler.context ["form"] = form
-                    result = self.__super.rendered (handler, template)
-                else :
-                    handler.context ["inline"]   = inline
-                    handler.context ["iform"]    = form
-                    handler.context ["no"]       = no
-                    handler.context ["NEW_FORM"] = \
-                        req_data.get ("__NEW__") == "true"
-                    result = self.top.Templateer.render_string \
-                        (self.template_string, handler.context).strip ()
-                form.et_man.home_scope.rollback ()
+                try :
+                    form   = inline.test (no, req_data)
+                    if form.error_count () :
+                        handler.context ["form"] = form
+                        result = self.__super.rendered (handler, template)
+                    else :
+                        handler.context ["inline"]   = inline
+                        handler.context ["iform"]    = form
+                        handler.context ["no"]       = no
+                        handler.context ["NEW_FORM"] = \
+                            req_data.get ("__NEW__") == "true"
+                        result = self.top.Templateer.render_string \
+                            (self.template_string, handler.context).strip ()
+                finally :
+                    form.et_man.home_scope.rollback ()
                 return result
         # end def rendered
 
