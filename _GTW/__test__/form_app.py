@@ -68,6 +68,33 @@ from   _GTW._Form._MOM.Inline_Description      import \
     )
 import _GTW._Form._MOM.Javascript
 
+class Regatta_C_Admin (GTW.NAV.E_Type.Admin) :
+    """TEst"""
+
+    class _RC_Changer_ (GTW.NAV.E_Type.Admin.Changer) :
+
+        _real_name = "Changer"
+
+        @TFL.Meta.Once_Property
+        def form_parameters (self) :
+            scope  = self.top.scope
+            result = dict \
+                ( initial_data = dict
+                    ( boat_class = dict
+                        (instance = scope.SRM.Boat_Class.query ().first ())
+                    , left       = dict
+                        (instance = scope.SRM.Regatta_Event.query ().first ())
+                    )
+                )
+            return result
+        # end def form_parameters
+
+    Changer = _RC_Changer_ # end class
+
+# end class Regatta_C_Admin
+
+GTW.OMP.SRM.Nav.Admin.Regatta_C ["Type"] = Regatta_C_Admin
+
 def create_nav (scope) :
     home_url_root = "http://localhost:9042"
     site_prefix   = pjoin (home_url_root, "")
@@ -157,12 +184,12 @@ def create_nav (scope) :
                   ## , GTW.OMP.SWP.Nav.Admin.Picture
 
                   ## , GTW.OMP.SRM.Nav.Admin.Boat
-                  ## , GTW.OMP.SRM.Nav.Admin.Boat_Class
+                  , GTW.OMP.SRM.Nav.Admin.Boat_Class
                   ## , GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
                   ## , GTW.OMP.SRM.Nav.Admin.Page
-                  ## , GTW.OMP.SRM.Nav.Admin.Regatta_C
+                  , GTW.OMP.SRM.Nav.Admin.Regatta_C
                   ## , GTW.OMP.SRM.Nav.Admin.Regatta_H
-                  ## , GTW.OMP.SRM.Nav.Admin.Regatta_Event
+                  , GTW.OMP.SRM.Nav.Admin.Regatta_Event
                   ]
               , Type            = GTW.NAV.Site_Admin
               )
@@ -204,8 +231,8 @@ def _main (cmd) :
     import _GTW._Werkzeug.Request_Handler
     import _GTW._Werkzeug.Request_Data
     import  threading
-    scope = Scope ("sqlite:///", "test")
-    #scope = Scope ()
+    #scope = Scope ("sqlite:///", "test")
+    scope = Scope ()
     NAV   = create_nav (scope)
     app = GTW.Werkzeug.Application \
         ( ("", GTW.Werkzeug.NAV_Request_Handler, (NAV, ))
@@ -228,6 +255,10 @@ def _main (cmd) :
     scope.PAP.Person_has_Address (p, a, desc = "Wien")
     ph = scope.PAP.Phone         ("43", "1", "123456")
     scope.PAP.Person_has_Phone   (p, ph, desc = "dummy")
+    SRM = scope.SRM
+    bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    re  = SRM.Regatta_Event \
+        (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
     scope.commit                 () ### commit my `fixtures`
     app.run_development_server \
         ( port                 = cmd.port

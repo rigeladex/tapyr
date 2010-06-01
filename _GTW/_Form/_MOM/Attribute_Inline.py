@@ -38,6 +38,7 @@
 #     7-May-2010 (MG) `need_change` eliminated, `create_object` changed
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    19-May-2010 (MG) `Id_Attribute_Inline_Instance.create_object` added
+#     1-Jun-2010 (MG) `initial_data` support added
 #    ««revision-date»»···
 #--
 
@@ -94,13 +95,18 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
     # end def create_object
 
     def clone (self, form) :
-        instance = getattr (form.instance, self.name, None)
+        instance     = getattr (form.instance, self.name, None)
+        name         = self.name
+        if name not in form.initial_data :
+            name     = self.attr_kind.name
+        initial_data = form.initial_data.get (name, {})
         return self.__class__ \
             ( self.name, self.form_cls, self.inline_description
             , self.form_cls
                 ( instance
-                , parent = form
-                , prefix = "__".join ((form.prefix, self.name))
+                , parent       = form
+                , prefix       = "__".join ((form.prefix, self.name))
+                , initial_data = initial_data
                 )
             )
     # end def clone

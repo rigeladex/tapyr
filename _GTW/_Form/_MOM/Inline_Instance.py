@@ -56,6 +56,7 @@
 #    27-May-2010 (MG) Use new `on_error` for `cooked_attrs`
 #    28-May-2010 (MG) `instance_or_fake` changed to fake the object only in
 #                     case raw data for this for is present
+#     1-Jun-2010 (MG) `initial_data` support added
 #    ««revision-date»»···
 #--
 
@@ -161,6 +162,13 @@ class An_Attribute_Inline_Instance (Attribute_Inline_Instance) :
 class Id_Attribute_Inline_Instance (Attribute_Inline_Instance) :
     """A form which handles an attribute of an Id_Entity as a seperate form."""
 
+    def __init__ (self, instance, * args, ** kw) :
+        initial_data = kw.get ("initial_data", {})
+        if instance is None and initial_data :
+            instance = initial_data.get ("instance")
+        self.__super.__init__ (instance, * args, ** kw)
+    # end def __init__
+
     def create_object (self, form) :
         if self.pid and not self.instance :
             self.instance = self.et_man.pid_query (self.pid)
@@ -188,6 +196,12 @@ class Link_Inline_Instance (_Inline_Instance_) :
     """A form which handles an inline link"""
 
     electric_fields_css = "mom-link"
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        if self.instance is None and self.initial_data :
+            import pdb; pdb.set_trace ()
+    # end def __init__
 
     def create_object (self, * args, ** kw) :
         state = self.state

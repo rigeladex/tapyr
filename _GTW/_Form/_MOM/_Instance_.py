@@ -83,6 +83,7 @@
 #    26-May-2010 (MG) Error handling changed
 #     1-Jun-2010 (MG) `add_changed_raw` `attrs_in_request_data` counter
 #                     added, `has_substance` added
+#     1-Jun-2010 (MG) `initial_data` support added
 #    ««revision-date»»···
 #--
 
@@ -223,6 +224,7 @@ class _Instance_ (GTW.Form._Form_) :
     ignore_fields           = ()
     _create_update_executed = False
     raw_attr_dict           = {}
+    initial_data            = {}
 
     css_class               = "Object-Editor"
     widget                  = GTW.Form.Widget_Spec ("html/form.jnj, object")
@@ -240,9 +242,16 @@ class _Instance_ (GTW.Form._Form_) :
     ### existing instance
     state            = "N"
 
-    def __init__ (self, instance = None, parent = None, prefix = None, ** kw) :
+    def __init__ ( self
+                 , instance     = None
+                 , parent       = None
+                 , prefix       = None
+                 , initial_data = {}
+                 , ** kw
+                 ) :
         if not prefix :
             prefix                   = self.et_man.ui_name
+        self.initial_data            = initial_data
         self.__super.__init__ (instance, prefix = prefix, ** kw)
         scope                        = self.et_man.home_scope
         self.parent                  = parent

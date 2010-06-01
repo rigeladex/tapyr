@@ -63,6 +63,7 @@
 #    28-May-2010 (MG) s/ui_display_attrs/list_display/g
 #                     s/ui_display/list_display_values/
 #    28-May-2010 (MG) `list_display_values` fixed
+#     1-Jun-2010 (MG) `initial_data` support added
 #    ««revision-date»»···
 #--
 
@@ -139,7 +140,8 @@ class Link_Inline (TFL.Meta.Object) :
             pid = self.request_data.get (pid_pat % no, ":").split (":") [0]
             if pid :
                 used_instances [pid] = instances.pop (pid, None)
-        instances = sorted (instances.values ())
+        instances    = sorted (instances.values ())
+        initial_data = owner.initial_data.get (self.own_role_name, {})
         for no in xrange (count) :
             pid = self.request_data.get (pid_pat % no, ":").split (":") [0]
             ### assign the correct link to the form or assign a free link
@@ -151,10 +153,11 @@ class Link_Inline (TFL.Meta.Object) :
                 instance = None
             result.append \
                 (  form_cls
-                      ( instance  = instance
-                      , prefix    = self.prefix_pat % no
-                      , prototype = prototype
-                      , parent    = self.owner
+                      ( instance     = instance
+                      , prefix       = self.prefix_pat % no
+                      , prototype    = prototype
+                      , parent       = self.owner
+                      , initial_data = initial_data
                       )
                 )
         return result

@@ -23,10 +23,11 @@
 #    GTW.Form.MOM.Field_List
 #
 # Purpose
-#    «text»···
+#    Handling of field specification for forms
 #
 # Revision Dates
 #    28-May-2010 (MG) Creation
+#    01-Jun-2010 (MG) Handling of `role_name` added
 #    ««revision-date»»···
 #--
 
@@ -60,14 +61,16 @@ class Wildcard_Field (TFL.Meta.Object) :
             et_man = getattr (et_man, self.prefix).role_type
             prefix = self.prefix + "."
         etype  = getattr (et_man, "_etype", et_man)
-        return \
-            [   "%s%s" % (prefix, ak.name)
-            for ak in sorted
+        result = []
+        for ak in sorted \
                ( itertools.chain (* (getattr (etype, k) for k in self.kinds))
                , key = lambda ak : ak.rank
-               )
-            if ak.name not in added_fields
-            ]
+               ) :
+            name      = ak.name
+            role_name = getattr (ak, "role_name", name)
+            if (name not in added_fields) and (role_name not in added_fields) :
+                result.append (name)
+        return result
     # end def __call__
 
 # end class Wildcard_Field

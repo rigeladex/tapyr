@@ -53,7 +53,7 @@ class Instance (GTW.Form.MOM._Instance_) :
     """
 
     def __init__ (self, action, instance = None, ** kw) :
-        self.action = action
+        self.action       = action
         self.__super.__init__ (instance, ** kw)
     # end def __init__
 

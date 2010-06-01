@@ -63,6 +63,7 @@
 #    19-May-2010 (MG) `Test` readded
 #    20-May-2010 (MG) `Test` finished
 #    26-May-2010 (MG) Error handing changed
+#    01-Jun-2010 (MG) `Changer.form_parameters` added
 #    ««revision-date»»···
 #--
 
@@ -101,10 +102,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
            of a etype.
         """
 
-        Media        = None ### cancel inherited property defined
-        name         = "create"
-        args         = (None, )
-        template     = "e_type_change"
+        Media           = None ### cancel inherited property defined
+        name            = "create"
+        args            = (None, )
+        template        = "e_type_change"
+        form_parameters = {}
 
         def rendered (self, handler, template = None) :
             ETM      = self.ETM
@@ -125,7 +127,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
             form = self.Form \
-                (self.abs_href, obj, cancel_href = self.parent.abs_href)
+                ( self.abs_href, obj, cancel_href = self.parent.abs_href
+                , ** self.form_parameters
+                )
             if request.method == "POST" :
                 if req_data.get ("cancel") :
                     ### the user has clicked on the cancel button and not on
