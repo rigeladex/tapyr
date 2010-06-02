@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-May-2010 (MG) Creation
 #    01-Jun-2010 (MG) Handling of `role_name` added
+#     2-Jun-2010 (CT) `prefixed` added to `Wildcard_Field.__call__`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,6 @@ import  itertools
 class Wildcard_Field (TFL.Meta.Object) :
     """A place holder in the field group description which will expand to
        all attributes of the given kinds which have not been added explicitly.
-
     """
 
     def __init__ (self, * kinds , ** kw) :
@@ -56,10 +56,10 @@ class Wildcard_Field (TFL.Meta.Object) :
             ### added after all other fields have been precessed in the first
             ### pass
             return (self, )
-        prefix = ""
+        prefixed = lambda x : x
         if self.prefix :
-            et_man = getattr (et_man, self.prefix).role_type
-            prefix = self.prefix + "."
+            et_man   = getattr (et_man, self.prefix).role_type
+            prefixed = lambda x : ".".join ((self.prefix, x))
         etype  = getattr (et_man, "_etype", et_man)
         result = []
         for ak in sorted \
@@ -69,7 +69,7 @@ class Wildcard_Field (TFL.Meta.Object) :
             name      = ak.name
             role_name = getattr (ak, "role_name", name)
             if (name not in added_fields) and (role_name not in added_fields) :
-                result.append (name)
+                result.append (prefixed (name))
         return result
     # end def __call__
 

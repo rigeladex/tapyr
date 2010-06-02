@@ -252,7 +252,11 @@ class Link_Inline (TFL.Meta.Object) :
     def list_display_values (self, link) :
         etype = self.form_cls.et_man._etype
         for attr in self.inline_description.list_display :
-            value = operator.attrgetter (attr) (link)
+            try :
+                value = operator.attrgetter (attr) (link)
+            except AttributeError :
+                print attr, link
+                raise
             if hasattr (value, "ui_display") :
                 yield value.ui_display
             else :
