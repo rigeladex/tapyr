@@ -970,6 +970,44 @@ def tupelize (l) :
         return l
 # end def tupelize
 
+def undotted_dict (d) :
+    """Return a dict with un-dotted keys. Dotted keys in `d` are converted
+       to nested dictionaries with un-dotted keys in the result.
+
+       >>> def show (d) :
+       ...     def gen (d) :
+       ...         for k, v in sorted (d.iteritems ()) :
+       ...             if isinstance (v, dict) :
+       ...                 v = show (v)
+       ...             yield "%r : %s" % (k, v)
+       ...     return "{%s}" % (", ".join (gen (d)))
+       ...
+       >>> show (undotted_dict({"a" : 1, "ab.b" : 2}))
+       "{'a' : 1, 'ab' : {'b' : 2}}"
+       >>> show (undotted_dict({"a" : 1, "ab.b" : 2, "ab.c.d" : 42}))
+       "{'a' : 1, 'ab' : {'b' : 2, 'c' : {'d' : 42}}}"
+    """
+    result = {}
+    for k, v in sorted (d.iteritems ()) :
+        n = k
+        target = result
+        if "." in k :
+            os, _, n = rsplit_hst (k, ".")
+            for o in os.split (".") :
+                target = target.setdefault (o, {})
+                assert isinstance (target, dict), "Need a dict: %s, %s" % (o, k)
+        target [n] = v
+    return result
+# end def undotted_dict
+
+def show (d) :
+    def gen (d) :
+        for k, v in sorted (d.iteritems ()) :
+            if isinstance (v, dict) :
+                v = show (v)
+            yield "%r : %s" % (k, v)
+    return "{%s}" % (", ".join (gen (d)))
+
 def union (* lists) :
     """Compute the union of lists.
 
