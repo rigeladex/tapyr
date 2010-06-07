@@ -142,7 +142,7 @@ class Admin (object) :
                     )
                 , render_mode = "table"
                 )
-            , FGD ("lifetime")
+            , FGD ("lifetime", WF ())
             , LID
                 ( "GTW.OMP.PAP.Person_has_Phone"
                 , FGD

@@ -33,15 +33,18 @@
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    10-May-2010 (CT) `ui_display_format` redefined
+#     4-Jun-2010 (CT) `sex` added
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM        import *
+from   _MOM.import_MOM             import *
 from   _MOM._Attr.Date_Interval    import *
 
-from   _GTW                   import GTW
-from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
+from   _GTW._OMP._PAP.Attr_Type    import *
+
+from   _GTW                        import GTW
+from   _GTW._OMP._PAP              import PAP
+from   _TFL.I18N                   import _
 
 import _GTW._OMP._PAP.Entity
 
@@ -102,7 +105,21 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class lifetime
 
-        ### class sex (A_Sex) : ...
+        class salutation (A_String) :
+            """Salutation to be used when communicating with person (e.g., in
+               a letter or email).
+            """
+
+            kind               = Attr.Optional
+            max_length         = 80
+
+        # end class salutation
+
+        class sex (A_Sex) :
+
+            kind           = Attr.Required
+
+        # end class sex
 
     # end class _Attributes
 
