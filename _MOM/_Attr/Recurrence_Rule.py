@@ -34,6 +34,7 @@
 #    16-Mar-2010 (CT) Bugs fixed (`__nonzero__`, `easter_offset.rrule_name`,
 #                     `finish` or `count`, ...)
 #    27-Apr-2010 (CT) Default for `glob` and `locl` changed from `None` to `{}`
+#     7-Jun-2010 (CT) `A_Weekday_RR.Pickler` methods guarded against `None`
 #    ««revision-date»»···
 #--
 
@@ -62,12 +63,14 @@ class A_Weekday_RR (A_Attr_Type) :
 
         @classmethod
         def as_cargo (cls, obj, attr_kind, attr_type, value) :
-            return attr_type.as_string (value)
+            if value is not None :
+                return attr_type.as_string (value)
         # end def as_cargo
 
         @classmethod
         def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
-            return attr_type.from_string (cargo, obj)
+            if cargo is not None :
+                return attr_type.from_string (cargo, obj)
         # end def from_cargo
 
     # end class Pickler

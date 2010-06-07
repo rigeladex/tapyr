@@ -129,6 +129,7 @@
 #                     `datetime.date`!)
 #    19-May-2010 (CT) `_A_Object_._check_type` changed to check against
 #                     `etype.Essence`
+#     7-Jun-2010 (CT) `_A_Named_Object_.Pickler` methods guarded against `None`
 #    ««revision-date»»···
 #--
 
@@ -1026,16 +1027,18 @@ class _A_Named_Object_ (_A_Named_Value_) :
 
         @classmethod
         def as_cargo (cls, obj, attr_kind, attr_type, value) :
-            return attr_type.__class__.Elbat [value]
+            if value is not None :
+                return attr_type.__class__.Elbat [value]
         # end def as_cargo
 
         @classmethod
         def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
-            Table = attr_type.__class__.Table
-            try :
-                return Table [cargo]
-            except KeyError :
-                raise ValueError (u"%s not in %s" % (cargo, sorted (Table)))
+            if cargo is not None :
+                Table = attr_type.__class__.Table
+                try :
+                    return Table [cargo]
+                except KeyError :
+                    raise ValueError (u"%s not in %s" % (cargo, sorted (Table)))
         # end def from_cargo
 
     # end class Pickler
