@@ -169,6 +169,7 @@
 #     2-Dec-2009 (CT)  `intersection`, `intersection_n` and `union` modernized
 #     2-Dec-2009 (CT)  `_sorted` removed (only needed for ancient Pythons)
 #     1-Jan-2010 (CT)  `first_diff` added
+#     2-Jun-2010 (CT)  `undotted_dict` added
 #    ««revision-date»»···
 #--
 
@@ -999,14 +1000,6 @@ def undotted_dict (d) :
         target [n] = v
     return result
 # end def undotted_dict
-
-def show (d) :
-    def gen (d) :
-        for k, v in sorted (d.iteritems ()) :
-            if isinstance (v, dict) :
-                v = show (v)
-            yield "%r : %s" % (k, v)
-    return "{%s}" % (", ".join (gen (d)))
 
 def union (* lists) :
     """Compute the union of lists.
