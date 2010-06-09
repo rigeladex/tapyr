@@ -57,6 +57,7 @@
 #    28-May-2010 (MG) `instance_or_fake` changed to fake the object only in
 #                     case raw data for this for is present
 #     1-Jun-2010 (MG) `initial_data` support added
+#     9-Jun-2010 (MG) `initial_data.instance` can now be a callable
 #    ««revision-date»»···
 #--
 
@@ -166,6 +167,8 @@ class Id_Attribute_Inline_Instance (Attribute_Inline_Instance) :
         initial_data = kw.get ("initial_data", {})
         if instance is None and initial_data :
             instance = initial_data.get ("instance")
+            if callable (instance) :
+                instance = instance (self)
         self.__super.__init__ (instance, * args, ** kw)
     # end def __init__
 

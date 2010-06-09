@@ -84,6 +84,7 @@
 #     1-Jun-2010 (MG) `add_changed_raw` `attrs_in_request_data` counter
 #                     added, `has_substance` added
 #     1-Jun-2010 (MG) `initial_data` support added
+#     9-Jun-2010 (MG) `initial_data` support enhanced
 #    ««revision-date»»···
 #--
 
@@ -92,7 +93,7 @@ import _MOM._Attr.Type
 
 from   _TFL                                 import TFL
 import _TFL._Meta.Object
-
+from   _TFL.predicate                       import undotted_dict
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
 import _GTW._Form.Field
@@ -251,7 +252,8 @@ class _Instance_ (GTW.Form._Form_) :
                  ) :
         if not prefix :
             prefix                   = self.et_man.ui_name
-        self.initial_data            = initial_data
+        self.initial_data            = undotted_dict \
+            (dict (self.initial_data, ** initial_data))
         self.__super.__init__ (instance, prefix = prefix, ** kw)
         scope                        = self.et_man.home_scope
         self.parent                  = parent

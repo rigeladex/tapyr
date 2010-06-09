@@ -79,12 +79,10 @@ class Regatta_C_Admin (GTW.NAV.E_Type.Admin) :
         def form_parameters (self) :
             scope  = self.top.scope
             result = dict \
-                ( initial_data = dict
-                    ( boat_class = dict
-                        (instance = scope.SRM.Boat_Class.query ().first ())
-                    , left       = dict
-                        (instance = scope.SRM.Regatta_Event.query ().first ())
-                    )
+                ( initial_data =
+                    { "boat_class.instance" :
+                          lambda form : scope.SRM.Boat_Class.query ().first ()
+                    }
                 )
             return result
         # end def form_parameters
@@ -94,6 +92,12 @@ class Regatta_C_Admin (GTW.NAV.E_Type.Admin) :
 # end class Regatta_C_Admin
 
 GTW.OMP.SRM.Nav.Admin.Regatta_C ["Type"] = Regatta_C_Admin
+GTW.OMP.SRM.Nav.Admin.Regatta_C ["Form_kw"] = dict \
+                ( initial_data =
+                    { "left.instance" : lambda form :
+                        form.et_man.home_scope.SRM.Regatta_Event.query ().first ()
+                    }
+                )
 
 def create_nav (scope) :
     home_url_root = "http://localhost:9042"
