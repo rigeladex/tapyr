@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-03-16 16:10+0100\n"
-"PO-Revision-Date: 2010-05-10 13:37+0200\n"
+"PO-Revision-Date: 2010-06-10 12:21+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -53,6 +53,10 @@ msgstr[1] "Termine"
 #: _GTW._OMP._EVT.Event:0
 msgid "Information about event."
 msgstr "Information zum Ereignis."
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Models a string-valued attribute of an object."
+msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Object which this event is bound to."

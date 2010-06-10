@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-05-10 13:37+0200\n"
+"POT-Creation-Date: 2010-06-10 12:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_PAP/Person.py:93 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:97 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr ""
 
@@ -26,15 +26,12 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Address:0
+#: _GTW/_OMP/_PAP/Nav.py:176 _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
 msgstr[1] ""
-
-#: _GTW/_OMP/_PAP/Nav.py:168 _GTW/_OMP/_PAP/Nav.py:169
-msgid "Addresses"
-msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
@@ -65,7 +62,8 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Email:0
+#: _GTW/_OMP/_PAP/Nav.py:164 _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW._OMP._PAP.Email:0
 msgid "Email"
 msgid_plural "Emails"
 msgstr[0] ""
@@ -79,16 +77,16 @@ msgstr ""
 msgid "Email address (including domain)"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:160 _GTW/_OMP/_PAP/Nav.py:161
-msgid "Email addresses"
-msgstr ""
-
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension number used in PBX"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Attr_Type.py:46
+msgid "Female"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
@@ -135,16 +133,16 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
+#: _GTW/_OMP/_PAP/Attr_Type.py:47
+msgid "Male"
+msgstr ""
+
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name of person"
-msgstr ""
-
-#: _GTW._OMP._PAP.Address:0
-msgid "Models a string-valued attribute of an object."
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
@@ -185,7 +183,8 @@ msgstr[1] ""
 msgid "Persons"
 msgstr ""
 
-#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW/_OMP/_PAP/Nav.py:152 _GTW._OMP._PAP.Phone:0
+#: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] ""
@@ -193,10 +192,6 @@ msgstr[1] ""
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Phone number proper (without country code, area code, extension)"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Nav.py:152 _GTW/_OMP/_PAP/Nav.py:153
-msgid "Phone numbers"
 msgstr ""
 
 #: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
@@ -207,6 +202,24 @@ msgstr[1] ""
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Region"
+msgstr ""
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Salutation"
+msgstr ""
+
+#: _GTW._OMP._PAP.Person:0
+msgid ""
+"Salutation to be used when communicating with person (e.g., in\n"
+"a letter or email)."
+msgstr ""
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Sex"
+msgstr ""
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Sex of a person."
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0

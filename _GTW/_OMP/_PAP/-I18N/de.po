@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-05-10 13:37+0200\n"
+"PO-Revision-Date: 2010-06-10 12:21+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_PAP/Person.py:93 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:97 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr "Akademischer Titel"
 
@@ -26,15 +26,12 @@ msgstr "Akademischer Titel"
 msgid "Academic title."
 msgstr "Titel."
 
-#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Address:0
+#: _GTW/_OMP/_PAP/Nav.py:176 _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] "Adresse"
 msgstr[1] "Adressen"
-
-#: _GTW/_OMP/_PAP/Nav.py:168 _GTW/_OMP/_PAP/Nav.py:169
-msgid "Addresses"
-msgstr "Adressen"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
@@ -65,7 +62,8 @@ msgstr "Geburtstag (und Sterbetag)"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Email:0
+#: _GTW/_OMP/_PAP/Nav.py:164 _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW._OMP._PAP.Email:0
 msgid "Email"
 msgid_plural "Emails"
 msgstr[0] "Email"
@@ -79,10 +77,6 @@ msgstr "Emailadresse"
 msgid "Email address (including domain)"
 msgstr "Emailadresse (inkl. Domain)"
 
-#: _GTW/_OMP/_PAP/Nav.py:160 _GTW/_OMP/_PAP/Nav.py:161
-msgid "Email addresses"
-msgstr "Emailadressen"
-
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension"
 msgstr "Durchwahl"
@@ -90,6 +84,10 @@ msgstr "Durchwahl"
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension number used in PBX"
 msgstr "Durchwahl"
+
+#: _GTW/_OMP/_PAP/Attr_Type.py:46
+msgid "Female"
+msgstr "Weiblich"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "First name"
@@ -135,6 +133,10 @@ msgstr "Lebenszeit"
 msgid "Longitude"
 msgstr "Länge"
 
+#: _GTW/_OMP/_PAP/Attr_Type.py:47
+msgid "Male"
+msgstr "Männlich"
+
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name"
 msgstr "Mittelname"
@@ -142,10 +144,6 @@ msgstr "Mittelname"
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name of person"
 msgstr "Mittelname"
-
-#: _GTW._OMP._PAP.Address:0
-msgid "Models a string-valued attribute of an object."
-msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "National area code of phone number (without prefix)"
@@ -185,7 +183,8 @@ msgstr[1] "Person hat Telefone"
 msgid "Persons"
 msgstr "Personen"
 
-#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW/_OMP/_PAP/Nav.py:152 _GTW._OMP._PAP.Phone:0
+#: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] "Telefon"
@@ -194,10 +193,6 @@ msgstr[1] "Telefone"
 #: _GTW._OMP._PAP.Phone:0
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr "Telefonnummer (ohne Vorwahl oder Durchwahl)"
-
-#: _GTW/_OMP/_PAP/Nav.py:152 _GTW/_OMP/_PAP/Nav.py:153
-msgid "Phone numbers"
-msgstr "Telefonnummern"
 
 #: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
 msgid "Position"
@@ -208,6 +203,25 @@ msgstr[1] "Postionen"
 #: _GTW._OMP._PAP.Address:0
 msgid "Region"
 msgstr "Region"
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Salutation"
+msgstr "Anrede"
+
+#: _GTW._OMP._PAP.Person:0
+msgid ""
+"Salutation to be used when communicating with person (e.g., in\n"
+"a letter or email)."
+msgstr ""
+"Anrede, die in Briefen oder Emails verwendet werden soll."
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Sex"
+msgstr "Geschlecht"
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Sex of a person."
+msgstr "Geschlecht der Person."
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Short description of the address"
@@ -244,4 +258,3 @@ msgstr "Postleitzahl"
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr "Postleitzahl der Adresse"
-

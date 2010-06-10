@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-05-10 13:37+0200\n"
+"PO-Revision-Date: 2010-06-10 12:21+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:958
+#: _MOM/Entity.py:970
 #, python-format
 msgid ""
 "%s\n"
@@ -27,7 +27,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1481
+#: _MOM/_Attr/Type.py:1490
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -56,7 +56,7 @@ msgstr ""
 "Typ %s kann nicht direkt mit %r erzeugt werden, stattdessen muss\"\n"
 "\"scope.%s %r verwendet werden"
 
-#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:140
+#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:146
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
@@ -72,7 +72,7 @@ msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
 msgid "Count"
 msgstr "Anzahl"
 
-#: _MOM/_Attr/Recurrence_Rule.py:210
+#: _MOM/_Attr/Recurrence_Rule.py:213
 msgid "Daily"
 msgstr "Täglich"
 
@@ -81,6 +81,12 @@ msgid "Date_Interval"
 msgid_plural "Date_Intervals"
 msgstr[0] "Datumsinterval"
 msgstr[1] "Datumsintervalle"
+
+#: _MOM._Attr.Date_Interval:0
+msgid "Date_Interval_C"
+msgid_plural "Date_Interval_Cs"
+msgstr[0] "Date_Interval_C"
+msgstr[1] "Date_Interval_Cs"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Date_Interval_N"
@@ -98,7 +104,7 @@ msgid_plural "Entitys"
 msgstr[0] "Entität"
 msgstr[1] "Entitäten"
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "FR"
 msgstr "Fr"
 
@@ -120,7 +126,7 @@ msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1163
+#: _MOM/_Attr/Type.py:1171
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -155,7 +161,7 @@ msgid_plural "Link3s"
 msgstr[0] "3-Verknüpfung"
 msgstr[1] "3-Verknüpfungen"
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "MO"
 msgstr "Mo"
 
@@ -171,7 +177,7 @@ msgstr "Monatlich"
 msgid "Month day"
 msgstr "Monatstag"
 
-#: _MOM/_Attr/Recurrence_Rule.py:210
+#: _MOM/_Attr/Recurrence_Rule.py:213
 msgid "Monthly"
 msgstr "Monatlich"
 
@@ -185,12 +191,12 @@ msgid_plural "Named_Objects"
 msgstr[0] "Benanntes-Objekt"
 msgstr[1] "Benannte-Objekte"
 
-#: _MOM/_Attr/Type.py:879
+#: _MOM/_Attr/Type.py:885
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/_Attr/Type.py:321
+#: _MOM/_Attr/Type.py:327
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 
@@ -281,11 +287,11 @@ msgstr ""
 msgid "Restrict the recurrences to the week numbers specified."
 msgstr "Beschränke die Wiederholungen auf die angegebenen Wochen."
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "SA"
 msgstr "Sa"
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "SU"
 msgstr "So"
 
@@ -309,11 +315,11 @@ msgstr "Anfangsdatum des Intervalls"
 msgid "Start time of interval"
 msgstr "Anfangszeit des Intervalls"
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "TH"
 msgstr "Do"
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "TU"
 msgstr "Di"
 
@@ -364,17 +370,17 @@ msgstr ""
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
-#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:141
+#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:147
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:90 _MOM/_Attr/Type.py:492
+#: _MOM/_Attr/Recurrence_Rule.py:93 _MOM/_Attr/Type.py:498
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
 
-#: _MOM/_Attr/Recurrence_Rule.py:54
+#: _MOM/_Attr/Recurrence_Rule.py:55
 msgid "WE"
 msgstr "Mi"
 
@@ -386,7 +392,7 @@ msgstr "Woche"
 msgid "Week day"
 msgstr "Wochentag"
 
-#: _MOM/_Attr/Recurrence_Rule.py:210
+#: _MOM/_Attr/Recurrence_Rule.py:213
 msgid "Weekly"
 msgstr "Wöchentlich"
 
@@ -394,7 +400,7 @@ msgstr "Wöchentlich"
 msgid "Year day"
 msgstr "Tag des Jahres"
 
-#: _MOM/_Attr/Recurrence_Rule.py:210
+#: _MOM/_Attr/Recurrence_Rule.py:213
 msgid "Yearly"
 msgstr "Jährlich"
 
@@ -414,7 +420,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:874
+#: _MOM/_Attr/Type.py:880
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-05-10 13:37+0200\n"
+"PO-Revision-Date: 2010-06-10 12:21+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,33 +18,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:114 _GTW/_NAV/_E_Type/Admin.py:213
+#: _GTW/_Form/_MOM/Javascript.py:63
+#, python-format
+msgid "%s `%s` does not exist!"
+msgstr "%s `%s` existiert nicht"
+
+#: _GTW/_NAV/_E_Type/Admin.py:125 _GTW/_NAV/_E_Type/Admin.py:232
+#: _GTW/_NAV/_E_Type/Admin.py:263
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_Form/_MOM/Javascript.py:58
-#, python-format
-msgid "%s `%s` existiert nicht!"
-msgstr "%s `%s` existiert nicht"
-
-#: _GTW/_NAV/Auth.py:170
+#: _GTW/_NAV/Auth.py:171
 msgid "A confirmation email has been sent tothe new email address."
 msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 
-#: _GTW/_NAV/Auth.py:303
+#: _GTW/_NAV/Auth.py:304
 msgid "A confirmation has been sent to your emailaddress."
 msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
-#: _GTW/_Form/Auth.py:73 _GTW/_Form/Auth.py:223
+#: _GTW/_Form/Auth.py:74 _GTW/_Form/Auth.py:229
 msgid "A user name is required to login."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_Form/Auth.py:248
+#: _GTW/_Form/Auth.py:254
 msgid "A user name is required."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_NAV/Auth.py:129
+#: _GTW/_NAV/Auth.py:130
 msgid "Activation successful."
 msgstr "Die Aktivierung war erfolgreich."
 
@@ -64,17 +65,21 @@ msgstr "Aug"
 msgid "August"
 msgstr "August"
 
-#: _GTW/__test__/form_app.py:157
+#: _GTW/__test__/form_app.py:201
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:160
+#: _GTW/__test__/form_app.py:204
 msgid "Authorization and Account handling"
 msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
-#: _GTW/__test__/form_app.py:168
+#: _GTW/__test__/form_app.py:212
 msgid "Choice of language used for localization"
 msgstr "Auswahl der Sprache für Lokalisierung"
+
+#: _GTW/_NAV/_E_Type/Admin.py:297
+msgid "Copy"
+msgstr "Kopiere"
 
 #: _GTW/_NAV/Calendar.py:63
 msgid "Dec"
@@ -84,11 +89,15 @@ msgstr "Dez"
 msgid "December"
 msgstr "Dezember"
 
-#: _GTW/_NAV/Auth.py:94
+#: _GTW/_NAV/Auth.py:95
 msgid "EMail verification successful."
 msgstr "Die Bestätigung der Email war erfolgreich."
 
-#: _GTW/_NAV/Auth.py:161 _GTW/_NAV/Auth.py:294
+#: _GTW/_NAV/_E_Type/Admin.py:295
+msgid "Edit"
+msgstr "Ändere"
+
+#: _GTW/_NAV/Auth.py:162 _GTW/_NAV/Auth.py:295
 #, python-format
 msgid "Email confirmation for %s"
 msgstr "Email Bestätigung für %s"
@@ -101,7 +110,7 @@ msgstr "Feb"
 msgid "February"
 msgstr "Feber"
 
-#: _GTW/_Form/Plain.py:92
+#: _GTW/_Form/Plain.py:93
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
@@ -138,7 +147,7 @@ msgstr "Jun"
 msgid "June"
 msgstr "Juni"
 
-#: _GTW/__test__/form_app.py:165
+#: _GTW/__test__/form_app.py:209
 msgid "L10N"
 msgstr ""
 
@@ -147,11 +156,11 @@ msgstr ""
 msgid "Language %s selected"
 msgstr "Sprache %s wurde ausgewählt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:99
+#: _GTW/_NAV/_E_Type/SRM.py:105
 msgid "List of participants for"
 msgstr "Liste der Teilnehmer für"
 
-#: _GTW/_NAV/Auth.py:263
+#: _GTW/_NAV/Auth.py:264
 msgid "Logout successful."
 msgstr "Abmelden war erfolgreich."
 
@@ -179,11 +188,11 @@ msgstr "Montag"
 msgid "Need Javascript for displaying"
 msgstr "Für die Darstellung ist Javascript erforderlich"
 
-#: _GTW/_Form/Auth.py:181
+#: _GTW/_Form/Auth.py:187
 msgid "New email address"
 msgstr "Emailadresse"
 
-#: _GTW/_Form/Auth.py:120
+#: _GTW/_Form/Auth.py:126
 msgid "New password"
 msgstr "Neues Kennwort"
 
@@ -203,35 +212,35 @@ msgstr "Okt"
 msgid "October"
 msgstr "Oktober"
 
-#: _GTW/_Form/Auth.py:169
+#: _GTW/_Form/Auth.py:175
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:78
+#: _GTW/_NAV/_E_Type/SRM.py:84
 msgid "Participants"
 msgstr "Teilnehmer"
 
-#: _GTW/_Form/Auth.py:62 _GTW/_Form/Auth.py:152 _GTW/_Form/Auth.py:185
+#: _GTW/_Form/Auth.py:63 _GTW/_Form/Auth.py:158 _GTW/_Form/Auth.py:191
 msgid "Password"
 msgstr "Kennwort"
 
-#: _GTW/_Form/Auth.py:132
+#: _GTW/_Form/Auth.py:138
 msgid "Passwords don't match."
 msgstr "Kennworte stimmen nicht überein."
 
-#: _GTW/_Form/Auth.py:130
+#: _GTW/_Form/Auth.py:136
 msgid "Please repeat the new password."
 msgstr "Bitte neues Kennwort wiederholen."
 
-#: _GTW/_Form/Auth.py:122
+#: _GTW/_Form/Auth.py:128
 msgid "Repeat new password"
 msgstr "Wiederhole neues Kennwort"
 
-#: _GTW/_NAV/_E_Type/SRM.py:79
+#: _GTW/_NAV/_E_Type/SRM.py:85
 msgid "Results"
 msgstr "Resultate"
 
-#: _GTW/_NAV/_E_Type/SRM.py:87
+#: _GTW/_NAV/_E_Type/SRM.py:93
 msgid "Results for"
 msgstr "Resultate für"
 
@@ -259,45 +268,45 @@ msgstr "SO"
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: _GTW/_Form/Auth.py:197
+#: _GTW/_Form/Auth.py:203
 msgid "The new E-Mail address is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:128
+#: _GTW/_Form/Auth.py:134
 msgid "The new password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:164 _GTW/_Form/Auth.py:195
+#: _GTW/_Form/Auth.py:170 _GTW/_Form/Auth.py:201
 msgid "The old password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:205
+#: _GTW/_NAV/Auth.py:206
 msgid "The password has been changed."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:202
+#: _GTW/_Form/Auth.py:208
 msgid "The password is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_Form/Auth.py:75
+#: _GTW/_Form/Auth.py:76
 msgid "The password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:340
+#: _GTW/_NAV/Auth.py:341
 msgid "The reset password instructions have beensent to your email address."
 msgstr ""
 "Die Information über das neue Kennwort wurden an die Emailadresse "
 "versandt."
 
-#: _GTW/_Form/Auth.py:80
+#: _GTW/_Form/Auth.py:81
 msgid "This account is currently inactive"
 msgstr "Dieses Benutzerkonto ist gegenwärtig nicht verfügbar"
 
-#: _GTW/_Form/Auth.py:228
+#: _GTW/_Form/Auth.py:234
 msgid "This username is already in use."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_Form/Auth.py:253
+#: _GTW/_Form/Auth.py:259
 msgid "This username is not registered"
 msgstr "Dieser Benutzername ist nicht bekannt"
 
@@ -317,11 +326,11 @@ msgstr "DI"
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: _GTW/_Form/Auth.py:61 _GTW/_Form/Auth.py:212 _GTW/_Form/Auth.py:238
+#: _GTW/_Form/Auth.py:62 _GTW/_Form/Auth.py:218 _GTW/_Form/Auth.py:244
 msgid "Username"
 msgstr "Benutzername"
 
-#: _GTW/_Form/Auth.py:78
+#: _GTW/_Form/Auth.py:79
 msgid "Username or password incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
@@ -344,4 +353,7 @@ msgstr "Telefonnummer"
 #: _GTW/_NAV/_E_Type/Gallery.py:94
 msgid "picture"
 msgstr "Bild"
+
+#~ msgid "%s `%s` existiert nicht!"
+#~ msgstr "%s `%s` existiert nicht"
 
