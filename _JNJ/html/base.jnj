@@ -30,6 +30,7 @@
 ##    29-Dec-2009 (CT) Creation
 ##    17-Mar-2010 (CT) `rel="canonical"` for `permalink` added
 ##     1-May-2010 (MG) `body` block added
+##    11-Jun-2010 (CT) Use `X.link_stylesheet` instead of home-grown code
 ##    ««revision-date»»···
 ##--
 #}
@@ -52,7 +53,7 @@
             {% head %}
             <!--[if {{ cssl.condition }}]>
             {% body %}
-            <link rel="stylesheet" type="text/css" title="Default" media="{{ cssl.media_type }}" href="{{ cssl.href }}" />
+            {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
             {% tail %}
             <![endif]-->
           {% endonion -%} {#- cssl.condition -#}

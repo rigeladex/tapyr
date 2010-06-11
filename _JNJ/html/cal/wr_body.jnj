@@ -30,6 +30,7 @@
 ##     9-Mar-2010 (CT) Creation
 ##    10-Mar-2010 (CT) `week_day` changed to honor `is_holiday`
 ##    26-Apr-2010 (CT) `week_day_events` changed to guard against empty `href`
+##    11-Jun-2010 (CT) Validation errors removed (no `div` in `tr` and `td`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -44,7 +45,7 @@
 {%- macro head (cal) -%}
   <th class="week-number" scope="col">{{ GTW._T ("Wk") }}</th>
   {%- for a, d in GTW.zip (cal.day_abbrs, cal.day_names) %}
-    <th class="{{ d.lower () }}"  title="{{ GTW._T (d) }}"scope="col">
+    <th class="{{ d.lower () }}"  title="{{ GTW._T (d) }}" scope="col">
       {{- GTW._T (a) -}}
     </th>
   {% endfor -%}
@@ -63,7 +64,7 @@
   {%- for ev in day.events %}
     {%- set thead = ("%s " % (ev.FO.time, )) if ev.FO.time else "" %}
     {%- set href = cal.obj_href (ev.essence) %}
-    <div class="event" title="{{ thead }}{{ GTW.firstof (ev.detail, ev.title) }}">
+    <span class="event" title="{{ thead }}{{ GTW.firstof (ev.detail, ev.title) }}">
       {%- onion href %}
         {%- head -%}
           <a href="{{ href }}">
@@ -72,7 +73,7 @@
         {%- tail -%}
           </a>
         {%- endonion %}
-    </div>
+    </span>
   {% endfor -%}
 {%- endmacro -%} {#- week_day_events -#}
 
@@ -82,7 +83,7 @@
 {%- macro week_number (cal, week) -%}
   <th class="week-number" scope="row"
     title="{{ "%s %2.2d/%s     [%s&ndash;%s]" % (GTW._T ('Week'), week.number, week.year, week.mon, week.sun) }}">
-    <div class="week-number"><a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a></div>
+    <span class="week-number"><a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a></span>
   </th>
 {%- endmacro -%} {#- week_number -#}
 

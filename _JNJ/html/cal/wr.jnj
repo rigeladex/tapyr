@@ -30,6 +30,7 @@
 ##     9-Mar-2010 (CT) Creation
 ##    10-Mar-2010 (CT) Optional keyword argument `weeks` added to `week_roller`
 ##    10-Mar-2010 (CT) `week_roller_body` and `week_roller_nav` added
+##    11-Jun-2010 (CT) Validation errors removed (no `div` in `tr` and `td`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -64,7 +65,7 @@
                 )).strip ()
             -%}
             <td class="{{ td_cls }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
-              <div class="{{ div_cls}}">
+              <span class="{{ div_cls }}">
                 {%- onion foo %} {# events #}
                   {% head -%}
                     <a href="{{ cal.day_href (d) }}">
@@ -73,7 +74,7 @@
                   {%- tail -%}
                     </a>
                 {%- endonion -%}
-              </div>
+              </span>
               {{ W.week_day_events (cal, week, d) }}
             </td>
           {% endfor -%}
