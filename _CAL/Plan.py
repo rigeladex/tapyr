@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,17 +40,21 @@
 #                     keys (for `Y.map`)
 #    17-Dec-2007 (CT) `write_plan` changed to use `Date_Time` instead of
 #                     `Date` to calculate `today`
+#    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 from   _CAL                  import CAL
+
 from   _CAL.Appointment      import prio_pat, time_pat
 import _CAL.Appointment
 import _CAL.Date
 import _CAL.Date_Time
 import _CAL.Year
+
 import _TFL._Meta.Object
+import _TFL.CAO
 
 from   _TFL.Filename         import *
 from   _TFL.predicate        import *
@@ -187,47 +191,6 @@ def write_plan (Y, plan_file_name, replace = False) :
     CAL.write_year (Y.as_plan, plan_file_name, force = replace)
 # end def write_plan
 
-def _command_spec (arg_array = None) :
-    from Command_Line import Command_Line
-    today    = CAL.Date ()
-    year     = today.year
-    return Command_Line \
-        ( option_spec =
-            ( "add_appointment:B?Add appointments specified by arguments"
-            , "diary:S=~/diary?Path for calendar file"
-            , "filename:S=plan?Filename of plan for `year`"
-            , "holidays_too:B?Add appointments to holidays, too"
-            , "replace:B?Replace old calendar with new file"
-            , "Show:B?Show days corresponding to arguments"
-            , "sort:B?Sort calendar and write it back"
-            , "year:I=%d?Year for which to process calendar" % (year, )
-            )
-        , description =
-          """Manage appointments/activities in a yearly calendar.
-
-             The arguments specify appointments. Examples of arguments:
-
-             '7.1. +1w*52 14:30-15 =j SW-Jour-Fixe'
-             '21.6. +1*8 =V Vacation'
-
-             Argument syntax:
-
-             <DD>.<MM>. +<delta><unit>*<how_often>
-                 <hh>:<mm>-<hh>:<mm> =<Prio> <Activity/Appointment>
-
-             Date, repeat-info, time, and priority are all optional, but at
-             least one field of date or time must be specified. Missing date
-             fields are replaced by the current day/month.
-
-             The delta-unit can be specified as `d` for days (default), `w`
-             for weeks, or `m` for months.
-
-             The priority is a single letter (upper or lowercase) or number.
-          """
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     year      = cmd.year
     path      = sos.path.join (sos.expanded_path (cmd.diary), "%4.4d" % year)
@@ -257,8 +220,44 @@ def _main (cmd) :
         write_plan (Y, file_name, cmd.replace)
 # end def _main
 
-if __name__ == "__main__" :
-    _main (_command_spec ())
-else :
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , opts        =
+        ( "add_appointment:B?Add appointments specified by arguments"
+        , "diary:S=~/diary?Path for calendar file"
+        , "filename:S=plan?Filename of plan for `year`"
+        , "holidays_too:B?Add appointments to holidays, too"
+        , "replace:B?Replace old calendar with new file"
+        , "Show:B?Show days corresponding to arguments"
+        , "sort:B?Sort calendar and write it back"
+        , "year:I=%d?Year for which to process calendar" % (CAL.Date ().year, )
+        )
+    , description =
+      """Manage appointments/activities in a yearly calendar.
+
+         The arguments specify appointments. Examples of arguments:
+
+         '7.1. +1w*52 14:30-15 =j SW-Jour-Fixe'
+         '21.6. +1*8 =V Vacation'
+
+         Argument syntax:
+
+         <DD>.<MM>. +<delta><unit>*<how_often>
+             <hh>:<mm>-<hh>:<mm> =<Prio> <Activity/Appointment>
+
+         Date, repeat-info, time, and priority are all optional, but at
+         least one field of date or time must be specified. Missing date
+         fields are replaced by the current day/month.
+
+         The delta-unit can be specified as `d` for days (default), `w`
+         for weeks, or `m` for months.
+
+         The priority is a single letter (upper or lowercase) or number.
+      """
+    )
+
+if __name__ != "__main__" :
     CAL._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.Plan

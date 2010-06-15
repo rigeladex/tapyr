@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This library is free software; you can redistribute it and/or
@@ -34,7 +34,6 @@
 #    15-Feb-2001 (CT)  `gcd' streamlined
 #    15-Feb-2001 (CT)  `default' added to `greatest_common_divisor' and
 #                      `least_common_multiple' and check for empty `seq' added
-#                      to prevent IndexError
 #     4-Dec-2001 (CT)  `p2_ceil` added
 #    30-Aug-2002 (CT)  `p2_ceil` corrected (division by 8 is *not* reusable)
 #    27-Feb-2004 (CT)  `average` and `standard_deviation` added
@@ -53,6 +52,8 @@
 #     7-Nov-2006 (CED) `sign` added
 #    13-Dec-2006 (PGO) `periodic_pattern_gen` added
 #    12-Nov-2007 (CT)  `horner` added
+#    15-Jun-2010 (CT)  `periodic_pattern_gen` removed (needs to go into
+#                      different module)
 #    ««revision-date»»···
 #--
 
@@ -102,11 +103,11 @@ def horner (x, ai) :
        >>> horner (-3, [8, -1, 0, 13, 4])
        -16
     """
-    bi     = reversed (ai)
-    result = bi.next  ()
-    for b in bi :
+    ia     = reversed (ai)
+    result = ia.next  ()
+    for a in ia :
         result *= x
-        result += b
+        result += a
     return result
 # end def horner
 
@@ -163,29 +164,6 @@ def p2_ceil (n) :
     """
     return n.__class__ (2 ** ceil (log2 (n)))
 # end def p2_ceil
-
-def periodic_pattern_gen (rnds, offset = 0) :
-    """Calculate all period/phase patterns, e.g. for max period = 4 :
-       >>> [(p, ph) for (p, ph, _) in periodic_pattern_gen (4)]
-       [(1, 0), (2, 0), (2, 1), (4, 0), (4, 1), (4, 2), (4, 3)]
-       >>> [sorted (pattern) for (_, _, pattern) in periodic_pattern_gen (4)]
-       [[0, 1, 2, 3], [0, 2], [1, 3], [0], [1], [2], [3]]
-       >>> [sorted (pattern) for (_, _, pattern) in periodic_pattern_gen (4, 1)]
-       [[1, 2, 3, 4], [1, 3], [2, 4], [1], [2], [3], [4]]
-
-       Works also for a non-power-of-two number.
-    """
-    import _TFL.Divisor_Dag
-    ddag   = TFL.Divisor_Dag (rnds)
-    rounds = range (rnds)
-    for period_r in sorted (ddag.divisors) :
-        for phase_r in xrange (period_r) :
-            yield \
-                ( period_r
-                , phase_r + offset
-                , set (x + offset for x in rounds if (x % period_r) == phase_r)
-                )
-# end def periodic_pattern_gen
 
 def sign (n) :
     """Returns the sign of n.

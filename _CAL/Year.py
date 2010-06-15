@@ -67,6 +67,7 @@
 #     9-Mar-2010 (CT) `day_abbr`, `day_name`, `month_abbr`, and `month_name`
 #                     added
 #    10-Mar-2010 (CT) `Day.is_holiday` turned into property
+#    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ import _CAL.Holiday
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
+import _TFL.CAO
 import _TFL.d_dict
 
 from   _TFL.predicate    import *
@@ -469,25 +471,6 @@ def write_year (Yf, file_name, force = 0) :
         f.close  ()
 # end def write_year
 
-def _command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line
-    today    = CAL.Date ()
-    year     = today.year
-    return Command_Line \
-        ( option_spec =
-            ( "create:B?Write files"
-            , "diary:B?Create a diary file per day"
-            , "force:B?Overwrite existing files if any"
-            , "path:S=~/diary?Path for calendar files"
-            , "Plan:S=plan?Filename of plan for `year`"
-            , "View:S=view?Filename of view for `year`"
-            , "year:I=%d?Year for which to process calendar" % (year, )
-            )
-        , max_args    = 0
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     year = cmd.year
     path = sos.path.join (sos.expanded_path (cmd.path), "%4.4d" % year)
@@ -506,8 +489,22 @@ def _main (cmd) :
                 write_year (Y.as_cal,  vfil, cmd.force)
 # end def _main
 
-if __name__ == "__main__" :
-    _main (_command_spec ())
-else :
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , opts        =
+        ( "create:B?Write files"
+        , "diary:B?Create a diary file per day"
+        , "force:B?Overwrite existing files if any"
+        , "path:S=~/diary?Path for calendar files"
+        , "Plan:S=plan?Filename of plan for `year`"
+        , "View:S=view?Filename of view for `year`"
+        , "year:I=%d?Year for which to process calendar" % (CAL.Date ().year, )
+        )
+    , max_args    = 0
+    )
+
+if __name__ != "__main__" :
     CAL._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.Year
