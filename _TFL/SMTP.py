@@ -28,10 +28,13 @@
 # Revision Dates
 #    19-Feb-2010 (CT) Creation (factored from `PMA.Sender`)
 #    21-Feb-2010 (MG) Support for authentication added
+#    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
+
+from   _TFL                    import pyk
 
 import _TFL._Meta.Object
 
@@ -96,8 +99,9 @@ class SMTP_Tester (SMTP) :
     """Tester writing to stdout instead of connecting to SMTP server."""
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
-        print "Email via", self.mail_host, "from", from_addr, "to", to_addrs
-        print msg
+        pyk.fprint \
+            ("Email via", self.mail_host, "from", from_addr, "to", to_addrs)
+        pyk.fprint (msg)
     # end def send
 
 # end class SMTP_Tester

@@ -28,10 +28,12 @@
 #
 # Revision Dates
 #    25-Jan-2010 (CT) Creation
+#    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
+from   _TFL import pyk
 from   _TFL import sos
 
 import _TFL._Meta.Object
@@ -85,7 +87,7 @@ relative_to_python_path = Relative_To_Search_Path \
 
 def _main (cmd) :
     rtsp = Relative_To_Search_Path (cmd.search_path)
-    print cmd.Sep.join (rtsp (p) for p in cmd.argv)
+    pyk.fprint (* (rtsp (p) for p in cmd.argv), sep = cmd.Sep)
 # end def _main
 
 _Command = TFL.CAO.Cmd \

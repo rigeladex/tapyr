@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2009 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
+# Copyright (C) 2006-2010 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -44,10 +44,11 @@
 #    24-Sep-2009 (CT)  `_load_module` changed to not rely on tuple unpacking
 #                      in the argument list (3.x doesn't support that anymore)
 #    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
+#    16-Jun-2010 (CT)  s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
-from   __future__      import print_function
+from   _TFL              import pyk
 
 import imp
 import os
@@ -278,13 +279,13 @@ class Plugin_Importer (object) :
             zim = zipimport.zipimporter (fname)
         except ImportError :
             if __debug__ :
-                print ("Could not import from %s" % fname)
+                pyk.fprint ("Could not import from %s" % fname)
             return
         sname     = "_setup"
         setup_mod = zim.find_module (sname)
         if not setup_mod :
             if __debug__ :
-                print ("Could not find '%s' in %s" % (sname, fname))
+                pyk.fprint ("Could not find '%s' in %s" % (sname, fname))
             return
         zim.load_module (sname)
     # end def _run_setup

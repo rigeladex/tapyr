@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,14 +38,18 @@
 #     3-Jan-2008 (CT) `time_pattern` added and `_from_string_match_kw` redefined
 #     7-Jan-2008 (CT) `as_utc` added
 #    31-Mar-2008 (CT) `combine` added
+#    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
 from   _TFL                     import TFL
 from   _CAL                     import CAL
+
 import _CAL.Date
 import _CAL.Time
+
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL                     import pyk
 from   _TFL.Regexp              import *
 
 import datetime
@@ -55,7 +59,7 @@ class Date_Time (CAL.Date, CAL.Time) :
 
        >>> from _CAL.Delta import Date_Time_Delta as Delta
        >>> d = Date_Time (2004, 10, 15, 16, 03, 14)
-       >>> print d
+       >>> pyk.fprint (d)
        2004-10-15 16:03:14
        >>> d.year, d.month, d.day, d.datetime, d.week, d.weekday, d.ordinal
        (2004, 10, 15, datetime.datetime(2004, 10, 15, 16, 3, 14), 42, 4, 731869)
@@ -73,7 +77,7 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> d1 += 1
        >>> id (d1) == id (d2)
        False
-       >>> print d2 - d1
+       >>> pyk.fprint (d2 - d1)
        -1 day, 0:00:00
 
        >>> d = Date_Time (2006, 12, 10, 12, 26, 30)
@@ -230,12 +234,12 @@ class Date_Time_M (CAL._Mutable_DTW_) :
     """Mutable datetime object
 
        >>> d1 = d2 = Date_Time_M (2004, 10, 15, 16, 03, 14)
-       >>> print d1, d2
+       >>> pyk.fprint (d1, d2)
        2004-10-15 16:03:14 2004-10-15 16:03:14
        >>> id (d1) == id (d2)
        True
        >>> d1 += 1
-       >>> print d1, d2
+       >>> pyk.fprint (d1, d2)
        2004-10-16 16:03:14 2004-10-16 16:03:14
        >>> id (d1) == id (d2)
        True

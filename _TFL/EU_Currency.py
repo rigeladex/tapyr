@@ -64,11 +64,13 @@
 #     3-Jan-2010 (CT) `EUC_Source`, `EUC_Target`, and `_Command` added
 #                     (all based on `TFL.CAO`)
 #     7-Jan-2010 (CT) `_EUC_Currency_Arg_` added
+#    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 
+from   _TFL              import pyk
 from   _TFL.Currency     import *
 from   _TFL.Currency     import Currency, _Currency_
 
@@ -447,10 +449,10 @@ def _main (cmd) :
     total  = source (0)
     for a in cmd.argv :
         c = source (a)
-        print "%s %s = %s" % (a, source.sloppy_name, c)
+        pyk.fprint ("%s %s = %s" % (a, source.sloppy_name, c))
         total += c
     if total != 0 and len (cmd.argv) > 1 :
-        print "Total : %s" % total
+        pyk.fprint ("Total : %s" % total)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -477,7 +479,7 @@ European Union for the currencies that participated in the initial
 introduction of the Euro.
 
     >>> for C in EU_Currency.extension :
-    ...   print "100 %s = %10s" % (C.name, C (100))
+    ...   pyk.fprint ("100 %s = %10s" % (C.name, C (100)))
     ...
     100 ATS =   7.27 EUR
     100 BEF =   2.48 EUR
@@ -494,7 +496,7 @@ introduction of the Euro.
 
     >>> EU_Currency.set_target_currency (ATS)
     >>> for C in EU_Currency.extension :
-    ...   print "100 %s = %10s" % (C.name, C (100))
+    ...   pyk.fprint ("100 %s = %10s" % (C.name, C (100)))
     ...
     100 ATS =  100,00 öS
     100 BEF =   34,11 öS
@@ -511,7 +513,7 @@ introduction of the Euro.
 
     >>> EU_Currency.set_target_currency (EU_Currency)
     >>> for C in EU_Currency.extension :
-    ...   print "100 %s + 100 ATS = %10s" % (C.name, C (100) + ATS (100))
+    ...   pyk.fprint ("100 %s + 100 ATS = %10s" % (C.name, C (100) + ATS (100)))
     ...
     100 ATS + 100 ATS =  14.53 EUR
     100 BEF + 100 ATS =   9.75 EUR
@@ -526,7 +528,7 @@ introduction of the Euro.
     100 NLG + 100 ATS =  52.65 EUR
     100 PTE + 100 ATS =   7.77 EUR
 
-    >>> print EUR (100) * 1.20
+    >>> pyk.fprint (EUR (100) * 1.20)
     120.00 EUR
 
     >>> EUR (100) == 100.00
@@ -564,9 +566,8 @@ These can be used like this:
     <BLANKLINE>
         argv              : [EU_Currency ("7.26728341679")]
     <BLANKLINE>
-    >>> print cao.amount
+    >>> pyk.fprint (cao.amount)
     7.27 EUR
-
 
 """
 

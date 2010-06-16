@@ -129,16 +129,14 @@
 #     3-Feb-2009 (CT)  Style improvements
 #     6-Feb-2009 (CT)  Documentation improved
 #    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
-#    23-Nov-2009 (CT) `Package_Namespace.__init__`: order of arguments changed
-#    14-Jan-2010 (CT) `_Outer` added (and methods sorted alphabetically)
+#    23-Nov-2009 (CT)  `Package_Namespace.__init__`: order of arguments changed
+#    14-Jan-2010 (CT)  `_Outer` added (and methods sorted alphabetically)
+#    16-Jun-2010 (CT)  s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
-from   __future__      import print_function
-
 import re
 import sys
-from   _TFL.Importers  import DPN_Importer
 
 def _caller_globals () :
     return sys._getframe (1).f_back.f_globals
@@ -404,6 +402,7 @@ class Package_Namespace (object) :
         """Reload all the `modules` of the `Package_Namespace` specified
            (default: all modules of the `Package_Namespace` currently imported).
         """
+        from _TFL import pyk
         old_reload = self.__reload
         if not modules :
             from _TFL.predicate import dusort
@@ -412,11 +411,11 @@ class Package_Namespace (object) :
                 [m for (m, i) in dusort (self.__modules.values (), second)]
         try :
             self.__reload = 1
-            print ("Reloading", self.__name, end = " ")
+            pyk.fprint ("Reloading", self.__name, end = " ")
             for m in modules :
-                print (m.__name__, end = " ")
+                pyk.fprint (m.__name__, end = " ")
                 reload (m)
-            print ("finished")
+            pyk.fprint ("finished")
         finally :
             self.__reload = old_reload
         import linecache
@@ -471,6 +470,7 @@ class Derived_Package_Namespace (Package_Namespace) :
         self._parent  = parent
         self.__cached = {}
         mod           = sys.modules [pname]
+        from _TFL.Importers import DPN_Importer
         DPN_Importer.register (mod, pname, parent)
     # end def __init__
 

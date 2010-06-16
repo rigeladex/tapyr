@@ -48,11 +48,13 @@
 #    19-May-2010 (CT) `_set_keys` corrected (s/kw/kw.iteritems ()/)
 #    16-Jun-2010 (CT) `File_System_Encoding`, `Input_Encoding`, and
 #                     `Output_Encoding` added
+#    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 
+from   _TFL               import pyk
 from   _TFL.Regexp        import Regexp, re
 
 import _TFL.Accessor
@@ -461,18 +463,20 @@ class Help (_Spec_O_) :
             return
         name = ao.name
         v    = getattr (cao, name, "")
-        print "%s%s%-*s  : %s = %s <default: %s>" % \
-            (head, prefix, max_l, name, ao.__class__.__name__, v, ao.default)
+        pyk.fprint \
+            ( "%s%s%-*s  : %s = %s <default: %s>"
+            % (head, prefix, max_l, name, ao.__class__.__name__, v, ao.default)
+            )
         if ao.description :
-            print "%s    %s" % (head, ao.description)
+            pyk.fprint (head, ao.description, sep = "    ")
         if ao.choices :
             choices = "Possible values: %s" % (", ".join (sorted (ao.choices)))
-            print "%s    %s" % (head, choices)
+            pyk.fprint (head, choices, sep = "    ")
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
         if heading :
-            print "%sArguments of %s" % (" " * indent, cao._name)
+            pyk.fprint ("%sArguments of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
         max_l   = max \
@@ -480,14 +484,14 @@ class Help (_Spec_O_) :
         for arg in cao._arg_list :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
-            print
-            print "%s%-*s  : %s" % (head, max_l, "argv", cao.argv)
+            pyk.fprint ()
+            pyk.fprint ("%s%-*s  : %s" % (head, max_l, "argv", cao.argv))
     # end def _help_args
 
     def _help_cmds (self, cao, indent = 0) :
         cmd = cao._cmd
         if cmd._sub_cmd_choice :
-            print "%sSub commands of %s" % (" " * indent, cao._name)
+            pyk.fprint ("%sSub commands of %s" % (" " * indent, cao._name))
             indent += 4
             head    = " " * indent
             max_l   = max (len (k) for k in cmd._sub_cmd_choice.sub_cmds)
@@ -496,14 +500,16 @@ class Help (_Spec_O_) :
                 , key = TFL.Getter [0]
                 )
             for name, sc in scs :
-                print "%s%-*s : %s" % (head, max_l, name, sc._description)
+                pyk.fprint \
+                    ("%s%-*s : %s" % (head, max_l, name, sc._description))
         else :
-            print "%s%s doesn't have sub commands" % (" " * indent, cao._name)
+            pyk.fprint \
+                ("%s%s doesn't have sub commands" % (" " * indent, cao._name))
     # end def _help_cmds
 
     def _help_opts (self, cao, indent = 0, heading = False) :
         if heading :
-            print "%sOptions   of %s" % (" " * indent, cao._name)
+            pyk.fprint ("%sOptions   of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
         max_l   = max \
@@ -515,10 +521,12 @@ class Help (_Spec_O_) :
     def _help_summary (self, cao, indent) :
         head = " " * indent
         desc = cao._cmd._description
-        print "%s%s %s"  % \
-            (head, cao._name, " ".join (self._help_summary_args (cao)))
+        pyk.fprint \
+            ( "%s%s %s"
+            % (head, cao._name, " ".join (self._help_summary_args (cao)))
+            )
         if desc :
-            print "%s    %s" % (head, desc)
+            pyk.fprint (head, desc, sep = "    ")
     # end def _help_summary
 
     def _help_summary_args (self, cao) :
@@ -539,7 +547,7 @@ class Help (_Spec_O_) :
     def _nl_gen (self) :
         while True :
             yield
-            print
+            pyk.fprint ()
     # end def _nl_gen
 
     def _setup_default (self, default) :
@@ -782,7 +790,7 @@ class Cmd (TFL.Meta.Object) :
                 cao = self.parse (_argv)
             except Exception, exc :
                 if help :
-                    print exc, "\n\nUsage :"
+                    pyk.fprint (exc, "\n\nUsage :")
                     cao = CAO (self)
                     self.help (cao, indent = 4)
                     return
@@ -1142,14 +1150,15 @@ class CAO (TFL.Meta.Object) :
 # end class CAO
 
 def show (cao) :
-    print cao._name
-    print "    Options    : %s" % (sorted (cao._opt_abbr), )
-    print "    Arguments  : %s" % (sorted (a.name for a in cao._arg_list), )
+    pyk.fprint (cao._name)
+    pyk.fprint ("    Options    : %s" % (sorted (cao._opt_abbr), ))
+    pyk.fprint \
+        ("    Arguments  : %s" % (sorted (a.name for a in cao._arg_list),))
     for o in sorted (cao._opt_dict) :
-        print "    -%-9s : %s" % (o, getattr (cao, o))
+        pyk.fprint ("    -%-9s : %s" % (o, getattr (cao, o)))
     for a in cao._arg_list :
-        print "    %-10s : %s" % (a.name, getattr (cao, a.name))
-    print "    argv       : %s" % (cao.argv, )
+        pyk.fprint ("    %-10s : %s" % (a.name, getattr (cao, a.name)))
+    pyk.fprint ("    argv       : %s" % (cao.argv, ))
 # end def show
 
 __doc__ = """

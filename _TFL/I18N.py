@@ -41,10 +41,12 @@
 #    16-Jun-2010 (CT) `encoding` added
 #    16-Jun-2010 (CT) `encoding` changed to Record with fields `file_system`,
 #                     `input`, and `output`
+#    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    ««revision-date»»···
 #--
 
 from   _TFL            import TFL
+from   _TFL            import pyk
 from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
 
@@ -251,13 +253,17 @@ def _load_languages (locale_dir, languages, domains) :
         Config.Languages [lang] = lang_trans = Translations.load \
             (locale_dir, lang, first_dom)
         if not isinstance (lang_trans, Translations) :
-            print "*** Warning, language %s for domain %s not found!" % \
-                (lang, first_dom)
+            pyk.fprint \
+                ( "*** Warning, language %s for domain %s not found!"
+                % (lang, first_dom)
+                )
         for d in domains :
             new_domain = Translations.load (locale_dir, lang, d)
             if not isinstance (new_domain, Translations) :
-                print "*** Warning, language %s for domain %s not found!" % \
-                    (lang, d)
+                pyk.fprint \
+                    ( "*** Warning, language %s for domain %s not found!"
+                    % (lang, d)
+                    )
             lang_trans.merge (new_domain)
 # end def _load_languages
 
