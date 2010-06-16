@@ -216,7 +216,7 @@ class PDF_Plan_Month (PDF_Plan) :
         lw = self.linewidth
         hd = d.is_holiday
         if hd :
-            hd = hd.encode (TFL.I18N.Config.encoding, "replace")
+            hd = hd.encode (TFL.I18N.Config.encoding.output, "replace")
         if d.weekday == 6 : ### it's a sunday
             self.draw_rect (c, x + lw, y, xl - x - lw, ds - lw, self.light)
         elif hd :
@@ -277,7 +277,7 @@ class PDF_Plan_Week (PDF_Plan) :
         lg = self.line_generator (ds, x, xo - 0.15 * (xl - x), y, ts // 5)
         hd = d.is_holiday
         if hd :
-            hd = hd.encode (TFL.I18N.Config.encoding, "replace")
+            hd = hd.encode (TFL.I18N.Config.encoding.output, "replace")
         if hd :
             lg.next ()
             xo, yo = lg.next ()

@@ -46,6 +46,8 @@
 #                     empty `args` spec properly
 #     4-Mar-2010 (CT) `Abs_Path` added
 #    19-May-2010 (CT) `_set_keys` corrected (s/kw/kw.iteritems ()/)
+#    16-Jun-2010 (CT) `File_System_Encoding`, `Input_Encoding`, and
+#                     `Output_Encoding` added
 #    ««revision-date»»···
 #--
 
@@ -127,7 +129,7 @@ class Arg (TFL.Meta.M_Class) :
 # end class Arg
 
 class Opt (Arg) :
-    """Meta class for pure option types (i.e., these are noit usable for
+    """Meta class for pure option types (i.e., these are not usable for
        arguments).
     """
 
@@ -264,6 +266,35 @@ class _Spec_O_ (_Spec_) :
 
 # end class _Spec_O_
 
+class _Encoding_ (_Spec_O_) :
+    """Base class for encoding option types"""
+
+    def __init__ (self, ** kw) :
+        assert "name" not in kw
+        kw ["name"] = name = self.__class__.__name__.lower ()
+        self.abbr   = name.rsplit ("_", 1) [0]
+        if "default" not in kw :
+            kw ["default"] = self._get_default ()
+        if "description" not in kw :
+            kw ["description"] = self.__class__.__doc__
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        result = self.__super.cook (value, cao)
+        if result :
+            from _TFL.I18N import Config
+            setattr (Config.encoding, self.abbr, result)
+        return result
+    # end def cook
+
+    def _get_default (self) :
+        import locale
+        return locale.getpreferredencoding ()
+    # end def _get_default
+
+# end class _Encoding_
+
 class _Number_ (_Spec_) :
     """Base class for numeric argument and option types"""
 
@@ -354,6 +385,15 @@ class Decimal (_Number_) :
     # end def _cook
 
 # end class Decimal
+
+class File_System_Encoding (_Encoding_) :
+    """Encoding used to convert Unicode filenames into operating system filenames."""
+
+    def _get_default (self) :
+        return sys.getfilesystemencoding ()
+    # end def _get_default
+
+# end class File_System_Encoding
 
 class Float (_Number_) :
     """Argument or option with a floating point value"""
@@ -516,6 +556,10 @@ class Help (_Spec_O_) :
 
 # end class Help
 
+class Input_Encoding (_Encoding_) :
+    """Default encoding for input (files)."""
+# end class Input_Encoding
+
 class Int (_Number_) :
     """Argument or option with a integer value"""
 
@@ -594,6 +638,10 @@ class Money (Decimal) :
     # end def _safe_eval
 
 # end class Money
+
+class Output_Encoding (_Encoding_) :
+    """Default encoding for output."""
+# end class Output_Encoding
 
 class Set (_Spec_) :
     """Argument or option that specifies one element of a set of choices"""
@@ -1124,7 +1172,7 @@ with the arguments
 - the maximum number of arguments allowed  `max_args`
   (the default -1 means an unlimited number is allowed),
 
-- a tuple of :class:`Arg` or :class:`Opt` that instances defines the
+- a tuple of :class:`Arg` or :class:`Opt` instances that defines the
   possible  options,
 
 - a description of the command to be included in the `help`,

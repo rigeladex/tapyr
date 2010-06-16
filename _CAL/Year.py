@@ -132,7 +132,8 @@ class Day (TFL.Meta.Object) :
         holi = self.is_holiday
         if holi :
             holi = "%26s" % \
-                ( "=%s=" % (holi.encode (TFL.I18N.Config.encoding, "replace"), )
+                ( "=%s="
+                % (holi.encode (TFL.I18N.Config.encoding.output, "replace"), )
                 ,
                 )
         return "\n".join \

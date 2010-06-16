@@ -146,7 +146,7 @@ def Annotated (RETURN = _undefined, ** kw) :
             if k in arg_set :
                 fa [k] = v
             else :
-                raise TypeError, \
+                raise TypeError \
                     ( "Function `%s` doesn't have an argument named `%s`"
                     % (f.__name__, k)
                     )

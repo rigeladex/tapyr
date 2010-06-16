@@ -39,6 +39,8 @@
 #    22-Feb-2010 (CT) `choose` factored, `Config.choice` added
 #    15-Apr-2010 (MG) `Translations` added and used
 #    16-Jun-2010 (CT) `encoding` added
+#    16-Jun-2010 (CT) `encoding` changed to Record with fields `file_system`,
+#                     `input`, and `output`
 #    ««revision-date»»···
 #--
 
@@ -47,20 +49,30 @@ from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
 
 import _TFL.Decorator
-import babel.support
 
+import babel.support
+import gettext
 import locale
 import struct
-import gettext
+import sys
+
+_e = locale.getpreferredencoding ()
 
 Config = Record \
    ( Languages  = {"" : gettext.NullTranslations ()}
    , locale_dir = "locale"
    , domains    = ("messages", )
    , choice     = ""
-   , encoding   = locale.getpreferredencoding ()
+   , encoding   =
+       Record
+         ( file_system = sys.getfilesystemencoding ()
+         , input       = _e
+         , output      = _e
+         )
    )
 Config.current = Config.Null = Config.Languages [""]
+
+del _e
 
 class _Name_ (TFL.Meta.Object) :
     """Translator for names"""
