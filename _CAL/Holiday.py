@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #    17-Oct-2004 (CT) Use `Date_Delta` instead of `Delta`
 #    31-Oct-2004 (CT) `_main` changed to display date, too
 #     5-Nov-2004 (CT) Use `//` for int division
+#    16-Jun-2010 (CT) Use unicode for holiday names
 #    ««revision-date»»···
 #--
 
@@ -100,24 +101,24 @@ def easter_date (y) :
 # end def easter_date
 
 fixed_holidays = \
-  { ( 1,  1) : "Neujahr"
-  , ( 1,  6) : "Hl. Drei Könige"
-  , ( 5,  1) : "Mai-Feiertag"
-  , ( 8, 15) : "Mariä Himmelfahrt"
-  , (10, 26) : "Nationalfeiertag"
-  , (11,  1) : "Allerheiligen"
-  , (12,  8) : "Mariä Empfängnis"
-  , (12, 25) : "1. Weihnachtstag"
-  , (12, 26) : "2. Weihnachtstag"
+  { ( 1,  1) : u"Neujahr"
+  , ( 1,  6) : u"Hl. Drei Könige"
+  , ( 5,  1) : u"Mai-Feiertag"
+  , ( 8, 15) : u"Mariä Himmelfahrt"
+  , (10, 26) : u"Nationalfeiertag"
+  , (11,  1) : u"Allerheiligen"
+  , (12,  8) : u"Mariä Empfängnis"
+  , (12, 25) : u"1. Weihnachtstag"
+  , (12, 26) : u"2. Weihnachtstag"
   }
 
 easter_dependent_holidays = \
-  {  0      : "Ostersonntag"
-  ,  1      : "Ostermontag"
-  , 39      : "Christi Himmelfahrt"
-  , 49      : "Pfingstsonntag"
-  , 50      : "Pfingstmontag"
-  , 60      : "Fronleichnam"
+  {  0       : u"Ostersonntag"
+  ,  1       : u"Ostermontag"
+  , 39       : u"Christi Himmelfahrt"
+  , 49       : u"Pfingstsonntag"
+  , 50       : u"Pfingstmontag"
+  , 60       : u"Fronleichnam"
   }
 
 def holidays (Y) :
@@ -134,7 +135,7 @@ def holidays (Y) :
 # end def holidays
 
 def _command_spec (arg_array = None) :
-    from Command_Line import Command_Line
+    from _TFL.Command_Line import Command_Line
     today    = CAL.Date ()
     year     = today.year
     return Command_Line \
@@ -146,7 +147,7 @@ def _command_spec (arg_array = None) :
 # end def _command_spec
 
 def _main (cmd) :
-    from predicate import sorted
+    from _TFL.predicate import sorted
     import _CAL.Year
     year = CAL.Date (cmd.year, 1, 1)
     Y    = CAL.Year (cmd.year)

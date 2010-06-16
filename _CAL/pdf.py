@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,17 +46,22 @@
 #    12-Feb-2008 (CT) Refactored, `PDF_Plan_Month` started
 #    13-Feb-2008 (CT) `PDF_Plan_Month` finished
 #     8-Dec-2009 (CT) 3-compatibility (tuple parameter unpacking)
+#    16-Jun-2010 (CT) Encode holiday names with `TFL.I18N.Config.encoding`
+#    16-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
 from   _CAL           import CAL
+
 from   _TFL.Filename  import *
 from   _TFL.predicate import *
 from   _TFL.Regexp    import *
 from   _TFL           import sos
 
 import _TFL._Meta.Object
+import _TFL.CAO
+
 import _CAL.Plan
 import _CAL.Year
 import _CAL.Date
@@ -209,17 +214,20 @@ class PDF_Plan_Month (PDF_Plan) :
         xo = x + 0.10 * cm
         yo = y + 0.15 * cm
         lw = self.linewidth
+        hd = d.is_holiday
+        if hd :
+            hd = hd.encode (TFL.I18N.Config.encoding, "replace")
         if d.weekday == 6 : ### it's a sunday
             self.draw_rect (c, x + lw, y, xl - x - lw, ds - lw, self.light)
-        elif d.is_holiday :
+        elif hd :
             self.draw_rect (c, x + lw, y, xl - x - lw, ds - lw, self.holi)
         if d.day == 1 or d.weekday == 0 : ### it's a monday (or the first)
             self.draw_text (c, xl, yo, "%2.2d" % d.week, self.gray, True)
         self.draw_line (c, x, y, xl, y, self.dark)
         self.draw_text (c, xo, yo, d.formatted ("%A") [:2], self.dark)
         self.draw_text (c, xo + 0.4 * cm, yo, d.formatted ("%d"), self.darker)
-        if d.is_holiday :
-            self.draw_text (c, xo + 0.8 * cm, yo, d.is_holiday, self.blue)
+        if hd :
+            self.draw_text (c, xo + 0.8 * cm, yo, hd, self.blue)
     # end def one_day
 
     def one_unit (self, Y, n, spec) :
@@ -267,11 +275,14 @@ class PDF_Plan_Week (PDF_Plan) :
         c.setFont      (font, ts // 5)
         self.draw_text (c, xo, y + mm,  d.formatted ("%A"), self.dark, True)
         lg = self.line_generator (ds, x, xo - 0.15 * (xl - x), y, ts // 5)
-        if d.is_holiday :
+        hd = d.is_holiday
+        if hd :
+            hd = hd.encode (TFL.I18N.Config.encoding, "replace")
+        if hd :
             lg.next ()
             xo, yo = lg.next ()
             c.setFont      (font, ts // 2)
-            self.draw_text (c, xo, yo, d.is_holiday [:20], self.blue)
+            self.draw_text (c, xo, yo, hd [:20], self.blue)
             c.setFont      (font, ts // 5)
         for a in getattr (d, "appointments", []) :
             try :
@@ -326,30 +337,6 @@ class PDF_Plan_Week_L (PDF_L, PDF_Plan_Week) :
 
 # end class PDF_Plan_Week_L
 
-def _command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line
-    today    = CAL.Date ()
-    year     = today.year
-    return Command_Line \
-        ( option_spec =
-            ( "diary:S=~/diary?Path for calendar file"
-            , "filename:S=plan?Filename of plan for `year`"
-            , "head:I?Number of first week/month to process"
-            , "landscape:B?Print in landscape format"
-            , "monthly:B?Generate monthly instead of weekly sheets"
-            , "pdf:S=?Generate PDF file with plan"
-            , "tail:I?Number of last week/month to process"
-            , "XL:F?X length of one week (in cm)"
-            , "XO:F=0.9?X offset of one week (in cm relative to XL)"
-            , "YL:F?Y length of one week"
-            , "YO:F=0.5?Y offset of one week (in cm relative to YL)"
-            , "year:I=%d?Year for which to process calendar" % (year, )
-            )
-        , max_args    = 0
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     year      = cmd.year
     head      = cmd.head
@@ -381,13 +368,32 @@ def _main (cmd) :
         )
 # end def _main
 
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , opts        =
+        ( "diary:S=~/diary?Path for calendar file"
+        , "filename:S=plan?Filename of plan for `year`"
+        , "head:I?Number of first week/month to process"
+        , "landscape:B?Print in landscape format"
+        , "monthly:B?Generate monthly instead of weekly sheets"
+        , "pdf:S=?Generate PDF file with plan"
+        , "tail:I?Number of last week/month to process"
+        , "XL:F?X length of one week (in cm)"
+        , "XO:F=0.9?X offset of one week (in cm relative to XL)"
+        , "YL:F?Y length of one week"
+        , "YO:F=0.5?Y offset of one week (in cm relative to YL)"
+        , "year:I=%d?Year for which to process calendar" % (CAL.Date ().year, )
+        )
+    , max_args    = 0
+)
+
 """
 python ~/Y/_CAL/pdf.py -year 2008 -landscape -XL 8.95 -YL 16.85 -XO=1.5
 python ~/Y/_CAL/pdf.py -year 2008 -landscape -XL 8.95 -YL 16.85 -XO=1.5 -monthly
 """
 
-if __name__ == "__main__" :
-    _main (_command_spec ())
-else :
+if __name__ != "__main__" :
     CAL._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.pdf

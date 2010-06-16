@@ -38,6 +38,7 @@
 #    18-Feb-2010 (CT) `Name` added
 #    22-Feb-2010 (CT) `choose` factored, `Config.choice` added
 #    15-Apr-2010 (MG) `Translations` added and used
+#    16-Jun-2010 (CT) `encoding` added
 #    ««revision-date»»···
 #--
 
@@ -46,16 +47,18 @@ from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
 
 import _TFL.Decorator
-import  babel.support
+import babel.support
 
-import  struct
-import  gettext
+import locale
+import struct
+import gettext
 
 Config = Record \
    ( Languages  = {"" : gettext.NullTranslations ()}
    , locale_dir = "locale"
    , domains    = ("messages", )
    , choice     = ""
+   , encoding   = locale.getpreferredencoding ()
    )
 Config.current = Config.Null = Config.Languages [""]
 
@@ -71,7 +74,6 @@ class _Name_ (TFL.Meta.Object) :
     # end def __getitem__
 
 # end class _Name_
-
 
 class Translations (babel.support.Translations) :
     """Add better support for singula/plural"""
