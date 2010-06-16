@@ -38,6 +38,7 @@
 #                     instead of `%s` for val
 #    12-Feb-2010 (CT) `Invariant_Errors.__init__` redefined to sort `errors`
 #    11-Mar-2010 (CT) `Mandatory_Missing` added
+#    16-Jun-2010 (CT) `__str__` changed to `.encode` result of `__unicode__`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ from   _TFL.predicate import *
 from   _TFL.Record    import Record
 
 import _TFL.Caller
+import _TFL.I18N
 
 class Exception_Handled (Exception) :
     """Raised after an exception was already handled to bail out from an
@@ -61,11 +63,16 @@ class Error (StandardError) :
     arg_sep = u", "
 
     def __str__ (self) :
-        return self.arg_sep.join (self.str_arg (self.args))
+        return unicode (self).encode \
+            (TFL.I18N.Config.encoding.output, "replace")
     # end def __str__
 
+    def __unicode__ (self) :
+        return self.arg_sep.join (self.str_arg (self.args))
+    # end def __unicode__
+
     def str_arg (self, args) :
-        return (str (a) for a in args if a)
+        return (unicode (a) for a in args if a)
     # end def str_arg
 
     def __cmp__ (self, other) :
@@ -274,7 +281,7 @@ class Invariant_Error (_Invariant_Error_) :
             (format % (self.inv_desc, ass, self._tail (indent)))
     # end def _as_string
 
-    def assertion   (self, indent = "    ") :
+    def assertion (self, indent = "    ") :
         return self._as_string ("%s\n" + indent + "%s%s", indent)
     # end def assertion
 
@@ -311,13 +318,13 @@ class Invariant_Error (_Invariant_Error_) :
         return self._attribute_values (self.val_desc, head)
     # end def parameter_values
 
-    def __str__ (self) :
+    def __unicode__ (self) :
         return self._as_string \
-            ( "Condition `%s` " % (self.inv.name, )
-            + ": %s %s%s"
-            , "    "
+            ( u"Condition `%s` " % (self.inv.name, )
+            + u": %s %s%s"
+            , u"    "
             )
-    # end def __str__
+    # end def __unicode__
 
     def _tail (self, indent = "    ") :
         result = self.parameter_values (self.attribute_values ())
@@ -366,7 +373,7 @@ class Quant_Error (Invariant_Error) :
                     (sep.join (map (self._violator_value, paired (bvars, v))))
             elif isinstance (v, (list, tuple)) :
                 result.append \
-                    ("%s : [%s]" % (inv.bvar, ", ".join (map (str, v))))
+                    ("%s : [%s]" % (inv.bvar, ", ".join (map (unicode, v))))
             elif type (v) != type (self) : ### v is not a class instance
                 result.append ("%s : %s" % (inv.bvar, v))
             else :
@@ -411,22 +418,6 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
         return self.assertion ()
     # end def description
 
-    def __str__ (self) :
-        result = \
-            ( ("`%s` for : `%r`"
-               "\n     expected type  : `%s`"
-               "\n     got      value : `%s`"
-               "\n     of       type  : `%s`"
-              )
-            % ( self.exc_str or "Syntax error"
-              , self.attr, self.attr.typ, self.val, type (self.val)
-              )
-            )
-        if self.attr.syntax :
-            result = "\n".join ((result, self.attr.syntax))
-        return result
-    # end def __str__
-
     def __unicode__ (self) :
         result = \
             ( (u"`%s` for : `%r`"
@@ -470,7 +461,7 @@ class Invariant_Errors (Error) :
         add    = result.append
         for a in args [0] :
             try :
-                add (str (a))
+                add (unicode (a))
             except StandardError as exc :
                 add ("%s --> %s" % (repr (a), exc))
         return result

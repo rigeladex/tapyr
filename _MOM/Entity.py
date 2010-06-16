@@ -253,7 +253,8 @@ class Entity (TFL.Meta.Object) :
         # end def __getitem__
 
         def __str__ (self) :
-            return self.__obj.ui_display
+            return unicode (self).encode \
+                (TFL.I18N.Config.encoding.output, "replaced")
         # end def __str__
 
         def __unicode__ (self) :
