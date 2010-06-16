@@ -33,6 +33,7 @@
 ##    26-May-2010 (MG) Error handling changed
 ##    27-May-2010 (MG) `inline_table` error handling added
 ##    28-May-2010 (MG) `link_ui_display_row` guard against empty instance added
+##    16-Jun-2010 (MG) `link_display` changed to make the whole row clickable
 ##    ««revision-date»»···
 ##--
 #}
@@ -282,10 +283,10 @@
     {%- onion inline.collapsable %}
       {%- head -%}
         <span class="ui-icon ui-icon-circle-triangle-s"></span>
-        <a href="#add" class="add">{{ GTW._T ("Add") }}</a>
+        <a href="#add" class="ui-icon add">{{ GTW._T ("Add") }}</a>
         <a href="#hide">
       {%- else %}
-        <a href="#add" class="add">{{ GTW._T ("Add") }}</a>
+        <a href="#add" class="ui-icon add">{{ GTW._T ("Add") }}</a>
       {%- body %}
         {{- GTW._T (inline.legend)|safe -}}
       {%- tail -%}
@@ -311,9 +312,9 @@
       {{- GTW.render_fofi_widget
         (inline, "link_list_display", inline, iform, index, include_form and iform.has_substance)
       -}}
-      <td class="first-button zero-width"><a href="#edit">{{ GTW._T ("Edit") }}</td>
-      <td class="zero-width"><a href="#copy">{{ GTW._T ("Copy") }}</td>
-      <td class="zero-width"><a href="#delete">{{ GTW._T ("Delete") }}</td>
+      <td class="first-button zero-width"><a class="ui-icon" href="#edit">{{ GTW._T ("Edit") }}</td>
+      <td class="zero-width"><a class="ui-icon" href="#copy">{{ GTW._T ("Copy") }}</td>
+      <td class="zero-width"><a class="ui-icon" href="#delete">{{ GTW._T ("Delete") }}</td>
       {%- if ec -%}
         <td>
           <div class="ui-state-error ui-corner-all">
@@ -341,7 +342,14 @@
           {%- endfor -%}
         {% endif -%}
       {%- endif -%}
-        {{- value -}}
+        {%- onion True -%}
+          {%- head -%}
+            <a href="#edit">
+          {%- body %}
+            {{- value -}}
+          {%- tail -%}
+            </a>
+          {%- endonion -%}
     </td>
   {%- endfor -%}
 {%- endmacro -%} {#- link_list_display -#}

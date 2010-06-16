@@ -36,3 +36,10 @@ a.inline-form-add
 .completion-list .completion-id
     { display:          none
     }
+
+.Object-Editor .ui-display a
+    { background-color: transparent
+    ; border:           none
+    ; text-decoration:  none
+    ; color:            black
+    }

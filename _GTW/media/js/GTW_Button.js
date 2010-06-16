@@ -28,6 +28,7 @@
 **
 ** Revision Dates
 **     9-May-2010 (MG) Creation
+**    16-Jun-2010 (MG) Support for non icon buttons
 **    ««revision-date»»···
 **--
 */
@@ -68,7 +69,9 @@
               var self     = evt.data;
               self._update_icon (evt, true);
               return false;
-            }).addClass ("ui-icon ui-helper-reset");
+            });
+        if (this.element.hasClass ("ui-icon"))
+            this.element.addClass ("ui-helper-reset");
         this._update_icon (undefined, false);
       }
     , _update_icon : function (evt, trigger)
@@ -77,8 +80,11 @@
           var old_icon = O.states [O.state].icon;
           O.state     += 1;
           if (O.state >= O.states.length) O.state = 0;
-          var new_icon = O.states [O.state].icon;
-          this.element.removeClass (old_icon).addClass (new_icon);
+          if (this.element.hasClass ("ui-icon"))
+            {
+              var new_icon = O.states [O.state].icon;
+              this.element.removeClass (old_icon).addClass (new_icon);
+            }
           if (trigger)
             {
               var callback = O.states [O.state].callback;
