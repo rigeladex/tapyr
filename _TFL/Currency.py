@@ -34,7 +34,8 @@
 #     3-Nov-2009 (CT) `__hash__` added to avoid::
 #                         DeprecationWarning: Overriding __eq__
 #                         blocks inheritance of __hash__ in 3.x
-#     7-Jan-2010 (CT) `__str__` moved from `Currency` o `_Currency_`
+#     7-Jan-2010 (CT) `__str__` moved from `Currency` to `_Currency_`
+#    17-Jun-2010 (CT) `__unicode__` introduced
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ from   _TFL import TFL
 
 import _TFL._Meta.Object
 import _TFL.Decorator
+import _TFL.I18N
 
 import decimal
 import re
@@ -265,8 +267,12 @@ class _Currency_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return "%s %s" % (self.as_string (), self.symbol or self.name)
+        return TFL.I18N.encode_o (unicode (self))
     # end def __str__
+
+    def __unicode__ (self) :
+        return u"%s %s" % (self.as_string (), self.symbol or self.name)
+    # end def __unicode__
 
 # end class _Currency_
 
@@ -303,6 +309,8 @@ class Currency (_Currency_) :
        >>> c /= vat
        >>> c
        Currency ("12345.67")
+       >>> print c
+       12345.67 ¤
 
        >>> c = Currency ("12345.67")
        >>> d = Currency ("12345.67")
@@ -310,7 +318,7 @@ class Currency (_Currency_) :
        (True, False, True, False)
     """
 
-    _symbol         = "¤"
+    _symbol         = u"¤"
 
     C     = decimal.Context (prec = 12, rounding = decimal.ROUND_HALF_UP)
     D     = decimal.Decimal

@@ -42,6 +42,7 @@
 #    16-Jun-2010 (CT) `encoding` changed to Record with fields `file_system`,
 #                     `input`, and `output`
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
+#    17-Jun-2010 (CT) `encode_f` and `encode_o` added
 #    ««revision-date»»···
 #--
 
@@ -232,6 +233,16 @@ def context (* lang) :
     finally :
         Config.current, Config.choice = old
 # end def context
+
+def encode_f (s, errors = "replace") :
+    """Encodes `s` using `Config.encoding.file_system`."""
+    return s.encode (Config.encoding.file_system, errors)
+# end def encode_f
+
+def encode_o (s, errors = "replace") :
+    """Encodes `s` using `Config.encoding.output`."""
+    return s.encode (Config.encoding.output, errors)
+# end def encode_o
 
 def load (* languages, ** kw) :
     locale_dir        = kw.pop ("locale_dir", Config.locale_dir)

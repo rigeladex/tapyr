@@ -132,6 +132,8 @@
 #                     other entities make trouble)
 #    27-May-2010 (CT) `cooked_attrs` changed to `from_string` instead `cooked`
 #    27-May-2010 (CT) `on_error` added to `cooked_attrs`
+#    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
+#    17-Jun-2010 (CT) `__unicode__` introduced
 #    ««revision-date»»···
 #--
 
@@ -253,8 +255,7 @@ class Entity (TFL.Meta.Object) :
         # end def __getitem__
 
         def __str__ (self) :
-            return unicode (self).encode \
-                (TFL.I18N.Config.encoding.output, "replaced")
+            return TFL.I18N.encode_o (unicode (self))
         # end def __str__
 
         def __unicode__ (self) :
@@ -588,10 +589,14 @@ class Entity (TFL.Meta.Object) :
 
     def __repr__ (self) :
         try :
-            return self._repr (self.type_name)
+            return TFL.I18N.encode_o (self._repr (self.type_name))
         except AttributeError :
             return "<%s Incomplete>" % (self.type_name, )
     # end def __repr__
+
+    def __str__ (self) :
+        return TFL.I18N.encode_o (unicode (self))
+    # end def __str__
 
 # end class Entity
 
@@ -661,8 +666,8 @@ class An_Entity (Entity) :
     # end def set_raw
 
     def _formatted_user_attr (self) :
-        return ", ".join \
-            (   "%s = %s" % (name, raw)
+        return u", ".join \
+            (   u"%s = %s" % (name, raw)
             for (name, raw) in sorted (self.raw_attr_dict.iteritems ())
             )
     # end def _formatted_user_attr
@@ -681,7 +686,7 @@ class An_Entity (Entity) :
     # end def _main__init__
 
     def _repr (self, type_name) :
-        return "%s (%s)" % (type_name, self._formatted_user_attr ())
+        return u"%s (%s)" % (type_name, self._formatted_user_attr ())
     # end def _repr
 
     def __eq__ (self, rhs) :
@@ -693,9 +698,9 @@ class An_Entity (Entity) :
         return hash (self.hash_key)
     # end def __hash__
 
-    def __str__ (self) :
-        return "(%s)" % (self._formatted_user_attr ())
-    # end def __str__
+    def __unicode__ (self) :
+        return u"(%s)" % (self._formatted_user_attr ())
+    # end def __unicode__
 
 # end class An_Entity
 
@@ -1166,14 +1171,14 @@ class Id_Entity (Entity) :
         return result + len (pkas_ckd)
     # end def _set_raw
 
-    def __str__ (self) :
+    def __unicode__ (self) :
         epk = self.epk
         if len (epk) == 1 :
             format = u"%s"
         else :
             format = u"(%s)"
         return format % (", ".join (self.epk_as_code))
-    # end def __str__
+    # end def __unicode__
 
 # end class Id_Entity
 

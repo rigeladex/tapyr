@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #    12-Nov-2007 (CT) Creation
 #    30-Nov-2007 (CT) Moved to TFL
+#    17-Jun-2010 (CT) `__unicode__` introduced
 #    ««revision-date»»···
 #--
 
@@ -132,12 +133,17 @@ class _Angle_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return "%3.3d°%2.2d'%2.2d''" % self.tuple
+        import _TFL.I18N
+        return TFL.I18N.encode_o (unicode (self))
     # end def __str__
 
     def __sub__ (self, rhs) :
         return self.__class__ (float (self) - getattr (rhs, self.name, rhs))
     # end def __sub__
+
+    def __unicode__ (self) :
+        return u"%3.3d°%2.2d'%2.2d''" % self.tuple
+    # end def __unicode__
 
 # end class _Angle_
 

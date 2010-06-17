@@ -193,15 +193,11 @@ class _Condition_ (object):
         return result
     # end def _val_dict
 
-    def __str__  (self) :
+    def __repr__ (self) :
         if self.error :
             return "%s"    % (self.error, )
         else :
             return "%s %s" % (self.name, "satisfied")
-    # end def __str__
-
-    def __repr__ (self) :
-        return str (self)
     # end def __repr__
 
     def __nonzero__ (self) :

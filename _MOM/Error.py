@@ -39,6 +39,7 @@
 #    12-Feb-2010 (CT) `Invariant_Errors.__init__` redefined to sort `errors`
 #    11-Mar-2010 (CT) `Mandatory_Missing` added
 #    16-Jun-2010 (CT) `__str__` changed to `.encode` result of `__unicode__`
+#    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -62,15 +63,6 @@ class Error (StandardError) :
 
     arg_sep = u", "
 
-    def __str__ (self) :
-        return unicode (self).encode \
-            (TFL.I18N.Config.encoding.output, "replace")
-    # end def __str__
-
-    def __unicode__ (self) :
-        return self.arg_sep.join (self.str_arg (self.args))
-    # end def __unicode__
-
     def str_arg (self, args) :
         return (unicode (a) for a in args if a)
     # end def str_arg
@@ -82,6 +74,14 @@ class Error (StandardError) :
     def __hash__ (self) :
         return hash (str (self))
     # end def __hash__
+
+    def __str__ (self) :
+        return TFL.I18N.encode_o (unicode (self))
+    # end def __str__
+
+    def __unicode__ (self) :
+        return self.arg_sep.join (self.str_arg (self.args))
+    # end def __unicode__
 
 # end class Error
 

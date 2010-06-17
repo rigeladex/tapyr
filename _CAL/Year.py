@@ -69,6 +69,7 @@
 #    10-Mar-2010 (CT) `Day.is_holiday` turned into property
 #    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    16-Jun-2010 (CT) Encode holiday names with `TFL.I18N.Config.encoding`
+#    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -131,11 +132,7 @@ class Day (TFL.Meta.Object) :
         l = CAL.Date (d.year, 12, 31)
         holi = self.is_holiday
         if holi :
-            holi = "%26s" % \
-                ( "=%s="
-                % (holi.encode (TFL.I18N.Config.encoding.output, "replace"), )
-                ,
-                )
+            holi = "%26s" % ("=%s=" % (TFL.I18N.encode_o (holi), ),)
         return "\n".join \
             ( [ "# %s      %s#%2.2d, %s, day %d/-%d %s"
               % ( self
