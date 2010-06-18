@@ -56,7 +56,6 @@ import _TFL.Decorator
 
 import gettext
 import locale
-import struct
 import sys
 
 _e = locale.getpreferredencoding ()
