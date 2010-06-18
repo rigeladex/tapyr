@@ -134,6 +134,7 @@
 #    27-May-2010 (CT) `on_error` added to `cooked_attrs`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    17-Jun-2010 (CT) `__unicode__` introduced
+#    18-Jun-2010 (CT) s/""/u""/
 #    ««revision-date»»···
 #--
 
@@ -384,7 +385,7 @@ class Entity (TFL.Meta.Object) :
         """
         attr = self.attributes.get (name)
         if attr :
-            return attr.get_raw (self) or ""
+            return attr.get_raw (self) or u""
     # end def raw_attr
 
     def reset_syncable (self) :
@@ -556,7 +557,7 @@ class Entity (TFL.Meta.Object) :
                             )
                         if __debug__ :
                             print err
-                        to_do.append ((attr, "", None))
+                        to_do.append ((attr, u"", None))
                     except StandardError as exc :
                         print exc, \
                           ( "; object %s, attribute %s: %s [%s]"
@@ -567,7 +568,7 @@ class Entity (TFL.Meta.Object) :
                     else :
                         to_do.append ((attr, val, cooked_val))
                 else :
-                    to_do.append ((attr, "", None))
+                    to_do.append ((attr, u"", None))
             self._kw_check_predicates (cooked_kw, on_error)
             man.reset_pending ()
             for attr, raw_val, val in to_do :
@@ -828,11 +829,11 @@ class Id_Entity (Entity) :
     def epk_as_code (self) :
         def _conv (tup) :
             if len (tup) == 1 :
-                tup += ("", )
+                tup += (u"", )
             for t in tup :
                 if isinstance (t, tuple) :
                     if len (t) == 1 :
-                        t += ("", )
+                        t += (u"", )
                     t = "(%s)" % (", ".join (_conv (t)))
                 yield t
         def _gen () :

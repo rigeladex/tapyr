@@ -120,6 +120,7 @@
 #    22-Apr-2010 (CT) `_Composite_Mixin_._set_cooked_value` changed to call
 #                     `reset` if `value is None`
 #    28-Apr-2010 (CT) `_Composite_Collection_Mixin_` added
+#    18-Jun-2010 (CT) `get_raw` changed to return `u""` instead of `""`
 #    ««revision-date»»···
 #--
 
@@ -221,9 +222,9 @@ class Kind (MOM.Prop.Kind) :
         if obj is not None :
             val = self.get_value (obj)
             if val is not None :
-                return self.attr.as_string (val) or ""
+                return self.attr.as_string (val) or u""
             else :
-                return ""
+                return u""
         else :
             return self.raw_default
     # end def get_raw
@@ -314,7 +315,7 @@ class Kind (MOM.Prop.Kind) :
                ) :
                 d = attr_type.as_string (default)
                 if d == "" and default is not None :
-                    d = "%s" % default
+                    d = u"%s" % default
                 raise ValueError \
                     ( u""">>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
                     % (attr_type, self.name, default, d)
@@ -631,7 +632,7 @@ class _Raw_Value_Mixin_ (Kind) :
 
     def get_raw (self, obj) :
         if obj is not None :
-            return getattr (obj, self.attr.raw_name, "")
+            return getattr (obj, self.attr.raw_name, u"")
         else :
             return self.raw_default
     # end def get_raw

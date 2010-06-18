@@ -130,6 +130,7 @@
 #    19-May-2010 (CT) `_A_Object_._check_type` changed to check against
 #                     `etype.Essence`
 #     7-Jun-2010 (CT) `_A_Named_Object_.Pickler` methods guarded against `None`
+#    18-Jun-2010 (CT) `_A_String_Base_.default` changed from `""` to `u""`
 #    ««revision-date»»···
 #--
 
@@ -909,7 +910,7 @@ class _A_Object_ (A_Attr_Type) :
 class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
-    default           = ""
+    default           = u""
     max_length        = 0
     ui_length         = TFL.Meta.Once_Property \
         (lambda s : s.max_length or 120)

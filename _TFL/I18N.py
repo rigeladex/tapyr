@@ -44,6 +44,7 @@
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    17-Jun-2010 (CT) `encode_f` and `encode_o` added
 #    18-Jun-2010 (CT) `Translations` factored to `TFL.Babel`
+#    18-Jun-2010 (CT) `decode` added
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,13 @@ def context (* lang) :
     finally :
         Config.current, Config.choice = old
 # end def context
+
+def decode (s, errors = "replace") :
+    """Decode `s` using `Config.encoding.input`."""
+    if isinstance (s, str) :
+        s = unicode (s, Config.encoding.input, errors)
+    return s
+# end def decode
 
 def encode_f (s, errors = "replace") :
     """Encodes `s` using `Config.encoding.file_system`."""
