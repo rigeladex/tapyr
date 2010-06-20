@@ -32,85 +32,32 @@
 #    20-Mar-2010 (MG) `NAV_Request_Handler` moved in here
 #    24-Mar-2010 (CT) `tornado.httpserver.HTTPRequest.url` set as alias for
 #                     `uri`
+#    20-Jun-2010 (MG) `GTW._Request_Handler_` factored
 #    ««revision-date»»···
 #--
 
 from   _TFL                       import TFL
 from   _TFL._Meta.Once_Property   import Once_Property
-import _TFL._Meta.Object
 from   _TFL                       import I18N
 
 from   _GTW                       import GTW
+import _GTW._Request_Handler_
 import _GTW.Notification
 import _GTW._Tornado
 
-import  locale
 from    tornado                   import web, escape
 
 import  tornado.httpserver
 tornado.httpserver.HTTPRequest.url = TFL.Meta.Alias_Property ("uri")
 
-class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
+class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
     """Base class for a request handler"""
 
-    @Once_Property
-    def session (self) :
-        settings   = self.application.settings
-        SID_Cookie = settings.get ("session_id", "SESSION_ID")
-        sid        = self.get_secure_cookie (SID_Cookie)
-        session    = settings ["Session_Class"] \
-            (sid, settings.get ("cookie_secret", ""))
-        if not sid :
-            self.set_secure_cookie      (SID_Cookie, session.sid)
-        GTW.Notification_Collection     (session)
-        return session
-    # end def session
-
-    @Once_Property
-    def locale_codes (self) :
-        """The locale-code for the current session."""
-        codes = self.get_user_locale_codes ()
-        if not codes :
-            codes = self.get_browser_locale_codes ()
-        assert codes
-        return codes
-    # end def locale_codes
-
-    def get_browser_locale_codes (self) :
-        """Determines the user's locale from Accept-Language header."""
-        if "Accept-Language" in self.request.headers :
-            languages = self.request.headers ["Accept-Language"].split (",")
-            locales   = []
-            for language in languages :
-                parts = language.strip ().split (";")
-                if len (parts) > 1 and parts [1].startswith ("q="):
-                    try :
-                        score = float (parts [1][2:])
-                    except (ValueError, TypeError):
-                        score = 0.0
-                else:
-                    score = 1.0
-                locales.append ((parts [0], score))
-            if locales :
-                locales.sort (key=lambda (l, s): s, reverse = True)
-                return [l [0] for l in locales]
-        return \
-            (self.application.settings.get ("defailt_locale_code", "en_US"), )
-    # end def get_browser_locale_codes
-
-    def get_user_locale_codes (self) :
-        return self.session.get ("language")
-    # end def get_user_locale_codes
-
-    def json (self, data) :
-        self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
-        self.write      (escape.json_encode (data))
-        return True
-    # end def json
+    secure_cookie = TFL.Meta.Alias_Property ("get_secure_cookie")
 
 # end class Request_Handler
 
-class M_Request_Handler (Request_Handler.__class__) :
+class M_Request_Handler (TFL.Meta.M_Class, Request_Handler.__class__) :
     """Metaclass for a request"""
 
     def __init__ (cls, name, bases, dict) :
@@ -123,30 +70,17 @@ class M_Request_Handler (Request_Handler.__class__) :
 
 # end class M_Request_Handler
 
-class NAV_Request_Handler (Request_Handler) :
+class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     """Base class request handlers interacting with GTW.NAV"""
 
     __metaclass__   = M_Request_Handler
 
     DEFAULT_HANDLER = "_handle_request"
 
-    def _finish (self, scope) :
-        self.session.save ()
-        if scope :
-            scope.commit  ()
-    # end def _finish
-
     def _handle_request (self, * args, ** kw) :
-        if self.application.settings.get ("i18n", False) :
-            I18N.use (* self.locale_codes)
-        top   = GTW.NAV.Root.top
-        scope = getattr (top, "scope", None)
-        try :
-            top.universal_view (self)
-        except top.HTTP._Redirect_, redirect :
-            self._finish    (scope)
+        redirect, top = self.__super._handle_request (* args, ** kw)
+        if redirect :
             return redirect (self, top)
-        self._finish (scope)
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
@@ -159,18 +93,6 @@ class NAV_Request_Handler (Request_Handler) :
                 return
         self.__super._handle_request_exception (exc)
     # end def _handle_request_exception
-
-    def get_current_user (self) :
-        top      = GTW.NAV.Root.top
-        username = self.get_secure_cookie ("username")
-        result   = top.anonymous
-        if username :
-            try :
-                result = top.account_manager.query (name = username).one ()
-            except IndexError :
-                pass
-        return result
-    # end def get_current_user
 
 # end class NAV_Request_Handler
 

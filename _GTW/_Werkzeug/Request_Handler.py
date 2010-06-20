@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
+#    20-Jun-2010 (MG) `GTW._Request_Handler_` factored
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,7 @@ from   _TFL                           import I18N
 
 from   _GTW                           import GTW
 import _GTW._Werkzeug
+import _GTW._Request_Handler_
 import _GTW.Notification
 
 from    werkzeug.contrib.securecookie import SecureCookie
@@ -51,11 +53,6 @@ import  hmac
 import  logging
 import  time
 
-try :
-    import json
-except ImportError :
-    import simplejson as json
-
 def _time_independent_equals (l, r) :
     if len (l) != len (r) :
         return False
@@ -65,11 +62,12 @@ def _time_independent_equals (l, r) :
     return result == 0
 # end ef _time_independent_equals
 
-class Request_Handler (TFL.Meta.Object) :
+class Request_Handler (GTW._Request_Handler_) :
     """Extended Request."""
 
     _real_name                = "Request"
     secure_cookie_exipre_time = 31 * 86400
+    cookie_encoding           = "utf-8"
 
     def __init__ (self, application, environ) :
         self.application = application
@@ -101,38 +99,6 @@ class Request_Handler (TFL.Meta.Object) :
         return hash.hexdigest ()
     # end def _cookie_signature
 
-    def get_browser_locale_codes (self) :
-        """Determines the user's locale from Accept-Language header."""
-        if "Accept-Language" in self.request.headers :
-            languages = self.request.headers ["Accept-Language"].split (",")
-            locales   = []
-            for language in languages :
-                parts = language.strip ().split (";")
-                if len (parts) > 1 and parts [1].startswith ("q="):
-                    try :
-                        score = float (parts [1][2:])
-                    except (ValueError, TypeError):
-                        score = 0.0
-                else:
-                    score = 1.0
-                locales.append ((parts [0], score))
-            if locales :
-                locales.sort (key=lambda (l, s): s, reverse = True)
-                return [l [0] for l in locales]
-        return \
-            (self.application.settings.get ("default_locale_code", "en_US"), )
-    # end def get_browser_locale_codes
-
-    def get_user_locale_codes (self) :
-        return self.session.get ("language")
-    # end def get_user_locale_codes
-
-    def finish (self, scope = None) :
-        self.session.save ()
-        if scope :
-            scope.commit  ()
-    # end def finish
-
     def _handle_request_exception (self, exc) :
         if isinstance (exc, GTW.Werkzeug.Status) :
             return exc (self)
@@ -143,12 +109,6 @@ class Request_Handler (TFL.Meta.Object) :
             print "*" * 79
         raise exc
     # end def _handle_request_exception
-
-    def json (self, data) :
-        self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
-        self.write      (json.dumps (data))
-        return True
-    # end def json
 
     def secure_cookie (self, name) :
         ### based on the implementation of tornado.web.Request.get_secure_cookie
@@ -167,22 +127,11 @@ class Request_Handler (TFL.Meta.Object) :
             logging.warning ("Expired cookie %r", data)
             return None
         try:
-            return base64.b64decode (parts[0])
+            return base64.b64decode (parts[0]).decode (self.cookie_encoding)
         except:
             return None
     # end def secure_cookie
-
-    @Once_Property
-    def session (self) :
-        settings   = self.application.settings
-        SID_Cookie = settings.get ("session_id", "SESSION_ID")
-        sid        = self.secure_cookie (SID_Cookie)
-        session    = settings ["Session_Class"] \
-            (sid, settings.get ("cookie_secret", ""))
-        self.set_secure_cookie          (SID_Cookie, session.sid)
-        GTW.Notification_Collection     (session)
-        return session
-    # end def session
+    get_secure_cookie = secure_cookie
 
     def set_cookie ( self, key
                    , value      = ""
@@ -197,13 +146,15 @@ class Request_Handler (TFL.Meta.Object) :
             timestamp = calendar.timegm (expires.utctimetuple ())
             expires   = email.utils.formatdate \
                 (timestamp, localtime = False, usegmt = True)
+        if isinstance (value, unicode) :
+            value = value.encode (self.cookie_encoding)
         return self.response.set_cookie \
             (key, value, max_age, expires, path, domain, secure, httponly)
     # end def set_cookie
 
     def set_header (self, key, value) :
         if isinstance (value, datetime.datetime) :
-            t     = calendar.timegm(value.utctimetuple())
+            t     = calendar.timegm (value.utctimetuple ())
             value = email.utils.formatdate (t, localtime = False, usegmt = True)
         self.response.headers [key] = value
     # end def set_header
@@ -214,7 +165,9 @@ class Request_Handler (TFL.Meta.Object) :
 
     def set_secure_cookie (self, name, data, expires_days = 30, ** kw) :
         timestamp = str (int (time.time ()))
-        data      = base64.b64encode (data)
+        if isinstance (data, unicode) :
+            data  = data.encode (self.cookie_encoding)
+        data      = base64.b64encode       (data)
         signature = self._cookie_signature (data, timestamp)
         data      = "|".join ((data, timestamp, signature))
         expires   = ( datetime.datetime.utcnow ()
@@ -222,16 +175,6 @@ class Request_Handler (TFL.Meta.Object) :
                     )
         self.set_cookie (name, data, expires = expires, ** kw)
     # end def set_secure_cookie
-
-    @Once_Property
-    def locale_codes (self) :
-        """The locale-code for the current session."""
-        codes = self.get_user_locale_codes ()
-        if not codes :
-            codes = self.get_browser_locale_codes ()
-        assert codes
-        return codes
-    # end def locale_codes
 
     def write (self, data) :
         self.response.response.append (data)
@@ -245,7 +188,7 @@ class Request_Handler (TFL.Meta.Object) :
 
 # end class Request_Handler
 
-class NAV_Request_Handler (Request_Handler) :
+class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     """A request handler which uses GTW.NAV features."""
 
     def __init__ (self, application, environ, nav_root) :
@@ -254,32 +197,14 @@ class NAV_Request_Handler (Request_Handler) :
     # end def __init__
 
     def __call__ (self, environ, start_response) :
-        top = self.nav_root
-        self.set_header ("Content-Type", "text/html")
-        if self.application.settings.get ("i18n", False) :
-            I18N.use    (* self.locale_codes)
-        scope = getattr (top, "scope", None)
-        try :
-            top.universal_view (self)
-        except top.HTTP._Redirect_, redirect :
-            self.finish      (scope)
+        self.set_header                      ("Content-Type", "text/html")
+        redirect, top = self._handle_request ()
+        if redirect :
             raise redirect
-        self.finish          (scope)
         return self.response (environ, start_response)
     # end def __call__
 
-    @Once_Property
-    def current_user (self) :
-        top      = self.nav_root
-        username = self.secure_cookie ("username")
-        result   = top.anonymous
-        if username :
-            try :
-                result = top.account_manager.query (name = username).one ()
-            except IndexError :
-                pass
-        return result
-    # end def current_user
+    current_user = Once_Property (GTW._NAV_Request_Handler_.get_current_user)
 
     def _handle_request_exception (self, exc) :
         top   = self.nav_root

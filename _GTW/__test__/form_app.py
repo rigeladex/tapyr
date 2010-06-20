@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Apr-2010 (MG) Creation
 #     6-Mai-2010 (MG) Support for profiling added
+#    20-Jun-2010 (MG) Support for `GTW.Tornado` added
 #    ««revision-date»»···
 #--
 
@@ -99,10 +100,16 @@ GTW.OMP.SRM.Nav.Admin.Regatta_C ["Form_kw"] = dict \
                     }
                 )
 
-def create_nav (scope) :
+def create_nav (cmd, scope) :
     home_url_root = "http://localhost:9042"
     site_prefix   = pjoin (home_url_root, "")
     GTW.NAV.scope = scope
+    if cmd.werkzeug :
+        import _GTW._Werkzeug
+        HTTP = GTW.Werkzeug
+    else :
+        import _GTW._Tornado
+        HTTP = GTW.Tornado
     result        = GTW.NAV.Root \
         ( anonymous       = scope and scope.Auth.Account_Anonymous.singleton
         , encoding        = "ISO-8859-1"
@@ -111,7 +118,7 @@ def create_nav (scope) :
         , site_prefix     = site_prefix
         , auto_delegate   = False
         , web_src_root    = sos.path.dirname (__file__)
-        , HTTP            = GTW.Werkzeug
+        , HTTP            = HTTP
         , template        = "static.jnj"
         , Templateer      = JNJ.Templateer
             ( i18n        = True
@@ -219,25 +226,32 @@ def create_nav (scope) :
     return result
 # end def create_nav
 
-def media_handler (nav) :
-    prefix    = "media"
-    media_dir = sos.path.join (nav.web_src_root, "media")
-    return \
-        ( "/" + prefix
-        , GTW.Werkzeug.Static_File_Handler
-        , (media_dir, GTW.static_file_map)
-        )
-# end def media_handler
+def _dyn_tornado (cmd, NAV) :
+    import _GTW._Tornado.Application
+    import _GTW._Tornado.Static_File_Handler
+    import _GTW._Tornado.Request_Handler
+    import _GTW._Tornado.Request_Data
 
-def _main (cmd) :
+    app = GTW.Tornado.Application \
+        ( ((".*$", GTW.Tornado.NAV_Request_Handler), )
+        , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1bieN;aNg0eetie$Chae^2eEjeuth7e"
+        , debug          = cmd.debug
+        , i18n           = True
+        , login_url      = NAV.SC.Auth.href_login
+        , Session_Class  = GTW.File_Session
+        , session_id     = "SESSION_ID"
+        , static_handler = media_handler (NAV)
+        )
+    print "app_server started on port", cmd.port
+    GTW.Tornado.start_server (app, cmd.port)
+# end def _dyn_tornado
+
+def _dyn_werkzeug (cmd, NAV) :
     import _GTW._Werkzeug.Application
     import _GTW._Werkzeug.Static_File_Handler
     import _GTW._Werkzeug.Request_Handler
     import _GTW._Werkzeug.Request_Data
     import  threading
-    #scope = Scope ("sqlite:///", "test")
-    scope = Scope ()
-    NAV   = create_nav (scope)
     app = GTW.Werkzeug.Application \
         ( ("", GTW.Werkzeug.NAV_Request_Handler, (NAV, ))
         , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1bieN;aNg0eetie$Chae^2eEjeuth7e"
@@ -245,9 +259,50 @@ def _main (cmd) :
         , login_url      = NAV.SC.Auth.href_login
         , Session_Class  = GTW.File_Session
         , session_id     = "SESSION_ID"
-        , static_handler = media_handler (NAV)
+        , static_handler = media_handler (NAV, False)
         , encoding       = NAV.encoding
         )
+    app.run_development_server \
+        ( port                 = cmd.port
+        , use_debugger         = cmd.debug
+        , use_reloader         = cmd.reload
+        , use_profiler         = cmd.profiler
+        , profile_log_files    = cmd.p_logs
+        , profile_restrictions = cmd.p_restrictions
+        , profile_sort_by      = cmd.p_sort_by
+        , profile_delete_logs  = cmd.p_delete_logs
+        )
+    if cmd.wsgi :
+        return app
+    app.run_development_server \
+        (port = cmd.port, use_debugger = cmd.debug, use_reloader = cmd.auto_reload)
+# end def _dyn_werkzeug
+
+def media_handler (nav, tornado = True) :
+    prefix    = "media"
+    media_dir = sos.path.join (nav.web_src_root, "media")
+    if tornado :
+        return GTW.Tornado.Static_File_Handler \
+            ( prefix, media_dir, GTW.static_file_map)
+    else :
+        return \
+            ( "/" + prefix
+            , GTW.Werkzeug.Static_File_Handler
+            , (media_dir, GTW.static_file_map)
+            )
+# end def media_handler
+
+def _main_dyn (cmd) :
+    if not cmd.werkzeug :
+        return _dyn_tornado  (cmd, NAV)
+    else :
+        return _dyn_werkzeug (cmd, NAV)
+# end def _main_dyn
+
+def _main (cmd) :
+    #scope = Scope ("sqlite:///", "test")
+    scope = Scope ()
+    NAV   = create_nav (cmd, scope)
     ### XXX remove me
     PAP = scope.PAP
     p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
@@ -264,22 +319,20 @@ def _main (cmd) :
     re  = SRM.Regatta_Event \
         (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
     scope.commit                 () ### commit my `fixtures`
-    app.run_development_server \
-        ( port                 = cmd.port
-        , use_debugger         = cmd.debug
-        , use_reloader         = cmd.reload
-        , use_profiler         = cmd.profiler
-        , profile_log_files    = cmd.p_logs
-        , profile_restrictions = cmd.p_restrictions
-        , profile_sort_by      = cmd.p_sort_by
-        , profile_delete_logs  = cmd.p_delete_logs
-        )
+    if cmd.Break :
+        TFL.Environment.exec_python_startup ()
+        import pdb; pdb.set_trace ()
+    if cmd.werkzeug :
+        return _dyn_werkzeug (cmd, NAV)
+    return     _dyn_tornado  (cmd, NAV)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
     ( _main
     , opts =
         ( "debug:B=Yes?Run with werkzeug debugger"
+        , "werkzeug:B=yes?Run the werkzeug server"
+        , "Break:B?Set a breakpoint after the scope is setup"
         , "reload:B=Yes?Run with autoreloader"
         , "port:I=9042?Port for the webserber"
         , "profiler:B=no?Run with werkzeug profiler"

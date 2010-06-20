@@ -332,6 +332,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def above
 
     @Once_Property
+    def anonymous_account (self) :
+        scope = self.top.scope
+        if scope :
+            return scope [self.anonymous_account_etm_name].singleton
+    # end def anonymous_account
+
+    @Once_Property
     def account_manager (self) :
         scope = self.top.scope
         if scope :
@@ -849,7 +856,6 @@ class Root (_Dir_) :
     name                    = "/"
     owner                   = None
     redirects               = {}
-    scope                   = None
     smtp                    = None
     src_root                = ""
     target                  = None

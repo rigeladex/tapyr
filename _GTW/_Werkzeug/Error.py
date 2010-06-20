@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-Mar-2010 (MG) Creation (based on GTW.Tornado.Error)
 #     6-May-2010 (MG) `Status.__init__` `* args` added
+#    20-Jun-2010 (MG) `s/finish/finish_request/g`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,7 @@ class _Redirect_ (Status) :
 
     def __call__ (self, handler) :
         location = self.url
-        handler.finish  ()
+        handler.finish_request  ()
         handler.write \
             ( '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n'
               '<title>Redirecting...</title>\n'
