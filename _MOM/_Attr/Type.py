@@ -131,6 +131,8 @@
 #                     `etype.Essence`
 #     7-Jun-2010 (CT) `_A_Named_Object_.Pickler` methods guarded against `None`
 #    18-Jun-2010 (CT) `_A_String_Base_.default` changed from `""` to `u""`
+#    21-Jun-2010 (CT) `_A_Filename_.simple_cooked` changed to use
+#                     `I18N.encode_f` instead of hard-coded `encode` to `ascii`
 #    ««revision-date»»···
 #--
 
@@ -975,7 +977,7 @@ class _A_Filename_ (_A_String_Base_) :
     @TFL.Meta.Class_and_Instance_Method
     def simple_cooked (soc, s) :
         if s :
-            return s.encode ("ascii")
+            return TFL.I18N.encode_f (s)
     # end def simple_cooked
 
     def _check_dir (self, d) :
