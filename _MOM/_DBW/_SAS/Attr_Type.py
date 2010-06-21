@@ -47,6 +47,7 @@
 #    12-May-2010 (MG) `pid` is now the primary key of SA tables
 #    12-May-2010 (MG) `_sa_string` use a `Text` type if no `max_length` is
 #                     given to work under MySQL as well
+#    21-Jun-2010 (CT) `_sa_file_name` added
 #    ««revision-date»»···
 #--
 
@@ -164,6 +165,12 @@ def _sa_string (cls, attr, kind, ** kw) :
         return types.String (length, convert_unicode = True)
     return types.Text (convert_unicode = True)
 # end def _sa_string
+
+@Add_Classmedthod ("_sa_type", Attr._A_Filename_)
+def _sa_file_name (cls, attr, kind, ** kw) :
+    length = getattr (attr, "max_length", None)
+    return types.String (length, convert_unicode = False)
+# end def _sa_file_name
 
 @Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
 def _sa_blob (cls, attr, kind, ** kw) :
