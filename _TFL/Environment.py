@@ -127,8 +127,7 @@ def py_shell (glob_dct = None, locl_dct = None, ps1 = None, banner = None, readf
         pass
     else :
         import rlcompleter
-        readline.set_completer \
-            (rlcompleter.Completer (dct).complete)
+        readline.set_completer (rlcompleter.Completer (dct).complete)
         readline.parse_and_bind ("tab: complete")
     ### readline checks if sys.stdout is what is used to be,
     ### otherwise it won't do tab-completion
