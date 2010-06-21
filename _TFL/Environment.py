@@ -116,10 +116,12 @@ def py_shell (glob_dct = None, locl_dct = None, ps1 = None, banner = None, readf
     """Provide a shell to the running python interpreter."""
     import code
     import _TFL.Context
+    import _TFL.Caller
     if glob_dct is None :
-        import _TFL.Caller
         glob_dct = TFL.Caller.globals ()
-    dct = dict (glob_dct, ** (locl_dct or {}))
+    if locl_dct is None :
+        locl_dct = TFL.Caller.locals  ()
+    dct = dict (glob_dct, ** locl_dct)
     exec_python_startup ()
     try :
         import readline
