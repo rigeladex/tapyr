@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 DI Christian Eder <eder@tttech.com>
+# Copyright (C) 2005-2010 DI Christian Eder <eder@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -28,13 +28,9 @@
 #     8-Mar-2005 (CED) Creation (moved multiple implemented stuff into here)
 #     9-Jun-2005 (CED) `locals` added to `__call__`
 #    25-Jul-2005 (CT)  `__call__` fixed (`or {}` considered harmful)
-#    23-Jul-2007 (CED) Activated absolute_import
 #    25-Jul-2007 (PGO) Reduced not-invented-here-ness
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-#
-
 
 from   _TFL             import TFL
 from   _TFL.predicate   import *

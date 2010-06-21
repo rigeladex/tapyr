@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,14 +30,14 @@
 #    11-Feb-2009 (CT) `interact` changed to include `model.globals ()` and
 #                     `model.script_locals` in context of interpreter
 #    10-Dec-2009 (CT) Adapted to change of `TFL.Context.attr_let`
+#    21-Jun-2010 (CT) Use `TFL.Environment.py_shell` instead of home-grown code
 #    ««revision-date»»···
 #--
-
-from   __future__         import with_statement
 
 from   _TFL               import TFL
 
 import _TFL.Context
+import _TFL.Environment
 import _TFL.Filename
 
 import _TFL._TKT.Application
@@ -188,29 +188,15 @@ class _TFL_TKT_Batch_Application_ (TFL.TKT.Application) :
     # end def busy_cursor
 
     def interact (self, glob_dct = None, locl_dct = None) :
-        import sys
-        import code
         model = self.model
         if glob_dct is None:
             glob_dct = TFL.d_dict (model.script_locals, model.globals ())
-        if locl_dct is not None :
-            glob_dct.update (locl_dct)
-        try :
-            import readline
-        except ImportError :
-            print "(readline not available)"
-        else :
-            import rlcompleter
-            readline.parse_and_bind ("tab: complete")
-        ### XXX readline checks if sys.stdout is what is used to be,
-        ### XXX otherwise it won't do tab-completion
-        with TFL.Context.attr_let (sys, stdout = sys.__stdout__) :
-            sys.ps1 = "%s => " % (model.Tool_Supplier)
-            code.interact \
-                ( "%s - %s python interpreter"
-                  % (model.Tool_Supplier, model.product_name)
-                , local = glob_dct
-                )
+        TFL.Environment.py_shell \
+            ( glob_dct, locl_dct
+            , ps1    = "%s => " % (model.Tool_Supplier)
+            , banner = "%s - %s python interpreter"
+                % (model.Tool_Supplier, model.product_name)
+            )
     # end def interact
 
     def normal_cursor (self, * args, ** kw) :

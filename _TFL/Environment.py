@@ -50,6 +50,7 @@
 #     8-Aug-2006 (MSF) fixed [5608]
 #    21-Aug-2007 (CED) practically_infinite introduced
 #    27-Apr-2010 (CT) `exec_python_startup` added
+#    21-Jun-2010 (CT) `py_shell` added
 #    ««revision-date»»···
 #--
 
@@ -86,11 +87,16 @@ if not hostname :
     except Exception :
         pass
 
+_python_startup_loaded = False
+
 def exec_python_startup () :
-    ps = sos.environ.get ("PYTHONSTARTUP")
-    if ps and sos.path.exists (ps) :
-        with open (ps) as f :
-            exec (f.read ())
+    global _python_startup_loaded
+    if not _python_startup_loaded :
+        ps = sos.environ.get ("PYTHONSTARTUP")
+        if ps and sos.path.exists (ps) :
+            with open (ps) as f :
+                exec (f.read ())
+        _python_startup_loaded = True
 # end def exec_python_startup
 
 def mailname () :
@@ -105,6 +111,32 @@ def mailname () :
         except (IOError, sos.error) :
             pass
 # end def mailname
+
+def py_shell (glob_dct = None, locl_dct = None, ps1 = None, banner = None, readfunc = None) :
+    """Provide a shell to the running python interpreter."""
+    import code
+    import _TFL.Context
+    if glob_dct is None :
+        import _TFL.Caller
+        glob_dct = TFL.Caller.globals ()
+    dct = dict (glob_dct, ** (locl_dct or {}))
+    exec_python_startup ()
+    try :
+        import readline
+    except ImportError :
+        pass
+    else :
+        import rlcompleter
+        readline.set_completer \
+            (rlcompleter.Completer (dct).complete)
+        readline.parse_and_bind ("tab: complete")
+    ### readline checks if sys.stdout is what is used to be,
+    ### otherwise it won't do tab-completion
+    with TFL.Context.attr_let (sys, stdout = sys.__stdout__) :
+        if ps1 is not None :
+            sys.ps1 = ps1
+        code.interact (banner = banner, readfunc = readfunc, local = dct)
+# end def py_shell
 
 def script_name () :
     """Returns the name of the currently running python script."""
