@@ -169,7 +169,9 @@ def _sa_string (cls, attr, kind, ** kw) :
 @Add_Classmedthod ("_sa_type", Attr._A_Filename_)
 def _sa_file_name (cls, attr, kind, ** kw) :
     length = getattr (attr, "max_length", None)
-    return types.String (length, convert_unicode = False)
+    if length :
+        return types.String (length, convert_unicode = False)
+    return types.Text (convert_unicode = False)
 # end def _sa_file_name
 
 @Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
