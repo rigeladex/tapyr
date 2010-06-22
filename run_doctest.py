@@ -48,6 +48,8 @@
 #    17-May-2010 (CT) `failures` added to `_main`
 #    19-May-2010 (CT) Support for keywords->environment added
 #                     (and ported to use TFL.CAO instead of TFL.Command_Line)
+#    22-Jun-2010 (CT) Use `TFL.CAO.put_keywords` instead of
+#                     `TFL.CAO.do_keywords` and home-grown code
 #    ««revision-date»»···
 #--
 
@@ -108,8 +110,6 @@ TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 total = failed = 0
 
 def _main (cmd) :
-    for k, v in cmd._key_values.iteritems () :
-        os.environ [k] = v
     format   = cmd.format
     cmd_path = list (cmd.path or [])
     replacer = Re_Replacer (r"\.py[co]", ".py")
@@ -194,9 +194,9 @@ def _main (cmd) :
 # end def _main
 
 _Command = TFL.CAO.Cmd \
-    ( handler     = _main
-    , args        = ("module:P?Module(s) to test", )
-    , opts        =
+    ( handler      = _main
+    , args         = ("module:P?Module(s) to test", )
+    , opts         =
         ( "format:S="
              """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
         , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
@@ -206,8 +206,8 @@ _Command = TFL.CAO.Cmd \
             "?Include all subdirectories of directories specified "
               "as arguments"
         )
-    , min_args    = 1
-    , do_keywords = True
+    , min_args     = 1
+    , put_keywords = True
     )
 
 if __name__ == "__main__" :

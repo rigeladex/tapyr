@@ -49,6 +49,7 @@
 #    16-Jun-2010 (CT) `File_System_Encoding`, `Input_Encoding`, and
 #                     `Output_Encoding` added
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
+#    22-Jun-2010 (CT) `put_keywords` added
 #    ««revision-date»»···
 #--
 
@@ -746,30 +747,32 @@ class Cmd (TFL.Meta.Object) :
 
     def __init__ \
             ( self
-            , handler     = None
-            , args        = ()
-            , min_args    = 0
-            , max_args    = -1
-            , opts        = ()
-            , description = ""
-            , name        = ""
-            , do_keywords = False
-            , helper      = None
+            , handler       = None
+            , args          = ()
+            , min_args      = 0
+            , max_args      = -1
+            , opts          = ()
+            , description   = ""
+            , name          = ""
+            , do_keywords   = False
+            , put_keywords  = False
+            , helper        = None
             ) :
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
         if handler is not None :
             assert TFL.callable (handler)
-            self._handler = handler
-        self._opt_spec    = opts
-        self._arg_spec    = args
-        self._min_args    = min_args
-        self._max_args    = max_args
-        self._description = description
-        self._name        = name or TFL.Environment.script_name ()
-        self._do_keywords = do_keywords
+            self._handler   = handler
+        self._opt_spec      = opts
+        self._arg_spec      = args
+        self._min_args      = min_args
+        self._max_args      = max_args
+        self._description   = description
+        self._name          = name or TFL.Environment.script_name ()
+        self._do_keywords   = do_keywords or put_keywords
+        self._put_keywords  = put_keywords
         if helper is not None :
-            self._helper  = helper
+            self._helper    = helper
         self._setup_opts (opts)
         self._setup_args (args)
     # end def __init__
@@ -994,19 +997,20 @@ class CAO (TFL.Meta.Object) :
     _pending = object ()
 
     def __init__ (self, cmd) :
-        self._cmd         = cmd
-        self._name        = cmd._name
-        self._arg_dict    = dict (cmd._arg_dict)
-        self._arg_list    = list (cmd._arg_list)
-        self._opt_dict    = dict (cmd._opt_dict)
-        self._opt_abbr    = dict (cmd._opt_abbr)
-        self._opt_alias   = dict (cmd._opt_alias)
-        self._do_keywords = cmd._do_keywords
-        self.argv         = []
-        self.argv_raw     = []
-        self._map         = TFL.defaultdict (lambda : self._pending)
-        self._raw         = TFL.defaultdict (list)
-        self._key_values  = dict ()
+        self._cmd           = cmd
+        self._name          = cmd._name
+        self._arg_dict      = dict (cmd._arg_dict)
+        self._arg_list      = list (cmd._arg_list)
+        self._opt_dict      = dict (cmd._opt_dict)
+        self._opt_abbr      = dict (cmd._opt_abbr)
+        self._opt_alias     = dict (cmd._opt_alias)
+        self._do_keywords   = cmd._do_keywords
+        self._put_keywords  = cmd._put_keywords
+        self.argv           = []
+        self.argv_raw       = []
+        self._map           = TFL.defaultdict (lambda : self._pending)
+        self._raw           = TFL.defaultdict (list)
+        self._key_values    = dict ()
     # end def __init__
 
     def __call__ (self) :
@@ -1106,6 +1110,12 @@ class CAO (TFL.Meta.Object) :
                 self._raw [spec.name].append (value)
     # end def _set_arg
 
+    def _set_keys (self, kw) :
+        self._key_values.update (kw)
+        if self._put_keywords :
+           TFL.sos.environ.update (kw)
+    # end def _set_keys
+
     def _set_opt (self, spec, value) :
         if value is not None :
             self._raw [spec.name].append (value)
@@ -1113,11 +1123,6 @@ class CAO (TFL.Meta.Object) :
         else :
             self._map [spec.name] = spec.cooked (value, self)
     # end def _set_opt
-
-    def _set_keys (self, kw) :
-        for k, v in kw.iteritems () :
-            self._key_values [k] = v
-    # end def _set_keys
 
     def __getattr__ (self, name) :
         try :
