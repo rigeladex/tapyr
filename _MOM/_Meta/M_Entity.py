@@ -91,6 +91,8 @@
 #                     attributes set to `None`
 #    21-Apr-2010 (CT) `M_Id_Entity._m_new_e_type_dict` changed to use `_d_rank`
 #     3-May-2010 (CT) `Type_Name_Type` added and used for `type_name`
+#    22-Jun-2010 (CT) `_m_setup_attributes` changed to set `is_mandatory` and
+#                     to put `a` instead of `a.attr` into `P._syntax_checks`
 #    ««revision-date»»···
 #--
 
@@ -580,8 +582,10 @@ class M_E_Type (M_E_Mixin) :
                                     ) % (cls, attr.kind, an, cls.type_name, pn)
                         else :
                             P._attr_map [attr.attr].append (pn)
+                            if attr.is_mandatory :
+                                pv.pred.is_mandatory = True
         P._syntax_checks = \
-            [  a.attr for a in attr_dict.itervalues ()
+            [  a for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)
             ]
     # end def _m_setup_attributes

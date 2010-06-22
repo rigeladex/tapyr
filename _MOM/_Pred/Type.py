@@ -36,6 +36,7 @@
 #    21-Jan-2010 (CT) `set_s_attr_value` changed to not call `cooked` for `None`
 #    25-Feb-2010 (CT) `check_always` added
 #    11-Mar-2010 (CT) `check_always` removed (was a Bad Idea (tm))
+#    22-Jun-2010 (CT) `is_mandatory` added
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,7 @@ class _Condition_ (object):
     guard           = None
     guard_attr      = ()
     guard_code      = None
+    is_mandatory    = False ### set by meta machinery
     parameters      = ()
     rank            = 1
     renameds        = () ### only for compatibility with MOM.Attr.Type

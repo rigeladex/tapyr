@@ -24,24 +24,26 @@
 #
 # Purpose
 #    Test what happens if one tries to create an object where a primary key
-#    is correctly specified durign object creation
+#    is correctly specified during object creation
 #
 # Revision Dates
 #    22-Jun-2010 (MG) Creation
+#    22-Jun-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
+
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
-    >>> PAP.Person.count
+    >>> print PAP.Person.count
     0
     >>> PAP.Person (last_name = u"last_name", first_name = u"", raw = True)
     Traceback (most recent call last):
       ...
     Invariant_Errors: Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
         first_name = u''
-    >>> PAP.Person.count
+    >>> print PAP.Person.count
     0
     >>> errors = []
     >>> PAP.Person \
@@ -51,10 +53,14 @@ _test_code = r"""
     ...     , on_error   = errors.append
     ...     )
     ...
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
+        first_name = u''
     >>> errors
     [Invariant_Errors([Invariant_Error(GTW.OMP.PAP.Person (u'last_name', u'', u'', u''), Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
         first_name = u'', (), ())],)]
-    >>> PAP.Person.count
+    >>> print PAP.Person.count
     0
 
 """
@@ -65,5 +71,3 @@ __test__ = Scaffold.create_test_dict (_test_code)
 
 
 ### __END__ GTW.__test__.Missing_Primary_Key
-
-

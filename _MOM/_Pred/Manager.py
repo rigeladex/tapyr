@@ -32,6 +32,7 @@
 #    25-Feb-2010 (CT) `check_kind` changed to use `check_pred_p` of predicate
 #                     instead of home-grown code
 #    11-Mar-2010 (CT) `check_kind` change of `25-Feb` revoked
+#    22-Jun-2010 (CT) `mandatory_errors` and `missing_mandatory` added
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ class Manager (TFL.Meta.Object) :
     def reset_predicates (self) :
         self.errors   = errors   = {}
         self.warnings = warnings = {}
+        self.missing_mandatory   = None
         for k in self.pred_kind.iterkeys () :
             errors   [k] = []
             warnings [k] = []
@@ -123,6 +125,23 @@ class Manager (TFL.Meta.Object) :
                     errors.append (exc)
         return MOM.Pred.Err_and_Warn_List (errors, warnings)
     # end def check_kind
+
+    @TFL.Meta.Once_Property
+    def mandatory (self) :
+        return tuple (p for p in self.pred_kind ["object"] if p.is_mandatory)
+    # end def mandatory
+
+    @property
+    def mandatory_errors (self) :
+        result = []
+        if self.missing_mandatory :
+            result.append (self.missing_mandatory)
+        result.extend \
+            ( e for e in self.errors ["object"]
+            if getattr (e, "is_mandatory", False)
+            )
+        return result
+    # end def mandatory_errors
 
     def __getattr__ (self, name) :
         prefix = "check_"

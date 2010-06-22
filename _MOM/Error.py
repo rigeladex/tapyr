@@ -40,6 +40,7 @@
 #    11-Mar-2010 (CT) `Mandatory_Missing` added
 #    16-Jun-2010 (CT) `__str__` changed to `.encode` result of `__unicode__`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
+#    22-Jun-2010 (CT) `is_mandatory` added
 #    ««revision-date»»···
 #--
 
@@ -61,7 +62,8 @@ class Exception_Handled (Exception) :
 class Error (StandardError) :
     """Root class of MOM exceptions"""
 
-    arg_sep = u", "
+    arg_sep      = u", "
+    is_mandatory = False
 
     def str_arg (self, args) :
         return (unicode (a) for a in args if a)
@@ -100,7 +102,8 @@ class Invalid_Seq_Nr (Error) :
 class Mandatory_Missing (Error) :
     """Raised when a mandatory attribute is missing."""
 
-    arg_sep = " "
+    arg_sep      = " "
+    is_mandatory = True
 
     def __init__ (self, missing, provided) :
         self.missing  = missing
@@ -259,6 +262,7 @@ class Invariant_Error (_Invariant_Error_) :
         _Invariant_Error_.__init__ (self, obj)
         self.args           = (obj, inv, violators, violators_attr)
         self.inv            = inv
+        self.is_mandatory   = inv.is_mandatory
         self.attributes     = inv.attributes + inv.attr_none
         self.extra_links    = list (inv.extra_links ())
         self.val_dict       = dict (inv.val_dict)
@@ -402,12 +406,13 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
 
     def __init__ (self, obj, attr, val, exc_str = "") :
         _Invariant_Error_.__init__ (self, obj)
-        self.args       = (obj, attr, val, exc_str)
-        self.obj        = obj
-        self.attributes = (attr, )
-        self.attr       = attr
-        self.val        = val
-        self.exc_str    = exc_str
+        self.args         = (obj, attr, val, exc_str)
+        self.obj          = obj
+        self.attributes   = (attr, )
+        self.attr         = attr
+        self.is_mandatory = attr.is_mandatory
+        self.val          = val
+        self.exc_str      = exc_str
     # end def __init__
 
     def name (self) :

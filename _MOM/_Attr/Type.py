@@ -133,6 +133,7 @@
 #    18-Jun-2010 (CT) `_A_String_Base_.default` changed from `""` to `u""`
 #    21-Jun-2010 (CT) `_A_Filename_.simple_cooked` changed to use
 #                     `I18N.encode_f` instead of hard-coded `encode` to `ascii`
+#    22-Jun-2010 (CT) `is_mandatory` added
 #    ««revision-date»»···
 #--
 
@@ -228,7 +229,8 @@ class A_Attr_Type (object) :
     # end def ac_query
 
     def __init__ (self, kind) :
-        self.kind = kind
+        self.kind         = kind
+        self.is_mandatory = kind.is_mandatory
     # end def __init__
 
     @classmethod

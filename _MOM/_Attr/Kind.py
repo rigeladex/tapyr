@@ -121,6 +121,7 @@
 #                     `reset` if `value is None`
 #    28-Apr-2010 (CT) `_Composite_Collection_Mixin_` added
 #    18-Jun-2010 (CT) `get_raw` changed to return `u""` instead of `""`
+#    22-Jun-2010 (CT) `is_mandatory` added
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ class Kind (MOM.Prop.Kind) :
 
     attr                  = None
     electric              = True
+    is_mandatory          = False
     is_primary            = False
     is_settable           = True
     needs_raw_value       = False
@@ -428,6 +430,8 @@ class _EPK_Mixin_ (Kind) :
 class _Mandatory_Mixin_ (Kind) :
     """Mixin for enforcing that an attribute always has a value"""
 
+    is_mandatory          = True
+
     def _checkers (self, e_type) :
         yield "value is not None and value != ''", (self.name, )
         for c in self.__super._checkers (e_type) :
@@ -513,10 +517,11 @@ class _Composite_Mixin_ (Kind) :
         else :
             if value.owner is not None and value.owner is not obj :
                 value = value.copy ()
-            value.owner      = obj
-            value.attr_name  = self.name
-            value.is_primary = self.is_primary
-            value.home_scope = obj.home_scope
+            value.owner        = obj
+            value.attr_name    = self.name
+            value.is_mandatory = self.is_mandatory
+            value.is_primary   = self.is_primary
+            value.home_scope   = obj.home_scope
             return self.__super._set_cooked_value (obj, value, changed)
     # end def _set_cooked_value
 

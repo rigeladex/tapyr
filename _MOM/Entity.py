@@ -135,6 +135,11 @@
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    18-Jun-2010 (CT) s/""/u""/
+#    22-Jun-2010 (CT) `_kw_check_mandatory` changed to set
+#                     `_pred_man.missing_mandatory`
+#    22-Jun-2010 (CT) `_main__init__` changed to raise `mandatory_errors`, if
+#                     any (otherwise, `on_error` can lead to object creation
+#                     with missing `epk`)
 #    ««revision-date»»···
 #--
 
@@ -475,7 +480,9 @@ class Entity (TFL.Meta.Object) :
         if missing :
             if on_error is None :
                 on_error = self._raise_attr_error
-            on_error (MOM.Error.Mandatory_Missing (missing, list (attr_dict)))
+            error = self._pred_man.missing_mandatory = \
+                MOM.Error.Mandatory_Missing (missing, list (attr_dict))
+            on_error (error)
     # end def _kw_check_mandatory
 
     def _kw_check_predicates (self, attr_dict, on_error, kind = "object") :
@@ -1121,10 +1128,13 @@ class Id_Entity (Entity) :
         raw      = bool (kw.pop ("raw", False))
         setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
         epk, kw  = self.epkified  (* epk, ** kw)
-        self._kw_check_mandatory  (kw)
+        self._kw_check_mandatory (kw)
         kw.update (self._init_epk (epk))
         setter    (** kw)
         self._finish__init__ ()
+        mandatory_errors = self._pred_man.mandatory_errors
+        if mandatory_errors :
+            raise MOM.Error.Invariant_Errors (mandatory_errors)
     # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
