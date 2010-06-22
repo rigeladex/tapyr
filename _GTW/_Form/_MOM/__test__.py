@@ -31,6 +31,7 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    23-May-2010 (MG) Test cases adapted for new error handling
 #    26-May-2010 (MG) Test's adapted to new error handling
+#    22-Jun-2010 (CT) `salutation` and `sex` accommodated
 #    ««revision-date»»···
 #--
 
@@ -41,10 +42,10 @@ _object_test = r"""
 
 Each form class has a fields NO-List containing all fields of all field groups.
 
-    >>> [f.name for f in simp_per_form_cls.fields]
-    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state']
+    >>> [f.name for f in simp_per_form_cls.fields] ### 1
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex', 'instance_state']
     >>> fields_of_field_groups (simp_per_form_cls)
-    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime']
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex']
 
 As wen can see, for each user editable attribute a field will be added to the
 form.
@@ -60,7 +61,7 @@ and in what order the fields should be part of the form:
     ...     , FGD ("first_name", "last_name", "middle_name")
     ...     , FGD (AID ("lifetime"))
     ...     )
-    >>> [f.name for f in form_cls.fields]
+    >>> [f.name for f in form_cls.fields] ### 2
     ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'instance_state']
     >>> fields_of_field_groups (form_cls)
     ['title']
@@ -75,22 +76,22 @@ descriptions:
     ...     , FGD ("title")
     ...     , FGD ("first_name", "last_name", WF  ())
     ...     )
-    >>> [f.name for f in form_cls.fields]
-    ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'instance_state']
+    >>> [f.name for f in form_cls.fields] ### 3
+    ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'salutation', 'sex', 'instance_state']
     >>> fields_of_field_groups (form_cls)
     ['title']
-    ['first_name', 'last_name', 'middle_name', 'lifetime']
+    ['first_name', 'last_name', 'middle_name', 'lifetime', 'salutation', 'sex']
 
     >>> form_cls = GTW.Form.MOM.Instance.New \
     ...     ( PAP.Person
     ...     , FGD (WF ("primary"))
     ...     , FGD ()
     ...     )
-    >>> [f.name for f in form_cls.fields]
-    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'instance_state']
+    >>> [f.name for f in form_cls.fields] ### 4
+    ['last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex', 'instance_state']
     >>> fields_of_field_groups (form_cls)
     ['last_name', 'first_name', 'middle_name', 'title']
-    ['lifetime']
+    ['lifetime', 'salutation', 'sex']
 
 The wildcard field can now be place anywhere in the list of field and will
 only expand to the fields not explicitly list in any other field group
@@ -102,11 +103,11 @@ description.
     ...     , FGD ("first_name", WF ())
     ...     , FGD ("lifetime")
     ...     )
-    >>> [f.name for f in form_cls.fields]
-    ['title', 'first_name', 'last_name', 'middle_name', 'lifetime', 'instance_state']
+    >>> [f.name for f in form_cls.fields] ### 5
+    ['title', 'first_name', 'last_name', 'middle_name', 'salutation', 'sex', 'lifetime', 'instance_state']
     >>> fields_of_field_groups (form_cls)
     ['title']
-    ['first_name', 'last_name', 'middle_name']
+    ['first_name', 'last_name', 'middle_name', 'salutation', 'sex']
     ['lifetime']
 
 Now that we have learned how the create form classes, let's see what we can
@@ -120,10 +121,12 @@ The raw_values dict holdes the values which will be used as default values
 for the HTML fields
     >>> for i in sorted (form.raw_values.iteritems ()) : print i
     ('Person__first_name', u'')
-    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgooZHAzClMncmF3JwpwNApJMDEKc3NTJ2ZpcnN0X25hbWUnCnA1ClYKc1MnbGFzdF9uYW1lJwpwNgpWCnNTJ21pZGRsZV9uYW1lJwpwNwpWCnNTJ3RpdGxlJwpwOApWCnMu')
+    ('Person__instance_state', 'KGRwMQpTJ2ZpcnN0X25hbWUnCnAyClYKc1MnbGFzdF9uYW1lJwpwMwpWCnNTJ21pZGRsZV9uYW1lJwpwNApWCnNTJ3RpdGxlJwpwNQpWCnNTJ3NleCcKcDYKVgpzUydzYWx1dGF0aW9uJwpwNwpWCnNTJ2xpZmV0aW1lJwpwOAooZHA5ClMncmF3JwpwMTAKSTAxCnNzLg==')
     ('Person__last_name', u'')
     ('Person__lifetime', {'raw': True})
     ('Person__middle_name', u'')
+    ('Person__salutation', u'')
+    ('Person__sex', u'')
     ('Person__title', u'')
 
 Once we receive the data from the browser we *call* the form instance and
@@ -147,10 +150,9 @@ Now, let's pass some real data to the form:
 
 We have one error...
     >>> dump_form_errors (form)
-    Non field errors for 'Person':
-      epkified_ckd() takes at least 3 non-keyword arguments (2 given)
-        GTW.OMP.PAP.Person needs the arguments: (last_name, first_name, middle_name = '', title = '', ** kw)
-        Instead it got: (last_name = 'Last name')
+    first_name
+      Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
+        first_name = u''
 
 Ah, so we need a first name as well.
     >>> form = form_cls ("/post-url/")
@@ -167,10 +169,12 @@ created to the new form instance.
     >>> form = form_cls ("/post-url/", form.instance)
     >>> for i in sorted (form.raw_values.iteritems ()) : print i
     ('Person__first_name', 'First name')
-    ('Person__instance_state', 'KGRwMQpTJ2xpZmV0aW1lJwpwMgooZHAzClMncmF3JwpwNApJMDEKc3NTJ2ZpcnN0X25hbWUnCnA1ClMnRmlyc3QgbmFtZScKcDYKc1MnbGFzdF9uYW1lJwpwNwpTJ0xhc3QgbmFtZScKcDgKc1MnbWlkZGxlX25hbWUnCnA5ClYKc1MndGl0bGUnCnAxMApWCnMu')
+    ('Person__instance_state', 'KGRwMQpTJ2ZpcnN0X25hbWUnCnAyClMnRmlyc3QgbmFtZScKcDMKc1MnbGFzdF9uYW1lJwpwNApTJ0xhc3QgbmFtZScKcDUKc1MnbWlkZGxlX25hbWUnCnA2ClYKc1MndGl0bGUnCnA3ClYKc1Mnc2V4JwpwOApWCnNTJ3NhbHV0YXRpb24nCnA5ClYKc1MnbGlmZXRpbWUnCnAxMAooZHAxMQpTJ3JhdycKcDEyCkkwMQpzcy4=')
     ('Person__last_name', 'Last name')
     ('Person__lifetime', {'raw': True})
     ('Person__middle_name', u'')
+    ('Person__salutation', u'')
+    ('Person__sex', u'')
     ('Person__title', u'')
 
     >>> form = form_cls ("/post-url/", form.instance)
@@ -198,7 +202,7 @@ editing*. So let' check which inlines we have:
 Each inline has an embedded form for it's own:
 
     >>> inline_form_cls = form.inline_fields [0].form_cls
-    >>> [f.name for f in inline_form_cls.fields]
+    >>> [f.name for f in inline_form_cls.fields] ### 6
     ['start', 'finish', 'instance_state', '_pid_', '_state_']
 
 The result is not what we execpted.... There are two  new fields called
@@ -225,6 +229,8 @@ the fields of the inline from;
     lifetime:
       start              = datetime.date(1976, 3, 16)
       finish             = None
+    salutation           = u''
+    sex                  = None
 
 Now, let's try to change the value of a composite:
     >>> request_data ["Person__lifetime__finish"] = "16.03.2142"
@@ -240,6 +246,8 @@ Now, let's try to change the value of a composite:
     lifetime:
       start              = datetime.date(1976, 3, 16)
       finish             = datetime.date(2142, 3, 16)
+    salutation           = u''
+    sex                  = None
 
 Up the now, we have always changed an existing object. Now, Lets check if we
 can rename an existing object as well:
@@ -259,6 +267,8 @@ can rename an existing object as well:
     lifetime:
       start              = datetime.date(1976, 3, 16)
       finish             = datetime.date(2142, 3, 16)
+    salutation           = u''
+    sex                  = None
     >>> scope.PAP.Person.count
     1
     >>> saved_instance = form.instance
@@ -310,7 +320,7 @@ we use the *Link1* *Event*:
     ('Event__recurrence', {'raw': True})
     ('Event__short_title', u'')
     ('Event__time', {'raw': True})
-    >>> [f.name for f in form_cls.fields]
+    >>> [f.name for f in form_cls.fields] ### 7
     ['left', 'date', 'time', 'detail', 'recurrence', 'short_title', 'instance_state']
     >>> fields_of_field_groups (form_cls)
     ['left', 'date', 'time', 'detail', 'recurrence', 'short_title']
@@ -506,7 +516,7 @@ for the form code.
     ('Person_has_Address__instance_state', 'KGRwMQpTJ2Rlc2MnCnAyClYKc1MncmlnaHQnCnAzCih0c1MnbGVmdCcKcDQKKHRzLg==')
     ('Person_has_Address__left', ())
     ('Person_has_Address__right', ())
-    >>> [f.name for f in form_cls.fields]
+    >>> [f.name for f in form_cls.fields] ### 8
     ['left', 'right', 'desc', 'instance_state']
     >>> fields_of_field_groups (form_cls)
     ['left', 'right', 'desc']
@@ -575,6 +585,8 @@ So let's create request_data dict.
       lifetime:
         start            = None
         finish           = None
+      salutation         = u''
+      sex                = None
     right:
       street             = u'street'
       zip                = u'1010'
@@ -629,6 +641,8 @@ person.
     lifetime:
       start              = None
       finish             = None
+    salutation           = u''
+    sex                  = None
     >>> for i in sorted (form.instance.addresses) :
     ...     dump_instance (i) ### 1
     street               = u'street'
@@ -665,6 +679,8 @@ object which is linked) using the **state_** field of the link:
     lifetime:
       start              = None
       finish             = None
+    salutation           = u''
+    sex                  = None
     >>> for i in sorted (form.instance.addresses) :
     ...     dump_instance (i) ### 2
     >>> PAP.Address.query ().all ()
@@ -689,6 +705,8 @@ So, let's try to link to this object again:
     lifetime:
       start              = None
       finish             = None
+    salutation           = u''
+    sex                  = None
     >>> for i in sorted (form.instance.addresses) :
     ...     dump_instance (i)
     street               = u'street'
