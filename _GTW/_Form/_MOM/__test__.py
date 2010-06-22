@@ -615,6 +615,7 @@ Creating the form class is a little bit more effort here.
     ...     , FGD ()
     ...     , LID
     ...         ( "PAP.Person_has_Address"
+    ...         , min_count = 1
     ...         )
     ...     )
 
@@ -644,7 +645,7 @@ person.
     salutation           = u''
     sex                  = None
     >>> for i in sorted (form.instance.addresses) :
-    ...     dump_instance (i) ### 1
+    ...     dump_instance (i) ### 1.5
     street               = u'street'
     zip                  = u'1010'
     city                 = u'vienna'
@@ -824,7 +825,7 @@ if 1 :
         , object           = _object_test
         )
 else :
-    __doc__ = _link_test
+    __doc__ = _object_with_link_test
 
 from   _MOM._EMS.Hash                           import Manager as EMS
 from   _MOM._DBW._HPS.Manager                   import Manager as DBW

@@ -85,6 +85,8 @@
 #                     added, `has_substance` added
 #     1-Jun-2010 (MG) `initial_data` support added
 #     9-Jun-2010 (MG) `initial_data` support enhanced
+#    22-Jun-2010 (MG) `_create_or_update` special exception handler added to
+#                     prevent double recording of invariant errors
 #    ««revision-date»»···
 #--
 
@@ -334,6 +336,13 @@ class _Instance_ (GTW.Form._Form_) :
                 else :
                     self.instance = self._create_instance \
                         (on_error = errors.append)
+            except MOM.Error.Invariant_Errors :
+                ### since we pass an on_error hanlder an ` Invariant_Errors`
+                ### exception can only be raise in case of propblems with
+                ### mandatory attributes in which case the errors are already
+                ### stored in the `errors` list and therefore don't need to
+                ### be handled again
+                pass
             except Exception, exc:
                 if __debug__ :
                     import traceback
