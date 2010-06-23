@@ -221,6 +221,7 @@
 #     7-May-2010 (CT) `_Meta_.__call__` changed to not overwrite existing
 #                     `Table [perma]`
 #    10-May-2010 (CT) `Dir.__init__` changed to set `.name` to `.sub_dir`
+#    21-Jun-2010 (MG) `Root.scope` and `Root.Create_Scope` added,
 #    ««revision-date»»···
 #--
 
@@ -272,27 +273,27 @@ class _Meta_ (TFL.Meta.M_Class) :
 class _Site_Entity_ (TFL.Meta.Object) :
     """Model one entity that is part of a web site."""
 
-    __metaclass__   = _Meta_
+    __metaclass__              = _Meta_
 
-    desc            = ""
-    hidden          = False
-    href            = ""
-    input_encoding  = "iso-8859-15"
-    nick            = ""
-    pid             = None
-    rank            = 10
-    title           = ""
-    top             = None
+    desc                       = ""
+    hidden                     = False
+    href                       = ""
+    input_encoding             = "iso-8859-15"
+    nick                       = ""
+    pid                        = None
+    rank                       = 10
+    title                      = ""
+    top                        = None
+    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
+    implicit                   = False
+    parent                     = None
 
-    implicit        = False
-    parent          = None
+    _dump_type                 = "dict"
 
-    _dump_type      = "dict"
-
-    _Media          = GTW.Media ()
+    _Media                     = GTW.Media ()
 
     ### ("GET", "HEAD", "POST", "DELETE", "PUT")
-    SUPPORTED_METHODS = set (("GET", ))
+    SUPPORTED_METHODS   = set (("GET", ))
 
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw
@@ -865,6 +866,7 @@ class Root (_Dir_) :
     _dump_type              = "GTW.NAV.Root.from_dict_list \\"
     _login_required         = False
     _permission             = None
+    Create_Scope            = None
 
     def __init__ (self, src_dir, HTTP, Templateer, ** kw) :
         if "copyright_start" not in kw :
@@ -973,6 +975,14 @@ class Root (_Dir_) :
                 raise HTTP.Error_403 ()
         raise HTTP.Error_404 (href)
     # end def universal_view
+
+    @Once_Property
+    def scope (self) :
+        if self.Create_Scope :
+            return self.Create_Scope (self)
+        from _MOM import MOM
+        return MOM.Scope.load (self.top.App_Type, self.top.DB_Uri)
+    # end def scope
 
 # end class Root
 

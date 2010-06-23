@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    12-Apr-2010 (CT) Creation
+#    23-Jun-2010 (MG) `Aggregator.ETMS` once property added
 #    ««revision-date»»···
 #--
 
@@ -85,14 +86,19 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     Page = Instance
 
     def __init__ (self, parent, ** kw) :
-        ETMS = []
-        for ETM in kw ["ETMS"] :
-            if isinstance (ETM, basestring) :
-                ETM = parent.scope [ETM]
-            ETMS.append (ETM)
-        kw ["ETMS"] = ETMS
+        kw ["_ETMS"] = kw.pop ("ETMS")
         self.__super.__init__ (parent, ** kw)
     # end def __init__
+
+    @Once_Property
+    def ETMS (self) :
+        result = []
+        for etm in self._kw ["_ETMS"] :
+            if isinstance (etm, basestring) :
+                etm = self.top.scope [etm]
+            result.append (etm)
+        return result
+    # end def ETMS
 
     def query (self) :
         result = []

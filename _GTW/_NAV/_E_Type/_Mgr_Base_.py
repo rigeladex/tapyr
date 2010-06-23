@@ -33,6 +33,7 @@
 #    19-Mar-2010 (CT) Call to `scope.async_changes` removed from `_get_entries`
 #    22-Mar-2010 (CT) Use `_T (name)`, not `_Tn (name)` for `title`
 #    12-Apr-2010 (CT) `_get_entries` factored to `Mixin`
+#    21-Jun-2010 (MG) Once property `ETM` added
 #    ««revision-date»»···
 #--
 
@@ -51,12 +52,16 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
 
     def __init__ (self, parent, ** kw) :
-        ETM    = kw ["ETM"]
-        E_Type = ETM._etype
-        top    = self.top
-        desc   = kw.pop  ("desc", E_Type.__doc__)
-        name   = unicode (kw.pop ("name", E_Type.ui_name))
-        title  = kw.pop  ("title", _T (name))
+        ETM = kw ["ETM"]
+        if isinstance (ETM, basestring) :
+            kw ["_ETM"] = ETM
+            E_Type      = self.top.App_Type [ETM]
+            del kw ["ETM"]
+        else :
+            E_Type = ETM._etype
+        desc       = kw.pop  ("desc", E_Type.__doc__)
+        name       = unicode (kw.pop ("name", E_Type.ui_name))
+        title      = kw.pop  ("title", _T (name))
         self.__super.__init__ \
             ( parent       = parent
             , E_Type       = E_Type
@@ -75,6 +80,11 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
             result = self.ETM.count_transitive
         return result
     # end def count
+
+    @Once_Property
+    def ETM (self) :
+        return self.scope [self._ETM]
+    # end def ETM
 
     def query (self) :
         return self.ETM.query_s \

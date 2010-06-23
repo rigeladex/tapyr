@@ -32,7 +32,7 @@
 #    ««revision-date»»···
 #--
 
-from   _GTW.__test__.model import MOM, GTW, Scope
+from   _GTW.__test__.model import MOM, GTW, Scaffold
 from   _JNJ                import JNJ
 import _GTW._NAV.import_NAV
 import _GTW.Media
@@ -100,10 +100,35 @@ GTW.OMP.SRM.Nav.Admin.Regatta_C ["Form_kw"] = dict \
                     }
                 )
 
-def create_nav (cmd, scope) :
-    home_url_root = "http://localhost:9042"
-    site_prefix   = pjoin (home_url_root, "")
-    GTW.NAV.scope = scope
+def _create_scope (nav) :
+    scope = Scaffold.scope ()
+    PAP   = scope.PAP
+    scope.Auth.Account_Anonymous (u"anonymous")
+    p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
+    p = scope.PAP.Person (u"Glücklos",  u"Eddy", raw = True)
+    p = scope.PAP.Person (u"Glück",     u"Martin", raw = True)
+    a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg", u"Austria", raw = True)
+    scope.PAP.Person_has_Address (p, a, desc = "Home")
+    a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
+    ### scope.PAP.Person_has_Address (p, a, desc = "Wien")
+    ph = scope.PAP.Phone         ("43", "1", "123456")
+    scope.PAP.Person_has_Phone   (p, ph, desc = "dummy")
+    SRM = scope.SRM
+    bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    re  = SRM.Regatta_Event \
+        (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
+    scope.commit                 () ### commit my `fixtures`
+    if nav.Break :
+        TFL.Environment.exec_python_startup ()
+        import pdb; pdb.set_trace ()
+    print "Scope Created"
+    return scope
+# end def _create_scope
+
+def create_nav (cmd) :
+    home_url_root    = "http://localhost:9042"
+    app_type, db_uri = Scaffold.app_type_and_uri ()
+    site_prefix      = pjoin (home_url_root, "")
     if cmd.werkzeug :
         import _GTW._Werkzeug
         HTTP = GTW.Werkzeug
@@ -111,8 +136,7 @@ def create_nav (cmd, scope) :
         import _GTW._Tornado
         HTTP = GTW.Tornado
     result        = GTW.NAV.Root \
-        ( anonymous       = scope and scope.Auth.Account_Anonymous.singleton
-        , encoding        = "ISO-8859-1"
+        ( encoding        = "ISO-8859-1"
         , src_dir         = "."
         , site_url        = home_url_root
         , site_prefix     = site_prefix
@@ -140,8 +164,11 @@ def create_nav (cmd, scope) :
                 , GTW.Script.jQuery_Gritter
                 )
             )
-        , permissive      = False
-        , scope           = scope
+        , permissive            = False
+        , DB_Uri                = db_uri
+        , App_Type              = app_type
+        , Create_Scope          = _create_scope
+        , Break                 = cmd.Break
         )
     result.add_entries \
         ( [
@@ -299,26 +326,7 @@ def _main_dyn (cmd) :
 
 def _main (cmd) :
     #scope = Scope ("sqlite:///", "test")
-    scope = Scope ()
-    NAV   = create_nav (cmd, scope)
-    ### XXX remove me
-    PAP = scope.PAP
-    p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
-    p = scope.PAP.Person (u"Glücklos",  u"Eddy", raw = True)
-    p = scope.PAP.Person (u"Glück",     u"Martin", raw = True)
-    a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg", u"Austria", raw = True)
-    scope.PAP.Person_has_Address (p, a, desc = "Home")
-    a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
-    ph = scope.PAP.Phone         ("43", "1", "123456")
-    scope.PAP.Person_has_Phone   (p, ph, desc = "dummy")
-    SRM = scope.SRM
-    bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    re  = SRM.Regatta_Event \
-        (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
-    scope.commit                 () ### commit my `fixtures`
-    if cmd.Break :
-        TFL.Environment.exec_python_startup ()
-        import pdb; pdb.set_trace ()
+    NAV   = create_nav    (cmd)
     if cmd.werkzeug :
         return _dyn_werkzeug (cmd, NAV)
     return     _dyn_tornado  (cmd, NAV)

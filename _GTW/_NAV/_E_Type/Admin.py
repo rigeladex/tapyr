@@ -64,6 +64,8 @@
 #    20-May-2010 (MG) `Test` finished
 #    26-May-2010 (MG) Error handing changed
 #    01-Jun-2010 (MG) `Changer.form_parameters` added
+#    21-Jun-2010 (MG) `From` and `list_display` once properties added, inline
+#                     class `Form` renamed to `HTML_Form`
 #    ««revision-date»»···
 #--
 
@@ -268,7 +270,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class _Inline_
 
-    class Form (_Inline_) :
+    class HTML_Form (_Inline_) :
         """Generate the html code for editing of an inline on request."""
 
         def rendered (self, handler, template = None) :
@@ -278,7 +280,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return self.__super.rendered (handler, template)
         # end def rendered
 
-    # end class Form
+    # end class HTML_Form
 
     class Fields (_Inline_) :
         """Return the values of the form fields for an instance."""
@@ -384,20 +386,18 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     Page = Instance
 
     def __init__ (self, parent, ** kw) :
-        ETM = kw ["ETM"]
-        if isinstance (ETM, basestring) :
-            ETM = kw ["ETM"] = parent.scope [ETM]
-        if "Form" not in kw :
-            kw ["Form"] = GTW.Form.MOM.Instance.New \
-                (ETM, * kw.pop ("Form_args", ()), ** kw.pop ("Form_kw", {}))
-        if "list_display" not in kw :
-            kw ["list_display"] = self._auto_list_display (ETM, kw)
-        else :
-            kw ["list_display"] = tuple \
-                (getattr (ETM._etype, a, a) for a in kw ["list_display"])
+        kw ["Form_Spec"] = dict \
+            (args = kw.pop ("Form_args", ()), kw = kw.pop ("Form_kw", {}))
+        kw ["_list_display"] = kw.pop ("list_display", None)
         self.__super.__init__ (parent, ** kw)
-        self.prefix = pjoin (self.parent.prefix, self.name)
+        self.prefix = pjoin (parent.prefix, self.name)
     # end def __init__
+
+    @Once_Property
+    def Form (self) :
+        return GTW.Form.MOM.Instance.New \
+           (self.ETM, * self.Form_Spec ["args"], ** self.Form_Spec ["kw"])
+    # end def Form
 
     @Once_Property
     def manager (self) :
@@ -432,6 +432,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return u"::".join ((self.name, self.parent.h_title))
     # end def h_title
 
+    @Once_Property
+    def list_display (self) :
+        if self._list_display is None :
+            return self._auto_list_display (self.ETM)
+        return tuple \
+                (getattr (self.ETM._etype, a, a) for a in self._list_display)
+    # end def list_display
+
     def rendered (self, handler, template = None) :
         objects = self._get_entries ()
         handler.context.update \
@@ -441,7 +449,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return self.__super.rendered (handler, template)
     # end def rendered
 
-    def _auto_list_display (self, E_Type, kw) :
+    def _auto_list_display (self, E_Type) :
         return list (ichain (E_Type.primary, E_Type.user_attr))
     # end def _auto_list_display
 
@@ -450,7 +458,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , complete  = (Completer, "forms")
         , completed = (Completed, "forms")
         , fields    = (Fields,    "forms")
-        , form      = (Form,      "forms")
+        , form      = (HTML_Form, "forms")
         , test      = (Test,      "forms")
         )
     child_attrs     = {}

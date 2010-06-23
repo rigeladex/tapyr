@@ -175,6 +175,7 @@
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #     5-Mar-2010 (CT) `_etype_man_entries` corrected
 #    15-Mar-2010 (CT) `kind_name` removed
+#    23-Jun-2010 (MG) `Site_Admin.__init__` changed to not require a scope
 #    ««revision-date»»···
 #--
 
@@ -207,7 +208,7 @@ class Site_Admin (GTW.NAV.Dir) :
             m_kw  = man.admin_args
             title = m_kw.pop ("title", man.title)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, man.name))
-            ETM   = m_kw.pop ("ETM", man.ETM)
+            ETM   = m_kw.pop ("ETM", man._ETM)
             Type  = m_kw.pop ("Type", self.Page)
             d     = dict \
                 ( name      = man.name

@@ -32,6 +32,7 @@
 #                     to set `ETM` and `E_Type` properly
 #    10-May-2010 (CT) `Regatta._get_objects` changed to include `Results`
 #    12-May-2010 (CT) `Results._get_objects` changed to sort by `skipper`
+#    23-Jun-2010 (MG) `SRM.__init__` changed to use app-type instead of scope
 #    ««revision-date»»···
 #--
 
@@ -172,8 +173,11 @@ class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
     def __init__ (self, src_dir, ** kw) :
         self.__super.__init__ (src_dir = src_dir, ** kw)
         top   = self.top
-        scope = top.scope
-        for et in (scope.SRM.Page, scope.SRM.Regatta_C, scope.SRM.Regatta_H) :
+        app   = top.App_Type
+        for et in ( app ["GTW.OMP.SRM.Page"]
+                  , app ["GTW.OMP.SRM.Regatta_C"]
+                  , app ["GTW.OMP.SRM.Regatta_H"]
+                  ) :
             etn = et.type_name
             if etn not in top.E_Types :
                 top.E_Types [etn] = self

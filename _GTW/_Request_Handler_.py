@@ -29,6 +29,7 @@
 # Revision Dates
 #    19-Jun-2010 (MG) Creation (factored from GTW.Werkzeug.Request_Handler
 #                     and GTW.Tornado.Request_Handler)
+#    23-Jun-2010 (MG) `s/anonymous/anonymous_account/`
 #    ««revision-date»»···
 #--
 
@@ -134,7 +135,7 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
     def get_current_user (self) :
         top      = GTW.NAV.Root.top
         username = self.get_secure_cookie ("username")
-        result   = top.anonymous
+        result   = top.anonymous_account
         if username :
             try :
                 result = top.account_manager.query (name = username).one ()

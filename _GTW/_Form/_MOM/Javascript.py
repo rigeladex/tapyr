@@ -37,6 +37,7 @@
 #     6-May-2010 (MG) `Field_Completer.js_on_ready` urls fixed
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    15-May-2010 (MG) `_form_as_dict` factored
+#    23-Jun-2010 (MG) `Completer._send_result` changed to not send `_state_`
 #    ««revision-date»»···
 #--
 
@@ -219,6 +220,7 @@ class Completer (_MOM_Completer_) :
         data = dict ((f.name, form.get_raw (f)) for f in form.fields)
         for ai in form.inline_fields :
             data [ai.link_name] = cls.form_as_dict (ai.form)
+        data.pop ("_state_", None)
         return data
     # end def form_as_dict
 
