@@ -23,7 +23,7 @@
 #    TFL.Url
 #
 # Purpose
-#    Model a URL
+#    Model a URL and its parts
 #
 # Revision Dates
 #    23-Jun-2010 (CT) Creation
@@ -41,7 +41,7 @@ import _TFL.Accessor
 import _TFL.Record
 
 class Url (TFL.Meta.Object) :
-    """Model a URL as defined by RFC 3986.
+    """Model a URL and its parts as defined by RFC 3986.
 
         >>> Url ("http://www.ics.uci.edu/pub/ietf/uri/#Related")
         Url (authority = 'www.ics.uci.edu', fragment = 'Related', path = '/pub/ietf/uri/', query = None, scheme = 'http')

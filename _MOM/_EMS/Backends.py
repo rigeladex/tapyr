@@ -30,6 +30,16 @@
 #    ««revision-date»»···
 #--
 
+"""
+    >>> print MOM.EMS.Backends.get (None)
+    (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>)
+    >>> print MOM.EMS.Backends.get ("postgresql")
+    (<class '_MOM._EMS.SAS.Manager'>, <class '_MOM._DBW._SAS.Manager.Manager'>)
+    >>> print MOM.EMS.Backends.get ("hps")
+    (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>)
+
+"""
+
 from   _MOM                   import MOM
 import _MOM._EMS
 
