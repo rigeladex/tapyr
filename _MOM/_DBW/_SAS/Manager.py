@@ -60,6 +60,7 @@
 #    26-May-2010 (CT) `etype_decorator` changed to create a `New` app-type
 #                     specific `attr_cls` instead of modifying the essential
 #                     one
+#    23-Jun-2010 (CT) Import for `_MOM._DBW._SAS.DBS` added
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ import _MOM._DBW._Manager_
 import _MOM._DBW._SAS
 import _MOM._DBW._SAS.Attr_Type
 import _MOM._DBW._SAS.Attr_Kind
+import _MOM._DBW._SAS.DBS
 import _MOM._DBW._SAS.Pid_Manager
 import _MOM._DBW._SAS.Query
 import _MOM._DBW._SAS.Session

@@ -31,12 +31,12 @@
 #--
 
 """
-    >>> print MOM.EMS.Backends.get (None)
-    (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>)
-    >>> print MOM.EMS.Backends.get ("postgresql")
-    (<class '_MOM._EMS.SAS.Manager'>, <class '_MOM._DBW._SAS.Manager.Manager'>)
-    >>> print MOM.EMS.Backends.get ("hps")
-    (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>)
+    >>> print MOM.EMS.Backends.get ("postgresql:")
+    (<class '_MOM._EMS.SAS.Manager'>, <class '_MOM._DBW._SAS.Manager.Manager'>, <class '_MOM._DBW._SAS.DBS.Postgresql'>)
+    >>> print MOM.EMS.Backends.get ("mysql:")
+    (<class '_MOM._EMS.SAS.Manager'>, <class '_MOM._DBW._SAS.Manager.Manager'>, <class '_MOM._DBW._SAS.DBS.MySQL'>)
+    >>> print MOM.EMS.Backends.get ("hps:")
+    (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>, <class '_MOM._DBW._HPS.DBS.HPS'>)
 
 """
 
@@ -56,14 +56,16 @@ Map  = dict \
          }
     )
 
-def get (scheme) :
-    """Return (`EMS`, `DBW`) for `scheme`."""
+def get (url) :
+    """Return (`EMS`, `DBW`) for `scheme` of `url`."""
     import _MOM._DBW
-    e, d = Map [(scheme or "").split (":") [0]]
-    return \
-        ( MOM.EMS._Import_Module (e).Manager
-        , MOM.DBW._Import_Module (d).Manager
-        )
+    if ":" not in url :
+        raise ValueError (url)
+    scheme = url.split (":") [0]
+    e, d   = Map [scheme]
+    EMS    = MOM.EMS._Import_Module (e).Manager
+    DBW    = MOM.DBW._Import_Module (d).Manager
+    return (EMS, DBW, DBW.DBS_map [scheme])
 # end def get
 
 if __name__ != "__main__" :

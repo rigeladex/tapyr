@@ -32,6 +32,7 @@
 #    16-Dec-2009 (MG) `_Manager_.prepare` added
 #    27-Jan-2010 (MG) `update_etype` parameter `app_type` added
 #    11-May-2010 (CT) `Pid_Manager` added
+#    23-Jun-2010 (CT) `DBS_map` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,8 @@ import _TFL._Meta.Object
 
 class _M_Manager_ (TFL.Meta.Object.__class__) :
     """Backend independent _Manager_, describes the common interface."""
+
+    DBS_map = {}
 
     def create_database (cls, db_uri, scope) :
         raise NotImplementedError

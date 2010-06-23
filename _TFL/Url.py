@@ -44,17 +44,38 @@ class Url (TFL.Meta.Object) :
     """Model a URL and its parts as defined by RFC 3986.
 
         >>> Url ("http://www.ics.uci.edu/pub/ietf/uri/#Related")
-        Url (authority = 'www.ics.uci.edu', fragment = 'Related', path = '/pub/ietf/uri/', query = None, scheme = 'http')
+        Url (authority = 'www.ics.uci.edu', fragment = 'Related', path = '/pub/ietf/uri/', query = '', scheme = 'http')
         >>> Url ("scheme://username:password@domain:port/path?foo=bar#anchor")
         Url (authority = 'username:password@domain:port', fragment = 'anchor', path = '/path', query = 'foo=bar', scheme = 'scheme')
         >>> Url ("foo://example.com:8042/over/there?name=ferret#nose")
         Url (authority = 'example.com:8042', fragment = 'nose', path = '/over/there', query = 'name=ferret', scheme = 'foo')
         >>> Url ("/tmp/foo.bar")
-        Url (authority = None, fragment = None, path = '/tmp/foo.bar', query = None, scheme = None)
+        Url (authority = '', fragment = '', path = '/tmp/foo.bar', query = '', scheme = '')
         >>> Url ("http://a/b/c/g;x?y#s")
         Url (authority = 'a', fragment = 's', path = '/b/c/g;x', query = 'y', scheme = 'http')
         >>> Url ("ftp://cnn.example.com&story=breaking_news@10.0.0.1/top_story.htm")
-        Url (authority = 'cnn.example.com&story=breaking_news@10.0.0.1', fragment = None, path = '/top_story.htm', query = None, scheme = 'ftp')
+        Url (authority = 'cnn.example.com&story=breaking_news@10.0.0.1', fragment = '', path = '/top_story.htm', query = '', scheme = 'ftp')
+
+        >>> Url ("sqlite://")
+        Url (authority = '', fragment = '', path = '', query = '', scheme = 'sqlite')
+        >>> Url ("sqlite:///foo.db")
+        Url (authority = '', fragment = '', path = '/foo.db', query = '', scheme = 'sqlite')
+        >>> Url ("sqlite:////foo.db")
+        Url (authority = '', fragment = '', path = '//foo.db', query = '', scheme = 'sqlite')
+
+        >>> Url ("postgresql://scott:tiger@localhost/mydatabase")
+        Url (authority = 'scott:tiger@localhost', fragment = '', path = '/mydatabase', query = '', scheme = 'postgresql')
+        >>> Url ("postgresql+pg8000://scott:tiger@localhost/mydatabase")
+        Url (authority = 'scott:tiger@localhost', fragment = '', path = '/mydatabase', query = '', scheme = 'postgresql+pg8000')
+
+        >>> Url ("hps://test.foo")
+        Url (authority = 'test.foo', fragment = '', path = '', query = '', scheme = 'hps')
+        >>> Url ("hps:///test.foo")
+        Url (authority = '', fragment = '', path = '/test.foo', query = '', scheme = 'hps')
+        >>> Url ("hps://")
+        Url (authority = '', fragment = '', path = '', query = '', scheme = 'hps')
+        >>> Url ("hps:")
+        Url (authority = '', fragment = '', path = '', query = '', scheme = 'hps')
 
     """
 
@@ -69,27 +90,31 @@ class Url (TFL.Meta.Object) :
           r"""(?:#(?P<fragment>.*))?"""
         )
 
-    authority = property (TFL.Getter.__parsed.authority or "")
-    fragment  = property (TFL.Getter.__parsed.fragment  or "")
-    path      = property (TFL.Getter.__parsed.path      or "")
-    query     = property (TFL.Getter.__parsed.query     or "")
-    scheme    = property (TFL.Getter.__parsed.scheme    or "")
-    value     = property (TFL.Getter.__value)
+    authority = property (TFL.Getter._parsed.authority)
+    fragment  = property (TFL.Getter._parsed.fragment)
+    path      = property (TFL.Getter._parsed.path)
+    query     = property (TFL.Getter._parsed.query)
+    scheme    = property (TFL.Getter._parsed.scheme)
+    value     = property (TFL.Getter._value)
 
     def __init__ (self, value) :
         if self._matcher.match (value) :
-            self.__value  = value
-            self.__parsed = TFL.Record (** self._matcher.groupdict ())
+            self._value  = value
+            attrs        = dict \
+                ( (k, v or "")
+                for (k, v) in self._matcher.groupdict ().iteritems ()
+                )
+            self._parsed = TFL.Record (** attrs)
         else :
             raise ValueError (value)
     # end def __init__
 
     def __repr__ (self) :
-        return "Url " + str (self.__parsed)
+        return "Url " + str (self._parsed)
     # end def __repr__
 
     def __str__ (self) :
-        return self.__value
+        return self._value
     # end def __str__
 
 # end class Url
