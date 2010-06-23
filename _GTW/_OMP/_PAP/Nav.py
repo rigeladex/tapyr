@@ -148,7 +148,7 @@ class Admin (object) :
                 , FGD
                     ( "desc"
                     , AID
-                        ("phone", render_mode = "div_seq"
+                        ( "phone", render_mode = "div_seq"
                         , legend = _ ("Phone")
                         )
                     )
@@ -174,6 +174,7 @@ class Admin (object) :
                     , AID
                         ("address", render_mode = "div_seq"
                         , legend = _ ("Address")
+                        , completer = address_completer
                         )
                     )
                 , list_display     =

@@ -272,10 +272,8 @@ def _dyn_werkzeug (cmd, NAV) :
         , profile_sort_by      = cmd.p_sort_by
         , profile_delete_logs  = cmd.p_delete_logs
         )
-    if cmd.wsgi :
-        return app
     app.run_development_server \
-        (port = cmd.port, use_debugger = cmd.debug, use_reloader = cmd.auto_reload)
+        (port = cmd.port, use_debugger = True, use_reloader = True)
 # end def _dyn_werkzeug
 
 def media_handler (nav, tornado = True) :
@@ -311,7 +309,6 @@ def _main (cmd) :
     a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg", u"Austria", raw = True)
     scope.PAP.Person_has_Address (p, a, desc = "Home")
     a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
-    scope.PAP.Person_has_Address (p, a, desc = "Wien")
     ph = scope.PAP.Phone         ("43", "1", "123456")
     scope.PAP.Person_has_Phone   (p, ph, desc = "dummy")
     SRM = scope.SRM

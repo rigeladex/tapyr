@@ -88,6 +88,7 @@
       }
       , _update_values : function (item, no)
       {
+        var self    = this;
         var options = this.options;
         var pf      = options.field_prefix;
         if (no) pf  = pf + "-M" + no;
@@ -100,19 +101,7 @@
               {
                   if (textStatus == "success")
                   {
-                      for (var key in data)
-                      {
-                          var $field = $("[name=" + pf + key + "]");
-                          if ($field.length)
-                            {
-                              var tag_name = $field [0].nodeName.toLowerCase ();
-                              if (tag_name == "input")
-                              {
-                                  $field.attr ("value", data [key]);
-                              }
-                              $field.attr ("disabled", "disabled");
-                            }
-                      }
+                      var $field = self._set_form_values (pf, data, false);
                       observers = $field.parents (".inline-instance")
                            .data ("ac_observers") || [];
                       for (var i = 0; i < observers.length; i++)
@@ -122,6 +111,30 @@
                   }
               }
             );
+      }
+      , _set_form_values : function (pf, data, disable)
+      {
+        var $result;
+        for (var key in data)
+          {
+            var value  = data [key];
+            if (typeof value == "object")
+              {
+                this._set_form_values (pf + key + "__", value, disable)
+              }
+            else
+              {
+                var $field = $("[name=" + pf + key + "]");
+                if ($field.length)
+                  {
+                    $result = $field;
+                    $field.attr ("value", value);
+                    if (disable)
+                        $field.attr ("disabled", "disabled");
+                  }
+              }
+          }
+        return $result;
       }
   }
   $.widget ("ui.MOM_Auto_Complete", Auto_Complete);

@@ -790,7 +790,8 @@
                                  .appendTo    ($dialog)
                                  .removeClass ("ui-helper-hidden");
            }
-         $dialog.dialog ("open");
+         $dialog.dialog         ("open");
+         this._setup_completers ($form);
       }
     , _ui_hide_form          : function ($entity_root)
       {
