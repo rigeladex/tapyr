@@ -93,6 +93,7 @@
 #     3-May-2010 (CT) `Type_Name_Type` added and used for `type_name`
 #    22-Jun-2010 (CT) `_m_setup_attributes` changed to set `is_mandatory` and
 #                     to put `a` instead of `a.attr` into `P._syntax_checks`
+#    24-Jun-2010 (CT) `db_sig` added
 #    ««revision-date»»···
 #--
 
@@ -442,6 +443,11 @@ class M_E_Type (M_E_Mixin) :
     app_type    = None
 
     _Class_Kind = "Essence"
+
+    @TFL.Meta.Once_Property
+    def db_sig (cls) :
+        return (cls.type_name, tuple (a.db_sig for a in cls.db_attr))
+    # end def db_sig
 
     @TFL.Meta.Once_Property
     def m_recordable_attrs (cls) :

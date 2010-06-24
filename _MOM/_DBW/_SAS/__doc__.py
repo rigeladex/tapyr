@@ -69,7 +69,8 @@ True
 >>> db_path_old  = "scope_old.sqlite"
 >>> db_path_new  = "scope_new.sqlite"
 >>> hps_filename = "scope_hps"
->>> hps_path     = "hps:///%s.bmt" % (hps_filename, )
+>>> hps_path     = "%s.bmt" % (hps_filename, )
+>>> hps_url      = "hps:///%s" % (hps_path, )
 >>> remove (db_path_old)
 >>> remove (db_path_new)
 >>> remove (hps_path)
@@ -92,13 +93,13 @@ True
 
 Now, we load the `old` database and save it as a HPS
 >>> scope_1 = MOM.Scope.load         (apt_sas, "sqlite:///%s" % (db_path_old, ))
->>> scope_2 = scope_1.copy           (apt_hps, hps_path)
+>>> scope_2 = scope_1.copy           (apt_hps, hps_url)
 >>> scope_1.destroy                  ()
 >>> scope_2.destroy                  ()
 
 Here is the point where we upgrade the object model and load the HPS database
 again to perform the migration
->>> scope_2 = MOM.Scope.load         (apt_hps, hps_path)
+>>> scope_2 = MOM.Scope.load         (apt_hps, hps_url)
 >>> scope_3 = scope_2.copy           (apt_sas, "sqlite:///%s" % (db_path_new, ))
 >>> scope_2.destroy                  ()
 >>> scope_3.destroy                  ()

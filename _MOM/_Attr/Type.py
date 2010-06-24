@@ -134,6 +134,7 @@
 #    21-Jun-2010 (CT) `_A_Filename_.simple_cooked` changed to use
 #                     `I18N.encode_f` instead of hard-coded `encode` to `ascii`
 #    22-Jun-2010 (CT) `is_mandatory` added
+#    24-Jun-2010 (CT) `db_sig` added
 #    ««revision-date»»···
 #--
 
@@ -191,6 +192,7 @@ class A_Attr_Type (object) :
     code_format         = u"%r"
     computed            = None
     computed_default    = None
+    db_sig_version      = 0
     default             = None
     description         = u""
     explanation         = u""
@@ -270,6 +272,11 @@ class A_Attr_Type (object) :
             return soc.simple_cooked (value)
         return value
     # end def cooked
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return (self.typ, self.db_sig_version, getattr (self, "max_length", 0))
+    # end def db_sig
 
     @classmethod
     def epk_def_set_ckd (cls) :
@@ -431,6 +438,14 @@ class _A_Collection_ (A_Attr_Type) :
         return soc.R_Type (soc.C_Type.cooked (v) for v in val)
     # end def cooked
 
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return \
+            ( self.__super.db_sig
+            + (self.C_Type and self.C_Type.db_sig, )
+            )
+    # end def db_sig
+
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
         comps = self._C_split (s.strip ())
         return self.R_Type (self._C_from_code (obj, comps, glob, locl))
@@ -503,6 +518,14 @@ class _A_Composite_ (A_Attr_Type) :
                 (_T ("Value `%r` is not of type %s") % (value, soc.C_Type))
         return value
     # end def cooked
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return \
+            ( self.__super.db_sig
+            + (self.C_Type and self.C_Type.db_sig, )
+            )
+    # end def db_sig
 
     @classmethod
     def epk_def_set_ckd (cls) :
@@ -916,8 +939,7 @@ class _A_String_Base_ (A_Attr_Type) :
 
     default           = u""
     max_length        = 0
-    ui_length         = TFL.Meta.Once_Property \
-        (lambda s : s.max_length or 120)
+    ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
 
     @TFL.Meta.Once_Property
     def ac_query (self) :
@@ -1349,6 +1371,11 @@ class A_Decimal (_A_Number_) :
             value = D (value, soc.D_Context)
         return value.quantize (soc.D_Quant)
     # end def cooked
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return self.__super.db_sig + (self.decimal_places, self.max_digits)
+    # end def db_sig
 
 # end class A_Decimal
 

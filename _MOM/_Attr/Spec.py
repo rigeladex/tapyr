@@ -50,6 +50,7 @@
 #                     `_setup_alias`
 #     9-Apr-2010 (CT) `_effective_prop_kind_mixins` changed to filter
 #                     `Sticky_Mixin`, if `Computed_Mixin` is in `result`
+#    24-Jun-2010 (CT) `db_attr` added
 #    ««revision-date»»···
 #--
 
@@ -93,11 +94,14 @@ class Spec (MOM.Prop.Spec) :
     _prop_kind      = TFL.Meta.Alias_Property ("_attr_kind")
 
     def __init__ (self, e_type) :
+        self._db_attr     = []
         self._syncable    = []
         self._user_attr   = []
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
+        e_type.db_attr    = self._db_attr
         e_type.user_attr  = self._user_attr
+        e_type.db_attr.sort   (key = TFL.Sorted_By ("rank", "name"))
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
         self._setup_dependent_attrs ()
     # end def __init__
@@ -144,6 +148,8 @@ class Spec (MOM.Prop.Spec) :
         self.__super._setup_prop (e_type, name, kind, prop)
         if not (prop.electric or prop.is_primary) :
             self._user_attr.append (prop)
+        if prop.save_to_db :
+            self._db_attr.append (prop)
         if callable (prop.sync) :
             self._syncable.append (prop)
     # end def _setup_prop

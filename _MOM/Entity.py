@@ -140,6 +140,7 @@
 #    22-Jun-2010 (CT) `_main__init__` changed to raise `mandatory_errors`, if
 #                     any (otherwise, `on_error` can lead to object creation
 #                     with missing `epk`)
+#    24-Jun-2010 (CT) `relevant_root = None` moved from `Id_Entity` to `Entity`
 #    ««revision-date»»···
 #--
 

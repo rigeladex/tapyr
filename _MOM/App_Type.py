@@ -35,6 +35,7 @@
 #    14-Jan-2010 (CT) `PNS_Aliases` added
 #     4-Mar-2010 (CT) `delete_database` added
 #    24-Jun-2010 (CT) `Url` added
+#    24-Jun-2010 (CT) `db_sig` and `db_version_hash` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,10 @@ import _MOM._EMS.Backends
 
 import _TFL.Ordered_Set
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
+
+import base64
+import hashlib
 
 class _App_Type_ (TFL.Meta.Object) :
     """Encapsulate information about a specific application type."""
@@ -108,6 +113,20 @@ class _App_Type_ (TFL.Meta.Object) :
 
 class _App_Type_D_ (_App_Type_) :
     """App_Type derived for a specific combination of `EMS` and `DBW`"""
+
+    @TFL.Meta.Once_Property
+    def db_version_hash (self) :
+        hash = hashlib.sha224 (str (self.db_sig)).digest ()
+        return base64.b64encode (hash, "_-").replace ("=", "")
+    # end def db_version_hash
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return tuple \
+            ( T.db_sig for T in self._T_Extension
+            if getattr (T, "relevant_root", None)
+            )
+    # end def db_sig
 
     @property
     def Root_Type (self) :

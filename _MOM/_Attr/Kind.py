@@ -122,6 +122,7 @@
 #    28-Apr-2010 (CT) `_Composite_Collection_Mixin_` added
 #    18-Jun-2010 (CT) `get_raw` changed to return `u""` instead of `""`
 #    22-Jun-2010 (CT) `is_mandatory` added
+#    24-Jun-2010 (CT) `db_sig` added
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ class Kind (MOM.Prop.Kind) :
     __metaclass__         = MOM.Meta.M_Attr_Kind
 
     attr                  = None
+    db_sig_version        = 0
     electric              = True
     is_mandatory          = False
     is_primary            = False
@@ -196,6 +198,17 @@ class Kind (MOM.Prop.Kind) :
             if self.record_changes :
                 self._record_change (obj, value, self.name, old_raw)
     # end def __set__
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return \
+            ( self.db_sig_version
+            , self.is_mandatory
+            , self.is_primary
+            , self.needs_raw_value
+            , self.attr.db_sig
+            )
+    # end def db_sig
 
     @property
     def default (self) :
@@ -387,6 +400,11 @@ class Kind (MOM.Prop.Kind) :
 
 class _EPK_Mixin_ (Kind) :
     """Mixin for attributes referring to entities with `epk`."""
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return self.__super.db_sig + (self.attr.Class.type_name, )
+    # end def db_sig
 
     def get_hash (self, obj, value = None) :
         ref = value if (value is not None) else self.get_value (obj)
