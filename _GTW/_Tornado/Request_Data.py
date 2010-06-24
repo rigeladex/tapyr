@@ -23,24 +23,62 @@
 #    GTW.Tornado.Request_Data
 #
 # Purpose
-#    «text»···
+#    Provide access to the request arguments and the uploaded files of a
+#    tornado request handler
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
+#    24-Jun-2010 (MG) Signature of `__init__` changed, `files` added
 #    ««revision-date»»···
 #--
 
+from   _TFL                import TFL
+import _TFL._Meta.Object
 from   _GTW                import GTW
 import _GTW.Request_Data
 import _GTW._Tornado
+
+class File_Storage (TFL.Meta.Object) :
+    """A wrapper around an uploaded file to provide the same interface as
+       werkzeug
+    """
+
+    def __init__ (self, ** kw) :
+        self.__dict__.update (kw)
+    # end def __init__
+
+    def save (self, dst) :
+        close_dst = False
+        if isinstance (dst, basestring) :
+            dst       = open (dst, "wb")
+            close_dst = True
+        try:
+            dst.write (self.body)
+        finally:
+            if close_dst :
+                dst.close ()
+    # end def save
+
+# end class File_Storage
 
 class _Tornado_Request_Data_ (GTW.Request_Data) :
 
     _real_name = "Request_Data"
 
-    def __init__ (self, request) :
-        self.__super.__init__ (request.arguments)
+    def __init__ (self, handler) :
+        self._request = handler.request
+        self.__super.__init__ (handler.request.arguments)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def files (self) :
+        result = {}
+        for name, file_list in self._request.files.iteritems () :
+            assert len (file_list) == 1
+            result [name] = File_Storage (** file_list [0])
+        return result
+    # end def files
+
 Request_Data = _Tornado_Request_Data_ # end class
 
 if __name__ != "__main__" :

@@ -125,6 +125,26 @@ def _create_scope (nav) :
     return scope
 # end def _create_scope
 
+class File_Upload_Page (GTW.NAV.Page) :
+    """just allow post request as well"""
+
+    SUPPORTED_METHODS = set (("GET", "POST"))
+
+    def _view (self, handler) :
+        request = handler.request
+        if request.method == "POST" :
+            import os
+            req_data = self.top.HTTP.Request_Data (handler)
+            for f in req_data.files.itervalues () :
+                if f :
+                    path = os.path.join ("/tmp", f.filename)
+                    f.save (path)
+                    print "Saved", path
+        return self.__super._view (handler)
+    # end def _view
+
+# end class File_Upload_Page
+
 def create_nav (cmd) :
     home_url_root    = "http://localhost:9042"
     app_type, db_url = Scaffold.app_type_and_url ()
@@ -135,6 +155,10 @@ def create_nav (cmd) :
     else :
         import _GTW._Tornado
         HTTP = GTW.Tornado
+    template_dirs     = \
+        [ sos.path.join (sos.path.dirname (__file__), "html")
+        ]
+
     result        = GTW.NAV.Root \
         ( encoding        = "ISO-8859-1"
         , src_dir         = "."
@@ -146,7 +170,7 @@ def create_nav (cmd) :
         , template        = "static.jnj"
         , Templateer      = JNJ.Templateer
             ( i18n        = True
-            #, load_path   = template_dirs
+            , load_path   = template_dirs
             , trim_blocks = True
             , version     = "html/x.jnj"
             )
@@ -247,6 +271,13 @@ def create_nav (cmd) :
               , Type            = GTW.NAV.L10N
               , country_map     = dict \
                   ( de          = "AT")
+              )
+          , dict
+              ( name            = "file-upload.html"
+              , title           =
+                _ (u"File upload test")
+              , Type            = File_Upload_Page
+              , template        = "file-upload.jnj"
               )
           ]
         )

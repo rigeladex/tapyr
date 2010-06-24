@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
+#    24-Jun-2010 (MG) Signature of `__init__` changed, `files` added
 #    ««revision-date»»···
 #--
 
@@ -40,9 +41,15 @@ import _GTW.Request_Data
 
 class _Werkzeug_Request_Data_ (GTW.Request_Data) :
 
-    def __init__ (self, request) :
+    def __init__ (self, handler) :
+        self._request = request = handler.request
         self.__super.__init__ (dict (request.args, ** request.form))
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def files (self) :
+        return self._request.files
+    # end def files
 
 Request_Data = _Werkzeug_Request_Data_ # end class
 

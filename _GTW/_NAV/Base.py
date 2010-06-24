@@ -222,6 +222,9 @@
 #                     `Table [perma]`
 #    10-May-2010 (CT) `Dir.__init__` changed to set `.name` to `.sub_dir`
 #    21-Jun-2010 (MG) `Root.scope` and `Root.Create_Scope` added,
+#    24-Jun-2010 (MG) `_Site_Entity_._view` pass `handler` to
+#                     `HTTP.Request_Data` instead of `request` to support
+#                     file uploads
 #    ««revision-date»»···
 #--
 
@@ -564,7 +567,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         HTTP             = self.top.HTTP
         request          = handler.request
         request.user     = handler.current_user
-        request.req_data = req_data = HTTP.Request_Data (request)
+        request.req_data = HTTP.Request_Data (handler)
         handler.context  = self.render_context \
             ( lang          = "_".join (uniq (TFL.I18N.Config.choice))
             , notifications = handler.session.notifications

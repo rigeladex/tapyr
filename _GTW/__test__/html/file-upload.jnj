@@ -1,0 +1,46 @@
+{%- extends "html/base.jnj" %}
+{#- jinja template: file-upload.jnj -#}
+{#
+## Copyright (C) 2010 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+## ****************************************************************************
+## This template is part of the package GTW.__test__.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    file-upload
+##
+## Purpose
+##    Simple file upload test form
+##
+## Revision Dates
+##    24-Jun-2010 (MG) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- block document -%}
+  <form action="/file-upload.html" method="post" enctype="multipart/form-data">
+    <label>File:</bale>
+    <input name="file" type="file" size="50" maxlength="100000">
+    <div>
+      <input name="submit" type="submit">
+    </div>
+</form>
+{%- endblock document -%}
+{#- __END__ jinja template: file-upload.jnj -#}
+
+
