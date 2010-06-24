@@ -38,14 +38,17 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    15-May-2010 (MG) `_form_as_dict` factored
 #    23-Jun-2010 (MG) `Completer._send_result` changed to not send `_state_`
+#    24-Jun-2010 (CT) 3-compatibility
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 
 from   _TFL.predicate     import uniq_p
+
 import _TFL._Meta.Object
 import _TFL._Meta.M_Unique_If_Named
+import _TFL.Accessor
 
 from   _GTW                       import GTW
 
@@ -109,9 +112,7 @@ class Field_Completer (_MOM_Completer_) :
 
     def _send_suggestions (self, handler, trigger, query) :
         result = uniq_p \
-            ( ((self.ui_display (c), c) for c in query)
-            , lambda (d, c) : d
-            )
+            (((self.ui_display (c), c) for c in query), TFL.Getter [0])
         return handler.json \
             ( [ dict
                   ( pid   = str (c.pid)
