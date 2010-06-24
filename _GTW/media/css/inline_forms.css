@@ -104,3 +104,20 @@ ul.errorlist
 .gtw-next-error
     { float           : right
     }
+.gtw-ui-form-inline-container
+    { padding         : 0.5em 0
+    ; margin-left     : 1em
+    ; border          : 1px solid black
+    }
+.gtw-ui-form-inline-container .gtw-ui-popup-form
+    { margin          : 0 0.5em
+    }
+.gtw-ui-form-inline .buttons
+    { text-align      : right
+    ; border-top      : 1px dotted black
+    ; margin-top      : 0.3em
+    ; padding-top     : 0.3em
+    }
+.gtw-ui-form-inline .buttons button
+    { margin          : 0 0.2em
+    }

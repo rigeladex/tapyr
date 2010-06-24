@@ -180,6 +180,7 @@ class Admin (object) :
                 , list_display     =
                     ("desc", WF ("primary", prefix = "address"))
                 , collapsable      = True
+                , popup            = False
                 )
             )
         )

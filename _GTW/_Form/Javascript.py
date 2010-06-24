@@ -30,6 +30,7 @@
 #    27-Feb-2010 (MG) Cleanup
 #    02-Mar-2010 (MG) `Multi_Completer` moved in here
 #     3-May-2010 (MG) New form handling implemented
+#    24-Jun-2010 (MG) `js_on_ready_options` added
 #    ««revision-date»»···
 #--
 
@@ -81,8 +82,9 @@ class Form (TFL.Meta.Object) :
 class _Inline_ (TFL.Meta.Object) :
     """Base class for the different kind of inline forms"""
 
-    buttons          = ("rename", "delete", "clear")
-    initial_disabled = True
+    buttons             = ("rename", "delete", "clear")
+    initial_disabled    = True
+    js_on_ready_options = ()
 
     def __init__ (self, form, description, ** kw) :
         self.form        = form
@@ -99,6 +101,7 @@ class _Inline_ (TFL.Meta.Object) :
             , buttons          = self.buttons
             , instance_class   = "inline-instance"
             , initial_disabled = self.initial_disabled
+            , ** dict ((k, getattr (self, k)) for k in self.js_on_ready_options)
             )
         return result
     # end def js_on_ready
@@ -119,6 +122,9 @@ class Link_Inline (_Inline_) :
 
 class Link_Inline_UI_Display (Attribute_Inline) :
     """XXX"""
+
+    js_on_ready_options = ("popup", )
+
 # end class Link_Inline_UI_Display
 
 class _Completer_ (TFL.Meta.Object) :

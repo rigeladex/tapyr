@@ -64,6 +64,8 @@
 #                     s/ui_display/list_display_values/
 #    28-May-2010 (MG) `list_display_values` fixed
 #     1-Jun-2010 (MG) `initial_data` support added
+#    24-Jun-2010 (MG) `setup_javascript` changed to support callables in
+#                     `javascript_options`
 #    ««revision-date»»···
 #--
 
@@ -221,7 +223,12 @@ class Link_Inline (TFL.Meta.Object) :
             cls = GTW.Form.Javascript.Link_Inline_UI_Display
         else :
             cls = GTW.Form.Javascript.Link_Inline
-        cls (self.form_cls, self, ** self.javascript_options)
+        jso = dict ()
+        for k, v in self.javascript_options.iteritems () :
+            if callable (v) :
+                v = v (self)
+            jso [k] = v
+        cls (self.form_cls, self, ** jso)
     # end def setup_javascript
 
     def test (self, no, data) :

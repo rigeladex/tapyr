@@ -383,10 +383,10 @@
    }}
     <div id="form-dialog">
       <div id="popup-form-buttons">
-        <!-- The order of the buttons has to be specified from right to left -->
-        <span id="popup-form-button-reset">{{ GTW._T ("Reset") }}</span>
-        <span id="popup-form-button-cancel">{{ GTW._T ("Cancel") }}</span>
-        <span id="popup-form-button-save">{{ GTW._T ("Save") }}</span>
+        <!-- The order of the buttons has to be specified from left to right -->
+        <button id="popup-form-button-save">{{ GTW._T ("Save") }}</button>
+        <button id="popup-form-button-cancel">{{ GTW._T ("Cancel") }}</button>
+        <button id="popup-form-button-reset">{{ GTW._T ("Reset") }}</button>
       </div>
     </div>
   {% endcall %} {# form #}

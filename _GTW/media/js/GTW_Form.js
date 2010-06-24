@@ -134,34 +134,52 @@
             if (inlines [i].type == "Link_Inline_UI_Display")
                 this._setup_di_inline (inlines [i]);
             else
-                this._setup_inline (inlines [i]);
+                this._setup_inline    (inlines [i]);
           }
         this._setup_completers (this.element);
         this.element.find (":submit").bind ("click", this, this._form_submit);
         var $dialog   = $("#form-dialog").dialog ({ autoOpen : false});
         var $buttons  = $dialog.find ("#popup-form-buttons").children ();
         var callbacks =
-            { "save"   : function (evt)
-                       { $dialog.data   ("form-save", true).dialog ("close"); }
-            , "cancel" : function (evt)
-                       { $dialog.dialog ("close"); }
-            , "reset"  : function (evt)
+            { "save"   : function (evt, $form, $inline)
                        {
-                         var prefix = $dialog.data ("form-prefix");
-                         var data   = $dialog.data ("form-data");
+                         if (! $form)
+                           $form = $dialog.find (".gtw-ui-popup-form");
+                         $form.data             ("form-save", true);
+                         if ($inline)  self._ui_save_form ($inline, $form)
+                         else         $dialog.dialog      ("close");
+                         return true;
+                       }
+            , "cancel" : function (evt, $form, $inline)
+                       {
+                         if (! $form)
+                           $form = $dialog.find (".gtw-ui-popup-form");
+                         $form.data             ("form-save", false);
+                         if ($inline)  self._ui_save_form ($inline, $form)
+                         else         $dialog.dialog      ("close");
+                         return true;
+                       }
+            , "reset"  : function (evt, $form, $inline)
+                       {
+                         if (! $form)
+                             $form = $dialog.find (".gtw-ui-popup-form");
+                         var prefix = $form.data  ("form-prefix");
+                         var data   = $form.data  ("form-data");
                          if (data)
-                           self._ui_set_form_values ($dialog, prefix, data)
+                             self._ui_set_form_values ($form, prefix, data)
+                         return false;
                        }
             };
-        for (i = 0; i < $buttons.length; i++)
+        for (i = $buttons.length - 1; i >= 0; i--)
           {
-            var $button = $buttons.eq (i)
+            var $button = $buttons.eq (i);
             var text = $button.html ()
             var key  = $button.attr ("id").replace ("popup-form-button-", "");
             popup_form_buttons [text] = callbacks [key];
           }
         this.element.data ("popup_form_buttons", popup_form_buttons);
-        this.element.data ("$dialog", $dialog);
+        this.element.data ("$buttons",           $buttons);
+        this.element.data ("$dialog",            $dialog);
       }
     , _add_button : function ($element, button, prepend)
       {
@@ -482,6 +500,7 @@
         if (parseInt (last) == last) action.pop ();
         $inline.data ("base_url", action.join ("/") + "/");
         $inline.data ("prefix",   inline.prefix);
+        $inline.data ("popup",    inline.popup);
         var self = this;
         $inline.find ("a[href=#add]").GTW_Button
             ( { icon      : "ui-icon-circle-plus"
@@ -587,6 +606,13 @@
                 flat [name] = value;
           }
       }
+    , _ui_data_as_post_dict : function ($root, prefix, post)
+      {
+        $root.find ("[name^=" + prefix + "]").each (function () {
+          post [this.name] = $(this).val ();
+        });
+        return post;
+      }
     , _ui_delete_entity : function (evt, data)
       {
         var self       = data.self;
@@ -605,6 +631,62 @@
         $container.find ("input:hidden:first[name$=__state_]")
                   .attr ("value", state);
       }
+    , _ui_display_form : function ($dialog, $form, $inline, $entity_root)
+      {
+        $form.removeClass ("ui-helper-hidden");
+        if ($inline.data ("popup"))
+          {
+            $dialog.empty ().append ($form).dialog ("open");
+          }
+        else
+          {
+            var $iform =
+              $( '<tr><td colspan="100" class="gtw-ui-form-inline">'
+               +   '<div class="gtw-ui-form-inline-container"></div>'
+               + '</td></tr>'
+               );
+            $iform.find      (".gtw-ui-form-inline-container")
+                  .append    ($form)
+                  .append    ('<div class="buttons"></div>')
+                  .resizable ({ handles : "e"});
+            var $buttons = this.element.data ("$buttons")
+            var popup_form_buttons = this.element.data ("popup_form_buttons");
+            for (var i = 0; i< $buttons.length; i++)
+              {
+                var $button  = $buttons.eq (i).clone ();
+                var text     = $button.html ()
+                $iform.find    ("div.buttons").append ($button);
+                $button.data   ("callback", popup_form_buttons [text]);
+                $button.button ().click
+                  ( function (evt)
+                      { evt.preventDefault        ();
+                        evt.stopPropagation       ();
+                        $form.data  ("inline-width", $iform.width () + "px");
+                        if ($(this).data ("callback") (evt, $form, $inline))
+                          {
+                            $iform.remove             ();
+                            $entity_root.show         ();
+                          }
+                      }
+                  );
+              }
+            if ($entity_root === undefined)
+              {
+                var $table = $inline.find (".ui-entities-container");
+                var $last  = $table.find  (".ui-entity-container:last");
+                if ($last.length) $last.after   ($iform);
+                else              $table.append ($iform);
+              }
+            else
+              {
+                $entity_root.after ($iform);
+                $entity_root.hide  ();
+              }
+            $iform.find  (".gtw-ui-form-inline-container")
+                  .width ($form.data ("inline-width") || "auto");
+          }
+        this._setup_completers ($form);
+      }
     , _ui_edit          : function (evt, data)
       {
         var $pid  = $(evt.target).parents (".ui-entity-container")
@@ -613,13 +695,6 @@
         if (! data.copy)
             fo_no = field_no_pat.exec ($pid.attr ("name")) [1];
         return data.self._ui_request_form_for ($pid.val (), data, fo_no);
-      }
-    , _ui_data_as_post_dict : function ($root, prefix, post)
-      {
-        $root.find ("[name^=" + prefix + "]").each (function () {
-          post [this.name] = $(this).val ();
-        });
-        return post;
       }
     , _ui_request_form_for : function (pid, data, no)
       {
@@ -659,24 +734,26 @@
             self._ui_show_form_for ($inline, no, pid);
         return false;
       }
-    , _ui_save_form : function ($inline)
+    , _ui_save_form : function ($inline, $form)
       {
         var $dialog      = this.element.data ("$dialog");
-        var old_data     = $dialog.data ("form-data");
-        var form_save    = $dialog.data ("form-save");
-        var name         = $dialog.find (":input").attr ("name");
+        if (! $form)
+           $form = $dialog.find        (".gtw-ui-popup-form");
+        var old_data     = $form.data ("form-data");
+        var form_save    = $form.data ("form-save");
+        var name         = $form.find (":input").attr ("name");
         var no           = field_no_pat.exec (name) [1];
         var prefix       = $inline.data ("prefix") + "-M" + no;
         var $entity_root = $("#" + prefix);
         var new_entity   = $entity_root.length == 0;
         if (!form_save && old_data)
-            this._ui_set_form_values ($dialog, prefix, old_data);
-        if ($dialog.data ("form-is-new") && !form_save)
+            this._ui_set_form_values ($form, prefix, old_data);
+        if ($form.data ("form-is-new") && !form_save)
           {
             $inline.data ("cur_count", $inline.data ("cur_count") - 1);
           }
         var new_data     = {};
-        $dialog.data ("form-save", false);
+        $form.data  ("form-save", false);
         if (  (new_entity && form_save)
            || this._ui_update_form_values (prefix, old_data, new_data)
            )
@@ -689,7 +766,7 @@
               ( { url      : url
                 , type     : "POST"
                 , data     : this._ui_data_as_post_dict
-                    ($dialog, prefix, post_data)
+                    ($form, prefix, post_data)
                 , dataType : "html"
                 , success  : function (data, textStatus, xmlreq)
                    {
@@ -712,15 +789,21 @@
                                          .addClass ("ui-display-changed");
                            }
                          $entity_root.data  ("form-data", post_data);
-                         self._ui_hide_form ($entity_root);
+                         $form.find (".ui-state-error").remove ();
+                         self._ui_hide_form ($entity_root, $form);
                          /* must be done after the form is hidden */
                          if (new_entity)
                              self._setup_di_entity ($entity_root, $inline);
                        }
                      else
                        {
-                         console.log ("Errors");
-                         $dialog.empty ().append ($data).dialog ("open");
+                         var attrs = ["form-is-new", "form-prefix"];
+                         $data.addClass ("gtw-ui-popup-form");
+                         $data.data ("form-data", post_data);
+                         for (var i = 0; i < attrs.length; i++)
+                             $data.data (attrs [i], $form.data (attrs [i]));
+                         self._ui_display_form
+                             ($dialog, $data, $inline, $entity_root);
                        }
                    }
                  }
@@ -729,7 +812,7 @@
         else
           {
             $entity_root.data  ("form-data", new_data);
-            this._ui_hide_form ($entity_root);
+            this._ui_hide_form ($entity_root, $form);
           }
       }
     , _ui_set_form_values : function ($root, prefix, data)
@@ -762,13 +845,12 @@
          if (! $entity_root || ! $entity_root.hasClass ("mom-populated"))
            {
              var  temp        = this._copy_form_inner ($inline, no);
-             $dialog.data ("form-is-new", no === undefined);
              $form            = temp [0];
+             $form.data ("form-is-new", no === undefined);
              no               = temp [1];
              prefix           = $inline.data ("prefix") + "-M" + no;
              this._clear_internal_fields ($form, add_or_copy);
              $form.addClass ("gtw-ui-popup-form");
-             $dialog.append ($form);
              if (pid)
                {
                  var url  = $inline.data ("base_url")
@@ -782,40 +864,41 @@
                        {
                          var data = {};
                          self._ui_convert_to_flat_data (prefix, hdata, data);
-                         self._ui_set_form_values  ($dialog, prefix, data);
-                         $dialog.data   ("form-data",       data);
-                         $dialog.data   ("form-prefix",     prefix);
+                         self._ui_set_form_values  ($form, prefix, data);
+                         $form.data     ("form-data",       data);
+                         $form.data     ("form-prefix",     prefix);
                          $dialog.dialog ("option", "title", data.puf_title);
-                         $dialog.dialog ("open");
+                         self._ui_display_form
+                             ($dialog, $form, $inline, $entity_root);
                        }
                      }
                    );
+               }
+             else
+               {
+                 this._ui_display_form ($dialog, $form, $inline, $entity_root);
                }
            }
          else
            {
              var data = $entity_root.data ("form-data");
-             $dialog.data   ("form-is-new", false);
-             $dialog.data   ("form-prefix", prefix);
-             $dialog.data   ("form-data",   data);
+             $form    = $entity_root.find (".gtw-ui-popup-form");
+             $form.data                   ("form-is-new", false);
+             $form.data                   ("form-prefix", prefix);
+             $form.data                   ("form-data",   data);
              if (data)
                  $dialog.dialog ("option", "title", data.puf_title);
-             $form = $entity_root.find        (".gtw-ui-popup-form")
-                                 .appendTo    ($dialog)
-                                 .removeClass ("ui-helper-hidden");
+             this._ui_display_form
+                 ($dialog, $form, $inline, $entity_root);
            }
-         $dialog.dialog         ("open");
-         this._setup_completers ($form);
       }
-    , _ui_hide_form          : function ($entity_root)
+    , _ui_hide_form          : function ($entity_root, $form)
       {
-        var $dialog      = this.element.data ("$dialog");
         var $container   = $entity_root.addClass ("mom-populated")
                                        .find     (".ui-display:first");
         $container.find  (".mom-link, .mom-object").remove ();
-        $dialog.find     (".gtw-ui-popup-form")
-               .addClass ("ui-helper-hidden")
-               .appendTo ($container);
+        $form.addClass ("ui-helper-hidden")
+             .appendTo ($container);
       }
     , _ui_update_form_values : function (prefix, data, new_data)
       {
@@ -994,4 +1077,5 @@
           }
         }
       )
+  $.fn.reverse = [].reverse;
 })(jQuery);

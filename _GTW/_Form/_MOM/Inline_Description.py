@@ -70,6 +70,7 @@
 #                     `table` set
 #    28-May-2010 (MG) Render mode names changed
 #    28-May-2010 (MG) Ise new `GTW.Form.MOM.Field_List` for `list_display`
+#    24-Jun-2010 (MG) `javascript_options` added to `Link_Inline_Description`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,7 @@ import _GTW.Media
 import _GTW._Form.Render_Mode_Description
 import _GTW._Form._MOM.Attribute_Inline
 import _GTW.jQuery
+import  operator
 
 class _GTW_Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
@@ -184,18 +186,21 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
             , link_list_display_row = "html/rform.jnj, link_list_display_row"
             )
         )
-    legend           = None
-    role_name        = None
-    css_class        = "inline-link"
+    legend             = None
+    role_name          = None
+    css_class          = "inline-link"
 
-    max_count        = 256 ### seems to be more than enough for a web-app
-                           ### and sys.maxint on a 64 bit is machine way to much
-    min_count        = 0
-    min_empty        = 0
-    min_required     = 0
+    max_count          = 256 ### seems to be more than enough for a web-app
+                             ### and sys.maxint on a 64 bit is machine way to
+                             ### much
+    min_count          = 0
+    min_empty          = 0
+    min_required       = 0
 
-    field_attrs      = dict ()
-    list_display     = None
+    field_attrs        = dict ()
+    list_display       = None
+    popup              = True
+    javascript_options = dict (popup = operator.attrgetter ("popup"))
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
