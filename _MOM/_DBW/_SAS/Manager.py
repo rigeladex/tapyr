@@ -61,6 +61,7 @@
 #                     specific `attr_cls` instead of modifying the essential
 #                     one
 #    23-Jun-2010 (CT) Import for `_MOM._DBW._SAS.DBS` added
+#    24-Jun-2010 (CT) Put methods into alphabetical order
 #    ««revision-date»»···
 #--
 
@@ -134,39 +135,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
 
     metadata         = schema.MetaData () ### XXX
 
-    def _attr_dicts (cls, e_type, bases) :
-        attr_dict  = e_type._Attributes._attr_dict
-        db_attrs   = {}
-        role_attrs = {}
-        root       = bases and bases [0]
-        if e_type is getattr (e_type, "relevant_root", e_type):
-            inherited_attrs = {}
-        else :
-            inherited_attrs = root._Attributes._attr_dict
-        for name, attr_kind in attr_dict.iteritems () :
-            if name not in inherited_attrs :
-                attr = attr_kind.attr
-                db_attr_p = attr_kind.save_to_db
-                if db_attr_p :
-                    Pickle_Kind = getattr (attr.Pickler, "Pickle_Mixin", None)
-                    if isinstance (attr, MOM.Attr._A_Object_) :
-                        ### The default way of `pickling` object references
-                        ### would be storing the epk which is not perfect for
-                        ### a database. Therefore we replace the
-                        ### `set/get_pickle_cargo` functions
-                        Pickle_Kind = SAS_A_Object_Kind_Mixin
-                    if Pickle_Kind :
-                        cls._setup_attr_kind_mixin (attr_kind, Pickle_Kind)
-                if db_attr_p or isinstance (attr_kind, MOM.Attr.Query) :
-                    db_attrs [name] = attr_kind
-                elif isinstance \
-                         ( attr_kind
-                         , (MOM.Attr.Cached_Role, MOM.Attr.Cached_Role_Set)
-                         ) :
-                    role_attrs [name] = attr_kind
-        return db_attrs, role_attrs
-    # end def _attr_dicts
-
     def create_database (cls, db_uri, scope) :
         if db_uri and not db_uri.startswith ("sqlite://") :
             ### we need to issue a create database command
@@ -180,27 +148,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         cls.metadata.create_all      (engine)
         return cls._create_session   (engine, scope)
     # end def create_database
-
-    def _create_postgres_connection ( cls, db_uri) :
-        import psycopg2.extensions as PE
-        engine = cls._create_engine (db_uri + "/postgres")
-        conn   = engine.connect     ()
-        conn.connection.connection.set_isolation_level \
-            (PE.ISOLATION_LEVEL_AUTOCOMMIT)
-        return conn, engine
-    # end def _create_postgres_db
-
-    def _create_postgres_db ( cls, db_uri, db_name
-                            , encoding = "utf8"
-                            , template = "template0"
-                            ) :
-        conn, engine = cls._create_postgres_connection (db_uri)
-        conn.execute \
-            ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
-            % (db_name, encoding, template)
-            )
-        conn.close   ()
-    # end def _create_postgres_db
 
     def connect_database (cls, db_uri, scope) :
         return cls._create_session (cls._create_engine (db_uri), scope)
@@ -228,58 +175,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 except sqlalchemy.exc.OperationalError :
                     pass
     # end def delete_database
-
-    def _create_engine (cls, db_uri) :
-        return SQL_Engine.create_engine (db_uri or "sqlite:///:memory:")
-    # end def _create_engine
-
-    def _create_session (self, engine, scope) :
-        return MOM.DBW.SAS.Session (scope, engine)
-    # end def _create_session
-
-    def _create_pid_table (cls, metadata) :
-        cls.sa_pid_sequence = schema.Sequence ("pid_seq")
-        cls.sa_pid          = Table = schema.Table \
-            ( "pids", metadata
-            , schema.Column
-                  ( "pid"
-                  , types.Integer
-                  , cls.sa_pid_sequence
-                  , primary_key = True
-                  )
-            , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
-            )
-    # end def _create_pid_table
-
-    def _create_scope_table (cls, metadata) :
-        cls.sa_scope = Table = schema.Table \
-            ( "scope_metadata", metadata
-            , schema.Column
-                ("root_pid",       types.Integer, primary_key = True)
-            , schema.Column
-                ("scope_guid",     types.String (length = 64))
-            , schema.Column
-                ("root_type_name", Type_Name_Type)
-            )
-        MOM.DBW.SAS.Query (Table, Table)
-    # end def _create_scope_table
-
-    def _create_SCM_table (cls, metadata) :
-        MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
-            ( "change_history", metadata
-            , schema.Column ("cid",       types.Integer,     primary_key = True)
-            , schema.Column ("Type_Name", Type_Name_Type,    nullable    = True)
-            , schema.Column ("pid",       types.Integer,     nullable    = True)
-            , schema.Column ("data",      types.LargeBinary, nullable    = True)
-            , schema.Column
-                  ( "parent_cid"
-                  , types.Integer
-                  , schema.ForeignKey ("change_history.cid")
-                  )
-            )
-        MOM.DBW.SAS.Query \
-            (MOM.SCM.Change._Change_, Table, parent = "parent_cid")
-    # end def _create_SCM_table
 
     def etype_decorator (cls, e_type) :
         if getattr (e_type, "relevant_root", None) :
@@ -329,12 +224,36 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return e_type
     # end def etype_decorator
 
+    def load_root (cls, session, scope) :
+        result     = session.connection.execute \
+            (cls.sa_scope.select ().limit (1))
+        si        = result.fetchone ()
+        result.close ()
+        scope.guid = si.scope_guid
+        if si.root_type_name :
+            return getattr \
+                (scope, si.root_type_name).query (pid = si.root_pid).one ()
+    # end def load_root
+
     def prepare (cls) :
         cls._create_pid_table             (cls.metadata)
         cls._create_scope_table           (cls.metadata)
         cls._create_SCM_table             (cls.metadata)
         cls.role_cacher = TFL.defaultdict (set)
     # end def prepare
+
+    def register_scope (cls, session,  scope) :
+        kw = dict (scope_guid = scope.guid)
+        if scope.root :
+            kw ["root_pid"]       = scope.root.pid
+            kw ["root_type_name"] = scope.root.type_name
+        session.execute (cls.sa_scope.insert ().values (** kw))
+        session.commit  ()
+    # end def register_scope
+
+    def Reset_Metadata (cls) :
+        cls.__class__.metadata = schema.MetaData ()
+    # end def Reset_Metadata
 
     def update_etype (cls, e_type, app_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
@@ -355,29 +274,148 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 sa_table.append_constraint (unique)
     # end def update_etype
 
-    def load_root (cls, session, scope) :
-        result     = session.connection.execute \
-            (cls.sa_scope.select ().limit (1))
-        si        = result.fetchone ()
-        result.close ()
-        scope.guid = si.scope_guid
-        if si.root_type_name :
-            return getattr \
-                (scope, si.root_type_name).query (pid = si.root_pid).one ()
-    # end def load_root
+    def _attr_dicts (cls, e_type, bases) :
+        attr_dict  = e_type._Attributes._attr_dict
+        db_attrs   = {}
+        role_attrs = {}
+        root       = bases and bases [0]
+        if e_type is getattr (e_type, "relevant_root", e_type):
+            inherited_attrs = {}
+        else :
+            inherited_attrs = root._Attributes._attr_dict
+        for name, attr_kind in attr_dict.iteritems () :
+            if name not in inherited_attrs :
+                attr = attr_kind.attr
+                db_attr_p = attr_kind.save_to_db
+                if db_attr_p :
+                    Pickle_Kind = getattr (attr.Pickler, "Pickle_Mixin", None)
+                    if isinstance (attr, MOM.Attr._A_Object_) :
+                        ### The default way of `pickling` object references
+                        ### would be storing the epk which is not perfect for
+                        ### a database. Therefore we replace the
+                        ### `set/get_pickle_cargo` functions
+                        Pickle_Kind = SAS_A_Object_Kind_Mixin
+                    if Pickle_Kind :
+                        cls._setup_attr_kind_mixin (attr_kind, Pickle_Kind)
+                if db_attr_p or isinstance (attr_kind, MOM.Attr.Query) :
+                    db_attrs [name] = attr_kind
+                elif isinstance \
+                         ( attr_kind
+                         , (MOM.Attr.Cached_Role, MOM.Attr.Cached_Role_Set)
+                         ) :
+                    role_attrs [name] = attr_kind
+        return db_attrs, role_attrs
+    # end def _attr_dicts
 
-    def register_scope (cls, session,  scope) :
-        kw = dict (scope_guid = scope.guid)
-        if scope.root :
-            kw ["root_pid"]       = scope.root.pid
-            kw ["root_type_name"] = scope.root.type_name
-        session.execute (cls.sa_scope.insert ().values (** kw))
-        session.commit  ()
-    # end def register_scope
+    def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
+        if isinstance (cr, MOM.Link_Cacher) :
+            singleton = isinstance (cr, MOM.Link_Cacher_1)
+            r_attr    = assoc_et._sa_table.c \
+                [getattr (assoc_et, cr.role_name).attr._sa_col_name]
+            def computed_crn (self) :
+                session = self.home_scope.ems.session
+                query   = MOM.DBW.SAS.Q_Result \
+                    ( assoc_et, session
+                    , assoc_et._SAS.select.where (r_attr == self.pid)
+                    )
+                if singleton :
+                    return query.first ()
+                return query
+            # end def computed_crn
+        else :
+            assoc_sa    = assoc_et._sa_table
+            q_attr      = assoc_sa.c \
+                [getattr (assoc_et, cr.role_name      ).attr._sa_col_name]
+            f_attr      = assoc_sa.c \
+                [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
+            singleton   = isinstance (cr, MOM.Role_Cacher_1)
+            result_et   = app_type [attr_kind.Class.type_name]
+            def computed_crn (self) :
+                session = self.home_scope.ems.session
+                links   = sql.select ((q_attr,)).where (f_attr == self.pid)
+                query   = MOM.DBW.SAS.Q_Result \
+                    ( result_et, session
+                    , result_et._SAS.select.where (result_et._SAQ.pid.in_(links))
+                    )
+                if singleton :
+                    return query.first ()
+                return query
+            # end def computed_crn
+        attr_kind.attr.computed = computed_crn
+    # end def _cached_role
 
-    def Reset_Metadata (cls) :
-        cls.__class__.metadata = schema.MetaData ()
-    # end def Reset_Metadata
+    def _create_engine (cls, db_uri) :
+        return SQL_Engine.create_engine (db_uri or "sqlite:///:memory:")
+    # end def _create_engine
+
+    def _create_pid_table (cls, metadata) :
+        cls.sa_pid_sequence = schema.Sequence ("pid_seq")
+        cls.sa_pid          = Table = schema.Table \
+            ( "pids", metadata
+            , schema.Column
+                  ( "pid"
+                  , types.Integer
+                  , cls.sa_pid_sequence
+                  , primary_key = True
+                  )
+            , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
+            )
+    # end def _create_pid_table
+
+    def _create_postgres_connection ( cls, db_uri) :
+        import psycopg2.extensions as PE
+        engine = cls._create_engine (db_uri + "/postgres")
+        conn   = engine.connect     ()
+        conn.connection.connection.set_isolation_level \
+            (PE.ISOLATION_LEVEL_AUTOCOMMIT)
+        return conn, engine
+    # end def _create_postgres_db
+
+    def _create_postgres_db ( cls, db_uri, db_name
+                            , encoding = "utf8"
+                            , template = "template0"
+                            ) :
+        conn, engine = cls._create_postgres_connection (db_uri)
+        conn.execute \
+            ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
+            % (db_name, encoding, template)
+            )
+        conn.close   ()
+    # end def _create_postgres_db
+
+    def _create_SCM_table (cls, metadata) :
+        MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
+            ( "change_history", metadata
+            , schema.Column ("cid",       types.Integer,     primary_key = True)
+            , schema.Column ("Type_Name", Type_Name_Type,    nullable    = True)
+            , schema.Column ("pid",       types.Integer,     nullable    = True)
+            , schema.Column ("data",      types.LargeBinary, nullable    = True)
+            , schema.Column
+                  ( "parent_cid"
+                  , types.Integer
+                  , schema.ForeignKey ("change_history.cid")
+                  )
+            )
+        MOM.DBW.SAS.Query \
+            (MOM.SCM.Change._Change_, Table, parent = "parent_cid")
+    # end def _create_SCM_table
+
+    def _create_scope_table (cls, metadata) :
+        cls.sa_scope = Table = schema.Table \
+            ( "scope_metadata", metadata
+            , schema.Column
+                ("root_pid",       types.Integer, primary_key = True)
+            , schema.Column
+                ("scope_guid",     types.String (length = 64))
+            , schema.Column
+                ("root_type_name", Type_Name_Type)
+            )
+        MOM.DBW.SAS.Query (Table, Table)
+    # end def _create_scope_table
+
+    def _create_session (self, engine, scope) :
+        return MOM.DBW.SAS.Session (scope, engine)
+    # end def _create_session
 
     def _setup_attr_kind_mixin (cls, kind, Mixin) :
         old_cls = kind.__class__
@@ -449,43 +487,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 result.append (col)
         return result
     # end def _setup_columns
-
-    def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
-        if isinstance (cr, MOM.Link_Cacher) :
-            singleton = isinstance (cr, MOM.Link_Cacher_1)
-            r_attr    = assoc_et._sa_table.c \
-                [getattr (assoc_et, cr.role_name).attr._sa_col_name]
-            def computed_crn (self) :
-                session = self.home_scope.ems.session
-                query   = MOM.DBW.SAS.Q_Result \
-                    ( assoc_et, session
-                    , assoc_et._SAS.select.where (r_attr == self.pid)
-                    )
-                if singleton :
-                    return query.first ()
-                return query
-            # end def computed_crn
-        else :
-            assoc_sa    = assoc_et._sa_table
-            q_attr      = assoc_sa.c \
-                [getattr (assoc_et, cr.role_name      ).attr._sa_col_name]
-            f_attr      = assoc_sa.c \
-                [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
-            singleton   = isinstance (cr, MOM.Role_Cacher_1)
-            result_et   = app_type [attr_kind.Class.type_name]
-            def computed_crn (self) :
-                session = self.home_scope.ems.session
-                links   = sql.select ((q_attr,)).where (f_attr == self.pid)
-                query   = MOM.DBW.SAS.Q_Result \
-                    ( result_et, session
-                    , result_et._SAS.select.where (result_et._SAQ.pid.in_(links))
-                    )
-                if singleton :
-                    return query.first ()
-                return query
-            # end def computed_crn
-        attr_kind.attr.computed = computed_crn
-    # end def _cached_role
 
 # end class _M_SAS_Manager_
 
