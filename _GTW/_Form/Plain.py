@@ -40,6 +40,7 @@ from   _TFL               import TFL
 import _TFL.I18N
 import _TFL._Meta.Object
 import _TFL.defaultdict
+import _TFL.predicate
 
 from   _GTW               import GTW
 import _GTW._Form._Form_
@@ -55,7 +56,7 @@ class M_Plain (GTW.Form._Form_.__class__) :
             ) :
         name         = name_or_creator
         creator      = None
-        if callable (name_or_creator) :
+        if TFL.callable (name_or_creator) :
             name     = name_or_creator.__name__
             creator  = name_or_creator
         field_groups = []
