@@ -43,11 +43,11 @@ class HPS (MOM.DBW._DBS_) :
     scheme = "hps"
 
     @classmethod
-    def Url (cls, value, ANS) :
-        result = super (HPS, cls).Url (value, ANS)
+    def Url (cls, value, ANS, default_path = None) :
+        result = super (HPS, cls).Url (value, ANS, default_path)
         if result.authority :
             raise ValueError ("HPS url cannot specify authority: %s" % value)
-        result._value.path = TFL.Filename \
+        result._parsed.path = TFL.Filename \
             ( result.path
             , ANS.Version.db_version.db_extension
             , absolute = True

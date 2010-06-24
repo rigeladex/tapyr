@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    23-Jun-2010 (CT) Creation
+#    24-Jun-2010 (CT) `new` added
+#    24-Jun-2010 (CT) Optional argument `fs_path` added
 #    ««revision-date»»···
 #--
 
@@ -77,9 +79,24 @@ class Url (TFL.Meta.Object) :
         >>> Url ("hps:")
         Url (authority = '', fragment = '', path = '', query = '', scheme = 'hps')
 
+        >>> u = Url ("hps://")
+        >>> Url.new (u, path = "test.foo")
+        Url (authority = '', fragment = '', path = '/test.foo', query = '', scheme = 'hps')
+        >>> Url.new (u, path = "/test.foo")
+        Url (authority = '', fragment = '', path = '//test.foo', query = '', scheme = 'hps')
+
+        >>> Url.new (u, path = "test.foo", fs_path = True)
+        Url (authority = '', fragment = '', path = 'test.foo', query = '', scheme = 'hps')
+        >>> Url.new (u, path = "/test.foo", fs_path = True)
+        Url (authority = '', fragment = '', path = '/test.foo', query = '', scheme = 'hps')
+
     """
 
+    _format = "%(scheme)s://%(authority)s/%(path)s"
+
     ### Use regexp as given by http://www.ietf.org/rfc/rfc3986.txt
+    ### and http://www.apps.ietf.org/rfc/rfc3986.html
+    ###
     ### (urlparse is broken because it doesn't parse `query` and `fragments`
     ### for unknown schemes)
     _matcher  = Regexp \
@@ -97,17 +114,35 @@ class Url (TFL.Meta.Object) :
     scheme    = property (TFL.Getter._parsed.scheme)
     value     = property (TFL.Getter._value)
 
-    def __init__ (self, value) :
+    def __init__ (self, value, fs_path = False) :
         if self._matcher.match (value) :
             self._value  = value
             attrs        = dict \
                 ( (k, v or "")
                 for (k, v) in self._matcher.groupdict ().iteritems ()
                 )
-            self._parsed = TFL.Record (** attrs)
+            self._parsed = p = TFL.Record (** attrs)
+            if fs_path and p.path.startswith ("/") :
+                p.path = p.path [1:]
         else :
             raise ValueError (value)
     # end def __init__
+
+    @classmethod
+    def new (cls, proto = None, ** kw) :
+        dct = {}
+        if proto is not None :
+            dct.update (proto._parsed._kw)
+        dct.update (kw)
+        result = cls._format % dct
+        q = dct ["query"]
+        if q :
+            result = "%s?%s" % (result, q)
+        f = dct ["fragment"]
+        if f :
+            result = "%s#%s" % (result, f)
+        return cls (result, fs_path = kw.get ("fs_path"))
+    # end def new
 
     def __repr__ (self) :
         return "Url " + str (self._parsed)

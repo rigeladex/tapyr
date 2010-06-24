@@ -32,6 +32,7 @@
 
 from   _MOM                      import MOM
 from   _TFL                      import TFL
+from   _TFL                      import sos
 
 import _MOM._DBW._Manager_
 
@@ -61,7 +62,6 @@ class _DBS_ (TFL.Meta.Object) :
 
     @classmethod
     def delete_database (cls, db_url, manager) :
-        from _TFL import sos
         try :
             sos.unlink (db_url.path)
         except OSError :
@@ -69,11 +69,12 @@ class _DBS_ (TFL.Meta.Object) :
     # end def delete_database
 
     @classmethod
-    def Url (cls, value) :
-        result = TFL.Url (value)
-        if result.path.startswith ("/") :
-            result._value.path = result.path [1:]
+    def Url (cls, value, ANS, default_path = None) :
+        result = TFL.Url (value, fs_path = True)
+        if not result.path and default_path is not None :
+            result = TFL.Url.new (result, path = default_path, fs_path = True)
         result.scheme_auth = "://".join ((result.scheme, result.authority))
+        result.create = False
         return result
     # end def Url
 
