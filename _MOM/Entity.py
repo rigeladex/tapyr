@@ -189,6 +189,7 @@ class Entity (TFL.Meta.Object) :
     is_partial            = True
     is_used               = True
     rank                  = 0
+    relevant_root         = None   ### Set by meta machinery
     show_package_prefix   = False
     ui_display_sep        = ", "
     x_locked              = False
@@ -726,7 +727,6 @@ class Id_Entity (Entity) :
     max_count             = 0
     record_changes        = True
     refuse_links          = set ()
-    relevant_root         = None   ### Set by meta machinery
     save_to_db            = True
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
     tutorial              = None

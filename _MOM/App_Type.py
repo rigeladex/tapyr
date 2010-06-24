@@ -122,10 +122,7 @@ class _App_Type_D_ (_App_Type_) :
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
-        return tuple \
-            ( T.db_sig for T in self._T_Extension
-            if getattr (T, "relevant_root", None)
-            )
+        return tuple (T.db_sig for T in self._T_Extension if T.relevant_root)
     # end def db_sig
 
     @property
