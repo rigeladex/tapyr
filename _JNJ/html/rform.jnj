@@ -34,6 +34,8 @@
 ##    27-May-2010 (MG) `inline_table` error handling added
 ##    28-May-2010 (MG) `link_ui_display_row` guard against empty instance added
 ##    16-Jun-2010 (MG) `link_display` changed to make the whole row clickable
+##    24-Jun-2010 (MG) Button order and text for the popup form are now
+##                     specified in the template
 ##    ««revision-date»»···
 ##--
 #}
@@ -379,7 +381,14 @@
    {{ GTW.render_fofi_widget
         (fo, "aid_object", fo, render_mode = render_mode)
    }}
-    <div id="form-dialog"></div>
+    <div id="form-dialog">
+      <div id="popup-form-buttons">
+        <!-- The order of the buttons has to be specified from right to left -->
+        <span id="popup-form-button-reset">{{ GTW._T ("Reset") }}</span>
+        <span id="popup-form-button-cancel">{{ GTW._T ("Cancel") }}</span>
+        <span id="popup-form-button-save">{{ GTW._T ("Save") }}</span>
+      </div>
+    </div>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 {#- __END__ jinja template: JNJ/html.rform.jnj -#}

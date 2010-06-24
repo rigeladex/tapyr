@@ -34,7 +34,9 @@
 **                     continued
 **    20-May-2010 (MG) UI-Display style finished
 **    28-May-2010 (MG) New form creation bug fixes
-      ««revision-date»»···
+**    24-Jun-2010 (MG) Button order and text for popup form are now specified
+**                     in the template
+**    ««revision-date»»···
 **--
 */
 
@@ -124,7 +126,9 @@
     { _create : function ()
       {
         var i;
-        var inlines    = this.options.inlines;
+        var popup_form_buttons = {};
+        var inlines            = this.options.inlines;
+        var self               = this;
         for (i = 0; i < inlines.length; i++)
           {
             if (inlines [i].type == "Link_Inline_UI_Display")
@@ -134,7 +138,29 @@
           }
         this._setup_completers (this.element);
         this.element.find (":submit").bind ("click", this, this._form_submit);
-        var $dialog = $("#form-dialog").dialog ({ autoOpen : false});
+        var $dialog   = $("#form-dialog").dialog ({ autoOpen : false});
+        var $buttons  = $dialog.find ("#popup-form-buttons").children ();
+        var callbacks =
+            { "save"   : function (evt)
+                       { $dialog.data   ("form-save", true).dialog ("close"); }
+            , "cancel" : function (evt)
+                       { $dialog.dialog ("close"); }
+            , "reset"  : function (evt)
+                       {
+                         var prefix = $dialog.data ("form-prefix");
+                         var data   = $dialog.data ("form-data");
+                         if (data)
+                           self._ui_set_form_values ($dialog, prefix, data)
+                       }
+            };
+        for (i = 0; i < $buttons.length; i++)
+          {
+            var $button = $buttons.eq (i)
+            var text = $button.html ()
+            var key  = $button.attr ("id").replace ("popup-form-button-", "");
+            popup_form_buttons [text] = callbacks [key];
+          }
+        this.element.data ("popup_form_buttons", popup_form_buttons);
         this.element.data ("$dialog", $dialog);
       }
     , _add_button : function ($element, button, prepend)
@@ -727,19 +753,7 @@
            ( "option"
            , { title        : "New"
              , width        : "auto"
-             , "buttons"    :
-                 { "Save"   : function (evt)
-                     { $dialog.data   ("form-save", true).dialog ("close"); }
-                 , "Cancel" : function (evt)
-                     { $dialog.dialog ("close"); }
-                 , "Reset" : function (evt)
-                     {
-                       var prefix = $dialog.data ("form-prefix");
-                       var data   = $dialog.data ("form-data");
-                       if (data)
-                         self._ui_set_form_values ($dialog, prefix, data)
-                     }
-                 }
+             , "buttons"    : this.element.data ("popup_form_buttons")
              }
            ).unbind ("dialogbeforeclose")
             .bind   ("dialogbeforeclose", function (evt, ui) {
