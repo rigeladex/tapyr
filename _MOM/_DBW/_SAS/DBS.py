@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Jun-2010 (CT) Creation
+#    24-Jun-2010 (CT) `pid` related methods added
 #    ««revision-date»»···
 #--
 
@@ -36,8 +37,35 @@ from   _TFL                      import TFL
 import _MOM._DBW._DBS_
 
 import contextlib
+import sqlalchemy
 
-class MySQL (MOM.DBW._DBS_) :
+class _NFB_ (MOM.DBW._DBS_) :
+    """Base class for non-file based databases."""
+
+    @classmethod
+    def commit_pid (cls, pm) :
+        pm.transaction.commit   ()
+        pm.connection.close     ()
+        del pm.connection
+    # end def commit_pid
+
+    @classmethod
+    def rollback_pid (cls, pm) :
+        pm.transaction.rollback ()
+        pm.connection.close     ()
+        del pm.connection
+    # end def rollback_pid
+
+    @classmethod
+    def Url (cls, value, ANS, default_path = None) :
+        if default_path :
+            default_path = TFL.Filename (default_path).base
+        return super (_NFB_, cls).Url (value, ANS, default_path)
+    # end def Url
+
+# end class _NFB_
+
+class MySQL (_NFB_) :
     """DB-specific functionality for MySQL."""
 
     scheme = "mysql"
@@ -59,7 +87,7 @@ class MySQL (MOM.DBW._DBS_) :
 
 # end class MySQL
 
-class Postgresql (MOM.DBW._DBS_) :
+class Postgresql (_NFB_) :
     """DB-specific functionality for Postgresql."""
 
     scheme = "postgresql"
@@ -98,12 +126,28 @@ class Postgresql (MOM.DBW._DBS_) :
                 pass
     # end def delete_database
 
+    @classmethod
+    def reserve_pid (cls, connection, pid) :
+        connection.execute \
+            ("ALTER SEQUENCE pid_seq RESTART WITH %d" % (pid + 1, ))
+    # end def reserve_pid
+
 # end class Postgresql
 
 class Sqlite (MOM.DBW._DBS_) :
     """DB-specific functionality for Sqlite ."""
 
     scheme = "sqlite"
+
+    @classmethod
+    def commit_pid (cls, pm) :
+        pass
+    # end def commit_pid
+
+    @classmethod
+    def rollback_pid (cls, pm) :
+        pass
+    # end def rollback_pid
 
 # end class Sqlite
 

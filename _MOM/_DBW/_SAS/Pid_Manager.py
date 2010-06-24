@@ -30,6 +30,7 @@
 #    12-May-2010 (MG) Support for PostgreSQL sequences added
 #    17-May-2010 (CT) `reserve` changed to `insert` for postgresql, too
 #    17-May-2010 (MG) `new_context` replaced by `context`
+#    24-Jun-2010 (CT) `commit`, `reserve`, and `rollback` factored to `dbs`
 #    ««revision-date»»···
 #--
 
@@ -42,23 +43,18 @@ import _MOM._DBW.Pid_Manager
 class Pid_Manager (MOM.DBW.Pid_Manager) :
     """SAS specific manager for permanent ids."""
 
-    def __init__ (self, ems, db_uri) :
-        self.__super.__init__ (ems, db_uri)
-        db_uri            = db_uri or "sqlite://"
-        self.is_postgres  = db_uri.startswith ("postgresql://")
-        if db_uri.startswith ("sqlite://") :
-            self.commit   = self.rollback = lambda : None
-        sa_table          = self.ems.DBW.sa_pid
-        self.insert       = sa_table.insert ()
-        self.select       = sa_table.select ()
-        self.pid_col      = sa_table.c.pid
-        self.tn_col       = sa_table.c.Type_Name
+    def __init__ (self, ems, db_url) :
+        self.__super.__init__ (ems, db_url)
+        sa_table     = self.ems.DBW.sa_pid
+        self.insert  = sa_table.insert ()
+        self.select  = sa_table.select ()
+        self.pid_col = sa_table.c.pid
+        self.tn_col  = sa_table.c.Type_Name
+        self.dbs     = self.ems.DBW.DBS_map [db_url.scheme]
     # end def __init__
 
     def commit (self) :
-        self.transaction.commit     ()
-        self.connection.close       ()
-        del self.connection
+        self.dbs.commit_pid (self)
     # end def commit
 
     @TFL.Meta.Once_Property
@@ -107,9 +103,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def query
 
     def reserve (self, entity, pid, commit = True) :
-        if self.is_postgres :
-            self.connection.execute \
-                ("ALTER SEQUENCE pid_seq RESTART WITH %d" % (pid + 1, ))
+        self.dbs.reserve_pid (self.connection, pid)
         Type_Name = None
         if entity :
             Type_Name  = entity.type_name
@@ -123,9 +117,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
 
     def rollback (self) :
         if self.transaction :
-            self.transaction.rollback ()
-            self.connection.close     ()
-            del self.connection
+            self.dbs.rollback_pid (self)
     # end def rollback
 
 # end class Pid_Manager

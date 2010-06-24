@@ -503,6 +503,8 @@ BMT._Export ("*", "Version")
 
 NL = chr (10)
 
+### «text»
+
 dt_form = \
 """
 How to define and use essential object models
@@ -860,9 +862,9 @@ Scope
 A :class:`scope<_MOM.Scope.Scope>` manages the instances of essential
 object and link types.
 
-Specifying `None` as `db_uri` will create an in memory database::
+Specifying `None` as `db_url` will create an in memory database::
 
-    >>> scope = MOM.Scope.new (apt, None)
+    >>> scope = MOM.Scope.new (apt, %(db_scheme)s)
 
 For each :attr:`~_MOM.Entity.PNS` defining essential
 classes, the `scope` provides an object holding
@@ -1535,7 +1537,7 @@ Scope queries
 Replaying changes
 -----------------
 
-    >>> scop2 = MOM.Scope.new (apt, None)
+    >>> scop2 = MOM.Scope.new (apt, %(db_scheme)s)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (16, 0)
     >>> for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
@@ -1559,10 +1561,10 @@ Replaying changes
     >>> t3.destroy ()
     >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
     ...     print diff
-    (('BMT.Person_owns_Trap', (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap')), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Person_sets_Trap_at_Location', (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')", 'BMT.Rodent_in_Trap')), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Person_owns_Trap', (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Person_sets_Trap_at_Location', (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')", 'BMT.Rodent_in_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
     >>> scope.user_equal (scop2)
     False
 
@@ -1570,7 +1572,7 @@ Saving and re-loading changes from a database
 ----------------------------------------------
 
     >>> db_path   = %(db_path)s
-    >>> db_uri    = %(db_uri)s
+    >>> db_url    = "/".join ((%(db_scheme)s, %(db_path)s))
     >>> db_path_x = db_path + ".X"
     >>> if sos.path.exists (db_path) :
     ...     sos.remove (db_path)
@@ -1579,7 +1581,7 @@ Saving and re-loading changes from a database
 
     >>> scope.MOM.Id_Entity.count_transitive
     12
-    >>> scop3 = scope.copy (apt, db_uri)
+    >>> scop3 = scope.copy (apt, db_url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
     (12, 12)
     >>> sorted (scop3.user_diff (scope).iteritems ())
@@ -1588,7 +1590,7 @@ Saving and re-loading changes from a database
     True
     >>> scop3.destroy ()
 
-    >>> scop4 = MOM.Scope.load (apt, db_uri)
+    >>> scop4 = MOM.Scope.load (apt, db_url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop4))
     (12, 12)
     >>> sorted (scope.user_diff (scop4).iteritems ())
@@ -1606,7 +1608,7 @@ Migrating all entities and the complete change history
     12
     >>> scope.query_changes ().count ()
     50
-    >>> scop5 = scope.migrate (apt, None)
+    >>> scop5 = scope.migrate (apt, %(db_scheme)s)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop5))
     (12, 12)
     >>> tuple (s.query_changes ().count () for s in (scope, scop5))
@@ -1742,12 +1744,10 @@ Changing a composite primary attribute
 
 """
 
-db_uri = "'/tmp/bmt_test.bmt'"
-
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"
     , import_EMS = "from _MOM._EMS.Hash         import Manager"
-    , db_path    = db_uri
-    , db_uri     = db_uri
+    , db_path    = "'/tmp/bmt_test.bmt'"
+    , db_scheme  = "'hps://'"
     )
 ### __END__ MOM.__doc__

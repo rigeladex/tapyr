@@ -104,8 +104,8 @@ class Manager (MOM.EMS._Manager_) :
     max_cid   = property (TFL.Getter.cm.max_cid)
     max_pid   = property (TFL.Getter.pm.max_pid)
 
-    def __init__ (self, scope, db_uri) :
-        self.__super.__init__ (scope, db_uri)
+    def __init__ (self, scope, db_url) :
+        self.__super.__init__ (scope, db_url)
         self._counts  = TFL.defaultdict (int)
         self._r_map   = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self._tables  = TFL.defaultdict (dict)

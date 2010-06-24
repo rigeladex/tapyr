@@ -84,10 +84,10 @@ class Scaffold (MOM.Scaffold) :
         )
 
     Backend_Parameters = dict \
-        ( HPS = (None,                                        None)
-        , SQL = ("'sqlite://'",                               None)
-        , POS = ("'postgresql://regtest:regtest@localhost'", "'regtest'")
-        , MYS = ("'mysql://:@localhost'",                    "'test'")
+        ( HPS = "'hps://'"
+        , SQL = "'sqlite://'"
+        , POS = "'postgresql://regtest:regtest@localhost/regtest'"
+        , MYS = "'mysql://:@localhost/test'"
         )
 
     @classmethod
@@ -122,7 +122,7 @@ class Scaffold (MOM.Scaffold) :
         i = 0
         for b in backends :
             i += 1
-            for n, v in zip (("p", "n"), cls.Backend_Parameters [b]) :
+            for n, v in zip (("p", "n"), (cls.Backend_Parameters [b], None)) :
                 yield ("%s%d" % (n, i), v)
     # end def _backend_spec
 
@@ -132,7 +132,7 @@ Scope = Scaffold.scope
 
 if __name__ == "__main__" :
     TFL.Environment.exec_python_startup ()
-    db_prefix = sos.environ.get ("GTW_DB_prefix", None)
-    db_name   = sos.environ.get ("GTW_DB_name",   None)
-    scope     = Scope (db_prefix, db_name)
+    db_url  = sos.environ.get ("DB_url",  "hps://")
+    db_name = sos.environ.get ("DB_name", None)
+    scope   = Scope (db_url, db_name)
 ### __END__ GTW.__test__.model

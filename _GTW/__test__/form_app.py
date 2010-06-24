@@ -127,7 +127,7 @@ def _create_scope (nav) :
 
 def create_nav (cmd) :
     home_url_root    = "http://localhost:9042"
-    app_type, db_uri = Scaffold.app_type_and_uri ()
+    app_type, db_url = Scaffold.app_type_and_url ()
     site_prefix      = pjoin (home_url_root, "")
     if cmd.werkzeug :
         import _GTW._Werkzeug
@@ -165,7 +165,7 @@ def create_nav (cmd) :
                 )
             )
         , permissive            = False
-        , DB_Uri                = db_uri
+        , DB_Url                = db_url
         , App_Type              = app_type
         , Create_Scope          = _create_scope
         , Break                 = cmd.Break

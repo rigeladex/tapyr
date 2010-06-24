@@ -981,7 +981,7 @@ class Root (_Dir_) :
         if self.Create_Scope :
             return self.Create_Scope (self)
         from _MOM import MOM
-        return MOM.Scope.load (self.top.App_Type, self.top.DB_Uri)
+        return MOM.Scope.load (self.top.App_Type, self.top.DB_Url)
     # end def scope
 
 # end class Root

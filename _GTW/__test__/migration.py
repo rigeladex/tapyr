@@ -102,9 +102,9 @@ _test_code = r"""
     Now, we migrate all objects and the change history to a new scope. All
     entities, changes, cids, and pids should be identical::
 
-    >>> db_uri = "/tmp/gtw_test.gtw"
-    >>> apt, uri = Scaffold.app_type_and_uri (None, db_uri)
-    >>> scop2 = scope.migrate (apt, uri)
+    >>> db_url = "hps:////tmp/gtw_test.gtw"
+    >>> apt, url = Scaffold.app_type_and_url (db_url)
+    >>> scop2 = scope.migrate (apt, url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (29, 29)
     >>> sorted (scope.user_diff (scop2).iteritems ())
@@ -118,12 +118,12 @@ _test_code = r"""
     >>> len (scop2.SRM.Regatta_Event.query ().first ().regattas)
     2
 
-    After saving and restoring from `db_uri`, all entities, changes, cids,
+    After saving and restoring from `db_url`, all entities, changes, cids,
     and pids should still be identical::
 
     >>> scop2.destroy ()
 
-    >>> scop3 = MOM.Scope.load (apt, db_uri)
+    >>> scop3 = MOM.Scope.load (apt, db_url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
     (29, 29)
     >>> sorted (scope.user_diff (scop3).iteritems ())
@@ -141,11 +141,11 @@ _test_code = r"""
     into that app-type/backend. Again, all entities, changes, cids,
     and pids should still be identical::
 
-    >>> apt, db_uri = scope.app_type, scope.db_uri
+    >>> apt, db_url = scope.app_type, scope.db_url
     >>> scope.destroy ()
-    >>> if db_uri :
-    ...    apt.delete_database (db_uri)
-    >>> scop4 = scop3.migrate (apt, db_uri)
+    >>> if db_url :
+    ...    apt.delete_database (db_url)
+    >>> scop4 = scop3.migrate (apt, db_url)
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
     (29, 29)

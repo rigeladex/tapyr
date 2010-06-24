@@ -60,7 +60,7 @@ def get (url) :
     """Return (`EMS`, `DBW`) for `scheme` of `url`."""
     import _MOM._DBW
     if ":" not in url :
-        raise ValueError (url)
+        raise ValueError ("`%s` doesn't contain a scheme" % url)
     scheme = url.split (":") [0]
     e, d   = Map [scheme]
     EMS    = MOM.EMS._Import_Module (e).Manager

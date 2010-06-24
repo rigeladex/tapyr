@@ -56,32 +56,32 @@ import _TFL.Filename
 class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class for MOM.DBW.HPS.Manager"""
 
-    def create_database (cls, db_uri, scope) :
-        return cls._new_manager (db_uri, scope, TFL.Method.create)
+    def create_database (cls, db_url, scope) :
+        return cls._new_manager (db_url, scope, TFL.Method.create)
     # end def create_database
 
-    def connect_database (cls, db_uri, scope) :
-        return cls._new_manager (db_uri, scope, TFL.Method.load_info)
+    def connect_database (cls, db_url, scope) :
+        return cls._new_manager (db_url, scope, TFL.Method.load_info)
     # end def connect_database
 
-    def delete_database (cls, db_uri, db_ext) :
-        uri = cls._db_uri (db_uri, db_ext).name
-        if sos.path.exists (uri) :
+    def delete_database (cls, db_url) :
+        uri = db_url.path
+        try :
             sos.unlink (uri)
+        except OSError :
+            pass
         x_uri = MOM.DBW.HPS.Store.X_Uri (uri).name
-        if sos.path.exists (x_uri) :
+        try :
             sos.rmdir (x_uri, True)
+        except OSError :
+            pass
     # end def delete_database
 
-    def _db_uri (cls, uri, ext) :
-        return TFL.Filename (uri, ext)
-    # end def _db_uri
-
-    def _new_manager (cls, db_uri, scope, store_fct) :
+    def _new_manager (cls, db_url, scope, store_fct) :
         store = None
-        if db_uri is not None :
-            ext   = scope.app_type.ANS.Version.db_version.db_extension
-            store = MOM.DBW.HPS.Store (cls._db_uri (db_uri, ext), scope)
+        uri   = db_url and db_url.path
+        if uri :
+            store = MOM.DBW.HPS.Store (TFL.Filename (uri), scope)
             store_fct (store)
         return cls (store, scope)
     # end def _get_store

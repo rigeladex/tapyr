@@ -70,6 +70,7 @@
 #                     `parent = None`
 #    19-May-2010 (MG) `rollback` clear `attr_changes` added
 #    26-May-2010 (CT) `self.db_errors = []` added to `_init_context`
+#    24-Jun-2010 (CT) Adpated to change of `db_url`
 #    ««revision-date»»···
 #--
 
@@ -161,21 +162,23 @@ class Scope (TFL.Meta.Object) :
     ### Scope creation methods
 
     @classmethod
-    def load (cls, app_type, db_uri, user = None) :
-        with cls._init_context (app_type, db_uri, user) as self :
+    def load (cls, app_type, db_url, user = None) :
+        db_url = app_type.Url (db_url)
+        with cls._init_context (app_type, db_url, user) as self :
             app_type  = self.app_type
-            self.ems  = ems = self.app_type.EMS.connect (self, db_uri)
+            self.ems  = ems = self.app_type.EMS.connect (self, db_url)
             with self._init_root_context () :
                 self._register_root (ems.load_root ())
         return self
     # end def load
 
     @classmethod
-    def new (cls, app_type, db_uri, root_epk = (), user = None) :
-        with cls._init_context (app_type, db_uri, user, root_epk) as self :
+    def new (cls, app_type, db_url, root_epk = (), user = None) :
+        db_url = app_type.Url (db_url)
+        with cls._init_context (app_type, db_url, user, root_epk) as self :
             app_type  = self.app_type
             self.guid = self._new_guid ()
-            self.ems  = ems = app_type.EMS.new (self, db_uri)
+            self.ems  = ems = app_type.EMS.new (self, db_url)
             with self._init_root_context (root_epk) :
                 self._setup_root   (app_type, root_epk)
                 ems.register_scope ()
@@ -184,12 +187,12 @@ class Scope (TFL.Meta.Object) :
 
     @classmethod
     @TFL.Contextmanager
-    def _init_context (cls, app_type, db_uri, user, root_epk = ()) :
+    def _init_context (cls, app_type, db_url, user, root_epk = ()) :
         if isinstance (app_type, (str, unicode)) :
             app_type        = MOM.App_Type.instance (app_type)
         self                = cls.__new__ (cls)
         self.app_type       = app_type
-        self.db_uri         = db_uri
+        self.db_url         = db_url
         self.user           = user
         self.root_epk       = root_epk
         self.bname          = "__".join (str (e) for e in root_epk)
@@ -322,15 +325,16 @@ class Scope (TFL.Meta.Object) :
                         traceback.print_exc ()
     # end def compute_defaults_internal
 
-    def copy (self, app_type, db_uri) :
-        """Return a new scope for `app_type` and `db_uri` with copies of all
+    def copy (self, app_type, db_url) :
+        """Return a new scope for `app_type` and `db_url` with copies of all
            entities in `self`.
         """
         assert self.app_type.parent is app_type.parent
-        assert self.db_uri != db_uri or db_uri is None
+        db_url = app_type.Url (db_url)
+        assert db_url is None or self.db_url.path != db_url.path
         with self.as_active () :
             result = self.__class__.new \
-                (app_type, db_uri, self.root_epk, user = self.user)
+                (app_type, db_url, self.root_epk, user = self.user)
             for e in self :
                 f = result.add_from_pickle_cargo \
                     (e.type_name, e.pid, e.as_pickle_cargo ())
@@ -425,15 +429,16 @@ class Scope (TFL.Meta.Object) :
             return self._check_inv (gauge, "object")
     # end def i_incorrect
 
-    def migrate (self, app_type, db_uri) :
+    def migrate (self, app_type, db_url) :
         """Migrate all entities and change-history  of `self` into a new
-           scope for `app_type` and `db_uri`.
+           scope for `app_type` and `db_url`.
         """
         assert self.app_type.parent is app_type.parent
-        assert self.db_uri != db_uri or db_uri is None
+        db_url = app_type.Url (db_url)
+        assert db_url is None or self.db_url != db_url
         with self.as_active () :
             result = self.__class__.new \
-                (app_type, db_uri, self.root_epk, user = self.user)
+                (app_type, db_url, self.root_epk, user = self.user)
             for e in self :
                 result.add_from_pickle_cargo \
                     (e.type_name, e.pid, e.as_pickle_cargo ())
@@ -681,7 +686,7 @@ class Scope (TFL.Meta.Object) :
 
     def __str__ (self) :
         return "%s %s<%s>" % \
-            (self.__class__.__name__, self.bname, self.db_uri)
+            (self.__class__.__name__, self.bname, self.db_url)
     # end def __str__
 
 # end class Scope

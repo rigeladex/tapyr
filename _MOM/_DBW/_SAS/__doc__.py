@@ -32,20 +32,24 @@
 #--
 
 from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos
-import re
+from   _TFL.Regexp import Dict_Replacer, re
 
 filter_dbw_pat = re.compile \
     (  "\#\#\#\sDBW-specific\sstart.+?\#\#\#\sDBW-specific\sfinish"
     , re.DOTALL | re.X | re.MULTILINE
     )
 
-doc__ = ( filter_dbw_pat.sub ("", dt_form)
-        % dict ( import_DBW = "from _MOM._DBW._SAS.Manager import Manager"
-               , import_EMS = "from _MOM._EMS.SAS          import Manager"
-               , db_path    = "'test.sqlite'"
-               , db_uri     = "'sqlite:///test.sqlite'"
-               )
-        ).replace ("__Hash", "__SAS").replace ("__HPS", "__SAS")
+fixer = Dict_Replacer ({"__Hash" : "__SAS", "__HPS": "__SAS", "hps://" : "sqlite://"})
+
+doc__ = fixer \
+    ( filter_dbw_pat.sub ("", dt_form)
+    % dict
+        ( import_DBW = "from _MOM._DBW._SAS.Manager import Manager"
+        , import_EMS = "from _MOM._EMS.SAS          import Manager"
+        , db_path    = "'test.sqlite'"
+        , db_scheme  = "'sqlite://'"
+        )
+    )
 __doc__ = doc__
 
 _db_mig_test = """
@@ -65,7 +69,7 @@ True
 >>> db_path_old  = "scope_old.sqlite"
 >>> db_path_new  = "scope_new.sqlite"
 >>> hps_filename = "scope_hps"
->>> hps_path     = "%s.bmt" % (hps_filename, )
+>>> hps_path     = "hps:///%s.bmt" % (hps_filename, )
 >>> remove (db_path_old)
 >>> remove (db_path_new)
 >>> remove (hps_path)

@@ -49,11 +49,11 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
 
     DBS_map = {}
 
-    def create_database (cls, db_uri, scope) :
+    def create_database (cls, db_url, scope) :
         raise NotImplementedError
     # end def create_database
 
-    def connect_database (cls, db_uri, scope) :
+    def connect_database (cls, db_url, scope) :
         raise NotImplementedError
     # end def connect_database
 

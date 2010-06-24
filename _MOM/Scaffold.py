@@ -29,16 +29,20 @@
 #    27-Apr-2010 (CT) Creation
 #    19-May-2010 (CT) `app_type_and_uri` factored
 #    20-May-2010 (CT) `scope` corrected (guard for `if` modifying `create`)
+#    24-Jun-2010 (CT) Use `MOM.EMS.Backends` and `DBS.Url`
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 
 from   _TFL                   import sos
-from    posixpath             import join as pjoin
+
+import _MOM._EMS.Backends
 
 import _TFL.Filename
 import _TFL._Meta.Object
+
+from    posixpath             import join as pjoin
 
 class _MOM_Scaffold_ (TFL.Meta.Object) :
     """Scaffold for creating instances of MOM.App_Type and MOM.Scope."""
@@ -66,63 +70,37 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def app_type
 
     @classmethod
-    def app_type_and_uri (cls, db_prefix = None, db_name = None) :
+    def app_type_and_url (cls, db_url = "hps://", default_path = None) :
         assert cls.ANS is not None
-        uri = None
-        if db_prefix :
-            apt = cls.app_type_sas ()
-            if db_prefix.startswith ("sqlite:////") :
-                ### SQLite database with absolute path
-                uri = "".join ((db_prefix, db_name))
-            elif db_name :
-                uri = pjoin \
-                    (db_prefix, TFL.Filename (db_name).base_ext)
-        else :
-            apt = cls.app_type_hps ()
-            if db_name :
-                uri = TFL.Filename \
-                    (db_name, cls.ANS.Version.db_version.db_extension).name
-        return apt, uri
-    # end def app_type_and_uri
+        EMS, DBW, DBS = MOM.EMS.Backends.get (db_url)
+        apt = cls.app_type (EMS, DBW)
+        url = DBS.Url (db_url, cls.ANS, default_path)
+        return apt, url
+    # end def app_type_and_url
 
     @classmethod
-    def app_type_hps (cls) :
-        from _MOM._EMS.Hash         import Manager as EMS
-        from _MOM._DBW._HPS.Manager import Manager as DBW
-        return cls.app_type (EMS, DBW)
-    # end def app_type_hps
-
-    @classmethod
-    def app_type_sas (cls) :
-        from _MOM._EMS.SAS          import Manager as EMS
-        from _MOM._DBW._SAS.Manager import Manager as DBW
-        return cls.app_type (EMS, DBW)
-    # end def app_type_sas
-
-    @classmethod
-    def scope (cls, db_prefix = None, db_name = None, create = True) :
-        apt, uri = cls.app_type_and_uri (db_prefix, db_name)
-        if (not db_prefix) and (not uri or not sos.path.exists (uri)) :
-            create = True
+    def scope (cls, db_url = "hps://", default_path = None, create = True) :
+        apt, url = cls.app_type_and_url (db_url, default_path)
+        create = create or url.create
         if create :
-            print "Creating new scope", apt, uri or "in memory"
-            scope = cls._create_scope (apt, uri)
+            print "Creating new scope", apt, url.path or "in memory"
+            scope = cls._create_scope (apt, url)
         else :
-            print "Loading scope", apt, uri
-            scope = cls._load_scope (apt, uri)
+            print "Loading scope", apt, url
+            scope = cls._load_scope (apt, url)
         return scope
     # end def scope
 
     @classmethod
-    def _create_scope (cls, apt, uri) :
-        if uri :
-            apt.delete_database (uri)
-        return cls.Scope.new (apt, uri)
+    def _create_scope (cls, apt, url) :
+        if url :
+            apt.delete_database (url)
+        return cls.Scope.new (apt, url)
     # end def _create_scope
 
     @classmethod
-    def _load_scope (cls, apt, uri) :
-        return cls.Scope.load (apt, uri)
+    def _load_scope (cls, apt, url) :
+        return cls.Scope.load (apt, url)
     # end def _load_scope
 
 Scaffold = _MOM_Scaffold_ # end class

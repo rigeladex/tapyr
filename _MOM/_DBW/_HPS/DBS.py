@@ -47,11 +47,12 @@ class HPS (MOM.DBW._DBS_) :
         result = super (HPS, cls).Url (value, ANS, default_path)
         if result.authority :
             raise ValueError ("HPS url cannot specify authority: %s" % value)
-        result._parsed.path = TFL.Filename \
-            ( result.path
-            , ANS.Version.db_version.db_extension
-            , absolute = True
-            ).name
+        if result.path :
+            result._parsed.path = TFL.Filename \
+                ( result.path
+                , ANS.Version.db_version.db_extension
+                , absolute = True
+                ).name
         result.create = not sos.path.exists (result.path)
         return result
     # end def Url
@@ -60,4 +61,4 @@ class HPS (MOM.DBW._DBS_) :
 
 if __name__ != "__main__" :
     MOM.DBW.HPS._Export ("*")
-### __END__ MOM.DBW.HPSDBS
+### __END__ MOM.DBW.HPS.DBS

@@ -45,7 +45,7 @@ class _Pid_Manager_ (TFL.Meta.Object) :
 
     _real_name = "Pid_Manager"
 
-    def __init__ (self, ems, db_uri) :
+    def __init__ (self, ems, db_url) :
         self.ems = ems
     # end def __init__
 

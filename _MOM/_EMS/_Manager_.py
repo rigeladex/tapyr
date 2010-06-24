@@ -76,24 +76,24 @@ class _Manager_ (TFL.Meta.Object) :
     Q_Result_Composite = TFL.Q_Result_Composite
 
     @classmethod
-    def connect (cls, scope, db_uri) :
-        self         = cls (scope, db_uri)
-        self.session = self.DBW.connect_database (db_uri, scope)
+    def connect (cls, scope, db_url) :
+        self         = cls (scope, db_url)
+        self.session = self.DBW.connect_database (db_url, scope)
         return self
     # end def connect
 
     @classmethod
-    def new (cls, scope, db_uri) :
-        self         = cls (scope, db_uri)
-        self.session = self.DBW.create_database (db_uri, scope)
+    def new (cls, scope, db_url) :
+        self         = cls (scope, db_url)
+        self.session = self.DBW.create_database (db_url, scope)
         return self
     # end def new
 
-    def __init__ (self, scope, db_uri) :
+    def __init__ (self, scope, db_url) :
         self.scope               = scope
-        self.db_uri              = db_uri
+        self.db_url              = db_url
         self.DBW = DBW           = scope.app_type.DBW
-        self.pm                  = DBW.Pid_Manager (self, db_uri)
+        self.pm                  = DBW.Pid_Manager (self, db_url)
         self.uncommitted_changes = []
     # end def __init__
 

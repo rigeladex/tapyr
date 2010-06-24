@@ -62,6 +62,8 @@
 #                     one
 #    23-Jun-2010 (CT) Import for `_MOM._DBW._SAS.DBS` added
 #    24-Jun-2010 (CT) Put methods into alphabetical order
+#    24-Jun-2010 (CT) Use scheme-specific entry from `DBS_map` for creating
+#                     and deleting databases
 #    ««revision-date»»···
 #--
 
@@ -78,6 +80,8 @@ import _MOM._DBW._SAS.Pid_Manager
 import _MOM._DBW._SAS.Query
 import _MOM._DBW._SAS.Session
 import _MOM._SCM.Change
+
+import contextlib
 
 from   sqlalchemy import schema, types, sql
 from   sqlalchemy import engine as SQL_Engine
@@ -135,45 +139,21 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
 
     metadata         = schema.MetaData () ### XXX
 
-    def create_database (cls, db_uri, scope) :
-        if db_uri and not db_uri.startswith ("sqlite://") :
-            ### we need to issue a create database command
-            create_db_uri, db_name = db_uri.rsplit ("/", 1)
-            if db_uri.startswith ("postgresql://") :
-                cls._create_postgres_db (create_db_uri, db_name)
-            elif not db_uri.startswith ("sqlite://") :
-                engine  = cls._create_engine (create_db_uri)
-                engine.execute ("CREATE DATABASE %s" % (db_name, ))
-        engine  = cls._create_engine (db_uri)
+    def create_database (cls, db_url, scope) :
+        dbs = cls.DBS_map [db_url.scheme]
+        dbs.create_database          (db_url, cls)
+        engine  = cls._create_engine (db_url.value)
         cls.metadata.create_all      (engine)
         return cls._create_session   (engine, scope)
     # end def create_database
 
-    def connect_database (cls, db_uri, scope) :
-        return cls._create_session (cls._create_engine (db_uri), scope)
+    def connect_database (cls, db_url, scope) :
+        return cls._create_session (cls._create_engine (db_url.value), scope)
     # end def connect_database
 
-    def delete_database (cls, db_uri, db_ext) :
-        if db_uri :
-            db_uri, db_name = db_uri.rsplit ("/", 1)
-            if db_uri.startswith ("sqlite://") :
-                ### sqlite database are just a file
-                from _TFL import sos
-                if sos.path.exists (db_name) :
-                    sos.unlink     (db_name)
-            elif db_uri.startswith ("postgresql://") :
-                conn, engine = cls._create_postgres_connection (db_uri)
-                try :
-                    conn.execute ("DROP DATABASE %s" % (db_name, ))
-                except sqlalchemy.exc.ProgrammingError :
-                    pass
-                conn.close   ()
-            else :
-                try :
-                    engine  = cls._create_engine (db_uri)
-                    engine.execute ("DROP DATABASE %s" % (db_name, ))
-                except sqlalchemy.exc.OperationalError :
-                    pass
+    def delete_database (cls, db_url) :
+        dbs = cls.DBS_map [db_url.scheme]
+        dbs.delete_database (db_url, cls)
     # end def delete_database
 
     def etype_decorator (cls, e_type) :
@@ -225,10 +205,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def etype_decorator
 
     def load_root (cls, session, scope) :
-        result     = session.connection.execute \
-            (cls.sa_scope.select ().limit (1))
-        si        = result.fetchone ()
-        result.close ()
+        q = session.connection.execute (cls.sa_scope.select ().limit (1))
+        with contextlib.closing (q) :
+            si = q.fetchone ()
         scope.guid = si.scope_guid
         if si.root_type_name :
             return getattr \
@@ -344,8 +323,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         attr_kind.attr.computed = computed_crn
     # end def _cached_role
 
-    def _create_engine (cls, db_uri) :
-        return SQL_Engine.create_engine (db_uri or "sqlite:///:memory:")
+    def _create_engine (cls, db_url) :
+        return SQL_Engine.create_engine (db_url or "sqlite:///:memory:")
     # end def _create_engine
 
     def _create_pid_table (cls, metadata) :
@@ -361,27 +340,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
             )
     # end def _create_pid_table
-
-    def _create_postgres_connection ( cls, db_uri) :
-        import psycopg2.extensions as PE
-        engine = cls._create_engine (db_uri + "/postgres")
-        conn   = engine.connect     ()
-        conn.connection.connection.set_isolation_level \
-            (PE.ISOLATION_LEVEL_AUTOCOMMIT)
-        return conn, engine
-    # end def _create_postgres_db
-
-    def _create_postgres_db ( cls, db_uri, db_name
-                            , encoding = "utf8"
-                            , template = "template0"
-                            ) :
-        conn, engine = cls._create_postgres_connection (db_uri)
-        conn.execute \
-            ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
-            % (db_name, encoding, template)
-            )
-        conn.close   ()
-    # end def _create_postgres_db
 
     def _create_SCM_table (cls, metadata) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \

@@ -44,7 +44,7 @@ class _M_DBS_ (TFL.Meta.Object.__class__) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        if name != "_DBS_" :
+        if not name.startswith ("_") :
             MOM.DBW._Manager_.DBS_map [cls.scheme] = cls
     # end def __init__
 
@@ -67,6 +67,11 @@ class _DBS_ (TFL.Meta.Object) :
         except OSError :
             pass
     # end def delete_database
+
+    @classmethod
+    def reserve_pid (cls, connection, pid) :
+        pass
+    # end def reserve_pid
 
     @classmethod
     def Url (cls, value, ANS, default_path = None) :

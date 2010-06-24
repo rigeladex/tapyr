@@ -34,11 +34,14 @@
 #    30-Dec-2009 (CT) s/Package_NS/PNS/
 #    14-Jan-2010 (CT) `PNS_Aliases` added
 #     4-Mar-2010 (CT) `delete_database` added
+#    24-Jun-2010 (CT) `Url` added
 #    ««revision-date»»···
 #--
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+
+import _MOM._EMS.Backends
 
 import _TFL.Ordered_Set
 import _TFL._Meta.Object
@@ -78,6 +81,13 @@ class _App_Type_ (TFL.Meta.Object) :
         for c in self.kill_callback :
             c (scope)
     # end def run_kill_callbacks
+
+    def Url (self, db_url) :
+        if isinstance (db_url, basestring) :
+            _, _, DBS = MOM.EMS.Backends.get (db_url)
+            return DBS.Url (db_url, self.ANS)
+        return db_url
+    # end def Url
 
     def __getitem__ (self, name) :
         return self.etypes [name]
@@ -136,9 +146,10 @@ class _App_Type_D_ (_App_Type_) :
         self._T_Extension.append (etype)
     # end def add_type
 
-    def delete_database (self, db_uri) :
-        self.DBW.delete_database \
-            (db_uri, self.ANS.Version.db_version.db_extension)
+    def delete_database (self, db_url) :
+        if db_url :
+            url = self.Url (db_url)
+            self.DBW.delete_database (url)
     # end def delete_database
 
     def entity_type (self, entity) :

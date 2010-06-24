@@ -64,8 +64,8 @@ import _MOM._DBW.Pid_Manager
 class Pid_Manager (MOM.DBW.Pid_Manager) :
     """HPS specific manager for permanent ids."""
 
-    def __init__ (self, ems, db_uri) :
-        self.__super.__init__ (ems, db_uri)
+    def __init__ (self, ems = None, db_url = None) :
+        self.__super.__init__ (ems, db_url)
         self.max_pid = 0
         self.table   = {}
     # end def __init__
