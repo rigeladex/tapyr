@@ -258,7 +258,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         db_attrs   = {}
         role_attrs = {}
         root       = bases and bases [0]
-        if e_type is getattr (e_type, "relevant_root", e_type):
+        if e_type is (getattr (e_type, "relevant_root", None) or e_type) :
             inherited_attrs = {}
         else :
             inherited_attrs = root._Attributes._attr_dict
