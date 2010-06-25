@@ -121,6 +121,22 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
             )
     # end def cmd__migrate
 
+    @TFL.Meta.Once_Property
+    def cmd__base__opts (cls) :
+        return \
+            [ TFL.CAO.Abs_Path
+                ( name        = "db_name"
+                , default     = cls.cmd__default_db_name
+                , description = "Default name of database"
+                , max_number  = 1
+                )
+            , "-db_url:S=hps://"
+                "?Database url "
+                "(form: `dialect://user:password@host:port/db_name`)"
+            , SA_WE_Opt ()
+            ] + cls.cmd__base__opts_x
+    # end def cmd__base__opts
+
     def __do_create (cls, cmd) :
         """Handler for sub-command `create`."""
         cls.do_create (cmd)
@@ -150,7 +166,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
 
     __metaclass__         = _M_Scaffold_
     _lists_to_combine     = \
-        ( "cmd__base__opts"
+        ( "cmd__base__opts_x"
         , "cmd__create__opts"
         , "cmd__load__opts"
         , "cmd__migrate__opts"
@@ -159,6 +175,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     _real_name            = "Scaffold"
 
     ANS                   = None
+    default_db_name       = ""
     nick                  = "NN"
     PNS_Aliases           = {}
     Scope                 = MOM.Scope
@@ -167,20 +184,11 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     def cmd__default_db_name (cls) :
         return sos.path.join \
             ( sos.path.dirname (sys.modules [cls.__module__].__file__)
-            , cls.ANS.productnick
+            , cls.default_db_name or cls.ANS.__name__.lower ()
             )
     # end def cmd__default_db_name
 
-    cmd__base__opts       = \
-        ( TFL.CAO.Abs_Path
-            ( name        = "db_name"
-            , default     = cmd__default_db_name
-            , description = "Default name of database"
-            )
-        , "-db_url:S=hps://"
-            "?Database url (form: `dialect://user:password@host:port/db_name`)"
-        , SA_WE_Opt ()
-        )
+    cmd__base__opts_x     = ()
     cmd__create__opts     = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
