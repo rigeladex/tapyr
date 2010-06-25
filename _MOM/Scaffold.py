@@ -70,8 +70,20 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
 # end class SA_WE_Opt
 
-class _MOM_M_Scaffold_ (TFL.Meta.Object.__class__) :
+class _M_Scaffold_ (TFL.Meta.Object.__class__) :
     """Meta class for `Scaffold`"""
+
+    @TFL.Meta.Once_Property
+    def cmd (cls) :
+        """Command for database management."""
+        return TFL.CAO.Cmd \
+            ( args        =
+                ( TFL.CAO.Cmd_Choice ("command", * cls.__sub_commands ())
+                ,
+                )
+            , opts        = cls.cmd__base__opts
+            )
+    # end def cmd
 
     @TFL.Meta.Once_Property
     def cmd__create (cls) :
@@ -124,12 +136,17 @@ class _MOM_M_Scaffold_ (TFL.Meta.Object.__class__) :
         cls.do_migrate (cmd)
     # end def __do_migrate
 
-# end class _MOM_M_Scaffold_
+    def __sub_commands (cls) :
+        return tuple \
+            (getattr (cls, sc) for sc in cls.cmd__sub_commands)
+    # end def __sub_commands
+
+# end class _M_Scaffold_
 
 class _MOM_Scaffold_ (TFL.Meta.Object) :
     """Scaffold for creating instances of MOM.App_Type and MOM.Scope."""
 
-    __metaclass__         = _MOM_M_Scaffold_
+    __metaclass__         = _M_Scaffold_
     _real_name            = "Scaffold"
 
     ANS                   = None
@@ -141,11 +158,11 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     def cmd__default_db_name (cls) :
         return sos.path.join \
             ( sos.path.dirname (sys.modules [cls.__module__].__file__)
-            , "test"
+            , cls.ANS.productnick
             )
     # end def cmd__default_db_name
 
-    cmd__base_opts        = \
+    cmd__base__opts       = \
         ( TFL.CAO.Abs_Path
             ( name        = "db_name"
             , default     = cmd__default_db_name
@@ -161,6 +178,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         ( "target_db_url:S=hps:////migration?Database url for target database"
         ,
         )
+    cmd__sub_commands     = ("cmd__create", "cmd__load", "cmd__migrate")
 
     @classmethod
     def app_type (cls, * ems_dbw) :
@@ -187,10 +205,21 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def app_type_and_url
 
     @classmethod
+    def do_create (cls, cmd) :
+        scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
+        scope.destroy ()
+    # end def do_create
+
+    @classmethod
+    def do_load (cls, cmd) :
+        return cls.scope (cmd.db_url, cmd.db_name, create = False)
+    # end def do_load
+
+    @classmethod
     def do_migrate (cls, cmd) :
-        src_scope = cls.scope (cmd.db_url, cmd.db_name, create = False)
+        src_scope = cls.do_load          (cmd)
         apt, url  = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
-        trg_scope = src_scope.migrate (apt, url)
+        trg_scope = src_scope.migrate    (apt, url)
         trg_scope.destroy ()
     # end def do_migrate
 
