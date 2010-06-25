@@ -1277,12 +1277,30 @@ values passed to it.
     >>> caq.verbose
     False
 
+    >>> c1  = Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B"))
+    >>> c1 ([])
+    one
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -help      : []
+        -y         : None
+        aaa        : None
+        bbb        : None
+        argv       : []
+    >>> c2  = Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
+    >>> c2 ([])
+    two
+        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stru', 'struc', 'struct']
+        Arguments  : ['ccc', 'ddd']
+        -help      : []
+        -struct    : False
+        ccc        : 3
+        ddd        : D
+        argv       : [3, 'D']
     >>> coc = Cmd (show,
-    ...     name = "Comp", args = (Arg.Cmd_Choice ("sub",
-    ...       Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
-    ...       Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
-    ...       ), ), opts = ("verbose:B", "strict:B")
-    ...     )
+    ...     name = "Comp", args = (Arg.Cmd_Choice ("sub", c1, c2), ),
+    ...     opts = ("verbose:B", "strict:B"))
     >>> coc ([])
     Comp
         Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']

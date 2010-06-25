@@ -92,6 +92,7 @@ import _TFL.multimap
 import _TFL.Ordered_Set
 import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
 import uuid
 
