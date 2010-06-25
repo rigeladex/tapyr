@@ -24,6 +24,7 @@
 #
 # Purpose
 #    Provide a scaffold for creating instances of MOM.App_Type and MOM.Scope
+#    and managing their databases
 #
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
@@ -42,6 +43,7 @@ import _MOM._EMS.Backends
 
 import _TFL.CAO
 import _TFL.Filename
+import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
@@ -70,7 +72,7 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
 # end class SA_WE_Opt
 
-class _M_Scaffold_ (TFL.Meta.Object.__class__) :
+class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     """Meta class for `Scaffold`"""
 
     @TFL.Meta.Once_Property
@@ -90,8 +92,7 @@ class _M_Scaffold_ (TFL.Meta.Object.__class__) :
         """Sub-command for database creation."""
         return TFL.CAO.Cmd \
             ( name        = "create"
-            , description =
-                "Create database specified by `-db_url`."
+            , description = "Create database specified by `-db_url`."
             , handler     = cls.__do_create
             , opts        = cls.cmd__create__opts
             )
@@ -102,8 +103,7 @@ class _M_Scaffold_ (TFL.Meta.Object.__class__) :
         """Sub-command for database loading."""
         return TFL.CAO.Cmd \
             ( name        = "load"
-            , description =
-                "Load database specified by `-db_url`."
+            , description = "Load database specified by `-db_url`."
             , handler     = cls.__do_load
             , opts        = cls.cmd__load__opts
             )
@@ -144,9 +144,18 @@ class _M_Scaffold_ (TFL.Meta.Object.__class__) :
 # end class _M_Scaffold_
 
 class _MOM_Scaffold_ (TFL.Meta.Object) :
-    """Scaffold for creating instances of MOM.App_Type and MOM.Scope."""
+    """Scaffold for creating instances of MOM.App_Type and MOM.Scope and
+       managering their databases.
+    """
 
     __metaclass__         = _M_Scaffold_
+    _lists_to_combine     = \
+        ( "cmd__base__opts"
+        , "cmd__create__opts"
+        , "cmd__load__opts"
+        , "cmd__migrate__opts"
+        , "cmd__sub_commands"
+        )
     _real_name            = "Scaffold"
 
     ANS                   = None
