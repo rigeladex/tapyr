@@ -30,6 +30,7 @@
 #    19-May-2010 (CT) `app_type_and_uri` factored
 #    20-May-2010 (CT) `scope` corrected (guard for `if` modifying `create`)
 #    24-Jun-2010 (CT) Use `MOM.EMS.Backends` and `DBS.Url`
+#    25-Jun-2010 (CT) Command handlers added
 #    ««revision-date»»···
 #--
 
@@ -39,20 +40,127 @@ from   _TFL                   import sos
 
 import _MOM._EMS.Backends
 
+import _TFL.CAO
 import _TFL.Filename
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
-from    posixpath             import join as pjoin
+import sys
+
+class SA_WE_Opt (TFL.CAO.Bool) :
+    """Turn SA warnings into errors"""
+
+    def __init__ (self, ** kw) :
+        assert "name" not in kw
+        kw ["name"] = name = self.__class__.__name__
+        if "description" not in kw :
+            kw ["description"] = self.__class__.__doc__
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        result = self.__super.cook (value, cao)
+        if result :
+            import warnings
+            from sqlalchemy import exc as sa_exc
+            warnings.filterwarnings \
+                (action = "error", category = sa_exc.SAWarning)
+        return result
+    # end def cook
+
+# end class SA_WE_Opt
+
+class _MOM_M_Scaffold_ (TFL.Meta.Object.__class__) :
+    """Meta class for `Scaffold`"""
+
+    @TFL.Meta.Once_Property
+    def cmd__create (cls) :
+        """Sub-command for database creation."""
+        return TFL.CAO.Cmd \
+            ( name        = "create"
+            , description =
+                "Create database specified by `-db_url`."
+            , handler     = cls.__do_create
+            , opts        = cls.cmd__create__opts
+            )
+    # end def cmd__create
+
+    @TFL.Meta.Once_Property
+    def cmd__load (cls) :
+        """Sub-command for database loading."""
+        return TFL.CAO.Cmd \
+            ( name        = "load"
+            , description =
+                "Load database specified by `-db_url`."
+            , handler     = cls.__do_load
+            , opts        = cls.cmd__load__opts
+            )
+    # end def cmd__load
+
+    @TFL.Meta.Once_Property
+    def cmd__migrate (cls) :
+        """Sub-command for database migration."""
+        return TFL.CAO.Cmd \
+            ( name        = "migrate"
+            , description =
+                "Migrate database specified by `-db_url` to `-target_db_url`"
+            , handler     = cls.__do_migrate
+            , opts        = cls.cmd__migrate__opts
+            )
+    # end def cmd__migrate
+
+    def __do_create (cls, cmd) :
+        """Handler for sub-command `create`."""
+        cls.do_create (cmd)
+    # end def __do_create
+
+    def __do_load (cls, cmd) :
+        """Handler for sub-command `load`."""
+        cls.do_load (cmd)
+    # end def __do_load
+
+    def __do_migrate (cls, cmd) :
+        """Handler for sub-command `migrate`."""
+        cls.do_migrate (cmd)
+    # end def __do_migrate
+
+# end class _MOM_M_Scaffold_
 
 class _MOM_Scaffold_ (TFL.Meta.Object) :
     """Scaffold for creating instances of MOM.App_Type and MOM.Scope."""
 
-    _real_name      = "Scaffold"
+    __metaclass__         = _MOM_M_Scaffold_
+    _real_name            = "Scaffold"
 
-    ANS             = None
-    nick            = "NN"
-    PNS_Aliases     = {}
-    Scope           = MOM.Scope
+    ANS                   = None
+    nick                  = "NN"
+    PNS_Aliases           = {}
+    Scope                 = MOM.Scope
+
+    @classmethod
+    def cmd__default_db_name (cls) :
+        return sos.path.join \
+            ( sos.path.dirname (sys.modules [cls.__module__].__file__)
+            , "test"
+            )
+    # end def cmd__default_db_name
+
+    cmd__base_opts        = \
+        ( TFL.CAO.Abs_Path
+            ( name        = "db_name"
+            , default     = cmd__default_db_name
+            , description = "Default name of database"
+            )
+        , "-db_url:S=hps://"
+            "?Database url (form: `dialect://user:password@host:port/db_name`)"
+        , SA_WE_Opt ()
+        )
+    cmd__create__opts     = ()
+    cmd__load__opts       = ()
+    cmd__migrate__opts    = \
+        ( "target_db_url:S=hps:////migration?Database url for target database"
+        ,
+        )
 
     @classmethod
     def app_type (cls, * ems_dbw) :
@@ -77,6 +185,14 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         url = DBS.Url (db_url, cls.ANS, default_path)
         return apt, url
     # end def app_type_and_url
+
+    @classmethod
+    def do_migrate (cls, cmd) :
+        src_scope = cls.scope (cmd.db_url, cmd.db_name, create = False)
+        apt, url  = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
+        trg_scope = src_scope.migrate (apt, url)
+        trg_scope.destroy ()
+    # end def do_migrate
 
     @classmethod
     def scope (cls, db_url = "hps://", default_path = None, create = True) :

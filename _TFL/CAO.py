@@ -50,6 +50,7 @@
 #                     `Output_Encoding` added
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    22-Jun-2010 (CT) `put_keywords` added
+#    25-Jun-2010 (CT) Support for callable `default`
 #    ««revision-date»»···
 #--
 
@@ -241,6 +242,8 @@ class _Spec_ (TFL.Meta.Object) :
             default  = self.cooked (default)
         elif default is None :
             default  = ()
+        elif TFL.callable (default) :
+            default  = (default (), )
         elif not isinstance (default, (list, tuple)) :
             default  = (default, )
         self.default = default
