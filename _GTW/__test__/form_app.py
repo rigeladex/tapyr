@@ -29,6 +29,8 @@
 #    22-Apr-2010 (MG) Creation
 #     6-Mai-2010 (MG) Support for profiling added
 #    20-Jun-2010 (MG) Support for `GTW.Tornado` added
+#    25-Jun-2010 (MG) Werkzeug and Tornado now have a common interface ->
+#                     application creation simplified
 #    ««revision-date»»···
 #--
 
@@ -284,83 +286,44 @@ def create_nav (cmd) :
     return result
 # end def create_nav
 
-def _dyn_tornado (cmd, NAV) :
-    import _GTW._Tornado.Application
-    import _GTW._Tornado.Static_File_Handler
-    import _GTW._Tornado.Request_Handler
-    import _GTW._Tornado.Request_Data
+def _main (cmd) :
+    NAV   = create_nav    (cmd)
+    if cmd.werkzeug :
+        import _GTW._Werkzeug.Application
+        import _GTW._Werkzeug.Static_File_Handler
+        import _GTW._Werkzeug.Request_Handler
+        import _GTW._Werkzeug.Request_Data
+        HTTP       = GTW.Werkzeug
+    else :
+        import _GTW._Tornado.Application
+        import _GTW._Tornado.Static_File_Handler
+        import _GTW._Tornado.Request_Handler
+        import _GTW._Tornado.Request_Data
+        HTTP       = GTW.Tornado
 
-    app = GTW.Tornado.Application \
-        ( ((".*$", GTW.Tornado.NAV_Request_Handler), )
-        , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1bieN;aNg0eetie$Chae^2eEjeuth7e"
-        , debug          = cmd.debug
-        , i18n           = True
-        , login_url      = NAV.SC.Auth.href_login
-        , Session_Class  = GTW.File_Session
-        , session_id     = "SESSION_ID"
-        , static_handler = media_handler (NAV)
-        )
-    print "app_server started on port", cmd.port
-    GTW.Tornado.start_server (app, cmd.port)
-# end def _dyn_tornado
-
-def _dyn_werkzeug (cmd, NAV) :
-    import _GTW._Werkzeug.Application
-    import _GTW._Werkzeug.Static_File_Handler
-    import _GTW._Werkzeug.Request_Handler
-    import _GTW._Werkzeug.Request_Data
-    import  threading
-    app = GTW.Werkzeug.Application \
-        ( ("", GTW.Werkzeug.NAV_Request_Handler, (NAV, ))
+    prefix    = "media"
+    media_dir = sos.path.join (NAV.web_src_root, "media")
+    app       = HTTP.Application \
+        ( ("", HTTP.NAV_Request_Handler, dict (nav_root = NAV))
         , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1bieN;aNg0eetie$Chae^2eEjeuth7e"
         , i18n           = True
         , login_url      = NAV.SC.Auth.href_login
         , Session_Class  = GTW.File_Session
         , session_id     = "SESSION_ID"
-        , static_handler = media_handler (NAV, False)
+        , static_handler = HTTP.Static_File_Handler
+            (prefix, media_dir, GTW.static_file_map)
         , encoding       = NAV.encoding
+        , debug          = cmd.debug
+        , auto_reload    = cmd.reload
         )
     app.run_development_server \
         ( port                 = cmd.port
-        , use_debugger         = cmd.debug
-        , use_reloader         = cmd.reload
         , use_profiler         = cmd.profiler
         , profile_log_files    = cmd.p_logs
         , profile_restrictions = cmd.p_restrictions
         , profile_sort_by      = cmd.p_sort_by
         , profile_delete_logs  = cmd.p_delete_logs
         )
-    app.run_development_server \
-        (port = cmd.port, use_debugger = True, use_reloader = True)
-# end def _dyn_werkzeug
-
-def media_handler (nav, tornado = True) :
-    prefix    = "media"
-    media_dir = sos.path.join (nav.web_src_root, "media")
-    if tornado :
-        return GTW.Tornado.Static_File_Handler \
-            ( prefix, media_dir, GTW.static_file_map)
-    else :
-        return \
-            ( "/" + prefix
-            , GTW.Werkzeug.Static_File_Handler
-            , (media_dir, GTW.static_file_map)
-            )
-# end def media_handler
-
-def _main_dyn (cmd) :
-    if not cmd.werkzeug :
-        return _dyn_tornado  (cmd, NAV)
-    else :
-        return _dyn_werkzeug (cmd, NAV)
-# end def _main_dyn
-
-def _main (cmd) :
-    #scope = Scope ("sqlite:///", "test")
-    NAV   = create_nav    (cmd)
-    if cmd.werkzeug :
-        return _dyn_werkzeug (cmd, NAV)
-    return     _dyn_tornado  (cmd, NAV)
 # end def _main
 
 _Command = TFL.CAO.Cmd \

@@ -33,6 +33,8 @@
 #     6-Mai-2010 (MG) Support for profiling added
 #     6-May-2010 (MG) `url_charset` seperated from `charset` because `GET`
 #                     parameters are by default `utf-8` encoded
+#    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
+#                     and Tornado
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -57,10 +59,7 @@ class Application (TFL.Meta.Object) :
         , Session_Class = GTW.File_Session
         )
 
-    def __init__ (self
-                 , * handlers
-                 , ** kw
-                 ) :
+    def __init__ (self, * handlers, ** kw) :
         if "cookie_secret" not in kw :
             warnings.warn ("Using default `cookie_secret`!", UserWarning)
         static_handler          = kw.pop ("static_handler", None)
@@ -75,22 +74,23 @@ class Application (TFL.Meta.Object) :
         for handler_spec in handlers :
             args = ()
             if len (handler_spec) > 2 :
-                prefix, handler, args = handler_spec
+                prefix, handler, kw = handler_spec
             else :
-                prefix, handler       = handler_spec
+                prefix, handler     = handler_spec
             self.handlers.append \
-                ((re.compile ("(%s)(/.*)$" % (prefix, )), handler, args))
+                ((re.compile ("(%s)(/.*)$" % (prefix, )), handler, kw))
+        self._server_opts = kw
     # end def __init__
 
     def __call__ (self, environ, start_response) :
         path = environ ["PATH_INFO"]
-        for pat, handler_cls, args in self.handlers :
+        for pat, handler_cls, kw in self.handlers :
             match = pat.match (path)
             if match :
                 sn, pi = match.groups ()
                 environ ["PATH_INFO"]   = pi
                 environ ["SCRIPT_NAME"] = sn
-                handler = handler_cls (self, environ, * args)
+                handler = handler_cls (self, environ, ** kw)
                 try :
                     return handler (environ, start_response)
                 except GTW.Werkzeug.Status, exc :
@@ -103,17 +103,16 @@ class Application (TFL.Meta.Object) :
     def run_development_server ( self
                                , port                 = 8080
                                , host                 = "localhost"
-                               , use_reloader         = True
-                               , use_debugger         = False
                                , use_profiler         = False
                                , profile_log_files    = ()
                                , profile_sort_by      = ('time', 'calls')
                                , profile_restrictions = ()
                                , profile_delete_logs  = False
-                               , ** kw
                                ) :
         from werkzeug import run_simple
         app = self
+        use_debugger = self._server_opts.get ("debug",       False)
+        use_reloader = self._server_opts.get ("auto_reload", False)
         if use_profiler :
             from werkzeug.contrib.profiler import \
                 ProfilerMiddleware, MergeStream

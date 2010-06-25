@@ -28,6 +28,8 @@
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
 #    20-Jun-2010 (MG) `GTW._Request_Handler_` factored
+#    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
+#                     and Tornado
 #    ««revision-date»»···
 #--
 

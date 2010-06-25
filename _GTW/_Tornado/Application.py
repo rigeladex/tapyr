@@ -28,6 +28,8 @@
 # Revision Dates
 #    12-Sep-2009 (MG) Creation
 #     1-Feb-2010 (MG) `__init__` added to support `media_path`
+#    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
+#                     and Tornado
 #    ««revision-date»»···
 #--
 
@@ -49,39 +51,35 @@ reload_logger = TFL.Logger.Create ("reload")
 class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
     """Base class for Web Applications"""
 
-    def __init__ (self, handlers = None, * args, ** kw) :
+    def __init__ (self, * handlers, ** kw) :
         media          = kw.pop ("media_path", None)
         static_handler = kw.pop ("static_handler", None)
-        handlers       = (handlers and list (handlers)) or []
-        if media :
-            handlers.insert \
-                (0, ("/media/(.*)", web.StaticFileHandler, dict (path = media)))
+        real_handlers  = []
         if static_handler :
-            handlers.insert (0, static_handler)
-        self.__super.__init__ (handlers, * args, ** kw)
+            real_handlers.append (static_handler)
+        for handler_spec in handlers :
+            args = ()
+            if len (handler_spec) > 2 :
+                prefix, handler, kw = handler_spec
+            else :
+                prefix, handler     = handler_spec
+            real_handlers.append (("%s/.*$" % (prefix, ), handler, kw))
+        self.__super.__init__ (real_handlers, ** kw)
     # end def __init__
 
     _real_name = "Application"
 
+    def run_development_server (self, port = 8000, ** kw) :
+        print "Start server on port %d" % (port, )
+        http_server = tornado.httpserver.HTTPServer (self)
+        http_server.listen                          (port)
+        tornado.ioloop.IOLoop.instance ().start     ()
+    # end def start_server
+
 Application = _Tornado_Application_ # end class _Tornado_Application_
 
-def start_server (application, port = 8000, log_level = TFL.Logger.INFO) :
-    http_server = tornado.httpserver.HTTPServer (application)
-    http_server.listen                          (port)
-    #server_logger.info                          ("Start server at %s", port)
-    tornado.ioloop.IOLoop.instance ().start     ()
-# end def start_server
-
-def auto_reload_start (* args, ** kw) :
-    def _run (* args, ** kw) :
-        reload_logger.warning ("*" * 79)
-        reload_logger.warning ("*** Reload application")
-        reload_logger.warning ("*" * 79)
-        start_server          (* args, ** kw)
-    GTW.autoreload.main (_run, * args, ** kw)
-# end def auto_reload_start
-
 as_json = dict
+
 if __name__ != "__main__" :
     GTW.Tornado._Export ("*", "as_json")
 else :

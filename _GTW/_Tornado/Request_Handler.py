@@ -33,6 +33,8 @@
 #    24-Mar-2010 (CT) `tornado.httpserver.HTTPRequest.url` set as alias for
 #                     `uri`
 #    20-Jun-2010 (MG) `GTW._Request_Handler_` factored
+#    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
+#                     and Tornado
 #    ««revision-date»»···
 #--
 
@@ -76,6 +78,11 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     __metaclass__   = M_Request_Handler
 
     DEFAULT_HANDLER = "_handle_request"
+
+    def __init__ (self, * args, ** kw) :
+        self.nav_root = kw.pop ("nav_root")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
 
     def _handle_request (self, * args, ** kw) :
         redirect, top = self.__super._handle_request (* args, ** kw)

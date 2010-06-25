@@ -28,6 +28,8 @@
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
+#    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
+#                     and Tornado
 #    ««revision-date»»···
 #--
 from   _GTW                           import GTW
@@ -42,17 +44,15 @@ import  datetime
 import  email
 import  mimetypes
 
-class Static_File_Handler (GTW.Werkzeug.Request_Handler) :
+class _Static_File_Handler_ (GTW.Werkzeug.Request_Handler) :
     """A static file handler which shpuld only be used during development to
        server static files directly form the disk.
     """
 
     block_size = 10 * 1024
 
-    def __init__ (self, application, environ, app_dir, * maps) :
+    def __init__ (self, application, environ, maps = ()) :
         self.__super.__init__ (application, environ)
-        maps      = list (maps)
-        maps.append (GTW.Static_File_Map ("", os.path.abspath (app_dir)))
         self.maps = maps
     # end def __init__
 
@@ -97,7 +97,13 @@ class Static_File_Handler (GTW.Werkzeug.Request_Handler) :
                     self.write (file.read (self.block_size))
     # end def _get
 
-# end class Static_File_Handler
+# end class _Static_File_Handler_
+
+def Static_File_Handler (prefix, media_dir, * maps) :
+    maps      = list (maps)
+    maps.append (GTW.Static_File_Map ("", os.path.abspath (media_dir)))
+    return ("/" + prefix, _Static_File_Handler_, dict (maps = maps))
+# end def Static_File_Handler
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")
