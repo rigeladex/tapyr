@@ -30,6 +30,7 @@
 #     1-Feb-2010 (MG) `__init__` added to support `media_path`
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
+#    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
 #    ««revision-date»»···
 #--
 
@@ -58,12 +59,12 @@ class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
         if static_handler :
             real_handlers.append (static_handler)
         for handler_spec in handlers :
-            args = ()
+            hkw = {}
             if len (handler_spec) > 2 :
-                prefix, handler, kw = handler_spec
+                prefix, handler, hkw = handler_spec
             else :
-                prefix, handler     = handler_spec
-            real_handlers.append (("%s/.*$" % (prefix, ), handler, kw))
+                prefix, handler      = handler_spec
+            real_handlers.append (("%s/.*$" % (prefix, ), handler, hkw))
         self.__super.__init__ (real_handlers, ** kw)
     # end def __init__
 

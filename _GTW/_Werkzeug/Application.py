@@ -35,6 +35,7 @@
 #                     parameters are by default `utf-8` encoded
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
+#    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -72,13 +73,13 @@ class Application (TFL.Meta.Object) :
             handlers = list (handlers)
             handlers.insert (0, static_handler)
         for handler_spec in handlers :
-            args = ()
+            hkw = {}
             if len (handler_spec) > 2 :
-                prefix, handler, kw = handler_spec
+                prefix, handler, hkw = handler_spec
             else :
-                prefix, handler     = handler_spec
+                prefix, handler      = handler_spec
             self.handlers.append \
-                ((re.compile ("(%s)(/.*)$" % (prefix, )), handler, kw))
+                ((re.compile ("(%s)(/.*)$" % (prefix, )), handler, hkw))
         self._server_opts = kw
     # end def __init__
 
