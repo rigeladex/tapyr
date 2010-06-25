@@ -44,6 +44,8 @@
 #    18-May-2010 (CT) `_load_pending` changed to use `.restore` instead of
 #                     `.redo`
 #    18-May-2010 (CT) `save_treshold` added
+#    25-Jun-2010 (CT) Use `scope.db_version_hash` instead of
+#                     `Version.db_version`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +118,7 @@ class Info (TFL.Record) :
         ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
         result  = cls \
             ( creator       = _creator_info (scope, Version)
-            , db_version    = Version.db_version.program_version
+            , dbv_hash      = scope.db_version_hash
             , guid          = scope.guid
             , last_changer  = _creator_info (scope, Version)
             , max_cid       = ems.max_cid
@@ -269,8 +271,7 @@ class Store (TFL.Meta.Object) :
     def _load_info (self) :
         with open (self.info_uri.name, "rb") as file :
             result = pickle.load (file)
-        ### Assignment to `Version.db_version` checks version compatibility
-        self.Version.db_version = result.db_version
+        ### XXX Check result.dbv_hash vs. self.scope.db_version_hash
         return result
     # end def _load_info
 

@@ -1,6 +1,11 @@
 MOM To-Do
 =========
 
+- DB versioning:
+
+  * implement checks for compatibility of
+    database.dbv_hash vs app_type.db_version_hash
+
 - MOM.DBW.HPS.Store:
 
   * on load, allow for non-existing `pid` and delay restore of the
