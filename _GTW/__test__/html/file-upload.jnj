@@ -34,7 +34,14 @@
 #}
 {%- block document -%}
   <form action="/file-upload.html" method="post" enctype="multipart/form-data">
-    <label>File:</bale>
+    <label>File:</label>
+    <input name="file" type="file" size="50" maxlength="100000">
+    <div>
+      <input name="submit" type="submit">
+    </div>
+  </form>
+  <form action="/upload/test/" method="post" enctype="multipart/form-data">
+    <label>File:</label>
     <input name="file" type="file" size="50" maxlength="100000">
     <div>
       <input name="submit" type="submit">

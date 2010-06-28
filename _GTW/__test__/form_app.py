@@ -293,18 +293,21 @@ def _main (cmd) :
         import _GTW._Werkzeug.Static_File_Handler
         import _GTW._Werkzeug.Request_Handler
         import _GTW._Werkzeug.Request_Data
+        import _GTW._Werkzeug.Upload_Handler
         HTTP       = GTW.Werkzeug
     else :
         import _GTW._Tornado.Application
         import _GTW._Tornado.Static_File_Handler
         import _GTW._Tornado.Request_Handler
         import _GTW._Tornado.Request_Data
+        import _GTW._Tornado.Upload_Handler
         HTTP       = GTW.Tornado
 
     prefix    = "media"
     media_dir = sos.path.join (NAV.web_src_root, "media")
     app       = HTTP.Application \
-        ( ("", HTTP.NAV_Request_Handler, dict (nav_root = NAV))
+        ( ("/upload", HTTP.Upload_Handler)
+        , ("",        HTTP.NAV_Request_Handler, dict (nav_root = NAV))
         , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1bieN;aNg0eetie$Chae^2eEjeuth7e"
         , i18n           = True
         , login_url      = NAV.SC.Auth.href_login

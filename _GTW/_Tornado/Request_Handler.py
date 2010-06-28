@@ -35,6 +35,7 @@
 #    20-Jun-2010 (MG) `GTW._Request_Handler_` factored
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
+#    28-Jun-2010 (MG) Meta class moved to `Request_Handler`
 #    ««revision-date»»···
 #--
 
@@ -52,14 +53,7 @@ from    tornado                   import web, escape
 import  tornado.httpserver
 tornado.httpserver.HTTPRequest.url = TFL.Meta.Alias_Property ("uri")
 
-class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
-    """Base class for a request handler"""
-
-    secure_cookie = TFL.Meta.Alias_Property ("get_secure_cookie")
-
-# end class Request_Handler
-
-class M_Request_Handler (TFL.Meta.M_Class, Request_Handler.__class__) :
+class M_Request_Handler (TFL.Meta.M_Class, web.RequestHandler.__class__) :
     """Metaclass for a request"""
 
     def __init__ (cls, name, bases, dict) :
@@ -72,12 +66,22 @@ class M_Request_Handler (TFL.Meta.M_Class, Request_Handler.__class__) :
 
 # end class M_Request_Handler
 
+class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
+    """Base class for a request handler"""
+
+    __metaclass__   = M_Request_Handler
+    secure_cookie   = TFL.Meta.Alias_Property ("get_secure_cookie")
+    DEFAULT_HANDLER = "_handle_request"
+
+    def _handle_request (self, * args, ** kw) :
+        raise web.HTTPError(405)
+    # end def _handle_request
+
+# end class Request_Handler
+
 class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     """Base class request handlers interacting with GTW.NAV"""
 
-    __metaclass__   = M_Request_Handler
-
-    DEFAULT_HANDLER = "_handle_request"
 
     def __init__ (self, * args, ** kw) :
         self.nav_root = kw.pop ("nav_root")

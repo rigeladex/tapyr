@@ -31,6 +31,7 @@
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
 #    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
+#    28-Jun-2010 (MG) Pass the url prefix as parameter to the request handler
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,7 @@ class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
                 prefix, handler, hkw = handler_spec
             else :
                 prefix, handler      = handler_spec
-            real_handlers.append (("%s/.*$" % (prefix, ), handler, hkw))
+            real_handlers.append (("(%s)/.*$" % (prefix, ), handler, hkw))
         self.__super.__init__ (real_handlers, ** kw)
     # end def __init__
 

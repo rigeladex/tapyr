@@ -30,6 +30,7 @@
 #    20-Jun-2010 (MG) `GTW._Request_Handler_` factored
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
+#    28-Jun-2010 (MG) `Request_Class` and `Response_Class` added
 #    ««revision-date»»···
 #--
 
@@ -73,10 +74,12 @@ class Request_Handler (GTW._Request_Handler_) :
     secure_cookie_exipre_time = 31 * 86400
     cookie_encoding           = "utf-8"
 
+    Request_Class             = BaseRequest
+    Response_Class            = Response
     def __init__ (self, application, environ) :
         self.application = application
-        self.request     = BaseRequest (environ)
-        self.response    = Response    ()
+        self.request     = self.Request_Class  (environ)
+        self.response    = self.Response_Class ()
     # end def __init__
 
     def clear_cookie (self, name, * args, ** kw) :

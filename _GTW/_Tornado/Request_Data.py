@@ -29,6 +29,7 @@
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
 #    24-Jun-2010 (MG) Signature of `__init__` changed, `files` added
+#    28-Jun-2010 (MG) `stream` added
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,8 @@ class File_Storage (TFL.Meta.Object) :
     """A wrapper around an uploaded file to provide the same interface as
        werkzeug
     """
+
+    stream = None
 
     def __init__ (self, ** kw) :
         self.__dict__.update (kw)
