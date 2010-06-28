@@ -54,7 +54,7 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
     def __init__ (self, ** kw) :
         assert "name" not in kw
-        kw ["name"] = name = self.__class__.__name__
+        kw ["name"] = self.__class__.__name__
         if "description" not in kw :
             kw ["description"] = self.__class__.__doc__
         self.__super.__init__ (** kw)

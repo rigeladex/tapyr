@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    25-Jun-2010 (CT) Creation
+#    28-Jun-2010 (CT) `HTTP_Opt` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,41 @@ import _MOM.Scaffold
 
 import _TFL.CAO
 import _TFL._Meta.Once_Property
+
+class HTTP_Opt (TFL.CAO._Spec_) :
+    """Select HTTP server framework to use."""
+
+    def __init__ (self, ** kw) :
+        assert "name" not in kw
+        kw ["name"] = "HTTP"
+        if "description" not in kw :
+            kw ["description"] = self.__class__.__doc__
+        self.__super.__init__ (max_number = 1, ** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        if not value :
+            value = "Werkzeug"
+        m = GTW._Import_Module ("_" + value)
+        return getattr (m, value)
+    # end def cook
+
+    @property
+    def default (self) :
+        ### Avoid import before actual use
+        return (self.cook (self._default or "Werkzeug"), )
+    # end def default
+
+    @default.setter
+    def default (self, value) :
+        self._default = value
+    # end def default
+
+    def _setup_default (self, default) :
+        self._default = default
+    # end def _setup_default
+
+# end class HTTP_Opt
 
 class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
 
@@ -75,6 +111,7 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         ( "Break:B?Enter debugger before starting tornado/werkzeug"
         , "-copyright_start:I=2010"
         , "-debug:B=yes"
+        , HTTP_Opt ()
         , TFL.CAO.Opt.Output_Encoding
             ( default     = "utf-8"
             , description = "Default encoding for generated html"
@@ -84,7 +121,6 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
             , description = "Default encoding for source files"
             )
         , "-template_file:S=static.html"
-        , "werkzeug:B?Run the application with the werkzeug server"
         , "auto_reload:B=yes=Autoload of werkzeug, only works with no sqlite db"
         , "-TEST:B"
         )
