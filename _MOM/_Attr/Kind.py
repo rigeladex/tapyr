@@ -123,6 +123,7 @@
 #    18-Jun-2010 (CT) `get_raw` changed to return `u""` instead of `""`
 #    22-Jun-2010 (CT) `is_mandatory` added
 #    24-Jun-2010 (CT) `db_sig` added
+#    28-Jun-2010 (CT) Missing import for `TFL.Meta.Once_Property` added
 #    ««revision-date»»···
 #--
 
@@ -130,6 +131,7 @@ from   _TFL                  import TFL
 from   _MOM                  import MOM
 
 import _TFL._Meta.Property
+import _TFL._Meta.Once_Property
 
 import _MOM._Attr
 import _MOM._Meta.M_Attr_Kind
