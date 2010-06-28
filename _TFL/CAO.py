@@ -51,6 +51,8 @@
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    22-Jun-2010 (CT) `put_keywords` added
 #    25-Jun-2010 (CT) Support for callable `default`
+#    28-Jun-2010 (CT) `default` changed to a property to delay evaluation of
+#                     the `default` value (which might be a callable)
 #    ««revision-date»»···
 #--
 
@@ -62,8 +64,8 @@ from   _TFL.Regexp        import Regexp, re
 import _TFL.Accessor
 import _TFL.defaultdict
 import _TFL.Environment
-import _TFL._Meta.Object
 import _TFL._Meta.M_Class
+import _TFL._Meta.Object
 import _TFL.predicate
 import _TFL.sos
 
@@ -176,6 +178,7 @@ class _Spec_ (TFL.Meta.Object) :
             , cook          = None
             ) :
         self.name           = name
+        self.default        = default
         self.description    = description
         if auto_split is None :
             auto_split      = self.auto_split
@@ -188,7 +191,6 @@ class _Spec_ (TFL.Meta.Object) :
         self.range_delta    = range_delta
         if cook is not None :
             self.cook       = cook
-        self._setup_default (default)
     # end def __init__
 
     def combine (self, values) :
@@ -210,6 +212,28 @@ class _Spec_ (TFL.Meta.Object) :
             values = self._resolve_range (values, cao)
         return [cook (v, cao) for v in values]
     # end def cooked
+
+    @property
+    def default (self) :
+        result = self.__cooked_default
+        if result is None :
+            result = self.__default
+            if TFL.callable (result) :
+                result = result ()
+            if isinstance (result, basestring) :
+                result = self.cooked (result)
+            elif result is None :
+                result = ()
+            elif not isinstance (result, (list, tuple)) :
+                result  = [result]
+            self.__cooked_default = result
+        return result
+    # end def default
+
+    @default.setter
+    def default (self, value) :
+        self._set_default (value)
+    # end def default
 
     def _auto_max_number (self, auto_split) :
         return 0 if auto_split else 1
@@ -237,17 +261,10 @@ class _Spec_ (TFL.Meta.Object) :
                 raise Err ("Invalid value `%s` for %s" % (value, self))
     # end def _safe_eval
 
-    def _setup_default (self, default) :
-        if isinstance (default, basestring) :
-            default  = self.cooked (default)
-        elif default is None :
-            default  = ()
-        elif TFL.callable (default) :
-            default  = (default (), )
-        elif not isinstance (default, (list, tuple)) :
-            default  = (default, )
-        self.default = default
-    # end def _setup_default
+    def _set_default (self, default) :
+        self.__cooked_default = None
+        self.__default        = default
+    # end def _set_default
 
     def __repr__ (self) :
         return "'%s%s:%s%s=%s#%s?%s'" % \
@@ -341,11 +358,11 @@ class Bool (_Spec_O_) :
         return 1
     # end def _auto_max_number
 
-    def _setup_default (self, default) :
+    def _set_default (self, default) :
         if default is None :
             default = False
-        return self.__super._setup_default (default)
-    # end def _setup_default
+        return self.__super._set_default (default)
+    # end def _set_default
 
 # end class Bool
 
@@ -554,9 +571,9 @@ class Help (_Spec_O_) :
             pyk.fprint ()
     # end def _nl_gen
 
-    def _setup_default (self, default) :
-        self.default = ()
-    # end def _setup_default
+    def _set_default (self, default) :
+        self.__super._set_default ([])
+    # end def _set_default
 
     def __repr__ (self) :
         return "'%s%s %s'" % \
@@ -1068,9 +1085,10 @@ class CAO (TFL.Meta.Object) :
     def _cooked (self, spec) :
         raw = self._raw.get (spec.name, None)
         if raw is None :
-            result = spec.default or []
+            default = spec.default
+            result  = default if (default is not None) else []
         else :
-            result = list \
+            result  = list \
                 (ichain (* tuple (spec.cooked (r, self) for r in raw)))
         self._map [spec.name] = result
         return result
@@ -1466,21 +1484,21 @@ values passed to it.
         sub       : Cmd_Choice = None <default: None>
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = [True] <default: ()>
+        -help     : Help = [True] <default: []>
             Display help about command
-        -strict   : Bool = False <default: (False,)>
-        -verbose  : Bool = False <default: (False,)>
+        -strict   : Bool = False <default:  [False]>
+        -verbose  : Bool = False <default:  [False]>
     >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
         aaa       : Str = None <default: ()>
         bbb       : Str = None <default: ()>
     <BLANKLINE>
-        -Z        : Bool = False <default: (False,)>
-        -help     : Help = [True] <default: ()>
+        -Z        : Bool = False <default:  [False]>
+        -help     : Help = [True] <default: []>
             Display help about command
-        -strict   : Bool = False <default: (False,)>
-        -verbose  : Bool = False <default: (False,)>
+        -strict   : Bool = False <default:  [False]>
+        -verbose  : Bool = False <default:  [False]>
         -y        : Int = None <default: ()>
     >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
@@ -1490,11 +1508,11 @@ values passed to it.
     <BLANKLINE>
         argv      : [3, 'D']
     <BLANKLINE>
-        -help     : Help = [True] <default: ()>
+        -help     : Help = [True] <default: []>
             Display help about command
-        -strict   : Bool = False <default: (False,)>
-        -struct   : Bool = False <default: (False,)>
-        -verbose  : Bool = False <default: (False,)>
+        -strict   : Bool = False <default:  [False]>
+        -struct   : Bool = False <default:  [False]>
+        -verbose  : Bool = False <default:  [False]>
     >>> _ = coc (["-help=cmds"])
     Sub commands of Comp
         one :

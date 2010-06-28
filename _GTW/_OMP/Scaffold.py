@@ -59,20 +59,9 @@ class HTTP_Opt (TFL.CAO._Spec_) :
         return getattr (m, value)
     # end def cook
 
-    @property
-    def default (self) :
-        ### Avoid import before actual use
-        return (self.cook (self._default or "Werkzeug"), )
-    # end def default
-
-    @default.setter
-    def default (self, value) :
-        self._default = value
-    # end def default
-
-    def _setup_default (self, default) :
-        self._default = default
-    # end def _setup_default
+    def _set_default (self, default) :
+        self.__super._set_default (default or "Werkzeug")
+    # end def _set_default
 
 # end class HTTP_Opt
 
