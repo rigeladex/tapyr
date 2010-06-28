@@ -36,12 +36,13 @@
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
 #    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
+#    28-Jun-2010 (CT) `GTW._Application_` factored
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
-import _TFL._Meta.Object
-
 from   _GTW               import GTW
+
+import _GTW._Application_
 import _GTW.File_Session
 import _GTW._Werkzeug.Error
 import _GTW._Werkzeug.Request_Handler
@@ -51,7 +52,7 @@ from    werkzeug.wrappers import BaseRequest, BaseResponse
 import  warnings
 import  re
 
-class Application (TFL.Meta.Object) :
+class _Werkzeug_Application_ (GTW._Application_) :
     """A WSGI Application"""
 
     default_settings = dict \
@@ -60,27 +61,17 @@ class Application (TFL.Meta.Object) :
         , Session_Class = GTW.File_Session
         )
 
+    _real_name = "Application"
+
     def __init__ (self, * handlers, ** kw) :
         if "cookie_secret" not in kw :
             warnings.warn ("Using default `cookie_secret`!", UserWarning)
-        static_handler          = kw.pop ("static_handler", None)
         encoding                = kw.pop ("encoding", "utf-8")
         BaseRequest.charset     = BaseResponse.charset = encoding
         BaseRequest.url_charset = "utf-8"
         self.settings           = dict (self.default_settings, ** kw)
-        self.handlers           = []
-        if static_handler :
-            handlers = list (handlers)
-            handlers.insert (0, static_handler)
-        for handler_spec in handlers :
-            hkw = {}
-            if len (handler_spec) > 2 :
-                prefix, handler, hkw = handler_spec
-            else :
-                prefix, handler      = handler_spec
-            self.handlers.append \
-                ((re.compile ("(%s)(/.*)$" % (prefix, )), handler, hkw))
-        self._server_opts = kw
+        self.handlers, self._server_opts = self._init_handlers (handlers, kw)
+        self.__super.__init__ (** kw)
     # end def __init__
 
     def __call__ (self, environ, start_response) :
@@ -141,7 +132,15 @@ class Application (TFL.Meta.Object) :
             )
     # end def run_development_server
 
-# end class Application
+    def _handler_pattern (self, prefix) :
+        return re.compile ("(%s)(/.*)$" % (prefix, ))
+    # end def _handler_pattern
+
+    def _init_static_handler (self, handler_spec) :
+        return self._init_handler (handler_spec)
+    # end def _init_static_handler
+
+Application = _Werkzeug_Application_ # end class
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")

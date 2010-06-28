@@ -225,6 +225,7 @@
 #    24-Jun-2010 (MG) `_Site_Entity_._view` pass `handler` to
 #                     `HTTP.Request_Data` instead of `request` to support
 #                     file uploads
+#    28-Jun-2010 (CT) `nav_context` added to `from_nav_list_file`
 #    ««revision-date»»···
 #--
 
@@ -695,18 +696,19 @@ class _Dir_ (_Site_Entity_) :
     # end def __init__
 
     @classmethod
-    def from_nav_list_file (cls, src_dir, parent = None, ** kw) :
+    def from_nav_list_file (cls, src_dir, parent = None, nav_context = {}, ** kw) :
         """Return a new `Dir` filled with information read from the file
            `navigation.list` in `src_dir`.
         """
-        context       = {}
-        nl            = pjoin  (src_dir, "navigation.list")
-        result        = cls    (src_dir, parent = parent, ** kw)
+        dct    = {}
+        nl     = pjoin  (src_dir, "navigation.list")
+        result = cls    (src_dir, parent = parent, ** kw)
         if sos.path.exists (nl) :
+            context = dict (GTW.NAV.__dict__, ** nav_context)
             with open (nl) as f :
-                exec (f, GTW.NAV.__dict__, context)
+                exec (f, context, dct)
             result.add_entries \
-                (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
+                (dct ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
     # end def from_nav_list_file
 

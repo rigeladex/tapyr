@@ -32,44 +32,35 @@
 #                     and Tornado
 #    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
 #    28-Jun-2010 (MG) Pass the url prefix as parameter to the request handler
+#    28-Jun-2010 (CT) `GTW._Application_` factored
 #    ««revision-date»»···
 #--
 
 from   _TFL                import TFL
-import _TFL._Meta.Object
 from   _GTW                import GTW
+
+import _GTW._Application_
+import _GTW.autoreload
 import _GTW._Tornado.Error
 import _GTW._Tornado.Static_File_Handler
 
-from    tornado            import web
-import  tornado.httpserver
-import  tornado.ioloop
+from   tornado            import web
+import tornado.httpserver
+import tornado.ioloop
 
-import  _GTW.autoreload
-import  _TFL.Logger
+import _TFL.Logger
 
 reload_logger = TFL.Logger.Create ("reload")
 
-class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
+class _Tornado_Application_ (web.Application, GTW._Application_) :
     """Base class for Web Applications"""
 
-    def __init__ (self, * handlers, ** kw) :
-        media          = kw.pop ("media_path", None)
-        static_handler = kw.pop ("static_handler", None)
-        real_handlers  = []
-        if static_handler :
-            real_handlers.append (static_handler)
-        for handler_spec in handlers :
-            hkw = {}
-            if len (handler_spec) > 2 :
-                prefix, handler, hkw = handler_spec
-            else :
-                prefix, handler      = handler_spec
-            real_handlers.append (("(%s)/.*$" % (prefix, ), handler, hkw))
-        self.__super.__init__ (real_handlers, ** kw)
-    # end def __init__
-
     _real_name = "Application"
+
+    def __init__ (self, * handlers, ** kw) :
+        real_handlers, kw = self._init_handlers (handlers, kw)
+        super (_Tornado_Application_, self).__init__ (real_handlers, ** kw)
+    # end def __init__
 
     def run_development_server (self, port = 8000, ** kw) :
         print "Start server on port %d" % (port, )
@@ -78,12 +69,18 @@ class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
         tornado.ioloop.IOLoop.instance ().start     ()
     # end def start_server
 
-Application = _Tornado_Application_ # end class _Tornado_Application_
+    def _handler_pattern (self, prefix) :
+        return "(%s)/.*$" % (prefix, )
+    # end def _handler_pattern
 
-as_json = dict
+    def _init_static_handler (self, handler_spec) :
+        return handler_spec
+    # end def _init_static_handler
+
+Application = _Tornado_Application_ # end class
 
 if __name__ != "__main__" :
-    GTW.Tornado._Export ("*", "as_json")
+    GTW.Tornado._Export ("*")
 else :
     import _GTW._Tornado.Request_Handler
     import  sys
