@@ -60,6 +60,7 @@ class HTTP_Opt (TFL.CAO._Spec_) :
     # end def cook
 
     def _set_default (self, default) :
+        ### Make `Werkzeug` sticky
         self.__super._set_default (default or "Werkzeug")
     # end def _set_default
 
