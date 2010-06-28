@@ -121,3 +121,13 @@ ul.errorlist
 .gtw-ui-form-inline .buttons button
     { margin          : 0 0.2em
     }
+
+/* File Upload Handling */
+.gtw-upload-name
+    { font-style      : normal
+    }
+.gtw-uploading
+    { padding-right   : 18px
+    ; background      : url("images/ui-anim_basic_16x16.gif") no-repeat scroll right center transparent
+    ; font-style      : italic
+    }

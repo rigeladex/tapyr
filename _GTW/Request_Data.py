@@ -36,6 +36,7 @@
 #    10-Feb-2010 (MG) Convert the data into unicode
 #    21-Feb-2010 (MG) `pop` added
 #    20-Mar-2010 (MG) Moved into `GTW` package
+#    28-Jun-2010 (MG) `iterkeys` added
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,10 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
         for n in self.data.iterkeys () :
             yield n, self [n]
     # end def iteritems
+
+    def iterkeys (self) :
+        return self.data.iterkeys ()
+    # end def iterkeys
 
     def pop (self, key, default = None) :
         return self._convert_element (self.data.pop (key, default))

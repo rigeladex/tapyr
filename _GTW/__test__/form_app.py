@@ -132,11 +132,29 @@ class File_Upload_Page (GTW.NAV.Page) :
 
     SUPPORTED_METHODS = set (("GET", "POST"))
 
+    _Media           = GTW.Media \
+        ( js_on_ready =
+            ( '$(".ajax").GTW_File_Upload (); '
+            ,
+            )
+        , css_links   =
+            ( GTW.CSS_Link._.jQuery_UI
+            , GTW.CSS_Link ("/media/GTW/css/inline_forms.css")
+            )
+        , scripts     =
+            ( GTW.Script.jQuery_UI
+            , GTW.Script (src = "/media/GTW/js/GTW_File_Upload.js")
+            )
+        )
+
     def _view (self, handler) :
         request = handler.request
         if request.method == "POST" :
             import os
             req_data = self.top.HTTP.Request_Data (handler)
+            print req_data.files.keys ()
+            for n, v in req_data.iteritems () :
+                print n, v
             for f in req_data.files.itervalues () :
                 if f :
                     path = os.path.join ("/tmp", f.filename)

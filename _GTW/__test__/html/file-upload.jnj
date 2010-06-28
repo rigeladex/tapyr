@@ -34,19 +34,28 @@
 #}
 {%- block document -%}
   <form action="/file-upload.html" method="post" enctype="multipart/form-data">
-    <label>File:</label>
+    <label>Normal File Upload:</label>
     <input name="file" type="file" size="50" maxlength="100000">
     <div>
       <input name="submit" type="submit">
     </div>
   </form>
+  <hr>
   <form action="/upload/test/" method="post" enctype="multipart/form-data">
-    <label>File:</label>
+    <label>Normal upload using the upload handler</label>
     <input name="file" type="file" size="50" maxlength="100000">
     <div>
       <input name="submit" type="submit">
     </div>
-</form>
+  </form>
+  <hr>
+  <form action="/file-upload.html" method="post" enctype="multipart/form-data">
+    <label>AJAX File Upload using the upload handler:</label>
+    <input class="ajax" name="file" type="file" size="50" maxlength="100000">
+    <div>
+      <input name="submit" type="submit">
+    </div>
+  </form>
 {%- endblock document -%}
 {#- __END__ jinja template: file-upload.jnj -#}
 
