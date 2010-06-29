@@ -47,6 +47,7 @@
 #    26-May-2010 (MG) Error handling changed
 #    27-May-2010 (MG) `Form_Errors._order` changed
 #     1-Jun-2010 (MG) `get_raw` `default` parameter added
+#    29-Jun-2010 (MG) `_Form_.inline_fields` added
 #    ««revision-date»»···
 #--
 
@@ -288,6 +289,7 @@ class _Form_ (TFL.Meta.Object) :
     prefix        = ""
     __metaclass__ = M_Form
     instance      = None
+    inline_fields = ()
 
     def __init__ (self, instance = None, prefix = "", ** kw) :
         if instance is not None :

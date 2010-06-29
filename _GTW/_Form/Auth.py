@@ -40,6 +40,7 @@
 #    20-Feb-2010 (MG) `ui_name` for fields added
 #    23-Feb-2010 (MG) Debug errors added to `_Login_Mixin_`
 #    28-May-2010 (MG) Adapted to new errors handling
+#    29-Jun-2010 (MG) Bug fixing in errorr handling
 #    ««revision-date»»···
 #--
 
@@ -74,14 +75,15 @@ class _Login_Mixin_ (TFL.Meta.Object) :
             ("username", _T (u"A user name is required to login."))
         password     = self.get_required \
             ("password", _T (u"The password is required."))
+        error_add = lambda e : self.errors.add (self, None, e)
         if not self.errors :
             if not self._authenticate (username, password) :
-                self.errors.append (_T (u"Username or password incorrect"))
+                error_add (_T (u"Username or password incorrect"))
             elif self.active_account_required and not self.account.active :
-                self.errors.append (_T (u"This account is currently inactive"))
+                error_add (_T (u"This account is currently inactive"))
                 self.account = None
         elif getattr (self.kw, "debug", False) :
-            self.errors.append (repr (self.request_data))
+            error_add (repr (self.request_data))
         self.__super._validate ()
         self.request_data = {}
     # end def _validate

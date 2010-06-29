@@ -281,7 +281,7 @@ def create_nav (cmd) :
               , prefix          = "Auth"
               , title           = _ (u"Authorization and Account handling")
               , Type            = GTW.NAV.Auth
-              , hidden          = True
+#              , hidden          = True
               )
           , dict
               ( src_dir         = _ ("L10N")

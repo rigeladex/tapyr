@@ -34,6 +34,7 @@
 #    15-Apr-2010 (MG) `Media` moved to `GTW.Form.Field_Group`
 #     3-May-2010 (MG) New form handling implemented
 #     6-May-2010 (MG) `widget` replace by `render_mode_description`
+#    29-Jun-2010 (MG) Legacy `widget` re-added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ class _Form_Field_Group_Description_ (TFL.Meta.Object) :
     default_render_mode     = "div_seq"
     render_mode_description = GTW.Form.Render_Mode_Description \
         (div_seq = GTW.Form.Widget_Spec ("html/form.jnj, fg_div_seq"))
+    widget                  = render_mode_description ["div_seq"]
 
     def __init__ (self, * fields, ** kw) :
         self.fields = fields
