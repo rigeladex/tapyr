@@ -30,6 +30,7 @@
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
 ##    23-Feb-2010 (CT) `New password` added
+##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    ««revision-date»»···
 ##--
 #}
@@ -37,7 +38,7 @@
 {%- import html_version as X -%}
 {%- import "STD::html/form.jnj" as Form %}
 
-{%- set title = GTW._T ("Login for") + " " + page.site_url %}
+{%- set title = GTW._T ("Login for") + " " + request.host %}
 
 {%- block title -%}
   <title>{{ title|safe }}</title>

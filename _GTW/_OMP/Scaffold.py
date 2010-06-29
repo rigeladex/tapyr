@@ -30,6 +30,7 @@
 #    25-Jun-2010 (CT) Creation
 #    28-Jun-2010 (CT) `HTTP_Opt` added
 #    29-Jun-2010 (CT) `HTTP_Opt` changed to `_Import_Module ("Application")`
+#    29-Jun-2010 (CT) Command for `wsgi` added
 #    ««revision-date»»···
 #--
 
@@ -82,10 +83,26 @@ class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
             )
     # end def cmd__run_server
 
+    @TFL.Meta.Once_Property
+    def cmd__wsgi (cls) :
+        """Sub-command for running as wsgi application"""
+        return TFL.CAO.Cmd \
+            ( name        = "wsgi"
+            , description = "Run as wwsgi application."
+            , handler     = cls.__do_wsgi
+            , opts        = cls.cmd__wsgi__opts
+            )
+    # end def cmd__run_server
+
     def __do_run_server (cls, cmd) :
         """Handler for sub-command `run_server`."""
-        cls.do_run_server (cmd)
+        return cls.do_run_server (cmd)
     # end def __do_run_server
+
+    def __do_wsgi (cls, cmd) :
+        """Handler for sub-command `wsgi`."""
+        return cls.do_wsgi (cmd)
+    # end def __do_wsgi
 
 # end class _GTW_M_Scaffold_
 
@@ -95,34 +112,42 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
     _real_name            = "Scaffold"
     _lists_to_combine     = MOM.Scaffold._lists_to_combine + \
         ( "cmd__run_server__opts"
-        ,
+        , "cmd__wsgi__opts"
         )
 
     ANS                   = GTW
 
-    cmd__run_server__opts = \
-        ( "Break:B?Enter debugger before starting tornado/werkzeug"
-        , "-copyright_start:I=2010"
+    cmd___server__opts = \
+        ( "auto_reload:B=yes=Autoload of werkzeug, only works with no sqlite db"
+        , "Break:B?Enter debugger before starting tornado/werkzeug"
         , "-debug:B=yes"
         , HTTP_Opt (default = "Tornado")
-        , TFL.CAO.Opt.Output_Encoding
-            ( default     = "utf-8"
-            , description = "Default encoding for generated html"
-            )
         , TFL.CAO.Opt.Input_Encoding
             ( default     = "iso-8859-15"
             , description = "Default encoding for source files"
             )
-        , "-template_file:S=static.html"
-        , "auto_reload:B=yes=Autoload of werkzeug, only works with no sqlite db"
+        , TFL.CAO.Opt.Output_Encoding
+            ( default     = "utf-8"
+            , description = "Default encoding for generated html"
+            )
+        , "port:I=8090?Server port"
+        , "-smtp_server:S=localhost?SMTP server used to send emails"
+        , "-template_file:S=html/static.jnj"
         , "-TEST:B"
         )
-    cmd__sub_commands     = ("cmd__run_server", )
+    cmd__run_server__opts = cmd___server__opts
+    cmd__wsgi__opts       = cmd___server__opts
+    cmd__sub_commands     = ("cmd__run_server", "cmd__wsgi")
 
     @classmethod
     def do_run_server (cls, cmd) :
         raise NotImplementedError
     # end def do_run_server
+
+    @classmethod
+    def do_wsgi (cls, cmd) :
+        raise NotImplementedError
+    # end def do_wsgi
 
 Scaffold = _GTW_Scaffold_ # end class
 

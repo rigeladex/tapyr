@@ -32,6 +32,7 @@
 #    20-May-2010 (CT) `scope` corrected (guard for `if` modifying `create`)
 #    24-Jun-2010 (CT) Use `MOM.EMS.Backends` and `DBS.Url`
 #    25-Jun-2010 (CT) Command handlers added
+#    29-Jun-2010 (CT) `-copyright_start` added
 #    ««revision-date»»···
 #--
 
@@ -124,7 +125,8 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     @TFL.Meta.Once_Property
     def cmd__base__opts (cls) :
         return \
-            [ TFL.CAO.Abs_Path
+            [ "-copyright_start:I=%s" % cls.cmd__copyright_start
+            , TFL.CAO.Abs_Path
                 ( name        = "db_name"
                 , default     = cls.cmd__default_db_name
                 , description = "Default name of database"
@@ -139,17 +141,17 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
 
     def __do_create (cls, cmd) :
         """Handler for sub-command `create`."""
-        cls.do_create (cmd)
+        return cls.do_create (cmd)
     # end def __do_create
 
     def __do_load (cls, cmd) :
         """Handler for sub-command `load`."""
-        cls.do_load (cmd)
+        return cls.do_load (cmd)
     # end def __do_load
 
     def __do_migrate (cls, cmd) :
         """Handler for sub-command `migrate`."""
-        cls.do_migrate (cmd)
+        return cls.do_migrate (cmd)
     # end def __do_migrate
 
     def __sub_commands (cls) :
@@ -175,6 +177,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     _real_name            = "Scaffold"
 
     ANS                   = None
+    cmd__copyright_start  = 2010
     default_db_name       = ""
     nick                  = "NN"
     PNS_Aliases           = {}
@@ -192,7 +195,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     cmd__create__opts     = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
-        ( "target_db_url:S=hps:////migration?Database url for target database"
+        ( "target_db_url:S=hps:///migration?Database url for target database"
         ,
         )
     cmd__sub_commands     = ("cmd__create", "cmd__load", "cmd__migrate")

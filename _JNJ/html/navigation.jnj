@@ -39,6 +39,7 @@
 ##    17-Mar-2010 (CT) `permalink` added
 ##    18-Mar-2010 (CT) `entry` changed to use `href = link.abs_href`
 ##    24-Mar-2010 (CT) Use `link.is_current` instead of home-grown code
+##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    ««revision-date»»···
 ##--
 #}
@@ -110,7 +111,7 @@
     {%- set langs = L10N.languages %}
     {%- if langs|length > 1 %}
       <div class="nav-section language-selection">
-        <h1 title="{{ GTW._T ("Languages that can be selected for %s") % page.site_url }}">
+        <h1 title="{{ GTW._T ("Languages that can be selected for %s") % request.host }}">
           {{- GTW._T ("Language") -}}
           {{- flag_or_text
               ( L10N, lang
@@ -136,7 +137,7 @@
   <div class="nav-section login">
     {%- import "STD::html/form.jnj" as Form %}
     {%- if request.user.authenticated %}
-      <h1 title="{{ GTW._T ("Logged in as %s") % request.user.name }}">
+      <h1 title="{{ GTW._T ("Logged in as %s") % (request.user.name, ) }}">
         {{- GTW._T ("Logged in") -}}
       </h1>
       {{ Form.logout_inline (page, request) }}

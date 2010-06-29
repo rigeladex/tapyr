@@ -43,6 +43,7 @@
 #    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
 #    24-Feb-2010 (CT) `own_links` redefined
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    29-Jun-2010 (CT) Use `request.host` instead of `site_url`
 #    ««revision-date»»···
 #--
 
@@ -159,12 +160,13 @@ class Auth (GTW.NAV.Dir) :
                         ( self.new_email_template
                         , email_to      = form.new_email
                         , email_subject =
-                            _T("Email confirmation for %s" % (site_url, ))
+                            _T("Email confirmation for %s" % (request.host, ))
                         , email_from    = self.email
                         , link          =
                             self.parent.href_action (account, token)
                         , NAV           = self.top
                         , page          = self
+                        , host          = request.host
                         )
                     handler.session.notifications.append \
                         ( GTW.Notification
@@ -292,12 +294,13 @@ class Auth (GTW.NAV.Dir) :
                         ( self.email_template
                         , email_to      = form.username
                         , email_subject =
-                            _T("Email confirmation for %s" % (site_url, ))
+                            _T("Email confirmation for %s" % (request.host, ))
                         , email_from    = self.email
                         , link          =
                             self.parent.href_action (account, token)
                         , NAV           = self.top
                         , page          = self
+                        , host          = request.host
                         )
                     handler.session.notifications.append \
                         ( GTW.Notification

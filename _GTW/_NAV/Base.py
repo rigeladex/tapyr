@@ -506,7 +506,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
         email_from = context.get ("email_from")
         if not email_from :
             context ["email_from"] = \
-                (self.webmaster or "webmaster@" + self.site_url)
+                (  self.webmaster
+                or "webmaster@" + context.get ("host", self.site_url)
+                )
         if self.smtp :
             text = self.top.Templateer.render (template, context).encode \
                 (self.encoding, "replace")
