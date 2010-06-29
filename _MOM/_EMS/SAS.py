@@ -148,4 +148,4 @@ class Manager (MOM.EMS._Manager_) :
 
 if __name__ != "__main__" :
     MOM.EMS._Export_Module ()
-### __END__ MOM.EMS.SA
+### __END__ MOM.EMS.SAS
