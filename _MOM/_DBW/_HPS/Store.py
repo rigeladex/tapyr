@@ -46,6 +46,7 @@
 #    18-May-2010 (CT) `save_treshold` added
 #    25-Jun-2010 (CT) Use `scope.db_version_hash` instead of
 #                     `Version.db_version`
+#    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -314,7 +315,7 @@ class Store (TFL.Meta.Object) :
             sk     = TFL.Sorted_By ("pid")
             s_name = TFL.Filename ("by_pid", self.x_uri)
             cargo  = \
-                [   (e.type_name, e.pid, e.as_pickle_cargo ())
+                [   e.as_pickle_cargo ()
                 for e in sorted (scope.ems.pm.table.itervalues (), key = sk)
                 ]
             with open (s_name.name, "wb") as file :

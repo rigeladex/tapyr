@@ -124,6 +124,8 @@
 #    22-Jun-2010 (CT) `is_mandatory` added
 #    24-Jun-2010 (CT) `db_sig` added
 #    28-Jun-2010 (CT) Missing import for `TFL.Meta.Once_Property` added
+#    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
+#                     s/as_pickle_cargo/as_attr_pickle_cargo/
 #    ««revision-date»»···
 #--
 
@@ -498,12 +500,12 @@ class _Composite_Mixin_ (Kind) :
     def get_pickle_cargo (self, obj) :
         value = self.get_value (obj)
         if value is not None :
-            return (value.as_pickle_cargo (), )
+            return (value.as_attr_pickle_cargo (), )
     # end def get_pickle_cargo
 
     def set_pickle_cargo (self, obj, cargo) :
         if cargo :
-            value = self.attr.C_Type.from_pickle_cargo \
+            value = self.attr.C_Type.from_attr_pickle_cargo \
                 (obj.home_scope, cargo [0])
             self._set_cooked_value (obj, value, changed = True)
     # end def set_pickle_cargo

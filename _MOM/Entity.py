@@ -141,6 +141,9 @@
 #                     any (otherwise, `on_error` can lead to object creation
 #                     with missing `epk`)
 #    24-Jun-2010 (CT) `relevant_root = None` moved from `Id_Entity` to `Entity`
+#    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
+#                     s/as_pickle_cargo/as_attr_pickle_cargo/
+#    29-Jun-2010 (CT) New `as_pickle_cargo` added
 #    ««revision-date»»···
 #--
 
@@ -302,13 +305,13 @@ class Entity (TFL.Meta.Object) :
     # end def __init__
 
     @classmethod
-    def from_pickle_cargo (cls, scope, cargo) :
+    def from_attr_pickle_cargo (cls, scope, cargo) :
         result = cls.__new__    (cls, scope = scope)
         result._init_attributes ()
         result.set_pickle_cargo (cargo)
         result._finish__init__  ()
         return result
-    # end def from_pickle_cargo
+    # end def from_attr_pickle_cargo
 
     ### provide read-only access to this class' __init__
     _MOM_Entity__init__ = property (lambda self, __init__ = __init__ : __init__)
@@ -317,16 +320,16 @@ class Entity (TFL.Meta.Object) :
         pass
     # end def after_init
 
-    def as_code (self) :
-        return "%s (%s)" % (self.type_name, self.attr_as_code ())
-    # end def as_code
-
-    def as_pickle_cargo (self) :
+    def as_attr_pickle_cargo (self) :
         return dict \
             (   (a.name, a.get_pickle_cargo  (self))
             for a in self.attributes.itervalues () if a.to_save (self)
             )
-    # end def as_pickle_cargo
+    # end def as_attr_pickle_cargo
+
+    def as_code (self) :
+        return "%s (%s)" % (self.type_name, self.attr_as_code ())
+    # end def as_code
 
     def attr_as_code (self) :
         return ", ".join \
@@ -641,6 +644,10 @@ class An_Entity (Entity) :
         return MOM.SCM.Change.Attr_Composite
     # end def SCM_Change_Attr
 
+    def as_pickle_cargo (self) :
+        return (self.type_name, self.as_attr_pickle_cargo ())
+    # end def as_pickle_cargo
+
     def as_string (self) :
         return tuple (sorted (self.raw_attr_dict.iteritems ()))
     # end def as_string
@@ -911,6 +918,10 @@ class Id_Entity (Entity) :
         return result
     # end def async_changes
 
+    def as_pickle_cargo (self) :
+        return (self.type_name, self.pid, self.as_attr_pickle_cargo ())
+    # end def as_pickle_cargo
+
     def attr_as_code (self) :
         result = ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
         if "," not in result :
@@ -1047,8 +1058,8 @@ class Id_Entity (Entity) :
         undef  = object ()
         if self.type_name != other.type_name :
             result ["type_name"] = (self.type_name, other.type_name)
-        pc_s = self.as_pickle_cargo  ()
-        pc_o = other.as_pickle_cargo ()
+        pc_s = self.as_attr_pickle_cargo  ()
+        pc_o = other.as_attr_pickle_cargo ()
         for k in set (pc_s).union (pc_o) :
             p = pc_s.get (k, undef)
             q = pc_o.get (k, undef)
@@ -1063,8 +1074,8 @@ class Id_Entity (Entity) :
     def user_equal (self, other) :
         """Compare `self` and `other` concerning user attributes."""
         return \
-            (   self.type_name          == other.type_name
-            and self.as_pickle_cargo () == other.as_pickle_cargo ()
+            (   self.type_name               == other.type_name
+            and self.as_attr_pickle_cargo () == other.as_attr_pickle_cargo ()
             )
     # end def user_equal
 

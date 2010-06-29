@@ -71,6 +71,8 @@
 #    19-May-2010 (MG) `rollback` clear `attr_changes` added
 #    26-May-2010 (CT) `self.db_errors = []` added to `_init_context`
 #    24-Jun-2010 (CT) Adpated to change of `db_url`
+#    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
+#    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -249,7 +251,7 @@ class Scope (TFL.Meta.Object) :
         Type = self.entity_type (type_name)
         if Type :
             try :
-                result = Type.from_pickle_cargo (self, cargo)
+                result = Type.from_attr_pickle_cargo (self, cargo)
             except Exception, exc :
                 self.db_errors.append ((type_name, pid, cargo))
                 print repr (exc)
@@ -337,9 +339,9 @@ class Scope (TFL.Meta.Object) :
             result = self.__class__.new \
                 (app_type, db_url, self.root_epk, user = self.user)
             for e in self :
-                f = result.add_from_pickle_cargo \
-                    (e.type_name, e.pid, e.as_pickle_cargo ())
-                result.record_change (MOM.SCM.Change.Create, f)
+                f = result.add_from_pickle_cargo (* e.as_pickle_cargo ())
+                if f :
+                    result.record_change (MOM.SCM.Change.Create, f)
         return result
     # end def copy
 
@@ -441,8 +443,7 @@ class Scope (TFL.Meta.Object) :
             result = self.__class__.new \
                 (app_type, db_url, self.root_epk, user = self.user)
             for e in self :
-                result.add_from_pickle_cargo \
-                    (e.type_name, e.pid, e.as_pickle_cargo ())
+                result.add_from_pickle_cargo (* e.as_pickle_cargo ())
             for c in self.query_changes ().order_by (TFL.Sorted_By ("cid")) :
                 result.ems.register_change (c)
         return result

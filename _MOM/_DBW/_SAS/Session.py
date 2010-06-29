@@ -49,6 +49,7 @@
 #    12-May-2010 (MG) New `pid` style
 #    17-May-2010 (MG) `add` changed to allow `id` parameter
 #     1-Jun-2010 (MG) Rollback handling fixed
+#    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class SAS_Interface (TFL.Meta.Object) :
         scope        = session.scope
         pickle_cargo = TFL.defaultdict (list)
         self._reconstruct (session, self.e_type_columns, pickle_cargo, row)
-        entity     = self.e_type.from_pickle_cargo (scope, pickle_cargo)
+        entity     = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
         entity.pid = row [self.e_type._SAQ.pid]
         return entity
     # end def reconstruct

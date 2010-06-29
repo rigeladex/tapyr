@@ -53,6 +53,7 @@
 #                     instance variable
 #    18-May-2010 (CT) `restore` added
 #    18-May-2010 (CT) `Create` changed to store and use `pickle_cargo`
+#    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -341,8 +342,7 @@ class Create (_Entity_) :
 
     def _restore (self, scope) :
         ### XXX Add legacy lifting
-        return scope.add_from_pickle_cargo \
-            (self.type_name, self.pid, self.pickle_cargo)
+        return scope.add_from_pickle_cargo (* self.pickle_cargo)
     # end def _restore
 
 # end class Create

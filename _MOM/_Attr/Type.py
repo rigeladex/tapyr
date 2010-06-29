@@ -135,6 +135,8 @@
 #                     `I18N.encode_f` instead of hard-coded `encode` to `ascii`
 #    22-Jun-2010 (CT) `is_mandatory` added
 #    24-Jun-2010 (CT) `db_sig` added
+#    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
+#                     s/as_pickle_cargo/as_attr_pickle_cargo/
 #    ««revision-date»»···
 #--
 
@@ -599,14 +601,14 @@ class _A_Composite_Collection_ (_A_Collection_) :
         def as_cargo (cls, obj, attr_kind, attr_type, value) :
             if value is not None :
                 R_Type = attr_type.R_Type
-                return tuple (v.as_pickle_cargo () for v in value)
+                return tuple (v.as_attr_pickle_cargo () for v in value)
         # end def as_cargo
 
         @classmethod
         def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
             if cargo is not None :
                 R_Type = attr_type.R_Type
-                fpc    = attr_type.C_Type.C_Type.from_pickle_cargo
+                fpc    = attr_type.C_Type.C_Type.from_attr_pickle_cargo
                 return R_Type (fpc (obj.home_scope, c) for c in cargo)
         # end def from_cargo
 
