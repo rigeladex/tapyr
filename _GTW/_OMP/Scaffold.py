@@ -101,7 +101,7 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         ( "Break:B?Enter debugger before starting tornado/werkzeug"
         , "-copyright_start:I=2010"
         , "-debug:B=yes"
-        , HTTP_Opt ()
+        , HTTP_Opt (default = "Tornado")
         , TFL.CAO.Opt.Output_Encoding
             ( default     = "utf-8"
             , description = "Default encoding for generated html"
