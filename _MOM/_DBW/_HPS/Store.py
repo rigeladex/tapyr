@@ -250,6 +250,41 @@ class Store (TFL.Meta.Object) :
 
 # end class Store
 
+class Store_PC (Store) :
+    """Scopeless store dealing with pickle-cargos only."""
+
+    def consume (self, pc_iter) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert not self.info.pending
+        ### XXX
+    # end def consume
+
+    def produce_changes (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        info  = self.info
+        x_uri = self.x_uri
+        with TFL.lock_file (x_uri.name) :
+            for (cid, name) in info.commits + info.pending :
+                file_name = TFL.Filename (name, x_uri).name
+                with open (file_name, "rb") as file :
+                    changes = pickle.load (file)
+                    for cargo in changes :
+                        yield cargo
+    # end def produce_changes
+
+    def produce_entities (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        info  = self.info
+        x_uri = self.x_uri
+        with TFL.lock_file (x_uri.name) :
+            for s in info.stores :
+                with open (s, "rb") as file :
+                    for epc in pickle.load (file) :
+                        yield epc
+    # end def produce
+
+# end class Store_PC
+
 class Store_S (Store) :
     """Store connected to a scope."""
 
