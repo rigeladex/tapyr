@@ -37,15 +37,22 @@
 #                     and Tornado
 #    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
 #    28-Jun-2010 (CT) `GTW._Application_` factored
+#    29-Jun-2010 (CT) Import for all relevant modules of package added
 #    ««revision-date»»···
 #--
+
 from   _TFL               import TFL
 from   _GTW               import GTW
 
 import _GTW._Application_
 import _GTW.File_Session
+import _GTW.Static_File_Map
+
 import _GTW._Werkzeug.Error
+import _GTW._Werkzeug.Request_Data
 import _GTW._Werkzeug.Request_Handler
+import _GTW._Werkzeug.Static_File_Handler
+import _GTW._Werkzeug.Upload_Handler
 
 from    werkzeug          import ClosingIterator
 from    werkzeug.wrappers import BaseRequest, BaseResponse
@@ -144,15 +151,4 @@ Application = _Werkzeug_Application_ # end class
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")
-else :
-    import _GTW.Static_File_Map
-    import _GTW._Werkzeug.Static_File_Handler
-    import  os
-    media_dir = os.path.join (os.path.dirname (__file__), "media")
-    app = Application \
-        ( ("/media", GTW.Werkzeug.Static_File_Handler, (media_dir, ))
-        , ("",       GTW.Werkzeug.Request_Handler)
-        , cookie_secret = "SALT"
-        )
-    app.run_development_server (use_debugger = True, use_reloader = True)
 ### __END__ GTW.Werkzeug.Application

@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Tornado.Static_File
+#    GTW.Tornado.Static_File_Handler
 #
 # Purpose
 #    Handling of static files
@@ -128,4 +128,4 @@ def Static_File_Handler (prefix, app_dir, * static_maps) :
 
 if __name__ != "__main__" :
     GTW.Tornado._Export ("*")
-### __END__ GTW.Tornado.Static_File
+### __END__ GTW.Tornado.Static_File_Handler

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jun-2010 (CT) Creation
+#    29-Jun-2010 (CT) `_init_handlers` corrected (use `_init_static_handler`)
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,7 @@ class _Application_ (TFL.Meta.Object) :
         static_handler = kw.pop ("static_handler", None)
         result = []
         if static_handler :
-            result.append (self._init_handler (static_handler))
+            result.append (self._init_static_handler (static_handler))
         for handler_spec in handlers :
             result.append (self._init_handler (handler_spec))
         return result, kw

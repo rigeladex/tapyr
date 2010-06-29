@@ -29,6 +29,7 @@
 # Revision Dates
 #    25-Jun-2010 (CT) Creation
 #    28-Jun-2010 (CT) `HTTP_Opt` added
+#    29-Jun-2010 (CT) `HTTP_Opt` changed to `_Import_Module ("Application")`
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,9 @@ class HTTP_Opt (TFL.CAO._Spec_) :
         if not value :
             value = "Werkzeug"
         m = GTW._Import_Module ("_" + value)
-        return getattr (m, value)
+        result = getattr (m, value)
+        result._Import_Module ("Application")
+        return result
     # end def cook
 
     def _set_default (self, default) :

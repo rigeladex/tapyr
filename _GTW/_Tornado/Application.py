@@ -33,6 +33,7 @@
 #    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
 #    28-Jun-2010 (MG) Pass the url prefix as parameter to the request handler
 #    28-Jun-2010 (CT) `GTW._Application_` factored
+#    29-Jun-2010 (CT) Import for all relevant modules of package added
 #    ««revision-date»»···
 #--
 
@@ -41,8 +42,12 @@ from   _GTW                import GTW
 
 import _GTW._Application_
 import _GTW.autoreload
+
 import _GTW._Tornado.Error
+import _GTW._Tornado.Request_Data
+import _GTW._Tornado.Request_Handler
 import _GTW._Tornado.Static_File_Handler
+import _GTW._Tornado.Upload_Handler
 
 from   tornado            import web
 import tornado.httpserver
@@ -59,7 +64,7 @@ class _Tornado_Application_ (web.Application, GTW._Application_) :
 
     def __init__ (self, * handlers, ** kw) :
         real_handlers, kw = self._init_handlers (handlers, kw)
-        super (_Tornado_Application_, self).__init__ (real_handlers, ** kw)
+        self.__super.__init__ (real_handlers, ** kw)
     # end def __init__
 
     def run_development_server (self, port = 8000, ** kw) :
@@ -81,30 +86,4 @@ Application = _Tornado_Application_ # end class
 
 if __name__ != "__main__" :
     GTW.Tornado._Export ("*")
-else :
-    import _GTW._Tornado.Request_Handler
-    import  sys
-    import  os
-
-    app_dir   = os.path.dirname (sys.argv [0])
-    media_dir = os.path.normpath \
-        (os.path.join (app_dir, "..", "_NAV", "example", "media"))
-    djo_dir   = os.path.normpath \
-        (os.path.join (app_dir, "..", "..", "_DJO", "media"))
-    class Handle_All (GTW.Tornado.Request_Handler) :
-
-        def get (self) :
-            self.write ("Hello World 2")
-        # end def get
-
-    # end class Handle_All
-
-    auto_reload_start \
-        (Application ( ((r"/", Handle_All), )
-                     , static_handler = GTW.Tornado.Static_File_Handler
-                         ( "media", media_dir
-                         , GTW.Tornado.Static_Map ("GTW", djo_dir)
-                         )
-                     )
-        )
 ### __END__ GTW.Tornado.Application
