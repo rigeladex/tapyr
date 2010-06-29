@@ -81,7 +81,7 @@ class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
         store = None
         uri   = db_url and db_url.path
         if uri :
-            store = MOM.DBW.HPS.Store (TFL.Filename (uri), scope)
+            store = MOM.DBW.HPS.Store_S (TFL.Filename (uri), scope)
             store_fct (store)
         return cls (store, scope)
     # end def _get_store
@@ -101,7 +101,7 @@ class Manager (MOM.DBW._Manager_) :
         self.store = store
         self.scope = scope
         if store is None :
-            self._info = MOM.DBW.HPS.Info.NEW (scope)
+            self._info = MOM.DBW.HPS.Info.NEW (scope.app_type, scope)
             self.cm    = MOM.DBW.HPS.Change_Manager ()
         else :
             self.cm    = store.cm

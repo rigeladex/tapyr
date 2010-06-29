@@ -47,6 +47,7 @@
 #    25-Jun-2010 (CT) Use `scope.db_version_hash` instead of
 #                     `Version.db_version`
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
+#    29-Jun-2010 (CT) `Store_S` factored from `Store`
 #    ««revision-date»»···
 #--
 
@@ -78,12 +79,12 @@ TZF = TFL.module_copy \
     , stringEndArchive = "MM\006\005"
     )
 
-def _creator_info (scope, Version) :
+def _creator_info (Version, scope = None) :
     return TFL.Record \
         ( date          = datetime.datetime.now ()
         , tool          = Version.productid
         , tool_version  = Version.tuple
-        , user          = scope.user or TFL.Environment.username
+        , user          = getattr (scope, "user", TFL.Environment.username)
         )
 # end def _creator_info
 
@@ -114,22 +115,32 @@ class Info (TFL.Record) :
     # end def FILES
 
     @classmethod
-    def NEW (cls, scope) :
-        Version = scope.app_type.ANS.Version
+    def NEW (cls, app_type, scope = None, ** kw) :
+        Version = app_type.ANS.Version
         ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
+        if scope is not None :
+            kw.update \
+                ( guid      = scope.guid
+                , root_epk  = scope.root_epk
+                )
         result  = cls \
-            ( creator       = _creator_info (scope, Version)
-            , dbv_hash      = scope.db_version_hash
-            , guid          = scope.guid
-            , last_changer  = _creator_info (scope, Version)
+            ( creator       = _creator_info (Version, scope)
+            , dbv_hash      = app_type.db_version_hash
+            , last_changer  = _creator_info (Version, scope)
             , max_cid       = ems.max_cid
             , max_pid       = ems.max_pid
-            , root_epk      = scope.root_epk
+            , ** kw
             )
         return result
     # end def NEW
 
 # end class Info
+
+class _TZF_ (TFL.Meta.Object) :
+
+    ZF = TZF
+
+# end class _TZF_
 
 class Store (TFL.Meta.Object) :
     """Implement on-disk store for Hash-Pickle-Store."""
@@ -146,32 +157,18 @@ class Store (TFL.Meta.Object) :
         zip_compression = ZF.ZIP_DEFLATED
         del zlib
 
-    def __init__ (self, db_uri, scope) :
-        self.Version  = Version = scope.app_type.ANS.Version
-        self.cm       = MOM.DBW.HPS.Change_Manager ()
+    def __init__ (self, db_uri, app_type) :
+        self.app_type = app_type
+        self.Version  = app_type.ANS.Version
         self.db_uri   = db_uri
         self.x_uri    = self.X_Uri (db_uri.name)
         self.info_uri = TFL.Filename ("info", self.x_uri)
-        self.scope    = scope
+        self.cm       = MOM.DBW.HPS.Change_Manager ()
     # end def __init__
 
     def close (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        db_uri = self.db_uri
-        bak    = TFL.Filename (".bak", db_uri).name
-        info   = self.info
-        x_name = self.x_uri.name
-        self.scope.ems.commit ()
-        if len (info.pending) > self.save_treshold :
-            self._save_objects ()
-        with TFL.lock_file (x_name) :
-            self._check_sync (info)
-            with TFL.open_to_replace \
-                     (db_uri.name, mode = "wb", backup_name = bak) as file:
-                with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
-                    for abs, rel in info.FILES (self.x_uri, self.info_uri) :
-                        zf.write (abs, rel)
-        sos.rmdir (x_name, deletefiles = True)
+        sos.rmdir (self.x_uri.name, deletefiles = True)
     # end def close
 
     def create (self) :
@@ -182,23 +179,6 @@ class Store (TFL.Meta.Object) :
             sos.mkdir (x_name)
             self._create_info ()
     # end def create
-
-    def commit (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        scope = self.scope
-        ucc   = scope.ems.uncommitted_changes
-        if ucc :
-            cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
-            info    = self.info
-            max_cid = scope.ems.max_cid
-            max_pid = scope.ems.max_pid
-            x_name  = self.x_uri.name
-            with self._save_context (x_name, scope, info, max_cid, max_pid) :
-                c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
-                with open (c_name.name, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
-                info.pending.append ((max_cid, c_name.base_ext))
-    # end def commit
 
     def load_changes (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
@@ -224,19 +204,6 @@ class Store (TFL.Meta.Object) :
             self.info = self._load_info ()
     # end def load_info
 
-    def load_objects (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        info  = self.info
-        x_uri = self.x_uri
-        with TFL.lock_file (x_uri.name) :
-            self.scope.db_errors = []
-            for s in info.stores :
-                self._load_store   (TFL.Filename (s, x_uri).name)
-            for (cid, name) in info.pending :
-                self._load_pending (TFL.Filename (name, x_uri).name)
-        self.cm.to_load  = [name for (cid, name) in info.commits]
-    # end def load_objects
-
     @classmethod
     def X_Uri (cls, name) :
         return TFL.Dirname (name + ".X")
@@ -252,7 +219,7 @@ class Store (TFL.Meta.Object) :
     def _create_info (self) :
         uri  = self.info_uri.name
         assert not sos.path.exists (uri)
-        info = self.info = Info.NEW (self.scope)
+        info = self.info = self._new_info ()
         with open (uri, "wb") as file :
             pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _create_info
@@ -272,9 +239,73 @@ class Store (TFL.Meta.Object) :
     def _load_info (self) :
         with open (self.info_uri.name, "rb") as file :
             result = pickle.load (file)
-        ### XXX Check result.dbv_hash vs. self.scope.db_version_hash
+        ### XXX Check result.dbv_hash vs. self.app_type.db_version_hash
         return result
     # end def _load_info
+
+    def _new_info (self) :
+        ### XXX `creator`, `guid`, `last_changer`, `root_epk`
+        return Info.NEW (self.app_type)
+    # end def _new_info
+
+# end class Store
+
+class Store_S (Store) :
+    """Store connected to a scope."""
+
+    def __init__ (self, db_uri, scope) :
+        self.__super.__init__ (db_uri, scope.app_type)
+        self.scope = scope
+    # end def __init__
+
+    def close (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        db_uri = self.db_uri
+        bak    = TFL.Filename (".bak", db_uri).name
+        info   = self.info
+        x_name = self.x_uri.name
+        self.scope.ems.commit ()
+        if len (info.pending) > self.save_treshold :
+            self._save_objects ()
+        with TFL.lock_file (x_name) :
+            self._check_sync (info)
+            with TFL.open_to_replace \
+                     (db_uri.name, mode = "wb", backup_name = bak) as file:
+                with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
+                    for abs, rel in info.FILES (self.x_uri, self.info_uri) :
+                        zf.write (abs, rel)
+        self.__super.close ()
+    # end def close
+
+    def commit (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        scope = self.scope
+        ucc   = scope.ems.uncommitted_changes
+        if ucc :
+            cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
+            info    = self.info
+            max_cid = scope.ems.max_cid
+            max_pid = scope.ems.max_pid
+            x_name  = self.x_uri.name
+            with self._save_context (x_name, scope, info, max_cid, max_pid) :
+                c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
+                with open (c_name.name, "wb") as file :
+                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                info.pending.append ((max_cid, c_name.base_ext))
+    # end def commit
+
+    def load_objects (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        info  = self.info
+        x_uri = self.x_uri
+        with TFL.lock_file (x_uri.name) :
+            self.scope.db_errors = []
+            for s in info.stores :
+                self._load_store   (TFL.Filename (s, x_uri).name)
+            for (cid, name) in info.pending :
+                self._load_pending (TFL.Filename (name, x_uri).name)
+        self.cm.to_load  = [name for (cid, name) in info.commits]
+    # end def load_objects
 
     def _load_pending (self, name) :
         scope = self.scope
@@ -291,13 +322,17 @@ class Store (TFL.Meta.Object) :
                 scope.add_from_pickle_cargo (tn, pid, e_cargo)
     # end def _load_store
 
+    def _new_info (self) :
+        return Info.NEW (self.app_type, self.scope)
+    # end def _new_info
+
     @TFL.Contextmanager
     def _save_context (self, x_name, scope, info, max_cid, max_pid) :
         Version = scope.app_type.ANS.Version
         with TFL.lock_file (x_name) :
             self._check_sync (info)
             yield
-            info.last_changer = _creator_info (scope, Version)
+            info.last_changer = _creator_info (Version, scope)
             info.max_cid      = max_cid
             info.max_pid      = max_pid
             with open (self.info_uri.name, "wb") as file :
@@ -325,13 +360,7 @@ class Store (TFL.Meta.Object) :
             info.pending = []
     # end def _save_objects
 
-# end class Store
-
-class Store_TZF (Store) :
-
-    ZF = TZF
-
-# end class Store_TZF
+# end class Store_S
 
 if __name__ != '__main__':
     MOM.DBW.HPS._Export ("*")
