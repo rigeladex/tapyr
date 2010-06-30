@@ -101,8 +101,8 @@ class Manager (MOM.DBW._Manager_) :
         self.store = store
         self.scope = scope
         if store is None :
-            self._info = MOM.DBW.HPS.Info.NEW (scope.app_type, scope)
-            self.cm    = MOM.DBW.HPS.Change_Manager ()
+            self._info = MOM.DBW.HPS.DB_Meta_Data.NEW (scope.app_type, scope)
+            self.cm    = MOM.DBW.HPS.Change_Manager   ()
         else :
             self.cm    = store.cm
     # end def __init__

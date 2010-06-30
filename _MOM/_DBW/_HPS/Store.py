@@ -49,16 +49,17 @@
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    29-Jun-2010 (CT) `Store_S` factored from `Store`
 #    30-Jun-2010 (CT) `last_changer` removed
+#    30-Jun-2010 (CT) s/Info/DB_Meta_Data/; `MOM.DB_Meta_Data` factored
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 from   _TFL       import TFL
 
+import _MOM.DB_Meta_Data
 import _MOM._DBW._HPS.Change_Manager
 
 import _TFL._Meta.Object
-import _TFL.Environment
 import _TFL.Error
 import _TFL.FCM
 import _TFL.Filename
@@ -69,7 +70,6 @@ import _TFL.Record
 from   _TFL       import sos
 
 import contextlib
-import datetime
 import pickle
 import zipfile            as     ZF
 
@@ -80,17 +80,10 @@ TZF = TFL.module_copy \
     , stringEndArchive = "MM\006\005"
     )
 
-def _creator_info (Version, scope = None) :
-    return TFL.Record \
-        ( date          = datetime.datetime.now ()
-        , tool          = Version.productid
-        , tool_version  = Version.tuple
-        , user          = getattr (scope, "user", TFL.Environment.username)
-        )
-# end def _creator_info
+class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
+    """Provide meta data for Hash-Pickle-Store."""
 
-class Info (TFL.Record) :
-    """Implement info object for Hash-Pickle-Store."""
+    _real_name = "DB_Meta_Data"
 
     def __init__ (self, commits = None, pending = None, stores = None, ** kw) :
         return self.__super.__init__ \
@@ -116,27 +109,18 @@ class Info (TFL.Record) :
     # end def FILES
 
     @classmethod
-    def NEW (cls, app_type, scope = None) :
-        Version = app_type.ANS.Version
+    def NEW (cls, app_type, scope = None, ** kw) :
         ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
-        kw      = {}
-        if scope is not None :
-            kw.update \
-                ( guid      = scope.guid
-                , root_epk  = scope.root_epk
-                )
-        result  = cls \
-            ( creator       = _creator_info (Version, scope)
-            , dbv_hash      = app_type.db_version_hash
-            , max_cid       = ems.max_cid
-            , max_pid       = ems.max_pid
-            , read_only     = False
+        result  = super (DB_Meta_Data, cls).NEW \
+            ( app_type, scope
+            , max_cid = ems.max_cid
+            , max_pid = ems.max_pid
             , ** kw
             )
         return result
     # end def NEW
 
-# end class Info
+DB_Meta_Data = _HPS_DB_Meta_Data_ # end class
 
 class _TZF_ (TFL.Meta.Object) :
 
@@ -245,11 +229,6 @@ class Store (TFL.Meta.Object) :
         return result
     # end def _load_info
 
-    def _new_info (self) :
-        ### XXX `creator`, `guid`, `root_epk`
-        return Info.NEW (self.app_type)
-    # end def _new_info
-
 # end class Store
 
 class Store_PC (Store) :
@@ -262,6 +241,11 @@ class Store_PC (Store) :
         assert not self.info.stores
         ### XXX
     # end def consume
+
+    def create (self, from_db_md) :
+        self.from_db_md = from_db_md
+        self.__super.create ()
+    # end def create
 
     def produce_changes (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
@@ -288,6 +272,10 @@ class Store_PC (Store) :
                     for epc in pickle.load (file) :
                         yield epc
     # end def produce
+
+    def _new_info (self) :
+        return DB_Meta_Data.COPY (self.from_db_md)
+    # end def _new_info
 
 # end class Store_PC
 
@@ -364,7 +352,7 @@ class Store_S (Store) :
     # end def _load_store
 
     def _new_info (self) :
-        return Info.NEW (self.app_type, self.scope)
+        return DB_Meta_Data.NEW (self.app_type, self.scope)
     # end def _new_info
 
     @TFL.Contextmanager
