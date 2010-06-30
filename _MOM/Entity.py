@@ -144,6 +144,7 @@
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
 #    29-Jun-2010 (CT) New `as_pickle_cargo` added
+#    30-Jun-2010 (CT) Reference to `home_scope._locked` removed
 #    ««revision-date»»···
 #--
 
@@ -970,7 +971,6 @@ class Id_Entity (Entity) :
         if self is self.home_scope.root :
             self.home_scope.destroy ()
         else :
-            assert (not self.home_scope._locked)
             self.home_scope.remove (self)
     # end def destroy
 

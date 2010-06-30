@@ -73,6 +73,7 @@
 #    24-Jun-2010 (CT) Adpated to change of `db_url`
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
+#    30-Jun-2010 (CT) `_locked` and friends removed
 #    ««revision-date»»···
 #--
 
@@ -98,15 +99,6 @@ import _TFL._Meta.Once_Property
 
 import uuid
 
-@TFL.Decorator
-def _with_lock_check (f) :
-    def _ (self, * args, ** kw) :
-        if self._locked :
-            raise RuntimeError ("Trying to modify locked scope %s." % self)
-        f (self, * args, ** kw)
-    return _
-# end def _with_lock_check
-
 class Scope (TFL.Meta.Object) :
 
     active                 = None
@@ -116,7 +108,6 @@ class Scope (TFL.Meta.Object) :
     kill_callback          = TFL.Ordered_Set ()
     is_universe            = False
     _deprecated_type_names = {}
-    _locked                = False
     _pkg_ns                = None
     __id                   = 0
 
@@ -238,7 +229,6 @@ class Scope (TFL.Meta.Object) :
 
     ### Scope methods
 
-    @_with_lock_check
     def add (self, entity) :
         """Adds `entity` to scope `self`."""
         self.ems.add (entity)
@@ -353,7 +343,6 @@ class Scope (TFL.Meta.Object) :
         self.ems.close ()
         if self.qname in Scope.Table :
             del Scope.Table [self.qname]
-        self._locked = False
         self.stop_change_recorder ()
         self.app_type.run_kill_callbacks (self)
         for c in self.kill_callback :
@@ -479,7 +468,6 @@ class Scope (TFL.Meta.Object) :
             (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
     # end def relevant_roots
 
-    @_with_lock_check
     def remove (self, entity) :
         """Remove `entity` from scope `self`"""
         assert (entity != self.root)
@@ -494,7 +482,6 @@ class Scope (TFL.Meta.Object) :
                 remove ()
     # end def remove
 
-    @_with_lock_check
     def rename (self, entity, new_epk, renamer) :
         self.ems.rename (entity, new_epk, renamer)
     # end def rename
@@ -516,12 +503,6 @@ class Scope (TFL.Meta.Object) :
             self.historian.pop_recorder ()
         self.attr_changes.clear ()
     # end def stop_change_recorder
-
-    @TFL.Contextmanager
-    def unlocked (self) :
-        with self.LET (_locked = False) :
-            yield self
-    # end def unlocked
 
     def user_diff (self, other) :
         """Return differences of entities `self` and `other` concerning user attributes."""
