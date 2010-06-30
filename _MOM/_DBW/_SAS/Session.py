@@ -262,7 +262,7 @@ class Session (TFL.Meta.Object) :
     def __init__ (self, scope, engine) :
         self.scope  = scope
         self.engine = engine
-        self.expunge                 ()
+        self.expunge  ()
     # end def __init__
 
     def add (self, entity, id = None) :
@@ -363,7 +363,7 @@ class Session (TFL.Meta.Object) :
     # end def query
 
     def recreate_change (self, row) :
-        cid      = row.cid
+        cid = row.cid
         if row.cid not in self._cid_map :
             change              = MOM.SCM.Change._Change_.from_pickle (row.data)
             change.cid          = cid
@@ -379,7 +379,7 @@ class Session (TFL.Meta.Object) :
 
     def rollback (self) :
         if self.transaction :
-            scope            = self.scope
+            scope = self.scope
             for c in reversed (scope.ems.uncommitted_changes) :
                 if c.undoable :
                     c.undo (scope)

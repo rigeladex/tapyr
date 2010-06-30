@@ -51,6 +51,8 @@
 #    12-May-2010 (CT) `pid_query` rewritten to use `pm.query`
 #    12-May-2010 (CT) `pid_query` changed to apply `int` to `pid`
 #    17-May-2010 (CT) `register_change` changed to not set `change.user`
+#    30-Jun-2010 (CT) `db_meta_data` added
+#    30-Jun-2010 (CT) `readonly` added
 #    ««revision-date»»···
 #--
 
@@ -121,6 +123,11 @@ class _Manager_ (TFL.Meta.Object) :
         return self.query (Type, strict = strict).count ()
     # end def count
 
+    @property
+    def db_meta_data (self) :
+        return self.session.db_meta_data
+    # end def db_meta_data
+
     def exists (self, Type, epk) :
         epk_dict = dict (zip (Type.epk_sig, epk))
         entities = self.query (Type).filter (** epk_dict)
@@ -183,6 +190,11 @@ class _Manager_ (TFL.Meta.Object) :
     def r_query (self, Type, rkw, * filters, ** kw) :
         return self.query (Type, * filters, ** dict (rkw, ** kw))
     # end def r_query
+
+    def readonly (self, state) :
+        self.session.readonly (state)
+        self.commit ()
+    # end def readonly
 
     def register_change (self, change) :
         if change.parent is None :

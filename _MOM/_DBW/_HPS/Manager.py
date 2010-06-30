@@ -36,6 +36,9 @@
 #    11-May-2010 (CT) `Pid_Manager` added
 #    18-May-2010 (CT) `Change_Manager` and `load_changes` added
 #    23-Jun-2010 (CT) Import for `_MOM._DBW._HPS.DBS` added
+#    30-Jun-2010 (CT) `_new_manager` changed to use `scope.ilk`
+#    30-Jun-2010 (CT) `db_meta_data` added
+#    30-Jun-2010 (CT) `readonly` added
 #    ««revision-date»»···
 #--
 
@@ -56,13 +59,13 @@ import _TFL.Filename
 class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class for MOM.DBW.HPS.Manager"""
 
-    def create_database (cls, db_url, scope) :
-        return cls._new_manager (db_url, scope, TFL.Method.create)
-    # end def create_database
-
     def connect_database (cls, db_url, scope) :
         return cls._new_manager (db_url, scope, TFL.Method.load_info)
     # end def connect_database
+
+    def create_database (cls, db_url, scope) :
+        return cls._new_manager (db_url, scope, TFL.Method.create)
+    # end def create_database
 
     def delete_database (cls, db_url) :
         uri = db_url.path
@@ -81,10 +84,11 @@ class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
         store = None
         uri   = db_url and db_url.path
         if uri :
-            store = MOM.DBW.HPS.Store_S (TFL.Filename (uri), scope)
-            store_fct (store)
+            Store = getattr (MOM.DBW.HPS, "Store_%s" % scope.ilk)
+            store = Store   (TFL.Filename (uri), scope)
+            store_fct       (store)
         return cls (store, scope)
-    # end def _get_store
+    # end def _new_manager
 
 # end class _M_HPS_Manager_
 
@@ -123,6 +127,11 @@ class Manager (MOM.DBW._Manager_) :
     # end def commit
 
     @property
+    def db_meta_data (self) :
+        return self.store.db_meta_data
+    # end def db_meta_data
+
+    @property
     def info (self) :
         if self.store is not None :
             return self.store.info
@@ -139,6 +148,10 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.load_objects ()
     # end def load_objects
+
+    def readonly (self, state) :
+        self.store.readonly (state)
+    # end def readonly
 
     def rollback (self) :
         pass ### Nothing needs to be done here

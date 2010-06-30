@@ -74,13 +74,13 @@
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    30-Jun-2010 (CT) `_locked` and friends removed
+#    30-Jun-2010 (CT) `ilk` added
 #    ««revision-date»»···
 #--
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
-import _MOM.App_Type
 import _MOM.Error
 import _MOM._Pred.Err_and_Warn_List
 import _MOM._SCM.Tracker
@@ -102,6 +102,7 @@ import uuid
 class Scope (TFL.Meta.Object) :
 
     active                 = None
+    ilk                    = "S"
     Table                  = {}
 
     init_callback          = TFL.Ordered_Set ()
@@ -160,7 +161,7 @@ class Scope (TFL.Meta.Object) :
         db_url = app_type.Url (db_url)
         with cls._init_context (app_type, db_url, user) as self :
             app_type  = self.app_type
-            self.ems  = ems = self.app_type.EMS.connect (self, db_url)
+            self.ems  = ems = app_type.EMS.connect (self, db_url)
             with self._init_root_context () :
                 self._register_root (ems.load_root ())
         return self
@@ -182,8 +183,6 @@ class Scope (TFL.Meta.Object) :
     @classmethod
     @TFL.Contextmanager
     def _init_context (cls, app_type, db_url, user, root_epk = ()) :
-        if isinstance (app_type, (str, unicode)) :
-            app_type        = MOM.App_Type.instance (app_type)
         self                = cls.__new__ (cls)
         self.app_type       = app_type
         self.db_url         = db_url
