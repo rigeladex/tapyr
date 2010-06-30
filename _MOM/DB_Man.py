@@ -75,15 +75,15 @@ class DB_Man (TFL.Meta.Object) :
 
     ### DB_Man instance methods
 
+    def change_readonly (self, state) :
+        """Change `readonly` state of database to `state`."""
+        self.ems.change_readonly (state)
+    # end def change_readonly
+
     @property
     def db_meta_data (self) :
         return self.ems.db_meta_data
     # end def db_meta_data
-
-    def lock (self) :
-        """Lock database: readonly."""
-        self.ems.readonly (True)
-    # end def lock
 
     def _migrate (self) :
         pass ### XXX

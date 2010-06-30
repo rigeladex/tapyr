@@ -52,7 +52,7 @@
 #    12-May-2010 (CT) `pid_query` changed to apply `int` to `pid`
 #    17-May-2010 (CT) `register_change` changed to not set `change.user`
 #    30-Jun-2010 (CT) `db_meta_data` added
-#    30-Jun-2010 (CT) `readonly` added
+#    30-Jun-2010 (CT) `change_readonly` added
 #    ««revision-date»»···
 #--
 
@@ -106,6 +106,11 @@ class _Manager_ (TFL.Meta.Object) :
             result = result.filter (* filters, ** kw)
         return result
     # end def async_changes
+
+    def change_readonly (self, state) :
+        self.session.change_readonly (state)
+        self.commit ()
+    # end def change_readonly
 
     def close (self) :
         if self.uncommitted_changes :
@@ -190,11 +195,6 @@ class _Manager_ (TFL.Meta.Object) :
     def r_query (self, Type, rkw, * filters, ** kw) :
         return self.query (Type, * filters, ** dict (rkw, ** kw))
     # end def r_query
-
-    def readonly (self, state) :
-        self.session.readonly (state)
-        self.commit ()
-    # end def readonly
 
     def register_change (self, change) :
         if change.parent is None :

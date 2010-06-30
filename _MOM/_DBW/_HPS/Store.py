@@ -52,14 +52,18 @@
 #    30-Jun-2010 (CT) s/Info/DB_Meta_Data/; `MOM.DB_Meta_Data` factored
 #    30-Jun-2010 (CT) `_save_info` factored,
 #                     `_save_context` changed to yield `info`
-#    30-Jun-2010 (CT) `readonly` added
+#    30-Jun-2010 (CT) `readonly` and `change_readonly` added
 #    ««revision-date»»···
 #--
 
-from   _MOM       import MOM
-from   _TFL       import TFL
+from   _MOM           import MOM
+from   _TFL           import TFL
+
+from   _TFL           import sos
+from   _TFL.predicate import sliced
 
 import _MOM.DB_Meta_Data
+import _MOM.Error
 import _MOM._DBW._HPS.Change_Manager
 
 import _TFL._Meta.Object
@@ -70,8 +74,6 @@ import _TFL.Filename
 import _TFL.module_copy
 import _TFL.open_w_lock
 import _TFL.Record
-
-from   _TFL       import sos
 
 import contextlib
 import pickle
@@ -97,6 +99,16 @@ class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
             , ** kw
             )
     # end def __init__
+
+    @classmethod
+    def COPY (cls, other) :
+        result = super (DB_Meta_Data, cls).COPY (other)
+        ### Don't want to copy the `commits`, `pending`, and `stores` lists
+        result.commits = []
+        result.pending = []
+        result.stores  = []
+        return result
+    # end def COPY
 
     def FILES (self, x_uri, head = None) :
         def _ (x) :
@@ -157,9 +169,26 @@ class Store (TFL.Meta.Object) :
         self.cm       = MOM.DBW.HPS.Change_Manager ()
     # end def __init__
 
+    def change_readonly (self, state) :
+        with TFL.lock_file (self.x_uri.name) :
+            info          = self._check_sync (self.info)
+            info.readonly = bool (state)
+            self._save_info (info)
+    # end def change_readonly
+
     def close (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        sos.rmdir (self.x_uri.name, deletefiles = True)
+        db_uri = self.db_uri
+        x_name = self.x_uri.name
+        bak    = TFL.Filename (".bak", db_uri).name
+        with TFL.lock_file (x_name) :
+            info = self._check_sync (self.info)
+            with TFL.open_to_replace \
+                     (db_uri.name, mode = "wb", backup_name = bak) as file:
+                with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
+                    for abs, rel in info.FILES (self.x_uri, self.info_uri) :
+                        zf.write (abs, rel)
+        sos.rmdir (x_name, deletefiles = True)
     # end def close
 
     def create (self) :
@@ -194,13 +223,6 @@ class Store (TFL.Meta.Object) :
                     zf.extractall (x_name)
             self.info = self._load_info ()
     # end def load_info
-
-    def readonly (self, state) :
-        with TFL.lock_file (self.x_uri.name) :
-            info          = self._check_sync (self.info)
-            info.readonly = state
-            self._save_info (info)
-    # end def readonly
 
     @classmethod
     def X_Uri (cls, name) :
@@ -256,12 +278,37 @@ class Store_PC (Store) :
         self.db_man = db_man
     # end def __init__
 
-    def consume (self, e_iter, c_iter) :
+    def commit (self) :
+        pass
+    # end def commit
+
+    def consume (self, e_iter, c_iter, chunk_size = 10000) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
         assert not self.info.commits
         assert not self.info.pending
         assert not self.info.stores
-        ### XXX
+        db_uri  = self.db_uri
+        x_name  = self.x_uri.name
+        max_cid = 0
+        with TFL.lock_file (x_name) :
+            info    = self._check_sync (self.info)
+            stores  = info.stores  = []
+            commits = info.commits = []
+            for i, cargo in enumerate (sliced (e_iter, chunk_size)) :
+                max_pid = cargo [-1] [1] ### XXX too brittle
+                s_name  = TFL.Filename ("by_pid_%d" % i, self.x_uri)
+                with open (s_name.name, "wb") as file :
+                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                stores.append   (s_name.base_ext)
+            for i, cargo in enumerate (sliced (c_iter, chunk_size)) :
+                max_cid = cargo [-1].cid
+                c_name  = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
+                with open (c_name.name, "wb") as file :
+                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                commits.append ((max_cid, c_name.base_ext))
+            info.max_cid = max_cid
+            info.max_pid = max_pid
+            self._save_info (info)
     # end def consume
 
     def produce_changes (self) :
@@ -305,21 +352,8 @@ class Store_S (Store) :
     # end def __init__
 
     def close (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
-        db_uri = self.db_uri
-        bak    = TFL.Filename (".bak", db_uri).name
-        info   = self.info
-        x_name = self.x_uri.name
-        self.scope.ems.commit ()
-        if len (info.pending) > self.save_treshold :
+        if len (self.info.pending) > self.save_treshold :
             self._save_objects ()
-        with TFL.lock_file (x_name) :
-            info = self._check_sync (info)
-            with TFL.open_to_replace \
-                     (db_uri.name, mode = "wb", backup_name = bak) as file:
-                with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
-                    for abs, rel in info.FILES (self.x_uri, self.info_uri) :
-                        zf.write (abs, rel)
         self.__super.close ()
     # end def close
 
@@ -374,9 +408,11 @@ class Store_S (Store) :
 
     @TFL.Contextmanager
     def _save_context (self, x_name, scope, info, max_cid, max_pid) :
-        Version = scope.app_type.ANS.Version
+        Version = self.Version
         with TFL.lock_file (x_name) :
             info = self._check_sync (info)
+            if info.readonly :
+                raise MOM.Error.Readonly_DB
             yield info
             info.max_cid = max_cid
             info.max_pid = max_pid

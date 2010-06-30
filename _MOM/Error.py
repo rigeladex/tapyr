@@ -41,6 +41,7 @@
 #    16-Jun-2010 (CT) `__str__` changed to `.encode` result of `__unicode__`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    22-Jun-2010 (CT) `is_mandatory` added
+#    30-Jun-2010 (CT) `Readonly_DB` added
 #    ««revision-date»»···
 #--
 
@@ -532,6 +533,11 @@ class Incompatible_DB_Version (DB_Error) :
 class Empty_DB (DB_Error) :
     pass
 # end class Empty_DB
+
+class Readonly_DB (DB_Error) :
+    """Database is set to readonly."""
+# end class Readonly_DB
+
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

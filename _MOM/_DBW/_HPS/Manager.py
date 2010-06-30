@@ -38,7 +38,7 @@
 #    23-Jun-2010 (CT) Import for `_MOM._DBW._HPS.DBS` added
 #    30-Jun-2010 (CT) `_new_manager` changed to use `scope.ilk`
 #    30-Jun-2010 (CT) `db_meta_data` added
-#    30-Jun-2010 (CT) `readonly` added
+#    30-Jun-2010 (CT) `change_readonly` added
 #    ««revision-date»»···
 #--
 
@@ -99,6 +99,8 @@ class Manager (MOM.DBW._Manager_) :
 
     Pid_Manager   = MOM.DBW.HPS.Pid_Manager
 
+    db_meta_data  = TFL.Meta.Alias_Property ("info")
+
     type_name     = "HPS"
 
     def __init__ (self, store, scope) :
@@ -110,6 +112,11 @@ class Manager (MOM.DBW._Manager_) :
         else :
             self.cm    = store.cm
     # end def __init__
+
+    def change_readonly (self, state) :
+        if self.store is not None :
+            self.store.change_readonly (state)
+    # end def change_readonly
 
     def close (self) :
         if self.store is not None :
@@ -125,11 +132,6 @@ class Manager (MOM.DBW._Manager_) :
             info.max_cid = ems.max_cid
             info.max_pid = ems.max_pid
     # end def commit
-
-    @property
-    def db_meta_data (self) :
-        return self.store.db_meta_data
-    # end def db_meta_data
 
     @property
     def info (self) :
@@ -148,10 +150,6 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.load_objects ()
     # end def load_objects
-
-    def readonly (self, state) :
-        self.store.readonly (state)
-    # end def readonly
 
     def rollback (self) :
         pass ### Nothing needs to be done here

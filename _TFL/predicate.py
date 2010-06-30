@@ -170,12 +170,15 @@
 #     2-Dec-2009 (CT)  `_sorted` removed (only needed for ancient Pythons)
 #     1-Jan-2010 (CT)  `first_diff` added
 #     2-Jun-2010 (CT)  `undotted_dict` added
+#    30-Jun-2010 (CT)  `sliced` added
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 
 import _TFL.Generators
+
+import itertools
 
 ### legacy aliases
 IV_Pairs        = enumerate
@@ -825,6 +828,48 @@ def second_arg (x, y, * args, ** kw) :
     """Returns the second argument unchanged"""
     return y
 # end def second_arg
+
+def sliced (iterable, length) :
+    """Generate all slices of size `length` in `iterable`.
+
+        >>> l = range (20)
+        >>> for s in sliced (l, 3) :
+        ...   print s
+        ...
+        (0, 1, 2)
+        (3, 4, 5)
+        (6, 7, 8)
+        (9, 10, 11)
+        (12, 13, 14)
+        (15, 16, 17)
+        (18, 19)
+        >>> for s in sliced (l, 5) :
+        ...   print s
+        ...
+        (0, 1, 2, 3, 4)
+        (5, 6, 7, 8, 9)
+        (10, 11, 12, 13, 14)
+        (15, 16, 17, 18, 19)
+        >>> for s in sliced (l, 8) :
+        ...   print s
+        ...
+        (0, 1, 2, 3, 4, 5, 6, 7)
+        (8, 9, 10, 11, 12, 13, 14, 15)
+        (16, 17, 18, 19)
+        >>> for s in sliced (l, 10) :
+        ...   print s
+        ...
+        (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        (10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+    """
+    it = iter (iterable)
+    while True :
+        next = tuple (itertools.islice (it, None, length))
+        if next :
+            yield next
+        else :
+            break
+# end def sliced
 
 ### Legacy: allow `sorted` to be passed to `_Export`
 sorted = sorted

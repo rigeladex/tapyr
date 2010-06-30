@@ -60,7 +60,7 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
             ( creator       = creator
             , dbv_hash      = app_type.db_version_hash
             , guid          = getattr (scope, "guid", None)
-            , read_only     = False
+            , readonly      = False
             , root_epk      = getattr (scope, "root_epk", ())
             , ** kw
             )
