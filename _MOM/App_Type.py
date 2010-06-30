@@ -36,6 +36,7 @@
 #     4-Mar-2010 (CT) `delete_database` added
 #    24-Jun-2010 (CT) `Url` added
 #    24-Jun-2010 (CT) `db_sig` and `db_version_hash` added
+#    30-Jun-2010 (CT) `Once_Property` for `Version` added
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,11 @@ class _App_Type_ (TFL.Meta.Object) :
             return DBS.Url (db_url, self.ANS)
         return db_url
     # end def Url
+
+    @TFL.Meta.Once_Property
+    def Version (self) :
+        return self.ANS.Version
+    # end def Version
 
     def __getitem__ (self, name) :
         return self.etypes [name]

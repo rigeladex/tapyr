@@ -112,7 +112,7 @@ class Record (TFL.Meta.Object) :
     # end def __iter__
 
     def __len__ (self) :
-        return len(self._kw)
+        return len (self._kw)
     # end def __len__
 
     def __nonzero__ (self) :

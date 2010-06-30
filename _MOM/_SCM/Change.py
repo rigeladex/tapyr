@@ -54,6 +54,7 @@
 #    18-May-2010 (CT) `restore` added
 #    18-May-2010 (CT) `Create` changed to store and use `pickle_cargo`
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
+#    30-Jun-2010 (CT) `tool_version` added
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     parent             = None
     pid                = None
     time               = None
+    tool_version       = None
     user               = None
 
     def __init__ (self) :
@@ -203,6 +205,7 @@ class _Entity_ (Undoable) :
         self.__super.__init__ ()
         self.epk          = entity.epk_raw
         self.pid          = getattr (entity, "pid", None)
+        self.tool_version = entity.home_scope.Version.id
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
     # end def __init__
@@ -266,11 +269,12 @@ class _Entity_ (Undoable) :
     def _pickle_attrs (self) :
         return dict \
             ( self.__super._pickle_attrs ()
-            , epk         = self.epk
-            , new_attr    = self.new_attr
-            , old_attr    = self.old_attr
-            , pid         = self.pid
-            , type_name   = self.type_name
+            , epk           = self.epk
+            , new_attr      = self.new_attr
+            , old_attr      = self.old_attr
+            , pid           = self.pid
+            , tool_version  = self.tool_version
+            , type_name     = self.type_name
             )
     # end def _pickle_attrs
 

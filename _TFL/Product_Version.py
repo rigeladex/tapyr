@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,7 @@
 #                     instead of `id self`
 #    24-Aug-2008 (CT) Factored from `TOM.Product_Version`
 #    18-Dec-2009 (CT) `author`, `copyright_start`, and `tuple` added
+#    30-Jun-2010 (CT) `id` added
 #    ««revision-date»»···
 #--
 
@@ -120,6 +121,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         self.copyright       = self._copyright (author, copyright_start)
         self.message         = "Version %s, %s" % (self.version, self.date)
         self.tuple           = (self.major, self.minor, self.patchlevel)
+        self.id              = (self.productnick, self.tuple)
         self.lic_comps       = list (lic_comps)
         self.plugins         = []
         self._setup_lic_comps  ()

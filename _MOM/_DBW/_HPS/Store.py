@@ -48,6 +48,7 @@
 #                     `Version.db_version`
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    29-Jun-2010 (CT) `Store_S` factored from `Store`
+#    30-Jun-2010 (CT) `last_changer` removed
 #    ««revision-date»»···
 #--
 
@@ -115,9 +116,10 @@ class Info (TFL.Record) :
     # end def FILES
 
     @classmethod
-    def NEW (cls, app_type, scope = None, ** kw) :
+    def NEW (cls, app_type, scope = None) :
         Version = app_type.ANS.Version
         ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
+        kw      = {}
         if scope is not None :
             kw.update \
                 ( guid      = scope.guid
@@ -126,9 +128,9 @@ class Info (TFL.Record) :
         result  = cls \
             ( creator       = _creator_info (Version, scope)
             , dbv_hash      = app_type.db_version_hash
-            , last_changer  = _creator_info (Version, scope)
             , max_cid       = ems.max_cid
             , max_pid       = ems.max_pid
+            , read_only     = False
             , ** kw
             )
         return result
@@ -244,7 +246,7 @@ class Store (TFL.Meta.Object) :
     # end def _load_info
 
     def _new_info (self) :
-        ### XXX `creator`, `guid`, `last_changer`, `root_epk`
+        ### XXX `creator`, `guid`, `root_epk`
         return Info.NEW (self.app_type)
     # end def _new_info
 
@@ -253,14 +255,17 @@ class Store (TFL.Meta.Object) :
 class Store_PC (Store) :
     """Scopeless store dealing with pickle-cargos only."""
 
-    def consume (self, pc_iter) :
+    def consume (self, e_iter, c_iter) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert not self.info.commits
         assert not self.info.pending
+        assert not self.info.stores
         ### XXX
     # end def consume
 
     def produce_changes (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert not self.info.pending
         info  = self.info
         x_uri = self.x_uri
         with TFL.lock_file (x_uri.name) :
@@ -274,6 +279,7 @@ class Store_PC (Store) :
 
     def produce_entities (self) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert not self.info.pending
         info  = self.info
         x_uri = self.x_uri
         with TFL.lock_file (x_uri.name) :
@@ -367,9 +373,8 @@ class Store_S (Store) :
         with TFL.lock_file (x_name) :
             self._check_sync (info)
             yield
-            info.last_changer = _creator_info (Version, scope)
-            info.max_cid      = max_cid
-            info.max_pid      = max_pid
+            info.max_cid = max_cid
+            info.max_pid = max_pid
             with open (self.info_uri.name, "wb") as file :
                 pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _save_context
