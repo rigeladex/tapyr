@@ -53,6 +53,7 @@
 #    17-May-2010 (CT) `register_change` changed to not set `change.user`
 #    30-Jun-2010 (CT) `db_meta_data` added
 #    30-Jun-2010 (CT) `change_readonly` added
+#    30-Jun-2010 (CT) `pcm` added
 #    ««revision-date»»···
 #--
 
@@ -167,6 +168,11 @@ class _Manager_ (TFL.Meta.Object) :
         """Redefine to load `guid`, `pid`, and `root` of scope from database."""
         raise NotImplementedError
     # end def load_root
+
+    @property
+    def pcm (self) :
+        return self.session.pcm
+    # end def pcm
 
     def pid_query (self, pid, Type) :
         result = self.pm.query (int (pid))

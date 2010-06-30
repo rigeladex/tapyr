@@ -51,11 +51,12 @@ class DB_Man (TFL.Meta.Object) :
     # end def connect
 
     @classmethod
-    def create (cls, db_url, app_type, from_db_man) :
-        self     = cls.__new__ (db_url, app_type)
-        self.src = from_db_man
-        self.ems = app_type.EMS.new (self, db_url)
-        self._migrate ()
+    def create (cls, db_url, app_type, from_db_man, chunk_size = 10000) :
+        self            = cls.__new__ (db_url, app_type)
+        self.src        = from_db_man
+        self.ems        = app_type.EMS.new (self, db_url)
+        self.chunk_size = chunk_size
+        self._migrate (chunk_size)
         return self
     # end def create
 
@@ -85,8 +86,12 @@ class DB_Man (TFL.Meta.Object) :
         return self.ems.db_meta_data
     # end def db_meta_data
 
-    def _migrate (self) :
-        pass ### XXX
+    def _migrate (self, chunk_size) :
+        self.ems.pcm.consume \
+            ( self.src.ems.produce_entities ()
+            , self.src.ems.produce_changes  ()
+            , chunk_size
+            )
     # end def _migrate
 
 # end class DB_Man

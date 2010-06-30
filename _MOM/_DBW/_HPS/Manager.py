@@ -39,6 +39,7 @@
 #    30-Jun-2010 (CT) `_new_manager` changed to use `scope.ilk`
 #    30-Jun-2010 (CT) `db_meta_data` added
 #    30-Jun-2010 (CT) `change_readonly` added
+#    30-Jun-2010 (CT) `pcm` added
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,7 @@ class Manager (MOM.DBW._Manager_) :
     Pid_Manager   = MOM.DBW.HPS.Pid_Manager
 
     db_meta_data  = TFL.Meta.Alias_Property ("info")
+    pcm           = TFL.Meta.Alias_Property ("store")
 
     type_name     = "HPS"
 
