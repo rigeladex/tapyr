@@ -104,7 +104,7 @@ _test_code = r"""
 
     >>> db_url = "hps:////tmp/gtw_test.gtw"
     >>> apt, url = Scaffold.app_type_and_url (db_url)
-    >>> scop2 = scope.migrate (apt, url)
+    >>> scop2 = scope.copy (apt, url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (29, 29)
     >>> sorted (scope.user_diff (scop2).iteritems ())
@@ -145,7 +145,7 @@ _test_code = r"""
     >>> scope.destroy ()
     >>> if db_url :
     ...    apt.delete_database (db_url)
-    >>> scop4 = scop3.migrate (apt, db_url)
+    >>> scop4 = scop3.copy (apt, db_url)
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
     (29, 29)

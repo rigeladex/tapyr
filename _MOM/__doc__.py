@@ -1608,7 +1608,7 @@ Migrating all entities and the complete change history
     12
     >>> scope.query_changes ().count ()
     50
-    >>> scop5 = scope.migrate (apt, %(db_scheme)s)
+    >>> scop5 = scope.copy (apt, %(db_scheme)s)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop5))
     (12, 12)
     >>> tuple (s.query_changes ().count () for s in (scope, scop5))

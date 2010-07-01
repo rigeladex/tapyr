@@ -40,6 +40,7 @@
 #    30-Jun-2010 (CT) `db_meta_data` added
 #    30-Jun-2010 (CT) `change_readonly` added
 #    30-Jun-2010 (CT) `pcm` added
+#     1-Jul-2010 (CT) `compact` added
 #    ««revision-date»»···
 #--
 
@@ -134,6 +135,11 @@ class Manager (MOM.DBW._Manager_) :
             info.max_cid = ems.max_cid
             info.max_pid = ems.max_pid
     # end def commit
+
+    def compact (self) :
+        if self.store is not None :
+            self.store.compact ()
+    # end def compact
 
     @property
     def info (self) :

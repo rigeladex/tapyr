@@ -54,6 +54,7 @@
 #     1-Jul-2010 (MG) `SAS_Interface.pickle_cargo` factored
 #     1-Jul-2010 (MG) `Session_PC.produce_entities` and
 #                     `Session_PC.produce_changes` implemented
+#     1-Jul-2010 (CT) `compact` added (does nothing for now)
 #    ««revision-date»»···
 #--
 
@@ -275,11 +276,15 @@ class _Session_ (TFL.Meta.Object) :
     # end def __init__
 
     def commit (self) :
-        self.transaction.commit     ()
-        self.connection.close       ()
-        self.transaction      = None
+        self.transaction.commit ()
+        self.connection.close   ()
+        self.transaction = None
         del self.connection
     # end def commit
+
+    def compact (self) :
+        pass
+    # end def compact
 
     @TFL.Meta.Once_Property
     def connection (self) :

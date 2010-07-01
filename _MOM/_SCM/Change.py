@@ -55,6 +55,8 @@
 #    18-May-2010 (CT) `Create` changed to store and use `pickle_cargo`
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    30-Jun-2010 (CT) `tool_version` added
+#     1-Jul-2010 (CT) `_Entity._restore` added
+#                     (default implementation does nothing -- `Copy` needs it)
 #    ««revision-date»»···
 #--
 
@@ -289,6 +291,10 @@ class _Entity_ (Undoable) :
             result.append ("new-values = {%s}" % format (self.new_attr))
         return ", ".join (result)
     # end def _repr
+
+    def _restore (self, scope) :
+        pass
+    # end def _restore
 
     def _to_change (self, entity, old_attr) :
         return dict \

@@ -76,6 +76,7 @@
 #    30-Jun-2010 (CT) `_locked` and friends removed
 #    30-Jun-2010 (CT) `ilk` added
 #     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
+#     1-Jul-2010 (CT) `migrate` renamed to `copy`
 #    ««revision-date»»···
 #--
 
@@ -319,8 +320,8 @@ class Scope (TFL.Meta.Object) :
     # end def compute_defaults_internal
 
     def copy (self, app_type, db_url) :
-        """Return a new scope for `app_type` and `db_url` with copies of all
-           entities in `self`.
+        """Copy all entities and change-history  of `self` into a new
+           scope for `app_type` and `db_url`.
         """
         assert self.app_type.parent is app_type.parent
         db_url = app_type.Url (db_url)
@@ -328,10 +329,11 @@ class Scope (TFL.Meta.Object) :
         with self.as_active () :
             result = self.__class__.new \
                 (app_type, db_url, self.root_epk, user = self.user)
-            for e in self :
-                f = result.add_from_pickle_cargo (* e.as_pickle_cargo ())
-                if f :
-                    result.record_change (MOM.SCM.Change.Create, f)
+            for e in sorted (self, key = TFL.Getter.pid) :
+                result.add_from_pickle_cargo (* e.as_pickle_cargo ())
+            for c in self.query_changes ().order_by (TFL.Sorted_By ("cid")) :
+                result.ems.register_change (c)
+            result.ems.compact ()
         return result
     # end def copy
 
@@ -420,23 +422,6 @@ class Scope (TFL.Meta.Object) :
         with self.as_active () :
             return self._check_inv (gauge, "object")
     # end def i_incorrect
-
-    def migrate (self, app_type, db_url) :
-        """Migrate all entities and change-history  of `self` into a new
-           scope for `app_type` and `db_url`.
-        """
-        assert self.app_type.parent is app_type.parent
-        db_url = app_type.Url (db_url)
-        assert db_url is None or self.db_url != db_url
-        with self.as_active () :
-            result = self.__class__.new \
-                (app_type, db_url, self.root_epk, user = self.user)
-            for e in self :
-                result.add_from_pickle_cargo (* e.as_pickle_cargo ())
-            for c in self.query_changes ().order_by (TFL.Sorted_By ("cid")) :
-                result.ems.register_change (c)
-        return result
-    # end def migrate
 
     @TFL.Contextmanager
     def nested_change_recorder (self, Change, * args, ** kw) :

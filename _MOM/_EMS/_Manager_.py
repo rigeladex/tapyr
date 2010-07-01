@@ -54,6 +54,7 @@
 #    30-Jun-2010 (CT) `db_meta_data` added
 #    30-Jun-2010 (CT) `change_readonly` added
 #    30-Jun-2010 (CT) `pcm` added
+#     1-Jul-2010 (CT) `compact` added
 #    ««revision-date»»···
 #--
 
@@ -124,6 +125,12 @@ class _Manager_ (TFL.Meta.Object) :
         self.session.commit ()
         self.uncommitted_changes = []
     # end def commit
+
+    def compact (self) :
+        if self.uncommitted_changes :
+            self.commit ()
+        self.session.compact ()
+    # end def compact
 
     def count (self, Type, strict) :
         return self.query (Type, strict = strict).count ()
