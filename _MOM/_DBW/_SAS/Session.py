@@ -51,6 +51,9 @@
 #     1-Jun-2010 (MG) Rollback handling fixed
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #     1-Jul-2010 (MG) `_Session_` factored, `Session_S` and `Session_PC` added
+#     1-Jul-2010 (MG) `SAS_Interface.pickle_cargo` factored
+#     1-Jul-2010 (MG) `Session_PC.produce_entities` and
+#                     `Session_PC.produce_changes` implemented
 #    ««revision-date»»···
 #--
 
@@ -64,6 +67,7 @@ import _MOM._DBW._SAS
 import  operator
 import  itertools
 from    sqlalchemy           import sql
+import  cPickle              as     Pickle
 
 ddict_list = lambda : TFL.defaultdict (list)
 attrgetter = operator.attrgetter
@@ -133,21 +137,26 @@ class SAS_Interface (TFL.Meta.Object) :
         return result.inserted_primary_key [0]
     # end def insert
 
+    def pickle_cargo (self, row) :
+        pickle_cargo = TFL.defaultdict (list)
+        self._reconstruct (self.e_type_columns, pickle_cargo, row)
+        return pickle_cargo
+    # end def pickle_cargo
+
     def reconstruct (self, session, row) :
         scope        = session.scope
-        pickle_cargo = TFL.defaultdict (list)
-        self._reconstruct (session, self.e_type_columns, pickle_cargo, row)
+        pickle_cargo = self.pickle_cargo (row)
         entity     = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
         entity.pid = row [self.e_type._SAQ.pid]
         return entity
     # end def reconstruct
 
-    def _reconstruct (self, session, e_type_columns, pickle_cargo, row) :
+    def _reconstruct (self, e_type_columns, pickle_cargo, row) :
         for kind, columns in e_type_columns [None].iteritems () :
             if kind :
                 if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                     comp_cargo = TFL.defaultdict (list)
-                    self._reconstruct (session, columns, comp_cargo, row)
+                    self._reconstruct (columns, comp_cargo, row)
                     pickle_cargo [kind.attr.name] = (comp_cargo, )
                 else :
                     for column in columns :
@@ -380,7 +389,7 @@ class Session_S (_Session_) :
         e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
         pid    = row [e_type._SAQ.pid]
         if pid not in self._pid_map :
-            entity             = e_type._SAS.reconstruct (self, row)
+            entity              = e_type._SAS.reconstruct (self, row)
             self._pid_map [pid] = entity
         return self._pid_map [pid]
     # end def instance_from_row
@@ -434,15 +443,45 @@ class Session_PC (_Session_) :
         pass
     # end def consume
 
+    def flush (self) :
+        pass ### needed because Q_Result calls flush
+    # end def flush
+
+    def instance_from_row (self, e_type, row) :
+        ### get the real etype for this entity from the database
+        ### e_type = getattr (self.scope.app_type, row [e_type._SAQ.Type_Name])
+        return dict (e_type._SAS.pickle_cargo (row))
+    # end def instance_from_row
+
     def produce_changes (self) :
-        return ()
+        apt      = self.scope.app_type
+        Q_Result = MOM.DBW.SAS.Q_Result_Changes
+        Change   = MOM.SCM.Change._Change_
+        for pc in Q_Result (Change, self).order_by (TFL.Sorted_By ("cid")) :
+            yield pc
     # end def produce_changes
 
     def produce_entities (self) :
-        return ()
+        pm       = self.scope.ems.pm
+        apt      = self.scope.app_type
+        Q_Result = MOM.DBW.SAS.Q_Result
+        for pid, type_name in pm :
+            try :
+                e_type = apt [type_name]
+                pc     = Q_Result (e_type, self).filter (pid = pid).one ()
+                yield type_name, pc, pid
+            except LookupError :
+                ### stale entry in the PID table
+                pass
     # end def produce_entities
 
+    def recreate_change (self, row) :
+        return Pickle.loads (row.data)
+    # end def recreate_change
+
 # end class Session_PC
+
+#Session_S = Session_PC
 
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")

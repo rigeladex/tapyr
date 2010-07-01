@@ -32,7 +32,7 @@
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    17-May-2010 (CT) Class `PID` removed
 #    17-May-2010 (MG) `add` parameter `id` added
-#     1-Jul-2010 (MG) `pcm` added
+#     1-Jul-2010 (MG) `pcm` and `max_pid` added
 #    ««revision-date»»···
 #--
 
@@ -101,6 +101,11 @@ class Manager (MOM.EMS._Manager_) :
             ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
             ).fetchone ()
         return (last and last.cid) or 0
+    # end def max_cid
+
+    @property
+    def max_pid (self) :
+        return self.scope.ems.pm.max_pid
     # end def max_cid
 
     @property

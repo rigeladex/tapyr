@@ -31,6 +31,7 @@
 #    17-May-2010 (CT) `reserve` changed to `insert` for postgresql, too
 #    17-May-2010 (MG) `new_context` replaced by `context`
 #    24-Jun-2010 (CT) `commit`, `reserve`, and `rollback` factored to `dbs`
+#     1-Jul-2010 (MG) `max_pid` and `__iter__` added, `type_name` factored
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,27 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         return result
     # end def connection
 
+    @TFL.Contextmanager
+    def context (self, entity, pid) :
+        try :
+            yield self (entity, pid, commit = False)
+        except :
+            self.rollback ()
+            raise
+        else :
+            self.commit   ()
+    # end def new_context
+
+    @property
+    def max_pid (self) :
+        result = self.connection.execute \
+            (self.select.limit (1).order_by (self.pid_col.desc ()))
+        row = result.fetchone ()
+        if row :
+            return row.pid
+        return 0
+    # end def max_pid
+
     def new (self, entity, commit = True) :
         Type_Name = None
         if entity :
@@ -78,28 +100,12 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         return pid
     # end def new
 
-    @TFL.Contextmanager
-    def context (self, entity, pid) :
-        try :
-            yield self (entity, pid, commit = False)
-        except :
-            self.rollback ()
-            raise
-        else :
-            self.commit   ()
-    # end def new_context
-
     def query (self, pid) :
-        result = self.connection.execute \
-            (self.select.where (self.pid_col == pid))
-        found  = result.fetchone ()
-        self.commit              ()
-        if found :
-            try :
-                return self.ems.scope [found.type_name].query (pid = pid).one ()
-            except StandardError : ### XXX
-                pass
-        raise LookupError ("No object with pid `%d` found" % (pid, ))
+        try :
+            type_name = self.type_name (pid)
+            return self.ems.scope [type_name].query (pid = pid).one ()
+        except StandardError :
+            raise LookupError ("No object with pid `%d` found" % (pid, ))
     # end def query
 
     def reserve (self, entity, pid, commit = True) :
@@ -119,6 +125,24 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         if self.transaction :
             self.dbs.rollback_pid (self)
     # end def rollback
+
+    def type_name (self, pid) :
+        result = self.connection.execute \
+            (self.select.where (self.pid_col == pid))
+        found  = result.fetchone ()
+        self.commit              ()
+        if found and found.type_name :
+            return found.type_name
+        raise LookupError ("No object with pid `%d` found" % (pid, ))
+    # end def type_name
+
+    def __iter__ (self) :
+        result = self.connection.execute \
+            (self.select.order_by (self.pid_col.asc ()))
+        for row in result :
+            if row.type_name :
+                yield row.pid, row.type_name
+    # end def __iter__
 
 # end class Pid_Manager
 

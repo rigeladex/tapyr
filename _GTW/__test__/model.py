@@ -32,6 +32,7 @@
 #    19-May-2010 (CT) `create_test_dict` improved (use dict interpolation,
 #                     parameters `bpt` (backends per test), `combiner`)
 #    26-May-2010 (CT) Use anonymous account and database `test` for MySQL
+#     1-Jul-2010 (MG) Support for loading a scope added
 #    ««revision-date»»···
 #--
 
@@ -134,5 +135,6 @@ if __name__ == "__main__" :
     TFL.Environment.exec_python_startup ()
     db_url  = sos.environ.get ("DB_url",  "hps://")
     db_name = sos.environ.get ("DB_name", None)
-    scope   = Scope (db_url, db_name)
+    create  = eval  (sos.environ.get ("DB_create", "True"))
+    scope   = Scope (db_url, db_name, create = create)
 ### __END__ GTW.__test__.model

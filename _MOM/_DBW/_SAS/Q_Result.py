@@ -173,10 +173,6 @@ class Q_Result_Changes (Q_Result) :
     def __init__ (self, Type, session, sa_query = None) :
         if sa_query is None  :
             sa_table = Type._sa_table
-            #pa       = sql.alias  (sa_table, "parent")
-            #ch_1     = sql.alias  (sa_table, "child_1")
-            #ch_2     = sql.alias  (sa_table, "child_2")
-            #join     = pa.outerjoin (ch_1).outerjoin (ch_2)
             sa_query = sql.select ((sa_table, ))
         self.__super.__init__ (Type, session, sa_query)
     # end def __init__
