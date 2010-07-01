@@ -430,6 +430,18 @@ class Session_S (_Session_) :
 class Session_PC (_Session_) :
     """A session bound to a DB mangager deailing with pickle cargos"""
 
+    def consume (self, entity_iter, change_iter, chunk_size) :
+        pass
+    # end def consume
+
+    def produce_changes (self) :
+        return ()
+    # end def produce_changes
+
+    def produce_entities (self) :
+        return ()
+    # end def produce_entities
+
 # end class Session_PC
 
 if __name__ != "__main__" :

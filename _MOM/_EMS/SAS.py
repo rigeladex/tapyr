@@ -32,6 +32,7 @@
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    17-May-2010 (CT) Class `PID` removed
 #    17-May-2010 (MG) `add` parameter `id` added
+#     1-Jul-2010 (MG) `pcm` added
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,11 @@ class Manager (MOM.EMS._Manager_) :
             ).fetchone ()
         return (last and last.cid) or 0
     # end def max_cid
+
+    @property
+    def pcm (self) :
+        return self.session
+    # end def pcm
 
     def register_change (self, change) :
         result      = self.__super.register_change (change)

@@ -88,8 +88,8 @@ class DB_Man (TFL.Meta.Object) :
 
     def _migrate (self, chunk_size) :
         self.ems.pcm.consume \
-            ( self.src.ems.produce_entities ()
-            , self.src.ems.produce_changes  ()
+            ( self.src.ems.pcm.produce_entities ()
+            , self.src.ems.pcm.produce_changes  ()
             , chunk_size
             )
     # end def _migrate
