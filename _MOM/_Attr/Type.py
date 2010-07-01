@@ -600,7 +600,6 @@ class _A_Composite_Collection_ (_A_Collection_) :
         @classmethod
         def as_cargo (cls, obj, attr_kind, attr_type, value) :
             if value is not None :
-                R_Type = attr_type.R_Type
                 return tuple (v.as_attr_pickle_cargo () for v in value)
         # end def as_cargo
 

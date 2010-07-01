@@ -59,6 +59,7 @@
 #    19-Mar-2009 (CT) Deprecation warning added to `tempfile_name`
 #    11-Nov-2009 (CT) Changed exception handler for 3-compatibility
 #     5-Mar-2010 (CT) `changed_dir` added
+#     1-Jul-2010 (CT) `expanded_glob` changed to return `[pathname]` over `[]`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,10 @@ def changed_dir (dir) :
 def expanded_glob (pathname) :
     """Return a list of file names matching `expanded_path (pathname)'."""
     from glob import glob
-    return glob (expanded_path (pathname))
+    result = glob (expanded_path (pathname))
+    if (not result) and "*" not in pathname :
+        result = [pathname]
+    return result
 # end def expanded_glob
 
 def expanded_path (pathname) :

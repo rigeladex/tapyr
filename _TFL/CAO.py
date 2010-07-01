@@ -225,7 +225,7 @@ class _Spec_ (TFL.Meta.Object) :
             elif result is None :
                 result = ()
             elif not isinstance (result, (list, tuple)) :
-                result  = [result]
+                result = [result]
             self.__cooked_default = result
         return result
     # end def default
@@ -719,9 +719,8 @@ class Path (_Spec_) :
     # end def cook
 
     def _resolve_range (self, values, cao) :
-        for value in values :
-            for v in TFL.sos.expanded_globs (value) :
-                yield v
+        for v in TFL.sos.expanded_globs (* values) :
+            yield v
     # end def _resolve_range
 
 # end class Path

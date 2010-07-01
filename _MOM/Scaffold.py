@@ -33,6 +33,7 @@
 #    24-Jun-2010 (CT) Use `MOM.EMS.Backends` and `DBS.Url`
 #    25-Jun-2010 (CT) Command handlers added
 #    29-Jun-2010 (CT) `-copyright_start` added
+#     1-Jul-2010 (CT) `-overwrite` added to `cmd__migrate__opts`
 #    ««revision-date»»···
 #--
 
@@ -195,8 +196,8 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     cmd__create__opts     = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
-        ( "target_db_url:S=hps:///migration?Database url for target database"
-        ,
+        ( "overwrite:B?Overwrite `target_db_url` if necessary"
+        , "target_db_url:S=hps:///migration?Database url for target database"
         )
     cmd__sub_commands     = ("cmd__create", "cmd__load", "cmd__migrate")
 
@@ -239,7 +240,9 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     def do_migrate (cls, cmd) :
         src_scope = cls.do_load          (cmd)
         apt, url  = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
-        trg_scope = src_scope.migrate    (apt, url)
+        if cmd.overwrite :
+            apt.delete_database          (url)
+        trg_scope = src_scope.copy       (apt, url)
         trg_scope.destroy ()
     # end def do_migrate
 

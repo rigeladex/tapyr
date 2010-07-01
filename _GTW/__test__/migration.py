@@ -35,6 +35,7 @@ from _GTW.__test__.model import *
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
+    >>> PAP = scope.PAP
     >>> SRM = scope.SRM
 
     >>> x = SRM.Boat_Class ("29er",              max_crew = 2)
@@ -70,17 +71,21 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> bc  = SRM.Boat_Class.instance ("Optimist")
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
+    >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> scope.commit ()
     >>> scope.MOM.Id_Entity.count_transitive
-    29
+    33
     >>> int (scope.query_changes ().count ())
-    29
+    33
     >>> int (scope.ems.max_cid)
-    29
+    33
 
     >>> bc.set (loa = 2.43)
     1
@@ -91,11 +96,11 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.count_transitive
-    29
+    33
     >>> int (scope.query_changes ().count ())
-    32
+    36
     >>> int (scope.ems.max_cid)
-    32
+    36
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -106,15 +111,11 @@ _test_code = r"""
     >>> apt, url = Scaffold.app_type_and_url (db_url)
     >>> scop2 = scope.copy (apt, url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
-    (29, 29)
-    >>> sorted (scope.user_diff (scop2).iteritems ())
-    []
-    >>> scope.user_equal (scop2)
-    True
+    (33, 33)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
     True
     >>> int (scop2.ems.max_cid)
-    32
+    36
     >>> len (scop2.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -125,15 +126,11 @@ _test_code = r"""
 
     >>> scop3 = MOM.Scope.load (apt, db_url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
-    (29, 29)
-    >>> sorted (scope.user_diff (scop3).iteritems ())
-    []
-    >>> scope.user_equal (scop3)
-    True
+    (33, 33)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop3))
     True
     >>> int (scop3.ems.max_cid)
-    32
+    36
     >>> len (scop3.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -148,15 +145,11 @@ _test_code = r"""
     >>> scop4 = scop3.copy (apt, db_url)
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
-    (29, 29)
-    >>> sorted (scop3.user_diff (scop4).iteritems ())
-    []
-    >>> scop3.user_equal (scop4)
-    True
+    (33, 33)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scop3, scop4))
     True
     >>> int (scop4.ems.max_cid)
-    32
+    36
     >>> len (scop4.SRM.Regatta_Event.query ().first ().regattas)
     2
 
