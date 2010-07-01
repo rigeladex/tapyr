@@ -504,6 +504,8 @@ class Session_PC (_Session_) :
                 ### lead to performance issues
                 self.commit ()
         self.commit ()
+        for no, pc in enumerate (change_iter) :
+            print pc
     # end def consume
 
     def flush (self) :
@@ -544,7 +546,7 @@ class Session_PC (_Session_) :
 
 # end class Session_PC
 
-Session_S = Session_PC
+#Session_S = Session_PC
 
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")

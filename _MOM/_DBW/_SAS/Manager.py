@@ -66,7 +66,8 @@
 #                     and deleting databases
 #     1-Jul-2010 (MG) `_M_SAS_Manager_._create_session`: consider `ilk` to
 #                     create the correct session instance
-#     1-Jul-2010 (MG) `SAS_A_Object_Kind_Mixin` removed
+#     1-Jul-2010 (MG) `SAS_A_Object_Kind_Mixin` removed, `Pickle_Mixin`
+#                     handling removed
 #    ««revision-date»»···
 #--
 
