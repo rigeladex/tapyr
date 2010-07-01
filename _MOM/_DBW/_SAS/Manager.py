@@ -64,6 +64,8 @@
 #    24-Jun-2010 (CT) Put methods into alphabetical order
 #    24-Jun-2010 (CT) Use scheme-specific entry from `DBS_map` for creating
 #                     and deleting databases
+#     1-Jul-2010 (MG) `_M_SAS_Manager_._create_session`: consider `ilk` to
+#                     create the correct session instance
 #    ««revision-date»»···
 #--
 
@@ -372,7 +374,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_scope_table
 
     def _create_session (self, engine, scope) :
-        return MOM.DBW.SAS.Session (scope, engine)
+        return getattr (MOM.DBW.SAS, "Session_%s" % scope.ilk) (scope, engine)
     # end def _create_session
 
     def _setup_attr_kind_mixin (cls, kind, Mixin) :

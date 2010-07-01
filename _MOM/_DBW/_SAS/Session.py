@@ -50,6 +50,7 @@
 #    17-May-2010 (MG) `add` changed to allow `id` parameter
 #     1-Jun-2010 (MG) Rollback handling fixed
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
+#     1-Jul-2010 (MG) `_Session_` factored, `Session_S` and `Session_PC` added
 #    ««revision-date»»···
 #--
 
@@ -254,7 +255,7 @@ class SAS_Interface (TFL.Meta.Object) :
 
 # end class SAS_Interface
 
-class Session (TFL.Meta.Object) :
+class _Session_ (TFL.Meta.Object) :
     """A database session"""
 
     transaction = None
@@ -262,6 +263,48 @@ class Session (TFL.Meta.Object) :
     def __init__ (self, scope, engine) :
         self.scope  = scope
         self.engine = engine
+    # end def __init__
+
+    def commit (self) :
+        self.transaction.commit     ()
+        self.connection.close       ()
+        self.transaction      = None
+        del self.connection
+    # end def commit
+
+    @TFL.Meta.Once_Property
+    def connection (self) :
+        result           = self.engine.connect ()
+        self.transaction = result.begin        ()
+        return result
+    # end def connection
+
+    def close (self) :
+        self.rollback            ()
+        ### close all connections inside the pool
+        self.engine.pool.dispose ()
+        self.engine = None
+    # end def close
+
+    def execute (self, * args, ** kw) :
+        return self.connection.execute (* args, ** kw)
+    # end def execute
+
+    def rollback (self) :
+        if self.transaction :
+            self.transaction.rollback ()
+            self.connection.close     ()
+            self.transaction = None
+            del self.connection
+    # end def rollback
+
+# end class _Session_
+
+class Session_S (_Session_) :
+    """A Session bound to a scope"""
+
+    def __init__ (self, scope, engine) :
+        self.__super.__init__ (scope, engine)
         self.expunge  ()
     # end def __init__
 
@@ -287,31 +330,19 @@ class Session (TFL.Meta.Object) :
 
     def commit (self) :
         self.flush                  ()
-        self.transaction.commit     ()
-        self.connection.close       ()
+        self.__super.commit         ()
         self._flushed_changes = set ()
-        self.transaction      = None
-        del self.connection
         del self._saved
     # end def commit
 
     @TFL.Meta.Once_Property
     def connection (self) :
-        result           = self.engine.connect ()
-        self.transaction = result.begin        ()
         self._saved = dict \
             ( pid_map = self._pid_map.copy ()
             , cid_map = self._cid_map.copy ()
             )
-        return result
+        return self.__super.connection
     # end def connection
-
-    def close (self) :
-        self.rollback            ()
-        ### close all connections inside the pool
-        self.engine.pool.dispose ()
-        self.engine = None
-    # end def close
 
     def delete (self, entity) :
         self.flush                   ()
@@ -328,10 +359,6 @@ class Session (TFL.Meta.Object) :
         entity.__class__._SAS.delete (self, entity)
         entity.pid = None
     # end def delete
-
-    def execute (self, * args, ** kw) :
-        return self.connection.execute (* args, ** kw)
-    # end def execute
 
     def expunge (self) :
         self._pid_map         = {}
@@ -383,12 +410,9 @@ class Session (TFL.Meta.Object) :
             for c in reversed (scope.ems.uncommitted_changes) :
                 if c.undoable :
                     c.undo (scope)
-            self.transaction.rollback ()
-            self.connection.close     ()
-            self.transaction = None
+            self.__super.rollback ()
             self._pid_map    = self._saved ["pid_map"]
             self._cid_map    = self._saved ["cid_map"]
-            del self.connection
     # end def rollback
 
     def _modify_change_iter (self, change_list) :
@@ -401,7 +425,12 @@ class Session (TFL.Meta.Object) :
                     yield cc
     # end def _modify_change_iter
 
-# end class Session
+# end class Session_S
+
+class Session_PC (_Session_) :
+    """A session bound to a DB mangager deailing with pickle cargos"""
+
+# end class Session_PC
 
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")
