@@ -48,6 +48,7 @@
 #    12-May-2010 (MG) `_sa_string` use a `Text` type if no `max_length` is
 #                     given to work under MySQL as well
 #    21-Jun-2010 (CT) `_sa_file_name` added
+#     1-Jul-2010 (MG) `SAS_PC_Transform` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,7 @@ import _TFL.Decorator
 from   _MOM               import MOM
 import _MOM._Attr.Type
 import _MOM._Attr
+import  cPickle
 
 Attr = MOM.Attr
 
@@ -72,7 +74,7 @@ def Add_Classmedthod  (name, * classes) :
 # end def Add_Classmedthod
 
 @TFL.Add_To_Class ("_sa_column_name", Attr.A_Attr_Type)
-def _sa_normal_attr(self) :
+def _sa_normal_attr (self) :
     return self.name
 # end def _sa_normal_attr
 
@@ -179,4 +181,24 @@ def _sa_blob (cls, attr, kind, ** kw) :
     return types.LargeBinary (getattr (attr, "max_length", None))
 # end def _sa_blob
 
+class Python_Pickle_Transform (object) :
+    """Pickle the pickle cargo of the object model and store it as string."""
+
+    @classmethod
+    def dump (cls, pickle_cargo) :
+        assert len (pickle_cargo) == 1
+        return (cPickle.dumps (pickle_cargo [0], cPickle.HIGHEST_PROTOCOL), )
+    # end def dump
+
+    @classmethod
+    def load (cls, pickle_string) :
+        assert len (pickle_string) == 1
+        return (cPickle.loads (pickle_string [0]), )
+    # end def load
+
+# end class Python_Pickle_Transform
+
+Attr.A_Attr_Type.             SAS_PC_Transform = None
+Attr._A_Typed_Collection_.    SAS_PC_Transform = Python_Pickle_Transform
+Attr._A_Composite_Collection_.SAS_PC_Transform = Python_Pickle_Transform
 ### __END__ MOM.DBW.SAS.Type

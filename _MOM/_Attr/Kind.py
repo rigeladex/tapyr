@@ -126,6 +126,9 @@
 #    28-Jun-2010 (CT) Missing import for `TFL.Meta.Once_Property` added
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
+#     1-Jul-2010 (MG) `get_pickle_cargo` and `set_pickle_cargo` changed to
+#                     always return a tuple/accept a tupple
+#     1-Jul-2010 (MG) `_Pickle_Mixin_` removed, `Session_PC.consume` added
 #    ««revision-date»»···
 #--
 
@@ -420,10 +423,11 @@ class _EPK_Mixin_ (Kind) :
         ref = self.get_value (obj)
         if ref is not None :
             return (ref.pid, )
+        return (None, )
     # end def get_pickle_cargo
 
     def set_pickle_cargo (self, obj, cargo) :
-        if cargo :
+        if cargo and cargo [0] :
             ETM = obj.home_scope [self.attr.Class.type_name]
             ref = ETM.pid_query (cargo [0])
             self._set_cooked_value (obj, ref, changed = True)
@@ -501,10 +505,11 @@ class _Composite_Mixin_ (Kind) :
         value = self.get_value (obj)
         if value is not None :
             return (value.as_attr_pickle_cargo (), )
+        return (None, )
     # end def get_pickle_cargo
 
     def set_pickle_cargo (self, obj, cargo) :
-        if cargo :
+        if cargo and cargo [0] :
             value = self.attr.C_Type.from_attr_pickle_cargo \
                 (obj.home_scope, cargo [0])
             self._set_cooked_value (obj, value, changed = True)
@@ -624,29 +629,6 @@ class _Nested_Mixin_ (Kind) :
     # end def _record_change
 
 # end class _Nested_Mixin_
-
-class _Pickle_Mixin_ (Kind) :
-    """Pickle pickle cargo."""
-
-    def get_pickle_cargo (self, obj) :
-        cargo = self.__super.get_pickle_cargo (obj)
-        assert len (cargo) == 1
-        return (pickle.dumps (cargo [0]), )
-    # end def get_pickle_cargo
-
-    def set_pickle_cargo (self, obj, cargo) :
-        try :
-            assert len (cargo) == 1
-            cargo = pickle.loads (cargo [0])
-        except Exception, exc :
-            print "Unpickling error", \
-                exc.__class__.__name__, exc, self, obj, cargo
-        else :
-            if cargo is not None :
-                return self.__super.set_pickle_cargo (obj, (cargo, ))
-    # end def set_pickle_cargo
-
-# end class _Pickle_Mixin_
 
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""

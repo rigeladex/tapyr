@@ -55,6 +55,7 @@
 #     1-Jul-2010 (MG) `Session_PC.produce_entities` and
 #                     `Session_PC.produce_changes` implemented
 #     1-Jul-2010 (CT) `compact` added (does nothing for now)
+#     1-Jul-2010 (MG) `SAS_PC_Transform` support added
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,8 @@ class Type_Name (object) :
     """A fake kind which is used to retrive the type_name of an entity"""
 
     class attr (object) :
-        name = "Type_Name"
+        name             = "Type_Name"
+        SAS_PC_Transform = None
     # end class attr
 
     @classmethod
@@ -138,31 +140,74 @@ class SAS_Interface (TFL.Meta.Object) :
         return result.inserted_primary_key [0]
     # end def insert
 
+    def insert_cargo (self, session, pid, pickle_cargo) :
+        for b in self.bases :
+            b._SAS.insert_cargo (session, pid, pickle_cargo)
+        session.connection.execute \
+            ( self.table.insert ().values
+                ( self._pickle_cargo_for_table
+                    (pickle_cargo, self.e_type, pid, "pid")
+                )
+            )
+    # end def insert_cargo
+
+    def _pickle_cargo_for_table ( self, pickle_cargo
+                                , e_type
+                                , pid
+                                , pk_column
+                                , columns = None
+                                ) :
+        if columns is None :
+            columns = self.e_type_columns [e_type]
+        result      = {}
+        if pk_column :
+            result [pk_column] = pid
+        for kind in columns :
+            attr_name          = kind.attr.name
+            if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                result.update \
+                    ( self._pickle_cargo_for_table
+                        ( pickle_cargo [attr_name] [0]
+                        , kind.C_Type
+                        , pid, None
+                        , columns = columns [kind] [e_type]
+                        )
+                    )
+            else :
+                for column, value in zip \
+                    (columns [kind], pickle_cargo [attr_name]) :
+                    result [column.name] = value
+        return result
+    # end def _pickle_cargo_for_table
+
     def pickle_cargo (self, row) :
         pickle_cargo = TFL.defaultdict (list)
-        self._reconstruct (self.e_type_columns, pickle_cargo, row)
+        self._pickle_cargo (self.e_type_columns, pickle_cargo, row)
         return pickle_cargo
     # end def pickle_cargo
 
-    def reconstruct (self, session, row) :
-        scope        = session.scope
-        pickle_cargo = self.pickle_cargo (row)
-        entity     = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
-        entity.pid = row [self.e_type._SAQ.pid]
-        return entity
-    # end def reconstruct
-
-    def _reconstruct (self, e_type_columns, pickle_cargo, row) :
+    def _pickle_cargo (self, e_type_columns, pickle_cargo, row) :
         for kind, columns in e_type_columns [None].iteritems () :
             if kind :
                 if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                     comp_cargo = TFL.defaultdict (list)
-                    self._reconstruct (columns, comp_cargo, row)
+                    self._pickle_cargo (columns, comp_cargo, row)
                     pickle_cargo [kind.attr.name] = (comp_cargo, )
                 else :
-                    for column in columns :
-                        pickle_cargo [kind.attr.name].append (row [column])
-    # end def _reconstruct
+                    kind_pc                       = [row [c] for c in columns]
+                    pc_transform                  = kind.attr.SAS_PC_Transform
+                    if pc_transform :
+                        kind_pc                   = pc_transform.load (kind_pc)
+                    pickle_cargo [kind.attr.name] = kind_pc
+    # end def _pickle_cargo
+
+    def reconstruct (self, session, row) :
+        scope        = session.scope
+        pickle_cargo = self.pickle_cargo (row)
+        entity       = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
+        entity.pid   = row [self.e_type._SAQ.pid]
+        return entity
+    # end def reconstruct
 
     def _setup_columns (self, e_type, e_type_columns, prefix = "") :
         cm = self.column_map
@@ -245,8 +290,11 @@ class SAS_Interface (TFL.Meta.Object) :
                         )
                     )
             else :
-                for column, value in zip \
-                    (columns [kind], kind.get_pickle_cargo (entity)) :
+                pickle_cargo = kind.get_pickle_cargo (entity)
+                pc_transform = kind.attr.SAS_PC_Transform
+                if pc_transform :
+                    pickle_cargo = pc_transform.dump (pickle_cargo)
+                for column, value in zip (columns [kind], pickle_cargo) :
                     result [column.name] = value
         return result
     # end def value_dict
@@ -276,10 +324,11 @@ class _Session_ (TFL.Meta.Object) :
     # end def __init__
 
     def commit (self) :
-        self.transaction.commit ()
-        self.connection.close   ()
-        self.transaction = None
-        del self.connection
+        if self.transaction :
+            self.transaction.commit ()
+            self.connection.close   ()
+            self.transaction = None
+            del self.connection
     # end def commit
 
     def compact (self) :
@@ -445,7 +494,16 @@ class Session_PC (_Session_) :
     """A session bound to a DB mangager deailing with pickle cargos"""
 
     def consume (self, entity_iter, change_iter, chunk_size) :
-        pass
+        apt      = self.scope.app_type
+        pm       = self.scope.ems.pm
+        for no, (type_name, pc, pid) in enumerate (entity_iter) :
+            apt [type_name]._SAS.insert_cargo (self, pid, pc)
+            pm.reserve (TFL.Record (type_name = type_name), pid)
+            if no and not (no % chunk_size) :
+                ### commit chunk_size object. To large transactions could
+                ### lead to performance issues
+                self.commit ()
+        self.commit ()
     # end def consume
 
     def flush (self) :
@@ -486,7 +544,7 @@ class Session_PC (_Session_) :
 
 # end class Session_PC
 
-#Session_S = Session_PC
+Session_S = Session_PC
 
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")

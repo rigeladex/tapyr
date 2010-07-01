@@ -228,11 +228,6 @@ class M_Attr_Type_String (M_Attr_Type) :
 class M_Attr_Type__Pickler (TFL.Meta.Object.__class__) :
 
     @TFL.Meta.Once_Property
-    def Pickle_Mixin (cls) :
-        return MOM.Attr._Pickle_Mixin_
-    # end def Pickle_Mixin
-
-    @TFL.Meta.Once_Property
     def Type (cls) :
         return MOM.Attr._A_Binary_String_
     # end def Type

@@ -66,6 +66,7 @@
 #                     and deleting databases
 #     1-Jul-2010 (MG) `_M_SAS_Manager_._create_session`: consider `ilk` to
 #                     create the correct session instance
+#     1-Jul-2010 (MG) `SAS_A_Object_Kind_Mixin` removed
 #    ««revision-date»»···
 #--
 
@@ -118,23 +119,6 @@ class _Type_Name_Type_ (types.TypeDecorator) :
 # end class _Type_Name_Type_
 
 Type_Name_Type = _Type_Name_Type_ (length = 60)
-
-class SAS_A_Object_Kind_Mixin (object) :
-    """A mixin for special handling of A_Object attributes for this backend."""
-
-    def set_pickle_cargo (self, obj, cargo) :
-        pid = cargo [0]
-        if pid :
-            query = MOM.DBW.SAS.Q_Result \
-                (self.Class, obj.home_scope.ems.session).filter (pid = pid)
-            self._set_cooked_value (obj, query.one (), changed = True)
-    # end def set_pickle_cargo
-
-    def get_pickle_cargo (self, obj) :
-        return (getattr (self.get_value (obj), "pid", None), )
-    # end def get_pickle_cargo
-
-# end class SAS_A_Object_Kind_Mixin
 
 class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
@@ -268,16 +252,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if name not in inherited_attrs :
                 attr = attr_kind.attr
                 db_attr_p = attr_kind.save_to_db
-                if db_attr_p :
-                    Pickle_Kind = getattr (attr.Pickler, "Pickle_Mixin", None)
-                    if isinstance (attr, MOM.Attr._A_Object_) :
-                        ### The default way of `pickling` object references
-                        ### would be storing the epk which is not perfect for
-                        ### a database. Therefore we replace the
-                        ### `set/get_pickle_cargo` functions
-                        Pickle_Kind = SAS_A_Object_Kind_Mixin
-                    if Pickle_Kind :
-                        cls._setup_attr_kind_mixin (attr_kind, Pickle_Kind)
                 if db_attr_p or isinstance (attr_kind, MOM.Attr.Query) :
                     db_attrs [name] = attr_kind
                 elif isinstance \

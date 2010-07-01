@@ -136,5 +136,12 @@ if __name__ == "__main__" :
     db_url  = sos.environ.get ("DB_url",  "hps://")
     db_name = sos.environ.get ("DB_name", None)
     create  = eval  (sos.environ.get ("DB_create", "True"))
-    scope   = Scope (db_url, db_name, create = create)
+    scope1  = Scope (db_url, db_name, create = create)
+    scope2  = Scope ("sqlite:///pc2.sqlite", db_name, create = True)
+    #scope2.ems.session.engine.echo = True
+    scope2.ems.session.consume \
+        ( scope1.ems.session.produce_entities ()
+        , scope1.ems.session.produce_changes  ()
+        , 100
+        )
 ### __END__ GTW.__test__.model
