@@ -145,6 +145,7 @@
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
 #    29-Jun-2010 (CT) New `as_pickle_cargo` added
 #    30-Jun-2010 (CT) Reference to `home_scope._locked` removed
+#     1-Jul-2010 (CT) `Id_Entity.as_pickle_cargo` changed to put `pid` last
 #    ««revision-date»»···
 #--
 
@@ -920,7 +921,7 @@ class Id_Entity (Entity) :
     # end def async_changes
 
     def as_pickle_cargo (self) :
-        return (self.type_name, self.pid, self.as_attr_pickle_cargo ())
+        return (self.type_name, self.as_attr_pickle_cargo (), self.pid)
     # end def as_pickle_cargo
 
     def attr_as_code (self) :

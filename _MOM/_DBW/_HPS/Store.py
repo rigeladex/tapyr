@@ -53,6 +53,7 @@
 #    30-Jun-2010 (CT) `_save_info` factored,
 #                     `_save_context` changed to yield `info`
 #    30-Jun-2010 (CT) `readonly` and `change_readonly` added
+#     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
 #    ««revision-date»»···
 #--
 
@@ -295,7 +296,7 @@ class Store_PC (Store) :
             stores  = info.stores  = []
             commits = info.commits = []
             for i, cargo in enumerate (sliced (e_iter, chunk_size)) :
-                max_pid = cargo [-1] [1] ### XXX too brittle
+                max_pid = cargo [-1] [-1]
                 s_name  = TFL.Filename ("by_pid_%d" % i, self.x_uri)
                 with open (s_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
@@ -397,9 +398,9 @@ class Store_S (Store) :
         with open (s, "rb") as file :
             cargo   = pickle.load (file)
             scope   = self.scope
-            for tn, pid, e_cargo in cargo :
+            for ec in cargo :
                 ### XXX Add legacy lifting
-                scope.add_from_pickle_cargo (tn, pid, e_cargo)
+                scope.add_from_pickle_cargo (* ec)
     # end def _load_store
 
     def _new_info (self) :

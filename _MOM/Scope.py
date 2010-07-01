@@ -75,6 +75,7 @@
 #    29-Jun-2010 (CT) Adapted to change of `entity.as_pickle_cargo`
 #    30-Jun-2010 (CT) `_locked` and friends removed
 #    30-Jun-2010 (CT) `ilk` added
+#     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
 #    ««revision-date»»···
 #--
 
@@ -235,7 +236,7 @@ class Scope (TFL.Meta.Object) :
             self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
 
-    def add_from_pickle_cargo (self, type_name, pid, cargo) :
+    def add_from_pickle_cargo (self, type_name, cargo, pid) :
         """Add an entity defined by (`type_name`, `pid`, `cargo`)."""
         Type = self.entity_type (type_name)
         if Type :
