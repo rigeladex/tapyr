@@ -456,8 +456,6 @@ class Store_S (Store) :
 
 # end class Store_S
 
-Store_S = Store_PC
-
 if __name__ != '__main__':
     MOM.DBW.HPS._Export ("*")
 ### __END__ MOM.DBW.HPS.Store
