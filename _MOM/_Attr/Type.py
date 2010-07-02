@@ -137,7 +137,6 @@
 #    24-Jun-2010 (CT) `db_sig` added
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
-#     1-Jul-2010 (MG) `M_Attr_Type__Pickler.Pickle_Mixin` removed
 #    ««revision-date»»···
 #--
 

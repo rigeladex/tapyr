@@ -128,7 +128,7 @@
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
 #     1-Jul-2010 (MG) `get_pickle_cargo` and `set_pickle_cargo` changed to
 #                     always return a tuple/accept a tupple
-#     1-Jul-2010 (MG) `_Pickle_Mixin_` removed, `Session_PC.consume` added
+#     1-Jul-2010 (MG) `_Pickle_Mixin_` removed
 #    ««revision-date»»···
 #--
 

@@ -50,6 +50,7 @@
 #    20-Apr-2010 (CT) `M_Attr_Type_Named_Object` changed to create a derived
 #                     `Pickler` to avoid aliasing
 #    28-Apr-2010 (CT) s/_M_Pickler_/M_Attr_Type__Pickler/
+#     1-Jul-2010 (MG) `M_Attr_Type__Pickler.Pickle_Mixin` removed
 #    ««revision-date»»···
 #--
 
