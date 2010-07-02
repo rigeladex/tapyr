@@ -322,7 +322,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
             ( "change_history", metadata
             , schema.Column ("cid",       types.Integer,     primary_key = True)
-            , schema.Column ("Type_Name", Type_Name_Type,    nullable    = True)
             , schema.Column ("pid",       types.Integer,     nullable    = True)
             , schema.Column ("data",      types.LargeBinary, nullable    = True)
             , schema.Column

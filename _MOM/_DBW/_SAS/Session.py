@@ -56,6 +56,7 @@
 #                     `Session_PC.produce_changes` implemented
 #     1-Jul-2010 (CT) `compact` added (does nothing for now)
 #     1-Jul-2010 (MG) `SAS_PC_Transform` support added
+#     2-Jul-2010 (MG) `produce_changes` changed and `consume` added
 #    ««revision-date»»···
 #--
 
@@ -140,13 +141,14 @@ class SAS_Interface (TFL.Meta.Object) :
         return result.inserted_primary_key [0]
     # end def insert
 
-    def insert_cargo (self, session, pid, pickle_cargo) :
+    def insert_cargo (self, session, pid, pickle_cargo, type_name = None) :
+        type_name = type_name or self.e_type.type_name
         for b in self.bases :
-            b._SAS.insert_cargo (session, pid, pickle_cargo)
+            b._SAS.insert_cargo (session, pid, pickle_cargo, type_name)
         session.connection.execute \
             ( self.table.insert ().values
                 ( self._pickle_cargo_for_table
-                    (pickle_cargo, self.e_type, pid, "pid")
+                    (pickle_cargo, self.e_type, pid, "pid", default = type_name)
                 )
             )
     # end def insert_cargo
@@ -156,6 +158,7 @@ class SAS_Interface (TFL.Meta.Object) :
                                 , pid
                                 , pk_column
                                 , columns = None
+                                , default = None
                                 ) :
         if columns is None :
             columns = self.e_type_columns [e_type]
@@ -170,12 +173,16 @@ class SAS_Interface (TFL.Meta.Object) :
                         ( pickle_cargo [attr_name] [0]
                         , kind.C_Type
                         , pid, None
+                        , default = kind.C_Type.type_name
                         , columns = columns [kind] [e_type]
                         )
                     )
             else :
-                for column, value in zip \
-                    (columns [kind], pickle_cargo [attr_name]) :
+                attr_pc      = pickle_cargo.get (attr_name, (default, ))
+                pc_transform = kind.attr.SAS_PC_Transform
+                if pc_transform :
+                    attr_pc = pc_transform.dump (attr_pc)
+                for column, value in zip (columns [kind], attr_pc) :
                     result [column.name] = value
         return result
     # end def _pickle_cargo_for_table
@@ -378,7 +385,6 @@ class Session_S (_Session_) :
     # end def add
 
     def add_change (self, change) :
-        DBW    = self.scope.ems.DBW
         table  = MOM.SCM.Change._Change_._sa_table
         result = self.connection.execute \
             ( table.insert
@@ -493,6 +499,11 @@ class Session_S (_Session_) :
 class Session_PC (_Session_) :
     """A session bound to a DB mangager deailing with pickle cargos"""
 
+    def change_query (self, ** kw) :
+        query = MOM.DBW.SAS.Q_Result_Changes (MOM.SCM.Change._Change_, self)
+        return query.filter (** kw).order_by (TFL.Sorted_By ("cid"))
+    # end def change_query
+
     def consume (self, entity_iter, change_iter, chunk_size) :
         apt      = self.scope.app_type
         pm       = self.scope.ems.pm
@@ -503,10 +514,34 @@ class Session_PC (_Session_) :
                 ### commit chunk_size object. To large transactions could
                 ### lead to performance issues
                 self.commit ()
-        self.commit ()
-        for no, pc in enumerate (change_iter) :
-            print pc
+        self.commit         ()
+        self._count = 0
+        self._consume_change_iter (change_iter, chunk_size, None)
+        self.commit         ()
     # end def consume
+
+    def _consume_change_iter (self, change_iter, chunk_size, parent_cid) :
+        table  = MOM.SCM.Change._Change_._sa_table
+        for no, (chg_cls, chg_dct, children_pc) in enumerate (change_iter) :
+            cid = chg_dct ["cid"]
+            print chg_dct
+            self._consume_change_iter (children_pc, chunk_size, cid)
+            self.connection.execute \
+                ( table.insert
+                    ( values = dict
+                        ( cid        = cid
+                        , pid        = chg_dct ["pid"]
+                        , data       = Pickle.dumps
+                              ((chg_cls, chg_dct, []), Pickle.HIGHEST_PROTOCOL)
+                        , parent_cid = parent_cid
+                        )
+                    )
+                )
+            self._count    += 1
+            if self._count == chunk_size :
+                self.commit ()
+                self._count = 0
+    # end def _consume_change_iter
 
     def flush (self) :
         pass ### needed because Q_Result calls flush
@@ -519,10 +554,7 @@ class Session_PC (_Session_) :
     # end def instance_from_row
 
     def produce_changes (self) :
-        apt      = self.scope.app_type
-        Q_Result = MOM.DBW.SAS.Q_Result_Changes
-        Change   = MOM.SCM.Change._Change_
-        for pc in Q_Result (Change, self).order_by (TFL.Sorted_By ("cid")) :
+        for pc in self.change_query (parent_cid = None) :
             yield pc
     # end def produce_changes
 
@@ -541,12 +573,17 @@ class Session_PC (_Session_) :
     # end def produce_entities
 
     def recreate_change (self, row) :
-        return Pickle.loads (row.data)
+        cls, dct, children = Pickle.loads (row.data)
+        ### we need to set the cid for this change in the pickle
+        dct ["cid"]        = row.cid
+        ### before we return the pickle cartgo for this change we need to
+        ### create the children list (because we do not save them in the
+        ### pickle stored in the database)
+        children = self.change_query (parent_cid = row.cid).all ()
+        return cls, dct, children
     # end def recreate_change
 
 # end class Session_PC
-
-#Session_S = Session_PC
 
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*")
