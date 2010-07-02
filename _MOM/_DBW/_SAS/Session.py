@@ -57,6 +57,7 @@
 #     1-Jul-2010 (CT) `compact` added (does nothing for now)
 #     1-Jul-2010 (MG) `SAS_PC_Transform` support added
 #     2-Jul-2010 (MG) `produce_changes` changed and `consume` added
+#     2-Jul-2010 (MG) `db_meta_data` added
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 
 from   _MOM                  import MOM
+import _MOM.DB_Meta_Data
 import _MOM._DBW._SAS
 
 import  operator
@@ -326,8 +328,9 @@ class _Session_ (TFL.Meta.Object) :
     transaction = None
 
     def __init__ (self, scope, engine) :
-        self.scope  = scope
-        self.engine = engine
+        self.scope        = scope
+        self.engine       = engine
+        self.db_meta_data = MOM.DB_Meta_Data.NEW (scope.app_type, scope)
     # end def __init__
 
     def commit (self) :

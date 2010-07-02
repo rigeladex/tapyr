@@ -68,6 +68,7 @@
 #                     create the correct session instance
 #     1-Jul-2010 (MG) `SAS_A_Object_Kind_Mixin` removed, `Pickle_Mixin`
 #                     handling removed
+#     2-Jul-2010 (MG) Scope meta data handling changed
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,7 @@ import _MOM._DBW._SAS.Query
 import _MOM._DBW._SAS.Session
 import _MOM._SCM.Change
 
+import  cPickle                as Pickle
 import contextlib
 
 from   sqlalchemy import schema, types, sql
@@ -195,8 +197,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         q = session.connection.execute (cls.sa_scope.select ().limit (1))
         with contextlib.closing (q) :
             si = q.fetchone ()
-        scope.guid = si.scope_guid
-        if si.root_type_name :
+        meta_data            = si.meta_data
+        session.db_meta_data = meta_data
+        scope.guid           = meta_data.guid
+        if meta_data.root_epk :
+            raise ValueError ()
             return getattr \
                 (scope, si.root_type_name).query (pid = si.root_pid).one ()
     # end def load_root
@@ -209,10 +214,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def prepare
 
     def register_scope (cls, session,  scope) :
-        kw = dict (scope_guid = scope.guid)
-        if scope.root :
-            kw ["root_pid"]       = scope.root.pid
-            kw ["root_type_name"] = scope.root.type_name
+        kw               = dict (scope_guid = scope.guid)
+        kw ["meta_data"] = scope.ems.db_meta_data
+        kw ["read_only"] = False
         session.execute (cls.sa_scope.insert ().values (** kw))
         session.commit  ()
     # end def register_scope
@@ -337,12 +341,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def _create_scope_table (cls, metadata) :
         cls.sa_scope = Table = schema.Table \
             ( "scope_metadata", metadata
-            , schema.Column
-                ("root_pid",       types.Integer, primary_key = True)
-            , schema.Column
-                ("scope_guid",     types.String (length = 64))
-            , schema.Column
-                ("root_type_name", Type_Name_Type)
+            , schema.Column ("pk",        types.Integer, primary_key = True)
+            , schema.Column ("read_only", types.Boolean)
+            , schema.Column ("meta_data", types.PickleType)
             )
         MOM.DBW.SAS.Query (Table, Table)
     # end def _create_scope_table
