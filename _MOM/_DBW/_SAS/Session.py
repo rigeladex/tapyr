@@ -58,6 +58,8 @@
 #     1-Jul-2010 (MG) `SAS_PC_Transform` support added
 #     2-Jul-2010 (MG) `produce_changes` changed and `consume` added
 #     2-Jul-2010 (MG) `db_meta_data` added
+#     5-Jul-2010 (MG) `register_scope` and `load_root` moved in here
+#     5-Jul-2010 (MG) `change_readonly` implemented
 #    ««revision-date»»···
 #--
 
@@ -73,6 +75,7 @@ import  operator
 import  itertools
 from    sqlalchemy           import sql
 import  cPickle              as     Pickle
+import  contextlib
 
 ddict_list = lambda : TFL.defaultdict (list)
 attrgetter = operator.attrgetter
@@ -333,6 +336,18 @@ class _Session_ (TFL.Meta.Object) :
         self.db_meta_data = MOM.DB_Meta_Data.NEW (scope.app_type, scope)
     # end def __init__
 
+    def change_readonly (self, state) :
+        meta_data           = self.db_meta_data
+        meta_data.read_only = state
+        kw                  = dict \
+            ( pk        = self._scope_pk
+            , meta_data = meta_data
+            , read_only = state
+            )
+        self.execute (self.scope._sa_table.update ().values (** kw))
+        self.commit  ()
+    # end def change_readonly
+
     def commit (self) :
         if self.transaction :
             self.transaction.commit ()
@@ -362,6 +377,28 @@ class _Session_ (TFL.Meta.Object) :
     def execute (self, * args, ** kw) :
         return self.connection.execute (* args, ** kw)
     # end def execute
+
+    def load_root (self, scope) :
+        q = self.connection.execute (scope._sa_table.select ().limit (1))
+        with contextlib.closing (q) :
+            si = q.fetchone ()
+        meta_data         = si.meta_data
+        self.db_meta_data = meta_data
+        meta_read_only    = getattr (meta_data, "read_only", False)
+        if meta_read_only != si.read_only :
+            self.change_readonly (meta_read_only)
+        scope.guid        = meta_data.guid
+        self._scope_pk    = si.pk
+    # end def load_root
+
+    def register_scope (self, scope) :
+        kw               = dict (scope_guid = scope.guid)
+        kw ["meta_data"] = self.db_meta_data
+        kw ["read_only"] = getattr (self.db_meta_data, "read_only", False)
+        result = self.execute (scope._sa_table.insert ().values (** kw))
+        self.commit           ()
+        self._scope_pk   = result.inserted_primary_key [0]
+    # end def register_scope
 
     def rollback (self) :
         if self.transaction :
@@ -456,6 +493,17 @@ class Session_S (_Session_) :
             self._pid_map [pid] = entity
         return self._pid_map [pid]
     # end def instance_from_row
+
+    def load_root (self, scope) :
+        self.__super.load_root (scope)
+        meta_data     = self.db_meta_data
+        if meta_data.root_epk :
+            epk       = list (meta_data.root_epk)
+            type_name = root_epk.pop ()
+            etm       = scope [root_type_name]
+            epk       = dict ((k,v) for (k,v) in zip (etm.epk_sig, epk))
+            return etm.query (** epk).one ()
+    # end def load_root
 
     def query (self, Type) :
         return Type.select ()

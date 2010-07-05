@@ -33,6 +33,8 @@
 #    17-May-2010 (CT) Class `PID` removed
 #    17-May-2010 (MG) `add` parameter `id` added
 #     1-Jul-2010 (MG) `pcm` and `max_pid` added
+#     5-Jul-2010 (MG) `load_root` and `register_scope` are now method's of
+#                     the session
 #    ««revision-date»»···
 #--
 
@@ -89,7 +91,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def changes
 
     def load_root (self) :
-        result = self.DBW.load_root (self.session, self.scope)
+        result            = self.session.load_root (self.scope)
         self.scope.db_cid = self.max_cid
         return result
     # end def load_root
@@ -129,7 +131,7 @@ class Manager (MOM.EMS._Manager_) :
 
     def register_scope (self) :
         """Redefine to store `guid` and `root`-info of scope in database."""
-        self.DBW.register_scope (self.session, self.scope)
+        self.session.register_scope (self.scope)
     # end def register_scope
 
     def remove (self, entity) :

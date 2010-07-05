@@ -69,6 +69,7 @@
 #     1-Jul-2010 (MG) `SAS_A_Object_Kind_Mixin` removed, `Pickle_Mixin`
 #                     handling removed
 #     2-Jul-2010 (MG) Scope meta data handling changed
+#     5-Jul-2010 (MG) `register_scope` and `load_root` moved into `Session`
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,6 @@ import _MOM._DBW._SAS.Session
 import _MOM._SCM.Change
 
 import  cPickle                as Pickle
-import contextlib
 
 from   sqlalchemy import schema, types, sql
 from   sqlalchemy import engine as SQL_Engine
@@ -193,33 +193,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return e_type
     # end def etype_decorator
 
-    def load_root (cls, session, scope) :
-        q = session.connection.execute (cls.sa_scope.select ().limit (1))
-        with contextlib.closing (q) :
-            si = q.fetchone ()
-        meta_data            = si.meta_data
-        session.db_meta_data = meta_data
-        scope.guid           = meta_data.guid
-        if meta_data.root_epk :
-            raise ValueError ()
-            return getattr \
-                (scope, si.root_type_name).query (pid = si.root_pid).one ()
-    # end def load_root
-
     def prepare (cls) :
         cls._create_pid_table             (cls.metadata)
         cls._create_scope_table           (cls.metadata)
         cls._create_SCM_table             (cls.metadata)
         cls.role_cacher = TFL.defaultdict (set)
     # end def prepare
-
-    def register_scope (cls, session,  scope) :
-        kw               = dict (scope_guid = scope.guid)
-        kw ["meta_data"] = scope.ems.db_meta_data
-        kw ["read_only"] = False
-        session.execute (cls.sa_scope.insert ().values (** kw))
-        session.commit  ()
-    # end def register_scope
 
     def Reset_Metadata (cls) :
         cls.__class__.metadata = schema.MetaData ()
@@ -339,7 +318,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_SCM_table
 
     def _create_scope_table (cls, metadata) :
-        cls.sa_scope = Table = schema.Table \
+        MOM.Scope._sa_table = Table = schema.Table \
             ( "scope_metadata", metadata
             , schema.Column ("pk",        types.Integer, primary_key = True)
             , schema.Column ("read_only", types.Boolean)
