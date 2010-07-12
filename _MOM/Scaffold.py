@@ -34,6 +34,7 @@
 #    25-Jun-2010 (CT) Command handlers added
 #    29-Jun-2010 (CT) `-copyright_start` added
 #     1-Jul-2010 (CT) `-overwrite` added to `cmd__migrate__opts`
+#    12-Jul-2010 (CT) `do_migrate` changed to use `DB_Man`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ from   _MOM.import_MOM        import *
 
 from   _TFL                   import sos
 
+import _MOM.DB_Man
 import _MOM._EMS.Backends
 
 import _TFL.CAO
@@ -179,6 +181,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
 
     ANS                   = None
     cmd__copyright_start  = 2010
+    DB_Man                = MOM.DB_Man
     default_db_name       = ""
     nick                  = "NN"
     PNS_Aliases           = {}
@@ -196,7 +199,8 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     cmd__create__opts     = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
-        ( "overwrite:B?Overwrite `target_db_url` if necessary"
+        ( "chunk_size:I=10000?Number of entities in one chunk"
+        , "overwrite:B?Overwrite `target_db_url` if necessary"
         , "target_db_url:S=hps:///migration?Database url for target database"
         )
     cmd__sub_commands     = ("cmd__create", "cmd__load", "cmd__migrate")
@@ -226,6 +230,16 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def app_type_and_url
 
     @classmethod
+    def do_copy (cls, cmd) :
+        src_scope = cls.do_load          (cmd)
+        apt, url  = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
+        if cmd.overwrite :
+            apt.delete_database          (url)
+        trg_scope = src_scope.copy       (apt, url)
+        trg_scope.destroy ()
+    # end def do_copy
+
+    @classmethod
     def do_create (cls, cmd) :
         scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
         scope.destroy ()
@@ -238,12 +252,14 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
 
     @classmethod
     def do_migrate (cls, cmd) :
-        src_scope = cls.do_load          (cmd)
-        apt, url  = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
+        apt_s, url_s = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        apt_t, url_t = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
+        print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
+        db_man_s     = cls.DB_Man.connect   (apt_s, url_s)
         if cmd.overwrite :
-            apt.delete_database          (url)
-        trg_scope = src_scope.copy       (apt, url)
-        trg_scope.destroy ()
+            apt_t.delete_database (url_t)
+        db_man_t = cls.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
+        db_man_t.destroy ()
     # end def do_migrate
 
     @classmethod

@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    30-Jun-2010 (CT) Creation
+#    12-Jul-2010 (CT) Signature changed from `db_url, app_type` to
+#                     `app_type, db_url`
+#    12-Jul-2010 (CT) `destroy` added
 #    ««revision-date»»···
 #--
 
@@ -44,15 +47,17 @@ class DB_Man (TFL.Meta.Object) :
 
     ### DB_Man creation methods
     @classmethod
-    def connect (cls, db_url, app_type) :
-        self     = cls.__new__ (db_url, app_type)
+    def connect (cls, app_type, db_url) :
+        db_url   = app_type.Url (db_url)
+        self     = cls.__new__  (cls, app_type, db_url)
         self.ems = app_type.EMS.connect (self, db_url)
         return self
     # end def connect
 
     @classmethod
-    def create (cls, db_url, app_type, from_db_man, chunk_size = 10000) :
-        self            = cls.__new__ (db_url, app_type)
+    def create (cls, app_type, db_url, from_db_man, chunk_size = 10000) :
+        db_url          = app_type.Url (db_url)
+        self            = cls.__new__  (cls, app_type, db_url)
         self.src        = from_db_man
         self.ems        = app_type.EMS.new (self, db_url)
         self.chunk_size = chunk_size
@@ -67,7 +72,7 @@ class DB_Man (TFL.Meta.Object) :
             )
     # end def __init__
 
-    def __new__ (cls, db_url, app_type) :
+    def __new__ (cls, app_type, db_url) :
         self          = super (DB_Man, cls).__new__ (cls)
         self.db_url   = db_url
         self.app_type = app_type
@@ -85,6 +90,11 @@ class DB_Man (TFL.Meta.Object) :
     def db_meta_data (self) :
         return self.ems.db_meta_data
     # end def db_meta_data
+
+    def destroy (self) :
+        self.ems.close ()
+        self.__dict__.clear ()
+    # end def destroy
 
     def _migrate (self, chunk_size) :
         self.ems.pcm.consume \

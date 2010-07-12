@@ -55,6 +55,7 @@
 #    30-Jun-2010 (CT) `readonly` and `change_readonly` added
 #     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
 #     1-Jul-2010 (CT) `compact` added
+#    12-Jul-2010 (CT) `consume` corrected
 #    ««revision-date»»···
 #--
 
@@ -297,10 +298,9 @@ class Store_PC (Store) :
         assert not self.info.stores
         db_uri  = self.db_uri
         x_name  = self.x_uri.name
-        max_cid = 0
+        max_cid = max_pid = 0
         with TFL.lock_file (x_name) :
-            info = self.info
-            self._check_sync (info)
+            info    = self.info
             stores  = info.stores  = []
             commits = info.commits = []
             for i, cargo in enumerate (sliced (e_iter, chunk_size)) :
@@ -309,8 +309,8 @@ class Store_PC (Store) :
                 with open (s_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
                 stores.append   (s_name.base_ext)
-            for i, cargo in enumerate (sliced (c_iter, chunk_size)) :
-                max_cid = cargo [-1].cid
+            for cargo in sliced (c_iter, chunk_size) :
+                max_cid = cargo [-1] [1] ["cid"]
                 c_name  = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
                 with open (c_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
