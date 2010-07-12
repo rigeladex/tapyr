@@ -906,6 +906,10 @@ Essential links are identified by the associated objects (the link's
 roles) and any other, if any, primary attributes defined for the link
 in question:
 
+- Unary links are derived from :class:`MOM.Link1<_MOM.Link.Link1>`
+  and identified by the link role :attr:`left<_MOM.Link.Link1.left>`
+  plus any other primary attributes.
+
 - Binary links are derived from :class:`MOM.Link2<_MOM.Link.Link2>`
   and identified by the link roles :attr:`left<_MOM.Link.Link2.left>`
   and :attr:`right<_MOM.Link.Link2.right>` plus any other primary
@@ -1018,7 +1022,7 @@ Passing `strict = True` to a query makes it strict.
 
 The query :meth:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
 only be applied to `E_Type_Managers` for essential types that are, or
-inherit, a `relevant_root`:
+inherit from, a `relevant_root`:
 
     >>> scope.MOM.Object.instance (u"Mighty_Mouse")
     Traceback (most recent call last):
