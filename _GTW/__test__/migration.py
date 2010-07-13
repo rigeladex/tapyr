@@ -28,14 +28,30 @@
 # Revision Dates
 #    19-May-2010 (CT) Creation
 #     1-Jul-2010 (CT) `race_results` as example of composite-collection added
+#    13-Jul-2010 (CT) Changed to use `DB_Man` for migration
+#                     (instead of `Scope.copy`)
 #    ««revision-date»»···
 #--
 
 from _GTW.__test__.model import *
 
+class _migration_Scaffold_ (Scaffold) :
+
+    _real_name = "Scaffold"
+
+    Backend_Parameters = dict \
+        ( HPS = "'hps:///test.hps'"
+        , SQL = "'sqlite:///test.sql'"
+        , POS = "'postgresql://regtest:regtest@localhost/test'"
+        , MYS = "'mysql://:@localhost/test'"
+        )
+
+Scaffold = _migration_Scaffold_ # end class
+
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
+    >>> apt_s, url_s = scope.app_type, scope.db_url
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
 
@@ -109,59 +125,70 @@ _test_code = r"""
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
 
-    Now, we migrate all objects and the change history to a new scope. All
-    entities, changes, cids, and pids should be identical::
+    Save contents of scope to database and destroy scope:
 
-    >>> db_url = "hps:////tmp/gtw_test.gtw"
-    >>> apt, url = Scaffold.app_type_and_url (db_url)
-    >>> scop2 = scope.copy (apt, url)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
-    (33, 33)
-    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
-    True
-    >>> int (scop2.ems.max_cid)
-    37
-    >>> len (scop2.SRM.Regatta_Event.query ().first ().regattas)
-    2
-
-    After saving and restoring from `db_url`, all entities, changes, cids,
-    and pids should still be identical::
-
-    >>> scop2.destroy ()
-
-    >>> scop3 = MOM.Scope.load (apt, db_url)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
-    (33, 33)
-    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop3))
-    True
-    >>> int (scop3.ems.max_cid)
-    37
-    >>> len (scop3.SRM.Regatta_Event.query ().first ().regattas)
-    2
-
-    Now we delete the original database and then migrate back from `scop3`
-    into that app-type/backend. Again, all entities, changes, cids,
-    and pids should still be identical::
-
-    >>> apt, db_url = scope.app_type, scope.db_url
+    >>> scope.ems.compact ()
     >>> scope.destroy ()
-    >>> if db_url :
-    ...    apt.delete_database (db_url)
-    >>> scop4 = scop3.copy (apt, db_url)
 
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
+    Now, we migrate all objects and the change history to a new backend. All
+    entities, changes, cids, and pids should be identical afterwards:
+
+    >>> db_url = "hps:////tmp/gtw_test_migration.gtw"
+    >>> apt_t, url_t = Scaffold.app_type_and_url (db_url)
+    >>> apt_t.delete_database (url_t)
+    >>> db_man_s = Scaffold.DB_Man.connect (apt_s, url_s)
+    >>> db_man_t = Scaffold.DB_Man.create  (apt_t, url_t, db_man_s)
+    >>> db_man_s.destroy ()
+    >>> db_man_t.destroy ()
+
+    >>> scope_s = Scaffold.scope (url_s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
+    >>> scope_t = Scaffold.scope (url_t, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
+
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_s, scope_t))
     (33, 33)
-    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scop3, scop4))
+    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_s, scope_t))
     True
-    >>> int (scop4.ems.max_cid)
+    >>> int (scope_t.ems.max_cid)
     37
-    >>> len (scop4.SRM.Regatta_Event.query ().first ().regattas)
+    >>> len (scope_t.SRM.Regatta_Event.query ().first ().regattas)
+    2
+
+    Now we delete the original database and then migrate back into the
+    original app-type/backend. Again, all entities, changes, cids,
+    and pids should still be identical:
+
+    >>> scope_s.destroy ()
+    >>> scope_t.destroy ()
+    >>> apt_s.delete_database (url_s)
+    >>> db_man_t = Scaffold.DB_Man.connect (apt_t, url_t)
+    >>> db_man_u = Scaffold.DB_Man.create  (apt_s, url_s, db_man_t)
+    >>> db_man_t.destroy ()
+    >>> db_man_u.destroy ()
+
+    >>> scope_t = Scaffold.scope (url_t, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
+    >>> scope_u = Scaffold.scope (url_s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
+
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_t, scope_u))
+    (33, 33)
+    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_t, scope_u))
+    True
+    >>> int (scope_u.ems.max_cid)
+    37
+    >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
 
     Lets clean up::
 
-    >>> scop3.destroy ()
-    >>> scop4.destroy ()
+    >>> scope_t.destroy ()
+    >>> scope_u.destroy ()
+
+    >>> apt_s.delete_database (url_s)
+    >>> apt_t.delete_database (url_t)
+
 """
 
 __test__ = Scaffold.create_test_dict (_test_code)

@@ -56,6 +56,8 @@
 #     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
 #     1-Jul-2010 (CT) `compact` added
 #    12-Jul-2010 (CT) `consume` corrected
+#    13-Jul-2010 (CT) `Store_PC.produce_entities` changed to apply `x_uri` to
+#                     name of store
 #    ««revision-date»»···
 #--
 
@@ -341,7 +343,7 @@ class Store_PC (Store) :
         x_uri = self.x_uri
         with TFL.lock_file (x_uri.name) :
             for s in info.stores :
-                with open (s, "rb") as file :
+                with open (TFL.Filename (s, x_uri).name, "rb") as file :
                     for epc in pickle.load (file) :
                         yield epc
     # end def produce

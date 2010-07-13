@@ -29,6 +29,8 @@
 #    23-Jun-2010 (CT) Creation
 #    24-Jun-2010 (CT) `new` added
 #    24-Jun-2010 (CT) Optional argument `fs_path` added
+#    13-Jul-2010 (CT) `__contains__` and `split` added
+#    13-Jul-2010 (CT) `__init__` changed to accept `Url` instance as `value`
 #    ««revision-date»»···
 #--
 
@@ -115,7 +117,10 @@ class Url (TFL.Meta.Object) :
     value     = property (TFL.Getter._value)
 
     def __init__ (self, value, fs_path = False) :
-        if self._matcher.match (value) :
+        if isinstance (value, Url) :
+            self._value  = value._value
+            self._parsed = TFL.Record (** value._parsed._kw)
+        elif self._matcher.match (value) :
             self._value  = value
             attrs        = dict \
                 ( (k, v or "")
@@ -143,6 +148,14 @@ class Url (TFL.Meta.Object) :
             result = "%s#%s" % (result, f)
         return cls (result, fs_path = kw.get ("fs_path"))
     # end def new
+
+    def split (self, sep, * args, ** kw) :
+        return self._value.split (sep, * args, ** kw)
+    # end def split
+
+    def __contains__ (self, item) :
+        return item in self._value
+    # end def __contains__
 
     def __repr__ (self) :
         return "Url " + str (self._parsed)

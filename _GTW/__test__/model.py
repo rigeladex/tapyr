@@ -123,8 +123,8 @@ class Scaffold (MOM.Scaffold) :
         i = 0
         for b in backends :
             i += 1
-            for n, v in zip (("p", "n"), (cls.Backend_Parameters [b], None)) :
-                yield ("%s%d" % (n, i), v)
+            for k, v in zip (("p", "n"), (cls.Backend_Parameters [b], None)) :
+                yield ("%s%d" % (k, i), v)
     # end def _backend_spec
 
 # end class Scaffold
