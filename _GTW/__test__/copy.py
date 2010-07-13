@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    migration
+#    copy
 #
 # Purpose
-#    Test scope migrations
+#    Test scope copying
 #
 # Revision Dates
 #    19-May-2010 (CT) Creation
@@ -166,4 +166,4 @@ _test_code = r"""
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
-### __END__ migration
+### __END__ copy
