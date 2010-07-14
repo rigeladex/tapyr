@@ -665,7 +665,8 @@
                         if ($(this).data ("callback") (evt, $form, $inline))
                           {
                             $iform.remove             ();
-                            $entity_root.show         ();
+                            if ($entity_root)
+                                $entity_root.show     ();
                           }
                       }
                   );

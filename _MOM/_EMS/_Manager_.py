@@ -111,7 +111,7 @@ class _Manager_ (TFL.Meta.Object) :
 
     def change_readonly (self, state) :
         self.session.change_readonly (state)
-        self.commit ()
+        self.commit                  ()
     # end def change_readonly
 
     def close (self) :

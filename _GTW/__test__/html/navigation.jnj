@@ -1,0 +1,44 @@
+{#- jinja template: navigation.jnj -#}
+{#
+## Copyright (C) 2010 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg. martin@mangari.org
+## ****************************************************************************
+## This template is part of the package GTW.__test__.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    GTW.__test__.html.navigation
+##
+## Purpose
+##    Add the language selection to the navigation
+##
+## Revision Dates
+##    14-Jul-2010 (MG) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- import "STD::html/navigation.jnj" as NT with context %}
+{%- import "STD::html/form.jnj" as Form %}
+
+{{- NT.section (page.top.own_links, "Navigation") -}}
+{{- NT.language_section (page, request) -}}
+{%- if page.login_page or request.user.authenticated %}
+  {{- NT.login_section (page, request) -}}
+{%- endif -%}
+{#- __END__ jinja template: GTW.__test__.html.navigation.jnj -#}
+
+

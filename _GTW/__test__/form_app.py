@@ -176,9 +176,8 @@ def create_nav (cmd) :
         import _GTW._Tornado
         HTTP = GTW.Tornado
     template_dirs     = \
-        [ sos.path.join (sos.path.dirname (__file__), "html")
+        [ sos.path.join (sos.path.dirname (__file__))
         ]
-
     result        = GTW.NAV.Root \
         ( encoding        = "ISO-8859-1"
         , src_dir         = "."
@@ -321,6 +320,16 @@ def _main (cmd) :
         import _GTW._Tornado.Upload_Handler
         HTTP       = GTW.Tornado
 
+    try :
+        ldir = sos.path.join (sos.path.dirname (__file__), "locale")
+        translations = TFL.I18N.load \
+            ( "de", "en"
+            , domains    = ("messages", )
+            , use        = "de"
+            , locale_dir = ldir
+            )
+    except ImportError :
+        translations = None
     prefix    = "media"
     media_dir = sos.path.join (NAV.web_src_root, "media")
     app       = HTTP.Application \
