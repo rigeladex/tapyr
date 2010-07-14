@@ -120,6 +120,16 @@ ul.errorlist
     }
 .gtw-ui-form-inline .buttons button
     { margin          : 0 0.2em
+    ; text-align      : left
+    }
+
+td.gtw-ui-form-inline[colspan]
+    { text-align      : left
+    }
+
+.ui-button
+    { background      : none
+    ; font-weight     : normal
     }
 
 /* File Upload Handling */

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-06-10 12:21+0200\n"
+"PO-Revision-Date: 2010-07-14 16:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -212,8 +212,7 @@ msgstr "Anrede"
 msgid ""
 "Salutation to be used when communicating with person (e.g., in\n"
 "a letter or email)."
-msgstr ""
-"Anrede, die in Briefen oder Emails verwendet werden soll."
+msgstr "Anrede, die in Briefen oder Emails verwendet werden soll."
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Sex"
@@ -258,3 +257,4 @@ msgstr "Postleitzahl"
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr "Postleitzahl der Adresse"
+

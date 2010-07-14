@@ -124,7 +124,7 @@ class GTW (TFL.Meta.Object) :
     pjoin      = staticmethod (sos.path.join)
 
     def render_fofi_widget (self, fofi, widget, * args, ** kw) :
-        pushed     = False
+        pushed = False
         obj_render_mode = getattr (fofi, "render_mode", None)
         kw_render_mode  = kw.pop  ("render_mode",       None)
         if obj_render_mode :
