@@ -66,6 +66,8 @@
 #    01-Jun-2010 (MG) `Changer.form_parameters` added
 #    21-Jun-2010 (MG) `From` and `list_display` once properties added, inline
 #                     class `Form` renamed to `HTML_Form`
+#    14-Jul-2010 (CT) `Changer.rendered` changed to `Redirect_302`
+#                     identically for boith `submit` and `cancel`
 #    ««revision-date»»···
 #--
 
@@ -133,23 +135,24 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 , ** self.form_parameters
                 )
             if request.method == "POST" :
+                err_count = 0
                 if req_data.get ("cancel") :
                     ### the user has clicked on the cancel button and not on
                     ### the submit button
                     self.top.scope.rollback ()
-                    raise HTTP.Redirect_302 (req_data ["form-cancel-href"])
                 else :
                     err_count = form (req_data)
                     if err_count == 0 :
                         man = self.parent.manager
                         if man :
                             man._old_cid = -1
-                        tail = "#pk-%s" % (obj.pid) if obj else ""
-                        raise HTTP.Redirect_302 \
-                            ("%s%s" % (self.parent.abs_href, tail))
                     else :
                         self._display_errors (form)
                         self.top.scope.rollback ()
+                if err_count == 0 :
+                    tail = "#pk-%s" % (obj.pid) if obj else ""
+                    raise HTTP.Redirect_302 \
+                        ("%s%s" % (self.parent.abs_href, tail))
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
             try :

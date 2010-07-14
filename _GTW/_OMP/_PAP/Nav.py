@@ -177,8 +177,7 @@ class Admin (object) :
                         , completer = address_completer
                         )
                     )
-                , list_display     =
-                    ("desc", WF ("primary", prefix = "address"))
+                , list_display     = ("desc", "address")
                 , collapsable      = True
                 , popup            = False
                 )
