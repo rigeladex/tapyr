@@ -32,6 +32,7 @@
 #    17-May-2010 (MG) `new_context` replaced by `context`
 #    24-Jun-2010 (CT) `commit`, `reserve`, and `rollback` factored to `dbs`
 #     1-Jul-2010 (MG) `max_pid` and `__iter__` added, `type_name` factored
+#    15-Jul-2010 (MG) `close` added
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,11 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         else :
             self.commit   ()
     # end def new_context
+
+    def close (self) :
+        self.rollback         ()
+        self.connection.close ()
+    # end def close
 
     @property
     def max_pid (self) :

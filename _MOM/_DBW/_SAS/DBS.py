@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Jun-2010 (CT) Creation
 #    24-Jun-2010 (CT) `pid` related methods added
+#    15-Jul-2010 (MG) `Postgresql.Connection` added and used
 #    ««revision-date»»···
 #--
 
@@ -92,15 +93,28 @@ class Postgresql (_NFB_) :
 
     scheme = "postgresql"
 
-    @classmethod
-    def create_connection (cls, db_url, manager) :
-        import psycopg2.extensions as PE
-        engine = manager._create_engine (db_url.scheme_auth + "/postgres")
-        conn   = engine.connect ()
-        conn.connection.connection.set_isolation_level \
-            (PE.ISOLATION_LEVEL_AUTOCOMMIT)
-        return conn, engine
-    # end def create_connection
+    class Connection (object) :
+
+        def __init__ (self, db_url, manager) :
+            import psycopg2.extensions as PE
+            engine = manager._create_engine (db_url.scheme_auth + "/postgres")
+            conn   = engine.connect ()
+            conn.connection.connection.set_isolation_level \
+                (PE.ISOLATION_LEVEL_AUTOCOMMIT)
+            self.engine = engine
+            self.conn   = conn
+        # end def __init__
+
+        def execute (self, * args, ** kw) :
+            return self.conn.execute (* args, ** kw)
+        # end def execute
+
+        def close (self) :
+            self.conn.close          ()
+            self.engine.pool.dispose ()
+        # end def close
+
+    # end class Connection
 
     @classmethod
     def create_database \
@@ -108,7 +122,7 @@ class Postgresql (_NFB_) :
             , encoding = "utf8"
             , template = "template0"
             ) :
-        conn, engine = cls.create_connection (db_url, manager)
+        conn = cls.Connection (db_url, manager)
         with contextlib.closing (conn) :
             conn.execute \
                 ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
@@ -118,7 +132,7 @@ class Postgresql (_NFB_) :
 
     @classmethod
     def delete_database (cls, db_url, manager) :
-        conn, engine = cls.create_connection (db_url, manager)
+        conn = cls.Connection (db_url, manager)
         with contextlib.closing (conn) :
             try :
                 conn.execute ("DROP DATABASE %s" % (db_url.path, ))

@@ -30,6 +30,7 @@
 #    12-Jul-2010 (CT) Signature changed from `db_url, app_type` to
 #                     `app_type, db_url`
 #    12-Jul-2010 (CT) `destroy` added
+#    15-Jul-2010 (MG) `__str__` added
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,11 @@ class DB_Man (TFL.Meta.Object) :
             , chunk_size
             )
     # end def _migrate
+
+    def __str__ (self) :
+        return "%s <%s>" % \
+            (self.__class__.__name__, self.db_url)
+    # end def __str__
 
 # end class DB_Man
 

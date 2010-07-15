@@ -64,6 +64,8 @@
 #                     `insert_cargo` fixed
 #    15-Jul-2010 (MG) `_Session_.load_root`: check for compatible database
 #                     version hash added
+#    15-Jul-2010 (MG) `_Session_.close`: close the PID-manager as well to
+#                     make sure all connections are closed
 #    ««revision-date»»···
 #--
 
@@ -372,7 +374,9 @@ class _Session_ (TFL.Meta.Object) :
 
     def close (self) :
         self.rollback            ()
+        self.scope.ems.pm.close  ()
         ### close all connections inside the pool
+        ### import pdb; pdb.set_trace ()
         self.engine.pool.dispose ()
         self.engine = None
     # end def close
