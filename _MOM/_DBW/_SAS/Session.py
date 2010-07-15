@@ -62,12 +62,15 @@
 #     5-Jul-2010 (MG) `change_readonly` implemented
 #    15-Jul-2010 (MG) `register_scope` changed to use `guid` from `db_meta_data`
 #                     `insert_cargo` fixed
+#    15-Jul-2010 (MG) `_Session_.load_root`: check for compatible database
+#                     version hash added
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.I18N
 
 from   _MOM                  import MOM
 import _MOM.DB_Meta_Data
@@ -388,6 +391,16 @@ class _Session_ (TFL.Meta.Object) :
         if meta_read_only != si.read_only :
             self.change_readonly (meta_read_only)
         scope.guid        = meta_data.guid
+        if meta_data.dbv_hash != scope.app_type.db_version_hash :
+            raise MOM.Error.Incompatible_DB_Version \
+                ( TFL.I18N._T
+                   ( "Cannot load database because of a database version hash "
+                     "missmatch:\n"
+                     "  Tool  database version hash: %s\n"
+                     "  Scope database version hash: %s\n"
+                   )
+                % (scope.app_type.db_version_hash, meta_data.dbv_hash)
+                )
         self._scope_pk    = si.pk
     # end def load_root
 
