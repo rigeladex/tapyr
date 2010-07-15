@@ -70,6 +70,8 @@
 #                     handling removed
 #     2-Jul-2010 (MG) Scope meta data handling changed
 #     5-Jul-2010 (MG) `register_scope` and `load_root` moved into `Session`
+#    15-Jul-2010 (MG) SA Table for the scope is now attached to
+#                     `MOM.DBW.SAS._Session_`
 #    ««revision-date»»···
 #--
 
@@ -318,7 +320,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_SCM_table
 
     def _create_scope_table (cls, metadata) :
-        MOM.Scope._sa_table = Table = schema.Table \
+        MOM.DBW.SAS._Session_._sa_scope = Table = schema.Table \
             ( "scope_metadata", metadata
             , schema.Column ("pk",        types.Integer, primary_key = True)
             , schema.Column ("read_only", types.Boolean)

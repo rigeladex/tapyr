@@ -60,6 +60,8 @@
 #     2-Jul-2010 (MG) `db_meta_data` added
 #     5-Jul-2010 (MG) `register_scope` and `load_root` moved in here
 #     5-Jul-2010 (MG) `change_readonly` implemented
+#    15-Jul-2010 (MG) `register_scope` changed to use `guid` from `db_meta_data`
+#                     `insert_cargo` fixed
 #    ««revision-date»»···
 #--
 
@@ -153,7 +155,7 @@ class SAS_Interface (TFL.Meta.Object) :
         session.connection.execute \
             ( self.table.insert ().values
                 ( self._pickle_cargo_for_table
-                    (pickle_cargo, self.e_type, pid, "pid", default = type_name)
+                    (pickle_cargo, self.e_type, pid, default = type_name)
                 )
             )
     # end def insert_cargo
@@ -161,15 +163,13 @@ class SAS_Interface (TFL.Meta.Object) :
     def _pickle_cargo_for_table ( self, pickle_cargo
                                 , e_type
                                 , pid
-                                , pk_column
                                 , columns = None
                                 , default = None
                                 ) :
         if columns is None :
             columns = self.e_type_columns [e_type]
         result      = {}
-        if pk_column :
-            result [pk_column] = pid
+        result [self.e_type._sa_pk_name] = pid
         for kind in columns :
             attr_name          = kind.attr.name
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
@@ -177,7 +177,7 @@ class SAS_Interface (TFL.Meta.Object) :
                     ( self._pickle_cargo_for_table
                         ( pickle_cargo [attr_name] [0]
                         , kind.C_Type
-                        , pid, None
+                        , pid
                         , default = kind.C_Type.type_name
                         , columns = columns [kind] [e_type]
                         )
@@ -344,7 +344,7 @@ class _Session_ (TFL.Meta.Object) :
             , meta_data = meta_data
             , read_only = state
             )
-        self.execute (self.scope._sa_table.update ().values (** kw))
+        self.execute (self._sa_scope.update ().values (** kw))
         self.commit  ()
     # end def change_readonly
 
@@ -379,7 +379,7 @@ class _Session_ (TFL.Meta.Object) :
     # end def execute
 
     def load_root (self, scope) :
-        q = self.connection.execute (scope._sa_table.select ().limit (1))
+        q = self.connection.execute (self._sa_scope.select ().limit (1))
         with contextlib.closing (q) :
             si = q.fetchone ()
         meta_data         = si.meta_data
@@ -392,10 +392,10 @@ class _Session_ (TFL.Meta.Object) :
     # end def load_root
 
     def register_scope (self, scope) :
-        kw               = dict (scope_guid = scope.guid)
+        kw               = dict (scope_guid = self.db_meta_data.guid)
         kw ["meta_data"] = self.db_meta_data
         kw ["read_only"] = getattr (self.db_meta_data, "read_only", False)
-        result = self.execute (scope._sa_table.insert ().values (** kw))
+        result = self.execute (self._sa_scope.insert ().values (** kw))
         self.commit           ()
         self._scope_pk   = result.inserted_primary_key [0]
     # end def register_scope
@@ -558,6 +558,7 @@ class Session_PC (_Session_) :
     def consume (self, entity_iter, change_iter, chunk_size) :
         apt      = self.scope.app_type
         pm       = self.scope.ems.pm
+        self.register_scope (self.scope)
         for no, (type_name, pc, pid) in enumerate (entity_iter) :
             apt [type_name]._SAS.insert_cargo (self, pid, pc)
             pm.reserve (TFL.Record (type_name = type_name), pid)
@@ -575,7 +576,6 @@ class Session_PC (_Session_) :
         table  = MOM.SCM.Change._Change_._sa_table
         for no, (chg_cls, chg_dct, children_pc) in enumerate (change_iter) :
             cid = chg_dct ["cid"]
-            print chg_dct
             self._consume_change_iter (children_pc, chunk_size, cid)
             self.connection.execute \
                 ( table.insert
@@ -637,7 +637,7 @@ class Session_PC (_Session_) :
 # end class Session_PC
 
 if __name__ != "__main__" :
-    MOM.DBW.SAS._Export ("*")
+    MOM.DBW.SAS._Export ("*", "_Session_")
 ### __END__ MOM.DBW.SAS.Session
 
 
