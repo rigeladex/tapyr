@@ -42,7 +42,7 @@ class _migration_Scaffold_ (Scaffold) :
     Backend_Parameters = dict \
         ( HPS = "'hps:///test.hps'"
         , SQL = "'sqlite:///test.sql'"
-        , POS = "'postgresql://regtest:regtest@localhost/test'"
+        , POS = "'postgresql://regtest:regtest@localhost/regtest'"
         , MYS = "'mysql://:@localhost/test'"
         )
 
@@ -135,7 +135,7 @@ _test_code = r"""
 
     >>> db_url = "hps:////tmp/gtw_test_migration.gtw"
     >>> apt_t, url_t = Scaffold.app_type_and_url (db_url)
-    >>> apt_t.delete_database (url_t)
+    >>> apt_t.delete_database (url_t) # 1
     >>> db_man_s = Scaffold.DB_Man.connect (apt_s, url_s)
     >>> db_man_t = Scaffold.DB_Man.create  (apt_t, url_t, db_man_s)
     >>> db_man_s.destroy ()
@@ -161,7 +161,7 @@ _test_code = r"""
 
     >>> scope_s.destroy ()
     >>> scope_t.destroy ()
-    >>> apt_s.delete_database (url_s)
+    >>> apt_s.delete_database (url_s) # 2
     >>> db_man_t = Scaffold.DB_Man.connect (apt_t, url_t)
     >>> db_man_u = Scaffold.DB_Man.create  (apt_s, url_s, db_man_t)
     >>> db_man_t.destroy ()
@@ -186,8 +186,8 @@ _test_code = r"""
     >>> scope_t.destroy ()
     >>> scope_u.destroy ()
 
-    >>> apt_s.delete_database (url_s)
-    >>> apt_t.delete_database (url_t)
+    >>> apt_t.delete_database (url_t) # 3
+    >>> apt_s.delete_database (url_s) # 4
 
 """
 
