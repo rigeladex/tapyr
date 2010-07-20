@@ -1,0 +1,124 @@
+/*
+* Copyright (C) 2010 Mag. Christian Tanzer. All rights reserved
+* Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+*
+* Revision Dates
+*    20-Jul-2010 (CT) Creation
+*    ««revision-date»»···
+*/
+
+/* Styling for HTML elements (assumes effects of reset.css!) */
+
+body
+    { font-family         : "Lucida Grande", verdana, sans-serif
+    ; line-height         : 1.375
+    ; margin              : 0.2em 0.5em
+    }
+
+blockquote
+    { margin-left         : 2.5em
+    }
+
+em  { font-weight         : bold }
+
+h1, h2, h3, h4, h5, h6
+    { font-weight         : bold
+    }
+
+h1  { font-size           : 125% }
+h2  { font-size           : 120% }
+h3  { font-size           : 115% }
+h4  { font-size           : 110% }
+h5  { font-size           : 105% }
+h6  { font-size           : 100% }
+
+ol
+    { list-style          : decimal outside
+    ; margin-bottom       : 0.5em
+    ; padding-left        : 2.5em
+    }
+
+ol ol
+    { list-style          : upper-alpha
+    ; margin              : 0 0 0.5em 0.5em
+    ; padding-left        : 2.5em
+    }
+
+ol ol ol
+    { list-style          : lower-alpha
+    ; padding-left        : 2.5em
+    }
+
+ol ol ol ol
+    { list-style          : lower-roman
+    ; padding-left        : 2.5em
+    }
+
+p   { margin-bottom       : 0.5em }
+
+pre { font-family         : monospace }
+
+strong
+    { font-weight         : bold }
+
+td  { padding             : 0 0.5em 0 0
+    ; vertical-align      : top
+    }
+
+td[colspan]
+    { text-align          : center
+    }
+
+ul
+    { list-style          : disc outside
+    ; margin-bottom       : 0.5em
+    ; padding-left        : 1.0em
+    }
+
+ul ul
+    { list-style          : square
+    ; margin              : 0 0 0.5em 0.5em
+    ; padding-left        : 1.0em
+    }
+
+ul ul ul
+    { list-style          : circle
+    ; padding-left        : 1.0em
+    }
+
+ul ul ul ul
+    { list-style          : disc
+    ; padding-left        : 1.0em
+    }
+
+/* Styling for classes */
+
+.em { font-weight         : bold }
+
+.headline
+    { color               : #FF6633
+    ; font-size           : 135%
+    }
+
+.just-c
+    { text-align          : center }
+
+.just-l
+    { text-align          : left }
+
+.just-l
+    { text-align          : right }
+
+.section + .section
+    { margin-top          : 0.5em }
+
+.vert-b
+    { vertical-align      : bottom }
+
+.vert-m
+    { vertical-align      : middle }
+
+.vert-t
+    { vertical-align      : top }
+
+/* __END__ base.css */

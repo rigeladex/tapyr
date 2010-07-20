@@ -53,12 +53,14 @@
     </div>
     {{ e.contents|safe }}
     {%- if e.changer and NAV.allow (e.changer, request.user) %}
-      <a href="{{ e.changer.abs_href }}"{#--#}
-         title="{{ GTW._T ('Edit this entry') }}"{#--#}
-         class="button"{#--#}
-      >{#--#}
-        {{ GTW._T ("Change") }}{#--#}
-      </a>
+      <p>{#--#}
+        <a href="{{ e.changer.abs_href }}"{#--#}
+           title="{{ GTW._T ('Edit this entry') }}"{#--#}
+           class="button"{#--#}
+        >{#--#}
+          {{ GTW._T ("Change") }}{#--#}
+        </a>{#--#}
+      </p>
     {% endif -%}
   </div>
 {%- endmacro -%} {#- entry -#}

@@ -50,9 +50,13 @@
   <div class="{{ page.css_class }}">
     {{ c.contents | safe }}
     {%- if link %}
-      <a href="{{ link }}" class="{{ page.css_class }}-more"
-        title="{{ '%s %s' % (GTW._T ('Read the full article at'), link) }}"
-      >{{ GTW._T ("More") }}...</a>
+      <p class="{{ page.css_class }}-more">{#--#}
+        <a href="{{ link }}"
+          title="{{ '%s %s' % (GTW._T ('Read the full article at'), link) }}"
+        >{#--#}
+          {{ GTW._T ("More") }}...{#--#}
+        </a>{#--#}
+      </p>
     {%- endif %}
   </div>
 {%- endmacro -%} {#- clip -#}

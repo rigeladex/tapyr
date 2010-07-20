@@ -99,7 +99,7 @@ msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 
 #: _JNJ/html/news.jnj:57
 msgid "Edit this entry"
-msgstr "Ändere dieses Ding"
+msgstr "Ändere diesen Eintrag"
 
 #: _JNJ/html/rform.jnj:89 _JNJ/html/rform.jnj:324
 msgid "Error"
