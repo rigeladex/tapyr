@@ -19,6 +19,12 @@ blockquote
     { margin-left         : 2.5em
     }
 
+cite
+    { display             : block
+    ; margin-top          : 1.0em
+    ; text-align          : right
+    }
+
 em  { font-weight         : bold }
 
 h1, h2, h3, h4, h5, h6
@@ -32,27 +38,27 @@ h4  { font-size           : 110% }
 h5  { font-size           : 105% }
 h6  { font-size           : 100% }
 
+img { display             : block }
+
 ol
     { list-style          : decimal outside
-    ; margin-bottom       : 0.5em
     ; padding-left        : 2.5em
     }
+
+ol, ul
+    { margin-bottom       : 0.5em }
+
+ol ol, ul ul
+    { margin              : 0 0 0.5em 0.5em }
 
 ol ol
-    { list-style          : upper-alpha
-    ; margin              : 0 0 0.5em 0.5em
-    ; padding-left        : 2.5em
-    }
+    { list-style          : upper-alpha }
 
 ol ol ol
-    { list-style          : lower-alpha
-    ; padding-left        : 2.5em
-    }
+    { list-style          : lower-alpha }
 
 ol ol ol ol
-    { list-style          : lower-roman
-    ; padding-left        : 2.5em
-    }
+    { list-style          : lower-roman }
 
 p   { margin-bottom       : 0.5em }
 
@@ -61,39 +67,37 @@ pre { font-family         : monospace }
 strong
     { font-weight         : bold }
 
-td  { padding             : 0 0.5em 0 0
+td, th
+    { padding             : 0.05em 0.25em
     ; vertical-align      : top
     }
 
-td[colspan]
+td[colspan], th[colspan]
     { text-align          : center
     }
 
 ul
     { list-style          : disc outside
-    ; margin-bottom       : 0.5em
     ; padding-left        : 1.0em
     }
 
 ul ul
-    { list-style          : square
-    ; margin              : 0 0 0.5em 0.5em
-    ; padding-left        : 1.0em
-    }
+    { list-style          : square }
 
 ul ul ul
-    { list-style          : circle
-    ; padding-left        : 1.0em
-    }
+    { list-style          : circle }
 
 ul ul ul ul
-    { list-style          : disc
-    ; padding-left        : 1.0em
-    }
+    { list-style          : disc }
 
 /* Styling for classes */
 
 .em { font-weight         : bold }
+
+.hbox
+    { display             : block
+    ; overflow            : hidden
+    }
 
 .headline
     { color               : #FF6633
@@ -109,8 +113,40 @@ ul ul ul ul
 .just-l
     { text-align          : right }
 
+.large
+    { font-size           : 120%
+    }
+
 .section + .section
     { margin-top          : 0.5em }
+
+.striped tr:nth-child(2n+1)
+    { background-color    : #EBEBEB
+    }
+
+.striped tr:nth-child(2n)
+    { background-color    : white
+    }
+
+.vbox
+    { float               : left
+    }
+
+.vboxr
+    { float               : right
+    }
+
+.vbox.last-child, .w1o1
+    { display             : inline-block
+    ; float               : none
+    ; width               : auto
+    }
+
+.vbox:last-child /* CSS 3 */
+    { display             : inline-block
+    ; float               : none
+    ; width               : auto
+    }
 
 .vert-b
     { vertical-align      : bottom }
@@ -120,5 +156,15 @@ ul ul ul ul
 
 .vert-t
     { vertical-align      : top }
+
+.w1o2 { width             : 50% }
+.w1o3 { width             : 33.33333333333333% }
+.w1o4 { width             : 25% }
+.w1o5 { width             : 20% }
+.w2o3 { width             : 66.66666666666666% }
+.w2o5 { width             : 40% }
+.w3o4 { width             : 75% }
+.w3o5 { width             : 60% }
+.w4o5 { width             : 80% }
 
 /* __END__ base.css */
