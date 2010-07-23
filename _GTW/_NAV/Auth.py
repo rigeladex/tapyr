@@ -44,6 +44,7 @@
 #    24-Feb-2010 (CT) `own_links` redefined
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    29-Jun-2010 (CT) Use `request.host` instead of `site_url`
+#    23-Jul-2010 (MG) Notification handling simplified
 #    ««revision-date»»···
 #--
 
@@ -242,6 +243,8 @@ class Auth (GTW.NAV.Dir) :
                         else :
                             handler.set_secure_cookie \
                                 ("username", req_data  ["username"])
+                            handler.add_notification \
+                                (_T (u"Welcome %s.") % (req_data ["username"]))
                         raise HTTP.Redirect_302 (next)
                     ### after a failed login, clear the current username
                     handler.clear_cookie ("username")
@@ -261,9 +264,8 @@ class Auth (GTW.NAV.Dir) :
             next_page = top.page_from_href (urlparse.urlsplit (next).path)
             if getattr (next_page, "login_required", False) :
                 next = "/"
-            if handler.session.notifications is not None:
-                handler.session.notifications.append \
-                    (GTW.Notification (_T (u"Logout successful.")))
+            handler.add_notification \
+                (_T (u"Logout successful."))
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 
@@ -302,11 +304,9 @@ class Auth (GTW.NAV.Dir) :
                         , page          = self
                         , host          = request.host
                         )
-                    handler.session.notifications.append \
-                        ( GTW.Notification
-                            (_T(u"A confirmation has been sent to your email "
-                                 "address."
-                               )
+                    handler.add_notification \
+                        ( _T(u"A confirmation has been sent to your email "
+                              "address."
                             )
                         )
                     raise HTTP.Redirect_302 (next)
@@ -339,7 +339,7 @@ class Auth (GTW.NAV.Dir) :
                     next      = handler.request.headers.get ("Referer", "/")
                     next_page = top.page_from_href \
                         (urlparse.urlsplit (next).path)
-                    handler.session.notifications.append \
+                    handler.add_notifications \
                         ( GTW.Notification
                             (_T(u"The reset password instructions have been "
                                  "sent to your email address."

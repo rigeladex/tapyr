@@ -34,6 +34,9 @@
 #    19-Apr-2008 (MG) Template handling moved into a class to support
 #                     dependency tracking and automatic css file recreation
 #                     based on changes of a parameter file
+#    23-Jul-2010 (MG) Polling based `watch_directories` support added for
+#                     platforms where `pyinotify` is not supported (OS X,
+#                     Windows, ...)
 #    ««revision-date»»···
 #--
 
@@ -47,6 +50,7 @@ import _TFL.Record
 import _TFL.CAO
 import  re
 import  traceback
+import  stat
 
 class CSS_Template (TFL.Meta.Object) :
     """Models a css template and teh dependencies to parameter files."""
@@ -56,8 +60,13 @@ class CSS_Template (TFL.Meta.Object) :
     templates       = {}
     fix_percent_pat = re.compile ("%([^(])")
 
-    def __init__ (self, template, parameter_file = None, css_file = None) :
+    def __init__ ( self, template
+                 , parameter_file = None
+                 , css_file       = None
+                 , polling        = False
+                 ) :
         self.count    = 0
+        self.polling  = polling
         self.template = TFL.Filename \
             (template, "filename.css_template", absolute = True)
         self.css_file = TFL.Filename (css_file or ".css", self.template)
@@ -74,11 +83,25 @@ class CSS_Template (TFL.Meta.Object) :
             self.parameter_file = None
     # end def __init__
 
+    def check_for_update (self) :
+        update = False
+        if self.parameter_file :
+            p_m_time = os.stat (self.parameter_file.name) [stat.ST_MTIME]
+            update   = p_m_time != self.p_m_time
+        t_m_time = os.stat (self.template.name) [stat.ST_MTIME]
+        update   = update or (t_m_time != self.t_m_time)
+        if update :
+            self.create_css_file ()
+    # end def check_for_update
+
     def create_css_file (self, overrides = {}) :
         try :
             self.pdict = {} ### lets clear it again before we read everything
             self._update_dependencies ()
-            ct    = open         (self.template.name).read ()
+            filename   = self.template.name
+            ct    = open         (filename).read ()
+            if self.polling :
+                self.t_m_time = os.stat (filename) [stat.ST_MTIME]
             ct, _ = self.fix_percent_pat.subn \
                 (lambda m : "%%%s" % (m.group (0), ), ct)
             outf  = open  (self.css_file.name, "wb")
@@ -92,13 +115,13 @@ class CSS_Template (TFL.Meta.Object) :
     # end def create_css_file
 
     @classmethod
-    def find_templates (cls, directory, recursive = False) :
+    def find_templates (cls, polling, directory, recursive = False) :
         for file in os.listdir_full (directory) :
             if os.path.isdir (file) :
                 if recursive :
                     cls.find_templates (file, recursive = True)
             if file.endswith (".css_template") and not "#" in file :
-                cls (file)
+                cls (file, polling = polling)
     # end def find_templates
 
     def _update_dependencies (self, filename = None) :
@@ -109,6 +132,8 @@ class CSS_Template (TFL.Meta.Object) :
         if new_dir :
             old_dir = os.getcwd ()
             os.chdir (new_dir)
+        if self.polling :
+            self.p_m_time = os.stat (filename) [stat.ST_MTIME]
         execfile \
              ( filename
              , dict
@@ -123,8 +148,19 @@ class CSS_Template (TFL.Meta.Object) :
 
 # end class CSS_Template
 
-def watch_directories (overrides, * directories) :
-    import pyinotify
+def watch_directories (pyinotify, timeout, overrides, * directories) :
+    if pyinotify :
+        _watch_directories_pyinotify (pyinotify, overrides, * directories)
+    else :
+        import time
+        print "Polling fallback, interval %dms" % (timeout, )
+        while True :
+            time.sleep (1000. / timeout)
+            for template in CSS_Template.templates.itervalues () :
+                template.check_for_update ()
+# end def watch_directories
+
+def _watch_directories_pyinotify (pyinotify, overrides, * directories) :
     watch  = pyinotify.WatchManager ()
     events = \
         pyinotify.IN_MODIFY | pyinotify.IN_CREATE
@@ -173,7 +209,7 @@ def watch_directories (overrides, * directories) :
             # destroy the inotify's instance on this interrupt (stop monitoring)
             notifier.stop ()
             break
-# end def watch_directories
+# end def _watch_directories_pyinotify
 
 def main (cmd) :
     keywords    = {} ### XXX cmd.keywords
@@ -182,11 +218,16 @@ def main (cmd) :
         for f in cmd.argv :
             CSS_Template (f).create_css_file (keywords)
     if cmd.watch_directories :
+        try :
+            import pyinotify
+        except ImportError :
+            pyinotify = None
         for d in cmd.watch_directories :
-            CSS_Template.find_templates (d, False)
+            CSS_Template.find_templates (pyinotify is None, d, False)
         for t in CSS_Template.templates.itervalues () :
             t.create_css_file (keywords)
-        watch_directories (keywords, * cmd.watch_directories)
+        watch_directories \
+            (pyinotify, cmd.poll_timeout, keywords, * cmd.watch_directories)
 # end def main
 
 Command = TFL.CAO.Cmd \
@@ -194,7 +235,8 @@ Command = TFL.CAO.Cmd \
     , args = ("template:P", )
     , opts =
           ( "watch_directories:P,?List of directories to watch for changes"
-          ,
+          , "poll_timeout:I=1000?Microseconds timeout if pyinotify is not "
+              "availabe"
           )
     )
 

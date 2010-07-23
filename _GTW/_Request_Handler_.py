@@ -30,6 +30,7 @@
 #    19-Jun-2010 (MG) Creation (factored from GTW.Werkzeug.Request_Handler
 #                     and GTW.Tornado.Request_Handler)
 #    23-Jun-2010 (MG) `s/anonymous/anonymous_account/`
+#    23-Jul-2010 (MG) `add_notification` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,14 @@ import json
 
 class _Request_Handler_ (object) :
     """Mixin for request hanlders."""
+
+    def add_notification (self, noti) :
+        notifications = self.session.notifications
+        if notifications is not None :
+            if not isinstance (noti, GTW.Notification) :
+                noti = GTW.Notification (noti)
+            notifications.append (noti)
+    # end def add_notification
 
     @Once_Property
     def session (self) :
