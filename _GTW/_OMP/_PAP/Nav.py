@@ -134,7 +134,7 @@ class Admin (object) :
     Person = dict \
         ( ETM       = "GTW.OMP.PAP.Person"
         , Form_args =
-            ( FGD
+            [ FGD
                 ( primary
                 , completer = GTW.Form.MOM.Javascript.Field_Completer
                     ( "last_name", ("last_name", )
@@ -181,7 +181,7 @@ class Admin (object) :
                 , collapsable      = True
                 , popup            = False
                 )
-            )
+            ]
         )
     Phone           = dict \
         ( ETM       = "GTW.OMP.PAP.Phone"

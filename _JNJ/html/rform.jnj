@@ -36,6 +36,7 @@
 ##    16-Jun-2010 (MG) `link_display` changed to make the whole row clickable
 ##    24-Jun-2010 (MG) Button order and text for the popup form are now
 ##                     specified in the template
+##    25-Jul-2010 (MG) Macros for render mode `dl_seq` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -120,9 +121,29 @@
     </div>
 {%- endmacro -%} {#- fi_div_seq -#}
 
+{%- macro fi_dl_seq (fo, fi) -%}
+  <dt>{{ GTW.render_fofi_widget (fi, "label",         fo, fi) }}</dt>
+  <dd>
+    <span class="ui-icon-right-container">
+      {{- GTW.call_macro (fi.widget [GTW.render_mode], fo, fi) }}
+      {{- GTW.render_fofi_widget (fi, "help",          fo, fi) }}
+    </span>
+    {{- GTW.render_fofi_widget (fi, "error",         fo, fi) -}}
+  </dd>
+{%- endmacro -%} {#- fi_dl_seq -#}
+
 {%- macro fi_header (fo, fi) -%}
   <th>&nbsp;</th>
 {%- endmacro -%} {#- fi_header -#}
+
+{%- macro field_help_icon (fo, fi) -%}
+  {%- if fi.description -%}
+    {%- set help = GTW._T (fi.description)|safe %}
+    <span class="Field-Help ui-icon ui-icon-help" title="{{ help }}">
+      {{- help -}}
+    </span>
+  {%- endif -%}
+{%- endmacro -%} {#- field_help_icon -#}
 
 {%- macro fi_th (fo, fi) -%}
   <th>{{ GTW.render_fofi_widget (fi, "label", fo, fi) }}</th>
@@ -143,6 +164,14 @@
     {{ GTW.render_fofi_widget (fi, "field", fo, fi) }}
   {% endfor -%}
 {%- endmacro -%} {#- fg_div_seq -#}
+
+{%- macro fg_dl_seq (fo, fg) -%}
+  <dl>
+  {%- for fi in fo.fields_of_field_group (fg) %}
+    {{ GTW.render_fofi_widget (fi, "field", fo, fi) }}
+  {% endfor -%}
+  </dl>
+{%- endmacro -%} {#- fg_dl_seq -#}
 
 {%- macro fg_table (fo, fg) -%}
   {%- set errors = [] %}

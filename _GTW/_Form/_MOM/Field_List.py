@@ -29,6 +29,7 @@
 #    28-May-2010 (MG) Creation
 #    01-Jun-2010 (MG) Handling of `role_name` added
 #     2-Jun-2010 (CT) `prefixed` added to `Wildcard_Field.__call__`
+#    24-Jul-2010 (MG) `Wildcard_Field.`exclude` added
 #    ««revision-date»»···
 #--
 
@@ -45,8 +46,9 @@ class Wildcard_Field (TFL.Meta.Object) :
     """
 
     def __init__ (self, * kinds , ** kw) :
-        self.kinds  = kinds or ("primary", "user_attr")
-        self.prefix = kw.pop ("prefix", None)
+        self.kinds   = kinds or ("primary", "user_attr")
+        self.prefix  = kw.pop ("prefix", None)
+        self.exclude = kw.pop ("exclude", set ())
         assert not kw, sorted (kw.keys ())
     # end def __init__
 
@@ -56,6 +58,7 @@ class Wildcard_Field (TFL.Meta.Object) :
             ### added after all other fields have been precessed in the first
             ### pass
             return (self, )
+        added_fields.update (self.exclude)
         prefixed = lambda x : x
         if self.prefix :
             et_man   = getattr (et_man, self.prefix).role_type

@@ -48,6 +48,7 @@
 #     5-May-2010 (MG) `render_mode_description` added
 #     6-May-2010 (MG) `table` render mode added
 #    28-May-2010 (MG) `Field_List` factored
+#    25-Jul-2010 (MG) Render mode `dl_seq` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,8 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( div_seq = GTW.Form.Widget_Spec
               ("html/rform.jnj, fg_div_seq")
+        , dl_seq = GTW.Form.Widget_Spec
+              ("html/rform.jnj, fg_dl_seq")
         , table   = GTW.Form.Widget_Spec
               ("html/rform.jnj, fg_table"
               , fg_column = "html/rform.jnj, fg_column"

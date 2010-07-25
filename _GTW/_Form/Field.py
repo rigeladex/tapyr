@@ -34,6 +34,7 @@
 #                     `Media` added
 #     5-May-2010 (MG) `render_mode_description` added
 #     6-May-2010 (MG) `needs_header` added
+#    25-Jul-2010 (MG) Render mode `dl_seq` added
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -51,10 +52,16 @@ class _Field_ (TFL.Meta.Object) :
 
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( div_seq = GTW.Form.Widget_Spec
-            ( error        = "html/form.jnj, field_error"
-            , help         = "html/form.jnj, field_help"
-            , label        = "html/form.jnj, field_label"
+            ( error        = "html/form.jnj,  field_error"
+            , help         = "html/form.jnj,  field_help"
+            , label        = "html/form.jnj,  field_label"
             , field        = "html/rform.jnj, fi_div_seq"
+            )
+        , dl_seq = GTW.Form.Widget_Spec
+            ( error        = "html/form.jnj,  field_error"
+            , help         = "html/rform.jnj, field_help_icon"
+            , label        = "html/form.jnj,  field_label"
+            , field        = "html/rform.jnj, fi_dl_seq"
             )
         , table   = GTW.Form.Widget_Spec
             ( error        = "html/form.jnj, field_error"
