@@ -29,6 +29,9 @@
 #    23-Jun-2010 (CT) Creation
 #    24-Jun-2010 (CT) `pid` related methods added
 #    15-Jul-2010 (MG) `Postgresql.Connection` added and used
+#    29-Jul-2010 (CT) `MySQL.create_database` changed (`encoding`, exception
+#                     handling)
+#    29-Jul-2010 (CT) `IF EXISTS` and `IF NOT EXISTS` added to `MySQL`
 #    ««revision-date»»···
 #--
 
@@ -72,16 +75,22 @@ class MySQL (_NFB_) :
     scheme = "mysql"
 
     @classmethod
-    def create_database (cls, db_url, manager) :
-        engine = manager._create_engine (db_url.scheme_auth)
-        engine.execute ("CREATE DATABASE %s" % (db_url.path, ))
+    def create_database (cls, db_url, manager, encoding = "utf8") :
+        try :
+            engine = manager._create_engine (db_url.scheme_auth)
+            engine.execute \
+                ( "CREATE DATABASE IF NOT EXISTS %s character set %s"
+                % (db_url.path, encoding)
+                )
+        except sqlalchemy.exc.OperationalError :
+            pass
     # end def create_database
 
     @classmethod
     def delete_database (cls, db_url, manager) :
         try :
-            engine  = manager._create_engine (db_url.scheme_auth)
-            engine.execute ("DROP DATABASE %s" % (db_url.path, ))
+            engine = manager._create_engine (db_url.scheme_auth)
+            engine.execute ("DROP DATABASE IF EXISTS %s" % (db_url.path, ))
         except sqlalchemy.exc.OperationalError :
             pass
     # end def delete_database
