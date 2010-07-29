@@ -33,6 +33,7 @@
 #    24-Jun-2010 (CT) `commit`, `reserve`, and `rollback` factored to `dbs`
 #     1-Jul-2010 (MG) `max_pid` and `__iter__` added, `type_name` factored
 #    15-Jul-2010 (MG) `close` added
+#    29-Jul-2010 (CT) `transaction = None` added to `Pid_Manager`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,8 @@ import _MOM._DBW.Pid_Manager
 
 class Pid_Manager (MOM.DBW.Pid_Manager) :
     """SAS specific manager for permanent ids."""
+
+    transaction = None
 
     def __init__ (self, ems, db_url) :
         self.__super.__init__ (ems, db_url)
