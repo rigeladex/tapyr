@@ -118,9 +118,9 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
     ANS                   = GTW
 
     cmd___server__opts = \
-        ( "auto_reload:B=yes=Autoload of werkzeug, only works with no sqlite db"
+        ( "auto_reload:B=yes?Autoload of werkzeug, only works with no sqlite db"
         , "Break:B?Enter debugger before starting tornado/werkzeug"
-        , "-debug:B=yes"
+        , "-debug:B=no"
         , HTTP_Opt (default = "Tornado")
         , TFL.CAO.Opt.Input_Encoding
             ( default     = "iso-8859-15"

@@ -53,6 +53,7 @@
 #    25-Jun-2010 (CT) Support for callable `default`
 #    28-Jun-2010 (CT) `default` changed to a property to delay evaluation of
 #                     the `default` value (which might be a callable)
+#    30-Jul-2010 (CT) `Config` and `_conf_opt` added
 #    ««revision-date»»···
 #--
 
@@ -150,6 +151,7 @@ class _Spec_ (TFL.Meta.Object) :
     auto_split    = None
     choices       = None
     needs_value   = True
+    rank          = 0
 
     prefix        = ""
 
@@ -234,6 +236,11 @@ class _Spec_ (TFL.Meta.Object) :
     def default (self, value) :
         self._set_default (value)
     # end def default
+
+    @property
+    def raw_default (self) :
+        return self.__default
+    # end def raw_default
 
     def _auto_max_number (self, auto_split) :
         return 0 if auto_split else 1
@@ -376,6 +383,7 @@ class Cmd_Choice (TFL.Meta.Object) :
     hide          = False
     max_number    = 1
     needs_value   = False
+    raw_default   = None
 
     def __init__ (self, name, * cmds, ** kw) :
         self.name        = name
@@ -486,7 +494,9 @@ class Help (_Spec_O_) :
         v    = getattr (cao, name, "")
         pyk.fprint \
             ( "%s%s%-*s  : %s = %s <default: %s>"
-            % (head, prefix, max_l, name, ao.__class__.__name__, v, ao.default)
+            % ( head, prefix, max_l, name, ao.__class__.__name__, v
+              , ao.raw_default
+              )
             )
         if ao.description :
             pyk.fprint (head, ao.description, sep = "    ")
@@ -744,6 +754,22 @@ class Abs_Path (Path) :
 
 # end class Abs_Path
 
+class Config (Abs_Path) :
+    """Option specifying a config-file"""
+
+    type_abbr     = "C"
+
+    def cook (self, value, cao = None) :
+        from _TFL.load_config_file import load_config_file
+        path   = self.__super.cook (value, cao)
+        result = {}
+        if path :
+            load_config_file (path, {}, result)
+        return result
+    # end def cook
+
+# end class Config
+
 class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler.
 
@@ -943,9 +969,10 @@ class Cmd (TFL.Meta.Object) :
                         )
     # end def _setup_args
 
-    def _setup_opt  (self, opt, od, al) :
+    def _setup_opt  (self, opt, od, al, index) :
         od [opt.name] = opt
-        opt.kind = "option"
+        opt.kind      = "option"
+        opt.index     = index
         if opt.alias :
             al [opt.alias] = opt.name
     # end def _setup_opt
@@ -954,14 +981,18 @@ class Cmd (TFL.Meta.Object) :
         self._opt_dict  = od = {}
         self._opt_abbr  = oa = {}
         self._opt_alias = al = {}
-        for o in opts :
+        self._opt_conf  = oc = []
+        for i, o in enumerate (opts) :
             if isinstance (o, basestring) :
                 o = Arg.from_string (o.lstrip ("-"))
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
-            self._setup_opt (o, od, al)
+            self._setup_opt (o, od, al, i)
+            if isinstance (o, Opt.Config) :
+                oc.append (o)
+        oc.sort (key = TFL.Getter.rank)
         if not "help" in od :
-            self._setup_opt (Opt.Help (), od, al)
+            self._setup_opt (Opt.Help (), od, al, -1)
         self._setup_opt_abbr (od, oa)
     # end def _setup_opts
 
@@ -1023,6 +1054,7 @@ class CAO (TFL.Meta.Object) :
         self._opt_dict      = dict (cmd._opt_dict)
         self._opt_abbr      = dict (cmd._opt_abbr)
         self._opt_alias     = dict (cmd._opt_alias)
+        self._opt_conf      = list (cmd._opt_conf)
         self._do_keywords   = cmd._do_keywords
         self._put_keywords  = cmd._put_keywords
         self.argv           = []
@@ -1094,6 +1126,19 @@ class CAO (TFL.Meta.Object) :
     # end def _cooked
 
     def _finish_setup (self) :
+        for co in self._opt_conf :
+            ckds = self._cooked (co)
+            for ckd in ckds :
+                for k, v in ckd.iteritems () :
+                    ao = None
+                    if k in self._opt_dict :
+                        ao = self._opt_dict [k]
+                    elif k in self._arg_dict :
+                        ao = self._arg_dict [k]
+                    if ao is not None :
+                        ao.default = v
+                    elif k not in self._key_values :
+                        self._key_values [k] = v
         argv = self.argv
         for spec in self._arg_list :
             ckd = self._cooked (spec)
@@ -1120,6 +1165,7 @@ class CAO (TFL.Meta.Object) :
             self._arg_dict.update  (sc._arg_dict)
             self._opt_dict.update  (sc._opt_dict)
             self._opt_alias.update (sc._opt_alias)
+            self._opt_conf.extend  (sc._opt_conf)
             sc._setup_opt_abbr     (self._opt_dict, self._opt_abbr)
         elif self._do_keywords and kp.match (value) :
             self._set_keys ({kp.name : kp.value})
@@ -1485,33 +1531,33 @@ values passed to it.
     <BLANKLINE>
         -help     : Help = [True] <default: []>
             Display help about command
-        -strict   : Bool = False <default:  [False]>
-        -verbose  : Bool = False <default:  [False]>
+        -strict   : Bool = False <default: False>
+        -verbose  : Bool = False <default: False>
     >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
-        aaa       : Str = None <default: ()>
-        bbb       : Str = None <default: ()>
+        aaa       : Str = None <default: None>
+        bbb       : Str = None <default: None>
     <BLANKLINE>
-        -Z        : Bool = False <default:  [False]>
+        -Z        : Bool = False <default: False>
         -help     : Help = [True] <default: []>
             Display help about command
-        -strict   : Bool = False <default:  [False]>
-        -verbose  : Bool = False <default:  [False]>
-        -y        : Int = None <default: ()>
+        -strict   : Bool = False <default: False>
+        -verbose  : Bool = False <default: False>
+        -y        : Int = None <default: None>
     >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
     <BLANKLINE>
-        ccc       : Int = 3 <default: [3]>
-        ddd       : Str_AS = D <default: ['D']>
+        ccc       : Int = 3 <default: 3>
+        ddd       : Str_AS = D <default: D>
     <BLANKLINE>
         argv      : [3, 'D']
     <BLANKLINE>
         -help     : Help = [True] <default: []>
             Display help about command
-        -strict   : Bool = False <default:  [False]>
-        -struct   : Bool = False <default:  [False]>
-        -verbose  : Bool = False <default:  [False]>
+        -strict   : Bool = False <default: False>
+        -struct   : Bool = False <default: False>
+        -verbose  : Bool = False <default: False>
     >>> _ = coc (["-help=cmds"])
     Sub commands of Comp
         one :

@@ -553,17 +553,17 @@ These can be used like this:
     >>> cmd = TFL.CAO.Cmd (name = "Test", args = (TFL.CAO.Arg.EUC (name = "amount"), ), opts = (TFL.CAO.Opt.EUC_Source (), TFL.CAO.Opt.EUC_Target ()))
     >>> cao = cmd (["-help=args"])
     Arguments of Test
-        amount            : EUC = None <default: ()>
+        amount            : EUC = None <default: None>
     <BLANKLINE>
     >>> cao = cmd (["-help=args", "100"])
     Arguments of Test
-        amount            : EUC = 100.00 EUR <default: ()>
+        amount            : EUC = 100.00 EUR <default: None>
     <BLANKLINE>
         argv              : [Euro ("100.00")]
     <BLANKLINE>
     >>> cao = cmd (["-help=args", "-source=ATS", "100.00"])
     Arguments of Test
-        amount            : EUC = 7.27 EUR <default: ()>
+        amount            : EUC = 7.27 EUR <default: None>
     <BLANKLINE>
         argv              : [EU_Currency ("7.26728341679")]
     <BLANKLINE>
