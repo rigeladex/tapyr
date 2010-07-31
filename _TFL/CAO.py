@@ -54,6 +54,8 @@
 #    28-Jun-2010 (CT) `default` changed to a property to delay evaluation of
 #                     the `default` value (which might be a callable)
 #    30-Jul-2010 (CT) `Config` and `_conf_opt` added
+#    31-Jul-2010 (CT) `Bundle` added,
+#                     Support for sub-commands added to `CAO._finish_setup`
 #    ««revision-date»»···
 #--
 
@@ -295,6 +297,11 @@ class _Spec_O_ (_Spec_) :
     prefix        = "-"
 
 # end class _Spec_O_
+
+class _Config_ (_Spec_O_) :
+    """Base class for config options"""
+
+# end class _Config_
 
 class _Encoding_ (_Spec_O_) :
     """Base class for encoding option types"""
@@ -754,7 +761,12 @@ class Abs_Path (Path) :
 
 # end class Abs_Path
 
-class Config (Abs_Path) :
+class Bundle (_Config_, Key) :
+    """Option specifying a selection of predefined configurations"""
+
+# end class Bundle
+
+class Config (_Config_, Abs_Path) :
     """Option specifying a config-file"""
 
     type_abbr     = "C"
@@ -988,7 +1000,7 @@ class Cmd (TFL.Meta.Object) :
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
             self._setup_opt (o, od, al, i)
-            if isinstance (o, Opt.Config) :
+            if isinstance (o, _Config_) :
                 oc.append (o)
         oc.sort (key = TFL.Getter.rank)
         if not "help" in od :
@@ -1126,17 +1138,20 @@ class CAO (TFL.Meta.Object) :
     # end def _cooked
 
     def _finish_setup (self) :
+        sc = self._cmd._sub_cmd_choice
         for co in self._opt_conf :
             ckds = self._cooked (co)
             for ckd in ckds :
+                if sc and sc.name in ckd :
+                    self._set_arg (sc, ckd.pop (sc.name))
                 for k, v in ckd.iteritems () :
                     ao = None
                     if k in self._opt_dict :
                         ao = self._opt_dict [k]
+                        ao.default = v
                     elif k in self._arg_dict :
                         ao = self._arg_dict [k]
-                    if ao is not None :
-                        ao.default = v
+                        ao.default = (v, )
                     elif k not in self._key_values :
                         self._key_values [k] = v
         argv = self.argv
@@ -1596,6 +1611,48 @@ values passed to it.
     Traceback (most recent call last):
       ...
     Err: Command/argument/option error: Maximum number of arguments is 3, got 4
+
+    >>> c1b = dict (sub = "one", Z = True, aaa = "foo")
+    >>> c2b = dict (sub = "two", struct = False, ccc = 42)
+    >>> bundle = Opt.Bundle (dict (c1b = c1b, c2b = c2b), name = "bundle")
+    >>> cocb = Cmd (show,
+    ...     name = "Comp", args = (Arg.Cmd_Choice ("sub", c1, c2), ),
+    ...     opts = ("verbose:B", "strict:B", bundle))
+    >>> cocb ([])
+    Comp
+        Options    : ['b', 'bu', 'bun', 'bund', 'bundl', 'bundle', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['sub']
+        -bundle    : None
+        -help      : []
+        -strict    : False
+        -verbose   : False
+        sub        : None
+        argv       : []
+    >>> cocb (["-bundle=c1b"])
+    Comp one
+        Options    : ['Z', 'b', 'bu', 'bun', 'bund', 'bundl', 'bundle', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : True
+        -bundle    : {'Z': True, 'aaa': 'foo'}
+        -help      : []
+        -strict    : False
+        -verbose   : False
+        -y         : None
+        aaa        : foo
+        bbb        : None
+        argv       : ['foo']
+    >>> cocb (["-bundle=c2b"])
+    Comp two
+        Options    : ['b', 'bu', 'bun', 'bund', 'bundl', 'bundle', 'h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['ccc', 'ddd']
+        -bundle    : {'struct': False, 'ccc': 42}
+        -help      : []
+        -strict    : False
+        -struct    : False
+        -verbose   : False
+        ccc        : 42
+        ddd        : D
+        argv       : [42, 'D']
 
 """
 
