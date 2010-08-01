@@ -56,6 +56,10 @@
 #    30-Jul-2010 (CT) `Config` and `_conf_opt` added
 #    31-Jul-2010 (CT) `Bundle` added,
 #                     Support for sub-commands added to `CAO._finish_setup`
+#     1-Aug-2010 (CT) `_Spec_.cooked_default` factored and used in `CAO._cooked`
+#     1-Aug-2010 (CT) `Cmd_Choice.__getattr__` added
+#     1-Aug-2010 (CT) `Config.cook` changed to pass `context` with `C =
+#                     cao._cmd` to `load_config_file`
 #    ««revision-date»»···
 #--
 
@@ -153,7 +157,6 @@ class _Spec_ (TFL.Meta.Object) :
     auto_split    = None
     choices       = None
     needs_value   = True
-    rank          = 0
 
     prefix        = ""
 
@@ -180,6 +183,7 @@ class _Spec_ (TFL.Meta.Object) :
             , hide          = False
             , range_delta   = 1
             , cook          = None
+            , rank          = 0
             ) :
         self.name           = name
         self.default        = default
@@ -193,6 +197,7 @@ class _Spec_ (TFL.Meta.Object) :
         self.max_number     = max_number
         self.hide           = hide or name [:2] == "__"
         self.range_delta    = range_delta
+        self.rank           = rank
         if cook is not None :
             self.cook       = cook
     # end def __init__
@@ -217,20 +222,24 @@ class _Spec_ (TFL.Meta.Object) :
         return [cook (v, cao) for v in values]
     # end def cooked
 
+    def cooked_default (self, cao = None) :
+        result = self.__default
+        if TFL.callable (result) :
+            result = result ()
+        if isinstance (result, basestring) :
+            result = self.cooked (result, cao)
+        elif result is None :
+            result = ()
+        elif not isinstance (result, (list, tuple)) :
+            result = [result]
+        return result
+    # end def cooked_default
+
     @property
     def default (self) :
         result = self.__cooked_default
         if result is None :
-            result = self.__default
-            if TFL.callable (result) :
-                result = result ()
-            if isinstance (result, basestring) :
-                result = self.cooked (result)
-            elif result is None :
-                result = ()
-            elif not isinstance (result, (list, tuple)) :
-                result = [result]
-            self.__cooked_default = result
+            self.__cooked_default = result = self.cooked_default ()
         return result
     # end def default
 
@@ -403,6 +412,14 @@ class Cmd_Choice (TFL.Meta.Object) :
     def choices (self) :
         return self.sub_cmds
     # end def choices
+
+    def cooked_default (self, cao = None) :
+        return self.default
+    # end def cooked_default
+
+    def __getattr__ (self, name) :
+        return self.sub_cmds [name]
+    # end def __getattr__
 
     def __getitem__ (self, key) :
         return self.sub_cmds [key]
@@ -776,7 +793,8 @@ class Config (_Config_, Abs_Path) :
         path   = self.__super.cook (value, cao)
         result = {}
         if path :
-            load_config_file (path, {}, result)
+            context = dict (C = cao._cmd if cao else None)
+            load_config_file (path, context, result)
         return result
     # end def cook
 
@@ -1128,7 +1146,7 @@ class CAO (TFL.Meta.Object) :
     def _cooked (self, spec) :
         raw = self._raw.get (spec.name, None)
         if raw is None :
-            default = spec.default
+            default = spec.cooked_default (self)
             result  = default if (default is not None) else []
         else :
             result  = list \
