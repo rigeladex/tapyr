@@ -65,6 +65,7 @@
 #                     * `CAO._parse_args` and `._use_args` factored from
 #                       `Cmd.parse` and `.use`
 #                     * `Cmd._handle_arg` and `._handle_opt` moved to `CAO`
+#     2-Aug-2010 (CT) `Help` for `Bundle` added
 #    ««revision-date»»···
 #--
 
@@ -513,8 +514,8 @@ class Help (_Spec_O_) :
         if cmd._helper :
             cmd._helper (cao)
         else :
-            nl    = self._nl_gen ()
-            keys  = set (["args", "cmds", "opts", "summary"])
+            nl    = self.nl = self._nl_gen ()
+            keys  = set (["args", "buns", "cmds", "opts", "summary"])
             vals  = set (v for v in getattr (cao, self.name) if v)
             all_p = (not vals.intersection (keys)) or vals == set ([True])
             if (all_p or "summary" in vals) :
@@ -534,13 +535,19 @@ class Help (_Spec_O_) :
             if (all_p or "opts" in vals) and opt_p :
                 nl.next ()
                 self._help_opts (cao, indent, heading = not all_p)
+            if (all_p or "buns" in vals) and cao._bun_dict :
+                nl.next ()
+                self._help_buns (cao, indent + (4 * all_p))
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
         if ao.hide :
             return
         name = ao.name
-        v    = getattr (cao, name, "")
+        try :
+            v = cao ["%s:raw" % name]
+        except KeyError :
+            v = ""
         pyk.fprint \
             ( "%s%s%-*s  : %s = %s <default: %s>"
             % ( head, prefix, max_l, name, ao.__class__.__name__, v
@@ -567,6 +574,28 @@ class Help (_Spec_O_) :
             pyk.fprint ()
             pyk.fprint ("%s%-*s  : %s" % (head, max_l, "argv", cao.argv))
     # end def _help_args
+
+    def _help_bun (self, bun, cao, head, indent) :
+        pyk.fprint ("%s@%s" % (head, bun._name))
+        desc    = bun._description
+        if desc :
+            pyk.fprint (head, desc, sep = "    ")
+        indent += 4
+        head    = " " * indent
+        max_l   = max (len (k) for k in bun._kw)
+        for k, v in sorted (bun._kw.iteritems ()) :
+            pyk.fprint ("%s%-*s : %s" % (head, max_l, k, v))
+    # end def _help_bun
+
+    def _help_buns (self, cao, indent = 0) :
+        if cao._bun_dict :
+            pyk.fprint \
+                ("%sArgument/option bundles of %s" % (" " * indent, cao._name))
+            indent += 4
+            head    = " " * indent
+            for k, b in sorted (cao._bun_dict.iteritems ()) :
+                self._help_bun (b, cao, head, indent)
+    # end def _help_buns
 
     def _help_cmds (self, cao, indent = 0) :
         cmd = cao._cmd
@@ -607,12 +636,22 @@ class Help (_Spec_O_) :
             )
         if desc :
             pyk.fprint (head, desc, sep = "    ")
+        if cao._bun_dict :
+            self.nl.next ()
+            pyk.fprint \
+                ( "%sPossible bundles: %s"
+                % ( " " * (indent + 4)
+                  , ", ".join ("@%s" % b for b in sorted (cao._bun_dict))
+                  )
+                )
     # end def _help_summary
 
     def _help_summary_args (self, cao) :
         cmd      = cao._cmd
         min_args = cmd._min_args
         max_args = cmd._max_args
+        if cmd._bun_dict :
+            yield "[@bundle]"
         if cmd._arg_list :
             for i, arg in enumerate (cmd._arg_list) :
                 if not arg.hide :
@@ -1292,7 +1331,10 @@ class CAO (TFL.Meta.Object) :
             elif k == "__kw__" :
                 self._set_keys  (v)
             else :
-                raise Err ("Unknown option `%s` [%s]" % (k, v))
+                raise Err \
+                    ( "Unknown argument or option `%s` [%s] for command %s"
+                    % (k, v, self._name)
+                    )
         argv_it = iter (rest)
         for arg in argv_it :
             self._handle_arg (arg, argv_it)
@@ -1637,35 +1679,35 @@ values passed to it.
         sub       : Cmd_Choice = None <default: None>
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = [True] <default: []>
+        -help     : Help = [] <default: []>
             Display help about command
-        -strict   : Bool = False <default: False>
-        -verbose  : Bool = False <default: False>
+        -strict   : Bool = None <default: False>
+        -verbose  : Bool = None <default: False>
     >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
         aaa       : Str = None <default: None>
         bbb       : Str = None <default: None>
     <BLANKLINE>
-        -Z        : Bool = False <default: False>
-        -help     : Help = [True] <default: []>
+        -Z        : Bool = None <default: False>
+        -help     : Help = [] <default: []>
             Display help about command
-        -strict   : Bool = False <default: False>
-        -verbose  : Bool = False <default: False>
+        -strict   : Bool = None <default: False>
+        -verbose  : Bool = None <default: False>
         -y        : Int = None <default: None>
     >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
     <BLANKLINE>
-        ccc       : Int = 3 <default: 3>
-        ddd       : Str_AS = D <default: D>
+        ccc       : Int = None <default: 3>
+        ddd       : Str_AS = None <default: D>
     <BLANKLINE>
         argv      : [3, 'D']
     <BLANKLINE>
-        -help     : Help = [True] <default: []>
+        -help     : Help = [] <default: []>
             Display help about command
-        -strict   : Bool = False <default: False>
-        -struct   : Bool = False <default: False>
-        -verbose  : Bool = False <default: False>
+        -strict   : Bool = None <default: False>
+        -struct   : Bool = None <default: False>
+        -verbose  : Bool = None <default: False>
     >>> _ = coc (["-help=cmds"])
     Sub commands of Comp
         one :
@@ -1751,6 +1793,26 @@ values passed to it.
       ...
     Err: Command/argument/option error: Unknown bundle `@c3b`, specify one of (@c1b, @c2b)
 
+    >>> _ = cocb (["-help"])
+    Comp [@bundle] [sub] ...
+    <BLANKLINE>
+        Possible bundles: @c1b, @c2b
+    <BLANKLINE>
+        sub       : Cmd_Choice = None <default: None>
+            Possible values: one, two
+    <BLANKLINE>
+        -help     : Help = [] <default: []>
+            Display help about command
+        -strict   : Bool = None <default: False>
+        -verbose  : Bool = None <default: False>
+    <BLANKLINE>
+        Argument/option bundles of Comp
+            @c1b
+                Z   : True
+                aaa : foo
+            @c2b
+                ccc    : 42
+                struct : False
 """
 
 if __name__ != "__main__" :
