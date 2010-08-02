@@ -58,8 +58,13 @@
 #                     Support for sub-commands added to `CAO._finish_setup`
 #     1-Aug-2010 (CT) `_Spec_.cooked_default` factored and used in `CAO._cooked`
 #     1-Aug-2010 (CT) `Cmd_Choice.__getattr__` added
-#     1-Aug-2010 (CT) `Config.cook` changed to pass `context` with `C =
-#                     cao._cmd` to `load_config_file`
+#     1-Aug-2010 (CT) `Config.cook` changed to pass `context` with
+#                     `C = cao._cmd` to `load_config_file`
+#     2-Aug-2010 (CT) `Bundle` handling changed (major surgery)
+#                     * `Cmd_Choice.__call__` factored from `CAO._set_arg`
+#                     * `CAO._parse_args` and `._use_args` factored from
+#                       `Cmd.parse` and `.use`
+#                     * `Cmd._handle_arg` and `._handle_opt` moved to `CAO`
 #    ««revision-date»»···
 #--
 
@@ -397,6 +402,7 @@ class Cmd_Choice (TFL.Meta.Object) :
     auto_split    = None
     default       = None
     hide          = False
+    kind          = "sub-command"
     max_number    = 1
     needs_value   = False
     raw_default   = None
@@ -416,6 +422,25 @@ class Cmd_Choice (TFL.Meta.Object) :
     def cooked_default (self, cao = None) :
         return self.default
     # end def cooked_default
+
+    def __call__ (self, value, cao) :
+        try :
+            cao._cmd = sc = self.sub_cmds [value]
+        except KeyError :
+            raise Err \
+                ( "Unkown sub-command `%s`, specify one of: (%s)"
+                % (value, ", ".join (sorted (self.sub_cmds)))
+                )
+        cao._name         = " ".join ([cao._name, sc._name])
+        cao._arg_list [:] = sc._arg_list
+        cao._arg_dict.clear   ()
+        cao._arg_dict.update  (sc._arg_dict)
+        cao._bun_dict.update  (sc._bun_dict)
+        cao._opt_dict.update  (sc._opt_dict)
+        cao._opt_alias.update (sc._opt_alias)
+        cao._opt_conf.extend  (sc._opt_conf)
+        sc._setup_opt_abbr    (cao._opt_dict, cao._opt_abbr)
+    # end def __call__
 
     def __getattr__ (self, name) :
         return self.sub_cmds [name]
@@ -778,11 +803,6 @@ class Abs_Path (Path) :
 
 # end class Abs_Path
 
-class Bundle (_Config_, Key) :
-    """Option specifying a selection of predefined configurations"""
-
-# end class Bundle
-
 class Config (_Config_, Abs_Path) :
     """Option specifying a config-file"""
 
@@ -800,6 +820,39 @@ class Config (_Config_, Abs_Path) :
 
 # end class Config
 
+class Bundle (TFL.Meta.Object) :
+    """Model a bundle of values for arguments and options."""
+
+    kind          = "bundle"
+
+    def __init__ (self, _name, _description = "", ** _kw) :
+        self._name          = _name
+        self._description   = _description
+        self._kw            = _kw
+    # end def __init__
+
+    def __call__ (self, value, cao) :
+        assert value == self._name
+        cao._use_args (self._kw)
+    # end def __call__
+
+    def __contains__ (self, item) :
+        return item in self._kw
+    # end def __contains__
+
+    def __getattr__ (self, name) :
+        return self._kw [name]
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        try :
+            return self._kw [key]
+        except AttributeError :
+            raise KeyError (key)
+    # end def __getitem__
+
+# end class Bundle
+
 class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler.
 
@@ -813,22 +866,17 @@ class Cmd (TFL.Meta.Object) :
 
     _handler      = None
     _helper       = None
-    _opt_pat      = Regexp \
-        ( """ -{1,2} (?P<name> [^:= ]+) """
-          """ (?: = (?P<quote> [\"\']?) (?P<value> .*) (?P=quote)? )? """
-          """ $ """
-        , re.VERBOSE
-        )
 
     def __init__ \
             ( self
             , handler       = None
             , args          = ()
-            , min_args      = 0
-            , max_args      = -1
             , opts          = ()
+            , buns          = ()
             , description   = ""
             , name          = ""
+            , min_args      = 0
+            , max_args      = -1
             , do_keywords   = False
             , put_keywords  = False
             , helper        = None
@@ -838,8 +886,9 @@ class Cmd (TFL.Meta.Object) :
         if handler is not None :
             assert TFL.callable (handler)
             self._handler   = handler
-        self._opt_spec      = opts
         self._arg_spec      = args
+        self._opt_spec      = opts
+        self._bun_spec      = buns
         self._min_args      = min_args
         self._max_args      = max_args
         self._description   = description
@@ -850,6 +899,7 @@ class Cmd (TFL.Meta.Object) :
             self._helper    = helper
         self._setup_opts (opts)
         self._setup_args (args)
+        self._setup_buns (buns)
     # end def __init__
 
     def __call__ (self, _argv = None, ** _kw) :
@@ -882,17 +932,9 @@ class Cmd (TFL.Meta.Object) :
            (which must not contain the command name, like `sys.argv` would)
            and return an instance of :class:`CAO`.
         """
-        result  = CAO  (self)
-        argv_it = iter (argv)
-        for arg in argv_it :
-            if arg == "--" :
-                for arg in argv_it :
-                    self._handle_arg (arg, argv_it, result)
-            elif arg.startswith ("-") :
-                self._handle_opt (arg, argv_it, result)
-            else :
-                self._handle_arg (arg, argv_it, result)
-        result._check ()
+        result = CAO       (self)
+        result._parse_args (argv)
+        result._check      ()
         return result
     # end def parse
 
@@ -901,28 +943,9 @@ class Cmd (TFL.Meta.Object) :
            options, and sub-commands specified by the keyword arguments in
            `_kw`.
         """
-        result = CAO (self)
-        ad     = result._arg_dict
-        oa     = result._opt_abbr
-        rest   = []
-        sc     = self._sub_cmd_choice
-        if sc and sc.name in _kw :
-            result._set_arg (sc, _kw.pop (sc.name))
-        for k, v in _kw.iteritems () :
-            if k in oa :
-                result._set_opt   (oa [k], v)
-            elif k in ad :
-                result._set_arg   (ad [k], v)
-            elif k == "__rest__" :
-                rest = v
-            elif k == "__kw__" :
-                result._set_keys  (v)
-            else :
-                raise Err ("Unknown option `%s` [%s]" % (k, v))
-        argv_it = iter (rest)
-        for arg in argv_it :
-            self._handle_arg (arg, argv_it, result)
-        result._check ()
+        result = CAO     (self)
+        result._use_args (_kw)
+        result._check    ()
         return result
     # end def use
 
@@ -933,40 +956,6 @@ class Cmd (TFL.Meta.Object) :
             return self._arg_dict [name]
         raise AttributeError (name)
     # end def _attribute_spec
-
-    def _handle_arg (self, arg, argv_it, result) :
-        al   = result._arg_list
-        spec = al [min (len (result.argv_raw), len (al) - 1)]
-        result._set_arg (spec, arg)
-    # end def _handle_arg
-
-    def _handle_opt (self, arg, argv_it, result) :
-        oa  = result._opt_abbr
-        al  = result._opt_alias
-        pat = self._opt_pat
-        if pat.match (arg) :
-            k = pat.group ("name")
-            v = pat.group ("value")
-            k = al.get    (k, k)
-            if k in oa :
-                spec = oa [k]
-                if spec.needs_value and v is None :
-                    try :
-                        v = argv_it.next ()
-                    except StopIteration :
-                        raise Err ("Option `%s` needs a value" % k)
-                result._set_opt  (spec, v)
-            else :
-                matches = \
-                    [o for o in sorted (result._opt_dict) if o.startswith (k)]
-                if matches :
-                    raise Err \
-                        ( "Ambiguous option `%s`, matches any of %s"
-                        % (arg, matches)
-                        )
-                else :
-                    raise Err ("Unknown option `%s`" % (arg, ))
-    # end def _handle_opt
 
     def _setup_args (self, args) :
         self._arg_list = al  = []
@@ -985,7 +974,6 @@ class Cmd (TFL.Meta.Object) :
                     ("Option type `%s` cannot be used for argument" % a)
             assert a.name not in od
             a.index = i
-            a.kind  = "argument"
             al.append (a)
             ad [a.name] = a
             if isinstance (a, Cmd_Choice) :
@@ -997,7 +985,13 @@ class Cmd (TFL.Meta.Object) :
                           "two are specified: `%s`, `%s`"
                         % (self._sub_cmd_choice.name, a.name)
                         )
+            else :
+                a.kind  = "argument"
     # end def _setup_args
+
+    def _setup_buns (self, buns) :
+        self._bun_dict = dict ((b._name, b) for b in buns)
+    # end def _setup_buns
 
     def _setup_opt  (self, opt, od, al, index) :
         od [opt.name] = opt
@@ -1066,11 +1060,21 @@ class CAO (TFL.Meta.Object) :
        :class:`Cmd` instance, passing `self` to the `handler`.
     """
 
+    _bun_pat = Regexp \
+        ( """@(?P<name> [a-zA-Z0-9_]+)$"""
+        , re.VERBOSE
+        )
     _key_pat = Regexp \
         ( """\s*"""
           """(?P<name> [^= ]+)"""
           """\s* [=] \s* """
           """(?P<value> .*)"""
+        , re.VERBOSE
+        )
+    _opt_pat = Regexp \
+        ( """ -{1,2} (?P<name> [^:= ]+) """
+          """ (?: = (?P<quote> [\"\']?) (?P<value> .*) (?P=quote)? )? """
+          """ $ """
         , re.VERBOSE
         )
 
@@ -1081,6 +1085,7 @@ class CAO (TFL.Meta.Object) :
         self._name          = cmd._name
         self._arg_dict      = dict (cmd._arg_dict)
         self._arg_list      = list (cmd._arg_list)
+        self._bun_dict      = dict (cmd._bun_dict)
         self._opt_dict      = dict (cmd._opt_dict)
         self._opt_abbr      = dict (cmd._opt_abbr)
         self._opt_alias     = dict (cmd._opt_alias)
@@ -1155,6 +1160,53 @@ class CAO (TFL.Meta.Object) :
         return result
     # end def _cooked
 
+    def _handle_arg (self, arg, argv_it) :
+        bd  = self._bun_dict
+        pat = self._bun_pat
+        if pat.match (arg) :
+            name = pat.name
+            if name in bd :
+                spec = bd [name]
+                arg  = name
+            else :
+                raise Err \
+                    ( "Unknown bundle `%s`, specify one of (%s)"
+                    % (arg, ", ".join ("@%s" % b for b in sorted (bd)))
+                    )
+        else :
+            al   = self._arg_list
+            spec = al [min (len (self.argv_raw), len (al) - 1)]
+        self._set_arg (spec, arg)
+    # end def _handle_arg
+
+    def _handle_opt (self, arg, argv_it) :
+        oa  = self._opt_abbr
+        al  = self._opt_alias
+        pat = self._opt_pat
+        if pat.match (arg) :
+            k = pat.name
+            v = pat.value
+            k = al.get (k, k)
+            if k in oa :
+                spec = oa [k]
+                if spec.needs_value and v is None :
+                    try :
+                        v = argv_it.next ()
+                    except StopIteration :
+                        raise Err ("Option `%s` needs a value" % k)
+                self._set_opt  (spec, v)
+            else :
+                matches = \
+                    [o for o in sorted (self._opt_dict) if o.startswith (k)]
+                if matches :
+                    raise Err \
+                        ( "Ambiguous option `%s`, matches any of %s"
+                        % (arg, matches)
+                        )
+                else :
+                    raise Err ("Unknown option `%s`" % (arg, ))
+    # end def _handle_opt
+
     def _finish_setup (self) :
         sc = self._cmd._sub_cmd_choice
         for co in self._opt_conf :
@@ -1179,27 +1231,27 @@ class CAO (TFL.Meta.Object) :
                 argv.extend (ckd)
     # end def _finish_setup
 
+    def _parse_args (self, argv) :
+        argv_it = iter (argv)
+        for arg in argv_it :
+            if arg == "--" :
+                for arg in argv_it :
+                    self._handle_arg (arg, argv_it)
+            elif arg.startswith ("-") :
+                self._handle_opt (arg, argv_it)
+            else :
+                self._handle_arg (arg, argv_it)
+    # end def _parse_args
+
     def _set_arg (self, spec, value) :
         kp = self._key_pat
-        if isinstance (spec, Cmd_Choice) :
+        if isinstance (spec, (Bundle, Cmd_Choice)) :
             if self.argv_raw :
                 raise Err \
-                    ("Sub-command `%s` needs to be first argument" % value)
-            try :
-                self._cmd = sc = spec [value]
-            except KeyError :
-                raise Err \
-                    ( "Unkown sub-command `%s`, specify one of: (%s)"
-                    % (value, ", ".join (sorted (spec.sub_cmds)))
+                    ( "%s `%s` needs to be first argument"
+                    % (spec.kind.capitalize (), value)
                     )
-            self._name = " ".join ([self._name, sc._name])
-            self._arg_list [:] = sc._arg_list
-            self._arg_dict.clear   ()
-            self._arg_dict.update  (sc._arg_dict)
-            self._opt_dict.update  (sc._opt_dict)
-            self._opt_alias.update (sc._opt_alias)
-            self._opt_conf.extend  (sc._opt_conf)
-            sc._setup_opt_abbr     (self._opt_dict, self._opt_abbr)
+            spec (value, self)
         elif self._do_keywords and kp.match (value) :
             self._set_keys ({kp.name : kp.value})
         else :
@@ -1222,6 +1274,29 @@ class CAO (TFL.Meta.Object) :
         else :
             self._map [spec.name] = spec.cooked (value, self)
     # end def _set_opt
+
+    def _use_args (self, _kw) :
+        ad     = self._arg_dict
+        oa     = self._opt_abbr
+        rest   = []
+        sc     = self._cmd._sub_cmd_choice
+        if sc and sc.name in _kw :
+            self._set_arg (sc, _kw.pop (sc.name))
+        for k, v in _kw.iteritems () :
+            if k in oa :
+                self._set_opt   (oa [k], v)
+            elif k in ad :
+                self._set_arg   (ad [k], v)
+            elif k == "__rest__" :
+                rest = v
+            elif k == "__kw__" :
+                self._set_keys  (v)
+            else :
+                raise Err ("Unknown option `%s` [%s]" % (k, v))
+        argv_it = iter (rest)
+        for arg in argv_it :
+            self._handle_arg (arg, argv_it)
+    # end def _use_args
 
     def __getattr__ (self, name) :
         try :
@@ -1630,28 +1705,25 @@ values passed to it.
       ...
     Err: Command/argument/option error: Maximum number of arguments is 3, got 4
 
-    >>> c1b = dict (sub = "one", Z = True, aaa = "foo")
-    >>> c2b = dict (sub = "two", struct = False, ccc = 42)
-    >>> bundle = Opt.Bundle (dict (c1b = c1b, c2b = c2b), name = "bundle")
+    >>> c1b = Bundle ("c1b", sub = "one", Z = True, aaa = "foo")
+    >>> c2b = Bundle ("c2b", sub = "two", struct = False, ccc = 42)
     >>> cocb = Cmd (show,
     ...     name = "Comp", args = (Arg.Cmd_Choice ("sub", c1, c2), ),
-    ...     opts = ("verbose:B", "strict:B", bundle))
+    ...     opts = ("verbose:B", "strict:B"), buns = (c1b, c2b))
     >>> cocb ([])
     Comp
-        Options    : ['b', 'bu', 'bun', 'bund', 'bundl', 'bundle', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['sub']
-        -bundle    : None
         -help      : []
         -strict    : False
         -verbose   : False
         sub        : None
         argv       : []
-    >>> cocb (["-bundle=c1b"])
+    >>> cocb (["@c1b"])
     Comp one
-        Options    : ['Z', 'b', 'bu', 'bun', 'bund', 'bundl', 'bundle', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : True
-        -bundle    : {'Z': True, 'aaa': 'foo'}
         -help      : []
         -strict    : False
         -verbose   : False
@@ -1659,11 +1731,10 @@ values passed to it.
         aaa        : foo
         bbb        : None
         argv       : ['foo']
-    >>> cocb (["-bundle=c2b"])
+    >>> cocb (["@c2b"])
     Comp two
-        Options    : ['b', 'bu', 'bun', 'bund', 'bundl', 'bundle', 'h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Options    : ['h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['ccc', 'ddd']
-        -bundle    : {'struct': False, 'ccc': 42}
         -help      : []
         -strict    : False
         -struct    : False
@@ -1671,6 +1742,14 @@ values passed to it.
         ccc        : 42
         ddd        : D
         argv       : [42, 'D']
+    >>> cocb (["c2b"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Unkown sub-command `c2b`, specify one of: (one, two)
+    >>> cocb (["@c3b"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Unknown bundle `@c3b`, specify one of (@c1b, @c2b)
 
 """
 

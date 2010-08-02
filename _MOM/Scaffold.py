@@ -35,6 +35,7 @@
 #    29-Jun-2010 (CT) `-copyright_start` added
 #     1-Jul-2010 (CT) `-overwrite` added to `cmd__migrate__opts`
 #    12-Jul-2010 (CT) `do_migrate` changed to use `DB_Man`
+#     2-Aug-2010 (CT) `cmd__buns` added
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,7 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
                 ,
                 )
             , opts        = cls.cmd__base__opts
+            , buns        = cls.cmd__buns
             )
     # end def cmd
 
@@ -172,6 +174,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     __metaclass__         = _M_Scaffold_
     _lists_to_combine     = \
         ( "cmd__base__opts_x"
+        , "cmd__buns"
         , "cmd__create__opts"
         , "cmd__load__opts"
         , "cmd__migrate__opts"
@@ -196,12 +199,28 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def cmd__default_db_name
 
     cmd__base__opts_x     = ()
+    cmd__buns             = \
+        ( TFL.CAO.Bundle
+            ( "mig1"
+            , "Migrate from `db_url` to `target_db_url`"
+            , command       = "migrate"
+            , target_db_url = "hps:///migration"
+            )
+        , TFL.CAO.Bundle
+            ( "mig2"
+            , "Migrate from `target_db_url` to `db_url`"
+            , command       = "migrate"
+            , db_url        = "hps:///migration"
+            )
+        ### Application needs to define `db_url = target_db_url = XXX` for
+        ### the bundles `mig1` and `mig2` to work conventiently
+        )
     cmd__create__opts     = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
         ( "chunk_size:I=10000?Number of entities in one chunk"
         , "overwrite:B?Overwrite `target_db_url` if necessary"
-        , "target_db_url:S=hps:///migration?Database url for target database"
+        , "target_db_url:S?Database url for target database"
         )
     cmd__sub_commands     = ("cmd__create", "cmd__load", "cmd__migrate")
 
