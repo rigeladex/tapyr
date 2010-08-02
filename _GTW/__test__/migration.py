@@ -30,6 +30,8 @@
 #     1-Jul-2010 (CT) `race_results` as example of composite-collection added
 #    13-Jul-2010 (CT) Changed to use `DB_Man` for migration
 #                     (instead of `Scope.copy`)
+#     2-Aug-2010 (MG) `Account_Anonymous` added to test an border case for
+#                     the migration
 #    ««revision-date»»···
 #--
 
@@ -52,8 +54,11 @@ _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> apt_s, url_s = scope.app_type, scope.db_url
-    >>> PAP = scope.PAP
-    >>> SRM = scope.SRM
+    >>> PAP  = scope.PAP
+    >>> SRM  = scope.SRM
+    >>> Auth = scope.Auth
+
+    >>> a = Auth.Account_Anonymous ("anonymous")
 
     >>> x = SRM.Boat_Class ("29er",              max_crew = 2)
     >>> x = SRM.Boat_Class ("420er",             max_crew = 2)
@@ -102,11 +107,11 @@ _test_code = r"""
 
     >>> scope.commit ()
     >>> scope.MOM.Id_Entity.count_transitive
-    33
+    34
     >>> int (scope.query_changes ().count ())
-    34
+    35
     >>> int (scope.ems.max_cid)
-    34
+    35
 
     >>> bc.set (loa = 2.43)
     1
@@ -117,11 +122,11 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.count_transitive
-    33
+    34
     >>> int (scope.query_changes ().count ())
-    37
+    38
     >>> int (scope.ems.max_cid)
-    37
+    38
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -147,11 +152,11 @@ _test_code = r"""
     Loading scope MOMT__...
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_s, scope_t))
-    (33, 33)
+    (34, 34)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_s, scope_t))
     True
     >>> int (scope_t.ems.max_cid)
-    37
+    38
     >>> len (scope_t.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -173,11 +178,11 @@ _test_code = r"""
     Loading scope MOMT__...
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_t, scope_u))
-    (33, 33)
+    (34, 34)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_t, scope_u))
     True
     >>> int (scope_u.ems.max_cid)
-    37
+    38
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
 
