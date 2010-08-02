@@ -278,6 +278,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         if cmd.overwrite :
             apt_t.delete_database (url_t)
         db_man_t = cls.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
+        db_man_s.destroy ()
         db_man_t.destroy ()
     # end def do_migrate
 
