@@ -66,6 +66,7 @@
 #                     version hash added
 #    15-Jul-2010 (MG) `_Session_.close`: close the PID-manager as well to
 #                     make sure all connections are closed
+#     2-Aug-2010 (MG) `_pickle_cargo_for_table` fixed
 #    ««revision-date»»···
 #--
 
@@ -160,8 +161,7 @@ class SAS_Interface (TFL.Meta.Object) :
         session.connection.execute \
             ( self.table.insert ().values
                 ( self._pickle_cargo_for_table
-                    (pickle_cargo, self.e_type, pid, default = type_name)
-                )
+                    (pickle_cargo, self.e_type, pid, default = type_name))
             )
     # end def insert_cargo
 
@@ -188,7 +188,10 @@ class SAS_Interface (TFL.Meta.Object) :
                         )
                     )
             else :
-                attr_pc      = pickle_cargo.get (attr_name, (default, ))
+                attr_default     = default
+                if hasattr (kind, "get_value") :
+                    attr_default = kind.get_value (None)
+                attr_pc      = pickle_cargo.get (attr_name, (attr_default, ))
                 pc_transform = kind.attr.SAS_PC_Transform
                 if pc_transform :
                     attr_pc = pc_transform.dump (attr_pc)
