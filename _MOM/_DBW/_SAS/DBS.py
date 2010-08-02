@@ -32,6 +32,8 @@
 #    29-Jul-2010 (CT) `MySQL.create_database` changed (`encoding`, exception
 #                     handling)
 #    29-Jul-2010 (CT) `IF EXISTS` and `IF NOT EXISTS` added to `MySQL`
+#     2-Aug-2010 (MG) Support for dropping the tables instead of droping the
+#                     database added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +54,30 @@ class _NFB_ (MOM.DBW._DBS_) :
         pm.connection.close     ()
         del pm.connection
     # end def commit_pid
+
+    @classmethod
+    def delete_database (cls, db_url, manager) :
+        try :
+            cls._drop_database (db_url, manager)
+        except sqlalchemy.exc.SQLError, e:
+            ### looks like we don't have the permissions to drop the database
+            ### -> let's delete all tables we find using the reflection
+            ### mechanism of sqlalchemy
+            engine = manager._create_engine (db_url.value)
+            meta   = sqlalchemy.MetaData    (bind = engine)
+            meta.reflect                    ()
+            if meta.tables :
+                meta.drop_all               ()
+                ### no we need to drop everything we created with the
+                ### knowledge of sqlalchemy
+                cls._drop_manual            (engine)
+            engine.pool.dispose             ()
+    # end def delete_database
+
+    @classmethod
+    def _drop_manual (cls, engine) :
+        pass
+    # end def _drop_manual
 
     @classmethod
     def rollback_pid (cls, pm) :
@@ -87,13 +113,10 @@ class MySQL (_NFB_) :
     # end def create_database
 
     @classmethod
-    def delete_database (cls, db_url, manager) :
-        try :
-            engine = manager._create_engine (db_url.scheme_auth)
-            engine.execute ("DROP DATABASE IF EXISTS %s" % (db_url.path, ))
-        except sqlalchemy.exc.OperationalError :
-            pass
-    # end def delete_database
+    def _drop_database (cls, db_url, manager) :
+        engine = manager._create_engine (db_url.scheme_auth)
+        engine.execute ("DROP DATABASE IF EXISTS %s" % (db_url.path, ))
+    # end def _drop_database
 
 # end class MySQL
 
@@ -133,21 +156,31 @@ class Postgresql (_NFB_) :
             ) :
         conn = cls.Connection (db_url, manager)
         with contextlib.closing (conn) :
-            conn.execute \
-                ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
-                % (db_url.path, encoding, template)
-                )
+            ### before we try to create the database let's check if it does
+            ### not already exist
+            result = conn.execute \
+                ( "SELECT datname FROM pg_database WHERE datname = %r"
+                % (db_url.path, )
+                ).fetchall ()
+            if not result :
+                ### database does not exist -> create it
+                conn.execute \
+                    ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
+                    % (db_url.path, encoding, template)
+                    )
     # end def create_database
 
     @classmethod
-    def delete_database (cls, db_url, manager) :
+    def _drop_database (cls, db_url, manager) :
         conn = cls.Connection (db_url, manager)
         with contextlib.closing (conn) :
-            try :
-                conn.execute ("DROP DATABASE %s" % (db_url.path, ))
-            except sqlalchemy.exc.ProgrammingError :
-                pass
-    # end def delete_database
+            conn.execute ("DROP DATABASE %s" % (db_url.path, ))
+    # end def _drop_database
+
+    @classmethod
+    def _drop_manual (cls, engine) :
+        engine.execute ("DROP SEQUENCE pid_seq")
+    # end def _drop_manual
 
     @classmethod
     def reserve_pid (cls, connection, pid) :
