@@ -34,6 +34,7 @@
 #    29-Jul-2010 (CT) `IF EXISTS` and `IF NOT EXISTS` added to `MySQL`
 #     2-Aug-2010 (MG) Support for dropping the tables instead of droping the
 #                     database added
+#     3-Aug-2010 (MG) Handle error of `meta.reflect` in `delete_database`
 #    ««revision-date»»···
 #--
 
@@ -63,21 +64,21 @@ class _NFB_ (MOM.DBW._DBS_) :
             ### looks like we don't have the permissions to drop the database
             ### -> let's delete all tables we find using the reflection
             ### mechanism of sqlalchemy
-            engine = manager._create_engine (db_url.value)
-            meta   = sqlalchemy.MetaData    (bind = engine)
-            meta.reflect                    ()
-            if meta.tables :
-                meta.drop_all               ()
-                ### no we need to drop everything we created with the
-                ### knowledge of sqlalchemy
-                cls._drop_manual            (engine)
-            engine.pool.dispose             ()
+            engine = manager._create_engine    (db_url.value)
+            meta   = sqlalchemy.MetaData       (bind = engine)
+            try :
+                meta.reflect                   ()
+                if meta.tables :
+                    cls._drop_database_content (engine, meta)
+            except sqlalchemy.exc.SQLError :
+                pass
+            engine.pool.dispose                ()
     # end def delete_database
 
     @classmethod
-    def _drop_manual (cls, engine) :
-        pass
-    # end def _drop_manual
+    def _drop_database_content (cls, engine, meta) :
+        meta.drop_all ()
+    # end def _drop_database_content
 
     @classmethod
     def rollback_pid (cls, pm) :
@@ -178,9 +179,12 @@ class Postgresql (_NFB_) :
     # end def _drop_database
 
     @classmethod
-    def _drop_manual (cls, engine) :
+    def _drop_database_content (cls, engine, meta) :
+        cls.__m_super._drop_database_content (engine, meta)
+        ### now we need to drop everything we created with the
+        ### knowledge of sqlalchemy
         engine.execute ("DROP SEQUENCE pid_seq")
-    # end def _drop_manual
+    # end def _drop_database_content
 
     @classmethod
     def reserve_pid (cls, connection, pid) :
