@@ -36,6 +36,7 @@
 **    28-May-2010 (MG) New form creation bug fixes
 **    24-Jun-2010 (MG) Button order and text for popup form are now specified
 **                     in the template
+**     3-Aug-2010 (MG) Bug with copying link inlines fixed
 **    ««revision-date»»···
 **--
 */
@@ -535,6 +536,13 @@
               , callback  : this._ui_edit
               }
             );
+        $root.find ("span.ui-icon-alert").GTW_Button
+            ( { icon      : "ui-icon-alert"
+              , enabled   : function (btn) { return true; }
+              , data      : { self : this , $inline : $inline, copy : false}
+              , callback  : this._ui_edit
+              }
+            ).css ("cursor", "pointer");
         $root.find ("a[href=#delete]").GTW_Button
             ( { states   :
                   [ { icon      : "ui-icon-trash"
@@ -869,6 +877,8 @@
                          $form.data     ("form-data",       data);
                          $form.data     ("form-prefix",     prefix);
                          $dialog.dialog ("option", "title", data.puf_title);
+                         if (add_or_copy)
+                             self._clear_internal_fields ($form, true);
                          self._ui_display_form
                              ($dialog, $form, $inline, $entity_root);
                        }
