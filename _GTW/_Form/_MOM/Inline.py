@@ -183,7 +183,6 @@ class Link_Inline (TFL.Meta.Object) :
             result         = []
             attr_spec      = [""]
             attr_spec.extend (self.role_names)
-            print self.role_names
             for attr in attr_spec :
                 obj       = link
                 css_class = "mom-link"

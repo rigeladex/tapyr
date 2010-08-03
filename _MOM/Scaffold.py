@@ -36,6 +36,7 @@
 #     1-Jul-2010 (CT) `-overwrite` added to `cmd__migrate__opts`
 #    12-Jul-2010 (CT) `do_migrate` changed to use `DB_Man`
 #     2-Aug-2010 (CT) `cmd__buns` added
+#     3-Aug-2010 (MG) Sub-command `shell` added
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,7 @@ import _TFL.Filename
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL.Environment
 
 import sys
 
@@ -128,6 +130,17 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     # end def cmd__migrate
 
     @TFL.Meta.Once_Property
+    def cmd__shell (cls) :
+        """Sub-command for an interactive interpreter shell."""
+        return TFL.CAO.Cmd \
+            ( name        = "shell"
+            , description = "Open interactive python shell."
+            , handler     = cls.__do_shell
+            , opts        = cls.cmd__shell__opts
+            )
+    # end def cmd__load
+
+    @TFL.Meta.Once_Property
     def cmd__base__opts (cls) :
         return \
             [ "-copyright_start:I=%s" % cls.cmd__copyright_start
@@ -159,6 +172,11 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         return cls.do_migrate (cmd)
     # end def __do_migrate
 
+    def __do_shell (cls, cmd) :
+        """Handler for sub-command `shell`."""
+        return cls.do_shell (cmd)
+    # end def __do_shell
+
     def __sub_commands (cls) :
         return tuple \
             (getattr (cls, sc) for sc in cls.cmd__sub_commands)
@@ -178,6 +196,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         , "cmd__create__opts"
         , "cmd__load__opts"
         , "cmd__migrate__opts"
+        , "cmd__shell__opts"
         , "cmd__sub_commands"
         )
     _real_name            = "Scaffold"
@@ -222,7 +241,9 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         , "overwrite:B?Overwrite `target_db_url` if necessary"
         , "target_db_url:S?Database url for target database"
         )
-    cmd__sub_commands     = ("cmd__create", "cmd__load", "cmd__migrate")
+    cmd__shell__opts      = ()
+    cmd__sub_commands     = \
+        ("cmd__create", "cmd__load", "cmd__migrate", "cmd__shell")
 
     @classmethod
     def app_type (cls, * ems_dbw) :
@@ -281,6 +302,12 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         db_man_s.destroy ()
         db_man_t.destroy ()
     # end def do_migrate
+
+    @classmethod
+    def do_shell (cls, cmd) :
+        scope = cls.do_load      (cmd)
+        TFL.Environment.py_shell ()
+    # end def do_shell
 
     @classmethod
     def scope (cls, db_url = "hps://", default_path = None, create = True) :

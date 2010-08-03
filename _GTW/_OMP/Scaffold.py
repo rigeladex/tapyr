@@ -31,6 +31,7 @@
 #    28-Jun-2010 (CT) `HTTP_Opt` added
 #    29-Jun-2010 (CT) `HTTP_Opt` changed to `_Import_Module ("Application")`
 #    29-Jun-2010 (CT) Command for `wsgi` added
+#     3-Aug-2010 (MG) Additional options added to `shell` sub-command
 #    ««revision-date»»···
 #--
 
@@ -137,12 +138,25 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         )
     cmd__run_server__opts = cmd___server__opts
     cmd__wsgi__opts       = cmd___server__opts
+    cmd__shell__opts      = \
+        ( "wsgi:B?Create the wsgi application before entering the shell"
+        ,
+        ) + cmd___server__opts
     cmd__sub_commands     = ("cmd__run_server", "cmd__wsgi")
 
     @classmethod
     def do_run_server (cls, cmd) :
         raise NotImplementedError
     # end def do_run_server
+
+    @classmethod
+    def do_shell (cls, cmd) :
+        scope = cls.do_load      (cmd)
+        if cmd.wsgi :
+            wsgi = cls.do_wsgi   (cmd)
+            top  = GTW.NAV.Root.top
+        TFL.Environment.py_shell ()
+    # end def do_shell
 
     @classmethod
     def do_wsgi (cls, cmd) :
