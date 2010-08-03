@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    25-May-2009 (CT) Creation
+#     3-Aug-2010 (CT) Completely revamped
 #    ««revision-date»»···
 #--
 
@@ -36,58 +37,38 @@ from   _TFL.Regexp     import *
 
 from   random          import randrange
 
-_fmt_o = """\
-<script type="text/javascript">document.write(String.fromCharCode(%s))</script>\
-"""
-_fmt_p = """\
-<noscript>\
-<p class="nospam">\
-<a class="nospam" title="Need Javascript for Email">%s</a>\
-</p>\
-</noscript>\
-"""
-_fmt_t = """\
-<noscript>\
-<p class="nospam" title="%s">Need Javascript for Email</p>\
-</noscript>\
+_obfuscator_format = """\
+<a class="nospam" title="%(need)s" rel="%(js_args)s">%(text)s</a>\
 """
 
-def _gen (text) :
-    for c in text :
-        yield ord (c), randrange (1, 256)
-# end def _gen
+def obfuscated (text) :
+    """Return `text` as (slightly) obfuscated Javascript array."""
+    result = ",".join \
+        ( "%s%+d" % (s, c - s)
+        for (c, s) in ((ord (c), randrange (1, 256)) for c in text)
+        )
+    return result
+# end def obfuscated
 
-def _obf (text) :
-    return _fmt_o % \
-        (",".join ("%s%+d" % (s, c - s) for (c, s) in _gen (text)))
-# end def _obf
+def _rep (match) :
+    return _obfuscator_format % dict \
+        ( js_args  = obfuscated  (match.group (0))
+        , need     = "Need Javascript for displaying Email"
+        , text     = match.group (2)
+        )
 
-def _rep_implicit (match) :
-    text = match.group (0)
-    js   = _obf (text)
-    ns   = _fmt_t % text
-    return "".join ((js, ns))
-# end def _rep_implicit
-
-def _rep_explicit (match) :
-    text = match.group (2)
-    js   = _obf (match.group (0))
-    ns   = _fmt_p % text
-    return "".join ((js, ns))
-# end def _rep_explicit
-
-obfuscated_email = Multi_Re_Replacer \
-    ( Re_Replacer
-        ( r"("
+obfuscated_email = Re_Replacer \
+        ( r"(?:"
             r"<a"
-            r"(?:\s+\w+=" r'"[^"]*"' r")*"
-            r"\s+href=" r'"' r"(?:mailto|email):[^>]+>"
+            r"("
+              r"(?:\s+\w+=" r'"[^"]*"' r")*"
+              r"\s+href=" r'"' r"(?:mailto|email):[^>]+>"
+            r")"
           r")"
           r"([^<]*)"
           r"(</a>)"
-        , _rep_explicit, re.MULTILINE
+        , _rep, re.MULTILINE
         )
-    )
 
 if __name__ != "__main__" :
     DJO._Export ("obfuscated_email")
