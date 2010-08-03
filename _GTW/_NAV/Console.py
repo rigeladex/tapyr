@@ -364,7 +364,7 @@ class Console (GTW.NAV.Page) :
         )
 
     console           = None
-    completion_cutoff = 30
+    completion_cutoff = None
 
     @TFL.Meta.Once_Property
     def console (self) :
@@ -394,7 +394,9 @@ class Console (GTW.NAV.Page) :
                     completed = True
                 else :
                     input     = complete
-            elif len (cands) > self.completion_cutoff :
+            elif (   (self.completion_cutoff is not None)
+                 and (len (cands) > self.completion_cutoff)
+                 ) :
                 #cp           = 0 ###len (input)
                 #import pdb; pdb.set_trace ()
                 #cands_by_apl = dusplit \

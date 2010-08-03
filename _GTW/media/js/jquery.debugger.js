@@ -29,6 +29,7 @@
 **
 ** Revision Dates
 **     2-Aug-2010 (MG) Creation
+**     3-Aug-2010 (MG) Clear button added
 **    ««revision-date»»···
 **--
 */
@@ -47,11 +48,13 @@
 function open_shell ($consoleNode, frameID)
 {
   var $target = this.find ("div.inner").empty ();
+  var  href   = $(location).attr ("href");
   if ($consoleNode)
     return $consoleNode.slideToggle ("fast");
   var $consoleNode = $('<pre class="console">')
-      .appendTo ($target.parent ())
-      .hide     ();
+      .appendTo       ($target.parent ())
+      .hide           ()
+      .resizable      ({handles: "se"});
   var historyPos = 0
     var history  = [""];
   var $output    = $('<div class="output">[console ready]</div>')
@@ -61,7 +64,7 @@ function open_shell ($consoleNode, frameID)
         {
           var cmd = $command.val ();
           $.getJSON
-                ( "/Console"
+                ( href
                 , {cmd: cmd}
                 , function (data)
                     {
@@ -108,7 +111,7 @@ function open_shell ($consoleNode, frameID)
           {
             var cmd = $(this).val ();
           $.getJSON
-                ( "/Console"
+                ( href
                 , {complete: cmd}
                 , function (data)
                     {
@@ -129,6 +132,14 @@ function open_shell ($consoleNode, frameID)
             return false;
           }
       });
+  $(this).parent ().find ("button").click
+    ( function (evt)
+        {
+          $output.text   ("--- screen cleared ---");
+          $command.focus ();
+          return false;
+        }
+      );
 
   return $consoleNode.slideDown ("fast", function() {$command.focus (); });
 }

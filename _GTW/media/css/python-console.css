@@ -23,6 +23,12 @@ div.debugger div.detail p
 div.debugger div.explanation
     { margin:           13px
     ; font-size:        11px
+    ; position:         relative
+    }
+div.debugger div.explanation button
+    { position:         absolute
+    ; right:            0px
+    ; top:              -20px
     }
 div.debugger div.footer
     { background-color: #E3EFF1

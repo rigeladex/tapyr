@@ -34,7 +34,7 @@
 
 ( function($)
   {
-    $.GTW =$.GTW || {};
+    $.GTW = $.GTW || {};
     $.extend
       ( $.GTW
       , { as_int_array : function (data)

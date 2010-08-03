@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##     2-Aug-2010 (MG) Creation
+##     3-Aug-2010 (MG) Clear button added
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,6 +39,7 @@
       <div class="explanation">
         In this console you can execute Python expressions in the context of the
         application.
+        <button>{{ GTW._T ("Clear") }}</button>
       </div>
       <div class="console"><div class="inner">The Console requires JavaScript.</div></div>
     </div>
