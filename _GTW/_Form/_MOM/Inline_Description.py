@@ -71,6 +71,7 @@
 #    28-May-2010 (MG) Render mode names changed
 #    28-May-2010 (MG) Ise new `GTW.Form.MOM.Field_List` for `list_display`
 #    24-Jun-2010 (MG) `javascript_options` added to `Link_Inline_Description`
+#     3-Aug-2010 (MG) Handling of `role_name` changed (is now `role_names`)
 #    ««revision-date»»···
 #--
 
@@ -187,7 +188,7 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
             )
         )
     legend             = None
-    role_name          = None
+    role_names         = ()
     css_class          = "inline-link"
 
     max_count          = 256 ### seems to be more than enough for a web-app
@@ -233,10 +234,12 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                 )
             other_roles = \
                 [r for r in link_et_man.Roles if not r is role_attr_kind]
-            if not self.role_name and len (other_roles) == 1:
-                r = other_roles [0]
-                self.role_name = \
-                    r.role_name if r.role_name in inline_form.fields else r.name
+            if not self.role_names :
+                self.role_names = \
+                    [ r.role_name if r.role_name in inline_form.fields
+                                  else r.name
+                      for r in other_roles
+                    ]
             if not self.legend :
                 if len (other_roles) == 1 and other_roles [0].auto_cache :
                     ack = getattr (et_man, other_roles [0].auto_cache.attr_name)

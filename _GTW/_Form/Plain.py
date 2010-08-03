@@ -33,6 +33,7 @@
 #    19-Feb-2010 (MG) `__call__` change to calculate the error count
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #    23-Feb-2010 (MG) `__init__` fixed
+#     3-Aug-2010 (MG) `get_required` fixed
 #    ««revision-date»»···
 #--
 
@@ -92,8 +93,8 @@ class Plain (GTW.Form._Form_) :
         if not value :
             error = error or TFL.I18N._T \
                 (u"Field `%(field)s` is required")
-            self.field_errors [field.name].append \
-                (error % dict (field = field.name))
+            self.errors.add \
+                (self, field.name, error % dict (field = field.name))
         return value
     # end def get_required
 

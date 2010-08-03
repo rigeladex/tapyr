@@ -66,6 +66,8 @@
 #     1-Jun-2010 (MG) `initial_data` support added
 #    24-Jun-2010 (MG) `setup_javascript` changed to support callables in
 #                     `javascript_options`
+#     3-Aug-2010 (MG) `initial_pid_and_state` changed to handle `role_names`
+#                     correctly
 #    ««revision-date»»···
 #--
 
@@ -178,15 +180,19 @@ class Link_Inline (TFL.Meta.Object) :
             self._initial_pids.add (link)
             pid_name_pat   = "%s%%s___pid_"   % (self.prefix_pat % no, )
             state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
-            role           = getattr (link, self.role_name)
             result         = []
-            for inst, attr, css in \
-                    ( (link, "",                        "mom-link")
-                    , (role, "__%s" % (self.role_name), "mom-object")
-                    ) :
+            attr_spec      = [""]
+            attr_spec.extend (self.role_names)
+            print self.role_names
+            for attr in attr_spec :
+                obj       = link
+                css_class = "mom-link"
+                if attr :
+                    obj       = getattr (obj, attr)
+                    css_class = "mom-obj"
                 result.extend \
-                    ( ( (inst.pid, pid_name_pat   % (attr, ), css)
-                      , ("L",      state_name_pat % (attr, ), css)
+                    ( ( (obj.pid, pid_name_pat   % (attr, ), css_class)
+                      , ("L",     state_name_pat % (attr, ), css_class)
                       )
                     )
             return result
@@ -213,10 +219,6 @@ class Link_Inline (TFL.Meta.Object) :
     def range_field_name (self) :
         return "%s-m2m-range" % (self.form_cls.et_man._etype.type_base_name, )
     # end def range_field_name
-
-    def role_instance (self, link) :
-        return getattr (link, self.role_name)
-    # end def role_instance
 
     def setup_javascript (self, parent_form) :
         if self.render_mode == "popup" :
