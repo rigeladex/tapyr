@@ -60,8 +60,24 @@ GTW.JS_On_Ready \
     , name = "jQuery_Gritter"
     )
 
+GTW.Script (src = "/media/GTW/js/GTW_util.js", name = "de_obfuscate_a")
+GTW.JS_On_Ready \
+    ( """
+        $("a.nospam").each
+        ( function (i)
+          {
+            var rel = $(this).attr ("rel");
+            if (rel != null)
+              {
+                var aia = $.GTW.as_int_array (rel);
+                $(this).replaceWith (String.fromCharCode.apply (null, aia));
+              }
+          }
+        );
+      """
+    , name = "de_obfuscate_a"
+    )
+
 if __name__ != "__main__" :
     GTW._Export ("*")
 ### __END__ GTW.jQuery
-
-

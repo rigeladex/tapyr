@@ -28,6 +28,8 @@
 # Revision Dates
 #    17-Feb-2010 (CT) Creation
 #    17-Mar-2010 (CT) `Cleaner` added
+#     3-Aug-2010 (CT) `obfuscator` completely revamped (letting jQuery
+#                     rewrite the obfuscated `<a...</a>` elements)
 #    ««revision-date»»···
 #--
 
@@ -42,16 +44,8 @@ import _TFL._Meta.Object
 
 from   random                   import randrange
 
-_obfuscation_format_js = """\
-<script type="text/javascript">document.write(String.fromCharCode(%s))</script>\
-"""
-
-_obfuscation_format_ns = """\
-<noscript>\
-<p class="nospam">\
-<a class="nospam" title="%s %s">%s</a>\
-</p>\
-</noscript>\
+_obfuscator_format = """\
+<a class="nospam" title="%(need)s" rel="%(js_args)s">%(text)s</a>\
 """
 
 scheme_map = dict \
@@ -60,33 +54,39 @@ scheme_map = dict \
     )
 
 def obfuscated (text) :
-    """Return `text` as (slightly) obfuscated Javascript."""
-    js_args = ",".join \
+    """Return `text` as (slightly) obfuscated Javascript array."""
+    result = ",".join \
         ( "%s%+d" % (s, c - s)
         for (c, s) in ((ord (c), randrange (1, 256)) for c in text)
         )
-    return _obfuscation_format_js % (js_args, )
+    return result
 # end def obfuscated
 
-def obfuscator (scheme = "mailto") :
-    need = _T ("Need Javascript for displaying")
-    desc = _T (scheme_map.get (scheme, scheme))
+def _obfuscator (scheme = "mailto") :
     def _rep (match) :
-        text = match.group (2)
-        js   = obfuscated (match.group (0))
-        ns   = _obfuscation_format_ns % (need, desc, text)
-        return "".join ((js, ns))
+        return _obfuscator_format % dict \
+            ( js_args  = obfuscated  (match.group (0))
+            , need     =
+                ( _T ("Need Javascript for displaying %s")
+                % _T (scheme_map.get (scheme, scheme))
+                )
+            , text     = match.group (2)
+            )
     return Re_Replacer \
-        ( r"("
+        ( r"(?:"
             r"<a"
-            r"(?:\s+\w+=" r'"[^"]*"' r")*"
-            r"\s+href=" r'"' r"mailto:[^>]+>"
+            r"("
+              r"(?:\s+\w+=" r'"[^"]*"' r")*"
+              r"\s+href=" r'"' r"mailto:[^>]+>"
+            r")"
           r")"
           r"([^<]*)"
           r"(</a>)"
         , _rep, re.MULTILINE
         )
-# end def obfuscator
+# end def _obfuscator
+
+obfuscator = dict ((s, _obfuscator (s)) for s in scheme_map)
 
 class Cleaner (TFL.Meta.Object) :
     """Clean up HTML using BeautifulSoup."""

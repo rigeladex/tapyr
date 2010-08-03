@@ -189,8 +189,8 @@ msgid "Monday"
 msgstr "Montag"
 
 #: _GTW/HTML.py:72
-msgid "Need Javascript for displaying"
-msgstr "Für die Darstellung ist Javascript erforderlich"
+msgid "Need Javascript for displaying %s"
+msgstr "Für die Darstellung der %s ist Javascript erforderlich"
 
 #: _GTW/_Form/Auth.py:189
 msgid "New email address"

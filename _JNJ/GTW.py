@@ -40,6 +40,8 @@
 #     5-May-2010 (MG) `default_render_mode` used
 #     5-May-2010 (MG) `render_mode` added
 #     6-May-2010 (MG) `render_fofi_widget` exception handling improoved
+#     3-Aug-2010 (CT) Use `HTML.obfuscator` instead of home-grown code
+#     3-Aug-2010 (CT) `obfuscated` removed
 #    ««revision-date»»···
 #--
 
@@ -120,7 +122,6 @@ class GTW (TFL.Meta.Object) :
         return result.strftime (format)
     # end def now
 
-    obfuscated = staticmethod (HTML.obfuscated)
     pjoin      = staticmethod (sos.path.join)
 
     def render_fofi_widget (self, fofi, widget, * args, ** kw) :
@@ -176,12 +177,7 @@ class GTW (TFL.Meta.Object) :
         attrs = " ".join (sorted (attrs))
         result = u"""<a %(attrs)s>%(text)s</a>""" % locals ()
         if obfuscate :
-            scheme_desc = _Tn (HTML.scheme_map.get (scheme, scheme))
-            result = "".join \
-                (( self.obfuscated (result)
-                 , HTML._obfuscation_format_ns
-                   % (_T ("Need Javascript for displaying"), scheme_desc, text)
-                ))
+            result = HTML.obfuscator [scheme] (result)
         return result
     # end def uri
 
