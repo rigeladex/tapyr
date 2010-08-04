@@ -28,6 +28,8 @@
 #
 # Revision Dates
 #     1-May-2010 (MG) Creation
+#     3-Aug-2010 (CT) `de_obfuscate_a` added
+#     4-Aug-2010 (CT) `fix_a_nospam` factored
 #    ««revision-date»»···
 #--
 
@@ -60,23 +62,8 @@ GTW.JS_On_Ready \
     , name = "jQuery_Gritter"
     )
 
-GTW.Script (src = "/media/GTW/js/GTW_util.js", name = "de_obfuscate_a")
-GTW.JS_On_Ready \
-    ( """
-        $("a.nospam").each
-        ( function (i)
-          {
-            var rel = $(this).attr ("rel");
-            if (rel != null)
-              {
-                var aia = $.GTW.as_int_array (rel);
-                $(this).replaceWith (String.fromCharCode.apply (null, aia));
-              }
-          }
-        );
-      """
-    , name = "de_obfuscate_a"
-    )
+GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "de_obfuscate_a")
+GTW.JS_On_Ready ("$.GTW.fix_a_nospam ($);",         name = "de_obfuscate_a")
 
 if __name__ != "__main__" :
     GTW._Export ("*")

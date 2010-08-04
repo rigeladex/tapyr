@@ -27,7 +27,8 @@
 **
 **
 ** Revision Dates
-**     3-Aug-2010 (CT) Creation
+**     3-Aug-2010 (CT) Creation (`as_int_array`)
+**     4-Aug-2010 (CT) `fix_a_nospam` added (factored from GTW.jQuery)
 **    ««revision-date»»···
 **--
 */
@@ -51,6 +52,21 @@
                   }
               }
             return result;
+          }
+        , fix_a_nospam : function ($)
+          {
+            $("a.nospam").each
+              ( function (i)
+                {
+                  var rel = $(this).attr ("rel");
+                  if (rel != null)
+                    {
+                      var aia = $.GTW.as_int_array (rel);
+                      $(this).replaceWith
+                          (String.fromCharCode.apply (null, aia));
+                    }
+                }
+              );
           }
         }
       )
