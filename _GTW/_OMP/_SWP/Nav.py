@@ -173,7 +173,7 @@ class Admin (object) :
                     , legend    = _("Events associated to page")
                     , title     = _("Events")
                     )
-               )
+                )
             , LID
                 ( "GTW.OMP.SWP.Clip_O"
                 , FGD

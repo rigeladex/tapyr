@@ -37,13 +37,14 @@
 ##    24-Jun-2010 (MG) Button order and text for the popup form are now
 ##                     specified in the template
 ##    25-Jul-2010 (MG) Macros for render mode `dl_seq` added
+##     4-Aug-2010 (MG) `aid_table` added
 ##    ««revision-date»»···
 ##--
 #}
 {%- import "html/form.jnj" as Form %}
 {%- import html_version    as X   -%}
 
-{%- macro aid_div_seq (pfo, aid, widget_type = None) -%}
+{%- macro aid_div_seq (pfo, aid) -%}
   {%- set fo = aid.form -%}
   {%- onion aid.legend %}
     {%- head %}
@@ -109,6 +110,25 @@
      {{ object_caller () }}
    {% endif -%}
 {%- endmacro -%} {#- aid_object -#}
+
+{%- macro aid_table (pfo, aid) -%}
+  {%- set fo = aid.form -%}
+  {%- onion aid.legend %}
+    {%- head %}
+      <fieldset class="inline-form {{ aid.form_cls.form_path_css }}">
+        <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
+          {{ GTW._T (aid.legend)|safe }}
+        </legend>
+    {%- else %}
+      <div class="inline-form {{ aid.name }}">
+    {%- body %}
+      {{ GTW.render_fofi_widget (fo, "aid_object", fo) }}
+    {%- tail %}
+      </fieldset>
+    {%- else %}
+      </div>
+  {%- endonion %}
+{%- endmacro -%} {#- aid_table -#}
 
 {%- macro fi_div_seq (fo, fi) -%}
     <div class="Field-Div-Seq Field-{{ fi.name }}"

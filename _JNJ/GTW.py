@@ -125,19 +125,19 @@ class GTW (TFL.Meta.Object) :
     pjoin      = staticmethod (sos.path.join)
 
     def render_fofi_widget (self, fofi, widget, * args, ** kw) :
-        pushed = False
+        pushed          = False
         obj_render_mode = getattr (fofi, "render_mode", None)
         kw_render_mode  = kw.pop  ("render_mode",       None)
         if obj_render_mode :
-            pushed  = True
+            pushed      = True
             self.render_mode_stack.append (obj_render_mode)
         elif kw_render_mode :
-            pushed  = True
+            pushed      = True
             self.render_mode_stack.append (kw_render_mode)
         elif not self.render_mode_stack :
-            pushed  = True
+            pushed      = True
             self.render_mode_stack.append (fofi.default_render_mode)
-        render_mode = self.render_mode_stack [-1]
+        render_mode     = self.render_mode_stack [-1]
         try :
             try :
                 mode_desc   = fofi.render_mode_description [render_mode]

@@ -45,6 +45,7 @@ class Render_Mode_Description (TFL.Meta.Object) :
         if parent :
             raise NotImplementedError ("Inheritance not yet impl")
         self.__dict__.update (modes)
+        self.__modes = modes.keys ()
     # end def __init__
 
     def __getitem__ (self, key) :

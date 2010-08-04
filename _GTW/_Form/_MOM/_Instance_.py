@@ -87,6 +87,7 @@
 #     9-Jun-2010 (MG) `initial_data` support enhanced
 #    22-Jun-2010 (MG) `_create_or_update` special exception handler added to
 #                     prevent double recording of invariant errors
+#     4-Aug-2010 (MG) Render mode `table` added to `_Instance_`
 #    ««revision-date»»···
 #--
 
@@ -236,6 +237,10 @@ class _Instance_ (GTW.Form._Form_) :
 
     render_mode_description = GTW.Form.Render_Mode_Description \
         ( div_seq = GTW.Form.Widget_Spec
+              ( object     = "html/rform.jnj, object"
+              , aid_object = "html/rform.jnj, aid_object"
+              )
+        , table   = GTW.Form.Widget_Spec
               ( object     = "html/rform.jnj, object"
               , aid_object = "html/rform.jnj, aid_object"
               )

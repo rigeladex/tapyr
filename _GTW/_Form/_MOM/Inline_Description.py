@@ -72,6 +72,8 @@
 #    28-May-2010 (MG) Ise new `GTW.Form.MOM.Field_List` for `list_display`
 #    24-Jun-2010 (MG) `javascript_options` added to `Link_Inline_Description`
 #     3-Aug-2010 (MG) Handling of `role_name` changed (is now `role_names`)
+#     4-Aug-2010 (MG) `Attribute_Inline_Description` render mode `table`
+#                     corrected
 #    ««revision-date»»···
 #--
 
@@ -129,7 +131,7 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
             ( "html/rform.jnj, aid_div_seq"
             )
         , table   = GTW.Form.Widget_Spec
-            ( "html/rform.jnj, fg_table"
+            ( "html/rform.jnj, aid_table"
             , field_head        = "html/rform.jnj, aid_th"
             , field_header      = "html/rform.jnj, aid_header"
             , field_body        = "html/rform.jnj, aid_td"
