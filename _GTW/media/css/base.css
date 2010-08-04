@@ -19,6 +19,10 @@ blockquote
     { margin-left         : 2.5em
     }
 
+caption
+    { text-align          : center
+    }
+
 cite
     { display             : block
     ; margin-top          : 1.0em
@@ -37,6 +41,10 @@ h3  { font-size           : 115% }
 h4  { font-size           : 110% }
 h5  { font-size           : 105% }
 h6  { font-size           : 100% }
+
+input, textarea
+    { padding             : 0.1em 0.1em 0.2em
+    }
 
 input:focus, textarea:focus
     { background-color    : yellow
