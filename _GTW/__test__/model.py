@@ -33,6 +33,7 @@
 #                     parameters `bpt` (backends per test), `combiner`)
 #    26-May-2010 (CT) Use anonymous account and database `test` for MySQL
 #     1-Jul-2010 (MG) Support for loading a scope added
+#     4-Aug-2010 (MG) Changed to new Scaffold structure
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ import _GTW._OMP._EVT.import_EVT
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
-import _MOM.Scaffold
+import _GTW._OMP.Scaffold
 import _TFL.Filename
 import _TFL.Generators
 
@@ -72,23 +73,28 @@ GTW.Version = Product_Version \
         )
     )
 
-class Scaffold (MOM.Scaffold) :
+class Scaffold (GTW.OMP.Scaffold) :
 
-    ANS         = GTW
-    nick        = u"MOMT"
-    PNS_Aliases = dict \
-        ( Auth  = GTW.OMP.Auth
-        , EVT   = GTW.OMP.EVT
-        , PAP   = GTW.OMP.PAP
-        , SRM   = GTW.OMP.SRM
-        , SWP   = GTW.OMP.SWP
+    ANS                   = GTW
+    nick                  = u"MOMT"
+    default_db_name       = "test"
+    PNS_Aliases           = dict \
+        ( Auth            = GTW.OMP.Auth
+        , EVT             = GTW.OMP.EVT
+        , PAP             = GTW.OMP.PAP
+        , SRM             = GTW.OMP.SRM
+        , SWP             = GTW.OMP.SWP
         )
 
-    Backend_Parameters = dict \
-        ( HPS = "'hps://'"
-        , SQL = "'sqlite://'"
-        , POS = "'postgresql://regtest:regtest@localhost/regtest'"
-        , MYS = "'mysql://:@localhost/test'"
+    cmd__base__opts_x     = \
+        ( "-config:C=~/.gtw-test.config?File specifying defaults for options"
+        ,
+        )
+    Backend_Parameters    = dict \
+        ( HPS             = "'hps://'"
+        , SQL             = "'sqlite://'"
+        , POS             = "'postgresql://regtest:regtest@localhost/regtest'"
+        , MYS             = "'mysql://:@localhost/test'"
         )
 
     @classmethod
@@ -127,14 +133,34 @@ class Scaffold (MOM.Scaffold) :
                 yield ("%s%d" % (k, i), v)
     # end def _backend_spec
 
+    @classmethod
+    def do_run_server (cls, cmd) :
+        from form_app import run
+        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        return run (cmd, apt, url)
+    # end def do_run_server
+
+    @classmethod
+    def do_wsgi (cls, cmd) :
+        from form_app import wsgi
+        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        return wsgi (cmd, apt, url)
+    # end def do_wsgi
+
+    @classmethod
+    def _create_scope (cls, apt, url) :
+        from form_app import fixtures
+        result = super (Scaffold, cls)._create_scope (apt, url)
+        fixtures       (result)
+        return result
+    # end def _create_scope
+
 # end class Scaffold
 
 Scope = Scaffold.scope
 
+_Command = Scaffold.cmd
+
 if __name__ == "__main__" :
-    TFL.Environment.exec_python_startup ()
-    db_url  = sos.environ.get ("DB_url",  "hps://")
-    db_name = sos.environ.get ("DB_name", None)
-    create  = eval  (sos.environ.get ("DB_create", "True"))
-    scope   = Scope (db_url, db_name, create = create)
+    _Command ()
 ### __END__ GTW.__test__.model

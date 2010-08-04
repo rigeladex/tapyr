@@ -31,6 +31,7 @@
 #    20-Jun-2010 (MG) Support for `GTW.Tornado` added
 #    25-Jun-2010 (MG) Werkzeug and Tornado now have a common interface ->
 #                     application creation simplified
+#     4-Aug-2010 (MG) Simplified to work with new `model.py`
 #    ««revision-date»»···
 #--
 
@@ -102,8 +103,7 @@ GTW.OMP.SRM.Nav.Admin.Regatta_C ["Form_kw"] = dict \
                     }
                 )
 
-def _create_scope (nav) :
-    scope = Scaffold.scope ()
+def fixtures (scope) :
     PAP   = scope.PAP
     scope.Auth.Account_Anonymous (u"anonymous")
     p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
@@ -120,12 +120,7 @@ def _create_scope (nav) :
     re  = SRM.Regatta_Event \
         (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
     scope.commit                 () ### commit my `fixtures`
-    if nav.Break :
-        TFL.Environment.exec_python_startup ()
-        import pdb; pdb.set_trace ()
-    print "Scope Created"
-    return scope
-# end def _create_scope
+# end def fixtures
 
 class File_Upload_Page (GTW.NAV.Page) :
     """just allow post request as well"""
@@ -165,17 +160,16 @@ class File_Upload_Page (GTW.NAV.Page) :
 
 # end class File_Upload_Page
 
-def create_nav (cmd) :
-    home_url_root    = "http://localhost:9042"
-    app_type, db_url = Scaffold.app_type_and_url ()
-    site_prefix      = pjoin (home_url_root, "")
-    if cmd.werkzeug :
-        import _GTW._Werkzeug
-        HTTP = GTW.Werkzeug
-    else :
-        import _GTW._Tornado
-        HTTP = GTW.Tornado
-    template_dirs     = \
+def nav ( cmd
+        , App_Type      = None
+        , DB_Url        = None
+        , auto_delegate = False
+        , version       = "html/5.jnj"
+        , permissive    = True
+        ) :
+    home_url_root = "http://localhost:9042"
+    site_prefix   = pjoin (home_url_root, "")
+    template_dirs = \
         [ sos.path.join (sos.path.dirname (__file__))
         ]
     result        = GTW.NAV.Root \
@@ -183,9 +177,9 @@ def create_nav (cmd) :
         , src_dir         = "."
         , site_url        = home_url_root
         , site_prefix     = site_prefix
-        , auto_delegate   = False
+        , auto_delegate   = auto_delegate
         , web_src_root    = sos.path.dirname (__file__)
-        , HTTP            = HTTP
+        , HTTP            = cmd.HTTP
         , template        = "static.jnj"
         , Templateer      = JNJ.Templateer
             ( i18n        = True
@@ -207,11 +201,9 @@ def create_nav (cmd) :
                 , GTW.Script.jQuery_Gritter
                 )
             )
-        , permissive            = False
-        , DB_Url                = db_url
-        , App_Type              = app_type
-        , Create_Scope          = _create_scope
-        , Break                 = cmd.Break
+        , permissive            = permissive
+        , DB_Url                = DB_Url
+        , App_Type              = App_Type
         )
     result.add_entries \
         ( [
@@ -224,52 +216,9 @@ def create_nav (cmd) :
               , login_required  = False
               , etypes          =
                   [ GTW.OMP.PAP.Nav.Admin.Person
-                    ## dict
-                    ##   ( ETM       = "GTW.OMP.PAP.Person"
-                    ##   , Form_args =
-                    ##       ( FGD (WF ("primary"),   render_mode = "table")
-                    ##       , FGD (AID ("lifetime"), render_mode = "table")
-                    ##       , LID
-                    ##           ( "GTW.OMP.PAP.Person_has_Address"
-                    ##           , FGD
-                    ##               ( "desc"
-                    ##               , AID
-                    ##                   ("address", render_mode = "div_seq"
-                    ##                   , legend = _T ("Address")
-                    ##                   )
-                    ##               )
-                    ##           , render_mode      = "ui_display_table"
-                    ##           , ui_display_attrs = ("desc", "address")
-                    ##           , collapsable      = True
-                    ##           )
-                    ##       )
-                    ##   )
                   , GTW.OMP.Auth.Nav.Admin.Account
-                  ##   GTW.OMP.PAP.Nav.Admin.Address
-                  ## , GTW.OMP.PAP.Nav.Admin.Email
-                  ## , GTW.OMP.PAP.Nav.Admin.Person
-                  ## , GTW.OMP.PAP.Nav.Admin.Person_has_Address
-                  ## , GTW.OMP.PAP.Nav.Admin.Person_has_Phone
-                  ## , GTW.OMP.PAP.Nav.Admin.Person_has_Email
-                  ## , GTW.OMP.PAP.Nav.Admin.Phone
-
-                  ## , GTW.OMP.Auth.Nav.Admin.Account
-                  ## , GTW.OMP.Auth.Nav.Admin.Account_in_Group
-
-                  ## , GTW.OMP.EVT.Nav.Admin.Event
-                  ## , GTW.OMP.EVT.Nav.Admin.Event_occurs
-
-                  ## , GTW.OMP.SWP.Nav.Admin.Clip_X
-                  ## , GTW.OMP.SWP.Nav.Admin.Gallery
-                  ## , GTW.OMP.SWP.Nav.Admin.Page
-                  ## , GTW.OMP.SWP.Nav.Admin.Picture
-
-                  ## , GTW.OMP.SRM.Nav.Admin.Boat
                   , GTW.OMP.SRM.Nav.Admin.Boat_Class
-                  ## , GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
-                  ## , GTW.OMP.SRM.Nav.Admin.Page
                   , GTW.OMP.SRM.Nav.Admin.Regatta_C
-                  ## , GTW.OMP.SRM.Nav.Admin.Regatta_H
                   , GTW.OMP.SRM.Nav.Admin.Regatta_Event
                   ]
               , Type            = GTW.NAV.Site_Admin
@@ -280,7 +229,7 @@ def create_nav (cmd) :
               , prefix          = "Auth"
               , title           = _ (u"Authorization and Account handling")
               , Type            = GTW.NAV.Auth
-#              , hidden          = True
+              , hidden          = True
               )
           , dict
               ( src_dir         = _ ("L10N")
@@ -301,41 +250,26 @@ def create_nav (cmd) :
           ]
         )
     return result
-# end def create_nav
+# end def nav
 
-def _main (cmd) :
-    NAV   = create_nav    (cmd)
-    if cmd.werkzeug :
-        import _GTW._Werkzeug.Application
-        import _GTW._Werkzeug.Static_File_Handler
-        import _GTW._Werkzeug.Request_Handler
-        import _GTW._Werkzeug.Request_Data
-        import _GTW._Werkzeug.Upload_Handler
-        HTTP       = GTW.Werkzeug
-    else :
-        import _GTW._Tornado.Application
-        import _GTW._Tornado.Static_File_Handler
-        import _GTW._Tornado.Request_Handler
-        import _GTW._Tornado.Request_Data
-        import _GTW._Tornado.Upload_Handler
-        HTTP       = GTW.Tornado
-
+def wsgi (cmd, app_type, db_url) :
     try :
         ldir = sos.path.join (sos.path.dirname (__file__), "locale")
-        translations = TFL.I18N.load \
+        TFL.I18N.load \
             ( "de", "en"
             , domains    = ("messages", )
             , use        = "de"
             , locale_dir = ldir
             )
     except ImportError :
-        translations = None
+        pass
+    NAV       = nav (cmd, app_type, db_url)
+    HTTP      = NAV.HTTP
     prefix    = "media"
     media_dir = sos.path.join (NAV.web_src_root, "media")
     app       = HTTP.Application \
-        ( ("/upload", HTTP.Upload_Handler)
-        , ("",        HTTP.NAV_Request_Handler, dict (nav_root = NAV))
-        , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1bieN;aNg0eetie$Chae^2eEjeuth7e"
+        ( ("", HTTP.NAV_Request_Handler, dict (nav_root = NAV))
+        , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1b43N;aNg0eetie$Chae^2eEjeuth7e"
         , i18n           = True
         , login_url      = NAV.SC.Auth.href_login
         , Session_Class  = GTW.File_Session
@@ -344,35 +278,18 @@ def _main (cmd) :
             (prefix, media_dir, GTW.static_file_map)
         , encoding       = NAV.encoding
         , debug          = cmd.debug
-        , auto_reload    = cmd.reload
+        , auto_reload    = cmd.auto_reload
         )
-    app.run_development_server \
-        ( port                 = cmd.port
-        , use_profiler         = cmd.profiler
-        , profile_log_files    = cmd.p_logs
-        , profile_restrictions = cmd.p_restrictions
-        , profile_sort_by      = cmd.p_sort_by
-        , profile_delete_logs  = cmd.p_delete_logs
-        )
-# end def _main
+    if cmd.Break :
+        TFL.Environment.py_shell (vars ())
+    return app
+# end def wsgi
 
-_Command = TFL.CAO.Cmd \
-    ( _main
-    , opts =
-        ( "debug:B=Yes?Run with werkzeug debugger"
-        , "werkzeug:B=yes?Run the werkzeug server"
-        , "Break:B?Set a breakpoint after the scope is setup"
-        , "reload:B=Yes?Run with autoreloader"
-        , "port:I=9042?Port for the webserber"
-        , "profiler:B=no?Run with werkzeug profiler"
-        , "p_logs:S,=stderr,profile.log?Logfile for the profiler"
-        , "p_sort_by:S,=time,calls?Profiling sort order"
-        , "p_restrictions:S,=?Profiling restrictions"
-        , "p_delete_logs:B=no?Delete old profile log files on server start"
-        )
-    )
-if __name__ == "__main__" :
-    _Command ()
+def run (cmd, apt, url) :
+    app = wsgi                 (cmd, apt, url)
+    app.run_development_server (port = cmd.port)
+# end def run
+
 ### __END__ GTW.__test__.form_app
 
 
