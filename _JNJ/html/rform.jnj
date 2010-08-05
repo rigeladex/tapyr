@@ -38,6 +38,7 @@
 ##                     specified in the template
 ##    25-Jul-2010 (MG) Macros for render mode `dl_seq` added
 ##     4-Aug-2010 (MG) `aid_table` added
+##     5-Aug-2010 (MG) `object` gaurd creation of the dialog
 ##    ««revision-date»»···
 ##--
 #}
@@ -430,6 +431,7 @@
    {{ GTW.render_fofi_widget
         (fo, "aid_object", fo, render_mode = render_mode)
    }}
+   {%- if fo.inline_groups %}
     <div id="form-dialog">
       <div id="popup-form-buttons">
         <!-- The order of the buttons has to be specified from left to right -->
@@ -438,6 +440,7 @@
         <button id="popup-form-button-reset">{{ GTW._T ("Reset") }}</button>
       </div>
     </div>
+   {% endif -%}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 {#- __END__ jinja template: JNJ/html.rform.jnj -#}
