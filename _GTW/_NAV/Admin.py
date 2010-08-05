@@ -176,6 +176,9 @@
 #     5-Mar-2010 (CT) `_etype_man_entries` corrected
 #    15-Mar-2010 (CT) `kind_name` removed
 #    23-Jun-2010 (MG) `Site_Admin.__init__` changed to not require a scope
+#     5-Aug-2010 (CT) `_filter_etype_entries` added
+#     5-Aug-2010 (CT) Work on `man.admin_args.copy ()` instead of
+#                     `man.admin_args` (`pop` being as destructive as it is)
 #    ««revision-date»»···
 #--
 
@@ -196,16 +199,17 @@ class Site_Admin (GTW.NAV.Dir) :
     template        = "site_admin"
 
     def __init__ (self, src_dir, parent, ** kw) :
-        etypes         = kw.pop ("etypes", [])
         self.top.Admin = self
+        entries        = self._filter_etype_entries \
+            (self._etype_man_entries (), kw.pop ("etypes", []))
         self.__super.__init__ (src_dir, parent, ** kw)
-        self.add_entries      (ichain (self._etype_man_entries (), etypes))
+        self.add_entries      (entries)
         self._entries.sort    (key = TFL.Getter.title)
     # end def __init__
 
     def _etype_man_entries (self) :
         for man in self.top.E_Types.itervalues () :
-            m_kw  = man.admin_args
+            m_kw  = man.admin_args.copy ()
             title = m_kw.pop ("title", man.title)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, man.name))
             ETM   = m_kw.pop ("ETM", man._ETM)
@@ -220,6 +224,19 @@ class Site_Admin (GTW.NAV.Dir) :
                 )
             yield d
     # end def _etype_man_entries
+
+    def _filter_etype_entries (self, * args) :
+        seen = set ()
+        for d in ichain (* args) :
+            try :
+                etm = d ["ETM"]
+            except KeyError :
+                print "No `ETM`\n   ", sorted (d.iteritems ())
+            else :
+                if etm not in seen :
+                    seen.add (etm)
+                    yield d
+    # end def _filter_etype_entries
 
     if 1 :
         ### if we want to display a site-admin specific page (and not
