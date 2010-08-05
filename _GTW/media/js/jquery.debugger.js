@@ -101,6 +101,7 @@ function open_shell ($consoleNode, frameID)
     .appendTo  ($form)
     .keydown   (function(e)
       {
+        $compNode.empty ();
         if (e.which == 100 && e.ctrlKey)
           {
             $output.text ("--- screen cleared ---");
