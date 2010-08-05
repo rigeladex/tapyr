@@ -4,6 +4,7 @@
 *
 * Revision Dates
 *    20-Jul-2010 (CT) Creation
+*     5-Aug-2010 (CT) Creation continued
 *    ««revision-date»»···
 */
 
@@ -31,6 +32,11 @@ cite
 
 em  { font-weight         : bold }
 
+fieldset
+    { border              : 1px solid #BEBEBE
+    ; padding             : 0.1em 0.1em 0.2em
+    }
+
 h1, h2, h3, h4, h5, h6
     { font-weight         : bold
     }
@@ -42,12 +48,17 @@ h4  { font-size           : 110% }
 h5  { font-size           : 105% }
 h6  { font-size           : 100% }
 
-input, textarea
-    { padding             : 0.1em 0.1em 0.2em
+input, textarea, input:focus, textarea:focus
+    { font-family         : monospace
+    ; padding             : 0.1em 0.1em 0.2em
     }
 
 input:focus, textarea:focus
     { background-color    : yellow
+    }
+
+legend
+    { font-weight         : bold
     }
 
 ol

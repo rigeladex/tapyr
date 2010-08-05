@@ -9,28 +9,28 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-07-14 16:36+0200\n"
+"PO-Revision-Date: 2010-08-05 10:40+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.4\n"
+"Generated-By: Babel 0.9.5\n"
 
 #: _JNJ/html/activate.jnj:40
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:288 _JNJ/html/rform.jnj:291
+#: _JNJ/html/rform.jnj:337 _JNJ/html/rform.jnj:340
 msgid "Add"
 msgstr ""
 
-#: _JNJ/html/form.jnj:157 _JNJ/html/rform.jnj:204 _JNJ/html/rform.jnj:388
+#: _JNJ/html/form.jnj:157 _JNJ/html/rform.jnj:253 _JNJ/html/rform.jnj:437
 msgid "Cancel"
 msgstr ""
 
-#: _JNJ/html/news.jnj:60
+#: _JNJ/html/news.jnj:61
 msgid "Change"
 msgstr ""
 
@@ -64,7 +64,11 @@ msgstr ""
 msgid "Change password of account %s"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:85
+#: _JNJ/html/console.jnj:42
+msgid "Clear"
+msgstr ""
+
+#: _JNJ/html/rform.jnj:87
 msgid "Click to jump to the field with the first error"
 msgstr ""
 
@@ -81,7 +85,7 @@ msgstr ""
 msgid "Currently selected language is %s"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:319
+#: _JNJ/html/rform.jnj:368
 msgid "Delete"
 msgstr ""
 
@@ -89,19 +93,19 @@ msgstr ""
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:379 _JNJ/html/rform.jnj:374
+#: _JNJ/html/form.jnj:379 _JNJ/html/rform.jnj:423
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:155 _JNJ/html/form.jnj:370 _JNJ/html/rform.jnj:365
+#: _JNJ/html/form.jnj:155 _JNJ/html/form.jnj:370 _JNJ/html/rform.jnj:414
 msgid "Discard all changes and leave form"
 msgstr ""
 
-#: _JNJ/html/news.jnj:57
+#: _JNJ/html/news.jnj:58
 msgid "Edit this entry"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:89 _JNJ/html/rform.jnj:324
+#: _JNJ/html/rform.jnj:91 _JNJ/html/rform.jnj:373
 msgid "Error"
 msgid_plural "Errors"
 msgstr[0] ""
@@ -171,7 +175,7 @@ msgstr ""
 msgid "Month (for last day of week)"
 msgstr ""
 
-#: _JNJ/html/clip_aggregator.jnj:55
+#: _JNJ/html/clip_aggregator.jnj:57
 msgid "More"
 msgstr ""
 
@@ -211,7 +215,7 @@ msgstr ""
 msgid "Processing the request triggered a server error. "
 msgstr ""
 
-#: _JNJ/html/clip_aggregator.jnj:54
+#: _JNJ/html/clip_aggregator.jnj:55
 msgid "Read the full article at"
 msgstr ""
 
@@ -227,7 +231,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:380 _JNJ/html/rform.jnj:375 _JNJ/html/rform.jnj:389
+#: _JNJ/html/form.jnj:380 _JNJ/html/rform.jnj:424 _JNJ/html/rform.jnj:438
 msgid "Reset"
 msgstr ""
 
@@ -236,7 +240,7 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:387
+#: _JNJ/html/rform.jnj:436
 msgid "Save"
 msgstr ""
 
@@ -249,7 +253,7 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: _JNJ/html/form.jnj:382 _JNJ/html/rform.jnj:377
+#: _JNJ/html/form.jnj:382 _JNJ/html/rform.jnj:426
 msgid "Submit"
 msgstr ""
 

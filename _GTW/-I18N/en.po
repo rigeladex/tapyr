@@ -9,31 +9,31 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-07-14 16:36+0200\n"
+"PO-Revision-Date: 2010-08-05 10:40+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.4\n"
+"Generated-By: Babel 0.9.5\n"
 
 #: _GTW/_Form/_MOM/Javascript.py:67
 #, python-format
 msgid "%s `%s` does not exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:127 _GTW/_NAV/_E_Type/Admin.py:234
-#: _GTW/_NAV/_E_Type/Admin.py:265
+#: _GTW/_NAV/_E_Type/Admin.py:129 _GTW/_NAV/_E_Type/Admin.py:237
+#: _GTW/_NAV/_E_Type/Admin.py:268
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:173
+#: _GTW/_NAV/Auth.py:174
 msgid "A confirmation email has been sent tothe new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:307
+#: _GTW/_NAV/Auth.py:308
 msgid "A confirmation has been sent to your emailaddress."
 msgstr ""
 
@@ -45,7 +45,7 @@ msgstr ""
 msgid "A user name is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:131
+#: _GTW/_NAV/Auth.py:132
 msgid "Activation successful."
 msgstr ""
 
@@ -65,19 +65,19 @@ msgstr ""
 msgid "August"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:278
+#: _GTW/__test__/form_app.py:227
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:281
+#: _GTW/__test__/form_app.py:230
 msgid "Authorization and Account handling"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:289
+#: _GTW/__test__/form_app.py:238
 msgid "Choice of language used for localization"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:299
+#: _GTW/_NAV/_E_Type/Admin.py:302
 msgid "Copy"
 msgstr ""
 
@@ -89,15 +89,15 @@ msgstr ""
 msgid "December"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:96
+#: _GTW/_NAV/Auth.py:97
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:297
+#: _GTW/_NAV/_E_Type/Admin.py:300
 msgid "Edit"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:163 _GTW/_NAV/Auth.py:297
+#: _GTW/_NAV/Auth.py:164 _GTW/_NAV/Auth.py:299
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
@@ -110,12 +110,12 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: _GTW/_Form/Plain.py:94
+#: _GTW/_Form/Plain.py:95
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:297
+#: _GTW/__test__/form_app.py:246
 msgid "File upload test"
 msgstr ""
 
@@ -151,7 +151,7 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:286
+#: _GTW/__test__/form_app.py:235
 msgid "L10N"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgstr ""
 msgid "List of participants for"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:266
+#: _GTW/_NAV/Auth.py:268
 msgid "Logout successful."
 msgstr ""
 
@@ -188,8 +188,9 @@ msgstr ""
 msgid "Monday"
 msgstr ""
 
-#: _GTW/HTML.py:72
-msgid "Need Javascript for displaying"
+#: _GTW/HTML.py:70
+#, python-format
+msgid "Need Javascript for displaying %s"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:189
@@ -284,7 +285,7 @@ msgstr ""
 msgid "The old password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:208
+#: _GTW/_NAV/Auth.py:209
 msgid "The password has been changed."
 msgstr ""
 
@@ -344,15 +345,23 @@ msgstr ""
 msgid "Wednesday"
 msgstr ""
 
-#: _GTW/HTML.py:58
+#: _GTW/_NAV/Auth.py:247
+#, python-format
+msgid "Welcome %s."
+msgstr ""
+
+#: _GTW/HTML.py:52
 msgid "email address"
 msgstr ""
 
-#: _GTW/HTML.py:59
+#: _GTW/HTML.py:53
 msgid "phone number"
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Gallery.py:94
 msgid "picture"
 msgstr ""
+
+#~ msgid "Need Javascript for displaying"
+#~ msgstr ""
 
