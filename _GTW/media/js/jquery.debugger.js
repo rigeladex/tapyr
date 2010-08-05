@@ -53,8 +53,8 @@ function open_shell ($consoleNode, frameID)
     return $consoleNode.slideToggle ("fast");
   var $consoleNode = $('<pre class="console">')
       .appendTo       ($target.parent ())
-      .hide           ()
-      .resizable      ({handles: "se"});
+      .hide           ();
+  $(this).parent ().resizable   ({handles: "se"});
   var historyPos = 0
     var history  = [""];
   var $output    = $('<div class="output">[console ready]</div>')
