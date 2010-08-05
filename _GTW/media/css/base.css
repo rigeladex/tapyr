@@ -49,8 +49,7 @@ h5  { font-size           : 105% }
 h6  { font-size           : 100% }
 
 input, textarea, input:focus, textarea:focus
-    { font-family         : monospace
-    ; padding             : 0.1em 0.1em 0.2em
+    { padding             : 0.1em 0.1em 0.2em
     }
 
 input:focus, textarea:focus
@@ -95,6 +94,10 @@ td, th
 
 td[colspan], th[colspan]
     { text-align          : center
+    }
+
+textarea
+    { font-family         : monospace
     }
 
 ul

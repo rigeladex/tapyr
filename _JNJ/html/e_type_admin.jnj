@@ -35,7 +35,7 @@
 ##--
 #}
 {%- macro _button (page, E_Type, tag, href, name, desc, icon) -%}
-  <{{ tag }} class="{{ E_Type.ui_name }}-cmd-change" scope="col">
+  <{{ tag }} class="{{ E_Type.ui_name }}-cmd-change">
     <a href="{{ href }}" title="{{ desc }} {{ name }}"
        class="ui-icon ui-icon-{{ icon }}"
     >{{ desc }}</a>

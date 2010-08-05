@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-Jan-2010 (CT) Creation
 #    10-Feb-2010 (CT) `MOM.Entity.FO` factored
+#     5-Aug-2010 (CT) `_get_nested` added to support `composite.field`
 #    ««revision-date»»···
 #--
 
@@ -43,10 +44,30 @@ class FO (TFL.Meta.Object) :
         self.__obj    = obj
         self.__fo     = obj.FO
         self.__enc    = enc
+        self.__cache  = {}
     # end def __init__
 
+    def _get_nested (self, name) :
+        try :
+            result = self.__cache [name]
+        except KeyError :
+            obj = self.__obj
+            for n in name.split (".") :
+                obj = getattr (obj, n)
+            FO = getattr (obj, "FO", None)
+            if FO is not None :
+                result = unicode (FO)
+            else :
+                result = unicode (obj)
+            self.__cache [name] = result
+        return result
+    # end def _get_nested
+
     def __getattr__ (self, name) :
-        result = getattr (self.__fo, name)
+        if "." in name :
+            result = self._get_nested (name)
+        else :
+            result = getattr (self.__fo, name)
         if self.__enc and isinstance (result, str) :
             result = unicode (result, self.__enc, "replace")
         setattr (self, name, result)

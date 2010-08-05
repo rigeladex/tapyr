@@ -68,6 +68,7 @@
 #                     class `Form` renamed to `HTML_Form`
 #    14-Jul-2010 (CT) `Changer.rendered` changed to `Redirect_302`
 #                     identically for boith `submit` and `cancel`
+#     5-Aug-2010 (CT) Support for `composite.field` added
 #    ««revision-date»»···
 #--
 
@@ -439,8 +440,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def list_display (self) :
         if self._list_display is None :
             return self._auto_list_display (self.ETM)
+        etype = self.ETM._etype
         return tuple \
-                (getattr (self.ETM._etype, a, a) for a in self._list_display)
+                (self._attr_kind (etype, a) for a in self._list_display)
     # end def list_display
 
     def rendered (self, handler, template = None) :
@@ -451,6 +453,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             )
         return self.__super.rendered (handler, template)
     # end def rendered
+
+    def _attr_kind (self, etype, name) :
+        if "." in name :
+            x = etype
+            for n in name.split (".") :
+                x = getattr (x.Class, n)
+            return TFL.Record \
+                ( name         = name
+                , ui_name      = x.ui_name
+                , description  = x.description
+                )
+        else :
+            return getattr (etype, name)
+    # end def _attr_kind
 
     def _auto_list_display (self, E_Type) :
         return list (ichain (E_Type.primary, E_Type.user_attr))

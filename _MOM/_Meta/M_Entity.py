@@ -94,6 +94,7 @@
 #    22-Jun-2010 (CT) `_m_setup_attributes` changed to set `is_mandatory` and
 #                     to put `a` instead of `a.attr` into `P._syntax_checks`
 #    24-Jun-2010 (CT) `db_sig` added
+#     5-Aug-2010 (CT) Property `M_E_Type.Class` added
 #    ««revision-date»»···
 #--
 
@@ -517,6 +518,11 @@ class M_E_Type (M_E_Mixin) :
             if et :
                 yield et
     # end def children_iter
+
+    @property
+    def Class (cls) :
+        return cls
+    # end def Class
 
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
         name = prop.__name__

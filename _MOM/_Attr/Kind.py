@@ -491,6 +491,11 @@ class _Auto_Update_Mixin_ (Kind) :
 class _Composite_Mixin_ (Kind) :
     """Mixin for composite attributes."""
 
+    @property
+    def Class (self) :
+        return self.attr.C_Type
+    # end def Class
+
     def get_hash (self, obj, value = None) :
         if value is None :
             value = self.get_value (obj)

@@ -138,6 +138,8 @@ class Admin (object) :
                 )
             ,
             )
+        , list_display   =
+            ( "event.name", "event.date.start", "boat_class", "races", "discards")
         )
 
     Regatta_H       = dict \
@@ -159,6 +161,8 @@ class Admin (object) :
                 )
             ,
             )
+        , list_display   =
+            ( "event.name", "event.date.start", "handicap", "races", "discards")
         )
 
     Regatta_Event = dict \
@@ -169,6 +173,7 @@ class Admin (object) :
             ( FGD ("name", "date", "desc", "club", WF ())
             ,
             )
+        , list_display   = ( "name", "date", "desc")
         )
 
 # end class Admin

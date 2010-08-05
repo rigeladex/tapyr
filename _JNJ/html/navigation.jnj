@@ -61,7 +61,7 @@
     {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
         <a href="{{ href }}"
-               {%- if link.desc %}title="{{ link.desc }}"{% endif %}
+               {%- if link.desc %} title="{{ link.desc }}"{% endif %}
                class="current-section"
             >{{ link.title|safe }}</a>
         {{ entries (link.own_links, level + 1) }}
@@ -188,7 +188,7 @@
   {% if NAV.permissive or (NAV.allow (link, request.user) and not link.hidden) %}
     <li class="nav-link level-{{link.level|default('0')}}">
       <a href="{{ link.permalink}}"
-         {% if link.desc %}title="{{ link.desc }}"{% endif %}
+         {% if link.desc %} title="{{ link.desc }}"{% endif %}
       >{{ link.title }}</a>
       {% if TEST and request.user.authenticated %}
         <div class="nav-link-details">
