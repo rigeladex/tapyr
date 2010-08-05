@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #     2-Aug-2010 (MG) Creation
+#     5-Aug-2010 (MG) Added `jQuery_UI` to Media
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ import _TFL.Py_Interpreter
 from   _GTW           import GTW
 import _GTW._NAV.Base
 import _GTW.Media
+import _GTW.jQuery
 
 from    xml.sax.saxutils import escape
 from    traceback        import format_exception_only
@@ -359,6 +361,7 @@ class Console (GTW.NAV.Page) :
             )
         , scripts     =
             ( GTW.Script._.jQuery
+            , GTW.Script._.jQuery_UI
             , GTW.Script (src = "/media/GTW/js/jquery.debugger.js")
             )
         )
