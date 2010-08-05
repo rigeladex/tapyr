@@ -353,7 +353,7 @@ class Console (GTW.NAV.Page) :
     _Media   = GTW.Media \
         ( css_links   =
             ( GTW.CSS_Link ("/media/GTW/css/python-console.css")
-            ,
+            , GTW.CSS_Link.jQuery_UI
             )
         , js_on_ready =
             ( "$('div.console').open_shell (null, 0);"
