@@ -54,8 +54,7 @@ function open_shell ($consoleNode, frameID)
   var $consoleNode = $('<pre class="console">')
       .appendTo       ($target.parent ())
       .hide           ();
-  $(this).parent ().resizable   ({handles: "se"});
-  var historyPos = 0
+  var historyPos = 0;
     var history  = [""];
   var $output    = $('<div class="output">[console ready]</div>')
     .appendTo       ($consoleNode);
