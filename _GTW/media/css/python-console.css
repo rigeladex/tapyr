@@ -1,9 +1,13 @@
-div.console
+.debugger .console .output
+    { white-space       : pre-wrap
+    }
+
+.debugger .console
     { border:           1px solid #ccc
     ; padding:          4px
     ; background-color: #fafafa
     }
-div.debugger
+.debugger
     { text-align:       left
     ; padding:          12px
     ; margin:           auto
@@ -11,26 +15,21 @@ div.debugger
     ; background-color: white
     ; line-height:      1;
     }
-div.debugger h1
-    { color:            #11557C
-    ; font-size:        30px
-    ; margin:           0 0 0.3em 0
-    }
-div.debugger div.detail p
+.debugger .detail p
     { margin:           0 0 8px 13px
     ; font-size:        14px
     }
-div.debugger div.explanation
+.debugger .explanation
     { margin:           13px
     ; font-size:        11px
     ; position:         relative
     }
-div.debugger div.explanation button
+.debugger .explanation button
     { position:         absolute
     ; right:            0px
     ; top:              -20px
     }
-div.debugger div.footer
+.debugger .footer
     { background-color: #E3EFF1
     ; font-size:        0.8em
     ; text-align:       right
@@ -39,27 +38,27 @@ div.debugger div.footer
     ; color:            #86989B
     }
 
-div.traceback, div.plain
+.debugger .traceback, .debugger .plain
     { background-color: #eee!important
     ; border:           1px solid #ccc
     ; margin:           0 0 1em 0
     ; padding:          10px
     }
-div.traceback h3
+.debugger .traceback h3
     { font-size:        1em
     ; margin:           0 0 0.8em 0
     }
-div.traceback h4
+.debugger .traceback h4
     { font-size:        13px
     ; font-weight:      normal
     ; margin:           0.7em 0 0.1em 0
     }
-div.traceback ul
+.debugger .traceback ul
     { list-style:       none
     ; margin:           0
     ; padding:          0 0 0 1em
     }
-div.traceback pre
+.debugger .traceback pre
     { margin:           0
     ; padding:          5px 0 3px 15px
     ; background-color: #ccc
@@ -68,7 +67,7 @@ div.traceback pre
     ; border-right:     1px solid #fafafa
     ; border-bottom:    1px solid #fafafa
     }
-div.traceback pre, div.box table.source
+.debugger .traceback pre, .debugger .box table.source
     { white-space:      pre-wrap       /* css-3 should we be so lucky... */
     ; white-space:      -moz-pre-wrap  /* Mozilla, since 1999 */
     ; white-space:      -pre-wrap      /* Opera 4-6 ?? */
@@ -77,45 +76,43 @@ div.traceback pre, div.box table.source
     ; _white-space:     pre            /* IE only hack to re-specify in
                                           addition to word-wrap  */
     }
-div.traceback pre:hover
+.debugger .traceback pre:hover
     { background-color: #fafafa
     ; color:            black
     ; cursor:           pointer
     }
-div.traceback blockquote
+.debugger .traceback blockquote
     { margin:           1em 0 0 0
     ; padding:          0
     }
-div.traceback img
+.debugger .traceback img
     { float:            right
     ; padding:          2px
     ; margin:           -3px 2px 0 0
     ; display:          none
     }
-div.traceback img:hover
+.debugger .traceback img:hover
     { background-color: #ddd
     ; cursor:           pointer
     }
-div.traceback pre:hover img
+.debugger .traceback pre:hover img
     { display:          block
     }
-div.traceback cite
+.debugger .traceback cite
     { display:          inline
     }
 
-pre.console
+.debugger .console
     { background-color: #fafafa!important
     ; color:            black
     ; padding:          5px!important
     ; margin:           3px 0 0 0!important
     ; cursor:           default!important
-    ; max-height:       400px
-    ; overflow:         auto
     }
-pre.console form
+.debugger .console form
     { color:            #555
     }
-pre.console input
+.debugger .console input
     { background-color: #fafafa
     ; color:            #555
     ; width:            90%
@@ -124,33 +121,33 @@ pre.console input
     ; font-size:        13px
     ; border:           none!important
     }
-pre.console div.traceback
+.debugger .console .traceback
     { margin:           5px 0 5px 25px
     ; white-space:      normal
     }
-pre.console div.traceback h3
+.debugger .console .traceback h3
     { background-color: #555
     ; color:            white
     ; margin:           -10px -10px 5px -10px
     ; padding:          5px
     }
-pre.console div.traceback pre:hover
+.debugger .console .traceback pre:hover
     { background-color: #ccc
     ; cursor:           default
     }
-span.string
+.debugger .string
     { color:            #30799B
     }
-span.number
+.debugger .number
     { color:            #9C1A1C
     }
-span.object
+.debugger .object
     { color:            #485F6E
     }
-span.extended
+.debugger .extended
     { opacity:          0.5
     }
-span.extended:hover
+.debugger .extended:hover
     { opacity:          1
     }
 
