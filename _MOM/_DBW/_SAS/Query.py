@@ -38,6 +38,7 @@
 #     5-May-2010 (MG) `Join_Quer.__call__` fixed to support ordering as well
 #     7-May-2010 (MG) `MOM_Query.__init__` inherit `_query_fct` dict as well
 #    12-May-2010 (MG) New `pid` style
+#     5-Aug-2010 (MG) `MOM_Composite_Query.__ne__, __eq__` fixed
 #    ««revision-date»»···
 #--
 
@@ -201,19 +202,22 @@ class MOM_Composite_Query (_MOM_Query_) :
     def __eq__ (self, rhs) :
         result = []
         for an in self._ATTRIBUTES :
-            result.append (getattr (self, an) == getattr (rhs, an))
+            result.append (getattr (self, an) == getattr (rhs, an, rhs))
         return sql.and_ (* result)
     # end def __eq__
 
     def __ne__ (self, rhs) :
-        return not self == rhs
+        result = []
+        for an in self._ATTRIBUTES :
+            result.append (getattr (self, an) != getattr (rhs, an, rhs))
+        return sql.and_ (* result)
     # end def __ne__
 
     def __le__ (self, rhs) :
         raise TypeError ("`<` is not supported for composits")
-    # end def __lt__
+    # end def __le__
 
-    def __le__ (self, rhs) :
+    def __lt__ (self, rhs) :
         raise TypeError ("`<=` is not supported for composits")
     # end def __lt__
 
