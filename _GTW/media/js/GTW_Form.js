@@ -130,6 +130,7 @@
         var popup_form_buttons = {};
         var inlines            = this.options.inlines;
         var self               = this;
+        this.mandatory_fields  = this.element.find (":input.Mandatory");
         for (i = 0; i < inlines.length; i++)
           {
             if (inlines [i].type == "Link_Inline_UI_Display")
@@ -232,12 +233,12 @@
     , _clear_internal_fields : function ($form, state)
       {
         /* set pid's to undefined, the state to N (new) */
-        $form.find ("input[name$=___pid_]"  ).attr ("value", "");
-        $form.find ("input[name$=___state_]").attr ("value", "N");
+        $form.find ("input[name$=___pid_]"  ).val ("");
+        $form.find ("input[name$=___state_]").val ("");
         if (state)
           {
             /* set the state of ALL inlines to empty */
-            $form.find ("input[name$=__instance_state]").attr ("value", "");
+            $form.find ("input[name$=__instance_state]").val ("");
           }
       }
     , _copy_inline   : function (evt)
@@ -626,7 +627,7 @@
         var self       = data.self;
         var $container = $(evt.target).parents (".ui-entity-container")
         var $ui        = $container.find       (".ui-display");
-        var state = "L";
+        var state      = "";
         if ($ui.hasClass ("ui-state-disabled"))
           {
             $ui.removeClass ("ui-state-disabled");
@@ -634,7 +635,7 @@
         else
           {
             $ui.addClass    ("ui-state-disabled");
-            state = "U";
+            state      = "U";
           }
         $container.find ("input:hidden:first[name$=__state_]")
                   .attr ("value", state);
@@ -644,7 +645,9 @@
         $form.removeClass ("ui-helper-hidden");
         if ($inline.data ("popup"))
           {
-            $dialog.empty ().append ($form).dialog ("open");
+            $dialog.empty ().append ($form)
+                   .dialog ("option", "title", $form.data ("form-title"))
+                   .dialog ("open");
           }
         else
           {
@@ -770,6 +773,11 @@
             var url       = $inline.data ("base_url")
                           + "test/" + $inline.data ("prefix");
             var post_data = {__FORM_NO__ : no, __NEW__ : new_entity};
+            this.mandatory_fields.each (function (idx)
+              {
+                var $this = $(this);
+                post_data [$this.attr ("name")] = $this.val ();
+              });
             var self      = this;
             $.ajax
               ( { url      : url
@@ -803,6 +811,20 @@
                          /* must be done after the form is hidden */
                          if (new_entity)
                              self._setup_di_entity ($entity_root, $inline);
+                         else
+                           {
+                              $entity_root.find ("a[href=#edit]").GTW_Button
+                                ( { icon      : "ui-icon-pencil"
+                                  , enabled   : function (btn) { return true; }
+                                  , data      :
+                                      { self    : self
+                                      , $inline : $inline
+                                      , copy    : false
+                                      }
+                                  , callback  : self._ui_edit
+                                  }
+                                 );
+                           }
                        }
                      else
                        {
@@ -843,8 +865,7 @@
              $entity_root = $("#" + prefix);
          $dialog.dialog
            ( "option"
-           , { title        : "New"
-             , width        : "auto"
+           , { width        : "auto"
              , "buttons"    : this.element.data ("popup_form_buttons")
              }
            ).unbind ("dialogbeforeclose")
@@ -867,7 +888,7 @@
                  $.ajax
                    ( { url      : url
                      , type     : "GET"
-                     , data     : { pid : pid, edit : (add_or_copy ? 0 : 1)}
+                     , data     : {pid : pid, edit : (add_or_copy ? 0 : 1)}
                      , dataType : "json"
                      , success  : function (hdata, textStatus, xmlreq)
                        {
@@ -876,7 +897,7 @@
                          self._ui_set_form_values  ($form, prefix, data);
                          $form.data     ("form-data",       data);
                          $form.data     ("form-prefix",     prefix);
-                         $dialog.dialog ("option", "title", data.puf_title);
+                         $form.data     ("form-title",      hdata.puf_title);
                          if (add_or_copy)
                              self._clear_internal_fields ($form, true);
                          self._ui_display_form
@@ -887,6 +908,7 @@
                }
              else
                {
+                 $form.data ("form-title", "New");
                  this._ui_display_form ($dialog, $form, $inline, $entity_root);
                }
            }
@@ -917,7 +939,7 @@
         for (var name in data)
           {
             var $field = $("[name=" + name + "]");
-            if ( $field.length && (name.substr (name.length - 7) != "_state_"))
+            if ($field.length && (name.substr (name.length - 7) != "_state_"))
               {
                 var old_value   = data [name];
                 var new_value   = $field.val ();
@@ -982,10 +1004,9 @@
         var $link          = $form.find  ("a[href=" + button.href + "]");
         var $button        = $link.find  ("span");
         var $elements      = $form.find  (":input:not([type=hidden])");
-        var  new_state     = "L";
+        var  new_state     = "";
         if (! self._pid_for_inline ($inline, $form).attr ("value"))
         {
-            new_state      = "N";
             $elements.removeAttr ("disabled")
         }
         $elements.removeClass ("ui-state-disabled");
@@ -1008,21 +1029,9 @@
         var $button      = $link.find    ("span");
         var $elements    = $form.find    (":input");
         var  link_prefix = $inline.data ("options").prefix;
-        $form.find  ("input[name$=___state_]").each
-          ( function () {
-            var $this      = $(this);
-            var name       = $this.attr ("name");
-            var new_state  = "r"
-            if ($this.hasClass ("mom-link"))
-            {
-                /* this is the state field of the link */
-                new_state     = "R";
-            }
-            $this.attr ("value", new_state);
-          }).attr ("name");
         $form.data                 ("_state", self._save_form_state ($form));
         $elements.removeAttr       ("disabled")
-        $link.attr ("title", _T (button.states [1].title))
+        $link.attr                 ("title", _T (button.states [1].title))
         $button.removeClass        (button.states [0].icon)
                .addClass           (button.states [1].icon);
         self._update_button_states ($inline);

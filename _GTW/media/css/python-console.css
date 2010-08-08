@@ -151,3 +151,10 @@
     { opacity:          1
     }
 
+.debugger a.toggle
+    { text-decoration:     none
+    ; display:             inline-block
+    }
+.debugger a.toggle:hover
+    { background-color:    #444
+    }

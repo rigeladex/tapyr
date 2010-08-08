@@ -30,6 +30,7 @@
 #    01-Jun-2010 (MG) Handling of `role_name` added
 #     2-Jun-2010 (CT) `prefixed` added to `Wildcard_Field.__call__`
 #    24-Jul-2010 (MG) `Wildcard_Field.`exclude` added
+#     4-Aug-2010 (MG) `exclude` added to `Field_List.both_runs`
 #    ««revision-date»»···
 #--
 
@@ -118,8 +119,8 @@ class Field_List (TFL.Meta.Object) :
         self.first_pass = True
     # end def __init__
 
-    def both_runs (self, et_man) :
-        added_fields = set ()
+    def both_runs (self, et_man, * exclude) :
+        added_fields = set (exclude)
         self (et_man, added_fields)
         self (et_man, added_fields)
     # end def both_runs

@@ -73,11 +73,22 @@ function open_shell ($consoleNode, frameID)
                           var $hidden = $(this).wrap ("<span>").hide ();
                           $hidden
                             .parent ()
-                            .append ($('<a href="#" class="toggle">&nbsp;&nbsp;</a>')
+                            .append ($('<a href="#" class="toggle ui-icon ui-icon-circlesmall-plus"></a>')
                             .click (function ()
                               {
+                                var $this = $(this);
                                 $hidden.toggle      ();
-                                $(this).toggleClass ("open")
+                                $this.toggleClass  ("open");
+                                if ($this.hasClass ("open"))
+                                  {
+                                    $this.removeClass ("ui-icon-circlesmall-plus")
+                                         .addClass    ("ui-icon-circlesmall-minus");
+                                  }
+                                else
+                                  {
+                                    $this.removeClass ("ui-icon-circlesmall-minus")
+                                         .addClass    ("ui-icon-circlesmall-plus");
+                                  }
                                 return false;
                               }));
                         });

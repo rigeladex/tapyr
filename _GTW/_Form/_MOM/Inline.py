@@ -68,6 +68,7 @@
 #                     `javascript_options`
 #     3-Aug-2010 (MG) `initial_pid_and_state` changed to handle `role_names`
 #                     correctly
+#     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    ««revision-date»»···
 #--
 
@@ -86,12 +87,17 @@ class Link_Inline (TFL.Meta.Object) :
     """Handling of all link-forms as a field group of a form.."""
 
     request_data = dict ()
+    ### if different form `None` only the form with the number set will be
+    ### evaluated
+
+    restrict_to  = None
 
     def __init__ (self, inline_description, form_cls, owner = None) :
         self.name               = form_cls.et_man._etype.type_base_name
         self.inline_description = inline_description
         self.form_cls           = form_cls
         self.owner              = owner
+        self.test               = owner and owner.test
         if owner :
             self.prefix         = "__".join ((owner.prefix, self.name))
             self.prefix_pat     = "%s-M%%s" % (self.prefix, )
@@ -129,10 +135,15 @@ class Link_Inline (TFL.Meta.Object) :
         owner          = self.owner
         et_man         = self.form_cls.et_man
         used_instances = dict ()
-        count          = self.form_count
+        if self.restrict_to is None :
+            count      = self.form_count
+            no_offset  = 0
+        else :
+            count      = 1
+            no_offset  = self.restrict_to
         form_cls       = self.form_cls
         prototype      = self.owner.prototype
-        pid_pat        = "__".join ((self.prefix_pat, "_pid_a_state_"))
+        pid_pat        = "__".join ((self.prefix_pat, "_pid_"))
         result         = []
         ### find the links currently linked to the owner
         if owner.instance :
@@ -158,10 +169,13 @@ class Link_Inline (TFL.Meta.Object) :
             result.append \
                 (  form_cls
                       ( instance     = instance
-                      , prefix       = self.prefix_pat % no
+                      , prefix       = self.prefix_pat % (no + no_offset)
+                      , form_number  = no + no_offset
+                      , inline       = self
                       , prototype    = prototype
                       , parent       = self.owner
                       , initial_data = initial_data
+                      , test         = owner.test
                       )
                 )
         return result
@@ -170,13 +184,16 @@ class Link_Inline (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def linked_instances (self) :
         if self.owner.instance :
-            return self.form_cls.et_man.query \
-                (** {self.own_role_name : self.owner.instance})
+            et_man = self.form_cls.et_man
+            return et_man.query \
+                ( sort_key = et_man.sorted_by
+                , ** {self.own_role_name : self.owner.instance}
+                )
         return TFL.Q_Result (())
     # end def linked_instances
 
     def initial_pid_and_state (self, link, no) :
-        if link.pid and link not in self._initial_pids :
+        if not self.test and link.pid and link not in self._initial_pids :
             self._initial_pids.add (link)
             pid_name_pat   = "%s%%s___pid_"   % (self.prefix_pat % no, )
             state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
@@ -188,10 +205,11 @@ class Link_Inline (TFL.Meta.Object) :
                 css_class = "mom-link"
                 if attr :
                     obj       = getattr (obj, attr)
+                    attr      = "__%s" % (attr, )
                     css_class = "mom-obj"
                 result.extend \
                     ( ( (obj.pid, pid_name_pat   % (attr, ), css_class)
-                      , ("L",     state_name_pat % (attr, ), css_class)
+                      , ("",      state_name_pat % (attr, ), css_class)
                       )
                     )
             return result
@@ -232,14 +250,10 @@ class Link_Inline (TFL.Meta.Object) :
         cls (self.form_cls, self, ** jso)
     # end def setup_javascript
 
-    def test (self, no, data) :
-        form = self.form_cls (prefix = self.prefix_pat % no)
-        form.test            (data)
-        return form
-    # end def test
-
     def create_object (self, form) :
         ### add checks for min/max
+        if getattr (GTW.Form.MOM._Instance_, "BREAK", False) :
+            import pdb; pdb.set_trace ()
         for lform in self.forms :
             lform.recursively_run \
                 ("create_object", lform, reverse = True)
@@ -281,12 +295,12 @@ class Link_Inline (TFL.Meta.Object) :
     def update_object (self, form) :
         for lform in self.forms :
             lform.recursively_run ("update_object", lform)
-    # end def setup_raw_attr_dict
+    # end def update_object
 
     def update_raw_attr_dict (self, form) :
         for lform in self.forms :
             lform.recursively_run ("update_raw_attr_dict", lform)
-    # end def setup_raw_attr_dict
+    # end def update_raw_attr_dict
 
     def __getattr__ (self, name) :
         try :

@@ -538,6 +538,11 @@ class Readonly_DB (DB_Error) :
     """Database is set to readonly."""
 # end class Readonly_DB
 
+class No_Scope (Error) :
+    """Try to create an instance without specifing the owning scope."""
+    pass
+# end class No_Scope
+
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

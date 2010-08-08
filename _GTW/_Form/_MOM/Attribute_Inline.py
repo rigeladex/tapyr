@@ -39,6 +39,7 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    19-May-2010 (MG) `Id_Attribute_Inline_Instance.create_object` added
 #     1-Jun-2010 (MG) `initial_data` support added
+#     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                     form.get_object_raw (parent_form)
             else :
                 parent_form.raw_attr_dict.pop (form.generic_name, None)
-        ### not not move the caching up because the `get_object_raw` could
+        ### do not move the caching up because the `get_object_raw` could
         ### create additional errors
         ec = form.error_count (form)
         if ec or not form.instance :
@@ -107,6 +108,7 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
                 , parent       = form
                 , prefix       = "__".join ((form.prefix, self.name))
                 , initial_data = initial_data
+                , test         = form.test
                 )
             )
     # end def clone
@@ -140,6 +142,12 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
         pass
     # end def _setup_javascript
 
+    def set_cooked_attr (self, attr_dict, raw_attr_dict) :
+        attr_dict [self.form.generic_name] = self.form.instance
+        raw_attr_dict.pop (self.name,              None)
+        raw_attr_dict.pop (self.form.generic_name, None)
+    # end def set_cooked_attr
+
     def setup_raw_attr_dict (self, form) :
         self.form.recursively_run ("setup_raw_attr_dict", self.form)
     # end def setup_raw_attr_dict
@@ -156,11 +164,11 @@ class _GTW_Attribute_Inline_ (TFL.Meta.Object) :
 
     def update_object (self, form) :
         self.form.recursively_run ("update_object", self.form)
-    # end def setup_raw_attr_dict
+    # end def update_object
 
     def update_raw_attr_dict (self, form) :
         self.form.recursively_run ("update_raw_attr_dict", self.form)
-    # end def setup_raw_attr_dict
+    # end def update_raw_attr_dict
 
     def __getattr__ (self, name) :
         try :
@@ -190,19 +198,18 @@ class GTW_Id_Attribute_Inline (_Attribute_Inline_) :
     @TFL.Meta.Once_Property
     def needs_processing (self) :
         state = self.form.state
+        pid   = self.form.pid
         if state == "U" :
             ### this from handles an instance which should be unlinked
             ### because we handle an attribute inline we cannot destroy the
-            ### object but just unlink it from the many object
+            ### object but just unlink it from the parent object
             self.form.instance = None
             return False
-        if state == "L" :
+        if pid and not self.form.test :
             ### the client side provided information which object should be
-            ### linked -> let's get this object by it's lid and set it in the
+            ### linked -> let's get this object by it's pid and set it in the
             ### form
             self.form.instance = self.form.et_man.pid_query (self.form.pid)
-            self.form._create_update_executed = True
-            return False
         return True
     # end def needs_processing
 

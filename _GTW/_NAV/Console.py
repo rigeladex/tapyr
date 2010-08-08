@@ -34,6 +34,7 @@
 
 from   _TFL               import TFL
 from   _TFL.predicate     import dusplit
+from   _MOM.import_MOM    import Q
 import _TFL.Url
 import _TFL.I18N
 import _TFL.Py_Interpreter
@@ -288,6 +289,7 @@ class _Py_Console_ (code.InteractiveInterpreter) :
         self.more         = False
         self.input_buffer = []
         code.InteractiveInterpreter.__init__ (self, locls)
+        self.locals.update (Q = Q)
     # end def __init__
 
     def update_locals (self, ** kw) :
@@ -371,7 +373,8 @@ class Console (GTW.NAV.Page) :
 
     @TFL.Meta.Once_Property
     def console (self) :
-        return _Py_Console_ (dict (NAV  = self.top, page = self))
+        top = self.top
+        return _Py_Console_ (dict (NAV  = top, page = self, scope = top.scope))
     # end def console
 
     def _completion_cand_cahr (self, candidate, pos) :
@@ -420,10 +423,10 @@ class Console (GTW.NAV.Page) :
                        )
                 )
         elif not cmd :
-            top      = self.top
-            referer  = request.headers.get ("Referer")
+            top     = self.top
+            referer = request.headers.get ("Referer")
             if top and referer :
-                url   = TFL.Url (referer)
+                url = TFL.Url (referer)
                 self.console.update_locals \
                     ( last_page = top.page_from_href (url.path [1:])
                     , referer   = url

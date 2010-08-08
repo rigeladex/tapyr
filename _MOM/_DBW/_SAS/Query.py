@@ -51,6 +51,7 @@ from   _MOM.import_MOM       import Q
 import _MOM._DBW._SAS
 
 from    sqlalchemy           import sql
+import  operator
 
 class Query (TFL.Meta.Object) :
     """A query object for non MOM objects"""
@@ -199,18 +200,19 @@ class MOM_Composite_Query (_MOM_Query_) :
                     setattr (self, name, kind.attr.query._sa_filter (self))
     # end def __init__
 
-    def __eq__ (self, rhs) :
+    def _compare (self, op, rhs) :
         result = []
         for an in self._ATTRIBUTES :
-            result.append (getattr (self, an) == getattr (rhs, an, rhs))
+            result.append (op (getattr (self, an), getattr (rhs, an, rhs)))
         return sql.and_ (* result)
+    # end def _compare
+
+    def __eq__ (self, rhs) :
+        return self._compare (operator.eq, rhs)
     # end def __eq__
 
     def __ne__ (self, rhs) :
-        result = []
-        for an in self._ATTRIBUTES :
-            result.append (getattr (self, an) != getattr (rhs, an, rhs))
-        return sql.and_ (* result)
+        return self._compare (operator.ne, rhs)
     # end def __ne__
 
     def __le__ (self, rhs) :

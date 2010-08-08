@@ -29,6 +29,8 @@
 #    25-Jan-2010 (MG) Creation
 #    19-Feb-2010 (MG) Moved from `GTW.Tornado` into `GTW`
 #    20-Feb-2010 (MG) `__contains__` added
+#     5-Aug-2010 (MG) `New_ID` factored from `_new_sid`, `setdefault` added
+#     8-Aug-2010 (MG) `setdefault` added
 #    ««revision-date»»···
 #--
 
@@ -84,19 +86,23 @@ class Session (TFL.Meta.Object) :
         self._data_dict = value
     # end def _data
 
-    def _new_sid (self, salt) :
+    def New_ID (self, check = None, salt = "") :
         try :
             pid = os.getpid ()
         except AttributeError :
             # No getpid() in Jython, for example
             pid = 1
         while True :
-            sid = hashlib.md5 \
+            id = hashlib.md5 \
                 ( "%s%s%s%s"
-                % ( randrange (0, MAX_SESSION_KEY), pid, time.time(), salt)
+                % ( randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
                 ).hexdigest ()
-            if not self.exists (sid) :
-                return sid
+            if check is None or not check (id) :
+                return id
+    # end def New_ID
+
+    def _new_sid (self, salt) :
+        return self.New_ID (self.exists, salt)
     # end def _new_sid
 
     def exists (self, sid) :
@@ -108,6 +114,12 @@ class Session (TFL.Meta.Object) :
     def get (self, key, default = None) :
         return self._data.get (key, default)
     # end def get
+
+    def setdefault (self, key, default = None) :
+        if key not in self._data :
+            self._data [key] = default
+        return self._data [key]
+    # end def setdefault
 
     def pop (self, name, default = None) :
         return self._data.pop (name, default)

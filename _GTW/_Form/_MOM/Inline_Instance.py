@@ -58,6 +58,7 @@
 #                     case raw data for this for is present
 #     1-Jun-2010 (MG) `initial_data` support added
 #     9-Jun-2010 (MG) `initial_data.instance` can now be a callable
+#     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    ««revision-date»»···
 #--
 
@@ -91,12 +92,7 @@ class State_Field (GTW.Form.Field) :
     widget   = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
 
     def get_raw (self, form, defaults = {}) :
-        state = "N"
-        if form.instance :
-            state = "L"
-        elif form.prototype :
-            state = "P"
-        return state
+        return ""
     # end def get_raw
 
 # end class State_Field
@@ -133,20 +129,16 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
         return self.request_data.get (self.get_id (self.pid_field), "")
     # end def pid
 
-    def _prepare_form (self) :
-        pid, state = self.pid, self.state
-        return True
-    # end def _prepare_form
-
     @TFL.Meta.Once_Property
     def state (self) :
-        return self.request_data.get (self.get_id (self.state_field), "X")
+        return self.request_data.get (self.get_id (self.state_field), "")
     # end def state
 
 # end class _Inline_Instance_
 
 class Attribute_Inline_Instance (_Inline_Instance_) :
     """Base class for attribute inline instances"""
+
 # end class Attribute_Inline_Instance
 
 class An_Attribute_Inline_Instance (Attribute_Inline_Instance) :
@@ -154,7 +146,7 @@ class An_Attribute_Inline_Instance (Attribute_Inline_Instance) :
 
     instance = None
 
-    def get_object_raw (self, defaults) :
+    def get_object_raw (self, defaults = {}) :
         return dict (getattr (self.instance, "raw_attr_dict", ()), raw = True)
     # end def get_object_raw
 
@@ -173,13 +165,13 @@ class Id_Attribute_Inline_Instance (Attribute_Inline_Instance) :
     # end def __init__
 
     def create_object (self, form) :
-        if self.pid and not self.instance :
+        if self.pid and not self.instance and not self.test :
             self.instance = self.et_man.pid_query (self.pid)
         return self.__super.create_object (form)
     # end def create_object
 
     def _create_instance (self, on_error) :
-        if self.raw_attr_dict :
+        if self.raw_attr_dict and not self.test :
             ### if raw data is provided for this form -> let's check if we
             ### find an instance with this raw data before we try to create
             ### a new one
@@ -201,6 +193,8 @@ class Link_Inline_Instance (_Inline_Instance_) :
     electric_fields_css = "mom-link"
 
     def __init__ (self, * args, ** kw) :
+        self.form_number = kw.pop ("form_number", -1)
+        self.inline      = kw.pop ("inline",      None)
         self.__super.__init__ (* args, ** kw)
         if self.instance is None and self.initial_data :
             import pdb; pdb.set_trace ()
@@ -208,9 +202,10 @@ class Link_Inline_Instance (_Inline_Instance_) :
 
     def create_object (self, * args, ** kw) :
         state = self.state
+        pid   = self.pid
         if state == "U" :
             if self.instance :
-                ### this form handles an link which should be destroyed
+                ### this form handles an link which should be removed
                 ### we need to destroy the instance in the database
                 self.instance.destroy ()
                 ### and mark that this form does not have a valid instance
@@ -218,51 +213,32 @@ class Link_Inline_Instance (_Inline_Instance_) :
                 self.instance = None
                 ### XXX handle deleting of links object's
             return
-        if state == "L" :
-            ### this instance is still linked and was not changed -> no need
-            ### to do anything for this form
-            return
-        if not self.instance and self.pid :
-            self.instance = self.et_man.pid_query (self.pid)
-        if self.raw_attr_dict and (not self.instance or self.state == "r") :
-            ### this is not a rename ->
-            ### set the owner role before we create the link
+        if not self.instance and pid and not self.test :
+            self.instance = self.et_man.pid_query (pid)
+        if self.raw_attr_dict and not self.instance :
+            ### this is not a rename -> set othe owner role
+            ### (a rename on a link does not work if all roles are specified)
             self.raw_attr_dict [self.owner_role_name] = \
                 self.parent.get_object_raw ()
         self.__super.create_object (* args, ** kw)
     # end def create_object
 
-    @TFL.Meta.Once_Property
-    def instance_or_fake (self) :
-        if not self.instance and self.raw_attr_dict :
-            self.test_object (None)
+    @property
+    def fake_or_instance (self) :
+        if not self.instance :
+            form          = self.parent.__class__.Test_Inline (self.parent.action)
+            self.instance = form.test_inline \
+                ( self.request_data, self.inline.prefix, self.form_number
+                ) [1].instance
         return self.instance
-    # end def instance_or_fake
+    # end def fake_or_instance
 
-    def test (self, data) :
-        self.create_object = self.test_object
-        return self (data)
-    # end def test
-
-    def test_object (self, form) :
-        self.instance = instance = TFL.Record (pid = None)
-        for field in (f for f in self.fields if not f.electric) :
-            if isinstance (field, GTW.Form.MOM._Attribute_Inline_) :
-                value = field.form.instance
-                if value is None and field.form.is_link_role :
-                    ### this is the link role -> force the creation of the
-                    ### object
-                    field.form.get_object_raw ()
-                setattr (instance, field.form.generic_name, value)
-            else :
-                value     = ""
-                try :
-                    value = field.attr_kind.from_string (self.get_raw (field))
-                except StandardError, error:
-                    self._handle_errors (error, field)
-            setattr (instance, field.name,                    value)
-            setattr (instance, field.attr_kind.attr.ckd_name, value)
-    # end def test_object
+    def _update_test_inline_fields (self, if_dict) :
+        ### force create of parent object
+        self.parent.get_object_raw ()
+        if_dict [self.owner_role_name] = self.parent.instance
+        self.raw_attr_dict.pop (self.owner_role_name, None)
+    # end def _update_test_inline_fields
 
 # end class Link_Inline_Instance
 
@@ -274,11 +250,6 @@ class Collection_Inline_Instance (An_Attribute_Inline_Instance) :
         if state == "U" :
             if self.instance :
                 self.instance = None
-                ### XXX handle deleting of links object's
-            return
-        if state == "L" :
-            ### this instance is still linked and was not changed -> no need
-            ### to do anything for this form
             return
         self.__super.create_object (* args, ** kw)
     # end def create_object

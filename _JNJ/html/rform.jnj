@@ -358,30 +358,33 @@
 {%- endmacro -%} {#- inline_list_display_table -#}
 
 {%- macro link_list_display_row (inline, iform, index, include_form = True) -%}
-  {%- if iform.instance_or_fake -%}
+  {%- if iform.fake_or_instance -%}
     {%- set ec = iform.error_count (iform) %}
     <tr class="ui-entity-container {% if include_form and iform.has_substance -%} mom-populated ui-display-changed{%- endif -%}">
       {{- GTW.render_fofi_widget
         (inline, "link_list_display", inline, iform, index, include_form and iform.has_substance)
       -}}
-      <td class="first-button zero-width"><a class="ui-icon" href="#edit">{{ GTW._T ("Edit") }}</td>
-      <td class="zero-width"><a class="ui-icon" href="#copy">{{ GTW._T ("Copy") }}</td>
-      <td class="zero-width"><a class="ui-icon" href="#delete">{{ GTW._T ("Delete") }}</td>
-      {%- if ec -%}
         <td>
+          {%- if ec -%}
           <div class="ui-state-error ui-corner-all">
             <span class="ui-icon ui-icon-alert"
                   title="{{ ec }} {{ GTW._Tn ("Error", "Errors", ec) }}"
             >Errors</span>
           </div>
+          {%- endif -%}
         </td>
-    {%- endif -%}
+      <td class="ui-3-icons-width">
+        {%- for title in "Edit", "Copy", "Delete" -%}
+          {%- set tr = GTW._T (title) -%}
+          <a class="ui-icon" href="#{{ title|lower}}" title="{{ tr }}">{{ tr}}</a>
+        {%- endfor -%}
+      </td>
     </tr>
   {%- endif -%}
 {%- endmacro -%} {#- link_list_display_row -#}
 
 {%- macro link_list_display (inline, form, index, include_form) -%}
-  {%- set link = form.instance_or_fake -%}
+  {%- set link = form.instance -%}
   {%- for value in inline.list_display_values (link) -%}
     <td class="ui-display">
       {%- if loop.first -%}
@@ -396,7 +399,7 @@
       {%- endif -%}
         {%- onion True -%}
           {%- head -%}
-            <a href="#edit">
+            <a href="#edit" title="{{ GTW._T ("Edit") }}">
           {%- body %}
             {{- value -}}
           {%- tail -%}

@@ -88,6 +88,8 @@
 #    22-Jun-2010 (MG) `_create_or_update` special exception handler added to
 #                     prevent double recording of invariant errors
 #     4-Aug-2010 (MG) Render mode `table` added to `_Instance_`
+#     6-Aug-2010 (MG) `M_Instance.scope` added
+#     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    ««revision-date»»···
 #--
 
@@ -102,6 +104,7 @@ import _GTW._Form._Form_
 import _GTW._Form.Field
 import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM.Inline
+import _GTW._Form._MOM.Scope_Mockup
 
 import  base64
 import  cPickle
@@ -217,6 +220,16 @@ class M_Instance (GTW.Form._Form_.__class__) :
             )
     # end def New
 
+    @TFL.Meta.Once_Property
+    def scope (cls) :
+        return cls.et_man.home_scope
+    # end def scope
+
+    def Test_Inline (cls, href) :
+        return cls \
+            (href, test = GTW.Form.MOM.Scope_Mockup (cls.et_man.home_scope))
+    # end def Test_Inline
+
 # end class M_Instance
 
 class _Instance_ (GTW.Form._Form_) :
@@ -246,17 +259,23 @@ class _Instance_ (GTW.Form._Form_) :
               )
         )
 
-    ### a standard form always creates the instance new and does not reuse an
-    ### existing instance
-    state            = "N"
+    state                 = ""
+    pid                   = None
+    ### setting `test` to True assures that all data sent by
+    ### the browser ends up in the raw attr dict
+    test                  = False
+    ### XXX
+    restrict_to           = {}
 
     def __init__ ( self
                  , instance     = None
                  , parent       = None
                  , prefix       = None
                  , initial_data = {}
+                 , test         = False
                  , ** kw
                  ) :
+        self.test                    = test
         if not prefix :
             prefix                   = self.et_man.ui_name
         self.initial_data            = undotted_dict \
@@ -267,15 +286,11 @@ class _Instance_ (GTW.Form._Form_) :
         ### make a copies of the inline fields/groups to allow caching of the
         ### inline forms
         for src, src_list_class, iln, iln_cls in \
-            ( ( "fields"
-              , TFL.NO_List
-              , "inline_fields"
-              , GTW.Form.MOM._Attribute_Inline_
+            ( ( "fields",        TFL.NO_List
+              , "inline_fields", GTW.Form.MOM._Attribute_Inline_
               )
-            , ( "field_groups"
-              , list
-              , "inline_groups"
-              , GTW.Form.MOM.Link_Inline
+            , ( "field_groups",  list
+              , "inline_groups", GTW.Form.MOM.Link_Inline
               )
             ):
             new_src_list                 = src_list_class ()
@@ -303,7 +318,7 @@ class _Instance_ (GTW.Form._Form_) :
     # end def add_changed_raw
 
     def _create_instance (self, on_error) :
-        if not self.instance or self.state == "r" :
+        if 1 : ###not self.instance : ###or self.state == "r" :
             ### a new instance should be created starting from scratch or
             ### from a rename -> we have to fill in at least all primaries
             for attr_kind in self.et_man._etype.primary :
@@ -312,8 +327,22 @@ class _Instance_ (GTW.Form._Form_) :
                     raw_value = attr_kind.get_raw (self.instance)
                     if 1 or raw_value :
                         self.raw_attr_dict [n] = raw_value
-        return self.et_man \
-            (raw = True, on_error = on_error, ** self.raw_attr_dict)
+        if not self.test :
+            return self.et_man \
+                (raw = True, on_error = on_error, ** self.raw_attr_dict)
+        if_dict = {}
+        for ifi in self.inline_fields :
+            ifi.set_cooked_attr         (if_dict, self.raw_attr_dict)
+        self._update_test_inline_fields (if_dict)
+        attr_dict = self.et_man.cooked_attrs \
+            (self.raw_attr_dict, on_error = on_error)
+        attr_dict.update (if_dict)
+        instance  = self.et_man._etype \
+            (on_error = on_error, scope = self.test, ** attr_dict)
+        instance.pid = self.pid
+        ### set the raw values again to make sure the display is correct
+        instance.set_raw (** self.raw_attr_dict)
+        return instance
     # end def _create_instance
 
     def create_object (self, form) :
@@ -335,7 +364,7 @@ class _Instance_ (GTW.Form._Form_) :
             instance                     = self.instance
             errors = []
             try :
-                if instance and self.state != "r" :
+                if instance : ### and self.state != "r" :
                     instance.set_raw \
                         (on_error = errors.append, ** self.raw_attr_dict)
                 else :
@@ -356,6 +385,22 @@ class _Instance_ (GTW.Form._Form_) :
             self._handle_errors (errors)
         return self.instance
     # end def _create_or_update
+
+    @TFL.Meta.Once_Property
+    def form_list (self) :
+        restrict_to = self.restrict_to
+        if restrict_to :
+            self.restricted_inlines = {}
+            igs                     = []
+            for ig in self.inline_groups :
+                restrict_no = restrict_to.get (ig.prefix)
+                if restrict_no is not None :
+                    self.restricted_inlines [ig.prefix] = ig
+                    ig.restrict_to                      = restrict_no
+                    igs.append (ig)
+            return [(self, ), igs, self.inline_fields]
+        return [self], self.inline_groups, self.inline_fields
+    # end def form_list
 
     def get_object_raw (self, defaults = {}) :
         instance = self._create_or_update (True)
@@ -389,7 +434,7 @@ class _Instance_ (GTW.Form._Form_) :
 
     @TFL.Meta.Once_Property
     def instance_state (self) :
-        if self.request_data :
+        if self.request_data and not self.test :
             state = self.request_data.get \
                 (self.get_id (self.instance_state_field))
         else :
@@ -409,12 +454,19 @@ class _Instance_ (GTW.Form._Form_) :
     # end def setup_raw_attr_dict
 
     def recursively_run (self, method_name, * args, ** kw) :
-        lists   = [self], self.inline_groups, self.inline_fields
+        lists   = self.form_list
         if kw.pop ("reverse", False) :
             lists = reversed (lists)
         for obj in itertools.chain (* lists) :
             getattr (obj, method_name) (* args, ** kw)
     # end def recursively_run
+
+    def test_inline (self, request_data, inline_prefix, inline_no) :
+        self.restrict_to = {inline_prefix : inline_no}
+        self (request_data)
+        inline = self.restricted_inlines [inline_prefix]
+        return inline, inline.forms [0]
+    # end def test_inline
 
     def update_object (self, form) :
         pass
@@ -423,6 +475,10 @@ class _Instance_ (GTW.Form._Form_) :
     def update_raw_attr_dict (self, form) :
         pass
     # end def update_raw_attr_dict
+
+    def _update_test_inline_fields (self, if_dict) :
+        pass
+    # end def _update_test_inline_fields
 
     def __call__ (self, request_data) :
         ### first, we give each form_group the chance of adding/changing

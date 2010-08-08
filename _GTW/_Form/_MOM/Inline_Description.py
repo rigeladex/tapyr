@@ -248,7 +248,8 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                     self.legend = TFL.I18N._T (ack.ui_name)
                 else :
                     self.legend = TFL.I18N._T (link_et_man.ui_name)
-            self.list_display.both_runs (link_et_man)
+            self.list_display.both_runs \
+                (link_et_man, self.generic_role, self.own_role_name)
             return (self.PKNS.Link_Inline (self, inline_form), )
     # end def __call__
 

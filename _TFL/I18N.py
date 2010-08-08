@@ -45,6 +45,7 @@
 #    17-Jun-2010 (CT) `encode_f` and `encode_o` added
 #    18-Jun-2010 (CT) `Translations` factored to `TFL.Babel`
 #    18-Jun-2010 (CT) `decode` added
+#     4-Aug-2010 (MG) `load`: `log_level` added
 #    ««revision-date»»···
 #--
 
@@ -161,15 +162,16 @@ def encode_o (s, errors = "replace") :
 def load (* languages, ** kw) :
     locale_dir        = kw.pop ("locale_dir", Config.locale_dir)
     domains           = kw.pop ("domains",    Config.domains)
-    use_lang          = kw.pop ("use", "")
+    use_lang          = kw.pop ("use",        "")
+    log_level         = kw.pop ("log_level",  5)
     Config.domains    = domains
     Config.locale_dir = locale_dir
-    _load_languages (locale_dir, languages, domains)
+    _load_languages (locale_dir, languages, domains, log_level)
     if use_lang:
         use (use_lang)
 # end def load
 
-def _load_languages (locale_dir, languages, domains) :
+def _load_languages (locale_dir, languages, domains, log_level) :
     from _TFL._Babel.Translations import Translations
     if not isinstance (domains, (list, tuple)) :
         domains = (domains, )
@@ -178,14 +180,14 @@ def _load_languages (locale_dir, languages, domains) :
     for lang in languages :
         Config.Languages [lang] = lang_trans = Translations.load \
             (locale_dir, lang, first_dom)
-        if not isinstance (lang_trans, Translations) :
+        if not isinstance (lang_trans, Translations) and log_level >= 5 :
             pyk.fprint \
                 ( "*** Warning, language %s for domain %s not found!"
                 % (lang, first_dom)
                 )
         for d in domains :
             new_domain = Translations.load (locale_dir, lang, d)
-            if not isinstance (new_domain, Translations) :
+            if not isinstance (new_domain, Translations) and log_level >= 5 :
                 pyk.fprint \
                     ( "*** Warning, language %s for domain %s not found!"
                     % (lang, d)

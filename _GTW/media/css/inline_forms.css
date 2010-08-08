@@ -77,15 +77,16 @@ div.Inline-UI-Display table a
     { margin          : 0
     }
 div.Inline-UI-Display table
-    { width           : auto
+    { width           : 100%
     }
-.zero-width
-    { width           : 0px
+a.ui-icon
+    { display:          inline-block
+    ; border-width:     0px !important
+    ; background-color: transparent !important
     }
-.first-button
-    { padding-left    : 1em
+.ui-3-icons-width
+    { width:            48px
     }
-
 /* error handling */
 .ui-state-error
     { padding         : 5px

@@ -69,12 +69,15 @@
 #    14-Jul-2010 (CT) `Changer.rendered` changed to `Redirect_302`
 #                     identically for boith `submit` and `cancel`
 #     5-Aug-2010 (CT) Support for `composite.field` added
+#     6-Aug-2010 (MG) `Changer.rendered` use a nested change to make it
+#                     possible to undo all changes done in this form in one step
+#     8-Aug-2010 (MG) `Test` changed
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
-from   _MOM.import_MOM          import Q
+from   _MOM.import_MOM          import MOM, Q
 
 import _GTW._Form._MOM.Instance
 
@@ -137,19 +140,22 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 )
             if request.method == "POST" :
                 err_count = 0
+                scope     = self.Form.scope
                 if req_data.get ("cancel") :
                     ### the user has clicked on the cancel button and not on
                     ### the submit button
-                    self.top.scope.rollback ()
+                    scope.rollback ()
                 else :
-                    err_count = form (req_data)
+                    with scope.nested_change_recorder \
+                        (MOM.SCM.Change.Undoable) :
+                            err_count = form (req_data)
                     if err_count == 0 :
                         man = self.parent.manager
                         if man :
                             man._old_cid = -1
                     else :
                         self._display_errors (form)
-                        self.top.scope.rollback ()
+                        scope.rollback       ()
                 if err_count == 0 :
                     tail = "#pk-%s" % (obj.pid) if obj else ""
                     raise HTTP.Redirect_302 \
@@ -260,16 +266,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return inline [0]
         # end def inline
 
-        def object (self, inline, pid) :
+        def object (self, inline, pid, request) :
             form_cls = inline.form_cls
             try :
                 return form_cls.et_man.pid_query (pid)
             except LookupError :
                 request.Error = \
                     ( _T ("%s `%s` doesn't exist!")
-                    % (_T (E_Type.ui_name), pid)
+                    % (_T (self.Form.et_man.ui_name), pid)
                     )
-                raise HTTP.Error_404 (request.path, request.Error)
+                raise self.top.HTTP.Error_404 (request.path, request.Error)
         # end def object
 
     # end class _Inline_
@@ -293,7 +299,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request = handler.request
             inline = self.inline ()
             if inline :
-                obj  = self.object (inline, request.req_data.get ("pid"))
+                obj  = self.object \
+                    (inline, request.req_data.get ("pid"), request)
                 data = GTW.Form.MOM.Javascript.Completer.form_as_dict \
                     (inline.form_cls (obj))
                 data ["ui_display"] = getattr (obj, "ui_display", u"")
@@ -326,27 +333,27 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         """
 
         def rendered (self, handler, template = None) :
-            request  = handler.request
-            inline   = self.inline ()
-            if inline :
-                req_data = request.req_data
-                no       = req_data.get ("__FORM_NO__")
-                try :
-                    form   = inline.test (no, req_data)
-                    if form.error_count () :
-                        handler.context ["form"] = form
-                        result = self.__super.rendered (handler, template)
-                    else :
-                        handler.context ["inline"]   = inline
-                        handler.context ["iform"]    = form
-                        handler.context ["no"]       = no
-                        handler.context ["NEW_FORM"] = \
-                            req_data.get ("__NEW__") == "true"
-                        result = self.top.Templateer.render_string \
-                            (self.template_string, handler.context).strip ()
-                finally :
-                    form.et_man.home_scope.rollback ()
-                return result
+            request          = handler.request
+            master_form      = self.Form.Test_Inline (self.abs_href)
+            req_data         = request.req_data
+            no               = int (req_data.get ("__FORM_NO__", "-1"))
+            try :
+                inline, form = master_form.test_inline \
+                    (req_data, self.forms [0], no)
+                if form.error_count () :
+                    handler.context ["form"] = form
+                    result   = self.__super.rendered (handler, template)
+                else :
+                    handler.context ["inline"]   = inline
+                    handler.context ["iform"]    = form
+                    handler.context ["no"]       = no
+                    handler.context ["NEW_FORM"] = \
+                        req_data.get ("__NEW__") == "true"
+                    result   = self.top.Templateer.render_string \
+                        (self.template_string, handler.context).strip ()
+            finally :
+                self.Form.scope.rollback ()
+            return result
         # end def rendered
 
     # end class Test

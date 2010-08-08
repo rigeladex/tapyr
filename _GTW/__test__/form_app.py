@@ -38,8 +38,9 @@
 from   _GTW.__test__.model import MOM, GTW, Scaffold
 from   _JNJ                import JNJ
 import _GTW._NAV.import_NAV
-import _GTW.Media
 import _GTW.jQuery
+import _GTW._NAV.Console
+import _GTW.Media
 import _GTW.File_Session
 import _GTW._Werkzeug
 import _JNJ.Templateer
@@ -105,13 +106,17 @@ GTW.OMP.SRM.Nav.Admin.Regatta_C ["Form_kw"] = dict \
 
 def fixtures (scope) :
     PAP   = scope.PAP
+    SWP   = scope.SWP
+    EVT   = scope.EVT
+    MOM   = scope.MOM
     scope.Auth.Account_Anonymous (u"anonymous")
     p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
     p = scope.PAP.Person (u"Glücklos",  u"Eddy", raw = True)
-    p = scope.PAP.Person (u"Glück",     u"Martin", raw = True)
+    p = scope.PAP.Person (u"Glueck",    u"Martin", raw = True)
     a = PAP.Address      (u"Langstrasse 4", u"2244", u"Spannberg", u"Austria", raw = True)
     scope.PAP.Person_has_Address (p, a, desc = "Home")
     a = PAP.Address      (u"Oberzellergasse 14", u"1030", u"Wien", u"Austria", raw = True)
+    scope.PAP.Person_has_Address (p, a, desc = "Wien")
     ### scope.PAP.Person_has_Address (p, a, desc = "Wien")
     ph = scope.PAP.Phone         ("43", "1", "123456")
     scope.PAP.Person_has_Phone   (p, ph, desc = "dummy")
@@ -119,6 +124,10 @@ def fixtures (scope) :
     bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
     re  = SRM.Regatta_Event \
         (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
+
+    page = SWP.Page \
+        (perma_name = "test-page", text = "Test Page with an event", creator= p)
+    EVT.Event (page, MOM.Date_Interval (start = "2010-01-01", raw = True))
     scope.commit                 () ### commit my `fixtures`
 # end def fixtures
 
@@ -205,6 +214,9 @@ def nav ( cmd
         , DB_Url                = DB_Url
         , App_Type              = App_Type
         )
+    if getattr (cmd, "create", False) :
+        from model import Scaffold
+        result.scope = Scaffold.scope (DB_Url.value, create = True)
     result.add_entries \
         ( [
             dict
@@ -220,6 +232,7 @@ def nav ( cmd
                   , GTW.OMP.SRM.Nav.Admin.Boat_Class
                   , GTW.OMP.SRM.Nav.Admin.Regatta_C
                   , GTW.OMP.SRM.Nav.Admin.Regatta_Event
+                  , GTW.OMP.SWP.Nav.Admin.Page
                   ]
               , Type            = GTW.NAV.Site_Admin
               )
@@ -241,6 +254,12 @@ def nav ( cmd
                   ( de          = "AT")
               )
           , dict
+              ( src_dir         = _ ("Console")
+              , name            = "Console"
+              , title           = _ (u"Console")
+              , Type            = GTW.NAV.Console
+              )
+          , dict
               ( name            = "file-upload.html"
               , title           =
                 _ (u"File upload test")
@@ -260,6 +279,7 @@ def wsgi (cmd, app_type, db_url) :
             , domains    = ("messages", )
             , use        = "de"
             , locale_dir = ldir
+            , log_level  = 0
             )
     except ImportError :
         pass

@@ -90,6 +90,10 @@ class Scaffold (GTW.OMP.Scaffold) :
         ( "-config:C=~/.gtw-test.config?File specifying defaults for options"
         ,
         )
+    cmd__wsgi__opts       = \
+        ( "create:B=Run the fixtures function"
+        ,
+        )
     Backend_Parameters    = dict \
         ( HPS             = "'hps://'"
         , SQL             = "'sqlite://'"

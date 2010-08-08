@@ -70,8 +70,6 @@
               self._update_icon (evt, true);
               return false;
             });
-        if (this.element.hasClass ("ui-icon"))
-            this.element.addClass ("ui-helper-reset");
         this._update_icon (undefined, false);
       }
     , _update_icon : function (evt, trigger)
