@@ -95,6 +95,8 @@
 #                     to put `a` instead of `a.attr` into `P._syntax_checks`
 #    24-Jun-2010 (CT) `db_sig` added
 #     5-Aug-2010 (CT) Property `M_E_Type.Class` added
+#     9-Aug-2010 (CT) `M_E_Type_Id._m_setup_sorted_by` changed to handle
+#                     `_A_Composite_` attributes properly
 #    ««revision-date»»···
 #--
 
@@ -722,6 +724,9 @@ class M_E_Type_Id (M_E_Type) :
                         ### Class is to abstract: need to use `cls.sort_key`
                         sbs = [cls.sort_key]
                         break
+                elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
+                    sbs.extend \
+                        ("%s.%s" % (pka.name, x) for x in pka.Class.sorted_by)
                 else :
                     sbs.append (pka.name)
         sb = TFL.Sorted_By (* (sbs or [cls.sort_key]))

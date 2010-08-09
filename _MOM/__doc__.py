@@ -839,7 +839,7 @@ The app-type specific entity-types are ready to be used by
     BMT.Supertrap
         ('name', 'serial_no')
     BMT.Rodent_is_sick
-        ('left.name', 'sick_leave')
+        ('left.name', 'sick_leave.start')
     BMT.Rodent_in_Trap
         ('left.name', 'right.name', 'right.serial_no')
     BMT.Person_owns_Trap
