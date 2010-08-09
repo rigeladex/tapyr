@@ -151,14 +151,6 @@ class Scaffold (GTW.OMP.Scaffold) :
         return wsgi (cmd, apt, url)
     # end def do_wsgi
 
-    @classmethod
-    def _create_scope (cls, apt, url) :
-        from form_app import fixtures
-        result = super (Scaffold, cls)._create_scope (apt, url)
-        fixtures       (result)
-        return result
-    # end def _create_scope
-
 # end class Scaffold
 
 Scope = Scaffold.scope

@@ -31,6 +31,8 @@
 #                     and GTW.Tornado.Request_Handler)
 #    23-Jun-2010 (MG) `s/anonymous/anonymous_account/`
 #    23-Jul-2010 (MG) `add_notification` added
+#     9-Aug-2010 (MG) `_NAV_Request_Handler_._handle_request` scope rollback
+#                     in case of exceptions added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +51,7 @@ import  hmac
 import  logging
 import  time
 import  json
+import  sys
 
 class _Request_Handler_ (object) :
     """Mixin for request hanlders."""
@@ -133,10 +136,21 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         scope  = getattr (top, "scope", None)
         result = (None, None)
         try :
-            top.universal_view (self)
-        except top.HTTP._Redirect_, redirect :
-            result = redirect, top
-        self.finish_request (scope)
+            try :
+                top.universal_view (self)
+            except top.HTTP._Redirect_, redirect :
+                result = redirect, top
+            ### reassigning the scope prevent's from executing the rollback
+            ### from the finally clause in case the commit in
+            ### `finish_request` works
+            scope = self.finish_request (scope)
+        finally :
+            if scope :
+                print >> sys.stderr\
+                    , ( ">>> Exception during request handling, rolling "
+                        "back the database"
+                      )
+                scope.rollback ()
         return result
     # end def _handle_request
 
