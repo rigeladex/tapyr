@@ -39,6 +39,7 @@
 #     7-May-2010 (MG) `MOM_Query.__init__` inherit `_query_fct` dict as well
 #    12-May-2010 (MG) New `pid` style
 #     5-Aug-2010 (MG) `MOM_Composite_Query.__ne__, __eq__` fixed
+#    10-Aug-2010 (MG) Missing `_SA_TABLE` attributes added
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ class Query (TFL.Meta.Object) :
     def __init__ (self, cls, sa_table, ** attr_map) :
         cls._SAQ              = self
         self._CLASS           = cls
+        self._SA_TABLE        = sa_table
         self._ID_ENTITY_ATTRS = dict ()
         columns               = sa_table.columns
         for col in columns :
@@ -124,7 +126,8 @@ class MOM_Query (_MOM_Query_) :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
-                comp_query = MOM_Composite_Query (e_type, attr.C_Type, kind)
+                comp_query = MOM_Composite_Query \
+                    (e_type, attr.C_Type, kind, sa_table)
                 self._add_q (comp_query, name, attr.ckd_name)
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind, attr))
@@ -176,8 +179,9 @@ class MOM_Query (_MOM_Query_) :
 class MOM_Composite_Query (_MOM_Query_) :
     """Query attributes of an composite attribite"""
 
-    def __init__ (self, owner_etype, e_type, kind) :
+    def __init__ (self, owner_etype, e_type, kind, sa_table) :
         self._E_TYPE      = e_type
+        self._SA_TABLE    = sa_table
         prefix            = kind._sa_prefix
         db_attrs, columns = e_type._sa_save_attrs.pop \
             ((owner_etype.type_name, kind.attr.name))

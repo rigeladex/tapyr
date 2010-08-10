@@ -33,6 +33,8 @@
 #     5-May-2010 (MG) `_join`and `_inner_join` added
 #     7-May-2010 (MG) `_joins` changed: joins is now a list instead of a set
 #    12-May-2010 (MG) New pid style
+#    10-Aug-2010 (MG) `order_by`: add the columns used for the order clause
+#                     to the select statement
 #    ««revision-date»»···
 #--
 
@@ -147,6 +149,8 @@ class Q_Result (TFL.Meta.Object) :
             joins               = ()
             order_clause        = (criterion, )
         sa_query                = self._joins (joins)
+        for oc in order_clause :
+            sa_query.append_column (oc)
         return self.__class__ \
             (self.e_type, self.session, sa_query.order_by (* order_clause))
     # end def order_by

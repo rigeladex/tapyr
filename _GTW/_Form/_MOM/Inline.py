@@ -125,7 +125,7 @@ class Link_Inline (TFL.Meta.Object) :
         except KeyError :
             owner     = self.owner
             if owner.instance :
-                count = self.min_empty + self.linked_instances.count ()
+                count = self.min_empty + len (self.linked_instances)
         return min \
             (self.max_count, max (self.min_count, self.min_required, count))
     # end def form_count
@@ -188,8 +188,8 @@ class Link_Inline (TFL.Meta.Object) :
             return et_man.query \
                 ( sort_key = et_man.sorted_by
                 , ** {self.own_role_name : self.owner.instance}
-                )
-        return TFL.Q_Result (())
+                ).all ()
+        return ()
     # end def linked_instances
 
     def initial_pid_and_state (self, link, no) :
@@ -329,8 +329,7 @@ class Collection_Inline (Link_Inline) :
 
     @TFL.Meta.Once_Property
     def linked_instances (self) :
-        return TFL.Q_Result \
-            (getattr (self.owner.instance, self.link_name) or ())
+        return getattr (self.owner.instance, self.link_name)
     # end def linked_instances
 
     @TFL.Meta.Once_Property
@@ -341,7 +340,7 @@ class Collection_Inline (Link_Inline) :
         form_cls       = self.form_cls
         prototype      = self.owner.prototype
         result         = []
-        instances      = self.linked_instances.all ()
+        instances      = self.linked_instances
         for no in xrange (count) :
             if instances :
                 instance = instances.pop (0)

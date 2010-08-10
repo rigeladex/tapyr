@@ -31,6 +31,7 @@
 #     3-May-2010 (MG) Add support for joins for filtering
 #     7-May-2010 (MG) Join handling changed (is now a list instead of a set
 #                     to keep join order)
+#    10-Aug-2010 (MG) `TFL.Q_Exp.Get._sa_filter` fixed
 #    ««revision-date»»···
 #--
 
@@ -47,14 +48,22 @@ SAS_Attr_Map = dict \
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
 def _sa_filter (self, SAQ) :
+    joins      = []
     attr       = self.name.split (".", 1) [0]
     _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr, None)
     if _sa_filter :
         return _sa_filter (self.name)
     result = SAS_Attr_Map.get (self.name, self.getter) (SAQ)
     if isinstance (result, (list, tuple)) :
-        return result
-    return (), (result, )
+        joins, columns = result
+    else :
+        columns        = (result, )
+        col            = columns [0]
+        ### if the column is not in the table the SAQ object is linked to ->
+        ### add a join to correct table as well
+        if col.table != SAQ._SA_TABLE :
+           joins.append ((SAQ._SA_TABLE, col.table))
+    return joins, columns
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)

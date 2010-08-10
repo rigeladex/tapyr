@@ -29,6 +29,7 @@
 # Revision Dates
 #    30-Apr-2010 (MG) Creation
 #     7-May-2010 (MG) `sail_number` is now a numeric string
+#    10-Aug-2010 (MG) Additional test added
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,11 @@ _composite = r"""
     >>> for e in q.all () : print e
     ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
     ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
-"""
+
+    >>> for e in EVT.Event.query (sort_key = EVT.Event.sorted_by) :
+    ...     print e
+    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())"""
 
 _link1_role = r"""
     >>> scope = Scaffold.scope ("sqlite://")

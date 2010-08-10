@@ -50,6 +50,7 @@
 #                     (and ported to use TFL.CAO instead of TFL.Command_Line)
 #    22-Jun-2010 (CT) Use `TFL.CAO.put_keywords` instead of
 #                     `TFL.CAO.do_keywords` and home-grown code
+#    10-Aug-2010 (MG) Use double quotes instance of %r to please windoof
 #    ««revision-date»»···
 #--
 
@@ -91,10 +92,10 @@ def run_command (cmd, regex = False) :
     if regex :
         while subp.poll () is None :
             out, err = subp.communicate ()
-            sys.stdout.write (out)
+            sys.stdout.write            (out)
         try :
             out, err = subp.communicate ()
-            sys.stdout.write (out)
+            sys.stdout.write            (out)
         except ValueError :
             pass
         if out and regex.match (out.split ("\n") [-2]) :
@@ -149,7 +150,7 @@ def _main (cmd) :
             path = " -path %r" % (",".join (cmd_path), )
         if sys.flags.optimize :
             optimize = "-%s" % ("O" * sys.flags.optimize, )
-        head = "%s %s %s -format %r%s%s" % \
+        head = """%s %s %s -format "%s"%s%s""" % \
             ( sys.executable
             , optimize
             , sos.path.join
