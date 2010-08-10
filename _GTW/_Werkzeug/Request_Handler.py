@@ -68,7 +68,7 @@ def _time_independent_equals (l, r) :
 class Request_Handler (GTW._Request_Handler_) :
     """Extended Request."""
 
-    __metaclass__ = TFL.Meta.M_Class
+    __metaclass__             = TFL.Meta.M_Class
 
     _real_name                = "Request"
     secure_cookie_exipre_time = 31 * 86400
@@ -76,6 +76,7 @@ class Request_Handler (GTW._Request_Handler_) :
 
     Request_Class             = BaseRequest
     Response_Class            = Response
+
     def __init__ (self, application, environ) :
         self.application = application
         self.request     = self.Request_Class  (environ)
