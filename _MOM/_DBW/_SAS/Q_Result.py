@@ -150,7 +150,7 @@ class Q_Result (TFL.Meta.Object) :
             order_clause        = (criterion, )
         sa_query                = self._joins (joins)
         for oc in order_clause :
-            sa_query.append_column (oc)
+            sa_query.append_column (getattr (oc, "element", oc))
         return self.__class__ \
             (self.e_type, self.session, sa_query.order_by (* order_clause))
     # end def order_by
