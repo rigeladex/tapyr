@@ -37,6 +37,7 @@
 #    12-Jul-2010 (CT) `do_migrate` changed to use `DB_Man`
 #     2-Aug-2010 (CT) `cmd__buns` added
 #     3-Aug-2010 (MG) Sub-command `shell` added
+#    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
 #    ««revision-date»»···
 #--
 
@@ -100,7 +101,6 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         """Sub-command for database creation."""
         return TFL.CAO.Cmd \
             ( name        = "create"
-            , description = "Create database specified by `-db_url`."
             , handler     = cls.__do_create
             , opts        = cls.cmd__create__opts
             )
@@ -111,7 +111,6 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         """Sub-command for database loading."""
         return TFL.CAO.Cmd \
             ( name        = "load"
-            , description = "Load database specified by `-db_url`."
             , handler     = cls.__do_load
             , opts        = cls.cmd__load__opts
             )
@@ -122,8 +121,6 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         """Sub-command for database migration."""
         return TFL.CAO.Cmd \
             ( name        = "migrate"
-            , description =
-                "Migrate database specified by `-db_url` to `-target_db_url`"
             , handler     = cls.__do_migrate
             , opts        = cls.cmd__migrate__opts
             )
@@ -134,7 +131,6 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         """Sub-command for an interactive interpreter shell."""
         return TFL.CAO.Cmd \
             ( name        = "shell"
-            , description = "Open interactive python shell."
             , handler     = cls.__do_shell
             , opts        = cls.cmd__shell__opts
             )
@@ -158,22 +154,22 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     # end def cmd__base__opts
 
     def __do_create (cls, cmd) :
-        """Handler for sub-command `create`."""
+        """Create database specified by `-db_url`."""
         return cls.do_create (cmd)
     # end def __do_create
 
     def __do_load (cls, cmd) :
-        """Handler for sub-command `load`."""
+        """Load database specified by `-db_url`."""
         return cls.do_load (cmd)
     # end def __do_load
 
     def __do_migrate (cls, cmd) :
-        """Handler for sub-command `migrate`."""
+        """Migrate database specified by `-db_url` to `-target_db_url`."""
         return cls.do_migrate (cmd)
     # end def __do_migrate
 
     def __do_shell (cls, cmd) :
-        """Handler for sub-command `shell`."""
+        """Open interactive python shell."""
         return cls.do_shell (cmd)
     # end def __do_shell
 
@@ -268,16 +264,6 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         url = DBS.Url (db_url, cls.ANS, default_path)
         return apt, url
     # end def app_type_and_url
-
-    @classmethod
-    def do_copy (cls, cmd) :
-        src_scope = cls.do_load          (cmd)
-        apt, url  = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
-        if cmd.overwrite :
-            apt.delete_database          (url)
-        trg_scope = src_scope.copy       (apt, url)
-        trg_scope.destroy ()
-    # end def do_copy
 
     @classmethod
     def do_create (cls, cmd) :

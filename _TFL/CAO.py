@@ -66,6 +66,8 @@
 #                       `Cmd.parse` and `.use`
 #                     * `Cmd._handle_arg` and `._handle_opt` moved to `CAO`
 #     2-Aug-2010 (CT) `Help` for `Bundle` added
+#    10-Aug-2010 (CT) `Cmd.__init__` changed to optionally take `description`
+#                     from `handler.__doc__`
 #    ««revision-date»»···
 #--
 
@@ -930,7 +932,7 @@ class Cmd (TFL.Meta.Object) :
         self._bun_spec      = buns
         self._min_args      = min_args
         self._max_args      = max_args
-        self._description   = description
+        self._description   = description or getattr (handler, "__doc__", "")
         self._name          = name or TFL.Environment.script_name ()
         self._do_keywords   = do_keywords or put_keywords
         self._put_keywords  = put_keywords

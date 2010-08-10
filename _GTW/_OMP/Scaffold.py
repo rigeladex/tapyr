@@ -32,6 +32,7 @@
 #    29-Jun-2010 (CT) `HTTP_Opt` changed to `_Import_Module ("Application")`
 #    29-Jun-2010 (CT) Command for `wsgi` added
 #     3-Aug-2010 (MG) Additional options added to `shell` sub-command
+#    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
 #    ««revision-date»»···
 #--
 
@@ -78,7 +79,6 @@ class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
         """Sub-command for running the application server"""
         return TFL.CAO.Cmd \
             ( name        = "run_server"
-            , description = "Run the application server."
             , handler     = cls.__do_run_server
             , opts        = cls.cmd__run_server__opts
             )
@@ -89,19 +89,18 @@ class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
         """Sub-command for running as wsgi application"""
         return TFL.CAO.Cmd \
             ( name        = "wsgi"
-            , description = "Run as wwsgi application."
             , handler     = cls.__do_wsgi
             , opts        = cls.cmd__wsgi__opts
             )
     # end def cmd__run_server
 
     def __do_run_server (cls, cmd) :
-        """Handler for sub-command `run_server`."""
+        """Run as application server."""
         return cls.do_run_server (cmd)
     # end def __do_run_server
 
     def __do_wsgi (cls, cmd) :
-        """Handler for sub-command `wsgi`."""
+        """Run as wsgi application."""
         return cls.do_wsgi (cmd)
     # end def __do_wsgi
 
