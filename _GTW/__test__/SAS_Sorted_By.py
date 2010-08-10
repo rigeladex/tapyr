@@ -30,12 +30,13 @@
 #    30-Apr-2010 (MG) Creation
 #     7-May-2010 (MG) `sail_number` is now a numeric string
 #    10-Aug-2010 (MG) Additional test added
+#    10-Aug-2010 (MG) Test changed to allow different backends
 #    ««revision-date»»···
 #--
 
 _composite = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> EVT = scope.EVT
     >>> SWP = scope.SWP
     >>> p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
@@ -44,9 +45,6 @@ _composite = r"""
     ...     (p1.epk_raw, dict (start = "1.2.2010", raw = True), raw = True)
     >>> e2 = EVT.Event \
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
-    >>> for e in EVT.Event.query ().all () : print e
-    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
     >>> q = EVT.Event.query ().order_by (TFL.Sorted_By (Q.date.start))
     >>> for e in q.all () : print e
     ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
@@ -59,11 +57,13 @@ _composite = r"""
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By ("-date.start")) :
     ...     print e
+    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
 
 """
 _link1_role = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> EVT = scope.EVT
     >>> SWP = scope.SWP
     >>> p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
@@ -83,8 +83,8 @@ _link1_role = r"""
 """
 
 _link2_link1 = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
@@ -116,8 +116,8 @@ _link2_link1 = r"""
 """
 
 _query_attr = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> PAP  = scope.PAP
     >>> SRM  = scope.SRM
     >>> bc   = SRM.Boat_Class ("Optimist", max_crew = 1)
@@ -137,10 +137,6 @@ _query_attr = r"""
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> q = SRM.Regatta_C.query ()
-    >>> for r in q : print r.year, r
-    2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
-    2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
     >>> for r in q.order_by (Q.year) : print r.year, r
     2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
@@ -152,11 +148,13 @@ _query_attr = r"""
 """
 
 if 1 :
-    __test__ = dict \
-        ( composite   = _composite
-        , link1_role  = _link1_role
-        , link2_link1 = _link2_link1
-        , query_attr  = _query_attr
+    from _GTW.__test__.model import *
+    __test__ = Scaffold.create_test_dict \
+        ( dict ( composite   = _composite
+               , link1_role  = _link1_role
+               , link2_link1 = _link2_link1
+               , query_attr  = _query_attr
+               )
         )
 else :
     #__doc__ = _composite
@@ -167,7 +165,7 @@ else :
 from _GTW.__test__.model import *
 from _MOM.import_MOM     import Q
 
-if __name__ == "__main__" :
+if __name__ == "__main__11" :
     import doctest, SAS_Sorted_By
     TFL.Environment.exec_python_startup ()
     exec (doctest.testsource (SAS_Sorted_By, "SAS_Sorted_By.test"))

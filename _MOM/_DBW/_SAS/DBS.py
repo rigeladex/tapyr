@@ -35,6 +35,7 @@
 #     2-Aug-2010 (MG) Support for dropping the tables instead of droping the
 #                     database added
 #     3-Aug-2010 (MG) Handle error of `meta.reflect` in `delete_database`
+#    10-Aug-2010 (MG) `Postgresql._drop_database_content` fixed
 #    ««revision-date»»···
 #--
 
@@ -180,7 +181,7 @@ class Postgresql (_NFB_) :
 
     @classmethod
     def _drop_database_content (cls, engine, meta) :
-        cls.__m_super._drop_database_content (engine, meta)
+        super (Postgresql, cls)._drop_database_content (engine, meta)
         ### now we need to drop everything we created with the
         ### knowledge of sqlalchemy
         engine.execute ("DROP SEQUENCE pid_seq")

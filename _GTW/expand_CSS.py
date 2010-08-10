@@ -222,6 +222,7 @@ def main (cmd) :
             import pyinotify
         except ImportError :
             pyinotify = None
+            print "pyinotify not found, fall back to polling"
         for d in cmd.watch_directories :
             CSS_Template.find_templates (pyinotify is None, d, False)
         for t in CSS_Template.templates.itervalues () :
