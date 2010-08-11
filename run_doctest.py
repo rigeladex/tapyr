@@ -43,14 +43,16 @@
 #    18-Dec-2009 (CT) `-nodiff` added to disable `doctest.REPORT_NDIFF`
 #    29-Apr-2010 (MG) Support for running the doctest in optimized mode added
 #    12-May-2010 (MG) Summary generation added
-#    12-May-2010 (CT) Summary generation fixed
-#    12-May-2010 (MG) Summary generation fixed if some test fails
 #    17-May-2010 (CT) `failures` added to `_main`
 #    19-May-2010 (CT) Support for keywords->environment added
 #                     (and ported to use TFL.CAO instead of TFL.Command_Line)
 #    22-Jun-2010 (CT) Use `TFL.CAO.put_keywords` instead of
 #                     `TFL.CAO.do_keywords` and home-grown code
-#    10-Aug-2010 (MG) Use double quotes instance of %r to please windoof
+#    11-Aug-2010 (CT) Summary generation totally revamped
+#    11-Aug-2010 (CT) `_main` changed to avoid starting subprocesses for
+#                     directory traversal (factored and changed `run_dir`)
+#    11-Aug-2010 (CT) Option `-format` replaced by module-level variables
+#                     `format_f` and `format_s`
 #    ««revision-date»»···
 #--
 
@@ -70,7 +72,26 @@ import  sys
 import  subprocess
 import  os
 
-_doctest_pat = Regexp (r"^ *>>> ", re.MULTILINE)
+TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
+
+_doctest_pat   = Regexp (r"^ *>>> ", re.MULTILINE)
+
+summary        = TFL.Record \
+    ( failed   = 0
+    , failures = []
+    , modules  = 0
+    , total    = 0
+    )
+
+format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
+format_s = """%(module.__file__)s passes all of %(t)s doc-tests"""
+format_x = """%s raises exception `%r` during doc-tests"""
+sum_pat  = Regexp \
+    ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
+      "(?P<total>\d+) doc-tests"
+    )
+exc_pat  = Regexp \
+    ("(?P<module>.*?) raises exception `(?P<exc>[^`]+)` during doc-tests")
 
 def has_doctest (fn) :
     with open (fn, "rb") as f :
@@ -78,40 +99,48 @@ def has_doctest (fn) :
     return _doctest_pat.search (code)
 # end def has_doctest
 
-def run_command (cmd, regex = False) :
-    kw = dict ()
-    t  = f = "0"
-    if regex :
-        kw ["stdout"] = subprocess.PIPE
-    subp = subprocess.Popen \
-        ( cmd
-        , shell = True
-        , env   = dict (os.environ)
-        , ** kw
-        )
-    if regex :
-        while subp.poll () is None :
-            out, err = subp.communicate ()
-            sys.stdout.write            (out)
-        try :
-            out, err = subp.communicate ()
-            sys.stdout.write            (out)
-        except ValueError :
-            pass
-        if out and regex.match (out.split ("\n") [-2]) :
-            f = regex.failed
-            t = regex.total
-    else :
-        subp.wait ()
-    return f, t
+def run_command (cmd) :
+    subp = subprocess.Popen (cmd, shell = True, env = dict (os.environ))
+    subp.wait ()
 # end def run_command
 
-TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
+def _subp_step (subp) :
+    try :
+        out, err = subp.communicate ()
+    except ValueError :
+        pass
+    else :
+        sys.stdout.write (out)
+        sys.stderr.write (err)
+        if err :
+            for l in err.split ("\n") :
+                if sum_pat.match (l) :
+                    summary.total += int (sum_pat.total)
+                    f = int (sum_pat.failed or 0)
+                    if f :
+                        summary.failed += f
+                        summary.failures.append ((sum_pat.module, f))
+                elif exc_pat.match (l) :
+                    summary.failed += 1
+                    summary.total  += 1
+                    summary.failures.append \
+                        ((exc_pat.module, "Exception %s" % (exc_pat.exc, )))
+# end def _subp_step
 
-total = failed = 0
+def run_command_with_summary (cmd) :
+    subp = subprocess.Popen \
+        ( cmd
+        , shell   = True
+        , env     = dict (os.environ)
+        , stderr  = subprocess.PIPE
+        , stdout  = subprocess.PIPE
+        )
+    while subp.poll () is None :
+        _subp_step (subp)
+    _subp_step (subp)
+# end def run_command_with_summary
 
 def _main (cmd) :
-    format   = cmd.format
     cmd_path = list (cmd.path or [])
     replacer = Re_Replacer (r"\.py[co]", ".py")
     a        = cmd.argv [0]
@@ -128,7 +157,7 @@ def _main (cmd) :
         else :
             flags = doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
         try :
-            module = __import__      (m)
+            module = __import__ (m)
             f, t   = doctest.testmod \
                 ( module
                 , verbose     = 0
@@ -137,71 +166,69 @@ def _main (cmd) :
         except KeyboardInterrupt :
             raise
         except StandardError, exc :
-            print "Testing of %s resulted in exception" % (replacer (a), )
+            print >> sys.stderr, format_x % (replacer (a), exc)
             raise
         else :
-            print replacer (format % TFL.Caller.Scope ())
+            format = format_f if f else format_s
+            print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
     else :
-        regexp = None
-        path   = nodiff = optimize = ""
+        path = nodiff = optimize = ""
         if cmd.nodiff :
-            nodiff = "-nodiff"
+            nodiff = " -nodiff"
         if cmd_path :
             path = " -path %r" % (",".join (cmd_path), )
         if sys.flags.optimize :
-            optimize = "-%s" % ("O" * sys.flags.optimize, )
-        head = """%s %s %s -format "%s"%s%s""" % \
-            ( sys.executable
-            , optimize
-            , sos.path.join
-                  (Environment.script_path (), Environment.script_name ())
-            , format
-            , path
-            , nodiff
+            optimize = " -%s" % ("O" * sys.flags.optimize, )
+        script = sos.path.join \
+            (Environment.script_path (), Environment.script_name ())
+        head = """%s%s %s%s%s""" % \
+            ( sys.executable, optimize
+            , script, path, nodiff
             )
         if cmd.summary :
-            t      = "(?P<total>\d+)"
-            f      = "(?P<failed>\d+)"
-            module = TFL.Record (__file__ = ".+?")
-            regexp = Regexp \
-                (cmd.format % TFL.Caller.Scope (module = module))
-        failures = []
-        def run (a) :
-            global total, failed
-            f, t    = tuple \
-                (int (x) for x in run_command ("%s %s" % (head, a), regexp))
-            failed += f
-            total  += t
-            if f :
-                failures.append ((a, f))
+            run_cmd = run_command_with_summary
+        else :
+            run_cmd = run_command
+        def run_mod (a) :
+            summary.modules += 1
+            run_cmd ("%s %s" % (head, a))
+        def run_mods (d) :
+            for f in sorted (sos.listdir_exts (d, ".py")) :
+                if has_doctest (f) :
+                    run_mod (f)
+        if cmd.transitive :
+            from _TFL.subdirs import subdirs
+            def run_dir (d) :
+                run_mods (d)
+                for s in subdirs (d) :
+                    run_dir (s)
+        else :
+            run_dir = run_mods
         for a in cmd.argv :
             if sos.path.isdir (a) :
-                for f in sorted (sos.listdir_exts (a, ".py")) :
-                    if has_doctest (f) :
-                        run (f)
-                if cmd.transitive :
-                    from _TFL.subdirs import subdirs
-                    for d in subdirs (a) :
-                        run (d)
+                run_dir (a)
             else :
                 if has_doctest (a) :
-                    run (a)
+                    run_mod (a)
         if cmd.summary :
+            format = format_f if summary.failed else format_s
             print "=" * 79
-            print "%s fails %d tests of %d doc-tests\n    %s" % \
-                ( " ".join (cmd.argv), failed, total
-                , "\n    ".join ("%-68s : %d" % f for f in failures)
-                )
+            print format % TFL.Caller.Scope \
+                ( f      = summary.failed
+                , module = TFL.Record (__file__ = " ".join (cmd.argv))
+                , t      = summary.total
+                ), "[%s/%s modules fail]" % \
+                (len (summary.failures), summary.modules)
+            print "    %s" % \
+                ("\n    ".join ("%-68s : %s" % f for f in summary.failures))
 # end def _main
 
 _Command = TFL.CAO.Cmd \
     ( handler      = _main
     , args         = ("module:P?Module(s) to test", )
     , opts         =
-        ( "format:S="
-             """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
-        , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
-        , "path:P?Path to add to sys.path"
+        ( "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
+        , "path:P:?Path to add to sys.path"
         , "summary:B?Summary of failed tests"
         , "transitive:B"
             "?Include all subdirectories of directories specified "

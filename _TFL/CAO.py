@@ -932,7 +932,8 @@ class Cmd (TFL.Meta.Object) :
         self._bun_spec      = buns
         self._min_args      = min_args
         self._max_args      = max_args
-        self._description   = description or getattr (handler, "__doc__", "")
+        self._description   = \
+            description or getattr (handler, "__doc__", "") or ""
         self._name          = name or TFL.Environment.script_name ()
         self._do_keywords   = do_keywords or put_keywords
         self._put_keywords  = put_keywords
