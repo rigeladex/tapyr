@@ -160,7 +160,7 @@ def _main (cmd) :
             module = __import__ (m)
             f, t   = doctest.testmod \
                 ( module
-                , verbose     = 0
+                , verbose     = cmd.verbose
                 , optionflags = flags
                 )
         except KeyboardInterrupt :
@@ -172,18 +172,20 @@ def _main (cmd) :
             format = format_f if f else format_s
             print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
     else :
-        path = nodiff = optimize = ""
+        path = nodiff = optimize = verbose = ""
         if cmd.nodiff :
-            nodiff = " -nodiff"
+            nodiff  = " -nodiff"
+        if cmd.verbose:
+            verbose = " -verbose"
         if cmd_path :
             path = " -path %r" % (",".join (cmd_path), )
         if sys.flags.optimize :
             optimize = " -%s" % ("O" * sys.flags.optimize, )
         script = sos.path.join \
             (Environment.script_path (), Environment.script_name ())
-        head = """%s%s %s%s%s""" % \
+        head = """%s%s %s%s%s%s""" % \
             ( sys.executable, optimize
-            , script, path, nodiff
+            , script, path, nodiff, verbose
             )
         if cmd.summary :
             run_cmd = run_command_with_summary
@@ -233,6 +235,7 @@ _Command = TFL.CAO.Cmd \
         , "transitive:B"
             "?Include all subdirectories of directories specified "
               "as arguments"
+        , "verbose:B?Turn verbosity on"
         )
     , min_args     = 1
     , put_keywords = True
