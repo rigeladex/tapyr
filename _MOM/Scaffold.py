@@ -38,6 +38,7 @@
 #     2-Aug-2010 (CT) `cmd__buns` added
 #     3-Aug-2010 (MG) Sub-command `shell` added
 #    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
+#    11-Aug-2010 (CT) `cmd__info` and friends added
 #    ««revision-date»»···
 #--
 
@@ -107,6 +108,16 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     # end def cmd__create
 
     @TFL.Meta.Once_Property
+    def cmd__info (cls) :
+        """Sub-command displaying database info."""
+        return TFL.CAO.Cmd \
+            ( name        = "info"
+            , handler     = cls.__do_info
+            , opts        = cls.cmd__info__opts
+            )
+    # end def cmd__info
+
+    @TFL.Meta.Once_Property
     def cmd__load (cls) :
         """Sub-command for database loading."""
         return TFL.CAO.Cmd \
@@ -158,6 +169,11 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         return cls.do_create (cmd)
     # end def __do_create
 
+    def __do_info (cls, cmd) :
+        """Display info about database specified by `-db_url`."""
+        return cls.do_info (cmd)
+    # end def __do_info
+
     def __do_load (cls, cmd) :
         """Load database specified by `-db_url`."""
         return cls.do_load (cmd)
@@ -190,6 +206,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         ( "cmd__base__opts_x"
         , "cmd__buns"
         , "cmd__create__opts"
+        , "cmd__info__opts"
         , "cmd__load__opts"
         , "cmd__migrate__opts"
         , "cmd__shell__opts"
@@ -231,6 +248,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         ### the bundles `mig1` and `mig2` to work conventiently
         )
     cmd__create__opts     = ()
+    cmd__info__opts       = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
         ( "chunk_size:I=10000?Number of entities in one chunk"
@@ -239,7 +257,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         )
     cmd__shell__opts      = ()
     cmd__sub_commands     = \
-        ("cmd__create", "cmd__load", "cmd__migrate", "cmd__shell")
+        ("cmd__create", "cmd__info", "cmd__load", "cmd__migrate", "cmd__shell")
 
     @classmethod
     def app_type (cls, * ems_dbw) :
@@ -270,6 +288,17 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
         scope.destroy ()
     # end def do_create
+
+    @classmethod
+    def do_info (cls, cmd) :
+        apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        db_man   = cls.DB_Man.connect   (apt, url)
+        dbmd     = db_man.db_meta_data
+        print "Info for database", apt, url
+        for k in sorted (dbmd) :
+            print "%-12s : %s" % (k, dbmd [k])
+        db_man.destroy ()
+    # end def do_info
 
     @classmethod
     def do_load (cls, cmd) :
