@@ -58,6 +58,7 @@
 #     1-Jul-2010 (CT) `_Entity._restore` added
 #                     (default implementation does nothing -- `Copy` needs it)
 #    11-Aug-2010 (CT) `register` and handling for `last_cid` added
+#    11-Aug-2010 (MG) `last_cid` special handling added
 #    ««revision-date»»···
 #--
 
@@ -273,6 +274,7 @@ class _Entity_ (Undoable) :
 
     def _create (self, scope, attr) :
         etm = scope [self.type_name]
+        attr.pop ("last_cid", None) ### XXX ???
         result = etm (* self.epk, raw = True, last_cid = self.cid, ** attr)
         return result
     # end def _create
@@ -287,6 +289,7 @@ class _Entity_ (Undoable) :
         if attr :
             entity = self.entity (scope)
             if entity :
+                attr.pop ("last_cid", None) ### XXX ???
                 entity.set_raw (** attr)
                 if "last_cid" not in attr :
                     entity.last_cid = self.cid

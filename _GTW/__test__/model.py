@@ -100,6 +100,8 @@ class Scaffold (GTW.OMP.Scaffold) :
         , POS             = "'postgresql://regtest:regtest@localhost/regtest'"
         , MYS             = "'mysql://:@localhost/test'"
         )
+    Backend_Default_Path  = dict \
+        ( (k, None) for k in Backend_Parameters)
 
     @classmethod
     def combiner (cls, backends, bpt) :
@@ -109,7 +111,12 @@ class Scaffold (GTW.OMP.Scaffold) :
     # end def combiner
 
     @classmethod
-    def create_test_dict (cls, test_spec, backends = None, bpt = 1, combiner = None) :
+    def create_test_dict ( cls, test_spec
+                         , backends = None
+                         , bpt      = 1
+                         , combiner = None
+                         , ignore   = set ()
+                         ) :
         result = {}
         if backends is None :
             backends = sos.environ.get ("GTW_test_backends", ("HPS:SQL"))
@@ -119,9 +126,13 @@ class Scaffold (GTW.OMP.Scaffold) :
                 backends = list (p.strip () for p in backends.split (":"))
         if combiner is None :
             combiner = cls.combiner
+        if isinstance (ignore, basestring) :
+            ignore   = set ((ignore, ))
+        elif not isinstance (ignore, set) :
+            ignore   = set (ignore)
         if not isinstance (test_spec, dict) :
             test_spec = {"" : test_spec}
-        for w in combiner (backends, bpt) :
+        for w in combiner ((b for b in backends if b not in ignore), bpt) :
             for name, code in test_spec.iteritems () :
                 key = "_".join (p for p in (name, ) + w if p)
                 result [key] = code % dict (cls._backend_spec (w))
@@ -133,7 +144,11 @@ class Scaffold (GTW.OMP.Scaffold) :
         i = 0
         for b in backends :
             i += 1
-            for k, v in zip (("p", "n"), (cls.Backend_Parameters [b], None)) :
+            path = cls.Backend_Default_Path [b]
+            for k, v in zip \
+                    ( ("p",                        "n",  "BN")
+                    , (cls.Backend_Parameters [b], path, repr (b))
+                    ) :
                 yield ("%s%d" % (k, i), v)
     # end def _backend_spec
 

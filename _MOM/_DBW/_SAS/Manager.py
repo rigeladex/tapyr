@@ -72,11 +72,14 @@
 #     5-Jul-2010 (MG) `register_scope` and `load_root` moved into `Session`
 #    15-Jul-2010 (MG) SA Table for the scope is now attached to
 #                     `MOM.DBW.SAS._Session_`
+#    11-Aug-2010 (MG) `_create_session` changed to call passed method to load
+#                     or create the meta data
 #    ««revision-date»»···
 #--
 
 from   _TFL                      import TFL
 import _TFL.defaultdict
+import _TFL.Accessor
 from   _MOM                      import MOM
 import _MOM._DBW
 import _MOM._DBW._Manager_
@@ -135,11 +138,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         dbs.create_database          (db_url, cls)
         engine  = cls._create_engine (db_url.value)
         cls.metadata.create_all      (engine)
-        return cls._create_session   (engine, scope)
+        return cls._create_session   (engine, scope, TFL.Method.create)
     # end def create_database
 
     def connect_database (cls, db_url, scope) :
-        return cls._create_session (cls._create_engine (db_url.value), scope)
+        return cls._create_session \
+            (cls._create_engine (db_url.value), scope, TFL.Method.load_info)
     # end def connect_database
 
     def delete_database (cls, db_url) :
@@ -329,8 +333,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         MOM.DBW.SAS.Query (Table, Table)
     # end def _create_scope_table
 
-    def _create_session (self, engine, scope) :
-        return getattr (MOM.DBW.SAS, "Session_%s" % scope.ilk) (scope, engine)
+    def _create_session (self, engine, scope, method) :
+        result = getattr (MOM.DBW.SAS, "Session_%s" % scope.ilk) (scope, engine)
+        method           (result)
+        return result
     # end def _create_session
 
     def _setup_attr_kind_mixin (cls, kind, Mixin) :

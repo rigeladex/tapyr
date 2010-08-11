@@ -69,6 +69,8 @@
 #     2-Aug-2010 (MG) `_pickle_cargo_for_table` fixed
 #    11-Aug-2010 (CT) `_new_db_meta_data` factored and redefined for
 #                     `Session_PC`
+#    11-Aug-2010 (MG) `load_info` factored from `load_root`
+#    11-Aug-2010 (MG) `readonly` handling added
 #    ««revision-date»»···
 #--
 
@@ -145,6 +147,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def _gather_columns
 
     def insert (self, session, entity) :
+        session.write_access = True
         base_pks = dict (pid = entity.pid)
         pk_map   = self.e_type._sa_pk_base
         for b in self.bases :
@@ -157,6 +160,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def insert
 
     def insert_cargo (self, session, pid, pickle_cargo, type_name = None) :
+        session.write_access = True
         type_name = type_name or self.e_type.type_name
         for b in self.bases :
             b._SAS.insert_cargo (session, pid, pickle_cargo, type_name)
@@ -328,6 +332,7 @@ class SAS_Interface (TFL.Meta.Object) :
         values     = self.value_dict \
             (entity, e_type = self.e_type, attrs = attrs)
         if values :
+            session.write_access = True
             update = self.table.update ().values (values)
             return session.connection.execute \
                 (update.where (self.pk == entity.pid))
@@ -343,7 +348,7 @@ class _Session_ (TFL.Meta.Object) :
     def __init__ (self, scope, engine) :
         self.scope        = scope
         self.engine       = engine
-        self.db_meta_data = self._new_db_meta_data (scope)
+        self.write_access = False
     # end def __init__
 
     def change_readonly (self, state) :
@@ -358,12 +363,25 @@ class _Session_ (TFL.Meta.Object) :
         self.commit  ()
     # end def change_readonly
 
+    def close (self) :
+        self.rollback            ()
+        self.scope.ems.pm.close  ()
+        ### close all connections inside the pool
+        ### import pdb; pdb.set_trace ()
+        self.engine.pool.dispose ()
+        self.engine = None
+    # end def close
+
     def commit (self) :
         if self.transaction :
+            if self.readonly and self.write_access :
+                self.rollback       ()
+                raise MOM.Error.Readonly_DB
             self.transaction.commit ()
             self.connection.close   ()
             self.transaction = None
             del self.connection
+            self.write_access = False
     # end def commit
 
     def compact (self) :
@@ -377,21 +395,17 @@ class _Session_ (TFL.Meta.Object) :
         return result
     # end def connection
 
-    def close (self) :
-        self.rollback            ()
-        self.scope.ems.pm.close  ()
-        ### close all connections inside the pool
-        ### import pdb; pdb.set_trace ()
-        self.engine.pool.dispose ()
-        self.engine = None
-    # end def close
+    def create (self) :
+        self.db_meta_data = self._new_db_meta_data (self.scope)
+    # end def create
 
     def execute (self, * args, ** kw) :
         return self.connection.execute (* args, ** kw)
     # end def execute
 
-    def load_root (self, scope) :
-        q = self.connection.execute (self._sa_scope.select ().limit (1))
+    def load_info (self) :
+        scope = self.scope
+        q     = self.connection.execute (self._sa_scope.select ().limit (1))
         with contextlib.closing (q) :
             si = q.fetchone ()
         meta_data         = si.meta_data
@@ -411,7 +425,18 @@ class _Session_ (TFL.Meta.Object) :
                 % (scope.app_type.db_version_hash, meta_data.dbv_hash)
                 )
         self._scope_pk    = si.pk
-    # end def load_root
+    # end def load_info
+
+    @property
+    def readonly (self) :
+        ### read-read the read only flag from the database to be sure to ba
+        ### up-to-date
+        scope = self.scope
+        q     = self.connection.execute (self._sa_scope.select ())
+        with contextlib.closing (q) :
+            si = q.fetchone ()
+        return si and si.read_only
+    # end def readonly
 
     def register_scope (self, scope) :
         kw               = dict (scope_guid = self.db_meta_data.guid)
@@ -424,6 +449,7 @@ class _Session_ (TFL.Meta.Object) :
 
     def rollback (self) :
         if self.transaction :
+            self.write_access = False
             self.transaction.rollback ()
             self.connection.close     ()
             self.transaction = None
@@ -521,7 +547,6 @@ class Session_S (_Session_) :
     # end def instance_from_row
 
     def load_root (self, scope) :
-        self.__super.load_root (scope)
         meta_data     = self.db_meta_data
         if meta_data.root_epk :
             epk       = list (meta_data.root_epk)
