@@ -77,6 +77,7 @@
 #    30-Jun-2010 (CT) `ilk` added
 #     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
 #     1-Jul-2010 (CT) `migrate` renamed to `copy`
+#    11-Aug-2010 (CT) Optional argument `ignore` added to `user_diff`
 #    ««revision-date»»···
 #--
 

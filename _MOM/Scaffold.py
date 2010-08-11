@@ -353,6 +353,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         print "%sInfo for database" % (indent, ), apt, url
         for k in sorted (dbmd) :
             print "%s%-12s : %s" % (indent, k, dbmd [k])
+        print "%s%-12s : %s" % (indent, "dbv_hash/apt", apt.db_version_hash)
         print
     # end def _print_info
 
