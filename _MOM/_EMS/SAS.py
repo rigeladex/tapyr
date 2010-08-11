@@ -116,8 +116,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def pcm
 
     def register_change (self, change) :
-        result      = self.__super.register_change (change)
-        self.session.add_change                    (change)
+        self.session.add_change (change)
         ###self.session.flush  ()
         if change.children :
             Table  = MOM.SCM.Change._Change_._sa_table
@@ -126,7 +125,7 @@ class Manager (MOM.EMS._Manager_) :
                 ).values (parent_cid = change.cid)
             self.session.execute (update)
         self.scope.db_cid = change.cid
-        return result
+        self.__super.register_change (change)
     # end def register_change
 
     def register_scope (self) :

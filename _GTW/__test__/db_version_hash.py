@@ -49,12 +49,12 @@ same database version):
 
 Now let's simulate a change of teh database version hash:
     >>> apt.db_version_hash = "<a version hash which should never happen>"
-    >>> scope    = Scope ("sqlite:///test.sql", create = False)
+    >>> scope    = Scope ("sqlite:///test.sql", create = False) # doctest:+ELLIPSIS
     Traceback (most recent call last):
        ...
     Incompatible_DB_Version: Cannot load database because of a database version hash missmatch:
       Tool  database version hash: <a version hash which should never happen>
-      Scope database version hash: OeDh-_NaZcGLVfTpoLKCa9aWaV-uVIC39jGXcA
+      Scope database version hash: ...
 
 Cleanup:
     >>> apt.delete_database (url)

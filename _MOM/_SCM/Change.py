@@ -57,6 +57,7 @@
 #    30-Jun-2010 (CT) `tool_version` added
 #     1-Jul-2010 (CT) `_Entity._restore` added
 #                     (default implementation does nothing -- `Copy` needs it)
+#    11-Aug-2010 (CT) `register` and handling for `last_cid` added
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ import _TFL._Meta.Once_Property
 
 import datetime
 import pickle
+import weakref
 
 class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
@@ -138,6 +140,10 @@ class _Change_ (MOM.SCM.History_Mixin) :
         for c in self.children :
             c.redo (scope)
     # end def undo
+
+    def register (self) :
+        pass
+    # end def register
 
     def restore (self, scope) :
         for c in self.children :
@@ -210,6 +216,7 @@ class _Entity_ (Undoable) :
         self.tool_version = entity.home_scope.Version.id
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
+        self._entity      = weakref.ref (entity)
     # end def __init__
 
     @classmethod
@@ -229,6 +236,21 @@ class _Entity_ (Undoable) :
         etm = scope [self.type_name]
         return etm.pid_query (self.pid)
     # end def entity
+
+    def register (self, scope) :
+        try :
+            _entity = self._entity
+            del self._entity
+        except AttributeError :
+            try :
+                entity = self.entity (scope)
+            except LookupError :
+                entity = None
+        else :
+            entity = _entity ()
+        if entity is not None :
+            entity.last_cid = self.cid
+    # end def register
 
     @classmethod
     def remove_callback (cls, etype) :
@@ -251,7 +273,7 @@ class _Entity_ (Undoable) :
 
     def _create (self, scope, attr) :
         etm = scope [self.type_name]
-        result = etm (* self.epk, raw = True, ** attr)
+        result = etm (* self.epk, raw = True, last_cid = self.cid, ** attr)
         return result
     # end def _create
 
@@ -266,6 +288,8 @@ class _Entity_ (Undoable) :
             entity = self.entity (scope)
             if entity :
                 entity.set_raw (** attr)
+                if "last_cid" not in attr :
+                    entity.last_cid = self.cid
     # end def _modify
 
     def _pickle_attrs (self) :
@@ -375,7 +399,8 @@ class Destroy (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.old_attr = self._to_save (entity)
+        self.old_attr = dict \
+            (self._to_save (entity), last_cid = entity.last_cid)
     # end def __init__
 
     def redo (self, scope) :
@@ -401,7 +426,7 @@ class _Attr_ (_Entity_) :
 
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity)
-        self.old_attr = old_attr
+        self.old_attr = dict (old_attr, last_cid = entity.last_cid)
     # end def __init__
 
     def redo (self, scope) :

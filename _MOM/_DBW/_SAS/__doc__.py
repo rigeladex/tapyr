@@ -109,7 +109,7 @@ Now we load the load and the new SAS based scopes and compare them
 >>> scope_3 = MOM.Scope.load         (apt_sas, "sqlite:///%s" % (db_path_new, ))
 >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_1, scope_3))
 (12, 12)
->>> sorted (scope_1.user_diff (scope_3).iteritems ())
+>>> sorted (scope_1.user_diff (scope_3, ignore = ["last_cid"]).iteritems ())
 []
 >>> scope_1.destroy ()
 >>> scope_3.destroy ()

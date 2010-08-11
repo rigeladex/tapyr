@@ -722,7 +722,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Name `name`, Cached_Role_Set `sickness`, String `ui_display`, Float `weight`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Name `name`, Cached_Role_Set `sickness`, String `ui_display`, Float `weight`, Boolean `x_locked`]
 
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', 'Last name')
@@ -736,13 +736,13 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Supertrap._Attributes._own_names)
     ['ui_display']
     >>> sorted (ET_Trap._Attributes._names)
-    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -1293,19 +1293,19 @@ Changing objects and links
     >>> for c in m.changes ().order_by (csk).all () :
     ...     print c
     <Create BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse')>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u''}, new-values = {'color' : u'white'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'weight' : u''}, new-values = {'weight' : u'10.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : 5}, new-values = {'color' : u'white'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'last_cid' : 26, 'weight' : u''}, new-values = {'weight' : u'10.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'white', 'last_cid' : 27, 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'black', 'last_cid' : 28, 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
 
     >>> mm = m.copy ("Magic_Mouse")
     >>> for c in mm.changes ().order_by (csk).all () :
     ...     print c
     <Copy BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
         <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
-        <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+        <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : 30, 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
     <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
-    <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : 30, 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
 
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
@@ -1496,42 +1496,42 @@ Scope queries
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')>
-    <Modify BMT.Rat (u'betty', 'BMT.Rat'), old-values = {'name' : u'Axel'}, new-values = {'name' : u'betty'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u''}, new-values = {'color' : u'white'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'weight' : u''}, new-values = {'weight' : u'10.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'white', 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
-    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Modify BMT.Rat (u'betty', 'BMT.Rat'), old-values = {'last_cid' : 8, 'name' : u'Axel'}, new-values = {'name' : u'betty'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : 5}, new-values = {'color' : u'white'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'last_cid' : 26, 'weight' : u''}, new-values = {'weight' : u'10.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'white', 'last_cid' : 27, 'weight' : u'10.0'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'black', 'last_cid' : 28, 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
     <Copy BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
         <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse')>
-        <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
-    <Modify BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u''}, new-values = {'max_weight' : u'20.0'}>
-    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'42.00'}, new-values = {'price' : u'1.20'}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'left' : u"(u'Toothy_Beaver',)"}, new-values = {'left' : u"(u'Mighty_Mouse',)"}>
-    <Destroy BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'weight' : u'42.0'}>
-        <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap')>
-    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u'20.0'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'1.20'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>
-    <Destroy BMT.Trap (u'X', u'2', 'BMT.Trap')>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'42.00'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')>
-        <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap')>
+        <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : 30, 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : u'42.0'}>
+    <Modify BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : 9, 'max_weight' : u''}, new-values = {'max_weight' : u'20.0'}>
+    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : 17, 'price' : u'42.00'}, new-values = {'price' : u'1.20'}>
+    <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : 14, 'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
+    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : 35, 'left' : u"(u'Toothy_Beaver',)"}, new-values = {'left' : u"(u'Mighty_Mouse',)"}>
+    <Destroy BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'last_cid' : 29, 'weight' : u'42.0'}>
+        <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : 36}>
+    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : 33, 'max_weight' : u'20.0'}>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : 34, 'price' : u'1.20'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : 22}>
+    <Destroy BMT.Trap (u'X', u'2', 'BMT.Trap'), old-values = {'last_cid' : 10}>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : 18, 'price' : u'42.00'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : 23}>
+        <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : 16}>
     >>> c = scope.ems.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
     >>> cc
-    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u'20.0'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'1.20'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>
+    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : 33, 'max_weight' : u'20.0'}>
+        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : 34, 'price' : u'1.20'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : 22}>
     >>> cc.children
-    [<Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location')>]
+    [<Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : 34, 'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : 22}>]
     >>> cc.children [0].parent is cc
     True
     >>> pckl = c.as_pickle ()
     >>> cc = c.from_pickle (pckl)
     >>> cc
-    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'max_weight' : u'20.0'}>
+    <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : 33, 'max_weight' : u'20.0'}>
     >>> cc.children
     []
     >>> scope.commit ()
@@ -1548,22 +1548,18 @@ Replaying changes
     ...     c.redo (scop2)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (16, 16)
-    >>> sorted (scope.user_diff (scop2).iteritems ())
+    >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
     []
-    >>> scope.user_equal (scop2)
-    True
-    >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
-    True
 
     >>> t3.max_weight = 25
-    >>> sorted (scope.user_diff (scop2).iteritems ())
+    >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
     [(('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), {'max_weight': ((25.0,), '<Missing>')})]
     >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
     1
-    >>> sorted (scope.user_diff (scop2).iteritems ())
+    >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
     [(('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), {'max_weight': ((25.0,), (42.0,))})]
     >>> t3.destroy ()
-    >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
+    >>> for diff in sorted (scop2.user_diff (scope, ignore = ["last_cid"]).iteritems ()) :
     ...     print diff
     (('BMT.Person_owns_Trap', (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
     (('BMT.Person_sets_Trap_at_Location', (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <hps://>, missing in Scope <hps://>')

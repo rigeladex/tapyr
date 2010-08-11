@@ -55,6 +55,7 @@
 #    30-Jun-2010 (CT) `change_readonly` added
 #    30-Jun-2010 (CT) `pcm` added
 #     1-Jul-2010 (CT) `compact` added
+#    11-Aug-2010 (CT) `register_change` changed to call `change.register`
 #    ««revision-date»»···
 #--
 
@@ -212,6 +213,7 @@ class _Manager_ (TFL.Meta.Object) :
     def register_change (self, change) :
         if change.parent is None :
             self.uncommitted_changes.append (change)
+        change.register (self.scope)
     # end def register_change
 
     def register_scope (self) :

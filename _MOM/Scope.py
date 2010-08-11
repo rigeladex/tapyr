@@ -489,7 +489,7 @@ class Scope (TFL.Meta.Object) :
         self.attr_changes.clear ()
     # end def stop_change_recorder
 
-    def user_diff (self, other) :
+    def user_diff (self, other, ignore = ()) :
         """Return differences of entities `self` and `other` concerning user attributes."""
         result = {}
         seen   = set ()
@@ -503,7 +503,7 @@ class Scope (TFL.Meta.Object) :
                     if o is None :
                         diff = "Present in %s, missing in %s" % (lhs, rhs)
                     else :
-                        diff = e.user_diff (o)
+                        diff = e.user_diff (o, ignore)
                     if diff :
                         result [(t, k)] = diff
         diff (self,  other)

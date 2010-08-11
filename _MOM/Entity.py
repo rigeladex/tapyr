@@ -146,6 +146,8 @@
 #    29-Jun-2010 (CT) New `as_pickle_cargo` added
 #    30-Jun-2010 (CT) Reference to `home_scope._locked` removed
 #     1-Jul-2010 (CT) `Id_Entity.as_pickle_cargo` changed to put `pid` last
+#    11-Aug-2010 (CT) `last_cid` added
+#    11-Aug-2010 (CT) Optional argument `ignore` added to `user_diff`
 #    ««revision-date»»···
 #--
 
@@ -780,6 +782,15 @@ class Id_Entity (Entity) :
 
         # end class last_changed
 
+        class last_cid (A_Int) :
+            """Change id of last change for this entity."""
+
+            kind               = Attr.Internal
+            default            = 0
+            record_changes     = False
+
+        # end class last_cid
+
         class x_locked (A_Boolean) :
             """Specifies if object can be changed by user"""
 
@@ -1053,15 +1064,19 @@ class Id_Entity (Entity) :
             del deps [other]
     # end def unregister_dependency
 
-    def user_diff (self, other) :
+    def user_diff (self, other, ignore = ()) :
         """Return differences in user attributes between `self` and `other`."""
         result = {}
         undef  = object ()
+        if ignore :
+            ignore = set (ignore)
         if self.type_name != other.type_name :
             result ["type_name"] = (self.type_name, other.type_name)
         pc_s = self.as_attr_pickle_cargo  ()
         pc_o = other.as_attr_pickle_cargo ()
         for k in set (pc_s).union (pc_o) :
+            if k in ignore :
+                continue
             p = pc_s.get (k, undef)
             q = pc_o.get (k, undef)
             if p != q :
