@@ -106,8 +106,7 @@ class DB_Man (TFL.Meta.Object) :
     # end def _migrate
 
     def __str__ (self) :
-        return "%s <%s>" % \
-            (self.__class__.__name__, self.db_url)
+        return "%s <%s>" % (self.__class__.__name__, self.db_url)
     # end def __str__
 
 # end class DB_Man

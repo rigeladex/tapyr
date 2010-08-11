@@ -67,6 +67,8 @@
 #    15-Jul-2010 (MG) `_Session_.close`: close the PID-manager as well to
 #                     make sure all connections are closed
 #     2-Aug-2010 (MG) `_pickle_cargo_for_table` fixed
+#    11-Aug-2010 (CT) `_new_db_meta_data` factored and redefined for
+#                     `Session_PC`
 #    ««revision-date»»···
 #--
 
@@ -341,7 +343,7 @@ class _Session_ (TFL.Meta.Object) :
     def __init__ (self, scope, engine) :
         self.scope        = scope
         self.engine       = engine
-        self.db_meta_data = MOM.DB_Meta_Data.NEW (scope.app_type, scope)
+        self.db_meta_data = self._new_db_meta_data (scope)
     # end def __init__
 
     def change_readonly (self, state) :
@@ -427,6 +429,10 @@ class _Session_ (TFL.Meta.Object) :
             self.transaction = None
             del self.connection
     # end def rollback
+
+    def _new_db_meta_data (self, scope) :
+        return MOM.DB_Meta_Data.NEW (scope.app_type, scope)
+    # end def _new_db_meta_data
 
 # end class _Session_
 
@@ -653,6 +659,13 @@ class Session_PC (_Session_) :
         children = self.change_query (parent_cid = row.cid).all ()
         return cls, dct, children
     # end def recreate_change
+
+    def _new_db_meta_data (self, scope) :
+        if scope.src :
+            return MOM.DB_Meta_Data.COPY (scope.src.db_meta_data)
+        else :
+            return self.__super._new_db_meta_data (scope)
+    # end def _new_db_meta_data
 
 # end class Session_PC
 

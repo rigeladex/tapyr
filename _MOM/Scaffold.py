@@ -293,10 +293,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     def do_info (cls, cmd) :
         apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
         db_man   = cls.DB_Man.connect   (apt, url)
-        dbmd     = db_man.db_meta_data
-        print "Info for database", apt, url
-        for k in sorted (dbmd) :
-            print "%-12s : %s" % (k, dbmd [k])
+        cls._print_info (apt, url, db_man.db_meta_data)
         db_man.destroy ()
     # end def do_info
 
@@ -309,11 +306,13 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     def do_migrate (cls, cmd) :
         apt_s, url_s = cls.app_type_and_url (cmd.db_url, cmd.db_name)
         apt_t, url_t = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
-        print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
         db_man_s     = cls.DB_Man.connect   (apt_s, url_s)
+        print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
         if cmd.overwrite :
             apt_t.delete_database (url_t)
         db_man_t = cls.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
+        cls._print_info (apt_s, url_s, db_man_s.db_meta_data, "    ")
+        cls._print_info (apt_t, url_t, db_man_t.db_meta_data, "    ")
         db_man_s.destroy ()
         db_man_t.destroy ()
     # end def do_migrate
@@ -348,6 +347,15 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     def _load_scope (cls, apt, url) :
         return cls.Scope.load (apt, url)
     # end def _load_scope
+
+    @classmethod
+    def _print_info (cls, apt, url, dbmd, indent = "") :
+        print "%sInfo for database" % (indent, ), apt, url
+        for k in sorted (dbmd) :
+            print "%s%-12s : %s" % (indent, k, dbmd [k])
+        print
+    # end def _print_info
+
 
 Scaffold = _MOM_Scaffold_ # end class
 
