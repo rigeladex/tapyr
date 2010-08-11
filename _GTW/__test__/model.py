@@ -34,6 +34,8 @@
 #    26-May-2010 (CT) Use anonymous account and database `test` for MySQL
 #     1-Jul-2010 (MG) Support for loading a scope added
 #     4-Aug-2010 (MG) Changed to new Scaffold structure
+#    11-Aug-2010 (MG) `create_test_dict`: parameter `ignore` added
+#    11-Aug-2010 (MG) `GTW_FULL_OBJECT_MODEL` added
 #    ««revision-date»»···
 #--
 
@@ -45,7 +47,12 @@ from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL                   import sos
 
 import _GTW._OMP._Auth.import_Auth
-import _GTW._OMP._EVT.import_EVT
+if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
+    import _GTW._OMP._EVT.import_EVT
+    PNS_Dict = dict (EVT = GTW.OMP.EVT)
+else :
+    PNS_Dict = dict ()
+    print "Ignore _GTW._OMP._EVT.import_EVT"
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
@@ -80,10 +87,10 @@ class Scaffold (GTW.OMP.Scaffold) :
     default_db_name       = "test"
     PNS_Aliases           = dict \
         ( Auth            = GTW.OMP.Auth
-        , EVT             = GTW.OMP.EVT
         , PAP             = GTW.OMP.PAP
         , SRM             = GTW.OMP.SRM
         , SWP             = GTW.OMP.SWP
+        , ** PNS_Dict
         )
 
     cmd__base__opts_x     = \

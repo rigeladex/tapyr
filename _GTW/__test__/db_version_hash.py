@@ -27,11 +27,12 @@
 #
 # Revision Dates
 #    15-Jul-2010 (MG) Creation
+#    11-Aug-2010 (MG) Real database test added
 #    ««revision-date»»···
 #--
-"""
-    >>> scope    = Scope ("sqlite:///test.sql", create = True)
-    Creating new scope MOMT__SAS__SAS test.sql
+_simple_test = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
     >>> apt, url = scope.app_type, scope.db_url
     >>> dbv      = scope.ems.db_meta_data.dbv_hash
     >>> guid     = scope.guid
@@ -39,8 +40,8 @@
 
 Now, let's try to load this scope again (which should work since we have the
 same database version):
-    >>> scope    = Scope ("sqlite:///test.sql", create = False)
-    Loading scope MOMT__SAS__SAS sqlite:///test.sql
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
     >>> scope.guid                      == guid
     True
     >>> scope.ems.db_meta_data.dbv_hash == dbv
@@ -49,7 +50,7 @@ same database version):
 
 Now let's simulate a change of teh database version hash:
     >>> apt.db_version_hash = "<a version hash which should never happen>"
-    >>> scope    = Scope ("sqlite:///test.sql", create = False) # doctest:+ELLIPSIS
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Traceback (most recent call last):
        ...
     Incompatible_DB_Version: Cannot load database because of a database version hash missmatch:
@@ -60,6 +61,46 @@ Cleanup:
     >>> apt.delete_database (url)
 """
 
-from _GTW.__test__.model import *
+_real_db_create_cmd = r"""
 
+"""
+
+_real_db_test = r"""
+    >>> env = dict (os.environ, GTW_FULL_OBJECT_MODEL = "False")
+    >>> cmd = subprocess.Popen \
+    ...     ( [ sys.executable, "-c"
+    ...       , "from _GTW.__test__.model import *; scope = Scaffold.scope (%(p1)s, %(n1)s,create = True)"
+    ...       ]
+    ...     , stdout = subprocess.PIPE
+    ...     , stderr = subprocess.PIPE
+    ...     , env    = env
+    ...     )
+    >>> sout, serr = cmd.communicate ()
+    >>> print sout.strip ()  # doctest:+ELLIPSIS
+    Ignore _GTW._OMP._EVT.import_EVT
+    Creating new scope MOMT__...
+    >>> serr
+    ''
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Traceback (most recent call last):
+       ...
+    Incompatible_DB_Version: Cannot load database because of a database version hash missmatch:
+      Tool  database version hash: ...
+      Scope database version hash: ...
+"""
+from   _GTW.__test__.model import *
+from   _TFL                import Environment
+import subprocess
+import cStringIO
+import sys
+import  os
+
+Scaffold.Backend_Default_Path ["SQL"] = "'test'"
+# dict (simple_test = _simple_test)
+__test__ = Scaffold.create_test_dict \
+    ( dict ( simple_test  = _simple_test
+           , real_db_test = _real_db_test
+           )
+    , ignore = "HPS" ### this test cannot work an the HPS backend
+    )
 ### __END__ GTW.__test__.db_version_hash
