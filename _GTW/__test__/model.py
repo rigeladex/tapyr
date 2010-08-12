@@ -36,6 +36,7 @@
 #     4-Aug-2010 (MG) Changed to new Scaffold structure
 #    11-Aug-2010 (MG) `create_test_dict`: parameter `ignore` added
 #    11-Aug-2010 (MG) `GTW_FULL_OBJECT_MODEL` added
+#    12-Aug-2010 (MG) Fixture support handling added
 #    ««revision-date»»···
 #--
 
@@ -97,9 +98,13 @@ class Scaffold (GTW.OMP.Scaffold) :
         ( "-config:C=~/.gtw-test.config?File specifying defaults for options"
         ,
         )
-    cmd__wsgi__opts       = \
-        ( "create:B=Run the fixtures function"
+    cmd__create__opts     = \
+        ( "fixtures:B?Run the fixtures after the scope has been created"
         ,
+        )
+    cmd__wsgi__opts       = \
+        ( "create:B=Create a new scope during WSGI application careation"
+        , "fixtures:B?Run the fixtures after the scope has been created"
         )
     Backend_Parameters    = dict \
         ( HPS             = "'hps://'"
@@ -158,6 +163,15 @@ class Scaffold (GTW.OMP.Scaffold) :
                     ) :
                 yield ("%s%d" % (k, i), v)
     # end def _backend_spec
+
+    @classmethod
+    def do_create (cls, cmd) :
+        scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
+        if cmd.fixtures :
+            from _GTW.__test__.form_app import fixtures
+            fixtures  (scope)
+        scope.destroy ()
+    # end def do_create
 
     @classmethod
     def do_run_server (cls, cmd) :

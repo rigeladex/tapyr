@@ -32,6 +32,7 @@
 #    25-Jun-2010 (MG) Werkzeug and Tornado now have a common interface ->
 #                     application creation simplified
 #     4-Aug-2010 (MG) Simplified to work with new `model.py`
+#    12-Aug-2010 (MG) `nav` fixture support added
 #    ««revision-date»»···
 #--
 
@@ -217,6 +218,8 @@ def nav ( cmd
     if getattr (cmd, "create", False) :
         from model import Scaffold
         result.scope = Scaffold.scope (DB_Url.value, create = True)
+        if getattr (cmd, "fixtures", False) :
+            fixtures (result.scope)
     result.add_entries \
         ( [
             dict

@@ -59,6 +59,7 @@
 #                     (default implementation does nothing -- `Copy` needs it)
 #    11-Aug-2010 (CT) `register` and handling for `last_cid` added
 #    11-Aug-2010 (MG) `last_cid` special handling added
+#    12-Aug-2010 (MG) `_Change_.register` parameter `scope` added
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
             c.redo (scope)
     # end def undo
 
-    def register (self) :
+    def register (self, scope) :
         pass
     # end def register
 

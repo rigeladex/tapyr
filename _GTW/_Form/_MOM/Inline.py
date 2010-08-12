@@ -69,6 +69,7 @@
 #     3-Aug-2010 (MG) `initial_pid_and_state` changed to handle `role_names`
 #                     correctly
 #     8-Aug-2010 (MG) State handling changed, inline `testing` changed
+#    12-Aug-2010 (MG) Sort order fixed
 #    ««revision-date»»···
 #--
 
@@ -155,7 +156,8 @@ class Link_Inline (TFL.Meta.Object) :
             pid = self.request_data.get (pid_pat % no, ":").split (":") [0]
             if pid :
                 used_instances [pid] = instances.pop (pid, None)
-        instances    = sorted (instances.values ())
+        instances    = sorted \
+            (instances.values (), key = self.form_cls.et_man.sorted_by)
         initial_data = owner.initial_data.get (self.own_role_name, {})
         for no in xrange (count) :
             pid = self.request_data.get (pid_pat % no, ":").split (":") [0]
@@ -186,9 +188,7 @@ class Link_Inline (TFL.Meta.Object) :
         if self.owner.instance :
             et_man = self.form_cls.et_man
             return et_man.query \
-                ( sort_key = et_man.sorted_by
-                , ** {self.own_role_name : self.owner.instance}
-                ).all ()
+                (** {self.own_role_name : self.owner.instance}).all ()
         return ()
     # end def linked_instances
 
