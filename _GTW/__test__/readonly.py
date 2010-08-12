@@ -35,7 +35,7 @@ _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> p = scope.PAP.Person ("LN", "FN")
-    >>> scope.commit     ()
+    >>> scope.commit         () ### should work
 
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
     >>> db_man   = MOM.DB_Man.connect   (apt, url)
@@ -43,15 +43,15 @@ _test_code = r"""
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p2 = scope.PAP.Person ("LN2", "FN")
-    >>> scope.commit           ()
+    >>> scope.commit          () # create failes
     Traceback (most recent call last):
        ...
     Readonly_DB
 
     The scope is now readonly. So commiting a change should raise an error
-    >>> p.set_raw (title = "Ing.")
+    >>> p.set_raw    (title = "Ing.")
     1
-    >>> scope.commit           ()
+    >>> scope.commit () ### update fails
     Traceback (most recent call last):
        ...
     Readonly_DB
@@ -66,7 +66,6 @@ _test_code = r"""
     1
     >>> scope.commit           ()
     >>> scope.destroy          ()
-    >>> db_man.destroy         ()
     >>> apt.delete_database    (url)
 """
 

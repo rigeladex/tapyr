@@ -58,6 +58,8 @@
 #    12-Jul-2010 (CT) `consume` corrected
 #    13-Jul-2010 (CT) `Store_PC.produce_entities` changed to apply `x_uri` to
 #                     name of store
+#    12-Aug-2010 (MG) `Store_S._save_context` fixed in regards to `readonly`
+#                     handling
 #    ««revision-date»»···
 #--
 
@@ -426,8 +428,9 @@ class Store_S (Store) :
     def _save_context (self, x_name, scope, info, max_cid, max_pid) :
         Version = self.Version
         with TFL.lock_file (x_name) :
-            self._check_sync (info)
-            if info.readonly :
+            new_info = self._check_sync (info)
+            if new_info.readonly :
+                self.scope.rollback ()
                 raise MOM.Error.Readonly_DB
             yield info
             info.max_cid = max_cid
