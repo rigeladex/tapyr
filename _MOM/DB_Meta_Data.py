@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Jun-2010 (CT) Creation (factored from `MOM.DBW.HPS.DB_Meta_Data`)
+#    13-Aug-2010 (CT) `COPY` changed to set `readonly` to `False`
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,7 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
 
     @classmethod
     def COPY (cls, other) :
-        return cls (** other._kw)
+        return cls (** dict (other._kw, readonly = False))
     # end def COPY
 
     @classmethod

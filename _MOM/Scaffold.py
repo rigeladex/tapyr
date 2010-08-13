@@ -39,6 +39,7 @@
 #     3-Aug-2010 (MG) Sub-command `shell` added
 #    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
 #    11-Aug-2010 (CT) `cmd__info` and friends added
+#    13-Aug-2010 (CT) `-readonly` added to command `migrate`
 #    ««revision-date»»···
 #--
 
@@ -253,6 +254,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     cmd__migrate__opts    = \
         ( "chunk_size:I=10000?Number of entities in one chunk"
         , "overwrite:B?Overwrite `target_db_url` if necessary"
+        , "readonly:B?Mark database `db_url` as readonly"
         , "target_db_url:S?Database url for target database"
         )
     cmd__shell__opts      = ()
@@ -308,13 +310,12 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         apt_t, url_t = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
         db_man_s     = cls.DB_Man.connect   (apt_s, url_s)
         print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
-        if cmd.overwrite :
-            apt_t.delete_database (url_t)
-        db_man_t = cls.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
-        cls._print_info (apt_s, url_s, db_man_s.db_meta_data, "    ")
-        cls._print_info (apt_t, url_t, db_man_t.db_meta_data, "    ")
+        if cmd.readonly :
+            with cls._cro_context (db_man_s, True) :
+                cls._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
+        else :
+            cls._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
         db_man_s.destroy ()
-        db_man_t.destroy ()
     # end def do_migrate
 
     @classmethod
@@ -342,6 +343,28 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
             apt.delete_database (url)
         return cls.Scope.new (apt, url)
     # end def _create_scope
+
+    @classmethod
+    @TFL.Contextmanager
+    def _cro_context (cls, db_man, state) :
+        old_state = db_man.db_meta_data.readonly
+        db_man.change_readonly (state)
+        try :
+            yield
+        except :
+            db_man.change_readonly (old_state)
+            raise
+    # end def _cro_context
+
+    @classmethod
+    def _do_migration (cls, cmd, apt_s, url_s, apt_t, url_t, db_man_s) :
+        if cmd.overwrite :
+            apt_t.delete_database (url_t)
+        db_man_t = cls.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
+        cls._print_info  (apt_s, url_s, db_man_s.db_meta_data, "    ")
+        cls._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
+        db_man_t.destroy ()
+    # end def _do_migration
 
     @classmethod
     def _load_scope (cls, apt, url) :

@@ -61,6 +61,7 @@
 #    12-Aug-2010 (MG) `Store_S._save_context` fixed in regards to `readonly`
 #                     handling
 #    13-Aug-2010 (CT) `_check_sync_ro` factored
+#    13-Aug-2010 (CT) `_rollback` factored
 #    ««revision-date»»···
 #--
 
@@ -254,7 +255,7 @@ class Store (TFL.Meta.Object) :
     def _check_sync_ro (self, info) :
         result = self._check_sync (info)
         if info.readonly or result.readonly :
-            self.scope.rollback ()
+            self._rollback ()
             raise MOM.Error.Readonly_DB
         return result
     # end def _check_sync_ro
@@ -363,6 +364,10 @@ class Store_PC (Store) :
         return DB_Meta_Data.COPY (self.db_man.src.db_meta_data)
     # end def _new_info
 
+    def _rollback (self) :
+        pass
+    # end def _rollback
+
 # end class Store_PC
 
 class Store_S (Store) :
@@ -432,6 +437,10 @@ class Store_S (Store) :
     def _new_info (self) :
         return DB_Meta_Data.NEW (self.app_type, self.scope)
     # end def _new_info
+
+    def _rollback (self) :
+        self.scope.rollback ()
+    # end def _rollback
 
     @TFL.Contextmanager
     def _save_context (self, x_name, scope, info, max_cid, max_pid) :

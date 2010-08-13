@@ -74,6 +74,7 @@
 #                     `MOM.DBW.SAS._Session_`
 #    11-Aug-2010 (MG) `_create_session` changed to call passed method to load
 #                     or create the meta data
+#    13-Aug-2010 (CT) s/read_only/readonly/g
 #    ««revision-date»»···
 #--
 
@@ -327,7 +328,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         MOM.DBW.SAS._Session_._sa_scope = Table = schema.Table \
             ( "scope_metadata", metadata
             , schema.Column ("pk",        types.Integer, primary_key = True)
-            , schema.Column ("read_only", types.Boolean)
+            , schema.Column ("readonly",  types.Boolean)
             , schema.Column ("meta_data", types.PickleType)
             )
         MOM.DBW.SAS.Query (Table, Table)

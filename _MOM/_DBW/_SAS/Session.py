@@ -71,6 +71,7 @@
 #                     `Session_PC`
 #    11-Aug-2010 (MG) `load_info` factored from `load_root`
 #    11-Aug-2010 (MG) `readonly` handling added
+#    13-Aug-2010 (CT) s/read_only/readonly/g
 #    ««revision-date»»···
 #--
 
@@ -352,12 +353,12 @@ class _Session_ (TFL.Meta.Object) :
     # end def __init__
 
     def change_readonly (self, state) :
-        meta_data           = self.db_meta_data
-        meta_data.read_only = state
-        kw                  = dict \
+        meta_data          = self.db_meta_data
+        meta_data.readonly = state
+        kw                 = dict \
             ( pk        = self._scope_pk
             , meta_data = meta_data
-            , read_only = state
+            , readonly  = state
             )
         self.execute (self._sa_scope.update ().values (** kw))
         self.commit  ()
@@ -410,9 +411,9 @@ class _Session_ (TFL.Meta.Object) :
             si = q.fetchone ()
         meta_data         = si.meta_data
         self.db_meta_data = meta_data
-        meta_read_only    = getattr (meta_data, "read_only", False)
-        if meta_read_only != si.read_only :
-            self.change_readonly (meta_read_only)
+        meta_readonly     = getattr (meta_data, "readonly", False)
+        if meta_readonly != si.readonly :
+            self.change_readonly (meta_readonly)
         scope.guid        = meta_data.guid
         if meta_data.dbv_hash != scope.app_type.db_version_hash :
             raise MOM.Error.Incompatible_DB_Version \
@@ -435,13 +436,13 @@ class _Session_ (TFL.Meta.Object) :
         q     = self.connection.execute (self._sa_scope.select ())
         with contextlib.closing (q) :
             si = q.fetchone ()
-        return si and si.read_only
+        return si and si.readonly
     # end def readonly
 
     def register_scope (self, scope) :
         kw               = dict (scope_guid = self.db_meta_data.guid)
         kw ["meta_data"] = self.db_meta_data
-        kw ["read_only"] = getattr (self.db_meta_data, "read_only", False)
+        kw ["readonly"]  = getattr (self.db_meta_data, "readonly", False)
         result = self.execute (self._sa_scope.insert ().values (** kw))
         self.commit           ()
         self._scope_pk   = result.inserted_primary_key [0]
