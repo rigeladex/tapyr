@@ -60,6 +60,7 @@
 #                     name of store
 #    12-Aug-2010 (MG) `Store_S._save_context` fixed in regards to `readonly`
 #                     handling
+#    13-Aug-2010 (CT) `_check_sync_ro` factored
 #    ««revision-date»»···
 #--
 
@@ -179,9 +180,9 @@ class Store (TFL.Meta.Object) :
     def change_readonly (self, state) :
         with TFL.lock_file (self.x_uri.name) :
             info = self.info
-            self._check_sync (info)
+            self._check_sync     (info)
             info.readonly = bool (state)
-            self._save_info (info)
+            self._save_info      (info)
     # end def change_readonly
 
     def close (self) :
@@ -191,7 +192,7 @@ class Store (TFL.Meta.Object) :
         bak    = TFL.Filename (".bak", db_uri).name
         with TFL.lock_file (x_name) :
             info = self.info
-            self._check_sync (info)
+            self._check_sync_ro (info)
             with TFL.open_to_replace \
                      (db_uri.name, mode = "wb", backup_name = bak) as file:
                 with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
@@ -249,6 +250,14 @@ class Store (TFL.Meta.Object) :
             raise TFL.Sync_Conflict (self)
         return db_info
     # end def _check_sync
+
+    def _check_sync_ro (self, info) :
+        result = self._check_sync (info)
+        if info.readonly or result.readonly :
+            self.scope.rollback ()
+            raise MOM.Error.Readonly_DB
+        return result
+    # end def _check_sync_ro
 
     def _create_info (self) :
         assert not sos.path.exists (self.info_uri.name)
@@ -428,10 +437,7 @@ class Store_S (Store) :
     def _save_context (self, x_name, scope, info, max_cid, max_pid) :
         Version = self.Version
         with TFL.lock_file (x_name) :
-            new_info = self._check_sync (info)
-            if new_info.readonly :
-                self.scope.rollback ()
-                raise MOM.Error.Readonly_DB
+            self._check_sync_ro (info)
             yield info
             info.max_cid = max_cid
             info.max_pid = max_pid
