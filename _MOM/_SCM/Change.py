@@ -60,6 +60,7 @@
 #    11-Aug-2010 (CT) `register` and handling for `last_cid` added
 #    11-Aug-2010 (MG) `last_cid` special handling added
 #    12-Aug-2010 (MG) `_Change_.register` parameter `scope` added
+#    13-Aug-2010 (CT) `last_cid` handling corrected
 #    ««revision-date»»···
 #--
 
@@ -275,7 +276,7 @@ class _Entity_ (Undoable) :
 
     def _create (self, scope, attr) :
         etm = scope [self.type_name]
-        attr.pop ("last_cid", None) ### XXX ???
+        attr.pop ("last_cid", None)
         result = etm (* self.epk, raw = True, last_cid = self.cid, ** attr)
         return result
     # end def _create
@@ -290,9 +291,9 @@ class _Entity_ (Undoable) :
         if attr :
             entity = self.entity (scope)
             if entity :
-                attr.pop ("last_cid", None) ### XXX ???
+                last_cid = attr.pop ("last_cid", None)
                 entity.set_raw (** attr)
-                if "last_cid" not in attr :
+                if last_cid is None :
                     entity.last_cid = self.cid
     # end def _modify
 
