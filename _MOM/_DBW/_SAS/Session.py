@@ -72,6 +72,9 @@
 #    11-Aug-2010 (MG) `load_info` factored from `load_root`
 #    11-Aug-2010 (MG) `readonly` handling added
 #    13-Aug-2010 (CT) s/read_only/readonly/g
+#    15-Aug-2010 (MG) `commit`: use `self.scope.rollback` instead of
+#                     `self.rollback` to clear all internal fields as well
+#    15-Aug-2010 (MG) `_close_connection` factored, `pid_query` added
 #    ««revision-date»»···
 #--
 
@@ -373,16 +376,20 @@ class _Session_ (TFL.Meta.Object) :
         self.engine = None
     # end def close
 
-    def commit (self) :
+    def _close_connection (self, method) :
         if self.transaction :
-            if self.readonly and self.write_access :
-                self.rollback       ()
-                raise MOM.Error.Readonly_DB
-            self.transaction.commit ()
+            method                  (self.transaction)
             self.connection.close   ()
-            self.transaction = None
+            self.transaction  = None
             del self.connection
             self.write_access = False
+    # end def _close_connection
+
+    def commit (self) :
+        if self.readonly and self.write_access :
+            self.scope.rollback ()
+            raise MOM.Error.Readonly_DB
+        self._close_connection  (TFL.Method.commit)
     # end def commit
 
     def compact (self) :
@@ -416,6 +423,9 @@ class _Session_ (TFL.Meta.Object) :
             self.change_readonly (meta_readonly)
         scope.guid        = meta_data.guid
         if meta_data.dbv_hash != scope.app_type.db_version_hash :
+            self._close_connection   (TFL.Method.rollback)
+            self.engine.pool.dispose ()
+            self.engine   = None
             raise MOM.Error.Incompatible_DB_Version \
                 ( TFL.I18N._T
                    ( "Cannot load database because of a database version hash "
@@ -449,12 +459,7 @@ class _Session_ (TFL.Meta.Object) :
     # end def register_scope
 
     def rollback (self) :
-        if self.transaction :
-            self.write_access = False
-            self.transaction.rollback ()
-            self.connection.close     ()
-            self.transaction = None
-            del self.connection
+        self._close_connection  (TFL.Method.rollback)
     # end def rollback
 
     def _new_db_meta_data (self, scope) :
@@ -556,6 +561,10 @@ class Session_S (_Session_) :
             epk       = dict ((k,v) for (k,v) in zip (etm.epk_sig, epk))
             return etm.query (** epk).one ()
     # end def load_root
+
+    def pid_query (self, pid) :
+        return self._pid_map.get (pid)
+    # end def pid_query
 
     def query (self, Type) :
         return Type.select ()

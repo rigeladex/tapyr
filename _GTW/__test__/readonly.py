@@ -36,10 +36,14 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> p = scope.PAP.Person ("LN", "FN")
     >>> scope.commit         () ### should work
+    >>> scope.destroy        ()
 
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
     >>> db_man   = MOM.DB_Man.connect   (apt, url)
     >>> db_man.change_readonly          (True)
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p2 = scope.PAP.Person ("LN2", "FN")
@@ -49,6 +53,7 @@ _test_code = r"""
     Readonly_DB
 
     The scope is now readonly. So commiting a change should raise an error
+    >>> p = scope.PAP.Person.query ().one ()
     >>> p.set_raw    (title = "Ing.")
     1
     >>> scope.commit () ### update fails
@@ -56,7 +61,6 @@ _test_code = r"""
        ...
     Readonly_DB
 
-    But running a readponly query still works
     >>> scope.PAP.Person.query ().all ()
      [GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')]
 
@@ -65,7 +69,6 @@ _test_code = r"""
     >>> p.set_raw (title = "Ing.")
     1
     >>> scope.commit           ()
-    >>> scope.destroy          ()
     >>> apt.delete_database    (url)
 """
 

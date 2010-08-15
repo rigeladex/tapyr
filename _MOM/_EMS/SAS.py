@@ -35,6 +35,7 @@
 #     1-Jul-2010 (MG) `pcm` and `max_pid` added
 #     5-Jul-2010 (MG) `load_root` and `register_scope` are now method's of
 #                     the session
+#    15-Aug-2010 (MG) `pid_query` added
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,19 @@ class Manager (MOM.EMS._Manager_) :
         self.scope.db_cid = self.max_cid
         return result
     # end def load_root
+
+    def pid_query (self, pid, Type) :
+        pid        = int (pid)
+        result     = self.session.pid_query (pid)
+        if result is None :
+            result = self.pm.query          (pid)
+        if not isinstance (result, Type.Essence) :
+            raise LookupError \
+                ( "Pid `%r` is instance of type %s, not of type `%s`"
+                % (pid, result.type_name, Type.type_name)
+                )
+        return result
+    # end def pid_query
 
     @property
     def max_cid (self) :
