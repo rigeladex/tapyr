@@ -68,6 +68,7 @@
 #     2-Aug-2010 (CT) `Help` for `Bundle` added
 #    10-Aug-2010 (CT) `Cmd.__init__` changed to optionally take `description`
 #                     from `handler.__doc__`
+#    16-Aug-2010 (CT) Use `_min_args` and `_max_args` from sub-command
 #    ««revision-date»»···
 #--
 
@@ -442,7 +443,9 @@ class Cmd_Choice (TFL.Meta.Object) :
         cao._opt_dict.update  (sc._opt_dict)
         cao._opt_alias.update (sc._opt_alias)
         cao._opt_conf.extend  (sc._opt_conf)
-        sc._setup_opt_abbr    (cao._opt_dict, cao._opt_abbr)
+        cao._min_args = sc._min_args
+        cao._max_args = sc._max_args
+        sc._setup_opt_abbr (cao._opt_dict, cao._opt_abbr)
     # end def __call__
 
     def __getattr__ (self, name) :
@@ -650,8 +653,8 @@ class Help (_Spec_O_) :
 
     def _help_summary_args (self, cao) :
         cmd      = cao._cmd
-        min_args = cmd._min_args
-        max_args = cmd._max_args
+        min_args = cao._min_args
+        max_args = cao._max_args
         if cmd._bun_dict :
             yield "[@bundle]"
         if cmd._arg_list :
@@ -1132,6 +1135,8 @@ class CAO (TFL.Meta.Object) :
         self._opt_abbr      = dict (cmd._opt_abbr)
         self._opt_alias     = dict (cmd._opt_alias)
         self._opt_conf      = list (cmd._opt_conf)
+        self._min_args      = cmd._min_args
+        self._max_args      = cmd._max_args
         self._do_keywords   = cmd._do_keywords
         self._put_keywords  = cmd._put_keywords
         self.argv           = []
@@ -1176,8 +1181,8 @@ class CAO (TFL.Meta.Object) :
 
     def _check (self) :
         self._finish_setup ()
-        min_args = self._cmd._min_args
-        max_args = self._cmd._max_args
+        min_args = self._min_args
+        max_args = self._max_args
         argn     = len (self.argv)
         if not self.help :
             if argn < min_args :

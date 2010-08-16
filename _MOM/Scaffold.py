@@ -148,6 +148,8 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
             , handler     = cls.__do_readonly
             , args        = cls.cmd__readonly__args
             , opts        = cls.cmd__readonly__opts
+            , max_args    = 1
+            , min_args    = 1
             )
     # end def cmd__readonly
 
@@ -158,8 +160,6 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
             ( name        = "shell"
             , handler     = cls.__do_shell
             , opts        = cls.cmd__shell__opts
-            , max_args    = 1
-            , min_args    = 1
             )
     # end def cmd__load
 
