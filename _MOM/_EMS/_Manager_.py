@@ -56,6 +56,7 @@
 #    30-Jun-2010 (CT) `pcm` added
 #     1-Jul-2010 (CT) `compact` added
 #    11-Aug-2010 (CT) `register_change` changed to call `change.register`
+#    16-Aug-2010 (CT) `commit` changed to check for `uncommitted_changes`
 #    ««revision-date»»···
 #--
 
@@ -122,9 +123,10 @@ class _Manager_ (TFL.Meta.Object) :
     # end def close
 
     def commit (self) :
-        self.scope.db_cid = self.max_cid
-        self.session.commit ()
-        self.uncommitted_changes = []
+        if self.uncommitted_changes :
+            self.scope.db_cid = self.max_cid
+            self.session.commit ()
+            self.uncommitted_changes = []
     # end def commit
 
     def compact (self) :

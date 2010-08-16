@@ -75,6 +75,7 @@
 #    15-Aug-2010 (MG) `commit`: use `self.scope.rollback` instead of
 #                     `self.rollback` to clear all internal fields as well
 #    15-Aug-2010 (MG) `_close_connection` factored, `pid_query` added
+#    16-Aug-2010 (CT) Adapted to change of signature of `DB_Meta_Data.COPY`
 #    ««revision-date»»···
 #--
 
@@ -697,7 +698,8 @@ class Session_PC (_Session_) :
 
     def _new_db_meta_data (self, scope) :
         if scope.src :
-            return MOM.DB_Meta_Data.COPY (scope.src.db_meta_data)
+            return MOM.DB_Meta_Data.COPY \
+                (scope.src.db_meta_data, scope.app_type, scope)
         else :
             return self.__super._new_db_meta_data (scope)
     # end def _new_db_meta_data

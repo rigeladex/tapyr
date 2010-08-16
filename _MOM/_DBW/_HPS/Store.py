@@ -62,6 +62,10 @@
 #                     handling
 #    13-Aug-2010 (CT) `_check_sync_ro` factored
 #    13-Aug-2010 (CT) `_rollback` factored
+#    16-Aug-2010 (CT) `_check_sync_ro` changed to call `scope.rollback`
+#                     insteaf of `_rollback`
+#    16-Aug-2010 (CT) Adapted to change of signature of `DB_Meta_Data.COPY`
+#    16-Aug-2010 (CT) `_copy_ignore` added and redefinition of `COPY` removed
 #    ««revision-date»»···
 #--
 
@@ -98,7 +102,9 @@ TZF = TFL.module_copy \
 class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
     """Provide meta data for Hash-Pickle-Store."""
 
-    _real_name = "DB_Meta_Data"
+    _real_name   = "DB_Meta_Data"
+    _copy_ignore = MOM.DB_Meta_Data._copy_ignore | set \
+        (("commits", "pending", "stores"))
 
     def __init__ (self, commits = None, pending = None, stores = None, ** kw) :
         return self.__super.__init__ \
@@ -108,16 +114,6 @@ class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
             , ** kw
             )
     # end def __init__
-
-    @classmethod
-    def COPY (cls, other) :
-        result = super (DB_Meta_Data, cls).COPY (other)
-        ### Don't want to copy the `commits`, `pending`, and `stores` lists
-        result.commits = []
-        result.pending = []
-        result.stores  = []
-        return result
-    # end def COPY
 
     def FILES (self, x_uri, head = None) :
         def _ (x) :
@@ -134,12 +130,13 @@ class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
     # end def FILES
 
     @classmethod
-    def NEW (cls, app_type, scope = None, ** kw) :
+    def NEW (cls, app_type, scope = None, ** _kw) :
         ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
+        kw      = dict (_kw)
         result  = super (DB_Meta_Data, cls).NEW \
             ( app_type, scope
-            , max_cid = ems.max_cid
-            , max_pid = ems.max_pid
+            , max_cid = kw.pop ("max_cid", ems.max_cid)
+            , max_pid = kw.pop ("max_pid", ems.max_pid)
             , ** kw
             )
         return result
@@ -255,7 +252,7 @@ class Store (TFL.Meta.Object) :
     def _check_sync_ro (self, info) :
         result = self._check_sync (info)
         if info.readonly or result.readonly :
-            self._rollback ()
+            self.scope.rollback ()
             raise MOM.Error.Readonly_DB
         return result
     # end def _check_sync_ro
@@ -295,6 +292,8 @@ class Store (TFL.Meta.Object) :
 
 class Store_PC (Store) :
     """Scopeless store dealing with pickle-cargos only."""
+
+    scope = TFL.Meta.Alias_Property ("db_man")
 
     def __init__ (self, db_uri, db_man) :
         self.__super.__init__ (db_uri, db_man.app_type)
@@ -361,7 +360,8 @@ class Store_PC (Store) :
     # end def produce
 
     def _new_info (self) :
-        return DB_Meta_Data.COPY (self.db_man.src.db_meta_data)
+        return DB_Meta_Data.COPY \
+            (self.db_man.src.db_meta_data, self.db_man.app_type, self.db_man)
     # end def _new_info
 
     def _rollback (self) :

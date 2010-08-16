@@ -28,6 +28,8 @@
 # Revision Dates
 #    30-Jun-2010 (CT) Creation (factored from `MOM.DBW.HPS.DB_Meta_Data`)
 #    13-Aug-2010 (CT) `COPY` changed to set `readonly` to `False`
+#    16-Aug-2010 (CT) `COPY` changed to use `_copy_ignore` and `NEW`
+#    16-Aug-2010 (CT) `NEW`  changed to pop from `kw`
 #    ««revision-date»»···
 #--
 
@@ -42,27 +44,36 @@ import datetime
 class _MOM_DB_Meta_Data_ (TFL.Record) :
     """Provide meta data for MOM data base."""
 
-    _real_name = "DB_Meta_Data"
+    _real_name   = "DB_Meta_Data"
+    _copy_ignore = set (( "readonly", "dbv_hash"))
 
     @classmethod
-    def COPY (cls, other) :
-        return cls (** dict (other._kw, readonly = False))
+    def COPY (cls, other, app_type, scope = None) :
+        ignore = cls._copy_ignore | other._copy_ignore
+        kw     = other._kw
+        return cls.NEW \
+            ( app_type, scope
+            , ** dict ((k, kw [k]) for k in kw if k not in ignore)
+            )
     # end def COPY
 
     @classmethod
-    def NEW (cls, app_type, scope = None, ** kw) :
+    def NEW (cls, app_type, scope = None, ** _kw) :
+        kw      = dict (_kw)
         Version = app_type.Version
-        creator = TFL.Record \
-            ( date          = datetime.datetime.now ()
-            , tool_version  = Version.id
-            , user          = getattr (scope, "user", TFL.Environment.username)
-            )
         result  = cls \
-            ( creator       = creator
+            ( creator       = kw.pop ("creator", None) or TFL.Record
+                ( date          = datetime.datetime.now ()
+                , tool_version  = Version.id
+                , user          =
+                    getattr (scope, "user", TFL.Environment.username)
+                )
             , dbv_hash      = app_type.db_version_hash
-            , guid          = getattr (scope, "guid", None)
-            , readonly      = False
-            , root_epk      = getattr (scope, "root_epk", ())
+            , guid          =
+                kw.pop ("guid", None) or getattr (scope, "guid", None)
+            , readonly      = kw.pop ("readonly", False)
+            , root_epk      =
+                kw.pop ("root_epk", None) or getattr (scope, "root_epk", ())
             , ** kw
             )
         return result

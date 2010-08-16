@@ -40,6 +40,7 @@
 #    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
 #    11-Aug-2010 (CT) `cmd__info` and friends added
 #    13-Aug-2010 (CT) `-readonly` added to command `migrate`
+#    16-Aug-2010 (CT) `cmd__readonly` ad friends added
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,17 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     # end def cmd__migrate
 
     @TFL.Meta.Once_Property
+    def cmd__readonly (cls) :
+        """Sub-command to change readonly-state of database."""
+        return TFL.CAO.Cmd \
+            ( name        = "readonly"
+            , handler     = cls.__do_readonly
+            , args        = cls.cmd__readonly__args
+            , opts        = cls.cmd__readonly__opts
+            )
+    # end def cmd__readonly
+
+    @TFL.Meta.Once_Property
     def cmd__shell (cls) :
         """Sub-command for an interactive interpreter shell."""
         return TFL.CAO.Cmd \
@@ -162,6 +174,7 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
                 "?Database url "
                 "(form: `dialect://user:password@host:port/db_name`)"
             , SA_WE_Opt ()
+            , "-verbose:B"
             ] + cls.cmd__base__opts_x
     # end def cmd__base__opts
 
@@ -184,6 +197,11 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         """Migrate database specified by `-db_url` to `-target_db_url`."""
         return cls.do_migrate (cmd)
     # end def __do_migrate
+
+    def __do_readonly (cls, cmd) :
+        """Change readonly-state of database"""
+        return cls.do_readonly (cmd)
+    # end def __do_readonly
 
     def __do_shell (cls, cmd) :
         """Open interactive python shell."""
@@ -210,6 +228,8 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         , "cmd__info__opts"
         , "cmd__load__opts"
         , "cmd__migrate__opts"
+        , "cmd__readonly__args"
+        , "cmd__readonly__opts"
         , "cmd__shell__opts"
         , "cmd__sub_commands"
         )
@@ -257,9 +277,26 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         , "readonly:B?Mark database `db_url` as readonly"
         , "target_db_url:S?Database url for target database"
         )
+    cmd__readonly__args   = \
+        ( TFL.CAO.Arg.Key
+            ( name        = "state"
+            , dct         = dict
+                ( yes     = True
+                , no      = False
+                )
+            )
+        ,
+        )
+    cmd__readonly__opts   = ()
     cmd__shell__opts      = ()
     cmd__sub_commands     = \
-        ("cmd__create", "cmd__info", "cmd__load", "cmd__migrate", "cmd__shell")
+        ( "cmd__create"
+        , "cmd__info"
+        , "cmd__load"
+        , "cmd__migrate"
+        , "cmd__readonly"
+        , "cmd__shell"
+        )
 
     @classmethod
     def app_type (cls, * ems_dbw) :
@@ -309,7 +346,8 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         apt_s, url_s = cls.app_type_and_url (cmd.db_url, cmd.db_name)
         apt_t, url_t = cls.app_type_and_url (cmd.target_db_url, cmd.db_name)
         db_man_s     = cls.DB_Man.connect   (apt_s, url_s)
-        print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
+        if cmd.verbose :
+            print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
         if cmd.readonly :
             with cls._cro_context (db_man_s, True) :
                 cls._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
@@ -317,6 +355,16 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
             cls._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
         db_man_s.destroy ()
     # end def do_migrate
+
+    @classmethod
+    def do_readonly (cls, cmd) :
+        apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        db_man   = cls.DB_Man.connect   (apt, url)
+        db_man.change_readonly (cmd.state)
+        if cmd.verbose :
+            cls._print_info (apt, url, db_man.db_meta_data)
+        db_man.destroy ()
+    # end def do_readonly
 
     @classmethod
     def do_shell (cls, cmd) :
@@ -329,10 +377,12 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         apt, url = cls.app_type_and_url (db_url, default_path)
         create = create or url.create
         if create :
-            print "Creating new scope", apt, url.path or "in memory"
+            if cmd.verbose :
+                print "Creating new scope", apt, url.path or "in memory"
             scope = cls._create_scope (apt, url)
         else :
-            print "Loading scope", apt, url
+            if cmd.verbose :
+                print "Loading scope", apt, url
             scope = cls._load_scope (apt, url)
         return scope
     # end def scope
@@ -361,8 +411,9 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         if cmd.overwrite :
             apt_t.delete_database (url_t)
         db_man_t = cls.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
-        cls._print_info  (apt_s, url_s, db_man_s.db_meta_data, "    ")
-        cls._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
+        if cmd.verbose :
+            cls._print_info  (apt_s, url_s, db_man_s.db_meta_data, "    ")
+            cls._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
         db_man_t.destroy ()
     # end def _do_migration
 
