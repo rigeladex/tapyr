@@ -255,7 +255,8 @@ class _Entity_ (Undoable) :
             entity = _entity ()
         if entity is not None :
             entity.last_cid = self.cid
-            entity.home_scope.attr_changes [entity.pid].add ("last_cid")
+            if entity.pid :
+                entity.home_scope.attr_changes [entity.pid].add ("last_cid")
     # end def register
 
     @classmethod
