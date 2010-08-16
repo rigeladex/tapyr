@@ -28,6 +28,8 @@
 # Revision Dates
 #    15-Jul-2010 (MG) Creation
 #    11-Aug-2010 (MG) Real database test added
+#    16-Aug-2010 (MG) `_simple_test` cleanup impooved to be able run multiple
+#                     backend tests in one run
 #    ««revision-date»»···
 #--
 _simple_test = r"""
@@ -58,6 +60,7 @@ Now let's simulate a change of teh database version hash:
       Scope database version hash: ...
 
 Cleanup:
+    >>> apt.db_version_hash = dbv
     >>> apt.delete_database (url)
 """
 

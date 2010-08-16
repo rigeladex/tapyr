@@ -37,6 +37,7 @@
 #    11-Aug-2010 (MG) `create_test_dict`: parameter `ignore` added
 #    11-Aug-2010 (MG) `GTW_FULL_OBJECT_MODEL` added
 #    12-Aug-2010 (MG) Fixture support handling added
+#    16-Aug-2010 (MG) `scope` added to change the default of `verbose`
 #    ««revision-date»»···
 #--
 
@@ -186,6 +187,12 @@ class Scaffold (GTW.OMP.Scaffold) :
         apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
         return wsgi (cmd, apt, url)
     # end def do_wsgi
+
+    @classmethod
+    def scope (cls, * args, ** kw) :
+        verbose = kw.pop ("verbose", True)
+        return super (Scaffold, cls).scope (* args, verbose = verbose, ** kw)
+    # end def scope
 
 # end class Scaffold
 

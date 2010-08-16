@@ -31,6 +31,7 @@
 #     7-May-2010 (MG) `sail_number` is now a numeric string
 #    10-Aug-2010 (MG) Additional test added
 #    10-Aug-2010 (MG) Test changed to allow different backends
+#    16-Aug-2010 (MG) Test fixed
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,7 @@ _link2_link1 = r"""
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
@@ -123,7 +124,7 @@ _query_attr = r"""
     >>> PAP  = scope.PAP
     >>> SRM  = scope.SRM
     >>> bc   = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", u"1107", raw = True)
     >>> p    = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s    = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
@@ -151,6 +152,11 @@ _query_attr = r"""
 """
 
 if 1 :
+    if 0 :
+        import warnings
+        from sqlalchemy import exc as sa_exc
+        warnings.filterwarnings \
+            (action = "error", category = sa_exc.SAWarning)
     from _GTW.__test__.model import *
     __test__ = Scaffold.create_test_dict \
         ( dict ( composite   = _composite
@@ -159,11 +165,14 @@ if 1 :
                , query_attr  = _query_attr
                )
         )
-else :
-    #__doc__ = _composite
-    __doc__ = _link2_link1
-    def test () :pass
-    #test .__doc__ = __doc__
+    if 0 :
+        __test__ = Scaffold.create_test_dict \
+            (
+            #  _composite
+            # _link1_role
+             _link2_link1
+            # _query_attr
+            )
 
 from _GTW.__test__.model import *
 from _MOM.import_MOM     import Q

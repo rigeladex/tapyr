@@ -75,6 +75,7 @@
 #    11-Aug-2010 (MG) `_create_session` changed to call passed method to load
 #                     or create the meta data
 #    13-Aug-2010 (CT) s/read_only/readonly/g
+#    16-Aug-2010 (MG) Add `mysql_engine` to all Table creation statements
 #    ««revision-date»»···
 #--
 
@@ -174,7 +175,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             else :
                 unique = None
             e_type._sa_table = schema.Table \
-                (e_type.type_name.replace (".", "__"), cls.metadata, * columns)
+                ( e_type.type_name.replace (".", "__")
+                , cls.metadata
+                , mysql_engine = "InnoDB"
+                , * columns
+                )
             ### save the gathered attribute dict and bases for the
             ### update_etype run
             e_type._sa_save_attrs = bases, db_attrs, role_attrs, unique
@@ -305,6 +310,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                   , primary_key = True
                   )
             , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
+            , mysql_engine = "InnoDB"
             )
     # end def _create_pid_table
 
@@ -319,6 +325,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                   , types.Integer
                   , schema.ForeignKey ("change_history.cid")
                   )
+            , mysql_engine = "InnoDB"
             )
         MOM.DBW.SAS.Query \
             (MOM.SCM.Change._Change_, Table, parent = "parent_cid")
@@ -330,6 +337,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             , schema.Column ("pk",        types.Integer, primary_key = True)
             , schema.Column ("readonly",  types.Boolean)
             , schema.Column ("meta_data", types.PickleType)
+            , mysql_engine = "InnoDB"
             )
         MOM.DBW.SAS.Query (Table, Table)
     # end def _create_scope_table

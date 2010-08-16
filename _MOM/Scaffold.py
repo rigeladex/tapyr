@@ -42,6 +42,7 @@
 #    13-Aug-2010 (CT) `-readonly` added to command `migrate`
 #    16-Aug-2010 (CT) `cmd__readonly` ad friends added
 #    16-Aug-2010 (CT) `-verbose` added
+#    16-Aug-2010 (MG) `verbose` handling in `scope` fixed
 #    ««revision-date»»···
 #--
 
@@ -327,7 +328,8 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
 
     @classmethod
     def do_create (cls, cmd) :
-        scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
+        scope = cls.scope \
+            (cmd.db_url, cmd.db_name, create = True, verbose = cmd.verbose)
         scope.destroy ()
     # end def do_create
 
@@ -376,15 +378,20 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def do_shell
 
     @classmethod
-    def scope (cls, db_url = "hps://", default_path = None, create = True) :
+    def scope ( cls
+              , db_url       = "hps://"
+              , default_path = None
+              , create       = True
+              , verbose      = False
+              ) :
         apt, url = cls.app_type_and_url (db_url, default_path)
         create = create or url.create
         if create :
-            if cmd.verbose :
+            if verbose :
                 print "Creating new scope", apt, url.path or "in memory"
             scope = cls._create_scope (apt, url)
         else :
-            if cmd.verbose :
+            if verbose :
                 print "Loading scope", apt, url
             scope = cls._load_scope (apt, url)
         return scope

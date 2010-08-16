@@ -36,6 +36,7 @@
 #                     database added
 #     3-Aug-2010 (MG) Handle error of `meta.reflect` in `delete_database`
 #    10-Aug-2010 (MG) `Postgresql._drop_database_content` fixed
+#    16-Aug-2010 (MG) `MySQL._drop_database` fixed to suppress the nasty warning
 #    ««revision-date»»···
 #--
 
@@ -117,7 +118,15 @@ class MySQL (_NFB_) :
     @classmethod
     def _drop_database (cls, db_url, manager) :
         engine = manager._create_engine (db_url.scheme_auth)
-        engine.execute ("DROP DATABASE IF EXISTS %s" % (db_url.path, ))
+        ### This is necessary to avoid a nasty Warning that the database does
+        ### not exist (even using the IF EXISTS clause)
+        try :
+            engine.execute ("use %s" % (db_url.path, ))
+        except sqlalchemy.exc.OperationalError :
+            ### database does not exist -> no need to drop it
+            pass
+        else :
+            engine.execute ("DROP DATABASE IF EXISTS %s" % (db_url.path, ))
     # end def _drop_database
 
 # end class MySQL

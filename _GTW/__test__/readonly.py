@@ -34,7 +34,7 @@ _test_code = r"""
 
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
-    >>> p = scope.PAP.Person ("LN", "FN")
+    >>> p = scope.PAP.Person (u"LN", u"FN")
     >>> scope.commit         () ### should work
     >>> scope.destroy        ()
 
@@ -46,7 +46,7 @@ _test_code = r"""
     Loading scope MOMT__...
 
     The scope is now readonly. So commiting a change should raise an error
-    >>> p2 = scope.PAP.Person ("LN2", "FN")
+    >>> p2 = scope.PAP.Person (u"LN2", u"FN")
     >>> scope.commit          () # create failes
     Traceback (most recent call last):
        ...
@@ -54,21 +54,26 @@ _test_code = r"""
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p = scope.PAP.Person.query ().one ()
-    >>> p.set_raw    (title = "Ing.")
+    >>> p.set_raw    (title = u"Ing.")
     1
     >>> scope.commit () ### update fails
     Traceback (most recent call last):
        ...
     Readonly_DB
 
-    >>> scope.PAP.Person.query ().all ()
-     [GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')]
+    >>> scope.PAP.Person.query ().all () ### without title
+    [GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')]
 
-     Let's change the readonly back to False
+    >>> scope.destroy ()
+
+    Let's change the readonly back to False
     >>> db_man.change_readonly          (False)
-    >>> p.set_raw (title = "Ing.")
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
+    >>> p = scope.PAP.Person.query ().one ()
+    >>> p.set_raw (title = u"Ing.")
     1
-    >>> scope.commit           ()
+    >>> scope.commit           () # last
     >>> apt.delete_database    (url)
 """
 
