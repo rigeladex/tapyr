@@ -41,6 +41,7 @@
 #    11-Aug-2010 (CT) `cmd__info` and friends added
 #    13-Aug-2010 (CT) `-readonly` added to command `migrate`
 #    16-Aug-2010 (CT) `cmd__readonly` ad friends added
+#    16-Aug-2010 (CT) `-verbose` added
 #    ««revision-date»»···
 #--
 
@@ -157,6 +158,8 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
             ( name        = "shell"
             , handler     = cls.__do_shell
             , opts        = cls.cmd__shell__opts
+            , max_args    = 1
+            , min_args    = 1
             )
     # end def cmd__load
 
