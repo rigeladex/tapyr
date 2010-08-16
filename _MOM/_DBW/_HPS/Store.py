@@ -66,6 +66,7 @@
 #                     insteaf of `_rollback`
 #    16-Aug-2010 (CT) Adapted to change of signature of `DB_Meta_Data.COPY`
 #    16-Aug-2010 (CT) `_copy_ignore` added and redefinition of `COPY` removed
+#    16-Aug-2010 (CT) `close` change to use `_check_sync`, not `_check_sync_ro`
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class Store (TFL.Meta.Object) :
         bak    = TFL.Filename (".bak", db_uri).name
         with TFL.lock_file (x_name) :
             info = self.info
-            self._check_sync_ro (info)
+            self._check_sync (info)
             with TFL.open_to_replace \
                      (db_uri.name, mode = "wb", backup_name = bak) as file:
                 with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :

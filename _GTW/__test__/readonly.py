@@ -23,10 +23,11 @@
 #    GTW.__test__.readonly
 #
 # Purpose
-#    «text»···
+#    Test `readonly` databases and state switches
 #
 # Revision Dates
 #    11-Aug-2010 (MG) Creation
+#    16-Aug-2010 (CT) Don't re-use `db_man` (destroy & re-connect, instead)
 #    ««revision-date»»···
 #--
 
@@ -35,19 +36,20 @@ _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> p = scope.PAP.Person (u"LN", u"FN")
-    >>> scope.commit         () ### should work
-    >>> scope.destroy        ()
+    >>> scope.commit () ### should work
+    >>> scope.destroy ()
 
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
-    >>> db_man   = MOM.DB_Man.connect   (apt, url)
-    >>> db_man.change_readonly          (True)
+    >>> db_man   = MOM.DB_Man.connect (apt, url)
+    >>> db_man.change_readonly (True)
+    >>> db_man.destroy ()
 
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p2 = scope.PAP.Person (u"LN2", u"FN")
-    >>> scope.commit          () # create failes
+    >>> scope.commit () # create failes
     Traceback (most recent call last):
        ...
     Readonly_DB
@@ -67,7 +69,10 @@ _test_code = r"""
     >>> scope.destroy ()
 
     Let's change the readonly back to False
-    >>> db_man.change_readonly          (False)
+    >>> db_man = MOM.DB_Man.connect (apt, url)
+    >>> db_man.change_readonly (False)
+    >>> db_man.destroy ()
+
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
     >>> p = scope.PAP.Person.query ().one ()
