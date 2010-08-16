@@ -40,9 +40,10 @@
 #    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
 #    11-Aug-2010 (CT) `cmd__info` and friends added
 #    13-Aug-2010 (CT) `-readonly` added to command `migrate`
-#    16-Aug-2010 (CT) `cmd__readonly` ad friends added
+#    16-Aug-2010 (CT) `cmd__readonly` and friends added
 #    16-Aug-2010 (CT) `-verbose` added
 #    16-Aug-2010 (MG) `verbose` handling in `scope` fixed
+#    16-Aug-2010 (CT) `cmd__delete` and friends added
 #    ««revision-date»»···
 #--
 
@@ -110,6 +111,16 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
             , opts        = cls.cmd__create__opts
             )
     # end def cmd__create
+
+    @TFL.Meta.Once_Property
+    def cmd__delete (cls) :
+        """Sub-command for database deletion."""
+        return TFL.CAO.Cmd \
+            ( name        = "delete"
+            , handler     = cls.__do_delete
+            , opts        = cls.cmd__delete__opts
+            )
+    # end def cmd__delete
 
     @TFL.Meta.Once_Property
     def cmd__info (cls) :
@@ -187,6 +198,11 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
         return cls.do_create (cmd)
     # end def __do_create
 
+    def __do_delete (cls, cmd) :
+        """Delete database specified by `-db_url`."""
+        return cls.do_delete (cmd)
+    # end def __do_delete
+
     def __do_info (cls, cmd) :
         """Display info about database specified by `-db_url`."""
         return cls.do_info (cmd)
@@ -229,6 +245,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         ( "cmd__base__opts_x"
         , "cmd__buns"
         , "cmd__create__opts"
+        , "cmd__delete__opts"
         , "cmd__info__opts"
         , "cmd__load__opts"
         , "cmd__migrate__opts"
@@ -273,6 +290,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         ### the bundles `mig1` and `mig2` to work conventiently
         )
     cmd__create__opts     = ()
+    cmd__delete__opts     = ()
     cmd__info__opts       = ()
     cmd__load__opts       = ()
     cmd__migrate__opts    = \
@@ -295,6 +313,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     cmd__shell__opts      = ()
     cmd__sub_commands     = \
         ( "cmd__create"
+        , "cmd__delete"
         , "cmd__info"
         , "cmd__load"
         , "cmd__migrate"
@@ -332,6 +351,14 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
             (cmd.db_url, cmd.db_name, create = True, verbose = cmd.verbose)
         scope.destroy ()
     # end def do_create
+
+    @classmethod
+    def do_delete (cls, cmd) :
+        apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        if cmd.verbose :
+            print "Deleting scope", apt, url.path
+        apt.delete_database (url)
+    # end def do_delete
 
     @classmethod
     def do_info (cls, cmd) :
