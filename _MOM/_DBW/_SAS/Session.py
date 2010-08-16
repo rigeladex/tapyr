@@ -76,6 +76,7 @@
 #                     `self.rollback` to clear all internal fields as well
 #    15-Aug-2010 (MG) `_close_connection` factored, `pid_query` added
 #    16-Aug-2010 (CT) Adapted to change of signature of `DB_Meta_Data.COPY`
+#    16-Aug-2010 (MG) `SAS_Interface.joined_tables` added
 #    ««revision-date»»···
 #--
 
@@ -279,6 +280,7 @@ class SAS_Interface (TFL.Meta.Object) :
             tables.append           (c._sa_table)
         self.select = sql.select \
             (tables, from_obj = (joins, ), use_labels = True)
+        self.joined_tables = set (tables)
     # end def finish
 
     @TFL.Meta.Once_Property

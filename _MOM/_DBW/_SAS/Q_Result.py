@@ -35,6 +35,7 @@
 #    12-May-2010 (MG) New pid style
 #    10-Aug-2010 (MG) `order_by`: add the columns used for the order clause
 #                     to the select statement
+#    16-Aug-2010 (MG) `_clone` factored, `joined_tables` added
 #    ««revision-date»»···
 #--
 
@@ -48,17 +49,31 @@ from    sqlalchemy          import sql
 class Q_Result (TFL.Meta.Object) :
     """Q_Result using SQL-query funtion for the operations"""
 
-    def __init__ (self, e_type, session, sa_query = None) :
-        self.e_type   = e_type
-        self.session  = session
+    def __init__ ( self, e_type, session
+                 , sa_query      = None
+                 , joined_tables = None
+                 ) :
+        if not joined_tables :
+           joined_tables   = set ()
+        self.e_type        = e_type
+        self.session       = session
+        self.joined_tables = joined_tables
         if sa_query is None :
-            sa_query  = e_type._SAS.select
+            sa_query       = e_type._SAS.select
+            self.joined_tables.update (e_type._SAS.joined_tables)
         self.sa_query = sa_query
     # end def __init__
 
     def all (self) :
         return list (self)
     # end def all
+
+    def _clone (self, sa_query, joined_tables = None) :
+        if joined_tables is None :
+            joined_tables = self.joined_tables.copy ()
+        return self.__class__ \
+            (self.e_type, self.session, sa_query, joined_tables)
+    # end def _clone
 
     def count (self) :
         ### this is sort of hackish )o;
@@ -75,8 +90,7 @@ class Q_Result (TFL.Meta.Object) :
     # end def count
 
     def distinct (self) :
-        return self.__class__ \
-            (self.e_type, self.session, self.sa_query.distinct ())
+        return self._clone (self.sa_query.distinct ())
     # end def distinct
 
     def filter (self, * criteria, ** eq_kw) :
@@ -94,10 +108,9 @@ class Q_Result (TFL.Meta.Object) :
             ajoins, aclause = self.e_type._SAQ.SAS_EQ_Clause (attr, value)
             joins.extend         (ajoins)
             filter_clause.extend (aclause)
-        sa_criteria = (sql.expression.and_ (* filter_clause), )
-        sa_query    = self._joins (joins)
-        return self.__class__ \
-            (self.e_type, self.session, sa_query.where (* sa_criteria))
+        sa_criteria             = (sql.expression.and_ (* filter_clause), )
+        sa_query, joined_tables = self._joins (joins)
+        return self._clone (sa_query.where (* sa_criteria), joined_tables)
     # end def filter
 
     def first (self) :
@@ -112,25 +125,26 @@ class Q_Result (TFL.Meta.Object) :
     # end def _from_row
 
     def _joins (self, joins) :
+        joined_tables     = self.joined_tables.copy ()
+        sa_query          = self.sa_query
         if joins :
-            joined   = set ()
-            sql_join = self.sa_query.froms [-1]
+            sql_join      = self.sa_query.froms [-1]
+            no_joins      = len (joined_tables)
             for src, dst in reversed (joins) :
-                if dst not in joined :
-                    joined.add    (dst)
+                if dst not in joined_tables :
+                    joined_tables.add        (dst)
                     sql_join = sql_join.join (dst)
-            return self.sa_query.select_from (sql_join)
-        return self.sa_query
+            if len (joined_tables) > no_joins :
+                sa_query = self.sa_query.select_from (sql_join)
+        return sa_query, joined_tables
     # end def _joins
 
     def limit (self, limit) :
-        return self.__class__ \
-            (self.e_type, self.session, self.sa_query.limit (limit))
+        return self._clone (self.sa_query.limit (limit))
     # end def limit
 
     def offset (self, offset) :
-        return self.__class__ \
-            (self.e_type, self.session, self.sa_query.offset (offset))
+        return self._clone (self.sa_query.offset (offset))
     # end def offset
 
     def one (self) :
@@ -148,11 +162,10 @@ class Q_Result (TFL.Meta.Object) :
         else :
             joins               = ()
             order_clause        = (criterion, )
-        sa_query                = self._joins (joins)
+        sa_query, joined_tables = self._joins (joins)
         for oc in order_clause :
             sa_query.append_column (getattr (oc, "element", oc))
-        return self.__class__ \
-            (self.e_type, self.session, sa_query.order_by (* order_clause))
+        return self._clone (sa_query.order_by (* order_clause), joined_tables)
     # end def order_by
 
     def __getattr__ (self, name) :
@@ -174,11 +187,11 @@ class Q_Result (TFL.Meta.Object) :
 class Q_Result_Changes (Q_Result) :
     """Special handling of attribute translation for changes"""
 
-    def __init__ (self, Type, session, sa_query = None) :
+    def __init__ (self, Type, session, sa_query = None, joined_tables = None) :
         if sa_query is None  :
             sa_table = Type._sa_table
             sa_query = sql.select ((sa_table, ))
-        self.__super.__init__ (Type, session, sa_query)
+        self.__super.__init__ (Type, session, sa_query, joined_tables)
     # end def __init__
 
     def filter (self, * filter, ** kw) :
