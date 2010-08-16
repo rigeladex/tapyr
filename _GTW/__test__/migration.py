@@ -32,6 +32,7 @@
 #                     (instead of `Scope.copy`)
 #     2-Aug-2010 (MG) `Account_Anonymous` added to test an border case for
 #                     the migration
+#    16-Aug-2010 (MG) Test for a change with children added
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ _test_code = r"""
     >>> x = SRM.Boat_Class ("470er",             max_crew = 2)
     >>> x = SRM.Boat_Class ("49er",              max_crew = 2)
     >>> x = SRM.Boat_Class ("Aquila Kiel",       max_crew = 3)
-    >>> x = SRM.Boat_Class ("Aquila Schwert",    max_crew = 3)
+    >>> x = x.copy ("Aquila Schwert", max_crew = 3)
     >>> x = SRM.Boat_Class ("Fam",               max_crew = 3)
     >>> x = SRM.Boat_Class ("Finn-Dinghy",       max_crew = 1)
     >>> x = SRM.Boat_Class ("Korsar",            max_crew = 2)
@@ -108,10 +109,12 @@ _test_code = r"""
     >>> scope.commit ()
     >>> scope.MOM.Id_Entity.count_transitive
     34
+    >>> int (scope.query_changes (parent = None).count ())
+    35
     >>> int (scope.query_changes ().count ())
-    35
+    36
     >>> int (scope.ems.max_cid)
-    35
+    36
 
     >>> bc.set (loa = 2.43)
     1
@@ -124,11 +127,20 @@ _test_code = r"""
     >>> scope.MOM.Id_Entity.count_transitive
     34
     >>> int (scope.query_changes ().count ())
-    38
+    39
     >>> int (scope.ems.max_cid)
-    38
+    39
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
+    >>> b = scope.SRM.Boat_Class.query (name = "Aquila Schwert").one ()
+    >>> c = scope.query_changes (cid = b.last_cid).one ()
+    >>> print c ### change in source scope
+    <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class')>
+        <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'max_crew' : u'3'}>
+    >>> len (c.children)
+    1
+    >>> c.cid, c.children [0].cid
+    (8, 7)
 
     Save contents of scope to database and destroy scope:
 
@@ -156,7 +168,7 @@ _test_code = r"""
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_s, scope_t))
     True
     >>> int (scope_t.ems.max_cid)
-    38
+    39
     >>> len (scope_t.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -182,9 +194,18 @@ _test_code = r"""
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_t, scope_u))
     True
     >>> int (scope_u.ems.max_cid)
-    38
+    39
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
+    >>> b = scope_u.SRM.Boat_Class.query (name = "Aquila Schwert").one ()
+    >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope
+    >>> print c
+    <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class')>
+        <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'max_crew' : u'3'}>
+    >>> len (c.children)
+    1
+    >>> c.cid, c.children [0].cid
+    (8, 7)
 
     Lets clean up::
 

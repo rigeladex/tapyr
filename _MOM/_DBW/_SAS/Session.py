@@ -77,6 +77,10 @@
 #    15-Aug-2010 (MG) `_close_connection` factored, `pid_query` added
 #    16-Aug-2010 (CT) Adapted to change of signature of `DB_Meta_Data.COPY`
 #    16-Aug-2010 (MG) `SAS_Interface.joined_tables` added
+#    16-Aug-2010 (MG) `Session_S.recreate_change` fixed to create all
+#                     children changes as well
+#                     `_consume_change_iter` fixed to add the parent change
+#                     before the children will be added
 #    ««revision-date»»···
 #--
 
@@ -585,6 +589,7 @@ class Session_S (_Session_) :
                     ### recreate the parent first
                     parent = self.scope.ems.changes (cid = pcid).one ()
                 self._cid_map [pcid].add_change (change)
+            self.scope.ems.changes (parent_cid = cid).all ()
         return self._cid_map [cid]
     # end def recreate_change
 
@@ -640,12 +645,11 @@ class Session_PC (_Session_) :
         table  = MOM.SCM.Change._Change_._sa_table
         for no, (chg_cls, chg_dct, children_pc) in enumerate (change_iter) :
             cid = chg_dct ["cid"]
-            self._consume_change_iter (children_pc, chunk_size, cid)
             self.connection.execute \
                 ( table.insert
                     ( values = dict
                         ( cid        = cid
-                        , pid        = chg_dct ["pid"]
+                        , pid        = chg_dct.get ("pid", None)
                         , data       = Pickle.dumps
                               ((chg_cls, chg_dct, []), Pickle.HIGHEST_PROTOCOL)
                         , parent_cid = parent_cid
@@ -656,6 +660,7 @@ class Session_PC (_Session_) :
             if self._count == chunk_size :
                 self.commit ()
                 self._count = 0
+            self._consume_change_iter (children_pc, chunk_size, cid)
     # end def _consume_change_iter
 
     def flush (self) :
