@@ -140,7 +140,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 , ** self.form_parameters
                 )
             scope = self.Form.scope
-            if scope.readonly :
+            if scope.readonly : ### XXX might be out-of-date !!!
                 request.Error = \
                     (_T ( "At the moment, the database is set to "
                           "readonly to allow maintenance."
