@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-08-05 10:40+0200\n"
+"PO-Revision-Date: 2010-08-17 18:14+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,8 +23,8 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:129 _GTW/_NAV/_E_Type/Admin.py:237
-#: _GTW/_NAV/_E_Type/Admin.py:268
+#: _GTW/_NAV/_E_Type/Admin.py:134 _GTW/_NAV/_E_Type/Admin.py:252
+#: _GTW/_NAV/_E_Type/Admin.py:283
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
@@ -57,6 +57,10 @@ msgstr "Apr"
 msgid "April"
 msgstr "April"
 
+#: _GTW/_NAV/_E_Type/Admin.py:145
+msgid "At the moment, the database is set to readonly to allow maintenance."
+msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
+
 #: _GTW/_NAV/Calendar.py:62
 msgid "Aug"
 msgstr "Aug"
@@ -65,19 +69,23 @@ msgstr "Aug"
 msgid "August"
 msgstr "August"
 
-#: _GTW/__test__/form_app.py:227
+#: _GTW/__test__/form_app.py:243
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:230
+#: _GTW/__test__/form_app.py:246
 msgid "Authorization and Account handling"
 msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
-#: _GTW/__test__/form_app.py:238
+#: _GTW/__test__/form_app.py:254
 msgid "Choice of language used for localization"
 msgstr "Auswahl der Sprache für Lokalisierung"
 
-#: _GTW/_NAV/_E_Type/Admin.py:302
+#: _GTW/__test__/form_app.py:260 _GTW/__test__/form_app.py:262
+msgid "Console"
+msgstr "Konsole"
+
+#: _GTW/_NAV/_E_Type/Admin.py:318
 msgid "Copy"
 msgstr "Kopiere"
 
@@ -93,7 +101,7 @@ msgstr "Dezember"
 msgid "EMail verification successful."
 msgstr "Die Bestätigung der Email war erfolgreich."
 
-#: _GTW/_NAV/_E_Type/Admin.py:300
+#: _GTW/_NAV/_E_Type/Admin.py:316
 msgid "Edit"
 msgstr "Ändere"
 
@@ -115,7 +123,7 @@ msgstr "Feber"
 msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
 
-#: _GTW/__test__/form_app.py:246
+#: _GTW/__test__/form_app.py:268
 msgid "File upload test"
 msgstr ""
 
@@ -151,7 +159,7 @@ msgstr "Jun"
 msgid "June"
 msgstr "Juni"
 
-#: _GTW/__test__/form_app.py:235
+#: _GTW/__test__/form_app.py:251
 msgid "L10N"
 msgstr ""
 
@@ -160,7 +168,7 @@ msgstr ""
 msgid "Language %s selected"
 msgstr "Sprache %s wurde ausgewählt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:106
+#: _GTW/_NAV/_E_Type/SRM.py:108
 msgid "List of participants for"
 msgstr "Liste der Teilnehmer für"
 
@@ -221,7 +229,7 @@ msgstr "Oktober"
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:85
+#: _GTW/_NAV/_E_Type/SRM.py:87
 msgid "Participants"
 msgstr "Teilnehmer"
 
@@ -241,11 +249,11 @@ msgstr "Bitte neues Kennwort wiederholen."
 msgid "Repeat new password"
 msgstr "Wiederhole neues Kennwort"
 
-#: _GTW/_NAV/_E_Type/SRM.py:86
+#: _GTW/_NAV/_E_Type/SRM.py:88
 msgid "Results"
 msgstr "Resultate"
 
-#: _GTW/_NAV/_E_Type/SRM.py:94
+#: _GTW/_NAV/_E_Type/SRM.py:96
 msgid "Results for"
 msgstr "Resultate für"
 
@@ -350,7 +358,7 @@ msgstr "Mittwoch"
 #: _GTW/_NAV/Auth.py:247
 #, python-format
 msgid "Welcome %s."
-msgstr ""
+msgstr "Willkommen, %s."
 
 #: _GTW/HTML.py:52
 msgid "email address"
@@ -360,7 +368,7 @@ msgstr "Emailadresse"
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: _GTW/_NAV/_E_Type/Gallery.py:94
+#: _GTW/_NAV/_E_Type/Gallery.py:96
 msgid "picture"
 msgstr "Bild"
 

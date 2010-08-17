@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-05 10:40+0200\n"
+"POT-Creation-Date: 2010-08-17 18:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:337 _JNJ/html/rform.jnj:340
+#: _JNJ/html/rform.jnj:338 _JNJ/html/rform.jnj:341
 msgid "Add"
 msgstr ""
 
-#: _JNJ/html/form.jnj:157 _JNJ/html/rform.jnj:253 _JNJ/html/rform.jnj:437
+#: _JNJ/html/form.jnj:157 _JNJ/html/rform.jnj:254 _JNJ/html/rform.jnj:442
 msgid "Cancel"
 msgstr ""
 
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:87
+#: _JNJ/html/rform.jnj:88
 msgid "Click to jump to the field with the first error"
 msgstr ""
 
@@ -80,24 +80,20 @@ msgstr ""
 msgid "Create new object"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:118
+#: _JNJ/html/navigation.jnj:121
 #, python-format
 msgid "Currently selected language is %s"
-msgstr ""
-
-#: _JNJ/html/rform.jnj:368
-msgid "Delete"
 msgstr ""
 
 #: _JNJ/html/e_type_admin.jnj:80
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:379 _JNJ/html/rform.jnj:423
+#: _JNJ/html/form.jnj:379 _JNJ/html/rform.jnj:427
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:155 _JNJ/html/form.jnj:370 _JNJ/html/rform.jnj:414
+#: _JNJ/html/form.jnj:155 _JNJ/html/form.jnj:370 _JNJ/html/rform.jnj:418
 msgid "Discard all changes and leave form"
 msgstr ""
 
@@ -105,7 +101,7 @@ msgstr ""
 msgid "Edit this entry"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:91 _JNJ/html/rform.jnj:373
+#: _JNJ/html/rform.jnj:92 _JNJ/html/rform.jnj:371
 msgid "Error"
 msgid_plural "Errors"
 msgstr[0] ""
@@ -124,11 +120,11 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:115
+#: _JNJ/html/navigation.jnj:118
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:114
+#: _JNJ/html/navigation.jnj:117
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -141,16 +137,16 @@ msgstr ""
 msgid "Log into website with username and password specified"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:141
+#: _JNJ/html/navigation.jnj:144
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:140
+#: _JNJ/html/navigation.jnj:143
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:305 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:146
+#: _JNJ/html/form.jnj:305 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:149
 msgid "Login"
 msgstr ""
 
@@ -207,6 +203,10 @@ msgstr ""
 msgid "Please enter your username"
 msgstr ""
 
+#: _JNJ/html/error_503.jnj:47
+msgid "Please try again later. "
+msgstr ""
+
 #: _JNJ/html/photo.jnj:42
 msgid "Previous picture"
 msgstr ""
@@ -231,7 +231,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:380 _JNJ/html/rform.jnj:424 _JNJ/html/rform.jnj:438
+#: _JNJ/html/form.jnj:380 _JNJ/html/rform.jnj:428 _JNJ/html/rform.jnj:443
 msgid "Reset"
 msgstr ""
 
@@ -240,11 +240,11 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:436
+#: _JNJ/html/rform.jnj:441
 msgid "Save"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:123
+#: _JNJ/html/navigation.jnj:126
 #, python-format
 msgid "Select language %s"
 msgstr ""
@@ -253,7 +253,15 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: _JNJ/html/form.jnj:382 _JNJ/html/rform.jnj:426
+#: _JNJ/html/error_503.jnj:37
+msgid "Service Unavailable"
+msgstr ""
+
+#: _JNJ/html/error_503.jnj:42
+msgid "Service is temporarily unavailable. "
+msgstr ""
+
+#: _JNJ/html/form.jnj:382 _JNJ/html/rform.jnj:430
 msgid "Submit"
 msgstr ""
 

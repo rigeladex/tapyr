@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-08-05 10:40+0200\n"
+"PO-Revision-Date: 2010-08-17 18:14+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
-#: _MOM/Entity.py:997
+#: _MOM/Entity.py:1008
 #, python-format
 msgid ""
 "%s\n"
@@ -49,21 +49,21 @@ msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:144
+#: _MOM/_Meta/M_Entity.py:147
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 "Typ %s kann nicht direkt mit %r erzeugt werden, stattdessen muss\"\n"
 "\"scope.%s %r verwendet werden"
 
-#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:166
+#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:169
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:918
+#: _MOM/_Attr/Kind.py:923
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -218,12 +218,12 @@ msgstr ""
 msgid "Period"
 msgstr "Periode"
 
-#: _MOM/_Attr/Kind.py:783
+#: _MOM/_Attr/Kind.py:788
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:793
+#: _MOM/_Attr/Kind.py:798
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -366,11 +366,11 @@ msgstr ""
 "Einheit der Wiederholung. `Periode` wird als Vielfaches von `Einheit` "
 "interpretiert."
 
-#: _MOM/_Attr/Kind.py:784
+#: _MOM/_Attr/Kind.py:789
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
-#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:167
+#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:170
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."

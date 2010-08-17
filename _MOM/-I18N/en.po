@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-08-05 10:40+0200\n"
+"PO-Revision-Date: 2010-08-17 18:14+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
-#: _MOM/Entity.py:997
+#: _MOM/Entity.py:1008
 #, python-format
 msgid ""
 "%s\n"
@@ -46,17 +46,17 @@ msgid_plural "An_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:144
+#: _MOM/_Meta/M_Entity.py:147
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:166
+#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:169
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:918
+#: _MOM/_Attr/Kind.py:923
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -228,12 +228,12 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:783
+#: _MOM/_Attr/Kind.py:788
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:793
+#: _MOM/_Attr/Kind.py:798
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -365,11 +365,11 @@ msgid ""
 "`unit`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:784
+#: _MOM/_Attr/Kind.py:789
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:167
+#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:170
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr ""
