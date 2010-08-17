@@ -33,6 +33,7 @@
 #     2-Aug-2010 (MG) `Account_Anonymous` added to test an border case for
 #                     the migration
 #    16-Aug-2010 (MG) Test for a change with children added
+#    17-Aug-2010 (CT) Use `unicode` instead of `str`
 #    ««revision-date»»···
 #--
 
@@ -59,45 +60,45 @@ _test_code = r"""
     >>> SRM  = scope.SRM
     >>> Auth = scope.Auth
 
-    >>> a = Auth.Account_Anonymous ("anonymous")
+    >>> a = Auth.Account_Anonymous (u"anonymous")
 
-    >>> x = SRM.Boat_Class ("29er",              max_crew = 2)
-    >>> x = SRM.Boat_Class ("420er",             max_crew = 2)
-    >>> x = SRM.Boat_Class ("470er",             max_crew = 2)
-    >>> x = SRM.Boat_Class ("49er",              max_crew = 2)
-    >>> x = SRM.Boat_Class ("Aquila Kiel",       max_crew = 3)
-    >>> x = x.copy         ("Aquila Schwert",    max_crew = 3)
-    >>> x = SRM.Boat_Class ("Fam",               max_crew = 3)
-    >>> x = SRM.Boat_Class ("Finn-Dinghy",       max_crew = 1)
-    >>> x = SRM.Boat_Class ("Korsar",            max_crew = 2)
-    >>> x = SRM.Boat_Class ("Laser",             max_crew = 1)
-    >>> x = SRM.Boat_Class ("Laser 4.7",         max_crew = 1)
-    >>> x = SRM.Boat_Class ("Laser Master",      max_crew = 1)
-    >>> x = SRM.Boat_Class ("Laser Radial",      max_crew = 1)
-    >>> x = SRM.Boat_Class ("O-Jolle",           max_crew = 1)
-    >>> x = SRM.Boat_Class ("Optimist",          max_crew = 1)
-    >>> x = SRM.Boat_Class ("Pirat Regatta",     max_crew = 2)
-    >>> x = SRM.Boat_Class ("Pirat Klassik",     max_crew = 2)
-    >>> x = SRM.Boat_Class ("Pirat Schulboot",   max_crew = 2)
-    >>> x = SRM.Boat_Class ("Pirat",             max_crew = 2)
-    >>> x = SRM.Boat_Class ("Robby Jolle",       max_crew = 2)
-    >>> x = SRM.Boat_Class ("Seascape 18",       max_crew = 4)
-    >>> x = SRM.Boat_Class ("Zoom8",             max_crew = 1)
-
-    >>> scope.commit ()
-
-    >>> x = SRM.Boat ((u'Optimist',),    "Austria", 1)
-    >>> x = SRM.Boat ((u'Optimist',),    "Austria", 2)
-    >>> x = SRM.Boat ((u'Laser',),       "Austria", 3)
-    >>> x = SRM.Boat ((u'Seascape 18',), "Austria", 14)
+    >>> x = SRM.Boat_Class (u"29er",              max_crew = 2)
+    >>> x = SRM.Boat_Class (u"420er",             max_crew = 2)
+    >>> x = SRM.Boat_Class (u"470er",             max_crew = 2)
+    >>> x = SRM.Boat_Class (u"49er",              max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Aquila Kiel",       max_crew = 3)
+    >>> x = x.copy         (u"Aquila Schwert",    max_crew = 3)
+    >>> x = SRM.Boat_Class (u"Fam",               max_crew = 3)
+    >>> x = SRM.Boat_Class (u"Finn-Dinghy",       max_crew = 1)
+    >>> x = SRM.Boat_Class (u"Korsar",            max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Laser",             max_crew = 1)
+    >>> x = SRM.Boat_Class (u"Laser 4.7",         max_crew = 1)
+    >>> x = SRM.Boat_Class (u"Laser Master",      max_crew = 1)
+    >>> x = SRM.Boat_Class (u"Laser Radial",      max_crew = 1)
+    >>> x = SRM.Boat_Class (u"O-Jolle",           max_crew = 1)
+    >>> x = SRM.Boat_Class (u"Optimist",          max_crew = 1)
+    >>> x = SRM.Boat_Class (u"Pirat Regatta",     max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Pirat Klassik",     max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Pirat Schulboot",   max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Pirat",             max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Robby Jolle",       max_crew = 2)
+    >>> x = SRM.Boat_Class (u"Seascape 18",       max_crew = 4)
+    >>> x = SRM.Boat_Class (u"Zoom8",             max_crew = 1)
 
     >>> scope.commit ()
 
-    >>> bc  = SRM.Boat_Class.instance ("Optimist")
+    >>> x = SRM.Boat ((u'Optimist',),    u"Austria", 1)
+    >>> x = SRM.Boat ((u'Optimist',),    u"Austria", 2)
+    >>> x = SRM.Boat ((u'Laser',),       u"Austria", 3)
+    >>> x = SRM.Boat ((u'Seascape 18',), u"Austria", 14)
+
+    >>> scope.commit ()
+
+    >>> bc  = SRM.Boat_Class.instance (u"Optimist")
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
@@ -118,9 +119,9 @@ _test_code = r"""
 
     >>> bc.set (loa = 2.43)
     1
-    >>> SRM.Boat_Class.instance ("Laser").set (sail_area = 7.06, loa = 4.064, beam = 1.422)
+    >>> SRM.Boat_Class.instance (u"Laser").set (sail_area = 7.06, loa = 4.064, beam = 1.422)
     3
-    >>> SRM.Boat_Class.instance ("Seascape 18").set (loa = 5.45, beam = 2.45, sail_area = 23)
+    >>> SRM.Boat_Class.instance (u"Seascape 18").set (loa = 5.45, beam = 2.45, sail_area = 23)
     3
     >>> scope.commit ()
 
