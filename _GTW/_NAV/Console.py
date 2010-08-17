@@ -235,15 +235,19 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
             title = 'Details for'
         title    += ' ' + object.__repr__ (obj) [1:-1]
         ### XXX
-        return render_template('dump_object.html', items=items,
-                               title=title, repr=repr)
+        return render_template\
+            ('dump_object.html', items=items, title=title, repr=repr)
     # end def dump_object
 
     def dump_locals (self, d) :
         items = [(key, self.repr (value)) for key, value in d.items ()]
         ### XXX
-        return render_template('dump_object.html', items=items,
-                               title='Local variables in frame', repr=None)
+        return render_template\
+            ( 'dump_object.html'
+            , items = items
+            , repr  = None
+            , title = 'Local variables in frame'
+            )
     # end def dump_locals
 
 # end class HTML_Repr_Generator
@@ -442,5 +446,3 @@ class Console (GTW.NAV.Page) :
 if __name__ != "__main__" :
     GTW.NAV._Export ("*")
 ### __END__ GTW.Nav.Console
-
-

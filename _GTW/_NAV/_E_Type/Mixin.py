@@ -99,14 +99,14 @@ class Instance_Mixin (Mixin) :
         else :
             name = TFL.Ascii.sanitized_filename (name)
         self.__super.__init__ \
-            ( obj      = obj
-            , manager  = manager
-            , name     = name
-            , parent   = kw.pop ("parent", manager)
+            ( obj        = obj
+            , manager    = manager
+            , name       = name
+            , parent     = kw.pop ("parent", manager)
             , ** kw
             )
-        self.desc  = self.__getattr__ ("desc")
-        self.title = self.__getattr__ ("title")
+        self.title       = self.__getattr__ ("title")
+        self.short_title = self.__getattr__ ("short_title")
     # end def __init__
 
     @property

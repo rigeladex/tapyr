@@ -204,22 +204,22 @@ class Site_Admin (GTW.NAV.Dir) :
             (self._etype_man_entries (), kw.pop ("etypes", []))
         self.__super.__init__ (src_dir, parent, ** kw)
         self.add_entries      (entries)
-        self._entries.sort    (key = TFL.Getter.title)
+        self._entries.sort    (key = TFL.Getter.short_title)
     # end def __init__
 
     def _etype_man_entries (self) :
         for man in self.top.E_Types.itervalues () :
-            m_kw  = man.admin_args.copy ()
-            title = m_kw.pop ("title", man.title)
-            desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, man.name))
-            ETM   = m_kw.pop ("ETM", man._ETM)
-            Type  = m_kw.pop ("Type", self.Page)
-            d     = dict \
-                ( name      = man.name
-                , title     = title
-                , desc      = desc
-                , ETM       = ETM
-                , Type      = Type
+            m_kw        = man.admin_args.copy ()
+            short_title = m_kw.pop ("short_title", man.short_title)
+            title       = m_kw.pop ("title", "%s: %s" % (self.title, man.name))
+            ETM         = m_kw.pop ("ETM", man._ETM)
+            Type        = m_kw.pop ("Type", self.Page)
+            d           = dict \
+                ( name        = man.name
+                , short_title = short_title
+                , title       = title
+                , ETM         = ETM
+                , Type        = Type
                 , ** m_kw
                 )
             yield d

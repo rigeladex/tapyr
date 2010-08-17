@@ -30,6 +30,8 @@
 #    24-Mar-2010 (CT) `name` passed to `Picture`
 #    24-Mar-2010 (CT) `Gallery.permalink` and `.prefix` corrected
 #    24-Mar-2010 (CT) `is_current` redefined
+#    17-Aug-2010 (CT) `template` corrected
+#    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #    ««revision-date»»···
 #--
 
@@ -54,7 +56,7 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     allows_children = True
 
-    template        = "gallery.html"
+    template        = "gallery"
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -64,7 +66,7 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     class Picture (_Cmd_) :
 
-        template  = "photo.html"
+        template  = "photo"
 
         def __init__ (self, * args, ** kw) :
             self.__super.__init__ (* args, ** kw)
@@ -88,14 +90,14 @@ class Gallery (GTW.NAV.E_Type.Instance) :
         # end def prev
 
         @Once_Property
-        def title (self) :
+        def short_title (self) :
             return "%s: %s %s/%s" % \
-                ( self.parent.obj.title
+                ( self.parent.obj.short_title
                 , _T ("picture")
                 , self.obj.name
                 , len (self.obj.gallery.pictures)
                 )
-        # end def title
+        # end def short_title
 
     # end class Picture
 

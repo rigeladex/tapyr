@@ -73,7 +73,11 @@ class Templateer (TFL.Meta.Object) :
         , e_type_admin                 = "html/e_type_admin.jnj"
         , e_type_aggregator            = "html/e_type_aggregator.jnj"
         , e_type_change                = "html/e_type_change.jnj"
+        , gallery                      = "html/gallery.jnj"
         , login                        = "html/login.jnj"
+        , photo                        = "html/photo.jnj"
+        , regatta_result               = "html/regatta_result.jnj"
+        , regatta_registration         = "html/regatta_registration.jnj"
         , site_admin                   = "html/site_admin.jnj"
         )
 

@@ -45,7 +45,7 @@
       {% endif %}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
-          <title>{{ GTW.firstof (page.h_title, page.title, page.h_ref) }}</title>
+          <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
         {%- for cssl in page.Media.css_links %}
@@ -79,12 +79,9 @@
         {% endfor -%}
       {%- endblock related_links -%}
       {%- block meta_elements -%}
-        {%- if page.description %}
-        <meta name="description" content="{{ page.description }}" />
-        {%- endif %}
         <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />
         <meta name="generator" content="GTW, JNJ, Jinja2" />
-        {{ X.meta_content_url (page.href) }}
+        {{ X.meta_content_url (page.permalink) }}
       {%- endblock meta_elements -%}
       {{ page.add_headers|safe }}
     {%- endblock head_elements %}
@@ -111,8 +108,8 @@
           {% endif -%}
         {%- endblock notifications -%}
         {%- block body_headline %}
-          {%- if page.headline %}
-            <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>
+          {%- if page.head_line %}
+            <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.head_line|safe }}</h1>
           {% endif -%}
         {%- endblock body_headline %}
         {% block document %}{% endblock -%}

@@ -159,6 +159,8 @@
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
 #     8-Jan-2010 (CT) Moved from DJO to GTW
+#    17-Aug-2010 (CT) `template` corrected
+#    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #    ««revision-date»»···
 #--
 
@@ -176,7 +178,7 @@ from   posixpath import join as pjoin, normpath as pnorm
 class Gallery (GTW.NAV.Page) :
     """Model a photo gallery that's part of a web site."""
 
-    template = "gallery.html"
+    template = "gallery"
 
     def __init__ (self, pic_dir, parent, ** kw) :
         self.im_dir   = pjoin (pic_dir, "im")
@@ -234,20 +236,20 @@ class Gallery (GTW.NAV.Page) :
             name = Filename (im).base
             th   = pjoin (self.th_dir, "%s.jpg" % name)
             if sos.path.exists (th) :
-                i     += 1
-                title  = "%s %d/%d" % (self.title, i, len (images))
-                desc   = "%s %d/%d" % (self.desc,  i, len (images))
-                photo  = Photo     \
+                i           += 1
+                short_title  = "%s %d/%d" % (self.short_title, i, len (images))
+                title        = "%s %d/%d" % (self.title,  i, len (images))
+                photo        = Photo     \
                     ( "%s.html" % (name, ), im
-                    , parent = self
-                    , desc   = desc
-                    , title  = title
+                    , parent       = self
+                    , title        = title
+                    , short_title  = short_title
                     )
                 thumb  = Thumbnail \
                     ( th, photo
-                    , parent = self
-                    , desc   = desc
-                    , title  = title
+                    , parent      = self
+                    , title       = title
+                    , short_title = short_title
                     )
                 photos.append (photo)
                 thumbs.append (thumb)
@@ -301,7 +303,7 @@ class Photo (_Photo_) :
 
     next      = None
     prev      = None
-    template  = "photo.html"
+    template  = "photo"
     thumb     = None
 
 # end class Photo

@@ -33,6 +33,8 @@
 #    10-May-2010 (CT) `Regatta._get_objects` changed to include `Results`
 #    12-May-2010 (CT) `Results._get_objects` changed to sort by `skipper`
 #    23-Jun-2010 (MG) `SRM.__init__` changed to use app-type instead of scope
+#    17-Aug-2010 (CT) `template` corrected
+#    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #    ««revision-date»»···
 #--
 
@@ -89,10 +91,10 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 ( GTW.NAV.Page
                     ( self
                     , name        = u"%s.html" % (nr.lower (), )
-                    , title       = nr
-                    , desc        = u"%s %s" %
-                        ( _T (u"Results for"), self.title)
-                    , template    = u"regatta_result.html"
+                    , short_title = nr
+                    , title       = u"%s %s" %
+                        ( _T (u"Results for"), self.short_title)
+                    , template    = u"regatta_result"
                     , regatta     = obj
                     )
                 )
@@ -101,10 +103,10 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 ( GTW.NAV.Page
                     ( self
                     , name        = u"%s.html" % (np.lower (), )
-                    , title       = np
-                    , desc        = u"%s %s" %
-                        ( _T (u"List of participants for"), self.title)
-                    , template    = u"regatta_registration.html"
+                    , short_title = np
+                    , title       = u"%s %s" %
+                        ( _T (u"List of participants for"), self.short_title)
+                    , template    = u"regatta_registration"
                     , regatta     = obj
                     )
                 )

@@ -204,14 +204,14 @@ class Manager_T (Manager) :
         result = [T (self, o, ** kw) for o in self.query ()]
         arch   = Manager_T_Archive \
             ( ETM       = self.ETM
-            , name      = name
-            , Page      = T
-            , page_args = kw
-            , parent    = self
-            , sort_key  = self.sort_key
-            , src_dir   = pjoin (self.src_dir, name)
-            , sub_dir   = name
-            , title     = name
+            , name        = name
+            , Page        = T
+            , page_args   = kw
+            , parent      = self
+            , sort_key    = self.sort_key
+            , src_dir     = pjoin (self.src_dir, name)
+            , sub_dir     = name
+            , short_title = name
             )
         result.append (arch)
         return result
@@ -285,12 +285,12 @@ class Manager_T_Archive (Manager) :
             if os :
                 name = str (y)
                 Y    = kw ["parent"] = self.Year \
-                    ( src_dir = pjoin (self.src_dir, name)
-                    , parent  = self
-                    , year    = y
-                    , name    = name
-                    , sub_dir = name
-                    , title   = name
+                    ( src_dir     = pjoin (self.src_dir, name)
+                    , parent      = self
+                    , year        = y
+                    , name        = name
+                    , sub_dir     = name
+                    , short_title = name
                     )
                 Y._entries = [T (self, o, page_args = pkw, ** kw) for o in os]
                 result.append (Y)

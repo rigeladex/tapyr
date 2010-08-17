@@ -40,6 +40,7 @@
 ##    18-Mar-2010 (CT) `entry` changed to use `href = link.abs_href`
 ##    24-Mar-2010 (CT) Use `link.is_current` instead of home-grown code
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
+##    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 ##    ««revision-date»»···
 ##--
 #}
@@ -61,28 +62,30 @@
     {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
         <a href="{{ href }}"
-               {%- if link.desc %} title="{{ link.desc }}"{% endif %}
+               {%- if link.title %} title="{{ link.title }}"{% endif %}
                class="current-section"
-            >{{ link.title|safe }}</a>
+            >{{ link.short_title|safe }}</a>
         {{ entries (link.own_links, level + 1) }}
       </li>
     {%- else -%}
       {% if link.is_current and link.is_current (nav_page) -%}
-        <li class="current-link level-{{ level }}">{{ link.title|safe }}</li>
+        <li class="current-link level-{{ level }}">
+          {{- link.short_title|safe -}}
+        </li>
       {%- else -%}
         {%- if href -%}
           <li class="nav-link level-{{ level }}">
             <a href="{{ href }}"
-               {%- if link.desc %} title="{{ link.desc }}"{% endif -%}
-            >{{ link.title|safe }}</a>
+               {%- if link.title %} title="{{ link.title }}"{% endif -%}
+            >{{ link.short_title|safe }}</a>
           </li>
         {%- else -%}
-          <li class="no-link">{{ link.title|safe }}</li>
+          <li class="no-link">{{ link.short_title|safe }}</li>
         {%- endif %}
       {%- endif %}
     {%- endif %}
   {%- else %}
-    <li>{{ link.title|safe }}</li>
+    <li>{{ link.short_title|safe }}</li>
   {%- endif %}
 {%- endmacro -%} {# entry #}
 
@@ -188,8 +191,8 @@
   {% if NAV.permissive or (NAV.allow (link, request.user) and not link.hidden) %}
     <li class="nav-link level-{{link.level|default('0')}}">
       <a href="{{ link.permalink}}"
-         {% if link.desc %} title="{{ link.desc }}"{% endif %}
-      >{{ link.title }}</a>
+         {% if link.title %} title="{{ link.title }}"{% endif %}
+      >{{ link.short_title|safe }}</a>
       {% if TEST and request.user.authenticated %}
         <div class="nav-link-details">
           {% if link.creator %}<p>Creator: {{ link.creator }}</p>{% endif %}
@@ -198,7 +201,7 @@
           <p>Permalink: {{ link.permalink }}</p>
           <p>Name: {{ link.name }}</p>
           <p>Prefix: {{ link.prefix }}</p>
-          <p>Title: {{ link.title }}</p>
+          <p>Short-Title: {{ link.short_title }}</p>
           <p>Desc: {{ link.desc }}</p>
           <p>Template: {{ link.template }}</p>
           <p>Type: {{ link.Type }}</p>

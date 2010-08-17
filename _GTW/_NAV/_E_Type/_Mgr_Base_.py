@@ -58,15 +58,15 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
             E_Type      = self.top.App_Type [ETM]
             del kw ["ETM"]
         else :
-            E_Type = ETM._etype
-        desc       = kw.pop  ("desc", E_Type.__doc__)
-        name       = unicode (kw.pop ("name", E_Type.ui_name))
-        title      = kw.pop  ("title", _T (name))
+            E_Type  = ETM._etype
+        title       = kw.pop  ("title", E_Type.__doc__)
+        name        = unicode (kw.pop ("name", E_Type.ui_name))
+        short_title = kw.pop  ("short_title", _T (name))
         self.__super.__init__ \
-            ( parent       = parent
-            , E_Type       = E_Type
-            , desc         = desc
+            ( E_Type       = E_Type
             , name         = name
+            , parent       = parent
+            , short_title  = short_title
             , title        = title
             , ** kw
             )

@@ -279,14 +279,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
-    desc                       = ""
+    title                      = ""
     hidden                     = False
     href                       = ""
     input_encoding             = "iso-8859-15"
     nick                       = ""
     pid                        = None
     rank                       = 10
-    title                      = ""
+    short_title                = ""
     top                        = None
     anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
     implicit                   = False
@@ -421,7 +421,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     @property
     def h_title (self) :
         return u"::".join \
-            ( ( self.nick or self.title or self.name or self.href
+            ( ( self.nick or self.short_title or self.name or self.href
               , self.parent.h_title
               )
             )
@@ -613,7 +613,7 @@ class Page (_Site_Entity_) :
 
     @property
     def dir (self) :
-        return self.parent.title
+        return self.parent.short_title
     # end def dir
 
     @property

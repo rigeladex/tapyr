@@ -1,5 +1,5 @@
 {%- extends site_base or "html/base.jnj" %}
-{#- jinja template: site_admin.jnj -#}
+{#- jinja template: html/sitemap.jnj -#}
 {#
 ## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -22,33 +22,21 @@
 ##
 ##++
 ## Name
-##    html/site_admin.jnj
+##    html/sitemap.jnj
 ##
 ## Purpose
-##    Template for site administration
+##    Template for sitemap of a web site
 ##
 ## Revision Dates
-##    22-Jan-2010 (CT) Creation
+##    17-Aug-2010 (CT) Creation
 ##    ««revision-date»»···
 ##--
 #}
-{%- macro site_admin (page) -%}
-  <table class="Object-List">
-    {%- for link in page.own_links if link.allow_user (request.user) %}
-      <tr class="{{ loop.cycle ('row1', 'row2',) }}">
-        <td>
-          <a href="{{ link.permalink }}"
-             {% if link.title %}title="{{ GTW._T (link.title) }}"{% endif -%}
-          >{{ link.short_title }}</a>
-        </td>
-        <td>{{ link.count }}</td>
-      </tr>
-    {% endfor -%}
-  </table>
-{%- endmacro -%} {#- site_admin -#}
 
-{%- block document %}
-  {{- site_admin (page) -}}
-{% endblock -%}
+{%- import "STD::html/navigation.jnj" as NT with context -%}
 
-{#- __END__ jinja template: site_admin.jnj -#}
+{%- block document -%}
+  {{ NT.sitemap (NAV.own_links, TEST = NAV.TEST) }}
+{%- endblock document -%}
+
+{#- __END__ jinja template: html/sitemap.jnj -#}

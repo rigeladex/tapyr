@@ -1,6 +1,8 @@
 GTW To-Do
 =========
 
+- GTW.Tornado.Error vs. GTW.Werkzeug.Error: refactor
+
 - GTW.NAV.Robots: Answer to url `/robots.txt`
 
   * Disallow for various directories/pages

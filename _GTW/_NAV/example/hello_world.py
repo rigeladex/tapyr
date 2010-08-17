@@ -29,6 +29,7 @@
 #    13-Sep-2009 (MG) Creation
 #    14-Jan-2010 (MG) Use `TFL.CAO`
 #    14-Jan-2010 (CT) `PNS_Aliases` added and `Account_P` creation enabled
+#    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -127,60 +128,60 @@ NAV               = GTW.NAV.Root \
 NAV.add_entries \
     ( ( dict
           ( name           = "index.html"
-          , title          = u"Home"
+          , short_title    = u"Home"
           , Type           = GTW.NAV.Page_ReST_F
           )
       , dict
           ( name           = "test.html"
-          , title          = u"Test"
+          , short_title    = u"Test"
           , Type           = GTW.NAV.Page_ReST_F
           , login_required = True
           )
       , dict
           ( name           = "sitemap.html"
           , template       = "sitemap.jnj"
-          , title          = u"Sitemap"
+          , short_title    = u"Sitemap"
           , Type           = GTW.NAV.Page
           , login_required = True
           )
       , dict
           ( name            = "login.html"
           , template        = "login.jnj"
-          , title           = u"Login"
+          , short_title     = u"Login"
           , Type            = GTW.NAV.Auth.Login
           , hidden          = True
           )
       , dict
           ( name            = "logout.html"
-          , title           = u"Logout"
+          , short_title     = u"Logout"
           , Type            = GTW.NAV.Auth.Logout
           , hidden          = True
           )
       , dict
           ( name            = "I18N.html"
-          , title           = "I18N Test"
+          , short_title     = "I18N Test"
           , template        = "i18n.jnj"
           , Type            = I18N_Test
           )
       , dict
           ( name           = "redirect_301.html"
-          , title          = u"Redirect 301 (index)"
+          , short_title    = u"Redirect 301 (index)"
           , Type           = Redirect
           , redirect_to    = "index.html"
           , code           = 301
           )
       , dict
           ( name           = "redirect_302.html"
-          , title          = u"Redirect 302 (test)"
+          , short_title    = u"Redirect 302 (test)"
           , Type           = Redirect
           , redirect_to    = "test.html"
           , code           = 302
           )
       , dict
           ( sub_dir         = "Admin"
-          , title           = "Admin"
-          , desc            = u"Verwaltung der Homepage"
-          , headline        = u"Administration der Homepage"
+          , short_title     = "Admin"
+          , title           = u"Verwaltung der Homepage"
+          , head_line       = u"Administration der Homepage"
           , login_required  = False # True
           , etypes          =
               [ GTW.OMP.PAP.Nav.Admin.Person
@@ -194,7 +195,7 @@ NAV.add_entries \
 NAV.add_entries \
     ( ( dict
           ( name           = "error_%s.html" % c
-          , title          = u"Display a HTTP error %s" % c
+          , short_title          = u"Display a HTTP error %s" % c
           , Type           = Error
           , code           = c
           )
