@@ -219,7 +219,7 @@ class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     # end def __do_migrate
 
     def __do_readonly (cls, cmd) :
-        """Change readonly-state of database"""
+        """Change readonly-state of database."""
         return cls.do_readonly (cmd)
     # end def __do_readonly
 
