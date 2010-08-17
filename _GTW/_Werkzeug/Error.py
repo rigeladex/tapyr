@@ -96,6 +96,8 @@ class _Redirect_ (Status) :
 
 # end class _Redirect_
 
+### http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+
 class Redirect_301 (_Redirect_) :
     """Moved Permanently."""
     status_code = 301
