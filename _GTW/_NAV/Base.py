@@ -300,7 +300,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     SUPPORTED_METHODS   = set (("GET", ))
 
     def __init__ (self, parent = None, ** kw) :
-        self._kw    = kw
+        self._kw    = dict (kw)
         self.parent = parent
         if "input_encoding" in kw :
             encoding = kw ["input_encoding"]
