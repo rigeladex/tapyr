@@ -32,6 +32,7 @@
 #    15-Jan-2010 (CT) `M_Status` added
 #    18-Jan-2010 (CT) Use `Templateer.get_std_template` instead of homegrown
 #                     code
+#    17-Aug-2010 (CT) `Error_503` added
 #    ««revision-date»»···
 #--
 
@@ -162,6 +163,11 @@ class Error_500 (_Error_) :
     """Internal Server Error."""
     status_code = 500
 # end class Error_500
+
+class Error_503 (_Error_) :
+    """Service Unavailable."""
+    status_code = 503
+# end class Error_503
 
 if __name__ != "__main__" :
     GTW.Tornado._Export ("*", "_Redirect_")

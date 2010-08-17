@@ -34,6 +34,7 @@
 #    14-May-2010 (MG) `dynamic_form` added
 #    19-May-2010 (MG) `render_string` added
 #     2-Aug-2010 (MG) `console` added
+#    17-Aug-2010 (CT) `error_503` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ class Templateer (TFL.Meta.Object) :
           , 404       : "html/error_404.jnj"
           , 405       : "html/error_405.jnj"
           , 500       : "html/error_500.jnj"
+          , 503       : "html/error_503.jnj"
           }
         , account_activate             = "html/activate.jnj"
         , account_change_email         = "html/change_email.jnj"

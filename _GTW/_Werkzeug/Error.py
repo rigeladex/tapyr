@@ -29,6 +29,7 @@
 #    20-Mar-2010 (MG) Creation (based on GTW.Tornado.Error)
 #     6-May-2010 (MG) `Status.__init__` `* args` added
 #    20-Jun-2010 (MG) `s/finish/finish_request/g`
+#    17-Aug-2010 (CT) `Error_503` added
 #    ««revision-date»»···
 #--
 
@@ -167,6 +168,11 @@ class Error_405 (_Error_) :
 class Error_500 (_Error_) :
     """Internal Server Error."""
     response = exceptions.InternalServerError
+# end class Error_500
+
+class Error_503 (_Error_) :
+    """Service Unavailable."""
+    response = exceptions.ServiceUnavailable
 # end class Error_500
 
 if __name__ != "__main__" :

@@ -78,6 +78,7 @@
 #     1-Jul-2010 (CT) Adapted to `Id_Entity.as_pickle_cargo` change (`pid` last)
 #     1-Jul-2010 (CT) `migrate` renamed to `copy`
 #    11-Aug-2010 (CT) Optional argument `ignore` added to `user_diff`
+#    17-Aug-2010 (CT) Properties `db_meta_data` and `readonly` added
 #    ««revision-date»»···
 #--
 
@@ -121,8 +122,10 @@ class Scope (TFL.Meta.Object) :
     changes                = property (TFL.Getter.historian.total_changes)
     changes_to_save        = property \
         (lambda s : len (s.ems.uncommitted_changes))
+    db_meta_data           = property (TFL.Getter.ems.db_meta_data)
     etypes                 = property (TFL.Getter.app_type.etypes)
     name                   = property (lambda s : s.qname or s.bname)
+    readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
 
     PNS_Proxy              = None
 

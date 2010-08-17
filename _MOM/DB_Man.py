@@ -42,9 +42,12 @@ import _TFL._Meta.Object
 class DB_Man (TFL.Meta.Object) :
     """Manager for data bases of MOM."""
 
-    attr_changes = {}
-    ilk          = "PC"
-    src          = None
+    attr_changes           = {}
+    ilk                    = "PC"
+    src                    = None
+
+    db_meta_data           = property (TFL.Getter.ems.db_meta_data)
+    readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
 
     ### DB_Man creation methods
     @classmethod
@@ -86,11 +89,6 @@ class DB_Man (TFL.Meta.Object) :
         """Change `readonly` state of database to `state`."""
         self.ems.change_readonly (state)
     # end def change_readonly
-
-    @property
-    def db_meta_data (self) :
-        return self.ems.db_meta_data
-    # end def db_meta_data
 
     def destroy (self) :
         self.ems.close ()

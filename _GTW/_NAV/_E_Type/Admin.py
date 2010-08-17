@@ -72,6 +72,7 @@
 #     6-Aug-2010 (MG) `Changer.rendered` use a nested change to make it
 #                     possible to undo all changes done in this form in one step
 #     8-Aug-2010 (MG) `Test` changed
+#    17-Aug-2010 (CT) `Changer.rendered` changed to check `scope.readonly`
 #    ««revision-date»»···
 #--
 
@@ -134,13 +135,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         % (_T (E_Type.ui_name), pid)
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
-            form = self.Form \
+            form  = self.Form \
                 ( self.abs_href, obj, cancel_href = self.parent.abs_href
                 , ** self.form_parameters
                 )
+            scope = self.Form.scope
+            if scope.readonly :
+                request.Error = \
+                    (_T ( "At the moment, the database is set to "
+                          "readonly to allow maintenance."
+                        )
+                    )
+                raise self.top.HTTP.Error_503 (request.path)
             if request.method == "POST" :
                 err_count = 0
-                scope     = self.Form.scope
                 if req_data.get ("cancel") :
                     ### the user has clicked on the cancel button and not on
                     ### the submit button
