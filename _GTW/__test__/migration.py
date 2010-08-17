@@ -66,7 +66,7 @@ _test_code = r"""
     >>> x = SRM.Boat_Class ("470er",             max_crew = 2)
     >>> x = SRM.Boat_Class ("49er",              max_crew = 2)
     >>> x = SRM.Boat_Class ("Aquila Kiel",       max_crew = 3)
-    >>> x = x.copy ("Aquila Schwert", max_crew = 3)
+    >>> x = x.copy         ("Aquila Schwert",    max_crew = 3)
     >>> x = SRM.Boat_Class ("Fam",               max_crew = 3)
     >>> x = SRM.Boat_Class ("Finn-Dinghy",       max_crew = 1)
     >>> x = SRM.Boat_Class ("Korsar",            max_crew = 2)
@@ -132,14 +132,14 @@ _test_code = r"""
     39
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
-    >>> b = scope.SRM.Boat_Class.query (name = "Aquila Schwert").one ()
+    >>> b = scope.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
     >>> c = scope.query_changes (cid = b.last_cid).one ()
     >>> print c ### change in source scope
     <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class')>
         <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'max_crew' : u'3'}>
     >>> len (c.children)
     1
-    >>> c.cid, c.children [0].cid
+    >>> int (c.cid), int (c.children [0].cid)
     (8, 7)
 
     Save contents of scope to database and destroy scope:
@@ -197,14 +197,14 @@ _test_code = r"""
     39
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
-    >>> b = scope_u.SRM.Boat_Class.query (name = "Aquila Schwert").one ()
+    >>> b = scope_u.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
     >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope
     >>> print c
     <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class')>
         <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'max_crew' : u'3'}>
     >>> len (c.children)
     1
-    >>> c.cid, c.children [0].cid
+    >>> int (c.cid), int (c.children [0].cid)
     (8, 7)
 
     Lets clean up::
