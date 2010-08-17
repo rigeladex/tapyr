@@ -53,6 +53,7 @@
 #                     directory traversal (factored and changed `run_dir`)
 #    11-Aug-2010 (CT) Option `-format` replaced by module-level variables
 #                     `format_f` and `format_s`
+#    17-Aug-2010 (CT) `__test__` added to `_doctest_pat`
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ import  os
 
 TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 
-_doctest_pat   = Regexp (r"^ *>>> ", re.MULTILINE)
+_doctest_pat   = Regexp (r"^( *>>> |__test__ *=)", re.MULTILINE)
 
 summary        = TFL.Record \
     ( failed   = 0

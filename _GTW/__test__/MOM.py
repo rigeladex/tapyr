@@ -29,16 +29,10 @@
 #    19-Apr-2010 (MG) Creation
 #    ««revision-date»»···
 #--
-"""
-This is just to make sure that run_doctest considers this file as a file with
-doctests
-    >>> Print
-"""
-from _MOM.__doc__ import __doc__, MOM, BMT, show, NL, sos
 
-__doc__ = __doc__
+import _MOM.__doc__
+from   _MOM.__doc__ import *
 
-if __name__ == "__main__" :
-    import doctest
-    doctest.testmod ()
+__test__ = dict (MOM = _MOM.__doc__)
+
 ### __END__ GTW.__test__.MOM
