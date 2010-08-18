@@ -167,10 +167,11 @@ class Admin (object) :
                     , "detail"
                     , AID
                         ( "recurrence"
-                        , FGD ()
+                        , FGD (render_mode = "div_seq")
                         , legend = _("Recurrence rule")
                         )
                     , legend    = _("Events associated to page")
+                    , render_mode = "div_seq"
                     , title     = _("Events")
                     )
                 )

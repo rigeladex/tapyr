@@ -60,7 +60,13 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.EVT.Event"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("object", "date", "time", "detail", "recurrence")
+            ( FGD
+                ( "object", "date", "time", "detail"
+                , AID
+                    ( "recurrence"
+                    , legend = _("Recurrence rule")
+                    )
+                )
             ,
             )
         )
