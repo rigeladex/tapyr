@@ -38,15 +38,21 @@
 #    18-Aug-2010 (CT) Attributes `dates`, `finish`, and `start` added; method
 #                     `rule` removed
 #    18-Aug-2010 (CT) `unit.default` changed from `Weekly` to `Daily`
+#    18-Aug-2010 (CT) `Recurrence_Rule_Set` added
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM import *
 from   _MOM.import_MOM import \
-     _A_Binary_String_, _A_Composite_, _A_Named_Value_, _A_Typed_List_
+     ( _A_Binary_String_
+     , _A_Composite_, _A_Composite_Collection_
+     , _A_Named_Value_
+     , _A_Typed_List_
+     )
 
 from   _TFL.I18N       import _, _T, _Tn
 
+import datetime
 import dateutil.rrule
 
 class A_Weekday_RR (A_Attr_Type) :
@@ -140,20 +146,6 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class count
 
-        class dates (A_Blob) :
-
-            kind      = Attr.Auto_Cached
-
-            def computed (self, obj) :
-                if bool (obj) :
-                    kw = dict (obj._rrule_attrs ())
-                    if obj.finish is None and obj.count is None :
-                        kw ["count"] = 1
-                    return dateutil.rrule.rrule (cache = True, ** kw)
-            # end def computed
-
-        # end class dates
-
         class easter_offset (A_Int_List) :
             """Offset to Easter sunday (positive or negative, 0 means the
                Easter sunday itself).
@@ -219,6 +211,20 @@ class Recurrence_Rule (_Ancestor_Essence) :
             rrule_name         = "bymonthday"
 
         # end class month_day
+
+        class occurrences (A_Blob) :
+
+            kind      = Attr.Auto_Cached
+
+            def computed (self, obj) :
+                if bool (obj) :
+                    kw = dict (obj._rrule_attrs ())
+                    if obj.finish is None and obj.count is None :
+                        kw ["count"] = 1
+                    return dateutil.rrule.rrule (cache = True, ** kw)
+            # end def computed
+
+        # end class occurrences
 
         class period (A_Int) :
             """The interval (measured in `units`) between
@@ -344,6 +350,95 @@ class A_Recurrence_Rule (_A_Composite_) :
     owners_dan = "date"
 
 # end class A_Recurrence_Rule
+
+class A_Recurrence_Rule_List (_A_Composite_Collection_) :
+    """A list of recurrence rules."""
+
+    typ        = "Recurrence_Rule_List"
+    C_Type     = A_Recurrence_Rule
+
+# end class A_Recurrence_Rule_List
+
+_Ancestor_Essence = MOM.An_Entity
+
+class Recurrence_Rule_Set (_Ancestor_Essence) :
+    """Model a set of recurrence rules (possibly with exceptions)."""
+
+    ### http://labix.org/python-dateutil
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class dates (A_Date_List) :
+            """Dates included in the recurrence rule set."""
+
+            kind               = Attr.Optional
+            default            = []
+
+        # end class dates
+
+        class date_exceptions (A_Date_List) :
+            """Dates excluded from the recurrence rule set."""
+
+            kind               = Attr.Optional
+            default            = []
+
+        # end class date_exceptions
+
+        class occurrences (A_Blob) :
+
+            kind      = Attr.Auto_Cached
+
+            def computed (self, obj) :
+                if bool (obj) :
+                    result = dateutil.rrule.rruleset (cache = True)
+                    for r in obj.rules :
+                        result.rrule (r.occurrences)
+                    for x in obj.rule_exceptions :
+                        result.exrule (x.occurrences)
+                    for d in obj.dates :
+                        result.rdate \
+                            (datetime.datetime.fromordinal (d.toordinal ()))
+                    for x in obj.date_exceptions :
+                        result.exdate \
+                            (datetime.datetime.fromordinal (x.toordinal ()))
+                    return result
+            # end def computed
+
+        # end class occurrences
+
+        class rules (A_Recurrence_Rule_List) :
+            """Rules included in the recurrence rule set."""
+
+            kind               = Attr.Optional
+
+        # end class rules
+
+        class rule_exceptions (A_Recurrence_Rule_List) :
+            """Rules excluded from the recurrence rule set."""
+
+            kind               = Attr.Optional
+
+        # end class rule_exceptions
+
+    # end class _Attributes
+
+    def __nonzero__ (self) :
+        return self.has_substance ()
+    # end def __nonzero__
+
+# end class Recurrence_Rule_Set
+
+class A_Recurrence_Rule_Set (_A_Composite_) :
+    """Models an attribute holding a recurrence rule."""
+
+    C_Type     = Recurrence_Rule_Set
+    typ        = "Recurrence_Rule_Set"
+
+    owners_dan = "date"
+
+# end class A_Recurrence_Rule_Set
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()

@@ -129,6 +129,8 @@
 #     1-Jul-2010 (MG) `get_pickle_cargo` and `set_pickle_cargo` changed to
 #                     always return a tuple/accept a tupple
 #     1-Jul-2010 (MG) `_Pickle_Mixin_` removed
+#    18-Aug-2010 (CT) `_Composite_Collection_Mixin_`: added `reset` and
+#                     `_set_cooked_value`
 #    ««revision-date»»···
 #--
 
@@ -562,6 +564,11 @@ class _Composite_Mixin_ (Kind) :
 class _Composite_Collection_Mixin_ (Kind) :
     """Mixin for composite collection attributes."""
 
+    def reset (self, obj) :
+        ### Need an empty composite collection at all times
+        return self._set_cooked_value (obj, self.attr.R_Type (), changed = True)
+    # end def reset
+
     def _check_sanity (self, attr_type) :
         if __debug__ :
             if isinstance (self, _Primary_) :
@@ -589,6 +596,13 @@ class _Composite_Collection_Mixin_ (Kind) :
                         )
         self.__super._check_sanity (attr_type)
     # end def _check_sanity
+
+    def _set_cooked_value (self, obj, value, changed = 42) :
+        if value is None :
+            return self.reset (obj)
+        else :
+            return self.__super._set_cooked_value (obj, value, changed)
+    # end def _set_cooked_value
 
 # end class _Composite_Collection_Mixin_
 

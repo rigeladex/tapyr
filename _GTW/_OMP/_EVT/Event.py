@@ -91,7 +91,7 @@ class Event (_Ancestor_Essence) :
 
             def computed (self, obj) :
                 if obj.recurrence:
-                    return list (obj.recurrence.dates)
+                    return list (obj.recurrence.occurrences)
                 elif obj.date :
                     return [obj.date.start]
                 else :

@@ -137,6 +137,7 @@
 #    24-Jun-2010 (CT) `db_sig` added
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
+#    18-Aug-2010 (CT) `A_Date_Time_List` added
 #    ««revision-date»»···
 #--
 
@@ -1350,6 +1351,14 @@ class A_Date_Time (_A_Date_) :
     # end def now
 
 # end class A_Date_Time
+
+class A_Date_Time_List (_A_Typed_List_) :
+    """Models a list-valued attribute comprising date/time elements."""
+
+    typ            = "Date_Time_List"
+    C_Type         = A_Date_Time
+
+# end class A_Date_Time_List
 
 class A_Decimal (_A_Number_) :
     """Models a decimal-number valued attribute of an object."""
