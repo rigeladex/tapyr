@@ -62,7 +62,7 @@ GTW.JS_On_Ready \
     , name = "jQuery_Gritter"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "de_obfuscate_a")
+GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "GTW_util")
 GTW.JS_On_Ready ("$.GTW.fix_a_nospam ($);",         name = "de_obfuscate_a")
 
 if __name__ != "__main__" :
