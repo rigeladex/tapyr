@@ -626,6 +626,7 @@ class An_Entity (Entity) :
     is_partial            = True
     is_primary            = False
     owner                 = None
+    attr_name             = None
 
     @property
     def ui_display_format (self) :
@@ -675,7 +676,7 @@ class An_Entity (Entity) :
         """Return the attribute (kind property) of the `owner` object that
            holds `self`.
         """
-        if self.owner :
+        if self.owner and self.attr_name :
             return getattr (self.owner.__class__, self.attr_name)
     # end def owner_attr
 

@@ -169,10 +169,14 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
             def computed (self, obj) :
                 owner = obj.owner
-                if owner :
-                    result = getattr (owner, obj.owner_attr.owners_dan, None)
-                    if isinstance (result, MOM.Date_Interval) :
-                        return result.finish
+                if owner and obj.owner_attr :
+                    try :
+                        result = obj.owner_attr.owners_finish (obj)
+                    except AttributeError :
+                        pass
+                    else :
+                        if isinstance (result, MOM.Date_Interval) :
+                            return result.finish
             # end def computed
 
         # end class finish
@@ -263,11 +267,15 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
             def computed (self, obj) :
                 owner = obj.owner
-                if owner :
-                    result = getattr (owner, obj.owner_attr.owners_dan, None)
-                    if isinstance (result, MOM.Date_Interval) :
-                        result = result.start
-                    return result
+                if owner and obj.owner_attr :
+                    try :
+                        result = obj.owner_attr.owners_start (obj)
+                    except AttributeError :
+                        pass
+                    else :
+                        if isinstance (result, MOM.Date_Interval) :
+                            result = result.start
+                        return result
             # end def computed
 
         # end class start
@@ -344,18 +352,20 @@ class Recurrence_Rule (_Ancestor_Essence) :
 class A_Recurrence_Rule (_A_Composite_) :
     """Models an attribute holding a recurrence rule."""
 
-    C_Type     = Recurrence_Rule
-    typ        = "Recurrence_Rule"
+    C_Type        = Recurrence_Rule
+    typ           = "Recurrence_Rule"
 
-    owners_dan = "date"
+    owners_start  = owners_finish = TFL.Getter.owner.date
 
 # end class A_Recurrence_Rule
 
 class A_Recurrence_Rule_List (_A_Composite_Collection_) :
     """A list of recurrence rules."""
 
-    typ        = "Recurrence_Rule_List"
-    C_Type     = A_Recurrence_Rule
+    typ           = "Recurrence_Rule_List"
+    C_Type        = A_Recurrence_Rule
+
+    owners_start  = owners_finish = TFL.Getter.owner.owner.date
 
 # end class A_Recurrence_Rule_List
 
@@ -412,6 +422,7 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
             """Rules included in the recurrence rule set."""
 
             kind               = Attr.Optional
+            default            = []
 
         # end class rules
 
@@ -419,6 +430,7 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
             """Rules excluded from the recurrence rule set."""
 
             kind               = Attr.Optional
+            default            = []
 
         # end class rule_exceptions
 
@@ -435,8 +447,6 @@ class A_Recurrence_Rule_Set (_A_Composite_) :
 
     C_Type     = Recurrence_Rule_Set
     typ        = "Recurrence_Rule_Set"
-
-    owners_dan = "date"
 
 # end class A_Recurrence_Rule_Set
 

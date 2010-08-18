@@ -30,6 +30,8 @@
 #    16-Mar-2010 (CT) `_change_callback` added
 #    18-Aug-2010 (CT) `dates.computed` changed to use `recurrence.dates`
 #    18-Aug-2010 (CT) Attribute `rule` removed
+#    18-Aug-2010 (CT) `recurrence` changed from `A_Recurrence_Rule` to
+#                     `A_Recurrence_Rule_Set`
 #    ««revision-date»»···
 #--
 
@@ -68,9 +70,7 @@ class Event (_Ancestor_Essence) :
         # end class left
 
         class date (A_Date_Interval) :
-            """Date interval of event (for non-recurring events, only `start`
-               is relevant)
-            """
+            """Date interval of event (for non-recurring events, only `start` is relevant)"""
 
             kind               = Attr.Primary_Optional
 
@@ -90,7 +90,7 @@ class Event (_Ancestor_Essence) :
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj.recurrence:
+                if obj.recurrence :
                     return list (obj.recurrence.occurrences)
                 elif obj.date :
                     return [obj.date.start]
@@ -108,14 +108,12 @@ class Event (_Ancestor_Essence) :
 
         # end class detail
 
-        class recurrence (A_Recurrence_Rule) :
-            """Recurrence rule defining when and how often the event recurs."""
+        class recurrence (A_Recurrence_Rule_Set) :
+            """Recurrence rule set defining when and how often the event recurs."""
 
             kind               = Attr.Optional
 
         # end class recurrence
-
-        ### XXX exceptions to `recurrence`
 
         class short_title (A_String) :
 

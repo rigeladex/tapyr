@@ -131,6 +131,10 @@
 #     1-Jul-2010 (MG) `_Pickle_Mixin_` removed
 #    18-Aug-2010 (CT) `_Composite_Collection_Mixin_`: added `reset` and
 #                     `_set_cooked_value`
+#    18-Aug-2010 (CT) `_check_sanity_default` factored and redefined for
+#                     `_A_Composite_Collection_`
+#    18-Aug-2010 (CT) `_update_owner` factored and used in
+#                     `_Composite_Collection_Mixin_._set_cooked_value`
 #    ««revision-date»»···
 #--
 
@@ -333,18 +337,22 @@ class Kind (MOM.Prop.Kind) :
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
-            default = getattr (attr_type, "raw_default", None)
-            if (   default is not None
-               and not isinstance (default, basestring)
-               ) :
-                d = attr_type.as_string (default)
-                if d == "" and default is not None :
-                    d = u"%s" % default
-                raise ValueError \
-                    ( u""">>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
-                    % (attr_type, self.name, default, d)
-                    )
+            self._check_sanity_default (attr_type)
     # end def _check_sanity
+
+    def _check_sanity_default (self, attr_type) :
+        default = getattr (attr_type, "raw_default", None)
+        if (   default is not None
+           and not isinstance (default, basestring)
+           ) :
+            d = attr_type.as_string (default)
+            if d == "" and default is not None :
+                d = u"%s" % default
+            raise ValueError \
+                ( u""">>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
+                % (attr_type, self.name, default, d)
+                )
+    # end def _check_sanity_default
 
     def _get_computed (self, obj) :
         attr     = self.attr
@@ -490,7 +498,21 @@ class _Auto_Update_Mixin_ (Kind) :
 
 # end class _Auto_Update_Mixin_
 
-class _Composite_Mixin_ (Kind) :
+class _Composite_Base_ (Kind) :
+    """Base for composite mixin classes."""
+
+    def _update_owner (self, obj, value) :
+        if value.owner is not None and value.owner is not obj :
+            value = value.copy ()
+        value.attr_name    = self.name
+        value.owner        = obj
+        value.home_scope   = obj.home_scope
+        return value
+    # end def _update_owner
+
+# end class _Composite_Base_
+
+class _Composite_Mixin_ (_Composite_Base_) :
     """Mixin for composite attributes."""
 
     @property
@@ -549,19 +571,20 @@ class _Composite_Mixin_ (Kind) :
             ### Need an empty composite at all times
             return self.reset (obj)
         else :
-            if value.owner is not None and value.owner is not obj :
-                value = value.copy ()
-            value.owner        = obj
-            value.attr_name    = self.name
-            value.is_mandatory = self.is_mandatory
-            value.is_primary   = self.is_primary
-            value.home_scope   = obj.home_scope
+            value = self._update_owner (obj, value)
             return self.__super._set_cooked_value (obj, value, changed)
     # end def _set_cooked_value
 
+    def _update_owner (self, obj, value) :
+        value = self.__super._update_owner (obj, value)
+        value.is_mandatory = self.is_mandatory
+        value.is_primary   = self.is_primary
+        return value
+    # end def _update_owner
+
 # end class _Composite_Mixin_
 
-class _Composite_Collection_Mixin_ (Kind) :
+class _Composite_Collection_Mixin_ (_Composite_Base_) :
     """Mixin for composite collection attributes."""
 
     def reset (self, obj) :
@@ -597,10 +620,18 @@ class _Composite_Collection_Mixin_ (Kind) :
         self.__super._check_sanity (attr_type)
     # end def _check_sanity
 
+    def _check_sanity_default (self, attr_type) :
+        default = getattr (attr_type, "raw_default", None)
+        if default is not None and default not in ([], ()) :
+            self.__super._check_sanity_default (attr_type)
+    # end def _check_sanity_default
+
     def _set_cooked_value (self, obj, value, changed = 42) :
         if value is None :
             return self.reset (obj)
         else :
+            value = self.attr.R_Type \
+                (self._update_owner (obj, v) for v in value)
             return self.__super._set_cooked_value (obj, value, changed)
     # end def _set_cooked_value
 
