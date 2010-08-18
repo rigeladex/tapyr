@@ -35,6 +35,9 @@
 #                     `finish` or `count`, ...)
 #    27-Apr-2010 (CT) Default for `glob` and `locl` changed from `None` to `{}`
 #     7-Jun-2010 (CT) `A_Weekday_RR.Pickler` methods guarded against `None`
+#    18-Aug-2010 (CT) Attributes `dates`, `finish`, and `start` added; method
+#                     `rule` removed
+#    18-Aug-2010 (CT) `unit.default` changed from `Weekly` to `Daily`
 #    ««revision-date»»···
 #--
 
@@ -137,6 +140,20 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class count
 
+        class dates (A_Blob) :
+
+            kind      = Attr.Auto_Cached
+
+            def computed (self, obj) :
+                if bool (obj) :
+                    kw = dict (obj._rrule_attrs ())
+                    if obj.finish is None and obj.count is None :
+                        kw ["count"] = 1
+                    return dateutil.rrule.rrule (cache = True, ** kw)
+            # end def computed
+
+        # end class dates
+
         class easter_offset (A_Int_List) :
             """Offset to Easter sunday (positive or negative, 0 means the
                Easter sunday itself).
@@ -148,6 +165,35 @@ class Recurrence_Rule (_Ancestor_Essence) :
             rrule_name         = "byeaster"
 
         # end class easter_offset
+
+        class finish (A_Date) :
+            """Finish date of the recurrence."""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Mixin, )
+            rank               = -105
+
+            rrule_name         = "until"
+
+            def computed (self, obj) :
+                owner = obj.owner
+                if owner :
+                    result = getattr (owner, obj.owner_attr.owners_dan, None)
+                    if isinstance (result, MOM.Date_Interval) :
+                        return result.finish
+            # end def computed
+
+        # end class finish
+
+        class first_day_of_week (A_Int) :
+            """First day of week"""
+
+            kind               = Attr.Const
+            default            = dateutil.rrule.MO.weekday
+
+            rrule_name         = "wkst"
+
+        # end class first_day_of_week
 
         class month (A_Int_List) :
             """Restrict the recurrences to the months specified (1 means
@@ -200,6 +246,26 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class restrict_pos
 
+        class start (A_Date) :
+            """Start date of the recurrence."""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Mixin, )
+            rank               = -110
+
+            rrule_name         = "dtstart"
+
+            def computed (self, obj) :
+                owner = obj.owner
+                if owner :
+                    result = getattr (owner, obj.owner_attr.owners_dan, None)
+                    if isinstance (result, MOM.Date_Interval) :
+                        result = result.start
+                    return result
+            # end def computed
+
+        # end class start
+
         class unit (_A_Named_Value_) :
             """Unit of recurrence. `period` is interpreted in units of
                `unit`.
@@ -212,7 +278,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
                 (  (k, getattr (dateutil.rrule, k.upper ()))
                 for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))
                 )
-            default            = Table ["Weekly"]
+            default            = Table ["Daily"]
             rank               = -99
 
             rrule_name         = "freq"
@@ -240,16 +306,6 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class week_day
 
-        class first_day_of_week (A_Int) :
-            """First day of week"""
-
-            kind               = Attr.Const
-            default            = dateutil.rrule.MO.weekday
-
-            rrule_name         = "wkst"
-
-        # end class first_day_of_week
-
         class year_day (A_Int_List) :
             """Restrict the recurrences to the days of the year specified.
                Negative numbers count from the end of the year
@@ -263,14 +319,6 @@ class Recurrence_Rule (_Ancestor_Essence) :
         # end class year_day
 
     # end class _Attributes
-
-    def rule (self, start = None, finish = None, cache = False) :
-        kw = dict (self._rrule_attrs ())
-        if finish is None and self.count is None :
-            kw ["count"] = 1
-        return dateutil.rrule.rrule \
-            (dtstart = start, until = finish, cache = cache, ** kw)
-    # end def rule
 
     def _rrule_attrs (self) :
         for a in self.attributes.itervalues () :
@@ -290,8 +338,10 @@ class Recurrence_Rule (_Ancestor_Essence) :
 class A_Recurrence_Rule (_A_Composite_) :
     """Models an attribute holding a recurrence rule."""
 
-    C_Type = Recurrence_Rule
-    typ    = "Recurrence_Rule"
+    C_Type     = Recurrence_Rule
+    typ        = "Recurrence_Rule"
+
+    owners_dan = "date"
 
 # end class A_Recurrence_Rule
 

@@ -148,6 +148,7 @@
 #     1-Jul-2010 (CT) `Id_Entity.as_pickle_cargo` changed to put `pid` last
 #    11-Aug-2010 (CT) `last_cid` added
 #    11-Aug-2010 (CT) Optional argument `ignore` added to `user_diff`
+#    18-Aug-2010 (CT) `owner_attr` added to `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -668,6 +669,15 @@ class An_Entity (Entity) :
             result.set_raw (** raw_kw)
         return result
     # end def copy
+
+    @property
+    def owner_attr (self) :
+        """Return the attribute (kind property) of the `owner` object that
+           holds `self`.
+        """
+        if self.owner :
+            return getattr (self.owner.__class__, self.attr_name)
+    # end def owner_attr
 
     def set (self, on_error = None, ** kw) :
         if self.owner and self.is_primary :

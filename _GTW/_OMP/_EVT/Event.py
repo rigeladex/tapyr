@@ -28,6 +28,8 @@
 # Revision Dates
 #    10-Mar-2010 (CT) Creation
 #    16-Mar-2010 (CT) `_change_callback` added
+#    18-Aug-2010 (CT) `dates.computed` changed to use `recurrence.dates`
+#    18-Aug-2010 (CT) Attribute `rule` removed
 #    ««revision-date»»···
 #--
 
@@ -88,8 +90,8 @@ class Event (_Ancestor_Essence) :
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj.rule :
-                    return list (obj.rule)
+                if obj.recurrence:
+                    return list (obj.recurrence.dates)
                 elif obj.date :
                     return [obj.date.start]
                 else :
@@ -114,22 +116,6 @@ class Event (_Ancestor_Essence) :
         # end class recurrence
 
         ### XXX exceptions to `recurrence`
-
-        class rule (A_Blob) :
-
-            kind      = Attr.Auto_Cached
-
-            def computed (self, obj) :
-                if obj.recurrence :
-                    date = obj.date
-                    return obj.recurrence.rule \
-                        ( start  = date.start
-                        , finish = date.finish
-                        , cache  = True
-                        )
-            # end def computed
-
-        # end class rule
 
         class short_title (A_String) :
 
