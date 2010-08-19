@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-08-17 18:14+0200\n"
+"PO-Revision-Date: 2010-08-19 16:22+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "Activation for"
 msgstr "Aktivierung für"
 
-#: _JNJ/html/rform.jnj:338 _JNJ/html/rform.jnj:341
+#: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr "Erzeuge"
 
-#: _JNJ/html/form.jnj:157 _JNJ/html/rform.jnj:254 _JNJ/html/rform.jnj:442
+#: _JNJ/html/form.jnj:160 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -38,7 +38,7 @@ msgstr "Ändern"
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/form.jnj:353
+#: _JNJ/html/form.jnj:357
 msgid "Change email"
 msgstr "Ändere Email"
 
@@ -46,7 +46,7 @@ msgstr "Ändere Email"
 msgid "Change email for"
 msgstr "Ändere Email für"
 
-#: _JNJ/html/form.jnj:352
+#: _JNJ/html/form.jnj:356
 #, python-format
 msgid "Change email of account %s"
 msgstr "Ändere Email für Benutzerkonto %s"
@@ -55,11 +55,11 @@ msgstr "Ändere Email für Benutzerkonto %s"
 msgid "Change object"
 msgstr "Ändere Objekt"
 
-#: _JNJ/html/form.jnj:358
+#: _JNJ/html/form.jnj:362
 msgid "Change password"
 msgstr "Ändere Kennwort"
 
-#: _JNJ/html/form.jnj:357
+#: _JNJ/html/form.jnj:361
 #, python-format
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
@@ -68,7 +68,7 @@ msgstr "Ändere Kennwort für Benutzerkonto %s"
 msgid "Clear"
 msgstr "Lösche Konsole"
 
-#: _JNJ/html/rform.jnj:88
+#: _JNJ/html/rform.jnj:91
 msgid "Click to jump to the field with the first error"
 msgstr "Verweis auf das erste fehlerhafte Eingabefeld."
 
@@ -89,19 +89,20 @@ msgstr "Gegenwärtig ausgewählte Sprache: %s"
 msgid "Delete object"
 msgstr "Lösche Objekt"
 
-#: _JNJ/html/form.jnj:379 _JNJ/html/rform.jnj:427
+#: _JNJ/html/form.jnj:383 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:155 _JNJ/html/form.jnj:370 _JNJ/html/rform.jnj:418
+#: _JNJ/html/form.jnj:159 _JNJ/html/form.jnj:374 _JNJ/html/rform.jnj:258
+#: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
-msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
+msgstr "Verwerfen aller Änderungen und Verlassen des Formulars"
 
 #: _JNJ/html/news.jnj:58
 msgid "Edit this entry"
 msgstr "Ändere diesen Eintrag"
 
-#: _JNJ/html/rform.jnj:92 _JNJ/html/rform.jnj:371
+#: _JNJ/html/rform.jnj:95 _JNJ/html/rform.jnj:375
 msgid "Error"
 msgid_plural "Errors"
 msgstr[0] ""
@@ -111,7 +112,7 @@ msgstr[1] ""
 msgid "Gallery"
 msgstr "Gallerie"
 
-#: _JNJ/html/form.jnj:313 _JNJ/html/login.jnj:66
+#: _JNJ/html/form.jnj:317 _JNJ/html/login.jnj:66
 msgid "Get a new password for the username specified"
 msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
 
@@ -131,7 +132,7 @@ msgstr "Sprache"
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
 
-#: _JNJ/html/form.jnj:304
+#: _JNJ/html/form.jnj:308
 msgid "Log into website or go to account page"
 msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 
@@ -148,7 +149,7 @@ msgstr "Angemeldet"
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:305 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:149
+#: _JNJ/html/form.jnj:309 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:149
 msgid "Login"
 msgstr "Anmelden"
 
@@ -160,7 +161,7 @@ msgstr "Anmeldung für"
 msgid "Login required"
 msgstr "Anmeldung erforderlich"
 
-#: _JNJ/html/form.jnj:344 _JNJ/html/form.jnj:345
+#: _JNJ/html/form.jnj:348 _JNJ/html/form.jnj:349
 #, python-format
 msgid "Logout %s"
 msgstr "Melde %s ab"
@@ -197,11 +198,11 @@ msgstr "Seite existiert nicht"
 msgid "Permanent link"
 msgstr "Dauerhafter Verweis"
 
-#: _JNJ/html/form.jnj:298
+#: _JNJ/html/form.jnj:302
 msgid "Please enter your password"
 msgstr "Bitte um Eingabe des Kennworts"
 
-#: _JNJ/html/form.jnj:289
+#: _JNJ/html/form.jnj:293
 msgid "Please enter your username"
 msgstr "Bitte um Eingabe des Benutzernamens"
 
@@ -221,11 +222,11 @@ msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
 msgid "Read the full article at"
 msgstr "Lies den vollständigen Bericht unter"
 
-#: _JNJ/html/form.jnj:324
+#: _JNJ/html/form.jnj:328
 msgid "Register"
 msgstr "Registrieren"
 
-#: _JNJ/html/form.jnj:323
+#: _JNJ/html/form.jnj:327
 msgid "Register a new account"
 msgstr "Registrieren eines neuen Benutzerkontos"
 
@@ -233,7 +234,7 @@ msgstr "Registrieren eines neuen Benutzerkontos"
 msgid "Register a new account for "
 msgstr "Registrieren eines neuen Benutzerkontos für "
 
-#: _JNJ/html/form.jnj:380 _JNJ/html/rform.jnj:428 _JNJ/html/rform.jnj:443
+#: _JNJ/html/form.jnj:384 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -242,7 +243,7 @@ msgstr "Zurücksetzen"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/rform.jnj:441
+#: _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr "Sichern"
 
@@ -250,6 +251,10 @@ msgstr "Sichern"
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
+
+#: _JNJ/html/form.jnj:388 _JNJ/html/rform.jnj:436
+msgid "Send form data to server and leave form"
+msgstr "Schicke Daten an den Server und beende das Formular"
 
 #: _JNJ/html/error_500.jnj:37
 msgid "Server error"
@@ -263,7 +268,7 @@ msgstr "Momentan nicht verfügbar"
 msgid "Service is temporarily unavailable. "
 msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 
-#: _JNJ/html/form.jnj:382 _JNJ/html/rform.jnj:430
+#: _JNJ/html/form.jnj:389 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr "Absenden"
 
@@ -304,7 +309,4 @@ msgstr "Ein Zugriff auf die Seite %s ist nur nach Anmeldung möglich"
 #: _JNJ/html/error_404.jnj:48
 msgid "You requested a page that doesn't exist: "
 msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
-
-#~ msgid "Delete"
-#~ msgstr "Lösche"
 

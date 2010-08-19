@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-17 18:14+0200\n"
+"POT-Creation-Date: 2010-08-19 16:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
-#: _MOM/Entity.py:1008
+#: _MOM/Entity.py:1026
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1523
+#: _MOM/_Attr/Type.py:1547
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -55,7 +55,7 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:923
+#: _MOM/_Attr/Kind.py:973
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -64,8 +64,12 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:213
+#: _MOM/_Attr/Recurrence_Rule.py:330
 msgid "Daily"
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Date exceptions"
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
@@ -87,6 +91,18 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+msgid "Dates"
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Dates excluded from the recurrence rule set."
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Dates included in the recurrence rule set."
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
 msgid "Easter offset"
 msgstr ""
 
@@ -96,16 +112,21 @@ msgid_plural "Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "FR"
 msgstr ""
 
 #: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
+#: _MOM._Attr.Recurrence_Rule:0
 msgid "Finish"
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Finish date of interval"
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Finish date of the recurrence."
 msgstr ""
 
 #: _MOM._Attr.Time_Interval:0
@@ -118,7 +139,7 @@ msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1199
+#: _MOM/_Attr/Type.py:1205
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -153,7 +174,7 @@ msgid_plural "Link3s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "MO"
 msgstr ""
 
@@ -169,7 +190,7 @@ msgstr ""
 msgid "Month day"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:213
+#: _MOM/_Attr/Recurrence_Rule.py:330
 msgid "Monthly"
 msgstr ""
 
@@ -183,12 +204,12 @@ msgid_plural "Named_Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:914
+#: _MOM/_Attr/Type.py:920
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:341
+#: _MOM/_Attr/Type.py:346
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
@@ -208,12 +229,12 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:788
+#: _MOM/_Attr/Kind.py:840
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:798
+#: _MOM/_Attr/Kind.py:850
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -221,6 +242,12 @@ msgstr ""
 #: _MOM._Attr.Recurrence_Rule:0
 msgid "Recurrence_Rule"
 msgid_plural "Recurrence_Rules"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Recurrence_Rule_Set"
+msgid_plural "Recurrence_Rule_Sets"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -264,11 +291,27 @@ msgstr ""
 msgid "Restrict the recurrences to the week numbers specified."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Rule exceptions"
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Rules"
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Rules excluded from the recurrence rule set."
+msgstr ""
+
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Rules included in the recurrence rule set."
+msgstr ""
+
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "SA"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "SU"
 msgstr ""
 
@@ -281,6 +324,7 @@ msgid "Sequence number of a link in an ordered association."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
+#: _MOM._Attr.Recurrence_Rule:0
 msgid "Start"
 msgstr ""
 
@@ -288,15 +332,19 @@ msgstr ""
 msgid "Start date of interval"
 msgstr ""
 
+#: _MOM._Attr.Recurrence_Rule:0
+msgid "Start date of the recurrence."
+msgstr ""
+
 #: _MOM._Attr.Time_Interval:0
 msgid "Start time of interval"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "TH"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "TU"
 msgstr ""
 
@@ -320,7 +368,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:318
+#: _MOM/_Attr/Kind.py:326
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -339,7 +387,7 @@ msgid ""
 "`unit`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:789
+#: _MOM/_Attr/Kind.py:841
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
@@ -348,12 +396,12 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:93 _MOM/_Attr/Type.py:520
+#: _MOM/_Attr/Recurrence_Rule.py:107 _MOM/_Attr/Type.py:525
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:55
+#: _MOM/_Attr/Recurrence_Rule.py:67
 msgid "WE"
 msgstr ""
 
@@ -365,7 +413,7 @@ msgstr ""
 msgid "Week day"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:213
+#: _MOM/_Attr/Recurrence_Rule.py:330
 msgid "Weekly"
 msgstr ""
 
@@ -373,7 +421,7 @@ msgstr ""
 msgid "Year day"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:213
+#: _MOM/_Attr/Recurrence_Rule.py:330
 msgid "Yearly"
 msgstr ""
 
@@ -393,7 +441,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:909
+#: _MOM/_Attr/Type.py:915
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""

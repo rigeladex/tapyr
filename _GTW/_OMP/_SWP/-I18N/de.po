@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-08-17 18:14+0200\n"
+"PO-Revision-Date: 2010-08-19 16:22+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Abstract"
 msgstr "Kurzfassung"
 
-#: _GTW/_OMP/_SWP/Nav.py:189
+#: _GTW/_OMP/_SWP/Nav.py:190
 msgid "Clip"
 msgstr "Schnipsel"
 
@@ -70,7 +70,7 @@ msgstr[1] ""
 msgid "Date"
 msgstr "Datum"
 
-#: _GTW/_OMP/_SWP/Nav.py:160 _GTW/_OMP/_SWP/Nav.py:186
+#: _GTW/_OMP/_SWP/Nav.py:160 _GTW/_OMP/_SWP/Nav.py:187
 msgid "Date interval"
 msgstr "Datumsinterval"
 
@@ -78,7 +78,7 @@ msgstr "Datumsinterval"
 msgid "Date interval of event"
 msgstr "Datumsinterval des Ereignisses"
 
-#: _GTW/_OMP/_SWP/Nav.py:185
+#: _GTW/_OMP/_SWP/Nav.py:186
 msgid "Date interval of news clip"
 msgstr "Datumsinterval des Neuigkeitsschnipsels"
 
@@ -90,7 +90,7 @@ msgstr "Verzeichnis"
 msgid "Directory where pictures of gallery are stored."
 msgstr "Verzeichnis, wo die Bilder der Gallerie gespeichert sind."
 
-#: _GTW/_OMP/_SWP/Nav.py:174
+#: _GTW/_OMP/_SWP/Nav.py:175
 msgid "Events"
 msgstr "Ereignisse"
 
@@ -102,7 +102,7 @@ msgstr "Zur Seite gehörende Ereignisse"
 msgid "Format"
 msgstr "Format"
 
-#: _GTW/_OMP/_SWP/Nav.py:209 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:210 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
 msgid "Gallery"
 msgid_plural "Gallerys"
 msgstr[0] "Gallerie"
@@ -159,7 +159,7 @@ msgstr "Textauszeichnungsformat, das für den `text` verwendet wird"
 msgid "Name used for perma-link."
 msgstr "Name, der für den Permalink verwendet wird."
 
-#: _GTW/_OMP/_SWP/Nav.py:188
+#: _GTW/_OMP/_SWP/Nav.py:189
 msgid "News clip for page"
 msgstr "Neuigkeitsschnipsel für Seite"
 
@@ -195,7 +195,7 @@ msgid_plural "Page_Ys"
 msgstr[0] "Seite/J"
 msgstr[1] "Seiten/J"
 
-#: _GTW/_OMP/_SWP/Nav.py:215 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:216 _GTW._OMP._SWP.Picture:0
 msgid "Photo"
 msgstr "Photo"
 
@@ -264,7 +264,7 @@ msgstr ""
 msgid "Thumb"
 msgstr "Miniaturbild"
 
-#: _GTW/_OMP/_SWP/Nav.py:220 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:221 _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-17 18:14+0200\n"
+"POT-Creation-Date: 2010-08-19 16:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Abstract"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:189
+#: _GTW/_OMP/_SWP/Nav.py:190
 msgid "Clip"
 msgstr ""
 
@@ -70,7 +70,7 @@ msgstr[1] ""
 msgid "Date"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:160 _GTW/_OMP/_SWP/Nav.py:186
+#: _GTW/_OMP/_SWP/Nav.py:160 _GTW/_OMP/_SWP/Nav.py:187
 msgid "Date interval"
 msgstr ""
 
@@ -78,7 +78,7 @@ msgstr ""
 msgid "Date interval of event"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:185
+#: _GTW/_OMP/_SWP/Nav.py:186
 msgid "Date interval of news clip"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 msgid "Directory where pictures of gallery are stored."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:174
+#: _GTW/_OMP/_SWP/Nav.py:175
 msgid "Events"
 msgstr ""
 
@@ -102,7 +102,7 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:209 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:210 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
 msgid "Gallery"
 msgid_plural "Gallerys"
 msgstr[0] ""
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Name used for perma-link."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:188
+#: _GTW/_OMP/_SWP/Nav.py:189
 msgid "News clip for page"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgid_plural "Page_Ys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_SWP/Nav.py:215 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:216 _GTW._OMP._SWP.Picture:0
 msgid "Photo"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgstr ""
 msgid "Thumb"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:220 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:221 _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
 msgstr ""
 
