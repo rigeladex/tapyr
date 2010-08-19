@@ -39,6 +39,9 @@
 #                     `rule` removed
 #    18-Aug-2010 (CT) `unit.default` changed from `Weekly` to `Daily`
 #    18-Aug-2010 (CT) `Recurrence_Rule_Set` added
+#    19-Aug-2010 (CT) `_Recurrence_Rule_Mixin_` added to define `ui_display`
+#    19-Aug-2010 (CT) `__nonzero__` factored to `An_Entity`
+#    19-Aug-2010 (CT) `count_default` added
 #    ««revision-date»»···
 #--
 
@@ -97,9 +100,13 @@ class A_Weekday_RR (A_Attr_Type) :
     def cooked (soc, value) :
         if isinstance (value, int) :
             value = soc.Table [soc.Names [value]]
+        elif isinstance (value, basestring) :
+            value = soc.Table [value]
         if value is not None and not isinstance (value, soc.C_Type) :
             raise ValueError \
-                (_T ("Value `%r` is not of type %s") % (value, soc.C_Type))
+                ( _T ("Value `%r` is not of type %s") % (value, soc.C_Type)
+                + "\n    %s" % ", ".join (soc.Names)
+                )
         return value
     # end def cooked
 
@@ -125,6 +132,31 @@ class A_Weekday_RR_List (_A_Typed_List_) :
 # end class A_Weekday_RR_List
 
 _Ancestor_Essence = MOM.An_Entity
+
+class _Recurrence_Rule_Mixin_ (_Ancestor_Essence) :
+    """Mixin for classes modelling recurrence rules."""
+
+    occurrence_format = "%Y%m%d"
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class ui_display (_Ancestor.ui_display) :
+
+            def computed (self, obj) :
+                if obj :
+                    fmt = obj.occurrence_format
+                    return ", ".join (o.strftime (fmt) for o in obj.occurrences)
+            # end def computed
+
+        # end class ui_display
+
+    # end class _Attributes
+
+# end class _Recurrence_Rule_Mixin_
+
+_Ancestor_Essence = _Recurrence_Rule_Mixin_
 
 class Recurrence_Rule (_Ancestor_Essence) :
     """Model a recurrence rule."""
@@ -171,7 +203,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
                 owner = obj.owner
                 if owner and obj.owner_attr :
                     try :
-                        result = obj.owner_attr.owners_finish (obj)
+                        result = obj.owner_attr.finish_getter (obj)
                     except AttributeError :
                         pass
                     else :
@@ -181,7 +213,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class finish
 
-        class first_day_of_week (A_Int) :
+        class first_day_of_week (A_Weekday_RR) :
             """First day of week"""
 
             kind               = Attr.Const
@@ -218,13 +250,18 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         class occurrences (A_Blob) :
 
-            kind      = Attr.Auto_Cached
+            ### needs to be `Computed`, not `Auto_Cached` because result
+            ### depends on `start_getter` and `finish_getter`
+            kind      = Attr.Computed
 
             def computed (self, obj) :
-                if bool (obj) :
+                if obj :
                     kw = dict (obj._rrule_attrs ())
                     if obj.finish is None and obj.count is None :
-                        kw ["count"] = 1
+                        dc = 1
+                        if obj.owner and obj.owner_attr :
+                            dc = obj.owner_attr.count_default
+                        kw ["count"] = dc
                     return dateutil.rrule.rrule (cache = True, ** kw)
             # end def computed
 
@@ -269,7 +306,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
                 owner = obj.owner
                 if owner and obj.owner_attr :
                     try :
-                        result = obj.owner_attr.owners_start (obj)
+                        result = obj.owner_attr.start_getter (obj)
                     except AttributeError :
                         pass
                     else :
@@ -343,10 +380,6 @@ class Recurrence_Rule (_Ancestor_Essence) :
                     yield name, value
     # end def _rrule_attrs
 
-    def __nonzero__ (self) :
-        return self.has_substance ()
-    # end def __nonzero__
-
 # end class Recurrence_Rule
 
 class A_Recurrence_Rule (_A_Composite_) :
@@ -355,7 +388,8 @@ class A_Recurrence_Rule (_A_Composite_) :
     C_Type        = Recurrence_Rule
     typ           = "Recurrence_Rule"
 
-    owners_start  = owners_finish = TFL.Getter.owner.date
+    start_getter  = finish_getter = TFL.Getter.owner.date
+    count_default = 1
 
 # end class A_Recurrence_Rule
 
@@ -365,11 +399,9 @@ class A_Recurrence_Rule_List (_A_Composite_Collection_) :
     typ           = "Recurrence_Rule_List"
     C_Type        = A_Recurrence_Rule
 
-    owners_start  = owners_finish = TFL.Getter.owner.owner.date
-
 # end class A_Recurrence_Rule_List
 
-_Ancestor_Essence = MOM.An_Entity
+_Ancestor_Essence = _Recurrence_Rule_Mixin_
 
 class Recurrence_Rule_Set (_Ancestor_Essence) :
     """Model a set of recurrence rules (possibly with exceptions)."""
@@ -398,10 +430,12 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
 
         class occurrences (A_Blob) :
 
-            kind      = Attr.Auto_Cached
+            ### needs to be `Computed`, not `Auto_Cached` because result
+            ### depends on `start_getter` and `finish_getter`
+            kind      = Attr.Computed
 
             def computed (self, obj) :
-                if bool (obj) :
+                if obj :
                     result = dateutil.rrule.rruleset (cache = True)
                     for r in obj.rules :
                         result.rrule (r.occurrences)
@@ -424,6 +458,8 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
             kind               = Attr.Optional
             default            = []
 
+            start_getter       = finish_getter = TFL.Getter.owner.owner.date
+
         # end class rules
 
         class rule_exceptions (A_Recurrence_Rule_List) :
@@ -432,13 +468,12 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
             kind               = Attr.Optional
             default            = []
 
+            start_getter       = finish_getter = TFL.Getter.owner.owner.date
+            count_default      = 365
+
         # end class rule_exceptions
 
     # end class _Attributes
-
-    def __nonzero__ (self) :
-        return self.has_substance ()
-    # end def __nonzero__
 
 # end class Recurrence_Rule_Set
 

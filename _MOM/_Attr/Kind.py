@@ -135,6 +135,8 @@
 #                     `_A_Composite_Collection_`
 #    18-Aug-2010 (CT) `_update_owner` factored and used in
 #                     `_Composite_Collection_Mixin_._set_cooked_value`
+#    19-Aug-2010 (CT) `get_substance` and `void_values` factored and added to
+#                     `_Composite_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -504,6 +506,8 @@ class _Composite_Base_ (Kind) :
     def _update_owner (self, obj, value) :
         if value.owner is not None and value.owner is not obj :
             value = value.copy ()
+        if value.owner is not obj :
+            value._attr_man.inc_changes ()
         value.attr_name    = self.name
         value.owner        = obj
         value.home_scope   = obj.home_scope
@@ -514,6 +518,9 @@ class _Composite_Base_ (Kind) :
 
 class _Composite_Mixin_ (_Composite_Base_) :
     """Mixin for composite attributes."""
+
+    get_substance   = TFL.Meta.Alias_Property ("get_raw")
+    void_values     = property (lambda s : ("", s.attr.raw_default))
 
     @property
     def Class (self) :
@@ -683,7 +690,9 @@ class _Nested_Mixin_ (Kind) :
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
 
+    get_substance   = TFL.Meta.Alias_Property ("get_raw")
     needs_raw_value = True
+    void_values     = property (lambda s : ("", s.attr.raw_default))
 
     def get_pickle_cargo (self, obj) :
         return self.get_value (obj), self.get_raw (obj)
@@ -701,10 +710,6 @@ class _Raw_Value_Mixin_ (Kind) :
             self._sync (obj)
         return self.__super.get_value (obj)
     # end def get_value
-
-    def has_substance (self, obj) :
-        return self.get_raw (obj) not in ("", self.attr.raw_default)
-    # end def has_substance
 
     def set_pickle_cargo (self, obj, cargo) :
         ckd = cargo [0]
@@ -786,10 +791,12 @@ class _DB_Attr_ (Kind) :
 class _User_ (_DB_Attr_, Kind) :
     """Attributes set by user."""
 
-    electric       = False
+    electric              = False
+    get_substance         = TFL.Meta.Alias_Property ("get_value")
+    void_values           = property (lambda s : (None, s.attr.default))
 
     def has_substance (self, obj) :
-        return self.get_value (obj) not in (None, self.attr.default)
+        return self.get_substance (obj) not in self.void_values
     # end def has_substance
 
 # end class _User_
@@ -919,11 +926,9 @@ class Mandatory (_Mandatory_Mixin_, _User_) :
     """Mandatory attribute: must immediately be defined by the tool user."""
 
     kind        = "mandatory"
-    _k_rank     = -5
+    void_values = (None, "")
 
-    def has_substance (self, obj) :
-        return self.get_value (obj) not in (None, "")
-    # end def has_substance
+    _k_rank     = -5
 
     def to_save (self, obj) :
         return True

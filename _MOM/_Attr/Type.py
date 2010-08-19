@@ -138,6 +138,10 @@
 #    29-Jun-2010 (CT) s/from_pickle_cargo/from_attr_pickle_cargo/
 #                     s/as_pickle_cargo/as_attr_pickle_cargo/
 #    18-Aug-2010 (CT) `A_Date_Time_List` added
+#    19-Aug-2010 (CT) `_A_Date_._from_string_eval` changed into
+#                     `Class_and_Instance_Method`
+#    19-Aug-2010 (CT) `A_Date.cooked` and `A_Date_Time.cooked` changed to
+#                     accept strings, too
 #    ««revision-date»»···
 #--
 
@@ -668,9 +672,10 @@ class _A_Date_ (A_Attr_Type) :
         return self.from_string (self.__super.from_code (s, obj, glob, locl))
     # end def from_code
 
-    def _from_string_eval (self, s, obj, glob, locl) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string_eval (soc, s, obj = None, glob = {}, locl = {}) :
         s = s.strip ()
-        for f in self.input_formats :
+        for f in soc.input_formats :
             try :
                 result = time.strptime (s, f)
             except ValueError :
@@ -679,7 +684,7 @@ class _A_Date_ (A_Attr_Type) :
                 break
         else :
             raise ValueError (s)
-        return self._DT_Type (* result [self._tuple_off:self._tuple_len])
+        return soc._DT_Type (* result [soc._tuple_off:soc._tuple_len])
     # end def _from_string_eval
 
 # end class _A_Date_
@@ -1280,6 +1285,11 @@ class A_Date (_A_Date_) :
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
             value = value.date ()
+        elif isinstance (value, basestring) :
+            try :
+                value = soc._from_string_eval (value)
+            except ValueError :
+                raise TypeError ("Date expected, got %r" % (value, ))
         elif not isinstance (value, datetime.date) :
             raise TypeError ("Date expected, got %r" % (value, ))
         return value
@@ -1340,8 +1350,13 @@ class A_Date_Time (_A_Date_) :
         if not isinstance (value, datetime.datetime) :
             if isinstance (value, datetime.date) :
                 value = datetime.datetime (value.year, value.month, value.day)
+            elif isinstance (value, basestring) :
+                try :
+                    value = soc._from_string_eval (value)
+                except ValueError :
+                    raise TypeError ("Date/time expected, got %r" % (value, ))
             else :
-                raise TypeError ("Date expected, got %r" % (value, ))
+                raise TypeError ("Date/time expected, got %r" % (value, ))
         return value
     # end def cooked
 

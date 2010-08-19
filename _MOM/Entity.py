@@ -149,6 +149,9 @@
 #    11-Aug-2010 (CT) `last_cid` added
 #    11-Aug-2010 (CT) Optional argument `ignore` added to `user_diff`
 #    18-Aug-2010 (CT) `owner_attr` added to `An_Entity`
+#    19-Aug-2010 (CT) `An_Entity.__nonzero__` added
+#    19-Aug-2010 (CT) `Id_Entity.ui_display_format` changed to use
+#                     `has_substance` to check attributes
 #    ««revision-date»»···
 #--
 
@@ -730,6 +733,10 @@ class An_Entity (Entity) :
         return hash (self.hash_key)
     # end def __hash__
 
+    def __nonzero__ (self) :
+        return self.has_substance ()
+    # end def __nonzero__
+
     def __unicode__ (self) :
         return u"(%s)" % (self._formatted_user_attr ())
     # end def __unicode__
@@ -930,8 +937,8 @@ class Id_Entity (Entity) :
     @property
     def ui_display_format (self) :
         return self.ui_display_sep.join \
-            ( "%%(%s)s" % k for (k, v) in zip (self.epk_sig, self.epk)
-              if v not in (None, "")
+            ( "%%(%s)s" % a.name for (a, v) in zip (self.primary, self.epk)
+              if a.has_substance (self)
             )
     # end def ui_display_format
 
