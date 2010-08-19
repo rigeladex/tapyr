@@ -39,6 +39,9 @@
 ##    25-Jul-2010 (MG) Macros for render mode `dl_seq` added
 ##     4-Aug-2010 (MG) `aid_table` added
 ##     5-Aug-2010 (MG) `object` gaurd creation of the dialog
+##    19-Aug-2010 (CT) popup-form-buttons changed to same sequence as in form
+##                     (Save/reset/cancel)
+##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
 ##    ««revision-date»»···
 ##--
 #}
@@ -251,11 +254,12 @@
       {%- if cancel_kw %}
         {%- set ckw = cancel_kw %}
         {{ X.input.submit
-             (name = "cancel", value = ckw.name or GTW._T ("Cancel"))
+            ( name  = "cancel"
+            , title = ckw.title or GTW._T ("Discard all changes and leave form")
+            , value = ckw.name  or GTW._T ("Cancel")
+            )
         }}
-        {{ X.input.hidden
-            (name  = "form-cancel-href", value = ckw.href)
-       }}
+        {{ X.input.hidden (name  = "form-cancel-href", value = ckw.href) }}
       {% endif -%}
     </div>
   </form>
@@ -427,23 +431,34 @@
           ( title  = GTW._T ("Discard all changes")
           , value  = GTW._T ("Reset")
           )
-      , submit_kws = submit_kws or [dict (value = GTW._T ("Submit"))]
+      , submit_kws = submit_kws or
+          [ dict
+              ( title = GTW._T ("Send form data to server and leave form")
+              , value = GTW._T ("Submit")
+              )
+          ]
       , ** kwargs
       )
- -%}
-   {{ GTW.render_fofi_widget
-        (fo, "aid_object", fo, render_mode = render_mode)
-   }}
-   {%- if fo.inline_groups %}
-    <div id="form-dialog">
-      <div id="popup-form-buttons">
-        <!-- The order of the buttons has to be specified from left to right -->
-        <button id="popup-form-button-save">{{ GTW._T ("Save") }}</button>
-        <button id="popup-form-button-cancel">{{ GTW._T ("Cancel") }}</button>
-        <button id="popup-form-button-reset">{{ GTW._T ("Reset") }}</button>
+  -%}
+    {{ GTW.render_fofi_widget
+         (fo, "aid_object", fo, render_mode = render_mode)
+    }}
+    {%- if fo.inline_groups %}
+      <div id="form-dialog">
+        <div id="popup-form-buttons">
+          <!-- The order of the buttons has to be specified from left to right -->
+          <button id="popup-form-button-save" title="Save values in form entries">
+            {{- GTW._T ("Save") -}}
+          </button>
+          <button id="popup-form-button-reset" title="Discard all changes made">
+            {{- GTW._T ("Reset") -}}
+          </button>
+          <button id="popup-form-button-cancel" title="Discard all changes made and leave popup-form">
+            {{- GTW._T ("Cancel") -}}
+          </button>
+        </div>
       </div>
-    </div>
-   {% endif -%}
+     {% endif -%}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 {#- __END__ jinja template: JNJ/html.rform.jnj -#}

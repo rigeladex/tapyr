@@ -39,8 +39,9 @@ import _GTW._NAV._E_Type.Admin
 import _GTW._Form._MOM.Javascript
 
 from   _GTW._Form._MOM.Inline_Description      import \
-    ( Link_Inline_Description      as LID
-    , Attribute_Inline_Description as AID
+    ( Link_Inline_Description       as LID
+    , Attribute_Inline_Description  as AID
+    , Collection_Inline_Description as CID
     )
 from   _GTW._Form._MOM.Field_Group_Description import \
     ( Field_Group_Description as FGD
@@ -61,10 +62,28 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
-                ( "object", "date", "time", "detail"
+                ( "object", "date", "time", "detail", "short_title"
                 , AID
                     ( "recurrence"
-                    , legend = _("Recurrence rule")
+                    , FGD
+                        ( CID
+                            ( "rules"
+                            , legend = _("Recurrence rules")
+                            )
+                        , CID
+                            ( "rule_exceptions"
+                            , legend = _("Recurrence exceptions")
+                            )
+                        , CID
+                            ( "dates"
+                            , legend = _("Dates")
+                            )
+                        , CID
+                            ( "date_exceptions"
+                            , legend = _("Date exceptions")
+                            )
+                        )
+                    , legend = _("Recurrence rule set")
                     )
                 )
             ,

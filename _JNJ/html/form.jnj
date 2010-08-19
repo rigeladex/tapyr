@@ -68,6 +68,9 @@
 ##     5-May-2010 (MG) `field_help` added
 ##     5-May-2010 (MG) Field help for div-seq and table unified
 ##    26-May-2010 (MG) Error handling changed
+##    19-Aug-2010 (CT) `form` changed to use `X.input.submit` instead of
+##                     `<a>` for `Cancel`
+##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
 ##    ««revision-date»»···
 ##--
 #}
@@ -151,11 +154,12 @@
       {% endif -%}
       {%- if cancel_kw %}
         {%- set ckw = cancel_kw %}
-        <a href="{{ ckw.href }}"
-           title="{{ ckw.title or GTW._T ('Discard all changes and leave form') }}"
-           class="button">
-          {{ ckw.name or GTW._T ("Cancel") }}
-        </a>
+        {{ X.input.submit
+            ( name  = "cancel"
+            , title = ckw.title or GTW._T ("Discard all changes and leave form")
+            , value = ckw.name  or GTW._T ("Cancel")
+            )
+        }}
       {% endif -%}
     </div>
   </form>
@@ -379,14 +383,19 @@
           ( title  = GTW._T ("Discard all changes")
           , value  = GTW._T ("Reset")
           )
-      , submit_kws = submit_kws or [dict (value = GTW._T ("Submit"))]
+      , submit_kws = submit_kws or
+          [ dict
+              ( title = GTW._T ("Send form data to server and leave form")
+              , value = GTW._T ("Submit")
+              )
+          ]
       , ** kwargs
       )
- -%}
-   {{ field_groups (fo) }}
-   {%- if object_caller %}
-     {{ object_caller () }}
-   {% endif -%}
+  -%}
+    {{ field_groups (fo) }}
+    {%- if object_caller %}
+      {{ object_caller () }}
+    {% endif -%}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 
