@@ -74,6 +74,7 @@
 #     3-Aug-2010 (MG) Handling of `role_name` changed (is now `role_names`)
 #     4-Aug-2010 (MG) `Attribute_Inline_Description` render mode `table`
 #                     corrected
+#    19-Aug-2010 (MG) `Collection_Inline_Description.list_display` fixed
 #    ««revision-date»»···
 #--
 
@@ -274,6 +275,7 @@ class GTW_Collection_Inline_Description (Link_Inline_Description) :
                 , suffix          = et_man.type_base_name
                 , field_attrs     = self.field_attrs
                 )
+            self.list_display.both_runs (coll_e_type)
             return (self.PKNS.Collection_Inline (self, inline_form), )
     # end def __call__
 

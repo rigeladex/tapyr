@@ -59,6 +59,7 @@
 #     1-Jun-2010 (MG) `initial_data` support added
 #     9-Jun-2010 (MG) `initial_data.instance` can now be a callable
 #     8-Aug-2010 (MG) State handling changed, inline `testing` changed
+#    19-Aug-2010 (MG) `Collection_Inline_Instance` missing methods added
 #    ««revision-date»»···
 #--
 
@@ -243,7 +244,24 @@ class Link_Inline_Instance (_Inline_Instance_) :
 # end class Link_Inline_Instance
 
 class Collection_Inline_Instance (An_Attribute_Inline_Instance) :
-    """XXX"""
+    """Collection of inline An_Entities"""
+
+    @property
+    def fake_or_instance (self) :
+        if not self.instance :
+            form          = self.parent.__class__.Test_Inline (self.parent.action)
+            self.instance = form.test_inline \
+                ( self.request_data, self.inline.prefix, self.form_number
+                ) [1].instance
+        return self.instance
+    # end def fake_or_instance
+
+    def _update_test_inline_fields (self, if_dict) :
+        ### force create of parent object
+        self.parent.get_object_raw ()
+        if_dict [self.owner_role_name] = self.parent.instance
+        self.raw_attr_dict.pop (self.owner_role_name, None)
+    # end def _update_test_inline_fields
 
     def create_object (self, * args, ** kw) :
         state = self.state

@@ -70,6 +70,8 @@
 #                     correctly
 #     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    12-Aug-2010 (MG) Sort order fixed
+#    18-Aug-2010 (MG) `Collection_Inline.setup_javascript` removed
+#    18-Aug-2010 (MG) `Collection_Inline.linked_instances` fixed
 #    ««revision-date»»···
 #--
 
@@ -193,7 +195,8 @@ class Link_Inline (TFL.Meta.Object) :
     # end def linked_instances
 
     def initial_pid_and_state (self, link, no) :
-        if not self.test and link.pid and link not in self._initial_pids :
+        pid = getattr (link, "pid", 1)
+        if not self.test and pid and link not in self._initial_pids :
             self._initial_pids.add (link)
             pid_name_pat   = "%s%%s___pid_"   % (self.prefix_pat % no, )
             state_name_pat = "%s%%s___state_" % (self.prefix_pat % no, )
@@ -208,7 +211,10 @@ class Link_Inline (TFL.Meta.Object) :
                     attr      = "__%s" % (attr, )
                     css_class = "mom-obj"
                 result.extend \
-                    ( ( (obj.pid, pid_name_pat   % (attr, ), css_class)
+                    ( ( ( getattr (obj, "pid", "")
+                        , pid_name_pat   % (attr, )
+                        , css_class
+                        )
                       , ("",      state_name_pat % (attr, ), css_class)
                       )
                     )
@@ -329,7 +335,7 @@ class Collection_Inline (Link_Inline) :
 
     @TFL.Meta.Once_Property
     def linked_instances (self) :
-        return getattr (self.owner.instance, self.link_name)
+        return getattr (self.owner.instance, self.link_name, ())
     # end def linked_instances
 
     @TFL.Meta.Once_Property
@@ -356,11 +362,6 @@ class Collection_Inline (Link_Inline) :
                 )
         return result
     # end def forms
-
-    def setup_javascript (self, parent_form) :
-        GTW.Form.Javascript.Link_Inline \
-            (self.form_cls, self, ** self.javascript_options)
-    # end def setup_javascript
 
 # end class Collection_Inline
 
