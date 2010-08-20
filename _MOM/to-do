@@ -1,6 +1,16 @@
 MOM To-Do
 =========
 
+- MOM.Attr.Type
+
+  * remove (incomplete) code for symbolic references
+
+    + remove `obj` from `from_string`...
+
+    + `obj.home_scope`
+
+    + _A_Object_: remove `eligible_objects` and its ilk
+
 - DB versioning:
 
   x implement checks for compatibility of

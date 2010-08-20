@@ -859,7 +859,7 @@ class _A_Object_ (A_Attr_Type) :
 
     def eligible_objects (self, obj = None) :
         etm = self.etype_manager (obj)
-        return (et and et.t_extension ()) or ()
+        return (et and et.t_extension ()) or () ### XXX broken
     # end def eligible_objects
 
     def eligible_raw_values (self, obj = None) :
