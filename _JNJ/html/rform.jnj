@@ -447,13 +447,13 @@
       <div id="form-dialog">
         <div id="popup-form-buttons">
           <!-- The order of the buttons has to be specified from left to right -->
-          <button id="popup-form-button-save" title="Save values in form entries">
+          <button id="popup-form-button-save" title="{{ GTW._T ("Save values in form entries") }}">
             {{- GTW._T ("Save") -}}
           </button>
-          <button id="popup-form-button-reset" title="Discard all changes made">
+          <button id="popup-form-button-reset" title="{{ GTW._T ("Discard all changes made") }}">
             {{- GTW._T ("Reset") -}}
           </button>
-          <button id="popup-form-button-cancel" title="Discard all changes made and leave popup-form">
+          <button id="popup-form-button-cancel" title="{{ GTW._T ("Discard all changes made and leave popup-form") }}">
             {{- GTW._T ("Cancel") -}}
           </button>
         </div>

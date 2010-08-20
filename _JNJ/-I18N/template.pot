@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-19 16:22+0200\n"
+"POT-Creation-Date: 2010-08-20 09:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,6 +96,14 @@ msgstr ""
 #: _JNJ/html/form.jnj:159 _JNJ/html/form.jnj:374 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
+msgstr ""
+
+#: _JNJ/html/rform.jnj:453
+msgid "Discard all changes made"
+msgstr ""
+
+#: _JNJ/html/rform.jnj:456
+msgid "Discard all changes made and leave popup-form"
 msgstr ""
 
 #: _JNJ/html/news.jnj:58
@@ -243,6 +251,10 @@ msgstr ""
 
 #: _JNJ/html/rform.jnj:451
 msgid "Save"
+msgstr ""
+
+#: _JNJ/html/rform.jnj:450
+msgid "Save values in form entries"
 msgstr ""
 
 #: _JNJ/html/navigation.jnj:126

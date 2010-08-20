@@ -85,9 +85,11 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ()
-            , CID ( "race_results"
-                  , legend = _("Race Results")
-                  )
+            , CID
+                ( "race_results"
+                , legend = _("Race Results")
+                , popup  = False
+                )
             )
         , sort_key  = TFL.Sorted_By
             ("-right.date.start", "skipper.last_name", "skipper.first_name")

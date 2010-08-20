@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-03-16 16:10+0100\n"
-"PO-Revision-Date: 2010-08-19 16:22+0200\n"
+"PO-Revision-Date: 2010-08-20 09:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -68,11 +68,11 @@ msgstr ""
 msgid "Recurrence"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:75
+#: _GTW/_OMP/_EVT/Nav.py:74
 msgid "Recurrence exceptions"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:86
+#: _GTW/_OMP/_EVT/Nav.py:79
 msgid "Recurrence rule set"
 msgstr ""
 
@@ -80,7 +80,7 @@ msgstr ""
 msgid "Recurrence rule set defining when and how often the event recurs."
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:71
+#: _GTW/_OMP/_EVT/Nav.py:70
 msgid "Recurrence rules"
 msgstr ""
 
@@ -96,12 +96,4 @@ msgstr ""
 #: _GTW._OMP._EVT.Event:0
 msgid "Time interval of event (for a full-day event, this is empty)"
 msgstr ""
-
-#~ msgid ""
-#~ "Date interval of event (for non-recurring events, only `start`\n"
-#~ "is relevant)"
-#~ msgstr ""
-
-#~ msgid "Recurrence rule defining when and how often the event recurs."
-#~ msgstr ""
 

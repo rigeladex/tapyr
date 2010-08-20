@@ -65,23 +65,18 @@ class Admin (object) :
                 ( "object", "date", "time", "detail", "short_title"
                 , AID
                     ( "recurrence"
+                    , CID
+                        ( "rules"
+                        , legend = _("Recurrence rules")
+                        , popup  = False
+                        )
+                    , CID
+                        ( "rule_exceptions"
+                        , legend = _("Recurrence exceptions")
+                        , popup  = False
+                        )
                     , FGD
-                        ( CID
-                            ( "rules"
-                            , legend = _("Recurrence rules")
-                            )
-                        , CID
-                            ( "rule_exceptions"
-                            , legend = _("Recurrence exceptions")
-                            )
-                        , CID
-                            ( "dates"
-                            , legend = _("Dates")
-                            )
-                        , CID
-                            ( "date_exceptions"
-                            , legend = _("Date exceptions")
-                            )
+                        ( "dates", "date_exceptions"
                         )
                     , legend = _("Recurrence rule set")
                     )

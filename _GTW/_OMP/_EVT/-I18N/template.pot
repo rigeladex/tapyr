@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-19 16:22+0200\n"
+"POT-Creation-Date: 2010-08-20 09:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,11 +64,11 @@ msgstr ""
 msgid "Recurrence"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:75
+#: _GTW/_OMP/_EVT/Nav.py:74
 msgid "Recurrence exceptions"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:86
+#: _GTW/_OMP/_EVT/Nav.py:79
 msgid "Recurrence rule set"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 msgid "Recurrence rule set defining when and how often the event recurs."
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:71
+#: _GTW/_OMP/_EVT/Nav.py:70
 msgid "Recurrence rules"
 msgstr ""
 

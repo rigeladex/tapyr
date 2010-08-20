@@ -414,8 +414,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def Form (self) :
-        return GTW.Form.MOM.Instance.New \
-           (self.ETM, * self.Form_Spec ["args"], ** self.Form_Spec ["kw"])
+        try :
+            return GTW.Form.MOM.Instance.New \
+               (self.ETM, * self.Form_Spec ["args"], ** self.Form_Spec ["kw"])
+        except Exception :
+            import traceback; traceback.print_exc ()
+            raise
     # end def Form
 
     @Once_Property
