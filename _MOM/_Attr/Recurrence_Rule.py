@@ -63,7 +63,7 @@ class A_Weekday_RR (A_Attr_Type) :
 
     typ    = "Weekday_RR"
 
-    C_Type = dateutil.rrule.weekday
+    P_Type = dateutil.rrule.weekday
     Names  = (_("MO"), _("TU"), _("WE"), _("TH"), _("FR"), _("SA"), _("SU"))
     Table  = dict ((k, getattr (dateutil.rrule, k)) for k in Names)
 
@@ -102,24 +102,18 @@ class A_Weekday_RR (A_Attr_Type) :
             value = soc.Table [soc.Names [value]]
         elif isinstance (value, basestring) :
             value = soc.Table [value]
-        if value is not None and not isinstance (value, soc.C_Type) :
+        if value is not None and not isinstance (value, soc.P_Type) :
             raise ValueError \
-                ( _T ("Value `%r` is not of type %s") % (value, soc.C_Type)
+                ( _T ("Value `%r` is not of type %s") % (value, soc.P_Type)
                 + "\n    %s" % ", ".join (soc.Names)
                 )
         return value
     # end def cooked
 
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (self, s, obj, glob, locl) :
         if s :
             return self.cooked (self._call_eval (s, self.Table, {}))
-    # end def from_string
-
-    from_code = from_string
-
-    def _from_string_eval (self, s, obj, glob, locl) :
-        return self._call_eval (s, self.Table, locl)
-    # end def _from_string_eval
+    # end def _from_string
 
 # end class A_Weekday_RR
 

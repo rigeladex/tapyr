@@ -51,6 +51,7 @@
 #                     `Pickler` to avoid aliasing
 #    28-Apr-2010 (CT) s/_M_Pickler_/M_Attr_Type__Pickler/
 #     1-Jul-2010 (MG) `M_Attr_Type__Pickler.Pickle_Mixin` removed
+#    26-Aug-2010 (CT) s/simple_cooked/cooked/
 #    ««revision-date»»···
 #--
 
@@ -212,16 +213,16 @@ class M_Attr_Type_String (M_Attr_Type) :
     """Meta class for MOM.Attr._A_String_ classes.
 
        `M_Attr_Type_String` interprets `ignore_case` and sets
-       `needs_raw_value` and `simple_cooked` accordingly.
+       `needs_raw_value` and `cooked` accordingly.
     """
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        cls.needs_raw_value   = bool (cls.ignore_case)
+        cls.needs_raw_value = bool (cls.ignore_case)
         if cls.ignore_case :
-            cls.simple_cooked = staticmethod (_unicode_lower)
+            cls.cooked = staticmethod (_unicode_lower)
         else :
-            cls.simple_cooked = unicode
+            cls.cooked = unicode
     # end def __init__
 
 # end class M_Attr_Type_String

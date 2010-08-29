@@ -1281,9 +1281,9 @@ Changing objects and links
     Invalid_Attribute: Can't set required attribute Mouse.weight to `one ton`
         `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
          expected type  : `Float`
-         got      value : `one ton -> one ton`
+         got      value : `one ton`
          of       type  : `<type 'str'>`
-    >>> m.set_raw (color = "yellow", weight = "42")
+    >>> m.set_raw (color = "yellow", weight = "6*7")
     2
     >>> m.color, m.weight
     (u'yellow', 42.0)

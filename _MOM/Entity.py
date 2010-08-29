@@ -561,15 +561,14 @@ class Entity (TFL.Meta.Object) :
         man = self._attr_man
         tc  = man.total_changes
         if kw :
-            cooked_kw = {}
+            ckd_kw = {}
             to_do     = []
             if on_error is None :
                 on_error = self._raise_attr_error
             for name, val, attr in self.set_attr_iter (kw, on_error) :
                 if val is not None :
                     try :
-                        cooked_kw [name] = cooked_val = \
-                            attr.from_string (val, self)
+                        ckd_kw [name] = ckd_val = attr.from_string (val, self)
                     except ValueError as err:
                         on_error \
                             ( MOM.Error.Invalid_Attribute
@@ -586,10 +585,10 @@ class Entity (TFL.Meta.Object) :
                         if __debug__ :
                             traceback.print_exc ()
                     else :
-                        to_do.append ((attr, val, cooked_val))
+                        to_do.append ((attr, val, ckd_val))
                 else :
                     to_do.append ((attr, u"", None))
-            self._kw_check_predicates (cooked_kw, on_error)
+            self._kw_check_predicates (ckd_kw, on_error)
             man.reset_pending ()
             for attr, raw_val, val in to_do :
                 attr._set_raw (self, raw_val, val)

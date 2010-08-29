@@ -3,13 +3,17 @@ MOM To-Do
 
 - MOM.Attr.Type
 
-  * remove (incomplete) code for symbolic references
+  x remove (incomplete) code for symbolic references
 
-    + remove `obj` from `from_string`...
+  x remove `from_code`
 
-    + `obj.home_scope`
+  x remove `_to_cooked`
 
-    + _A_Object_: remove `eligible_objects` and its ilk
+  x define `P_Type` used by top-level `cooked`
+
+  * use `P_Type` instead of `C_Type` for _A_Composite_ ???
+
+  * _A_Object_.Class: rename to `P_Type` ???
 
 - DB versioning:
 

@@ -142,6 +142,11 @@
 #                     `Class_and_Instance_Method`
 #    19-Aug-2010 (CT) `A_Date.cooked` and `A_Date_Time.cooked` changed to
 #                     accept strings, too
+#    26-Aug-2010 (CT) Ballast dumped
+#                     * `from_code` removed
+#                     * `symbolic_ref_pat` removed
+#                     * `from_string` drastically simplified (symbolic...)
+#                     * `P_Type` added and used, `simple_cooked` removed
 #    ««revision-date»»···
 #--
 
@@ -159,10 +164,10 @@ import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 import _TFL.Filter
 
-import binascii
 import datetime
 import decimal
 import itertools
+import math
 import time
 
 Q = TFL.Attr_Query ()
@@ -210,14 +215,13 @@ class A_Attr_Type (object) :
     Kind_Mixins         = ()
     needs_raw_value     = False
     Pickler             = None
+    P_Type              = None ### Python type of attribute values
     query               = None
     query_fct           = None
     rank                = 0
     raw_default         = u""
     record_changes      = True
-    simple_cooked       = None
     store_default       = False
-    symbolic_ref_pat    = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
     typ                 = None
     ui_name             = TFL.Meta.Once_Property \
         (lambda s : s.name.capitalize ().replace ("_", " "))
@@ -275,8 +279,8 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if value is not None and soc.simple_cooked :
-            return soc.simple_cooked (value)
+        if value is not None and soc.P_Type :
+            return soc.P_Type (value)
         return value
     # end def cooked
 
@@ -295,15 +299,16 @@ class A_Attr_Type (object) :
         pass
     # end def epk_def_set_raw
 
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        return self._to_cooked (s, self._call_eval, obj, glob, locl)
-    # end def from_code
-
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        return self._to_cooked (s, self._from_string_resolve, obj, glob, locl)
+        try :
+            if s is not None :
+                return self._from_string (s, obj, glob, locl)
+        except StandardError as exc :
+            raise MOM.Error.Attribute_Syntax_Error (obj, self, s, str (exc))
     # end def from_string
 
-    def _call_eval (self, s, glob, locl) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _call_eval (soc, s, glob, locl) :
         return eval (s, glob, locl.copy ())
     # end def _call_eval
 
@@ -317,60 +322,8 @@ class A_Attr_Type (object) :
     # end def _fix_C_Type
 
     def _from_string (self, s, obj, glob, locl) :
-        t = self._from_string_prepare (s, obj)
-        try :
-            u = self._from_string_eval (t, obj, glob, locl)
-        except StandardError as exc :
-            raise MOM.Error.Attribute_Syntax_Error \
-                (obj, self, "%s -> %s" % (s, t), str (exc))
-        try :
-            if u is not None :
-                return self.cooked (u)
-            else :
-                pass
-        except StandardError as exc :
-            raise MOM.Error.Attribute_Syntax_Error \
-                (obj, self, "%s -> %s -> %s" % (s, t, u), str (exc))
+        return self.cooked (s)
     # end def _from_string
-
-    def _from_string_eval (self, s, obj, glob, locl) :
-        return self._call_eval (s, glob, locl)
-    # end def _from_string_eval
-
-    def _from_string_prepare (self, s, obj) :
-        try :
-            s = unicode (s)
-        except UnicodeError :
-            raise MOM.Error.Attribute_Syntax_Error \
-                ( obj, self, s
-                , _T ("Non-ascii values in 8-bit strings are not supported")
-                )
-        return s
-    # end def _from_string_prepare
-
-    def _from_string_resolve (self, s, obj, glob, locl) :
-        if obj is not None and not glob :
-            glob = obj.globals ()
-        if self.symbolic_ref_pat.match (s) :
-            resolver = self._from_symbolic_ref
-        else :
-            resolver = self._from_string
-        return resolver (s, obj, glob, locl)
-    # end def _from_string_resolve
-
-    def _from_symbolic_ref (self, s, obj, glob, locl) :
-        raise NotImplementedError ("_from_symbolic_ref: XXX")
-    # end def _from_symbolic_ref
-
-    def _to_cooked (self, s, cooker, obj, glob, locl) :
-        if s :
-            if self.simple_cooked :
-                try :
-                    return self.simple_cooked (s)
-                except (ValueError, TypeError) :
-                    pass
-            return cooker (s, obj, glob or {}, locl or {})
-    # end def _to_cooked
 
     def __repr__ (self) :
        return "%s `%s`" % (self.typ, self.name)
@@ -387,10 +340,10 @@ class _A_Binary_String_ (A_Attr_Type) :
 
     hidden              = True
     max_length          = None
+    P_Type              = bytes
 
     def as_code (self, value) :
-        code = binascii.b2a_base64 (value)
-        return self.__super.as_code_string (code)
+        return repr (value)
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -403,20 +356,6 @@ class _A_Binary_String_ (A_Attr_Type) :
         return value or ""
     # end def cooked
 
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        code = self.__super.from_code (s, obj, glob, locl)
-        try :
-            result = binascii.a2b_base64 (code)
-        except (binascii.Error, TypeError) :
-            result = ""
-        return result
-    # end def from_code
-
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        if s :
-            return s
-    # end def from_string
-
 # end class _A_Binary_String_
 
 class _A_Collection_ (A_Attr_Type) :
@@ -425,6 +364,7 @@ class _A_Collection_ (A_Attr_Type) :
     C_Type          = None ### Type of entities held by collection
     C_sep           = ","
     R_Type          = None ### Type of collection
+    P_Type          = TFL.Meta.Alias_Property ("R_Type")
 
     needs_raw_value = False
 
@@ -453,18 +393,9 @@ class _A_Collection_ (A_Attr_Type) :
             )
     # end def db_sig
 
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        comps = self._C_split (s.strip ())
-        return self.R_Type (self._C_from_code (obj, comps, glob, locl))
-    # end def from_code
-
     def _C_as_code (self, value) :
         return (self.C_Type.as_code (v) for v in value)
     # end def _C_as_code
-
-    def _C_from_code (self, obj, comps, glob, locl) :
-        return (self.C_Type.from_code (obj, c, glob, locl) for c in comps)
-    # end def _C_from_code
 
     def _C_split (self, s) :
         if s in ("[]", "") :
@@ -476,14 +407,6 @@ class _A_Collection_ (A_Attr_Type) :
         return (x for x in (r.strip () for r in s.split (self.C_sep)) if x)
     # end def _C_split
 
-    def _from_symbolic_ref (self, s, obj, glob, locl) :
-        raise TypeError \
-            ( "Symbolic cross references not supported for attributes "
-              "of type %s: `%s`"
-            % (self.typ, s)
-            )
-    # end def _from_symbolic_ref
-
 # end class _A_Collection_
 
 class _A_Composite_ (A_Attr_Type) :
@@ -491,6 +414,7 @@ class _A_Composite_ (A_Attr_Type) :
 
     ### Type of composite attribute (derived from MOM.An_Entity)
     C_Type            = None
+    P_Type            = TFL.Meta.Alias_Property ("C_Type")
 
     Kind_Mixins       = (MOM.Attr._Composite_Mixin_, )
     needs_raw_value   = False
@@ -540,10 +464,6 @@ class _A_Composite_ (A_Attr_Type) :
             form = "if %(name)s is None : %(name)s = cls.%(name)s.C_Type ()"
             return cls.kind.epk_def_set (form % dict (name = cls.name))
     # end def epk_def_set_ckd
-
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        return self.C_Type (** self.__super.from_code (s, obj, glob, locl))
-    # end def from_code_string
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         t = s or {}
@@ -668,24 +588,21 @@ class _A_Date_ (A_Attr_Type) :
         return u""
     # end def as_string
 
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        return self.from_string (self.__super.from_code (s, obj, glob, locl))
-    # end def from_code
-
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string_eval (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         s = s.strip ()
-        for f in soc.input_formats :
-            try :
-                result = time.strptime (s, f)
-            except ValueError :
-                pass
+        if s :
+            for f in soc.input_formats :
+                try :
+                    result = time.strptime (s, f)
+                except ValueError :
+                    pass
+                else :
+                    break
             else :
-                break
-        else :
-            raise ValueError (s)
-        return soc._DT_Type (* result [soc._tuple_off:soc._tuple_len])
-    # end def _from_string_eval
+                raise ValueError (s)
+            return soc.P_Type (* result [soc._tuple_off:soc._tuple_len])
+    # end def _from_string
 
 # end class _A_Date_
 
@@ -714,17 +631,13 @@ class _A_Named_Value_ (A_Attr_Type) :
         return sorted (self.__class__.Table.iterkeys ())
     # end def eligible_raw_values
 
-    def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        return self._from_string_eval (self._call_eval (s, glob, locl))
-    # end def from_code
-
-    def _from_string_eval (self, s, obj, glob, locl) :
+    def _from_string (self, s, obj, glob, locl) :
         try :
             return self.__class__.Table [s]
         except KeyError :
             raise ValueError \
                 (u"%s not in %s" % (s, self.eligible_raw_values ()))
-    # end def _from_string_eval
+    # end def _from_string
 
 # end class _A_Named_Value_
 
@@ -733,6 +646,8 @@ class _A_Number_ (A_Attr_Type) :
 
     min_value         = None
     max_value         = None
+
+    _string_fixer     = None
 
     @TFL.Meta.Once_Property
     def ui_length (self) :
@@ -755,17 +670,29 @@ class _A_Number_ (A_Attr_Type) :
             yield c
     # end def _checkers
 
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, value, obj, glob, locl) :
+        if value :
+            try :
+                return soc.P_Type (value)
+            except (ValueError, TypeError) :
+                if soc._string_fixer :
+                    value = soc._string_fixer (value)
+                g = dict \
+                    ( math.__dict__
+                    , Decimal      = decimal.Decimal
+                    , __builtins__ = {}
+                    )
+                return soc._call_eval (value, g, {})
+    # end def _from_string
+
 # end class _A_Number_
 
 class _A_Float_ (_A_Number_) :
     """Models a floating-point attribute of an object."""
 
     typ         = "Float"
-    cooked      = float
-
-    def _from_string_prepare (self, s, obj) :
-        return s.replace ("/", "*1.0/")
-    # end def _from_string_prepare
+    P_Type      = float
 
 # end class _A_Float_
 
@@ -773,7 +700,7 @@ class _A_Int_ (_A_Number_) :
     """Models an integer attribute of an object."""
 
     typ         = "Int"
-    cooked      = int
+    P_Type      = int
 
 # end class _A_Int_
 
@@ -831,6 +758,7 @@ class _A_Object_ (A_Attr_Type) :
     """Models an attribute referring to an object."""
 
     Class             = ""
+    P_Type            = TFL.Meta.Alias_Property ("Class")
 
     needs_raw_value   = False
 
@@ -859,7 +787,7 @@ class _A_Object_ (A_Attr_Type) :
 
     def eligible_objects (self, obj = None) :
         etm = self.etype_manager (obj)
-        return (et and et.t_extension ()) or () ### XXX broken
+        return (etm and etm.query_s ()) or ()
     # end def eligible_objects
 
     def eligible_raw_values (self, obj = None) :
@@ -874,7 +802,15 @@ class _A_Object_ (A_Attr_Type) :
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if s :
-            return self._to_cooked (s, None, obj, glob, locl)
+            assert self.Class, "%s needs to define `Class`" % self
+            if isinstance (s, tuple) :
+                t = s
+            else :
+                try :
+                    t = self._call_eval (s, {}, {})
+                except (NameError, SyntaxError) :
+                    t = (s, )
+            return self._get_object  (obj, t, raw = True)
     # end def from_string
 
     def _accept_object (self, obj, result) :
@@ -927,18 +863,6 @@ class _A_Object_ (A_Attr_Type) :
         return obj.home_scope if obj else MOM.Scope.active
     # end def _get_scope
 
-    def _to_cooked (self, s, cooker, obj, glob, locl) :
-        assert self.Class, "%s needs to define `Class`" % self
-        if isinstance (s, tuple) :
-            t  = s
-        else :
-            try :
-                t  = self._call_eval (s, {}, {})
-            except (NameError, SyntaxError) :
-                t = (s, )
-        return self._get_object  (obj, t, raw = True)
-    # end def _to_cooked
-
 # end class _A_Object_
 
 class _A_String_Base_ (A_Attr_Type) :
@@ -951,7 +875,7 @@ class _A_String_Base_ (A_Attr_Type) :
     @TFL.Meta.Once_Property
     def ac_query (self) :
         return _AC_Query_ \
-            (getattr (Q, self.ckd_name).STARTSWITH, self.simple_cooked)
+            (getattr (Q, self.ckd_name).STARTSWITH, self.cooked)
     # end def ac_query
 
     def _checkers (self, e_type, kind) :
@@ -978,16 +902,6 @@ class _A_String_Base_ (A_Attr_Type) :
             yield check, ()
     # end def _checkers
 
-    def _from_string_eval (self, s, obj, glob, locl) :
-        return self.simple_cooked (s)
-    # end def _from_string
-
-    def _to_cooked (self, s, cooker, obj, glob, locl) :
-        if s is not None :
-            return self.simple_cooked (s)
-        return s
-    # end def _to_cooked
-
 # end class _A_String_Base_
 
 class _A_Filename_ (_A_String_Base_) :
@@ -1006,10 +920,10 @@ class _A_Filename_ (_A_String_Base_) :
        """
 
     @TFL.Meta.Class_and_Instance_Method
-    def simple_cooked (soc, s) :
+    def cooked (soc, s) :
         if s :
             return TFL.I18N.encode_f (s)
-    # end def simple_cooked
+    # end def cooked
 
     def _check_dir (self, d) :
         if not sos.path.isdir (d) :
@@ -1044,7 +958,7 @@ class _A_String_ (_A_String_Base_) :
 
     ignore_case       = False
     needs_raw_value   = False
-    simple_cooked     = unicode
+    P_Type            = unicode
 
 # end class _A_String_
 
@@ -1100,9 +1014,9 @@ class _A_Typed_Collection_ (_A_Collection_) :
         result = None
         t      = s or []
         if isinstance (t, basestring) :
-            result = self._from_string_eval (s, obj, glob, locl)
+            result = self._from_string (s, obj, glob, locl)
         elif t :
-            C_fs = self.C_Type.from_string
+            C_fs   = self.C_Type.from_string
             result = self.R_Type (C_fs (c, obj, glob, locl) for c in t)
         return result
     # end def from_string
@@ -1126,10 +1040,10 @@ class _A_Typed_Collection_ (_A_Collection_) :
         return (soc.C_Type.as_string (v) for v in value)
     # end def _C_as_string
 
-    def _from_string_eval (self, s, obj, glob, locl) :
+    def _from_string (self, s, obj, glob, locl) :
+        C_fs  = self.C_Type._from_string
         comps = self._C_split (s.strip ())
-        C_fse = self.C_Type._from_string_eval
-        return self.R_Type (C_fse (c, obj, glob, locl) for c in comps)
+        return self.R_Type (C_fs (c, obj, glob, locl) for c in comps)
     # end def _from_string
 
 # end class _A_Typed_Collection_
@@ -1192,7 +1106,7 @@ class _A_Unit_ (A_Attr_Type) :
         return sorted (self._unit_dict.iterkeys ())
     # end def eligible_raw_values
 
-    def _from_string_eval (self, s, obj, glob, locl) :
+    def _from_string (self, s, obj, glob, locl) :
         factor = 1
         pat    = self._unit_pattern
         if pat.search (s) :
@@ -1205,8 +1119,8 @@ class _A_Unit_ (A_Attr_Type) :
                       ( _T (u"Invalid unit %s, specify one of %s")
                       % (unit, self.eligible_raw_values ())
                       )
-        return self.__super._from_string_eval (obj, s, glob, locl) * factor
-    # end def _from_string_eval
+        return self.__super._from_string (obj, s, glob, locl) * factor
+    # end def _from_string
 
 # end class _A_Unit_
 
@@ -1223,6 +1137,7 @@ class A_Boolean (_A_Named_Value_) :
     """Models a Boolean attribute of an object."""
 
     typ            = "Boolean"
+    P_Type         = bool
     ui_length      = 5
 
     Table          = dict \
@@ -1275,11 +1190,11 @@ class A_Date (_A_Date_) :
     """Models a date-valued attribute of an object."""
 
     typ            = "Date"
+    P_Type         = datetime.date
     ui_length      = 12
     input_formats  = \
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
-    _DT_Type       = datetime.date
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -1287,7 +1202,7 @@ class A_Date (_A_Date_) :
             value = value.date ()
         elif isinstance (value, basestring) :
             try :
-                value = soc._from_string_eval (value)
+                value = soc._from_string (value)
             except ValueError :
                 raise TypeError ("Date expected, got %r" % (value, ))
         elif not isinstance (value, datetime.date) :
@@ -1334,6 +1249,7 @@ class A_Date_Time (_A_Date_) :
     """Models a date-time-valued attribute of an object."""
 
     typ            = "Date-Time"
+    P_Type         = datetime.datetime
     ui_length      = 18
     input_formats  = tuple \
         ( itertools.chain
@@ -1343,7 +1259,6 @@ class A_Date_Time (_A_Date_) :
             )
         )
     _tuple_len     = 6
-    _DT_Type       = datetime.datetime
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -1352,7 +1267,7 @@ class A_Date_Time (_A_Date_) :
                 value = datetime.datetime (value.year, value.month, value.day)
             elif isinstance (value, basestring) :
                 try :
-                    value = soc._from_string_eval (value)
+                    value = soc._from_string (value)
                 except ValueError :
                     raise TypeError ("Date/time expected, got %r" % (value, ))
             else :
@@ -1380,6 +1295,7 @@ class A_Decimal (_A_Number_) :
 
     __metaclass__  = MOM.Meta.M_Attr_Type_Decimal
     typ            = "Decimal"
+    P_Type         = decimal.Decimal
     code_format    = "%s"
 
     decimal_places = 2
@@ -1387,9 +1303,14 @@ class A_Decimal (_A_Number_) :
     rounding       = decimal.ROUND_HALF_UP
     ui_length      = TFL.Meta.Once_Property (lambda s : s.max_digits + 2)
 
+    _string_fixer  = Re_Replacer \
+        ( r"([-+]?\d*\.\d+([eE][-+]?\d+)?)"
+        , r"""Decimal("\1")"""
+        )
+
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        D = decimal.Decimal
+        D = soc.P_Type
         if not isinstance (value, D) :
             if isinstance (value, float) :
                 value = str (value)
@@ -1409,8 +1330,8 @@ class A_Dirname (_A_Filename_) :
 
     typ         = "Directory"
 
-    def _from_string_eval (self, s, obj, glob, locl) :
-        s = self.__super._from_string_eval (s, obj, glob, locl)
+    def _from_string (self, s, obj, glob, locl) :
+        s = self.__super._from_string (s, obj, glob, locl)
         if s :
             if sos.altsep :
                 s = s.replace (sos.altsep, sos.sep)
@@ -1439,8 +1360,8 @@ class A_Filename (_A_Filename_) :
 
     typ         = "Filename"
 
-    def _from_string_eval (self, s, obj, glob, locl) :
-        s = self.__super._from_string_eval (s, obj, glob, locl)
+    def _from_string (self, s, obj, glob, locl) :
+        s = self.__super._from_string (s, obj, glob, locl)
         if s and self.do_check :
             self._check_dir   (sos.path.dirname (s))
             self._check_read  (s)
@@ -1452,11 +1373,10 @@ class A_Filename (_A_Filename_) :
 
 class A_Float (_A_Float_) :
     code_format    = "%s"
-    simple_cooked  = float
 # end class A_Float
 
 class A_Int (_A_Int_) :
-    simple_cooked  = int
+    pass
 # end class A_Int
 
 class A_Int_List (_A_Typed_List_) :
@@ -1567,16 +1487,17 @@ class A_Numeric_String (_A_String_Base_) :
 
     typ               = "Numeric_String"
 
+    P_Type            = unicode
     as_number         = int
 
     @TFL.Meta.Class_and_Instance_Method
-    def simple_cooked (soc, value) :
+    def cooked (soc, value) :
         if isinstance (value, basestring) :
             value = value.replace (" ", "").lstrip ("+-")
         if value :
             value = soc.as_number (value)
-        return unicode (value)
-    # end def simple_cooked
+        return soc.P_Type (value)
+    # end def cooked
 
 # end class A_Numeric_String
 
@@ -1610,11 +1531,25 @@ class A_Time (_A_Date_) :
     """Models a time-valued attribute of an object."""
 
     typ            = "Time"
+    P_Type         = datetime.time
     ui_length      = 8
     input_formats  = ("%H:%M:%S", "%H:%M")
     _tuple_len     = 6
     _tuple_off     = 3
-    _DT_Type       = datetime.time
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, datetime.datetime) :
+            value = value.time ()
+        elif isinstance (value, basestring) :
+            try :
+                value = soc._from_string (value)
+            except ValueError :
+                raise TypeError ("Time expected, got %r" % (value, ))
+        elif not isinstance (value, datetime.time) :
+            raise TypeError ("Time expected, got %r" % (value, ))
+        return value
+    # end def cooked
 
     @classmethod
     def now (cls) :

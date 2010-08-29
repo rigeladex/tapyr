@@ -153,7 +153,12 @@ class _Condition_ (object):
             attr   = getattr (obj.__class__, name, None)
             result = dict [name]
             if attr is not None and result is not None :
-                result = attr.cooked (result)
+                try :
+                    result = attr.cooked (result)
+                except Exception, exc :
+                    print "Error in `cooked` of `%s` for value `%s` [%s]" % \
+                        (attr, result, obj)
+                    raise
         elif hasattr (obj, name) or (name in self.attr_none) :
             result = self.kind.get_attr_value (obj, name)
         else :
