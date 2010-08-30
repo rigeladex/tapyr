@@ -726,11 +726,11 @@ The app-type specific entity-types are ready to be used by
     [Blob `FO`, Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Name `name`, Cached_Role_Set `sickness`, String `ui_display`, Float `weight`, Boolean `x_locked`]
 
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
-    ('last_name', 'Last name')
+    ('last_name', u'Last name')
     >>> sorted (ET_Person._Attributes._own_names)
     ['first_name', 'last_name', 'middle_name', 'traps', 'ui_display']
     >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
-    ('color', 'Color')
+    ('color', u'Color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
     ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q']
@@ -1243,7 +1243,7 @@ Changing objects and links
     Invariant_Errors: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 (length <= 5)
         length = 9
         middle_name = u'zacharias'
-        length = 'len (middle_name)'
+        length = u'len (middle_name)'
 
     >>> m
     BMT.Mouse (u'Mighty_Mouse')

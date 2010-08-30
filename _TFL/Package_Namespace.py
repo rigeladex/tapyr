@@ -132,6 +132,7 @@
 #    23-Nov-2009 (CT)  `Package_Namespace.__init__`: order of arguments changed
 #    14-Jan-2010 (CT)  `_Outer` added (and methods sorted alphabetically)
 #    16-Jun-2010 (CT)  s/print/pyk.fprint/
+#    30-Aug-2010 (CT) `_import_names` changed to check against `basestring`
 #    ««revision-date»»···
 #--
 
@@ -366,7 +367,7 @@ class Package_Namespace (object) :
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
-            if isinstance (name, str) :
+            if isinstance (name, basestring) :
                 name, as_name = name, name
             else :
                 name, as_name = name

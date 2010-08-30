@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,6 +53,8 @@
 #     4-Feb-2009 (CT)  s/_fixed_type_/M_M_Class/ and clarified implementation
 #    11-Jun-2009 (CT)  `head_mixins` and `tail_mixins` added to `New`
 #    24-Sep-2009 (CT)  Use `_TFL.callable` to avoid `-3` warnings
+#    30-Aug-2010 (CT) `M_Autorename.__name__` changed to pass `name` through
+#                     `str` (`unicode` gives `type()` a sissy-fit)
 #    ««revision-date»»···
 #--
 
@@ -201,9 +203,9 @@ class M_Autorename (M_Base) :
     """
 
     def __new__ (meta, name, bases, dict) :
-        real_name = name
+        real_name = name = str (name)
         if "_real_name" in dict :
-            name = dict ["_real_name"]
+            name = str (dict ["_real_name"])
             del dict ["_real_name"]
         dict ["__real_name"] = real_name
         return super (M_Autorename, meta).__new__ (meta, name, bases, dict)

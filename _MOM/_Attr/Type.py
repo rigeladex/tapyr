@@ -148,8 +148,12 @@
 #                     * `from_string` drastically simplified (symbolic...)
 #                     * `P_Type` added and used, `simple_cooked` removed
 #    30-Aug-2010 (CT) `A_Url.max_length` increased from 96 to 160
+#    30-Aug-2010 (CT) `__future__` imports added to improve 3-compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import, division
+from   __future__  import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
