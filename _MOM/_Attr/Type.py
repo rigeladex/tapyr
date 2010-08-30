@@ -147,6 +147,7 @@
 #                     * `symbolic_ref_pat` removed
 #                     * `from_string` drastically simplified (symbolic...)
 #                     * `P_Type` added and used, `simple_cooked` removed
+#    30-Aug-2010 (CT) `A_Url.max_length` increased from 96 to 160
 #    ««revision-date»»···
 #--
 
@@ -1562,7 +1563,7 @@ class A_Url (_A_String_) :
     """Models an url-valued attribute of an object."""
 
     typ            = "Url"
-    max_length     = 96
+    max_length     = 160
     check          = ("""value.startswith (("/", "http://", "https://"))""", )
 
 # end class A_Url
