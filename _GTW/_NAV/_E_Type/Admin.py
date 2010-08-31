@@ -73,6 +73,8 @@
 #                     possible to undo all changes done in this form in one step
 #     8-Aug-2010 (MG) `Test` changed
 #    17-Aug-2010 (CT) `Changer.rendered` changed to check `scope.readonly`
+#    31-Aug-2010 (CT) `Changer.obj` added to simplify debugging from
+#                     browser-based `Console`
 #    ««revision-date»»···
 #--
 
@@ -116,6 +118,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         args            = (None, )
         template        = "e_type_change"
         form_parameters = {}
+
+        @property
+        def obj (self) :
+            ETM = self.ETM
+            pid = self.args and self.args [0]
+            return ETM.pid_query (pid)
+        # end def obj
 
         def rendered (self, handler, template = None) :
             ETM      = self.ETM

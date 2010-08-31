@@ -20,35 +20,32 @@
 #
 #++
 # Name
-#    GTW.OMP.SRM.Boat_in_Regatta
+#    GTW.OMP.SRM.Team
 #
 # Purpose
-#    Boat racing in a regatta
+#    Model a team of sailors participating in a regatta
 #
 # Revision Dates
-#    19-Apr-2010 (CT) Creation
-#    10-May-2010 (CT) `place` added
+#    31-Aug-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division
+from   __future__  import print_function, unicode_literals
+
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
-from   _MOM.import_MOM          import _A_Composite_Collection_
 
+import _GTW._OMP._PAP.Person
 
-from   _GTW._OMP._SRM.Attr_Type import A_Race_Result
-
-import _GTW._OMP._SRM.Boat
 import _GTW._OMP._SRM.Entity
-import _GTW._OMP._SRM.Regatta
-import _GTW._OMP._SRM.Sailor
 
 from   _TFL.I18N                import _, _T, _Tn
 
-_Ancestor_Essence = GTW.OMP.SRM.Link2
+_Ancestor_Essence = GTW.OMP.SRM.Link1
 
-class Boat_in_Regatta (_Ancestor_Essence) :
-    """Boat racing in a regatta."""
+class Team (_Ancestor_Essence) :
+    """A team of sailors participating in a regatta."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -57,46 +54,55 @@ class Boat_in_Regatta (_Ancestor_Essence) :
         ### Primary attributes
 
         class left (_Ancestor.left) :
-            """Boat racing in a regatta."""
+            """Regatta event to which this regatta belongs."""
 
-            role_type          = GTW.OMP.SRM.Boat
+            role_type          = GTW.OMP.SRM.Regatta_C
+            role_name          = "regatta"
             auto_cache         = True
 
         # end class left
 
-        class right (_Ancestor.right) :
-            """Regatta a boat races in."""
+        class name (A_String) :
+            """Name of the sailing team."""
 
-            role_type          = GTW.OMP.SRM.Regatta
+            kind               = Attr.Primary
+            max_length         = 64
 
-        # end class right
+        # end class name
 
         ### Non-primary attributes
 
+        class club (A_String) :
+            """Club the team sails for."""
+
+            kind               = Attr.Optional
+            max_length         = 8
+
+        # end class club
+
+        class desc (A_String) :
+            """Short description of the team."""
+
+            kind               = Attr.Optional
+            max_length         = 160
+
+        # end class desc
+
+        class leader (A_Object) :
+            """Leader of team."""
+
+            Class              = GTW.OMP.PAP.Person
+            kind               = Attr.Optional
+
+        # end class leader
+
         class place (A_Int) :
-            """Place of boat in this regatta."""
+            """Place of team in this regatta."""
 
             kind               = Attr.Optional
             min_value          = 1
 
         # end class place
-
-        class points (A_Int) :
-            """Total points of boat in this regatta."""
-
-            kind               = Attr.Optional
-            min_value          = 1
-
-        # end class points
-
-        class race_results (_A_Composite_Collection_) :
-            """Results of the `boat` in the races of the `regatta`."""
-
-            typ                = "Race_Results"
-            C_Type             = A_Race_Result
-            kind               = Attr.Optional
-
-        # end class race_results
 
         class registration_date (A_Date) :
             """Date of registration."""
@@ -109,18 +115,10 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class registration_date
 
-        class skipper (A_Object) :
-            """Skipper of boat."""
-
-            Class              = GTW.OMP.SRM.Sailor
-            kind               = Attr.Mandatory
-
-        # end class skipper
-
     # end class _Attributes
 
-# end class Boat_in_Regatta
+# end class Team
 
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")
-### __END__ GTW.OMP.SRM.Boat_in_Regatta
+### __END__ GTW.OMP.SRM.Team

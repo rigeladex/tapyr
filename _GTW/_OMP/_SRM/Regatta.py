@@ -32,6 +32,7 @@
 #     7-May-2010 (CT) `year` added
 #    10-May-2010 (CT) `discards` and `races` added
 #    11-May-2010 (CT) `result` added
+#    31-Aug-2010 (CT) `is_team_race` added to `Regatta_C`
 #    ««revision-date»»···
 #--
 
@@ -168,6 +169,13 @@ class Regatta_C (_Ancestor_Essence) :
             Class              = GTW.OMP.SRM.Boat_Class
 
         # end class boat_class
+
+        class is_team_race (A_Boolean) :
+
+            kind               = Attr.Optional
+            default            = False
+
+        # end class is_team_race
 
         class name (_Ancestor.name) :
 

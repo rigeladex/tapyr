@@ -82,7 +82,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         result = []
         sk     = TFL.Sorted_By \
             ("skipper.person.last_name", "skipper.person.first_name")
-        boats  = obj.boats = self.scope.SRM.Boat_in_Regatta.r_query \
+        obj.boats = self.scope.SRM.Boat_in_Regatta.r_query \
             (right = obj).order_by (sk).all ()
         np = _T (u"Participants")
         nr = _T (u"Results")
@@ -98,18 +98,17 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                     , regatta     = obj
                     )
                 )
-        else :
-            result.append \
-                ( GTW.NAV.Page
-                    ( self
-                    , name        = u"%s.html" % (np.lower (), )
-                    , short_title = np
-                    , title       = u"%s %s" %
-                        ( _T (u"List of participants for"), self.short_title)
-                    , template    = u"regatta_registration"
-                    , regatta     = obj
-                    )
+        result.append \
+            ( GTW.NAV.Page
+                ( self
+                , name        = u"%s.html" % (np.lower (), )
+                , short_title = np
+                , title       = u"%s %s" %
+                    ( _T (u"List of participants for"), self.short_title)
+                , template    = u"regatta_registration"
+                , regatta     = obj
                 )
+            )
         return result
     # end def _get_objects
 

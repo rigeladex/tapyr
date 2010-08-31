@@ -30,6 +30,7 @@
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
+#    31-Aug-2010 (CT) `Team` and `Team_has_Boat_in_Regatta` added
 #    ««revision-date»»···
 #--
 
@@ -176,6 +177,19 @@ class Admin (object) :
             ,
             )
         , list_display   = ( "name", "date", "desc")
+        )
+
+    Team            = dict \
+        ( ETM       = "GTW.OMP.SRM.Team"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("-regatta.event.date.start", "name")
+        , list_display   = ("regatta", "name", "club", "leader")
+        )
+
+    Team_has_Boat_in_Regatta = dict \
+        ( ETM       = "GTW.OMP.SRM.Team_has_Boat_in_Regatta"
+        , Type      = GTW.NAV.E_Type.Admin
+        , list_display   = ("team", "boat.boat")
         )
 
 # end class Admin

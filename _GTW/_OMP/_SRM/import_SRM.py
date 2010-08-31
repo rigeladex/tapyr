@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
 #    19-Apr-2010 (CT) Creation continued
+#    31-Aug-2010 (CT) `Team` and `Team_has_Boat_in_Regatta` added
 #    ««revision-date»»···
 #--
 
@@ -43,8 +44,11 @@ import _GTW._OMP._SRM.Page
 import _GTW._OMP._SRM.Regatta_Event
 import _GTW._OMP._SRM.Regatta
 import _GTW._OMP._SRM.Sailor
+import _GTW._OMP._SRM.Team
 
 import _GTW._OMP._SRM.Boat_in_Regatta
 import _GTW._OMP._SRM.Crew_Member
+import _GTW._OMP._SRM.Team_has_Boat_in_Regatta
+
 
 ### __END__ GTW.OMP.SRM.import_SRM
