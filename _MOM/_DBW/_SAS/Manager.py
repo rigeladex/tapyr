@@ -76,6 +76,8 @@
 #                     or create the meta data
 #    13-Aug-2010 (CT) s/read_only/readonly/g
 #    16-Aug-2010 (MG) Add `mysql_engine` to all Table creation statements
+#     1-Sep-2010 (MG) `_cached_role` changed to work with new `Q_Result`
+#                     classes
 #    ««revision-date»»···
 #--
 
@@ -266,9 +268,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             def computed_crn (self) :
                 session = self.home_scope.ems.session
                 query   = MOM.DBW.SAS.Q_Result \
-                    ( assoc_et, session
-                    , assoc_et._SAS.select.where (r_attr == self.pid)
-                    )
+                    (assoc_et, session).where (r_attr == self.pid)
                 if singleton :
                     return query.first ()
                 return query
@@ -286,8 +286,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 links   = sql.select ((q_attr,)).where (f_attr == self.pid)
                 query   = MOM.DBW.SAS.Q_Result \
                     ( result_et, session
-                    , result_et._SAS.select.where (result_et._SAQ.pid.in_(links))
-                    )
+                    ).where (result_et._SAQ.pid.in_(links))
                 if singleton :
                     return query.first ()
                 return query

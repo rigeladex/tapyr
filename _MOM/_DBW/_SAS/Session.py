@@ -274,7 +274,7 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def finish (self) :
         ### setup the select statement for this class with all the joins
-        tables = [self.table]
+        tables      = [self.table]
         joins  = self.table
         for b in self.transitive_bases :
             joins = joins.outerjoin (b._sa_table)
@@ -282,6 +282,7 @@ class SAS_Interface (TFL.Meta.Object) :
         for c in self.transitive_children :
             joins = joins.outerjoin (c._sa_table)
             tables.append           (c._sa_table)
+        self.joins  = joins
         self.select = sql.select \
             (tables, from_obj = (joins, ), use_labels = True)
         self.joined_tables = set (tables)
