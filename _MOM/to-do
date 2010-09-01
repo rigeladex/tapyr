@@ -1,6 +1,40 @@
 MOM To-Do
 =========
 
+- Change_Summary: consolidate list of changes into one summary change per
+  object
+
+- merge of changes:
+
+  * dictionary (pid-> dict (initial_value))
+
+  * Change_Summary
+
+  * objects from database
+
+- Q_Result methods:
+
+  * attr: QR.attr (q.foo) returns `.foo` of each of the members of `QR`
+
+  * attrs: like `attr`, but returns tuple of values for specified attributes
+    of each of the members of `QR`
+
+  * set: set one or more attributes for each of the members of `QR`
+
+    + signature or `set` like that of `dict.update` (to allow setting of
+      composite values like `date.start`)
+
+x Q_Exp bug:
+
+  x `-1 * Q.foo` --> exception
+
+    >>> -1 * Q.foo
+    Traceback (most recent call last):
+      ...
+    TypeError: unsupported operand type(s) for *: 'int' and 'Get'
+
+  x `Q.foo * -1` --> works
+
 - MOM.Attr.Type
 
   x remove (incomplete) code for symbolic references

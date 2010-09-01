@@ -39,6 +39,7 @@
 #                     functions which have aproper `__name__` which is needed
 #                     by the SA instrumentation
 #    12-Feb-2010 (CT) `__nonzero__` added to `Base`, `Call`, and `_Exp_`
+#     1-Sep-2010 (CT) Reflected binary operators added (__radd__ and friends)
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,12 @@ This module implements a query expression language::
     4
     >>> Q [-2] ((2,4))
     2
+
+    >>> Q.foo * -1
+    Q.foo * -1
+    >>> -1 * Q.foo
+    Q.foo * -1
+
 
 Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
 no way to simulate this by defining operator methods. Therefore,
@@ -245,8 +252,18 @@ class Bin (TFL.Meta.Object) :
         , __lt__  = "<"
         , __mod__ = "%"
         , __mul__ = "*"
+        , __rmul__ = "*"
         , __pow__ = "**"
         , __sub__ = "-"
+        )
+
+    rop_map       = dict \
+        ( __radd__  = "__add__"
+        , __rdiv__  = "__div__"
+        , __rmod__  = "__mod__"
+        , __rmul__  = "__mul__"
+        , __rpow__  = "__pow__"
+        , __rsub__  = "__sub__"
         )
 
     predicate_precious_p = True
@@ -326,7 +343,7 @@ class Call (TFL.Meta.Object) :
 
 def __binary (op, Class) :
     name = op.__name__
-    op   = getattr (operator, name)
+    op   = getattr (operator, Bin.rop_map.get (name, name))
     if name in ("__eq__", "__ne__") :
         ### Allow `x == None` and `x != None`
         undefs = (Q.undef, )
@@ -430,6 +447,25 @@ class Exp (_Exp_) :
 
     @_binary
     def __sub__ (self, rhs) : pass
+
+    ### Binary non-boolean reflected queries
+    @_binary
+    def __radd__ (self, rhs) : pass
+
+    @_binary
+    def __rdiv__ (self, rhs) : pass
+
+    @_binary
+    def __rmod__ (self, rhs) : pass
+
+    @_binary
+    def __rmul__ (self, rhs) : pass
+
+    @_binary
+    def __rpow__ (self, rhs) : pass
+
+    @_binary
+    def __rsub__ (self, rhs) : pass
 
     ### Method calls
     @_method
