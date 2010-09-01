@@ -52,6 +52,7 @@
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    17-May-2010 (CT) Test for `scope.migrate` added
 #    17-Aug-2010 (CT) Use A_Float instead of A_Decimal to avoid sqlite warning
+#     1-Sep-2010 (CT) Tests for `Q.attr`, `Q.attrs`, and `Q.set` added
 #    ««revision-date»»···
 #--
 
@@ -1368,6 +1369,13 @@ Attribute queries
     >>> scope.BMT.Trap.query_s (Q.serial_no %% 2 == 0).all ()
     [BMT.Trap (u'X', 2), BMT.Trap (u'Y', 2)]
 
+    >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight))
+    (42.0, 42.0)
+    >>> tuple (scope.BMT.Rodent.query_s (Q.weight == None).attrs (Q.name, "color"))
+    ((u'Rutty_Rat', u''), (u'Toothy_Beaver', u''), (u'betty', u''))
+    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no %% 2).attr (Q.up_ex_q))
+    (20.0, None, None)
+
 Renaming objects and links
 --------------------------
 
@@ -1742,6 +1750,14 @@ Changing a composite primary attribute
 
     .. ### DBW-specific finish
 
+Setting attribute values with Queries
+-------------------------------------
+
+    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
+    ((2, None, None), (3, None, None))
+    >>> scope.BMT.Trap.query_s (Q.serial_no != None).set (max_weight = 25)
+    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
+    ((2, 25.0, 50.0), (3, 25.0, 75.0))
 
 """
 

@@ -31,6 +31,7 @@
 #     3-Dec-2009 (CT) Creation continued..
 #     7-Dec-2009 (CT) Usage of `TFL.Attr_Filter` replaced by `TFL.Attr_Query`
 #    19-Feb-2010 (MG) `first` fixed
+#     1-Sep-2010 (CT) `attr`, `attrs`, and `set` added
 #    ««revision-date»»···
 #--
 
@@ -130,6 +131,8 @@ import operator
 
 class _Q_Result_ (TFL.Meta.Object) :
 
+    Q = TFL.Attr_Query ()
+
     def __init__ (self, iterable) :
         self.iterable = iterable
         self._cache   = None
@@ -138,6 +141,30 @@ class _Q_Result_ (TFL.Meta.Object) :
     def all (self) :
         return list (self)
     # end def all
+
+    def attr (self, getter) :
+        if isinstance (getter, basestring) :
+            getter = getattr (self.Q, getter)
+        for r in self :
+            yield getter (r)
+    # end def attr
+
+    def attrs (self, * getters) :
+        if not getters :
+            raise TypeError \
+                ( "%s.attrs() requires at least one argument"
+                % self.__class__.__name
+                )
+        def _g (getters) :
+            Q = self.Q
+            for getter in getters :
+                if isinstance (getter, basestring) :
+                    getter = getattr (Q, getter)
+                yield getter
+        getters = tuple (_g (getters))
+        for r in self :
+            yield tuple (g (r) for g in getters)
+    # end def attrs
 
     def count (self) :
         if self._cache is None :
@@ -157,7 +184,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     def filter (self, * criteria, ** kw) :
         if kw :
             criteria = list (criteria)
-            Q = TFL.Attr_Query ()
+            Q = self.Q
             for k, v in kw.iteritems () :
                 criteria.append (getattr (Q, k) == v)
             criteria = tuple (criteria)
@@ -196,6 +223,10 @@ class _Q_Result_ (TFL.Meta.Object) :
         return self._Q_Result_Ordered_ (self, criterion)
     # end def order_by
 
+    def set (self, * args, ** kw) :
+        return self._set (dict (args, ** kw))
+    # end def set
+
     def slice (self, start, stop = None) :
         return self._Q_Result_Sliced_ (self, start, stop)
     # end def slice
@@ -203,6 +234,12 @@ class _Q_Result_ (TFL.Meta.Object) :
     def _fill_cache (self) :
         self._cache = list (self.iterable)
     # end def _fill_cache
+
+    def _set (self, kw) :
+        for r in self :
+            for k, v in kw.iteritems () :
+                setattr (r, k, v)
+    # end def _set
 
     def __getitem__ (self, key) :
         if isinstance (key, slice) :
