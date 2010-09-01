@@ -12,16 +12,16 @@ MOM To-Do
 
   * objects from database
 
-- Q_Result methods:
+x Q_Result methods:
 
-  * attr: QR.attr (q.foo) returns `.foo` of each of the members of `QR`
+  x attr: QR.attr (q.foo) returns `.foo` of each of the members of `QR`
 
-  * attrs: like `attr`, but returns tuple of values for specified attributes
+  x attrs: like `attr`, but returns tuple of values for specified attributes
     of each of the members of `QR`
 
-  * set: set one or more attributes for each of the members of `QR`
+  x set: set one or more attributes for each of the members of `QR`
 
-    + signature or `set` like that of `dict.update` (to allow setting of
+    x signature or `set` like that of `dict.update` (to allow setting of
       composite values like `date.start`)
 
 x Q_Exp bug:
