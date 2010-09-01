@@ -542,6 +542,25 @@ class Exp_B (_Exp_) :
     @_type_error
     def __sub__ (self, rhs) : pass
 
+    ### Binary non-boolean reflected queries
+    @_type_error
+    def __radd__ (self, rhs) : pass
+
+    @_type_error
+    def __rdiv__ (self, rhs) : pass
+
+    @_type_error
+    def __rmod__ (self, rhs) : pass
+
+    @_type_error
+    def __rmul__ (self, rhs) : pass
+
+    @_type_error
+    def __rpow__ (self, rhs) : pass
+
+    @_type_error
+    def __rsub__ (self, rhs) : pass
+
 # end class Exp_B
 
 @TFL.Add_New_Method (Base)
