@@ -128,7 +128,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     @Once_Property
     def query_filters (self) :
         result = list (self.__super.query_filters)
-        if self.disp_filter :
+        if self.disp_filter is not None :
             result.append (self.disp_filter)
         return tuple (result)
     # end def query_filters

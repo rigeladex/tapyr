@@ -230,8 +230,6 @@ class Page_ReST_F (Page_ReST) :
     @Once_Property
     def src_path (self) :
         return pjoin (self.src_dir, self.file_stem + self.src_extension)
-        ### XXX 17-Mar-2010 used to be::
-        return pjoin (self.src_path, self.file_stem + self.src_extension)
     # end def src_path
 
 # end class Page_ReST_F

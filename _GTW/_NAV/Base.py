@@ -226,6 +226,7 @@
 #                     `HTTP.Request_Data` instead of `request` to support
 #                     file uploads
 #    28-Jun-2010 (CT) `nav_context` added to `from_nav_list_file`
+#     2-Sep-2010 (CT) `Page_O` and `Page_P` added
 #    ««revision-date»»···
 #--
 
@@ -622,6 +623,53 @@ class Page (_Site_Entity_) :
     # end def dir
 
 # end class Page
+
+class _Page_O_ (Page) :
+    """Page relying on an object for some of its properties."""
+
+    def __getattr__ (self, name) :
+        if name != "obj" :
+            try :
+                return getattr (self.obj, name)
+            except AttributeError :
+                pass
+        return self.__super.__getattr__ (name)
+    # end def __getattr__
+
+# end class _Page_O_
+
+class Page_O (_Page_O_) :
+    """Page relying on an object for some of its properties."""
+
+    def __init__ (self, * args, ** kw) :
+        self.ETM_name = kw.pop ("ETM")
+        self.epk      = kw.pop ("epk")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    @property
+    def obj (self) :
+        return self.top.scope [self.ETM_name].instance (* self.epk)
+    # end def obj
+
+# end class Page_O
+
+class Page_P (_Page_O_) :
+    """Page relying on an object stored by another page for some of its properties."""
+
+    def __init__ (self, * args, ** kw) :
+        self.base_href = kw.pop ("base_href")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    @property
+    def obj (self) :
+        base_page = self.top.page_from_href (self.base_href)
+        if base_page is not None :
+            return base_page.obj
+    # end def obj
+
+# end class Page_P
 
 class Alias (Page) :
     """Model an alias for a page of a web site."""
