@@ -149,6 +149,7 @@
 #                     * `P_Type` added and used, `simple_cooked` removed
 #    30-Aug-2010 (CT) `A_Url.max_length` increased from 96 to 160
 #    30-Aug-2010 (CT) `__future__` imports added to improve 3-compatibility
+#     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
 #    ««revision-date»»···
 #--
 
@@ -528,17 +529,17 @@ class _A_Composite_Collection_ (_A_Collection_) :
         __metaclass__ = MOM.Meta.M_Attr_Type__Pickler
 
         @classmethod
-        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+        def as_cargo (cls, attr_kind, attr_type, value) :
             if value is not None :
                 return tuple (v.as_attr_pickle_cargo () for v in value)
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
             if cargo is not None :
                 R_Type = attr_type.R_Type
                 fpc    = attr_type.C_Type.C_Type.from_attr_pickle_cargo
-                return R_Type (fpc (obj.home_scope, c) for c in cargo)
+                return R_Type (fpc (scope, c) for c in cargo)
         # end def from_cargo
 
     # end class Pickler
@@ -979,13 +980,13 @@ class _A_Named_Object_ (_A_Named_Value_) :
         Type = _A_String_
 
         @classmethod
-        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+        def as_cargo (cls, attr_kind, attr_type, value) :
             if value is not None :
                 return attr_type.__class__.Elbat [value]
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
             if cargo is not None :
                 Table = attr_type.__class__.Table
                 try :

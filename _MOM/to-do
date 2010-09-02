@@ -1,7 +1,7 @@
 MOM To-Do
 =========
 
-- MOM.Attr.Kind: factore from_pickle_cargo from set_pickle_cargo
+x MOM.Attr.Kind: factor `from_pickle_cargo` from `set_pickle_cargo`
 
 - MOM.Pred.Kind: Region
 

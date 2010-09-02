@@ -137,6 +137,8 @@
 #                     `_Composite_Collection_Mixin_._set_cooked_value`
 #    19-Aug-2010 (CT) `get_substance` and `void_values` factored and added to
 #                     `_Composite_Mixin_`
+#     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
+#     2-Sep-2010 (CT) `from_pickle_cargo` factored
 #    ««revision-date»»···
 #--
 
@@ -235,6 +237,13 @@ class Kind (MOM.Prop.Kind) :
         return result
     # end def default
 
+    def from_pickle_cargo (self, scope, cargo) :
+        Pickler = self.attr.Pickler
+        if Pickler :
+            return Pickler.from_cargo (scope, self, self.attr, cargo [0])
+        return cargo [0]
+    # end def from_pickle_cargo
+
     def get_hash (self, obj, value = None) :
         return value if (value is not None) else self.get_value (obj)
     # end def get_hash
@@ -243,7 +252,7 @@ class Kind (MOM.Prop.Kind) :
         Pickler = self.attr.Pickler
         value   = self.get_value (obj)
         if Pickler :
-            return (Pickler.as_cargo (obj, self, self.attr, value), )
+            return (Pickler.as_cargo (self, self.attr, value), )
         else :
             return (value, )
     # end def get_pickle_cargo
@@ -297,10 +306,9 @@ class Kind (MOM.Prop.Kind) :
     # end def reset
 
     def set_pickle_cargo (self, obj, cargo) :
-        Pickler = self.attr.Pickler
-        if Pickler :
-            cargo = (Pickler.from_cargo (obj, self, self.attr, cargo [0]), )
-        self._set_cooked_value (obj, cargo [0], changed = True)
+        value = self.from_pickle_cargo (obj.home_scope, cargo)
+        if value is not None :
+            self._set_cooked_value (obj, value, changed = True)
     # end def set_pickle_cargo
 
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False, changed = 42) :
@@ -425,6 +433,12 @@ class _EPK_Mixin_ (Kind) :
         return self.__super.db_sig + (self.attr.Class.type_name, )
     # end def db_sig
 
+    def from_pickle_cargo (self, scope, cargo) :
+        if cargo and cargo [0] :
+            ETM = scope [self.attr.Class.type_name]
+            return ETM.pid_query (cargo [0])
+    # end def from_pickle_cargo
+
     def get_hash (self, obj, value = None) :
         ref = value if (value is not None) else self.get_value (obj)
         if ref is not None :
@@ -437,13 +451,6 @@ class _EPK_Mixin_ (Kind) :
             return (ref.pid, )
         return (None, )
     # end def get_pickle_cargo
-
-    def set_pickle_cargo (self, obj, cargo) :
-        if cargo and cargo [0] :
-            ETM = obj.home_scope [self.attr.Class.type_name]
-            ref = ETM.pid_query (cargo [0])
-            self._set_cooked_value (obj, ref, changed = True)
-    # end def set_pickle_cargo
 
     def sort_key (self, obj) :
         v = self.get_value (obj)
@@ -527,6 +534,11 @@ class _Composite_Mixin_ (_Composite_Base_) :
         return self.attr.C_Type
     # end def Class
 
+    def from_pickle_cargo (self, scope, cargo) :
+        if cargo and cargo [0] :
+            return self.attr.C_Type.from_attr_pickle_cargo (scope, cargo [0])
+    # end def from_pickle_cargo
+
     def get_hash (self, obj, value = None) :
         if value is None :
             value = self.get_value (obj)
@@ -543,13 +555,6 @@ class _Composite_Mixin_ (_Composite_Base_) :
             return (value.as_attr_pickle_cargo (), )
         return (None, )
     # end def get_pickle_cargo
-
-    def set_pickle_cargo (self, obj, cargo) :
-        if cargo and cargo [0] :
-            value = self.attr.C_Type.from_attr_pickle_cargo \
-                (obj.home_scope, cargo [0])
-            self._set_cooked_value (obj, value, changed = True)
-    # end def set_pickle_cargo
 
     def reset (self, obj) :
         ### Need an empty composite at all times

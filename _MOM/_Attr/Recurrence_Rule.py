@@ -42,6 +42,7 @@
 #    19-Aug-2010 (CT) `_Recurrence_Rule_Mixin_` added to define `ui_display`
 #    19-Aug-2010 (CT) `__nonzero__` factored to `An_Entity`
 #    19-Aug-2010 (CT) `count_default` added
+#     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
 #    ««revision-date»»···
 #--
 
@@ -74,15 +75,15 @@ class A_Weekday_RR (A_Attr_Type) :
         # end class Type
 
         @classmethod
-        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+        def as_cargo (cls, attr_kind, attr_type, value) :
             if value is not None :
                 return attr_type.as_string (value)
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
             if cargo is not None :
-                return attr_type.from_string (cargo, obj)
+                return attr_type.from_string (cargo)
         # end def from_cargo
 
     # end class Pickler
