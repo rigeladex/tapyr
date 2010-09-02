@@ -37,6 +37,10 @@
 #     3-Aug-2010 (MG) Handle error of `meta.reflect` in `delete_database`
 #    10-Aug-2010 (MG) `Postgresql._drop_database_content` fixed
 #    16-Aug-2010 (MG) `MySQL._drop_database` fixed to suppress the nasty warning
+#     2-Sep-2010 (CT) Pass `db_url.path` through `str` to aovid::
+#            ProgrammingError: (ProgrammingError) type "u" does not exist
+#            LINE 1: SELECT datname FROM pg_database WHERE datname = u'regtest'                                                                       ^
+#             "SELECT datname FROM pg_database WHERE datname = u'regtest'" {}
 #    ««revision-date»»···
 #--
 
@@ -109,7 +113,7 @@ class MySQL (_NFB_) :
             engine = manager._create_engine (db_url.scheme_auth)
             engine.execute \
                 ( "CREATE DATABASE IF NOT EXISTS %s character set %s"
-                % (db_url.path, encoding)
+                % (str (db_url.path), encoding)
                 )
         except sqlalchemy.exc.OperationalError :
             pass
@@ -121,12 +125,12 @@ class MySQL (_NFB_) :
         ### This is necessary to avoid a nasty Warning that the database does
         ### not exist (even using the IF EXISTS clause)
         try :
-            engine.execute ("use %s" % (db_url.path, ))
+            engine.execute ("use %s" % (str (db_url.path), ))
         except sqlalchemy.exc.OperationalError :
             ### database does not exist -> no need to drop it
             pass
         else :
-            engine.execute ("DROP DATABASE IF EXISTS %s" % (db_url.path, ))
+            engine.execute ("DROP DATABASE IF EXISTS %s" % (str (db_url.path), ))
     # end def _drop_database
 
 # end class MySQL
@@ -171,13 +175,13 @@ class Postgresql (_NFB_) :
             ### not already exist
             result = conn.execute \
                 ( "SELECT datname FROM pg_database WHERE datname = %r"
-                % (db_url.path, )
+                % (str (db_url.path), )
                 ).fetchall ()
             if not result :
                 ### database does not exist -> create it
                 conn.execute \
                     ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
-                    % (db_url.path, encoding, template)
+                    % (str (db_url.path), encoding, template)
                     )
     # end def create_database
 
@@ -185,7 +189,7 @@ class Postgresql (_NFB_) :
     def _drop_database (cls, db_url, manager) :
         conn = cls.Connection (db_url, manager)
         with contextlib.closing (conn) :
-            conn.execute ("DROP DATABASE %s" % (db_url.path, ))
+            conn.execute ("DROP DATABASE %s" % (str (db_url.path), ))
     # end def _drop_database
 
     @classmethod

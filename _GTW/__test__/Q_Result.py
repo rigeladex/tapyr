@@ -29,6 +29,7 @@
 #     1-Sep-2010 (MG) Creation
 #    ««revision-date»»···
 #--
+
 from __future__ import unicode_literals
 
 _q_result = r"""
@@ -39,7 +40,7 @@ _q_result = r"""
     >>> p   = scope.PAP.Person ("LN 2", "FN 2")
     >>> p   = scope.PAP.Person ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
     >>> q   = scope.PAP.Person.query ()
-    >>> q.count ()
+    >>> print q.count ()
     3
     >>> len (q.all ())
     3
