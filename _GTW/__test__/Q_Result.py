@@ -67,13 +67,18 @@ _q_result = r"""
     u'Mr'
     >>> p.lifetime # 1
     MOM.Date_Interval (start = 2010/01/01)
-    >>> q.set ((Q.lifetime.finish, datetime.date(2010, 12, 31)), )
+    >>> q.set (("lifetime.finish", datetime.date(2010, 12, 31)), )
+    >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
+    >>> p = scope.PAP.Person.query (pid = 1).one ()
     >>> p.lifetime # 2
+    MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
+    >>> first (scope.PAP.Person.query (pid = 1).attr (Q.lifetime))
     MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
 """
 
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
+from   _TFL.predicate      import first
 import datetime
 
 __test__ = Scaffold.create_test_dict (_q_result)

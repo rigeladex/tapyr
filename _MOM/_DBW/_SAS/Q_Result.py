@@ -38,6 +38,7 @@
 #    16-Aug-2010 (MG) `_clone` factored, `joined_tables` added
 #     1-Sep-2010 (MG) New version of `Q_Result*` added to support `attr*` and
 #                     `set` functions
+#     2-Sep-2010 (CT) Bug fixes in new version of `Q_Result`
 #    ««revision-date»»···
 #--
 
@@ -313,7 +314,7 @@ class Q_Result (TFL.Meta.Object) :
                 yield getter (SAQ)
         cols = tuple (_g (getters))
         for r in self._query_rows (self.sa_query (cols)) :
-            yield r
+            yield tuple (r)
     # end def attrs
 
     def all (self) :
@@ -328,13 +329,13 @@ class Q_Result (TFL.Meta.Object) :
         sa_query = self.sa_query ([sql.func.count ("*").label ("count")], True)
         result   = self.session.connection.execute (sa_query)
         count    = result.fetchone ().count
-        result.close               ()
+        result.close ()
         return count
     # end def count
 
     def distinct (self) :
-        result          = self._clone ()
-        result.distinct = True
+        result           = self._clone ()
+        result._distinct = True
         return result
     # end def distinct
 
@@ -381,13 +382,13 @@ class Q_Result (TFL.Meta.Object) :
 
     def limit (self, limit) :
         result = self._clone ()
-        result.limit = limit
+        result._limit = limit
         return result
     # end def limit
 
     def offset (self, offset) :
         result = self._clone ()
-        result.offset = offset
+        result._offset = offset
         return result
     # end def offset
 
