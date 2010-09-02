@@ -29,6 +29,7 @@
 #    24-Sep-2009 (CT) Creation (factored from TOM.Pred.Kind)
 #    25-Feb-2010 (CT) `check_pred_p` added (honoring `check_always`)
 #    11-Mar-2010 (CT) `check_pred_p` removed (was a Bad Idea (tm))
+#     2-Sep-2010 (CT) `Region` added
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,17 @@ class Object (Kind) :
 
 # end class Object
 
+class Region (Kind) :
+    """Predicate kind for region-wide invariant.
+
+       Region predicates can refer to other objects and their predicates and
+       must be satisfied before an object can be committed to the database.
+    """
+
+    kind = "region"
+
+# end class Region
+
 class System (Kind) :
     """Predicate kind for system-wide invariant.
 
@@ -141,6 +153,7 @@ Class `MOM.Pred.Kind`
     from :class:`Kind`.
 
 .. autoclass:: Object
+.. autoclass:: Region
 .. autoclass:: System
 
 """

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -138,7 +138,7 @@ class M_Pred_Type_Quantifier (M_Pred_Type) :
             if not getattr (cls, "guard_attr", None) :
                 setattr (cls, "guard_attr", (guard, ))
             setattr (cls, "guard_code", compile (guard, guard, "eval"))
-        if isinstance (cls.seq, (str, unicode)) :
+        if isinstance (cls.seq, basestring) :
             setattr (cls, "seq_code", compile (cls.seq, cls.seq, "eval"))
         if cls.bvar and cls.bvar_attr :
             one_element_code = \
