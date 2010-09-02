@@ -72,6 +72,8 @@ _q_result = r"""
     >>> p = scope.PAP.Person.query (pid = 1).one ()
     >>> p.lifetime # 2
     MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
+    >>> first (scope.PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
+    (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
     >>> first (scope.PAP.Person.query (pid = 1).attr (Q.lifetime))
     MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
 """
