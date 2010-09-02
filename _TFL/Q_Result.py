@@ -32,6 +32,7 @@
 #     7-Dec-2009 (CT) Usage of `TFL.Attr_Filter` replaced by `TFL.Attr_Query`
 #    19-Feb-2010 (MG) `first` fixed
 #     1-Sep-2010 (CT) `attr`, `attrs`, and `set` added
+#     2-Sep-2010 (CT) `set` changed to use `SET` of `Q.Get`
 #    ««revision-date»»···
 #--
 
@@ -224,7 +225,18 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def order_by
 
     def set (self, * args, ** kw) :
-        return self._set (dict (args, ** kw))
+        def _g (args) :
+            Q = self.Q
+            for k, v in args :
+                if isinstance (k, basestring) :
+                    k = getattr (Q, k)
+                yield k, v
+        args = tuple (_g (args))
+        for r in self :
+            for k, v in kw.iteritems () :
+                setattr (r, k, v)
+            for k, v in args :
+                k.SET (r, v)
     # end def set
 
     def slice (self, start, stop = None) :
@@ -234,12 +246,6 @@ class _Q_Result_ (TFL.Meta.Object) :
     def _fill_cache (self) :
         self._cache = list (self.iterable)
     # end def _fill_cache
-
-    def _set (self, kw) :
-        for r in self :
-            for k, v in kw.iteritems () :
-                setattr (r, k, v)
-    # end def _set
 
     def __getitem__ (self, key) :
         if isinstance (key, slice) :

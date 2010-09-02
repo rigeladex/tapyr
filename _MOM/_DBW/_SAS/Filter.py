@@ -32,6 +32,8 @@
 #     7-May-2010 (MG) Join handling changed (is now a list instead of a set
 #                     to keep join order)
 #    10-Aug-2010 (MG) `TFL.Q_Exp.Get._sa_filter` fixed
+#     2-Sep-2010 (CT) `Get.name`  changed to `Get._name` (ditto for
+#                     `Get.getter`)
 #    ««revision-date»»···
 #--
 
@@ -49,11 +51,11 @@ SAS_Attr_Map = dict \
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
 def _sa_filter (self, SAQ) :
     joins      = []
-    attr       = self.name.split (".", 1) [0]
+    attr       = self._name.split (".", 1) [0]
     _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr, None)
     if _sa_filter :
-        return _sa_filter (self.name)
-    result = SAS_Attr_Map.get (self.name, self.getter) (SAQ)
+        return _sa_filter (self._name)
+    result = SAS_Attr_Map.get (self._name, self._getter) (SAQ)
     if isinstance (result, (list, tuple)) :
         joins, columns = result
     else :

@@ -40,6 +40,8 @@
 #                     by the SA instrumentation
 #    12-Feb-2010 (CT) `__nonzero__` added to `Base`, `Call`, and `_Exp_`
 #     1-Sep-2010 (CT) Reflected binary operators added (__radd__ and friends)
+#     2-Sep-2010 (CT) `Get.name`  changed to `Get._name` (ditto for
+#                     `Get.getter`)
 #    ««revision-date»»···
 #--
 
@@ -50,7 +52,7 @@ This module implements a query expression language::
     >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
     >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef")
     >>> q0 = Q.foo
-    >>> q0.name
+    >>> q0._name
     'foo'
     >>> q0.predicate (r1)
     42
@@ -58,7 +60,7 @@ This module implements a query expression language::
     >>> q1 = Q.foo == Q.bar
     >>> q1, q1.lhs, q1.rhs, q1.op.__name__
     (Q.foo == Q.bar, Q.foo, Q.bar, '__eq__')
-    >>> q1.lhs.name, q1.rhs.name
+    >>> q1.lhs._name, q1.rhs._name
     ('foo', 'bar')
     >>> q1.predicate (r1)
     False
@@ -180,7 +182,7 @@ But explicit parenthesis are necessary in some cases::
 Queries for nested attributes are also possible::
 
     >>> qn = Q.quux.a
-    >>> qn.name
+    >>> qn._name
     'quux.a'
     >>> qn.predicate (r1)
     1
@@ -570,31 +572,39 @@ class Get (Exp) :
     predicate_precious_p = True
 
     def __init__ (self, Q, name, getter) :
-        self.Q      = Q
-        self.name   = name
-        self.getter = getter
+        self.Q       = Q
+        self._name   = name
+        self._getter = getter
     # end def __init__
 
     def predicate (self, obj) :
         Q = self.Q
         try :
-            return self.getter (obj)
+            return self._getter (obj)
         except Q.Ignore_Exception :
             return Q.undef
     # end def predicate
+
+    def SET (self, obj, value) :
+        name = self._name
+        if "." in name :
+            head, name = name.rsplit (".", 1)
+            obj = getattr (TFL.Getter, head) (obj)
+        setattr (obj, name, value)
+    # end def SET
 
     def __call__ (self, obj) :
         return self.predicate (obj)
     # end def __call__
 
     def __getattr__ (self, name) :
-        full_name = ".".join ((self.name, name))
+        full_name = ".".join ((self._name, name))
         getter    = getattr (TFL.Getter, full_name)
         return self.__class__ (self.Q, full_name, getter)
     # end def __getattr__
 
     def __repr__ (self) :
-        return "Q.%s" % (self.name, )
+        return "Q.%s" % (self._name, )
     # end def __repr__
 
 # end class Get

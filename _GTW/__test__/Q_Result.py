@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     1-Sep-2010 (MG) Creation
+#     2-Sep-2010 (CT) Changed to test `HPS` backend, too
+#     2-Sep-2010 (CT) Test for `set` of `Q.lifetime.finish` added
 #    ««revision-date»»···
 #--
 
@@ -44,34 +46,37 @@ _q_result = r"""
     3
     >>> len (q.all ())
     3
-    >>> list (q.attr ("first_name"))
+    >>> sorted (q.attr ("first_name"))
     [u'fn 1', u'fn 2', u'fn 3']
-    >>> list (q.attrs (Q.first_name))
+    >>> sorted (q.attrs (Q.first_name))
     [(u'fn 1',), (u'fn 2',), (u'fn 3',)]
 
-    >>> list (q.attr (Q.lifetime.start))
-    [datetime.date(2010, 1, 1), None, datetime.date(2010, 1, 3)]
-    >>> list (q.attrs (Q.first_name, Q.lifetime.start, "last_name"))
+    >>> sorted (q.attr (Q.lifetime.start), key = lambda v : (v.__class__.__name__, v))
+    [None, datetime.date(2010, 1, 1), datetime.date(2010, 1, 3)]
+    >>> sorted (q.attrs (Q.first_name, Q.lifetime.start, "last_name"))
     [(u'fn 1', datetime.date(2010, 1, 1), u'ln 1'), (u'fn 2', None, u'ln 2'), (u'fn 3', datetime.date(2010, 1, 3), u'ln 3')]
 
     >>> p = scope.PAP.Person.query (pid = 1).one ()
     >>> p.salutation
     u''
-    >>> scope.ems.session.expunge ()
+    >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
     >>> q = scope.PAP.Person.query (pid = 1)
     >>> q.set (("salutation", "Mr"), )
     >>> p = scope.PAP.Person.query (pid = 1).one ()
     >>> p.salutation
     u'Mr'
+    >>> p.lifetime # 1
+    MOM.Date_Interval (start = 2010/01/01)
+    >>> q.set ((Q.lifetime.finish, datetime.date(2010, 12, 31)), )
+    >>> p.lifetime # 2
+    MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
 """
 
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
+import datetime
 
-__test__ = Scaffold.create_test_dict \
-    ( _q_result
-    , ignore   = "HPS" ### this test cannot work an the HPS backend
-    )
+__test__ = Scaffold.create_test_dict (_q_result)
 
 ### __END__ GTW.__test__.Q_Result
 
