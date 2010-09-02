@@ -39,6 +39,8 @@
 #     1-Sep-2010 (MG) New version of `Q_Result*` added to support `attr*` and
 #                     `set` functions
 #     2-Sep-2010 (CT) Bug fixes in new version of `Q_Result`
+#     2-Sep-2010 (MG) `_attrs` factored and improved to used
+#                     `kind.from_pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -295,8 +297,8 @@ class Q_Result (TFL.Meta.Object) :
         if isinstance (getter, basestring) :
             getter = getattr (MOM.Q, getter)
         col        = getter (self.e_type._SAQ)
-        for r in self._query_rows (self.sa_query ((col, ))) :
-            yield r [col]
+        for r in self._attrs (col) :
+            yield r [0]
     # end def attr
 
     def attrs (self, * getters) :
@@ -313,9 +315,33 @@ class Q_Result (TFL.Meta.Object) :
                     getter = getattr (Q, getter)
                 yield getter (SAQ)
         cols = tuple (_g (getters))
-        for r in self._query_rows (self.sa_query (cols)) :
+        for r in self._attrs (* cols) :
             yield tuple (r)
     # end def attrs
+
+    def _attrs (self, * requested) :
+        comp_query = MOM.DBW.SAS.MOM_Composite_Query
+        scope      = self.session.scope
+        columns    = []
+        kinds      = []
+        for req_col in requested :
+            if isinstance (req_col, comp_query) :
+                cols = req_col._COLUMNS
+                columns.extend (cols)
+            else :
+                cols = req_col
+                columns.append (cols)
+            kinds.append ((req_col.MOM_Kind, cols))
+        for r in self._query_rows (self.sa_query (columns)) :
+            result = []
+            for k, cols in kinds :
+                if isinstance (cols, (list, tuple)) :
+                    pc = dict ((c.MOM_Kind.attr.name, (r [c], )) for c in cols)
+                else :
+                    pc = r [cols]
+                result.append (k.from_pickle_cargo (scope, (pc, )))
+            yield result
+    # end def _attrs
 
     def all (self) :
         return list (self)

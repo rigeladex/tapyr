@@ -41,6 +41,7 @@
 #     5-Aug-2010 (MG) `MOM_Composite_Query.__ne__, __eq__` fixed
 #    10-Aug-2010 (MG) Missing `_SA_TABLE` attributes added
 #     2-Sep-2010 (CT) Signature of `Pickler.as_cargo` changed
+#     2-Sep-2010 (MG) Store the kind in the database column attributes
 #    ««revision-date»»···
 #--
 
@@ -129,17 +130,18 @@ class MOM_Query (_MOM_Query_) :
                 self._COMPOSITES.append (name)
                 comp_query = MOM_Composite_Query \
                     (e_type, attr.C_Type, kind, sa_table)
-                self._add_q (comp_query, name, attr.ckd_name)
+                self._add_q (comp_query, kind, name, attr.ckd_name)
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind, attr))
             else :
                 col        = columns [attr._sa_col_name]
                 attr_names = [name]
-                self._add_q (col, name, attr.ckd_name)
+                self._add_q (col, kind, name, attr.ckd_name)
                 if kind.needs_raw_value :
-                    self._add_q (columns [attr._sa_raw_col_name], attr.raw_name)
+                    rcol = columns [attr._sa_raw_col_name]
+                    self._add_q (rcol, kind, attr.raw_name)
                 if isinstance (kind, MOM.Attr.Link_Role) :
-                    self._add_q       (col, attr.role_name)
+                    self._add_q (col, kind, attr.role_name)
                     attr_names.append (attr.role_name)
                 if isinstance (attr, MOM.Attr._A_Object_) :
                     join_query = Join_Query (self)
@@ -162,10 +164,15 @@ class MOM_Query (_MOM_Query_) :
                 self._query_fct [name] = attr
             else :
                 query = attr.query._sa_filter (self)
-                self._add_q (query, name)
+                self._add_q (query [1] [0], kind, name)
     # end def __init__
 
-    def _add_q (self, q, * names) :
+    def _add_q (self, q, kind, * names) :
+        try :
+            q.MOM_Kind = kind
+        except :
+            import pdb; pdb.set_trace ()
+            raise
         for n in names :
             setattr (self, n, q)
             self._ATTRIBUTES.append (n)
@@ -189,12 +196,16 @@ class MOM_Composite_Query (_MOM_Query_) :
         prefix_len                = len (prefix)
         attr_names                = [c.name [prefix_len:] for c in columns]
         self._ATTRIBUTES          = attr_names
+        self._COLUMNS             = []
         self._ID_ENTITY_ATTRS     = {}
         for idx, name in \
             (  (i, an) for (i, an) in enumerate (attr_names)
             if not an.startswith ("__raw_")
             )  :
-            setattr (self, name, columns [idx])
+            col          = columns [idx]
+            col.MOM_Kind = getattr (e_type, name)
+            setattr                (self, name, col)
+            self._COLUMNS.append   (col)
         self._query_fct = {}
         for name, kind in db_attrs.iteritems () :
             if isinstance (kind, MOM.Attr.Query) :
@@ -202,7 +213,9 @@ class MOM_Composite_Query (_MOM_Query_) :
                 if query_fct :
                     self._query_fct [name] = kind.attr
                 else :
-                    setattr (self, name, kind.attr.query._sa_filter (self))
+                    col          = kind.attr.query._sa_filter (self) [1] [0]
+                    col.MOM.Kind = kind
+                    setattr (self, name, col)
     # end def __init__
 
     def _compare (self, op, rhs) :

@@ -29,6 +29,7 @@
 #     1-Sep-2010 (MG) Creation
 #     2-Sep-2010 (CT) Changed to test `HPS` backend, too
 #     2-Sep-2010 (CT) Test for `set` of `Q.lifetime.finish` added
+#     2-Sep-2010 (MG) More tests added
 #    ««revision-date»»···
 #--
 
@@ -38,9 +39,13 @@ _q_result = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> p   = scope.PAP.Person ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
-    >>> p   = scope.PAP.Person ("LN 2", "FN 2")
-    >>> p   = scope.PAP.Person ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 2")
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
+    >>> pha = scope.PAP.Person_has_Address (p, a)
+
+
     >>> q   = scope.PAP.Person.query ()
     >>> print q.count ()
     3
@@ -76,6 +81,13 @@ _q_result = r"""
     (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
     >>> first (scope.PAP.Person.query (pid = 1).attr (Q.lifetime))
     MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
+    >>> sorted (scope.PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
+    [(u'fn 1', MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01))]
+
+    >>> sorted (scope.PAP.Person_has_Address.query ().attr ("person"))
+    [GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    >>> sorted (scope.PAP.Person_has_Address.query ().attrs ("person", "address"))
+    [(GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Address (u's', u'c', u'z', u'c', u''))]
 """
 
 from   _GTW.__test__.model import *
