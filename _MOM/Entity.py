@@ -152,6 +152,7 @@
 #    19-Aug-2010 (CT) `An_Entity.__nonzero__` added
 #    19-Aug-2010 (CT) `Id_Entity.ui_display_format` changed to use
 #                     `has_substance` to check attributes
+#     3-Sep-2010 (CT) `epk_hash` removed
 #    ««revision-date»»···
 #--
 
@@ -899,12 +900,6 @@ class Id_Entity (Entity) :
         return dict (zip (self.epk_sig, self.epk))
     # end def epk_as_dict
 
-    @TFL.Meta.Once_Property
-    def epk_hash (self) :
-        """Hash value of essential primary key"""
-        return tuple (a.get_hash (self) for a in self.primary)
-    # end def epk
-
     @property
     def epk_raw (self) :
         """Essential primary key as raw values"""
@@ -1201,7 +1196,7 @@ class Id_Entity (Entity) :
 
     def _reset_epk (self) :
         sd = self.__dict__
-        for a in ("epk", "epk_as_dict", "epk_hash") :
+        for a in ("epk", "epk_as_dict") :
             if a in sd :
                 delattr (self, a)
     # end def _reset_epk

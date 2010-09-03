@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     2-Sep-2010 (CT) Creation
+#     3-Sep-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -39,11 +40,14 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
 import _TFL.defaultdict
+import _TFL.Undef
+
+import itertools
 
 class Attr_Summary (TFL.Meta.Object) :
     """Change summary for a single attribute of a single `pid`."""
 
-    undef = object ()
+    undef = TFL.Undef ("attr")
 
     def __init__ (self) :
         self.old = self.undef
@@ -55,6 +59,10 @@ class Attr_Summary (TFL.Meta.Object) :
             self.old = old
         self.new = new
     # end def add
+
+    def __repr__ (self) :
+        return "(old = %r, new = %r)" % (self.old, self.new)
+    # end def __repr__
 
 # end class Attr_Summary
 
@@ -75,7 +83,7 @@ class Pid (TFL.Meta.Object) :
         result = TFL.defaultdict (Attr_Summary)
         for c in self.changes :
             ### XXX SCM.Change.Attr_Composite
-            for a in set (c.old_attr, c.new_attr) :
+            for a in set (itertools.chain (c.old_attr, c.new_attr)) :
                 result [a].add (c.old_attr.get (a), c.new_attr.get (a))
         return result
     # end def attribute_changes
@@ -88,14 +96,45 @@ class Pid (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def is_born (self) :
         changes = self.changes
-        return changes and isinstance (changes [0], SCM.Change.Create)
+        return changes and isinstance (changes [0], MOM.SCM.Change.Create)
     # end def is_born
 
     @TFL.Meta.Once_Property
     def is_dead (self) :
         changes = self.changes
-        return changes and isinstance (changes [-1], SCM.Change.Destroy)
+        return changes and isinstance (changes [-1], MOM.SCM.Change.Destroy)
     # end def is_dead
+
+    def _repr (self) :
+        parts = []
+        n     = len (self) - self.is_born - self.is_dead
+        if self.is_born :
+            parts.append ("newborn")
+        if n > 0 :
+            parts.append ("%s change%s" % (n, "s" if n > 1 else ""))
+        if self.is_dead :
+            parts.append ("just died")
+        return "Change Summary for pid %s: %s" % (self.pid, ", ".join (parts))
+    # end def _repr
+
+    def _repr_lines (self, level = 0) :
+        result = ["%s<%s>" % ("  " * level, self._repr ())]
+        for c in self.changes :
+            result.extend (c._repr_lines (level + 1))
+        return result
+    # end def _repr_lines
+
+    def __len__ (self) :
+        return len (self._changes)
+    # end def __len__
+
+    def __nonzero__ (self) :
+        return bool (self._changes)
+    # end def __nonzero__
+
+    def __repr__ (self) :
+        return "\n  ".join (self._repr_lines ())
+    # end def __repr__
 
 # end class Pid
 
@@ -115,6 +154,46 @@ class Summary (TFL.Meta.Object) :
             if c.children :
                 self.add (c.children)
     # end def add
+
+    def items (self) :
+        return self._map.items ()
+    # end def items
+
+    def iteritems (self) :
+        return self._map.iteritems ()
+    # end def iteritems
+
+    def iterkeys (self) :
+        return self._map.iterkeys ()
+    # end def iterkeys
+
+    def itervalues (self) :
+        return self._map.itervalues ()
+    # end def itervalues
+
+    def keys (self) :
+        return self._map.keys ()
+    # end def keys
+
+    def values (self) :
+        return self._map.values ()
+    # end def values
+
+    def __getitem__ (self, key) :
+        return self._map [key]
+    # end def __getitem__
+
+    def __iter__ (self) :
+        return iter (self._map)
+    # end def __iter__
+
+    def __len__ (self) :
+        return len (self._map)
+    # end def __len__
+
+    def __nonzero__ (self) :
+        return bool (self._map)
+    # end def __nonzero__
 
 # end class Summary
 

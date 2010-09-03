@@ -817,11 +817,11 @@ The app-type specific entity-types are ready to be used by
     MOM.Named_Object
         ('name',)
     MOM.Date_Interval
-        ('start',)
+        ('start', 'finish')
     MOM.Date_Interval_C
-        ('start',)
+        ('start', 'finish')
     MOM.Date_Interval_N
-        ('start',)
+        ('start', 'finish')
     BMT.Location
         ('lon', 'lat')
     BMT.Person
@@ -841,7 +841,7 @@ The app-type specific entity-types are ready to be used by
     BMT.Supertrap
         ('name', 'serial_no')
     BMT.Rodent_is_sick
-        ('left.name', 'sick_leave.start')
+        ('left.name', 'sick_leave.start', 'sick_leave.finish')
     BMT.Rodent_in_Trap
         ('left.name', 'right.name', 'right.serial_no')
     BMT.Person_owns_Trap
@@ -1477,9 +1477,9 @@ Scope queries
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
 
-    >>> len (scope.ems.uncommitted_changes)
+    >>> len (scope.uncommitted_changes)
     37
-    >>> for c in scope.ems.uncommitted_changes :
+    >>> for c in scope.uncommitted_changes :
     ...     print c
     <Create BMT.Person (u'Luke', u'Lucky', u'', 'BMT.Person')>
     <Create BMT.Person (u'Dog', u'Snoopy', u'', 'BMT.Person')>
@@ -1526,7 +1526,7 @@ Scope queries
         <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : 18}>
         <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : 23}>
         <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : 16}>
-    >>> c = scope.ems.uncommitted_changes [-2]
+    >>> c = scope.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
     >>> cc
@@ -1544,7 +1544,7 @@ Scope queries
     >>> cc.children
     []
     >>> scope.commit ()
-    >>> len (scope.ems.uncommitted_changes)
+    >>> len (scope.uncommitted_changes)
     0
 
 Replaying changes
@@ -1730,7 +1730,7 @@ Changing a composite primary attribute
     .. ### DBW-specific start
 
     >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
-    [(26, (datetime.date(2010, 2, 18),))]
+    [(26, (datetime.date(2010, 2, 18), None))]
 
     .. ### DBW-specific finish
 
@@ -1746,7 +1746,7 @@ Changing a composite primary attribute
     .. ### DBW-specific start
 
     >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
-    [(26, (datetime.date(2010, 3, 1),))]
+    [(26, (datetime.date(2010, 3, 1), None))]
 
     .. ### DBW-specific finish
 

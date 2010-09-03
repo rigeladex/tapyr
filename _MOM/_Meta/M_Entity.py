@@ -97,6 +97,8 @@
 #     5-Aug-2010 (CT) Property `M_E_Type.Class` added
 #     9-Aug-2010 (CT) `M_E_Type_Id._m_setup_sorted_by` changed to handle
 #                     `_A_Composite_` attributes properly
+#     3-Sep-2010 (CT) `M_E_Type_An._m_setup_attributes` changed to set
+#                     `cls.hash_sig` to `.user_attr` instead of `.required`
 #    ««revision-date»»···
 #--
 
@@ -640,7 +642,7 @@ class M_E_Type_An (M_E_Type) :
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
-        cls.hash_sig = cls.required
+        cls.hash_sig = cls.user_attr
         assert not cls.primary, \
             "An_Entity `%s` cannot have primary attributes" % (cls.type_name, )
     # end def _m_setup_attributes

@@ -87,6 +87,7 @@ from   _TFL                  import TFL
 
 import _MOM.Error
 import _MOM._Pred.Err_and_Warn_List
+import _MOM._SCM.Summary
 import _MOM._SCM.Tracker
 
 from   _TFL.Gauge_Logger      import Gauge_Logger
@@ -126,6 +127,7 @@ class Scope (TFL.Meta.Object) :
     etypes                 = property (TFL.Getter.app_type.etypes)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
+    uncommitted_changes    = property (TFL.Getter.ems.uncommitted_changes)
 
     PNS_Proxy              = None
 
