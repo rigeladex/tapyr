@@ -78,7 +78,7 @@ class Dict (dict) :
     __metaclass__   = M_Coll
     _state_changers = \
         ( "__delitem__", "__setitem__"
-        , "clear", , "pop", "popitem", "setdefault", "update"
+        , "clear", "pop", "popitem", "setdefault", "update"
         )
 
 # end class Dict

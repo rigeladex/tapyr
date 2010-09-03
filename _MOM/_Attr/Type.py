@@ -153,12 +153,13 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division
-from   __future__  import print_function, unicode_literals
+from   __future__            import absolute_import, division
+from   __future__            import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
+import _MOM._Attr.Coll
 import _MOM._Attr.Kind
 import _MOM._Meta.M_Attr_Type
 
@@ -522,7 +523,7 @@ class _A_Composite_Collection_ (_A_Collection_) :
     """Base class for attributes that hold a collection of composite values."""
 
     Kind_Mixins       = (MOM.Attr._Composite_Collection_Mixin_, )
-    R_Type            = list
+    R_Type            = MOM.Attr.List
 
     class Pickler (TFL.Meta.Object) :
 
@@ -1057,14 +1058,14 @@ class _A_Typed_Collection_ (_A_Collection_) :
 class _A_Typed_List_ (_A_Typed_Collection_) :
     """Base class for list-valued attributes with strict type."""
 
-    R_Type         = list
+    R_Type         = MOM.Attr.List
 
 # end class _A_Typed_List_
 
 class _A_Typed_Set_ (_A_Typed_Collection_) :
     """Base class for set-valued attributes with strict type."""
 
-    R_Type         = set
+    R_Type         = MOM.Attr.Set
 
 # end class _A_Typed_Set_
 

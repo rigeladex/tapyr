@@ -1715,8 +1715,8 @@ Unary links
     >>> osm.fever = 42
     >>> osm.as_code ()
     u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'), fever = 42.0)"
-    >>> sr.sickness
-    set([BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))])
+    >>> sorted (sr.sickness)
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))]
 
 Changing a composite primary attribute
 --------------------------------------
