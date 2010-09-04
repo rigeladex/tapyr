@@ -69,14 +69,18 @@ bir.race_results [0].set (discarded = True)
 x.destroy ()
 rev.date.set (finish = "2010/05/14")
 rev.date.finish = datetime.date (2010, 05, 13)
+[id (x.owner) for x in bir.race_results]
+id (bir.race_results)
 
 cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
 for pid, csp in sorted (cs_1.iteritems ()) :
-    print csp.pid, sorted (csp.attribute_changes.iteritems ())
-
-for pid, csp in sorted (cs_1.iteritems ()) :
     print csp
 
+for pid, csp in sorted (cs_1.iteritems ()) :
+    print csp.pid, sorted (csp.attribute_changes.iteritems ())
+
 scope.commit ()
+
+TFL.Environment.exec_python_startup ()
 
 """

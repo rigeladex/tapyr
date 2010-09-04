@@ -139,6 +139,9 @@
 #                     `_Composite_Mixin_`
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
 #     2-Sep-2010 (CT) `from_pickle_cargo` factored
+#     4-Sep-2010 (CT) `_Co_Base_` and `_Collection_Base_` factored,
+#                     `_Typed_Collection_Mixin_` added
+#     4-Sep-2010 (CT) `_Computed_Mixin_._get_value` changed to use `void_values`
 #    ««revision-date»»···
 #--
 
@@ -175,6 +178,7 @@ class Kind (MOM.Prop.Kind) :
     save_to_db            = False
     sync                  = None
     Table                 = dict ()
+    void_values           = property (lambda s : (None, ""))
 
     _k_rank               = 0
 
@@ -507,17 +511,56 @@ class _Auto_Update_Mixin_ (Kind) :
 
 # end class _Auto_Update_Mixin_
 
-class _Composite_Base_ (Kind) :
-    """Base for composite mixin classes."""
+class _Co_Base_ (Kind) :
+    """Base for collection and composite mixin classes."""
+
+    def _set_cooked_value (self, obj, value, changed = 42) :
+        if value is None :
+            ### Need an empty collection/composite at all times
+            return self.reset (obj)
+        else :
+            if not self.electric :
+                value = self._update_owner (obj, value)
+            return self.__super._set_cooked_value (obj, value, changed)
+    # end def _set_cooked_value
 
     def _update_owner (self, obj, value) :
         if value.owner is not None and value.owner is not obj :
             value = value.copy ()
-        if value.owner is not obj :
-            value._attr_man.inc_changes ()
         value.attr_name    = self.name
         value.owner        = obj
         value.home_scope   = obj.home_scope
+        return value
+    # end def _update_owner
+
+# end class _Co_Base_
+
+class _Collection_Base_ (_Co_Base_) :
+    """Base for collection mixin classes."""
+
+    void_values = property \
+        (lambda s : ("", s.attr.raw_default, s.attr.R_Type ()))
+
+    def reset (self, obj) :
+        ### Need an empty collection at all times
+        return self._set_cooked_value (obj, self.attr.R_Type (), changed = True)
+    # end def reset
+
+    def _check_sanity_default (self, attr_type) :
+        default = getattr (attr_type, "raw_default", None)
+        if default is not None and default not in ([], ()) :
+            self.__super._check_sanity_default (attr_type)
+    # end def _check_sanity_default
+
+# end class _Collection_Base_
+
+class _Composite_Base_ (_Co_Base_) :
+    """Base for composite mixin classes."""
+
+    def _update_owner (self, obj, value) :
+        self.__super._update_owner (obj, value)
+        if value.owner is not obj :
+            value._attr_man.inc_changes ()
         return value
     # end def _update_owner
 
@@ -578,31 +621,18 @@ class _Composite_Mixin_ (_Composite_Base_) :
         self.__super._check_sanity (attr_type)
     # end def _check_sanity
 
-    def _set_cooked_value (self, obj, value, changed = 42) :
-        if value is None :
-            ### Need an empty composite at all times
-            return self.reset (obj)
-        else :
-            value = self._update_owner (obj, value)
-            return self.__super._set_cooked_value (obj, value, changed)
-    # end def _set_cooked_value
-
-    def _update_owner (self, obj, value) :
-        value = self.__super._update_owner (obj, value)
-        value.is_mandatory = self.is_mandatory
-        value.is_primary   = self.is_primary
-        return value
-    # end def _update_owner
-
 # end class _Composite_Mixin_
 
-class _Composite_Collection_Mixin_ (_Composite_Base_) :
+class _Composite_Collection_Mixin_ (_Collection_Base_, _Composite_Base_) :
     """Mixin for composite collection attributes."""
 
-    def reset (self, obj) :
-        ### Need an empty composite collection at all times
-        return self._set_cooked_value (obj, self.attr.R_Type (), changed = True)
-    # end def reset
+    def __init__ (self, Attr_Type) :
+        self.__super.__init__ (Attr_Type)
+        attr = self.attr
+        if attr.R_Type is not None :
+            if not self.electric :
+                attr.R_Type = attr.R_Type.New (attr_name = attr.name)
+    # end def __init__
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
@@ -632,29 +662,27 @@ class _Composite_Collection_Mixin_ (_Composite_Base_) :
         self.__super._check_sanity (attr_type)
     # end def _check_sanity
 
-    def _check_sanity_default (self, attr_type) :
-        default = getattr (attr_type, "raw_default", None)
-        if default is not None and default not in ([], ()) :
-            self.__super._check_sanity_default (attr_type)
-    # end def _check_sanity_default
-
-    def _set_cooked_value (self, obj, value, changed = 42) :
-        if value is None :
-            return self.reset (obj)
-        else :
-            value = self.attr.R_Type \
-                (self._update_owner (obj, v) for v in value)
-            return self.__super._set_cooked_value (obj, value, changed)
-    # end def _set_cooked_value
-
 # end class _Composite_Collection_Mixin_
+
+class _Typed_Collection_Mixin_ (_Collection_Base_) :
+    """Mixin for typed collection attributes."""
+
+    def __init__ (self, Attr_Type) :
+        self.__super.__init__ (Attr_Type)
+        attr = self.attr
+        if attr.R_Type is not None :
+            if self.electric :
+                attr.R_Type = attr.R_Type.P_Type
+    # end def __init__
+
+# end class _Typed_Collection_Mixin_
 
 class _Computed_Mixin_ (Kind) :
     """Mixin to compute attribute value."""
 
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
-        if obj is not None and (result is None or result == "") :
+        if obj is not None and (result is None or result in self.void_values) :
             result = self._get_computed (obj)
         return result
     # end def get_value

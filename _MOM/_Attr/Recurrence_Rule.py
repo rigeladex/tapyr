@@ -43,6 +43,8 @@
 #    19-Aug-2010 (CT) `__nonzero__` factored to `An_Entity`
 #    19-Aug-2010 (CT) `count_default` added
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
+#     4-Sep-2010 (CT) s/owner/owner.owner/ where necessary (change of
+#                     _A_Composite_Collection_)
 #    ««revision-date»»···
 #--
 
@@ -196,10 +198,10 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
             def computed (self, obj) :
                 owner = obj.owner
-                if owner and obj.owner_attr :
+                if owner :
                     try :
-                        result = obj.owner_attr.finish_getter (obj)
-                    except AttributeError :
+                        result = obj.owner.owner_attr.finish_getter (obj)
+                    except AttributeError as exc :
                         pass
                     else :
                         if isinstance (result, MOM.Date_Interval) :
@@ -254,8 +256,8 @@ class Recurrence_Rule (_Ancestor_Essence) :
                     kw = dict (obj._rrule_attrs ())
                     if obj.finish is None and obj.count is None :
                         dc = 1
-                        if obj.owner and obj.owner_attr :
-                            dc = obj.owner_attr.count_default
+                        if obj.owner and obj.owner.owner_attr :
+                            dc = obj.owner.owner_attr.count_default
                         kw ["count"] = dc
                     return dateutil.rrule.rrule (cache = True, ** kw)
             # end def computed
@@ -299,10 +301,10 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
             def computed (self, obj) :
                 owner = obj.owner
-                if owner and obj.owner_attr :
+                if owner :
                     try :
-                        result = obj.owner_attr.start_getter (obj)
-                    except AttributeError :
+                        result = obj.owner.owner_attr.start_getter (obj)
+                    except AttributeError as exc :
                         pass
                     else :
                         if isinstance (result, MOM.Date_Interval) :
@@ -371,7 +373,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             name = getattr (a, "rrule_name", None)
             if name :
                 value = a.get_value (self)
-                if value is not None :
+                if value is not None and value != [] :
                     yield name, value
     # end def _rrule_attrs
 
@@ -453,7 +455,8 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
             kind               = Attr.Optional
             default            = []
 
-            start_getter       = finish_getter = TFL.Getter.owner.owner.date
+            start_getter       = finish_getter = \
+                TFL.Getter.owner.owner.owner.date
 
         # end class rules
 
@@ -463,7 +466,8 @@ class Recurrence_Rule_Set (_Ancestor_Essence) :
             kind               = Attr.Optional
             default            = []
 
-            start_getter       = finish_getter = TFL.Getter.owner.owner.date
+            start_getter       = finish_getter = \
+                TFL.Getter.owner.owner.owner.date
             count_default      = 365
 
         # end class rule_exceptions

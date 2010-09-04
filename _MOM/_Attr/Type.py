@@ -523,7 +523,7 @@ class _A_Composite_Collection_ (_A_Collection_) :
     """Base class for attributes that hold a collection of composite values."""
 
     Kind_Mixins       = (MOM.Attr._Composite_Collection_Mixin_, )
-    R_Type            = MOM.Attr.List
+    R_Type            = MOM.Attr.List_C
 
     class Pickler (TFL.Meta.Object) :
 
@@ -1005,7 +1005,8 @@ class _A_Typed_Collection_ (_A_Collection_) :
        values.
     """
 
-    __metaclass__   = MOM.Meta.M_Attr_Type_Typed_Collection
+    __metaclass__     = MOM.Meta.M_Attr_Type_Typed_Collection
+    Kind_Mixins       = (MOM.Attr._Typed_Collection_Mixin_, )
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :

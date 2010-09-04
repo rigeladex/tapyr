@@ -99,6 +99,8 @@
 #                     `_A_Composite_` attributes properly
 #     3-Sep-2010 (CT) `M_E_Type_An._m_setup_attributes` changed to set
 #                     `cls.hash_sig` to `.user_attr` instead of `.required`
+#     4-Sep-2010 (CT) `M_E_Type.__init__` changed to set `Class` and `C_Type`
+#                     to `cls` (property `M_E_Type.Class` removed)
 #    ««revision-date»»···
 #--
 
@@ -462,6 +464,7 @@ class M_E_Type (M_E_Mixin) :
     # end def m_recordable_attrs
 
     def __init__ (cls, name, bases, dct) :
+        cls.Class = cls.C_Type = cls
         cls.__m_super.__init__  (name, bases, dct)
         cls._m_setup_children   (bases, dct)
         cls._m_setup_attributes (bases, dct)
@@ -522,11 +525,6 @@ class M_E_Type (M_E_Mixin) :
             if et :
                 yield et
     # end def children_iter
-
-    @property
-    def Class (cls) :
-        return cls
-    # end def Class
 
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
         name = prop.__name__

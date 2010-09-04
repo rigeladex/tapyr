@@ -407,6 +407,18 @@ class Entity (TFL.Meta.Object) :
             return attr.get_raw (self) or u""
     # end def raw_attr
 
+    def record_attr_change (self, kw) :
+        gen = \
+            (   (name, attr.get_raw (self))
+            for attr, name, value in self._record_iter (kw)
+            if  attr.get_value (self) != value
+            )
+        with self._record_context (gen, self.SCM_Change_Attr) as rvr :
+            if rvr :
+                print "***", self, "\n   ",rvr
+            pass ### XXX
+    # end def record_attr_change
+
     def reset_syncable (self) :
         self._attr_man.reset_syncable ()
     # end def reset_syncable
@@ -524,7 +536,7 @@ class Entity (TFL.Meta.Object) :
             yield
         else :
             rvr = dict (gen)
-            yield
+            yield rvr
             if rvr :
                 self.home_scope.record_change (Change, self, rvr)
     # end def _record_context
@@ -684,20 +696,26 @@ class An_Entity (Entity) :
     # end def owner_attr
 
     def set (self, on_error = None, ** kw) :
-        if self.owner and self.is_primary :
+        owner_attr = self.owner_attr
+        if owner_attr is None or self.electric or not owner_attr.record_changes :
+            return self._set_ckd (on_error, ** kw)
+        elif owner_attr and owner_attr.is_primary :
             ### Change in primary attribute might be a `rename`
             return self.owner.set (** {self.attr_name : self.copy (** kw)})
         else :
-            self.__super.set (on_error, ** kw)
+            return self.__super.set (on_error, ** kw)
     # end def set
 
     def set_raw (self, on_error = None, ** kw) :
-        if self.owner and self.is_primary :
+        owner_attr = self.owner_attr
+        if owner_attr is None or self.electric or not owner_attr.record_changes :
+            return self._set_raw (on_error, ** kw)
+        elif owner_attr and owner_attr.is_primary :
             ### Change in primary attribute might be a `rename`
             return self.owner.set \
                 (** {self.attr_name : self.copy (raw = True, ** kw)})
         else :
-            self.__super.set_raw (on_error, ** kw)
+            return self.__super.set_raw (on_error, ** kw)
     # end def set_raw
 
     def _formatted_user_attr (self) :

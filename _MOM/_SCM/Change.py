@@ -479,6 +479,8 @@ class Attr_Composite (_Attr_) :
        entity
     """
 
+    kind = "Modify/C"
+
     def __new__ (cls, composite, old_attr) :
         if composite.owner :
             return super (Attr_Composite, cls).__new__ \
@@ -486,8 +488,11 @@ class Attr_Composite (_Attr_) :
     # end def __new__
 
     def __init__ (self, composite, old_attr) :
-        self.__super.__init__ (composite.owner, old_attr)
         entity = composite.owner
+        owner  = getattr (entity, "owner", None)
+        if owner is not None :
+            entity = owner
+        self.__super.__init__ (entity, old_attr)
         ### XXX maybe register is the better place to set the attr_changes
         entity.home_scope.attr_changes [entity.pid].add (composite.attr_name)
         self.attr_name = composite.attr_name
@@ -502,7 +507,7 @@ class Attr_Composite (_Attr_) :
 
     @TFL.Meta.Once_Property
     def type_repr (self) :
-        return ".".join ((self.type_name, self.attr_name))
+        return ".".join ((self.type_name, self.attr_name or "???"))
     # end def type_repr
 
     def _pickle_attrs (self) :

@@ -54,6 +54,7 @@
 #    22-Apr-2010 (CT) `_rename` redefined to honor `auto_cache_roles`
 #     5-May-2010 (CT) `Link_Cacher._auto_attr_name` changed to call `lower`
 #    11-May-2010 (CT) `_Cacher_.grn` added
+#     4-Sep-2010 (CT) Use `cache.discard` instead of `cache.remove`
 #    ««revision-date»»···
 #--
 
@@ -368,9 +369,9 @@ class Role_Cacher_n (Role_Cacher) :
             cache = getattr (o,    self.attr_name)
             value = getattr (link, self.role_name)
             if no_value :
-                cache.remove (value)
+                cache.discard (value)
             else :
-                cache.add    (value)
+                cache.add     (value)
     # end def __call__
 
 # end class Role_Cacher_n
