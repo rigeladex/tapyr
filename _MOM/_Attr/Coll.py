@@ -96,6 +96,10 @@ class _Mixin_ (object) :
         return self.P_Type (self)
     # end def __getstate__
 
+    def __setstate__ (self, state) :
+        return self.__class__ (state)
+    # end def __setstate__
+
 # end class _Mixin_
 
 class _Mixin_C_ (_Mixin_) :
