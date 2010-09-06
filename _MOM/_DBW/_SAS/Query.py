@@ -43,6 +43,7 @@
 #     2-Sep-2010 (CT) Signature of `Pickler.as_cargo` changed
 #     2-Sep-2010 (MG) Store the kind in the database column attributes
 #     6-Sep-2010 (MG) `Join_Query` specify the join condition
+#     6-Sep-2010 (MG) `_MOM_Query_.SAS_EQ_Clause` fixed
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,7 @@ class _MOM_Query_ (TFL.Meta.Object) :
             db   = cooked.pid
         else :
             kind = getattr (self._E_TYPE [0], attr, None)
-            if kind and isinstance (kind.attr, MOM.Attr._A_Named_Value_) :
+            if kind and kind.Pickler :
                 db = kind.Pickler.as_cargo (kind, kind.attr, cooked)
         return (), (getattr (self, attr) == db, )
     # end def SAS_EQ_Clause
@@ -171,9 +172,6 @@ class MOM_Query (_MOM_Query_) :
     def _add_q (self, q, kind, * names) :
         q.MOM_Kind = kind
         for n in names :
-            if n is None :
-                        import pdb; pdb.set_trace ()
-
             setattr (self, n, q)
             self._ATTRIBUTES.append (n)
     # end def _add_q
