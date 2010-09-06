@@ -151,6 +151,8 @@
 #    30-Aug-2010 (CT) `__future__` imports added to improve 3-compatibility
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
 #     6-Sep-2010 (CT) `A_Boolean._from_string` redefined to allow empty strings
+#     6-Sep-2010 (CT) `_A_Composite_Collection_` removed
+#     6-Sep-2010 (CT) `_A_Typed_Tuple_` added
 #    ««revision-date»»···
 #--
 
@@ -519,60 +521,6 @@ class _A_Composite_ (A_Attr_Type) :
     # end def _fix_C_Type
 
 # end class _A_Composite_
-
-class _A_Composite_Collection_ (_A_Collection_) :
-    """Base class for attributes that hold a collection of composite values."""
-
-    Kind_Mixins       = (MOM.Attr._Composite_Collection_Mixin_, )
-    R_Type            = MOM.Attr.List_C
-
-    class Pickler (TFL.Meta.Object) :
-
-        __metaclass__ = MOM.Meta.M_Attr_Type__Pickler
-
-        @classmethod
-        def as_cargo (cls, attr_kind, attr_type, value) :
-            if value is not None :
-                return tuple (v.as_attr_pickle_cargo () for v in value)
-        # end def as_cargo
-
-        @classmethod
-        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
-            if cargo is not None :
-                R_Type = attr_type.R_Type
-                fpc    = attr_type.C_Type.C_Type.from_attr_pickle_cargo
-                return R_Type (fpc (scope, c) for c in cargo)
-        # end def from_cargo
-
-    # end class Pickler
-
-    @TFL.Meta.Class_and_Instance_Method
-    def as_string (soc, value) :
-        if value is not None :
-            return tuple (v.as_string () for v in value)
-        return u""
-    # end def as_string
-
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        t = s or ()
-        if isinstance (t, basestring) :
-            t = self._call_eval (t, {}, {})
-        if t :
-            C_fs = self.C_Type.from_string
-            return self.R_Type (C_fs (c, obj, glob, locl) for c in t)
-    # end def from_string
-
-    def _checkers (self, e_type, kind) :
-        C_Type = self.C_Type
-        if C_Type :
-            C_C_Type = getattr (C_Type, "C_Type", None)
-            if C_C_Type :
-                C_Type._fix_C_Type (e_type)
-            ### XXX Predicate checking each component for `C_Type._checkers`
-        return ()
-    # end def _checkers
-
-# end class _A_Composite_Collection_
 
 class _A_Date_ (A_Attr_Type) :
     """Common base class for date-valued attributes of an object."""
@@ -1036,9 +984,9 @@ class _A_Typed_Collection_ (_A_Collection_) :
             if __debug__ :
                 if isinstance (C_Type, _A_Composite_) :
                     raise TypeError \
-                        ( "For composite collections, you need to derive "
-                          "%s from `_A_Composite_Collection_`"
-                        % self
+                        ( "Collection %s of composite %s must be modelled "
+                          "as Link1"
+                        % (self, C_Type)
                         )
             pass ### XXX Predicate checking each component for `C_Type._checkers`
         return ()
@@ -1070,6 +1018,13 @@ class _A_Typed_Set_ (_A_Typed_Collection_) :
     R_Type         = MOM.Attr.Set
 
 # end class _A_Typed_Set_
+
+class _A_Typed_Tuple_ (_A_Typed_Collection_) :
+    """Base class for tuple-valued attributes with strict type."""
+
+    R_Type         = tuple
+
+# end class _A_Typed_Tuple_
 
 class _A_Object_Set_ (_A_Typed_Set_) :
 

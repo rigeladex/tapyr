@@ -53,6 +53,8 @@
 #     1-Jul-2010 (MG) `M_Attr_Type__Pickler.Pickle_Mixin` removed
 #    26-Aug-2010 (CT) s/simple_cooked/cooked/
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
+#     6-Sep-2010 (CT) `M_Attr_Type_Typed_Collection` changed to use `tuple`
+#                     and `R_Type` in `as_cargo` and `from_cargo`, respectively
 #    ««revision-date»»···
 #--
 
@@ -282,24 +284,26 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
     def _elements_as_cargo_p (attr_kind, attr_type, value) :
         C_Type = attr_type.C_Type
         P      = C_Type.Pickler
-        return list (P.as_cargo (attr_kind, C_Type, v) for v in value)
+        return tuple (P.as_cargo (attr_kind, C_Type, v) for v in value)
     # end def _elements_as_cargo_p
 
     @staticmethod
     def _elements_from_cargo_p (scope, attr_kind, attr_type, cargo) :
-        C_Type = attr_type.C_Type
-        P      = C_Type.Pickler
-        return list (P.from_cargo (scope, attr_kind, C_Type, c) for c in cargo)
+        R_Type = attr_type.R_Type
+        fpc    = attr_type.C_Type.Pickler.from_cargo
+        return R_Type (fpc (scope, attr_kind, C_Type, c) for c in cargo)
     # end def _elements_from_cargo_p
 
     @staticmethod
     def _elements_as_cargo_s (attr_kind, attr_type, value) :
-        return value
+        if value is not None :
+            return tuple (value)
     # end def _elements_as_cargo_s
 
     @staticmethod
     def _elements_from_cargo_s (scope, attr_kind, attr_type, cargo) :
-        return cargo
+        if cargo is not None :
+            return attr_type.R_Type (cargo)
     # end def _elements_from_cargo_s
 
 # end class M_Attr_Type_Typed_Collection

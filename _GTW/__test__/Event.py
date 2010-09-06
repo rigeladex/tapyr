@@ -198,3 +198,21 @@ import datetime
 __test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ GTW.__test.Event
+"""
+scope = Scope ('sqlite://')
+
+import datetime
+EVT = scope.EVT
+MOM = scope.MOM
+SWP = scope.SWP
+RR  = EVT.Recurrence_Rule
+RRS = EVT.Recurrence_Spec
+
+p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
+p2 = SWP.Page ("event-2-text", text = "Text for the 2. event")
+
+e1 = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
+rs1 = RRS (e1, date_exceptions = ["2010/08/15"])
+rr1 = RR (rs1.epk_raw, start = "20100801", count = 7, unit = "Weekly", raw = True)
+
+"""

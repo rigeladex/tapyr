@@ -29,6 +29,7 @@
 # Revision Dates
 #     3-Sep-2010 (CT) Creation
 #     4-Sep-2010 (CT) Creation continued
+#     6-Sep-2010 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -92,36 +93,7 @@ class _Mixin_ (object) :
             self.owner.record_attr_change ({self.attr_name : self})
     # end def record_attr_change
 
-    def __getstate__ (self) :
-        return self.P_Type (self)
-    # end def __getstate__
-
-    def __setstate__ (self, state) :
-        return self.__class__ (state)
-    # end def __setstate__
-
 # end class _Mixin_
-
-class _Mixin_C_ (_Mixin_) :
-
-    __metaclass__   = M_Coll
-
-    is_primary      = False
-
-    def __init__ (self, values = ()) :
-        self.owner = None
-        self.__super.__init__ (self._update_owner (v) for v in values)
-    # end def __init__
-
-    def _update_owner (self, value) :
-        if value.owner is not None and value.owner is not self :
-            value = value.copy ()
-        value.owner     = self
-        value.attr_name = self.attr_name
-        return value
-    # end def _update_owner
-
-# end class _Mixin_C_
 
 class List (_Mixin_, list) :
     """List of attribute values"""
@@ -136,36 +108,6 @@ class List (_Mixin_, list) :
 
 # end class List
 
-class List_C (_Mixin_C_, List) :
-    """List of composite attributes"""
-
-    def append (self, value) :
-        return self.__super.append (self._update_owner (value))
-    # end def append
-
-    def extend (self, values) :
-        return self.__super.extend (self._update_owner (v) for v in values)
-    # end def extend
-
-    def insert (self, index, value) :
-        return self.__super.insert (index, self._update_owner (value))
-    # end def insert
-
-    def __iadd__ (self, rhs) :
-        return self.__super.__iadd__ (self._update_owner (v) for v in rhs)
-    # end def __iadd__
-
-    def __setitem__ (self, key, value) :
-        return self.__super.__setitem__ (key, self._update_owner (value))
-    # end def __setitem__
-
-    def __setslice__ (self, i, j, seq) :
-        return self.__super.__setslice__ \
-            (i, j, (self._update_owner (v) for v in seq))
-    # end def __setslice__
-
-# end class List_C
-
 class Set (_Mixin_, set) :
     """Set of attribute values"""
 
@@ -178,33 +120,6 @@ class Set (_Mixin_, set) :
         )
 
 # end class Set
-
-class Set_C (_Mixin_C_, Set) :
-    """Set of composite attributes."""
-
-    def add (self, value) :
-        return self.__super.add (self._update_owner (value))
-    # end def add
-
-    def symmetric_difference_update (self, rhs) :
-        return self.__super.symmetric_difference_update \
-            (self._update_owner (v) for v in rhs if v not in self)
-    # end def symmetric_difference_update
-
-    def update (self, rhs) :
-        return self.__super.update (self._update_owner (v) for v in rhs)
-    # end def update
-
-    def __ior__ (self, rhs) :
-        return self.__super.__ior__ (self._update_owner (v) for v in rhs)
-    # end def __ior__
-
-    def __ixor__ (self, rhs) :
-        return self.__super.__ixor__ \
-            (self._update_owner (v) for v in rhs if v not in self)
-    # end def __ixor__
-
-# end class Set_C
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")

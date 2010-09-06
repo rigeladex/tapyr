@@ -51,6 +51,7 @@
 #     1-Jul-2010 (MG) `SAS_PC_Transform` added
 #     6-Sep-2010 (MG) Changes to allow link's to entities which are not
 #                     relevant
+#     6-Sep-2010 (CT) `Attr._A_Composite_Collection_` removed
 #    ««revision-date»»···
 #--
 
@@ -201,5 +202,5 @@ class Python_Pickle_Transform (object) :
 
 Attr.A_Attr_Type.             SAS_PC_Transform = None
 Attr._A_Typed_Collection_.    SAS_PC_Transform = Python_Pickle_Transform
-Attr._A_Composite_Collection_.SAS_PC_Transform = Python_Pickle_Transform
+
 ### __END__ MOM.DBW.SAS.Type

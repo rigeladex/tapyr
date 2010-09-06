@@ -142,6 +142,7 @@
 #     4-Sep-2010 (CT) `_Co_Base_` and `_Collection_Base_` factored,
 #                     `_Typed_Collection_Mixin_` added
 #     4-Sep-2010 (CT) `_Computed_Mixin_._get_value` changed to use `void_values`
+#     6-Sep-2010 (CT) `_Computed_Collection_Mixin_` removed
 #    ««revision-date»»···
 #--
 
@@ -535,38 +536,7 @@ class _Co_Base_ (Kind) :
 
 # end class _Co_Base_
 
-class _Collection_Base_ (_Co_Base_) :
-    """Base for collection mixin classes."""
-
-    void_values = property \
-        (lambda s : ("", s.attr.raw_default, s.attr.R_Type ()))
-
-    def reset (self, obj) :
-        ### Need an empty collection at all times
-        return self._set_cooked_value (obj, self.attr.R_Type (), changed = True)
-    # end def reset
-
-    def _check_sanity_default (self, attr_type) :
-        default = getattr (attr_type, "raw_default", None)
-        if default is not None and default not in ([], ()) :
-            self.__super._check_sanity_default (attr_type)
-    # end def _check_sanity_default
-
-# end class _Collection_Base_
-
-class _Composite_Base_ (_Co_Base_) :
-    """Base for composite mixin classes."""
-
-    def _update_owner (self, obj, value) :
-        self.__super._update_owner (obj, value)
-        if value.owner is not obj :
-            value._attr_man.inc_changes ()
-        return value
-    # end def _update_owner
-
-# end class _Composite_Base_
-
-class _Composite_Mixin_ (_Composite_Base_) :
+class _Composite_Mixin_ (_Co_Base_) :
     """Mixin for composite attributes."""
 
     get_substance   = TFL.Meta.Alias_Property ("get_raw")
@@ -621,18 +591,35 @@ class _Composite_Mixin_ (_Composite_Base_) :
         self.__super._check_sanity (attr_type)
     # end def _check_sanity
 
+    def _update_owner (self, obj, value) :
+        self.__super._update_owner (obj, value)
+        if value.owner is not obj :
+            value._attr_man.inc_changes ()
+        return value
+    # end def _update_owner
+
 # end class _Composite_Mixin_
 
-class _Composite_Collection_Mixin_ (_Collection_Base_, _Composite_Base_) :
-    """Mixin for composite collection attributes."""
+class _Typed_Collection_Mixin_ (_Co_Base_) :
+    """Mixin for typed collection attributes."""
+
+    void_values = property \
+        (lambda s : ("", s.attr.raw_default, s.attr.R_Type ()))
 
     def __init__ (self, Attr_Type) :
         self.__super.__init__ (Attr_Type)
         attr = self.attr
-        if attr.R_Type is not None :
-            if not self.electric :
+        if isinstance (attr.R_Type, MOM.Attr.M_Coll) :
+            if self.electric :
+                attr.R_Type = attr.R_Type.P_Type
+            else :
                 attr.R_Type = attr.R_Type.New (attr_name = attr.name)
     # end def __init__
+
+    def reset (self, obj) :
+        ### Need an empty collection at all times
+        return self._set_cooked_value (obj, self.attr.R_Type (), changed = True)
+    # end def reset
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
@@ -642,38 +629,14 @@ class _Composite_Collection_Mixin_ (_Collection_Base_, _Composite_Base_) :
             C_Type = attr_type.C_Type
             if not C_Type :
                 raise TypeError ("%s needs to define `C_Type`" % attr_type)
-            C_C_Type = C_Type.C_Type
-            if not C_C_Type :
-                raise TypeError \
-                    ("%s.C_Type needs to define `C_Type`" % attr_type)
-            if not isinstance (C_Type, MOM.Attr._A_Composite_) :
-                raise TypeError \
-                    ( "The C_Type of a `%s` needs to be derived "
-                      "from _A_Composite_"
-                    % attr_type
-                    )
-            for name in ("computed_default", "default", "raw_default") :
-                d = getattr (attr_type, name)
-                if d :
-                    raise TypeError \
-                        ( "Attribute `%s` of kind %s cannot have %s %r"
-                        % (attr_type, self.kind, name, d)
-                        )
         self.__super._check_sanity (attr_type)
     # end def _check_sanity
 
-# end class _Composite_Collection_Mixin_
-
-class _Typed_Collection_Mixin_ (_Collection_Base_) :
-    """Mixin for typed collection attributes."""
-
-    def __init__ (self, Attr_Type) :
-        self.__super.__init__ (Attr_Type)
-        attr = self.attr
-        if attr.R_Type is not None :
-            if self.electric :
-                attr.R_Type = attr.R_Type.P_Type
-    # end def __init__
+    def _check_sanity_default (self, attr_type) :
+        default = getattr (attr_type, "raw_default", None)
+        if default is not None and default not in ([], ()) :
+            self.__super._check_sanity_default (attr_type)
+    # end def _check_sanity_default
 
 # end class _Typed_Collection_Mixin_
 
