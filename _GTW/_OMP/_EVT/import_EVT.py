@@ -36,5 +36,6 @@ from   _GTW                   import GTW
 import _GTW._OMP._EVT
 import _GTW._OMP._EVT.Entity
 import _GTW._OMP._EVT.Event
+import _GTW._OMP._EVT.Recurrence_Spec
 
 ### __END__ GTW.OMP.EVT.import_EVT

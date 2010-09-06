@@ -30,6 +30,7 @@
 #     6-Feb-2010 (MG) Missing `is_partial` added
 #    10-Feb-2010 (CT) Bug fix (`Object = _SWP_Object_` added)
 #    22-Mar-2010 (CT) `Object_PN` added (factored from `SWP.Page`)
+#     6-Sep-2010 (CT) `perma_name.max_length` set to `80` (bad MySQL)
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,7 @@ class Object_PN (_Ancestor_Essence) :
             """Name used for perma-link."""
 
             kind               = Attr.Primary
+            max_length         = 80
             ui_name            = "Name"
 
             check              = ("""" " not in value""", )

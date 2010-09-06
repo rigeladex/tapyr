@@ -32,13 +32,14 @@
 #    18-Aug-2010 (CT) Attribute `rule` removed
 #    18-Aug-2010 (CT) `recurrence` changed from `A_Recurrence_Rule` to
 #                     `A_Recurrence_Rule_Set`
+#     6-Sep-2010 (CT) `recurrence` changed from list of composite attributes
+#                     to `Link1`
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Date_Interval   import *
 from   _MOM._Attr.Time_Interval   import *
-from   _MOM._Attr.Recurrence_Rule import *
 
 from   _GTW                       import GTW
 
@@ -107,13 +108,6 @@ class Event (_Ancestor_Essence) :
             max_length         = 160
 
         # end class detail
-
-        class recurrence (A_Recurrence_Rule_Set) :
-            """Recurrence rule set defining when and how often the event recurs."""
-
-            kind               = Attr.Optional
-
-        # end class recurrence
 
         class short_title (A_String) :
 

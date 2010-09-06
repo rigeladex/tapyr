@@ -150,6 +150,7 @@
 #    30-Aug-2010 (CT) `A_Url.max_length` increased from 96 to 160
 #    30-Aug-2010 (CT) `__future__` imports added to improve 3-compatibility
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
+#     6-Sep-2010 (CT) `A_Boolean._from_string` redefined to allow empty strings
 #    ««revision-date»»···
 #--
 
@@ -1152,6 +1153,13 @@ class A_Boolean (_A_Named_Value_) :
         ( no       = False
         , yes      = True
         )
+
+    def _from_string (self, s, obj, glob, locl) :
+        if not s :
+            return False
+        else :
+            return self.__super._from_string (s, obj, glob, locl)
+    # end def _from_string
 
 # end class A_Boolean
 
