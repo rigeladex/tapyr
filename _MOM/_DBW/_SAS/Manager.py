@@ -197,7 +197,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 e_type.auto_cache_roles = ()
             attr_spec = e_type._Attributes
             for name, attr_kind in role_attrs.iteritems () :
-                attr_cls = attr_spec._own_names [name]
+                attr_cls = attr_spec._names [name]
                 acd      = attr_spec._own_names [name] = attr_cls.New \
                     ( kind        = MOM.Attr.Cached
                     , Kind_Mixins = (MOM.Attr.Computed_Mixin, )

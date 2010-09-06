@@ -101,10 +101,10 @@ def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name
         , types.Integer ()
-        , schema.ForeignKey
-            ( "%s.%s"
-            % (attr.Class._sa_table.name, attr.Class._sa_pk_name)
-            )
+#        , schema.ForeignKey
+#            ( "%s.%s"
+#            % (attr.Class._sa_table.name, attr.Class._sa_pk_name)
+#            )
         )
     col.mom_kind = kind
     return (col, )
