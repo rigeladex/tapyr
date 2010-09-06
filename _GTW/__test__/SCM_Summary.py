@@ -61,16 +61,15 @@ rev   = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt
 reg   = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
 reh   = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
 bir   = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+rr1 = SRM.Race_Result (bir, 1, points = 8)
+rr2 = SRM.Race_Result (bir, 2, points = 4)
 rev.date.set (start = "2010/05/13", finish = "2010/05/13")
-bir.set (race_results = [RR (points = 8), RR (points = 4)])
 bc.set (loa = 2.43)
 p.set_raw (title = "Mr.", salutation = "Dear L.")
-bir.race_results [0].set (discarded = True)
+rr1.set (discarded = True)
 x.destroy ()
 rev.date.set (finish = "2010/05/14")
 rev.date.finish = datetime.date (2010, 05, 13)
-[id (x.owner) for x in bir.race_results]
-id (bir.race_results)
 
 cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
 for pid, csp in sorted (cs_1.iteritems ()) :
