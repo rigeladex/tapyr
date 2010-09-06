@@ -109,7 +109,7 @@ class Field_Prefixer (TFL.Meta.Object) :
 
 class Field_List (TFL.Meta.Object) :
     """List of fields for forms in various contexts which support wildcards,
-       ...
+       prefixes, ...
     """
 
     def __init__ (self, * fields) :
@@ -128,8 +128,7 @@ class Field_List (TFL.Meta.Object) :
     def __call__ (self, et_man, added_fields) :
         if added_fields is None :
             added_fields = set ()
-        fields_spec = self.fields
-        fields      = []
+        fields           = []
         for f in self.fields :
             if callable (f) :
                 new_fields = f  (self.first_pass, et_man, added_fields)

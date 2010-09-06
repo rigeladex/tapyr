@@ -195,7 +195,7 @@ if 1 :
         , query_attr  = _query_attr
         )
 else :
-    __doc__ = _composite
+    __doc__ = _link1_role
     #__doc__ = _query_attr
 
 from   _GTW.__test__.model import *

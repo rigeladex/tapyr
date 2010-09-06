@@ -50,6 +50,7 @@ class _Recurrence_Mixin_ (_Ancestor_Essence) :
     """Mixin for classes modelling recurrence rules."""
 
     occurrence_format = "%Y%m%d"
+    is_partial        = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

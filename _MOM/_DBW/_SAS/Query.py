@@ -42,6 +42,7 @@
 #    10-Aug-2010 (MG) Missing `_SA_TABLE` attributes added
 #     2-Sep-2010 (CT) Signature of `Pickler.as_cargo` changed
 #     2-Sep-2010 (MG) Store the kind in the database column attributes
+#     6-Sep-2010 (MG) `Join_Query` specify the join condition
 #    ««revision-date»»···
 #--
 
@@ -168,12 +169,11 @@ class MOM_Query (_MOM_Query_) :
     # end def __init__
 
     def _add_q (self, q, kind, * names) :
-        try :
-            q.MOM_Kind = kind
-        except :
-            import pdb; pdb.set_trace ()
-            raise
+        q.MOM_Kind = kind
         for n in names :
+            if n is None :
+                        import pdb; pdb.set_trace ()
+
             setattr (self, n, q)
             self._ATTRIBUTES.append (n)
     # end def _add_q
@@ -261,11 +261,19 @@ class Join_Query (_MOM_Query_) :
     def __call__ (self, attr_name, desc = False) :
         base, sub_attr = attr_name.split (".", 1)
         column         = getattr (self.source, base)
-        o_SAQ          = column.mom_kind.Class._SAQ
-        fk             = tuple (column.foreign_keys) [0]
+        try :
+            o_SAQ      = column.mom_kind.Class._SAQ
+        except AttributeError :
+            type_name  = column.mom_kind.Class.type_name
+            raise TypeError \
+                ( "Cannot query attribute `%s` of type `%s`.\n"
+                  "If you need this query consider making `%s` relevant."
+                % (sub_attr, type_name, type_name)
+                )
         sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
         joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
-        joins.append ((self.source._SA_TABLE, o_SAQ._SA_TABLE))
+        joins.append \
+            ((self.source._SA_TABLE, o_SAQ._SA_TABLE, column == o_SAQ.pid))
         return joins, oc
     # end def __call__
 

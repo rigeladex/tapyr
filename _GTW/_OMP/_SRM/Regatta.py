@@ -33,6 +33,7 @@
 #    10-May-2010 (CT) `discards` and `races` added
 #    11-May-2010 (CT) `result` added
 #    31-Aug-2010 (CT) `is_team_race` added to `Regatta_C`
+#     6-Sep-2010 (MG) `Regatta.is_relevant` added
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,8 @@ _Ancestor_Essence = GTW.OMP.SRM.Link1
 class Regatta (_Ancestor_Essence) :
     """Sailing regatta for one class or handicap."""
 
-    is_partial = True
+    is_partial  = True
+    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

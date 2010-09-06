@@ -78,6 +78,8 @@
 #    16-Aug-2010 (MG) Add `mysql_engine` to all Table creation statements
 #     1-Sep-2010 (MG) `_cached_role` changed to work with new `Q_Result`
 #                     classes
+#     6-Sep-2010 (MG) Changes to allow link's to entities which are not
+#                     relevant
 #    ««revision-date»»···
 #--
 
@@ -135,7 +137,9 @@ Type_Name_Type = _Type_Name_Type_ (length = 60)
 class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
-    metadata         = schema.MetaData () ### XXX
+    metadata                 = schema.MetaData () ### XXX
+    cached_role_attr_classes = \
+        (MOM.Attr.A_Cached_Role, MOM.Attr.A_Cached_Role_Set)
 
     def create_database (cls, db_url, scope) :
         dbs = cls.DBS_map [db_url.scheme]
@@ -170,7 +174,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     )
             unique               = []
             e_type._sa_pk_base   = {}
-            db_attrs, role_attrs = cls._attr_dicts (e_type, bases)
+            db_attrs             = cls._attr_dicts (e_type, bases)
             columns   = cls._setup_columns (e_type, db_attrs, bases, unique)
             if unique :
                 unique = schema.UniqueConstraint (* unique)
@@ -184,26 +188,32 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 )
             ### save the gathered attribute dict and bases for the
             ### update_etype run
-            e_type._sa_save_attrs = bases, db_attrs, role_attrs, unique
-            if issubclass (e_type, MOM.Link) :
-                for cr in e_type.auto_cache_roles :
-                    if isinstance (cr, MOM.Link_Cacher) :
-                        cr_et = getattr (e_type, cr.role_name).role_type
-                        cls.role_cacher [cr_et.type_name].add ((cr, e_type))
-                    else :
-                        cls.role_cacher \
-                            [cr.other_role.role_type.type_name].add \
-                            ((cr, e_type))
-                e_type.auto_cache_roles = ()
-            attr_spec = e_type._Attributes
-            for name, attr_kind in role_attrs.iteritems () :
-                attr_cls = attr_spec._names [name]
+            e_type._sa_save_attrs = bases, db_attrs, unique
+            MOM.DBW.SAS.SAS_Interface (e_type, columns, bases)
+        ### we cannot create the `computed` function for the cached role
+        ### until all e-types have been decorated -> therefore we store all
+        ### role-cachers which will be handled in the `update_etype` pass
+        if issubclass (e_type, MOM.Link) :
+            for cr in e_type.auto_cache_roles :
+                if isinstance (cr, MOM.Link_Cacher) :
+                    cr_et = getattr (e_type, cr.role_name).role_type
+                    cls.role_cacher [cr_et.type_name].add ((cr, e_type))
+                else :
+                    cls.role_cacher \
+                        [cr.other_role.role_type.type_name].add \
+                        ((cr, e_type))
+            e_type.auto_cache_roles = ()
+        ### we need to replace the attribute kinds for all `cached_role`
+        ### attribute, even for e-etypes which don't have a relevant root
+        attr_spec = e_type._Attributes
+        for name, attr_cls in attr_spec._own_names.iteritems () :
+            if attr_cls and issubclass (attr_cls, cls.cached_role_attr_classes) :
+                ### import pdb; pdb.set_trace ()
                 acd      = attr_spec._own_names [name] = attr_cls.New \
                     ( kind        = MOM.Attr.Cached
                     , Kind_Mixins = (MOM.Attr.Computed_Mixin, )
                     )
                 attr_spec._add_prop   (e_type, name, acd)
-            MOM.DBW.SAS.SAS_Interface (e_type, columns, bases)
         return e_type
     # end def etype_decorator
 
@@ -221,26 +231,25 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def update_etype (cls, e_type, app_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
         if getattr (e_type, "relevant_root", None) :
-            sa_table                            = e_type._sa_table
-            bases, db_attrs, role_attrs, unique = e_type._sa_save_attrs
+            sa_table                = e_type._sa_table
+            bases, db_attrs, unique = e_type._sa_save_attrs
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
             MOM.DBW.SAS.MOM_Query     (e_type, sa_table, db_attrs, bases)
             e_type._SAS.finish        ()
-            for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
-                if cr.grn in assoc_et._Attributes._own_names :
-                    ### setup cached role only for the etype first defining the
-                    ### role attribute, not it's descendents
-                    cls._cached_role \
-                        (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
             if unique is not None and not e_type.polymorphic_epk :
                 sa_table.append_constraint (unique)
+        for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
+            if cr.grn in assoc_et._Attributes._own_names :
+                ### setup cached role only for the etype first defining the
+                ### role attribute, not it's descendents
+                cls._cached_role \
+                    (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
     # end def update_etype
 
     def _attr_dicts (cls, e_type, bases) :
         attr_dict  = e_type._Attributes._attr_dict
         db_attrs   = {}
-        role_attrs = {}
         root       = bases and bases [0]
         if e_type is (getattr (e_type, "relevant_root", None) or e_type) :
             inherited_attrs = {}
@@ -252,23 +261,17 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 db_attr_p = attr_kind.save_to_db
                 if db_attr_p or isinstance (attr_kind, MOM.Attr.Query) :
                     db_attrs [name] = attr_kind
-                elif isinstance \
-                         ( attr_kind
-                         , (MOM.Attr.Cached_Role, MOM.Attr.Cached_Role_Set)
-                         ) :
-                    role_attrs [name] = attr_kind
-        return db_attrs, role_attrs
+        return db_attrs
     # end def _attr_dicts
 
     def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
+        assoc_tn = assoc_et.type_name
         if isinstance (cr, MOM.Link_Cacher) :
             singleton = isinstance (cr, MOM.Link_Cacher_1)
-            r_attr    = assoc_et._sa_table.c \
-                [getattr (assoc_et, cr.role_name).attr._sa_col_name]
+            attr        = getattr (MOM.Q, cr.role_name)
             def computed_crn (self) :
-                session = self.home_scope.ems.session
-                query   = MOM.DBW.SAS.Q_Result \
-                    (assoc_et, session).where (r_attr == self.pid)
+                ETM     = self.home_scope [assoc_tn]
+                query   = ETM.query (attr == self.pid)
                 if singleton :
                     return query.first ()
                 return query
@@ -282,11 +285,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             singleton   = isinstance (cr, MOM.Role_Cacher_1)
             result_et   = app_type [attr_kind.Class.type_name]
             def computed_crn (self) :
+                ETM     = self.home_scope [assoc_tn]
                 session = self.home_scope.ems.session
                 links   = sql.select ((q_attr,)).where (f_attr == self.pid)
                 query   = MOM.DBW.SAS.Q_Result \
                     ( result_et, session
-                    ).where (result_et._SAQ.pid.in_(links))
+                    ).where (result_et._SAQ.pid.in_ (links))
                 if singleton :
                     return query.first ()
                 return query

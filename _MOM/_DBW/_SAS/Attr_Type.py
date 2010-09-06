@@ -49,6 +49,8 @@
 #                     given to work under MySQL as well
 #    21-Jun-2010 (CT) `_sa_file_name` added
 #     1-Jul-2010 (MG) `SAS_PC_Transform` added
+#     6-Sep-2010 (MG) Changes to allow link's to entities which are not
+#                     relevant
 #    ««revision-date»»···
 #--
 
@@ -123,12 +125,11 @@ def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Composite_)
 def _sa_columns_composite (cls, attr, kind, unique, owner_etype, ** kw) :
-    e_type                = kind.C_Type
-    bases                 = e_type.__bases__
-    Manager               = MOM.DBW.SAS.Manager
-    db_attrs, role_attrs  = Manager._attr_dicts (kind.C_Type, bases)
-    prefix                = "__%s_" % (attr.name, )
-    assert not role_attrs
+    e_type   = kind.C_Type
+    bases    = e_type.__bases__
+    Manager  = MOM.DBW.SAS.Manager
+    db_attrs = Manager._attr_dicts (kind.C_Type, bases)
+    prefix   = "__%s_" % (attr.name, )
     unique_attrs          = set ()
     if kind.is_primary :
         unique_attrs      = set (k.attr.name for k in e_type.hash_sig)

@@ -51,10 +51,11 @@ SAS_Attr_Map = dict \
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
 def _sa_filter (self, SAQ) :
     joins      = []
-    attr       = self._name.split (".", 1) [0]
-    _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr, None)
-    if _sa_filter :
-        return _sa_filter (self._name)
+    if "." in self._name :
+        attr       = self._name.split (".", 1) [0]
+        _sa_filter = SAQ._ID_ENTITY_ATTRS.get (attr, None)
+        if _sa_filter :
+            return _sa_filter (self._name)
     result = SAS_Attr_Map.get (self._name, self._getter) (SAQ)
     if isinstance (result, (list, tuple)) :
         joins, columns = result
@@ -64,7 +65,7 @@ def _sa_filter (self, SAQ) :
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well
         if col.table != SAQ._SA_TABLE :
-           joins.append ((SAQ._SA_TABLE, col.table))
+           joins.append ((SAQ._SA_TABLE, col.table, None))
     return joins, columns
 # end def _sa_filter
 
