@@ -28,6 +28,8 @@
 # Revision Dates
 #    19-May-2010 (CT) Creation
 #     1-Jul-2010 (CT) `race_results` as example of composite-collection added
+#     6-Sep-2010 (CT) Adapted to change of `Race_Result` from Composite-List
+#                     to `Link1`
 #    ««revision-date»»···
 #--
 
@@ -80,17 +82,16 @@ _test_code = r"""
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> bir.set (race_results = \
-    ... [SRM.Race_Result (points = 8), SRM.Race_Result (points = 4)])
-    1
+    >>> rr1 = SRM.Race_Result (bir, 1, points = 8)
+    >>> rr2 = SRM.Race_Result (bir, 2, points = 4)
 
     >>> scope.commit ()
     >>> scope.MOM.Id_Entity.count_transitive
-    33
+    35
     >>> int (scope.query_changes ().count ())
-    34
+    35
     >>> int (scope.ems.max_cid)
-    34
+    35
 
     >>> bc.set (loa = 2.43)
     1
@@ -101,11 +102,11 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.count_transitive
-    33
+    35
     >>> int (scope.query_changes ().count ())
-    37
+    38
     >>> int (scope.ems.max_cid)
-    37
+    38
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -116,11 +117,11 @@ _test_code = r"""
     >>> apt, url = Scaffold.app_type_and_url (db_url)
     >>> scop2 = scope.copy (apt, url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
-    (33, 33)
+    (35, 35)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
     True
     >>> int (scop2.ems.max_cid)
-    37
+    38
     >>> len (scop2.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -131,11 +132,11 @@ _test_code = r"""
 
     >>> scop3 = MOM.Scope.load (apt, db_url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
-    (33, 33)
+    (35, 35)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop3))
     True
     >>> int (scop3.ems.max_cid)
-    37
+    38
     >>> len (scop3.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -150,11 +151,11 @@ _test_code = r"""
     >>> scop4 = scop3.copy (apt, db_url)
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
-    (33, 33)
+    (35, 35)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scop3, scop4))
     True
     >>> int (scop4.ems.max_cid)
-    37
+    38
     >>> len (scop4.SRM.Regatta_Event.query ().first ().regattas)
     2
 

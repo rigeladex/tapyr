@@ -34,6 +34,8 @@
 #                     the migration
 #    16-Aug-2010 (MG) Test for a change with children added
 #    17-Aug-2010 (CT) Use `unicode` instead of `str`
+#     6-Sep-2010 (CT) Adapted to change of `Race_Result` from Composite-List
+#                     to `Link1`
 #    ««revision-date»»···
 #--
 
@@ -103,19 +105,18 @@ _test_code = r"""
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> bir.set (race_results = \
-    ... [SRM.Race_Result (points = 8), SRM.Race_Result (points = 4)])
-    1
+    >>> rr1 = SRM.Race_Result (bir, 1, points = 8)
+    >>> rr2 = SRM.Race_Result (bir, 2, points = 4)
 
     >>> scope.commit ()
     >>> scope.MOM.Id_Entity.count_transitive
-    34
+    36
     >>> int (scope.query_changes (parent = None).count ())
-    35
+    36
     >>> int (scope.query_changes ().count ())
-    36
+    37
     >>> int (scope.ems.max_cid)
-    36
+    37
 
     >>> bc.set (loa = 2.43)
     1
@@ -126,11 +127,11 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.count_transitive
-    34
+    36
     >>> int (scope.query_changes ().count ())
-    39
+    40
     >>> int (scope.ems.max_cid)
-    39
+    40
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> b = scope.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
@@ -165,11 +166,11 @@ _test_code = r"""
     Loading scope MOMT__...
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_s, scope_t))
-    (34, 34)
+    (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_s, scope_t))
     True
     >>> int (scope_t.ems.max_cid)
-    39
+    40
     >>> len (scope_t.SRM.Regatta_Event.query ().first ().regattas)
     2
 
@@ -191,11 +192,11 @@ _test_code = r"""
     Loading scope MOMT__...
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_t, scope_u))
-    (34, 34)
+    (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_t, scope_u))
     True
     >>> int (scope_u.ems.max_cid)
-    39
+    40
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> b = scope_u.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()

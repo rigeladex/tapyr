@@ -29,6 +29,7 @@
 #    15-Apr-2010 (CT) Creation
 #    19-Apr-2010 (CT) Creation continued
 #    31-Aug-2010 (CT) `Team` and `Team_has_Boat_in_Regatta` added
+#     6-Sep-2010 (CT) `Race_Result` added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Boat
 import _GTW._OMP._SRM.Entity
 import _GTW._OMP._SRM.Page
+import _GTW._OMP._SRM.Race_Result
 import _GTW._OMP._SRM.Regatta_Event
 import _GTW._OMP._SRM.Regatta
 import _GTW._OMP._SRM.Sailor

@@ -31,6 +31,7 @@
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
 #    31-Aug-2010 (CT) `Team` and `Team_has_Boat_in_Regatta` added
+#     6-Sep-2010 (CT) `Boat_in_Regatta` adapted to change of `race_results`
 #    ««revision-date»»···
 #--
 
@@ -86,10 +87,9 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ()
-            , CID
-                ( "race_results"
-                , legend = _("Race Results")
-                , popup  = False
+            , LID
+                ( "GTW.OMP.SRM.Race_Result"
+                , FGD ()
                 )
             )
         , sort_key  = TFL.Sorted_By

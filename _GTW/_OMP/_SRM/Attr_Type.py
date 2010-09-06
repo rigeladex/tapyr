@@ -30,6 +30,7 @@
 #    28-Apr-2010 (CT) `Race_Result.ui_display_format` redefined
 #    11-May-2010 (CT) `A_Regatta_Result` added
 #    12-May-2010 (CT) `A_Nation.Table` filled with `unicode` instead of `str`
+#     6-Sep-2010 (CT) `Race_Result` removed (now implemented as `Link1`)
 #    ««revision-date»»···
 #--
 
@@ -94,59 +95,6 @@ class A_Nation (_A_Named_Object_) :
 
 _Ancestor_Essence = MOM.An_Entity
 
-class Race_Result (_Ancestor_Essence) :
-    """Model the result of a boat in a single race."""
-
-    PNS = GTW.OMP.SRM
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class discarded (A_Boolean) :
-            """The result of this race is discarded."""
-
-            kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Sticky_Mixin, )
-            default            = False
-            rank               = 3
-
-        # end class discarded
-
-        class points (A_Int) :
-            """Points of boat in this race."""
-
-            kind               = Attr.Required
-            min_value          = 1
-            rank               = 1
-
-        # end class points
-
-        class status (A_String) :
-            """Status of boat in this race (DNS, DNF, BFD, ...)"""
-
-            kind               = Attr.Optional
-            max_length         = 8
-            rank               = 2
-
-        # end class status
-
-    # end class _Attributes
-
-    @property
-    def ui_display_format (self) :
-        result = "%(points)s"
-        if self.discarded :
-            result = "[" + result + "]"
-        if self.status :
-            result += " %(status)s"
-        return result
-    # end def ui_display_format
-
-# end class Race_Result
-
-_Ancestor_Essence = MOM.An_Entity
-
 class Regatta_Result (_Ancestor_Essence) :
     """Provide information about the result of a regatta."""
 
@@ -180,14 +128,6 @@ class Regatta_Result (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Regatta_Result
-
-class A_Race_Result (_A_Composite_) :
-    """Result of a boat in a single race."""
-
-    C_Type          = Race_Result
-    typ             = "Race_Result"
-
-# end class A_Race_Result
 
 class A_Regatta_Result (_A_Composite_) :
     """Information about a regatta's result."""

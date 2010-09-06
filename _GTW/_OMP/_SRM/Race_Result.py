@@ -20,32 +20,28 @@
 #
 #++
 # Name
-#    GTW.OMP.SRM.Boat_in_Regatta
+#    GTW.OMP.SRM.Race_Result
 #
 # Purpose
-#    Boat racing in a regatta
+#    Race result of a `Boat_in_Regatta`
 #
 # Revision Dates
-#    19-Apr-2010 (CT) Creation
-#    10-May-2010 (CT) `place` added
-#     6-Sep-2010 (CT) `race_results` removed (now implemented as `Link1`)
+#     6-Sep-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
-import _GTW._OMP._SRM.Boat
+import _GTW._OMP._SRM.Boat_in_Regatta
 import _GTW._OMP._SRM.Entity
-import _GTW._OMP._SRM.Regatta
-import _GTW._OMP._SRM.Sailor
 
 from   _TFL.I18N                import _, _T, _Tn
 
-_Ancestor_Essence = GTW.OMP.SRM.Link2
+_Ancestor_Essence = GTW.OMP.SRM.Link1
 
-class Boat_in_Regatta (_Ancestor_Essence) :
-    """Boat racing in a regatta."""
+class Race_Result (_Ancestor_Essence) :
+    """Race result of a `Boat_in_Regatta`."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -54,61 +50,64 @@ class Boat_in_Regatta (_Ancestor_Essence) :
         ### Primary attributes
 
         class left (_Ancestor.left) :
-            """Boat racing in a regatta."""
+            """`Boat_in_Regatta` the crew member sails on."""
 
-            role_type          = GTW.OMP.SRM.Boat
-            auto_cache         = True
+            role_type          = GTW.OMP.SRM.Boat_in_Regatta
+            auto_cache         = "race_results"
 
         # end class left
 
-        class right (_Ancestor.right) :
-            """Regatta a boat races in."""
+        class race (A_Int) :
+            """Number of race."""
 
-            role_type          = GTW.OMP.SRM.Regatta
+            kind               = Attr.Primary
 
-        # end class right
+        # end class race
 
         ### Non-primary attributes
 
-        class place (A_Int) :
-            """Place of boat in this regatta."""
+        class discarded (A_Boolean) :
+            """The result of this race is discarded."""
 
             kind               = Attr.Optional
-            min_value          = 1
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+            default            = False
+            rank               = 3
 
-        # end class place
+        # end class discarded
 
         class points (A_Int) :
-            """Total points of boat in this regatta."""
+            """Points of boat in this race."""
 
-            kind               = Attr.Optional
+            kind               = Attr.Required
             min_value          = 1
+            rank               = 1
 
         # end class points
 
-        class registration_date (A_Date) :
-            """Date of registration."""
+        class status (A_String) :
+            """Status of boat in this race (DNS, DNF, BFD, ...)"""
 
-            kind               = Attr.Internal
+            kind               = Attr.Optional
+            max_length         = 8
+            rank               = 2
 
-            def computed_default (self) :
-                return self.now ()
-            # end def computed_default
-
-        # end class registration_date
-
-        class skipper (A_Object) :
-            """Skipper of boat."""
-
-            Class              = GTW.OMP.SRM.Sailor
-            kind               = Attr.Mandatory
-
-        # end class skipper
+        # end class status
 
     # end class _Attributes
 
-# end class Boat_in_Regatta
+    @property
+    def ui_display_format (self) :
+        result = "%(points)s"
+        if self.discarded :
+            result = "[" + result + "]"
+        if self.status :
+            result += " %(status)s"
+        return result
+    # end def ui_display_format
+
+# end class Race_Result
 
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")
-### __END__ GTW.OMP.SRM.Boat_in_Regatta
+### __END__ GTW.OMP.SRM.Race_Result
