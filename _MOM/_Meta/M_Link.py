@@ -87,8 +87,6 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         roles = set ()
         for a in cls._Attributes._names.itervalues () :
             if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
-
-
                 if a.auto_cache :
                     roles.add (a)
                 #if not cls.is_partial : a.role_type.is_relevant = True
