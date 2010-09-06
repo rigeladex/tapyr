@@ -692,7 +692,7 @@ class An_Entity (Entity) :
            holds `self`.
         """
         if self.owner and self.attr_name :
-            return getattr (self.owner.__class__, self.attr_name)
+            return getattr (self.owner.__class__, self.attr_name, None)
     # end def owner_attr
 
     def set (self, on_error = None, ** kw) :
