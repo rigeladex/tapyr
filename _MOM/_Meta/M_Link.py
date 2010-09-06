@@ -86,18 +86,19 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         cls.__m_super._m_setup_etype_auto_props ()
         roles = set ()
         for a in cls._Attributes._names.itervalues () :
-            role_type = \
-                a.role_type if issubclass (a, MOM.Attr.A_Link_Role) else None
-            if role_type :
+            if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
+
+
                 if a.auto_cache :
                     roles.add (a)
-                #if not cls.is_partial : role_type.is_relevant = True
-                if a in cls._Attributes._own_names :
-                    rc = a.auto_cache
-                    if rc :
-                        if not isinstance (rc, MOM._.Link._Cacher_) :
-                            rc = a.auto_cache = cls.Cacher (rc)
-                        rc.setup (cls, a)
+                #if not cls.is_partial : a.role_type.is_relevant = True
+        for a in cls._Attributes._own_names.itervalues () :
+            if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
+                rc = a.auto_cache
+                if rc :
+                    if not isinstance (rc, MOM._.Link._Cacher_) :
+                        rc = a.auto_cache = cls.Cacher (rc)
+                    rc.setup (cls, a)
         cls.auto_cache_roles = tuple (a.auto_cache for a in roles)
     # end def _m_setup_etype_auto_props
 
