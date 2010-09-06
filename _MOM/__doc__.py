@@ -177,6 +177,7 @@ class Rodent (_Ancestor_Essence) :
     PNS    = BMT
 
     is_partial    = True
+    is_relevant   = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
