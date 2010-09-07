@@ -1008,14 +1008,14 @@ class _A_Typed_Collection_ (_A_Collection_) :
 class _A_Typed_List_ (_A_Typed_Collection_) :
     """Base class for list-valued attributes with strict type."""
 
-    R_Type         = MOM.Attr.List
+    R_Type         = list
 
 # end class _A_Typed_List_
 
 class _A_Typed_Set_ (_A_Typed_Collection_) :
     """Base class for set-valued attributes with strict type."""
 
-    R_Type         = MOM.Attr.Set
+    R_Type         = set
 
 # end class _A_Typed_Set_
 

@@ -43,6 +43,8 @@ __test__ = Scaffold.create_test_dict (_test_code)
 ### __END__ GTW.__test__.SCM_Summary
 
 """
+scope = Scope ('sqlite://')
+
 import datetime
 scope = Scope ()
 

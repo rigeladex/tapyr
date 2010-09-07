@@ -143,6 +143,8 @@
 #                     `_Typed_Collection_Mixin_` added
 #     4-Sep-2010 (CT) `_Computed_Mixin_._get_value` changed to use `void_values`
 #     6-Sep-2010 (CT) `_Computed_Collection_Mixin_` removed
+#     7-Sep-2010 (CT) `_Typed_Collection_Mixin_.__init__` changed to replace
+#                     `attr.R_Type` from `M_Coll.Table` if `record_changes`
 #    ««revision-date»»···
 #--
 
@@ -609,11 +611,16 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
     def __init__ (self, Attr_Type) :
         self.__super.__init__ (Attr_Type)
         attr = self.attr
-        if isinstance (attr.R_Type, MOM.Attr.M_Coll) :
-            if self.electric :
-                attr.R_Type = attr.R_Type.P_Type
-            else :
-                attr.R_Type = attr.R_Type.New (attr_name = attr.name)
+        if self.record_changes :
+            PT = MOM.Attr.M_Coll.Table.get (attr.R_Type)
+            if PT is not None :
+                attr.R_Type = PT.New (attr_name = attr.name)
+            elif attr.R_Type is not tuple :
+                if __debug__ :
+                    print \
+                        ( "%s.R_Type doesn't have a correspondence in "
+                          "MOM.Attr.Coll; is it immutable?"
+                        )
     # end def __init__
 
     def reset (self, obj) :

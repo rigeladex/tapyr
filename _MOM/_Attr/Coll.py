@@ -30,6 +30,9 @@
 #     3-Sep-2010 (CT) Creation
 #     4-Sep-2010 (CT) Creation continued
 #     6-Sep-2010 (CT) Creation continued..
+#     7-Sep-2010 (CT) `Table` added
+#     7-Sep-2010 (CT) `old` added to `_override` and passed to
+#                     `record_attr_change`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +48,7 @@ import _TFL.Decorator
 class M_Coll (TFL.Meta.M_Class) :
 
     _state_changers = ()
+    Table           = {}
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
@@ -52,14 +56,19 @@ class M_Coll (TFL.Meta.M_Class) :
             m = getattr (cls, mn, None)
             if m is not None :
                 setattr (cls, mn, cls._override (m))
+        if cls.P_Type is not None :
+            assert cls.P_Type not in cls.Table
+            cls.Table [cls.P_Type] = cls
     # end def __init__
 
     @staticmethod
     @TFL.Decorator
     def _override (method) :
         def _ (self, * args, ** kw) :
+            old    = self.copy ()
             result = method (self, * args, ** kw)
-            self.record_attr_change ()
+            if old != self :
+                self.record_attr_change (old)
             return result
         return _
     # end def _override
@@ -69,6 +78,7 @@ class M_Coll (TFL.Meta.M_Class) :
 class _Mixin_ (object) :
 
     __metaclass__   = M_Coll
+    P_Type          = None
 
     attr_name       = None
     owner           = None
@@ -87,10 +97,10 @@ class _Mixin_ (object) :
             return getattr (self.owner.__class__, self.attr_name)
     # end def owner_attr
 
-    def record_attr_change (self, ** kw) :
+    def record_attr_change (self, old) :
         ### communicate change of `self` to `self.owner`
         if self.owner is not None :
-            self.owner.record_attr_change ({self.attr_name : self})
+            self.owner.record_attr_change ({self.attr_name : old})
     # end def record_attr_change
 
 # end class _Mixin_
