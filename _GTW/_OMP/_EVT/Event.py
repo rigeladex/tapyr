@@ -34,6 +34,8 @@
 #                     `A_Recurrence_Rule_Set`
 #     6-Sep-2010 (CT) `recurrence` changed from list of composite attributes
 #                     to `Link1`
+#     7-Sep-2010 (CT) `_change_callback` guarded by
+#                     `date in change.attr_changes`
 #    ««revision-date»»···
 #--
 
@@ -145,15 +147,16 @@ class Event (_Ancestor_Essence) :
 
     @classmethod
     def _change_callback (cls, scope, change) :
-        self = change.entity (scope)
-        self.compute_occurrences ()
+        if "date" in change.attr_changes or isinstance \
+               (change, MOM.SCM.Change.Create):
+            self = change.entity (scope)
+            self.compute_occurrences ()
     # end def _change_callback
 
 # end class Event
 
 MOM.SCM.Change.Create.add_callback         (Event, Event._change_callback)
 MOM.SCM.Change.Attr.add_callback           (Event, Event._change_callback)
-#MOM.SCM.Change.Attr_Composite.add_callback (Event, Event._change_callback)
 
 _Ancestor_Essence = GTW.OMP.EVT.Link1
 

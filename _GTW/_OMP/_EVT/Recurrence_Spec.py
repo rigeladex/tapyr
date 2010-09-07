@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Sep-2010 (CT) Creation
+#     7-Sep-2010 (CT) `_change_callback` added
 #    ««revision-date»»···
 #--
 
@@ -169,7 +170,25 @@ class Recurrence_Spec (_Ancestor_Essence) :
 
     start_getter  = finish_getter = TFL.Getter.left.date
 
+    _event_change_triggers = ("dates", "date_exceptions")
+
+    def compute_occurrences (self) :
+        self.event.compute_occurrences ()
+    # end def compute_occurrences
+
+    @classmethod
+    def _change_callback (cls, scope, change) :
+        if change.attr_changes.intersection (cls._event_change_triggers) :
+            self = change.entity (scope)
+            self.compute_occurrences ()
+    # end def _change_callback
+
 # end class Recurrence_Spec
+
+MOM.SCM.Change.Create.add_callback \
+    (Recurrence_Spec, Recurrence_Spec._change_callback)
+MOM.SCM.Change.Attr.add_callback \
+    (Recurrence_Spec, Recurrence_Spec._change_callback)
 
 _Ancestor_Essence = _Recurrence_Mixin_
 
@@ -410,6 +429,12 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
     # end class _Attributes
 
+    @classmethod
+    def _change_callback (cls, scope, change) :
+        self = change.entity (scope)
+        self.left.compute_occurrences ()
+    # end def _change_callback
+
     def _rrule_attrs (self) :
         for a in self.attributes.itervalues () :
             name = getattr (a, "rrule_name", None)
@@ -420,6 +445,11 @@ class Recurrence_Rule (_Ancestor_Essence) :
     # end def _rrule_attrs
 
 # end class Recurrence_Rule
+
+MOM.SCM.Change.Create.add_callback \
+    (Recurrence_Rule, Recurrence_Rule._change_callback)
+MOM.SCM.Change.Attr.add_callback \
+    (Recurrence_Rule, Recurrence_Rule._change_callback)
 
 if __name__ != "__main__" :
     GTW.OMP.EVT._Export ("*")

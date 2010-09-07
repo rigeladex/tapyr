@@ -63,6 +63,7 @@
 #    13-Aug-2010 (CT) `last_cid` handling corrected
 #    16-Aug-2010 (MG) `_Entity_.register` add `last_cid` to the
 #                     `attr_changes` dict of the scope
+#     7-Sep-2010 (CT) `attr_changes` added
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,7 @@ import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
 
 import datetime
+import itertools
 import pickle
 import weakref
 
@@ -84,6 +86,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     kind               = "Composite change"
 
+    attr_changes       = ()
     callbacks          = None
     children           = TFL.Meta.Alias_Property ("history")
     cid                = None
@@ -230,6 +233,11 @@ class _Entity_ (Undoable) :
             cls.callbacks = {}
         cls.callbacks [etype.type_name] = callback
     # end def add_callback
+
+    @property
+    def attr_changes (self) :
+        return set (itertools.chain (self.new_attr, self.old_attr))
+    # end def attr_changes
 
     def do_callbacks (self, scope) :
         callbacks = self.callbacks

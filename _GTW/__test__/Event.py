@@ -29,6 +29,7 @@
 #    18-Aug-2010 (CT) Creation
 #    19-Aug-2010 (CT) Creation continued
 #     6-Sep-2010 (CT) Adapted to change of Recurrence_Rule and Recurrence_Spec
+#     7-Sep-2010 (CT) Tests for update of `Event_occurs` added
 #    ««revision-date»»···
 #--
 
@@ -39,18 +40,21 @@ _test_code = """
     >>> MOM = scope.MOM
     >>> SWP = scope.SWP
     >>> RR  = EVT.Recurrence_Rule
-    >>> RRS = EVT.Recurrence_Spec
+    >>> RS  = EVT.Recurrence_Spec
 
     >>> p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
     >>> p2 = SWP.Page ("event-2-text", text = "Text for the 2. event")
 
     >>> e1 = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
-    >>> rs1 = RRS (e1, date_exceptions = ["2010/08/15"])
+    >>> rs1 = RS (e1, date_exceptions = ["2010/08/15"])
     >>> rr1 = RR (rs1.epk_raw, start = "20100801", count = 7, unit = "Weekly", raw = True)
     >>> rr1.ui_display
     u'20100801, 20100808, 20100815, 20100822, 20100829, 20100905, 20100912'
     >>> rs1.ui_display
     u'20100801, 20100808, 20100822, 20100829, 20100905, 20100912'
+
+    >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
+    ('2010/08/01', '2010/08/08', '2010/08/22', '2010/08/29', '2010/09/05', '2010/09/12')
 
     >>> e1.date.set_raw (finish = "2010/08/31")
     1
@@ -60,8 +64,15 @@ _test_code = """
     u'20100801, 20100808, 20100822, 20100829'
     >>> e1.dates
     [datetime.datetime(2010, 8, 1, 0, 0), datetime.datetime(2010, 8, 8, 0, 0), datetime.datetime(2010, 8, 22, 0, 0), datetime.datetime(2010, 8, 29, 0, 0)]
+    >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
+    ('2010/08/01', '2010/08/08', '2010/08/22', '2010/08/29')
 
-    >>> rsx = RRS (EVT.Event (p1))
+    >>> rs1.set_raw (dates = ["2010/08/07", "2010/08/09"])
+    1
+    >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
+    ('2010/08/01', '2010/08/07', '2010/08/08', '2010/08/09', '2010/08/22', '2010/08/29')
+
+    >>> rsx = RS (EVT.Event (p1))
     >>> def RR (** kw) :
     ...     for r in list (rsx.rules) : r.destroy ()
     ...     return EVT.Recurrence_Rule (rsx.epk_raw, raw = True, ** kw)
@@ -184,7 +195,7 @@ _test_code = """
     u'20100729, 20100830, 20100929, 20101028, 20101129'
 
     >>> RR  = EVT.Recurrence_Rule
-    >>> rsy = RRS (EVT.Event (p2))
+    >>> rsy = RS (EVT.Event (p2))
     >>> rry = RR (rsy.epk_raw, start = "20100801", unit = "Daily", count = 7, raw = True)
     >>> rrz = RR (rsy.epk_raw, start = "20100801", unit = "Yearly", week_day = "SA,SU", is_exception = "yes", raw = True)
     >>> rsy.ui_display
@@ -206,13 +217,13 @@ EVT = scope.EVT
 MOM = scope.MOM
 SWP = scope.SWP
 RR  = EVT.Recurrence_Rule
-RRS = EVT.Recurrence_Spec
+RS = EVT.Recurrence_Spec
 
 p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
 p2 = SWP.Page ("event-2-text", text = "Text for the 2. event")
 
 e1 = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
-rs1 = RRS (e1, date_exceptions = ["2010/08/15"])
+rs1 = RS (e1, date_exceptions = ["2010/08/15"])
 rr1 = RR (rs1.epk_raw, start = "20100801", count = 7, unit = "Weekly", raw = True)
 
 """

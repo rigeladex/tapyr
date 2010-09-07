@@ -57,8 +57,8 @@ class M_Coll (TFL.Meta.M_Class) :
             if m is not None :
                 setattr (cls, mn, cls._override (m))
         if cls.P_Type is not None :
-            assert cls.P_Type not in cls.Table
-            cls.Table [cls.P_Type] = cls
+            if cls.P_Type not in cls.Table :
+                cls.Table [cls.P_Type] = cls
     # end def __init__
 
     @staticmethod
