@@ -137,8 +137,8 @@ _test_code = r"""
     >>> b = scope.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
     >>> c = scope.query_changes (cid = b.last_cid).one ()
     >>> print c ### change in source scope
-    <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class')>
-        <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'max_crew' : u'3'}>
+    <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'last_cid' : '8'}>
+        <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'last_cid' : '7', 'max_crew' : u'3'}>
     >>> len (c.children)
     1
     >>> int (c.cid), int (c.children [0].cid)
@@ -202,8 +202,8 @@ _test_code = r"""
     >>> b = scope_u.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
     >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope
     >>> print c
-    <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class')>
-        <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'max_crew' : u'3'}>
+    <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'last_cid' : '8'}>
+        <Create GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'last_cid' : '7', 'max_crew' : u'3'}>
     >>> len (c.children)
     1
     >>> int (c.cid), int (c.children [0].cid)

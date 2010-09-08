@@ -28,6 +28,7 @@
 # Revision Dates
 #     2-Sep-2010 (CT) Creation
 #     3-Sep-2010 (CT) Creation continued
+#     8-Sep-2010 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class Attr_Summary (TFL.Meta.Object) :
     # end def __init__
 
     def add (self, old, new) :
-        if self.old is not self.undef :
+        if self.old is self.undef :
             self.old = old
         self.new = new
     # end def add
@@ -65,6 +66,84 @@ class Attr_Summary (TFL.Meta.Object) :
     # end def __repr__
 
 # end class Attr_Summary
+
+class Attr_C_Summary (TFL.Meta.Object) :
+    """Change summary for a composite attribute of a single `pid`."""
+
+    def __init__ (self, attr_summary = None) :
+        self.attribute_changes = TFL.defaultdict (Attr_Summary)
+        if attr_summary :
+            old = dict (attr_summary.old)
+            new = dict (attr_summary.new)
+            for a in set (itertools.chain (old, new)) :
+                self [a].add (old.get (a), new.get (a))
+    # end def __init__
+
+    @property
+    def old (self) :
+        return tuple \
+            (   (k, v.old)
+            for (k, v) in sorted (self.attribute_changes.iteritems ())
+            )
+    # end def old
+
+    @property
+    def new (self) :
+        return tuple \
+            (   (k, v.new)
+            for (k, v) in sorted (self.attribute_changes.iteritems ())
+            )
+    # end def new
+
+    def items (self) :
+        return self.attribute_changes.items ()
+    # end def items
+
+    def iteritems (self) :
+        return self.attribute_changes.iteritems ()
+    # end def iteritems
+
+    def iterkeys (self) :
+        return self.attribute_changes.iterkeys ()
+    # end def iterkeys
+
+    def itervalues (self) :
+        return self.attribute_changes.itervalues ()
+    # end def itervalues
+
+    def keys (self) :
+        return self.attribute_changes.keys ()
+    # end def keys
+
+    def values (self) :
+        return self.attribute_changes.values ()
+    # end def values
+
+    def __getitem__ (self, key) :
+        return self.attribute_changes [key]
+    # end def __getitem__
+
+    def __iter__ (self) :
+        return iter (self.attribute_changes)
+    # end def __iter__
+
+    def __len__ (self) :
+        return len (self.attribute_changes)
+    # end def __len__
+
+    def __nonzero__ (self) :
+        return bool (self.attribute_changes)
+    # end def __nonzero__
+
+    def __getitem__ (self, key) :
+        return self.attribute_changes [key]
+    # end def __getitem__
+
+    def __repr__ (self) :
+        return "(old = %r, new = %r)" % (self.old, self.new)
+    # end def __repr__
+
+# end class Attr_C_Summary
 
 class Pid (TFL.Meta.Object) :
     """Change summary for a single `pid`."""
@@ -82,9 +161,13 @@ class Pid (TFL.Meta.Object) :
     def attribute_changes (self) :
         result = TFL.defaultdict (Attr_Summary)
         for c in self.changes :
-            ### XXX SCM.Change.Attr_Composite
+            r = result
+            if isinstance (c, MOM.SCM.Change.Attr_Composite) :
+                r = result [c.attr_name] = Attr_C_Summary \
+                    (result.get (c.attr_name))
             for a in set (itertools.chain (c.old_attr, c.new_attr)) :
-                result [a].add (c.old_attr.get (a), c.new_attr.get (a))
+                (result if a == "last_cid" else r) \
+                    [a].add (c.old_attr.get (a), c.new_attr.get (a))
         return result
     # end def attribute_changes
 

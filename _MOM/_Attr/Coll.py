@@ -104,7 +104,8 @@ class _Mixin_ (object) :
     def record_attr_change (self, old) :
         ### communicate change of `self` to `self.owner`
         if self.owner is not None :
-            self.owner.record_attr_change ({self.attr_name : self.P_Type (old)})
+            self.owner.record_attr_change \
+                ({self.attr_name : self.owner_attr.as_string (old)})
     # end def record_attr_change
 
 # end class _Mixin_

@@ -64,6 +64,8 @@
 #    16-Aug-2010 (MG) `_Entity_.register` add `last_cid` to the
 #                     `attr_changes` dict of the scope
 #     7-Sep-2010 (CT) `attr_changes` added
+#     8-Sep-2010 (CT) `_register_last_cid` added
+#     8-Sep-2010 (CT) Put `str` of `last_cid` into `new_attr` and `old_attr`
 #    ««revision-date»»···
 #--
 
@@ -213,8 +215,6 @@ class Non_Undoable (_Change_) :
 class _Entity_ (Undoable) :
     """Model a change of an MOM entity"""
 
-    new_attr = old_attr = {}
-
     change_count = 1
 
     def __init__ (self, entity) :
@@ -224,6 +224,8 @@ class _Entity_ (Undoable) :
         self.tool_version = entity.home_scope.Version.id
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
+        self.new_attr     = {}
+        self.old_attr     = {}
         self._entity      = weakref.ref (entity)
     # end def __init__
 
@@ -263,6 +265,7 @@ class _Entity_ (Undoable) :
             entity = _entity ()
         if entity is not None :
             entity.last_cid = self.cid
+            self._register_last_cid (scope, entity)
             if entity.pid :
                 entity.home_scope.attr_changes [entity.pid].add ("last_cid")
     # end def register
@@ -320,6 +323,10 @@ class _Entity_ (Undoable) :
             , type_name     = self.type_name
             )
     # end def _pickle_attrs
+
+    def _register_last_cid (self, scope, entity) :
+        self.new_attr ["last_cid"] = str (self.cid)
+    # end def _register_last_cid
 
     def _repr (self) :
         result = ["%s %s %s" % (self.kind, self.type_repr, self.epk)]
@@ -417,7 +424,7 @@ class Destroy (_Entity_) :
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
         self.old_attr = dict \
-            (self._to_save (entity), last_cid = entity.last_cid)
+            (self._to_save (entity), last_cid = str (entity.last_cid))
     # end def __init__
 
     def redo (self, scope) :
@@ -429,6 +436,10 @@ class Destroy (_Entity_) :
         self._create      (scope, self.old_attr)
         self.__super.undo (scope)
     # end def undo
+
+    def _register_last_cid (self, scope, entity) :
+        pass ### nothing to do here
+    # end def _register_last_cid
 
     def _restore (self, scope) :
         self._destroy (scope)
@@ -443,7 +454,7 @@ class _Attr_ (_Entity_) :
 
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity)
-        self.old_attr = dict (old_attr, last_cid = entity.last_cid)
+        self.old_attr = dict (old_attr, last_cid = str (entity.last_cid))
     # end def __init__
 
     def redo (self, scope) :
