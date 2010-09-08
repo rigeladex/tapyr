@@ -36,6 +36,8 @@
 #                     to `Link1`
 #     7-Sep-2010 (CT) `_change_callback` guarded by
 #                     `date in change.attr_changes`
+#     8-Sep-2010 (CT) `dates.computed` changed to use temporary
+#                     `Recurrence_Rule` if not explicit one is given
 #    ««revision-date»»···
 #--
 
@@ -93,12 +95,16 @@ class Event (_Ancestor_Essence) :
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj.recurrence :
-                    return list (obj.recurrence.occurrences)
-                elif obj.date :
-                    return [obj.date.start]
-                else :
-                    return []
+                rr = obj.recurrence
+                if not rr :
+                    if not obj.date :
+                        return []
+                    ### create temporary Recurrence_Spec and Recurrence_Rule
+                    ### without putting them into `home_scope`
+                    scope = obj.home_scope
+                    rs = scope.EVT.Recurrence_Spec._etype (obj, scope = scope)
+                    rr = scope.EVT.Recurrence_Rule._etype (rs,  scope = scope)
+                return list (rr.occurrences)
             # end def computed
 
         # end class dates
