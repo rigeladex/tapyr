@@ -33,6 +33,7 @@
 #     7-Sep-2010 (CT) `Table` added
 #     7-Sep-2010 (CT) `old` added to `_override` and passed to
 #                     `record_attr_change`
+#     8-Sep-2010 (CT) `M_Coll.__init__` changed to apply `_override` only once
 #    ««revision-date»»···
 #--
 
@@ -52,13 +53,16 @@ class M_Coll (TFL.Meta.M_Class) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        for mn in cls._state_changers :
-            m = getattr (cls, mn, None)
-            if m is not None :
-                setattr (cls, mn, cls._override (m))
         if cls.P_Type is not None :
             if cls.P_Type not in cls.Table :
                 cls.Table [cls.P_Type] = cls
+                for mn in cls._state_changers :
+                    m = getattr (cls, mn, None)
+                    if m is not None :
+                        setattr (cls, mn, cls._override (m))
+            else :
+                ### sub-class overrriding `attr_name`
+                assert cls.Table [cls.P_Type] is bases [0]
     # end def __init__
 
     @staticmethod
@@ -100,7 +104,7 @@ class _Mixin_ (object) :
     def record_attr_change (self, old) :
         ### communicate change of `self` to `self.owner`
         if self.owner is not None :
-            self.owner.record_attr_change ({self.attr_name : old})
+            self.owner.record_attr_change ({self.attr_name : self.P_Type (old)})
     # end def record_attr_change
 
 # end class _Mixin_

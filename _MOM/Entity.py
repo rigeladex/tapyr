@@ -153,6 +153,7 @@
 #    19-Aug-2010 (CT) `Id_Entity.ui_display_format` changed to use
 #                     `has_substance` to check attributes
 #     3-Sep-2010 (CT) `epk_hash` removed
+#     8-Sep-2010 (CT) `record_attr_change` implemented
 #    ««revision-date»»···
 #--
 
@@ -408,15 +409,8 @@ class Entity (TFL.Meta.Object) :
     # end def raw_attr
 
     def record_attr_change (self, kw) :
-        gen = \
-            (   (name, attr.get_raw (self))
-            for attr, name, value in self._record_iter (kw)
-            if  attr.get_value (self) != value
-            )
-        with self._record_context (gen, self.SCM_Change_Attr) as rvr :
-            if rvr :
-                print "***", self, "\n   ",rvr
-            pass ### XXX
+        if kw and not self.electric :
+            self.home_scope.record_change (self.SCM_Change_Attr, self, kw)
     # end def record_attr_change
 
     def reset_syncable (self) :
