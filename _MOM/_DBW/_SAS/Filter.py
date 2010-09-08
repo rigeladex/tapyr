@@ -34,6 +34,8 @@
 #    10-Aug-2010 (MG) `TFL.Q_Exp.Get._sa_filter` fixed
 #     2-Sep-2010 (CT) `Get.name`  changed to `Get._name` (ditto for
 #                     `Get.getter`)
+#     6-Sep-2010 (MG) The join list now requires a 3 element (the join
+#                     conidition or `None`)
 #    ««revision-date»»···
 #--
 

@@ -36,6 +36,7 @@
 #     5-Jul-2010 (MG) `load_root` and `register_scope` are now method's of
 #                     the session
 #    15-Aug-2010 (MG) `pid_query` added
+#     8-Sep-2010 (MG) `register_change` call of `session.update_change` added
 #    ««revision-date»»···
 #--
 
@@ -131,7 +132,6 @@ class Manager (MOM.EMS._Manager_) :
 
     def register_change (self, change) :
         self.session.add_change (change)
-        ###self.session.flush  ()
         if change.children :
             Table  = MOM.SCM.Change._Change_._sa_table
             update = Table.update ().where \
@@ -140,6 +140,7 @@ class Manager (MOM.EMS._Manager_) :
             self.session.execute (update)
         self.scope.db_cid = change.cid
         self.__super.register_change (change)
+        self.session.update_change   (change)
     # end def register_change
 
     def register_scope (self) :

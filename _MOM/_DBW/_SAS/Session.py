@@ -81,6 +81,7 @@
 #                     children changes as well
 #                     `_consume_change_iter` fixed to add the parent change
 #                     before the children will be added
+#     8-Sep-2010 (MG) `Session_S.update_change` added
 #    ««revision-date»»···
 #--
 
@@ -614,6 +615,14 @@ class Session_S (_Session_) :
                 for cc in self._modify_change_iter (c.children) :
                     yield cc
     # end def _modify_change_iter
+
+    def update_change (self, change) :
+        table  = MOM.SCM.Change._Change_._sa_table
+        self.connection.execute \
+            ( table.update (values = dict (data = change.as_pickle ())
+                           ).where (table.c.cid == change.cid)
+            )
+    # end def update_change
 
 # end class Session_S
 
