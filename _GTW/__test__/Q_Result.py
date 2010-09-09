@@ -51,8 +51,12 @@ _q_result = r"""
     3
     >>> len (q.all ())
     3
+    >>> q.attr ("first_name").count ()
+    3
     >>> sorted (q.attr ("first_name"))
     [u'fn 1', u'fn 2', u'fn 3']
+    >>> q.attrs (Q.first_name).count ()
+    3
     >>> sorted (q.attrs (Q.first_name))
     [(u'fn 1',), (u'fn 2',), (u'fn 3',)]
 

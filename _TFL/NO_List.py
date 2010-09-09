@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,6 +46,8 @@
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    29-May-2009 (MG) `*items`, `*keys`, and `*values` added
 #     3-Nov-2009 (CT)  Usage of `has_key` removed
+#     9-Sep-2010 (MG) `M_Name_Dict`, `Name_Dict` changed to allow overriding
+#                     the `key_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +74,7 @@ class M_Name_Dict (TFL.Meta.M_Class) :
     def name_of_key (method) :
         def _ (self, key, * args, ** kw) :
             if not isinstance (key, basestring) :
-                key = key.name
+                key = getattr (key, self.key_attr_name)
             return method (self, key, * args, ** kw)
         return _
     # end def name_of_key
@@ -82,6 +84,7 @@ class M_Name_Dict (TFL.Meta.M_Class) :
 class Name_Dict (dict) :
 
     __metaclass__    = M_Name_Dict
+    key_attr_name    = "name"
     _convert_methods = \
         ("get", "pop", "__getitem__", "__delitem__", "__setitem__")
 

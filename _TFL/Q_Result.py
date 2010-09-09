@@ -33,6 +33,8 @@
 #    19-Feb-2010 (MG) `first` fixed
 #     1-Sep-2010 (CT) `attr`, `attrs`, and `set` added
 #     2-Sep-2010 (CT) `set` changed to use `SET` of `Q.Get`
+#     7-Sep-2010 (MG) `attr` and `attrs` return a `Q_Result` instance instead
+#                     of being an iterator
 #    ««revision-date»»···
 #--
 
@@ -146,8 +148,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     def attr (self, getter) :
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
-        for r in self :
-            yield getter (r)
+        return Q_Result ((getter (r) for r in self))
     # end def attr
 
     def attrs (self, * getters) :
@@ -163,8 +164,7 @@ class _Q_Result_ (TFL.Meta.Object) :
                     getter = getattr (Q, getter)
                 yield getter
         getters = tuple (_g (getters))
-        for r in self :
-            yield tuple (g (r) for g in getters)
+        return Q_Result ((tuple (g (r) for g in getters) for r in self))
     # end def attrs
 
     def count (self) :

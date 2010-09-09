@@ -42,20 +42,24 @@
 #     2-Sep-2010 (MG) `_attrs` factored and improved to used
 #                     `kind.from_pickle_cargo`
 #     6-Sep-2010 (MG) Old implementaion removed, `_join` changed to allow
-#                     specifying of the koin condition
+#                     specifying of the join condition
+#     7-Sep-2010 (MG) `attr` and `attrs` changed to return `_Q_Result_Attrs_`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
-from   _MOM                 import MOM
-import _TFL._Meta.Object
+import _TFL.Decorator
 import _TFL.Accessor
+import _TFL._Meta.Object
+
+from   _MOM                 import MOM
 import _MOM._DBW._SAS.Filter
 import _MOM._DBW._SAS.Sorted_By
+
 from    sqlalchemy          import sql
 
-class Q_Result (TFL.Meta.Object) :
-    """Q_Result using SQL-query funtion for the operations"""
+class _Q_Result_ (TFL.Meta.Object) :
+    """Base class for Q_Result using SQLAlchemy to query a SQL database."""
 
     _sa_query = None
 
@@ -84,11 +88,8 @@ class Q_Result (TFL.Meta.Object) :
     # end def __init__
 
     def attr (self, getter) :
-        if isinstance (getter, basestring) :
-            getter = getattr (MOM.Q, getter)
-        col        = getter (self.e_type._SAQ)
-        for r in self._attrs (col) :
-            yield r [0]
+        return self._Q_Result_Attrs_ \
+            (self.e_type, self.session, self, getter)
     # end def attr
 
     def attrs (self, * getters) :
@@ -97,41 +98,9 @@ class Q_Result (TFL.Meta.Object) :
                 ( "%s.attrs() requires at least one argument"
                 % self.__class__.__name
                 )
-        def _g (getters) :
-            Q   = MOM.Q
-            SAQ = self.e_type._SAQ
-            for getter in getters :
-                if isinstance (getter, basestring) :
-                    getter = getattr (Q, getter)
-                yield getter (SAQ)
-        cols = tuple (_g (getters))
-        for r in self._attrs (* cols) :
-            yield tuple (r)
+        return self._Q_Result_Attrs_ \
+            (self.e_type, self.session, self, getters)
     # end def attrs
-
-    def _attrs (self, * requested) :
-        comp_query = MOM.DBW.SAS.MOM_Composite_Query
-        scope      = self.session.scope
-        columns    = []
-        kinds      = []
-        for req_col in requested :
-            if isinstance (req_col, comp_query) :
-                cols = req_col._COLUMNS
-                columns.extend (cols)
-            else :
-                cols = req_col
-                columns.append (cols)
-            kinds.append ((req_col.MOM_Kind, cols))
-        for r in self._query_rows (self.sa_query (columns)) :
-            result = []
-            for k, cols in kinds :
-                if isinstance (cols, (list, tuple)) :
-                    pc = dict ((c.MOM_Kind.attr.name, (r [c], )) for c in cols)
-                else :
-                    pc = r [cols]
-                result.append (k.from_pickle_cargo (scope, (pc, )))
-            yield result
-    # end def _attrs
 
     def all (self) :
         return list (self)
@@ -178,10 +147,6 @@ class Q_Result (TFL.Meta.Object) :
         except IndexError :
             return None
     # end def first
-
-    def _from_row (self, row) :
-        return self.session.instance_from_row (self.e_type, row)
-    # end def _from_row
 
     def _join (self, sa_query, joins, joined_tables) :
         if joins :
@@ -306,9 +271,88 @@ class Q_Result (TFL.Meta.Object) :
             yield self._from_row (row)
     # end def __iter__
 
+# end class _Q_Result_
+
+class Q_Result (_Q_Result_) :
+    """Reconstruct MOM entities from the query results."""
+
+    def _from_row (self, row) :
+        return self.session.instance_from_row (self.e_type, row)
+    # end def _from_row
+
 # end class Q_Result
 
-class Q_Result_Changes (Q_Result) :
+@TFL.Add_New_Method (_Q_Result_)
+class _Q_Result_Attrs_ (_Q_Result_) :
+    """Return only the values of the explicitly stated attributes instead of
+       MOM instances.
+    """
+
+    _Query_Attrs    = dict \
+        (_Q_Result_._Query_Attrs, _attr_cols = (_Q_Result_.List (), True))
+
+    def __init__ (self, e_type, session, parent, getter_or_getters = None) :
+        self.__super.__init__ (e_type, session, parent)
+        if getter_or_getters is not None :
+            if not isinstance (getter_or_getters, tuple) :
+                getters        = (getter_or_getters, )
+                self._from_row = self._from_row_single
+            else :
+                getters        = getter_or_getters
+                self._from_row = self._from_row_tuple
+            self._attr_cols.extend (self._getters_to_columns (getters))
+    # end def __init__
+
+    def _getters_to_columns (self, getters) :
+        Q   = MOM.Q
+        SAQ = self.e_type._SAQ
+        for getter in getters :
+            if isinstance (getter, basestring) :
+                getter = getattr (Q, getter)
+            yield getter (SAQ)
+    # end def _getters_to_columns
+
+    def _from_row_tuple (self, row) :
+        result = []
+        scope  = self.session.scope
+        for k, cols in self._kinds :
+            if isinstance (cols, (list, tuple)) :
+                pc = dict ((c.MOM_Kind.attr.name, (row [c], )) for c in cols)
+            else :
+                pc = row [cols]
+            result.append (k.from_pickle_cargo (scope, (pc, )))
+        return tuple (result)
+    # end def _from_row_tuple
+
+    def _from_row_single (self, row) :
+        return self._from_row_tuple (row) [0]
+    # end def _from_row_single
+
+    def sa_query (self, columns = (), joins = False) :
+        if self._sa_query is None :
+            if not columns :
+                joins       = False
+                comp_query  = MOM.DBW.SAS.MOM_Composite_Query
+                columns     = []
+                self._kinds = []
+                for req_col in self._attr_cols :
+                    if isinstance (req_col, comp_query) :
+                        cols = req_col._COLUMNS
+                        columns.extend (cols)
+                    else :
+                        cols = req_col
+                        columns.append (cols)
+                    self._kinds.append ((req_col.MOM_Kind, cols))
+            else :
+                joins       = True
+                self._kinds = [(None, c) for c in columns]
+            self._sa_query = self.__super.sa_query (columns, joins)
+        return self._sa_query
+    # end def sa_query
+
+# end class _Q_Result_Attrs_
+
+class Q_Result_Changes (_Q_Result_) :
     """Special handling of attribute translation for changes"""
 
     def _sql_query (self, columns, joins) :

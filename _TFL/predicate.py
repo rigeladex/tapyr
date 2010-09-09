@@ -171,6 +171,7 @@
 #     1-Jan-2010 (CT)  `first_diff` added
 #     2-Jun-2010 (CT)  `undotted_dict` added
 #    30-Jun-2010 (CT)  `sliced` added
+#    08-Sep-2010 (MG)  `dotted_dict` added
 #    ««revision-date»»···
 #--
 
@@ -1045,6 +1046,30 @@ def undotted_dict (d) :
         target [n] = v
     return result
 # end def undotted_dict
+
+def dotted_dict (d, prefix = "") :
+    """Return a flat dict where sub-dicts will be merged into the top level
+       dict and the keys will be combined with `.`s
+
+       >>> def show (d) :
+       ...     for k, v in sorted (d.iteritems ()) :
+       ...         print k, v
+       >>> show (dotted_dict (dict (a = 1, b = dict (c = 2, d = dict (e = 3)))))
+       a 1
+       b.c 2
+       b.d.e 3
+"""
+    result = {}
+    if prefix :
+        prefix = "%s." % (prefix, )
+    for k, v in d.iteritems () :
+        k = "%s%s" % (prefix, k)
+        if isinstance (v, dict) :
+            result.update (dotted_dict (v, k))
+        else :
+            result [k] = v
+    return result
+# end def dotted_dict
 
 def union (* lists) :
     """Compute the union of lists.

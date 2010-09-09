@@ -86,7 +86,8 @@ class Session (TFL.Meta.Object) :
         self._data_dict = value
     # end def _data
 
-    def New_ID (self, check = None, salt = "") :
+    @classmethod
+    def New_ID (cls, check = None, salt = "") :
         try :
             pid = os.getpid ()
         except AttributeError :
