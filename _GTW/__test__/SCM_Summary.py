@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     3-Sep-2010 (CT) Creation
+#     8-Sep-2010 (CT) Creation continued..
+#     9-Sep-2010 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -59,8 +61,8 @@ _test_code = r"""
     >>> bir   = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
     >>> r1    = SRM.Race_Result (bir, 1, points = 8)
     >>> r2    = SRM.Race_Result (bir, 2, points = 4)
-    >>> p1    = SWP.Page ("event-1-text", text = "Text for the 1. event")
-    >>> p2    = SWP.Page ("event-2-text", text = "Text for the 2. event")
+    >>> p1    = SWP.Page ("event-1-text", text = "Text for the 1. event", date = (("start", "2010/09/08"), ))
+    >>> p2    = SWP.Page ("event-2-text", text = "Text for the 2. event", date = (("start", "2010/09/08"), ))
     >>> e1    = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
     >>> rs1   = RS (e1, date_exceptions = ["2010/08/15"])
     >>> rr1   = RR (rs1.epk_raw, start = "20100801", count = 7, unit = "Weekly", raw = True)

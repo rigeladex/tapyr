@@ -66,6 +66,7 @@
 #     7-Sep-2010 (CT) `attr_changes` added
 #     8-Sep-2010 (CT) `_register_last_cid` added
 #     8-Sep-2010 (CT) Put `str` of `last_cid` into `new_attr` and `old_attr`
+#     9-Sep-2010 (CT) `_new_attr` vs `new_attr` (don't store `last_cid`)
 #    ««revision-date»»···
 #--
 
@@ -224,8 +225,8 @@ class _Entity_ (Undoable) :
         self.tool_version = entity.home_scope.Version.id
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
-        self.new_attr     = {}
         self.old_attr     = {}
+        self._new_attr    = {}
         self._entity      = weakref.ref (entity)
     # end def __init__
 
@@ -238,7 +239,8 @@ class _Entity_ (Undoable) :
 
     @property
     def attr_changes (self) :
-        return set (itertools.chain (self.new_attr, self.old_attr))
+        return set \
+            (itertools.chain (self._new_attr, self.old_attr, ["last_cid"]))
     # end def attr_changes
 
     def do_callbacks (self, scope) :
@@ -251,6 +253,14 @@ class _Entity_ (Undoable) :
         etm = scope [self.type_name]
         return etm.pid_query (self.pid)
     # end def entity
+
+    @property
+    def new_attr (self) :
+        result = self._new_attr
+        if self.cid :
+            result = dict (result, last_cid = str (self.cid))
+        return result
+    # end def new_attr
 
     def register (self, scope) :
         try :
@@ -265,7 +275,6 @@ class _Entity_ (Undoable) :
             entity = _entity ()
         if entity is not None :
             entity.last_cid = self.cid
-            self._register_last_cid (scope, entity)
             if entity.pid :
                 entity.home_scope.attr_changes [entity.pid].add ("last_cid")
     # end def register
@@ -291,8 +300,7 @@ class _Entity_ (Undoable) :
 
     def _create (self, scope, attr) :
         etm = scope [self.type_name]
-        attr.pop ("last_cid", None)
-        result = etm (* self.epk, raw = True, last_cid = self.cid, ** attr)
+        result = etm (* self.epk, raw = True, ** attr)
         return result
     # end def _create
 
@@ -306,9 +314,8 @@ class _Entity_ (Undoable) :
         if attr :
             entity = self.entity (scope)
             if entity :
-                last_cid = attr.pop ("last_cid", None)
                 entity.set_raw (** attr)
-                if last_cid is None :
+                if "last_cid" not in attr :
                     entity.last_cid = self.cid
     # end def _modify
 
@@ -316,17 +323,13 @@ class _Entity_ (Undoable) :
         return dict \
             ( self.__super._pickle_attrs ()
             , epk           = self.epk
-            , new_attr      = self.new_attr
+            , _new_attr     = self._new_attr
             , old_attr      = self.old_attr
             , pid           = self.pid
             , tool_version  = self.tool_version
             , type_name     = self.type_name
             )
     # end def _pickle_attrs
-
-    def _register_last_cid (self, scope, entity) :
-        self.new_attr ["last_cid"] = str (self.cid)
-    # end def _register_last_cid
 
     def _repr (self) :
         result = ["%s %s %s" % (self.kind, self.type_repr, self.epk)]
@@ -377,7 +380,7 @@ class Create (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.new_attr     = self._to_save (entity)
+        self._new_attr    = self._to_save (entity)
         self.pickle_cargo = entity.as_pickle_cargo ()
     # end def __init__
 
@@ -427,6 +430,11 @@ class Destroy (_Entity_) :
             (self._to_save (entity), last_cid = str (entity.last_cid))
     # end def __init__
 
+    @property
+    def new_attr (self) :
+        return self._new_attr
+    # end def new_attr
+
     def redo (self, scope) :
         self.__super.redo (scope)
         self._restore     (scope)
@@ -436,10 +444,6 @@ class Destroy (_Entity_) :
         self._create      (scope, self.old_attr)
         self.__super.undo (scope)
     # end def undo
-
-    def _register_last_cid (self, scope, entity) :
-        pass ### nothing to do here
-    # end def _register_last_cid
 
     def _restore (self, scope) :
         self._destroy (scope)
@@ -488,7 +492,7 @@ class Attr (_Attr_) :
         self.__super.__init__ (entity, old_attr)
         ### XXX maybe register is the better place to set the attr_changes
         entity.home_scope.attr_changes [entity.pid].update (old_attr)
-        self.new_attr = self._to_change (entity, old_attr)
+        self._new_attr = self._to_change (entity, old_attr)
     # end def __init__
 
 # end class Attr
@@ -515,7 +519,7 @@ class Attr_Composite (_Attr_) :
         ### XXX maybe register is the better place to set the attr_changes
         entity.home_scope.attr_changes [entity.pid].add (composite.attr_name)
         self.attr_name = composite.attr_name
-        self.new_attr  = self._to_change (composite, old_attr)
+        self._new_attr  = self._to_change (composite, old_attr)
     # end def __init__
 
     def entity (self, scope) :
