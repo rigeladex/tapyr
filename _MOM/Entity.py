@@ -154,6 +154,8 @@
 #                     `has_substance` to check attributes
 #     3-Sep-2010 (CT) `epk_hash` removed
 #     8-Sep-2010 (CT) `record_attr_change` implemented
+#    13-Sep-2010 (CT) `_FO_.__getattr__` changed to return `FO` of `Entity`
+#                     instances
 #    ««revision-date»»···
 #--
 
@@ -259,11 +261,14 @@ class Entity (TFL.Meta.Object) :
                 result = getattr (obj, name)
             else :
                 ckd = att.get_value (obj)
-                uid = getattr (ckd, "ui_display", None)
-                if uid :
-                    result = uid
+                if isinstance (ckd, Entity) :
+                    return ckd.FO
                 else :
-                    result = att.get_raw (obj)
+                    uid = getattr (ckd, "ui_display", None)
+                    if uid :
+                        result = uid
+                    else :
+                        result = att.get_raw (obj)
             setattr (self, name, result)
             return result
         # end def __getattr__

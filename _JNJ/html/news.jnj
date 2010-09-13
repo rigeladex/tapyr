@@ -31,6 +31,7 @@
 ##    27-Jan-2010 (CT) Creation
 ##    26-Feb-2010 (CT) Added some `{#--#}` to avoid spurious whitespace
 ##    17-Mar-2010 (CT) `permalink` added
+##    13-Sep-2010 (CT) Use `e.date.start` before `e.date`
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,7 +40,7 @@
   <div class="news-entry">
     <div class="news-meta">
       <span class="news-author">{{ e.creator }}</span>{#--#}
-      <span class="news-date">{{ e.date }}</span>{#--#}
+      <span class="news-date">{{ GTW.firstof (e.date.start, e.date) }}</span>{#--#}
       <div  class="news-title">
         {%- onion e.permalink %}
           {%- head -%}

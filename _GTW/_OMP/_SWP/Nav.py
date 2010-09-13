@@ -165,14 +165,14 @@ class Admin (object) :
                           , title       = _("Time interval")
                           )
                     , "detail"
-                    , AID
-                        ( "recurrence"
-                        , FGD (render_mode = "div_seq")
-                        , legend = _("Recurrence rule")
-                        )
                     , legend    = _("Events associated to page")
                     , render_mode = "div_seq"
                     , title     = _("Events")
+                    )
+                , LID
+                    ( "GTW.OMP.EVT.Recurrence_Spec"
+                    , FGD (render_mode = "div_seq")
+                    , legend = _("Recurrence rule")
                     )
                 )
             , LID

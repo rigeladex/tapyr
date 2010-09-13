@@ -48,7 +48,7 @@ _test_code = r"""
 
     >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = u"calculated with REGATTA.yellow8.com", status = "final", raw = True))
     1
-    >>> reg.FO.result
+    >>> unicode (reg.FO.result)
     u'2009/05/26 10:20:00, calculated with REGATTA.yellow8.com, final'
     >>> scope.commit ()
 

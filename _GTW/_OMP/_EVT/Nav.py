@@ -63,25 +63,24 @@ class Admin (object) :
         , Form_args =
             ( FGD
                 ( "object", "date", "time", "detail", "short_title"
-                , AID
-                    ( "recurrence"
-                    , CID
-                        ( "rules"
-                        , legend = _("Recurrence rules")
-                        , popup  = False
-                        )
-                    , CID
-                        ( "rule_exceptions"
-                        , legend = _("Recurrence exceptions")
-                        , popup  = False
-                        )
-                    , FGD
-                        ( "dates", "date_exceptions"
-                        )
-                    , legend = _("Recurrence rule set")
-                    )
                 )
-            ,
+            , LID
+                ( "GTW.OMP.EVT.Recurrence_Spec"
+                , CID
+                    ( "rules"
+                    , legend = _("Recurrence rules")
+                    , popup  = False
+                    )
+                , CID
+                    ( "rule_exceptions"
+                    , legend = _("Recurrence exceptions")
+                    , popup  = False
+                    )
+                , FGD
+                    ( "dates", "date_exceptions"
+                    )
+                , legend = _("Recurrence rule set")
+                )
             )
         )
 
