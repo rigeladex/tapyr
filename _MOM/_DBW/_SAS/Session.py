@@ -537,17 +537,17 @@ class Session_S (_Session_) :
     # end def delete
 
     def expunge (self) :
-        self._pid_map         = {}
+        self._pid_map = {}
         ### only used during loading of changes from the database
-        self._cid_map         = {}
+        self._cid_map = {}
     # end def expunge
 
     def flush (self) :
         #self.engine.echo = True
         for pid, attrs in self.scope.attr_changes.iteritems () :
-            entity  = self._pid_map.get  (pid, None)
+            entity = self._pid_map.get   (pid, None)
+            ### XXX `entity` might be None here ???
             entity.__class__._SAS.update (self, entity, attrs)
-        self.scope.attr_changes.clear    ()
         #self.engine.echo = False
     # end def flush
 
@@ -555,10 +555,11 @@ class Session_S (_Session_) :
         ### get the real etype for this entity from the database
         e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
         pid    = row [e_type._SAQ.pid]
-        if pid not in self._pid_map :
-            entity              = e_type._SAS.reconstruct (self, row)
-            self._pid_map [pid] = entity
-        return self._pid_map [pid]
+        pim    = self._pid_map
+        if pid not in pim :
+            entity    = e_type._SAS.reconstruct (self, row)
+            pim [pid] = entity
+        return pim [pid]
     # end def instance_from_row
 
     def load_root (self, scope) :

@@ -57,6 +57,8 @@
 #     1-Jul-2010 (CT) `compact` added
 #    11-Aug-2010 (CT) `register_change` changed to call `change.register`
 #    16-Aug-2010 (CT) `commit` changed to check for `uncommitted_changes`
+#    14-Sep-2010 (CT) Use `MOM.SCM.Summary` instance instead of `list` to
+#                     hold `uncommitted_changes`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +66,7 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 
 import _MOM._EMS
+import _MOM._SCM.Summary
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -100,7 +103,7 @@ class _Manager_ (TFL.Meta.Object) :
         self.db_url              = db_url
         self.DBW = DBW           = scope.app_type.DBW
         self.pm                  = DBW.Pid_Manager (self, db_url)
-        self.uncommitted_changes = []
+        self.uncommitted_changes = MOM.SCM.Summary ()
     # end def __init__
 
     def async_changes (self, * filters, ** kw) :
@@ -126,7 +129,7 @@ class _Manager_ (TFL.Meta.Object) :
         if self.uncommitted_changes :
             self.scope.db_cid = self.max_cid
             self.session.commit ()
-            self.uncommitted_changes = []
+            self.uncommitted_changes.clear ()
     # end def commit
 
     def compact (self) :
@@ -214,7 +217,7 @@ class _Manager_ (TFL.Meta.Object) :
 
     def register_change (self, change) :
         if change.parent is None :
-            self.uncommitted_changes.append (change)
+            self.uncommitted_changes.add (change)
         change.register (self.scope)
     # end def register_change
 
@@ -225,7 +228,7 @@ class _Manager_ (TFL.Meta.Object) :
 
     def rollback (self) :
         self.session.rollback ()
-        self.uncommitted_changes = []
+        self.uncommitted_changes.clear ()
     # end def rollback
 
     def _query_multi_root (self, Type) :

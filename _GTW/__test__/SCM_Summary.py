@@ -29,6 +29,7 @@
 #     3-Sep-2010 (CT) Creation
 #     8-Sep-2010 (CT) Creation continued..
 #     9-Sep-2010 (CT) Creation continued...
+#    14-Sep-2010 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -77,8 +78,8 @@ _test_code = r"""
     >>> rs1.dates.append (datetime.datetime (2010, 9, 8, 0, 0))
     >>> rs1.dates.append (datetime.datetime (2010, 10, 8, 0, 0))
     >>>
-    >>> cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+    >>> ucc = scope.uncommitted_changes
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
     <Change Summary for pid 1: newborn, 1 change>
@@ -131,7 +132,7 @@ _test_code = r"""
     <Change Summary for pid 20: newborn>
         <Create GTW.OMP.EVT.Recurrence_Rule (u'(u\'(u"(u\\\'event-1-text\\\',)", ((\\\'start\\\', \\\'2010/08/18\\\'),), ())\',)', u'', u'', 'GTW.OMP.EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '20', 'start' : '2010/08/01', 'unit' : u'Weekly'}>
 
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
     ...
     1 [('last_cid', (old = None, new = '22')), ('loa', (old = u'', new = u'2.43')), ('max_crew', (old = None, new = u'1'))]
@@ -154,6 +155,14 @@ _test_code = r"""
     19 [('date_exceptions', (old = None, new = u'2010/08/15')), ('dates', (old = u'', new = u'2010/09/08,2010/10/08')), ('last_cid', (old = None, new = '29'))]
     20 [('count', (old = None, new = u'7')), ('last_cid', (old = None, new = '20')), ('start', (old = None, new = '2010/08/01')), ('unit', (old = None, new = u'Weekly'))]
 
+    >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
+    ...     print pid, sorted (ca)
+    1 ['last_cid', 'loa']
+    7 ['last_cid', 'salutation', 'title']
+    9 ['date', 'last_cid']
+    13 ['discarded', 'last_cid']
+    19 ['dates', 'last_cid']
+
     >>> scope.commit ()
 
     >>> print rs1.attr_as_code()
@@ -164,9 +173,8 @@ _test_code = r"""
     1
     >>> rs1.dates.pop ()
     datetime.datetime(2010, 10, 8, 0, 0)
-    >>>
-    >>> cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
     <Change Summary for pid 17: 1 change>
@@ -174,18 +182,23 @@ _test_code = r"""
     <Change Summary for pid 19: 2 changes>
         <Modify GTW.OMP.EVT.Recurrence_Spec (u'(u"(u\'event-1-text\',)", ((\'start\', \'2010/08/18\'),), ())', 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '29'}, new-values = {'date_exceptions' : u'', 'last_cid' : '30'}>
         <Modify GTW.OMP.EVT.Recurrence_Spec (u'(u"(u\'event-1-text\',)", ((\'finish\', \'2010/08/19\'), (\'start\', \'2010/08/13\')), ())', 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '30'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '32'}>
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
     ...
     17 [('date', (old = (('start', '2010/08/18'),), new = (('finish', '2010/08/19'), ('start', '2010/08/13')))), ('last_cid', (old = '18', new = '31'))]
     19 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '29', new = '32'))]
 
+    >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
+    ...     print pid, sorted (ca)
+    17 ['date', 'last_cid']
+    19 ['date_exceptions', 'dates', 'last_cid']
+
     >>> scope.commit ()
 
     >>> SRM.Boat.query (sail_number = 1134).one ().destroy ()
     >>> b.destroy ()
-    >>> cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
     <Change Summary for pid 5: just died>
@@ -203,7 +216,8 @@ _test_code = r"""
         <Destroy GTW.OMP.SRM.Race_Result (u'(u\'(u"(u\\\'Optimist\\\',)", u\\\'AUT\\\', u\\\'1107\\\')\', u\'(u"(((\\\'finish\\\', \\\'2010/05/13\\\'), (\\\'start\\\', \\\'2010/05/13\\\')), u\\\'Himmelfahrt\\\')", u"(u\\\'Optimist\\\',)")\')', u'1', 'GTW.OMP.SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '24', 'points' : u'8'}>
     <Change Summary for pid 14: just died>
         <Destroy GTW.OMP.SRM.Race_Result (u'(u\'(u"(u\\\'Optimist\\\',)", u\\\'AUT\\\', u\\\'1107\\\')\', u\'(u"(((\\\'finish\\\', \\\'2010/05/13\\\'), (\\\'start\\\', \\\'2010/05/13\\\')), u\\\'Himmelfahrt\\\')", u"(u\\\'Optimist\\\',)")\')', u'2', 'GTW.OMP.SRM.Race_Result'), old-values = {'last_cid' : '15', 'points' : u'4'}>
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
     ...
     5 [('last_cid', (old = '5', new = None))]
@@ -212,21 +226,28 @@ _test_code = r"""
     13 [('discarded', (old = u'yes', new = None)), ('last_cid', (old = '24', new = None)), ('points', (old = u'8', new = None))]
     14 [('last_cid', (old = '15', new = None)), ('points', (old = u'4', new = None))]
 
+    >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
+    ...     print pid, sorted (ca)
+
     >>> scope.commit ()
 
     >>> _ = p.lifetime.set (start = "1997/11/16")
     >>> _ = p.lifetime.set (finish = "2077/11/30")
-    >>> cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
     <Change Summary for pid 7: 2 changes>
         <Modify/C GTW.OMP.PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'GTW.OMP.PAP.Person'), old-values = {'last_cid' : '23', 'start' : u''}, new-values = {'last_cid' : '38', 'start' : '1997/11/16'}>
         <Modify/C GTW.OMP.PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'GTW.OMP.PAP.Person'), old-values = {'finish' : u'', 'last_cid' : '38'}, new-values = {'finish' : '2077/11/30', 'last_cid' : '39'}>
-    >>> for pid, csp in sorted (cs_1.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
     ...
     7 [('last_cid', (old = '23', new = '39')), ('lifetime', (old = (('finish', u''), ('start', u'')), new = (('finish', '2077/11/30'), ('start', '1997/11/16'))))]
+
+    >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
+    ...     print pid, sorted (ca)
+    7 ['last_cid', 'lifetime']
 
 """
 
@@ -277,11 +298,11 @@ rev.date.finish = datetime.date (2010, 05, 13)
 rs1.dates.append (datetime.datetime (2010, 9, 8, 0, 0))
 rs1.dates.append (datetime.datetime (2010, 10, 8, 0, 0))
 
-cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
-for pid, csp in sorted (cs_1.iteritems ()) :
+ucc = scope.uncommitted_changes
+for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     print csp
 
-for pid, csp in sorted (cs_1.iteritems ()) :
+for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     print csp.pid, sorted (csp.attribute_changes.iteritems ())
 
 scope.commit ()
@@ -293,11 +314,10 @@ rs1.set (date_exceptions = None)
 rs1.event.date.set (finish = datetime.date (2010, 8, 19), start = datetime.date (2010, 8, 13))
 rs1.dates.pop ()
 
-cs_1 = MOM.SCM.Summary (scope.uncommitted_changes)
-for pid, csp in sorted (cs_1.iteritems ()) :
+for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     print csp
 
-for pid, csp in sorted (cs_1.iteritems ()) :
+for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     print csp.pid, sorted (csp.attribute_changes.iteritems ())
 
 scope.commit ()

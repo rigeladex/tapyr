@@ -120,6 +120,8 @@ class Scope (TFL.Meta.Object) :
     root                   = None
     _roots                 = None
 
+    attr_changes           = property \
+        (TFL.Getter.ems.uncommitted_changes.changed_attrs)
     changes                = property (TFL.Getter.historian.total_changes)
     changes_to_save        = property \
         (lambda s : len (s.ems.uncommitted_changes))
@@ -204,7 +206,6 @@ class Scope (TFL.Meta.Object) :
         self.root           = None
         self.db_cid         = 0
         self.historian      = MOM.SCM.Tracker (self)
-        self.attr_changes   = TFL.mm_set ()
         self.db_errors      = []
         self._attr_errors   = []
         self._etm           = {}
@@ -291,8 +292,7 @@ class Scope (TFL.Meta.Object) :
     # end def async_changes
 
     def commit (self) :
-        self.ems.commit         ()
-        self.attr_changes.clear ()
+        self.ems.commit ()
     # end def commit
 
     @TFL.Meta.Lazy_Method_RLV
@@ -478,21 +478,18 @@ class Scope (TFL.Meta.Object) :
     # end def rename
 
     def rollback (self) :
-        self.ems.rollback       ()
-        self.attr_changes.clear ()
-        self.count_change       ()
+        self.ems.rollback ()
+        self.count_change ()
     # end def rollback
 
     def start_change_recorder (self) :
         if not self.historian._rec_stack :
             self.historian.push_recorder (MOM.SCM.Tracker.Preferred_Recorder)
-        self.attr_changes.clear ()
     # end def start_change_recorder
 
     def stop_change_recorder (self) :
         if self.historian._rec_stack :
             self.historian.pop_recorder ()
-        self.attr_changes.clear ()
     # end def stop_change_recorder
 
     def user_diff (self, other, ignore = ()) :

@@ -29,6 +29,8 @@
 #     2-Sep-2010 (CT) Creation
 #     3-Sep-2010 (CT) Creation continued
 #     8-Sep-2010 (CT) Creation continued..
+#    14-Sep-2010 (CT) `Summary` rewritten to store `changes`,
+#                     `Pid.changed_attrs` added
 #    ««revision-date»»···
 #--
 
@@ -172,6 +174,17 @@ class Pid (TFL.Meta.Object) :
     # end def attribute_changes
 
     @TFL.Meta.Once_Property
+    def changed_attrs (self) :
+        result = set ()
+        for c in self.changes :
+            if isinstance (c, MOM.SCM.Change.Attr_Composite) :
+                result.update ((c.attr_name, "last_cid"))
+            else :
+                result.update (c.old_attr)
+        return result
+    # end def changed_attrs
+
+    @TFL.Meta.Once_Property
     def changes (self) :
         return sorted (self._changes, key = TFL.Getter.cid)
     # end def changes
@@ -224,58 +237,66 @@ class Pid (TFL.Meta.Object) :
 class Summary (TFL.Meta.Object) :
     """Summary of changes per `pid`"""
 
-    def __init__ (self, changes) :
-        self._map = TFL.defaultdict_kd (Pid)
-        self.add (changes)
+    def __init__ (self) :
+        self.clear ()
     # end def __init__
 
-    def add (self, changes) :
-        map = self._map
-        for c in changes :
-            if c.pid :
-                map [c.pid].add (c)
-            if c.children :
-                self.add (c.children)
+    @property
+    def changed_attrs (self) :
+        result = dict ()
+        for pid, csp in self.by_pid.iteritems () :
+            if csp.changed_attrs and not csp.is_dead :
+                result [pid] = csp.changed_attrs
+        return result
+    # end def changed_attrs
+
+    @property
+    def changes (self) :
+        return self._changes
+    # end def changes
+
+    @property
+    def by_pid (self) :
+        result = self._by_pid
+        if result is None :
+            result = self._by_pid = TFL.defaultdict_kd (Pid)
+            self._add_to_by_pid (self._changes)
+        return result
+    # end def by_pid
+
+    def add (self, c) :
+        self._changes.append (c)
+        self._by_pid = None
     # end def add
 
-    def items (self) :
-        return self._map.items ()
-    # end def items
+    def clear (self) :
+        self._changes = []
+        self._by_pid = None
+    # end def clear
 
-    def iteritems (self) :
-        return self._map.iteritems ()
-    # end def iteritems
+    def _add_to_by_pid (self, changes) :
+        by_pid = self._by_pid
+        for c in changes :
+            if c.pid :
+                by_pid [c.pid].add (c)
+            if c.children :
+                self._add_to_by_pid (c.children)
+    # end def _add_to_by_pid
 
-    def iterkeys (self) :
-        return self._map.iterkeys ()
-    # end def iterkeys
-
-    def itervalues (self) :
-        return self._map.itervalues ()
-    # end def itervalues
-
-    def keys (self) :
-        return self._map.keys ()
-    # end def keys
-
-    def values (self) :
-        return self._map.values ()
-    # end def values
-
-    def __getitem__ (self, key) :
-        return self._map [key]
+    def __getitem__ (self, index) :
+        return self._changes [index]
     # end def __getitem__
 
     def __iter__ (self) :
-        return iter (self._map)
+        return iter (self._changes)
     # end def __iter__
 
     def __len__ (self) :
-        return len (self._map)
+        return len (self._changes)
     # end def __len__
 
     def __nonzero__ (self) :
-        return bool (self._map)
+        return bool (self._changes)
     # end def __nonzero__
 
 # end class Summary

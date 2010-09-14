@@ -275,8 +275,6 @@ class _Entity_ (Undoable) :
             entity = _entity ()
         if entity is not None :
             entity.last_cid = self.cid
-            if entity.pid :
-                entity.home_scope.attr_changes [entity.pid].add ("last_cid")
     # end def register
 
     @classmethod
@@ -490,8 +488,6 @@ class Attr (_Attr_) :
 
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity, old_attr)
-        ### XXX maybe register is the better place to set the attr_changes
-        entity.home_scope.attr_changes [entity.pid].update (old_attr)
         self._new_attr = self._to_change (entity, old_attr)
     # end def __init__
 
@@ -516,10 +512,8 @@ class Attr_Composite (_Attr_) :
         if owner is not None :
             entity = owner
         self.__super.__init__ (entity, old_attr)
-        ### XXX maybe register is the better place to set the attr_changes
-        entity.home_scope.attr_changes [entity.pid].add (composite.attr_name)
         self.attr_name = composite.attr_name
-        self._new_attr  = self._to_change (composite, old_attr)
+        self._new_attr = self._to_change (composite, old_attr)
     # end def __init__
 
     def entity (self, scope) :

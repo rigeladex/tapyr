@@ -135,6 +135,8 @@ _test_code = r"""
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> b = scope.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
+    >>> b.last_cid
+    8
     >>> c = scope.query_changes (cid = b.last_cid).one ()
     >>> print c ### change in source scope
     <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'last_cid' : '8'}>
@@ -200,6 +202,8 @@ _test_code = r"""
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> b = scope_u.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
+    >>> b.last_cid
+    8
     >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope
     >>> print c
     <Copy GTW.OMP.SRM.Boat_Class (u'Aquila Schwert', 'GTW.OMP.SRM.Boat_Class'), new-values = {'last_cid' : '8'}>
