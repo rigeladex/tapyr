@@ -156,8 +156,12 @@
 #     8-Sep-2010 (CT) `record_attr_change` implemented
 #    13-Sep-2010 (CT) `_FO_.__getattr__` changed to return `FO` of `Entity`
 #                     instances
+#    14-Sep-2010 (CT) `unicode_literals` added
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import, division
+from   __future__  import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -521,7 +525,7 @@ class Entity (TFL.Meta.Object) :
     # end def _kw_check_predicates
 
     def _print_attr_err (self, exc) :
-        print self, exc
+        print (self, exc)
     # end def _print_attr_err
 
     @TFL.Meta.Class_and_Instance_Method
@@ -587,11 +591,12 @@ class Entity (TFL.Meta.Object) :
                                 (self, name, val, attr.kind, err)
                             )
                         if __debug__ :
-                            print err
+                            print (err)
                         to_do.append ((attr, u"", None))
                     except StandardError as exc :
-                        print exc, \
-                          ( "; object %s, attribute %s: %s [%s]"
+                        print \
+                          ( exc
+                          , "; object %s, attribute %s: %s [%s]"
                           % (self, name, val, type (val))
                           )
                         if __debug__ :
