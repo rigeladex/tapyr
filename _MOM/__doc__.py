@@ -1563,7 +1563,7 @@ Replaying changes
 
     >>> t3.max_weight = 25
     >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
-    [(('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), {'max_weight': ((25.0,), '<Missing>')})]
+    [(('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), {'max_weight': ((25.0,), u'<Missing>')})]
     >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
     1
     >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
