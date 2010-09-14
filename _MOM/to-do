@@ -8,9 +8,9 @@ x MOM.Pred.Kind: Region
 x Change_Summary: consolidate list of changes into one summary change per
   object
 
-- Scope.commit
+x Scope.commit
 
-  * check region predicates for each object in change summary
+  x check region predicates for each object in change summary
 
 - merge of changes:
 

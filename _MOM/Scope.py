@@ -79,6 +79,9 @@
 #     1-Jul-2010 (CT) `migrate` renamed to `copy`
 #    11-Aug-2010 (CT) Optional argument `ignore` added to `user_diff`
 #    17-Aug-2010 (CT) Properties `db_meta_data` and `readonly` added
+#    14-Sep-2010 (CT) `r_incorrect` added (and optional argument `eiter`
+#                     added to `_check_inv`)
+#    14-Sep-2010 (CT) Call to `r_incorrect` added to `commit`
 #    ««revision-date»»···
 #--
 
@@ -292,6 +295,12 @@ class Scope (TFL.Meta.Object) :
     # end def async_changes
 
     def commit (self) :
+        ems = self.ems
+        ucc = ems.uncommitted_changes
+        if ucc :
+            errs = self.r_incorrect (eiter = ucc.entities (ems))
+            if errs :
+                raise MOM.Error.Invariant_Errors (errs)
         self.ems.commit ()
     # end def commit
 
@@ -442,6 +451,15 @@ class Scope (TFL.Meta.Object) :
         return self.ems.changes (* filter, ** kw)
     # end def query_changes
 
+    @TFL.Meta.Lazy_Method_RLV
+    def r_incorrect (self, gauge = Gauge_Logger (), eiter = None) :
+        """Returns all objects which are region-wise incorrect (i.e., violating
+           the object's `region` predicates).
+        """
+        with self.as_active () :
+            return self._check_inv (gauge, "region", eiter)
+    # end def i_incorrect
+
     def record_change (self, Change, * args, ** kw) :
         result = self.historian.record (Change, * args, ** kw)
         if result is not None :
@@ -538,12 +556,14 @@ class Scope (TFL.Meta.Object) :
         return self._deprecated_type_names.get (name, name)
     # end def _canonical_name
 
-    def _check_inv (self, gauge, kind) :
+    def _check_inv (self, gauge, kind, eiter = None) :
         err_result = []
         wrn_result = []
         sk         = self.MOM.Id_Entity.sort_key
-        for e in self.entity_iter_gauge \
-            (gauge, label = "Checking %s invariants" % kind) :
+        if eiter is None :
+            eiter  = self.entity_iter_gauge \
+                (gauge, label = "Checking %s invariants" % kind)
+        for e in eiter :
             try :
                 ews = e._pred_man.check_kind (kind, e)
                 if ews.errors :

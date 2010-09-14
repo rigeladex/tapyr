@@ -98,12 +98,12 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def load_root
 
-    def pid_query (self, pid, Type) :
+    def pid_query (self, pid, Type = None) :
         pid        = int (pid)
         result     = self.session.pid_query (pid)
         if result is None :
             result = self.pm.query          (pid)
-        if not isinstance (result, Type.Essence) :
+        if Type is not None and not isinstance (result, Type.Essence) :
             raise LookupError \
                 ( "Pid `%r` is instance of type %s, not of type `%s`"
                 % (pid, result.type_name, Type.type_name)

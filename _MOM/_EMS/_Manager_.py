@@ -59,6 +59,7 @@
 #    16-Aug-2010 (CT) `commit` changed to check for `uncommitted_changes`
 #    14-Sep-2010 (CT) Use `MOM.SCM.Summary` instance instead of `list` to
 #                     hold `uncommitted_changes`
+#    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
 #    ««revision-date»»···
 #--
 
@@ -187,9 +188,9 @@ class _Manager_ (TFL.Meta.Object) :
         return self.session.pcm
     # end def pcm
 
-    def pid_query (self, pid, Type) :
+    def pid_query (self, pid, Type = None) :
         result = self.pm.query (int (pid))
-        if not isinstance (result, Type.Essence) :
+        if Type is not None and not isinstance (result, Type.Essence) :
             raise LookupError \
                 ( "Pid `%r` is instance of type %s, not of type `%s`"
                 % (pid, result.type_name, Type.type_name)

@@ -31,6 +31,7 @@
 #     8-Sep-2010 (CT) Creation continued..
 #    14-Sep-2010 (CT) `Summary` rewritten to store `changes`,
 #                     `Pid.changed_attrs` added
+#    14-Sep-2010 (CT) `entities` added
 #    ««revision-date»»···
 #--
 
@@ -273,6 +274,12 @@ class Summary (TFL.Meta.Object) :
         self._changes = []
         self._by_pid = None
     # end def clear
+
+    def entities (self, ems) :
+        for pid, csp in self.by_pid.iteritems () :
+            if not csp.is_dead :
+                yield ems.pid_query (pid)
+    # end def entities
 
     def _add_to_by_pid (self, changes) :
         by_pid = self._by_pid
