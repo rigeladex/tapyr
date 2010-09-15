@@ -32,6 +32,7 @@
 #    14-Sep-2010 (CT) `Summary` rewritten to store `changes`,
 #                     `Pid.changed_attrs` added
 #    14-Sep-2010 (CT) `entities` added
+#    15-Sep-2010 (CT) Use `SCM.Change.modified_attrs` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -178,10 +179,7 @@ class Pid (TFL.Meta.Object) :
     def changed_attrs (self) :
         result = set ()
         for c in self.changes :
-            if isinstance (c, MOM.SCM.Change.Attr_Composite) :
-                result.update ((c.attr_name, "last_cid"))
-            else :
-                result.update (c.old_attr)
+            result.update (c.modified_attrs)
         return result
     # end def changed_attrs
 

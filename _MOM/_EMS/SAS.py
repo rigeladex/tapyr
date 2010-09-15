@@ -37,6 +37,8 @@
 #                     the session
 #    15-Aug-2010 (MG) `pid_query` added
 #     8-Sep-2010 (MG) `register_change` call of `session.update_change` added
+#    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
+#    15-Sep-2010 (CT) `Change_Summary` added to manage `pending_attr_changes`
 #    ««revision-date»»···
 #--
 
@@ -44,24 +46,50 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 from   _TFL.I18N             import _, _T, _Tn
 
-import _MOM._EMS._Manager_
 import _MOM.Entity
 import _MOM._DBW._SAS.Q_Result
+import _MOM._EMS._Manager_
+import _MOM._SCM.Summary
 import _TFL._Meta.Object
 
 import _TFL.defaultdict
+import _TFL.multimap
 
 import itertools
 
 from   sqlalchemy  import exc        as SAS_Exception
 from   sqlalchemy  import sql
 
+class Change_Summary (MOM.SCM.Summary) :
+
+    def add (self, c) :
+        self.__super.add  (c)
+        self._add_pending (c)
+    # end def add
+
+    def clear (self) :
+        self.__super.clear ()
+        self.pending_attr_changes = TFL.mm_set ()
+    # end def clear
+
+    def _add_pending (self, c) :
+        mo = c.modified_attrs
+        if mo :
+            self.pending_attr_changes [c.pid].update (mo)
+        for cc in c.children :
+            self._add_pending (cc)
+    # end def _add_pending
+
+# end class Change_Summary
+
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
-    type_name = "SAS"
+    type_name          = "SAS"
 
-    Q_Result  = MOM.DBW.SAS.Q_Result
+    Change_Summary     = Change_Summary
+
+    Q_Result           = MOM.DBW.SAS.Q_Result
 
     def add (self, entity, id = None) :
         ses = self.session

@@ -38,11 +38,12 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 
 import _TFL._Meta.Object
+import _TFL.Record
 
 class DB_Man (TFL.Meta.Object) :
     """Manager for data bases of MOM."""
 
-    attr_changes           = {}
+    uncommitted_changes    = TFL.Record (pending_attr_changes = {})
     ilk                    = "PC"
     src                    = None
 

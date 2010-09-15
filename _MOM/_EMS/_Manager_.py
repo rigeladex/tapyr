@@ -60,6 +60,7 @@
 #    14-Sep-2010 (CT) Use `MOM.SCM.Summary` instance instead of `list` to
 #                     hold `uncommitted_changes`
 #    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
+#    15-Sep-2010 (CT) `Change_Summary` defined as class variable
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,8 @@ class _Manager_ (TFL.Meta.Object) :
     """Base class for entity managers."""
 
     type_name          = "XXX"
+
+    Change_Summary     = MOM.SCM.Summary
 
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
@@ -104,7 +107,7 @@ class _Manager_ (TFL.Meta.Object) :
         self.db_url              = db_url
         self.DBW = DBW           = scope.app_type.DBW
         self.pm                  = DBW.Pid_Manager (self, db_url)
-        self.uncommitted_changes = MOM.SCM.Summary ()
+        self.uncommitted_changes = self.Change_Summary ()
     # end def __init__
 
     def async_changes (self, * filters, ** kw) :

@@ -67,6 +67,7 @@
 #     8-Sep-2010 (CT) `_register_last_cid` added
 #     8-Sep-2010 (CT) Put `str` of `last_cid` into `new_attr` and `old_attr`
 #     9-Sep-2010 (CT) `_new_attr` vs `new_attr` (don't store `last_cid`)
+#    15-Sep-2010 (CT) `modified_attrs` added
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     children           = TFL.Meta.Alias_Property ("history")
     cid                = None
     epk                = None
+    modified_attrs     = ()
     parent             = None
     pid                = None
     time               = None
@@ -491,6 +493,11 @@ class Attr (_Attr_) :
         self._new_attr = self._to_change (entity, old_attr)
     # end def __init__
 
+    @TFL.Meta.Once_Property
+    def modified_attrs (self) :
+        return set (self.old_attr)
+    # end def modified_attrs
+
 # end class Attr
 
 class Attr_Composite (_Attr_) :
@@ -521,6 +528,11 @@ class Attr_Composite (_Attr_) :
         if entity is not None :
             return getattr (entity, self.attr_name)
     # end def entity
+
+    @TFL.Meta.Once_Property
+    def modified_attrs (self) :
+        return set ((self.attr_name, "last_cid"))
+    # end def modified_attrs
 
     @TFL.Meta.Once_Property
     def type_repr (self) :

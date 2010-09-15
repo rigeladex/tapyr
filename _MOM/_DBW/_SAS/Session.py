@@ -82,6 +82,8 @@
 #                     `_consume_change_iter` fixed to add the parent change
 #                     before the children will be added
 #     8-Sep-2010 (MG) `Session_S.update_change` added
+#    15-Sep-2010 (CT) `flush` changed to use `pending_attr_changes`,
+#                     guard for `entity` added
 #    ««revision-date»»···
 #--
 
@@ -544,10 +546,15 @@ class Session_S (_Session_) :
 
     def flush (self) :
         #self.engine.echo = True
-        for pid, attrs in self.scope.attr_changes.iteritems () :
-            entity = self._pid_map.get   (pid, None)
-            ### XXX `entity` might be None here ???
-            entity.__class__._SAS.update (self, entity, attrs)
+        pending = self.scope.uncommitted_changes.pending_attr_changes
+        for pid, attrs in pending.iteritems () :
+            entity = self._pid_map.get (pid)
+            if entity is not None :
+                entity.__class__._SAS.update (self, entity, attrs)
+            else :
+                if __debug__ :
+                    print "SAS.Session.flush: Pid", pid, "not in map", attrs
+        pending.clear ()
         #self.engine.echo = False
     # end def flush
 

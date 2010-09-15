@@ -82,6 +82,7 @@
 #    14-Sep-2010 (CT) `r_incorrect` added (and optional argument `eiter`
 #                     added to `_check_inv`)
 #    14-Sep-2010 (CT) Call to `r_incorrect` added to `commit`
+#    15-Sep-2010 (CT) `attr_changes` removed
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,6 @@ from   _TFL.predicate         import split_hst, rsplit_hst
 import _TFL.Accessor
 import _TFL.Context
 import _TFL.Decorator
-import _TFL.multimap
 import _TFL.Ordered_Set
 import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
@@ -123,8 +123,6 @@ class Scope (TFL.Meta.Object) :
     root                   = None
     _roots                 = None
 
-    attr_changes           = property \
-        (TFL.Getter.ems.uncommitted_changes.changed_attrs)
     changes                = property (TFL.Getter.historian.total_changes)
     changes_to_save        = property \
         (lambda s : len (s.ems.uncommitted_changes))
