@@ -33,6 +33,7 @@
 #                     `Pid.changed_attrs` added
 #    14-Sep-2010 (CT) `entities` added
 #    15-Sep-2010 (CT) Use `SCM.Change.modified_attrs` instead of home-grown code
+#    16-Sep-2010 (CT) `Summary`: s/clear/_clear/
 #    ««revision-date»»···
 #--
 
@@ -237,7 +238,7 @@ class Summary (TFL.Meta.Object) :
     """Summary of changes per `pid`"""
 
     def __init__ (self) :
-        self.clear ()
+        self._clear ()
     # end def __init__
 
     @property
@@ -268,11 +269,6 @@ class Summary (TFL.Meta.Object) :
         self._by_pid = None
     # end def add
 
-    def clear (self) :
-        self._changes = []
-        self._by_pid = None
-    # end def clear
-
     def entities (self, ems) :
         for pid, csp in self.by_pid.iteritems () :
             if not csp.is_dead :
@@ -287,6 +283,11 @@ class Summary (TFL.Meta.Object) :
             if c.children :
                 self._add_to_by_pid (c.children)
     # end def _add_to_by_pid
+
+    def _clear (self) :
+        self._changes = []
+        self._by_pid = None
+    # end def _clear
 
     def __getitem__ (self, index) :
         return self._changes [index]

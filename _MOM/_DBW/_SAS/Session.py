@@ -250,9 +250,7 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def _setup_columns (self, e_type, e_type_columns, prefix = "") :
         cm = self.column_map
-        for kind in ( k for k in e_type.attributes.itervalues ()
-                      if k.save_to_db
-                    ) :
+        for kind in e_type.db_attr :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 s_prefix = kind._sa_prefix
                 columns  = TFL.defaultdict (ddict_list)

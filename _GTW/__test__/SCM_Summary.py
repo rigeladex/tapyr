@@ -158,10 +158,23 @@ _test_code = r"""
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
     1 ['last_cid', 'loa']
+    2 ['last_cid']
+    3 ['last_cid']
+    5 ['last_cid']
+    6 ['last_cid']
     7 ['last_cid', 'salutation', 'title']
+    8 ['last_cid']
     9 ['date', 'last_cid']
+    10 ['last_cid']
+    11 ['last_cid']
+    12 ['last_cid']
     13 ['discarded', 'last_cid']
+    14 ['last_cid']
+    15 ['last_cid']
+    16 ['last_cid']
+    17 ['last_cid']
     19 ['dates', 'last_cid']
+    20 ['last_cid']
 
     >>> scope.commit ()
 
@@ -174,6 +187,7 @@ _test_code = r"""
     >>> rs1.dates.pop ()
     datetime.datetime(2010, 10, 8, 0, 0)
 
+    >>> ucc = scope.uncommitted_changes
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
@@ -198,6 +212,7 @@ _test_code = r"""
     >>> SRM.Boat.query (sail_number = 1134).one ().destroy ()
     >>> b.destroy ()
 
+    >>> ucc = scope.uncommitted_changes
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
@@ -234,6 +249,7 @@ _test_code = r"""
     >>> _ = p.lifetime.set (start = "1997/11/16")
     >>> _ = p.lifetime.set (finish = "2077/11/30")
 
+    >>> ucc = scope.uncommitted_changes
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp
     ...
@@ -314,6 +330,7 @@ rs1.set (date_exceptions = None)
 rs1.event.date.set (finish = datetime.date (2010, 8, 19), start = datetime.date (2010, 8, 13))
 rs1.dates.pop ()
 
+ucc = scope.uncommitted_changes
 for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     print csp
 

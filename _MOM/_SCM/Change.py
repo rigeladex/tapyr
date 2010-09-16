@@ -67,7 +67,8 @@
 #     8-Sep-2010 (CT) `_register_last_cid` added
 #     8-Sep-2010 (CT) Put `str` of `last_cid` into `new_attr` and `old_attr`
 #     9-Sep-2010 (CT) `_new_attr` vs `new_attr` (don't store `last_cid`)
-#    15-Sep-2010 (CT) `modified_attrs` added
+#    15-Sep-2010 (CT) `modified_attrs` added (to `Attr` and `Attr_Composite`)
+#    16-Sep-2010 (CT) `modified_attrs` added `Create`
 #    ««revision-date»»···
 #--
 
@@ -383,6 +384,11 @@ class Create (_Entity_) :
         self._new_attr    = self._to_save (entity)
         self.pickle_cargo = entity.as_pickle_cargo ()
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def modified_attrs (self) :
+        return set (("last_cid", ))
+    # end def modified_attrs
 
     def redo (self, scope) :
         self._create      (scope, self.new_attr)

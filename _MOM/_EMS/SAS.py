@@ -39,6 +39,7 @@
 #     8-Sep-2010 (MG) `register_change` call of `session.update_change` added
 #    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
 #    15-Sep-2010 (CT) `Change_Summary` added to manage `pending_attr_changes`
+#    16-Sep-2010 (CT) `Change_Summary`: s/clear/_clear/
 #    ««revision-date»»···
 #--
 
@@ -67,11 +68,6 @@ class Change_Summary (MOM.SCM.Summary) :
         self._add_pending (c)
     # end def add
 
-    def clear (self) :
-        self.__super.clear ()
-        self.pending_attr_changes = TFL.mm_set ()
-    # end def clear
-
     def _add_pending (self, c) :
         mo = c.modified_attrs
         if mo :
@@ -79,6 +75,11 @@ class Change_Summary (MOM.SCM.Summary) :
         for cc in c.children :
             self._add_pending (cc)
     # end def _add_pending
+
+    def _clear (self) :
+        self.__super._clear ()
+        self.pending_attr_changes = TFL.mm_set ()
+    # end def _clear
 
 # end class Change_Summary
 

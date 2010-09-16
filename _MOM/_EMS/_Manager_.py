@@ -61,6 +61,8 @@
 #                     hold `uncommitted_changes`
 #    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
 #    15-Sep-2010 (CT) `Change_Summary` defined as class variable
+#    16-Sep-2010 (CT) Replace `uncommitted_changes` by new object instead of
+#                     calling `clear` on the existing one
 #    ««revision-date»»···
 #--
 
@@ -133,7 +135,7 @@ class _Manager_ (TFL.Meta.Object) :
         if self.uncommitted_changes :
             self.scope.db_cid = self.max_cid
             self.session.commit ()
-            self.uncommitted_changes.clear ()
+            self.uncommitted_changes = self.Change_Summary ()
     # end def commit
 
     def compact (self) :
@@ -232,7 +234,7 @@ class _Manager_ (TFL.Meta.Object) :
 
     def rollback (self) :
         self.session.rollback ()
-        self.uncommitted_changes.clear ()
+        self.uncommitted_changes = self.Change_Summary ()
     # end def rollback
 
     def _query_multi_root (self, Type) :
