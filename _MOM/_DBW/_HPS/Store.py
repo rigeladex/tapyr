@@ -358,7 +358,7 @@ class Store_PC (Store) :
                 with open (TFL.Filename (s, x_uri).name, "rb") as file :
                     for epc in pickle.load (file) :
                         yield epc
-    # end def produce
+    # end def produce_entities
 
     def _new_info (self) :
         return DB_Meta_Data.COPY \

@@ -146,6 +146,16 @@ _test_code = r"""
     >>> int (c.cid), int (c.children [0].cid)
     (8, 7)
 
+    >>> [s for s in scope if not s.last_cid] ### before expunge
+    []
+    >>> sum ((not s.last_cid) for s in scope), sum (bool (s.last_cid) for s in scope) ### before expunge
+    (0, 36)
+    >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
+    >>> [s for s in scope if not s.last_cid] ### after expunge
+    []
+    >>> sum ((not s.last_cid) for s in scope), sum (bool (s.last_cid) for s in scope)  ### after expunge
+    (0, 36)
+
     Save contents of scope to database and destroy scope:
 
     >>> scope.ems.compact ()
@@ -175,6 +185,8 @@ _test_code = r"""
     40
     >>> len (scope_t.SRM.Regatta_Event.query ().first ().regattas)
     2
+    >>> [s for (s, t) in zip (scope_s, scope_t) if s.last_cid != t.last_cid or not s.last_cid]
+    []
 
     Now we delete the original database and then migrate back into the
     original app-type/backend. Again, all entities, changes, cids,
@@ -201,6 +213,9 @@ _test_code = r"""
     40
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
+    >>> [s for (s, t) in zip (scope_t, scope_u) if s.last_cid != t.last_cid or not s.last_cid]
+    []
+
     >>> b = scope_u.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
     >>> print b.last_cid
     8
