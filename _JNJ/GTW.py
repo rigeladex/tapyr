@@ -42,6 +42,7 @@
 #     6-May-2010 (MG) `render_fofi_widget` exception handling improoved
 #     3-Aug-2010 (CT) Use `HTML.obfuscator` instead of home-grown code
 #     3-Aug-2010 (CT) `obfuscated` removed
+#    20-Sep-2010 (CT) `Sorted_By` added
 #    ««revision-date»»···
 #--
 
@@ -52,11 +53,12 @@ from   _GTW               import HTML
 
 import _JNJ.Environment
 
-import _TFL._Meta.Object
-
-import _TFL.Accessor
 from   _TFL               import sos
 from   _TFL.I18N          import _, _T, _Tn
+
+import _TFL._Meta.Object
+import _TFL.Accessor
+import _TFL.Sorted_By
 
 class GTW (TFL.Meta.Object) :
     """Provide additional global functions for Jinja templates."""
@@ -158,6 +160,7 @@ class GTW (TFL.Meta.Object) :
     # end def render_mode
 
     sorted     = staticmethod (sorted)
+    Sorted_By  = TFL.Sorted_By
 
     def tel_uri (self, phone_number, text = None, ** kw) :
         """Returns a telephone URI for `phone_number`.

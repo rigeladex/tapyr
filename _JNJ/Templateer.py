@@ -76,8 +76,9 @@ class Templateer (TFL.Meta.Object) :
         , gallery                      = "html/gallery.jnj"
         , login                        = "html/login.jnj"
         , photo                        = "html/photo.jnj"
-        , regatta_result               = "html/regatta_result.jnj"
         , regatta_registration         = "html/regatta_registration.jnj"
+        , regatta_result               = "html/regatta_result.jnj"
+        , regatta_result_teamrace      = "html/regatta_result_teamrace.jnj"
         , site_admin                   = "html/site_admin.jnj"
         )
 

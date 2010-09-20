@@ -35,6 +35,7 @@
 #    23-Jun-2010 (MG) `SRM.__init__` changed to use app-type instead of scope
 #    17-Aug-2010 (CT) `template` corrected
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
+#    20-Sep-2010 (CT) `Results._get_objects` changed to support team races, too
 #    ««revision-date»»···
 #--
 
@@ -78,26 +79,41 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     # end def _get_child
 
     def _get_objects (self) :
+        np     = _T (u"Participants")
+        nr     = _T (u"Results")
         obj    = self.obj
         result = []
+        scope  = self.scope
         sk     = TFL.Sorted_By \
             ("skipper.person.last_name", "skipper.person.first_name")
-        obj.boats = self.scope.SRM.Boat_in_Regatta.r_query \
-            (right = obj).order_by (sk).all ()
-        np = _T (u"Participants")
-        nr = _T (u"Results")
-        if obj.races :
-            result.append \
-                ( GTW.NAV.Page
-                    ( self
-                    , name        = u"%s.html" % (nr.lower (), )
-                    , short_title = nr
-                    , title       = u"%s %s" %
-                        ( _T (u"Results for"), self.short_title)
-                    , template    = u"regatta_result"
-                    , regatta     = obj
+        if obj.is_team_race :
+            if first (obj.teams).place :
+                result.append \
+                    ( GTW.NAV.Page
+                        ( self
+                        , name        = u"%s.html" % (nr.lower (), )
+                        , short_title = nr
+                        , title       = u"%s %s" %
+                            ( _T (u"Results for"), self.short_title)
+                        , template    = u"regatta_result_teamrace"
+                        , regatta     = obj
+                        )
                     )
-                )
+        else :
+            obj.boats = scope.SRM.Boat_in_Regatta.r_query \
+                (right = obj).order_by (sk).all ()
+            if obj.races :
+                result.append \
+                    ( GTW.NAV.Page
+                        ( self
+                        , name        = u"%s.html" % (nr.lower (), )
+                        , short_title = nr
+                        , title       = u"%s %s" %
+                            ( _T (u"Results for"), self.short_title)
+                        , template    = u"regatta_result"
+                        , regatta     = obj
+                        )
+                    )
         result.append \
             ( GTW.NAV.Page
                 ( self
@@ -136,17 +152,18 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
 
     def _get_objects (self) :
         pkw    = self.page_args
-        result = self._get_pages ()
+        result = []
         scope  = self.obj.home_scope
         today  = datetime.date.today ()
         for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
-            if r.races or r.event.date.start > today :
+            if r.boats or r.teams :
                 kw  = dict \
                     ( pkw
                     , ETM       = scope [r.type_name]
                     , E_Type    = r.__class__
                     )
                 result.append (Regatta (self, r, page_args = pkw, ** kw))
+        result.extend (self._get_pages ())
         return result
     # end def _get_objects
 

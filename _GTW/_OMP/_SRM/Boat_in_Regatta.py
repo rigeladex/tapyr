@@ -29,6 +29,7 @@
 #    19-Apr-2010 (CT) Creation
 #    10-May-2010 (CT) `place` added
 #     6-Sep-2010 (CT) `race_results` removed (now implemented as `Link1`)
+#    20-Sep-2010 (CT) `rank` added
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,14 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             min_value          = 1
 
         # end class points
+
+        class rank (A_Int) :
+            """Rank of registration of boat in regatta."""
+
+            kind               = Attr.Optional
+            default            = 0
+
+        # end class rank
 
         class registration_date (A_Date) :
             """Date of registration."""
