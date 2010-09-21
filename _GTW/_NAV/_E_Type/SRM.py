@@ -78,6 +78,15 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
             return result
     # end def _get_child
 
+    if 0 :
+        def _get_entries (self) :
+            try :
+                return self.__super._get_entries ()
+            except Exception as exc :
+                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
+                raise
+        # end def _get_entries
+
     def _get_objects (self) :
         np     = _T (u"Participants")
         nr     = _T (u"Results")
@@ -114,13 +123,17 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                         , regatta     = obj
                         )
                     )
+        head = _T (u"List of participants for")
         result.append \
             ( GTW.NAV.Page
                 ( self
+                , head_line   = u"%s %s<br />%s, %s" %
+                    ( _T (u"Registration list")
+                    , obj.name, obj.event.short_title, obj.event.FO.date
+                    )
                 , name        = u"%s.html" % (np.lower (), )
                 , short_title = np
-                , title       = u"%s %s" %
-                    ( _T (u"List of participants for"), self.short_title)
+                , title       = u"%s %s"   % (head, self.short_title)
                 , template    = u"regatta_registration"
                 , regatta     = obj
                 )

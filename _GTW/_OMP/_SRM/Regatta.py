@@ -34,6 +34,7 @@
 #    11-May-2010 (CT) `result` added
 #    31-Aug-2010 (CT) `is_team_race` added to `Regatta_C`
 #     6-Sep-2010 (MG) `Regatta.is_relevant` added
+#    21-Sep-2010 (CT) `Regatta_H.is_team_race` added
 #    ««revision-date»»···
 #--
 
@@ -210,6 +211,13 @@ class Regatta_H (_Ancestor_Essence) :
 
         # end class handicap
 
+        class is_team_race (A_Boolean) :
+
+            kind               = Attr.Const
+            default            = False
+
+        # end class is_team_race
+
         class name (_Ancestor.name) :
 
             auto_up_depends    = ("handicap", )
@@ -219,6 +227,7 @@ class Regatta_H (_Ancestor_Essence) :
             # end def computed
 
         # end class name
+
     # end class _Attributes
 
 # end class Regatta_H
