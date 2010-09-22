@@ -145,6 +145,7 @@
 #     6-Sep-2010 (CT) `_Computed_Collection_Mixin_` removed
 #     7-Sep-2010 (CT) `_Typed_Collection_Mixin_.__init__` changed to replace
 #                     `attr.R_Type` from `M_Coll.Table` if `record_changes`
+#    22-Sep-2010 (CT) `void_raw_values` factored
 #    ««revision-date»»···
 #--
 
@@ -182,6 +183,7 @@ class Kind (MOM.Prop.Kind) :
     sync                  = None
     Table                 = dict ()
     void_values           = property (lambda s : (None, ""))
+    void_raw_values       = property (lambda s : ("", s.attr.raw_default))
 
     _k_rank               = 0
 
@@ -542,7 +544,7 @@ class _Composite_Mixin_ (_Co_Base_) :
     """Mixin for composite attributes."""
 
     get_substance   = TFL.Meta.Alias_Property ("get_raw")
-    void_values     = property (lambda s : ("", s.attr.raw_default))
+    void_values     = property (lambda s : s.void_raw_values)
 
     @property
     def Class (self) :
@@ -695,7 +697,7 @@ class _Raw_Value_Mixin_ (Kind) :
 
     get_substance   = TFL.Meta.Alias_Property ("get_raw")
     needs_raw_value = True
-    void_values     = property (lambda s : ("", s.attr.raw_default))
+    void_values     = property (lambda s : s.void_raw_values)
 
     def get_pickle_cargo (self, obj) :
         return self.get_value (obj), self.get_raw (obj)

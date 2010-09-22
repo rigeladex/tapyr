@@ -34,6 +34,7 @@
 #    14-Sep-2010 (CT) `entities` added
 #    15-Sep-2010 (CT) Use `SCM.Change.modified_attrs` instead of home-grown code
 #    16-Sep-2010 (CT) `Summary`: s/clear/_clear/
+#    22-Sep-2010 (CT) `Summary.change_conflicts` and `_check_*_conflicts` added
 #    ««revision-date»»···
 #--
 
@@ -242,6 +243,15 @@ class Summary (TFL.Meta.Object) :
     # end def __init__
 
     @property
+    def by_pid (self) :
+        result = self._by_pid
+        if result is None :
+            result = self._by_pid = TFL.defaultdict_kd (Pid)
+            self._add_to_by_pid (self._changes)
+        return result
+    # end def by_pid
+
+    @property
     def changed_attrs (self) :
         result = dict ()
         for pid, csp in self.by_pid.iteritems () :
@@ -255,19 +265,29 @@ class Summary (TFL.Meta.Object) :
         return self._changes
     # end def changes
 
-    @property
-    def by_pid (self) :
-        result = self._by_pid
-        if result is None :
-            result = self._by_pid = TFL.defaultdict_kd (Pid)
-            self._add_to_by_pid (self._changes)
-        return result
-    # end def by_pid
-
     def add (self, c) :
         self._changes.append (c)
         self._by_pid = None
     # end def add
+
+    def change_conflicts (self, initial_values, scope) :
+        """Determine conflicts between `self.changes` and the entities of
+           `scope`, compared to attribute values in `initial_values`.
+        """
+        result = conflicts, merges = {}, {}
+        for csp in self.by_pid.itervalues () :
+            args = \
+                ( initial_values.get (csp.pid, {}), scope, csp
+                , conflicts, merges
+                )
+            if csp.is_dead :
+                self._check_dead_conflicts (* args)
+            elif csp.is_born :
+                self._check_born_conflicts (* args)
+            else :
+                self._check_attr_conflicts (* args)
+        return result
+    # end def change_conflicts
 
     def entities (self, ems) :
         for pid, csp in self.by_pid.iteritems () :
@@ -283,6 +303,55 @@ class Summary (TFL.Meta.Object) :
             if c.children :
                 self._add_to_by_pid (c.children)
     # end def _add_to_by_pid
+
+    def _check_attr_conflicts (self, initial_values, scope, csp, conflicts, merges) :
+        try :
+            entity = scope.ems.pid_query (csp.pid)
+        except LookupError :
+            conflicts ### XXX ???
+        else :
+            for name, asu in csp.attribute_changes.iteritems () :
+                attr = getattr (entity.__class__, name)
+                ### XXX following won't work for composite attributes ???
+                if not attr.electric :
+                    cva = attr.get_raw (entity)
+                    iva = initial_values.get (name)
+                    if asu.new != cva :
+                        if (  (iva not in attr.void_raw_values and iva != asu.old)
+                           or (cva not in attr.void_raw_values and iva != cva)
+                           ) :
+                            conflicts ### XXX ???
+            for name, iva in initial_values.iteritems () :
+                cva = attr.get_raw (entity)
+                if name not in csp.attribute_changes and iva != cva :
+                    merges ### XXX ???
+    # end def _check_attr_conflicts
+
+    def _check_born_conflicts (self, initial_values, scope, csp, conflicts, merges) :
+        create_change = csp.changes [0]
+        etm           = scope [create_change.type_name]
+        if etm.instance (create_change.epk, raw = True) :
+            for name, asu in csp.attribute_changes.iteritems () :
+                attr = getattr (entity.__class__, name)
+                if not attr.electric :
+                    cva  = attr.get_raw (entity)
+                    if cva not in attr.void_raw_values and and asu.new != cva :
+                        conflicts ### XXX ???
+    # end def _check_born_conflicts
+
+    def _check_dead_conflicts (self, initial_values, scope, csp, conflicts, merges) :
+        try :
+            entity = scope.ems.pid_query (csp.pid)
+        except LookupError :
+            pass
+        else :
+            for name, iva in initial_values.iteritems () :
+                attr = getattr (entity.__class__, name)
+                if not attr.electric :
+                    cva  = attr.get_raw (entity)
+                    if iva != cva :
+                        conflicts ### XXX ???
+    # end def _check_dead_conflicts
 
     def _clear (self) :
         self._changes = []
