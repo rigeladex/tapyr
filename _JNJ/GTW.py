@@ -43,6 +43,7 @@
 #     3-Aug-2010 (CT) Use `HTML.obfuscator` instead of home-grown code
 #     3-Aug-2010 (CT) `obfuscated` removed
 #    20-Sep-2010 (CT) `Sorted_By` added
+#    22-Sep-2010 (CT) `eval_sorted_by` added
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,22 @@ class GTW (TFL.Meta.Object) :
         """
         return self.uri (scheme = "mailto", uri = email, text = text, ** kw)
     # end def email_uri
+
+    def eval_sorted_by (self, key = None) :
+        """Returns a function that can be passed to `Sorted_By` to evaluate
+           the `sorted_by` attribute of an object, If `key` is passed in, the
+           `sorted_by` attribute of the attribute referred to by `key` will
+           be evaluated.
+        """
+        if key is None :
+            result = lambda obj : obj.sorted_by (obj)
+        else :
+            getter = getattr (TFL.Getter, key)
+            def result (obj) :
+                v = getter (obj)
+                return v.sorted_by (v)
+        return result
+    # end def eval_sorted_by
 
     def firstof (self, * args) :
         if len (args) == 1 and isinstance (args [0], (tuple, list)) :
