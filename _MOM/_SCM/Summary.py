@@ -54,18 +54,18 @@ import itertools
 class Attr_Summary (TFL.Meta.Object) :
     """Change summary for a single attribute of a single `pid`."""
 
-    undef = TFL.Undef ("attr")
-
-    def __init__ (self) :
-        self.old = self.undef
-        self.new = None
-    # end def __init__
+    cur = ini = None
+    new = old = undef = TFL.Undef ("attr")
 
     def add (self, old, new) :
         if self.old is self.undef :
             self.old = old
         self.new = new
     # end def add
+
+    def __nonzero__ (self) :
+        return self.old is not self.undef
+    # end def __nonzero__
 
     def __repr__ (self) :
         return "(old = %r, new = %r)" % (self.old, self.new)
@@ -310,20 +310,20 @@ class Summary (TFL.Meta.Object) :
         except LookupError :
             conflicts ### XXX ???
         else :
-            for name, asu in csp.attribute_changes.iteritems () :
+            for name, acs in csp.attribute_changes.iteritems () :
                 attr = getattr (entity.__class__, name)
                 ### XXX following won't work for composite attributes ???
                 if not attr.electric :
-                    cva = attr.get_raw (entity)
-                    iva = initial_values.get (name)
-                    if asu.new != cva :
-                        if (  (iva not in attr.void_raw_values and iva != asu.old)
-                           or (cva not in attr.void_raw_values and iva != cva)
+                    cur = attr.get_raw (entity)
+                    ini = initial_values.get (name)
+                    if acs.new != cur :
+                        if (  (ini not in attr.void_raw_values and ini != acs.old)
+                           or (cur not in attr.void_raw_values and ini != cur)
                            ) :
                             conflicts ### XXX ???
-            for name, iva in initial_values.iteritems () :
-                cva = attr.get_raw (entity)
-                if name not in csp.attribute_changes and iva != cva :
+            for name, ini in initial_values.iteritems () :
+                cur = attr.get_raw (entity)
+                if name not in csp.attribute_changes and ini != cur :
                     merges ### XXX ???
     # end def _check_attr_conflicts
 
@@ -331,11 +331,11 @@ class Summary (TFL.Meta.Object) :
         create_change = csp.changes [0]
         etm           = scope [create_change.type_name]
         if etm.instance (create_change.epk, raw = True) :
-            for name, asu in csp.attribute_changes.iteritems () :
+            for name, acs in csp.attribute_changes.iteritems () :
                 attr = getattr (entity.__class__, name)
                 if not attr.electric :
-                    cva  = attr.get_raw (entity)
-                    if cva not in attr.void_raw_values and and asu.new != cva :
+                    cur  = attr.get_raw (entity)
+                    if cur not in attr.void_raw_values and acs.new != cur :
                         conflicts ### XXX ???
     # end def _check_born_conflicts
 
@@ -345,11 +345,11 @@ class Summary (TFL.Meta.Object) :
         except LookupError :
             pass
         else :
-            for name, iva in initial_values.iteritems () :
+            for name, ini in initial_values.iteritems () :
                 attr = getattr (entity.__class__, name)
                 if not attr.electric :
-                    cva  = attr.get_raw (entity)
-                    if iva != cva :
+                    cur  = attr.get_raw (entity)
+                    if ini != cur :
                         conflicts ### XXX ???
     # end def _check_dead_conflicts
 
