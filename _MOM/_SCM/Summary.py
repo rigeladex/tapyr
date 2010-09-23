@@ -348,7 +348,7 @@ class Summary (TFL.Meta.Object) :
             for name, ini in initial_values.iteritems () :
                 attr = getattr (entity.__class__, name)
                 if not attr.electric :
-                    cur  = attr.get_raw (entity)
+                    cur = attr.get_raw (entity)
                     if ini != cur :
                         conflicts ### XXX ???
     # end def _check_dead_conflicts
