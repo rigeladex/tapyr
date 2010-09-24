@@ -14,11 +14,15 @@ x Scope.commit
 
 - merge of changes:
 
-  * dictionary (pid-> dict (initial_value))
+  * composite attributes
 
-  * Change_Summary
+    ? representation in `initial_values`
 
-  * objects from database
+  x dictionary (pid-> dict (initial_value))
+
+  x Change_Summary
+
+  x objects from database
 
 x Q_Result methods:
 

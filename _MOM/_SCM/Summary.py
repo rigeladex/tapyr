@@ -39,6 +39,7 @@
 #                     factored
 #    24-Sep-2010 (CT) `Pid.epk`, `.by_epk`, and `.type_name` added,
 #                     `.check_attr_conflicts` and `.check_ini_vs_cur` factored
+#    24-Sep-2010 (CT) `Pid.apply` added
 #    ««revision-date»»···
 #--
 
@@ -239,6 +240,19 @@ class Pid (TFL.Meta.Object) :
     def add (self, c) :
         self._changes.add (c)
     # end def add
+
+    def apply (self, scope) :
+        kw = dict \
+            ( (name, acs.new)
+            for name, acs in self.attribute_changes.iteritems ()
+            if  acs.merges
+            )
+        if self.is_born and not self.entity :
+            etm = scope [self.type_name]
+            self.entity = etm (self.epk, raw = True)
+        if self.entity :
+            self.entity.set_raw (kw)
+    # end def apply
 
     def check_attr_conflicts (self, entity, initial_values) :
         result = False
