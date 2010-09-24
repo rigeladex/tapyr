@@ -37,7 +37,7 @@
 #    22-Sep-2010 (CT) `Summary.change_conflicts` and `_check_*_conflicts` added
 #    24-Sep-2010 (CT) `Attr_Summary.check_conflict` and `.check_ini_vs_cur`
 #                     factored
-#    24-Sep-2010 (CT) `Pid.epk` and `.by_epk` added,
+#    24-Sep-2010 (CT) `Pid.epk`, `.by_epk`, and `.type_name` added,
 #                     `.check_attr_conflicts` and `.check_ini_vs_cur` factored
 #    ««revision-date»»···
 #--
@@ -230,6 +230,12 @@ class Pid (TFL.Meta.Object) :
         return changes and isinstance (changes [-1], MOM.SCM.Change.Destroy)
     # end def is_dead
 
+    @TFL.Meta.Once_Property
+    def type_name (self) :
+        changes = self.changes
+        return changes and changes [0].type_name
+    # end def type_name
+
     def add (self, c) :
         self._changes.add (c)
     # end def add
@@ -329,7 +335,7 @@ class Summary (TFL.Meta.Object) :
         by_epk = self.by_epk
         for csp in self.by_pid.itervalues () :
             args = (initial_values.get (csp.pid, {}), scope, csp) + result
-            by_pid [csp.epk] = csp
+            by_epk [(csp.type_name, csp.epk)] = csp
             if csp.is_dead :
                 self._check_dead_conflicts (* args)
             elif csp.is_born :
@@ -367,9 +373,8 @@ class Summary (TFL.Meta.Object) :
     # end def _check_attr_conflicts
 
     def _check_born_conflicts (self, initial_values, scope, csp, conflicts, merges) :
-        c0     = csp.changes [0]
-        etm    = scope [c0.type_name]
-        entity = csp.entity = etm.instance (c0.epk, raw = True)
+        etm    = scope [csp.type_name]
+        entity = csp.entity = etm.instance (csp.epk, raw = True)
         if entity :
             if csp.check_attr_conflicts (entity, initial_values) :
                 conflicts.add (csp.pid)
