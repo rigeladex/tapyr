@@ -35,6 +35,10 @@
 #    15-Sep-2010 (CT) Use `SCM.Change.modified_attrs` instead of home-grown code
 #    16-Sep-2010 (CT) `Summary`: s/clear/_clear/
 #    22-Sep-2010 (CT) `Summary.change_conflicts` and `_check_*_conflicts` added
+#    24-Sep-2010 (CT) `Attr_Summary.check_conflict` and `.check_ini_vs_cur`
+#                     factored
+#    24-Sep-2010 (CT) `Pid.epk` and `.by_epk` added,
+#                     `.check_attr_conflicts` and `.check_ini_vs_cur` factored
 #    ««revision-date»»···
 #--
 
@@ -54,6 +58,9 @@ import itertools
 class Attr_Summary (TFL.Meta.Object) :
     """Change summary for a single attribute of a single `pid`."""
 
+    conflicts = False
+    merges    = False
+
     cur = ini = None
     new = old = undef = TFL.Undef ("attr")
 
@@ -62,6 +69,23 @@ class Attr_Summary (TFL.Meta.Object) :
             self.old = old
         self.new = new
     # end def add
+
+    def check_conflict (self, attr, entity, ini) :
+        self.conflicts = False
+        if not attr.electric :
+            self.ini = ini
+            self.cur = cur = attr.get_raw (entity)
+            self.conflicts = (self.new != cur and ini != cur)
+        return self.conflicts
+    # end def check_conflict
+
+    def check_ini_vs_cur (self, attr, entity, ini, r_name) :
+        self.ini = ini
+        self.cur = cur    = attr.get_raw (entity)
+        result   = (ini != cur)
+        setattr (self, r_name, result)
+        return result
+    # end def check_ini_vs_cur
 
     def __nonzero__ (self) :
         return self.old is not self.undef
@@ -154,14 +178,12 @@ class Attr_C_Summary (TFL.Meta.Object) :
 class Pid (TFL.Meta.Object) :
     """Change summary for a single `pid`."""
 
+    entity = None
+
     def __init__ (self, pid) :
         self.pid      = pid
         self._changes = set ()
     # end def __init__
-
-    def add (self, c) :
-        self._changes.add (c)
-    # end def add
 
     @TFL.Meta.Once_Property
     def attribute_changes (self) :
@@ -191,6 +213,12 @@ class Pid (TFL.Meta.Object) :
     # end def changes
 
     @TFL.Meta.Once_Property
+    def epk (self) :
+        changes = self.changes
+        return changes and changes [-1].epk
+    # end def epk
+
+    @TFL.Meta.Once_Property
     def is_born (self) :
         changes = self.changes
         return changes and isinstance (changes [0], MOM.SCM.Change.Create)
@@ -201,6 +229,29 @@ class Pid (TFL.Meta.Object) :
         changes = self.changes
         return changes and isinstance (changes [-1], MOM.SCM.Change.Destroy)
     # end def is_dead
+
+    def add (self, c) :
+        self._changes.add (c)
+    # end def add
+
+    def check_attr_conflicts (self, entity, initial_values) :
+        result = False
+        for name, acs in self.attribute_changes.iteritems () :
+            attr    = getattr (entity.__class__, name)
+            ini     = initial_values.get (name)
+            result += acs.check_conflict (attr, entity, ini)
+        return result
+    # end def check_attr_conflicts
+
+    def check_ini_vs_cur (self, entity, initial_values, r_name) :
+        result    = False
+        check_all = not self.is_dead
+        for name, ini in initial_values.iteritems () :
+            attr  = getattr (entity.__class__, name)
+            if check_all or not attr.electric :
+                result += acs.check_merge (attr, entity, ini, r_name)
+        return result
+    # end def check_ini_vs_cur
 
     def _repr (self) :
         parts = []
@@ -274,12 +325,11 @@ class Summary (TFL.Meta.Object) :
         """Determine conflicts between `self.changes` and the entities of
            `scope`, compared to attribute values in `initial_values`.
         """
-        result = conflicts, merges = {}, {}
+        result = self.conflicts, self.merges = set (), set ()
+        by_epk = self.by_epk
         for csp in self.by_pid.itervalues () :
-            args = \
-                ( initial_values.get (csp.pid, {}), scope, csp
-                , conflicts, merges
-                )
+            args = (initial_values.get (csp.pid, {}), scope, csp) + result
+            by_pid [csp.epk] = csp
             if csp.is_dead :
                 self._check_dead_conflicts (* args)
             elif csp.is_born :
@@ -306,56 +356,39 @@ class Summary (TFL.Meta.Object) :
 
     def _check_attr_conflicts (self, initial_values, scope, csp, conflicts, merges) :
         try :
-            entity = scope.ems.pid_query (csp.pid)
+            entity = csp.entity = scope.ems.pid_query (csp.pid)
         except LookupError :
-            conflicts ### XXX ???
+            conflicts.add (csp.pid)
         else :
-            for name, acs in csp.attribute_changes.iteritems () :
-                attr = getattr (entity.__class__, name)
-                ### XXX following won't work for composite attributes ???
-                if not attr.electric :
-                    cur = attr.get_raw (entity)
-                    ini = initial_values.get (name)
-                    if acs.new != cur :
-                        if (  (ini not in attr.void_raw_values and ini != acs.old)
-                           or (cur not in attr.void_raw_values and ini != cur)
-                           ) :
-                            conflicts ### XXX ???
-            for name, ini in initial_values.iteritems () :
-                cur = attr.get_raw (entity)
-                if name not in csp.attribute_changes and ini != cur :
-                    merges ### XXX ???
+            if csp.check_attr_conflicts (entity, initial_values) :
+                conflicts.add (csp.pid)
+            if csp.check_ini_vs_cur (entity, initial_values, "merges") :
+                merges.add (csp.pid)
     # end def _check_attr_conflicts
 
     def _check_born_conflicts (self, initial_values, scope, csp, conflicts, merges) :
-        create_change = csp.changes [0]
-        etm           = scope [create_change.type_name]
-        if etm.instance (create_change.epk, raw = True) :
-            for name, acs in csp.attribute_changes.iteritems () :
-                attr = getattr (entity.__class__, name)
-                if not attr.electric :
-                    cur  = attr.get_raw (entity)
-                    if cur not in attr.void_raw_values and acs.new != cur :
-                        conflicts ### XXX ???
+        c0     = csp.changes [0]
+        etm    = scope [c0.type_name]
+        entity = csp.entity = etm.instance (c0.epk, raw = True)
+        if entity :
+            if csp.check_attr_conflicts (entity, initial_values) :
+                conflicts.add (csp.pid)
     # end def _check_born_conflicts
 
     def _check_dead_conflicts (self, initial_values, scope, csp, conflicts, merges) :
         try :
-            entity = scope.ems.pid_query (csp.pid)
+            entity = csp.entity = scope.ems.pid_query (csp.pid)
         except LookupError :
             pass
         else :
-            for name, ini in initial_values.iteritems () :
-                attr = getattr (entity.__class__, name)
-                if not attr.electric :
-                    cur = attr.get_raw (entity)
-                    if ini != cur :
-                        conflicts ### XXX ???
+            if csp.check_ini_vs_cur (entity, initial_values, "conflicts") :
+                conflicts.add (csp.pid)
     # end def _check_dead_conflicts
 
     def _clear (self) :
         self._changes = []
-        self._by_pid = None
+        self._by_pid  = None
+        self.by_epk   = {}
     # end def _clear
 
     def __getitem__ (self, index) :
