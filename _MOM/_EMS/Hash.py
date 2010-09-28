@@ -73,6 +73,7 @@
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    17-May-2010 (CT) `register_change` changed to accept `change` with `cid`
 #    18-May-2010 (CT) Use `Change_Manager` instead of home-grown code
+#    28-Sep-2010 (CT) s/rollback/_rollback/
 #    ««revision-date»»···
 #--
 
@@ -235,14 +236,6 @@ class Manager (MOM.EMS._Manager_) :
         self.add     (entity, entity.pid)
     # end def rename
 
-    def rollback (self) :
-        uncommitted_changes = self.uncommitted_changes
-        if uncommitted_changes :
-            self.cm.rollback (self.scope, self.session, uncommitted_changes)
-            self.pm.max_pid = self.session.info.max_pid
-            self.__super.rollback ()
-    # end def rollback
-
     def r_query (self, Type, rkw, * filters, ** kw) :
         r_map   = self._r_map
         strict  = kw.pop ("strict", False)
@@ -311,6 +304,12 @@ class Manager (MOM.EMS._Manager_) :
                 obj.unregister_dependency (entity.__class__)
                 r_map [r] [obj.pid].remove (entity)
     # end def _remove
+
+    def _rollback (self) :
+        self.cm.rollback (self.scope, self.session, self.uncommitted_changes)
+        self.pm.max_pid = self.session.info.max_pid
+        self.__super._rollback ()
+    # end def _rollback
 
     def _t_count (self, Type, seen = None) :
         if seen is None :

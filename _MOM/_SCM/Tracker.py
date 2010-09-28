@@ -29,6 +29,7 @@
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Tracker)
 #    16-Dec-2009 (CT) `nested_recorder` changed to yield change object, if any
 #     8-Feb-2010 (CT) `snapshot` removed
+#    28-Sep-2010 (CT) `temp_recorder` added
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,15 @@ class Tracker (MOM.SCM.History_Mixin) :
     def remove_dependency (self, scope) :
         del self.dependents [scope.id]
     # end def remove_dependency
+
+    @TFL.Contextmanager
+    def temp_recorder (self, recorder) :
+        self.push_recorder (recorder)
+        try :
+            yield
+        finally :
+            self.pop_recorder ()
+    # end def temp_recorder
 
     def undo (self) :
         last = self.history.pop ()

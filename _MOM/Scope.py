@@ -83,6 +83,7 @@
 #                     added to `_check_inv`)
 #    14-Sep-2010 (CT) Call to `r_incorrect` added to `commit`
 #    15-Sep-2010 (CT) `attr_changes` removed
+#    28-Sep-2010 (CT) `temp_change_recorder` added
 #    ««revision-date»»···
 #--
 
@@ -507,6 +508,12 @@ class Scope (TFL.Meta.Object) :
         if self.historian._rec_stack :
             self.historian.pop_recorder ()
     # end def stop_change_recorder
+
+    @TFL.Contextmanager
+    def temp_change_recorder (self, Recorder) :
+        with self.historian.temp_recorder (Recorder) :
+            yield
+    # end def temp_change_recorder
 
     def user_diff (self, other, ignore = ()) :
         """Return differences of entities `self` and `other` concerning user attributes."""

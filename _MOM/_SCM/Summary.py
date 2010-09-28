@@ -103,6 +103,7 @@ class Attr_Summary (TFL.Meta.Object) :
         self.ini = ini
         if not attr.electric :
             self.conflicts = (self.new != cur and ini != cur)
+        self.merges = (self.new != ini)
         return self.conflicts
     # end def check_conflict
 
@@ -300,11 +301,11 @@ class Pid (_Entity_Summary_) :
         kw = dict \
             ( (name, acs.new)
             for name, acs in self.attribute_changes.iteritems ()
-            if  acs.merges
+            if  acs.merges and not acs.conflicts
             )
         if self.is_born and not self.entity :
             etm = scope [self.type_name]
-            self.entity = etm (self.epk, raw = True)
+            self.entity = etm (* self.epk, raw = True)
         if self.entity :
             self.entity.set_raw (kw)
     # end def apply

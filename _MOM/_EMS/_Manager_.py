@@ -63,6 +63,8 @@
 #    15-Sep-2010 (CT) `Change_Summary` defined as class variable
 #    16-Sep-2010 (CT) Replace `uncommitted_changes` by new object instead of
 #                     calling `clear` on the existing one
+#    28-Sep-2010 (CT) `rollback` changed to use `temp_change_recorder`,
+#                     `_rollback` factored
 #    ««revision-date»»···
 #--
 
@@ -233,7 +235,8 @@ class _Manager_ (TFL.Meta.Object) :
     # end def register_scope
 
     def rollback (self) :
-        self.session.rollback ()
+        with self.scope.temp_change_recorder (MOM.SCM.Ignorer) :
+            self._rollback ()
         self.uncommitted_changes = self.Change_Summary ()
     # end def rollback
 
@@ -246,6 +249,10 @@ class _Manager_ (TFL.Meta.Object) :
         raise NotImplementedError \
             ("%s needs to define %s" % (self.__class__, "_query_single_root"))
     # end def _query_single_root
+
+    def _rollback (self) :
+        self.session.rollback ()
+    # end def _rollback
 
     def __iter__ (self) :
         sk = TFL.Sorted_By ("pid")

@@ -38,7 +38,7 @@ from __future__ import unicode_literals
 from _GTW.__test__.model import *
 import datetime
 
-_test_code = r"""
+_basic = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
@@ -207,10 +207,6 @@ _test_code = r"""
     17 ['date', 'last_cid']
     19 ['date_exceptions', 'dates', 'last_cid']
 
-    >>> conflicts, merges = csm1.change_conflicts ({}, scope)
-    >>> sorted (conflicts), sorted (merges)
-    ([], [])
-
     >>> scope.commit ()
 
     >>> SRM.Boat.query (sail_number = 1134).one ().destroy ()
@@ -269,9 +265,74 @@ _test_code = r"""
     ...     print pid, sorted (ca)
     7 ['last_cid', 'lifetime']
 
+    >>> len (csm1)
+    28
+    >>> conflicts, merges = csm1.change_conflicts ({}, scope)
+    >>> sorted (conflicts), sorted (merges)
+    ([], [])
+
+    >>> scope.destroy ()
+
 """
 
-__test__ = Scaffold.create_test_dict (_test_code)
+_more = dict \
+    ( conflicts = """
+
+    >>> scope_1 = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> scope_2 = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
+
+    >>> _ = scope_1.PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
+    >>> scope_1.commit ()
+
+    >>> p1  = scope_1.PAP.Person.instance (u"Tanzer", u"Laurens")
+    >>> _   = p1.set (salutation = u"Dear Laurens")
+    >>> cs1 = scope_1.uncommitted_changes
+    >>> len (cs1) ### 1
+    1
+    >>> for pid, csp in sorted (cs1.by_pid.iteritems ()) :
+    ...     print csp
+    <Change Summary for pid 1: 1 change>
+        <Modify GTW.OMP.PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), old-values = {'last_cid' : '1', 'salutation' : u''}, new-values = {'last_cid' : '2', 'salutation' : u'Dear Laurens'}>
+
+    >>> p2 = scope_2.PAP.Person.instance (* p1.epk)
+    >>> p2.salutation
+    u''
+    >>> _ = p2.set (salutation = u"Lieber Laurens")
+    >>> cs2 = scope_2.uncommitted_changes
+    >>> len (cs2) ### 1
+    1
+    >>> for pid, csp in sorted (cs2.by_pid.iteritems ()) :
+    ...     print csp
+    <Change Summary for pid 1: 1 change>
+        <Modify GTW.OMP.PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), old-values = {'last_cid' : '1', 'salutation' : u''}, new-values = {'last_cid' : '3', 'salutation' : u'Lieber Laurens'}>
+
+    >>> for s in scope_1, scope_2 :
+    ...     s.commit ()
+    ...     s.ems.session.expunge ()
+
+    >>> p2 = scope_2.PAP.Person.instance (* p1.epk)
+    >>> p2.salutation
+    u'Lieber Laurens'
+    >>> p1 = scope_1.PAP.Person.instance (* p1.epk)
+    >>> p1.salutation
+    u'Lieber Laurens'
+
+    >>> scope_2.commit ()
+    >>> scope_1.commit ()
+
+    >>> scope_1.destroy ()
+    >>> scope_2.destroy ()
+
+    """
+    )
+
+Scaffold.Backend_Default_Path ["SQL"] = "'test'"
+__test__ = dict \
+    ( Scaffold.create_test_dict (_more, ignore = ("HPS", "SQL"))
+    , ** Scaffold.create_test_dict (_basic)
+    )
 
 ### __END__ GTW.__test__.SCM_Summary
 
