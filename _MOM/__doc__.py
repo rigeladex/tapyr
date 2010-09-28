@@ -53,6 +53,7 @@
 #    17-May-2010 (CT) Test for `scope.migrate` added
 #    17-Aug-2010 (CT) Use A_Float instead of A_Decimal to avoid sqlite warning
 #     1-Sep-2010 (CT) Tests for `Q.attr`, `Q.attrs`, and `Q.set` added
+#    28-Sep-2010 (CT) Adapted to change of `epk_raw`
 #    ««revision-date»»···
 #--
 
@@ -1495,17 +1496,17 @@ Scope queries
     <Create BMT.Trap (u'Y', u'1', 'BMT.Trap'), new-values = {'last_cid' : '11'}>
     <Create BMT.Trap (u'Y', u'2', 'BMT.Trap'), new-values = {'last_cid' : '12'}>
     <Create BMT.Trap (u'Z', u'3', 'BMT.Trap'), new-values = {'last_cid' : '13'}>
-    <Create BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), new-values = {'last_cid' : '14'}>
-    <Create BMT.Rodent_in_Trap (u"(u'Rutty_Rat',)", u"(u'Y', u'1')", 'BMT.Rodent_in_Trap'), new-values = {'last_cid' : '15'}>
-    <Create BMT.Rodent_in_Trap (u"(u'Axel',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap'), new-values = {'last_cid' : '16'}>
-    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '17'}>
-    <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '18'}>
-    <Create BMT.Person_owns_Trap (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '19'}>
+    <Create BMT.Rodent_in_Trap ((u'Mighty_Mouse', 'BMT.Mouse'), (u'X', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), new-values = {'last_cid' : '14'}>
+    <Create BMT.Rodent_in_Trap ((u'Rutty_Rat', 'BMT.Rat'), (u'Y', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), new-values = {'last_cid' : '15'}>
+    <Create BMT.Rodent_in_Trap ((u'Axel', 'BMT.Rat'), (u'X', u'2', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), new-values = {'last_cid' : '16'}>
+    <Create BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '17'}>
+    <Create BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'2', 'BMT.Trap'), 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '18'}>
+    <Create BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u'', 'BMT.Person'), (u'Y', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '19'}>
     <Create BMT.Person (u'Tin', u'Tin', u'', 'BMT.Person'), new-values = {'last_cid' : '20'}>
-    <Create BMT.Person_owns_Trap (u"(u'tin', u'tin', u'')", u"(u'Y', u'2')", 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '21'}>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), new-values = {'last_cid' : '22'}>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location'), new-values = {'last_cid' : '23'}>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location'), new-values = {'last_cid' : '24'}>
+    <Create BMT.Person_owns_Trap ((u'Tin', u'Tin', u'', 'BMT.Person'), (u'Y', u'2', 'BMT.Trap'), 'BMT.Person_owns_Trap'), new-values = {'last_cid' : '21'}>
+    <Create BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), (u'-16.268799', u'48.189956', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), new-values = {'last_cid' : '22'}>
+    <Create BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'2', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), new-values = {'last_cid' : '23'}>
+    <Create BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'Y', u'1', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), new-values = {'last_cid' : '24'}>
     <Modify BMT.Rat (u'betty', 'BMT.Rat'), old-values = {'last_cid' : '8', 'name' : u'Axel'}, new-values = {'last_cid' : '25', 'name' : u'betty'}>
     <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : '5'}, new-values = {'color' : u'white', 'last_cid' : '26'}>
     <Modify BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'last_cid' : '26', 'weight' : u''}, new-values = {'last_cid' : '27', 'weight' : u'10.0'}>
@@ -1515,27 +1516,27 @@ Scope queries
         <Create BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), new-values = {'last_cid' : '30'}>
         <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : '30', 'weight' : u''}, new-values = {'color' : u'yellow', 'last_cid' : '31', 'weight' : u'42.0'}>
     <Modify BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : '9', 'max_weight' : u''}, new-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
-    <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '17', 'price' : u'42.0'}, new-values = {'last_cid' : '34', 'price' : u'1.2'}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : u"(u'Mighty_Mouse',)"}, new-values = {'last_cid' : '35', 'left' : u"(u'Toothy_Beaver',)"}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '35', 'left' : u"(u'Toothy_Beaver',)"}, new-values = {'last_cid' : '36', 'left' : u"(u'Mighty_Mouse',)"}>
+    <Modify BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '17', 'price' : u'42.0'}, new-values = {'last_cid' : '34', 'price' : u'1.2'}>
+    <Modify BMT.Rodent_in_Trap ((u'Toothy_Beaver', 'BMT.Beaver'), (u'X', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : u"(u'Mighty_Mouse',)"}, new-values = {'last_cid' : '35', 'left' : u"(u'Toothy_Beaver',)"}>
+    <Modify BMT.Rodent_in_Trap ((u'Mighty_Mouse', 'BMT.Mouse'), (u'X', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '35', 'left' : u"(u'Toothy_Beaver',)"}, new-values = {'last_cid' : '36', 'left' : u"(u'Mighty_Mouse',)"}>
     <Destroy BMT.Mouse (u'Mighty_Mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'last_cid' : '29', 'weight' : u'42.0'}>
-        <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '36'}>
+        <Destroy BMT.Rodent_in_Trap ((u'Mighty_Mouse', 'BMT.Mouse'), (u'X', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '36'}>
     <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>
+        <Destroy BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>
+        <Destroy BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), (u'-16.268799', u'48.189956', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>
     <Destroy BMT.Trap (u'X', u'2', 'BMT.Trap'), old-values = {'last_cid' : '10'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '18'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '23'}>
-        <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')", 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '16'}>
+        <Destroy BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'2', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '18'}>
+        <Destroy BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'2', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '23'}>
+        <Destroy BMT.Rodent_in_Trap ((u'betty', 'BMT.Rat'), (u'X', u'2', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '16'}>
     >>> c = scope.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
     >>> cc
     <Destroy BMT.Trap (u'X', u'1', 'BMT.Trap'), old-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>
+        <Destroy BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>
+        <Destroy BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), (u'-16.268799', u'48.189956', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>
     >>> cc.children
-    [<Destroy BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')", 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>]
+    [<Destroy BMT.Person_owns_Trap ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>, <Destroy BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'X', u'1', 'BMT.Trap'), (u'-16.268799', u'48.189956', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>]
     >>> cc.children [0].parent is cc
     True
     >>> pckl = c.as_pickle ()
@@ -1571,9 +1572,9 @@ Replaying changes
     >>> t3.destroy ()
     >>> for diff in sorted (scop2.user_diff (scope, ignore = ["last_cid"]).iteritems ()) :
     ...     print diff
-    (('BMT.Person_owns_Trap', (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')", 'BMT.Person_owns_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
-    (('BMT.Person_sets_Trap_at_Location', (u"(u'luke', u'lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')", 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <hps://>, missing in Scope <hps://>')
-    (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')", 'BMT.Rodent_in_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Person_owns_Trap', ((u'Dog', u'Snoopy', u'', 'BMT.Person'), (u'Y', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Person_sets_Trap_at_Location', ((u'Luke', u'Lucky', u'', 'BMT.Person'), (u'Y', u'1', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Rodent_in_Trap', ((u'Rutty_Rat', 'BMT.Rat'), (u'Y', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
     (('BMT.Trap', (u'Y', u'1', 'BMT.Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
     >>> scope.user_equal (scop2)
     False

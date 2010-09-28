@@ -157,6 +157,8 @@
 #    13-Sep-2010 (CT) `_FO_.__getattr__` changed to return `FO` of `Entity`
 #                     instances
 #    14-Sep-2010 (CT) `unicode_literals` added
+#    28-Sep-2010 (CT) `epk_raw` changed to use `get_raw_epk` instead of
+#                     `get_raw`
 #    ««revision-date»»···
 #--
 
@@ -926,7 +928,7 @@ class Id_Entity (Entity) :
     def epk_raw (self) :
         """Essential primary key as raw values"""
         return tuple \
-            (a.get_raw (self) for a in self.primary) + (self.type_name,)
+            (a.get_raw_epk (self) for a in self.primary) + (self.type_name,)
     # end def epk_raw
 
     @property

@@ -146,6 +146,7 @@
 #     7-Sep-2010 (CT) `_Typed_Collection_Mixin_.__init__` changed to replace
 #                     `attr.R_Type` from `M_Coll.Table` if `record_changes`
 #    22-Sep-2010 (CT) `void_raw_values` factored
+#    28-Sep-2010 (CT) `get_raw_epk` added
 #    ««revision-date»»···
 #--
 
@@ -276,6 +277,10 @@ class Kind (MOM.Prop.Kind) :
         else :
             return self.raw_default
     # end def get_raw
+
+    def get_raw_epk (self, obj) :
+        return self.get_raw (obj)
+    # end def get_raw_epk
 
     def get_value (self, obj) :
         if obj is not None :
@@ -441,6 +446,13 @@ class _EPK_Mixin_ (Kind) :
     def db_sig (self) :
         return self.__super.db_sig + (self.attr.Class.type_name, )
     # end def db_sig
+
+    def get_raw_epk (self, obj) :
+        ref = self.get_value (obj)
+        if ref is not None :
+            return ref.epk_raw
+        return u""
+    # end def get_raw_epk
 
     def from_pickle_cargo (self, scope, cargo) :
         if cargo and cargo [0] :

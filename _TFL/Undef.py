@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Sep-2010 (CT) Creation
+#    28-Sep-2010 (CT) `__nonzero__` added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,10 @@ class Undef (object) :
     def __init__ (self, name = None) :
         self.name = name
     # end def __init__
+
+    def __nonzero__ (self) :
+        return False
+    # end def __nonzero__
 
     def __repr__ (self) :
         names = [self.__class__.__name__]

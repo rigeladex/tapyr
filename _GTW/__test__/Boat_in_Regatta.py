@@ -52,6 +52,10 @@ _test_code = r"""
     u'2009/05/26 10:20:00, calculated with REGATTA.yellow8.com, final'
     >>> scope.commit ()
 
+    >>> rev.epk_raw
+    ((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    >>> reg.epk_raw
+    (((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk)
     GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     >>> SRM.Regatta.instance (* reg.epk)
@@ -60,6 +64,11 @@ _test_code = r"""
     GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
 
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+    >>> bir.epk_raw
+    (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta')
+    >>> SRM.Boat_in_Regatta.instance (* bir.epk_raw, raw = True)
+    GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+
 """
 
 from _GTW.__test__.model import *

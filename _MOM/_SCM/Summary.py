@@ -40,6 +40,9 @@
 #    24-Sep-2010 (CT) `Pid.epk`, `.by_epk`, and `.type_name` added,
 #                     `.check_attr_conflicts` and `.check_ini_vs_cur` factored
 #    24-Sep-2010 (CT) `Pid.apply` added
+#    28-Sep-2010 (CT) `_Entity_Summary_` factored from `Pid`
+#    28-Sep-2010 (CT) `Attr_C_Summary.check_conflict` and `.check_ini_vs_cur`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +58,29 @@ import _TFL.defaultdict
 import _TFL.Undef
 
 import itertools
+
+class _Entity_Summary_ (TFL.Meta.Object) :
+
+    def check_attr_conflicts (self, entity, initial_values) :
+        result = False
+        for name, acs in self.attribute_changes.iteritems () :
+            attr    = getattr (entity.__class__, name)
+            ini     = initial_values.get (name)
+            result += acs.check_conflict (attr, entity, ini)
+        return result
+    # end def check_attr_conflicts
+
+    def check_ini_vs_cur (self, entity, initial_values, r_name) :
+        result    = False
+        check_all = not self.is_dead
+        for name, ini in initial_values.iteritems () :
+            attr  = getattr (entity.__class__, name)
+            if check_all or not attr.electric :
+                result += acs.check_ini_vs_cur (attr, entity, ini, r_name)
+        return result
+    # end def check_ini_vs_cur
+
+# end class _Entity_Summary_
 
 class Attr_Summary (TFL.Meta.Object) :
     """Change summary for a single attribute of a single `pid`."""
@@ -73,16 +99,16 @@ class Attr_Summary (TFL.Meta.Object) :
 
     def check_conflict (self, attr, entity, ini) :
         self.conflicts = False
+        self.cur = cur = attr.get_raw (entity)
+        self.ini = ini
         if not attr.electric :
-            self.ini = ini
-            self.cur = cur = attr.get_raw (entity)
             self.conflicts = (self.new != cur and ini != cur)
         return self.conflicts
     # end def check_conflict
 
     def check_ini_vs_cur (self, attr, entity, ini, r_name) :
         self.ini = ini
-        self.cur = cur    = attr.get_raw (entity)
+        self.cur = cur = attr.get_raw (entity)
         result   = (ini != cur)
         setattr (self, r_name, result)
         return result
@@ -98,7 +124,7 @@ class Attr_Summary (TFL.Meta.Object) :
 
 # end class Attr_Summary
 
-class Attr_C_Summary (TFL.Meta.Object) :
+class Attr_C_Summary (_Entity_Summary_) :
     """Change summary for a composite attribute of a single `pid`."""
 
     def __init__ (self, attr_summary = None) :
@@ -111,12 +137,12 @@ class Attr_C_Summary (TFL.Meta.Object) :
     # end def __init__
 
     @property
-    def old (self) :
+    def cur (self) :
         return tuple \
-            (   (k, v.old)
+            (   (k, v.cur)
             for (k, v) in sorted (self.attribute_changes.iteritems ())
             )
-    # end def old
+    # end def cur
 
     @property
     def new (self) :
@@ -125,6 +151,35 @@ class Attr_C_Summary (TFL.Meta.Object) :
             for (k, v) in sorted (self.attribute_changes.iteritems ())
             )
     # end def new
+
+    @property
+    def old (self) :
+        return tuple \
+            (   (k, v.old)
+            for (k, v) in sorted (self.attribute_changes.iteritems ())
+            )
+    # end def old
+
+    def check_conflict (self, attr, entity, ini) :
+        if ini is None :
+            ini        = {}
+        an_entity      = attr.get_value (entity)
+        self.conflicts = result = self.check_attr_conflicts (an_entity, ini)
+        self.entity    = an_entity
+        self.ini       = ini
+        return result
+    # end def check_conflict
+
+    def check_ini_vs_cur (self, attr, entity, ini, r_name) :
+        if ini is None :
+            ini        = {}
+        an_entity      = attr.get_value (entity)
+        self.entity    = an_entity
+        self.ini       = ini
+        self.merges    = result = self.__super.check_ini_vs_cur \
+            (an_entity, ini, r_name)
+        return result
+    # end def check_ini_vs_cur
 
     def items (self) :
         return self.attribute_changes.items ()
@@ -176,7 +231,7 @@ class Attr_C_Summary (TFL.Meta.Object) :
 
 # end class Attr_C_Summary
 
-class Pid (TFL.Meta.Object) :
+class Pid (_Entity_Summary_) :
     """Change summary for a single `pid`."""
 
     entity = None
@@ -253,25 +308,6 @@ class Pid (TFL.Meta.Object) :
         if self.entity :
             self.entity.set_raw (kw)
     # end def apply
-
-    def check_attr_conflicts (self, entity, initial_values) :
-        result = False
-        for name, acs in self.attribute_changes.iteritems () :
-            attr    = getattr (entity.__class__, name)
-            ini     = initial_values.get (name)
-            result += acs.check_conflict (attr, entity, ini)
-        return result
-    # end def check_attr_conflicts
-
-    def check_ini_vs_cur (self, entity, initial_values, r_name) :
-        result    = False
-        check_all = not self.is_dead
-        for name, ini in initial_values.iteritems () :
-            attr  = getattr (entity.__class__, name)
-            if check_all or not attr.electric :
-                result += acs.check_merge (attr, entity, ini, r_name)
-        return result
-    # end def check_ini_vs_cur
 
     def _repr (self) :
         parts = []
@@ -388,7 +424,7 @@ class Summary (TFL.Meta.Object) :
 
     def _check_born_conflicts (self, initial_values, scope, csp, conflicts, merges) :
         etm    = scope [csp.type_name]
-        entity = csp.entity = etm.instance (csp.epk, raw = True)
+        entity = csp.entity = etm.instance (* csp.epk, raw = True)
         if entity :
             if csp.check_attr_conflicts (entity, initial_values) :
                 conflicts.add (csp.pid)
