@@ -14,9 +14,9 @@ x Scope.commit
 
 - merge of changes:
 
-  * composite attributes
+  x composite attributes
 
-    ? representation in `initial_values`
+    x representation in `initial_values`
 
   x dictionary (pid-> dict (initial_value))
 

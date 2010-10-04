@@ -308,7 +308,7 @@ _more = dict \
     <Change Summary for pid 1: 1 change>
         <Modify GTW.OMP.PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), old-values = {'last_cid' : '1', 'salutation' : u''}, new-values = {'last_cid' : '3', 'salutation' : u'Lieber Laurens'}>
 
-    ### The second commit hould give an exception, but doesn't
+    ### The second commit should give an exception, but doesn't
     >>> for s in scope_1, scope_2 :
     ...     s.commit ()
     ...     s.ems.session.expunge ()
