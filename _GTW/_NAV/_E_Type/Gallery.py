@@ -32,6 +32,7 @@
 #    24-Mar-2010 (CT) `is_current` redefined
 #    17-Aug-2010 (CT) `template` corrected
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
+#     7-Oct-2010 (CT) `max_height_photo` and friends added
 #    ««revision-date»»···
 #--
 
@@ -129,6 +130,26 @@ class Gallery (GTW.NAV.E_Type.Instance) :
             or nav_page.prefix.startswith (self.prefix)
             )
     # end def is_current
+
+    @Once_Property
+    def max_height_photo (self) :
+        return max (p.photo.height for p in self.pictures)
+    # end def max_height_photo
+
+    @Once_Property
+    def max_height_thumb (self) :
+        return max (p.thumb.height for p in self.pictures)
+    # end def max_height_thumb
+
+    @Once_Property
+    def max_width_photo (self) :
+        return max (p.photo.width for p in self.pictures)
+    # end def max_width_photo
+
+    @Once_Property
+    def max_width_thumb (self) :
+        return max (p.thumb.width for p in self.pictures)
+    # end def max_width_thumb
 
     @Once_Property
     def permalink (self) :

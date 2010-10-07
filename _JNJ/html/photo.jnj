@@ -52,7 +52,7 @@
 {%- macro photo (page) %}
   <div class="photo">
     {%- set tit = page.title %}
-    <h2>{{ page.title }}</h2>
+    <h2>{{ tit }}</h2>
     {{ buttons (page) }}
     <img alt="{{ tit }}" title="{{ tit }}" src="{{ "/" + page.photo.path }}"
          height="{{ page.photo.height }}" width="{{ page.photo.width }}"
