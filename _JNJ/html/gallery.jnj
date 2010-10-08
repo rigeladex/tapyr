@@ -46,6 +46,7 @@
   {%- set gallery_title = "%s %s" % (GTW._T ('Gallery'), page.title) %}
   <p class="photo-nav">
     {{ button (GTW._T ("Previous picture"), "arrow_left",  class="button prev") }}
+    {{ button (GTW._T ("Slide show"),       "play",        class="button play") }}
     {{ button (GTW._T ("Next picture"),     "arrow_right", class="button next") }}
   </p>
 {%- endmacro %} {#- buttons -#}
@@ -56,23 +57,21 @@
     <div class="inline">
       {{ buttons (page) }}
       <div class="photo">
-        <img alt="{{ GTW._T ('Selected picture')}}"
-           title="{{ GTW._T ("Next picture") }}" src=""
-        />
+        <img alt="{{ GTW._T ('Selected picture')}}" src=""/>
       </div>
       {{ buttons (page) }}
     </div>
     <div class="thumbnails">
-      {%- for pic in page.pictures %}
-        <div>
+      <div class="box">
+        {%- for pic in page.pictures %}
           <a href="{{ pic.permalink }}">
            <img alt="{{ pic.title }}" title="{{ pic.title }}"
                 src="{{ "/" + pic.thumb.path }}"
                 height="{{ pic.thumb.height }}" width="{{ pic.thumb.width }}"
            />
           </a>
-        </div>
-      {% endfor -%}
+        {% endfor -%}
+      </div>
     </div>
   </div>
 {%- endmacro -%} {#- gallery -#}
@@ -81,12 +80,15 @@
   {{- super () -}}
   <style type="text/css">
      .inline .photo
-       { height  : {{ page.max_height_photo -}}px
-       ; width   : {{ page.max_width_photo -}}px
+       { height : {{ page.max_height_photo -}}px
+       ; width  : {{ page.max_width_photo -}}px
        }
-     .thumbnails div
-       { height  : {{ page.max_height_thumb -}}px
-       ; width   : {{ page.max_width_thumb -}}px
+     .thumbnails a
+       { height : {{ page.max_height_thumb -}}px
+       ; width  : {{ page.max_width_thumb -}}px
+       }
+     .thumbnails.inline .box
+       { width  : {{ (page.max_width_thumb + 10) * GTW.len (page.pictures) }}px
        }
    </style>
 {% endblock styles -%}

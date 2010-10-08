@@ -44,6 +44,7 @@
 #     3-Aug-2010 (CT) `obfuscated` removed
 #    20-Sep-2010 (CT) `Sorted_By` added
 #    22-Sep-2010 (CT) `eval_sorted_by` added
+#     8-Oct-2010 (CT) `len` added
 #    ««revision-date»»···
 #--
 
@@ -129,6 +130,8 @@ class GTW (TFL.Meta.Object) :
     # end def get_macro
 
     Getter     = TFL.Getter
+
+    len        = staticmethod (len)
 
     def log_stdout (self, text) :
         print text

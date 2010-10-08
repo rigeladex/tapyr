@@ -28,6 +28,7 @@
 **
 ** Revision Dates
 **     7-Oct-2010 (CT) Creation
+**     8-Oct-2010 (CT) Creation continued
 **    ««revision-date»»···
 **--
 */
@@ -36,15 +37,17 @@
   {
     $.fn.GTW_Gallery = function (options)
       {
-        var options = $.extend
-          ( { controls        :
-                { head        : ".button.head"
-                , next        : ".button.next"
-                , play        : ".button.play"
-                , prev        : ".button.prev"
-                , tail        : ".button.tail"
-                }
-            , delay           : 3000
+        var controls = $.extend
+          ( { head        : ".button.head"
+            , next        : ".button.next"
+            , play        : ".button.play"
+            , prev        : ".button.prev"
+            , tail        : ".button.tail"
+            }
+          , options.controls || {}
+          );
+        var options  = $.extend
+          ( { delay           : 3000
             , inline_selector : ".gallery .inline"
             , photo_selector  : ".photo img"
             , play_class      : "playing"
@@ -52,65 +55,82 @@
                 { return name.replace (/\/th\//, "/im/"); }
             }
           , options || {}
+          , { controls        : controls }
           );
         function show (index, event)
           {
+            var len   = options.thumbnails$.length;
+            var photo = $(options.photo_selector);
+            var alt   = photo.attr ("alt");
+            var thumb, url;
             if (index < 0)
               {
-                index += options.thumbnails$.length
+                index += len;
               }
-            $(options.photo_selector).attr
-                ( "src"
-                , options.url_transformer (options.thumbnails$ [index].src)
-                );
-            options.current = index;
-            if (event != null)
+            index = options.current = index % len;
+            thumb = options.thumbnails$ [index];
+            url   = options.url_transformer (thumb.src);
+            photo.attr
+              ( { src   : url
+                , title :
+                    (alt ? alt + ":" : "Photo") + " " + (index+1) + "/" + len
+                }
+              );
+            if (event && event.preventDefault)
               {
                 event.preventDefault ();
               }
           }
         function next (event)
           {
-            show ((options.current + 1) % options.thumbnails$.length, event);
+            show (options.current + 1, event);
           }
         function prev (event)
           {
-            show
-              ( (options.thumbnails$.length + options.current - 1)
-              % (options.thumbnails$.length)
-              , event
-              );
+            show (options.current - 1, event);
           }
-        options.current     = 0;
-        options.thumbnails$ = $("img", this);
-        options.thumbnails$.each
-          ( function (n)  { $(this).data ("GTW-gallery-index", n); }
-          ).click
-          ( function (ev) { show ($(this).data ("GTW-gallery-index"), ev); });
-        this.addClass ("inline");
-        $(options.inline_selector).show ();
-        $(options.photo_selector).click (next);
-        $(options.controls.next).click  (next);
-        $(options.controls.prev).click  (prev);
-        $(options.controls.head).click  (function (ev) { show (0, ev); });
-        $(options.controls.tail).click  (function (ev) { show (-1, ev); });
-        $(options.controls.play).toggle
-          ( function (event)
-              {
-                options.play_cb = window.setInterval
-                  ( function ()
-                      { $(options.controls.next).triggerHandler ("click"); }
-                  , options.delay
-                  );
-                $(event.target).addClass (options.play_class);
-                $(options.controls.next).click ();
-              }
-          , function (event)
+        function start (event)
+          {
+            options.play_cb = window.setInterval (next, options.delay);
+            $(options.controls.play)
+              .addClass (options.play_class)
+              .unbind   ("click")
+              .click    (stop);
+            next ();
+          }
+        function stop (event)
+          {
+            if ($(options.controls.play).hasClass (options.play_class))
               {
                 window.clearInterval (options.play_cb);
-                $(event.target).removeClass (options.play_class);
+                $(options.controls.play)
+                  .unbind      ("click")
+                  .click       (start)
+                  .removeClass (options.play_class);
               }
-          );
+          }
+        this.addClass ("inline");
+        options.current = 0;
+        options.thumbnails$ = $("img", this);
+        options.thumbnails$
+          .each
+            ( function (n)
+                { $(this).data ("GTW-gallery-index", n); }
+            )
+          .click
+            ( function (ev)
+                { stop (ev); show ($(this).data ("GTW-gallery-index"), ev); }
+            );
+        $(options.controls.next).click
+            (function (ev) { stop (ev); next (ev); });
+        $(options.controls.prev).click
+            (function (ev) { stop (ev); prev (ev); });
+        $(options.controls.head).click
+            (function (ev) { stop (ev); show (0, ev); });
+        $(options.controls.tail).click
+            (function (ev) { stop (ev); show (-1, ev); });
+        $(options.controls.play).click (start);
+        $(options.inline_selector).show ();
         show (0);
         return this;
       }

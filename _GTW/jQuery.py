@@ -68,7 +68,7 @@ GTW.JS_On_Ready ("$.GTW.fix_a_nospam ($);",         name = "de_obfuscate_a")
 
 GTW.Script      (src = "/media/GTW/js/GTW_Gallery.js", name = "GTW_Gallery")
 GTW.JS_On_Ready \
-    ( """$(".thumbnails").GTW_Gallery ({ delay : 5000 });"""
+    ( """$(".thumbnails").GTW_Gallery ({ delay : 2000 });"""
     , name = "GTW_Gallery"
     )
 
