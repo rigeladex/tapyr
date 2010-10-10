@@ -29,7 +29,8 @@
 ** Revision Dates
 **     3-Aug-2010 (CT) Creation (`as_int_array`)
 **     4-Aug-2010 (CT) `fix_a_nospam` added (factored from GTW.jQuery)
-**    ««revision-date»»···
+**    10-Oct-2010 (CT) `GTW_Externalize` added
+      ««revision-date»»···
 **--
 */
 
@@ -69,7 +70,21 @@
               );
           }
         }
-      )
+      );
+    $.fn.GTW_Externalize = function ()
+      {
+        this.click
+          ( function (event)
+              {
+                var w = window.open (this.href);
+                w.focus ();
+                if (event && event.preventDefault)
+                  {
+                    event.preventDefault ();
+                  }
+              }
+          );
+      };
   }
 ) (jQuery);
 

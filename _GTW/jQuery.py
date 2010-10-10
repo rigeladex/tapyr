@@ -31,6 +31,7 @@
 #     3-Aug-2010 (CT) `de_obfuscate_a` added
 #     4-Aug-2010 (CT) `fix_a_nospam` factored
 #     7-Oct-2010 (CT) `GTW_Gallery` added
+#    10-Oct-2010 (CT) `GTW_Externalize` added
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,12 @@ GTW.JS_On_Ready \
 
 GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "GTW_util")
 GTW.JS_On_Ready ("$.GTW.fix_a_nospam ($);",         name = "de_obfuscate_a")
+GTW.JS_On_Ready \
+    ( """$("a[href^='http://']").GTW_Externalize ();
+         $("a[href^='https://']").GTW_Externalize ();
+      """
+    , name = "GTW_Externalize"
+    )
 
 GTW.Script      (src = "/media/GTW/js/GTW_Gallery.js", name = "GTW_Gallery")
 GTW.JS_On_Ready \
