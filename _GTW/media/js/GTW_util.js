@@ -76,14 +76,14 @@
         this.click
           ( function (event)
               {
-                var w = window.open (this.href);
-                w.focus ();
+                window.open (this.href).focus ();
                 if (event && event.preventDefault)
                   {
                     event.preventDefault ();
                   }
               }
-          );
+          ).addClass ("external");
+        return this;
       };
   }
 ) (jQuery);
