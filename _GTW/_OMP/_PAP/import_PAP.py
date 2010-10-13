@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#    13-Oct-2010 (CT) `Entity_created_by_Person` added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ import _GTW._OMP._PAP.Phone
 import _GTW._OMP._PAP.Person
 
 import _GTW._OMP._PAP.Person_has_Address
+import _GTW._OMP._PAP.Entity_created_by_Person
 import _GTW._OMP._PAP.Person_has_Email
 import _GTW._OMP._PAP.Person_has_Phone
 

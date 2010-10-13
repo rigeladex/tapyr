@@ -31,6 +31,7 @@
 #    10-Feb-2010 (CT) Bug fix (`Object = _SWP_Object_` added)
 #    22-Mar-2010 (CT) `Object_PN` added (factored from `SWP.Page`)
 #     6-Sep-2010 (CT) `perma_name.max_length` set to `80` (bad MySQL)
+#    13-Oct-2010 (CT) `creator` removed
 #    ««revision-date»»···
 #--
 
@@ -103,14 +104,6 @@ class Object_PN (_Ancestor_Essence) :
         # end class perma_name
 
         ### Non-primary attributes
-
-        class creator (A_Object) :
-            """Creator of the contents."""
-
-            kind               = Attr.Optional
-            Class              = GTW.OMP.PAP.Person
-
-        # end class creator
 
         class date (A_Date_Interval_N) :
             """Publication (`start`) and expiration date (`finish`)"""

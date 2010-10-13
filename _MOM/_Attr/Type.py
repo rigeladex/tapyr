@@ -154,6 +154,7 @@
 #     6-Sep-2010 (CT) `_A_Composite_Collection_` removed
 #     6-Sep-2010 (CT) `_A_Typed_Tuple_` added
 #    13-Oct-2010 (CT) `example` added
+#    13-Oct-2010 (CT) `A_Date_Time.as_string` redefined to not output `0:0`
 #    ««revision-date»»···
 #--
 
@@ -1267,6 +1268,16 @@ class A_Date_Time (_A_Date_) :
             )
         )
     _tuple_len     = 6
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            if not value.time () :
+                return value.strftime (A_Date.input_formats [0])
+            else :
+                return value.strftime (soc.output_format)
+        return u""
+    # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :

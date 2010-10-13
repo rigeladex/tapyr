@@ -38,6 +38,7 @@
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
+#    13-Oct-2010 (CT) `Entity_created_by_Person` added
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,10 @@ class Admin (object) :
 
     person_completer = GTW.Form.MOM.Javascript.Completer \
         ( fields    = ("last_name", "first_name", "middle_name", "title")
-        , triggers  = dict (last_name = dict (min_chars = 2))
+        , triggers  = dict
+            ( last_name  = dict (min_chars = 2)
+            , first_name = dict (min_chars = 2)
+            )
         , name      = "GTW.OMP.PAP.Person"
         )
 
@@ -192,6 +196,12 @@ class Admin (object) :
             , Person_has_LID ("PAP.Person_has_Phone")
             )
         , list_display = ("ui_display", "desc")
+        )
+
+    Entity_created_by_Person = dict \
+        ( ETM       = "GTW.OMP.PAP.Entity_created_by_Person"
+        , Type      = GTW.NAV.E_Type.Admin
+        , list_display = ("entity", "creator", "date")
         )
 
     Person_has_Address = dict \

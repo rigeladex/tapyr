@@ -41,6 +41,7 @@ from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
 import _GTW._Form._MOM.Javascript
+import _GTW._OMP._PAP.Nav
 
 from   _GTW._Form._MOM.Inline_Description      import \
     ( Link_Inline_Description      as LID
@@ -60,15 +61,7 @@ primary  = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    creator_completer = GTW.Form.MOM.Javascript.Completer \
-        ( fields    =
-            ("last_name", "first_name", "middle_name", "title")
-        , triggers  = dict
-            ( last_name  = dict (min_chars = 2)
-            , first_name = dict (min_chars = 2)
-            )
-        , name      = "Creator_Info"
-        )
+    creator_completer = GTW.OMP.PAP.Nav.Admin.person_completer
 
     Clip_X          = dict \
         ( ETM       = "GTW.OMP.SWP.Clip_X"
@@ -80,16 +73,6 @@ class Admin (object) :
                     ( "date"
                     , FGD (render_mode = "table")
                     , legend = _("Publication and expiration date")
-                    )
-                , AID
-                    ( "creator"
-                    , FGD
-                        ( primary
-                        , render_mode = "table"
-                        , css_class   = "inline-instance"
-                        )
-                    , completer = creator_completer
-                    , legend = _("Creator of the contents of the news clip")
                     )
                 , "format", "text", "link_to"
                 )
@@ -113,16 +96,17 @@ class Admin (object) :
                     , FGD (render_mode = "table")
                     , legend        = _("Publication and expiration date")
                     )
-                , AID
-                    ( "creator"
-                    , FGD
-                        ( primary
-                        , render_mode = "table"
-                        , css_class   = "inline-instance"
-                        )
-                    , completer      = creator_completer
-                    , legend         = _("Photographer")
-                    )
+                 ### XXX put LID for Entity_created_by_Person here
+#                , AID
+#                    ( "creator"
+#                    , FGD
+#                        ( primary
+#                        , render_mode = "table"
+#                        , css_class   = "inline-instance"
+#                        )
+#                    , completer      = creator_completer
+#                    , legend         = _("Photographer")
+#                    )
                 )
             ,
             )
@@ -140,15 +124,16 @@ class Admin (object) :
                     , FGD (render_mode = "table")
                     , legend = _("Publication and expiration date")
                     )
-                , AID
-                    ( "creator"
-                    , FGD ( primary
-                          , render_mode = "table"
-                          , css_class = "inline-instance"
-                          )
-                    , completer = creator_completer
-                    , legend = _("Creator of the contents of the web page")
-                    )
+                 ### XXX put LID for Entity_created_by_Person here
+#                , AID
+#                    ( "creator"
+#                    , FGD ( primary
+#                          , render_mode = "table"
+#                          , css_class = "inline-instance"
+#                          )
+#                    , completer = creator_completer
+#                    , legend = _("Creator of the contents of the web page")
+#                    )
                 , "head_line", "format", "text"
                 )
             , LID
