@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Mar-2010 (CT) Creation
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ class _Pic_ (_Ancestor_Essence) :
             """Directory in gallery holding pictures."""
 
             kind               = Attr.Const
-            default            = "im"
+            default            = u"im"
 
         # end class dir
 
@@ -61,7 +62,7 @@ class _Pic_ (_Ancestor_Essence) :
             """Extension of file holding picture."""
 
             kind               = Attr.Const
-            default            = ".jpg"
+            default            = u".jpg"
 
         # end class extension
 
@@ -112,7 +113,8 @@ class _Thumb_ (_Ancestor_Essence) :
         class dir (_Ancestor.dir) :
             """Directory in gallery holding thumbnails."""
 
-            default            = "th"
+            default            = u"th"
+            example            = u"th"
 
         # end class dir
 

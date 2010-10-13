@@ -73,6 +73,8 @@
 #     3-May-2010 (CT) `_epkified` added instead of direct calls to `epkified`
 #     3-May-2010 (CT) `this` added to return of `_cooked_epk`
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
+#    13-Oct-2010 (CT) `default_child` added and used in `_role_to_cooked_iter`
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -80,6 +82,7 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
 from   _TFL.predicate import first, paired
 
@@ -95,6 +98,21 @@ class Entity (TFL.Meta.Object) :
         return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
 
+    @TFL.Meta.Once_Property
+    def default_child (self) :
+        dc = self._etype.default_child
+        if dc is not None :
+            try :
+                return self.home_scope [dc]
+            except KeyError :
+                pass
+    # end def default_child
+
+    @TFL.Meta.Once_Property
+    def is_partial (self) :
+        return self._etype.is_partial
+    # end def is_partial
+
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
     # end def __getattr__
@@ -108,6 +126,10 @@ class Entity (TFL.Meta.Object) :
 
 class An_Entity (Entity) :
     """Scope-specific manager for a specific type of anonymous entities."""
+
+    def example (self, full = False) :
+        return self (raw = True, ** self._etype.example_attrs (full))
+    # end def example
 
     def query (self, * args, ** kw) :
         ### we need to define this function to hiode the `query` attribute of
@@ -143,6 +165,11 @@ class Id_Entity (Entity) :
     def ems (self) :
         return self.home_scope.ems
     # end def ems
+
+    def example (self, full = False) :
+        return self.instance_or_new \
+            (raw = True, ** self._etype.example_attrs (full))
+    # end def example
 
     def exists (self, * epk, ** kw) :
         if kw :
@@ -436,8 +463,10 @@ class Link (Id_Entity) :
                 except MOM.Error.No_Such_Object :
                     if auto_create :
                         scope = self.home_scope
-                        et    = getattr (scope, r.role_type.type_name)
-                        v     = et (* v, implicit = True, raw = True)
+                        et    = scope [r.role_type.type_name]
+                        if et.is_partial and et.default_child :
+                            et = et.default_child
+                        v = et (* v, implicit = True, raw = True)
                     else :
                         v = None
             elif v is not None :

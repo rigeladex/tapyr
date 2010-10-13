@@ -31,6 +31,7 @@
 #    11-May-2010 (CT) `A_Regatta_Result` added
 #    12-May-2010 (CT) `A_Nation.Table` filled with `unicode` instead of `str`
 #     6-Sep-2010 (CT) `Race_Result` removed (now implemented as `Link1`)
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ class A_Nation (_A_Named_Object_) :
 
     ### http://en.wikipedia.org/wiki/List_of_IOC_country_codes
 
+    example    = u"AUT"
     typ        = "Nation"
     Table      = \
         { u"AUS" :  _(u"Australia")

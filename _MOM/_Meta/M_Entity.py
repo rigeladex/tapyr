@@ -101,6 +101,7 @@
 #                     `cls.hash_sig` to `.user_attr` instead of `.required`
 #     4-Sep-2010 (CT) `M_E_Type.__init__` changed to set `Class` and `C_Type`
 #                     to `cls` (property `M_E_Type.Class` removed)
+#    13-Oct-2010 (CT) `default_child` added
 #    ««revision-date»»···
 #--
 
@@ -153,6 +154,30 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             )
     # end def __call__
 
+    @property
+    def default_child (cls) :
+        if cls.is_partial :
+            return cls._default_child
+    # end def default_child
+
+    @default_child.setter
+    def default_child (cls, child) :
+        if not cls.is_partial :
+            raise TypeError, \
+                ( "Cannot set default_child of non-partial class %s to %s"
+                % (cls, child)
+                )
+        elif cls._default_child is not None :
+            raise TypeError, \
+                ( "Cannot change default_child of class %s from %s to %s"
+                % (cls, cls._default_child, child)
+                )
+        else :
+            if isinstance (child, M_E_Mixin) :
+                child = child.type_name
+            cls._default_child = child
+    # end def default_child
+
     def m_setup_etypes (cls, app_type) :
         """Setup EMS- and DBW -specific essential types for all classes in
            `cls._S_Extension`.
@@ -181,6 +206,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             result = name
         return result
     # end def pns_qualified
+
+    def set_default_child (cls, child) :
+        cls.default_child = child
+        return child
+    # end def set_default_child
 
     def set_ui_name (cls, ui_name) :
         """Sets `ui_name` of `cls`"""
@@ -274,6 +304,12 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
+
+    def __new__ (mcls, name, bases, dct) :
+        dct ["_default_child"] = dct.pop ("default_child", None)
+        result = super (M_Entity, mcls).__new__ (mcls, name, bases, dct)
+        return result
+    # end def __new__
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__  (name, bases, dict)

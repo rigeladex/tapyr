@@ -41,6 +41,7 @@ from   _TFL.I18N                import _, _T, _Tn
 class A_Sex (_A_Named_Object_) :
     """Sex of a person."""
 
+    example   = u"F"
     typ       = "Sex"
     Table     = \
         { u"F"  : _(u"Female")

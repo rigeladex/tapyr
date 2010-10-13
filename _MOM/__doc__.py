@@ -177,6 +177,8 @@ class Rodent (_Ancestor_Essence) :
 
     PNS    = BMT
 
+    default_child = "BMT.Rat"
+
     is_partial    = True
     is_relevant   = True
 

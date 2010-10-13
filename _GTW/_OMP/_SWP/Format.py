@@ -127,6 +127,7 @@ class Markdown (_Format_) :
 class A_Format (MOM.Attr._A_Named_Object_) :
     """Format to use for text of a page"""
 
+    example     = u"ReST"
     typ         = "Format"
     Table       = M_Format.Table
 

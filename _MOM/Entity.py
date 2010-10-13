@@ -692,6 +692,12 @@ class An_Entity (Entity) :
         return result
     # end def copy
 
+    @classmethod
+    def example_attrs (cls, full = False) :
+        attrs = cls.user_attr if full else cls.mandatory
+        return dict ((a.name, a.example) for a in attrs)
+    # end def example_attrs
+
     @property
     def owner_attr (self) :
         """Return the attribute (kind property) of the `owner` object that
@@ -1028,6 +1034,13 @@ class Id_Entity (Entity) :
         if other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
+
+    @classmethod
+    def example_attrs (cls, full = False) :
+        attrs = itertools.chain \
+            (cls.primary, cls.user_attr if full else cls.mandatory)
+        return dict ((a.name, a.example) for a in attrs)
+    # end def example_attrs
 
     @classmethod
     def epkified (cls, * epk, ** kw) :

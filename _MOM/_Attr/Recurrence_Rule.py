@@ -45,6 +45,7 @@
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
 #     4-Sep-2010 (CT) s/owner/owner.owner/ where necessary (change of
 #                     _A_Composite_Collection_)
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,8 @@ import dateutil.rrule
 class A_Weekday_RR (A_Attr_Type) :
     """Weekday specification in recurrence rule."""
 
-    typ    = "Weekday_RR"
+    example = u"TU"
+    typ     = "Weekday_RR"
 
     P_Type = dateutil.rrule.weekday
     Names  = (_("MO"), _("TU"), _("WE"), _("TH"), _("FR"), _("SA"), _("SU"))

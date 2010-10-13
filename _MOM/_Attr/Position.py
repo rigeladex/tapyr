@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     4-Feb-2010 (CT) Creation
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ class Position (_Ancestor_Essence) :
             """Latitude"""
 
             kind               = Attr.Required
+            example            = u"42"
             min_value          = -90.0
             max_value          = +90.0
             ui_name            = "Latitude"
@@ -64,6 +66,7 @@ class Position (_Ancestor_Essence) :
             """Longitude"""
 
             kind               = Attr.Required
+            example            = u"137"
             min_value          = -180.0
             max_value          = +180.0
             ui_name            = "Longitude"
@@ -74,6 +77,7 @@ class Position (_Ancestor_Essence) :
             """Height above mean sea level"""
 
             kind               = Attr.Optional
+            example            = u"1764"
 
         # end class height
 

@@ -153,6 +153,7 @@
 #     6-Sep-2010 (CT) `A_Boolean._from_string` redefined to allow empty strings
 #     6-Sep-2010 (CT) `_A_Composite_Collection_` removed
 #     6-Sep-2010 (CT) `_A_Typed_Tuple_` added
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,11 @@ class A_Attr_Type (object) :
                 (getattr (Q, self.ckd_name).__eq__, self.cooked)
         return result
     # end def ac_query
+
+    @TFL.Meta.Once_Property
+    def example (self) :
+        return self.raw_default
+    # end def example
 
     def __init__ (self, kind) :
         self.kind         = kind
@@ -606,6 +612,20 @@ class _A_Number_ (A_Attr_Type) :
     _string_fixer     = None
 
     @TFL.Meta.Once_Property
+    def example (self) :
+        if self.min_value is not None :
+            if self.max_value is not None :
+                result = self.min_value + (self.max_value - self.min_value) / 2
+            else :
+                result = self.min_value + 42
+        elif self.max_value is not None :
+            result = self.max_value - 42
+        else :
+            result = 42
+        return self.as_string (result)
+    # end def example
+
+    @TFL.Meta.Once_Property
     def ui_length (self) :
         if self.max_value :
             import math
@@ -718,6 +738,17 @@ class _A_Object_ (A_Attr_Type) :
 
     needs_raw_value   = False
 
+    @TFL.Meta.Once_Property
+    def example (self) :
+        result = None
+        etm    = self.etype_manager ()
+        if etm and etm.is_partial :
+            etm = etm.default_child
+        if etm :
+            result = etm.example ()
+        return self.as_string (result)
+    # end def example
+
     def as_code (self, value) :
         return tuple (a.as_code (a.get_value (value)) for a in value.primary)
     # end def as_code
@@ -730,7 +761,7 @@ class _A_Object_ (A_Attr_Type) :
                     (a.as_string (a.get_value (value)) for a in value.primary)
                 ,
                 )
-        return ""
+        return u""
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -825,6 +856,7 @@ class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
     default           = u""
+    example           = u"foo"
     max_length        = 0
     ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
 
@@ -1100,6 +1132,7 @@ class A_Blob (A_Attr_Type) :
 class A_Boolean (_A_Named_Value_) :
     """Models a Boolean attribute of an object."""
 
+    example        = u"no"
     typ            = "Boolean"
     P_Type         = bool
     ui_length      = 5
@@ -1152,6 +1185,7 @@ class A_Cached_Role_Set (_A_Object_Set_) :
 class A_Char (_A_String_) :
     """Models an attribute holding a single character."""
 
+    example        = u"X"
     typ            = "Character"
     max_length     = 1
 
@@ -1160,6 +1194,7 @@ class A_Char (_A_String_) :
 class A_Date (_A_Date_) :
     """Models a date-valued attribute of an object."""
 
+    example        = u"2010/10/10"
     typ            = "Date"
     P_Type         = datetime.date
     ui_length      = 12
@@ -1201,6 +1236,7 @@ class A_Date_Slug (_A_String_) :
        of entity creation.
     """
 
+    example        = u"20101010_000042_137"
     typ            = "Date-Slug"
     ui_length      = 22
 
@@ -1219,6 +1255,7 @@ class A_Date_Slug (_A_String_) :
 class A_Date_Time (_A_Date_) :
     """Models a date-time-valued attribute of an object."""
 
+    example        = u"2010/10/10 06:42"
     typ            = "Date-Time"
     P_Type         = datetime.datetime
     ui_length      = 18
@@ -1456,6 +1493,7 @@ class A_Numeric_String (_A_String_Base_) :
        string).
     """
 
+    example           = u"42"
     typ               = "Numeric_String"
 
     P_Type            = unicode
@@ -1501,6 +1539,7 @@ class A_Text (_A_String_) :
 class A_Time (_A_Date_) :
     """Models a time-valued attribute of an object."""
 
+    example        = u"06:42"
     typ            = "Time"
     P_Type         = datetime.time
     ui_length      = 8
@@ -1532,6 +1571,7 @@ class A_Time (_A_Date_) :
 class A_Url (_A_String_) :
     """Models an url-valued attribute of an object."""
 
+    example        = u"/bar"
     typ            = "Url"
     max_length     = 160
     check          = ("""value.startswith (("/", "http://", "https://"))""", )

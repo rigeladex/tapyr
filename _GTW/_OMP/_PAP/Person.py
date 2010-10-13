@@ -34,6 +34,7 @@
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    10-May-2010 (CT) `ui_display_format` redefined
 #     4-Jun-2010 (CT) `sex` added
+#    13-Oct-2010 (CT) `example` added
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Last name of person"""
 
             kind           = Attr.Primary
+            example        = u"Doe"
             ignore_case    = True
             max_length     = 48
             rank           = 1
@@ -71,6 +73,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """First name of person"""
 
             kind           = Attr.Primary
+            example        = u"John"
             ignore_case    = True
             max_length     = 32
             rank           = 2
