@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Apr-2010 (CT) Creation
+#    13-Oct-2010 (CT) Derive from `Link2` instead of `Link1`
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,7 @@ import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
 
-_Ancestor_Essence = GTW.OMP.SRM.Link1
+_Ancestor_Essence = GTW.OMP.SRM.Link2
 
 class Crew_Member (_Ancestor_Essence) :
     """Crew member of a `Boat_in_Regatta`."""
@@ -55,17 +56,16 @@ class Crew_Member (_Ancestor_Essence) :
             """`Boat_in_Regatta` the crew member sails on."""
 
             role_type          = GTW.OMP.SRM.Boat_in_Regatta
-            auto_cache         = "crew"
 
         # end class left
 
-        class member (A_Object) :
+        class right (_Ancestor.right) :
             """Person which sails as crew member on `boat_in_regatta`"""
 
-            Class              = GTW.OMP.SRM.Sailor
-            kind               = Attr.Primary
+            role_type          = GTW.OMP.SRM.Sailor
+            auto_cache         = "crew"
 
-        # end class member
+        # end class right
 
         ### Non-primary attributes
 

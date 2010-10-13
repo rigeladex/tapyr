@@ -42,6 +42,7 @@
 #--
 
 from   _MOM.import_MOM            import *
+from   _MOM._Attr.Type            import *
 from   _MOM._Attr.Date_Interval   import *
 from   _MOM._Attr.Time_Interval   import *
 
@@ -211,7 +212,7 @@ class Event_occurs (_Ancestor_Essence) :
 
         # end class detail
 
-        class essence (A_Object) :
+        class essence (_A_Object_) :
 
             kind               = Attr.Computed
 
