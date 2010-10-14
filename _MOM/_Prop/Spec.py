@@ -38,6 +38,7 @@
 #     4-Feb-2010 (CT) Argument `e_type` added to `_effective_prop_kind_mixins`
 #    26-May-2010 (CT) `__init__` changed to copy `_own_names` and `_names`
 #                     from (essential) class to (app-type specific) instance
+#    14-Oct-2010 (CT) `Kind_Mixins` added as `Spec` variable
 #    ««revision-date»»···
 #--
 
@@ -53,10 +54,13 @@ import _TFL.Sorted_By
 class _Prop_Spec_ (TFL.Meta.Object) :
     """Base class for attribute and predicate specification."""
 
-    __metaclass__  = MOM.Meta.M_Prop_Spec
-    _real_name     = "Spec"
-    _prop_dict_cls = dict
+    __metaclass__       = MOM.Meta.M_Prop_Spec
+    _real_name          = "Spec"
+    _lists_to_combine   = ("Kind_Mixins", )
 
+    Kind_Mixins         = ()
+
+    _prop_dict_cls = dict
     _mixed_kinds   = dict ()
 
     def __init__ (self, e_type) :
@@ -115,7 +119,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def _effective_prop_kind
 
     def _effective_prop_kind_mixins (self, name, kind, prop_type, e_type) :
-        return tuple (getattr (prop_type, "Kind_Mixins", ()))
+        return tuple (getattr (prop_type, "Kind_Mixins", ())) + self.Kind_Mixins
     # end def _effective_prop_kind_mixins
 
     def _kind_list_name (self, kind) :

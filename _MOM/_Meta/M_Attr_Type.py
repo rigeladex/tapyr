@@ -55,6 +55,7 @@
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
 #     6-Sep-2010 (CT) `M_Attr_Type_Typed_Collection` changed to use `tuple`
 #                     and `R_Type` in `as_cargo` and `from_cargo`, respectively
+#    14-Oct-2010 (CT) `symbolic_ref_pat` and `_symbolic_default` removed
 #    ««revision-date»»···
 #--
 
@@ -97,8 +98,6 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
                   "and cooked default %s for %s"
                 % (raw_default, default, cls)
                 )
-            if cls.symbolic_ref_pat.match (raw_default) :
-                cls._symbolic_default = True
             ### Can't precompute `default` from `raw_default`
         elif default is not None :
             ### Precompute `raw_default` from `default`

@@ -155,6 +155,7 @@
 #     6-Sep-2010 (CT) `_A_Typed_Tuple_` added
 #    13-Oct-2010 (CT) `example` added
 #    13-Oct-2010 (CT) `A_Date_Time.as_string` redefined to not output `0:0`
+#    14-Oct-2010 (CT) Last vestiges of `_symbolic_default` removed
 #    ««revision-date»»···
 #--
 
@@ -239,7 +240,6 @@ class A_Attr_Type (object) :
         (lambda s : s.name.capitalize ().replace ("_", " "))
     ui_length           = 20
 
-    _symbolic_default   = False
     _t_rank             = 0
 
     @TFL.Meta.Once_Property

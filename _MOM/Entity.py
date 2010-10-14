@@ -159,6 +159,7 @@
 #    14-Sep-2010 (CT) `unicode_literals` added
 #    28-Sep-2010 (CT) `epk_raw` changed to use `get_raw_epk` instead of
 #                     `get_raw`
+#    14-Oct-2010 (CT) `init_finished` added
 #    ««revision-date»»···
 #--
 
@@ -207,6 +208,7 @@ class Entity (TFL.Meta.Object) :
     electric              = False
     generate_doc          = True
     home_scope            = None
+    init_finished         = False
     is_partial            = True
     is_used               = True
     rank                  = 0
@@ -494,6 +496,7 @@ class Entity (TFL.Meta.Object) :
 
     def _finish__init__ (self) :
         """Redefine this to perform additional initialization."""
+        self.init_finished = True
     # end def _finish__init__
 
     def _init_attributes (self) :

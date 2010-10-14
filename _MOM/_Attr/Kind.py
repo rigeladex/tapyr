@@ -147,6 +147,9 @@
 #                     `attr.R_Type` from `M_Coll.Table` if `record_changes`
 #    22-Sep-2010 (CT) `void_raw_values` factored
 #    28-Sep-2010 (CT) `get_raw_epk` added
+#    14-Oct-2010 (CT) Last vestiges of `_symbolic_default` removed
+#    14-Oct-2010 (CT) `_set_cooked_value_inner` factored
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added
 #    ««revision-date»»···
 #--
 
@@ -215,9 +218,10 @@ class Kind (MOM.Prop.Kind) :
     def __set__ (self, obj, value) :
         old_value = self.get_value (obj)
         old_raw   = self.get_raw   (obj)
+        changed   = old_value != value
         self.attr.check_invariant  (obj, value)
-        self._set_cooked           (obj, value)
-        if old_value != value :
+        self._set_cooked           (obj, value, changed)
+        if changed :
             if self.dependent_attrs :
                 man = obj._attr_man
                 man.updates_pending = list (self.dependent_attrs)
@@ -308,15 +312,11 @@ class Kind (MOM.Prop.Kind) :
 
     def reset (self, obj) :
         attr = self.attr
-        if attr._symbolic_default :
-            return self.set_raw \
-                (obj, attr.raw_default, dont_raise = True, changed = True)
-        else :
-            if attr.raw_default and attr.default is None :
-                attr.default = attr.from_string \
-                    (attr.raw_default, obj, obj.globals ())
-            return self._set_raw \
-                (obj, attr.raw_default, attr.default, changed = True)
+        if attr.raw_default and attr.default is None :
+            attr.default = attr.from_string \
+                (attr.raw_default, obj, obj.globals ())
+        return self._set_raw \
+            (obj, attr.raw_default, attr.default, changed = True)
     # end def reset
 
     def set_pickle_cargo (self, obj, cargo) :
@@ -413,17 +413,21 @@ class Kind (MOM.Prop.Kind) :
     # end def _set_cooked_inner
 
     def _set_cooked_value (self, obj, value, changed = 42) :
-        attr = self.attr
         if changed == 42 :
             ### if the caller didn't pass a (boolean) value, evaluate it here
             changed = self.get_value (obj) != value
         if changed :
-            setattr          (obj, attr.ckd_name, value)
-            self.inc_changes (obj._attr_man, obj, value)
+            attr_man = obj._attr_man
+            self._set_cooked_value_inner (obj, value)
+            self.inc_changes (attr_man, obj, value)
             if self.dependent_attrs :
-                obj._attr_man.updates_pending.extend (self.dependent_attrs)
+                attr_man.updates_pending.extend (self.dependent_attrs)
             return True
     # end def _set_cooked_value
+
+    def _set_cooked_value_inner (self, obj, value) :
+        setattr (obj, self.attr.ckd_name, value)
+    # end def _set_cooked_value_inner
 
     def _set_raw (self, obj, raw_value, value, changed = 42) :
         return self._set_cooked_inner (obj, value, changed)
@@ -519,7 +523,7 @@ class _Auto_Update_Mixin_ (Kind) :
         self.__super._check_sanity (attr_type)
         if __debug__ :
             if not attr_type.auto_up_depends :
-                raise ValueError \
+                raise TypeError \
                     ( "%s is defined as `Auto_Update_Mixin` but has no "
                       "`auto_up_depends` specified"
                     % (attr_type, )
@@ -1185,6 +1189,22 @@ class Computed_Set_Mixin (Computed_Mixin) :
     # end def get_value
 
 # end class Computed_Set_Mixin
+
+class Init_Only_Mixin (Kind) :
+    """Mixin restricting attribute changes to the object initialization."""
+
+    def _set_cooked_value_inner (self, obj, value) :
+        if obj.init_finished :
+            raise AttributeError \
+                ( _T ("Init-only attribute `%s.%s` cannot be "
+                      "changed from `%s` to `%s` after object creation"
+                     )
+                % (obj.type_name, self.name, self.get_value (obj), value)
+                )
+        self.__super._set_cooked_value_inner (obj, value)
+    # end def _set_cooked_value_inner
+
+# end class Init_Only_Mixin
 
 class Sticky_Mixin (_Sticky_Mixin_) :
     """Mixin to reset the attribute to the default value whenever the tool

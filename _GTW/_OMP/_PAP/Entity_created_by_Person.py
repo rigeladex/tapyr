@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Oct-2010 (CT) Creation
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added to `_Attributes`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,9 @@ class Entity_created_by_Person (PAP.Entity, _Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
-        _Ancestor = _Ancestor_Essence._Attributes
+        _Ancestor   = _Ancestor_Essence._Attributes
+
+        Kind_Mixins = (Attr.Init_Only_Mixin, )
 
         ### Primary attributes
 
