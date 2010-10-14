@@ -122,8 +122,9 @@ class MOM_Query (_MOM_Query_) :
         self._query_fct       = {}
         delayed               = []
         if e_type is e_type.relevant_root :
-            self.Type_Name = columns.Type_Name
-            self.pid       = columns.pid
+            self.Type_Name    = columns.Type_Name
+            self.pid          = columns.pid
+            self.pid.MOM_Kind = None
             self._ATTRIBUTES.extend (("Type_Name", "pid"))
         for name, kind in db_attrs.iteritems () :
             attr = kind.attr

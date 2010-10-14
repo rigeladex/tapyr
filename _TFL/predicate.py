@@ -171,7 +171,8 @@
 #     1-Jan-2010 (CT)  `first_diff` added
 #     2-Jun-2010 (CT)  `undotted_dict` added
 #    30-Jun-2010 (CT)  `sliced` added
-#    08-Sep-2010 (MG)  `dotted_dict` added
+#     8-Sep-2010 (MG)  `dotted_dict` added
+#     9-Oct-2010 (MG) `undotted_dict`and `dotted_dict`: Parameter `sep` added
 #    ««revision-date»»···
 #--
 
@@ -1017,7 +1018,7 @@ def tupelize (l) :
         return l
 # end def tupelize
 
-def undotted_dict (d) :
+def undotted_dict (d, sep = ".") :
     """Return a dict with un-dotted keys. Dotted keys in `d` are converted
        to nested dictionaries with un-dotted keys in the result.
 
@@ -1038,16 +1039,16 @@ def undotted_dict (d) :
     for k, v in sorted (d.iteritems ()) :
         n = k
         target = result
-        if "." in k :
-            os, _, n = rsplit_hst (k, ".")
-            for o in os.split (".") :
+        if sep in k :
+            os, _, n = rsplit_hst (k, sep)
+            for o in os.split (sep) :
                 target = target.setdefault (o, {})
                 assert isinstance (target, dict), "Need a dict: %s, %s" % (o, k)
         target [n] = v
     return result
 # end def undotted_dict
 
-def dotted_dict (d, prefix = "") :
+def dotted_dict (d, prefix = "", sep = ".") :
     """Return a flat dict where sub-dicts will be merged into the top level
        dict and the keys will be combined with `.`s
 
@@ -1061,11 +1062,11 @@ def dotted_dict (d, prefix = "") :
 """
     result = {}
     if prefix :
-        prefix = "%s." % (prefix, )
+        prefix = "%s%s" % (prefix, sep)
     for k, v in d.iteritems () :
         k = "%s%s" % (prefix, k)
         if isinstance (v, dict) :
-            result.update (dotted_dict (v, k))
+            result.update (dotted_dict (v, k, sep))
         else :
             result [k] = v
     return result

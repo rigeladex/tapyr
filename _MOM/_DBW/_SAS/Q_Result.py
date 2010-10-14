@@ -44,6 +44,7 @@
 #     6-Sep-2010 (MG) Old implementaion removed, `_join` changed to allow
 #                     specifying of the join condition
 #     7-Sep-2010 (MG) `attr` and `attrs` changed to return `_Q_Result_Attrs_`
+#    13-Oct-2010 (MG) Support for `raw` parameter added to `attr/(s)`
 #    ««revision-date»»···
 #--
 
@@ -87,19 +88,19 @@ class _Q_Result_ (TFL.Meta.Object) :
             setattr (self, name, value)
     # end def __init__
 
-    def attr (self, getter) :
+    def attr (self, getter, raw = False) :
         return self._Q_Result_Attrs_ \
-            (self.e_type, self.session, self, getter)
+            (self.e_type, self.session, self, getter, raw)
     # end def attr
 
-    def attrs (self, * getters) :
+    def attrs (self, * getters, ** kw) :
         if not getters :
             raise TypeError \
                 ( "%s.attrs() requires at least one argument"
                 % self.__class__.__name
                 )
         return self._Q_Result_Attrs_ \
-            (self.e_type, self.session, self, getters)
+            (self.e_type, self.session, self, getters, kw.pop ("raw", False))
     # end def attrs
 
     def all (self) :
@@ -291,7 +292,10 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     _Query_Attrs    = dict \
         (_Q_Result_._Query_Attrs, _attr_cols = (_Q_Result_.List (), True))
 
-    def __init__ (self, e_type, session, parent, getter_or_getters = None) :
+    def __init__ ( self, e_type, session, parent
+                 , getter_or_getters = None
+                 , raw               = False
+                 ) :
         self.__super.__init__ (e_type, session, parent)
         if getter_or_getters is not None :
             if not isinstance (getter_or_getters, tuple) :
@@ -300,16 +304,30 @@ class _Q_Result_Attrs_ (_Q_Result_) :
             else :
                 getters        = getter_or_getters
                 self._from_row = self._from_row_tuple
-            self._attr_cols.extend (self._getters_to_columns (getters))
+            self._attr_cols.extend (self._getters_to_columns (getters, raw))
     # end def __init__
 
-    def _getters_to_columns (self, getters) :
+    def distinct (self, * criteria) :
+        return TFL.Q_Result (self).distinct (* criteria)
+    # end def distinct
+
+    def _getters_to_columns (self, getters, raw) :
         Q   = MOM.Q
         SAQ = self.e_type._SAQ
         for getter in getters :
             if isinstance (getter, basestring) :
                 getter = getattr (Q, getter)
-            yield getter (SAQ)
+            if raw :
+                attr_name = getter._name
+                if "." in attr_name :
+                    path, attr_name = attr_name.rsplit (".", 1)
+                    SAQ             = getattr (Q, path) (SAQ)
+                attr_kind           = getattr (SAQ._E_TYPE [0], attr_name, None)
+                if attr_kind and attr_kind.needs_raw_value :
+                    attr_name       = attr_kind.raw_name
+                yield getattr (SAQ, attr_name)
+            else :
+                yield getter (SAQ)
     # end def _getters_to_columns
 
     def _from_row_tuple (self, row) :
@@ -320,7 +338,10 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                 pc = dict ((c.MOM_Kind.attr.name, (row [c], )) for c in cols)
             else :
                 pc = row [cols]
-            result.append (k.from_pickle_cargo (scope, (pc, )))
+            if k :
+                result.append (k.from_pickle_cargo (scope, (pc, )))
+            else :
+                result.append (str (pc))
         return tuple (result)
     # end def _from_row_tuple
 

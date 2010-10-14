@@ -50,6 +50,8 @@ import  itertools
 class Field_Group (TFL.Meta.Object) :
     """A group of form field."""
 
+    action_list = ()
+
     def __init__ (self, fields, field_group_description) :
         self.fields                  = TFL.NO_List         (fields)
         self.field_group_description = field_group_description
