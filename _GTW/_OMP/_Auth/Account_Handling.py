@@ -31,6 +31,8 @@
 #    19-Feb-2010 (MG) Reorganized
 #    20-Feb-2010 (MG) Account management functions added
 #    20-Feb-2010 (MG) Expiration of actions added
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added to `token`
+#    14-Oct-2010 (CT) `Account_Pasword_Reset.password` changed to `A_String`
 #    ««revision-date»»···
 #--
 
@@ -122,7 +124,7 @@ class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         token = uuid.uuid4 ().hex
         if not expires :
             etype   = self._etype
-            expires = datetime.datetime.now ()+ etype.expire_duration_default
+            expires = datetime.datetime.now () + etype.expire_duration_default
         return self.__super.__call__ \
             (account, token = token, expires = expires, ** kw)
     # end def __call__
@@ -146,14 +148,15 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
         class token (A_String) :
             """Unique token which identifies this action."""
 
-            kind         = Attr.Primary
+            kind          = Attr.Primary
+            Kind_Mixins   = (Attr.Init_Only_Mixin, )
 
         # end class token
 
         class expires (A_Date_Time) :
             """Exipre time of this action"""
 
-            kind         = Attr.Required
+            kind          = Attr.Required
 
         # end class expires
 
@@ -210,7 +213,7 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class password (A_Email) :
+        class password (A_String) :
             """The temporary password."""
 
             kind               = Attr.Required

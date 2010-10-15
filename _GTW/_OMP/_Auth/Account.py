@@ -46,6 +46,7 @@
 #                     to `Internal` (set by the application, not the user)
 #    18-May-2010 (CT) `Account_P_Manager.__call__` replaced by
 #                     `Account_P_Manager.create_new_account_x`
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added to `salt`
 #    ««revision-date»»···
 #--
 
@@ -211,8 +212,9 @@ class Account_P (_Ancestor_Essence) :
         class salt (A_String) :
             """The salt used for the password hash."""
 
-            kind       = Attr.Internal
-            max_length = 50
+            kind          = Attr.Internal
+            Kind_Mixins   = (Attr.Init_Only_Mixin, )
+            max_length    = 50
 
         # end class salt
 

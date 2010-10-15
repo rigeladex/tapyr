@@ -30,6 +30,7 @@
 #    10-May-2010 (CT) `place` added
 #     6-Sep-2010 (CT) `race_results` removed (now implemented as `Link1`)
 #    20-Sep-2010 (CT) `rank` added
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added to `registration_date`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Date of registration."""
 
             kind               = Attr.Internal
+            Kind_Mixins        = (Attr.Init_Only_Mixin, )
 
             def computed_default (self) :
                 return self.now ()

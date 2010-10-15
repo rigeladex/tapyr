@@ -160,6 +160,7 @@
 #    28-Sep-2010 (CT) `epk_raw` changed to use `get_raw_epk` instead of
 #                     `get_raw`
 #    14-Oct-2010 (CT) `init_finished` added
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added to `electric`
 #    ««revision-date»»···
 #--
 
@@ -802,6 +803,7 @@ class Id_Entity (Entity) :
             """Indicates if object/link was created automatically or not."""
 
             kind          = Attr.Internal
+            Kind_Mixins   = (Attr.Init_Only_Mixin, )
             default       = False
             hidden        = True
 

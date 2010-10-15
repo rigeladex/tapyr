@@ -31,6 +31,7 @@
 #                     `A_Numeric_String` to allow autocompletion
 #     7-May-2010 (CT) `sail_number` changed back to `A_Int` to fix sorting
 #                     and set `needs_raw_value` to allow autocompletion
+#    14-Oct-2010 (CT) `Init_Only_Mixin` added to `left`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ class Boat (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Boat_Class
             role_name          = "b_class"
+            Kind_Mixins        = (Attr.Init_Only_Mixin, )
             ui_name            = "Class"
 
         # end class left
