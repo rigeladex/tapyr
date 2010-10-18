@@ -34,6 +34,7 @@
 #                     and `sanitized_filename`
 #    23-Dec-2007 (CT) Use `Re_Replacer` and `Dict_Replacer` instead of
 #                     home-grown code
+#    18-Oct-2010 (CT) `_quote_map` added and used
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,23 @@ _graph_rep      = Re_Replacer \
 _non_print_rep  = Re_Replacer \
     ("|".join   (re.escape (chr (i)) for i in range (0, 32) + [127]), "")
 
+_quote_map      = \
+    { u"«"      : u"<<"
+    , u"»"      : u">>"
+    , u"\u2018" : u"'"
+    , u"\u2019" : u"'"
+    , u"\u201A" : u"'"
+    , u"\u201B" : u"'"
+    , u"\u201C" : u'"'
+    , u"\u201D" : u'"'
+    , u"\u201E" : u'"'
+    , u"\u201F" : u'"'
+    , u"\u2039" : u"'"
+    , u"\u203A" : u"'"
+    }
+
+_quote_rep      = Dict_Replacer (_quote_map)
+
 def sanitized_unicode (s, translate_table = None) :
     """Return sanitized version of unicode string `s` reduced to
        pure ASCII 8-bit string. Caveat: passing in an 8-bit string with
@@ -69,12 +87,14 @@ def sanitized_unicode (s, translate_table = None) :
 
        >>> sanitized_unicode (u"üxäyözßuÜXÄYÖZbc¡ha!")
        'uexaeyoezssuUeXAeYOeZbcha!'
-       >>> sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord ("»") : u">"})
+       >>> sanitized_unicode (u"«ÄÖÜ»")
+       '<<AeOeUe>>'
+       >>> sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord (u"»") : u">"})
        '<AeOeUe>'
     """
-    s = _diacrit_rep (s)
     if translate_table :
         s = s.translate (translate_table)
+    s = _quote_rep (_diacrit_rep (s))
     return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
 # end def sanitized_unicode
 
@@ -83,8 +103,10 @@ def sanitized_filename (s, translate_table = None) :
       characters removed so that the result is usable as a filename.
 
        >>> sanitized_filename (
-       ...    u"überflüßig komplexer und $gefährlicher* Filename")
+       ...    u"überflüßig komplexer'; und $gefährlicher*' Filename")
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
+       >>> sanitized_filename (u"«ÄÖÜß»")
+       '_AeOeUess_'
    """
    s = sanitized_unicode  (s.strip (), translate_table)
    s = _non_print_rep     (s)
