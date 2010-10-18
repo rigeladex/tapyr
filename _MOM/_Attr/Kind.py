@@ -1292,6 +1292,7 @@ Class `MOM.Attr.Kind`
 
 .. autoclass:: Primary
 .. autoclass:: Primary_Optional
+.. autoclass:: Mandatory
 .. autoclass:: Required
 .. autoclass:: Optional
 
@@ -1305,6 +1306,8 @@ Class `MOM.Attr.Kind`
 .. autoclass:: Const
 
 .. autoclass:: Computed_Mixin
+.. autoclass:: Computed_Set_Mixin
+.. autoclass:: Init_Only_Mixin
 .. autoclass:: Sticky_Mixin
 
 """
