@@ -32,6 +32,7 @@
 #     4-Aug-2010 (CT) `fix_a_nospam` factored
 #     7-Oct-2010 (CT) `GTW_Gallery` added
 #    10-Oct-2010 (CT) `GTW_Externalize` added
+#    18-Oct-2010 (CT) `GTW_pixpander` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,12 @@ GTW.Script      (src = "/media/GTW/js/GTW_Gallery.js", name = "GTW_Gallery")
 GTW.JS_On_Ready \
     ( """$(".thumbnails").GTW_Gallery ({ delay : 2000 });"""
     , name = "GTW_Gallery"
+    )
+
+GTW.Script      (src = "/media/GTW/js/GTW_pixpander.js", name = "GTW_pixpander")
+GTW.JS_On_Ready \
+    ( """$("a[href$='.jpg'] > img").GTW_pixpander ();"""
+    , name = "GTW_pixpander"
     )
 
 if __name__ != "__main__" :
