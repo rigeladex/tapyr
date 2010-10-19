@@ -36,22 +36,19 @@ test_code = r"""
 
     >>> PAP = scope.PAP
     >>> per = PAP.Person           ("ln", "fn")
-    >>> pho = PAP.Phone            ("43", "1", "123456")
-    >>> php = PAP.Person_has_Phone (per, pho)
     >>> scope.commit               ()
 
     >>> with scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
-    ...     _ = pho.set_raw (number = u"111222")
-    ...     _ = php.set_raw (right = pho.epk_raw)
+    ...     _ = per.set_raw (first_name = u"fn2")
+    ...     PAP.Person.query (Q.first_name == per.first_name).all () ## Nested
+    [GTW.OMP.PAP.Person (u'ln', u'fn2', u'', u'')]
 
-    >>> php
-    GTW.OMP.PAP.Person_has_Phone ((u'ln', u'fn', u'', u''), (u'43', u'1', u'111222'), u'')
-    >>> pho
-    GTW.OMP.PAP.Phone (u'43', u'1', u'111222')
+    >>> PAP.Person.query (Q.first_name == per.first_name).all () ## outside
+    [GTW.OMP.PAP.Person (u'ln', u'fn2', u'', u'')]
 """
 
 from   _GTW.__test__.model                      import *
-
+from   _MOM.import_MOM                          import Q
 __test__ = Scaffold.create_test_dict (test_code)
 
 ### __END__ GTW.__test__.Nested_Change_Recorder
