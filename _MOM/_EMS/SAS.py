@@ -40,6 +40,10 @@
 #    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
 #    15-Sep-2010 (CT) `Change_Summary` added to manage `pending_attr_changes`
 #    16-Sep-2010 (CT) `Change_Summary`: s/clear/_clear/
+#    20-Oct-2010 (CT) `Change_Summary`: s/_add_pending/add_pending/
+#    20-Oct-2010 (CT) `Change_Summary.add` redefinition removed
+#    20-Oct-2010 (CT) `Manager.register_change` changed to call
+#                     `uncommitted_changes.add_pending`
 #    ««revision-date»»···
 #--
 
@@ -63,18 +67,11 @@ from   sqlalchemy  import sql
 
 class Change_Summary (MOM.SCM.Summary) :
 
-    def add (self, c) :
-        self.__super.add  (c)
-        self._add_pending (c)
-    # end def add
-
-    def _add_pending (self, c) :
+    def add_pending (self, c) :
         mo = c.modified_attrs
         if mo :
             self.pending_attr_changes [c.pid].update (mo)
-        for cc in c.children :
-            self._add_pending (cc)
-    # end def _add_pending
+    # end def add_pending
 
     def _clear (self) :
         self.__super._clear ()
@@ -127,19 +124,6 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def load_root
 
-    def pid_query (self, pid, Type = None) :
-        pid        = int (pid)
-        result     = self.session.pid_query (pid)
-        if result is None :
-            result = self.pm.query          (pid)
-        if Type is not None and not isinstance (result, Type.Essence) :
-            raise LookupError \
-                ( "Pid `%r` is instance of type %s, not of type `%s`"
-                % (pid, result.type_name, Type.type_name)
-                )
-        return result
-    # end def pid_query
-
     @property
     def max_cid (self) :
         id_col   = MOM.SCM.Change._Change_._sa_table.c.cid
@@ -159,6 +143,19 @@ class Manager (MOM.EMS._Manager_) :
         return self.session
     # end def pcm
 
+    def pid_query (self, pid, Type = None) :
+        pid        = int (pid)
+        result     = self.session.pid_query (pid)
+        if result is None :
+            result = self.pm.query          (pid)
+        if Type is not None and not isinstance (result, Type.Essence) :
+            raise LookupError \
+                ( "Pid `%r` is instance of type %s, not of type `%s`"
+                % (pid, result.type_name, Type.type_name)
+                )
+        return result
+    # end def pid_query
+
     def register_change (self, change) :
         self.session.add_change (change)
         if change.children :
@@ -167,9 +164,11 @@ class Manager (MOM.EMS._Manager_) :
                 ( Table.c.cid.in_ (c.cid for c in change.children)
                 ).values (parent_cid = change.cid)
             self.session.execute (update)
-        self.scope.db_cid = change.cid
-        self.__super.register_change (change)
-        self.session.update_change   (change)
+        uncommitted_changes = self.uncommitted_changes
+        self.scope.db_cid   = change.cid
+        self.__super.register_change    (change)
+        uncommitted_changes.add_pending (change)
+        self.session.update_change      (change)
     # end def register_change
 
     def register_scope (self) :

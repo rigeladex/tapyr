@@ -35,15 +35,16 @@ test_code = r"""
     Creating new scope MOMT__...
 
     >>> PAP = scope.PAP
-    >>> per = PAP.Person           ("ln", "fn")
-    >>> scope.commit               ()
+    >>> per = PAP.Person ("ln", "fn")
+    >>> scope.commit     ()
 
+    >>> fn2 = u"fn2"
     >>> with scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
-    ...     _ = per.set_raw (first_name = u"fn2")
-    ...     PAP.Person.query (Q.first_name == per.first_name).all () ## Nested
+    ...     _ = per.set_raw (first_name = fn2)
+    ...     PAP.Person.query (Q.first_name == fn2).all () ## Nested
     [GTW.OMP.PAP.Person (u'ln', u'fn2', u'', u'')]
 
-    >>> PAP.Person.query (Q.first_name == per.first_name).all () ## outside
+    >>> PAP.Person.query (Q.first_name == fn2).all () ## outside
     [GTW.OMP.PAP.Person (u'ln', u'fn2', u'', u'')]
 """
 
