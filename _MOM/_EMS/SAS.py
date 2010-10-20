@@ -40,7 +40,8 @@
 #    14-Sep-2010 (CT) Argument `Type` of `pid_query` made optional
 #    15-Sep-2010 (CT) `Change_Summary` added to manage `pending_attr_changes`
 #    16-Sep-2010 (CT) `Change_Summary`: s/clear/_clear/
-#    20-Oct-2010 (CT) `Change_Summary`: s/_add_pending/add_pending/
+#    20-Oct-2010 (CT) `Change_Summary`: s/_add_pending/add_pending/,
+#                     recursion removed from `add_pending`
 #    20-Oct-2010 (CT) `Change_Summary.add` redefinition removed
 #    20-Oct-2010 (CT) `Manager.register_change` changed to call
 #                     `uncommitted_changes.add_pending`
