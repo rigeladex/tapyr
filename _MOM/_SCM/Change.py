@@ -69,6 +69,8 @@
 #     9-Sep-2010 (CT) `_new_attr` vs `new_attr` (don't store `last_cid`)
 #    15-Sep-2010 (CT) `modified_attrs` added (to `Attr` and `Attr_Composite`)
 #    16-Sep-2010 (CT) `modified_attrs` added `Create`
+#    21-Oct-2010 (CT) `_modify_last_cid` factored and redefined for
+#                     `Attr_Composite`
 #    ««revision-date»»···
 #--
 
@@ -315,10 +317,13 @@ class _Entity_ (Undoable) :
         if attr :
             entity = self.entity (scope)
             if entity :
+                self._modify_last_cid (scope, entity, attr)
                 entity.set_raw (** attr)
-                if "last_cid" not in attr :
-                    entity.last_cid = self.cid
     # end def _modify
+
+    def _modify_last_cid (self, scope, entity, attr) :
+        attr.setdefault ("last_cid", str (self.cid))
+    # end def _modify_last_cid
 
     def _pickle_attrs (self) :
         return dict \
@@ -544,6 +549,11 @@ class Attr_Composite (_Attr_) :
     def type_repr (self) :
         return ".".join ((self.type_name, self.attr_name or "???"))
     # end def type_repr
+
+    def _modify_last_cid (self, scope, entity, attr) :
+        entity = self.__super.entity (scope)
+        entity.set_raw (last_cid = attr.pop ("last_cid", self.cid))
+    # end def _modify_last_cid
 
     def _pickle_attrs (self) :
         return dict \
