@@ -156,6 +156,8 @@
 #    13-Oct-2010 (CT) `example` added
 #    13-Oct-2010 (CT) `A_Date_Time.as_string` redefined to not output `0:0`
 #    14-Oct-2010 (CT) Last vestiges of `_symbolic_default` removed
+#    28-Oct-2010 (CT) `_A_Object_._get_object` changed to take type-name from
+#                     `epk`, if possible
 #    ««revision-date»»···
 #--
 
@@ -827,8 +829,11 @@ class _A_Object_ (A_Attr_Type) :
     # end def _check_type
 
     def _get_object (self, obj, epk, raw = False) :
+        if epk and isinstance (epk [-1], self.Class.Type_Name_Type) :
+            tn = epk [-1]
+        else :
+            tn = self.Class.type_name
         scope  = self._get_scope (obj)
-        tn     = self.Class.type_name
         etm    = scope [tn]
         result = etm.instance (* epk, raw = raw)
         if result is not None :
