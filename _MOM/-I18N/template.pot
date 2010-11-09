@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-20 09:26+0200\n"
+"POT-Creation-Date: 2010-11-09 13:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
-#: _MOM/Entity.py:1026
+#: _MOM/Entity.py:1062
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1547
+#: _MOM/_Attr/Type.py:1491
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -45,31 +45,19 @@ msgid_plural "An_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:147
+#: _MOM/_Meta/M_Entity.py:152
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:169
+#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:180
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:973
+#: _MOM/_Attr/Kind.py:994
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Count"
-msgstr ""
-
-#: _MOM/_Attr/Recurrence_Rule.py:330
-msgid "Daily"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Date exceptions"
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
@@ -90,43 +78,22 @@ msgid_plural "Date_Interval_Ns"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Dates"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Dates excluded from the recurrence rule set."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Dates included in the recurrence rule set."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Easter offset"
-msgstr ""
-
 #: _MOM.Entity:0
 msgid "Entity"
 msgid_plural "Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "FR"
 msgstr ""
 
 #: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
-#: _MOM._Attr.Recurrence_Rule:0
 msgid "Finish"
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Finish date of interval"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Finish date of the recurrence."
 msgstr ""
 
 #: _MOM._Attr.Time_Interval:0
@@ -139,7 +106,14 @@ msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1205
+#: _MOM/_Attr/Kind.py:1199
+#, python-format
+msgid ""
+"Init-only attribute `%s.%s` cannot bechanged from `%s` to `%s` after "
+"object creation"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1121
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -174,24 +148,8 @@ msgid_plural "Link3s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "MO"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Maximum number of recurrences."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Month"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Month day"
-msgstr ""
-
-#: _MOM/_Attr/Recurrence_Rule.py:330
-msgid "Monthly"
 msgstr ""
 
 #: _MOM.Object:0
@@ -204,13 +162,9 @@ msgid_plural "Named_Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:920
+#: _MOM/_Attr/Type.py:849
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
-msgstr ""
-
-#: _MOM/_Attr/Type.py:346
-msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
 #: _MOM.Object:0
@@ -219,99 +173,21 @@ msgid_plural "Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Offset to Easter sunday (positive or negative, 0 means the\n"
-"Easter sunday itself)."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Period"
-msgstr ""
-
-#: _MOM/_Attr/Kind.py:840
+#: _MOM/_Attr/Kind.py:861
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:850
+#: _MOM/_Attr/Kind.py:871
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Recurrence_Rule"
-msgid_plural "Recurrence_Rules"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Recurrence_Rule_Set"
-msgid_plural "Recurrence_Rule_Sets"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Restrict pos"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Restrict recurrences to the numbers given. Negative numbers\n"
-"count from the last occurrence (-1 meaning the last occurrence)."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Restrict the recurrences to the days of the month specified.\n"
-"Negative numbers count from the end of the month\n"
-"(-1 means the last day of the month)."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Restrict the recurrences to the days of the week specified.\n"
-"(0 means monday, 6 means sunday)."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Restrict the recurrences to the days of the year specified.\n"
-"Negative numbers count from the end of the year\n"
-"(-1 means the last day of the year)."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Restrict the recurrences to the months specified (1 means\n"
-"January, ...)."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Restrict the recurrences to the week numbers specified."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Rule exceptions"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Rules"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Rules excluded from the recurrence rule set."
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Rules included in the recurrence rule set."
-msgstr ""
-
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "SA"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "SU"
 msgstr ""
 
@@ -324,7 +200,6 @@ msgid "Sequence number of a link in an ordered association."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
-#: _MOM._Attr.Recurrence_Rule:0
 msgid "Start"
 msgstr ""
 
@@ -332,19 +207,15 @@ msgstr ""
 msgid "Start date of interval"
 msgstr ""
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Start date of the recurrence."
-msgstr ""
-
 #: _MOM._Attr.Time_Interval:0
 msgid "Start time of interval"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "TH"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "TU"
 msgstr ""
 
@@ -356,19 +227,13 @@ msgstr ""
 msgid "The finish time must be later than the start time"
 msgstr ""
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"The interval (measured in `units`) between\n"
-"successive recurrences of an event."
-msgstr ""
-
 #: _MOM._Attr.Time_Interval:0
 msgid "Time_Interval"
 msgid_plural "Time_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:326
+#: _MOM/_Attr/Kind.py:348
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -377,52 +242,22 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Unit"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid ""
-"Unit of recurrence. `period` is interpreted in units of\n"
-"`unit`."
-msgstr ""
-
-#: _MOM/_Attr/Kind.py:841
+#: _MOM/_Attr/Kind.py:862
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:170
+#: _MOM/_EMS/Hash.py:197 _MOM/_EMS/_Manager_.py:181
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:107 _MOM/_Attr/Type.py:525
+#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:468
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:67
+#: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "WE"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Week"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Week day"
-msgstr ""
-
-#: _MOM/_Attr/Recurrence_Rule.py:330
-msgid "Weekly"
-msgstr ""
-
-#: _MOM._Attr.Recurrence_Rule:0
-msgid "Year day"
-msgstr ""
-
-#: _MOM/_Attr/Recurrence_Rule.py:330
-msgid "Yearly"
 msgstr ""
 
 #: _MOM.Entity:0
@@ -441,7 +276,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:915
+#: _MOM/_Attr/Type.py:844
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""

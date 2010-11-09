@@ -69,6 +69,9 @@
 #    10-Aug-2010 (CT) `Cmd.__init__` changed to optionally take `description`
 #                     from `handler.__doc__`
 #    16-Aug-2010 (CT) Use `_min_args` and `_max_args` from sub-command
+#     9-Nov-2010 (CT) `Binary` added (a kind of `Bool` that requires a value)
+#     9-Nov-2010 (CT) `max_name_length` added and used for formatting of `help`
+#     9-Nov-2010 (CT) `Help` changed to recognize `all` (and `*`)
 #    ««revision-date»»···
 #--
 
@@ -82,6 +85,7 @@ import _TFL.defaultdict
 import _TFL.Environment
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 import _TFL.predicate
 import _TFL.sos
 
@@ -259,7 +263,10 @@ class _Spec_ (TFL.Meta.Object) :
 
     @property
     def raw_default (self) :
-        return self.__default
+        result = self.__default
+        if TFL.callable (result) :
+            result = result ()
+        return result
     # end def raw_default
 
     def _auto_max_number (self, auto_split) :
@@ -398,6 +405,14 @@ class Bool (_Spec_O_) :
 
 # end class Bool
 
+class Binary (Bool) :
+    """Option with a required boolean value"""
+
+    needs_value = True
+    type_abbr   = "Y"
+
+# end class Binary
+
 class Cmd_Choice (TFL.Meta.Object) :
     """Argument that selects a sub-command"""
 
@@ -417,15 +432,6 @@ class Cmd_Choice (TFL.Meta.Object) :
         self.description = kw.pop ("description", "")
         assert not kw
     # end def __init__
-
-    @property
-    def choices (self) :
-        return self.sub_cmds
-    # end def choices
-
-    def cooked_default (self, cao = None) :
-        return self.default
-    # end def cooked_default
 
     def __call__ (self, value, cao) :
         try :
@@ -447,6 +453,20 @@ class Cmd_Choice (TFL.Meta.Object) :
         cao._max_args = sc._max_args
         sc._setup_opt_abbr (cao._opt_dict, cao._opt_abbr)
     # end def __call__
+
+    @property
+    def choices (self) :
+        return self.sub_cmds
+    # end def choices
+
+    def cooked_default (self, cao = None) :
+        return self.default
+    # end def cooked_default
+
+    @TFL.Meta.Once_Property
+    def max_name_length (self) :
+        return max (sc.max_name_length for sc in self.sub_cmds.itervalues ())
+    # end def max_name_length
 
     def __getattr__ (self, name) :
         return self.sub_cmds [name]
@@ -493,9 +513,11 @@ class Float (_Number_) :
 class Help (_Spec_O_) :
     """Option asking for help"""
 
-    alias         = "?"
-    auto_split    = ","
-    needs_value   = False
+    alias          = "?"
+    auto_split     = ","
+    needs_value    = False
+    topics         = set (["args", "buns", "cmds", "opts", "summary"])
+    default_topics = set (["args", "buns", "opts", "summary"])
 
     def __init__ (self) :
         self.__super.__init__ \
@@ -519,30 +541,35 @@ class Help (_Spec_O_) :
         if cmd._helper :
             cmd._helper (cao)
         else :
-            nl    = self.nl = self._nl_gen ()
-            keys  = set (["args", "buns", "cmds", "opts", "summary"])
-            vals  = set (v for v in getattr (cao, self.name) if v)
-            all_p = (not vals.intersection (keys)) or vals == set ([True])
-            if (all_p or "summary" in vals) :
+            nl     = self.nl = self._nl_gen ()
+            topics = self.topics
+            wanted = set (v for v in getattr (cao, self.name) if v)
+            most_p = False
+            if wanted in (set (["all"]), set (["*"])) :
+                wanted = topics
+                most_p = True
+            elif wanted == set ([True]) or not wanted.intersection (topics) :
+                wanted = self.default_topics
+                most_p = True
+            if "summary" in wanted :
                 nl.next ()
                 self._help_summary (cao, indent)
-            arg_p = any (a for a in cao._arg_list if not a.hide)
-            if (all_p or "args" in vals) and arg_p :
+            arg_p     = any (a for a in cao._arg_list if not a.hide)
+            want_args = "args" in wanted
+            if want_args and arg_p :
                 nl.next ()
-                self._help_args (cao, indent, heading = not all_p)
-                if "cmds" in vals :
-                    nl.next ()
-                    self._help_cmds (cao, indent + 4)
-            elif "cmds" in vals :
+                self._help_args (cao, indent, heading = not most_p)
+            if "cmds" in wanted :
                 nl.next ()
-                self._help_cmds (cao, indent)
+                self._help_cmds \
+                    (cao, indent+ (4 * want_args), heading = not want_args)
             opt_p = any (o for o in cao._opt_dict.itervalues () if not o.hide)
-            if (all_p or "opts" in vals) and opt_p :
+            if "opts" in wanted and opt_p :
                 nl.next ()
-                self._help_opts (cao, indent, heading = not all_p)
-            if (all_p or "buns" in vals) and cao._bun_dict :
+                self._help_opts (cao, indent, heading = not most_p)
+            if "buns" in wanted and cao._bun_dict :
                 nl.next ()
-                self._help_buns (cao, indent + (4 * all_p))
+                self._help_buns (cao, indent + (4 * most_p))
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
@@ -571,8 +598,7 @@ class Help (_Spec_O_) :
             pyk.fprint ("%sArguments of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
-        max_l   = max \
-            (len (k) for k in ichain (cao._arg_dict, cao._opt_dict)) + 1
+        max_l   = cao.max_name_length
         for arg in cao._arg_list :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
@@ -587,7 +613,7 @@ class Help (_Spec_O_) :
             pyk.fprint (head, desc, sep = "    ")
         indent += 4
         head    = " " * indent
-        max_l   = max (len (k) for k in bun._kw)
+        max_l   = cao.max_name_length
         for k, v in sorted (bun._kw.iteritems ()) :
             pyk.fprint ("%s%-*s : %s" % (head, max_l, k, v))
     # end def _help_bun
@@ -602,13 +628,14 @@ class Help (_Spec_O_) :
                 self._help_bun (b, cao, head, indent)
     # end def _help_buns
 
-    def _help_cmds (self, cao, indent = 0) :
+    def _help_cmds (self, cao, indent = 0, heading = False) :
         cmd = cao._cmd
         if cmd._sub_cmd_choice :
-            pyk.fprint ("%sSub commands of %s" % (" " * indent, cao._name))
+            if heading :
+                pyk.fprint ("%sSub commands of %s" % (" " * indent, cao._name))
             indent += 4
             head    = " " * indent
-            max_l   = max (len (k) for k in cmd._sub_cmd_choice.sub_cmds)
+            max_l   = cao.max_name_length
             scs     = sorted \
                 ( cmd._sub_cmd_choice.sub_cmds.iteritems ()
                 , key = TFL.Getter [0]
@@ -626,8 +653,7 @@ class Help (_Spec_O_) :
             pyk.fprint ("%sOptions   of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
-        max_l   = max \
-            (len (k) for k in ichain (cao._arg_dict, cao._opt_dict))
+        max_l   = cao.max_name_length - 1
         for name, opt in sorted (cao._opt_dict.iteritems ()) :
             self._help_ao (opt, cao, head, max_l, "-")
     # end def _help_opts
@@ -865,7 +891,19 @@ class Config (_Config_, Abs_Path) :
 # end class Config
 
 class Bundle (TFL.Meta.Object) :
-    """Model a bundle of values for arguments and options."""
+    """Model a bundle of values for arguments and options.
+
+       A bundle is defined by creating an instance of :class:`Bundle` with
+       the arguments:
+
+       - the name of the bundle,
+
+       - a description of the bundle to be included in the `help`,
+
+       - a number of keyword arguments specifying values for the arguments
+         and options defined by the bundle.
+
+    """
 
     kind          = "bundle"
 
@@ -971,6 +1009,15 @@ class Cmd (TFL.Meta.Object) :
                     raise
         return cao ()
     # end def __call__
+
+    @TFL.Meta.Once_Property
+    def max_name_length (self) :
+        result = max \
+            (len (k) for k in ichain (self._arg_dict, self._opt_dict))
+        if self._sub_cmd_choice :
+            result = max (result, self._sub_cmd_choice.max_name_length)
+        return result + 1
+    # end def max_name_length
 
     def parse (self, argv) :
         """Parse arguments, options, and sub-commands specified in `argv`
@@ -1126,24 +1173,25 @@ class CAO (TFL.Meta.Object) :
     _pending = object ()
 
     def __init__ (self, cmd) :
-        self._cmd           = cmd
-        self._name          = cmd._name
-        self._arg_dict      = dict (cmd._arg_dict)
-        self._arg_list      = list (cmd._arg_list)
-        self._bun_dict      = dict (cmd._bun_dict)
-        self._opt_dict      = dict (cmd._opt_dict)
-        self._opt_abbr      = dict (cmd._opt_abbr)
-        self._opt_alias     = dict (cmd._opt_alias)
-        self._opt_conf      = list (cmd._opt_conf)
-        self._min_args      = cmd._min_args
-        self._max_args      = cmd._max_args
-        self._do_keywords   = cmd._do_keywords
-        self._put_keywords  = cmd._put_keywords
-        self.argv           = []
-        self.argv_raw       = []
-        self._map           = TFL.defaultdict (lambda : self._pending)
-        self._raw           = TFL.defaultdict (list)
-        self._key_values    = dict ()
+        self._cmd            = cmd
+        self._name           = cmd._name
+        self._arg_dict       = dict (cmd._arg_dict)
+        self._arg_list       = list (cmd._arg_list)
+        self._bun_dict       = dict (cmd._bun_dict)
+        self._opt_dict       = dict (cmd._opt_dict)
+        self._opt_abbr       = dict (cmd._opt_abbr)
+        self._opt_alias      = dict (cmd._opt_alias)
+        self._opt_conf       = list (cmd._opt_conf)
+        self._min_args       = cmd._min_args
+        self._max_args       = cmd._max_args
+        self._do_keywords    = cmd._do_keywords
+        self._put_keywords   = cmd._put_keywords
+        self.argv            = []
+        self.argv_raw        = []
+        self.max_name_length = cmd.max_name_length
+        self._map            = TFL.defaultdict (lambda : self._pending)
+        self._raw            = TFL.defaultdict (list)
+        self._key_values     = dict ()
     # end def __init__
 
     def __call__ (self) :
@@ -1390,6 +1438,8 @@ def show (cao) :
     pyk.fprint ("    argv       : %s" % (cao.argv, ))
 # end def show
 
+### «text»
+
 __doc__ = """
 Module `CAO`
 =============
@@ -1398,7 +1448,7 @@ This module provides classes for defining and processing commands,
 arguments, and options. The values for arguments and options can be
 parsed from `sys.argv` or supplied by a client via keyword arguments.
 
-A command is defined by creating an instance of the :class:`Cmd`
+A command is defined by creating an instance of :class:`Cmd`
 with the arguments
 
 - a callback function `handler` that performs the command,
@@ -1412,6 +1462,10 @@ with the arguments
 
 - a tuple of :class:`Arg` or :class:`Opt` instances that defines the
   possible  options,
+
+- a tuple of :class:`Bundle` instances that define pre-packaged bundles of
+  argument and option values to support common usage scenarios that can be
+  specified simply by using the bundles name.
 
 - a description of the command to be included in the `help`,
 
@@ -1437,6 +1491,7 @@ called by a client, if explicit flow control is required.
    :members:
 .. autoclass:: Opt
    :members:
+.. autoclass:: Bundle
 .. autoclass:: Cmd
    :members: __call__, parse, use
 .. autoclass:: CAO

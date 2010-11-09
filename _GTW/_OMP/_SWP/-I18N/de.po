@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-08-20 09:26+0200\n"
+"PO-Revision-Date: 2010-11-09 13:09+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Abstract"
 msgstr "Kurzfassung"
 
-#: _GTW/_OMP/_SWP/Nav.py:190
+#: _GTW/_OMP/_SWP/Nav.py:175
 msgid "Clip"
 msgstr "Schnipsel"
 
@@ -37,22 +37,6 @@ msgid "Clip_X"
 msgid_plural "Clip_Xs"
 msgstr[0] ""
 msgstr[1] ""
-
-#: _GTW._OMP._SWP.Entity:0
-msgid "Creator"
-msgstr "Autor"
-
-#: _GTW/_OMP/_SWP/Nav.py:92
-msgid "Creator of the contents of the news clip"
-msgstr "Autor des Inhalts des Neuigkeitsschnipsels"
-
-#: _GTW/_OMP/_SWP/Nav.py:150
-msgid "Creator of the contents of the web page"
-msgstr "Autor des Inhalts der Webseite"
-
-#: _GTW._OMP._SWP.Entity:0
-msgid "Creator of the contents."
-msgstr "Autor des Inhalts."
 
 #: _MOM._Attr.A_2D:0
 msgid "D2_Value_Float"
@@ -70,15 +54,15 @@ msgstr[1] ""
 msgid "Date"
 msgstr "Datum"
 
-#: _GTW/_OMP/_SWP/Nav.py:160 _GTW/_OMP/_SWP/Nav.py:187
+#: _GTW/_OMP/_SWP/Nav.py:145 _GTW/_OMP/_SWP/Nav.py:172
 msgid "Date interval"
 msgstr "Datumsinterval"
 
-#: _GTW/_OMP/_SWP/Nav.py:159
+#: _GTW/_OMP/_SWP/Nav.py:144
 msgid "Date interval of event"
 msgstr "Datumsinterval des Ereignisses"
 
-#: _GTW/_OMP/_SWP/Nav.py:186
+#: _GTW/_OMP/_SWP/Nav.py:171
 msgid "Date interval of news clip"
 msgstr "Datumsinterval des Neuigkeitsschnipsels"
 
@@ -90,11 +74,11 @@ msgstr "Verzeichnis"
 msgid "Directory where pictures of gallery are stored."
 msgstr "Verzeichnis, wo die Bilder der Gallerie gespeichert sind."
 
-#: _GTW/_OMP/_SWP/Nav.py:175
+#: _GTW/_OMP/_SWP/Nav.py:155
 msgid "Events"
 msgstr "Ereignisse"
 
-#: _GTW/_OMP/_SWP/Nav.py:173
+#: _GTW/_OMP/_SWP/Nav.py:153
 msgid "Events associated to page"
 msgstr "Zur Seite gehörende Ereignisse"
 
@@ -102,7 +86,7 @@ msgstr "Zur Seite gehörende Ereignisse"
 msgid "Format"
 msgstr "Format"
 
-#: _GTW/_OMP/_SWP/Nav.py:210 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:195 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
 msgid "Gallery"
 msgid_plural "Gallerys"
 msgstr[0] "Gallerie"
@@ -159,7 +143,7 @@ msgstr "Textauszeichnungsformat, das für den `text` verwendet wird"
 msgid "Name used for perma-link."
 msgstr "Name, der für den Permalink verwendet wird."
 
-#: _GTW/_OMP/_SWP/Nav.py:189
+#: _GTW/_OMP/_SWP/Nav.py:174
 msgid "News clip for page"
 msgstr "Neuigkeitsschnipsel für Seite"
 
@@ -195,13 +179,9 @@ msgid_plural "Page_Ys"
 msgstr[0] "Seite/J"
 msgstr[1] "Seiten/J"
 
-#: _GTW/_OMP/_SWP/Nav.py:216 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:201 _GTW._OMP._SWP.Picture:0
 msgid "Photo"
 msgstr "Photo"
-
-#: _GTW/_OMP/_SWP/Nav.py:124
-msgid "Photographer"
-msgstr "Photograph"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Picture"
@@ -228,11 +208,11 @@ msgid ""
 "belongs to."
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:82 _GTW/_OMP/_SWP/Nav.py:114 _GTW/_OMP/_SWP/Nav.py:141
+#: _GTW/_OMP/_SWP/Nav.py:75 _GTW/_OMP/_SWP/Nav.py:97 _GTW/_OMP/_SWP/Nav.py:125
 msgid "Publication and expiration date"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:171
+#: _GTW/_OMP/_SWP/Nav.py:160
 msgid "Recurrence rule"
 msgstr "Wiederholungsregel"
 
@@ -264,15 +244,15 @@ msgstr ""
 msgid "Thumb"
 msgstr "Miniaturbild"
 
-#: _GTW/_OMP/_SWP/Nav.py:221 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:206 _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: _GTW/_OMP/_SWP/Nav.py:165
+#: _GTW/_OMP/_SWP/Nav.py:150
 msgid "Time interval"
 msgstr "Zeitraum"
 
-#: _GTW/_OMP/_SWP/Nav.py:164
+#: _GTW/_OMP/_SWP/Nav.py:149
 msgid "Time interval of event"
 msgstr "Zeitraum des Ereignisses"
 
@@ -329,4 +309,19 @@ msgstr "Jahr, auf das sich die Webseite bezieht."
 #: _GTW._OMP._SWP.Clip:0
 msgid "date"
 msgstr "Datum"
+
+#~ msgid "Creator"
+#~ msgstr "Autor"
+
+#~ msgid "Creator of the contents of the news clip"
+#~ msgstr "Autor des Inhalts des Neuigkeitsschnipsels"
+
+#~ msgid "Creator of the contents of the web page"
+#~ msgstr "Autor des Inhalts der Webseite"
+
+#~ msgid "Creator of the contents."
+#~ msgstr "Autor des Inhalts."
+
+#~ msgid "Photographer"
+#~ msgstr "Photograph"
 
