@@ -169,7 +169,7 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         scope  = self.obj.home_scope
         today  = datetime.date.today ()
         for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
-            if scope.SRM.Boat_in_Regatta.r_query (right = r).count :
+            if scope.SRM.Boat_in_Regatta.r_query (right = r).count () :
                 kw  = dict \
                     ( pkw
                     , ETM       = scope [r.type_name]
