@@ -71,6 +71,7 @@
 ##    19-Aug-2010 (CT) `form` changed to use `X.input.submit` instead of
 ##                     `<a>` for `Cancel`
 ##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
+##    12-Nov-2010 (CT) `form` changed to include `div.buttons` only if necessary
 ##    ««revision-date»»···
 ##--
 #}
@@ -140,28 +141,30 @@
 -%}
   <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
     {{ caller () }}
-    <div class="buttons">
-      {%- if next_form_kw %}
-        {{ X.input.hidden (** next_form_kw) }}
-      {% endif -%}
-      {%- for submit_kw in submit_kws %}
-        {%- if submit_kw %}
-          {{ X.input.submit (** submit_kw) }}
+    {%- if next_form_kw %}
+      {{ X.input.hidden (** next_form_kw) }}
+    {% endif -%}
+    {%- if submit_kws or reset_kw or cancel_kw %}
+      <div class="buttons">
+        {%- for submit_kw in submit_kws %}
+          {%- if submit_kw %}
+            {{ X.input.submit (** submit_kw) }}
+          {% endif -%}
+        {% endfor -%}
+        {%- if reset_kw %}
+          {{ X.input.reset  (** reset_kw) }}
         {% endif -%}
-      {% endfor -%}
-      {%- if reset_kw %}
-        {{ X.input.reset  (** reset_kw) }}
-      {% endif -%}
-      {%- if cancel_kw %}
-        {%- set ckw = cancel_kw %}
-        {{ X.input.submit
-            ( name  = "cancel"
-            , title = ckw.title or GTW._T ("Discard all changes and leave form")
-            , value = ckw.name  or GTW._T ("Cancel")
-            )
-        }}
-      {% endif -%}
-    </div>
+        {%- if cancel_kw %}
+          {%- set ckw = cancel_kw %}
+          {{ X.input.submit
+              ( name  = "cancel"
+              , title = ckw.title or GTW._T ("Discard all changes and leave form")
+              , value = ckw.name  or GTW._T ("Cancel")
+              )
+          }}
+        {% endif -%}
+      </div>
+    {% endif -%}
   </form>
 {%- endmacro -%} {#- form -#}
 
@@ -313,7 +316,7 @@
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
       <li>
-        {{ X.input.submit
+        {{ X.input.reset
             ( title = GTW._T ("Get a new password for the username specified")
             , value = GTW._T ("New password")
             , name  = "Reset"

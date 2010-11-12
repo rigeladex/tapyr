@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Mar-2010 (CT) Creation
 #    12-Mar-2010 (CT) Children `Day`, `Week`, and `Year` added
+#    12-Nov-2010 (CT) `_Mixin_` factored, `Q` added and used
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,18 @@ from   _TFL._Meta.Once_Property import Once_Property
 import datetime
 from   posixpath                import join  as pjoin
 
-class Calendar (GTW.NAV.Dir) :
+class _Mixin_ (GTW.NAV._Site_Entity_) :
+
+    @property
+    def weeks (self) :
+        n = self.week_roller_size
+        w = self.anchor.week
+        return self.year.weeks [w - 1 : w + n - 1]
+    # end def weeks
+
+# end class _Mixin_
+
+class Calendar (_Mixin_, GTW.NAV.Dir) :
     """Navigation directory for providing a calendar."""
 
     day_abbrs          = \
@@ -69,6 +81,7 @@ class Calendar (GTW.NAV.Dir) :
         , _("October"), _("November"), _("December")
         )
     pid                = "Cal"
+    query_prefix       = "q"
     template           = "calendar"
     week_roller_size   = 6
 
@@ -80,6 +93,8 @@ class Calendar (GTW.NAV.Dir) :
 
     _cal               = None
 
+    anchor             = property (TFL.Getter.today)
+
     class _Cmd_ (GTW.NAV.Page) :
 
         implicit          = True
@@ -89,30 +104,44 @@ class Calendar (GTW.NAV.Dir) :
 
     class Day (_Cmd_) :
 
-        # ??? # Media        = None ### cancel inherited property defined
         name         = "day"
         template     = "calendar_day"
 
     # end class Day
 
+    class Q (_Mixin_, _Cmd_) :
+
+        def rendered (self, handler, template = None) :
+            req_data = handler.request.req_data
+            if req_data ["Submit"] == _T ("Today") :
+                anchor = self.today
+            elif "anchor" in req_data :
+                anchor = self._cal.day [req_data ["anchor"]]
+            wrs = int (req_data.get ("weeks") or self.week_roller_size)
+            if anchor != self.anchor :
+                y = anchor.year
+                self = handler.context ["page"] = self.Year \
+                    ( parent = self
+                    , anchor = anchor
+                    , year   = self._cal.year [y]
+                    )
+            with self.LET (week_roller_size = wrs) :
+                return self.__super.rendered (handler, template)
+        # end def rendered
+
+    # end class Q
+
     class Week (_Cmd_) :
 
-        # ??? # Media        = None ### cancel inherited property defined
         name         = "week"
         template     = "calendar_week"
 
     # end class Week
 
-    class Year (_Cmd_) :
+    class Year (_Mixin_, _Cmd_) :
 
-        # ??? # Media        = None ### cancel inherited property defined
         name         = "year"
         template     = "calendar"
-
-        @property
-        def weeks (self) :
-            return self.year.weeks
-        # end def weeks
 
     # end class Day
 
@@ -138,11 +167,16 @@ class Calendar (GTW.NAV.Dir) :
             return scope [self.event_manager_name]
     # end def event_manager
 
-    ### if we want to display a site-admin specific page (and not
-    ### just the page of the first child [a E_Type_Admin]), we'll
-    ### need to bypass `_Dir_.rendered`
+    @property
+    def q_href (self) :
+        return pjoin (self.abs_href, self.query_prefix)
+    # end def q_href
+
     def rendered (self, handler, template = None) :
-        return GTW.NAV._Site_Entity_.rendered (self, handler, template)
+        ### if we want to display a site-admin specific page (and not
+        ### just the page of the first child [a E_Type_Admin]), we'll
+        ### need to bypass `_Dir_.rendered`
+        return _Mixin_.rendered (self, handler, template)
     # end def rendered
 
     @property
@@ -153,14 +187,6 @@ class Calendar (GTW.NAV.Dir) :
     def week_href (self, week) :
         return pjoin (self.abs_href, "%s/week/%s" % (week.year, week.number))
     # end def week_href
-
-    @property
-    def weeks (self) :
-        n     = self.week_roller_size
-        today = self.today
-        w     = today.week
-        return self.year.weeks [w - 1 : w + n - 1]
-    # end def weeks
 
     @property
     def year (self) :
@@ -174,28 +200,30 @@ class Calendar (GTW.NAV.Dir) :
         try :
             y = int (child)
         except ValueError :
-            return
-        if not (self.year_range [0] <= y <= self.year_range [1]) :
-            return
-        year = self._cal.year [y]
-        if not grandchildren :
-            if year == self.year :
-                return self
-            else :
-                return self.Year (parent = self, year = year)
-        elif grandchildren [0] == "week" and len (grandchildren) == 2 :
-            try :
-                week = year.weeks [int (grandchildren [1])]
-            except (ValueError, LookupError) :
+            if child == self.query_prefix and not grandchildren :
+                return self.Q (parent = self)
+        else :
+            if not (self.year_range [0] <= y <= self.year_range [1]) :
                 return
-            return self.Week (parent = self, year = year, week = week)
-        elif len (grandchildren) == 2 :
-            try :
-                m, d = [int (c) for c in grandchildren]
-                day  = year.dmap [y, m, d]
-            except (ValueError, LookupError) :
-                return
-            return self.Day (parent = self, year = year, day = day)
+            year = self._cal.year [y]
+            if not grandchildren :
+                if year == self.year :
+                    return self
+                else :
+                    return self.Year (parent = self, year = year)
+            elif grandchildren [0] == "week" and len (grandchildren) == 2 :
+                try :
+                    week = year.weeks [int (grandchildren [1])]
+                except (ValueError, LookupError) :
+                    return
+                return self.Week (parent = self, year = year, week = week)
+            elif len (grandchildren) == 2 :
+                try :
+                    m, d = [int (c) for c in grandchildren]
+                    day  = year.dmap [y, m, d]
+                except (ValueError, LookupError) :
+                    return
+                return self.Day (parent = self, year = year, day = day)
     # end def _get_child
 
     def _get_events (self, date) :

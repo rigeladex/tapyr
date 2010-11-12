@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##     8-Mar-2010 (CT) Creation
+##    12-Nov-2010 (CT) `week_roller_ctrl` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -40,7 +41,10 @@
     <h1>{{ page.desc }}</h1>
   {% endif -%}
 
-  {{ C.week_roller_body (page) -}}
+  {%- call C.week_roller_body (page, page.weeks) -%}
+    {{ C.week_roller_ctrl (page, page.weeks) }}
+  {% endcall %} {# C.week #}
+
 {%- endblock document -%}
 
 {#- __END__ jinja template: calendar.jnj -#}

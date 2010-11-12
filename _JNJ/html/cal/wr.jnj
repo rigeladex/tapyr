@@ -31,12 +31,15 @@
 ##    10-Mar-2010 (CT) Optional keyword argument `weeks` added to `week_roller`
 ##    10-Mar-2010 (CT) `week_roller_body` and `week_roller_nav` added
 ##    11-Jun-2010 (CT) Validation errors removed (no `div` in `tr` and `td`)
+##    12-Nov-2010 (CT) `week_roller_ctrl` added
+##    12-Nov-2010 (CT) `week_roller_body` changed to call `caller`, if any
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- macro week_roller (cal, W) -%}
-  {%- set weeks = kwargs.pop ("weeks", None) or cal.weeks %}
+{%- import html_version as X -%}
+
+{%- macro week_roller (cal, weeks, W) -%}
   <table class="calendar">
     <colgroup>
       {{ W.cols (cal) }}
@@ -85,14 +88,65 @@
   </table>
 {%- endmacro -%} {#- week_roller -#}
 
-{%- macro week_roller_body (cal) -%}
+{%- macro week_roller_body (cal, weeks) -%}
   {%- import "html/cal/wr_body.jnj" as W %}
-  {{ week_roller (cal, W, ** kwargs)}}
+  {%- set wr_caller = kwargs.pop ("caller", None) -%}
+  <div class="week-roller">
+    {%- if wr_caller -%}{{- wr_caller () -}}{%- endif -%}
+    {{ week_roller (cal, weeks, W, ** kwargs) }}
+  </div>
 {%- endmacro -%} {#- week_roller_body -#}
 
-{%- macro week_roller_nav (cal) -%}
+{%- macro week_roller_ctrl (cal, weeks) -%}
+  {%- import "html/form.jnj" as Form %}
+  {%- set action = cal.q_href -%}
+  {% call Form.form (action = action, method = "get", class = "ctrl") -%}
+    <ul>
+      <li>
+        {{ X.input.text
+            ( name      = "anchor"
+            , title     = GTW._T ("Anchor date for calendar display")
+            , value     = cal.anchor
+            , class     = "Moderate-Len"
+            )
+        }}
+      </li>
+      <li>
+        {{ X.input.number
+            ( name      = "weeks"
+            , min       = 1
+            , max       = 53
+            , title     = GTW._T  ("Number of weeks displayed")
+            , value     = GTW.len (weeks)
+            , class     = "Short"
+            )
+        }}
+      </li>
+      <li>
+        {{ X.input.submit
+            ( name      = "Submit"
+            , title     = GTW._T ("Display calendar for the selected values")
+            , value     = GTW._T ("Apply")
+            , class     = "Short"
+            )
+        }}
+      </li>
+      <li>
+        {{ X.input.submit
+            ( name      = "Submit"
+            , title     = GTW._T ("Display calendar anchored on today")
+            , value     = GTW._T ("Today")
+            , class     = "Short"
+            )
+        }}
+      </li>
+    </ul>
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- week_roller_ctrl -#}
+
+{%- macro week_roller_nav (cal, weeks) -%}
   {%- import "html/cal/wr_nav.jnj" as W %}
-  {{ week_roller (cal, W, ** kwargs)}}
+  {{ week_roller (cal, weeks, W, ** kwargs)}}
 {%- endmacro -%} {#- week_roller_nav -#}
 
 {#- __END__ jinja template: wr.jnj -#}
