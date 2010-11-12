@@ -36,7 +36,7 @@
 #}
 
 {%- macro week_roller (cal, W) -%}
-  {%- set weeks = kwargs.pop ("weeks", cal.weeks) %}
+  {%- set weeks = kwargs.pop ("weeks", None) or cal.weeks %}
   <table class="calendar">
     <colgroup>
       {{ W.cols (cal) }}

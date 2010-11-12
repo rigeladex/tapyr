@@ -35,7 +35,11 @@
 
 {%- block document -%}
   {%- import "html/cal/wr.jnj" as C %}
-  <h1>{{ page.desc }}</h1>
+
+  {%- if page.desc %}
+    <h1>{{ page.desc }}</h1>
+  {% endif -%}
+
   {{ C.week_roller_body (page) -}}
 {%- endblock document -%}
 
