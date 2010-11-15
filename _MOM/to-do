@@ -1,6 +1,10 @@
 MOM To-Do
 =========
 
+- Don't store attributes in __dict__ ???
+
+  + http://morepypy.blogspot.com/2010/11/efficiently-implementing-python-objects.html
+
 x MOM.Attr.Kind: factor `from_pickle_cargo` from `set_pickle_cargo`
 
 x MOM.Pred.Kind: Region
