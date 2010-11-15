@@ -29,6 +29,8 @@
 #     9-Mar-2010 (CT) Creation
 #    12-Mar-2010 (CT) Children `Day`, `Week`, and `Year` added
 #    12-Nov-2010 (CT) `_Mixin_` factored, `Q` added and used
+#    15-Nov-2010 (CT) `Q.rendered` changed to use separate `input`
+#                     elements for `year`, `month`, and `day` of `anchor`
 #    ««revision-date»»···
 #--
 
@@ -113,11 +115,14 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
         def rendered (self, handler, template = None) :
             req_data = handler.request.req_data
+            anchor   = self.anchor
             if req_data.get ("Submit") == _T ("Today") :
                 anchor = self.today
-            elif "anchor" in req_data :
-                anchor = self._cal.day [req_data ["anchor"]]
-            wrs = int (req_data.get ("weeks") or self.week_roller_size)
+            else :
+                y = int (req_data.get ("year")  or anchor.year)
+                m = int (req_data.get ("month") or anchor.month)
+                d = int (req_data.get ("day")   or anchor.day)
+                anchor = self._cal.day ["%4.4d/%2.2d/%2.2d" % (y, m, d)]
             if anchor != self.anchor :
                 y = anchor.year
                 self = handler.context ["page"] = self.Year \
@@ -125,6 +130,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                     , anchor = anchor
                     , year   = self._cal.year [y]
                     )
+            wrs = int (req_data.get ("weeks") or self.week_roller_size)
             with self.LET (week_roller_size = wrs) :
                 return self.__super.rendered (handler, template)
         # end def rendered

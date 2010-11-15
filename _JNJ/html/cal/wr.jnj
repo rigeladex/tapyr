@@ -33,6 +33,8 @@
 ##    11-Jun-2010 (CT) Validation errors removed (no `div` in `tr` and `td`)
 ##    12-Nov-2010 (CT) `week_roller_ctrl` added
 ##    12-Nov-2010 (CT) `week_roller_body` changed to call `caller`, if any
+##    14-Nov-2010 (CT) `week_roller_ctrl` changed to use separate `input`
+##                     elements for `year`, `month`, and `day` of `anchor`
 ##    ««revision-date»»···
 ##--
 #}
@@ -101,46 +103,60 @@
   {%- import "html/form.jnj" as Form %}
   {%- set action = cal.q_href -%}
   {% call Form.form (action = action, method = "get", class = "ctrl") -%}
-    <ul>
-      <li>
-        {{ X.input.text
-            ( name      = "anchor"
-            , title     = GTW._T ("Anchor date for calendar display")
-            , value     = cal.anchor
-            , class     = "Moderate-Len"
+      <div class="anchor">
+        {{- X.input.number
+            ( name      = "year"
+            , title     = GTW._T ("Anchor year for calendar display")
+            , value     = cal.anchor.year
+            , min       = cal.year_range [0]
+            , min       = cal.year_range [1]
+            , class     = "year"
             )
-        }}
-      </li>
-      <li>
-        {{ X.input.number
-            ( name      = "weeks"
+        -}}
+        <span class="sep">/</span>
+        {{- X.input.number
+            ( name      = "month"
+            , title     = GTW._T ("Anchor month for calendar display")
+            , value     = cal.anchor.month
             , min       = 1
-            , max       = 53
-            , title     = GTW._T  ("Number of weeks displayed")
-            , value     = GTW.len (weeks)
-            , class     = "Short"
+            , min       = 12
+            , class     = "month"
             )
-        }}
-      </li>
-      <li>
-        {{ X.input.submit
-            ( name      = "Submit"
-            , title     = GTW._T ("Display calendar for the selected values")
-            , value     = GTW._T ("Apply")
-            , class     = "Short"
+        -}}
+        <span class="sep">/</span>
+        {{- X.input.number
+            ( name      = "day"
+            , title     = GTW._T ("Anchor day for calendar display")
+            , value     = cal.anchor.day
+            , min       = 1
+            , min       = 31
+            , class     = "day"
             )
-        }}
-      </li>
-      <li>
-        {{ X.input.submit
-            ( name      = "Submit"
-            , title     = GTW._T ("Display calendar anchored on today")
-            , value     = GTW._T ("Today")
-            , class     = "Short"
-            )
-        }}
-      </li>
-    </ul>
+        -}}
+      </div>
+      {{ X.input.number
+          ( name      = "weeks"
+          , min       = 1
+          , max       = 53
+          , title     = GTW._T  ("Number of weeks displayed")
+          , value     = GTW.len (weeks)
+          , class     = "Short"
+          )
+      }}
+      {{ X.input.submit
+          ( name      = "Submit"
+          , title     = GTW._T ("Display calendar for the selected values")
+          , value     = GTW._T ("Apply")
+          , class     = "Short"
+          )
+      }}
+      {{ X.input.submit
+          ( name      = "Submit"
+          , title     = GTW._T ("Display calendar anchored on today")
+          , value     = GTW._T ("Today")
+          , class     = "Short"
+          )
+      }}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- week_roller_ctrl -#}
 
