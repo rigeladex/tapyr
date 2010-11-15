@@ -113,7 +113,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
         def rendered (self, handler, template = None) :
             req_data = handler.request.req_data
-            if req_data ["Submit"] == _T ("Today") :
+            if req_data.get ("Submit") == _T ("Today") :
                 anchor = self.today
             elif "anchor" in req_data :
                 anchor = self._cal.day [req_data ["anchor"]]
