@@ -31,6 +31,7 @@
 #    12-Nov-2010 (CT) `_Mixin_` factored, `Q` added and used
 #    15-Nov-2010 (CT) `Q.rendered` changed to use separate `input`
 #                     elements for `year`, `month`, and `day` of `anchor`
+#    15-Nov-2010 (CT) `QX` added
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,8 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         , _("October"), _("November"), _("December")
         )
     pid                = "Cal"
-    query_prefix       = "q"
+    q_prefix           = "q"
+    qx_prefix          = "qx"
     template           = "calendar"
     week_roller_size   = 6
 
@@ -137,6 +139,12 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     # end class Q
 
+    class QX (Q) :
+
+        template = "wr_qx"
+
+    # end class QX
+
     class Week (_Cmd_) :
 
         name         = "week"
@@ -175,7 +183,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     @property
     def q_href (self) :
-        return pjoin (self.abs_href, self.query_prefix)
+        return pjoin (self.abs_href, self.q_prefix)
     # end def q_href
 
     def rendered (self, handler, template = None) :
@@ -206,8 +214,8 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         try :
             y = int (child)
         except ValueError :
-            if child == self.query_prefix and not grandchildren :
-                return self.Q (parent = self)
+            if child in (self.q_prefix, self.qx_prefix) and not grandchildren :
+                return getattr (self, child.upper ()) (parent = self)
         else :
             if not (self.year_range [0] <= y <= self.year_range [1]) :
                 return

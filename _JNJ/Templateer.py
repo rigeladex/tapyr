@@ -80,6 +80,7 @@ class Templateer (TFL.Meta.Object) :
         , regatta_result               = "html/regatta_result.jnj"
         , regatta_result_teamrace      = "html/regatta_result_teamrace.jnj"
         , site_admin                   = "html/site_admin.jnj"
+        , wr_qx                        = "html/cal/wr.jnj"
         )
 
     def __init__ (self, * args, ** kw) :

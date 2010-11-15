@@ -24,7 +24,7 @@
 ##    html/cal/wr.jnj
 ##
 ## Purpose
-##    Macros for displaying a week_roller
+##    Template and macros for displaying a week_roller
 ##
 ## Revision Dates
 ##     9-Mar-2010 (CT) Creation
@@ -35,6 +35,7 @@
 ##    12-Nov-2010 (CT) `week_roller_body` changed to call `caller`, if any
 ##    14-Nov-2010 (CT) `week_roller_ctrl` changed to use separate `input`
 ##                     elements for `year`, `month`, and `day` of `anchor`
+##    15-Nov-2010 (CT) Call to `week_roller_body` added at end
 ##    ««revision-date»»···
 ##--
 #}
@@ -164,5 +165,12 @@
   {%- import "html/cal/wr_nav.jnj" as W %}
   {{ week_roller (cal, weeks, W, ** kwargs)}}
 {%- endmacro -%} {#- week_roller_nav -#}
+
+{#- If included with context, the follwing code will be executed -#}
+{%- if page %}
+  {%- call week_roller_body (page, page.weeks) -%}
+    {{ week_roller_ctrl (page, page.weeks) }}
+  {% endcall %} {# week_roller_body #}
+{% endif -%}
 
 {#- __END__ jinja template: wr.jnj -#}
