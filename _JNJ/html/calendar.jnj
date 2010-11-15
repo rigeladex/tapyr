@@ -30,17 +30,21 @@
 ## Revision Dates
 ##     8-Mar-2010 (CT) Creation
 ##    12-Nov-2010 (CT) `week_roller_ctrl` added
-##    15-Nov-2010 (CT) Include instead of import `html/cal/wr.jnj`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block document -%}
+  {%- import "html/cal/wr.jnj" as C %}
+
   {%- if page.desc %}
     <h1>{{ page.desc }}</h1>
   {% endif -%}
 
-  {%- include "html/cal/wr.jnj" with context -%}
+  {%- call C.week_roller_body (page, page.weeks) -%}
+    {{ C.week_roller_ctrl (page, page.weeks) }}
+  {% endcall %} {# C.week #}
+
 {%- endblock document -%}
 
 {#- __END__ jinja template: calendar.jnj -#}

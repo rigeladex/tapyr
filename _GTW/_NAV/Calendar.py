@@ -127,21 +127,39 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                 anchor = self._cal.day ["%4.4d/%2.2d/%2.2d" % (y, m, d)]
             if anchor != self.anchor :
                 y = anchor.year
-                self = handler.context ["page"] = self.Year \
+                self = handler.context ["page"] = self.__class__ \
                     ( parent = self
                     , anchor = anchor
                     , year   = self._cal.year [y]
                     )
             wrs = int (req_data.get ("weeks") or self.week_roller_size)
             with self.LET (week_roller_size = wrs) :
-                return self.__super.rendered (handler, template)
+                return self._rendered (handler, template)
         # end def rendered
+
+        def _rendered (self, handler, template) :
+            return self.__super.rendered (handler, template)
+        # end def _rendered
 
     # end class Q
 
     class QX (Q) :
 
         template = "wr_qx"
+
+        def _rendered (self, handler, template) :
+            anchor = self.anchor
+            result = self.__super._rendered (handler, template)
+            return handler.json \
+                ( dict
+                    ( calendar = result
+                    , day      = anchor.day
+                    , month    = anchor.month
+                    , weeks    = self.week_roller_size
+                    , year     = anchor.year
+                    )
+                )
+        # end def _rendered
 
     # end class QX
 

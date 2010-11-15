@@ -2,8 +2,6 @@
 ** Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 ** Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ** ****************************************************************************
-**
-**
 ** This file is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU Affero General Public License as published by
 ** the Free Software Foundation, either version 3 of the License, or

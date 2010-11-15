@@ -171,5 +171,3 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
 if __name__ != "__main__" :
     GTW._Export ("_Request_Handler_", "_NAV_Request_Handler_")
 ### __END__ GTW._Request_Handler_
-
-

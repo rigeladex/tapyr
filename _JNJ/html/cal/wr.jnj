@@ -168,9 +168,8 @@
 
 {#- If included with context, the follwing code will be executed -#}
 {%- if page %}
-  {%- call week_roller_body (page, page.weeks) -%}
-    {{ week_roller_ctrl (page, page.weeks) }}
-  {% endcall %} {# week_roller_body #}
+  {%- import "html/cal/wr_body.jnj" as W  %}
+  {{ week_roller (page, page.weeks, W) }}
 {% endif -%}
 
 {#- __END__ jinja template: wr.jnj -#}

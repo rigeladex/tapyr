@@ -33,6 +33,7 @@
 #     7-Oct-2010 (CT) `GTW_Gallery` added
 #    10-Oct-2010 (CT) `GTW_Externalize` added
 #    18-Oct-2010 (CT) `GTW_pixpander` added
+#    15-Nov-2010 (CT) `GTW_week_roller` added
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,12 @@ GTW.Script      (src = "/media/GTW/js/GTW_pixpander.js", name = "GTW_pixpander")
 GTW.JS_On_Ready \
     ( """$("a[href$='.jpg'] > img").GTW_pixpander ();"""
     , name = "GTW_pixpander"
+    )
+
+GTW.Script (src = "/media/GTW/js/GTW_week_roller.js", name = "GTW_week_roller")
+GTW.JS_On_Ready \
+    ( """$(".week-roller").GTW_week_roller (); """
+    , name = "GTW_week_roller"
     )
 
 if __name__ != "__main__" :
