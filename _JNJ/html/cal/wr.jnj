@@ -106,30 +106,30 @@
       <div class="anchor">
         {{- X.input.number
             ( name      = "year"
+            , min       = cal.year_range [0]
+            , max       = cal.year_range [1]
             , title     = GTW._T ("Anchor year for calendar display")
             , value     = cal.anchor.year
-            , min       = cal.year_range [0]
-            , min       = cal.year_range [1]
             , class     = "year"
             )
         -}}
-        <span class="sep">/</span>
+        /
         {{- X.input.number
             ( name      = "month"
+            , min       = 1
+            , max       = 12
             , title     = GTW._T ("Anchor month for calendar display")
             , value     = cal.anchor.month
-            , min       = 1
-            , min       = 12
             , class     = "month"
             )
         -}}
-        <span class="sep">/</span>
+        /
         {{- X.input.number
             ( name      = "day"
+            , min       = 1
+            , max       = 31
             , title     = GTW._T ("Anchor day for calendar display")
             , value     = cal.anchor.day
-            , min       = 1
-            , min       = 31
             , class     = "day"
             )
         -}}
@@ -140,7 +140,7 @@
           , max       = 53
           , title     = GTW._T  ("Number of weeks displayed")
           , value     = GTW.len (weeks)
-          , class     = "Short"
+          , class     = "weeks"
           )
       }}
       {{ X.input.submit
