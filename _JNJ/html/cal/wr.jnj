@@ -44,9 +44,6 @@
 
 {%- macro week_roller (cal, weeks, W) -%}
   <table class="calendar">
-    <colgroup>
-      {{ W.cols (cal) }}
-    </colgroup>
     <thead>
       <tr>
         {{ W.head (cal) }}
@@ -87,6 +84,7 @@
           {{ W.week_month  (cal, week) }}
         </tr>
       {% endfor %}
+      {{ W.selected_day_div (cal) }}
     </tbody>
   </table>
 {%- endmacro -%} {#- week_roller -#}
@@ -107,8 +105,8 @@
       <div class="anchor">
         {{- X.input.number
             ( name      = "year"
-            , min       = cal.year_range [0]
-            , max       = cal.year_range [1]
+            , min       = cal.min_year
+            , max       = cal.max_year
             , title     = GTW._T ("Anchor year for calendar display")
             , value     = cal.anchor.year
             , class     = "year"

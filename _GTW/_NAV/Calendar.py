@@ -32,6 +32,9 @@
 #    15-Nov-2010 (CT) `Q.rendered` changed to use separate `input`
 #                     elements for `year`, `month`, and `day` of `anchor`
 #    15-Nov-2010 (CT) `QX` added
+#    16-Nov-2010 (CT) `weeks` changed to use `_cal.week` instead of `year.weeks`
+#    16-Nov-2010 (CT) `Q._q_args` factored (and call wrapped in try/except)
+#    16-Nov-2010 (CT) `Q._q_delta` added and used
 #    ««revision-date»»···
 #--
 
@@ -40,10 +43,12 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _CAL.Calendar
+import _CAL.Delta
 import _GTW._NAV.Base
 
 from   _TFL.defaultdict         import defaultdict_kd
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.Regexp              import Regexp, re
 from   _TFL._Meta.Once_Property import Once_Property
 
 import datetime
@@ -54,8 +59,8 @@ class _Mixin_ (GTW.NAV._Site_Entity_) :
     @property
     def weeks (self) :
         n = self.week_roller_size
-        w = self.anchor.week
-        return self.year.weeks [w - 1 : w + n - 1]
+        w = self.anchor.wk_ordinal
+        return [self._cal.week [i] for i in range (w - 1, w + n - 1)]
     # end def weeks
 
 # end class _Mixin_
@@ -91,9 +96,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     event_manager_name = "GTW.OMP.EVT.Event_occurs"
 
-    _y                 = datetime.date.today ().year
-    year_range         = (_y - 3, _y + 3)
-    del _y
+    year_window_size   = 3
 
     _cal               = None
 
@@ -115,27 +118,67 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     class Q (_Mixin_, _Cmd_) :
 
+        delta_pat = Regexp \
+            ( r"^"
+              r"(?P<number> [0-9]+)"
+              r"\s*"
+              r"(?: (?P<unit> day|week|month|year)s?)?"
+              r"$"
+            , re.VERBOSE | re.IGNORECASE
+            )
+
         def rendered (self, handler, template = None) :
-            req_data = handler.request.req_data
-            anchor   = self.anchor
+            try :
+                q_args = self._q_args (handler)
+            except Exception, exc :
+                print exc
+                raise self.top.HTTP.Error_404 (handler.request.path)
+            if q_args.anchor != self.anchor :
+                self = handler.context ["page"] = self.__class__ \
+                    ( parent = self
+                    , anchor = q_args.anchor
+                    )
+            with self.LET (week_roller_size = q_args.week_roller_size) :
+                return self._rendered (handler, template)
+        # end def rendered
+
+        def _q_args (self, handler) :
+            anchor     = self.anchor
+            req_data   = handler.request.req_data
             if req_data.get ("Submit") == _T ("Today") :
                 anchor = self.today
             else :
-                y = int (req_data.get ("year")  or anchor.year)
-                m = int (req_data.get ("month") or anchor.month)
-                d = int (req_data.get ("day")   or anchor.day)
+                y      = int (req_data.get ("year")  or anchor.year)
+                m      = int (req_data.get ("month") or anchor.month)
+                d      = int (req_data.get ("day")   or anchor.day)
                 anchor = self._cal.day ["%4.4d/%2.2d/%2.2d" % (y, m, d)]
-            if anchor != self.anchor :
-                y = anchor.year
-                self = handler.context ["page"] = self.__class__ \
-                    ( parent = self
-                    , anchor = anchor
-                    , year   = self._cal.year [y]
-                    )
+                if "delta" in req_data :
+                    delta  = self._q_delta (req_data)
+                    anchor = self._cal.day [(anchor.date + delta).ordinal]
             wrs = int (req_data.get ("weeks") or self.week_roller_size)
-            with self.LET (week_roller_size = wrs) :
-                return self._rendered (handler, template)
-        # end def rendered
+            return TFL.Record \
+                ( anchor           = anchor
+                , week_roller_size = wrs
+                )
+        # end def _q_args
+
+        def _q_delta (self, req_data) :
+            data = req_data ["delta"]
+            pat  = self.delta_pat
+            if pat.match (data) :
+                number = int (pat.number)
+                unit   = pat.unit
+                if unit in ("month", "year") :
+                    DT = CAL.Month_Delta
+                    if unit == "year" :
+                        number *= 12
+                else :
+                    DT = CAL.Date_Delta
+                    if unit == "week" :
+                        number *= 7
+                return DT (number)
+            raise ValueError (data)
+        # end def _q_delta
 
         def _rendered (self, handler, template) :
             return self.__super.rendered (handler, template)
@@ -175,6 +218,11 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         name         = "year"
         template     = "calendar"
 
+        @property
+        def anchor (self) :
+            return self._cal.day [datetime.date (self.year, 1, 1).toordinal ()]
+        # end def anchor
+
     # end class Day
 
     def __init__ (self, * args, ** kw) :
@@ -182,7 +230,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         if self._cal is None :
             self.__class__._cal  = CAL.Calendar ()
         self.events = defaultdict_kd (self._get_events)
-        self._year  = None
         def _day_get_events (this) :
             return self.events [this.date.date]
         _CAL.Year.Day.events = property (_day_get_events)
@@ -198,6 +245,16 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         if scope and self.event_manager_name :
             return scope [self.event_manager_name]
     # end def event_manager
+
+    @property
+    def max_year (self) :
+        return self.anchor.year + self.year_window_size
+    # end def max_year
+
+    @property
+    def min_year (self) :
+        return self.anchor.year - self.year_window_size
+    # end def min_year
 
     @property
     def q_href (self) :
@@ -222,10 +279,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     @property
     def year (self) :
-        result = self._year
-        if result is None or result.number != self.today.year :
-            result = self._year = self._cal.year [datetime.date.today ().year]
-        return result
+        return self._cal.year [self.anchor.year]
     # end def year
 
     def _get_child (self, child, * grandchildren) :
@@ -235,14 +289,11 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
             if child in (self.q_prefix, self.qx_prefix) and not grandchildren :
                 return getattr (self, child.upper ()) (parent = self)
         else :
-            if not (self.year_range [0] <= y <= self.year_range [1]) :
+            if not (self.min_year <= y <= self.max_year) :
                 return
             year = self._cal.year [y]
             if not grandchildren :
-                if year == self.year :
-                    return self
-                else :
-                    return self.Year (parent = self, year = year)
+                return self.Year (parent = self, year = year)
             elif grandchildren [0] == "week" and len (grandchildren) == 2 :
                 try :
                     week = year.weeks [int (grandchildren [1])]

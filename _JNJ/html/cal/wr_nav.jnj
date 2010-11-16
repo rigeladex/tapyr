@@ -32,18 +32,13 @@
 ##--
 #}
 
-{%- macro cols (cal) -%}
-  <col class="week-number" title="{{ GTW._T ('Number of week') }}"/>
-  {%- for d in cal.day_names %}
-    <col class="{{ d.lower () }}" title="{{ GTW._T (d) }}"/>
-  {% endfor -%}
-  <col class="month-name" title="{{ GTW._T ('Month (for last day of week)') }}"/>
-{%- endmacro -%} {#- cols -#}
-
 {%- macro head (cal) -%}
   {#- Empty `tr` element would be invalid HTML, empty `th` is valid -#}
   <th colspan="9"></th>
 {%- endmacro -%} {#- head -#}
+
+{%- macro selected_day_div (cal) -%}
+{%- endmacro -%} {#- selected_day_div -#}
 
 {%- macro week_day (cal, week, day) -%}
   {{- day.day -}}

@@ -26,6 +26,8 @@
 **
 ** Revision Dates
 **    15-Nov-2010 (CT) Creation
+**    16-Nov-2010 (CT) `change_field` factored
+**    16-Nov-2010 (CT) `init_cal` added and used
 **    ««revision-date»»···
 **--
 */
@@ -37,12 +39,54 @@
         var options  = $.extend
           ( { cal_selector      : "table.calendar"
             , ctrl_selector     : "form.ctrl"
+            , selected_class    : "selected"
+            , day_selector      : "td[class$=day]"
             , q_url_transformer : function (name)
                 { return name.replace (/\/q/, "/qx"); }
             }
           , options || {}
           );
-        function _init_ctrl (wr$)
+        function change_field (name, context, response)
+          {
+            $("input[name='" + name + "']", context).attr
+              ("value", response [name]);
+          }
+        function init_cal (wr$)
+          {
+            var cal$  = $(options.cal_selector, wr$);
+            var div$  = $("div." + options.selected_class, wr$);
+            $(options.day_selector, cal$).click
+              ( function (ev)
+                  {
+                    if (options.selected)
+                      {
+                        $(options.selected).removeClass
+                          (options.selected_class);
+                      }
+                    $(this).addClass (options.selected_class);
+                    options.selected = this;
+                    div$.html ("");
+                    div$.append ($("<h1>" + $(this).attr ("title") + "</h1>"));
+                    $(this).children ().each
+                      ( function (n)
+                          {
+                            if (n > 0)
+                              {
+                                div$.append
+                                  ( $( "<div>"
+                                     + $(this).attr ("title")
+                                     + " : "
+                                     + $(this).html ()
+                                     + "</div>"
+                                     )
+                                  );
+                              }
+                          }
+                      );
+                  }
+              );
+          }
+        function init_ctrl (wr$)
           {
             $(options.ctrl_selector, wr$).each
               ( function ()
@@ -60,11 +104,13 @@
                                   + "&" + this.name + "=" + this.value
                               , function (response)
                                   {
-                                    cal$.html (response.calendar);
-                                    $("input[name='day']",   ctrl$).attr ("value", response.day);
-                                    $("input[name='month']", ctrl$).attr ("value", response.month);
-                                    $("input[name='weeks']", ctrl$).attr ("value", response.weeks);
-                                    $("input[name='year']",  ctrl$).attr ("value", response.year);
+                                    cal$.replaceWith (response.calendar);
+                                    change_field ("day",   ctrl$, response);
+                                    change_field ("month", ctrl$, response);
+                                    change_field ("weeks", ctrl$, response);
+                                    change_field ("year",  ctrl$, response);
+                                    init_cal (wr$);
+                                    cal$  = $(options.cal_selector, wr$);
                                   }
                               )
                             if (ev && ev.preventDefault)
@@ -75,11 +121,12 @@
                       );
                   }
               );
+            init_cal (wr$);
           }
         $(this).each
           ( function ()
               {
-                _init_ctrl ($(this));
+                init_ctrl ($(this));
               }
           );
         return this;

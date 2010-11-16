@@ -35,13 +35,6 @@
 ##--
 #}
 
-{%- macro cols (cal) -%}
-  <col class="week-number" title="{{ GTW._T ('Number of week') }}"/>
-  {%- for d in cal.day_names %}
-    <col class="{{ d.lower () }}" title="{{ GTW._T (d) }}"/>
-  {% endfor -%}
-{%- endmacro -%} {#- cols -#}
-
 {%- macro head (cal) -%}
   <th class="week-number" scope="col">{{ GTW._T ("Wk") }}</th>
   {%- for a, d in GTW.zip (cal.day_abbrs, cal.day_names) %}
@@ -50,6 +43,12 @@
     </th>
   {% endfor -%}
 {%- endmacro -%} {#- head -#}
+
+{%- macro selected_day_div (cal) -%}
+  <tr><td colspan="8">
+    <div class="selected" title="{{ GTW._T ("Currently selected day") }}"></div>
+  </td></tr>
+{%- endmacro -%} {#- selected_day_div -#}
 
 {%- macro week_day (cal, week, day) -%}
   {%- set holi = day.is_holiday %}
