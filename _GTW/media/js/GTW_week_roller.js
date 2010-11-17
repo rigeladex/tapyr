@@ -43,6 +43,8 @@
             , selected_class    : "selected"
             , day_selector      : "td"
             , today_selector    : "td.today"
+            , q_day_transformer : function (href)
+                { return href.replace (/(\d{4}\/\d{1,2}\/\d{1,2})/, "qx/$1"); }
             , q_url_transformer : function (name)
                 { return name.replace (/\/q/, "/qx"); }
             }
@@ -63,11 +65,10 @@
                   {
                     var day  = this;
                     var day$ = $(day);
-                    var abbr = day.abbr;
                     var href = $("span.date a", day$).attr ("href");
                     if (href)
                       {
-                        var qx = href.replace (abbr, "qx/" + abbr);
+                        var qx = options.q_day_transformer (href);
                         day$.click
                           ( function (ev)
                               {

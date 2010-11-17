@@ -68,7 +68,7 @@
                  , "event" if events else ""
                 )).strip ()
             -%}
-            <td class="{{ td_cls }}" abbr="{{ d }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
+            <td class="{{ td_cls }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
               <span class="{{ div_cls }}">
                 {{- W.week_day_head (cal, weeks, d, events) -}}
               </span>

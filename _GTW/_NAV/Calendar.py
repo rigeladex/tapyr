@@ -209,13 +209,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     # end class QX
 
-    class Week (_Cmd_) :
-
-        name         = "week"
-        template     = "calendar_week"
-
-    # end class Week
-
     class Year (_Mixin_, _Cmd_) :
 
         name         = "year"
@@ -276,10 +269,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         return self._cal.day [datetime.date.today ().toordinal ()]
     # end def today
 
-    def week_href (self, week) :
-        return pjoin (self.abs_href, "%s/week/%s" % (week.year, week.number))
-    # end def week_href
-
     @property
     def year (self) :
         return self._cal.year [self.anchor.year]
@@ -304,27 +293,18 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                     if qx_p :
                         return
                     return self.Year (parent = self, year = year)
-                elif grandchildren [0] == "week" and len (grandchildren) == 2 :
-                    if qx_p :
-                        return
-                    try :
-                        week = year.weeks [int (grandchildren [1])]
-                    except (ValueError, LookupError) :
-                        return
-                    return self.Week (parent = self, year = year, week = week)
                 elif len (grandchildren) == 2 :
                     try :
                         m, d = [int (c) for c in grandchildren]
                         day  = year.dmap [y, m, d]
                     except (ValueError, LookupError) :
                         return
-                    Day      = self.Day
-                    template = Day.template_qx if qx_p else Day.template
+                    Day = self.Day
                     return Day \
                         ( parent   = self
                         , year     = year
                         , day      = day
-                        , template = template
+                        , template = Day.template_qx if qx_p else Day.template
                         )
     # end def _get_child
 

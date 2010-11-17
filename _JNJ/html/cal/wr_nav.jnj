@@ -67,7 +67,7 @@
 
 {%- macro week_number (cal, week) -%}
   <th class="week-number" scope="row" title="{{ GTW._T ('Week %2.2d/%s') % (week.number, week.year) }}">
-    <a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a>
+    {{- "%2.2d" % week.number -}}
   </th>
 {%- endmacro -%} {#- week_number -#}
 
