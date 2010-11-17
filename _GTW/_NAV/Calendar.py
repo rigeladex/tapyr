@@ -36,6 +36,8 @@
 #    16-Nov-2010 (CT) `Q._q_args` factored (and call wrapped in try/except)
 #    16-Nov-2010 (CT) `Q._q_delta` added and used
 #    17-Nov-2010 (CT) `Day.template_qx` added and used in `Calendar._get_child`
+#    17-Nov-2010 (CT) `_q_delta` adapted to use of two input/select elements for
+#                     `delta` and `delta_unit`
 #    ««revision-date»»···
 #--
 
@@ -121,15 +123,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     class Q (_Mixin_, _Cmd_) :
 
-        delta_pat = Regexp \
-            ( r"^"
-              r"(?P<number> [0-9]+)"
-              r"\s*"
-              r"(?: (?P<unit> day|week|month|year)s?)?"
-              r"$"
-            , re.VERBOSE | re.IGNORECASE
-            )
-
         def rendered (self, handler, template = None) :
             try :
                 q_args = self._q_args (handler)
@@ -166,19 +159,20 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         # end def _q_args
 
         def _q_delta (self, req_data) :
-            data = req_data ["delta"]
-            pat  = self.delta_pat
-            if pat.match (data) :
-                number = int (pat.number)
-                unit   = pat.unit
+            data = req_data.get ("delta")
+            if data :
+                number = int (data)
+                unit   = req_data.get ("delta_unit", "week").rstrip ("s")
                 if unit in ("month", "year") :
                     DT = CAL.Month_Delta
                     if unit == "year" :
                         number *= 12
-                else :
+                elif unit in ("week", "day") :
                     DT = CAL.Date_Delta
                     if unit == "week" :
                         number *= 7
+                else :
+                    raise ValueError (unit)
                 return DT (number)
             raise ValueError (data)
         # end def _q_delta

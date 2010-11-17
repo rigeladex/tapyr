@@ -37,6 +37,7 @@
 ##                     elements for `year`, `month`, and `day` of `anchor`
 ##    15-Nov-2010 (CT) Call to `week_roller_body` added at end
 ##    17-Nov-2010 (CT) `week_day_head` factored
+##    17-Nov-2010 (CT) `label`s and `delta` added to `week_roller_ctrl`
 ##    ««revision-date»»···
 ##--
 #}
@@ -96,9 +97,16 @@
   {%- import "html/form.jnj" as Form %}
   {%- set action = cal.q_href -%}
   {% call Form.form (action = action, method = "get", class = "ctrl") -%}
+      <label class="anchor"
+          title="{{ GTW._T ("Anchor date for calendar display") }}"
+          for="F_anchor_year"
+      >
+        {{ GTW._T ("Anchor") }}
+      </label>
       <div class="anchor">
         {{- X.input.number
             ( name      = "year"
+            , id        = "F_anchor_year"
             , min       = cal.min_year
             , max       = cal.max_year
             , title     = GTW._T ("Anchor year for calendar display")
@@ -127,13 +135,41 @@
             )
         -}}
       </div>
+      <label title="{{ GTW._T ("Number of weeks displayed") }}" for="F_weeks">
+        {{ GTW._T ("Weeks") }}
+      </label>
       {{ X.input.number
           ( name      = "weeks"
+          , id        = "F_weeks"
           , min       = 1
           , max       = 53
           , title     = GTW._T  ("Number of weeks displayed")
           , value     = GTW.len (weeks)
           , class     = "weeks"
+          )
+      }}
+      <label title="{{ GTW._T ("Move calendar display by delta units") }}"
+             for="F_delta">
+        {{ GTW._T ("Delta") }}
+      </label>
+      {{ X.input.number
+          ( name      = "delta"
+          , id        = "F_delta"
+          , title     = GTW._T ("Move calendar display by delta units")
+          , class     = "delta"
+          )
+      }}
+      {{ X.input.select_v
+          ( "delta_unit"
+          , ( ("day",   GTW._T ("day"))
+            , ("week",  GTW._T ("week"))
+            , ("month", GTW._T ("month"))
+            , ("year",  GTW._T ("year"))
+            )
+          , "week"
+          , title     = GTW._T
+              ("Units for `delta` movement of calendar display")
+          , class     = "delta unit"
           )
       }}
       {{ X.input.submit
