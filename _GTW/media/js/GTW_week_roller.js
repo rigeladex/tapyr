@@ -28,6 +28,7 @@
 **    15-Nov-2010 (CT) Creation
 **    16-Nov-2010 (CT) `change_field` factored
 **    16-Nov-2010 (CT) `init_cal` added and used
+**    17-Nov-2010 (CT) `init_cal` changed to use AJAX `.load` to fill `div$`
 **    ««revision-date»»···
 **--
 */
@@ -41,6 +42,7 @@
             , ctrl_selector     : "form.ctrl"
             , selected_class    : "selected"
             , day_selector      : "td"
+            , today_selector    : "td.today"
             , q_url_transformer : function (name)
                 { return name.replace (/\/q/, "/qx"); }
             }
@@ -53,42 +55,40 @@
           }
         function init_cal (wr$)
           {
-            var cal$  = $(options.cal_selector, wr$);
-            var div$  = $("div." + options.selected_class, wr$);
-            $(options.day_selector, cal$).click
-              ( function (ev)
+            var cal$   = $(options.cal_selector, wr$);
+            var div$   = $("div." + options.selected_class, wr$);
+            var today$ = $(options.today_selector, cal$);
+            $(options.day_selector, cal$).each
+              ( function ()
                   {
-                    if (options.selected)
+                    var day  = this;
+                    var day$ = $(day);
+                    var abbr = day.abbr;
+                    var href = $("span.date a", day$).attr ("href");
+                    if (href)
                       {
-                        $(options.selected).removeClass
-                          (options.selected_class);
-                      }
-                    $(this).addClass (options.selected_class);
-                    options.selected = this;
-                    div$.html ("").css ({display : "block"});
-                    div$.append ($("<h1>" + $(this).attr ("title") + "</h1>"));
-                    $(this).children ().each
-                      ( function (n)
-                          {
-                            if (n > 0)
+                        var qx = href.replace (abbr, "qx/" + abbr);
+                        day$.click
+                          ( function (ev)
                               {
-                                div$.append
-                                  ( $( "<div>"
-                                     + $(this).attr ("title")
-                                     + " : "
-                                     + $(this).html ()
-                                     + "</div>"
-                                     )
-                                  );
+                                div$.load (qx).css ({display : "block"});
+                                if (options.selected)
+                                  {
+                                    $(options.selected).removeClass
+                                      (options.selected_class);
+                                  }
+                                day$.addClass (options.selected_class);
+                                options.selected = day;
+                                if (ev && ev.preventDefault)
+                                  {
+                                    ev.preventDefault ();
+                                  }
                               }
-                          }
-                      );
-                    if (ev && ev.preventDefault)
-                      {
-                        ev.preventDefault ();
+                          );
                       }
                   }
               );
+            today$.triggerHandler ("click");
           }
         function init_ctrl (wr$)
           {
@@ -101,20 +101,23 @@
                     $("input[type='submit']", ctrl$).click
                       ( function (ev)
                           {
-                            stop (ev);
+                            var args = ctrl$.serialize ()
+                                  + "&" + this.name + "=" + this.value;
                             $.getJSON
                               ( url
-                              , ctrl$.serialize ()
-                                  + "&" + this.name + "=" + this.value
+                              , args
                               , function (response)
                                   {
-                                    cal$.replaceWith (response.calendar);
-                                    change_field ("day",   ctrl$, response);
-                                    change_field ("month", ctrl$, response);
-                                    change_field ("weeks", ctrl$, response);
-                                    change_field ("year",  ctrl$, response);
-                                    init_cal (wr$);
-                                    cal$  = $(options.cal_selector, wr$);
+                                    if (response)
+                                      {
+                                        cal$.replaceWith (response.calendar);
+                                        change_field ("day",   ctrl$, response);
+                                        change_field ("month", ctrl$, response);
+                                        change_field ("weeks", ctrl$, response);
+                                        change_field ("year",  ctrl$, response);
+                                        cal$  = $(options.cal_selector, wr$);
+                                        init_cal (wr$);
+                                      }
                                   }
                               )
                             if (ev && ev.preventDefault)

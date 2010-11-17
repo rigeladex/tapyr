@@ -35,6 +35,7 @@
 #    16-Nov-2010 (CT) `weeks` changed to use `_cal.week` instead of `year.weeks`
 #    16-Nov-2010 (CT) `Q._q_args` factored (and call wrapped in try/except)
 #    16-Nov-2010 (CT) `Q._q_delta` added and used
+#    17-Nov-2010 (CT) `Day.template_qx` added and used in `Calendar._get_child`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     class _Cmd_ (GTW.NAV.Page) :
 
         implicit          = True
+        template_qx       = None
         SUPPORTED_METHODS = set (("GET", ))
 
     # end class _Cmd_
@@ -113,6 +115,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
         name         = "day"
         template     = "calendar_day"
+        template_qx  = "calendar_day_qx"
 
     # end class Day
 
@@ -188,7 +191,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     class QX (Q) :
 
-        template = "wr_qx"
+        template = "calendar_qx"
 
         def _rendered (self, handler, template) :
             anchor = self.anchor
@@ -283,30 +286,46 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     # end def year
 
     def _get_child (self, child, * grandchildren) :
-        try :
-            y = int (child)
-        except ValueError :
-            if child in (self.q_prefix, self.qx_prefix) and not grandchildren :
-                return getattr (self, child.upper ()) (parent = self)
+        if child in (self.q_prefix, self.qx_prefix) and not grandchildren :
+            return getattr (self, child.upper ()) (parent = self)
         else :
-            if not (self.min_year <= y <= self.max_year) :
+            qx_p = child == self.qx_prefix
+            if qx_p :
+                child, grandchildren = grandchildren [0], grandchildren [1:]
+            try :
+                y = int (child)
+            except ValueError :
                 return
-            year = self._cal.year [y]
-            if not grandchildren :
-                return self.Year (parent = self, year = year)
-            elif grandchildren [0] == "week" and len (grandchildren) == 2 :
-                try :
-                    week = year.weeks [int (grandchildren [1])]
-                except (ValueError, LookupError) :
+            else :
+                if not (self.min_year <= y <= self.max_year) :
                     return
-                return self.Week (parent = self, year = year, week = week)
-            elif len (grandchildren) == 2 :
-                try :
-                    m, d = [int (c) for c in grandchildren]
-                    day  = year.dmap [y, m, d]
-                except (ValueError, LookupError) :
-                    return
-                return self.Day (parent = self, year = year, day = day)
+                year = self._cal.year [y]
+                if not grandchildren :
+                    if qx_p :
+                        return
+                    return self.Year (parent = self, year = year)
+                elif grandchildren [0] == "week" and len (grandchildren) == 2 :
+                    if qx_p :
+                        return
+                    try :
+                        week = year.weeks [int (grandchildren [1])]
+                    except (ValueError, LookupError) :
+                        return
+                    return self.Week (parent = self, year = year, week = week)
+                elif len (grandchildren) == 2 :
+                    try :
+                        m, d = [int (c) for c in grandchildren]
+                        day  = year.dmap [y, m, d]
+                    except (ValueError, LookupError) :
+                        return
+                    Day      = self.Day
+                    template = Day.template_qx if qx_p else Day.template
+                    return Day \
+                        ( parent   = self
+                        , year     = year
+                        , day      = day
+                        , template = template
+                        )
     # end def _get_child
 
     def _get_events (self, date) :

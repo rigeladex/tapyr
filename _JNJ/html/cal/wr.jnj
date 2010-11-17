@@ -36,6 +36,7 @@
 ##    14-Nov-2010 (CT) `week_roller_ctrl` changed to use separate `input`
 ##                     elements for `year`, `month`, and `day` of `anchor`
 ##    15-Nov-2010 (CT) Call to `week_roller_body` added at end
+##    17-Nov-2010 (CT) `week_day_head` factored
 ##    ««revision-date»»···
 ##--
 #}
@@ -69,14 +70,7 @@
             -%}
             <td class="{{ td_cls }}" abbr="{{ d }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
               <span class="{{ div_cls }}">
-                {%- onion 1 %} {# events foo #}
-                  {% head -%}
-                    <a href="{{ cal.day_href (d) }}">
-                  {%- body -%}
-                    {{- W.week_day (cal, week, d) -}}
-                  {%- tail -%}
-                    </a>
-                {%- endonion -%}
+                {{- W.week_day_head (cal, weeks, d, events) -}}
               </span>
               {{ W.week_day_events (cal, week, d) }}
             </td>

@@ -65,8 +65,10 @@ class Templateer (TFL.Meta.Object) :
         , account_verify_new_email     = "email/verifiy_new_email.jnj"
         , account_verify_email         = "email/verifiy_new_email.jnj"
         , calendar                     = "html/calendar.jnj"
+        , calendar_qx                  = "html/cal/wr.jnj"
         , calendar_day                 = "html/cal_day.jnj"
-        , calendar_week                = "html/cal/week.jnj"
+        , calendar_day_qx              = "html/cal/day.jnj"
+        , calendar_week                = "html/cal_week.jnj"
         , console                      = "html/console.jnj"
         , default                      = "html/error.jnj"
         , dynamic_form                 = "html/dynamic_form.jnj"
@@ -80,7 +82,6 @@ class Templateer (TFL.Meta.Object) :
         , regatta_result               = "html/regatta_result.jnj"
         , regatta_result_teamrace      = "html/regatta_result_teamrace.jnj"
         , site_admin                   = "html/site_admin.jnj"
-        , wr_qx                        = "html/cal/wr.jnj"
         )
 
     def __init__ (self, * args, ** kw) :

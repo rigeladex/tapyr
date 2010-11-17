@@ -31,6 +31,7 @@
 ##    10-Mar-2010 (CT) `week_day` changed to honor `is_holiday`
 ##    26-Apr-2010 (CT) `week_day_events` changed to guard against empty `href`
 ##    11-Jun-2010 (CT) Validation errors removed (no `div` in `tr` and `td`)
+##    17-Nov-2010 (CT) `week_day_head` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -75,6 +76,17 @@
     </span>
   {% endfor -%}
 {%- endmacro -%} {#- week_day_events -#}
+
+{%- macro week_day_head (cal, weeks, day, events) -%}
+  {%- onion (weeks == cal.weeks) or events %}
+    {% head -%}
+      <a href="{{ cal.day_href (day) }}">
+    {%- body -%}
+      {{- week_day (cal, week, day) -}}
+    {%- tail -%}
+      </a>
+  {%- endonion -%}
+{%- endmacro -%} {#- week_day -#}
 
 {%- macro week_month (cal, week) -%}
 {%- endmacro -%} {#- week_month -#}
