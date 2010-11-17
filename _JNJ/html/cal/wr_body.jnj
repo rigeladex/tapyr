@@ -80,9 +80,10 @@
 {%- endmacro -%} {#- week_month -#}
 
 {%- macro week_number (cal, week) -%}
-  <th class="week-number" scope="row"
-    title="{{ "%s %2.2d/%s     [%s&ndash;%s]" % (GTW._T ('Week'), week.number, week.year, week.mon, week.sun) }}">
-    <span class="week-number"><a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a></span>
+  <th class="week-number" scope="row" title="{{ "%s %2.2d/%s     [%s&ndash;%s]" % (GTW._T ('Week'), week.number, week.year, week.mon, week.sun) }}">
+    <span class="week-number">
+      <a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a>
+    </span>
   </th>
 {%- endmacro -%} {#- week_number -#}
 

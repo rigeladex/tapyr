@@ -1,0 +1,40 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: cal_day.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/cal_day.jnj
+##
+## Purpose
+##    Template for displaying a single day of a calendar
+##
+## Revision Dates
+##    12-Mar-2010 (CT) Creation (factored from html/cal/day.jnj)
+##    ««revision-date»»···
+##--
+#}
+
+{%- block document -%}
+  {%- include "html/cal/day.jnj" with context %}
+{%- endblock document -%}
+
+{#- __END__ jinja template: cal_day.jnj -#}

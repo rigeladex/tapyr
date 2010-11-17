@@ -40,7 +40,7 @@
           ( { cal_selector      : "table.calendar"
             , ctrl_selector     : "form.ctrl"
             , selected_class    : "selected"
-            , day_selector      : "td[class$=day]"
+            , day_selector      : "td"
             , q_url_transformer : function (name)
                 { return name.replace (/\/q/, "/qx"); }
             }
@@ -65,7 +65,7 @@
                       }
                     $(this).addClass (options.selected_class);
                     options.selected = this;
-                    div$.html ("");
+                    div$.html ("").css ({display : "block"});
                     div$.append ($("<h1>" + $(this).attr ("title") + "</h1>"));
                     $(this).children ().each
                       ( function (n)
@@ -83,6 +83,10 @@
                               }
                           }
                       );
+                    if (ev && ev.preventDefault)
+                      {
+                        ev.preventDefault ();
+                      }
                   }
               );
           }

@@ -102,6 +102,7 @@
 #     4-Sep-2010 (CT) `M_E_Type.__init__` changed to set `Class` and `C_Type`
 #                     to `cls` (property `M_E_Type.Class` removed)
 #    13-Oct-2010 (CT) `default_child` added
+#    17-Nov-2010 (CT) `_m_setup_sorted_by` changed to honor `sort_rank`
 #    ««revision-date»»···
 #--
 
@@ -750,7 +751,7 @@ class M_E_Type_Id (M_E_Type) :
     def _m_setup_sorted_by (cls) :
         sbs = []
         if cls.epk_sig :
-            for pka in cls.primary :
+            for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
                 if isinstance (pka.attr, MOM.Attr._A_Object_) :
                     et = pka.Class
                     if et :

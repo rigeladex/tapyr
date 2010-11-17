@@ -38,6 +38,8 @@
 #                     `date in change.attr_changes`
 #     8-Sep-2010 (CT) `dates.computed` changed to use temporary
 #                     `Recurrence_Rule` if not explicit one is given
+#    17-Nov-2010 (CT) `left.sort_rank` set to `10` to have events sort by
+#                     (`date`,`time`,`left`) instead of (`left`,`date`,`time`)
 #    ««revision-date»»···
 #--
 
@@ -70,6 +72,9 @@ class Event (_Ancestor_Essence) :
             import _GTW._OMP._SWP.Page
             role_type          = GTW.OMP.SWP.Page
             role_name          = "object"
+
+            ### give `date` and `time` priority for sorting
+            sort_rank          = 10
 
             auto_cache         = "events"
 
@@ -182,6 +187,9 @@ class Event_occurs (_Ancestor_Essence) :
             role_type          = Event
             role_name          = "event"
             auto_cache         = "occurs"
+
+            ### give `date` and `time` priority for sorting
+            sort_rank          = 10
 
         # end class left
 

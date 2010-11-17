@@ -53,14 +53,21 @@ _composite = r"""
 
     >>> for e in EVT.Event.query (sort_key = EVT.Event.sorted_by) :
     ...     print e
-    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
     ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By ("-date.start")) :
     ...     print e
     ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
     ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
+
+    >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By (Q.left.perma_name)) :
+    ...     print e
+    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
+
     >>> scope.destroy ()
+
 """
 _link1_role = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS

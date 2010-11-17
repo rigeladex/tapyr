@@ -43,6 +43,7 @@
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
       {% if page.permalink -%}
         <link rel="canonical" href="{{- page.permalink -}}"/>
+        <meta name="href" content="{{- page.abs_href -}}"/>
       {% endif %}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}

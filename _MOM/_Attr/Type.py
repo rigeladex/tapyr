@@ -158,6 +158,7 @@
 #    14-Oct-2010 (CT) Last vestiges of `_symbolic_default` removed
 #    28-Oct-2010 (CT) `_A_Object_._get_object` changed to take type-name from
 #                     `epk`, if possible
+#    17-Nov-2010 (CT) `sort_rank` added
 #    ««revision-date»»···
 #--
 
@@ -236,6 +237,7 @@ class A_Attr_Type (object) :
     rank                = 0
     raw_default         = u""
     record_changes      = True
+    sort_rank           = 0
     store_default       = False
     typ                 = None
     ui_name             = TFL.Meta.Once_Property \

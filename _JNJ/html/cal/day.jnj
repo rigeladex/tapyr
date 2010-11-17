@@ -1,4 +1,3 @@
-{%- extends site_base or "html/base.jnj" %}
 {#- jinja template: day.jnj -#}
 {#
 ## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
@@ -29,27 +28,40 @@
 ##
 ## Revision Dates
 ##    12-Mar-2010 (CT) Creation
+##    17-Nov-2010 (CT) `html/cal_day.jnj` factored out
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- macro day (page, day) -%}
+{%- macro day (cal, day) -%}
+  <h1 class="day">
+    {{ "%s, %s" % (GTW._T (day.day_name), day) }}
+    <span class="week">
+      {{ "%s %2.2d/%s" % (GTW._T ('Week'), day.week, day.year) }}
+    </span>
+  </h1>
   {%- set holi = day.is_holiday %}
   {%- if holi %}
     <div class="holiday">{{- GTW._T (holi) -}}</div>
   {% endif -%}
   {%- for ev in day.events %}
     <div class="event" title="{{ ev.FO.time }}: {{ ev.title }}">
-      <h2><a href="{{ cal.obj_href (ev.essence) }}">{{ ev.short_title}}: {{ ev.title }}</a></h2>
+      <h2>
+        <a href="{{ cal.obj_href (ev.essence) }}">
+          {{- ev.short_title}}: {{ ev.title -}}
+        </a>
+      </h2>
       <p>{{ ev.FO.time }}</p>
-      <p>{{ ev.detail }}</p>
+      {%- if ev.short_title != ev.detail %}
+        <p>{{ ev.detail }}</p>
+      {% endif -%}
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- day -#}
 
-{%- block document -%}
-  <h1>{{ page.desc }}: {{ page.day }}</h1>
+{#- If included with context, the follwing code will be executed -#}
+{%- if page %}
   {{ day (page, page.day) -}}
-{%- endblock document -%}
+{% endif -%}
 
 {#- __END__ jinja template: day.jnj -#}
