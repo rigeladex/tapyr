@@ -155,6 +155,8 @@
       {{ X.input.number
           ( name      = "delta"
           , id        = "F_delta"
+          , min       = -53
+          , max       = +53
           , title     = GTW._T ("Move calendar display by delta units")
           , class     = "delta"
           )
