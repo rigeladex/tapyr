@@ -148,7 +148,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                 m      = int (req_data.get ("month") or anchor.month)
                 d      = int (req_data.get ("day")   or anchor.day)
                 anchor = self._cal.day ["%4.4d/%2.2d/%2.2d" % (y, m, d)]
-                if "delta" in req_data :
+                if req_data.get ("delta") :
                     delta  = self._q_delta (req_data)
                     anchor = self._cal.day [(anchor.date + delta).ordinal]
             wrs = int (req_data.get ("weeks") or self.week_roller_size)
@@ -159,22 +159,19 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         # end def _q_args
 
         def _q_delta (self, req_data) :
-            data = req_data.get ("delta")
-            if data :
-                number = int (data)
-                unit   = req_data.get ("delta_unit", "week").rstrip ("s")
-                if unit in ("month", "year") :
-                    DT = CAL.Month_Delta
-                    if unit == "year" :
-                        number *= 12
-                elif unit in ("week", "day") :
-                    DT = CAL.Date_Delta
-                    if unit == "week" :
-                        number *= 7
-                else :
-                    raise ValueError (unit)
-                return DT (number)
-            raise ValueError (data)
+            number = int (req_data.get ("delta"))
+            unit   = req_data.get ("delta_unit", "week").rstrip ("s")
+            if unit in ("month", "year") :
+                DT = CAL.Month_Delta
+                if unit == "year" :
+                    number *= 12
+            elif unit in ("week", "day") :
+                DT = CAL.Date_Delta
+                if unit == "week" :
+                    number *= 7
+            else :
+                raise ValueError (unit)
+            return DT (number)
         # end def _q_delta
 
         def _rendered (self, handler, template) :

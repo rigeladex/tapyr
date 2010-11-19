@@ -30,7 +30,8 @@
 **     3-Aug-2010 (CT) Creation (`as_int_array`)
 **     4-Aug-2010 (CT) `fix_a_nospam` added (factored from GTW.jQuery)
 **    10-Oct-2010 (CT) `GTW_Externalize` added
-      ««revision-date»»···
+**    19-Nov-2010 (CT) `push_history` added
+**    ««revision-date»»···
 **--
 */
 
@@ -68,6 +69,14 @@
                     }
                 }
               );
+          }
+        , push_history : function (url, title, state)
+          {
+            if (Modernizr.history)
+              {
+                window.history.pushState(state, title, url);
+              }
+            /* else { XXX ??? } */
           }
         }
       );

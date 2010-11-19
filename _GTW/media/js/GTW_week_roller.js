@@ -29,6 +29,7 @@
 **    16-Nov-2010 (CT) `change_field` factored
 **    16-Nov-2010 (CT) `init_cal` added and used
 **    17-Nov-2010 (CT) `init_cal` changed to use AJAX `.load` to fill `div$`
+**    19-Nov-2010 (CT) `push_history` called
 **    ««revision-date»»···
 **--
 */
@@ -98,14 +99,15 @@
                   {
                     var ctrl$ = $(this);
                     var cal$  = $(options.cal_selector, wr$);
-                    var url   = options.q_url_transformer (this.action);
+                    var q_url = this.action;
+                    var x_url = options.q_url_transformer (q_url);
                     $("input[type='submit']", ctrl$).click
                       ( function (ev)
                           {
                             var args = ctrl$.serialize ()
                                   + "&" + this.name + "=" + this.value;
                             $.getJSON
-                              ( url
+                              ( x_url
                               , args
                               , function (response)
                                   {
@@ -118,6 +120,7 @@
                                         change_field ("year",  ctrl$, response);
                                         cal$  = $(options.cal_selector, wr$);
                                         init_cal (wr$);
+                                        $.GTW.push_history (q_url + "?" + args);
                                       }
                                   }
                               )

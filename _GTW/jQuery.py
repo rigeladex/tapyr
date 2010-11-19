@@ -34,6 +34,7 @@
 #    10-Oct-2010 (CT) `GTW_Externalize` added
 #    18-Oct-2010 (CT) `GTW_pixpander` added
 #    15-Nov-2010 (CT) `GTW_week_roller` added
+#    19-Nov-2010 (CT) `Modernizr` added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ else :
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui-1.8.min.js", name = "jQuery_UI")
 GTW.Script (src = "/media/GTW/js/jquery.gritter.js",    name = "jQuery_Gritter")
+GTW.Script (src = "/media/GTW/js/modernizr-1.6.min.js", name = "Modernizr")
 
 GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css", name = "jQuery_UI")
 GTW.CSS_Link \
