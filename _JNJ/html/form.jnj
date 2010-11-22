@@ -349,7 +349,8 @@
       <li>
         {{ X.input.submit
             ( title = (GTW._T ("Logout %s") % (request.user.name, ))
-            , value = (GTW._T ("Logout %s") % (request.user.name, ))
+            , value = (GTW._T ("Logout %s") %
+                (request.user.name.split ("@") [0], ))
             )
         }}
         {{ X.input.hidden (name  = "next", value = next) }}
