@@ -159,6 +159,7 @@
 #    28-Oct-2010 (CT) `_A_Object_._get_object` changed to take type-name from
 #                     `epk`, if possible
 #    17-Nov-2010 (CT) `sort_rank` added
+#    22-Nov-2010 (CT) `A_Euro_Amount` and `A_Year` added, `_A_Decimal_` factored
 #    ««revision-date»»···
 #--
 
@@ -178,6 +179,7 @@ from   _TFL                  import sos
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
+import _TFL.Currency
 import _TFL.Filter
 
 import datetime
@@ -668,6 +670,20 @@ class _A_Number_ (A_Attr_Type) :
     # end def _from_string
 
 # end class _A_Number_
+
+class _A_Decimal_ (_A_Number_) :
+    """Models a decimal-number valued attribute of an object."""
+
+    typ            = "Decimal"
+    P_Type         = decimal.Decimal
+    code_format    = "%s"
+
+    _string_fixer  = Re_Replacer \
+        ( r"([-+]?\d*\.\d+([eE][-+]?\d+)?)"
+        , r"""Decimal("\1")"""
+        )
+
+# end class _A_Decimal_
 
 class _A_Float_ (_A_Number_) :
     """Models a floating-point attribute of an object."""
@@ -1316,23 +1332,15 @@ class A_Date_Time_List (_A_Typed_List_) :
 
 # end class A_Date_Time_List
 
-class A_Decimal (_A_Number_) :
+class A_Decimal (_A_Decimal_) :
     """Models a decimal-number valued attribute of an object."""
 
     __metaclass__  = MOM.Meta.M_Attr_Type_Decimal
-    typ            = "Decimal"
-    P_Type         = decimal.Decimal
-    code_format    = "%s"
 
     decimal_places = 2
     max_digits     = 12
     rounding       = decimal.ROUND_HALF_UP
     ui_length      = TFL.Meta.Once_Property (lambda s : s.max_digits + 2)
-
-    _string_fixer  = Re_Replacer \
-        ( r"([-+]?\d*\.\d+([eE][-+]?\d+)?)"
-        , r"""Decimal("\1")"""
-        )
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -1380,6 +1388,46 @@ class A_Email (_A_String_) :
     ### XXX check_syntax
 
 # end class A_Email
+
+class A_Euro_Amount (_A_Decimal_) :
+    """Models an attribute holding an amount of Euros."""
+
+    typ              = "Decimal"
+    P_Type           = TFL.Currency
+
+    _string_cleaner  = Re_Replacer \
+        ( r"\s*(%s|%s)\s*" % (TFL.Currency._symbol, TFL.Currency.name)
+        , r""
+        )
+
+    class Pickler (TFL.Meta.Object) :
+
+        Type = _A_String_
+
+        @classmethod
+        def as_cargo (cls, attr_kind, attr_type, value) :
+            if value is not None :
+                return value.amount
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
+            if cargo is not None :
+                return attr_type.P_Type (cargo)
+        # end def from_cargo
+
+    # end class Pickler
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, value, obj, glob, locl) :
+        ### when called for the class, `soc.__super` doesn't
+        ### work while `super (A_Euro_Amount, soc)` does
+        if value :
+            return super (A_Euro_Amount, soc)._from_string \
+                (soc._string_cleaner (value), obj, glob, locl)
+    # end def _from_string
+
+# end class A_Euro_Amount
 
 class A_Filename (_A_Filename_) :
     """Models an attribute of an object specifying a filename."""
@@ -1595,6 +1643,17 @@ class A_Url (_A_String_) :
     check          = ("""value.startswith (("/", "http://", "https://"))""", )
 
 # end class A_Url
+
+class A_Year (A_Int) :
+    """Models a year-valued attribute of an object."""
+
+    example        = "2000"
+    typ            = "Year"
+    min_value      = 1900
+    max_value      = 2100
+
+# end class A_Year
+
 
 __doc__ = """
 Class `MOM.Attr.A_Attr_Type`

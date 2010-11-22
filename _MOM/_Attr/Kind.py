@@ -150,6 +150,9 @@
 #    14-Oct-2010 (CT) Last vestiges of `_symbolic_default` removed
 #    14-Oct-2010 (CT) `_set_cooked_value_inner` factored
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added
+#    22-Nov-2010 (CT) `_Raw_Value_Mixin_` changed to use `get_pickle_cargo`
+#                     and `from_pickle_cargo` of `__super` to support
+#                     `attr.Pickler`, if any
 #    ««revision-date»»···
 #--
 
@@ -716,7 +719,7 @@ class _Raw_Value_Mixin_ (Kind) :
     void_values     = property (lambda s : s.void_raw_values)
 
     def get_pickle_cargo (self, obj) :
-        return self.get_value (obj), self.get_raw (obj)
+        return self.__super.get_pickle_cargo (obj) [0], self.get_raw (obj)
     # end def get_pickle_cargo
 
     def get_raw (self, obj) :
@@ -733,7 +736,7 @@ class _Raw_Value_Mixin_ (Kind) :
     # end def get_value
 
     def set_pickle_cargo (self, obj, cargo) :
-        ckd = cargo [0]
+        ckd = self.from_pickle_cargo (obj.home_scope, cargo)
         if len (cargo) > 1 :
             raw = cargo [1]
             self._set_cooked_value (obj,      ckd, changed = True)
@@ -1133,6 +1136,13 @@ class Computed (_Cached_, _Computed_Mixin_) :
     def reset (self, obj) :
         pass
     # end def reset
+
+    def __set__ (self, obj, value) :
+        raise AttributeError \
+            ( _T ("Computed attribute `%s.%s` cannot be assigned")
+            % (obj.type_name, self.name)
+            )
+    # end def __set__
 
 # end class Computed
 
