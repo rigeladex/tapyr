@@ -5,6 +5,7 @@
 * Revision Dates
 *    20-Jul-2010 (CT) Creation
 *     5-Aug-2010 (CT) Creation continued
+*    23-Nov-2010 (CT) `max-width` for `img` and `object` set to `100%`
 *    ««revision-date»»···
 */
 
@@ -47,6 +48,10 @@ h3  { font-size           : 115% }
 h4  { font-size           : 110% }
 h5  { font-size           : 105% }
 h6  { font-size           : 100% }
+
+img, object
+    { max-width           : 100%
+    }
 
 input, textarea, input:focus, textarea:focus
     { padding             : 0.1em 0.1em 0.2em
@@ -161,12 +166,6 @@ ul ul ul ul
     }
 
 .vbox.last-child, .w1o1
-    { display             : inline-block
-    ; float               : none
-    ; width               : auto
-    }
-
-.vbox:last-child /* CSS 3 */
     { display             : inline-block
     ; float               : none
     ; width               : auto

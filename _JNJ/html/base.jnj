@@ -115,8 +115,8 @@
           {% endif -%}
         {%- endblock body_headline %}
         {% block document %}{% endblock -%}
-      </div>
-    </div>
+      </div> {# #document .body #}
+    </div> {# #main .main #}
     {% call X.footer (id = "footer") -%}
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
