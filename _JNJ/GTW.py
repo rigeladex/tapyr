@@ -45,6 +45,7 @@
 #    20-Sep-2010 (CT) `Sorted_By` added
 #    22-Sep-2010 (CT) `eval_sorted_by` added
 #     8-Oct-2010 (CT) `len` added
+#    23-Nov-2010 (CT) `list` and `reversed` added
 #    ««revision-date»»···
 #--
 
@@ -132,6 +133,7 @@ class GTW (TFL.Meta.Object) :
     Getter     = TFL.Getter
 
     len        = staticmethod (len)
+    list       = staticmethod (list)
 
     def log_stdout (self, text) :
         print text
@@ -179,6 +181,7 @@ class GTW (TFL.Meta.Object) :
         return self.render_mode_stack and self.render_mode_stack [-1]
     # end def render_mode
 
+    reversed   = staticmethod (reversed)
     sorted     = staticmethod (sorted)
     Sorted_By  = TFL.Sorted_By
 

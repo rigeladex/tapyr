@@ -35,6 +35,7 @@
 #    31-Aug-2010 (CT) `is_team_race` added to `Regatta_C`
 #     6-Sep-2010 (MG) `Regatta.is_relevant` added
 #    21-Sep-2010 (CT) `Regatta_H.is_team_race` added
+#    23-Nov-2010 (CT) `kind` added
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,14 @@ class Regatta (_Ancestor_Essence) :
             min_value          = 0
 
         # end class discards
+
+        class kind (A_String) :
+            """Kind of regatta."""
+
+            kind               = Attr.Optional
+            max_length         = 32
+
+        # end class kind
 
         class name (A_String) :
 

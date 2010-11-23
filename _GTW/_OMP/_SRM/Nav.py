@@ -142,7 +142,7 @@ class Admin (object) :
             ,
             )
         , list_display   =
-            ( "event.name", "event.date.start", "boat_class", "races", "discards")
+            ( "event.name", "event.date.start", "boat_class", "kind", "races", "discards")
         )
 
     Regatta_H       = dict \
@@ -165,7 +165,7 @@ class Admin (object) :
             ,
             )
         , list_display   =
-            ( "event.name", "event.date.start", "handicap", "races", "discards")
+            ( "event.name", "event.date.start", "handicap", "kind", "races", "discards")
         )
 
     Regatta_Event = dict \

@@ -30,6 +30,7 @@
 #     5-May-2010 (CT) `perma_name` changed from `Cache` to `Internal` to
 #                     allow use in queries
 #    11-May-2010 (CT) `club` added
+#    23-Nov-2010 (CT) `ui_date` changed to avoid display of `start == finish`
 #    ««revision-date»»···
 #--
 
@@ -137,7 +138,8 @@ class Regatta_Event (_Ancestor_Essence) :
                 start, finish = obj.date.start, obj.date.finish
                 result        = []
                 if finish is not None and finish.month == start.month :
-                    result.append (start.strftime  ("%d."))
+                    if finish != start :
+                        result.append (start.strftime  ("%d."))
                 else :
                     result.append (start.strftime  (date_format))
                 if finish is not None :

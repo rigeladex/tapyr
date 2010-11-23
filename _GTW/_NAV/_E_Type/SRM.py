@@ -36,6 +36,7 @@
 #    17-Aug-2010 (CT) `template` corrected
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #    20-Sep-2010 (CT) `Results._get_objects` changed to support team races, too
+#    23-Nov-2010 (CT) `_SRM_Year_` redefined to display `regatta_calendar`
 #    ««revision-date»»···
 #--
 
@@ -196,10 +197,24 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
 
 # end class Regatta_Event
 
-class SRM (GTW.NAV.E_Type.Manager_T_Archive_Y) :
+_Ancestor = GTW.NAV.E_Type.Manager_T_Archive_Y
+class SRM (_Ancestor) :
     """Navigation directory listing regatta events by year."""
 
     Page            = Regatta_Event
+
+    class _SRM_Year_ (_Ancestor.Year) :
+
+        template    = "regatta_calendar"
+
+        def rendered (self, handler, template = None) :
+            ### if we want to display a site-admin specific page (and not
+            ### just the page of the first child [a E_Type_Admin]), we'll
+            ### need to bypass `_Dir_.rendered`
+            return GTW.NAV._Site_Entity_.rendered (self, handler, template)
+        # end def rendered
+
+    Year = _SRM_Year_ # end class
 
     def __init__ (self, src_dir, ** kw) :
         self.__super.__init__ (src_dir = src_dir, ** kw)

@@ -87,8 +87,7 @@ class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
             auto_up_depends    = ("desc", "event")
 
             def computed (self, obj) :
-                if obj.desc and obj.event :
-                    return obj.desc
+                return obj.desc
             # end def computed
 
         # end class short_title
