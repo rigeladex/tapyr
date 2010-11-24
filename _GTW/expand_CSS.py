@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    14-Dec-2007 (CT) Creation
-#    15-Dec-2007 (MG) `eval_paremeters` factored to support inclueded files
+#    15-Dec-2007 (MG) `eval_paremeters` factored to support included files
 #    15-Dec-2007 (MG) Fix single `%` to avoid having `%%` in the templates
 #    15-Dec-2007 (MG) `watch_directories` added
 #    16-Dec-2007 (MG) Exception handling added
@@ -37,6 +37,7 @@
 #    23-Jul-2010 (MG) Polling based `watch_directories` support added for
 #                     platforms where `pyinotify` is not supported (OS X,
 #                     Windows, ...)
+#    24-Nov-2010 (CT) Option `-template_extension` added
 #    ««revision-date»»···
 #--
 
@@ -56,9 +57,10 @@ class CSS_Template (TFL.Meta.Object) :
     """Models a css template and teh dependencies to parameter files."""
 
 
-    parameter_files = TFL.defaultdict (set)
-    templates       = {}
-    fix_percent_pat = re.compile ("%([^(])")
+    parameter_files    = TFL.defaultdict (set)
+    template_extension = ".css_template"
+    templates          = {}
+    fix_percent_pat    = re.compile ("%([^(])")
 
     def __init__ ( self, template
                  , parameter_file = None
@@ -68,7 +70,7 @@ class CSS_Template (TFL.Meta.Object) :
         self.count    = 0
         self.polling  = polling
         self.template = TFL.Filename \
-            (template, "filename.css_template", absolute = True)
+            (template, self.template_extension, absolute = True)
         self.css_file = TFL.Filename (css_file or ".css", self.template)
         self.pdict    = {}
         if not os.path.isfile (self.template.name) :
@@ -214,6 +216,8 @@ def _watch_directories_pyinotify (pyinotify, overrides, * directories) :
 def main (cmd) :
     keywords    = {} ### XXX cmd.keywords
     directories = set ()
+    if cmd.template_extension :
+        CSS_Template.template_extension = cmd.template_extension
     if cmd.template :
         for f in cmd.argv :
             CSS_Template (f).create_css_file (keywords)
@@ -235,9 +239,10 @@ Command = TFL.CAO.Cmd \
     ( main
     , args = ("template:P", )
     , opts =
-          ( "watch_directories:P,?List of directories to watch for changes"
-          , "poll_timeout:I=1000?Microseconds timeout if pyinotify is not "
+          ( "poll_timeout:I=1000?Microseconds timeout if pyinotify is not "
               "availabe"
+          , "template_extension:S=.css_template?Extension of template file"
+          , "watch_directories:P,?List of directories to watch for changes"
           )
     )
 

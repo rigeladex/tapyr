@@ -94,13 +94,6 @@
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
     <div id="main" class="main">
-      {%- block nav_block -%}
-        {% call X.nav (id = "navigate") -%}
-          {%- block navigate -%}
-            {%- include "html/navigation.jnj" ignore missing -%}
-          {%- endblock -%}
-        {%- endcall %} {# X.nav #}
-      {%- endblock nav_block -%}
       <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
         {%- block notifications -%}
           {%- if notifications %}
@@ -116,6 +109,13 @@
         {%- endblock body_headline %}
         {% block document %}{% endblock -%}
       </div> {# #document .body #}
+      {%- block nav_block -%}
+        {% call X.nav (id = "navigate") -%}
+          {%- block navigate -%}
+            {%- include "html/navigation.jnj" ignore missing -%}
+          {%- endblock -%}
+        {%- endcall %} {# X.nav #}
+      {%- endblock nav_block -%}
     </div> {# #main .main #}
     {% call X.footer (id = "footer") -%}
       {%- block body_footer %}{% endblock body_footer -%}
