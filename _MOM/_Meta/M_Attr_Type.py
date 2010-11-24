@@ -56,6 +56,8 @@
 #     6-Sep-2010 (CT) `M_Attr_Type_Typed_Collection` changed to use `tuple`
 #                     and `R_Type` in `as_cargo` and `from_cargo`, respectively
 #    14-Oct-2010 (CT) `symbolic_ref_pat` and `_symbolic_default` removed
+#    24-Nov-2010 (CT) `M_Attr_Type_Typed_Collection._elements_from_cargo_p`
+#                     fixed (`C_Type`)
 #    ««revision-date»»···
 #--
 
@@ -289,7 +291,8 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
     @staticmethod
     def _elements_from_cargo_p (scope, attr_kind, attr_type, cargo) :
         R_Type = attr_type.R_Type
-        fpc    = attr_type.C_Type.Pickler.from_cargo
+        C_Type = attr_type.C_Type
+        fpc    = C_Type.Pickler.from_cargo
         return R_Type (fpc (scope, attr_kind, C_Type, c) for c in cargo)
     # end def _elements_from_cargo_p
 
