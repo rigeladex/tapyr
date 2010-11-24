@@ -106,6 +106,7 @@ import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
+import traceback
 import uuid
 
 class Scope (TFL.Meta.Object) :
@@ -254,6 +255,8 @@ class Scope (TFL.Meta.Object) :
                 result = Type.from_attr_pickle_cargo (self, cargo)
             except Exception, exc :
                 self.db_errors.append ((type_name, pid, cargo))
+                if __debug__ :
+                    traceback.print_exc ()
                 print repr (exc)
                 print "   Couldn't restore %s %s %s (app-type %s)" % \
                     (type_name, pid, cargo, self.app_type)
