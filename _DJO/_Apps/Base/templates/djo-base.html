@@ -16,6 +16,7 @@
   ##    10-Jul-2009 (CT) Creation started (factored from two specific homepages)
   ##    13-Jul-2009 (CT) Creation finished (bug fixes)
   ##    19-Aug-2009 (CT) `headline_class` added
+  ##    25-Nov-2010 (CT) `navigate` moved after `document`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -85,14 +86,14 @@
   <body {{ page.body_attr|safe }} {% block body-attrs %}{% endblock %}>
     <div id="header">{% block body-header %}{% endblock body-header %}</div>
     <div id="main" class="main">
-      <div id="navigate">
-        {% block navigate %}{% include "navigate.html" %}{% endblock %}
-      </div>
       <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
         {% block body-headline %}
           {% if page.headline %}<h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>{% endif %}
         {% endblock body-headline %}
         {% block document %}{% endblock %}
+      </div>
+      <div id="navigate">
+        {% block navigate %}{% include "navigate.html" %}{% endblock %}
       </div>
     </div>
     <div id="footer">{% block body-footer %}{% endblock body-footer %}</div>

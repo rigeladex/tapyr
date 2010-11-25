@@ -32,6 +32,7 @@
 ##     1-May-2010 (MG) `body` block added
 ##    11-Jun-2010 (CT) Use `X.link_stylesheet` instead of home-grown code
 ##    17-Aug-2010 (CT) s/headline/head_line/
+##    24-Nov-2010 (CT) `nav_block` moved after `document`
 ##    ««revision-date»»···
 ##--
 #}

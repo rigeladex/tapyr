@@ -31,6 +31,7 @@
 ##    27-Jan-2010 (CT) Creation
 ##    23-Mar-2010 (CT) Adapted to work with GTW.NAV.E_Type.Gallery
 ##     7-Oct-2010 (CT) `inline` added
+##    25-Nov-2010 (CT) `max-width: 100%` added to style for `.inline .photo`
 ##    ««revision-date»»···
 ##--
 #}
@@ -80,12 +81,13 @@
   {{- super () -}}
   <style type="text/css">
      .inline .photo
-       { height : {{ page.max_height_photo -}}px
-       ; width  : {{ page.max_width_photo -}}px
+       { height    : {{ page.max_height_photo -}}px
+       ; max-width : 100%
+       ; width     : {{ page.max_width_photo -}}px
        }
      .thumbnails a
-       { height : {{ page.max_height_thumb -}}px
-       ; width  : {{ page.max_width_thumb -}}px
+       { height    : {{ page.max_height_thumb -}}px
+       ; width     : {{ page.max_width_thumb -}}px
        }
      .thumbnails.inline .box
        { width  : {{ (page.max_width_thumb + 10) * GTW.len (page.pictures) }}px
