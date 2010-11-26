@@ -30,6 +30,7 @@
 **    16-Nov-2010 (CT) `init_cal` added and used
 **    17-Nov-2010 (CT) `init_cal` changed to use AJAX `.load` to fill `div$`
 **    19-Nov-2010 (CT) `push_history` called
+**    26-Nov-2010 (CT) `init_slider` added and used
 **    ««revision-date»»···
 **--
 */
@@ -39,10 +40,12 @@
     $.fn.GTW_week_roller = function (options)
       {
         var options  = $.extend
-          ( { cal_selector      : "table.calendar"
+          ( { apply_button_name : "Apply"
+            , cal_selector      : "table.calendar"
             , ctrl_selector     : "form.ctrl"
             , selected_class    : "selected"
             , day_selector      : "td"
+            , slider_selector   : ".slider"
             , today_selector    : "td.today"
             , q_day_transformer : function (href)
                 { return href.replace (/(\d{4}\/\d{1,2}\/\d{1,2})/, "qx/$1"); }
@@ -51,10 +54,10 @@
             }
           , options || {}
           );
-        function change_field (name, context, response)
+        function change_field (name, context, response, value)
           {
             $("input[name='" + name + "']", context).attr
-              ("value", response [name]);
+              ("value", (value != null) ? value : response [name]);
           }
         function init_cal (wr$)
           {
@@ -134,10 +137,51 @@
               );
             init_cal (wr$);
           }
+        function init_slider (wr$)
+          {
+            $(options.slider_selector, wr$).each
+              ( function ()
+                  {
+                    var slider$ = $(this);
+                    var apply$  =
+                        $("input[name='"+options.apply_button_name+"']", wr$);
+                    function change (event, ui)
+                        {
+                          var value = - ui.value;
+                          if (value)
+                            {
+                              change_field          ("delta", wr$, null, value);
+                              apply$.triggerHandler ("click");
+                              change_field          ("delta", wr$, null, "");
+                              slider$.slider        ("value", 0);
+                            }
+                        }
+                    function slide (event, ui)
+                        {
+                          var value = - ui.value;
+                          if (value)
+                            {
+                              change_field ("delta", wr$, null, value);
+                            }
+                        }
+                    slider$.slider
+                      ( { max         : 53
+                        , min         : -53
+                        , orientation : "vertical"
+                        , value       : 0
+                        , change      : change
+                        , slide       : slide
+                        }
+                      );
+                    slider$.addClass ("enabled");
+                  }
+              );
+          }
         $(this).each
           ( function ()
               {
-                init_ctrl ($(this));
+                init_ctrl   ($(this));
+                init_slider ($(this));
               }
           );
         return this;

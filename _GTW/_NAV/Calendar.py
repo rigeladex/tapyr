@@ -38,6 +38,8 @@
 #    17-Nov-2010 (CT) `Day.template_qx` added and used in `Calendar._get_child`
 #    17-Nov-2010 (CT) `_q_delta` adapted to use of two input/select elements for
 #                     `delta` and `delta_unit`
+#    26-Nov-2010 (CT) Adapted to change of name of input-elements of
+#                     `week_roller_ctrl`
 #    ««revision-date»»···
 #--
 
@@ -141,7 +143,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         def _q_args (self, handler) :
             anchor     = self.anchor
             req_data   = handler.request.req_data
-            if req_data.get ("Submit") == _T ("Today") :
+            if req_data.get ("Today") :
                 anchor = self.today
             else :
                 y      = int (req_data.get ("year")  or anchor.year)

@@ -38,6 +38,8 @@
 ##    15-Nov-2010 (CT) Call to `week_roller_body` added at end
 ##    17-Nov-2010 (CT) `week_day_head` factored
 ##    17-Nov-2010 (CT) `label`s and `delta` added to `week_roller_ctrl`
+##    26-Nov-2010 (CT) Name of `input.submit` changed for `week_roller_ctrl`
+##    26-Nov-2010 (CT) `week_roller_slider` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -86,7 +88,7 @@
 
 {%- macro week_roller_body (cal, weeks) -%}
   {%- import "html/cal/wr_body.jnj" as W %}
-  {%- set wr_caller = kwargs.pop ("caller", None) -%}
+  {%- set wr_caller = kwargs.pop ("caller",   None) -%}
   <div class="week-roller">
     {%- if wr_caller -%}{{- wr_caller () -}}{%- endif -%}
     {{ week_roller (cal, weeks, W, ** kwargs) }}
@@ -175,21 +177,26 @@
           )
       }}
       {{ X.input.submit
-          ( name      = "Submit"
+          ( name      = "Apply"
           , title     = GTW._T ("Display calendar for the selected values")
           , value     = GTW._T ("Apply")
           , class     = "Short"
           )
       }}
       {{ X.input.submit
-          ( name      = "Submit"
+          ( name      = "Today"
           , title     = GTW._T ("Display calendar anchored on today")
           , value     = GTW._T ("Today")
           , class     = "Short"
           )
       }}
   {% endcall %} {# form #}
+  {{ week_roller_slider (cal, weeks) }}
 {%- endmacro -%} {#- week_roller_ctrl -#}
+
+{%- macro week_roller_slider (cal, weeks) -%}
+  <div class="slider"></div>
+{%- endmacro -%} {#- week_roller_slider -#}
 
 {%- macro week_roller_nav (cal, weeks) -%}
   {%- import "html/cal/wr_nav.jnj" as W %}
