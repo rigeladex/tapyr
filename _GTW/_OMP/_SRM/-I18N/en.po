@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-05-10 13:37+0200\n"
-"PO-Revision-Date: 2010-11-09 13:09+0100\n"
+"PO-Revision-Date: 2010-11-26 11:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -197,6 +197,14 @@ msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:72
 msgid "Italy"
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Kind"
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Kind of regatta."
 msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:73
@@ -581,19 +589,4 @@ msgstr ""
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr ""
-
-#~ msgid "Member"
-#~ msgstr ""
-
-#~ msgid "Race Results"
-#~ msgstr ""
-
-#~ msgid "Race results"
-#~ msgstr ""
-
-#~ msgid "Results of the `boat` in the races of the `regatta`."
-#~ msgstr ""
-
-#~ msgid "`start`and `finish` date of regatta"
-#~ msgstr ""
 

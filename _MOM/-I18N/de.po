@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-11-09 13:09+0100\n"
+"PO-Revision-Date: 2010-11-26 11:02+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -27,7 +27,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1491
+#: _MOM/_Attr/Type.py:1541
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -49,7 +49,7 @@ msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:152
+#: _MOM/_Meta/M_Entity.py:153
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -63,7 +63,12 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:994
+#: _MOM/_Attr/Kind.py:1142
+#, python-format
+msgid "Computed attribute `%s.%s` cannot be assigned"
+msgstr "Berechnetes Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
+
+#: _MOM/_Attr/Kind.py:997
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -114,14 +119,14 @@ msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:1199
+#: _MOM/_Attr/Kind.py:1209
 #, python-format
 msgid ""
 "Init-only attribute `%s.%s` cannot bechanged from `%s` to `%s` after "
 "object creation"
-msgstr ""
+msgstr "Geburts-Attribut `%s.%s` kann nach der Erzeugung nicht mit Zuweisung von `%s` auf` %s` erändert werden."
 
-#: _MOM/_Attr/Type.py:1121
+#: _MOM/_Attr/Type.py:1139
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -170,7 +175,7 @@ msgid_plural "Named_Objects"
 msgstr[0] "Benanntes-Objekt"
 msgstr[1] "Benannte-Objekte"
 
-#: _MOM/_Attr/Type.py:849
+#: _MOM/_Attr/Type.py:867
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
@@ -181,12 +186,12 @@ msgid_plural "Objects"
 msgstr[0] "Objekt"
 msgstr[1] "Objekte"
 
-#: _MOM/_Attr/Kind.py:861
+#: _MOM/_Attr/Kind.py:864
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:871
+#: _MOM/_Attr/Kind.py:874
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -241,7 +246,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] "Zeitraum"
 msgstr[1] "Zeiträume"
 
-#: _MOM/_Attr/Kind.py:348
+#: _MOM/_Attr/Kind.py:351
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
@@ -250,7 +255,7 @@ msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
-#: _MOM/_Attr/Kind.py:862
+#: _MOM/_Attr/Kind.py:865
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
@@ -259,7 +264,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:468
+#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:472
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -284,7 +289,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:844
+#: _MOM/_Attr/Type.py:862
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"
@@ -296,166 +301,3 @@ msgstr "Objekt-korrekt"
 #: _MOM.Link:0
 msgid "right"
 msgstr "rechts"
-
-#~ msgid "Count"
-#~ msgstr "Anzahl"
-
-#~ msgid "Daily"
-#~ msgstr "Täglich"
-
-#~ msgid "Date exceptions"
-#~ msgstr "Ausnahmen für Datum"
-
-#~ msgid "Dates"
-#~ msgstr "Daten"
-
-#~ msgid "Dates excluded from the recurrence rule set."
-#~ msgstr "Daten, die aus den Wiederholungen ausgeschlossen werden sollen."
-
-#~ msgid "Dates included in the recurrence rule set."
-#~ msgstr "Daten, die Teilder Wiederholungen sein sollen."
-
-#~ msgid "Easter offset"
-#~ msgstr "Osterabstand"
-
-#~ msgid "Finish date of the recurrence."
-#~ msgstr "Enddatum für die Wiederholungsregel."
-
-#~ msgid "Maximum number of recurrences."
-#~ msgstr "Höchstzahl der Wiederholungen."
-
-#~ msgid "Month"
-#~ msgstr "Monatlich"
-
-#~ msgid "Month day"
-#~ msgstr "Monatstag"
-
-#~ msgid "Monthly"
-#~ msgstr "Monatlich"
-
-#~ msgid "Non-ascii values in 8-bit strings are not supported"
-#~ msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
-
-#~ msgid ""
-#~ "Offset to Easter sunday (positive or negative, 0 means the\n"
-#~ "Easter sunday itself)."
-#~ msgstr ""
-#~ "Abstand zum Ostersonntag in Tagen "
-#~ "(positiv oder negativ, 0 bedeutet "
-#~ "Ostersonntag)"
-
-#~ msgid "Period"
-#~ msgstr "Periode"
-
-#~ msgid "Recurrence_Rule"
-#~ msgid_plural "Recurrence_Rules"
-#~ msgstr[0] "Wiederholungsregel"
-#~ msgstr[1] "Wiederholungsregeln"
-
-#~ msgid "Recurrence_Rule_Set"
-#~ msgid_plural "Recurrence_Rule_Sets"
-#~ msgstr[0] "Wiederholungsregelsammlung"
-#~ msgstr[1] "Wiederholungsregelsammlungen"
-
-#~ msgid "Restrict pos"
-#~ msgstr "Einschränkung"
-
-#~ msgid ""
-#~ "Restrict recurrences to the numbers given. Negative numbers\n"
-#~ "count from the last occurrence (-1 meaning the last occurrence)."
-#~ msgstr ""
-#~ "Beschränke die Wiederholungen auf die "
-#~ "angegebenen Positionen. Negative Zahlen zählen"
-#~ " von der letzten Wiederholung (-1 "
-#~ "bedeutet: die letzte Wiederholung, -2 "
-#~ "die vorletzte usw.)."
-
-#~ msgid ""
-#~ "Restrict the recurrences to the days of the month specified.\n"
-#~ "Negative numbers count from the end of the month\n"
-#~ "(-1 means the last day of the month)."
-#~ msgstr ""
-#~ "Beschränke die Wiederholungen auf die "
-#~ "angegebenen Monatstage. Negative Zahlen zählen"
-#~ " vom Monatsende (-1 bedeutet der "
-#~ "letzte Tag des Monats, -2 der "
-#~ "vorletzte usw.)."
-
-#~ msgid ""
-#~ "Restrict the recurrences to the days of the week specified.\n"
-#~ "(0 means monday, 6 means sunday)."
-#~ msgstr ""
-#~ "Beschränke die Wiederholungen auf die "
-#~ "angegebenen Wochentage. (0 bedeutet Montag,"
-#~ " 6 bedeutet Sonntag)."
-
-#~ msgid ""
-#~ "Restrict the recurrences to the days of the year specified.\n"
-#~ "Negative numbers count from the end of the year\n"
-#~ "(-1 means the last day of the year)."
-#~ msgstr ""
-#~ "Beschränke die Wiederholungen auf die "
-#~ "angegebenen Tage des Jahres. Negative "
-#~ "Zahlen zählen vom Jahresende (-1 "
-#~ "bedeutet der letzte Tag des Jahres, "
-#~ "-2 der vorletzte usw.)."
-
-#~ msgid ""
-#~ "Restrict the recurrences to the months specified (1 means\n"
-#~ "January, ...)."
-#~ msgstr ""
-#~ "Beschränke die Wiederholungen auf die "
-#~ "angegebenen Monate (1 bedeutet Jänner, "
-#~ "12 Dezember, ...)"
-
-#~ msgid "Restrict the recurrences to the week numbers specified."
-#~ msgstr "Beschränke die Wiederholungen auf die angegebenen Wochen."
-
-#~ msgid "Rule exceptions"
-#~ msgstr "Ausnahmeregeln"
-
-#~ msgid "Rules"
-#~ msgstr "Regeln"
-
-#~ msgid "Rules excluded from the recurrence rule set."
-#~ msgstr "Regeln, die Ausnahmen von den Wiederholungen definieren."
-
-#~ msgid "Rules included in the recurrence rule set."
-#~ msgstr "Regeln, die Wiederholungen definieren."
-
-#~ msgid "Start date of the recurrence."
-#~ msgstr "Anfangsdatum der Wiederholungen."
-
-#~ msgid ""
-#~ "The interval (measured in `units`) between\n"
-#~ "successive recurrences of an event."
-#~ msgstr ""
-#~ "Der Zeitraum (gemessen in `Einheiten`) "
-#~ "zwischen aufeinanderfolgenden Wiederholungen des "
-#~ "Ereignisses."
-
-#~ msgid "Unit"
-#~ msgstr "Einheit"
-
-#~ msgid ""
-#~ "Unit of recurrence. `period` is interpreted in units of\n"
-#~ "`unit`."
-#~ msgstr ""
-#~ "Einheit der Wiederholung. `Periode` wird "
-#~ "als Vielfaches von `Einheit` interpretiert."
-
-#~ msgid "Week"
-#~ msgstr "Woche"
-
-#~ msgid "Week day"
-#~ msgstr "Wochentag"
-
-#~ msgid "Weekly"
-#~ msgstr "Wöchentlich"
-
-#~ msgid "Year day"
-#~ msgstr "Tag des Jahres"
-
-#~ msgid "Yearly"
-#~ msgstr "Jährlich"
-

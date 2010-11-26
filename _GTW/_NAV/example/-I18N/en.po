@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-11-09 13:09+0100\n"
+"PO-Revision-Date: 2010-11-26 11:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,15 +23,6 @@ msgstr ""
 msgid ""
 "    We are at language %(lang)s.\n"
 "  "
-msgstr ""
-
-#: _GTW._OMP._SWP.Entity:0
-#, fuzzy
-msgid "Creator"
-msgstr ""
-
-#: _GTW._OMP._SWP.Entity:0
-msgid "Creator of the contents."
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
@@ -143,4 +134,10 @@ msgstr ""
 #: _GTW._OMP._SWP.Page:0
 msgid "Year to which the web page applies."
 msgstr ""
+
+#~ msgid "Creator"
+#~ msgstr ""
+
+#~ msgid "Creator of the contents."
+#~ msgstr ""
 

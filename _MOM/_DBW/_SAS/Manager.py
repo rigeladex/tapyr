@@ -80,6 +80,7 @@
 #                     classes
 #     6-Sep-2010 (MG) Changes to allow link's to entities which are not
 #                     relevant
+#    26-Nov-2010 (CT) `pool_recycle = 900` added to `_create_session`
 #    ««revision-date»»···
 #--
 
@@ -299,7 +300,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _cached_role
 
     def _create_engine (cls, db_url) :
-        return SQL_Engine.create_engine (db_url or "sqlite:///:memory:")
+        return SQL_Engine.create_engine \
+            ( db_url or "sqlite:///:memory:"
+            , pool_recycle = 900
+            )
     # end def _create_engine
 
     def _create_pid_table (cls, metadata) :

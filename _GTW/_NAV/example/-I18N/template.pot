@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-08-20 09:26+0200\n"
+"POT-Creation-Date: 2010-11-26 11:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,14 +23,6 @@ msgstr ""
 msgid ""
 "    We are at language %(lang)s.\n"
 "  "
-msgstr ""
-
-#: _GTW._OMP._SWP.Entity:0
-msgid "Creator"
-msgstr ""
-
-#: _GTW._OMP._SWP.Entity:0
-msgid "Creator of the contents."
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-11-09 13:09+0100\n"
+"PO-Revision-Date: 2010-11-26 11:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -26,11 +26,35 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: _JNJ/html/form.jnj:160 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
+#: _JNJ/html/cal/wr.jnj:104
+msgid "Anchor"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:101
+msgid "Anchor date for calendar display"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:132
+msgid "Anchor day for calendar display"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:122
+msgid "Anchor month for calendar display"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:112
+msgid "Anchor year for calendar display"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:180
+msgid "Apply"
+msgstr ""
+
+#: _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr ""
 
-#: _JNJ/html/news.jnj:61
+#: _JNJ/html/news.jnj:62
 msgid "Change"
 msgstr ""
 
@@ -38,7 +62,7 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:357
+#: _JNJ/html/form.jnj:361
 msgid "Change email"
 msgstr ""
 
@@ -46,7 +70,7 @@ msgstr ""
 msgid "Change email for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:356
+#: _JNJ/html/form.jnj:360
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -55,11 +79,11 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:362
+#: _JNJ/html/form.jnj:366
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:361
+#: _JNJ/html/form.jnj:365
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
@@ -80,6 +104,10 @@ msgstr ""
 msgid "Create new object"
 msgstr ""
 
+#: _JNJ/html/cal/wr_body.jnj:50
+msgid "Currently selected day"
+msgstr ""
+
 #: _JNJ/html/navigation.jnj:121
 #, python-format
 msgid "Currently selected language is %s"
@@ -89,11 +117,15 @@ msgstr ""
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:383 _JNJ/html/rform.jnj:431
+#: _JNJ/html/cal/wr.jnj:153
+msgid "Delta"
+msgstr ""
+
+#: _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:159 _JNJ/html/form.jnj:374 _JNJ/html/rform.jnj:258
+#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:378 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
 msgstr ""
@@ -106,7 +138,15 @@ msgstr ""
 msgid "Discard all changes made and leave popup-form"
 msgstr ""
 
-#: _JNJ/html/news.jnj:58
+#: _JNJ/html/cal/wr.jnj:186
+msgid "Display calendar anchored on today"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:179
+msgid "Display calendar for the selected values"
+msgstr ""
+
+#: _JNJ/html/news.jnj:59
 msgid "Edit this entry"
 msgstr ""
 
@@ -116,11 +156,11 @@ msgid_plural "Errors"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _JNJ/html/photo.jnj:40
+#: _JNJ/html/gallery.jnj:47 _JNJ/html/photo.jnj:40
 msgid "Gallery"
 msgstr ""
 
-#: _JNJ/html/form.jnj:317 _JNJ/html/login.jnj:66
+#: _JNJ/html/form.jnj:320 _JNJ/html/login.jnj:66
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -138,7 +178,7 @@ msgstr ""
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:308
+#: _JNJ/html/form.jnj:311
 msgid "Log into website or go to account page"
 msgstr ""
 
@@ -155,7 +195,7 @@ msgstr ""
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:309 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:149
+#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:149
 msgid "Login"
 msgstr ""
 
@@ -167,7 +207,7 @@ msgstr ""
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:348 _JNJ/html/form.jnj:349
+#: _JNJ/html/form.jnj:351 _JNJ/html/form.jnj:352
 #, python-format
 msgid "Logout %s"
 msgstr ""
@@ -176,7 +216,7 @@ msgstr ""
 msgid "Method Not Allowed"
 msgstr ""
 
-#: _JNJ/html/cal/wr_nav.jnj:40 _JNJ/html/cal/wr_nav.jnj:56
+#: _JNJ/html/cal/wr_nav.jnj:63
 msgid "Month (for last day of week)"
 msgstr ""
 
@@ -184,31 +224,35 @@ msgstr ""
 msgid "More"
 msgstr ""
 
+#: _JNJ/html/cal/wr.jnj:151 _JNJ/html/cal/wr.jnj:160
+msgid "Move calendar display by delta units"
+msgstr ""
+
 #: _JNJ/html/field_error.jnj:43
 msgid "Next error"
 msgstr ""
 
-#: _JNJ/html/photo.jnj:48
+#: _JNJ/html/gallery.jnj:51 _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr ""
 
-#: _JNJ/html/cal/wr_body.jnj:39 _JNJ/html/cal/wr_nav.jnj:36
-msgid "Number of week"
+#: _JNJ/html/cal/wr.jnj:138 _JNJ/html/cal/wr.jnj:146
+msgid "Number of weeks displayed"
 msgstr ""
 
 #: _JNJ/html/error_404.jnj:38
 msgid "Page doesn't exist"
 msgstr ""
 
-#: _JNJ/html/news.jnj:46
+#: _JNJ/html/news.jnj:47
 msgid "Permanent link"
 msgstr ""
 
-#: _JNJ/html/form.jnj:302
+#: _JNJ/html/form.jnj:305
 msgid "Please enter your password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:293
+#: _JNJ/html/form.jnj:296
 msgid "Please enter your username"
 msgstr ""
 
@@ -216,7 +260,7 @@ msgstr ""
 msgid "Please try again later. "
 msgstr ""
 
-#: _JNJ/html/photo.jnj:42
+#: _JNJ/html/gallery.jnj:49 _JNJ/html/photo.jnj:42
 msgid "Previous picture"
 msgstr ""
 
@@ -228,11 +272,11 @@ msgstr ""
 msgid "Read the full article at"
 msgstr ""
 
-#: _JNJ/html/form.jnj:328
+#: _JNJ/html/form.jnj:331
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:327
+#: _JNJ/html/form.jnj:330
 msgid "Register a new account"
 msgstr ""
 
@@ -240,7 +284,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:384 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
+#: _JNJ/html/form.jnj:388 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr ""
 
@@ -262,7 +306,11 @@ msgstr ""
 msgid "Select language %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:388 _JNJ/html/rform.jnj:436
+#: _JNJ/html/gallery.jnj:61
+msgid "Selected picture"
+msgstr ""
+
+#: _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr ""
 
@@ -278,12 +326,20 @@ msgstr ""
 msgid "Service is temporarily unavailable. "
 msgstr ""
 
-#: _JNJ/html/form.jnj:389 _JNJ/html/rform.jnj:437
+#: _JNJ/html/gallery.jnj:50
+msgid "Slide show"
+msgstr ""
+
+#: _JNJ/html/form.jnj:393 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr ""
 
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:173
+msgid "Units for `delta` movement of calendar display"
 msgstr ""
 
 #: _JNJ/html/error_500.jnj:52
@@ -292,12 +348,20 @@ msgid ""
 " possible. "
 msgstr ""
 
-#: _JNJ/html/cal/wr_nav.jnj:62
+#: _JNJ/html/cal/day.jnj:40 _JNJ/html/cal/wr_body.jnj:95
+msgid "Week"
+msgstr ""
+
+#: _JNJ/html/cal/wr_nav.jnj:69
 #, python-format
 msgid "Week %2.2d/%s"
 msgstr ""
 
-#: _JNJ/html/cal/wr_body.jnj:46
+#: _JNJ/html/cal/wr.jnj:139
+msgid "Weeks"
+msgstr ""
+
+#: _JNJ/html/cal/wr_body.jnj:40
 msgid "Wk"
 msgstr ""
 
@@ -317,4 +381,23 @@ msgstr ""
 #: _JNJ/html/error_404.jnj:48
 msgid "You requested a page that doesn't exist: "
 msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:166
+msgid "day"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:168
+msgid "month"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:167
+msgid "week"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:169
+msgid "year"
+msgstr ""
+
+#~ msgid "Number of week"
+#~ msgstr ""
 

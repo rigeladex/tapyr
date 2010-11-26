@@ -36,10 +36,12 @@
 #                     we want to see the `TemplateSyntaxError`s and we need
 #                     to add the `JNJ.Environment.Default_Extensions` to the
 #                     environment
+#    26-Nov-2010 (CT) Import for `get_spontaneous_environment` fixed
 #    ««revision-date»»···
 #--
 
-from    jinja2             import ext
+from   jinja2              import ext
+from   jinja2.environment  import get_spontaneous_environment
 from   _TFL._Babel.Extract import Default_Keywords
 from   _JNJ                import JNJ
 import _JNJ.Environment
@@ -76,7 +78,7 @@ def babel_extract (fileobj, keywords, comment_tags, options) :
     if ext.InternationalizationExtension not in extensions :
         extensions.add (ext.InternationalizationExtension)
 
-    environment = ext.get_spontaneous_environment \
+    environment = get_spontaneous_environment \
         ( options.get ("block_start_string",    ext.BLOCK_START_STRING)
         , options.get ("block_end_string",      ext.BLOCK_END_STRING)
         , options.get ("variable_start_string", ext.VARIABLE_START_STRING)

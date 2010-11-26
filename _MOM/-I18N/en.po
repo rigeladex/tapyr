@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-11-09 13:09+0100\n"
+"PO-Revision-Date: 2010-11-26 11:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -25,7 +25,7 @@ msgid ""
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1491
+#: _MOM/_Attr/Type.py:1541
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -46,7 +46,7 @@ msgid_plural "An_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:152
+#: _MOM/_Meta/M_Entity.py:153
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -56,7 +56,12 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:994
+#: _MOM/_Attr/Kind.py:1142
+#, python-format
+msgid "Computed attribute `%s.%s` cannot be assigned"
+msgstr ""
+
+#: _MOM/_Attr/Kind.py:997
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -113,14 +118,14 @@ msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:1199
+#: _MOM/_Attr/Kind.py:1209
 #, python-format
 msgid ""
 "Init-only attribute `%s.%s` cannot bechanged from `%s` to `%s` after "
 "object creation"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1121
+#: _MOM/_Attr/Type.py:1139
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -176,7 +181,7 @@ msgid_plural "Named_Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:849
+#: _MOM/_Attr/Type.py:867
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr ""
@@ -188,12 +193,12 @@ msgid_plural "Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:861
+#: _MOM/_Attr/Kind.py:864
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:871
+#: _MOM/_Attr/Kind.py:874
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -251,7 +256,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:348
+#: _MOM/_Attr/Kind.py:351
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -260,7 +265,7 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:862
+#: _MOM/_Attr/Kind.py:865
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
@@ -269,7 +274,7 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:468
+#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:472
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -298,7 +303,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:844
+#: _MOM/_Attr/Type.py:862
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""
@@ -312,137 +317,4 @@ msgstr ""
 #, fuzzy
 msgid "right"
 msgstr ""
-
-#~ msgid "Count"
-#~ msgstr ""
-
-#~ msgid "Daily"
-#~ msgstr ""
-
-#~ msgid "Date exceptions"
-#~ msgstr ""
-
-#~ msgid "Dates"
-#~ msgstr ""
-
-#~ msgid "Dates excluded from the recurrence rule set."
-#~ msgstr ""
-
-#~ msgid "Dates included in the recurrence rule set."
-#~ msgstr ""
-
-#~ msgid "Easter offset"
-#~ msgstr ""
-
-#~ msgid "Finish date of the recurrence."
-#~ msgstr ""
-
-#~ msgid "Maximum number of recurrences."
-#~ msgstr ""
-
-#~ msgid "Month"
-#~ msgstr ""
-
-#~ msgid "Month day"
-#~ msgstr ""
-
-#~ msgid "Monthly"
-#~ msgstr ""
-
-#~ msgid "Non-ascii values in 8-bit strings are not supported"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Offset to Easter sunday (positive or negative, 0 means the\n"
-#~ "Easter sunday itself)."
-#~ msgstr ""
-
-#~ msgid "Period"
-#~ msgstr ""
-
-#~ msgid "Recurrence_Rule"
-#~ msgid_plural "Recurrence_Rules"
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "Recurrence_Rule_Set"
-#~ msgid_plural "Recurrence_Rule_Sets"
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "Restrict pos"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Restrict recurrences to the numbers given. Negative numbers\n"
-#~ "count from the last occurrence (-1 meaning the last occurrence)."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Restrict the recurrences to the days of the month specified.\n"
-#~ "Negative numbers count from the end of the month\n"
-#~ "(-1 means the last day of the month)."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Restrict the recurrences to the days of the week specified.\n"
-#~ "(0 means monday, 6 means sunday)."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Restrict the recurrences to the days of the year specified.\n"
-#~ "Negative numbers count from the end of the year\n"
-#~ "(-1 means the last day of the year)."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Restrict the recurrences to the months specified (1 means\n"
-#~ "January, ...)."
-#~ msgstr ""
-
-#~ msgid "Restrict the recurrences to the week numbers specified."
-#~ msgstr ""
-
-#~ msgid "Rule exceptions"
-#~ msgstr ""
-
-#~ msgid "Rules"
-#~ msgstr ""
-
-#~ msgid "Rules excluded from the recurrence rule set."
-#~ msgstr ""
-
-#~ msgid "Rules included in the recurrence rule set."
-#~ msgstr ""
-
-#~ msgid "Start date of the recurrence."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The interval (measured in `units`) between\n"
-#~ "successive recurrences of an event."
-#~ msgstr ""
-
-#~ msgid "Unit"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Unit of recurrence. `period` is interpreted in units of\n"
-#~ "`unit`."
-#~ msgstr ""
-
-#~ msgid "Week"
-#~ msgstr ""
-
-#~ msgid "Week day"
-#~ msgstr ""
-
-#~ msgid "Weekly"
-#~ msgstr ""
-
-#~ msgid "Year day"
-#~ msgstr ""
-
-#~ msgid "Yearly"
-#~ msgstr ""
 
