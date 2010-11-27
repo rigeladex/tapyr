@@ -46,6 +46,7 @@
 #    22-Sep-2010 (CT) `eval_sorted_by` added
 #     8-Oct-2010 (CT) `len` added
 #    23-Nov-2010 (CT) `list` and `reversed` added
+#    27-Nov-2010 (CT) `formatted` added
 #    ««revision-date»»···
 #--
 
@@ -116,6 +117,14 @@ class GTW (TFL.Meta.Object) :
             if not (a is None or isinstance (a, self.Undefined)) :
                 return a
     # end def firstof
+
+    def formatted (self, format, * args, ** kw) :
+        if args :
+            assert not kw
+            return format % args
+        else :
+            return format % kw
+    # end def formatted
 
     def get_macro (self, macro_name, templ_name = None, widget_type = None) :
         """Return macro `macro_name` from template `templ_name`."""

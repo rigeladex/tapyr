@@ -31,6 +31,7 @@
 **    17-Nov-2010 (CT) `init_cal` changed to use AJAX `.load` to fill `div$`
 **    19-Nov-2010 (CT) `push_history` called
 **    26-Nov-2010 (CT) `init_slider` added and used
+**    27-Nov-2010 (CT) Handling of `.echo` added
 **    ««revision-date»»···
 **--
 */
@@ -40,16 +41,19 @@
     $.fn.GTW_week_roller = function (options)
       {
         var options  = $.extend
-          ( { apply_button_name : "Apply"
-            , cal_selector      : "table.calendar"
-            , ctrl_selector     : "form.ctrl"
-            , selected_class    : "selected"
-            , day_selector      : "td"
-            , slider_selector   : ".slider"
-            , today_selector    : "td.today"
-            , q_day_transformer : function (href)
+          ( { apply_button_name      : "Apply"
+            , cal_selector           : "table.calendar"
+            , ctrl_selector          : "form.ctrl"
+            , selected_class         : "selected"
+            , day_selector           : "td"
+            , slider_selector        : ".slider"
+            , slider_ctrl_selector   : ".ctrl"
+            , slider_echo_selector   : ".echo"
+            , slider_msg_selector    : ".echo .message"
+            , today_selector         : "td.today"
+            , q_day_transformer      : function (href)
                 { return href.replace (/(\d{4}\/\d{1,2}\/\d{1,2})/, "qx/$1"); }
-            , q_url_transformer : function (name)
+            , q_url_transformer      : function (name)
                 { return name.replace (/\/q/, "/qx"); }
             }
           , options || {}
@@ -58,6 +62,14 @@
           {
             $("input[name='" + name + "']", context).attr
               ("value", (value != null) ? value : response [name]);
+          }
+        function fieldv (name, context)
+          {
+            return $("input[name='" + name + "']", context).attr ("value");
+          }
+        function i2s (value)
+          {
+            return (value < 10 ? "0" : "") + value;
           }
         function init_cal (wr$)
           {
@@ -135,16 +147,23 @@
                       );
                   }
               );
-            init_cal (wr$);
+            init_cal    (wr$);
+            init_slider (wr$);
           }
         function init_slider (wr$)
           {
             $(options.slider_selector, wr$).each
               ( function ()
                   {
-                    var slider$ = $(this);
                     var apply$  =
                         $("input[name='"+options.apply_button_name+"']", wr$);
+                    var slider$ = $(this);
+                    var slider_ctrl$ = $(options.slider_ctrl_selector, slider$);
+                    var slider_echo$ = $(options.slider_echo_selector, slider$);
+                    var slider_msg$  = $(options.slider_msg_selector,  slider$);
+                    var anchor$      = $("span.anchor", slider_msg$);
+                    var weeks$       = $("span.weeks",  slider_msg$);
+                    var adate, tdate;
                     function change (event, ui)
                         {
                           var value = - ui.value;
@@ -153,27 +172,53 @@
                               change_field          ("delta", wr$, null, value);
                               apply$.triggerHandler ("click");
                               change_field          ("delta", wr$, null, "");
-                              slider$.slider        ("value", 0);
+                              slider_ctrl$.slider   ("value", 0);
                             }
                         }
                     function slide (event, ui)
                         {
                           var value = - ui.value;
-                          if (value)
-                            {
-                              change_field ("delta", wr$, null, value);
-                            }
+                          var delta_ms = value * 7 * 86400 * 1000;
+                          tdate = new Date (adate.getTime () + delta_ms);
+                          change_field ("delta", wr$, null, value || "");
+                          weeks$.html  (value);
+                          anchor$.html
+                            ( tdate.getFullYear ()
+                            + "/"
+                            + i2s (tdate.getMonth () + 1)
+                            + "/"
+                            + i2s (tdate.getDate ())
+                            );
                         }
-                    slider$.slider
+                    function start (event, ui)
+                        {
+                          adate = new Date
+                            ( fieldv ("year",  wr$)
+                            , fieldv ("month", wr$) - 1
+                            , fieldv ("day",   wr$)
+                            );
+                          slider_echo$.addClass ("enabled");
+                          slide (event, ui);
+                        }
+                    function stop (event, ui)
+                        {
+                          slider_echo$.removeClass ("enabled");
+                          weeks$.html  ("");
+                          anchor$.html ("");
+                        }
+                    slider_ctrl$.slider
                       ( { max         : 53
                         , min         : -53
                         , orientation : "vertical"
                         , value       : 0
                         , change      : change
                         , slide       : slide
+                        , start       : start
+                        , stop        : stop
                         }
                       );
                     slider$.addClass ("enabled");
+                    slider_echo$.css ("height", slider_ctrl$.css ("height"));
                   }
               );
           }
@@ -181,7 +226,6 @@
           ( function ()
               {
                 init_ctrl   ($(this));
-                init_slider ($(this));
               }
           );
         return this;

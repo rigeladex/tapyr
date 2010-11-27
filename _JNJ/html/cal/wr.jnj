@@ -40,6 +40,7 @@
 ##    17-Nov-2010 (CT) `label`s and `delta` added to `week_roller_ctrl`
 ##    26-Nov-2010 (CT) Name of `input.submit` changed for `week_roller_ctrl`
 ##    26-Nov-2010 (CT) `week_roller_slider` added
+##    27-Nov-2010 (CT) `div.echo` added to `week_roller_slider`
 ##    ««revision-date»»···
 ##--
 #}
@@ -195,7 +196,21 @@
 {%- endmacro -%} {#- week_roller_ctrl -#}
 
 {%- macro week_roller_slider (cal, weeks) -%}
-  <div class="slider"></div>
+  <div class="slider">
+    <div class="ctrl"></div>
+    <div class="echo">
+      <div class="message">
+        <p>
+          {{- GTW.formatted
+              ( GTW._T ( "Scroll by %s weeks to anchor %s.")
+              , '<span class="weeks"></span>'
+              , '<span class="anchor"></span>'
+              )
+          -}}
+        </p>
+      </div>
+    </div>
+  </div>
 {%- endmacro -%} {#- week_roller_slider -#}
 
 {%- macro week_roller_nav (cal, weeks) -%}
