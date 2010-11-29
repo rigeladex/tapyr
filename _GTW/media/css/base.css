@@ -6,6 +6,9 @@
 *    20-Jul-2010 (CT) Creation
 *     5-Aug-2010 (CT) Creation continued
 *    23-Nov-2010 (CT) `max-width` for `img` and `object` set to `100%`
+*    29-Nov-2010 (CT) Exception for `div#map img` and `div#map object` added
+*                     (otherwise google maps is **totally** broken)
+*    29-Nov-2010 (CT) `h1` .. `h5` ain't no `bold` anymore
 *    ««revision-date»»···
 */
 
@@ -13,7 +16,7 @@
 
 body
     { font-family         : "Lucida Grande", verdana, sans-serif
-    ; line-height         : 1.375
+    ; line-height         : 1.44
     ; margin              : 0.2em 0.5em
     }
 
@@ -38,19 +41,21 @@ fieldset
     ; padding             : 0.1em 0.1em 0.2em
     }
 
-h1, h2, h3, h4, h5, h6
-    { font-weight         : bold
-    }
-
 h1  { font-size           : 125% }
 h2  { font-size           : 120% }
 h3  { font-size           : 115% }
 h4  { font-size           : 110% }
 h5  { font-size           : 105% }
-h6  { font-size           : 100% }
+h6  { font-size           : 100%
+    ; font-weight         : bold
+    }
 
 img, object
     { max-width           : 100%
+    }
+
+div#map img, div#map object
+    { max-width           : none
     }
 
 input, textarea, input:focus, textarea:focus
