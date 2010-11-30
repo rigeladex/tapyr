@@ -196,19 +196,19 @@
 {%- endmacro -%} {#- week_roller_ctrl -#}
 
 {%- macro week_roller_slider (cal, weeks) -%}
-  <div class="slider">
+  <div class="slider-ctrl">
     <div class="ctrl"></div>
-    <div class="echo">
-      <div class="message">
-        <p>
-          {{- GTW.formatted
-              ( GTW._T ( "Scroll by %s weeks to anchor %s.")
-              , '<span class="weeks"></span>'
-              , '<span class="anchor"></span>'
-              )
-          -}}
-        </p>
-      </div>
+  </div>
+  <div class="slider-echo">
+    <div class="message">
+      <p>
+        {{- GTW.formatted
+            ( GTW._T ( "Scroll by %s weeks to anchor %s.")
+            , '<span class="weeks"></span>'
+            , '<span class="anchor"></span>'
+            )
+        -}}
+      </p>
     </div>
   </div>
 {%- endmacro -%} {#- week_roller_slider -#}

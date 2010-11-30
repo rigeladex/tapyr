@@ -32,6 +32,7 @@
 **    19-Nov-2010 (CT) `push_history` called
 **    26-Nov-2010 (CT) `init_slider` added and used
 **    27-Nov-2010 (CT) Handling of `.echo` added
+**    30-Nov-2010 (CT) Handling of `.echo` changed
 **    ««revision-date»»···
 **--
 */
@@ -46,10 +47,9 @@
             , ctrl_selector          : "form.ctrl"
             , selected_class         : "selected"
             , day_selector           : "td"
-            , slider_selector        : ".slider"
-            , slider_ctrl_selector   : ".ctrl"
-            , slider_echo_selector   : ".echo"
-            , slider_msg_selector    : ".echo .message"
+            , slider_ctrl_selector   : ".slider-ctrl"
+            , slider_echo_selector   : ".slider-echo"
+            , slider_msg_selector    : ".slider-echo .message p"
             , today_selector         : "td.today"
             , q_day_transformer      : function (href)
                 { return href.replace (/(\d{4}\/\d{1,2}\/\d{1,2})/, "qx/$1"); }
@@ -106,6 +106,7 @@
                   }
               );
             today$.triggerHandler ("click");
+            place_slider (wr$);
           }
         function init_ctrl (wr$)
           {
@@ -147,26 +148,25 @@
                       );
                   }
               );
-            init_cal    (wr$);
             init_slider (wr$);
+            init_cal    (wr$);
           }
         function init_slider (wr$)
           {
-            $(options.slider_selector, wr$).each
+            $(options.slider_ctrl_selector, wr$).each
               ( function ()
                   {
                     var apply$  =
                         $("input[name='"+options.apply_button_name+"']", wr$);
-                    var slider$ = $(this);
-                    var slider_ctrl$ = $(options.slider_ctrl_selector, slider$);
-                    var slider_echo$ = $(options.slider_echo_selector, slider$);
-                    var slider_msg$  = $(options.slider_msg_selector,  slider$);
+                    var slider_ctrl$ = $(this);
+                    var slider_echo$ = $(options.slider_echo_selector, wr$);
+                    var slider_msg$  = $(options.slider_msg_selector,  wr$);
                     var anchor$      = $("span.anchor", slider_msg$);
                     var weeks$       = $("span.weeks",  slider_msg$);
                     var adate, tdate;
                     function change (event, ui)
                         {
-                          var value = - ui.value;
+                          var value = - Math.round (ui.value);
                           if (value)
                             {
                               change_field          ("delta", wr$, null, value);
@@ -177,7 +177,7 @@
                         }
                     function slide (event, ui)
                         {
-                          var value = - ui.value;
+                          var value = - Math.round (ui.value);
                           var delta_ms = value * 7 * 86400 * 1000;
                           tdate = new Date (adate.getTime () + delta_ms);
                           change_field ("delta", wr$, null, value || "");
@@ -192,12 +192,32 @@
                         }
                     function start (event, ui)
                         {
+                          var cal$ = $(options.cal_selector, wr$);
                           adate = new Date
                             ( fieldv ("year",  wr$)
                             , fieldv ("month", wr$) - 1
                             , fieldv ("day",   wr$)
                             );
-                          slider_echo$.addClass ("enabled");
+                          slider_echo$
+                            .addClass ("enabled")
+                            .css
+                              ( { height : cal$.css ("height")
+                                , width  : cal$.css ("width")
+                                }
+                              )
+                            .position
+                              ( { my        : "center"
+                                , at        : "center"
+                                , of        : options.cal_selector
+                                , collision : "fit"
+                                }
+                              );
+                          slider_msg$.position
+                              ( { my        : "center"
+                                , at        : "center"
+                                , of        : options.cal_selector
+                                }
+                              );
                           slide (event, ui);
                         }
                     function stop (event, ui)
@@ -217,10 +237,23 @@
                         , stop        : stop
                         }
                       );
-                    slider$.addClass ("enabled");
-                    slider_echo$.css ("height", slider_ctrl$.css ("height"));
+                    slider_ctrl$.addClass ("enabled");
+                    $(".ui-slider-handle", slider_ctrl$).append
+                      ("<span class='ui-icon ui-icon-triangle-2-n-s'></span>");
                   }
               );
+          }
+        function place_slider (wr$)
+          {
+            $(options.slider_ctrl_selector, wr$)
+              .css ("height", $(options.cal_selector, wr$).css ("height"))
+              .position
+                ( { my     : "left"
+                  , at     : "right"
+                  , of     : options.cal_selector
+                  , offset : "5 0"
+                  }
+                );
           }
         $(this).each
           ( function ()
