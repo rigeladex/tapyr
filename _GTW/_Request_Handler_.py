@@ -33,6 +33,8 @@
 #    23-Jul-2010 (MG) `add_notification` added
 #     9-Aug-2010 (MG) `_NAV_Request_Handler_._handle_request` scope rollback
 #                     in case of exceptions added
+#    30-Nov-2010 (CT) Superfluous imports removed
+#    30-Nov-2010 (CT) `_handle_request` changed to deal with `Fatal_Exceptions`
 #    ««revision-date»»···
 #--
 
@@ -40,16 +42,8 @@ from   _GTW                       import GTW
 from   _TFL                       import TFL
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL                       import I18N
+from   _TFL                       import pyk
 
-import  locale
-import  base64
-import  calendar
-import  datetime
-import  email.utils
-import  hashlib
-import  hmac
-import  logging
-import  time
 import  json
 import  sys
 
@@ -134,22 +128,26 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
             I18N.use (* self.locale_codes)
         top    = GTW.NAV.Root.top
         scope  = getattr (top, "scope", None)
+        FEs    = getattr (scope, "Fatal_Exceptions", ())
         result = (None, None)
         try :
             try :
                 top.universal_view (self)
-            except top.HTTP._Redirect_, redirect :
+            except top.HTTP._Redirect_ as redirect :
                 result = redirect, top
-            ### reassigning the scope prevent's from executing the rollback
-            ### from the finally clause in case the commit in
-            ### `finish_request` works
-            scope = self.finish_request (scope)
-        finally :
+            self.finish_request (scope)
+        except FEs :
+            result = top.HTTP.Error_503 (), top
+        except top.HTTP.Error_503 as exc:
+            result = exc, top
+        except Exception as exc :
             if scope :
-                print >> sys.stderr\
-                    , ( ">>> Exception during request handling, rolling "
-                        "back the database"
-                      )
+                pyk.fprint \
+                    ( ">>> Exception"
+                    , exc
+                    , "during request handling, rolling back the database"
+                    , file = sys.stderr
+                    )
                 scope.rollback ()
         return result
     # end def _handle_request

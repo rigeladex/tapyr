@@ -41,6 +41,7 @@
 #            ProgrammingError: (ProgrammingError) type "u" does not exist
 #            LINE 1: SELECT datname FROM pg_database WHERE datname = u'regtest'                                                                       ^
 #             "SELECT datname FROM pg_database WHERE datname = u'regtest'" {}
+#    30-Nov-2010 (CT) `Fatal_Exceptions` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,8 @@ import sqlalchemy
 
 class _NFB_ (MOM.DBW._DBS_) :
     """Base class for non-file based databases."""
+
+    Fatal_Exceptions = (sqlalchemy.exc.OperationalError, )
 
     @classmethod
     def commit_pid (cls, pm) :

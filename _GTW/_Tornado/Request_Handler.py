@@ -82,7 +82,6 @@ class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
 class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     """Base class request handlers interacting with GTW.NAV"""
 
-
     def __init__ (self, * args, ** kw) :
         self.nav_root = kw.pop ("nav_root")
         self.__super.__init__ (* args, ** kw)
@@ -95,10 +94,13 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
-        top   = GTW.NAV.Root.top
+        top   = self.nav_root
         scope = getattr (top, "scope", None)
         if scope :
-            scope.rollback ()
+            try :
+                scope.rollback ()
+            except Exception :
+                pass
         if isinstance (exc, top.HTTP.Status) :
             if exc (self, top) :
                 return

@@ -84,6 +84,7 @@
 #    14-Sep-2010 (CT) Call to `r_incorrect` added to `commit`
 #    15-Sep-2010 (CT) `attr_changes` removed
 #    28-Sep-2010 (CT) `temp_change_recorder` added
+#    30-Nov-2010 (CT) `Fatal_Exceptions` added
 #    ««revision-date»»···
 #--
 
@@ -130,6 +131,7 @@ class Scope (TFL.Meta.Object) :
         (lambda s : len (s.ems.uncommitted_changes))
     db_meta_data           = property (TFL.Getter.ems.db_meta_data)
     etypes                 = property (TFL.Getter.app_type.etypes)
+    Fatal_Exceptions       = property (TFL.Getter.ems.pm.dbs.Fatal_Exceptions)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
     uncommitted_changes    = property (TFL.Getter.ems.uncommitted_changes)

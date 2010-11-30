@@ -74,11 +74,10 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
 class _Manager_ (TFL.Meta.Object) :
     """Base class for database backend specific _Manager_ classes"""
 
-    __metaclass__ = _M_Manager_
+    __metaclass__    = _M_Manager_
 
-    Pid_Manager   = MOM.DBW.Pid_Manager
-
-    type_name     = "Bare"
+    Pid_Manager      = MOM.DBW.Pid_Manager
+    type_name        = "Bare"
 
     def commit (self) :
         raise NotImplementedError

@@ -144,8 +144,8 @@
       {{ X.input.number
           ( name      = "weeks"
           , id        = "F_weeks"
-          , min       = 1
-          , max       = 53
+          , min       = 2
+          , max       = 14
           , title     = GTW._T  ("Number of weeks displayed")
           , value     = GTW.len (weeks)
           , class     = "weeks"

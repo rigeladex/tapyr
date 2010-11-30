@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Jun-2010 (CT) Creation
+#    30-Nov-2010 (CT) `Fatal_Exceptions` added (here, an empty tuple)
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,9 @@ class _M_DBS_ (TFL.Meta.Object.__class__) :
 class _DBS_ (TFL.Meta.Object) :
     """Base class for DBS classes."""
 
-    __metaclass__ = _M_DBS_
+    __metaclass__    = _M_DBS_
+
+    Fatal_Exceptions = ()
 
     @classmethod
     def create_database (cls, db_url, manager) :

@@ -218,7 +218,10 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
         top   = self.nav_root
         scope = getattr (top, "scope", None)
         if scope :
-            scope.rollback ()
+            try :
+                scope.rollback ()
+            except Exception :
+                pass
         if isinstance (exc, top.HTTP.Status) :
             return exc (self)
         raise exc
