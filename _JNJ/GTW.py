@@ -218,6 +218,7 @@ class GTW (TFL.Meta.Object) :
 
     zip  = staticmethod (zip)
     _T   = staticmethod (_T)
+    _    = staticmethod (_)
     _Tn  = staticmethod (_Tn)
 
 # end class GTW

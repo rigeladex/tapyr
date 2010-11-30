@@ -32,23 +32,25 @@
 ##    23-Mar-2010 (CT) Adapted to work with GTW.NAV.E_Type.Gallery
 ##     7-Oct-2010 (CT) `inline` added
 ##    25-Nov-2010 (CT) `max-width: 100%` added to style for `.inline .photo`
+##    30-Nov-2010 (CT) `button` changed to use `<button>`
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- macro button (alt, sym, tit) -%}
-  <img alt="{{ alt }}"{#--#}
-    src="/media/images/{{ sym }}.png" title="{{ GTW.firstof (tit, alt) }}" {# -#}
-    {{ kwargs|xmlattr -}}
-  />
+{%- macro button (name, title) -%}
+  <button title="{{ title }}" class="{{ name.lower () }}">
+    {{- GTW._T (name) -}}
+  </button>
 {%- endmacro -%} {#- button -#}
 
 {%- macro buttons (page) %}
   {%- set gallery_title = "%s %s" % (GTW._T ('Gallery'), page.title) %}
   <p class="photo-nav">
-    {{ button (GTW._T ("Previous picture"), "arrow_left",  class="button prev") }}
-    {{ button (GTW._T ("Slide show"),       "play",        class="button play") }}
-    {{ button (GTW._T ("Next picture"),     "arrow_right", class="button next") }}
+    {{ button (GTW._ ("First"), GTW._T ("First picture")) }}
+    {{ button (GTW._ ("Prev"),  GTW._T ("Previous picture")) }}
+    {{ button (GTW._ ("Play"),  GTW._T ("Slide show")) }}
+    {{ button (GTW._ ("Next"),  GTW._T ("Next picture")) }}
+    {{ button (GTW._ ("Last"),  GTW._T ("Last picture")) }}
   </p>
 {%- endmacro %} {#- buttons -#}
 
@@ -86,11 +88,11 @@
        ; width     : {{ page.max_width_photo -}}px
        }
      .thumbnails a
-       { height    : {{ page.max_height_thumb -}}px
-       ; width     : {{ page.max_width_thumb -}}px
+       { height    : {{ page.max_height_thumb + 6 -}}px
+       ; width     : {{ page.max_width_thumb + 6 -}}px
        }
      .thumbnails.inline .box
-       { width  : {{ (page.max_width_thumb + 10) * GTW.len (page.pictures) }}px
+       { width  : {{ (page.max_width_thumb + 16) * GTW.len (page.pictures) }}px
        }
    </style>
 {% endblock styles -%}

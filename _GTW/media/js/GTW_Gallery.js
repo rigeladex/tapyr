@@ -27,6 +27,8 @@
 ** Revision Dates
 **     7-Oct-2010 (CT) Creation
 **     8-Oct-2010 (CT) Creation continued
+**    30-Nov-2010 (CT) Calls to `.button` added
+**    30-Nov-2010 (CT) `scroll` added and used
 **    ««revision-date»»···
 **--
 */
@@ -36,11 +38,11 @@
     $.fn.GTW_Gallery = function (options)
       {
         var controls = $.extend
-          ( { head        : ".button.head"
-            , next        : ".button.next"
-            , play        : ".button.play"
-            , prev        : ".button.prev"
-            , tail        : ".button.tail"
+          ( { head        : "button.first"
+            , next        : "button.next"
+            , play        : "button.play"
+            , prev        : "button.prev"
+            , tail        : "button.last"
             }
           , options.controls || {}
           );
@@ -49,12 +51,29 @@
             , inline_selector : ".gallery .inline"
             , photo_selector  : ".photo img"
             , play_class      : "playing"
+            , selected_class  : "selected"
             , url_transformer : function (name)
                 { return name.replace (/\/th\//, "/im/"); }
             }
           , options || {}
           , { controls        : controls }
           );
+        function scroll (thumb$)
+          {
+            var w1  = options.th_div$.width ();
+            var w2  = options.th_box$.width ();
+            var pos, left;
+            if ((w1 < w2))
+              {
+                options.th_box$.css    ("margin-left", 0);
+                pos  = thumb$.position ();
+                if ((pos.left + thumb$.width ()) > w1)
+                  {
+                    left = Math.min (pos.left, w2 - w1);
+                    options.th_box$.css ("margin-left", "-" + left + "px");
+                  }
+              }
+          }
         function show (index, event)
           {
             var len   = options.thumbnails$.length;
@@ -65,6 +84,7 @@
               {
                 index += len;
               }
+            $(options.thumbnails$ [options.current]).removeClass ("selected");
             index = options.current = index % len;
             thumb = options.thumbnails$ [index];
             url   = options.url_transformer (thumb.src);
@@ -74,6 +94,8 @@
                     (alt ? alt + ":" : "Photo") + " " + (index+1) + "/" + len
                 }
               );
+            scroll ($(thumb));
+            $(thumb).addClass ("selected");
             if (event && event.preventDefault)
               {
                 event.preventDefault ();
@@ -93,7 +115,9 @@
             $(options.controls.play)
               .addClass (options.play_class)
               .unbind   ("click")
-              .click    (stop);
+              .click    (stop)
+              .button
+                ({ icons : { primary : "ui-icon-pause" }, text : false });
             next ();
           }
         function stop (event)
@@ -104,12 +128,17 @@
                 $(options.controls.play)
                   .unbind      ("click")
                   .click       (start)
-                  .removeClass (options.play_class);
+                  .removeClass (options.play_class)
+                  .button
+                    ({ icons : { primary : "ui-icon-play" }, text : false });
               }
           }
         this.addClass ("inline");
         options.current = 0;
-        options.thumbnails$ = $("img", this);
+        options.th_div$     = this;
+        options.th_box$     = $(".box", this);
+        options.thumbnails$ = $("img",  this);
+        options.th_div$.css ("overflow", "hidden");
         options.thumbnails$
           .each
             ( function (n)
@@ -119,15 +148,30 @@
             ( function (ev)
                 { stop (ev); show ($(this).data ("GTW-gallery-index"), ev); }
             );
-        $(options.controls.next).click
-            (function (ev) { stop (ev); next (ev); });
-        $(options.controls.prev).click
-            (function (ev) { stop (ev); prev (ev); });
-        $(options.controls.head).click
-            (function (ev) { stop (ev); show (0, ev); });
-        $(options.controls.tail).click
-            (function (ev) { stop (ev); show (-1, ev); });
-        $(options.controls.play).click (start);
+        $(options.controls.next)
+          .click
+            (function (ev) { stop (ev); next (ev); })
+          .button
+            ({ icons : { primary : "ui-icon-seek-next" }, text : false });
+        $(options.controls.prev)
+          .click
+            (function (ev) { stop (ev); prev (ev); })
+          .button
+            ({ icons : { primary : "ui-icon-seek-prev" }, text : false });
+        $(options.controls.head)
+          .click
+            (function (ev) { stop (ev); show (0, ev); })
+          .button
+            ({ icons : { primary : "ui-icon-seek-start" }, text : false });
+        $(options.controls.tail)
+          .click
+            (function (ev) { stop (ev); show (-1, ev); })
+          .button
+            ({ icons : { primary : "ui-icon-seek-end" }, text : false });
+        $(options.controls.play)
+          .click (start)
+          .button
+            ({ icons : { primary : "ui-icon-play" }, text : false });
         $(options.inline_selector).show ();
         show (0);
         return this;
