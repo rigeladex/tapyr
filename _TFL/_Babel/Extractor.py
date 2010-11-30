@@ -29,6 +29,7 @@
 #    21-Jan-2010 (MG) Creation
 #    24-Feb-2010 (MG) Duplicate check moved one level up
 #    27-Feb-2010 (MG) Support for different file name added
+#    30-Nov-2010 (CT) s/save_eval/safe_eval/ and added `strip`-calls
 #    ««revision-date»»···
 #--
 from   _TFL                    import TFL
@@ -89,13 +90,14 @@ def Python (fobj, keywords, comment_tags, config, method) :
                     break
         elif wait_for_doc_string and tok == STRING :
             ### found a doc_string
-            msg = TFL.normalized_indent (TFL.I18N.save_eval (value, encoding))
+            msg = TFL.normalized_indent \
+                (TFL.I18N.safe_eval (value, encoding)).strip ()
             yield (lineno, funcname, msg, [], None)
             wait_for_doc_string = False
         elif funcname and call_stack == 0 :
             if tok == OP and value == ")" :
                 if buf :
-                    messages.append ("".join (buf))
+                    messages.append ("".join (buf).strip ())
                     del buf [:]
                 else:
                     messages.append (None)
@@ -128,13 +130,13 @@ def Python (fobj, keywords, comment_tags, config, method) :
                 # encoding
                 # https://sourceforge.net/tracker/?func=detail&atid=355470&
                 # aid=617979&group_id=5470
-                value = TFL.I18N.save_eval (value, encoding)
+                value = TFL.I18N.safe_eval (value, encoding)
                 if isinstance (value, str) :
                     value = value.decode (encoding)
                 buf.append (value)
             elif tok == OP and value == "," :
                 if buf :
-                    messages.append ("".join (buf))
+                    messages.append ("".join (buf).strip ())
                     del buf [:]
                 else:
                     messages.append (None)
@@ -152,7 +154,6 @@ def Python (fobj, keywords, comment_tags, config, method) :
         elif tok == NAME and value in keywords :
             funcname = value
 # end def Python
-
 
 if __name__ != "__main__" :
     TFL.Babel._Export_Module ()

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-11-26 11:02+0100\n"
+"PO-Revision-Date: 2010-11-30 17:05+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -26,27 +26,27 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:104
+#: _JNJ/html/cal/wr.jnj:107
 msgid "Anchor"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:101
+#: _JNJ/html/cal/wr.jnj:104
 msgid "Anchor date for calendar display"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:132
+#: _JNJ/html/cal/wr.jnj:135
 msgid "Anchor day for calendar display"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:122
+#: _JNJ/html/cal/wr.jnj:125
 msgid "Anchor month for calendar display"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:112
+#: _JNJ/html/cal/wr.jnj:115
 msgid "Anchor year for calendar display"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:180
+#: _JNJ/html/cal/wr.jnj:183
 msgid "Apply"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr ""
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:153
+#: _JNJ/html/cal/wr.jnj:156
 msgid "Delta"
 msgstr ""
 
@@ -138,11 +138,11 @@ msgstr ""
 msgid "Discard all changes made and leave popup-form"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:186
+#: _JNJ/html/cal/wr.jnj:189
 msgid "Display calendar anchored on today"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:179
+#: _JNJ/html/cal/wr.jnj:182
 msgid "Display calendar for the selected values"
 msgstr ""
 
@@ -155,6 +155,14 @@ msgid "Error"
 msgid_plural "Errors"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _JNJ/html/gallery.jnj:49
+msgid "First"
+msgstr ""
+
+#: _JNJ/html/gallery.jnj:49
+msgid "First picture"
+msgstr ""
 
 #: _JNJ/html/gallery.jnj:47 _JNJ/html/photo.jnj:40
 msgid "Gallery"
@@ -176,6 +184,14 @@ msgstr ""
 #: _JNJ/html/navigation.jnj:117
 #, python-format
 msgid "Languages that can be selected for %s"
+msgstr ""
+
+#: _JNJ/html/gallery.jnj:53
+msgid "Last"
+msgstr ""
+
+#: _JNJ/html/gallery.jnj:53
+msgid "Last picture"
 msgstr ""
 
 #: _JNJ/html/form.jnj:311
@@ -224,19 +240,23 @@ msgstr ""
 msgid "More"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:151 _JNJ/html/cal/wr.jnj:160
+#: _JNJ/html/cal/wr.jnj:154 _JNJ/html/cal/wr.jnj:163
 msgid "Move calendar display by delta units"
+msgstr ""
+
+#: _JNJ/html/gallery.jnj:52
+msgid "Next"
 msgstr ""
 
 #: _JNJ/html/field_error.jnj:43
 msgid "Next error"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:51 _JNJ/html/photo.jnj:48
+#: _JNJ/html/gallery.jnj:52 _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:138 _JNJ/html/cal/wr.jnj:146
+#: _JNJ/html/cal/wr.jnj:141 _JNJ/html/cal/wr.jnj:149
 msgid "Number of weeks displayed"
 msgstr ""
 
@@ -246,6 +266,10 @@ msgstr ""
 
 #: _JNJ/html/news.jnj:47
 msgid "Permanent link"
+msgstr ""
+
+#: _JNJ/html/gallery.jnj:51
+msgid "Play"
 msgstr ""
 
 #: _JNJ/html/form.jnj:305
@@ -260,7 +284,11 @@ msgstr ""
 msgid "Please try again later. "
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:49 _JNJ/html/photo.jnj:42
+#: _JNJ/html/gallery.jnj:50
+msgid "Prev"
+msgstr ""
+
+#: _JNJ/html/gallery.jnj:50 _JNJ/html/photo.jnj:42
 msgid "Previous picture"
 msgstr ""
 
@@ -301,12 +329,17 @@ msgstr ""
 msgid "Save values in form entries"
 msgstr ""
 
+#: _JNJ/html/cal/wr.jnj:206
+#, python-format
+msgid "Scroll by %s weeks to anchor %s."
+msgstr ""
+
 #: _JNJ/html/navigation.jnj:126
 #, python-format
 msgid "Select language %s"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:61
+#: _JNJ/html/gallery.jnj:63
 msgid "Selected picture"
 msgstr ""
 
@@ -326,7 +359,7 @@ msgstr ""
 msgid "Service is temporarily unavailable. "
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:50
+#: _JNJ/html/gallery.jnj:51
 msgid "Slide show"
 msgstr ""
 
@@ -338,7 +371,11 @@ msgstr ""
 msgid "The error was reported to the webmaster. "
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:173
+#: _JNJ/html/cal/wr.jnj:190
+msgid "Today"
+msgstr ""
+
+#: _JNJ/html/cal/wr.jnj:176
 msgid "Units for `delta` movement of calendar display"
 msgstr ""
 
@@ -357,7 +394,7 @@ msgstr ""
 msgid "Week %2.2d/%s"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:139
+#: _JNJ/html/cal/wr.jnj:142
 msgid "Weeks"
 msgstr ""
 
@@ -382,22 +419,19 @@ msgstr ""
 msgid "You requested a page that doesn't exist: "
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:166
+#: _JNJ/html/cal/wr.jnj:169
 msgid "day"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:168
+#: _JNJ/html/cal/wr.jnj:171
 msgid "month"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:167
+#: _JNJ/html/cal/wr.jnj:170
 msgid "week"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:169
+#: _JNJ/html/cal/wr.jnj:172
 msgid "year"
 msgstr ""
-
-#~ msgid "Number of week"
-#~ msgstr ""
 

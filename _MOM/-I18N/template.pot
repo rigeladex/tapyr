@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-11-26 11:02+0100\n"
+"POT-Creation-Date: 2010-11-30 17:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,12 +22,13 @@ msgstr ""
 #, python-format
 msgid ""
 "%s\n"
-"    %s needs the arguments: (%s)Instead it got: (%s)"
+"    %s needs the arguments: (%s)\n"
+"    Instead it got: (%s)"
 msgstr ""
 
 #: _MOM/_Attr/Type.py:1541
 msgid ""
-"A name must start with a letter or underscore and continue withletters, "
+"A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
 msgstr ""
 
@@ -114,7 +115,7 @@ msgstr[1] ""
 #: _MOM/_Attr/Kind.py:1209
 #, python-format
 msgid ""
-"Init-only attribute `%s.%s` cannot bechanged from `%s` to `%s` after "
+"Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
 "object creation"
 msgstr ""
 

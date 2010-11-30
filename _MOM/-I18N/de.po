@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-11-26 11:02+0100\n"
+"PO-Revision-Date: 2010-11-30 17:05+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,14 +22,15 @@ msgstr ""
 #, python-format
 msgid ""
 "%s\n"
-"    %s needs the arguments: (%s)Instead it got: (%s)"
+"    %s needs the arguments: (%s)\n"
+"    Instead it got: (%s)"
 msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
 #: _MOM/_Attr/Type.py:1541
 msgid ""
-"A name must start with a letter or underscore and continue withletters, "
+"A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
 msgstr ""
 "Ein Name beginng mit einem Buchstaben oder Unterstrich, gefolgt\"\n"
@@ -122,9 +123,11 @@ msgstr[1] ""
 #: _MOM/_Attr/Kind.py:1209
 #, python-format
 msgid ""
-"Init-only attribute `%s.%s` cannot bechanged from `%s` to `%s` after "
+"Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
 "object creation"
-msgstr "Geburts-Attribut `%s.%s` kann nach der Erzeugung nicht mit Zuweisung von `%s` auf` %s` erändert werden."
+msgstr ""
+"Geburts-Attribut `%s.%s` kann nach der Erzeugung nicht mit Zuweisung von "
+"`%s` auf` %s` erändert werden."
 
 #: _MOM/_Attr/Type.py:1139
 #, python-format
@@ -301,3 +304,4 @@ msgstr "Objekt-korrekt"
 #: _MOM.Link:0
 msgid "right"
 msgstr "rechts"
+

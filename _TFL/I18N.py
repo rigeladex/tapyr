@@ -46,6 +46,7 @@
 #    18-Jun-2010 (CT) `Translations` factored to `TFL.Babel`
 #    18-Jun-2010 (CT) `decode` added
 #     4-Aug-2010 (MG) `load`: `log_level` added
+#    30-Nov-2010 (CT) s/save_eval/safe_eval/ and removed `strip`-call from it
 #    ««revision-date»»···
 #--
 
@@ -200,17 +201,15 @@ def mark (text):
     return unicode (text)
 # end def mark
 
-def save_eval (value, encoding = None) :
+def safe_eval (value, encoding = None) :
     # Found in babel....
     # Unwrap quotes in a safe manner, maintaining the string's encoding
     # https://sourceforge.net/tracker/?func=detail&atid=355470&aid=617979&group_id=5470
     if encoding :
         value = "# coding=%s\n%s" % (encoding, value)
     result = eval (value, dict (__builtins__ = {}), {})
-    if isinstance (result, basestring) :
-        return result.strip ()
     return result
-# end def save_eval
+# end def safe_eval
 
 def ugettext (text, trans = None) :
     """Return the localized translation of `text` (as unicode)."""
