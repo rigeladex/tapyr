@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Apr-2010 (CT) Creation
 #    13-Oct-2010 (CT) Derive from `Link2` instead of `Link1`
+#     1-Dec-2010 (CT) `key` added
 #    ««revision-date»»···
 #--
 
@@ -63,11 +64,22 @@ class Crew_Member (_Ancestor_Essence) :
             """Person which sails as crew member on `boat_in_regatta`"""
 
             role_type          = GTW.OMP.SRM.Sailor
-            auto_cache         = "crew"
+            auto_cache         = "_crew"
 
         # end class right
 
         ### Non-primary attributes
+
+        class key (A_Int) :
+            """The crew members of a boat will be sorted by `key`, if
+               defined, by order of creation otherwise.
+            """
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+            default            = 0
+
+        # end class key
 
         class role (A_String) :
             """Role of crew member."""

@@ -31,6 +31,7 @@
 #     6-Sep-2010 (CT) `race_results` removed (now implemented as `Link1`)
 #    20-Sep-2010 (CT) `rank` added
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `registration_date`
+#     1-Dec-2010 (CT) `crew` added
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,24 @@ class Boat_in_Regatta (_Ancestor_Essence) :
         # end class right
 
         ### Non-primary attributes
+
+        class crew (A_Blob) :
+
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("_crew", )
+
+            def computed (self, obj) :
+                scope = obj.home_scope
+                return \
+                    [ cm.sailor for cm in scope.SRM.Crew_Member.r_query
+                        ( left = obj
+                        , sort_key = TFL.Sorted_By ("key", "pid")
+                        )
+                    ]
+            # end def computed
+
+        # end class crew
 
         class place (A_Int) :
             """Place of boat in this regatta."""
