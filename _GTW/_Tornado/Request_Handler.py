@@ -74,7 +74,7 @@ class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
     DEFAULT_HANDLER = "_handle_request"
 
     def _handle_request (self, * args, ** kw) :
-        raise web.HTTPError(405)
+        raise web.HTTPError (405)
     # end def _handle_request
 
 # end class Request_Handler

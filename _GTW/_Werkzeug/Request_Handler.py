@@ -63,7 +63,7 @@ def _time_independent_equals (l, r) :
     for x, y in zip (l, r) :
         result |= ord (x) ^ ord (y)
     return result == 0
-# end ef _time_independent_equals
+# end _time_independent_equals
 
 class Request_Handler (GTW._Request_Handler_) :
     """Extended Request."""

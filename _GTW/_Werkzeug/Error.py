@@ -30,6 +30,7 @@
 #     6-May-2010 (MG) `Status.__init__` `* args` added
 #    20-Jun-2010 (MG) `s/finish/finish_request/g`
 #    17-Aug-2010 (CT) `Error_503` added
+#     2-Dec-2010 (CT) `_Exc_Mixin_` and `M_Error` added and used
 #    ««revision-date»»···
 #--
 
@@ -123,26 +124,59 @@ class Redirect_307 (_Redirect_) :
     status_code = 307
 # end class Redirect_307
 
+class _Exc_Mixin_ (exceptions.HTTPException) :
+    "Mixin for werkzeug.exceptions classes"
+
+    def get_body (self, environ) :
+        "Returns `description` only because it contains a complete body"
+        return self.description
+    # end def get_body
+
+# end class _Exc_Mixin_
+
+class M_Error (M_Status) :
+    """Meta class for Error classes"""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if cls.response is not None :
+            ### Rewrite `response` to use the `description` as the whole body
+            ### (it contains a complete `<html>` element)
+            cls.response = type (cls.response) \
+                ( cls.response.__name__
+                , (_Exc_Mixin_, ) + cls.response.__bases__
+                , dict (cls.response.__dict__)
+                )
+    # end def __init__
+
+# end class M_Error
+
 class _Error_ (Status) :
     """Base class for all error responses."""
 
+    __metaclass__ = M_Error
+
+    response    = None
+    status_code = property (lambda s : s.response.code)
+
     def __call__ (self, handler) :
-        text     = self.description
-        nav_root = getattr (handler, "nav_root", None)
+        description = self.description
+        nav_root    = getattr (handler, "nav_root", None)
         if nav_root :
             handler.request.user = handler.current_user
             Templateer           = nav_root.Templateer
             template             = Templateer.get_std_template \
-                (self.response.code)
-            context              = Templateer.Context \
-                ( exception      = self
-                , page           = nav_root
-                , nav_page       = nav_root
-                , NAV            = nav_root
-                , request        = handler.request
+                (self.status_code)
+            context               = Templateer.Context \
+                ( exception       = self
+                , fatal_exception = self if self.status_code >= 500 else None
+                , page            = nav_root
+                , nav_page        = nav_root
+                , NAV             = nav_root
+                , request         = handler.request
                 )
-            text = template.render (context)
-        return self.response (text)
+            description = template.render (context)
+        return self.response (description)
     # end def __call__
 
 # end class _Error_
