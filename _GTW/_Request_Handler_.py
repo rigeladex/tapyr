@@ -35,6 +35,7 @@
 #                     in case of exceptions added
 #    30-Nov-2010 (CT) Superfluous imports removed
 #    30-Nov-2010 (CT) `_handle_request` changed to deal with `Fatal_Exceptions`
+#     2-Dec-2010 (CT) `_handle_request` change fixed
 #    ««revision-date»»···
 #--
 
@@ -149,6 +150,7 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
                     , file = sys.stderr
                     )
                 scope.rollback ()
+            raise
         return result
     # end def _handle_request
 
@@ -161,6 +163,13 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
                 result = top.account_manager.query (name = username).one ()
             except IndexError :
                 pass
+            except Exception as exc :
+                pyk.fprint \
+                    ( ">>> Exception"
+                    , exc
+                    , "when trying to determine the user"
+                    , file = sys.stderr
+                    )
         return result
     # end def get_current_user
 

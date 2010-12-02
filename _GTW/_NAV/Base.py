@@ -227,6 +227,7 @@
 #                     file uploads
 #    28-Jun-2010 (CT) `nav_context` added to `from_nav_list_file`
 #     2-Sep-2010 (CT) `Page_O` and `Page_P` added
+#     2-Dec-2010 (CT) `Stopper` added
 #    ««revision-date»»···
 #--
 
@@ -247,6 +248,7 @@ import _TFL._Meta.Object
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
+import signal
 import time
 
 class _Meta_ (TFL.Meta.M_Class) :
@@ -1040,6 +1042,31 @@ class Root (_Dir_) :
     # end def scope
 
 # end class Root
+
+class Stopper (Page) :
+    """Page that stops the running process if a sentinel file is found."""
+
+    sentinel_name    = "time_to_die"
+    delay            = 1
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        try :
+            sos.remove (self.sentinel_name)
+        except (IOError, OSError) :
+            pass
+    # end def __init__
+
+    def _view (self, handler) :
+        HTTP    = self.top.HTTP
+        request = handler.request
+        if sos.path.exists (self.sentinel_name) :
+            signal.alarm   (self.delay)
+        else :
+            raise HTTP.Error_404 (request.url)
+    # end def _view
+
+# end class Stopper
 
 if __name__ != "__main__" :
     GTW.NAV._Export \
