@@ -52,7 +52,13 @@
       {% endblock styles %}
         {% block scripts %}
           {% for jsl in page.Media.scripts %}
-            <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+            {% if jsl.condition %}
+              <!--[if {{ jsl.condition }}]>
+            {% endif %}
+              <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+            {% if jsl.condition %}
+              <![endif]-->
+            {% endif %}
           {% endfor %}
           {% if page.Media.js_on_ready %}
             <script type="text/javascript">

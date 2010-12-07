@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    14-Jul-2009 (CT) `__len__` and `__nonzero__` added to `Media_List`
 #    21-Aug-2009 (MG) `JS_On_Ready` added and used to support sorting in
 #                     `Media_List_JSOR`
+#     7-Dec-2010 (CT) `condition` added to `Script`
 #    ««revision-date»»···
 #--
 
@@ -101,12 +102,13 @@ class Script (TFL.Meta.Object) :
 
     href = Alias_Property ("src")
 
-    def __init__ (self, src = "", body = "", script_type = "text/javascript") :
+    def __init__ (self, src = "", body = "", script_type = "text/javascript", condition   = "") :
         assert src or body
         assert not (src and body)
         self.src         = src
         self.body        = body
         self.script_type = script_type
+        self.condition   = condition
     # end def __init__
 
     def __eq__ (self, rhs) :

@@ -41,6 +41,7 @@
 #    27-Feb-2010 (MG) `sort_key` added to javascript
 #     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of emdia
 #                     objects
+#     7-Dec-2010 (CT) `condition` added to `Script`
 #    ««revision-date»»···
 #--
 
@@ -118,6 +119,7 @@ class Script (TFL.Meta.Object) :
                  , script_type = "text/javascript"
                  , sort_key    = 0
                  , name        = None
+                 , condition   = ""
                  ) :
         assert src or body
         assert not (src and body)
@@ -125,6 +127,7 @@ class Script (TFL.Meta.Object) :
         self.body        = body
         self.script_type = script_type
         self.sort_key    = sort_key
+        self.condition   = condition
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -155,8 +158,8 @@ class JS_On_Ready (TFL.Meta.Object) :
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     def __init__ (self, code, sort_key = 0, name = None) :
-        self.code     = code
-        self.sort_key = sort_key
+        self.code      = code
+        self.sort_key  = sort_key
     # end def __init__
 
     def __str__ (self) :

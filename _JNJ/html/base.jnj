@@ -33,9 +33,22 @@
 ##    11-Jun-2010 (CT) Use `X.link_stylesheet` instead of home-grown code
 ##    17-Aug-2010 (CT) s/headline/head_line/
 ##    24-Nov-2010 (CT) `nav_block` moved after `document`
+##     7-Dec-2010 (CT) `media_item` factored and used for `Media.scripts`, too
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- macro media_item (item) -%}
+  {%- onion item.condition %}
+    {% head -%}
+    <!--[if {{ item.condition }}]>
+    {% body -%}
+    {{- caller () -}}
+    {%- tail -%}
+    <![endif]-->
+  {% endonion -%} {#- item.condition -#}
+{%- endmacro -%} {#- media_item -#}
+
 {%- import html_version as X -%}
 {%- call X.html (lang = page.language|default ("en")) -%}
 {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
@@ -52,19 +65,16 @@
         {% endblock title -%}
       {%- block styles %}
         {%- for cssl in page.Media.css_links %}
-          {%- onion cssl.condition %}
-            {% head %}
-            <!--[if {{ cssl.condition }}]>
-            {% body %}
+          {% call media_item (cssl) -%}
             {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
-            {% tail %}
-            <![endif]-->
-          {% endonion -%} {#- cssl.condition -#}
+          {% endcall %} {# media_item #}
         {% endfor -%}
       {%- endblock styles %}
         {%- block scripts %}
           {%- for jsl in page.Media.scripts %}
-            <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+            {% call media_item (jsl) -%}
+              <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+            {% endcall %} {# media_item #}
           {% endfor -%}
           {%- if page.Media.js_on_ready %}
             <script type="text/javascript">
