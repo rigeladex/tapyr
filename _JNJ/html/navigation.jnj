@@ -41,6 +41,7 @@
 ##    24-Mar-2010 (CT) Use `link.is_current` instead of home-grown code
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
+##     9-Dec-2010 (CT) `_entry_body` factored and changed to handle `a_img`
 ##    ««revision-date»»···
 ##--
 #}
@@ -56,6 +57,14 @@
   {% endif -%}
 {%- endmacro -%} {#- calendar -#}
 
+{%- macro _entry_body (link) -%}
+  {%- if link.a_img -%}
+    <img alt="{{ link.short_title }}" src="{{ link.a_img }}" />
+  {%- else -%}
+    {{ link.short_title|safe }}
+  {%- endif -%}
+{%- endmacro -%} {#- _entry_body -#}
+
 {%- macro entry (link, level) -%}
   {% if NAV.permissive or NAV.allow (link, request.user) %}
     {%- set href = link.abs_href or link.href %}
@@ -64,28 +73,28 @@
         <a href="{{ href }}"
                {%- if link.title %} title="{{ link.title }}"{% endif %}
                class="current-section"
-            >{{ link.short_title|safe }}</a>
+            >{{ _entry_body (link) }}</a>
         {{ entries (link.own_links, level + 1) }}
       </li>
     {%- else -%}
       {% if link.is_current and link.is_current (nav_page) -%}
         <li class="current-link level-{{ level }}">
-          {{- link.short_title|safe -}}
+          {{- _entry_body (link) -}}
         </li>
       {%- else -%}
         {%- if href -%}
           <li class="nav-link level-{{ level }}">
             <a href="{{ href }}"
                {%- if link.title %} title="{{ link.title }}"{% endif -%}
-            >{{ link.short_title|safe }}</a>
+            >{{ _entry_body (link) }}</a>
           </li>
         {%- else -%}
-          <li class="no-link">{{ link.short_title|safe }}</li>
+          <li class="no-link">{{ _entry_body (link) }}</li>
         {%- endif %}
       {%- endif %}
     {%- endif %}
   {%- else %}
-    <li>{{ link.short_title|safe }}</li>
+    <li>{{ _entry_body (link) }}</li>
   {%- endif %}
 {%- endmacro -%} {# entry #}
 
