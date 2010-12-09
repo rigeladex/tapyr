@@ -1,6 +1,6 @@
 {# Django template: nav-section-entry.html #}
 {% comment %}
-  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
   ##
   ##
@@ -26,6 +26,7 @@
   ##    17-Oct-2008 (CT) `login_required` added
   ##    17-Oct-2008 (CT) Wrap `current-section` inside a `a`
   ##    17-Oct-2008 (CT) Use `allow_user`  instead of `login_required`
+  ##     9-Dec-2010 (CT) Support for `a_img` added
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -49,7 +50,13 @@
           <li class="nav-link {{ level }}">
             <a href="{{ link.site_prefix }}{{ link.href }}"
                {% if link.desc %}title="{{ link.desc }}"{% endif %}
-            >{{ link.title }}</a>
+            >
+              {% if link.a_img %}
+                <img alt="{{ link.title }}" src="{{ link.a_img }}" />
+              {% else %}
+                {{ link.title }}
+              {% endif %}
+            </a>
           </li>
         {% else %}
           <li class="no-link">{{ link.title|safe }}</li>
