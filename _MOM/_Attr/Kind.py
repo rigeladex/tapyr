@@ -153,6 +153,7 @@
 #    22-Nov-2010 (CT) `_Raw_Value_Mixin_` changed to use `get_pickle_cargo`
 #                     and `from_pickle_cargo` of `__super` to support
 #                     `attr.Pickler`, if any
+#     9-Dec-2010 (CT) `_Auto_Update_Lazy_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -534,6 +535,19 @@ class _Auto_Update_Mixin_ (Kind) :
     # end def _check_sanity
 
 # end class _Auto_Update_Mixin_
+
+class _Auto_Update_Lazy_Mixin_ (_Auto_Update_Mixin_) :
+    """Mixin to lazily auto-update an attribute after changes of any other
+       attribute it depends on, as specified by `auto_up_depends`.
+    """
+
+    def update (self, obj) :
+        ### reset value so that `compute` is triggered at next access
+        ### (but don't call `reset` to avoid overhead, e.g. `inc_changes`)
+        self._set_cooked_value_inner (obj, self.attr.default)
+    # end def update
+
+# end class _Auto_Update_Lazy_Mixin_
 
 class _Co_Base_ (Kind) :
     """Base for collection and composite mixin classes."""

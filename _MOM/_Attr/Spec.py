@@ -51,6 +51,8 @@
 #     9-Apr-2010 (CT) `_effective_prop_kind_mixins` changed to filter
 #                     `Sticky_Mixin`, if `Computed_Mixin` is in `result`
 #    24-Jun-2010 (CT) `db_attr` added
+#     9-Dec-2010 (CT) `_effective_prop_kind_mixins` changed to use
+#                     `_Auto_Update_Lazy_Mixin_` if `Computed_Set_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -124,7 +126,12 @@ class Spec (MOM.Prop.Spec) :
         if prop_type.needs_raw_value and not kind.electric :
             result += (MOM.Attr._Raw_Value_Mixin_, )
         if prop_type.auto_up_depends :
-            result += (MOM.Attr._Auto_Update_Mixin_, )
+            MI = \
+                ( MOM.Attr._Auto_Update_Lazy_Mixin_
+                if   (MOM.Attr.Computed_Set_Mixin in result)
+                else MOM.Attr._Auto_Update_Mixin_
+                )
+            result += (MI, )
         if issubclass (e_type, MOM.An_Entity) :
             result = (MOM.Attr._Nested_Mixin_, ) + result
         if MOM.Attr.Computed_Mixin in result :
