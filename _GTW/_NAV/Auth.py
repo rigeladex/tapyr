@@ -345,7 +345,7 @@ class Auth (GTW.NAV.Dir) :
                         (urlparse.urlsplit (next).path)
                     handler.add_notification \
                         ( GTW.Notification
-                            (_T ( "XXX SEND MAIL MISSING"
+                            (_T ( "XXX SEND MAIL MISSING *** "
                                   "The reset password instructions have been "
                                   "sent to your email address."
                                 )
