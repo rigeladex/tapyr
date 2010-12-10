@@ -111,7 +111,7 @@
 {%- macro flag_or_text (L10N, lang, desc) -%}
   {%- set img  = L10N.flag (lang) %}
   {%- if img %}
-    <img alt="{{ desc }}" src="{{ img }}" title="{{ desc }}" />
+    <img alt="{{ lang.upper () }}" src="{{ img }}" title="{{ desc }}" />
   {%- else %}
     {{ lang }}
   {% endif -%}
@@ -127,7 +127,8 @@
           {{- GTW._T ("Language") -}}
           {{- flag_or_text
               ( L10N, lang
-              , GTW._T ("Currently selected language is %s") % (lang, ))
+              , GTW._T ("Currently selected language is %s") % (lang, )
+              )
           -}}
         </h1>
         {%- for l in langs %}
