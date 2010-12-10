@@ -45,6 +45,8 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    29-Jun-2010 (CT) Use `request.host` instead of `site_url`
 #    23-Jul-2010 (MG) Notification handling simplified
+#    10-Dec-2010 (CT) `Request_Reset_Password.rendered` fixed
+#                     (s/add_notifications/add_notification/)
 #    ««revision-date»»···
 #--
 
@@ -339,7 +341,7 @@ class Auth (GTW.NAV.Dir) :
                     next      = handler.request.headers.get ("Referer", "/")
                     next_page = top.page_from_href \
                         (urlparse.urlsplit (next).path)
-                    handler.add_notifications \
+                    handler.add_notification \
                         ( GTW.Notification
                             (_T(u"The reset password instructions have been "
                                  "sent to your email address."

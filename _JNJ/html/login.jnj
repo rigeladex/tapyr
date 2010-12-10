@@ -66,7 +66,6 @@
               ( title = GTW._T ("Get a new password for the username specified")
               , value = GTW._T ("New password")
               , name  = "Reset"
-              , class = "Link"
               )
           ]
       , next_form_kw = dict (name = "next", value = next)
