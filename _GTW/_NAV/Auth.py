@@ -50,6 +50,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import unicode_literals
+
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 from   _MOM.import_MOM          import Q
@@ -343,9 +345,10 @@ class Auth (GTW.NAV.Dir) :
                         (urlparse.urlsplit (next).path)
                     handler.add_notification \
                         ( GTW.Notification
-                            (_T(u"The reset password instructions have been "
-                                 "sent to your email address."
-                               )
+                            (_T ( "XXX SEND MAIL MISSING"
+                                  "The reset password instructions have been "
+                                  "sent to your email address."
+                                )
                             )
                         )
                     print "XXX SEND MAIL MISSING"

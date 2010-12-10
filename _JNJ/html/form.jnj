@@ -316,7 +316,7 @@
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
       <li>
-        {{ X.input.reset
+        {{ X.input.submit
             ( title = GTW._T ("Get a new password for the username specified")
             , value = GTW._T ("New password")
             , name  = "Reset"
