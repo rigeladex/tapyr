@@ -1007,7 +1007,7 @@ class T_Account (Account) :
             self.haben_saldo [entry.konto]       += entry.haben_betrag
             self.soll_saldo  [entry.gegen_konto] += entry.haben_betrag
             if  (  (not self.t_konto_ignore_pat.match (entry.konto))
-                or ("u" in entry.cat) ### ???  6-Feb-2000 ??? ###
+                or ("u" in entry.cat)
                 ) :
                 betrag = self._effective_amount (entry, entry.haben_betrag)
                 self._add_einnahme (entry, betrag, entry.vat)
