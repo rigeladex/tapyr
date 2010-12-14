@@ -55,6 +55,8 @@
 #     7-May-2010 (CT) `Manager_T_Archive._get_objects` corrected (`manager`
 #                     vs. `parent` for `Y._entries`)
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    14-Dec-2010 (CT) `Manager_T_Archive._year_filter` changed to use
+#                     `Q.date.start.D.YEAR` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -298,10 +300,7 @@ class Manager_T_Archive (Manager) :
     # end def _get_objects
 
     def _year_filter (self, y) :
-        return \
-            ( (Q.date.start >= datetime.date (y,  1,  1))
-            , (Q.date.start <= datetime.date (y, 12, 31))
-            )
+        return (Q.date.start.D.YEAR (y), )
     # end def _year_filter
 
 # end class Manager_T_Archive

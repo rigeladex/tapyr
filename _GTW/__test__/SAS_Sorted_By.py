@@ -147,11 +147,11 @@ _query_attr = r"""
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> q = SRM.Regatta_C.query ()
-    >>> for r in q.order_by (Q.year) : print r.year, r
+    >>> for r in q.order_by (Q.event.date.start) : print r.year, r
     2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
     2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
-    >>> for r in q.order_by (TFL.Sorted_By ("-year")) : print r.year, r
+    >>> for r in q.order_by (TFL.Sorted_By ("-event.date.start")) : print r.year, r
     2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
     2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
     2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))

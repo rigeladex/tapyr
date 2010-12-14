@@ -180,11 +180,10 @@ _query_attr = r"""
     2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
     2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
-    >>> for r in q.filter (Q.year > 2009) : print r.year, r
+    >>> for r in q.filter (Q.event.date.start.D.YEAR (2010)) : print r.year, r
     2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
-    >>> for r in q.filter (Q.year >= 2009) : print r.year, r
+    >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
     2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
 """
 
 if 1 :

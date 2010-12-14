@@ -31,6 +31,7 @@
 #                     allow use in queries
 #    11-May-2010 (CT) `club` added
 #    23-Nov-2010 (CT) `ui_date` changed to avoid display of `start == finish`
+#    14-Dec-2010 (CT) `year` changed from `Internal` to `Cached`
 #    ««revision-date»»···
 #--
 
@@ -152,7 +153,7 @@ class Regatta_Event (_Ancestor_Essence) :
         class year (A_Int) :
             """Year in which the regatta happens."""
 
-            kind               = Attr.Internal
+            kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("date", )
 

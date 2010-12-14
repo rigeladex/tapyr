@@ -36,6 +36,7 @@
 #     6-Sep-2010 (MG) `Regatta.is_relevant` added
 #    21-Sep-2010 (CT) `Regatta_H.is_team_race` added
 #    23-Nov-2010 (CT) `kind` added
+#    14-Dec-2010 (CT) `year` changed from `Query` to `Cached`
 #    ««revision-date»»···
 #--
 
@@ -152,12 +153,13 @@ class Regatta (_Ancestor_Essence) :
 
         class year (A_Int) :
 
-            kind               = Attr.Query
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("left", )
 
-            def query_fct (self) :
-                return Q.left.year
-            # end def query_fct
+            def computed (self, obj) :
+                return obj.left.year
+            # end def computed
 
         # end class year
 

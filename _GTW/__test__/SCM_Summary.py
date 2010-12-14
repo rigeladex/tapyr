@@ -104,7 +104,7 @@ _basic = r"""
     <Change Summary for pid 8: newborn>
         <Create GTW.OMP.SRM.Sailor ((u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), u'AUT', u'29676', 'GTW.OMP.SRM.Sailor'), new-values = {'last_cid' : '9'}>
     <Change Summary for pid 9: newborn, 3 changes>
-        <Create GTW.OMP.SRM.Regatta_Event ((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), new-values = {'last_cid' : '10', 'perma_name' : u'himmelfahrt', 'year' : u'2008'}>
+        <Create GTW.OMP.SRM.Regatta_Event ((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), new-values = {'last_cid' : '10', 'perma_name' : u'himmelfahrt'}>
         <Modify GTW.OMP.SRM.Regatta_Event ((('finish', '2010/05/13'), ('start', '2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), old-values = {'date' : (('finish', '2008/05/01'), ('start', '2008/05/01')), 'last_cid' : '10'}, new-values = {'date' : (('finish', '2010/05/13'), ('start', '2010/05/13')), 'last_cid' : '21'}>
         <Modify GTW.OMP.SRM.Regatta_Event ((('finish', '2010/05/14'), ('start', '2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), old-values = {'date' : (('finish', '2010/05/13'), ('start', '2010/05/13')), 'last_cid' : '21'}, new-values = {'date' : (('finish', '2010/05/14'), ('start', '2010/05/13')), 'last_cid' : '25'}>
         <Modify/C GTW.OMP.SRM.Regatta_Event.date ((('finish', '2010/05/13'), ('start', '2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), old-values = {'finish' : '2010/05/14', 'last_cid' : '25'}, new-values = {'finish' : '2010/05/13', 'last_cid' : '27'}>
@@ -143,7 +143,7 @@ _basic = r"""
     6 [('last_cid', (old = None, new = '7'))]
     7 [('last_cid', (old = None, new = '23')), ('salutation', (old = u'', new = u'Dear L.')), ('title', (old = u'', new = u'Mr.'))]
     8 [('last_cid', (old = None, new = '9'))]
-    9 [('date', (old = (('finish', '2008/05/01'), ('start', '2008/05/01')), new = (('finish', '2010/05/13'), ('start', '2010/05/13')))), ('last_cid', (old = None, new = '27')), ('perma_name', (old = None, new = u'himmelfahrt')), ('year', (old = None, new = u'2008'))]
+    9 [('date', (old = (('finish', '2008/05/01'), ('start', '2008/05/01')), new = (('finish', '2010/05/13'), ('start', '2010/05/13')))), ('last_cid', (old = None, new = '27')), ('perma_name', (old = None, new = u'himmelfahrt'))]
     10 [('last_cid', (old = None, new = '11')), ('perma_name', (old = None, new = u'optimist'))]
     11 [('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'yardstick'))]
     12 [('last_cid', (old = None, new = '13')), ('skipper', (old = None, new = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\')'))]
