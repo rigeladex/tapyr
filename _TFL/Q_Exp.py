@@ -42,6 +42,7 @@
 #     1-Sep-2010 (CT) Reflected binary operators added (__radd__ and friends)
 #     2-Sep-2010 (CT) `Get.name`  changed to `Get._name` (ditto for
 #                     `Get.getter`)
+#    14-Dec-2010 (CT) `Exp.D`, `Exp.DT`, and `Q._Date_` added
 #    ««revision-date»»···
 #--
 
@@ -49,8 +50,9 @@
 This module implements a query expression language::
 
     >>> from _TFL.Record import Record as R
+    >>> from datetime import date, datetime
     >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
-    >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef")
+    >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef", d = date (2010, 12, 14), dt = datetime (2010, 12, 14, 11, 36))
     >>> q0 = Q.foo
     >>> q0._name
     'foo'
@@ -137,6 +139,36 @@ This module implements a query expression language::
     >>> -1 * Q.foo
     Q.foo * -1
 
+    >>> qm = Q.foo.D.MONTH (2, 2010)
+    >>> qm, qm.lhs, qm.op.__name__
+    (Q.foo.between (datetime.date(2010, 2, 1), datetime.date(2010, 2, 28)), \
+        Q.foo, 'between')
+
+    >>> Q.foo.D.MONTH (2, 2000)
+    Q.foo.between (datetime.date(2000, 2, 1), datetime.date(2000, 2, 29))
+
+    >>> Q.foo.DT.QUARTER (4, 2010)
+    Q.foo.between (datetime.datetime(2010, 10, 1, 0, 0), \
+      datetime.datetime(2010, 12, 31, 23, 59, 59))
+
+    >>> Q.foo.D.YEAR (2011)
+    Q.foo.between (datetime.date(2011, 1, 1), datetime.date(2011, 12, 31))
+    >>> Q.foo.DT.YEAR (2012)
+    Q.foo.between (datetime.datetime(2012, 1, 1, 0, 0), \
+        datetime.datetime(2012, 12, 31, 23, 59, 59))
+
+    >>> Q.d.D.MONTH (12, 2010) (r2)
+    True
+    >>> Q.d.D.MONTH (1, 2010) (r2)
+    False
+    >>> Q.d.D.QUARTER (4, 2010) (r2)
+    True
+    >>> Q.dt.D.QUARTER (4, 2010) (r2)
+    Traceback (most recent call last):
+      ...
+    TypeError: can't compare datetime.datetime to datetime.date
+    >>> Q.dt.DT.QUARTER (4, 2010) (r2)
+    True
 
 Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
 no way to simulate this by defining operator methods. Therefore,
@@ -393,6 +425,74 @@ def _type_error (op) :
     return _
 # end def _type_error
 
+@TFL.Add_New_Method (Base)
+class _Date_ (TFL.Meta.Object) :
+
+    class Date (TFL.Meta.Object) :
+
+        import datetime
+
+        type       = datetime.date
+        lom_delta  = datetime.timedelta (days=1)
+
+    # end class Date
+
+    class Date_Time (TFL.Meta.Object) :
+
+        import datetime
+
+        type       = datetime.datetime
+        lom_delta  = datetime.timedelta (seconds=1)
+
+    # end class Date_Time
+
+    def __init__ (self, exp, D_Type) :
+        self.exp    = exp
+        self.D_Type = D_Type
+    # end def __init__
+
+    def MONTH (self, m, y) :
+        D_Type = self.D_Type
+        m      = int (m)
+        y      = int (y)
+        if m < 12 :
+            n  = m + 1
+            z  = y
+        else :
+            n  = 1
+            z  = y + 1
+        lhs    = D_Type.type (y, m, 1)
+        rhs    = D_Type.type (z, n, 1) - D_Type.lom_delta
+        return self.exp.BETWEEN (lhs, rhs)
+    # end def MONTH
+
+    def QUARTER (self, q, y) :
+        D_Type = self.D_Type
+        q      = int (q)
+        y      = int (y)
+        m      = 1 + 3 * (q - 1)
+        if q < 4 :
+            n  = m + 3
+            z  = y
+        else :
+            n  = 1
+            z  = y + 1
+        lhs    = D_Type.type (y, m, 1)
+        rhs    = D_Type.type (z, n, 1) - D_Type.lom_delta
+        return self.exp.BETWEEN (lhs, rhs)
+    # end def QUARTER
+
+    def YEAR (self, y) :
+        D_Type = self.D_Type
+        y      = int (y)
+        return self.exp.BETWEEN \
+            ( D_Type.type (y,   1, 1)
+            , D_Type.type (y+1, 1, 1) - D_Type.lom_delta
+            )
+    # end def YEAR
+
+# end class _Date_
+
 class _Exp_ (TFL.Meta.Object) :
 
     ### Equality queries
@@ -482,6 +582,16 @@ class Exp (_Exp_) :
     def CONTAINS () :
         return operator.contains
     # end def CONTAINS
+
+    @property
+    def D (self) :
+        return self.Q._Date_ (self, self.Q._Date_.Date)
+    # end def D
+
+    @property
+    def DT (self) :
+        return self.Q._Date_ (self, self.Q._Date_.Date_Time)
+    # end def DT
 
     @_method
     def ENDSWITH () :

@@ -318,7 +318,7 @@ class Attr_Query (TFL.Q_Exp.Base) :
        >>> q0 = Q.foo
        >>> q0
        Q.foo
-       >>> q0.name
+       >>> q0._name
        'foo'
        >>> q0.predicate (r1)
        42
