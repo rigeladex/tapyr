@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-11-30 17:05+0100\n"
+"POT-Creation-Date: 2010-12-15 13:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:361
+#: _JNJ/html/form.jnj:360
 msgid "Change email"
 msgstr ""
 
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Change email for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:360
+#: _JNJ/html/form.jnj:359
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -79,11 +79,11 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:366
+#: _JNJ/html/form.jnj:365
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:365
+#: _JNJ/html/form.jnj:364
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
@@ -100,6 +100,10 @@ msgstr ""
 msgid "Click to jump to the next error"
 msgstr ""
 
+#: _JNJ/email/verify_new_email.jnj:38
+msgid "Confirm new email address"
+msgstr ""
+
 #: _JNJ/html/e_type_admin.jnj:59 _JNJ/html/e_type_admin.jnj:66
 msgid "Create new object"
 msgstr ""
@@ -108,7 +112,7 @@ msgstr ""
 msgid "Currently selected day"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:121
+#: _JNJ/html/navigation.jnj:130
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
@@ -121,11 +125,11 @@ msgstr ""
 msgid "Delta"
 msgstr ""
 
-#: _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:431
+#: _JNJ/html/form.jnj:386 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:378 _JNJ/html/rform.jnj:258
+#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:377 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
 msgstr ""
@@ -177,11 +181,11 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:118
+#: _JNJ/html/navigation.jnj:127
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:117
+#: _JNJ/html/navigation.jnj:126
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -202,16 +206,16 @@ msgstr ""
 msgid "Log into website with username and password specified"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:144
+#: _JNJ/html/navigation.jnj:154
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:143
+#: _JNJ/html/navigation.jnj:153
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:149
+#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:159
 msgid "Login"
 msgstr ""
 
@@ -223,7 +227,7 @@ msgstr ""
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:351 _JNJ/html/form.jnj:352
+#: _JNJ/html/form.jnj:350 _JNJ/html/form.jnj:351
 #, python-format
 msgid "Logout %s"
 msgstr ""
@@ -264,12 +268,23 @@ msgstr ""
 msgid "Page doesn't exist"
 msgstr ""
 
+#: _JNJ/email/reset_password.jnj:37
+#, python-format
+msgid "Password of %s reset"
+msgstr ""
+
 #: _JNJ/html/news.jnj:47
 msgid "Permanent link"
 msgstr ""
 
 #: _JNJ/html/gallery.jnj:51
 msgid "Play"
+msgstr ""
+
+#: _JNJ/email/reset_password.jnj:44
+msgid ""
+"Please click the following link to change the temporary password to a new"
+" value"
 msgstr ""
 
 #: _JNJ/html/form.jnj:305
@@ -300,11 +315,11 @@ msgstr ""
 msgid "Read the full article at"
 msgstr ""
 
-#: _JNJ/html/form.jnj:331
+#: _JNJ/html/form.jnj:330
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:330
+#: _JNJ/html/form.jnj:329
 msgid "Register a new account"
 msgstr ""
 
@@ -312,7 +327,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:388 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
+#: _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr ""
 
@@ -334,7 +349,7 @@ msgstr ""
 msgid "Scroll by %s weeks to anchor %s."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:126
+#: _JNJ/html/navigation.jnj:136
 #, python-format
 msgid "Select language %s"
 msgstr ""
@@ -343,7 +358,7 @@ msgstr ""
 msgid "Selected picture"
 msgstr ""
 
-#: _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:436
+#: _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr ""
 
@@ -363,12 +378,16 @@ msgstr ""
 msgid "Slide show"
 msgstr ""
 
-#: _JNJ/html/form.jnj:393 _JNJ/html/rform.jnj:437
+#: _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr ""
 
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
+msgstr ""
+
+#: _JNJ/email/verify_new_email.jnj:41
+msgid "To verify the new email address, please click the following link"
 msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:190
@@ -417,6 +436,10 @@ msgstr ""
 
 #: _JNJ/html/error_404.jnj:48
 msgid "You requested a page that doesn't exist: "
+msgstr ""
+
+#: _JNJ/email/reset_password.jnj:39
+msgid "Your password was reset to the temporary value"
 msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:169

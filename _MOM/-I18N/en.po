@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-11-30 17:05+0100\n"
+"PO-Revision-Date: 2010-12-15 13:24+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -57,12 +57,12 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:1142
+#: _MOM/_Attr/Kind.py:1156
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:997
+#: _MOM/_Attr/Kind.py:1011
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -119,7 +119,7 @@ msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:1209
+#: _MOM/_Attr/Kind.py:1223
 #, python-format
 msgid ""
 "Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
@@ -194,12 +194,12 @@ msgid_plural "Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:864
+#: _MOM/_Attr/Kind.py:878
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:874
+#: _MOM/_Attr/Kind.py:888
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -257,7 +257,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:351
+#: _MOM/_Attr/Kind.py:352
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:865
+#: _MOM/_Attr/Kind.py:879
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
@@ -318,15 +318,4 @@ msgstr ""
 #, fuzzy
 msgid "right"
 msgstr ""
-
-#~ msgid ""
-#~ "%s\n"
-#~ "    %s needs the arguments: (%s)Instead it got: (%s)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "A name must start with a letter"
-#~ " or underscore and continue withletters,"
-#~ " digits, and underscores."
-#~ msgstr ""
 

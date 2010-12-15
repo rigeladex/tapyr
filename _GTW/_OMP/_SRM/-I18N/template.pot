@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-11-30 17:05+0100\n"
+"POT-Creation-Date: 2010-12-15 13:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,6 +197,10 @@ msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:72
 msgid "Italy"
+msgstr ""
+
+#: _GTW._OMP._SRM.Crew_Member:0
+msgid "Key"
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
@@ -547,6 +551,12 @@ msgid "Team_has_Boat_in_Regatta"
 msgid_plural "Team_has_Boat_in_Regattas"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _GTW._OMP._SRM.Crew_Member:0
+msgid ""
+"The crew members of a boat will be sorted by `key`, if\n"
+"defined, by order of creation otherwise."
+msgstr ""
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "The result of this race is discarded."
