@@ -47,6 +47,8 @@
 #    18-May-2010 (CT) `Account_P_Manager.__call__` replaced by
 #                     `Account_P_Manager.create_new_account_x`
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `salt`
+#    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
+#    15-Dec-2010 (CT) `Account_P_Manager.reset_password` fixed
 #    ««revision-date»»···
 #--
 
@@ -184,11 +186,11 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         ### than we create the password change request action
         self.force_password_change (account)
         ### now create a reset password action which contains the new password
-        new_password = self._etype.random_password (16)
-        Auth.Account_Pasword_Reset (account, password = new_password)
+        apr = Auth.Account_Password_Reset \
+            (account, password = self._etype.random_password (16))
         ### and temporarily suspend the account
         account.set (suspended = True)
-        return new_password
+        return apr.password, apr.token
     # end def reset_password
 
 # end class Account_P_Manager

@@ -33,6 +33,9 @@
 #    20-Feb-2010 (MG) Expiration of actions added
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `token`
 #    14-Oct-2010 (CT) `Account_Pasword_Reset.password` changed to `A_String`
+#    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
+#    15-Dec-2010 (CT) `Account_Password_Reset.handle` changed to lift
+#                     `suspended`
 #    ««revision-date»»···
 #--
 
@@ -197,7 +200,7 @@ class Account_EMail_Verification (_Ancestor_Essence) :
         else :
             account.set (suspended = False)
         for l in self.home_scope.GTW.OMP.Auth.Account_EMail_Verification.query \
-                     (account = account) :
+                (account = account) :
             l.destroy ()
         return next
     # end def handle
@@ -206,7 +209,7 @@ class Account_EMail_Verification (_Ancestor_Essence) :
 
 _Ancestor_Essence = _Account_Token_Action_
 
-class Account_Pasword_Reset (_Ancestor_Essence) :
+class Account_Password_Reset (_Ancestor_Essence) :
     """A password reset is pending for the linked account."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
@@ -226,14 +229,15 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
         self.__super.handle ()
         account = self.account
         account.change_password (self.password, False)
-        for l in self.home_scope.GTW.OMP.Auth.Account_Pasword_Reset.query \
-                     (account = account) :
+        account.set (suspended = False)
+        for l in self.home_scope.GTW.OMP.Auth.Account_Password_Reset.query \
+                (account = account) :
             l.destroy ()
         if nav :
             return nav.href_change_pass (account)
     # end def handle
 
-# end class Account_Pasword_Reset
+# end class Account_Password_Reset
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

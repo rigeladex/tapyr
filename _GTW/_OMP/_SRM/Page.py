@@ -109,7 +109,7 @@ class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
         class year (A_Int) :
             """Year in which the regatta happens."""
 
-            kind               = Attr.Internal
+            kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("event", )
 

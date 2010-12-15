@@ -49,6 +49,7 @@
 #                     (s/add_notifications/add_notification/)
 #    15-Dec-2010 (CT) `request.url_root` added to `href_action`
 #    15-Dec-2010 (CT) Calls to `send_email` guarded with exception handler
+#    15-Dec-2010 (CT) `Request_Reset_Password` implemented
 #    ««revision-date»»···
 #--
 
@@ -170,7 +171,7 @@ class Auth (GTW.NAV.Dir) :
                             ( self.new_email_template
                             , email_to      = form.new_email
                             , email_subject =
-                                _T ("Email confirmation for %s" % (host, ))
+                                _T ("Email confirmation for %s") % (host, )
                             , email_from    = self.email
                             , link          = link
                             , NAV           = self.top
@@ -309,7 +310,7 @@ class Auth (GTW.NAV.Dir) :
                             ( self.email_template
                             , email_to      = form.username
                             , email_subject =
-                                _T ("Email confirmation for %s" % (host, ))
+                                _T ("Email confirmation for %s") % (host, )
                             , email_from    = self.email
                             , link          = link
                             , NAV           = self.top
@@ -335,12 +336,14 @@ class Auth (GTW.NAV.Dir) :
     class Request_Reset_Password (_Cmd_) :
         """Initiate the reset password procedure."""
 
-        template = "account_reset_password"
+        template       = "account_reset_password"
+        email_template = "account_reset_password_email"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
             request   = handler.request
             top       = self.top
+            host      = request.host
             form      = GTW.Form.Auth.Reset_Password \
                 (top.account_manager, self.abs_href)
             context ["form"] = form
@@ -348,21 +351,35 @@ class Auth (GTW.NAV.Dir) :
                 HTTP      = top.HTTP
                 req_data  = request.req_data
                 errors    = form (req_data)
-                if form.account :
-                    passwd = top.scope.GTW.OMP.Auth.Account_P.reset_password \
-                        (form.account)
+                if not errors :
+                    Auth    = top.scope.GTW.OMP.Auth
+                    account = form.account
+                    passwd, token = Auth.Account_P.reset_password (account)
                     next      = handler.request.headers.get ("Referer", "/")
                     next_page = top.page_from_href \
                         (urlparse.urlsplit (next).path)
+                    link  = self.parent.href_action (account, token, request)
+                    self.send_email \
+                        ( self.email_template
+                        , email_to      = form.username
+                        , email_subject =
+                            ( _T ("Password reset for user %s on website %s")
+                            % (form.username, host)
+                            )
+                        , email_from    = self.email
+                        , new_password  = passwd
+                        , link          = link
+                        , NAV           = self.top
+                        , page          = self
+                        , host          = host
+                        )
                     handler.add_notification \
                         ( GTW.Notification
-                            (_T ( "XXX SEND MAIL MISSING *** "
-                                  "The reset password instructions have been "
+                            (_T ( "The reset password instructions have been "
                                   "sent to your email address."
                                 )
                             )
                         )
-                    print "XXX SEND MAIL MISSING"
                     raise HTTP.Redirect_302 (next)
             return self.__super.rendered    (handler, template)
         # end def rendered

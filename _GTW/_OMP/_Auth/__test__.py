@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Feb-2010 (MG) Creation
 #    12-May-2010 (CT) Use `pid`, not `lid`
+#    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
 #    ««revision-date»»···
 #--
 
@@ -166,7 +167,7 @@ Next, we test the reset password functions
     Redirect_302: /
     >>> print handler.session.notifications.discarge ()
     The reset password instructions have been sent to your email address.
-    >>> reset_pwd  = scope.Auth.Account_Pasword_Reset.query (account = acc2).all ()
+    >>> reset_pwd  = scope.Auth.Account_Password_Reset.query (account = acc2).all ()
     >>> new_password_1 = reset_pwd [0].password
     >>> new_password_2 = reset_pwd [1].password
     >>> len (reset_pwd)
@@ -183,7 +184,7 @@ Try to verify the `new` passwords
     Traceback (most recent call last):
         ....
     Error_404
-    >>> scope.Auth.Account_Pasword_Reset.query (account = acc2).count ()
+    >>> scope.Auth.Account_Password_Reset.query (account = acc2).count ()
     2
     >>> scope.Auth.Account_Password_Change_Required.query (account = acc2).count ()
     1
@@ -196,7 +197,7 @@ Try to verify the `new` passwords
 
     >>> acc2.verify_password (reset_link.password)
     True
-    >>> scope.Auth.Account_Pasword_Reset.query (account = acc2).count ()
+    >>> scope.Auth.Account_Password_Reset.query (account = acc2).count ()
     0
     >>> scope.Auth.Account_Password_Change_Required.query (account = acc2).count ()
     1

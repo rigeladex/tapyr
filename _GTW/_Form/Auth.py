@@ -40,7 +40,8 @@
 #    20-Feb-2010 (MG) `ui_name` for fields added
 #    23-Feb-2010 (MG) Debug errors added to `_Login_Mixin_`
 #    28-May-2010 (MG) Adapted to new errors handling
-#    29-Jun-2010 (MG) Bug fixing in errorr handling
+#    29-Jun-2010 (MG) Bug fixing in error handling
+#    15-Dec-2010 (CT) `_Reset_Password_Mixin_._validate` fixed
 #    ««revision-date»»···
 #--
 
@@ -254,7 +255,7 @@ class _Reset_Password_Mixin_ (TFL.Meta.Object) :
     # end def __init__
 
     def _validate (self) :
-        self.account = username = self.get_required \
+        self.username = username = self.get_required \
             ("username", _T ("A user name is required."))
         if not self.errors and self.account_manager :
             self.account = self.account_manager.query (name = username).first ()
