@@ -47,6 +47,8 @@
 #    23-Jul-2010 (MG) Notification handling simplified
 #    10-Dec-2010 (CT) `Request_Reset_Password.rendered` fixed
 #                     (s/add_notifications/add_notification/)
+#    15-Dec-2010 (CT) `request.url_root` added to `href_action`
+#    15-Dec-2010 (CT) Calls to `send_email` guarded with exception handler
 #    ««revision-date»»···
 #--
 
@@ -153,6 +155,7 @@ class Auth (GTW.NAV.Dir) :
             form    = GTW.Form.Auth.Change_Email (account, self.abs_href)
             context = handler.context
             request = handler.request
+            host    = request.host
             context ["form"] = form
             if request.method == "POST" :
                 HTTP     = top.HTTP
@@ -161,27 +164,31 @@ class Auth (GTW.NAV.Dir) :
                 if not errors :
                     next  = req_data.get ("next", "/")
                     token = account.change_email_prepare (form.new_email)
-                    self.send_email \
-                        ( self.new_email_template
-                        , email_to      = form.new_email
-                        , email_subject =
-                            _T ("Email confirmation for %s" % (request.host, ))
-                        , email_from    = self.email
-                        , link          =
-                            self.parent.href_action (account, token)
-                        , NAV           = self.top
-                        , page          = self
-                        , host          = request.host
-                        )
-                    handler.session.notifications.append \
-                        ( GTW.Notification
-                            (_T ( "A confirmation email has been sent to "
-                                  "the new email address."
+                    link  = self.parent.href_action (account, token, request)
+                    try :
+                        self.send_email \
+                            ( self.new_email_template
+                            , email_to      = form.new_email
+                            , email_subject =
+                                _T ("Email confirmation for %s" % (host, ))
+                            , email_from    = self.email
+                            , link          = link
+                            , NAV           = self.top
+                            , page          = self
+                            , host          = host
+                            )
+                    except Exception as exc :
+                        form.errors.add (form, None, str (exc))
+                    else :
+                        handler.session.notifications.append \
+                            ( GTW.Notification
+                                (_T ( "A confirmation email has been sent to "
+                                      "the new email address."
+                                    )
                                 )
                             )
-                        )
-                    ### XXX Send info email to old email
-                    raise HTTP.Redirect_302 (next)
+                        ### XXX Send info email to old email
+                        raise HTTP.Redirect_302 (next)
             return self.__super.rendered (handler, template)
         # end def rendered
 
@@ -282,6 +289,7 @@ class Auth (GTW.NAV.Dir) :
         def rendered (self, handler, template = None) :
             context   = handler.context
             request   = handler.request
+            host      = request.host
             top       = self.top
             form      = GTW.Form.Auth.Register \
                 (top.account_manager, self.abs_href)
@@ -295,24 +303,28 @@ class Auth (GTW.NAV.Dir) :
                     next  = req_data.get ("next", "/")
                     account, token = Auth.Account_P.create_new_account \
                         (form.username, form.new_password)
-                    self.send_email \
-                        ( self.email_template
-                        , email_to      = form.username
-                        , email_subject =
-                            _T ("Email confirmation for %s" % (request.host, ))
-                        , email_from    = self.email
-                        , link          =
-                            self.parent.href_action (account, token)
-                        , NAV           = self.top
-                        , page          = self
-                        , host          = request.host
-                        )
-                    handler.add_notification \
-                        (_T ( "A confirmation has been sent to your email "
-                              "address."
+                    link  = self.parent.href_action (account, token, request)
+                    try :
+                        self.send_email \
+                            ( self.email_template
+                            , email_to      = form.username
+                            , email_subject =
+                                _T ("Email confirmation for %s" % (host, ))
+                            , email_from    = self.email
+                            , link          = link
+                            , NAV           = self.top
+                            , page          = self
+                            , host          = host
                             )
-                        )
-                    raise HTTP.Redirect_302 (next)
+                    except Exception as exc :
+                        form.errors.add (form, None, str (exc))
+                    else :
+                        handler.add_notification \
+                            (_T ( "A confirmation has been sent to your email "
+                                  "address."
+                                )
+                            )
+                        raise HTTP.Redirect_302 (next)
                 ### after a failed login, clear the current username
                 handler.clear_cookie ("username")
             return self.__super.rendered (handler, template)
@@ -357,17 +369,17 @@ class Auth (GTW.NAV.Dir) :
 
     # end class Request_Reset_Password
 
-    def href_action (self, obj, token) :
-        return pjoin (self.abs_href, self.T.action, str (obj.pid), token)
-    # end def href_action
-
     @Once_Property
     def href (self) :
         return pjoin (self.prefix, "")
     # end def href
 
-    def href_action (self, obj, token) :
-        return pjoin (self.abs_href, self.T.action, str (obj.pid), token)
+    def href_action (self, obj, token, request) :
+        result = \
+            ( request.url_root
+            + pjoin (self.abs_href, self.T.action, str (obj.pid), token)
+            )
+        return result
     # end def href_action
 
     def href_change_email (self, obj) :

@@ -153,8 +153,8 @@ msgstr "Ändere diesen Eintrag"
 #: _JNJ/html/rform.jnj:95 _JNJ/html/rform.jnj:375
 msgid "Error"
 msgid_plural "Errors"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fehler"
+msgstr[1] "Fehler"
 
 #: _JNJ/html/gallery.jnj:49
 msgid "First"

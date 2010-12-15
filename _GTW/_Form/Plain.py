@@ -120,5 +120,3 @@ class Plain (GTW.Form._Form_) :
 if __name__ != "__main__" :
     GTW.Form._Export ("*")
 ### __END__ GTW.Form.Plain
-
-

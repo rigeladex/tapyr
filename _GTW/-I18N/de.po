@@ -287,23 +287,23 @@ msgstr "Sonntag"
 
 #: _GTW/_Form/Auth.py:205
 msgid "The new E-Mail address is required."
-msgstr "Das Kennwort muss ausgefüllt werden."
+msgstr "Die neue E-Mail Adresse muss ausgefüllt werden."
 
 #: _GTW/_Form/Auth.py:136
 msgid "The new password is required."
-msgstr "Das Kennwort muss ausgefüllt werden."
+msgstr "Das neue Kennwort muss ausgefüllt werden."
 
 #: _GTW/_Form/Auth.py:172 _GTW/_Form/Auth.py:203
 msgid "The old password is required."
-msgstr "Das Kennwort muss ausgefüllt werden."
+msgstr "Das alte Kennwort muss ausgefüllt werden."
 
 #: _GTW/_NAV/Auth.py:209
 msgid "The password has been changed."
-msgstr "Das Kennwort muss ausgefüllt werden."
+msgstr "Das Kennwort wurde geändert"
 
 #: _GTW/_Form/Auth.py:210
 msgid "The password is incorrect"
-msgstr "Benutzername oder Kennwort sind nicht korrekt"
+msgstr "Das Kennwort sind nicht korrekt"
 
 #: _GTW/_Form/Auth.py:77
 msgid "The password is required."
