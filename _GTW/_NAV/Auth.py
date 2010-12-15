@@ -98,7 +98,7 @@ class Auth (GTW.NAV.Dir) :
                     next = action.handle (self)
                     handler.session.notifications.append \
                         ( GTW.Notification
-                            (_T(u"EMail verification successful."))
+                            (_T ("EMail verification successful."))
                         )
                     raise HTTP.Redirect_302 (next)
                 except GTW.OMP.Auth.Action_Exipred :
@@ -133,7 +133,7 @@ class Auth (GTW.NAV.Dir) :
                         (form.new_password, suspended = False)
                     handler.set_secure_cookie ("username", account.name)
                     handler.session.notifications.append \
-                        (GTW.Notification (_T(u"Activation successful.")))
+                        (GTW.Notification (_T ("Activation successful.")))
                     raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
         # end def rendered
@@ -165,7 +165,7 @@ class Auth (GTW.NAV.Dir) :
                         ( self.new_email_template
                         , email_to      = form.new_email
                         , email_subject =
-                            _T("Email confirmation for %s" % (request.host, ))
+                            _T ("Email confirmation for %s" % (request.host, ))
                         , email_from    = self.email
                         , link          =
                             self.parent.href_action (account, token)
@@ -175,7 +175,7 @@ class Auth (GTW.NAV.Dir) :
                         )
                     handler.session.notifications.append \
                         ( GTW.Notification
-                            ( _T( "A confirmation email has been sent to "
+                            (_T ( "A confirmation email has been sent to "
                                   "the new email address."
                                 )
                             )
@@ -210,7 +210,7 @@ class Auth (GTW.NAV.Dir) :
                         (form.new_password, suspended = False)
                     handler.session.notifications.append \
                         ( GTW.Notification
-                            (_T(u"The password has been changed."))
+                            (_T ("The password has been changed."))
                         )
                     raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
@@ -248,7 +248,7 @@ class Auth (GTW.NAV.Dir) :
                             handler.set_secure_cookie \
                                 ("username", req_data  ["username"])
                             handler.add_notification \
-                                (_T (u"Welcome %s.") % (req_data ["username"]))
+                                (_T ("Welcome %s.") % (req_data ["username"]))
                         raise HTTP.Redirect_302 (next)
                     ### after a failed login, clear the current username
                     handler.clear_cookie ("username")
@@ -268,8 +268,7 @@ class Auth (GTW.NAV.Dir) :
             next_page = top.page_from_href (urlparse.urlsplit (next).path)
             if getattr (next_page, "login_required", False) :
                 next = "/"
-            handler.add_notification \
-                (_T (u"Logout successful."))
+            handler.add_notification (_T ("Logout successful."))
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 
@@ -300,7 +299,7 @@ class Auth (GTW.NAV.Dir) :
                         ( self.email_template
                         , email_to      = form.username
                         , email_subject =
-                            _T("Email confirmation for %s" % (request.host, ))
+                            _T ("Email confirmation for %s" % (request.host, ))
                         , email_from    = self.email
                         , link          =
                             self.parent.href_action (account, token)
@@ -309,7 +308,7 @@ class Auth (GTW.NAV.Dir) :
                         , host          = request.host
                         )
                     handler.add_notification \
-                        ( _T(u"A confirmation has been sent to your email "
+                        (_T ( "A confirmation has been sent to your email "
                               "address."
                             )
                         )
@@ -364,7 +363,7 @@ class Auth (GTW.NAV.Dir) :
 
     @Once_Property
     def href (self) :
-        return pjoin (self.prefix, u"")
+        return pjoin (self.prefix, "")
     # end def href
 
     def href_action (self, obj, token) :
