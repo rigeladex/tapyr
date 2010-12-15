@@ -1,5 +1,5 @@
 {%- extends "email/email.jnj" %}
-{#- jinja template: verifiy_new_email.jnj -#}
+{#- jinja template: verify_new_email.jnj -#}
 {#
 ## Copyright (C) 2010 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
@@ -22,22 +22,24 @@
 ##
 ##++
 ## Name
-##    verifiy_new_email
+##    verify_new_email
 ##
 ## Purpose
-##    EMail sent the user if the email address of the account has been changed
+##    Email sent to the user to confirm a change of the user's email address
 ##
 ## Revision Dates
 ##    21-Feb-2010 (MG) Creation
+##    15-Dec-2010 (CT) I18N, wording
 ##    ««revision-date»»···
 ##--
 #}
+
 {%- block body -%}
-EMail change requested.
-To verifiy the new email, please confirm the new email by following the
-following link:
- {{ link }}
+{{ GTW._T ("Confirm new email address") }} {{ email_to }}
+
+{{ GTW._T
+    ("To verify the new email address, please click the following link")
+-}}: {{ link }}
 {%- endblock body -%}
-{#- __END__ jinja template: verifiy_new_email.jnj -#}
 
-
+{#- __END__ jinja template: verify_new_email.jnj -#}
