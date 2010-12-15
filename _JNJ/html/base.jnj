@@ -34,6 +34,7 @@
 ##    17-Aug-2010 (CT) s/headline/head_line/
 ##    24-Nov-2010 (CT) `nav_block` moved after `document`
 ##     7-Dec-2010 (CT) `media_item` factored and used for `Media.scripts`, too
+##    15-Dec-2010 (CT) `exclude_robots` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,6 +56,9 @@
   {%- call X.head () -%}
     {%- block head_elements -%}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
+      {%- if page.exclude_robots %}
+        <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+      {% endif -%}
       {% if page.permalink -%}
         <link rel="canonical" href="{{- page.permalink -}}"/>
         <meta name="href" content="{{- page.abs_href -}}"/>

@@ -228,6 +228,7 @@
 #    28-Jun-2010 (CT) `nav_context` added to `from_nav_list_file`
 #     2-Sep-2010 (CT) `Page_O` and `Page_P` added
 #     2-Dec-2010 (CT) `Stopper` added
+#    15-Dec-2010 (CT) `exclude_robots` and `Robot_Excluder` added
 #    ««revision-date»»···
 #--
 
@@ -311,6 +312,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
             encoding = getattr (parent, "input_encoding", self.input_encoding)
         if "Media" in kw :
             self._Media = kw.pop ("Media")
+        self._exclude_robots = kw.pop ("exclude_robots", False)
         self._login_required = kw.pop ("login_required", False)
         self._permission     = kw.pop ("permission",     None)
         for k, v in kw.iteritems () :
@@ -402,6 +404,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if etn :
             return self.top.E_Types.get (etn)
     # end def etype
+
+    @Once_Property
+    def exclude_robots (self) :
+        return self.login_required or self.hidden or self._exclude_robots
+    # end def exclude_robots
 
     @Once_Property
     def file_stem (self) :
@@ -1043,11 +1050,39 @@ class Root (_Dir_) :
 
 # end class Root
 
+class Robot_Excluder (Page) :
+    """Page providing a /robots.txt file."""
+
+    exclude_robots             = False
+    hidden                     = True
+    href                       = "robots.txt"
+    implicit                   = False
+
+    @Once_Property
+    def contents (self) :
+        exclude = \
+            [   "Disallow: %s" % (p.abs_href, )
+            for p in self.top.own_links if p.exclude_robots
+            ]
+        result = ""
+        if exclude :
+            result = "\n".join (itertools.chain (["User-agent: *"], exclude))
+        return result
+    # end def contents
+
+    def _view (self, handler) :
+        handler.set_header ("Content-Type", "text/plain")
+        handler.write      (self.contents)
+    # end def _view
+
+# end class Robot_Excluder
+
 class Stopper (Page) :
     """Page that stops the running process if a sentinel file is found."""
 
-    sentinel_name    = "time_to_die"
     delay            = 1
+    exclude_robots   = False ### don't want this to appear in `robots.txt`
+    sentinel_name    = "time_to_die"
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
