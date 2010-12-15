@@ -42,6 +42,7 @@
 #    28-May-2010 (MG) Adapted to new errors handling
 #    29-Jun-2010 (MG) Bug fixing in error handling
 #    15-Dec-2010 (CT) `_Reset_Password_Mixin_._validate` fixed
+#    15-Dec-2010 (CT) Specify `GTW.Form.Widget_Spec` for "html/field.jnj, email"
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class _Change_EMail_Mixin_ (TFL.Meta.Object) :
         ( GTW.Form.Field
             ( "new_email"
             , ui_name = _("New email address")
-            , widget  = "html/field.jnj, email"
+            , widget  = GTW.Form.Widget_Spec ("html/field.jnj, email")
             )
         , GTW.Form.Field
             ("password", ui_name = _("Password"), widget = PWD_WS)

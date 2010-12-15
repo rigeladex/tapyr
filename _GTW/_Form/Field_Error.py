@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Jan-2010 (MG) Creation
+#    15-Dec-2010 (CT) Use `GTW.Form.Widget_Spec` for `widget`
 #    ««revision-date»»···
 #--
 
@@ -34,12 +35,12 @@ from   _TFL                    import TFL
 import _TFL._Meta.Object
 
 from   _GTW                    import GTW
-import _GTW._Form
+import _GTW._Form.Widget_Spec
 
 class Error_List (list, TFL.Meta.Object) :
     """A list of errors."""
 
-    widget = "html/field_error.jnj, error_list"
+    widget = GTW.Form.Widget_Spec ("html/field_error.jnj, error_list")
 
     def add (self, error) :
         if isinstance (error, (list, tuple, self.__class__)) :
