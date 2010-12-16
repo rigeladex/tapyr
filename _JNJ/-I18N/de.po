@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -288,8 +288,8 @@ msgid ""
 "Please click the following link to change the temporary password to a new"
 " value"
 msgstr ""
-"Bitte folgen Sie dem nachfolgenden Verweis, um das temporäre Kennwort "
-"auf einen neuen Wert zu ändern"
+"Bitte folgen Sie dem nachfolgenden Verweis, um das temporäre Kennwort auf"
+" einen neuen Wert zu ändern"
 
 #: _JNJ/html/form.jnj:305
 msgid "Please enter your password"
@@ -392,7 +392,9 @@ msgstr "Der Fehler wurde an den Webmaster gemeldet."
 
 #: _JNJ/email/verify_new_email.jnj:41
 msgid "To verify the new email address, please click the following link"
-msgstr "Zur Bestätigung der neuen Email Adresse folgen Sie bitte dem nachfolgenden Verweis"
+msgstr ""
+"Zur Bestätigung der neuen Email Adresse folgen Sie bitte dem "
+"nachfolgenden Verweis"
 
 #: _JNJ/html/cal/wr.jnj:190
 msgid "Today"

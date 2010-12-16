@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -52,6 +52,10 @@ msgstr "Land"
 #: _GTW._OMP._PAP.Phone:0
 msgid "Country code"
 msgstr "Ländervorwahl"
+
+#: _GTW._OMP._PAP.Entity_created_by_Person:0
+msgid "Created-By association for all kinds of entities"
+msgstr ""
 
 #: _GTW._OMP._PAP.Entity_created_by_Person:0
 msgid "Creator"
@@ -158,6 +162,38 @@ msgstr "Mittelname"
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name of person"
 msgstr "Mittelname"
+
+#: _GTW._OMP._PAP.Address:0
+msgid "Model a (postal) address."
+msgstr "Postanschrift."
+
+#: _MOM._Attr.Position:0
+msgid "Model a geographical position."
+msgstr "Koordinaten"
+
+#: _GTW._OMP._PAP.Person:0
+msgid "Model a person."
+msgstr "Person."
+
+#: _GTW._OMP._PAP.Phone:0
+msgid "Model a phone number"
+msgstr "Telefonnummer"
+
+#: _GTW._OMP._PAP.Email:0
+msgid "Model an email address"
+msgstr "Emailadresse"
+
+#: _GTW._OMP._PAP.Person_has_Phone:0
+msgid "Model the link between a person and a phone number"
+msgstr "Verknüpfung zwischen Person und Telefonnummer"
+
+#: _GTW._OMP._PAP.Person_has_Address:0
+msgid "Model the link between a person and an address"
+msgstr "Verknüpfung zwischen Person und Postanschrift"
+
+#: _GTW._OMP._PAP.Person_has_Email:0
+msgid "Model the link between a person and an email address"
+msgstr "Verknüpfung zwischen Person und Emailadresse"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "National area code of phone number (without prefix)"

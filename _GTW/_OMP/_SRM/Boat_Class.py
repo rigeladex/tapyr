@@ -40,7 +40,7 @@ from   _TFL.I18N                import _, _T, _Tn
 _Ancestor_Essence = GTW.OMP.SRM.Object
 
 class Boat_Class (_Ancestor_Essence) :
-    """Modela class of sailboats"""
+    """Model a class of sailboats"""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

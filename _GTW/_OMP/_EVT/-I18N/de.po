@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-03-16 16:10+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -103,6 +103,10 @@ msgid "Maximum number of recurrences."
 msgstr "Maximale Anzahl von Wiederholungen."
 
 #: _GTW._OMP._EVT.Event:0
+msgid "Model a calendary event (or set of recurring events)"
+msgstr "Kalendarisches Ereignis (oder Menge von Ereignis-Wiederholungen)"
+
+#: _GTW._OMP._EVT.Event:0
 msgid "Models a string-valued attribute of an object."
 msgstr ""
 
@@ -122,6 +126,10 @@ msgstr "Monatlich"
 msgid "Object which this event is bound to."
 msgstr "Objekt, zu dem das Ereignis gehört."
 
+#: _GTW._OMP._EVT.Event:0
+msgid "Occurrence of a calendary event."
+msgstr "Eintreten eines kalendarischen Ereignisses."
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid ""
 "Offset to Easter sunday (positive or negative, 0 means the\n"
@@ -139,6 +147,12 @@ msgstr "Ausnahmen von der Wiederholung"
 #: _GTW/_OMP/_EVT/Nav.py:82
 msgid "Recurrence rule set"
 msgstr "Wiederholungsregel"
+
+#: _GTW._OMP._EVT.Recurrence_Spec:0
+msgid "Recurrence rule specifying a set of dates to include or exclude."
+msgstr ""
+"Wiederholungsregel, die eine Menge von Kalenderdaten für Einschluss oder "
+"Ausschluss definiert."
 
 #: _GTW/_OMP/_EVT/Nav.py:71
 msgid "Recurrence rules"
@@ -219,6 +233,10 @@ msgstr "Schränke die Wiederholungen auf die angegebenen Kalenderwochen ein."
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Short description of the rule"
 msgstr "Kurze Beschreibung der Regel"
+
+#: _GTW._OMP._EVT.Recurrence_Spec:0
+msgid "Specification for recurrency of event."
+msgstr "Spezifikation für Wiederholgen eines Ereignisses."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Start date of the recurrence."

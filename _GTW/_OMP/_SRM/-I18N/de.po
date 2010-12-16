@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-05-10 13:37+0200\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,9 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
+#: _GTW._OMP._SRM.Sailor:0
+msgid "A person that is member of a sailing club."
+msgstr "Mitglied eines Segelclubs."
+
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "A predicate defined by a simple assertion."
 msgstr ""
+
+#: _GTW._OMP._SRM.Team:0
+msgid "A team of sailors participating in a regatta."
+msgstr "Segelteam, das an einer Regatta teilnimmt."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:54
 msgid "Australia"
@@ -52,6 +60,10 @@ msgstr "Bootsklasse"
 #: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Crew_Member:0
 msgid "Boat in regatta"
 msgstr "Boot in Regatta"
+
+#: _GTW._OMP._SRM.Boat:0
+msgid "Boat of a specific boat-class."
+msgstr "Boot einer bestimmten Bootsklasse."
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Boat racing in a regatta."
@@ -104,6 +116,10 @@ msgstr "Segelclub, für den der Segler startet."
 #: _GTW._OMP._SRM.Boat:0
 msgid "Country for which the boat is registered."
 msgstr "Land, für das das Boot registriert ist."
+
+#: _GTW._OMP._SRM.Crew_Member:0
+msgid "Crew member of a `Boat_in_Regatta`."
+msgstr "Person, die als Crewmitglied segelt."
 
 #: _GTW._OMP._SRM.Crew_Member:0
 msgid "Crew_Member"
@@ -267,6 +283,10 @@ msgstr "Mitgliedsnummer im nationalen Segelverband (Member National Authority)."
 msgid "Mna number"
 msgstr "MNA Nummer"
 
+#: _GTW._OMP._SRM.Boat_Class:0
+msgid "Model a class of sailboats"
+msgstr "Bootsklasse."
+
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Models a Boolean attribute of an object."
 msgstr ""
@@ -367,9 +387,17 @@ msgstr "Polen"
 msgid "Portugal"
 msgstr "Portugal"
 
+#: _GTW._OMP._SRM.Attr_Type:0
+msgid "Provide information about the result of a regatta."
+msgstr "Status des Ergebnisses."
+
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "Race"
 msgstr "Frankreich"
+
+#: _GTW._OMP._SRM.Race_Result:0
+msgid "Race result of a `Boat_in_Regatta`."
+msgstr "Platzierung des Boots in dieser Regatta."
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "Race_Result"
@@ -407,6 +435,14 @@ msgstr "Regatta, die von dieser Seite beschrieben wird."
 #: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
 msgid "Regatta event to which this regatta belongs."
 msgstr "Regattaveranstaltung, zu der diese Regatta gehört."
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Regatta for a single class of sail boats."
+msgstr "Regatta für eine spezielle Bootsklasse."
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Regatta for boats in a handicap system."
+msgstr "Regatta für Boote eines Handicap-Systems."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta_C"
@@ -469,6 +505,10 @@ msgstr "Segelnummer"
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number of boat"
 msgstr "Segelnummer des Boots"
+
+#: _GTW._OMP._SRM.Regatta_Event:0
+msgid "Sailing regatta event for one or more classes/handicaps."
+msgstr "Segelregatta für ein oder mehrere Bootsklassen/Handicaps."
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "Sailing team boats sail for in regatta."
@@ -557,8 +597,8 @@ msgid ""
 "The crew members of a boat will be sorted by `key`, if\n"
 "defined, by order of creation otherwise."
 msgstr ""
-"Die Crew-Mitglieder des Boots werden anhand des `Schlüssels` sortiert, falls "
-"angegeben, anderenfalls nach der Reihenfolge der Eingabe."
+"Die Crew-Mitglieder des Boots werden anhand des `Schlüssels` sortiert, "
+"falls angegeben, anderenfalls nach der Reihenfolge der Eingabe."
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "The result of this race is discarded."
@@ -575,6 +615,14 @@ msgstr "Ukraine"
 #: _GTW/_OMP/_SRM/Attr_Type.py:93
 msgid "United States"
 msgstr "Vereinigte Staaten von Amerika"
+
+#: _GTW._OMP._SRM.Page:0
+msgid "Web page with information about a sailing regatta."
+msgstr "Webseite mit Informationen zu einer Segelregatta."
+
+#: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
+msgid "`Boat_in_Regatta` sailing for `Team`"
+msgstr "Boot, das in der Regatta für das Team segelt."
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "`Boat_in_Regatta` sailing for team."

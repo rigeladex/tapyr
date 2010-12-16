@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:29+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -58,6 +58,18 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Markup format used for `text`"
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Mixin with the attributes of `Page`."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Model a static web page."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Model a year-specific static web page."
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0

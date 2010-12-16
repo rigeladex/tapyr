@@ -36,6 +36,7 @@
 #    15-Apr-2010 (MG) Don't create plurals for attributes, hide non-user
 #                     attributes and names starings with `_` from the
 #                     translation
+#    16-Dec-2010 (CT) Add ``__doc__`` for non-partial e-types
 #    ««revision-date»»···
 #--
 from   _MOM                import MOM
@@ -71,7 +72,7 @@ def Add_Translations (encoding, config, method, app_type) :
 
     for et in app_type.etypes.itervalues () :
         filename = et.__module__
-        _add_object (et, et.ui_name, False, filename, True)
+        _add_object (et, et.ui_name, not et.is_partial, filename, True)
         for prop_spec, inst_cls in ( (et._Attributes, MOM.Attr._User_)
                                    , (et._Predicates, None)
                                    ) :
@@ -81,7 +82,6 @@ def Add_Translations (encoding, config, method, app_type) :
                     _add_object (prop, prop.name, True, filename)
     return translations
 # end def Add_Translations
-
 
 def Extract (fobj, keywords, comment_tags, config, method) :
     d        = {}

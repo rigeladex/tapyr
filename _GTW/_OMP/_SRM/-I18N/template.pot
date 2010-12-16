@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-12-15 13:24+0100\n"
+"POT-Creation-Date: 2010-12-16 16:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
+#: _GTW._OMP._SRM.Sailor:0
+msgid "A person that is member of a sailing club."
+msgstr ""
+
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "A predicate defined by a simple assertion."
+msgstr ""
+
+#: _GTW._OMP._SRM.Team:0
+msgid "A team of sailors participating in a regatta."
 msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:54
@@ -51,6 +59,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Crew_Member:0
 msgid "Boat in regatta"
+msgstr ""
+
+#: _GTW._OMP._SRM.Boat:0
+msgid "Boat of a specific boat-class."
 msgstr ""
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
@@ -103,6 +115,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Country for which the boat is registered."
+msgstr ""
+
+#: _GTW._OMP._SRM.Crew_Member:0
+msgid "Crew member of a `Boat_in_Regatta`."
 msgstr ""
 
 #: _GTW._OMP._SRM.Crew_Member:0
@@ -267,6 +283,10 @@ msgstr ""
 msgid "Mna number"
 msgstr ""
 
+#: _GTW._OMP._SRM.Boat_Class:0
+msgid "Model a class of sailboats"
+msgstr ""
+
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Models a Boolean attribute of an object."
 msgstr ""
@@ -367,8 +387,16 @@ msgstr ""
 msgid "Portugal"
 msgstr ""
 
+#: _GTW._OMP._SRM.Attr_Type:0
+msgid "Provide information about the result of a regatta."
+msgstr ""
+
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "Race"
+msgstr ""
+
+#: _GTW._OMP._SRM.Race_Result:0
+msgid "Race result of a `Boat_in_Regatta`."
 msgstr ""
 
 #: _GTW._OMP._SRM.Race_Result:0
@@ -406,6 +434,14 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
 msgid "Regatta event to which this regatta belongs."
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Regatta for a single class of sail boats."
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Regatta for boats in a handicap system."
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
@@ -468,6 +504,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number of boat"
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta_Event:0
+msgid "Sailing regatta event for one or more classes/handicaps."
 msgstr ""
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
@@ -572,6 +612,14 @@ msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:93
 msgid "United States"
+msgstr ""
+
+#: _GTW._OMP._SRM.Page:0
+msgid "Web page with information about a sailing regatta."
+msgstr ""
+
+#: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
+msgid "`Boat_in_Regatta` sailing for `Team`"
 msgstr ""
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0

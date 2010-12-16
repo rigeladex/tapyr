@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -37,11 +37,11 @@ msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 msgid "A confirmation has been sent to your email address."
 msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
-#: _GTW/_Form/Auth.py:78 _GTW/_Form/Auth.py:234
+#: _GTW/_Form/Auth.py:79 _GTW/_Form/Auth.py:235
 msgid "A user name is required to login."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_Form/Auth.py:259
+#: _GTW/_Form/Auth.py:260
 msgid "A user name is required."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
@@ -49,11 +49,11 @@ msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 msgid "Activation successful."
 msgstr "Die Aktivierung war erfolgreich."
 
-#: _GTW/_NAV/Calendar.py:86
+#: _GTW/_NAV/Calendar.py:88
 msgid "Apr"
 msgstr "Apr"
 
-#: _GTW/_NAV/Calendar.py:92
+#: _GTW/_NAV/Calendar.py:94
 msgid "April"
 msgstr "April"
 
@@ -61,11 +61,11 @@ msgstr "April"
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
 
-#: _GTW/_NAV/Calendar.py:87
+#: _GTW/_NAV/Calendar.py:89
 msgid "Aug"
 msgstr "Aug"
 
-#: _GTW/_NAV/Calendar.py:93
+#: _GTW/_NAV/Calendar.py:95
 msgid "August"
 msgstr "August"
 
@@ -89,11 +89,11 @@ msgstr "Konsole"
 msgid "Copy"
 msgstr "Kopiere"
 
-#: _GTW/_NAV/Calendar.py:88
+#: _GTW/_NAV/Calendar.py:90
 msgid "Dec"
 msgstr "Dez"
 
-#: _GTW/_NAV/Calendar.py:94
+#: _GTW/_NAV/Calendar.py:96
 msgid "December"
 msgstr "Dezember"
 
@@ -110,11 +110,11 @@ msgstr "Ändere"
 msgid "Email confirmation for %s"
 msgstr "Email Bestätigung für %s"
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:87
 msgid "Feb"
 msgstr "Feb"
 
-#: _GTW/_NAV/Calendar.py:91
+#: _GTW/_NAV/Calendar.py:93
 msgid "February"
 msgstr "Feber"
 
@@ -127,35 +127,35 @@ msgstr "Feld `%(field)s` muss ausgefüllt werden"
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:78
+#: _GTW/_NAV/Calendar.py:80
 msgid "Fri"
 msgstr "FR"
 
-#: _GTW/_NAV/Calendar.py:82
+#: _GTW/_NAV/Calendar.py:84
 msgid "Friday"
 msgstr "Freitag"
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:87
 msgid "Jan"
 msgstr "Jan"
 
-#: _GTW/_NAV/Calendar.py:91
+#: _GTW/_NAV/Calendar.py:93
 msgid "January"
 msgstr "Jänner"
 
-#: _GTW/_NAV/Calendar.py:87
+#: _GTW/_NAV/Calendar.py:89
 msgid "Jul"
 msgstr "Jul"
 
-#: _GTW/_NAV/Calendar.py:93
+#: _GTW/_NAV/Calendar.py:95
 msgid "July"
 msgstr "Juli"
 
-#: _GTW/_NAV/Calendar.py:86
+#: _GTW/_NAV/Calendar.py:88
 msgid "Jun"
 msgstr "Jun"
 
-#: _GTW/_NAV/Calendar.py:92
+#: _GTW/_NAV/Calendar.py:94
 msgid "June"
 msgstr "Juni"
 
@@ -168,7 +168,7 @@ msgstr ""
 msgid "Language %s selected"
 msgstr "Sprache %s wurde ausgewählt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:131
+#: _GTW/_NAV/_E_Type/SRM.py:133
 msgid "List of participants for"
 msgstr "Liste der Teilnehmer für"
 
@@ -176,23 +176,23 @@ msgstr "Liste der Teilnehmer für"
 msgid "Logout successful."
 msgstr "Abmelden war erfolgreich."
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:87
 msgid "Mar"
 msgstr "Mrz"
 
-#: _GTW/_NAV/Calendar.py:91
+#: _GTW/_NAV/Calendar.py:93
 msgid "March"
 msgstr "März"
 
-#: _GTW/_NAV/Calendar.py:86 _GTW/_NAV/Calendar.py:92
+#: _GTW/_NAV/Calendar.py:88 _GTW/_NAV/Calendar.py:94
 msgid "May"
 msgstr "Mai"
 
-#: _GTW/_NAV/Calendar.py:77
+#: _GTW/_NAV/Calendar.py:79
 msgid "Mon"
 msgstr "MO"
 
-#: _GTW/_NAV/Calendar.py:81
+#: _GTW/_NAV/Calendar.py:83
 msgid "Monday"
 msgstr "Montag"
 
@@ -201,39 +201,39 @@ msgstr "Montag"
 msgid "Need Javascript for displaying %s"
 msgstr "Für die Darstellung der %s ist Javascript erforderlich"
 
-#: _GTW/_Form/Auth.py:192
+#: _GTW/_Form/Auth.py:193
 msgid "New email address"
 msgstr "Emailadresse"
 
-#: _GTW/_Form/Auth.py:131
+#: _GTW/_Form/Auth.py:132
 msgid "New password"
 msgstr "Neues Kennwort"
 
-#: _GTW/_NAV/Calendar.py:88
+#: _GTW/_NAV/Calendar.py:90
 msgid "Nov"
 msgstr "Nov"
 
-#: _GTW/_NAV/Calendar.py:94
+#: _GTW/_NAV/Calendar.py:96
 msgid "November"
 msgstr "November"
 
-#: _GTW/_NAV/Calendar.py:88
+#: _GTW/_NAV/Calendar.py:90
 msgid "Oct"
 msgstr "Okt"
 
-#: _GTW/_NAV/Calendar.py:94
+#: _GTW/_NAV/Calendar.py:96
 msgid "October"
 msgstr "Oktober"
 
-#: _GTW/_Form/Auth.py:180
+#: _GTW/_Form/Auth.py:181
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:96
+#: _GTW/_NAV/_E_Type/SRM.py:98
 msgid "Participants"
 msgstr "Teilnehmer"
 
-#: _GTW/_Form/Auth.py:67 _GTW/_Form/Auth.py:163 _GTW/_Form/Auth.py:196
+#: _GTW/_Form/Auth.py:68 _GTW/_Form/Auth.py:164 _GTW/_Form/Auth.py:197
 msgid "Password"
 msgstr "Kennwort"
 
@@ -242,63 +242,63 @@ msgstr "Kennwort"
 msgid "Password reset for user %s on website %s"
 msgstr "Kennwort für Anwender %s auf Webseite %s zurückgesetzt"
 
-#: _GTW/_Form/Auth.py:143
+#: _GTW/_Form/Auth.py:144
 msgid "Passwords don't match."
 msgstr "Kennworte stimmen nicht überein."
 
-#: _GTW/_Form/Auth.py:141
+#: _GTW/_Form/Auth.py:142
 msgid "Please repeat the new password."
 msgstr "Bitte neues Kennwort wiederholen."
 
-#: _GTW/_NAV/_E_Type/SRM.py:136
+#: _GTW/_NAV/_E_Type/SRM.py:138
 msgid "Registration list"
 msgstr "Meldeliste"
 
-#: _GTW/_Form/Auth.py:133
+#: _GTW/_Form/Auth.py:134
 msgid "Repeat new password"
 msgstr "Wiederhole neues Kennwort"
 
-#: _GTW/_NAV/_E_Type/SRM.py:97
+#: _GTW/_NAV/_E_Type/SRM.py:99
 msgid "Results"
 msgstr "Resultate"
 
-#: _GTW/_NAV/_E_Type/SRM.py:111 _GTW/_NAV/_E_Type/SRM.py:126
+#: _GTW/_NAV/_E_Type/SRM.py:113 _GTW/_NAV/_E_Type/SRM.py:128
 msgid "Results for"
 msgstr "Resultate für"
 
-#: _GTW/_NAV/Calendar.py:78
+#: _GTW/_NAV/Calendar.py:80
 msgid "Sat"
 msgstr "SA"
 
-#: _GTW/_NAV/Calendar.py:82
+#: _GTW/_NAV/Calendar.py:84
 msgid "Saturday"
 msgstr "Samstag"
 
-#: _GTW/_NAV/Calendar.py:87
+#: _GTW/_NAV/Calendar.py:89
 msgid "Sep"
 msgstr "Sep"
 
-#: _GTW/_NAV/Calendar.py:93
+#: _GTW/_NAV/Calendar.py:95
 msgid "September"
 msgstr "September"
 
-#: _GTW/_NAV/Calendar.py:78
+#: _GTW/_NAV/Calendar.py:80
 msgid "Sun"
 msgstr "SO"
 
-#: _GTW/_NAV/Calendar.py:82
+#: _GTW/_NAV/Calendar.py:84
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: _GTW/_Form/Auth.py:208
+#: _GTW/_Form/Auth.py:209
 msgid "The new E-Mail address is required."
 msgstr "Die neue E-Mail Adresse muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:139
+#: _GTW/_Form/Auth.py:140
 msgid "The new password is required."
 msgstr "Das neue Kennwort muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:175
+#: _GTW/_Form/Auth.py:176
 msgid "The old password is required."
 msgstr "Das alte Kennwort muss ausgefüllt werden."
 
@@ -306,61 +306,61 @@ msgstr "Das alte Kennwort muss ausgefüllt werden."
 msgid "The password has been changed."
 msgstr "Das Kennwort wurde geändert"
 
-#: _GTW/_Form/Auth.py:213
+#: _GTW/_Form/Auth.py:214
 msgid "The password is incorrect"
 msgstr "Das Kennwort sind nicht korrekt"
 
-#: _GTW/_Form/Auth.py:80 _GTW/_Form/Auth.py:206
+#: _GTW/_Form/Auth.py:81 _GTW/_Form/Auth.py:207
 msgid "The password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
 #: _GTW/_NAV/Auth.py:378
 msgid "The reset password instructions have been sent to your email address."
 msgstr ""
-"Die Information über das Setzen eines neuen Kennworts wurde "
-"an die Emailadresse versandt."
+"Die Information über das Setzen eines neuen Kennworts wurde an die "
+"Emailadresse versandt."
 
-#: _GTW/_Form/Auth.py:86
+#: _GTW/_Form/Auth.py:87
 msgid "This account is currently inactive"
 msgstr "Dieses Benutzerkonto ist gegenwärtig nicht verfügbar"
 
-#: _GTW/_Form/Auth.py:239
+#: _GTW/_Form/Auth.py:240
 msgid "This username is already in use."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_Form/Auth.py:264
+#: _GTW/_Form/Auth.py:265
 msgid "This username is not registered"
 msgstr "Dieser Benutzername ist nicht bekannt"
 
-#: _GTW/_NAV/Calendar.py:77
+#: _GTW/_NAV/Calendar.py:79
 msgid "Thu"
 msgstr "DO"
 
-#: _GTW/_NAV/Calendar.py:81
+#: _GTW/_NAV/Calendar.py:83
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: _GTW/_NAV/Calendar.py:77
+#: _GTW/_NAV/Calendar.py:79
 msgid "Tue"
 msgstr "DI"
 
-#: _GTW/_NAV/Calendar.py:81
+#: _GTW/_NAV/Calendar.py:83
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: _GTW/_Form/Auth.py:66 _GTW/_Form/Auth.py:223 _GTW/_Form/Auth.py:249
+#: _GTW/_Form/Auth.py:67 _GTW/_Form/Auth.py:224 _GTW/_Form/Auth.py:250
 msgid "Username"
 msgstr "Benutzername"
 
-#: _GTW/_Form/Auth.py:84
+#: _GTW/_Form/Auth.py:85
 msgid "Username or password incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/Calendar.py:77
+#: _GTW/_NAV/Calendar.py:79
 msgid "Wed"
 msgstr "MI"
 
-#: _GTW/_NAV/Calendar.py:81
+#: _GTW/_NAV/Calendar.py:83
 msgid "Wednesday"
 msgstr "Mittwoch"
 

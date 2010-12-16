@@ -59,8 +59,8 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
             del kw ["ETM"]
         else :
             E_Type  = ETM._etype
-        title       = kw.pop  ("title", E_Type.__doc__)
-        name        = unicode (kw.pop ("name", E_Type.ui_name))
+        title       = kw.pop  ("title",       _T (E_Type.__doc__))
+        name        = kw.pop  ("name",        E_Type.ui_name)
         short_title = kw.pop  ("short_title", _T (name))
         self.__super.__init__ \
             ( E_Type       = E_Type

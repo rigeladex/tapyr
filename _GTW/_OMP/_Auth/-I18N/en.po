@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
+
+#: _GTW._OMP._Auth.Account_Handling:0
+msgid "A password reset is pending for the linked account."
+msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account_in_Group:0
 #: _GTW._OMP._Auth.Account:0
@@ -79,6 +83,18 @@ msgid_plural "Account_in_Groups"
 msgstr[0] ""
 msgstr[1] ""
 
+#: _GTW._OMP._Auth.Account_Handling:0
+msgid "Activation of the account"
+msgstr ""
+
+#: _GTW._OMP._Auth.Account:0
+msgid "An acount which uses passwords for authorization."
+msgstr ""
+
+#: _GTW._OMP._Auth.Account:0
+msgid "Default account for users which are not logging in."
+msgstr ""
+
 #: _GTW._OMP._Auth.Group:0
 #, fuzzy
 msgid "Desc"
@@ -119,12 +135,28 @@ msgid "Groups"
 msgstr ""
 
 #: _GTW._OMP._Auth.Group:0
+msgid "Model a group of accounts."
+msgstr ""
+
+#: _GTW._OMP._Auth.Account:0
+msgid "Model an user account."
+msgstr ""
+
+#: _GTW._OMP._Auth.Account_in_Group:0
+msgid "Model association Account_in_Group"
+msgstr ""
+
+#: _GTW._OMP._Auth.Group:0
 msgid "Name of group"
 msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 #, fuzzy
 msgid "New email"
+msgstr ""
+
+#: _GTW._OMP._Auth.Account_Handling:0
+msgid "Pending email verification."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account:0
@@ -134,6 +166,12 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "The new email address for the linked account."
+msgstr ""
+
+#: _GTW._OMP._Auth.Account_Handling:0
+msgid ""
+"The password of the linked account must be changed after the next\n"
+"login."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0

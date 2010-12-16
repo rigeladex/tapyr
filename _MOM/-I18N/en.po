@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-15 13:24+0100\n"
+"PO-Revision-Date: 2010-12-16 16:41+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -168,6 +168,22 @@ msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:70
 msgid "MO"
+msgstr ""
+
+#: _MOM._Attr.Date_Interval:0
+msgid "Model a date interval (start, finish)."
+msgstr ""
+
+#: _MOM._Attr.Date_Interval:0
+msgid "Model a date_interval (start [default: now], finish)."
+msgstr ""
+
+#: _MOM._Attr.Date_Interval:0
+msgid "Model a date_interval (start, finish [default: `start`])."
+msgstr ""
+
+#: _MOM._Attr.Time_Interval:0
+msgid "Model a time interval (start, finish)"
 msgstr ""
 
 #: _MOM.Object:0

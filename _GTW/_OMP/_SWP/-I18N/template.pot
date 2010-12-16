@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-12-15 13:24+0100\n"
+"POT-Creation-Date: 2010-12-16 16:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -134,12 +134,50 @@ msgstr ""
 msgid "Markup format used for `text`"
 msgstr ""
 
+#: _GTW._OMP._SWP.Page:0
+msgid "Mixin with the attributes of `Page`."
+msgstr ""
+
+#: _GTW._OMP._SWP.Gallery:0
+msgid "Model a gallery of pictures"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Model a picture that can be displayed on a web page."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Model a static web page."
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "Model a two-dimensional float-based value."
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "Model a two-dimensional integer-based value."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Model a year-specific static web page."
+msgstr ""
+
 #: _GTW._OMP._SWP.Entity:0
 msgid "Name used for perma-link."
 msgstr ""
 
+#: _GTW._OMP._SWP.Clip:0
+msgid "News clip for a object."
+msgstr ""
+
 #: _GTW/_OMP/_SWP/Nav.py:174
 msgid "News clip for page"
+msgstr ""
+
+#: _GTW._OMP._SWP.Clip:0
+msgid ""
+"News clip for the front page of a website referring to an external web\n"
+"page."
 msgstr ""
 
 #: _GTW._OMP._SWP.Picture:0

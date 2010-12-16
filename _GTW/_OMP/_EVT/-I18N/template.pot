@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-12-15 13:24+0100\n"
+"POT-Creation-Date: 2010-12-16 16:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,6 +101,10 @@ msgid "Maximum number of recurrences."
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
+msgid "Model a calendary event (or set of recurring events)"
+msgstr ""
+
+#: _GTW._OMP._EVT.Event:0
 msgid "Models a string-valued attribute of an object."
 msgstr ""
 
@@ -120,6 +124,10 @@ msgstr ""
 msgid "Object which this event is bound to."
 msgstr ""
 
+#: _GTW._OMP._EVT.Event:0
+msgid "Occurrence of a calendary event."
+msgstr ""
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid ""
 "Offset to Easter sunday (positive or negative, 0 means the\n"
@@ -136,6 +144,10 @@ msgstr ""
 
 #: _GTW/_OMP/_EVT/Nav.py:82
 msgid "Recurrence rule set"
+msgstr ""
+
+#: _GTW._OMP._EVT.Recurrence_Spec:0
+msgid "Recurrence rule specifying a set of dates to include or exclude."
 msgstr ""
 
 #: _GTW/_OMP/_EVT/Nav.py:71
@@ -204,6 +216,10 @@ msgstr ""
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Short description of the rule"
+msgstr ""
+
+#: _GTW._OMP._EVT.Recurrence_Spec:0
+msgid "Specification for recurrency of event."
 msgstr ""
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
