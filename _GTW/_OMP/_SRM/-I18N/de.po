@@ -589,8 +589,8 @@ msgstr[1] "Teams"
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "Team_has_Boat_in_Regatta"
 msgid_plural "Team_has_Boat_in_Regattas"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Team hat Boot in Regatta"
+msgstr[1] "Teams haben Boote in Regatten"
 
 #: _GTW._OMP._SRM.Crew_Member:0
 msgid ""
