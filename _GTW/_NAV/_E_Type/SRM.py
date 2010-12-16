@@ -41,6 +41,8 @@
 #                     inherit the wrong template)
 #    14-Dec-2010 (CT) `SRM` derived from `Manager_T_Archive` instead of
 #                     `Manager_T_Archive_Y`
+#    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
+#                     `__super.rendered`
 #    ««revision-date»»···
 #--
 
@@ -210,12 +212,11 @@ class SRM (_Ancestor) :
 
     class _SRM_Year_ (_Ancestor.Year) :
 
+        delegate_view_p = False
+
         def rendered (self, handler, template = None) :
-            ### if we want to display a site-admin specific page (and not
-            ### just the page of the first child [a E_Type_Admin]), we'll
-            ### need to bypass `_Dir_.rendered`
-            return GTW.NAV._Site_Entity_.rendered \
-                (self, handler, template or "regatta_calendar")
+            return self.__super.rendered \
+                (handler, template or "regatta_calendar")
         # end def rendered
 
     Year = _SRM_Year_ # end class

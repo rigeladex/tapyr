@@ -40,6 +40,8 @@
 #                     `delta` and `delta_unit`
 #    26-Nov-2010 (CT) Adapted to change of name of input-elements of
 #                     `week_roller_ctrl`
+#    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
+#                     `__super.rendered`
 #    ««revision-date»»···
 #--
 
@@ -93,6 +95,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         , _("July"),    _("August"),   _("September")
         , _("October"), _("November"), _("December")
         )
+    delegate_view_p    = False
     pid                = "Cal"
     q_prefix           = "q"
     qx_prefix          = "qx"
@@ -249,13 +252,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     def q_href (self) :
         return pjoin (self.abs_href, self.q_prefix)
     # end def q_href
-
-    def rendered (self, handler, template = None) :
-        ### if we want to display a site-admin specific page (and not
-        ### just the page of the first child [a E_Type_Admin]), we'll
-        ### need to bypass `_Dir_.rendered`
-        return _Mixin_.rendered (self, handler, template)
-    # end def rendered
 
     @property
     def today (self) :

@@ -229,6 +229,7 @@
 #     2-Sep-2010 (CT) `Page_O` and `Page_P` added
 #     2-Dec-2010 (CT) `Stopper` added
 #    15-Dec-2010 (CT) `exclude_robots` and `Robot_Excluder` added
+#    16-Dec-2010 (CT) `_Dir_.rendered` changed to consider `delegate_view_p`
 #    ««revision-date»»···
 #--
 
@@ -744,6 +745,7 @@ class _Dir_ (_Site_Entity_) :
     Page            = Page
 
     dir             = ""
+    delegate_view_p = True
     sub_dir         = ""
 
     def __init__ (self, parent = None, ** kw) :
@@ -865,17 +867,20 @@ class _Dir_ (_Site_Entity_) :
     # end def new_sub_dir
 
     def rendered (self, handler, template = None) :
-        try :
-            page = first (self.own_links)
-        except IndexError :
-            if self.empty_template :
-                return self.__super.rendered (handler, self.empty_template)
+        if self.delegate_view_p :
+            try :
+                page = first (self.own_links)
+            except IndexError :
+                if self.empty_template :
+                    return self.__super.rendered (handler, self.empty_template)
+            else :
+                handler.context.update \
+                    ( nav_page = page
+                    , page     = page
+                    )
+                return page.rendered (handler, template)
         else :
-            handler.context.update \
-                ( nav_page = page
-                , page     = page
-                )
-            return page.rendered (handler, template)
+            return self.__super.rendered (handler, template)
     # end def rendered
 
     def _get_child (self, child, * grandchildren) :

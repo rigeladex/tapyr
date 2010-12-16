@@ -179,6 +179,8 @@
 #     5-Aug-2010 (CT) `_filter_etype_entries` added
 #     5-Aug-2010 (CT) Work on `man.admin_args.copy ()` instead of
 #                     `man.admin_args` (`pop` being as destructive as it is)
+#    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
+#                     `__super.rendered`
 #    ««revision-date»»···
 #--
 
@@ -195,6 +197,7 @@ from   itertools import chain as ichain, repeat as irepeat
 class Site_Admin (GTW.NAV.Dir) :
     """Model an admin page for a GTW site."""
 
+    delegate_view_p = False
     Page            = GTW.NAV.E_Type.Admin
     template        = "site_admin"
 
@@ -237,14 +240,6 @@ class Site_Admin (GTW.NAV.Dir) :
                     seen.add (etm)
                     yield d
     # end def _filter_etype_entries
-
-    if 1 :
-        ### if we want to display a site-admin specific page (and not
-        ### just the page of the first child [a E_Type_Admin]), we'll
-        ### need to bypass `_Dir_.rendered`
-        def rendered (self, handler, template = None) :
-            return GTW.NAV._Site_Entity_.rendered (self, handler, template)
-        # end def rendered
 
 # end class Site_Admin
 
