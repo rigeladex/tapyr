@@ -28,16 +28,17 @@
 # Revision Dates
 #    25-Jan-2010 (CT) Creation
 #    20-Mar-2010 (MG) Import of `Request_Handler` removed
+#    16-Dec-2010 (CT) s/Admin/Site_Admin/
 #    ««revision-date»»···
 #--
 
-import _GTW._NAV.Admin
 import _GTW._NAV.Auth
 import _GTW._NAV.Base
 import _GTW._NAV.Gallery
 import _GTW._NAV.L10N
 import _GTW._NAV.Permission
 import _GTW._NAV.ReST
+import _GTW._NAV.Site_Admin
 import _GTW._NAV.Video
 
 import _GTW._NAV._E_Type.Admin

@@ -42,7 +42,7 @@ import  os
 import _GTW._NAV.Base
 import _GTW._NAV.ReST
 import _GTW._NAV._E_Type.Admin
-import _GTW._NAV.Admin
+import _GTW._NAV.Site_Admin
 import _GTW._OMP._PAP.Nav
 import _GTW._OMP._SWP.Nav
 from   _JNJ.Templateer import Templateer

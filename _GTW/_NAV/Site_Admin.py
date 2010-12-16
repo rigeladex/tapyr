@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.NAV
+#    GTW.NAV.Site_Admin
 #
 # Purpose
 #    Model navigation for web site
@@ -181,6 +181,7 @@
 #                     `man.admin_args` (`pop` being as destructive as it is)
 #    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
 #                     `__super.rendered`
+#    16-Dec-2010 (CT) s/Admin/Site_Admin/
 #    ««revision-date»»···
 #--
 
@@ -245,4 +246,4 @@ class Site_Admin (GTW.NAV.Dir) :
 
 if __name__ != "__main__":
     GTW.NAV._Export ("*")
-### __END__ GTW.NAV.Admin
+### __END__ GTW.NAV.Site_Admin
