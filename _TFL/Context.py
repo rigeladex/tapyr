@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,13 +29,15 @@
 #    14-Apr-2008 (CT) Creation
 #    10-Dec-2009 (CT) `attr_let` changed to accept `** kw` instead of a
 #                     single name and value
+#    17-Dec-2010 (CT) `time_block` added
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 import _TFL.Decorator
 
-from contextlib import closing, nested
+from   contextlib import closing, nested
+from   timeit     import default_timer as _timer
 
 @TFL.Contextmanager
 def attr_let (obj, ** kw) :
@@ -68,6 +70,24 @@ def list_push (list, item) :
         assert list [-1] is item
         list.pop ()
 # end def list_push
+
+@TFL.Contextmanager
+def time_block (fmt = "Execution time: %s", cb = None) :
+    """Context manager measuring the execution time for a block.
+
+       After finishing the block, `cb` will be called with the arguments
+       `start` and `finish`, if specified. Otherwise, `time_block` will use
+       `fmt` to write the execution time to sys.stdout.
+    """
+    start  = _timer ()
+    yield
+    finish = _timer ()
+    if cb is not None :
+        cb (start, finish)
+    else :
+        import pyk
+        pyk.fprint (fmt % (finish - start, ))
+# end def time_block
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

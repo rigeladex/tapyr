@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,12 +28,8 @@
 #
 # Revision Dates
 #    22-Sep-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                   import TFL
 import _TFL._FMW.Recorder
@@ -67,7 +63,7 @@ class Time_Measurer (TFL.FMW.Wrapped_Recorder) :
         self.recorder.record \
             ( wrapper = self
             , cpu     = end_clock - start_clock
-            , elapsed = end_time - start_time
+            , elapsed = end_time  - start_time
             )
         return result
     # end def __call__

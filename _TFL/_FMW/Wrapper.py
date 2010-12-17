@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,8 @@
 #    23-Sep-2004 (CT) `_Wrapped_.__getattr__` added to make wrapped
 #                     callables more similar to the real thing (e.g., avoid
 #                     an AttributeError from `wrapped.func_code`)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                   import TFL
 import _TFL._FMW

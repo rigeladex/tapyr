@@ -230,11 +230,13 @@
 #     2-Dec-2010 (CT) `Stopper` added
 #    15-Dec-2010 (CT) `exclude_robots` and `Robot_Excluder` added
 #    16-Dec-2010 (CT) `_Dir_.rendered` changed to consider `delegate_view_p`
+#    17-Dec-2010 (CT) `universal_view` changed to use `time_block` if `DEBUG`
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+
 import _GTW.Media
 import _GTW._NAV
 
@@ -247,6 +249,7 @@ from   _TFL                     import sos
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
+import _TFL.Context
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
@@ -921,6 +924,7 @@ class Root (_Dir_) :
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
     copyright_url           = None
+    DEBUG                   = False
     email                   = None   ### default from address
     empty_template          = None
     name                    = "/"
@@ -1039,7 +1043,12 @@ class Root (_Dir_) :
                 if user and not user.authenticated :
                     raise HTTP.Error_401 ()
             if page.allow_user (user) :
-                return page._view (handler)
+                if page.DEBUG :
+                    fmt = "%s: view execution time = %%s" % (href, )
+                    with TFL.Context.time_block (fmt) :
+                        return page._view (handler)
+                else :
+                    return page._view (handler)
             else :
                 raise HTTP.Error_403 ()
         raise HTTP.Error_404 (href)
