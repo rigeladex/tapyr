@@ -52,7 +52,9 @@ def fprint (* values, ** kw) :
             if isinstance (v, unicode) :
                 v = v.encode (encoding, "replace")
             yield v
-    file = kw.pop ("file", sys.stdout)
+    file = kw.pop ("file", None)
+    if file is None :
+        file = sys.stdout
     sep  = kw.pop ("sep",  " ")
     end  = kw.pop ("end",  "\n")
     file.write (sep.join (_convert (values)) + end)

@@ -121,8 +121,23 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     class Day (_Cmd_) :
 
         name         = "day"
+        qx_p         = False
         template     = "calendar_day"
         template_qx  = "calendar_day_qx"
+
+        def rendered (self, handler, template = None) :
+            result = self.__super.rendered (handler, template)
+            if 0 and self.qx_p :
+                result = handler.json \
+                    ( dict
+                        ( html     = result
+                        , day      = self.day.day
+                        , month    = self.day.month
+                        , year     = self.day.year
+                        )
+                    )
+            return result
+        # end def rendered
 
     # end class Day
 
@@ -293,6 +308,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                         ( parent   = self
                         , year     = year
                         , day      = day
+                        , qx_p     = qx_p
                         , template = Day.template_qx if qx_p else Day.template
                         )
     # end def _get_child

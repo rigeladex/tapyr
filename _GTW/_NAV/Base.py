@@ -254,6 +254,7 @@ import _TFL.Context
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import signal
+import sys
 import time
 
 class _Meta_ (TFL.Meta.M_Class) :
@@ -1044,8 +1045,12 @@ class Root (_Dir_) :
                     raise HTTP.Error_401 ()
             if page.allow_user (user) :
                 if page.DEBUG :
-                    fmt = "%s: view execution time = %%s" % (href, )
-                    with TFL.Context.time_block (fmt) :
+                    fmt = "[%s] %s: view execution time = %%s" % \
+                        ( time.strftime
+                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
+                        , href
+                        )
+                    with TFL.Context.time_block (fmt, sys.stderr) :
                         return page._view (handler)
                 else :
                     return page._view (handler)

@@ -45,6 +45,7 @@
           ( { apply_button_name      : "Apply"
             , cal_selector           : "table.calendar"
             , ctrl_selector          : "form.ctrl"
+            , day_as_html            : true
             , selected_class         : "selected"
             , day_selector           : "td"
             , slider_ctrl_selector   : ".slider-ctrl"
@@ -88,7 +89,26 @@
                         day$.click
                           ( function (ev)
                               {
-                                div$.load (qx).css ({display : "block"});
+                                div$.html ("");
+                                if (options.day_as_html)
+                                  {
+                                    div$.load (qx).css ({display : "block"});
+                                  }
+                                else
+                                  {
+                                    $.getJSON
+                                      ( qx, null
+                                      , function (response)
+                                          {
+                                            if (response)
+                                              {
+                                                div$.
+                                                  html (response.html).
+                                                  css  ({display : "block"});
+                                              }
+                                          }
+                                      );
+                                  }
                                 if (options.selected)
                                   {
                                     $(options.selected).removeClass
@@ -139,7 +159,7 @@
                                         $.GTW.push_history (q_url + "?" + args);
                                       }
                                   }
-                              )
+                              );
                             if (ev && ev.preventDefault)
                               {
                                 ev.preventDefault ();

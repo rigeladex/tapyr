@@ -72,7 +72,7 @@ def list_push (list, item) :
 # end def list_push
 
 @TFL.Contextmanager
-def time_block (fmt = "Execution time: %s", cb = None) :
+def time_block (fmt = "Execution time: %s", out = None, cb = None) :
     """Context manager measuring the execution time for a block.
 
        After finishing the block, `cb` will be called with the arguments
@@ -86,7 +86,7 @@ def time_block (fmt = "Execution time: %s", cb = None) :
         cb (start, finish)
     else :
         import pyk
-        pyk.fprint (fmt % (finish - start, ))
+        pyk.fprint (fmt % (finish - start, ), file = out)
 # end def time_block
 
 if __name__ != "__main__" :
