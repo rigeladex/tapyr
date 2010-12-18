@@ -107,7 +107,7 @@
         {{ GTW._T ("Anchor") }}
       </label>
       <div class="anchor">
-        {{- X.input.number
+        {{- X.input.text
             ( name      = "year"
             , id        = "F_anchor_year"
             , min       = cal.min_year
@@ -118,7 +118,7 @@
             )
         -}}
         /
-        {{- X.input.number
+        {{- X.input.text
             ( name      = "month"
             , min       = 1
             , max       = 12
@@ -128,7 +128,7 @@
             )
         -}}
         /
-        {{- X.input.number
+        {{- X.input.text
             ( name      = "day"
             , min       = 1
             , max       = 31
@@ -141,7 +141,7 @@
       <label title="{{ GTW._T ("Number of weeks displayed") }}" for="F_weeks">
         {{ GTW._T ("Weeks") }}
       </label>
-      {{ X.input.number
+      {{ X.input.text
           ( name      = "weeks"
           , id        = "F_weeks"
           , min       = 2
@@ -155,7 +155,7 @@
              for="F_delta">
         {{ GTW._T ("Delta") }}
       </label>
-      {{ X.input.number
+      {{ X.input.text
           ( name      = "delta"
           , id        = "F_delta"
           , min       = -53
