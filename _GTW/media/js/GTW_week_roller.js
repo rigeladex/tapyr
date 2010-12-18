@@ -278,7 +278,7 @@
         $(this).each
           ( function ()
               {
-                init_ctrl   ($(this));
+                init_ctrl ($(this));
               }
           );
         return this;
