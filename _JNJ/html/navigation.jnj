@@ -89,12 +89,14 @@
             >{{ _entry_body (link) }}</a>
           </li>
         {%- else -%}
-          <li class="no-link">{{ _entry_body (link) }}</li>
+          <li class="no-link level-{{ level }}">{{ _entry_body (link) }}</li>
         {%- endif %}
       {%- endif %}
     {%- endif %}
   {%- else %}
-    <li>{{ _entry_body (link) }}</li>
+    {%- if NAV.DEBUG %}
+      <li class="level-{{ level }}">{{ _entry_body (link) }}</li>
+    {% endif -%}
   {%- endif %}
 {%- endmacro -%} {# entry #}
 

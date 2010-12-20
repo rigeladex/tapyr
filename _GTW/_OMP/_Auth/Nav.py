@@ -88,6 +88,7 @@ class Admin (object) :
     Account_in_Group = dict \
         ( ETM        = "GTW.OMP.Auth.Account_in_Group"
         , Type       = GTW.NAV.E_Type.Admin
+        , permission = Is_Superuser ()
         )
 
 # end class Admin
