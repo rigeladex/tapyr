@@ -54,6 +54,7 @@
 #    17-Aug-2010 (CT) Use A_Float instead of A_Decimal to avoid sqlite warning
 #     1-Sep-2010 (CT) Tests for `Q.attr`, `Q.attrs`, and `Q.set` added
 #    28-Sep-2010 (CT) Adapted to change of `epk_raw`
+#    20-Dec-2010 (CT) Python 2.7 compatibility
 #    ««revision-date»»···
 #--
 
@@ -1276,10 +1277,11 @@ Changing objects and links
     2
     >>> print m.as_code ()
     BMT.Mouse (u'Mighty_Mouse', color = u'black', weight = 25.0)
-    >>> m.set (weight = "one ton")
-    Traceback (most recent call last):
-      ...
-    ValueError: invalid literal for float(): one ton
+    >>> try :
+    ...   m.set (weight = "one ton")
+    ... except ValueError :
+    ...   pass
+    Error in `cooked` of `Float `weight`` for value `one ton` [(u'Mighty_Mouse')]
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...

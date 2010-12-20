@@ -32,6 +32,7 @@
 #    10-Aug-2010 (MG) Additional test added
 #    10-Aug-2010 (MG) Test changed to allow different backends
 #    16-Aug-2010 (MG) Test fixed
+#    20-Dec-2010 (CT) Python 2.7 compatibility
 #    ««revision-date»»···
 #--
 
@@ -80,14 +81,14 @@ _link1_role = r"""
     ...     (p1.epk_raw, dict (start = "1.2.2010", raw = True), raw = True)
     >>> e2 = EVT.Event \
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
-    >>> q = EVT.Event_occurs.query ()
+    >>> q = EVT.Event_occurs.query_s ()
     >>> for e in q.all () : print e ### default sort order
-    (((u'event-1-text', ), dict (start = '2010/02/01'), dict ()), '2010/02/01', dict ())
-    (((u'event-2-text', ), dict (start = '2010/01/01'), dict ()), '2010/01/01', dict ())
-    >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By (Q.event.date.start))
-    >>> for e in q.all () : print e ### sorted
     (((u'event-2-text', ), dict (start = '2010/01/01'), dict ()), '2010/01/01', dict ())
     (((u'event-1-text', ), dict (start = '2010/02/01'), dict ()), '2010/02/01', dict ())
+    >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By ("-event.date.start"))
+    >>> for e in q.all () : print e ### sorted by descending date
+    (((u'event-1-text', ), dict (start = '2010/02/01'), dict ()), '2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = '2010/01/01'), dict ()), '2010/01/01', dict ())
     >>> scope.destroy ()
 """
 
