@@ -75,6 +75,7 @@
 #    17-Aug-2010 (CT) `Changer.rendered` changed to check `scope.readonly`
 #    31-Aug-2010 (CT) `Changer.obj` added to simplify debugging from
 #                     browser-based `Console`
+#    21-Dec-2010 (CT) `h_title` removed
 #    ««revision-date»»···
 #--
 
@@ -458,11 +459,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if man :
             return man.href_display (obj)
     # end def href_display
-
-    @property
-    def h_title (self) :
-        return u"::".join ((self.name, self.parent.h_title))
-    # end def h_title
 
     @Once_Property
     def list_display (self) :

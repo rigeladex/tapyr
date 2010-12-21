@@ -231,6 +231,8 @@
 #    15-Dec-2010 (CT) `exclude_robots` and `Robot_Excluder` added
 #    16-Dec-2010 (CT) `_Dir_.rendered` changed to consider `delegate_view_p`
 #    17-Dec-2010 (CT) `universal_view` changed to use `time_block` if `DEBUG`
+#    21-Dec-2010 (CT) `h_title` changed (no `title junk` (TM))
+#    21-Dec-2010 (CT) `Root.home` added
 #    ««revision-date»»···
 #--
 
@@ -435,11 +437,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @property
     def h_title (self) :
-        return u"::".join \
-            ( ( self.nick or self.short_title or self.name or self.href
-              , self.parent.h_title
-              )
-            )
+        name = self.nick or self.short_title or self.name or self.href
+        if self.level > 0 :
+            return u"/".join ((name, self.parent.h_title))
+        else :
+            if self is self.top.home :
+                return self.top.h_title
+            else :
+                return u"%s [%s]" % (name, self.top.h_title)
     # end def h_title
 
     def is_current (self, nav_page) :
@@ -982,6 +987,16 @@ class Root (_Dir_) :
             result.add_entries (entries, Dir_Type = Dir_Type)
         return result
     # end def from_dict_list
+
+    @Once_Property
+    def home (self) :
+        if self.delegate_view_p :
+            try :
+                return first (self.own_links)
+            except IndexError :
+                pass
+        return self
+    # end def home
 
     @property
     def h_title (self) :

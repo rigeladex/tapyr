@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -70,6 +70,7 @@
 #    20-Aug-2009 (CT) `Admin.Completer` added
 #    20-Aug-2009 (CT) `Admin.Completed` added
 #    21-Aug-2009 (MG) `Complete*` changed to used unbound nested form group
+#    21-Dec-2010 (CT) `h_title` removed
 #    ««revision-date»»···
 #--
 
@@ -400,11 +401,6 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         return pjoin (self.abs_href, "delete", str (obj.id))
     # end def href_delete
 
-    @property
-    def h_title (self) :
-        return u"::".join ((self.name, self.parent.h_title))
-    # end def h_title
-
     def rendered (self, context = None, nav_page = None) :
         Instance = self.Instance
         field    = self.Model._F.get
@@ -487,11 +483,6 @@ class Instance (DJO.NAV.Page) :
         if admin :
             return admin._get_child ("change", self.obj.id)
     # end def changer
-
-    @property
-    def h_title (self) :
-        return u"::".join ((self.name, self.parent.h_title))
-    # end def h_title
 
     @property
     def href_change (self) :

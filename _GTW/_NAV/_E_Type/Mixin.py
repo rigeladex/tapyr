@@ -114,12 +114,6 @@ class Instance_Mixin (Mixin) :
         return self.manager.admin
     # end def admin
 
-    @property
-    def h_title (self) :
-        return u"::".join \
-            ((self.obj.short_title or self.name, self.parent.h_title))
-    # end def h_title
-
     @Once_Property
     def permalink (self) :
         man = self.top.E_Types [self.E_Type.type_name]
