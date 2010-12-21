@@ -280,7 +280,7 @@ class Manager_T_Archive (Manager) :
         pkw    = self.page_args
         kw     = dict (pkw)
         qr     = self.ETM.query (sort_key = self.sort_key)
-        cy     = datetime.date.today ().year
+        cy     = datetime.date.today ().year + 1
         result = []
         for y in xrange (cy, self.top.copyright_start - 1, -1) :
             os = qr.filter (* self._year_filter (y)).all ()

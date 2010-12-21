@@ -33,6 +33,7 @@
 #     7-May-2010 (CT) `Instance_Mixin.__init__` changed to take `parent` from
 #                     `kw`, if possible
 #    12-May-2010 (CT) `lid_query` removed
+#    21-Dec-2010 (CT) `h_title` removed
 #    ««revision-date»»···
 #--
 
