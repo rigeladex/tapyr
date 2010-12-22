@@ -77,7 +77,7 @@ class Admin_Group (GTW.NAV.Dir) :
     delegate_view_p = False
     Page            = GTW.NAV.E_Type.Admin
     show_aliases    = False
-    template        = "site_admin" ### XXX wrong name
+    template        = "site_admin"
 
     def __init__ (self, src_dir, parent, ** kw) :
         entries = \
