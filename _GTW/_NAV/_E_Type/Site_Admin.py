@@ -41,6 +41,7 @@
 #    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
 #    22-Dec-2010 (CT) Assignment to `top.Admin` removed
 #    22-Dec-2010 (CT) Moved from `GTW.NAV` to `GTW.NAV.E_Type`
+#    22-Dec-2010 (CT) `Admin_Group` factored, `Admin_Group._pns_entries` added
 #    ««revision-date»»···
 #--
 
@@ -54,20 +55,55 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 from   itertools import chain as ichain, repeat as irepeat
 
-class Site_Admin (GTW.NAV.Dir) :
-    """Model an admin page for a GTW site."""
+class Admin_Group (GTW.NAV.Dir) :
+    """Model a group of E-Type admin pages."""
 
     delegate_view_p = False
     Page            = GTW.NAV.E_Type.Admin
-    template        = "site_admin"
+    template        = "site_admin" ### XXX wrong name
+
+    """
+        [   str (T.type_base_name)
+        for T in scope.app_type.etypes_by_pns ['GTW.OMP.Auth']
+        if T.is_relevant and not T.electric.default)
+        ]
+
+    """
 
     def __init__ (self, src_dir, parent, ** kw) :
         entries = self._filter_etype_entries \
-            (self._etype_man_entries (), kw.pop ("etypes", []))
+            (kw.pop ("etypes", []), self._pns_entries (* kw.pop ("PNSs", [])))
         self.__super.__init__ (src_dir, parent, ** kw)
         self.add_entries      (entries)
         self._entries.sort    (key = TFL.Getter.short_title)
     # end def __init__
+
+    def _filter_etype_entries (self, * args) :
+        seen = set ()
+        for d in ichain (* args) :
+            try :
+                etm = d ["ETM"]
+            except KeyError :
+                print "No `ETM`\n   ", sorted (d.iteritems ())
+            else :
+                if etm not in seen :
+                    seen.add (etm)
+                    yield d
+    # end def _filter_etype_entries
+
+    def _pns_entries (self, * pnss) :
+        app_type = self.top.scope.app_type
+        for pns in pnss :
+            for T in app_type.etypes_by_pns [pns] :
+                if T.is_relevant and not T.electric.default :
+                    if T.admin_args :
+                        yield T.admin_args
+    # end def _pns_entries
+
+# end class Admin_Group
+
+class Site_Admin (Admin_Group) :
+    """Model an admin page for a GTW site."""
 
     def _etype_man_entries (self) :
         for et in self.top.ET_Map.itervalues () :
@@ -91,16 +127,8 @@ class Site_Admin (GTW.NAV.Dir) :
     # end def _etype_man_entries
 
     def _filter_etype_entries (self, * args) :
-        seen = set ()
-        for d in ichain (* args) :
-            try :
-                etm = d ["ETM"]
-            except KeyError :
-                print "No `ETM`\n   ", sorted (d.iteritems ())
-            else :
-                if etm not in seen :
-                    seen.add (etm)
-                    yield d
+        return self.__super._filter_etype_entries \
+            (self._etype_man_entries (), * args)
     # end def _filter_etype_entries
 
 # end class Site_Admin

@@ -40,6 +40,7 @@
 #                     `Recurrence_Rule` if not explicit one is given
 #    17-Nov-2010 (CT) `left.sort_rank` set to `10` to have events sort by
 #                     (`date`,`time`,`left`) instead of (`left`,`date`,`time`)
+#    22-Dec-2010 (CT) `Event_occurs.electric` redefined as `Const` with `True`
 #    ««revision-date»»···
 #--
 
@@ -154,7 +155,7 @@ class Event (_Ancestor_Essence) :
         for o in list (self.occurs) :
             o.destroy ()
         for d in self.dates :
-            ETM (self, date = d, time = self.time, electric = True)
+            ETM (self, date = d, time = self.time)
     # end def compute_occurrences
 
     @classmethod
@@ -219,6 +220,13 @@ class Event_occurs (_Ancestor_Essence) :
             # end def computed
 
         # end class detail
+
+        class electric (_Ancestor.electric) :
+
+            kind       = Attr.Const
+            default    = True
+
+        # end class electric
 
         class essence (_A_Object_) :
 

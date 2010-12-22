@@ -36,6 +36,7 @@
 #    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
 #    15-Dec-2010 (CT) `Account_Password_Reset.handle` changed to lift
 #                     `suspended`
+#    22-Dec-2010 (CT) `_Account_Action_.electric` redefined to `True`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +70,13 @@ class _Account_Action_ (Auth.Entity, _Ancestor_Essence) :
             role_type     = Auth.Account
 
         # end class left
+
+        class electric (_Ancestor.electric) :
+
+            kind               = Attr.Const
+            default            = True
+
+        # end class electric
 
     # end class _Attributes
 

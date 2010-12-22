@@ -161,6 +161,7 @@
 #                     `get_raw`
 #    14-Oct-2010 (CT) `init_finished` added
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `electric`
+#    22-Dec-2010 (CT) `is_relevant` moved from `Id_Entity` to `Entity`
 #    ««revision-date»»···
 #--
 
@@ -211,6 +212,7 @@ class Entity (TFL.Meta.Object) :
     home_scope            = None
     init_finished         = False
     is_partial            = True
+    is_relevant           = False
     is_used               = True
     rank                  = 0
     relevant_root         = None   ### Set by meta machinery
@@ -786,7 +788,6 @@ class Id_Entity (Entity) :
 
     auto_display          = ()
     is_partial            = True
-    is_relevant           = False
     max_count             = 0
     record_changes        = True
     refuse_links          = set ()

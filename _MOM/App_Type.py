@@ -37,6 +37,7 @@
 #    24-Jun-2010 (CT) `Url` added
 #    24-Jun-2010 (CT) `db_sig` and `db_version_hash` added
 #    30-Jun-2010 (CT) `Once_Property` for `Version` added
+#    22-Dec-2010 (CT) `etypes_by_pns` addded
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ from   _TFL                  import TFL
 
 import _MOM._EMS.Backends
 
+import _TFL.multimap
 import _TFL.Ordered_Set
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -146,6 +148,7 @@ class _App_Type_D_ (_App_Type_) :
         self.EMS              = EMS
         self.DBW              = DBW
         self.etypes           = {}
+        self.etypes_by_pns    = TFL.mm_list ()
         self._T_Extension     = []
         self.derived          = None
         self.parent           = parent
@@ -165,7 +168,8 @@ class _App_Type_D_ (_App_Type_) :
         qn  = pns._Package_Namespace__qname
         self.PNS_Map [qn]                      = pns
         self.etypes  [etype.Essence.type_name] = etype
-        self._T_Extension.append (etype)
+        self.etypes_by_pns [qn].append (etype)
+        self._T_Extension.append       (etype)
     # end def add_type
 
     def delete_database (self, db_url) :

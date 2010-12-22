@@ -1732,7 +1732,7 @@ Class `MOM.Attr.A_Attr_Type`
       attribute. Some of the possible mixins are
       :class:`~_MOM._Attr.Kind.Computed_Mixin`,
       :class:`~_MOM._Attr.Kind.Sticky_Mixin`, and
-      :class:`~_MOM._Attr.Kind.Class_Uses_Default_Mixin`.
+      :class:`~_MOM._Attr.Kind.Init_Only_Mixin`.
 
       This is optional and defaults to `()`.
 

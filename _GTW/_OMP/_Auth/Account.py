@@ -49,6 +49,8 @@
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `salt`
 #    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
 #    15-Dec-2010 (CT) `Account_P_Manager.reset_password` fixed
+#    22-Dec-2010 (CT) `_Auth_Account_.electric`, `.is_partial` and
+#                     `.is_relevant` redefined to `True`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +69,9 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
     """Model an user account."""
 
     _real_name = "Account"
+
+    is_partial  = True
+    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -134,6 +139,13 @@ class Account_Anonymous (_Ancestor_Essence) :
             default    = False
 
         # end class active
+
+        class electric (_Ancestor_Essence._Attributes.electric) :
+
+            kind       = Attr.Const
+            default    = True
+
+        # end class electric
 
         class superuser (_Ancestor_Essence._Attributes.superuser) :
 
