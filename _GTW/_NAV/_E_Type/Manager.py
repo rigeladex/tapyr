@@ -149,7 +149,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             short_title = _T ("Admin")
         else :
             short_title = m_kw.pop ("short_title", self.short_title)
-        title = m_kw.pop ("title", "%s: %s" % (self.title, self.name))
+        title = m_kw.pop ("title", "%s: Verwaltung" % (self.title.rstrip (".")))
         ETM   = m_kw.pop ("ETM", self._ETM)
         Type  = m_kw.pop ("Type", GTW.NAV.E_Type.Admin)
         try :
