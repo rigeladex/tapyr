@@ -34,8 +34,8 @@
 #}
 {%- macro site_admin (page) -%}
   <table class="Object-List">
-    {%- for link in page.own_links if link.allow_user (request.user) %}
-      <tr class="{{ loop.cycle ('row1', 'row2',) }}">
+    {%- for link in page.own_links_transitive if link.allow_user (request.user) %}
+      <tr>
         <td>
           <a href="{{ link.permalink }}"
              {% if link.title %}title="{{ GTW._T (link.title) }}"{% endif -%}
