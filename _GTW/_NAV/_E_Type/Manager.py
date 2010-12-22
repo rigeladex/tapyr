@@ -57,6 +57,8 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    14-Dec-2010 (CT) `Manager_T_Archive._year_filter` changed to use
 #                     `Q.date.start.D.YEAR` instead of home-grown code
+#    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
+#    22-Dec-2010 (CT) `_admin` added and used
 #    ««revision-date»»···
 #--
 
@@ -87,21 +89,20 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     disp_filter     = None
     sort_key        = TFL.Sorted_By ("-date.start", "perma_name")
 
+    _admin          = None
+
     def __init__ (self, src_dir, ** kw) :
         self.__super.__init__ (src_dir = src_dir, ** kw)
         if "sort_key" in self.admin_args :
             self.sort_key = self.admin_args ["sort_key"]
-        etn = self.E_Type.type_name
-        top = self.top
-        if etn not in top.E_Types :
-            top.E_Types [etn] = self
+        self.top.ET_Map [self.type_name].manager = self
+        if self.admin_args :
+            self._admin = self._admin_page (self.admin_args)
     # end def __init__
 
     @Once_Property
     def admin (self) :
-        Admin = self.top.Admin
-        if Admin :
-            return Admin._get_child (self.name)
+        return self.top.ET_Map [self.type_name].admin
     # end def admin
 
     @property
@@ -135,6 +136,32 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         return tuple (result)
     # end def query_filters
 
+    @Once_Property
+    def type_name (self) :
+        return self.E_Type.type_name
+    # end def type_name
+
+    def _admin_page (self, admin_args, parent = None) :
+        m_kw = admin_args.copy ()
+        if parent is None :
+            parent = self
+        if parent is self :
+            short_title = _T ("Admin")
+        else :
+            short_title = m_kw.pop ("short_title", self.short_title)
+        title = m_kw.pop ("title", "%s: %s" % (self.title, self.name))
+        ETM   = m_kw.pop ("ETM", self._ETM)
+        Type  = m_kw.pop ("Type", GTW.NAV.E_Type.Admin)
+        return Type \
+            ( parent      = parent
+            , name        = self.name
+            , short_title = short_title
+            , title       = title
+            , ETM         = ETM
+            , ** m_kw
+            )
+    # end def _admin_page
+
     def _get_child (self, child, * grandchildren) :
         result = None
         try :
@@ -155,6 +182,13 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
                     result = None
         return result
     # end def _get_child
+
+    def _get_entries (self) :
+        result = self.__super._get_entries ()
+        if self._admin :
+            result = result + [self._admin]
+        return result
+    # end def _get_entries
 
     def __getattr__ (self, name) :
         if self.attr_mapper :

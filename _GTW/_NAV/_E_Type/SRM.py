@@ -43,6 +43,7 @@
 #                     `Manager_T_Archive_Y`
 #    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
 #                     `__super.rendered`
+#    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
 #    ««revision-date»»···
 #--
 
@@ -229,9 +230,7 @@ class SRM (_Ancestor) :
                   , app ["GTW.OMP.SRM.Regatta_C"]
                   , app ["GTW.OMP.SRM.Regatta_H"]
                   ) :
-            etn = et.type_name
-            if etn not in top.E_Types :
-                top.E_Types [etn] = self
+            top.ET_Map [et.type_name].manager = self
     # end def __init__
 
     def href_display (self, obj) :

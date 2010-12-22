@@ -49,7 +49,7 @@ import datetime
 
 class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     """Navigation page aggregating the most recent instances of one or more
-       E_Types.
+       E-Types.
     """
 
     css_class   = "news-clip"
@@ -59,7 +59,7 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an aggregation page
-           for one or more E_Types.
+           for one or more E-Types.
         """
 
         def __init__ (self, admin, obj) :

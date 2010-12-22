@@ -34,6 +34,8 @@
 #                     `kw`, if possible
 #    12-May-2010 (CT) `lid_query` removed
 #    21-Dec-2010 (CT) `h_title` removed
+#    22-Dec-2010 (CT) `permalink` changed to use `self.manager` instead of
+#                     home-grown code
 #    ««revision-date»»···
 #--
 
@@ -117,8 +119,7 @@ class Instance_Mixin (Mixin) :
 
     @Once_Property
     def permalink (self) :
-        man = self.top.E_Types [self.E_Type.type_name]
-        return man.href_display (self.obj)
+        return self.manager.href_display (self.obj)
     # end def permalink
 
     def rendered (self, handler, template = None) :

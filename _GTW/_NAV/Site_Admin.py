@@ -182,6 +182,8 @@
 #    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
 #                     `__super.rendered`
 #    16-Dec-2010 (CT) s/Admin/Site_Admin/
+#    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
+#    22-Dec-2010 (CT) Assignment to `top.Admin` removed
 #    ««revision-date»»···
 #--
 
@@ -203,8 +205,7 @@ class Site_Admin (GTW.NAV.Dir) :
     template        = "site_admin"
 
     def __init__ (self, src_dir, parent, ** kw) :
-        self.top.Admin = self
-        entries        = self._filter_etype_entries \
+        entries = self._filter_etype_entries \
             (self._etype_man_entries (), kw.pop ("etypes", []))
         self.__super.__init__ (src_dir, parent, ** kw)
         self.add_entries      (entries)
@@ -212,21 +213,24 @@ class Site_Admin (GTW.NAV.Dir) :
     # end def __init__
 
     def _etype_man_entries (self) :
-        for man in self.top.E_Types.itervalues () :
-            m_kw        = man.admin_args.copy ()
-            short_title = m_kw.pop ("short_title", man.short_title)
-            title       = m_kw.pop ("title", "%s: %s" % (self.title, man.name))
-            ETM         = m_kw.pop ("ETM", man._ETM)
-            Type        = m_kw.pop ("Type", self.Page)
-            d           = dict \
-                ( name        = man.name
-                , short_title = short_title
-                , title       = title
-                , ETM         = ETM
-                , Type        = Type
-                , ** m_kw
-                )
-            yield d
+        for et in self.top.ET_Map.itervalues () :
+            man = et.manager
+            if man is not None and et.admin is None :
+                m_kw        = man.admin_args.copy ()
+                short_title = m_kw.pop ("short_title", man.short_title)
+                title       = m_kw.pop \
+                    ("title", "%s: %s" % (self.title, man.name))
+                ETM         = m_kw.pop ("ETM", man._ETM)
+                Type        = m_kw.pop ("Type", self.Page)
+                d           = dict \
+                    ( name        = man.name
+                    , short_title = short_title
+                    , title       = title
+                    , ETM         = ETM
+                    , Type        = Type
+                    , ** m_kw
+                    )
+                yield d
     # end def _etype_man_entries
 
     def _filter_etype_entries (self, * args) :

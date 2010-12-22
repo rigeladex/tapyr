@@ -76,6 +76,7 @@
 #    31-Aug-2010 (CT) `Changer.obj` added to simplify debugging from
 #                     browser-based `Console`
 #    21-Dec-2010 (CT) `h_title` removed
+#    22-Dec-2010 (CT) Register `Admin` instances in `top.ET_Map`
 #    ««revision-date»»···
 #--
 
@@ -420,6 +421,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         kw ["_list_display"] = kw.pop ("list_display", None)
         self.__super.__init__ (parent, ** kw)
         self.prefix = pjoin (parent.prefix, self.name)
+        self.top.ET_Map [self.E_Type.type_name].admin = self
     # end def __init__
 
     @Once_Property

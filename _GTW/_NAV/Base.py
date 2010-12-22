@@ -233,6 +233,8 @@
 #    17-Dec-2010 (CT) `universal_view` changed to use `time_block` if `DEBUG`
 #    21-Dec-2010 (CT) `h_title` changed (no `title junk` (TM))
 #    21-Dec-2010 (CT) `Root.home` added
+#    22-Dec-2010 (CT) `E_Types` replaced by `ET_Map` (containing `E_Type_Desc`)
+#    22-Dec-2010 (CT) `Root.Admin` removed
 #    ««revision-date»»···
 #--
 
@@ -252,6 +254,7 @@ from   _TFL                     import sos
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL.Context
+import _TFL.defaultdict
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
@@ -409,7 +412,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def etype_manager (self, obj) :
         etn = getattr (obj, "type_name", None)
         if etn :
-            return self.top.E_Types.get (etn)
+            return self.top.ET_Map [etn].manager
     # end def etype
 
     @Once_Property
@@ -926,7 +929,6 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
-    Admin                   = None
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
     copyright_url           = None
@@ -947,6 +949,35 @@ class Root (_Dir_) :
     _permission             = None
     Create_Scope            = None
 
+    class E_Type_Desc (TFL.Meta.Object) :
+
+        _admin   = None
+        _manager = None
+
+        @property
+        def admin (self) :
+            return self._admin
+        # end def admin
+
+        @admin.setter
+        def admin (self, value) :
+            if self._admin is None :
+                self._admin = value
+        # end def admin
+
+        @property
+        def manager (self) :
+            return  self._manager
+        # end def manager
+
+        @manager.setter
+        def manager (self, value) :
+            if self._manager is None :
+                self._manager = value
+        # end def manager
+
+    # end class E_Type_Desc
+
     def __init__ (self, src_dir, HTTP, Templateer, ** kw) :
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
@@ -955,7 +986,7 @@ class Root (_Dir_) :
         self.prefix       = ""
         self.Table        = {}
         self.SC           = Record ()
-        self.E_Types      = {}
+        self.ET_Map       = TFL.defaultdict (self.E_Type_Desc)
         self.level        = -1
         self.__super.__init__ \
             ( src_dir    = src_dir
