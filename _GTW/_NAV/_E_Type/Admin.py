@@ -101,6 +101,7 @@ from   posixpath                import join  as pjoin
 class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
+    css_group   = "Type"
     template    = "e_type_admin"
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :

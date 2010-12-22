@@ -42,6 +42,7 @@
 #    22-Dec-2010 (CT) Assignment to `top.Admin` removed
 #    22-Dec-2010 (CT) Moved from `GTW.NAV` to `GTW.NAV.E_Type`
 #    22-Dec-2010 (CT) `Admin_Group` factored, `Admin_Group._pns_entries` added
+#    22-Dec-2010 (CT) `Admin_Alias` and `show_aliases` added and used
 #    ««revision-date»»···
 #--
 
@@ -55,26 +56,34 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 from   itertools import chain as ichain, repeat as irepeat
 
+class Admin_Alias (GTW.NAV.Alias) :
+
+    short_title = property \
+        ( lambda s    : s.target.manager.short_title
+        , lambda s, v : None
+        )
+
+    title = property \
+        ( lambda s    : s.target.title
+        , lambda s, v : None
+        )
+
+# end class Admin_Alias
+
 class Admin_Group (GTW.NAV.Dir) :
     """Model a group of E-Type admin pages."""
 
+    css_group       = "Group"
     delegate_view_p = False
     Page            = GTW.NAV.E_Type.Admin
+    show_aliases    = False
     template        = "site_admin" ### XXX wrong name
 
-    """
-        [   str (T.type_base_name)
-        for T in scope.app_type.etypes_by_pns ['GTW.OMP.Auth']
-        if T.is_relevant and not T.electric.default)
-        ]
-
-    """
-
     def __init__ (self, src_dir, parent, ** kw) :
-        entries = self._filter_etype_entries \
+        entries = \
             (kw.pop ("etypes", []), self._pns_entries (* kw.pop ("PNSs", [])))
         self.__super.__init__ (src_dir, parent, ** kw)
-        self.add_entries      (entries)
+        self.add_entries      (self._filter_etype_entries (* entries))
         self._entries.sort    (key = TFL.Getter.short_title)
     # end def __init__
 
@@ -93,11 +102,21 @@ class Admin_Group (GTW.NAV.Dir) :
 
     def _pns_entries (self, * pnss) :
         app_type = self.top.scope.app_type
+        ET_Map   = self.top.ET_Map
         for pns in pnss :
+            PNS = app_type.PNS_Map [pns]
+            Nav = getattr (getattr (PNS, "Nav", None), "Admin", None)
             for T in app_type.etypes_by_pns [pns] :
                 if T.is_relevant and not T.electric.default :
-                    if T.admin_args :
-                        yield T.admin_args
+                    admin = ET_Map [T.type_name].admin
+                    if (not admin) or self.show_aliases :
+                        aa = getattr (T, "admin_args", {})
+                        aa.update (getattr (Nav, T.type_base_name, {}))
+                        if admin :
+                            aa ["Type"]   = Admin_Alias
+                            aa ["target"] = admin
+                        if aa :
+                            yield aa
     # end def _pns_entries
 
 # end class Admin_Group

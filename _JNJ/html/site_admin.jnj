@@ -29,19 +29,29 @@
 ##
 ## Revision Dates
 ##    22-Jan-2010 (CT) Creation
+##    22-Dec-2010 (CT) `a_link` factored, `Group` support added, `class` added
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- macro a_link (link) -%}
+  <a href="{{ link.permalink }}"
+     {% if link.title %}title="{{ GTW._T (link.title) }}"{% endif -%}
+  >{{ link.short_title }}</a>
+{%- endmacro -%} {#- a_link -#}
+
 {%- macro site_admin (page) -%}
   <table class="Object-List">
     {%- for link in page.own_links_transitive if link.allow_user (request.user) %}
       <tr>
-        <td>
-          <a href="{{ link.permalink }}"
-             {% if link.title %}title="{{ GTW._T (link.title) }}"{% endif -%}
-          >{{ link.short_title }}</a>
-        </td>
-        <td>{{ link.count }}</td>
+        {%- if link.css_group == "Group" %}
+          <td colspan="2" class="Group">{{ a_link (link) }}</td>
+        {%- else -%}
+          <td {%- if link.css_group  %} class="{{ link.css_group }}"{% endif %}>
+            {{- a_link (link) -}}
+          </td>
+          <td class="Count">{{ link.count }}</td>
+        {% endif %}
       </tr>
     {% endfor -%}
   </table>
