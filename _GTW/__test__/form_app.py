@@ -237,7 +237,7 @@ def nav ( cmd
                   , GTW.OMP.SRM.Nav.Admin.Regatta_Event
                   , GTW.OMP.SWP.Nav.Admin.Page
                   ]
-              , Type            = GTW.NAV.Site_Admin
+              , Type            = GTW.NAV.E_Type.Site_Admin
               )
           , dict
               ( src_dir         = _ ("Auth")

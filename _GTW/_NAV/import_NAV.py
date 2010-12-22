@@ -29,6 +29,7 @@
 #    25-Jan-2010 (CT) Creation
 #    20-Mar-2010 (MG) Import of `Request_Handler` removed
 #    16-Dec-2010 (CT) s/Admin/Site_Admin/
+#    22-Dec-2010 (CT) `Site_Admin` moved to `GTW.NAV.E_Type`
 #    ««revision-date»»···
 #--
 
@@ -38,12 +39,12 @@ import _GTW._NAV.Gallery
 import _GTW._NAV.L10N
 import _GTW._NAV.Permission
 import _GTW._NAV.ReST
-import _GTW._NAV.Site_Admin
 import _GTW._NAV.Video
 
 import _GTW._NAV._E_Type.Admin
 import _GTW._NAV._E_Type.Aggregator
 import _GTW._NAV._E_Type.Instance
 import _GTW._NAV._E_Type.Manager
+import _GTW._NAV._E_Type.Site_Admin
 
 ### __END__ GTW.NAV.import_NAV

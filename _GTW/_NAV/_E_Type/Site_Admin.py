@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.NAV.Site_Admin
+#    GTW.NAV.E_Type.Site_Admin
 #
 # Purpose
 #    Model an admin page for a GTW site
@@ -40,6 +40,7 @@
 #    16-Dec-2010 (CT) s/Admin/Site_Admin/
 #    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
 #    22-Dec-2010 (CT) Assignment to `top.Admin` removed
+#    22-Dec-2010 (CT) Moved from `GTW.NAV` to `GTW.NAV.E_Type`
 #    ««revision-date»»···
 #--
 
@@ -105,5 +106,5 @@ class Site_Admin (GTW.NAV.Dir) :
 # end class Site_Admin
 
 if __name__ != "__main__":
-    GTW.NAV._Export ("*")
-### __END__ GTW.NAV.Site_Admin
+    GTW.NAV.E_Type._Export ("*")
+### __END__ GTW.NAV.E_Type.Site_Admin
