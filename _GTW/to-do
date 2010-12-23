@@ -10,25 +10,11 @@ x GTW.NAV.Robots: Answer to url `/robots.txt`
 
   x http://www.robotstxt.org/robotstxt.html
 
-- GTW.NAV.E_Type.Admin
+x GTW.NAV.E_Type.Admin
 
-  * Introduce E_Type_Admin_Desc and E_Type_Admin_Group_Desc
+  x allow grouping of E_Type specific Admin pages under a Admin Group
 
-    + reify the information contained in GTW.OMP.XXX.Nav.Admin
-
-    + allow grouping of E_Type specific Admin pages under a Admin Group
-
-    + allow `admin_args` argument to `GTW.NAV.E_Type.Manager` to refer to a
-      `E_Type_Admin_Group_Desc` (doesn't need the name of the `E_Type`; DRY!)
-
-    + Change GTW.NAV.Site_Admin
-
-      - to include etypes from `top.E_Types` only if they aren't explicitly
-        specified
-
-      - must allow multiple E_Types to map to the same GTW.NAV.E_Type.Manager
-        instance (i.e., Site_Admin needs to iterate over the keys of
-        `top.E_Types`, not over its values!)
+  x Change GTW.NAV.Site_Admin
 
 - OMP (Object Model Part)
 

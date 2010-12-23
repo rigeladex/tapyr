@@ -44,10 +44,10 @@
   <table class="Object-List">
     {%- for link in page.own_links_transitive if link.allow_user (request.user) %}
       <tr>
-        {%- if link.css_group == "Group" %}
+        {%- if link.has_children %}
           <td colspan="2" class="Group">{{ a_link (link) }}</td>
         {%- else -%}
-          <td {%- if link.css_group  %} class="{{ link.css_group }}"{% endif %}>
+          <td class="{{ link.css_group or "Type" }}">
             {{- a_link (link) -}}
           </td>
           <td class="Count">{{ link.count }}</td>
