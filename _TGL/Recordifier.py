@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Sep-2006 (CT) Creation
+#    23-Dec-2010 (CT) Use `_print` for doctest (`%s` instead of `%r` for `v`)
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,17 @@ from   _TFL.Regexp import re
 import _TFL.Caller
 import _TFL.Record
 import _TFL._Meta.Object
+
+def _print (r) :
+    print "(%s)" % \
+        ( ", ".join \
+            ( (   "%s = %s" % (k, v)
+              for (k, v) in sorted (r._kw.iteritems ())
+              )
+            )
+        )
+# end def _print
+
 
 class _Recordifier_ (TFL.Meta.Object) :
 
@@ -63,9 +75,9 @@ class By_Regexp (_Recordifier_) :
        ...     (r"(?P<dt> (?P<y> \d{4})-(?P<m> \d{2})(?:-(?P<d> \d{2}))?)"
        ...      r" \s+ (?P<M> \d+) \s+ (?P<w> \d+\.\d*)", re.X)
        ...     , M = int, weight = float, y = int, m = int, d = int)
-       >>> print br ("2006-06-01 6  96.4  1.20  93.5  98.1")
+       >>> _print (br ("2006-06-01 6  96.4  1.20  93.5  98.1"))
        (M = 6, d = 1, dt = 2006-06-01, m = 6, w = 96.4, y = 2006)
-       >>> print br ("2006-06 6  96.4  1.20  93.5  98.1")
+       >>> _print (br ("2006-06 6  96.4  1.20  93.5  98.1"))
        (M = 6, dt = 2006-06, m = 6, w = 96.4, y = 2006)
     """
 
@@ -105,11 +117,11 @@ class By_Separator (_Recordifier_) :
        >>> bw = By_Separator (
        ...   "d", ("m", int), "avg", "err", "min", "max",
        ...   _default_converter = float, d = str)
-       >>> print bw ("2006-06-01 6  96.4  1.20  93.5  98.1")
+       >>> _print (bw ("2006-06-01 6  96.4  1.20  93.5  98.1"))
        (avg = 96.4, d = 2006-06-01, err = 1.2, m = 6, max = 98.1, min = 93.5)
-       >>> print bw ("2006-06-01 6  96.4  1.20  93.5")
+       >>> _print (bw ("2006-06-01 6  96.4  1.20  93.5"))
        (avg = 96.4, d = 2006-06-01, err = 1.2, m = 6, min = 93.5)
-       >>> print bw ("2006-06-01 6  96.4  1.20  93.5  98.1 42")
+       >>> _print (bw ("2006-06-01 6  96.4  1.20  93.5  98.1 42"))
        (avg = 96.4, d = 2006-06-01, err = 1.2, m = 6, max = 98.1, min = 93.5)
     """
 

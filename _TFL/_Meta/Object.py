@@ -67,7 +67,7 @@ class _TFL_Meta_Object_Root_ (object) :
        ...         self.y = y
        ...         self.__super.__init__ ()
        ...
-       >>> b = B (1)
+       >>> b = B (1) ### Test fails if run with `-O` !!!
        Traceback (most recent call last):
            ...
        AssertionError: MRO conflict for B.__init__: super != object,

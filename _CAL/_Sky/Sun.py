@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -59,22 +59,22 @@ class Sun (TFL.Meta.Object) :
        ### Example 25.a of J. Meeus, p.165
        >>> import _CAL.Date
        >>> s = Sun (CAL.Date (1992, 10, 13))
-       >>> s.t
-       -0.072183436002737855
+       >>> print s.t
+       -0.0721834360027
        >>> s.geometric_mean_longitude
        Angle_D (201.807196507)
        >>> s.geometric_mean_anomaly
        Angle_D (278.993966432)
-       >>> s.eccentriticy_earth_orbit
-       0.01671166771493543
+       >>> print s.eccentriticy_earth_orbit
+       0.0167116677149
        >>> s.equation_of_center
        Angle_D (-1.89732384337)
        >>> s.true_longitude
        Angle_D (199.909872663)
        >>> print s.true_longitude
        199°54'35''
-       >>> s.radius_vector
-       0.99766195000562929
+       >>> print s.radius_vector
+       0.997661950006
        >>> s.omega
        Angle_D (264.652582177)
        >>> s.apparent_longitude
@@ -85,16 +85,16 @@ class Sun (TFL.Meta.Object) :
        Angle_D (23.4402297955)
        >>> print s.mean_obliquity_ecliptic
        023°26'24''
-       >>> s.mean_obliquity_ecliptic.seconds
-       24.827263800417541
+       >>> print s.mean_obliquity_ecliptic.seconds
+       24.8272638004
        >>> s.obliquity_corrected
        Angle_D (23.4399912173)
-       >>> s.right_ascension.degrees
-       -161.61917478762672
-       >>> s.declination.degrees
-       -7.7850697960238602
-       >>> s.equation_of_time
-       13.71101025277024
+       >>> print s.right_ascension.degrees
+       -161.619174788
+       >>> print s.declination.degrees
+       -7.78506979602
+       >>> print s.equation_of_time
+       13.7110102528
     """
 
     ### see J. Meeus, pp. 163f.

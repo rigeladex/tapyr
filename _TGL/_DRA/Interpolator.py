@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,8 +42,8 @@ class Interpolator_3 (TFL.Meta.Object) :
     """Interpolate from three data values.
 
        >>> calcer = Interpolator_3 ((7, 0.884226), (8, 0.877366), (9, 0.870531))
-       >>> calcer (8.18125)
-       0.87612530126953125
+       >>> print calcer (8.18125)
+       0.87612530127
     """
 
     ### see J. Meeus, ISBN 0-943396-61-1, pp. 23-24

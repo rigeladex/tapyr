@@ -29,6 +29,7 @@
 #    12-Nov-2007 (CT) Creation
 #    30-Nov-2007 (CT) Moved to TFL
 #    17-Jun-2010 (CT) `__unicode__` introduced
+#    23-Dec-2010 (CT) Doctest fixed (don't use `repr` of floating point numbers)
 #    ««revision-date»»···
 #--
 
@@ -163,10 +164,11 @@ class Angle_D (_Angle_) :
        >>> Angle_D (45, 30, 36)
        Angle_D (45.51)
        >>> a = Angle_D (45)
-       >>> a.radians
-       0.78539816339744828
-       >>> a.sin, a.cos, a.tan
-       (0.70710678118654746, 0.70710678118654757, 0.99999999999999989)
+       >>> print a.radians
+       0.785398163397
+       >>> print a.sin, a.cos, a.tan
+       0.707106781187 0.707106781187 1.0
+
     """
 
     name = "degrees"
@@ -197,14 +199,14 @@ class Angle_R (_Angle_) :
        >>> b = Angle_R (0.78539816339744828)
        >>> b.degrees
        45.0
-       >>> b.sin, b.cos, b.tan
-       (0.70710678118654746, 0.70710678118654757, 0.99999999999999989)
+       >>> print b.sin, b.cos, b.tan
+       0.707106781187 0.707106781187 1.0
        >>> Angle_R.asin (b.sin)
        Angle_R (0.785398163397)
        >>> Angle_D.asin (b.sin)
        Angle_R (0.785398163397)
-       >>> Angle_R.asin (b.sin).degrees
-       44.999999999999993
+       >>> print Angle_R.asin (b.sin).degrees
+       45.0
     """
 
     name = "radians"
