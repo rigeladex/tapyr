@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,12 +51,12 @@ style_sheet = Style_Sheet \
     , Rule
         ( "img"
         , children             =
-            ( Rule
+            ( Rule_Class
                 ( "align_left"
                 , float            = "left"
                 , margin           = "1px 5px 1px 0px"
                 )
-            , Rule
+            , Rule_Class
                 ( "align_right"
                 , float            = "right"
                 , margin           = "1px 0px 1px 5px"
