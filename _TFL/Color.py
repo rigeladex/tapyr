@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Dec-2010 (CT) Creation
+#    27-Dec-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -113,6 +114,9 @@ class Value (TFL.Meta.Object) :
     def from_hsl (cls, hsl) :
         assert hsl
         hsl = HSL_Value (* hsl)
+        assert 0.0 <= hsl.hue        <  360.0
+        assert 0.0 <= hsl.saturation <= 1.0
+        assert 0.0 <= hsl.lightness  <= 1.0
         if hsl in cls.Table_HSL :
             result = cls.Table_HSL [hsl]
         else :
@@ -125,6 +129,7 @@ class Value (TFL.Meta.Object) :
     def from_rgb (cls, rgb) :
         assert rgb
         rgb = RGB_Value (* rgb)
+        assert all (0.0 <= v <= 1.0 for v in rgb), str (rgb)
         if rgb in cls.Table_RGB :
             result = cls.Table_RGB [rgb]
         else :
@@ -213,11 +218,28 @@ class _Color_ (TFL.Meta.Object) :
        >>> print c, d, h
        rgb(255, 0, 0) #F00 hsl(0.0, 1.0, 0.5)
 
+       >>> cn = ~ c
+       >>> hn = ~ h
+       >>> print cn, hn
+       rgb(0, 255, 255) hsl(180.0, 1.0, 0.5)
+
        >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
        >>> da = ca.as_RGB_X
        >>> ha = da.as_HSL
        >>> print ca, da, ha
        rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0.0, 1.0, 0.5, 0.25)
+
+       >>> b  = RGB (0, 0, 0)
+       >>> hb = b.as_HSL
+       >>> w  = RGB (1, 1, 1)
+       >>> hw = w.as_HSL
+       >>> print b, ~b, hb, ~hb
+       rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+       >>> print ~w, w, ~hw, hw
+       rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+
+       >>> print c * 0.5, w * 0.8
+       rgb(127, 0, 0) rgb(80%, 80%, 80%)
     """
 
     alpha = None
@@ -264,6 +286,15 @@ class _Color_ (TFL.Meta.Object) :
             result.alpha = v.alpha
         return result
     # end def cast
+
+    @classmethod
+    def from_value (cls, value, alpha = None) :
+        result = cls.__new__ (cls)
+        result.value = value
+        if alpha is not None :
+            result.alpha = alpha
+        return result
+    # end def from_value
 
     @property
     def blue (self) :
@@ -361,6 +392,19 @@ class _Color_ (TFL.Meta.Object) :
         self.value = Value (hsl = (h, float (value), l))
     # end def saturation
 
+    def __invert__ (self) :
+        return self.__class__.from_value \
+            (Value (rgb = tuple (1.0 - v for v in self.rgb)), self.alpha)
+    # end def __invert__
+
+    def __mul__ (self, rhs) :
+        assert 0.0 <= rhs
+        return self.__class__.from_value \
+            ( Value (rgb = tuple (min (v * rhs, 1.0) for v in self.rgb))
+            , self.alpha
+            )
+    # end def __mul__
+
     def __str__ (self) :
         v = self._formatted_values ()
         if self.alpha is not None :
@@ -377,9 +421,6 @@ class HSL (_Color_) :
     name = "hsl"
 
     def __init__ (self, hue, saturation, lightness, alpha = None) :
-        assert 0.0 <= hue        <  360.0
-        assert 0.0 <= saturation <= 1.0
-        assert 0.0 <= lightness  <= 1.0
         self.__super.__init__ ((hue, saturation, lightness), alpha)
     # end def __init__
 
@@ -399,9 +440,6 @@ class RGB (_Color_) :
     name = "rgb"
 
     def __init__ (self, red, green, blue, alpha = None) :
-        assert 0.0 <= red   <= 1.0
-        assert 0.0 <= green <= 1.0
-        assert 0.0 <= blue  <= 1.0
         self.__super.__init__ ((red, green, blue), alpha)
     # end def __init__
 
