@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,6 +48,7 @@
 #    24-Feb-2009 (CT) Add headers for `Content-type`,
 #                     `Content-transfer-encoding` and `Mime-version`
 #    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
+#    27-Dec-2010 (CT) Options for mail sending added and passed to `PMA.Sender`
 #    ««revision-date»»···
 #--
 
@@ -359,16 +360,22 @@ class Composer (TFL.Meta.Object) :
 # end class Composer
 
 def _command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line
+    from _TFL.Command_Line import Command_Line ### XXX port to CAO
     return Command_Line \
         ( option_spec =
             ( "-bounce:S?Message to resend"
+            # "-config:C?File specifying defaults for options"
             , "-domain:S?Domain of sender"
             , "-editor:S?Command used to start editor"
             , "-forward:S?Message to forward"
             , "-mail_host:S?Name of SMTP server to use"
+            , "-mail_local_hostname:S?Name of host sending the email"
+            , "-mail_port:I=25?Number of port of SMTP server to use"
+            , "-mail_user:S?User name for login into SMTP server"
+            , "-mail_word:S?Password for login into SMTP server"
             , "-reply:S?Message to reply to"
             , "-Reply_all:S?Message to reply to"
+            , "-tls:B?Use SMTP in TLS (Transport Layer Security) mode."
             , "-user:S?Name of sender"
             )
         , description =
@@ -379,7 +386,14 @@ def _command_spec (arg_array = None) :
 # end def _command_spec
 
 def _main (cmd) :
-    smtp = PMA.Sender   (cmd.mail_host)
+    smtp = PMA.Sender \
+        ( local_hostname = cmd.mail_local_hostname
+        , mail_host      = cmd.mail_host
+        , mail_port      = cmd.mail_port
+        , password       = cmd.mail_word
+        , user           = cmd.mail_user
+        , use_tls        = cmd.tls
+        )
     comp = PMA.Composer (cmd.editor, cmd.user, cmd.domain, smtp)
     if cmd.forward :
         comp.forward    (PMA.message_from_file (cmd.forward))

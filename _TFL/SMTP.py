@@ -29,6 +29,9 @@
 #    19-Feb-2010 (CT) Creation (factored from `PMA.Sender`)
 #    21-Feb-2010 (MG) Support for authentication added
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
+#    27-Dec-2010 (CT) Optional init-arguments added,
+#                     `open` and `close` factored and extended (`use_tls`)
+#                     `connection` added and used
 #    ««revision-date»»···
 #--
 
@@ -37,22 +40,38 @@ from   _TFL                    import TFL
 from   _TFL                    import pyk
 
 import _TFL._Meta.Object
+import _TFL.Context
 
 from   email                   import message, message_from_string
 from   email.Utils             import formatdate
 
 import smtplib
+import socket
 
 class SMTP (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
-    mail_host = "localhost"
+    local_hostname = None
+    mail_host      = "localhost"
+    mail_port      = None
+    password       = None
+    user           = None
+    use_tls        = False
 
-    def __init__ (self, mail_host = None, user = None, password = None) :
+    def __init__ (self, mail_host = None, mail_port = None, local_hostname = None, user = None, password = None, use_tls = None) :
         if mail_host is not None :
             self.mail_host = mail_host
-        self.user          = user
-        self.password      = password
+        if mail_port is not None :
+            self.mail_port = mail_port
+        if local_hostname is not None :
+            self.local_hostname = local_hostname
+        if user is not None :
+            self.user = user
+        if password is not None :
+            self.password = password
+        if use_tls is not None :
+            self.use_tls = use_tls
+        self.server = None
     # end def __init__
 
     def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
@@ -63,16 +82,48 @@ class SMTP (TFL.Meta.Object) :
         self.send_message (email, mail_opts = mail_opts, rcpt_opts = rcpt_opts)
     # end def __call__
 
+    def close (self) :
+        assert self.server is not None
+        try :
+            self.server.quit ()
+        except socket.sslerror :
+            self.server.close ()
+        finally :
+            self.server = None
+    # end def close
+
+    @TFL.Contextmanager
+    def connection (self) :
+        close_p = self.server is not None
+        server  = self.open ()
+        try :
+            yield server
+        finally :
+            if close_p :
+                self.close ()
+    # end def connection
+
+    def open (self) :
+        if self.server is None :
+            result = self.server = smtplib.SMTP \
+                (self.mail_host, self.mail_port, self.local_hostname)
+            if self.use_tls :
+                result.ehlo     ()
+                result.starttls ()
+                result.ehlo     ()
+            else :
+                result.helo     ()
+            if self.user :
+                result.login (self.user, self.password)
+        return self.server
+    # end def open
+
     def send (self, from_addr, to_addrs, msg, mail_opts = (), rcpt_opts = None) :
-        server = smtplib.SMTP (self.mail_host)
-        if self.user :
-            server.login (self.user, self.password)
-        server.helo      ()
-        server.sendmail  (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
-        server.quit      ()
+        with self.connection () as server :
+            server.sendmail (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
     # end def send
 
-    def send_message (self, email, envelope = None, mail_opts = None, rcpt_opts = None) :
+    def send_message (self, email, envelope = None, mail_opts = (), rcpt_opts = None) :
         assert isinstance (email, message.Message)
         if envelope is None :
             envelope = email

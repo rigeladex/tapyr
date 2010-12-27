@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Jul-2005 (CT) Creation (factored from Composer.py)
 #    19-Feb-2010 (CT) `TFL.SMTP` factored
+#    27-Dec-2010 (CT) `** kw` added to `__init__`
 #    ««revision-date»»···
 #--
 
@@ -40,8 +41,8 @@ import _TFL.SMTP
 class Sender (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
-    def __init__ (self, mail_host = None) :
-        self.smtp = TFL.SMTP ()
+    def __init__ (self, mail_host = None, ** kw) :
+        self.smtp = TFL.SMTP (mail_host = mail_host, ** kw)
     # end def __init__
 
     def __call__ (self, email, envelope = None) :
