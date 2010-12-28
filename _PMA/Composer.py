@@ -49,6 +49,7 @@
 #                     `Content-transfer-encoding` and `Mime-version`
 #    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
 #    27-Dec-2010 (CT) Options for mail sending added and passed to `PMA.Sender`
+#    27-Dec-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ import _PMA.Sender
 import _PMA.Thread
 
 import _TFL._Meta.Object
+import _TFL.CAO
 import _TFL.Environment
 import _TFL.FCM
 from   _TFL.predicate          import callable
@@ -359,32 +361,6 @@ class Composer (TFL.Meta.Object) :
 
 # end class Composer
 
-def _command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line ### XXX port to CAO
-    return Command_Line \
-        ( option_spec =
-            ( "-bounce:S?Message to resend"
-            # "-config:C?File specifying defaults for options"
-            , "-domain:S?Domain of sender"
-            , "-editor:S?Command used to start editor"
-            , "-forward:S?Message to forward"
-            , "-mail_host:S?Name of SMTP server to use"
-            , "-mail_local_hostname:S?Name of host sending the email"
-            , "-mail_port:I=25?Number of port of SMTP server to use"
-            , "-mail_user:S?User name for login into SMTP server"
-            , "-mail_word:S?Password for login into SMTP server"
-            , "-reply:S?Message to reply to"
-            , "-Reply_all:S?Message to reply to"
-            , "-tls:B?Use SMTP in TLS (Transport Layer Security) mode."
-            , "-user:S?Name of sender"
-            )
-        , description =
-          "Send mail message (newly composed or reply to existing email)"
-        , max_args    = 0
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     smtp = PMA.Sender \
         ( local_hostname = cmd.mail_local_hostname
@@ -407,10 +383,33 @@ def _main (cmd) :
         comp.compose    ()
 # end def _main
 
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , max_args    = 0
+    , opts        =
+        ( "-bounce:S?Message to resend"
+        , "-config:C?File specifying defaults for options"
+        , "-domain:S?Domain of sender"
+        , "-editor:S?Command used to start editor"
+        , "-forward:S?Message to forward"
+        , "-mail_host:S?Name of SMTP server to use"
+        , "-mail_local_hostname:S?Name of host sending the email"
+        , "-mail_port:I=25?Number of port of SMTP server to use"
+        , "-mail_user:S?User name for login into SMTP server"
+        , "-mail_word:S?Password for login into SMTP server"
+        , "-reply:S?Message to reply to"
+        , "-Reply_all:S?Message to reply to"
+        , "-tls:B?Use SMTP in TLS (Transport Layer Security) mode."
+        , "-user:S?Name of sender"
+        )
+        , description =
+          "Send mail message (newly composed or reply to existing email)"
+    )
+
 if __name__ != "__main__" :
     PMA._Export ("*")
 else :
     import _PMA.Composer
     PMA.load_user_config ()
-    _main (_command_spec ())
+    _Command ()
 ### __END__ PMA.Composer

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,10 +37,11 @@
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    12-Aug-2005 (MG) `patchlevel` increased to 4
 #    16-Aug-2005 (CT) `patchlevel` increased to 5
-#    03-Jan-2006 (MG) `load_user_config` changed
+#     3-Jan-2006 (MG) `load_user_config` changed
 #     5-Jan-2006 (CT) `load_config_file` factored to `TGL` and
 #                     `load_user_config` interface changed (`* config_fn`)
 #     9-Jul-2007 (CT) `text_output_width` added
+#    27-Dec-2010 (CT) `minor_version` version increased to 7
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ PMA = Package_Namespace ()
 
 PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
 PMA.major_version        = _M = 0
-PMA.minor_version        = _m = 6
+PMA.minor_version        = _m = 7
 PMA.patchlevel           = _p = 0
 PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
 PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
