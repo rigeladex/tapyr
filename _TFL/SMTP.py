@@ -109,10 +109,8 @@ class SMTP (TFL.Meta.Object) :
                 (self.mail_host, self.mail_port, self.local_hostname)
             if self.use_tls :
                 result.ehlo     ()
-                result.starttls ()
-                result.ehlo     ()
-            else :
-                result.helo     ()
+                result.starttls () ### Still need another `ehlo` after this
+            result.ehlo ()
             if self.user :
                 result.login (self.user, self.password)
         return self.server
