@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.CSS
+#    GTW.CSS
 #
 # Purpose
 #    Model CSS rules and style files
@@ -34,13 +34,14 @@
 #                     aren't `self.declarations`
 #    11-Sep-2009 (CT) `Parameters`, `Parameter_Scope` and `Style_Sheet.Read`
 #                     added
+#    28-Dec-2010 (CT) Move to `GTW`
 #    ««revision-date»»···
 #--
 
 from   __future__                 import with_statement
 
 from   _TFL                       import TFL
-from   _DJO                       import DJO
+from   _GTW                       import GTW
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -267,7 +268,7 @@ class Style_Sheet (TFL.Meta.Object) :
         ignore = set (("Parameter_Scope", "Parameters"))
         if not result :
             from _TFL.Module import names_of
-            from _DJO        import CSS
+            from _GTW        import CSS
             for name in names_of (CSS) :
                 if name not in ignore :
                     result [name] = getattr (CSS, name)
@@ -292,5 +293,5 @@ class Style_Sheet (TFL.Meta.Object) :
 S = Style_Sheet
 
 if __name__ != "__main__" :
-    DJO._Export_Module ()
-### __END__ DJO.CSS
+    GTW._Export_Module ()
+### __END__ GTW.CSS
