@@ -115,7 +115,7 @@ def choose (* lang) :
 
 @TFL.Contextmanager
 def context (* lang) :
-    """Temporaly change the translation language
+    """Temporarily change the translation language
     ### Let's fake some Translations
     >>> from _TFL._Babel.Translations import Translations
     >>> Config.Languages ["l1"] = l1 = Translations ()
