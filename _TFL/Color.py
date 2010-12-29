@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Dec-2010 (CT) Creation
 #    27-Dec-2010 (CT) Creation continued
+#    29-Dec-2010 (CT) Creation finished
 #    ««revision-date»»···
 #--
 
@@ -46,43 +47,39 @@ HSL_Value = namedtuple ("HSL", ("hue", "saturation", "lightness"))
 class Value (TFL.Meta.Object) :
     """Model an immutable color value.
 
-       >>> white_1 = Value (rgb = (1.0, 1.0, 1.0))
-       >>> white_1
-       Value (rgb = (1.0, 1.0, 1.0))
-       >>> white_1.rgb, white_1.hsl
-       (RGB(red=1.0, green=1.0, blue=1.0), HSL(hue=0.0, saturation=0.0, lightness=1.0))
+    >>> white_1 = Value (rgb = (1.0, 1.0, 1.0))
+    >>> white_1.rgb, white_1.hsl
+    (RGB(red=1.0, green=1.0, blue=1.0), HSL(hue=0.0, saturation=0.0, lightness=1.0))
 
-       >>> white_2 = Value (hsl = (0.0, 0.0, 1.0))
-       >>> white_2
-       Value (hsl = (0.0, 0.0, 1.0))
-       >>> white_2.rgb, white_2.hsl
-       (RGB(red=1.0, green=1.0, blue=1.0), HSL(hue=0.0, saturation=0.0, lightness=1.0))
+    >>> white_2 = Value (hsl = (0.0, 0.0, 1.0))
+    >>> white_2.rgb, white_2.hsl
+    (RGB(red=1.0, green=1.0, blue=1.0), HSL(hue=0.0, saturation=0.0, lightness=1.0))
 
-       >>> white_1 == white_2
-       True
+    >>> white_1 == white_2
+    True
 
-       >>> grey50 = Value (rgb = (0.5, 0.5, 0.5))
-       >>> grey50.rgb, grey50.hsl
-       (RGB(red=0.5, green=0.5, blue=0.5), HSL(hue=0.0, saturation=0.0, lightness=0.5))
+    >>> grey50 = Value (rgb = (0.5, 0.5, 0.5))
+    >>> grey50.rgb, grey50.hsl
+    (RGB(red=0.5, green=0.5, blue=0.5), HSL(hue=0.0, saturation=0.0, lightness=0.5))
 
-       >>> black = Value (rgb = (0.0, 0.0, 0.0))
-       >>> black.rgb, black.hsl
-       (RGB(red=0.0, green=0.0, blue=0.0), HSL(hue=0.0, saturation=0.0, lightness=0.0))
+    >>> black = Value (rgb = (0.0, 0.0, 0.0))
+    >>> black.rgb, black.hsl
+    (RGB(red=0.0, green=0.0, blue=0.0), HSL(hue=0.0, saturation=0.0, lightness=0.0))
 
-       >>> red = Value (hsl = (0.0, 1.0, 0.5))
-       >>> red.rgb, red.hsl
-       (RGB(red=1.0, green=0.0, blue=0.0), HSL(hue=0.0, saturation=1.0, lightness=0.5))
+    >>> red = Value (hsl = (0.0, 1.0, 0.5))
+    >>> red.rgb, red.hsl
+    (RGB(red=1.0, green=0.0, blue=0.0), HSL(hue=0.0, saturation=1.0, lightness=0.5))
 
-       >>> Value (rgb = (0.750, 0.750, 0.000)) == Value (hsl = ( 60.0, 1.000, 0.375))
-       True
-       >>> Value (rgb = (0.000, 0.500, 0.000)) == Value (hsl = (120.0, 1.000, 0.250))
-       True
-       >>> Value (rgb = (0.500, 1.000, 1.000)) == Value (hsl = (180.0, 1.000, 0.750))
-       True
-       >>> Value (rgb = (0.500, 0.500, 1.000)) == Value (hsl = (240.0, 1.000, 0.750))
-       True
-       >>> Value (rgb = (0.750, 0.250, 0.750)) == Value (hsl = (300.0, 0.500, 0.500))
-       True
+    >>> Value (rgb = (0.750, 0.750, 0.000)) == Value (hsl = ( 60.0, 1.000, 0.375))
+    True
+    >>> Value (rgb = (0.000, 0.500, 0.000)) == Value (hsl = (120.0, 1.000, 0.250))
+    True
+    >>> Value (rgb = (0.500, 1.000, 1.000)) == Value (hsl = (180.0, 1.000, 0.750))
+    True
+    >>> Value (rgb = (0.500, 0.500, 1.000)) == Value (hsl = (240.0, 1.000, 0.750))
+    True
+    >>> Value (rgb = (0.750, 0.250, 0.750)) == Value (hsl = (300.0, 0.500, 0.500))
+    True
     """
 
     Table_HSL = {}
@@ -137,6 +134,20 @@ class Value (TFL.Meta.Object) :
             result._rgb = rgb
         return result
     # end def from_rgb
+
+    @Once_Property
+    def hex (self) :
+        r, g, b = tuple ("%2.2X" % (x*255, ) for x in self.rgb)
+        return "#%s%s%s" % (r, g, b)
+    # end def hex
+
+    @Once_Property
+    def hex_CSS (self) :
+        r, g, b = tuple ("%2.2X" % (x*255, ) for x in self.rgb)
+        if all (x [0] == x [1] for x in (r, g, b)) :
+            r, g, b = tuple (x [0] for x in (r, g, b))
+        return "#%s%s%s" % (r, g, b)
+    # end def hex
 
     @Once_Property
     def hsl (self) :
@@ -209,40 +220,65 @@ class Value (TFL.Meta.Object) :
 
 # end class Value
 
-class _Color_ (TFL.Meta.Object) :
+class Color (TFL.Meta.Object) :
     """Base class modelling a mutable color.
 
-       >>> c = RGB_8 (255, 0, 0)
-       >>> d = c.as_RGB_X
-       >>> h = d.as_HSL
-       >>> print c, d, h
-       rgb(255, 0, 0) #F00 hsl(0.0, 1.0, 0.5)
+    >>> c = RGB_8 (255, 0, 0)
+    >>> d = c.as_RGB_X
+    >>> h = d.as_HSL
+    >>> print c, d, h
+    rgb(255, 0, 0) #F00 hsl(0.0, 1.0, 0.5)
 
-       >>> cn = ~ c
-       >>> hn = ~ h
-       >>> print cn, hn
-       rgb(0, 255, 255) hsl(180.0, 1.0, 0.5)
+    >>> cn = ~ c
+    >>> hn = ~ h
+    >>> print cn, hn
+    rgb(0, 255, 255) hsl(180.0, 1.0, 0.5)
 
-       >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
-       >>> da = ca.as_RGB_X
-       >>> ha = da.as_HSL
-       >>> print ca, da, ha
-       rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0.0, 1.0, 0.5, 0.25)
+    >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
+    >>> da = ca.as_RGB_X
+    >>> ha = da.as_HSL
+    >>> print ca, da, ha
+    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0.0, 1.0, 0.5, 0.25)
 
-       >>> b  = RGB (0, 0, 0)
-       >>> hb = b.as_HSL
-       >>> w  = RGB (1, 1, 1)
-       >>> hw = w.as_HSL
-       >>> print b, ~b, hb, ~hb
-       rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
-       >>> print ~w, w, ~hw, hw
-       rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+    >>> b  = RGB (0, 0, 0)
+    >>> hb = b.as_HSL
+    >>> w  = RGB (1, 1, 1)
+    >>> hw = w.as_HSL
+    >>> print b, ~b, hb, ~hb
+    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+    >>> print ~w, w, ~hw, hw
+    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
 
-       >>> print c * 0.5, w * 0.8
-       rgb(127, 0, 0) rgb(80%, 80%, 80%)
+    >>> print c * 0.5, w * 0.8
+    rgb(127, 0, 0) rgb(80%, 80%, 80%)
+
+    >>> Color.formatter = RGB_X
+    >>> print b, ~b, hb, ~hb
+    #000 #FFF #000 #FFF
+    >>> print cn, hn
+    #0FF #0FF
+    >>> print ca, da, ha
+    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
+
+    >>> Color.formatter = HSL
+    >>> print b, ~b, hb, ~hb
+    hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+    >>> print cn, hn
+    hsl(180.0, 1.0, 0.5) hsl(180.0, 1.0, 0.5)
+    >>> print ca, da, ha
+    hsla(0.0, 1.0, 0.5, 0.25) hsla(0.0, 1.0, 0.5, 0.25) hsla(0.0, 1.0, 0.5, 0.25)
+
+    >>> Color.formatter = RGB_X
+    >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
+    #808080 #8B0000 rgba(0, 0, 255, 0.5)
+
+    >>> Color.formatter = None
+    >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
+    "grey" "darkred" rgba(0, 0, 255, 0.5)
     """
 
-    alpha = None
+    alpha     = None
+    formatter = None
 
     def __init__ (self, values, alpha = None) :
         if not isinstance (values, Value) :
@@ -392,6 +428,14 @@ class _Color_ (TFL.Meta.Object) :
         self.value = Value (hsl = (h, float (value), l))
     # end def saturation
 
+    def formatted (self) :
+        v = self._formatted_values ()
+        if self.alpha is not None :
+            return "%sa(%s, %s)" % (self.name, v, self.alpha)
+        else :
+            return "%s(%s)" % (self.name, v)
+    # end def formatted
+
     def __invert__ (self) :
         return self.__class__.from_value \
             (Value (rgb = tuple (1.0 - v for v in self.rgb)), self.alpha)
@@ -406,16 +450,14 @@ class _Color_ (TFL.Meta.Object) :
     # end def __mul__
 
     def __str__ (self) :
-        v = self._formatted_values ()
-        if self.alpha is not None :
-            return "%sa(%s, %s)" % (self.name, v, self.alpha)
-        else :
-            return "%s(%s)" % (self.name, v)
+        if self.formatter is not None :
+            self = self.formatter.cast (self)
+        return self.formatted ()
     # end def __str__
 
-# end class _Color_
+# end class Color
 
-class HSL (_Color_) :
+class HSL (Color) :
     """Model a color specified by hue/saturation/lightness values."""
 
     name = "hsl"
@@ -424,6 +466,7 @@ class HSL (_Color_) :
         self.__super.__init__ ((hue, saturation, lightness), alpha)
     # end def __init__
 
+    @property
     def as_HSL (self) :
         return self
     # end def as_HSL
@@ -434,7 +477,7 @@ class HSL (_Color_) :
 
 # end class HSL
 
-class RGB (_Color_) :
+class RGB (Color) :
     """Model a color specified by red/green/blue values."""
 
     name = "rgb"
@@ -443,6 +486,7 @@ class RGB (_Color_) :
         self.__super.__init__ ((red, green, blue), alpha)
     # end def __init__
 
+    @property
     def as_RGB (self) :
         return self
     # end def as_RGB
@@ -464,6 +508,7 @@ class RGB_8 (RGB) :
             )
     # end def __init__
 
+    @property
     def as_RGB_8 (self) :
         return self
     # end def as_RGB_8
@@ -484,6 +529,7 @@ class RGB_P (RGB) :
             )
     # end def __init__
 
+    @property
     def as_RGB_P (self) :
         return self
     # end def as_RGB_P
@@ -500,15 +546,18 @@ class RGB_X (RGB) :
           r"?(?P<blue>[0-9a-zA-Z]{1,2})"
         )
 
-    def __init__ (self, s) :
+    def __init__ (self, s, alpha = None) :
         pat = self._pat
         if pat.match (s) :
             r, g, b = pat.red, pat.green, pat.blue
-            if not (len (r) == len (g) == len (g)) :
-                raise ValueError ("Colors all need same length: %s" % s)
             if len (r) == 1 :
+                if not (len (g) == len (g) == 1) :
+                    raise ValueError ("Colors all need same length: %s" % s)
                 r, g, b = r*2, g*2, b*2
-            self.__super.__init__ (tuple (int (x, 16) for x in (r, g, b)))
+            self.__super.__init__ \
+                ( * tuple ((int (x, 16) / 255.0) for x in (r, g, b))
+                , alpha = alpha
+                )
         else :
             raise ValueError \
                 ( "Need a hexadecimal color specification like '#AABBCC', "
@@ -516,25 +565,204 @@ class RGB_X (RGB) :
                 )
     # end def __init__
 
+    @property
     def as_RGB_X (self) :
         return self
     # end def as_RGB_X
 
-    def _formatted_values (self) :
-        r, g, b = tuple ("%2.2X" % (x*255, ) for x in self.value.rgb)
-        if all (x [0] == x [1] for x in (r, g, b)) :
-            r, g, b = tuple (x [0] for x in (r, g, b))
-        return "#%s%s%s" % (r, g, b)
-    # end def _formatted_values
-
-    def __str__ (self) :
+    def formatted (self) :
         if self.alpha is None :
             return self._formatted_values ()
         else :
-            return str (self.as_RGB_8)
-    # end def __str__
+            return self.as_RGB_8.formatted ()
+    # end def formatted
+
+    def _formatted_values (self) :
+        return self.value.hex_CSS
+    # end def _formatted_values
 
 # end class RGB_X
+
+class SVG_Color (RGB_X) :
+    """Model a color named as specified by SVG 1.0 and CSS-3."""
+
+    ### http://www.w3.org/TR/css3-color/#rgb-color
+    Map = dict \
+        ( aliceblue               = "#F0F8FF"
+        , antiquewhite            = "#FAEBD7"
+        , aqua                    = "#00FFFF"
+        , aquamarine              = "#7FFFD4"
+        , azure                   = "#F0FFFF"
+        , beige                   = "#F5F5DC"
+        , bisque                  = "#FFE4C4"
+        , black                   = "#000000"
+        , blanchedalmond          = "#FFEBCD"
+        , blue                    = "#0000FF"
+        , blueviolet              = "#8A2BE2"
+        , brown                   = "#A52A2A"
+        , burlywood               = "#DEB887"
+        , cadetblue               = "#5F9EA0"
+        , chartreuse              = "#7FFF00"
+        , chocolate               = "#D2691E"
+        , coral                   = "#FF7F50"
+        , cornflowerblue          = "#6495ED"
+        , cornsilk                = "#FFF8DC"
+        , crimson                 = "#DC143C"
+        , cyan                    = "#00FFFF"
+        , darkblue                = "#00008B"
+        , darkcyan                = "#008B8B"
+        , darkgoldenrod           = "#B8860B"
+        , darkgray                = "#A9A9A9"
+        , darkgreen               = "#006400"
+        , darkgrey                = "#A9A9A9"
+        , darkkhaki               = "#BDB76B"
+        , darkmagenta             = "#8B008B"
+        , darkolivegreen          = "#556B2F"
+        , darkorange              = "#FF8C00"
+        , darkorchid              = "#9932CC"
+        , darkred                 = "#8B0000"
+        , darksalmon              = "#E9967A"
+        , darkseagreen            = "#8FBC8F"
+        , darkslateblue           = "#483D8B"
+        , darkslategray           = "#2F4F4F"
+        , darkslategrey           = "#2F4F4F"
+        , darkturquoise           = "#00CED1"
+        , darkviolet              = "#9400D3"
+        , deeppink                = "#FF1493"
+        , deepskyblue             = "#00BFFF"
+        , dimgray                 = "#696969"
+        , dimgrey                 = "#696969"
+        , dodgerblue              = "#1E90FF"
+        , firebrick               = "#B22222"
+        , floralwhite             = "#FFFAF0"
+        , forestgreen             = "#228B22"
+        , fuchsia                 = "#FF00FF"
+        , gainsboro               = "#DCDCDC"
+        , ghostwhite              = "#F8F8FF"
+        , gold                    = "#FFD700"
+        , goldenrod               = "#DAA520"
+        , gray                    = "#808080"
+        , green                   = "#008000"
+        , greenyellow             = "#ADFF2F"
+        , grey                    = "#808080"
+        , honeydew                = "#F0FFF0"
+        , hotpink                 = "#FF69B4"
+        , indianred               = "#CD5C5C"
+        , indigo                  = "#4B0082"
+        , ivory                   = "#FFFFF0"
+        , khaki                   = "#F0E68C"
+        , lavender                = "#E6E6FA"
+        , lavenderblush           = "#FFF0F5"
+        , lawngreen               = "#7CFC00"
+        , lemonchiffon            = "#FFFACD"
+        , lightblue               = "#ADD8E6"
+        , lightcoral              = "#F08080"
+        , lightcyan               = "#E0FFFF"
+        , lightgoldenrodyellow    = "#FAFAD2"
+        , lightgray               = "#D3D3D3"
+        , lightgreen              = "#90EE90"
+        , lightgrey               = "#D3D3D3"
+        , lightpink               = "#FFB6C1"
+        , lightsalmon             = "#FFA07A"
+        , lightseagreen           = "#20B2AA"
+        , lightskyblue            = "#87CEFA"
+        , lightslategray          = "#778899"
+        , lightslategrey          = "#778899"
+        , lightsteelblue          = "#B0C4DE"
+        , lightyellow             = "#FFFFE0"
+        , lime                    = "#00FF00"
+        , limegreen               = "#32CD32"
+        , linen                   = "#FAF0E6"
+        , magenta                 = "#FF00FF"
+        , maroon                  = "#800000"
+        , mediumaquamarine        = "#66CDAA"
+        , mediumblue              = "#0000CD"
+        , mediumorchid            = "#BA55D3"
+        , mediumpurple            = "#9370DB"
+        , mediumseagreen          = "#3CB371"
+        , mediumslateblue         = "#7B68EE"
+        , mediumspringgreen       = "#00FA9A"
+        , mediumturquoise         = "#48D1CC"
+        , mediumvioletred         = "#C71585"
+        , midnightblue            = "#191970"
+        , mintcream               = "#F5FFFA"
+        , mistyrose               = "#FFE4E1"
+        , moccasin                = "#FFE4B5"
+        , navajowhite             = "#FFDEAD"
+        , navy                    = "#000080"
+        , oldlace                 = "#FDF5E6"
+        , olive                   = "#808000"
+        , olivedrab               = "#6B8E23"
+        , orange                  = "#FFA500"
+        , orangered               = "#FF4500"
+        , orchid                  = "#DA70D6"
+        , palegoldenrod           = "#EEE8AA"
+        , palegreen               = "#98FB98"
+        , paleturquoise           = "#AFEEEE"
+        , palevioletred           = "#DB7093"
+        , papayawhip              = "#FFEFD5"
+        , peachpuff               = "#FFDAB9"
+        , peru                    = "#CD853F"
+        , pink                    = "#FFC0CB"
+        , plum                    = "#DDA0DD"
+        , powderblue              = "#B0E0E6"
+        , purple                  = "#800080"
+        , red                     = "#FF0000"
+        , rosybrown               = "#BC8F8F"
+        , royalblue               = "#4169E1"
+        , saddlebrown             = "#8B4513"
+        , salmon                  = "#FA8072"
+        , sandybrown              = "#F4A460"
+        , seagreen                = "#2E8B57"
+        , seashell                = "#FFF5EE"
+        , sienna                  = "#A0522D"
+        , silver                  = "#C0C0C0"
+        , skyblue                 = "#87CEEB"
+        , slateblue               = "#6A5ACD"
+        , slategray               = "#708090"
+        , snow                    = "#FFFAFA"
+        , springgreen             = "#00FF7F"
+        , steelblue               = "#4682B4"
+        , tan                     = "#D2B48C"
+        , teal                    = "#008080"
+        , thistle                 = "#D8BFD8"
+        , tomato                  = "#FF6347"
+        , turquoise               = "#40E0D0"
+        , violet                  = "#EE82EE"
+        , wheat                   = "#F5DEB3"
+        , white                   = "#FFFFFF"
+        , whitesmoke              = "#F5F5F5"
+        , yellow                  = "#FFFF00"
+        , yellowgreen             = "#9ACD32"
+        )
+
+    _Pam = None
+
+    def __init__ (self, name, alpha = None) :
+        key = name.lower ().replace (" ", "")
+        self.__super.__init__ (self.Map [key], alpha)
+    # end def __init__
+
+    def formatted (self) :
+        if self.alpha is None :
+            name = self.Pam.get (self.value.hex)
+            if name is not None :
+                return '"%s"' % (name, )
+            else :
+                return self._formatted_values ()
+        else :
+            return self.as_RGB_8.formatted ()
+    # end def formatted
+
+    @property
+    def Pam (self) :
+        if self._Pam is None :
+            self.__class__._Pam = dict \
+                ((v, k) for (k, v) in self.Map.iteritems ())
+        return self._Pam
+    # end def Pam
+
+# end class SVG_Color
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
