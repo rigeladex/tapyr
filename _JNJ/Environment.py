@@ -55,6 +55,7 @@ def HTML \
         , load_path = ()
         , loader    = None
         , globals   = {}
+        , encoding  = "iso-8859-1"
         , i18n      = False
         , ** kw
         ) :
@@ -63,7 +64,6 @@ def HTML \
     if loader :
         loaders.append (loader)
     if load_path :
-        encoding = kw.pop ("encoding", "iso-8859-1")
         loaders.append (FileSystemLoader (load_path, encoding))
     loaders.append (jnj_loader)
     loaders.append (PrefixLoader (dict (STD = jnj_loader), delimiter='::'))
