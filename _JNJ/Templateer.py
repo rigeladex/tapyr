@@ -35,6 +35,7 @@
 #    19-May-2010 (MG) `render_string` added
 #     2-Aug-2010 (MG) `console` added
 #    17-Aug-2010 (CT) `error_503` added
+#    29-Dec-2010 (CT) `Template` added and used
 #    ««revision-date»»···
 #--
 
@@ -45,46 +46,89 @@ import _JNJ.Environment
 
 import _TFL._Meta.Object
 
+class Template (TFL.Meta.Object) :
+    """Describe a Jinja template."""
+
+    Map           = {}
+
+    _css_fragment = None
+    _css_path     = None
+
+    def __init__ (self, name, path, css_fragment_name = None) :
+        assert name not in self.Map, name
+        self.name              = name
+        self.path              = path
+        self.css_fragment_name = css_fragment_name
+        self.Map [name]        = self
+    # end def __init__
+
+    def css_fragment (self, env) :
+        if self._css_fragment is None :
+            self._load_css (env)
+        return self._css_fragment
+    # end def css_fragment
+
+    def css_path (self, env) :
+        if self._css_path is None :
+            self._load_css (env)
+        return self._css_path
+    # end def css_path
+
+    def _load_css (self, env) :
+        from jinja2.exceptions import TemplateNotFound
+        f_path = self.css_fragment_name
+        if f_path is None :
+            f_path = "%s.css" % (self.path, )
+        try :
+            source, path, _ = env.loader.get_source (env, f_path)
+        except TemplateNotFound :
+            pass
+        else :
+            self._css_fragment = source
+            self._css_path     = path
+    # end def _load_css
+
+# end class Template
+
+Template (401,                            "html/error_401.jnj")
+Template (403,                            "html/error_403.jnj")
+Template (404,                            "html/error_404.jnj")
+Template (405,                            "html/error_405.jnj")
+Template (500,                            "html/error_500.jnj")
+Template (503,                            "html/error_503.jnj")
+Template ("account_activate",             "html/activate.jnj")
+Template ("account_change_email",         "html/change_email.jnj")
+Template ("account_change_password",      "html/change_password.jnj")
+Template ("account_register",             "html/register.jnj")
+Template ("account_reset_password",       "html/reset_password.jnj")
+Template ("account_reset_password_email", "email/reset_password.jnj")
+Template ("account_verify_new_email",     "email/verify_new_email.jnj")
+Template ("account_verify_email",         "email/verify_new_email.jnj")
+Template ("calendar",                     "html/calendar.jnj")
+Template ("calendar_qx",                  "html/cal/wr.jnj")
+Template ("calendar_day",                 "html/cal_day.jnj")
+Template ("calendar_day_qx",              "html/cal/day.jnj")
+Template ("calendar_week",                "html/cal_week.jnj")
+Template ("console",                      "html/console.jnj")
+Template ("default",                      "html/error.jnj")
+Template ("dynamic_form",                 "html/dynamic_form.jnj")
+Template ("e_type_admin",                 "html/e_type_admin.jnj")
+Template ("e_type_aggregator",            "html/e_type_aggregator.jnj")
+Template ("e_type_change",                "html/e_type_change.jnj")
+Template ("gallery",                      "html/gallery.jnj")
+Template ("login",                        "html/login.jnj")
+Template ("photo",                        "html/photo.jnj")
+Template ("regatta_calendar",             "html/regatta_calendar.jnj")
+Template ("regatta_registration",         "html/regatta_registration.jnj")
+Template ("regatta_result",               "html/regatta_result.jnj")
+Template ("regatta_result_teamrace",      "html/regatta_result_teamrace.jnj")
+Template ("site_admin",                   "html/site_admin.jnj")
+
 class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""
 
     Context         = dict
-    Template_Map    = dict \
-        ( { 401       : "html/error_401.jnj"
-          , 403       : "html/error_403.jnj"
-          , 404       : "html/error_404.jnj"
-          , 405       : "html/error_405.jnj"
-          , 500       : "html/error_500.jnj"
-          , 503       : "html/error_503.jnj"
-          }
-        , account_activate             = "html/activate.jnj"
-        , account_change_email         = "html/change_email.jnj"
-        , account_change_password      = "html/change_password.jnj"
-        , account_register             = "html/register.jnj"
-        , account_reset_password       = "html/reset_password.jnj"
-        , account_reset_password_email = "email/reset_password.jnj"
-        , account_verify_new_email     = "email/verify_new_email.jnj"
-        , account_verify_email         = "email/verify_new_email.jnj"
-        , calendar                     = "html/calendar.jnj"
-        , calendar_qx                  = "html/cal/wr.jnj"
-        , calendar_day                 = "html/cal_day.jnj"
-        , calendar_day_qx              = "html/cal/day.jnj"
-        , calendar_week                = "html/cal_week.jnj"
-        , console                      = "html/console.jnj"
-        , default                      = "html/error.jnj"
-        , dynamic_form                 = "html/dynamic_form.jnj"
-        , e_type_admin                 = "html/e_type_admin.jnj"
-        , e_type_aggregator            = "html/e_type_aggregator.jnj"
-        , e_type_change                = "html/e_type_change.jnj"
-        , gallery                      = "html/gallery.jnj"
-        , login                        = "html/login.jnj"
-        , photo                        = "html/photo.jnj"
-        , regatta_calendar             = "html/regatta_calendar.jnj"
-        , regatta_registration         = "html/regatta_registration.jnj"
-        , regatta_result               = "html/regatta_result.jnj"
-        , regatta_result_teamrace      = "html/regatta_result_teamrace.jnj"
-        , site_admin                   = "html/site_admin.jnj"
-        )
+    Template_Map    = Template.Map
 
     def __init__ (self, * args, ** kw) :
         self.env = JNJ.Environment.HTML (* args, ** kw)
@@ -92,14 +136,18 @@ class Templateer (TFL.Meta.Object) :
 
     def get_std_template (self, name) :
         if name in self.Template_Map :
-            name = self.Template_Map [name]
+            template = self.Template_Map [name]
         else :
-            name = self.Template_Map ["default"]
-        return self.env.get_template (name)
+            template = self.Template_Map ["default"]
+        return self.env.get_template (template.path)
     # end def get_std_template
 
     def get_template (self, name) :
-        return self.env.get_template (self.Template_Map.get (name, name))
+        if name in self.Template_Map :
+            path = self.Template_Map [name].path
+        else :
+            path = name
+        return self.env.get_template (path)
     # end def get_template
 
     def render (self, template_or_name, context) :
