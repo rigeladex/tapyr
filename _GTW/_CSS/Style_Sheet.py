@@ -36,7 +36,7 @@ from   __future__  import print_function, unicode_literals
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
-import _GTW.CSS
+import _GTW._CSS
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -66,10 +66,17 @@ class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
 
 # end class Parameter_Scope
 
+class M_Style_Sheet (TFL.Meta.Object.__class__) :
+    """Meta class for `Style_Sheet`"""
+
+# end class M_Style_Sheet
+
 class Style_Sheet (TFL.Meta.Object) :
     """Model a CSS style sheet"""
 
-    _CSS_globs = {}
+    __metaclass__ = M_Style_Sheet
+
+    _CSS_globs    = {}
 
     def __init__ (self, * rules, ** attrs) :
         self.rules   = list (rules)
@@ -127,8 +134,8 @@ class Style_Sheet (TFL.Meta.Object) :
 S = Style_Sheet
 
 __all__ = tuple \
-    ( k for (k, v) in globals ().iteritems () if isinstance (v, Style_Sheet)
-    ) + (Parameters, )
+    ( k for (k, v) in globals ().iteritems () if isinstance (v, M_Style_Sheet)
+    ) + ("Parameters", )
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)

@@ -36,43 +36,50 @@ from   __future__  import print_function, unicode_literals
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
-import _GTW.CSS
+import _GTW._CSS
 
 import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
 
+class M_Rule (TFL.Meta.Object.__class__) :
+    """Meta class for `Rule`."""
+
+# end class M_Rule
+
 class Rule (TFL.Meta.Object) :
     """Model a CSS rule.
 
-       >>> import itertools
-       >>> tr = Rp ("target", background_color = "yellow", color = "red")
-       >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both", children = [tr])
-       >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both", children = [tr])
-       >>> for x in itertools.chain (r1, r2) :
-       ...   print x
-       ...
-       tr.row1, div.row1
-         { clear : both
-         ; color : grey
-         }
-         tr.row1:target, div.row1:target
-           { background-color : yellow
-           ; color            : red
-           }
-       tr.row2, div.row2
-         { clear : both
-         ; color : blue
-         }
-         tr.row2:target, div.row2:target
-           { background-color : yellow
-           ; color            : red
-           }
+    >>> import itertools
+    >>> tr = Rp ("target", background_color = "yellow", color = "red")
+    >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both", children = [tr])
+    >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both", children = [tr])
+    >>> for x in itertools.chain (r1, r2) :
+    ...   print (x)
+    ...
+    tr.row1, div.row1
+      { clear : both
+      ; color : grey
+      }
+      tr.row1:target, div.row1:target
+        { background-color : yellow
+        ; color            : red
+        }
+    tr.row2, div.row2
+      { clear : both
+      ; color : blue
+      }
+      tr.row2:target, div.row2:target
+        { background-color : yellow
+        ; color            : red
+        }
 
     """
 
-    parent_sep = " "
+    __metaclass__ = M_Rule
+
+    parent_sep    = " "
 
     def __init__ (self, * selectors, ** declarations) :
         self.children      = list (self._pop_children (declarations))
@@ -204,7 +211,7 @@ Rp = Rule_Pseudo
 Rs = Rule_Sibling
 
 __all__ = tuple \
-    (k for (k, v) in globals ().iteritems () if isinstance (v, Rule))
+    (k for (k, v) in globals ().iteritems () if isinstance (v, M_Rule))
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)

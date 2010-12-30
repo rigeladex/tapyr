@@ -220,6 +220,11 @@ class Value (TFL.Meta.Object) :
 
 # end class Value
 
+class M_Color (TFL.Meta.Object.__class__) :
+    """Meta class for `Color`."""
+
+# end class M_Color
+
 class Color (TFL.Meta.Object) :
     """Base class modelling a mutable color.
 
@@ -277,8 +282,10 @@ class Color (TFL.Meta.Object) :
     "grey" "darkred" rgba(0, 0, 255, 0.5)
     """
 
-    alpha     = None
-    formatter = None
+    __metaclass__ = M_Color
+
+    alpha         = None
+    formatter     = None
 
     def __init__ (self, values, alpha = None) :
         if not isinstance (values, Value) :
@@ -763,6 +770,11 @@ class SVG_Color (RGB_X) :
     # end def Pam
 
 # end class SVG_Color
+
+__all__ = tuple \
+    ( k for (k, v) in globals ().iteritems ()
+    if k != "Color" and isinstance (v, M_Color)
+    )
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
