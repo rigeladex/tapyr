@@ -25,6 +25,8 @@
 # Purpose
 #    Model CSS media type and queries
 #
+#    See: http://www.w3.org/TR/css3-mediaqueries/
+#
 # Revision Dates
 #    30-Dec-2010 (CT) Creation
 #    ««revision-date»»···
@@ -211,6 +213,7 @@ _g.update (M_Media.Nick)
 
 __all__ = tuple \
     (k for (k, v) in _g.iteritems () if isinstance (v, (M_Media, Type)))
+del _g
 
 if __name__ != "__main__" :
     GTW.CSS._Export_Module ()
