@@ -36,7 +36,7 @@ from   __future__  import print_function, unicode_literals
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
-import _GTW._CSS
+import _GTW._CSS.Media
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -81,7 +81,7 @@ class Style_Sheet (TFL.Meta.Object) :
     def __init__ (self, * rules, ** attrs) :
         self.rules   = list (rules)
         self.imports = list (attrs.pop ("imports", []))
-        self.media   = attrs.pop ("media", "all")
+        self.media   = attrs.pop ("media", None) or GTW.CSS.Media.Type ("all")
         self.name    = attrs.pop ("name",  None)
         self.attrs   = attrs
     # end def __init__

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Dec-2010 (CT) Creation
+#    30-Dec-2010 (CT) `base_level` and `media_rule` added
 #    ««revision-date»»···
 #--
 
@@ -79,12 +80,15 @@ class Rule (TFL.Meta.Object) :
 
     __metaclass__ = M_Rule
 
+    base_level   = 0
+    media_rule   = None
     parent_sep    = " "
 
     def __init__ (self, * selectors, ** declarations) :
         self.children      = list (self._pop_children (declarations))
-        self.parent = p    = declarations.pop ("parent",     None)
-        self.parent_sep    = declarations.pop ("parent_sep", self.parent_sep)
+        self.base_level    = declarations.pop ("base_level",  self.base_level)
+        self.parent = p    = declarations.pop ("parent",      None)
+        self.parent_sep    = declarations.pop ("parent_sep",  self.parent_sep)
         self._selectors    = selectors
         self.declarations  = declarations
         if p is not None :
@@ -105,7 +109,7 @@ class Rule (TFL.Meta.Object) :
         parent = self.parent
         if parent is not None :
             return parent.level - (not parent.declarations) + 1
-        return 0
+        return self.base_level
     # end def level
 
     @Once_Property

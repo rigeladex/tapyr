@@ -66,15 +66,15 @@ class _Media_ (TFL.Meta.Object) :
 # end class _Media_
 
 class Expression (_Media_) :
-    """Media query expression
+    """Media query expression.
 
-    >>> print X ("color")
+    >>> print MX ("color")
     (color)
-    >>> print X ("min_width", "1000px")
+    >>> print MX ("min_width", "1000px")
     (min-width: 1000px)
     """
 
-    nick = "X"
+    nick = "MX"
 
     def __init__ (self, feature, expr = None) :
         self.feature = feature.replace ("_", "-")
@@ -91,26 +91,26 @@ class Expression (_Media_) :
 # end class Expression
 
 class Query (_Media_) :
-    """Meda query
+    """Media query.
 
     >>> print Query ()
     <BLANKLINE>
     >>> print Query ("screen")
     screen
-    >>> print Q ("screen", "color", min_width = "1000px")
+    >>> print MQ ("screen", "color", min_width = "1000px")
     screen and (color) and (min-width: 1000px)
-    >>> print Q ("all", "color", min_width = "1000px")
+    >>> print MQ ("all", "color", min_width = "1000px")
     (color) and (min-width: 1000px)
-    >>> print Q (X ("color"), min_width = "1000px")
+    >>> print MQ (MX ("color"), min_width = "1000px")
     (color) and (min-width: 1000px)
 
     Beware: skipping `type` and using strings for `* exprs` fails::
 
-    >>> print Q ("color", min_width = "1000px")
+    >>> print MQ ("color", min_width = "1000px")
     color and (min-width: 1000px)
     """
 
-    nick = "Q"
+    nick = "MQ"
 
     def __init__ (self, type = None, * exprs, ** kw) :
         if isinstance (type, Expression) :
@@ -162,6 +162,78 @@ class Query (_Media_) :
 
 # end class Query
 
+class Rule (_Media_) :
+    """Media rule: block of CSS rules specific for a list of media queries.
+
+    >>> from _GTW._CSS.Rule import R
+    >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both")
+    >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both")
+    >>> print r1
+    tr.row1, div.row1
+      { clear : both
+      ; color : grey
+      }
+    >>> print r2
+    tr.row2, div.row2
+      { clear : both
+      ; color : blue
+      }
+    >>> qr = Rule (MQ ("screen", "color", min_width = "1000px"), rules = (r1, r2))
+    >>> print qr
+    @media screen and (color) and (min-width: 1000px)
+      {
+        tr.row1, div.row1
+          { clear : both
+          ; color : grey
+          }
+    <BLANKLINE>
+        tr.row2, div.row2
+          { clear : both
+          ; color : blue
+          }
+      }
+    """
+
+    nick = "MR"
+
+    def __init__ (self, * queries, ** kw) :
+        assert queries
+        self.queries = list (queries)
+        self.rules   = list (self._pop_rules (kw))
+    # end def __init__
+
+    def block (self) :
+        return "\n\n".join (str (r) for r in self.rules_iter ())
+    # end def block
+
+    def rules_iter (self) :
+        for r in self.rules :
+            for x in r :
+                yield x
+    # end def rules_iter
+
+    def _pop_rules (self, kw) :
+        for r in kw.pop ("rules") :
+            if r.media_rule is not None :
+                r = r.copy ()
+            r.media_rule = self
+            r.base_level = 2
+            yield r
+    # end def _pop_rules
+
+    def __iter__ (self) :
+        yield self
+    # end def __iter__
+
+    def __str__ (self) :
+        queries = tuple (str (s) for s in self.queries)
+        ls      = sum   (len (s) for s in queries) + 2 * (len (queries) - 1)
+        q_sep   = (",\n%s" % indent0) if (ls >= 80) else ", "
+        return "@media %s\n  {\n%s\n  }" % (q_sep.join (queries), self.block ())
+    # end def __str__
+
+# end class Rule
+
 class Type (_Media_) :
     """Media type.
 
@@ -179,7 +251,7 @@ class Type (_Media_) :
     ValueError: Screen
     """
 
-    nick  = "T"
+    nick  = "MT"
     Table = {}
 
     def __new__ (cls, name) :
