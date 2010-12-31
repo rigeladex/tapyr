@@ -36,23 +36,26 @@
 #     2-Aug-2010 (MG) `console` added
 #    17-Aug-2010 (CT) `error_503` added
 #    29-Dec-2010 (CT) `Template` added and used
+#    31-Dec-2010 (CT) `Template_E` added and used
 #    ««revision-date»»···
 #--
+
+from   __future__  import unicode_literals
 
 from   _JNJ               import JNJ
 from   _TFL               import TFL
 
 import _JNJ.Environment
 
+from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
+
+from jinja2.exceptions import TemplateNotFound
 
 class Template (TFL.Meta.Object) :
     """Describe a Jinja template."""
 
     Map           = {}
-
-    _css_fragment = None
-    _css_path     = None
 
     def __init__ (self, name, path, css_fragment_name = None) :
         assert name not in self.Map, name
@@ -62,25 +65,56 @@ class Template (TFL.Meta.Object) :
         self.Map [name]        = self
     # end def __init__
 
-    def css_fragment (self, env) :
-        if self._css_fragment is None :
-            self._load_css (env)
+# end class Template
+
+class Template_E (TFL.Meta.Object) :
+    """Describe a Jinja template for a specific Jinja environment."""
+
+    _css_fragment = None
+    _css_path     = None
+    _t_path       = None
+    _t_source     = None
+
+    def __init__ (self, proto, env) :
+        self.name              = proto.name
+        self.path              = proto.path
+        self.css_fragment_name = proto.css_fragment_name
+        self.env               = env
+    # end def __init__
+
+    @Once_Property
+    def css_fragment (self) :
+        self._load_css (self.env)
         return self._css_fragment
     # end def css_fragment
 
-    def css_path (self, env) :
-        if self._css_path is None :
-            self._load_css (env)
+    @Once_Property
+    def css_path (self) :
+        self._load_css (self.env)
         return self._css_path
     # end def css_path
 
-    def _load_css (self, env) :
-        from jinja2.exceptions import TemplateNotFound
+    @Once_Property
+    def source (self) :
+        self._load_template (self.env)
+        return self._t_source
+    # end def source
+
+    @property
+    def template (self) :
+        return self.env.get_template (self.path)
+    # end def template
+
+    def render (self, context) :
+        return self.template.render (context)
+    # end def render
+
+    def _load_css (self) :
         f_path = self.css_fragment_name
         if f_path is None :
             f_path = "%s.css" % (self.path, )
         try :
-            source, path, _ = env.loader.get_source (env, f_path)
+            source, path, _ = env.loader.get_source (self.env, f_path)
         except TemplateNotFound :
             pass
         else :
@@ -88,7 +122,17 @@ class Template (TFL.Meta.Object) :
             self._css_path     = path
     # end def _load_css
 
-# end class Template
+    def _load_template (self) :
+        try :
+            source, path, _ = env.loader.get_source (self.env, self.path)
+        except TemplateNotFound :
+            pass
+        else :
+            self._t_path   = path
+            self._t_source = source
+    # end def _load_template
+
+# end class Template_E
 
 Template (401,                            "html/error_401.jnj")
 Template (403,                            "html/error_403.jnj")
@@ -128,10 +172,11 @@ class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""
 
     Context         = dict
-    Template_Map    = Template.Map
 
     def __init__ (self, * args, ** kw) :
-        self.env = JNJ.Environment.HTML (* args, ** kw)
+        self.env = env = JNJ.Environment.HTML (* args, ** kw)
+        self.Template_Map = dict \
+            ((t.name, Template_E (t, env)) for t in Template.Map.itervalues ())
     # end def __init__
 
     def get_std_template (self, name) :
@@ -139,15 +184,14 @@ class Templateer (TFL.Meta.Object) :
             template = self.Template_Map [name]
         else :
             template = self.Template_Map ["default"]
-        return self.env.get_template (template.path)
+        return template
     # end def get_std_template
 
     def get_template (self, name) :
-        if name in self.Template_Map :
-            path = self.Template_Map [name].path
-        else :
-            path = name
-        return self.env.get_template (path)
+        if name not in self.Template_Map :
+            self.Template_Map [name] = Template_E \
+                (Template (name, name), self.env)
+        return self.Template_Map [name]
     # end def get_template
 
     def render (self, template_or_name, context) :
