@@ -280,6 +280,7 @@ class Color (TFL.Meta.Object) :
     >>> Color.formatter = None
     >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
     "grey" "darkred" rgba(0, 0, 255, 0.5)
+
     """
 
     __metaclass__ = M_Color
@@ -546,20 +547,20 @@ class RGB_P (RGB) :
 class RGB_X (RGB) :
     """Model a color specified by a hexadecimal string for RGB."""
 
-    _pat = TFL.Regexp \
+    _fmt = \
         ( r"^#"
-          r"?(?P<red>[0-9a-zA-Z]{1,2})"
-          r"?(?P<green>[0-9a-zA-Z]{1,2})"
-          r"?(?P<blue>[0-9a-zA-Z]{1,2})"
+          r"(?P<red>[0-9a-zA-Z]%(q)s)"
+          r"(?P<green>[0-9a-zA-Z]%(q)s)"
+          r"(?P<blue>[0-9a-zA-Z]%(q)s)"
+          r"$"
         )
+    _pat = TFL.Multi_Regexp (_fmt % dict (q = "{2}"), _fmt % dict (q = ""))
 
     def __init__ (self, s, alpha = None) :
         pat = self._pat
         if pat.match (s) :
             r, g, b = pat.red, pat.green, pat.blue
             if len (r) == 1 :
-                if not (len (g) == len (g) == 1) :
-                    raise ValueError ("Colors all need same length: %s" % s)
                 r, g, b = r*2, g*2, b*2
             self.__super.__init__ \
                 ( * tuple ((int (x, 16) / 255.0) for x in (r, g, b))
@@ -567,8 +568,9 @@ class RGB_X (RGB) :
                 )
         else :
             raise ValueError \
-                ( "Need a hexadecimal color specification like '#AABBCC', "
-                  "got '%s'" % (s, )
+                ( "Need a hexadecimal color specification like "
+                  "'#ABCDEF' or '#ABC', got '%s' instead"
+                % (s, )
                 )
     # end def __init__
 

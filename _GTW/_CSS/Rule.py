@@ -28,6 +28,7 @@
 # Revision Dates
 #    29-Dec-2010 (CT) Creation
 #    30-Dec-2010 (CT) `base_level` and `media_rule` added
+#    31-Dec-2010 (CT) `Kits` added and used
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,14 @@ import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
+
+def Kits (* ds, ** kw) :
+    result = {}
+    for d in ds :
+        result.update (d)
+    result.update (kw)
+    return result
+# end def Kits
 
 class M_Rule (TFL.Meta.Object.__class__) :
     """Meta class for `Rule`."""
@@ -90,7 +99,8 @@ class Rule (TFL.Meta.Object) :
         self.parent = p    = declarations.pop ("parent",      None)
         self.parent_sep    = declarations.pop ("parent_sep",  self.parent_sep)
         self._selectors    = selectors
-        self.declarations  = declarations
+        self.declarations  = Kits \
+            (* declarations.pop ("kits", ()), ** declarations)
         if p is not None :
             p.children.append (self)
     # end def __init__
@@ -215,7 +225,8 @@ Rp = Rule_Pseudo
 Rs = Rule_Sibling
 
 __all__ = tuple \
-    (k for (k, v) in globals ().iteritems () if isinstance (v, M_Rule))
+    ( k for (k, v) in globals ().iteritems () if isinstance (v, M_Rule)
+    ) + ("Kits", )
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)
