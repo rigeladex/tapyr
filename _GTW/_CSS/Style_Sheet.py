@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Dec-2010 (CT) Creation
+#     1-Jan-2011 (CT) `Eval` added
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,17 @@ class Style_Sheet (TFL.Meta.Object) :
     # end def add_rule
 
     @classmethod
+    def Eval (cls, * fragments, ** kw) :
+        parameters = kw.pop ("parameters", None)
+        assert not kw
+        scope = Parameter_Scope (parameters)
+        globs = cls._get_CSS_globs ()
+        for f in fragments :
+            exec (f, globs, scope)
+        return scope.style_sheets
+    # end def Eval
+
+    @classmethod
     def Read (cls, file_name, parameters = None) :
         """Read style sheets definitions from `file_name`."""
         scope = Parameter_Scope (parameters)
@@ -106,13 +118,9 @@ class Style_Sheet (TFL.Meta.Object) :
     @classmethod
     def _get_CSS_globs (cls) :
         result = cls._CSS_globs
-        ignore = set (("Parameter_Scope", "Parameters"))
         if not result :
-            from _TFL.Module import names_of
-            from _GTW        import CSS
-            for name in names_of (CSS) :
-                if name not in ignore :
-                    result [name] = getattr (CSS, name)
+            from _GTW._CSS import import_CSS
+            result = cls._CSS_globs = import_CSS.__dict__
         return result
     # end def _get_CSS_globs
 

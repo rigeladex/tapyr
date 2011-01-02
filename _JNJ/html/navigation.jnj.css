@@ -1,0 +1,133 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    html/navigation.jnj.css
+#
+# Purpose
+#    CSS fragment for template navigation.jnj
+#
+# Revision Dates
+#     1-Jan-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+try :
+    P
+except NameError :
+    from _GTW._CSS.import_CSS import *
+    import _JNJ.CSS_Defaults as P
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".pg_main nav"
+        , children =
+            [ Rule
+                ("input"
+                , background_color = P.nav_col.background_color
+                , border           = "1px solid #BEBEBE"
+                , padding          = 0
+                , width            = P.nav_col.width - P.col_padding
+                , children         =
+                    [ Rule_Attr
+                        ( "[type=submit]", "[type=reset]"
+                        , color    = P.link_color
+                        , ** P.button_spec
+                        )
+                    , ### XXX ??? .login input.Link, .login input.Link:hover
+                    ]
+                )
+            , Rule
+                ( "ul"
+                , list_style     = "none"
+                , ** P.nav_col.color_spec_link
+                )
+            , Rule
+                ( "li"
+                , margin         = 0
+                , padding        = TRBL
+                    ( t = P.nav_col.vert_padding
+                    , b = P.nav_col.vert_padding
+                    )
+                , position       = "relative" ### for nested menues
+                , children       =
+                    [ Rule
+                        ( "a"
+                        , display          = "block"
+                        , margin           = 0
+                        )
+                    , Rule ("td a", width  = "auto")
+                    , Rule_Class
+                        ( "current-link"
+                        , font_weight      = "bold"
+                        , ** P.nav_col.color_spec_link_current
+                        )
+                    , Rule_Class
+                       ( "current-section"
+                       , font_weight = "bold"
+                       )
+                    ]
+                )
+            , Rule
+                ( "a.current-section"
+                , "a.current-section:link"
+                , "a.current-section:visited"
+                , ** P.nav_col.color_spec_heading
+                )
+            , Rule ("a",         text_decoration = "none")
+            , Rule ("a:link",    ** P.nav_col.color_spec_link)
+            , Rule ("a:visited", ** P.nav_col.color_spec_visited)
+            , Rule
+                ( "a:hover", "li.nav-link:hover"
+                , ** P.color_spec_selected
+                )
+            , Rule
+                ( "h1"
+                , font_size      = Percent (100)
+                , margin         = TRBL (b = Em (1./4))
+                , ** P.nav_col.color_spec_heading
+                )
+            , Rule ("section", margin_bottom  = Em (1))
+            , Rule
+                ( ".level-1"
+                , padding_left   = Em (0.75)
+                )
+            , Rule
+                ( * tuple (".level-%s" % (i+2) for i in range (5))
+                , padding_left   = Em (1.00)
+                )
+            , Rule
+                ( "#weblinks li.nav-link:hover"
+                , "#weblinks li.nav-link a:hover"
+                , ** P.nav_col.color_spec_web_link_hover
+                )
+            , Rule
+                ( "#weblinks .nav-link img"
+                , margin_left     = Percent (2.5)
+                )
+            # XXX ??? li.google-search .google-logo
+            # XXX ??? td
+            ]
+        )
+    # XXX sitemap...
+    )
+
+### __END__ html/navigation.jnj.css

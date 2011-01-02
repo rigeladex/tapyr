@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    29-Dec-2010 (CT) Creation
+#     1-Jan-2011 (CT) `TRBL` added
+#     1-Jan-2011 (CT) `__truediv__` and `__floordiv__` added
 #    ««revision-date»»···
 #--
 
@@ -54,18 +56,21 @@ class M_Length (TFL.Meta.Object.__class__) :
 class Length (TFL.Meta.Object) :
     """Model a CSS length value.
 
-    >>> print (Px(3))
+    >>> print (Px (3))
     3px
-    >>> print (Px(3)*2)
+    >>> print (Px (3) * 2)
     6px
-    >>> print (Px(3)+Px(2))
+    >>> print (Px (3) + Px (2))
     5px
-    >>> print (Px(3)+In(2))
+    >>> print (Px (3) + In (2))
     Traceback (most recent call last):
       ...
     TypeError: Cannot add 'Px' and 'In' objects
-    >>> print (Px(3)%2)
+    >>> print (Px (3) % 2)
     1px
+
+    >>> print (Percent (100), Percent (100) / 2, Percent (100) / 3)
+    100% 50.0% 33.3333333333%
     """
 
     __metaclass__ = M_Length
@@ -94,13 +99,47 @@ class Length (TFL.Meta.Object) :
         return self.__class__ (self.value / rhs)
     # end def __div__
 
+    __truediv__ = __div__
+
+    def __eq__ (self, rhs) :
+        ru = getattr (rhs, "unit_name", None)
+        if self.unit_name == ru :
+            return self.value == rhs.value
+        else :
+            if not rhs :
+                return not self
+        return False
+    # end def __eq__
+
     def __float__ (self) :
         return float (self.value)
     # end def __float__
 
+    def __floordiv__ (self, rhs) :
+        if not isinstance (rhs, (int, float)) :
+            raise TypeError \
+                ( "Cannot divide %r and %r objects"
+                % (self.__class__.__name__, rhs.__class__.__name__)
+                )
+        return self.__class__ (self.value // rhs)
+    # end def __floordiv__
+
     def __int__ (self) :
         return int (self.value)
     # end def __int__
+
+    def __hash__ (self) :
+        return (self.unit_name, self.value)
+    # end def __hash__
+
+    def __mod__ (self, rhs) :
+        if not isinstance (rhs, (int, float)) :
+            raise TypeError \
+                ( "Cannot take remainer of %r and %r objects"
+                % (self.__class__.__name__, rhs.__class__.__name__)
+                )
+        return self.__class__ (self.value % rhs)
+    # end def __mod__
 
     def __mul__ (self, rhs) :
         if not isinstance (rhs, (int, float)) :
@@ -111,14 +150,11 @@ class Length (TFL.Meta.Object) :
         return self.__class__ (self.value * rhs)
     # end def __mul__
 
-    def __mod__ (self, rhs) :
-        if not isinstance (rhs, (int, float)) :
-            raise TypeError \
-                ( "Cannot take remainer of %r and %r objects"
-                % (self.__class__.__name__, rhs.__class__.__name__)
-                )
-        return self.__class__ (self.value % rhs)
-    # end def __mul__
+    __rmul__ = __mul__
+
+    def __nonzero__ (self) :
+        return bool (self.value)
+    # end def __nonzero__
 
     def __sub__ (self, rhs) :
         if not isinstance (rhs, self.__class__) :
@@ -173,6 +209,18 @@ class Percent (Length) :
 
     unit_name = "%"
 
+    def __add__ (self, rhs) :
+        if isinstance (rhs, (int, float)) :
+            return self.__class__ (self.value + rhs)
+        return self.__super.__add__ (rhs)
+    # end def __add__
+
+    def __sub__ (self, rhs) :
+        if isinstance (rhs, (int, float)) :
+            return self.__class__ (self.value - rhs)
+        return self.__super.__sub__ (rhs)
+    # end def __sub__
+
 # end class Percent
 
 class Pt (Length) :
@@ -185,8 +233,73 @@ class Px (Length) :
 
 # end class Px
 
+class TRBL (TFL.Meta.Object) :
+    """Top/right/bottom/left spec
+
+    >>> print (TRBL (0))
+    0
+    >>> print (TRBL (1, 2, 1, 2))
+    1 2
+    >>> print (TRBL (1, 2, 3, 2))
+    1 2 3
+    >>> print (TRBL (1, 2, 3, 4))
+    1 2 3 4
+    >>> print (TRBL (Px (1), Em (1)))
+    1px 1em 0 0
+    >>> print (TRBL (Px (1), 0, Em (1)))
+    1px 0 1em
+    >>> print (TRBL (Px (1), 0, Px (1)))
+    1px 0
+    >>> print (TRBL (t = Px (1)))
+    1px 0 0
+    >>> print (TRBL (r = Px (1)))
+    0 1px 0 0
+    >>> print (TRBL (b = Px (1)))
+    0 0 1px
+    >>> print (TRBL (l = Px (1)))
+    0 0 0 1px
+    >>> print (TRBL (default = Px(2)))
+    2px
+    >>> print (TRBL (t = Px (1), default = Px(2)))
+    1px 2px 2px
+    >>> print (TRBL (r = Px (1), default = Px(2)))
+    2px 1px 2px 2px
+    >>> print (TRBL (b = Px (1), default = Px(2)))
+    2px 2px 1px
+    >>> print (TRBL (l = Px (1), default = Px(2)))
+    2px 2px 2px 1px
+
+    """
+
+    b = property (lambda s : s.values [2])
+    l = property (lambda s : s.values [3])
+    r = property (lambda s : s.values [1])
+    t = property (lambda s : s.values [0])
+
+    def __init__ (self, t = None, r = None, b = None, l = None, default = 0) :
+        self.values = tuple \
+            ((v if v is not None else default) for v in (t, r, b, l))
+    # end def __init__
+
+    def __nonzero__ (self) :
+        return any (self.values)
+    # end def __nonzero__
+
+    def __str__ (self) :
+        values = list (self.values)
+        for h, t in ((-1, -3), (-1, -3), (0, 1)) :
+            if values [h] == values [t] :
+                values.pop ()
+            else :
+                break
+        return " ".join (str (v) for v in values)
+    # end def __str__
+
+# end class TRBL
+
 __all__ = tuple \
-    (k for (k, v) in globals ().iteritems () if getattr (v, "unit_name", None))
+    ( k for (k, v) in globals ().iteritems () if getattr (v, "unit_name", None)
+    ) + ("TRBL", )
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)

@@ -1,0 +1,190 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    html/base.jnj.css
+#
+# Purpose
+#    CSS fragment for template base.jnj
+#
+# Revision Dates
+#     1-Jan-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+try :
+    P
+except NameError :
+    from _GTW._CSS.import_CSS import *
+    import _JNJ.CSS_Defaults as P
+
+style_sheet = Style_Sheet \
+    ( Rule ()
+    ### CSS rules for HTML elements
+    , Rule
+        ( "html"
+        , kits     = [P.color_spec_normal, P.font_spec_normal]
+        , overflow = "auto"
+        )
+    , Rule ("em", ".em", ** P.font_spec_em)
+    , Rule ("pre",       ** P.font_spec_pre)
+    , Rule
+        ( "form div"
+        , margin  = TRBL (t = Em (0.25), b = Em (0.5))
+        )
+    , Rule
+        ( * tuple ("h%s" % (i+1) for i in range (6))
+        , ** P.font_spec_em
+        )
+    , Rule
+        ( "h1"
+        , font_size            = P.h1_font_size
+        , children             =
+            [ Rule_Class
+                ( "headline"
+                , font_size    = P.h1_font_size + 10
+                , ** P.color_spec_heading
+                )
+            ]
+        )
+    , Rule ("h2", font_size = P.h1_font_size -  5)
+    , Rule ("h3", font_size = P.h1_font_size - 10)
+    , Rule ("h4", font_size = P.h1_font_size - 15)
+    , Rule ("h5", font_size = P.h1_font_size - 20)
+    , Rule ("h6", font_size = P.h1_font_size - 25)
+    , Rule
+        ( "input", "select", "textarea"
+        , border    = "1px solid #BEBEBE"
+        , children  =
+            [ Rule_Class
+                ( "Mandatory"
+                , border_width = Px (2)
+                )
+            , Rule_Class
+                ( "Required"
+                , border_width = TRBL (b = Px (2), default = Px (1))
+                )
+            ]
+        )
+    , Rule
+        ( "input[type=submit]", "input[type=reset]", "button"
+        , ** P.button_spec
+        )
+    , Rule
+        ( "tbody tr"
+        , children             =
+            [ Rule_Pseudo ("nth-child(2n+1)", ** P.color_spec_row1)
+            , Rule_Pseudo ("nth-child(2n)",   ** P.color_spec_row2)
+            , Rule_Pseudo ("target",          ** P.color_spec_selected)
+            ]
+        )
+    , Rule
+        ( "td", "th"
+        , padding              = TRBL (r = Em (0.5))
+        , vertical_align       = "top"
+        , children             =
+            [ Rule_Attr
+                ( "[colspan]"
+                , text_align   = "center"
+                )
+            , Rule_Child
+                ( "em"
+                , font_size    = P.h1_font_size
+                , font_weight  = P.h1_font_weight
+                , width        = "100%"
+                , ** P.color_spec_heading
+                )
+            , Rule_Child
+                ( "strong"
+                , padding      = TRBL (l = Em (1./2), r = Em (1./2))
+                , width        = "100%"
+                , ** P.color_spec_strong
+                )
+            ]
+        )
+    , Rule_Pseudo ("target", ** P.color_spec_selected)
+    ### CSS rules for overall layout
+    , Rule
+        ( ".pg_head"
+        , height        = P.pg_head_height
+        , kits          = [P.color_spec_pg_head]
+        , overflow      = "hidden"
+        )
+    , Rule
+        ( ".pg_main"
+        , clear         = "both"
+        , max_width     = P.pg_main_max_width
+        , min_width     = P.pg_main_min_width
+        , overflow      = "auto"
+        , padding_left  = P.nav_col.full_width + P.col_padding
+        , children      =
+            [ Rule_Child
+                ( "div", "nav"
+                , float        = "left"
+                , position     = "relative"
+                )
+            , Rule_Child
+                ( "nav"
+                , background_color = P.nav_col.background_color
+                , font_size        = "small"
+                , margin_left      = Percent (-100)
+                , padding          = TRBL
+                    (Em (1./2), P.col_padding, 0, P.col_padding)
+                , right            = P.nav_col.width + 3 * P.col_padding
+                , width            = P.nav_col.width
+                )
+            ]
+        )
+    , Rule
+        ( ".pg_body"
+        , width          = "100%"
+        , children       =
+            [ Rule ("p", max_width = Em (40))
+            # XXX ??? ".login div", "form.login"
+            ]
+        )
+    , Rule
+        ( ".pg_foot"
+        , border_top     = "1px solid #BEBEBE"
+        , clear          = "both"
+        , font_size      = Percent (75)
+        , margin         = TRBL (Em (2.5), "auto", Em (0.2), "auto")
+        , padding        = TRBL (Em (1./4))
+        , vertical_align = "bottom"
+        , width          = Percent (98)
+        )
+    ### Various classes
+    , Rule (".Error-Message", ** P.color_spec_error)
+    , Rule (".normal",        ** P.color_spec_normal)
+    , Rule (".centered",      text_align = "center")
+    , Rule (".large",         font_size  = Percent (120))
+    , Rule ("a.nospam",       color      = P.link_color)
+    , Rule ("p.nospam",       display    = "inline")
+    , Rule
+        ( "img.centered"
+        , display        = "block"
+        , height         = "auto"
+        , margin         = "auto"
+        , width          = "auto"
+        )
+    )
+
+### __END__ html/base.jnj.css

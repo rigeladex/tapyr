@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,6 +47,7 @@
 #     7-Jun-2006 (CT) `Re_Replacer` added
 #    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
 #    23-Dec-2007 (CT)  `Dict_Replacer` added
+#    31-Dec-2010 (CT) `Multi_Regexp.search_all` and `.search_iter` added
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,16 @@ class Multi_Regexp :
     def search (self, * args, ** kw) :
         return self._delegate ("search", * args, ** kw)
     # end def search
+
+    def search_all (self, string, pos = 0, endpos = None) :
+        return list (self.search_iter (string, pos, endpos))
+    # end def search_all
+
+    def search_iter (self, string, pos = 0, endpos = None) :
+        for p in self.patterns :
+            for m in p.search_iter (string, pos, endpos) :
+                yield m
+    # end def search_iter
 
     def __getattr__ (self, name) :
         try :

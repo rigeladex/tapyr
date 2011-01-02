@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -125,13 +125,14 @@ class Rule (TFL.Meta.Object) :
     @Once_Property
     def selectors (self) :
         parent = self.parent
+        parent_sep = self.parent_sep
         if parent is not None :
-            parent_sep = self.parent_sep
             return \
                 [   parent_sep.join (s)
                 for s in cartesian (parent.selectors, self._selectors)
                 ]
-        return self._selectors
+        ps = parent_sep.strip ()
+        return [(ps + s) for s in self._selectors]
     # end def selectors
 
     def _formatted_decl (self, declarations, sep) :

@@ -1,6 +1,6 @@
 {#- jinja template: html/base.jnj -#}
 {#
-## Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -52,7 +52,7 @@
 
 {%- import html_version as X -%}
 {%- call X.html (lang = page.language|default ("en")) -%}
-{%- if not page -%}{%- set page = NAV -%}{%- endif -%}
+  {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
   {%- call X.head () -%}
     {%- block head_elements -%}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
@@ -105,11 +105,11 @@
   {%- endcall %} {# X.head #}
   <body {{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
     {%- block body -%}
-    {% call X.header (id = "header") -%}
+    {% call X.header (id = "header", class = "pg_head") -%}
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
-    <div id="main" class="main">
-      <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
+    <div id="main" class="pg_main">
+      <div id="document" class="pg_body{% if page.document_class %} {{ page.document_class }}{% endif %}">
         {%- block notifications -%}
           {%- if notifications %}
             <div class="notifications">
@@ -132,7 +132,7 @@
         {%- endcall %} {# X.nav #}
       {%- endblock nav_block -%}
     </div> {# #main .main #}
-    {% call X.footer (id = "footer") -%}
+    {% call X.footer (id = "footer", class="pg_foot") -%}
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
     {%- endblock body -%}

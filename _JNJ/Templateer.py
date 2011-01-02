@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -47,56 +47,131 @@ from   _TFL               import TFL
 
 import _JNJ.Environment
 
-from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
+from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Regexp              import *
 
 from jinja2.exceptions import TemplateNotFound
 
-class Template (TFL.Meta.Object) :
+class _Template_ (TFL.Meta.Object) :
     """Describe a Jinja template."""
 
-    Map           = {}
-
-    def __init__ (self, name, path, css_fragment_name = None) :
+    def _init_ (self, name, path, css_fragment_name = None) :
         assert name not in self.Map, name
         self.name              = name
         self.path              = path
         self.css_fragment_name = css_fragment_name
         self.Map [name]        = self
-    # end def __init__
+    # end def _init_
+
+# end class _Template_
+
+class Template (_Template_) :
+    """Describe a Jinja template."""
+
+    Map           = {}
+
+    __init__      = _Template_._init_
 
 # end class Template
 
-class Template_E (TFL.Meta.Object) :
+class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
     _css_fragment = None
     _css_path     = None
+
+    _extend_pat   = Regexp \
+        ( r"\{\%-?\s*extends\s+(?P<name>.*?)\s*-?\%\}"
+        )
+    _import_pat   = Multi_Regexp \
+        ( r"\{\%-?\s*import\s+"
+          r"(?P<name>.*?)\s+"
+          r"as\s+"
+        , r"\{\%-?\s*from\s+"
+          r"(?P<name>.*?)\s+"
+          r"import\s+"
+        , r"\{\%-\s*include\s+"
+          r"(?P<name>.*?)\s+"
+          r"(?:(?:ignore|with|without)\s+|-?\%\})"
+        )
+
     _t_path       = None
     _t_source     = None
 
-    def __init__ (self, proto, env) :
-        self.name              = proto.name
-        self.path              = proto.path
-        self.css_fragment_name = proto.css_fragment_name
-        self.env               = env
-    # end def __init__
+    def __new__ (cls, env, name, path = None, css_fragment_name = None) :
+        if path is None :
+            path = name
+        if name in cls.Map :
+            result = cls.Map [name]
+        elif path in cls.By_Path :
+            result = cls.By_Path [path]
+        else :
+            result = _Template_.__new__ (cls)
+            result._init_ (env, name, path, css_fragment_name)
+        return result
+    # end def __new__
+
+    def _init_ (self, env, name, path = None, css_fragment_name = None) :
+        self.__super._init_ (name, path, css_fragment_name)
+        self.env            = env
+        self.By_Path [path] = self
+    # end def _init_
+
+    @classmethod
+    def copy (cls, env, proto) :
+        return cls (env, proto.name, proto.path, proto.css_fragment_name)
+    # end def copy
 
     @Once_Property
     def css_fragment (self) :
-        self._load_css (self.env)
+        self._load_css ()
         return self._css_fragment
     # end def css_fragment
 
     @Once_Property
     def css_path (self) :
-        self._load_css (self.env)
+        self._load_css ()
         return self._css_path
     # end def css_path
 
     @Once_Property
+    def extends (self) :
+        env    = self.env
+        pat    = self._extend_pat
+        source = self.source
+        if pat.search (source) :
+            try :
+                path = eval (pat.name.strip (), env.globals, {})
+            except Exception :
+                pass
+            else :
+                return self.__class__ (env, path)
+    # end def extends
+
+    @Once_Property
+    def imports (self) :
+        env    = self.env
+        pat    = self._import_pat
+        source = self.source
+        def _gen () :
+            for match in pat.search_iter (source) :
+                try:
+                    name   = match.group ("name").strip ()
+                    pathes = eval (name, env.globals, {})
+                except Exception :
+                    pass
+                else :
+                    if isinstance (pathes, basestring) :
+                        pathes = [pathes]
+                    for p in pathes :
+                        yield self.__class__ (env, p)
+        return list (_gen ())
+    # end def imports
+
+    @Once_Property
     def source (self) :
-        self._load_template (self.env)
+        self._load_template ()
         return self._t_source
     # end def source
 
@@ -104,6 +179,34 @@ class Template_E (TFL.Meta.Object) :
     def template (self) :
         return self.env.get_template (self.path)
     # end def template
+
+    @Once_Property
+    def templates (self) :
+        return list (reversed (self.templates_e)) + self.templates_i
+    # end def templates
+
+    @Once_Property
+    def templates_e (self) :
+        def _gen () :
+            yield self
+            if self.extends :
+                for e in self.extends.templates_e :
+                    yield e
+        return list (TFL.uniq (_gen ()))
+    # end def templates_e
+
+    @Once_Property
+    def templates_i (self) :
+        def _gen () :
+            for e in reversed (self.templates_e [1:]) :
+                for i in e.templates_i :
+                    yield i
+            for i in self.imports :
+                yield i
+                for ii in i.imports :
+                    yield ii
+        return list (TFL.uniq (_gen ()))
+    # end def templates_i
 
     def render (self, context) :
         return self.template.render (context)
@@ -114,7 +217,7 @@ class Template_E (TFL.Meta.Object) :
         if f_path is None :
             f_path = "%s.css" % (self.path, )
         try :
-            source, path, _ = env.loader.get_source (self.env, f_path)
+            source, path, _ = self.env.loader.get_source (self.env, f_path)
         except TemplateNotFound :
             pass
         else :
@@ -124,7 +227,7 @@ class Template_E (TFL.Meta.Object) :
 
     def _load_template (self) :
         try :
-            source, path, _ = env.loader.get_source (self.env, self.path)
+            source, path, _ = self.env.loader.get_source (self.env, self.path)
         except TemplateNotFound :
             pass
         else :
@@ -174,24 +277,16 @@ class Templateer (TFL.Meta.Object) :
     Context         = dict
 
     def __init__ (self, * args, ** kw) :
-        self.env = env = JNJ.Environment.HTML (* args, ** kw)
-        self.Template_Map = dict \
-            ((t.name, Template_E (t, env)) for t in Template.Map.itervalues ())
+        self.env          = env = JNJ.Environment.HTML (* args, ** kw)
+        self.Template_E   = T   = Template_E.New \
+            ("x", Map = {}, By_Path = {})
+        self.Template_Map = T.Map
+        for t in Template.Map.itervalues () :
+            T.copy (env, t)
     # end def __init__
 
-    def get_std_template (self, name) :
-        if name in self.Template_Map :
-            template = self.Template_Map [name]
-        else :
-            template = self.Template_Map ["default"]
-        return template
-    # end def get_std_template
-
     def get_template (self, name) :
-        if name not in self.Template_Map :
-            self.Template_Map [name] = Template_E \
-                (Template (name, name), self.env)
-        return self.Template_Map [name]
+        return self.Template_E (self.env, name)
     # end def get_template
 
     def render (self, template_or_name, context) :
@@ -202,7 +297,7 @@ class Templateer (TFL.Meta.Object) :
     # end def render
 
     def render_string (self, template_string, context) :
-        return self.render (self.env.from_string (template_string), context)
+        return self.env.from_string (template_string).render (context)
     # end def render_string
 
 # end class Templateer

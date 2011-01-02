@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -200,6 +200,7 @@ class Rule (_Media_) :
         assert queries
         self.queries = list (queries)
         self.rules   = list (self._pop_rules (kw))
+        assert not kw
     # end def __init__
 
     def block (self) :

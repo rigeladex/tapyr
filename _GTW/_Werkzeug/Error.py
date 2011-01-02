@@ -31,6 +31,7 @@
 #    20-Jun-2010 (MG) `s/finish/finish_request/g`
 #    17-Aug-2010 (CT) `Error_503` added
 #     2-Dec-2010 (CT) `_Exc_Mixin_` and `M_Error` added and used
+#    31-Dec-2010 (CT) s/get_std_template/get_template/
 #    ««revision-date»»···
 #--
 
@@ -163,10 +164,9 @@ class _Error_ (Status) :
         description = self.description
         nav_root    = getattr (handler, "nav_root", None)
         if nav_root :
-            handler.request.user = handler.current_user
-            Templateer           = nav_root.Templateer
-            template             = Templateer.get_std_template \
-                (self.status_code)
+            handler.request.user  = handler.current_user
+            Templateer            = nav_root.Templateer
+            template              = Templateer.get_template (self.status_code)
             context               = Templateer.Context \
                 ( exception       = self
                 , fatal_exception = self if self.status_code >= 500 else None

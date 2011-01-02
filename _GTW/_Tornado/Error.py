@@ -33,6 +33,7 @@
 #    18-Jan-2010 (CT) Use `Templateer.get_std_template` instead of homegrown
 #                     code
 #    17-Aug-2010 (CT) `Error_503` added
+#    31-Dec-2010 (CT) s/get_std_template/get_template/
 #    ««revision-date»»···
 #--
 
@@ -119,8 +120,7 @@ class _Error_ (Status) :
         if nav_root :
             handler.request.user = handler.current_user
             Templateer           = nav_root.Templateer
-            template             = Templateer.get_std_template \
-                (self.status_code)
+            template             = Templateer.get_template (self.status_code)
             context              = Templateer.Context \
                 ( exception = self
                 , page      = nav_root
