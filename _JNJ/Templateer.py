@@ -37,6 +37,7 @@
 #    17-Aug-2010 (CT) `error_503` added
 #    29-Dec-2010 (CT) `Template` added and used
 #    31-Dec-2010 (CT) `Template_E` added and used
+#     2-Jan-2011 (CT) `Template_E.get_CSS` added
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,8 @@ from   _TFL               import TFL
 import _JNJ.Environment
 
 import _TFL._Meta.Object
+import _TFL.predicate
+
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Regexp              import *
 
@@ -81,6 +84,9 @@ class Template_E (_Template_) :
     _css_fragment = None
     _css_path     = None
 
+    _coding_pat   = Regexp \
+        ( r"^#\s*-\*-\s*coding:\s*[-a-zA-Z0-9]+\s*-\*-\s*" + "\n"
+        )
     _extend_pat   = Regexp \
         ( r"\{\%-?\s*extends\s+(?P<name>.*?)\s*-?\%\}"
         )
@@ -208,6 +214,18 @@ class Template_E (_Template_) :
         return list (TFL.uniq (_gen ()))
     # end def templates_i
 
+    def get_CSS (self, P) :
+        css_fragment_pathes = tuple \
+            (TFL.uniq (t.css_path for t in self.templates if t.css_path))
+        if css_fragment_pathes :
+            from _GTW._CSS.Style_Sheet import Style_Sheet
+            result = "\n\n".join \
+                ( str (s) for s in Style_Sheet.Read
+                    (* css_fragment_pathes, parameters = P)
+                )
+            return result
+    # end def get_CSS
+
     def render (self, context) :
         return self.template.render (context)
     # end def render
@@ -221,7 +239,7 @@ class Template_E (_Template_) :
         except TemplateNotFound :
             pass
         else :
-            self._css_fragment = source
+            self._css_fragment = self._coding_pat.sub ("", source, 1)
             self._css_path     = path
     # end def _load_css
 

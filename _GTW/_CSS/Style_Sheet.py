@@ -28,6 +28,7 @@
 # Revision Dates
 #    29-Dec-2010 (CT) Creation
 #     1-Jan-2011 (CT) `Eval` added
+#     2-Jan-2011 (CT) `_Eval` factored
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,8 @@ class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
     """
 
     def __init__ (self, parameters) :
-        self.__super.__init__ (object = parameters, locls = {})
+        self.__super.__init__ \
+            (object = parameters, locls = dict (P = parameters))
         self.style_sheets = []
     # end def __init__
 
@@ -97,23 +99,27 @@ class Style_Sheet (TFL.Meta.Object) :
 
     @classmethod
     def Eval (cls, * fragments, ** kw) :
-        parameters = kw.pop ("parameters", None)
-        assert not kw
+        return cls._Eval (fragments, ** kw)
+    # end def Eval
+
+    @classmethod
+    def Read (cls, * file_names, ** kw) :
+        """Read style sheets definitions from `file_names`."""
+        def _gen (file_names) :
+            for file_name in file_names :
+                with open (file_name, "rt") as file :
+                    yield file
+        return cls._Eval (_gen (file_names), ** kw)
+    # end def Read
+
+    @classmethod
+    def _Eval (cls, fragments, parameters) :
         scope = Parameter_Scope (parameters)
         globs = cls._get_CSS_globs ()
         for f in fragments :
             exec (f, globs, scope)
         return scope.style_sheets
-    # end def Eval
-
-    @classmethod
-    def Read (cls, file_name, parameters = None) :
-        """Read style sheets definitions from `file_name`."""
-        scope = Parameter_Scope (parameters)
-        with open (file_name, "rt") as file :
-            exec (file, cls._get_CSS_globs (), scope)
-        return scope.style_sheets
-    # end def Read
+    # end def _Eval
 
     @classmethod
     def _get_CSS_globs (cls) :

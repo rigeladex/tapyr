@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -29,6 +29,7 @@
 #    26-Dec-2010 (CT) Creation
 #    27-Dec-2010 (CT) Creation continued
 #    29-Dec-2010 (CT) Creation finished
+#     2-Jan-2011 (CT) `__add__` and `__radd__` added
 #    ««revision-date»»···
 #--
 
@@ -443,6 +444,14 @@ class Color (TFL.Meta.Object) :
         else :
             return "%s(%s)" % (self.name, v)
     # end def formatted
+
+    def __add__ (self, rhs) :
+        return str (self) + rhs
+    # end def __add__
+
+    def __radd__ (self, rhs) :
+        return rhs + str (self)
+    # end def __radd__
 
     def __invert__ (self) :
         return self.__class__.from_value \
