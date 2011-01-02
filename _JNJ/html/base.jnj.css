@@ -188,3 +188,15 @@ style_sheet = Style_Sheet \
     )
 
 ### __END__ html/base.jnj.css
+
+"""
+Test::
+
+import _GTW._CSS.Style_Sheet
+from   _JNJ import CSS_Defaults as P
+T  = NAV.Templateer
+ct = T.get_template("calendar")
+x  = ct.get_CSS (P)
+print x
+
+"""
