@@ -37,12 +37,16 @@ from _TFL.Color           import Color as _C
 
 _C.formatter = RGB_X
 
-color_light_grey       = RGB_X     ("#EBEBEB")
-color_medium_grey      = RGB_X     ("#BEBEBE")
+color_light_grey       = RGB_X ("#EBEBEB")
+color_medium_grey      = RGB_X ("#BEBEBE")
+color_selected         = RGB_X ("#FF6633")
 
-border_simple          = "1px solid " + color_medium_grey
+border_button          = "2px outset " + color_medium_grey
+border_simple          = "1px solid "  + color_medium_grey
+border_selected        = "2px solid "  + color_selected
+
 button_spec            = dict \
-    ( border           = "2px outset"
+    ( border           = border_button
     , margin           = TRBL0 (t = Em (1./4), b = Em (3./4))
     , padding          = TRBL0 (t = Em (1./8), b = Em (1./8))
     )
@@ -50,6 +54,7 @@ button_spec            = dict \
 col_padding            = Px (5)
 
 link_color             = RGB_X ("#0050FF")
+visited_color          = RGB_X ("#54AAFF")
 
 class nav_col :
 
@@ -71,7 +76,7 @@ class nav_col :
 
     color_spec_visited     = dict \
         ( color_spec_link
-        , color            = RGB_X ("#54AAFF")
+        , color            = visited_color
         )
 
     color_spec_web_link_hover = dict \
@@ -87,13 +92,27 @@ class nav_col :
 
 ### end class nav_col
 
+class cal :
+
+    date_bg                = RGB_X ("#DDDDDD")
+    date_padding           = TRBL0 (r = Em (1./4), b = Em (1./10))
+    event_color            = RGB_X ("#FFF8AF")
+    font_size              = Em    (0.7)
+    holiday_bg             = RGB_X ("#CCFFFF")
+    month_color            = RGB_X ("#ABABAB")
+    weekend_color          = RGB_X ("#444444")
+    week_color             = RGB_8 (255, 153, 0)
+    week_height            = Em    (8)
+
+# end class cal
+
 color_spec_error       = dict \
     ( background_color = SVG_Color ("white")
     , color            = SVG_Color ("red")
     )
 color_spec_heading     = dict \
     ( background_color = SVG_Color ("white")
-    , color            = RGB_X     ("#FF6633")
+    , color            = color_selected
     )
 color_spec_gallery_heading = dict \
     ( background_color = RGB_P     (50, 75, 100)
@@ -111,8 +130,8 @@ color_spec_row1        = color_spec_meta = dict \
     ( background_color = color_light_grey
     , color            = RGB_X     ("#000033")
     )
-color_spec_row2        = dict \
-    ( background_color = color_medium_grey  ### XXX ??? white
+color_spec_row2        = color_spec_message = dict \
+    ( background_color = color_medium_grey
     , color            = RGB_X     ("#000033")
     )
 color_spec_selected    = dict \
@@ -127,12 +146,18 @@ color_spec_strong      = dict \
 css_arrow_color        = SVG_Color ("red")
 css_arrow_width        = Em (1./2)
 
+del_spec               = dict \
+    ( text_decoration  = "line-through"
+    # XXX ???
+    )
+
 font_family_normal     = """"Lucida Grande", verdana, sans-serif"""
 font_family_pre        = """monospace"""
 font_spec_normal       = dict \
     ( font_family      = font_family_normal
     , font_style       = "normal"
     , font_weight      = "normal"
+    , line_height      = 1.44
     )
 font_spec_em           = dict \
     ( font_spec_normal
@@ -148,11 +173,32 @@ grid_table_border      = "3px ridge gray"
 h1_font_size           = Percent (125)
 h1_font_weight         = "bold"
 
+hbox_spec              = dict \
+    ( display          = "block"
+    , overflow         = "hidden"
+    )
+
+hr_spec                = dict \
+    ( border           = 0
+    , border_top       = "1px solid #CCC"
+    , display          = "block"
+    , height           = Px (1)
+    , margin           = TRBL (Em (1), 0)
+    , padding          = 0
+    )
+
+input_padding          = TRBL (Em (0.1), Em (0.1), Em (0.2))
+
+ins_spec               = dict \
+    ( text_decoration  = "none"
+    # XXX ???
+    )
+
 pg_head_height         = Px (100)
 pg_main_max_width      = Em (50)
 pg_main_min_width      = Em (15)
 
 thumbnail_size         = Px (155)
-thumbnail_selected_color = SVG_Color ("orange")
+thumbnail_selected_color = color_selected
 
 ### __END__ JNJ.CSS_Defaults

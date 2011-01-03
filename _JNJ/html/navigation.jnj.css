@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
+#     3-Jan-2011 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,21 @@ style_sheet = Style_Sheet \
             , Rule
                 ( * tuple (".level-%s" % (i+2) for i in range (5))
                 , padding_left   = Em (1.00)
+                )
+            , Rule
+                ( ".calendar"
+                , font_size      = P.cal.font_size
+                , children       =
+                    [ Rule
+                        ( "th.week-number"
+                        , height = Em (1.5)
+                        , width  = Em (1.5)
+                        )
+                    , Rule
+                        ( "thead"
+                        , display = "none"
+                        )
+                    ]
                 )
             , Rule
                 ( "#weblinks li.nav-link:hover"

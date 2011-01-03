@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2010 Mag. Christian Tanzer. All rights reserved
+* Copyright (C) 2010-2011 Mag. Christian Tanzer. All rights reserved
 * Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 *
 * Revision Dates
@@ -26,12 +26,6 @@ blockquote
 
 caption
     { text-align          : center
-    }
-
-cite
-    { display             : block
-    ; margin-top          : 1.0em
-    ; text-align          : right
     }
 
 em  { font-weight         : bold }
