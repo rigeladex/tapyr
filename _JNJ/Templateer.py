@@ -38,6 +38,7 @@
 #    29-Dec-2010 (CT) `Template` added and used
 #    31-Dec-2010 (CT) `Template_E` added and used
 #     2-Jan-2011 (CT) `Template_E.get_CSS` added
+#     3-Jan-2011 (CT) `Template_E.CSS` added
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,11 @@ class Template_E (_Template_) :
     def copy (cls, env, proto) :
         return cls (env, proto.name, proto.path, proto.css_fragment_name)
     # end def copy
+
+    @Once_Property
+    def CSS (self) :
+        return self.get_CSS (self.env.CSS_Parameters)
+    # end def CSS
 
     @Once_Property
     def css_fragment (self) :
@@ -297,16 +303,16 @@ class Templateer (TFL.Meta.Object) :
     Context         = dict
 
     def __init__ (self, * args, ** kw) :
-        self.env          = env = JNJ.Environment.HTML (* args, ** kw)
-        self.Template_E   = T   = Template_E.New \
+        self.env           = env = JNJ.Environment.HTML (* args, ** kw)
+        self.Template_Type = T   = Template_E.New \
             ("x", Map = {}, By_Path = {})
-        self.Template_Map = T.Map
+        self.Template_Map  = T.Map
         for t in Template.Map.itervalues () :
             T.copy (env, t)
     # end def __init__
 
     def get_template (self, name) :
-        return self.Template_E (self.env, name)
+        return self.Template_Type (self.env, name)
     # end def get_template
 
     def render (self, template_or_name, context) :

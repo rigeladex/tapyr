@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    12-Apr-2010 (CT) Creation
 #    23-Jun-2010 (MG) `Aggregator.ETMS` once property added
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -52,10 +53,10 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
        E-Types.
     """
 
-    css_class   = "news-clip"
-    query_limit = 25
-    sort_key    = TFL.Sorted_By ("-date.start", "-prio")
-    template    = "e_type_aggregator"
+    css_class        = "news-clip"
+    query_limit      = 25
+    sort_key         = TFL.Sorted_By ("-date.start", "-prio")
+    template_name    = "e_type_aggregator"
 
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an aggregation page

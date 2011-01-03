@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Nav.
@@ -29,6 +29,7 @@
 # Revision Dates
 #     2-Aug-2010 (MG) Creation
 #     5-Aug-2010 (MG) Added `jQuery_UI` to Media
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -235,14 +236,14 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
             title = 'Details for'
         title    += ' ' + object.__repr__ (obj) [1:-1]
         ### XXX
-        return render_template\
+        return render_template \
             ('dump_object.html', items=items, title=title, repr=repr)
     # end def dump_object
 
     def dump_locals (self, d) :
         items = [(key, self.repr (value)) for key, value in d.items ()]
         ### XXX
-        return render_template\
+        return render_template \
             ( 'dump_object.html'
             , items = items
             , repr  = None
@@ -354,7 +355,7 @@ class _Py_Console_ (code.InteractiveInterpreter) :
 class Console (GTW.NAV.Page) :
     """Provide a interactive python console `window`."""
 
-    template = "console"
+    template_name = "console"
 
     _Media   = GTW.Media \
         ( css_links   =

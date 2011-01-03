@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -161,6 +161,7 @@
 #     8-Jan-2010 (CT) Moved from DJO to GTW
 #    17-Aug-2010 (CT) `template` corrected
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -178,7 +179,7 @@ from   posixpath import join as pjoin, normpath as pnorm
 class Gallery (GTW.NAV.Page) :
     """Model a photo gallery that's part of a web site."""
 
-    template = "gallery"
+    template_name = "gallery"
 
     def __init__ (self, pic_dir, parent, ** kw) :
         self.im_dir   = pjoin (pic_dir, "im")
@@ -301,10 +302,10 @@ class _Photo_ (GTW.NAV.Page) :
 class Photo (_Photo_) :
     """Model one page of a web site displaying a single photo of a gallery."""
 
-    next      = None
-    prev      = None
-    template  = "photo"
-    thumb     = None
+    next           = None
+    prev           = None
+    template_name  = "photo"
+    thumb          = None
 
 # end class Photo
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    22-Jan-2010 (CT) PrefixLoader for `STD::` added to allow access
 #                     to shadowed templates of JNJ itself
 #    23-Feb-2010 (MG) `Default_Extensions` factored
+#     3-Jan-2011 (CT) `CSS_Parameters` added
 #    ««revision-date»»···
 #--
 
@@ -51,12 +52,13 @@ from jinja2 import Environment, FileSystemLoader, ChoiceLoader, PrefixLoader
 Default_Extensions = ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
 
 def HTML \
-        ( version   = "html/5.jnj"
-        , load_path = ()
-        , loader    = None
-        , globals   = {}
-        , encoding  = "iso-8859-1"
-        , i18n      = False
+        ( version        = "html/5.jnj"
+        , load_path      = ()
+        , loader         = None
+        , globals        = {}
+        , encoding       = "iso-8859-1"
+        , i18n           = False
+        , CSS_Parameters = None
         , ** kw
         ) :
     jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "iso-8859-1")
@@ -78,6 +80,7 @@ def HTML \
         , GTW          = JNJ.GTW (result)
         , html_version = version
         )
+    result.CSS_Parameters = CSS_Parameters
     if i18n :
         result.install_gettext_translations (TFL.I18N)
     return result

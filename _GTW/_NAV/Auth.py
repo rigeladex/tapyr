@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.Auth.
@@ -50,6 +50,7 @@
 #    15-Dec-2010 (CT) `request.url_root` added to `href_action`
 #    15-Dec-2010 (CT) Calls to `send_email` guarded with exception handler
 #    15-Dec-2010 (CT) `Request_Reset_Password` implemented
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +117,7 @@ class Auth (GTW.NAV.Dir) :
     class Activate (_Cmd_) :
         """Account activation"""
 
-        template     = "account_activate"
+        template_name = "account_activate"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -145,7 +146,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Email (_Cmd_) :
 
-        template           = "account_change_email"
+        template_name      = "account_change_email"
         new_email_template = "account_verify_new_email"
         old_email_template = "account_change_email_info"
 
@@ -197,7 +198,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Password (_Cmd_) :
 
-        template     = "account_change_password"
+        template_name = "account_change_password"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -228,7 +229,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Login (_Cmd_) :
 
-        template = "login"
+        template_name = "login"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
@@ -284,7 +285,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Register (_Cmd_) :
 
-        template       = "account_register"
+        template_name  = "account_register"
         email_template = "account_verify_email"
 
         def rendered (self, handler, template = None) :
@@ -336,7 +337,7 @@ class Auth (GTW.NAV.Dir) :
     class Request_Reset_Password (_Cmd_) :
         """Initiate the reset password procedure."""
 
-        template       = "account_reset_password"
+        template_name  = "account_reset_password"
         email_template = "account_reset_password_email"
 
         def rendered (self, handler, template = None) :

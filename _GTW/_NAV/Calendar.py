@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -42,6 +42,7 @@
 #                     `week_roller_ctrl`
 #    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
 #                     `__super.rendered`
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     pid                = "Cal"
     q_prefix           = "q"
     qx_prefix          = "qx"
-    template           = "calendar"
+    template_name      = "calendar"
     week_roller_size   = 6
 
     event_manager_name = "GTW.OMP.EVT.Event_occurs"
@@ -113,17 +114,17 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     class _Cmd_ (GTW.NAV.Page) :
 
         implicit          = True
-        template_qx       = None
+        template_qx_name  = None
         SUPPORTED_METHODS = set (("GET", ))
 
     # end class _Cmd_
 
     class Day (_Cmd_) :
 
-        name         = "day"
-        qx_p         = False
-        template     = "calendar_day"
-        template_qx  = "calendar_day_qx"
+        name              = "day"
+        qx_p              = False
+        template_name     = "calendar_day"
+        template_qx_name  = "calendar_day_qx"
 
         def rendered (self, handler, template = None) :
             result = self.__super.rendered (handler, template)
@@ -202,7 +203,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     class QX (Q) :
 
-        template = "calendar_qx"
+        template_name = "calendar_qx"
 
         def _rendered (self, handler, template) :
             anchor = self.anchor
@@ -222,8 +223,8 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
 
     class Year (_Mixin_, _Cmd_) :
 
-        name         = "year"
-        template     = "calendar"
+        name          = "year"
+        template_name = "calendar"
 
         @property
         def anchor (self) :
@@ -309,7 +310,8 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                         , year     = year
                         , day      = day
                         , qx_p     = qx_p
-                        , template = Day.template_qx if qx_p else Day.template
+                        , template =
+                            Day.template_qx_name if qx_p else Day.template_name
                         )
     # end def _get_child
 

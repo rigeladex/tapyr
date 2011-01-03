@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -33,6 +33,7 @@
 #    17-Aug-2010 (CT) `template` corrected
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #     7-Oct-2010 (CT) `max_height_photo` and friends added
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     allows_children = True
 
-    template        = "gallery"
+    template_name   = "gallery"
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -67,7 +68,7 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     class Picture (_Cmd_) :
 
-        template  = "photo"
+        template_name  = "photo"
 
         def __init__ (self, * args, ** kw) :
             self.__super.__init__ (* args, ** kw)

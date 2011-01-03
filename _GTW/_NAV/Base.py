@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -235,6 +235,9 @@
 #    21-Dec-2010 (CT) `Root.home` added
 #    22-Dec-2010 (CT) `E_Types` replaced by `ET_Map` (containing `E_Type_Desc`)
 #    22-Dec-2010 (CT) `Root.Admin` removed
+#     3-Jan-2011 (CT) `empty_template` removed
+#     3-Jan-2011 (CT) `template` changed to property (auto-converting
+#                     `template_name`)
 #    ««revision-date»»···
 #--
 
@@ -307,6 +310,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     parent                     = None
 
     _dump_type                 = "dict"
+    _template                  = None
 
     _Media                     = GTW.Media ()
 
@@ -540,6 +544,25 @@ class _Site_Entity_ (TFL.Meta.Object) :
             print "*** Cannot send email because `smpt` is undefined ***"
             print text
     # end def send_email
+
+    @property
+    def template (self) :
+        if self._template is None :
+            t_name = getattr (self, "template_name", None)
+            if t_name :
+                self._template = self.Templateer.get_template (t_name)
+        return self._template
+    # end def template
+
+    @template.setter
+    def template (self, value) :
+        if isinstance (value, basestring) :
+            self.template_name = value
+        elif not isinstance (value, self.Templateer.Template_Type) :
+            self.template_name = value.name
+        else :
+            self._template = value
+    # end def template
 
     @property
     def Type (self) :
@@ -883,16 +906,14 @@ class _Dir_ (_Site_Entity_) :
             try :
                 page = first (self.own_links)
             except IndexError :
-                if self.empty_template :
-                    return self.__super.rendered (handler, self.empty_template)
+                pass
             else :
                 handler.context.update \
                     ( nav_page = page
                     , page     = page
                     )
                 return page.rendered (handler, template)
-        else :
-            return self.__super.rendered (handler, template)
+        return self.__super.rendered (handler, template)
     # end def rendered
 
     def _get_child (self, child, * grandchildren) :
@@ -932,9 +953,9 @@ class Root (_Dir_) :
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
     copyright_url           = None
+    CSS_Parameters          = None
     DEBUG                   = False
     email                   = None   ### default from address
-    empty_template          = None
     name                    = "/"
     owner                   = None
     redirects               = {}
@@ -982,18 +1003,15 @@ class Root (_Dir_) :
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
         _Site_Entity_.top = self
+        self.HTTP         = HTTP
+        self.Templateer   = Templateer
         self.parents      = []
         self.prefix       = ""
         self.Table        = {}
         self.SC           = Record ()
         self.ET_Map       = TFL.defaultdict (self.E_Type_Desc)
         self.level        = -1
-        self.__super.__init__ \
-            ( src_dir    = src_dir
-            , HTTP       = HTTP
-            , Templateer = Templateer
-            , ** kw
-            )
+        self.__super.__init__ (src_dir = src_dir, ** kw)
         if not self.src_root :
             self.src_root = src_dir
     # end def __init__

@@ -251,8 +251,10 @@ style_sheet = Style_Sheet \
 """
 Test::
 
+$ /usr/bin/python nav.py
+
 import _GTW._CSS.Style_Sheet
-import CSS_Defaults as P
+import CSS_Parameters as P
 T  = NAV.Templateer
 ct = T.get_template ("html/sitemap.jnj")
 ct = T.get_template ("html/clip_aggregator.jnj")

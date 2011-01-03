@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -43,6 +43,7 @@
 #    22-Dec-2010 (CT) Moved from `GTW.NAV` to `GTW.NAV.E_Type`
 #    22-Dec-2010 (CT) `Admin_Group` factored, `Admin_Group._pns_entries` added
 #    22-Dec-2010 (CT) `Admin_Alias` and `show_aliases` added and used
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,7 @@ class Admin_Group (GTW.NAV.Dir) :
     delegate_view_p = False
     Page            = GTW.NAV.E_Type.Admin
     show_aliases    = False
-    template        = "site_admin"
+    template_name   = "site_admin"
 
     def __init__ (self, src_dir, parent, ** kw) :
         entries = \

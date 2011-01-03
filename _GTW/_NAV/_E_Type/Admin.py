@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -77,6 +77,7 @@
 #                     browser-based `Console`
 #    21-Dec-2010 (CT) `h_title` removed
 #    22-Dec-2010 (CT) Register `Admin` instances in `top.ET_Map`
+#     3-Jan-2011 (CT) Introduce `template_name`
 #    ««revision-date»»···
 #--
 
@@ -101,8 +102,8 @@ from   posixpath                import join  as pjoin
 class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
-    css_group   = "Type"
-    template    = "e_type_admin"
+    css_group           = "Type"
+    template_name       = "e_type_admin"
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -119,7 +120,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         Media           = None ### cancel inherited property defined
         name            = "create"
         args            = (None, )
-        template        = "e_type_change"
+        template_name   = "e_type_change"
         form_parameters = {}
 
         @property
@@ -250,8 +251,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     class Deleter (_Cmd_) :
         """Model an admin page for deleting a specific instance of a etype."""
 
-        name         = "delete"
-        template     = "e_type_delete"
+        name              = "delete"
+        template_name     = "e_type_delete"
 
         def _view (self, request) :
             HTTP = self.top.HTTP
@@ -275,7 +276,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         SUPPORTED_METHODS = set (("GET", ))
 
-        template          = "dynamic_form"
+        template_name     = "dynamic_form"
 
         def inline (self) :
             form   = self.Form (self.abs_href, None)
