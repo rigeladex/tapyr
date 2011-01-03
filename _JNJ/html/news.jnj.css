@@ -1,0 +1,99 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    html/news.jnj.css
+#
+# Purpose
+#    CSS fragment for template html/news.jnj
+#
+# Revision Dates
+#     2-Jan-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+try :
+    P
+except NameError :
+    from _GTW._CSS.import_CSS import *
+    import _JNJ.CSS_Defaults as P
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".news-entry"
+        , children                =
+            [ Rule_Sibling
+                ( ".news-entry"
+                , margin_top      = Em (2)
+                )
+            , Rule
+                ( "td"
+                , padding_bottom  = Em (1./4)
+                )
+            , Rule
+                ( ".button"
+                , float           = "right"
+                , font_size       = "small"
+                , text_align      = "center"
+                , width           = "auto"
+                , ** P.nav_col.color_spec_link
+                )
+            ]
+        )
+    , Rule
+        ( ".news-meta"
+        , border                  = P.border_simple
+        , border_width            = TRBL (Px (1), 0)
+        , margin_bottom           = Em (1)
+        , padding                 = TRBL (0, Em (0.2))
+        , ** P.color_spec_meta
+        )
+    , Rule
+        ( ".news-author", ".news-date"
+        , font_size               = Percent (90)
+        )
+    , Rule
+        ( ".news-author"
+        , children                =
+            [ Rule
+                ( "a"
+                , text_decoration = "none"
+                , children        =
+                    [ Rule_Pseudo
+                        ( "hover"
+                        , text_decoration = "underline"
+                        )
+                    ]
+                )
+            ]
+        )
+    , Rule
+        ( ".news-date"
+        , float                    = "right"
+        )
+    , Rule
+        ( ".news-title"
+        , font_size                = Percent (110)
+        , padding                  = TRBL (Em (1./4), 0, Em (0.05))
+        )
+    )
+
+### __END__ html/news.jnj.css

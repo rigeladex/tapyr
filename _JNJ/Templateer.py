@@ -146,7 +146,7 @@ class Template_E (_Template_) :
         env    = self.env
         pat    = self._extend_pat
         source = self.source
-        if pat.search (source) :
+        if source and pat.search (source) :
             try :
                 path = eval (pat.name.strip (), env.globals, {})
             except Exception :
@@ -160,19 +160,21 @@ class Template_E (_Template_) :
         env    = self.env
         pat    = self._import_pat
         source = self.source
-        def _gen () :
-            for match in pat.search_iter (source) :
-                try:
-                    name   = match.group ("name").strip ()
-                    pathes = eval (name, env.globals, {})
-                except Exception :
-                    pass
-                else :
-                    if isinstance (pathes, basestring) :
-                        pathes = [pathes]
-                    for p in pathes :
-                        yield self.__class__ (env, p)
-        return list (_gen ())
+        if source :
+            def _gen () :
+                for match in pat.search_iter (source) :
+                    try:
+                        name   = match.group ("name").strip ()
+                        pathes = eval (name, env.globals, {})
+                    except Exception :
+                        pass
+                    else :
+                        if isinstance (pathes, basestring) :
+                            pathes = [pathes]
+                        for p in pathes :
+                            yield self.__class__ (env, p)
+            return list (_gen ())
+        return []
     # end def imports
 
     @Once_Property

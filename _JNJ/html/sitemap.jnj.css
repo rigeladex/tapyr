@@ -1,0 +1,56 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    html/sitemap.jnj.css
+#
+# Purpose
+#    CSS fragment for template sitemap.jnj
+#
+# Revision Dates
+#     2-Jan-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+try :
+    P
+except NameError :
+    from   _GTW._CSS.import_CSS import *
+    import _JNJ.CSS_Defaults    as P
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".sitemap"
+        , children =
+            [ Rule
+                ( "ul"
+                , list_style      = "none"
+                # XXX ??? margin = 0, padding = 0 ???
+                )
+            , Rule
+                ( * tuple (".level-%s" % (i+1) for i in range (6))
+                , padding_left   = Em (2.5)
+                )
+            ]
+        )
+    )
+
+### __END__ html/sitemap.jnj.css

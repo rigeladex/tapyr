@@ -125,7 +125,7 @@
         {% block document %}{% endblock -%}
       </div> {# #document .body #}
       {%- block nav_block -%}
-        {% call X.nav (id = "navigate") -%}
+        {% call X.nav (id = "navigate", class="pg_nav") -%}
           {%- block navigate -%}
             {%- include "html/navigation.jnj" ignore missing -%}
           {%- endblock -%}

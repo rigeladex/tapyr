@@ -1,0 +1,110 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    html/gallery.jnj.css
+#
+# Purpose
+#    CSS fragment for template html/gallery.jnj
+#
+# Revision Dates
+#     2-Jan-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".gallery"
+        , width                    = Percent (100)
+        , children                 =
+            [ Rule ("button", min_width = 0)
+            , Rule
+                ( "h1", "h2"
+                , margin_bottom    = Px (10)
+                , padding          = TRBL (Px (10), 0)
+                , text_align       = "center"
+                , ** P.color_spec_gallery_heading
+                )
+            , Rule
+                ( ".inline"
+                , display          = "none"
+                , children         =
+                    [ Rule
+                        ( ".photo img"
+                        , display  = "block"
+                        , height   = "auto"
+                        , margin   = "auto"
+                        , width    = "auto"
+                        )
+                    , Rule
+                        ( ".photo-nav"
+                        , border     = 0
+                        , margin     = TRBL (Px (5), 0)
+                        , max_width  = Percent (100)
+                        , padding    = 0
+                        , width      = Percent (100)
+                        , text_align = "center"
+                        )
+                    ]
+                )
+            ]
+        )
+    , Rule
+        ( ".photo"
+        , text_align                 = "center"
+        )
+    , Rule
+        ( ".photo-nav img"
+        , margin                     = TRBL (0, Px (2))
+        )
+    , Rule
+        ( ".thumbnails"
+        , font_style                 = "italic"
+        , children                   =
+            [ Rule_Class
+                ( "inline"
+                , overflow           = "auto"
+                , position           = "relative"
+                )
+            , Rule
+                ( "a"
+                , display            = "inline-block"
+                , height             = P.thumbnail_size
+                , text_align         = "center"
+                , width              = P.thumbnail_size
+                )
+            , Rule
+                ( "img"
+                , border             =
+                    "3px solid " + P.color_spec_normal ["background_color"]
+                , vertical_align     = "middle"
+                , children           =
+                    [ Rule_Class
+                        ( "selected"
+                        , border_color = P.thumbnail_selected_color
+                        )
+                    ]
+                )
+            ]
+        )
+    )
+
+### __END__ html/gallery.jnj.css

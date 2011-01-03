@@ -23,7 +23,7 @@
 #    html/navigation.jnj.css
 #
 # Purpose
-#    CSS fragment for template navigation.jnj
+#    CSS fragment for template html/navigation.jnj
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
@@ -33,17 +33,17 @@
 try :
     P
 except NameError :
-    from _GTW._CSS.import_CSS import *
-    import _JNJ.CSS_Defaults as P
+    from   _GTW._CSS.import_CSS import *
+    import _JNJ.CSS_Defaults    as P
 
 style_sheet = Style_Sheet \
     ( Rule
-        ( ".pg_main nav"
+        ( ".pg_nav"
         , children =
             [ Rule
                 ("input"
                 , background_color = P.nav_col.background_color
-                , border           = "1px solid #BEBEBE"
+                , border           = P.border_simple
                 , padding          = 0
                 , width            = P.nav_col.width - P.col_padding
                 , children         =
@@ -63,10 +63,7 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "li"
                 , margin         = 0
-                , padding        = TRBL
-                    ( t = P.nav_col.vert_padding
-                    , b = P.nav_col.vert_padding
-                    )
+                , padding        = TRBL (P.nav_col.vert_padding, 0)
                 , position       = "relative" ### for nested menues
                 , children       =
                     [ Rule
@@ -102,7 +99,7 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "h1"
                 , font_size      = Percent (100)
-                , margin         = TRBL (b = Em (1./4))
+                , margin         = TRBL0 (b = Em (1./4))
                 , ** P.nav_col.color_spec_heading
                 )
             , Rule ("section", margin_bottom  = Em (1))
@@ -127,7 +124,6 @@ style_sheet = Style_Sheet \
             # XXX ??? td
             ]
         )
-    # XXX sitemap...
     )
 
 ### __END__ html/navigation.jnj.css

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
+#     2-Jan-2011 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -36,64 +37,17 @@ from _TFL.Color           import Color as _C
 
 _C.formatter = RGB_X
 
+color_light_grey       = RGB_X     ("#EBEBEB")
+color_medium_grey      = RGB_X     ("#BEBEBE")
+
+border_simple          = "1px solid " + color_medium_grey
 button_spec            = dict \
     ( border           = "2px outset"
-    , margin           = TRBL (t = Em (1./4), b = Em (3./4))
-    , padding          = TRBL (t = Em (1./8), b = Em (1./8))
+    , margin           = TRBL0 (t = Em (1./4), b = Em (3./4))
+    , padding          = TRBL0 (t = Em (1./8), b = Em (1./8))
     )
 
 col_padding            = Px (5)
-color_spec_error       = dict \
-    ( background_color = SVG_Color ("white")
-    , color            = SVG_Color ("red")
-    )
-color_spec_heading     = dict \
-    ( background_color = SVG_Color ("white")
-    , color            = RGB_X     ("#FF6633")
-    )
-color_spec_normal      = dict \
-    ( background_color = SVG_Color ("white")
-    , color            = RGB_X     ("#000033")
-    )
-color_spec_pg_head     = dict \
-    ( background_color = SVG_Color ("white")
-    , color            = RGB_X     ("#0200DE")
-    )
-color_spec_row1        = dict \
-    ( background_color = RGB_X     ("#EBEBEB")
-    , color            = RGB_X     ("#000033")
-    )
-color_spec_row2        = dict \
-    ( background_color = RGB_X     ("#BEBEBE") ### XXX ??? white
-    , color            = RGB_X     ("#000033")
-    )
-color_spec_selected    = dict \
-    ( background_color = SVG_Color ("yellow")
-    , color            = SVG_Color ("red")
-    )
-color_spec_strong      = dict \
-    ( background_color = SVG_Color ("blue")
-    , color            = SVG_Color ("white")
-    )
-
-font_family_normal     = """"Lucida Grande", verdana, sans-serif"""
-font_family_pre        = """monospace"""
-font_spec_normal       = dict \
-    ( font_family      = font_family_normal
-    , font_style       = "normal"
-    , font_weight      = "normal"
-    )
-font_spec_em           = dict \
-    ( font_spec_normal
-    , font_weight      = "bold"
-    )
-font_spec_pre          = dict \
-    ( font_spec_normal
-    , font_family      = font_family_pre
-    )
-
-h1_font_size           = Percent (120)
-h1_font_weight         = "bold"
 
 link_color             = RGB_X ("#0050FF")
 
@@ -133,8 +87,72 @@ class nav_col :
 
 ### end class nav_col
 
+color_spec_error       = dict \
+    ( background_color = SVG_Color ("white")
+    , color            = SVG_Color ("red")
+    )
+color_spec_heading     = dict \
+    ( background_color = SVG_Color ("white")
+    , color            = RGB_X     ("#FF6633")
+    )
+color_spec_gallery_heading = dict \
+    ( background_color = RGB_P     (50, 75, 100)
+    , color            = nav_col.background_color
+    )
+color_spec_normal      = dict \
+    ( background_color = SVG_Color ("white")
+    , color            = RGB_X     ("#000033")
+    )
+color_spec_pg_head     = dict \
+    ( background_color = SVG_Color ("white")
+    , color            = RGB_X     ("#0200DE")
+    )
+color_spec_row1        = color_spec_meta = dict \
+    ( background_color = color_light_grey
+    , color            = RGB_X     ("#000033")
+    )
+color_spec_row2        = dict \
+    ( background_color = color_medium_grey  ### XXX ??? white
+    , color            = RGB_X     ("#000033")
+    )
+color_spec_selected    = dict \
+    ( background_color = SVG_Color ("yellow")
+    , color            = SVG_Color ("red")
+    )
+color_spec_strong      = dict \
+    ( background_color = SVG_Color ("blue")
+    , color            = SVG_Color ("white")
+    )
+
+css_arrow_color        = SVG_Color ("red")
+css_arrow_width        = Em (1./2)
+
+font_family_normal     = """"Lucida Grande", verdana, sans-serif"""
+font_family_pre        = """monospace"""
+font_spec_normal       = dict \
+    ( font_family      = font_family_normal
+    , font_style       = "normal"
+    , font_weight      = "normal"
+    )
+font_spec_em           = dict \
+    ( font_spec_normal
+    , font_weight      = "bold"
+    )
+font_spec_pre          = dict \
+    ( font_spec_normal
+    , font_family      = font_family_pre
+    )
+
+grid_table_border      = "3px ridge gray"
+
+h1_font_size           = Percent (125)
+h1_font_weight         = "bold"
+
 pg_head_height         = Px (100)
 pg_main_max_width      = Em (50)
 pg_main_min_width      = Em (15)
+
+thumbnail_size         = Px (155)
+thumbnail_selected_color = SVG_Color ("orange")
 
 ### __END__ JNJ.CSS_Defaults

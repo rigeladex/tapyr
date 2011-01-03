@@ -23,10 +23,11 @@
 #    html/base.jnj.css
 #
 # Purpose
-#    CSS fragment for template base.jnj
+#    CSS fragment for template html/base.jnj
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
+#     2-Jan-2011 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ style_sheet = Style_Sheet \
     , Rule ("pre",       ** P.font_spec_pre)
     , Rule
         ( "form div"
-        , margin  = TRBL (t = Em (0.25), b = Em (0.5))
+        , margin  = TRBL0 (t = Em (0.25), b = Em (0.5))
         )
     , Rule
         ( * tuple ("h%s" % (i+1) for i in range (6))
@@ -72,7 +73,7 @@ style_sheet = Style_Sheet \
     , Rule ("h6", font_size = P.h1_font_size - 25)
     , Rule
         ( "input", "select", "textarea"
-        , border    = "1px solid #BEBEBE"
+        , border    = P.border_simple
         , children  =
             [ Rule_Class
                 ( "Mandatory"
@@ -80,7 +81,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule_Class
                 ( "Required"
-                , border_width = TRBL (b = Px (2), default = Px (1))
+                , border_width = TRBL0 (b = Px (2), default = Px (1))
                 )
             ]
         )
@@ -98,7 +99,7 @@ style_sheet = Style_Sheet \
         )
     , Rule
         ( "td", "th"
-        , padding              = TRBL (r = Em (0.5))
+        , padding              = TRBL0 (r = Em (0.5))
         , vertical_align       = "top"
         , children             =
             [ Rule_Attr
@@ -114,7 +115,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule_Child
                 ( "strong"
-                , padding      = TRBL (l = Em (1./2), r = Em (1./2))
+                , padding      = TRBL0 (l = Em (1./2), r = Em (1./2))
                 , width        = "100%"
                 , ** P.color_spec_strong
                 )
@@ -146,8 +147,7 @@ style_sheet = Style_Sheet \
                 , background_color = P.nav_col.background_color
                 , font_size        = "small"
                 , margin_left      = Percent (-100)
-                , padding          = TRBL
-                    (Em (1./2), P.col_padding, 0, P.col_padding)
+                , padding          = TRBL (Em (1./2), P.col_padding, 0)
                 , right            = P.nav_col.width + 3 * P.col_padding
                 , width            = P.nav_col.width
                 )
@@ -163,11 +163,11 @@ style_sheet = Style_Sheet \
         )
     , Rule
         ( ".pg_foot"
-        , border_top     = "1px solid #BEBEBE"
+        , border_top     = P.border_simple
         , clear          = "both"
         , font_size      = Percent (75)
-        , margin         = TRBL (Em (2.5), "auto", Em (0.2), "auto")
-        , padding        = TRBL (Em (1./4))
+        , margin         = TRBL  (Em (2.5), "auto", Em (0.2))
+        , padding        = TRBL0 (Em (1./4))
         , vertical_align = "bottom"
         , width          = Percent (98)
         )
@@ -185,6 +185,65 @@ style_sheet = Style_Sheet \
         , margin         = "auto"
         , width          = "auto"
         )
+    , Rule
+        ( "img.pixpanded"
+        , display        = "block"
+        , float          = "none"
+        , height         = "auto"
+        , margin         = "auto"
+        , padding        = TRBL (Px (5), 0)
+        , width          = "auto"
+        )
+    ### ReST specific
+    , Rule
+        ( "hr.docutils"
+        , clear          = "right"
+        )
+    , Rule
+        ( "img.align-left"
+        , float          = "left"
+        , margin         = TRBL0 (t = Px (1), b = Px (1), r = Px (5))
+        )
+    , Rule
+        ( "img.align-right"
+        , float          = "right"
+        , margin         = TRBL0 (t = Px (1), b = Px (1), l = Px (5))
+        )
+    , Rule
+        ( "pre.literal-block"
+        , font           = P.font_family_normal
+        , padding_left   = Em (5)
+        )
+    , Rule
+        ( ".docutils p"
+        , border         = 0
+        , margin         = TRBL0 (Em (1./5))
+        , padding        = 0
+        , children       =
+            [ Rule_Class ("first", margin = 0)
+            , Rule_Class ("last",  margin = TRBL (Em (1./5), 0))
+            ]
+        )
+    ### Grid-Table
+    , Rule
+        ( ".grid-table"
+        , border                   = P.grid_table_border
+        , border_collapse          = "collapse"
+        , margin_left              = Em (1./2)
+        , children                 =
+            [ Rule
+                ( "thead th"
+                , font_weight      = "bold"
+                , text_align       = "center"
+                , ** P.color_spec_heading
+                )
+            , Rule
+                ( "td", "th"
+                , border           = P.grid_table_border
+                , padding          = TRBL (Em (0.05), Em (0.25))
+                )
+            ]
+        )
     )
 
 ### __END__ html/base.jnj.css
@@ -193,8 +252,15 @@ style_sheet = Style_Sheet \
 Test::
 
 import _GTW._CSS.Style_Sheet
-from   _JNJ import CSS_Defaults as P
+import CSS_Defaults as P
 T  = NAV.Templateer
+ct = T.get_template ("html/sitemap.jnj")
+ct = T.get_template ("html/clip_aggregator.jnj")
+ct = T.get_template ("html/news.jnj")
+ct = T.get_template ("html/photo.jnj")
+
+print ct.get_CSS (P)
+
 ct = T.get_template("calendar")
 x  = ct.get_CSS (P)
 print x

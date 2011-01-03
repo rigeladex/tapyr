@@ -1,0 +1,73 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    html/clip_aggregator.jnj.css
+#
+# Purpose
+#    CSS fragment for template html/clip_aggregator.jnj
+#
+# Revision Dates
+#     2-Jan-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+try :
+    P
+except NameError :
+    from   _GTW._CSS.import_CSS import *
+    import _JNJ.CSS_Defaults    as P
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( "news-clip"
+        , overflow                = "hidden"
+        )
+    , Rule
+        ( "news-clip-more"
+        , text_align              = "left"
+        , children                =
+            [ Rule
+                ( "a"
+                , border          = P.border_simple
+                , cursor          = "pointer"
+                , font_size       = "small"
+                , padding         = TRBL (Em (0.1), Em (0.7), Em (0.2))
+                , margin          = TRBL (Em (0.1))
+                , text_decoration = "none"
+                , children        =
+                    [ Rule_Pseudo ("visited", ** P.nav_col.color_spec_visited)
+                    , Rule_Pseudo ("hover",   ** P.color_spec_selected)
+                    ]
+                , ** P.nav_col.color_spec_link
+                )
+            ]
+        )
+    , Rule
+        ( "news-clip-sep"
+        , background_color        = P.color_medium_grey
+        , height                  = Px (1)
+        , margin                  = TRBL (Em (1./2), Percent (12.5))
+        , width                   = Percent (75)
+        )
+    )
+
+### __END__ html/clip_aggregator.jnj.css

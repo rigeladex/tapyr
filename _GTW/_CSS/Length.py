@@ -27,8 +27,9 @@
 #
 # Revision Dates
 #    29-Dec-2010 (CT) Creation
-#     1-Jan-2011 (CT) `TRBL` added
+#     1-Jan-2011 (CT) `TRBL0` added
 #     1-Jan-2011 (CT) `__truediv__` and `__floordiv__` added
+#     2-Jan-2011 (CT) `TRBL` added
 #    ««revision-date»»···
 #--
 
@@ -233,40 +234,40 @@ class Px (Length) :
 
 # end class Px
 
-class TRBL (TFL.Meta.Object) :
-    """Top/right/bottom/left spec
+class TRBL0 (TFL.Meta.Object) :
+    """Top/right/bottom/left spec, undefined values are 0.
 
-    >>> print (TRBL (0))
+    >>> print (TRBL0 (0))
     0
-    >>> print (TRBL (1, 2, 1, 2))
+    >>> print (TRBL0 (1, 2, 1, 2))
     1 2
-    >>> print (TRBL (1, 2, 3, 2))
+    >>> print (TRBL0 (1, 2, 3, 2))
     1 2 3
-    >>> print (TRBL (1, 2, 3, 4))
+    >>> print (TRBL0 (1, 2, 3, 4))
     1 2 3 4
-    >>> print (TRBL (Px (1), Em (1)))
+    >>> print (TRBL0 (Px (1), Em (1)))
     1px 1em 0 0
-    >>> print (TRBL (Px (1), 0, Em (1)))
+    >>> print (TRBL0 (Px (1), 0, Em (1)))
     1px 0 1em
-    >>> print (TRBL (Px (1), 0, Px (1)))
+    >>> print (TRBL0 (Px (1), 0, Px (1)))
     1px 0
-    >>> print (TRBL (t = Px (1)))
+    >>> print (TRBL0 (t = Px (1)))
     1px 0 0
-    >>> print (TRBL (r = Px (1)))
+    >>> print (TRBL0 (r = Px (1)))
     0 1px 0 0
-    >>> print (TRBL (b = Px (1)))
+    >>> print (TRBL0 (b = Px (1)))
     0 0 1px
-    >>> print (TRBL (l = Px (1)))
+    >>> print (TRBL0 (l = Px (1)))
     0 0 0 1px
-    >>> print (TRBL (default = Px(2)))
+    >>> print (TRBL0 (default = Px(2)))
     2px
-    >>> print (TRBL (t = Px (1), default = Px(2)))
+    >>> print (TRBL0 (t = Px (1), default = Px(2)))
     1px 2px 2px
-    >>> print (TRBL (r = Px (1), default = Px(2)))
+    >>> print (TRBL0 (r = Px (1), default = Px(2)))
     2px 1px 2px 2px
-    >>> print (TRBL (b = Px (1), default = Px(2)))
+    >>> print (TRBL0 (b = Px (1), default = Px(2)))
     2px 2px 1px
-    >>> print (TRBL (l = Px (1), default = Px(2)))
+    >>> print (TRBL0 (l = Px (1), default = Px(2)))
     2px 2px 2px 1px
 
     """
@@ -295,11 +296,46 @@ class TRBL (TFL.Meta.Object) :
         return " ".join (str (v) for v in values)
     # end def __str__
 
+# end class TRBL0
+
+class TRBL (TRBL0) :
+    """Top/right/bottom/left spec, repeated values.
+
+    >>> print (TRBL ())
+    0
+    >>> print (TRBL (Em (1)))
+    1em
+    >>> print (TRBL (Em (1), Px (2)))
+    1em 2px
+    >>> print (TRBL (Em (1), Px (2), Ex (3)))
+    1em 2px 3ex
+    >>> print (TRBL (Em (1), Px (2), Ex (3)).l)
+    2px
+    >>> print (TRBL (Em (1), Px (2), Ex (3), Cm (4)))
+    1em 2px 3ex 4cm
+    >>> print (TRBL (Em (1), Px (0), Ex (3), Cm (4)))
+    1em 0 3ex 4cm
+    """
+
+    def __init__ (self, * values) :
+        assert len (values) < 5, str (values)
+        l = len (values)
+        if not l :
+            values = (0, ) * 4
+        elif l == 1 :
+            values = values * 4
+        elif l == 2 :
+            values = values * 2
+        elif l == 3 :
+            values += (values [1], )
+        self.__super.__init__ (* values)
+    # end def __init__
+
 # end class TRBL
 
 __all__ = tuple \
     ( k for (k, v) in globals ().iteritems () if getattr (v, "unit_name", None)
-    ) + ("TRBL", )
+    ) + ("TRBL0", "TRBL")
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)
