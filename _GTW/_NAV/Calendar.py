@@ -43,6 +43,7 @@
 #    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
 #                     `__super.rendered`
 #     3-Jan-2011 (CT) Introduce `template_name`
+#     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #    ««revision-date»»···
 #--
 
@@ -96,11 +97,10 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         , _("July"),    _("August"),   _("September")
         , _("October"), _("November"), _("December")
         )
-    delegate_view_p    = False
+    dir_template_name  = template_name = "calendar"
     pid                = "Cal"
     q_prefix           = "q"
     qx_prefix          = "qx"
-    template_name      = "calendar"
     week_roller_size   = 6
 
     event_manager_name = "GTW.OMP.EVT.Event_occurs"

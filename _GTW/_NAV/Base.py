@@ -238,6 +238,7 @@
 #     3-Jan-2011 (CT) `empty_template` removed
 #     3-Jan-2011 (CT) `template` changed to property (auto-converting
 #                     `template_name`)
+#     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template`
 #    ««revision-date»»···
 #--
 
@@ -780,8 +781,9 @@ class _Dir_ (_Site_Entity_) :
     Page            = Page
 
     dir             = ""
-    delegate_view_p = True
     sub_dir         = ""
+
+    _dir_template   = None
 
     def __init__ (self, parent = None, ** kw) :
         entries = kw.pop ("entries", [])
@@ -790,6 +792,25 @@ class _Dir_ (_Site_Entity_) :
         if entries :
             self.add_entries (entries)
     # end def __init__
+
+    @property
+    def dir_template (self) :
+        if self._dir_template is None :
+            t_name = getattr (self, "dir_template_name", None)
+            if t_name :
+                self._dir_template = self.Templateer.get_template (t_name)
+        return self._dir_template
+    # end def dir_template
+
+    @dir_template.setter
+    def dir_template (self, value) :
+        if isinstance (value, basestring) :
+            self.dir_template_name = value
+        elif not isinstance (value, self.Templateer.Template_Type) :
+            self.dir_template_name = value.name
+        else :
+            self._dir_template = value
+    # end def dir_template
 
     @classmethod
     def from_nav_list_file (cls, src_dir, parent = None, nav_context = {}, ** kw) :
@@ -902,7 +923,8 @@ class _Dir_ (_Site_Entity_) :
     # end def new_sub_dir
 
     def rendered (self, handler, template = None) :
-        if self.delegate_view_p :
+        dt = self.dir_template
+        if dt is None :
             try :
                 page = first (self.own_links)
             except IndexError :
@@ -913,7 +935,7 @@ class _Dir_ (_Site_Entity_) :
                     , page     = page
                     )
                 return page.rendered (handler, template)
-        return self.__super.rendered (handler, template)
+        return self.__super.rendered (handler, template or dt)
     # end def rendered
 
     def _get_child (self, child, * grandchildren) :
@@ -950,7 +972,7 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
-    auto_delegate           = False  ### useful if not served by Django
+    auto_delegate           = False  ### useful if not served by web-app
     copyright_start         = None
     copyright_url           = None
     CSS_Parameters          = None
@@ -1039,7 +1061,7 @@ class Root (_Dir_) :
 
     @Once_Property
     def home (self) :
-        if self.delegate_view_p :
+        if self.dir_template is None :
             try :
                 return first (self.own_links)
             except IndexError :

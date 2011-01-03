@@ -44,6 +44,7 @@
 #    22-Dec-2010 (CT) `Admin_Group` factored, `Admin_Group._pns_entries` added
 #    22-Dec-2010 (CT) `Admin_Alias` and `show_aliases` added and used
 #     3-Jan-2011 (CT) Introduce `template_name`
+#     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #    ««revision-date»»···
 #--
 
@@ -74,11 +75,10 @@ class Admin_Alias (GTW.NAV.Alias) :
 class Admin_Group (GTW.NAV.Dir) :
     """Model a group of E-Type admin pages."""
 
-    css_group       = "Group"
-    delegate_view_p = False
-    Page            = GTW.NAV.E_Type.Admin
-    show_aliases    = False
-    template_name   = "site_admin"
+    css_group         = "Group"
+    dir_template_name = "site_admin"
+    Page              = GTW.NAV.E_Type.Admin
+    show_aliases      = False
 
     def __init__ (self, src_dir, parent, ** kw) :
         entries = \

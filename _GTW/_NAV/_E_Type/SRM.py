@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -44,6 +44,7 @@
 #    16-Dec-2010 (CT) Redefine `delegate_view_p` instead of bypassing
 #                     `__super.rendered`
 #    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
+#     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #    ««revision-date»»···
 #--
 
@@ -154,6 +155,8 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
 class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta event."""
 
+    dir_template_name = None
+
     def __init__ (self, manager, obj, ** kw) :
         kw ["src_dir"] = kw ["sub_dir"] = obj.perma_name
         self.__super.__init__ (manager, obj, ** kw)
@@ -209,16 +212,11 @@ _Ancestor = GTW.NAV.E_Type.Manager_T_Archive
 class SRM (_Ancestor) :
     """Navigation directory listing regatta events by year."""
 
-    Page            = Regatta_Event
+    Page              = Regatta_Event
 
     class _SRM_Year_ (_Ancestor.Year) :
 
-        delegate_view_p = False
-
-        def rendered (self, handler, template = None) :
-            return self.__super.rendered \
-                (handler, template or "regatta_calendar")
-        # end def rendered
+        dir_template_name = "regatta_calendar"
 
     Year = _SRM_Year_ # end class
 
