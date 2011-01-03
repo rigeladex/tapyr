@@ -5,6 +5,8 @@ JNJ To-Do
 
   * .Object-List, .Object-Editor
 
+  * @media "print"
+
 x global function for retrieving a macro from a template:
 
   x def get_macro (macro_name, template_name = None):
