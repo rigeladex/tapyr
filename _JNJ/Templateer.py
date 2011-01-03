@@ -122,7 +122,8 @@ class Template_E (_Template_) :
     def _init_ (self, env, name, path = None, css_fragment_name = None) :
         self.__super._init_ (name, path, css_fragment_name)
         self.env            = env
-        self.By_Path [path] = self
+        if path not in self.By_Path :
+            self.By_Path [path] = self
     # end def _init_
 
     @classmethod
@@ -260,6 +261,14 @@ class Template_E (_Template_) :
             self._t_path   = path
             self._t_source = source
     # end def _load_template
+
+    def __repr__ (self) :
+        return "<JNJ.Template_E %s>" % (self.path, )
+    # end def __repr__
+
+    def __str__ (self) :
+        return "%s [%s]" % (self.name, self.path)
+    # end def __str__
 
 # end class Template_E
 
