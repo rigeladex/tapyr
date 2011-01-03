@@ -31,12 +31,6 @@
 #    ««revision-date»»···
 #--
 
-try :
-    P
-except NameError :
-    from _GTW._CSS.import_CSS import *
-    import _JNJ.CSS_Defaults as P
-
 style_sheet = Style_Sheet \
     ( Rule ()
     ### CSS rules for HTML elements
@@ -247,24 +241,3 @@ style_sheet = Style_Sheet \
     )
 
 ### __END__ html/base.jnj.css
-
-"""
-Test::
-
-$ /usr/bin/python nav.py
-
-import _GTW._CSS.Style_Sheet
-import CSS_Parameters as P
-T  = NAV.Templateer
-ct = T.get_template ("html/sitemap.jnj")
-ct = T.get_template ("html/clip_aggregator.jnj")
-ct = T.get_template ("html/news.jnj")
-ct = T.get_template ("html/photo.jnj")
-
-print ct.get_CSS (P)
-
-ct = T.get_template("calendar")
-x  = ct.get_CSS (P)
-print x
-
-"""

@@ -30,12 +30,6 @@
 #    ««revision-date»»···
 #--
 
-try :
-    P
-except NameError :
-    from   _GTW._CSS.import_CSS import *
-    import _JNJ.CSS_Defaults    as P
-
 style_sheet = Style_Sheet \
     ( Rule
         ( "news-clip"

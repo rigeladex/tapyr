@@ -29,6 +29,7 @@
 #    29-Dec-2010 (CT) Creation
 #     1-Jan-2011 (CT) `Eval` added
 #     2-Jan-2011 (CT) `_Eval` factored
+#     3-Jan-2011 (CT) `rank` added
 #    ««revision-date»»···
 #--
 
@@ -86,6 +87,7 @@ class Style_Sheet (TFL.Meta.Object) :
         self.imports = list (attrs.pop ("imports", []))
         self.media   = attrs.pop ("media", None) or GTW.CSS.Media.Type ("all")
         self.name    = attrs.pop ("name",  None)
+        self.rank    = attrs.pop ("rank",  0)
         self.attrs   = attrs
     # end def __init__
 

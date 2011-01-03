@@ -39,6 +39,7 @@
 #    31-Dec-2010 (CT) `Template_E` added and used
 #     2-Jan-2011 (CT) `Template_E.get_CSS` added
 #     3-Jan-2011 (CT) `Template_E.CSS` added
+#     3-Jan-2011 (CT) `Template_E.get_CSS` changed to sort stylesheets by `rank`
 #    ««revision-date»»···
 #--
 
@@ -228,10 +229,9 @@ class Template_E (_Template_) :
             (TFL.uniq (t.css_path for t in self.templates if t.css_path))
         if css_fragment_pathes :
             from _GTW._CSS.Style_Sheet import Style_Sheet
+            sheets = Style_Sheet.Read (* css_fragment_pathes, parameters = P)
             result = "\n\n".join \
-                ( str (s) for s in Style_Sheet.Read
-                    (* css_fragment_pathes, parameters = P)
-                )
+                (str (s) for s in sorted (sheets, key = TFL.Getter.rank))
             return result
     # end def get_CSS
 
