@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: site_admin.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -45,7 +45,7 @@
     {%- for link in page.own_links_transitive if link.allow_user (request.user) %}
       <tr>
         {%- if link.has_children %}
-          <td colspan="2" class="Group">{{ a_link (link) }}</td>
+          <th colspan="2" class="Group">{{ a_link (link) }}</th>
         {%- else -%}
           <td class="{{ link.css_group or "Type" }}">
             {{- a_link (link) -}}

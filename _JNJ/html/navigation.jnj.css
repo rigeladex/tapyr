@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
 #     3-Jan-2011 (CT) Creation continued
+#     4-Jan-2011 (CT) Bug fixes
 #    ««revision-date»»···
 #--
 
@@ -36,24 +37,19 @@ style_sheet = Style_Sheet \
         ( ".pg_nav"
         , children =
             [ Rule
-                ("input"
+                ( "input"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple
                 , padding          = 0
-                , width            = P.nav_col.width - P.col_padding
                 , children         =
                     [ Rule_Attr
                         ( "[type=submit]", "[type=reset]"
-                        , color    = P.link_color
-                        , ** P.button_spec
+                        , children =
+                            [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                            ]
+                        , ** P.nav_col.button_spec
                         )
-                    , ### XXX ??? .login input.Link, .login input.Link:hover
-                    ]
-                )
-            , Rule
-                ( "ul"
-                , list_style     = "none"
-                , ** P.nav_col.color_spec_link
+                    , Rule_Attr ("[type=hidden]", display = "none")]
                 )
             , Rule
                 ( "li"
@@ -62,11 +58,9 @@ style_sheet = Style_Sheet \
                 , position       = "relative" ### for nested menues
                 , children       =
                     [ Rule
-                        ( "a"
+                        ( "a", "b", "input"
                         , display          = "block"
-                        , margin           = 0
                         )
-                    , Rule ("td a", width  = "auto")
                     , Rule_Class
                         ( "current-link"
                         , font_weight      = "bold"
@@ -82,35 +76,62 @@ style_sheet = Style_Sheet \
                 ( "a.current-section"
                 , "a.current-section:link"
                 , "a.current-section:visited"
-                , ** P.nav_col.color_spec_heading
+                , ** P.nav_col.color_spec_section_current
                 )
             , Rule ("a",         text_decoration = "none")
-            , Rule ("a:link",    ** P.nav_col.color_spec_link)
-            , Rule ("a:visited", ** P.nav_col.color_spec_visited)
+            , Rule ("a:link",    color = P.link_color)
+            , Rule ("a:visited", color = P.visited_color)
             , Rule
-                ( "a:hover", "li.nav-link:hover"
+                ( "a:hover", "a.current-section:hover", "li.nav-link:hover"
                 , ** P.color_spec_selected
                 )
             , Rule
                 ( "h1"
                 , font_size      = Percent (100)
                 , margin         = TRBL0 (b = Em (1./4))
+                , padding_left   = Em (0.50)
+                , children       =
+                    [ Rule
+                        ( "b"
+                        , float          = "right"
+                        , padding_right  = Em (0.5)
+                        )
+                    ]
                 , ** P.nav_col.color_spec_heading
                 )
-            , Rule ("section", margin_bottom  = Em (1))
+            , Rule ("section", margin_bottom  = Em (1./2))
+            , Rule
+                ( "ul"
+                , font_weight    = "normal"
+                , list_style     = "none"
+                , padding        = 0
+                , ** P.nav_col.color_spec_link
+                )
+            , Rule
+                ( ".level-0"
+                , children       =
+                    [ Rule ("a", "b", "input", padding_left = Em (0.50))
+                    , Rule ("table.calendar",  margin_left  = Em (0.50))
+                    ]
+                )
             , Rule
                 ( ".level-1"
-                , padding_left   = Em (0.75)
+                , children       =
+                    [Rule ("a", "b", padding_left = Em (0.75))]
                 )
             , Rule
                 ( * tuple (".level-%s" % (i+2) for i in range (5))
-                , padding_left   = Em (1.00)
+                , children       =
+                    [Rule ("a", "b", padding_left = Em (1.0))]
                 )
             , Rule
                 ( ".calendar"
                 , font_size      = P.cal.font_size
+                , line_height    = P.cal.line_height
                 , children       =
-                    [ Rule
+                    [ Rule ("a", padding = 0)
+                    , Rule ("span.event", border = 0)
+                    , Rule
                         ( "th.week-number"
                         , height = Em (1.5)
                         , width  = Em (1.5)
@@ -119,7 +140,17 @@ style_sheet = Style_Sheet \
                         ( "thead"
                         , display = "none"
                         )
+                    , Rule ("th", padding = TRBL (0, Em (0.25), Em (0.1)))
+                    , Rule
+                        ( ".saturday", ".sunday"
+                        , color = "inherit"
+                        )
                     ]
+                )
+            , Rule
+                ( "section.login a"
+                , children = [Rule_Pseudo ("hover", ** P.color_spec_selected)]
+                , ** P.nav_col.button_spec
                 )
             , Rule
                 ( "#weblinks li.nav-link:hover"
@@ -130,8 +161,6 @@ style_sheet = Style_Sheet \
                 ( "#weblinks .nav-link img"
                 , margin_left     = Percent (2.5)
                 )
-            # XXX ??? li.google-search .google-logo
-            # XXX ??? td
             ]
         )
     )

@@ -68,11 +68,17 @@
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- for cssl in page.Media.css_links %}
-          {% call media_item (cssl) -%}
-            {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
-          {% endcall %} {# media_item #}
-        {% endfor -%}
+        {%- if NAV.DEBUG and page.template.CSS %}
+          <style type="text/css">
+            {{ page.template.CSS }}
+          </style>
+        {% else %}
+          {%- for cssl in page.Media.css_links %}
+            {% call media_item (cssl) -%}
+              {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
+            {% endcall %} {# media_item #}
+          {% endfor -%}
+        {% endif -%}
       {%- endblock styles %}
         {%- block scripts %}
           {%- for jsl in page.Media.scripts %}

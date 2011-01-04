@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
 #     2-Jan-2011 (CT) Creation continued
+#     4-Jan-2011 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -37,9 +38,12 @@ from _TFL.Color           import Color as _C
 
 _C.formatter = RGB_X
 
-color_light_grey       = RGB_X ("#EBEBEB")
-color_medium_grey      = RGB_X ("#BEBEBE")
-color_selected         = RGB_X ("#FF6633")
+color_focus            = SVG_Color ("yellow")
+color_heading          = RGB_X     ("#34444D")
+color_light_grey       = RGB_X     ("#EBEBEB")
+color_medium_grey      = RGB_X     ("#BEBEBE")
+color_selected         = RGB_X     ("#FF6633")
+color_target           = RGB_X     ("#FF6633")
 
 border_button          = "2px outset " + color_medium_grey
 border_simple          = "1px solid "  + color_medium_grey
@@ -48,30 +52,43 @@ border_selected        = "2px solid "  + color_selected
 button_spec            = dict \
     ( border           = border_button
     , margin           = TRBL0 (t = Em (1./4), b = Em (3./4))
-    , padding          = TRBL0 (t = Em (1./8), b = Em (1./8))
+    , padding          = TRBL  (Em (0.5), Em (1.5))
     )
 
 col_padding            = Px (5)
 
-link_color             = RGB_X ("#0050FF")
-visited_color          = RGB_X ("#54AAFF")
+background_color       = SVG_Color ("white")
+link_color             = RGB_X ("#0000EE")
+visited_color          = RGB_X ("#551A8B")
 
 class nav_col :
 
-    background_color       = RGB_X ("#EFF3FE")
+    background_color       = RGB_X     ("#EFF3FE")
+
+    button_spec            = dict \
+        ( border           = border_button
+        , color            = link_color
+        , margin           = 0
+        , text_align       = "center"
+        )
 
     color_spec_heading     = dict \
-        ( background_color = background_color
-        , color            = RGB_X ("#666666")
+        ( background_color = color_heading
+        , color            = background_color
         )
 
     color_spec_link        = dict \
         ( background_color = background_color
         , color            = link_color
         )
-    color_spec_link_current= dict \
+    color_spec_link_current    = dict \
         ( background_color = link_color
         , color            = background_color
+        )
+
+    color_spec_section_current = dict \
+        ( background_color = background_color
+        , color            = color_heading
         )
 
     color_spec_visited     = dict \
@@ -96,22 +113,23 @@ class cal :
 
     date_bg                = RGB_X ("#DDDDDD")
     date_padding           = TRBL0 (r = Em (1./4), b = Em (1./10))
-    event_color            = RGB_X ("#FFF8AF")
+    event_bg               = RGB_X ("#FFF8AF")
     font_size              = Em    (0.7)
+    line_height            = 1.5
     holiday_bg             = RGB_X ("#CCFFFF")
     month_color            = RGB_X ("#ABABAB")
-    weekend_color          = RGB_X ("#444444")
+    weekend_color          = RGB_X ("#00FFFF")
     week_color             = RGB_8 (255, 153, 0)
     week_height            = Em    (8)
 
 # end class cal
 
 color_spec_error       = dict \
-    ( background_color = SVG_Color ("white")
+    ( background_color = background_color
     , color            = SVG_Color ("red")
     )
 color_spec_heading     = dict \
-    ( background_color = SVG_Color ("white")
+    ( background_color = background_color
     , color            = color_selected
     )
 color_spec_gallery_heading = dict \
@@ -119,11 +137,11 @@ color_spec_gallery_heading = dict \
     , color            = nav_col.background_color
     )
 color_spec_normal      = dict \
-    ( background_color = SVG_Color ("white")
+    ( background_color = background_color
     , color            = RGB_X     ("#000033")
     )
 color_spec_pg_head     = dict \
-    ( background_color = SVG_Color ("white")
+    ( background_color = background_color
     , color            = RGB_X     ("#0200DE")
     )
 color_spec_row1        = color_spec_meta = dict \
@@ -139,8 +157,8 @@ color_spec_selected    = dict \
     , color            = SVG_Color ("red")
     )
 color_spec_strong      = dict \
-    ( background_color = SVG_Color ("blue")
-    , color            = SVG_Color ("white")
+    ( background_color = background_color
+    , color            = SVG_Color ("blue")
     )
 
 css_arrow_color        = SVG_Color ("red")
@@ -193,6 +211,9 @@ ins_spec               = dict \
     ( text_decoration  = "none"
     # XXX ???
     )
+
+outline_focus          = "1px solid "   + color_focus
+outline_target         = "1px dotted "  + color_target
 
 pg_head_height         = Px (100)
 pg_main_max_width      = Em (50)

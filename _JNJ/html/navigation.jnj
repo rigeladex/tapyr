@@ -1,6 +1,6 @@
 {#- jinja template: html/navigation.jnj -#}
 {#
-## Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -42,9 +42,12 @@
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 ##     9-Dec-2010 (CT) `_entry_body` factored and changed to handle `a_img`
+##     4-Jan-2011 (CT) Use `X.section`
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- import html_version as X -%}
 
 {%- macro calendar (page) -%}
   {%- set cal = page.top.SC.Cal %}
@@ -79,7 +82,7 @@
     {%- else -%}
       {% if link.is_current and link.is_current (nav_page) -%}
         <li class="current-link level-{{ level }}">
-          {{- _entry_body (link) -}}
+          <b>{{- _entry_body (link) -}}</b>
         </li>
       {%- else -%}
         {%- if href -%}
@@ -124,45 +127,47 @@
   {%- if L10N %}
     {%- set langs = L10N.languages %}
     {%- if langs|length > 1 %}
-      <div class="nav-section language-selection">
+      {% call X.section (class="language-selection level-0") -%}
         <h1 title="{{ GTW._T ("Languages that can be selected for %s") % request.host }}">
           {{- GTW._T ("Language") -}}
-          {{- flag_or_text
+          <b>
+            {{- flag_or_text
               ( L10N, lang
               , GTW._T ("Currently selected language is %s") % (lang, )
               )
-          -}}
+            -}}
+          </b>
         </h1>
         {%- for l in langs %}
           {%- if l != lang %}
             {%- set desc = GTW._T ("Select language %s") % (l, ) %}
-            <span class="nav-link level-0 {{ curr -}}" >
+            <span class="nav-link {{ curr -}}" >
               <a href="{{ GTW.pjoin (L10N.abs_href, l) }}" title="{{ desc }}">
                 {{ flag_or_text (L10N, l, desc) }}
               </a>
             </span>
           {% endif -%}
         {% endfor -%}
-      {% endif -%}
-    </div>
+      {% endcall %} {# X.section #}
+    {% endif -%}
   {% endif -%}
 {%- endmacro -%} {#- language_section -#}
 
 {%- macro login_section (page, request, allow_register = False) -%}
-  <div class="nav-section login">
-    {%- import "STD::html/form.jnj" as Form %}
-    {%- if request.user.authenticated %}
-      <h1 title="{{ GTW._T ("Logged in as %s") % (request.user.name, ) }}">
-        {{- GTW._T ("Logged in") -}}
-      </h1>
-      {{ Form.logout_inline (page, request) }}
-    {%- else -%}
-      <h1>
-        {{- GTW._T ("Login") -}}
-      </h1>
-      {{ Form.login_inline (page, request, allow_register = allow_register) }}
-    {% endif -%}
-  </div>
+  {% call X.section (class="login level-0") -%}
+      {%- import "STD::html/form.jnj" as Form %}
+      {%- if request.user.authenticated %}
+        <h1 title="{{ GTW._T ("Logged in as %s") % (request.user.name, ) }}">
+          {{- GTW._T ("Logged in") -}}
+        </h1>
+        {{ Form.logout_inline (page, request) }}
+      {%- else -%}
+        <h1>
+          {{- GTW._T ("Login") -}}
+        </h1>
+        {{ Form.login_inline (page, request, allow_register = allow_register) }}
+      {% endif -%}
+  {% endcall %} {#  #}
 {%- endmacro -%} {#- login_section -#}
 
 {%- macro neighbor (neighbor, alt, symbol) -%}
@@ -184,11 +189,15 @@
 
 {%- macro section (link_list, name = None) -%}
   {%- if link_list %}
-  <div class="nav-section{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
-    {% if name -%}<h1>{{ name }}</h1>{% endif %}
-    {{ entries (link_list, 0) }}
-    {%- if caller %}{{ caller () }}{% endif -%}
-  </div>
+    {%- set section_caller = kwargs.pop ("caller", None) -%}
+    {%- set section_class = " ".join
+          (("level-0", kwargs.pop ("class", ""))).strip ()
+    -%}
+    {% call X.section (class = section_class, ** kwargs) -%}
+      {% if name -%}<h1>{{ name }}</h1>{% endif %}
+      {{ entries (link_list, 0) }}
+      {%- if section_caller %}{{ section_caller () }}{% endif -%}
+    {% endcall %} {# X.section #}
   {%- endif %}
 {%- endmacro -%} {# section #}
 

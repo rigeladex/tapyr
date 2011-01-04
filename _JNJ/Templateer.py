@@ -40,6 +40,8 @@
 #     2-Jan-2011 (CT) `Template_E.get_CSS` added
 #     3-Jan-2011 (CT) `Template_E.CSS` added
 #     3-Jan-2011 (CT) `Template_E.get_CSS` changed to sort stylesheets by `rank`
+#     4-Jan-2011 (CT) `templates_i` fixed (recurse into `templates_i`
+#                     instead of `imports`)
 #    ««revision-date»»···
 #--
 
@@ -219,7 +221,7 @@ class Template_E (_Template_) :
                     yield i
             for i in self.imports :
                 yield i
-                for ii in i.imports :
+                for ii in i.templates_i :
                     yield ii
         return list (TFL.uniq (_gen ()))
     # end def templates_i

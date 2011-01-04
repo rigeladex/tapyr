@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Jan-2011 (CT) Creation
+#     4-Jan-2011 (CT) Bug fixes
 #    ««revision-date»»···
 #--
 
@@ -49,9 +50,9 @@ style_sheet = Style_Sheet \
                 , children         =
                     [ Rule_Class
                         ( "event"
-                        , border   = P.border_simple
-                        , color    = P.cal.event_color
-                        , display  = "block"
+                        , background_color = P.cal.event_bg
+                        , border_bottom    = P.border_simple
+                        , display          = "block"
                         )
                     , Rule_Class
                         ( "date", "date a", "event a"
@@ -105,12 +106,8 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
-                ( "thead"
-                , background_color         = P.color_medium_grey
-                )
-            , Rule
                 ( ".date"
-                , background_color = P.date_bg
+                , background_color = P.cal.date_bg
                 , padding          = P.cal.date_padding
                 )
             , Rule
@@ -119,6 +116,10 @@ style_sheet = Style_Sheet \
                 , display          = "none"
                 , padding          = Px (2)
                 , text_align       = "left"
+                )
+            , Rule
+                ( "tr.selected"
+                , background_color = P.background_color
                 )
             , Rule
                 ( ".holiday .date"
@@ -131,12 +132,12 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
-        ( ".bg_body .calendar span.week-number"
+        ( ".pg_body .calendar span.week-number"
         , display                  = "block"
-        , height                   = P.week_height
+        , height                   = P.cal.week_height
         )
     , Rule
-        ( ".week_roller"
+        ( ".week-roller"
         , font_size                = P.cal.font_size
         , position                 = "relative"
         , children                 =
@@ -227,7 +228,7 @@ style_sheet = Style_Sheet \
                         ( "enabled"
                         , display  = "block"
                         , height   = Percent (100)
-                        , position = "relative" ### XXX ??? absolute
+                        , position = "absolute"
                         )
                     ]
                 )

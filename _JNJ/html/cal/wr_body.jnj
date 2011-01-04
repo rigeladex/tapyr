@@ -1,6 +1,6 @@
 {#- jinja template: wr_body.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -46,7 +46,7 @@
 {%- endmacro -%} {#- head -#}
 
 {%- macro selected_day_div (cal) -%}
-  <tr><td colspan="8">
+  <tr class="selected"><td colspan="8">
     <div class="selected" title="{{ GTW._T ("Currently selected day") }}"></div>
   </td></tr>
 {%- endmacro -%} {#- selected_day_div -#}

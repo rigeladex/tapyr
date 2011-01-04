@@ -1,6 +1,6 @@
 {#- jinja template: form.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -354,12 +354,12 @@
         }}
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
-      <li class="nav-link level-0">
+      <li>
         <a href="{{ Auth.href_change_email (request.user) }}"
           title="{{ GTW._T ("Change email of account %s") % request.user.name }}"
         >{{ GTW._T ("Change email") }}</a>
       </li>
-      <li class="nav-link level-0">
+      <li>
         <a href="{{ Auth.href_change_pass (request.user) }}"
           title="{{ GTW._T ("Change password of account %s") % request.user.name }}"
         >{{ GTW._T ("Change password") }}</a>

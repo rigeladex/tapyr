@@ -29,19 +29,21 @@
 #     1-Jan-2011 (CT) Creation
 #     2-Jan-2011 (CT) Creation continued
 #     3-Jan-2011 (CT) Creation continued..
+#     4-Jan-2011 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
 ### CSS rules for HTML elements
 reset_sheet = Style_Sheet \
     ( Rule
-        ( "a", "abbr", "address", "article", "aside", "audio"
+        ( "a", "abbr", "acronym", "address", "article", "aside", "audio"
         , "b", "blockquote", "body"
         , "canvas", "caption", "cite", "code"
         , "dd", "del", "details", "dfn", "div", "dl", "dt"
         , "em"
         , "fieldset", "figcaption", "figure", "footer", "form"
-        , "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "html"
+        , "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup"
+        , "html"
         , "i", "img", "input", "ins"
         , "kbd"
         , "label", "legend", "li"
@@ -55,20 +57,18 @@ reset_sheet = Style_Sheet \
         , "time", "tr"
         , "ul"
         , "var", "video"
-        , background               = "transparent"
         , border                   = 0
         , font_size                = Percent (100)
-        , font_style               = "normal"
-        , font_weight              = "normal"
+        , font                     = "inherit"
         , margin                   = 0
         , outline                  = 0
         , padding                  = 0
         , vertical_align           = "baseline"
         )
     , Rule
-        ( "article", "aside", "canvas", "details"
+        ( "article", "aside", "details"
         , "figcaption", "figure", "footer", "header", "hgroup"
-        , "menu", "nav", "section", "summary"
+        , "menu", "nav", "section"
         , display                  = "block"
         )
     , Rule
@@ -85,28 +85,38 @@ reset_sheet = Style_Sheet \
                 )
             ]
         )
-    , Rule ("body",          line_height     = 1)
-    , Rule ("caption", "th", text_align      = "left")
-    , Rule ("del",           ** P.del_spec)
-    , Rule ("hr",            ** P.hr_spec)
-    , Rule ("ins",           ** P.ins_spec)
-    , Rule ("sub",           vertical_align  = "text-bottom")
-    , Rule ("sup",           vertical_align  = "text-top")
+    , Rule ("body", line_height     = 1.44)
+    , Rule ("del",  ** P.del_spec)
+    , Rule ("hr",   ** P.hr_spec)
+    , Rule ("ins",  ** P.ins_spec)
+    , Rule ("sub",  font_size = "smaller", vertical_align  = "text-bottom")
+    , Rule ("sup",  font_size = "smaller", vertical_align  = "text-top")
     , Rule
         ( "table"
         , border_collapse          = "collapse"
         , border_spacing           = 0
         )
-    , Rule_Pseudo ("focus", "target", ** P.color_spec_selected)
+    , Rule_Pseudo
+        ( "focus"
+        , outline                  = P.outline_focus
+        , ** P.color_spec_selected
+        )
+    , Rule_Pseudo
+        ( "target"
+        , outline                  = P.outline_target
+        , ** P.color_spec_selected
+        )
     )
 base_sheet = Style_Sheet \
     ( Rule
         ( "html"
+        , height                   = Percent (100)
         , kits                     = [P.color_spec_normal, P.font_spec_normal]
         , overflow                 = "auto"
         )
     , Rule
         ( "body"
+        , height                   = Percent (100)
         , margin                   = TRBL (Em (0.2), Em (0.5))
         )
     , Rule
@@ -147,12 +157,24 @@ base_sheet = Style_Sheet \
         , font_family              = "inherit"
         , padding                  = P.input_padding
         , children                 =
-            [ Rule_Pseudo ("focus", ** P.color_spec_selected)
+            [ Rule_Pseudo
+                ( "focus"
+                , outline          = P.outline_focus
+                , ** P.color_spec_selected
+                )
+            ]
+        )
+    , Rule
+        ( "input"
+        , children                 =
+            [ Rule_Attr ("[type=checkbox]", vertical_align = "bottom")
+            , Rule_Attr ("[type=radio]",    vertical_align = "text-bottom")
             ]
         )
     , Rule
         ( "legend"
         , font_weight              = "bold"
+        , padding_bottom           = Em (1./2)
         )
     , Rule
         ( "ol"
@@ -183,12 +205,12 @@ base_sheet = Style_Sheet \
     , Rule
         ( "ul"
         , list_style               = "disc outside"
-        , margin_bottom            = Em (1.0)
+        , padding_left             = Em (1.0)
         , children                 =
             [ Rule
                 ( "ul"
                 , list_style       = "square"
-                , margin           = TRBL0 (b = Em (0.5), l = Em (0.5))
+                , margin           = TRBL0 (l = Em (0.5))
                 , children         =
                     [ Rule
                         ( "ul"
@@ -207,6 +229,13 @@ base_sheet = Style_Sheet \
     )
 style_sheet = Style_Sheet \
     ( Rule
+        ( "a"
+        , text_decoration      = "none"
+        , children             =
+            [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+            ]
+        )
+    , Rule
         ( "input", "select", "textarea"
         , children  =
             [ Rule_Class
@@ -220,7 +249,7 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
-        ( "input[type=submit]", "input[type=reset]", "button"
+        ( "input[type=submit]", "input[type=reset]", "button", "a.button"
         , ** P.button_spec
         )
     , Rule
@@ -232,8 +261,12 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
+        ( "thead tr"
+        , ** P.nav_col.color_spec_heading
+        )
+    , Rule
         ( "td", "th"
-        , padding              = TRBL0 (r = Em (0.5))
+        , padding              = TRBL (Em (0.15), Em (0.25))
         , vertical_align       = "top"
         , children             =
             [ Rule_Attr
@@ -242,20 +275,19 @@ style_sheet = Style_Sheet \
                 )
             , Rule_Child
                 ( "em"
+                , color        = P.color_selected
                 , font_size    = P.h1_font_size
                 , font_weight  = P.h1_font_weight
                 , width        = "100%"
-                , ** P.color_spec_heading
                 )
             , Rule_Child
                 ( "strong"
+                , color        = SVG_Color ("blue")
                 , padding      = TRBL0 (l = Em (1./2), r = Em (1./2))
                 , width        = "100%"
-                , ** P.color_spec_strong
                 )
             ]
         )
-    , Rule_Pseudo ("target", ** P.color_spec_selected)
     ### CSS rules for overall layout
     , Rule
         ( ".pg_head"
@@ -280,8 +312,9 @@ style_sheet = Style_Sheet \
                 ( "nav"
                 , background_color = P.nav_col.background_color
                 , font_size        = "small"
+                , line_height      = 1.35
                 , margin_left      = Percent (-100)
-                , padding          = TRBL (Em (1./2), P.col_padding, 0)
+                , padding          = TRBL (Em (1./4), P.col_padding, 0)
                 , right            = P.nav_col.width + 3 * P.col_padding
                 , width            = P.nav_col.width
                 )
