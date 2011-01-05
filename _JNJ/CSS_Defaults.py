@@ -170,13 +170,22 @@ del_spec               = dict \
     )
 
 font_family_normal     = """"Lucida Grande", verdana, sans-serif"""
-font_family_pre        = """monospace"""
+font_family_print      = \
+    """"Lucida Serif", Lucida, "Times New Roman", Times, serif"""
+font_family_pre        = \
+    """"Lucida Sans Typewriter", "Lucida Console", "Courier New", Courier, monospace"""
 font_spec_normal       = dict \
     ( font_family      = font_family_normal
     , font_style       = "normal"
     , font_weight      = "normal"
     , line_height      = 1.44
     )
+
+font_spec_print        = dict \
+    ( font_spec_normal
+    , font_family      = font_family_print
+    )
+
 font_spec_em           = dict \
     ( font_spec_normal
     , font_weight      = "bold"

@@ -45,6 +45,7 @@
 #                     `__super.rendered`
 #    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
+#     5-Jan-2011 (CT) `Registration`, `Result`, and `Result_Teamrace` factored
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,24 @@ import datetime
 
 class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta."""
+
+    class Registration (GTW.NAV.Page) :
+
+        template_name = u"regatta_registration"
+
+    # end class Registration
+
+    class Result (GTW.NAV.Page) :
+
+        template_name = u"regatta_result"
+
+    # end class Result
+
+    class Result_Teamrace (GTW.NAV.Page) :
+
+        template_name = u"regatta_result_teamrace"
+
+    # end class Result_Teamrace
 
     def __init__ (self, manager, obj, ** kw) :
         kw ["src_dir"] = kw ["sub_dir"] = obj.perma_name
@@ -107,13 +126,12 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         if obj.is_team_race :
             if first (obj.teams).place :
                 result.append \
-                    ( GTW.NAV.Page
+                    ( self.Result_Teamrace
                         ( self
                         , name        = u"%s.html" % (nr.lower (), )
                         , short_title = nr
                         , title       = u"%s %s" %
                             ( _T (u"Results for"), self.short_title)
-                        , template    = u"regatta_result_teamrace"
                         , regatta     = obj
                         )
                     )
@@ -122,19 +140,18 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 (right = obj).order_by (sk).all ()
             if obj.races :
                 result.append \
-                    ( GTW.NAV.Page
+                    ( self.Result
                         ( self
                         , name        = u"%s.html" % (nr.lower (), )
                         , short_title = nr
                         , title       = u"%s %s" %
                             ( _T (u"Results for"), self.short_title)
-                        , template    = u"regatta_result"
                         , regatta     = obj
                         )
                     )
         head = _T (u"List of participants for")
         result.append \
-            ( GTW.NAV.Page
+            ( self.Registration
                 ( self
                 , head_line   = u"%s %s<br />%s, %s" %
                     ( _T (u"Registration list")
@@ -143,7 +160,6 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , name        = u"%s.html" % (np.lower (), )
                 , short_title = np
                 , title       = u"%s %s"   % (head, self.short_title)
-                , template    = u"regatta_registration"
                 , regatta     = obj
                 )
             )

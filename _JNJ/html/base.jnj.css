@@ -26,10 +26,9 @@
 #    CSS fragment for template html/base.jnj
 #
 # Revision Dates
-#     1-Jan-2011 (CT) Creation
-#     2-Jan-2011 (CT) Creation continued
-#     3-Jan-2011 (CT) Creation continued..
-#     4-Jan-2011 (CT) Creation continued...
+#     1-Jan-2011 (CT) Creation...
+#     4-Jan-2011 (CT)         ...finished
+#     5-Jan-2011 (CT) `print_sheet` added
 #    ««revision-date»»···
 #--
 
@@ -476,4 +475,92 @@ style_sheet = Style_Sheet \
         )
     )
 
+print_sheet = Style_Sheet \
+    ( Media.Rule
+        ( Media.Query ("print")
+        , rules                   =
+            [ Rule
+                ( "@page"
+                , margin          = Cm (2.5)
+                )
+            , Rule
+                ( "*"
+                , background      = "transparent !important"
+                , color           = "black !important"
+                )
+            , Rule
+                ( "a"
+                , color           = "#000033 !important"
+                , text_decoration = "none"
+                , children        =
+                    [ Rule_Attr
+                        ( "[href]:after"
+                        , content   = """ " [" attr(href) "]" """.strip ()
+                        , font_size = "smaller"
+                        )
+                    , Rule_Class
+                        ( "button"
+                        , display   = "none"
+                        )
+                    ]
+                )
+            , Rule
+                ( "html", ".pg_main", ".pg_foot", ".pg_head"
+                , border          = 0
+                , margin          = 0
+                , padding         = 0
+                , width           = "auto"
+                )
+            , Rule
+                ( "body"
+                , border          = 0
+                , font_size       = Pt (10)
+                , height          = "auto"
+                , min_width       = 0
+                , padding_right   = 0
+                , width           = "auto"
+                , ** P.font_spec_print
+                )
+            , Rule
+                ( "em", ".em"
+                , ** dict
+                    (P.font_spec_print, font_style = "italic")
+                )
+            , Rule
+                ( "strong"
+                , ** dict
+                    (P.font_spec_print, font_weight = "bold")
+                )
+            , Rule
+                ( "pre"
+                , ** dict
+                    (P.font_spec_print, font_family = P.font_family_pre)
+                )
+            , Rule ("thead", display = "table-header-group")
+            , Rule
+                ( ".pg_body"
+                , max_width       = Em (45)
+                )
+            , Rule
+                ( ".pg_foot"
+                , bottom          = 0
+                , font_size       = Percent (75)
+                , left            = 0
+                , position        = "fixed"
+                , width           = Percent (100)
+                )
+            , Rule
+                ( ".pg_head"
+                , color           = "#666666 !important"
+                , height          = "auto"
+                )
+            , Rule
+                ( ".pg_head .logo", ".pg_nav"
+                , display         = "none"
+                , visibility      = "collapse"
+                )
+            ]
+        )
+    , rank  = 1 << 16
+    )
 ### __END__ html/base.jnj.css

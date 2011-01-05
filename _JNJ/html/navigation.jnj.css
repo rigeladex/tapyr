@@ -88,6 +88,7 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "h1"
                 , font_size      = Percent (100)
+                , line_height    = 2.0
                 , margin         = TRBL0 (b = Em (1./4))
                 , padding_left   = Em (0.50)
                 , children       =
