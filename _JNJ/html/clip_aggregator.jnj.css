@@ -27,16 +27,17 @@
 #
 # Revision Dates
 #     2-Jan-2011 (CT) Creation
+#     5-Jan-2011 (CT) Bug fixes
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
-        ( "news-clip"
+        ( ".news-clip"
         , overflow                = "hidden"
         )
     , Rule
-        ( "news-clip-more"
+        ( ".news-clip-more"
         , text_align              = "left"
         , children                =
             [ Rule
@@ -56,7 +57,7 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
-        ( "news-clip-sep"
+        ( ".news-clip-sep"
         , background_color        = P.color_medium_grey
         , height                  = Px (1)
         , margin                  = TRBL (Em (1./2), Percent (12.5))
