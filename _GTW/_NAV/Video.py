@@ -39,7 +39,7 @@ import _GTW._NAV.Base
 class Video (GTW.NAV.Page) :
     """Model a page containing an embedded video"""
 
-    template_name = "video.html"
+    template_name = "video"
 
 # end class Video
 

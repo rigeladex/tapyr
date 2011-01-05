@@ -40,8 +40,9 @@
 #     2-Jan-2011 (CT) `Template_E.get_CSS` added
 #     3-Jan-2011 (CT) `Template_E.CSS` added
 #     3-Jan-2011 (CT) `Template_E.get_CSS` changed to sort stylesheets by `rank`
-#     4-Jan-2011 (CT) `templates_i` fixed (recurse into `templates_i`
-#                     instead of `imports`)
+#     4-Jan-2011 (CT) `templates_i` fixed (transitive `imports`)
+#     5-Jan-2011 (CT) `templates_i` fixed (protect against recursive `imports`)
+#     5-Jan-2011 (CT) `Template_E.__eq__` and `__hash__` added
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,8 @@ class Template (_Template_) :
 class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
+    css_href      = None
+
     _css_fragment = None
     _css_path     = None
 
@@ -112,10 +115,10 @@ class Template_E (_Template_) :
     def __new__ (cls, env, name, path = None, css_fragment_name = None) :
         if path is None :
             path = name
-        if name in cls.Map :
-            result = cls.Map [name]
-        elif path in cls.By_Path :
+        if path in cls.By_Path :
             result = cls.By_Path [path]
+        elif name in cls.Map :
+            result = cls.Map     [name]
         else :
             result = _Template_.__new__ (cls)
             result._init_ (env, name, path, css_fragment_name)
@@ -124,7 +127,7 @@ class Template_E (_Template_) :
 
     def _init_ (self, env, name, path = None, css_fragment_name = None) :
         self.__super._init_ (name, path, css_fragment_name)
-        self.env            = env
+        self.env = env
         if path not in self.By_Path :
             self.By_Path [path] = self
     # end def _init_
@@ -193,6 +196,12 @@ class Template_E (_Template_) :
         return self._t_source
     # end def source
 
+    @Once_Property
+    def source_path (self) :
+        self._load_template ()
+        return self._t_path
+    # end def source_path
+
     @property
     def template (self) :
         return self.env.get_template (self.path)
@@ -215,15 +224,19 @@ class Template_E (_Template_) :
 
     @Once_Property
     def templates_i (self) :
-        def _gen () :
-            for e in reversed (self.templates_e [1:]) :
-                for i in e.templates_i :
+        seen = set ([self])
+        def _gen_i (imports) :
+            for i in imports :
+                if i not in seen :
                     yield i
-            for i in self.imports :
-                yield i
-                for ii in i.templates_i :
-                    yield ii
-        return list (TFL.uniq (_gen ()))
+                    seen.add (i)
+                    for ii in _gen_i (i.imports) :
+                        yield ii
+        def _gen () :
+            for e in reversed (self.templates_e) :
+                for i in _gen_i (e.imports) :
+                    yield i
+        return list (_gen ())
     # end def templates_i
 
     def get_CSS (self, P) :
@@ -263,6 +276,14 @@ class Template_E (_Template_) :
             self._t_path   = path
             self._t_source = source
     # end def _load_template
+
+    def __eq__ (self, rhs) :
+        return self.source_path == getattr (rhs, "source_path", rhs)
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash (self.source_path)
+    # end def __hash__
 
     def __repr__ (self) :
         return "<JNJ.Template_E %s>" % (self.path, )
@@ -307,6 +328,7 @@ Template ("regatta_registration",         "html/regatta_registration.jnj")
 Template ("regatta_result",               "html/regatta_result.jnj")
 Template ("regatta_result_teamrace",      "html/regatta_result_teamrace.jnj")
 Template ("site_admin",                   "html/site_admin.jnj")
+Template ("video",                        "html/video.jnj")
 
 class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""

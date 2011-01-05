@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -27,10 +27,13 @@
 #
 # Revision Dates
 #    16-Jun-2010 (CT) Creation
+#     5-Jan-2011 (CT) `pickle` added
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
+
+import pickle
 
 fprint = print
 

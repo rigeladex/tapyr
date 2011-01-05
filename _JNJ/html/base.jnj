@@ -68,11 +68,14 @@
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- if NAV.DEBUG and page.template.CSS %}
+        {%- if page.template.CSS and not page.template.css_href %}
           <style type="text/css">
             {{ page.template.CSS }}
           </style>
         {% else %}
+          {%- if page.template.css_href %}
+            {{ X.link_stylesheet (page.template.css_href) }}
+          {% endif -%}
           {%- for cssl in page.Media.css_links %}
             {% call media_item (cssl) -%}
               {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}

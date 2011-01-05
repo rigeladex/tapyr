@@ -239,6 +239,7 @@
 #     3-Jan-2011 (CT) `template` changed to property (auto-converting
 #                     `template_name`)
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template`
+#     5-Jan-2011 (CT) `template_names`, `load_css_map`, and `store_css` added
 #    ««revision-date»»···
 #--
 
@@ -251,6 +252,7 @@ import _GTW._NAV
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
 from   _TFL.predicate           import uniq
+from   _TFL.pyk                 import pickle
 from   _TFL.Record              import Record
 from   _TFL.Regexp              import Dict_Replacer
 from   _TFL                     import sos
@@ -259,14 +261,24 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL.Context
 import _TFL.defaultdict
+import _TFL.multimap
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
+import hashlib
 import signal
 import sys
 import time
 
 class _Meta_ (TFL.Meta.M_Class) :
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        for k in ("template_name", "dir_template_name") :
+            tn = dct.get (k)
+            if tn :
+                cls.template_names.add (tn)
+    # end def __init__
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
@@ -287,6 +299,10 @@ class _Meta_ (TFL.Meta.M_Class) :
                             Table [perma] = result
             if pid is not None :
                 setattr (top.SC, pid, result)
+        for k in ("template_name", "dir_template_name") :
+            tn = getattr (result, k, None)
+            if tn :
+                cls.template_names.add (tn)
         return result
     # end def __call__
 
@@ -314,6 +330,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
     _template                  = None
 
     _Media                     = GTW.Media ()
+
+    template_names             = set ()
 
     ### ("GET", "HEAD", "POST", "DELETE", "PUT")
     SUPPORTED_METHODS   = set (("GET", ))
@@ -562,7 +580,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
         elif not isinstance (value, self.Templateer.Template_Type) :
             self.template_name = value.name
         else :
-            self._template = value
+            self.template_name = value.name
+            self._template     = value
     # end def template
 
     @property
@@ -809,7 +828,8 @@ class _Dir_ (_Site_Entity_) :
         elif not isinstance (value, self.Templateer.Template_Type) :
             self.dir_template_name = value.name
         else :
-            self._dir_template = value
+            self.dir_template_name = value.name
+            self._dir_template     = value
     # end def dir_template
 
     @classmethod
@@ -1074,6 +1094,16 @@ class Root (_Dir_) :
         return unicode (self.nick or self.owner or self.name)
     # end def h_title
 
+    def load_css_map (self, map_path) :
+        T = self.Templateer
+        with open (map_path, "rb") as file :
+            map_p = pickle.load (file)
+        for p, tns in map_p.iteritems () :
+            for tn in tns :
+                t = T.get_template (tn)
+                t.css_href = p
+    # end def load_css_map
+
     @Once_Property
     def login_page (self) :
         if "Auth" in self.SC :
@@ -1152,6 +1182,36 @@ class Root (_Dir_) :
         from _MOM import MOM
         return MOM.Scope.load (self.top.App_Type, self.top.DB_Url)
     # end def scope
+
+    def store_css (self, css_dir, prefix, map_path) :
+        map   = TFL.mm_list ()
+        map_p = TFL.mm_list ()
+        T     = self.Templateer
+        for tn in self.template_names :
+            t = T.get_template (tn)
+            try :
+                css = t.CSS
+            except Exception as exc :
+                print "CSS exception for template", t.path
+                print "   ", exc
+            else :
+                if css :
+                    k = hashlib.sha1 (css).hexdigest ()
+                    map [k].append (t)
+        for k, ts in map.iteritems () :
+            cn = k + ".css"
+            p  = sos.path.join (prefix,  cn)
+            fn = sos.path.join (css_dir, cn)
+            t  = first (ts)
+            with open (fn, "wb") as file :
+                file.write (t.CSS)
+            for t in ts :
+                t.css_href = p
+                map_p [p].append (t.path)
+        if map_p :
+            with open (map_path, "wb") as file :
+                pickle.dump (map_p, file, pickle.HIGHEST_PROTOCOL)
+    # end def store_css
 
 # end class Root
 
