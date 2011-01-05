@@ -35,6 +35,7 @@
 ##    24-Nov-2010 (CT) `nav_block` moved after `document`
 ##     7-Dec-2010 (CT) `media_item` factored and used for `Media.scripts`, too
 ##    15-Dec-2010 (CT) `exclude_robots` added
+##     5-Jan-2011 (CT) Support `page.template.css_href`
 ##    ««revision-date»»···
 ##--
 #}
