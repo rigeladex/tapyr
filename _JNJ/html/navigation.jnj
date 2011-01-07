@@ -44,6 +44,8 @@
 ##     9-Dec-2010 (CT) `_entry_body` factored and changed to handle `a_img`
 ##     4-Jan-2011 (CT) Use `X.section`
 ##     7-Jan-2011 (CT) `level-<i>` removed
+##     7-Jan-2011 (CT) Use `is_current_dir` instead of home-grown code
+##                     (and s/is_current/is_current_page/)
 ##    ««revision-date»»···
 ##--
 #}
@@ -72,18 +74,19 @@
 {%- macro entry (link, level) -%}
   {% if NAV.permissive or NAV.allow (link, request.user) %}
     {%- set href = link.abs_href or link.href %}
-    {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
-      <li class="current-section">
+    {%- set isc  = link.is_current_page and link.is_current_page (nav_page) %}
+    {%- if link.is_current_dir and link.is_current_dir (nav_page) %}
+      <li>
         <a href="{{ href }}"
                {%- if link.title %} title="{{ link.title }}"{% endif %}
-               class="current-section"
+               class="current-section{%- if isc %} current-link{% endif -%}"
             >{{ _entry_body (link) }}</a>
         {{ entries (link.own_links, level + 1) }}
       </li>
     {%- else -%}
-      {% if link.is_current and link.is_current (nav_page) -%}
-        <li class="current-link">
-          <b>{{- _entry_body (link) -}}</b>
+      {% if isc -%}
+        <li>
+          <b class="current-link">{{- _entry_body (link) -}}</b>
         </li>
       {%- else -%}
         {%- if href -%}

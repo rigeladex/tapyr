@@ -30,6 +30,7 @@
 #     3-Jan-2011 (CT) Creation continued
 #     4-Jan-2011 (CT) Bug fixes
 #     7-Jan-2011 (CT) `level-<i>` removed
+#     7-Jan-2011 (CT) Rules for `current-link` and `current-section` changed
 #    ««revision-date»»···
 #--
 
@@ -62,15 +63,6 @@ style_sheet = Style_Sheet \
                         , display          = "block"
                         , padding_left     = Em (0.50)
                         )
-                    , Rule_Class
-                        ( "current-link"
-                        , font_weight      = "bold"
-                        , ** P.nav_col.color_spec_link_current
-                        )
-                    , Rule_Class
-                       ( "current-section"
-                       , font_weight = "bold"
-                       )
                     ]
                 )
             , Rule
@@ -101,7 +93,17 @@ style_sheet = Style_Sheet \
                 ( "a.current-section"
                 , "a.current-section:link"
                 , "a.current-section:visited"
+                , "li.current-section"
+                , font_weight = "bold"
                 , ** P.nav_col.color_spec_section_current
+                )
+            , Rule
+                ( "a.current-link"
+                , "a.current-link:link"
+                , "a.current-link:visited"
+                , "b.current-link"
+                , font_weight = "bold"
+                , ** P.nav_col.color_spec_link_current
                 )
             , Rule ("a",         text_decoration = "none")
             , Rule ("a:link",    color = P.link_color)

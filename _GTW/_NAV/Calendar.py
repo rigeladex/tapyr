@@ -44,6 +44,7 @@
 #                     `__super.rendered`
 #     3-Jan-2011 (CT) Introduce `template_name`
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
+#     7-Jan-2011 (CT) `is_current_dir` redefined
 #    ««revision-date»»···
 #--
 
@@ -116,6 +117,11 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         implicit          = True
         template_qx_name  = None
         SUPPORTED_METHODS = set (("GET", ))
+
+        def is_current_dir (self, nav_page) :
+            p = self.parent
+            return p.prefix.startswith (nav_page.prefix)
+        # end def is_current_dir
 
     # end class _Cmd_
 

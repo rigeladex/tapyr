@@ -240,6 +240,7 @@
 #                     `template_name`)
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template`
 #     5-Jan-2011 (CT) `template_names`, `load_css_map`, and `store_css` added
+#     7-Jan-2011 (CT) s/is_current/is_current_page/, `is_current_dir` added
 #    ««revision-date»»···
 #--
 
@@ -473,12 +474,16 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 return u"%s [%s]" % (name, self.top.h_title)
     # end def h_title
 
-    def is_current (self, nav_page) :
+    def is_current_dir (self, nav_page) :
+        return False
+    # end def is_current_dir
+
+    def is_current_page (self, nav_page) :
         return \
             (  (self.permalink == nav_page.permalink)
             or (self.href      == nav_page.href)
             )
-    # end def is_current
+    # end def is_current_page
 
     @Once_Property
     def login_required (self) :
@@ -868,6 +873,10 @@ class _Dir_ (_Site_Entity_) :
                 pass
         return pjoin (self.prefix, u"")
     # end def href
+
+    def is_current_dir (self, nav_page) :
+        return nav_page.prefix.startswith (self.prefix)
+    # end def is_current_dir
 
     @property
     def own_links (self) :

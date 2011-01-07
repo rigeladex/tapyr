@@ -78,6 +78,7 @@
 #    21-Dec-2010 (CT) `h_title` removed
 #    22-Dec-2010 (CT) Register `Admin` instances in `top.ET_Map`
 #     3-Jan-2011 (CT) Introduce `template_name`
+#     7-Jan-2011 (CT) `is_current_dir` redefined
 #    ««revision-date»»···
 #--
 
@@ -463,6 +464,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if man :
             return man.href_display (obj)
     # end def href_display
+
+    def is_current_dir (self, nav_page) :
+        p = nav_page.href
+        return p.startswith (self.href) and p != self.href
+    # end def is_current_dir
 
     @Once_Property
     def list_display (self) :
