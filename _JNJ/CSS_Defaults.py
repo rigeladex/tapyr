@@ -40,7 +40,8 @@ _C.formatter = RGB_X
 
 color_focus            = SVG_Color ("yellow")
 color_heading          = RGB_X     ("#34444D")
-color_light_grey       = RGB_X     ("#EBEBEB")
+color_lighter_grey     = RGB_X     ("#EDEDED")
+color_light_grey       = RGB_X     ("#DEDEDE")
 color_medium_grey      = RGB_X     ("#BEBEBE")
 color_selected         = RGB_X     ("#FF6633")
 color_target           = RGB_X     ("#FF6633")
@@ -145,11 +146,11 @@ color_spec_pg_head     = dict \
     , color            = RGB_X     ("#0200DE")
     )
 color_spec_row1        = color_spec_meta = dict \
-    ( background_color = color_light_grey
+    ( background_color = color_lighter_grey
     , color            = RGB_X     ("#000033")
     )
 color_spec_row2        = color_spec_message = dict \
-    ( background_color = color_medium_grey
+    ( background_color = color_light_grey
     , color            = RGB_X     ("#000033")
     )
 color_spec_selected    = dict \
