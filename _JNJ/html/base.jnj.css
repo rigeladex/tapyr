@@ -204,12 +204,12 @@ base_sheet = Style_Sheet \
     , Rule
         ( "ul"
         , list_style               = "disc outside"
+        , margin_bottom            = Em (0.5)
         , padding_left             = Em (1.0)
         , children                 =
             [ Rule
                 ( "ul"
                 , list_style       = "square"
-                , margin           = TRBL0 (l = Em (0.5))
                 , children         =
                     [ Rule
                         ( "ul"

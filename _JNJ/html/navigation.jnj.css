@@ -29,6 +29,7 @@
 #     1-Jan-2011 (CT) Creation
 #     3-Jan-2011 (CT) Creation continued
 #     4-Jan-2011 (CT) Bug fixes
+#     7-Jan-2011 (CT) `level-<i>` removed
 #    ««revision-date»»···
 #--
 
@@ -55,11 +56,11 @@ style_sheet = Style_Sheet \
                 ( "li"
                 , margin         = 0
                 , padding        = TRBL (P.nav_col.vert_padding, 0)
-                , position       = "relative" ### for nested menues
                 , children       =
                     [ Rule
                         ( "a", "b", "input"
                         , display          = "block"
+                        , padding_left     = Em (0.50)
                         )
                     , Rule_Class
                         ( "current-link"
@@ -71,6 +72,30 @@ style_sheet = Style_Sheet \
                        , font_weight = "bold"
                        )
                     ]
+                )
+            , Rule
+                ( "li li"
+                , children = [ Rule ( "a", "b", padding_left     = Em (1.25))]
+                )
+            , Rule
+                ( "li li li"
+                , children = [ Rule ( "a", "b", padding_left     = Em (2.00))]
+                )
+            , Rule
+                ( "li li li li"
+                , children = [ Rule ( "a", "b", padding_left     = Em (2.75))]
+                )
+            , Rule
+                ( "li li li li li"
+                , children = [ Rule ( "a", "b", padding_left     = Em (3.50))]
+                )
+            , Rule
+                ( "li li li li li li"
+                , children = [ Rule ( "a", "b", padding_left     = Em (4.25))]
+                )
+            , Rule
+                ( "li li li li li li li"
+                , children = [ Rule ( "a", "b", padding_left     = Em (5.00))]
                 )
             , Rule
                 ( "a.current-section"
@@ -100,30 +125,18 @@ style_sheet = Style_Sheet \
                     ]
                 , ** P.nav_col.color_spec_heading
                 )
-            , Rule ("section", margin_bottom  = Em (1./2))
+            , Rule ("section", margin_bottom = Em (1./2))
+            , Rule
+                ( "table.calendar tbody th"
+                , padding        = TRBL0 (l = Em (0.50))
+                )
             , Rule
                 ( "ul"
                 , font_weight    = "normal"
                 , list_style     = "none"
+                , margin         = 0
                 , padding        = 0
                 , ** P.nav_col.color_spec_link
-                )
-            , Rule
-                ( ".level-0"
-                , children       =
-                    [ Rule ("a", "b", "input", padding_left = Em (0.50))
-                    , Rule ("table.calendar",  margin_left  = Em (0.50))
-                    ]
-                )
-            , Rule
-                ( ".level-1"
-                , children       =
-                    [Rule ("a", "b", padding_left = Em (0.75))]
-                )
-            , Rule
-                ( * tuple (".level-%s" % (i+2) for i in range (5))
-                , children       =
-                    [Rule ("a", "b", padding_left = Em (1.0))]
                 )
             , Rule
                 ( ".calendar"

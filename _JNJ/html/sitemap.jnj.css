@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     2-Jan-2011 (CT) Creation
+#     7-Jan-2011 (CT) `level-<i>` removed
 #    ««revision-date»»···
 #--
 
@@ -37,12 +38,18 @@ style_sheet = Style_Sheet \
             [ Rule
                 ( "ul"
                 , list_style      = "none"
-                # XXX ??? margin = 0, padding = 0 ???
+                , margin          = 0
+                , padding         = 0
                 )
-            , Rule
-                ( * tuple (".level-%s" % (i+1) for i in range (6))
-                , padding_left   = Em (2.5)
-                )
+            , Rule ("li a",                         display      = "block")
+            , Rule ("li li a",                      padding_left = Em ( 2.50))
+            , Rule ("li li li a",                   padding_left = Em ( 5.00))
+            , Rule ("li li li li a",                padding_left = Em ( 7.50))
+            , Rule ("li li li li li a",             padding_left = Em (10.00))
+            , Rule ("li li li li li li a",          padding_left = Em (12.50))
+            , Rule ("li li li li li li li a",       padding_left = Em (15.00))
+            , Rule ("li li li li li li li li a",    padding_left = Em (17.50))
+            , Rule ("li li li li li li li li li a", padding_left = Em (20.00))
             ]
         )
     )

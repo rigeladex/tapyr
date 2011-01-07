@@ -43,6 +43,7 @@
 ##    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 ##     9-Dec-2010 (CT) `_entry_body` factored and changed to handle `a_img`
 ##     4-Jan-2011 (CT) Use `X.section`
+##     7-Jan-2011 (CT) `level-<i>` removed
 ##    ««revision-date»»···
 ##--
 #}
@@ -72,7 +73,7 @@
   {% if NAV.permissive or NAV.allow (link, request.user) %}
     {%- set href = link.abs_href or link.href %}
     {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
-      <li class="current-section level-{{ level }}">
+      <li class="current-section">
         <a href="{{ href }}"
                {%- if link.title %} title="{{ link.title }}"{% endif %}
                class="current-section"
@@ -81,24 +82,24 @@
       </li>
     {%- else -%}
       {% if link.is_current and link.is_current (nav_page) -%}
-        <li class="current-link level-{{ level }}">
+        <li class="current-link">
           <b>{{- _entry_body (link) -}}</b>
         </li>
       {%- else -%}
         {%- if href -%}
-          <li class="nav-link level-{{ level }}">
+          <li class="nav-link">
             <a href="{{ href }}"
                {%- if link.title %} title="{{ link.title }}"{% endif -%}
             >{{ _entry_body (link) }}</a>
           </li>
         {%- else -%}
-          <li class="no-link level-{{ level }}">{{ _entry_body (link) }}</li>
+          <li class="no-link">{{ _entry_body (link) }}</li>
         {%- endif %}
       {%- endif %}
     {%- endif %}
   {%- else %}
     {%- if NAV.DEBUG %}
-      <li class="level-{{ level }}">{{ _entry_body (link) }}</li>
+      <li>{{ _entry_body (link) }}</li>
     {% endif -%}
   {%- endif %}
 {%- endmacro -%} {# entry #}
@@ -127,7 +128,7 @@
   {%- if L10N %}
     {%- set langs = L10N.languages %}
     {%- if langs|length > 1 %}
-      {% call X.section (class="language-selection level-0") -%}
+      {% call X.section (class="language-selection") -%}
         <h1 title="{{ GTW._T ("Languages that can be selected for %s") % request.host }}">
           {{- GTW._T ("Language") -}}
           <b>
@@ -154,7 +155,7 @@
 {%- endmacro -%} {#- language_section -#}
 
 {%- macro login_section (page, request, allow_register = False) -%}
-  {% call X.section (class="login level-0") -%}
+  {% call X.section (class="login") -%}
       {%- import "STD::html/form.jnj" as Form %}
       {%- if request.user.authenticated %}
         <h1 title="{{ GTW._T ("Logged in as %s") % (request.user.name, ) }}">
@@ -190,8 +191,7 @@
 {%- macro section (link_list, name = None) -%}
   {%- if link_list %}
     {%- set section_caller = kwargs.pop ("caller", None) -%}
-    {%- set section_class = " ".join
-          (("level-0", kwargs.pop ("class", ""))).strip ()
+    {%- set section_class = kwargs.pop ("class", "").strip ()
     -%}
     {% call X.section (class = section_class, ** kwargs) -%}
       {% if name -%}<h1>{{ name }}</h1>{% endif %}
@@ -210,7 +210,7 @@
 
 {%- macro sitemap_entry (link, TEST = False) -%}
   {% if NAV.permissive or (NAV.allow (link, request.user) and not link.hidden) %}
-    <li class="nav-link level-{{link.level|default('0')}}">
+    <li class="nav-link">
       <a href="{{ link.permalink}}"
          {% if link.title %} title="{{ link.title }}"{% endif %}
       >{{ link.short_title|safe }}</a>
