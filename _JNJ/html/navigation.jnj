@@ -96,13 +96,13 @@
             >{{ _entry_body (link) }}</a>
           </li>
         {%- else -%}
-          <li class="no-link">{{ _entry_body (link) }}</li>
+          <li><b class="no-link">{{ _entry_body (link) }}</b></li>
         {%- endif %}
       {%- endif %}
     {%- endif %}
   {%- else %}
     {%- if NAV.DEBUG %}
-      <li>{{ _entry_body (link) }}</li>
+      <li><b class="no-link">{{ _entry_body (link) }}</b></li>
     {% endif -%}
   {%- endif %}
 {%- endmacro -%} {# entry #}

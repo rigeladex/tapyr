@@ -5,7 +5,7 @@ JNJ To-Do
 
   * .Object-List, .Object-Editor
 
-  * @media "print"
+  x @media "print"
 
 x global function for retrieving a macro from a template:
 

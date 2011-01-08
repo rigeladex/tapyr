@@ -60,6 +60,7 @@ col_padding            = Px (5)
 
 background_color       = SVG_Color ("white")
 link_color             = RGB_X ("#0000EE")
+no_link_color          = RGB_X ("#333333")
 visited_color          = RGB_X ("#551A8B")
 
 class nav_col :
@@ -85,6 +86,11 @@ class nav_col :
     color_spec_link_current    = dict \
         ( background_color = link_color
         , color            = background_color
+        )
+
+    color_spec_no_link     = dict \
+        ( background_color = background_color
+        , color            = no_link_color
         )
 
     color_spec_section_current = dict \

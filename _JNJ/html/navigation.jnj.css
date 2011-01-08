@@ -63,6 +63,8 @@ style_sheet = Style_Sheet \
                         , display          = "block"
                         , padding_left     = Em (0.50)
                         )
+                    , Rule
+                        ( ".no-link", ** P.nav_col.color_spec_no_link)
                     ]
                 )
             , Rule
