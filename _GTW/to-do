@@ -1,6 +1,8 @@
 GTW To-Do
 =========
 
+- GTW.NAV.E_Type.Admin: restrict urls to Ascii
+
 - GTW.Tornado.Error vs. GTW.Werkzeug.Error: refactor
 
 x GTW.NAV.Robots: Answer to url `/robots.txt`
