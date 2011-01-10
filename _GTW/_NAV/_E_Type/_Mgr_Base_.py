@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -34,6 +34,7 @@
 #    22-Mar-2010 (CT) Use `_T (name)`, not `_Tn (name)` for `title`
 #    12-Apr-2010 (CT) `_get_entries` factored to `Mixin`
 #    21-Jun-2010 (MG) Once property `ETM` added
+#    10-Jan-2011 (CT) `_Mgr_Base_` changed to use `sanitized_filename` on `name`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TFL                     import TFL
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type.Mixin
 
+import _TFL.Ascii
 import _TFL.Filter
 
 from   _TFL._Meta.Once_Property import Once_Property
@@ -64,7 +66,7 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
         short_title = kw.pop  ("short_title", _T (name))
         self.__super.__init__ \
             ( E_Type       = E_Type
-            , name         = name
+            , name         = TFL.Ascii.sanitized_filename (unicode (name))
             , parent       = parent
             , short_title  = short_title
             , title        = title
