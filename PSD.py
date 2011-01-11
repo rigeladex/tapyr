@@ -36,6 +36,7 @@
 #    24-Nov-2007 (CT) `ACPI_Updater.__call__` changed to use a treshold of
 #                     `minuntes < 45` instead of `percent < 40` for `low_color`
 #    19-Nov-2009 (CT) `text_font` changed (X update broke the display)
+#    11-Jan-2011 (CT) `_get_temperatures` implemented and used
 #    ««revision-date»»···
 #--
 
@@ -153,6 +154,10 @@ class ACPI_Updater (TFL.Meta.Object) :
           r")?"
         , re.VERBOSE | re.IGNORECASE | re.MULTILINE
         )
+    _temp_pattern = Regexp \
+        ( r"\s(?P<temperature> [0-9]+)"
+        , re.VERBOSE
+        )
 
     def __init__ (self) :
         self.last_status_change = time.time ()
@@ -176,7 +181,7 @@ class ACPI_Updater (TFL.Meta.Object) :
             now         = time.time ()
             percent     = int (round (float (p.percent)))
             speed       = self._get_speed ()
-            temperature = int (p.temperature or 0)
+            temperature = int (p.temperature or 0) or self._get_temperatures ()
             if self.last_ac_status != ac_status :
                 self.last_ac_status     = ac_status
                 self.last_status_change = now
@@ -226,8 +231,22 @@ class ACPI_Updater (TFL.Meta.Object) :
     # end def _get_speed
 
     def _get_temperatures (self) :
-        pass
-        ### XXX /proc/acpi/ibm/thermal
+        try :
+            f = open ("/proc/acpi/ibm/thermal")
+        except IOError :
+            pass
+        else :
+            try :
+                v = f.read ().strip ()
+            finally :
+                f.close ()
+            return max \
+                ( tuple
+                    (  int (m.group ("temperature"))
+                    for m in self._temp_pattern.search_iter (v)
+                    )
+                + (0, )
+                )
         ### (/usr/share/doc/ibm-acpi-0.11-r1/README.gz)
         ### Alas: the sensors seem to be wired differently in different
         ### models (e.g., for my X40 hddtemp shows a totally different
