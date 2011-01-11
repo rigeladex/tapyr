@@ -32,6 +32,7 @@
 #                     and Tornado
 #    28-Jun-2010 (MG) `Request_Class` and `Response_Class` added
 #    11-Jan-2011 (CT) Sort methods alphabetically
+#    11-Jan-2011 (CT) `body` added
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,11 @@ class Request_Handler (GTW._Request_Handler_) :
         self.response.response.append ("Hello World")
         return self.response          (environ, start_response)
     # end def __call__
+
+    @Once_Property
+    def body (self) :
+        return self.request.data
+    # end def body
 
     def clear (self) :
         self.response.headers.clear ()

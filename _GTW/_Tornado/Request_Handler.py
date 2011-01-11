@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2010 Martin Glück. All rights reserved
+# Copyright (C) 2007-2011 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
 #    28-Jun-2010 (MG) Meta class moved to `Request_Handler`
+#    11-Jan-2011 (CT) `body` added
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,7 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL                       import I18N
 
 from   _GTW                       import GTW
+
 import _GTW._Request_Handler_
 import _GTW.Notification
 import _GTW._Tornado
@@ -51,6 +53,7 @@ import _GTW._Tornado
 from    tornado                   import web, escape
 
 import  tornado.httpserver
+
 tornado.httpserver.HTTPRequest.url = TFL.Meta.Alias_Property ("uri")
 
 class M_Request_Handler (TFL.Meta.M_Class, web.RequestHandler.__class__) :
@@ -72,6 +75,11 @@ class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
     __metaclass__   = M_Request_Handler
     secure_cookie   = TFL.Meta.Alias_Property ("get_secure_cookie")
     DEFAULT_HANDLER = "_handle_request"
+
+    @Once_Property
+    def body (self) :
+        return self.request.body
+    # end def body
 
     def _handle_request (self, * args, ** kw) :
         raise web.HTTPError (405)
