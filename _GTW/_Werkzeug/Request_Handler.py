@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -31,6 +31,7 @@
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
 #    28-Jun-2010 (MG) `Request_Class` and `Response_Class` added
+#    11-Jan-2011 (CT) Sort methods alphabetically
 #    ««revision-date»»···
 #--
 
@@ -83,40 +84,25 @@ class Request_Handler (GTW._Request_Handler_) :
         self.response    = self.Response_Class ()
     # end def __init__
 
-    def clear_cookie (self, name, * args, ** kw) :
-        self.response.delete_cookie (name, * args, ** kw)
-    # end def clear_cookie
+    def __call__ (self, environ, start_response) :
+        self.set_header               ("Content-Type", "text/html")
+        self.response.response.append ("Hello World")
+        return self.response          (environ, start_response)
+    # end def __call__
 
     def clear (self) :
         self.response.headers.clear ()
         self.response.response = []
     # end def clear
 
+    def clear_cookie (self, name, * args, ** kw) :
+        self.response.delete_cookie (name, * args, ** kw)
+    # end def clear_cookie
+
     @Once_Property
     def current_user (self) :
         return None
     # end def current_user
-
-    def _cookie_signature (self, * parts):
-        hash = hmac.new\
-            ( self.application.settings ["cookie_secret"]
-            , digestmod = hashlib.sha1
-            )
-        for part in parts:
-            hash.update (part)
-        return hash.hexdigest ()
-    # end def _cookie_signature
-
-    def _handle_request_exception (self, exc) :
-        if isinstance (exc, GTW.Werkzeug.Status) :
-            return exc (self)
-        if 1 :
-            import traceback
-            print "*" * 79
-            traceback.print_exc ()
-            print "*" * 79
-        raise exc
-    # end def _handle_request_exception
 
     def secure_cookie (self, name) :
         ### based on the implementation of tornado.web.Request.get_secure_cookie
@@ -167,10 +153,6 @@ class Request_Handler (GTW._Request_Handler_) :
         self.response.headers [key] = value
     # end def set_header
 
-    def set_status (self, code) :
-        self.response.status_code = code
-    # end def set_status
-
     def set_secure_cookie (self, name, data, expires_days = 30, ** kw) :
         timestamp = str (int (time.time ()))
         if isinstance (data, unicode) :
@@ -184,15 +166,34 @@ class Request_Handler (GTW._Request_Handler_) :
         self.set_cookie (name, data, expires = expires, ** kw)
     # end def set_secure_cookie
 
+    def set_status (self, code) :
+        self.response.status_code = code
+    # end def set_status
+
     def write (self, data) :
         self.response.response.append (data)
     # end def write
 
-    def __call__ (self, environ, start_response) :
-        self.set_header               ("Content-Type", "text/html")
-        self.response.response.append ("Hello World")
-        return self.response          (environ, start_response)
-    # end def __call__
+    def _cookie_signature (self, * parts):
+        hash = hmac.new\
+            ( self.application.settings ["cookie_secret"]
+            , digestmod = hashlib.sha1
+            )
+        for part in parts:
+            hash.update (part)
+        return hash.hexdigest ()
+    # end def _cookie_signature
+
+    def _handle_request_exception (self, exc) :
+        if isinstance (exc, GTW.Werkzeug.Status) :
+            return exc (self)
+        if 1 :
+            import traceback
+            print "*" * 79
+            traceback.print_exc ()
+            print "*" * 79
+        raise exc
+    # end def _handle_request_exception
 
 # end class Request_Handler
 
