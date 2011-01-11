@@ -33,6 +33,8 @@
 #    28-Jun-2010 (MG) `Request_Class` and `Response_Class` added
 #    11-Jan-2011 (CT) Sort methods alphabetically
 #    11-Jan-2011 (CT) `body` added
+#    11-Jan-2011 (CT) `Request_Class` derived from `BaseRequest` to define
+#                     `max_content_length` and `max_form_memory_size`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +78,11 @@ class Request_Handler (GTW._Request_Handler_) :
     secure_cookie_exipre_time = 31 * 86400
     cookie_encoding           = "utf-8"
 
-    Request_Class             = BaseRequest
+    class Request_Class (BaseRequest) :
+        max_content_length   = 1024 * 1024 * 4
+        max_form_memory_size = 1024 * 1024 * 2
+    # end class Request_Class
+
     Response_Class            = Response
 
     def __init__ (self, application, environ) :

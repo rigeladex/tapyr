@@ -31,6 +31,7 @@
 #     5-Aug-2010 (MG) Added `jQuery_UI` to Media
 #     3-Jan-2011 (CT) Introduce `template_name`
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
+#    11-Jan-2011 (CT) `rendered` changed to pass `handler` to `update_locals`
 #    ««revision-date»»···
 #--
 
@@ -434,7 +435,8 @@ class Console (GTW.NAV.Page) :
             if top and referer :
                 url = TFL.Url (referer)
                 self.console.update_locals \
-                    ( last_page = top.page_from_href (url.path [1:])
+                    ( handler   = handler
+                    , last_page = top.page_from_href (url.path [1:])
                     , referer   = url
                     )
         else :
