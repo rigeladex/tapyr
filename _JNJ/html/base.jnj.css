@@ -32,14 +32,15 @@
 #    ««revision-date»»···
 #--
 
-### CSS rules for HTML elements
+### CSS reset rules for HTML elements
+### - see http://meyerweb.com/eric/tools/css/reset/...
 reset_sheet = Style_Sheet \
     ( Rule
         ( "a", "abbr", "acronym", "address", "article", "aside", "audio"
         , "b", "blockquote", "body"
         , "canvas", "caption", "cite", "code"
         , "dd", "del", "details", "dfn", "div", "dl", "dt"
-        , "em"
+        , "em", "embed"
         , "fieldset", "figcaption", "figure", "footer", "form"
         , "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup"
         , "html"
@@ -48,7 +49,7 @@ reset_sheet = Style_Sheet \
         , "label", "legend", "li"
         , "mark", "menu"
         , "nav"
-        , "object", "ol"
+        , "object", "ol", "output"
         , "p", "pre"
         , "q"
         , "samp", "section", "small", "span", "strong", "sub", "summary", "sup"

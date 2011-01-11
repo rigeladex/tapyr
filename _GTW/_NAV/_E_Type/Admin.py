@@ -79,6 +79,7 @@
 #    22-Dec-2010 (CT) Register `Admin` instances in `top.ET_Map`
 #     3-Jan-2011 (CT) Introduce `template_name`
 #     7-Jan-2011 (CT) `is_current_dir` redefined
+#    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    ««revision-date»»···
 #--
 
@@ -331,7 +332,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 else :
                     title = _T ("Copy")
                 data ["puf_title"] = "%s %s" % (title, obj.ui_display)
-                return handler.json (data)
+                return handler.write_json (data)
         # end def rendered
 
     # end class Fields

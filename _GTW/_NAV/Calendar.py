@@ -45,6 +45,7 @@
 #     3-Jan-2011 (CT) Introduce `template_name`
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #     7-Jan-2011 (CT) `is_current_dir` redefined
+#    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         def rendered (self, handler, template = None) :
             result = self.__super.rendered (handler, template)
             if 0 and self.qx_p :
-                result = handler.json \
+                result = handler.write_json \
                     ( dict
                         ( html     = result
                         , day      = self.day.day
@@ -214,7 +215,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         def _rendered (self, handler, template) :
             anchor = self.anchor
             result = self.__super._rendered (handler, template)
-            return handler.json \
+            return handler.write_json \
                 ( dict
                     ( calendar = result
                     , day      = anchor.day

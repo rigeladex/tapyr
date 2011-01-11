@@ -30,6 +30,7 @@
 #     2-Aug-2010 (MG) Creation
 #     5-Aug-2010 (MG) Added `jQuery_UI` to Media
 #     3-Jan-2011 (CT) Introduce `template_name`
+#    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    ««revision-date»»···
 #--
 
@@ -421,7 +422,7 @@ class Console (GTW.NAV.Page) :
                 #        ( TFL.I18N._T
                 #            ("%s starting with %s" % (len (cbya, "X")))
                 #        )
-            return handler.json \
+            return handler.write_json \
                 ( dict ( input     = input
                        , cands     = ", ".join (cands)
                        , completed = completed
@@ -437,7 +438,7 @@ class Console (GTW.NAV.Page) :
                     , referer   = url
                     )
         else :
-            return handler.json \
+            return handler.write_json \
                 (dict (html = self.console (cmd), more = self.console.more))
         return self.__super.rendered (handler, self.template)
     # end def rendered

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -36,6 +36,7 @@
 #    30-Nov-2010 (CT) Superfluous imports removed
 #    30-Nov-2010 (CT) `_handle_request` changed to deal with `Fatal_Exceptions`
 #     2-Dec-2010 (CT) `_handle_request` change fixed
+#    11-Jan-2011 (CT) s/json/write_json/
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ import  json
 import  sys
 
 class _Request_Handler_ (object) :
-    """Mixin for request hanlders."""
+    """Mixin for request handlers."""
 
     def add_notification (self, noti) :
         notifications = self.session.notifications
@@ -97,12 +98,6 @@ class _Request_Handler_ (object) :
         return self.session.get ("language")
     # end def get_user_locale_codes
 
-    def json (self, data) :
-        self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
-        self.write      (json.dumps (data))
-        return True
-    # end def json
-
     @Once_Property
     def locale_codes (self) :
         """The locale-code for the current session."""
@@ -112,6 +107,12 @@ class _Request_Handler_ (object) :
         assert codes
         return codes
     # end def locale_codes
+
+    def write_json (self, data) :
+        self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
+        self.write      (json.dumps (data))
+        return True
+    # end def write_json
 
 # end class _Request_Handler_
 

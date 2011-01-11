@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -39,6 +39,7 @@
 #    15-May-2010 (MG) `_form_as_dict` factored
 #    23-Jun-2010 (MG) `Completer._send_result` changed to not send `_state_`
 #    24-Jun-2010 (CT) 3-compatibility
+#    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    ««revision-date»»···
 #--
 
@@ -107,13 +108,13 @@ class Field_Completer (_MOM_Completer_) :
         attributes = obj.attributes
         result     = dict \
             ((f, attributes [f].get_raw (obj)) for f in self.fields)
-        return handler.json (result)
+        return handler.write_json (result)
     # end def _send_result
 
     def _send_suggestions (self, handler, trigger, query) :
         result = uniq_p \
             (((self.ui_display (c), c) for c in query), TFL.Getter [0])
-        return handler.json \
+        return handler.write_json \
             ( [ dict
                   ( pid   = str (c.pid)
                   , value = trigger.get_raw (c)
@@ -198,7 +199,7 @@ class Completer (_MOM_Completer_) :
     # end def js_on_ready
 
     def _send_suggestions (self, handler, trigger, query) :
-        return handler.json \
+        return handler.write_json \
             ( [ dict
                   ( pid   = str (c.pid)
                   , value = trigger.get_raw (c)
@@ -213,7 +214,7 @@ class Completer (_MOM_Completer_) :
     def _send_result (self, form_cls, handler, obj) :
         data                = self.form_as_dict (form_cls (obj))
         data ["ui_display"] = getattr (obj, "ui_display", u"")
-        return handler.json (data)
+        return handler.write_json (data)
     # end def _send_result
 
     @classmethod
