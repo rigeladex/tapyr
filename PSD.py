@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -176,7 +176,7 @@ class ACPI_Updater (TFL.Meta.Object) :
             now         = time.time ()
             percent     = int (round (float (p.percent)))
             speed       = self._get_speed ()
-            temperature = int (p.temperature)
+            temperature = int (p.temperature or 0)
             if self.last_ac_status != ac_status :
                 self.last_ac_status     = ac_status
                 self.last_status_change = now
