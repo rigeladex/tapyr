@@ -38,6 +38,7 @@
 #     2-Dec-2010 (CT) `_handle_request` change fixed
 #    11-Jan-2011 (CT) s/json/write_json/
 #    11-Jan-2011 (CT) `json` added to provide the request's json data, if any
+#    11-Jan-2011 (CT) `content-encoding` added to `json`
 #    ««revision-date»»···
 #--
 
@@ -101,8 +102,10 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def json (self) :
-        if self.request.headers.get ("content-type") == "application/json" :
-            return json.loads (self.body)
+        headers = self.request.headers
+        if headers.get ("content-type") == "application/json" :
+            encoding = headers.get ("content-encoding")
+            return json.loads (self.body, encoding)
     # end def json
 
     @Once_Property
