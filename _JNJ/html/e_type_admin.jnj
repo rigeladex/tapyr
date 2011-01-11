@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: e_type_admin.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -43,7 +43,7 @@
 {%- endmacro -%} {#- _button -#}
 
 {%- macro e_type_admin (page, E_Type, fields, objects) -%}
-  <table class="Object-List">
+  <table class="Object-List tablesorter">
     <caption>
       {{ GTW._T (page.name) }}
     </caption>

@@ -80,6 +80,7 @@
 #     3-Jan-2011 (CT) Introduce `template_name`
 #     7-Jan-2011 (CT) `is_current_dir` redefined
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
+#    11-Jan-2011 (CT) `Media` for `tablesorter` added
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,8 @@ from   _MOM.import_MOM          import MOM, Q
 import _GTW._Form._MOM.Instance
 
 import _GTW.FO
+import _GTW.jQuery
+
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
 
@@ -106,6 +109,40 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     css_group           = "Type"
     template_name       = "e_type_admin"
+
+    _Media              = GTW.Media \
+        ( js_on_ready   =
+            ( GTW.JS_On_Ready
+                ( """$("table.tablesorter").each
+                        ( function ()
+                            {
+                              var tab$ = $(this);
+                              var th$  = $("thead tr:last th", tab$);
+                              var n = th$.size () - 1;
+                              var headers = { 0 : { sorter : false } };
+                              headers [n] = { sorter : false };
+                              tab$.tablesorter
+                                ( { cssAsc    : "ascending"
+                                  , cssDesc   : "descending"
+                                  , cssHeader : "sortable"
+                                  , headers   : headers
+                                  }
+                                );
+                            }
+                        );
+                  """
+                , sort_key = 100
+                )
+            ,
+            )
+        , scripts       =
+            ( GTW.Script
+                ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
+                , sort_key = 100
+                )
+            ,
+            )
+        )
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 

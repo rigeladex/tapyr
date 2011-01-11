@@ -29,6 +29,7 @@
 #     1-Jan-2011 (CT) Creation...
 #     4-Jan-2011 (CT)         ...finished
 #     5-Jan-2011 (CT) `print_sheet` added
+#    11-Jan-2011 (CT) `tablesorter` added
 #    ««revision-date»»···
 #--
 
@@ -471,6 +472,16 @@ style_sheet = Style_Sheet \
                 ( "td", "th"
                 , border           = P.grid_table_border
                 , padding          = TRBL (Em (0.05), Em (0.25))
+                )
+            ]
+        )
+    ### tablesorter
+    , Rule
+        ( "table.tablesorter"
+        , children                 =
+            [ Rule
+                ( "th.sortable"
+                , cursor           = "pointer"
                 )
             ]
         )
