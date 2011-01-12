@@ -1,7 +1,7 @@
 GTW To-Do
 =========
 
-- GTW.NAV.E_Type.Admin: restrict urls to Ascii
+x GTW.NAV.E_Type.Admin: restrict urls to Ascii
 
 - GTW.Tornado.Error vs. GTW.Werkzeug.Error: refactor
 
