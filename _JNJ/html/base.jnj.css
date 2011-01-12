@@ -342,6 +342,7 @@ style_sheet = Style_Sheet \
     ### Various classes
     , Rule (".Error-Message", ** P.color_spec_error)
     , Rule (".centered",      text_align = "center")
+    , Rule (".clickable",     cursor     = "pointer")
     , Rule ( ".hbox",         ** P.hbox_spec)
     , Rule
         ( ".headline"
@@ -351,11 +352,11 @@ style_sheet = Style_Sheet \
     , Rule (".just-c",        text_align     = "center")
     , Rule (".just-l",        text_align     = "left")
     , Rule (".just-r",        text_align     = "right")
-    , Rule (".normal",        ** P.color_spec_normal)
     , Rule (".large",         font_size      = Percent (120))
+    , Rule (".normal",        ** P.color_spec_normal)
     , Rule ("a.nospam",       color          = P.link_color)
     , Rule ("p.nospam",       display        = "inline")
-    , Rule (".centered",      text_align     = "center")
+    , Rule (".placeholden",   color          = P.color_dark_grey)
     , Rule (".vbox",          float          = "left")
     , Rule (".vboxr",         float          = "right")
     , Rule (".vert-b",        vertical_align = "bottom")

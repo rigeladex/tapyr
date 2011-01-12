@@ -293,7 +293,6 @@
             ( id            = "F_username"
             , name          = "username"
             , maxlength     = "30"
-            , placeholder   = GTW._T ("Please enter your username")
             )
         }}
       </li>
@@ -302,7 +301,6 @@
         {{ X.input.password
             ( id            = "F_password"
             , name          = "password"
-            , placeholder   = GTW._T ("Please enter your password")
             )
         }}
       </li>

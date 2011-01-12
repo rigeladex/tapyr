@@ -47,6 +47,7 @@ style_sheet = Style_Sheet \
                 , children         =
                     [ Rule_Attr
                         ( "[type=submit]", "[type=reset]"
+                        , width    = P.nav_col.width
                         , children =
                             [ Rule_Pseudo ("hover", ** P.color_spec_selected)
                             ]
@@ -220,6 +221,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "section.login a"
+                , padding  = P.input_padding
                 , children = [Rule_Pseudo ("hover", ** P.color_spec_selected)]
                 , ** P.nav_col.button_spec
                 )

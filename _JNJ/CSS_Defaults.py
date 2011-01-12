@@ -43,6 +43,7 @@ color_heading          = RGB_X     ("#34444D")
 color_lighter_grey     = RGB_X     ("#EDEDED")
 color_light_grey       = RGB_X     ("#DEDEDE")
 color_medium_grey      = RGB_X     ("#BEBEBE")
+color_dark_grey        = RGB_X     ("#444444")
 color_selected         = RGB_X     ("#FF6633")
 color_target           = RGB_X     ("#FF6633")
 

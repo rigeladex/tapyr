@@ -35,6 +35,7 @@
 #    18-Oct-2010 (CT) `GTW_pixpander` added
 #    15-Nov-2010 (CT) `GTW_week_roller` added
 #    19-Nov-2010 (CT) `Modernizr` added
+#    12-Jan-2011 (CT) `GTW_Input` and `GTW_Label` added
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,22 @@ GTW.Script      (src = "/media/GTW/js/GTW_Gallery.js", name = "GTW_Gallery")
 GTW.JS_On_Ready \
     ( """$(".thumbnails").GTW_Gallery ({ delay : 2000 });"""
     , name = "GTW_Gallery"
+    )
+
+GTW.Script      (src = "/media/GTW/js/GTW_Input.js", name = "GTW_Input")
+GTW.JS_On_Ready \
+    ( """$("[placeholder]").gtw_input_placeholders ();"""
+    , name = "GTW_Input_Placeholders"
+    )
+
+GTW.Script      (src = "/media/GTW/js/GTW_Label.js", name = "GTW_Label")
+GTW.JS_On_Ready \
+    ( """$("label[for]").gtw_label_clicker ();"""
+    , name = "GTW_Label_Clicker"
+    )
+GTW.JS_On_Ready \
+    ( """$("label[for]").gtw_label_as_placeholder ();"""
+    , name = "GTW_Label_As_Placeholder"
     )
 
 GTW.Script      (src = "/media/GTW/js/GTW_pixpander.js", name = "GTW_pixpander")
