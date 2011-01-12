@@ -46,6 +46,9 @@ color_medium_grey      = RGB_X     ("#BEBEBE")
 color_selected         = RGB_X     ("#FF6633")
 color_target           = RGB_X     ("#FF6633")
 
+css_arrow_color        = SVG_Color ("red")
+css_arrow_width        = Em (1./2)
+
 border_button          = "2px outset " + color_medium_grey
 border_simple          = "1px solid "  + color_medium_grey
 border_selected        = "2px solid "  + color_selected
@@ -59,9 +62,10 @@ button_spec            = dict \
 col_padding            = Px (5)
 
 background_color       = SVG_Color ("white")
-link_color             = RGB_X ("#0000EE")
-no_link_color          = RGB_X ("#333333")
-visited_color          = RGB_X ("#551A8B")
+link_color             = RGB_X     ("#0000EE")
+no_link_color          = RGB_X     ("#333333")
+text_color             = RGB_X     ("#000033")
+visited_color          = RGB_X     ("#551A8B")
 
 class nav_col :
 
@@ -77,6 +81,11 @@ class nav_col :
     color_spec_heading     = dict \
         ( background_color = color_heading
         , color            = background_color
+        )
+
+    color_spec_label       = dict \
+        ( background_color = background_color
+        , color            = text_color
         )
 
     color_spec_link        = dict \
@@ -107,6 +116,11 @@ class nav_col :
         ( color_spec_link
         , background_color = RGB_8 (255, 153, 0)
         )
+
+    li_left                = Em (0.75)
+    mark_color_link        = css_arrow_color
+    mark_color_section     = color_heading
+    mark_width             = Em (0.40)
 
     vert_padding           = Em (0.2)
     width                  = Px (190)
@@ -145,7 +159,7 @@ color_spec_gallery_heading = dict \
     )
 color_spec_normal      = dict \
     ( background_color = background_color
-    , color            = RGB_X     ("#000033")
+    , color            = text_color
     )
 color_spec_pg_head     = dict \
     ( background_color = background_color
@@ -153,11 +167,11 @@ color_spec_pg_head     = dict \
     )
 color_spec_row1        = color_spec_meta = dict \
     ( background_color = color_lighter_grey
-    , color            = RGB_X     ("#000033")
+    , color            = text_color
     )
 color_spec_row2        = color_spec_message = dict \
     ( background_color = color_light_grey
-    , color            = RGB_X     ("#000033")
+    , color            = text_color
     )
 color_spec_selected    = dict \
     ( background_color = SVG_Color ("yellow")
@@ -167,9 +181,6 @@ color_spec_strong      = dict \
     ( background_color = background_color
     , color            = SVG_Color ("blue")
     )
-
-css_arrow_color        = SVG_Color ("red")
-css_arrow_width        = Em (1./2)
 
 del_spec               = dict \
     ( text_decoration  = "line-through"

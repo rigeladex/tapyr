@@ -61,7 +61,7 @@ style_sheet = Style_Sheet \
                     [ Rule
                         ( "a", "b", "input"
                         , display          = "block"
-                        , padding_left     = Em (0.50)
+                        , padding_left     = P.nav_col.li_left
                         )
                     , Rule
                         ( ".no-link", ** P.nav_col.color_spec_no_link)
@@ -69,27 +69,33 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "li li"
-                , children = [ Rule ( "a", "b", padding_left     = Em (1.25))]
+                , children =
+                    [ Rule ( "a", "b", padding_left = P.nav_col.li_left * 2)]
                 )
             , Rule
                 ( "li li li"
-                , children = [ Rule ( "a", "b", padding_left     = Em (2.00))]
+                , children =
+                    [ Rule ( "a", "b", padding_left = P.nav_col.li_left * 3)]
                 )
             , Rule
                 ( "li li li li"
-                , children = [ Rule ( "a", "b", padding_left     = Em (2.75))]
+                , children =
+                    [ Rule ( "a", "b", padding_left = P.nav_col.li_left * 4)]
                 )
             , Rule
                 ( "li li li li li"
-                , children = [ Rule ( "a", "b", padding_left     = Em (3.50))]
+                , children =
+                    [ Rule ( "a", "b", padding_left = P.nav_col.li_left * 5)]
                 )
             , Rule
                 ( "li li li li li li"
-                , children = [ Rule ( "a", "b", padding_left     = Em (4.25))]
+                , children =
+                    [ Rule ( "a", "b", padding_left = P.nav_col.li_left * 6)]
                 )
             , Rule
                 ( "li li li li li li li"
-                , children = [ Rule ( "a", "b", padding_left     = Em (5.00))]
+                , children =
+                    [ Rule ( "a", "b", padding_left = P.nav_col.li_left * 7)]
                 )
             , Rule
                 ( "a.current-section"
@@ -106,6 +112,49 @@ style_sheet = Style_Sheet \
                 , "b.current-link"
                 , font_weight = "bold"
                 , ** P.nav_col.color_spec_link_current
+                )
+            , Rule
+                ( "a.current-link", "b.current-link"
+                , children    =
+                    [ Rule
+                        ( "i"
+                        , border_style   = "solid"
+                        , border_color   = TRBL0
+                            ( default    = "transparent"
+                            , l          = P.nav_col.mark_color_link
+                            )
+                        , border_width   = TRBL0
+                            (default = P.nav_col.mark_width, r = 0)
+                        , display        = "inline-block"
+                        , height         = 0
+                        , margin         = TRBL0
+                            ( l = - P.nav_col.li_left
+                            , r = + P.nav_col.li_left - P.nav_col.mark_width
+                            )
+                        , width          = 0
+                        )
+                    ]
+                )
+            , Rule
+                ( "a.current-section i"
+                , border_style   = "solid"
+                , border_color   = TRBL0
+                    (default = "transparent", t = P.nav_col.mark_color_section)
+                , border_width   = TRBL0
+                    (default = P.nav_col.mark_width, b = 0)
+                , display        = "inline-block"
+                , height         = 0
+                , margin         = TRBL0
+                    ( b = + P.nav_col.vert_padding
+                    , l = - P.nav_col.li_left
+                    , r = + P.nav_col.li_left - P.nav_col.mark_width
+                    )
+                , width          = 0
+                )
+            , Rule
+                ( "a.current-section.current-link i"
+                , border_color   = TRBL0
+                    (default = "transparent", t = P.nav_col.mark_color_link)
                 )
             , Rule ("a",         text_decoration = "none")
             , Rule ("a:link",    color = P.link_color)
@@ -140,6 +189,9 @@ style_sheet = Style_Sheet \
                 , list_style     = "none"
                 , margin         = 0
                 , padding        = 0
+                , children       =
+                    [ Rule ("label", ** P.nav_col.color_spec_label)
+                    ]
                 , ** P.nav_col.color_spec_link
                 )
             , Rule

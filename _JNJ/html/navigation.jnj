@@ -80,13 +80,13 @@
         <a href="{{ href }}"
                {%- if link.title %} title="{{ link.title }}"{% endif %}
                class="current-section{%- if isc %} current-link{% endif -%}"
-            >{{ _entry_body (link) }}</a>
+            ><i></i>{{ _entry_body (link) }}</a>
         {{ entries (link.own_links, level + 1) }}
       </li>
     {%- else -%}
       {% if isc -%}
         <li>
-          <b class="current-link">{{- _entry_body (link) -}}</b>
+          <b class="current-link"><i></i>{{- _entry_body (link) -}}</b>
         </li>
       {%- else -%}
         {%- if href -%}

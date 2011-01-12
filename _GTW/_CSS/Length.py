@@ -30,6 +30,7 @@
 #     1-Jan-2011 (CT) `TRBL0` added
 #     1-Jan-2011 (CT) `__truediv__` and `__floordiv__` added
 #     2-Jan-2011 (CT) `TRBL` added
+#    12-Jan-2011 (CT) `__neg__` and `__pos__` added
 #    ««revision-date»»···
 #--
 
@@ -153,9 +154,17 @@ class Length (TFL.Meta.Object) :
 
     __rmul__ = __mul__
 
+    def __neg__ (self) :
+        return self.__class__ (- self.value)
+    # end def __neg__
+
     def __nonzero__ (self) :
         return bool (self.value)
     # end def __nonzero__
+
+    def __pos__ (self) :
+        return self
+    # end def __pos__
 
     def __sub__ (self, rhs) :
         if not isinstance (rhs, self.__class__) :
