@@ -42,7 +42,8 @@ style_sheet = Style_Sheet \
                 ( "input"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple
-                , padding          = 0
+                , display          = "block"
+                , padding          = P.input_padding
                 , children         =
                     [ Rule_Attr
                         ( "[type=submit]", "[type=reset]"
@@ -59,7 +60,7 @@ style_sheet = Style_Sheet \
                 , padding        = TRBL (P.nav_col.vert_padding, 0)
                 , children       =
                     [ Rule
-                        ( "a", "b", "input"
+                        ( "a", "b"
                         , display          = "block"
                         , padding_left     = P.nav_col.li_left
                         )

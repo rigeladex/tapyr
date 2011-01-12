@@ -232,7 +232,7 @@ hr_spec                = dict \
     , padding          = 0
     )
 
-input_padding          = TRBL (Em (0.1), Em (0.1), Em (0.2))
+input_padding          = Em (0.2)
 
 ins_spec               = dict \
     ( text_decoration  = "none"
