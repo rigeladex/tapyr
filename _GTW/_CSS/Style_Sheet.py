@@ -44,13 +44,6 @@ import _GTW._CSS.Media
 import _TFL._Meta.Object
 import _TFL.Caller
 
-def Parameters (* bases, ** kw) :
-    """Model parameters for CSS rules and stylesheets, defined by `kw` and
-       inherited from `bases`.
-    """
-    return type ("CSS_Parameters", bases, kw)
-# end def Parameters
-
 class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
     """Encapsulate a CSS parameters class so that it is usable as context for
        `exec` of a file containing CSS.Style_Sheet declarations.
@@ -151,7 +144,7 @@ S = Style_Sheet
 
 __all__ = tuple \
     ( k for (k, v) in globals ().iteritems () if isinstance (v, M_Style_Sheet)
-    ) + ("Parameters", )
+    )
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)
