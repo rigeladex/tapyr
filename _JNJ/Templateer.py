@@ -44,6 +44,8 @@
 #     5-Jan-2011 (CT) `templates_i` fixed (protect against recursive `imports`)
 #     5-Jan-2011 (CT) `Template_E.__eq__` and `__hash__` added
 #    14-Jan-2011 (CT) `get_CSS` replaced by `get_Media` (s/css/media/ -- mostly)
+#    14-Jan-2011 (CT) `JS`, `JS_On_Ready`, `js_href`, `js_on_ready` and
+#                     `scripts` added
 #    ««revision-date»»···
 #--
 
@@ -88,6 +90,8 @@ class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
     css_href        = None
+    js_href         = None
+    js_on_ready     = None
 
     _media_fragment = None
     _media_path     = None
@@ -140,7 +144,11 @@ class Template_E (_Template_) :
 
     @Once_Property
     def CSS (self) :
-        media = self.Media
+        """Combined CSS rules required by media fragments that can
+           loaded from a single file or included inline in a html <style>
+           element.
+        """
+        media = self._Media
         if media :
             result = "\n\n".join \
                 ( str (s) for s in
@@ -148,6 +156,40 @@ class Template_E (_Template_) :
                 )
             return result
     # end def CSS
+
+    @Once_Property
+    def JS (self) :
+        """Combined Javascript code required by media fragments that can
+           loaded from a single file or included inline in a html <script>
+           element.
+        """
+        media = self._Media
+        static_handler = self.env.static_handler
+        if media and static_handler :
+            def _gen (scripts) :
+                for s in sorted (scripts, key = TFL.Getter.sort_key) :
+                    if s.src and not s.condition :
+                        p = static_handler.get_path (s.src)
+                        if p :
+                            with open (p, "rb") as file :
+                                yield file.read ()
+            result = "\n\n".join (TFL.uniq (_gen (media.scripts)))
+            return result
+    # end def JS
+
+    @Once_Property
+    def JS_On_Ready (self) :
+        """Combined Javascript code required by media fragments to be
+           executed when document is ready.
+        """
+        media = self._Media
+        if media :
+            result = ";".join \
+                ( str (s) for s in sorted
+                    (TFL.uniq (media.js_on_ready), key = TFL.Getter.sort_key)
+                )
+            return result
+    # end def JS_On_Ready
 
     @Once_Property
     def media_fragment (self) :
@@ -198,9 +240,22 @@ class Template_E (_Template_) :
     # end def imports
 
     @Once_Property
-    def Media (self) :
-        return self.get_Media (self.env.CSS_Parameters)
-    # end def Media
+    def scripts (self) :
+        """Scripts required by media fragments that need to be put into
+           separate <script src="..."> elements.
+        """
+        media = self._Media
+        static_handler = self.env.static_handler
+        if media and static_handler :
+            def _gen (scripts) :
+                for s in sorted (scripts, key = TFL.Getter.rank) :
+                    if (  (not s.src)
+                       or (not static_handler.get_path (s.src))
+                       or s.condition
+                       ) :
+                        yield s.src
+            return list (TFL.uniq (_gen (media.scripts)))
+    # end def scripts
 
     @Once_Property
     def source (self) :
@@ -250,6 +305,11 @@ class Template_E (_Template_) :
                     yield i
         return list (_gen ())
     # end def templates_i
+
+    @Once_Property
+    def _Media (self) :
+        return self.get_Media (self.env.CSS_Parameters)
+    # end def _Media
 
     def get_Media (self, P) :
         media_fragment_pathes = tuple \

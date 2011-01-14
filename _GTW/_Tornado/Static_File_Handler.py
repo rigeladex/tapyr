@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Tornado.
@@ -35,6 +35,7 @@
 #    23-Feb-2010 (MG) `_get`: call `self.flush` do really send the data over
 #                     the line
 #    19-Mar-2010 (CT) `Static_File_Handler` changed to support empty `prefix`
+#    14-Jan-2011 (CT) `get_path` factored
 #    ««revision-date»»···
 #--
 
@@ -70,12 +71,18 @@ class _Static_File_Handler_ (web.RequestHandler) :
     # end def head
 
     def get (self, path, include_body = True) :
-        for map in self.maps :
-            file_name = map.get (path)
-            if file_name :
-                return self._get (file_name, include_body)
+        file_name = self.get_path (path)
+        if file_name :
+            return self._get (file_name, include_body)
         raise GTW.Tornado.Error_404 ()
     # end def get
+
+    def get_path (self, req_path) :
+        for map in self.maps :
+            file_name = map.get (req_path)
+            if file_name :
+                return file_name
+    # end def get_path
 
     def _get (self, file_name, include_body = True) :
         # Check the If-Modified-Since, and don't send the result if the

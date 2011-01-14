@@ -81,6 +81,7 @@ def HTML \
         , html_version = version
         )
     result.CSS_Parameters = CSS_Parameters
+    result.static_handler = None
     if i18n :
         result.install_gettext_translations (TFL.I18N)
     return result

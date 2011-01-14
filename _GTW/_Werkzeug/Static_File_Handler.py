@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -30,6 +30,7 @@
 #    20-Mar-2010 (MG) Creation
 #    25-Jun-2010 (MG) Changed to generate a common interface between Werkzeug
 #                     and Tornado
+#    14-Jan-2011 (CT) `get_path` factored
 #    ««revision-date»»···
 #--
 from   _GTW                           import GTW
@@ -58,14 +59,21 @@ class _Static_File_Handler_ (GTW.Werkzeug.Request_Handler) :
 
     def __call__ (self, environ, start_response) :
         include_body = environ ["REQUEST_METHOD"] != "HEAD"
-        path         = environ ["PATH_INFO"].lstrip ("/")
-        for map in self.maps :
-            file_name = map.get (path)
-            if file_name :
-                self._get (file_name, include_body)
-                return self.response (environ, start_response)
+        path         = environ ["PATH_INFO"]
+        file_name    = self.get_path (path)
+        if file_name :
+            self._get (file_name, include_body)
+            return self.response (environ, start_response)
         raise GTW.Werkzeug.Error_404 (path)
     # end def __call__
+
+    def get_path (self, req_path) :
+        req_path = req_path.lstrip ("/")
+        for map in self.maps :
+            file_name = map.get (req_path)
+            if file_name :
+                return file_name
+    # end def get_path
 
     def _get (self, file_name, include_body = True) :
         # Check the If-Modified-Since, and don't send the result if the

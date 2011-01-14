@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -211,7 +211,6 @@ class Media_List (TFL.Meta.Object) :
     def __iter__ (self) :
         return iter (self.values)
     # end def __iter__
-
 
     def __str__ (self) :
         return "\n".join (str (v) for v in self)
