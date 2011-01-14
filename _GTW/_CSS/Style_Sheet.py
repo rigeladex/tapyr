@@ -32,6 +32,8 @@
 #     3-Jan-2011 (CT) `rank` added
 #    14-Jan-2011 (CT) `Parameter_Scope` changed to `import_CSS.__dict__` as
 #                     object
+#    14-Jan-2011 (CT) `Parameter_Scope` moved to `GTW.Parameters.Scope`
+#    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
 #    ««revision-date»»···
 #--
 
@@ -44,29 +46,6 @@ from   _TFL                       import TFL
 import _GTW._CSS.Media
 
 import _TFL._Meta.Object
-import _TFL.Caller
-
-class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
-    """Encapsulate a CSS parameters class so that it is usable as context for
-       `exec` of a file containing CSS.Style_Sheet declarations.
-    """
-
-    def __init__ (self, parameters) :
-        from _GTW._CSS import import_CSS
-        self.__super.__init__ \
-            ( object = import_CSS
-            , locls  = dict (P = parameters)
-            )
-        self.style_sheets = []
-    # end def __init__
-
-    def __setitem__ (self, key, value) :
-        self.__super.__setitem__ (key, value)
-        if isinstance (value, Style_Sheet) :
-            self.style_sheets.append (value)
-    # end def __setitem__
-
-# end class Parameter_Scope
 
 class M_Style_Sheet (TFL.Meta.Object.__class__) :
     """Meta class for `Style_Sheet`"""
@@ -96,39 +75,6 @@ class Style_Sheet (TFL.Meta.Object) :
     def add_rule (self, * rules) :
         self.rules.extend (rules)
     # end def add_rule
-
-    @classmethod
-    def Eval (cls, * fragments, ** kw) :
-        return cls._Eval (fragments, ** kw)
-    # end def Eval
-
-    @classmethod
-    def Read (cls, * file_names, ** kw) :
-        """Read style sheets definitions from `file_names`."""
-        def _gen (file_names) :
-            for file_name in file_names :
-                with open (file_name, "rt") as file :
-                    yield file
-        return cls._Eval (_gen (file_names), ** kw)
-    # end def Read
-
-    @classmethod
-    def _Eval (cls, fragments, parameters) :
-        scope = Parameter_Scope (parameters)
-        globs = cls._get_CSS_globs ()
-        for f in fragments :
-            exec (f, globs, scope)
-        return scope.style_sheets
-    # end def _Eval
-
-    @classmethod
-    def _get_CSS_globs (cls) :
-        result = cls._CSS_globs
-        if not result :
-            from _GTW._CSS import import_CSS
-            result = cls._CSS_globs = import_CSS.__dict__
-        return result
-    # end def _get_CSS_globs
 
     def __iter__ (self) :
         for i in self.imports :

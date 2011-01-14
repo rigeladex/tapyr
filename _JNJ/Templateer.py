@@ -43,6 +43,7 @@
 #     4-Jan-2011 (CT) `templates_i` fixed (transitive `imports`)
 #     5-Jan-2011 (CT) `templates_i` fixed (protect against recursive `imports`)
 #     5-Jan-2011 (CT) `Template_E.__eq__` and `__hash__` added
+#    14-Jan-2011 (CT) `get_CSS` replaced by `get_Media` (s/css/media/ -- mostly)
 #    ««revision-date»»···
 #--
 
@@ -64,11 +65,11 @@ from jinja2.exceptions import TemplateNotFound
 class _Template_ (TFL.Meta.Object) :
     """Describe a Jinja template."""
 
-    def _init_ (self, name, path, css_fragment_name = None) :
+    def _init_ (self, name, path, media_fragment_name = None) :
         assert name not in self.Map, name
         self.name              = name
         self.path              = path
-        self.css_fragment_name = css_fragment_name
+        self.media_fragment_name = media_fragment_name
         self.Map [name]        = self
     # end def _init_
 
@@ -86,18 +87,18 @@ class Template (_Template_) :
 class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
-    css_href      = None
+    css_href        = None
 
-    _css_fragment = None
-    _css_path     = None
+    _media_fragment = None
+    _media_path     = None
 
-    _coding_pat   = Regexp \
+    _coding_pat     = Regexp \
         ( r"^#\s*-\*-\s*coding:\s*[-a-zA-Z0-9]+\s*-\*-\s*" + "\n"
         )
-    _extend_pat   = Regexp \
+    _extend_pat     = Regexp \
         ( r"\{\%-?\s*extends\s+(?P<name>.*?)\s*-?\%\}"
         )
-    _import_pat   = Multi_Regexp \
+    _import_pat     = Multi_Regexp \
         ( r"\{\%-?\s*import\s+"
           r"(?P<name>.*?)\s+"
           r"as\s+"
@@ -109,10 +110,10 @@ class Template_E (_Template_) :
           r"(?:(?:ignore|with|without)\s+|-?\%\})"
         )
 
-    _t_path       = None
-    _t_source     = None
+    _t_path         = None
+    _t_source       = None
 
-    def __new__ (cls, env, name, path = None, css_fragment_name = None) :
+    def __new__ (cls, env, name, path = None, media_fragment_name = None) :
         if path is None :
             path = name
         if path in cls.By_Path :
@@ -121,12 +122,12 @@ class Template_E (_Template_) :
             result = cls.Map     [name]
         else :
             result = _Template_.__new__ (cls)
-            result._init_ (env, name, path, css_fragment_name)
+            result._init_ (env, name, path, media_fragment_name)
         return result
     # end def __new__
 
-    def _init_ (self, env, name, path = None, css_fragment_name = None) :
-        self.__super._init_ (name, path, css_fragment_name)
+    def _init_ (self, env, name, path = None, media_fragment_name = None) :
+        self.__super._init_ (name, path, media_fragment_name)
         self.env = env
         if path not in self.By_Path :
             self.By_Path [path] = self
@@ -134,25 +135,31 @@ class Template_E (_Template_) :
 
     @classmethod
     def copy (cls, env, proto) :
-        return cls (env, proto.name, proto.path, proto.css_fragment_name)
+        return cls (env, proto.name, proto.path, proto.media_fragment_name)
     # end def copy
 
     @Once_Property
     def CSS (self) :
-        return self.get_CSS (self.env.CSS_Parameters)
+        media = self.Media
+        if media :
+            result = "\n\n".join \
+                ( str (s) for s in
+                    sorted (media.style_sheets, key = TFL.Getter.rank)
+                )
+            return result
     # end def CSS
 
     @Once_Property
-    def css_fragment (self) :
-        self._load_css ()
-        return self._css_fragment
-    # end def css_fragment
+    def media_fragment (self) :
+        self._load_media ()
+        return self._media_fragment
+    # end def media_fragment
 
     @Once_Property
-    def css_path (self) :
-        self._load_css ()
-        return self._css_path
-    # end def css_path
+    def media_path (self) :
+        self._load_media ()
+        return self._media_path
+    # end def media_path
 
     @Once_Property
     def extends (self) :
@@ -189,6 +196,11 @@ class Template_E (_Template_) :
             return list (_gen ())
         return []
     # end def imports
+
+    @Once_Property
+    def Media (self) :
+        return self.get_Media (self.env.CSS_Parameters)
+    # end def Media
 
     @Once_Property
     def source (self) :
@@ -239,23 +251,29 @@ class Template_E (_Template_) :
         return list (_gen ())
     # end def templates_i
 
-    def get_CSS (self, P) :
-        css_fragment_pathes = tuple \
-            (TFL.uniq (t.css_path for t in self.templates if t.css_path))
-        if css_fragment_pathes :
-            from _GTW._CSS.Style_Sheet import Style_Sheet
-            sheets = Style_Sheet.Read (* css_fragment_pathes, parameters = P)
-            result = "\n\n".join \
-                (str (s) for s in sorted (sheets, key = TFL.Getter.rank))
-            return result
-    # end def get_CSS
+    def get_Media (self, P) :
+        media_fragment_pathes = tuple \
+            (TFL.uniq (t.media_path for t in self.templates if t.media_path))
+        if media_fragment_pathes :
+            return self._eval_fragments (media_fragment_pathes, P)
+    # end def get_Media
 
     def render (self, context) :
         return self.template.render (context)
     # end def render
 
-    def _load_css (self) :
-        f_path = self.css_fragment_name
+    def _eval_fragments (self, fragments, P) :
+        from _GTW import Parameters
+        scope = Parameters.Scope (P)
+        globs = {}
+        for f in fragments :
+            with open (f, "rt") as file :
+                exec (file, globs, scope)
+        return scope
+    # end def _Eval
+
+    def _load_media (self) :
+        f_path = self.media_fragment_name
         if f_path is None :
             f_path = "%s.css" % (self.path, )
         try :
@@ -263,9 +281,9 @@ class Template_E (_Template_) :
         except TemplateNotFound :
             pass
         else :
-            self._css_fragment = self._coding_pat.sub ("", source, 1)
-            self._css_path     = path
-    # end def _load_css
+            self._media_fragment = self._coding_pat.sub ("", source, 1)
+            self._media_path     = path
+    # end def _load_media
 
     def _load_template (self) :
         try :

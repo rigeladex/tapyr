@@ -153,6 +153,65 @@ class Definition (TFL.Meta.Object) :
 
 # end class Definition
 
+class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
+    """Encapsulate media parameters so that it is usable as context for
+       `exec` of a file containing media fragments.
+    """
+
+    _real_name = "Scope"
+
+    class _Media_ (TFL.Meta.Object) :
+        """Wrapper for media class"""
+
+        def __init__ (self, cls) :
+            self._cls = cls
+            self._    = self
+            self._ext = []
+        # end def __init__
+
+        def __call__ (self, * args, ** kw) :
+            result = self._cls (* args, ** kw)
+            self._ext.append (result)
+            return result
+        # end def __call__
+
+        def __getattr__ (self, name) :
+            return getattr (self._cls, name)
+        # end def __getattr__
+
+    # end class _Media_
+
+    css_links            = property (lambda s : s.CSS_Link._ext)
+    js_on_ready          = property (lambda s : s.JS_On_Ready._ext)
+    rel_links            = property (lambda s : s.Rel_Link._ext)
+    scripts              = property (lambda s : s.Script._ext)
+    style_sheets         = property (lambda s : s.Style_Sheet._ext)
+
+    def __init__ (self, parameters) :
+        from _GTW._CSS  import import_CSS
+        from _GTW.Media import CSS_Link, JS_On_Ready, Rel_Link, Script
+        self.P           = parameters
+        self.CSS_Link    = self._Media_ (CSS_Link)
+        self.JS_On_Ready = self._Media_ (JS_On_Ready)
+        self.Rel_Link    = self._Media_ (Rel_Link)
+        self.Script      = self._Media_ (Script)
+        self.Style_Sheet = self._Media_ (import_CSS.Style_Sheet)
+        self.__super.__init__ \
+            ( object = import_CSS
+            , locls  = dict ()
+            )
+    # end def __init__
+
+    def __getitem__ (self, index) :
+        try :
+            if isinstance (index, basestring) and not index.startswith ("_") :
+                return getattr (self, index)
+        except AttributeError :
+            return self.__super.__getitem__ (index)
+    # end def __getitem__
+
+Scope = _Parameters_Scope_ # end class
+
 if __name__ != "__main__" :
     GTW._Export_Module ()
 ### __END__ GTW.Parameters
