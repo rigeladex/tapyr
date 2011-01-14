@@ -43,8 +43,6 @@ import _TFL.Caller
 import _TFL.Filter
 import _TFL.Q_Exp
 
-import itertools
-
 P = TFL.Attr_Query ()
 
 def ddict (* ds) :
@@ -115,7 +113,7 @@ class Definition (TFL.Meta.Object) :
     ...       qux = P.R.bar * 2
     ...       quy = P.T.bar * 2
     ...       quz = P.T.foo * 0.5
-    ...     spec = P_dict (a = P.bar)
+    ...     spec = P_dict (a = P.bar, border = "solid")
     ...
     >>> class App (Defaults) :
     ...   foo = 2
@@ -134,8 +132,8 @@ class Definition (TFL.Meta.Object) :
     (4, 8)
     >>> D.nav_col.own_links.quz, E.nav_col.own_links.quz
     (0.5, 1.0)
-    >>> D.nav_col.spec, E.nav_col.spec
-    ({'a': 42}, {'a': 137})
+    >>> sorted (D.nav_col.spec.items ()), sorted (E.nav_col.spec.items ())
+    ([('a', 42), ('border', u'solid')], [('a', 137), ('border', u'solid')])
     """
 
     __metaclass__ = M_Definition
