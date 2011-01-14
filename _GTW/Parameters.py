@@ -54,15 +54,40 @@ def ddict (* ds) :
     return result
 # end def ddict
 
+class P_dict (TFL.Q_Exp.Q_Root) :
+    """Parameter dict: supports lazy evaluation of dict arguments."""
+
+    def __init__ (self, * args, ** kw) :
+        self.args = args
+        self.kw   = kw
+    # end def __init__
+
+    def __call__ (self, P) :
+        result = {}
+        Q_Root = TFL.Q_Exp.Q_Root
+        for a in self.args :
+            if isinstance (a, Q_Root) :
+                a = a (P)
+            result.update (a)
+        for k, v in self.kw.iteritems () :
+            if isinstance (v, Q_Root) :
+                v = v (P)
+            result [k] = v
+        return result
+    # end def __call__
+
+# end class P_dict
+
 class M_Definition (TFL.Meta.Object.__class__) :
     """Meta class for `Definition`."""
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        bn = tuple (getattr (b, "_nested_", {}) for b in bases)
+        bn = tuple (reversed ([getattr (b, "_nested_", {}) for b in bases]))
         cls._nested_ = _nested_ = ddict (* bn)
+        Q_Root = TFL.Q_Exp.Q_Root
         for k, v in dct.iteritems () :
-            if isinstance (v, TFL.Q_Exp.Q_Root) :
+            if isinstance (v, Q_Root) :
                 setattr (cls, k, Lazy_Property (k, v))
             elif isinstance (v, M_Definition) :
                 _nested_ [k] = v
@@ -90,6 +115,7 @@ class Definition (TFL.Meta.Object) :
     ...       qux = P.R.bar * 2
     ...       quy = P.T.bar * 2
     ...       quz = P.T.foo * 0.5
+    ...     spec = P_dict (a = P.bar)
     ...
     >>> class App (Defaults) :
     ...   foo = 2
@@ -108,6 +134,8 @@ class Definition (TFL.Meta.Object) :
     (4, 8)
     >>> D.nav_col.own_links.quz, E.nav_col.own_links.quz
     (0.5, 1.0)
+    >>> D.nav_col.spec, E.nav_col.spec
+    ({'a': 42}, {'a': 137})
     """
 
     __metaclass__ = M_Definition

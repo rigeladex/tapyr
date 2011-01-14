@@ -30,6 +30,8 @@
 #     1-Jan-2011 (CT) `Eval` added
 #     2-Jan-2011 (CT) `_Eval` factored
 #     3-Jan-2011 (CT) `rank` added
+#    14-Jan-2011 (CT) `Parameter_Scope` changed to `import_CSS.__dict__` as
+#                     object
 #    ««revision-date»»···
 #--
 
@@ -50,8 +52,11 @@ class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
     """
 
     def __init__ (self, parameters) :
+        from _GTW._CSS import import_CSS
         self.__super.__init__ \
-            (object = parameters, locls = dict (P = parameters))
+            ( object = import_CSS
+            , locls  = dict (P = parameters)
+            )
         self.style_sheets = []
     # end def __init__
 

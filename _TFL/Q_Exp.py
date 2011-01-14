@@ -44,6 +44,7 @@
 #                     `Get.getter`)
 #    14-Dec-2010 (CT) `Exp.D`, `Exp.DT`, and `Q._Date_` added
 #    14-Jan-2011 (CT) Common base `Q_Root` added to all query classes
+#    14-Jan-2011 (CT) `Bin` and `__binary` changed to honor `reverse`
 #    ««revision-date»»···
 #--
 
@@ -307,12 +308,13 @@ class Bin (Q_Root) :
 
     predicate_precious_p = True
 
-    def __init__ (self, lhs, op, rhs, undefs) :
-        self.Q      = lhs.Q
-        self.lhs    = lhs
-        self.op     = op
-        self.rhs    = rhs
-        self.undefs = undefs
+    def __init__ (self, lhs, op, rhs, undefs, reverse = False) :
+        self.Q       = lhs.Q
+        self.lhs     = lhs
+        self.op      = op
+        self.rhs     = rhs
+        self.undefs  = undefs
+        self.reverse = reverse
     # end def __init__
 
     def predicate (self, obj) :
@@ -325,6 +327,8 @@ class Bin (Q_Root) :
             r = pred (obj)
         if not any ((v is u) for v in (l, r) for u in self.undefs) :
             ### Call `op` only if neither `l` nor `v` is an undefined value
+            if self.reverse :
+                l, r = r, l
             return self.op (l, r)
     # end def predicate
 
@@ -381,8 +385,9 @@ class Call (Q_Root) :
 # end class Call
 
 def __binary (op, Class) :
-    name = op.__name__
-    op   = getattr (operator, Bin.rop_map.get (name, name))
+    name    = op.__name__
+    reverse = name in Bin.rop_map
+    op      = getattr (operator, Bin.rop_map [name] if reverse else name)
     if name in ("__eq__", "__ne__") :
         ### Allow `x == None` and `x != None`
         undefs = (Q.undef, )
@@ -390,7 +395,7 @@ def __binary (op, Class) :
         ### Ignore `None` for all other operators
         undefs = (None, Q.undef)
     def _ (self, rhs) :
-        return getattr (self.Q, Class) (self, op, rhs, undefs)
+        return getattr (self.Q, Class) (self, op, rhs, undefs, reverse)
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = op.__module__
