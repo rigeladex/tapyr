@@ -103,6 +103,7 @@ GTW.JS_On_Ready \
 GTW.Script      (src = "/media/GTW/js/GTW_pixpander.js", name = "GTW_pixpander")
 GTW.JS_On_Ready \
     ( """$("a[href$='.jpg'] > img").GTW_pixpander ();"""
+      """$("a[href$='.png'] > img").GTW_pixpander ();"""
     , name = "GTW_pixpander"
     )
 

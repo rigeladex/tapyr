@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,13 +31,13 @@
 #     8-May-2008 (CT) Set `ImageFile.MAXBLOCK` to avoid IOError during `save`
 #    20-Mar-2009 (CT) `convert_one` factored and `-add_to_dir` added
 #     1-Dec-2009 (CT) Ignore `__getslice__` warnings
+#    14-Jan-2011 (CT) `-format`, `-color`, `-x_off`, and `-y_off` added
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 from   _TFL               import sos
 from   _TFL.Filename      import *
-
 
 from   PIL import Image, ImageDraw, ImageFile, ImageFont, ExifTags
 
@@ -47,18 +47,20 @@ from   PIL import Image, ImageDraw, ImageFile, ImageFont, ExifTags
 
 ImageFile.MAXBLOCK = 1000000 # default is 64k
 
-def convert_one (src, name, i_size, t_size, holder, year, font, imp, thp) :
+def convert_one (src, name, i_size, t_size, holder, year, font, imp, thp, format, color, x_off, y_off) :
     im = Image.open (src)
     th = im.copy    ()
     im.thumbnail    (i_size, Image.ANTIALIAS)
     th.thumbnail    (t_size, Image.ANTIALIAS)
     if holder :
+        xo   = x_off if x_off > 0 else im.size [0] + x_off
+        yo   = y_off if y_off > 0 else im.size [1] + y_off
         draw = ImageDraw.Draw (im)
         draw.text \
-            ((5, im.size [1] - 15), "(C) %s %s" % (year, holder), font=font)
+            ((xo, yo), "(C) %s %s" % (year, holder), fill = color, font = font)
     print name, im.size, th.size
-    im.save (imp, "JPEG", progressive = True)
-    th.save (thp, "JPEG", progressive = True)
+    im.save (imp, format, progressive = True)
+    th.save (thp, format, progressive = True)
 # end def convert_one
 
 def command_spec (arg_array = None) :
@@ -75,10 +77,14 @@ def command_spec (arg_array = None) :
         , option_spec =
             ( "add_to_dir:B"
                 "?Add pictures to existing directory (no `im` and `th` subdirectories)"
-            , "photographer:S?Name of photographer"
+            , "color:S=white?Color to use for copyright notice"
+            , "format:S=JPEG?Image format used for output"
             , "i_size:I=800?Size of images in gallery (larger dimension)"
-            , "t_size:I=150?Size of thumbnails in gallery (larger dimension)"
+            , "photographer:S?Name of photographer"
             , "start_pid:I=0?Start value for picture count"
+            , "t_size:I=150?Size of thumbnails in gallery (larger dimension)"
+            , "x_off:I=5?X offset of copyright notice"
+            , "y_off:I=-15?Y offset of copyright notice"
             , "-year:I=%s?Year for copyright" % (year, )
             )
         , min_args    = 2
@@ -88,7 +94,14 @@ def command_spec (arg_array = None) :
 
 def main (cmd) :
     font   = ImageFont.load_default ()
+    color  = cmd.color
+    fmt    = cmd.format
+    ext    = fmt.lower ()
+    if ext == "jpeg" :
+        ext = "jpg"
     holder = cmd.photographer
+    x_off  = cmd.x_off
+    y_off  = cmd.y_off
     year   = cmd.year
     i_size = cmd.i_size, cmd.i_size
     t_size = cmd.t_size, cmd.t_size
@@ -102,10 +115,12 @@ def main (cmd) :
             if not name :
                 name = src
             name = Filename (name).base
-            imp  = sos.path.join (td, "%s_im.jpg" % name)
-            thp  = sos.path.join (td, "%s_th.jpg" % name)
+            imp  = sos.path.join (td, "%s_im.%s" % (name, ext))
+            thp  = sos.path.join (td, "%s_th.%s" % (name, ext))
             convert_one \
-                (src, name, i_size, t_size, holder, year, font, imp, thp)
+                ( src, name, i_size, t_size, holder, year, font, imp, thp
+                , fmt, color, x_off, y_off
+                )
     else :
         td_im = sos.path.join (td, "im")
         td_th = sos.path.join (td, "th")
@@ -116,11 +131,13 @@ def main (cmd) :
         pid  = cmd.start_pid
         for src in sorted (sos.expanded_globs (* cmd.argv [1:])) :
             pid  += 1
-            name  = "%04d.jpg" % pid
+            name  = "%04d.%s" % (pid, ext)
             imp   = sos.path.join (td_im, name)
             thp   = sos.path.join (td_th, name)
             convert_one \
-                (src, name, i_size, t_size, holder, year, font, imp, thp)
+                ( src, name, i_size, t_size, holder, year, font, imp, thp
+                , fmt, color, x_off, y_off
+                )
 # end def main
 
 import warnings
