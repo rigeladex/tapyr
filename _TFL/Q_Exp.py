@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #     2-Sep-2010 (CT) `Get.name`  changed to `Get._name` (ditto for
 #                     `Get.getter`)
 #    14-Dec-2010 (CT) `Exp.D`, `Exp.DT`, and `Q._Date_` added
+#    14-Jan-2011 (CT) Common base `Q_Root` added to all query classes
 #    ««revision-date»»···
 #--
 
@@ -238,6 +239,10 @@ from   _TFL.predicate           import callable
 
 import operator
 
+class Q_Root (TFL.Meta.Object) :
+    """Base class for all classes modelling queries"""
+# end class Q_Root
+
 class Base (TFL.Meta.Object) :
     """Query generator"""
 
@@ -273,7 +278,7 @@ class Base (TFL.Meta.Object) :
 Q = Base ()
 
 @TFL.Add_New_Method (Base)
-class Bin (TFL.Meta.Object) :
+class Bin (Q_Root) :
     """Binary query expression"""
 
     op_map        = dict \
@@ -340,7 +345,7 @@ class Bin (TFL.Meta.Object) :
 # end class Bin
 
 @TFL.Add_New_Method (Base)
-class Call (TFL.Meta.Object) :
+class Call (Q_Root) :
     """Query expression calling a method."""
 
     predicate_precious_p = True
@@ -493,7 +498,7 @@ class _Date_ (TFL.Meta.Object) :
 
 # end class _Date_
 
-class _Exp_ (TFL.Meta.Object) :
+class _Exp_ (Q_Root) :
 
     ### Equality queries
     @_boolean
