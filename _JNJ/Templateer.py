@@ -275,7 +275,7 @@ class Template_E (_Template_) :
     def _load_media (self) :
         f_path = self.media_fragment_name
         if f_path is None :
-            f_path = "%s.css" % (self.path, )
+            f_path = "%s.media" % (self.path, )
         try :
             source, path, _ = self.env.loader.get_source (self.env, f_path)
         except TemplateNotFound :
