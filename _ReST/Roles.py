@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ReST.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Feb-2010 (CT) Creation
+#    15-Jan-2011 (CT) `deleted` role added
 #    ««revision-date»»···
 #--
 
@@ -62,5 +63,12 @@ _tel_role   = CustomRole ("tel",   _uri_role, dict (uri_scheme = "tel"))
 
 register_local_role (_email_role.name, _email_role)
 register_local_role ("tel",            _tel_role)
+
+def _deleted_role (role, rawtext, text, lineno, inliner, options={}, content=[]) :
+    node = nodes.inline (rawtext, text, classes = ["deleted"], ** options)
+    return [node], []
+# end def _deleted_role
+
+register_local_role ("deleted", _deleted_role)
 
 ### __END__ ReST.Roles

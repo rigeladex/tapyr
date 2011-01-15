@@ -343,7 +343,12 @@ style_sheet = Style_Sheet \
     , Rule (".Error-Message", ** P.color_spec_error)
     , Rule (".centered",      text_align = "center")
     , Rule (".clickable",     cursor     = "pointer")
-    , Rule ( ".hbox",         ** P.hbox_spec)
+    , Rule
+      ( ".deleted"
+      , opacity          = 0.8
+      , text_decoration  = "line-through"
+      )
+    , Rule (".hbox",          ** P.hbox_spec)
     , Rule
         ( ".headline"
         , font_size      = P.h1_font_size + 10
