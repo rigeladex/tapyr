@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -72,6 +72,8 @@
 #     9-Nov-2010 (CT) `Binary` added (a kind of `Bool` that requires a value)
 #     9-Nov-2010 (CT) `max_name_length` added and used for formatting of `help`
 #     9-Nov-2010 (CT) `Help` changed to recognize `all` (and `*`)
+#    17-Jan-2011 (CT) Use a `Word_Trie` instead of a `dict` to handle
+#                     abbreviations, removed `_opt_abbr` from `Cmd`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +81,7 @@ from   _TFL               import TFL
 
 from   _TFL               import pyk
 from   _TFL.Regexp        import Regexp, re
+from   _TFL.Trie          import Word_Trie as Trie
 
 import _TFL.Accessor
 import _TFL.defaultdict
@@ -447,11 +450,11 @@ class Cmd_Choice (TFL.Meta.Object) :
         cao._arg_dict.update  (sc._arg_dict)
         cao._bun_dict.update  (sc._bun_dict)
         cao._opt_dict.update  (sc._opt_dict)
+        cao._opt_abbr.update  (sc._opt_dict, sc._opt_alias)
         cao._opt_alias.update (sc._opt_alias)
         cao._opt_conf.extend  (sc._opt_conf)
         cao._min_args = sc._min_args
         cao._max_args = sc._max_args
-        sc._setup_opt_abbr (cao._opt_dict, cao._opt_abbr)
     # end def __call__
 
     @property
@@ -1095,7 +1098,6 @@ class Cmd (TFL.Meta.Object) :
 
     def _setup_opts (self, opts) :
         self._opt_dict  = od = {}
-        self._opt_abbr  = oa = {}
         self._opt_alias = al = {}
         self._opt_conf  = oc = []
         for i, o in enumerate (opts) :
@@ -1109,28 +1111,7 @@ class Cmd (TFL.Meta.Object) :
         oc.sort (key = TFL.Getter.rank)
         if not "help" in od :
             self._setup_opt (Opt.Help (), od, al, -1)
-        self._setup_opt_abbr (od, oa)
     # end def _setup_opts
-
-    def _setup_opt_abbr (self, od, result) :
-        result.clear ()
-        if od :
-            def abbrs (i, key) :
-                o = od [key]
-                for j in range (i, len (key)) :
-                    result [key [:j + 1]] = o
-            keys = sorted (od)
-            ### Just in case `od` has only one entry
-            i, k2 = 0, keys [-1]
-            last  = 0
-            for k1, k2 in TFL.pairwise (keys) :
-                i = TFL.first_diff (k1, k2)
-                abbrs (max (i, last), k1)
-                last = i ### Remembers index of first_diff of last pair
-            ### Handle last entry
-            abbrs (i, k2)
-        return result
-    # end def _setup_opt_abbr
 
     def __getattr__ (self, name) :
         return self._attribute_spec (name)
@@ -1179,7 +1160,7 @@ class CAO (TFL.Meta.Object) :
         self._arg_list       = list (cmd._arg_list)
         self._bun_dict       = dict (cmd._bun_dict)
         self._opt_dict       = dict (cmd._opt_dict)
-        self._opt_abbr       = dict (cmd._opt_abbr)
+        self._opt_abbr       = Trie (cmd._opt_dict, cmd._opt_alias)
         self._opt_alias      = dict (cmd._opt_alias)
         self._opt_conf       = list (cmd._opt_conf)
         self._min_args       = cmd._min_args
@@ -1275,24 +1256,21 @@ class CAO (TFL.Meta.Object) :
     # end def _handle_arg
 
     def _handle_opt (self, arg, argv_it) :
-        oa  = self._opt_abbr
-        al  = self._opt_alias
         pat = self._opt_pat
         if pat.match (arg) :
             k = pat.name
             v = pat.value
-            k = al.get (k, k)
-            if k in oa :
-                spec = oa [k]
+            matches, unique = self._opt_abbr.completions (k)
+            if unique :
+                n = self._opt_alias.get (unique, unique)
+                spec = self._opt_dict [n]
                 if spec.needs_value and v is None :
                     try :
                         v = argv_it.next ()
                     except StopIteration :
-                        raise Err ("Option `%s` needs a value" % k)
+                        raise Err ("Option `%s` needs a value" % n)
                 self._set_opt  (spec, v)
             else :
-                matches = \
-                    [o for o in sorted (self._opt_dict) if o.startswith (k)]
                 if matches :
                     raise Err \
                         ( "Ambiguous option `%s`, matches any of %s"
@@ -1371,25 +1349,29 @@ class CAO (TFL.Meta.Object) :
     # end def _set_opt
 
     def _use_args (self, _kw) :
-        ad     = self._arg_dict
-        oa     = self._opt_abbr
-        rest   = []
-        sc     = self._cmd._sub_cmd_choice
+        sc = self._cmd._sub_cmd_choice
         if sc and sc.name in _kw :
             self._set_arg (sc, _kw.pop (sc.name))
+        ad   = self._arg_dict
+        rest = []
         for k, v in _kw.iteritems () :
-            if k in oa :
-                self._set_opt   (oa [k], v)
+            matches, unique = self._opt_abbr.completions (k)
+            if unique :
+                self._set_opt  (self._opt_dict [unique], v)
             elif k in ad :
-                self._set_arg   (ad [k], v)
+                self._set_arg  (ad [k], v)
             elif k == "__rest__" :
                 rest = v
             elif k == "__kw__" :
-                self._set_keys  (v)
+                self._set_keys (v)
             else :
+                tail = ""
+                if matches :
+                    tail = "\n    Ambiguous match for the options: %s" % \
+                        (matches, )
                 raise Err \
-                    ( "Unknown argument or option `%s` [%s] for command %s"
-                    % (k, v, self._name)
+                    ( "Unknown argument or option `%s` [%s] for command %s%s"
+                    % (k, v, self._name, tail)
                     )
         argv_it = iter (rest)
         for arg in argv_it :
@@ -1428,7 +1410,6 @@ class CAO (TFL.Meta.Object) :
 
 def show (cao) :
     pyk.fprint (cao._name)
-    pyk.fprint ("    Options    : %s" % (sorted (cao._opt_abbr), ))
     pyk.fprint \
         ("    Arguments  : %s" % (sorted (a.name for a in cao._arg_list),))
     for o in sorted (cao._opt_dict) :
@@ -1516,7 +1497,6 @@ values passed to it.
 
     >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
     Test
-        Options    : ['h', 'he', 'hel', 'help', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
         Arguments  : ['adam', 'bert']
         -help      : []
        -verbose   : False
@@ -1539,7 +1519,6 @@ values passed to it.
 
     >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
     Test
-        Options    : ['h', 'he', 'hel', 'help', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
         Arguments  : ['adam', 'bert']
         -help      : []
         -verbose   : True
@@ -1559,7 +1538,6 @@ values passed to it.
     >>> c1  = Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B"))
     >>> c1 ([])
     one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
         -help      : []
@@ -1570,7 +1548,6 @@ values passed to it.
     >>> c2  = Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
     >>> c2 ([])
     two
-        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stru', 'struc', 'struct']
         Arguments  : ['ccc', 'ddd']
         -help      : []
         -struct    : False
@@ -1582,7 +1559,6 @@ values passed to it.
     ...     opts = ("verbose:B", "strict:B"))
     >>> coc ([])
     Comp
-        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['sub']
         -help      : []
         -strict    : False
@@ -1591,7 +1567,6 @@ values passed to it.
         argv       : []
     >>> coc (["one"])
     Comp one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
         -help      : []
@@ -1603,7 +1578,6 @@ values passed to it.
         argv       : []
     >>> coc (["two"])
     Comp two
-        Options    : ['h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['ccc', 'ddd']
         -help      : []
         -strict    : False
@@ -1614,7 +1588,6 @@ values passed to it.
         argv       : [3, 'D']
     >>> coc (["-s"])
     Comp
-        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['sub']
         -help      : []
         -strict    : True
@@ -1623,7 +1596,6 @@ values passed to it.
         argv       : []
     >>> coc (["-s", "one"])
     Comp one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
         -help      : []
@@ -1635,7 +1607,6 @@ values passed to it.
         argv       : []
     >>> coc (["-s", "two"])
     Comp two
-        Options    : ['h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['ccc', 'ddd']
         -help      : []
         -strict    : True
@@ -1647,7 +1618,7 @@ values passed to it.
     >>> coc (["two", "-s"])
     Traceback (most recent call last):
       ...
-    Err: Command/argument/option error: Ambiguous option `-s`, matches any of ['strict', 'struct']
+    Err: Command/argument/option error: Ambiguous option `-s`, matches any of ('strict', 'struct')
     >>> coc (["two", "-t"])
     Traceback (most recent call last):
       ...
@@ -1658,7 +1629,6 @@ values passed to it.
     Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?'
     >>> coc (["one", "two"])
     Comp one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
         -help      : []
@@ -1670,7 +1640,6 @@ values passed to it.
         argv       : ['two']
     >>> coc (["one", "-v", "two", "-Z"])
     Comp one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : True
         -help      : []
@@ -1682,7 +1651,6 @@ values passed to it.
         argv       : ['two']
     >>> coc (["one", "-v", "two", "-Z", "three", "four"])
     Comp one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : True
         -help      : []
@@ -1697,7 +1665,6 @@ values passed to it.
     >>> cmd = Cmd (show, name = "dict-test", opts = (ko, ))
     >>> cmd (["-foo", "a"])
     dict-test
-        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -foo       : 42
         -help      : []
@@ -1705,7 +1672,6 @@ values passed to it.
         argv       : []
     >>> cmd (["-foo=1"])
     dict-test
-        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -foo       : frodo
         -help      : []
@@ -1713,7 +1679,6 @@ values passed to it.
         argv       : []
     >>> cmd (["a", "b", "c", "d"])
     dict-test
-        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -foo       : None
         -help      : []
@@ -1721,7 +1686,6 @@ values passed to it.
         argv       : ['a', 'b', 'c', 'd']
     >>> cmd (["-foo", "a", "b", "c", "d"])
     dict-test
-        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -foo       : 42
         -help      : []
@@ -1729,7 +1693,6 @@ values passed to it.
         argv       : ['b', 'c', 'd']
     >>> cmd (["-foo=1", "a", "b", "c", "d"])
     dict-test
-        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -foo       : frodo
         -help      : []
@@ -1779,28 +1742,24 @@ values passed to it.
     >>> cmd = Cmd (show, name = "Varargs test", max_args = 3)
     >>> cmd ([])
     Varargs test
-        Options    : ['h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -help      : []
         __argv     : None
         argv       : []
     >>> cmd (["a"])
     Varargs test
-        Options    : ['h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -help      : []
         __argv     : a
         argv       : ['a']
     >>> cmd (["a", "b"])
     Varargs test
-        Options    : ['h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -help      : []
         __argv     : a
         argv       : ['a', 'b']
     >>> cmd (["a", "b", "c"])
     Varargs test
-        Options    : ['h', 'he', 'hel', 'help']
         Arguments  : ['__argv']
         -help      : []
         __argv     : a
@@ -1817,7 +1776,6 @@ values passed to it.
     ...     opts = ("verbose:B", "strict:B"), buns = (c1b, c2b))
     >>> cocb ([])
     Comp
-        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['sub']
         -help      : []
         -strict    : False
@@ -1826,7 +1784,6 @@ values passed to it.
         argv       : []
     >>> cocb (["@c1b"])
     Comp one
-        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : True
         -help      : []
@@ -1838,7 +1795,6 @@ values passed to it.
         argv       : ['foo']
     >>> cocb (["@c2b"])
     Comp two
-        Options    : ['h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['ccc', 'ddd']
         -help      : []
         -strict    : False

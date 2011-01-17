@@ -29,6 +29,7 @@
 #    15-Jan-2011 (CT) Creation
 #    16-Jan-2011 (CT) `Node_P` and `Word_Trie_P` factored
 #    16-Jan-2011 (CT) `matches_damerau` added (Damerau-Levenshtein)
+#    17-Jan-2011 (CT) `completions` and `update` added
 #    ««revision-date»»···
 #--
 
@@ -237,57 +238,29 @@ class Word_Trie (TFL.Meta.Object) :
         <Value cats>
       >
     >
-    >>> wt.discard ("cab")
-    True
-    >>> print wt.find ("ca").visualized ()
-    <Node
-      <Node
-        <Node
-          <Value cabby>
-        >
-      >
-      <Value cat
-        <Node
-          <Value cathy>
-        >
-        <Value cats>
-      >
-    >
-    >>> wt.discard ("cabby")
-    True
-    >>> print wt.find ("ca").visualized ()
-    <Node
-      <Node
-        <Node
-          <Node>
-        >
-      >
-      <Value cat
-        <Node
-          <Value cathy>
-        >
-        <Value cats>
-      >
-    >
-    >>> list (wt.values ())
-    ['ada', 'adam', 'beta', 'cat', 'cathy', 'cats', 'cub']
-    >>> list (str (node) for key, node in wt.pre_order ())
-    ['<Node>', '<Node>', '<Node>', '<ada ...>', '<adam>', '<Node>', '<Node>',\
-    '<Node>', '<beta>', '<Node>', '<Node>', '<Node>', '<Node>', '<Node>',\
-    '<cat ...>', '<Node>', '<cathy>', '<cats>', '<Node>', '<cub>']
-    >>> list (repr (key) for key, node in wt.pre_order ())
-    ["''", "'a'", "'d'", "'a'", "'m'", "'b'", "'e'",\
-    "'t'", "'a'", "'c'", "'a'", "'b'", "'b'", "'y'",\
-    "'t'", "'h'", "'y'", "'s'", "'u'", "'b'"]
 
+    >>> wt.completions("a")
+    (('ada', 'adam'), False)
+    >>> wt.completions("b")
+    (('beta',), 'beta')
+    >>> wt.completions("c")
+    (('cab', 'cabby', 'cat', 'cathy', 'cats', 'cub'), False)
+    >>> wt.completions("d")
+    ((), False)
+    >>> wt.completions("ca")
+    (('cab', 'cabby', 'cat', 'cathy', 'cats'), False)
+    >>> wt.completions("cat")
+    (('cat', 'cathy', 'cats'), 'cat')
+    >>> wt.completions ("cats")
+    (('cats',), 'cats')
     """
 
     Node = Node
 
-    def __init__ (self, words = ()) :
+    def __init__ (self, * word_sets) :
         self.root = self.Node (None)
-        for w in words :
-            self.add (w)
+        if word_sets :
+            self.update (* word_sets)
     # end def __init__
 
     def add (self, word) :
@@ -306,6 +279,18 @@ class Word_Trie (TFL.Meta.Object) :
                     return result, None
             return result, True
     # end def closest
+
+    def completions (self, prefix) :
+        """Return all words in trie starting with `prefix` and indication, if
+           prefix has a unique completion.
+        """
+        node, found = self.closest (prefix)
+        if found :
+            result = tuple (node.values ())
+            unique = result and (len (result) == 1 or result [0] == prefix)
+            return result, unique and result [0]
+        return (), False
+    # end def completions
 
     def discard (self, word) :
         """Remove `word` from trie; if `word` is not in trie, do nothing."""
@@ -364,6 +349,14 @@ class Word_Trie (TFL.Meta.Object) :
         if not self.discard (word) :
             raise KeyError (word)
     # end def remove
+
+    def update (self, * word_sets) :
+        """Add all words in `word_sets` to trie."""
+        root = self.root
+        for words in word_sets :
+            for word in words :
+                self._add (word, root)
+    # end def update
 
     def values (self) :
         """Generate all values in trie."""
@@ -454,12 +447,14 @@ class Word_Trie (TFL.Meta.Object) :
 # end class Word_Trie
 
 class Word_Trie_P (Word_Trie) :
-    """Trie (prefix tree) for words which can prune empty elements.
+    """Trie (prefix tree) for words which prunes empty elements on deletion.
 
-    >>> wt = Word_Trie_P (
+    >>> wt = Word_Trie (
+    ...  ["ada", "adam", "beta", "cab", "cabby", "cat", "cats", "cathy", "cub"])
+    >>> wtp = Word_Trie_P (
     ...  ["ada", "adam", "beta", "cab", "cabby", "cat", "cats", "cathy", "cub"])
 
-    >>> wt.discard ("cab")
+   >>> wt.discard ("cab")
     True
     >>> print wt.find ("ca").visualized ()
     <Node
@@ -475,9 +470,42 @@ class Word_Trie_P (Word_Trie) :
         <Value cats>
       >
     >
+    >>> wtp.discard ("cab")
+    True
+    >>> print wtp.find ("ca").visualized ()
+    <Node
+      <Node
+        <Node
+          <Value cabby>
+        >
+      >
+      <Value cat
+        <Node
+          <Value cathy>
+        >
+        <Value cats>
+      >
+    >
+
     >>> wt.discard ("cabby")
     True
     >>> print wt.find ("ca").visualized ()
+    <Node
+      <Node
+        <Node
+          <Node>
+        >
+      >
+      <Value cat
+        <Node
+          <Value cathy>
+        >
+        <Value cats>
+      >
+    >
+    >>> wtp.discard ("cabby")
+    True
+    >>> print wtp.find ("ca").visualized ()
     <Node
       <Value cat
         <Node
@@ -486,13 +514,26 @@ class Word_Trie_P (Word_Trie) :
         <Value cats>
       >
     >
+
     >>> list (wt.values ())
     ['ada', 'adam', 'beta', 'cat', 'cathy', 'cats', 'cub']
+    >>> list (wtp.values ())
+    ['ada', 'adam', 'beta', 'cat', 'cathy', 'cats', 'cub']
+
     >>> list (str (node) for key, node in wt.pre_order ())
+    ['<Node>', '<Node>', '<Node>', '<ada ...>', '<adam>', '<Node>', '<Node>',\
+    '<Node>', '<beta>', '<Node>', '<Node>', '<Node>', '<Node>', '<Node>',\
+    '<cat ...>', '<Node>', '<cathy>', '<cats>', '<Node>', '<cub>']
+    >>> list (str (node) for key, node in wtp.pre_order ())
     ['<Root>', '<Node>', '<Node>', '<ada ...>', '<adam>', '<Node>', '<Node>',\
     '<Node>', '<beta>', '<Node>', '<Node>', '<cat ...>', '<Node>', '<cathy>',\
     '<cats>', '<Node>', '<cub>']
+
     >>> list (repr (key) for key, node in wt.pre_order ())
+    ["''", "'a'", "'d'", "'a'", "'m'", "'b'", "'e'",\
+    "'t'", "'a'", "'c'", "'a'", "'b'", "'b'", "'y'",\
+    "'t'", "'h'", "'y'", "'s'", "'u'", "'b'"]
+    >>> list (repr (key) for key, node in wtp.pre_order ())
     ["''", "'a'", "'d'", "'a'", "'m'", "'b'", "'e'",\
     "'t'", "'a'", "'c'", "'a'", "'t'", "'h'", "'y'",\
     "'s'", "'u'", "'b'"]
