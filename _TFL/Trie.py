@@ -269,22 +269,26 @@ class Word_Trie (TFL.Meta.Object) :
     # end def add
 
     def closest (self, word) :
-        """Return node closest to `word` and indication if `word` is in trie."""
+        """Return node closest to `word`, indication if `word` is in trie,
+           and key-length of result-node.
+        """
         if word :
             result = self.root
-            for c in word :
+            found  = True
+            for i, c in enumerate (word) :
                 try :
                     result = result.children [c]
                 except KeyError :
-                    return result, None
-            return result, True
+                    found = False
+                    break
+            return result, found, i + bool (found)
     # end def closest
 
     def completions (self, prefix) :
-        """Return all words in trie starting with `prefix` and indication, if
-           prefix has a unique completion.
+        """Return all words in trie starting with `prefix` and unique
+           completion for `prefix`, if any.
         """
-        node, found = self.closest (prefix)
+        node, found, length = self.closest (prefix)
         if found :
             result = tuple (node.values ())
             unique = result and (len (result) == 1 or result [0] == prefix)
@@ -294,7 +298,7 @@ class Word_Trie (TFL.Meta.Object) :
 
     def discard (self, word) :
         """Remove `word` from trie; if `word` is not in trie, do nothing."""
-        node, found = self.closest (word)
+        node, found, length = self.closest (word)
         if found :
             node.value = None
             for c in reversed (word) :
@@ -309,15 +313,24 @@ class Word_Trie (TFL.Meta.Object) :
 
     def find (self, word) :
         """Return node containing `word`, if any."""
-        node, found = self.closest (word)
+        node, found, length = self.closest (word)
         return found and node
     # end def find
 
     def longest_prefix (self, word) :
-        """Return node closest to `word`."""
-        node, found = self.closest (word)
-        return node
+        """Return node closest to `word` and its key."""
+        node, found, length = self.closest (word)
+        return word [:length], node
     # end def longest_prefix
+
+    @staticmethod
+    def match_dict (matches) :
+        from _TFL.multimap import mm_list
+        result = mm_list ()
+        for m, d in matches :
+            result [d].append (m)
+        return result
+    # end def match_dict
 
     def match_iter_damerau (self, word, max_edits) :
         """Generate all matches with a Damerau-Levenshtein distance <= max_edits."""
@@ -329,14 +342,14 @@ class Word_Trie (TFL.Meta.Object) :
         return self._match_iter (self._match_col_iter_l, word, max_edits)
     # end def match_iter_levenshtein
 
-    def matches_damerau (self, word, max_edits) :
+    def matches_damerau (self, word, max_edits, result_type = list) :
         """Return all matches with a Damerau-Levenshtein distance <= max_edits."""
-        return list (self.match_iter_damerau (word, max_edits))
+        return result_type (self.match_iter_damerau (word, max_edits))
     # end def matches_damerau
 
-    def matches_levenshtein (self, word, max_edits) :
+    def matches_levenshtein (self, word, max_edits, result_type = list) :
         """Return all matches with a Levenshtein distance <= max_edits."""
-        return list (self.match_iter_levenshtein (word, max_edits))
+        return result_type (self.match_iter_levenshtein (word, max_edits))
     # end def matches_levenshtein
 
     def pre_order (self) :
