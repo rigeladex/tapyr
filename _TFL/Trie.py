@@ -27,10 +27,13 @@
 #
 # Revision Dates
 #    15-Jan-2011 (CT) Creation
+#    16-Jan-2011 (CT) `Node_P` and `Word_Trie_P` factored
+#    16-Jan-2011 (CT) `matches_damerau` added (Damerau-Levenshtein)
 #    ««revision-date»»···
 #--
 
 from   _TFL import       TFL
+import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 
 import itertools
@@ -38,15 +41,19 @@ import itertools
 class Node (object) :
     """Node of a trie."""
 
-    __slots__     = ("children", "parent", "value")
+    __metaclass__ = TFL.Meta.M_Autosuper
+    __slots__     = ("children", "value")
+
+    kind          = "Node"
+    parent        = None
 
     def __init__ (self, parent, value = None) :
         self.children = {}
-        self.parent   = parent
         self.value    = value
     # end def __init__
 
     def pre_order (self) :
+        """Generate node and all its children in pre-order."""
         def gen (key, node) :
             yield key, node
             for ck, cn in sorted (node.children.iteritems ()) :
@@ -57,15 +64,17 @@ class Node (object) :
     # end def pre_order
 
     def values (self) :
+        """Generate all values in node and its children."""
         for node in self :
             if node.value :
                 yield node.value
     # end def values
 
     def visualized (self) :
+        """Return string visualizing the node and its children."""
         children = self.children
         value    = self.value
-        kind     = "Node" if self.parent else "Root"
+        kind     = self.kind
         tail     = ""
         if children :
             tail = "\n  ".join \
@@ -74,7 +83,6 @@ class Node (object) :
                         for c in children.itervalues ()
                         )
                     )
-                ,
                 )
         if value :
             if tail :
@@ -96,7 +104,7 @@ class Node (object) :
     def __repr__ (self) :
         children = self.children
         value    = self.value
-        kind     = "Node" if self.parent else "Root"
+        kind     = self.kind
         if value :
             if children :
                 fmt = "<%s ...>"
@@ -119,40 +127,69 @@ class Node (object) :
 
 # end class Node
 
+class Node_P (Node) :
+    """Node of a trie knowing its parent."""
+
+    __slots__     = Node.__slots__ + ("parent", )
+
+    kind          = property (lambda self : "Node" if self.parent else "Root")
+
+    def __init__ (self, parent, value = None) :
+        self.__super.__init__ (parent, value)
+        self.parent = parent
+    # end def __init__
+
+# end class Node_P
+
 class Word_Trie (TFL.Meta.Object) :
     """Trie (prefix tree) for words.
 
     >>> wt = Word_Trie (
-    ...   "ada", "adam", "beta", "cab", "cabby", "cat", "cats", "cathy", "cub")
+    ...  ["ada", "adam", "beta", "cab", "cabby", "cat", "cats", "cathy", "cub"])
     >>> list (wt.values ())
     ['ada', 'adam', 'beta', 'cab', 'cabby', 'cat', 'cathy', 'cats', 'cub']
     >>> list (str (node) for key, node in  wt.pre_order ())
-    ['<Root>', '<Node>', '<Node>', '<ada ...>', '<adam>', '<Node>', '<Node>',\
+    ['<Node>', '<Node>', '<Node>', '<ada ...>', '<adam>', '<Node>', '<Node>',\
     '<Node>', '<beta>', '<Node>', '<Node>', '<cab ...>', '<Node>', '<cabby>',\
     '<cat ...>', '<Node>', '<cathy>', '<cats>', '<Node>', '<cub>']
     >>> list (repr (key) for key, node in  wt.pre_order ())
     ["''", "'a'", "'d'", "'a'", "'m'", "'b'", "'e'", "'t'", "'a'", "'c'",\
     "'a'", "'b'", "'b'", "'y'", "'t'", "'h'", "'y'", "'s'", "'u'", "'b'"]
 
-    >>> wt.fuzzy_matches ("cat", 0)
+    >>> wt.matches_levenshtein ("cat", 0)
     [('cat', 0)]
-    >>> wt.fuzzy_matches ("cat", 1)
+    >>> wt.matches_levenshtein ("cat", 1)
     [('cab', 1), ('cat', 0), ('cats', 1)]
-    >>> wt.fuzzy_matches ("cat", 2)
-    [('cab', 1), ('cat', 0), ('cathy', 2), ('cats', 1), ('cub', 2)]
-
-    >>> wt.fuzzy_matches ("cit", 0)
+    >>> wt.matches_levenshtein ("act", 1)
     []
-    >>> wt.fuzzy_matches ("cit", 1)
+    >>> wt.matches_levenshtein ("cat", 2)
+    [('cab', 1), ('cat', 0), ('cathy', 2), ('cats', 1), ('cub', 2)]
+    >>> wt.matches_levenshtein ("act", 2)
+    [('ada', 2), ('cat', 2)]
+
+    >>> wt.matches_damerau ("cat", 0)
+    [('cat', 0)]
+    >>> wt.matches_damerau ("cat", 1)
+    [('cab', 1), ('cat', 0), ('cats', 1)]
+    >>> wt.matches_damerau ("act", 1)
     [('cat', 1)]
-    >>> wt.fuzzy_matches ("cit", 2)
+    >>> wt.matches_damerau ("cat", 2)
+    [('cab', 1), ('cat', 0), ('cathy', 2), ('cats', 1), ('cub', 2)]
+    >>> wt.matches_damerau ("act", 2)
+    [('ada', 2), ('cab', 2), ('cat', 1), ('cats', 2)]
+
+    >>> wt.matches_levenshtein ("cit", 0)
+    []
+    >>> wt.matches_levenshtein ("cit", 1)
+    [('cat', 1)]
+    >>> wt.matches_levenshtein ("cit", 2)
     [('cab', 2), ('cat', 1), ('cats', 2), ('cub', 2)]
 
     >>> print wt
-    Word_Trie ('ada', 'adam', 'beta', 'cab', 'cabby', 'cat', 'cathy',\
-        'cats', 'cub')
+    Word_Trie (('ada', 'adam', 'beta', 'cab', 'cabby', 'cat', 'cathy',\
+        'cats', 'cub'))
     >>> print wt.visualized ()
-    <Root
+    <Node
       <Node
         <Node
           <Value ada
@@ -220,6 +257,228 @@ class Word_Trie (TFL.Meta.Object) :
     True
     >>> print wt.find ("ca").visualized ()
     <Node
+      <Node
+        <Node
+          <Node>
+        >
+      >
+      <Value cat
+        <Node
+          <Value cathy>
+        >
+        <Value cats>
+      >
+    >
+    >>> list (wt.values ())
+    ['ada', 'adam', 'beta', 'cat', 'cathy', 'cats', 'cub']
+    >>> list (str (node) for key, node in wt.pre_order ())
+    ['<Node>', '<Node>', '<Node>', '<ada ...>', '<adam>', '<Node>', '<Node>',\
+    '<Node>', '<beta>', '<Node>', '<Node>', '<Node>', '<Node>', '<Node>',\
+    '<cat ...>', '<Node>', '<cathy>', '<cats>', '<Node>', '<cub>']
+    >>> list (repr (key) for key, node in wt.pre_order ())
+    ["''", "'a'", "'d'", "'a'", "'m'", "'b'", "'e'",\
+    "'t'", "'a'", "'c'", "'a'", "'b'", "'b'", "'y'",\
+    "'t'", "'h'", "'y'", "'s'", "'u'", "'b'"]
+
+    """
+
+    Node = Node
+
+    def __init__ (self, words = ()) :
+        self.root = self.Node (None)
+        for w in words :
+            self.add (w)
+    # end def __init__
+
+    def add (self, word) :
+        """Add `word` to trie."""
+        return self._add (word, self.root)
+    # end def add
+
+    def closest (self, word) :
+        """Return node closest to `word` and indication if `word` is in trie."""
+        if word :
+            result = self.root
+            for c in word :
+                try :
+                    result = result.children [c]
+                except KeyError :
+                    return result, None
+            return result, True
+    # end def closest
+
+    def discard (self, word) :
+        """Remove `word` from trie; if `word` is not in trie, do nothing."""
+        node, found = self.closest (word)
+        if found :
+            node.value = None
+            for c in reversed (word) :
+                parent = node.parent
+                if node.children or not parent :
+                    break
+                del parent.children [c]
+                node.parent = None
+                node        = parent
+        return found
+    # end def discard
+
+    def find (self, word) :
+        """Return node containing `word`, if any."""
+        node, found = self.closest (word)
+        return found and node
+    # end def find
+
+    def longest_prefix (self, word) :
+        """Return node closest to `word`."""
+        node, found = self.closest (word)
+        return node
+    # end def longest_prefix
+
+    def match_iter_damerau (self, word, max_edits) :
+        """Generate all matches with a Damerau-Levenshtein distance <= max_edits."""
+        return self._match_iter (self._match_col_iter_d, word, max_edits)
+    # end def match_iter_damerau
+
+    def match_iter_levenshtein (self, word, max_edits) :
+        """Generate all matches with a Levenshtein distance <= max_edits."""
+        return self._match_iter (self._match_col_iter_l, word, max_edits)
+    # end def match_iter_levenshtein
+
+    def matches_damerau (self, word, max_edits) :
+        """Return all matches with a Damerau-Levenshtein distance <= max_edits."""
+        return list (self.match_iter_damerau (word, max_edits))
+    # end def matches_damerau
+
+    def matches_levenshtein (self, word, max_edits) :
+        """Return all matches with a Levenshtein distance <= max_edits."""
+        return list (self.match_iter_levenshtein (word, max_edits))
+    # end def matches_levenshtein
+
+    def pre_order (self) :
+        """Generate all nodes in pre-order."""
+        return self.root.pre_order ()
+    # end def pre_order
+
+    def remove (self, word) :
+        """Remove `word` from trie."""
+        if not self.discard (word) :
+            raise KeyError (word)
+    # end def remove
+
+    def values (self) :
+        """Generate all values in trie."""
+        return self.root.values ()
+    # end def values
+
+    def visualized (self) :
+        """Return string visualizing the trie."""
+        return self.root.visualized ()
+    # end def visualized
+
+    def _add (self, word, node) :
+        for c in word :
+            if c not in node.children :
+                node.children [c] = self.Node (node)
+            node = node.children [c]
+        node.value = word
+        return node
+    # end def _add
+
+    def _match_col_iter_d (self, word, char, node, row_c, row_1, row_2 = None, char_1 = None) :
+        ### compute restricted Damerau-Levenshtein distance, aka,
+        ### optimal string alignment
+        ### http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance
+        for col, diff, edits in self._match_col_iter_l \
+                (word, char, node, row_c, row_1, row_2, char_1) :
+            if col > 1 and char_1 :
+                if word [col - 1] == char_1 and word [col - 2] == char :
+                    ### a transposition
+                    edits = min (edits, row_2 [col - 2] + diff)
+            yield col, diff, edits
+    # end def _match_col_iter_d
+
+    def _match_col_iter_l (self, word, char, node, row_c, row_1, row_2 = None, char_1 = None) :
+        ### compute Levenshtein distance
+        ### http://en.wikipedia.org/wiki/Levenshtein_distance
+        for col in range (1, len (word) + 1) :
+            diff = word [col - 1] != char
+            yield col, diff, min \
+                ( row_1 [col]     + 1    # a  deletion
+                , row_c [col - 1] + 1    # an insertion
+                , row_1 [col - 1] + diff # a  replacement
+                )
+    # end def _match_col_iter_l
+
+    def _match_iter (self, col_iter, word, max_edits) :
+        """Generate all words with a Levenshtein-distance <= max_edits to word."""
+        ### http://en.wikipedia.org/wiki/Levenshtein_distance
+        ### http://stevehanov.ca/blog/index.php?id=114
+        row_1 = range (len (word) + 1)
+        for char, node in self.root.children.iteritems () :
+            for m in self._match_iter_inner \
+                    (col_iter, word, max_edits, char, node, row_1) :
+                yield m
+    # end def _match_iter
+
+    def _match_iter_inner (self, col_iter, word, max_edits, char, node, row_1, row_2 = None, char_1 = None) :
+        row_c = [row_1 [0] + 1]
+        for col, diff, edits in col_iter \
+                (word, char, node, row_c, row_1, row_2, char_1) :
+            ### append 1 by 1, because `_match_col_iter` needs `row_c [-1]`
+            row_c.append (edits)
+        ### row_c [-1] now contains the edit distance between
+        ### `word` and `node.value`, if any
+        if row_c [-1] <= max_edits and node.value is not None :
+            yield (node.value, row_c [-1])
+        if any (c <= max_edits for c in row_c) :
+            char_1 = char
+            for char, node in node.children.iteritems () :
+                for m in self._match_iter_inner \
+                        ( col_iter, word, max_edits
+                        , char, node, row_c, row_1, char_1
+                        ) :
+                    yield m
+    # end def _match_iter_inner
+
+    def __iter__ (self) :
+        return iter (self.root)
+    # end def __iter__
+
+    def __str__ (self) :
+        return "%s ((%s))" % \
+            ( self.__class__.__name__
+            , ", ".join (repr (w) for w in self.values ())
+            )
+    # end def __str__
+
+# end class Word_Trie
+
+class Word_Trie_P (Word_Trie) :
+    """Trie (prefix tree) for words which can prune empty elements.
+
+    >>> wt = Word_Trie_P (
+    ...  ["ada", "adam", "beta", "cab", "cabby", "cat", "cats", "cathy", "cub"])
+
+    >>> wt.discard ("cab")
+    True
+    >>> print wt.find ("ca").visualized ()
+    <Node
+      <Node
+        <Node
+          <Value cabby>
+        >
+      >
+      <Value cat
+        <Node
+          <Value cathy>
+        >
+        <Value cats>
+      >
+    >
+    >>> wt.discard ("cabby")
+    True
+    >>> print wt.find ("ca").visualized ()
+    <Node
       <Value cat
         <Node
           <Value cathy>
@@ -238,126 +497,11 @@ class Word_Trie (TFL.Meta.Object) :
     "'t'", "'a'", "'c'", "'a'", "'t'", "'h'", "'y'",\
     "'s'", "'u'", "'b'"]
 
-from _TFL.Trie import *
-wt = Word_Trie ("ada", "adam", "beta", "cab", "cabby", "cat", "cats", "cathy", "cub")
     """
 
-    def __init__ (self, * words) :
-        self.root = Node (None)
-        for w in words :
-            self.add (w)
-    # end def __init__
+    Node = Node_P
 
-    def add (self, word) :
-        return self._add (word, self.root)
-    # end def add
-
-    def closest (self, word) :
-        if word :
-            result = self.root
-            for c in word :
-                try :
-                    result = result.children [c]
-                except KeyError :
-                    return result, None
-            return result, True
-    # end def closest
-
-    def discard (self, word) :
-        node, found = self.closest (word)
-        if found :
-            node.value = None
-            for c in reversed (word) :
-                parent = node.parent
-                if node.children or not parent :
-                    break
-                del parent.children [c]
-                node.parent = None
-                node        = parent
-        return found
-    # end def discard
-
-    def find (self, word) :
-        node, found = self.closest (word)
-        return found and node
-    # end def find
-
-    def fuzzy_match_iter (self, word, max_edits) :
-        """Generate all words with a Levenshtein-distance <= max_edits to word."""
-        ### http://en.wikipedia.org/wiki/Levenshtein_distance
-        ### http://stevehanov.ca/blog/index.php?id=114
-        row_1  = range (len (word) + 1)
-        for char, node in self.root.children.iteritems () :
-            for m in self._match_iter (char, node, word, max_edits, row_1) :
-                yield m
-    # end def fuzzy_match_iter
-
-    def fuzzy_matches (self, word, max_edits) :
-        return list (self.fuzzy_match_iter (word, max_edits))
-    # end def fuzzy_matches
-
-    def longest_prefix (self, word) :
-        node, found = self.closest (word)
-        return node
-    # end def longest_prefix
-
-    def pre_order (self) :
-        return self.root.pre_order ()
-    # end def pre_order
-
-    def remove (self, word) :
-        if not self.discard (word) :
-            raise KeyError (word)
-    # end def remove
-
-    def values (self) :
-        return self.root.values ()
-    # end def values
-
-    def visualized (self) :
-        return self.root.visualized ()
-    # end def visualized
-
-    def _add (self, word, node) :
-        for c in word :
-            if c not in node.children :
-                node.children [c] = Node (node)
-            node = node.children [c]
-        node.value = word
-        return node
-    # end def _add
-
-    def _match_iter (self, char, node, word, max_edits, row_p) :
-        wlen  = len (word)
-        row_c = [row_p [0] + 1] + [0] * wlen
-        for col in range (1, wlen + 1) :
-            row_c [col] = min \
-                ( row_p [col]     + 1                        # a  deletion
-                , row_c [col - 1] + 1                        # an insertion
-                , row_p [col - 1] + (word [col - 1] != char) # a  replacement
-                )
-        ### row_c [-1] now contains the edit distance between
-        ### `word` and `node.value`, if any
-        if row_c [-1] <= max_edits and node.value is not None :
-            yield (node.value, row_c [-1])
-        if any (c <= max_edits for c in row_c) :
-            for char, node in node.children.iteritems () :
-                for m in self._match_iter (char, node, word, max_edits, row_c) :
-                    yield m
-    # end def _match_iter
-
-    def __iter__ (self) :
-        return iter (self.root)
-    # end def __iter__
-
-    def __str__ (self) :
-        return "%s (%s)" % \
-            ( self.__class__.__name__
-            , ", ".join (repr (w) for w in self.values ())
-            )
-    # end def __str__
-
-# end class Word_Trie
+# end class Word_Trie_P
 
 if __name__ != "__main__" :
     TFL._Export ("*")
