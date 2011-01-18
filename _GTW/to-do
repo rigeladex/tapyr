@@ -1,6 +1,8 @@
 GTW To-Do
 =========
 
+- csrf / xrsf protection: cf. xsrf_cookies in  tornado
+
 x GTW.NAV.E_Type.Admin: restrict urls to Ascii
 
 - GTW.Tornado.Error vs. GTW.Werkzeug.Error: refactor
