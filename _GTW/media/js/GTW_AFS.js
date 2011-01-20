@@ -32,14 +32,20 @@
 
 ( function($)
   {
+    ««statement»»···
     $.fn.gtw_afs = function (options)
       {
-        ««js-statement»»···
+        var options  = $.extend
+          ( { «expression»
+            }
+          , options || {}
+          );
+        ««statement»»···
+        return this;
       }
-    ««js-statement»»···;
+    ««statement»»···
   }
 ) (jQuery);
-
 /* __END__ GTW_AFS.js */
 
 

@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+** Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ** Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ** ****************************************************************************
 ** This file is free software: you can redistribute it and/or modify
@@ -29,13 +29,14 @@
 **     8-Oct-2010 (CT) Creation continued
 **    30-Nov-2010 (CT) Calls to `.button` added
 **    30-Nov-2010 (CT) `scroll` added and used
+**    20-Jan-2011 (CT) Rename function `GTW_Gallery` to `gtw_gallery`
 **    ««revision-date»»···
 **--
 */
 
 ( function($)
   {
-    $.fn.GTW_Gallery = function (options)
+    $.fn.gtw_gallery = function (options)
       {
         var controls = $.extend
           ( { head        : "button.first"

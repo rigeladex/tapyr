@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+** Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ** Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ** ****************************************************************************
 **
@@ -28,13 +28,14 @@
 **
 ** Revision Dates
 **    18-Oct-2010 (CT) Creation
+**    20-Jan-2011 (CT) Rename function `GTW_pixpander` to `gtw_pixpander`
 **    ««revision-date»»···
 **--
 */
 
 ( function($)
   {
-    $.fn.GTW_pixpander = function (options)
+    $.fn.gtw_pixpander = function (options)
       {
         var options  = $.extend
           ( { x_class     : "pixpanded"

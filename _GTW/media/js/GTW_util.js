@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+** Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ** Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ** ****************************************************************************
 **
@@ -31,6 +31,7 @@
 **     4-Aug-2010 (CT) `fix_a_nospam` added (factored from GTW.jQuery)
 **    10-Oct-2010 (CT) `GTW_Externalize` added
 **    19-Nov-2010 (CT) `push_history` added
+**    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
 **    ««revision-date»»···
 **--
 */
@@ -80,7 +81,7 @@
           }
         }
       );
-    $.fn.GTW_Externalize = function ()
+    $.fn.gtw_externalize = function ()
       {
         this.click
           ( function (event)

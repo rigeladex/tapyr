@@ -36,6 +36,8 @@
 #    15-Nov-2010 (CT) `GTW_week_roller` added
 #    19-Nov-2010 (CT) `Modernizr` added
 #    12-Jan-2011 (CT) `GTW_Input` and `GTW_Label` added
+#    20-Jan-2011 (CT) Functions `GTW_Gallery`, `GTW_Externalize`,
+#                     `GTW_pixpander`, `GTW_week_roller` renamed to lowercase
 #    ««revision-date»»···
 #--
 
@@ -72,15 +74,15 @@ GTW.JS_On_Ready \
 GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "GTW_util")
 GTW.JS_On_Ready ("$.GTW.fix_a_nospam ($);",         name = "de_obfuscate_a")
 GTW.JS_On_Ready \
-    ( """$("a[href^='http://']").GTW_Externalize ();
-         $("a[href^='https://']").GTW_Externalize ();
+    ( """$("a[href^='http://']").gtw_externalize ();
+         $("a[href^='https://']").gtw_externalize ();
       """
     , name = "GTW_Externalize"
     )
 
 GTW.Script      (src = "/media/GTW/js/GTW_Gallery.js", name = "GTW_Gallery")
 GTW.JS_On_Ready \
-    ( """$(".thumbnails").GTW_Gallery ({ delay : 2000 });"""
+    ( """$(".thumbnails").gtw_gallery ({ delay : 2000 });"""
     , name = "GTW_Gallery"
     )
 
@@ -102,14 +104,14 @@ GTW.JS_On_Ready \
 
 GTW.Script      (src = "/media/GTW/js/GTW_pixpander.js", name = "GTW_pixpander")
 GTW.JS_On_Ready \
-    ( """$("a[href$='.jpg'] > img").GTW_pixpander ();"""
-      """$("a[href$='.png'] > img").GTW_pixpander ();"""
+    ( """$("a[href$='.jpg'] > img").gtw_pixpander ();"""
+      """$("a[href$='.png'] > img").gtw_pixpander ();"""
     , name = "GTW_pixpander"
     )
 
 GTW.Script (src = "/media/GTW/js/GTW_week_roller.js", name = "GTW_week_roller")
 GTW.JS_On_Ready \
-    ( """$(".week-roller").GTW_week_roller (); """
+    ( """$(".week-roller").gtw_week_roller (); """
     , name = "GTW_week_roller"
     )
 

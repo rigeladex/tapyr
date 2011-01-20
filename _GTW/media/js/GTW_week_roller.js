@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+** Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ** Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ** ****************************************************************************
 ** This file is free software: you can redistribute it and/or modify
@@ -33,13 +33,14 @@
 **    26-Nov-2010 (CT) `init_slider` added and used
 **    27-Nov-2010 (CT) Handling of `.echo` added
 **    30-Nov-2010 (CT) Handling of `.echo` changed
+**    20-Jan-2011 (CT) Rename function `GTW_week_roller` to `gtw_week_roller`
 **    ««revision-date»»···
 **--
 */
 
 ( function($)
   {
-    $.fn.GTW_week_roller = function (options)
+    $.fn.gtw_week_roller = function (options)
       {
         var options  = $.extend
           ( { apply_button_name      : "Apply"
