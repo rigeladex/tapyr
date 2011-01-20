@@ -46,6 +46,7 @@
     ««statement»»···
   }
 ) (jQuery);
+
 /* __END__ GTW_AFS.js */
 
 
