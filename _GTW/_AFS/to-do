@@ -1,0 +1,22 @@
+GTW.AFS to-to
+==============
+
+- Display
+
+  * hover labels (Res06, pp.186-8)
+
+  * mandatory: add `*` to label (Res06, p.189)
+
+  * CSS: Res06, p.171
+
+- Form events (Res06, pp.342-3)
+
+- Validation (Res06, pp.173-185, p.181)
+
+  * field validation: bind to `change` event (Res06, p.184, p.342)
+
+- Autocompletion (Res06, ch.12)
+
+  * Add `autocomplete="off"` to <input> which have JS autocompletion
+
+### GTW/AFS/to-do
