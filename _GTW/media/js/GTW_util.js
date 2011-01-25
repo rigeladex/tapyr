@@ -1,40 +1,40 @@
-/*
-** Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
-** Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
-** ****************************************************************************
-**
-**
-** This file is free software: you can redistribute it and/or modify
-** it under the terms of the GNU Affero General Public License as published by
-** the Free Software Foundation, either version 3 of the License, or
-** (at your option) any later version.
-**
-** This file is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-** GNU Affero General Public License for more details.
-**
-** You should have received a copy of the GNU Affero General Public License
-** along with this file. If not, see <http://www.gnu.org/licenses/>.
-** ****************************************************************************
-**
-**++
-** Name
-**    GTW_util
-**
-** Purpose
-**    Utility javascript functions for GTW
-**
-**
-** Revision Dates
-**     3-Aug-2010 (CT) Creation (`as_int_array`)
-**     4-Aug-2010 (CT) `fix_a_nospam` added (factored from GTW.jQuery)
-**    10-Oct-2010 (CT) `GTW_Externalize` added
-**    19-Nov-2010 (CT) `push_history` added
-**    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
-**    ««revision-date»»···
-**--
-*/
+//-*- coding: iso-8859-1 -*-
+//
+// Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+// Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+// ****************************************************************************
+//
+//
+// This file is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This file is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this file. If not, see <http://www.gnu.org/licenses/>.
+// ****************************************************************************
+//
+//++
+// Name
+//    GTW_util
+//
+// Purpose
+//    Utility javascript functions for GTW
+//
+//
+// Revision Dates
+//     3-Aug-2010 (CT) Creation (`as_int_array`)
+//     4-Aug-2010 (CT) `fix_a_nospam` added (factored from GTW.jQuery)
+//    10-Oct-2010 (CT) `GTW_Externalize` added
+//    19-Nov-2010 (CT) `push_history` added
+//    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
+//    ««revision-date»»···
+//--
 
 ( function($)
   {
