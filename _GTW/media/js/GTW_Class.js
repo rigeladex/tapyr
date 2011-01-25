@@ -44,8 +44,13 @@
         ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
-    Class.extend = function Class (dict) {
-        var result = function () {
+
+    Class.extend     = function Class (dict) {
+        var base     = this.prototype;
+        making_proto = true; // don't run `init` in `this.constructor`
+        var proto    = new this ();
+        making_proto = false;
+        var result   = proto.constructor = function () {
             if (this === window) {
                 throw new TypeError ("Needs to be called with new");
             };
@@ -53,10 +58,8 @@
                 this.init.apply (this, arguments);
             };
         };
-        var base    = this.prototype;
-        making_proto = true; // don't run `init` in `this.constructor`
-        var proto    = new this ();
-        making_proto = false;
+        result.prototype = proto;
+        result.extend    = this.extend;
         for (name in dict) {
             if (dict.hasOwnProperty (name)) {
                 var d_value = dict [name];
@@ -85,13 +88,20 @@
                     );
             }
         }
-        result.prototype   = proto;
-        result.constructor = result;
-        result.extend      = this.extend;
         return result;
     };
     $.GTW.Class = Class;
   }
 ) (jQuery);
+
+//+
+// Field = $.GTW.Class.extend ({ init : function (name, title) { this.name = name; this.title = title; }, show : function () { return (this.name + ": " + this.title); } });
+// P_Field = Field.extend ({ show : function () { return this._super () + " but more powerful!"; } });
+// P_Field.prototype instanceof Field
+// f = new Field ("a", "b")
+// pf = new P_Field ("gqu", "foo")
+// !(f instanceof P_Field) && ( f instanceof Field) && ( f instanceof Object)
+// (pf instanceof P_Field) && (pf instanceof Field) && (pf instanceof Object)
+//-
 
 // __END__ GTW_Class.js
