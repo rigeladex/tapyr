@@ -36,19 +36,22 @@
 
 ( function($) {
     $.GTW = $.GTW || {};
-    var Class        = function (){};
+    var Class        = function Class () {};
     var making_proto = false;
     var super_re     = /\bthis\._super\b/;
     var super_test   =
-        ( super_re.test ((function () { this._super; }).toString ())
-        ? function (v) { return super_re.test (v.toString ()); }
+        ( super_re.test ((function () { this._super; }))
+        ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
-    Class.extend = function (dict) {
+    Class.extend = function Class (dict) {
         var result = function () {
+            if (this === window) {
+                throw new TypeError ("Needs to be called with new");
+            };
             if (! making_proto && this.init) {
                 this.init.apply (this, arguments);
-            }
+            };
         };
         var base    = this.prototype;
         making_proto = true; // don't run `init` in `this.constructor`
@@ -83,6 +86,7 @@
             }
         }
         result.prototype   = proto;
+        result.constructor = result;
         result.extend      = this.extend;
         return result;
     };
@@ -90,4 +94,4 @@
   }
 ) (jQuery);
 
-/* __END__ GTW_Class.js */
+// __END__ GTW_Class.js
