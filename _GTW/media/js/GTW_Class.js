@@ -20,7 +20,7 @@
 //
 //++
 // Name
-//    Class
+//    GTW_Class
 //
 // Purpose
 //    Provide a javascript class based on ideas of
@@ -34,7 +34,8 @@
 //    ««revision-date»»···
 //--
 
-( function(scope) {
+( function($) {
+    $.GTW = $.GTW || {};
     var Class        = function (){};
     var making_proto = false;
     var super_re     = /\bthis\._super\b/;
@@ -82,13 +83,11 @@
             }
         }
         result.prototype   = proto;
-        result.constructor = result;
         result.extend      = this.extend;
         return result;
     };
     $.GTW.Class = Class;
-    return Class;
   }
-) ($.GTW);
+) (jQuery);
 
-/* __END__ Class.js */
+/* __END__ GTW_Class.js */
