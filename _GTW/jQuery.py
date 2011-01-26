@@ -38,6 +38,7 @@
 #    12-Jan-2011 (CT) `GTW_Input` and `GTW_Label` added
 #    20-Jan-2011 (CT) Functions `GTW_Gallery`, `GTW_Externalize`,
 #                     `GTW_pixpander`, `GTW_week_roller` renamed to lowercase
+#    26-Jan-2011 (CT) `GTW.js` added
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ GTW.JS_On_Ready \
     )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/GTW_Class.js"
+    ( src      = "/media/GTW/js/GTW.js"
     , name     = "GTW"
     , sort_key = -50
     )
