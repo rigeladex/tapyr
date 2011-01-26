@@ -40,26 +40,21 @@
         , "\b" : "\\b",  "\f" : "\\f", "\n" : "\\n", "\r" : "\\r", "\t" : "\\t"
         };
     var jsonify  = function jsonify (thing) {
-        var result = "null";
-        var rs     = [];
         var i, l, k, t, v;
+        var rs = [];
         switch (typeof thing) {
             case "boolean" :
-                result = thing.toString ();
-                break;
+                return thing.toString ();
             case "number" :
-                if (isFinite (thing)) {
-                    result = thing.toString ();
-                };
-                break;
+                return isFinite (thing) ? thing.toString () "null":
             case "object" :
                 if (thing) {
                     if (thing.constructor == Array) {
                         l = thing.length;
                         for (i = 0; i < l; i += 1) {
                             rs.push (jsonify (thing [i]));
-                        } ;
-                        result = "[" + rs.join (",") + "]";
+                        };
+                        return "[" + rs.join (",") + "]";
                     } else if (thing.toString !== undefined) {
                         for (name in thing) {
                             v = thing [name];
@@ -68,10 +63,10 @@
                                 rs.push (jsonify (name) + ":" + jsonify (v));
                             };
                         };
-                        result = "{" + rs.join (",") + "}";
+                        return "{" + rs.join (",") + "}";
                     };
                 };
-                break;
+                return "null";
             case "string" :
                 l = thing.length;
                 for (i = 0; i < l; i += 1) {
@@ -86,11 +81,11 @@
                             );
                     };
                     rs.push (v);
-                } ;
-                result = '"' + rs.join ("") + '"';
-                break;
+                };
+                return '"' + rs.join ("") + '"';
+            default :
+                return "null";
         };
-        return result;
     };
     $.GTW = $.GTW || {};
     $.extend
