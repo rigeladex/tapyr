@@ -79,15 +79,15 @@
                                     result = d_value.apply (this, arguments);
                                 } finally {
                                     this._super = saved_super;
-                                }
+                                };
                                 return result;
                             };
                         }
                       ) (d_value, b_value)
                     : d_value
                     );
-            }
-        }
+            };
+        };
         return result;
     };
     $.GTW.Class = Class;
