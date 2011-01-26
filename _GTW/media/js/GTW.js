@@ -85,11 +85,11 @@
             };
             if (! making_proto && this.init) {
                 this.init.apply (this, arguments);
-                this.update = function (dict) {
-                    update_proto.call (this, dict, this, {});
-                    return this;
-                };
             };
+        };
+        proto.update = function (dict) {
+            update_proto.call (this, dict, this, proto);
+            return this;
         };
         result.prototype = proto;
         result.extend    = this.extend;
