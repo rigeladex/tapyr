@@ -20,7 +20,7 @@
 //
 //++
 // Name
-//    GTW_Class
+//    GTW
 //
 // Purpose
 //    Provide a javascript class based on ideas of
@@ -117,4 +117,4 @@ pf = new P_Field ("gqu", "foo")
 
 */
 
-// __END__ GTW_Class.js
+// __END__ GTW.js
