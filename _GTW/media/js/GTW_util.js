@@ -34,7 +34,7 @@
 //    ««revision-date»»···
 //--
 
-( function($) {
+( function ($) {
     var json_char_map =
         { "\\" : "\\\\", "\"" : "\\\""
         , "\b" : "\\b",  "\f" : "\\f", "\n" : "\\n", "\r" : "\\r", "\t" : "\\t"
@@ -46,7 +46,7 @@
             case "boolean" :
                 return thing.toString ();
             case "number" :
-                return isFinite (thing) ? thing.toString () "null":
+                return isFinite (thing) ? thing.toString () : "null";
             case "object" :
                 if (thing) {
                     if (thing.constructor == Array) {
@@ -103,16 +103,16 @@
                 return result;
             }
           , fix_a_nospam   : function ($) {
-                $("a.nospam").each
-                    ( function (i) {
-                          var rel = $(this).attr ("rel");
-                          if (rel != null) {
-                              var aia = $.GTW.as_int_array (rel);
-                              $(this).replaceWith
-                                  (String.fromCharCode.apply (null, aia));
-                          };
-                      }
-                    );
+                $("a.nospam").each (
+                    function () {
+                        var rel = $(this).attr ("rel");
+                        if (rel != null) {
+                            var aia = $.GTW.as_int_array (rel);
+                            $(this).replaceWith
+                                (String.fromCharCode.apply (null, aia));
+                        };
+                    }
+                );
             }
           , jsonify        : jsonify
           , push_history   : function (url, title, state) {

@@ -34,8 +34,7 @@
 //    ««revision-date»»···
 //--
 
-( function($) {
-    $.GTW = $.GTW || {};
+( function ($) {
     var Class        = function Class () {};
     var making_proto = false;
     var super_re     = /\bthis\._super\b/;
@@ -44,7 +43,6 @@
         ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
-
     Class.extend     = function Class (dict) {
         var base     = this.prototype;
         making_proto = true; // don't run `init` in `this.constructor`
@@ -90,6 +88,7 @@
         };
         return result;
     };
+    $.GTW = $.GTW || {};
     $.GTW.Class = Class;
   }
 ) (jQuery);
