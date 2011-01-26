@@ -30,11 +30,12 @@
 //
 //
 // Revision Dates
-//    24-Jan-2011 (CT) Creation
+//    25-Jan-2011 (CT) Creation
+//    26-Jan-2011 (CT) `update_proto` factored, `update` added
 //    ««revision-date»»···
 //--
 
-( function ($) {
+( function () {
     var Class        = function Class () {};
     var making_proto = false;
     var super_re     = /\bthis\._super\b/;
@@ -43,21 +44,7 @@
         ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
-    Class.extend     = function Class (dict) {
-        var base     = this.prototype;
-        making_proto = true; // don't run `init` in `this.constructor`
-        var proto    = new this ();
-        making_proto = false;
-        var result   = proto.constructor = function () {
-            if (this === window) {
-                throw new TypeError ("Needs to be called with new");
-            };
-            if (! making_proto && this.init) {
-                this.init.apply (this, arguments);
-            };
-        };
-        result.prototype = proto;
-        result.extend    = this.extend;
+    var update_proto = function (dict, proto, base) {
         for (name in dict) {
             if (dict.hasOwnProperty (name)) {
                 var d_value = dict [name];
@@ -86,21 +73,48 @@
                     );
             };
         };
+    };
+    Class.extend = function (dict) {
+        var base     = this.prototype;
+        making_proto = true; // don't run `init` in `this.constructor`
+        var proto    = new this ();
+        making_proto = false;
+        var result   = proto.constructor = function () {
+            if (this === window) {
+                throw new TypeError ("Needs to be called with new");
+            };
+            if (! making_proto && this.init) {
+                this.init.apply (this, arguments);
+                this.update = function (dict) {
+                    update_proto.call (this, dict, this, {});
+                    return this;
+                };
+            };
+        };
+        result.prototype = proto;
+        result.extend    = this.extend;
+        result.update    = this.update;
+        update_proto.call (this, dict, proto, base);
         return result;
     };
-    $.GTW = $.GTW || {};
-    $.GTW.Class = Class;
+    Class.update = function (dict) {
+        update_proto.call (this, dict, this, this.prototype);
+        return this;
+    };
+    $GTW = Class.extend ({}).update ({ Class : Class });
   }
-) (jQuery);
+) ();
 
-//+
-// Field = $.GTW.Class.extend ({ init : function (name, title) { this.name = name; this.title = title; }, show : function () { return (this.name + ": " + this.title); } });
-// P_Field = Field.extend ({ show : function () { return this._super () + " but more powerful!"; } });
-// P_Field.prototype instanceof Field
-// f = new Field ("a", "b")
-// pf = new P_Field ("gqu", "foo")
-// !(f instanceof P_Field) && ( f instanceof Field) && ( f instanceof Object)
-// (pf instanceof P_Field) && (pf instanceof Field) && (pf instanceof Object)
-//-
+/*
+
+Field = $GTW.Class.extend ({ init : function (name, title) { this.name = name; this.title = title; }, show : function () { return (this.name + ": " + this.title); } });
+P_Field = Field.extend ({ show : function () { return this._super () + " but more powerful!"; } });
+P_Field.prototype instanceof Field
+f = new Field ("a", "b")
+pf = new P_Field ("gqu", "foo")
+!(f instanceof P_Field) && ( f instanceof Field) && ( f instanceof Object)
+(pf instanceof P_Field) && (pf instanceof Field) && (pf instanceof Object)
+
+*/
 
 // __END__ GTW_Class.js

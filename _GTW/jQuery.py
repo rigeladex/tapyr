@@ -46,14 +46,14 @@ import _GTW.Media
 
 if __debug__ :
     GTW.Script \
-        ( src = "/media/GTW/js/jquery-1.4.2.js"
+        ( src      = "/media/GTW/js/jquery-1.4.2.js"
         , sort_key = -100  ## should be loaded first
         , name     = "jQuery"
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui.js", name = "jQuery_UI")
 else :
     GTW.Script \
-        ( src = "/media/GTW/js/jquery-1.4.2.min.js"
+        ( src      = "/media/GTW/js/jquery-1.4.2.min.js"
         , sort_key = -100  ## should be loaded first
         , name     = "jQuery"
         )
@@ -71,8 +71,14 @@ GTW.JS_On_Ready \
     , name = "jQuery_Gritter"
     )
 
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW_Class.js"
+    , name     = "GTW"
+    , sort_key = -50
+    )
+
 GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "GTW_util")
-GTW.JS_On_Ready ("$.GTW.fix_a_nospam ($);",         name = "de_obfuscate_a")
+GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 GTW.JS_On_Ready \
     ( """$("a[href^='http://']").gtw_externalize ();
          $("a[href^='https://']").gtw_externalize ();

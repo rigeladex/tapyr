@@ -30,67 +30,13 @@
 //    10-Oct-2010 (CT) `GTW_Externalize` added
 //    19-Nov-2010 (CT) `push_history` added
 //    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
-//    26-Jan-2011 (CT) `jsonify` added
+//    26-Jan-2011 (CT) Style change
 //    ««revision-date»»···
 //--
 
 ( function ($) {
-    var json_char_map =
-        { "\\" : "\\\\", "\"" : "\\\""
-        , "\b" : "\\b",  "\f" : "\\f", "\n" : "\\n", "\r" : "\\r", "\t" : "\\t"
-        };
-    var jsonify  = function jsonify (thing) {
-        var i, l, k, t, v;
-        var rs = [];
-        switch (typeof thing) {
-            case "boolean" :
-                return thing.toString ();
-            case "number" :
-                return isFinite (thing) ? thing.toString () : "null";
-            case "object" :
-                if (thing) {
-                    if (thing.constructor == Array) {
-                        l = thing.length;
-                        for (i = 0; i < l; i += 1) {
-                            rs.push (jsonify (thing [i]));
-                        };
-                        return "[" + rs.join (",") + "]";
-                    } else if (thing.toString !== undefined) {
-                        for (name in thing) {
-                            v = thing [name];
-                            t = typeof (v);
-                            if (t != "undefined" && t != "function") {
-                                rs.push (jsonify (name) + ":" + jsonify (v));
-                            };
-                        };
-                        return "{" + rs.join (",") + "}";
-                    };
-                };
-                return "null";
-            case "string" :
-                l = thing.length;
-                for (i = 0; i < l; i += 1) {
-                    v = thing.charAt (i);
-                    if (v in json_char_map) {
-                        v = json_char_map [v];
-                    } else if (v < " ") {
-                        k = v.charCodeAt ();
-                        v = ( "\\00"
-                            + Math.floor (k / 16).toString (16)
-                            + (k % 16).toString (16)
-                            );
-                    };
-                    rs.push (v);
-                };
-                return '"' + rs.join ("") + '"';
-            default :
-                return "null";
-        };
-    };
-    $.GTW = $.GTW || {};
-    $.extend
-        ( $.GTW
-        , { as_int_array   : function (data) {
+    $GTW.update
+        ( { as_int_array   : function (data) {
                 var list   = data.split (",");
                 var pat    = /^\s*\d+\s*([-+]\s*\d+)?\s*$/;
                 var result = new Array ();
@@ -107,14 +53,13 @@
                     function () {
                         var rel = $(this).attr ("rel");
                         if (rel != null) {
-                            var aia = $.GTW.as_int_array (rel);
+                            var aia = $GTW.as_int_array (rel);
                             $(this).replaceWith
                                 (String.fromCharCode.apply (null, aia));
                         };
                     }
                 );
             }
-          , jsonify        : jsonify
           , push_history   : function (url, title, state) {
                 if (Modernizr.history) {
                     window.history.pushState (state, title, url);

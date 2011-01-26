@@ -135,7 +135,7 @@
                                         change_field ("year",  ctrl$, response);
                                         cal$ = $(options.cal_selector, wr$);
                                         init_cal (wr$);
-                                        $.GTW.push_history (q_url + "?" + args);
+                                        $GTW.push_history (q_url + "?" + args);
                                     };
                                 }
                               );

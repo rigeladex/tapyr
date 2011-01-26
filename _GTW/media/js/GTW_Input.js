@@ -106,18 +106,18 @@
                   }
                 )
             .parents ("form")
-                .submit
-                    ( function () {
+                .submit (
+                    function () {
                         $("[placeholder]", this)
-                            .each
-                                ( function () {
+                            .each (
+                                function () {
                                     var target$ = $(this);
                                     pop_placeholder
                                         (target$, target$.attr ("placeholder"));
-                                  }
-                                )
-                      }
-                    );
+                                }
+                            )
+                    }
+                );
         return this;
     };
   }
