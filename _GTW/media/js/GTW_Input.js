@@ -44,69 +44,80 @@
             };
         };
         this
-            .each (
-                function (n) {
+            .each
+                ( function (n) {
                     var target$ = $(this);
                     var placeholder = target$.attr ("placeholder");
                     if (placeholder) {
                         if (target$.attr ("type") != "password") {
-                            target$.focus (
-                                    function (ev) {
+                            target$
+                                .focus
+                                    ( function (ev) {
                                         pop_placeholder (target$, placeholder);
-                                    }
-                                ).blur (
-                                    function (ev) {
+                                      }
+                                    )
+                                .blur
+                                    ( function (ev) {
                                         var v = target$.val ();
                                         if (v == "" || v == placeholder) {
                                             target$
                                                 .val      (placeholder)
                                                 .addClass (options.p_class);
                                         };
-                                    }
-                                ).blur ();
+                                      }
+                                    )
+                                .blur ();
                         } else {
                             var overlay$ =
                                 $( "<"  + options.overlay_type + ">"
                                  + placeholder
                                  + "</" + options.overlay_type + ">"
                                  );
-                            overlay$.insertBefore (target$
-                                ).css (
-                                    { height   : target$.css ("height")
-                                    , position : "absolute"
-                                    , width    : target$.css ("width")
-                                    }
-                                ).addClass (options.p_class
-                                ).click (
-                                    function (ev) {
+                            overlay$
+                                .insertBefore (target$)
+                                .css
+                                    ( { height   : target$.css ("height")
+                                      , position : "absolute"
+                                      , width    : target$.css ("width")
+                                      }
+                                    )
+                                .addClass (options.p_class)
+                                .click
+                                    ( function (ev) {
                                         overlay$.hide ();
                                         target$.focus ();
-                                    }
-                                ).hide ();
-                            target$.focus (
-                                    function (ev) { overlay$.hide (); }
-                                ).blur (
-                                    function (ev) {
+                                      }
+                                    )
+                                .hide ();
+                            target$
+                                .focus
+                                    ( function (ev) { overlay$.hide (); })
+                                .blur
+                                    ( function (ev) {
                                         var v = target$.val ();
                                         if (v == "" || v == placeholder) {
                                             overlay$.show ();
                                         };
-                                    }
-                                ).blur  ();
+                                      }
+                                    )
+                                .blur ();
                         };
                     };
-                }
-            ).parents ("form").submit (
-                function () {
-                    $("[placeholder]", this).each (
-                        function () {
-                            var target$ = $(this);
-                            pop_placeholder
-                                (target$, target$.attr ("placeholder"));
-                        }
-                    )
-                }
-            );
+                  }
+                )
+            .parents ("form")
+                .submit
+                    ( function () {
+                        $("[placeholder]", this)
+                            .each
+                                ( function () {
+                                    var target$ = $(this);
+                                    pop_placeholder
+                                        (target$, target$.attr ("placeholder"));
+                                  }
+                                )
+                      }
+                    );
         return this;
     };
   }
