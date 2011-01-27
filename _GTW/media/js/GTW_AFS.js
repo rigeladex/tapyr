@@ -20,19 +20,5 @@
 //    ««revision-date»»···
 //--
 
-( function ($) {
-    ««statement»»···
-    $.fn.«name» = function (options) {
-        var options  = $.extend
-          ( { «expression»
-            }
-          , options || {}
-          );
-        ««statement»»···
-        return this;
-    }
-    ««statement»»···
-  }
-) (jQuery);
 
 // __END__ GTW_AFS.js

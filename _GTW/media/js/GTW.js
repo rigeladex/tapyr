@@ -25,15 +25,18 @@
 //    ««revision-date»»···
 //--
 
+var $GTW;
+
 ( function () {
     var making_proto = false;
     var super_re     = /\bthis\._super\b/;
     var super_test   =
-        ( super_re.test ((function () { this._super; }))
+        ( super_re.test ((function () { this._super (); }))
         ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
     var update_proto = function (dict, proto, base) {
+        var name;
         if (dict !== undefined) {
             for (name in dict) {
                 if (dict.hasOwnProperty (name)) {
@@ -54,18 +57,21 @@
                                         result = d_val.apply (this, arguments);
                                     } finally {
                                         this._super = saved_super;
-                                    };
+                                    }
                                     return result;
                                 };
                             }
                           ) (d_val, b_val)
                         : d_val
                         );
-                };
-            };
-        };
+                }
+            }
+        }
     };
     var Class    = function Class () {};
+    var Module   = function (dict) {
+        return new Class ().update (dict);
+    };
     Class.extend = function (dict, meta) {
         var base = this.prototype;
         var proto, result;
@@ -75,14 +81,11 @@
             proto = new this ();
         }  finally {
             making_proto = false;
-        };
+        }
         result = proto.constructor = function () {
-            if (this === window) {
-                throw new TypeError ("Needs to be called with new");
-            };
-            if (! making_proto && this.init) {
+            if (! making_proto && this ["init"]) {
                 this.init.apply (this, arguments);
-            };
+            }
             this.update = proto.update;
         };
         proto.update = function (dict) {
@@ -101,9 +104,6 @@
         return this;
     };
     Class  = Class.extend ({}); // add `proto.constructor` to `Class`
-    Module = function (dict) {
-        return new Class ().update (dict);
-    };
     $GTW = Module (
         { Class       : Class
         , Module      : Module

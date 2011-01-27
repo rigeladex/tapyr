@@ -26,7 +26,7 @@
 //--
 
 ( function ($) {
-    $.fn.gtw_gallery = function (options) {
+    $.fn.gtw_gallery = function (opts) {
         var controls = $.extend
             ( { head        : "button.first"
               , next        : "button.next"
@@ -34,7 +34,7 @@
               , prev        : "button.prev"
               , tail        : "button.last"
               }
-            , options.controls || {}
+            , opts.controls || {}
             );
         var options  = $.extend
             ( { delay           : 3000
@@ -45,7 +45,7 @@
               , url_transformer : function (name)
                   { return name.replace (/\/th\//, "/im/"); }
               }
-            , options || {}
+            , opts || {}
             , { controls        : controls }
             );
         var scroll = function (thumb$) {

@@ -1,0 +1,43 @@
+/*
+
+Expected output when run like $ /usr/bin/js -s -f GTW.test::
+
+    ----/--------------------------------------
+    true
+    true
+    true
+    a: b
+    gqu: foo but more powerful!
+    ----/--------------------------------------
+
+Expected output for
+    $ for f in GTW*.js; do /usr/bin/js -s -C $f && \
+          echo "$f successfully compiles" ; done
+
+    ----/--------------------------------------
+    GTW.js successfully compiles
+    GTW_AFS.js successfully compiles
+    GTW_Button.js successfully compiles
+    GTW_File_Upload.js successfully compiles
+    GTW_Form.js successfully compiles
+    GTW_Form_C.js successfully compiles
+    GTW_Gallery.js successfully compiles
+    GTW_Input.js successfully compiles
+    GTW_Label.js successfully compiles
+    GTW_jsonify.js successfully compiles
+    GTW_pixpander.js successfully compiles
+    GTW_util.js successfully compiles
+    GTW_week_roller.js successfully compiles
+    ----/--------------------------------------
+
+*/
+load ("GTW.js")
+var Field = $GTW.Class.extend ( { init : function (name, title) { this.name = name; this.title = title; }, show : function () { return (this.name + ": " + this.title); } }, { name : "Field"});
+var P_Field = Field.extend ({ show : function () { return this._super () + " but more powerful!"; } });
+var f = new Field ("a", "b")
+var pf = new P_Field ("gqu", "foo")
+print (P_Field.prototype instanceof Field)
+print (!(f instanceof P_Field) && ( f instanceof Field) && ( f instanceof Object))
+print ((pf instanceof P_Field) && (pf instanceof Field) && (pf instanceof Object))
+print (f.show ())
+print (pf.show ())

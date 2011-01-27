@@ -22,12 +22,12 @@
 //--
 
 ( function ($) {
-    $.fn.gtw_input_placeholders = function (options) {
+    $.fn.gtw_input_placeholders = function (opts) {
         var options  = $.extend
             ( { overlay_type : "b"
               , p_class      : "placeholden"
               }
-            , options || {}
+            , opts || {}
             );
         var pop_placeholder = function (target$, placeholder) {
             if (target$.val () == placeholder) {

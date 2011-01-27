@@ -48,8 +48,8 @@
                             };
                         };
                         return "{" + rs.join (",") + "}";
-                    };
-                };
+                    }
+                }
                 return "null";
             case "string" :
                 l = thing.length;
@@ -63,13 +63,13 @@
                             + Math.floor (k / 16).toString (16)
                             + (k % 16).toString (16)
                             );
-                    };
+                    }
                     rs.push (v);
-                };
+                }
                 return '"' + rs.join ("") + '"';
             default :
                 return "null";
-        };
+        }
     };
     $GTW.update ({ jsonify : jsonify });
   }

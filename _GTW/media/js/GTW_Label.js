@@ -30,11 +30,11 @@
         };
         return result;
     };
-    $.fn.gtw_label_as_placeholder = function (options)  {
+    $.fn.gtw_label_as_placeholder = function (opts)  {
         var options  = $.extend
             ( { hide_parent : false
               }
-            , options || {}
+            , opts || {}
             );
         this.each (
             function () {
@@ -54,11 +54,11 @@
         );
         return this;
     };
-    $.fn.gtw_label_clicker = function (options) {
+    $.fn.gtw_label_clicker = function (opts) {
         var options  = $.extend
             ( { l_class : "clickable"
               }
-            , options || {}
+            , opts || {}
             );
         this.each (
             function () {

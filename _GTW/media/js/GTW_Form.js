@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2010 Martin Glueck All rights reserved
+** Copyright (C) 2010-2011 Martin Glueck All rights reserved
 ** Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ** ****************************************************************************
 ** This file is part of the library GTW.
@@ -275,7 +275,7 @@
         if (form_no === undefined)
           {
             $inline.data ("cur_count", $inline.data ("cur_count") + 1);
-            var form_no = $inline.data ("cur_number");
+            form_no = $inline.data ("cur_number");
             $inline.data ("cur_number", form_no + 1);
           }
         var new_no     = "-M" + form_no + "_";
