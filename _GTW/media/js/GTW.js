@@ -31,7 +31,7 @@ var $GTW;
     var making_proto = false;
     var super_re     = /\bthis\._super\b/;
     var super_test   =
-        ( super_re.test ((function () { this._super (); }))
+        ( super_re.test (function () { this._super (); })
         ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
@@ -60,8 +60,8 @@ var $GTW;
                                     }
                                     return result;
                                 };
-                            }
-                          ) (d_val, b_val)
+                            } (d_val, b_val)
+                          )
                         : d_val
                         );
                 }
@@ -103,8 +103,8 @@ var $GTW;
         update_proto.call (this, dict, this, this.prototype);
         return this;
     };
-    Class  = Class.extend ({}); // add `proto.constructor` to `Class`
-    $GTW = Module (
+    Class = Class.extend ({}); // add `proto.constructor` to `Class`
+    $GTW  = new Module (
         { Class       : Class
         , Module      : Module
         , author      : "christian.tanzer@swing.co.at"
@@ -114,15 +114,12 @@ var $GTW;
         , version     : "1.0"
         }
     );
-  }
-) ();
+  } ()
+);
 
 /*
 
-Field = $GTW.Class.extend
-  ( { init : function (name, title) { this.name = name; this.title = title; }, show : function () { return (this.name + ": " + this.title); } }
-  , { name : "Field"}
-  );
+Field = $GTW.Class.extend ( { init : function (name, title) { this.name = name; this.title = title; }, show : function () { return (this.name + ": " + this.title); } }, { name : "Field"});
 P_Field = Field.extend ({ show : function () { return this._super () + " but more powerful!"; } });
 P_Field.prototype instanceof Field
 f = new Field ("a", "b")
