@@ -1,6 +1,6 @@
 {# Django template: nav-section-entry.html #}
 {% comment %}
-  ## Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+  ## Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
   ##
   ##
@@ -27,11 +27,12 @@
   ##    17-Oct-2008 (CT) Wrap `current-section` inside a `a`
   ##    17-Oct-2008 (CT) Use `allow_user`  instead of `login_required`
   ##     9-Dec-2010 (CT) Support for `a_img` added
+  ##    27-Jan-2011 (CT) Consider `link.hidden`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
-{% if NAV.permissive or link|allow_user:request.user %}
+{% if NAV.permissive or link|allow_user:request.user and not link.hidden %}
   {% let %}
     {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
     {% if nav_page.prefix|starts_with:link.prefix and link.has_children %}
