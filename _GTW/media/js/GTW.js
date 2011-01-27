@@ -40,8 +40,8 @@
                     var d_val = dict [name];
                     var b_val = base [name];
                     var super_caller =
-                        (  (typeof d_val == "function")
-                        && (typeof b_val == "function")
+                        (  (typeof d_val === "function")
+                        && (typeof b_val === "function")
                         && super_test (d_val)
                         );
                     proto [name] =
@@ -67,11 +67,16 @@
     };
     var Class    = function Class () {};
     Class.extend = function (dict, meta) {
-        var base     = this.prototype;
-        making_proto = true; // don't run `init` in `this.constructor`
-        var proto    = new this ();
-        making_proto = false;
-        var result   = proto.constructor = function () {
+        var base = this.prototype;
+        var proto, result;
+        // don't run `init` in constructor called by `new this ()`
+        making_proto = true;
+        try {
+            proto = new this ();
+        }  finally {
+            making_proto = false;
+        };
+        result = proto.constructor = function () {
             if (this === window) {
                 throw new TypeError ("Needs to be called with new");
             };
