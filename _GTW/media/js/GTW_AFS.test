@@ -1,0 +1,13 @@
+/*
+Run this like::
+    $ /usr/bin/js -s -f GTW_AFS.test -i
+
+to get an interactive Javascript shell with GTW.js and GTW_AFS.js loaded
+
+*/
+load ("GTW.js")
+load ("GTW_AFS.js")
+load ("GTW_inspect.js")
+load ("GTW_jsonify.js")
+var x = new $GTW.AFS.Element ({ id : 1, name : "hansi", pid : 4711, cid : 42})
+print ("$GTW :\n" + $GTW.inspect.show ($GTW, undefined, 1))

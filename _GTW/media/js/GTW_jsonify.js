@@ -72,7 +72,7 @@
         }
     };
     $GTW.update ({ jsonify : jsonify });
-  }
-) ();
+  } ()
+);
 
 // __END__ GTW_jsonify.js

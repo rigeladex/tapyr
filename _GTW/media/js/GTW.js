@@ -35,7 +35,7 @@ var $GTW;
         ? function (v) { return super_re.test (v); }
         : function (v) { return true; }
         );
-    var update_proto = function (dict, proto, base) {
+    var update_proto = function update_proto (dict, proto, base) {
         var name;
         if (dict !== undefined) {
             for (name in dict) {
@@ -69,10 +69,10 @@ var $GTW;
         }
     };
     var Class    = function Class () {};
-    var Module   = function (dict) {
+    var Module   = function Module (dict) {
         return new Class ().update (dict);
     };
-    Class.extend = function (dict, meta) {
+    Class.extend = function extend (dict, meta) {
         var base = this.prototype;
         var proto, result;
         // don't run `init` in constructor called by `new this ()`
@@ -82,13 +82,13 @@ var $GTW;
         }  finally {
             making_proto = false;
         }
-        result = proto.constructor = function () {
+        result = proto.constructor = function constructor () {
             if (! making_proto && this ["init"]) {
                 this.init.apply (this, arguments);
             }
             this.update = proto.update;
         };
-        proto.update = function (dict) {
+        proto.update = function update (dict) {
             update_proto.call (this, dict, this, proto);
             return this;
         };
@@ -99,7 +99,7 @@ var $GTW;
         result.update     (meta);
         return result;
     };
-    Class.update = function (dict) {
+    Class.update = function update (dict) {
         update_proto.call (this, dict, this, this.prototype);
         return this;
     };
