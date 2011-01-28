@@ -42,7 +42,7 @@
         return result;
     };
     var Element = $GTW.Class.extend (
-        { init          : function init (spec) {
+        { init : function init (spec) {
               var name, value;
               for (name in spec) {
                   if (spec.hasOwnProperty (name)) {
@@ -65,7 +65,7 @@
         , Element  : Element
         , id_map   : {}
         }
-    )
+    );
   } ()
 );
 
