@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    html/gallery.jnj.css
+#    html/gallery.jnj.media
 #
 # Purpose
 #    CSS fragment for template html/gallery.jnj
@@ -48,11 +48,9 @@ style_sheet = Style_Sheet \
                 , display          = "none"
                 , children         =
                     [ Rule
-                        ( ".photo img"
-                        , display  = "block"
-                        , height   = "auto"
-                        , margin   = "auto"
-                        , width    = "auto"
+                        ( ".photo"
+                        , display        = "block"
+                        , margin         = "auto"
                         )
                     , Rule
                         ( ".photo-nav"
@@ -66,10 +64,6 @@ style_sheet = Style_Sheet \
                     ]
                 )
             ]
-        )
-    , Rule
-        ( ".photo"
-        , text_align                 = "center"
         )
     , Rule
         ( ".photo-nav img"
@@ -107,4 +101,4 @@ style_sheet = Style_Sheet \
         )
     )
 
-### __END__ html/gallery.jnj.css
+### __END__ html/gallery.jnj.media
