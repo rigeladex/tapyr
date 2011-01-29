@@ -22,7 +22,7 @@
 ( function () {
     var AFS;
     var create = function create (spec) {
-        var Type, type_name = spec ["type_name"];
+        var Type, type_name = spec ["type"];
         if (type_name !== undefined) {
             Type = AFS [type_name];
             if (Type !== undefined) {
