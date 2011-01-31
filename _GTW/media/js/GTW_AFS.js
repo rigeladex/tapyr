@@ -17,6 +17,7 @@
 // Revision Dates
 //    28-Jan-2011 (CT) Creation
 //    30-Jan-2011 (CT) Creation continued
+//    31-Jan-2011 (CT) Creation continued..
 //    ««revision-date»»···
 //--
 
@@ -36,8 +37,8 @@
         var elem, i, l = elems.length, result = [];
         for (i = 0; i < l; i += 1) {
             elem = create (elems [i]);
-            if (elem !== undefined && elem ["_id"] !== undefined) {
-                result.push (elem._id);
+            if (elem !== undefined && elem ["$id"] !== undefined) {
+                result.push (elem.$id);
             }
         }
         return result;
@@ -54,21 +55,22 @@
                       this [name] = value;
                   }
               }
-              if (this ["_id"] !== undefined) {
-                  AFS.id_map [this._id] = this;
+              if (this ["$id"] !== undefined) {
+                  AFS.id_map [this.$id] = this;
               }
           }
         , setup_value : function setup_value (value) {
-              var id = value ["_id"], n, v, elem;
-              if (id !== undefined && id === this ["_id"]) {
-                  this.value = value;
-              }
-              for (n in value) {
-                  if (value.hasOwnProperty (n) && n [0] !== "_") {
-                      v = value [n];
-                      if (v ["_id"] !== undefined) {
-                          elem = AFS.id_map [v._id];
-                          elem.setup_value (v);
+              var i, l, v, child, $id;
+              this.value = value;
+              if (this ["children"] !== undefined) {
+                  for (i = 0, l = this.children.length; i < l; i += 1) {
+                      child = AFS.id_map [this.children [i]];
+                      $id   = child ["$id"];
+                      if ($id !== undefined) {
+                          v = value [$id];
+                          if (v !== undefined) {
+                              child.setup_value (v);
+                          }
                       }
                   }
               }
