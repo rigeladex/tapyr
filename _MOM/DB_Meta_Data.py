@@ -47,7 +47,7 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
     """Provide meta data for MOM data base."""
 
     _real_name   = "DB_Meta_Data"
-    _copy_ignore = set (( "readonly", "dbv_hash"))
+    _copy_ignore = set (( "readonly", "dbid", "dbv_hash"))
 
     @classmethod
     def COPY (cls, other, app_type, scope = None) :
