@@ -15,7 +15,8 @@
 //    jQuery plugin for AJAX-enhanced forms
 //
 // Revision Dates
-//    18-Jan-2011 (CT) Creation
+//    28-Jan-2011 (CT) Creation
+//    30-Jan-2011 (CT) Creation continued
 //    ««revision-date»»···
 //--
 
@@ -35,8 +36,8 @@
         var elem, i, l = elems.length, result = [];
         for (i = 0; i < l; i += 1) {
             elem = create (elems [i]);
-            if (elem !== undefined) {
-                result.push (elem);
+            if (elem !== undefined and elem._id !== undefined) {
+                result.push (elem._id);
             }
         }
         return result;
@@ -53,16 +54,55 @@
                       this [name] = value;
                   }
               }
-              if (this.id !== undefined) {
-                  AFS.id_map [this.id] = this;
+              if (this._id !== undefined) {
+                  AFS.id_map [this._id] = this;
+              }
+          }
+        , var setup_value = function setup_value (value) {
+              var n, v, elem;
+              if (value._id == this._id) {
+                  this.value = value;
+              }
+              for (n in value) {
+                  if (value.hasOwnProperty (n) && n [0] !== "_") {
+                      v = value [n];
+                      if (v._id !== undefined) {
+                          elem = AFS.id_map [v._id];
+                          elem.setup_value (v);
+                      }
+                  }
               }
           }
         }
       , { type_name : "Element" }
     );
+    var Entity = Element.extend (
+        {}
+      , { type_name : "Entity" }
+    );
+    var Field = Element.extend (
+        {}
+      , { type_name : "Field" }
+    );
+    var Fieldset = Element.extend (
+        {}
+      , { type_name : "Fieldset" }
+    );
+    var Form = Element.extend (
+        { var init = function init (spec, value) {
+              this._super      (spec);
+              this.setup_value (value);
+          }
+        }
+      , { type_name : "Form" }
+    )
     $GTW.AFS = AFS = new $GTW.Module (
         { create   : create
         , Element  : Element
+        , Entity   : Entity
+        , Field    : Field
+        , Fieldset : Fieldset
+        , Form     : Form
         , id_map   : {}
         }
     );

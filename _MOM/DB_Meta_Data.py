@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -30,6 +30,7 @@
 #    13-Aug-2010 (CT) `COPY` changed to set `readonly` to `False`
 #    16-Aug-2010 (CT) `COPY` changed to use `_copy_ignore` and `NEW`
 #    16-Aug-2010 (CT) `NEW`  changed to pop from `kw`
+#    30-Jan-2011 (CT) `dbid` added
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ import _TFL.Environment
 import _TFL.Record
 
 import datetime
+import uuid
 
 class _MOM_DB_Meta_Data_ (TFL.Record) :
     """Provide meta data for MOM data base."""
@@ -68,6 +70,7 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
                 , user          =
                     getattr (scope, "user", TFL.Environment.username)
                 )
+            , dbid          = uuid.uuid4 ()
             , dbv_hash      = app_type.db_version_hash
             , guid          =
                 kw.pop ("guid", None) or getattr (scope, "guid", None)
