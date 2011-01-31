@@ -90,6 +90,9 @@
                           result.push (indent + name + " :");
                           r = inspect.show (value, filter, lev + 1); ;
                           break;
+                      case "string" :
+                          r = indent + name + " = \"" + value + "\"";
+                          break;
                       default :
                           r = indent + name + " = " + value;
                   }

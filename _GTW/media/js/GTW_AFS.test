@@ -9,5 +9,63 @@ load ("GTW.js")
 load ("GTW_AFS.js")
 load ("GTW_inspect.js")
 load ("GTW_jsonify.js")
-var x = new $GTW.AFS.Element ({ id : 1, name : "hansi", pid : 4711, cid : 42})
+var f = new $GTW.AFS.Form (
+    { _id      : 0
+    , children :
+        [ { _id       : "1"
+          , _pid      : 4711
+          , _cid      : 42
+          , name      : "Person"
+          , type      : "Entity"
+          , children  :
+              [ { _id        : "1\.1"
+                , name       : "last_name"
+                , type       : "Field"
+                }
+              , { _id        : "1\.2"
+                , name       : "first_name"
+                , type       : "Field"
+                }
+              , { _id        : "1\.3"
+                , name       : "sex"
+                , type       : "Field"
+                }
+              ]
+          }
+        , { _id       : "2"
+          , _pid      : 80
+          , _cid      : 45
+          , name      : "Boat_Type"
+          , type      : "Entity"
+          , children  :
+              [ { _id        : "2\.1"
+                , name       : "name"
+                , type       : "Field"
+                }
+              ]
+          }
+        ]
+    }
+  , [ { _id        : "1"
+      , last_name  :
+          { _id        : "1\.1"
+          , init       : "Tanzer"
+          }
+      , first_name :
+          { _id        : "1\.2"
+          , init       : "Christian"
+          }
+      , sex        :
+          { _id        : "1\.3"
+          , init       : "Male"
+          }
+      }
+    , { _id        : "2"
+      , name       :
+          { _id        : "2\.1"
+          , init       : "Laser"
+          }
+      }
+    ]
+);
 print ("$GTW :\n" + $GTW.inspect.show ($GTW, undefined, 1))

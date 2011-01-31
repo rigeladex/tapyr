@@ -36,7 +36,7 @@
         var elem, i, l = elems.length, result = [];
         for (i = 0; i < l; i += 1) {
             elem = create (elems [i]);
-            if (elem !== undefined && elem._id !== undefined) {
+            if (elem !== undefined && elem ["_id"] !== undefined) {
                 result.push (elem._id);
             }
         }
@@ -54,7 +54,7 @@
                       this [name] = value;
                   }
               }
-              if (this._id !== undefined) {
+              if (this ["_id"] !== undefined) {
                   AFS.id_map [this._id] = this;
               }
           }
@@ -66,7 +66,7 @@
               for (n in value) {
                   if (value.hasOwnProperty (n) && n [0] !== "_") {
                       v = value [n];
-                      if (v._id !== undefined) {
+                      if (v ["_id"] !== undefined) {
                           elem = AFS.id_map [v._id];
                           elem.setup_value (v);
                       }
