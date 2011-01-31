@@ -36,7 +36,7 @@
         var elem, i, l = elems.length, result = [];
         for (i = 0; i < l; i += 1) {
             elem = create (elems [i]);
-            if (elem !== undefined and elem._id !== undefined) {
+            if (elem !== undefined && elem._id !== undefined) {
                 result.push (elem._id);
             }
         }
@@ -58,7 +58,7 @@
                   AFS.id_map [this._id] = this;
               }
           }
-        , var setup_value = function setup_value (value) {
+        , setup_value : function setup_value (value) {
               var n, v, elem;
               if (value._id == this._id) {
                   this.value = value;
@@ -89,7 +89,7 @@
       , { type_name : "Fieldset" }
     );
     var Form = Element.extend (
-        { var init = function init (spec, value) {
+        { init : function init (spec, value) {
               this._super      (spec);
               this.setup_value (value);
           }
