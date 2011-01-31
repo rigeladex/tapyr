@@ -59,8 +59,8 @@
               }
           }
         , setup_value : function setup_value (value) {
-              var n, v, elem;
-              if (value._id == this._id) {
+              var id = value ["_id"], n, v, elem;
+              if (id !== undefined && id === this ["_id"]) {
                   this.value = value;
               }
               for (n in value) {
