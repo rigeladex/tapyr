@@ -13,9 +13,7 @@ var f = new $GTW.AFS.Form (
     { _id      : 0
     , children :
         [ { _id       : "1"
-          , _pid      : 4711
-          , _cid      : 42
-          , name      : "Person"
+          , name      : "PAP.Person"
           , type      : "Entity"
           , children  :
               [ { _id        : "1\.1"
@@ -33,9 +31,7 @@ var f = new $GTW.AFS.Form (
               ]
           }
         , { _id       : "2"
-          , _pid      : 80
-          , _cid      : 45
-          , name      : "Boat_Type"
+          , name      : "SRM.Boat_Type"
           , type      : "Entity"
           , children  :
               [ { _id        : "2\.1"
@@ -47,6 +43,8 @@ var f = new $GTW.AFS.Form (
         ]
     }
   , [ { _id        : "1"
+      , _pid       : 4711
+      , _cid       : 42
       , last_name  :
           { _id        : "1\.1"
           , init       : "Tanzer"
@@ -61,6 +59,8 @@ var f = new $GTW.AFS.Form (
           }
       }
     , { _id        : "2"
+      , _pid       : 80
+      , _cid       : 45
       , name       :
           { _id        : "2\.1"
           , init       : "Laser"
