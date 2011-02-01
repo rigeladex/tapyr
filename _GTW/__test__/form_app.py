@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -33,6 +33,7 @@
 #                     application creation simplified
 #     4-Aug-2010 (MG) Simplified to work with new `model.py`
 #    12-Aug-2010 (MG) `nav` fixture support added
+#     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,7 @@ class File_Upload_Page (GTW.NAV.Page) :
             )
         , scripts     =
             ( GTW.Script.jQuery_UI
-            , GTW.Script (src = "/media/GTW/js/GTW_File_Upload.js")
+            , GTW.Script (src = "/media/GTW/js/GTW/File_Upload.js")
             )
         )
 

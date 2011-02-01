@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -75,6 +75,7 @@
 #     4-Aug-2010 (MG) `Attribute_Inline_Description` render mode `table`
 #                     corrected
 #    19-Aug-2010 (MG) `Collection_Inline_Description.list_display` fixed
+#     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
 #    ««revision-date»»···
 #--
 
@@ -113,8 +114,8 @@ class _GTW_Inline_Description_ (TFL.Meta.Object) :
       , scripts     =
           ( GTW.Script._.jQuery
           , GTW.Script._.jQuery_UI
-          , GTW.Script (src = "/media/GTW/js/GTW_Button.js")
-          , GTW.Script (src = "/media/GTW/js/GTW_Form.js")
+          , GTW.Script (src = "/media/GTW/js/GTW/Button.js")
+          , GTW.Script (src = "/media/GTW/js/GTW/Form.js")
           , GTW.Script (src = "/media/GTW/js/MOM_Auto_Complete.js")
           )
      )

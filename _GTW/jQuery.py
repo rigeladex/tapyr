@@ -39,6 +39,7 @@
 #    20-Jan-2011 (CT) Functions `GTW_Gallery`, `GTW_Externalize`,
 #                     `GTW_pixpander`, `GTW_week_roller` renamed to lowercase
 #    26-Jan-2011 (CT) `GTW.js` added
+#     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
 #    ««revision-date»»···
 #--
 
@@ -78,7 +79,7 @@ GTW.Script \
     , sort_key = -50
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW_util.js", name = "GTW_util")
+GTW.Script      (src = "/media/GTW/js/GTW/util.js", name = "GTW_util")
 GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 GTW.JS_On_Ready \
     ( """$("a[href^='http://']").gtw_externalize ();
@@ -87,19 +88,19 @@ GTW.JS_On_Ready \
     , name = "GTW_Externalize"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW_Gallery.js", name = "GTW_Gallery")
+GTW.Script      (src = "/media/GTW/js/GTW/jQ/gallery.js", name = "GTW_Gallery")
 GTW.JS_On_Ready \
     ( """$(".thumbnails").gtw_gallery ({ delay : 2000 });"""
     , name = "GTW_Gallery"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW_Input.js", name = "GTW_Input")
+GTW.Script      (src = "/media/GTW/js/GTW/jQ/input.js", name = "GTW_Input")
 GTW.JS_On_Ready \
     ( """$("[placeholder]").gtw_input_placeholders ();"""
     , name = "GTW_Input_Placeholders"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW_Label.js", name = "GTW_Label")
+GTW.Script      (src = "/media/GTW/js/GTW/jQ/label.js", name = "GTW_Label")
 GTW.JS_On_Ready \
     ( """$("label[for]").gtw_label_clicker ();"""
     , name = "GTW_Label_Clicker"
@@ -109,14 +110,14 @@ GTW.JS_On_Ready \
     , name = "GTW_Label_As_Placeholder"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW_pixpander.js", name = "GTW_pixpander")
+GTW.Script      (src = "/media/GTW/js/GTW/jQ/pixpander.js", name = "GTW_pixpander")
 GTW.JS_On_Ready \
     ( """$("a[href$='.jpg'] > img").gtw_pixpander ();"""
       """$("a[href$='.png'] > img").gtw_pixpander ();"""
     , name = "GTW_pixpander"
     )
 
-GTW.Script (src = "/media/GTW/js/GTW_week_roller.js", name = "GTW_week_roller")
+GTW.Script (src = "/media/GTW/js/GTW/jQ/week_roller.js", name = "GTW_week_roller")
 GTW.JS_On_Ready \
     ( """$(".week-roller").gtw_week_roller (); """
     , name = "GTW_week_roller"
