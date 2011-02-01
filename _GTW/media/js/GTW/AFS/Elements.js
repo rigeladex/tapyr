@@ -9,10 +9,10 @@
 //
 //++
 // Name
-//    GTW_AFS
+//    GTW/AFS/Elements.js
 //
 // Purpose
-//    jQuery plugin for AJAX-enhanced forms
+//    Elements for AJAX-enhanced forms
 //
 // Revision Dates
 //    28-Jan-2011 (CT) Creation
@@ -22,11 +22,11 @@
 //--
 
 ( function () {
-    var AFS;
+    var Elements;
     var create = function create (spec) {
         var Type, type_name = spec ["type"];
         if (type_name !== undefined) {
-            Type = AFS [type_name];
+            Type = Elements [type_name];
             if (Type !== undefined) {
                 return new Type (spec);
             }
@@ -56,7 +56,7 @@
                   }
               }
               if (this ["$id"] !== undefined) {
-                  AFS.id_map [this.$id] = this;
+                  Elements.id_map [this.$id] = this;
               }
           }
         , setup_value : function setup_value (value) {
@@ -64,7 +64,7 @@
               this.value = value;
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
-                      child = AFS.id_map [this.children [i]];
+                      child = Elements.id_map [this.children [i]];
                       $id   = child ["$id"];
                       if ($id !== undefined) {
                           v = value [$id];
@@ -98,17 +98,21 @@
         }
       , { type_name : "Form" }
     )
-    $GTW.AFS = AFS = new $GTW.Module (
+    Elements = new $GTW.Module (
         { create   : create
         , Element  : Element
         , Entity   : Entity
         , Field    : Field
         , Fieldset : Fieldset
-        , Form     : Form
         , id_map   : {}
+        }
+    );
+    $GTW.AFS = new $GTW.Module (
+        { Elements : Elements
+        , Form     : Form
         }
     );
   } ()
 );
 
-// __END__ GTW_AFS.js
+// __END__ GTW/AFS/Elements.js

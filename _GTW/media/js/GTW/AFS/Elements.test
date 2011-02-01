@@ -1,14 +1,15 @@
 /*
 Run this like::
-    $ /usr/bin/js -s -f GTW_AFS.test -i
+    $ /usr/bin/js -s -f GTW/AFS/Elements.test -i
 
-to get an interactive Javascript shell with GTW.js and GTW_AFS.js loaded
+to get an interactive Javascript shell with GTW.js and GTW/AFS/Elements.js
+loaded
 
 */
 load ("GTW.js")
-load ("GTW_AFS.js")
-load ("GTW_inspect.js")
-load ("GTW_jsonify.js")
+load ("GTW/AFS/Elements.js")
+load ("GTW/inspect.js")
+load ("GTW/jsonify.js")
 var f = new $GTW.AFS.Form (
     { $id      : "F:"
     , children :
