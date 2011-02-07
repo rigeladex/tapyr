@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -51,6 +51,7 @@
 #    27-Mar-2009 (CT) `account_format` and `_update_account_entry` changed to
 #                     allow line-specific date (for `Abgang`)
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#     7-Feb-2011 (CT) `cat` and `total_per_cat` added
 #    ««revision-date»»···
 #--
 
@@ -123,12 +124,14 @@ class IFB (_IFB_) :
 
 class Anlagen_Entry (_Base_, _Entry_) :
 
+    cat            = "Normal"
     rate_pattern   = r"(?P<rate> [-+*/().0-9\s]+)"
     first_rate_pat = Regexp (rate_pattern, re.X)
     later_rate_pat = Regexp \
         ( r"(?P<year> \d\d (?: \d\d)?) \s* : \s* " + rate_pattern
         , re.X
         )
+    _cat_pat       = Regexp (r"C\[(?P<cat> [^]]+)\]", re.VERBOSE)
 
     def __init__ (self, line, anlagenverzeichnis) :
         try :
@@ -175,6 +178,7 @@ class Anlagen_Entry (_Base_, _Entry_) :
             self.ifb         = FBiG (self, ifb, source_currency)
         else :
             self.ifb         = IFB  (self, ifb, source_currency)
+        self._set_cat (self.flags)
     # end def __init__
 
     @property
@@ -258,6 +262,12 @@ class Anlagen_Entry (_Base_, _Entry_) :
             self.current_rate = 100.0 - self.past_total_rate
     # end def _calc_rates
 
+    def _set_cat (self, flags) :
+        pat = self._cat_pat
+        if pat.search (flags) :
+            self.cat = pat.cat
+    # end def _set_cat
+
 # end class Anlagen_Entry
 
 class Anlagenverzeichnis (_Base_) :
@@ -300,6 +310,7 @@ class Anlagenverzeichnis (_Base_) :
         self.total_out_value    = source_currency (0.0)
         self.total_ifb_value    = source_currency (0.0)
         self.total_depreciation = source_currency (0.0)
+        self.total_per_cat      = defaultdict     (EUR)
         self._setup_dates (year)
         self.add_file     (file_name)
     # end def __init__
@@ -340,15 +351,16 @@ class Anlagenverzeichnis (_Base_) :
                 continue
             e.evaluate ()
             if e.active :
-                self.total_birth_value   += e.birth_value
-                self.total_head_value    += e.head_value
-                self.total_tail_value    += e.tail_value
-                self.total_new_value     += e.new_value
-                self.total_out_value     += e.out_value
-                self.total_depreciation  += e.current_depreciation
+                self.total_birth_value     += e.birth_value
+                self.total_head_value      += e.head_value
+                self.total_tail_value      += e.tail_value
+                self.total_new_value       += e.new_value
+                self.total_out_value       += e.out_value
+                self.total_depreciation    += e.current_depreciation
+                self.total_per_cat [e.cat] += e.current_depreciation
             if e.ifb and e.ifb.is_new :
-                self.ifb_type             = e.ifb.__class__
-                self.total_ifb_value     += e.ifb.value
+                self.ifb_type               = e.ifb.__class__
+                self.total_ifb_value       += e.ifb.value
     # end def evaluate
 
     def write (self) :
@@ -374,6 +386,9 @@ class Anlagenverzeichnis (_Base_) :
                 , self.total_tail_value
                 )
               )
+        if len (self.total_per_cat) > 1 :
+            for k, v in sorted (self.total_per_cat.iteritems ()) :
+                print (self.out_format % ("", "", "", "", k, v))
         print self.new_format % ("Neuzugänge", "", "", self.total_new_value)
         print ( self.out_format
               % ( "Abgänge", "", "", "", "", self.total_out_value)
