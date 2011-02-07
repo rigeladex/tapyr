@@ -1,6 +1,14 @@
 GTW.AFS to-to
 ==============
 
+- Ids:
+
+  * ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
+    followed by any number of letters, digits ([0-9]), hyphens ("-"),
+    underscores ("_"), colons (":"), and periods (".").
+
+    http://www.w3.org/TR/html4/types.html#h-6.2
+
 - Display
 
   * hover labels (Res06, pp.186-8)

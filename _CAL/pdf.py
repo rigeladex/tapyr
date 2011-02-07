@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -49,6 +49,7 @@
 #    16-Jun-2010 (CT) Encode holiday names with `TFL.I18N.Config.encoding`
 #    16-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
+#     5-Feb-2011 (CT) `PDF_Plan_Year` added
 #    ««revision-date»»···
 #--
 
@@ -78,7 +79,9 @@ class PDF_P (TFL.Meta.Object) :
     xsiz   = 21.0 * cm
     ysiz   = 29.7 * cm
     xo     = 0.5  * cm
+    xof    = 1.0
     yo     = 0.5  * cm
+    yof    = 1.0
     ts     = 30
     lw     = 1.0
     font   = "Helvetica"
@@ -172,6 +175,8 @@ class PDF_Plan (PDF_P) :
         yo = self.yo
         xl = self.xl
         yl = self.yl
+        xd = xl - xo * self.xof
+        yd = yl - yo * self.yof
         ds = (yl - self.yo - 1 * self.cm) / self.dpu
         xs = [(xo + i * xl) for i in range (self.wpx)]
         ys = [(yo + i * yl) for i in range (self.wpy)]
@@ -179,7 +184,7 @@ class PDF_Plan (PDF_P) :
         while True :
             for y in ys :
                 for x in xs :
-                    yield (x, x + xl - xo), (y + 0.3, y + 0.3 + yl - yo), ds
+                    yield (x, x + xd), (y + 0.3, y + 0.3 + yd), ds
             c.showPage ()
     # end def page_generator
 
@@ -203,9 +208,11 @@ class PDF_Plan (PDF_P) :
 
 class PDF_Plan_Month (PDF_Plan) :
 
-    dpu    = 31
-    dark   = 0.500, 0.500, 0.500
-    darker = 0.400, 0.400, 0.400
+    dpu      = 31
+    dark     = 0.500, 0.500, 0.500
+    darker   = 0.400, 0.400, 0.400
+    head_fmt = "%B %Y"
+    rjd_fmt  = "[%d-%d]"
 
     def __init__ (self, Y, filename, first_month = 1, last_month = 12, ** kw) :
         self.__super.__init__ (Y, filename, first_month, last_month + 1, ** kw)
@@ -245,11 +252,12 @@ class PDF_Plan_Month (PDF_Plan) :
         y = y + dpu * ds
         self.draw_line (c, x, y, xl, y, self.dark)
         c.setFont (font, ts // 2)
-        txt = m.head.formatted ("%B %Y")
+        txt = m.head.formatted (self.head_fmt)
         self.draw_text (c, x + 0.1 * cm, y + 0.2 * cm, txt, self.blue)
         c.setFont (font, ts // 5)
-        txt = "[%d-%d]" % (m.head.rjd, m.tail.rjd)
-        self.draw_text (c, xl, y + 0.2 * cm, txt, self.gray, True)
+        if self.rjd_fmt :
+            txt = self.rjd_fmt % (m.head.rjd, m.tail.rjd)
+            self.draw_text (c, xl, y + 0.2 * cm, txt, self.gray, True)
         for d in m.days :
             y -= ds
             self.one_day (c, d, ds, x, xl, y, yl, font, ts, cm, mm)
@@ -326,6 +334,22 @@ class PDF_Plan_Week (PDF_Plan) :
 
 # end class PDF_Plan_Week
 
+class PDF_Plan_Year (PDF_Plan_Month) :
+
+    xo       = 0.25 * PDF_P.cm
+    xof      = 0.25
+    yo       = 0.25 * PDF_P.cm
+    wpx      = 6
+    wpy      = 2
+    head_fmt = "%b %Y"
+
+    def seq_generator (self, first, last, wpp) :
+        for w in range (first, last) :
+            yield w
+    # end def seq_generator
+
+# end class PDF_Plan_Year
+
 class PDF_Plan_Month_L (PDF_L, PDF_Plan_Month) :
 
     pass
@@ -338,6 +362,15 @@ class PDF_Plan_Week_L (PDF_L, PDF_Plan_Week) :
 
 # end class PDF_Plan_Week_L
 
+class PDF_Plan_Year_L (PDF_L, PDF_Plan_Year) :
+
+    xo       = 0.25 * PDF_P.cm
+    yo       = 0.25 * PDF_P.cm
+    wpx      = 6
+    wpy      = 1
+
+# end class PDF_Plan_Year_L
+
 def _main (cmd) :
     year      = cmd.year
     head      = cmd.head
@@ -346,10 +379,12 @@ def _main (cmd) :
     Y         = CAL.Year  (year)
     file_name = sos.path.join (path, cmd.filename)
     pdf_name  = Filename (cmd.pdf or ("plan_%s.pdf" % year), ".pdf").name
+    head      = cmd.head or 1
+    tail      = cmd.tail or 12
     if cmd.monthly :
         Plan  = [PDF_Plan_Month, PDF_Plan_Month_L] [bool (cmd.landscape)]
-        head  = cmd.head or 1
-        tail  = cmd.tail or 12
+    elif cmd.Yearly :
+        Plan  = [PDF_Plan_Year, PDF_Plan_Year_L] [bool (cmd.landscape)]
     else :
         Plan  = [PDF_Plan_Week, PDF_Plan_Week_L] [bool (cmd.landscape)]
         head  = cmd.head or 0
@@ -379,11 +414,12 @@ _Command = TFL.CAO.Cmd \
         , "monthly:B?Generate monthly instead of weekly sheets"
         , "pdf:S=?Generate PDF file with plan"
         , "tail:I?Number of last week/month to process"
-        , "XL:F?X length of one week (in cm)"
-        , "XO:F=0.9?X offset of one week (in cm relative to XL)"
-        , "YL:F?Y length of one week"
-        , "YO:F=0.5?Y offset of one week (in cm relative to YL)"
+        , "XL:F?X length of one week/month (in cm)"
+        , "XO:F=0.9?X offset of one week/month (in cm relative to XL)"
+        , "YL:F?Y length of one week/month"
+        , "YO:F=0.5?Y offset of one week/month (in cm relative to YL)"
         , "year:I=%d?Year for which to process calendar" % (CAL.Date ().year, )
+        , "Yearly:B?Generate yearly instead of weekly sheets"
         )
     , max_args    = 0
 )

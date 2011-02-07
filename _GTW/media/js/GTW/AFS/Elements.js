@@ -18,6 +18,7 @@
 //    28-Jan-2011 (CT) Creation
 //    30-Jan-2011 (CT) Creation continued
 //    31-Jan-2011 (CT) Creation continued..
+//     6-Feb-2011 (CT) Creation continued...
 //    ««revision-date»»···
 //--
 
@@ -85,6 +86,10 @@
     var Field = Element.extend (
         {}
       , { type_name : "Field" }
+    );
+    var Field_Composite = Element.extend (
+        {}
+      , { type_name : "Field_Composite" }
     );
     var Fieldset = Element.extend (
         {}
