@@ -99,8 +99,6 @@ class _Element_ (TFL.Meta.Object) :
 
     def copy (self, ** kw) :
         ckw = dict (self.kw, ** kw)
-        if "id" not in kw :
-            ckw.update (id = self.id, REGISTER = False)
         return self.__class__ \
             ( children =
                 [c.copy () for c in self.children] if self.children else None
@@ -216,6 +214,18 @@ class Form (_Element_) :
         self.__super.__init__ (id = id, children = children, ** kw)
         self._id_children     (id, children, self.id_map)
     # end def __init__
+
+    @Once_Property
+    def dynamic_children_p (self) :
+        s = Entity_List.id_sep
+        return any ((s in id) for id in self.id_map)
+    # end def dynamic_children_p
+
+    def copy (self, ** kw) :
+        if "id" not in kw :
+            kw = dict (kw, id = self.id, REGISTER = False)
+        return self.__super.copy (** kw)
+    # end def copy
 
 # end class Form
 
