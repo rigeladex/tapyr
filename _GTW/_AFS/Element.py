@@ -78,10 +78,7 @@ class _Element_ (TFL.Meta.Object) :
 
     @Once_Property
     def as_json_cargo (self) :
-        result = dict \
-            ( self.kw
-            , type     = self.__class__.__name__
-            )
+        result = dict (self.kw, type = self.__class__.__name__)
         if self.children :
             result ["children"] = [c.as_json_cargo for c in self.children]
         result ["$id"] = self.id
@@ -98,12 +95,9 @@ class _Element_ (TFL.Meta.Object) :
     # end def child_id
 
     def copy (self, ** kw) :
-        ckw = dict (self.kw, ** kw)
-        return self.__class__ \
-            ( children =
-                [c.copy () for c in self.children] if self.children else None
-            , ** ckw
-            )
+        ckw      = dict (self.kw, ** kw)
+        children = [c.copy () for c in self.children] if self.children else None
+        return self.__class__ (children = children, ** ckw)
     # end def copy
 
     def _id_children (self, id, children, id_map) :
