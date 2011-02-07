@@ -45,6 +45,10 @@ import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
 
+### Add support for CSS3 elements that need browser-prefixes (e.g.,
+### border-radius, ...)
+### http://www.usabilitypost.com/2011/02/05/simplify-css-with-less-elements/
+
 def Kits (* ds, ** kw) :
     result = {}
     for d in ds :
