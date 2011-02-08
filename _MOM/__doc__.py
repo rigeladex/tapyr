@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -55,6 +55,7 @@
 #     1-Sep-2010 (CT) Tests for `Q.attr`, `Q.attrs`, and `Q.set` added
 #    28-Sep-2010 (CT) Adapted to change of `epk_raw`
 #    20-Dec-2010 (CT) Python 2.7 compatibility
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -195,7 +196,7 @@ class Rodent (_Ancestor_Essence) :
         class weight (A_Float) :
             """Weight of the rodent"""
 
-            kind     = Attr.Required
+            kind     = Attr.Necessary
             check    = ("value > 0", )
 
         # end class weight
@@ -717,14 +718,14 @@ The app-type specific entity-types are ready to be used by
     [String `last_name`, String `first_name`, String `middle_name`]
     >>> [attr.__class__.__name__ for attr in ET_Person.primary]
     ['Primary__Raw_Value', 'Primary__Raw_Value', 'Primary_Optional__Raw_Value']
-    >>> ET_Person.required
+    >>> ET_Person.necessary
     []
     >>> ET_Person.optional
     []
 
     >>> ET_Mouse.primary
     [Name `name`]
-    >>> ET_Mouse.required
+    >>> ET_Mouse.necessary
     [Float `weight`]
     >>> ET_Mouse.optional
     [String `color`]
@@ -1285,7 +1286,7 @@ Changing objects and links
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...
-    Invalid_Attribute: Can't set required attribute Mouse.weight to `one ton`
+    Invalid_Attribute: Can't set necessary attribute Mouse.weight to `one ton`
         `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`
@@ -1479,9 +1480,9 @@ Scope queries
 
     >>> for e in scope.g_incorrect () :
     ...     print list (str (x).replace (NL, " ") for x in e.errors)
-    ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
-    ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
-    ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
+    ['Condition `completely_defined` : All necessary attributes must be defined.      Necessary attribute Float `weight` is not defined']
+    ['Condition `completely_defined` : All necessary attributes must be defined.      Necessary attribute Float `weight` is not defined']
+    ['Condition `completely_defined` : All necessary attributes must be defined.      Necessary attribute Float `weight` is not defined']
 
     >>> len (scope.uncommitted_changes)
     37

@@ -105,7 +105,7 @@ class Page_Mixin (_Ancestor_Essence) :
         class text (A_Text) :
             """Text for web page in markup specified by `format`."""
 
-            kind               = Attr.Mandatory
+            kind               = Attr.Required
 
         # end class text
 

@@ -49,7 +49,7 @@ class Gallery (_Ancestor_Essence) :
         class directory (A_Dirname) :
             """Directory where pictures of gallery are stored."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
 
         # end class directory
 

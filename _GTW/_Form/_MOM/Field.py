@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -32,6 +32,7 @@
 #    26-Feb-2010 (MG) `get_cooked` added
 #    10-Mar-2010 (CT) s/named_object/named_value/
 #     3-May-2010 (MG) New form handling implemented
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -63,10 +64,10 @@ MAT.A_Text.widget              = WS ("html/field.jnj, text")
 MAT._A_Named_Value_.widget     = WS ("html/field.jnj, named_value")
 
 MAT.Kind.css_class             = ""
-MAT.Primary.css_class          = "Mandatory"
+MAT.Primary.css_class          = "Required"
 MAT.Primary_Optional.css_class = "Optional"
-MAT.Mandatory.css_class        = "Mandatory"
 MAT.Required.css_class         = "Required"
+MAT.Necessary.css_class        = "Necessary"
 MAT.Optional.css_class         = "Optional"
 
 MER                            = MOM.Error

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -160,6 +160,7 @@
 #                     `epk`, if possible
 #    17-Nov-2010 (CT) `sort_rank` added
 #    22-Nov-2010 (CT) `A_Euro_Amount` and `A_Year` added, `_A_Decimal_` factored
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -265,8 +266,8 @@ class A_Attr_Type (object) :
     # end def example
 
     def __init__ (self, kind) :
-        self.kind         = kind
-        self.is_mandatory = kind.is_mandatory
+        self.kind        = kind
+        self.is_required = kind.is_required
     # end def __init__
 
     @classmethod
@@ -1752,7 +1753,7 @@ Class `MOM.Attr.A_Attr_Type`
 
       `default` **must** not be specified for
       :class:`~_MOM._Attr.Kind.Primary` and
-      :class:`~_MOM._Attr.Kind.Required` attributes.
+      :class:`~_MOM._Attr.Kind.Necessary` attributes.
 
     .. attribute:: computed
 

@@ -181,7 +181,7 @@ class Picture (_Ancestor_Essence) :
         class photo (A_2D_Int) :
             """Picture."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             C_Type             = _Pic_
             typ                = "Picture"
 
@@ -190,7 +190,7 @@ class Picture (_Ancestor_Essence) :
         class thumb (A_2D_Int) :
             """Thumbnail"""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             C_Type             = _Thumb_
             typ                = "Thumbnail"
 

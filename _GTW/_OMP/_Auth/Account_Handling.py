@@ -167,7 +167,7 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
         class expires (A_Date_Time) :
             """Exipre time of this action"""
 
-            kind          = Attr.Required
+            kind          = Attr.Necessary
 
         # end class expires
 
@@ -227,7 +227,7 @@ class Account_Password_Reset (_Ancestor_Essence) :
         class password (A_String) :
             """The temporary password."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
 
         # end class password
 

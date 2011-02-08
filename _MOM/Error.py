@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -42,6 +42,7 @@
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    22-Jun-2010 (CT) `is_mandatory` added
 #    30-Jun-2010 (CT) `Readonly_DB` added
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -63,8 +64,8 @@ class Exception_Handled (Exception) :
 class Error (StandardError) :
     """Root class of MOM exceptions"""
 
-    arg_sep      = u", "
-    is_mandatory = False
+    arg_sep     = u", "
+    is_required = False
 
     def str_arg (self, args) :
         return (unicode (a) for a in args if a)
@@ -100,17 +101,17 @@ class Invalid_Seq_Nr (Error) :
     """Raised when an invalid sequence number is given for an ordered link to be created."""
 # end class Invalid_Seq_Nr
 
-class Mandatory_Missing (Error) :
-    """Raised when a mandatory attribute is missing."""
+class Required_Missing (Error) :
+    """Raised when a required attribute is missing."""
 
-    arg_sep      = " "
-    is_mandatory = True
+    arg_sep     = " "
+    is_required = True
 
     def __init__ (self, missing, provided) :
         self.missing  = missing
         self.provided = provided
         self.args     = \
-            ( "Mandatory argument"
+            ( "Required argument"
             , "s" if len (missing) > 1 else ""
             , ", ".join (repr (m) for m in missing)
             , "are" if len (missing) > 1 else "is"
@@ -119,7 +120,7 @@ class Mandatory_Missing (Error) :
             )
     # end def __init__
 
-# end class Mandatory_Missing
+# end class Required_Missing
 
 class Name_Clash (Error) :
     """Raised when one name is used for more than one object."""
@@ -263,7 +264,7 @@ class Invariant_Error (_Invariant_Error_) :
         _Invariant_Error_.__init__ (self, obj)
         self.args           = (obj, inv, violators, violators_attr)
         self.inv            = inv
-        self.is_mandatory   = inv.is_mandatory
+        self.is_required    = inv.is_required
         self.attributes     = inv.attributes + inv.attr_none
         self.extra_links    = list (inv.extra_links ())
         self.val_dict       = dict (inv.val_dict)
@@ -411,7 +412,7 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
         self.obj          = obj
         self.attributes   = (attr, )
         self.attr         = attr
-        self.is_mandatory = attr.is_mandatory
+        self.is_required  = attr.is_required
         self.val          = val
         self.exc_str      = exc_str
     # end def __init__

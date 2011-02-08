@@ -79,7 +79,7 @@ class Race_Result (_Ancestor_Essence) :
         class points (A_Int) :
             """Points of boat in this race."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             min_value          = 1
             rank               = 1
 

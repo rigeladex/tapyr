@@ -47,7 +47,7 @@ class _D2_Value_ (_Ancestor_Essence) :
         class x (A_Attr_Type) :
             """Value in x (horizontal) direction."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             rank               = 1
 
         # end class x
@@ -55,7 +55,7 @@ class _D2_Value_ (_Ancestor_Essence) :
         class y (A_Attr_Type) :
             """Value in y (vertical) direction."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             rank               = 2
 
         # end class y

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package _MOM.
@@ -81,7 +81,7 @@ class named `_Predicates` that is derived from
         class _Predicates (MOM.Object._Predicates) :
 
             class completely_defined (Pred.Condition) :
-                "All required attributes must be defined."
+                "All necessary attributes must be defined."
 
                 kind          = Pred.System
                 guard         = "is_used"

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -103,6 +103,7 @@
 #                     to `cls` (property `M_E_Type.Class` removed)
 #    13-Oct-2010 (CT) `default_child` added
 #    17-Nov-2010 (CT) `_m_setup_sorted_by` changed to honor `sort_rank`
+#     8-Feb-2011 (CT) s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -633,8 +634,8 @@ class M_E_Type (M_E_Mixin) :
                                     ) % (cls, attr.kind, an, cls.type_name, pn)
                         else :
                             P._attr_map [attr.attr].append (pn)
-                            if attr.is_mandatory :
-                                pv.pred.is_mandatory = True
+                            if attr.is_required :
+                                pv.pred.is_required = True
         P._syntax_checks = \
             [  a for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)

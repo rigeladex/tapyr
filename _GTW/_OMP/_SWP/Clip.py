@@ -76,7 +76,7 @@ class Clip_O (_Ancestor_Essence) :
         class abstract (A_Text) :
             """Text for news clip in markup specified by `format`."""
 
-            kind               = Attr.Mandatory
+            kind               = Attr.Required
 
         # end class abstract
 

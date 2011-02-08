@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -37,6 +37,7 @@
 #    25-Feb-2010 (CT) `check_always` added
 #    11-Mar-2010 (CT) `check_always` removed (was a Bad Idea (tm))
 #    22-Jun-2010 (CT) `is_mandatory` added
+#     8-Feb-2011 (CT) s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,7 @@ class _Condition_ (object):
     guard           = None
     guard_attr      = ()
     guard_code      = None
-    is_mandatory    = False ### set by meta machinery
+    is_required     = False ### set by meta machinery
     parameters      = ()
     rank            = 1
     renameds        = () ### only for compatibility with MOM.Attr.Type

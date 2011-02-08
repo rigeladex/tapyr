@@ -99,7 +99,7 @@ class Date_Interval (_Ancestor_Essence) :
         class start (A_Date) :
             """Start date of interval"""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             rank               = 1
 
         # end class start

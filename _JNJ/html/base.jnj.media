@@ -30,6 +30,7 @@
 #     4-Jan-2011 (CT)         ...finished
 #     5-Jan-2011 (CT) `print_sheet` added
 #    11-Jan-2011 (CT) `tablesorter` added
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -240,11 +241,11 @@ style_sheet = Style_Sheet \
         ( "input", "select", "textarea"
         , children  =
             [ Rule_Class
-                ( "Mandatory"
+                ( "Required"
                 , border_width = Px (2)
                 )
             , Rule_Class
-                ( "Required"
+                ( "Necessary"
                 , border_width = TRBL0 (b = Px (2), default = Px (1))
                 )
             ]

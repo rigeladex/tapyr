@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -154,6 +154,7 @@
 #                     and `from_pickle_cargo` of `__super` to support
 #                     `attr.Pickler`, if any
 #     9-Dec-2010 (CT) `_Auto_Update_Lazy_Mixin_` added
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -181,8 +182,8 @@ class Kind (MOM.Prop.Kind) :
     attr                  = None
     db_sig_version        = 0
     electric              = True
-    is_mandatory          = False
     is_primary            = False
+    is_required           = False
     is_settable           = True
     needs_raw_value       = False
     prop                  = TFL.Meta.Alias_Property ("attr")
@@ -238,7 +239,7 @@ class Kind (MOM.Prop.Kind) :
     def db_sig (self) :
         return \
             ( self.db_sig_version
-            , self.is_mandatory
+            , self.is_required
             , self.is_primary
             , self.needs_raw_value
             , self.attr.db_sig
@@ -501,10 +502,10 @@ class _EPK_Mixin_ (Kind) :
 
 # end class _EPK_Mixin_
 
-class _Mandatory_Mixin_ (Kind) :
+class _Required_Mixin_ (Kind) :
     """Mixin for enforcing that an attribute always has a value"""
 
-    is_mandatory          = True
+    is_required          = True
 
     def _checkers (self, e_type) :
         yield "value is not None and value != ''", (self.name, )
@@ -512,7 +513,7 @@ class _Mandatory_Mixin_ (Kind) :
             yield c
     # end def _checkers
 
-# end class _Mandatory_Mixin_
+# end class _Required_Mixin_
 
 class _Auto_Update_Mixin_ (Kind) :
     """Mixin to auto-update an attribute after changes of any other attribute
@@ -896,7 +897,7 @@ class _Primary_ (_User_) :
 
 # end class _Primary_
 
-class Primary (_Mandatory_Mixin_, _Primary_) :
+class Primary (_Required_Mixin_, _Primary_) :
     """Primary attribute: must be defined at all times, used as part of the
        `essential primary key`.
     """
@@ -960,10 +961,10 @@ class Link_Role (_EPK_Mixin_, Primary) :
 
 # end class Link_Role
 
-class Mandatory (_Mandatory_Mixin_, _User_) :
-    """Mandatory attribute: must immediately be defined by the tool user."""
+class Required (_Required_Mixin_, _User_) :
+    """Required attribute: must immediately be defined by the tool user."""
 
-    kind        = "mandatory"
+    kind        = "required"
     void_values = (None, "")
 
     _k_rank     = -5
@@ -972,19 +973,19 @@ class Mandatory (_Mandatory_Mixin_, _User_) :
         return True
     # end def to_save
 
-# end class Mandatory
+# end class Required
 
-class Required (_User_) :
-    """Required attribute: must eventually be defined by the tool user."""
+class Necessary (_User_) :
+    """Necessary attribute: must eventually be defined by the tool user."""
 
-    kind        = "required"
+    kind        = "necessary"
     _k_rank     = -4
 
     def to_save (self, obj) :
         return self.has_substance (obj)
     # end def to_save
 
-# end class Required
+# end class Necessary
 
 class Optional (_User_) :
     """Optional attribute: if undefined, the `default` value is used, if any."""
@@ -1307,7 +1308,7 @@ Class `MOM.Attr.Kind`
     the `type` to the kind's `__init__`.
 
     Some kinds of attributes are stored into the database, e.g.,
-    :class:`Primary`, :class:`Required`, :class:`Optional` (and its
+    :class:`Primary`, :class:`Necessary`, :class:`Optional` (and its
     descendents), and :class:`Internal`, others are not, e.g., the various
     kinds of cached and computed attributes.
 
@@ -1316,8 +1317,8 @@ Class `MOM.Attr.Kind`
 
 .. autoclass:: Primary
 .. autoclass:: Primary_Optional
-.. autoclass:: Mandatory
 .. autoclass:: Required
+.. autoclass:: Necessary
 .. autoclass:: Optional
 
 .. autoclass:: Internal

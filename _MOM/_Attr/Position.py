@@ -54,7 +54,7 @@ class Position (_Ancestor_Essence) :
         class lat (A_Float) :
             """Latitude"""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             example            = u"42"
             min_value          = -90.0
             max_value          = +90.0
@@ -65,7 +65,7 @@ class Position (_Ancestor_Essence) :
         class lon (A_Float) :
             """Longitude"""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             example            = u"137"
             min_value          = -180.0
             max_value          = +180.0

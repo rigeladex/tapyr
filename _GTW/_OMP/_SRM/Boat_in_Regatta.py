@@ -131,7 +131,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Skipper of boat."""
 
             Class              = GTW.OMP.SRM.Sailor
-            kind               = Attr.Mandatory
+            kind               = Attr.Required
 
         # end class skipper
 

@@ -122,7 +122,7 @@ class Object_PN (_Ancestor_Essence) :
         class short_title (A_String) :
             """Short title (used in navigation)."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             max_length         = 30
 
         # end class title
@@ -130,7 +130,7 @@ class Object_PN (_Ancestor_Essence) :
         class title (A_String) :
             """Title of the web page"""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
             max_length         = 120
 
         # end class title

@@ -79,7 +79,7 @@ class Boat_Class (_Ancestor_Essence) :
         class max_crew (A_Int) :
             """Maximum number of crew for this class of sailboats."""
 
-            kind               = Attr.Mandatory
+            kind               = Attr.Required
             max_value          = 4
             min_value          = 1
 

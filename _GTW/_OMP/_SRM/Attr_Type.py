@@ -109,7 +109,7 @@ class Regatta_Result (_Ancestor_Essence) :
         class date (A_Date_Time) :
             """Date of regatta result."""
 
-            kind               = Attr.Required
+            kind               = Attr.Necessary
 
         # end class date
 

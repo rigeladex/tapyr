@@ -120,7 +120,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
         class sex (A_Sex) :
 
-            kind           = Attr.Required
+            kind           = Attr.Necessary
 
         # end class sex
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,7 @@
 #                     instead of home-grown code
 #    11-Mar-2010 (CT) `check_kind` change of `25-Feb` revoked
 #    22-Jun-2010 (CT) `mandatory_errors` and `missing_mandatory` added
+#     8-Feb-2011 (CT) s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ class Manager (TFL.Meta.Object) :
     def reset_predicates (self) :
         self.errors   = errors   = {}
         self.warnings = warnings = {}
-        self.missing_mandatory   = None
+        self.missing_required   = None
         for k in self.pred_kind.iterkeys () :
             errors   [k] = []
             warnings [k] = []
@@ -127,21 +128,21 @@ class Manager (TFL.Meta.Object) :
     # end def check_kind
 
     @TFL.Meta.Once_Property
-    def mandatory (self) :
-        return tuple (p for p in self.pred_kind ["object"] if p.is_mandatory)
-    # end def mandatory
+    def required (self) :
+        return tuple (p for p in self.pred_kind ["object"] if p.is_required)
+    # end def required
 
     @property
-    def mandatory_errors (self) :
+    def required_errors (self) :
         result = []
-        if self.missing_mandatory :
-            result.append (self.missing_mandatory)
+        if self.missing_required :
+            result.append (self.missing_required)
         result.extend \
             ( e for e in self.errors ["object"]
-            if getattr (e, "is_mandatory", False)
+            if getattr (e, "is_required", False)
             )
         return result
-    # end def mandatory_errors
+    # end def required_errors
 
     def __getattr__ (self, name) :
         prefix = "check_"

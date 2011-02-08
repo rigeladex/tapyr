@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -162,6 +162,7 @@
 #    14-Oct-2010 (CT) `init_finished` added
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `electric`
 #    22-Dec-2010 (CT) `is_relevant` moved from `Id_Entity` to `Entity`
+#     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    ««revision-date»»···
 #--
 
@@ -511,16 +512,16 @@ class Entity (TFL.Meta.Object) :
         self._pred_man  = MOM.Pred.Manager (self._Predicates)
     # end def _init_meta_attrs
 
-    def _kw_check_mandatory (self, attr_dict, on_error = None) :
+    def _kw_check_required (self, attr_dict, on_error = None) :
         missing = list \
-            (k for k in (m.name for m in self.mandatory) if k not in attr_dict)
+            (k for k in (m.name for m in self.required) if k not in attr_dict)
         if missing :
             if on_error is None :
                 on_error = self._raise_attr_error
-            error = self._pred_man.missing_mandatory = \
-                MOM.Error.Mandatory_Missing (missing, list (attr_dict))
+            error = self._pred_man.missing_required = \
+                MOM.Error.Required_Missing (missing, list (attr_dict))
             on_error (error)
-    # end def _kw_check_mandatory
+    # end def _kw_check_required
 
     def _kw_check_predicates (self, attr_dict, on_error, kind = "object") :
         result = not self.is_correct (attr_dict, kind)
@@ -700,7 +701,7 @@ class An_Entity (Entity) :
 
     @classmethod
     def example_attrs (cls, full = False) :
-        attrs = cls.user_attr if full else cls.mandatory
+        attrs = cls.user_attr if full else cls.required
         return dict ((a.name, a.example) for a in attrs)
     # end def example_attrs
 
@@ -750,7 +751,7 @@ class An_Entity (Entity) :
 
     def _main__init__ (self, * args, ** kw) :
         raw = bool (kw.pop ("raw", False))
-        self._kw_check_mandatory (kw)
+        self._kw_check_required (kw)
         if kw :
             set = (self._set_ckd, self._set_raw) [raw]
             set (** kw)
@@ -859,7 +860,7 @@ class Id_Entity (Entity) :
     class _Predicates (Entity._Predicates) :
 
         class completely_defined (Pred.Condition) :
-            """All required attributes must be defined."""
+            """All necessary attributes must be defined."""
 
             kind          = Pred.System
             guard         = "is_used"
@@ -868,9 +869,9 @@ class Id_Entity (Entity) :
             def eval_condition (self, obj, glob_dict, val_dict) :
                 result = []
                 add    = result.append
-                for a in obj.required :
+                for a in obj.necessary :
                     if not a.has_substance (obj) :
-                        add ("Required attribute %s is not defined" % (a, ))
+                        add ("Necessary attribute %s is not defined" % (a, ))
                 self._error_info.extend (result)
                 return not result
             # end def eval_condition
@@ -1044,7 +1045,7 @@ class Id_Entity (Entity) :
     @classmethod
     def example_attrs (cls, full = False) :
         attrs = itertools.chain \
-            (cls.primary, cls.user_attr if full else cls.mandatory)
+            (cls.primary, cls.user_attr if full else cls.required)
         return dict ((a.name, a.example) for a in attrs)
     # end def example_attrs
 
@@ -1078,7 +1079,7 @@ class Id_Entity (Entity) :
     def is_defined (self)  :
         return \
             (  (not self.is_used)
-            or all (a.has_substance (self) for a in self.required)
+            or all (a.has_substance (self) for a in self.necessary)
             )
     # end def is_defined
 
@@ -1211,13 +1212,13 @@ class Id_Entity (Entity) :
         raw      = bool (kw.pop ("raw", False))
         setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
         epk, kw  = self.epkified  (* epk, ** kw)
-        self._kw_check_mandatory (kw)
+        self._kw_check_required (kw)
         kw.update (self._init_epk (epk))
         setter    (** kw)
         self._finish__init__ ()
-        mandatory_errors = self._pred_man.mandatory_errors
-        if mandatory_errors :
-            raise MOM.Error.Invariant_Errors (mandatory_errors)
+        required_errors = self._pred_man.required_errors
+        if required_errors :
+            raise MOM.Error.Invariant_Errors (required_errors)
     # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
