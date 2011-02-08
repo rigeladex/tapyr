@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -64,7 +64,6 @@ class Admin (object) :
 
     Account          = dict \
         ( ETM        = "GTW.OMP.Auth.Account_P"
-        , Type       = GTW.NAV.E_Type.Admin
         , Form_args  =
             ( FGD ()
             , LID
@@ -81,13 +80,11 @@ class Admin (object) :
 
     Group            = dict \
         ( ETM        = "GTW.OMP.Auth.Group"
-        , Type       = GTW.NAV.E_Type.Admin
         , permission = Is_Superuser ()
         )
 
     Account_in_Group = dict \
         ( ETM        = "GTW.OMP.Auth.Account_in_Group"
-        , Type       = GTW.NAV.E_Type.Admin
         , permission = Is_Superuser ()
         )
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -65,7 +65,6 @@ class Admin (object) :
 
     Clip_X          = dict \
         ( ETM       = "GTW.OMP.SWP.Clip_X"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
                 ( primary, "title"
@@ -87,7 +86,6 @@ class Admin (object) :
 
     Gallery         = dict \
         ( ETM       = "GTW.OMP.SWP.Gallery"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
                 ( primary, "short_title", "title", "directory"
@@ -115,7 +113,6 @@ class Admin (object) :
 
     Page            = dict \
         ( ETM       = "GTW.OMP.SWP.Page"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
                 ( primary, "short_title", "title"
@@ -186,7 +183,6 @@ class Admin (object) :
 
     Picture         = dict \
         ( ETM       = "GTW.OMP.SWP.Picture"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
                 ( AID

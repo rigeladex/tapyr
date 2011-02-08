@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package  GTW.OMP.SRM.
@@ -74,17 +74,14 @@ class Admin (object) :
 
     Boat = dict \
         ( ETM       = "GTW.OMP.SRM.Boat"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("left.name", "nation", "sail_number")
         )
     Boat_Class = dict \
         ( ETM       = "GTW.OMP.SRM.Boat_Class"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("name")
         )
     Boat_in_Regatta = dict \
         ( ETM       = "GTW.OMP.SRM.Boat_in_Regatta"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ()
             , LID
@@ -97,7 +94,6 @@ class Admin (object) :
         )
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("year", "perma_name")
         , Form_args =
             ( FGD
@@ -124,7 +120,6 @@ class Admin (object) :
 
     Regatta_C       = dict \
         ( ETM       = "GTW.OMP.SRM.Regatta_C"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("-event.date.start", "boat_class.name")
         , Form_args =
             ( FGD
@@ -147,7 +142,6 @@ class Admin (object) :
 
     Regatta_H       = dict \
         ( ETM       = "GTW.OMP.SRM.Regatta_H"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("-event.date.start", "handicap")
         , Form_args =
             ( FGD
@@ -170,7 +164,6 @@ class Admin (object) :
 
     Regatta_Event = dict \
         ( ETM       = "GTW.OMP.SRM.Regatta_Event"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("-date.start", "name")
         , Form_args =
             ( FGD ("name", "date", "desc", "club", WF ())
@@ -181,14 +174,12 @@ class Admin (object) :
 
     Team            = dict \
         ( ETM       = "GTW.OMP.SRM.Team"
-        , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("-regatta.event.date.start", "name")
         , list_display   = ("regatta", "name", "club", "leader")
         )
 
     Team_has_Boat_in_Regatta = dict \
         ( ETM       = "GTW.OMP.SRM.Team_has_Boat_in_Regatta"
-        , Type      = GTW.NAV.E_Type.Admin
         , list_display   = ("team", "boat.boat")
         )
 

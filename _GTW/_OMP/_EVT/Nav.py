@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -59,7 +59,6 @@ class Admin (object) :
 
     Event           =  dict \
         ( ETM       = "GTW.OMP.EVT.Event"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
                 ( "object", "date", "time", "detail", "short_title"
@@ -86,7 +85,6 @@ class Admin (object) :
 
     Event_occurs    = dict \
         ( ETM       = "GTW.OMP.EVT.Event_occurs"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD
                 ( AID ("event", FGD ("object"))

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -116,7 +116,6 @@ class Admin (object) :
 
     Address         = dict \
         ( ETM       = "GTW.OMP.PAP.Address"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ( primary, "desc", "position")
             , Person_has_LID ("PAP.Person_has_Address")
@@ -127,7 +126,6 @@ class Admin (object) :
 
     Email           = dict \
         ( ETM       = "GTW.OMP.PAP.Email"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ()
             , Person_has_LID ("PAP.Person_has_Email")
@@ -189,7 +187,6 @@ class Admin (object) :
         )
     Phone           = dict \
         ( ETM       = "GTW.OMP.PAP.Phone"
-        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (primary)
             , FGD ()
@@ -200,23 +197,19 @@ class Admin (object) :
 
     Entity_created_by_Person = dict \
         ( ETM       = "GTW.OMP.PAP.Entity_created_by_Person"
-        , Type      = GTW.NAV.E_Type.Admin
         , list_display = ("entity", "creator", "date")
         )
 
     Person_has_Address = dict \
         ( ETM       = "GTW.OMP.PAP.Person_has_Address"
-        , Type      = GTW.NAV.E_Type.Admin
         )
 
     Person_has_Email = dict \
         ( ETM       = "GTW.OMP.PAP.Person_has_Email"
-        , Type      = GTW.NAV.E_Type.Admin
         )
 
     Person_has_Phone = dict \
         ( ETM       = "GTW.OMP.PAP.Person_has_Phone"
-        , Type      = GTW.NAV.E_Type.Admin
         )
 
 # end class Admin
