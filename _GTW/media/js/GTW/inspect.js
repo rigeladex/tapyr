@@ -66,12 +66,12 @@
               }
               return result;
           }
-        , show   : function show (obj, filter, level) {
+        , show   : function show (obj, filter, level, top_filter) {
               var i, l, name, r, regexp, value;
               var result = [];
               var lev    = level || 0;
               var indent = blanks.slice (0, 4 * lev);
-              var names  = inspect.keys (obj, filter).sort (inspect.key_cmp);
+              var names  = inspect.keys (obj, top_filter || filter).sort (inspect.key_cmp);
               for (i = 0, l = names.length; i < l; i += 1) {
                   name  = names [i];
                   value = obj   [name];

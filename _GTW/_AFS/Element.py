@@ -434,6 +434,8 @@ Usage example::
                    'type': 'Entity',
                    'type_name': 'SRM.Boat_Type'}],
      'type': 'Form'}
+    >>> print g.as_json
+    {"$id": "F", "type": "Form", "children": [{"$id": "F-1", "type_name": "PAP.Person", "type": "Entity", "children": [{"$id": "F-1:1", "type": "Fieldset", "name": "primary", "children": [{"$id": "F-1:1:1", "type": "Field", "name": "last_name"}, {"$id": "F-1:1:2", "type": "Field", "name": "first_name"}]}, {"$id": "F-1:2", "type": "Field_Composite", "name": "lifetime", "children": [{"$id": "F-1:2.1", "type": "Field", "name": "start"}, {"$id": "F-1:2.2", "type": "Field", "name": "finish"}]}, {"$id": "F-1:3", "type": "Entity_List", "children": [{"$id": "F-1:3::1", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::1:1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::1:2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::1:2:1", "type": "Field", "name": "address"}]}]}, {"$id": "F-1:3::2", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::2:1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::2:2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::2:2:1", "type": "Field", "name": "address"}]}]}]}]}, {"$id": "F-2", "type_name": "SRM.Boat_Type", "type": "Entity", "children": [{"$id": "F-2:1", "type": "Field", "name": "name"}]}]}
     >>> print g ["F-1:3::0-1"]
     <Field F-1:3::0-1 'desc'>
     >>> print g ["F-1:3::1-1"]
@@ -444,7 +446,6 @@ Usage example::
     <Field F-1:3::0-1 'desc'>
     >>> tuple (str (c) for c in gel.children)
     ("<Entity F-1:3::1 'PAP.Person_has_Email'>", "<Entity F-1:3::2 'PAP.Person_has_Email'>")
-
 
 """
 

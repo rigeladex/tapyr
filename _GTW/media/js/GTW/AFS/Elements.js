@@ -83,6 +83,10 @@
         {}
       , { type_name : "Entity" }
     );
+    var Entity_List = Element.extend (
+        {}
+      , { type_name : "Entity_List" }
+    );
     var Field = Element.extend (
         {}
       , { type_name : "Field" }
@@ -104,17 +108,19 @@
       , { type_name : "Form" }
     )
     Elements = new $GTW.Module (
-        { create   : create
-        , Element  : Element
-        , Entity   : Entity
-        , Field    : Field
-        , Fieldset : Fieldset
-        , id_map   : {}
+        { create                : create
+        , Element               : Element
+        , Entity                : Entity
+        , Entity_List           : Entity_List
+        , Field                 : Field
+        , Field_Composite       : Field_Composite
+        , Fieldset              : Fieldset
+        , id_map                : {}
         }
     );
     $GTW.AFS = new $GTW.Module (
-        { Elements : Elements
-        , Form     : Form
+        { Elements              : Elements
+        , Form                  : Form
         }
     );
   } ()
