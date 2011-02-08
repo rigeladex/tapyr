@@ -195,7 +195,7 @@ class Entity_List (_Element_List_) :
             self.children = []
         cs     = self.children
         result = self.proto.copy ()
-        self._id_cop (self.id, result, {})
+        self._id_child_or_proto  (self.id, result, {})
         cs.append (result)
         return result
     # end def add_child
@@ -205,15 +205,15 @@ class Entity_List (_Element_List_) :
     # end def copy
 
     def _id_children (self, id, children, id_map) :
-        self._id_cop              (id, self.proto, self.id_map)
+        self._id_child_or_proto   (id, self.proto, self.id_map)
         self.__super._id_children (id, children,   {})
     # end def _id_children
 
-    def _id_cop (self, id, cop, id_map) :
+    def _id_child_or_proto (self, id, cop, id_map) :
         cop.id = cid = self.child_id (id, self.id_sep, id_map)
         if cid :
             cop._id_children (cid, cop.children, id_map)
-    # end def _id_cop
+    # end def _id_child_or_proto
 
 # end class Entity_List
 
