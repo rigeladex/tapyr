@@ -161,6 +161,7 @@
 #    17-Nov-2010 (CT) `sort_rank` added
 #    22-Nov-2010 (CT) `A_Euro_Amount` and `A_Year` added, `_A_Decimal_` factored
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#     9-Feb-2011 (CT) `ui_allow_new` added to `_A_Object_` and `A_Link_Role`
 #    ««revision-date»»···
 #--
 
@@ -759,6 +760,8 @@ class _A_Object_ (A_Attr_Type) :
     P_Type            = TFL.Meta.Alias_Property ("Class")
 
     needs_raw_value   = False
+    ### allow creation of new object for this attribute
+    ui_allow_new      = True
 
     @TFL.Meta.Once_Property
     def example (self) :
@@ -1493,6 +1496,8 @@ class A_Link_Role (_A_Object_) :
     max_links         = 0
     role_name         = None
     role_type         = None
+    ### don't allow creation of new object for this attribute
+    ui_allow_new      = False
     ui_name           = TFL.Meta.Once_Property \
         (lambda s : s.role_name.capitalize ().replace ("_", " "))
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -29,6 +29,7 @@
 #     3-Feb-2010 (CT) Creation
 #    19-Feb-2010 (MG) `left.auto_cache` removed
 #    28-Feb-2010 (CT) `desc` defined with `Computed_Mixin`
+#     9-Feb-2011 (CT) `right.ui_allow_new` set to `True`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,12 @@ class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
             role_type      = Person
 
         # end class left
+
+        class right (_Ancestor.right) :
+
+            ui_allow_new   = True
+
+        # end class right
 
         class desc (A_String) :
             """Short description of the link"""

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -32,6 +32,7 @@
 #     7-May-2010 (CT) `sail_number` changed back to `A_Int` to fix sorting
 #                     and set `needs_raw_value` to allow autocompletion
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `left`
+#     9-Feb-2011 (CT) `Boat.left.ui_allow_new` set to `True`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,8 @@ class Boat (_Ancestor_Essence) :
             role_name          = "b_class"
             Kind_Mixins        = (Attr.Init_Only_Mixin, )
             ui_name            = "Class"
+
+            ui_allow_new       = True
 
         # end class left
 

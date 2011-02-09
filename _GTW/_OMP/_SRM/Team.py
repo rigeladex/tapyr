@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -54,7 +54,7 @@ class Team (_Ancestor_Essence) :
         ### Primary attributes
 
         class left (_Ancestor.left) :
-            """Regatta event to which this regatta belongs."""
+            """Regatta in which this team sails."""
 
             role_type          = GTW.OMP.SRM.Regatta_C
             role_name          = "regatta"
