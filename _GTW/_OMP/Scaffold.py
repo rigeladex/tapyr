@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.
@@ -33,6 +33,7 @@
 #    29-Jun-2010 (CT) Command for `wsgi` added
 #     3-Aug-2010 (MG) Additional options added to `shell` sub-command
 #    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
+#    10-Feb-2011 (CT) Injection of `GTW` into essential classes added
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,13 @@ import _MOM.Scaffold
 
 import _TFL.CAO
 import _TFL._Meta.Once_Property
+
+### Inject a class-valued  class attribute `GTW` into the essential classes
+### (due to `_nested_classes_to_combine`, each essential class gets their own
+### `GTW` class with proper inheritance)
+import _MOM._Meta.M_Entity, _MOM.Entity
+MOM.Meta.M_Entity._nested_classes_to_combine += ("GTW", )
+MOM.Entity.GTW = type ("GTW", (), dict (__module__ = MOM.Entity.__module__))
 
 class HTTP_Opt (TFL.CAO._Spec_) :
     """Select HTTP server framework to use."""

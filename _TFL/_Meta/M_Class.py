@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #    24-Sep-2009 (CT)  Use `_TFL.callable` to avoid `-3` warnings
 #    30-Aug-2010 (CT) `M_Autorename.__name__` changed to pass `name` through
 #                     `str` (`unicode` gives `type()` a sissy-fit)
+#    10-Feb-2011 (CT) `_m_combine_nested_class` added to `M_Base`
 #    ««revision-date»»···
 #--
 
@@ -167,6 +168,25 @@ class M_Base (type) :
         new_dict.update (kw)
         return type (cls) (name, head_mixins + (cls, ) + tail_mixins, new_dict)
     # end def New
+
+    def _m_combine_nested_class (cls, cn, bases = None, dct = None, ** kw) :
+        """Add a class named `cn` derived from all the classes named `cn`
+           in `bases` (default `cls.__bases__`) to `cls`.
+        """
+        if bases is None :
+            bases = cls.__bases__
+        if dct is None :
+            dct   = cls.__dict__
+        if cn not in dct :
+            c_bases = tuple \
+                (  c for c in (getattr (b, cn, None) for b in bases)
+                if c is not None
+                )
+            if c_bases :
+                cb0 = c_bases [0]
+                d   = dict (__module__ = cls.__module__, ** kw)
+                setattr (cls, cn, cb0.__class__ (cn, c_bases, d))
+    # end def _m_combine_nested_class
 
 # end class M_Base
 

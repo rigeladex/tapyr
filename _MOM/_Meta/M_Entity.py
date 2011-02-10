@@ -104,6 +104,8 @@
 #    13-Oct-2010 (CT) `default_child` added
 #    17-Nov-2010 (CT) `_m_setup_sorted_by` changed to honor `sort_rank`
 #     8-Feb-2011 (CT) s/Mandatory/Required/
+#    10-Feb-2011 (CT) `_nested_classes_to_combine` defined as class attribute
+#    10-Feb-2011 (CT) `_m_combine_nested_class` factored to `TFL.Meta.M_Base`
 #    ««revision-date»»···
 #--
 
@@ -307,6 +309,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
 
+    _nested_classes_to_combine = ("_Attributes", "_Predicates")
+
     def __new__ (mcls, name, bases, dct) :
         dct ["_default_child"] = dct.pop ("default_child", None)
         result = super (M_Entity, mcls).__new__ (mcls, name, bases, dct)
@@ -382,13 +386,8 @@ class M_Entity (M_E_Mixin) :
     def _m_init_prop_specs (cls, name, bases, dct) :
         if "is_partial" not in dct :
             setattr (cls, "is_partial", False)
-        for psn in "_Attributes", "_Predicates" :
-            if psn not in dct :
-                prop_bases = tuple (getattr (b, psn) for b in bases)
-                d          = dict  (__module__ = cls.__module__)
-                ### `TFL.Meta.M_M_Class` will choose the right meta class
-                ### (i.e., `M_Attr_Spec` or `M_Pred_Spec`)
-                setattr (cls, psn, MOM.Meta.M_Prop_Spec (psn, prop_bases, d))
+        for psn in cls._nested_classes_to_combine :
+            cls._m_combine_nested_class (psn, bases, dct)
         if "ui_display" not in cls._Attributes.__dict__ :
             base = cls._Attributes.ui_display
             cls._Attributes.ui_display = base.__class__ \
