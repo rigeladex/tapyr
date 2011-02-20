@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    17-Jul-2009 (CT) `_check_MRO` and doctest added to `_TFL_Meta_Object_Root_`
 #     9-Dec-2009 (CT) Context manager `LET` added
 #    10-Dec-2009 (CT) `LET` defined as alias for `TFL.Context.attr_let`
+#    16-Feb-2011 (CT) `pop_to_self` added
 #    ««revision-date»»···
 #--
 
@@ -188,6 +189,13 @@ class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
     # end def __init__
 
     LET = TFL.Meta.Class_and_Instance_Method (TFL.Context.attr_let)
+
+    def pop_to_self (self, kw, * names) :
+        """Pop each name in `names` from `kw` and store its value in `self`."""
+        for name in names :
+            if name in kw :
+                setattr (self, name, kw.pop (name))
+    # end def pop_to_self
 
 Object = _TFL_Meta_Object_ # end class
 

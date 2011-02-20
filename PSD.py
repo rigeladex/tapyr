@@ -37,6 +37,9 @@
 #                     `minuntes < 45` instead of `percent < 40` for `low_color`
 #    19-Nov-2009 (CT) `text_font` changed (X update broke the display)
 #    11-Jan-2011 (CT) `_get_temperatures` implemented and used
+#    14-Feb-2011 (CT) `ACPI_Updater` adapted to multiple batteries
+#    15-Feb-2011 (CT) Changed to use `LNX.Bat_Charge` (multiple batteries,
+#                     again)
 #    ««revision-date»»···
 #--
 
@@ -52,6 +55,8 @@ import _TFL._D2.Rect
 import _TFL._Meta.Object
 
 from   _TFL                  import sos
+
+from   _LNX.Bat_Charge       import Bat_Charge
 
 import sys, time
 
@@ -137,8 +142,19 @@ class ACPI_Updater (TFL.Meta.Object) :
     normal_color  = "light green"
     online_color  = "Deep Sky blue"
 
-    _acpi_pattern = Regexp \
-        ( r"^ \s* Battery \s+ \#\d \s+ : \s+ "
+    _bat_pattern  = Multi_Regexp \
+        ( Regexp
+            ( r"^ \s* All \s+ batteries \s+ : \s+ "
+              r"(?P<percent> [0-9.]+)%"
+              r"(?: , \s+"
+                  r"(?P<hours>   [0-9]{2}):"
+                  r"(?P<minutes> [0-9]{2}):"
+                  r"(?P<seconds> [0-9]{2})"
+              r")?"
+            , re.VERBOSE | re.IGNORECASE | re.MULTILINE
+            )
+        , Regexp
+            ( r"^ \s* Battery \s+ \#\d \s+ : \s+ "
               r"(?P<bat_status> [^,]+),  \s+ "
               r"(?P<percent> [0-9.]+)%"
               r"(?: , \s+"
@@ -146,12 +162,17 @@ class ACPI_Updater (TFL.Meta.Object) :
                   r"(?P<minutes> [0-9]{2}):"
                   r"(?P<seconds> [0-9]{2})"
               r")?"
-              r"\s* "
-          r"AC \s+ adapter   \s+ : \s+ (?P<ac_status> on|off)-line \s*"
-          r"(?: Thermal \s+ (?: info|zone \s+ \d+) \s+ : \s + "
+            , re.VERBOSE | re.IGNORECASE | re.MULTILINE
+            )
+        )
+    _ac_pattern   = Regexp \
+        ( r"AC \s+ adapter   \s+ : \s+ (?P<ac_status> on|off)-line \s*"
+        , re.VERBOSE | re.IGNORECASE | re.MULTILINE
+        )
+    _th_pattern   = Regexp \
+        ( r"Thermal \s+ (?: info|zone \s+ \d+) \s+ : \s + "
               r"(?P<therm_stat> [^,]+), \s+ "
               r"(?P<temperature> [0-9]+) \s+ C"
-          r")?"
         , re.VERBOSE | re.IGNORECASE | re.MULTILINE
         )
     _temp_pattern = Regexp \
@@ -170,18 +191,34 @@ class ACPI_Updater (TFL.Meta.Object) :
         pipe = sos.popen ("acpitool")
         l = pipe.read    ()
         pipe.close       ()
-        p = self._acpi_pattern
-        if p.search (l) :
-            if p.hours is not None :
-                minutes = int (p.hours) * 60 + int (p.minutes)
+        bat_charge = Bat_Charge (4)
+        tc = bat_charge.total if bat_charge.batteries else None
+        bp = self._bat_pattern
+        ap = self._ac_pattern
+        tp = self._th_pattern
+        ap.search (l)
+        tp.search (l)
+        if tc or bp.search (l) :
+            hours = getattr (bp, "hours", None)
+            if hours is not None :
+                minutes = int (hours) * 60 + int (bp.minutes)
             else :
                 minutes = None
-            ac_status   = p.ac_status
-            bat_status  = p.bat_status
+            ac_status   = ap.ac_status
+            if tc :
+                bat_status = tc.bat_status
+                percent    = tc.percent
+            else :
+                bat_status  = getattr (bp, "bat_status", None)
+                if bat_status is None :
+                    for _ in "discharging", "charging", "charged" :
+                        if _ in l :
+                            bat_status = _
+                            break
+                percent = int (round (float (bp.percent)))
             now         = time.time ()
-            percent     = int (round (float (p.percent)))
             speed       = self._get_speed ()
-            temperature = int (p.temperature or 0) or self._get_temperatures ()
+            temperature = int (tp.temperature or 0) or self._get_temperatures ()
             if self.last_ac_status != ac_status :
                 self.last_ac_status     = ac_status
                 self.last_status_change = now
@@ -202,7 +239,7 @@ class ACPI_Updater (TFL.Meta.Object) :
             same_status_duration = (now - self.last_status_change) // 60
             status.acpi = Record \
                 ( ac_status            = ac_status
-                , bat_minutes          = minutes
+                , bat_minutes          = tc.time if tc else minutes
                 , bat_percent          = percent
                 , bat_status           = bat_status
                 , color                = color
@@ -383,16 +420,17 @@ class ACPI_Entry (Text_LR_Entry) :
                     status = ""
                 else :
                     status = "->"
-                    if s.bat_percent == 100 or bat_status == "Charged" :
+                    if s.bat_percent > 99 or bat_status == "Charged" :
                         bat_status = " Full"
                 remaining = ""
             else :
                 status   = ""
                 s_format = "%s%s%2.2s"
                 if bat_status == "Discharging" :
-                    bat_status = ""
+                    bat_status = "<<"
             status = s_format % (status, duration, bat_status)
-            value  = "%s%%%s" % (s.bat_percent, remaining)
+            fmt    = "%3.1f" if s.bat_percent < 10  else "%2.0f"
+            value  = (fmt + "%%%s") % (s.bat_percent, remaining)
             tcolor = self.text_color
             self.widget.config (fill = color)
             self.l_text.config (fill = tcolor, text = status)

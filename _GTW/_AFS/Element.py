@@ -54,15 +54,10 @@ class _Element_ (TFL.Meta.Object) :
     _id      = None
 
     def __init__ (self, ** kw) :
-        children  = kw.pop ("children", None)
-        id        = kw.pop ("id",       None)
-        id_sep    = kw.pop ("id_sep",   None)
+        self.pop_to_self  (kw, "id", "id_sep")
+        children = kw.pop ("children", None)
         if children is not None :
             self.children = list (children)
-        if id is not None :
-            self.id = id
-        if id_sep is not None :
-            self.id_sep = id_sep
         self.kw = kw
     # end def __init__
 
@@ -108,6 +103,13 @@ class _Element_ (TFL.Meta.Object) :
         return self.__class__ (children = children, ** ckw)
     # end def copy
 
+    def _formatted (self, level = 0) :
+        result = ["%s%s" % (" " * level, self)]
+        level += 1
+        result.extend (c._formatted (level) for c in self.children)
+        return "\n".join (result)
+    # end def _formatted
+
     def _id_children (self, id, children, id_map) :
         sep = self.id_sep
         for c in children :
@@ -123,6 +125,10 @@ class _Element_ (TFL.Meta.Object) :
         except KeyError :
             raise AttributeError (name)
     # end def __getattr__
+
+    def __repr__ (self) :
+        return self._formatted ()
+    # end def __repr__
 
     def __str__ (self) :
         n = getattr (self, "name", None) or getattr (self, "type_name", None)
@@ -172,6 +178,11 @@ class Entity (_Element_) :
 
 # end class Entity
 
+class Entity_Link (Entity) :
+    """Model a sub-form for a link to entity in containing sub-form."""
+
+# end class Entity_Link
+
 class Entity_List (_Element_List_) :
     """Model a sub-form for a list of entities.
 
@@ -204,6 +215,13 @@ class Entity_List (_Element_List_) :
         return self.__super.copy (proto = self.proto.copy (), ** kw)
     # end def copy
 
+    def _formatted (self, level = 0) :
+        result = [self.__super._formatted (level)]
+        if not self.children :
+            result.append (self.proto._formatted (level + 1))
+        return "\n".join (result)
+    # end def _formatted
+
     def _id_children (self, id, children, id_map) :
         self._id_child_or_proto   (id, self.proto, self.id_map)
         self.__super._id_children (id, children,   {})
@@ -214,6 +232,15 @@ class Entity_List (_Element_List_) :
         if cid :
             cop._id_children (cid, cop.children, id_map)
     # end def _id_child_or_proto
+
+    def __str__ (self) :
+        n = getattr (self, "name", None) or getattr (self, "type_name", None)
+        p = str (self.proto)
+        if n :
+            return "<%s %s %r %s>" % (self.__class__.__name__, self.id, n, p)
+        else :
+            return "<%s %s %s>"    % (self.__class__.__name__, self.id, p)
+    # end def __str__
 
 # end class Entity_List
 
