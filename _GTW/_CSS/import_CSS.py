@@ -31,12 +31,14 @@
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
+#    21-Feb-2011 (CT) `Border` added
 #    ««revision-date»»···
 #--
 
 from _TFL.Color            import *
 
 from _GTW._CSS             import Media
+from _GTW._CSS.Border      import *
 from _GTW._CSS.Length      import *
 from _GTW._CSS.Rule        import *
 from _GTW._CSS.Style_Sheet import *

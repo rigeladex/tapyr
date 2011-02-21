@@ -31,6 +31,7 @@
 #     5-Jan-2011 (CT) `print_sheet` added
 #    11-Jan-2011 (CT) `tablesorter` added
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#    21-Feb-2011 (CT) Use `Border`
 #    ««revision-date»»···
 #--
 
@@ -414,23 +415,31 @@ style_sheet = Style_Sheet \
         )
     , Rule
         ( ".css-arrow-d"
-        , border_color = TRBL0 (default = "transparent", t = P.css_arrow_color)
-        , border_width = TRBL0 (default = P.css_arrow_width, b = 0)
+        , Border
+            ( color = TRBL0 (default = "transparent",     t = P.css_arrow_color)
+            , width = TRBL0 (default = P.css_arrow_width, b = 0)
+            )
         )
     , Rule
         ( ".css-arrow-l"
-        , border_color = TRBL0 (default = "transparent", r = P.css_arrow_color)
-        , border_width = TRBL0 (default = P.css_arrow_width, l = 0)
+        , Border
+            ( color = TRBL0 (default = "transparent",     r = P.css_arrow_color)
+            , width = TRBL0 (default = P.css_arrow_width, l = 0)
+            )
         )
     , Rule
         ( ".css-arrow-r"
-        , border_color = TRBL0 (default = "transparent", l = P.css_arrow_color)
-        , border_width = TRBL0 (default = P.css_arrow_width, r = 0)
+        , Border
+            ( color = TRBL0 (default = "transparent",     l = P.css_arrow_color)
+            , width = TRBL0 (default = P.css_arrow_width, r = 0)
+            )
         )
     , Rule
         ( ".css-arrow-u"
-        , border_color = TRBL0 (default = "transparent", b = P.css_arrow_color)
-        , border_width = TRBL0 (default = P.css_arrow_width, t = 0)
+        , Border
+            ( color = TRBL0 (default = "transparent",     b = P.css_arrow_color)
+            , width = TRBL0 (default = P.css_arrow_width, t = 0)
+            )
         )
     ### ReST specific
     , Rule

@@ -68,7 +68,7 @@
     </thead>
     <tbody>
       {% for o in objects %}
-        <tr class="{{ loop.cycle ('row1', 'row2') }}" id="pk-{{ o.pid }}">
+        <tr id="pk-{{ o.pid }}">
           {{ _button (page, E_Type, "td", o.href_change (), o.pid, GTW._T ("Change object"), "pencil") }}
           {% for f, v in o %}
             <td class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}">

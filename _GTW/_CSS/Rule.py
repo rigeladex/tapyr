@@ -29,6 +29,8 @@
 #    29-Dec-2010 (CT) Creation
 #    30-Dec-2010 (CT) `base_level` and `media_rule` added
 #    31-Dec-2010 (CT) `Kits` added and used
+#    21-Feb-2011 (CT) `Rule.__init__` changed to allow `kits` passed
+#                     positionally
 #    ««revision-date»»···
 #--
 
@@ -95,18 +97,23 @@ class Rule (TFL.Meta.Object) :
 
     base_level   = 0
     media_rule   = None
+    parent       = None
     parent_sep    = " "
 
     def __init__ (self, * selectors, ** declarations) :
+        self.pop_to_self (declarations, "base_level", "parent", "parent_sep")
         self.children      = list (self._pop_children (declarations))
-        self.base_level    = declarations.pop ("base_level",  self.base_level)
-        self.parent = p    = declarations.pop ("parent",      None)
-        self.parent_sep    = declarations.pop ("parent_sep",  self.parent_sep)
-        self._selectors    = selectors
+        sels               = []
+        kits               = []
+        for s in selectors :
+            (kits if isinstance (s, dict) else sels).append (s)
+        self._selectors    = tuple (sels)
         self.declarations  = Kits \
-            (* declarations.pop ("kits", ()), ** declarations)
-        if p is not None :
-            p.children.append (self)
+            ( * (tuple (kits) + tuple (declarations.pop ("kits", ())))
+            , ** declarations
+            )
+        if self.parent is not None :
+            self.parent.children.append (self)
     # end def __init__
 
     def copy (self) :

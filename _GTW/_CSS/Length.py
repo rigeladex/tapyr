@@ -31,6 +31,7 @@
 #     1-Jan-2011 (CT) `__truediv__` and `__floordiv__` added
 #     2-Jan-2011 (CT) `TRBL` added
 #    12-Jan-2011 (CT) `__neg__` and `__pos__` added
+#    21-Feb-2011 (CT) `HV` added
 #    ««revision-date»»···
 #--
 
@@ -341,6 +342,31 @@ class TRBL (TRBL0) :
     # end def __init__
 
 # end class TRBL
+
+class HV (TFL.Meta.Object) :
+    """Horizontal/vertical pair of `Length` of `TRBL`.
+
+    >>> print (HV (Px (100), Px (50)))
+    100px / 50px
+    >>> print (HV (TRBL (Px (5), Px (10)), TRBL (Px (10), Px (5), Px (10))))
+    5px 10px / 10px 5px
+    """
+
+    def __init__ (self, h, v) :
+        self.h = h
+        self.v = v
+    # end def __init__
+
+    def __nonzero__ (self) :
+        return self.h or self.v
+    # end def __nonzero__
+
+    def __str__ (self) :
+        return "%s / %s" % (self.h, self.v)
+    # end def __str__
+
+# end class HV
+
 
 __all__ = tuple \
     ( k for (k, v) in globals ().iteritems () if getattr (v, "unit_name", None)

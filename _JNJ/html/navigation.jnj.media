@@ -31,6 +31,7 @@
 #     4-Jan-2011 (CT) Bug fixes
 #     7-Jan-2011 (CT) `level-<i>` removed
 #     7-Jan-2011 (CT) Rules for `current-link` and `current-section` changed
+#    21-Feb-2011 (CT) Use `Border`
 #    ««revision-date»»···
 #--
 
@@ -120,13 +121,17 @@ style_sheet = Style_Sheet \
                 , children    =
                     [ Rule
                         ( "i"
-                        , border_style   = "solid"
-                        , border_color   = TRBL0
-                            ( default    = "transparent"
-                            , l          = P.nav_col.mark_color_link
+                        , Border
+                            ( style   = "solid"
+                            , color   = TRBL0
+                                ( default    = "transparent"
+                                , l          = P.nav_col.mark_color_link
+                                )
+                            , width   = TRBL0
+                                ( default    = P.nav_col.mark_width
+                                , r          = 0
+                                )
                             )
-                        , border_width   = TRBL0
-                            (default = P.nav_col.mark_width, r = 0)
                         , display        = "inline-block"
                         , height         = 0
                         , margin         = TRBL0
@@ -139,11 +144,17 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "a.current-section i"
-                , border_style   = "solid"
-                , border_color   = TRBL0
-                    (default = "transparent", t = P.nav_col.mark_color_section)
-                , border_width   = TRBL0
-                    (default = P.nav_col.mark_width, b = 0)
+                , Border
+                    ( style   = "solid"
+                    , color   = TRBL0
+                        ( default = "transparent"
+                        , t       = P.nav_col.mark_color_section
+                        )
+                    , width   = TRBL0
+                        ( default = P.nav_col.mark_width
+                        , b       = 0
+                        )
+                    )
                 , display        = "inline-block"
                 , height         = 0
                 , margin         = TRBL0
