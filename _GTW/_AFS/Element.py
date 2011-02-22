@@ -29,6 +29,7 @@
 #     6-Feb-2011 (CT) Creation
 #     7-Feb-2011 (CT) Creation continued
 #     8-Feb-2011 (CT) Creation continued..
+#    22-Feb-2011 (CT) `Form.__init__` changed to `copy` children with `.id`
 #    ««revision-date»»···
 #--
 
@@ -278,6 +279,8 @@ class Form (_Element_List_) :
                 raise KeyError ("Duplicate form id %s" % id)
             else :
                 Table [id] = self
+        children = tuple \
+            ((c.copy () if c.id is not None else c) for c in children)
         self.__super.__init__ (id = id, children = children, ** kw)
         self._id_children     (id, children, self.id_map)
     # end def __init__

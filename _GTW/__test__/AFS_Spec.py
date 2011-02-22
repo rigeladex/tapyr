@@ -29,7 +29,7 @@
 #--
 
 _test_code = """
-    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    >>> scope = Scaffold.scope ("hps://") # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> from _GTW._AFS._MOM import Spec
     >>> S = Spec.Entity ()
@@ -105,11 +105,127 @@ _test_code = """
            <Field None 'week'>
            <Field None 'year_day'>
            <Field None 'easter_offset'>
+    >>> print repr (Form ("F", children = [y]))
+    <Form F>
+     <Entity F-1 'GTW.OMP.SWP.Page'>
+      <Fieldset F-1:1 'primary'>
+       <Field F-1:1:1 'perma_name'>
+      <Fieldset F-1:2 'required'>
+       <Field F-1:2:1 'text'>
+      <Fieldset F-1:3 'necessary'>
+       <Field F-1:3:1 'short_title'>
+       <Field F-1:3:2 'title'>
+      <Fieldset F-1:4 'optional'>
+       <Field_Composite F-1:4:1 'date'>
+        <Field F-1:4:1.1 'start'>
+        <Field F-1:4:1.2 'finish'>
+       <Field F-1:4:2 'format'>
+       <Field F-1:4:3 'head_line'>
+       <Field F-1:4:4 'prio'>
+      <Entity_List F-1:5 <Entity_Link F-1:5::0 'GTW.OMP.EVT.Event'>>
+       <Entity_Link F-1:5::0 'GTW.OMP.EVT.Event'>
+        <Fieldset F-1:5::0-1 'primary'>
+         <Field_Composite F-1:5::0-1:1 'date'>
+          <Field F-1:5::0-1:1.1 'start'>
+          <Field F-1:5::0-1:1.2 'finish'>
+         <Field_Composite F-1:5::0-1:2 'time'>
+          <Field F-1:5::0-1:2.1 'start'>
+          <Field F-1:5::0-1:2.2 'finish'>
+        <Fieldset F-1:5::0-2 'optional'>
+         <Field F-1:5::0-2:1 'detail'>
+         <Field F-1:5::0-2:2 'short_title'>
+        <Entity_Link F-1:5::0-3 'GTW.OMP.EVT.Recurrence_Spec'>
+         <Fieldset F-1:5::0-3:1 'optional'>
+          <Field F-1:5::0-3:1:1 'dates'>
+          <Field F-1:5::0-3:1:2 'date_exceptions'>
+         <Entity_List F-1:5::0-3:2 <Entity_Link F-1:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>>
+          <Entity_Link F-1:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>
+           <Fieldset F-1:5::0-3:2::0-1 'primary'>
+            <Field F-1:5::0-3:2::0-1:1 'is_exception'>
+            <Field F-1:5::0-3:2::0-1:2 'desc'>
+           <Fieldset F-1:5::0-3:2::0-2 'optional'>
+            <Field F-1:5::0-3:2::0-2:1 'start'>
+            <Field F-1:5::0-3:2::0-2:2 'finish'>
+            <Field F-1:5::0-3:2::0-2:3 'period'>
+            <Field F-1:5::0-3:2::0-2:4 'unit'>
+            <Field F-1:5::0-3:2::0-2:5 'week_day'>
+            <Field F-1:5::0-3:2::0-2:6 'count'>
+            <Field F-1:5::0-3:2::0-2:7 'restrict_pos'>
+            <Field F-1:5::0-3:2::0-2:8 'month_day'>
+            <Field F-1:5::0-3:2::0-2:9 'month'>
+            <Field F-1:5::0-3:2::0-2:10 'week'>
+            <Field F-1:5::0-3:2::0-2:11 'year_day'>
+            <Field F-1:5::0-3:2::0-2:12 'easter_offset'>
+    >>> print repr (Form ("X", children = [x, y]))
+    <Form X>
+     <Entity X-1 'GTW.OMP.PAP.Person'>
+      <Fieldset X-1:1 'primary'>
+       <Field X-1:1:1 'last_name'>
+       <Field X-1:1:2 'first_name'>
+       <Field X-1:1:3 'middle_name'>
+       <Field X-1:1:4 'title'>
+      <Fieldset X-1:2 'necessary'>
+       <Field X-1:2:1 'sex'>
+      <Fieldset X-1:3 'optional'>
+       <Field_Composite X-1:3:1 'lifetime'>
+        <Field X-1:3:1.1 'start'>
+        <Field X-1:3:1.2 'finish'>
+       <Field X-1:3:2 'salutation'>
+     <Entity X-2 'GTW.OMP.SWP.Page'>
+      <Fieldset X-2:1 'primary'>
+       <Field X-2:1:1 'perma_name'>
+      <Fieldset X-2:2 'required'>
+       <Field X-2:2:1 'text'>
+      <Fieldset X-2:3 'necessary'>
+       <Field X-2:3:1 'short_title'>
+       <Field X-2:3:2 'title'>
+      <Fieldset X-2:4 'optional'>
+       <Field_Composite X-2:4:1 'date'>
+        <Field X-2:4:1.1 'start'>
+        <Field X-2:4:1.2 'finish'>
+       <Field X-2:4:2 'format'>
+       <Field X-2:4:3 'head_line'>
+       <Field X-2:4:4 'prio'>
+      <Entity_List X-2:5 <Entity_Link X-2:5::0 'GTW.OMP.EVT.Event'>>
+       <Entity_Link X-2:5::0 'GTW.OMP.EVT.Event'>
+        <Fieldset X-2:5::0-1 'primary'>
+         <Field_Composite X-2:5::0-1:1 'date'>
+          <Field X-2:5::0-1:1.1 'start'>
+          <Field X-2:5::0-1:1.2 'finish'>
+         <Field_Composite X-2:5::0-1:2 'time'>
+          <Field X-2:5::0-1:2.1 'start'>
+          <Field X-2:5::0-1:2.2 'finish'>
+        <Fieldset X-2:5::0-2 'optional'>
+         <Field X-2:5::0-2:1 'detail'>
+         <Field X-2:5::0-2:2 'short_title'>
+        <Entity_Link X-2:5::0-3 'GTW.OMP.EVT.Recurrence_Spec'>
+         <Fieldset X-2:5::0-3:1 'optional'>
+          <Field X-2:5::0-3:1:1 'dates'>
+          <Field X-2:5::0-3:1:2 'date_exceptions'>
+         <Entity_List X-2:5::0-3:2 <Entity_Link X-2:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>>
+          <Entity_Link X-2:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>
+           <Fieldset X-2:5::0-3:2::0-1 'primary'>
+            <Field X-2:5::0-3:2::0-1:1 'is_exception'>
+            <Field X-2:5::0-3:2::0-1:2 'desc'>
+           <Fieldset X-2:5::0-3:2::0-2 'optional'>
+            <Field X-2:5::0-3:2::0-2:1 'start'>
+            <Field X-2:5::0-3:2::0-2:2 'finish'>
+            <Field X-2:5::0-3:2::0-2:3 'period'>
+            <Field X-2:5::0-3:2::0-2:4 'unit'>
+            <Field X-2:5::0-3:2::0-2:5 'week_day'>
+            <Field X-2:5::0-3:2::0-2:6 'count'>
+            <Field X-2:5::0-3:2::0-2:7 'restrict_pos'>
+            <Field X-2:5::0-3:2::0-2:8 'month_day'>
+            <Field X-2:5::0-3:2::0-2:9 'month'>
+            <Field X-2:5::0-3:2::0-2:10 'week'>
+            <Field X-2:5::0-3:2::0-2:11 'year_day'>
+            <Field X-2:5::0-3:2::0-2:12 'easter_offset'>
 
 """
 
 from _GTW.__test__.model import *
+from _GTW._AFS.Element   import Form
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = dict (AFS_Spec = _test_code)
 
 ### __END__ AFS_Spec

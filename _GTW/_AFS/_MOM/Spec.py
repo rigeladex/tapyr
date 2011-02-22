@@ -148,8 +148,6 @@ class Field_Composite (_Entity_Mixin_, _Field_) :
     def default_elements (self, E_Type) :
         fg = Field_Group_K (kind = "user_attr")
         for f in fg.fields (E_Type, self, set ()) :
-            ### wrong type
-            ###   (GTW.AFS.Element.Field instead of GTW.AFS.MOM.Spec.Field)
             yield f
     # end def default_elements
 
