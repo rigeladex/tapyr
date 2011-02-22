@@ -218,7 +218,8 @@ class ACPI_Updater (TFL.Meta.Object) :
                 percent = int (round (float (bp.percent)))
             now         = time.time ()
             speed       = self._get_speed ()
-            temperature = int (tp.temperature or 0) or self._get_temperatures ()
+            temperature = int \
+                (getattr (tp, "temperature", 0) or self._get_temperatures ())
             if self.last_ac_status != ac_status :
                 self.last_ac_status     = ac_status
                 self.last_status_change = now
