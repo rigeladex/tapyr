@@ -54,10 +54,6 @@ class _Base_ (TFL.Meta.Object) :
         self.kw = dict (self.defaults, ** kw)
     # end def __init__
 
-    def _massaged (self, text) :
-        return text.replace ("\n\n", "<br>").replace ("\n", " ")
-    # end def _massaged
-
     def __getattr__ (self, name) :
         try :
             return self.kw [name]
@@ -197,12 +193,12 @@ class  _Field_Group_ (_Base_) :
                 seen.add (name)
                 kw = dict \
                     ( name        = name
-                    , description = self._massaged (attr.description)
+                    , description = attr.description
                     , ui_name     = attr.ui_name
                     , ** attr_spec [name]
                     )
                 if attr.explanation :
-                    kw ["explanation"] = self._massaged (attr.explanation)
+                    kw ["explanation"] = attr.explanation
                 yield attr.AFS_Spec (** kw)
     # end def fields
 

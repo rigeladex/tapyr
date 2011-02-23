@@ -38,19 +38,13 @@ class _MOM_Entity_ (Entity) :
 
     _real_name = "Entity"
 
-    def __call__ (self, arg, ** kw) :
-        if isinstance (arg, type) :
-            entity = None
-            e_type = arg
-        else :
-            entity = arg
-            e_type = entity.__class__
+    def __call__ (self, ETM, entity, ** kw) :
         result = dict \
             ( cid = getattr (entity, "cid", None)
             , pid = getattr (entity, "pid", None)
             )
         for c in self.children :
-            result [c.id] = c (entity, e_type, ** kw)
+            result [c.id] = c (ETM, entity, ** kw)
         return result
     # end def __call__
 
@@ -63,24 +57,20 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
 
     _real_name = "Entity_Link"
 
-    def __call__ (self, entity, e_type, ** kw) :
-        assoc = link = self._get_assoc (kw)
+    def __call__ (self, ETM, entity, ** kw) :
+        assoc = ETM.home_scope [self.type_name]
+        link  = None
         if entity is not None :
             try :
                 link = assoc.query (** { self.role_name : entity }).one ()
             except IndexError :
                 pass
-        return self.__super.__call__ (link, ** kw)
+        return self.__super.__call__ (assoc, link, ** kw)
     # end def __call__
 
-    def instance_call (self, link, ** kw) :
-        return self.__super.__call__ (link, ** kw)
+    def instance_call (self, assoc, link, ** kw) :
+        return self.__super.__call__ (assoc, link, ** kw)
     # end def instance_call
-
-    def _get_assoc (self, kw) :
-        scope = kw ["scope"]
-        return scope [self.type_name]
-    # end def _get_assoc
 
 Entity_Link = _MOM_Entity_Link_ # end class
 
@@ -89,17 +79,17 @@ class _MOM_Entity_List_  (Entity_List) :
 
     _real_name = "Entity_List"
 
-    def __call__ (self, entity, e_type, ** kw) :
+    def __call__ (self, ETM, entity, ** kw) :
+        cs     = []
         proto  = self.proto
-        result = []
-        if isinstance (proto, Entity_Link) :
-            if entity is not None :
-                assoc  = self._get_assoc (kw)
-                for link in assoc.query_s (** { self.role_name : entity }) :
-                    ### XXX need to add a child for each link ???
-                    result.append (proto.instance_call (link, ** kw))
-        else :
-            raise NotImplementedError ("%r for %r" % (proto, entity or e_type))
+        this   = self.clone ()
+        result = {}
+        if entity is not None :
+            assoc  = ETM.home_scope [proto.type_name]
+            for link in assoc.query_s (** { self.role_name : entity }) :
+                cs.append (link, this.add_child ())
+            for link, c in cs :
+                result [c.id] = c.instance_call (assoc, link, ** kw)
         return result
     # end def __call__
 
@@ -110,12 +100,13 @@ class _MOM_Field_ (Field) :
 
     _real_name = "Field"
 
-    def __call__ (self, entity, e_type, ** kw) :
-        ### XXX allow `init` to be specified in `kw`
-        attr   = e_type.attributes [self.name]
-        result = dict \
-            ( init = attr.get_raw (entity)
-            )
+    def __call__ (self, ETM, entity, ** kw) :
+        attr = ETM._e_type.attributes [self.name]
+        if self.name in kw :
+            init = kw [self.name].get ("init")
+        else :
+            init = attr.get_raw (entity)
+        result = dict (init = init)
         return result
     # end def __call__
 
@@ -126,17 +117,38 @@ class _MOM_Field_Composite_ (Field_Composite) :
 
     _real_name = "Field_Composite"
 
-    def __call__ (self, entity, e_type, ** kw) :
-        attr     = e_type.attributes [self.name]
-        c_type   = attr.C_Type
+    def __call__ (self, ETM, entity, ** kw) :
+        attr     = ETM._e_type.attributes [self.name]
+        c_type   = attr.etype_manager (ETM)
         c_entity = getattr (entity, self.name, None)
         result   = {}
         for c in self.children :
-            result [c.id] = c (c_entity, c_type, ** kw)
+            result [c.id] = c (c_type, c_entity, ** kw.get (self.name, {}))
         return result
     # end def __call__
 
 Field_Composite = _MOM_Field_Composite_ # end class
+
+class _MOM_Form_ (Form) :
+    """Model a MOM-specific AJAX-enhanced form."""
+
+    _real_name = "Form"
+
+    def __call__ (self, * args, ** kw) :
+        result = {}
+        if len (self.children) == 1 and len (args) <= 2 :
+            c = self.children [1]
+            result [c.id] = c (* args, ** kw)
+        else :
+            assert len (args) == len (self.children), repr (self)
+            assert not kw, repr (self)
+            for a, c in zip (args, self.children) :
+                result [c.id] = c (e.ETM, a.entity, ** a.kw)
+        return result
+    # end def __call__
+
+Form = _MOM_Form_ # end class
+
 
 if __name__ != "__main__" :
     GTW.AFS.MOM._Export_Module ()

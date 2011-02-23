@@ -31,6 +31,9 @@
 #     8-Feb-2011 (CT) Creation continued..
 #    22-Feb-2011 (CT) `Form.__init__` changed to `copy` children with `.id`
 #    23-Feb-2011 (CT) `Form.__call__` and `Fieldset.__call__` added
+#    23-Feb-2011 (CT) `Field.__init__` changed to `pop_to_self` of
+#                     `description` and `explanation` from `kw`
+#    23-Feb-2011 (CT) `Entity_List.clone` added
 #    ««revision-date»»···
 #--
 
@@ -220,6 +223,14 @@ class Entity_List (_Element_List_) :
         return result
     # end def add_child
 
+    def clone (self) :
+        assert not self.children, repr (self)
+        result          = self.__class__ (self.proto)
+        result.id       = self.id
+        result.max_cid += 1
+        return result
+    # end def clone
+
     def copy (self, ** kw) :
         return self.__super.copy (proto = self.proto.copy (), ** kw)
     # end def copy
@@ -257,6 +268,7 @@ class Field (_Element_) :
     """Model a field of an AJAX-enhanced form."""
 
     def __init__ (self, name, ** kw) :
+        self.pop_to_self      (kw, "description", "explanation")
         self.__super.__init__ (name = name, ** kw)
     # end def __init__
 
