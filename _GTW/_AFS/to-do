@@ -1,6 +1,14 @@
 GTW.AFS to-to
 ==============
 
+- "\n" in `description`, `explanation`
+
+  * breaks doc-test
+
+  * breaks in HTML
+
+  * currently replaced in GTW.AFS.MOM.Spec: this breaks I18N translations
+
 - Ids:
 
   * ID and NAME tokens must begin with a letter ([A-Za-z]) and may be

@@ -34,8 +34,7 @@ from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
 
-import _GTW._AFS._MOM
-import _GTW._AFS.Element
+from   _GTW._AFS._MOM           import Element
 
 import _MOM._Attr.Type
 
@@ -54,6 +53,10 @@ class _Base_ (TFL.Meta.Object) :
         self.pop_to_self (kw, "rank")
         self.kw = dict (self.defaults, ** kw)
     # end def __init__
+
+    def _massaged (self, text) :
+        return text.replace ("\n\n", "<br>").replace ("\n", " ")
+    # end def _massaged
 
     def __getattr__ (self, name) :
         try :
@@ -84,6 +87,7 @@ class _Entity_Mixin_ (_Base_) :
         kw       = self.kw
         elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
         children = (e (E_Type, self, seen) for e in elems)
+        kw.setdefault ("name", E_Type.type_name)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
@@ -120,7 +124,7 @@ class _Field_ (_Base_) :
 class Field (_Field_) :
     """Specification for a field of a AFS form."""
 
-    Type     = GTW.AFS.Field
+    Type     = Element.Field
 
     def __call__ (self, E_Type, spec, seen) :
         return self.Type (** self.kw)
@@ -132,7 +136,7 @@ class Field (_Field_) :
 class Field_Composite (_Entity_Mixin_, _Field_) :
     """Specification for a composite field of a AFS form."""
 
-    Type     = GTW.AFS.Field_Composite
+    Type     = Element.Field_Composite
 
     def __init__ (self, ** kw) :
         self._elems = kw.pop ("elements", ())
@@ -157,7 +161,7 @@ class Field_Composite (_Entity_Mixin_, _Field_) :
 class Field_Object (_Field_) :
     """Specification of a object-holding field of a AFS form."""
 
-    Type     = GTW.AFS.Entity
+    Type     = Element.Entity
 
     def __call__ (self, E_Type, spec, seen) :
         attr = getattr (E_Type, self.name)
@@ -165,7 +169,7 @@ class Field_Object (_Field_) :
             return self.Type (** self.kw)
         else :
             print NotImplementedError ("Object-Completer field"), E_Type, attr
-            return GTW.AFS.Field (** self.kw)
+            return Element.Field (** self.kw)
     # end def __call__
 
 # end class Field_Object
@@ -176,7 +180,7 @@ class  _Field_Group_ (_Base_) :
     """Specification of a Field_Group of a AFS form."""
 
     defaults = dict (collapsed = True)
-    Type     = GTW.AFS.Fieldset
+    Type     = Element.Fieldset
 
     def __call__ (self, E_Type, spec, seen) :
         children = tuple \
@@ -193,12 +197,12 @@ class  _Field_Group_ (_Base_) :
                 seen.add (name)
                 kw = dict \
                     ( name        = name
-                    , description = attr.description
+                    , description = self._massaged (attr.description)
                     , ui_name     = attr.ui_name
                     , ** attr_spec [name]
                     )
                 if attr.explanation :
-                    kw ["explanation"] = attr.explanation
+                    kw ["explanation"] = self._massaged (attr.explanation)
                 yield attr.AFS_Spec (** kw)
     # end def fields
 
@@ -271,7 +275,7 @@ class Field_Group_Required (Field_Group_K) :
 class Entity (_Entity_Mixin_) :
     """Specification of a AFS form for an essential MOM entity."""
 
-    Type      = GTW.AFS.Entity
+    Type      = Element.Entity
 
     def __init__ (self, * elements, ** kw) :
         self._elems    = elements
@@ -284,7 +288,7 @@ class Entity (_Entity_Mixin_) :
 class Entity_Link (Entity) :
     """Specification of a AFS sub-form for a type of link(s) of an essential MOM entity."""
 
-    Type = GTW.AFS.Entity_Link
+    Type = Element.Entity_Link
 
     def __init__ (self, name, * elements, ** kw) :
         self.name = name
@@ -302,7 +306,7 @@ class Entity_Link (Entity) :
         seen = set ([role.generic_role_name])
         result = self.__super.__call__ (assoc, self, seen)
         if role.max_links != 1 :
-            result = GTW.AFS.Entity_List (proto = result)
+            result = Element.Entity_List (proto = result)
         return result
     # end def __call__
 

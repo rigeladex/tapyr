@@ -83,6 +83,10 @@
         {}
       , { type_name : "Entity" }
     );
+    var Entity_Link = Element.extend (
+        {}
+      , { type_name : "Entity_Link" }
+    );
     var Entity_List = Element.extend (
         {}
       , { type_name : "Entity_List" }
@@ -111,6 +115,7 @@
         { create                : create
         , Element               : Element
         , Entity                : Entity
+        , Entity_Link           : Entity_Link
         , Entity_List           : Entity_List
         , Field                 : Field
         , Field_Composite       : Field_Composite
