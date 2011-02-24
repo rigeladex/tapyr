@@ -221,267 +221,374 @@ _test_code = """
             <Field X-2:5::0-3:2::0-2:10 'week'>
             <Field X-2:5::0-3:2::0-2:11 'year_day'>
             <Field X-2:5::0-3:2::0-2:12 'easter_offset'>
-    >>> pprint.pprint (f.as_json_cargo)
-    {'$id': 'X',
-     'children': [{'$id': 'X-1',
-                   'children': [{'$id': 'X-1:1',
-                                 'children': [{'$id': 'X-1:1:1',
-                                               'name': 'last_name',
-                                               'type': 'Field',
-                                               'ui_name': u'Last name'},
-                                              {'$id': 'X-1:1:2',
-                                               'name': 'first_name',
-                                               'type': 'Field',
-                                               'ui_name': u'First name'},
-                                              {'$id': 'X-1:1:3',
-                                               'name': 'middle_name',
-                                               'type': 'Field',
-                                               'ui_name': u'Middle name'},
-                                              {'$id': 'X-1:1:4',
-                                               'name': 'title',
-                                               'type': 'Field',
-                                               'ui_name': u'Academic title'}],
-                                 'collapsed': False,
-                                 'name': 'primary',
-                                 'type': 'Fieldset'},
-                                {'$id': 'X-1:2',
-                                 'children': [{'$id': 'X-1:2:1',
-                                               'name': 'sex',
-                                               'type': 'Field',
-                                               'ui_name': u'Sex'}],
-                                 'collapsed': True,
-                                 'name': 'necessary',
-                                 'type': 'Fieldset'},
-                                {'$id': 'X-1:3',
-                                 'children': [{'$id': 'X-1:3:1',
-                                               'children': [{'$id': 'X-1:3:1.1',
-                                                             'name': 'start',
-                                                             'type': 'Field',
-                                                             'ui_name': u'Start'},
-                                                            {'$id': 'X-1:3:1.2',
-                                                             'name': 'finish',
-                                                             'type': 'Field',
-                                                             'ui_name': u'Finish'}],
-                                               'name': 'lifetime',
-                                               'type': 'Field_Composite',
-                                               'type_name': 'MOM.Date_Interval',
-                                               'ui_name': u'Lifetime'},
-                                              {'$id': 'X-1:3:2',
-                                               'name': 'salutation',
-                                               'type': 'Field',
-                                               'ui_name': u'Salutation'}],
-                                 'collapsed': True,
-                                 'name': 'optional',
-                                 'type': 'Fieldset'}],
-                   'name': 'GTW.OMP.PAP.Person',
-                   'type': 'Entity',
-                   'type_name': 'GTW.OMP.PAP.Person'},
-                  {'$id': 'X-2',
-                   'children': [{'$id': 'X-2:1',
-                                 'children': [{'$id': 'X-2:1:1',
-                                               'name': 'perma_name',
-                                               'type': 'Field',
-                                               'ui_name': 'Name'}],
-                                 'collapsed': False,
-                                 'name': 'primary',
-                                 'type': 'Fieldset'},
-                                {'$id': 'X-2:2',
-                                 'children': [{'$id': 'X-2:2:1',
-                                               'name': 'text',
-                                               'type': 'Field',
-                                               'ui_name': u'Text'}],
-                                 'collapsed': True,
-                                 'name': 'required',
-                                 'type': 'Fieldset'},
-                                {'$id': 'X-2:3',
-                                 'children': [{'$id': 'X-2:3:1',
-                                               'name': 'short_title',
-                                               'type': 'Field',
-                                               'ui_name': u'Short title'},
-                                              {'$id': 'X-2:3:2',
-                                               'name': 'title',
-                                               'type': 'Field',
-                                               'ui_name': u'Title'}],
-                                 'collapsed': True,
-                                 'name': 'necessary',
-                                 'type': 'Fieldset'},
-                                {'$id': 'X-2:4',
-                                 'children': [{'$id': 'X-2:4:1',
-                                               'children': [{'$id': 'X-2:4:1.1',
-                                                             'name': 'start',
-                                                             'type': 'Field',
-                                                             'ui_name': u'Start'},
-                                                            {'$id': 'X-2:4:1.2',
-                                                             'name': 'finish',
-                                                             'type': 'Field',
-                                                             'ui_name': u'Finish'}],
-                                               'name': 'date',
-                                               'type': 'Field_Composite',
-                                               'type_name': 'MOM.Date_Interval_N',
-                                               'ui_name': u'Date'},
-                                              {'$id': 'X-2:4:2',
-                                               'name': 'format',
-                                               'type': 'Field',
-                                               'ui_name': u'Format'},
-                                              {'$id': 'X-2:4:3',
-                                               'name': 'head_line',
-                                               'type': 'Field',
-                                               'ui_name': u'Head line'},
-                                              {'$id': 'X-2:4:4',
-                                               'name': 'prio',
-                                               'type': 'Field',
-                                               'ui_name': u'Prio'}],
-                                 'collapsed': True,
-                                 'name': 'optional',
-                                 'type': 'Fieldset'},
-                                {'$id': 'X-2:5',
-                                 'proto': {'$id': 'X-2:5::0',
-                                           'children': [{'$id': 'X-2:5::0-1',
-                                                         'children': [{'$id': 'X-2:5::0-1:1',
-                                                                       'children': [{'$id': 'X-2:5::0-1:1.1',
-                                                                                     'name': 'start',
-                                                                                     'type': 'Field',
-                                                                                     'ui_name': u'Start'},
-                                                                                    {'$id': 'X-2:5::0-1:1.2',
-                                                                                     'name': 'finish',
-                                                                                     'type': 'Field',
-                                                                                     'ui_name': u'Finish'}],
-                                                                       'name': 'date',
-                                                                       'type': 'Field_Composite',
-                                                                       'type_name': 'MOM.Date_Interval',
-                                                                       'ui_name': u'Date'},
-                                                                      {'$id': 'X-2:5::0-1:2',
-                                                                       'children': [{'$id': 'X-2:5::0-1:2.1',
-                                                                                     'name': 'start',
-                                                                                     'type': 'Field',
-                                                                                     'ui_name': u'Start'},
-                                                                                    {'$id': 'X-2:5::0-1:2.2',
-                                                                                     'name': 'finish',
-                                                                                     'type': 'Field',
-                                                                                     'ui_name': u'Finish'}],
-                                                                       'name': 'time',
-                                                                       'type': 'Field_Composite',
-                                                                       'type_name': 'MOM.Time_Interval',
-                                                                       'ui_name': u'Time'}],
-                                                         'collapsed': False,
-                                                         'name': 'primary',
-                                                         'type': 'Fieldset'},
-                                                        {'$id': 'X-2:5::0-2',
-                                                         'children': [{'$id': 'X-2:5::0-2:1',
-                                                                       'name': 'detail',
-                                                                       'type': 'Field',
-                                                                       'ui_name': u'Detail'},
-                                                                      {'$id': 'X-2:5::0-2:2',
-                                                                       'name': 'short_title',
-                                                                       'type': 'Field',
-                                                                       'ui_name': u'Short title'}],
-                                                         'collapsed': True,
-                                                         'name': 'optional',
-                                                         'type': 'Fieldset'},
-                                                        {'$id': 'X-2:5::0-3',
-                                                         'children': [{'$id': 'X-2:5::0-3:1',
-                                                                       'children': [{'$id': 'X-2:5::0-3:1:1',
-                                                                                     'name': 'dates',
-                                                                                     'type': 'Field',
-                                                                                     'ui_name': u'Dates'},
-                                                                                    {'$id': 'X-2:5::0-3:1:2',
-                                                                                     'name': 'date_exceptions',
-                                                                                     'type': 'Field',
-                                                                                     'ui_name': u'Date exceptions'}],
-                                                                       'collapsed': True,
-                                                                       'name': 'optional',
-                                                                       'type': 'Fieldset'},
-                                                                      {'$id': 'X-2:5::0-3:2',
-                                                                       'proto': {'$id': 'X-2:5::0-3:2::0',
-                                                                                 'children': [{'$id': 'X-2:5::0-3:2::0-1',
-                                                                                               'children': [{'$id': 'X-2:5::0-3:2::0-1:1',
-                                                                                                             'name': 'is_exception',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Is exception'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-1:2',
-                                                                                                             'name': 'desc',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': 'Description'}],
-                                                                                               'collapsed': False,
-                                                                                               'name': 'primary',
-                                                                                               'type': 'Fieldset'},
-                                                                                              {'$id': 'X-2:5::0-3:2::0-2',
-                                                                                               'children': [{'$id': 'X-2:5::0-3:2::0-2:1',
-                                                                                                             'name': 'start',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Start'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:2',
-                                                                                                             'name': 'finish',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Finish'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:3',
-                                                                                                             'name': 'period',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Period'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:4',
-                                                                                                             'name': 'unit',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Unit'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:5',
-                                                                                                             'name': 'week_day',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Week day'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:6',
-                                                                                                             'name': 'count',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Count'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:7',
-                                                                                                             'name': 'restrict_pos',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Restrict pos'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:8',
-                                                                                                             'name': 'month_day',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Month day'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:9',
-                                                                                                             'name': 'month',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Month'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:10',
-                                                                                                             'name': 'week',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Week'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:11',
-                                                                                                             'name': 'year_day',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Year day'},
-                                                                                                            {'$id': 'X-2:5::0-3:2::0-2:12',
-                                                                                                             'name': 'easter_offset',
-                                                                                                             'type': 'Field',
-                                                                                                             'ui_name': u'Easter offset'}],
-                                                                                               'collapsed': True,
-                                                                                               'name': 'optional',
-                                                                                               'type': 'Fieldset'}],
-                                                                                 'name': 'GTW.OMP.EVT.Recurrence_Rule',
-                                                                                 'role_name': 'left',
-                                                                                 'type': 'Entity_Link',
-                                                                                 'type_name': 'GTW.OMP.EVT.Recurrence_Rule'},
-                                                                       'type': 'Entity_List'}],
-                                                         'name': 'GTW.OMP.EVT.Recurrence_Spec',
-                                                         'role_name': 'left',
-                                                         'type': 'Entity_Link',
-                                                         'type_name': 'GTW.OMP.EVT.Recurrence_Spec'}],
-                                           'name': 'GTW.OMP.EVT.Event',
-                                           'role_name': 'left',
-                                           'type': 'Entity_Link',
-                                           'type_name': 'GTW.OMP.EVT.Event'},
-                                 'type': 'Entity_List'}],
-                   'name': 'GTW.OMP.SWP.Page',
-                   'type': 'Entity',
-                   'type_name': 'GTW.OMP.SWP.Page'}],
-     'type': 'Form'}
+    >>> print formatted (f.as_json_cargo)
+    { '$id' : 'X'
+    , 'children' :
+        [ { '$id' : 'X-1'
+          , 'children' :
+              [ { '$id' : 'X-1:1'
+                , 'children' :
+                    [ { '$id' : 'X-1:1:1'
+                      , 'name' : 'last_name'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Last name'
+                      }
+                    , { '$id' : 'X-1:1:2'
+                      , 'name' : 'first_name'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'First name'
+                      }
+                    , { '$id' : 'X-1:1:3'
+                      , 'name' : 'middle_name'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Middle name'
+                      }
+                    , { '$id' : 'X-1:1:4'
+                      , 'name' : 'title'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Academic title'
+                      }
+                    ]
+                , 'collapsed' : False
+                , 'name' : 'primary'
+                , 'type' : 'Fieldset'
+                }
+              , { '$id' : 'X-1:2'
+                , 'children' :
+                    [ { '$id' : 'X-1:2:1'
+                      , 'name' : 'sex'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Sex'
+                      }
+                    ]
+                , 'collapsed' : True
+                , 'name' : 'necessary'
+                , 'type' : 'Fieldset'
+                }
+              , { '$id' : 'X-1:3'
+                , 'children' :
+                    [ { '$id' : 'X-1:3:1'
+                      , 'children' :
+                          [ { '$id' : 'X-1:3:1.1'
+                            , 'name' : 'start'
+                            , 'type' : 'Field'
+                            , 'ui_name' : u'Start'
+                            }
+                          , { '$id' : 'X-1:3:1.2'
+                            , 'name' : 'finish'
+                            , 'type' : 'Field'
+                            , 'ui_name' : u'Finish'
+                            }
+                          ]
+                      , 'name' : 'lifetime'
+                      , 'type' : 'Field_Composite'
+                      , 'type_name' : 'MOM.Date_Interval'
+                      , 'ui_name' : u'Lifetime'
+                      }
+                    , { '$id' : 'X-1:3:2'
+                      , 'name' : 'salutation'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Salutation'
+                      }
+                    ]
+                , 'collapsed' : True
+                , 'name' : 'optional'
+                , 'type' : 'Fieldset'
+                }
+              ]
+          , 'name' : 'GTW.OMP.PAP.Person'
+          , 'type' : 'Entity'
+          , 'type_name' : 'GTW.OMP.PAP.Person'
+          }
+        , { '$id' : 'X-2'
+          , 'children' :
+              [ { '$id' : 'X-2:1'
+                , 'children' :
+                    [ { '$id' : 'X-2:1:1'
+                      , 'name' : 'perma_name'
+                      , 'type' : 'Field'
+                      , 'ui_name' : 'Name'
+                      }
+                    ]
+                , 'collapsed' : False
+                , 'name' : 'primary'
+                , 'type' : 'Fieldset'
+                }
+              , { '$id' : 'X-2:2'
+                , 'children' :
+                    [ { '$id' : 'X-2:2:1'
+                      , 'name' : 'text'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Text'
+                      }
+                    ]
+                , 'collapsed' : True
+                , 'name' : 'required'
+                , 'type' : 'Fieldset'
+                }
+              , { '$id' : 'X-2:3'
+                , 'children' :
+                    [ { '$id' : 'X-2:3:1'
+                      , 'name' : 'short_title'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Short title'
+                      }
+                    , { '$id' : 'X-2:3:2'
+                      , 'name' : 'title'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Title'
+                      }
+                    ]
+                , 'collapsed' : True
+                , 'name' : 'necessary'
+                , 'type' : 'Fieldset'
+                }
+              , { '$id' : 'X-2:4'
+                , 'children' :
+                    [ { '$id' : 'X-2:4:1'
+                      , 'children' :
+                          [ { '$id' : 'X-2:4:1.1'
+                            , 'name' : 'start'
+                            , 'type' : 'Field'
+                            , 'ui_name' : u'Start'
+                            }
+                          , { '$id' : 'X-2:4:1.2'
+                            , 'name' : 'finish'
+                            , 'type' : 'Field'
+                            , 'ui_name' : u'Finish'
+                            }
+                          ]
+                      , 'name' : 'date'
+                      , 'type' : 'Field_Composite'
+                      , 'type_name' : 'MOM.Date_Interval_N'
+                      , 'ui_name' : u'Date'
+                      }
+                    , { '$id' : 'X-2:4:2'
+                      , 'name' : 'format'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Format'
+                      }
+                    , { '$id' : 'X-2:4:3'
+                      , 'name' : 'head_line'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Head line'
+                      }
+                    , { '$id' : 'X-2:4:4'
+                      , 'name' : 'prio'
+                      , 'type' : 'Field'
+                      , 'ui_name' : u'Prio'
+                      }
+                    ]
+                , 'collapsed' : True
+                , 'name' : 'optional'
+                , 'type' : 'Fieldset'
+                }
+              , { '$id' : 'X-2:5'
+                , 'proto' : { '$id' : 'X-2:5::0'
+                    , 'children' :
+                        [ { '$id' : 'X-2:5::0-1'
+                          , 'children' :
+                              [ { '$id' : 'X-2:5::0-1:1'
+                                , 'children' :
+                                    [ { '$id' : 'X-2:5::0-1:1.1'
+                                      , 'name' : 'start'
+                                      , 'type' : 'Field'
+                                      , 'ui_name' : u'Start'
+                                      }
+                                    , { '$id' : 'X-2:5::0-1:1.2'
+                                      , 'name' : 'finish'
+                                      , 'type' : 'Field'
+                                      , 'ui_name' : u'Finish'
+                                      }
+                                    ]
+                                , 'name' : 'date'
+                                , 'type' : 'Field_Composite'
+                                , 'type_name' : 'MOM.Date_Interval'
+                                , 'ui_name' : u'Date'
+                                }
+                              , { '$id' : 'X-2:5::0-1:2'
+                                , 'children' :
+                                    [ { '$id' : 'X-2:5::0-1:2.1'
+                                      , 'name' : 'start'
+                                      , 'type' : 'Field'
+                                      , 'ui_name' : u'Start'
+                                      }
+                                    , { '$id' : 'X-2:5::0-1:2.2'
+                                      , 'name' : 'finish'
+                                      , 'type' : 'Field'
+                                      , 'ui_name' : u'Finish'
+                                      }
+                                    ]
+                                , 'name' : 'time'
+                                , 'type' : 'Field_Composite'
+                                , 'type_name' : 'MOM.Time_Interval'
+                                , 'ui_name' : u'Time'
+                                }
+                              ]
+                          , 'collapsed' : False
+                          , 'name' : 'primary'
+                          , 'type' : 'Fieldset'
+                          }
+                        , { '$id' : 'X-2:5::0-2'
+                          , 'children' :
+                              [ { '$id' : 'X-2:5::0-2:1'
+                                , 'name' : 'detail'
+                                , 'type' : 'Field'
+                                , 'ui_name' : u'Detail'
+                                }
+                              , { '$id' : 'X-2:5::0-2:2'
+                                , 'name' : 'short_title'
+                                , 'type' : 'Field'
+                                , 'ui_name' : u'Short title'
+                                }
+                              ]
+                          , 'collapsed' : True
+                          , 'name' : 'optional'
+                          , 'type' : 'Fieldset'
+                          }
+                        , { '$id' : 'X-2:5::0-3'
+                          , 'children' :
+                              [ { '$id' : 'X-2:5::0-3:1'
+                                , 'children' :
+                                    [ { '$id' : 'X-2:5::0-3:1:1'
+                                      , 'name' : 'dates'
+                                      , 'type' : 'Field'
+                                      , 'ui_name' : u'Dates'
+                                      }
+                                    , { '$id' : 'X-2:5::0-3:1:2'
+                                      , 'name' : 'date_exceptions'
+                                      , 'type' : 'Field'
+                                      , 'ui_name' : u'Date exceptions'
+                                      }
+                                    ]
+                                , 'collapsed' : True
+                                , 'name' : 'optional'
+                                , 'type' : 'Fieldset'
+                                }
+                              , { '$id' : 'X-2:5::0-3:2'
+                                , 'proto' : { '$id' : 'X-2:5::0-3:2::0'
+                                    , 'children' :
+                                        [ { '$id' : 'X-2:5::0-3:2::0-1'
+                                          , 'children' :
+                                              [ { '$id' : 'X-2:5::0-3:2::0-1:1'
+                                                , 'name' : 'is_exception'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Is exception'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-1:2'
+                                                , 'name' : 'desc'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : 'Description'
+                                                }
+                                              ]
+                                          , 'collapsed' : False
+                                          , 'name' : 'primary'
+                                          , 'type' : 'Fieldset'
+                                          }
+                                        , { '$id' : 'X-2:5::0-3:2::0-2'
+                                          , 'children' :
+                                              [ { '$id' : 'X-2:5::0-3:2::0-2:1'
+                                                , 'name' : 'start'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Start'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:2'
+                                                , 'name' : 'finish'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Finish'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:3'
+                                                , 'name' : 'period'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Period'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:4'
+                                                , 'name' : 'unit'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Unit'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:5'
+                                                , 'name' : 'week_day'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Week day'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:6'
+                                                , 'name' : 'count'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Count'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:7'
+                                                , 'name' : 'restrict_pos'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Restrict pos'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:8'
+                                                , 'name' : 'month_day'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Month day'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:9'
+                                                , 'name' : 'month'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Month'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:10'
+                                                , 'name' : 'week'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Week'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:11'
+                                                , 'name' : 'year_day'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Year day'
+                                                }
+                                              , { '$id' : 'X-2:5::0-3:2::0-2:12'
+                                                , 'name' : 'easter_offset'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Easter offset'
+                                                }
+                                              ]
+                                          , 'collapsed' : True
+                                          , 'name' : 'optional'
+                                          , 'type' : 'Fieldset'
+                                          }
+                                        ]
+                                    , 'name' : 'GTW.OMP.EVT.Recurrence_Rule'
+                                    , 'role_name' : 'left'
+                                    , 'type' : 'Entity_Link'
+                                    , 'type_name' : 'GTW.OMP.EVT.Recurrence_Rule'
+                                    }
+                                , 'type' : 'Entity_List'
+                                }
+                              ]
+                          , 'name' : 'GTW.OMP.EVT.Recurrence_Spec'
+                          , 'role_name' : 'left'
+                          , 'type' : 'Entity_Link'
+                          , 'type_name' : 'GTW.OMP.EVT.Recurrence_Spec'
+                          }
+                        ]
+                    , 'name' : 'GTW.OMP.EVT.Event'
+                    , 'role_name' : 'left'
+                    , 'type' : 'Entity_Link'
+                    , 'type_name' : 'GTW.OMP.EVT.Event'
+                    }
+                , 'type' : 'Entity_List'
+                }
+              ]
+          , 'name' : 'GTW.OMP.SWP.Page'
+          , 'type' : 'Entity'
+          , 'type_name' : 'GTW.OMP.SWP.Page'
+          }
+        ]
+    , 'type' : 'Form'
+    }
 
 """
 
 from   _GTW.__test__.model import *
 from   _GTW._AFS.Element   import Form
 
-import pprint
+from   _TFL.Formatter      import formatted
 
 __test__ = dict (AFS_Spec = _test_code)
 

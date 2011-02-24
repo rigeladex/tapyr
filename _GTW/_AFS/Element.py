@@ -343,7 +343,8 @@ class Form (_Element_List_) :
 __doc__ = """
 Usage example::
 
-    >>> import pprint
+    >>> from _TFL.Formatter import Formatter
+    >>> formatted = Formatter (width = 160)
     >>> f = Form ( "F"
     ...     , children =
     ...         [ Entity
@@ -401,50 +402,80 @@ Usage example::
          <Field F-1:3::0-2:1 'address'>
      <Entity F-2 'SRM.Boat_Type'>
       <Field F-2:1 'name'>
-    >>> pprint.pprint (f.as_json_cargo)
-    {'$id': 'F',
-     'children': [{'$id': 'F-1',
-                    'children': [{'$id': 'F-1:1',
-                                   'children': [{'$id': 'F-1:1:1',
-                                                  'name': 'last_name',
-                                                  'type': 'Field'},
-                                                 {'$id': 'F-1:1:2',
-                                                  'name': 'first_name',
-                                                  'type': 'Field'}],
-                                   'name': 'primary',
-                                   'type': 'Fieldset'},
-                                  {'$id': 'F-1:2',
-                                   'children': [{'$id': 'F-1:2.1',
-                                                  'name': 'start',
-                                                  'type': 'Field'},
-                                                 {'$id': 'F-1:2.2',
-                                                  'name': 'finish',
-                                                  'type': 'Field'}],
-                                   'name': 'lifetime',
-                                   'type': 'Field_Composite'},
-                                  {'$id': 'F-1:3',
-                                   'proto': {'$id': 'F-1:3::0',
-                                             'children': [{'$id': 'F-1:3::0-1',
-                                                           'name': 'desc',
-                                                           'type': 'Field'},
-                                                          {'$id': 'F-1:3::0-2',
-                                                           'children': [{'$id': 'F-1:3::0-2:1',
-                                                                         'name': 'address',
-                                                                         'type': 'Field'}],
-                                                           'type': 'Entity',
-                                                           'type_name': 'PAP.Email'}],
-                                             'type': 'Entity',
-                                             'type_name': 'PAP.Person_has_Email'},
-                                   'type': 'Entity_List'}],
-                    'type': 'Entity',
-                    'type_name': 'PAP.Person'},
-                   {'$id': 'F-2',
-                    'children': [{'$id': 'F-2:1',
-                                   'name': 'name',
-                                   'type': 'Field'}],
-                    'type': 'Entity',
-                    'type_name': 'SRM.Boat_Type'}],
-     'type': 'Form'}
+    >>> print formatted (f.as_json_cargo, level = 1)
+      { '$id' : 'F'
+      , 'children' :
+          [ { '$id' : 'F-1'
+            , 'children' :
+                [ { '$id' : 'F-1:1'
+                  , 'children' :
+                      [ { '$id' : 'F-1:1:1'
+                        , 'name' : 'last_name'
+                        , 'type' : 'Field'
+                        }
+                      , { '$id' : 'F-1:1:2'
+                        , 'name' : 'first_name'
+                        , 'type' : 'Field'
+                        }
+                      ]
+                  , 'name' : 'primary'
+                  , 'type' : 'Fieldset'
+                  }
+                , { '$id' : 'F-1:2'
+                  , 'children' :
+                      [ { '$id' : 'F-1:2.1'
+                        , 'name' : 'start'
+                        , 'type' : 'Field'
+                        }
+                      , { '$id' : 'F-1:2.2'
+                        , 'name' : 'finish'
+                        , 'type' : 'Field'
+                        }
+                      ]
+                  , 'name' : 'lifetime'
+                  , 'type' : 'Field_Composite'
+                  }
+                , { '$id' : 'F-1:3'
+                  , 'proto' : { '$id' : 'F-1:3::0'
+                      , 'children' :
+                          [ { '$id' : 'F-1:3::0-1'
+                            , 'name' : 'desc'
+                            , 'type' : 'Field'
+                            }
+                          , { '$id' : 'F-1:3::0-2'
+                            , 'children' :
+                                [ { '$id' : 'F-1:3::0-2:1'
+                                  , 'name' : 'address'
+                                  , 'type' : 'Field'
+                                  }
+                                ]
+                            , 'type' : 'Entity'
+                            , 'type_name' : 'PAP.Email'
+                            }
+                          ]
+                      , 'type' : 'Entity'
+                      , 'type_name' : 'PAP.Person_has_Email'
+                      }
+                  , 'type' : 'Entity_List'
+                  }
+                ]
+            , 'type' : 'Entity'
+            , 'type_name' : 'PAP.Person'
+            }
+          , { '$id' : 'F-2'
+            , 'children' :
+                [ { '$id' : 'F-2:1'
+                  , 'name' : 'name'
+                  , 'type' : 'Field'
+                  }
+                ]
+            , 'type' : 'Entity'
+            , 'type_name' : 'SRM.Boat_Type'
+            }
+          ]
+      , 'type' : 'Form'
+      }
+
     >>> f.as_json
     '{"$id": "F", "type": "Form", "children": [{"$id": "F-1", "type_name": "PAP.Person", "type": "Entity", "children": [{"$id": "F-1:1", "type": "Fieldset", "name": "primary", "children": [{"$id": "F-1:1:1", "type": "Field", "name": "last_name"}, {"$id": "F-1:1:2", "type": "Field", "name": "first_name"}]}, {"$id": "F-1:2", "type": "Field_Composite", "name": "lifetime", "children": [{"$id": "F-1:2.1", "type": "Field", "name": "start"}, {"$id": "F-1:2.2", "type": "Field", "name": "finish"}]}, {"$id": "F-1:3", "type": "Entity_List", "proto": {"$id": "F-1:3::0", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::0-1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::0-2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::0-2:1", "type": "Field", "name": "address"}]}]}}]}, {"$id": "F-2", "type_name": "SRM.Boat_Type", "type": "Entity", "children": [{"$id": "F-2:1", "type": "Field", "name": "name"}]}]}'
     >>> sorted (f.id_map)
@@ -498,74 +529,122 @@ Usage example::
          <Field F-1:3::2:2:1 'address'>
      <Entity F-2 'SRM.Boat_Type'>
       <Field F-2:1 'name'>
-    >>> pprint.pprint (g.as_json_cargo)
-    {'$id': 'F',
-     'children': [{'$id': 'F-1',
-                   'children': [{'$id': 'F-1:1',
-                                 'children': [{'$id': 'F-1:1:1',
-                                               'name': 'last_name',
-                                               'type': 'Field'},
-                                              {'$id': 'F-1:1:2',
-                                               'name': 'first_name',
-                                               'type': 'Field'}],
-                                 'name': 'primary',
-                                 'type': 'Fieldset'},
-                                {'$id': 'F-1:2',
-                                 'children': [{'$id': 'F-1:2.1',
-                                               'name': 'start',
-                                               'type': 'Field'},
-                                              {'$id': 'F-1:2.2',
-                                               'name': 'finish',
-                                               'type': 'Field'}],
-                                 'name': 'lifetime',
-                                 'type': 'Field_Composite'},
-                                {'$id': 'F-1:3',
-                                 'children': [{'$id': 'F-1:3::1',
-                                               'children': [{'$id': 'F-1:3::1:1',
-                                                             'name': 'desc',
-                                                             'type': 'Field'},
-                                                            {'$id': 'F-1:3::1:2',
-                                                             'children': [{'$id': 'F-1:3::1:2:1',
-                                                                           'name': 'address',
-                                                                           'type': 'Field'}],
-                                                             'type': 'Entity',
-                                                             'type_name': 'PAP.Email'}],
-                                               'type': 'Entity',
-                                               'type_name': 'PAP.Person_has_Email'},
-                                              {'$id': 'F-1:3::2',
-                                               'children': [{'$id': 'F-1:3::2:1',
-                                                             'name': 'desc',
-                                                             'type': 'Field'},
-                                                            {'$id': 'F-1:3::2:2',
-                                                             'children': [{'$id': 'F-1:3::2:2:1',
-                                                                           'name': 'address',
-                                                                           'type': 'Field'}],
-                                                             'type': 'Entity',
-                                                             'type_name': 'PAP.Email'}],
-                                               'type': 'Entity',
-                                               'type_name': 'PAP.Person_has_Email'}],
-                                 'proto': {'$id': 'F-1:3::0',
-                                           'children': [{'$id': 'F-1:3::0-1',
-                                                         'name': 'desc',
-                                                         'type': 'Field'},
-                                                        {'$id': 'F-1:3::0-2',
-                                                         'children': [{'$id': 'F-1:3::0-2:1',
-                                                                       'name': 'address',
-                                                                       'type': 'Field'}],
-                                                         'type': 'Entity',
-                                                         'type_name': 'PAP.Email'}],
-                                           'type': 'Entity',
-                                           'type_name': 'PAP.Person_has_Email'},
-                                 'type': 'Entity_List'}],
-                   'type': 'Entity',
-                   'type_name': 'PAP.Person'},
-                  {'$id': 'F-2',
-                   'children': [{'$id': 'F-2:1',
-                                 'name': 'name',
-                                 'type': 'Field'}],
-                   'type': 'Entity',
-                   'type_name': 'SRM.Boat_Type'}],
-     'type': 'Form'}
+    >>> print formatted (g.as_json_cargo, level = 1)
+      { '$id' : 'F'
+      , 'children' :
+          [ { '$id' : 'F-1'
+            , 'children' :
+                [ { '$id' : 'F-1:1'
+                  , 'children' :
+                      [ { '$id' : 'F-1:1:1'
+                        , 'name' : 'last_name'
+                        , 'type' : 'Field'
+                        }
+                      , { '$id' : 'F-1:1:2'
+                        , 'name' : 'first_name'
+                        , 'type' : 'Field'
+                        }
+                      ]
+                  , 'name' : 'primary'
+                  , 'type' : 'Fieldset'
+                  }
+                , { '$id' : 'F-1:2'
+                  , 'children' :
+                      [ { '$id' : 'F-1:2.1'
+                        , 'name' : 'start'
+                        , 'type' : 'Field'
+                        }
+                      , { '$id' : 'F-1:2.2'
+                        , 'name' : 'finish'
+                        , 'type' : 'Field'
+                        }
+                      ]
+                  , 'name' : 'lifetime'
+                  , 'type' : 'Field_Composite'
+                  }
+                , { '$id' : 'F-1:3'
+                  , 'children' :
+                      [ { '$id' : 'F-1:3::1'
+                        , 'children' :
+                            [ { '$id' : 'F-1:3::1:1'
+                              , 'name' : 'desc'
+                              , 'type' : 'Field'
+                              }
+                            , { '$id' : 'F-1:3::1:2'
+                              , 'children' :
+                                  [ { '$id' : 'F-1:3::1:2:1'
+                                    , 'name' : 'address'
+                                    , 'type' : 'Field'
+                                    }
+                                  ]
+                              , 'type' : 'Entity'
+                              , 'type_name' : 'PAP.Email'
+                              }
+                            ]
+                        , 'type' : 'Entity'
+                        , 'type_name' : 'PAP.Person_has_Email'
+                        }
+                      , { '$id' : 'F-1:3::2'
+                        , 'children' :
+                            [ { '$id' : 'F-1:3::2:1'
+                              , 'name' : 'desc'
+                              , 'type' : 'Field'
+                              }
+                            , { '$id' : 'F-1:3::2:2'
+                              , 'children' :
+                                  [ { '$id' : 'F-1:3::2:2:1'
+                                    , 'name' : 'address'
+                                    , 'type' : 'Field'
+                                    }
+                                  ]
+                              , 'type' : 'Entity'
+                              , 'type_name' : 'PAP.Email'
+                              }
+                            ]
+                        , 'type' : 'Entity'
+                        , 'type_name' : 'PAP.Person_has_Email'
+                        }
+                      ]
+                  , 'proto' : { '$id' : 'F-1:3::0'
+                      , 'children' :
+                          [ { '$id' : 'F-1:3::0-1'
+                            , 'name' : 'desc'
+                            , 'type' : 'Field'
+                            }
+                          , { '$id' : 'F-1:3::0-2'
+                            , 'children' :
+                                [ { '$id' : 'F-1:3::0-2:1'
+                                  , 'name' : 'address'
+                                  , 'type' : 'Field'
+                                  }
+                                ]
+                            , 'type' : 'Entity'
+                            , 'type_name' : 'PAP.Email'
+                            }
+                          ]
+                      , 'type' : 'Entity'
+                      , 'type_name' : 'PAP.Person_has_Email'
+                      }
+                  , 'type' : 'Entity_List'
+                  }
+                ]
+            , 'type' : 'Entity'
+            , 'type_name' : 'PAP.Person'
+            }
+          , { '$id' : 'F-2'
+            , 'children' :
+                [ { '$id' : 'F-2:1'
+                  , 'name' : 'name'
+                  , 'type' : 'Field'
+                  }
+                ]
+            , 'type' : 'Entity'
+            , 'type_name' : 'SRM.Boat_Type'
+            }
+          ]
+      , 'type' : 'Form'
+      }
+
     >>> print g.as_json
     {"$id": "F", "type": "Form", "children": [{"$id": "F-1", "type_name": "PAP.Person", "type": "Entity", "children": [{"$id": "F-1:1", "type": "Fieldset", "name": "primary", "children": [{"$id": "F-1:1:1", "type": "Field", "name": "last_name"}, {"$id": "F-1:1:2", "type": "Field", "name": "first_name"}]}, {"$id": "F-1:2", "type": "Field_Composite", "name": "lifetime", "children": [{"$id": "F-1:2.1", "type": "Field", "name": "start"}, {"$id": "F-1:2.2", "type": "Field", "name": "finish"}]}, {"$id": "F-1:3", "type": "Entity_List", "children": [{"$id": "F-1:3::1", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::1:1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::1:2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::1:2:1", "type": "Field", "name": "address"}]}]}, {"$id": "F-1:3::2", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::2:1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::2:2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::2:2:1", "type": "Field", "name": "address"}]}]}], "proto": {"$id": "F-1:3::0", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::0-1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::0-2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::0-2:1", "type": "Field", "name": "address"}]}]}}]}, {"$id": "F-2", "type_name": "SRM.Boat_Type", "type": "Entity", "children": [{"$id": "F-2:1", "type": "Field", "name": "name"}]}]}
     >>> print g ["F-1:3::0-1"]
