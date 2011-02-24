@@ -77,6 +77,7 @@
 #    13-Oct-2010 (CT) `example` added
 #    24-Feb-2011 (CT) `Link._role_to_raw_iter` changed to use `v.epk_raw`
 #                     instead of `r.as_code (v)`
+#    24-Feb-2011 (CT) DRY cleanups for `instance` and `exists` (Object, Link)
 #    ««revision-date»»···
 #--
 
@@ -174,13 +175,17 @@ class Id_Entity (Entity) :
     # end def example
 
     def exists (self, * epk, ** kw) :
+        """Return true if an object or link with primary key `epk` exists."""
+        epk, kw, this = self._cooked_epk (epk, kw)
         if kw :
             raise TypeError (kw)
-        return self.ems.exists (self._etype, epk)
+        return this.ems.exists (this._etype, epk)
     # end def exists
 
     def instance (self, * epk, ** kw) :
-        return self.ems.instance (self._etype, epk)
+        """Return the object or link with primary key `epk` or None."""
+        epk, kw, this = self._cooked_epk (epk, kw)
+        return this.ems.instance (this._etype, epk)
     # end def instance
 
     def instance_or_new (self, * epk, ** kw) :
@@ -243,18 +248,6 @@ class Id_Entity (Entity) :
 class Object (Id_Entity) :
     """Scope-specific manager for essential object-types."""
 
-    def exists (self, * epk, ** kw) :
-        """Return true if an object with primary key `epk` exists."""
-        epk, kw, this = self._cooked_epk (epk, kw)
-        return this.__super.exists (* epk, ** kw)
-    # end def exists
-
-    def instance (self, * epk, ** kw) :
-        """Return the object with primary key `epk` or None."""
-        epk, kw, this = self._cooked_epk (epk, kw)
-        return this.__super.instance (* epk, ** kw)
-    # end def instance
-
     @property
     def singleton (self) :
         Type = self._etype
@@ -314,18 +307,6 @@ class Link (Id_Entity) :
         type_name = self._etype.Essence.type_name
         return [o for o in objects if type_name not in o.refuse_links]
     # end def applicable_objects
-
-    def exists (self, * epk, ** kw) :
-        """Return true if a link with primary key `epk` exists."""
-        epk, kw, this = self._cooked_epk (epk, kw)
-        return this.__super.exists (* epk, ** kw)
-    # end def exists
-
-    def instance (self, * epk, ** kw) :
-        """Return the link with primary key `epk` or None."""
-        epk, kw, this = self._cooked_epk   (epk, kw)
-        return this.__super.instance (* epk, ** kw)
-    # end def instance
 
     def r_query (self, * filters, ** kw) :
         """Return all links matching the conditions in `filters` and `kw`.
@@ -405,9 +386,9 @@ class Link (Id_Entity) :
         else :
             epk = tuple (self._role_to_cooked_iter (epk))
         etype = self._etype
-        if self.__super.exists (* epk) :
+        if self.ems.exists (etype, epk) :
             raise MOM.Error.Duplicate_Link \
-                (etype, self.__super.instance (* epk))
+                (etype, self.ems.instance (etype, epk))
         errors  = []
         r_query = self.ems.r_query
         for r, pk in zip (etype.Roles, epk) :
