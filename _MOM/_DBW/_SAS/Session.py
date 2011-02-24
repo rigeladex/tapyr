@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -84,6 +84,7 @@
 #     8-Sep-2010 (MG) `Session_S.update_change` added
 #    15-Sep-2010 (CT) `flush` changed to use `pending_attr_changes`,
 #                     guard for `entity` added
+#    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #    ««revision-date»»···
 #--
 
@@ -258,7 +259,7 @@ class SAS_Interface (TFL.Meta.Object) :
             else :
                 attr    = kind.attr
                 raw_col = None
-                if isinstance (attr, MOM.Attr._A_Object_) :
+                if isinstance (attr, MOM.Attr._A_Entity_) :
                     col = cm.get ("%s%s_pid" % (prefix, kind.attr.name), None)
                 else :
                     col = cm.get ("%s%s"     % (prefix, kind.attr.name), None)

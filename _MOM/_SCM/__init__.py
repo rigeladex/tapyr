@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package _MOM.
@@ -94,7 +94,7 @@ Constraints
 
 - Don't keep references to essential objects to avoid memory leaks
 
-  * problem: attributes of types like `A_Object`
+  * problem: attributes of types like `A_Entity`
 
 - Store the minimum amount of information in the history list
   necessary to support undo

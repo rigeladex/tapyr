@@ -127,7 +127,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class registration_date
 
-        class skipper (A_Object) :
+        class skipper (A_Entity) :
             """Skipper of boat."""
 
             Class              = GTW.OMP.SRM.Sailor

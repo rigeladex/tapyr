@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -176,7 +176,7 @@ class Regatta_C (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class boat_class (A_Object) :
+        class boat_class (A_Entity) :
             """Class of boats sailing in this regatta."""
 
             kind               = Attr.Primary

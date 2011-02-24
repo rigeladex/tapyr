@@ -106,6 +106,7 @@
 #     8-Feb-2011 (CT) s/Mandatory/Required/
 #    10-Feb-2011 (CT) `_nested_classes_to_combine` defined as class attribute
 #    10-Feb-2011 (CT) `_m_combine_nested_class` factored to `TFL.Meta.M_Base`
+#    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #    ««revision-date»»···
 #--
 
@@ -614,7 +615,7 @@ class M_E_Type (M_E_Mixin) :
         app_type        = cls.app_type
         for ak in attr_dict.itervalues () :
             at = ak.attr
-            if isinstance (at, MOM.Attr._A_Object_) and at.Class :
+            if isinstance (at, MOM.Attr._A_Entity_) and at.Class :
                 ats = app_type.entity_type (at.Class)
                 if ats :
                     at.Class = ats
@@ -752,7 +753,7 @@ class M_E_Type_Id (M_E_Type) :
         sbs = []
         if cls.epk_sig :
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
-                if isinstance (pka.attr, MOM.Attr._A_Object_) :
+                if isinstance (pka.attr, MOM.Attr._A_Entity_) :
                     et = pka.Class
                     if et :
                         sbs.extend \

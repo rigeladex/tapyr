@@ -88,7 +88,7 @@ class Team (_Ancestor_Essence) :
 
         # end class desc
 
-        class leader (A_Object) :
+        class leader (A_Entity) :
             """Leader of team."""
 
             Class              = GTW.OMP.PAP.Person

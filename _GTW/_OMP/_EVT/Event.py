@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -228,7 +228,7 @@ class Event_occurs (_Ancestor_Essence) :
 
         # end class electric
 
-        class essence (_A_Object_) :
+        class essence (_A_Entity_) :
 
             kind               = Attr.Computed
 

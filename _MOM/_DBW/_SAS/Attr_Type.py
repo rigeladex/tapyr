@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2011 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -52,6 +52,7 @@
 #     6-Sep-2010 (MG) Changes to allow link's to entities which are not
 #                     relevant
 #     6-Sep-2010 (CT) `Attr._A_Composite_Collection_` removed
+#    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ def _sa_normal_attr (self) :
     return self.name
 # end def _sa_normal_attr
 
-@TFL.Add_To_Class ("_sa_column_name", Attr._A_Object_)
+@TFL.Add_To_Class ("_sa_column_name", Attr._A_Entity_)
 def _sa_object (self) :
     return "%s_pid" % (self.name, )
 # end def _sa_object
@@ -99,7 +100,7 @@ def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     return (col, )
 # end def _sa_columns_simple
 
-@Add_Classmedthod ("_sa_columns", Attr._A_Object_)
+@Add_Classmedthod ("_sa_columns", Attr._A_Entity_)
 def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name

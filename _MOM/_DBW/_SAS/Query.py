@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -146,7 +146,7 @@ class MOM_Query (_MOM_Query_) :
                 if isinstance (kind, MOM.Attr.Link_Role) :
                     self._add_q (col, kind, attr.role_name)
                     attr_names.append (attr.role_name)
-                if isinstance (attr, MOM.Attr._A_Object_) :
+                if isinstance (attr, MOM.Attr._A_Entity_) :
                     join_query = Join_Query (self)
                     for an in attr_names :
                         self._ID_ENTITY_ATTRS [an] = join_query

@@ -162,6 +162,7 @@
 #    22-Nov-2010 (CT) `A_Euro_Amount` and `A_Year` added, `_A_Decimal_` factored
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #     9-Feb-2011 (CT) `ui_allow_new` added to `_A_Object_` and `A_Link_Role`
+#    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #    ««revision-date»»···
 #--
 
@@ -753,14 +754,14 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 
 # end class _A_Link_Role_Right_
 
-class _A_Object_ (A_Attr_Type) :
-    """Models an attribute referring to an object."""
+class _A_Entity_ (A_Attr_Type) :
+    """Models an attribute referring to an entity."""
 
     Class             = ""
     P_Type            = TFL.Meta.Alias_Property ("Class")
 
     needs_raw_value   = False
-    ### allow creation of new object for this attribute
+    ### allow creation of new entity for this attribute
     ui_allow_new      = True
 
     @TFL.Meta.Once_Property
@@ -827,7 +828,7 @@ class _A_Object_ (A_Attr_Type) :
 
     def _accept_object (self, obj, result) :
         if (      self.__class__.eligible_objects.im_func
-           is not _A_Object_.eligible_objects.im_func
+           is not _A_Entity_.eligible_objects.im_func
            ) :
             eo = self.eligible_objects (obj)
             if eo :
@@ -878,7 +879,7 @@ class _A_Object_ (A_Attr_Type) :
         return obj.home_scope if obj else MOM.Scope.active
     # end def _get_scope
 
-# end class _A_Object_
+# end class _A_Entity_
 
 class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
@@ -1086,9 +1087,9 @@ class _A_Typed_Tuple_ (_A_Typed_Collection_) :
 
 # end class _A_Typed_Tuple_
 
-class _A_Object_Set_ (_A_Typed_Set_) :
+class _A_Entity_Set_ (_A_Typed_Set_) :
 
-    C_Type         = _A_Object_
+    C_Type         = _A_Entity_
 
     def _C_as_code (self, value) :
         sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
@@ -1100,7 +1101,7 @@ class _A_Object_Set_ (_A_Typed_Set_) :
         return self.__super._C_as_string (sorted (value, key = sk))
     # end def _C_as_string
 
-# end class _A_Object_Set_
+# end class _A_Entity_Set_
 
 class _A_Unit_ (A_Attr_Type) :
     """Mixin for attributes describing physical quantities with optional
@@ -1179,7 +1180,7 @@ class A_Boolean (_A_Named_Value_) :
 
 # end class A_Boolean
 
-class A_Cached_Role (_A_Object_) :
+class A_Cached_Role (_A_Entity_) :
     """Models an attribute referring to an object linked via an
        association.
     """
@@ -1199,7 +1200,7 @@ class A_Cached_Role_DFC (A_Cached_Role) :
 
 # end class A_Cached_Role_DFC
 
-class A_Cached_Role_Set (_A_Object_Set_) :
+class A_Cached_Role_Set (_A_Entity_Set_) :
     """Models an attribute referring to a set of objects linked via an
        association.
     """
@@ -1485,7 +1486,7 @@ class A_Length (_A_Unit_, _A_Float_) :
 
 # end class A_Length
 
-class A_Link_Role (_A_Object_) :
+class A_Link_Role (_A_Entity_) :
     """Attribute describing a link-role."""
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
@@ -1582,13 +1583,13 @@ class A_Numeric_String (_A_String_Base_) :
 
 # end class A_Numeric_String
 
-class A_Object (_A_Object_) :
-    """Models an attribute referring to an object."""
+class A_Entity (_A_Entity_) :
+    """Models an attribute referring to an entity."""
 
-    typ            = "Object"
+    typ            = "Entity"
     Kind_Mixins    = (MOM.Attr.Object_Reference_Mixin, )
 
-# end class A_Object
+# end class A_Entity
 
 class A_String (_A_String_) :
     """Models a string-valued attribute of an object."""

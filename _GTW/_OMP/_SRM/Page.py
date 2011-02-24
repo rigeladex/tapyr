@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -56,7 +56,7 @@ class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
 
         ### Primary attributes
 
-        class event (A_Object) :
+        class event (A_Entity) :
             """Regatta event to which this page belongs."""
 
             kind               = Attr.Primary

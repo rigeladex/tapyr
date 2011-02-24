@@ -159,7 +159,7 @@ class Field_Composite (_Field_Entity_Mixin_) :
 
 # end class Field_Composite
 
-@TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Object_)
+@TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Entity_)
 class Field_Entity (_Field_Entity_Mixin_) :
     """Specification of an entity-holding field of a AFS form."""
 
