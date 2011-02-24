@@ -139,8 +139,13 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
         attr     = ETM._e_type.attributes [self.name]
         a_type   = attr.etype_manager (ETM)
         a_entity = getattr (entity, self.name, None)
-        result   = self.__super.__call__ \
-            (a_type, a_entity, ** kw.get (self.name, {}))
+        a_kw     = kw.get (self.name, {})
+        kw       = dict \
+            ( a_kw
+            , allow_new = attr.ui_allow_new and a_kw.get ("allow_new", True)
+            # XXX completer
+            )
+        result   = self.__super.__call__ (a_type, a_entity, ** kw)
         return result
     # end def __call__
 

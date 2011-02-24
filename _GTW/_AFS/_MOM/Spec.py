@@ -118,6 +118,15 @@ class _Field_ (_Base_) :
 
 # end class _Field_
 
+class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
+
+    def __call__ (self, E_Type, spec, seen) :
+        attr = getattr (E_Type, self.name)
+        return self.__super.__call__ (attr.C_Type, self, set ())
+    # end def __call__
+
+# end class _Field_Entity_Mixin_
+
 @TFL.Add_To_Class ("AFS_Spec", MOM.Attr.A_Attr_Type)
 class Field (_Field_) :
     """Specification for a field of a AFS form."""
@@ -131,7 +140,7 @@ class Field (_Field_) :
 # end class Field
 
 @TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Composite_)
-class Field_Composite (_Entity_Mixin_, _Field_) :
+class Field_Composite (_Field_Entity_Mixin_) :
     """Specification for a composite field of a AFS form."""
 
     Type     = Element.Field_Composite
@@ -142,11 +151,6 @@ class Field_Composite (_Entity_Mixin_, _Field_) :
         self.include_kind_groups = True
     # end def __init__
 
-    def __call__ (self, E_Type, spec, seen) :
-        attr = getattr (E_Type, self.name)
-        return self.__super.__call__ (attr.C_Type, self, set ())
-    # end def __call__
-
     def default_elements (self, E_Type) :
         fg = Field_Group_K (kind = "user_attr")
         for f in fg.fields (E_Type, self, set ()) :
@@ -156,19 +160,10 @@ class Field_Composite (_Entity_Mixin_, _Field_) :
 # end class Field_Composite
 
 @TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Object_)
-class Field_Entity (_Entity_Mixin_, _Field_) :
+class Field_Entity (_Field_Entity_Mixin_) :
     """Specification of an entity-holding field of a AFS form."""
 
     Type     = Element.Field_Entity
-
-    def __call__ (self, E_Type, spec, seen) :
-        attr = getattr (E_Type, self.name)
-        if attr.ui_allow_new :
-            return self.__super.__call__ (attr.C_Type, self, set ())
-        else :
-            print NotImplementedError ("Object-Completer field"), E_Type, attr
-            return Element.Field (** self.kw)
-    # end def __call__
 
 # end class Field_Entity
 
