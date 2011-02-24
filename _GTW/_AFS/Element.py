@@ -137,11 +137,14 @@ class _Element_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        n = getattr (self, "name", None) or getattr (self, "type_name", None)
-        if n :
-            return "<%s %s %r>" % (self.__class__.__name__, self.id, n)
-        else :
-            return "<%s %s>"    % (self.__class__.__name__, self.id)
+        infos = ["%s" % self.id]
+        for k in "name", "type_name" :
+            n = getattr (self, k, None)
+            if n is not None :
+                v = "%r" % n
+                if infos [-1] != v :
+                    infos.append (v)
+        return "<%s %s>" % (self.__class__.__name__, " ".join (infos))
     # end def __str__
 
 # end class _Element_

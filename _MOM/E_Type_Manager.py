@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -75,6 +75,8 @@
 #    12-May-2010 (CT) `pid_as_lid` and `pid_from_lid` removed
 #    13-Oct-2010 (CT) `default_child` added and used in `_role_to_cooked_iter`
 #    13-Oct-2010 (CT) `example` added
+#    24-Feb-2011 (CT) `Link._role_to_raw_iter` changed to use `v.epk_raw`
+#                     instead of `r.as_code (v)`
 #    ««revision-date»»···
 #--
 
@@ -483,7 +485,7 @@ class Link (Id_Entity) :
                 ### Allow role attributes to be passed as objects even if
                 ### `raw` is specified
                 if isinstance (v, MOM.Entity) :
-                    v = r.as_code (v)
+                    v = v.epk_raw
             yield v
     # end def _role_to_raw_iter
 

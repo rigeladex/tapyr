@@ -44,10 +44,7 @@ class Formatter (TFL.Meta.Object) :
        string.
 
     >>> thing = ["abc", "ced", {1: "abc", 2: "xyz", 0: (42, 137)}]
-    >>> formatted15 = Formatter (width = 15)
     >>> print formatted (thing)
-    [ 'abc' , 'ced' , { 0 : ( 42 , 137 ) , 1 : 'abc' , 2 : 'xyz' } ]
-    >>> print formatted15 (thing)
     [ 'abc'
     , 'ced'
     , { 0 :
@@ -62,12 +59,6 @@ class Formatter (TFL.Meta.Object) :
     >>> print formatted (thing)
     [ 'abc'
     , 'ced'
-    , { 0 : ( 42 , 137 ) , 1 : 'abc' , 2 : 'xyz' }
-    , <Recursion on list...>
-    ]
-    >>> print formatted15 (thing)
-    [ 'abc'
-    , 'ced'
     , { 0 :
           ( 42
           , 137
@@ -75,7 +66,7 @@ class Formatter (TFL.Meta.Object) :
       , 1 : 'abc'
       , 2 : 'xyz'
       }
-    , <Recursion on
+    , <Recursion on list...>
     ]
     """
 
@@ -99,14 +90,7 @@ class Formatter (TFL.Meta.Object) :
             yield "%s<Recursion on %s...>" % (leader, thing.__class__.__name__)
         else :
             seen.add (tid)
-            result = tuple (f (thing, level, seen, ws, leader, * a))
-            if 0 < len (result) < 6 :
-                r1 = " ".join \
-                    (ichain ((result [0], ), (r.strip () for r in result [1:])))
-                if len (r1) <= wd :
-                    yield r1
-                    return
-            for l in result :
+            for l in f (thing, level, seen, ws, leader, * a) :
                 yield l [:wd]
     # end def format_iter
 
@@ -128,17 +112,14 @@ class Formatter (TFL.Meta.Object) :
     @TFL.Attributed (recurses = True)
     def _format_dict (self, thing, level, seen, ws, leader) :
         sep = "{"
+        if leader :
+            yield leader.rstrip ()
         if thing :
-            ws1 = leader or ws
             for k, v in sorted (thing.iteritems ()) :
-                v1 = "%s%s %r : " % (ws1, sep, k)
-                v2 = "%s%s %r : " % (ws,  sep, k)
-                vl = v1
+                vl = "%s%s %r : " % (ws,  sep, k)
                 for l in self.format_iter (v, level + 2, seen, vl) :
                     yield l
-                    vl = v2
                 sep = ","
-                ws1 = ws
             yield "%s}" % (ws, )
         else :
             yield "%s{}" % (ws, )

@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    23-Feb-2011 (CT) Creation
-#    24-Feb-2011 (CT) `Field_Entity` added
+#    24-Feb-2011 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -40,6 +40,11 @@ class _MOM_Entity_ (Entity) :
     _real_name = "Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
+        if entity is not None :
+            assert isinstance (entity, ETM._etype), \
+                "%s <-> %r" % (ETM, entity)
+            assert ETM.type_name == self.type_name, \
+                 "%s <-> %s" % (ETM.type_name, self.type_name)
         result = dict \
             ( cid = getattr (entity, "cid", None)
             , pid = getattr (entity, "pid", None)
@@ -87,8 +92,8 @@ class _MOM_Entity_List_  (Entity_List) :
         result = {}
         if entity is not None :
             assoc  = ETM.home_scope [proto.type_name]
-            for link in assoc.query_s (** { self.role_name : entity }) :
-                cs.append (link, this.add_child ())
+            for link in assoc.query_s (** { proto.role_name : entity }) :
+                cs.append ((link, this.add_child ()))
             for link, c in cs :
                 result [c.id] = c.instance_call (assoc, link, ** kw)
         return result
@@ -102,7 +107,7 @@ class _MOM_Field_ (Field) :
     _real_name = "Field"
 
     def __call__ (self, ETM, entity, ** kw) :
-        attr = ETM._e_type.attributes [self.name]
+        attr = ETM.attributes [self.name]
         if self.name in kw :
             init = kw [self.name].get ("init")
         else :
@@ -119,8 +124,8 @@ class _MOM_Field_Composite_ (Field_Composite) :
     _real_name = "Field_Composite"
 
     def __call__ (self, ETM, entity, ** kw) :
-        attr     = ETM._e_type.attributes [self.name]
-        c_type   = attr.etype_manager (ETM)
+        attr     = ETM._etype.attributes [self.name]
+        c_type   = attr.C_Type
         c_entity = getattr (entity, self.name, None)
         result   = {}
         for c in self.children :
@@ -136,7 +141,7 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
     _real_name = "Field_Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
-        attr     = ETM._e_type.attributes [self.name]
+        attr     = ETM._etype.attributes [self.name]
         a_type   = attr.etype_manager (ETM)
         a_entity = getattr (entity, self.name, None)
         a_kw     = kw.get (self.name, {})
@@ -159,7 +164,7 @@ class _MOM_Form_ (Form) :
     def __call__ (self, * args, ** kw) :
         result = {}
         if len (self.children) == 1 and len (args) <= 2 :
-            c = self.children [1]
+            c = self.children [0]
             result [c.id] = c (* args, ** kw)
         else :
             assert len (args) == len (self.children), repr (self)
@@ -170,7 +175,6 @@ class _MOM_Form_ (Form) :
     # end def __call__
 
 Form = _MOM_Form_ # end class
-
 
 if __name__ != "__main__" :
     GTW.AFS.MOM._Export_Module ()

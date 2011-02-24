@@ -44,16 +44,13 @@ _test_code = """
      <Fieldset None 'necessary'>
       <Field None 'sex'>
      <Fieldset None 'optional'>
-      <Field_Composite None 'lifetime'>
+      <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
        <Field None 'start'>
        <Field None 'finish'>
       <Field None 'salutation'>
 
-    >>> T = Spec.Entity ( Spec.Entity_Link ("events",
-    ...   Spec.Entity_Link
-    ...     ( "recurrence", Spec.Entity_Link ("rules")
-    ...     , include_kind_groups = True), include_kind_groups = True
-    ...     ) , include_kind_groups = True)
+    >>> T = Spec.Entity (Spec.Entity_Link ("events",
+    ...   Spec.Entity_Link ("recurrence", Spec.Entity_Link ("rules"))))
     >>> y = T (scope.SWP.Page._etype)
     >>> print repr (y)
     <Entity None 'GTW.OMP.SWP.Page'>
@@ -65,7 +62,7 @@ _test_code = """
       <Field None 'short_title'>
       <Field None 'title'>
      <Fieldset None 'optional'>
-      <Field_Composite None 'date'>
+      <Field_Composite None 'date' 'MOM.Date_Interval_N'>
        <Field None 'start'>
        <Field None 'finish'>
       <Field None 'format'>
@@ -74,10 +71,10 @@ _test_code = """
      <Entity_List None <Entity_Link None 'GTW.OMP.EVT.Event'>>
       <Entity_Link None 'GTW.OMP.EVT.Event'>
        <Fieldset None 'primary'>
-        <Field_Composite None 'date'>
+        <Field_Composite None 'date' 'MOM.Date_Interval'>
          <Field None 'start'>
          <Field None 'finish'>
-        <Field_Composite None 'time'>
+        <Field_Composite None 'time' 'MOM.Time_Interval'>
          <Field None 'start'>
          <Field None 'finish'>
        <Fieldset None 'optional'>
@@ -116,7 +113,7 @@ _test_code = """
        <Field F-1:3:1 'short_title'>
        <Field F-1:3:2 'title'>
       <Fieldset F-1:4 'optional'>
-       <Field_Composite F-1:4:1 'date'>
+       <Field_Composite F-1:4:1 'date' 'MOM.Date_Interval_N'>
         <Field F-1:4:1.1 'start'>
         <Field F-1:4:1.2 'finish'>
        <Field F-1:4:2 'format'>
@@ -125,10 +122,10 @@ _test_code = """
       <Entity_List F-1:5 <Entity_Link F-1:5::0 'GTW.OMP.EVT.Event'>>
        <Entity_Link F-1:5::0 'GTW.OMP.EVT.Event'>
         <Fieldset F-1:5::0-1 'primary'>
-         <Field_Composite F-1:5::0-1:1 'date'>
+         <Field_Composite F-1:5::0-1:1 'date' 'MOM.Date_Interval'>
           <Field F-1:5::0-1:1.1 'start'>
           <Field F-1:5::0-1:1.2 'finish'>
-         <Field_Composite F-1:5::0-1:2 'time'>
+         <Field_Composite F-1:5::0-1:2 'time' 'MOM.Time_Interval'>
           <Field F-1:5::0-1:2.1 'start'>
           <Field F-1:5::0-1:2.2 'finish'>
         <Fieldset F-1:5::0-2 'optional'>
@@ -168,7 +165,7 @@ _test_code = """
       <Fieldset X-1:2 'necessary'>
        <Field X-1:2:1 'sex'>
       <Fieldset X-1:3 'optional'>
-       <Field_Composite X-1:3:1 'lifetime'>
+       <Field_Composite X-1:3:1 'lifetime' 'MOM.Date_Interval'>
         <Field X-1:3:1.1 'start'>
         <Field X-1:3:1.2 'finish'>
        <Field X-1:3:2 'salutation'>
@@ -181,7 +178,7 @@ _test_code = """
        <Field X-2:3:1 'short_title'>
        <Field X-2:3:2 'title'>
       <Fieldset X-2:4 'optional'>
-       <Field_Composite X-2:4:1 'date'>
+       <Field_Composite X-2:4:1 'date' 'MOM.Date_Interval_N'>
         <Field X-2:4:1.1 'start'>
         <Field X-2:4:1.2 'finish'>
        <Field X-2:4:2 'format'>
@@ -190,10 +187,10 @@ _test_code = """
       <Entity_List X-2:5 <Entity_Link X-2:5::0 'GTW.OMP.EVT.Event'>>
        <Entity_Link X-2:5::0 'GTW.OMP.EVT.Event'>
         <Fieldset X-2:5::0-1 'primary'>
-         <Field_Composite X-2:5::0-1:1 'date'>
+         <Field_Composite X-2:5::0-1:1 'date' 'MOM.Date_Interval'>
           <Field X-2:5::0-1:1.1 'start'>
           <Field X-2:5::0-1:1.2 'finish'>
-         <Field_Composite X-2:5::0-1:2 'time'>
+         <Field_Composite X-2:5::0-1:2 'time' 'MOM.Time_Interval'>
           <Field X-2:5::0-1:2.1 'start'>
           <Field X-2:5::0-1:2.2 'finish'>
         <Fieldset X-2:5::0-2 'optional'>
@@ -582,11 +579,144 @@ _test_code = """
         ]
     , 'type' : 'Form'
     }
+    >>> SB = Spec.Entity (Spec.Entity_Link ("GTW.OMP.SRM.Boat_in_Regatta"))
+    >>> fb = Form ("FB", children = [SB (scope.SRM.Boat)])
+    >>> print repr (fb)
+    <Form FB>
+     <Entity FB-1 'GTW.OMP.SRM.Boat'>
+      <Fieldset FB-1:1 'primary'>
+       <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'>
+        <Field FB-1:1:1:1 'name'>
+       <Field FB-1:1:2 'nation'>
+       <Field FB-1:1:3 'sail_number'>
+      <Fieldset FB-1:2 'optional'>
+       <Field FB-1:2:1 'name'>
+      <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>>
+       <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>
+        <Fieldset FB-1:3::0-1 'primary'>
+         <Field_Entity FB-1:3::0-1:1 'right' 'GTW.OMP.SRM.Regatta'>
+          <Field_Entity FB-1:3::0-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'>
+           <Field_Composite FB-1:3::0-1:1:1:1 'date' 'MOM.Date_Interval_C'>
+            <Field FB-1:3::0-1:1:1:1.1 'start'>
+            <Field FB-1:3::0-1:1:1:1.2 'finish'>
+           <Field FB-1:3::0-1:1:1:2 'name'>
+        <Fieldset FB-1:3::0-2 'required'>
+         <Field_Entity FB-1:3::0-2:1 'skipper' 'GTW.OMP.SRM.Sailor'>
+          <Field_Entity FB-1:3::0-2:1:1 'left' 'GTW.OMP.PAP.Person'>
+           <Field FB-1:3::0-2:1:1:1 'last_name'>
+           <Field FB-1:3::0-2:1:1:2 'first_name'>
+           <Field FB-1:3::0-2:1:1:3 'middle_name'>
+           <Field FB-1:3::0-2:1:1:4 'title'>
+          <Field FB-1:3::0-2:1:2 'nation'>
+          <Field FB-1:3::0-2:1:3 'mna_number'>
+        <Fieldset FB-1:3::0-3 'optional'>
+         <Field FB-1:3::0-3:1 'place'>
+         <Field FB-1:3::0-3:2 'points'>
+
+    >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
+    >>> s   = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True)
+    >>> rev = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
+    >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
+    >>> scope.commit ()
+    >>> print formatted (fb (SRM.Boat, b))
+    { 'FB-1' :
+        { 'FB-1:1' :
+            { 'FB-1:1:1' :
+                { 'FB-1:1:1:1' :
+                    { 'init' : u'Optimist'
+                    }
+                , 'cid' : None
+                , 'pid' : 1
+                }
+            , 'FB-1:1:2' :
+                { 'init' : u'AUT'
+                }
+            , 'FB-1:1:3' :
+                { 'init' : u'1107'
+                }
+            }
+        , 'FB-1:2' :
+            { 'FB-1:2:1' :
+                { 'init' : u''
+                }
+            }
+        , 'FB-1:3' :
+            { 'FB-1:3::1' :
+                { 'FB-1:3::1:1' :
+                    { 'FB-1:3::1:1:1' :
+                        { 'FB-1:3::1:1:1:1' :
+                            { 'FB-1:3::1:1:1:1:1' :
+                                { 'FB-1:3::1:1:1:1:1.1' :
+                                    { 'init' : '2008/05/01'
+                                    }
+                                , 'FB-1:3::1:1:1:1:1.2' :
+                                    { 'init' : '2008/05/01'
+                                    }
+                                }
+                            , 'FB-1:3::1:1:1:1:2' :
+                                { 'init' : u'Himmelfahrt'
+                                }
+                            , 'cid' : None
+                            , 'pid' : 5
+                            }
+                        , 'cid' : None
+                        , 'pid' : 6
+                        }
+                    }
+                , 'FB-1:3::1:2' :
+                    { 'FB-1:3::1:2:1' :
+                        { 'FB-1:3::1:2:1:1' :
+                            { 'FB-1:3::1:2:1:1:1' :
+                                { 'init' : u'Tanzer'
+                                }
+                            , 'FB-1:3::1:2:1:1:2' :
+                                { 'init' : u'Laurens'
+                                }
+                            , 'FB-1:3::1:2:1:1:3' :
+                                { 'init' : u''
+                                }
+                            , 'FB-1:3::1:2:1:1:4' :
+                                { 'init' : u''
+                                }
+                            , 'cid' : None
+                            , 'pid' : 3
+                            }
+                        , 'FB-1:3::1:2:1:2' :
+                            { 'init' : u'AUT'
+                            }
+                        , 'FB-1:3::1:2:1:3' :
+                            { 'init' : u'29676'
+                            }
+                        , 'cid' : None
+                        , 'pid' : 4
+                        }
+                    }
+                , 'FB-1:3::1:3' :
+                    { 'FB-1:3::1:3:1' :
+                        { 'init' : u''
+                        }
+                    , 'FB-1:3::1:3:2' :
+                        { 'init' : u''
+                        }
+                    }
+                , 'cid' : None
+                , 'pid' : 7
+                }
+            }
+        , 'cid' : None
+        , 'pid' : 2
+        }
+    }
 
 """
 
-from   _GTW.__test__.model import *
-from   _GTW._AFS.Element   import Form
+from   _GTW.__test__.model      import *
+from   _GTW._AFS._MOM.Element   import Form
 
 from   _TFL.Formatter      import formatted
 

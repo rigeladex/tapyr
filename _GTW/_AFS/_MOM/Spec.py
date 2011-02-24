@@ -70,10 +70,14 @@ class _Entity_Mixin_ (_Base_) :
     attr_spec           = {}
     defaults            = {}
     include_kind_groups = False
-    _elems              = None
+    _elems              = ()
 
     def __init__ (self, ** kw) :
-        self.pop_to_self (kw, "include_kind_groups")
+        if "include_kind_groups" in kw :
+            self.pop_to_self (kw, "include_kind_groups")
+        else :
+            self.include_kind_groups = not any \
+                (not isinstance (e, Entity_Link) for e in self._elems)
         self.attr_spec = TFL.mm_dict \
             (self.attr_spec, ** kw.pop ("attr_spec", {}))
         self.__super.__init__ (** kw)
@@ -122,10 +126,56 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
 
     def __call__ (self, E_Type, spec, seen) :
         attr = getattr (E_Type, self.name)
-        return self.__super.__call__ (attr.C_Type, self, set ())
+        return self.__super.__call__ (attr.P_Type, self, set ())
     # end def __call__
 
 # end class _Field_Entity_Mixin_
+
+class Entity (_Entity_Mixin_) :
+    """Specification of a AFS form for an essential MOM entity."""
+
+    Type      = Element.Entity
+
+    def __init__ (self, * elements, ** kw) :
+        self._elems = elements
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+# end class Entity
+
+class Entity_Link (Entity) :
+    """Specification of a AFS sub-form for a type of link(s) of an essential MOM entity."""
+
+    Type = Element.Entity_Link
+
+    def __init__ (self, name, * elements, ** kw) :
+        self.name = name
+        self.__super.__init__ (* elements, ** kw)
+    # end def __init__
+
+    def __call__ (self, E_Type, spec = None, seen = ()) :
+        assoc = self._get_assoc (self.name, E_Type)
+        try :
+            role_name = self.role_name
+        except AttributeError :
+            role_name = self.kw ["role_name"] = \
+                assoc.Roles [assoc.role_map [E_Type.type_name]].name
+        role = getattr (assoc, role_name)
+        seen = set ([role.generic_role_name])
+        result = self.__super.__call__ (assoc, self, seen)
+        if role.max_links != 1 :
+            result = Element.Entity_List (proto = result)
+        return result
+    # end def __call__
+
+    def _get_assoc (self, name, E_Type) :
+        cached_role = getattr (E_Type, name, None)
+        if cached_role is not None :
+            name = cached_role.assoc
+        return E_Type.app_type.etypes [name]
+    # end def _get_assoc
+
+# end class Entity_Link
 
 @TFL.Add_To_Class ("AFS_Spec", MOM.Attr.A_Attr_Type)
 class Field (_Field_) :
@@ -164,6 +214,11 @@ class Field_Entity (_Field_Entity_Mixin_) :
     """Specification of an entity-holding field of a AFS form."""
 
     Type     = Element.Field_Entity
+
+    def default_elements (self, E_Type) :
+        for f in FGP.fields (E_Type, self, set ()) :
+            yield f
+    # end def default_elements
 
 # end class Field_Entity
 
@@ -265,52 +320,10 @@ class Field_Group_Required (Field_Group_K) :
 
 # end class Field_Group_Required
 
-class Entity (_Entity_Mixin_) :
-    """Specification of a AFS form for an essential MOM entity."""
-
-    Type      = Element.Entity
-
-    def __init__ (self, * elements, ** kw) :
-        self._elems    = elements
-        kw.setdefault ("include_kind_groups", not elements)
-        self.__super.__init__ (** kw)
-    # end def __init__
-
-# end class Entity
-
-class Entity_Link (Entity) :
-    """Specification of a AFS sub-form for a type of link(s) of an essential MOM entity."""
-
-    Type = Element.Entity_Link
-
-    def __init__ (self, name, * elements, ** kw) :
-        self.name = name
-        self.__super.__init__ (* elements, ** kw)
-    # end def __init__
-
-    def __call__ (self, E_Type, spec = None, seen = ()) :
-        assoc = self._get_assoc (self.name, E_Type)
-        try :
-            role_name = self.role_name
-        except AttributeError :
-            role_name = self.kw ["role_name"] = \
-                assoc.Roles [assoc.role_map [E_Type.type_name]].name
-        role = getattr (assoc, role_name)
-        seen = set ([role.generic_role_name])
-        result = self.__super.__call__ (assoc, self, seen)
-        if role.max_links != 1 :
-            result = Element.Entity_List (proto = result)
-        return result
-    # end def __call__
-
-    def _get_assoc (self, name, E_Type) :
-        cached_role = getattr (E_Type, name, None)
-        if cached_role is not None :
-            name = cached_role.assoc
-        return E_Type.app_type.etypes [name]
-    # end def _get_assoc
-
-# end class Entity_Link
+FGP = Field_Group_Primary   ()
+FGR = Field_Group_Required  ()
+FGN = Field_Group_Necessary ()
+FGO = Field_Group_Optional  ()
 
 if __name__ != "__main__" :
     GTW.AFS.MOM._Export_Module ()
