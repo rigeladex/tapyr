@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    14-Feb-2011 (CT) Creation
+#    24-Feb-2011 (CT) s/Field_Object/Field_Entity/,
+#                     `Field_Entity` dervied from `_Entity_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -154,21 +156,21 @@ class Field_Composite (_Entity_Mixin_, _Field_) :
 # end class Field_Composite
 
 @TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Object_)
-class Field_Object (_Field_) :
-    """Specification of a object-holding field of a AFS form."""
+class Field_Entity (_Entity_Mixin_, _Field_) :
+    """Specification of an entity-holding field of a AFS form."""
 
-    Type     = Element.Entity
+    Type     = Element.Field_Entity
 
     def __call__ (self, E_Type, spec, seen) :
         attr = getattr (E_Type, self.name)
         if attr.ui_allow_new :
-            return self.Type (** self.kw)
+            return self.__super.__call__ (attr.C_Type, self, set ())
         else :
             print NotImplementedError ("Object-Completer field"), E_Type, attr
             return Element.Field (** self.kw)
     # end def __call__
 
-# end class Field_Object
+# end class Field_Entity
 
 ### XXX sub-structured fields (e.g., date as year/month/date combination)
 

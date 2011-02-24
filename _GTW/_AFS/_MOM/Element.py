@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Feb-2011 (CT) Creation
+#    24-Feb-2011 (CT) `Field_Entity` added
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ class _MOM_Entity_ (Entity) :
         return result
     # end def __call__
 
-# end class _MOM_Entity_
+Entity = _MOM_Entity_ # end class
 
 class _MOM_Entity_Link_ (Entity_Link, Entity) :
     """Model a MOM-specific sub-form for a link to entity in containing
@@ -128,6 +129,22 @@ class _MOM_Field_Composite_ (Field_Composite) :
     # end def __call__
 
 Field_Composite = _MOM_Field_Composite_ # end class
+
+class _MOM_Field_Entity_ (Entity, Field_Entity) :
+    """Model a MOM-specific entity-holding field of an AJAX-enhanced form."""
+
+    _real_name = "Field_Entity"
+
+    def __call__ (self, ETM, entity, ** kw) :
+        attr     = ETM._e_type.attributes [self.name]
+        a_type   = attr.etype_manager (ETM)
+        a_entity = getattr (entity, self.name, None)
+        result   = self.__super.__call__ \
+            (a_type, a_entity, ** kw.get (self.name, {}))
+        return result
+    # end def __call__
+
+Field_Entity = _MOM_Field_Entity_ # end class
 
 class _MOM_Form_ (Form) :
     """Model a MOM-specific AJAX-enhanced form."""

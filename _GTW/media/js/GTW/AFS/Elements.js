@@ -19,6 +19,7 @@
 //    30-Jan-2011 (CT) Creation continued
 //    31-Jan-2011 (CT) Creation continued..
 //     6-Feb-2011 (CT) Creation continued...
+//    24-Feb-2011 (CT) Creation continued....
 //    ««revision-date»»···
 //--
 
@@ -99,6 +100,10 @@
         {}
       , { type_name : "Field_Composite" }
     );
+    var Field_Entity = Element.extend (
+        {}
+      , { type_name : "Field_Entity" }
+    );
     var Fieldset = Element.extend (
         {}
       , { type_name : "Fieldset" }
@@ -119,6 +124,7 @@
         , Entity_List           : Entity_List
         , Field                 : Field
         , Field_Composite       : Field_Composite
+        , Field_Entity          : Field_Entity
         , Fieldset              : Fieldset
         , id_map                : {}
         }

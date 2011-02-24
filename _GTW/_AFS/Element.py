@@ -34,6 +34,7 @@
 #    23-Feb-2011 (CT) `Field.__init__` changed to `pop_to_self` of
 #                     `description` and `explanation` from `kw`
 #    23-Feb-2011 (CT) `Entity_List.clone` added
+#    24-Feb-2011 (CT) `Field_Entity` added
 #    ««revision-date»»···
 #--
 
@@ -278,6 +279,11 @@ class Field_Composite (Field) :
     """Model a composite field of a AJAX-enhanced form."""
 
 # end class Field_Composite
+
+class Field_Entity (Entity, Field) :
+    """Model an entity-holding field of a AJAX-enhanced form."""
+
+# end class Field_Entity
 
 class Fieldset (_Element_) :
     """Model a set of fields of an AJAX-enhanced form."""
