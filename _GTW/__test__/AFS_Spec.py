@@ -628,105 +628,182 @@ _test_code = """
     { 'FB-1' :
         { 'FB-1:1' :
             { 'FB-1:1:1' :
-                { 'FB-1:1:1:1' :
-                    { 'init' : u'Optimist'
-                    }
+                { 'FB-1:1:1:1' : { 'init' : u'Optimist' }
+                , 'child_ids' : [ 'FB-1:1:1:1' ]
                 , 'cid' : None
                 , 'pid' : 1
                 }
-            , 'FB-1:1:2' :
-                { 'init' : u'AUT'
-                }
-            , 'FB-1:1:3' :
-                { 'init' : u'1107'
-                }
+            , 'FB-1:1:2' : { 'init' : u'AUT' }
+            , 'FB-1:1:3' : { 'init' : u'1107' }
+            , 'child_ids' :
+                [ 'FB-1:1:1'
+                , 'FB-1:1:2'
+                , 'FB-1:1:3'
+                ]
             }
         , 'FB-1:2' :
-            { 'FB-1:2:1' :
-                { 'init' : u''
-                }
+            { 'FB-1:2:1' : {}
+            , 'child_ids' : [ 'FB-1:2:1' ]
             }
         , 'FB-1:3' :
             { 'FB-1:3::1' :
-                { 'FB-1:3::1:1' :
-                    { 'FB-1:3::1:1:1' :
-                        { 'FB-1:3::1:1:1:1' :
-                            { 'FB-1:3::1:1:1:1:1' :
-                                { 'FB-1:3::1:1:1:1:1.1' :
-                                    { 'init' : '2008/05/01'
-                                    }
-                                , 'FB-1:3::1:1:1:1:1.2' :
-                                    { 'init' : '2008/05/01'
-                                    }
+                { 'FB-1:3::1-1' :
+                    { 'FB-1:3::1-1:1' :
+                        { 'FB-1:3::1-1:1:1' :
+                            { 'FB-1:3::1-1:1:1:1' :
+                                { 'FB-1:3::1-1:1:1:1.1' : { 'init' : '2008/05/01' }
+                                , 'FB-1:3::1-1:1:1:1.2' : { 'init' : '2008/05/01' }
+                                , 'child_ids' :
+                                    [ 'FB-1:3::1-1:1:1:1.1'
+                                    , 'FB-1:3::1-1:1:1:1.2'
+                                    ]
                                 }
-                            , 'FB-1:3::1:1:1:1:2' :
-                                { 'init' : u'Himmelfahrt'
-                                }
+                            , 'FB-1:3::1-1:1:1:2' : { 'init' : u'Himmelfahrt' }
+                            , 'child_ids' :
+                                [ 'FB-1:3::1-1:1:1:1'
+                                , 'FB-1:3::1-1:1:1:2'
+                                ]
                             , 'cid' : None
                             , 'pid' : 5
                             }
+                        , 'child_ids' : [ 'FB-1:3::1-1:1:1' ]
                         , 'cid' : None
                         , 'pid' : 6
                         }
+                    , 'child_ids' : [ 'FB-1:3::1-1:1' ]
                     }
-                , 'FB-1:3::1:2' :
-                    { 'FB-1:3::1:2:1' :
-                        { 'FB-1:3::1:2:1:1' :
-                            { 'FB-1:3::1:2:1:1:1' :
-                                { 'init' : u'Tanzer'
-                                }
-                            , 'FB-1:3::1:2:1:1:2' :
-                                { 'init' : u'Laurens'
-                                }
-                            , 'FB-1:3::1:2:1:1:3' :
-                                { 'init' : u''
-                                }
-                            , 'FB-1:3::1:2:1:1:4' :
-                                { 'init' : u''
-                                }
+                , 'FB-1:3::1-2' :
+                    { 'FB-1:3::1-2:1' :
+                        { 'FB-1:3::1-2:1:1' :
+                            { 'FB-1:3::1-2:1:1:1' : { 'init' : u'Tanzer' }
+                            , 'FB-1:3::1-2:1:1:2' : { 'init' : u'Laurens' }
+                            , 'FB-1:3::1-2:1:1:3' : {}
+                            , 'FB-1:3::1-2:1:1:4' : {}
+                            , 'child_ids' :
+                                [ 'FB-1:3::1-2:1:1:1'
+                                , 'FB-1:3::1-2:1:1:2'
+                                , 'FB-1:3::1-2:1:1:3'
+                                , 'FB-1:3::1-2:1:1:4'
+                                ]
                             , 'cid' : None
                             , 'pid' : 3
                             }
-                        , 'FB-1:3::1:2:1:2' :
-                            { 'init' : u'AUT'
-                            }
-                        , 'FB-1:3::1:2:1:3' :
-                            { 'init' : u'29676'
-                            }
+                        , 'FB-1:3::1-2:1:2' : { 'init' : u'AUT' }
+                        , 'FB-1:3::1-2:1:3' : { 'init' : u'29676' }
+                        , 'child_ids' :
+                            [ 'FB-1:3::1-2:1:1'
+                            , 'FB-1:3::1-2:1:2'
+                            , 'FB-1:3::1-2:1:3'
+                            ]
                         , 'cid' : None
                         , 'pid' : 4
                         }
+                    , 'child_ids' : [ 'FB-1:3::1-2:1' ]
                     }
-                , 'FB-1:3::1:3' :
-                    { 'FB-1:3::1:3:1' :
-                        { 'init' : u''
-                        }
-                    , 'FB-1:3::1:3:2' :
-                        { 'init' : u''
-                        }
+                , 'FB-1:3::1-3' :
+                    { 'FB-1:3::1-3:1' : {}
+                    , 'FB-1:3::1-3:2' : {}
+                    , 'child_ids' :
+                        [ 'FB-1:3::1-3:1'
+                        , 'FB-1:3::1-3:2'
+                        ]
                     }
+                , 'child_ids' :
+                    [ 'FB-1:3::1-1'
+                    , 'FB-1:3::1-2'
+                    , 'FB-1:3::1-3'
+                    ]
                 , 'cid' : None
                 , 'pid' : 7
                 }
+            , 'child_ids' : [ 'FB-1:3::1' ]
             }
+        , 'child_ids' :
+            [ 'FB-1:1'
+            , 'FB-1:2'
+            , 'FB-1:3'
+            ]
         , 'cid' : None
         , 'pid' : 2
         }
+    , 'child_ids' : [ 'FB-1' ]
     }
     >>> print "var f =", fi.as_js, ";"
-    var f = new $GTW.AFS.Form ({"$id": "FB", "type": "Form", "children": [{"$id": "FB-1", "type_name": "GTW.OMP.SRM.Boat", "type": "Entity", "name": "GTW.OMP.SRM.Boat", "children": [{"$id": "FB-1:1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "left", "$id": "FB-1:1:1", "type_name": "GTW.OMP.SRM.Boat_Class", "ui_name": "Class", "type": "Field_Entity", "children": [{"$id": "FB-1:1:1:1", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-1:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:1:3", "ui_name": "Sail number", "type": "Field", "name": "sail_number"}]}, {"$id": "FB-1:2", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:2:1", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-1:3", "type": "Entity_List", "proto": {"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-1:3::0", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-1:3::0-1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-1:3::0-1:1", "type_name": "GTW.OMP.SRM.Regatta", "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::0-1:1:1", "type_name": "GTW.OMP.SRM.Regatta_Event", "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-1:3::0-1:1:1:1", "type_name": "MOM.Date_Interval_C", "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-1:3::0-1:1:1:1.1", "ui_name": "Start", "type": "Field", "name": "start"}, {"$id": "FB-1:3::0-1:1:1:1.2", "ui_name": "Finish", "type": "Field", "name": "finish"}]}, {"$id": "FB-1:3::0-1:1:1:2", "ui_name": "Name", "type": "Field", "name": "name"}]}]}]}, {"$id": "FB-1:3::0-2", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-1:3::0-2:1", "type_name": "GTW.OMP.SRM.Sailor", "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::0-2:1:1", "type_name": "GTW.OMP.PAP.Person", "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-1:3::0-2:1:1:1", "ui_name": "Last name", "type": "Field", "name": "last_name"}, {"$id": "FB-1:3::0-2:1:1:2", "ui_name": "First name", "type": "Field", "name": "first_name"}, {"$id": "FB-1:3::0-2:1:1:3", "ui_name": "Middle name", "type": "Field", "name": "middle_name"}, {"$id": "FB-1:3::0-2:1:1:4", "ui_name": "Academic title", "type": "Field", "name": "title"}]}, {"$id": "FB-1:3::0-2:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:3::0-2:1:3", "ui_name": "Mna number", "type": "Field", "name": "mna_number"}]}]}, {"$id": "FB-1:3::0-3", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:3::0-3:1", "ui_name": "Place", "type": "Field", "name": "place"}, {"$id": "FB-1:3::0-3:2", "ui_name": "Points", "type": "Field", "name": "points"}]}]}}]}]}, {"FB-1": {"FB-1:2": {"FB-1:2:1": {"init": ""}}, "FB-1:1": {"FB-1:1:3": {"init": "1107"}, "FB-1:1:2": {"init": "AUT"}, "FB-1:1:1": {"FB-1:1:1:1": {"init": "Optimist"}, "pid": 1, "cid": null}}, "pid": 2, "FB-1:3": {"FB-1:3::1": {"FB-1:3::1:1": {"FB-1:3::1:1:1": {"FB-1:3::1:1:1:1": {"FB-1:3::1:1:1:1:1": {"FB-1:3::1:1:1:1:1.1": {"init": "2008/05/01"}, "FB-1:3::1:1:1:1:1.2": {"init": "2008/05/01"}}, "FB-1:3::1:1:1:1:2": {"init": "Himmelfahrt"}, "pid": 5, "cid": null}, "pid": 6, "cid": null}}, "FB-1:3::1:2": {"FB-1:3::1:2:1": {"FB-1:3::1:2:1:2": {"init": "AUT"}, "FB-1:3::1:2:1:1": {"cid": null, "pid": 3, "FB-1:3::1:2:1:1:4": {"init": ""}, "FB-1:3::1:2:1:1:3": {"init": ""}, "FB-1:3::1:2:1:1:2": {"init": "Laurens"}, "FB-1:3::1:2:1:1:1": {"init": "Tanzer"}}, "pid": 4, "FB-1:3::1:2:1:3": {"init": "29676"}, "cid": null}}, "pid": 7, "FB-1:3::1:3": {"FB-1:3::1:3:2": {"init": ""}, "FB-1:3::1:3:1": {"init": ""}}, "cid": null}}, "cid": null}}) ;
+    var f = new $GTW.AFS.Form ({"$id": "FB", "type": "Form", "children": [{"$id": "FB-1", "type_name": "GTW.OMP.SRM.Boat", "type": "Entity", "name": "GTW.OMP.SRM.Boat", "children": [{"$id": "FB-1:1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "left", "$id": "FB-1:1:1", "type_name": "GTW.OMP.SRM.Boat_Class", "ui_name": "Class", "type": "Field_Entity", "children": [{"$id": "FB-1:1:1:1", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-1:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:1:3", "ui_name": "Sail number", "type": "Field", "name": "sail_number"}]}, {"$id": "FB-1:2", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:2:1", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-1:3", "type": "Entity_List", "children": [{"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-1:3::1", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-1:3::1-1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-1:3::1-1:1", "type_name": "GTW.OMP.SRM.Regatta", "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::1-1:1:1", "type_name": "GTW.OMP.SRM.Regatta_Event", "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-1:3::1-1:1:1:1", "type_name": "MOM.Date_Interval_C", "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-1:3::1-1:1:1:1.1", "ui_name": "Start", "type": "Field", "name": "start"}, {"$id": "FB-1:3::1-1:1:1:1.2", "ui_name": "Finish", "type": "Field", "name": "finish"}]}, {"$id": "FB-1:3::1-1:1:1:2", "ui_name": "Name", "type": "Field", "name": "name"}]}]}]}, {"$id": "FB-1:3::1-2", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-1:3::1-2:1", "type_name": "GTW.OMP.SRM.Sailor", "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::1-2:1:1", "type_name": "GTW.OMP.PAP.Person", "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-1:3::1-2:1:1:1", "ui_name": "Last name", "type": "Field", "name": "last_name"}, {"$id": "FB-1:3::1-2:1:1:2", "ui_name": "First name", "type": "Field", "name": "first_name"}, {"$id": "FB-1:3::1-2:1:1:3", "ui_name": "Middle name", "type": "Field", "name": "middle_name"}, {"$id": "FB-1:3::1-2:1:1:4", "ui_name": "Academic title", "type": "Field", "name": "title"}]}, {"$id": "FB-1:3::1-2:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:3::1-2:1:3", "ui_name": "Mna number", "type": "Field", "name": "mna_number"}]}]}, {"$id": "FB-1:3::1-3", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:3::1-3:1", "ui_name": "Place", "type": "Field", "name": "place"}, {"$id": "FB-1:3::1-3:2", "ui_name": "Points", "type": "Field", "name": "points"}]}]}], "proto": {"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-1:3::0", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-1:3::0-1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-1:3::0-1:1", "type_name": "GTW.OMP.SRM.Regatta", "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::0-1:1:1", "type_name": "GTW.OMP.SRM.Regatta_Event", "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-1:3::0-1:1:1:1", "type_name": "MOM.Date_Interval_C", "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-1:3::0-1:1:1:1.1", "ui_name": "Start", "type": "Field", "name": "start"}, {"$id": "FB-1:3::0-1:1:1:1.2", "ui_name": "Finish", "type": "Field", "name": "finish"}]}, {"$id": "FB-1:3::0-1:1:1:2", "ui_name": "Name", "type": "Field", "name": "name"}]}]}]}, {"$id": "FB-1:3::0-2", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-1:3::0-2:1", "type_name": "GTW.OMP.SRM.Sailor", "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::0-2:1:1", "type_name": "GTW.OMP.PAP.Person", "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-1:3::0-2:1:1:1", "ui_name": "Last name", "type": "Field", "name": "last_name"}, {"$id": "FB-1:3::0-2:1:1:2", "ui_name": "First name", "type": "Field", "name": "first_name"}, {"$id": "FB-1:3::0-2:1:1:3", "ui_name": "Middle name", "type": "Field", "name": "middle_name"}, {"$id": "FB-1:3::0-2:1:1:4", "ui_name": "Academic title", "type": "Field", "name": "title"}]}, {"$id": "FB-1:3::0-2:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:3::0-2:1:3", "ui_name": "Mna number", "type": "Field", "name": "mna_number"}]}]}, {"$id": "FB-1:3::0-3", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:3::0-3:1", "ui_name": "Place", "type": "Field", "name": "place"}, {"$id": "FB-1:3::0-3:2", "ui_name": "Points", "type": "Field", "name": "points"}]}]}}]}]}, {"FB-1": {"cid": null, "FB-1:2": {"child_ids": ["FB-1:2:1"], "FB-1:2:1": {}}, "pid": 2, "child_ids": ["FB-1:1", "FB-1:2", "FB-1:3"], "FB-1:3": {"FB-1:3::1": {"cid": null, "pid": 7, "child_ids": ["FB-1:3::1-1", "FB-1:3::1-2", "FB-1:3::1-3"], "FB-1:3::1-1": {"child_ids": ["FB-1:3::1-1:1"], "FB-1:3::1-1:1": {"pid": 6, "child_ids": ["FB-1:3::1-1:1:1"], "FB-1:3::1-1:1:1": {"child_ids": ["FB-1:3::1-1:1:1:1", "FB-1:3::1-1:1:1:2"], "pid": 5, "cid": null, "FB-1:3::1-1:1:1:1": {"FB-1:3::1-1:1:1:1.1": {"init": "2008/05/01"}, "FB-1:3::1-1:1:1:1.2": {"init": "2008/05/01"}, "child_ids": ["FB-1:3::1-1:1:1:1.1", "FB-1:3::1-1:1:1:1.2"]}, "FB-1:3::1-1:1:1:2": {"init": "Himmelfahrt"}}, "cid": null}}, "FB-1:3::1-2": {"FB-1:3::1-2:1": {"cid": null, "FB-1:3::1-2:1:3": {"init": "29676"}, "pid": 4, "child_ids": ["FB-1:3::1-2:1:1", "FB-1:3::1-2:1:2", "FB-1:3::1-2:1:3"], "FB-1:3::1-2:1:2": {"init": "AUT"}, "FB-1:3::1-2:1:1": {"cid": null, "FB-1:3::1-2:1:1:2": {"init": "Laurens"}, "FB-1:3::1-2:1:1:3": {}, "pid": 3, "FB-1:3::1-2:1:1:1": {"init": "Tanzer"}, "child_ids": ["FB-1:3::1-2:1:1:1", "FB-1:3::1-2:1:1:2", "FB-1:3::1-2:1:1:3", "FB-1:3::1-2:1:1:4"], "FB-1:3::1-2:1:1:4": {}}}, "child_ids": ["FB-1:3::1-2:1"]}, "FB-1:3::1-3": {"child_ids": ["FB-1:3::1-3:1", "FB-1:3::1-3:2"], "FB-1:3::1-3:2": {}, "FB-1:3::1-3:1": {}}}, "child_ids": ["FB-1:3::1"]}, "FB-1:1": {"FB-1:1:3": {"init": "1107"}, "FB-1:1:2": {"init": "AUT"}, "FB-1:1:1": {"pid": 1, "cid": null, "child_ids": ["FB-1:1:1:1"], "FB-1:1:1:1": {"init": "Optimist"}}, "child_ids": ["FB-1:1:1", "FB-1:1:2", "FB-1:1:3"]}}, "child_ids": ["FB-1"]}) ;
     >>> for e in fi.transitive_iter () :
-    ...     print e.elem, sorted (e.data.iteritems ())
-    <Form FB> [('FB-1', {'FB-1:2': {'FB-1:2:1': {'init': u''}}, 'FB-1:1': {'FB-1:1:3': {'init': u'1107'}, 'FB-1:1:2': {'init': u'AUT'}, 'FB-1:1:1': {'FB-1:1:1:1': {'init': u'Optimist'}, 'pid': 1, 'cid': None}}, 'pid': 2, 'FB-1:3': {'FB-1:3::1': {'FB-1:3::1:1': {'FB-1:3::1:1:1': {'FB-1:3::1:1:1:1': {'FB-1:3::1:1:1:1:1': {'FB-1:3::1:1:1:1:1.1': {'init': '2008/05/01'}, 'FB-1:3::1:1:1:1:1.2': {'init': '2008/05/01'}}, 'FB-1:3::1:1:1:1:2': {'init': u'Himmelfahrt'}, 'pid': 5, 'cid': None}, 'pid': 6, 'cid': None}}, 'FB-1:3::1:2': {'FB-1:3::1:2:1': {'FB-1:3::1:2:1:2': {'init': u'AUT'}, 'FB-1:3::1:2:1:1': {'cid': None, 'pid': 3, 'FB-1:3::1:2:1:1:4': {'init': u''}, 'FB-1:3::1:2:1:1:3': {'init': u''}, 'FB-1:3::1:2:1:1:2': {'init': u'Laurens'}, 'FB-1:3::1:2:1:1:1': {'init': u'Tanzer'}}, 'pid': 4, 'FB-1:3::1:2:1:3': {'init': u'29676'}, 'cid': None}}, 'pid': 7, 'FB-1:3::1:3': {'FB-1:3::1:3:2': {'init': u''}, 'FB-1:3::1:3:1': {'init': u''}}, 'cid': None}}, 'cid': None})]
-    <Entity FB-1 'GTW.OMP.SRM.Boat'> [('FB-1:1', {'FB-1:1:3': {'init': u'1107'}, 'FB-1:1:2': {'init': u'AUT'}, 'FB-1:1:1': {'FB-1:1:1:1': {'init': u'Optimist'}, 'pid': 1, 'cid': None}}), ('FB-1:2', {'FB-1:2:1': {'init': u''}}), ('FB-1:3', {'FB-1:3::1': {'FB-1:3::1:1': {'FB-1:3::1:1:1': {'FB-1:3::1:1:1:1': {'FB-1:3::1:1:1:1:1': {'FB-1:3::1:1:1:1:1.1': {'init': '2008/05/01'}, 'FB-1:3::1:1:1:1:1.2': {'init': '2008/05/01'}}, 'FB-1:3::1:1:1:1:2': {'init': u'Himmelfahrt'}, 'pid': 5, 'cid': None}, 'pid': 6, 'cid': None}}, 'FB-1:3::1:2': {'FB-1:3::1:2:1': {'FB-1:3::1:2:1:2': {'init': u'AUT'}, 'FB-1:3::1:2:1:1': {'cid': None, 'pid': 3, 'FB-1:3::1:2:1:1:4': {'init': u''}, 'FB-1:3::1:2:1:1:3': {'init': u''}, 'FB-1:3::1:2:1:1:2': {'init': u'Laurens'}, 'FB-1:3::1:2:1:1:1': {'init': u'Tanzer'}}, 'pid': 4, 'FB-1:3::1:2:1:3': {'init': u'29676'}, 'cid': None}}, 'pid': 7, 'FB-1:3::1:3': {'FB-1:3::1:3:2': {'init': u''}, 'FB-1:3::1:3:1': {'init': u''}}, 'cid': None}}), ('cid', None), ('pid', 2)]
-    <Fieldset FB-1:1 'primary'> [('FB-1:1:1', {'FB-1:1:1:1': {'init': u'Optimist'}, 'pid': 1, 'cid': None}), ('FB-1:1:2', {'init': u'AUT'}), ('FB-1:1:3', {'init': u'1107'})]
-    <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> [('FB-1:1:1:1', {'init': u'Optimist'}), ('cid', None), ('pid', 1)]
-    <Field FB-1:1:1:1 'name'> [('init', u'Optimist')]
-    <Field FB-1:1:2 'nation'> [('init', u'AUT')]
-    <Field FB-1:1:3 'sail_number'> [('init', u'1107')]
-    <Fieldset FB-1:2 'optional'> [('FB-1:2:1', {'init': u''})]
-    <Field FB-1:2:1 'name'> [('init', u'')]
-    <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>> [('FB-1:3::1', {'FB-1:3::1:1': {'FB-1:3::1:1:1': {'FB-1:3::1:1:1:1': {'FB-1:3::1:1:1:1:1': {'FB-1:3::1:1:1:1:1.1': {'init': '2008/05/01'}, 'FB-1:3::1:1:1:1:1.2': {'init': '2008/05/01'}}, 'FB-1:3::1:1:1:1:2': {'init': u'Himmelfahrt'}, 'pid': 5, 'cid': None}, 'pid': 6, 'cid': None}}, 'FB-1:3::1:2': {'FB-1:3::1:2:1': {'FB-1:3::1:2:1:2': {'init': u'AUT'}, 'FB-1:3::1:2:1:1': {'cid': None, 'pid': 3, 'FB-1:3::1:2:1:1:4': {'init': u''}, 'FB-1:3::1:2:1:1:3': {'init': u''}, 'FB-1:3::1:2:1:1:2': {'init': u'Laurens'}, 'FB-1:3::1:2:1:1:1': {'init': u'Tanzer'}}, 'pid': 4, 'FB-1:3::1:2:1:3': {'init': u'29676'}, 'cid': None}}, 'pid': 7, 'FB-1:3::1:3': {'FB-1:3::1:3:2': {'init': u''}, 'FB-1:3::1:3:1': {'init': u''}}, 'cid': None})]
+    ...     print e.elem, sorted (e.data)
+    <Form FB> ['FB-1', 'child_ids']
+    <Entity FB-1 'GTW.OMP.SRM.Boat'> ['FB-1:1', 'FB-1:2', 'FB-1:3', 'child_ids', 'cid', 'pid']
+    <Fieldset FB-1:1 'primary'> ['FB-1:1:1', 'FB-1:1:2', 'FB-1:1:3', 'child_ids']
+    <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> ['FB-1:1:1:1', 'child_ids', 'cid', 'pid']
+    <Field FB-1:1:1:1 'name'> ['init']
+    <Field FB-1:1:2 'nation'> ['init']
+    <Field FB-1:1:3 'sail_number'> ['init']
+    <Fieldset FB-1:2 'optional'> ['FB-1:2:1', 'child_ids']
+    <Field FB-1:2:1 'name'> []
+    <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>> ['FB-1:3::1', 'child_ids']
+    <Entity_Link FB-1:3::1 'GTW.OMP.SRM.Boat_in_Regatta'> ['FB-1:3::1-1', 'FB-1:3::1-2', 'FB-1:3::1-3', 'child_ids', 'cid', 'pid']
+    <Fieldset FB-1:3::1-1 'primary'> ['FB-1:3::1-1:1', 'child_ids']
+    <Field_Entity FB-1:3::1-1:1 'right' 'GTW.OMP.SRM.Regatta'> ['FB-1:3::1-1:1:1', 'child_ids', 'cid', 'pid']
+    <Field_Entity FB-1:3::1-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'> ['FB-1:3::1-1:1:1:1', 'FB-1:3::1-1:1:1:2', 'child_ids', 'cid', 'pid']
+    <Field_Composite FB-1:3::1-1:1:1:1 'date' 'MOM.Date_Interval_C'> ['FB-1:3::1-1:1:1:1.1', 'FB-1:3::1-1:1:1:1.2', 'child_ids']
+    <Field FB-1:3::1-1:1:1:1.1 'start'> ['init']
+    <Field FB-1:3::1-1:1:1:1.2 'finish'> ['init']
+    <Field FB-1:3::1-1:1:1:2 'name'> ['init']
+    <Fieldset FB-1:3::1-2 'required'> ['FB-1:3::1-2:1', 'child_ids']
+    <Field_Entity FB-1:3::1-2:1 'skipper' 'GTW.OMP.SRM.Sailor'> ['FB-1:3::1-2:1:1', 'FB-1:3::1-2:1:2', 'FB-1:3::1-2:1:3', 'child_ids', 'cid', 'pid']
+    <Field_Entity FB-1:3::1-2:1:1 'left' 'GTW.OMP.PAP.Person'> ['FB-1:3::1-2:1:1:1', 'FB-1:3::1-2:1:1:2', 'FB-1:3::1-2:1:1:3', 'FB-1:3::1-2:1:1:4', 'child_ids', 'cid', 'pid']
+    <Field FB-1:3::1-2:1:1:1 'last_name'> ['init']
+    <Field FB-1:3::1-2:1:1:2 'first_name'> ['init']
+    <Field FB-1:3::1-2:1:1:3 'middle_name'> []
+    <Field FB-1:3::1-2:1:1:4 'title'> []
+    <Field FB-1:3::1-2:1:2 'nation'> ['init']
+    <Field FB-1:3::1-2:1:3 'mna_number'> ['init']
+    <Fieldset FB-1:3::1-3 'optional'> ['FB-1:3::1-3:1', 'FB-1:3::1-3:2', 'child_ids']
+    <Field FB-1:3::1-3:1 'place'> []
+    <Field FB-1:3::1-3:2 'points'> []
+
+    >>> for e in fi.transitive_iter () :
+    ...     ids = e.data.get ("child_ids", ())
+    ...     if ids :
+    ...         print e.elem, ids
+    ...         print "   ",
+    ...         for i in ids :
+    ...             try :
+    ...                 print fi.elem [i],
+    ...             except KeyError :
+    ...                 print "NO id:", i,
+    ...         print
+    <Form FB> ['FB-1']
+        <Entity FB-1 'GTW.OMP.SRM.Boat'>
+    <Entity FB-1 'GTW.OMP.SRM.Boat'> ['FB-1:1', 'FB-1:2', 'FB-1:3']
+        <Fieldset FB-1:1 'primary'> <Fieldset FB-1:2 'optional'> <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>>
+    <Fieldset FB-1:1 'primary'> ['FB-1:1:1', 'FB-1:1:2', 'FB-1:1:3']
+        <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> <Field FB-1:1:2 'nation'> <Field FB-1:1:3 'sail_number'>
+    <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> ['FB-1:1:1:1']
+        <Field FB-1:1:1:1 'name'>
+    <Fieldset FB-1:2 'optional'> ['FB-1:2:1']
+        <Field FB-1:2:1 'name'>
+    <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>> ['FB-1:3::1']
+        <Entity_Link FB-1:3::1 'GTW.OMP.SRM.Boat_in_Regatta'>
+    <Entity_Link FB-1:3::1 'GTW.OMP.SRM.Boat_in_Regatta'> ['FB-1:3::1-1', 'FB-1:3::1-2', 'FB-1:3::1-3']
+        <Fieldset FB-1:3::1-1 'primary'> <Fieldset FB-1:3::1-2 'required'> <Fieldset FB-1:3::1-3 'optional'>
+    <Fieldset FB-1:3::1-1 'primary'> ['FB-1:3::1-1:1']
+        <Field_Entity FB-1:3::1-1:1 'right' 'GTW.OMP.SRM.Regatta'>
+    <Field_Entity FB-1:3::1-1:1 'right' 'GTW.OMP.SRM.Regatta'> ['FB-1:3::1-1:1:1']
+        <Field_Entity FB-1:3::1-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'>
+    <Field_Entity FB-1:3::1-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'> ['FB-1:3::1-1:1:1:1', 'FB-1:3::1-1:1:1:2']
+        <Field_Composite FB-1:3::1-1:1:1:1 'date' 'MOM.Date_Interval_C'> <Field FB-1:3::1-1:1:1:2 'name'>
+    <Field_Composite FB-1:3::1-1:1:1:1 'date' 'MOM.Date_Interval_C'> ['FB-1:3::1-1:1:1:1.1', 'FB-1:3::1-1:1:1:1.2']
+        <Field FB-1:3::1-1:1:1:1.1 'start'> <Field FB-1:3::1-1:1:1:1.2 'finish'>
+    <Fieldset FB-1:3::1-2 'required'> ['FB-1:3::1-2:1']
+        <Field_Entity FB-1:3::1-2:1 'skipper' 'GTW.OMP.SRM.Sailor'>
+    <Field_Entity FB-1:3::1-2:1 'skipper' 'GTW.OMP.SRM.Sailor'> ['FB-1:3::1-2:1:1', 'FB-1:3::1-2:1:2', 'FB-1:3::1-2:1:3']
+        <Field_Entity FB-1:3::1-2:1:1 'left' 'GTW.OMP.PAP.Person'> <Field FB-1:3::1-2:1:2 'nation'> <Field FB-1:3::1-2:1:3 'mna_number'>
+    <Field_Entity FB-1:3::1-2:1:1 'left' 'GTW.OMP.PAP.Person'> ['FB-1:3::1-2:1:1:1', 'FB-1:3::1-2:1:1:2', 'FB-1:3::1-2:1:1:3', 'FB-1:3::1-2:1:1:4']
+        <Field FB-1:3::1-2:1:1:1 'last_name'> <Field FB-1:3::1-2:1:1:2 'first_name'> <Field FB-1:3::1-2:1:1:3 'middle_name'> <Field FB-1:3::1-2:1:1:4 'title'>
+    <Fieldset FB-1:3::1-3 'optional'> ['FB-1:3::1-3:1', 'FB-1:3::1-3:2']
+        <Field FB-1:3::1-3:1 'place'> <Field FB-1:3::1-3:2 'points'>
 
 """
 

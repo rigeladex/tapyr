@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -104,8 +104,6 @@
 #    20-Nov-2007 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL               import TFL
 import _TFL._Meta.Object
@@ -395,7 +393,6 @@ class Multi_Line_Formatter (_Formatter_) :
             i          = 0
             add_indent = len (head)
             for l in lines :
-                #pdb.set_trace ()
                 lines_not_finished = not lines.is_finished
                 if i > 0 and f.anchor and (lines_not_finished or l) :
                     head = (" " * add_indent) + head

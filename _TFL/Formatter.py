@@ -29,6 +29,8 @@
 #
 # Revision Dates
 #    24-Feb-2011 (CT) Creation
+#    25-Feb-2011 (CT) `Look_Ahead_Gen` used to compact output for
+#                     single-element structures
 #    ««revision-date»»···
 #--
 
@@ -36,6 +38,7 @@ from   _TFL import TFL
 
 import _TFL._Meta.Object
 import _TFL.Decorator
+import _TFL.Generators
 
 from   itertools import chain as ichain
 
@@ -112,33 +115,51 @@ class Formatter (TFL.Meta.Object) :
     @TFL.Attributed (recurses = True)
     def _format_dict (self, thing, level, seen, ws, leader) :
         sep = "{"
-        if leader :
-            yield leader.rstrip ()
         if thing :
+            head = leader
+            tail = "}" if len (thing) == 1 else ""
             for k, v in sorted (thing.iteritems ()) :
-                vl = "%s%s %r : " % (ws,  sep, k)
-                for l in self.format_iter (v, level + 2, seen, vl) :
+                vl = "%s%s %r : " % (ws, sep, k)
+                it = TFL.Look_Ahead_Gen \
+                    (self.format_iter (v, level + 2, seen, vl))
+                for l in it :
+                    if tail and it.is_finished :
+                        yield "%s%s %s" % (head, l.lstrip (), tail)
+                        return
+                    elif head :
+                        yield head.rstrip ()
+                        head = ""
+                    tail = ""
                     yield l
                 sep = ","
             yield "%s}" % (ws, )
         else :
-            yield "%s{}" % (ws, )
+            yield "%s{}" % (leader or ws, )
     # end def _format_dict
 
     @TFL.Attributed (recurses = True)
     def _format_list (self, thing, level, seen, ws, leader, open, clos) :
         sep = open
-        if leader :
-            yield leader.rstrip ()
         if thing :
+            head = leader
+            tail = clos if len (thing) == 1 else ""
             for v in thing :
-                leader = "%s%s " % (ws, sep)
-                for l in self.format_iter (v, level + 1, seen, leader) :
+                vl = "%s%s " % (ws, sep)
+                it = TFL.Look_Ahead_Gen \
+                    (self.format_iter (v, level + 1, seen, vl))
+                for l in it :
+                    if tail and it.is_finished :
+                        yield "%s%s %s" % (head, l.lstrip (), tail)
+                        return
+                    elif head :
+                        yield head.rstrip ()
+                        head = ""
+                    tail = ""
                     yield l
                 sep = ","
             yield "%s%s" % (ws, clos)
         else :
-            yield "%s%s%s" % (ws, open, clos)
+            yield "%s%s%s" % (leader or ws, open, clos)
     # end def _format_list
 
     def _format_obj (self, thing, level, seen, ws, leader) :

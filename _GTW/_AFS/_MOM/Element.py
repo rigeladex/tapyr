@@ -41,17 +41,16 @@ class _MOM_Entity_ (Entity) :
     _real_name = "Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
+        assert ETM.type_name == self.type_name, \
+             "%s <-> %s" % (ETM.type_name, self.type_name)
         if entity is not None :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
-            assert ETM.type_name == self.type_name, \
-                 "%s <-> %s" % (ETM.type_name, self.type_name)
-        result = dict \
+        result = self.__super.__call__ (ETM, entity, ** kw)
+        result.update \
             ( cid = getattr (entity, "cid", None)
             , pid = getattr (entity, "pid", None)
             )
-        for c in self.children :
-            result [c.id] = c (ETM, entity, ** kw)
         return result
     # end def __call__
 
@@ -86,19 +85,16 @@ class _MOM_Entity_List_  (Entity_List) :
 
     _real_name = "Entity_List"
 
-    def __call__ (self, ETM, entity, ** kw) :
+    def _call_iter (self, ETM, entity, ** kw) :
         cs     = []
         proto  = self.proto
-        this   = self.clone ()
-        result = {}
         if entity is not None :
             assoc  = ETM.home_scope [proto.type_name]
             for link in assoc.query_s (** { proto.role_name : entity }) :
-                cs.append ((link, this.add_child ()))
+                cs.append ((link, self.add_child ()))
             for link, c in cs :
-                result [c.id] = c.instance_call (assoc, link, ** kw)
-        return result
-    # end def __call__
+                yield c.id, c.instance_call (assoc, link, ** kw)
+    # end def _call_iter
 
 Entity_List = _MOM_Entity_List_ # end class
 
@@ -109,11 +105,12 @@ class _MOM_Field_ (Field) :
 
     def __call__ (self, ETM, entity, ** kw) :
         attr = ETM.attributes [self.name]
-        if self.name in kw :
-            init = kw [self.name].get ("init")
+        akw  = kw.get (self.name, {})
+        if "init" in akw :
+            init = akw ["init"]
         else :
             init = attr.get_raw (entity)
-        result = dict (init = init)
+        result = dict (init = init) if init else {}
         return result
     # end def __call__
 
@@ -124,15 +121,13 @@ class _MOM_Field_Composite_ (Field_Composite) :
 
     _real_name = "Field_Composite"
 
-    def __call__ (self, ETM, entity, ** kw) :
+    def _call_iter (self, ETM, entity, ** kw) :
         attr     = ETM._etype.attributes [self.name]
         c_type   = attr.C_Type
         c_entity = getattr (entity, self.name, None)
-        result   = {}
         for c in self.children :
-            result [c.id] = c (c_type, c_entity, ** kw.get (self.name, {}))
-        return result
-    # end def __call__
+            yield c.id, c (c_type, c_entity, ** kw.get (self.name, {}))
+    # end def _call_iter
 
 Field_Composite = _MOM_Field_Composite_ # end class
 
@@ -151,8 +146,7 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
             , allow_new = attr.ui_allow_new and a_kw.get ("allow_new", True)
             # XXX completer
             )
-        result   = self.__super.__call__ (a_type, a_entity, ** kw)
-        return result
+        return self.__super.__call__ (a_type, a_entity, ** kw)
     # end def __call__
 
 Field_Entity = _MOM_Field_Entity_ # end class
@@ -162,19 +156,16 @@ class _MOM_Form_ (Form) :
 
     _real_name = "Form"
 
-    def __call__ (self, * args, ** kw) :
-        data   = {}
-        result = GTW.AFS.Instance.Form (self, data)
+    def _call_iter (self, * args, ** kw) :
         if len (self.children) == 1 and len (args) <= 2 :
             c = self.children [0]
-            data [c.id] = c (* args, ** kw)
+            yield c.id, c (* args, ** kw)
         else :
             assert len (args) == len (self.children), repr (self)
             assert not kw, repr (self)
             for a, c in zip (args, self.children) :
-                data [c.id] = c (e.ETM, a.entity, ** a.kw)
-        return result
-    # end def __call__
+                yield c.id, c (a.ETM, a.entity, ** a.kw)
+    # end def _call_iter
 
 Form = _MOM_Form_ # end class
 

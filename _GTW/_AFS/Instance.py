@@ -48,18 +48,34 @@ class Element (TFL.Meta.Object) :
         self.data = data
     # end def __init__
 
+    def __iter__ (self) :
+        data = self.data
+        for c in self.elem.children :
+            yield Element (c, data [c.id])
+    # end def __iter__
+
+    if 0 :
+        ### alternate implementation
+        def __init__ (self, elem, data, top = None) :
+            self.elem = elem
+            self.data = data
+            self.top  = top or self
+        # end def __init__
+
+        def __iter__ (self) :
+            data = self.data
+            elem = self.elem
+            top  = self.top
+            for id in data.get ("child_ids", ()) :
+                yield Element (top.elem [id], data [id], top)
+        # end def __iter__
+
     def transitive_iter (self) :
         yield self
         for c in self :
             for x in c.transitive_iter () :
                 yield x
     # end def transitive_iter
-
-    def __iter__ (self) :
-        data = self.data
-        for c in self.elem.children :
-            yield Element (c, data [c.id])
-    # end def __iter__
 
 # end class Element
 
