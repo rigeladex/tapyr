@@ -35,13 +35,15 @@
 #                     `description` and `explanation` from `kw`
 #    23-Feb-2011 (CT) `Entity_List.clone` added
 #    24-Feb-2011 (CT) `Field_Entity` added
+#    25-Feb-2011 (CT) `Form.__call__` changed to return `GTW.AFS.Instance.Form`
+#                     instead of data `dict`
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-import _GTW._AFS
+import _GTW._AFS.Instance
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -323,9 +325,10 @@ class Form (_Element_List_) :
 
     def __call__ (self, * args, ** kw) :
         assert len (args) == len (self.children)
-        result = {}
+        data   = {}
+        result = GTW.AFS.Instance.Form (self, data)
         for a, c in zip (args, self.children) :
-            result [c.id] = c (a, ** kw)
+            data [c.id] = c (a, ** kw)
         return result
     # end def __call__
 

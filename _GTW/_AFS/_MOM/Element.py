@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Feb-2011 (CT) Creation
 #    24-Feb-2011 (CT) Creation continued..
+#    25-Feb-2011 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -162,15 +163,16 @@ class _MOM_Form_ (Form) :
     _real_name = "Form"
 
     def __call__ (self, * args, ** kw) :
-        result = {}
+        data   = {}
+        result = GTW.AFS.Instance.Form (self, data)
         if len (self.children) == 1 and len (args) <= 2 :
             c = self.children [0]
-            result [c.id] = c (* args, ** kw)
+            data [c.id] = c (* args, ** kw)
         else :
             assert len (args) == len (self.children), repr (self)
             assert not kw, repr (self)
             for a, c in zip (args, self.children) :
-                result [c.id] = c (e.ETM, a.entity, ** a.kw)
+                data [c.id] = c (e.ETM, a.entity, ** a.kw)
         return result
     # end def __call__
 
