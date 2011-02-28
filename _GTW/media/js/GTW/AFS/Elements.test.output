@@ -1,8 +1,15 @@
 FB-0 values :
     $anchor_id = "FB-0"
+    $child_ids :
+        0 = "FB-0:0:0"
+        1 = "FB-0:0:1"
+        2 = "FB-0:0:2"
+        3 = "FB-0:1:0"
     $id = "FB-0"
     cid = 2
     FB-0:0:0 :
+        $child_ids :
+            0 = "FB-0:0:0:0"
         $id = "FB-0:0:0"
         cid :
 
@@ -18,15 +25,28 @@ FB-0 values :
     pid = 2
 FB-0:2::0 values :
     $anchor_id = "FB-0"
+    $child_ids :
+        0 = "FB-0:2::0-0:0"
+        1 = "FB-0:2::0-1:0"
+        2 = "FB-0:2::0-2:0"
+        3 = "FB-0:2::0-2:1"
     $id = "FB-0:2::0"
     cid = 7
     FB-0:2::0-0:0 :
+        $child_ids :
+            0 = "FB-0:2::0-0:0:0"
         $id = "FB-0:2::0-0:0"
         cid = 6
         FB-0:2::0-0:0:0 :
+            $child_ids :
+                0 = "FB-0:2::0-0:0:0:0"
+                1 = "FB-0:2::0-0:0:0:1"
             $id = "FB-0:2::0-0:0:0"
             cid = 5
             FB-0:2::0-0:0:0:0 :
+                $child_ids :
+                    0 = "FB-0:2::0-0:0:0:0.0"
+                    1 = "FB-0:2::0-0:0:0:0.1"
                 $id = "FB-0:2::0-0:0:0:0"
                 FB-0:2::0-0:0:0:0.0 :
                     init = "2008/05/01"
@@ -37,9 +57,18 @@ FB-0:2::0 values :
             pid = 5
         pid = 6
     FB-0:2::0-1:0 :
+        $child_ids :
+            0 = "FB-0:2::0-1:0:0"
+            1 = "FB-0:2::0-1:0:1"
+            2 = "FB-0:2::0-1:0:2"
         $id = "FB-0:2::0-1:0"
         cid = 4
         FB-0:2::0-1:0:0 :
+            $child_ids :
+                0 = "FB-0:2::0-1:0:0:0"
+                1 = "FB-0:2::0-1:0:0:1"
+                2 = "FB-0:2::0-1:0:0:2"
+                3 = "FB-0:2::0-1:0:0:3"
             $id = "FB-0:2::0-1:0:0"
             cid = 3
             FB-0:2::0-1:0:0:0 :
@@ -82,6 +111,7 @@ $GTW :
                     type = "Form"
                     function update(dict)
                 FB-0 :
+                    $anchor_id = "FB-0"
                     $id = "FB-0"
                     children :
                         0 = "FB-0:0"
@@ -93,9 +123,16 @@ $GTW :
                     function update(dict)
                     value :
                         $anchor_id = "FB-0"
+                        $child_ids :
+                            0 = "FB-0:0:0"
+                            1 = "FB-0:0:1"
+                            2 = "FB-0:0:2"
+                            3 = "FB-0:1:0"
                         $id = "FB-0"
                         cid = 2
                         FB-0:0:0 :
+                            $child_ids :
+                                0 = "FB-0:0:0:0"
                             $id = "FB-0:0:0"
                             cid :
 
@@ -120,6 +157,7 @@ $GTW :
                     type = "Fieldset"
                     function update(dict)
                 FB-0:0:0 :
+                    $anchor_id = "FB-0"
                     $id = "FB-0:0:0"
                     children :
                         0 = "FB-0:0:0:0"
@@ -129,6 +167,8 @@ $GTW :
                     ui_name = "Class"
                     function update(dict)
                     value :
+                        $child_ids :
+                            0 = "FB-0:0:0:0"
                         $id = "FB-0:0:0"
                         cid :
 
@@ -136,6 +176,7 @@ $GTW :
                             init = "Optimist"
                         pid = 1
                 FB-0:0:0:0 :
+                    $anchor_id = "FB-0:0:0"
                     $id = "FB-0:0:0:0"
                     name = "name"
                     type = "Field"
@@ -144,6 +185,7 @@ $GTW :
                     value :
                         init = "Optimist"
                 FB-0:0:1 :
+                    $anchor_id = "FB-0"
                     $id = "FB-0:0:1"
                     name = "nation"
                     type = "Field"
@@ -152,6 +194,7 @@ $GTW :
                     value :
                         init = "AUT"
                 FB-0:0:2 :
+                    $anchor_id = "FB-0"
                     $id = "FB-0:0:2"
                     name = "sail_number"
                     type = "Field"
@@ -168,6 +211,7 @@ $GTW :
                     type = "Fieldset"
                     function update(dict)
                 FB-0:1:0 :
+                    $anchor_id = "FB-0"
                     $id = "FB-0:1:0"
                     name = "name"
                     type = "Field"
@@ -182,6 +226,7 @@ $GTW :
                     type = "Entity_List"
                     function update(dict)
                 FB-0:2::0 :
+                    $anchor_id = "FB-0"
                     $id = "FB-0:2::0"
                     children :
                         0 = "FB-0:2::0-0"
@@ -194,15 +239,28 @@ $GTW :
                     function update(dict)
                     value :
                         $anchor_id = "FB-0"
+                        $child_ids :
+                            0 = "FB-0:2::0-0:0"
+                            1 = "FB-0:2::0-1:0"
+                            2 = "FB-0:2::0-2:0"
+                            3 = "FB-0:2::0-2:1"
                         $id = "FB-0:2::0"
                         cid = 7
                         FB-0:2::0-0:0 :
+                            $child_ids :
+                                0 = "FB-0:2::0-0:0:0"
                             $id = "FB-0:2::0-0:0"
                             cid = 6
                             FB-0:2::0-0:0:0 :
+                                $child_ids :
+                                    0 = "FB-0:2::0-0:0:0:0"
+                                    1 = "FB-0:2::0-0:0:0:1"
                                 $id = "FB-0:2::0-0:0:0"
                                 cid = 5
                                 FB-0:2::0-0:0:0:0 :
+                                    $child_ids :
+                                        0 = "FB-0:2::0-0:0:0:0.0"
+                                        1 = "FB-0:2::0-0:0:0:0.1"
                                     $id = "FB-0:2::0-0:0:0:0"
                                     FB-0:2::0-0:0:0:0.0 :
                                         init = "2008/05/01"
@@ -213,9 +271,18 @@ $GTW :
                                 pid = 5
                             pid = 6
                         FB-0:2::0-1:0 :
+                            $child_ids :
+                                0 = "FB-0:2::0-1:0:0"
+                                1 = "FB-0:2::0-1:0:1"
+                                2 = "FB-0:2::0-1:0:2"
                             $id = "FB-0:2::0-1:0"
                             cid = 4
                             FB-0:2::0-1:0:0 :
+                                $child_ids :
+                                    0 = "FB-0:2::0-1:0:0:0"
+                                    1 = "FB-0:2::0-1:0:0:1"
+                                    2 = "FB-0:2::0-1:0:0:2"
+                                    3 = "FB-0:2::0-1:0:0:3"
                                 $id = "FB-0:2::0-1:0:0"
                                 cid = 3
                                 FB-0:2::0-1:0:0:0 :
@@ -246,6 +313,7 @@ $GTW :
                     type = "Fieldset"
                     function update(dict)
                 FB-0:2::0-0:0 :
+                    $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-0:0"
                     children :
                         0 = "FB-0:2::0-0:0:0"
@@ -255,12 +323,20 @@ $GTW :
                     ui_name = "Regatta"
                     function update(dict)
                     value :
+                        $child_ids :
+                            0 = "FB-0:2::0-0:0:0"
                         $id = "FB-0:2::0-0:0"
                         cid = 6
                         FB-0:2::0-0:0:0 :
+                            $child_ids :
+                                0 = "FB-0:2::0-0:0:0:0"
+                                1 = "FB-0:2::0-0:0:0:1"
                             $id = "FB-0:2::0-0:0:0"
                             cid = 5
                             FB-0:2::0-0:0:0:0 :
+                                $child_ids :
+                                    0 = "FB-0:2::0-0:0:0:0.0"
+                                    1 = "FB-0:2::0-0:0:0:0.1"
                                 $id = "FB-0:2::0-0:0:0:0"
                                 FB-0:2::0-0:0:0:0.0 :
                                     init = "2008/05/01"
@@ -271,6 +347,7 @@ $GTW :
                             pid = 5
                         pid = 6
                 FB-0:2::0-0:0:0 :
+                    $anchor_id = "FB-0:2::0-0:0"
                     $id = "FB-0:2::0-0:0:0"
                     children :
                         0 = "FB-0:2::0-0:0:0:0"
@@ -281,9 +358,15 @@ $GTW :
                     ui_name = "Event"
                     function update(dict)
                     value :
+                        $child_ids :
+                            0 = "FB-0:2::0-0:0:0:0"
+                            1 = "FB-0:2::0-0:0:0:1"
                         $id = "FB-0:2::0-0:0:0"
                         cid = 5
                         FB-0:2::0-0:0:0:0 :
+                            $child_ids :
+                                0 = "FB-0:2::0-0:0:0:0.0"
+                                1 = "FB-0:2::0-0:0:0:0.1"
                             $id = "FB-0:2::0-0:0:0:0"
                             FB-0:2::0-0:0:0:0.0 :
                                 init = "2008/05/01"
@@ -293,6 +376,7 @@ $GTW :
                             init = "Himmelfahrt"
                         pid = 5
                 FB-0:2::0-0:0:0:0 :
+                    $anchor_id = "FB-0:2::0-0:0:0"
                     $id = "FB-0:2::0-0:0:0:0"
                     children :
                         0 = "FB-0:2::0-0:0:0:0.0"
@@ -303,12 +387,16 @@ $GTW :
                     ui_name = "Date"
                     function update(dict)
                     value :
+                        $child_ids :
+                            0 = "FB-0:2::0-0:0:0:0.0"
+                            1 = "FB-0:2::0-0:0:0:0.1"
                         $id = "FB-0:2::0-0:0:0:0"
                         FB-0:2::0-0:0:0:0.0 :
                             init = "2008/05/01"
                         FB-0:2::0-0:0:0:0.1 :
                             init = "2008/05/01"
                 FB-0:2::0-0:0:0:0.0 :
+                    $anchor_id = "FB-0:2::0-0:0:0:0"
                     $id = "FB-0:2::0-0:0:0:0.0"
                     name = "start"
                     type = "Field"
@@ -317,6 +405,7 @@ $GTW :
                     value :
                         init = "2008/05/01"
                 FB-0:2::0-0:0:0:0.1 :
+                    $anchor_id = "FB-0:2::0-0:0:0:0"
                     $id = "FB-0:2::0-0:0:0:0.1"
                     name = "finish"
                     type = "Field"
@@ -325,6 +414,7 @@ $GTW :
                     value :
                         init = "2008/05/01"
                 FB-0:2::0-0:0:0:1 :
+                    $anchor_id = "FB-0:2::0-0:0:0"
                     $id = "FB-0:2::0-0:0:0:1"
                     name = "name"
                     type = "Field"
@@ -341,6 +431,7 @@ $GTW :
                     type = "Fieldset"
                     function update(dict)
                 FB-0:2::0-1:0 :
+                    $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-1:0"
                     children :
                         0 = "FB-0:2::0-1:0:0"
@@ -352,9 +443,18 @@ $GTW :
                     ui_name = "Skipper"
                     function update(dict)
                     value :
+                        $child_ids :
+                            0 = "FB-0:2::0-1:0:0"
+                            1 = "FB-0:2::0-1:0:1"
+                            2 = "FB-0:2::0-1:0:2"
                         $id = "FB-0:2::0-1:0"
                         cid = 4
                         FB-0:2::0-1:0:0 :
+                            $child_ids :
+                                0 = "FB-0:2::0-1:0:0:0"
+                                1 = "FB-0:2::0-1:0:0:1"
+                                2 = "FB-0:2::0-1:0:0:2"
+                                3 = "FB-0:2::0-1:0:0:3"
                             $id = "FB-0:2::0-1:0:0"
                             cid = 3
                             FB-0:2::0-1:0:0:0 :
@@ -372,6 +472,7 @@ $GTW :
                             init = "29676"
                         pid = 4
                 FB-0:2::0-1:0:0 :
+                    $anchor_id = "FB-0:2::0-1:0"
                     $id = "FB-0:2::0-1:0:0"
                     children :
                         0 = "FB-0:2::0-1:0:0:0"
@@ -384,6 +485,11 @@ $GTW :
                     ui_name = "Person"
                     function update(dict)
                     value :
+                        $child_ids :
+                            0 = "FB-0:2::0-1:0:0:0"
+                            1 = "FB-0:2::0-1:0:0:1"
+                            2 = "FB-0:2::0-1:0:0:2"
+                            3 = "FB-0:2::0-1:0:0:3"
                         $id = "FB-0:2::0-1:0:0"
                         cid = 3
                         FB-0:2::0-1:0:0:0 :
@@ -396,6 +502,7 @@ $GTW :
 
                         pid = 3
                 FB-0:2::0-1:0:0:0 :
+                    $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:0"
                     name = "last_name"
                     type = "Field"
@@ -404,6 +511,7 @@ $GTW :
                     value :
                         init = "Tanzer"
                 FB-0:2::0-1:0:0:1 :
+                    $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:1"
                     name = "first_name"
                     type = "Field"
@@ -412,6 +520,7 @@ $GTW :
                     value :
                         init = "Laurens"
                 FB-0:2::0-1:0:0:2 :
+                    $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:2"
                     name = "middle_name"
                     type = "Field"
@@ -420,6 +529,7 @@ $GTW :
                     value :
 
                 FB-0:2::0-1:0:0:3 :
+                    $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:3"
                     name = "title"
                     type = "Field"
@@ -428,6 +538,7 @@ $GTW :
                     value :
 
                 FB-0:2::0-1:0:1 :
+                    $anchor_id = "FB-0:2::0-1:0"
                     $id = "FB-0:2::0-1:0:1"
                     name = "nation"
                     type = "Field"
@@ -436,6 +547,7 @@ $GTW :
                     value :
                         init = "AUT"
                 FB-0:2::0-1:0:2 :
+                    $anchor_id = "FB-0:2::0-1:0"
                     $id = "FB-0:2::0-1:0:2"
                     name = "mna_number"
                     type = "Field"
@@ -453,6 +565,7 @@ $GTW :
                     type = "Fieldset"
                     function update(dict)
                 FB-0:2::0-2:0 :
+                    $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-2:0"
                     name = "place"
                     type = "Field"
@@ -461,6 +574,7 @@ $GTW :
                     value :
 
                 FB-0:2::0-2:1 :
+                    $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-2:1"
                     name = "points"
                     type = "Field"
@@ -491,4 +605,4 @@ $GTW :
     function Module(dict)
     function update(dict)
     version = "1.0"
-{"cid":7,"pid":7,"$id":"FB-0:2::0","$anchor_id":"FB-0","FB-0:2::0-0:0":{"cid":6,"pid":6,"$id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0":{"cid":5,"pid":5,"$id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"cid":4,"pid":4,"$id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0":{"cid":3,"pid":3,"$id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}
+{"cid":7,"pid":7,"$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"$anchor_id":"FB-0","FB-0:2::0-0:0":{"cid":6,"pid":6,"$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"FB-0:2::0-0:0:0":{"cid":5,"pid":5,"$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"cid":4,"pid":4,"$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"FB-0:2::0-1:0:0":{"cid":3,"pid":3,"$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}

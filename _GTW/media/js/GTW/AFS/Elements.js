@@ -74,13 +74,16 @@
                   if (this.constructor.is_anchor) {
                       new_anchor = this;
                       this.value.$id = this.$id;
+                      this.value.$child_ids = [];
                   }
                   if (this.constructor.is_root) {
                       new_root   = this;
                       this.value ["$anchor_id"] = anchor.$id;
                   } else {
                       anchor.value [this.$id] = this.value;
+                      anchor.value ["$child_ids"].push (this.$id);
                   }
+                  this.$anchor_id = anchor.$id;
               }
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {

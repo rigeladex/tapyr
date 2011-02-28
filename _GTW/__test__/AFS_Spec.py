@@ -258,7 +258,7 @@ _test_code = """
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u"Optimist", u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s   = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True)
     >>> rev = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
@@ -278,9 +278,9 @@ _test_code = """
                             [ { '$id' : 'FB-0:0:0:0'
                               , 'name' : 'name'
                               , 'type' : 'Field'
-                              , 'ui_name' : u'Name'
+                              , 'ui_name' : 'Name'
                               , 'value' :
-                                  { 'init' : u'Optimist' }
+                                  { 'init' : 'Optimist' }
                               }
                             ]
                         , 'name' : 'left'
@@ -295,16 +295,16 @@ _test_code = """
                       , { '$id' : 'FB-0:0:1'
                         , 'name' : 'nation'
                         , 'type' : 'Field'
-                        , 'ui_name' : u'Nation'
+                        , 'ui_name' : 'Nation'
                         , 'value' :
-                            { 'init' : u'AUT' }
+                            { 'init' : 'AUT' }
                         }
                       , { '$id' : 'FB-0:0:2'
                         , 'name' : 'sail_number'
                         , 'type' : 'Field'
-                        , 'ui_name' : u'Sail number'
+                        , 'ui_name' : 'Sail number'
                         , 'value' :
-                            { 'init' : u'1107' }
+                            { 'init' : '1107' }
                         }
                       ]
                   , 'collapsed' : False
@@ -316,7 +316,7 @@ _test_code = """
                       [ { '$id' : 'FB-0:1:0'
                         , 'name' : 'name'
                         , 'type' : 'Field'
-                        , 'ui_name' : u'Name'
+                        , 'ui_name' : 'Name'
                         , 'value' :
                             {}
                         }
@@ -340,14 +340,14 @@ _test_code = """
                                                     [ { '$id' : 'FB-0:2::0-0:0:0:0.0'
                                                       , 'name' : 'start'
                                                       , 'type' : 'Field'
-                                                      , 'ui_name' : u'Start'
+                                                      , 'ui_name' : 'Start'
                                                       , 'value' :
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     , { '$id' : 'FB-0:2::0-0:0:0:0.1'
                                                       , 'name' : 'finish'
                                                       , 'type' : 'Field'
-                                                      , 'ui_name' : u'Finish'
+                                                      , 'ui_name' : 'Finish'
                                                       , 'value' :
                                                           { 'init' : '2008/05/01' }
                                                       }
@@ -355,22 +355,22 @@ _test_code = """
                                                 , 'name' : 'date'
                                                 , 'type' : 'Field_Composite'
                                                 , 'type_name' : 'MOM.Date_Interval_C'
-                                                , 'ui_name' : u'Date'
+                                                , 'ui_name' : 'Date'
                                                 , 'value' :
                                                     {}
                                                 }
                                               , { '$id' : 'FB-0:2::0-0:0:0:1'
                                                 , 'name' : 'name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : u'Name'
+                                                , 'ui_name' : 'Name'
                                                 , 'value' :
-                                                    { 'init' : u'Himmelfahrt' }
+                                                    { 'init' : 'Himmelfahrt' }
                                                 }
                                               ]
                                           , 'name' : 'left'
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.SRM.Regatta_Event'
-                                          , 'ui_name' : u'Event'
+                                          , 'ui_name' : 'Event'
                                           , 'value' :
                                               { 'cid' : 5
                                               , 'pid' : 5
@@ -380,7 +380,7 @@ _test_code = """
                                     , 'name' : 'right'
                                     , 'type' : 'Field_Entity'
                                     , 'type_name' : 'GTW.OMP.SRM.Regatta'
-                                    , 'ui_name' : u'Regatta'
+                                    , 'ui_name' : 'Regatta'
                                     , 'value' :
                                         { 'cid' : 6
                                         , 'pid' : 6
@@ -400,28 +400,28 @@ _test_code = """
                                               [ { '$id' : 'FB-0:2::0-1:0:0:0'
                                                 , 'name' : 'last_name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : u'Last name'
+                                                , 'ui_name' : 'Last name'
                                                 , 'value' :
-                                                    { 'init' : u'Tanzer' }
+                                                    { 'init' : 'Tanzer' }
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:1'
                                                 , 'name' : 'first_name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : u'First name'
+                                                , 'ui_name' : 'First name'
                                                 , 'value' :
-                                                    { 'init' : u'Laurens' }
+                                                    { 'init' : 'Laurens' }
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:2'
                                                 , 'name' : 'middle_name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : u'Middle name'
+                                                , 'ui_name' : 'Middle name'
                                                 , 'value' :
                                                     {}
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:3'
                                                 , 'name' : 'title'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : u'Academic title'
+                                                , 'ui_name' : 'Academic title'
                                                 , 'value' :
                                                     {}
                                                 }
@@ -429,7 +429,7 @@ _test_code = """
                                           , 'name' : 'left'
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.PAP.Person'
-                                          , 'ui_name' : u'Person'
+                                          , 'ui_name' : 'Person'
                                           , 'value' :
                                               { 'cid' : 3
                                               , 'pid' : 3
@@ -438,22 +438,22 @@ _test_code = """
                                         , { '$id' : 'FB-0:2::0-1:0:1'
                                           , 'name' : 'nation'
                                           , 'type' : 'Field'
-                                          , 'ui_name' : u'Nation'
+                                          , 'ui_name' : 'Nation'
                                           , 'value' :
-                                              { 'init' : u'AUT' }
+                                              { 'init' : 'AUT' }
                                           }
                                         , { '$id' : 'FB-0:2::0-1:0:2'
                                           , 'name' : 'mna_number'
                                           , 'type' : 'Field'
-                                          , 'ui_name' : u'Mna number'
+                                          , 'ui_name' : 'Mna number'
                                           , 'value' :
-                                              { 'init' : u'29676' }
+                                              { 'init' : '29676' }
                                           }
                                         ]
                                     , 'name' : 'skipper'
                                     , 'type' : 'Field_Entity'
                                     , 'type_name' : 'GTW.OMP.SRM.Sailor'
-                                    , 'ui_name' : u'Skipper'
+                                    , 'ui_name' : 'Skipper'
                                     , 'value' :
                                         { 'cid' : 4
                                         , 'pid' : 4
@@ -469,14 +469,14 @@ _test_code = """
                                   [ { '$id' : 'FB-0:2::0-2:0'
                                     , 'name' : 'place'
                                     , 'type' : 'Field'
-                                    , 'ui_name' : u'Place'
+                                    , 'ui_name' : 'Place'
                                     , 'value' :
                                         {}
                                     }
                                   , { '$id' : 'FB-0:2::0-2:1'
                                     , 'name' : 'points'
                                     , 'type' : 'Field'
-                                    , 'ui_name' : u'Points'
+                                    , 'ui_name' : 'Points'
                                     , 'value' :
                                         {}
                                     }

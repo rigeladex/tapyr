@@ -32,6 +32,7 @@
 #    25-Feb-2011 (CT) `Look_Ahead_Gen` used to compact output for
 #                     single-element structures
 #    28-Feb-2011 (CT) More output compaction (`nl_r`)
+#    28-Feb-2011 (CT) `_repr` added and used to remove leading `u` from strings
 #    ««revision-date»»···
 #--
 
@@ -124,8 +125,9 @@ class Formatter (TFL.Meta.Object) :
             head = leader or ws
             tail = "}" if len (thing) == 1 else ""
             for k, v in sorted (thing.iteritems ()) :
-                vl = "%s%s %r : " % (head, sep, k)
-                v2 = "%s%s %r : " % (ws,   sep, k)
+                rk = self._repr (k)
+                vl = "%s%s %s : " % (head, sep, rk)
+                v2 = "%s%s %s : " % (ws,   sep, rk)
                 it = TFL.Look_Ahead_Gen \
                     (self.format_iter (v, level + 2, seen, vl, True))
                 for l in it :
@@ -168,8 +170,16 @@ class Formatter (TFL.Meta.Object) :
     # end def _format_list
 
     def _format_obj (self, thing, level, seen, ws, leader) :
-        yield "%s%r" % (leader, thing)
+        yield "%s%s" % (leader, self._repr (thing))
     # end def _format_obj
+
+    def _repr (self, thing) :
+        result = "%r" % (thing, )
+        if result.startswith (("u'", 'u"')) :
+            result = result [1:]
+        return result
+    # end def _repr
+
 
 # end class Formatter
 
