@@ -219,16 +219,6 @@ class Entity_List (_Element_List_) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    @Once_Property
-    def as_json_cargo (self) :
-        result = self.__super.as_json_cargo
-        result ["proto"] = dict \
-            ( self.proto.as_json_cargo
-            , children = [c.as_json_cargo for c in self.proto.children]
-            )
-        return result
-    # end def as_json_cargo
-
     def add_child (self) :
         if self.children is self.__class__.children :
             self.children = []
