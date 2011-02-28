@@ -29,6 +29,7 @@
 #    23-Feb-2011 (CT) Creation
 #    24-Feb-2011 (CT) Creation continued..
 #    25-Feb-2011 (CT) Creation continued...
+#    27-Feb-2011 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -40,19 +41,19 @@ class _MOM_Entity_ (Entity) :
 
     _real_name = "Entity"
 
-    def __call__ (self, ETM, entity, ** kw) :
+    def _data (self, ETM, entity, ** kw) :
         assert ETM.type_name == self.type_name, \
              "%s <-> %s" % (ETM.type_name, self.type_name)
         if entity is not None :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
-        result = self.__super.__call__ (ETM, entity, ** kw)
-        result.update \
+        result = self.__super._data (ETM, entity, ** kw)
+        result ["value"].update \
             ( cid = getattr (entity, "cid", None)
             , pid = getattr (entity, "pid", None)
             )
         return result
-    # end def __call__
+    # end def _data
 
 Entity = _MOM_Entity_ # end class
 
@@ -86,14 +87,15 @@ class _MOM_Entity_List_  (Entity_List) :
     _real_name = "Entity_List"
 
     def _call_iter (self, ETM, entity, ** kw) :
-        cs     = []
-        proto  = self.proto
         if entity is not None :
+            cs     = []
+            proto  = self.proto
             assoc  = ETM.home_scope [proto.type_name]
-            for link in assoc.query_s (** { proto.role_name : entity }) :
-                cs.append ((link, self.add_child ()))
+            for i, link in enumerate \
+                    (assoc.query_s (** { proto.role_name : entity })) :
+                cs.append ((link, self.new_child (i, {})))
             for link, c in cs :
-                yield c.id, c.instance_call (assoc, link, ** kw)
+                yield c.instance_call (assoc, link, ** kw)
     # end def _call_iter
 
 Entity_List = _MOM_Entity_List_ # end class
@@ -103,16 +105,18 @@ class _MOM_Field_ (Field) :
 
     _real_name = "Field"
 
-    def __call__ (self, ETM, entity, ** kw) :
+    def _data (self, ETM, entity, ** kw) :
         attr = ETM.attributes [self.name]
         akw  = kw.get (self.name, {})
         if "init" in akw :
             init = akw ["init"]
         else :
             init = attr.get_raw (entity)
-        result = dict (init = init) if init else {}
+        result = self.__super._data (ETM, entity, ** kw)
+        if init :
+            result ["value"].update (init = init)
         return result
-    # end def __call__
+    # end def _data
 
 Field = _MOM_Field_ # end class
 
@@ -126,7 +130,7 @@ class _MOM_Field_Composite_ (Field_Composite) :
         c_type   = attr.C_Type
         c_entity = getattr (entity, self.name, None)
         for c in self.children :
-            yield c.id, c (c_type, c_entity, ** kw.get (self.name, {}))
+            yield c (c_type, c_entity, ** kw.get (self.name, {}))
     # end def _call_iter
 
 Field_Composite = _MOM_Field_Composite_ # end class
@@ -159,12 +163,12 @@ class _MOM_Form_ (Form) :
     def _call_iter (self, * args, ** kw) :
         if len (self.children) == 1 and len (args) <= 2 :
             c = self.children [0]
-            yield c.id, c (* args, ** kw)
+            yield c (* args, ** kw)
         else :
             assert len (args) == len (self.children), repr (self)
             assert not kw, repr (self)
             for a, c in zip (args, self.children) :
-                yield c.id, c (a.ETM, a.entity, ** a.kw)
+                yield c (a.ETM, a.entity, ** a.kw)
     # end def _call_iter
 
 Form = _MOM_Form_ # end class

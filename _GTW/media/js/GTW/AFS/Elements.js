@@ -61,9 +61,10 @@
                   Elements.id_map [this.$id] = this;
               }
           }
-        , setup_value : function setup_value (value) {
+        , setup_value : function setup_value () {
               var i, l, v, child, $id;
-              this.value = value;
+              var value = this.value;
+              // XXX  rewrite XXX
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = Elements.id_map [this.children [i]];
@@ -109,9 +110,9 @@
       , { type_name : "Fieldset" }
     );
     var Form = Element.extend (
-        { init : function init (spec, value) {
-              this._super      (spec);
-              this.setup_value (value);
+        { init : function init (spec) {
+              this._super       (spec);
+              this.setup_values ();
           }
         }
       , { type_name : "Form" }

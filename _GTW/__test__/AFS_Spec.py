@@ -104,514 +104,156 @@ _test_code = """
            <Field None 'easter_offset'>
     >>> print repr (Form ("F", children = [y]))
     <Form F>
-     <Entity F-1 'GTW.OMP.SWP.Page'>
-      <Fieldset F-1:1 'primary'>
-       <Field F-1:1:1 'perma_name'>
-      <Fieldset F-1:2 'required'>
-       <Field F-1:2:1 'text'>
-      <Fieldset F-1:3 'necessary'>
-       <Field F-1:3:1 'short_title'>
-       <Field F-1:3:2 'title'>
-      <Fieldset F-1:4 'optional'>
-       <Field_Composite F-1:4:1 'date' 'MOM.Date_Interval_N'>
-        <Field F-1:4:1.1 'start'>
-        <Field F-1:4:1.2 'finish'>
-       <Field F-1:4:2 'format'>
-       <Field F-1:4:3 'head_line'>
-       <Field F-1:4:4 'prio'>
-      <Entity_List F-1:5 <Entity_Link F-1:5::0 'GTW.OMP.EVT.Event'>>
-       <Entity_Link F-1:5::0 'GTW.OMP.EVT.Event'>
-        <Fieldset F-1:5::0-1 'primary'>
-         <Field_Composite F-1:5::0-1:1 'date' 'MOM.Date_Interval'>
-          <Field F-1:5::0-1:1.1 'start'>
-          <Field F-1:5::0-1:1.2 'finish'>
-         <Field_Composite F-1:5::0-1:2 'time' 'MOM.Time_Interval'>
-          <Field F-1:5::0-1:2.1 'start'>
-          <Field F-1:5::0-1:2.2 'finish'>
-        <Fieldset F-1:5::0-2 'optional'>
-         <Field F-1:5::0-2:1 'detail'>
-         <Field F-1:5::0-2:2 'short_title'>
-        <Entity_Link F-1:5::0-3 'GTW.OMP.EVT.Recurrence_Spec'>
-         <Fieldset F-1:5::0-3:1 'optional'>
-          <Field F-1:5::0-3:1:1 'dates'>
-          <Field F-1:5::0-3:1:2 'date_exceptions'>
-         <Entity_List F-1:5::0-3:2 <Entity_Link F-1:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>>
-          <Entity_Link F-1:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>
-           <Fieldset F-1:5::0-3:2::0-1 'primary'>
-            <Field F-1:5::0-3:2::0-1:1 'is_exception'>
-            <Field F-1:5::0-3:2::0-1:2 'desc'>
-           <Fieldset F-1:5::0-3:2::0-2 'optional'>
-            <Field F-1:5::0-3:2::0-2:1 'start'>
-            <Field F-1:5::0-3:2::0-2:2 'finish'>
-            <Field F-1:5::0-3:2::0-2:3 'period'>
-            <Field F-1:5::0-3:2::0-2:4 'unit'>
-            <Field F-1:5::0-3:2::0-2:5 'week_day'>
-            <Field F-1:5::0-3:2::0-2:6 'count'>
-            <Field F-1:5::0-3:2::0-2:7 'restrict_pos'>
-            <Field F-1:5::0-3:2::0-2:8 'month_day'>
-            <Field F-1:5::0-3:2::0-2:9 'month'>
-            <Field F-1:5::0-3:2::0-2:10 'week'>
-            <Field F-1:5::0-3:2::0-2:11 'year_day'>
-            <Field F-1:5::0-3:2::0-2:12 'easter_offset'>
+     <Entity F-0 'GTW.OMP.SWP.Page'>
+      <Fieldset F-0:0 'primary'>
+       <Field F-0:0:0 'perma_name'>
+      <Fieldset F-0:1 'required'>
+       <Field F-0:1:0 'text'>
+      <Fieldset F-0:2 'necessary'>
+       <Field F-0:2:0 'short_title'>
+       <Field F-0:2:1 'title'>
+      <Fieldset F-0:3 'optional'>
+       <Field_Composite F-0:3:0 'date' 'MOM.Date_Interval_N'>
+        <Field F-0:3:0.0 'start'>
+        <Field F-0:3:0.1 'finish'>
+       <Field F-0:3:1 'format'>
+       <Field F-0:3:2 'head_line'>
+       <Field F-0:3:3 'prio'>
+      <Entity_List F-0:4 <Entity_Link F-0:4::p 'GTW.OMP.EVT.Event'>>
+       <Entity_Link F-0:4::p 'GTW.OMP.EVT.Event'>
+        <Fieldset F-0:4::p-0 'primary'>
+         <Field_Composite F-0:4::p-0:0 'date' 'MOM.Date_Interval'>
+          <Field F-0:4::p-0:0.0 'start'>
+          <Field F-0:4::p-0:0.1 'finish'>
+         <Field_Composite F-0:4::p-0:1 'time' 'MOM.Time_Interval'>
+          <Field F-0:4::p-0:1.0 'start'>
+          <Field F-0:4::p-0:1.1 'finish'>
+        <Fieldset F-0:4::p-1 'optional'>
+         <Field F-0:4::p-1:0 'detail'>
+         <Field F-0:4::p-1:1 'short_title'>
+        <Entity_Link F-0:4::p-2 'GTW.OMP.EVT.Recurrence_Spec'>
+         <Fieldset F-0:4::p-2:0 'optional'>
+          <Field F-0:4::p-2:0:0 'dates'>
+          <Field F-0:4::p-2:0:1 'date_exceptions'>
+         <Entity_List F-0:4::p-2:1 <Entity_Link F-0:4::p-2:1::p 'GTW.OMP.EVT.Recurrence_Rule'>>
+          <Entity_Link F-0:4::p-2:1::p 'GTW.OMP.EVT.Recurrence_Rule'>
+           <Fieldset F-0:4::p-2:1::p-0 'primary'>
+            <Field F-0:4::p-2:1::p-0:0 'is_exception'>
+            <Field F-0:4::p-2:1::p-0:1 'desc'>
+           <Fieldset F-0:4::p-2:1::p-1 'optional'>
+            <Field F-0:4::p-2:1::p-1:0 'start'>
+            <Field F-0:4::p-2:1::p-1:1 'finish'>
+            <Field F-0:4::p-2:1::p-1:2 'period'>
+            <Field F-0:4::p-2:1::p-1:3 'unit'>
+            <Field F-0:4::p-2:1::p-1:4 'week_day'>
+            <Field F-0:4::p-2:1::p-1:5 'count'>
+            <Field F-0:4::p-2:1::p-1:6 'restrict_pos'>
+            <Field F-0:4::p-2:1::p-1:7 'month_day'>
+            <Field F-0:4::p-2:1::p-1:8 'month'>
+            <Field F-0:4::p-2:1::p-1:9 'week'>
+            <Field F-0:4::p-2:1::p-1:10 'year_day'>
+            <Field F-0:4::p-2:1::p-1:11 'easter_offset'>
+
     >>> f = Form ("X", children = [x, y])
     >>> print repr (f)
     <Form X>
-     <Entity X-1 'GTW.OMP.PAP.Person'>
-      <Fieldset X-1:1 'primary'>
-       <Field X-1:1:1 'last_name'>
-       <Field X-1:1:2 'first_name'>
-       <Field X-1:1:3 'middle_name'>
-       <Field X-1:1:4 'title'>
+     <Entity X-0 'GTW.OMP.PAP.Person'>
+      <Fieldset X-0:0 'primary'>
+       <Field X-0:0:0 'last_name'>
+       <Field X-0:0:1 'first_name'>
+       <Field X-0:0:2 'middle_name'>
+       <Field X-0:0:3 'title'>
+      <Fieldset X-0:1 'necessary'>
+       <Field X-0:1:0 'sex'>
+      <Fieldset X-0:2 'optional'>
+       <Field_Composite X-0:2:0 'lifetime' 'MOM.Date_Interval'>
+        <Field X-0:2:0.0 'start'>
+        <Field X-0:2:0.1 'finish'>
+       <Field X-0:2:1 'salutation'>
+     <Entity X-1 'GTW.OMP.SWP.Page'>
+      <Fieldset X-1:0 'primary'>
+       <Field X-1:0:0 'perma_name'>
+      <Fieldset X-1:1 'required'>
+       <Field X-1:1:0 'text'>
       <Fieldset X-1:2 'necessary'>
-       <Field X-1:2:1 'sex'>
+       <Field X-1:2:0 'short_title'>
+       <Field X-1:2:1 'title'>
       <Fieldset X-1:3 'optional'>
-       <Field_Composite X-1:3:1 'lifetime' 'MOM.Date_Interval'>
-        <Field X-1:3:1.1 'start'>
-        <Field X-1:3:1.2 'finish'>
-       <Field X-1:3:2 'salutation'>
-     <Entity X-2 'GTW.OMP.SWP.Page'>
-      <Fieldset X-2:1 'primary'>
-       <Field X-2:1:1 'perma_name'>
-      <Fieldset X-2:2 'required'>
-       <Field X-2:2:1 'text'>
-      <Fieldset X-2:3 'necessary'>
-       <Field X-2:3:1 'short_title'>
-       <Field X-2:3:2 'title'>
-      <Fieldset X-2:4 'optional'>
-       <Field_Composite X-2:4:1 'date' 'MOM.Date_Interval_N'>
-        <Field X-2:4:1.1 'start'>
-        <Field X-2:4:1.2 'finish'>
-       <Field X-2:4:2 'format'>
-       <Field X-2:4:3 'head_line'>
-       <Field X-2:4:4 'prio'>
-      <Entity_List X-2:5 <Entity_Link X-2:5::0 'GTW.OMP.EVT.Event'>>
-       <Entity_Link X-2:5::0 'GTW.OMP.EVT.Event'>
-        <Fieldset X-2:5::0-1 'primary'>
-         <Field_Composite X-2:5::0-1:1 'date' 'MOM.Date_Interval'>
-          <Field X-2:5::0-1:1.1 'start'>
-          <Field X-2:5::0-1:1.2 'finish'>
-         <Field_Composite X-2:5::0-1:2 'time' 'MOM.Time_Interval'>
-          <Field X-2:5::0-1:2.1 'start'>
-          <Field X-2:5::0-1:2.2 'finish'>
-        <Fieldset X-2:5::0-2 'optional'>
-         <Field X-2:5::0-2:1 'detail'>
-         <Field X-2:5::0-2:2 'short_title'>
-        <Entity_Link X-2:5::0-3 'GTW.OMP.EVT.Recurrence_Spec'>
-         <Fieldset X-2:5::0-3:1 'optional'>
-          <Field X-2:5::0-3:1:1 'dates'>
-          <Field X-2:5::0-3:1:2 'date_exceptions'>
-         <Entity_List X-2:5::0-3:2 <Entity_Link X-2:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>>
-          <Entity_Link X-2:5::0-3:2::0 'GTW.OMP.EVT.Recurrence_Rule'>
-           <Fieldset X-2:5::0-3:2::0-1 'primary'>
-            <Field X-2:5::0-3:2::0-1:1 'is_exception'>
-            <Field X-2:5::0-3:2::0-1:2 'desc'>
-           <Fieldset X-2:5::0-3:2::0-2 'optional'>
-            <Field X-2:5::0-3:2::0-2:1 'start'>
-            <Field X-2:5::0-3:2::0-2:2 'finish'>
-            <Field X-2:5::0-3:2::0-2:3 'period'>
-            <Field X-2:5::0-3:2::0-2:4 'unit'>
-            <Field X-2:5::0-3:2::0-2:5 'week_day'>
-            <Field X-2:5::0-3:2::0-2:6 'count'>
-            <Field X-2:5::0-3:2::0-2:7 'restrict_pos'>
-            <Field X-2:5::0-3:2::0-2:8 'month_day'>
-            <Field X-2:5::0-3:2::0-2:9 'month'>
-            <Field X-2:5::0-3:2::0-2:10 'week'>
-            <Field X-2:5::0-3:2::0-2:11 'year_day'>
-            <Field X-2:5::0-3:2::0-2:12 'easter_offset'>
-    >>> print formatted (f.as_json_cargo)
-    { '$id' : 'X'
-    , 'children' :
-        [ { '$id' : 'X-1'
-          , 'children' :
-              [ { '$id' : 'X-1:1'
-                , 'children' :
-                    [ { '$id' : 'X-1:1:1'
-                      , 'name' : 'last_name'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Last name'
-                      }
-                    , { '$id' : 'X-1:1:2'
-                      , 'name' : 'first_name'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'First name'
-                      }
-                    , { '$id' : 'X-1:1:3'
-                      , 'name' : 'middle_name'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Middle name'
-                      }
-                    , { '$id' : 'X-1:1:4'
-                      , 'name' : 'title'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Academic title'
-                      }
-                    ]
-                , 'collapsed' : False
-                , 'name' : 'primary'
-                , 'type' : 'Fieldset'
-                }
-              , { '$id' : 'X-1:2'
-                , 'children' :
-                    [ { '$id' : 'X-1:2:1'
-                      , 'name' : 'sex'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Sex'
-                      }
-                    ]
-                , 'collapsed' : True
-                , 'name' : 'necessary'
-                , 'type' : 'Fieldset'
-                }
-              , { '$id' : 'X-1:3'
-                , 'children' :
-                    [ { '$id' : 'X-1:3:1'
-                      , 'children' :
-                          [ { '$id' : 'X-1:3:1.1'
-                            , 'name' : 'start'
-                            , 'type' : 'Field'
-                            , 'ui_name' : u'Start'
-                            }
-                          , { '$id' : 'X-1:3:1.2'
-                            , 'name' : 'finish'
-                            , 'type' : 'Field'
-                            , 'ui_name' : u'Finish'
-                            }
-                          ]
-                      , 'name' : 'lifetime'
-                      , 'type' : 'Field_Composite'
-                      , 'type_name' : 'MOM.Date_Interval'
-                      , 'ui_name' : u'Lifetime'
-                      }
-                    , { '$id' : 'X-1:3:2'
-                      , 'name' : 'salutation'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Salutation'
-                      }
-                    ]
-                , 'collapsed' : True
-                , 'name' : 'optional'
-                , 'type' : 'Fieldset'
-                }
-              ]
-          , 'name' : 'GTW.OMP.PAP.Person'
-          , 'type' : 'Entity'
-          , 'type_name' : 'GTW.OMP.PAP.Person'
-          }
-        , { '$id' : 'X-2'
-          , 'children' :
-              [ { '$id' : 'X-2:1'
-                , 'children' :
-                    [ { '$id' : 'X-2:1:1'
-                      , 'name' : 'perma_name'
-                      , 'type' : 'Field'
-                      , 'ui_name' : 'Name'
-                      }
-                    ]
-                , 'collapsed' : False
-                , 'name' : 'primary'
-                , 'type' : 'Fieldset'
-                }
-              , { '$id' : 'X-2:2'
-                , 'children' :
-                    [ { '$id' : 'X-2:2:1'
-                      , 'name' : 'text'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Text'
-                      }
-                    ]
-                , 'collapsed' : True
-                , 'name' : 'required'
-                , 'type' : 'Fieldset'
-                }
-              , { '$id' : 'X-2:3'
-                , 'children' :
-                    [ { '$id' : 'X-2:3:1'
-                      , 'name' : 'short_title'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Short title'
-                      }
-                    , { '$id' : 'X-2:3:2'
-                      , 'name' : 'title'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Title'
-                      }
-                    ]
-                , 'collapsed' : True
-                , 'name' : 'necessary'
-                , 'type' : 'Fieldset'
-                }
-              , { '$id' : 'X-2:4'
-                , 'children' :
-                    [ { '$id' : 'X-2:4:1'
-                      , 'children' :
-                          [ { '$id' : 'X-2:4:1.1'
-                            , 'name' : 'start'
-                            , 'type' : 'Field'
-                            , 'ui_name' : u'Start'
-                            }
-                          , { '$id' : 'X-2:4:1.2'
-                            , 'name' : 'finish'
-                            , 'type' : 'Field'
-                            , 'ui_name' : u'Finish'
-                            }
-                          ]
-                      , 'name' : 'date'
-                      , 'type' : 'Field_Composite'
-                      , 'type_name' : 'MOM.Date_Interval_N'
-                      , 'ui_name' : u'Date'
-                      }
-                    , { '$id' : 'X-2:4:2'
-                      , 'name' : 'format'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Format'
-                      }
-                    , { '$id' : 'X-2:4:3'
-                      , 'name' : 'head_line'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Head line'
-                      }
-                    , { '$id' : 'X-2:4:4'
-                      , 'name' : 'prio'
-                      , 'type' : 'Field'
-                      , 'ui_name' : u'Prio'
-                      }
-                    ]
-                , 'collapsed' : True
-                , 'name' : 'optional'
-                , 'type' : 'Fieldset'
-                }
-              , { '$id' : 'X-2:5'
-                , 'proto' : { '$id' : 'X-2:5::0'
-                    , 'children' :
-                        [ { '$id' : 'X-2:5::0-1'
-                          , 'children' :
-                              [ { '$id' : 'X-2:5::0-1:1'
-                                , 'children' :
-                                    [ { '$id' : 'X-2:5::0-1:1.1'
-                                      , 'name' : 'start'
-                                      , 'type' : 'Field'
-                                      , 'ui_name' : u'Start'
-                                      }
-                                    , { '$id' : 'X-2:5::0-1:1.2'
-                                      , 'name' : 'finish'
-                                      , 'type' : 'Field'
-                                      , 'ui_name' : u'Finish'
-                                      }
-                                    ]
-                                , 'name' : 'date'
-                                , 'type' : 'Field_Composite'
-                                , 'type_name' : 'MOM.Date_Interval'
-                                , 'ui_name' : u'Date'
-                                }
-                              , { '$id' : 'X-2:5::0-1:2'
-                                , 'children' :
-                                    [ { '$id' : 'X-2:5::0-1:2.1'
-                                      , 'name' : 'start'
-                                      , 'type' : 'Field'
-                                      , 'ui_name' : u'Start'
-                                      }
-                                    , { '$id' : 'X-2:5::0-1:2.2'
-                                      , 'name' : 'finish'
-                                      , 'type' : 'Field'
-                                      , 'ui_name' : u'Finish'
-                                      }
-                                    ]
-                                , 'name' : 'time'
-                                , 'type' : 'Field_Composite'
-                                , 'type_name' : 'MOM.Time_Interval'
-                                , 'ui_name' : u'Time'
-                                }
-                              ]
-                          , 'collapsed' : False
-                          , 'name' : 'primary'
-                          , 'type' : 'Fieldset'
-                          }
-                        , { '$id' : 'X-2:5::0-2'
-                          , 'children' :
-                              [ { '$id' : 'X-2:5::0-2:1'
-                                , 'name' : 'detail'
-                                , 'type' : 'Field'
-                                , 'ui_name' : u'Detail'
-                                }
-                              , { '$id' : 'X-2:5::0-2:2'
-                                , 'name' : 'short_title'
-                                , 'type' : 'Field'
-                                , 'ui_name' : u'Short title'
-                                }
-                              ]
-                          , 'collapsed' : True
-                          , 'name' : 'optional'
-                          , 'type' : 'Fieldset'
-                          }
-                        , { '$id' : 'X-2:5::0-3'
-                          , 'children' :
-                              [ { '$id' : 'X-2:5::0-3:1'
-                                , 'children' :
-                                    [ { '$id' : 'X-2:5::0-3:1:1'
-                                      , 'name' : 'dates'
-                                      , 'type' : 'Field'
-                                      , 'ui_name' : u'Dates'
-                                      }
-                                    , { '$id' : 'X-2:5::0-3:1:2'
-                                      , 'name' : 'date_exceptions'
-                                      , 'type' : 'Field'
-                                      , 'ui_name' : u'Date exceptions'
-                                      }
-                                    ]
-                                , 'collapsed' : True
-                                , 'name' : 'optional'
-                                , 'type' : 'Fieldset'
-                                }
-                              , { '$id' : 'X-2:5::0-3:2'
-                                , 'proto' : { '$id' : 'X-2:5::0-3:2::0'
-                                    , 'children' :
-                                        [ { '$id' : 'X-2:5::0-3:2::0-1'
-                                          , 'children' :
-                                              [ { '$id' : 'X-2:5::0-3:2::0-1:1'
-                                                , 'name' : 'is_exception'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Is exception'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-1:2'
-                                                , 'name' : 'desc'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : 'Description'
-                                                }
-                                              ]
-                                          , 'collapsed' : False
-                                          , 'name' : 'primary'
-                                          , 'type' : 'Fieldset'
-                                          }
-                                        , { '$id' : 'X-2:5::0-3:2::0-2'
-                                          , 'children' :
-                                              [ { '$id' : 'X-2:5::0-3:2::0-2:1'
-                                                , 'name' : 'start'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Start'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:2'
-                                                , 'name' : 'finish'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Finish'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:3'
-                                                , 'name' : 'period'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Period'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:4'
-                                                , 'name' : 'unit'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Unit'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:5'
-                                                , 'name' : 'week_day'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Week day'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:6'
-                                                , 'name' : 'count'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Count'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:7'
-                                                , 'name' : 'restrict_pos'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Restrict pos'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:8'
-                                                , 'name' : 'month_day'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Month day'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:9'
-                                                , 'name' : 'month'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Month'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:10'
-                                                , 'name' : 'week'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Week'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:11'
-                                                , 'name' : 'year_day'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Year day'
-                                                }
-                                              , { '$id' : 'X-2:5::0-3:2::0-2:12'
-                                                , 'name' : 'easter_offset'
-                                                , 'type' : 'Field'
-                                                , 'ui_name' : u'Easter offset'
-                                                }
-                                              ]
-                                          , 'collapsed' : True
-                                          , 'name' : 'optional'
-                                          , 'type' : 'Fieldset'
-                                          }
-                                        ]
-                                    , 'name' : 'GTW.OMP.EVT.Recurrence_Rule'
-                                    , 'role_name' : 'left'
-                                    , 'type' : 'Entity_Link'
-                                    , 'type_name' : 'GTW.OMP.EVT.Recurrence_Rule'
-                                    }
-                                , 'type' : 'Entity_List'
-                                }
-                              ]
-                          , 'name' : 'GTW.OMP.EVT.Recurrence_Spec'
-                          , 'role_name' : 'left'
-                          , 'type' : 'Entity_Link'
-                          , 'type_name' : 'GTW.OMP.EVT.Recurrence_Spec'
-                          }
-                        ]
-                    , 'name' : 'GTW.OMP.EVT.Event'
-                    , 'role_name' : 'left'
-                    , 'type' : 'Entity_Link'
-                    , 'type_name' : 'GTW.OMP.EVT.Event'
-                    }
-                , 'type' : 'Entity_List'
-                }
-              ]
-          , 'name' : 'GTW.OMP.SWP.Page'
-          , 'type' : 'Entity'
-          , 'type_name' : 'GTW.OMP.SWP.Page'
-          }
-        ]
-    , 'type' : 'Form'
-    }
+       <Field_Composite X-1:3:0 'date' 'MOM.Date_Interval_N'>
+        <Field X-1:3:0.0 'start'>
+        <Field X-1:3:0.1 'finish'>
+       <Field X-1:3:1 'format'>
+       <Field X-1:3:2 'head_line'>
+       <Field X-1:3:3 'prio'>
+      <Entity_List X-1:4 <Entity_Link X-1:4::p 'GTW.OMP.EVT.Event'>>
+       <Entity_Link X-1:4::p 'GTW.OMP.EVT.Event'>
+        <Fieldset X-1:4::p-0 'primary'>
+         <Field_Composite X-1:4::p-0:0 'date' 'MOM.Date_Interval'>
+          <Field X-1:4::p-0:0.0 'start'>
+          <Field X-1:4::p-0:0.1 'finish'>
+         <Field_Composite X-1:4::p-0:1 'time' 'MOM.Time_Interval'>
+          <Field X-1:4::p-0:1.0 'start'>
+          <Field X-1:4::p-0:1.1 'finish'>
+        <Fieldset X-1:4::p-1 'optional'>
+         <Field X-1:4::p-1:0 'detail'>
+         <Field X-1:4::p-1:1 'short_title'>
+        <Entity_Link X-1:4::p-2 'GTW.OMP.EVT.Recurrence_Spec'>
+         <Fieldset X-1:4::p-2:0 'optional'>
+          <Field X-1:4::p-2:0:0 'dates'>
+          <Field X-1:4::p-2:0:1 'date_exceptions'>
+         <Entity_List X-1:4::p-2:1 <Entity_Link X-1:4::p-2:1::p 'GTW.OMP.EVT.Recurrence_Rule'>>
+          <Entity_Link X-1:4::p-2:1::p 'GTW.OMP.EVT.Recurrence_Rule'>
+           <Fieldset X-1:4::p-2:1::p-0 'primary'>
+            <Field X-1:4::p-2:1::p-0:0 'is_exception'>
+            <Field X-1:4::p-2:1::p-0:1 'desc'>
+           <Fieldset X-1:4::p-2:1::p-1 'optional'>
+            <Field X-1:4::p-2:1::p-1:0 'start'>
+            <Field X-1:4::p-2:1::p-1:1 'finish'>
+            <Field X-1:4::p-2:1::p-1:2 'period'>
+            <Field X-1:4::p-2:1::p-1:3 'unit'>
+            <Field X-1:4::p-2:1::p-1:4 'week_day'>
+            <Field X-1:4::p-2:1::p-1:5 'count'>
+            <Field X-1:4::p-2:1::p-1:6 'restrict_pos'>
+            <Field X-1:4::p-2:1::p-1:7 'month_day'>
+            <Field X-1:4::p-2:1::p-1:8 'month'>
+            <Field X-1:4::p-2:1::p-1:9 'week'>
+            <Field X-1:4::p-2:1::p-1:10 'year_day'>
+            <Field X-1:4::p-2:1::p-1:11 'easter_offset'>
+
+
     >>> SB = Spec.Entity (Spec.Entity_Link ("GTW.OMP.SRM.Boat_in_Regatta"))
     >>> fb = Form ("FB", children = [SB (scope.SRM.Boat)])
     >>> print repr (fb)
     <Form FB>
-     <Entity FB-1 'GTW.OMP.SRM.Boat'>
-      <Fieldset FB-1:1 'primary'>
-       <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'>
-        <Field FB-1:1:1:1 'name'>
-       <Field FB-1:1:2 'nation'>
-       <Field FB-1:1:3 'sail_number'>
-      <Fieldset FB-1:2 'optional'>
-       <Field FB-1:2:1 'name'>
-      <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>>
-       <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>
-        <Fieldset FB-1:3::0-1 'primary'>
-         <Field_Entity FB-1:3::0-1:1 'right' 'GTW.OMP.SRM.Regatta'>
-          <Field_Entity FB-1:3::0-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'>
-           <Field_Composite FB-1:3::0-1:1:1:1 'date' 'MOM.Date_Interval_C'>
-            <Field FB-1:3::0-1:1:1:1.1 'start'>
-            <Field FB-1:3::0-1:1:1:1.2 'finish'>
-           <Field FB-1:3::0-1:1:1:2 'name'>
-        <Fieldset FB-1:3::0-2 'required'>
-         <Field_Entity FB-1:3::0-2:1 'skipper' 'GTW.OMP.SRM.Sailor'>
-          <Field_Entity FB-1:3::0-2:1:1 'left' 'GTW.OMP.PAP.Person'>
-           <Field FB-1:3::0-2:1:1:1 'last_name'>
-           <Field FB-1:3::0-2:1:1:2 'first_name'>
-           <Field FB-1:3::0-2:1:1:3 'middle_name'>
-           <Field FB-1:3::0-2:1:1:4 'title'>
-          <Field FB-1:3::0-2:1:2 'nation'>
-          <Field FB-1:3::0-2:1:3 'mna_number'>
-        <Fieldset FB-1:3::0-3 'optional'>
-         <Field FB-1:3::0-3:1 'place'>
-         <Field FB-1:3::0-3:2 'points'>
+     <Entity FB-0 'GTW.OMP.SRM.Boat'>
+      <Fieldset FB-0:0 'primary'>
+       <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>
+        <Field FB-0:0:0:0 'name'>
+       <Field FB-0:0:1 'nation'>
+       <Field FB-0:0:2 'sail_number'>
+      <Fieldset FB-0:1 'optional'>
+       <Field FB-0:1:0 'name'>
+      <Entity_List FB-0:2 <Entity_Link FB-0:2::p 'GTW.OMP.SRM.Boat_in_Regatta'>>
+       <Entity_Link FB-0:2::p 'GTW.OMP.SRM.Boat_in_Regatta'>
+        <Fieldset FB-0:2::p-0 'primary'>
+         <Field_Entity FB-0:2::p-0:0 'right' 'GTW.OMP.SRM.Regatta'>
+          <Field_Entity FB-0:2::p-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>
+           <Field_Composite FB-0:2::p-0:0:0:0 'date' 'MOM.Date_Interval_C'>
+            <Field FB-0:2::p-0:0:0:0.0 'start'>
+            <Field FB-0:2::p-0:0:0:0.1 'finish'>
+           <Field FB-0:2::p-0:0:0:1 'name'>
+        <Fieldset FB-0:2::p-1 'required'>
+         <Field_Entity FB-0:2::p-1:0 'skipper' 'GTW.OMP.SRM.Sailor'>
+          <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.PAP.Person'>
+           <Field FB-0:2::p-1:0:0:0 'last_name'>
+           <Field FB-0:2::p-1:0:0:1 'first_name'>
+           <Field FB-0:2::p-1:0:0:2 'middle_name'>
+           <Field FB-0:2::p-1:0:0:3 'title'>
+          <Field FB-0:2::p-1:0:1 'nation'>
+          <Field FB-0:2::p-1:0:2 'mna_number'>
+        <Fieldset FB-0:2::p-2 'optional'>
+         <Field FB-0:2::p-2:0 'place'>
+         <Field FB-0:2::p-2:1 'points'>
 
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
@@ -624,193 +266,328 @@ _test_code = """
     >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
     >>> scope.commit ()
     >>> fi = fb (SRM.Boat, b)
-    >>> print formatted (fi.data)
-    { 'FB-1' :
-        { 'FB-1:1' :
-            { 'FB-1:1:1' :
-                { 'FB-1:1:1:1' : { 'init' : u'Optimist' }
-                , 'child_ids' : [ 'FB-1:1:1:1' ]
-                , 'cid' : None
-                , 'pid' : 1
-                }
-            , 'FB-1:1:2' : { 'init' : u'AUT' }
-            , 'FB-1:1:3' : { 'init' : u'1107' }
-            , 'child_ids' :
-                [ 'FB-1:1:1'
-                , 'FB-1:1:2'
-                , 'FB-1:1:3'
-                ]
-            }
-        , 'FB-1:2' :
-            { 'FB-1:2:1' : {}
-            , 'child_ids' : [ 'FB-1:2:1' ]
-            }
-        , 'FB-1:3' :
-            { 'FB-1:3::1' :
-                { 'FB-1:3::1-1' :
-                    { 'FB-1:3::1-1:1' :
-                        { 'FB-1:3::1-1:1:1' :
-                            { 'FB-1:3::1-1:1:1:1' :
-                                { 'FB-1:3::1-1:1:1:1.1' : { 'init' : '2008/05/01' }
-                                , 'FB-1:3::1-1:1:1:1.2' : { 'init' : '2008/05/01' }
-                                , 'child_ids' :
-                                    [ 'FB-1:3::1-1:1:1:1.1'
-                                    , 'FB-1:3::1-1:1:1:1.2'
-                                    ]
-                                }
-                            , 'FB-1:3::1-1:1:1:2' : { 'init' : u'Himmelfahrt' }
-                            , 'child_ids' :
-                                [ 'FB-1:3::1-1:1:1:1'
-                                , 'FB-1:3::1-1:1:1:2'
-                                ]
-                            , 'cid' : None
-                            , 'pid' : 5
-                            }
-                        , 'child_ids' : [ 'FB-1:3::1-1:1:1' ]
-                        , 'cid' : None
-                        , 'pid' : 6
-                        }
-                    , 'child_ids' : [ 'FB-1:3::1-1:1' ]
-                    }
-                , 'FB-1:3::1-2' :
-                    { 'FB-1:3::1-2:1' :
-                        { 'FB-1:3::1-2:1:1' :
-                            { 'FB-1:3::1-2:1:1:1' : { 'init' : u'Tanzer' }
-                            , 'FB-1:3::1-2:1:1:2' : { 'init' : u'Laurens' }
-                            , 'FB-1:3::1-2:1:1:3' : {}
-                            , 'FB-1:3::1-2:1:1:4' : {}
-                            , 'child_ids' :
-                                [ 'FB-1:3::1-2:1:1:1'
-                                , 'FB-1:3::1-2:1:1:2'
-                                , 'FB-1:3::1-2:1:1:3'
-                                , 'FB-1:3::1-2:1:1:4'
-                                ]
-                            , 'cid' : None
-                            , 'pid' : 3
-                            }
-                        , 'FB-1:3::1-2:1:2' : { 'init' : u'AUT' }
-                        , 'FB-1:3::1-2:1:3' : { 'init' : u'29676' }
-                        , 'child_ids' :
-                            [ 'FB-1:3::1-2:1:1'
-                            , 'FB-1:3::1-2:1:2'
-                            , 'FB-1:3::1-2:1:3'
+    >>> print formatted (fi.as_json_cargo, level = 1)
+      { '$id' : 'FB'
+      , 'children' :
+          [
+            { '$id' : 'FB-0'
+            , 'children' :
+                [
+                  { '$id' : 'FB-0:0'
+                  , 'children' :
+                      [
+                        { '$id' : 'FB-0:0:0'
+                        , 'children' :
+                            [
+                              { '$id' : 'FB-0:0:0:0'
+                              , 'name' : 'name'
+                              , 'type' : 'Field'
+                              , 'ui_name' : u'Name'
+                              , 'value' : { 'init' : u'Optimist' }
+                              }
                             ]
-                        , 'cid' : None
-                        , 'pid' : 4
+                        , 'name' : 'left'
+                        , 'type' : 'Field_Entity'
+                        , 'type_name' : 'GTW.OMP.SRM.Boat_Class'
+                        , 'ui_name' : 'Class'
+                        , 'value' :
+                            { 'cid' : None
+                            , 'pid' : 1
+                            }
                         }
-                    , 'child_ids' : [ 'FB-1:3::1-2:1' ]
-                    }
-                , 'FB-1:3::1-3' :
-                    { 'FB-1:3::1-3:1' : {}
-                    , 'FB-1:3::1-3:2' : {}
-                    , 'child_ids' :
-                        [ 'FB-1:3::1-3:1'
-                        , 'FB-1:3::1-3:2'
-                        ]
-                    }
-                , 'child_ids' :
-                    [ 'FB-1:3::1-1'
-                    , 'FB-1:3::1-2'
-                    , 'FB-1:3::1-3'
-                    ]
-                , 'cid' : None
-                , 'pid' : 7
+                      ,
+                        { '$id' : 'FB-0:0:1'
+                        , 'name' : 'nation'
+                        , 'type' : 'Field'
+                        , 'ui_name' : u'Nation'
+                        , 'value' : { 'init' : u'AUT' }
+                        }
+                      ,
+                        { '$id' : 'FB-0:0:2'
+                        , 'name' : 'sail_number'
+                        , 'type' : 'Field'
+                        , 'ui_name' : u'Sail number'
+                        , 'value' : { 'init' : u'1107' }
+                        }
+                      ]
+                  , 'collapsed' : False
+                  , 'name' : 'primary'
+                  , 'type' : 'Fieldset'
+                  }
+                ,
+                  { '$id' : 'FB-0:1'
+                  , 'children' :
+                      [
+                        { '$id' : 'FB-0:1:0'
+                        , 'name' : 'name'
+                        , 'type' : 'Field'
+                        , 'ui_name' : u'Name'
+                        }
+                      ]
+                  , 'collapsed' : True
+                  , 'name' : 'optional'
+                  , 'type' : 'Fieldset'
+                  }
+                ,
+                  { '$id' : 'FB-0:2'
+                  , 'children' :
+                      [
+                        { '$id' : 'FB-0:2::0'
+                        , 'children' :
+                            [
+                              { '$id' : 'FB-0:2::0-0'
+                              , 'children' :
+                                  [
+                                    { '$id' : 'FB-0:2::0-0:0'
+                                    , 'children' :
+                                        [
+                                          { '$id' : 'FB-0:2::0-0:0:0'
+                                          , 'children' :
+                                              [
+                                                { '$id' : 'FB-0:2::0-0:0:0:0'
+                                                , 'children' :
+                                                    [
+                                                      { '$id' : 'FB-0:2::0-0:0:0:0.0'
+                                                      , 'name' : 'start'
+                                                      , 'type' : 'Field'
+                                                      , 'ui_name' : u'Start'
+                                                      , 'value' : { 'init' : '2008/05/01' }
+                                                      }
+                                                    ,
+                                                      { '$id' : 'FB-0:2::0-0:0:0:0.1'
+                                                      , 'name' : 'finish'
+                                                      , 'type' : 'Field'
+                                                      , 'ui_name' : u'Finish'
+                                                      , 'value' : { 'init' : '2008/05/01' }
+                                                      }
+                                                    ]
+                                                , 'name' : 'date'
+                                                , 'type' : 'Field_Composite'
+                                                , 'type_name' : 'MOM.Date_Interval_C'
+                                                , 'ui_name' : u'Date'
+                                                }
+                                              ,
+                                                { '$id' : 'FB-0:2::0-0:0:0:1'
+                                                , 'name' : 'name'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Name'
+                                                , 'value' : { 'init' : u'Himmelfahrt' }
+                                                }
+                                              ]
+                                          , 'name' : 'left'
+                                          , 'type' : 'Field_Entity'
+                                          , 'type_name' : 'GTW.OMP.SRM.Regatta_Event'
+                                          , 'ui_name' : u'Event'
+                                          , 'value' :
+                                              { 'cid' : None
+                                              , 'pid' : 5
+                                              }
+                                          }
+                                        ]
+                                    , 'name' : 'right'
+                                    , 'type' : 'Field_Entity'
+                                    , 'type_name' : 'GTW.OMP.SRM.Regatta'
+                                    , 'ui_name' : u'Regatta'
+                                    , 'value' :
+                                        { 'cid' : None
+                                        , 'pid' : 6
+                                        }
+                                    }
+                                  ]
+                              , 'collapsed' : False
+                              , 'name' : 'primary'
+                              , 'type' : 'Fieldset'
+                              }
+                            ,
+                              { '$id' : 'FB-0:2::0-1'
+                              , 'children' :
+                                  [
+                                    { '$id' : 'FB-0:2::0-1:0'
+                                    , 'children' :
+                                        [
+                                          { '$id' : 'FB-0:2::0-1:0:0'
+                                          , 'children' :
+                                              [
+                                                { '$id' : 'FB-0:2::0-1:0:0:0'
+                                                , 'name' : 'last_name'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Last name'
+                                                , 'value' : { 'init' : u'Tanzer' }
+                                                }
+                                              ,
+                                                { '$id' : 'FB-0:2::0-1:0:0:1'
+                                                , 'name' : 'first_name'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'First name'
+                                                , 'value' : { 'init' : u'Laurens' }
+                                                }
+                                              ,
+                                                { '$id' : 'FB-0:2::0-1:0:0:2'
+                                                , 'name' : 'middle_name'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Middle name'
+                                                }
+                                              ,
+                                                { '$id' : 'FB-0:2::0-1:0:0:3'
+                                                , 'name' : 'title'
+                                                , 'type' : 'Field'
+                                                , 'ui_name' : u'Academic title'
+                                                }
+                                              ]
+                                          , 'name' : 'left'
+                                          , 'type' : 'Field_Entity'
+                                          , 'type_name' : 'GTW.OMP.PAP.Person'
+                                          , 'ui_name' : u'Person'
+                                          , 'value' :
+                                              { 'cid' : None
+                                              , 'pid' : 3
+                                              }
+                                          }
+                                        ,
+                                          { '$id' : 'FB-0:2::0-1:0:1'
+                                          , 'name' : 'nation'
+                                          , 'type' : 'Field'
+                                          , 'ui_name' : u'Nation'
+                                          , 'value' : { 'init' : u'AUT' }
+                                          }
+                                        ,
+                                          { '$id' : 'FB-0:2::0-1:0:2'
+                                          , 'name' : 'mna_number'
+                                          , 'type' : 'Field'
+                                          , 'ui_name' : u'Mna number'
+                                          , 'value' : { 'init' : u'29676' }
+                                          }
+                                        ]
+                                    , 'name' : 'skipper'
+                                    , 'type' : 'Field_Entity'
+                                    , 'type_name' : 'GTW.OMP.SRM.Sailor'
+                                    , 'ui_name' : u'Skipper'
+                                    , 'value' :
+                                        { 'cid' : None
+                                        , 'pid' : 4
+                                        }
+                                    }
+                                  ]
+                              , 'collapsed' : True
+                              , 'name' : 'required'
+                              , 'type' : 'Fieldset'
+                              }
+                            ,
+                              { '$id' : 'FB-0:2::0-2'
+                              , 'children' :
+                                  [
+                                    { '$id' : 'FB-0:2::0-2:0'
+                                    , 'name' : 'place'
+                                    , 'type' : 'Field'
+                                    , 'ui_name' : u'Place'
+                                    }
+                                  ,
+                                    { '$id' : 'FB-0:2::0-2:1'
+                                    , 'name' : 'points'
+                                    , 'type' : 'Field'
+                                    , 'ui_name' : u'Points'
+                                    }
+                                  ]
+                              , 'collapsed' : True
+                              , 'name' : 'optional'
+                              , 'type' : 'Fieldset'
+                              }
+                            ]
+                        , 'name' : 'GTW.OMP.SRM.Boat_in_Regatta'
+                        , 'role_name' : 'left'
+                        , 'type' : 'Entity_Link'
+                        , 'type_name' : 'GTW.OMP.SRM.Boat_in_Regatta'
+                        , 'value' :
+                            { 'cid' : None
+                            , 'pid' : 7
+                            }
+                        }
+                      ]
+                  , 'proto' :
+                      { '$id' : 'FB-0:2::p'
+                      , 'children' :
+                          [
+                            { '$id' : 'FB-0:2::p-0'
+                            , 'collapsed' : False
+                            , 'name' : 'primary'
+                            , 'type' : 'Fieldset'
+                            }
+                          ,
+                            { '$id' : 'FB-0:2::p-1'
+                            , 'collapsed' : True
+                            , 'name' : 'required'
+                            , 'type' : 'Fieldset'
+                            }
+                          ,
+                            { '$id' : 'FB-0:2::p-2'
+                            , 'collapsed' : True
+                            , 'name' : 'optional'
+                            , 'type' : 'Fieldset'
+                            }
+                          ]
+                      , 'name' : 'GTW.OMP.SRM.Boat_in_Regatta'
+                      , 'role_name' : 'left'
+                      , 'type' : 'Entity_Link'
+                      , 'type_name' : 'GTW.OMP.SRM.Boat_in_Regatta'
+                      }
+                  , 'type' : 'Entity_List'
+                  }
+                ]
+            , 'name' : 'GTW.OMP.SRM.Boat'
+            , 'type' : 'Entity'
+            , 'type_name' : 'GTW.OMP.SRM.Boat'
+            , 'value' :
+                { 'cid' : None
+                , 'pid' : 2
                 }
-            , 'child_ids' : [ 'FB-1:3::1' ]
             }
-        , 'child_ids' :
-            [ 'FB-1:1'
-            , 'FB-1:2'
-            , 'FB-1:3'
-            ]
-        , 'cid' : None
-        , 'pid' : 2
-        }
-    , 'child_ids' : [ 'FB-1' ]
-    }
-    >>> print "var f =", fi.as_js, ";"
-    var f = new $GTW.AFS.Form ({"$id": "FB", "type": "Form", "children": [{"$id": "FB-1", "type_name": "GTW.OMP.SRM.Boat", "type": "Entity", "name": "GTW.OMP.SRM.Boat", "children": [{"$id": "FB-1:1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "left", "$id": "FB-1:1:1", "type_name": "GTW.OMP.SRM.Boat_Class", "ui_name": "Class", "type": "Field_Entity", "children": [{"$id": "FB-1:1:1:1", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-1:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:1:3", "ui_name": "Sail number", "type": "Field", "name": "sail_number"}]}, {"$id": "FB-1:2", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:2:1", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-1:3", "type": "Entity_List", "children": [{"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-1:3::1", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-1:3::1-1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-1:3::1-1:1", "type_name": "GTW.OMP.SRM.Regatta", "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::1-1:1:1", "type_name": "GTW.OMP.SRM.Regatta_Event", "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-1:3::1-1:1:1:1", "type_name": "MOM.Date_Interval_C", "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-1:3::1-1:1:1:1.1", "ui_name": "Start", "type": "Field", "name": "start"}, {"$id": "FB-1:3::1-1:1:1:1.2", "ui_name": "Finish", "type": "Field", "name": "finish"}]}, {"$id": "FB-1:3::1-1:1:1:2", "ui_name": "Name", "type": "Field", "name": "name"}]}]}]}, {"$id": "FB-1:3::1-2", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-1:3::1-2:1", "type_name": "GTW.OMP.SRM.Sailor", "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::1-2:1:1", "type_name": "GTW.OMP.PAP.Person", "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-1:3::1-2:1:1:1", "ui_name": "Last name", "type": "Field", "name": "last_name"}, {"$id": "FB-1:3::1-2:1:1:2", "ui_name": "First name", "type": "Field", "name": "first_name"}, {"$id": "FB-1:3::1-2:1:1:3", "ui_name": "Middle name", "type": "Field", "name": "middle_name"}, {"$id": "FB-1:3::1-2:1:1:4", "ui_name": "Academic title", "type": "Field", "name": "title"}]}, {"$id": "FB-1:3::1-2:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:3::1-2:1:3", "ui_name": "Mna number", "type": "Field", "name": "mna_number"}]}]}, {"$id": "FB-1:3::1-3", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:3::1-3:1", "ui_name": "Place", "type": "Field", "name": "place"}, {"$id": "FB-1:3::1-3:2", "ui_name": "Points", "type": "Field", "name": "points"}]}]}], "proto": {"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-1:3::0", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-1:3::0-1", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-1:3::0-1:1", "type_name": "GTW.OMP.SRM.Regatta", "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::0-1:1:1", "type_name": "GTW.OMP.SRM.Regatta_Event", "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-1:3::0-1:1:1:1", "type_name": "MOM.Date_Interval_C", "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-1:3::0-1:1:1:1.1", "ui_name": "Start", "type": "Field", "name": "start"}, {"$id": "FB-1:3::0-1:1:1:1.2", "ui_name": "Finish", "type": "Field", "name": "finish"}]}, {"$id": "FB-1:3::0-1:1:1:2", "ui_name": "Name", "type": "Field", "name": "name"}]}]}]}, {"$id": "FB-1:3::0-2", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-1:3::0-2:1", "type_name": "GTW.OMP.SRM.Sailor", "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-1:3::0-2:1:1", "type_name": "GTW.OMP.PAP.Person", "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-1:3::0-2:1:1:1", "ui_name": "Last name", "type": "Field", "name": "last_name"}, {"$id": "FB-1:3::0-2:1:1:2", "ui_name": "First name", "type": "Field", "name": "first_name"}, {"$id": "FB-1:3::0-2:1:1:3", "ui_name": "Middle name", "type": "Field", "name": "middle_name"}, {"$id": "FB-1:3::0-2:1:1:4", "ui_name": "Academic title", "type": "Field", "name": "title"}]}, {"$id": "FB-1:3::0-2:1:2", "ui_name": "Nation", "type": "Field", "name": "nation"}, {"$id": "FB-1:3::0-2:1:3", "ui_name": "Mna number", "type": "Field", "name": "mna_number"}]}]}, {"$id": "FB-1:3::0-3", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-1:3::0-3:1", "ui_name": "Place", "type": "Field", "name": "place"}, {"$id": "FB-1:3::0-3:2", "ui_name": "Points", "type": "Field", "name": "points"}]}]}}]}]}, {"FB-1": {"cid": null, "FB-1:2": {"child_ids": ["FB-1:2:1"], "FB-1:2:1": {}}, "pid": 2, "child_ids": ["FB-1:1", "FB-1:2", "FB-1:3"], "FB-1:3": {"FB-1:3::1": {"cid": null, "pid": 7, "child_ids": ["FB-1:3::1-1", "FB-1:3::1-2", "FB-1:3::1-3"], "FB-1:3::1-1": {"child_ids": ["FB-1:3::1-1:1"], "FB-1:3::1-1:1": {"pid": 6, "child_ids": ["FB-1:3::1-1:1:1"], "FB-1:3::1-1:1:1": {"child_ids": ["FB-1:3::1-1:1:1:1", "FB-1:3::1-1:1:1:2"], "pid": 5, "cid": null, "FB-1:3::1-1:1:1:1": {"FB-1:3::1-1:1:1:1.1": {"init": "2008/05/01"}, "FB-1:3::1-1:1:1:1.2": {"init": "2008/05/01"}, "child_ids": ["FB-1:3::1-1:1:1:1.1", "FB-1:3::1-1:1:1:1.2"]}, "FB-1:3::1-1:1:1:2": {"init": "Himmelfahrt"}}, "cid": null}}, "FB-1:3::1-2": {"FB-1:3::1-2:1": {"cid": null, "FB-1:3::1-2:1:3": {"init": "29676"}, "pid": 4, "child_ids": ["FB-1:3::1-2:1:1", "FB-1:3::1-2:1:2", "FB-1:3::1-2:1:3"], "FB-1:3::1-2:1:2": {"init": "AUT"}, "FB-1:3::1-2:1:1": {"cid": null, "FB-1:3::1-2:1:1:2": {"init": "Laurens"}, "FB-1:3::1-2:1:1:3": {}, "pid": 3, "FB-1:3::1-2:1:1:1": {"init": "Tanzer"}, "child_ids": ["FB-1:3::1-2:1:1:1", "FB-1:3::1-2:1:1:2", "FB-1:3::1-2:1:1:3", "FB-1:3::1-2:1:1:4"], "FB-1:3::1-2:1:1:4": {}}}, "child_ids": ["FB-1:3::1-2:1"]}, "FB-1:3::1-3": {"child_ids": ["FB-1:3::1-3:1", "FB-1:3::1-3:2"], "FB-1:3::1-3:2": {}, "FB-1:3::1-3:1": {}}}, "child_ids": ["FB-1:3::1"]}, "FB-1:1": {"FB-1:1:3": {"init": "1107"}, "FB-1:1:2": {"init": "AUT"}, "FB-1:1:1": {"pid": 1, "cid": null, "child_ids": ["FB-1:1:1:1"], "FB-1:1:1:1": {"init": "Optimist"}}, "child_ids": ["FB-1:1:1", "FB-1:1:2", "FB-1:1:3"]}}, "child_ids": ["FB-1"]}) ;
-    >>> for e in fi.transitive_iter () :
-    ...     print e.elem, sorted (e.data)
-    <Form FB> ['FB-1', 'child_ids']
-    <Entity FB-1 'GTW.OMP.SRM.Boat'> ['FB-1:1', 'FB-1:2', 'FB-1:3', 'child_ids', 'cid', 'pid']
-    <Fieldset FB-1:1 'primary'> ['FB-1:1:1', 'FB-1:1:2', 'FB-1:1:3', 'child_ids']
-    <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> ['FB-1:1:1:1', 'child_ids', 'cid', 'pid']
-    <Field FB-1:1:1:1 'name'> ['init']
-    <Field FB-1:1:2 'nation'> ['init']
-    <Field FB-1:1:3 'sail_number'> ['init']
-    <Fieldset FB-1:2 'optional'> ['FB-1:2:1', 'child_ids']
-    <Field FB-1:2:1 'name'> []
-    <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>> ['FB-1:3::1', 'child_ids']
-    <Entity_Link FB-1:3::1 'GTW.OMP.SRM.Boat_in_Regatta'> ['FB-1:3::1-1', 'FB-1:3::1-2', 'FB-1:3::1-3', 'child_ids', 'cid', 'pid']
-    <Fieldset FB-1:3::1-1 'primary'> ['FB-1:3::1-1:1', 'child_ids']
-    <Field_Entity FB-1:3::1-1:1 'right' 'GTW.OMP.SRM.Regatta'> ['FB-1:3::1-1:1:1', 'child_ids', 'cid', 'pid']
-    <Field_Entity FB-1:3::1-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'> ['FB-1:3::1-1:1:1:1', 'FB-1:3::1-1:1:1:2', 'child_ids', 'cid', 'pid']
-    <Field_Composite FB-1:3::1-1:1:1:1 'date' 'MOM.Date_Interval_C'> ['FB-1:3::1-1:1:1:1.1', 'FB-1:3::1-1:1:1:1.2', 'child_ids']
-    <Field FB-1:3::1-1:1:1:1.1 'start'> ['init']
-    <Field FB-1:3::1-1:1:1:1.2 'finish'> ['init']
-    <Field FB-1:3::1-1:1:1:2 'name'> ['init']
-    <Fieldset FB-1:3::1-2 'required'> ['FB-1:3::1-2:1', 'child_ids']
-    <Field_Entity FB-1:3::1-2:1 'skipper' 'GTW.OMP.SRM.Sailor'> ['FB-1:3::1-2:1:1', 'FB-1:3::1-2:1:2', 'FB-1:3::1-2:1:3', 'child_ids', 'cid', 'pid']
-    <Field_Entity FB-1:3::1-2:1:1 'left' 'GTW.OMP.PAP.Person'> ['FB-1:3::1-2:1:1:1', 'FB-1:3::1-2:1:1:2', 'FB-1:3::1-2:1:1:3', 'FB-1:3::1-2:1:1:4', 'child_ids', 'cid', 'pid']
-    <Field FB-1:3::1-2:1:1:1 'last_name'> ['init']
-    <Field FB-1:3::1-2:1:1:2 'first_name'> ['init']
-    <Field FB-1:3::1-2:1:1:3 'middle_name'> []
-    <Field FB-1:3::1-2:1:1:4 'title'> []
-    <Field FB-1:3::1-2:1:2 'nation'> ['init']
-    <Field FB-1:3::1-2:1:3 'mna_number'> ['init']
-    <Fieldset FB-1:3::1-3 'optional'> ['FB-1:3::1-3:1', 'FB-1:3::1-3:2', 'child_ids']
-    <Field FB-1:3::1-3:1 'place'> []
-    <Field FB-1:3::1-3:2 'points'> []
+          ]
+      , 'type' : 'Form'
+      }
 
-    >>> for e in fi.transitive_iter () :
-    ...     ids = e.data.get ("child_ids", ())
-    ...     if ids :
-    ...         print e.elem, ids
-    ...         print "   ",
-    ...         for i in ids :
-    ...             try :
-    ...                 print fi.elem [i],
-    ...             except KeyError :
-    ...                 print "NO id:", i,
-    ...         print
-    <Form FB> ['FB-1']
-        <Entity FB-1 'GTW.OMP.SRM.Boat'>
-    <Entity FB-1 'GTW.OMP.SRM.Boat'> ['FB-1:1', 'FB-1:2', 'FB-1:3']
-        <Fieldset FB-1:1 'primary'> <Fieldset FB-1:2 'optional'> <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>>
-    <Fieldset FB-1:1 'primary'> ['FB-1:1:1', 'FB-1:1:2', 'FB-1:1:3']
-        <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> <Field FB-1:1:2 'nation'> <Field FB-1:1:3 'sail_number'>
-    <Field_Entity FB-1:1:1 'left' 'GTW.OMP.SRM.Boat_Class'> ['FB-1:1:1:1']
-        <Field FB-1:1:1:1 'name'>
-    <Fieldset FB-1:2 'optional'> ['FB-1:2:1']
-        <Field FB-1:2:1 'name'>
-    <Entity_List FB-1:3 <Entity_Link FB-1:3::0 'GTW.OMP.SRM.Boat_in_Regatta'>> ['FB-1:3::1']
-        <Entity_Link FB-1:3::1 'GTW.OMP.SRM.Boat_in_Regatta'>
-    <Entity_Link FB-1:3::1 'GTW.OMP.SRM.Boat_in_Regatta'> ['FB-1:3::1-1', 'FB-1:3::1-2', 'FB-1:3::1-3']
-        <Fieldset FB-1:3::1-1 'primary'> <Fieldset FB-1:3::1-2 'required'> <Fieldset FB-1:3::1-3 'optional'>
-    <Fieldset FB-1:3::1-1 'primary'> ['FB-1:3::1-1:1']
-        <Field_Entity FB-1:3::1-1:1 'right' 'GTW.OMP.SRM.Regatta'>
-    <Field_Entity FB-1:3::1-1:1 'right' 'GTW.OMP.SRM.Regatta'> ['FB-1:3::1-1:1:1']
-        <Field_Entity FB-1:3::1-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'>
-    <Field_Entity FB-1:3::1-1:1:1 'left' 'GTW.OMP.SRM.Regatta_Event'> ['FB-1:3::1-1:1:1:1', 'FB-1:3::1-1:1:1:2']
-        <Field_Composite FB-1:3::1-1:1:1:1 'date' 'MOM.Date_Interval_C'> <Field FB-1:3::1-1:1:1:2 'name'>
-    <Field_Composite FB-1:3::1-1:1:1:1 'date' 'MOM.Date_Interval_C'> ['FB-1:3::1-1:1:1:1.1', 'FB-1:3::1-1:1:1:1.2']
-        <Field FB-1:3::1-1:1:1:1.1 'start'> <Field FB-1:3::1-1:1:1:1.2 'finish'>
-    <Fieldset FB-1:3::1-2 'required'> ['FB-1:3::1-2:1']
-        <Field_Entity FB-1:3::1-2:1 'skipper' 'GTW.OMP.SRM.Sailor'>
-    <Field_Entity FB-1:3::1-2:1 'skipper' 'GTW.OMP.SRM.Sailor'> ['FB-1:3::1-2:1:1', 'FB-1:3::1-2:1:2', 'FB-1:3::1-2:1:3']
-        <Field_Entity FB-1:3::1-2:1:1 'left' 'GTW.OMP.PAP.Person'> <Field FB-1:3::1-2:1:2 'nation'> <Field FB-1:3::1-2:1:3 'mna_number'>
-    <Field_Entity FB-1:3::1-2:1:1 'left' 'GTW.OMP.PAP.Person'> ['FB-1:3::1-2:1:1:1', 'FB-1:3::1-2:1:1:2', 'FB-1:3::1-2:1:1:3', 'FB-1:3::1-2:1:1:4']
-        <Field FB-1:3::1-2:1:1:1 'last_name'> <Field FB-1:3::1-2:1:1:2 'first_name'> <Field FB-1:3::1-2:1:1:3 'middle_name'> <Field FB-1:3::1-2:1:1:4 'title'>
-    <Fieldset FB-1:3::1-3 'optional'> ['FB-1:3::1-3:1', 'FB-1:3::1-3:2']
-        <Field FB-1:3::1-3:1 'place'> <Field FB-1:3::1-3:2 'points'>
+    >>> print "var f =", fi.as_js, ";"
+    var f = new $GTW.AFS.Form ({"$id": "FB", "type": "Form", "children": [{"name": "GTW.OMP.SRM.Boat", "$id": "FB-0", "type_name": "GTW.OMP.SRM.Boat", "value": {"pid": 2, "cid": null}, "type": "Entity", "children": [{"$id": "FB-0:0", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "left", "$id": "FB-0:0:0", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"pid": 1, "cid": null}, "ui_name": "Class", "type": "Field_Entity", "children": [{"$id": "FB-0:0:0:0", "ui_name": "Name", "type": "Field", "name": "name", "value": {"init": "Optimist"}}]}, {"$id": "FB-0:0:1", "ui_name": "Nation", "type": "Field", "name": "nation", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "ui_name": "Sail number", "type": "Field", "name": "sail_number", "value": {"init": "1107"}}]}, {"$id": "FB-0:1", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-0:1:0", "ui_name": "Name", "type": "Field", "name": "name"}]}, {"$id": "FB-0:2", "type": "Entity_List", "children": [{"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-0:2::0", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"pid": 7, "cid": null}, "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-0:2::0-0", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-0:2::0-0:0", "type_name": "GTW.OMP.SRM.Regatta", "value": {"pid": 6, "cid": null}, "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-0:2::0-0:0:0", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"pid": 5, "cid": null}, "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-0:2::0-0:0:0:0", "type_name": "MOM.Date_Interval_C", "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-0:2::0-0:0:0:0.0", "ui_name": "Start", "type": "Field", "name": "start", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-0:0:0:0.1", "ui_name": "Finish", "type": "Field", "name": "finish", "value": {"init": "2008/05/01"}}]}, {"$id": "FB-0:2::0-0:0:0:1", "ui_name": "Name", "type": "Field", "name": "name", "value": {"init": "Himmelfahrt"}}]}]}]}, {"$id": "FB-0:2::0-1", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-0:2::0-1:0", "type_name": "GTW.OMP.SRM.Sailor", "value": {"pid": 4, "cid": null}, "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-0:2::0-1:0:0", "type_name": "GTW.OMP.PAP.Person", "value": {"pid": 3, "cid": null}, "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-0:2::0-1:0:0:0", "ui_name": "Last name", "type": "Field", "name": "last_name", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-1:0:0:1", "ui_name": "First name", "type": "Field", "name": "first_name", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-1:0:0:2", "ui_name": "Middle name", "type": "Field", "name": "middle_name"}, {"$id": "FB-0:2::0-1:0:0:3", "ui_name": "Academic title", "type": "Field", "name": "title"}]}, {"$id": "FB-0:2::0-1:0:1", "ui_name": "Nation", "type": "Field", "name": "nation", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-1:0:2", "ui_name": "Mna number", "type": "Field", "name": "mna_number", "value": {"init": "29676"}}]}]}, {"$id": "FB-0:2::0-2", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-0:2::0-2:0", "ui_name": "Place", "type": "Field", "name": "place"}, {"$id": "FB-0:2::0-2:1", "ui_name": "Points", "type": "Field", "name": "points"}]}]}], "proto": {"role_name": "left", "name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-0:2::p", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "type": "Entity_Link", "children": [{"$id": "FB-0:2::p-0", "collapsed": false, "type": "Fieldset", "name": "primary"}, {"$id": "FB-0:2::p-1", "collapsed": true, "type": "Fieldset", "name": "required"}, {"$id": "FB-0:2::p-2", "collapsed": true, "type": "Fieldset", "name": "optional"}]}}]}]}) ;
+
+    >>> for i in fi.transitive_iter () :
+    ...     print i.elem, sorted (i.value)
+    <Form FB> []
+    <Entity FB-0 'GTW.OMP.SRM.Boat'> ['cid', 'pid']
+    <Fieldset FB-0:0 'primary'> []
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> ['cid', 'pid']
+    <Field FB-0:0:0:0 'name'> ['init']
+    <Field FB-0:0:1 'nation'> ['init']
+    <Field FB-0:0:2 'sail_number'> ['init']
+    <Fieldset FB-0:1 'optional'> []
+    <Field FB-0:1:0 'name'> []
+    <Entity_List FB-0:2 <Entity_Link FB-0:2::p 'GTW.OMP.SRM.Boat_in_Regatta'>> []
+    <Entity_Link FB-0:2::0 'GTW.OMP.SRM.Boat_in_Regatta'> ['cid', 'pid']
+    <Fieldset FB-0:2::0-0 'primary'> []
+    <Field_Entity FB-0:2::0-0:0 'right' 'GTW.OMP.SRM.Regatta'> ['cid', 'pid']
+    <Field_Entity FB-0:2::0-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> ['cid', 'pid']
+    <Field_Composite FB-0:2::0-0:0:0:0 'date' 'MOM.Date_Interval_C'> []
+    <Field FB-0:2::0-0:0:0:0.0 'start'> ['init']
+    <Field FB-0:2::0-0:0:0:0.1 'finish'> ['init']
+    <Field FB-0:2::0-0:0:0:1 'name'> ['init']
+    <Fieldset FB-0:2::0-1 'required'> []
+    <Field_Entity FB-0:2::0-1:0 'skipper' 'GTW.OMP.SRM.Sailor'> ['cid', 'pid']
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.PAP.Person'> ['cid', 'pid']
+    <Field FB-0:2::0-1:0:0:0 'last_name'> ['init']
+    <Field FB-0:2::0-1:0:0:1 'first_name'> ['init']
+    <Field FB-0:2::0-1:0:0:2 'middle_name'> []
+    <Field FB-0:2::0-1:0:0:3 'title'> []
+    <Field FB-0:2::0-1:0:1 'nation'> ['init']
+    <Field FB-0:2::0-1:0:2 'mna_number'> ['init']
+    <Fieldset FB-0:2::0-2 'optional'> []
+    <Field FB-0:2::0-2:0 'place'> []
+    <Field FB-0:2::0-2:1 'points'> []
 
 """
 
 from   _GTW.__test__.model      import *
 from   _GTW._AFS._MOM.Element   import Form
 
-from   _TFL.Formatter      import formatted
+from   _TFL.Formatter      import Formatter
+formatted = Formatter (width = 240)
 
 __test__ = dict (AFS_Spec = _test_code)
 

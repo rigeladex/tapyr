@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    25-Feb-2011 (CT) Creation
+#    27-Feb-2011 (CT) Re-Creation (combine static and dynamic properties into
+#                     a single object per form element)
 #    ««revision-date»»···
 #--
 
@@ -40,58 +42,48 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 import json
 
-class Element (TFL.Meta.Object) :
-    """Model a AFS form element plus it's data."""
+class Instance (TFL.Meta.Object) :
+    """Model an instance of an AFS form element."""
 
-    def __init__ (self, elem, data) :
+    children = ()
+    value    = {}
+
+    def __init__ (self, elem, ** kw) :
+        self.pop_to_self  (kw, "children", "value")
         self.elem = elem
-        self.data = data
+        self.kw   = kw
     # end def __init__
 
-    def __iter__ (self) :
-        data = self.data
-        for c in self.elem.children :
-            yield Element (c, data [c.id])
-    # end def __iter__
+    @Once_Property
+    def as_js (self) :
+        return "new $GTW.AFS.Form (%s)" % (self.as_json)
+    # end def as_js
 
-    if 0 :
-        ### alternate implementation
-        def __init__ (self, elem, data, top = None) :
-            self.elem = elem
-            self.data = data
-            self.top  = top or self
-        # end def __init__
+    @Once_Property
+    def as_json (self) :
+        return json.dumps (self.as_json_cargo)
+    # end def as_json
 
-        def __iter__ (self) :
-            data = self.data
-            elem = self.elem
-            top  = self.top
-            for id in data.get ("child_ids", ()) :
-                yield Element (top.elem [id], data [id], top)
-        # end def __iter__
+    @Once_Property
+    def as_json_cargo (self) :
+        result = self.elem.as_json_cargo
+        result.update (self.kw)
+        if self.children :
+            result ["children"] = [c.as_json_cargo for c in self.children]
+        if self.value :
+            result ["value"]    = self.value
+        return result
+    # end def as_json_cargo
 
     def transitive_iter (self) :
         yield self
-        for c in self :
+        for c in self.children :
             for x in c.transitive_iter () :
                 yield x
     # end def transitive_iter
 
-# end class Element
-
-class Form (Element) :
-    """Model a AFS form instance plus the data for the form's entities and
-       fields.
-    """
-
-    @Once_Property
-    def as_js (self) :
-        return "new $GTW.AFS.Form (%s, %s)" % \
-            (self.elem.as_json, json.dumps (self.data))
-    # end def as_js
-
-# end class Form
+# end class Instance
 
 if __name__ != "__main__" :
-    GTW.AFS._Export_Module ()
+    GTW.AFS._Export ("Instance")
 ### __END__ GTW.AFS.Instance

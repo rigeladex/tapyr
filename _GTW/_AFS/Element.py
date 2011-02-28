@@ -40,6 +40,13 @@
 #    25-Feb-2011 (CT) `_call_iter` factored from `__call__`, `child_ids` added
 #    25-Feb-2011 (CT) Handling of `id_map` changed (only `Form` instance has
 #                     one, use full `id` as key, put in Entity_List.children)
+#    27-Feb-2011 (CT) `id` setting changed (0-based, `Entity_List.proto` gets
+#                     `p` instead of `0`)
+#    27-Feb-2011 (CT) `__call__` revamped (each __call__ now creates a
+#                     GTW.AFS.Instance object), `_data` added
+#    27-Feb-2011 (CT) `as_json` moved to `GTW.AFS.Instance`, `as_json_cargo`
+#                     changed to not include `children`
+#    27-Feb-2011 (CT) `Entity_List.new_child` factored
 #    ««revision-date»»···
 #--
 
@@ -61,7 +68,6 @@ class _Element_ (TFL.Meta.Object) :
     id_sep   = "."
     list_sep = "::"
     root_sep = "-"
-    max_cid  = 0
     _id      = None
 
     def __init__ (self, ** kw) :
@@ -73,13 +79,12 @@ class _Element_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        child_ids = []
-        result    = {}
-        for id, c in self._call_iter (* args, ** kw) :
-            child_ids.append (id)
-            result [id] = c
-        if child_ids :
-            result ["child_ids"] = child_ids
+        result = GTW.AFS.Instance \
+            ( self
+            , children = list (self._call_iter (* args, ** kw))
+            , ** self._data (* args, ** kw)
+            )
+        ### XXX compute and set csrf tokens for result
         return result
     # end def __call__
 
@@ -97,28 +102,11 @@ class _Element_ (TFL.Meta.Object) :
     # end def id
 
     @Once_Property
-    def as_json (self) :
-        return json.dumps (self.as_json_cargo)
-    # end def as_json
-
-    @Once_Property
     def as_json_cargo (self) :
-        result = dict (self.kw, type = self.__class__.__name__)
-        if self.children :
-            result ["children"] = [c.as_json_cargo for c in self.children]
+        result         = dict (self.kw, type = self.__class__.__name__)
         result ["$id"] = self.id
         return result
     # end def as_json_cargo
-
-    def child_id (self, id, sep, id_map) :
-        if id :
-            max_cid = self.max_cid + 1
-            result  = sep.join ((id, str (max_cid)))
-            if result in id_map :
-                raise KeyError ("Duplicate id %s" % result)
-            self.max_cid = max_cid
-            return result
-    # end def child_id
 
     def copy (self, ** kw) :
         ckw      = dict (self.kw, ** kw)
@@ -128,8 +116,12 @@ class _Element_ (TFL.Meta.Object) :
 
     def _call_iter (self, * args, ** kw) :
         for c in self.children :
-            yield c.id, c (* args, ** kw)
+            yield c (* args, ** kw)
     # end def _call_iter
+
+    def _data (self, * args, ** kw) :
+        return {"value" : {}}
+    # end def _data
 
     def _formatted (self, level = 0) :
         result = ["%s%s" % (" " * level, self)]
@@ -140,11 +132,19 @@ class _Element_ (TFL.Meta.Object) :
 
     def _id_children (self, id, children, id_map) :
         sep = self.id_sep
-        for c in children :
-            c.id          = self.child_id (id, sep, id_map)
-            id_map [c.id] = c
-            c._id_children (c.id, c.children, id_map)
+        for i, c in enumerate (children) :
+            c_id = c._set_id (self, i)
+            if c_id in id_map :
+                raise KeyError \
+                    ("Duplicate id %s: %s vs. %s" % (c_id, c, id_map [c_id]))
+            id_map [c_id] = c
+            c._id_children (c_id, c.children, id_map)
     # end def _id_children
+
+    def _set_id (self, parent, i) :
+        self.id = result = parent.id_sep.join ((parent.id, str (i)))
+        return result
+    # end def _set_id
 
     def __getattr__ (self, name) :
         try :
@@ -180,8 +180,11 @@ class _Element_List_ (_Element_) :
             h, _, t = split_hst (key, self.list_sep)
             i, _, u = split_hst (t,   self.root_sep)
             p = self.list_sep.join \
-                ((h, self.root_sep.join (("0", u)) if u else "0"))
-            return self.id_map [p]
+                ((h, self.root_sep.join (("p", u)) if u else "p"))
+            try :
+                return self.id_map [p]
+            except KeyError :
+                raise KeyError (key)
     # end def __getitem__
 
 # end class _Element_List_
@@ -206,7 +209,6 @@ class Entity_List (_Element_List_) :
     """Model a sub-form for a list of entities."""
 
     id_sep  = _Element_List_.list_sep
-    max_cid = -1
 
     def __init__ (self, proto, ** kw) :
         self.proto   = proto
@@ -217,7 +219,10 @@ class Entity_List (_Element_List_) :
     @Once_Property
     def as_json_cargo (self) :
         result = self.__super.as_json_cargo
-        result ["proto"] = self.proto.as_json_cargo
+        result ["proto"] = dict \
+            ( self.proto.as_json_cargo
+            , children = [c.as_json_cargo for c in self.proto.children]
+            )
         return result
     # end def as_json_cargo
 
@@ -225,25 +230,22 @@ class Entity_List (_Element_List_) :
         if self.children is self.__class__.children :
             self.children = []
         cs     = self.children
-        result = self.proto.copy ()
-        result.id_sep = self.root_sep
-        if self.id :
-            self._id_child_or_proto  (self.id, result, self.id_map)
+        result = self.new_child (len (cs), self.id_map)
         cs.append (result)
         return result
     # end def add_child
 
-    def clone (self) :
-        assert not self.children, repr (self)
-        result          = self.__class__ (self.proto)
-        result.id       = self.id
-        result.max_cid += 1
-        return result
-    # end def clone
-
     def copy (self, ** kw) :
         return self.__super.copy (proto = self.proto.copy (), ** kw)
     # end def copy
+
+    def new_child (self, i, id_map) :
+        result = self.proto.copy ()
+        result.id_sep = self.root_sep
+        if self.id :
+            self._id_child_or_proto (result, i, id_map)
+        return result
+    # end def new_child
 
     def _formatted (self, level = 0) :
         result = [self.__super._formatted (level)]
@@ -254,12 +256,14 @@ class Entity_List (_Element_List_) :
 
     def _id_children (self, id, children, id_map) :
         self.id_map = id_map
-        self._id_child_or_proto   (id, self.proto, id_map)
-        self.__super._id_children (id, children,   id_map)
+        self._id_child_or_proto   (self.proto, "p",      id_map)
+        self.__super._id_children (id,         children, id_map)
     # end def _id_children
 
-    def _id_child_or_proto (self, id, cop, id_map) :
-        self.__super._id_children (id, [cop], id_map)
+    def _id_child_or_proto (self, cop, i, id_map) :
+        cop._set_id      (self, i)
+        cop._id_children (cop.id, cop.children, id_map)
+        id_map [cop.id] = cop
     # end def _id_child_or_proto
 
     def __str__ (self) :
@@ -320,12 +324,6 @@ class Form (_Element_List_) :
         self._id_children     (id, children, self.id_map)
     # end def __init__
 
-    def __call__ (self, * args, ** kw) :
-        if self.dynamic_children_p :
-            self = self.copy ()
-        return self._call_body (* args, ** kw)
-    # end def __call__
-
     @Once_Property
     def dynamic_children_p (self) :
         s = Entity_List.id_sep
@@ -346,7 +344,7 @@ class Form (_Element_List_) :
     def _call_iter (self, * args, ** kw) :
         assert len (args) == len (self.children), repr (self)
         for a, c in zip (args, self.children) :
-            yield c.id, c (a, ** kw)
+            yield c (a, ** kw)
     # end def _call_iter
 
 # end class Form
@@ -399,295 +397,79 @@ Usage example::
     ...     )
     >>> print repr (f)
     <Form F>
-     <Entity F-1 'PAP.Person'>
-      <Fieldset F-1:1 'primary'>
-       <Field F-1:1:1 'last_name'>
-       <Field F-1:1:2 'first_name'>
-      <Field_Composite F-1:2 'lifetime'>
-       <Field F-1:2.1 'start'>
-       <Field F-1:2.2 'finish'>
-      <Entity_List F-1:3 <Entity F-1:3::0 'PAP.Person_has_Email'>>
-       <Entity F-1:3::0 'PAP.Person_has_Email'>
-        <Field F-1:3::0-1 'desc'>
-        <Entity F-1:3::0-2 'PAP.Email'>
-         <Field F-1:3::0-2:1 'address'>
-     <Entity F-2 'SRM.Boat_Type'>
-      <Field F-2:1 'name'>
-    >>> print formatted (f.as_json_cargo, level = 1)
-      { '$id' : 'F'
-      , 'children' :
-          [ { '$id' : 'F-1'
-            , 'children' :
-                [ { '$id' : 'F-1:1'
-                  , 'children' :
-                      [ { '$id' : 'F-1:1:1'
-                        , 'name' : 'last_name'
-                        , 'type' : 'Field'
-                        }
-                      , { '$id' : 'F-1:1:2'
-                        , 'name' : 'first_name'
-                        , 'type' : 'Field'
-                        }
-                      ]
-                  , 'name' : 'primary'
-                  , 'type' : 'Fieldset'
-                  }
-                , { '$id' : 'F-1:2'
-                  , 'children' :
-                      [ { '$id' : 'F-1:2.1'
-                        , 'name' : 'start'
-                        , 'type' : 'Field'
-                        }
-                      , { '$id' : 'F-1:2.2'
-                        , 'name' : 'finish'
-                        , 'type' : 'Field'
-                        }
-                      ]
-                  , 'name' : 'lifetime'
-                  , 'type' : 'Field_Composite'
-                  }
-                , { '$id' : 'F-1:3'
-                  , 'proto' : { '$id' : 'F-1:3::0'
-                      , 'children' :
-                          [ { '$id' : 'F-1:3::0-1'
-                            , 'name' : 'desc'
-                            , 'type' : 'Field'
-                            }
-                          , { '$id' : 'F-1:3::0-2'
-                            , 'children' :
-                                [ { '$id' : 'F-1:3::0-2:1'
-                                  , 'name' : 'address'
-                                  , 'type' : 'Field'
-                                  }
-                                ]
-                            , 'type' : 'Entity'
-                            , 'type_name' : 'PAP.Email'
-                            }
-                          ]
-                      , 'type' : 'Entity'
-                      , 'type_name' : 'PAP.Person_has_Email'
-                      }
-                  , 'type' : 'Entity_List'
-                  }
-                ]
-            , 'type' : 'Entity'
-            , 'type_name' : 'PAP.Person'
-            }
-          , { '$id' : 'F-2'
-            , 'children' :
-                [ { '$id' : 'F-2:1'
-                  , 'name' : 'name'
-                  , 'type' : 'Field'
-                  }
-                ]
-            , 'type' : 'Entity'
-            , 'type_name' : 'SRM.Boat_Type'
-            }
-          ]
-      , 'type' : 'Form'
-      }
-
-    >>> f.as_json
-    '{"$id": "F", "type": "Form", "children": [{"$id": "F-1", "type_name": "PAP.Person", "type": "Entity", "children": [{"$id": "F-1:1", "type": "Fieldset", "name": "primary", "children": [{"$id": "F-1:1:1", "type": "Field", "name": "last_name"}, {"$id": "F-1:1:2", "type": "Field", "name": "first_name"}]}, {"$id": "F-1:2", "type": "Field_Composite", "name": "lifetime", "children": [{"$id": "F-1:2.1", "type": "Field", "name": "start"}, {"$id": "F-1:2.2", "type": "Field", "name": "finish"}]}, {"$id": "F-1:3", "type": "Entity_List", "proto": {"$id": "F-1:3::0", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::0-1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::0-2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::0-2:1", "type": "Field", "name": "address"}]}]}}]}, {"$id": "F-2", "type_name": "SRM.Boat_Type", "type": "Entity", "children": [{"$id": "F-2:1", "type": "Field", "name": "name"}]}]}'
+     <Entity F-0 'PAP.Person'>
+      <Fieldset F-0:0 'primary'>
+       <Field F-0:0:0 'last_name'>
+       <Field F-0:0:1 'first_name'>
+      <Field_Composite F-0:1 'lifetime'>
+       <Field F-0:1.0 'start'>
+       <Field F-0:1.1 'finish'>
+      <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
+       <Entity F-0:2::p 'PAP.Person_has_Email'>
+        <Field F-0:2::p-0 'desc'>
+        <Entity F-0:2::p-1 'PAP.Email'>
+         <Field F-0:2::p-1:0 'address'>
+     <Entity F-1 'SRM.Boat_Type'>
+      <Field F-1:0 'name'>
     >>> sorted (f.id_map)
-    ['F-1', 'F-1:1', 'F-1:1:1', 'F-1:1:2', 'F-1:2', 'F-1:2.1', 'F-1:2.2', 'F-1:3', 'F-1:3::0', 'F-1:3::0-1', 'F-1:3::0-2', 'F-1:3::0-2:1', 'F-2', 'F-2:1']
+    ['F-0', 'F-0:0', 'F-0:0:0', 'F-0:0:1', 'F-0:1', 'F-0:1.0', 'F-0:1.1', 'F-0:2', 'F-0:2::p', 'F-0:2::p-0', 'F-0:2::p-1', 'F-0:2::p-1:0', 'F-1', 'F-1:0']
     >>> [str (f.id_map [id]) for id in sorted (f.id_map)]
-    ["<Entity F-1 'PAP.Person'>", "<Fieldset F-1:1 'primary'>", "<Field F-1:1:1 'last_name'>", "<Field F-1:1:2 'first_name'>", "<Field_Composite F-1:2 'lifetime'>", "<Field F-1:2.1 'start'>", "<Field F-1:2.2 'finish'>", "<Entity_List F-1:3 <Entity F-1:3::0 'PAP.Person_has_Email'>>", "<Entity F-1:3::0 'PAP.Person_has_Email'>", "<Field F-1:3::0-1 'desc'>", "<Entity F-1:3::0-2 'PAP.Email'>", "<Field F-1:3::0-2:1 'address'>", "<Entity F-2 'SRM.Boat_Type'>", "<Field F-2:1 'name'>"]
+    ["<Entity F-0 'PAP.Person'>", "<Fieldset F-0:0 'primary'>", "<Field F-0:0:0 'last_name'>", "<Field F-0:0:1 'first_name'>", "<Field_Composite F-0:1 'lifetime'>", "<Field F-0:1.0 'start'>", "<Field F-0:1.1 'finish'>", "<Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>", "<Entity F-0:2::p 'PAP.Person_has_Email'>", "<Field F-0:2::p-0 'desc'>", "<Entity F-0:2::p-1 'PAP.Email'>", "<Field F-0:2::p-1:0 'address'>", "<Entity F-1 'SRM.Boat_Type'>", "<Field F-1:0 'name'>"]
 
-    >>> print f ["F-1:2.1"]
-    <Field F-1:2.1 'start'>
-    >>> print f ["F-1:3"]
-    <Entity_List F-1:3 <Entity F-1:3::0 'PAP.Person_has_Email'>>
-    >>> print f ["F-1:3::0"]
-    <Entity F-1:3::0 'PAP.Person_has_Email'>
-    >>> print f ["F-1:3::0-1"]
-    <Field F-1:3::0-1 'desc'>
-    >>> print f ["F-1:3::1-1"]
-    <Field F-1:3::0-1 'desc'>
-    >>> print f ["F-1:3::2-1"]
-    <Field F-1:3::0-1 'desc'>
-    >>> fel = f ["F-1:3"]
+    >>> print f ["F-0:1.0"]
+    <Field F-0:1.0 'start'>
+    >>> print f ["F-0:2"]
+    <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
+    >>> print f ["F-0:2::p"]
+    <Entity F-0:2::p 'PAP.Person_has_Email'>
+    >>> print f ["F-0:2::p-0"]
+    <Field F-0:2::p-0 'desc'>
+    >>> print f ["F-0:2::p-0"]
+    <Field F-0:2::p-0 'desc'>
+    >>> print f ["F-0:2::1-0"]
+    <Field F-0:2::p-0 'desc'>
+    >>> fel = f ["F-0:2"]
     >>> print fel.proto
-    <Entity F-1:3::0 'PAP.Person_has_Email'>
+    <Entity F-0:2::p 'PAP.Person_has_Email'>
 
     >>> g = f.copy ()
-    >>> gel = g ["F-1:3"]
+    >>> gel = g ["F-0:2"]
     >>> print gel.add_child ()
-    <Entity F-1:3::1 'PAP.Person_has_Email'>
+    <Entity F-0:2::0 'PAP.Person_has_Email'>
     >>> print gel.add_child ()
-    <Entity F-1:3::2 'PAP.Person_has_Email'>
+    <Entity F-0:2::1 'PAP.Person_has_Email'>
     >>> print repr (g)
     <Form F>
-     <Entity F-1 'PAP.Person'>
-      <Fieldset F-1:1 'primary'>
-       <Field F-1:1:1 'last_name'>
-       <Field F-1:1:2 'first_name'>
-      <Field_Composite F-1:2 'lifetime'>
-       <Field F-1:2.1 'start'>
-       <Field F-1:2.2 'finish'>
-      <Entity_List F-1:3 <Entity F-1:3::0 'PAP.Person_has_Email'>>
-       <Entity F-1:3::1 'PAP.Person_has_Email'>
-        <Field F-1:3::1-1 'desc'>
-        <Entity F-1:3::1-2 'PAP.Email'>
-         <Field F-1:3::1-2:1 'address'>
-       <Entity F-1:3::2 'PAP.Person_has_Email'>
-        <Field F-1:3::2-1 'desc'>
-        <Entity F-1:3::2-2 'PAP.Email'>
-         <Field F-1:3::2-2:1 'address'>
-     <Entity F-2 'SRM.Boat_Type'>
-      <Field F-2:1 'name'>
-    >>> print formatted (g.as_json_cargo, level = 1)
-      { '$id' : 'F'
-      , 'children' :
-          [
-            { '$id' : 'F-1'
-            , 'children' :
-                [
-                  { '$id' : 'F-1:1'
-                  , 'children' :
-                      [
-                        { '$id' : 'F-1:1:1'
-                        , 'name' : 'last_name'
-                        , 'type' : 'Field'
-                        }
-                      ,
-                        { '$id' : 'F-1:1:2'
-                        , 'name' : 'first_name'
-                        , 'type' : 'Field'
-                        }
-                      ]
-                  , 'name' : 'primary'
-                  , 'type' : 'Fieldset'
-                  }
-                ,
-                  { '$id' : 'F-1:2'
-                  , 'children' :
-                      [
-                        { '$id' : 'F-1:2.1'
-                        , 'name' : 'start'
-                        , 'type' : 'Field'
-                        }
-                      ,
-                        { '$id' : 'F-1:2.2'
-                        , 'name' : 'finish'
-                        , 'type' : 'Field'
-                        }
-                      ]
-                  , 'name' : 'lifetime'
-                  , 'type' : 'Field_Composite'
-                  }
-                ,
-                  { '$id' : 'F-1:3'
-                  , 'children' :
-                      [
-                        { '$id' : 'F-1:3::1'
-                        , 'children' :
-                            [
-                              { '$id' : 'F-1:3::1-1'
-                              , 'name' : 'desc'
-                              , 'type' : 'Field'
-                              }
-                            ,
-                              { '$id' : 'F-1:3::1-2'
-                              , 'children' :
-                                  [
-                                    { '$id' : 'F-1:3::1-2:1'
-                                    , 'name' : 'address'
-                                    , 'type' : 'Field'
-                                    }
-                                  ]
-                              , 'type' : 'Entity'
-                              , 'type_name' : 'PAP.Email'
-                              }
-                            ]
-                        , 'type' : 'Entity'
-                        , 'type_name' : 'PAP.Person_has_Email'
-                        }
-                      ,
-                        { '$id' : 'F-1:3::2'
-                        , 'children' :
-                            [
-                              { '$id' : 'F-1:3::2-1'
-                              , 'name' : 'desc'
-                              , 'type' : 'Field'
-                              }
-                            ,
-                              { '$id' : 'F-1:3::2-2'
-                              , 'children' :
-                                  [
-                                    { '$id' : 'F-1:3::2-2:1'
-                                    , 'name' : 'address'
-                                    , 'type' : 'Field'
-                                    }
-                                  ]
-                              , 'type' : 'Entity'
-                              , 'type_name' : 'PAP.Email'
-                              }
-                            ]
-                        , 'type' : 'Entity'
-                        , 'type_name' : 'PAP.Person_has_Email'
-                        }
-                      ]
-                  , 'proto' :
-                      { '$id' : 'F-1:3::0'
-                      , 'children' :
-                          [
-                            { '$id' : 'F-1:3::0-1'
-                            , 'name' : 'desc'
-                            , 'type' : 'Field'
-                            }
-                          ,
-                            { '$id' : 'F-1:3::0-2'
-                            , 'children' :
-                                [
-                                  { '$id' : 'F-1:3::0-2:1'
-                                  , 'name' : 'address'
-                                  , 'type' : 'Field'
-                                  }
-                                ]
-                            , 'type' : 'Entity'
-                            , 'type_name' : 'PAP.Email'
-                            }
-                          ]
-                      , 'type' : 'Entity'
-                      , 'type_name' : 'PAP.Person_has_Email'
-                      }
-                  , 'type' : 'Entity_List'
-                  }
-                ]
-            , 'type' : 'Entity'
-            , 'type_name' : 'PAP.Person'
-            }
-          ,
-            { '$id' : 'F-2'
-            , 'children' :
-                [
-                  { '$id' : 'F-2:1'
-                  , 'name' : 'name'
-                  , 'type' : 'Field'
-                  }
-                ]
-            , 'type' : 'Entity'
-            , 'type_name' : 'SRM.Boat_Type'
-            }
-          ]
-      , 'type' : 'Form'
-      }
-
-    >>> print g.as_json
-    {"$id": "F", "type": "Form", "children": [{"$id": "F-1", "type_name": "PAP.Person", "type": "Entity", "children": [{"$id": "F-1:1", "type": "Fieldset", "name": "primary", "children": [{"$id": "F-1:1:1", "type": "Field", "name": "last_name"}, {"$id": "F-1:1:2", "type": "Field", "name": "first_name"}]}, {"$id": "F-1:2", "type": "Field_Composite", "name": "lifetime", "children": [{"$id": "F-1:2.1", "type": "Field", "name": "start"}, {"$id": "F-1:2.2", "type": "Field", "name": "finish"}]}, {"$id": "F-1:3", "type": "Entity_List", "children": [{"$id": "F-1:3::1", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::1-1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::1-2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::1-2:1", "type": "Field", "name": "address"}]}]}, {"$id": "F-1:3::2", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::2-1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::2-2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::2-2:1", "type": "Field", "name": "address"}]}]}], "proto": {"$id": "F-1:3::0", "type_name": "PAP.Person_has_Email", "type": "Entity", "children": [{"$id": "F-1:3::0-1", "type": "Field", "name": "desc"}, {"$id": "F-1:3::0-2", "type_name": "PAP.Email", "type": "Entity", "children": [{"$id": "F-1:3::0-2:1", "type": "Field", "name": "address"}]}]}}]}, {"$id": "F-2", "type_name": "SRM.Boat_Type", "type": "Entity", "children": [{"$id": "F-2:1", "type": "Field", "name": "name"}]}]}
+     <Entity F-0 'PAP.Person'>
+      <Fieldset F-0:0 'primary'>
+       <Field F-0:0:0 'last_name'>
+       <Field F-0:0:1 'first_name'>
+      <Field_Composite F-0:1 'lifetime'>
+       <Field F-0:1.0 'start'>
+       <Field F-0:1.1 'finish'>
+      <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
+       <Entity F-0:2::0 'PAP.Person_has_Email'>
+        <Field F-0:2::0-0 'desc'>
+        <Entity F-0:2::0-1 'PAP.Email'>
+         <Field F-0:2::0-1:0 'address'>
+       <Entity F-0:2::1 'PAP.Person_has_Email'>
+        <Field F-0:2::1-0 'desc'>
+        <Entity F-0:2::1-1 'PAP.Email'>
+         <Field F-0:2::1-1:0 'address'>
+     <Entity F-1 'SRM.Boat_Type'>
+      <Field F-1:0 'name'>
     >>> sorted (g.id_map)
-    ['F-1', 'F-1:1', 'F-1:1:1', 'F-1:1:2', 'F-1:2', 'F-1:2.1', 'F-1:2.2', 'F-1:3', 'F-1:3::0', 'F-1:3::0-1', 'F-1:3::0-2', 'F-1:3::0-2:1', 'F-1:3::1', 'F-1:3::1-1', 'F-1:3::1-2', 'F-1:3::1-2:1', 'F-1:3::2', 'F-1:3::2-1', 'F-1:3::2-2', 'F-1:3::2-2:1', 'F-2', 'F-2:1']
-    >>> print g ["F-1:3::0-1"]
-    <Field F-1:3::0-1 'desc'>
-    >>> print g ["F-1:3::1-1"]
-    <Field F-1:3::1-1 'desc'>
-    >>> print g ["F-1:3::2-1"]
-    <Field F-1:3::2-1 'desc'>
-    >>> print g ["F-1:3::42-1"]
-    <Field F-1:3::0-1 'desc'>
+    ['F-0', 'F-0:0', 'F-0:0:0', 'F-0:0:1', 'F-0:1', 'F-0:1.0', 'F-0:1.1', 'F-0:2', 'F-0:2::0', 'F-0:2::0-0', 'F-0:2::0-1', 'F-0:2::0-1:0', 'F-0:2::1', 'F-0:2::1-0', 'F-0:2::1-1', 'F-0:2::1-1:0', 'F-0:2::p', 'F-0:2::p-0', 'F-0:2::p-1', 'F-0:2::p-1:0', 'F-1', 'F-1:0']
+    >>> print g ["F-0:2::p-0"]
+    <Field F-0:2::p-0 'desc'>
+    >>> print g ["F-0:2::0-0"]
+    <Field F-0:2::0-0 'desc'>
+    >>> print g ["F-0:2::1-0"]
+    <Field F-0:2::1-0 'desc'>
+    >>> print g ["F-0:2::42-0"]
+    <Field F-0:2::p-0 'desc'>
     >>> tuple (str (c) for c in gel.children)
-    ("<Entity F-1:3::1 'PAP.Person_has_Email'>", "<Entity F-1:3::2 'PAP.Person_has_Email'>")
+    ("<Entity F-0:2::0 'PAP.Person_has_Email'>", "<Entity F-0:2::1 'PAP.Person_has_Email'>")
 
 """
 
