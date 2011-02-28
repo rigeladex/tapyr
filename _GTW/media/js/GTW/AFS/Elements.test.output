@@ -1,0 +1,556 @@
+FB-0 values :
+    $anchor_id = "FB-0"
+    $id = "FB-0"
+    cid :
+
+    FB-0:0:0 :
+        $id = "FB-0:0:0"
+        cid :
+
+        FB-0:0:0:0 :
+            $id = "FB-0:0:0:0"
+            init = "Optimist"
+        pid = 1
+    FB-0:0:1 :
+        $id = "FB-0:0:1"
+        init = "AUT"
+    FB-0:0:2 :
+        $id = "FB-0:0:2"
+        init = "1107"
+    FB-0:1:0 :
+        $id = "FB-0:1:0"
+    pid = 2
+FB-0:2::0 values :
+    $anchor_id = "FB-0"
+    $id = "FB-0:2::0"
+    cid :
+
+    FB-0:2::0-0:0 :
+        $id = "FB-0:2::0-0:0"
+        cid :
+
+        FB-0:2::0-0:0:0 :
+            $id = "FB-0:2::0-0:0:0"
+            cid :
+
+            FB-0:2::0-0:0:0:0 :
+                $id = "FB-0:2::0-0:0:0:0"
+                FB-0:2::0-0:0:0:0.0 :
+                    $id = "FB-0:2::0-0:0:0:0.0"
+                    init = "2008/05/01"
+                FB-0:2::0-0:0:0:0.1 :
+                    $id = "FB-0:2::0-0:0:0:0.1"
+                    init = "2008/05/01"
+            FB-0:2::0-0:0:0:1 :
+                $id = "FB-0:2::0-0:0:0:1"
+                init = "Himmelfahrt"
+            pid = 5
+        pid = 6
+    FB-0:2::0-1:0 :
+        $id = "FB-0:2::0-1:0"
+        cid :
+
+        FB-0:2::0-1:0:0 :
+            $id = "FB-0:2::0-1:0:0"
+            cid :
+
+            FB-0:2::0-1:0:0:0 :
+                $id = "FB-0:2::0-1:0:0:0"
+                init = "Tanzer"
+            FB-0:2::0-1:0:0:1 :
+                $id = "FB-0:2::0-1:0:0:1"
+                init = "Laurens"
+            FB-0:2::0-1:0:0:2 :
+                $id = "FB-0:2::0-1:0:0:2"
+            FB-0:2::0-1:0:0:3 :
+                $id = "FB-0:2::0-1:0:0:3"
+            pid = 3
+        FB-0:2::0-1:0:1 :
+            $id = "FB-0:2::0-1:0:1"
+            init = "AUT"
+        FB-0:2::0-1:0:2 :
+            $id = "FB-0:2::0-1:0:2"
+            init = "29676"
+        pid = 4
+    FB-0:2::0-2:0 :
+        $id = "FB-0:2::0-2:0"
+    FB-0:2::0-2:1 :
+        $id = "FB-0:2::0-2:1"
+    pid = 7
+$GTW :
+    AFS :
+        Elements :
+            function create(spec)
+            Element : function constructor()
+            Entity : function constructor()
+            Entity_Link : function constructor()
+            Entity_List : function constructor()
+            Field : function constructor()
+            Field_Composite : function constructor()
+            Field_Entity : function constructor()
+            Fieldset : function constructor()
+            id_map :
+                FB :
+                    $id = "FB"
+                    _super = undefined
+                    children :
+                        0 = "FB-0"
+                    type = "Form"
+                    function update(dict)
+                FB-0 :
+                    $id = "FB-0"
+                    children :
+                        0 = "FB-0:0"
+                        1 = "FB-0:1"
+                        2 = "FB-0:2"
+                    name = "GTW.OMP.SRM.Boat"
+                    type = "Entity"
+                    type_name = "GTW.OMP.SRM.Boat"
+                    function update(dict)
+                    value :
+                        $anchor_id = "FB-0"
+                        $id = "FB-0"
+                        cid :
+
+                        FB-0:0:0 :
+                            $id = "FB-0:0:0"
+                            cid :
+
+                            FB-0:0:0:0 :
+                                $id = "FB-0:0:0:0"
+                                init = "Optimist"
+                            pid = 1
+                        FB-0:0:1 :
+                            $id = "FB-0:0:1"
+                            init = "AUT"
+                        FB-0:0:2 :
+                            $id = "FB-0:0:2"
+                            init = "1107"
+                        FB-0:1:0 :
+                            $id = "FB-0:1:0"
+                        pid = 2
+                FB-0:0 :
+                    $id = "FB-0:0"
+                    children :
+                        0 = "FB-0:0:0"
+                        1 = "FB-0:0:1"
+                        2 = "FB-0:0:2"
+                    collapsed = false
+                    name = "primary"
+                    type = "Fieldset"
+                    function update(dict)
+                FB-0:0:0 :
+                    $id = "FB-0:0:0"
+                    children :
+                        0 = "FB-0:0:0:0"
+                    name = "left"
+                    type = "Field_Entity"
+                    type_name = "GTW.OMP.SRM.Boat_Class"
+                    ui_name = "Class"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:0:0"
+                        cid :
+
+                        FB-0:0:0:0 :
+                            $id = "FB-0:0:0:0"
+                            init = "Optimist"
+                        pid = 1
+                FB-0:0:0:0 :
+                    $id = "FB-0:0:0:0"
+                    name = "name"
+                    type = "Field"
+                    ui_name = "Name"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:0:0:0"
+                        init = "Optimist"
+                FB-0:0:1 :
+                    $id = "FB-0:0:1"
+                    name = "nation"
+                    type = "Field"
+                    ui_name = "Nation"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:0:1"
+                        init = "AUT"
+                FB-0:0:2 :
+                    $id = "FB-0:0:2"
+                    name = "sail_number"
+                    type = "Field"
+                    ui_name = "Sail number"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:0:2"
+                        init = "1107"
+                FB-0:1 :
+                    $id = "FB-0:1"
+                    children :
+                        0 = "FB-0:1:0"
+                    collapsed = true
+                    name = "optional"
+                    type = "Fieldset"
+                    function update(dict)
+                FB-0:1:0 :
+                    $id = "FB-0:1:0"
+                    name = "name"
+                    type = "Field"
+                    ui_name = "Name"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:1:0"
+                FB-0:2 :
+                    $id = "FB-0:2"
+                    children :
+                        0 = "FB-0:2::0"
+                    type = "Entity_List"
+                    function update(dict)
+                FB-0:2::0 :
+                    $id = "FB-0:2::0"
+                    children :
+                        0 = "FB-0:2::0-0"
+                        1 = "FB-0:2::0-1"
+                        2 = "FB-0:2::0-2"
+                    name = "GTW.OMP.SRM.Boat_in_Regatta"
+                    role_name = "left"
+                    type = "Entity_Link"
+                    type_name = "GTW.OMP.SRM.Boat_in_Regatta"
+                    function update(dict)
+                    value :
+                        $anchor_id = "FB-0"
+                        $id = "FB-0:2::0"
+                        cid :
+
+                        FB-0:2::0-0:0 :
+                            $id = "FB-0:2::0-0:0"
+                            cid :
+
+                            FB-0:2::0-0:0:0 :
+                                $id = "FB-0:2::0-0:0:0"
+                                cid :
+
+                                FB-0:2::0-0:0:0:0 :
+                                    $id = "FB-0:2::0-0:0:0:0"
+                                    FB-0:2::0-0:0:0:0.0 :
+                                        $id = "FB-0:2::0-0:0:0:0.0"
+                                        init = "2008/05/01"
+                                    FB-0:2::0-0:0:0:0.1 :
+                                        $id = "FB-0:2::0-0:0:0:0.1"
+                                        init = "2008/05/01"
+                                FB-0:2::0-0:0:0:1 :
+                                    $id = "FB-0:2::0-0:0:0:1"
+                                    init = "Himmelfahrt"
+                                pid = 5
+                            pid = 6
+                        FB-0:2::0-1:0 :
+                            $id = "FB-0:2::0-1:0"
+                            cid :
+
+                            FB-0:2::0-1:0:0 :
+                                $id = "FB-0:2::0-1:0:0"
+                                cid :
+
+                                FB-0:2::0-1:0:0:0 :
+                                    $id = "FB-0:2::0-1:0:0:0"
+                                    init = "Tanzer"
+                                FB-0:2::0-1:0:0:1 :
+                                    $id = "FB-0:2::0-1:0:0:1"
+                                    init = "Laurens"
+                                FB-0:2::0-1:0:0:2 :
+                                    $id = "FB-0:2::0-1:0:0:2"
+                                FB-0:2::0-1:0:0:3 :
+                                    $id = "FB-0:2::0-1:0:0:3"
+                                pid = 3
+                            FB-0:2::0-1:0:1 :
+                                $id = "FB-0:2::0-1:0:1"
+                                init = "AUT"
+                            FB-0:2::0-1:0:2 :
+                                $id = "FB-0:2::0-1:0:2"
+                                init = "29676"
+                            pid = 4
+                        FB-0:2::0-2:0 :
+                            $id = "FB-0:2::0-2:0"
+                        FB-0:2::0-2:1 :
+                            $id = "FB-0:2::0-2:1"
+                        pid = 7
+                FB-0:2::0-0 :
+                    $id = "FB-0:2::0-0"
+                    children :
+                        0 = "FB-0:2::0-0:0"
+                    collapsed = false
+                    name = "primary"
+                    type = "Fieldset"
+                    function update(dict)
+                FB-0:2::0-0:0 :
+                    $id = "FB-0:2::0-0:0"
+                    children :
+                        0 = "FB-0:2::0-0:0:0"
+                    name = "right"
+                    type = "Field_Entity"
+                    type_name = "GTW.OMP.SRM.Regatta"
+                    ui_name = "Regatta"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-0:0"
+                        cid :
+
+                        FB-0:2::0-0:0:0 :
+                            $id = "FB-0:2::0-0:0:0"
+                            cid :
+
+                            FB-0:2::0-0:0:0:0 :
+                                $id = "FB-0:2::0-0:0:0:0"
+                                FB-0:2::0-0:0:0:0.0 :
+                                    $id = "FB-0:2::0-0:0:0:0.0"
+                                    init = "2008/05/01"
+                                FB-0:2::0-0:0:0:0.1 :
+                                    $id = "FB-0:2::0-0:0:0:0.1"
+                                    init = "2008/05/01"
+                            FB-0:2::0-0:0:0:1 :
+                                $id = "FB-0:2::0-0:0:0:1"
+                                init = "Himmelfahrt"
+                            pid = 5
+                        pid = 6
+                FB-0:2::0-0:0:0 :
+                    $id = "FB-0:2::0-0:0:0"
+                    children :
+                        0 = "FB-0:2::0-0:0:0:0"
+                        1 = "FB-0:2::0-0:0:0:1"
+                    name = "left"
+                    type = "Field_Entity"
+                    type_name = "GTW.OMP.SRM.Regatta_Event"
+                    ui_name = "Event"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-0:0:0"
+                        cid :
+
+                        FB-0:2::0-0:0:0:0 :
+                            $id = "FB-0:2::0-0:0:0:0"
+                            FB-0:2::0-0:0:0:0.0 :
+                                $id = "FB-0:2::0-0:0:0:0.0"
+                                init = "2008/05/01"
+                            FB-0:2::0-0:0:0:0.1 :
+                                $id = "FB-0:2::0-0:0:0:0.1"
+                                init = "2008/05/01"
+                        FB-0:2::0-0:0:0:1 :
+                            $id = "FB-0:2::0-0:0:0:1"
+                            init = "Himmelfahrt"
+                        pid = 5
+                FB-0:2::0-0:0:0:0 :
+                    $id = "FB-0:2::0-0:0:0:0"
+                    children :
+                        0 = "FB-0:2::0-0:0:0:0.0"
+                        1 = "FB-0:2::0-0:0:0:0.1"
+                    name = "date"
+                    type = "Field_Composite"
+                    type_name = "MOM.Date_Interval_C"
+                    ui_name = "Date"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-0:0:0:0"
+                        FB-0:2::0-0:0:0:0.0 :
+                            $id = "FB-0:2::0-0:0:0:0.0"
+                            init = "2008/05/01"
+                        FB-0:2::0-0:0:0:0.1 :
+                            $id = "FB-0:2::0-0:0:0:0.1"
+                            init = "2008/05/01"
+                FB-0:2::0-0:0:0:0.0 :
+                    $id = "FB-0:2::0-0:0:0:0.0"
+                    name = "start"
+                    type = "Field"
+                    ui_name = "Start"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-0:0:0:0.0"
+                        init = "2008/05/01"
+                FB-0:2::0-0:0:0:0.1 :
+                    $id = "FB-0:2::0-0:0:0:0.1"
+                    name = "finish"
+                    type = "Field"
+                    ui_name = "Finish"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-0:0:0:0.1"
+                        init = "2008/05/01"
+                FB-0:2::0-0:0:0:1 :
+                    $id = "FB-0:2::0-0:0:0:1"
+                    name = "name"
+                    type = "Field"
+                    ui_name = "Name"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-0:0:0:1"
+                        init = "Himmelfahrt"
+                FB-0:2::0-1 :
+                    $id = "FB-0:2::0-1"
+                    children :
+                        0 = "FB-0:2::0-1:0"
+                    collapsed = true
+                    name = "required"
+                    type = "Fieldset"
+                    function update(dict)
+                FB-0:2::0-1:0 :
+                    $id = "FB-0:2::0-1:0"
+                    children :
+                        0 = "FB-0:2::0-1:0:0"
+                        1 = "FB-0:2::0-1:0:1"
+                        2 = "FB-0:2::0-1:0:2"
+                    name = "skipper"
+                    type = "Field_Entity"
+                    type_name = "GTW.OMP.SRM.Sailor"
+                    ui_name = "Skipper"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0"
+                        cid :
+
+                        FB-0:2::0-1:0:0 :
+                            $id = "FB-0:2::0-1:0:0"
+                            cid :
+
+                            FB-0:2::0-1:0:0:0 :
+                                $id = "FB-0:2::0-1:0:0:0"
+                                init = "Tanzer"
+                            FB-0:2::0-1:0:0:1 :
+                                $id = "FB-0:2::0-1:0:0:1"
+                                init = "Laurens"
+                            FB-0:2::0-1:0:0:2 :
+                                $id = "FB-0:2::0-1:0:0:2"
+                            FB-0:2::0-1:0:0:3 :
+                                $id = "FB-0:2::0-1:0:0:3"
+                            pid = 3
+                        FB-0:2::0-1:0:1 :
+                            $id = "FB-0:2::0-1:0:1"
+                            init = "AUT"
+                        FB-0:2::0-1:0:2 :
+                            $id = "FB-0:2::0-1:0:2"
+                            init = "29676"
+                        pid = 4
+                FB-0:2::0-1:0:0 :
+                    $id = "FB-0:2::0-1:0:0"
+                    children :
+                        0 = "FB-0:2::0-1:0:0:0"
+                        1 = "FB-0:2::0-1:0:0:1"
+                        2 = "FB-0:2::0-1:0:0:2"
+                        3 = "FB-0:2::0-1:0:0:3"
+                    name = "left"
+                    type = "Field_Entity"
+                    type_name = "GTW.OMP.PAP.Person"
+                    ui_name = "Person"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:0"
+                        cid :
+
+                        FB-0:2::0-1:0:0:0 :
+                            $id = "FB-0:2::0-1:0:0:0"
+                            init = "Tanzer"
+                        FB-0:2::0-1:0:0:1 :
+                            $id = "FB-0:2::0-1:0:0:1"
+                            init = "Laurens"
+                        FB-0:2::0-1:0:0:2 :
+                            $id = "FB-0:2::0-1:0:0:2"
+                        FB-0:2::0-1:0:0:3 :
+                            $id = "FB-0:2::0-1:0:0:3"
+                        pid = 3
+                FB-0:2::0-1:0:0:0 :
+                    $id = "FB-0:2::0-1:0:0:0"
+                    name = "last_name"
+                    type = "Field"
+                    ui_name = "Last name"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:0:0"
+                        init = "Tanzer"
+                FB-0:2::0-1:0:0:1 :
+                    $id = "FB-0:2::0-1:0:0:1"
+                    name = "first_name"
+                    type = "Field"
+                    ui_name = "First name"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:0:1"
+                        init = "Laurens"
+                FB-0:2::0-1:0:0:2 :
+                    $id = "FB-0:2::0-1:0:0:2"
+                    name = "middle_name"
+                    type = "Field"
+                    ui_name = "Middle name"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:0:2"
+                FB-0:2::0-1:0:0:3 :
+                    $id = "FB-0:2::0-1:0:0:3"
+                    name = "title"
+                    type = "Field"
+                    ui_name = "Academic title"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:0:3"
+                FB-0:2::0-1:0:1 :
+                    $id = "FB-0:2::0-1:0:1"
+                    name = "nation"
+                    type = "Field"
+                    ui_name = "Nation"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:1"
+                        init = "AUT"
+                FB-0:2::0-1:0:2 :
+                    $id = "FB-0:2::0-1:0:2"
+                    name = "mna_number"
+                    type = "Field"
+                    ui_name = "Mna number"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-1:0:2"
+                        init = "29676"
+                FB-0:2::0-2 :
+                    $id = "FB-0:2::0-2"
+                    children :
+                        0 = "FB-0:2::0-2:0"
+                        1 = "FB-0:2::0-2:1"
+                    collapsed = true
+                    name = "optional"
+                    type = "Fieldset"
+                    function update(dict)
+                FB-0:2::0-2:0 :
+                    $id = "FB-0:2::0-2:0"
+                    name = "place"
+                    type = "Field"
+                    ui_name = "Place"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-2:0"
+                FB-0:2::0-2:1 :
+                    $id = "FB-0:2::0-2:1"
+                    name = "points"
+                    type = "Field"
+                    ui_name = "Points"
+                    function update(dict)
+                    value :
+                        $id = "FB-0:2::0-2:1"
+            function update(dict)
+        Form : function constructor()
+        function update(dict)
+    author = "christian.tanzer@swing.co.at"
+    Class : function constructor()
+    copyright = "Copyright (C) 2011 Christian Tanzer"
+    inspect :
+        function filter_function(name, obj)
+        function filter_not_function(name, obj)
+        function filter_object(name, obj)
+        function filter_own(name, obj)
+        function items(obj, filter)
+        function key_cmp(l, r)
+        function keys(obj, filter)
+        function show(obj, filter, level, top_filter)
+        function update(dict)
+        function values(obj, filter)
+    function jsonify(thing)
+    license = "Dual licensed under the MIT or AGPLv3 licenses."
+    license_url = "http://www.c-tanzer.at/license/mit_or_agpl.html"
+    function Module(dict)
+    function update(dict)
+    version = "1.0"

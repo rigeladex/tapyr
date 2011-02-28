@@ -303,7 +303,6 @@ class Form (_Element_List_) :
     """Model a AJAX-enhanced form."""
 
     id_sep      = _Element_List_.root_sep
-    needs_value = True
     Table       = {}
 
     def __init__ (self, id, children, ** kw) :

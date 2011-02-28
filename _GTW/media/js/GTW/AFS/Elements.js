@@ -20,6 +20,8 @@
 //    31-Jan-2011 (CT) Creation continued..
 //     6-Feb-2011 (CT) Creation continued...
 //    24-Feb-2011 (CT) Creation continued....
+//    28-Feb-2011 (CT) Creation continued.....
+//                     `setup_value` revamped
 //    ««revision-date»»···
 //--
 
@@ -61,33 +63,42 @@
                   Elements.id_map [this.$id] = this;
               }
           }
-        , setup_value : function setup_value () {
-              var i, l, v, child, $id;
-              var value = this.value;
-              // XXX  rewrite XXX
+        , child : function child (i) {
+            return Elements.id_map [this.children [i]];
+          }
+        , setup_value : function setup_value (root, anchor) {
+              var i, l, child, has_value;
+              var new_anchor = anchor, new_root = root;
+              has_value = this ["value"] !== undefined;
+              if (has_value) {
+                  this.value.$id = this.$id;
+                  if (this.constructor.is_anchor) {
+                      new_anchor = this;
+                  }
+                  if (this.constructor.is_root) {
+                      new_root   = this;
+                      this.value ["$anchor_id"] = anchor.$id;
+                  } else {
+                      anchor.value [this.$id] = this.value;
+                  }
+              }
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
-                      child = Elements.id_map [this.children [i]];
-                      $id   = child ["$id"];
-                      if ($id !== undefined) {
-                          v = value [$id];
-                          if (v !== undefined) {
-                              child.setup_value (v);
-                          }
-                      }
+                      child = this.child (i);
+                      child.setup_value (new_root, new_anchor);
                   }
               }
           }
         }
-      , { type_name : "Element" }
+      , { is_anchor : false, is_root : false, type_name : "Element" }
     );
     var Entity = Element.extend (
         {}
-      , { type_name : "Entity" }
+      , { is_anchor : true, is_root : true, type_name : "Entity" }
     );
     var Entity_Link = Element.extend (
         {}
-      , { type_name : "Entity_Link" }
+      , { is_anchor : true, is_root : true, type_name : "Entity_Link" }
     );
     var Entity_List = Element.extend (
         {}
@@ -99,11 +110,11 @@
     );
     var Field_Composite = Element.extend (
         {}
-      , { type_name : "Field_Composite" }
+      , { is_anchor : true, type_name : "Field_Composite" }
     );
     var Field_Entity = Element.extend (
         {}
-      , { type_name : "Field_Entity" }
+      , { is_anchor : true, type_name : "Field_Entity" }
     );
     var Fieldset = Element.extend (
         {}
@@ -111,8 +122,17 @@
     );
     var Form = Element.extend (
         { init : function init (spec) {
-              this._super       (spec);
-              this.setup_values ();
+              this._super      (spec);
+              this.setup_value ();
+          }
+        , setup_value : function setup_value () {
+              var i, l, child;
+              if (this ["children"] !== undefined) {
+                  for (i = 0, l = this.children.length; i < l; i += 1) {
+                      child = this.child (i);
+                      child.setup_value (child, child);
+                  }
+              }
           }
         }
       , { type_name : "Form" }
