@@ -47,6 +47,7 @@
 #    27-Feb-2011 (CT) `as_json` moved to `GTW.AFS.Instance`, `as_json_cargo`
 #                     changed to not include `children`
 #    27-Feb-2011 (CT) `Entity_List.new_child` factored
+#    28-Feb-2011 (CT) `needs_value` added
 #    ««revision-date»»···
 #--
 
@@ -64,11 +65,12 @@ import json
 class _Element_ (TFL.Meta.Object) :
     """Base class for AFS element classes."""
 
-    children = ()
-    id_sep   = "."
-    list_sep = "::"
-    root_sep = "-"
-    _id      = None
+    children    = ()
+    id_sep      = "."
+    list_sep    = "::"
+    needs_value = False
+    root_sep    = "-"
+    _id         = None
 
     def __init__ (self, ** kw) :
         self.pop_to_self  (kw, "id", "id_sep")
@@ -192,7 +194,8 @@ class _Element_List_ (_Element_) :
 class Entity (_Element_) :
     """Model a sub-form for a single entity."""
 
-    id_sep = ":"
+    id_sep      = ":"
+    needs_value = True
 
     def __init__ (self, type_name, ** kw) :
         self.__super.__init__ (type_name = type_name, ** kw)
@@ -280,6 +283,8 @@ class Entity_List (_Element_List_) :
 class Field (_Element_) :
     """Model a field of an AJAX-enhanced form."""
 
+    needs_value = True
+
     def __init__ (self, name, ** kw) :
         self.pop_to_self      (kw, "description", "explanation")
         self.__super.__init__ (name = name, ** kw)
@@ -307,8 +312,9 @@ class Fieldset (_Element_) :
 class Form (_Element_List_) :
     """Model a AJAX-enhanced form."""
 
-    id_sep = _Element_List_.root_sep
-    Table  = {}
+    id_sep      = _Element_List_.root_sep
+    needs_value = True
+    Table       = {}
 
     def __init__ (self, id, children, ** kw) :
         self.id_map = {}

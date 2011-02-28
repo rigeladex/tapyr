@@ -29,6 +29,7 @@
 #    25-Feb-2011 (CT) Creation
 #    27-Feb-2011 (CT) Re-Creation (combine static and dynamic properties into
 #                     a single object per form element)
+#    28-Feb-2011 (CT) `needs_value` added
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,7 @@ class Instance (TFL.Meta.Object) :
         result.update (self.kw)
         if self.children :
             result ["children"] = [c.as_json_cargo for c in self.children]
-        if self.value :
+        if self.value or self.elem.needs_value :
             result ["value"]    = self.value
         return result
     # end def as_json_cargo

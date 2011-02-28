@@ -31,6 +31,7 @@
 #    24-Feb-2011 (CT) Creation
 #    25-Feb-2011 (CT) `Look_Ahead_Gen` used to compact output for
 #                     single-element structures
+#    28-Feb-2011 (CT) More output compaction (`nl_r`)
 #    ««revision-date»»···
 #--
 
@@ -46,10 +47,10 @@ class Formatter (TFL.Meta.Object) :
     """Provide callable to convert python data structures to a nicely formatted
        string.
 
-    >>> thing = ["abc", "ced", {1: "abc", 2: "xyz", 0: (42, 137)}]
+    >>> thing = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, 137)}]
     >>> print formatted (thing)
     [ 'abc'
-    , 'ced'
+    , 'dfg'
     , { 0 :
           ( 42
           , 137
@@ -61,7 +62,7 @@ class Formatter (TFL.Meta.Object) :
     >>> thing.append (thing)
     >>> print formatted (thing)
     [ 'abc'
-    , 'ced'
+    , 'dfg'
     , { 0 :
           ( 42
           , 137
@@ -82,17 +83,21 @@ class Formatter (TFL.Meta.Object) :
         return "\n".join (self.format_iter (thing, level, seen, leader))
     # end def __call__
 
-    def format_iter (self, thing, level = 0, seen = None, leader = "") :
+    def format_iter (self, thing, level = 0, seen = None, leader = "", nl_r = False) :
         if seen is None :
             seen = set ()
         tid  = id (thing)
         wd   = self.width
         ws   = " " * self.indent * level
         f, a = self.formatter (thing)
-        if getattr (f, "recurses", 0) and tid in seen :
+        recurses = getattr (f, "recurses", False)
+        if recurses and tid in seen :
             yield "%s<Recursion on %s...>" % (leader, thing.__class__.__name__)
         else :
             seen.add (tid)
+            if recurses and nl_r and leader :
+                yield leader.rstrip ()
+                leader = ""
             for l in f (thing, level, seen, ws, leader, * a) :
                 yield l [:wd]
     # end def format_iter
@@ -116,22 +121,22 @@ class Formatter (TFL.Meta.Object) :
     def _format_dict (self, thing, level, seen, ws, leader) :
         sep = "{"
         if thing :
-            head = leader
+            head = leader or ws
             tail = "}" if len (thing) == 1 else ""
             for k, v in sorted (thing.iteritems ()) :
-                vl = "%s%s %r : " % (ws, sep, k)
+                vl = "%s%s %r : " % (head, sep, k)
+                v2 = "%s%s %r : " % (ws,   sep, k)
                 it = TFL.Look_Ahead_Gen \
-                    (self.format_iter (v, level + 2, seen, vl))
+                    (self.format_iter (v, level + 2, seen, vl, True))
                 for l in it :
                     if tail and it.is_finished :
-                        yield "%s%s %s" % (head, l.lstrip (), tail)
+                        yield "%s%s %s" % (ws, l.lstrip (), tail)
                         return
-                    elif head :
-                        yield head.rstrip ()
-                        head = ""
-                    tail = ""
                     yield l
-                sep = ","
+                    tail = ""
+                    vl   = v2
+                head = ws
+                sep  = ","
             yield "%s}" % (ws, )
         else :
             yield "%s{}" % (leader or ws, )
