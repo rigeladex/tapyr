@@ -116,7 +116,7 @@ var f = new $GTW.AFS.Form (
                                         , 'type_name' : 'GTW.OMP.SRM.Regatta_Event'
                                         , 'ui_name' : 'Event'
                                         , 'value' :
-                                            { 'cid' : null
+                                            { 'cid' : 5
                                             , 'pid' : 5
                                             }
                                         }
@@ -126,7 +126,7 @@ var f = new $GTW.AFS.Form (
                                   , 'type_name' : 'GTW.OMP.SRM.Regatta'
                                   , 'ui_name' : 'Regatta'
                                   , 'value' :
-                                      { 'cid' : null
+                                      { 'cid' : 6
                                       , 'pid' : 6
                                       }
                                   }
@@ -175,7 +175,7 @@ var f = new $GTW.AFS.Form (
                                         , 'type_name' : 'GTW.OMP.PAP.Person'
                                         , 'ui_name' : 'Person'
                                         , 'value' :
-                                            { 'cid' : null
+                                            { 'cid' : 3
                                             , 'pid' : 3
                                             }
                                         }
@@ -199,7 +199,7 @@ var f = new $GTW.AFS.Form (
                                   , 'type_name' : 'GTW.OMP.SRM.Sailor'
                                   , 'ui_name' : 'Skipper'
                                   , 'value' :
-                                      { 'cid' : null
+                                      { 'cid' : 4
                                       , 'pid' : 4
                                       }
                                   }
@@ -235,7 +235,7 @@ var f = new $GTW.AFS.Form (
                       , 'type' : 'Entity_Link'
                       , 'type_name' : 'GTW.OMP.SRM.Boat_in_Regatta'
                       , 'value' :
-                          { 'cid' : null
+                          { 'cid' : 7
                           , 'pid' : 7
                           }
                       }
@@ -247,7 +247,7 @@ var f = new $GTW.AFS.Form (
           , 'type' : 'Entity'
           , 'type_name' : 'GTW.OMP.SRM.Boat'
           , 'value' :
-              { 'cid' : null
+              { 'cid' : 2
               , 'pid' : 2
               }
           }
