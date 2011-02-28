@@ -71,9 +71,9 @@
               var new_anchor = anchor, new_root = root;
               has_value = this ["value"] !== undefined;
               if (has_value) {
-                  this.value.$id = this.$id;
                   if (this.constructor.is_anchor) {
                       new_anchor = this;
+                      this.value.$id = this.$id;
                   }
                   if (this.constructor.is_root) {
                       new_root   = this;

@@ -262,3 +262,5 @@ print ("FB-0 values :\n" + $GTW.inspect.show (e.value, undefined, 1));
 print ("FB-0:2::0 values :\n" + $GTW.inspect.show (l.value, undefined, 1));
 
 print ("$GTW :\n" + $GTW.inspect.show ($GTW, undefined, 1));
+
+print ($GTW.jsonify (l.value));

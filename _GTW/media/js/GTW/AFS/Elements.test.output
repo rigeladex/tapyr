@@ -8,17 +8,14 @@ FB-0 values :
         cid :
 
         FB-0:0:0:0 :
-            $id = "FB-0:0:0:0"
             init = "Optimist"
         pid = 1
     FB-0:0:1 :
-        $id = "FB-0:0:1"
         init = "AUT"
     FB-0:0:2 :
-        $id = "FB-0:0:2"
         init = "1107"
     FB-0:1:0 :
-        $id = "FB-0:1:0"
+
     pid = 2
 FB-0:2::0 values :
     $anchor_id = "FB-0"
@@ -36,13 +33,10 @@ FB-0:2::0 values :
             FB-0:2::0-0:0:0:0 :
                 $id = "FB-0:2::0-0:0:0:0"
                 FB-0:2::0-0:0:0:0.0 :
-                    $id = "FB-0:2::0-0:0:0:0.0"
                     init = "2008/05/01"
                 FB-0:2::0-0:0:0:0.1 :
-                    $id = "FB-0:2::0-0:0:0:0.1"
                     init = "2008/05/01"
             FB-0:2::0-0:0:0:1 :
-                $id = "FB-0:2::0-0:0:0:1"
                 init = "Himmelfahrt"
             pid = 5
         pid = 6
@@ -55,27 +49,23 @@ FB-0:2::0 values :
             cid :
 
             FB-0:2::0-1:0:0:0 :
-                $id = "FB-0:2::0-1:0:0:0"
                 init = "Tanzer"
             FB-0:2::0-1:0:0:1 :
-                $id = "FB-0:2::0-1:0:0:1"
                 init = "Laurens"
             FB-0:2::0-1:0:0:2 :
-                $id = "FB-0:2::0-1:0:0:2"
+
             FB-0:2::0-1:0:0:3 :
-                $id = "FB-0:2::0-1:0:0:3"
+
             pid = 3
         FB-0:2::0-1:0:1 :
-            $id = "FB-0:2::0-1:0:1"
             init = "AUT"
         FB-0:2::0-1:0:2 :
-            $id = "FB-0:2::0-1:0:2"
             init = "29676"
         pid = 4
     FB-0:2::0-2:0 :
-        $id = "FB-0:2::0-2:0"
+
     FB-0:2::0-2:1 :
-        $id = "FB-0:2::0-2:1"
+
     pid = 7
 $GTW :
     AFS :
@@ -117,17 +107,14 @@ $GTW :
                             cid :
 
                             FB-0:0:0:0 :
-                                $id = "FB-0:0:0:0"
                                 init = "Optimist"
                             pid = 1
                         FB-0:0:1 :
-                            $id = "FB-0:0:1"
                             init = "AUT"
                         FB-0:0:2 :
-                            $id = "FB-0:0:2"
                             init = "1107"
                         FB-0:1:0 :
-                            $id = "FB-0:1:0"
+
                         pid = 2
                 FB-0:0 :
                     $id = "FB-0:0"
@@ -153,7 +140,6 @@ $GTW :
                         cid :
 
                         FB-0:0:0:0 :
-                            $id = "FB-0:0:0:0"
                             init = "Optimist"
                         pid = 1
                 FB-0:0:0:0 :
@@ -163,7 +149,6 @@ $GTW :
                     ui_name = "Name"
                     function update(dict)
                     value :
-                        $id = "FB-0:0:0:0"
                         init = "Optimist"
                 FB-0:0:1 :
                     $id = "FB-0:0:1"
@@ -172,7 +157,6 @@ $GTW :
                     ui_name = "Nation"
                     function update(dict)
                     value :
-                        $id = "FB-0:0:1"
                         init = "AUT"
                 FB-0:0:2 :
                     $id = "FB-0:0:2"
@@ -181,7 +165,6 @@ $GTW :
                     ui_name = "Sail number"
                     function update(dict)
                     value :
-                        $id = "FB-0:0:2"
                         init = "1107"
                 FB-0:1 :
                     $id = "FB-0:1"
@@ -198,7 +181,7 @@ $GTW :
                     ui_name = "Name"
                     function update(dict)
                     value :
-                        $id = "FB-0:1:0"
+
                 FB-0:2 :
                     $id = "FB-0:2"
                     children :
@@ -232,13 +215,10 @@ $GTW :
                                 FB-0:2::0-0:0:0:0 :
                                     $id = "FB-0:2::0-0:0:0:0"
                                     FB-0:2::0-0:0:0:0.0 :
-                                        $id = "FB-0:2::0-0:0:0:0.0"
                                         init = "2008/05/01"
                                     FB-0:2::0-0:0:0:0.1 :
-                                        $id = "FB-0:2::0-0:0:0:0.1"
                                         init = "2008/05/01"
                                 FB-0:2::0-0:0:0:1 :
-                                    $id = "FB-0:2::0-0:0:0:1"
                                     init = "Himmelfahrt"
                                 pid = 5
                             pid = 6
@@ -251,27 +231,23 @@ $GTW :
                                 cid :
 
                                 FB-0:2::0-1:0:0:0 :
-                                    $id = "FB-0:2::0-1:0:0:0"
                                     init = "Tanzer"
                                 FB-0:2::0-1:0:0:1 :
-                                    $id = "FB-0:2::0-1:0:0:1"
                                     init = "Laurens"
                                 FB-0:2::0-1:0:0:2 :
-                                    $id = "FB-0:2::0-1:0:0:2"
+
                                 FB-0:2::0-1:0:0:3 :
-                                    $id = "FB-0:2::0-1:0:0:3"
+
                                 pid = 3
                             FB-0:2::0-1:0:1 :
-                                $id = "FB-0:2::0-1:0:1"
                                 init = "AUT"
                             FB-0:2::0-1:0:2 :
-                                $id = "FB-0:2::0-1:0:2"
                                 init = "29676"
                             pid = 4
                         FB-0:2::0-2:0 :
-                            $id = "FB-0:2::0-2:0"
+
                         FB-0:2::0-2:1 :
-                            $id = "FB-0:2::0-2:1"
+
                         pid = 7
                 FB-0:2::0-0 :
                     $id = "FB-0:2::0-0"
@@ -301,13 +277,10 @@ $GTW :
                             FB-0:2::0-0:0:0:0 :
                                 $id = "FB-0:2::0-0:0:0:0"
                                 FB-0:2::0-0:0:0:0.0 :
-                                    $id = "FB-0:2::0-0:0:0:0.0"
                                     init = "2008/05/01"
                                 FB-0:2::0-0:0:0:0.1 :
-                                    $id = "FB-0:2::0-0:0:0:0.1"
                                     init = "2008/05/01"
                             FB-0:2::0-0:0:0:1 :
-                                $id = "FB-0:2::0-0:0:0:1"
                                 init = "Himmelfahrt"
                             pid = 5
                         pid = 6
@@ -328,13 +301,10 @@ $GTW :
                         FB-0:2::0-0:0:0:0 :
                             $id = "FB-0:2::0-0:0:0:0"
                             FB-0:2::0-0:0:0:0.0 :
-                                $id = "FB-0:2::0-0:0:0:0.0"
                                 init = "2008/05/01"
                             FB-0:2::0-0:0:0:0.1 :
-                                $id = "FB-0:2::0-0:0:0:0.1"
                                 init = "2008/05/01"
                         FB-0:2::0-0:0:0:1 :
-                            $id = "FB-0:2::0-0:0:0:1"
                             init = "Himmelfahrt"
                         pid = 5
                 FB-0:2::0-0:0:0:0 :
@@ -350,10 +320,8 @@ $GTW :
                     value :
                         $id = "FB-0:2::0-0:0:0:0"
                         FB-0:2::0-0:0:0:0.0 :
-                            $id = "FB-0:2::0-0:0:0:0.0"
                             init = "2008/05/01"
                         FB-0:2::0-0:0:0:0.1 :
-                            $id = "FB-0:2::0-0:0:0:0.1"
                             init = "2008/05/01"
                 FB-0:2::0-0:0:0:0.0 :
                     $id = "FB-0:2::0-0:0:0:0.0"
@@ -362,7 +330,6 @@ $GTW :
                     ui_name = "Start"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-0:0:0:0.0"
                         init = "2008/05/01"
                 FB-0:2::0-0:0:0:0.1 :
                     $id = "FB-0:2::0-0:0:0:0.1"
@@ -371,7 +338,6 @@ $GTW :
                     ui_name = "Finish"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-0:0:0:0.1"
                         init = "2008/05/01"
                 FB-0:2::0-0:0:0:1 :
                     $id = "FB-0:2::0-0:0:0:1"
@@ -380,7 +346,6 @@ $GTW :
                     ui_name = "Name"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-0:0:0:1"
                         init = "Himmelfahrt"
                 FB-0:2::0-1 :
                     $id = "FB-0:2::0-1"
@@ -410,21 +375,17 @@ $GTW :
                             cid :
 
                             FB-0:2::0-1:0:0:0 :
-                                $id = "FB-0:2::0-1:0:0:0"
                                 init = "Tanzer"
                             FB-0:2::0-1:0:0:1 :
-                                $id = "FB-0:2::0-1:0:0:1"
                                 init = "Laurens"
                             FB-0:2::0-1:0:0:2 :
-                                $id = "FB-0:2::0-1:0:0:2"
+
                             FB-0:2::0-1:0:0:3 :
-                                $id = "FB-0:2::0-1:0:0:3"
+
                             pid = 3
                         FB-0:2::0-1:0:1 :
-                            $id = "FB-0:2::0-1:0:1"
                             init = "AUT"
                         FB-0:2::0-1:0:2 :
-                            $id = "FB-0:2::0-1:0:2"
                             init = "29676"
                         pid = 4
                 FB-0:2::0-1:0:0 :
@@ -444,15 +405,13 @@ $GTW :
                         cid :
 
                         FB-0:2::0-1:0:0:0 :
-                            $id = "FB-0:2::0-1:0:0:0"
                             init = "Tanzer"
                         FB-0:2::0-1:0:0:1 :
-                            $id = "FB-0:2::0-1:0:0:1"
                             init = "Laurens"
                         FB-0:2::0-1:0:0:2 :
-                            $id = "FB-0:2::0-1:0:0:2"
+
                         FB-0:2::0-1:0:0:3 :
-                            $id = "FB-0:2::0-1:0:0:3"
+
                         pid = 3
                 FB-0:2::0-1:0:0:0 :
                     $id = "FB-0:2::0-1:0:0:0"
@@ -461,7 +420,6 @@ $GTW :
                     ui_name = "Last name"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-1:0:0:0"
                         init = "Tanzer"
                 FB-0:2::0-1:0:0:1 :
                     $id = "FB-0:2::0-1:0:0:1"
@@ -470,7 +428,6 @@ $GTW :
                     ui_name = "First name"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-1:0:0:1"
                         init = "Laurens"
                 FB-0:2::0-1:0:0:2 :
                     $id = "FB-0:2::0-1:0:0:2"
@@ -479,7 +436,7 @@ $GTW :
                     ui_name = "Middle name"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-1:0:0:2"
+
                 FB-0:2::0-1:0:0:3 :
                     $id = "FB-0:2::0-1:0:0:3"
                     name = "title"
@@ -487,7 +444,7 @@ $GTW :
                     ui_name = "Academic title"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-1:0:0:3"
+
                 FB-0:2::0-1:0:1 :
                     $id = "FB-0:2::0-1:0:1"
                     name = "nation"
@@ -495,7 +452,6 @@ $GTW :
                     ui_name = "Nation"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-1:0:1"
                         init = "AUT"
                 FB-0:2::0-1:0:2 :
                     $id = "FB-0:2::0-1:0:2"
@@ -504,7 +460,6 @@ $GTW :
                     ui_name = "Mna number"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-1:0:2"
                         init = "29676"
                 FB-0:2::0-2 :
                     $id = "FB-0:2::0-2"
@@ -522,7 +477,7 @@ $GTW :
                     ui_name = "Place"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-2:0"
+
                 FB-0:2::0-2:1 :
                     $id = "FB-0:2::0-2:1"
                     name = "points"
@@ -530,7 +485,7 @@ $GTW :
                     ui_name = "Points"
                     function update(dict)
                     value :
-                        $id = "FB-0:2::0-2:1"
+
             function update(dict)
         Form : function constructor()
         function update(dict)
@@ -554,3 +509,4 @@ $GTW :
     function Module(dict)
     function update(dict)
     version = "1.0"
+{"cid":null,"pid":7,"$id":"FB-0:2::0","$anchor_id":"FB-0","FB-0:2::0-0:0":{"cid":null,"pid":6,"$id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0":{"cid":null,"pid":5,"$id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"cid":null,"pid":4,"$id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0":{"cid":null,"pid":3,"$id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}
