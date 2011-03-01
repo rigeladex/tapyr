@@ -275,9 +275,18 @@ var f = new $GTW.AFS.Form (
 
 var e = $GTW.AFS.Elements.id_map ["FB-0"];
 var l = $GTW.AFS.Elements.id_map ["FB-0:2::0"];
-print ("FB-0 values :\n" + $GTW.inspect.show (e.value, undefined, 1));
-print ("FB-0:2::0 values :\n" + $GTW.inspect.show (l.value, undefined, 1));
+print ("FB-0 value :\n"      + $GTW.inspect.show (e.value, undefined, 1));
+print ("FB-0:2::0 value :\n" + $GTW.inspect.show (l.value, undefined, 1));
+print ("Form values :\n"     + $GTW.inspect.show (f.packed_values (), undefined, 1));
 
 print ("$GTW :\n" + $GTW.inspect.show ($GTW, undefined, 1));
 
-print ($GTW.jsonify (l.value));
+print ("FB-0:2::0 value jsonified :\n  " + $GTW.jsonify (l.value));
+print ("Form values jsonified :\n  " + $GTW.jsonify (f.packed_values ()));
+
+var x = f.get ("FB-0:2::0-1:0:0:2");
+x.value.user = "William";
+print ("Form values after change:\n" + $GTW.inspect.show (f.packed_values (), undefined, 1));
+print ("Form values jsonified :\n  " + $GTW.jsonify (f.packed_values ()));
+
+// __END__ Elements.test

@@ -561,13 +561,19 @@ _test_code = """
     <Field FB-0:2::0-2:0 'place'> []
     <Field FB-0:2::0-2:1 'points'> []
 
+    >>> v = Value.from_json (json_data)
+    >>> v.changes
+
 """
 
 from   _GTW.__test__.model      import *
 from   _GTW._AFS._MOM.Element   import Form
+from   _GTW._AFS.Value          import Value
 
 from   _TFL.Formatter      import Formatter
 formatted = Formatter (width = 240)
+
+json_data = """{"$id":"FB","$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"user":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}"""
 
 __test__ = dict (AFS_Spec = _test_code)
 

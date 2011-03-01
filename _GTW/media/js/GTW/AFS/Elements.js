@@ -22,7 +22,9 @@
 //    24-Feb-2011 (CT) Creation continued....
 //    28-Feb-2011 (CT) Creation continued.....
 //                     `setup_value` revamped
-//     1-Mar-2011 (CT) Creation continued...... (`$anchor_id` setting changed)
+//     1-Mar-2011 (CT) Creation continued......
+//                     * `$anchor_id` setting changed
+//                     * `packed_values` added
 //    ««revision-date»»···
 //--
 
@@ -67,20 +69,23 @@
         , child : function child (i) {
             return Elements.id_map [this.children [i]];
           }
-        , setup_value : function setup_value (root, anchor) {
+        , setup_value : function setup_value (root, anchor, roots) {
               var i, l, child, has_value;
               var new_anchor = anchor, new_root = root;
               has_value = this ["value"] !== undefined;
               if (has_value) {
-                  if (this.constructor.is_anchor) {
+                  if (this.constructor.is_anchor || this.constructor.is_root) {
                       new_anchor = this;
                       this.value.$id = this.$id;
                       this.value.$child_ids = [];
+                  }
+                  if (this.constructor.is_anchor) {
                       if (this.$id !== anchor.$id) {
                           this.value ["$anchor_id"] = anchor.$id;
                       }
                   }
                   if (this.constructor.is_root) {
+                      roots.push (this);
                       new_root   = this;
                   } else {
                       anchor.value [this.$id] = this.value;
@@ -93,7 +98,7 @@
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = this.child (i);
-                      child.setup_value (new_root, new_anchor);
+                      child.setup_value (new_root, new_anchor, roots);
                   }
               }
           }
@@ -106,7 +111,7 @@
     );
     var Entity_Link = Element.extend (
         {}
-      , { is_anchor : true, is_root : true, type_name : "Entity_Link" }
+      , { is_root : true, type_name : "Entity_Link" }
     );
     var Entity_List = Element.extend (
         {}
@@ -130,21 +135,44 @@
     );
     var Form = Element.extend (
         { init : function init (spec) {
+              Elements.root = this;
               this._super      (spec);
               this.setup_value ();
+          }
+        , get : function get (id) {
+              return Elements.id_map [id];
+          }
+        , packed_values : function packed_values (args) {
+              var i, l, child;
+              var form     = this;
+              var entities = args || form.roots;
+              var result   =
+                  { $id        : form.$id
+                  , $child_ids : []
+                  };
+              for (i = 0, l = entities.length; i < l; i += 1) {
+                  child = entities [i];
+                  result [child.$id] = child.value;
+                  result.$child_ids.push (child.$id);
+              }
+              return result;
           }
         , setup_value : function setup_value () {
               var i, l, child;
               if (this ["children"] !== undefined) {
+                  this.roots = [];
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = this.child (i);
-                      child.setup_value (child, child);
+                      child.setup_value (child, child, this.roots);
                   }
               }
           }
         }
       , { type_name : "Form" }
     )
+    var get = function get (id) {
+        return Elements.id_map [id];
+    };
     Elements = new $GTW.Module (
         { create                : create
         , Element               : Element
@@ -155,6 +183,7 @@
         , Field_Composite       : Field_Composite
         , Field_Entity          : Field_Entity
         , Fieldset              : Fieldset
+        , get                   : get
         , id_map                : {}
         }
     );
