@@ -6,6 +6,9 @@ to get an interactive Javascript shell with GTW.js and GTW/AFS/Elements.js
 loaded
 
 */
+// Define aliases to allow direct pasting from Python doctest
+var False = false, True = true;
+
 load ("GTW.js")
 load ("GTW/AFS/Elements.js")
 load ("GTW/inspect.js")
@@ -32,8 +35,10 @@ var f = new $GTW.AFS.Form (
                       , 'type_name' : 'GTW.OMP.SRM.Boat_Class'
                       , 'ui_name' : 'Class'
                       , 'value' :
-                          { 'cid' : null
-                          , 'pid' : 1
+                          { 'init' :
+                              { 'cid' : 1
+                              , 'pid' : 1
+                              }
                           }
                       }
                     , { '$id' : 'FB-0:0:1'
@@ -51,7 +56,7 @@ var f = new $GTW.AFS.Form (
                           { 'init' : '1107' }
                       }
                     ]
-                , 'collapsed' : false
+                , 'collapsed' : False
                 , 'name' : 'primary'
                 , 'type' : 'Fieldset'
                 }
@@ -65,7 +70,7 @@ var f = new $GTW.AFS.Form (
                           {}
                       }
                     ]
-                , 'collapsed' : true
+                , 'collapsed' : True
                 , 'name' : 'optional'
                 , 'type' : 'Fieldset'
                 }
@@ -116,8 +121,10 @@ var f = new $GTW.AFS.Form (
                                         , 'type_name' : 'GTW.OMP.SRM.Regatta_Event'
                                         , 'ui_name' : 'Event'
                                         , 'value' :
-                                            { 'cid' : 5
-                                            , 'pid' : 5
+                                            { 'init' :
+                                                { 'cid' : 5
+                                                , 'pid' : 5
+                                                }
                                             }
                                         }
                                       ]
@@ -126,12 +133,14 @@ var f = new $GTW.AFS.Form (
                                   , 'type_name' : 'GTW.OMP.SRM.Regatta'
                                   , 'ui_name' : 'Regatta'
                                   , 'value' :
-                                      { 'cid' : 6
-                                      , 'pid' : 6
+                                      { 'init' :
+                                          { 'cid' : 6
+                                          , 'pid' : 6
+                                          }
                                       }
                                   }
                                 ]
-                            , 'collapsed' : false
+                            , 'collapsed' : False
                             , 'name' : 'primary'
                             , 'type' : 'Fieldset'
                             }
@@ -175,8 +184,10 @@ var f = new $GTW.AFS.Form (
                                         , 'type_name' : 'GTW.OMP.PAP.Person'
                                         , 'ui_name' : 'Person'
                                         , 'value' :
-                                            { 'cid' : 3
-                                            , 'pid' : 3
+                                            { 'init' :
+                                                { 'cid' : 3
+                                                , 'pid' : 3
+                                                }
                                             }
                                         }
                                       , { '$id' : 'FB-0:2::0-1:0:1'
@@ -199,12 +210,14 @@ var f = new $GTW.AFS.Form (
                                   , 'type_name' : 'GTW.OMP.SRM.Sailor'
                                   , 'ui_name' : 'Skipper'
                                   , 'value' :
-                                      { 'cid' : 4
-                                      , 'pid' : 4
+                                      { 'init' :
+                                          { 'cid' : 4
+                                          , 'pid' : 4
+                                          }
                                       }
                                   }
                                 ]
-                            , 'collapsed' : true
+                            , 'collapsed' : True
                             , 'name' : 'required'
                             , 'type' : 'Fieldset'
                             }
@@ -225,7 +238,7 @@ var f = new $GTW.AFS.Form (
                                       {}
                                   }
                                 ]
-                            , 'collapsed' : true
+                            , 'collapsed' : True
                             , 'name' : 'optional'
                             , 'type' : 'Fieldset'
                             }
@@ -235,8 +248,10 @@ var f = new $GTW.AFS.Form (
                       , 'type' : 'Entity_Link'
                       , 'type_name' : 'GTW.OMP.SRM.Boat_in_Regatta'
                       , 'value' :
-                          { 'cid' : 7
-                          , 'pid' : 7
+                          { 'init' :
+                              { 'cid' : 7
+                              , 'pid' : 7
+                              }
                           }
                       }
                     ]
@@ -247,8 +262,10 @@ var f = new $GTW.AFS.Form (
           , 'type' : 'Entity'
           , 'type_name' : 'GTW.OMP.SRM.Boat'
           , 'value' :
-              { 'cid' : 2
-              , 'pid' : 2
+              { 'init' :
+                  { 'cid' : 2
+                  , 'pid' : 2
+                  }
               }
           }
         ]
