@@ -30,6 +30,7 @@
 #    24-Feb-2011 (CT) Creation continued..
 #    25-Feb-2011 (CT) Creation continued...
 #    27-Feb-2011 (CT) Creation continued....
+#     1-Mar-2011 (CT) Creation continued.....
 #    ««revision-date»»···
 #--
 
@@ -49,8 +50,10 @@ class _MOM_Entity_ (Entity) :
                 "%s <-> %r" % (ETM, entity)
         result = self.__super._data (ETM, entity, ** kw)
         result ["value"].update \
-            ( cid = getattr (entity, "last_cid", None)
-            , pid = getattr (entity, "pid",      None)
+            ( init = dict
+                ( cid = getattr (entity, "last_cid", None)
+                , pid = getattr (entity, "pid",      None)
+                )
             )
         return result
     # end def _data
