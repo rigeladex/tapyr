@@ -30,6 +30,7 @@
 #    27-Feb-2011 (CT) Re-Creation (combine static and dynamic properties into
 #                     a single object per form element)
 #    28-Feb-2011 (CT) `needs_value` added
+#     1-Mar-2011 (CT) `_Base_` factored
 #    ««revision-date»»···
 #--
 
@@ -43,7 +44,18 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 import json
 
-class Instance (TFL.Meta.Object) :
+class _Base_ (TFL.Meta.Object) :
+
+    def transitive_iter (self) :
+        yield self
+        for c in self.children :
+            for x in c.transitive_iter () :
+                yield x
+    # end def transitive_iter
+
+# end class _Base_
+
+class Instance (_Base_) :
     """Model an instance of an AFS form element."""
 
     children = ()
@@ -75,13 +87,6 @@ class Instance (TFL.Meta.Object) :
             result ["value"]    = self.value
         return result
     # end def as_json_cargo
-
-    def transitive_iter (self) :
-        yield self
-        for c in self.children :
-            for x in c.transitive_iter () :
-                yield x
-    # end def transitive_iter
 
 # end class Instance
 

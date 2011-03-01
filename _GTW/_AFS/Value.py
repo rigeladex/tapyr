@@ -34,24 +34,26 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._AFS.Element
+from   _GTW._AFS.Instance       import _Base_
 
-import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
 import json
 
-class Value (TFL.Meta.Object) :
+class Value (_Base_) :
     """Model the value of an AFS form element."""
 
+    anchor_id = None
+    init      = ""
+    _user     = None
+
     def __init__ (self, form, id, json_cargo) :
-        self.form        = form
-        self.id          = id
-        self.jc          = json_cargo
-        self.anchor_id   = json_cargo.get ("$anchor_id")
-        self.init = init = json_cargo.get ("init", "")
-        self.user        = json_cargo.get ("user", init)
-        self.elem        = form [id]
-        self.children    = children = []
+        self.form     = form
+        self.id       = id
+        self.jc       = json_cargo
+        self.elem     = form [id]
+        self.children = children = []
+        self.pop_to_self (json_cargo, "$anchor_id", "init", "user")
         for c_id in sorted (json_cargo.get ("$child_ids", ())) :
             children.append (self.__class__ (form, c_id, json_cargo [c_id]))
     # end def __init__
@@ -68,6 +70,34 @@ class Value (TFL.Meta.Object) :
     def changes (self) :
         return (self.init != self.user) + sum (c.changes for c in self.children)
     # end def changes
+
+    @property
+    def user (self) :
+        return self._user or self.init
+    # end def user
+
+    @user.setter
+    def user (self, value) :
+        self._user = value
+    # end def user
+
+    def _v_repr (self, v, name) :
+        if isinstance (v, dict) :
+            result = "%r" % (sorted (v.iteritems ()), )
+        else :
+            result = "%r" % (v, )
+            if result.startswith (("u'", 'u"')) :
+                result = result [1:]
+        return "%s-v = %s" % (name, result)
+    # end def _v_repr
+
+    def __str__ (self) :
+        result = [str (self.elem), self._v_repr (self.init, "init")]
+        if self.init != self.user :
+            result.append (self._v_repr (self.user, "user"))
+        result.append (str (self.changes))
+        return " ".join (result)
+    # end def __str__
 
 # end class Value
 

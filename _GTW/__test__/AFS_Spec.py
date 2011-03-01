@@ -265,7 +265,8 @@ _test_code = """
     >>> reg = SRM.Regatta_C (rev, boat_class = bc)
     >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
     >>> scope.commit ()
-    >>> fi = fb (SRM.Boat, b)
+    >>> fi  = fb (SRM.Boat, b)
+    >>> fic = fb (SRM.Boat, b, copy = True)
     >>> print formatted (fi.as_json_cargo, level = 1)
       { '$id' : 'FB'
       , 'children' :
@@ -561,8 +562,51 @@ _test_code = """
     <Field FB-0:2::0-2:0 'place'> []
     <Field FB-0:2::0-2:1 'points'> []
 
+    >>> for i in fi.transitive_iter () :
+    ...     v = i.value and i.value.get ("init")
+    ...     if isinstance (v, dict) and v.get ("pid") :
+    ...         print i.elem, "pid =", v ["pid"]
+    <Entity FB-0 'GTW.OMP.SRM.Boat'> pid = 2
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> pid = 1
+    <Entity_Link FB-0:2::0 'GTW.OMP.SRM.Boat_in_Regatta'> pid = 7
+    <Field_Entity FB-0:2::0-0:0 'right' 'GTW.OMP.SRM.Regatta'> pid = 6
+    <Field_Entity FB-0:2::0-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> pid = 5
+    <Field_Entity FB-0:2::0-1:0 'skipper' 'GTW.OMP.SRM.Sailor'> pid = 4
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.PAP.Person'> pid = 3
+    >>> for i in fic.transitive_iter () :
+    ...     v = i.value and i.value.get ("init")
+    ...     if isinstance (v, dict) and v.get ("pid") :
+    ...         print i.elem, "pid =", v ["pid"]
+
     >>> v = Value.from_json (json_data)
     >>> v.changes
+    1
+    >>> for i in v.transitive_iter () :
+    ...     print i
+    <Form FB> init-v = '' 1
+    <Entity FB-0 'GTW.OMP.SRM.Boat'> init-v = [(u'cid', 2), (u'pid', 2)] 0
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> init-v = [(u'cid', 1), (u'pid', 1)] 0
+    <Field FB-0:0:0:0 'name'> init-v = 'Optimist' 0
+    <Field FB-0:0:1 'nation'> init-v = 'AUT' 0
+    <Field FB-0:0:2 'sail_number'> init-v = '1107' 0
+    <Field FB-0:1:0 'name'> init-v = '' 0
+    <Entity_Link FB-0:2::p 'GTW.OMP.SRM.Boat_in_Regatta'> init-v = [(u'cid', 7), (u'pid', 7)] 1
+    <Field_Entity FB-0:2::p-0:0 'right' 'GTW.OMP.SRM.Regatta'> init-v = [(u'cid', 6), (u'pid', 6)] 0
+    <Field_Entity FB-0:2::p-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> init-v = [(u'cid', 5), (u'pid', 5)] 0
+    <Field_Composite FB-0:2::p-0:0:0:0 'date' 'MOM.Date_Interval_C'> init-v = '' 0
+    <Field FB-0:2::p-0:0:0:0.0 'start'> init-v = '2008/05/01' 0
+    <Field FB-0:2::p-0:0:0:0.1 'finish'> init-v = '2008/05/01' 0
+    <Field FB-0:2::p-0:0:0:1 'name'> init-v = 'Himmelfahrt' 0
+    <Field_Entity FB-0:2::p-1:0 'skipper' 'GTW.OMP.SRM.Sailor'> init-v = [(u'cid', 4), (u'pid', 4)] 1
+    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.PAP.Person'> init-v = [(u'cid', 3), (u'pid', 3)] 1
+    <Field FB-0:2::p-1:0:0:0 'last_name'> init-v = 'Tanzer' 0
+    <Field FB-0:2::p-1:0:0:1 'first_name'> init-v = 'Laurens' 0
+    <Field FB-0:2::p-1:0:0:2 'middle_name'> init-v = '' user-v = 'William' 1
+    <Field FB-0:2::p-1:0:0:3 'title'> init-v = '' 0
+    <Field FB-0:2::p-1:0:1 'nation'> init-v = 'AUT' 0
+    <Field FB-0:2::p-1:0:2 'mna_number'> init-v = '29676' 0
+    <Field FB-0:2::p-2:0 'place'> init-v = '' 0
+    <Field FB-0:2::p-2:1 'points'> init-v = '' 0
 
 """
 

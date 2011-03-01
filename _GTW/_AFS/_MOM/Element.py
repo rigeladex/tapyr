@@ -31,7 +31,6 @@
 #    25-Feb-2011 (CT) Creation continued...
 #    27-Feb-2011 (CT) Creation continued....
 #     1-Mar-2011 (CT) Creation continued.....
-#     1-Mar-2011 (CT) Creation continued......
 #    ««revision-date»»···
 #--
 
@@ -50,12 +49,14 @@ class _MOM_Entity_ (Entity) :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
         result = self.__super._value (ETM, entity, ** kw)
-        result ["value"].update \
-            ( init = dict
-                ( cid = getattr (entity, "last_cid", None)
-                , pid = getattr (entity, "pid",      None)
+        copy = kw.get ("copy", False)
+        if not copy :
+            result ["value"].update \
+                ( init = dict
+                    ( cid = getattr (entity, "last_cid", None)
+                    , pid = getattr (entity, "pid",      None)
+                    )
                 )
-            )
         return result
     # end def _value
 
@@ -134,7 +135,7 @@ class _MOM_Field_Composite_ (Field_Composite) :
         c_type   = attr.C_Type
         c_entity = getattr (entity, self.name, None)
         for c in self.children :
-            yield c (c_type, c_entity, ** kw.get (self.name, {}))
+            yield c (c_type, c_entity, ** dict (kw, ** kw.get (self.name, {})))
     # end def _call_iter
 
 Field_Composite = _MOM_Field_Composite_ # end class
@@ -148,7 +149,7 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
         attr     = ETM._etype.attributes [self.name]
         a_type   = attr.etype_manager (ETM)
         a_entity = getattr (entity, self.name, None)
-        a_kw     = kw.get (self.name, {})
+        a_kw     = dict (kw, ** kw.get (self.name, {}))
         kw       = dict \
             ( a_kw
             , allow_new = attr.ui_allow_new and a_kw.get ("allow_new", True)
