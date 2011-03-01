@@ -47,7 +47,7 @@ class Instance (TFL.Meta.Object) :
     """Model an instance of an AFS form element."""
 
     children = ()
-    value    = {}
+    value    = None
 
     def __init__ (self, elem, ** kw) :
         self.pop_to_self  (kw, "children", "value")
@@ -71,7 +71,7 @@ class Instance (TFL.Meta.Object) :
         result.update (self.kw)
         if self.children :
             result ["children"] = [c.as_json_cargo for c in self.children]
-        if self.value or self.elem.needs_value :
+        if self.value is not None :
             result ["value"]    = self.value
         return result
     # end def as_json_cargo

@@ -31,6 +31,7 @@
 #    25-Feb-2011 (CT) Creation continued...
 #    27-Feb-2011 (CT) Creation continued....
 #     1-Mar-2011 (CT) Creation continued.....
+#     1-Mar-2011 (CT) Creation continued......
 #    ««revision-date»»···
 #--
 
@@ -42,13 +43,13 @@ class _MOM_Entity_ (Entity) :
 
     _real_name = "Entity"
 
-    def _data (self, ETM, entity, ** kw) :
+    def _value (self, ETM, entity, ** kw) :
         assert ETM.type_name == self.type_name, \
              "%s <-> %s" % (ETM.type_name, self.type_name)
         if entity is not None :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
-        result = self.__super._data (ETM, entity, ** kw)
+        result = self.__super._value (ETM, entity, ** kw)
         result ["value"].update \
             ( init = dict
                 ( cid = getattr (entity, "last_cid", None)
@@ -56,7 +57,7 @@ class _MOM_Entity_ (Entity) :
                 )
             )
         return result
-    # end def _data
+    # end def _value
 
 Entity = _MOM_Entity_ # end class
 
@@ -108,18 +109,18 @@ class _MOM_Field_ (Field) :
 
     _real_name = "Field"
 
-    def _data (self, ETM, entity, ** kw) :
+    def _value (self, ETM, entity, ** kw) :
         attr = ETM.attributes [self.name]
         akw  = kw.get (self.name, {})
         if "init" in akw :
             init = akw ["init"]
         else :
             init = attr.get_raw (entity)
-        result = self.__super._data (ETM, entity, ** kw)
+        result = self.__super._value (ETM, entity, ** kw)
         if init :
             result ["value"].update (init = init)
         return result
-    # end def _data
+    # end def _value
 
 Field = _MOM_Field_ # end class
 

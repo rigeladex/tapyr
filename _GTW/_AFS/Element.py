@@ -48,6 +48,8 @@
 #                     changed to not include `children`
 #    27-Feb-2011 (CT) `Entity_List.new_child` factored
 #    28-Feb-2011 (CT) `needs_value` added
+#     1-Mar-2011 (CT) `M_Form` added
+#     1-Mar-2011 (CT) s/_data/_value/
 #    ««revision-date»»···
 #--
 
@@ -61,6 +63,16 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst, rsplit_hst
 
 import json
+
+class M_Form (TFL.Meta.Object.__class__) :
+    """Meta class for `Form`."""
+
+    def __getitem__ (cls, key) :
+        id, _, t = split_hst (key, cls.id_sep)
+        return cls.Table [id]
+    # end def __getitem__
+
+# end class M_Form
 
 class _Element_ (TFL.Meta.Object) :
     """Base class for AFS element classes."""
@@ -84,7 +96,7 @@ class _Element_ (TFL.Meta.Object) :
         result = GTW.AFS.Instance \
             ( self
             , children = list (self._call_iter (* args, ** kw))
-            , ** self._data (* args, ** kw)
+            , ** self._value (* args, ** kw)
             )
         ### XXX compute and set csrf tokens for result
         return result
@@ -121,9 +133,12 @@ class _Element_ (TFL.Meta.Object) :
             yield c (* args, ** kw)
     # end def _call_iter
 
-    def _data (self, * args, ** kw) :
-        return {"value" : {}}
-    # end def _data
+    def _value (self, * args, ** kw) :
+        if self.needs_value :
+            return {"value" : {}}
+        else :
+            return {}
+    # end def _value
 
     def _formatted (self, level = 0) :
         result = ["%s%s" % (" " * level, self)]
@@ -174,20 +189,6 @@ class _Element_ (TFL.Meta.Object) :
 
 class _Element_List_ (_Element_) :
     """Base class for AFS classes modelling a list of elements."""
-
-    def __getitem__ (self, key) :
-        try :
-            return self.id_map [key]
-        except KeyError :
-            h, _, t = split_hst (key, self.list_sep)
-            i, _, u = split_hst (t,   self.root_sep)
-            p = self.list_sep.join \
-                ((h, self.root_sep.join (("p", u)) if u else "p"))
-            try :
-                return self.id_map [p]
-            except KeyError :
-                raise KeyError (key)
-    # end def __getitem__
 
 # end class _Element_List_
 
@@ -302,8 +303,10 @@ class Fieldset (_Element_) :
 class Form (_Element_List_) :
     """Model a AJAX-enhanced form."""
 
-    id_sep      = _Element_List_.root_sep
-    Table       = {}
+    __metaclass__ = M_Form
+
+    id_sep        = _Element_List_.root_sep
+    Table         = {}
 
     def __init__ (self, id, children, ** kw) :
         self.id_map = {}
@@ -341,6 +344,22 @@ class Form (_Element_List_) :
         for a, c in zip (args, self.children) :
             yield c (a, ** kw)
     # end def _call_iter
+
+    def __getitem__ (self, key) :
+        if key == self.id :
+            return self
+        try :
+            return self.id_map [key]
+        except KeyError :
+            h, _, t = split_hst (key, self.list_sep)
+            i, _, u = split_hst (t,   self.root_sep)
+            p = self.list_sep.join \
+                ((h, self.root_sep.join (("p", u)) if u else "p"))
+            try :
+                return self.id_map [p]
+            except KeyError :
+                raise KeyError (key)
+    # end def __getitem__
 
 # end class Form
 
@@ -465,6 +484,13 @@ Usage example::
     <Field F-0:2::p-0 'desc'>
     >>> tuple (str (c) for c in gel.children)
     ("<Entity F-0:2::0 'PAP.Person_has_Email'>", "<Entity F-0:2::1 'PAP.Person_has_Email'>")
+
+    >>> print Form ["F"]
+    <Form F>
+    >>> print Form ["F-0:2::0"]
+    <Form F>
+    >>> print f ["F"]
+    <Form F>
 
 """
 
