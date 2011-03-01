@@ -6,7 +6,7 @@ to get an interactive Javascript shell with GTW.js and GTW/AFS/Elements.js
 loaded
 
 */
-// Define aliases to allow direct pasting from Python doctest
+// Define aliases to allow direct copy/pasting from Python doctest
 var False = false, True = true;
 
 load ("GTW.js")
