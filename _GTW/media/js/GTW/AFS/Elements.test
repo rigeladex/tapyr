@@ -39,6 +39,7 @@ var f = new $GTW.AFS.Form (
                               { 'cid' : 1
                               , 'pid' : 1
                               }
+                          , 'sid' : '4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg'
                           }
                       }
                     , { '$id' : 'FB-0:0:1'
@@ -125,6 +126,7 @@ var f = new $GTW.AFS.Form (
                                                 { 'cid' : 5
                                                 , 'pid' : 5
                                                 }
+                                            , 'sid' : 'dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w'
                                             }
                                         }
                                       ]
@@ -137,6 +139,7 @@ var f = new $GTW.AFS.Form (
                                           { 'cid' : 6
                                           , 'pid' : 6
                                           }
+                                      , 'sid' : 'QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ'
                                       }
                                   }
                                 ]
@@ -188,6 +191,7 @@ var f = new $GTW.AFS.Form (
                                                 { 'cid' : 3
                                                 , 'pid' : 3
                                                 }
+                                            , 'sid' : 'YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g'
                                             }
                                         }
                                       , { '$id' : 'FB-0:2::0-1:0:1'
@@ -214,6 +218,7 @@ var f = new $GTW.AFS.Form (
                                           { 'cid' : 4
                                           , 'pid' : 4
                                           }
+                                      , 'sid' : '730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w'
                                       }
                                   }
                                 ]
@@ -252,6 +257,7 @@ var f = new $GTW.AFS.Form (
                               { 'cid' : 7
                               , 'pid' : 7
                               }
+                          , 'sid' : '5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag'
                           }
                       }
                     ]
@@ -266,10 +272,13 @@ var f = new $GTW.AFS.Form (
                   { 'cid' : 2
                   , 'pid' : 2
                   }
+              , 'sid' : 'P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA'
               }
           }
         ]
     , 'type' : 'Form'
+    , 'value' :
+        { 'sid' : 0 }
     }
 );
 
@@ -285,8 +294,14 @@ print ("FB-0:2::0 value jsonified :\n  " + $GTW.jsonify (l.value));
 print ("Form values jsonified :\n  " + $GTW.jsonify (f.packed_values ()));
 
 var x = f.get ("FB-0:2::0-1:0:0:2");
-x.value.user = "William";
-print ("Form values after change:\n" + $GTW.inspect.show (f.packed_values (), undefined, 1));
-print ("Form values jsonified :\n  " + $GTW.jsonify (f.packed_values ()));
+x.value.edit = "William";
+print
+    ( "Form values after change:\n"
+    + $GTW.inspect.show (f.packed_values (), undefined, 1)
+    );
+print
+    ( "Form values jsonified after change:\n  "
+    + $GTW.jsonify (f.packed_values ())
+    );
 
 // __END__ Elements.test

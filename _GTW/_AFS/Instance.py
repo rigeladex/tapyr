@@ -11,7 +11,7 @@
 #
 # This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -42,9 +42,31 @@ import _GTW._AFS
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
+import base64
+import hashlib
 import json
 
 class _Base_ (TFL.Meta.Object) :
+
+    def form_hash (self, form_sig) :
+        hash = hashlib.sha224 (str (form_sig)).digest ()
+        return base64.b64encode (hash, ":-").rstrip ("=")
+    # end def form_hash
+
+    def form_sig (self, * args) :
+        return tuple \
+            (s for s in self.form_sig_iter (* args) if s is not None)
+    # end def form_sig
+
+    def form_sig_iter (self, arg1 = None, * args) :
+        yield arg1
+        yield self.prefilled
+        for c in self.children :
+            cig = c.elem._value_sig (c)
+            yield cig
+        for a in args :
+            yield a
+    # end def form_sig_iter
 
     def transitive_iter (self) :
         yield self
@@ -52,6 +74,16 @@ class _Base_ (TFL.Meta.Object) :
             for x in c.transitive_iter () :
                 yield x
     # end def transitive_iter
+
+    def _v_repr (self, v, name) :
+        if isinstance (v, dict) :
+            result = "%r" % (sorted (v.iteritems ()), )
+        else :
+            result = "%r" % (v, )
+            if result.startswith (("u'", 'u"')) :
+                result = result [1:]
+        return "%s-v = %s" % (name, result)
+    # end def _v_repr
 
 # end class _Base_
 
@@ -82,11 +114,29 @@ class Instance (_Base_) :
         result = self.elem.as_json_cargo
         result.update (self.kw)
         if self.children :
-            result ["children"] = [c.as_json_cargo for c in self.children]
+            result ["children"]  = [c.as_json_cargo for c in self.children]
         if self.value is not None :
-            result ["value"]    = self.value
+            result ["value"]     = self.value
+        if self.prefilled :
+            result ["prefilled"] = True
         return result
     # end def as_json_cargo
+
+    @property
+    def init (self) :
+        return self.value and self.value.get ("init", {})
+    # end def init
+
+    @property
+    def prefilled (self) :
+        if self.value :
+            return self.value.get ("prefilled")
+    # end def prefilled
+
+    @property
+    def sid (self) :
+        return self.value and self.value.get ("sid")
+    # end def sid
 
 # end class Instance
 

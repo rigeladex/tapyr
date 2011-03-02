@@ -11,7 +11,7 @@
 #
 # This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -50,6 +50,7 @@
 #    28-Feb-2011 (CT) `needs_value` added
 #     1-Mar-2011 (CT) `M_Form` added
 #     1-Mar-2011 (CT) s/_data/_value/
+#     2-Mar-2011 (CT) `prefilled`, `_value_sig`, and `sid` added
 #    ««revision-date»»···
 #--
 
@@ -81,11 +82,12 @@ class _Element_ (TFL.Meta.Object) :
     id_sep      = "."
     list_sep    = "::"
     needs_value = False
+    prefilled   = False
     root_sep    = "-"
     _id         = None
 
     def __init__ (self, ** kw) :
-        self.pop_to_self  (kw, "id", "id_sep")
+        self.pop_to_self  (kw, "id", "id_sep", "prefilled")
         children = kw.pop ("children", None)
         if children is not None :
             self.children = list (children)
@@ -133,13 +135,6 @@ class _Element_ (TFL.Meta.Object) :
             yield c (* args, ** kw)
     # end def _call_iter
 
-    def _value (self, * args, ** kw) :
-        if self.needs_value :
-            return {"value" : {}}
-        else :
-            return {}
-    # end def _value
-
     def _formatted (self, level = 0) :
         result = ["%s%s" % (" " * level, self)]
         level += 1
@@ -162,6 +157,18 @@ class _Element_ (TFL.Meta.Object) :
         self.id = result = parent.id_sep.join ((parent.id, str (i)))
         return result
     # end def _set_id
+
+    def _value (self, * args, ** kw) :
+        if self.needs_value :
+            p = self.prefilled or kw.get ("prefilled")
+            return {"value" : {"prefilled" : True} if p else {}}
+        else :
+            return {}
+    # end def _value
+
+    def _value_sig (self, instance) :
+        pass
+    # end def _value_sig
 
     def __getattr__ (self, name) :
         try :
@@ -201,6 +208,18 @@ class Entity (_Element_) :
     def __init__ (self, type_name, ** kw) :
         self.__super.__init__ (type_name = type_name, ** kw)
     # end def __init__
+
+    def __call__ (self, * args, ** kw) :
+        result = self.__super.__call__ (* args, ** kw)
+        sig    = result.sig = result.form_sig \
+            ( self._value_sig_t (result)
+            , kw.get ("_sid", 0)
+            , kw.get ("_session_secret")
+            )
+        hash   = result.form_hash (sig)
+        result.value.update (sid = hash)
+        return result
+    # end def __call__
 
 # end class Entity
 
@@ -271,8 +290,8 @@ class Entity_List (_Element_List_) :
 
 # end class Entity_List
 
-class Field (_Element_) :
-    """Model a field of an AJAX-enhanced form."""
+class _Field_ (_Element_) :
+    """Base class for AFS field classes."""
 
     needs_value = True
 
@@ -283,13 +302,30 @@ class Field (_Element_) :
 
 # end class Field
 
-class Field_Composite (Field) :
+class Field (_Field_) :
+    """Model a field of an AJAX-enhanced form."""
+
+    def _value_sig (self, instance) :
+        return (self.id, self.name, instance.init)
+    # end def _value_sig
+
+# end class Field
+
+class Field_Composite (_Field_) :
     """Model a composite field of a AJAX-enhanced form."""
+
+    def _value_sig (self, instance) :
+        return (self.id, self.name, instance.form_sig ())
+    # end def _value_sig
 
 # end class Field_Composite
 
-class Field_Entity (Entity, Field) :
+class Field_Entity (Entity, _Field_) :
     """Model an entity-holding field of a AJAX-enhanced form."""
+
+    def _value_sig (self, instance) :
+        return (self.id, self.name)
+    # end def _value_sig
 
 # end class Field_Entity
 
@@ -297,6 +333,10 @@ class Fieldset (_Element_) :
     """Model a set of fields of an AJAX-enhanced form."""
 
     id_sep = ":"
+
+    def _value_sig (self, instance) :
+        return instance.form_sig ()
+    # end def _value_sig
 
 # end class Fieldset
 
@@ -306,6 +346,7 @@ class Form (_Element_List_) :
     __metaclass__ = M_Form
 
     id_sep        = _Element_List_.root_sep
+    needs_value   = True
     Table         = {}
 
     def __init__ (self, id, children, ** kw) :
@@ -334,16 +375,17 @@ class Form (_Element_List_) :
         return self.__super.copy (** kw)
     # end def copy
 
-    def _call_body (self, * args, ** kw) :
-        data = self.__super.__call__ (* args, ** kw)
-        return GTW.AFS.Instance.Form (self, data)
-    # end def _call_body
-
     def _call_iter (self, * args, ** kw) :
         assert len (args) == len (self.children), repr (self)
         for a, c in zip (args, self.children) :
             yield c (a, ** kw)
     # end def _call_iter
+
+    def _value (self, * args, ** kw) :
+        result = self.__super._value (* args, ** kw)
+        result ["value"].update (sid = kw.get ("_sid", 0))
+        return result
+    # end def _value
 
     def __getitem__ (self, key) :
         if key == self.id :

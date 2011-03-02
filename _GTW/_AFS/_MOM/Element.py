@@ -31,6 +31,7 @@
 #    25-Feb-2011 (CT) Creation continued...
 #    27-Feb-2011 (CT) Creation continued....
 #     1-Mar-2011 (CT) Creation continued.....
+#     2-Mar-2011 (CT) Creation continued...... (`_value_sig_t`)
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,13 @@ class _MOM_Entity_ (Entity) :
                 )
         return result
     # end def _value
+
+    def _value_sig_t (self, instance) :
+        init = instance.init
+        return tuple \
+            ( (k, init.get (k)) for k in ("pid", "cid")
+            ) + (self.id, self.type_name)
+    # end def _value_sig_t
 
 Entity = _MOM_Entity_ # end class
 

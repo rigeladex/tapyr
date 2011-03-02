@@ -25,6 +25,8 @@
 //     1-Mar-2011 (CT) Creation continued......
 //                     * `$anchor_id` setting changed
 //                     * `packed_values` added
+//     2-Mar-2011 (CT) Creation continued.......
+//                     * `sid` added to `packed_values`
 //    ««revision-date»»···
 //--
 
@@ -148,6 +150,7 @@
               var entities = args || form.roots;
               var result   =
                   { $id        : form.$id
+                  , sid        : form.value.sid
                   , $child_ids : []
                   };
               for (i = 0, l = entities.length; i < l; i += 1) {

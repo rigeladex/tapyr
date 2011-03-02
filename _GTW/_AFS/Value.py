@@ -50,6 +50,8 @@ class Value (_Base_) :
 
     anchor_id = None
     init      = ""
+    prefilled = None
+    sid       = None
     _edit     = None
 
     def __init__ (self, form, id, json_cargo) :
@@ -58,7 +60,8 @@ class Value (_Base_) :
         self.jc       = json_cargo
         self.elem     = self._get_elem (form, id)
         self.children = children = []
-        self.pop_to_self (json_cargo, "$anchor_id", "init", "edit")
+        self.pop_to_self \
+            (json_cargo, "$anchor_id", "edit", "init", "prefilled", "sid")
         for c_id in sorted (json_cargo.get ("$child_ids", ())) :
             children.append (self.__class__ (form, c_id, json_cargo [c_id]))
     # end def __init__
@@ -95,20 +98,12 @@ class Value (_Base_) :
                 (_ ("Form/element is unknown"), unknown_id = id)
     # end def _get_elem
 
-    def _v_repr (self, v, name) :
-        if isinstance (v, dict) :
-            result = "%r" % (sorted (v.iteritems ()), )
-        else :
-            result = "%r" % (v, )
-            if result.startswith (("u'", 'u"')) :
-                result = result [1:]
-        return "%s-v = %s" % (name, result)
-    # end def _v_repr
-
     def __str__ (self) :
         result = [str (self.elem), self._v_repr (self.init, "init")]
         if self.init != self.edit :
             result.append (self._v_repr (self.edit, "edit"))
+        if self.sid is not None :
+            result.append ("sid = %s" % (self.sid, ))
         result.append (str (self.changes))
         return " ".join (result)
     # end def __str__

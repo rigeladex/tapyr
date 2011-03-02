@@ -15,6 +15,7 @@ FB-0 value :
         init :
             cid = 1
             pid = 1
+        sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
     FB-0:0:1 :
         init = "AUT"
     FB-0:0:2 :
@@ -24,6 +25,7 @@ FB-0 value :
     init :
         cid = 2
         pid = 2
+    sid = "P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA"
 FB-0:2::0 value :
     $child_ids :
         0 = "FB-0:2::0-0:0"
@@ -57,9 +59,11 @@ FB-0:2::0 value :
             init :
                 cid = 5
                 pid = 5
+            sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
         init :
             cid = 6
             pid = 6
+        sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
     FB-0:2::0-1:0 :
         $anchor_id = "FB-0:2::0"
         $child_ids :
@@ -86,6 +90,7 @@ FB-0:2::0 value :
             init :
                 cid = 3
                 pid = 3
+            sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
         FB-0:2::0-1:0:1 :
             init = "AUT"
         FB-0:2::0-1:0:2 :
@@ -93,6 +98,7 @@ FB-0:2::0 value :
         init :
             cid = 4
             pid = 4
+        sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
     FB-0:2::0-2:0 :
 
     FB-0:2::0-2:1 :
@@ -100,6 +106,7 @@ FB-0:2::0 value :
     init :
         cid = 7
         pid = 7
+    sid = "5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag"
 Form values :
     $child_ids :
         0 = "FB-0"
@@ -122,6 +129,7 @@ Form values :
             init :
                 cid = 1
                 pid = 1
+            sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
         FB-0:0:1 :
             init = "AUT"
         FB-0:0:2 :
@@ -131,6 +139,7 @@ Form values :
         init :
             cid = 2
             pid = 2
+        sid = "P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA"
     FB-0:2::0 :
         $child_ids :
             0 = "FB-0:2::0-0:0"
@@ -164,9 +173,11 @@ Form values :
                 init :
                     cid = 5
                     pid = 5
+                sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
             init :
                 cid = 6
                 pid = 6
+            sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
         FB-0:2::0-1:0 :
             $anchor_id = "FB-0:2::0"
             $child_ids :
@@ -193,6 +204,7 @@ Form values :
                 init :
                     cid = 3
                     pid = 3
+                sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
             FB-0:2::0-1:0:1 :
                 init = "AUT"
             FB-0:2::0-1:0:2 :
@@ -200,6 +212,7 @@ Form values :
             init :
                 cid = 4
                 pid = 4
+            sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
         FB-0:2::0-2:0 :
 
         FB-0:2::0-2:1 :
@@ -207,6 +220,8 @@ Form values :
         init :
             cid = 7
             pid = 7
+        sid = "5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag"
+    sid = 0
 $GTW :
     AFS :
         Elements :
@@ -254,6 +269,7 @@ $GTW :
                                     init :
                                         cid = 1
                                         pid = 1
+                                    sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
                                 FB-0:0:1 :
                                     init = "AUT"
                                 FB-0:0:2 :
@@ -263,6 +279,7 @@ $GTW :
                                 init :
                                     cid = 2
                                     pid = 2
+                                sid = "P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA"
                         1 :
                             $anchor_id = "FB-0"
                             $id = "FB-0:2::0"
@@ -308,9 +325,11 @@ $GTW :
                                         init :
                                             cid = 5
                                             pid = 5
+                                        sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
                                     init :
                                         cid = 6
                                         pid = 6
+                                    sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
                                 FB-0:2::0-1:0 :
                                     $anchor_id = "FB-0:2::0"
                                     $child_ids :
@@ -337,6 +356,7 @@ $GTW :
                                         init :
                                             cid = 3
                                             pid = 3
+                                        sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
                                     FB-0:2::0-1:0:1 :
                                         init = "AUT"
                                     FB-0:2::0-1:0:2 :
@@ -344,6 +364,7 @@ $GTW :
                                     init :
                                         cid = 4
                                         pid = 4
+                                    sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
                                 FB-0:2::0-2:0 :
 
                                 FB-0:2::0-2:1 :
@@ -351,8 +372,11 @@ $GTW :
                                 init :
                                     cid = 7
                                     pid = 7
+                                sid = "5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag"
                     type = "Form"
                     function update(dict)
+                    value :
+                        sid = 0
                 FB-0 :
                     $id = "FB-0"
                     children :
@@ -380,6 +404,7 @@ $GTW :
                             init :
                                 cid = 1
                                 pid = 1
+                            sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
                         FB-0:0:1 :
                             init = "AUT"
                         FB-0:0:2 :
@@ -389,6 +414,7 @@ $GTW :
                         init :
                             cid = 2
                             pid = 2
+                        sid = "P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA"
                 FB-0:0 :
                     $id = "FB-0:0"
                     children :
@@ -419,6 +445,7 @@ $GTW :
                         init :
                             cid = 1
                             pid = 1
+                        sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
                 FB-0:0:0:0 :
                     $anchor_id = "FB-0:0:0"
                     $id = "FB-0:0:0:0"
@@ -514,9 +541,11 @@ $GTW :
                                 init :
                                     cid = 5
                                     pid = 5
+                                sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
                             init :
                                 cid = 6
                                 pid = 6
+                            sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
                         FB-0:2::0-1:0 :
                             $anchor_id = "FB-0:2::0"
                             $child_ids :
@@ -543,6 +572,7 @@ $GTW :
                                 init :
                                     cid = 3
                                     pid = 3
+                                sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
                             FB-0:2::0-1:0:1 :
                                 init = "AUT"
                             FB-0:2::0-1:0:2 :
@@ -550,6 +580,7 @@ $GTW :
                             init :
                                 cid = 4
                                 pid = 4
+                            sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
                         FB-0:2::0-2:0 :
 
                         FB-0:2::0-2:1 :
@@ -557,6 +588,7 @@ $GTW :
                         init :
                             cid = 7
                             pid = 7
+                        sid = "5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag"
                 FB-0:2::0-0 :
                     $id = "FB-0:2::0-0"
                     children :
@@ -601,9 +633,11 @@ $GTW :
                             init :
                                 cid = 5
                                 pid = 5
+                            sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
                         init :
                             cid = 6
                             pid = 6
+                        sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
                 FB-0:2::0-0:0:0 :
                     $anchor_id = "FB-0:2::0-0:0"
                     $id = "FB-0:2::0-0:0:0"
@@ -636,6 +670,7 @@ $GTW :
                         init :
                             cid = 5
                             pid = 5
+                        sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
                 FB-0:2::0-0:0:0:0 :
                     $anchor_id = "FB-0:2::0-0:0:0"
                     $id = "FB-0:2::0-0:0:0:0"
@@ -730,6 +765,7 @@ $GTW :
                             init :
                                 cid = 3
                                 pid = 3
+                            sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
                         FB-0:2::0-1:0:1 :
                             init = "AUT"
                         FB-0:2::0-1:0:2 :
@@ -737,6 +773,7 @@ $GTW :
                         init :
                             cid = 4
                             pid = 4
+                        sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
                 FB-0:2::0-1:0:0 :
                     $anchor_id = "FB-0:2::0-1:0"
                     $id = "FB-0:2::0-1:0:0"
@@ -769,6 +806,7 @@ $GTW :
                         init :
                             cid = 3
                             pid = 3
+                        sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
                 FB-0:2::0-1:0:0:0 :
                     $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:0"
@@ -883,6 +921,7 @@ $GTW :
                                 init :
                                     cid = 1
                                     pid = 1
+                                sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
                             FB-0:0:1 :
                                 init = "AUT"
                             FB-0:0:2 :
@@ -892,6 +931,7 @@ $GTW :
                             init :
                                 cid = 2
                                 pid = 2
+                            sid = "P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA"
                     1 :
                         $anchor_id = "FB-0"
                         $id = "FB-0:2::0"
@@ -937,9 +977,11 @@ $GTW :
                                     init :
                                         cid = 5
                                         pid = 5
+                                    sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
                                 init :
                                     cid = 6
                                     pid = 6
+                                sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
                             FB-0:2::0-1:0 :
                                 $anchor_id = "FB-0:2::0"
                                 $child_ids :
@@ -966,6 +1008,7 @@ $GTW :
                                     init :
                                         cid = 3
                                         pid = 3
+                                    sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
                                 FB-0:2::0-1:0:1 :
                                     init = "AUT"
                                 FB-0:2::0-1:0:2 :
@@ -973,6 +1016,7 @@ $GTW :
                                 init :
                                     cid = 4
                                     pid = 4
+                                sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
                             FB-0:2::0-2:0 :
 
                             FB-0:2::0-2:1 :
@@ -980,8 +1024,11 @@ $GTW :
                             init :
                                 cid = 7
                                 pid = 7
+                            sid = "5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag"
                 type = "Form"
                 function update(dict)
+                value :
+                    sid = 0
             function update(dict)
         Form : function constructor()
         function update(dict)
@@ -1006,9 +1053,9 @@ $GTW :
     function update(dict)
     version = "1.0"
 FB-0:2::0 value jsonified :
-  {"init":{"cid":7,"pid":7},"$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}
+  {"init":{"cid":7,"pid":7},"sid":"5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}
 Form values jsonified :
-  {"$id":"FB","$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
 Form values after change:
     $child_ids :
         0 = "FB-0"
@@ -1031,6 +1078,7 @@ Form values after change:
             init :
                 cid = 1
                 pid = 1
+            sid = "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"
         FB-0:0:1 :
             init = "AUT"
         FB-0:0:2 :
@@ -1040,6 +1088,7 @@ Form values after change:
         init :
             cid = 2
             pid = 2
+        sid = "P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA"
     FB-0:2::0 :
         $child_ids :
             0 = "FB-0:2::0-0:0"
@@ -1073,9 +1122,11 @@ Form values after change:
                 init :
                     cid = 5
                     pid = 5
+                sid = "dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w"
             init :
                 cid = 6
                 pid = 6
+            sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
         FB-0:2::0-1:0 :
             $anchor_id = "FB-0:2::0"
             $child_ids :
@@ -1096,12 +1147,13 @@ Form values after change:
                 FB-0:2::0-1:0:0:1 :
                     init = "Laurens"
                 FB-0:2::0-1:0:0:2 :
-                    user = "William"
+                    edit = "William"
                 FB-0:2::0-1:0:0:3 :
 
                 init :
                     cid = 3
                     pid = 3
+                sid = "YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g"
             FB-0:2::0-1:0:1 :
                 init = "AUT"
             FB-0:2::0-1:0:2 :
@@ -1109,6 +1161,7 @@ Form values after change:
             init :
                 cid = 4
                 pid = 4
+            sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
         FB-0:2::0-2:0 :
 
         FB-0:2::0-2:1 :
@@ -1116,5 +1169,7 @@ Form values after change:
         init :
             cid = 7
             pid = 7
-Form values jsonified :
-  {"$id":"FB","$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"user":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
+        sid = "5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag"
+    sid = 0
+Form values jsonified after change:
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"P-PZNMardDRUXsk4DoTyB3R3sw:j1xubY7vghA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"5xjJCTEvzyUM3plZRJ5iNm3HFFkY1nJX0uyuag","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"dcxwDqiRZoVQJibrtBp6fHpF-vf-P:Y91evK-w","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"YK12nZUTcWDXqNvjVEjS9R1p3CcbMqrpo2Lw2g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
