@@ -23,7 +23,7 @@
 #    GTW.Werkzeug.Request_Handler
 #
 # Purpose
-#    A Tronado like handler for a request
+#    A Tornado like handler for a request
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
@@ -244,4 +244,4 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")
-### __END__ GTW.Werkzeug.Request
+### __END__ GTW.Werkzeug.Request_Handler
