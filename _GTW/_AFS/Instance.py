@@ -31,6 +31,7 @@
 #                     a single object per form element)
 #    28-Feb-2011 (CT) `needs_value` added
 #     1-Mar-2011 (CT) `_Base_` factored
+#     2-Mar-2011 (CT) `form_hash`, `form_sig`, `init`, `prefilled`, `sid` added
 #    ««revision-date»»···
 #--
 
