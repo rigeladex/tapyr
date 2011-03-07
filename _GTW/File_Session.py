@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -99,5 +99,3 @@ class File_Session (GTW.Session) :
 if __name__ != "__main__" :
     GTW._Export ("*")
 ### __END__ GTW.File_Session
-
-

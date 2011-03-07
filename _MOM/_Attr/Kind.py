@@ -280,11 +280,12 @@ class Kind (MOM.Prop.Kind) :
         if obj is not None :
             val = self.get_value (obj)
             if val is not None :
-                return self.attr.as_string (val) or u""
+                result = self.attr.as_string (val) or u""
             else :
-                return u""
+                result = u""
         else :
-            return self.raw_default
+            result = self.raw_default
+        return result
     # end def get_raw
 
     def get_raw_epk (self, obj) :
@@ -739,9 +740,10 @@ class _Raw_Value_Mixin_ (Kind) :
 
     def get_raw (self, obj) :
         if obj is not None :
-            return getattr (obj, self.attr.raw_name, u"")
+            result = getattr (obj, self.attr.raw_name, u"")
         else :
-            return self.raw_default
+            result = self.raw_default
+        return result
     # end def get_raw
 
     def get_value (self, obj) :

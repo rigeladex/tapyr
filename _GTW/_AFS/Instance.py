@@ -32,6 +32,7 @@
 #    28-Feb-2011 (CT) `needs_value` added
 #     1-Mar-2011 (CT) `_Base_` factored
 #     2-Mar-2011 (CT) `form_hash`, `form_sig`, `init`, `prefilled`, `sid` added
+#     5-Mar-2011 (CT) `_child_sig_iter` factored
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,8 @@ class _Base_ (TFL.Meta.Object) :
         yield self.prefilled
         for c in self.children :
             cig = c.elem._value_sig (c)
-            yield cig
+            for x in self._child_sig_iter (c, cig) :
+                yield x
         for a in args :
             yield a
     # end def form_sig_iter
@@ -124,8 +126,18 @@ class Instance (_Base_) :
     # end def as_json_cargo
 
     @property
+    def id (self) :
+        return self.elem.id
+    # end def id
+
+    @property
     def init (self) :
-        return self.value and self.value.get ("init", {})
+        result = None
+        if self.value :
+            result = self.value.get ("init")
+        if result is None :
+            result = self.elem.init
+        return result
     # end def init
 
     @property
@@ -138,6 +150,16 @@ class Instance (_Base_) :
     def sid (self) :
         return self.value and self.value.get ("sid")
     # end def sid
+
+    def _child_sig_iter (self, c, cig) :
+        if c.value is not None or cig is None :
+            yield cig
+        else :
+            ### An instance without value (e.g., Fieldset):
+            ### yield children's `sig` one by one
+            for x in cig :
+                yield x
+    # end def _child_sig_iter
 
 # end class Instance
 

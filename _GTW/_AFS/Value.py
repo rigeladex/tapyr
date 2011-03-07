@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Mar-2011 (CT) Creation
 #     2-Mar-2011 (CT) Creation continued
+#     5-Mar-2011 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -49,10 +50,11 @@ class Value (_Base_) :
     """Model the value of an AFS form element."""
 
     anchor_id = None
-    init      = ""
     prefilled = None
     sid       = None
+    value     = None
     _edit     = None
+    _init     = None
 
     def __init__ (self, form, id, json_cargo) :
         self.form     = form
@@ -88,6 +90,23 @@ class Value (_Base_) :
     def edit (self, value) :
         self._edit = value
     # end def edit
+
+    @property
+    def init (self) :
+        result = self._init
+        if result is None :
+            result = self.elem.init
+        return result
+    # end def init
+
+    @init.setter
+    def init (self, value) :
+        self._init = value
+    # end def init
+
+    def _child_sig_iter (self, c, cig) :
+        yield cig
+    # end def _child_sig_iter
 
     @TFL.Meta.Class_and_Instance_Method
     def _get_elem (soc, form, id) :

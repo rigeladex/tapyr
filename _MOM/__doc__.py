@@ -1718,12 +1718,12 @@ Unary links
     >>> sr = scope.BMT.Mouse ("Sick_Rodent")
     >>> osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'), )"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), )"
     >>> osm.fever = 42
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'), fever = 42.0)"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), fever = 42.0)"
     >>> sorted (sr.sickness)
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))]
 
 Changing a composite primary attribute
 --------------------------------------
@@ -1732,7 +1732,7 @@ Changing a composite primary attribute
     >>> old_epk
     (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* old_epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))
 
     .. ### DBW-specific start
 
@@ -1748,7 +1748,7 @@ Changing a composite primary attribute
     >>> osm.epk
     (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* osm.epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/03/01'))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))
 
     .. ### DBW-specific start
 

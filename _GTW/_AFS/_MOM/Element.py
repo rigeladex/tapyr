@@ -42,6 +42,7 @@ class _MOM_Entity_ (Entity) :
     """Model a MOM-specific sub-form for a single entity."""
 
     _real_name = "Entity"
+    init       = {}
 
     def _value (self, ETM, entity, ** kw) :
         assert ETM.type_name == self.type_name, \
@@ -65,7 +66,7 @@ class _MOM_Entity_ (Entity) :
         init = instance.init
         return tuple \
             ( (k, init.get (k)) for k in ("pid", "cid")
-            ) + (self.id, self.type_name)
+            ) + (str (instance.id), self.type_name)
     # end def _value_sig_t
 
 Entity = _MOM_Entity_ # end class
@@ -119,13 +120,13 @@ class _MOM_Field_ (Field) :
     _real_name = "Field"
 
     def _value (self, ETM, entity, ** kw) :
-        attr = ETM.attributes [self.name]
-        akw  = kw.get (self.name, {})
+        result = self.__super._value (ETM, entity, ** kw)
+        attr   = ETM.attributes [self.name]
+        akw    = kw.get (self.name, {})
         if "init" in akw :
             init = akw ["init"]
         else :
             init = attr.get_raw (entity)
-        result = self.__super._value (ETM, entity, ** kw)
         if init :
             result ["value"].update (init = init)
         return result

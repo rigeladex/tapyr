@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -49,23 +49,23 @@ _composite = r"""
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> q = EVT.Event.query ().order_by (TFL.Sorted_By (Q.date.start))
     >>> for e in q.all () : print e
-    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
-    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
 
     >>> for e in EVT.Event.query (sort_key = EVT.Event.sorted_by) :
     ...     print e
-    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
-    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By ("-date.start")) :
     ...     print e
-    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By (Q.left.perma_name)) :
     ...     print e
-    ((u'event-1-text', ), dict (start = '2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = '2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
 
     >>> scope.destroy ()
 
@@ -83,12 +83,12 @@ _link1_role = r"""
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> q = EVT.Event_occurs.query_s ()
     >>> for e in q.all () : print e ### default sort order
-    (((u'event-2-text', ), dict (start = '2010/01/01'), dict ()), '2010/01/01', dict ())
-    (((u'event-1-text', ), dict (start = '2010/02/01'), dict ()), '2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
     >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By ("-event.date.start"))
     >>> for e in q.all () : print e ### sorted by descending date
-    (((u'event-1-text', ), dict (start = '2010/02/01'), dict ()), '2010/02/01', dict ())
-    (((u'event-2-text', ), dict (start = '2010/01/01'), dict ()), '2010/01/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
     >>> scope.destroy ()
 """
 
@@ -115,14 +115,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
     >>> scope.destroy ()
 """
 
@@ -149,13 +149,13 @@ _query_attr = r"""
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q.order_by (Q.event.date.start) : print r.year, r
-    2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
-    2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    2008 ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
     >>> for r in q.order_by (TFL.Sorted_By ("-event.date.start")) : print r.year, r
-    2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
-    2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2008 ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     >>> scope.destroy ()
 """
 

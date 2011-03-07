@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test.
@@ -55,7 +55,7 @@ _test_code = """
     u'20100801, 20100808, 20100822, 20100829, 20100905, 20100912'
 
     >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
-    ('2010/08/01', '2010/08/08', '2010/08/22', '2010/08/29', '2010/09/05', '2010/09/12')
+    (u'2010/08/01', u'2010/08/08', u'2010/08/22', u'2010/08/29', u'2010/09/05', u'2010/09/12')
 
     >>> x = e1.date.set_raw (finish = "2010/08/31")
 
@@ -65,11 +65,11 @@ _test_code = """
     >>> e1.dates
     [datetime.datetime(2010, 8, 1, 0, 0), datetime.datetime(2010, 8, 8, 0, 0), datetime.datetime(2010, 8, 22, 0, 0), datetime.datetime(2010, 8, 29, 0, 0)]
     >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
-    ('2010/08/01', '2010/08/08', '2010/08/22', '2010/08/29')
+    (u'2010/08/01', u'2010/08/08', u'2010/08/22', u'2010/08/29')
 
     >>> _ = rs1.set_raw (dates = ["2010/08/07", "2010/08/09"])
     >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
-    ('2010/08/01', '2010/08/07', '2010/08/08', '2010/08/09', '2010/08/22', '2010/08/29')
+    (u'2010/08/01', u'2010/08/07', u'2010/08/08', u'2010/08/09', u'2010/08/22', u'2010/08/29')
 
     >>> e2 = EVT.Event (p2)
     >>> e2.dates

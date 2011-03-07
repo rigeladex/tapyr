@@ -163,6 +163,7 @@
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #     9-Feb-2011 (CT) `ui_allow_new` added to `_A_Object_` and `A_Link_Role`
 #    24-Feb-2011 (CT) s/A_Object/A_Entity/
+#     6-Mar-2011 (CT) `_A_Date_.as_string`: convert result to `unicode`
 #    ««revision-date»»···
 #--
 
@@ -556,7 +557,7 @@ class _A_Date_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return value.strftime (soc.output_format)
+            return unicode (value.strftime (soc.output_format))
         return u""
     # end def as_string
 

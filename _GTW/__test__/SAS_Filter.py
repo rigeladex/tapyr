@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -54,20 +54,20 @@ _composite = r"""
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event.query ()
     >>> for e in q.all () : print e ### all
-    ((u'event-1-text', ), dict (start = '2010/04/01'), dict ())
-    ((u'event-2-text', ), dict (start = '2010/03/01'), dict ())
-    ((u'event-3-text', ), dict (start = '2010/02/01'), dict ())
-    ((u'event-4-text', ), dict (start = '2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict ())
+    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict ())
     >>> q = EVT.Event.query ().filter (Q.date.start > date)
     >>> for e in q.all () : print e ### filtered 1
-    ((u'event-1-text', ), dict (start = '2010/04/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
     >>> q = EVT.Event.query ().filter (Q.date.start >= date)
     >>> for e in q.all () : print e ### filtered 2
-    ((u'event-1-text', ), dict (start = '2010/04/01'), dict ())
-    ((u'event-2-text', ), dict (start = '2010/03/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict ())
     >>> q = EVT.Event.query ().filter (left = p1)
     >>> for e in q.all () : print e ### filtered 3
-    ((u'event-1-text', ), dict (start = '2010/04/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
 """
 
 _link1_role = r"""
@@ -90,26 +90,26 @@ _link1_role = r"""
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event_occurs.query ()
     >>> for e in q.all () : print e ### all
-    (((u'event-1-text', ), dict (start = '2010/04/01'), dict ()), '2010/04/01', dict ())
-    (((u'event-2-text', ), dict (start = '2010/03/01'), dict ()), '2010/03/01', dict ())
-    (((u'event-3-text', ), dict (start = '2010/02/01'), dict ()), '2010/02/01', dict ())
-    (((u'event-4-text', ), dict (start = '2010/01/01'), dict ()), '2010/01/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict ()), u'2010/03/01', dict ())
+    (((u'event-3-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
+    (((u'event-4-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start > date)
     >>> for e in q.all () : print e ### filter 1
-    (((u'event-1-text', ), dict (start = '2010/04/01'), dict ()), '2010/04/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start >= date)
     >>> for e in q.all () : print e ### filter 2
-    (((u'event-1-text', ), dict (start = '2010/04/01'), dict ()), '2010/04/01', dict ())
-    (((u'event-2-text', ), dict (start = '2010/03/01'), dict ()), '2010/03/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict ()), u'2010/03/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (event = e1)
     >>> for e in q.all () : print e ### filter 3
-    (((u'event-1-text', ), dict (start = '2010/04/01'), dict ()), '2010/04/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
     >>> q = EVT.Event.query ().filter (Q.date.alive)
     >>> for e in q.all () : print e ### filter 4
-    ((u'event-1-text', ), dict (start = '2010/04/01'), dict ())
-    ((u'event-2-text', ), dict (start = '2010/03/01'), dict ())
-    ((u'event-3-text', ), dict (start = '2010/02/01'), dict ())
-    ((u'event-4-text', ), dict (start = '2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict ())
+    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict ())
 """
 
 _link2_link1 = r"""
@@ -136,21 +136,21 @@ _link2_link1 = r"""
     >>> date = datetime.date (2009, 1, 1)
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start > date) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start < date) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
     >>> date2 = datetime.date (2009, 12, 31)
     >>> qf = (Q.right.left.date.start >= date ) \
     ...    & (Q.right.left.date.start <= date2)
     >>> for r in q.filter (qf) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
 
     >>> date3 = datetime.date (2010, 05, 13)
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
 
 """
 
@@ -177,13 +177,13 @@ _query_attr = r"""
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q : print r.year, r
-    2008 ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
-    2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    2008 ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2010)) : print r.year, r
-    2010 ((dict (start = '2010/05/13', finish = '2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
-    2009 ((dict (start = '2009/05/21', finish = '2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+    2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
 """
 
 if 1 :

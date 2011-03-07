@@ -51,6 +51,9 @@
 #     1-Mar-2011 (CT) `M_Form` added
 #     1-Mar-2011 (CT) s/_data/_value/
 #     2-Mar-2011 (CT) `prefilled`, `_value_sig`, and `sid` added
+#     6-Mar-2011 (CT) `Entity.form_hash` factored
+#     6-Mar-2011 (CT) `_value_sig` changed to use `instance.id` instead of
+#                     `self.id` (needed for dynamic children of Entity_List)
 #    ««revision-date»»···
 #--
 
@@ -80,6 +83,7 @@ class _Element_ (TFL.Meta.Object) :
 
     children    = ()
     id_sep      = "."
+    init        = ""
     list_sep    = "::"
     needs_value = False
     prefilled   = False
@@ -211,15 +215,18 @@ class Entity (_Element_) :
 
     def __call__ (self, * args, ** kw) :
         result = self.__super.__call__ (* args, ** kw)
-        sig    = result.sig = result.form_sig \
-            ( self._value_sig_t (result)
+        result.value.update (sid = self.form_hash (result))
+        return result
+    # end def __call__
+
+    def form_hash (self, value, ** kw) :
+        sig = value.sig = value.form_sig \
+            ( self._value_sig_t (value)
             , kw.get ("_sid", 0)
             , kw.get ("_session_secret")
             )
-        hash   = result.form_hash (sig)
-        result.value.update (sid = hash)
-        return result
-    # end def __call__
+        return value.form_hash (sig)
+    # end def form_hash
 
 # end class Entity
 
@@ -306,7 +313,7 @@ class Field (_Field_) :
     """Model a field of an AJAX-enhanced form."""
 
     def _value_sig (self, instance) :
-        return (self.id, self.name, instance.init)
+        return (str (instance.id), self.name, instance.init)
     # end def _value_sig
 
 # end class Field
@@ -315,7 +322,7 @@ class Field_Composite (_Field_) :
     """Model a composite field of a AJAX-enhanced form."""
 
     def _value_sig (self, instance) :
-        return (self.id, self.name, instance.form_sig ())
+        return (str (instance.id), self.name, instance.form_sig ())
     # end def _value_sig
 
 # end class Field_Composite
@@ -324,7 +331,7 @@ class Field_Entity (Entity, _Field_) :
     """Model an entity-holding field of a AJAX-enhanced form."""
 
     def _value_sig (self, instance) :
-        return (self.id, self.name)
+        return (str (instance.id), self.name)
     # end def _value_sig
 
 # end class Field_Entity

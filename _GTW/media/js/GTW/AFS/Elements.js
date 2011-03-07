@@ -20,13 +20,10 @@
 //    31-Jan-2011 (CT) Creation continued..
 //     6-Feb-2011 (CT) Creation continued...
 //    24-Feb-2011 (CT) Creation continued....
-//    28-Feb-2011 (CT) Creation continued.....
-//                     `setup_value` revamped
-//     1-Mar-2011 (CT) Creation continued......
-//                     * `$anchor_id` setting changed
-//                     * `packed_values` added
-//     2-Mar-2011 (CT) Creation continued.......
-//                     * `sid` added to `packed_values`
+//    28-Feb-2011 (CT) `setup_value` revamped
+//     1-Mar-2011 (CT) `$anchor_id` setting changed, `packed_values` added
+//     2-Mar-2011 (CT) `sid` added to `packed_values`
+//     5-Mar-2011 (CT) `Element.changed` added
 //    ««revision-date»»···
 //--
 
@@ -68,27 +65,47 @@
                   Elements.id_map [this.$id] = this;
               }
           }
+        , changed : function changed () {
+              var i, l, child, has_value;
+              has_value =
+                  (  (this ["value"]  !== undefined)
+                  && (this.value.edit !== undefined)
+                  );
+              if (has_value && this.value.init !== this.value.edit) {
+                  return true;
+              }
+              if (this ["children"] !== undefined) {
+                  for (i = 0, l = this.children.length; i < l; i += 1) {
+                      child = this.child (i);
+                      if (child.changed ()) {
+                          return true;
+                      }
+                  }
+              }
+              return false;
+          }
         , child : function child (i) {
-            return Elements.id_map [this.children [i]];
+              return Elements.id_map [this.children [i]];
           }
         , setup_value : function setup_value (root, anchor, roots) {
               var i, l, child, has_value;
+              var cls = this.constructor;
               var new_anchor = anchor, new_root = root;
               has_value = this ["value"] !== undefined;
               if (has_value) {
-                  if (this.constructor.is_anchor || this.constructor.is_root) {
+                  if (cls.is_anchored || cls.is_root) {
                       new_anchor = this;
                       this.value.$id = this.$id;
                       this.value.$child_ids = [];
                   }
-                  if (this.constructor.is_anchor) {
+                  if (cls.is_anchored) {
                       if (this.$id !== anchor.$id) {
                           this.value ["$anchor_id"] = anchor.$id;
                       }
                   }
-                  if (this.constructor.is_root) {
+                  if (cls.is_root) {
                       roots.push (this);
-                      new_root   = this;
+                      new_root = this;
                   } else {
                       anchor.value [this.$id] = this.value;
                       anchor.value ["$child_ids"].push (this.$id);
@@ -105,11 +122,11 @@
               }
           }
         }
-      , { is_anchor : false, is_root : false, type_name : "Element" }
+      , { is_anchored : false, is_root : false, type_name : "Element" }
     );
     var Entity = Element.extend (
         {}
-      , { is_anchor : true, is_root : true, type_name : "Entity" }
+      , { is_anchored : true, is_root : true, type_name : "Entity" }
     );
     var Entity_Link = Element.extend (
         {}
@@ -125,11 +142,11 @@
     );
     var Field_Composite = Element.extend (
         {}
-      , { is_anchor : true, type_name : "Field_Composite" }
+      , { is_anchored : true, type_name : "Field_Composite" }
     );
     var Field_Entity = Element.extend (
         {}
-      , { is_anchor : true, type_name : "Field_Entity" }
+      , { is_anchored : true, type_name : "Field_Entity" }
     );
     var Fieldset = Element.extend (
         {}

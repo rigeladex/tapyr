@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -37,25 +37,25 @@ _test_code = """
     >>> bc  = SRM.Boat_Class (u"Optimist", max_crew = 1)
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> rev.epk_raw
-    ((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    ((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> reg.epk_raw
-    (((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
+    (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     >>> SRM.Regatta_C.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> reh.epk_raw
-    (((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), u'Yardstick', 'GTW.OMP.SRM.Regatta_H')
+    (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), u'Yardstick', 'GTW.OMP.SRM.Regatta_H')
     >>> SRM.Regatta_H.instance (* reh.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_H ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), u'Yardstick')
+    GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')
     >>> SRM.Regatta_H.instance (* reh.epk)
-    GTW.OMP.SRM.Regatta_H ((dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt'), u'Yardstick')
+    GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')
 
 """
 

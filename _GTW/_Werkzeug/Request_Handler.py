@@ -75,7 +75,7 @@ class Request_Handler (GTW._Request_Handler_) :
     __metaclass__             = TFL.Meta.M_Class
 
     _real_name                = "Request"
-    secure_cookie_exipre_time = 31 * 86400
+    secure_cookie_expire_time = 3600
     cookie_encoding           = "utf-8"
 
     class Request_Class (BaseRequest) :
@@ -129,7 +129,7 @@ class Request_Handler (GTW._Request_Handler_) :
             logging.warning ("Invalid cookie signature %r", data)
             return None
         timestamp = int (parts [1])
-        if timestamp < time.time () - self.secure_cookie_exipre_time :
+        if timestamp < time.time () - self.secure_cookie_expire_time :
             logging.warning ("Expired cookie %r", data)
             return None
         try:

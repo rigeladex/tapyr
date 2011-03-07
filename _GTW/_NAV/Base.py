@@ -241,6 +241,9 @@
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template`
 #     5-Jan-2011 (CT) `template_names`, `load_css_map`, and `store_css` added
 #     7-Jan-2011 (CT) s/is_current/is_current_page/, `is_current_dir` added
+#     5-Mar-2011 (CT) `store_css` changed to use `b64encode` on `digest`
+#                     instead of `hexdigest`
+#     5-Mar-2011 (CT) `_get_sub_session` and `_new_sub_session` added
 #    ««revision-date»»···
 #--
 
@@ -266,10 +269,13 @@ import _TFL.multimap
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
+import base64
+import datetime
 import hashlib
 import signal
 import sys
 import time
+import uuid
 
 class _Meta_ (TFL.Meta.M_Class) :
 
@@ -629,6 +635,42 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return self._Media
     # end def _get_media
 
+    def _get_sub_session (self, handler, sid) :
+        session       = handler.session
+        ss_map        = session.setdefault ("sub_sessions", {})
+        expiry, hash  = ss_map [id]
+        now           = datetime.datetime.utcnow ()
+        if hash and now > expiry :
+            raise LookupError \
+                ( "Session expired since %s"
+                % (expiry.strftime ("%Y/%m/%d %H:%M"), )
+                )
+        return hash
+    # end def _get_sub_session
+
+    def _new_sub_session (self, handler) :
+        assert handler.current_user
+        dbmd     = self.top.scope.db_meta_data
+        session  = handler.session
+        settings = handler.application.settings
+        ss_map   = session.setdefault ("sub_sessions", {})
+        id       = uuid.uuid4 ().hex
+        ttl      = \
+            (  settings.get ("edit_session_ttl")
+            or settings.get ("session_ttl", 3600)
+            )
+        if not isinstance (ttl, datetime.timedelta) :
+            ttl  = datetime.timedelta (seconds = ttl)
+        expiry   = datetime.datetime.utcnow () + ttl
+        fps      = \
+            ( current_user.password, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()
+            , time.mktime (expiry.timetuple ())
+            )
+        hash     = base64.b64encode (hashlib.sha224 (str (fps)).digest ())
+        ss_map [id] = (expiry, hash)
+        return id, hash
+    # end def _new_sub_session
+
     def _permissions (self) :
         p = self
         while p :
@@ -657,7 +699,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         if self.parent is not None :
             return getattr (self.parent, name)
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __repr__ (self) :
@@ -1205,7 +1247,8 @@ class Root (_Dir_) :
                 print "   ", exc
             else :
                 if css :
-                    k = hashlib.sha1 (css).hexdigest ()
+                    h = hashlib.sha1 (css).digest ()
+                    k = base64.b64encode (h, "_-").rstrip ("=")
                     map [k].append (t)
         for k, ts in map.iteritems () :
             cn = k + ".css"

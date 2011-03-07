@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -36,11 +36,11 @@ _test_code = """
     >>> SRM = scope.SRM
     >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
     >>> rev.epk_raw
-    ((('finish', '2008/05/01'), ('start', '2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    ((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    GTW.OMP.SRM.Regatta_Event (dict (start = '2008/05/01', finish = '2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
 
 """
 
