@@ -104,7 +104,6 @@ class _Element_ (TFL.Meta.Object) :
             , children = list (self._call_iter (* args, ** kw))
             , ** self._value (* args, ** kw)
             )
-        ### XXX compute and set csrf tokens for result
         return result
     # end def __call__
 
@@ -227,6 +226,10 @@ class Entity (_Element_) :
             )
         return value.form_hash (sig)
     # end def form_hash
+
+    def _value_sig_t (self, instance) :
+        return (str (instance.id), self.type_name, instance.init)
+    # end def _value_sig_t
 
 # end class Entity
 
