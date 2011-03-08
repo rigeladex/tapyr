@@ -33,6 +33,7 @@
 #     1-Mar-2011 (CT) `_Base_` factored
 #     2-Mar-2011 (CT) `form_hash`, `form_sig`, `init`, `prefilled`, `sid` added
 #     5-Mar-2011 (CT) `_child_sig_iter` factored
+#     8-Mar-2011 (CT) `entity_children` added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,14 @@ import hashlib
 import json
 
 class _Base_ (TFL.Meta.Object) :
+
+    def entity_children (self) :
+        for c in self.children :
+            if c.sid :
+                yield c
+            for cc in c.entity_children () :
+                yield cc
+    # end def entity_children
 
     def form_hash (self, form_sig) :
         hash = hashlib.sha224 (str (form_sig)).digest ()

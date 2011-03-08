@@ -54,6 +54,8 @@
 #     6-Mar-2011 (CT) `Entity.form_hash` factored
 #     6-Mar-2011 (CT) `_value_sig` changed to use `instance.id` instead of
 #                     `self.id` (needed for dynamic children of Entity_List)
+#     8-Mar-2011 (CT) `_value` simplified (`needs_value` moved to
+#                     `_Element_.__call__`)
 #    ««revision-date»»···
 #--
 
@@ -99,10 +101,12 @@ class _Element_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
+        ikw    = {} if not self.needs_value else dict \
+            ( value = self._value (* args, ** kw))
         result = GTW.AFS.Instance \
             ( self
             , children = list (self._call_iter (* args, ** kw))
-            , ** self._value (* args, ** kw)
+            , ** ikw
             )
         return result
     # end def __call__
@@ -162,11 +166,8 @@ class _Element_ (TFL.Meta.Object) :
     # end def _set_id
 
     def _value (self, * args, ** kw) :
-        if self.needs_value :
-            p = self.prefilled or kw.get ("prefilled")
-            return {"value" : {"prefilled" : True} if p else {}}
-        else :
-            return {}
+        p = self.prefilled or kw.get ("prefilled")
+        return {"prefilled" : True} if p else {}
     # end def _value
 
     def _value_sig (self, instance) :
@@ -393,7 +394,7 @@ class Form (_Element_List_) :
 
     def _value (self, * args, ** kw) :
         result = self.__super._value (* args, ** kw)
-        result ["value"].update (sid = kw.get ("_sid", 0))
+        result.update (sid = kw.get ("_sid", 0))
         return result
     # end def _value
 

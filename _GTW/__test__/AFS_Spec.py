@@ -575,11 +575,9 @@ _test_code = """
     <Field FB-0:2::0-2:1 'points'> []
 
     >>> f_sig_map = {}
-    >>> for i in fi.transitive_iter () :
-    ...     v = i.value and i.value.get ("init")
-    ...     if isinstance (v, dict) and v.get ("pid") :
-    ...         f_sig_map [i.id] = i, i.sig
-    ...         print i.elem, "pid =", v ["pid"], i.sid
+    >>> for i in fi.entity_children () :
+    ...     f_sig_map [i.id] = i, i.sig
+    ...     print i.elem, "pid =", i.init.get ("pid"), i.sid
     <Entity FB-0 'GTW.OMP.SRM.Boat'> pid = 2 nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A
     <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> pid = 1 4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg
     <Entity_Link FB-0:2::0 'GTW.OMP.SRM.Boat_in_Regatta'> pid = 7 g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ
@@ -588,19 +586,24 @@ _test_code = """
     <Field_Entity FB-0:2::0-1:0 'skipper' 'GTW.OMP.SRM.Sailor'> pid = 4 730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w
     <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.PAP.Person'> pid = 3 jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw
 
-    >>> for i in fic.transitive_iter () :
-    ...     v = i.value and i.value.get ("init")
-    ...     if isinstance (v, dict) and v.get ("pid") :
-    ...         print i.elem, "pid =", v ["pid"], i.sid
+    >>> for i in fic.entity_children () :
+    ...     print i.elem, "pid =", i.init.get ("pid"), i.sid
+    <Entity FB-0 'GTW.OMP.SRM.Boat'> pid = None DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> pid = None HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw
+    <Entity_Link FB-0:2::0 'GTW.OMP.SRM.Boat_in_Regatta'> pid = None Wjc1ZUzIYGUAeNWM2lqVfRRM2h55nbu:rGus2Q
+    <Field_Entity FB-0:2::0-0:0 'right' 'GTW.OMP.SRM.Regatta'> pid = None KHlrIVKnzSGWv7Cq7bb2jbo:sO1ap1t-ZsTlgQ
+    <Field_Entity FB-0:2::0-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> pid = None ONQwCBeEQX6ghfi7WbgojEhoRyKKS4rC74tZMQ
+    <Field_Entity FB-0:2::0-1:0 'skipper' 'GTW.OMP.SRM.Sailor'> pid = None k3391hFYwz2NdfCElt6fuRvhTxgWOwb65d7ZnA
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.PAP.Person'> pid = None kR13t0LifEpph1A3gzjbGECXgvntB:fbk4XByg
+
+    >>> Value.from_json (json_bad)
+    Traceback (most recent call last):
+      ...
+    Unknown: (u'Form/element is unknown', 404, {'unknown_id': u'FC'})
 
     >>> fv = Value.from_json (json_data)
     >>> fv.changes
     1
-
-    >>> w = Value.from_json (json_bad)
-    Traceback (most recent call last):
-      ...
-    Unknown: (u'Form/element is unknown', 404, {'unknown_id': u'FC'})
 
     >>> for i in fv.transitive_iter () :
     ...     print i
@@ -630,10 +633,9 @@ _test_code = """
     <Field FB-0:2::p-2:1 'points'> init-v = '' 0
 
     >>> v_sig_map = {}
-    >>> for v in fv.transitive_iter () :
-    ...     if v.sid :
-    ...         vh = v.elem.form_hash (v)
-    ...         v_sig_map [v.id] = v, v.sig, vh
+    >>> for v in fv.entity_children () :
+    ...     vh = v.elem.form_hash (v)
+    ...     v_sig_map [v.id] = v, v.sig, vh
 
     >>> for id, (i, i_sig) in sorted (f_sig_map.iteritems ()) :
     ...    (v, v_sig, vh) = v_sig_map [id]

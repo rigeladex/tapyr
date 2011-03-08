@@ -32,6 +32,8 @@
 #    27-Feb-2011 (CT) Creation continued....
 #     1-Mar-2011 (CT) Creation continued.....
 #     2-Mar-2011 (CT) Creation continued...... (`_value_sig_t`)
+#     8-Mar-2011 (CT) `Entity._value` changed to always set `init`
+#     8-Mar-2011 (CT) `_value` simplified
 #    ««revision-date»»···
 #--
 
@@ -51,14 +53,12 @@ class _MOM_Entity_ (Entity) :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
         result = self.__super._value (ETM, entity, ** kw)
-        copy = kw.get ("copy", False)
-        if not copy :
-            result ["value"].update \
-                ( init = dict
-                    ( cid = getattr (entity, "last_cid", None)
-                    , pid = getattr (entity, "pid",      None)
-                    )
+        result.update \
+            ( init = {} if kw.get ("copy", False) else dict
+                ( cid = getattr (entity, "last_cid", None)
+                , pid = getattr (entity, "pid",      None)
                 )
+            )
         return result
     # end def _value
 
@@ -128,7 +128,7 @@ class _MOM_Field_ (Field) :
         else :
             init = attr.get_raw (entity)
         if init :
-            result ["value"].update (init = init)
+            result.update (init = init)
         return result
     # end def _value
 
