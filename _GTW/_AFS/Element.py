@@ -89,6 +89,7 @@ class _Element_ (TFL.Meta.Object) :
     list_sep    = "::"
     needs_value = False
     prefilled   = False
+    rank        = 0
     root_sep    = "-"
     _id         = None
 
@@ -241,6 +242,8 @@ class Entity (_Element_) :
 
 class Entity_Link (Entity) :
     """Model a sub-form for a link to entity in containing sub-form."""
+
+    rank = 100
 
 # end class Entity_Link
 

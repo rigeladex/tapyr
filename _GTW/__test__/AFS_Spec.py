@@ -706,8 +706,8 @@ _test_code = """
     >>> gv = Value.from_json (json_copy)
     >>> gv.changes
     1
-    >>> for i in gv.transitive_iter () :
-    ...     print i
+    >>> for v in gv.transitive_iter () :
+    ...     print v
     <Form FB> init-v = '' sid = 0 1
     <Entity FB-0 'GTW.OMP.SRM.Boat'> init-v = [] sid = DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA 0
     <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> init-v = [] sid = HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw 0
@@ -732,6 +732,20 @@ _test_code = """
     <Field FB-0:2::p-1:0:2 'mna_number'> init-v = '29676' 0
     <Field FB-0:2::p-2:0 'place'> init-v = '' 0
     <Field FB-0:2::p-2:1 'points'> init-v = '' 0
+
+    >>> key = TFL.Sorted_By ("elem.rank", "-id")
+    >>> for v in sorted (gv.entity_children (), key = key) :
+    ...     print v.elem
+    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.PAP.Person'>
+    <Field_Entity FB-0:2::p-1:0 'skipper' 'GTW.OMP.SRM.Sailor'>
+    <Field_Entity FB-0:2::p-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>
+    <Field_Entity FB-0:2::p-0:0 'right' 'GTW.OMP.SRM.Regatta'>
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>
+    <Entity FB-0 'GTW.OMP.SRM.Boat'>
+    <Entity_Link FB-0:2::p 'GTW.OMP.SRM.Boat_in_Regatta'>
+
+    The above is not a valid change tree (Boat_in_Regatta depends on Boat
+    already being saved, but in this tree it isn't)
 
 """
 

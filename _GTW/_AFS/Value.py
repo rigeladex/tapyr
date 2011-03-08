@@ -29,6 +29,7 @@
 #     1-Mar-2011 (CT) Creation
 #     2-Mar-2011 (CT) Creation continued
 #     5-Mar-2011 (CT) Creation continued..
+#     8-Mar-2011 (CT) `apply` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ import _GTW._AFS.Element
 import _GTW._AFS.Error
 from   _GTW._AFS.Instance       import _Base_
 
+import _TFL.Sorted_By
 import _TFL._Meta.Property
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -108,7 +110,8 @@ class Value (_Base_) :
 
     def apply (self, * args, ** kw) :
         conflicts = 0
-        for e in sorted (self.entity_children (), reverse = True) :
+        key       = TFL.Sorted_By ("elem.rank", "-id")
+        for e in sorted (self.entity_children (), key = key) :
             e.entity   = e.elem.apply (e, * args, ** kw)
             conflicts += e.conflicts
         if conflicts :
