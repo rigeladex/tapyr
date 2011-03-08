@@ -34,6 +34,7 @@
 #     2-Mar-2011 (CT) Creation continued...... (`_value_sig_t`)
 #     8-Mar-2011 (CT) `Entity._value` changed to always set `init`
 #     8-Mar-2011 (CT) `_value` simplified
+#     8-Mar-2011 (CT) `apply` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,50 @@ class _MOM_Entity_ (Entity) :
 
     _real_name = "Entity"
     init       = {}
+
+    def apply (self, value, scope, ** kw) :
+        self._check_sid (value, ** kw)
+        pid = value.edit.get ("pid")
+        if pid is not None :
+            result = self._apply_change (pid, value, scope, ** kw)
+        else :
+            result = self._apply_create (value, scope, ** kw)
+        return result
+    # end def apply
+
+    def _apply_change (self, pid, value, scope, ** kw) :
+        entity = scope.pid_query (pid)
+        akw    = self._changed_children (value, entity, ** kw)
+        if akw and not value.conflicts :
+            ### XXX error handling
+            entity.set_raw (** akw)
+        return entity
+    # end def _apply_change
+
+    def _apply_create (self, value, scope, ** kw) :
+        akw = self._changed_children (value, None, ** kw)
+        if akw :
+            ETM = scope [self.type_name]
+            ### XXX error handling
+            return ETM (raw = 1, ** akw)
+    # end def _apply_create
+
+    def _changed_children (self, value, entity, ** kw) :
+        if value.changes :
+            result = {}
+            for c in value.children :
+                v = c.elem.applyf (c, entity, ** kw)
+                value.conflicts += c.conflicts
+                if v is not None :
+                    result [c.elem.name] = v
+            return result
+    # end def _changed_children
+
+    def _check_sid (self, value, ** kw) :
+        v_sid = self.form_hash (value, ** kw)
+        if v_sid != value.sid :
+            raise GTW.AFS.Error.Corrupted ()
+    # end def _check_sid
 
     def _value (self, ETM, entity, ** kw) :
         assert ETM.type_name == self.type_name, \
@@ -119,6 +164,19 @@ class _MOM_Field_ (Field) :
 
     _real_name = "Field"
 
+    def applyf (self, value, entity, ** kw) :
+        if entity is not None :
+            dbv = entity.raw_attr (self.name)
+            if value.init != dbv:
+                value.conflicts += 1
+                value.asyn       = dbv
+                return dbv
+            if value.init != value.edit :
+                return value.edit
+        else :
+            return value.edit
+    # end def applyf
+
     def _value (self, ETM, entity, ** kw) :
         result = self.__super._value (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
@@ -139,6 +197,10 @@ class _MOM_Field_Composite_ (Field_Composite) :
 
     _real_name = "Field_Composite"
 
+    def applyf (self, value, entity, ** kw) :
+        return self._changed_children (value, entity, ** kw)
+    # end def applyf
+
     def _call_iter (self, ETM, entity, ** kw) :
         attr     = ETM._etype.attributes [self.name]
         c_type   = attr.C_Type
@@ -153,6 +215,10 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
     """Model a MOM-specific entity-holding field of an AJAX-enhanced form."""
 
     _real_name = "Field_Entity"
+
+    def applyf (self, value, entity, ** kw) :
+        return value.entity
+    # end def applyf
 
     def __call__ (self, ETM, entity, ** kw) :
         attr     = ETM._etype.attributes [self.name]

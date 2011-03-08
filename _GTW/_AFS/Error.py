@@ -70,6 +70,14 @@ class Conflict (Base) :
 
 # end class Conflict
 
+class Corrupted (Base) :
+
+    message = _ \
+        ( """The form values were corrupted somewhere or are too old.""")
+    status  = 404
+
+# end class Corrupted
+
 class Timeout (Base) :
 
     message = _ ("""The edit session has expired.""")

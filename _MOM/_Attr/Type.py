@@ -164,6 +164,9 @@
 #     9-Feb-2011 (CT) `ui_allow_new` added to `_A_Object_` and `A_Link_Role`
 #    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #     6-Mar-2011 (CT) `_A_Date_.as_string`: convert result to `unicode`
+#     8-Mar-2011 (CT) `_A_Entity_.from_string` changed to check
+#                     `isinstance (s, self.Class)`
+#     8-Mar-2011 (CT) `_cls_attr` added
 #    ««revision-date»»···
 #--
 
@@ -343,6 +346,14 @@ class A_Attr_Type (object) :
         for c in sorted (self.check) :
             yield c, ()
     # end def _checkers
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _cls_attr (soc, name) :
+        result = getattr (soc, name, None)
+        if result is None :
+            result = getattr (soc.__class__, name, None)
+        return result
+    # end def _cls_attr
 
     def _fix_C_Type (self, e_type) :
         pass
@@ -594,10 +605,14 @@ class _A_Named_Value_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
-        Elbat = getattr (soc, "Elbat", None)
-        if Elbat is None :
-            Elbat = getattr (soc.__class__, "Elbat", None)
-        return soc.format % (Elbat [value], )
+        Elbat = soc._cls_attr ("Elbat")
+        try :
+            return soc.format % (Elbat [value], )
+        except KeyError :
+            Table = soc._cls_attr ("Table")
+            if value in Table :
+                return value
+            raise
     # end def as_string
 
     def eligible_raw_values (self, obj = None) :
@@ -815,7 +830,9 @@ class _A_Entity_ (A_Attr_Type) :
     # end def etype_manager
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        if s :
+        if isinstance (s, self.Class) :
+            return s
+        elif s :
             assert self.Class, "%s needs to define `Class`" % self
             if isinstance (s, tuple) :
                 t = s
@@ -994,7 +1011,7 @@ class _A_Named_Object_ (_A_Named_Value_) :
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :
             if value is not None :
-                return attr_type.__class__.Elbat [value]
+                return attr_type.as_string (value)
         # end def as_cargo
 
         @classmethod

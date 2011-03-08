@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -85,6 +85,7 @@
 #    15-Sep-2010 (CT) `attr_changes` removed
 #    28-Sep-2010 (CT) `temp_change_recorder` added
 #    30-Nov-2010 (CT) `Fatal_Exceptions` added
+#     8-Mar-2011 (CT) `pid_query` added
 #    ««revision-date»»···
 #--
 
@@ -450,6 +451,10 @@ class Scope (TFL.Meta.Object) :
                 c.user = self.user
                 self.ems.register_change (c)
     # end def nested_change_recorder
+
+    def pid_query (self, pid) :
+        return self.ems.pid_query (pid)
+    # end def pid_query
 
     def query_changes (self, * filter, ** kw) :
         return self.ems.changes (* filter, ** kw)

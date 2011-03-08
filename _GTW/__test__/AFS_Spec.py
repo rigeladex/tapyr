@@ -270,6 +270,7 @@ _test_code = """
     >>> scope.commit ()
     >>> fi  = fb (SRM.Boat, b)
     >>> fic = fb (SRM.Boat, b, copy = True)
+
     >>> print formatted (fi.as_json_cargo, level = 1)
       { '$id' : 'FB'
       , 'children' :
@@ -601,10 +602,9 @@ _test_code = """
       ...
     Unknown: (u'Form/element is unknown', 404, {'unknown_id': u'FC'})
 
-    >>> fv = Value.from_json (json_data)
+    >>> fv = Value.from_json (json_edit)
     >>> fv.changes
     1
-
     >>> for i in fv.transitive_iter () :
     ...     print i
     <Form FB> init-v = '' sid = 0 1
@@ -680,6 +680,59 @@ _test_code = """
       > ((('pid', 3), ('cid', 3), 'FB-0:2::0-1:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-1:0:0:0', 'last_name', u'Tanzer'), ('FB-0:2::0-1:0:0:1', 'first_name', u'Laurens'), ('FB-0:2::0-1:0:0:2', 'middle_name', ''), ('FB-0:2::0-1:0:0:3', 'title', ''), 0)
       < ((('pid', 3), ('cid', 3), 'FB-0:2::0-1:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-1:0:0:0', 'last_name', u'Tanzer'), ('FB-0:2::0-1:0:0:1', 'first_name', u'Laurens'), ('FB-0:2::0-1:0:0:2', 'middle_name', ''), ('FB-0:2::0-1:0:0:3', 'title', ''), 0)
 
+    >>> v.edit.get ("pid")
+    3
+
+    >>> p
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'', u'')
+    >>> fv.apply (scope, _sid = 0)
+    >>> p
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'william', u'')
+    >>> _ = p.set (middle_name = "w.")
+    >>> p
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
+    >>> fv.apply (scope, _sid = 0)
+    Traceback (most recent call last):
+      ...
+    Conflict: (u'Edit conflict: at least one value was changed asynchronously by another request.', 409)
+    >>> p
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
+
+    >>> fv.apply (scope, _sid = 1)
+    Traceback (most recent call last):
+      ...
+    Corrupted: (u'The form values were corrupted somewhere or are too old.', 404)
+
+    >>> gv = Value.from_json (json_copy)
+    >>> gv.changes
+    1
+    >>> for i in gv.transitive_iter () :
+    ...     print i
+    <Form FB> init-v = '' sid = 0 1
+    <Entity FB-0 'GTW.OMP.SRM.Boat'> init-v = [] sid = DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA 0
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> init-v = [] sid = HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw 0
+    <Field FB-0:0:0:0 'name'> init-v = 'Optimist' 0
+    <Field FB-0:0:1 'nation'> init-v = 'AUT' 0
+    <Field FB-0:0:2 'sail_number'> init-v = '1107' 0
+    <Field FB-0:1:0 'name'> init-v = '' 0
+    <Entity_Link FB-0:2::p 'GTW.OMP.SRM.Boat_in_Regatta'> init-v = [] sid = Wjc1ZUzIYGUAeNWM2lqVfRRM2h55nbu:rGus2Q 1
+    <Field_Entity FB-0:2::p-0:0 'right' 'GTW.OMP.SRM.Regatta'> init-v = [] sid = KHlrIVKnzSGWv7Cq7bb2jbo:sO1ap1t-ZsTlgQ 0
+    <Field_Entity FB-0:2::p-0:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> init-v = [] sid = ONQwCBeEQX6ghfi7WbgojEhoRyKKS4rC74tZMQ 0
+    <Field_Composite FB-0:2::p-0:0:0:0 'date' 'MOM.Date_Interval_C'> init-v = '' 0
+    <Field FB-0:2::p-0:0:0:0.0 'start'> init-v = '2008/05/01' 0
+    <Field FB-0:2::p-0:0:0:0.1 'finish'> init-v = '2008/05/01' 0
+    <Field FB-0:2::p-0:0:0:1 'name'> init-v = 'Himmelfahrt' 0
+    <Field_Entity FB-0:2::p-1:0 'skipper' 'GTW.OMP.SRM.Sailor'> init-v = [] sid = k3391hFYwz2NdfCElt6fuRvhTxgWOwb65d7ZnA 1
+    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.PAP.Person'> init-v = [] sid = kR13t0LifEpph1A3gzjbGECXgvntB:fbk4XByg 1
+    <Field FB-0:2::p-1:0:0:0 'last_name'> init-v = 'Tanzer' 0
+    <Field FB-0:2::p-1:0:0:1 'first_name'> init-v = 'Laurens' 0
+    <Field FB-0:2::p-1:0:0:2 'middle_name'> init-v = '' edit-v = 'William II' 1
+    <Field FB-0:2::p-1:0:0:3 'title'> init-v = '' 0
+    <Field FB-0:2::p-1:0:1 'nation'> init-v = 'AUT' 0
+    <Field FB-0:2::p-1:0:2 'mna_number'> init-v = '29676' 0
+    <Field FB-0:2::p-2:0 'place'> init-v = '' 0
+    <Field FB-0:2::p-2:1 'points'> init-v = '' 0
+
 """
 
 from   _GTW.__test__.model      import *
@@ -692,7 +745,8 @@ formatted = Formatter (width = 240)
 
 Instance.sort_json = True
 
-json_data = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}"""
+json_edit = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}"""
+json_copy = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{},"sid":"HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{},"sid":"Wjc1ZUzIYGUAeNWM2lqVfRRM2h55nbu:rGus2Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{},"sid":"KHlrIVKnzSGWv7Cq7bb2jbo:sO1ap1t-ZsTlgQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{},"sid":"ONQwCBeEQX6ghfi7WbgojEhoRyKKS4rC74tZMQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{},"sid":"k3391hFYwz2NdfCElt6fuRvhTxgWOwb65d7ZnA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"kR13t0LifEpph1A3gzjbGECXgvntB:fbk4XByg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William II"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}"""
 json_bad  = """{"$id":"FC"}"""
 
 __test__ = dict (AFS_Spec = _test_code)

@@ -50,6 +50,8 @@ class Value (_Base_) :
     """Model the value of an AFS form element."""
 
     anchor_id = None
+    asyn      = None
+    conflicts = 0
     prefilled = None
     sid       = None
     value     = None
@@ -103,6 +105,15 @@ class Value (_Base_) :
     def init (self, value) :
         self._init = value
     # end def init
+
+    def apply (self, * args, ** kw) :
+        conflicts = 0
+        for e in sorted (self.entity_children (), reverse = True) :
+            e.entity   = e.elem.apply (e, * args, ** kw)
+            conflicts += e.conflicts
+        if conflicts :
+            raise GTW.AFS.Error.Conflict ()
+    # end def apply
 
     def _child_sig_iter (self, c, cig) :
         yield cig

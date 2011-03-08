@@ -101,12 +101,12 @@ class _Element_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        ikw    = {} if not self.needs_value else dict \
-            ( value = self._value (* args, ** kw))
         result = GTW.AFS.Instance \
             ( self
             , children = list (self._call_iter (* args, ** kw))
-            , ** ikw
+            , **(  dict (value = self._value (* args, ** kw))
+                if self.needs_value else {}
+                )
             )
         return result
     # end def __call__
@@ -124,7 +124,7 @@ class _Element_ (TFL.Meta.Object) :
         self._id = value
     # end def id
 
-    @Once_Property
+    @property
     def as_json_cargo (self) :
         result         = dict (self.kw, type = self.__class__.__name__)
         result ["$id"] = self.id
@@ -215,9 +215,14 @@ class Entity (_Element_) :
 
     def __call__ (self, * args, ** kw) :
         result = self.__super.__call__ (* args, ** kw)
-        result.value.update (sid = self.form_hash (result))
+        result.value.update (sid = self.form_hash (result, ** kw))
         return result
     # end def __call__
+
+    def apply (self, * args, ** kw) :
+        raise NotImplementedError \
+            ("%s must implement method apply" % (self.__class__, ))
+    # end def apply
 
     def form_hash (self, value, ** kw) :
         sig = value.sig = value.form_sig \
