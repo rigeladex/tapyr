@@ -34,6 +34,7 @@
 #     2-Mar-2011 (CT) `form_hash`, `form_sig`, `init`, `prefilled`, `sid` added
 #     5-Mar-2011 (CT) `_child_sig_iter` factored
 #     8-Mar-2011 (CT) `entity_children` added
+#     8-Mar-2011 (CT) `sort_json` added (doctest better sets it to True)
 #    ««revision-date»»···
 #--
 
@@ -102,8 +103,9 @@ class _Base_ (TFL.Meta.Object) :
 class Instance (_Base_) :
     """Model an instance of an AFS form element."""
 
-    children = ()
-    value    = None
+    children  = ()
+    sort_json = False
+    value     = None
 
     def __init__ (self, elem, ** kw) :
         self.pop_to_self  (kw, "children", "value")
@@ -118,7 +120,7 @@ class Instance (_Base_) :
 
     @Once_Property
     def as_json (self) :
-        return json.dumps (self.as_json_cargo)
+        return json.dumps (self.as_json_cargo, sort_keys = self.sort_json)
     # end def as_json
 
     @Once_Property

@@ -29,6 +29,8 @@
 #    14-Feb-2011 (CT) Creation
 #    24-Feb-2011 (CT) s/Field_Object/Field_Entity/,
 #                     `Field_Entity` dervied from `_Entity_Mixin_`
+#     8-Mar-2011 (CT) `_Field_Group_.fields` changed to put `label` instead
+#                     of `ui_name` into `kw` for `attr.AFS_Spec`
 #    ««revision-date»»···
 #--
 
@@ -246,7 +248,7 @@ class  _Field_Group_ (_Base_) :
                 kw = dict \
                     ( name        = name
                     , description = attr.description
-                    , ui_name     = attr.ui_name
+                    , label       = attr.ui_name
                     , ** attr_spec [name]
                     )
                 if attr.explanation :

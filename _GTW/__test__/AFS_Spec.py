@@ -280,17 +280,17 @@ _test_code = """
                       [ { '$id' : 'FB-0:0:0'
                         , 'children' :
                             [ { '$id' : 'FB-0:0:0:0'
+                              , 'label' : 'Name'
                               , 'name' : 'name'
                               , 'type' : 'Field'
-                              , 'ui_name' : 'Name'
                               , 'value' :
                                   { 'init' : 'Optimist' }
                               }
                             ]
+                        , 'label' : 'Class'
                         , 'name' : 'left'
                         , 'type' : 'Field_Entity'
                         , 'type_name' : 'GTW.OMP.SRM.Boat_Class'
-                        , 'ui_name' : 'Class'
                         , 'value' :
                             { 'init' :
                                 { 'cid' : 1
@@ -300,16 +300,16 @@ _test_code = """
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
+                        , 'label' : 'Nation'
                         , 'name' : 'nation'
                         , 'type' : 'Field'
-                        , 'ui_name' : 'Nation'
                         , 'value' :
                             { 'init' : 'AUT' }
                         }
                       , { '$id' : 'FB-0:0:2'
+                        , 'label' : 'Sail number'
                         , 'name' : 'sail_number'
                         , 'type' : 'Field'
-                        , 'ui_name' : 'Sail number'
                         , 'value' :
                             { 'init' : '1107' }
                         }
@@ -321,9 +321,9 @@ _test_code = """
                 , { '$id' : 'FB-0:1'
                   , 'children' :
                       [ { '$id' : 'FB-0:1:0'
+                        , 'label' : 'Name'
                         , 'name' : 'name'
                         , 'type' : 'Field'
-                        , 'ui_name' : 'Name'
                         , 'value' :
                             {}
                         }
@@ -345,39 +345,39 @@ _test_code = """
                                               [ { '$id' : 'FB-0:2::0-0:0:0:0'
                                                 , 'children' :
                                                     [ { '$id' : 'FB-0:2::0-0:0:0:0.0'
+                                                      , 'label' : 'Start'
                                                       , 'name' : 'start'
                                                       , 'type' : 'Field'
-                                                      , 'ui_name' : 'Start'
                                                       , 'value' :
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     , { '$id' : 'FB-0:2::0-0:0:0:0.1'
+                                                      , 'label' : 'Finish'
                                                       , 'name' : 'finish'
                                                       , 'type' : 'Field'
-                                                      , 'ui_name' : 'Finish'
                                                       , 'value' :
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     ]
+                                                , 'label' : 'Date'
                                                 , 'name' : 'date'
                                                 , 'type' : 'Field_Composite'
                                                 , 'type_name' : 'MOM.Date_Interval_C'
-                                                , 'ui_name' : 'Date'
                                                 , 'value' :
                                                     {}
                                                 }
                                               , { '$id' : 'FB-0:2::0-0:0:0:1'
+                                                , 'label' : 'Name'
                                                 , 'name' : 'name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : 'Name'
                                                 , 'value' :
                                                     { 'init' : 'Himmelfahrt' }
                                                 }
                                               ]
+                                          , 'label' : 'Event'
                                           , 'name' : 'left'
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.SRM.Regatta_Event'
-                                          , 'ui_name' : 'Event'
                                           , 'value' :
                                               { 'init' :
                                                   { 'cid' : 5
@@ -387,10 +387,10 @@ _test_code = """
                                               }
                                           }
                                         ]
+                                    , 'label' : 'Regatta'
                                     , 'name' : 'right'
                                     , 'type' : 'Field_Entity'
                                     , 'type_name' : 'GTW.OMP.SRM.Regatta'
-                                    , 'ui_name' : 'Regatta'
                                     , 'value' :
                                         { 'init' :
                                             { 'cid' : 6
@@ -411,38 +411,38 @@ _test_code = """
                                         [ { '$id' : 'FB-0:2::0-1:0:0'
                                           , 'children' :
                                               [ { '$id' : 'FB-0:2::0-1:0:0:0'
+                                                , 'label' : 'Last name'
                                                 , 'name' : 'last_name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : 'Last name'
                                                 , 'value' :
                                                     { 'init' : 'Tanzer' }
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:1'
+                                                , 'label' : 'First name'
                                                 , 'name' : 'first_name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : 'First name'
                                                 , 'value' :
                                                     { 'init' : 'Laurens' }
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:2'
+                                                , 'label' : 'Middle name'
                                                 , 'name' : 'middle_name'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : 'Middle name'
                                                 , 'value' :
                                                     {}
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:3'
+                                                , 'label' : 'Academic title'
                                                 , 'name' : 'title'
                                                 , 'type' : 'Field'
-                                                , 'ui_name' : 'Academic title'
                                                 , 'value' :
                                                     {}
                                                 }
                                               ]
+                                          , 'label' : 'Person'
                                           , 'name' : 'left'
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.PAP.Person'
-                                          , 'ui_name' : 'Person'
                                           , 'value' :
                                               { 'init' :
                                                   { 'cid' : 3
@@ -452,24 +452,24 @@ _test_code = """
                                               }
                                           }
                                         , { '$id' : 'FB-0:2::0-1:0:1'
+                                          , 'label' : 'Nation'
                                           , 'name' : 'nation'
                                           , 'type' : 'Field'
-                                          , 'ui_name' : 'Nation'
                                           , 'value' :
                                               { 'init' : 'AUT' }
                                           }
                                         , { '$id' : 'FB-0:2::0-1:0:2'
+                                          , 'label' : 'Mna number'
                                           , 'name' : 'mna_number'
                                           , 'type' : 'Field'
-                                          , 'ui_name' : 'Mna number'
                                           , 'value' :
                                               { 'init' : '29676' }
                                           }
                                         ]
+                                    , 'label' : 'Skipper'
                                     , 'name' : 'skipper'
                                     , 'type' : 'Field_Entity'
                                     , 'type_name' : 'GTW.OMP.SRM.Sailor'
-                                    , 'ui_name' : 'Skipper'
                                     , 'value' :
                                         { 'init' :
                                             { 'cid' : 4
@@ -486,16 +486,16 @@ _test_code = """
                             , { '$id' : 'FB-0:2::0-2'
                               , 'children' :
                                   [ { '$id' : 'FB-0:2::0-2:0'
+                                    , 'label' : 'Place'
                                     , 'name' : 'place'
                                     , 'type' : 'Field'
-                                    , 'ui_name' : 'Place'
                                     , 'value' :
                                         {}
                                     }
                                   , { '$id' : 'FB-0:2::0-2:1'
+                                    , 'label' : 'Points'
                                     , 'name' : 'points'
                                     , 'type' : 'Field'
-                                    , 'ui_name' : 'Points'
                                     , 'value' :
                                         {}
                                     }
@@ -539,7 +539,7 @@ _test_code = """
       }
 
     >>> print "var f =", fi.as_js, ";"
-    var f = new $GTW.AFS.Form ({"$id": "FB", "type": "Form", "children": [{"name": "GTW.OMP.SRM.Boat", "$id": "FB-0", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"pid": 2, "cid": 2}, "sid": "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"}, "type": "Entity", "children": [{"$id": "FB-0:0", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "left", "$id": "FB-0:0:0", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {"pid": 1, "cid": 1}, "sid": "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"}, "ui_name": "Class", "type": "Field_Entity", "children": [{"$id": "FB-0:0:0:0", "ui_name": "Name", "type": "Field", "name": "name", "value": {"init": "Optimist"}}]}, {"$id": "FB-0:0:1", "ui_name": "Nation", "type": "Field", "name": "nation", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "ui_name": "Sail number", "type": "Field", "name": "sail_number", "value": {"init": "1107"}}]}, {"$id": "FB-0:1", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-0:1:0", "ui_name": "Name", "type": "Field", "name": "name", "value": {}}]}, {"$id": "FB-0:2", "type": "Entity_List", "children": [{"name": "GTW.OMP.SRM.Boat_in_Regatta", "$id": "FB-0:2::0", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {"pid": 7, "cid": 7}, "sid": "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"}, "role_name": "left", "type": "Entity_Link", "children": [{"$id": "FB-0:2::0-0", "collapsed": false, "type": "Fieldset", "name": "primary", "children": [{"name": "right", "$id": "FB-0:2::0-0:0", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {"pid": 6, "cid": 6}, "sid": "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"}, "ui_name": "Regatta", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-0:2::0-0:0:0", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {"pid": 5, "cid": 5}, "sid": "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"}, "ui_name": "Event", "type": "Field_Entity", "children": [{"name": "date", "$id": "FB-0:2::0-0:0:0:0", "type_name": "MOM.Date_Interval_C", "value": {}, "ui_name": "Date", "type": "Field_Composite", "children": [{"$id": "FB-0:2::0-0:0:0:0.0", "ui_name": "Start", "type": "Field", "name": "start", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-0:0:0:0.1", "ui_name": "Finish", "type": "Field", "name": "finish", "value": {"init": "2008/05/01"}}]}, {"$id": "FB-0:2::0-0:0:0:1", "ui_name": "Name", "type": "Field", "name": "name", "value": {"init": "Himmelfahrt"}}]}]}]}, {"$id": "FB-0:2::0-1", "collapsed": true, "type": "Fieldset", "name": "required", "children": [{"name": "skipper", "$id": "FB-0:2::0-1:0", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {"pid": 4, "cid": 4}, "sid": "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"}, "ui_name": "Skipper", "type": "Field_Entity", "children": [{"name": "left", "$id": "FB-0:2::0-1:0:0", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {"pid": 3, "cid": 3}, "sid": "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"}, "ui_name": "Person", "type": "Field_Entity", "children": [{"$id": "FB-0:2::0-1:0:0:0", "ui_name": "Last name", "type": "Field", "name": "last_name", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-1:0:0:1", "ui_name": "First name", "type": "Field", "name": "first_name", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-1:0:0:2", "ui_name": "Middle name", "type": "Field", "name": "middle_name", "value": {}}, {"$id": "FB-0:2::0-1:0:0:3", "ui_name": "Academic title", "type": "Field", "name": "title", "value": {}}]}, {"$id": "FB-0:2::0-1:0:1", "ui_name": "Nation", "type": "Field", "name": "nation", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-1:0:2", "ui_name": "Mna number", "type": "Field", "name": "mna_number", "value": {"init": "29676"}}]}]}, {"$id": "FB-0:2::0-2", "collapsed": true, "type": "Fieldset", "name": "optional", "children": [{"$id": "FB-0:2::0-2:0", "ui_name": "Place", "type": "Field", "name": "place", "value": {}}, {"$id": "FB-0:2::0-2:1", "ui_name": "Points", "type": "Field", "name": "points", "value": {}}]}]}]}]}], "value": {"sid": 0}}) ;
+    var f = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "label": "Name", "name": "name", "type": "Field", "value": {"init": "Optimist"}}], "label": "Class", "name": "left", "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {"cid": 1, "pid": 1}, "sid": "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"}}, {"$id": "FB-0:0:1", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "children": [{"$id": "FB-0:2::0-0:0", "children": [{"$id": "FB-0:2::0-0:0:0", "children": [{"$id": "FB-0:2::0-0:0:0:0", "children": [{"$id": "FB-0:2::0-0:0:0:0.0", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-0:0:0:0.1", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "label": "Date", "name": "date", "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-0:0:0:1", "label": "Name", "name": "name", "type": "Field", "value": {"init": "Himmelfahrt"}}], "label": "Event", "name": "left", "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {"cid": 5, "pid": 5}, "sid": "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"}}], "label": "Regatta", "name": "right", "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {"cid": 6, "pid": 6}, "sid": "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "label": "Last name", "name": "last_name", "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-1:0:0:1", "label": "First name", "name": "first_name", "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-1:0:0:2", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-1:0:0:3", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "label": "Person", "name": "left", "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {"cid": 3, "pid": 3}, "sid": "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"}}, {"$id": "FB-0:2::0-1:0:1", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-1:0:2", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "label": "Skipper", "name": "skipper", "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {"cid": 4, "pid": 4}, "sid": "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:1", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "name": "GTW.OMP.SRM.Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {"cid": 7, "pid": 7}, "sid": "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"}}], "type": "Entity_List"}], "name": "GTW.OMP.SRM.Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}, "sid": "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"}}], "type": "Form", "value": {"sid": 0}}) ;
 
     >>> for i in fi.transitive_iter () :
     ...     print i.elem, sorted (i.value or ())
@@ -684,10 +684,13 @@ _test_code = """
 
 from   _GTW.__test__.model      import *
 from   _GTW._AFS._MOM.Element   import Form
+from   _GTW._AFS.Instance       import Instance
 from   _GTW._AFS.Value          import Value
 
 from   _TFL.Formatter      import Formatter
 formatted = Formatter (width = 240)
+
+Instance.sort_json = True
 
 json_data = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}"""
 json_bad  = """{"$id":"FC"}"""
