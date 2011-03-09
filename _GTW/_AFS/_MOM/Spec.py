@@ -31,6 +31,11 @@
 #                     `Field_Entity` dervied from `_Entity_Mixin_`
 #     8-Mar-2011 (CT) `_Field_Group_.fields` changed to put `label` instead
 #                     of `ui_name` into `kw` for `attr.AFS_Spec`
+#     9-Mar-2011 (CT) `** kw` added to `__call__`
+#     9-Mar-2011 (CT) `_Entity_Mixin_.__call__` changed to set `name` to
+#                     `E_Type.ui_name` instead of `.type_name`
+#     9-Mar-2011 (CT) `Field_Role_Hidden` and `_Hidden_Role_` added,
+#                     `Entity_Link` changed to support `_Hidden_Role_`
 #    ««revision-date»»···
 #--
 
@@ -85,13 +90,13 @@ class _Entity_Mixin_ (_Base_) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    def __call__ (self, E_Type, spec = None, seen = None) :
+    def __call__ (self, E_Type, spec = None, seen = None, ** kw) :
         if seen is None :
             seen = set ()
-        kw       = self.kw
+        kw       = dict (self.kw, ** kw)
         elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
         children = (e (E_Type, self, seen) for e in elems)
-        kw.setdefault ("name", E_Type.type_name)
+        kw.setdefault ("name", E_Type.ui_name)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
@@ -126,9 +131,9 @@ class _Field_ (_Base_) :
 
 class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
 
-    def __call__ (self, E_Type, spec, seen) :
+    def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = getattr (E_Type, self.name)
-        return self.__super.__call__ (attr.P_Type, self, set ())
+        return self.__super.__call__ (attr.P_Type, self, set (), ** kw)
     # end def __call__
 
 # end class _Field_Entity_Mixin_
@@ -152,19 +157,25 @@ class Entity_Link (Entity) :
 
     def __init__ (self, name, * elements, ** kw) :
         self.name = name
-        self.__super.__init__ (* elements, ** kw)
+        self.__super.__init__ \
+            ( _Hidden_Role_ (), * elements
+            , include_kind_groups = kw.pop ("include_kind_groups", True)
+            , ** kw
+            )
     # end def __init__
 
-    def __call__ (self, E_Type, spec = None, seen = ()) :
+    def __call__ (self, E_Type, spec = None, seen = (), ** kw) :
         assoc = self._get_assoc (self.name, E_Type)
         try :
             role_name = self.role_name
         except AttributeError :
             role_name = self.kw ["role_name"] = \
                 assoc.Roles [assoc.role_map [E_Type.type_name]].name
-        role = getattr (assoc, role_name)
-        seen = set ([role.generic_role_name])
-        result = self.__super.__call__ (assoc, self, seen)
+        role   = getattr (assoc, role_name)
+        r_name = role.generic_role_name
+        seen   = set ([r_name])
+        with self.LET (hidden_role_name = r_name) :
+            result = self.__super.__call__ (assoc, self, seen, ** kw)
         if role.max_links != 1 :
             result = Element.Entity_List (proto = result)
         return result
@@ -185,8 +196,8 @@ class Field (_Field_) :
 
     Type     = Element.Field
 
-    def __call__ (self, E_Type, spec, seen) :
-        return self.Type (** self.kw)
+    def __call__ (self, E_Type, spec, seen, ** kw) :
+        return self.Type (** dict (self.kw, ** kw))
     # end def __call__
 
 # end class Field
@@ -198,7 +209,7 @@ class Field_Composite (_Field_Entity_Mixin_) :
     Type     = Element.Field_Composite
 
     def __init__ (self, ** kw) :
-        self._elems = kw.pop ("elements", ())
+        self._elems = kw.pop  ("elements", ())
         self.__super.__init__ (** kw)
         self.include_kind_groups = True
     # end def __init__
@@ -224,6 +235,12 @@ class Field_Entity (_Field_Entity_Mixin_) :
 
 # end class Field_Entity
 
+class Field_Role_Hidden (_Field_Entity_Mixin_) :
+
+    Type     = Element.Field_Role_Hidden
+
+# end class Field_Role_Hidden
+
 ### XXX sub-structured fields (e.g., date as year/month/date combination)
 
 class  _Field_Group_ (_Base_) :
@@ -232,11 +249,13 @@ class  _Field_Group_ (_Base_) :
     defaults = dict (collapsed = True)
     Type     = Element.Fieldset
 
-    def __call__ (self, E_Type, spec, seen) :
+    def __call__ (self, E_Type, spec, seen, ** kw) :
         children = tuple \
-            (f (E_Type, spec, seen) for f in self.fields (E_Type, spec, seen))
+            (   f (E_Type, spec, seen, ** kw)
+            for f in self.fields (E_Type, spec, seen)
+            )
         if children :
-            return self.Type (children = children, ** self.kw)
+            return self.Type (children = children, ** dict (self.kw, ** kw))
     # end def __call__
 
     def fields (self, E_Type, spec, seen) :
@@ -326,6 +345,26 @@ FGP = Field_Group_Primary   ()
 FGR = Field_Group_Required  ()
 FGN = Field_Group_Necessary ()
 FGO = Field_Group_Optional  ()
+
+class _Hidden_Role_ (_Base_) :
+    """Specification of a hidden field describing the hidden role of an
+       Entity_Link.
+    """
+
+    rank = - (1 << 16)
+
+    def __call__ (self, E_Type, spec, seen, ** kw) :
+        fe = Field_Role_Hidden \
+            ( allow_new           = False
+            , hidden              = True
+            , include_kind_groups = False
+            , name                = spec.hidden_role_name
+            )
+        result = fe (E_Type, spec, seen, ** kw)
+        return result
+    # end def __call__
+
+# end class _Hidden_Role_
 
 if __name__ != "__main__" :
     GTW.AFS.MOM._Export_Module ()

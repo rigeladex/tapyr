@@ -56,6 +56,7 @@
 #                     `self.id` (needed for dynamic children of Entity_List)
 #     8-Mar-2011 (CT) `_value` simplified (`needs_value` moved to
 #                     `_Element_.__call__`)
+#     9-Mar-2011 (CT) `_update_sid` factored
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,7 @@ class _Element_ (TFL.Meta.Object) :
     _id         = None
 
     def __init__ (self, ** kw) :
-        self.pop_to_self  (kw, "id", "id_sep", "prefilled")
+        self.pop_to_self  (kw, "id", "id_sep", "prefilled", "needs_value")
         children = kw.pop ("children", None)
         if children is not None :
             self.children = list (children)
@@ -189,7 +190,7 @@ class _Element_ (TFL.Meta.Object) :
     def __str__ (self) :
         infos = ["%s" % self.id]
         for k in "name", "type_name" :
-            n = getattr (self, k, None)
+            n = self.kw.get (k)
             if n is not None :
                 v = "%r" % n
                 if infos [-1] != v :
@@ -216,7 +217,7 @@ class Entity (_Element_) :
 
     def __call__ (self, * args, ** kw) :
         result = self.__super.__call__ (* args, ** kw)
-        result.value.update (sid = self.form_hash (result, ** kw))
+        self._update_sid (result, ** kw)
         return result
     # end def __call__
 
@@ -233,6 +234,10 @@ class Entity (_Element_) :
             )
         return value.form_hash (sig)
     # end def form_hash
+
+    def _update_sid (self, result, ** kw) :
+        result.value.update (sid = self.form_hash (result, ** kw))
+    # end def _update_sid
 
     def _value_sig_t (self, instance) :
         return (str (instance.id), self.type_name, instance.init)

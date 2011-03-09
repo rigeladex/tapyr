@@ -35,6 +35,8 @@
 #     5-Mar-2011 (CT) `_child_sig_iter` factored
 #     8-Mar-2011 (CT) `entity_children` added
 #     8-Mar-2011 (CT) `sort_json` added (doctest better sets it to True)
+#     9-Mar-2011 (CT) `entities` added
+#     9-Mar-2011 (CT) `as_json` and `as_json_cargo` factored to `_Base_`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +53,29 @@ import hashlib
 import json
 
 class _Base_ (TFL.Meta.Object) :
+
+    @Once_Property
+    def as_json (self) :
+        return json.dumps (self.as_json_cargo, sort_keys = self.sort_json)
+    # end def as_json
+
+    @Once_Property
+    def as_json_cargo (self) :
+        result = dict (self.kw)
+        if self.children :
+            result ["children"]  = [c.as_json_cargo for c in self.children]
+        if self.value is not None :
+            result ["value"]     = self.value
+        if self.prefilled :
+            result ["prefilled"] = True
+        return result
+    # end def as_json_cargo
+
+    def entities (self) :
+        for c in self.children :
+            if c.sid :
+                yield c
+    # end def entities
 
     def entity_children (self) :
         for c in self.children :
@@ -119,20 +144,9 @@ class Instance (_Base_) :
     # end def as_js
 
     @Once_Property
-    def as_json (self) :
-        return json.dumps (self.as_json_cargo, sort_keys = self.sort_json)
-    # end def as_json
-
-    @Once_Property
     def as_json_cargo (self) :
         result = self.elem.as_json_cargo
-        result.update (self.kw)
-        if self.children :
-            result ["children"]  = [c.as_json_cargo for c in self.children]
-        if self.value is not None :
-            result ["value"]     = self.value
-        if self.prefilled :
-            result ["prefilled"] = True
+        result.update (self.__super.as_json_cargo)
         return result
     # end def as_json_cargo
 

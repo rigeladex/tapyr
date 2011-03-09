@@ -5,11 +5,17 @@ FB-0 value :
         2 = "FB-0:0:2"
         3 = "FB-0:1:0"
     $id = "FB-0"
+    edit :
+        cid = 2
+        pid = 2
     FB-0:0:0 :
         $anchor_id = "FB-0"
         $child_ids :
             0 = "FB-0:0:0:0"
         $id = "FB-0:0:0"
+        edit :
+            cid = 1
+            pid = 1
         FB-0:0:0:0 :
             init = "Optimist"
         init :
@@ -28,85 +34,105 @@ FB-0 value :
     sid = "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"
 FB-0:2::0 value :
     $child_ids :
-        0 = "FB-0:2::0-0:0"
+        0 = "FB-0:2::0-0"
         1 = "FB-0:2::0-1:0"
         2 = "FB-0:2::0-2:0"
-        3 = "FB-0:2::0-2:1"
+        3 = "FB-0:2::0-3:0"
+        4 = "FB-0:2::0-3:1"
     $id = "FB-0:2::0"
-    FB-0:2::0-0:0 :
-        $anchor_id = "FB-0:2::0"
-        $child_ids :
-            0 = "FB-0:2::0-0:0:0"
-        $id = "FB-0:2::0-0:0"
-        FB-0:2::0-0:0:0 :
-            $anchor_id = "FB-0:2::0-0:0"
-            $child_ids :
-                0 = "FB-0:2::0-0:0:0:0"
-                1 = "FB-0:2::0-0:0:0:1"
-            $id = "FB-0:2::0-0:0:0"
-            FB-0:2::0-0:0:0:0 :
-                $anchor_id = "FB-0:2::0-0:0:0"
-                $child_ids :
-                    0 = "FB-0:2::0-0:0:0:0.0"
-                    1 = "FB-0:2::0-0:0:0:0.1"
-                $id = "FB-0:2::0-0:0:0:0"
-                FB-0:2::0-0:0:0:0.0 :
-                    init = "2008/05/01"
-                FB-0:2::0-0:0:0:0.1 :
-                    init = "2008/05/01"
-            FB-0:2::0-0:0:0:1 :
-                init = "Himmelfahrt"
-            init :
-                cid = 5
-                pid = 5
-            sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+    edit :
+        cid = 7
+        pid = 7
+    FB-0:2::0-0 :
         init :
-            cid = 6
-            pid = 6
-        sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
+            cid = 2
+            pid = 2
     FB-0:2::0-1:0 :
         $anchor_id = "FB-0:2::0"
         $child_ids :
             0 = "FB-0:2::0-1:0:0"
-            1 = "FB-0:2::0-1:0:1"
-            2 = "FB-0:2::0-1:0:2"
         $id = "FB-0:2::0-1:0"
+        edit :
+            cid = 6
+            pid = 6
         FB-0:2::0-1:0:0 :
             $anchor_id = "FB-0:2::0-1:0"
             $child_ids :
                 0 = "FB-0:2::0-1:0:0:0"
                 1 = "FB-0:2::0-1:0:0:1"
-                2 = "FB-0:2::0-1:0:0:2"
-                3 = "FB-0:2::0-1:0:0:3"
             $id = "FB-0:2::0-1:0:0"
+            edit :
+                cid = 5
+                pid = 5
             FB-0:2::0-1:0:0:0 :
-                init = "Tanzer"
+                $anchor_id = "FB-0:2::0-1:0:0"
+                $child_ids :
+                    0 = "FB-0:2::0-1:0:0:0.0"
+                    1 = "FB-0:2::0-1:0:0:0.1"
+                $id = "FB-0:2::0-1:0:0:0"
+                FB-0:2::0-1:0:0:0.0 :
+                    init = "2008/05/01"
+                FB-0:2::0-1:0:0:0.1 :
+                    init = "2008/05/01"
             FB-0:2::0-1:0:0:1 :
+                init = "Himmelfahrt"
+            init :
+                cid = 5
+                pid = 5
+            sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+        init :
+            cid = 6
+            pid = 6
+        sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+    FB-0:2::0-2:0 :
+        $anchor_id = "FB-0:2::0"
+        $child_ids :
+            0 = "FB-0:2::0-2:0:0"
+            1 = "FB-0:2::0-2:0:1"
+            2 = "FB-0:2::0-2:0:2"
+        $id = "FB-0:2::0-2:0"
+        edit :
+            cid = 4
+            pid = 4
+        FB-0:2::0-2:0:0 :
+            $anchor_id = "FB-0:2::0-2:0"
+            $child_ids :
+                0 = "FB-0:2::0-2:0:0:0"
+                1 = "FB-0:2::0-2:0:0:1"
+                2 = "FB-0:2::0-2:0:0:2"
+                3 = "FB-0:2::0-2:0:0:3"
+            $id = "FB-0:2::0-2:0:0"
+            edit :
+                cid = 3
+                pid = 3
+            FB-0:2::0-2:0:0:0 :
+                init = "Tanzer"
+            FB-0:2::0-2:0:0:1 :
                 init = "Laurens"
-            FB-0:2::0-1:0:0:2 :
+            FB-0:2::0-2:0:0:2 :
 
-            FB-0:2::0-1:0:0:3 :
+            FB-0:2::0-2:0:0:3 :
 
             init :
                 cid = 3
                 pid = 3
-            sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-        FB-0:2::0-1:0:1 :
+            sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+        FB-0:2::0-2:0:1 :
             init = "AUT"
-        FB-0:2::0-1:0:2 :
+        FB-0:2::0-2:0:2 :
             init = "29676"
         init :
             cid = 4
             pid = 4
-        sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-    FB-0:2::0-2:0 :
+        sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+    FB-0:2::0-3:0 :
 
-    FB-0:2::0-2:1 :
+    FB-0:2::0-3:1 :
 
     init :
         cid = 7
         pid = 7
-    sid = "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"
+    sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
 Form values :
     $child_ids :
         0 = "FB-0"
@@ -119,11 +145,17 @@ Form values :
             2 = "FB-0:0:2"
             3 = "FB-0:1:0"
         $id = "FB-0"
+        edit :
+            cid = 2
+            pid = 2
         FB-0:0:0 :
             $anchor_id = "FB-0"
             $child_ids :
                 0 = "FB-0:0:0:0"
             $id = "FB-0:0:0"
+            edit :
+                cid = 1
+                pid = 1
             FB-0:0:0:0 :
                 init = "Optimist"
             init :
@@ -142,85 +174,105 @@ Form values :
         sid = "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"
     FB-0:2::0 :
         $child_ids :
-            0 = "FB-0:2::0-0:0"
+            0 = "FB-0:2::0-0"
             1 = "FB-0:2::0-1:0"
             2 = "FB-0:2::0-2:0"
-            3 = "FB-0:2::0-2:1"
+            3 = "FB-0:2::0-3:0"
+            4 = "FB-0:2::0-3:1"
         $id = "FB-0:2::0"
-        FB-0:2::0-0:0 :
-            $anchor_id = "FB-0:2::0"
-            $child_ids :
-                0 = "FB-0:2::0-0:0:0"
-            $id = "FB-0:2::0-0:0"
-            FB-0:2::0-0:0:0 :
-                $anchor_id = "FB-0:2::0-0:0"
-                $child_ids :
-                    0 = "FB-0:2::0-0:0:0:0"
-                    1 = "FB-0:2::0-0:0:0:1"
-                $id = "FB-0:2::0-0:0:0"
-                FB-0:2::0-0:0:0:0 :
-                    $anchor_id = "FB-0:2::0-0:0:0"
-                    $child_ids :
-                        0 = "FB-0:2::0-0:0:0:0.0"
-                        1 = "FB-0:2::0-0:0:0:0.1"
-                    $id = "FB-0:2::0-0:0:0:0"
-                    FB-0:2::0-0:0:0:0.0 :
-                        init = "2008/05/01"
-                    FB-0:2::0-0:0:0:0.1 :
-                        init = "2008/05/01"
-                FB-0:2::0-0:0:0:1 :
-                    init = "Himmelfahrt"
-                init :
-                    cid = 5
-                    pid = 5
-                sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+        edit :
+            cid = 7
+            pid = 7
+        FB-0:2::0-0 :
             init :
-                cid = 6
-                pid = 6
-            sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
+                cid = 2
+                pid = 2
         FB-0:2::0-1:0 :
             $anchor_id = "FB-0:2::0"
             $child_ids :
                 0 = "FB-0:2::0-1:0:0"
-                1 = "FB-0:2::0-1:0:1"
-                2 = "FB-0:2::0-1:0:2"
             $id = "FB-0:2::0-1:0"
+            edit :
+                cid = 6
+                pid = 6
             FB-0:2::0-1:0:0 :
                 $anchor_id = "FB-0:2::0-1:0"
                 $child_ids :
                     0 = "FB-0:2::0-1:0:0:0"
                     1 = "FB-0:2::0-1:0:0:1"
-                    2 = "FB-0:2::0-1:0:0:2"
-                    3 = "FB-0:2::0-1:0:0:3"
                 $id = "FB-0:2::0-1:0:0"
+                edit :
+                    cid = 5
+                    pid = 5
                 FB-0:2::0-1:0:0:0 :
-                    init = "Tanzer"
+                    $anchor_id = "FB-0:2::0-1:0:0"
+                    $child_ids :
+                        0 = "FB-0:2::0-1:0:0:0.0"
+                        1 = "FB-0:2::0-1:0:0:0.1"
+                    $id = "FB-0:2::0-1:0:0:0"
+                    FB-0:2::0-1:0:0:0.0 :
+                        init = "2008/05/01"
+                    FB-0:2::0-1:0:0:0.1 :
+                        init = "2008/05/01"
                 FB-0:2::0-1:0:0:1 :
+                    init = "Himmelfahrt"
+                init :
+                    cid = 5
+                    pid = 5
+                sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+            init :
+                cid = 6
+                pid = 6
+            sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+        FB-0:2::0-2:0 :
+            $anchor_id = "FB-0:2::0"
+            $child_ids :
+                0 = "FB-0:2::0-2:0:0"
+                1 = "FB-0:2::0-2:0:1"
+                2 = "FB-0:2::0-2:0:2"
+            $id = "FB-0:2::0-2:0"
+            edit :
+                cid = 4
+                pid = 4
+            FB-0:2::0-2:0:0 :
+                $anchor_id = "FB-0:2::0-2:0"
+                $child_ids :
+                    0 = "FB-0:2::0-2:0:0:0"
+                    1 = "FB-0:2::0-2:0:0:1"
+                    2 = "FB-0:2::0-2:0:0:2"
+                    3 = "FB-0:2::0-2:0:0:3"
+                $id = "FB-0:2::0-2:0:0"
+                edit :
+                    cid = 3
+                    pid = 3
+                FB-0:2::0-2:0:0:0 :
+                    init = "Tanzer"
+                FB-0:2::0-2:0:0:1 :
                     init = "Laurens"
-                FB-0:2::0-1:0:0:2 :
+                FB-0:2::0-2:0:0:2 :
 
-                FB-0:2::0-1:0:0:3 :
+                FB-0:2::0-2:0:0:3 :
 
                 init :
                     cid = 3
                     pid = 3
-                sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-            FB-0:2::0-1:0:1 :
+                sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+            FB-0:2::0-2:0:1 :
                 init = "AUT"
-            FB-0:2::0-1:0:2 :
+            FB-0:2::0-2:0:2 :
                 init = "29676"
             init :
                 cid = 4
                 pid = 4
-            sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-        FB-0:2::0-2:0 :
+            sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+        FB-0:2::0-3:0 :
 
-        FB-0:2::0-2:1 :
+        FB-0:2::0-3:1 :
 
         init :
             cid = 7
             pid = 7
-        sid = "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"
+        sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
     sid = 0
 $GTW :
     AFS :
@@ -233,6 +285,7 @@ $GTW :
             Field : function constructor()
             Field_Composite : function constructor()
             Field_Entity : function constructor()
+            Field_Role_Hidden : function constructor()
             Fieldset : function constructor()
             function get(id)
             id_map :
@@ -248,7 +301,7 @@ $GTW :
                                 0 = "FB-0:0"
                                 1 = "FB-0:1"
                                 2 = "FB-0:2"
-                            name = "GTW.OMP.SRM.Boat"
+                            name = "Boat"
                             type = "Entity"
                             type_name = "GTW.OMP.SRM.Boat"
                             function update(dict)
@@ -259,11 +312,17 @@ $GTW :
                                     2 = "FB-0:0:2"
                                     3 = "FB-0:1:0"
                                 $id = "FB-0"
+                                edit :
+                                    cid = 2
+                                    pid = 2
                                 FB-0:0:0 :
                                     $anchor_id = "FB-0"
                                     $child_ids :
                                         0 = "FB-0:0:0:0"
                                     $id = "FB-0:0:0"
+                                    edit :
+                                        cid = 1
+                                        pid = 1
                                     FB-0:0:0:0 :
                                         init = "Optimist"
                                     init :
@@ -287,92 +346,113 @@ $GTW :
                                 0 = "FB-0:2::0-0"
                                 1 = "FB-0:2::0-1"
                                 2 = "FB-0:2::0-2"
-                            name = "GTW.OMP.SRM.Boat_in_Regatta"
+                                3 = "FB-0:2::0-3"
+                            name = "Boat_in_Regatta"
                             role_name = "left"
                             type = "Entity_Link"
                             type_name = "GTW.OMP.SRM.Boat_in_Regatta"
                             function update(dict)
                             value :
                                 $child_ids :
-                                    0 = "FB-0:2::0-0:0"
+                                    0 = "FB-0:2::0-0"
                                     1 = "FB-0:2::0-1:0"
                                     2 = "FB-0:2::0-2:0"
-                                    3 = "FB-0:2::0-2:1"
+                                    3 = "FB-0:2::0-3:0"
+                                    4 = "FB-0:2::0-3:1"
                                 $id = "FB-0:2::0"
-                                FB-0:2::0-0:0 :
-                                    $anchor_id = "FB-0:2::0"
-                                    $child_ids :
-                                        0 = "FB-0:2::0-0:0:0"
-                                    $id = "FB-0:2::0-0:0"
-                                    FB-0:2::0-0:0:0 :
-                                        $anchor_id = "FB-0:2::0-0:0"
-                                        $child_ids :
-                                            0 = "FB-0:2::0-0:0:0:0"
-                                            1 = "FB-0:2::0-0:0:0:1"
-                                        $id = "FB-0:2::0-0:0:0"
-                                        FB-0:2::0-0:0:0:0 :
-                                            $anchor_id = "FB-0:2::0-0:0:0"
-                                            $child_ids :
-                                                0 = "FB-0:2::0-0:0:0:0.0"
-                                                1 = "FB-0:2::0-0:0:0:0.1"
-                                            $id = "FB-0:2::0-0:0:0:0"
-                                            FB-0:2::0-0:0:0:0.0 :
-                                                init = "2008/05/01"
-                                            FB-0:2::0-0:0:0:0.1 :
-                                                init = "2008/05/01"
-                                        FB-0:2::0-0:0:0:1 :
-                                            init = "Himmelfahrt"
-                                        init :
-                                            cid = 5
-                                            pid = 5
-                                        sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+                                edit :
+                                    cid = 7
+                                    pid = 7
+                                FB-0:2::0-0 :
                                     init :
-                                        cid = 6
-                                        pid = 6
-                                    sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
+                                        cid = 2
+                                        pid = 2
                                 FB-0:2::0-1:0 :
                                     $anchor_id = "FB-0:2::0"
                                     $child_ids :
                                         0 = "FB-0:2::0-1:0:0"
-                                        1 = "FB-0:2::0-1:0:1"
-                                        2 = "FB-0:2::0-1:0:2"
                                     $id = "FB-0:2::0-1:0"
+                                    edit :
+                                        cid = 6
+                                        pid = 6
                                     FB-0:2::0-1:0:0 :
                                         $anchor_id = "FB-0:2::0-1:0"
                                         $child_ids :
                                             0 = "FB-0:2::0-1:0:0:0"
                                             1 = "FB-0:2::0-1:0:0:1"
-                                            2 = "FB-0:2::0-1:0:0:2"
-                                            3 = "FB-0:2::0-1:0:0:3"
                                         $id = "FB-0:2::0-1:0:0"
+                                        edit :
+                                            cid = 5
+                                            pid = 5
                                         FB-0:2::0-1:0:0:0 :
-                                            init = "Tanzer"
+                                            $anchor_id = "FB-0:2::0-1:0:0"
+                                            $child_ids :
+                                                0 = "FB-0:2::0-1:0:0:0.0"
+                                                1 = "FB-0:2::0-1:0:0:0.1"
+                                            $id = "FB-0:2::0-1:0:0:0"
+                                            FB-0:2::0-1:0:0:0.0 :
+                                                init = "2008/05/01"
+                                            FB-0:2::0-1:0:0:0.1 :
+                                                init = "2008/05/01"
                                         FB-0:2::0-1:0:0:1 :
+                                            init = "Himmelfahrt"
+                                        init :
+                                            cid = 5
+                                            pid = 5
+                                        sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+                                    init :
+                                        cid = 6
+                                        pid = 6
+                                    sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+                                FB-0:2::0-2:0 :
+                                    $anchor_id = "FB-0:2::0"
+                                    $child_ids :
+                                        0 = "FB-0:2::0-2:0:0"
+                                        1 = "FB-0:2::0-2:0:1"
+                                        2 = "FB-0:2::0-2:0:2"
+                                    $id = "FB-0:2::0-2:0"
+                                    edit :
+                                        cid = 4
+                                        pid = 4
+                                    FB-0:2::0-2:0:0 :
+                                        $anchor_id = "FB-0:2::0-2:0"
+                                        $child_ids :
+                                            0 = "FB-0:2::0-2:0:0:0"
+                                            1 = "FB-0:2::0-2:0:0:1"
+                                            2 = "FB-0:2::0-2:0:0:2"
+                                            3 = "FB-0:2::0-2:0:0:3"
+                                        $id = "FB-0:2::0-2:0:0"
+                                        edit :
+                                            cid = 3
+                                            pid = 3
+                                        FB-0:2::0-2:0:0:0 :
+                                            init = "Tanzer"
+                                        FB-0:2::0-2:0:0:1 :
                                             init = "Laurens"
-                                        FB-0:2::0-1:0:0:2 :
+                                        FB-0:2::0-2:0:0:2 :
 
-                                        FB-0:2::0-1:0:0:3 :
+                                        FB-0:2::0-2:0:0:3 :
 
                                         init :
                                             cid = 3
                                             pid = 3
-                                        sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-                                    FB-0:2::0-1:0:1 :
+                                        sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+                                    FB-0:2::0-2:0:1 :
                                         init = "AUT"
-                                    FB-0:2::0-1:0:2 :
+                                    FB-0:2::0-2:0:2 :
                                         init = "29676"
                                     init :
                                         cid = 4
                                         pid = 4
-                                    sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-                                FB-0:2::0-2:0 :
+                                    sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+                                FB-0:2::0-3:0 :
 
-                                FB-0:2::0-2:1 :
+                                FB-0:2::0-3:1 :
 
                                 init :
                                     cid = 7
                                     pid = 7
-                                sid = "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"
+                                sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
                     type = "Form"
                     function update(dict)
                     value :
@@ -383,7 +463,7 @@ $GTW :
                         0 = "FB-0:0"
                         1 = "FB-0:1"
                         2 = "FB-0:2"
-                    name = "GTW.OMP.SRM.Boat"
+                    name = "Boat"
                     type = "Entity"
                     type_name = "GTW.OMP.SRM.Boat"
                     function update(dict)
@@ -394,11 +474,17 @@ $GTW :
                             2 = "FB-0:0:2"
                             3 = "FB-0:1:0"
                         $id = "FB-0"
+                        edit :
+                            cid = 2
+                            pid = 2
                         FB-0:0:0 :
                             $anchor_id = "FB-0"
                             $child_ids :
                                 0 = "FB-0:0:0:0"
                             $id = "FB-0:0:0"
+                            edit :
+                                cid = 1
+                                pid = 1
                             FB-0:0:0:0 :
                                 init = "Optimist"
                             init :
@@ -440,6 +526,9 @@ $GTW :
                         $child_ids :
                             0 = "FB-0:0:0:0"
                         $id = "FB-0:0:0"
+                        edit :
+                            cid = 1
+                            pid = 1
                         FB-0:0:0:0 :
                             init = "Optimist"
                         init :
@@ -503,105 +592,139 @@ $GTW :
                         0 = "FB-0:2::0-0"
                         1 = "FB-0:2::0-1"
                         2 = "FB-0:2::0-2"
-                    name = "GTW.OMP.SRM.Boat_in_Regatta"
+                        3 = "FB-0:2::0-3"
+                    name = "Boat_in_Regatta"
                     role_name = "left"
                     type = "Entity_Link"
                     type_name = "GTW.OMP.SRM.Boat_in_Regatta"
                     function update(dict)
                     value :
                         $child_ids :
-                            0 = "FB-0:2::0-0:0"
+                            0 = "FB-0:2::0-0"
                             1 = "FB-0:2::0-1:0"
                             2 = "FB-0:2::0-2:0"
-                            3 = "FB-0:2::0-2:1"
+                            3 = "FB-0:2::0-3:0"
+                            4 = "FB-0:2::0-3:1"
                         $id = "FB-0:2::0"
-                        FB-0:2::0-0:0 :
-                            $anchor_id = "FB-0:2::0"
-                            $child_ids :
-                                0 = "FB-0:2::0-0:0:0"
-                            $id = "FB-0:2::0-0:0"
-                            FB-0:2::0-0:0:0 :
-                                $anchor_id = "FB-0:2::0-0:0"
-                                $child_ids :
-                                    0 = "FB-0:2::0-0:0:0:0"
-                                    1 = "FB-0:2::0-0:0:0:1"
-                                $id = "FB-0:2::0-0:0:0"
-                                FB-0:2::0-0:0:0:0 :
-                                    $anchor_id = "FB-0:2::0-0:0:0"
-                                    $child_ids :
-                                        0 = "FB-0:2::0-0:0:0:0.0"
-                                        1 = "FB-0:2::0-0:0:0:0.1"
-                                    $id = "FB-0:2::0-0:0:0:0"
-                                    FB-0:2::0-0:0:0:0.0 :
-                                        init = "2008/05/01"
-                                    FB-0:2::0-0:0:0:0.1 :
-                                        init = "2008/05/01"
-                                FB-0:2::0-0:0:0:1 :
-                                    init = "Himmelfahrt"
-                                init :
-                                    cid = 5
-                                    pid = 5
-                                sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+                        edit :
+                            cid = 7
+                            pid = 7
+                        FB-0:2::0-0 :
                             init :
-                                cid = 6
-                                pid = 6
-                            sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
+                                cid = 2
+                                pid = 2
                         FB-0:2::0-1:0 :
                             $anchor_id = "FB-0:2::0"
                             $child_ids :
                                 0 = "FB-0:2::0-1:0:0"
-                                1 = "FB-0:2::0-1:0:1"
-                                2 = "FB-0:2::0-1:0:2"
                             $id = "FB-0:2::0-1:0"
+                            edit :
+                                cid = 6
+                                pid = 6
                             FB-0:2::0-1:0:0 :
                                 $anchor_id = "FB-0:2::0-1:0"
                                 $child_ids :
                                     0 = "FB-0:2::0-1:0:0:0"
                                     1 = "FB-0:2::0-1:0:0:1"
-                                    2 = "FB-0:2::0-1:0:0:2"
-                                    3 = "FB-0:2::0-1:0:0:3"
                                 $id = "FB-0:2::0-1:0:0"
+                                edit :
+                                    cid = 5
+                                    pid = 5
                                 FB-0:2::0-1:0:0:0 :
-                                    init = "Tanzer"
+                                    $anchor_id = "FB-0:2::0-1:0:0"
+                                    $child_ids :
+                                        0 = "FB-0:2::0-1:0:0:0.0"
+                                        1 = "FB-0:2::0-1:0:0:0.1"
+                                    $id = "FB-0:2::0-1:0:0:0"
+                                    FB-0:2::0-1:0:0:0.0 :
+                                        init = "2008/05/01"
+                                    FB-0:2::0-1:0:0:0.1 :
+                                        init = "2008/05/01"
                                 FB-0:2::0-1:0:0:1 :
+                                    init = "Himmelfahrt"
+                                init :
+                                    cid = 5
+                                    pid = 5
+                                sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+                            init :
+                                cid = 6
+                                pid = 6
+                            sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+                        FB-0:2::0-2:0 :
+                            $anchor_id = "FB-0:2::0"
+                            $child_ids :
+                                0 = "FB-0:2::0-2:0:0"
+                                1 = "FB-0:2::0-2:0:1"
+                                2 = "FB-0:2::0-2:0:2"
+                            $id = "FB-0:2::0-2:0"
+                            edit :
+                                cid = 4
+                                pid = 4
+                            FB-0:2::0-2:0:0 :
+                                $anchor_id = "FB-0:2::0-2:0"
+                                $child_ids :
+                                    0 = "FB-0:2::0-2:0:0:0"
+                                    1 = "FB-0:2::0-2:0:0:1"
+                                    2 = "FB-0:2::0-2:0:0:2"
+                                    3 = "FB-0:2::0-2:0:0:3"
+                                $id = "FB-0:2::0-2:0:0"
+                                edit :
+                                    cid = 3
+                                    pid = 3
+                                FB-0:2::0-2:0:0:0 :
+                                    init = "Tanzer"
+                                FB-0:2::0-2:0:0:1 :
                                     init = "Laurens"
-                                FB-0:2::0-1:0:0:2 :
+                                FB-0:2::0-2:0:0:2 :
 
-                                FB-0:2::0-1:0:0:3 :
+                                FB-0:2::0-2:0:0:3 :
 
                                 init :
                                     cid = 3
                                     pid = 3
-                                sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-                            FB-0:2::0-1:0:1 :
+                                sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+                            FB-0:2::0-2:0:1 :
                                 init = "AUT"
-                            FB-0:2::0-1:0:2 :
+                            FB-0:2::0-2:0:2 :
                                 init = "29676"
                             init :
                                 cid = 4
                                 pid = 4
-                            sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-                        FB-0:2::0-2:0 :
+                            sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+                        FB-0:2::0-3:0 :
 
-                        FB-0:2::0-2:1 :
+                        FB-0:2::0-3:1 :
 
                         init :
                             cid = 7
                             pid = 7
-                        sid = "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"
+                        sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
                 FB-0:2::0-0 :
+                    $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-0"
+                    allow_new = false
+                    hidden = true
+                    name = "left"
+                    type = "Field_Role_Hidden"
+                    type_name = "GTW.OMP.SRM.Boat"
+                    function update(dict)
+                    value :
+                        init :
+                            cid = 2
+                            pid = 2
+                FB-0:2::0-1 :
+                    $id = "FB-0:2::0-1"
                     children :
-                        0 = "FB-0:2::0-0:0"
+                        0 = "FB-0:2::0-1:0"
                     collapsed = false
                     name = "primary"
                     type = "Fieldset"
                     function update(dict)
-                FB-0:2::0-0:0 :
+                FB-0:2::0-1:0 :
                     $anchor_id = "FB-0:2::0"
-                    $id = "FB-0:2::0-0:0"
+                    $id = "FB-0:2::0-1:0"
                     children :
-                        0 = "FB-0:2::0-0:0:0"
+                        0 = "FB-0:2::0-1:0:0"
                     label = "Regatta"
                     name = "right"
                     type = "Field_Entity"
@@ -610,130 +733,139 @@ $GTW :
                     value :
                         $anchor_id = "FB-0:2::0"
                         $child_ids :
-                            0 = "FB-0:2::0-0:0:0"
-                        $id = "FB-0:2::0-0:0"
-                        FB-0:2::0-0:0:0 :
-                            $anchor_id = "FB-0:2::0-0:0"
+                            0 = "FB-0:2::0-1:0:0"
+                        $id = "FB-0:2::0-1:0"
+                        edit :
+                            cid = 6
+                            pid = 6
+                        FB-0:2::0-1:0:0 :
+                            $anchor_id = "FB-0:2::0-1:0"
                             $child_ids :
-                                0 = "FB-0:2::0-0:0:0:0"
-                                1 = "FB-0:2::0-0:0:0:1"
-                            $id = "FB-0:2::0-0:0:0"
-                            FB-0:2::0-0:0:0:0 :
-                                $anchor_id = "FB-0:2::0-0:0:0"
+                                0 = "FB-0:2::0-1:0:0:0"
+                                1 = "FB-0:2::0-1:0:0:1"
+                            $id = "FB-0:2::0-1:0:0"
+                            edit :
+                                cid = 5
+                                pid = 5
+                            FB-0:2::0-1:0:0:0 :
+                                $anchor_id = "FB-0:2::0-1:0:0"
                                 $child_ids :
-                                    0 = "FB-0:2::0-0:0:0:0.0"
-                                    1 = "FB-0:2::0-0:0:0:0.1"
-                                $id = "FB-0:2::0-0:0:0:0"
-                                FB-0:2::0-0:0:0:0.0 :
+                                    0 = "FB-0:2::0-1:0:0:0.0"
+                                    1 = "FB-0:2::0-1:0:0:0.1"
+                                $id = "FB-0:2::0-1:0:0:0"
+                                FB-0:2::0-1:0:0:0.0 :
                                     init = "2008/05/01"
-                                FB-0:2::0-0:0:0:0.1 :
+                                FB-0:2::0-1:0:0:0.1 :
                                     init = "2008/05/01"
-                            FB-0:2::0-0:0:0:1 :
+                            FB-0:2::0-1:0:0:1 :
                                 init = "Himmelfahrt"
                             init :
                                 cid = 5
                                 pid = 5
-                            sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+                            sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
                         init :
                             cid = 6
                             pid = 6
-                        sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
-                FB-0:2::0-0:0:0 :
-                    $anchor_id = "FB-0:2::0-0:0"
-                    $id = "FB-0:2::0-0:0:0"
+                        sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+                FB-0:2::0-1:0:0 :
+                    $anchor_id = "FB-0:2::0-1:0"
+                    $id = "FB-0:2::0-1:0:0"
                     children :
-                        0 = "FB-0:2::0-0:0:0:0"
-                        1 = "FB-0:2::0-0:0:0:1"
+                        0 = "FB-0:2::0-1:0:0:0"
+                        1 = "FB-0:2::0-1:0:0:1"
                     label = "Event"
                     name = "left"
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Regatta_Event"
                     function update(dict)
                     value :
-                        $anchor_id = "FB-0:2::0-0:0"
+                        $anchor_id = "FB-0:2::0-1:0"
                         $child_ids :
-                            0 = "FB-0:2::0-0:0:0:0"
-                            1 = "FB-0:2::0-0:0:0:1"
-                        $id = "FB-0:2::0-0:0:0"
-                        FB-0:2::0-0:0:0:0 :
-                            $anchor_id = "FB-0:2::0-0:0:0"
+                            0 = "FB-0:2::0-1:0:0:0"
+                            1 = "FB-0:2::0-1:0:0:1"
+                        $id = "FB-0:2::0-1:0:0"
+                        edit :
+                            cid = 5
+                            pid = 5
+                        FB-0:2::0-1:0:0:0 :
+                            $anchor_id = "FB-0:2::0-1:0:0"
                             $child_ids :
-                                0 = "FB-0:2::0-0:0:0:0.0"
-                                1 = "FB-0:2::0-0:0:0:0.1"
-                            $id = "FB-0:2::0-0:0:0:0"
-                            FB-0:2::0-0:0:0:0.0 :
+                                0 = "FB-0:2::0-1:0:0:0.0"
+                                1 = "FB-0:2::0-1:0:0:0.1"
+                            $id = "FB-0:2::0-1:0:0:0"
+                            FB-0:2::0-1:0:0:0.0 :
                                 init = "2008/05/01"
-                            FB-0:2::0-0:0:0:0.1 :
+                            FB-0:2::0-1:0:0:0.1 :
                                 init = "2008/05/01"
-                        FB-0:2::0-0:0:0:1 :
+                        FB-0:2::0-1:0:0:1 :
                             init = "Himmelfahrt"
                         init :
                             cid = 5
                             pid = 5
-                        sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
-                FB-0:2::0-0:0:0:0 :
-                    $anchor_id = "FB-0:2::0-0:0:0"
-                    $id = "FB-0:2::0-0:0:0:0"
+                        sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+                FB-0:2::0-1:0:0:0 :
+                    $anchor_id = "FB-0:2::0-1:0:0"
+                    $id = "FB-0:2::0-1:0:0:0"
                     children :
-                        0 = "FB-0:2::0-0:0:0:0.0"
-                        1 = "FB-0:2::0-0:0:0:0.1"
+                        0 = "FB-0:2::0-1:0:0:0.0"
+                        1 = "FB-0:2::0-1:0:0:0.1"
                     label = "Date"
                     name = "date"
                     type = "Field_Composite"
                     type_name = "MOM.Date_Interval_C"
                     function update(dict)
                     value :
-                        $anchor_id = "FB-0:2::0-0:0:0"
+                        $anchor_id = "FB-0:2::0-1:0:0"
                         $child_ids :
-                            0 = "FB-0:2::0-0:0:0:0.0"
-                            1 = "FB-0:2::0-0:0:0:0.1"
-                        $id = "FB-0:2::0-0:0:0:0"
-                        FB-0:2::0-0:0:0:0.0 :
+                            0 = "FB-0:2::0-1:0:0:0.0"
+                            1 = "FB-0:2::0-1:0:0:0.1"
+                        $id = "FB-0:2::0-1:0:0:0"
+                        FB-0:2::0-1:0:0:0.0 :
                             init = "2008/05/01"
-                        FB-0:2::0-0:0:0:0.1 :
+                        FB-0:2::0-1:0:0:0.1 :
                             init = "2008/05/01"
-                FB-0:2::0-0:0:0:0.0 :
-                    $anchor_id = "FB-0:2::0-0:0:0:0"
-                    $id = "FB-0:2::0-0:0:0:0.0"
+                FB-0:2::0-1:0:0:0.0 :
+                    $anchor_id = "FB-0:2::0-1:0:0:0"
+                    $id = "FB-0:2::0-1:0:0:0.0"
                     label = "Start"
                     name = "start"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "2008/05/01"
-                FB-0:2::0-0:0:0:0.1 :
-                    $anchor_id = "FB-0:2::0-0:0:0:0"
-                    $id = "FB-0:2::0-0:0:0:0.1"
+                FB-0:2::0-1:0:0:0.1 :
+                    $anchor_id = "FB-0:2::0-1:0:0:0"
+                    $id = "FB-0:2::0-1:0:0:0.1"
                     label = "Finish"
                     name = "finish"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "2008/05/01"
-                FB-0:2::0-0:0:0:1 :
-                    $anchor_id = "FB-0:2::0-0:0:0"
-                    $id = "FB-0:2::0-0:0:0:1"
+                FB-0:2::0-1:0:0:1 :
+                    $anchor_id = "FB-0:2::0-1:0:0"
+                    $id = "FB-0:2::0-1:0:0:1"
                     label = "Name"
                     name = "name"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "Himmelfahrt"
-                FB-0:2::0-1 :
-                    $id = "FB-0:2::0-1"
+                FB-0:2::0-2 :
+                    $id = "FB-0:2::0-2"
                     children :
-                        0 = "FB-0:2::0-1:0"
+                        0 = "FB-0:2::0-2:0"
                     collapsed = true
                     name = "required"
                     type = "Fieldset"
                     function update(dict)
-                FB-0:2::0-1:0 :
+                FB-0:2::0-2:0 :
                     $anchor_id = "FB-0:2::0"
-                    $id = "FB-0:2::0-1:0"
+                    $id = "FB-0:2::0-2:0"
                     children :
-                        0 = "FB-0:2::0-1:0:0"
-                        1 = "FB-0:2::0-1:0:1"
-                        2 = "FB-0:2::0-1:0:2"
+                        0 = "FB-0:2::0-2:0:0"
+                        1 = "FB-0:2::0-2:0:1"
+                        2 = "FB-0:2::0-2:0:2"
                     label = "Skipper"
                     name = "skipper"
                     type = "Field_Entity"
@@ -742,146 +874,155 @@ $GTW :
                     value :
                         $anchor_id = "FB-0:2::0"
                         $child_ids :
-                            0 = "FB-0:2::0-1:0:0"
-                            1 = "FB-0:2::0-1:0:1"
-                            2 = "FB-0:2::0-1:0:2"
-                        $id = "FB-0:2::0-1:0"
-                        FB-0:2::0-1:0:0 :
-                            $anchor_id = "FB-0:2::0-1:0"
+                            0 = "FB-0:2::0-2:0:0"
+                            1 = "FB-0:2::0-2:0:1"
+                            2 = "FB-0:2::0-2:0:2"
+                        $id = "FB-0:2::0-2:0"
+                        edit :
+                            cid = 4
+                            pid = 4
+                        FB-0:2::0-2:0:0 :
+                            $anchor_id = "FB-0:2::0-2:0"
                             $child_ids :
-                                0 = "FB-0:2::0-1:0:0:0"
-                                1 = "FB-0:2::0-1:0:0:1"
-                                2 = "FB-0:2::0-1:0:0:2"
-                                3 = "FB-0:2::0-1:0:0:3"
-                            $id = "FB-0:2::0-1:0:0"
-                            FB-0:2::0-1:0:0:0 :
+                                0 = "FB-0:2::0-2:0:0:0"
+                                1 = "FB-0:2::0-2:0:0:1"
+                                2 = "FB-0:2::0-2:0:0:2"
+                                3 = "FB-0:2::0-2:0:0:3"
+                            $id = "FB-0:2::0-2:0:0"
+                            edit :
+                                cid = 3
+                                pid = 3
+                            FB-0:2::0-2:0:0:0 :
                                 init = "Tanzer"
-                            FB-0:2::0-1:0:0:1 :
+                            FB-0:2::0-2:0:0:1 :
                                 init = "Laurens"
-                            FB-0:2::0-1:0:0:2 :
+                            FB-0:2::0-2:0:0:2 :
 
-                            FB-0:2::0-1:0:0:3 :
+                            FB-0:2::0-2:0:0:3 :
 
                             init :
                                 cid = 3
                                 pid = 3
-                            sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-                        FB-0:2::0-1:0:1 :
+                            sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+                        FB-0:2::0-2:0:1 :
                             init = "AUT"
-                        FB-0:2::0-1:0:2 :
+                        FB-0:2::0-2:0:2 :
                             init = "29676"
                         init :
                             cid = 4
                             pid = 4
-                        sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-                FB-0:2::0-1:0:0 :
-                    $anchor_id = "FB-0:2::0-1:0"
-                    $id = "FB-0:2::0-1:0:0"
+                        sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+                FB-0:2::0-2:0:0 :
+                    $anchor_id = "FB-0:2::0-2:0"
+                    $id = "FB-0:2::0-2:0:0"
                     children :
-                        0 = "FB-0:2::0-1:0:0:0"
-                        1 = "FB-0:2::0-1:0:0:1"
-                        2 = "FB-0:2::0-1:0:0:2"
-                        3 = "FB-0:2::0-1:0:0:3"
+                        0 = "FB-0:2::0-2:0:0:0"
+                        1 = "FB-0:2::0-2:0:0:1"
+                        2 = "FB-0:2::0-2:0:0:2"
+                        3 = "FB-0:2::0-2:0:0:3"
                     label = "Person"
                     name = "left"
                     type = "Field_Entity"
                     type_name = "GTW.OMP.PAP.Person"
                     function update(dict)
                     value :
-                        $anchor_id = "FB-0:2::0-1:0"
+                        $anchor_id = "FB-0:2::0-2:0"
                         $child_ids :
-                            0 = "FB-0:2::0-1:0:0:0"
-                            1 = "FB-0:2::0-1:0:0:1"
-                            2 = "FB-0:2::0-1:0:0:2"
-                            3 = "FB-0:2::0-1:0:0:3"
-                        $id = "FB-0:2::0-1:0:0"
-                        FB-0:2::0-1:0:0:0 :
+                            0 = "FB-0:2::0-2:0:0:0"
+                            1 = "FB-0:2::0-2:0:0:1"
+                            2 = "FB-0:2::0-2:0:0:2"
+                            3 = "FB-0:2::0-2:0:0:3"
+                        $id = "FB-0:2::0-2:0:0"
+                        edit :
+                            cid = 3
+                            pid = 3
+                        FB-0:2::0-2:0:0:0 :
                             init = "Tanzer"
-                        FB-0:2::0-1:0:0:1 :
+                        FB-0:2::0-2:0:0:1 :
                             init = "Laurens"
-                        FB-0:2::0-1:0:0:2 :
+                        FB-0:2::0-2:0:0:2 :
 
-                        FB-0:2::0-1:0:0:3 :
+                        FB-0:2::0-2:0:0:3 :
 
                         init :
                             cid = 3
                             pid = 3
-                        sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-                FB-0:2::0-1:0:0:0 :
-                    $anchor_id = "FB-0:2::0-1:0:0"
-                    $id = "FB-0:2::0-1:0:0:0"
+                        sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+                FB-0:2::0-2:0:0:0 :
+                    $anchor_id = "FB-0:2::0-2:0:0"
+                    $id = "FB-0:2::0-2:0:0:0"
                     label = "Last name"
                     name = "last_name"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "Tanzer"
-                FB-0:2::0-1:0:0:1 :
-                    $anchor_id = "FB-0:2::0-1:0:0"
-                    $id = "FB-0:2::0-1:0:0:1"
+                FB-0:2::0-2:0:0:1 :
+                    $anchor_id = "FB-0:2::0-2:0:0"
+                    $id = "FB-0:2::0-2:0:0:1"
                     label = "First name"
                     name = "first_name"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "Laurens"
-                FB-0:2::0-1:0:0:2 :
-                    $anchor_id = "FB-0:2::0-1:0:0"
-                    $id = "FB-0:2::0-1:0:0:2"
+                FB-0:2::0-2:0:0:2 :
+                    $anchor_id = "FB-0:2::0-2:0:0"
+                    $id = "FB-0:2::0-2:0:0:2"
                     label = "Middle name"
                     name = "middle_name"
                     type = "Field"
                     function update(dict)
                     value :
 
-                FB-0:2::0-1:0:0:3 :
-                    $anchor_id = "FB-0:2::0-1:0:0"
-                    $id = "FB-0:2::0-1:0:0:3"
+                FB-0:2::0-2:0:0:3 :
+                    $anchor_id = "FB-0:2::0-2:0:0"
+                    $id = "FB-0:2::0-2:0:0:3"
                     label = "Academic title"
                     name = "title"
                     type = "Field"
                     function update(dict)
                     value :
 
-                FB-0:2::0-1:0:1 :
-                    $anchor_id = "FB-0:2::0-1:0"
-                    $id = "FB-0:2::0-1:0:1"
+                FB-0:2::0-2:0:1 :
+                    $anchor_id = "FB-0:2::0-2:0"
+                    $id = "FB-0:2::0-2:0:1"
                     label = "Nation"
                     name = "nation"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "AUT"
-                FB-0:2::0-1:0:2 :
-                    $anchor_id = "FB-0:2::0-1:0"
-                    $id = "FB-0:2::0-1:0:2"
+                FB-0:2::0-2:0:2 :
+                    $anchor_id = "FB-0:2::0-2:0"
+                    $id = "FB-0:2::0-2:0:2"
                     label = "Mna number"
                     name = "mna_number"
                     type = "Field"
                     function update(dict)
                     value :
                         init = "29676"
-                FB-0:2::0-2 :
-                    $id = "FB-0:2::0-2"
+                FB-0:2::0-3 :
+                    $id = "FB-0:2::0-3"
                     children :
-                        0 = "FB-0:2::0-2:0"
-                        1 = "FB-0:2::0-2:1"
+                        0 = "FB-0:2::0-3:0"
+                        1 = "FB-0:2::0-3:1"
                     collapsed = true
                     name = "optional"
                     type = "Fieldset"
                     function update(dict)
-                FB-0:2::0-2:0 :
+                FB-0:2::0-3:0 :
                     $anchor_id = "FB-0:2::0"
-                    $id = "FB-0:2::0-2:0"
+                    $id = "FB-0:2::0-3:0"
                     label = "Place"
                     name = "place"
                     type = "Field"
                     function update(dict)
                     value :
 
-                FB-0:2::0-2:1 :
+                FB-0:2::0-3:1 :
                     $anchor_id = "FB-0:2::0"
-                    $id = "FB-0:2::0-2:1"
+                    $id = "FB-0:2::0-3:1"
                     label = "Points"
                     name = "points"
                     type = "Field"
@@ -900,7 +1041,7 @@ $GTW :
                             0 = "FB-0:0"
                             1 = "FB-0:1"
                             2 = "FB-0:2"
-                        name = "GTW.OMP.SRM.Boat"
+                        name = "Boat"
                         type = "Entity"
                         type_name = "GTW.OMP.SRM.Boat"
                         function update(dict)
@@ -911,11 +1052,17 @@ $GTW :
                                 2 = "FB-0:0:2"
                                 3 = "FB-0:1:0"
                             $id = "FB-0"
+                            edit :
+                                cid = 2
+                                pid = 2
                             FB-0:0:0 :
                                 $anchor_id = "FB-0"
                                 $child_ids :
                                     0 = "FB-0:0:0:0"
                                 $id = "FB-0:0:0"
+                                edit :
+                                    cid = 1
+                                    pid = 1
                                 FB-0:0:0:0 :
                                     init = "Optimist"
                                 init :
@@ -939,92 +1086,113 @@ $GTW :
                             0 = "FB-0:2::0-0"
                             1 = "FB-0:2::0-1"
                             2 = "FB-0:2::0-2"
-                        name = "GTW.OMP.SRM.Boat_in_Regatta"
+                            3 = "FB-0:2::0-3"
+                        name = "Boat_in_Regatta"
                         role_name = "left"
                         type = "Entity_Link"
                         type_name = "GTW.OMP.SRM.Boat_in_Regatta"
                         function update(dict)
                         value :
                             $child_ids :
-                                0 = "FB-0:2::0-0:0"
+                                0 = "FB-0:2::0-0"
                                 1 = "FB-0:2::0-1:0"
                                 2 = "FB-0:2::0-2:0"
-                                3 = "FB-0:2::0-2:1"
+                                3 = "FB-0:2::0-3:0"
+                                4 = "FB-0:2::0-3:1"
                             $id = "FB-0:2::0"
-                            FB-0:2::0-0:0 :
-                                $anchor_id = "FB-0:2::0"
-                                $child_ids :
-                                    0 = "FB-0:2::0-0:0:0"
-                                $id = "FB-0:2::0-0:0"
-                                FB-0:2::0-0:0:0 :
-                                    $anchor_id = "FB-0:2::0-0:0"
-                                    $child_ids :
-                                        0 = "FB-0:2::0-0:0:0:0"
-                                        1 = "FB-0:2::0-0:0:0:1"
-                                    $id = "FB-0:2::0-0:0:0"
-                                    FB-0:2::0-0:0:0:0 :
-                                        $anchor_id = "FB-0:2::0-0:0:0"
-                                        $child_ids :
-                                            0 = "FB-0:2::0-0:0:0:0.0"
-                                            1 = "FB-0:2::0-0:0:0:0.1"
-                                        $id = "FB-0:2::0-0:0:0:0"
-                                        FB-0:2::0-0:0:0:0.0 :
-                                            init = "2008/05/01"
-                                        FB-0:2::0-0:0:0:0.1 :
-                                            init = "2008/05/01"
-                                    FB-0:2::0-0:0:0:1 :
-                                        init = "Himmelfahrt"
-                                    init :
-                                        cid = 5
-                                        pid = 5
-                                    sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+                            edit :
+                                cid = 7
+                                pid = 7
+                            FB-0:2::0-0 :
                                 init :
-                                    cid = 6
-                                    pid = 6
-                                sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
+                                    cid = 2
+                                    pid = 2
                             FB-0:2::0-1:0 :
                                 $anchor_id = "FB-0:2::0"
                                 $child_ids :
                                     0 = "FB-0:2::0-1:0:0"
-                                    1 = "FB-0:2::0-1:0:1"
-                                    2 = "FB-0:2::0-1:0:2"
                                 $id = "FB-0:2::0-1:0"
+                                edit :
+                                    cid = 6
+                                    pid = 6
                                 FB-0:2::0-1:0:0 :
                                     $anchor_id = "FB-0:2::0-1:0"
                                     $child_ids :
                                         0 = "FB-0:2::0-1:0:0:0"
                                         1 = "FB-0:2::0-1:0:0:1"
-                                        2 = "FB-0:2::0-1:0:0:2"
-                                        3 = "FB-0:2::0-1:0:0:3"
                                     $id = "FB-0:2::0-1:0:0"
+                                    edit :
+                                        cid = 5
+                                        pid = 5
                                     FB-0:2::0-1:0:0:0 :
-                                        init = "Tanzer"
+                                        $anchor_id = "FB-0:2::0-1:0:0"
+                                        $child_ids :
+                                            0 = "FB-0:2::0-1:0:0:0.0"
+                                            1 = "FB-0:2::0-1:0:0:0.1"
+                                        $id = "FB-0:2::0-1:0:0:0"
+                                        FB-0:2::0-1:0:0:0.0 :
+                                            init = "2008/05/01"
+                                        FB-0:2::0-1:0:0:0.1 :
+                                            init = "2008/05/01"
                                     FB-0:2::0-1:0:0:1 :
+                                        init = "Himmelfahrt"
+                                    init :
+                                        cid = 5
+                                        pid = 5
+                                    sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+                                init :
+                                    cid = 6
+                                    pid = 6
+                                sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+                            FB-0:2::0-2:0 :
+                                $anchor_id = "FB-0:2::0"
+                                $child_ids :
+                                    0 = "FB-0:2::0-2:0:0"
+                                    1 = "FB-0:2::0-2:0:1"
+                                    2 = "FB-0:2::0-2:0:2"
+                                $id = "FB-0:2::0-2:0"
+                                edit :
+                                    cid = 4
+                                    pid = 4
+                                FB-0:2::0-2:0:0 :
+                                    $anchor_id = "FB-0:2::0-2:0"
+                                    $child_ids :
+                                        0 = "FB-0:2::0-2:0:0:0"
+                                        1 = "FB-0:2::0-2:0:0:1"
+                                        2 = "FB-0:2::0-2:0:0:2"
+                                        3 = "FB-0:2::0-2:0:0:3"
+                                    $id = "FB-0:2::0-2:0:0"
+                                    edit :
+                                        cid = 3
+                                        pid = 3
+                                    FB-0:2::0-2:0:0:0 :
+                                        init = "Tanzer"
+                                    FB-0:2::0-2:0:0:1 :
                                         init = "Laurens"
-                                    FB-0:2::0-1:0:0:2 :
+                                    FB-0:2::0-2:0:0:2 :
 
-                                    FB-0:2::0-1:0:0:3 :
+                                    FB-0:2::0-2:0:0:3 :
 
                                     init :
                                         cid = 3
                                         pid = 3
-                                    sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-                                FB-0:2::0-1:0:1 :
+                                    sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+                                FB-0:2::0-2:0:1 :
                                     init = "AUT"
-                                FB-0:2::0-1:0:2 :
+                                FB-0:2::0-2:0:2 :
                                     init = "29676"
                                 init :
                                     cid = 4
                                     pid = 4
-                                sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-                            FB-0:2::0-2:0 :
+                                sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+                            FB-0:2::0-3:0 :
 
-                            FB-0:2::0-2:1 :
+                            FB-0:2::0-3:1 :
 
                             init :
                                 cid = 7
                                 pid = 7
-                            sid = "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"
+                            sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
                 type = "Form"
                 function update(dict)
                 value :
@@ -1036,6 +1204,7 @@ $GTW :
     Class : function constructor()
     copyright = "Copyright (C) 2011 Christian Tanzer"
     inspect :
+        function copy(obj, filter)
         function filter_function(name, obj)
         function filter_not_function(name, obj)
         function filter_object(name, obj)
@@ -1053,9 +1222,9 @@ $GTW :
     function update(dict)
     version = "1.0"
 FB-0:2::0 value jsonified :
-  {"init":{"cid":7,"pid":7},"sid":"g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}
+  {"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}
 Form values after change:
     $child_ids :
         0 = "FB-0"
@@ -1068,11 +1237,17 @@ Form values after change:
             2 = "FB-0:0:2"
             3 = "FB-0:1:0"
         $id = "FB-0"
+        edit :
+            cid = 2
+            pid = 2
         FB-0:0:0 :
             $anchor_id = "FB-0"
             $child_ids :
                 0 = "FB-0:0:0:0"
             $id = "FB-0:0:0"
+            edit :
+                cid = 1
+                pid = 1
             FB-0:0:0:0 :
                 init = "Optimist"
             init :
@@ -1091,87 +1266,107 @@ Form values after change:
         sid = "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"
     FB-0:2::0 :
         $child_ids :
-            0 = "FB-0:2::0-0:0"
+            0 = "FB-0:2::0-0"
             1 = "FB-0:2::0-1:0"
             2 = "FB-0:2::0-2:0"
-            3 = "FB-0:2::0-2:1"
+            3 = "FB-0:2::0-3:0"
+            4 = "FB-0:2::0-3:1"
         $id = "FB-0:2::0"
-        FB-0:2::0-0:0 :
-            $anchor_id = "FB-0:2::0"
-            $child_ids :
-                0 = "FB-0:2::0-0:0:0"
-            $id = "FB-0:2::0-0:0"
-            FB-0:2::0-0:0:0 :
-                $anchor_id = "FB-0:2::0-0:0"
-                $child_ids :
-                    0 = "FB-0:2::0-0:0:0:0"
-                    1 = "FB-0:2::0-0:0:0:1"
-                $id = "FB-0:2::0-0:0:0"
-                FB-0:2::0-0:0:0:0 :
-                    $anchor_id = "FB-0:2::0-0:0:0"
-                    $child_ids :
-                        0 = "FB-0:2::0-0:0:0:0.0"
-                        1 = "FB-0:2::0-0:0:0:0.1"
-                    $id = "FB-0:2::0-0:0:0:0"
-                    FB-0:2::0-0:0:0:0.0 :
-                        init = "2008/05/01"
-                    FB-0:2::0-0:0:0:0.1 :
-                        init = "2008/05/01"
-                FB-0:2::0-0:0:0:1 :
-                    init = "Himmelfahrt"
-                init :
-                    cid = 5
-                    pid = 5
-                sid = "XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ"
+        edit :
+            cid = 7
+            pid = 7
+        FB-0:2::0-0 :
             init :
-                cid = 6
-                pid = 6
-            sid = "QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ"
+                cid = 2
+                pid = 2
         FB-0:2::0-1:0 :
             $anchor_id = "FB-0:2::0"
             $child_ids :
                 0 = "FB-0:2::0-1:0:0"
-                1 = "FB-0:2::0-1:0:1"
-                2 = "FB-0:2::0-1:0:2"
             $id = "FB-0:2::0-1:0"
+            edit :
+                cid = 6
+                pid = 6
             FB-0:2::0-1:0:0 :
                 $anchor_id = "FB-0:2::0-1:0"
                 $child_ids :
                     0 = "FB-0:2::0-1:0:0:0"
                     1 = "FB-0:2::0-1:0:0:1"
-                    2 = "FB-0:2::0-1:0:0:2"
-                    3 = "FB-0:2::0-1:0:0:3"
                 $id = "FB-0:2::0-1:0:0"
+                edit :
+                    cid = 5
+                    pid = 5
                 FB-0:2::0-1:0:0:0 :
-                    init = "Tanzer"
+                    $anchor_id = "FB-0:2::0-1:0:0"
+                    $child_ids :
+                        0 = "FB-0:2::0-1:0:0:0.0"
+                        1 = "FB-0:2::0-1:0:0:0.1"
+                    $id = "FB-0:2::0-1:0:0:0"
+                    FB-0:2::0-1:0:0:0.0 :
+                        init = "2008/05/01"
+                    FB-0:2::0-1:0:0:0.1 :
+                        init = "2008/05/01"
                 FB-0:2::0-1:0:0:1 :
+                    init = "Himmelfahrt"
+                init :
+                    cid = 5
+                    pid = 5
+                sid = "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"
+            init :
+                cid = 6
+                pid = 6
+            sid = "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"
+        FB-0:2::0-2:0 :
+            $anchor_id = "FB-0:2::0"
+            $child_ids :
+                0 = "FB-0:2::0-2:0:0"
+                1 = "FB-0:2::0-2:0:1"
+                2 = "FB-0:2::0-2:0:2"
+            $id = "FB-0:2::0-2:0"
+            edit :
+                cid = 4
+                pid = 4
+            FB-0:2::0-2:0:0 :
+                $anchor_id = "FB-0:2::0-2:0"
+                $child_ids :
+                    0 = "FB-0:2::0-2:0:0:0"
+                    1 = "FB-0:2::0-2:0:0:1"
+                    2 = "FB-0:2::0-2:0:0:2"
+                    3 = "FB-0:2::0-2:0:0:3"
+                $id = "FB-0:2::0-2:0:0"
+                edit :
+                    cid = 3
+                    pid = 3
+                FB-0:2::0-2:0:0:0 :
+                    init = "Tanzer"
+                FB-0:2::0-2:0:0:1 :
                     init = "Laurens"
-                FB-0:2::0-1:0:0:2 :
+                FB-0:2::0-2:0:0:2 :
                     edit = "William"
-                FB-0:2::0-1:0:0:3 :
+                FB-0:2::0-2:0:0:3 :
 
                 init :
                     cid = 3
                     pid = 3
-                sid = "jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw"
-            FB-0:2::0-1:0:1 :
+                sid = "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"
+            FB-0:2::0-2:0:1 :
                 init = "AUT"
-            FB-0:2::0-1:0:2 :
+            FB-0:2::0-2:0:2 :
                 init = "29676"
             init :
                 cid = 4
                 pid = 4
-            sid = "730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w"
-        FB-0:2::0-2:0 :
+            sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
+        FB-0:2::0-3:0 :
 
-        FB-0:2::0-2:1 :
+        FB-0:2::0-3:1 :
 
         init :
             cid = 7
             pid = 7
-        sid = "g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ"
+        sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
     sid = 0
 Form values jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"g42D6sO1mgyRP0ifY5JXL9FILK912Q61htfBzQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{"cid":6,"pid":6},"sid":"QV0XMZopZtbgxQLnOGxW54o3iDzg6Lu7T0yBbQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{"cid":5,"pid":5},"sid":"XX80P4fVbzYLMT9TXtsXU7Aa--O8qtIycPLmNQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{"cid":4,"pid":4},"sid":"730ReHYLtxqCywPM1fa-UOFGO8Rs-bmf6sBu3w","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":3,"pid":3},"sid":"jp88qvezTZZF4iKwHNEmquUAdaFqxnaTnw4-Vw","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"edit":"William"},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}
 Form values of copy jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"FB-0:0:0":{"init":{},"sid":"HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{},"sid":"Wjc1ZUzIYGUAeNWM2lqVfRRM2h55nbu:rGus2Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0:0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-2:1"],"FB-0:2::0-0:0":{"init":{},"sid":"KHlrIVKnzSGWv7Cq7bb2jbo:sO1ap1t-ZsTlgQ","$id":"FB-0:2::0-0:0","$child_ids":["FB-0:2::0-0:0:0"],"$anchor_id":"FB-0:2::0","FB-0:2::0-0:0:0":{"init":{},"sid":"ONQwCBeEQX6ghfi7WbgojEhoRyKKS4rC74tZMQ","$id":"FB-0:2::0-0:0:0","$child_ids":["FB-0:2::0-0:0:0:0","FB-0:2::0-0:0:0:1"],"$anchor_id":"FB-0:2::0-0:0","FB-0:2::0-0:0:0:0":{"$id":"FB-0:2::0-0:0:0:0","$child_ids":["FB-0:2::0-0:0:0:0.0","FB-0:2::0-0:0:0:0.1"],"$anchor_id":"FB-0:2::0-0:0:0","FB-0:2::0-0:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-0:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-0:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-1:0":{"init":{},"sid":"k3391hFYwz2NdfCElt6fuRvhTxgWOwb65d7ZnA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0","FB-0:2::0-1:0:1","FB-0:2::0-1:0:2"],"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"kR13t0LifEpph1A3gzjbGECXgvntB:fbk4XByg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1","FB-0:2::0-1:0:0:2","FB-0:2::0-1:0:0:3"],"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Tanzer"},"FB-0:2::0-1:0:0:1":{"init":"Laurens"},"FB-0:2::0-1:0:0:2":{"edit":"William II"},"FB-0:2::0-1:0:0:3":{}},"FB-0:2::0-1:0:1":{"init":"AUT"},"FB-0:2::0-1:0:2":{"init":"29676"}},"FB-0:2::0-2:0":{},"FB-0:2::0-2:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{},"sid":"yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"edit":{},"role_id":"FB-0"},"FB-0:2::0-1:0":{"init":{},"sid":"AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"1Z9hfbsHgB1KybgyzkYXalFgapWHnTywXWXNhQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{},"sid":"f9Y99OzpLtFRbjkwQeRa114VVNAr9lXxQDYf0A","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":":CnlnOHl-3LHWlvhvRsfJ:5CYjsfP6AH-s2JMw","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"edit":"William II"},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}

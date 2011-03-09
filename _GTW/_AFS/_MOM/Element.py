@@ -35,6 +35,7 @@
 #     8-Mar-2011 (CT) `Entity._value` changed to always set `init`
 #     8-Mar-2011 (CT) `_value` simplified
 #     8-Mar-2011 (CT) `apply` added
+#     9-Mar-2011 (CT) `Field_Role_Hidden` added
 #    ««revision-date»»···
 #--
 
@@ -216,10 +217,6 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
 
     _real_name = "Field_Entity"
 
-    def applyf (self, value, entity, ** kw) :
-        return value.entity
-    # end def applyf
-
     def __call__ (self, ETM, entity, ** kw) :
         attr     = ETM._etype.attributes [self.name]
         a_type   = attr.etype_manager (ETM)
@@ -233,7 +230,27 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
         return self.__super.__call__ (a_type, a_entity, ** kw)
     # end def __call__
 
+    def applyf (self, value, entity, ** kw) :
+        return value.entity
+    # end def applyf
+
 Field_Entity = _MOM_Field_Entity_ # end class
+
+class Field_Role_Hidden (Field_Entity) :
+    """Hidden field description a hidden role of an Entity_Link."""
+
+    def _update_sid (self, result, ** kw) :
+        pass
+    # end def _update_sid
+
+    def _value (self, ETM, entity, ** kw) :
+        result = self.__super._value (ETM, entity, ** kw)
+        if kw.get ("copy", False) :
+            result.pop ("init", None)
+        return result
+    # end def _value
+
+# end class Field_Role_Hidden
 
 class _MOM_Form_ (Form) :
     """Model a MOM-specific AJAX-enhanced form."""

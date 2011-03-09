@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    28-Jan-2011 (CT) Creation
+//     9-Mar-2011 (CT) `copy` added
 //    ««revision-date»»···
 //--
 
@@ -23,7 +24,20 @@
     var blanks =
     "                                                                         ";
     $GTW.inspect = inspect = new $GTW.Module (
-        { filter_function  : function filter_function (name, obj) {
+        { copy : function copy (obj, filter) {
+              var i, l, k, v;
+              var keys = inspect.keys (obj, filter);
+              var result = {};
+              if (obj.constructor !== {}.constructor) {
+                  result.constructor = obj.constructor;
+              }
+              for (i = 0, l = keys.length; i < l; i += 1) {
+                  k = keys [i];
+                  result [k] = obj [k];
+              }
+              return result;
+          }
+        , filter_function  : function filter_function (name, obj) {
               return typeof (obj [name]) === "function";
           }
         , filter_not_function : function filter_not_function (name, obj) {

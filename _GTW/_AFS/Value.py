@@ -30,6 +30,7 @@
 #     2-Mar-2011 (CT) Creation continued
 #     5-Mar-2011 (CT) Creation continued..
 #     8-Mar-2011 (CT) `apply` added
+#     9-Mar-2011 (CT) `as_json_cargo` and `kw` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ class Value (_Base_) :
     anchor_id = None
     asyn      = None
     conflicts = 0
+    entity    = None
     prefilled = None
     sid       = None
     value     = None
@@ -79,6 +81,13 @@ class Value (_Base_) :
         form  = cls._get_elem (GTW.AFS.Element.Form, id)
         return cls (form, id, cargo)
     # end def from_json
+
+    @Once_Property
+    def as_json_cargo (self) :
+        result = self.__super.as_json_cargo
+        result ["$id"] = self.elem.id
+        return result
+    # end def as_json_cargo
 
     @Once_Property
     def changes (self) :
@@ -107,6 +116,20 @@ class Value (_Base_) :
     def init (self, value) :
         self._init = value
     # end def init
+
+    @Once_Property
+    def kw (self) :
+        def _gen () :
+            if self.init :
+                yield "init", self.init
+            if self.changes :
+                yield "edit", self.edit
+            if self.asyn :
+                yield "asyn", self.asyn
+        # end def _gen
+        result = dict (value = dict (_gen ()))
+        return result
+    # end def kw
 
     def apply (self, * args, ** kw) :
         conflicts = 0

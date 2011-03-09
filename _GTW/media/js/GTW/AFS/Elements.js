@@ -24,6 +24,10 @@
 //     1-Mar-2011 (CT) `$anchor_id` setting changed, `packed_values` added
 //     2-Mar-2011 (CT) `sid` added to `packed_values`
 //     5-Mar-2011 (CT) `Element.changed` added
+//     9-Mar-2011 (CT) `Field_Role_Hidden` added
+//     9-Mar-2011 (CT) `Element.setup_value` changed
+//                     * copy `value.init` to `edit`
+//                     * support `Field_Role_Hidden`
 //    ««revision-date»»···
 //--
 
@@ -97,6 +101,16 @@
                       new_anchor = this;
                       this.value.$id = this.$id;
                       this.value.$child_ids = [];
+                      if (this.value ["init"] && ! this.value ["edit"]) {
+                          this.value.edit = $GTW.inspect.copy (this.value.init);
+                      }
+                  }
+                  if (  cls.type_name === "Field_Role_Hidden"
+                     && ! this.value ["init"]
+                     ) {
+                      this.value.edit =
+                          Elements.id_map [root.$anchor_id].value.edit;
+                      this.value.role_id = root.$anchor_id;
                   }
                   if (cls.is_anchored) {
                       if (this.$id !== anchor.$id) {
@@ -117,7 +131,9 @@
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = this.child (i);
-                      child.setup_value (new_root, new_anchor, roots);
+                      if (child) {
+                          child.setup_value (new_root, new_anchor, roots);
+                      }
                   }
               }
           }
@@ -147,6 +163,10 @@
     var Field_Entity = Element.extend (
         {}
       , { is_anchored : true, type_name : "Field_Entity" }
+    );
+    var Field_Role_Hidden = Element.extend (
+        {}
+      , { type_name : "Field_Role_Hidden" }
     );
     var Fieldset = Element.extend (
         {}
@@ -202,6 +222,7 @@
         , Field                 : Field
         , Field_Composite       : Field_Composite
         , Field_Entity          : Field_Entity
+        , Field_Role_Hidden     : Field_Role_Hidden
         , Fieldset              : Fieldset
         , get                   : get
         , id_map                : {}
