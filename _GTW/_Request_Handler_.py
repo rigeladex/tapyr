@@ -39,6 +39,7 @@
 #    11-Jan-2011 (CT) s/json/write_json/
 #    11-Jan-2011 (CT) `json` added to provide the request's json data, if any
 #    11-Jan-2011 (CT) `content-encoding` added to `json`
+#    10-Mar-2011 (CT) `session_hash` added
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,7 @@ class _Request_Handler_ (object) :
         if sid is not None :
             session = S_Class (sid, secret)
             if session.session_hash != s_hash :
+                session.remove ()
                 sid = None
         if sid is None :
             session = S_Class (sid, secret)

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -72,17 +72,20 @@ class Memory_Session (GTW.Session) :
         return sid in _Store_
     # end def exists
 
-    def _load (self) :
-        return _Store_.get (self.sid, {}).copy ()
-    # end def _load
-
     def save (self) :
         _Store_ [self.sid] = self._data
     # end def save
 
     def remove (self) :
-        del _Store_ [self.sid]
+        try :
+            del _Store_ [self.sid]
+        except KeyError :
+            pass
     # end def remove
+
+    def _load (self) :
+        return _Store_.get (self.sid, {}).copy ()
+    # end def _load
 
 # end class Memory_Session
 

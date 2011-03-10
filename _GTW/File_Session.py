@@ -95,7 +95,10 @@ class File_Session (GTW.Session) :
     # end def save
 
     def remove (self) :
-        os.unlink (self.file_name)
+        try :
+            os.unlink (self.file_name)
+        except IOError :
+            pass
     # end def remove
 
     def _file_name (self, sid) :
