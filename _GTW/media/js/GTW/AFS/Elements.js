@@ -92,11 +92,10 @@
               return Elements.id_map [this.children [i]];
           }
         , setup_value : function setup_value (root, anchor, roots) {
-              var i, l, child, has_value;
+              var i, l, child;
               var cls = this.constructor;
               var new_anchor = anchor, new_root = root;
-              has_value = this ["value"] !== undefined;
-              if (has_value) {
+              if (this ["value"] !== undefined) {
                   if (cls.is_anchored || cls.is_root) {
                       new_anchor = this;
                       this.value.$id = this.$id;
