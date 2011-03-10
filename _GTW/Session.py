@@ -31,6 +31,7 @@
 #    20-Feb-2010 (MG) `__contains__` added
 #     5-Aug-2010 (MG) `New_ID` factored from `_new_sid`, `setdefault` added
 #     8-Aug-2010 (MG) `setdefault` added
+#    10-Mar-2011 (CT) `__setattr__` added
 #    ««revision-date»»···
 #--
 
