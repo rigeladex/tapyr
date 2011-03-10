@@ -514,6 +514,7 @@ $GTW :
                 FB-0:0:0 :
                     $anchor_id = "FB-0"
                     $id = "FB-0:0:0"
+                    _super = undefined
                     children :
                         0 = "FB-0:0:0:0"
                     label = "Class"
@@ -702,6 +703,7 @@ $GTW :
                 FB-0:2::0-0 :
                     $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-0"
+                    _super = undefined
                     allow_new = false
                     hidden = true
                     name = "left"
@@ -723,6 +725,7 @@ $GTW :
                 FB-0:2::0-1:0 :
                     $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-1:0"
+                    _super = undefined
                     children :
                         0 = "FB-0:2::0-1:0:0"
                     label = "Regatta"
@@ -770,6 +773,7 @@ $GTW :
                 FB-0:2::0-1:0:0 :
                     $anchor_id = "FB-0:2::0-1:0"
                     $id = "FB-0:2::0-1:0:0"
+                    _super = undefined
                     children :
                         0 = "FB-0:2::0-1:0:0:0"
                         1 = "FB-0:2::0-1:0:0:1"
@@ -806,6 +810,7 @@ $GTW :
                 FB-0:2::0-1:0:0:0 :
                     $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:0"
+                    _super = undefined
                     children :
                         0 = "FB-0:2::0-1:0:0:0.0"
                         1 = "FB-0:2::0-1:0:0:0.1"
@@ -862,6 +867,7 @@ $GTW :
                 FB-0:2::0-2:0 :
                     $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-2:0"
+                    _super = undefined
                     children :
                         0 = "FB-0:2::0-2:0:0"
                         1 = "FB-0:2::0-2:0:1"
@@ -915,6 +921,7 @@ $GTW :
                 FB-0:2::0-2:0:0 :
                     $anchor_id = "FB-0:2::0-2:0"
                     $id = "FB-0:2::0-2:0:0"
+                    _super = undefined
                     children :
                         0 = "FB-0:2::0-2:0:0:0"
                         1 = "FB-0:2::0-2:0:0:1"

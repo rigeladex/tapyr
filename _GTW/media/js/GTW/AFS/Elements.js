@@ -28,6 +28,8 @@
 //     9-Mar-2011 (CT) `Element.setup_value` changed
 //                     * copy `value.init` to `edit`
 //                     * support `Field_Role_Hidden`
+//    10-Mar-2011 (CT) `Element._setup_value` factored out of `.setup_value`
+//                     (using dynamic binding instead of `if` statements)
 //    ««revision-date»»···
 //--
 
@@ -76,6 +78,8 @@
                   && (this.value.edit !== undefined)
                   );
               if (has_value && this.value.init !== this.value.edit) {
+                  // XXX `this.value.init !== this.value.edit` doesn't work
+                  //     for objects
                   return true;
               }
               if (this ["children"] !== undefined) {
@@ -91,61 +95,66 @@
         , child : function child (i) {
               return Elements.id_map [this.children [i]];
           }
-        , setup_value : function setup_value (root, anchor, roots) {
+        , setup_value : function setup_value (kw) {
               var i, l, child;
               var cls = this.constructor;
-              var new_anchor = anchor, new_root = root;
+              var new_kw =
+                  {anchor : kw.anchor, root : kw.root, roots : kw.roots};
               if (this ["value"] !== undefined) {
-                  if (cls.is_anchored || cls.is_root) {
-                      new_anchor = this;
-                      this.value.$id = this.$id;
-                      this.value.$child_ids = [];
-                      if (this.value ["init"] && ! this.value ["edit"]) {
-                          this.value.edit = $GTW.inspect.copy (this.value.init);
-                      }
-                  }
-                  if (  cls.type_name === "Field_Role_Hidden"
-                     && ! this.value ["init"]
-                     ) {
-                      this.value.edit =
-                          Elements.id_map [root.$anchor_id].value.edit;
-                      this.value.role_id = root.$anchor_id;
-                  }
-                  if (cls.is_anchored) {
-                      if (this.$id !== anchor.$id) {
-                          this.value ["$anchor_id"] = anchor.$id;
-                      }
-                  }
-                  if (cls.is_root) {
-                      roots.push (this);
-                      new_root = this;
-                  } else {
-                      anchor.value [this.$id] = this.value;
-                      anchor.value ["$child_ids"].push (this.$id);
-                  }
-                  if (this.$id !== anchor.$id) {
-                     this.$anchor_id = anchor.$id;
+                  this._setup_value (kw, new_kw);
+                  if (this.$id !== kw.anchor.$id) {
+                     this.$anchor_id = kw.anchor.$id;
                   }
               }
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = this.child (i);
                       if (child) {
-                          child.setup_value (new_root, new_anchor, roots);
+                          child.setup_value (new_kw);
                       }
                   }
               }
           }
+        , _setup_value : function _sv_anchored (kw, new_kw) {
+              kw.anchor.value [this.$id] = this.value;
+              kw.anchor.value ["$child_ids"].push (this.$id);
+          }
+        , _sv_anchored_or_root : function _sv_anchored (kw, new_kw) {
+              new_kw.anchor = this;
+              this.value.$id = this.$id;
+              this.value.$child_ids = [];
+              if (this.value ["init"] && ! this.value ["edit"]) {
+                  this.value.edit = $GTW.inspect.copy (this.value.init);
+              }
+          }
+        , _sv_anchored : function _sv_anchored (kw, new_kw) {
+              if (this.$id !== kw.anchor.$id) {
+                  this.value ["$anchor_id"] = kw.anchor.$id;
+              }
+          }
+        , _sv_root : function _sv_anchored (kw, new_kw) {
+              kw.roots.push (this);
+              new_kw.root = this;
+          }
         }
-      , { is_anchored : false, is_root : false, type_name : "Element" }
+      , { type_name : "Element" }
     );
     var Entity = Element.extend (
-        {}
-      , { is_anchored : true, is_root : true, type_name : "Entity" }
+        { _setup_value : function _sv_anchored (kw, new_kw) {
+              this._sv_anchored_or_root (kw, new_kw);
+              this._sv_anchored         (kw, new_kw);
+              this._sv_root             (kw, new_kw);
+          }
+        }
+      , { type_name : "Entity" }
     );
     var Entity_Link = Element.extend (
-        {}
-      , { is_root : true, type_name : "Entity_Link" }
+        { _setup_value : function _sv_anchored (kw, new_kw) {
+              this._sv_anchored_or_root (kw, new_kw);
+              this._sv_root             (kw, new_kw);
+          }
+        }
+      , { type_name : "Entity_Link" }
     );
     var Entity_List = Element.extend (
         {}
@@ -156,15 +165,33 @@
       , { type_name : "Field" }
     );
     var Field_Composite = Element.extend (
-        {}
-      , { is_anchored : true, type_name : "Field_Composite" }
+        { _setup_value : function _sv_anchored (kw, new_kw) {
+              this._sv_anchored_or_root (kw, new_kw);
+              this._sv_anchored         (kw, new_kw);
+              this._super               (kw, new_kw);
+          }
+        }
+      , { type_name : "Field_Composite" }
     );
     var Field_Entity = Element.extend (
-        {}
-      , { is_anchored : true, type_name : "Field_Entity" }
+        { _setup_value : function _sv_anchored (kw, new_kw) {
+              this._sv_anchored_or_root (kw, new_kw);
+              this._sv_anchored         (kw, new_kw);
+              this._super               (kw, new_kw);
+          }
+        }
+      , { type_name : "Field_Entity" }
     );
     var Field_Role_Hidden = Element.extend (
-        {}
+        { _setup_value : function _sv_anchored (kw, new_kw) {
+              if (! this.value ["init"]) {
+                  this.value.edit =
+                      Elements.id_map [kw.root.$anchor_id].value.edit;
+                  this.value.role_id = kw.root.$anchor_id;
+              }
+              this._super (kw, new_kw);
+          }
+        }
       , { type_name : "Field_Role_Hidden" }
     );
     var Fieldset = Element.extend (
@@ -202,7 +229,8 @@
                   this.roots = [];
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = this.child (i);
-                      child.setup_value (child, child, this.roots);
+                      child.setup_value
+                          ({anchor : child, root : child, roots : this.roots});
                   }
               }
           }
