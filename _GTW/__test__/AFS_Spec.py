@@ -927,9 +927,9 @@ _test_code = """
     <Field FB-0:2::p-3:1 'points'> init-v = '' 0
 
     >>> for v in fv.entities () :
-    ...     print v.elem
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>
-    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>
+    ...     print v.elem, v.changes
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> 0
+    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> 1
 
     >>> v_sig_map = {}
     >>> for v in fv.entity_children () :
@@ -1044,13 +1044,10 @@ _test_code = """
     <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>
     <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>
 
-    The above is not a valid change tree (Boat_in_Regatta depends on Boat
-    already being saved, but in this tree it isn't)
-
     >>> for v in gv.entities () :
-    ...     print v.elem
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>
-    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>
+    ...     print v.elem, v.changes
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> 0
+    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> 1
 
     >>> print formatted (gv.as_json_cargo, level = 1)
       { '$id' : 'FB'
@@ -1177,6 +1174,15 @@ _test_code = """
       , 'value' :
           { 'edit' : '' }
       }
+
+    >>> for p in scope.PAP.Person.query_s ().all () :
+    ...    p
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
+    >>> gv.apply (scope, _sid = 0)
+    >>> for p in scope.PAP.Person.query_s ().all () :
+    ...    p
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
+    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'william ii', u'')
 
 """
 

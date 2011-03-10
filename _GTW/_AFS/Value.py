@@ -31,6 +31,7 @@
 #     5-Mar-2011 (CT) Creation continued..
 #     8-Mar-2011 (CT) `apply` added
 #     9-Mar-2011 (CT) `as_json_cargo` and `kw` added
+#    10-Mar-2011 (CT) `apply` changed to iterate over `self.entities`
 #    ««revision-date»»···
 #--
 
@@ -134,9 +135,12 @@ class Value (_Base_) :
     def apply (self, * args, ** kw) :
         conflicts = 0
         key       = TFL.Sorted_By ("elem.rank", "-id")
-        for e in sorted (self.entity_children (), key = key) :
-            e.entity   = e.elem.apply (e, * args, ** kw)
-            conflicts += e.conflicts
+        for e in self.entities () :
+            if e.changes :
+                for c in sorted (e.entity_children (), key = key) :
+                    if c.changes :
+                        c.entity   = c.elem.apply (c, * args, ** kw)
+                        conflicts += c.conflicts
         if conflicts :
             raise GTW.AFS.Error.Conflict ()
     # end def apply
