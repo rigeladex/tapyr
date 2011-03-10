@@ -48,8 +48,10 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL                       import I18N
 from   _TFL                       import pyk
 
-import  json
-import  sys
+import base64
+import hashlib
+import json
+import sys
 
 class _Request_Handler_ (object) :
     """Mixin for request handlers."""
@@ -64,13 +66,21 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def session (self) :
-        settings   = self.application.settings
-        SID_Cookie = settings.get ("session_id", "SESSION_ID")
-        sid        = self.secure_cookie (SID_Cookie)
-        session    = settings ["Session_Class"] \
-            (sid, settings.get ("cookie_secret", ""))
-        self.set_secure_cookie          (SID_Cookie, session.sid)
-        GTW.Notification_Collection     (session)
+        settings    = self.application.settings
+        SID_Cookie  = settings.get       ("session_id", "SESSION_ID")
+        secret      = settings.get       ("cookie_secret", "")
+        S_Class     = settings           ["Session_Class"]
+        s_hash      = self._session_hash
+        sid         = self.secure_cookie (SID_Cookie)
+        if sid is not None :
+            session = S_Class (sid, secret)
+            if session.session_hash != s_hash :
+                sid = None
+        if sid is None :
+            session = S_Class (sid, secret)
+        self.set_secure_cookie      (SID_Cookie, session.sid)
+        GTW.Notification_Collection (session)
+        session.session_hash = s_hash
         return session
     # end def session
 
@@ -93,7 +103,7 @@ class _Request_Handler_ (object) :
                 locales.sort (key=lambda (l, s): s, reverse = True)
                 return [l [0] for l in locales]
         return \
-            (self.application.settings.get ("defailt_locale_code", "en_US"), )
+            (self.application.settings.get ("default_locale_code", "en_US"), )
     # end def get_browser_locale_codes
 
     def get_user_locale_codes (self) :
@@ -124,10 +134,26 @@ class _Request_Handler_ (object) :
         return True
     # end def write_json
 
+    @property
+    def _session_hash (self) :
+        hash = hashlib.sha224 (str (self._session_sig)).digest ()
+        return base64.b64encode (hash, "~@").rstrip ("=")
+    # end def _session_hash
+
+    @property
+    def _session_sig (self) :
+        return 42
+    # end def _session_sig
+
 # end class _Request_Handler_
 
 class _NAV_Request_Handler_ (_Request_Handler_) :
     """Mixin for all request handlers using GTW.NAV"""
+
+    @property
+    def scope (self) :
+        return getattr (self.nav_root, "scope", None)
+    # end def scope
 
     def finish_request (self, scope = None) :
         self.session.save ()
@@ -135,10 +161,29 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
             scope.commit  ()
     # end def finish_request
 
+    def get_current_user (self) :
+        top      = self.nav_root
+        username = self.get_secure_cookie ("username")
+        result   = top.anonymous_account
+        if username :
+            try :
+                result = top.account_manager.query (name = username).one ()
+            except IndexError :
+                pass
+            except Exception as exc :
+                pyk.fprint \
+                    ( ">>> Exception"
+                    , exc
+                    , "when trying to determine the user"
+                    , file = sys.stderr
+                    )
+        return result
+    # end def get_current_user
+
     def _handle_request (self, * args, ** kw) :
         if self.application.settings.get ("i18n", False) :
             I18N.use (* self.locale_codes)
-        top    = GTW.NAV.Root.top
+        top    = self.nav_root
         scope  = getattr (top, "scope", None)
         FEs    = getattr (scope, "Fatal_Exceptions", ())
         result = (None, None)
@@ -165,24 +210,15 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         return result
     # end def _handle_request
 
-    def get_current_user (self) :
-        top      = GTW.NAV.Root.top
-        username = self.get_secure_cookie ("username")
-        result   = top.anonymous_account
-        if username :
-            try :
-                result = top.account_manager.query (name = username).one ()
-            except IndexError :
-                pass
-            except Exception as exc :
-                pyk.fprint \
-                    ( ">>> Exception"
-                    , exc
-                    , "when trying to determine the user"
-                    , file = sys.stderr
-                    )
-        return result
-    # end def get_current_user
+    @property
+    def _session_sig (self) :
+        scope = self.scope
+        user  = self.current_user
+        return \
+            ( getattr (user, "password", user.name)
+            , scope and scope.db_meta_data.dbid
+            )
+    # end def _session_sig
 
 # end class _NAV_Request_Handler_
 

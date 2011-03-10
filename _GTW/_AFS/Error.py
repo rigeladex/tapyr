@@ -73,8 +73,7 @@ class Conflict (Base) :
 
 class Corrupted (Base) :
 
-    message = _ \
-        ( """The form values were corrupted somewhere or are too old.""")
+    message = _ ("""The form values are corrupted.""")
     status  = 404
 
 # end class Corrupted

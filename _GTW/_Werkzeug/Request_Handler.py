@@ -218,7 +218,7 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     # end def __init__
 
     def __call__ (self, environ, start_response) :
-        self.set_header                      ("Content-Type", "text/html")
+        self.set_header ("Content-Type", "text/html")
         redirect, top = self._handle_request ()
         if redirect :
             raise redirect

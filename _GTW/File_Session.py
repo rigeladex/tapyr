@@ -28,6 +28,10 @@
 # Revision Dates
 #    25-Jan-2010 (MG) Creation
 #    19-Feb-2010 (MG) Moved from `GTW.Tornado` into `GTW`
+#    10-Mar-2011 (CT) Property `_file_name` renamed to `file_name`,
+#                     `exists` and `file_name` changed to use factored method
+#                     `_file_name` (previously, `exists` and `_file_name`
+#                     differed erroneously)
 #    ««revision-date»»···
 #--
 from   _TFL._Meta.Once_Property import Once_Property
@@ -44,7 +48,12 @@ class File_Session (GTW.Session) :
     >>> session ["name"] = "user1"
     >>> session ["lang"] = "de_AT"
     >>> session.save ()
+
     >>> session2 = File_Session (session.sid)
+    >>> sorted (session._data.items ())
+    [('lang', 'de_AT'), ('name', 'user1')]
+    >>> sorted (session2._data.items ())
+    [('lang', 'de_AT'), ('name', 'user1')]
     >>> session.sid == session2.sid
     True
     >>> session.name
@@ -68,31 +77,38 @@ class File_Session (GTW.Session) :
     (None, None)
     """
 
-    base_path = "/tmp"
-
-    def exists (self, sid) :
-        return os.path.exists (os.path.join (self.base_path, sid))
-    # end def exists
+    base_path       = "/tmp"
+    _non_data_attrs = set (("file_name", ))
 
     @Once_Property
-    def _file_name (self) :
-        return os.path.join (self.base_path, "%s.sid" % (self.sid, ))
+    def file_name (self) :
+        return self._file_name (self.sid)
+    # end def file_name
+
+    def exists (self, sid) :
+        return os.path.exists (self._file_name (sid))
+    # end def exists
+
+    def save (self) :
+        with open (self.file_name, "wb") as f :
+            cPickle.dump (self._data, f)
+    # end def save
+
+    def remove (self) :
+        os.unlink (self.file_name)
+    # end def remove
+
+    def _file_name (self, sid) :
+        return os.path.join (self.base_path, "%s.sid" % (sid, ))
     # end def _file_name
 
     def _load (self) :
         try :
-            return cPickle.load (open (self._file_name, "rb"))
+            with open (self.file_name, "rb") as f :
+                return cPickle.load (f)
         except :
             return {}
     # end def _load
-
-    def save (self) :
-        cPickle.dump (self._data, open (self._file_name, "wb"))
-    # end def save
-
-    def remove (self) :
-        os.unlink (self._file_name)
-    # end def remove
 
 # end class File_Session
 

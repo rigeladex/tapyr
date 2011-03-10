@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -38,6 +38,7 @@ from   _GTW                     import GTW
 
 from   _TFL                     import TFL
 import _TFL._Meta.Object
+import _TFL._Meta.M_Auto_Combine_Sets
 
 import  base64
 import  os
@@ -55,6 +56,10 @@ if hasattr(random, "SystemRandom") :
 else:
     randrange = random.randrange
 
+class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
+    """Meta class for Session."""
+# end class M_Session
+
 class Session (TFL.Meta.Object) :
     """Base class for sessions
 
@@ -65,10 +70,13 @@ class Session (TFL.Meta.Object) :
        True
     """
 
-    _data_dict = None
+    __metaclass__     = M_Session
+    _data_dict        = None
+    _non_data_attrs   = set (("sid", "_data", "_data_dict"))
+    _sets_to_combine  = ("_non_data_attrs", )
 
     def __init__ (self, sid = None, salt = "_GTW.Session") :
-        if not sid :
+        if sid is None :
             self._data = {}
             sid        = self._new_sid (salt or "")
         self.sid       = sid
@@ -116,15 +124,15 @@ class Session (TFL.Meta.Object) :
         return self._data.get (key, default)
     # end def get
 
+    def pop (self, name, default = None) :
+        return self._data.pop (name, default)
+    # end def pop
+
     def setdefault (self, key, default = None) :
         if key not in self._data :
             self._data [key] = default
         return self._data [key]
     # end def setdefault
-
-    def pop (self, name, default = None) :
-        return self._data.pop (name, default)
-    # end def pop
 
     def __contains__ (self, item) :
         return item in self._data
@@ -150,6 +158,14 @@ class Session (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         return self.get (name)
     # end def __getattr__
+
+    def __setattr__ (self, name, value) :
+        if name in self._non_data_attrs :
+            d = self.__dict__
+        else :
+            d = self._data
+        d [name] = value
+    # end def __setattr__
 
 # end class Session
 
