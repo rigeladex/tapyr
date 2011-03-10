@@ -97,7 +97,7 @@ class File_Session (GTW.Session) :
     def remove (self) :
         try :
             os.unlink (self.file_name)
-        except IOError :
+        except EnvironmentError :
             pass
     # end def remove
 
