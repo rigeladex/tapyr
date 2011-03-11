@@ -34,6 +34,7 @@
 #     4-Aug-2010 (MG) Simplified to work with new `model.py`
 #    12-Aug-2010 (MG) `nav` fixture support added
 #     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
+#    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
 #    ««revision-date»»···
 #--
 
@@ -293,7 +294,7 @@ def wsgi (cmd, app_type, db_url) :
     media_dir = sos.path.join (NAV.web_src_root, "media")
     app       = HTTP.Application \
         ( ("", HTTP.NAV_Request_Handler, dict (nav_root = NAV))
-        , cookie_secret  = "ahn*eTh:2uGu6la/weiwaiz1b43N;aNg0eetie$Chae^2eEjeuth7e"
+        , cookie_salt    = "ahn*eTh:2uGu6la/weiwaiz1b43N;aNg0eetie$Chae^2eEjeuth7e"
         , i18n           = True
         , login_url      = NAV.SC.Auth.href_login
         , Session_Class  = GTW.File_Session

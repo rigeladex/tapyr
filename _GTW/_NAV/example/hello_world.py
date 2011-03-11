@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Martin Glück. All rights reserved
+# Copyright (C) 2009-2011 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -30,8 +30,10 @@
 #    14-Jan-2010 (MG) Use `TFL.CAO`
 #    14-Jan-2010 (CT) `PNS_Aliases` added and `Account_P` creation enabled
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
+#    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
 #    ««revision-date»»···
 #--
+
 from   _TFL                      import TFL
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
@@ -209,7 +211,7 @@ if __name__ == "__main__" :
         print "Use Tornado buildin autorelaod feature"
     app = GTW.Tornado.Application \
         ( ((".*$", GTW.NAV.Request_Handler), )
-        , cookie_secret = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
+        , cookie_salt   = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
         , debug         = cmd.tornado_reload
         , Session_Class = GTW.File_Session
         , session_id    = "SESSION_ID"

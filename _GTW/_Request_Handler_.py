@@ -40,6 +40,9 @@
 #    11-Jan-2011 (CT) `json` added to provide the request's json data, if any
 #    11-Jan-2011 (CT) `content-encoding` added to `json`
 #    10-Mar-2011 (CT) `session_hash` added
+#    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
+#    11-Mar-2011 (CT) Checking of `session_hash` moved to `session`
+#    11-Mar-2011 (CT) `username` and `current_user` added
 #    ««revision-date»»···
 #--
 
@@ -57,6 +60,51 @@ import sys
 class _Request_Handler_ (object) :
     """Mixin for request handlers."""
 
+    @property
+    def current_user (self) :
+        return None
+    # end def current_user
+
+    @Once_Property
+    def json (self) :
+        headers = self.request.headers
+        if headers.get ("content-type") == "application/json" :
+            encoding = headers.get ("content-encoding")
+            return json.loads (self.body, encoding)
+    # end def json
+
+    @Once_Property
+    def locale_codes (self) :
+        """The locale-code for the current session."""
+        codes = self.get_user_locale_codes ()
+        if not codes :
+            codes = self.get_browser_locale_codes ()
+        assert codes
+        return codes
+    # end def locale_codes
+
+    @Once_Property
+    def session (self) :
+        settings    = self.application.settings
+        SID_Cookie  = settings.get       ("session_id",  "SESSION_ID")
+        S_Class     = settings           ["Session_Class"]
+        sid         = self.secure_cookie (SID_Cookie)
+        session     = S_Class            (sid, settings, self._session_hasher)
+        self.set_secure_cookie           (SID_Cookie, session.sid)
+        GTW.Notification_Collection      (session)
+        return session
+    # end def session
+
+    @property
+    def username (self) :
+        return self.session.username
+    # end def username
+
+    @username.setter
+    def username (self, value) :
+        self.session.username = value
+    # end def username
+
     def add_notification (self, noti) :
         notifications = self.session.notifications
         if notifications is not None :
@@ -64,27 +112,6 @@ class _Request_Handler_ (object) :
                 noti = GTW.Notification (noti)
             notifications.append (noti)
     # end def add_notification
-
-    @Once_Property
-    def session (self) :
-        settings    = self.application.settings
-        SID_Cookie  = settings.get       ("session_id", "SESSION_ID")
-        secret      = settings.get       ("cookie_secret", "")
-        S_Class     = settings           ["Session_Class"]
-        s_hash      = self._session_hash
-        sid         = self.secure_cookie (SID_Cookie)
-        if sid is not None :
-            session = S_Class (sid, secret)
-            if session.session_hash != s_hash :
-                session.remove ()
-                sid = None
-        if sid is None :
-            session = S_Class (sid, secret)
-        self.set_secure_cookie      (SID_Cookie, session.sid)
-        GTW.Notification_Collection (session)
-        session.session_hash = s_hash
-        return session
-    # end def session
 
     def get_browser_locale_codes (self) :
         """Determines the user's locale from Accept-Language header."""
@@ -112,45 +139,30 @@ class _Request_Handler_ (object) :
         return self.session.get ("language")
     # end def get_user_locale_codes
 
-    @Once_Property
-    def json (self) :
-        headers = self.request.headers
-        if headers.get ("content-type") == "application/json" :
-            encoding = headers.get ("content-encoding")
-            return json.loads (self.body, encoding)
-    # end def json
-
-    @Once_Property
-    def locale_codes (self) :
-        """The locale-code for the current session."""
-        codes = self.get_user_locale_codes ()
-        if not codes :
-            codes = self.get_browser_locale_codes ()
-        assert codes
-        return codes
-    # end def locale_codes
-
     def write_json (self, data) :
         self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
         self.write      (json.dumps (data))
         return True
     # end def write_json
 
-    @property
-    def _session_hash (self) :
-        hash = hashlib.sha224 (str (self._session_sig)).digest ()
+    def _session_hasher (self, username) :
+        hash = hashlib.sha224 (str (self._session_sig (username))).digest ()
         return base64.b64encode (hash, "~@").rstrip ("=")
-    # end def _session_hash
+    # end def _session_hasher
 
-    @property
-    def _session_sig (self) :
-        return 42
+    def _session_sig (self, username) :
+        return (42, username)
     # end def _session_sig
 
 # end class _Request_Handler_
 
 class _NAV_Request_Handler_ (_Request_Handler_) :
     """Mixin for all request handlers using GTW.NAV"""
+
+    @property
+    def current_user (self) :
+        return self._get_user (self.username)
+    # end def current_user
 
     @property
     def scope (self) :
@@ -162,25 +174,6 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         if scope :
             scope.commit  ()
     # end def finish_request
-
-    def get_current_user (self) :
-        top      = self.nav_root
-        username = self.get_secure_cookie ("username")
-        result   = top.anonymous_account
-        if username :
-            try :
-                result = top.account_manager.query (name = username).one ()
-            except IndexError :
-                pass
-            except Exception as exc :
-                pyk.fprint \
-                    ( ">>> Exception"
-                    , exc
-                    , "when trying to determine the user"
-                    , file = sys.stderr
-                    )
-        return result
-    # end def get_current_user
 
     def _handle_request (self, * args, ** kw) :
         if self.application.settings.get ("i18n", False) :
@@ -212,12 +205,29 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         return result
     # end def _handle_request
 
-    @property
-    def _session_sig (self) :
+    def _get_user (self, username) :
+        top    = self.nav_root
+        result = top.anonymous_account
+        if username :
+            try :
+                result = top.account_manager.query (name = username).one ()
+            except IndexError :
+                pass
+            except Exception as exc :
+                pyk.fprint \
+                    ( ">>> Exception"
+                    , exc
+                    , "when trying to determine the user"
+                    , file = sys.stderr
+                    )
+        return result
+    # end def _get_user
+
+    def _session_sig (self, username) :
         scope = self.scope
-        user  = self.current_user
+        user  = self._get_user (username)
         return \
-            ( getattr (user, "password", user.name)
+            ( getattr (user, "password", username)
             , scope and scope.db_meta_data.dbid
             )
     # end def _session_sig

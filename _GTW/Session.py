@@ -32,6 +32,7 @@
 #     5-Aug-2010 (MG) `New_ID` factored from `_new_sid`, `setdefault` added
 #     8-Aug-2010 (MG) `setdefault` added
 #    10-Mar-2011 (CT) `__setattr__` added
+#    11-Mar-2011 (CT) `Login`, `expiry`, `hash`, and `username` added
 #    ««revision-date»»···
 #--
 
@@ -41,11 +42,13 @@ from   _TFL                     import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Sets
 
-import  base64
-import  os
-import  random
-import  time
-import  hashlib
+import base64
+import datetime
+import hashlib
+import os
+import random
+import time
+import uuid
 
 ### session key generation is based on the version found in Django
 ### (www.djangoproject.com)
@@ -57,8 +60,38 @@ if hasattr(random, "SystemRandom") :
 else:
     randrange = random.randrange
 
+class Login (TFL.Meta.Object) :
+    """Encapsulate login information for session."""
+
+    expiry    = None
+    hash      = None
+    _username = None
+
+    def __init__ (self) :
+        self.username = None
+    # end def __init__
+
+    @property
+    def username (self) :
+        return self._username
+    # end def username
+
+    @username.setter
+    def username (self, value) :
+        if value is None or value != self._username :
+            self._username = value
+            self.sessions  = {}
+    # end def username
+
+    def __nonzero__ (self) :
+        return self._username is not None
+    # end def __nonzero__
+
+# end class Login
+
 class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
     """Meta class for Session."""
+
 # end class M_Session
 
 class Session (TFL.Meta.Object) :
@@ -71,29 +104,64 @@ class Session (TFL.Meta.Object) :
        True
     """
 
-    __metaclass__     = M_Session
-    _data_dict        = None
-    _non_data_attrs   = set (("sid", "_data", "_data_dict"))
-    _sets_to_combine  = ("_non_data_attrs", )
+    __metaclass__      = M_Session
+    _data_dict         = None
+    _non_data_attrs    = set \
+        (("_data", "_data_dict", "_hasher", "_sid", "_settings", "username"))
+    _sets_to_combine   = ("_non_data_attrs", )
 
-    def __init__ (self, sid = None, salt = "_GTW.Session") :
+    def __init__ (self, sid = None, settings = {}, hasher = None) :
+        self._settings = settings
+        self._hasher   = hasher or (lambda x : x)
         if sid is None :
-            self._data = {}
-            sid        = self._new_sid (salt or "")
-        self.sid       = sid
+            self._sid     = self._new_sid (salt)
+            self._data    = dict (login = Login ())
+            self.username = None
+        else :
+            self._sid     = sid
     # end def __init__
 
     @property
+    def username (self) :
+        return self.login.username
+    # end def username
+
+    @username.setter
+    def username (self, value) :
+        self._change_username (self.login, value)
+    # end def username
+
+    @property
     def _data (self) :
-        if self._data_dict is None :
-            self._data_dict = self._load ()
-        return self._data_dict
+        loaded = False
+        result = self._data_dict
+        if result is None :
+            result = self._data_dict = loaded = self._load ()
+        login   = result ["login"]
+        expired = \
+            (  (login.hash != self._hasher (login.username))
+            or self._expired (login.expiry)
+            )
+        if expired :
+            self._change_username (login, None)
+        elif loaded :
+            for id in list (login.sessions) :
+                try :
+                    self.edit_session (id)
+                except LookupError :
+                    pass
+        return result
     # end def _data
 
     @_data.setter
     def _data (self, value) :
         self._data_dict = value
     # end def _data
+
+    @property
+    def sid (self) :
+        return self._sid
+    # end def sid
 
     @classmethod
     def New_ID (cls, check = None, salt = "") :
@@ -111,14 +179,62 @@ class Session (TFL.Meta.Object) :
                 return id
     # end def New_ID
 
-    def _new_sid (self, salt) :
-        return self.New_ID (self.exists, salt)
-    # end def _new_sid
+    def edit_session (self, id) :
+        login = self.login
+        expiry, hash = login.sessions [id]
+        if self._expired (expiry) :
+            login.sessions.pop (id, None)
+            raise LookupError \
+                ( "Edit session expired since %s"
+                % (expiry.strftime ("%Y/%m/%d %H:%M"), )
+                )
+        return hash
+    # end def edit_session
 
     def exists (self, sid) :
         ### must be implemented by concrete backends
         return False
     # end def exists
+
+    def new_edit_session (self, hash_sig, ttl = None) :
+        assert self.login
+        expiry = self._expiry (ttl, "edit_session_ttl")
+        id     = uuid.uuid4 ().hex
+        hash   = base64.b64encode \
+            (hashlib.sha224 (str ((hash_sig, expiry))).digest ())
+        self.login.sessions [id] = (expiry, hash)
+        return id, hash
+    # end def new_edit_session
+
+    def pop_edit_session (self, id) :
+        result = self.edit_session (id)
+        if result is not None :
+            self.login.sessions.pop (id, None)
+        return result
+    # end def pop_edit_session
+
+    def _new_sid (self, salt) :
+        return self.New_ID (self.exists, salt)
+    # end def _new_sid
+
+    def _change_username (self, login, value) :
+        login.username = value
+        login.hash     = self._hasher (value)
+        login.expiry   = None if value is None else self._expiry ()
+    # end def _change_username
+
+    def _expired (self, expiry) :
+        if expiry :
+            return datetime.datetime.utcnow () > expiry
+    # end def _expired
+
+    def _expiry (self, ttl = None, ttl_name = "user_session_ttl") :
+        if ttl is None :
+            ttl = self._settings.get (ttl_name, 3600)
+        if not isinstance (ttl, datetime.timedelta) :
+            ttl  = datetime.timedelta (seconds = ttl)
+        return datetime.datetime.utcnow () + ttl
+    # end def _expiry
 
     ### dict interface
     def get (self, key, default = None) :
@@ -162,14 +278,14 @@ class Session (TFL.Meta.Object) :
 
     def __setattr__ (self, name, value) :
         if name in self._non_data_attrs :
-            d = self.__dict__
+            return self.__super.__setattr__ (name, value)
         else :
-            d = self._data
-        d [name] = value
+            self._data [name] = value
+            return value
     # end def __setattr__
 
 # end class Session
 
 if __name__ != "__main__" :
-    GTW._Export ("*")
+    GTW._Export ("Session")
 ### __END__ GTW.Session

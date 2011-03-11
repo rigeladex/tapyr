@@ -32,6 +32,7 @@
 #     3-Jan-2011 (CT) Introduce `template_name`
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    11-Jan-2011 (CT) `rendered` changed to pass `handler` to `update_locals`
+#    11-Mar-2011 (CT) `rendered` changed to update `handler` in all calls
 #    ««revision-date»»···
 #--
 
@@ -410,19 +411,10 @@ class Console (GTW.NAV.Page) :
             elif (   (self.completion_cutoff is not None)
                  and (len (cands) > self.completion_cutoff)
                  ) :
-                #cp           = 0 ###len (input)
-                #import pdb; pdb.set_trace ()
-                #cands_by_apl = dusplit \
-                #    (cands, lambda c : self._completion_cand_cahr (c, cp))
                 cands        = \
                     [ TFL.I18N._T
                        ("There are %s possible completions" % (len (cands)))
                     ]
-                #for cbya in cands_by_apl :
-                #    cands.append \
-                #        ( TFL.I18N._T
-                #            ("%s starting with %s" % (len (cbya, "X")))
-                #        )
             return handler.write_json \
                 ( dict ( input     = input
                        , cands     = ", ".join (cands)
@@ -435,11 +427,13 @@ class Console (GTW.NAV.Page) :
             if top and referer :
                 url = TFL.Url (referer)
                 self.console.update_locals \
-                    ( handler   = handler
-                    , last_page = top.page_from_href (url.path [1:])
-                    , referer   = url
+                    ( handler      = handler
+                    , last_handler = handler
+                    , last_page    = top.page_from_href (url.path [1:])
+                    , referer      = url
                     )
         else :
+            self.console.update_locals (handler = handler)
             return handler.write_json \
                 (dict (html = self.console (cmd), more = self.console.more))
         return self.__super.rendered (handler, self.template)

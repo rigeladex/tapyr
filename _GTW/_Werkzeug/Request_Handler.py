@@ -35,6 +35,8 @@
 #    11-Jan-2011 (CT) `body` added
 #    11-Jan-2011 (CT) `Request_Class` derived from `BaseRequest` to define
 #                     `max_content_length` and `max_form_memory_size`
+#    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
+#    11-Mar-2011 (CT) `current_user` moved to `GTW._Request_Handler_`
 #    ««revision-date»»···
 #--
 
@@ -111,11 +113,6 @@ class Request_Handler (GTW._Request_Handler_) :
         self.response.delete_cookie (name, * args, ** kw)
     # end def clear_cookie
 
-    @Once_Property
-    def current_user (self) :
-        return None
-    # end def current_user
-
     def secure_cookie (self, name) :
         ### based on the implementation of tornado.web.Request.get_secure_cookie
         data = self.request.cookies.get (name)
@@ -188,7 +185,7 @@ class Request_Handler (GTW._Request_Handler_) :
 
     def _cookie_signature (self, * parts):
         hash = hmac.new\
-            ( self.application.settings ["cookie_secret"]
+            ( self.application.settings ["cookie_salt"]
             , digestmod = hashlib.sha1
             )
         for part in parts:
@@ -224,8 +221,6 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
             raise redirect
         return self.response (environ, start_response)
     # end def __call__
-
-    current_user = Once_Property (GTW._NAV_Request_Handler_.get_current_user)
 
     def _handle_request_exception (self, exc) :
         top   = self.nav_root

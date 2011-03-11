@@ -243,7 +243,9 @@
 #     7-Jan-2011 (CT) s/is_current/is_current_page/, `is_current_dir` added
 #     5-Mar-2011 (CT) `store_css` changed to use `b64encode` on `digest`
 #                     instead of `hexdigest`
-#     5-Mar-2011 (CT) `_get_sub_session` and `_new_sub_session` added
+#     5-Mar-2011 (CT) `_get_edit_session` and `_new_edit_session` added
+#    11-Mar-2011 (CT) `_get_edit_session` and `_get_edit_session` factored to
+#                     `GTW.Session`
 #    ««revision-date»»···
 #--
 
@@ -635,41 +637,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return self._Media
     # end def _get_media
 
-    def _get_sub_session (self, handler, sid) :
-        session       = handler.session
-        ss_map        = session.setdefault ("sub_sessions", {})
-        expiry, hash  = ss_map [id]
-        now           = datetime.datetime.utcnow ()
-        if hash and now > expiry :
-            raise LookupError \
-                ( "Session expired since %s"
-                % (expiry.strftime ("%Y/%m/%d %H:%M"), )
-                )
-        return hash
-    # end def _get_sub_session
+    def _get_edit_session (self, handler, sid) :
+        return handler.session.edit_session (sid)
+    # end def _get_edit_session
 
-    def _new_sub_session (self, handler) :
-        assert handler.current_user
-        dbmd     = self.top.scope.db_meta_data
-        session  = handler.session
-        settings = handler.application.settings
-        ss_map   = session.setdefault ("sub_sessions", {})
-        id       = uuid.uuid4 ().hex
-        ttl      = \
-            (  settings.get ("edit_session_ttl")
-            or settings.get ("session_ttl", 3600)
-            )
-        if not isinstance (ttl, datetime.timedelta) :
-            ttl  = datetime.timedelta (seconds = ttl)
-        expiry   = datetime.datetime.utcnow () + ttl
-        fps      = \
-            ( current_user.password, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()
-            , time.mktime (expiry.timetuple ())
-            )
-        hash     = base64.b64encode (hashlib.sha224 (str (fps)).digest ())
-        ss_map [id] = (expiry, hash)
-        return id, hash
-    # end def _new_sub_session
+    def _new_edit_session (self, handler, ttl = None) :
+        cu = handler.current_user
+        assert cu and cu.password
+        dbmd = self.top.scope.db_meta_data
+        return handler.session.new_edit_session \
+            ((cu.password, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
+    # end def _new_edit_session
 
     def _permissions (self) :
         p = self
@@ -678,6 +656,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 yield p._permission
             p = p.parent
     # end def _permissions
+
+    def _pop_edit_session (self, handler, sid) :
+        return handler.session.pop_edit_session (sid)
+    # end def _pop_edit_session
 
     def _view (self, handler) :
         HTTP             = self.top.HTTP

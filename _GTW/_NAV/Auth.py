@@ -51,6 +51,7 @@
 #    15-Dec-2010 (CT) Calls to `send_email` guarded with exception handler
 #    15-Dec-2010 (CT) `Request_Reset_Password` implemented
 #     3-Jan-2011 (CT) Introduce `template_name`
+#    11-Mar-2011 (CT) Moved `username` from cookie to `session`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class Auth (GTW.NAV.Dir) :
                     next    = req_data.get ("next", "/")
                     account.change_password \
                         (form.new_password, suspended = False)
-                    handler.set_secure_cookie ("username", account.name)
+                    handler.username = account.name
                     handler.session.notifications.append \
                         (GTW.Notification (_T ("Activation successful.")))
                     raise HTTP.Redirect_302   (next)
@@ -213,10 +214,10 @@ class Auth (GTW.NAV.Dir) :
                 req_data = request.req_data
                 errors   = form (req_data)
                 if not errors :
-                    next  = req_data.get      ("next", "/")
-                    handler.set_secure_cookie ("username", account.name)
+                    next  = req_data.get ("next", "/")
                     account.change_password \
                         (form.new_password, suspended = False)
+                    handler.username = account.name
                     handler.session.notifications.append \
                         ( GTW.Notification
                             (_T ("The password has been changed."))
@@ -254,13 +255,13 @@ class Auth (GTW.NAV.Dir) :
                             ### that page
                             next = self.href_change_pass (form.account)
                         else :
-                            handler.set_secure_cookie \
-                                ("username", req_data  ["username"])
+                            username = req_data  ["username"]
+                            handler.username = username
                             handler.add_notification \
-                                (_T ("Welcome %s.") % (req_data ["username"]))
+                                (_T ("Welcome %s.") % (username, ))
                         raise HTTP.Redirect_302 (next)
                     ### after a failed login, clear the current username
-                    handler.clear_cookie ("username")
+                    handler.username = None
             else :
                 context ["next"] = handler.request.headers.get ("Referer", "/")
             return self.__super.rendered (handler, template)
@@ -271,7 +272,7 @@ class Auth (GTW.NAV.Dir) :
     class Logout (_Cmd_) :
 
         def _view (self, handler) :
-            handler.clear_cookie ("username")
+            handler.username = None
             top       = self.top
             next      = handler.request.headers.get ("Referer", "/")
             next_page = top.page_from_href (urlparse.urlsplit (next).path)
@@ -328,7 +329,7 @@ class Auth (GTW.NAV.Dir) :
                             )
                         raise HTTP.Redirect_302 (next)
                 ### after a failed login, clear the current username
-                handler.clear_cookie ("username")
+                handler.username = None
             return self.__super.rendered (handler, template)
         # end def rendered
 

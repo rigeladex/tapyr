@@ -1000,7 +1000,7 @@ _test_code = """
     >>> fv.apply (scope, _sid = 1)
     Traceback (most recent call last):
       ...
-    Corrupted: (u'The form values were corrupted somewhere or are too old.', 404)
+    Corrupted: (u'The form values are corrupted.', 404)
 
     >>> gv = Value.from_json (json_copy)
     >>> gv.changes

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -38,6 +38,9 @@
 #    25-Jun-2010 (CT) Bug fix (s/kw/hkw/ in `handlers` loop in `__init__`)
 #    28-Jun-2010 (CT) `GTW._Application_` factored
 #    29-Jun-2010 (CT) Import for all relevant modules of package added
+#    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
+#    11-Mar-2011 (CT) `edit_session_ttl` and `user_session_ttl` added to
+#                     `default_settings`
 #    ««revision-date»»···
 #--
 
@@ -56,23 +59,31 @@ import _GTW._Werkzeug.Upload_Handler
 
 from    werkzeug          import ClosingIterator
 from    werkzeug.wrappers import BaseRequest, BaseResponse
-import  warnings
+
+import  datetime
 import  re
+import  warnings
 
 class _Werkzeug_Application_ (GTW._Application_) :
     """A WSGI Application"""
 
     default_settings = dict \
-        ( session_id    = "SESSION_ID"
-        , cookie_secret = "salt" ### must be changed for every application
-        , Session_Class = GTW.File_Session
+        ( Session_Class    = GTW.File_Session
+        , cookie_salt      = "salt *MUST* be changed for every application"
+        , edit_session_ttl = datetime.timedelta (hours =  6)
+        , session_id       = "SESSION_ID"
+        , user_session_ttl = datetime.timedelta (days  = 30)
         )
 
     _real_name = "Application"
 
     def __init__ (self, * handlers, ** kw) :
-        if "cookie_secret" not in kw :
-            warnings.warn ("Using default `cookie_secret`!", UserWarning)
+        if "cookie_salt" not in kw :
+            warnings.warn \
+                ( "Cookie salt should be specified for every application! "
+                  "Using default `cookie_salt`!"
+                 , UserWarning
+                )
         encoding                = kw.pop ("encoding", "utf-8")
         BaseRequest.charset     = BaseResponse.charset = encoding
         BaseRequest.url_charset = "utf-8"
