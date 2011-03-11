@@ -90,7 +90,7 @@ class _Request_Handler_ (object) :
         S_Class     = settings           ["Session_Class"]
         sid         = self.secure_cookie (SID_Cookie)
         session     = S_Class            (sid, settings, self._session_hasher)
-        self.set_secure_cookie           (SID_Cookie, session.sid)
+        self.set_secure_cookie           (SID_Cookie, session.sid, 720)
         GTW.Notification_Collection      (session)
         return session
     # end def session
