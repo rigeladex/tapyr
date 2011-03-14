@@ -114,7 +114,7 @@ class Session (TFL.Meta.Object) :
         self._settings = settings
         self._hasher   = hasher or (lambda x : x)
         if sid is None :
-            self._sid     = self._new_sid (salt)
+            self._sid     = self._new_sid (settings.get ("cookie_salt"))
             self._data    = dict (login = Login ())
             self.username = None
         else :
