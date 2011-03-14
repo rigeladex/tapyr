@@ -36,6 +36,8 @@
 #                     `E_Type.ui_name` instead of `.type_name`
 #     9-Mar-2011 (CT) `Field_Role_Hidden` and `_Hidden_Role_` added,
 #                     `Entity_Link` changed to support `_Hidden_Role_`
+#    14-Mar-2011 (CT) `_Field_._field_kw` factored from `_Field_Group_.fields`
+#                     (and changed to add `kind` and `required`)
 #    ««revision-date»»···
 #--
 
@@ -125,7 +127,19 @@ class _Entity_Mixin_ (_Base_) :
 
 class _Field_ (_Base_) :
 
-    pass
+    def _field_kw (self, attr, ** kw) :
+        result = dict \
+            ( description = attr.description
+            , kind        = attr.kind
+            , label       = attr.ui_name
+            , required    = attr.is_required
+            )
+        if attr.explanation :
+            result ["explanation"] = attr.explanation
+        result.update (self.kw)
+        result.update (kw)
+        return result
+    # end def _field_kw
 
 # end class _Field_
 
@@ -133,7 +147,8 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = getattr (E_Type, self.name)
-        return self.__super.__call__ (attr.P_Type, self, set (), ** kw)
+        return self.__super.__call__ \
+            (attr.P_Type, self, set (), ** self._field_kw (attr, ** kw))
     # end def __call__
 
 # end class _Field_Entity_Mixin_
@@ -197,7 +212,8 @@ class Field (_Field_) :
     Type     = Element.Field
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
-        return self.Type (** dict (self.kw, ** kw))
+        attr = getattr (E_Type, self.name)
+        return self.Type (** self._field_kw (attr, ** kw))
     # end def __call__
 
 # end class Field
@@ -264,15 +280,7 @@ class  _Field_Group_ (_Base_) :
             name = attr.name
             if name not in seen :
                 seen.add (name)
-                kw = dict \
-                    ( name        = name
-                    , description = attr.description
-                    , label       = attr.ui_name
-                    , ** attr_spec [name]
-                    )
-                if attr.explanation :
-                    kw ["explanation"] = attr.explanation
-                yield attr.AFS_Spec (** kw)
+                yield attr.AFS_Spec (name = name, ** attr_spec [name])
     # end def fields
 
 # end class  _Field_Group_

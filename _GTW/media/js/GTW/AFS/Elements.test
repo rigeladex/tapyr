@@ -23,15 +23,19 @@ var f = new $GTW.AFS.Form (
                       [ { '$id' : 'FB-0:0:0'
                         , 'children' :
                             [ { '$id' : 'FB-0:0:0:0'
+                              , 'kind' : 'primary'
                               , 'label' : 'Name'
                               , 'name' : 'name'
+                              , 'required' : True
                               , 'type' : 'Field'
                               , 'value' :
                                   { 'init' : 'Optimist' }
                               }
                             ]
+                        , 'kind' : 'primary'
                         , 'label' : 'Class'
                         , 'name' : 'left'
+                        , 'required' : True
                         , 'type' : 'Field_Entity'
                         , 'type_name' : 'GTW.OMP.SRM.Boat_Class'
                         , 'value' :
@@ -43,15 +47,19 @@ var f = new $GTW.AFS.Form (
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
+                        , 'kind' : 'primary'
                         , 'label' : 'Nation'
                         , 'name' : 'nation'
+                        , 'required' : True
                         , 'type' : 'Field'
                         , 'value' :
                             { 'init' : 'AUT' }
                         }
                       , { '$id' : 'FB-0:0:2'
+                        , 'kind' : 'primary'
                         , 'label' : 'Sail number'
                         , 'name' : 'sail_number'
+                        , 'required' : False
                         , 'type' : 'Field'
                         , 'value' :
                             { 'init' : '1107' }
@@ -64,8 +72,10 @@ var f = new $GTW.AFS.Form (
                 , { '$id' : 'FB-0:1'
                   , 'children' :
                       [ { '$id' : 'FB-0:1:0'
+                        , 'kind' : 'optional'
                         , 'label' : 'Name'
                         , 'name' : 'name'
+                        , 'required' : False
                         , 'type' : 'Field'
                         , 'value' :
                             {}
@@ -82,7 +92,10 @@ var f = new $GTW.AFS.Form (
                             [ { '$id' : 'FB-0:2::0-0'
                               , 'allow_new' : False
                               , 'hidden' : True
+                              , 'kind' : 'primary'
+                              , 'label' : 'Boat'
                               , 'name' : 'left'
+                              , 'required' : True
                               , 'type' : 'Field_Role_Hidden'
                               , 'type_name' : 'GTW.OMP.SRM.Boat'
                               , 'value' :
@@ -101,37 +114,47 @@ var f = new $GTW.AFS.Form (
                                               [ { '$id' : 'FB-0:2::0-1:0:0:0'
                                                 , 'children' :
                                                     [ { '$id' : 'FB-0:2::0-1:0:0:0.0'
+                                                      , 'kind' : 'necessary'
                                                       , 'label' : 'Start'
                                                       , 'name' : 'start'
+                                                      , 'required' : False
                                                       , 'type' : 'Field'
                                                       , 'value' :
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     , { '$id' : 'FB-0:2::0-1:0:0:0.1'
+                                                      , 'kind' : 'optional'
                                                       , 'label' : 'Finish'
                                                       , 'name' : 'finish'
+                                                      , 'required' : False
                                                       , 'type' : 'Field'
                                                       , 'value' :
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     ]
+                                                , 'kind' : 'primary'
                                                 , 'label' : 'Date'
                                                 , 'name' : 'date'
+                                                , 'required' : True
                                                 , 'type' : 'Field_Composite'
                                                 , 'type_name' : 'MOM.Date_Interval_C'
                                                 , 'value' :
                                                     {}
                                                 }
                                               , { '$id' : 'FB-0:2::0-1:0:0:1'
+                                                , 'kind' : 'primary'
                                                 , 'label' : 'Name'
                                                 , 'name' : 'name'
+                                                , 'required' : True
                                                 , 'type' : 'Field'
                                                 , 'value' :
                                                     { 'init' : 'Himmelfahrt' }
                                                 }
                                               ]
+                                          , 'kind' : 'primary'
                                           , 'label' : 'Event'
                                           , 'name' : 'left'
+                                          , 'required' : True
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.SRM.Regatta_Event'
                                           , 'value' :
@@ -143,8 +166,10 @@ var f = new $GTW.AFS.Form (
                                               }
                                           }
                                         ]
+                                    , 'kind' : 'primary'
                                     , 'label' : 'Regatta'
                                     , 'name' : 'right'
+                                    , 'required' : True
                                     , 'type' : 'Field_Entity'
                                     , 'type_name' : 'GTW.OMP.SRM.Regatta'
                                     , 'value' :
@@ -167,36 +192,46 @@ var f = new $GTW.AFS.Form (
                                         [ { '$id' : 'FB-0:2::0-2:0:0'
                                           , 'children' :
                                               [ { '$id' : 'FB-0:2::0-2:0:0:0'
+                                                , 'kind' : 'primary'
                                                 , 'label' : 'Last name'
                                                 , 'name' : 'last_name'
+                                                , 'required' : True
                                                 , 'type' : 'Field'
                                                 , 'value' :
                                                     { 'init' : 'Tanzer' }
                                                 }
                                               , { '$id' : 'FB-0:2::0-2:0:0:1'
+                                                , 'kind' : 'primary'
                                                 , 'label' : 'First name'
                                                 , 'name' : 'first_name'
+                                                , 'required' : True
                                                 , 'type' : 'Field'
                                                 , 'value' :
                                                     { 'init' : 'Laurens' }
                                                 }
                                               , { '$id' : 'FB-0:2::0-2:0:0:2'
+                                                , 'kind' : 'primary'
                                                 , 'label' : 'Middle name'
                                                 , 'name' : 'middle_name'
+                                                , 'required' : False
                                                 , 'type' : 'Field'
                                                 , 'value' :
                                                     {}
                                                 }
                                               , { '$id' : 'FB-0:2::0-2:0:0:3'
+                                                , 'kind' : 'primary'
                                                 , 'label' : 'Academic title'
                                                 , 'name' : 'title'
+                                                , 'required' : False
                                                 , 'type' : 'Field'
                                                 , 'value' :
                                                     {}
                                                 }
                                               ]
+                                          , 'kind' : 'primary'
                                           , 'label' : 'Person'
                                           , 'name' : 'left'
+                                          , 'required' : True
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.PAP.Person'
                                           , 'value' :
@@ -208,22 +243,28 @@ var f = new $GTW.AFS.Form (
                                               }
                                           }
                                         , { '$id' : 'FB-0:2::0-2:0:1'
+                                          , 'kind' : 'primary'
                                           , 'label' : 'Nation'
                                           , 'name' : 'nation'
+                                          , 'required' : False
                                           , 'type' : 'Field'
                                           , 'value' :
                                               { 'init' : 'AUT' }
                                           }
                                         , { '$id' : 'FB-0:2::0-2:0:2'
+                                          , 'kind' : 'primary'
                                           , 'label' : 'Mna number'
                                           , 'name' : 'mna_number'
+                                          , 'required' : False
                                           , 'type' : 'Field'
                                           , 'value' :
                                               { 'init' : '29676' }
                                           }
                                         ]
+                                    , 'kind' : 'required'
                                     , 'label' : 'Skipper'
                                     , 'name' : 'skipper'
+                                    , 'required' : True
                                     , 'type' : 'Field_Entity'
                                     , 'type_name' : 'GTW.OMP.SRM.Sailor'
                                     , 'value' :
@@ -242,15 +283,19 @@ var f = new $GTW.AFS.Form (
                             , { '$id' : 'FB-0:2::0-3'
                               , 'children' :
                                   [ { '$id' : 'FB-0:2::0-3:0'
+                                    , 'kind' : 'optional'
                                     , 'label' : 'Place'
                                     , 'name' : 'place'
+                                    , 'required' : False
                                     , 'type' : 'Field'
                                     , 'value' :
                                         {}
                                     }
                                   , { '$id' : 'FB-0:2::0-3:1'
+                                    , 'kind' : 'optional'
                                     , 'label' : 'Points'
                                     , 'name' : 'points'
+                                    , 'required' : False
                                     , 'type' : 'Field'
                                     , 'value' :
                                         {}
