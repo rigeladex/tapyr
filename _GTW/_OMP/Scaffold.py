@@ -34,6 +34,7 @@
 #     3-Aug-2010 (MG) Additional options added to `shell` sub-command
 #    10-Aug-2010 (CT) Command `description` defined as doc-string of `handler`
 #    10-Feb-2011 (CT) Injection of `GTW` into essential classes added
+#    14-Mar-2011 (CT) Injection of `GTW` factored to `_GTW._OMP.MOM_injector`
 #    ««revision-date»»···
 #--
 
@@ -41,17 +42,12 @@ from   _GTW                   import GTW
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
+import _GTW._OMP.MOM_injector
+
 import _MOM.Scaffold
 
 import _TFL.CAO
 import _TFL._Meta.Once_Property
-
-### Inject a class-valued  class attribute `GTW` into the essential classes
-### (due to `_nested_classes_to_combine`, each essential class gets their own
-### `GTW` class with proper inheritance)
-import _MOM._Meta.M_Entity, _MOM.Entity
-MOM.Meta.M_Entity._nested_classes_to_combine += ("GTW", )
-MOM.Entity.GTW = type ("GTW", (), dict (__module__ = MOM.Entity.__module__))
 
 class HTTP_Opt (TFL.CAO._Spec_) :
     """Select HTTP server framework to use."""

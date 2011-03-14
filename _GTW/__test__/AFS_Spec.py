@@ -51,6 +51,54 @@ _test_code = """
        <Field None 'finish'>
       <Field None 'salutation'>
 
+    >>> SL = Spec.Entity (include_links = ("addresses", "emails", "phones"))
+    >>> xl = SL (scope.PAP.Person._etype)
+    >>> print repr (xl)
+    <Entity None 'Person' 'GTW.OMP.PAP.Person'>
+     <Fieldset None 'primary'>
+      <Field None 'last_name'>
+      <Field None 'first_name'>
+      <Field None 'middle_name'>
+      <Field None 'title'>
+     <Fieldset None 'necessary'>
+      <Field None 'sex'>
+     <Fieldset None 'optional'>
+      <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
+       <Field None 'start'>
+       <Field None 'finish'>
+      <Field None 'salutation'>
+     <Entity_List None <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
+      <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
+       <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
+       <Fieldset None 'primary'>
+        <Field_Entity None 'right' 'GTW.OMP.PAP.Address'>
+         <Field None 'street'>
+         <Field None 'zip'>
+         <Field None 'city'>
+         <Field None 'country'>
+         <Field None 'region'>
+       <Fieldset None 'optional'>
+        <Field None 'desc'>
+     <Entity_List None <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>>
+      <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>
+       <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
+       <Fieldset None 'primary'>
+        <Field_Entity None 'right' 'GTW.OMP.PAP.Email'>
+         <Field None 'address'>
+       <Fieldset None 'optional'>
+        <Field None 'desc'>
+     <Entity_List None <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>>
+      <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>
+       <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
+       <Fieldset None 'primary'>
+        <Field_Entity None 'right' 'GTW.OMP.PAP.Phone'>
+         <Field None 'country_code'>
+         <Field None 'area_code'>
+         <Field None 'number'>
+        <Field None 'extension'>
+       <Fieldset None 'optional'>
+        <Field None 'desc'>
+
     >>> T = Spec.Entity (Spec.Entity_Link ("events",
     ...   Spec.Entity_Link ("recurrence", Spec.Entity_Link ("rules"))))
     >>> y = T (scope.SWP.Page._etype)

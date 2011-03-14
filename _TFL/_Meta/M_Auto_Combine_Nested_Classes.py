@@ -37,7 +37,7 @@ class M_Auto_Combine_Nested_Classes (TFL.Meta.M_Base) :
        `_nested_classes_to_combine` between a class and it's ancestors.
     """
 
-    _classes_to_combine = ()
+    _nested_classes_to_combine = ()
 
     def __init__ (cls, name, bases, dct) :
         for cn in cls._nested_classes_to_combine :

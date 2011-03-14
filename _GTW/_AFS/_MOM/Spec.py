@@ -38,6 +38,7 @@
 #                     `Entity_Link` changed to support `_Hidden_Role_`
 #    14-Mar-2011 (CT) `_Field_._field_kw` factored from `_Field_Group_.fields`
 #                     (and changed to add `kind` and `required`)
+#    14-Mar-2011 (CT) `_Entity_Mixin_.__init__` changed to honor `include_links`
 #    ««revision-date»»···
 #--
 
@@ -82,13 +83,19 @@ class _Entity_Mixin_ (_Base_) :
     _elems              = ()
 
     def __init__ (self, ** kw) :
+        self.attr_spec = TFL.mm_dict \
+            (self.attr_spec, ** kw.pop ("attr_spec", {}))
+        include_links = tuple \
+            (   (Entity_Link (l) if isinstance (l, basestring) else l)
+            for l in kw.pop ("include_links", ())
+            )
+        if include_links :
+            self._elems += include_links
         if "include_kind_groups" in kw :
             self.pop_to_self (kw, "include_kind_groups")
         else :
             self.include_kind_groups = not any \
                 (not isinstance (e, Entity_Link) for e in self._elems)
-        self.attr_spec = TFL.mm_dict \
-            (self.attr_spec, ** kw.pop ("attr_spec", {}))
         self.__super.__init__ (** kw)
     # end def __init__
 
