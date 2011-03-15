@@ -200,7 +200,10 @@ class Entity_Link (Entity) :
         with self.LET (hidden_role_name = r_name) :
             result = self.__super.__call__ (assoc, self, seen, ** kw)
         if role.max_links != 1 :
-            result = Element.Entity_List (proto = result)
+            elkw = dict (kw)
+            if role.max_links > 0 :
+                elkw.setdefault (max_links = role.max_links)
+            result = Element.Entity_List (proto = result, ** elkw)
         return result
     # end def __call__
 
