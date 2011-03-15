@@ -437,16 +437,24 @@ class Form (_Element_List_) :
     def Load (cls, pickle_path) :
         """Load `Table` from `pickle_path`."""
         with open (pickle_path, "rb") as file :
-            table = pickle.load (file)
+            try :
+                table = pickle.load (file)
+            except pickle.PickleError as exc :
+                raise EnvironmentError (str (exc))
         table.update (cls.Table)
-        cls.Table = table
+        ### We want to set `Table` for `GTW.AFS.Element.Form`, not for a
+        ### possible descedent class
+        GTW.AFS.Element.Form.Table = table
     # end def Load
 
     @classmethod
     def Store (cls, pickle_path) :
         """Store `Table` as pickle in `pickle_path`."""
         with open (pickle_path, "wb") as file :
-            pickle.dump (cls.Table, file, pickle.HIGHEST_PROTOCOL)
+            try :
+                pickle.dump (cls.Table, file, pickle.HIGHEST_PROTOCOL)
+            except pickle.PickleError as exc :
+                raise EnvironmentError (str (exc))
     # end def Store
 
 # end class Form
