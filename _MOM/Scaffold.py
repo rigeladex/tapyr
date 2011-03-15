@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -467,7 +467,6 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         print "%s%-12s : %s" % (indent, "dbv_hash/apt", apt.db_version_hash)
         print
     # end def _print_info
-
 
 Scaffold = _MOM_Scaffold_ # end class
 

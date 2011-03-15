@@ -57,6 +57,9 @@
 #     8-Mar-2011 (CT) `_value` simplified (`needs_value` moved to
 #                     `_Element_.__call__`)
 #     9-Mar-2011 (CT) `_update_sid` factored
+#    15-Mar-2011 (CT) Guard against names starting with `__` added to
+#                     `__getattr__`
+#    15-Mar-2011 (CT) `Form.Load` and `Form.Store` added
 #    ««revision-date»»···
 #--
 
@@ -68,6 +71,7 @@ import _GTW._AFS.Instance
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst, rsplit_hst
+from   _TFL.pyk                 import pickle
 
 import json
 
@@ -177,10 +181,12 @@ class _Element_ (TFL.Meta.Object) :
     # end def _value_sig
 
     def __getattr__ (self, name) :
-        try :
-            return self.kw [name]
-        except KeyError :
-            raise AttributeError (name)
+        if not name.startswith ("__") :
+            try :
+                return self.kw [name]
+            except KeyError :
+                pass
+        raise AttributeError (name)
     # end def __getattr__
 
     def __repr__ (self) :
@@ -426,6 +432,22 @@ class Form (_Element_List_) :
             except KeyError :
                 raise KeyError (key)
     # end def __getitem__
+
+    @classmethod
+    def Load (cls, pickle_path) :
+        """Load `Table` from `pickle_path`."""
+        with open (pickle_path, "rb") as file :
+            table = pickle.load (file)
+        table.update (cls.Table)
+        cls.Table = table
+    # end def Load
+
+    @classmethod
+    def Store (cls, pickle_path) :
+        """Store `Table` as pickle in `pickle_path`."""
+        with open (pickle_path, "wb") as file :
+            pickle.dump (cls.Table, file, pickle.HIGHEST_PROTOCOL)
+    # end def Store
 
 # end class Form
 

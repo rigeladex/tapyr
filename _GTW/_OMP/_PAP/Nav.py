@@ -39,6 +39,7 @@
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
 #    13-Oct-2010 (CT) `Entity_created_by_Person` added
+#    15-Mar-2011 (CT) Test for `GTW.AFS` added
 #    ««revision-date»»···
 #--
 
@@ -213,6 +214,12 @@ class Admin (object) :
         )
 
 # end class Admin
+
+from   _GTW._AFS._MOM import Spec
+import _GTW._OMP._PAP.Person
+
+GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
+    (include_links = ("addresses", "emails", "phones"))
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export_Module ()

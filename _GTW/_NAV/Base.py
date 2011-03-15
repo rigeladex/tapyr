@@ -246,6 +246,8 @@
 #     5-Mar-2011 (CT) `_get_edit_session` and `_new_edit_session` added
 #    11-Mar-2011 (CT) `_get_edit_session` and `_get_edit_session` factored to
 #                     `GTW.Session`
+#    15-Mar-2011 (CT) `Root.scope` changed to call `Create_Scope` with same
+#                     signature as `MOM.Scope.load`
 #    ««revision-date»»···
 #--
 
@@ -1210,10 +1212,11 @@ class Root (_Dir_) :
 
     @Once_Property
     def scope (self) :
-        if self.Create_Scope :
-            return self.Create_Scope (self)
-        from _MOM import MOM
-        return MOM.Scope.load (self.top.App_Type, self.top.DB_Url)
+        CS = self.top.Create_Scope
+        if CS is None :
+            from _MOM import MOM
+            CS = MOM.Scope.load
+        return CS (self.top.App_Type, self.top.DB_Url)
     # end def scope
 
     def store_css (self, css_dir, prefix, map_path) :

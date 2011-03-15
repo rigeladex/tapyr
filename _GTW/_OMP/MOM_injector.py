@@ -30,15 +30,25 @@
 #
 # Revision Dates
 #    14-Mar-2011 (CT) Creation (factored from `_GTW._OMP.Scaffold`)
+#    15-Mar-2011 (CT) `GTW.afs_id` and `.afs_spec` initialized to `None`
 #    ««revision-date»»···
 #--
 
 from   _MOM import MOM
 
 import _MOM._Meta.M_Entity, _MOM.Entity
+
 MOM.Meta.M_Entity._nested_classes_to_combine += ("GTW", )
 
-MOM.Entity.GTW = type ("GTW", (), dict (__module__ = MOM.Entity.__module__))
+MOM.Entity.GTW = type \
+    ( "GTW"
+    , ()
+    , dict
+        ( afs_id     = None
+        , afs_spec   = None
+        , __module__ = MOM.Entity.__module__
+        )
+    )
 for _T in MOM.Entity._S_Extension [1:] :
     _T._m_combine_nested_class ("GTW", _T.__bases__, _T.__dict__)
 

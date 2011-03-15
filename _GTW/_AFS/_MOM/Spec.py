@@ -39,6 +39,7 @@
 #    14-Mar-2011 (CT) `_Field_._field_kw` factored from `_Field_Group_.fields`
 #                     (and changed to add `kind` and `required`)
 #    14-Mar-2011 (CT) `_Entity_Mixin_.__init__` changed to honor `include_links`
+#    15-Mar-2011 (CT) `setup_defaults` added
 #    ««revision-date»»···
 #--
 
@@ -380,6 +381,17 @@ class _Hidden_Role_ (_Base_) :
     # end def __call__
 
 # end class _Hidden_Role_
+
+def setup_defaults (default_spec = None, id_prefix = "AF") :
+    import _MOM.Entity
+    if default_spec is None :
+        default_spec = Entity ()
+    for T in MOM.Entity._S_Extension [::-1] :
+        if T.GTW.afs_id is None :
+            T.GTW.afs_id   = "%s%s" % (id_prefix, T.i_rank)
+        if T.GTW.afs_spec is None and not T.is_partial :
+            T.GTW.afs_spec = default_spec
+# end def setup_defaults
 
 if __name__ != "__main__" :
     GTW.AFS.MOM._Export_Module ()
