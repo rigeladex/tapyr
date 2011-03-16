@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -173,7 +173,7 @@ class GTW (TFL.Meta.Object) :
         render_mode     = self.render_mode_stack [-1]
         try :
             try :
-                mode_desc   = fofi.render_mode_description [render_mode]
+                mode_desc = fofi.render_mode_description [render_mode]
             except ValueError :
                 raise ValueError \
                     ("%r does not support render mode %r" % (fofi, render_mode))

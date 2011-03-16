@@ -34,6 +34,7 @@
 #                     to shadowed templates of JNJ itself
 #    23-Feb-2010 (MG) `Default_Extensions` factored
 #     3-Jan-2011 (CT) `CSS_Parameters` added
+#    16-Mar-2011 (CT) Optional argument `GTW` added to `HTML`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ def HTML \
         , encoding       = "iso-8859-1"
         , i18n           = False
         , CSS_Parameters = None
+        , GTW            = None
         , ** kw
         ) :
     jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "iso-8859-1")
@@ -75,9 +77,11 @@ def HTML \
         extensions.append ("jinja2.ext.i18n")
     result = Environment  \
         ( extensions = uniq (extensions), loader = loader, ** kw)
+    if GTW is None :
+        GTW = JNJ.GTW (result)
     result.globals.update \
         ( globals
-        , GTW          = JNJ.GTW (result)
+        , GTW          = GTW
         , html_version = version
         )
     result.CSS_Parameters = CSS_Parameters

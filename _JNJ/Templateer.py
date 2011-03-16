@@ -46,6 +46,9 @@
 #    14-Jan-2011 (CT) `get_CSS` replaced by `get_Media` (s/css/media/ -- mostly)
 #    14-Jan-2011 (CT) `JS`, `JS_On_Ready`, `js_href`, `js_on_ready` and
 #                     `scripts` added
+#    16-Mar-2011 (CT) `Template_E.module`, `.get_macro`, and `.call_macro` added
+#    16-Mar-2011 (CT) `Templateer.__init__` changed to pass `GTW` to
+#                     `JNJ.Environment.HTML` -> `GTW.env` refers to `Templateer`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +58,7 @@ from   _JNJ               import JNJ
 from   _TFL               import TFL
 
 import _JNJ.Environment
+import _JNJ.GTW
 
 import _TFL._Meta.Object
 import _TFL.predicate
@@ -158,6 +162,42 @@ class Template_E (_Template_) :
     # end def CSS
 
     @Once_Property
+    def extends (self) :
+        env    = self.env
+        pat    = self._extend_pat
+        source = self.source
+        if source and pat.search (source) :
+            try :
+                path = eval (pat.name.strip (), env.globals, {})
+            except Exception :
+                pass
+            else :
+                return self.__class__ (env, path)
+    # end def extends
+
+    @Once_Property
+    def imports (self) :
+        env    = self.env
+        pat    = self._import_pat
+        source = self.source
+        if source :
+            def _gen () :
+                for match in pat.search_iter (source) :
+                    try:
+                        name   = match.group ("name").strip ()
+                        pathes = eval (name, env.globals, {})
+                    except Exception :
+                        pass
+                    else :
+                        if isinstance (pathes, basestring) :
+                            pathes = [pathes]
+                        for p in pathes :
+                            yield self.__class__ (env, p)
+            return list (_gen ())
+        return []
+    # end def imports
+
+    @Once_Property
     def JS (self) :
         """Combined Javascript code required by media fragments that can
            loaded from a single file or included inline in a html <script>
@@ -204,40 +244,9 @@ class Template_E (_Template_) :
     # end def media_path
 
     @Once_Property
-    def extends (self) :
-        env    = self.env
-        pat    = self._extend_pat
-        source = self.source
-        if source and pat.search (source) :
-            try :
-                path = eval (pat.name.strip (), env.globals, {})
-            except Exception :
-                pass
-            else :
-                return self.__class__ (env, path)
-    # end def extends
-
-    @Once_Property
-    def imports (self) :
-        env    = self.env
-        pat    = self._import_pat
-        source = self.source
-        if source :
-            def _gen () :
-                for match in pat.search_iter (source) :
-                    try:
-                        name   = match.group ("name").strip ()
-                        pathes = eval (name, env.globals, {})
-                    except Exception :
-                        pass
-                    else :
-                        if isinstance (pathes, basestring) :
-                            pathes = [pathes]
-                        for p in pathes :
-                            yield self.__class__ (env, p)
-            return list (_gen ())
-        return []
-    # end def imports
+    def module (self) :
+        return self.template.module
+    # end def module
 
     @Once_Property
     def scripts (self) :
@@ -310,6 +319,15 @@ class Template_E (_Template_) :
     def _Media (self) :
         return self.get_Media (self.env.CSS_Parameters)
     # end def _Media
+
+    def call_macro (self, name, * _args, ** _kw) :
+        macro = self.get_macro (name)
+        return macro (* _args, ** _kw)
+    # end def call_macro
+
+    def get_macro (self, name) :
+        return getattr (self.module, name)
+    # end def get_macro
 
     def get_Media (self, P) :
         media_fragment_pathes = tuple \
@@ -414,8 +432,9 @@ class Templateer (TFL.Meta.Object) :
     Context         = dict
 
     def __init__ (self, * args, ** kw) :
-        self.env           = env = JNJ.Environment.HTML (* args, ** kw)
-        self.Template_Type = T   = Template_E.New \
+        self.env = env = JNJ.Environment.HTML \
+            (* args, GTW = JNJ.GTW (self), ** kw)
+        self.Template_Type = T = Template_E.New \
             ("x", Map = {}, By_Path = {})
         self.Template_Map  = T.Map
         for t in Template.Map.itervalues () :
