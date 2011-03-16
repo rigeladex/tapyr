@@ -81,6 +81,8 @@
 #     7-Jan-2011 (CT) `is_current_dir` redefined
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    11-Jan-2011 (CT) `Media` for `tablesorter` added
+#    16-Mar-2011 (CT) `AFS` added
+#    16-Mar-2011 (CT) `_get_child` simplified
 #    ««revision-date»»···
 #--
 
@@ -89,6 +91,7 @@ from   _TFL                     import TFL
 from   _MOM.import_MOM          import MOM, Q
 
 import _GTW._Form._MOM.Instance
+from   _GTW._AFS._MOM.Element   import Form as AFS_Form
 
 import _GTW.FO
 import _GTW.jQuery
@@ -151,6 +154,74 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class _Cmd_
 
+    class AFS (_Cmd_) :
+        """Model an admin page for creating or changing a specific instance
+           of a etype with an AFS form.
+        """
+
+        Media           = None ### cancel inherited property defined
+        name            = "create"
+        args            = (None, )
+        template_name   = "e_type_afs"
+        form_parameters = {}
+
+        @property
+        def obj (self) :
+            ETM = self.ETM
+            pid = self.args and self.args [0]
+            return ETM.pid_query (pid)
+        # end def obj
+
+        def rendered (self, handler, template = None) :
+            ETM      = self.ETM
+            E_Type   = self.E_Type
+            HTTP     = self.top.HTTP
+            context  = handler.context
+            obj      = context ["instance"] = None
+            request  = handler.request
+            req_data = request.req_data
+            pid      = req_data.get ("pid") or self.args [0]
+            scope    = self.top.scope
+            if scope.readonly : ### XXX might be out-of-date !!!
+                request.Error = \
+                    (_T ( "At the moment, the database is set to "
+                          "readonly to allow maintenance."
+                        )
+                    )
+                raise self.top.HTTP.Error_503 (request.path)
+            if pid is not None :
+                try :
+                    obj = ETM.pid_query (pid)
+                except LookupError :
+                    request.Error = \
+                        ( _T ("%s `%s` doesn't exist!")
+                        % (_T (E_Type.ui_name), pid)
+                        )
+                    raise HTTP.Error_404 (request.path, request.Error)
+            form  = AFS_Form [E_Type.GTW.afs_id] (ETM, obj)
+            if request.method == "POST" :
+                err_count = 0
+                if req_data.get ("cancel") :
+                    ### the user has clicked on the cancel button and not on
+                    ### the submit button
+                    scope.rollback ()
+                else :
+                    raise NotImplementedError ("AFS form post requests")
+                if err_count == 0 :
+                    tail = "#pk-%s" % (obj.pid) if obj else ""
+                    raise HTTP.Redirect_302 \
+                        ("%s%s" % (self.parent.abs_href, tail))
+            self.Media = self._get_media (head = getattr (form, "Media", None))
+            context.update (form = form)
+            try :
+                self.last_changed = obj.FO.last_changed
+            except AttributeError :
+                pass
+            return self.__super.rendered (handler, template)
+        # end def rendered
+
+    # end class AFS
+
     class Changer (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
            of a etype.
@@ -177,7 +248,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             obj      = context ["instance"] = None
             request  = handler.request
             req_data = request.req_data
-            pid      = req_data.get ("pid") or self.args [0]
+            pid      = req_data.get ("pid") or  self.args [0]
             if pid is not None :
                 try :
                     obj = ETM.pid_query (pid)
@@ -545,12 +616,15 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def _auto_list_display
 
     _child_name_map = dict \
-        ( change    = (Changer,   "args")
-        , complete  = (Completer, "forms")
-        , completed = (Completed, "forms")
-        , fields    = (Fields,    "forms")
-        , form      = (HTML_Form, "forms")
-        , test      = (Test,      "forms")
+        ( afs       = (AFS,       "args",  None)
+        , change    = (Changer,   "args",  None)
+        , complete  = (Completer, "forms", None)
+        , completed = (Completed, "forms", None)
+        , create    = (Changer,   "args",  0)
+        , delete    = (Deleter,   "args",  1)
+        , fields    = (Fields,    "forms", None)
+        , form      = (HTML_Form, "forms", None)
+        , test      = (Test,      "forms", None)
         )
     child_attrs     = {}
 
@@ -558,17 +632,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         T  = None
         kw = {}
         if child in self._child_name_map :
-            T, attr = self._child_name_map [child]
-            name    = pjoin (* grandchildren)
-            kw      = \
-                {"name"   : "%s/%s" % (child, name)
-                , attr    : grandchildren
-                }
-        if child == "create" and not grandchildren :
-            T = self.Changer
-        if child == "delete" and len (grandchildren) == 1 :
-            T = self.Deleter
-            kw ["args"] = grandchildren
+            C, attr, n = self._child_name_map [child]
+            if n is None or len (grandchildren) == n :
+                T      = C
+                name   = pjoin (* grandchildren) if grandchildren else ""
+                kw     = \
+                    {"name"   : "%s/%s" % (child, name)
+                    , attr    : grandchildren or (None, )
+                    }
         if T :
             kw = dict (self.child_attrs.get (T.__name__, {}), ** kw)
             return T (parent = self, ** kw)

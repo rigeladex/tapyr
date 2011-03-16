@@ -1,6 +1,12 @@
 JNJ To-Do
 =========
 
+- html/e_type_admin.jnj:
+
+  * `delete` uses GET instead of POST request
+
+  * Change this
+
 - Don't use `h<i>` for navigation
 
   http://www.456bereastreet.com/archive/201103/html5_sectioning_elements_headings_and_document_outlines/
