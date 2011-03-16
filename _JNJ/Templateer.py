@@ -69,10 +69,10 @@ class _Template_ (TFL.Meta.Object) :
 
     def _init_ (self, name, path, media_fragment_name = None) :
         assert name not in self.Map, name
-        self.name              = name
-        self.path              = path
+        self.name                = name
+        self.path                = path
         self.media_fragment_name = media_fragment_name
-        self.Map [name]        = self
+        self.Map [name]          = self
     # end def _init_
 
 # end class _Template_
