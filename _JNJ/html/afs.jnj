@@ -1,0 +1,124 @@
+
+{#- jinja template: afs.jnj -#}
+{#
+## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/afs.jnj
+##
+## Purpose
+##    Provide macros for rendering GTW.AFS forms
+##
+## Revision Dates
+##    17-Mar-2011 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import html_version as X -%}
+{%- import "html/form.jnj" as FM %}
+
+{%- macro _do_children (form, elem) -%}
+  {%- for c in elem.children %}
+    {{ GTW.call_macro (c.type, form, c, templ_name = c.renderer) }}
+  {% endfor -%}
+{%- endmacro -%} {#- _do_children -#}
+
+{%- macro Entity (form, elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <div class="Entity" id="{{ elem.id }}" title="{{ desc }}">
+    {#- XXX Legend -#}
+    {{ _do_children (form, elem) }}
+  </div>
+{%- endmacro -%} {#- Entity -#}
+
+{%- macro Entity_Link (form, elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <div class="Entity_Link" id="{{ elem.id }}" title="{{ desc }}">
+    {#- XXX Legend -#}
+    {{ _do_children (form, elem) }}
+  </div>
+{%- endmacro -%} {#- Entity_Link -#}
+
+{%- macro Entity_List (form, elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <div class="Entity_List" id="{{ elem.id }}" title="{{ desc }}">
+    {#- XXX Legend -#}
+    {{ _do_children (form, elem) }}
+  </div>
+{%- endmacro -%} {#- Entity_List -#}
+
+{%- macro Field (form, elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  {%- set expl = GTW._T (elem.explanation)|safe %}
+  <div class="Field" id="FC-{{ elem.id }}" title="{{ desc }}">
+    {%- if desc %}<span class="Desc" title="{{ expl }}">{{ desc }}</span>{% endif -%}
+    <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
+    {{ GTW.call_macro (elem.widget, form, elem) }}
+  </div>
+{%- endmacro -%} {#- Field -#}
+
+{%- macro Field_Composite (form, elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <div class="Field_Composite" id="{{ elem.id }}" title="{{ desc }}">
+    {#- XXX Legend -#}
+    {{ _do_children (form, elem) }}
+  </div>
+{%- endmacro -%} {#- Field_Composite -#}
+
+{%- macro Field_Entity (form, elem) -%}
+  {#- XXX honor allow_new... -#}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <div class="Field_Entity" id="{{ elem.id }}" title="{{ desc }}">
+    {#- XXX Legend -#}
+    {{ _do_children (form, elem) }}
+  </div>
+{%- endmacro -%} {#- Field_Entity -#}
+
+{%- macro Field_Role_Hidden (form, elem) -%}
+{%- endmacro -%} {#- Field_Role_Hidden -#}
+
+{%- macro Fieldset (form, elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <div class="Fieldset {{ elem.css_class }}" id="{{ elem.id }}" title="{{ desc }}">
+    {#- XXX Legend -#}
+    {{ _do_children (form, elem) }}
+  </div>
+{%- endmacro -%} {#- Fieldset -#}
+
+{%- macro Form (form) -%}
+  {#- Render a form for a AFS `Form` instance `form` -#}
+  {%- set object_caller = kwargs.pop ("caller", None) -%}
+  {% call FM.form
+      ( action     = ""
+      , class      = form.css_class
+      , id         = form.id
+      , ** kwargs
+      )
+  -%}
+    {{ _do_children (form, form) }}
+    {%- if object_caller %}
+      {{ object_caller () }}
+    {% endif -%}
+  {% endcall %} {# FM.form #}
+{%- endmacro -%} {#- Form -#}
+
+{#- __END__ jinja template: html/afs.jnj -#}

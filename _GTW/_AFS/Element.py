@@ -60,6 +60,8 @@
 #    15-Mar-2011 (CT) Guard against names starting with `__` added to
 #                     `__getattr__`
 #    15-Mar-2011 (CT) `Form.Load` and `Form.Store` added
+#    17-Mar-2011 (CT) `_instance_kw` added
+#    17-Mar-2011 (CT) `Field.widget` added
 #    ««revision-date»»···
 #--
 
@@ -107,12 +109,14 @@ class _Element_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
+        ikw    = self._instance_kw \
+            (  dict (value = self._value (* args, ** kw))
+            if self.needs_value else {}
+            )
         result = GTW.AFS.Instance \
             ( self
             , children = list (self._call_iter (* args, ** kw))
-            , **(  dict (value = self._value (* args, ** kw))
-                if self.needs_value else {}
-                )
+            , ** ikw
             )
         return result
     # end def __call__
@@ -165,6 +169,10 @@ class _Element_ (TFL.Meta.Object) :
             id_map [c_id] = c
             c._id_children (c_id, c.children, id_map)
     # end def _id_children
+
+    def _instance_kw (self, vkw) :
+        return vkw
+    # end def _instance_kw
 
     def _set_id (self, parent, i) :
         self.id = result = parent.id_sep.join ((parent.id, str (i)))
@@ -334,6 +342,19 @@ class _Field_ (_Element_) :
 
 class Field (_Field_) :
     """Model a field of an AJAX-enhanced form."""
+
+    widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
+
+    def __init__ (self, name, ** kw) :
+        self.pop_to_self      (kw, "widget")
+        self.__super.__init__ (name = name, ** kw)
+    # end def __init__
+
+    def _instance_kw (self, vkw) :
+        result = self.__super._instance_kw (vkw)
+        result.update (widget = self.widget)
+        return result
+    # end def _value
 
     def _value_sig (self, instance) :
         return (str (instance.id), self.name, instance.init)

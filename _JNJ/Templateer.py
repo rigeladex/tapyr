@@ -49,6 +49,7 @@
 #    16-Mar-2011 (CT) `Template_E.module`, `.get_macro`, and `.call_macro` added
 #    16-Mar-2011 (CT) `Templateer.__init__` changed to pass `GTW` to
 #                     `JNJ.Environment.HTML` -> `GTW.env` refers to `Templateer`
+#    17-Mar-2011 (CT) `afs` and `e_type_afs` added
 #    ««revision-date»»···
 #--
 
@@ -405,6 +406,7 @@ Template ("account_reset_password",       "html/reset_password.jnj")
 Template ("account_reset_password_email", "email/reset_password.jnj")
 Template ("account_verify_new_email",     "email/verify_new_email.jnj")
 Template ("account_verify_email",         "email/verify_new_email.jnj")
+Template ("afs",                          "html/afs.jnj")
 Template ("calendar",                     "html/calendar.jnj")
 Template ("calendar_qx",                  "html/cal/wr.jnj")
 Template ("calendar_day",                 "html/cal_day.jnj")
@@ -414,6 +416,7 @@ Template ("console",                      "html/console.jnj")
 Template ("default",                      "html/error.jnj")
 Template ("dynamic_form",                 "html/dynamic_form.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
+Template ("e_type_afs",                   "html/e_type_afs.jnj")
 Template ("e_type_aggregator",            "html/e_type_aggregator.jnj")
 Template ("e_type_change",                "html/e_type_change.jnj")
 Template ("gallery",                      "html/gallery.jnj")

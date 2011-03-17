@@ -37,6 +37,9 @@
 #     8-Mar-2011 (CT) `sort_json` added (doctest better sets it to True)
 #     9-Mar-2011 (CT) `entities` added
 #     9-Mar-2011 (CT) `as_json` and `as_json_cargo` factored to `_Base_`
+#    17-Mar-2011 (CT) `renderer` and `widget` added to `instance`
+#    17-Mar-2011 (CT) `type` added to `_Base_`
+#    17-Mar-2011 (CT) `__getattr__` added
 #    ««revision-date»»···
 #--
 
@@ -70,6 +73,11 @@ class _Base_ (TFL.Meta.Object) :
             result ["prefilled"] = True
         return result
     # end def as_json_cargo
+
+    @Once_Property
+    def type (self) :
+        return self.elem.__class__.__name__
+    # end def type
 
     def entities (self) :
         for c in self.children :
@@ -123,17 +131,24 @@ class _Base_ (TFL.Meta.Object) :
         return "%s-v = %s" % (name, result)
     # end def _v_repr
 
+    def __getattr__ (self, name) :
+        if name != "elem" and not name.startswith ("_") :
+            return getattr (self.elem, name)
+    # end def __getattr__
+
 # end class _Base_
 
 class Instance (_Base_) :
     """Model an instance of an AFS form element."""
 
     children  = ()
+    renderer  = "afs"
     sort_json = False
     value     = None
+    widget    = None
 
     def __init__ (self, elem, ** kw) :
-        self.pop_to_self  (kw, "children", "value")
+        self.pop_to_self (kw, "children", "renderer", "value", "widget")
         self.elem = elem
         self.kw   = kw
     # end def __init__
@@ -175,6 +190,15 @@ class Instance (_Base_) :
     def sid (self) :
         return self.value and self.value.get ("sid")
     # end def sid
+
+    ### compatibility with JNJ/html/field.jnj macros
+    def get_id (self, x) :
+        return x.id
+    # end def get_id
+
+    def get_raw (self, x) :
+        return x.init
+    # end def get_raw
 
     def _child_sig_iter (self, c, cig) :
         if c.value is not None or cig is None :

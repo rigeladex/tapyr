@@ -139,7 +139,7 @@ class _Field_ (_Base_) :
         result = dict \
             ( description = attr.description
             , kind        = attr.kind
-            , label       = attr.ui_name
+            , label       = attr.ui_name or attr.name
             , required    = attr.is_required
             )
         if attr.explanation :

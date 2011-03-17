@@ -159,7 +159,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
            of a etype with an AFS form.
         """
 
-        Media           = None ### cancel inherited property defined
+        _Media          = GTW.Media \
+            ( scripts       =
+                ( GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
+                )
+            )
         name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
