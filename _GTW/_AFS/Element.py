@@ -61,7 +61,8 @@
 #                     `__getattr__`
 #    15-Mar-2011 (CT) `Form.Load` and `Form.Store` added
 #    17-Mar-2011 (CT) `_instance_kw` added
-#    17-Mar-2011 (CT) `Field.widget` added
+#    17-Mar-2011 (CT) `Field.input_widget` added
+#    18-Mar-2011 (CT) `_Element_.renderer` and `.widget` added
 #    ««revision-date»»···
 #--
 
@@ -69,6 +70,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._AFS.Instance
+import _GTW._Form.Widget_Spec
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -97,11 +99,16 @@ class _Element_ (TFL.Meta.Object) :
     needs_value = False
     prefilled   = False
     rank        = 0
+    renderer    = "afs"
     root_sep    = "-"
+    widget      = None
     _id         = None
 
     def __init__ (self, ** kw) :
-        self.pop_to_self  (kw, "id", "id_sep", "prefilled", "needs_value")
+        self.pop_to_self \
+            ( kw
+            , "id", "id_sep", "needs_value", "prefilled", "renderer", "widget"
+            )
         children = kw.pop ("children", None)
         if children is not None :
             self.children = list (children)
@@ -331,10 +338,12 @@ class Entity_List (_Element_List_) :
 class _Field_ (_Element_) :
     """Base class for AFS field classes."""
 
-    needs_value = True
+    needs_value  = True
+
+    input_widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
 
     def __init__ (self, name, ** kw) :
-        self.pop_to_self      (kw, "description", "explanation")
+        self.pop_to_self      (kw, "description", "explanation", "input_widget")
         self.__super.__init__ (name = name, ** kw)
     # end def __init__
 
@@ -342,19 +351,6 @@ class _Field_ (_Element_) :
 
 class Field (_Field_) :
     """Model a field of an AJAX-enhanced form."""
-
-    widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
-
-    def __init__ (self, name, ** kw) :
-        self.pop_to_self      (kw, "widget")
-        self.__super.__init__ (name = name, ** kw)
-    # end def __init__
-
-    def _instance_kw (self, vkw) :
-        result = self.__super._instance_kw (vkw)
-        result.update (widget = self.widget)
-        return result
-    # end def _value
 
     def _value_sig (self, instance) :
         return (str (instance.id), self.name, instance.init)

@@ -1,6 +1,6 @@
 {#- jinja template: field.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -39,6 +39,7 @@
 ##                     `ui_length`
 ##    26-Feb-2010 (MG) `boolean` added
 ##    10-Mar-2010 (CT) s/named_object/named_value/
+##    18-Mar-2011 (CT) `fi.choices` changed to property
 ##    ««revision-date»»···
 ##--
 #}
@@ -70,7 +71,7 @@
   {{ X.input.select
       ( name     = id
       , id       = "F_%s"|format (id)
-      , choices  = fi.choices (fo)
+      , choices  = fi.choices
       , selected = fo.get_raw (fi)
       )
   }}

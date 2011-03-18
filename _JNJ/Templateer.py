@@ -50,6 +50,7 @@
 #    16-Mar-2011 (CT) `Templateer.__init__` changed to pass `GTW` to
 #                     `JNJ.Environment.HTML` -> `GTW.env` refers to `Templateer`
 #    17-Mar-2011 (CT) `afs` and `e_type_afs` added
+#    18-Mar-2011 (CT) `Template_E.parent` added and used in `get_macro`
 #    ««revision-date»»···
 #--
 
@@ -72,13 +73,19 @@ from jinja2.exceptions import TemplateNotFound
 class _Template_ (TFL.Meta.Object) :
     """Describe a Jinja template."""
 
-    def _init_ (self, name, path, media_fragment_name = None) :
+    def _init_ (self, name, path, media_fragment_name = None, parent_name = None) :
         assert name not in self.Map, name
         self.name                = name
         self.path                = path
         self.media_fragment_name = media_fragment_name
+        self.parent_name         = parent_name
         self.Map [name]          = self
     # end def _init_
+
+    @property
+    def args (self) :
+        return self.name, self.path, self.media_fragment_name, self.parent_name
+    # end def args
 
 # end class _Template_
 
@@ -122,7 +129,7 @@ class Template_E (_Template_) :
     _t_path         = None
     _t_source       = None
 
-    def __new__ (cls, env, name, path = None, media_fragment_name = None) :
+    def __new__ (cls, env, name, path = None, * args, ** kw) :
         if path is None :
             path = name
         if path in cls.By_Path :
@@ -131,20 +138,21 @@ class Template_E (_Template_) :
             result = cls.Map     [name]
         else :
             result = _Template_.__new__ (cls)
-            result._init_ (env, name, path, media_fragment_name)
+            result._init_ (env, name, path, * args, ** kw)
         return result
     # end def __new__
 
-    def _init_ (self, env, name, path = None, media_fragment_name = None) :
-        self.__super._init_ (name, path, media_fragment_name)
-        self.env = env
-        if path not in self.By_Path :
-            self.By_Path [path] = self
+    def _init_ (self, env, * args, ** kw) :
+        self.__super._init_ (* args, ** kw)
+        self.env     = env
+        self._macros = {}
+        if self.path not in self.By_Path :
+            self.By_Path [self.path] = self
     # end def _init_
 
     @classmethod
     def copy (cls, env, proto) :
-        return cls (env, proto.name, proto.path, proto.media_fragment_name)
+        return cls (env, * proto.args)
     # end def copy
 
     @Once_Property
@@ -250,6 +258,12 @@ class Template_E (_Template_) :
     # end def module
 
     @Once_Property
+    def parent (self) :
+        if self.parent_name :
+            return self.Map [self.parent_name]
+    # end def parent
+
+    @Once_Property
     def scripts (self) :
         """Scripts required by media fragments that need to be put into
            separate <script src="..."> elements.
@@ -327,7 +341,16 @@ class Template_E (_Template_) :
     # end def call_macro
 
     def get_macro (self, name) :
-        return getattr (self.module, name)
+        result = self._macros.get (name)
+        if result is None :
+            result = getattr (self.module, name, None)
+            if result is None :
+                if self.parent :
+                    result = self.parent.get_macro (name)
+                else :
+                    raise AttributeError (name)
+            self._macros [name] = result
+        return result
     # end def get_macro
 
     def get_Media (self, P) :

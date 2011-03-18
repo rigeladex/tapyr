@@ -40,6 +40,8 @@
 #                     (and changed to add `kind` and `required`)
 #    14-Mar-2011 (CT) `_Entity_Mixin_.__init__` changed to honor `include_links`
 #    15-Mar-2011 (CT) `setup_defaults` added
+#    18-Mar-2011 (CT) `_Field_._field_kw`: `css_class`, `choices`, and
+#                     `input_widget` added
 #    ««revision-date»»···
 #--
 
@@ -136,12 +138,20 @@ class _Entity_Mixin_ (_Base_) :
 class _Field_ (_Base_) :
 
     def _field_kw (self, attr, ** kw) :
+        at     = attr.attr
         result = dict \
             ( description = attr.description
             , kind        = attr.kind
             , label       = attr.ui_name or attr.name
             , required    = attr.is_required
             )
+        if isinstance (at, MOM.Attr._A_Named_Value_) :
+            result ["choices"] = sorted (at.Table)
+        if attr.css_class :
+            result ["css_class"] = " ".join \
+                (c for c in (attr.css_class, attr.css_class_len) if c)
+        if attr.widget :
+            result ["input_widget"] = attr.widget
         if attr.explanation :
             result ["explanation"] = attr.explanation
         result.update (self.kw)

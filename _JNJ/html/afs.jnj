@@ -38,7 +38,7 @@
 
 {%- macro _do_children (form, elem) -%}
   {%- for c in elem.children %}
-    {{ GTW.call_macro (c.type, form, c, templ_name = c.renderer) }}
+    {{ GTW.call_macro (c.widget, form, c, templ_name = c.renderer) }}
   {% endfor -%}
 {%- endmacro -%} {#- _do_children -#}
 
@@ -72,7 +72,7 @@
   <div class="Field" id="FC-{{ elem.id }}" title="{{ desc }}">
     {%- if desc %}<span class="Desc" title="{{ expl }}">{{ desc }}</span>{% endif -%}
     <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
-    {{ GTW.call_macro (elem.widget, form, elem) }}
+    {{ GTW.call_macro (elem.input_widget, form, elem) }}
   </div>
 {%- endmacro -%} {#- Field -#}
 
@@ -98,7 +98,7 @@
 
 {%- macro Fieldset (form, elem) -%}
   {%- set desc = GTW._T (elem.description)|safe %}
-  <div class="Fieldset {{ elem.css_class }}" id="{{ elem.id }}" title="{{ desc }}">
+  <div class="Fieldset {{ elem.name }} {{ elem.css_class }}" id="{{ elem.id }}" title="{{ desc }}">
     {#- XXX Legend -#}
     {{ _do_children (form, elem) }}
   </div>

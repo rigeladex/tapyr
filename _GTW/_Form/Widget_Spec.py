@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.Form.
@@ -30,6 +30,7 @@
 #     2-Feb-2010 (MG) `Media` added
 #     5-Feb-2010 (MG) Allow a `Widget_Spec` instance as `default`
 #     5-May-2010 (MG) `__getitem__` added
+#    18-Mar-2011 (CT) Guard for names starting with `__` added to `__getattr__`
 #    ««revision-date»»···
 #--
 
@@ -57,16 +58,18 @@ class Widget_Spec (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
+    def __getattr__ (self, name) :
+        if not name.startswith ("__") :
+            return self.default
+        raise AttributeError (name)
+    # end def __getattr__
+
     def __getitem__ (self, key) :
         try :
             return getattr (self, key)
         except AttributeError :
             raise KeyError (key)
     # end def __getitem__
-
-    def __getattr__ (self, name) :
-        return self.default
-    # end def __getattr__
 
     def __str__ (self) :
         return self.default

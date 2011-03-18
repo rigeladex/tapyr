@@ -47,6 +47,7 @@
 #     8-Oct-2010 (CT) `len` added
 #    23-Nov-2010 (CT) `list` and `reversed` added
 #    27-Nov-2010 (CT) `formatted` added
+#    18-Mar-2011 (CT) `get_macro` changed to use `Template_E.get_macro`
 #    ««revision-date»»···
 #--
 
@@ -54,8 +55,6 @@ from   _JNJ               import JNJ
 from   _TFL               import TFL
 
 from   _GTW               import HTML
-
-import _JNJ.Environment
 
 from   _TFL               import sos
 from   _TFL.I18N          import _, _T, _Tn
@@ -70,6 +69,7 @@ class GTW (TFL.Meta.Object) :
     from jinja2.runtime import Undefined
 
     def __init__ (self, env) :
+        import _JNJ.Templateer ### used by `get_macro`
         self.env               = env
         self.render_mode_stack = []
     # end def __init__
@@ -87,7 +87,7 @@ class GTW (TFL.Meta.Object) :
     # end def call_macro
 
     def email_uri (self, email, text = None, ** kw) :
-        """Returns a telephone URI for `phone_number`.
+        """Returns a mailto URI for `email`.
 
            http://tools.ietf.org/html/rfc3966
         """
@@ -136,7 +136,11 @@ class GTW (TFL.Meta.Object) :
             templ_name, macro_name = \
                 (p.strip () for p in macro_name.split (",", 1))
         template = self.env.get_template (templ_name)
-        return getattr (template.module, macro_name)
+        if isinstance (template, JNJ.Template_E) :
+            result = template.get_macro (macro_name)
+        else :
+            result = getattr (template.module, macro_name)
+        return result
     # end def get_macro
 
     Getter     = TFL.Getter

@@ -37,9 +37,9 @@
 #     8-Mar-2011 (CT) `sort_json` added (doctest better sets it to True)
 #     9-Mar-2011 (CT) `entities` added
 #     9-Mar-2011 (CT) `as_json` and `as_json_cargo` factored to `_Base_`
-#    17-Mar-2011 (CT) `renderer` and `widget` added to `instance`
 #    17-Mar-2011 (CT) `type` added to `_Base_`
 #    17-Mar-2011 (CT) `__getattr__` added
+#    18-Mar-2011 (CT) `_Base_.widget` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +78,14 @@ class _Base_ (TFL.Meta.Object) :
     def type (self) :
         return self.elem.__class__.__name__
     # end def type
+
+    @Once_Property
+    def widget (self) :
+        result = self.elem.widget
+        if result is None :
+            result = self.type
+        return result
+    # end def widget
 
     def entities (self) :
         for c in self.children :
@@ -142,13 +150,11 @@ class Instance (_Base_) :
     """Model an instance of an AFS form element."""
 
     children  = ()
-    renderer  = "afs"
     sort_json = False
     value     = None
-    widget    = None
 
     def __init__ (self, elem, ** kw) :
-        self.pop_to_self (kw, "children", "renderer", "value", "widget")
+        self.pop_to_self (kw, "children", "value")
         self.elem = elem
         self.kw   = kw
     # end def __init__

@@ -33,6 +33,7 @@
 #    10-Mar-2010 (CT) s/named_object/named_value/
 #     3-May-2010 (MG) New form handling implemented
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#    18-Mar-2011 (CT) `choices` changed to be `property`
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,11 @@ def css_class_len (self) :
     return _css_len_classes [self.ui_length]
 # end def css_class_len
 
+@TFL.Add_Method (MAT._A_Named_Value_, decorator = property)
+def css_class_len (self) :
+    return ""
+# end def css_class_len
+
 class Field (GTW.Form._Field_) :
     """A wrapper around the attribute of the MOM object used in field groups"""
 
@@ -104,7 +110,8 @@ class Field (GTW.Form._Field_) :
         self.attr_kind      = getattr (et_man._etype, attr_name)
     # end def __init__
 
-    def choices (self, form) :
+    @property
+    def choices (self) :
         attr = self.attr_kind.attr
         if isinstance (attr, MOM.Attr._A_Named_Value_) :
             return sorted (attr.Table)
