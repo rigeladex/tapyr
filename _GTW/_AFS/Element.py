@@ -63,6 +63,7 @@
 #    17-Mar-2011 (CT) `_instance_kw` added
 #    17-Mar-2011 (CT) `Field.input_widget` added
 #    18-Mar-2011 (CT) `_Element_.renderer` and `.widget` added
+#    20-Mar-2011 (CT) `css_class` added
 #    ««revision-date»»···
 #--
 
@@ -99,15 +100,17 @@ class _Element_ (TFL.Meta.Object) :
     needs_value = False
     prefilled   = False
     rank        = 0
-    renderer    = "afs"
+    renderer    = None
     root_sep    = "-"
     widget      = None
+    _css_class  = None
     _id         = None
 
     def __init__ (self, ** kw) :
         self.pop_to_self \
             ( kw
-            , "id", "id_sep", "needs_value", "prefilled", "renderer", "widget"
+            , "css_class", "id", "id_sep", "needs_value"
+            , "prefilled", "renderer", "widget"
             )
         children = kw.pop ("children", None)
         if children is not None :
@@ -127,6 +130,16 @@ class _Element_ (TFL.Meta.Object) :
             )
         return result
     # end def __call__
+
+    @property
+    def css_class (self) :
+        return " ".join (c for c in self._css_classes () if c)
+    # end def css_class
+
+    @css_class.setter
+    def css_class (self, value) :
+        self._css_class = value
+    # end def css_class
 
     @property
     def id (self) :
@@ -158,6 +171,10 @@ class _Element_ (TFL.Meta.Object) :
         for c in self.children :
             yield c (* args, ** kw)
     # end def _call_iter
+
+    def _css_classes (self) :
+        return (self._css_class, self.__class__.__name__)
+    # end def _css_classes
 
     def _formatted (self, level = 0) :
         result = ["%s%s" % (" " * level, self)]
@@ -231,6 +248,7 @@ class Entity (_Element_) :
 
     id_sep      = ":"
     needs_value = True
+    renderer    = "afs"
 
     def __init__ (self, type_name, ** kw) :
         self.__super.__init__ (type_name = type_name, ** kw)
@@ -277,6 +295,7 @@ class Entity_List (_Element_List_) :
     """Model a sub-form for a list of entities."""
 
     id_sep  = _Element_List_.list_sep
+    renderer    = "afs"
 
     def __init__ (self, proto, ** kw) :
         self.proto   = proto
@@ -361,6 +380,8 @@ class Field (_Field_) :
 class Field_Composite (_Field_) :
     """Model a composite field of a AJAX-enhanced form."""
 
+    renderer    = "afs"
+
     def _value_sig (self, instance) :
         return (str (instance.id), self.name, instance.form_sig ())
     # end def _value_sig
@@ -379,7 +400,12 @@ class Field_Entity (Entity, _Field_) :
 class Fieldset (_Element_) :
     """Model a set of fields of an AJAX-enhanced form."""
 
-    id_sep = ":"
+    id_sep      = ":"
+    renderer    = "afs"
+
+    def _css_classes (self) :
+        return self.__super._css_classes () + (self.name.capitalize (), )
+    # end def _css_classes
 
     def _value_sig (self, instance) :
         return instance.form_sig ()
@@ -394,6 +420,7 @@ class Form (_Element_List_) :
 
     id_sep        = _Element_List_.root_sep
     needs_value   = True
+    renderer      = "afs"
     Table         = {}
 
     def __init__ (self, id, children, ** kw) :
@@ -427,6 +454,10 @@ class Form (_Element_List_) :
         for a, c in zip (args, self.children) :
             yield c (a, ** kw)
     # end def _call_iter
+
+    def _css_classes (self) :
+        return self.__super._css_classes () + ("AFS", )
+    # end def _css_classes
 
     def _value (self, * args, ** kw) :
         result = self.__super._value (* args, ** kw)
