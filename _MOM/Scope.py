@@ -86,6 +86,7 @@
 #    28-Sep-2010 (CT) `temp_change_recorder` added
 #    30-Nov-2010 (CT) `Fatal_Exceptions` added
 #     8-Mar-2011 (CT) `pid_query` added
+#    21-Mar-2011 (MG) `copy` assert fixed
 #    ««revision-date»»···
 #--
 
@@ -345,7 +346,10 @@ class Scope (TFL.Meta.Object) :
         """
         assert self.app_type.parent is app_type.parent
         db_url = app_type.Url (db_url)
-        assert db_url is None or self.db_url.path != db_url.path
+        assert (      db_url is None
+               or not db_url.path
+               or self.db_url.path != db_url.path
+               )
         with self.as_active () :
             result = self.__class__.new \
                 (app_type, db_url, self.root_epk, user = self.user)
