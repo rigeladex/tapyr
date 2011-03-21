@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -113,7 +113,9 @@ _test_code = r"""
     Now, we migrate all objects and the change history to a new scope. All
     entities, changes, cids, and pids should be identical::
 
-    >>> db_url = "hps:////tmp/gtw_test.gtw"
+    >>> db_path = "/tmp/gtw_test.gtw"
+    >>> db_url  = "hps:////tmp/gtw_test.gtw"
+    >>> if sos.path.exists (db_path) : sos.unlink (db_path)
     >>> apt, url = Scaffold.app_type_and_url (db_url)
     >>> scop2 = scope.copy (apt, url)
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
