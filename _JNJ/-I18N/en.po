@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:360
+#: _JNJ/html/form.jnj:358
 msgid "Change email"
 msgstr ""
 
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Change email for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:359
+#: _JNJ/html/form.jnj:357
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -79,11 +79,11 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:365
+#: _JNJ/html/form.jnj:363
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:364
+#: _JNJ/html/form.jnj:362
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
@@ -112,7 +112,7 @@ msgstr ""
 msgid "Currently selected day"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:130
+#: _JNJ/html/navigation.jnj:140
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
@@ -125,11 +125,11 @@ msgstr ""
 msgid "Delta"
 msgstr ""
 
-#: _JNJ/html/form.jnj:386 _JNJ/html/rform.jnj:431
+#: _JNJ/html/form.jnj:384 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:377 _JNJ/html/rform.jnj:258
+#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:375 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
 msgstr ""
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Gallery"
 msgstr ""
 
-#: _JNJ/html/form.jnj:320 _JNJ/html/login.jnj:66
+#: _JNJ/html/form.jnj:318 _JNJ/html/login.jnj:66
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -181,11 +181,11 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:127
+#: _JNJ/html/navigation.jnj:136
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:126
+#: _JNJ/html/navigation.jnj:135
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -198,7 +198,7 @@ msgstr ""
 msgid "Last picture"
 msgstr ""
 
-#: _JNJ/html/form.jnj:311
+#: _JNJ/html/form.jnj:309
 msgid "Log into website or go to account page"
 msgstr ""
 
@@ -206,16 +206,16 @@ msgstr ""
 msgid "Log into website with username and password specified"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:154
+#: _JNJ/html/navigation.jnj:165
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:153
+#: _JNJ/html/navigation.jnj:164
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:159
+#: _JNJ/html/form.jnj:310 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:170
 msgid "Login"
 msgstr ""
 
@@ -227,7 +227,7 @@ msgstr ""
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:350 _JNJ/html/form.jnj:351
+#: _JNJ/html/form.jnj:348 _JNJ/html/form.jnj:349
 #, python-format
 msgid "Logout %s"
 msgstr ""
@@ -287,14 +287,6 @@ msgid ""
 " value"
 msgstr ""
 
-#: _JNJ/html/form.jnj:305
-msgid "Please enter your password"
-msgstr ""
-
-#: _JNJ/html/form.jnj:296
-msgid "Please enter your username"
-msgstr ""
-
 #: _JNJ/html/error_503.jnj:47
 msgid "Please try again later. "
 msgstr ""
@@ -315,11 +307,11 @@ msgstr ""
 msgid "Read the full article at"
 msgstr ""
 
-#: _JNJ/html/form.jnj:330
+#: _JNJ/html/form.jnj:328
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:329
+#: _JNJ/html/form.jnj:327
 msgid "Register a new account"
 msgstr ""
 
@@ -327,7 +319,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
+#: _JNJ/html/form.jnj:385 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr ""
 
@@ -349,7 +341,7 @@ msgstr ""
 msgid "Scroll by %s weeks to anchor %s."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:136
+#: _JNJ/html/navigation.jnj:147
 #, python-format
 msgid "Select language %s"
 msgstr ""
@@ -358,7 +350,7 @@ msgstr ""
 msgid "Selected picture"
 msgstr ""
 
-#: _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
+#: _JNJ/html/form.jnj:389 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr ""
 
@@ -378,7 +370,7 @@ msgstr ""
 msgid "Slide show"
 msgstr ""
 
-#: _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
+#: _JNJ/html/form.jnj:390 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr ""
 
@@ -457,4 +449,10 @@ msgstr ""
 #: _JNJ/html/cal/wr.jnj:172
 msgid "year"
 msgstr ""
+
+#~ msgid "Please enter your password"
+#~ msgstr ""
+
+#~ msgid "Please enter your username"
+#~ msgstr ""
 

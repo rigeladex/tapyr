@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    html/navigation.jnj.css
+#    html/navigation.jnj.media
 #
 # Purpose
-#    CSS fragment for template html/navigation.jnj
+#    Media fragment for template html/navigation.jnj
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
@@ -249,4 +249,4 @@ style_sheet = Style_Sheet \
         )
     )
 
-### __END__ html/navigation.jnj.css
+### __END__ html/navigation.jnj.media

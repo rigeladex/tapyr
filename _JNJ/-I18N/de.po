@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -62,7 +62,7 @@ msgstr "Ändern"
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/form.jnj:360
+#: _JNJ/html/form.jnj:358
 msgid "Change email"
 msgstr "Ändere Email"
 
@@ -70,7 +70,7 @@ msgstr "Ändere Email"
 msgid "Change email for"
 msgstr "Ändere Email für"
 
-#: _JNJ/html/form.jnj:359
+#: _JNJ/html/form.jnj:357
 #, python-format
 msgid "Change email of account %s"
 msgstr "Ändere Email für Benutzerkonto %s"
@@ -79,11 +79,11 @@ msgstr "Ändere Email für Benutzerkonto %s"
 msgid "Change object"
 msgstr "Ändere Objekt"
 
-#: _JNJ/html/form.jnj:365
+#: _JNJ/html/form.jnj:363
 msgid "Change password"
 msgstr "Ändere Kennwort"
 
-#: _JNJ/html/form.jnj:364
+#: _JNJ/html/form.jnj:362
 #, python-format
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
@@ -112,7 +112,7 @@ msgstr "Erzeuge neues Objekt"
 msgid "Currently selected day"
 msgstr "Gegenwärtig ausgewählter Tag"
 
-#: _JNJ/html/navigation.jnj:130
+#: _JNJ/html/navigation.jnj:140
 #, python-format
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
@@ -125,11 +125,11 @@ msgstr "Lösche Objekt"
 msgid "Delta"
 msgstr "Delta"
 
-#: _JNJ/html/form.jnj:386 _JNJ/html/rform.jnj:431
+#: _JNJ/html/form.jnj:384 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:377 _JNJ/html/rform.jnj:258
+#: _JNJ/html/form.jnj:161 _JNJ/html/form.jnj:375 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Formulars"
@@ -172,7 +172,7 @@ msgstr "Erstes Bild"
 msgid "Gallery"
 msgstr "Gallerie"
 
-#: _JNJ/html/form.jnj:320 _JNJ/html/login.jnj:66
+#: _JNJ/html/form.jnj:318 _JNJ/html/login.jnj:66
 msgid "Get a new password for the username specified"
 msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
 
@@ -183,11 +183,11 @@ msgstr ""
 "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
 "Webmaster."
 
-#: _JNJ/html/navigation.jnj:127
+#: _JNJ/html/navigation.jnj:136
 msgid "Language"
 msgstr "Sprache"
 
-#: _JNJ/html/navigation.jnj:126
+#: _JNJ/html/navigation.jnj:135
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
@@ -200,7 +200,7 @@ msgstr "Letztes"
 msgid "Last picture"
 msgstr "Letztes Bild"
 
-#: _JNJ/html/form.jnj:311
+#: _JNJ/html/form.jnj:309
 msgid "Log into website or go to account page"
 msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 
@@ -208,16 +208,16 @@ msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 msgid "Log into website with username and password specified"
 msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
-#: _JNJ/html/navigation.jnj:154
+#: _JNJ/html/navigation.jnj:165
 msgid "Logged in"
 msgstr "Angemeldet"
 
-#: _JNJ/html/navigation.jnj:153
+#: _JNJ/html/navigation.jnj:164
 #, python-format
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:159
+#: _JNJ/html/form.jnj:310 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:170
 msgid "Login"
 msgstr "Anmelden"
 
@@ -229,7 +229,7 @@ msgstr "Anmeldung für"
 msgid "Login required"
 msgstr "Anmeldung erforderlich"
 
-#: _JNJ/html/form.jnj:350 _JNJ/html/form.jnj:351
+#: _JNJ/html/form.jnj:348 _JNJ/html/form.jnj:349
 #, python-format
 msgid "Logout %s"
 msgstr "Melde %s ab"
@@ -291,14 +291,6 @@ msgstr ""
 "Bitte folgen Sie dem nachfolgenden Verweis, um das temporäre Kennwort auf"
 " einen neuen Wert zu ändern"
 
-#: _JNJ/html/form.jnj:305
-msgid "Please enter your password"
-msgstr "Bitte um Eingabe des Kennworts"
-
-#: _JNJ/html/form.jnj:296
-msgid "Please enter your username"
-msgstr "Bitte um Eingabe des Benutzernamens"
-
 #: _JNJ/html/error_503.jnj:47
 msgid "Please try again later. "
 msgstr "Bitte versichen Sie es später nochmals."
@@ -319,11 +311,11 @@ msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
 msgid "Read the full article at"
 msgstr "Lies den vollständigen Bericht unter"
 
-#: _JNJ/html/form.jnj:330
+#: _JNJ/html/form.jnj:328
 msgid "Register"
 msgstr "Registrieren"
 
-#: _JNJ/html/form.jnj:329
+#: _JNJ/html/form.jnj:327
 msgid "Register a new account"
 msgstr "Registrieren eines neuen Benutzerkontos"
 
@@ -331,7 +323,7 @@ msgstr "Registrieren eines neuen Benutzerkontos"
 msgid "Register a new account for "
 msgstr "Registrieren eines neuen Benutzerkontos für "
 
-#: _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
+#: _JNJ/html/form.jnj:385 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -353,7 +345,7 @@ msgstr "Sicher alle Werte in den Formularfeldern"
 msgid "Scroll by %s weeks to anchor %s."
 msgstr "Verschiebe Ansicht um %s Wochen auf Anker-Datum %s."
 
-#: _JNJ/html/navigation.jnj:136
+#: _JNJ/html/navigation.jnj:147
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
@@ -362,7 +354,7 @@ msgstr "Wähle Sprache '%s' aus"
 msgid "Selected picture"
 msgstr "Ausgewähltes Bild"
 
-#: _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
+#: _JNJ/html/form.jnj:389 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr "Schicke Daten an den Server und beende das Formular"
 
@@ -382,7 +374,7 @@ msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 msgid "Slide show"
 msgstr "Dia show"
 
-#: _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
+#: _JNJ/html/form.jnj:390 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr "Absenden"
 
@@ -465,4 +457,10 @@ msgstr "Woche"
 #: _JNJ/html/cal/wr.jnj:172
 msgid "year"
 msgstr "Jahr"
+
+#~ msgid "Please enter your password"
+#~ msgstr "Bitte um Eingabe des Kennworts"
+
+#~ msgid "Please enter your username"
+#~ msgstr "Bitte um Eingabe des Benutzernamens"
 

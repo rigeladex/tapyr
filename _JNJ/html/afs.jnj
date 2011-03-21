@@ -1,4 +1,3 @@
-
 {#- jinja template: afs.jnj -#}
 {#
 ## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
@@ -30,92 +29,22 @@
 ## Revision Dates
 ##    17-Mar-2011 (CT) Creation
 ##    20-Mar-2011 (CT) `_elem_div` factored, `renderer` argument added
+##    21-Mar-2011 (CT) `html/AFS/div_seq.jnj` factored
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
 {%- import "html/form.jnj" as FM %}
+{#- {%- include "html/AFS/input.jnj" %} media dependency -#}
 
-{%- macro _do_children (form, elem, renderer) -%}
+{%- macro do_children (form, elem, renderer) -%}
   {%- set renderer = elem.renderer or renderer %}
   {%- for c in elem.children %}
     {%- set r = c.renderer or renderer %}
     {{ GTW.call_macro (c.widget, form, c, r, templ_name = r) }}
   {% endfor -%}
-{%- endmacro -%} {#- _do_children -#}
-
-{%- macro _elem_div (form, elem, renderer, id_fix = "") -%}
-  {%- set elem_caller = kwargs.pop ("caller", None) -%}
-  {%- set cssc = elem.css_class %}
-  {%- set desc = GTW._T (elem.description)|safe %}
-  <div id="{{ id_fix }}{{ elem.id }}"
-      {%- if cssc %} class="{{ cssc }}"{% endif -%}
-      {%- if desc %} title="{{ desc }}"{% endif -%}
-  >
-    {{ elem_caller () -}}
-  </div>
-{%- endmacro -%} {#- _elem_div -#}
-
-{%- macro Entity (form, elem, renderer) -%}
-  {% call _elem_div (form, elem, renderer) -%}
-    {#- XXX Legend -#}
-    {{ _do_children (form, elem, renderer) }}
-  {%- endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Entity -#}
-
-{%- macro Entity_Link (form, elem, renderer) -%}
-  {% call _elem_div (form, elem, renderer) -%}
-    {#- XXX Legend -#}
-    {{ _do_children (form, elem, renderer) }}
-  {%- endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Entity_Link -#}
-
-{%- macro Entity_List (form, elem, renderer) -%}
-  {% call _elem_div (form, elem, renderer) -%}
-    {#- XXX Legend -#}
-    {{ _do_children (form, elem, renderer) }}
-  {%- endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Entity_List -#}
-
-{%- macro Field (form, elem, renderer) -%}
-  {% call _elem_div (form, elem, renderer, "FC-") -%}
-    {%- set desc = GTW._T (elem.description)|safe %}
-    {%- set expl = GTW._T (elem.explanation)|safe %}
-    {%- if desc -%}
-      <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
-        {{- desc -}}
-      </div>
-    {%- endif -%}
-    <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
-    {{ GTW.call_macro (elem.input_widget, form, elem) }}
-  {% endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Field -#}
-
-{%- macro Field_Composite (form, elem, renderer) -%}
-  {% call _elem_div (form, elem, renderer) -%}
-    {#- XXX Legend -#}
-    {{ _do_children (form, elem, renderer) }}
-  {%- endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Field_Composite -#}
-
-{%- macro Field_Entity (form, elem, renderer) -%}
-  {#- XXX honor allow_new... -#}
-  {% call _elem_div (form, elem, renderer) -%}
-    {#- XXX Legend -#}
-    {{ _do_children (form, elem, renderer) }}
-  {%- endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Field_Entity -#}
-
-{%- macro Field_Role_Hidden (form, elem, renderer) -%}
-{%- endmacro -%} {#- Field_Role_Hidden -#}
-
-{%- macro Fieldset (form, elem, renderer) -%}
-  {% call _elem_div (form, elem, renderer) -%}
-    {#- XXX Legend -#}
-    {{ _do_children (form, elem, renderer) }}
-  {%- endcall %} {# _elem_div #}
-{%- endmacro -%} {#- Fieldset -#}
+{%- endmacro -%} {#- do_children -#}
 
 {%- macro Form (form) -%}
   {#- Render a form for a AFS `Form` instance `form` -#}
@@ -127,7 +56,7 @@
       , ** kwargs
       )
   -%}
-    {{ _do_children (form, form, form.renderer) }}
+    {{ do_children (form, form, form.renderer) }}
     {%- if form_caller %}
       {{ form_caller () }}
     {% endif -%}

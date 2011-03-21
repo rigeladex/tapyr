@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -129,17 +129,13 @@ msgid_plural "Groups"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_Auth/Nav.py:75 _GTW/_OMP/_Auth/Nav.py:76
+#: _GTW/_OMP/_Auth/Nav.py:74 _GTW/_OMP/_Auth/Nav.py:75
 #, fuzzy
 msgid "Groups"
 msgstr ""
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Model a group of accounts."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "Model an user account."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account_in_Group:0
@@ -194,4 +190,7 @@ msgstr ""
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Unique token which identifies this action."
 msgstr ""
+
+#~ msgid "Model an user account."
+#~ msgstr ""
 

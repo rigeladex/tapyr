@@ -149,12 +149,20 @@ class _Base_ (TFL.Meta.Object) :
 class Instance (_Base_) :
     """Model an instance of an AFS form element."""
 
-    children  = ()
-    sort_json = False
-    value     = None
+    children    = ()
+    cooked      = None
+    max_length  = None
+    max_value   = None
+    min_value   = None
+    sort_json   = False
+    value       = None
 
     def __init__ (self, elem, ** kw) :
-        self.pop_to_self (kw, "children", "value")
+        self.pop_to_self \
+            ( kw
+            , "children", "cooked"
+            , "max_length", "max_value", "min_value", "value"
+            )
         self.elem = elem
         self.kw   = kw
     # end def __init__

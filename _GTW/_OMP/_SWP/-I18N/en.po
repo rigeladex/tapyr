@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Abstract"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:175
+#: _GTW/_OMP/_SWP/Nav.py:172
 msgid "Clip"
 msgstr ""
 
@@ -58,15 +58,15 @@ msgstr[1] ""
 msgid "Date"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:145 _GTW/_OMP/_SWP/Nav.py:172
+#: _GTW/_OMP/_SWP/Nav.py:142 _GTW/_OMP/_SWP/Nav.py:169
 msgid "Date interval"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:144
+#: _GTW/_OMP/_SWP/Nav.py:141
 msgid "Date interval of event"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:171
+#: _GTW/_OMP/_SWP/Nav.py:168
 msgid "Date interval of news clip"
 msgstr ""
 
@@ -79,11 +79,11 @@ msgstr ""
 msgid "Directory where pictures of gallery are stored."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:155
+#: _GTW/_OMP/_SWP/Nav.py:152
 msgid "Events"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:153
+#: _GTW/_OMP/_SWP/Nav.py:150
 msgid "Events associated to page"
 msgstr ""
 
@@ -92,7 +92,7 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:195 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:191 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
 #, fuzzy
 msgid "Gallery"
 msgid_plural "Gallerys"
@@ -179,7 +179,7 @@ msgstr ""
 msgid "News clip for a object."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:174
+#: _GTW/_OMP/_SWP/Nav.py:171
 msgid "News clip for page"
 msgstr ""
 
@@ -223,7 +223,7 @@ msgid_plural "Page_Ys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_SWP/Nav.py:201 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:197 _GTW._OMP._SWP.Picture:0
 #, fuzzy
 msgid "Photo"
 msgstr ""
@@ -255,11 +255,11 @@ msgid ""
 "belongs to."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:75 _GTW/_OMP/_SWP/Nav.py:97 _GTW/_OMP/_SWP/Nav.py:125
+#: _GTW/_OMP/_SWP/Nav.py:74 _GTW/_OMP/_SWP/Nav.py:95 _GTW/_OMP/_SWP/Nav.py:122
 msgid "Publication and expiration date"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:160
+#: _GTW/_OMP/_SWP/Nav.py:157
 msgid "Recurrence rule"
 msgstr ""
 
@@ -290,15 +290,15 @@ msgstr ""
 msgid "Thumb"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:206 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:202 _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:150
+#: _GTW/_OMP/_SWP/Nav.py:147
 msgid "Time interval"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:149
+#: _GTW/_OMP/_SWP/Nav.py:146
 msgid "Time interval of event"
 msgstr ""
 

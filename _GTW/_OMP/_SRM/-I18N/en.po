@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-05-10 13:37+0200\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -409,14 +409,6 @@ msgstr[1] ""
 msgid "Races"
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Rank"
-msgstr ""
-
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Rank of registration of boat in regatta."
-msgstr ""
-
 #: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Regatta"
@@ -432,7 +424,7 @@ msgstr ""
 msgid "Regatta event to which this page belongs."
 msgstr ""
 
-#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
+#: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta event to which this regatta belongs."
 msgstr ""
 
@@ -442,6 +434,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta for boats in a handicap system."
+msgstr ""
+
+#: _GTW._OMP._SRM.Team:0
+msgid "Regatta in which this team sails."
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
@@ -647,4 +643,10 @@ msgstr ""
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr ""
+
+#~ msgid "Rank"
+#~ msgstr ""
+
+#~ msgid "Rank of registration of boat in regatta."
+#~ msgstr ""
 

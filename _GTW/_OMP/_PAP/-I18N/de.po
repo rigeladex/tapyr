@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -26,7 +26,7 @@ msgstr "Akademischer Titel"
 msgid "Academic title."
 msgstr "Titel."
 
-#: _GTW/_OMP/_PAP/Nav.py:180 _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW/_OMP/_PAP/Nav.py:179 _GTW._OMP._PAP.Person_has_Address:0
 #: _GTW._OMP._PAP.Address:0
 msgid "Address"
 msgid_plural "Addresses"
@@ -55,7 +55,7 @@ msgstr "Ländervorwahl"
 
 #: _GTW._OMP._PAP.Entity_created_by_Person:0
 msgid "Created-By association for all kinds of entities"
-msgstr ""
+msgstr "Verknüpfung zu Autor/Erzeuger für verschiedenste Entitäten"
 
 #: _GTW._OMP._PAP.Entity_created_by_Person:0
 msgid "Creator"
@@ -70,7 +70,7 @@ msgstr "Geburtstag (und Sterbetag)"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: _GTW/_OMP/_PAP/Nav.py:168 _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW/_OMP/_PAP/Nav.py:167 _GTW._OMP._PAP.Person_has_Email:0
 #: _GTW._OMP._PAP.Email:0
 msgid "Email"
 msgid_plural "Emails"
@@ -92,8 +92,8 @@ msgstr "Ding, das von `Person` erzeugt wurde."
 #: _GTW._OMP._PAP.Entity_created_by_Person:0
 msgid "Entity_created_by_Person"
 msgid_plural "Entity_created_by_Persons"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ding von Person"
+msgstr[1] "Dinge von Personen"
 
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension"
@@ -233,11 +233,11 @@ msgid_plural "Person_has_Phones"
 msgstr[0] "Person hat Telefon"
 msgstr[1] "Person hat Telefone"
 
-#: _GTW/_OMP/_PAP/Nav.py:111 _GTW/_OMP/_PAP/Nav.py:112
+#: _GTW/_OMP/_PAP/Nav.py:112 _GTW/_OMP/_PAP/Nav.py:113
 msgid "Persons"
 msgstr "Personen"
 
-#: _GTW/_OMP/_PAP/Nav.py:156 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Nav.py:155 _GTW._OMP._PAP.Phone:0
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Phone"
 msgid_plural "Phones"

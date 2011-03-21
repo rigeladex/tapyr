@@ -1,0 +1,115 @@
+{#- jinja template: input.jnj -#}
+{#
+## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/AFS/input.jnj
+##
+## Purpose
+##    Provide macros for input elements of GTW.AFS forms
+##
+## Revision Dates
+##    21-Mar-2011 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import html_version as X -%}
+
+{%- macro boolean (form, elem) -%}
+  {%- set kw = {} if not elem.cooked else dict (checked = "checked") %}
+  {{ _field (X.input.checkbox, form, elem, ** kw) }}
+{%- endmacro -%} {#- boolean -#}
+
+{%- macro date (form, elem) -%}
+  {{ _field (X.input.date, form, elem) }}
+{%- endmacro -%} {#- date -#}
+
+{%- macro datetime (form, elem) -%}
+  {{ _field (X.input.datetime, form, elem) }}
+{%- endmacro -%} {#- datetime -#}
+
+{%- macro email (form, elem) -%}
+  {{ _field (X.input.email, form, elem) }}
+{%- endmacro -%} {#- email -#}
+
+{%- macro hidden (form, elem) -%}
+  {{ _field (X.input.hidden, form, elem)}}
+{%- endmacro -%} {#- hidden -#}
+
+{%- macro named_value (form, elem) -%}
+  {{ X.input.select
+      ( choices  = elem.choices
+      , id       = elem.id
+      , name     = elem.name
+      , selected = elem.init
+      )
+  }}
+{%- endmacro -%} {#- named_value -#}
+
+{%- macro number (form, elem) -%}
+  {{ _field
+      ( X.input.number, form, elem
+      , max           = elem.max_value
+      , min           = elem.min_value
+      )
+  }}
+{%- endmacro -%} {#- number -#}
+
+{%- macro password (form, elem) -%}
+  {{ _field (X.input.password, form, elem) }}
+{%- endmacro -%} {#- password -#}
+
+{%- macro string (form, elem) -%}
+  {{ _field
+      ( X.input.text, form, elem
+      , max_length    = elem.max_length
+      )
+  }}
+{%- endmacro -%} {#- string -#}
+
+{%- macro text (form, elem) -%}
+  {{ _field
+      ( X.input.textarea, form, elem
+      , cols          = elem.cols or 80
+      , max_length    = elem.max_length
+      , rows          = elem.rows or 32
+      )
+  }}
+{%- endmacro -%} {#- text -#}
+
+{%- macro time (form, elem) -%}
+  {{ _field (X.input.time, form, elem) }}
+{%- endmacro -%} {#- time -#}
+
+{%- macro _field (typ, fo, elem) -%}
+  {%- set id = elem.id -%}
+  {{ typ
+      ( class         = elem.css_class
+      , id            = id
+      , name          = elem.name
+      , value         = elem.init
+      , ** kwargs
+      )
+  }}
+{%- endmacro -%} {#- _field -#}
+
+{#- __END__ jinja template: html/AFS/input.jnj -#}

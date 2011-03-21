@@ -1,0 +1,113 @@
+
+{#- jinja template: div_seq.jnj -#}
+{#
+## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/AFS/div_seq.jnj
+##
+## Purpose
+##    Provide rendering macros for GTW.AFS forms as sequence of <div>
+##
+## Revision Dates
+##    21-Mar-2011 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import html_version as X -%}
+{%- import "html/afs.jnj" as AFS %}
+
+{%- macro _elem_div (form, elem, renderer, id_fix = "", class = "", typ="div") -%}
+  {%- set elem_caller = kwargs.pop ("caller", None) -%}
+  {%- set cssc = " ".join
+      ((class, elem.css_class)) if class else elem.css_class
+  %}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  <{{ typ }} id="{{ id_fix }}{{ elem.id }}"
+      {%- if cssc %} class="{{ cssc }}"{% endif -%}
+      {%- if desc %} title="{{ desc }}"{% endif -%}
+  >
+    {{ elem_caller () -}}
+  </{{ typ }}>
+{%- endmacro -%} {#- _elem_div -#}
+
+{%- macro Entity (form, elem, renderer) -%}
+  {% call _elem_div (form, elem, renderer) -%}
+    {#- XXX Legend -#}
+    {{ AFS.do_children (form, elem, renderer) }}
+  {%- endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Entity -#}
+
+{%- macro Entity_Link (form, elem, renderer) -%}
+  {% call _elem_div (form, elem, renderer) -%}
+    {#- XXX Legend -#}
+    {{ AFS.do_children (form, elem, renderer) }}
+  {%- endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Entity_Link -#}
+
+{%- macro Entity_List (form, elem, renderer) -%}
+  {% call _elem_div (form, elem, renderer) -%}
+    {#- XXX Legend -#}
+    {{ AFS.do_children (form, elem, renderer) }}
+  {%- endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Entity_List -#}
+
+{%- macro Field (form, elem, renderer) -%}
+  {% call _elem_div (form, elem, renderer, "FC-", class = "Field") -%}
+    {%- set desc = GTW._T (elem.description)|safe %}
+    {%- set expl = GTW._T (elem.explanation)|safe %}
+    {%- if desc -%}
+      <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
+        {{- desc -}}
+      </div>
+    {%- endif -%}
+    <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
+    {{ GTW.call_macro (elem.input_widget, form, elem) }}
+  {% endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Field -#}
+
+{%- macro Field_Composite (form, elem, renderer) -%}
+  {% call _elem_div (form, elem, renderer) -%}
+    {#- XXX Legend -#}
+    {{ AFS.do_children (form, elem, renderer) }}
+  {%- endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Field_Composite -#}
+
+{%- macro Field_Entity (form, elem, renderer) -%}
+  {#- XXX honor allow_new... -#}
+  {% call _elem_div (form, elem, renderer) -%}
+    {#- XXX Legend -#}
+    {{ AFS.do_children (form, elem, renderer) }}
+  {%- endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Field_Entity -#}
+
+{%- macro Field_Role_Hidden (form, elem, renderer) -%}
+{%- endmacro -%} {#- Field_Role_Hidden -#}
+
+{%- macro Fieldset (form, elem, renderer) -%}
+  {% call _elem_div (form, elem, renderer, typ = "fieldset") -%}
+    {#- XXX Legend -#}
+    {{ AFS.do_children (form, elem, renderer) }}
+  {%- endcall %} {# _elem_div #}
+{%- endmacro -%} {#- Fieldset -#}
+
+{#- __END__ jinja template: html/AFS/div_seq.jnj -#}

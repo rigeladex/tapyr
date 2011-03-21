@@ -33,6 +33,8 @@
 ##--
 #}
 
+{#- {%- include "html/afs.jnj" %} media dependency -#}
+
 {%- block document %}
   {{ GTW.call_macro (form.type, form, templ_name = form.renderer) }}
 {% endblock -%}

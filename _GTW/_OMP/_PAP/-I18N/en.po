@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:180 _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW/_OMP/_PAP/Nav.py:179 _GTW._OMP._PAP.Person_has_Address:0
 #: _GTW._OMP._PAP.Address:0
 #, fuzzy
 msgid "Address"
@@ -77,7 +77,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:168 _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW/_OMP/_PAP/Nav.py:167 _GTW._OMP._PAP.Person_has_Email:0
 #: _GTW._OMP._PAP.Email:0
 #, fuzzy
 msgid "Email"
@@ -256,12 +256,12 @@ msgid_plural "Person_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_PAP/Nav.py:111 _GTW/_OMP/_PAP/Nav.py:112
+#: _GTW/_OMP/_PAP/Nav.py:112 _GTW/_OMP/_PAP/Nav.py:113
 #, fuzzy
 msgid "Persons"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:156 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Nav.py:155 _GTW._OMP._PAP.Phone:0
 #: _GTW._OMP._PAP.Person_has_Phone:0
 #, fuzzy
 msgid "Phone"

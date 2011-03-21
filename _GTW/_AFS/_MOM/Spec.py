@@ -50,6 +50,8 @@ from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 from   _GTW._AFS._MOM           import Element
+from   _GTW._Form.Widget_Spec   import Widget_Spec as WS
+import _GTW._Form._MOM.Field ### XXX remove after migration of `css_class`
 
 import _MOM._Attr.Type
 
@@ -57,6 +59,16 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.multimap
+
+MAT                            = MOM.Attr
+MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj, string")
+MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj, number")
+MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj, boolean")
+MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj, date")
+MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj, datetime")
+MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj, email")
+MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj, text")
+MAT._A_Named_Value_.input_widget     = WS ("html/AFS/input.jnj, named_value")
 
 class _Base_ (TFL.Meta.Object) :
     """Base class for spec classes"""
@@ -149,15 +161,19 @@ class _Field_ (_Base_) :
             result ["choices"] = sorted (at.Table)
         if attr.css_class :
             result ["css_class"] = " ".join \
-                (c for c in (attr.css_class, attr.css_class_len) if c)
-        if attr.widget :
-            result ["input_widget"] = attr.widget
+                (c for c in self._css_classes (attr) if c)
+        if attr.input_widget :
+            result ["input_widget"] = attr.input_widget
         if attr.explanation :
             result ["explanation"] = attr.explanation
         result.update (self.kw)
         result.update (kw)
         return result
     # end def _field_kw
+
+    def _css_classes (self, attr) :
+        return (attr.css_class, )
+    # end def _css_classes
 
 # end class _Field_
 
@@ -236,6 +252,10 @@ class Field (_Field_) :
         attr = getattr (E_Type, self.name)
         return self.Type (** self._field_kw (attr, ** kw))
     # end def __call__
+
+    def _css_classes (self, attr) :
+        return (attr.css_class, attr.css_class_len)
+    # end def _css_classes
 
 # end class Field
 

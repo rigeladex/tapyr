@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-03-16 16:10+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -140,11 +140,11 @@ msgstr "Abstand vom Ostersonntag (positiv oder negativ, 0 bedeutet Ostersonntag)
 msgid "Period"
 msgstr "Periode"
 
-#: _GTW/_OMP/_EVT/Nav.py:76
+#: _GTW/_OMP/_EVT/Nav.py:75
 msgid "Recurrence exceptions"
 msgstr "Ausnahmen von der Wiederholung"
 
-#: _GTW/_OMP/_EVT/Nav.py:82
+#: _GTW/_OMP/_EVT/Nav.py:81
 msgid "Recurrence rule set"
 msgstr "Wiederholungsregel"
 
@@ -154,7 +154,7 @@ msgstr ""
 "Wiederholungsregel, die eine Menge von Kalenderdaten für Einschluss oder "
 "Ausschluss definiert."
 
-#: _GTW/_OMP/_EVT/Nav.py:71
+#: _GTW/_OMP/_EVT/Nav.py:70
 msgid "Recurrence rules"
 msgstr "Wiederholungsregeln"
 

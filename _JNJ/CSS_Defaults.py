@@ -74,6 +74,19 @@ class CSS_Defaults (Definition) :
     text_color             = RGB_X     ("#000033")
     visited_color          = RGB_X     ("#551A8B")
 
+    class afs (Definition) :
+
+        color_spec_desc        = P_dict \
+            ( background_color = P.R.background_color
+            , color            = RGB_X ("#666666")
+            )
+        color_spec_label       = P_dict \
+            ( background_color = P.R.color_light_grey
+            , color            = P.R.text_color
+            )
+
+    # end class afs
+
     class nav_col (Definition) :
 
         background_color       = RGB_X     ("#EFF3FE")
@@ -239,6 +252,7 @@ class CSS_Defaults (Definition) :
         , padding          = 0
         )
 
+    input_margin           = TRBL (Em (0.1), 0)
     input_padding          = Em (0.2)
 
     ins_spec               = P_dict \

@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    html/base.jnj.css
+#    html/base.jnj.media
 #
 # Purpose
-#    CSS fragment for template html/base.jnj
+#    Media fragment for template html/base.jnj
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation...
@@ -158,6 +158,7 @@ base_sheet = Style_Sheet \
         ( "input", "select", "textarea"
         , border                   = P.border_simple
         , font_family              = "inherit"
+        , margin                   = P.input_margin
         , padding                  = P.input_padding
         , children                 =
             [ Rule_Pseudo
@@ -591,4 +592,4 @@ print_sheet = Style_Sheet \
         )
     , rank  = 1 << 16
     )
-### __END__ html/base.jnj.css
+### __END__ html/base.jnj.media

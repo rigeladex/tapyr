@@ -415,12 +415,13 @@ class Template_E (_Template_) :
 
 # end class Template_E
 
-Template (401,                            "html/error_401.jnj")
-Template (403,                            "html/error_403.jnj")
-Template (404,                            "html/error_404.jnj")
-Template (405,                            "html/error_405.jnj")
-Template (500,                            "html/error_500.jnj")
-Template (503,                            "html/error_503.jnj")
+Template (401, "html/error_401.jnj")
+Template (403, "html/error_403.jnj")
+Template (404, "html/error_404.jnj")
+Template (405, "html/error_405.jnj")
+Template (500, "html/error_500.jnj")
+Template (503, "html/error_503.jnj")
+
 Template ("account_activate",             "html/activate.jnj")
 Template ("account_change_email",         "html/change_email.jnj")
 Template ("account_change_password",      "html/change_password.jnj")
@@ -429,7 +430,10 @@ Template ("account_reset_password",       "html/reset_password.jnj")
 Template ("account_reset_password_email", "email/reset_password.jnj")
 Template ("account_verify_new_email",     "email/verify_new_email.jnj")
 Template ("account_verify_email",         "email/verify_new_email.jnj")
-Template ("afs",                          "html/afs.jnj")
+
+Template ("afs",         "html/afs.jnj")
+Template ("afs_div_seq", "html/AFS/div_seq.jnj", parent_name = "afs")
+
 Template ("calendar",                     "html/calendar.jnj")
 Template ("calendar_qx",                  "html/cal/wr.jnj")
 Template ("calendar_day",                 "html/cal_day.jnj")

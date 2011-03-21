@@ -64,6 +64,7 @@
 #    17-Mar-2011 (CT) `Field.input_widget` added
 #    18-Mar-2011 (CT) `_Element_.renderer` and `.widget` added
 #    20-Mar-2011 (CT) `css_class` added
+#    21-Mar-2011 (CT) Call of `_value` moved to `_instance_kw`
 #    ««revision-date»»···
 #--
 
@@ -119,10 +120,7 @@ class _Element_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        ikw    = self._instance_kw \
-            (  dict (value = self._value (* args, ** kw))
-            if self.needs_value else {}
-            )
+        ikw    = self._instance_kw (* args, ** kw)
         result = GTW.AFS.Instance \
             ( self
             , children = list (self._call_iter (* args, ** kw))
@@ -194,8 +192,9 @@ class _Element_ (TFL.Meta.Object) :
             c._id_children (c_id, c.children, id_map)
     # end def _id_children
 
-    def _instance_kw (self, vkw) :
-        return vkw
+    def _instance_kw (self, * args, ** kw) :
+        return dict \
+            (value = self._value (* args, ** kw)) if self.needs_value else {}
     # end def _instance_kw
 
     def _set_id (self, parent, i) :
@@ -248,7 +247,7 @@ class Entity (_Element_) :
 
     id_sep      = ":"
     needs_value = True
-    renderer    = "afs"
+    renderer    = "afs_div_seq"
 
     def __init__ (self, type_name, ** kw) :
         self.__super.__init__ (type_name = type_name, ** kw)
@@ -295,7 +294,7 @@ class Entity_List (_Element_List_) :
     """Model a sub-form for a list of entities."""
 
     id_sep  = _Element_List_.list_sep
-    renderer    = "afs"
+    renderer    = "afs_div_seq"
 
     def __init__ (self, proto, ** kw) :
         self.proto   = proto
@@ -359,10 +358,11 @@ class _Field_ (_Element_) :
 
     needs_value  = True
 
-    input_widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
+    input_widget = GTW.Form.Widget_Spec ("html/AFS/input.jnj, string")
 
     def __init__ (self, name, ** kw) :
-        self.pop_to_self      (kw, "description", "explanation", "input_widget")
+        self.pop_to_self \
+            (kw, "choices", "description", "explanation", "input_widget")
         self.__super.__init__ (name = name, ** kw)
     # end def __init__
 
@@ -370,6 +370,10 @@ class _Field_ (_Element_) :
 
 class Field (_Field_) :
     """Model a field of an AJAX-enhanced form."""
+
+    def _css_classes (self) :
+        return (self._css_class, )
+    # end def _css_classes
 
     def _value_sig (self, instance) :
         return (str (instance.id), self.name, instance.init)
@@ -380,7 +384,7 @@ class Field (_Field_) :
 class Field_Composite (_Field_) :
     """Model a composite field of a AJAX-enhanced form."""
 
-    renderer    = "afs"
+    renderer    = "afs_div_seq"
 
     def _value_sig (self, instance) :
         return (str (instance.id), self.name, instance.form_sig ())
@@ -401,7 +405,7 @@ class Fieldset (_Element_) :
     """Model a set of fields of an AJAX-enhanced form."""
 
     id_sep      = ":"
-    renderer    = "afs"
+    renderer    = "afs_div_seq"
 
     def _css_classes (self) :
         return self.__super._css_classes () + (self.name.capitalize (), )
@@ -420,7 +424,7 @@ class Form (_Element_List_) :
 
     id_sep        = _Element_List_.root_sep
     needs_value   = True
-    renderer      = "afs"
+    renderer      = "afs_div_seq"
     Table         = {}
 
     def __init__ (self, id, children, ** kw) :

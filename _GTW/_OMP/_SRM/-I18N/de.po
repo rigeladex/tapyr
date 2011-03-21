@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-05-10 13:37+0200\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -409,14 +409,6 @@ msgstr[1] "Wettfahrtergebnisse"
 msgid "Races"
 msgstr "Wettfahrten"
 
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Rank"
-msgstr "Reihenfolge"
-
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Rank of registration of boat in regatta."
-msgstr "Reihenfolge der Registrierung des Boots in dieser Regatta."
-
 #: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Regatta"
@@ -432,7 +424,7 @@ msgstr "Regatta, an der das Boot teilnimmt."
 msgid "Regatta event to which this page belongs."
 msgstr "Regatta, die von dieser Seite beschrieben wird."
 
-#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
+#: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta event to which this regatta belongs."
 msgstr "Regattaveranstaltung, zu der diese Regatta gehört."
 
@@ -443,6 +435,11 @@ msgstr "Regatta für eine spezielle Bootsklasse."
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta for boats in a handicap system."
 msgstr "Regatta für Boote eines Handicap-Systems."
+
+#: _GTW._OMP._SRM.Team:0
+#, fuzzy
+msgid "Regatta in which this team sails."
+msgstr "Regatta, die von dieser Seite beschrieben wird."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta_C"
@@ -647,4 +644,10 @@ msgstr "Gültige Regatta"
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
+
+#~ msgid "Rank"
+#~ msgstr "Reihenfolge"
+
+#~ msgid "Rank of registration of boat in regatta."
+#~ msgstr "Reihenfolge der Registrierung des Boots in dieser Regatta."
 

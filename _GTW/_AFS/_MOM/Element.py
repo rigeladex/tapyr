@@ -36,6 +36,7 @@
 #     8-Mar-2011 (CT) `_value` simplified
 #     8-Mar-2011 (CT) `apply` added
 #     9-Mar-2011 (CT) `Field_Role_Hidden` added
+#    21-Mar-2011 (CT) `Field._instance_kw` added
 #    ««revision-date»»···
 #--
 
@@ -177,6 +178,17 @@ class _MOM_Field_ (Field) :
         else :
             return value.edit
     # end def applyf
+
+    def _instance_kw (self, ETM, entity, ** kw) :
+        result = self.__super._instance_kw (ETM, entity, ** kw)
+        attr   = ETM.attributes [self.name]
+        result ["cooked"] = attr.from_string (result ["value"].get ("init", ""))
+        for k in "max_length", "max_value", "min_value" :
+            v = getattr (attr, k, None)
+            if v is not None :
+                result [k] = v
+        return result
+    # end def _instance_kw
 
     def _value (self, ETM, entity, ** kw) :
         result = self.__super._value (ETM, entity, ** kw)

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-12-16 16:41+0100\n"
+"PO-Revision-Date: 2011-03-21 13:40+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
 
-#: _MOM/Entity.py:1062
+#: _MOM/Entity.py:1064
 #, python-format
 msgid ""
 "%s\n"
@@ -28,7 +28,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1541
+#: _MOM/_Attr/Type.py:1566
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -37,12 +37,13 @@ msgstr ""
 "\"von Buchstaben, Ziffern und Unterstrichen."
 
 #: _MOM.Entity:0
-msgid "All object invariants must be satisfied."
-msgstr "Alle Predikate von Objekten müssen erfüllt sein."
+#, fuzzy
+msgid "All necessary attributes must be defined."
+msgstr "Alle erforderlichen Attribute müssen definiert sein."
 
 #: _MOM.Entity:0
-msgid "All required attributes must be defined."
-msgstr "Alle erforderlichen Attribute müssen definiert sein."
+msgid "All object invariants must be satisfied."
+msgstr "Alle Predikate von Objekten müssen erfüllt sein."
 
 #: _MOM.Entity:0
 msgid "An_Entity"
@@ -50,7 +51,7 @@ msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:153
+#: _MOM/_Meta/M_Entity.py:157
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -64,12 +65,12 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:1156
+#: _MOM/_Attr/Kind.py:1159
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr "Berechnetes Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:1011
+#: _MOM/_Attr/Kind.py:1014
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -120,7 +121,7 @@ msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:1223
+#: _MOM/_Attr/Kind.py:1226
 #, python-format
 msgid ""
 "Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
@@ -129,7 +130,7 @@ msgstr ""
 "Geburts-Attribut `%s.%s` kann nach der Erzeugung nicht mit Zuweisung von "
 "`%s` auf` %s` erändert werden."
 
-#: _MOM/_Attr/Type.py:1139
+#: _MOM/_Attr/Type.py:1162
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -194,7 +195,7 @@ msgid_plural "Named_Objects"
 msgstr[0] "Benanntes-Objekt"
 msgstr[1] "Benannte-Objekte"
 
-#: _MOM/_Attr/Type.py:867
+#: _MOM/_Attr/Type.py:890
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
@@ -205,12 +206,12 @@ msgid_plural "Objects"
 msgstr[0] "Objekt"
 msgstr[1] "Objekte"
 
-#: _MOM/_Attr/Kind.py:878
+#: _MOM/_Attr/Kind.py:881
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:888
+#: _MOM/_Attr/Kind.py:891
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -265,7 +266,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] "Zeitraum"
 msgstr[1] "Zeiträume"
 
-#: _MOM/_Attr/Kind.py:352
+#: _MOM/_Attr/Kind.py:354
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
@@ -274,7 +275,7 @@ msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
-#: _MOM/_Attr/Kind.py:879
+#: _MOM/_Attr/Kind.py:882
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
@@ -283,7 +284,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:472
+#: _MOM/_Attr/Recurrence_Rule.py:110 _MOM/_Attr/Type.py:487
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -308,7 +309,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:862
+#: _MOM/_Attr/Type.py:885
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"
