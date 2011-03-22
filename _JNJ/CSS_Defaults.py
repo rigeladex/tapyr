@@ -80,6 +80,10 @@ class CSS_Defaults (Definition) :
             ( background_color = P.R.background_color
             , color            = RGB_X ("#666666")
             )
+        color_spec_heading     = P_dict \
+            ( background_color = P.R.color_heading
+            , color            = P.R.background_color
+            )
         color_spec_label       = P_dict \
             ( background_color = P.R.color_light_grey
             , color            = P.R.text_color

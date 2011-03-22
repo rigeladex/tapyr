@@ -48,6 +48,7 @@
 #    23-Nov-2010 (CT) `list` and `reversed` added
 #    27-Nov-2010 (CT) `formatted` added
 #    18-Mar-2011 (CT) `get_macro` changed to use `Template_E.get_macro`
+#    22-Mar-2011 (CT) `dict` added
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,8 @@ class GTW (TFL.Meta.Object) :
             raise
         return macro (* _args, ** _kw)
     # end def call_macro
+
+    dict = staticmethod (dict)
 
     def email_uri (self, email, text = None, ** kw) :
         """Returns a mailto URI for `email`.

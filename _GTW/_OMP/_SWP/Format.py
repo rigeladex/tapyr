@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -30,6 +30,7 @@
 #     2-Feb-2010 (CT) Creation continued
 #    17-Mar-2010 (CT) Use `ReST.to_html` instead of `GTW.ReST.to_html`
 #    17-Mar-2010 (CT) `Cleaner` added to `HTML`
+#    22-Mar-2011 (CT) `M_Format.__str__` added
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,10 @@ class M_Format (TFL.Meta.Object.__class__) :
         if name != "_Format_" :
             cls._m_add (name, cls.Table)
     # end def __init__
+
+    def __str__ (cls) :
+        return cls.__name__
+    # end def __str__
 
     def _m_add (cls, name, Table) :
         name = unicode (name)

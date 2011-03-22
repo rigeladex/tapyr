@@ -1,6 +1,6 @@
 {#- jinja template:  html/input_5.jnj -#}
 {#
-## Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -33,6 +33,7 @@
 ##    16-Feb-2010 (CT) `textarea` factored to `html/_input.jnj`
 ##    16-Feb-2010 (CT) `select` added
 ##    16-Feb-2010 (CT) `select_v` added
+##    22-Mar-2011 (CT) `_input_c` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,6 +48,16 @@
   <input type="{{ typ }}"{{ kw|xmlattr }}/>
 {%- endmacro -%} {#- text -#}
 
+{%- macro _input_c (typ, kw) -%}
+  {#- Avoid browser specific mischief, e.g., the browser ignoring a date it
+  ### doesn't recognize, like `2011/03/22`
+  -#}
+  {%- set kwc   = kw.pop   ("class", "") -%}
+  {%- set class = " ".join ((typ, kwc)) if kwc else typ -%}
+  {%- set kw    = GTW.dict (kw, class = class) -%}
+  {{- _input ("text", kw) -}}
+{%- endmacro -%} {#- _input_c -#}
+
 {%- macro checkbox () -%}
   {{ _input ("checkbox", kwargs) }}
 {%- endmacro -%}
@@ -56,15 +67,15 @@
 {%- endmacro -%}
 
 {%- macro date () -%}
-  {{ _input ("date", kwargs) }}
+  {{ _input_c ("date", kwargs) }}
 {%- endmacro -%}
 
 {%- macro datetime () -%}
-  {{ _input ("datetime", kwargs) }}
+  {{ _input_c ("datetime", kwargs) }}
 {%- endmacro -%}
 
 {%- macro datetime_local () -%}
-  {{ _input ("datetime-local", kwargs) }}
+  {{ _input_c ("datetime-local", kwargs) }}
 {%- endmacro -%}
 
 {%- macro email () -%}
@@ -80,7 +91,7 @@
 {%- endmacro -%}
 
 {%- macro month () -%}
-  {{ _input ("month", kwargs) }}
+  {{ _input_c ("month", kwargs) }}
 {%- endmacro -%}
 
 {%- macro number () -%}
@@ -120,7 +131,7 @@
 {%- endmacro -%}
 
 {%- macro time () -%}
-  {{ _input ("time", kwargs) }}
+  {{ _input_c ("time", kwargs) }}
 {%- endmacro -%}
 
 {%- macro url () -%}

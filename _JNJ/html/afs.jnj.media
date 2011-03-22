@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Mar-2011 (CT) Creation
+#    22-Mar-2011 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,34 @@ style_sheet = Style_Sheet \
                         , padding       = P.input_padding
                         , width         = "auto"
                         )
+                    , Rule
+                        ( "h2"
+                        , children      =
+                            [ Rule
+                                ( ".Status"
+                                , background_color  = "red" # "transparent"
+                                , display           = "inline-block"
+                                , height            = Px (10)
+                                , width             = Px (10)
+                                , ** Border (radius = Px (5))
+                                )
+                            ]
+                        )
                     ]
+                )
+            , Rule
+                ( "h1"
+                , P.afs.color_spec_heading
+                , P.font_spec_normal
+                , font_size     = Percent (100)
+                , padding       = P.input_padding
+                )
+            , Rule
+                ( "h2"
+                , P.afs.color_spec_label
+                , P.font_spec_normal
+                , font_size     = Percent (100)
+                , padding       = P.input_padding
                 )
             , Rule
                 ( "input", "select", "textarea"
@@ -60,22 +88,6 @@ style_sheet = Style_Sheet \
                         , ** P.color_spec_selected
                         )
                     ]
-                )
-            , Rule
-                ( "label"
-                , P.afs.color_spec_label
-                , display       = "block"
-                , padding       = P.input_padding
-                )
-            , Rule ### XXX ???
-                ( ".Required label:before"
-                , color         = "red"
-                , content       = "'** '"
-                )
-            , Rule ### XXX ???
-                ( ".Necessary label:after"
-                , content       = "' *'"
-                , color         = "blue"
                 )
             ]
         )

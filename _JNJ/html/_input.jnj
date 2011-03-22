@@ -1,6 +1,6 @@
 {#- jinja template: _input.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -38,7 +38,7 @@
         if (value or content) == selected else ""
   -%}
   {%- set va = (' value="%s"' % (value, )) if value != None else "" -%}
-  <option{{ va }}{{ sa }}{{ kwargs|xmlattr }}>{{ content }}</option>
+  <option{{ va }}{{ sa }}{{ kwargs|xmlattr }}>{{ GTW._T (content) }}</option>
 {%- endmacro -%} {#- option -#}
 
 {%- macro select (name, choices = (), selected = None) -%}
@@ -57,7 +57,7 @@
 {%- macro select_v (name, choices, selected = None) -%}
   {% call select (name, selected = selected, ** kwargs) -%}
     {%- for v, c in choices %}
-      {{ option (c, v, selected) }}
+      {{ option (c or v, v, selected) }}
     {%- endfor -%}
   {% endcall %} {# select #}
 {%- endmacro -%} {#- select_v -#}

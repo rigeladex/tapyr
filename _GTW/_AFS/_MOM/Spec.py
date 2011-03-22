@@ -120,7 +120,8 @@ class _Entity_Mixin_ (_Base_) :
         kw       = dict (self.kw, ** kw)
         elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
         children = (e (E_Type, self, seen) for e in elems)
-        kw.setdefault ("name", E_Type.ui_name)
+        kw.setdefault ("name",    E_Type.ui_name)
+        kw.setdefault ("ui_name", E_Type.ui_name)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
@@ -150,15 +151,18 @@ class _Entity_Mixin_ (_Base_) :
 class _Field_ (_Base_) :
 
     def _field_kw (self, attr, ** kw) :
-        at     = attr.attr
-        result = dict \
+        at      = attr.attr
+        ui_name = attr.ui_name or attr.name
+        result  = dict \
             ( description = attr.description
             , kind        = attr.kind
-            , label       = attr.ui_name or attr.name
+            , label       = ui_name
             , required    = attr.is_required
+            , ui_name     = ui_name
             )
         if isinstance (at, MOM.Attr._A_Named_Value_) :
-            result ["choices"] = sorted (at.Table)
+            result ["choices"] = sorted \
+                ((k, str (v)) for k, v in at.Table.iteritems ())
         if attr.css_class :
             result ["css_class"] = " ".join \
                 (c for c in self._css_classes (attr) if c)

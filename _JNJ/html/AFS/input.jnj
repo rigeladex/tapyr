@@ -56,7 +56,7 @@
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro named_value (form, elem) -%}
-  {{ X.input.select
+  {{ X.input.select_v
       ( choices  = elem.choices
       , id       = elem.id
       , name     = elem.name

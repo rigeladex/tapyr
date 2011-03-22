@@ -65,6 +65,7 @@
 #    18-Mar-2011 (CT) `_Element_.renderer` and `.widget` added
 #    20-Mar-2011 (CT) `css_class` added
 #    21-Mar-2011 (CT) Call of `_value` moved to `_instance_kw`
+#    22-Mar-2011 (CT) `het_c` and `het_h` added
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,8 @@ class _Element_ (TFL.Meta.Object) :
     """Base class for AFS element classes."""
 
     children    = ()
+    het_c       = "div" ### HTML element type to be used for the container
+    het_h       = "h2"  ### HTML element type to be used for the heading
     id_sep      = "."
     init        = ""
     list_sep    = "::"
@@ -111,7 +114,7 @@ class _Element_ (TFL.Meta.Object) :
         self.pop_to_self \
             ( kw
             , "css_class", "id", "id_sep", "needs_value"
-            , "prefilled", "renderer", "widget"
+            , "prefilled", "renderer", "ui_name", "widget"
             )
         children = kw.pop ("children", None)
         if children is not None :
@@ -240,11 +243,16 @@ class _Element_ (TFL.Meta.Object) :
 class _Element_List_ (_Element_) :
     """Base class for AFS classes modelling a list of elements."""
 
+    het_c       = "section" ### HTML element type to be used for the container
+    het_h       = "h1"      ### HTML element type to be used for the heading
+
 # end class _Element_List_
 
 class Entity (_Element_) :
     """Model a sub-form for a single entity."""
 
+    het_c       = "section" ### HTML element type to be used for the container
+    het_h       = "h1"      ### HTML element type to be used for the heading
     id_sep      = ":"
     needs_value = True
     renderer    = "afs_div_seq"
@@ -384,6 +392,8 @@ class Field (_Field_) :
 class Field_Composite (_Field_) :
     """Model a composite field of a AJAX-enhanced form."""
 
+    het_c       = "section" ### HTML element type to be used for the container
+    het_h       = "h2"      ### HTML element type to be used for the heading
     renderer    = "afs_div_seq"
 
     def _value_sig (self, instance) :
@@ -395,6 +405,8 @@ class Field_Composite (_Field_) :
 class Field_Entity (Entity, _Field_) :
     """Model an entity-holding field of a AJAX-enhanced form."""
 
+    het_h       = "h2"      ### HTML element type to be used for the heading
+
     def _value_sig (self, instance) :
         return (str (instance.id), self.name)
     # end def _value_sig
@@ -404,6 +416,8 @@ class Field_Entity (Entity, _Field_) :
 class Fieldset (_Element_) :
     """Model a set of fields of an AJAX-enhanced form."""
 
+    het_c       = "section" ### HTML element type to be used for the container
+    het_h       = "h2"      ### HTML element type to be used for the heading
     id_sep      = ":"
     renderer    = "afs_div_seq"
 
@@ -422,6 +436,8 @@ class Form (_Element_List_) :
 
     __metaclass__ = M_Form
 
+    het_c         = "section" ### HTML element type to be used for the container
+    het_h         = "h1"      ### HTML element type to be used for the heading
     id_sep        = _Element_List_.root_sep
     needs_value   = True
     renderer      = "afs_div_seq"
