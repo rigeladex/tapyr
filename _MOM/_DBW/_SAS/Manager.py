@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2011 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -81,6 +81,7 @@
 #     6-Sep-2010 (MG) Changes to allow link's to entities which are not
 #                     relevant
 #    26-Nov-2010 (CT) `pool_recycle = 900` added to `_create_session`
+#    22-Mar-2011 (MG) `_create_engine` moved into `dbs.create_engine`
 #    ««revision-date»»···
 #--
 
@@ -102,7 +103,6 @@ import _MOM._SCM.Change
 import  cPickle                as Pickle
 
 from   sqlalchemy import schema, types, sql
-from   sqlalchemy import engine as SQL_Engine
 import sqlalchemy
 
 if sqlalchemy.__version__.split (".") [1] < "6" :
@@ -145,14 +145,14 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def create_database (cls, db_url, scope) :
         dbs = cls.DBS_map [db_url.scheme]
         dbs.create_database          (db_url, cls)
-        engine  = cls._create_engine (db_url.value)
-        cls.metadata.create_all      (engine)
+        engine  = dbs.create_engine  (db_url)
+        engine.create_tables         (cls.metadata)
         return cls._create_session   (engine, scope, TFL.Method.create)
     # end def create_database
 
     def connect_database (cls, db_url, scope) :
-        return cls._create_session \
-            (cls._create_engine (db_url.value), scope, TFL.Method.load_info)
+        engine  = cls.DBS_map [db_url.scheme].create_engine (db_url)
+        return cls._create_session   (engine, scope, TFL.Method.load_info)
     # end def connect_database
 
     def delete_database (cls, db_url) :
@@ -298,13 +298,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             # end def computed_crn
         attr_kind.attr.computed = computed_crn
     # end def _cached_role
-
-    def _create_engine (cls, db_url) :
-        return SQL_Engine.create_engine \
-            ( db_url or "sqlite:///:memory:"
-            , pool_recycle = 900
-            )
-    # end def _create_engine
 
     def _create_pid_table (cls, metadata) :
         cls.sa_pid_sequence = schema.Sequence ("pid_seq")

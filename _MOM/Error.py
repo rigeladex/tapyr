@@ -43,6 +43,7 @@
 #    22-Jun-2010 (CT) `is_mandatory` added
 #    30-Jun-2010 (CT) `Readonly_DB` added
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#    22-Mar-2011 (MG) `Commit_Conflict` added
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,10 @@ class Exception_Handled (Exception) :
        arbitrary position in a call-tree. Should be ignored further up.
     """
 # end class Exception_Handled
+
+class DB_Error (StandardError) :
+    pass
+# end class DB_Error
 
 class Error (StandardError) :
     """Root class of MOM exceptions"""
@@ -523,9 +528,9 @@ class Cannot_Rename_Root_Object (Error) :
     pass
 # end class Cannot_Rename_Root_Object
 
-class DB_Error (StandardError) :
+class Commit_Conflict (DB_Error) :
     pass
-# end class DB_Error
+# end class Commit_Conflict
 
 class Incompatible_DB_Version (DB_Error) :
     pass

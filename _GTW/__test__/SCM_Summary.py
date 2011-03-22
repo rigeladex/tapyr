@@ -280,11 +280,11 @@ _more = dict \
 
     >>> scope_1 = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
-    >>> scope_2 = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
-    Loading scope MOMT__...
-
     >>> _ = scope_1.PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> scope_1.commit ()
+
+    >>> scope_2 = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
 
     >>> p1  = scope_1.PAP.Person.instance (u"Tanzer", u"Laurens")
     >>> _   = p1.set (salutation = u"Dear Laurens")
@@ -308,24 +308,26 @@ _more = dict \
     <Change Summary for pid 1: 1 change>
         <Modify GTW.OMP.PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), old-values = {'last_cid' : '1', 'salutation' : u''}, new-values = {'last_cid' : '3', 'salutation' : u'Lieber Laurens'}>
 
-    ### The second commit should give an exception, but doesn't
-    >>> for s in scope_1, scope_2 :
-    ...     s.commit ()
-    ...     s.ems.session.expunge ()
+    >>> scope_1.commit              ()
+    >>> scope_1.ems.session.expunge ()
+    >>> scope_2.commit              ()
+    Traceback (most recent call last):
+      ...
+    Commit_Conflict
 
     >>> p2 = scope_2.PAP.Person.instance (* p1.epk)
     >>> p2.salutation
-    u'Lieber Laurens'
+    u'Dear Laurens'
+
     >>> p1 = scope_1.PAP.Person.instance (* p1.epk)
     >>> p1.salutation
-    u'Lieber Laurens'
+    u'Dear Laurens'
 
     >>> scope_2.commit ()
     >>> scope_1.commit ()
 
     >>> scope_1.destroy ()
     >>> scope_2.destroy ()
-
     """
     )
 

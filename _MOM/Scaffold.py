@@ -416,7 +416,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         if create :
             if verbose :
                 print "Creating new scope", apt, url.path or "in memory"
-            scope = cls._create_scope (apt, url)
+            scope = cls._create_scope (apt, url, verbose)
         else :
             if verbose :
                 print "Loading scope", apt, url
@@ -425,8 +425,10 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     # end def scope
 
     @classmethod
-    def _create_scope (cls, apt, url) :
+    def _create_scope (cls, apt, url, verbose = False) :
         if url :
+            if verbose :
+                print "Deleting scope", url
             apt.delete_database (url)
         return cls.Scope.new (apt, url)
     # end def _create_scope

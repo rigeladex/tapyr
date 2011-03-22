@@ -382,14 +382,13 @@ class _Session_ (TFL.Meta.Object) :
         self.scope.ems.pm.close  ()
         ### close all connections inside the pool
         ### import pdb; pdb.set_trace ()
-        self.engine.pool.dispose ()
+        self.engine.close        ()
         self.engine = None
     # end def close
 
     def _close_connection (self, method) :
         if self.transaction :
-            method                  (self.transaction)
-            self.connection.close   ()
+            method (self.engine, self.transaction, self.connection)
             self.transaction  = None
             del self.connection
             self.write_access = False
@@ -434,7 +433,7 @@ class _Session_ (TFL.Meta.Object) :
         scope.guid        = meta_data.guid
         if meta_data.dbv_hash != scope.app_type.db_version_hash :
             self._close_connection   (TFL.Method.rollback)
-            self.engine.pool.dispose ()
+            self.engine.close        ()
             self.engine   = None
             raise MOM.Error.Incompatible_DB_Version \
                 ( TFL.I18N._T
@@ -506,10 +505,14 @@ class Session_S (_Session_) :
     # end def add_change
 
     def commit (self) :
-        self.flush                  ()
-        self.__super.commit         ()
-        self._flushed_changes = set ()
-        del self._saved
+        try :
+            self.flush                  ()
+            self.__super.commit         ()
+            self._flushed_changes = set ()
+            del self._saved
+        except self.engine.Commit_Conflict_Exception, exc:
+            self.scope.rollback             ()
+            raise MOM.Error.Commit_Conflict ()
     # end def commit
 
     @TFL.Meta.Once_Property
