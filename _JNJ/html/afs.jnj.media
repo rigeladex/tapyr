@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Mar-2011 (CT) Creation
 #    22-Mar-2011 (CT) Creation continued
+#    23-Mar-2011 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -36,7 +37,22 @@ style_sheet = Style_Sheet \
         ( ".AFS"
         , children =
             [ Rule
+                ( "h1"
+                , P.afs.color_spec_heading
+                , P.font_spec_normal
+                , font_size     = Percent (100)
+                , padding       = P.input_padding
+                )
+            , Rule
+                ( "h2"
+                , P.afs.color_spec_label
+                , P.font_spec_normal
+                , font_size     = Percent (100)
+                , padding       = P.input_padding
+                )
+            , Rule
                 ( ".Field"
+                , padding       = TRBL (0, Px (5))
                 , margin_bottom = Em (1.0)
                 , children      =
                     [ Rule
@@ -60,34 +76,38 @@ style_sheet = Style_Sheet \
                                 )
                             ]
                         )
-                    ]
-                )
-            , Rule
-                ( "h1"
-                , P.afs.color_spec_heading
-                , P.font_spec_normal
-                , font_size     = Percent (100)
-                , padding       = P.input_padding
-                )
-            , Rule
-                ( "h2"
-                , P.afs.color_spec_label
-                , P.font_spec_normal
-                , font_size     = Percent (100)
-                , padding       = P.input_padding
-                )
-            , Rule
-                ( "input", "select", "textarea"
-                , P.color_spec_normal
-                , P.font_spec_pre
-                , width         = "auto"
-                , children      =
-                    [ Rule_Pseudo
-                        ( "focus"
-                        , outline                  = P.outline_focus
-                        , ** P.color_spec_selected
+                    , Rule
+                        ( "input", "select", "textarea"
+                        , P.afs.border_spec_input
+                        , P.color_spec_normal
+                        , P.font_spec_pre
+                        , width         = "auto"
+                        , children      =
+                            [ Rule_Pseudo
+                                ( "focus"
+                                , outline                  = P.outline_focus
+                                , ** P.color_spec_selected
+                                )
+                            ]
                         )
                     ]
+                )
+            , Rule
+                ( "section"
+                , P.afs.border_spec_section
+                , padding          = TRBL0 (b = Px (2), l = Px (2))
+                )
+            , Rule
+                ( ".Optional"
+                , P.afs.color_spec_optional
+                )
+            , Rule
+                ( ".Necessary"
+                , P.afs.color_spec_necessary
+                )
+            , Rule
+                ( ".Primary", ".Required"
+                , P.afs.color_spec_required
                 )
             ]
         )

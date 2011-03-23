@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -41,17 +41,17 @@ _test_code = """
     []
     >>> link = PAP.Person_has_Address (person, address1)
     >>> sorted (person.addresses) #2
-    [GTW.OMP.PAP.Address (u'street 1', u'zip', u'city', u'country', u'')]
+    [GTW.OMP.PAP.Address (u'street 1', u'zip', u'city', u'country')]
     >>> sorted (PAP.Person_has_Address.query ().all ())
-    [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 1', u'zip', u'city', u'country', u''))]
+    [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 1', u'zip', u'city', u'country'))]
     >>> link.set (address = address2)
     1
     >>> sorted (person.addresses) #3
-    [GTW.OMP.PAP.Address (u'street 2', u'zip', u'city', u'country', u'')]
+    [GTW.OMP.PAP.Address (u'street 2', u'zip', u'city', u'country')]
     >>> link
-    GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country', u''))
+    GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country'))
     >>> sorted (PAP.Person_has_Address.query ().all ())
-    [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country', u''))]
+    [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country'))]
     >>> link.set_raw (right = address1.epk_raw)
     1
 """

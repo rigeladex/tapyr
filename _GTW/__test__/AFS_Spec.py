@@ -76,7 +76,6 @@ _test_code = """
          <Field None 'zip'>
          <Field None 'city'>
          <Field None 'country'>
-         <Field None 'region'>
        <Fieldset None 'optional'>
         <Field None 'desc'>
      <Entity_List None <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>>
@@ -98,6 +97,53 @@ _test_code = """
         <Field None 'extension'>
        <Fieldset None 'optional'>
         <Field None 'desc'>
+
+    >>> NL = chr (10)
+    >>> for e in xl.transitive_iter () :
+    ...   print e.__class__.__name__, e._name, getattr (e, "ui_name", None), repr (getattr (e, "description", "").replace (NL, " ")), e.renderer
+    Entity Person Person u'' afs_div_seq
+    Fieldset primary None u'' afs_div_seq
+    Field last_name Last name u'Last name of person' None
+    Field first_name First name u'First name of person' None
+    Field middle_name Middle name u'Middle name of person' None
+    Field title Academic title u'Academic title.' None
+    Fieldset necessary None u'' afs_div_seq
+    Field sex Sex u'Sex of a person.' None
+    Fieldset optional None u'' afs_div_seq
+    Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_div_seq
+    Field start Start u'Start date of interval' None
+    Field finish Finish u'Finish date of interval' None
+    Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
+    Entity_List None None u'' afs_div_seq
+    Entity_Link Person_has_Address Person_has_Address u'' afs_div_seq
+    Field_Role_Hidden left Person u'' afs_div_seq
+    Fieldset primary None u'' afs_div_seq
+    Field_Entity right Address u'' afs_div_seq
+    Field street Street u'Street (or place) and house number' None
+    Field zip Zip code u'Zip code of address' None
+    Field city City u'City, town, or village' None
+    Field country Country u'Country' None
+    Fieldset optional None u'' afs_div_seq
+    Field desc Description u'Short description of the link' None
+    Entity_List None None u'' afs_div_seq
+    Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
+    Field_Role_Hidden left Person u'' afs_div_seq
+    Fieldset primary None u'' afs_div_seq
+    Field_Entity right Email u'' afs_div_seq
+    Field address Email address u'Email address (including domain)' None
+    Fieldset optional None u'' afs_div_seq
+    Field desc Description u'Short description of the link' None
+    Entity_List None None u'' afs_div_seq
+    Entity_Link Person_has_Phone Person_has_Phone u'' afs_div_seq
+    Field_Role_Hidden left Person u'' afs_div_seq
+    Fieldset primary None u'' afs_div_seq
+    Field_Entity right Phone u'' afs_div_seq
+    Field country_code Country code u'International country code of phone number (without prefix)' None
+    Field area_code Area code u'National area code of phone number (without prefix)' None
+    Field number Number u'Phone number proper (without country code, area code, extension)' None
+    Field extension Extension u'Extension number used in PBX' None
+    Fieldset optional None u'' afs_div_seq
+    Field desc Description u'Short description of the link' None
 
     >>> T = Spec.Entity (Spec.Entity_Link ("events",
     ...   Spec.Entity_Link ("recurrence", Spec.Entity_Link ("rules"))))
@@ -1321,6 +1367,67 @@ _test_code = """
     ...    p
     GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
     GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'william ii', u'')
+
+    >>> em  = PAP.Email ("laurens.tanzer@gmail.com")
+    >>> phe = PAP.Person_has_Email (p, em)
+    >>> scope.commit ()
+    >>> fp  = Form ("FP", children = [xl])
+    >>> fip = fp (PAP.Person, p)
+
+    >>> for i in fip.transitive_iter () :
+    ...     print i.elem, sorted ((i.value or {}).iteritems ())
+    <Form FP> [('sid', 0)]
+    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [('init', {'pid': 8, 'cid': 11}), ('sid', '2F2a8HX0nSolIja2XfGEBNDronow6O1:eXVQYw')]
+    <Fieldset FP-0:0 'primary'> []
+    <Field FP-0:0:0 'last_name'> [('init', u'Tanzer')]
+    <Field FP-0:0:1 'first_name'> [('init', u'Laurens')]
+    <Field FP-0:0:2 'middle_name'> [('init', u'William II')]
+    <Field FP-0:0:3 'title'> []
+    <Fieldset FP-0:1 'necessary'> []
+    <Field FP-0:1:0 'sex'> []
+    <Fieldset FP-0:2 'optional'> []
+    <Field_Composite FP-0:2:0 'lifetime' 'MOM.Date_Interval'> []
+    <Field FP-0:2:0.0 'start'> []
+    <Field FP-0:2:0.1 'finish'> []
+    <Field FP-0:2:1 'salutation'> []
+    <Entity_List FP-0:3 <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
+    <Entity_List FP-0:4 <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
+    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [('init', {'pid': 11, 'cid': 14}), ('sid', 'sNPm0JkwXazZszolcExEKULzHp05nkNbfu1VhQ')]
+    <Field_Role_Hidden FP-0:4::0-0 u'left' 'GTW.OMP.PAP.Person'> [('init', {'pid': 8, 'cid': 11})]
+    <Fieldset FP-0:4::0-1 'primary'> []
+    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [('init', {'pid': 10, 'cid': 13}), ('sid', 'uAMfAaubjrvSulfSZXU4l8fsPuMnkyyaDSenkA')]
+    <Field FP-0:4::0-1:0:0 'address'> [('init', u'laurens.tanzer@gmail.com')]
+    <Fieldset FP-0:4::0-2 'optional'> []
+    <Field FP-0:4::0-2:0 'desc'> []
+    <Entity_List FP-0:5 <Entity_Link FP-0:5::p 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>> []
+
+    >>> for i in fip.transitive_iter () :
+    ...     e = i.elem
+    ...     print e.__class__.__name__, e._name, getattr (e, "ui_name", ""), repr (getattr (e, "description", "").replace (NL, " ")), e.renderer
+    Form None  u'' afs_div_seq
+    Entity Person Person u'' afs_div_seq
+    Fieldset primary  u'' afs_div_seq
+    Field last_name Last name u'Last name of person' None
+    Field first_name First name u'First name of person' None
+    Field middle_name Middle name u'Middle name of person' None
+    Field title Academic title u'Academic title.' None
+    Fieldset necessary  u'' afs_div_seq
+    Field sex Sex u'Sex of a person.' None
+    Fieldset optional  u'' afs_div_seq
+    Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_div_seq
+    Field start Start u'Start date of interval' None
+    Field finish Finish u'Finish date of interval' None
+    Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
+    Entity_List None  u'' afs_div_seq
+    Entity_List None  u'' afs_div_seq
+    Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
+    Field_Role_Hidden left Person u'' afs_div_seq
+    Fieldset primary  u'' afs_div_seq
+    Field_Entity right Email u'' afs_div_seq
+    Field address Email address u'Email address (including domain)' None
+    Fieldset optional  u'' afs_div_seq
+    Field desc Description u'Short description of the link' None
+    Entity_List None  u'' afs_div_seq
 
 """
 

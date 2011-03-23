@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -30,6 +30,7 @@
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #     4-Feb-2010 (CT) Composite `position` instead of `lat` and `lon`
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
+#    23-Mar-2011 (CT) `region` made `Optional`, not `Primary_Optional`
 #    ««revision-date»»···
 #--
 
@@ -92,17 +93,17 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class country
 
+        ### Non-primary attributes
+
         class region (A_String) :
             """State or province or region"""
 
-            kind           = Attr.Primary_Optional
+            kind           = Attr.Optional
             ignore_case    = True
             max_length     = 20
             rank           = 5
 
         # end class region
-
-        ### Non-primary attributes
 
         class desc (A_String) :
             """Short description of the address"""

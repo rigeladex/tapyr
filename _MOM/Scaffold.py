@@ -427,8 +427,6 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
     @classmethod
     def _create_scope (cls, apt, url, verbose = False) :
         if url :
-            if verbose :
-                print "Deleting scope", url
             apt.delete_database (url)
         return cls.Scope.new (apt, url)
     # end def _create_scope

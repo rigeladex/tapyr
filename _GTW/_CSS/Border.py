@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Feb-2011 (CT) Creation
+#    23-Mar-2011 (CT) `P_Border` added
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   __future__  import print_function, unicode_literals
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
+from   _GTW.Parameters            import P_dict
 import _GTW._CSS
 
 _prefix_map = dict \
@@ -60,6 +62,15 @@ def Border (** declarations) :
             result ["-".join ((p, n))] = v
     return result
 # end def Border
+
+class P_Border (P_dict) :
+    """Border parameter dict: supports lazy evaluation of dict arguments."""
+
+    def __call__ (self, P) :
+        return Border (** self.__super.__call__ (P))
+    # end def __call__
+
+# end class P_Border
 
 if __name__ != "__main__" :
     GTW.CSS._Export ("*")

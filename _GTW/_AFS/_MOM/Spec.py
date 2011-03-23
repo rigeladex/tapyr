@@ -154,7 +154,7 @@ class _Field_ (_Base_) :
         at      = attr.attr
         ui_name = attr.ui_name or attr.name
         result  = dict \
-            ( description = attr.description
+            ( description = attr.description or ""
             , kind        = attr.kind
             , label       = ui_name
             , required    = attr.is_required

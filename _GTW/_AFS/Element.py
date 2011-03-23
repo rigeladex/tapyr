@@ -66,6 +66,7 @@
 #    20-Mar-2011 (CT) `css_class` added
 #    21-Mar-2011 (CT) Call of `_value` moved to `_instance_kw`
 #    22-Mar-2011 (CT) `het_c` and `het_h` added
+#    23-Mar-2011 (CT) `_pop_to_self` factored and used in `copy`, too
 #    ««revision-date»»···
 #--
 
@@ -76,13 +77,19 @@ import _GTW._AFS.Instance
 import _GTW._Form.Widget_Spec
 
 import _TFL._Meta.Object
+import _TFL._Meta.M_Auto_Combine_Lists
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst, rsplit_hst
 from   _TFL.pyk                 import pickle
 
 import json
 
-class M_Form (TFL.Meta.Object.__class__) :
+class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
+    """Meta class for `_Element_`"""
+
+# end class _M_Element_
+
+class M_Form (_M_Element_) :
     """Meta class for `Form`."""
 
     def __getitem__ (cls, key) :
@@ -95,27 +102,31 @@ class M_Form (TFL.Meta.Object.__class__) :
 class _Element_ (TFL.Meta.Object) :
     """Base class for AFS element classes."""
 
-    children    = ()
-    het_c       = "div" ### HTML element type to be used for the container
-    het_h       = "h2"  ### HTML element type to be used for the heading
-    id_sep      = "."
-    init        = ""
-    list_sep    = "::"
-    needs_value = False
-    prefilled   = False
-    rank        = 0
-    renderer    = None
-    root_sep    = "-"
-    widget      = None
-    _css_class  = None
-    _id         = None
+    __metaclass__ = _M_Element_
+
+    children      = ()
+    het_c         = "div" ### HTML element type to be used for the container
+    het_h         = "h2"  ### HTML element type to be used for the heading
+    id_sep        = "."
+    init          = ""
+    list_sep      = "::"
+    needs_value   = False
+    prefilled     = False
+    rank          = 0
+    renderer      = None
+    root_sep      = "-"
+    widget        = None
+    _css_class    = None
+    _id           = None
+    _pop_to_self  = \
+        ( "css_class", "description", "explanation"
+        , "id", "id_sep", "needs_value", "prefilled"
+        , "renderer", "ui_name", "widget"
+        )
+    _lists_to_combine   = ("_pop_to_self", )
 
     def __init__ (self, ** kw) :
-        self.pop_to_self \
-            ( kw
-            , "css_class", "id", "id_sep", "needs_value"
-            , "prefilled", "renderer", "ui_name", "widget"
-            )
+        self.pop_to_self  (kw, * self._pop_to_self)
         children = kw.pop ("children", None)
         if children is not None :
             self.children = list (children)
@@ -131,6 +142,13 @@ class _Element_ (TFL.Meta.Object) :
             )
         return result
     # end def __call__
+
+    @property
+    def as_json_cargo (self) :
+        result         = dict (self.kw, type = self.__class__.__name__)
+        result ["$id"] = self.id
+        return result
+    # end def as_json_cargo
 
     @property
     def css_class (self) :
@@ -156,17 +174,30 @@ class _Element_ (TFL.Meta.Object) :
     # end def id
 
     @property
-    def as_json_cargo (self) :
-        result         = dict (self.kw, type = self.__class__.__name__)
-        result ["$id"] = self.id
-        return result
-    # end def as_json_cargo
+    def _name (self) :
+        for k in "name", "type_name" :
+            try :
+                return self.kw [k]
+            except KeyError :
+                pass
+    # end def _name
 
     def copy (self, ** kw) :
-        ckw      = dict (self.kw, ** kw)
+        ckw      = dict \
+            ( (k, getattr (self, k))
+            for k in self._pop_to_self if k in self.__dict__
+            )
+        ckw.update (self.kw, ** kw)
         children = [c.copy () for c in self.children] if self.children else None
         return self.__class__ (children = children, ** ckw)
     # end def copy
+
+    def transitive_iter (self) :
+        yield self
+        for c in self.children :
+            for x in c.transitive_iter () :
+                yield x
+    # end def transitive_iter
 
     def _call_iter (self, * args, ** kw) :
         for c in self.children :
@@ -331,6 +362,14 @@ class Entity_List (_Element_List_) :
         return result
     # end def new_child
 
+    def transitive_iter (self) :
+        for x in self.__super.transitive_iter () :
+            yield x
+        if not self.children :
+            for x in self.proto.transitive_iter () :
+                yield x
+    # end def transitive_iter
+
     def _formatted (self, level = 0) :
         result = [self.__super._formatted (level)]
         if not self.children :
@@ -364,13 +403,12 @@ class Entity_List (_Element_List_) :
 class _Field_ (_Element_) :
     """Base class for AFS field classes."""
 
-    needs_value  = True
+    needs_value   = True
 
-    input_widget = GTW.Form.Widget_Spec ("html/AFS/input.jnj, string")
+    input_widget  = GTW.Form.Widget_Spec ("html/AFS/input.jnj, string")
+    _pop_to_self  = ("choices", "input_widget")
 
     def __init__ (self, name, ** kw) :
-        self.pop_to_self \
-            (kw, "choices", "description", "explanation", "input_widget")
         self.__super.__init__ (name = name, ** kw)
     # end def __init__
 

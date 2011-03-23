@@ -31,6 +31,8 @@
 #     4-Jan-2011 (CT) Creation continued..
 #    14-Jan-2011 (CT) Use `GTW.Parameters.Definition` to allow lazy
 #                     references with `P` and `P_dict`
+#    22-Mar-2011 (CT) `afs`
+#    22-Mar-2011 (CT) `afs` continued
 #    ««revision-date»»···
 #--
 
@@ -50,6 +52,7 @@ class CSS_Defaults (Definition) :
     color_light_grey       = RGB_X     ("#DEDEDE")
     color_medium_grey      = RGB_X     ("#BEBEBE")
     color_dark_grey        = RGB_X     ("#444444")
+    color_darker_grey      = RGB_X     ("#222222")
     color_selected         = RGB_X     ("#FF6633")
     color_target           = RGB_X     ("#FF6633")
 
@@ -76,16 +79,36 @@ class CSS_Defaults (Definition) :
 
     class afs (Definition) :
 
+        border_spec_input      = P_Border \
+            ( color            = P.R.color_dark_grey
+            , style            = "solid"
+            , width            = Px (1)
+            )
+        border_spec_section    = P_Border \
+            ( color            = P.R.color_darker_grey
+            , style            = "solid"
+            , width            = TRBL0 (l = Px (2), default = Px (1))
+            )
         color_spec_desc        = P_dict \
-            ( background_color = P.R.background_color
-            , color            = RGB_X ("#666666")
+            ( background_color = RGB_X ("#666666")
+            , color            = P.R.background_color
             )
         color_spec_heading     = P_dict \
             ( background_color = P.R.color_heading
             , color            = P.R.background_color
             )
         color_spec_label       = P_dict \
+            ( color            = P.R.text_color
+            # background_color = P.R.background_color # color_lighter_grey
+            )
+        #color_spec_label       = color_spec_desc
+        color_spec_optional    = P.R.color_spec_normal
+        color_spec_necessary   = P_dict \
             ( background_color = P.R.color_light_grey
+            , color            = P.R.text_color
+            )
+        color_spec_required    = P_dict \
+            ( background_color = P.R.color_medium_grey
             , color            = P.R.text_color
             )
 

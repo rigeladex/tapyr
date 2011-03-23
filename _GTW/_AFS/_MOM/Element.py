@@ -182,7 +182,8 @@ class _MOM_Field_ (Field) :
     def _instance_kw (self, ETM, entity, ** kw) :
         result = self.__super._instance_kw (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
-        result ["cooked"] = attr.from_string (result ["value"].get ("init", ""))
+        v      = result ["value"].get ("init", "")
+        result ["cooked"] = attr.from_string (v) if v else None
         for k in "max_length", "max_value", "min_value" :
             v = getattr (attr, k, None)
             if v is not None :
