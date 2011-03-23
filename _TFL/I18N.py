@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,6 +47,8 @@
 #    18-Jun-2010 (CT) `decode` added
 #     4-Aug-2010 (MG) `load`: `log_level` added
 #    30-Nov-2010 (CT) s/save_eval/safe_eval/ and removed `strip`-call from it
+#    23-Mar-2011 (CT) `_T` defined (instead of aliased) to guard against
+#                     empty argument
 #    ««revision-date»»···
 #--
 
@@ -231,7 +233,13 @@ def use (* lang) :
 # end def use
 
 _    = mark
-_T   = ugettext
+
+def _T (s) :
+    if s :
+        return ugettext (s)
+    return s
+# end def _T
+
 _Tn  = ungettext
 
 Name = _Name_ ()

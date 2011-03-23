@@ -221,6 +221,13 @@ import _GTW._OMP._PAP.Person
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     (include_links = ("addresses", "emails", "phones"))
 
+from   _MOM import MOM
+import _MOM._Attr.Date_Interval
+import _MOM._Attr.Time_Interval
+
+MOM.Attr.Date_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
+MOM.Attr.Time_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
+
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export_Module ()
 ### __END__ GTW.OMP.PAP.Nav

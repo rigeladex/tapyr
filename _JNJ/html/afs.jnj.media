@@ -51,19 +51,19 @@ style_sheet = Style_Sheet \
                 , padding       = P.input_padding
                 )
             , Rule
+                ( ".Desc"
+                , P.afs.color_spec_desc
+                , float         = "right"
+                , font_size     = Percent (80)
+                , padding       = P.input_padding
+                , width         = "auto"
+                )
+            , Rule
                 ( ".Field"
                 , padding       = TRBL (0, Px (5))
                 , margin_bottom = Em (1.0)
                 , children      =
                     [ Rule
-                        ( ".Desc"
-                        , P.afs.color_spec_desc
-                        , float         = "right"
-                        , font_size     = Percent (80)
-                        , padding       = P.input_padding
-                        , width         = "auto"
-                        )
-                    , Rule
                         ( "h2"
                         , children      =
                             [ Rule
@@ -81,6 +81,7 @@ style_sheet = Style_Sheet \
                         , P.afs.border_spec_input
                         , P.color_spec_normal
                         , P.font_spec_pre
+                        , max_width     = Percent (99)
                         , width         = "auto"
                         , children      =
                             [ Rule_Pseudo
@@ -90,12 +91,22 @@ style_sheet = Style_Sheet \
                                 )
                             ]
                         )
+                    , Rule
+                        ( "textarea"
+                        , font_size     = Percent (95)
+                        )
                     ]
                 )
             , Rule
                 ( "section"
                 , P.afs.border_spec_section
-                , padding          = TRBL0 (b = Px (2), l = Px (2))
+                , clear            = "both"
+                , overflow         = "auto"
+                , padding          = TRBL0 (r = 0, default = Px (2))
+                )
+            , Rule
+                ( ".Horizo"
+                , float            = "left"
                 )
             , Rule
                 ( ".Optional"

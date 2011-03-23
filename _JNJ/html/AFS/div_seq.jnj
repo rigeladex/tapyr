@@ -37,23 +37,8 @@
 {%- import html_version as X -%}
 {%- import "html/afs.jnj" as AFS %}
 
-{%- macro do_element (form, elem, renderer, id_fix = "", class = "") -%}
-  {%- set elem_caller = kwargs.pop ("caller", None) -%}
-  {%- set cssc = " ".join
-      ((class, elem.css_class)) if class else elem.css_class
-  %}
-  {%- set desc = GTW._T (elem.description)|safe %}
-  <{{ elem.het_c }} id="{{ id_fix }}{{ elem.id }}"
-      {%- if cssc %} class="{{ cssc }}"{% endif -%}
-      {%- if desc %} title="{{ desc }}"{% endif -%}
-  >
-    {{ elem_caller () -}}
-  </{{ elem.het_c }}>
-{%- endmacro -%} {#- do_element -#}
-
-{%- macro do_head (form, elem, renderer) -%}
-  <{{ elem.het_h }}>{{ GTW._T (elem.ui_name or elem.name) }}</{{ elem.het_h }}>
-{%- endmacro -%} {#- do_head -#}
+{%- set do_element = AFS.do_element %}
+{%- set do_head    = AFS.do_head %}
 
 {%- macro Entity (form, elem, renderer) -%}
   {% call do_element (form, elem, renderer) -%}
@@ -79,8 +64,8 @@
 {%- macro Field (form, elem, renderer) -%}
   {% call do_element (form, elem, renderer, "FC-", class = "Field") -%}
     {%- set desc = GTW._T (elem.description)|safe %}
-    {%- set expl = GTW._T (elem.explanation)|safe %}
     {%- if desc -%}
+      {%- set expl = GTW._T (elem.explanation)|safe %}
       <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
         {{- desc -}}
       </div>

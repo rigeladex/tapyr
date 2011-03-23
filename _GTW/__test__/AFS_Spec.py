@@ -118,7 +118,7 @@ _test_code = """
     Entity_Link Person_has_Address Person_has_Address u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Address u'' afs_div_seq
+    Field_Entity right Address u'Address where person lives or works' afs_div_seq
     Field street Street u'Street (or place) and house number' None
     Field zip Zip code u'Zip code of address' None
     Field city City u'City, town, or village' None
@@ -129,7 +129,7 @@ _test_code = """
     Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Email u'' afs_div_seq
+    Field_Entity right Email u'Email address of person' afs_div_seq
     Field address Email address u'Email address (including domain)' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
@@ -137,7 +137,7 @@ _test_code = """
     Entity_Link Person_has_Phone Person_has_Phone u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Phone u'' afs_div_seq
+    Field_Entity right Phone u'Phone number of person' afs_div_seq
     Field country_code Country code u'International country code of phone number (without prefix)' None
     Field area_code Area code u'National area code of phone number (without prefix)' None
     Field number Number u'Phone number proper (without country code, area code, extension)' None
@@ -1423,7 +1423,7 @@ _test_code = """
     Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary  u'' afs_div_seq
-    Field_Entity right Email u'' afs_div_seq
+    Field_Entity right Email u'Email address of person' afs_div_seq
     Field address Email address u'Email address (including domain)' None
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None

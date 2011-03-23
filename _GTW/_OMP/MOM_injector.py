@@ -31,6 +31,7 @@
 # Revision Dates
 #    14-Mar-2011 (CT) Creation (factored from `_GTW._OMP.Scaffold`)
 #    15-Mar-2011 (CT) `GTW.afs_id` and `.afs_spec` initialized to `None`
+#    23-Mar-2011 (CT) `GTW.afs_kw` initialized to `None`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ MOM.Entity.GTW = type \
     , ()
     , dict
         ( afs_id     = None
+        , afs_kw     = None
         , afs_spec   = None
         , __module__ = MOM.Entity.__module__
         )

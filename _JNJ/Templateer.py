@@ -431,8 +431,9 @@ Template ("account_reset_password_email", "email/reset_password.jnj")
 Template ("account_verify_new_email",     "email/verify_new_email.jnj")
 Template ("account_verify_email",         "email/verify_new_email.jnj")
 
-Template ("afs",         "html/afs.jnj")
-Template ("afs_div_seq", "html/AFS/div_seq.jnj", parent_name = "afs")
+Template ("afs",           "html/afs.jnj")
+Template ("afs_div_seq",   "html/AFS/div_seq.jnj", parent_name = "afs")
+Template ("afs_fc_horizo", "html/AFS/field_composite_horizo.jnj", parent_name = "afs_div_seq")
 
 Template ("calendar",                     "html/calendar.jnj")
 Template ("calendar_qx",                  "html/cal/wr.jnj")

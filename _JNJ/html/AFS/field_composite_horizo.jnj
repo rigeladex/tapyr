@@ -1,0 +1,62 @@
+
+{#- jinja template: field_composite_horizo.jnj -#}
+{#
+## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/AFS/field_composite_horizo.jnj
+##
+## Purpose
+##    Provide rendering macros for Field_Composite of GTW.AFS forms as
+##    horizontal sequence of fields
+##
+## Revision Dates
+##    23-Mar-2011 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import html_version as X -%}
+{%- import "html/afs.jnj" as AFS %}
+
+{%- set do_element = AFS.do_element %}
+{%- set do_head    = AFS.do_head %}
+
+{%- macro Field (form, elem, renderer) -%}
+  {% call do_element (form, elem, renderer, "FC-", class = "Field Horizo") -%}
+    <{{ elem.het_h }}>
+      <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
+      <b class="Status"></b>
+    </{{ elem.het_h }}>
+    {{ GTW.call_macro (elem.input_widget, form, elem) }}
+  {% endcall %} {# do_element #}
+{%- endmacro -%} {#- Field -#}
+
+{%- macro Field_Composite (form, elem, renderer) -%}
+  {% call do_element (form, elem, renderer) -%}
+    {{ do_head (form, elem, renderer) }}
+    <div>
+      {{ AFS.do_children (form, elem, renderer) }}
+    </div>
+  {%- endcall %} {# do_element #}
+{%- endmacro -%} {#- Field_Composite -#}
+
+{#- __END__ jinja template: html/AFS/field_composite_horizo.jnj -#}

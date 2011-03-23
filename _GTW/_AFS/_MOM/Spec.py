@@ -117,15 +117,16 @@ class _Entity_Mixin_ (_Base_) :
     def __call__ (self, E_Type, spec = None, seen = None, ** kw) :
         if seen is None :
             seen = set ()
-        kw       = dict (self.kw, ** kw)
+        ekw      = dict (E_Type.GTW.afs_kw or {}, ** self.kw)
         elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
         children = (e (E_Type, self, seen) for e in elems)
-        kw.setdefault ("name",    E_Type.ui_name)
-        kw.setdefault ("ui_name", E_Type.ui_name)
+        ekw.update     (kw)
+        ekw.setdefault ("name",    E_Type.ui_name)
+        ekw.setdefault ("ui_name", E_Type.ui_name)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
-            , ** kw
+            , ** ekw
             )
     # end def __call__
 
@@ -426,6 +427,8 @@ def setup_defaults (default_spec = None, id_prefix = "AF") :
     for T in MOM.Entity._S_Extension [::-1] :
         if T.GTW.afs_id is None :
             T.GTW.afs_id   = "%s%s" % (id_prefix, T.i_rank)
+        if T.GTW.afs_kw is None :
+            T.GTW.afs_kw   = {}
         if T.GTW.afs_spec is None and not T.is_partial :
             T.GTW.afs_spec = default_spec
 # end def setup_defaults
