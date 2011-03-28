@@ -56,7 +56,7 @@
 
 {%- macro Entity_List (form, elem, renderer) -%}
   {% call do_element (form, elem, renderer) -%}
-    {#- XXX Legend -#}
+    {#- XXX Legend, controls, ... -#}
     {{ AFS.do_children (form, elem, renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity_List -#}

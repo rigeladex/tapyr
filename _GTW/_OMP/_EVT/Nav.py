@@ -97,6 +97,20 @@ class Admin (object) :
 
 # end class Admin
 
+from   _GTW._AFS._MOM import Spec
+import _GTW._OMP._EVT.Event
+import _GTW._OMP._EVT.Recurrence_Spec
+
+GTW.OMP.EVT.Event.GTW.afs_spec           = Spec.Entity \
+    ( include_links =
+        ( Spec.Entity_Link ("recurrence", include_links = ("rules", ))
+        ,
+        )
+    )
+
+GTW.OMP.EVT.Recurrence_Spec.GTW.afs_spec = Spec.Entity \
+    (include_links = ("rules", ))
+
 if __name__ != "__main__" :
     GTW.OMP.EVT._Export_Module ()
 ### __END__ GTW.OMP.EVT.Nav

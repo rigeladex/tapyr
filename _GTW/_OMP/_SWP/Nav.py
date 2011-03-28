@@ -210,6 +210,23 @@ class Admin (object) :
 
 # end class Admin
 
+from   _GTW._AFS._MOM import Spec
+import _GTW._OMP._SWP.Page
+
+GTW.OMP.SWP.Page.GTW.afs_spec = Spec.Entity \
+    ( include_links =
+        ( Spec.Entity_Link
+            ( "events"
+            , include_links =
+                ( Spec.Entity_Link("recurrence", include_links = ("rules", ))
+                ,
+                )
+            )
+        , "creator"
+        , Spec.Entity_Link ("clips", role_name = "object")
+        )
+    )
+
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export_Module ()
 ### __END__ GTW.OMP.SWP.Nav

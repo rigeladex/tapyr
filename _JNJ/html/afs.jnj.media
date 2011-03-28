@@ -92,6 +92,10 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     , Rule
+                        ( "input[type=checkbox]"
+                        , margin_left   = Em (2.0)
+                        )
+                    , Rule
                         ( "textarea"
                         , font_size     = Percent (95)
                         )

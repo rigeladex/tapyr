@@ -1,6 +1,20 @@
 GTW.AFS to-to
 ==============
 
+- Entity, Entity_Link, Entity_List
+
+  * label, control
+
+  * Entity_List: `Add` control
+
+  * open/close
+
+- Fieldset
+
+  * open/close
+
+--------------------------------------------------------------
+
 - "\n" in `description`, `explanation`
 
   * breaks doc-test

@@ -42,6 +42,7 @@
 #    15-Mar-2011 (CT) `setup_defaults` added
 #    18-Mar-2011 (CT) `_Field_._field_kw`: `css_class`, `choices`, and
 #                     `input_widget` added
+#    28-Mar-2011 (CT) `Entity_Link._get_role_name` factored, improved
 #    ««revision-date»»···
 #--
 
@@ -219,15 +220,11 @@ class Entity_Link (Entity) :
     # end def __init__
 
     def __call__ (self, E_Type, spec = None, seen = (), ** kw) :
-        assoc = self._get_assoc (self.name, E_Type)
-        try :
-            role_name = self.role_name
-        except AttributeError :
-            role_name = self.kw ["role_name"] = \
-                assoc.Roles [assoc.role_map [E_Type.type_name]].name
-        role   = getattr (assoc, role_name)
-        r_name = role.generic_role_name
-        seen   = set ([r_name])
+        assoc      = self._get_assoc     (self.name, E_Type)
+        role_name  = self._get_role_name (assoc,     E_Type)
+        role       = getattr (assoc, role_name)
+        r_name     = role.generic_role_name
+        seen       = set ([r_name])
         with self.LET (hidden_role_name = r_name) :
             result = self.__super.__call__ (assoc, self, seen, ** kw)
         if role.max_links != 1 :
@@ -244,6 +241,25 @@ class Entity_Link (Entity) :
             name = cached_role.assoc
         return E_Type.app_type.etypes [name]
     # end def _get_assoc
+
+    def _get_role_name (self, assoc, E_Type) :
+        try :
+            result = self.role_name
+        except AttributeError :
+            r_map = assoc.role_map
+            try :
+               result = assoc.Roles [r_map [E_Type.type_name]].name
+            except KeyError :
+                n = self.name
+                if n in r_map :
+                    result = assoc.Roles [r_map [n]].name
+                elif n.endswith ("s") and n [:-1] in r_map :
+                    result = assoc.Roles [r_map [n [:-1]]].name
+                else :
+                    raise TypeError ("No role-name defined for %s" % n)
+            self.kw ["role_name"] = result
+        return result
+    # end def _get_role_name
 
 # end class Entity_Link
 
