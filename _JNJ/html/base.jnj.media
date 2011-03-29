@@ -386,10 +386,11 @@ style_sheet = Style_Sheet \
         , width          = "auto"
         )
     , Rule
-        ( "img.centered"
+        ( "img.centered", "table.centered"
         , display        = "block"
         , height         = "auto"
-        , margin         = "auto"
+        , margin         = "1em auto"
+        , text_align     = "left"
         , width          = "auto"
         )
     , Rule
