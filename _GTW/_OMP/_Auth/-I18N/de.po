@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "A password reset is pending for the linked account."
-msgstr ""
+msgstr "Zurücksetzen des Kennworts für dieses Benutzerkonto ist ausständig."
 
 #: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account_in_Group:0
 #: _GTW._OMP._Auth.Account:0
@@ -141,7 +141,7 @@ msgstr "Neue Emailaddresse"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Pending email verification."
-msgstr ""
+msgstr "Ausständige Bestätigung der Email Adresse."
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Superuser"
@@ -178,7 +178,4 @@ msgstr ""
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Unique token which identifies this action."
 msgstr ""
-
-#~ msgid "Model an user account."
-#~ msgstr "Benutzerkonto."
 

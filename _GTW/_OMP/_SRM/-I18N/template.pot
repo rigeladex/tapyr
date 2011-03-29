@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-03-21 13:40+0100\n"
+"POT-Creation-Date: 2011-03-29 13:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,6 +141,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Attr_Type:0
 msgid "Date of regatta result."
+msgstr ""
+
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid "Date of registration."
 msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:61
@@ -469,6 +473,10 @@ msgid "Regatta_Result"
 msgid_plural "Regatta_Results"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid "Registration date"
+msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Result"

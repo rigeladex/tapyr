@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -96,7 +96,7 @@ msgstr[1] "Gallerien"
 msgid "Gallery to which this picture belongs."
 msgstr "Gallerie, zu der das Bild gehört."
 
-#: _GTW/_OMP/_SWP/Format.py:94
+#: _GTW/_OMP/_SWP/Format.py:99
 #, python-format
 msgid ""
 "HTML must not contain any of the tags:\n"
@@ -106,7 +106,7 @@ msgstr ""
 "enthalten:\n"
 "%s"
 
-#: _GTW/_OMP/_SWP/Format.py:88
+#: _GTW/_OMP/_SWP/Format.py:93
 #, python-format
 msgid ""
 "HTML must not contain comments:\n"

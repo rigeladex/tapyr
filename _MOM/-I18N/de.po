@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -37,7 +37,6 @@ msgstr ""
 "\"von Buchstaben, Ziffern und Unterstrichen."
 
 #: _MOM.Entity:0
-#, fuzzy
 msgid "All necessary attributes must be defined."
 msgstr "Alle erforderlichen Attribute müssen definiert sein."
 
@@ -65,12 +64,12 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:1159
+#: _MOM/_Attr/Kind.py:1161
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr "Berechnetes Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:1014
+#: _MOM/_Attr/Kind.py:1016
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -120,15 +119,6 @@ msgid "Id_Entity"
 msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
-
-#: _MOM/_Attr/Kind.py:1226
-#, python-format
-msgid ""
-"Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
-"object creation"
-msgstr ""
-"Geburts-Attribut `%s.%s` kann nach der Erzeugung nicht mit Zuweisung von "
-"`%s` auf` %s` erändert werden."
 
 #: _MOM/_Attr/Type.py:1162
 #, python-format
@@ -206,12 +196,12 @@ msgid_plural "Objects"
 msgstr[0] "Objekt"
 msgstr[1] "Objekte"
 
-#: _MOM/_Attr/Kind.py:881
+#: _MOM/_Attr/Kind.py:883
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:891
+#: _MOM/_Attr/Kind.py:893
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -266,7 +256,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] "Zeitraum"
 msgstr[1] "Zeiträume"
 
-#: _MOM/_Attr/Kind.py:354
+#: _MOM/_Attr/Kind.py:356
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
@@ -275,7 +265,7 @@ msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
-#: _MOM/_Attr/Kind.py:882
+#: _MOM/_Attr/Kind.py:884
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
@@ -321,4 +311,13 @@ msgstr "Objekt-korrekt"
 #: _MOM.Link:0
 msgid "right"
 msgstr "rechts"
+
+#~ msgid ""
+#~ "Init-only attribute `%s.%s` cannot be"
+#~ " changed from `%s` to `%s` after "
+#~ "object creation"
+#~ msgstr ""
+#~ "Geburts-Attribut `%s.%s` kann nach der"
+#~ " Erzeugung nicht mit Zuweisung von "
+#~ "`%s` auf` %s` erändert werden."
 

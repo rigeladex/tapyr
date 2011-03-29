@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-03-21 13:40+0100\n"
+"POT-Creation-Date: 2011-03-29 13:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,8 +23,8 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:203 _GTW/_NAV/_E_Type/Admin.py:263
-#: _GTW/_NAV/_E_Type/Admin.py:381 _GTW/_NAV/_E_Type/Admin.py:412
+#: _GTW/_NAV/_E_Type/Admin.py:209 _GTW/_NAV/_E_Type/Admin.py:269
+#: _GTW/_NAV/_E_Type/Admin.py:387 _GTW/_NAV/_E_Type/Admin.py:418
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
@@ -61,7 +61,7 @@ msgstr ""
 msgid "April"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:193 _GTW/_NAV/_E_Type/Admin.py:274
+#: _GTW/_NAV/_E_Type/Admin.py:199 _GTW/_NAV/_E_Type/Admin.py:280
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Console"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:447
+#: _GTW/_NAV/_E_Type/Admin.py:453
 msgid "Copy"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr ""
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:445
+#: _GTW/_NAV/_E_Type/Admin.py:451
 msgid "Edit"
 msgstr ""
 

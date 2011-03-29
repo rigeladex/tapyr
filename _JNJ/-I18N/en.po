@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -52,6 +52,10 @@ msgstr ""
 
 #: _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
+msgstr ""
+
+#: _JNJ/html/AFS/input.jnj:116
+msgid "Cannot be changed"
 msgstr ""
 
 #: _JNJ/html/news.jnj:62
@@ -449,10 +453,4 @@ msgstr ""
 #: _JNJ/html/cal/wr.jnj:172
 msgid "year"
 msgstr ""
-
-#~ msgid "Please enter your password"
-#~ msgstr ""
-
-#~ msgid "Please enter your username"
-#~ msgstr ""
 

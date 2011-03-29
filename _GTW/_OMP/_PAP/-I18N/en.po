@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -34,6 +34,10 @@ msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _GTW._OMP._PAP.Person_has_Address:0
+msgid "Address where person lives or works"
+msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
 #, fuzzy
@@ -92,6 +96,10 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Email:0
 msgid "Email address (including domain)"
+msgstr ""
+
+#: _GTW._OMP._PAP.Person_has_Email:0
+msgid "Email address of person"
 msgstr ""
 
 #: _GTW._OMP._PAP.Entity_created_by_Person:0
@@ -268,6 +276,10 @@ msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _GTW._OMP._PAP.Person_has_Phone:0
+msgid "Phone number of person"
+msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Phone number proper (without country code, area code, extension)"

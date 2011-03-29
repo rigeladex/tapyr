@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,8 +23,8 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:203 _GTW/_NAV/_E_Type/Admin.py:263
-#: _GTW/_NAV/_E_Type/Admin.py:381 _GTW/_NAV/_E_Type/Admin.py:412
+#: _GTW/_NAV/_E_Type/Admin.py:209 _GTW/_NAV/_E_Type/Admin.py:269
+#: _GTW/_NAV/_E_Type/Admin.py:387 _GTW/_NAV/_E_Type/Admin.py:418
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
@@ -51,7 +51,7 @@ msgstr "Die Aktivierung war erfolgreich."
 
 #: _GTW/_NAV/_E_Type/Manager.py:149
 msgid "Admin"
-msgstr ""
+msgstr "Verwaltung"
 
 #: _GTW/_NAV/Calendar.py:92
 msgid "Apr"
@@ -61,7 +61,7 @@ msgstr "Apr"
 msgid "April"
 msgstr "April"
 
-#: _GTW/_NAV/_E_Type/Admin.py:193 _GTW/_NAV/_E_Type/Admin.py:274
+#: _GTW/_NAV/_E_Type/Admin.py:199 _GTW/_NAV/_E_Type/Admin.py:280
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
 
@@ -89,7 +89,7 @@ msgstr "Auswahl der Sprache für Lokalisierung"
 msgid "Console"
 msgstr "Konsole"
 
-#: _GTW/_NAV/_E_Type/Admin.py:447
+#: _GTW/_NAV/_E_Type/Admin.py:453
 msgid "Copy"
 msgstr "Kopiere"
 
@@ -105,7 +105,7 @@ msgstr "Dezember"
 msgid "EMail verification successful."
 msgstr "Die Bestätigung der Email war erfolgreich."
 
-#: _GTW/_NAV/_E_Type/Admin.py:445
+#: _GTW/_NAV/_E_Type/Admin.py:451
 msgid "Edit"
 msgstr "Ändere"
 
@@ -114,6 +114,7 @@ msgid ""
 "Edit conflict: at least one value was changed asynchronously by another "
 "request."
 msgstr ""
+"Änderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verändert."
 
 #: _GTW/_NAV/Auth.py:176 _GTW/_NAV/Auth.py:315
 #, python-format
@@ -139,7 +140,7 @@ msgstr ""
 
 #: _GTW/_AFS/Value.py:158
 msgid "Form/element is unknown"
-msgstr ""
+msgstr "Unbekanntes Formular oder Feld"
 
 #: _GTW/_NAV/Calendar.py:84
 msgid "Fri"
@@ -306,11 +307,11 @@ msgstr "Sonntag"
 
 #: _GTW/_AFS/Error.py:83
 msgid "The edit session has expired."
-msgstr ""
+msgstr "Die Sitzung ist abgelaufen."
 
 #: _GTW/_AFS/Error.py:76
 msgid "The form values are corrupted."
-msgstr ""
+msgstr "The Werte des Formulars sind korrumpiert."
 
 #: _GTW/_Form/Auth.py:209
 msgid "The new E-Mail address is required."

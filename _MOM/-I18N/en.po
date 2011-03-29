@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -57,12 +57,12 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:1159
+#: _MOM/_Attr/Kind.py:1161
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:1014
+#: _MOM/_Attr/Kind.py:1016
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -118,13 +118,6 @@ msgid "Id_Entity"
 msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
-
-#: _MOM/_Attr/Kind.py:1226
-#, python-format
-msgid ""
-"Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
-"object creation"
-msgstr ""
 
 #: _MOM/_Attr/Type.py:1162
 #, python-format
@@ -210,12 +203,12 @@ msgid_plural "Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:881
+#: _MOM/_Attr/Kind.py:883
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:891
+#: _MOM/_Attr/Kind.py:893
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -273,7 +266,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:354
+#: _MOM/_Attr/Kind.py:356
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -282,7 +275,7 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:882
+#: _MOM/_Attr/Kind.py:884
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
@@ -335,6 +328,9 @@ msgstr ""
 msgid "right"
 msgstr ""
 
-#~ msgid "All required attributes must be defined."
+#~ msgid ""
+#~ "Init-only attribute `%s.%s` cannot be"
+#~ " changed from `%s` to `%s` after "
+#~ "object creation"
 #~ msgstr ""
 

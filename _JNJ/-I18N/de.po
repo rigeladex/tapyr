@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -53,6 +53,10 @@ msgstr "Los"
 #: _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
+
+#: _JNJ/html/AFS/input.jnj:116
+msgid "Cannot be changed"
+msgstr "Kann nicht geändert werden."
 
 #: _JNJ/html/news.jnj:62
 msgid "Change"
@@ -457,10 +461,4 @@ msgstr "Woche"
 #: _JNJ/html/cal/wr.jnj:172
 msgid "year"
 msgstr "Jahr"
-
-#~ msgid "Please enter your password"
-#~ msgstr "Bitte um Eingabe des Kennworts"
-
-#~ msgid "Please enter your username"
-#~ msgstr "Bitte um Eingabe des Benutzernamens"
 

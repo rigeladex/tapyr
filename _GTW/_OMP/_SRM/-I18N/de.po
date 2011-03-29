@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-05-10 13:37+0200\n"
-"PO-Revision-Date: 2011-03-21 13:40+0100\n"
+"PO-Revision-Date: 2011-03-29 13:30+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -142,6 +142,10 @@ msgstr "Tschechische Republik"
 #: _GTW._OMP._SRM.Attr_Type:0
 msgid "Date of regatta result."
 msgstr "Datum, an dem das Regattaergebnis erstellt wurde."
+
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid "Date of registration."
+msgstr "Datum der Anmeldung."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:61
 msgid "Denmark"
@@ -437,9 +441,8 @@ msgid "Regatta for boats in a handicap system."
 msgstr "Regatta für Boote eines Handicap-Systems."
 
 #: _GTW._OMP._SRM.Team:0
-#, fuzzy
 msgid "Regatta in which this team sails."
-msgstr "Regatta, die von dieser Seite beschrieben wird."
+msgstr "Regatta, in der dieses Team segelt."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta_C"
@@ -470,6 +473,10 @@ msgid "Regatta_Result"
 msgid_plural "Regatta_Results"
 msgstr[0] "Regattaergebnis"
 msgstr[1] "Regattaergebnisse"
+
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid "Registration date"
+msgstr "Datum der Anmeldung"
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Result"
@@ -644,10 +651,4 @@ msgstr "Gültige Regatta"
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
-
-#~ msgid "Rank"
-#~ msgstr "Reihenfolge"
-
-#~ msgid "Rank of registration of boat in regatta."
-#~ msgstr "Reihenfolge der Registrierung des Boots in dieser Regatta."
 
