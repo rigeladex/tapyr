@@ -9,7 +9,7 @@
 //
 //++
 // Name
-//    GTW_Input
+//    GTW/jQ/input.js
 //
 // Purpose
 //    jQuery plugin for improving input elements
@@ -114,4 +114,4 @@
   }
 ) (jQuery);
 
-// __END__ GTW_Input.js
+// __END__ GTW/jQ/input.js

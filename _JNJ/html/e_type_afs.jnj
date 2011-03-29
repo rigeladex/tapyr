@@ -41,6 +41,6 @@
 
 {%- block body -%}
   {{ super () }}
-  <script>var afs_form = {{ form.as_js }};</script>
+  <script>$("#{{ form.id }}").afs_form ({{ form.as_js }});</script>
 {%- endblock body -%}
 {#- __END__ jinja template: html/e_type_afs.jnj -#}
