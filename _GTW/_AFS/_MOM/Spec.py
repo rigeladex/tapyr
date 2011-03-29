@@ -43,6 +43,7 @@
 #    18-Mar-2011 (CT) `_Field_._field_kw`: `css_class`, `choices`, and
 #                     `input_widget` added
 #    28-Mar-2011 (CT) `Entity_Link._get_role_name` factored, improved
+#    29-Mar-2011 (CT) `_Field_._field_kw` changed to set `changeable`
 #    ««revision-date»»···
 #--
 
@@ -156,7 +157,8 @@ class _Field_ (_Base_) :
         at      = attr.attr
         ui_name = attr.ui_name or attr.name
         result  = dict \
-            ( description = attr.description or ""
+            ( changeable  = attr.is_changeable
+            , description = attr.description or ""
             , kind        = attr.kind
             , label       = ui_name
             , required    = attr.is_required

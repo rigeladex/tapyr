@@ -40,6 +40,9 @@
 #    17-Mar-2011 (CT) `type` added to `_Base_`
 #    17-Mar-2011 (CT) `__getattr__` added
 #    18-Mar-2011 (CT) `_Base_.widget` added
+#    29-Mar-2011 (CT) `readonly` and `required` added to
+#                     `Instance.as_json_cargo`, `prefilled` moved from
+#                     `_Base_.as_json_cargo` to `Instance.as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -69,8 +72,6 @@ class _Base_ (TFL.Meta.Object) :
             result ["children"]  = [c.as_json_cargo for c in self.children]
         if self.value is not None :
             result ["value"]     = self.value
-        if self.prefilled :
-            result ["prefilled"] = True
         return result
     # end def as_json_cargo
 
@@ -176,6 +177,9 @@ class Instance (_Base_) :
     def as_json_cargo (self) :
         result = self.elem.as_json_cargo
         result.update (self.__super.as_json_cargo)
+        for k in "prefilled", "readonly", "required" :
+            if getattr (self, k, False) :
+                result [k] = True
         return result
     # end def as_json_cargo
 

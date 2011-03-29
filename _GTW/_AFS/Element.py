@@ -67,6 +67,8 @@
 #    21-Mar-2011 (CT) Call of `_value` moved to `_instance_kw`
 #    22-Mar-2011 (CT) `het_c` and `het_h` added
 #    23-Mar-2011 (CT) `_pop_to_self` factored and used in `copy`, too
+#    29-Mar-2011 (CT) `changeable` and `readonly` added
+#    29-Mar-2011 (CT) `Field._value_sig` changed to include `prefilled`
 #    ««revision-date»»···
 #--
 
@@ -113,6 +115,7 @@ class _Element_ (TFL.Meta.Object) :
     needs_value   = False
     prefilled     = False
     rank          = 0
+    readonly      = False
     renderer      = None
     root_sep      = "-"
     widget        = None
@@ -120,8 +123,8 @@ class _Element_ (TFL.Meta.Object) :
     _id           = None
     _pop_to_self  = \
         ( "css_class", "description", "explanation"
-        , "id", "id_sep", "needs_value", "prefilled"
-        , "renderer", "ui_name", "widget"
+        , "id", "id_sep", "needs_value", "prefilled", "readonly"
+        , "renderer", "required", "ui_name", "widget"
         )
     _lists_to_combine   = ("_pop_to_self", )
 
@@ -406,7 +409,7 @@ class _Field_ (_Element_) :
     needs_value   = True
 
     input_widget  = GTW.Form.Widget_Spec ("html/AFS/input.jnj, string")
-    _pop_to_self  = ("choices", "input_widget")
+    _pop_to_self  = ("changeable", "choices", "input_widget")
 
     def __init__ (self, name, ** kw) :
         self.__super.__init__ (name = name, ** kw)
@@ -422,7 +425,10 @@ class Field (_Field_) :
     # end def _css_classes
 
     def _value_sig (self, instance) :
-        return (str (instance.id), self.name, instance.init)
+        result = (str (instance.id), self.name, instance.init)
+        if getattr (instance, "prefilled", False) :
+            result = (result, True)
+        return result
     # end def _value_sig
 
 # end class Field

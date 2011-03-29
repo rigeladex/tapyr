@@ -1,6 +1,10 @@
 GTW.AFS to-to
 ==============
 
+- Field
+
+  * is_changeable
+
 - Entity, Entity_Link, Entity_List
 
   * label, control
@@ -8,6 +12,8 @@ GTW.AFS to-to
   * Entity_List: `Add` control
 
   * open/close
+
+  * ui_allow_new
 
 - Fieldset
 

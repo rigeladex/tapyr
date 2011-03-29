@@ -62,9 +62,7 @@ class Boat (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Boat_Class
             role_name          = "b_class"
-            Kind_Mixins        = (Attr.Init_Only_Mixin, )
             ui_name            = "Class"
-
             ui_allow_new       = True
 
         # end class left

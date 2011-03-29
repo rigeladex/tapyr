@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    21-Mar-2011 (CT) Creation
+##    29-Mar-2011 (CT) `_field` changed to set `readonly`, if necessary
 ##    ««revision-date»»···
 ##--
 #}
@@ -102,14 +103,18 @@
 
 {%- macro _field (typ, fo, elem) -%}
   {%- set id = elem.id -%}
-  {{ typ
+  {%- set kw = GTW.dict
       ( class         = elem.css_class
       , id            = id
       , name          = elem.name
       , value         = elem.init
-      , ** kwargs
       )
-  }}
+  -%}
+  {%- do kw.update (kwargs) -%}
+  {%- if elem.prefilled or elem.readonly -%}
+    {%- do kw.setdefault ("readonly", "readonly") -%}
+  {%- endif -%}
+  {{ typ (** kw) }}
 {%- endmacro -%} {#- _field -#}
 
 {#- __END__ jinja template: html/AFS/input.jnj -#}

@@ -99,9 +99,7 @@ class CSS_Defaults (Definition) :
             )
         color_spec_label       = P_dict \
             ( color            = P.R.text_color
-            # background_color = P.R.background_color # color_lighter_grey
             )
-        #color_spec_label       = color_spec_desc
         color_spec_optional    = P.R.color_spec_normal
         color_spec_necessary   = P_dict \
             ( background_color = P.R.color_light_grey

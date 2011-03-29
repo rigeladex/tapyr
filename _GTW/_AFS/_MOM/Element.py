@@ -37,6 +37,8 @@
 #     8-Mar-2011 (CT) `apply` added
 #     9-Mar-2011 (CT) `Field_Role_Hidden` added
 #    21-Mar-2011 (CT) `Field._instance_kw` added
+#    29-Mar-2011 (CT) `Field._instance_kw` changed to set `readonly`, if
+#                     necessary
 #    ««revision-date»»···
 #--
 
@@ -182,8 +184,12 @@ class _MOM_Field_ (Field) :
     def _instance_kw (self, ETM, entity, ** kw) :
         result = self.__super._instance_kw (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
-        v      = result ["value"].get ("init", "")
-        result ["cooked"] = attr.from_string (v) if v else None
+        value  = result ["value"]
+        init   = value.get ("init", "")
+        result ["cooked"] = attr.from_string (init) if init else None
+        if not kw.get ("copy", False) :
+            if (not attr.is_changeable) and init != attr.raw_default :
+                value ["readonly"] = True
         for k in "max_length", "max_value", "min_value" :
             v = getattr (attr, k, None)
             if v is not None :

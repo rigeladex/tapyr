@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -55,6 +55,7 @@
 #     5-May-2010 (CT) `Link_Cacher._auto_attr_name` changed to call `lower`
 #    11-May-2010 (CT) `_Cacher_.grn` added
 #     4-Sep-2010 (CT) Use `cache.discard` instead of `cache.remove`
+#    29-Mar-2011 (CT) `Link1.left` redefined to mixin `Init_Only_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,18 @@ class Link1 (_Ancestor_Essence) :
 
     __metaclass__         = MOM.Meta.M_Link1
     is_partial            = True
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+
+            Kind_Mixins   = (Attr.Init_Only_Mixin, )
+
+        # end class left
+
+    # end class _Attributes
 
 # end class Link1
 

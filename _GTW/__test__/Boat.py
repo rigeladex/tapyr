@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
+#    29-Mar-2011 (CT) Test for change of `Init_Only_Mixin` attribute added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,10 @@ _test_code = """
     GTW.OMP.SRM.Boat_Class (u'Optimist')
     >>> print scope.SRM.Boat_Class.count
     1
+    >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
+    >>> print scope.SRM.Boat_Class.count
+    2
+
     >>> scope.SRM.Boat_Class.query (name = u'Optimist').all ()
     [GTW.OMP.SRM.Boat_Class (u'Optimist')]
     >>> scope.SRM.Boat_Class.instance (u'Optimist')
@@ -56,6 +61,12 @@ _test_code = """
     1
     >>> scope.SRM.Boat.query_s ().all ()
     [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)]
+
+    >>> b = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 3
+    >>> b.set (left = laser)
+    Traceback (most recent call last):
+      ...
+    AttributeError: Init-only attribute `GTW.OMP.SRM.Boat.left` cannot be changed from `(u'Optimist')` to `(u'Laser')` after object creation
 
 """
 

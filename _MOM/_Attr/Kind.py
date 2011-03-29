@@ -155,6 +155,7 @@
 #                     `attr.Pickler`, if any
 #     9-Dec-2010 (CT) `_Auto_Update_Lazy_Mixin_` added
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#    29-Mar-2011 (CT) `is_changeable` and `Just_Once_Mixin` added
 #    ««revision-date»»···
 #--
 
@@ -182,6 +183,7 @@ class Kind (MOM.Prop.Kind) :
     attr                  = None
     db_sig_version        = 0
     electric              = True
+    is_changeable         = True
     is_primary            = False
     is_required           = False
     is_settable           = True
@@ -1217,19 +1219,43 @@ class Computed_Set_Mixin (Computed_Mixin) :
 
 # end class Computed_Set_Mixin
 
-class Init_Only_Mixin (Kind) :
-    """Mixin restricting attribute changes to the object initialization."""
+class Just_Once_Mixin (Kind) :
+    """Mixin allowing attribute to be set to a non-default valuer just once."""
+
+    is_changeable         = False
+    _x_format             = \
+        ( "Attribute `%s.%s` cannot be "
+          "changed from `%s` to `%s`; it can be set only once!"
+        )
+
+    def _change_forbidden (self, old_value) :
+        return old_value != self.default
+    # end def _change_forbidden
 
     def _set_cooked_value_inner (self, obj, value) :
         if obj.init_finished :
-            raise AttributeError \
-                ( _T ("Init-only attribute `%s.%s` cannot be "
-                      "changed from `%s` to `%s` after object creation"
-                     )
-                % (obj.type_name, self.name, self.get_value (obj), value)
-                )
+            old_value = self.get_value (obj)
+            if self._change_forbidden (old_value) :
+                raise AttributeError \
+                    ( _T (self._x_format)
+                    % (obj.type_name, self.name, old_value, value)
+                    )
         self.__super._set_cooked_value_inner (obj, value)
     # end def _set_cooked_value_inner
+
+# end class Just_Once_Mixin
+
+class Init_Only_Mixin (Just_Once_Mixin) :
+    """Mixin restricting attribute changes to the object initialization."""
+
+    _x_format             = \
+        ( "Init-only attribute `%s.%s` cannot be "
+          "changed from `%s` to `%s` after object creation"
+        )
+
+    def _change_forbidden (self, old_value) :
+        return True
+    # end def _change_forbidden
 
 # end class Init_Only_Mixin
 
