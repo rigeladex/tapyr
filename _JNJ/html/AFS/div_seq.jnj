@@ -86,7 +86,7 @@
 {%- endmacro -%} {#- Field_Composite -#}
 
 {%- macro Field_Entity (form, elem, renderer) -%}
-  {#- XXX honor allow_new... -#}
+  {#- XXX honor allow_new, is_changeable... -#}
   {% call do_element (form, elem, renderer) -%}
     {{ do_head (form, elem, renderer) }}
     {{ AFS.do_children (form, elem, renderer) }}

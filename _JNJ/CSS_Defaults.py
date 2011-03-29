@@ -33,6 +33,7 @@
 #                     references with `P` and `P_dict`
 #    22-Mar-2011 (CT) `afs`
 #    22-Mar-2011 (CT) `afs` continued
+#    29-Mar-2011 (CT) `afs` continued..
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,11 @@ class CSS_Defaults (Definition) :
             , style            = "solid"
             , width            = Px (1)
             )
+        border_spec_readonly   = P_Border \
+            ( color            = P.R.color_medium_grey
+            , style            = "solid"
+            , width            = Px (2)
+            )
         border_spec_section    = P_Border \
             ( color            = P.R.color_darker_grey
             , style            = "solid"
@@ -104,6 +110,10 @@ class CSS_Defaults (Definition) :
         color_spec_necessary   = P_dict \
             ( background_color = P.R.color_light_grey
             , color            = P.R.text_color
+            )
+        color_spec_readonly    = P_dict \
+            ( background_color = P.R.color_light_grey
+            , color            = P.R.color_dark_grey
             )
         color_spec_required    = P_dict \
             ( background_color = P.R.color_medium_grey
@@ -285,8 +295,8 @@ class CSS_Defaults (Definition) :
         # XXX ???
         )
 
-    outline_focus          = "1px solid "   + P.color_focus
-    outline_target         = "1px dotted "  + P.color_target
+    outline_focus          = "2px solid "   + P.color_focus
+    outline_target         = "2px dotted "  + P.color_target
 
     pg_head_height         = Px (100)
     pg_main_max_width      = Em (50)

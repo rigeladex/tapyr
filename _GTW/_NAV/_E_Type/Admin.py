@@ -83,6 +83,7 @@
 #    11-Jan-2011 (CT) `Media` for `tablesorter` added
 #    16-Mar-2011 (CT) `AFS` added
 #    16-Mar-2011 (CT) `_get_child` simplified
+#    29-Mar-2011 (CT) `AFS.form` factored
 #    ««revision-date»»···
 #--
 
@@ -175,12 +176,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def obj (self) :
             ETM = self.ETM
             pid = self.args and self.args [0]
-            return ETM.pid_query (pid)
+            if pid is not None :
+                return ETM.pid_query (pid)
         # end def obj
 
+        def form (self, obj = None) :
+            if obj is None :
+                obj = self.obj
+            return AFS_Form [self.E_Type.GTW.afs_id] (self.ETM, obj)
+        # end def form
+
         def rendered (self, handler, template = None) :
-            ETM      = self.ETM
-            E_Type   = self.E_Type
             HTTP     = self.top.HTTP
             context  = handler.context
             obj      = context ["instance"] = None
@@ -194,17 +200,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise self.top.HTTP.Error_503 (request.path)
+                raise HTTP.Error_503 (request.path)
             if pid is not None :
                 try :
-                    obj = ETM.pid_query (pid)
+                    obj = self.ETM.pid_query (pid)
                 except LookupError :
                     request.Error = \
                         ( _T ("%s `%s` doesn't exist!")
-                        % (_T (E_Type.ui_name), pid)
+                        % (_T (self.E_Type.ui_name), pid)
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
-            form  = AFS_Form [E_Type.GTW.afs_id] (ETM, obj)
+            form = self.form (obj)
             if request.method == "POST" :
                 err_count = 0
                 if req_data.get ("cancel") :
@@ -275,7 +281,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise self.top.HTTP.Error_503 (request.path)
+                raise HTTP.Error_503 (request.path)
             if request.method == "POST" :
                 err_count = 0
                 if req_data.get ("cancel") :

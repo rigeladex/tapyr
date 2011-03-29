@@ -113,6 +113,7 @@
   {%- do kw.update (kwargs) -%}
   {%- if elem.prefilled or elem.readonly -%}
     {%- do kw.setdefault ("readonly", "readonly") -%}
+    {%- do kw.setdefault ("title",    GTW._T ("Cannot be changed")) -%}
   {%- endif -%}
   {{ typ (** kw) }}
 {%- endmacro -%} {#- _field -#}

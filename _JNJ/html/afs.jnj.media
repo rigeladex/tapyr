@@ -86,8 +86,13 @@ style_sheet = Style_Sheet \
                         , children      =
                             [ Rule_Pseudo
                                 ( "focus"
+                                , P.color_spec_selected
                                 , outline                  = P.outline_focus
-                                , ** P.color_spec_selected
+                                )
+                            , Rule_Attr
+                                ( "[readonly]"
+                                , P.afs.border_spec_readonly
+                                , P.afs.color_spec_readonly
                                 )
                             ]
                         )

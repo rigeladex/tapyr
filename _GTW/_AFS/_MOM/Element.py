@@ -189,7 +189,7 @@ class _MOM_Field_ (Field) :
         result ["cooked"] = attr.from_string (init) if init else None
         if not kw.get ("copy", False) :
             if (not attr.is_changeable) and init != attr.raw_default :
-                value ["readonly"] = True
+                result ["readonly"] = True
         for k in "max_length", "max_value", "min_value" :
             v = getattr (attr, k, None)
             if v is not None :

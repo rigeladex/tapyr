@@ -43,6 +43,7 @@
 #    29-Mar-2011 (CT) `readonly` and `required` added to
 #                     `Instance.as_json_cargo`, `prefilled` moved from
 #                     `_Base_.as_json_cargo` to `Instance.as_json_cargo`
+#    29-Mar-2011 (CT) `__getattr__` changed to look in `kw` first
 #    ««revision-date»»···
 #--
 
@@ -141,8 +142,11 @@ class _Base_ (TFL.Meta.Object) :
     # end def _v_repr
 
     def __getattr__ (self, name) :
-        if name != "elem" and not name.startswith ("_") :
-            return getattr (self.elem, name)
+        if name not in ("elem", "kw") and not name.startswith ("_") :
+            try :
+                return self.kw [name]
+            except KeyError :
+                return getattr (self.elem, name)
     # end def __getattr__
 
 # end class _Base_

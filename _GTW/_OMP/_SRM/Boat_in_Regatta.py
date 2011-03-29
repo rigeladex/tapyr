@@ -118,7 +118,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
         class registration_date (A_Date) :
             """Date of registration."""
 
-            kind               = Attr.Internal
+            kind               = Attr.Optional ### XXX change back to Attr.Internal
             Kind_Mixins        = (Attr.Init_Only_Mixin, )
 
             def computed_default (self) :
