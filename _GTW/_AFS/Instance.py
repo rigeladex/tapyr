@@ -44,6 +44,7 @@
 #                     `Instance.as_json_cargo`, `prefilled` moved from
 #                     `_Base_.as_json_cargo` to `Instance.as_json_cargo`
 #    29-Mar-2011 (CT) `__getattr__` changed to look in `kw` first
+#    30-Mar-2011 (CT) `display` added
 #    ««revision-date»»···
 #--
 
@@ -161,12 +162,14 @@ class Instance (_Base_) :
     min_value   = None
     sort_json   = False
     value       = None
+    _display    = None
 
     def __init__ (self, elem, ** kw) :
         self.pop_to_self \
             ( kw
-            , "children", "cooked"
+            , "allow_new", "children", "cooked", "copy"
             , "max_length", "max_value", "min_value", "value"
+            , "_display"
             )
         self.elem = elem
         self.kw   = kw
@@ -186,6 +189,11 @@ class Instance (_Base_) :
                 result [k] = True
         return result
     # end def as_json_cargo
+
+    @Once_Property
+    def display (self) :
+        return self.elem.display (self)
+    # end def display
 
     @property
     def id (self) :

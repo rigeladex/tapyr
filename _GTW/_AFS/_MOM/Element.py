@@ -39,6 +39,7 @@
 #    21-Mar-2011 (CT) `Field._instance_kw` added
 #    29-Mar-2011 (CT) `Field._instance_kw` changed to set `readonly`, if
 #                     necessary
+#    30-Mar-2011 (CT) `display` and `_display` added
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,13 @@ class _MOM_Entity_ (Entity) :
         if v_sid != value.sid :
             raise GTW.AFS.Error.Corrupted ()
     # end def _check_sid
+
+    def _instance_kw (self, ETM, entity, ** kw) :
+        result = self.__super._instance_kw (ETM, entity, ** kw)
+        if entity is not None :
+            result ["_display"] = entity.ui_display
+        return result
+    # end def _instance_kw
 
     def _value (self, ETM, entity, ** kw) :
         assert ETM.type_name == self.type_name, \
@@ -186,7 +194,8 @@ class _MOM_Field_ (Field) :
         attr   = ETM.attributes [self.name]
         value  = result ["value"]
         init   = value.get ("init", "")
-        result ["cooked"] = attr.from_string (init) if init else None
+        result ["cooked"]   = attr.from_string (init) if init else None
+        result ["_display"] = init
         if not kw.get ("copy", False) :
             if (not attr.is_changeable) and init != attr.raw_default :
                 result ["readonly"] = True
@@ -257,6 +266,10 @@ Field_Entity = _MOM_Field_Entity_ # end class
 
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
+
+    def display (self, instance) :
+        return None
+    # end def display
 
     def _update_sid (self, result, ** kw) :
         pass

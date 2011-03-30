@@ -69,6 +69,8 @@
 #    23-Mar-2011 (CT) `_pop_to_self` factored and used in `copy`, too
 #    29-Mar-2011 (CT) `changeable` and `readonly` added
 #    29-Mar-2011 (CT) `Field._value_sig` changed to include `prefilled`
+#    30-Mar-2011 (CT) `display` and `instantiated` added
+#    30-Mar-2011 (CT) `Form.__getitem__` changed to allow nested Entity_Lists
 #    ««revision-date»»···
 #--
 
@@ -195,6 +197,18 @@ class _Element_ (TFL.Meta.Object) :
         return self.__class__ (children = children, ** ckw)
     # end def copy
 
+    def display (self, instance) :
+        return instance._display
+    # end def display
+
+    def instantiated (self, id, * args, ** kw) :
+        this = self
+        if self.id != id :
+            this = self.copy  (id = id)
+            this._id_children (id, this.children, {})
+        return this (* args, ** kw)
+    # end def instantiated
+
     def transitive_iter (self) :
         yield self
         for c in self.children :
@@ -230,8 +244,10 @@ class _Element_ (TFL.Meta.Object) :
     # end def _id_children
 
     def _instance_kw (self, * args, ** kw) :
-        return dict \
-            (value = self._value (* args, ** kw)) if self.needs_value else {}
+        result = dict (kw)
+        if self.needs_value :
+            result ["value"] = self._value (* args, ** kw)
+        return result
     # end def _instance_kw
 
     def _set_id (self, parent, i) :
@@ -330,13 +346,17 @@ class Entity_Link (Entity) :
 
     rank = 100
 
+    def display (self, instance) :
+        return "; ".join (c.display for c in instance.children if c.display)
+    # end def display
+
 # end class Entity_Link
 
 class Entity_List (_Element_List_) :
     """Model a sub-form for a list of entities."""
 
-    id_sep  = _Element_List_.list_sep
-    renderer    = "afs_div_seq"
+    id_sep   = _Element_List_.list_sep
+    renderer = "afs_div_seq"
 
     def __init__ (self, proto, ** kw) :
         self.proto   = proto
@@ -465,6 +485,10 @@ class Fieldset (_Element_) :
     id_sep      = ":"
     renderer    = "afs_div_seq"
 
+    def display (self, instance) :
+        return "; ".join (c.display for c in instance.children if c.display)
+    # end def display
+
     def _css_classes (self) :
         return self.__super._css_classes () + (self.name.capitalize (), )
     # end def _css_classes
@@ -535,14 +559,15 @@ class Form (_Element_List_) :
         try :
             return self.id_map [key]
         except KeyError :
-            h, _, t = split_hst (key, self.list_sep)
-            i, _, u = split_hst (t,   self.root_sep)
-            p = self.list_sep.join \
-                ((h, self.root_sep.join (("p", u)) if u else "p"))
-            try :
-                return self.id_map [p]
-            except KeyError :
-                raise KeyError (key)
+            l_sep = self.list_sep
+            if l_sep in key :
+                r_sep   = self.root_sep
+                h, _, t = split_hst (key, l_sep)
+                i, _, u = split_hst (t,   r_sep)
+                p_key   = l_sep.join ((h, r_sep.join (("p", u)) if u else "p"))
+                return self [p_key]
+            else :
+                raise
     # end def __getitem__
 
     @classmethod

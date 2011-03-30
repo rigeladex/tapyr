@@ -44,6 +44,8 @@
 #                     `input_widget` added
 #    28-Mar-2011 (CT) `Entity_Link._get_role_name` factored, improved
 #    29-Mar-2011 (CT) `_Field_._field_kw` changed to set `changeable`
+#    30-Mar-2011 (CT) `include_elems` added
+#    30-Mar-2011 (CT) `Entity_Link.__call__` changed to set `name` and `ui_name`
 #    ««revision-date»»···
 #--
 
@@ -102,12 +104,13 @@ class _Entity_Mixin_ (_Base_) :
     def __init__ (self, ** kw) :
         self.attr_spec = TFL.mm_dict \
             (self.attr_spec, ** kw.pop ("attr_spec", {}))
+        include_elems = kw.pop ("include_elems", ())
         include_links = tuple \
             (   (Entity_Link (l) if isinstance (l, basestring) else l)
             for l in kw.pop ("include_links", ())
             )
-        if include_links :
-            self._elems += include_links
+        for include in include_elems, include_links :
+            self._elems += include
         if "include_kind_groups" in kw :
             self.pop_to_self (kw, "include_kind_groups")
         else :
@@ -133,12 +136,7 @@ class _Entity_Mixin_ (_Base_) :
     # end def __call__
 
     def default_elements (self, E_Type) :
-        return \
-            ( Field_Group_Primary   ()
-            , Field_Group_Required  ()
-            , Field_Group_Necessary ()
-            , Field_Group_Optional  ()
-            )
+        return default_elements
     # end def default_elements
 
     def elements (self, E_Type) :
@@ -210,7 +208,8 @@ class Entity (_Entity_Mixin_) :
 class Entity_Link (Entity) :
     """Specification of a AFS sub-form for a type of link(s) of an essential MOM entity."""
 
-    Type = Element.Entity_Link
+    defaults  = dict (collapsed = True)
+    Type      = Element.Entity_Link
 
     def __init__ (self, name, * elements, ** kw) :
         self.name = name
@@ -231,6 +230,8 @@ class Entity_Link (Entity) :
             result = self.__super.__call__ (assoc, self, seen, ** kw)
         if role.max_links != 1 :
             elkw = dict (kw)
+            elkw.setdefault ("name",    result.ui_name)
+            elkw.setdefault ("ui_name", result.ui_name)
             if role.max_links > 0 :
                 elkw.setdefault (max_links = role.max_links)
             result = Element.Entity_List (proto = result, ** elkw)
@@ -286,7 +287,8 @@ class Field (_Field_) :
 class Field_Composite (_Field_Entity_Mixin_) :
     """Specification for a composite field of a AFS form."""
 
-    Type     = Element.Field_Composite
+    defaults  = dict (collapsed = True)
+    Type      = Element.Field_Composite
 
     def __init__ (self, ** kw) :
         self._elems = kw.pop  ("elements", ())
@@ -343,8 +345,9 @@ class  _Field_Group_ (_Base_) :
         for attr in self.attrs (E_Type, spec, seen) :
             name = attr.name
             if name not in seen :
-                seen.add (name)
-                yield attr.AFS_Spec (name = name, ** attr_spec [name])
+                seen.add   (name)
+                akw = dict (attr_spec [name], name = name)
+                yield attr.AFS_Spec (** akw)
     # end def fields
 
 # end class  _Field_Group_
@@ -417,6 +420,8 @@ FGP = Field_Group_Primary   ()
 FGR = Field_Group_Required  ()
 FGN = Field_Group_Necessary ()
 FGO = Field_Group_Optional  ()
+
+default_elements = (FGP, FGR, FGN, FGO)
 
 class _Hidden_Role_ (_Base_) :
     """Specification of a hidden field describing the hidden role of an

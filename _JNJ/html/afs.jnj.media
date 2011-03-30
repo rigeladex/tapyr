@@ -29,6 +29,7 @@
 #    21-Mar-2011 (CT) Creation
 #    22-Mar-2011 (CT) Creation continued
 #    23-Mar-2011 (CT) Creation continued..
+#    30-Mar-2011 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,18 @@ style_sheet = Style_Sheet \
                 , padding       = P.input_padding
                 )
             , Rule
+                ( "a.button"
+                , background_color = "inherit"
+                , color            = "inherit"
+                , float            = "right"
+                , font_size        = Percent (70)
+                , margin           = TRBL (0, Em (0.5))
+                , padding          = TRBL (Em (0.2), Em (1.5))
+                , children             =
+                    [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                    ]
+                )
+            , Rule
                 ( ".Desc"
                 , P.afs.color_spec_desc
                 , float         = "right"
@@ -59,12 +72,31 @@ style_sheet = Style_Sheet \
                 , width         = "auto"
                 )
             , Rule
+                ( ".Field_Entity"
+                , children =
+                    [ Rule
+                        ( "h2"
+                        , P.afs.color_spec_heading
+                        )
+                    ]
+                )
+            , Rule
+                ( ".Field_Composite"
+                , children =
+                    [ Rule
+                        ( "h2"
+                        , P.afs.color_spec_heading_sub
+                        )
+                    ]
+                )
+            , Rule
                 ( ".Field"
-                , padding       = TRBL (0, Px (5))
+                , padding_left  = Px (5)
                 , margin_bottom = Em (1.0)
                 , children      =
                     [ Rule
                         ( "h2"
+                        , P.afs.color_spec_label
                         , children      =
                             [ Rule
                                 ( ".Status"

@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -160,7 +160,7 @@ msgstr "Wiederholungsregeln"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Recurrence spec"
-msgstr "Wiederholungsregel"
+msgstr "Wiederholungsspezifikation"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Recurrence-spec this rule applies to."
@@ -175,8 +175,8 @@ msgstr[1] "Wiederholungsregeln"
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Recurrence_Spec"
 msgid_plural "Recurrence_Specs"
-msgstr[0] "Wiederholungsregel"
-msgstr[1] "Wiederholungsregeln"
+msgstr[0] "Wiederholungsspezifikation"
+msgstr[1] "Wiederholungsspezifikationen"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Restrict pos"

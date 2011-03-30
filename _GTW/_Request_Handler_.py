@@ -43,6 +43,7 @@
 #    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
 #    11-Mar-2011 (CT) Checking of `session_hash` moved to `session`
 #    11-Mar-2011 (CT) `username` and `current_user` added
+#    30-Mar-2011 (CT) `** kw` added to `write_json`
 #    ««revision-date»»···
 #--
 
@@ -139,7 +140,10 @@ class _Request_Handler_ (object) :
         return self.session.get ("language")
     # end def get_user_locale_codes
 
-    def write_json (self, data) :
+    def write_json (self, __data = None, ** kw) :
+        data = dict (kw)
+        if __data is not None :
+            data.update (__data)
         self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
         self.write      (json.dumps (data))
         return True

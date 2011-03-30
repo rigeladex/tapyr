@@ -30,18 +30,22 @@
 ##
 ## Revision Dates
 ##    23-Mar-2011 (CT) Creation
+##    30-Mar-2011 (CT) Use `GTW.call_macro` to call `do_children`,
+##                     `do_element`, and `do_head`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
-{%- import "html/afs.jnj" as AFS %}
-
-{%- set do_element = AFS.do_element %}
-{%- set do_head    = AFS.do_head %}
+{#- {%- import "html/AFS/div_seq.jnj" as P %} media dependency -#}
 
 {%- macro Field (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer, "FC-", class = "Field Horizo") -%}
+  {% call GTW.call_macro
+      ( "do_element"
+      , form, elem, renderer, "FC-", class = "Field Horizo"
+      , templ_name = renderer
+      )
+  -%}
     <{{ elem.het_h }}>
       <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
       <b class="Status"></b>
@@ -51,10 +55,10 @@
 {%- endmacro -%} {#- Field -#}
 
 {%- macro Field_Composite (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer) -%}
-    {{ do_head (form, elem, renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
+    {{ GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) }}
     <div>
-      {{ AFS.do_children (form, elem, renderer) }}
+      {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
     </div>
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Field_Composite -#}

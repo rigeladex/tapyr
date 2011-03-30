@@ -84,6 +84,7 @@
 #    16-Mar-2011 (CT) `AFS` added
 #    16-Mar-2011 (CT) `_get_child` simplified
 #    29-Mar-2011 (CT) `AFS.form` factored
+#    30-Mar-2011 (CT) `Expander` started
 #    ««revision-date»»···
 #--
 
@@ -366,7 +367,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if not any (x is None for x in (form_cls, pid)) :
                     if completer.complete (form_cls, handler, pid) :
                         return True ### prevent an 404 Error if we return None
-            raise self.top.HTTP.Error_404 (request.path)
         # end def rendered
 
     # end class Completed
@@ -393,6 +393,46 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         # end def _view
 
     # end class Deleter
+
+    class Expander (_Cmd_) :
+        """Expand a sub-form (e.g., Entity_Link)"""
+
+        SUPPORTED_METHODS = set (("GET", ))
+
+        def rendered (self, handler, template = None) :
+            request  = handler.request
+            req_data = request.req_data
+            scope    = self.top.scope
+            fid      = req_data.get ("fid")
+            pid      = req_data.get ("pid")
+            if fid and pid :
+                try :
+                    form = AFS_Form [fid]
+                    elem = form     [fid]
+                except KeyError :
+                    return handler.write_json \
+                        (error  = _T ("Form corrupted, unknown element id"))
+                ETM = scope [elem.type_name]
+                if pid is not None :
+                    try :
+                        obj = ETM.pid_query (pid)
+                    except LookupError :
+                        return handler.write_json \
+                            ( error  =
+                                ( _T ("%s `%s` doesn't exist!")
+                                % (_T (elem.ui_name), pid)
+                                )
+                            )
+                fi = elem.instantiated (fid, ETM, obj, collapsed = False)
+                renderer = self.top.Templateer.get_template (fi.renderer)
+                return handler.write_json \
+                    ( html  = renderer.call_macro
+                        (fi.widget, fi, fi, fi.renderer)
+                    , value = fi.as_json_cargo
+                    )
+        # end def rendered
+
+    # end class Expander
 
     class _Inline_ (_Cmd_) :
         """Base class for children with need access to the inline."""
@@ -635,6 +675,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , completed = (Completed, "forms", None)
         , create    = (Changer,   "args",  0)
         , delete    = (Deleter,   "args",  1)
+        , expand    = (Expander,  "args",  0)
         , fields    = (Fields,    "forms", None)
         , form      = (HTML_Form, "forms", None)
         , test      = (Test,      "forms", None)

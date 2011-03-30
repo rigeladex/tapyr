@@ -34,6 +34,7 @@
 #    22-Mar-2011 (CT) `afs`
 #    22-Mar-2011 (CT) `afs` continued
 #    29-Mar-2011 (CT) `afs` continued..
+#    30-Mar-2011 (CT) `afs` continued...
 #    ««revision-date»»···
 #--
 
@@ -47,8 +48,10 @@ _C.formatter = RGB_X
 class CSS_Defaults (Definition) :
     """Provide defaults for CSS fragments in html/*.css"""
 
+    color_desc             = RGB_X     ("#666666")
     color_focus            = SVG_Color ("yellow")
     color_heading          = RGB_X     ("#34444D")
+    color_heading_sub      = RGB_X     ("#56666F")
     color_lighter_grey     = RGB_X     ("#EDEDED")
     color_light_grey       = RGB_X     ("#DEDEDE")
     color_medium_grey      = RGB_X     ("#BEBEBE")
@@ -96,15 +99,20 @@ class CSS_Defaults (Definition) :
             , width            = TRBL0 (l = Px (2), default = Px (1))
             )
         color_spec_desc        = P_dict \
-            ( background_color = RGB_X ("#666666")
+            ( background_color = P.R.color_desc
             , color            = P.R.background_color
             )
         color_spec_heading     = P_dict \
             ( background_color = P.R.color_heading
             , color            = P.R.background_color
             )
+        color_spec_heading_sub = P_dict \
+            ( background_color = P.R.color_heading_sub
+            , color            = P.R.background_color
+            )
         color_spec_label       = P_dict \
-            ( color            = P.R.text_color
+            ( background_color = "inherit"
+            , color            = P.R.text_color
             )
         color_spec_optional    = P.R.color_spec_normal
         color_spec_necessary   = P_dict \

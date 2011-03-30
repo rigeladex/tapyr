@@ -30,39 +30,69 @@
 ## Revision Dates
 ##    21-Mar-2011 (CT) Creation
 ##    22-Mar-2011 (CT) Creation continued
+##    30-Mar-2011 (CT) Use `GTW.call_macro` to call `do_children`,
+##                     `do_element`, and `do_head`
+##    30-Mar-2011 (CT) `button` instances added
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
-{%- import "html/afs.jnj" as AFS %}
-
-{%- set do_element = AFS.do_element %}
-{%- set do_head    = AFS.do_head %}
+{#- {%- import "html/afs.jnj" as AFS %} media dependency -#}
 
 {%- macro Entity (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer) -%}
-    {{ do_head (form, elem, renderer) }}
-    {{ AFS.do_children (form, elem, renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
+    {% call GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) -%}
+      <a href="#Save" class="button">{{GTW._T ("Save")}}</a>
+    {% endcall %} {# do_head #}
+    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity -#}
 
 {%- macro Entity_Link (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer) -%}
-    {{ do_head (form, elem, renderer) }}
-    {{ AFS.do_children (form, elem, renderer) }}
+  {% call GTW.call_macro
+      ("do_element"
+      , form, elem, renderer, class = "collapsed" if elem.collapsed else ""
+      , templ_name = renderer
+      )
+  -%}
+    {% call GTW.call_macro
+        ( "do_head"
+        , form, elem, renderer, head = elem.display if elem.collapsed else None
+        , templ_name = renderer
+        )
+   -%}
+      <a href="#Delete" class="button">{{GTW._T ("Delete")}}</a>
+      {%- if elem.collapsed %}
+        <a href="#Copy" class="button">{{GTW._T ("Copy")}}</a>
+        <a href="#Edit" class="button">{{GTW._T ("Edit")}}</a>
+      {%- else %}
+        <a href="#Save" class="button">{{GTW._T ("Save")}}</a>
+      {% endif -%}
+    {% endcall %} {# do_head #}
+    {%- if not elem.collapsed %}
+      {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+    {% endif -%}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity_Link -#}
 
 {%- macro Entity_List (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer) -%}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
     {#- XXX Legend, controls, ... -#}
-    {{ AFS.do_children (form, elem, renderer) }}
+    {% call GTW.call_macro ("do_head", form, elem, renderer, 65535, templ_name = renderer) -%}
+      <a href="#Add" class="button">{{GTW._T ("Add")}}</a>
+    {% endcall %} {# do_head #}
+    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity_List -#}
 
 {%- macro Field (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer, "FC-", class = "Field") -%}
+  {% call GTW.call_macro
+      ( "do_element"
+      , form, elem, renderer, "FC-", class = "Field"
+      , templ_name = renderer
+      )
+  -%}
     {%- set desc = GTW._T (elem.description)|safe %}
     {%- if desc -%}
       {%- set expl = GTW._T (elem.explanation)|safe %}
@@ -79,17 +109,17 @@
 {%- endmacro -%} {#- Field -#}
 
 {%- macro Field_Composite (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer) -%}
-    {{ do_head (form, elem, renderer) }}
-    {{ AFS.do_children (form, elem, renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
+    {{ GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Field_Composite -#}
 
 {%- macro Field_Entity (form, elem, renderer) -%}
   {#- XXX honor allow_new, is_changeable... -#}
-  {% call do_element (form, elem, renderer) -%}
-    {{ do_head (form, elem, renderer) }}
-    {{ AFS.do_children (form, elem, renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
+    {{ GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Field_Entity -#}
 
@@ -97,9 +127,9 @@
 {%- endmacro -%} {#- Field_Role_Hidden -#}
 
 {%- macro Fieldset (form, elem, renderer) -%}
-  {% call do_element (form, elem, renderer) -%}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
     {#- XXX Legend -#}
-    {{ AFS.do_children (form, elem, renderer) }}
+    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Fieldset -#}
 

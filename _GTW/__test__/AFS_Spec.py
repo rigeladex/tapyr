@@ -67,7 +67,7 @@ _test_code = """
        <Field None 'start'>
        <Field None 'finish'>
       <Field None 'salutation'>
-     <Entity_List None <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
+     <Entity_List None 'Person_has_Address' <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
       <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
        <Fieldset None 'primary'>
@@ -78,7 +78,7 @@ _test_code = """
          <Field None 'country'>
        <Fieldset None 'optional'>
         <Field None 'desc'>
-     <Entity_List None <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>>
+     <Entity_List None 'Person_has_Email' <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>>
       <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
        <Fieldset None 'primary'>
@@ -86,7 +86,7 @@ _test_code = """
          <Field None 'address'>
        <Fieldset None 'optional'>
         <Field None 'desc'>
-     <Entity_List None <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>>
+     <Entity_List None 'Person_has_Phone' <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>>
       <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
        <Fieldset None 'primary'>
@@ -114,7 +114,7 @@ _test_code = """
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
-    Entity_List None None u'' afs_div_seq
+    Entity_List Person_has_Address Person_has_Address u'' afs_div_seq
     Entity_Link Person_has_Address Person_has_Address u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
@@ -125,7 +125,7 @@ _test_code = """
     Field country Country u'Country' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List None None u'' afs_div_seq
+    Entity_List Person_has_Email Person_has_Email u'' afs_div_seq
     Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
@@ -133,7 +133,7 @@ _test_code = """
     Field address Email address u'Email address (including domain)' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List None None u'' afs_div_seq
+    Entity_List Person_has_Phone Person_has_Phone u'' afs_div_seq
     Entity_Link Person_has_Phone Person_has_Phone u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
@@ -164,7 +164,7 @@ _test_code = """
       <Field None 'format'>
       <Field None 'head_line'>
       <Field None 'prio'>
-     <Entity_List None <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>>
+     <Entity_List None 'Event' <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>>
       <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.SWP.Page'>
        <Fieldset None 'primary'>
@@ -182,7 +182,7 @@ _test_code = """
         <Fieldset None 'optional'>
          <Field None 'dates'>
          <Field None 'date_exceptions'>
-        <Entity_List None <Entity_Link None 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
+        <Entity_List None 'Recurrence_Rule' <Entity_Link None 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
          <Entity_Link None 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>
           <Field_Role_Hidden None u'left' 'GTW.OMP.EVT.Recurrence_Spec'>
           <Fieldset None 'primary'>
@@ -219,7 +219,7 @@ _test_code = """
        <Field F-0:3:1 'format'>
        <Field F-0:3:2 'head_line'>
        <Field F-0:3:3 'prio'>
-      <Entity_List F-0:4 <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>>
+      <Entity_List F-0:4 'Event' <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>>
        <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>
         <Field_Role_Hidden F-0:4::p-0 u'left' 'GTW.OMP.SWP.Page'>
         <Fieldset F-0:4::p-1 'primary'>
@@ -237,7 +237,7 @@ _test_code = """
          <Fieldset F-0:4::p-3:1 'optional'>
           <Field F-0:4::p-3:1:0 'dates'>
           <Field F-0:4::p-3:1:1 'date_exceptions'>
-         <Entity_List F-0:4::p-3:2 <Entity_Link F-0:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
+         <Entity_List F-0:4::p-3:2 'Recurrence_Rule' <Entity_Link F-0:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
           <Entity_Link F-0:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>
            <Field_Role_Hidden F-0:4::p-3:2::p-0 u'left' 'GTW.OMP.EVT.Recurrence_Spec'>
            <Fieldset F-0:4::p-3:2::p-1 'primary'>
@@ -288,7 +288,7 @@ _test_code = """
        <Field X-1:3:1 'format'>
        <Field X-1:3:2 'head_line'>
        <Field X-1:3:3 'prio'>
-      <Entity_List X-1:4 <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>>
+      <Entity_List X-1:4 'Event' <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>>
        <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>
         <Field_Role_Hidden X-1:4::p-0 u'left' 'GTW.OMP.SWP.Page'>
         <Fieldset X-1:4::p-1 'primary'>
@@ -306,7 +306,7 @@ _test_code = """
          <Fieldset X-1:4::p-3:1 'optional'>
           <Field X-1:4::p-3:1:0 'dates'>
           <Field X-1:4::p-3:1:1 'date_exceptions'>
-         <Entity_List X-1:4::p-3:2 <Entity_Link X-1:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
+         <Entity_List X-1:4::p-3:2 'Recurrence_Rule' <Entity_Link X-1:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
           <Entity_Link X-1:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>
            <Field_Role_Hidden X-1:4::p-3:2::p-0 u'left' 'GTW.OMP.EVT.Recurrence_Spec'>
            <Fieldset X-1:4::p-3:2::p-1 'primary'>
@@ -338,7 +338,7 @@ _test_code = """
        <Field FB-0:0:2 'sail_number'>
       <Fieldset FB-0:1 'optional'>
        <Field FB-0:1:0 'name'>
-      <Entity_List FB-0:2 <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>>
+      <Entity_List FB-0:2 'Boat_in_Regatta' <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>>
        <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>
         <Field_Role_Hidden FB-0:2::p-0 u'left' 'GTW.OMP.SRM.Boat'>
         <Fieldset FB-0:2::p-1 'primary'>
@@ -490,6 +490,7 @@ _test_code = """
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     ]
+                                                , 'collapsed' : True
                                                 , 'kind' : 'primary'
                                                 , 'label' : 'Date'
                                                 , 'name' : 'date'
@@ -658,6 +659,7 @@ _test_code = """
                               , 'type' : 'Fieldset'
                               }
                             ]
+                        , 'collapsed' : True
                         , 'name' : 'Boat_in_Regatta'
                         , 'role_name' : 'left'
                         , 'type' : 'Entity_Link'
@@ -671,6 +673,7 @@ _test_code = """
                             }
                         }
                       ]
+                  , 'name' : 'Boat_in_Regatta'
                   , 'type' : 'Entity_List'
                   }
                 ]
@@ -800,6 +803,7 @@ _test_code = """
                                                           { 'init' : '2008/05/01' }
                                                       }
                                                     ]
+                                                , 'collapsed' : True
                                                 , 'kind' : 'primary'
                                                 , 'label' : 'Date'
                                                 , 'name' : 'date'
@@ -960,6 +964,7 @@ _test_code = """
                               , 'type' : 'Fieldset'
                               }
                             ]
+                        , 'collapsed' : True
                         , 'name' : 'Boat_in_Regatta'
                         , 'role_name' : 'left'
                         , 'type' : 'Entity_Link'
@@ -971,6 +976,7 @@ _test_code = """
                             }
                         }
                       ]
+                  , 'name' : 'Boat_in_Regatta'
                   , 'type' : 'Entity_List'
                   }
                 ]
@@ -990,9 +996,9 @@ _test_code = """
       }
 
     >>> print "var f =", fi.as_js, ";"
-    var f = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {"cid": 1, "pid": 1}, "sid": "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {"cid": 5, "pid": 5}, "sid": "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {"cid": 6, "pid": 6}, "sid": "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {"cid": 3, "pid": 3}, "sid": "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {"cid": 4, "pid": 4}, "sid": "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {"cid": 7, "pid": 7}, "sid": "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"}}], "type": "Entity_List"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}, "sid": "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"}}], "type": "Form", "value": {"sid": 0}}) ;
+    var f = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {"cid": 1, "pid": 1}, "sid": "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "collapsed": true, "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {"cid": 5, "pid": 5}, "sid": "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {"cid": 6, "pid": 6}, "sid": "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {"cid": 3, "pid": 3}, "sid": "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {"cid": 4, "pid": 4}, "sid": "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "collapsed": true, "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {"cid": 7, "pid": 7}, "sid": "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"}}], "name": "Boat_in_Regatta", "type": "Entity_List"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}, "sid": "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"}}], "type": "Form", "value": {"sid": 0}}) ;
     >>> print "var g =", fic.as_js, ";"
-    var g = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {}, "sid": "HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {}, "sid": "1Z9hfbsHgB1KybgyzkYXalFgapWHnTywXWXNhQ"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {}, "sid": "AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {}, "sid": ":CnlnOHl-3LHWlvhvRsfJ:5CYjsfP6AH-s2JMw"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {}, "sid": "f9Y99OzpLtFRbjkwQeRa114VVNAr9lXxQDYf0A"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {}, "sid": "yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg"}}], "type": "Entity_List"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {}, "sid": "DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA"}}], "type": "Form", "value": {"sid": 0}}) ;
+    var g = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {}, "sid": "HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "collapsed": true, "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {}, "sid": "1Z9hfbsHgB1KybgyzkYXalFgapWHnTywXWXNhQ"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {}, "sid": "AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {}, "sid": ":CnlnOHl-3LHWlvhvRsfJ:5CYjsfP6AH-s2JMw"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {}, "sid": "f9Y99OzpLtFRbjkwQeRa114VVNAr9lXxQDYf0A"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "collapsed": true, "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {}, "sid": "yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg"}}], "name": "Boat_in_Regatta", "type": "Entity_List"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {}, "sid": "DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA"}}], "type": "Form", "value": {"sid": 0}}) ;
 
     >>> for i in fi.transitive_iter () :
     ...     print i.elem, sorted (i.value or ())
@@ -1005,7 +1011,7 @@ _test_code = """
     <Field FB-0:0:2 'sail_number'> ['init']
     <Fieldset FB-0:1 'optional'> []
     <Field FB-0:1:0 'name'> []
-    <Entity_List FB-0:2 <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>> []
+    <Entity_List FB-0:2 'Boat_in_Regatta' <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>> []
     <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> ['init', 'sid']
     <Field_Role_Hidden FB-0:2::0-0 u'left' 'GTW.OMP.SRM.Boat'> ['init']
     <Fieldset FB-0:2::0-1 'primary'> []
@@ -1370,8 +1376,8 @@ _test_code = """
     <Field FP-0:2:0.0 'start'> []
     <Field FP-0:2:0.1 'finish'> []
     <Field FP-0:2:1 'salutation'> []
-    <Entity_List FP-0:3 <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
-    <Entity_List FP-0:4 <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
+    <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
+    <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
     <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [('init', {'pid': 11, 'cid': 14}), ('sid', 'sNPm0JkwXazZszolcExEKULzHp05nkNbfu1VhQ')]
     <Field_Role_Hidden FP-0:4::0-0 u'left' 'GTW.OMP.PAP.Person'> [('init', {'pid': 8, 'cid': 11})]
     <Fieldset FP-0:4::0-1 'primary'> []
@@ -1379,7 +1385,7 @@ _test_code = """
     <Field FP-0:4::0-1:0:0 'address'> [('init', u'laurens.tanzer@gmail.com')]
     <Fieldset FP-0:4::0-2 'optional'> []
     <Field FP-0:4::0-2:0 'desc'> []
-    <Entity_List FP-0:5 <Entity_Link FP-0:5::p 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>> []
+    <Entity_List FP-0:5 'Person_has_Phone' <Entity_Link FP-0:5::p 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>> []
 
     >>> for i in fip.transitive_iter () :
     ...     e = i.elem
@@ -1398,8 +1404,8 @@ _test_code = """
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
-    Entity_List None  u'' afs_div_seq
-    Entity_List None  u'' afs_div_seq
+    Entity_List Person_has_Address Person_has_Address u'' afs_div_seq
+    Entity_List Person_has_Email Person_has_Email u'' afs_div_seq
     Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary  u'' afs_div_seq
@@ -1407,7 +1413,7 @@ _test_code = """
     Field address Email address u'Email address (including domain)' None
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List None  u'' afs_div_seq
+    Entity_List Person_has_Phone Person_has_Phone u'' afs_div_seq
 
 """
 
