@@ -85,6 +85,7 @@
 #    16-Mar-2011 (CT) `_get_child` simplified
 #    29-Mar-2011 (CT) `AFS.form` factored
 #    30-Mar-2011 (CT) `Expander` started
+#    31-Mar-2011 (CT) `Expander` continued, `href_expand` added
 #    ««revision-date»»···
 #--
 
