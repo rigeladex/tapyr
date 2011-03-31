@@ -52,7 +52,7 @@
 {%- macro Entity_Link (form, elem, renderer) -%}
   {% call GTW.call_macro
       ("do_element"
-      , form, elem, renderer, class = "collapsed" if elem.collapsed else ""
+      , form, elem, renderer, class = "closed" if elem.collapsed else ""
       , templ_name = renderer
       )
   -%}

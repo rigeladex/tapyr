@@ -64,6 +64,10 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
+                ( ".closed h1"
+                , P.afs.color_spec_heading_closed
+                )
+            , Rule
                 ( ".Desc"
                 , P.afs.color_spec_desc
                 , float         = "right"

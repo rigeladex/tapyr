@@ -71,6 +71,7 @@
 #    29-Mar-2011 (CT) `Field._value_sig` changed to include `prefilled`
 #    30-Mar-2011 (CT) `display` and `instantiated` added
 #    30-Mar-2011 (CT) `Form.__getitem__` changed to allow nested Entity_Lists
+#    31-Mar-2011 (CT) `Entity_List` changed to redefine `.instantiated`
 #    ««revision-date»»···
 #--
 
@@ -376,6 +377,12 @@ class Entity_List (_Element_List_) :
     def copy (self, ** kw) :
         return self.__super.copy (proto = self.proto.copy (), ** kw)
     # end def copy
+
+    def instantiated (self, id, * args, ** kw) :
+        child_id = kw.pop ("child_id")
+        child    = self.new_child (child_id, {})
+        return child (* args, ** kw)
+    # end def instantiated
 
     def new_child (self, i, id_map) :
         result = self.proto.copy ()

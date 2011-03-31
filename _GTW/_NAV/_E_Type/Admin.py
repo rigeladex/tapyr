@@ -404,8 +404,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             req_data = request.req_data
             scope    = self.top.scope
             fid      = req_data.get ("fid")
-            pid      = req_data.get ("pid")
-            if fid and pid :
+            if fid :
                 try :
                     form = AFS_Form [fid]
                     elem = form     [fid]
@@ -413,6 +412,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     return handler.write_json \
                         (error  = _T ("Form corrupted, unknown element id"))
                 ETM = scope [elem.type_name]
+                pid = req_data.get ("pid")
                 if pid is not None :
                     try :
                         obj = ETM.pid_query (pid)
@@ -423,12 +423,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                 % (_T (elem.ui_name), pid)
                                 )
                             )
-                fi = elem.instantiated (fid, ETM, obj, collapsed = False)
+                ikw = dict \
+                    ( collapsed = False
+                    , copy      = req_data.get ("copy", False)
+                    )
+                child_id = req_data.get ("child_id")
+                if child_id is not None :
+                    ikw ["child_id"] = child_id
+                fi = elem.instantiated (fid, ETM, obj, ** ikw)
                 renderer = self.top.Templateer.get_template (fi.renderer)
                 return handler.write_json \
-                    ( html  = renderer.call_macro
+                    ( html = renderer.call_macro
                         (fi.widget, fi, fi, fi.renderer)
-                    , value = fi.as_json_cargo
+                    , json = fi.as_json_cargo
                     )
         # end def rendered
 
@@ -626,6 +633,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if man :
             return man.href_display (obj)
     # end def href_display
+
+    def href_expand (self, obj = None) :
+        return pjoin (self.abs_href, "expand")
+    # end def href_delete
 
     def is_current_dir (self, nav_page) :
         p = nav_page.href

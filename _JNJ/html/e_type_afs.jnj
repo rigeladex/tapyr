@@ -29,6 +29,8 @@
 ##
 ## Revision Dates
 ##    17-Mar-2011 (CT) Creation
+##    29-Mar-2011 (CT) Creation continued
+##    31-Mar-2011 (CT) Creation continued..
 ##    ««revision-date»»···
 ##--
 #}
@@ -41,6 +43,12 @@
 
 {%- block body -%}
   {{ super () }}
-  <script>$("#{{ form.id }}").afs_form ({{ form.as_js }});</script>
+  <script>
+    $("#{{ form.id }}").afs_form
+      ( {{ form.as_js }}
+      , { expander_url : "{{ page.href_expand () }}"
+        }
+      );
+  </script>
 {%- endblock body -%}
 {#- __END__ jinja template: html/e_type_afs.jnj -#}

@@ -51,7 +51,8 @@ class CSS_Defaults (Definition) :
     color_desc             = RGB_X     ("#666666")
     color_focus            = SVG_Color ("yellow")
     color_heading          = RGB_X     ("#34444D")
-    color_heading_sub      = RGB_X     ("#56666F")
+    color_heading_closed   = RGB_X     ("#56666E")
+    color_heading_sub      = RGB_X     ("#78888F")
     color_lighter_grey     = RGB_X     ("#EDEDED")
     color_light_grey       = RGB_X     ("#DEDEDE")
     color_medium_grey      = RGB_X     ("#BEBEBE")
@@ -104,6 +105,10 @@ class CSS_Defaults (Definition) :
             )
         color_spec_heading     = P_dict \
             ( background_color = P.R.color_heading
+            , color            = P.R.background_color
+            )
+        color_spec_heading_closed = P_dict \
+            ( background_color = P.R.color_heading_closed
             , color            = P.R.background_color
             )
         color_spec_heading_sub = P_dict \
