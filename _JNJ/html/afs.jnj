@@ -31,6 +31,7 @@
 ##    20-Mar-2011 (CT) `_elem_div` factored, `renderer` argument added
 ##    21-Mar-2011 (CT) `html/AFS/div_seq.jnj` factored
 ##    30-Mar-2011 (CT) `do_head` changed to allow `caller`, `head` and `n` added
+##    31-Mar-2011 (CT) `do_button` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,6 +39,10 @@
 {%- import html_version as X -%}
 {%- import "html/form.jnj" as FM %}
 {#- {%- include "html/AFS/input.jnj" %} media dependency -#}
+
+{%- macro do_button (name) -%}
+  <a class="{{ name.lower () }} button">{{GTW._T (name)}}</a>
+{%- endmacro -%} {#- do_button -#}
 
 {%- macro do_children (form, elem, renderer) -%}
   {%- set renderer = elem.renderer or renderer %}

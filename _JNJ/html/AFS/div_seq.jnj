@@ -33,6 +33,7 @@
 ##    30-Mar-2011 (CT) Use `GTW.call_macro` to call `do_children`,
 ##                     `do_element`, and `do_head`
 ##    30-Mar-2011 (CT) `button` instances added
+##    31-Mar-2011 (CT) `do_button` factored
 ##    ««revision-date»»···
 ##--
 #}
@@ -43,7 +44,7 @@
 {%- macro Entity (form, elem, renderer) -%}
   {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
     {% call GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) -%}
-      <a href="#Save" class="button">{{GTW._T ("Save")}}</a>
+      {{ GTW.call_macro ("do_button", "Save", templ_name = renderer) }}
     {% endcall %} {# do_head #}
     {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
@@ -62,12 +63,13 @@
         , templ_name = renderer
         )
    -%}
-      <a href="#Delete" class="button">{{GTW._T ("Delete")}}</a>
+      {{ GTW.call_macro ("do_button", "Delete",   templ_name = renderer) }}
       {%- if elem.collapsed %}
-        <a href="#Copy" class="button">{{GTW._T ("Copy")}}</a>
-        <a href="#Edit" class="button">{{GTW._T ("Edit")}}</a>
+        {{ GTW.call_macro ("do_button", "Copy",   templ_name = renderer) }}
+        {{ GTW.call_macro ("do_button", "Edit",   templ_name = renderer) }}
       {%- else %}
-        <a href="#Save" class="button">{{GTW._T ("Save")}}</a>
+        {{ GTW.call_macro ("do_button", "Save",   templ_name = renderer) }}
+        {{ GTW.call_macro ("do_button", "Cancel", templ_name = renderer) }}
       {% endif -%}
     {% endcall %} {# do_head #}
     {%- if not elem.collapsed %}
@@ -80,7 +82,7 @@
   {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
     {#- XXX Legend, controls, ... -#}
     {% call GTW.call_macro ("do_head", form, elem, renderer, 65535, templ_name = renderer) -%}
-      <a href="#Add" class="button">{{GTW._T ("Add")}}</a>
+      {{ GTW.call_macro ("do_button", "Add", templ_name = renderer) }}
     {% endcall %} {# do_head #}
     {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}

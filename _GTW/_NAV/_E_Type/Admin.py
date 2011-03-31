@@ -426,7 +426,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                             )
                 ikw = dict \
                     ( collapsed = False
-                    , copy      = req_data.get ("copy", False)
+                    , copy      = req_data.get ("copy")
                     )
                 child_id = req_data.get ("child_id")
                 if child_id is not None :

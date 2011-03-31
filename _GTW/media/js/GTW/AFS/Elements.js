@@ -97,7 +97,6 @@
           }
         , setup_value : function setup_value (kw) {
               var i, l, child;
-              var cls = this.constructor;
               var new_kw =
                   {anchor : kw.anchor, root : kw.root, roots : kw.roots};
               if (this ["value"] !== undefined) {
@@ -115,11 +114,11 @@
                   }
               }
           }
-        , _setup_value : function _sv_anchored (kw, new_kw) {
+        , _setup_value : function _setup_value (kw, new_kw) {
               kw.anchor.value [this.$id] = this.value;
               kw.anchor.value ["$child_ids"].push (this.$id);
           }
-        , _sv_anchored_or_root : function _sv_anchored (kw, new_kw) {
+        , _sv_anchored_or_root : function _sv_anchored_or_root (kw, new_kw) {
               new_kw.anchor = this;
               this.value.$id = this.$id;
               this.value.$child_ids = [];
@@ -132,7 +131,7 @@
                   this.value ["$anchor_id"] = kw.anchor.$id;
               }
           }
-        , _sv_root : function _sv_anchored (kw, new_kw) {
+        , _sv_root : function _sv_root (kw, new_kw) {
               kw.roots.push (this);
               new_kw.root = this;
           }
@@ -140,7 +139,7 @@
       , { type_name : "Element" }
     );
     var Entity = Element.extend (
-        { _setup_value : function _sv_anchored (kw, new_kw) {
+        { _setup_value : function _setup_value (kw, new_kw) {
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._sv_root             (kw, new_kw);
@@ -149,7 +148,7 @@
       , { type_name : "Entity" }
     );
     var Entity_Link = Element.extend (
-        { _setup_value : function _sv_anchored (kw, new_kw) {
+        { _setup_value : function _setup_value (kw, new_kw) {
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_root             (kw, new_kw);
           }
@@ -161,11 +160,17 @@
       , { type_name : "Entity_List" }
     );
     var Field = Element.extend (
-        {}
+        { _setup_value : function _setup_value (kw, new_kw) {
+              if (! this.value ["init"]) {
+                  this.value.init = "";
+              }
+              this._super (kw, new_kw);
+          }
+        }
       , { type_name : "Field" }
     );
     var Field_Composite = Element.extend (
-        { _setup_value : function _sv_anchored (kw, new_kw) {
+        { _setup_value : function _setup_value (kw, new_kw) {
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
@@ -174,7 +179,7 @@
       , { type_name : "Field_Composite" }
     );
     var Field_Entity = Element.extend (
-        { _setup_value : function _sv_anchored (kw, new_kw) {
+        { _setup_value : function _setup_value (kw, new_kw) {
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
@@ -183,7 +188,7 @@
       , { type_name : "Field_Entity" }
     );
     var Field_Role_Hidden = Element.extend (
-        { _setup_value : function _sv_anchored (kw, new_kw) {
+        { _setup_value : function _setup_value (kw, new_kw) {
               if (! this.value ["init"]) {
                   this.value.edit =
                       Elements.id_map [kw.root.$anchor_id].value.edit;
