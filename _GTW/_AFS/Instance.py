@@ -167,7 +167,7 @@ class Instance (_Base_) :
     def __init__ (self, elem, ** kw) :
         self.pop_to_self \
             ( kw
-            , "allow_new", "children", "cooked", "copy"
+            , "allow_new", "children", "collapsed", "cooked", "copy"
             , "max_length", "max_value", "min_value", "value"
             , "_display"
             )

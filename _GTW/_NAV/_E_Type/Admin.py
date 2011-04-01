@@ -86,6 +86,7 @@
 #    29-Mar-2011 (CT) `AFS.form` factored
 #    30-Mar-2011 (CT) `Expander` started
 #    31-Mar-2011 (CT) `Expander` continued, `href_expand` added
+#     1-Apr-2011 (CT) `Expander` continued..
 #    ««revision-date»»···
 #--
 
@@ -206,7 +207,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise HTTP.Error_503 (request.path)
             if pid is not None :
                 try :
-                    obj = self.ETM.pid_query (pid)
+                    obj = context ["instance"] = self.ETM.pid_query (pid)
                 except LookupError :
                     request.Error = \
                         ( _T ("%s `%s` doesn't exist!")
@@ -401,6 +402,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         SUPPORTED_METHODS = set (("GET", ))
 
         def rendered (self, handler, template = None) :
+            context  = handler.context
+            obj      = context ["instance"] = None
             request  = handler.request
             req_data = request.req_data
             scope    = self.top.scope
@@ -416,7 +419,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 pid = req_data.get ("pid")
                 if pid is not None :
                     try :
-                        obj = ETM.pid_query (pid)
+                        obj = context ["instance"] = ETM.pid_query (pid)
                     except LookupError :
                         return handler.write_json \
                             ( error  =

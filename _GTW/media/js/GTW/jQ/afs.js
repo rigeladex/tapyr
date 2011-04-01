@@ -16,6 +16,7 @@
 // Revision Dates
 //    29-Mar-2011 (CT) Creation
 //    31-Mar-2011 (CT) Creation continued
+//     1-Apr-2011 (CT) Creation continued..
 //    ««revision-date»»···
 //--
 
@@ -26,30 +27,75 @@
               }
             , opts || {}
             );
-        var edit = function edit (ev, opts) {
-            var b$    = $(this);
-            var s     = b$.closest ("section.closed");
-            var id    = s.attr ("id");
-            var elem  = $GTW.AFS.Elements.get (id);
-            var value = elem ["value"];
-            var pid   = value && value.edit.pid;
-            var cargo = $.extend
-                ( { fid     : id
-                  , pid     : pid
-                  }
-                , opts || {}
-                );
+        var add_cb = function add_cb (ev) {
+            var b$       = $(this);
+            var s$       = b$.closest ("section");
+            var id       = s$.attr    ("id");
+            var parent   = $GTW.AFS.Elements.get (id);
+            var child_id = parent.new_child_id ();
             $.getJSON
-                ( options.expander_url, cargo
+                ( options.expander_url
+                , { fid      : id
+                  , child_id : child_id
+                  }
                 , function (response) {
                       if (response) {
-                          alert (elem.name + "[" + pid + "]: "+ response.html);
-                          // XXX
+                          s$.append (response.html);
+                          // alert ($GTW.inspect.show (response.json, undefined, 1));
+                          // XXX merge response.json
                       }
                   }
                 );
         };
-        var field_change = function field_change (ev) {
+        var copy_cb = function copy_cb (ev) {
+            var b$       = $(this);
+            var s$       = b$.closest ("section.closed");
+            var p$       = s$.parent  ();
+            var id       = s$.attr    ("id");
+            var elem     = $GTW.AFS.Elements.get (id);
+            var value    = elem ["value"];
+            var pid      = value && value.edit.pid;
+            var parent   = $GTW.AFS.Elements.get (p$.attr ("id"));
+            var child_id = parent.new_child_id ();
+            // alert ($GTW.inspect.show ($GTW.AFS.Elements.get (p$.attr ("id")), undefined, 1));
+            $.getJSON
+                ( options.expander_url
+                , { fid      : id
+                  , pid      : pid
+                  , child_id : child_id
+                  , copy     : true
+                  }
+                , function (response) {
+                      if (response) {
+                          p$.append (response.html);
+                          // alert ($GTW.inspect.show (response.json, undefined, 1));
+                          // XXX merge response.json
+                      }
+                  }
+                );
+        };
+        var edit_cb = function edit_cb (ev) {
+            var b$    = $(this);
+            var s$    = b$.closest ("section.closed");
+            var id    = s$.attr    ("id");
+            var elem  = $GTW.AFS.Elements.get (id);
+            var value = elem ["value"];
+            var pid   = value && value.edit.pid;
+            $.getJSON
+                ( options.expander_url
+                , { fid      : id
+                  , pid      : pid
+                  }
+                , function (response) {
+                      if (response) {
+                          s$.html (response.html);
+                          // alert ( elem.name + "[" + pid + "]: " + $GTW.inspect.show (response.json, undefined, 1));
+                          // XXX merge response.json
+                      }
+                  }
+                );
+        };
+        var field_change_cb = function field_change_cb (ev) {
             var f$ = $(this);
             var id = f$.attr ("id");
             var afs_field = $GTW.AFS.Elements.get (id);
@@ -65,8 +111,10 @@
         };
         options.form$   = this;
         options.inputs$ = $(":input", this);
-        options.inputs$.change (field_change);
-        $(".edit.button", this).click (edit);
+        options.inputs$.change (field_change_cb);
+        $(".add.button",  this).click (add_cb);
+        $(".copy.button", this).click (copy_cb);
+        $(".edit.button", this).click (edit_cb);
         return this;
     };
   } (jQuery)

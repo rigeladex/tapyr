@@ -72,6 +72,7 @@
 #    30-Mar-2011 (CT) `display` and `instantiated` added
 #    30-Mar-2011 (CT) `Form.__getitem__` changed to allow nested Entity_Lists
 #    31-Mar-2011 (CT) `Entity_List` changed to redefine `.instantiated`
+#     1-Apr-2011 (CT) `_Element_.instantiated` changed to honor `child_id`
 #    ««revision-date»»···
 #--
 
@@ -86,6 +87,7 @@ import _TFL._Meta.M_Auto_Combine_Lists
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst, rsplit_hst
 from   _TFL.pyk                 import pickle
+from   _TFL.Regexp              import Regexp
 
 import json
 
@@ -113,6 +115,7 @@ class _Element_ (TFL.Meta.Object) :
     het_c         = "div" ### HTML element type to be used for the container
     het_h         = "h2"  ### HTML element type to be used for the heading
     id_sep        = "."
+    id_suffix_pat = Regexp (r"\d+$")
     init          = ""
     list_sep      = "::"
     needs_value   = False
@@ -203,7 +206,10 @@ class _Element_ (TFL.Meta.Object) :
     # end def display
 
     def instantiated (self, id, * args, ** kw) :
-        this = self
+        child_id = kw.pop ("child_id")
+        this     = self
+        if child_id :
+            id = self.id_suffix_pat.sub (child_id, id)
         if self.id != id :
             this = self.copy  (id = id)
             this._id_children (id, this.children, {})

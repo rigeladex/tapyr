@@ -70,6 +70,7 @@ class CSS_Defaults (Definition) :
 
     button_spec            = P_dict \
         ( border           = P.border_button
+        , cursor           = "pointer"
         , margin           = TRBL0 (t = Em (1./4), b = Em (3./4))
         , padding          = TRBL  (Em (0.5), Em (1.5))
         )

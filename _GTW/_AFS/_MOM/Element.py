@@ -40,6 +40,8 @@
 #    29-Mar-2011 (CT) `Field._instance_kw` changed to set `readonly`, if
 #                     necessary
 #    30-Mar-2011 (CT) `display` and `_display` added
+#     1-Apr-2011 (CT) `Entity_Link.__call__` changed to allow `link` to be
+#                     passed in
 #    ««revision-date»»···
 #--
 
@@ -137,12 +139,13 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
 
     def __call__ (self, ETM, entity, ** kw) :
         assoc = ETM.home_scope [self.type_name]
-        link  = None
+        link  = entity
         if entity is not None :
-            try :
-                link = assoc.query (** { self.role_name : entity }).one ()
-            except IndexError :
-                pass
+            if not isinstance (entity, assoc) :
+                try :
+                    link = assoc.query (** { self.role_name : entity }).one ()
+                except IndexError :
+                    pass
         return self.__super.__call__ (assoc, link, ** kw)
     # end def __call__
 

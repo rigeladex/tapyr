@@ -30,11 +30,14 @@
 //                     * support `Field_Role_Hidden`
 //    10-Mar-2011 (CT) `Element._setup_value` factored out of `.setup_value`
 //                     (using dynamic binding instead of `if` statements)
+//     1-Apr-2011 (CT) `Element.id_suffix` added
+//     1-Apr-2011 (CT) `Entity_List.max_child_id` and `.new_child_id` added
 //    ««revision-date»»···
 //--
 
 ( function () {
     var Elements;
+    var id_suffix_pat = /\d+$/;
     var create = function create (spec) {
         var Type, type_name = spec ["type"];
         if (type_name !== undefined) {
@@ -94,6 +97,12 @@
           }
         , child : function child (i) {
               return Elements.id_map [this.children [i]];
+          }
+        , id_suffix : function id_suffix () {
+              var match = this.$id.match (id_suffix_pat);
+              if (match !== null) {
+                  return Number (match [0]);
+              }
           }
         , setup_value : function setup_value (kw) {
               var i, l, child;
@@ -156,7 +165,20 @@
       , { type_name : "Entity_Link" }
     );
     var Entity_List = Element.extend (
-        {}
+        { init : function init (spec) {
+              var max_child_id = -1;
+              this._super (spec);
+              for (var i = 0, li = this.children.length, child; i < li; i++) {
+                  child = this.child (i);
+                  max_child_id = Math.max (max_child_id, child.id_suffix ());
+              }
+              this.max_child_id = max_child_id;
+          }
+        , new_child_id : function new_child_id () {
+              this.max_child_id += 1; ;
+              return this.max_child_id;
+          }
+        }
       , { type_name : "Entity_List" }
     );
     var Field = Element.extend (

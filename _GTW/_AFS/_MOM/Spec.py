@@ -230,8 +230,9 @@ class Entity_Link (Entity) :
             result = self.__super.__call__ (assoc, self, seen, ** kw)
         if role.max_links != 1 :
             elkw = dict (kw)
-            elkw.setdefault ("name",    result.ui_name)
-            elkw.setdefault ("ui_name", result.ui_name)
+            elkw.setdefault ("name",      result.ui_name)
+            elkw.setdefault ("ui_name",   result.ui_name)
+            elkw.setdefault ("type_name", assoc.type_name)
             if role.max_links > 0 :
                 elkw.setdefault (max_links = role.max_links)
             result = Element.Entity_List (proto = result, ** elkw)
