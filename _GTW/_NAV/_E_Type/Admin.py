@@ -87,6 +87,8 @@
 #    30-Mar-2011 (CT) `Expander` started
 #    31-Mar-2011 (CT) `Expander` continued, `href_expand` added
 #     1-Apr-2011 (CT) `Expander` continued..
+#     4-Apr-2011 (CT) `Expander` continued... (`collapsed`)
+#     4-Apr-2011 (CT) s/child_id/new_id_suffix/
 #    ««revision-date»»···
 #--
 
@@ -428,12 +430,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                 )
                             )
                 ikw = dict \
-                    ( collapsed = False
+                    ( collapsed = req_data.get ("collapsed")
                     , copy      = req_data.get ("copy")
                     )
-                child_id = req_data.get ("child_id")
-                if child_id is not None :
-                    ikw ["child_id"] = child_id
+                new_id_suffix = req_data.get ("new_id_suffix")
+                if new_id_suffix is not None :
+                    ikw ["new_id_suffix"] = new_id_suffix
                 fi = elem.instantiated (fid, ETM, obj, ** ikw)
                 renderer = self.top.Templateer.get_template (fi.renderer)
                 return handler.write_json \

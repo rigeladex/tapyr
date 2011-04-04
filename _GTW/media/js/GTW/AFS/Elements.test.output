@@ -27,7 +27,7 @@ FB-0 value :
     FB-0:0:2 :
         init = "1107"
     FB-0:1:0 :
-
+        init = ""
     init :
         cid = 2
         pid = 2
@@ -110,9 +110,9 @@ FB-0:2::0 value :
             FB-0:2::0-2:0:0:1 :
                 init = "Laurens"
             FB-0:2::0-2:0:0:2 :
-
+                init = ""
             FB-0:2::0-2:0:0:3 :
-
+                init = ""
             init :
                 cid = 3
                 pid = 3
@@ -126,9 +126,9 @@ FB-0:2::0 value :
             pid = 4
         sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
     FB-0:2::0-3:0 :
-
+        init = ""
     FB-0:2::0-3:1 :
-
+        init = ""
     init :
         cid = 7
         pid = 7
@@ -167,7 +167,7 @@ Form values :
         FB-0:0:2 :
             init = "1107"
         FB-0:1:0 :
-
+            init = ""
         init :
             cid = 2
             pid = 2
@@ -250,9 +250,9 @@ Form values :
                 FB-0:2::0-2:0:0:1 :
                     init = "Laurens"
                 FB-0:2::0-2:0:0:2 :
-
+                    init = ""
                 FB-0:2::0-2:0:0:3 :
-
+                    init = ""
                 init :
                     cid = 3
                     pid = 3
@@ -266,9 +266,9 @@ Form values :
                 pid = 4
             sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
         FB-0:2::0-3:0 :
-
+            init = ""
         FB-0:2::0-3:1 :
-
+            init = ""
         init :
             cid = 7
             pid = 7
@@ -297,6 +297,7 @@ $GTW :
                     roots :
                         0 :
                             $id = "FB-0"
+                            $root_id = "FB-0"
                             children :
                                 0 = "FB-0:0"
                                 1 = "FB-0:1"
@@ -334,7 +335,7 @@ $GTW :
                                 FB-0:0:2 :
                                     init = "1107"
                                 FB-0:1:0 :
-
+                                    init = ""
                                 init :
                                     cid = 2
                                     pid = 2
@@ -342,6 +343,7 @@ $GTW :
                         1 :
                             $anchor_id = "FB-0"
                             $id = "FB-0:2::0"
+                            $root_id = "FB-0"
                             children :
                                 0 = "FB-0:2::0-0"
                                 1 = "FB-0:2::0-1"
@@ -430,9 +432,9 @@ $GTW :
                                         FB-0:2::0-2:0:0:1 :
                                             init = "Laurens"
                                         FB-0:2::0-2:0:0:2 :
-
+                                            init = ""
                                         FB-0:2::0-2:0:0:3 :
-
+                                            init = ""
                                         init :
                                             cid = 3
                                             pid = 3
@@ -446,9 +448,9 @@ $GTW :
                                         pid = 4
                                     sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
                                 FB-0:2::0-3:0 :
-
+                                    init = ""
                                 FB-0:2::0-3:1 :
-
+                                    init = ""
                                 init :
                                     cid = 7
                                     pid = 7
@@ -459,6 +461,7 @@ $GTW :
                         sid = 0
                 FB-0 :
                     $id = "FB-0"
+                    $root_id = "FB-0"
                     children :
                         0 = "FB-0:0"
                         1 = "FB-0:1"
@@ -496,7 +499,7 @@ $GTW :
                         FB-0:0:2 :
                             init = "1107"
                         FB-0:1:0 :
-
+                            init = ""
                         init :
                             cid = 2
                             pid = 2
@@ -517,8 +520,10 @@ $GTW :
                     _super = undefined
                     children :
                         0 = "FB-0:0:0:0"
+                    kind = "primary"
                     label = "Class"
                     name = "left"
+                    required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Boat_Class"
                     function update(dict)
@@ -539,8 +544,11 @@ $GTW :
                 FB-0:0:0:0 :
                     $anchor_id = "FB-0:0:0"
                     $id = "FB-0:0:0:0"
+                    _super = undefined
+                    kind = "primary"
                     label = "Name"
                     name = "name"
+                    required = true
                     type = "Field"
                     function update(dict)
                     value :
@@ -548,8 +556,11 @@ $GTW :
                 FB-0:0:1 :
                     $anchor_id = "FB-0"
                     $id = "FB-0:0:1"
+                    _super = undefined
+                    kind = "primary"
                     label = "Nation"
                     name = "nation"
+                    required = true
                     type = "Field"
                     function update(dict)
                     value :
@@ -557,6 +568,8 @@ $GTW :
                 FB-0:0:2 :
                     $anchor_id = "FB-0"
                     $id = "FB-0:0:2"
+                    _super = undefined
+                    kind = "primary"
                     label = "Sail number"
                     name = "sail_number"
                     type = "Field"
@@ -574,21 +587,26 @@ $GTW :
                 FB-0:1:0 :
                     $anchor_id = "FB-0"
                     $id = "FB-0:1:0"
+                    _super = undefined
+                    kind = "optional"
                     label = "Name"
                     name = "name"
                     type = "Field"
                     function update(dict)
                     value :
-
+                        init = ""
                 FB-0:2 :
                     $id = "FB-0:2"
+                    _super = undefined
                     children :
                         0 = "FB-0:2::0"
+                    max_child_idx = 0
                     type = "Entity_List"
                     function update(dict)
                 FB-0:2::0 :
                     $anchor_id = "FB-0"
                     $id = "FB-0:2::0"
+                    $root_id = "FB-0"
                     children :
                         0 = "FB-0:2::0-0"
                         1 = "FB-0:2::0-1"
@@ -677,9 +695,9 @@ $GTW :
                                 FB-0:2::0-2:0:0:1 :
                                     init = "Laurens"
                                 FB-0:2::0-2:0:0:2 :
-
+                                    init = ""
                                 FB-0:2::0-2:0:0:3 :
-
+                                    init = ""
                                 init :
                                     cid = 3
                                     pid = 3
@@ -693,9 +711,9 @@ $GTW :
                                 pid = 4
                             sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
                         FB-0:2::0-3:0 :
-
+                            init = ""
                         FB-0:2::0-3:1 :
-
+                            init = ""
                         init :
                             cid = 7
                             pid = 7
@@ -706,7 +724,10 @@ $GTW :
                     _super = undefined
                     allow_new = false
                     hidden = true
+                    kind = "primary"
+                    label = "Boat"
                     name = "left"
+                    required = true
                     type = "Field_Role_Hidden"
                     type_name = "GTW.OMP.SRM.Boat"
                     function update(dict)
@@ -728,8 +749,10 @@ $GTW :
                     _super = undefined
                     children :
                         0 = "FB-0:2::0-1:0:0"
+                    kind = "primary"
                     label = "Regatta"
                     name = "right"
+                    required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Regatta"
                     function update(dict)
@@ -777,8 +800,10 @@ $GTW :
                     children :
                         0 = "FB-0:2::0-1:0:0:0"
                         1 = "FB-0:2::0-1:0:0:1"
+                    kind = "primary"
                     label = "Event"
                     name = "left"
+                    required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Regatta_Event"
                     function update(dict)
@@ -814,8 +839,10 @@ $GTW :
                     children :
                         0 = "FB-0:2::0-1:0:0:0.0"
                         1 = "FB-0:2::0-1:0:0:0.1"
+                    kind = "primary"
                     label = "Date"
                     name = "date"
+                    required = true
                     type = "Field_Composite"
                     type_name = "MOM.Date_Interval_C"
                     function update(dict)
@@ -832,6 +859,8 @@ $GTW :
                 FB-0:2::0-1:0:0:0.0 :
                     $anchor_id = "FB-0:2::0-1:0:0:0"
                     $id = "FB-0:2::0-1:0:0:0.0"
+                    _super = undefined
+                    kind = "necessary"
                     label = "Start"
                     name = "start"
                     type = "Field"
@@ -841,6 +870,8 @@ $GTW :
                 FB-0:2::0-1:0:0:0.1 :
                     $anchor_id = "FB-0:2::0-1:0:0:0"
                     $id = "FB-0:2::0-1:0:0:0.1"
+                    _super = undefined
+                    kind = "optional"
                     label = "Finish"
                     name = "finish"
                     type = "Field"
@@ -850,8 +881,11 @@ $GTW :
                 FB-0:2::0-1:0:0:1 :
                     $anchor_id = "FB-0:2::0-1:0:0"
                     $id = "FB-0:2::0-1:0:0:1"
+                    _super = undefined
+                    kind = "primary"
                     label = "Name"
                     name = "name"
+                    required = true
                     type = "Field"
                     function update(dict)
                     value :
@@ -872,8 +906,10 @@ $GTW :
                         0 = "FB-0:2::0-2:0:0"
                         1 = "FB-0:2::0-2:0:1"
                         2 = "FB-0:2::0-2:0:2"
+                    kind = "required"
                     label = "Skipper"
                     name = "skipper"
+                    required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Sailor"
                     function update(dict)
@@ -903,9 +939,9 @@ $GTW :
                             FB-0:2::0-2:0:0:1 :
                                 init = "Laurens"
                             FB-0:2::0-2:0:0:2 :
-
+                                init = ""
                             FB-0:2::0-2:0:0:3 :
-
+                                init = ""
                             init :
                                 cid = 3
                                 pid = 3
@@ -927,8 +963,10 @@ $GTW :
                         1 = "FB-0:2::0-2:0:0:1"
                         2 = "FB-0:2::0-2:0:0:2"
                         3 = "FB-0:2::0-2:0:0:3"
+                    kind = "primary"
                     label = "Person"
                     name = "left"
+                    required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.PAP.Person"
                     function update(dict)
@@ -948,9 +986,9 @@ $GTW :
                         FB-0:2::0-2:0:0:1 :
                             init = "Laurens"
                         FB-0:2::0-2:0:0:2 :
-
+                            init = ""
                         FB-0:2::0-2:0:0:3 :
-
+                            init = ""
                         init :
                             cid = 3
                             pid = 3
@@ -958,8 +996,11 @@ $GTW :
                 FB-0:2::0-2:0:0:0 :
                     $anchor_id = "FB-0:2::0-2:0:0"
                     $id = "FB-0:2::0-2:0:0:0"
+                    _super = undefined
+                    kind = "primary"
                     label = "Last name"
                     name = "last_name"
+                    required = true
                     type = "Field"
                     function update(dict)
                     value :
@@ -967,8 +1008,11 @@ $GTW :
                 FB-0:2::0-2:0:0:1 :
                     $anchor_id = "FB-0:2::0-2:0:0"
                     $id = "FB-0:2::0-2:0:0:1"
+                    _super = undefined
+                    kind = "primary"
                     label = "First name"
                     name = "first_name"
+                    required = true
                     type = "Field"
                     function update(dict)
                     value :
@@ -976,24 +1020,30 @@ $GTW :
                 FB-0:2::0-2:0:0:2 :
                     $anchor_id = "FB-0:2::0-2:0:0"
                     $id = "FB-0:2::0-2:0:0:2"
+                    _super = undefined
+                    kind = "primary"
                     label = "Middle name"
                     name = "middle_name"
                     type = "Field"
                     function update(dict)
                     value :
-
+                        init = ""
                 FB-0:2::0-2:0:0:3 :
                     $anchor_id = "FB-0:2::0-2:0:0"
                     $id = "FB-0:2::0-2:0:0:3"
+                    _super = undefined
+                    kind = "primary"
                     label = "Academic title"
                     name = "title"
                     type = "Field"
                     function update(dict)
                     value :
-
+                        init = ""
                 FB-0:2::0-2:0:1 :
                     $anchor_id = "FB-0:2::0-2:0"
                     $id = "FB-0:2::0-2:0:1"
+                    _super = undefined
+                    kind = "primary"
                     label = "Nation"
                     name = "nation"
                     type = "Field"
@@ -1003,6 +1053,8 @@ $GTW :
                 FB-0:2::0-2:0:2 :
                     $anchor_id = "FB-0:2::0-2:0"
                     $id = "FB-0:2::0-2:0:2"
+                    _super = undefined
+                    kind = "primary"
                     label = "Mna number"
                     name = "mna_number"
                     type = "Field"
@@ -1021,21 +1073,25 @@ $GTW :
                 FB-0:2::0-3:0 :
                     $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-3:0"
+                    _super = undefined
+                    kind = "optional"
                     label = "Place"
                     name = "place"
                     type = "Field"
                     function update(dict)
                     value :
-
+                        init = ""
                 FB-0:2::0-3:1 :
                     $anchor_id = "FB-0:2::0"
                     $id = "FB-0:2::0-3:1"
+                    _super = undefined
+                    kind = "optional"
                     label = "Points"
                     name = "points"
                     type = "Field"
                     function update(dict)
                     value :
-
+                        init = ""
             root :
                 $id = "FB"
                 _super = undefined
@@ -1044,6 +1100,7 @@ $GTW :
                 roots :
                     0 :
                         $id = "FB-0"
+                        $root_id = "FB-0"
                         children :
                             0 = "FB-0:0"
                             1 = "FB-0:1"
@@ -1081,7 +1138,7 @@ $GTW :
                             FB-0:0:2 :
                                 init = "1107"
                             FB-0:1:0 :
-
+                                init = ""
                             init :
                                 cid = 2
                                 pid = 2
@@ -1089,6 +1146,7 @@ $GTW :
                     1 :
                         $anchor_id = "FB-0"
                         $id = "FB-0:2::0"
+                        $root_id = "FB-0"
                         children :
                             0 = "FB-0:2::0-0"
                             1 = "FB-0:2::0-1"
@@ -1177,9 +1235,9 @@ $GTW :
                                     FB-0:2::0-2:0:0:1 :
                                         init = "Laurens"
                                     FB-0:2::0-2:0:0:2 :
-
+                                        init = ""
                                     FB-0:2::0-2:0:0:3 :
-
+                                        init = ""
                                     init :
                                         cid = 3
                                         pid = 3
@@ -1193,9 +1251,9 @@ $GTW :
                                     pid = 4
                                 sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
                             FB-0:2::0-3:0 :
-
+                                init = ""
                             FB-0:2::0-3:1 :
-
+                                init = ""
                             init :
                                 cid = 7
                                 pid = 7
@@ -1229,9 +1287,9 @@ $GTW :
     function update(dict)
     version = "1.0"
 FB-0:2::0 value jsonified :
-  {"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}
+  {"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values after change:
     $child_ids :
         0 = "FB-0"
@@ -1266,7 +1324,7 @@ Form values after change:
         FB-0:0:2 :
             init = "1107"
         FB-0:1:0 :
-
+            init = ""
         init :
             cid = 2
             pid = 2
@@ -1350,8 +1408,9 @@ Form values after change:
                     init = "Laurens"
                 FB-0:2::0-2:0:0:2 :
                     edit = "William"
+                    init = ""
                 FB-0:2::0-2:0:0:3 :
-
+                    init = ""
                 init :
                     cid = 3
                     pid = 3
@@ -1365,15 +1424,15 @@ Form values after change:
                 pid = 4
             sid = "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"
         FB-0:2::0-3:0 :
-
+            init = ""
         FB-0:2::0-3:1 :
-
+            init = ""
         init :
             cid = 7
             pid = 7
         sid = "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"
     sid = 0
 Form values jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"edit":"William"},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values of copy jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{},"sid":"yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"edit":{},"role_id":"FB-0"},"FB-0:2::0-1:0":{"init":{},"sid":"AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"1Z9hfbsHgB1KybgyzkYXalFgapWHnTywXWXNhQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{},"sid":"f9Y99OzpLtFRbjkwQeRa114VVNAr9lXxQDYf0A","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":":CnlnOHl-3LHWlvhvRsfJ:5CYjsfP6AH-s2JMw","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"edit":"William II"},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"DfcywAWAhxOCbhT86UzIMQODWBYwRqPOOzhoCA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"HJ7nqt2RKMW:ofreoKi0QA1y4obHgGytN249Pw","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"edit":{},"role_id":"FB-0"},"FB-0:2::0-1:0":{"init":{},"sid":"AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"1Z9hfbsHgB1KybgyzkYXalFgapWHnTywXWXNhQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{},"sid":"f9Y99OzpLtFRbjkwQeRa114VVNAr9lXxQDYf0A","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":":CnlnOHl-3LHWlvhvRsfJ:5CYjsfP6AH-s2JMw","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}

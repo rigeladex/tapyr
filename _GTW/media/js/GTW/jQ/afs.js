@@ -17,6 +17,7 @@
 //    29-Mar-2011 (CT) Creation
 //    31-Mar-2011 (CT) Creation continued
 //     1-Apr-2011 (CT) Creation continued..
+//     4-Apr-2011 (CT) Creation continued...
 //    ««revision-date»»···
 //--
 
@@ -27,51 +28,113 @@
               }
             , opts || {}
             );
+        var _ac_response = function _ac_response (response, p$, parent) {
+            var anchor, root, new_elem, s$;
+            if (response) {
+                p$.append (response.html);
+                s$ = p$.children ().last ();
+                $(".cancel.button", s$).click (cancel_cb);
+                new_elem = $GTW.AFS.Elements.create (response.json);
+                anchor =
+                    ( parent.$anchor_id !== undefined
+                    ? $GTW.AFS.Elements.get (parent.$anchor_id)
+                    : new_elem
+                    );
+                root   =
+                    ( parent.$root_id !== undefined
+                    ? $GTW.AFS.Elements.get (parent.$root_id)
+                    : new_elem
+                    );
+                new_elem.setup_value
+                    ( { anchor : anchor
+                      , root   : root
+                      , roots  : $GTW.AFS.Elements.root.roots
+                      }
+                    );
+                if (anchor.$id !== new_elem.$id) {
+                    anchor.value [new_elem.$id] = new_elem.value;
+                    anchor.value ["$child_ids"].push (new_elem.$id);
+                }
+            }
+        };
         var add_cb = function add_cb (ev) {
-            var b$       = $(this);
-            var s$       = b$.closest ("section");
-            var id       = s$.attr    ("id");
-            var parent   = $GTW.AFS.Elements.get (id);
-            var child_id = parent.new_child_id ();
+            var b$        = $(this);
+            var p$        = b$.closest ("section");
+            var id        = p$.attr    ("id");
+            var parent    = $GTW.AFS.Elements.get (id);
+            var child_idx = parent.new_child_idx ();
             $.getJSON
                 ( options.expander_url
-                , { fid      : id
-                  , child_id : child_id
+                , { fid           : id
+                  , new_id_suffix : child_idx
                   }
-                , function (response) {
-                      if (response) {
-                          s$.append (response.html);
-                          // alert ($GTW.inspect.show (response.json, undefined, 1));
-                          // XXX merge response.json
-                      }
-                  }
+                , function (response) { _ac_response (response, p$, parent); }
                 );
         };
+        var cancel_cb = function cancel_cb (ev) {
+            var b$     = $(this);
+            var s$     = b$.closest ("section");
+            var id     = s$.attr    ("id");
+            var elem   = $GTW.AFS.Elements.get (id);
+            var value  = elem ["value"];
+            var pid    = value && value.edit.pid;
+            if (pid != undefined) {
+                $.getJSON
+                    ( options.expander_url
+                    , { fid       : id
+                      , pid       : pid
+                      , collapsed : true
+                      }
+                    , function (response) {
+                          var anchor, root, new_elem;
+                          if (response) {
+                              s$ = s$
+                                  .html       (response.html)
+                                  .children   ()
+                                      .unwrap ();
+                              $(".copy.button", s$).click (copy_cb);
+                              $(".edit.button", s$).click (edit_cb);
+                              anchor = $GTW.AFS.Elements.get (elem.$anchor_id);
+                              root   = $GTW.AFS.Elements.get
+                                  (elem.$root_id || anchor.$root_id);
+                              new_elem = $GTW.AFS.Elements.create
+                                  (response.json);
+                              new_elem.setup_value
+                                  ( { anchor : anchor
+                                    , root   : root
+                                    , roots  : []
+                                    }
+                                  );
+                              anchor.value [new_elem.$id] = new_elem.value;
+                          }
+                      }
+                    );
+            } else {
+                // XXX ??? detach and save to be able to undo the `cancel` ???
+                // XXX remove from anchor.value ["$child_ids"]
+                // XXX remove from $GTW.AFS.Elements.id_map
+                // XXX remove from $GTW.AFS.Elements.root.roots
+                s$.remove ();
+            };
+        };
         var copy_cb = function copy_cb (ev) {
-            var b$       = $(this);
-            var s$       = b$.closest ("section.closed");
-            var p$       = s$.parent  ();
-            var id       = s$.attr    ("id");
-            var elem     = $GTW.AFS.Elements.get (id);
-            var value    = elem ["value"];
-            var pid      = value && value.edit.pid;
-            var parent   = $GTW.AFS.Elements.get (p$.attr ("id"));
-            var child_id = parent.new_child_id ();
-            // alert ($GTW.inspect.show ($GTW.AFS.Elements.get (p$.attr ("id")), undefined, 1));
+            var b$        = $(this);
+            var s$        = b$.closest ("section.closed");
+            var p$        = s$.parent  ();
+            var id        = s$.attr    ("id");
+            var elem      = $GTW.AFS.Elements.get (id);
+            var value     = elem ["value"];
+            var pid       = value && value.edit.pid;
+            var parent    = $GTW.AFS.Elements.get (p$.attr ("id"));
+            var child_idx = parent.new_child_idx ();
             $.getJSON
                 ( options.expander_url
-                , { fid      : id
-                  , pid      : pid
-                  , child_id : child_id
-                  , copy     : true
+                , { fid           : id
+                  , pid           : pid
+                  , new_id_suffix : child_idx
+                  , copy          : true
                   }
-                , function (response) {
-                      if (response) {
-                          p$.append (response.html);
-                          // alert ($GTW.inspect.show (response.json, undefined, 1));
-                          // XXX merge response.json
-                      }
-                  }
+                , function (response) { _ac_response (response, p$, elem); }
                 );
         };
         var edit_cb = function edit_cb (ev) {
@@ -87,10 +150,24 @@
                   , pid      : pid
                   }
                 , function (response) {
+                      var anchor, root, new_elem;
                       if (response) {
-                          s$.html (response.html);
-                          // alert ( elem.name + "[" + pid + "]: " + $GTW.inspect.show (response.json, undefined, 1));
-                          // XXX merge response.json
+                          s$ = s$
+                              .html       (response.html)
+                              .children   ()
+                                  .unwrap ();
+                          $(".cancel.button", s$).click (cancel_cb);
+                          anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
+                          root     = $GTW.AFS.Elements.get
+                              (elem.$root_id || anchor.$root_id);
+                          new_elem = $GTW.AFS.Elements.create (response.json);
+                          new_elem.setup_value
+                              ( { anchor : anchor
+                                , root   : root
+                                , roots  : []
+                                }
+                              );
+                          anchor.value [new_elem.$id] = new_elem.value;
                       }
                   }
                 );
@@ -112,9 +189,9 @@
         options.form$   = this;
         options.inputs$ = $(":input", this);
         options.inputs$.change (field_change_cb);
-        $(".add.button",  this).click (add_cb);
-        $(".copy.button", this).click (copy_cb);
-        $(".edit.button", this).click (edit_cb);
+        $(".add.button",     this).click (add_cb);
+        $(".copy.button",    this).click (copy_cb);
+        $(".edit.button",    this).click (edit_cb);
         return this;
     };
   } (jQuery)

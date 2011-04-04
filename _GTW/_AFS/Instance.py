@@ -45,6 +45,7 @@
 #                     `_Base_.as_json_cargo` to `Instance.as_json_cargo`
 #    29-Mar-2011 (CT) `__getattr__` changed to look in `kw` first
 #    30-Mar-2011 (CT) `display` added
+#     4-Apr-2011 (CT) `collapsed` added to `Instance.as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -163,6 +164,7 @@ class Instance (_Base_) :
     sort_json   = False
     value       = None
     _display    = None
+    _undef      = object ()
 
     def __init__ (self, elem, ** kw) :
         self.pop_to_self \
@@ -184,9 +186,15 @@ class Instance (_Base_) :
     def as_json_cargo (self) :
         result = self.elem.as_json_cargo
         result.update (self.__super.as_json_cargo)
-        for k in "prefilled", "readonly", "required" :
-            if getattr (self, k, False) :
-                result [k] = True
+        undef = self._undef
+        for k in ("prefilled", "readonly", "required") :
+            v = getattr (self, k, False)
+            if v :
+                result [k] = v
+        for k in ("collapsed", ) :
+            v = getattr (self, k, undef)
+            if v is not undef :
+                result [k] = v
         return result
     # end def as_json_cargo
 

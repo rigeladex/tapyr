@@ -31,7 +31,7 @@
 //    10-Mar-2011 (CT) `Element._setup_value` factored out of `.setup_value`
 //                     (using dynamic binding instead of `if` statements)
 //     1-Apr-2011 (CT) `Element.id_suffix` added
-//     1-Apr-2011 (CT) `Entity_List.max_child_id` and `.new_child_id` added
+//     1-Apr-2011 (CT) `Entity_List.max_child_idx` and `.new_child_idx` added
 //    ««revision-date»»···
 //--
 
@@ -103,6 +103,7 @@
               if (match !== null) {
                   return Number (match [0]);
               }
+              return 65535;
           }
         , setup_value : function setup_value (kw) {
               var i, l, child;
@@ -111,7 +112,7 @@
               if (this ["value"] !== undefined) {
                   this._setup_value (kw, new_kw);
                   if (this.$id !== kw.anchor.$id) {
-                     this.$anchor_id = kw.anchor.$id;
+                      this.$anchor_id = kw.anchor.$id;
                   }
               }
               if (this ["children"] !== undefined) {
@@ -141,6 +142,7 @@
               }
           }
         , _sv_root : function _sv_root (kw, new_kw) {
+              this.$root_id = kw.root.$id;
               kw.roots.push (this);
               new_kw.root = this;
           }
@@ -166,17 +168,17 @@
     );
     var Entity_List = Element.extend (
         { init : function init (spec) {
-              var max_child_id = -1;
+              var max_child_idx = -1;
               this._super (spec);
               for (var i = 0, li = this.children.length, child; i < li; i++) {
                   child = this.child (i);
-                  max_child_id = Math.max (max_child_id, child.id_suffix ());
+                  max_child_idx = Math.max (max_child_idx, child.id_suffix ());
               }
-              this.max_child_id = max_child_id;
+              this.max_child_idx = max_child_idx;
           }
-        , new_child_id : function new_child_id () {
-              this.max_child_id += 1; ;
-              return this.max_child_id;
+        , new_child_idx : function new_child_idx () {
+              this.max_child_idx += 1; ;
+              return this.max_child_idx;
           }
         }
       , { type_name : "Entity_List" }

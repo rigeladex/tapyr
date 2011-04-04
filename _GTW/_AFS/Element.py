@@ -73,6 +73,7 @@
 #    30-Mar-2011 (CT) `Form.__getitem__` changed to allow nested Entity_Lists
 #    31-Mar-2011 (CT) `Entity_List` changed to redefine `.instantiated`
 #     1-Apr-2011 (CT) `_Element_.instantiated` changed to honor `child_id`
+#     4-Apr-2011 (CT) s/child_id/new_id_suffix/
 #    ««revision-date»»···
 #--
 
@@ -206,10 +207,10 @@ class _Element_ (TFL.Meta.Object) :
     # end def display
 
     def instantiated (self, id, * args, ** kw) :
-        child_id = kw.pop ("child_id")
-        this     = self
-        if child_id :
-            id = self.id_suffix_pat.sub (child_id, id)
+        new_id_suffix = kw.pop ("new_id_suffix", None)
+        this          = self
+        if new_id_suffix :
+            id = self.id_suffix_pat.sub (new_id_suffix, id)
         if self.id != id :
             this = self.copy  (id = id)
             this._id_children (id, this.children, {})
@@ -385,8 +386,8 @@ class Entity_List (_Element_List_) :
     # end def copy
 
     def instantiated (self, id, * args, ** kw) :
-        child_id = kw.pop ("child_id")
-        child    = self.new_child (child_id, {})
+        new_id_suffix = kw.pop ("new_id_suffix")
+        child         = self.new_child (new_id_suffix, {})
         return child (* args, ** kw)
     # end def instantiated
 

@@ -34,6 +34,7 @@
 ##                     `do_element`, and `do_head`
 ##    30-Mar-2011 (CT) `button` instances added
 ##    31-Mar-2011 (CT) `do_button` factored
+##     4-Apr-2011 (CT) `Delete` button only `if elem.init.pid`
 ##    ««revision-date»»···
 ##--
 #}
@@ -63,7 +64,9 @@
         , templ_name = renderer
         )
    -%}
-      {{ GTW.call_macro ("do_button", "Delete",   templ_name = renderer) }}
+      {%- if elem.init.pid %}
+        {{ GTW.call_macro ("do_button", "Delete", templ_name = renderer) }}
+      {% endif -%}
       {%- if elem.collapsed %}
         {{ GTW.call_macro ("do_button", "Copy",   templ_name = renderer) }}
         {{ GTW.call_macro ("do_button", "Edit",   templ_name = renderer) }}
