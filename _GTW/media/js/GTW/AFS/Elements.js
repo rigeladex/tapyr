@@ -32,6 +32,7 @@
 //                     (using dynamic binding instead of `if` statements)
 //     1-Apr-2011 (CT) `Element.id_suffix` added
 //     1-Apr-2011 (CT) `Entity_List.max_child_idx` and `.new_child_idx` added
+//     5-Apr-2011 (CT) `Element.remove` added
 //    ««revision-date»»···
 //--
 
@@ -104,6 +105,31 @@
                   return Number (match [0]);
               }
               return 65535;
+          }
+        , remove : function remove () {
+              var anchor = $GTW.AFS.Elements.get (this.$anchor_id);
+              var id     = this.$id;
+              var i, l, child, k;
+              if (this ["children"] !== undefined) {
+                  for (i = 0, l = this.children.length; i < l; i += 1) {
+                      child = this.child (i);
+                      if (child) {
+                          child.remove ();
+                      }
+                  }
+              }
+              if (anchor) {
+                  delete anchor.value [id];
+                  k = anchor.value ["$child_ids"].indexOf (id);
+                  if (k >= 0) {
+                      anchor.value ["$child_ids"].splice (k, 1);
+                  }
+              }
+              k = Elements.root.roots.indexOf (this);
+              if (k >= 0) {
+                  Elements.root.roots.splice (k, 1);
+              }
+              delete Elements.id_map [id];
           }
         , setup_value : function setup_value (kw) {
               var i, l, child;

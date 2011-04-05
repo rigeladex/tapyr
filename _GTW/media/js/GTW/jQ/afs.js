@@ -18,6 +18,7 @@
 //    31-Mar-2011 (CT) Creation continued
 //     1-Apr-2011 (CT) Creation continued..
 //     4-Apr-2011 (CT) Creation continued...
+//     5-Apr-2011 (CT) Creation continued....
 //    ««revision-date»»···
 //--
 
@@ -51,10 +52,6 @@
                       , roots  : $GTW.AFS.Elements.root.roots
                       }
                     );
-                if (anchor.$id !== new_elem.$id) {
-                    anchor.value [new_elem.$id] = new_elem.value;
-                    anchor.value ["$child_ids"].push (new_elem.$id);
-                }
             }
         };
         var add_cb = function add_cb (ev) {
@@ -110,11 +107,8 @@
                       }
                     );
             } else {
-                // XXX ??? detach and save to be able to undo the `cancel` ???
-                // XXX remove from anchor.value ["$child_ids"]
-                // XXX remove from $GTW.AFS.Elements.id_map
-                // XXX remove from $GTW.AFS.Elements.root.roots
-                s$.remove ();
+                elem.remove ()
+                s$.remove   ();
             };
         };
         var copy_cb = function copy_cb (ev) {
@@ -167,7 +161,6 @@
                                 , roots  : []
                                 }
                               );
-                          anchor.value [new_elem.$id] = new_elem.value;
                       }
                   }
                 );

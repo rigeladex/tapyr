@@ -21,6 +21,7 @@
 //    19-Nov-2010 (CT) `push_history` added
 //    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
 //    26-Jan-2011 (CT) Style change
+//     5-Apr-2011 (CT) `Array.prototype.indexOf` defined, if necessary
 //    ««revision-date»»···
 //--
 
@@ -69,6 +70,28 @@
             ).addClass ("external");
         return this;
     };
+    if (! Array.prototype.indexOf) {
+        Array.prototype.indexOf = function indexOf (elem, start) {
+            var len = this.length;
+            if (start === undefined) {
+                start = 0;
+            } else {
+                start = (start > 0) ? Math.floor (start) : Math.ceil (start);
+                if (start < 0) {
+                    start += len;
+                    if (start < 0) {
+                        start = 0;
+                    }
+                }
+            }
+            for (var i = start; i < len; i++) {
+                if (i in this && this [i] === elem) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+    }
   }
 ) (jQuery);
 
