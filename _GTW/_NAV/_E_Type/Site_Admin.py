@@ -45,6 +45,8 @@
 #    22-Dec-2010 (CT) `Admin_Alias` and `show_aliases` added and used
 #     3-Jan-2011 (CT) Introduce `template_name`
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
+#     5-Apr-2011 (MG) `Admin_Alias._pns_entries` used `top.App_Type` instead
+#                     of `top.scope.App_Type` to prevent early scope creation
 #    ««revision-date»»···
 #--
 
@@ -102,7 +104,7 @@ class Admin_Group (GTW.NAV.Dir) :
     # end def _filter_etype_entries
 
     def _pns_entries (self, * pnss) :
-        app_type = self.top.scope.app_type
+        app_type = self.top.App_Type
         ET_Map   = self.top.ET_Map
         for pns in pnss :
             PNS = app_type.PNS_Map [pns]

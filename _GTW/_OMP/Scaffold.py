@@ -36,6 +36,7 @@
 #    10-Feb-2011 (CT) Injection of `GTW` into essential classes added
 #    14-Mar-2011 (CT) Injection of `GTW` factored to `_GTW._OMP.MOM_injector`
 #    15-Mar-2011 (CT) `_load_afs` and `_setup_afs` added
+#     5-Apr-2011 (MG) Default for `HTTP` changed to `Werkzeug`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,7 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         ( "auto_reload:B=yes?Autoload of werkzeug, only works with no sqlite db"
         , "Break:B?Enter debugger before starting tornado/werkzeug"
         , "-debug:B=no"
-        , HTTP_Opt (default = "Tornado")
+        , HTTP_Opt (default = "Werkzeug")
         , TFL.CAO.Opt.Input_Encoding
             ( default     = "iso-8859-15"
             , description = "Default encoding for source files"
