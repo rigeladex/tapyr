@@ -196,9 +196,11 @@
         { init : function init (spec) {
               var max_child_idx = -1;
               this._super (spec);
-              for (var i = 0, li = this.children.length, child; i < li; i++) {
-                  child = this.child (i);
-                  max_child_idx = Math.max (max_child_idx, child.id_suffix ());
+              if (this ["children"] !== undefined) {
+                  for (var i = 0, li = this.children.length, child; i < li; i++) {
+                      child = this.child (i);
+                      max_child_idx = Math.max (max_child_idx, child.id_suffix ());
+                  }
               }
               this.max_child_idx = max_child_idx;
           }
