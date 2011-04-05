@@ -34,7 +34,7 @@
             if (response) {
                 p$.append (response.html);
                 s$ = p$.children ().last ();
-                $(".cancel.button", s$).click (cancel_cb);
+                _bind_click (s$, add_cb, cancel_cb, save_cb);
                 new_elem = $GTW.AFS.Elements.create (response.json);
                 anchor =
                     ( parent.$anchor_id !== undefined
@@ -52,6 +52,12 @@
                       , roots  : $GTW.AFS.Elements.root.roots
                       }
                     );
+            }
+        };
+        var _bind_click = function _bind_click (context, cb) {
+            for (var i = 1, li = arguments.length, arg; i < li; i++) {
+                arg = arguments [i];
+                $(arg.$selector, context).click (arg);
             }
         };
         var add_cb = function add_cb (ev) {
@@ -89,8 +95,9 @@
                                   .html       (response.html)
                                   .children   ()
                                       .unwrap ();
-                              $(".copy.button", s$).click (copy_cb);
-                              $(".edit.button", s$).click (edit_cb);
+                              $(".copy.button",   s$).click (copy_cb);
+                              $(".delete.button", s$).click (delete_cb);
+                              $(".edit.button",   s$).click (edit_cb);
                               anchor = $GTW.AFS.Elements.get (elem.$anchor_id);
                               root   = $GTW.AFS.Elements.get
                                   (elem.$root_id || anchor.$root_id);
@@ -131,6 +138,10 @@
                 , function (response) { _ac_response (response, p$, elem); }
                 );
         };
+        var delete_cb = function delete_cb (ev) {
+            // XXX;
+            alert ("Please implement the `delete_cb`");
+        };
         var edit_cb = function edit_cb (ev) {
             var b$    = $(this);
             var s$    = b$.closest ("section.closed");
@@ -150,7 +161,10 @@
                               .html       (response.html)
                               .children   ()
                                   .unwrap ();
-                          $(".cancel.button", s$).click (cancel_cb);
+                          _bind_click
+                              ( s$, add_cb, cancel_cb, copy_cb, delete_cb
+                              , edit_cb, save_cb
+                              );
                           anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
                           root     = $GTW.AFS.Elements.get
                               (elem.$root_id || anchor.$root_id);
@@ -179,12 +193,20 @@
                 // trigger `afs_change` event of `anchor`
             }
         };
+        var save_cb = function save_cb (ev) {
+            // XXX;
+            alert ("Please implement the `save_cb`");
+        };
         options.form$   = this;
         options.inputs$ = $(":input", this);
         options.inputs$.change (field_change_cb);
-        $(".add.button",     this).click (add_cb);
-        $(".copy.button",    this).click (copy_cb);
-        $(".edit.button",    this).click (edit_cb);
+        add_cb.$selector    = ".add.button";
+        cancel_cb.$selector = ".cancel.button";
+        copy_cb.$selector   = ".copy.button";
+        delete_cb.$selector = ".delete.button";
+        edit_cb.$selector   = ".edit.button";
+        save_cb.$selector   = ".save.button";
+        _bind_click (this, add_cb, copy_cb, delete_cb, edit_cb, save_cb);
         return this;
     };
   } (jQuery)
