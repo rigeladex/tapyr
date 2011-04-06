@@ -37,6 +37,8 @@
 #                     and Tornado
 #    28-Jun-2010 (MG) Meta class moved to `Request_Handler`
 #    11-Jan-2011 (CT) `body` added
+#     6-Apr-2011 (CT) `_handle_request_exception_nav` factored to
+#                     `GTW._Request_Handler_`
 #    ««revision-date»»···
 #--
 
@@ -96,23 +98,18 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     # end def __init__
 
     def _handle_request (self, * args, ** kw) :
+        top = self.nav_root
         redirect, top = self.__super._handle_request (* args, ** kw)
         if redirect :
             return redirect (self, top)
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
-        top   = self.nav_root
-        scope = getattr (top, "scope", None)
-        if scope :
-            try :
-                scope.rollback ()
-            except Exception :
-                pass
+        self._handle_request_exception_nav (exc)
         if isinstance (exc, top.HTTP.Status) :
             if exc (self, top) :
                 return
-        self.__super._handle_request_exception (exc)
+        return self.__super._handle_request_exception (exc)
     # end def _handle_request_exception
 
 # end class NAV_Request_Handler

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -32,6 +32,7 @@
 #    17-Aug-2010 (CT) `Error_503` added
 #     2-Dec-2010 (CT) `_Exc_Mixin_` and `M_Error` added and used
 #    31-Dec-2010 (CT) s/get_std_template/get_template/
+#     5-Apr-2011 (CT) `Error_408` and `Error_409` added
 #    ««revision-date»»···
 #--
 
@@ -200,6 +201,35 @@ class Error_405 (_Error_) :
     """Method Not Allowed."""
     response = exceptions.MethodNotAllowed
 # end class Error_405
+
+class Error_408 (_Error_) :
+    """Request Timeout."""
+    response = exceptions.RequestTimeout
+# end class Error_408
+
+try :
+    exceptions.Conflict
+except AttributeError :
+    class _Conflict_ (exceptions.HTTPException) :
+        """*409* `Conflict`
+
+           Raise to signalize a conflict.
+        """
+
+        code = 409
+        description = \
+            ( "<p>"
+              "The request could not be completed due to a conflict with "
+              "the current state of the resource. "
+              "</p>"
+            )
+
+    exceptions.Conflict = _Conflict_ # end class
+
+class Error_409 (_Error_) :
+    """Conflict."""
+    response = exceptions.Conflict
+# end class Error_409
 
 class Error_500 (_Error_) :
     """Internal Server Error."""

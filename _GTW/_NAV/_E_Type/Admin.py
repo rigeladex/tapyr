@@ -88,7 +88,8 @@
 #    31-Mar-2011 (CT) `Expander` continued, `href_expand` added
 #     1-Apr-2011 (CT) `Expander` continued..
 #     4-Apr-2011 (CT) `Expander` continued... (`collapsed`)
-#     4-Apr-2011 (CT) s/child_id/new_id_suffix/
+#     5-Apr-2011 (CT) `Expander` continued....
+#     6-Apr-2011 (CT) `Expander` continued....., `AFS._post_handler` added
 #    ««revision-date»»···
 #--
 
@@ -97,7 +98,8 @@ from   _TFL                     import TFL
 from   _MOM.import_MOM          import MOM, Q
 
 import _GTW._Form._MOM.Instance
-from   _GTW._AFS._MOM.Element   import Form as AFS_Form
+from   _GTW._AFS._MOM.Element   import Form  as AFS_Form
+from   _GTW._AFS.Value          import Value as AFS_Value
 
 import _GTW.FO
 import _GTW.jQuery
@@ -186,10 +188,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return ETM.pid_query (pid)
         # end def obj
 
-        def form (self, obj = None) :
+        def form (self, obj = None, ** kw) :
             if obj is None :
                 obj = self.obj
-            return AFS_Form [self.E_Type.GTW.afs_id] (self.ETM, obj)
+            return AFS_Form [self.E_Type.GTW.afs_id] (self.ETM, obj, ** kw)
         # end def form
 
         def rendered (self, handler, template = None) :
@@ -206,7 +208,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise HTTP.Error_503 (request.path)
+                raise HTTP.Error_503 (request.path, request.Error)
             if pid is not None :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
@@ -216,27 +218,62 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         % (_T (self.E_Type.ui_name), pid)
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
-            form = self.form (obj)
             if request.method == "POST" :
-                err_count = 0
-                if req_data.get ("cancel") :
-                    ### the user has clicked on the cancel button and not on
-                    ### the submit button
-                    scope.rollback ()
-                else :
-                    raise NotImplementedError ("AFS form post requests")
-                if err_count == 0 :
-                    tail = "#pk-%s" % (obj.pid) if obj else ""
-                    raise HTTP.Redirect_302 \
-                        ("%s%s" % (self.parent.abs_href, tail))
-            self.Media = self._get_media (head = getattr (form, "Media", None))
-            context.update (form = form)
-            try :
-                self.last_changed = obj.FO.last_changed
-            except AttributeError :
-                pass
-            return self.__super.rendered (handler, template)
+                return self._post_handler (handler, scope)
+            else :
+                sid, session_secret = self._new_edit_session (handler)
+                form = self.form \
+                    (obj, _sid = sid, _session_secret = session_secret)
+                self.Media = self._get_media \
+                    (head = getattr (form, "Media", None))
+                context.update (form = form)
+                try :
+                    self.last_changed = obj.FO.last_changed
+                except AttributeError :
+                    pass
+                return self.__super.rendered (handler, template)
         # end def rendered
+
+        def _post_handler (self, handler, scope) :
+            HTTP       = self.top.HTTP
+            json       = handler.json
+            request    = handler.request
+            result     = {}
+            if json is None :
+                raise NotImplementedError \
+                    ("AFS form post requests without content-type json")
+            try :
+                fv = AFS_Value.from_json (json ["cargo"])
+            except Exception as exc :
+                return handler.write_json (error = str (exc))
+            sid = fv.sid
+            try :
+                session_secret = handler.session.edit_session (sid)
+            except LookupError as exc :
+                return handler.write_json (error = "Session expired: %s" % exc)
+            try :
+                fv.apply (scope, _sid = sid, _session_secret = session_secret)
+            except GTW.AFS.Error.Conflict :
+                return handler.write_json (conflicts = fv.as_json_cargo)
+            except Exception as exc :
+                return handler.write_json (error = str (exc))
+            get_template = self.top.Templateer.get_template
+            ikw = dict \
+                ( collapsed = json.get ("collapsed")
+                )
+            result ["$child_ids"] = rids = []
+            for e in fv.entities () :
+                if e.entity :
+                    obj = e.entity
+                    fi  = e.elem.instantiated (e.id, obj.ETM, obj, ** ikw)
+                    result [e.id] = dict \
+                        ( html = get_template (e.elem.renderer).call_macro
+                            (fi.widget, fi, fi, fi.renderer)
+                        , json = fi.as_json_cargo
+                        )
+                    rids.append (e.id)
+            return handler.write_json (result)
+        # end def _post_handler
 
     # end class AFS
 
@@ -419,6 +456,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         (error  = _T ("Form corrupted, unknown element id"))
                 ETM = scope [elem.type_name]
                 pid = req_data.get ("pid")
+                sid = req_data.get ("sid")
                 if pid is not None :
                     try :
                         obj = context ["instance"] = ETM.pid_query (pid)
@@ -429,9 +467,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                 % (_T (elem.ui_name), pid)
                                 )
                             )
+                try :
+                    session_secret = handler.session.edit_session (sid)
+                except LookupError as exc :
+                    return handler.write_json \
+                        (error = "Session expired: %s" % exc)
                 ikw = dict \
-                    ( collapsed = req_data.get ("collapsed")
-                    , copy      = req_data.get ("copy")
+                    ( collapsed       = req_data.get ("collapsed")
+                    , copy            = req_data.get ("copy")
+                    , _sid            = sid
+                    , _session_secret = session_secret
                     )
                 new_id_suffix = req_data.get ("new_id_suffix")
                 if new_id_suffix is not None :

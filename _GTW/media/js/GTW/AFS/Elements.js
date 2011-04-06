@@ -264,10 +264,10 @@
         , get : function get (id) {
               return Elements.id_map [id];
           }
-        , packed_values : function packed_values (args) {
+        , packed_values : function packed_values () {
               var i, l, child;
               var form     = this;
-              var entities = args || form.roots;
+              var entities = arguments.length > 0 ? arguments : form.roots;
               var result   =
                   { $id        : form.$id
                   , sid        : form.value.sid

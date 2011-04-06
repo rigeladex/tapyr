@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Tornado.
@@ -160,6 +160,16 @@ class Error_405 (_Error_) :
     """Method Not Allowed."""
     status_code = 405
 # end class Error_405
+
+class Error_408 (_Error_) :
+    """Request Timeout."""
+    status_code = 408
+# end class Error_408
+
+class Error_409 (_Error_) :
+    """Conflict."""
+    status_code = 409
+# end class Error_409
 
 class Error_500 (_Error_) :
     """Internal Server Error."""

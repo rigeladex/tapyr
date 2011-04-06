@@ -42,13 +42,33 @@
 #    30-Mar-2011 (CT) `display` and `_display` added
 #     1-Apr-2011 (CT) `Entity_Link.__call__` changed to allow `link` to be
 #                     passed in
+#     5-Apr-2011 (CT) `Entity_Link.__call__` corrected
 #    ««revision-date»»···
 #--
 
 from   _GTW._AFS.Element import *
+from   _GTW._AFS.Element import _Element_
+
 import _GTW._AFS._MOM
 
-class _MOM_Entity_ (Entity) :
+class _MOM_Element_ (_Element_) :
+
+    _real_name = "Element"
+
+    def _changed_children (self, value, scope, entity, ** kw) :
+        result = {}
+        for c in value.children :
+            if c.changed :
+                v = c.elem.applyf (c, scope, entity, ** kw)
+                value.conflicts += c.conflicts
+                if v is not None :
+                    result [c.elem.name] = v
+        return result
+    # end def _changed_children
+
+Element = _MOM_Element_ # end class
+
+class _MOM_Entity_ (_MOM_Element_, Entity) :
     """Model a MOM-specific sub-form for a single entity."""
 
     _real_name = "Entity"
@@ -66,7 +86,7 @@ class _MOM_Entity_ (Entity) :
 
     def _apply_change (self, pid, value, scope, ** kw) :
         entity = scope.pid_query (pid)
-        akw    = self._changed_children (value, entity, ** kw)
+        akw    = self._changed_children (value, scope, entity, ** kw)
         if akw and not value.conflicts :
             ### XXX error handling
             entity.set_raw (** akw)
@@ -74,23 +94,12 @@ class _MOM_Entity_ (Entity) :
     # end def _apply_change
 
     def _apply_create (self, value, scope, ** kw) :
-        akw = self._changed_children (value, None, ** kw)
+        akw = self._changed_children (value, scope, None, ** kw)
         if akw :
             ETM = scope [self.type_name]
             ### XXX error handling
             return ETM (raw = 1, ** akw)
     # end def _apply_create
-
-    def _changed_children (self, value, entity, ** kw) :
-        if value.changes :
-            result = {}
-            for c in value.children :
-                v = c.elem.applyf (c, entity, ** kw)
-                value.conflicts += c.conflicts
-                if v is not None :
-                    result [c.elem.name] = v
-            return result
-    # end def _changed_children
 
     def _check_sid (self, value, ** kw) :
         v_sid = self.form_hash (value, ** kw)
@@ -112,11 +121,10 @@ class _MOM_Entity_ (Entity) :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
         result = self.__super._value (ETM, entity, ** kw)
-        result.update \
-            ( init = {} if kw.get ("copy", False) else dict
-                ( cid = getattr (entity, "last_cid", None)
-                , pid = getattr (entity, "pid",      None)
-                )
+        key    = "edit" if result.get ("prefilled") else "init"
+        result [key] = {} if kw.get ("copy", False) else dict \
+            ( cid = getattr (entity, "last_cid", None)
+            , pid = getattr (entity, "pid",      None)
             )
         return result
     # end def _value
@@ -141,11 +149,11 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
         assoc = ETM.home_scope [self.type_name]
         link  = entity
         if entity is not None :
-            if not isinstance (entity, assoc) :
+            if not isinstance (entity, assoc._etype) :
                 try :
                     link = assoc.query (** { self.role_name : entity }).one ()
                 except IndexError :
-                    pass
+                    link = None
         return self.__super.__call__ (assoc, link, ** kw)
     # end def __call__
 
@@ -179,17 +187,18 @@ class _MOM_Field_ (Field) :
 
     _real_name = "Field"
 
-    def applyf (self, value, entity, ** kw) :
+    def applyf (self, value, scope, entity, ** kw) :
+        result = None
         if entity is not None :
             dbv = entity.raw_attr (self.name)
             if value.init != dbv:
                 value.conflicts += 1
-                value.asyn       = dbv
-                return dbv
-            if value.init != value.edit :
-                return value.edit
+                value.asyn       = result = dbv
+            elif value.init != value.edit :
+                result = value.edit
         else :
-            return value.edit
+            result = value.edit
+        return result
     # end def applyf
 
     def _instance_kw (self, ETM, entity, ** kw) :
@@ -213,24 +222,29 @@ class _MOM_Field_ (Field) :
         result = self.__super._value (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
         akw    = kw.get (self.name, {})
+        key    = \
+            (    "edit"
+            if   result.get ("prefilled") or kw.get ("copy", False)
+            else "init"
+            )
         if "init" in akw :
-            init = akw ["init"]
-        else :
-            init = attr.get_raw (entity)
+            result [key] = akw ["init"]
+            key = "init"
+        init = attr.get_raw (entity)
         if init :
-            result.update (init = init)
+            result [key] = init
         return result
     # end def _value
 
 Field = _MOM_Field_ # end class
 
-class _MOM_Field_Composite_ (Field_Composite) :
+class _MOM_Field_Composite_ (_MOM_Element_, Field_Composite) :
     """Model a MOM-specific composite field of a AJAX-enhanced form."""
 
     _real_name = "Field_Composite"
 
-    def applyf (self, value, entity, ** kw) :
-        return self._changed_children (value, entity, ** kw)
+    def applyf (self, value, scope, entity, ** kw) :
+        return self._changed_children (value, scope, entity, ** kw)
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
@@ -261,7 +275,7 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
         return self.__super.__call__ (a_type, a_entity, ** kw)
     # end def __call__
 
-    def applyf (self, value, entity, ** kw) :
+    def applyf (self, value, scope, entity, ** kw) :
         return value.entity
     # end def applyf
 
@@ -269,6 +283,15 @@ Field_Entity = _MOM_Field_Entity_ # end class
 
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
+
+    def applyf (self, value, scope, entity, ** kw) :
+        pid = value.edit.get ("pid")
+        if pid is not None :
+            result = scope.pid_query (pid)
+        else :
+            result = getattr (entity, "self.name", None)
+        return result
+    # end def applyf
 
     def display (self, instance) :
         return None

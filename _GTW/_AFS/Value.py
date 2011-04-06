@@ -32,6 +32,8 @@
 #     8-Mar-2011 (CT) `apply` added
 #     9-Mar-2011 (CT) `as_json_cargo` and `kw` added
 #    10-Mar-2011 (CT) `apply` changed to iterate over `self.entities`
+#     6-Apr-2011 (CT) `apply` changed to call `e.apply`, too
+#     6-Apr-2011 (CT) `from_json` changed to except a dict as cargo, too
 #    ««revision-date»»···
 #--
 
@@ -77,7 +79,10 @@ class Value (_Base_) :
 
     @classmethod
     def from_json (cls, json_data) :
-        cargo = json.loads (json_data)
+        if isinstance (json_data, basestring) :
+            cargo = json.loads (json_data)
+        else :
+            cargo = json_data
         id    = cargo ["$id"]
         form  = cls._get_elem (GTW.AFS.Element.Form, id)
         return cls (form, id, cargo)
@@ -91,9 +96,24 @@ class Value (_Base_) :
     # end def as_json_cargo
 
     @Once_Property
+    def changed (self) :
+        return self.init != self.edit
+    # end def changed
+
+    @Once_Property
+    def changed_children (self) :
+        return sum (c.changed for c in self.children)
+    # end def changed_children
+
+    @Once_Property
     def changes (self) :
-        return (self.init != self.edit) + sum (c.changes for c in self.children)
+        return self.changed + self.changed_children
     # end def changes
+
+    @Once_Property
+    def changes_t (self) :
+        return self.changed + sum (c.changes_t for c in self.children)
+    # end def changes_t
 
     @property
     def edit (self) :
@@ -136,11 +156,11 @@ class Value (_Base_) :
         conflicts = 0
         key       = TFL.Sorted_By ("elem.rank", "-id")
         for e in self.entities () :
-            if e.changes :
-                for c in sorted (e.entity_children (), key = key) :
-                    if c.changes :
-                        c.entity   = c.elem.apply (c, * args, ** kw)
-                        conflicts += c.conflicts
+            for c in sorted (e.entity_children (), key = key) :
+                c.entity   = c.elem.apply (c, * args, ** kw)
+                conflicts += c.conflicts
+            e.entity   = e.elem.apply (e, * args, ** kw)
+            conflicts += e.conflicts
         if conflicts :
             raise GTW.AFS.Error.Conflict ()
     # end def apply
@@ -164,8 +184,8 @@ class Value (_Base_) :
             result.append (self._v_repr (self.edit, "edit"))
         if self.sid is not None :
             result.append ("sid = %s" % (self.sid, ))
-        result.append (str (self.changes))
-        return " ".join (result)
+        result.append ("changes = %s" % (self.changes, ))
+        return ", ".join (result)
     # end def __str__
 
 # end class Value

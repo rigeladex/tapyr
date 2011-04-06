@@ -44,12 +44,15 @@
 #    11-Mar-2011 (CT) Checking of `session_hash` moved to `session`
 #    11-Mar-2011 (CT) `username` and `current_user` added
 #    30-Mar-2011 (CT) `** kw` added to `write_json`
+#     6-Apr-2011 (CT) Properties `content_type` and `content_encoding` added
+#     6-Apr-2011 (CT) `_handle_request_exception_nav` factored from descendents
 #    ««revision-date»»···
 #--
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.predicate             import split_hst
 from   _TFL                       import I18N
 from   _TFL                       import pyk
 
@@ -61,6 +64,33 @@ import sys
 class _Request_Handler_ (object) :
     """Mixin for request handlers."""
 
+    _content_type     = None
+    _content_encoding = None
+
+    @property
+    def content_encoding (self) :
+        if self._content_encoding is None :
+            headers = self.request.headers
+            ce      = headers.get ("content-encoding")
+            if ce :
+                self._content_encoding = ce.strip ()
+            else :
+                _ = self.content_type ### might load _content_encoding
+        return self._content_encoding
+    # end def content_encoding
+
+    @property
+    def content_type (self) :
+        if self._content_type is None :
+            headers   = self.request.headers
+            ct, _, ce = split_hst (headers.get ("content-type", ""), ";")
+            self._content_type = ct.strip ()
+            if not self._content_encoding :
+                h, s, t = split_hst (ce, "=")
+                self._content_encoding = t.strip ()
+        return self._content_type
+    # end def content_type
+
     @property
     def current_user (self) :
         return None
@@ -68,10 +98,8 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def json (self) :
-        headers = self.request.headers
-        if headers.get ("content-type") == "application/json" :
-            encoding = headers.get ("content-encoding")
-            return json.loads (self.body, encoding)
+        if self.content_type == "application/json" :
+            return json.loads (self.body, self.content_encoding)
     # end def json
 
     @Once_Property
@@ -196,18 +224,27 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
             result = top.HTTP.Error_503 (), top
         except top.HTTP.Error_503 as exc:
             result = exc, top
-        except Exception as exc :
-            if scope :
+        return result
+    # end def _handle_request
+
+    def _handle_request_exception_nav (self, exc) :
+        top   = self.nav_root
+        scope = getattr (top, "scope", None)
+        if scope :
+            if not isinstance (exc, top.HTTP.Status) :
                 pyk.fprint \
                     ( ">>> Exception"
                     , exc
                     , "during request handling, rolling back the database"
                     , file = sys.stderr
                     )
+                if __debug__ :
+                    import traceback; traceback.print_exc ()
+            try :
                 scope.rollback ()
-            raise
-        return result
-    # end def _handle_request
+            except Exception :
+                pass
+    # end def _handle_request_exception_nav
 
     def _get_user (self, username) :
         top    = self.nav_root

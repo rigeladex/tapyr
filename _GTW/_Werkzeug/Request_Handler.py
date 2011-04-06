@@ -37,6 +37,8 @@
 #                     `max_content_length` and `max_form_memory_size`
 #    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
 #    11-Mar-2011 (CT) `current_user` moved to `GTW._Request_Handler_`
+#     6-Apr-2011 (CT) `_handle_request_exception_nav` factored to
+#                     `GTW._Request_Handler_`
 #    ««revision-date»»···
 #--
 
@@ -223,13 +225,8 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     # end def __call__
 
     def _handle_request_exception (self, exc) :
-        top   = self.nav_root
-        scope = getattr (top, "scope", None)
-        if scope :
-            try :
-                scope.rollback ()
-            except Exception :
-                pass
+        top = self.nav_root
+        self._handle_request_exception_nav (exc)
         if isinstance (exc, top.HTTP.Status) :
             return exc (self)
         raise exc

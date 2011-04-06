@@ -590,6 +590,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @template.setter
     def template (self, value) :
+        self._template = None
         if isinstance (value, basestring) :
             self.template_name = value
         elif not isinstance (value, self.Templateer.Template_Type) :
@@ -854,6 +855,7 @@ class _Dir_ (_Site_Entity_) :
 
     @dir_template.setter
     def dir_template (self, value) :
+        self._dir_template = None
         if isinstance (value, basestring) :
             self.dir_template_name = value
         elif not isinstance (value, self.Templateer.Template_Type) :

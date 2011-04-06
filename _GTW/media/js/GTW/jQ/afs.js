@@ -32,27 +32,50 @@
         var _ac_response = function _ac_response (response, p$, parent) {
             var anchor, root, new_elem, s$;
             if (response) {
-                p$.append (response.html);
-                s$ = p$.children ().last ();
-                _bind_click (s$, add_cb, cancel_cb, save_cb);
-                new_elem = $GTW.AFS.Elements.create (response.json);
-                anchor =
-                    ( parent.$anchor_id !== undefined
-                    ? $GTW.AFS.Elements.get (parent.$anchor_id)
-                    : new_elem
-                    );
-                root   =
-                    ( parent.$root_id !== undefined
-                    ? $GTW.AFS.Elements.get (parent.$root_id)
-                    : new_elem
-                    );
-                new_elem.setup_value
-                    ( { anchor : anchor
-                      , root   : root
-                      , roots  : $GTW.AFS.Elements.root.roots
-                      }
-                    );
+                if (! response ["error"]) {
+                    p$.append (response.html);
+                    s$ = p$.children ().last ();
+                    _bind_click (s$, add_cb, cancel_cb, save_cb);
+                    $(":input", s$).change (field_change_cb);
+                    new_elem = $GTW.AFS.Elements.create (response.json);
+                    anchor =
+                        ( parent.$anchor_id !== undefined
+                        ? $GTW.AFS.Elements.get (parent.$anchor_id)
+                        : new_elem
+                        );
+                    root   =
+                        ( parent.$root_id !== undefined
+                        ? $GTW.AFS.Elements.get (parent.$root_id)
+                        : new_elem
+                        );
+                    new_elem.setup_value
+                        ( { anchor : anchor
+                          , root   : root
+                          , roots  : $GTW.AFS.Elements.root.roots
+                          }
+                        );
+                } else {
+                    alert ("Error: " + response.error);
+                }
             }
+        };
+        var _ec_response = function _ec_response (response, s$, elem) {
+            var anchor, new_elem, root;
+            s$ = s$
+                .html       (response.html)
+                .children   ()
+                    .unwrap ();
+            _bind_click (s$, copy_cb, delete_cb, edit_cb);
+            anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
+            root     = $GTW.AFS.Elements.get (elem.$root_id || anchor.$root_id);
+            new_elem = $GTW.AFS.Elements.create (response.json);
+            new_elem.setup_value
+                ( { anchor : anchor
+                  , root   : root
+                  , roots  : []
+                  }
+                );
+            anchor.value [new_elem.$id] = new_elem.value;
         };
         var _bind_click = function _bind_click (context, cb) {
             for (var i = 1, li = arguments.length, arg; i < li; i++) {
@@ -69,6 +92,7 @@
             $.getJSON
                 ( options.expander_url
                 , { fid           : id
+                  , sid           : $GTW.AFS.Elements.root.value.sid
                   , new_id_suffix : child_idx
                   }
                 , function (response) { _ac_response (response, p$, parent); }
@@ -86,30 +110,17 @@
                     ( options.expander_url
                     , { fid       : id
                       , pid       : pid
+                      , sid       : $GTW.AFS.Elements.root.value.sid
                       , collapsed : true
                       }
                     , function (response) {
                           var anchor, root, new_elem;
                           if (response) {
-                              s$ = s$
-                                  .html       (response.html)
-                                  .children   ()
-                                      .unwrap ();
-                              $(".copy.button",   s$).click (copy_cb);
-                              $(".delete.button", s$).click (delete_cb);
-                              $(".edit.button",   s$).click (edit_cb);
-                              anchor = $GTW.AFS.Elements.get (elem.$anchor_id);
-                              root   = $GTW.AFS.Elements.get
-                                  (elem.$root_id || anchor.$root_id);
-                              new_elem = $GTW.AFS.Elements.create
-                                  (response.json);
-                              new_elem.setup_value
-                                  ( { anchor : anchor
-                                    , root   : root
-                                    , roots  : []
-                                    }
-                                  );
-                              anchor.value [new_elem.$id] = new_elem.value;
+                              if (! response ["error"]) {
+                                  _ec_response (response, s$, elem);
+                              } else {
+                                  alert ("Error: " + response.error);
+                              }
                           }
                       }
                     );
@@ -132,6 +143,7 @@
                 ( options.expander_url
                 , { fid           : id
                   , pid           : pid
+                  , sid           : $GTW.AFS.Elements.root.value.sid
                   , new_id_suffix : child_idx
                   , copy          : true
                   }
@@ -151,30 +163,36 @@
             var pid   = value && value.edit.pid;
             $.getJSON
                 ( options.expander_url
-                , { fid      : id
-                  , pid      : pid
+                , { fid       : id
+                  , pid       : pid
+                  , sid       : $GTW.AFS.Elements.root.value.sid
                   }
                 , function (response) {
                       var anchor, root, new_elem;
                       if (response) {
-                          s$ = s$
-                              .html       (response.html)
-                              .children   ()
-                                  .unwrap ();
-                          _bind_click
-                              ( s$, add_cb, cancel_cb, copy_cb, delete_cb
-                              , edit_cb, save_cb
-                              );
-                          anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
-                          root     = $GTW.AFS.Elements.get
-                              (elem.$root_id || anchor.$root_id);
-                          new_elem = $GTW.AFS.Elements.create (response.json);
-                          new_elem.setup_value
-                              ( { anchor : anchor
-                                , root   : root
-                                , roots  : []
-                                }
-                              );
+                          if (! response ["error"]) {
+                              s$ = s$
+                                  .html       (response.html)
+                                  .children   ()
+                                      .unwrap ();
+                              _bind_click
+                                  ( s$, add_cb, cancel_cb, copy_cb, delete_cb
+                                  , edit_cb, save_cb
+                                  );
+                              $(":input", s$).change (field_change_cb);
+                              anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
+                              root     = $GTW.AFS.Elements.get
+                                  (elem.$root_id || anchor.$root_id);
+                              new_elem = $GTW.AFS.Elements.create (response.json);
+                              new_elem.setup_value
+                                  ( { anchor : anchor
+                                    , root   : root
+                                    , roots  : []
+                                    }
+                                  );
+                          } else {
+                              alert ("Error: " + response.error);
+                          }
                       }
                   }
                 );
@@ -194,12 +212,50 @@
             }
         };
         var save_cb = function save_cb (ev) {
-            // XXX;
-            alert ("Please implement the `save_cb`");
+            var b$     = $(this);
+            var s$     = b$.closest ("section");
+            var id     = s$.attr    ("id");
+            var elem   = $GTW.AFS.Elements.get (id);
+            var pvs    = $GTW.AFS.Elements.root.packed_values (elem);
+            $.ajax
+                ( { url         : document.URL
+                  , async       : false
+                  , contentType : "application/json"
+                  , dataType    : "json"
+                  , data        : $GTW.jsonify (
+                      { cargo     : pvs
+                      , collapsed : true
+                      }
+                    )
+                  , processData : false
+                  , timeout     : 30000
+                  , type        : "POST"
+                  , success     : function (answer, status, xhr_instance) {
+                        var response;
+                        var anchor, root, new_elem;
+                        if (! answer ["error"]) {
+                            if (answer ["conflicts"]) {
+                                // XXX
+                            } else if (id === answer.$child_ids [0]) {
+                                response = answer [id];
+                                if (response !== undefined) {
+                                    _ec_response (response, s$, elem);
+                                } else {
+                                    alert
+                                        ( "Save missing response: \n"
+                                        + $GTW.inspect.show (answer)
+                                        );
+                                }
+                            }
+                        } else {
+                            alert ("Error: " + answer.error, undefined, 1);
+                        }
+                        //alert ("Save response: \n" + $GTW.inspect.show (answer));
+                    }
+                  }
+                );
         };
         options.form$   = this;
-        options.inputs$ = $(":input", this);
-        options.inputs$.change (field_change_cb);
         add_cb.$selector    = ".add.button";
         cancel_cb.$selector = ".cancel.button";
         copy_cb.$selector   = ".copy.button";
@@ -207,6 +263,7 @@
         edit_cb.$selector   = ".edit.button";
         save_cb.$selector   = ".save.button";
         _bind_click (this, add_cb, copy_cb, delete_cb, edit_cb, save_cb);
+        $(":input", this).change (field_change_cb);
         return this;
     };
   } (jQuery)

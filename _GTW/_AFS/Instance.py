@@ -171,7 +171,7 @@ class Instance (_Base_) :
             ( kw
             , "allow_new", "children", "collapsed", "cooked", "copy"
             , "max_length", "max_value", "min_value", "value"
-            , "_display"
+            , "_display", "_session_secret", "_sid"
             )
         self.elem = elem
         self.kw   = kw
