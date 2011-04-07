@@ -38,14 +38,14 @@ _test_code = """
     >>> x = S (scope.PAP.Person._etype)
     >>> print repr (x)
     <Entity None 'Person' 'GTW.OMP.PAP.Person'>
-     <Fieldset None 'primary'>
+     <Fieldset None u'primary'>
       <Field None 'last_name'>
       <Field None 'first_name'>
       <Field None 'middle_name'>
       <Field None 'title'>
-     <Fieldset None 'necessary'>
+     <Fieldset None u'necessary'>
       <Field None 'sex'>
-     <Fieldset None 'optional'>
+     <Fieldset None u'optional'>
       <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
        <Field None 'start'>
        <Field None 'finish'>
@@ -55,14 +55,14 @@ _test_code = """
     >>> xl = SL (scope.PAP.Person._etype)
     >>> print repr (xl)
     <Entity None 'Person' 'GTW.OMP.PAP.Person'>
-     <Fieldset None 'primary'>
+     <Fieldset None u'primary'>
       <Field None 'last_name'>
       <Field None 'first_name'>
       <Field None 'middle_name'>
       <Field None 'title'>
-     <Fieldset None 'necessary'>
+     <Fieldset None u'necessary'>
       <Field None 'sex'>
-     <Fieldset None 'optional'>
+     <Fieldset None u'optional'>
       <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
        <Field None 'start'>
        <Field None 'finish'>
@@ -70,32 +70,32 @@ _test_code = """
      <Entity_List None 'Person_has_Address' <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
       <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
-       <Fieldset None 'primary'>
+       <Fieldset None u'primary'>
         <Field_Entity None 'right' 'GTW.OMP.PAP.Address'>
          <Field None 'street'>
          <Field None 'zip'>
          <Field None 'city'>
          <Field None 'country'>
-       <Fieldset None 'optional'>
+       <Fieldset None u'optional'>
         <Field None 'desc'>
      <Entity_List None 'Person_has_Email' <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>>
       <Entity_Link None 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
-       <Fieldset None 'primary'>
+       <Fieldset None u'primary'>
         <Field_Entity None 'right' 'GTW.OMP.PAP.Email'>
          <Field None 'address'>
-       <Fieldset None 'optional'>
+       <Fieldset None u'optional'>
         <Field None 'desc'>
      <Entity_List None 'Person_has_Phone' <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>>
       <Entity_Link None 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
-       <Fieldset None 'primary'>
+       <Fieldset None u'primary'>
         <Field_Entity None 'right' 'GTW.OMP.PAP.Phone'>
          <Field None 'country_code'>
          <Field None 'area_code'>
          <Field None 'number'>
         <Field None 'extension'>
-       <Fieldset None 'optional'>
+       <Fieldset None u'optional'>
         <Field None 'desc'>
 
     >>> NL = chr (10)
@@ -150,14 +150,14 @@ _test_code = """
     >>> y = T (scope.SWP.Page._etype)
     >>> print repr (y)
     <Entity None 'Page' 'GTW.OMP.SWP.Page'>
-     <Fieldset None 'primary'>
+     <Fieldset None u'primary'>
       <Field None 'perma_name'>
-     <Fieldset None 'required'>
+     <Fieldset None u'required'>
       <Field None 'text'>
-     <Fieldset None 'necessary'>
+     <Fieldset None u'necessary'>
       <Field None 'short_title'>
       <Field None 'title'>
-     <Fieldset None 'optional'>
+     <Fieldset None u'optional'>
       <Field_Composite None 'date' 'MOM.Date_Interval_N'>
        <Field None 'start'>
        <Field None 'finish'>
@@ -167,28 +167,28 @@ _test_code = """
      <Entity_List None 'Event' <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>>
       <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>
        <Field_Role_Hidden None u'left' 'GTW.OMP.SWP.Page'>
-       <Fieldset None 'primary'>
+       <Fieldset None u'primary'>
         <Field_Composite None 'date' 'MOM.Date_Interval'>
          <Field None 'start'>
          <Field None 'finish'>
         <Field_Composite None 'time' 'MOM.Time_Interval'>
          <Field None 'start'>
          <Field None 'finish'>
-       <Fieldset None 'optional'>
+       <Fieldset None u'optional'>
         <Field None 'detail'>
         <Field None 'short_title'>
        <Entity_Link None 'Recurrence_Spec' 'GTW.OMP.EVT.Recurrence_Spec'>
         <Field_Role_Hidden None u'left' 'GTW.OMP.EVT.Event'>
-        <Fieldset None 'optional'>
+        <Fieldset None u'optional'>
          <Field None 'dates'>
          <Field None 'date_exceptions'>
         <Entity_List None 'Recurrence_Rule' <Entity_Link None 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
          <Entity_Link None 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>
           <Field_Role_Hidden None u'left' 'GTW.OMP.EVT.Recurrence_Spec'>
-          <Fieldset None 'primary'>
+          <Fieldset None u'primary'>
            <Field None 'is_exception'>
            <Field None 'desc'>
-          <Fieldset None 'optional'>
+          <Fieldset None u'optional'>
            <Field None 'start'>
            <Field None 'finish'>
            <Field None 'period'>
@@ -205,14 +205,14 @@ _test_code = """
     >>> print repr (Form ("F", children = [y]))
     <Form F>
      <Entity F-0 'Page' 'GTW.OMP.SWP.Page'>
-      <Fieldset F-0:0 'primary'>
+      <Fieldset F-0:0 u'primary'>
        <Field F-0:0:0 'perma_name'>
-      <Fieldset F-0:1 'required'>
+      <Fieldset F-0:1 u'required'>
        <Field F-0:1:0 'text'>
-      <Fieldset F-0:2 'necessary'>
+      <Fieldset F-0:2 u'necessary'>
        <Field F-0:2:0 'short_title'>
        <Field F-0:2:1 'title'>
-      <Fieldset F-0:3 'optional'>
+      <Fieldset F-0:3 u'optional'>
        <Field_Composite F-0:3:0 'date' 'MOM.Date_Interval_N'>
         <Field F-0:3:0.0 'start'>
         <Field F-0:3:0.1 'finish'>
@@ -222,28 +222,28 @@ _test_code = """
       <Entity_List F-0:4 'Event' <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>>
        <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>
         <Field_Role_Hidden F-0:4::p-0 u'left' 'GTW.OMP.SWP.Page'>
-        <Fieldset F-0:4::p-1 'primary'>
+        <Fieldset F-0:4::p-1 u'primary'>
          <Field_Composite F-0:4::p-1:0 'date' 'MOM.Date_Interval'>
           <Field F-0:4::p-1:0.0 'start'>
           <Field F-0:4::p-1:0.1 'finish'>
          <Field_Composite F-0:4::p-1:1 'time' 'MOM.Time_Interval'>
           <Field F-0:4::p-1:1.0 'start'>
           <Field F-0:4::p-1:1.1 'finish'>
-        <Fieldset F-0:4::p-2 'optional'>
+        <Fieldset F-0:4::p-2 u'optional'>
          <Field F-0:4::p-2:0 'detail'>
          <Field F-0:4::p-2:1 'short_title'>
         <Entity_Link F-0:4::p-3 'Recurrence_Spec' 'GTW.OMP.EVT.Recurrence_Spec'>
          <Field_Role_Hidden F-0:4::p-3:0 u'left' 'GTW.OMP.EVT.Event'>
-         <Fieldset F-0:4::p-3:1 'optional'>
+         <Fieldset F-0:4::p-3:1 u'optional'>
           <Field F-0:4::p-3:1:0 'dates'>
           <Field F-0:4::p-3:1:1 'date_exceptions'>
          <Entity_List F-0:4::p-3:2 'Recurrence_Rule' <Entity_Link F-0:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
           <Entity_Link F-0:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>
            <Field_Role_Hidden F-0:4::p-3:2::p-0 u'left' 'GTW.OMP.EVT.Recurrence_Spec'>
-           <Fieldset F-0:4::p-3:2::p-1 'primary'>
+           <Fieldset F-0:4::p-3:2::p-1 u'primary'>
             <Field F-0:4::p-3:2::p-1:0 'is_exception'>
             <Field F-0:4::p-3:2::p-1:1 'desc'>
-           <Fieldset F-0:4::p-3:2::p-2 'optional'>
+           <Fieldset F-0:4::p-3:2::p-2 u'optional'>
             <Field F-0:4::p-3:2::p-2:0 'start'>
             <Field F-0:4::p-3:2::p-2:1 'finish'>
             <Field F-0:4::p-3:2::p-2:2 'period'>
@@ -261,27 +261,27 @@ _test_code = """
     >>> print repr (f)
     <Form X>
      <Entity X-0 'Person' 'GTW.OMP.PAP.Person'>
-      <Fieldset X-0:0 'primary'>
+      <Fieldset X-0:0 u'primary'>
        <Field X-0:0:0 'last_name'>
        <Field X-0:0:1 'first_name'>
        <Field X-0:0:2 'middle_name'>
        <Field X-0:0:3 'title'>
-      <Fieldset X-0:1 'necessary'>
+      <Fieldset X-0:1 u'necessary'>
        <Field X-0:1:0 'sex'>
-      <Fieldset X-0:2 'optional'>
+      <Fieldset X-0:2 u'optional'>
        <Field_Composite X-0:2:0 'lifetime' 'MOM.Date_Interval'>
         <Field X-0:2:0.0 'start'>
         <Field X-0:2:0.1 'finish'>
        <Field X-0:2:1 'salutation'>
      <Entity X-1 'Page' 'GTW.OMP.SWP.Page'>
-      <Fieldset X-1:0 'primary'>
+      <Fieldset X-1:0 u'primary'>
        <Field X-1:0:0 'perma_name'>
-      <Fieldset X-1:1 'required'>
+      <Fieldset X-1:1 u'required'>
        <Field X-1:1:0 'text'>
-      <Fieldset X-1:2 'necessary'>
+      <Fieldset X-1:2 u'necessary'>
        <Field X-1:2:0 'short_title'>
        <Field X-1:2:1 'title'>
-      <Fieldset X-1:3 'optional'>
+      <Fieldset X-1:3 u'optional'>
        <Field_Composite X-1:3:0 'date' 'MOM.Date_Interval_N'>
         <Field X-1:3:0.0 'start'>
         <Field X-1:3:0.1 'finish'>
@@ -291,28 +291,28 @@ _test_code = """
       <Entity_List X-1:4 'Event' <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>>
        <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>
         <Field_Role_Hidden X-1:4::p-0 u'left' 'GTW.OMP.SWP.Page'>
-        <Fieldset X-1:4::p-1 'primary'>
+        <Fieldset X-1:4::p-1 u'primary'>
          <Field_Composite X-1:4::p-1:0 'date' 'MOM.Date_Interval'>
           <Field X-1:4::p-1:0.0 'start'>
           <Field X-1:4::p-1:0.1 'finish'>
          <Field_Composite X-1:4::p-1:1 'time' 'MOM.Time_Interval'>
           <Field X-1:4::p-1:1.0 'start'>
           <Field X-1:4::p-1:1.1 'finish'>
-        <Fieldset X-1:4::p-2 'optional'>
+        <Fieldset X-1:4::p-2 u'optional'>
          <Field X-1:4::p-2:0 'detail'>
          <Field X-1:4::p-2:1 'short_title'>
         <Entity_Link X-1:4::p-3 'Recurrence_Spec' 'GTW.OMP.EVT.Recurrence_Spec'>
          <Field_Role_Hidden X-1:4::p-3:0 u'left' 'GTW.OMP.EVT.Event'>
-         <Fieldset X-1:4::p-3:1 'optional'>
+         <Fieldset X-1:4::p-3:1 u'optional'>
           <Field X-1:4::p-3:1:0 'dates'>
           <Field X-1:4::p-3:1:1 'date_exceptions'>
          <Entity_List X-1:4::p-3:2 'Recurrence_Rule' <Entity_Link X-1:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>>
           <Entity_Link X-1:4::p-3:2::p 'Recurrence_Rule' 'GTW.OMP.EVT.Recurrence_Rule'>
            <Field_Role_Hidden X-1:4::p-3:2::p-0 u'left' 'GTW.OMP.EVT.Recurrence_Spec'>
-           <Fieldset X-1:4::p-3:2::p-1 'primary'>
+           <Fieldset X-1:4::p-3:2::p-1 u'primary'>
             <Field X-1:4::p-3:2::p-1:0 'is_exception'>
             <Field X-1:4::p-3:2::p-1:1 'desc'>
-           <Fieldset X-1:4::p-3:2::p-2 'optional'>
+           <Fieldset X-1:4::p-3:2::p-2 u'optional'>
             <Field X-1:4::p-3:2::p-2:0 'start'>
             <Field X-1:4::p-3:2::p-2:1 'finish'>
             <Field X-1:4::p-3:2::p-2:2 'period'>
@@ -331,24 +331,24 @@ _test_code = """
     >>> print repr (fb)
     <Form FB>
      <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>
-      <Fieldset FB-0:0 'primary'>
+      <Fieldset FB-0:0 u'primary'>
        <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>
         <Field FB-0:0:0:0 'name'>
        <Field FB-0:0:1 'nation'>
        <Field FB-0:0:2 'sail_number'>
-      <Fieldset FB-0:1 'optional'>
+      <Fieldset FB-0:1 u'optional'>
        <Field FB-0:1:0 'name'>
       <Entity_List FB-0:2 'Boat_in_Regatta' <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>>
        <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>
         <Field_Role_Hidden FB-0:2::p-0 u'left' 'GTW.OMP.SRM.Boat'>
-        <Fieldset FB-0:2::p-1 'primary'>
+        <Fieldset FB-0:2::p-1 u'primary'>
          <Field_Entity FB-0:2::p-1:0 'right' 'GTW.OMP.SRM.Regatta'>
           <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>
            <Field_Composite FB-0:2::p-1:0:0:0 'date' 'MOM.Date_Interval_C'>
             <Field FB-0:2::p-1:0:0:0.0 'start'>
             <Field FB-0:2::p-1:0:0:0.1 'finish'>
            <Field FB-0:2::p-1:0:0:1 'name'>
-        <Fieldset FB-0:2::p-2 'required'>
+        <Fieldset FB-0:2::p-2 u'required'>
          <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>
           <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>
            <Field FB-0:2::p-2:0:0:0 'last_name'>
@@ -357,7 +357,7 @@ _test_code = """
            <Field FB-0:2::p-2:0:0:3 'title'>
           <Field FB-0:2::p-2:0:1 'nation'>
           <Field FB-0:2::p-2:0:2 'mna_number'>
-        <Fieldset FB-0:2::p-3 'optional'>
+        <Fieldset FB-0:2::p-3 u'optional'>
          <Field FB-0:2::p-3:0 'place'>
          <Field FB-0:2::p-3:1 'points'>
 
@@ -405,7 +405,7 @@ _test_code = """
                                 { 'cid' : 1
                                 , 'pid' : 1
                                 }
-                            , 'sid' : '4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg'
+                            , 'sid' : 'qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA'
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
@@ -521,7 +521,7 @@ _test_code = """
                                                   { 'cid' : 5
                                                   , 'pid' : 5
                                                   }
-                                              , 'sid' : 'cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg'
+                                              , 'sid' : 'w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g'
                                               }
                                           }
                                         ]
@@ -536,7 +536,7 @@ _test_code = """
                                             { 'cid' : 6
                                             , 'pid' : 6
                                             }
-                                        , 'sid' : 'WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA'
+                                        , 'sid' : 't0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw'
                                         }
                                     }
                                   ]
@@ -596,7 +596,7 @@ _test_code = """
                                                   { 'cid' : 3
                                                   , 'pid' : 3
                                                   }
-                                              , 'sid' : 'wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ'
+                                              , 'sid' : 'jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA'
                                               }
                                           }
                                         , { '$id' : 'FB-0:2::0-2:0:1'
@@ -627,7 +627,7 @@ _test_code = """
                                             { 'cid' : 4
                                             , 'pid' : 4
                                             }
-                                        , 'sid' : 'xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ'
+                                        , 'sid' : 'eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig'
                                         }
                                     }
                                   ]
@@ -669,7 +669,7 @@ _test_code = """
                                 { 'cid' : 7
                                 , 'pid' : 7
                                 }
-                            , 'sid' : 'CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g'
+                            , 'sid' : 'z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g'
                             }
                         }
                       ]
@@ -686,7 +686,7 @@ _test_code = """
                     { 'cid' : 2
                     , 'pid' : 2
                     }
-                , 'sid' : 'nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A'
+                , 'sid' : 'phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w'
                 }
             }
           ]
@@ -723,7 +723,7 @@ _test_code = """
                         , 'value' :
                             { 'init' :
                                 {}
-                            , 'sid' : 'V7ilQhRiM:5B4nIpPTo-nmKhZ8a3yzkajy3Z6w'
+                            , 'sid' : '2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA'
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
@@ -833,7 +833,7 @@ _test_code = """
                                           , 'value' :
                                               { 'init' :
                                                   {}
-                                              , 'sid' : 'Zu10unXSt48-cNJJO0MfRVH2OCMCLw6eiEaJkQ'
+                                              , 'sid' : ':Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w'
                                               }
                                           }
                                         ]
@@ -846,7 +846,7 @@ _test_code = """
                                     , 'value' :
                                         { 'init' :
                                             {}
-                                        , 'sid' : 'AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA'
+                                        , 'sid' : 'n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw'
                                         }
                                     }
                                   ]
@@ -904,7 +904,7 @@ _test_code = """
                                           , 'value' :
                                               { 'init' :
                                                   {}
-                                              , 'sid' : 'oTu4HY2z0N69RidxerwL3LQTbEF6rnuhy254kA'
+                                              , 'sid' : 'Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ'
                                               }
                                           }
                                         , { '$id' : 'FB-0:2::0-2:0:1'
@@ -933,7 +933,7 @@ _test_code = """
                                     , 'value' :
                                         { 'init' :
                                             {}
-                                        , 'sid' : 'EqiMGVKXict2UMbukM:j02XVttQj1kF7Y0l1sg'
+                                        , 'sid' : 'olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w'
                                         }
                                     }
                                   ]
@@ -973,7 +973,7 @@ _test_code = """
                         , 'value' :
                             { 'init' :
                                 {}
-                            , 'sid' : 'yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg'
+                            , 'sid' : 'UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw'
                             }
                         }
                       ]
@@ -988,7 +988,7 @@ _test_code = """
             , 'value' :
                 { 'init' :
                     {}
-                , 'sid' : 'R0vqiL9QacZHzkbQubO-Xw3nHISRLpf5y7gxLg'
+                , 'sid' : 'x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA'
                 }
             }
           ]
@@ -998,41 +998,41 @@ _test_code = """
       }
 
     >>> print "var f =", fi.as_js, ";"
-    var f = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {"cid": 1, "pid": 1}, "sid": "4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "collapsed": true, "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {"cid": 5, "pid": 5}, "sid": "cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {"cid": 6, "pid": 6}, "sid": "WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {"cid": 3, "pid": 3}, "sid": "wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {"cid": 4, "pid": 4}, "sid": "xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "collapsed": true, "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {"cid": 7, "pid": 7}, "sid": "CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g"}}], "name": "Boat_in_Regatta", "type": "Entity_List", "type_name": "GTW.OMP.SRM.Boat_in_Regatta"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}, "sid": "nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A"}}], "type": "Form", "value": {"sid": 0}}) ;
+    var f = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {"cid": 1, "pid": 1}, "sid": "qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"init": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"init": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"init": "2008/05/01"}}], "collapsed": true, "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"init": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {"cid": 5, "pid": 5}, "sid": "w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {"cid": 6, "pid": 6}, "sid": "t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"init": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"init": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {"cid": 3, "pid": 3}, "sid": "jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"init": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"init": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {"cid": 4, "pid": 4}, "sid": "eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "collapsed": true, "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {"cid": 7, "pid": 7}, "sid": "z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g"}}], "name": "Boat_in_Regatta", "type": "Entity_List", "type_name": "GTW.OMP.SRM.Boat_in_Regatta"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {"cid": 2, "pid": 2}, "sid": "phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w"}}], "type": "Form", "value": {"sid": 0}}) ;
     >>> print "var g =", fic.as_js, ";"
-    var g = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"edit": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {}, "sid": "V7ilQhRiM:5B4nIpPTo-nmKhZ8a3yzkajy3Z6w"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"edit": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"edit": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"edit": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"edit": "2008/05/01"}}], "collapsed": true, "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"edit": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {}, "sid": "Zu10unXSt48-cNJJO0MfRVH2OCMCLw6eiEaJkQ"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {}, "sid": "AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"edit": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"edit": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {}, "sid": "oTu4HY2z0N69RidxerwL3LQTbEF6rnuhy254kA"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"edit": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"edit": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {}, "sid": "EqiMGVKXict2UMbukM:j02XVttQj1kF7Y0l1sg"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "collapsed": true, "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {}, "sid": "yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg"}}], "name": "Boat_in_Regatta", "type": "Entity_List", "type_name": "GTW.OMP.SRM.Boat_in_Regatta"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {}, "sid": "R0vqiL9QacZHzkbQubO-Xw3nHISRLpf5y7gxLg"}}], "type": "Form", "value": {"sid": 0}}) ;
+    var g = new $GTW.AFS.Form ({"$id": "FB", "children": [{"$id": "FB-0", "children": [{"$id": "FB-0:0", "children": [{"$id": "FB-0:0:0", "children": [{"$id": "FB-0:0:0:0", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"edit": "Optimist"}}], "kind": "primary", "label": "Class", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Boat_Class", "value": {"init": {}, "sid": "2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA"}}, {"$id": "FB-0:0:1", "kind": "primary", "label": "Nation", "name": "nation", "required": true, "type": "Field", "value": {"edit": "AUT"}}, {"$id": "FB-0:0:2", "kind": "primary", "label": "Sail number", "name": "sail_number", "type": "Field", "value": {"edit": "1107"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:1", "children": [{"$id": "FB-0:1:0", "kind": "optional", "label": "Name", "name": "name", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}, {"$id": "FB-0:2", "children": [{"$id": "FB-0:2::0", "children": [{"$id": "FB-0:2::0-0", "allow_new": false, "hidden": true, "kind": "primary", "label": "Boat", "name": "left", "required": true, "type": "Field_Role_Hidden", "type_name": "GTW.OMP.SRM.Boat", "value": {}}, {"$id": "FB-0:2::0-1", "children": [{"$id": "FB-0:2::0-1:0", "children": [{"$id": "FB-0:2::0-1:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0", "children": [{"$id": "FB-0:2::0-1:0:0:0.0", "kind": "necessary", "label": "Start", "name": "start", "type": "Field", "value": {"edit": "2008/05/01"}}, {"$id": "FB-0:2::0-1:0:0:0.1", "kind": "optional", "label": "Finish", "name": "finish", "type": "Field", "value": {"edit": "2008/05/01"}}], "collapsed": true, "kind": "primary", "label": "Date", "name": "date", "required": true, "type": "Field_Composite", "type_name": "MOM.Date_Interval_C", "value": {}}, {"$id": "FB-0:2::0-1:0:0:1", "kind": "primary", "label": "Name", "name": "name", "required": true, "type": "Field", "value": {"edit": "Himmelfahrt"}}], "kind": "primary", "label": "Event", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta_Event", "value": {"init": {}, "sid": ":Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w"}}], "kind": "primary", "label": "Regatta", "name": "right", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Regatta", "value": {"init": {}, "sid": "n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw"}}], "collapsed": false, "name": "primary", "type": "Fieldset"}, {"$id": "FB-0:2::0-2", "children": [{"$id": "FB-0:2::0-2:0", "children": [{"$id": "FB-0:2::0-2:0:0", "children": [{"$id": "FB-0:2::0-2:0:0:0", "kind": "primary", "label": "Last name", "name": "last_name", "required": true, "type": "Field", "value": {"edit": "Tanzer"}}, {"$id": "FB-0:2::0-2:0:0:1", "kind": "primary", "label": "First name", "name": "first_name", "required": true, "type": "Field", "value": {"edit": "Laurens"}}, {"$id": "FB-0:2::0-2:0:0:2", "kind": "primary", "label": "Middle name", "name": "middle_name", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-2:0:0:3", "kind": "primary", "label": "Academic title", "name": "title", "type": "Field", "value": {}}], "kind": "primary", "label": "Person", "name": "left", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.PAP.Person", "value": {"init": {}, "sid": "Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ"}}, {"$id": "FB-0:2::0-2:0:1", "kind": "primary", "label": "Nation", "name": "nation", "type": "Field", "value": {"edit": "AUT"}}, {"$id": "FB-0:2::0-2:0:2", "kind": "primary", "label": "Mna number", "name": "mna_number", "type": "Field", "value": {"edit": "29676"}}], "kind": "required", "label": "Skipper", "name": "skipper", "required": true, "type": "Field_Entity", "type_name": "GTW.OMP.SRM.Sailor", "value": {"init": {}, "sid": "olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w"}}], "collapsed": true, "name": "required", "type": "Fieldset"}, {"$id": "FB-0:2::0-3", "children": [{"$id": "FB-0:2::0-3:0", "kind": "optional", "label": "Place", "name": "place", "type": "Field", "value": {}}, {"$id": "FB-0:2::0-3:1", "kind": "optional", "label": "Points", "name": "points", "type": "Field", "value": {}}], "collapsed": true, "name": "optional", "type": "Fieldset"}], "collapsed": true, "name": "Boat_in_Regatta", "role_name": "left", "type": "Entity_Link", "type_name": "GTW.OMP.SRM.Boat_in_Regatta", "value": {"init": {}, "sid": "UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw"}}], "name": "Boat_in_Regatta", "type": "Entity_List", "type_name": "GTW.OMP.SRM.Boat_in_Regatta"}], "name": "Boat", "type": "Entity", "type_name": "GTW.OMP.SRM.Boat", "value": {"init": {}, "sid": "x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA"}}], "type": "Form", "value": {"sid": 0}}) ;
 
     >>> for i in fi.transitive_iter () :
     ...     print i.elem, sorted (i.value or ())
     <Form FB> ['sid']
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> ['init', 'sid']
-    <Fieldset FB-0:0 'primary'> []
-    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> ['init', 'sid']
-    <Field FB-0:0:0:0 'name'> ['init']
-    <Field FB-0:0:1 'nation'> ['init']
-    <Field FB-0:0:2 'sail_number'> ['init']
-    <Fieldset FB-0:1 'optional'> []
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> [u'init', 'sid']
+    <Fieldset FB-0:0 u'primary'> []
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> [u'init', 'sid']
+    <Field FB-0:0:0:0 'name'> [u'init']
+    <Field FB-0:0:1 'nation'> [u'init']
+    <Field FB-0:0:2 'sail_number'> [u'init']
+    <Fieldset FB-0:1 u'optional'> []
     <Field FB-0:1:0 'name'> []
     <Entity_List FB-0:2 'Boat_in_Regatta' <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>> []
-    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> ['init', 'sid']
-    <Field_Role_Hidden FB-0:2::0-0 u'left' 'GTW.OMP.SRM.Boat'> ['init']
-    <Fieldset FB-0:2::0-1 'primary'> []
-    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> ['init', 'sid']
-    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> ['init', 'sid']
+    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [u'init', 'sid']
+    <Field_Role_Hidden FB-0:2::0-0 u'left' 'GTW.OMP.SRM.Boat'> [u'init']
+    <Fieldset FB-0:2::0-1 u'primary'> []
+    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> [u'init', 'sid']
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> [u'init', 'sid']
     <Field_Composite FB-0:2::0-1:0:0:0 'date' 'MOM.Date_Interval_C'> []
-    <Field FB-0:2::0-1:0:0:0.0 'start'> ['init']
-    <Field FB-0:2::0-1:0:0:0.1 'finish'> ['init']
-    <Field FB-0:2::0-1:0:0:1 'name'> ['init']
-    <Fieldset FB-0:2::0-2 'required'> []
-    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> ['init', 'sid']
-    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> ['init', 'sid']
-    <Field FB-0:2::0-2:0:0:0 'last_name'> ['init']
-    <Field FB-0:2::0-2:0:0:1 'first_name'> ['init']
+    <Field FB-0:2::0-1:0:0:0.0 'start'> [u'init']
+    <Field FB-0:2::0-1:0:0:0.1 'finish'> [u'init']
+    <Field FB-0:2::0-1:0:0:1 'name'> [u'init']
+    <Fieldset FB-0:2::0-2 u'required'> []
+    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> [u'init', 'sid']
+    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> [u'init', 'sid']
+    <Field FB-0:2::0-2:0:0:0 'last_name'> [u'init']
+    <Field FB-0:2::0-2:0:0:1 'first_name'> [u'init']
     <Field FB-0:2::0-2:0:0:2 'middle_name'> []
     <Field FB-0:2::0-2:0:0:3 'title'> []
-    <Field FB-0:2::0-2:0:1 'nation'> ['init']
-    <Field FB-0:2::0-2:0:2 'mna_number'> ['init']
-    <Fieldset FB-0:2::0-3 'optional'> []
+    <Field FB-0:2::0-2:0:1 'nation'> [u'init']
+    <Field FB-0:2::0-2:0:2 'mna_number'> [u'init']
+    <Fieldset FB-0:2::0-3 u'optional'> []
     <Field FB-0:2::0-3:0 'place'> []
     <Field FB-0:2::0-3:1 'points'> []
 
@@ -1043,24 +1043,26 @@ _test_code = """
     >>> f_sig_map = {}
     >>> for i in fi.entity_children () :
     ...     f_sig_map [i.id] = i, i.sig
-    ...     print i.elem, "pid =", i.init.get ("pid"), i.sid
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> pid = 2 nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A
-    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> pid = 1 4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg
-    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> pid = 7 CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g
-    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> pid = 6 WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA
-    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> pid = 5 cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg
-    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> pid = 4 xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ
-    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> pid = 3 wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ
+    ...     print i.elem, ", pid =", i.init.get ("pid"), ", sid =", i.sid
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> , pid = 2 , sid = phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> , pid = 1 , sid = qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA
+    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> , pid = 7 , sid = z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g
+    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> , pid = 6 , sid = t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> , pid = 5 , sid = w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g
+    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> , pid = 4 , sid = eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig
+    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> , pid = 3 , sid = jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA
 
+    >>> g_sig_map = {}
     >>> for i in fic.entity_children () :
-    ...     print i.elem, "pid =", i.init.get ("pid"), i.sid
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> pid = None R0vqiL9QacZHzkbQubO-Xw3nHISRLpf5y7gxLg
-    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> pid = None V7ilQhRiM:5B4nIpPTo-nmKhZ8a3yzkajy3Z6w
-    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> pid = None yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg
-    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> pid = None AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA
-    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> pid = None Zu10unXSt48-cNJJO0MfRVH2OCMCLw6eiEaJkQ
-    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> pid = None EqiMGVKXict2UMbukM:j02XVttQj1kF7Y0l1sg
-    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> pid = None oTu4HY2z0N69RidxerwL3LQTbEF6rnuhy254kA
+    ...     g_sig_map [i.id] = i, i.sig
+    ...     print i.elem, ", pid =", i.init.get ("pid"), ", sid =", i.sid
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> , pid = None , sid = x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> , pid = None , sid = 2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA
+    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> , pid = None , sid = UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw
+    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> , pid = None , sid = n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> , pid = None , sid = :Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w
+    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> , pid = None , sid = olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w
+    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> , pid = None , sid = Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ
 
     >>> Value.from_json (json_bad)
     Traceback (most recent call last):
@@ -1073,22 +1075,22 @@ _test_code = """
     >>> for i in fv.transitive_iter () :
     ...     print i
     <Form FB>, init-v = '', sid = 0, changes = 0
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>, init-v = [(u'cid', 2), (u'pid', 2)], sid = nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A, changes = 0
-    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>, init-v = [(u'cid', 1), (u'pid', 1)], sid = 4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg, changes = 0
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>, init-v = [(u'cid', 2), (u'pid', 2)], sid = phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w, changes = 0
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>, init-v = [(u'cid', 1), (u'pid', 1)], sid = qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA, changes = 0
     <Field FB-0:0:0:0 'name'>, init-v = 'Optimist', changes = 0
     <Field FB-0:0:1 'nation'>, init-v = 'AUT', changes = 0
     <Field FB-0:0:2 'sail_number'>, init-v = '1107', changes = 0
     <Field FB-0:1:0 'name'>, init-v = '', changes = 0
-    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>, init-v = [(u'cid', 7), (u'pid', 7)], sid = CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g, changes = 0
+    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>, init-v = [(u'cid', 7), (u'pid', 7)], sid = z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g, changes = 0
     <Field_Role_Hidden FB-0:2::p-0 u'left' 'GTW.OMP.SRM.Boat'>, init-v = [(u'cid', 2), (u'pid', 2)], changes = 0
-    <Field_Entity FB-0:2::p-1:0 'right' 'GTW.OMP.SRM.Regatta'>, init-v = [(u'cid', 6), (u'pid', 6)], sid = WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA, changes = 0
-    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>, init-v = [(u'cid', 5), (u'pid', 5)], sid = cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg, changes = 0
+    <Field_Entity FB-0:2::p-1:0 'right' 'GTW.OMP.SRM.Regatta'>, init-v = [(u'cid', 6), (u'pid', 6)], sid = t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw, changes = 0
+    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>, init-v = [(u'cid', 5), (u'pid', 5)], sid = w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g, changes = 0
     <Field_Composite FB-0:2::p-1:0:0:0 'date' 'MOM.Date_Interval_C'>, init-v = '', changes = 0
     <Field FB-0:2::p-1:0:0:0.0 'start'>, init-v = '2008/05/01', changes = 0
     <Field FB-0:2::p-1:0:0:0.1 'finish'>, init-v = '2008/05/01', changes = 0
     <Field FB-0:2::p-1:0:0:1 'name'>, init-v = 'Himmelfahrt', changes = 0
-    <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>, init-v = [(u'cid', 4), (u'pid', 4)], sid = xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ, changes = 0
-    <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>, init-v = [(u'cid', 3), (u'pid', 3)], sid = wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ, changes = 1
+    <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>, init-v = [(u'cid', 4), (u'pid', 4)], sid = eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig, changes = 0
+    <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>, init-v = [(u'cid', 3), (u'pid', 3)], sid = jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA, changes = 1
     <Field FB-0:2::p-2:0:0:0 'last_name'>, init-v = 'Tanzer', changes = 0
     <Field FB-0:2::p-2:0:0:1 'first_name'>, init-v = 'Laurens', changes = 0
     <Field FB-0:2::p-2:0:0:2 'middle_name'>, init-v = '', edit-v = 'William', changes = 1
@@ -1116,40 +1118,40 @@ _test_code = """
     ...    print "  >", i_sig
     ...    print "  <", v_sig
     <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> True True
-      > nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A
-      < nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A
-      > ((('pid', 2), ('cid', 2), 'FB-0', 'GTW.OMP.SRM.Boat'), ('FB-0:0:0', 'left'), ('FB-0:0:1', 'nation', u'AUT'), ('FB-0:0:2', 'sail_number', u'1107'), ('FB-0:1:0', 'name', ''), 0)
-      < ((('pid', 2), ('cid', 2), 'FB-0', 'GTW.OMP.SRM.Boat'), ('FB-0:0:0', 'left'), ('FB-0:0:1', 'nation', u'AUT'), ('FB-0:0:2', 'sail_number', u'1107'), ('FB-0:1:0', 'name', ''), 0)
+      > phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w
+      < phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w
+      > (((u'pid', 2), (u'cid', 2), 'FB-0', 'GTW.OMP.SRM.Boat'), ('FB-0:0:0', 'left'), ('FB-0:0:1', 'nation', u'AUT'), ('FB-0:0:2', 'sail_number', u'1107'), ('FB-0:1:0', 'name', u''), 0)
+      < (((u'pid', 2), (u'cid', 2), 'FB-0', 'GTW.OMP.SRM.Boat'), ('FB-0:0:0', 'left'), ('FB-0:0:1', 'nation', u'AUT'), ('FB-0:0:2', 'sail_number', u'1107'), ('FB-0:1:0', 'name', u''), 0)
     <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> True True
-      > 4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg
-      < 4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg
-      > ((('pid', 1), ('cid', 1), 'FB-0:0:0', 'GTW.OMP.SRM.Boat_Class'), ('FB-0:0:0:0', 'name', u'Optimist'), 0)
-      < ((('pid', 1), ('cid', 1), 'FB-0:0:0', 'GTW.OMP.SRM.Boat_Class'), ('FB-0:0:0:0', 'name', u'Optimist'), 0)
+      > qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA
+      < qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA
+      > (((u'pid', 1), (u'cid', 1), 'FB-0:0:0', 'GTW.OMP.SRM.Boat_Class'), ('FB-0:0:0:0', 'name', u'Optimist'), 0)
+      < (((u'pid', 1), (u'cid', 1), 'FB-0:0:0', 'GTW.OMP.SRM.Boat_Class'), ('FB-0:0:0:0', 'name', u'Optimist'), 0)
     <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> True True
-      > CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g
-      < CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g
-      > ((('pid', 7), ('cid', 7), 'FB-0:2::0', 'GTW.OMP.SRM.Boat_in_Regatta'), ('FB-0:2::0-0', u'left'), ('FB-0:2::0-1:0', 'right'), ('FB-0:2::0-2:0', 'skipper'), ('FB-0:2::0-3:0', 'place', ''), ('FB-0:2::0-3:1', 'points', ''), 0)
-      < ((('pid', 7), ('cid', 7), 'FB-0:2::0', 'GTW.OMP.SRM.Boat_in_Regatta'), ('FB-0:2::0-0', u'left'), ('FB-0:2::0-1:0', 'right'), ('FB-0:2::0-2:0', 'skipper'), ('FB-0:2::0-3:0', 'place', ''), ('FB-0:2::0-3:1', 'points', ''), 0)
+      > z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g
+      < z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g
+      > (((u'pid', 7), (u'cid', 7), 'FB-0:2::0', 'GTW.OMP.SRM.Boat_in_Regatta'), ('FB-0:2::0-0', u'left'), ('FB-0:2::0-1:0', 'right'), ('FB-0:2::0-2:0', 'skipper'), ('FB-0:2::0-3:0', 'place', u''), ('FB-0:2::0-3:1', 'points', u''), 0)
+      < (((u'pid', 7), (u'cid', 7), 'FB-0:2::0', 'GTW.OMP.SRM.Boat_in_Regatta'), ('FB-0:2::0-0', u'left'), ('FB-0:2::0-1:0', 'right'), ('FB-0:2::0-2:0', 'skipper'), ('FB-0:2::0-3:0', 'place', u''), ('FB-0:2::0-3:1', 'points', u''), 0)
     <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> True True
-      > WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA
-      < WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA
-      > ((('pid', 6), ('cid', 6), 'FB-0:2::0-1:0', 'GTW.OMP.SRM.Regatta'), ('FB-0:2::0-1:0:0', 'left'), 0)
-      < ((('pid', 6), ('cid', 6), 'FB-0:2::0-1:0', 'GTW.OMP.SRM.Regatta'), ('FB-0:2::0-1:0:0', 'left'), 0)
+      > t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw
+      < t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw
+      > (((u'pid', 6), (u'cid', 6), 'FB-0:2::0-1:0', 'GTW.OMP.SRM.Regatta'), ('FB-0:2::0-1:0:0', 'left'), 0)
+      < (((u'pid', 6), (u'cid', 6), 'FB-0:2::0-1:0', 'GTW.OMP.SRM.Regatta'), ('FB-0:2::0-1:0:0', 'left'), 0)
     <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> True True
-      > cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg
-      < cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg
-      > ((('pid', 5), ('cid', 5), 'FB-0:2::0-1:0:0', 'GTW.OMP.SRM.Regatta_Event'), ('FB-0:2::0-1:0:0:0', 'date', (('FB-0:2::0-1:0:0:0.0', 'start', u'2008/05/01'), ('FB-0:2::0-1:0:0:0.1', 'finish', u'2008/05/01'))), ('FB-0:2::0-1:0:0:1', 'name', u'Himmelfahrt'), 0)
-      < ((('pid', 5), ('cid', 5), 'FB-0:2::0-1:0:0', 'GTW.OMP.SRM.Regatta_Event'), ('FB-0:2::0-1:0:0:0', 'date', (('FB-0:2::0-1:0:0:0.0', 'start', u'2008/05/01'), ('FB-0:2::0-1:0:0:0.1', 'finish', u'2008/05/01'))), ('FB-0:2::0-1:0:0:1', 'name', u'Himmelfahrt'), 0)
+      > w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g
+      < w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g
+      > (((u'pid', 5), (u'cid', 5), 'FB-0:2::0-1:0:0', 'GTW.OMP.SRM.Regatta_Event'), ('FB-0:2::0-1:0:0:0', 'date', (('FB-0:2::0-1:0:0:0.0', 'start', u'2008/05/01'), ('FB-0:2::0-1:0:0:0.1', 'finish', u'2008/05/01'))), ('FB-0:2::0-1:0:0:1', 'name', u'Himmelfahrt'), 0)
+      < (((u'pid', 5), (u'cid', 5), 'FB-0:2::0-1:0:0', 'GTW.OMP.SRM.Regatta_Event'), ('FB-0:2::0-1:0:0:0', 'date', (('FB-0:2::0-1:0:0:0.0', 'start', u'2008/05/01'), ('FB-0:2::0-1:0:0:0.1', 'finish', u'2008/05/01'))), ('FB-0:2::0-1:0:0:1', 'name', u'Himmelfahrt'), 0)
     <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> True True
-      > xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ
-      < xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ
-      > ((('pid', 4), ('cid', 4), 'FB-0:2::0-2:0', 'GTW.OMP.SRM.Sailor'), ('FB-0:2::0-2:0:0', 'left'), ('FB-0:2::0-2:0:1', 'nation', u'AUT'), ('FB-0:2::0-2:0:2', 'mna_number', u'29676'), 0)
-      < ((('pid', 4), ('cid', 4), 'FB-0:2::0-2:0', 'GTW.OMP.SRM.Sailor'), ('FB-0:2::0-2:0:0', 'left'), ('FB-0:2::0-2:0:1', 'nation', u'AUT'), ('FB-0:2::0-2:0:2', 'mna_number', u'29676'), 0)
+      > eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig
+      < eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig
+      > (((u'pid', 4), (u'cid', 4), 'FB-0:2::0-2:0', 'GTW.OMP.SRM.Sailor'), ('FB-0:2::0-2:0:0', 'left'), ('FB-0:2::0-2:0:1', 'nation', u'AUT'), ('FB-0:2::0-2:0:2', 'mna_number', u'29676'), 0)
+      < (((u'pid', 4), (u'cid', 4), 'FB-0:2::0-2:0', 'GTW.OMP.SRM.Sailor'), ('FB-0:2::0-2:0:0', 'left'), ('FB-0:2::0-2:0:1', 'nation', u'AUT'), ('FB-0:2::0-2:0:2', 'mna_number', u'29676'), 0)
     <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> True True
-      > wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ
-      < wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ
-      > ((('pid', 3), ('cid', 3), 'FB-0:2::0-2:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-2:0:0:0', 'last_name', u'Tanzer'), ('FB-0:2::0-2:0:0:1', 'first_name', u'Laurens'), ('FB-0:2::0-2:0:0:2', 'middle_name', ''), ('FB-0:2::0-2:0:0:3', 'title', ''), 0)
-      < ((('pid', 3), ('cid', 3), 'FB-0:2::0-2:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-2:0:0:0', 'last_name', u'Tanzer'), ('FB-0:2::0-2:0:0:1', 'first_name', u'Laurens'), ('FB-0:2::0-2:0:0:2', 'middle_name', ''), ('FB-0:2::0-2:0:0:3', 'title', ''), 0)
+      > jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA
+      < jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA
+      > (((u'pid', 3), (u'cid', 3), 'FB-0:2::0-2:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-2:0:0:0', 'last_name', u'Tanzer'), ('FB-0:2::0-2:0:0:1', 'first_name', u'Laurens'), ('FB-0:2::0-2:0:0:2', 'middle_name', u''), ('FB-0:2::0-2:0:0:3', 'title', u''), 0)
+      < (((u'pid', 3), (u'cid', 3), 'FB-0:2::0-2:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-2:0:0:0', 'last_name', u'Tanzer'), ('FB-0:2::0-2:0:0:1', 'first_name', u'Laurens'), ('FB-0:2::0-2:0:0:2', 'middle_name', u''), ('FB-0:2::0-2:0:0:3', 'title', u''), 0)
 
     >>> v.edit.get ("pid")
     3
@@ -1180,22 +1182,22 @@ _test_code = """
     >>> for v in gv.transitive_iter () :
     ...     print v
     <Form FB>, init-v = '', sid = 0, changes = 0
-    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>, init-v = [], sid = R0vqiL9QacZHzkbQubO-Xw3nHISRLpf5y7gxLg, changes = 2
-    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>, init-v = [], sid = V7ilQhRiM:5B4nIpPTo-nmKhZ8a3yzkajy3Z6w, changes = 1
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>, init-v = [], sid = x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA, changes = 2
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>, init-v = [], sid = 2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA, changes = 1
     <Field FB-0:0:0:0 'name'>, init-v = '', edit-v = 'Optimist', changes = 1
     <Field FB-0:0:1 'nation'>, init-v = '', edit-v = 'AUT', changes = 1
     <Field FB-0:0:2 'sail_number'>, init-v = '', edit-v = '1107', changes = 1
     <Field FB-0:1:0 'name'>, init-v = '', changes = 0
-    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>, init-v = [], sid = yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg, changes = 0
+    <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>, init-v = [], sid = UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw, changes = 0
     <Field_Role_Hidden FB-0:2::p-0 u'left' 'GTW.OMP.SRM.Boat'>, init-v = [], changes = 0
-    <Field_Entity FB-0:2::p-1:0 'right' 'GTW.OMP.SRM.Regatta'>, init-v = [], sid = AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA, changes = 0
-    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>, init-v = [], sid = Zu10unXSt48-cNJJO0MfRVH2OCMCLw6eiEaJkQ, changes = 1
+    <Field_Entity FB-0:2::p-1:0 'right' 'GTW.OMP.SRM.Regatta'>, init-v = [], sid = n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw, changes = 0
+    <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>, init-v = [], sid = :Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w, changes = 1
     <Field_Composite FB-0:2::p-1:0:0:0 'date' 'MOM.Date_Interval_C'>, init-v = '', changes = 2
     <Field FB-0:2::p-1:0:0:0.0 'start'>, init-v = '', edit-v = '2008/05/01', changes = 1
     <Field FB-0:2::p-1:0:0:0.1 'finish'>, init-v = '', edit-v = '2008/05/01', changes = 1
     <Field FB-0:2::p-1:0:0:1 'name'>, init-v = '', edit-v = 'Himmelfahrt', changes = 1
-    <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>, init-v = [], sid = EqiMGVKXict2UMbukM:j02XVttQj1kF7Y0l1sg, changes = 2
-    <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>, init-v = [], sid = oTu4HY2z0N69RidxerwL3LQTbEF6rnuhy254kA, changes = 3
+    <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>, init-v = [], sid = olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w, changes = 2
+    <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>, init-v = [], sid = Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ, changes = 3
     <Field FB-0:2::p-2:0:0:0 'last_name'>, init-v = '', edit-v = 'Tanzer', changes = 1
     <Field FB-0:2::p-2:0:0:1 'first_name'>, init-v = '', edit-v = 'Laurens', changes = 1
     <Field FB-0:2::p-2:0:0:2 'middle_name'>, init-v = '', edit-v = 'William II', changes = 1
@@ -1351,14 +1353,53 @@ _test_code = """
           {}
       }
 
-    >>> for p in scope.PAP.Person.query_s ().all () :
-    ...    p
-    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
-    >>> gv.apply (scope, _sid = 0)
-    >>> for p in scope.PAP.Person.query_s ().all () :
-    ...    p
-    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
-    GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'william ii', u'')
+    >>> w_sig_map = {}
+    >>> for w in gv.entity_children () :
+    ...     wh = w.elem.form_hash (w)
+    ...     w_sig_map [w.id] = w, w.sig, wh
+
+    >>> for id, (i, i_sig) in sorted (g_sig_map.iteritems ()) :
+    ...    (w, w_sig, wh) = w_sig_map [id]
+    ...    print i.elem, i.sid == wh, i_sig == w_sig
+    ...    print "  >", i.sid
+    ...    print "  <", wh
+    ...    print "  >", i_sig
+    ...    print "  <", w_sig
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> True True
+      > x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA
+      < x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA
+      > (((u'pid', None), (u'cid', None), 'FB-0', 'GTW.OMP.SRM.Boat'), ('FB-0:0:0', 'left'), ('FB-0:0:1', 'nation', u''), ('FB-0:0:2', 'sail_number', u''), ('FB-0:1:0', 'name', u''), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0', 'GTW.OMP.SRM.Boat'), ('FB-0:0:0', 'left'), ('FB-0:0:1', 'nation', u''), ('FB-0:0:2', 'sail_number', u''), ('FB-0:1:0', 'name', u''), 0)
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> True True
+      > 2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA
+      < 2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA
+      > (((u'pid', None), (u'cid', None), 'FB-0:0:0', 'GTW.OMP.SRM.Boat_Class'), ('FB-0:0:0:0', 'name', u''), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0:0:0', 'GTW.OMP.SRM.Boat_Class'), ('FB-0:0:0:0', 'name', u''), 0)
+    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> True True
+      > UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw
+      < UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw
+      > (((u'pid', None), (u'cid', None), 'FB-0:2::0', 'GTW.OMP.SRM.Boat_in_Regatta'), ('FB-0:2::0-0', u'left'), ('FB-0:2::0-1:0', 'right'), ('FB-0:2::0-2:0', 'skipper'), ('FB-0:2::0-3:0', 'place', u''), ('FB-0:2::0-3:1', 'points', u''), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0:2::0', 'GTW.OMP.SRM.Boat_in_Regatta'), ('FB-0:2::0-0', u'left'), ('FB-0:2::0-1:0', 'right'), ('FB-0:2::0-2:0', 'skipper'), ('FB-0:2::0-3:0', 'place', u''), ('FB-0:2::0-3:1', 'points', u''), 0)
+    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'> True True
+      > n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw
+      < n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw
+      > (((u'pid', None), (u'cid', None), 'FB-0:2::0-1:0', 'GTW.OMP.SRM.Regatta'), ('FB-0:2::0-1:0:0', 'left'), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0:2::0-1:0', 'GTW.OMP.SRM.Regatta'), ('FB-0:2::0-1:0:0', 'left'), 0)
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'> True True
+      > :Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w
+      < :Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w
+      > (((u'pid', None), (u'cid', None), 'FB-0:2::0-1:0:0', 'GTW.OMP.SRM.Regatta_Event'), ('FB-0:2::0-1:0:0:0', 'date', (('FB-0:2::0-1:0:0:0.0', 'start', u''), ('FB-0:2::0-1:0:0:0.1', 'finish', u''))), ('FB-0:2::0-1:0:0:1', 'name', u''), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0:2::0-1:0:0', 'GTW.OMP.SRM.Regatta_Event'), ('FB-0:2::0-1:0:0:0', 'date', (('FB-0:2::0-1:0:0:0.0', 'start', u''), ('FB-0:2::0-1:0:0:0.1', 'finish', u''))), ('FB-0:2::0-1:0:0:1', 'name', u''), 0)
+    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> True True
+      > olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w
+      < olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w
+      > (((u'pid', None), (u'cid', None), 'FB-0:2::0-2:0', 'GTW.OMP.SRM.Sailor'), ('FB-0:2::0-2:0:0', 'left'), ('FB-0:2::0-2:0:1', 'nation', u''), ('FB-0:2::0-2:0:2', 'mna_number', u''), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0:2::0-2:0', 'GTW.OMP.SRM.Sailor'), ('FB-0:2::0-2:0:0', 'left'), ('FB-0:2::0-2:0:1', 'nation', u''), ('FB-0:2::0-2:0:2', 'mna_number', u''), 0)
+    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> True True
+      > Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ
+      < Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ
+      > (((u'pid', None), (u'cid', None), 'FB-0:2::0-2:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-2:0:0:0', 'last_name', u''), ('FB-0:2::0-2:0:0:1', 'first_name', u''), ('FB-0:2::0-2:0:0:2', 'middle_name', u''), ('FB-0:2::0-2:0:0:3', 'title', u''), 0)
+      < (((u'pid', None), (u'cid', None), 'FB-0:2::0-2:0:0', 'GTW.OMP.PAP.Person'), ('FB-0:2::0-2:0:0:0', 'last_name', u''), ('FB-0:2::0-2:0:0:1', 'first_name', u''), ('FB-0:2::0-2:0:0:2', 'middle_name', u''), ('FB-0:2::0-2:0:0:3', 'title', u''), 0)
 
     >>> em  = PAP.Email ("laurens.tanzer@gmail.com")
     >>> phe = PAP.Person_has_Email (p, em)
@@ -1369,27 +1410,27 @@ _test_code = """
     >>> for i in fip.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FP> [('sid', 0)]
-    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [('init', {'pid': 3, 'cid': 9}), ('sid', 'AY0lWdBVGFIA0s8Xw7JwIx2ALoY57v4oZ7t40g')]
-    <Fieldset FP-0:0 'primary'> []
-    <Field FP-0:0:0 'last_name'> [('init', u'Tanzer')]
-    <Field FP-0:0:1 'first_name'> [('init', u'Laurens')]
-    <Field FP-0:0:2 'middle_name'> [('init', u'w.')]
+    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 9}), ('sid', 'qNsqqY:fkLHincq1UOGiFcR-rfr8azwNN5lzKg')]
+    <Fieldset FP-0:0 u'primary'> []
+    <Field FP-0:0:0 'last_name'> [(u'init', u'Tanzer')]
+    <Field FP-0:0:1 'first_name'> [(u'init', u'Laurens')]
+    <Field FP-0:0:2 'middle_name'> [(u'init', u'w.')]
     <Field FP-0:0:3 'title'> []
-    <Fieldset FP-0:1 'necessary'> []
+    <Fieldset FP-0:1 u'necessary'> []
     <Field FP-0:1:0 'sex'> []
-    <Fieldset FP-0:2 'optional'> []
+    <Fieldset FP-0:2 u'optional'> []
     <Field_Composite FP-0:2:0 'lifetime' 'MOM.Date_Interval'> []
     <Field FP-0:2:0.0 'start'> []
     <Field FP-0:2:0.1 'finish'> []
     <Field FP-0:2:1 'salutation'> []
     <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
     <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
-    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [('init', {'pid': 9, 'cid': 11}), ('sid', 'NkhwxdB3CzNWGPY3ORUOmACdukvpb1ILtqZC1A')]
-    <Field_Role_Hidden FP-0:4::0-0 u'left' 'GTW.OMP.PAP.Person'> [('init', {'pid': 3, 'cid': 9})]
-    <Fieldset FP-0:4::0-1 'primary'> []
-    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [('init', {'pid': 8, 'cid': 10}), ('sid', '5p7YsOOE0mtqcwWSqc4VGxIBBNr3Q3iRhnnfyg')]
-    <Field FP-0:4::0-1:0:0 'address'> [('init', u'laurens.tanzer@gmail.com')]
-    <Fieldset FP-0:4::0-2 'optional'> []
+    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [(u'init', {'pid': 9, 'cid': 11}), ('sid', 'pF-EYEnMJe3ON:GcMEjuLM9JpGWrcDP7u4LdoQ')]
+    <Field_Role_Hidden FP-0:4::0-0 u'left' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 9})]
+    <Fieldset FP-0:4::0-1 u'primary'> []
+    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [(u'init', {'pid': 8, 'cid': 10}), ('sid', 'SP6pZjeOnzgbW3EHQNC0N2AULHxGeMXPjDuSQg')]
+    <Field FP-0:4::0-1:0:0 'address'> [(u'init', u'laurens.tanzer@gmail.com')]
+    <Fieldset FP-0:4::0-2 u'optional'> []
     <Field FP-0:4::0-2:0 'desc'> []
     <Entity_List FP-0:5 'Person_has_Phone' <Entity_Link FP-0:5::p 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>> []
 
@@ -1435,8 +1476,8 @@ Instance.sort_json = True
 
 ### `json_edit` and `json_copy` copied from output of::
 ###     /usr/bin/js -s -f GTW/AFS/Elements.test
-json_edit = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"nP9NCkr2:RYzmR1-HcNa:hX5BkFcY-bNGPmF8A","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"4iclb:pX5bjYLJxM-hzFmRyFDlvAtNlJAOqXtg","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"CXtHxy47cyw1oWCNQZEZsy5Y9Rkbrz794iPO-g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"WhBOoVhOiZgslPZ52ICPny37YThf57KeMo87fA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"cnc9z:bC4HdO2ymWNZgjtZHw97r-QZmJKIgiBg","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"xH5Sp5mPgOe48Feocpx71fy5F8ewlaDYjDFeuQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"wQRotsgYAjt11Vl:JtkZpDUXjWLMYVvn-ooSAQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"edit":"William"},"FB-0:2::0-2:0:0:3":{}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{},"FB-0:2::0-3:1":{}}}"""
-json_copy = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"R0vqiL9QacZHzkbQubO-Xw3nHISRLpf5y7gxLg","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"V7ilQhRiM:5B4nIpPTo-nmKhZ8a3yzkajy3Z6w","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"yrtpTWd7BvDkTtuQpGpQqnmGsN21ElGXr62Ceg","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"edit":{},"role_id":"FB-0"},"FB-0:2::0-1:0":{"init":{},"sid":"AAX8cqiFu4TPsyrnVOGQtnt4-sNysC6hzrn6MA","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"Zu10unXSt48-cNJJO0MfRVH2OCMCLw6eiEaJkQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:0.1":{"edit":"2008/05/01","init":""}},"FB-0:2::0-1:0:0:1":{"edit":"Himmelfahrt","init":""}}},"FB-0:2::0-2:0":{"init":{},"sid":"EqiMGVKXict2UMbukM:j02XVttQj1kF7Y0l1sg","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":"oTu4HY2z0N69RidxerwL3LQTbEF6rnuhy254kA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}"""
+json_edit = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"phjgjwl72C-CvOCB04VaCmV4h1IW-tOOfskS1w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}"""
+json_copy = """{"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"x3VNcsrmZrHBNBU3W3kQIWzthC-FPCUzVEvwuA","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"edit":{},"role_id":"FB-0"},"FB-0:2::0-1:0":{"init":{},"sid":"n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":":Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:0.1":{"edit":"2008/05/01","init":""}},"FB-0:2::0-1:0:0:1":{"edit":"Himmelfahrt","init":""}}},"FB-0:2::0-2:0":{"init":{},"sid":"olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":"Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}"""
 json_bad  = """{"$id":"FC"}"""
 
 __test__ = dict (AFS_Spec = _test_code)

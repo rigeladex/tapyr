@@ -61,7 +61,7 @@
       ( choices  = elem.choices
       , id       = elem.id
       , name     = elem.name
-      , selected = elem.init
+      , selected = elem.edit
       )
   }}
 {%- endmacro -%} {#- named_value -#}
@@ -107,7 +107,7 @@
       ( class         = elem.css_class
       , id            = id
       , name          = elem.name
-      , value         = elem.init
+      , value         = elem.edit
       )
   -%}
   {%- do kw.update (kwargs) -%}

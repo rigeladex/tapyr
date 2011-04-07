@@ -46,6 +46,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import unicode_literals
+
 from   _GTW._AFS.Element import *
 from   _GTW._AFS.Element import _Element_
 
@@ -120,14 +122,18 @@ class _MOM_Entity_ (_MOM_Element_, Entity) :
         if entity is not None :
             assert isinstance (entity, ETM._etype), \
                 "%s <-> %r" % (ETM, entity)
-        result = self.__super._value (ETM, entity, ** kw)
+        result = self.__super._value  (ETM, entity, ** kw)
         key    = "edit" if result.get ("prefilled") else "init"
-        result [key] = {} if kw.get ("copy", False) else dict \
+        result [key] = self._value_cp (ETM, entity, ** kw)
+        return result
+    # end def _value
+
+    def _value_cp (self, ETM, entity, ** kw) :
+        return {} if kw.get ("copy", False) else dict \
             ( cid = getattr (entity, "last_cid", None)
             , pid = getattr (entity, "pid",      None)
             )
-        return result
-    # end def _value
+    # end def _value_cp
 
     def _value_sig_t (self, instance) :
         init = instance.init
@@ -300,13 +306,6 @@ class Field_Role_Hidden (Field_Entity) :
     def _update_sid (self, result, ** kw) :
         pass
     # end def _update_sid
-
-    def _value (self, ETM, entity, ** kw) :
-        result = self.__super._value (ETM, entity, ** kw)
-        if kw.get ("copy", False) :
-            result.pop ("init", None)
-        return result
-    # end def _value
 
 # end class Field_Role_Hidden
 

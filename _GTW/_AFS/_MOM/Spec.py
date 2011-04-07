@@ -49,6 +49,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import unicode_literals
+
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL

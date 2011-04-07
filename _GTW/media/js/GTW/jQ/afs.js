@@ -94,6 +94,7 @@
                 , { fid           : id
                   , sid           : $GTW.AFS.Elements.root.value.sid
                   , new_id_suffix : child_idx
+                  // XXX need to pass `pid` of `hidden_role` if any
                   }
                 , function (response) { _ac_response (response, p$, parent); }
                 );

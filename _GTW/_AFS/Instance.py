@@ -46,8 +46,11 @@
 #    29-Mar-2011 (CT) `__getattr__` changed to look in `kw` first
 #    30-Mar-2011 (CT) `display` added
 #     4-Apr-2011 (CT) `collapsed` added to `Instance.as_json_cargo`
+#     7-Apr-2011 (CT) `edit` added
 #    ««revision-date»»···
 #--
+
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -106,8 +109,8 @@ class _Base_ (TFL.Meta.Object) :
     # end def entity_children
 
     def form_hash (self, form_sig) :
-        hash = hashlib.sha224 (str (form_sig)).digest ()
-        return base64.b64encode (hash, ":-").rstrip ("=")
+        hash = hashlib.sha224 (unicode (form_sig)).digest ()
+        return base64.b64encode (hash, b":-").rstrip (b"=")
     # end def form_hash
 
     def form_sig (self, * args) :
@@ -209,6 +212,16 @@ class Instance (_Base_) :
     # end def id
 
     @property
+    def edit (self) :
+        result = None
+        if self.value :
+            result = self.value.get ("edit")
+        if result is None :
+            result = self.init
+        return result
+    # end def init
+
+    @property
     def init (self) :
         result = None
         if self.value :
@@ -217,6 +230,14 @@ class Instance (_Base_) :
             result = self.elem.init
         return result
     # end def init
+
+    @property
+    def pid (self) :
+        try :
+            return self.edit and self.edit.get ("pid")
+        except LookupError :
+            pass
+    # end def pid
 
     @property
     def prefilled (self) :

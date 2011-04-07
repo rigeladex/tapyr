@@ -77,6 +77,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import unicode_literals
+
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -658,79 +660,79 @@ Usage example::
     ...     )
     >>> print repr (f)
     <Form F>
-     <Entity F-0 'PAP.Person'>
-      <Fieldset F-0:0 'primary'>
-       <Field F-0:0:0 'last_name'>
-       <Field F-0:0:1 'first_name'>
-      <Field_Composite F-0:1 'lifetime'>
-       <Field F-0:1.0 'start'>
-       <Field F-0:1.1 'finish'>
-      <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
-       <Entity F-0:2::p 'PAP.Person_has_Email'>
-        <Field F-0:2::p-0 'desc'>
-        <Entity F-0:2::p-1 'PAP.Email'>
-         <Field F-0:2::p-1:0 'address'>
-     <Entity F-1 'SRM.Boat_Type'>
-      <Field F-1:0 'name'>
+     <Entity F-0 u'PAP.Person'>
+      <Fieldset F-0:0 u'primary'>
+       <Field F-0:0:0 u'last_name'>
+       <Field F-0:0:1 u'first_name'>
+      <Field_Composite F-0:1 u'lifetime'>
+       <Field F-0:1.0 u'start'>
+       <Field F-0:1.1 u'finish'>
+      <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
+       <Entity F-0:2::p u'PAP.Person_has_Email'>
+        <Field F-0:2::p-0 u'desc'>
+        <Entity F-0:2::p-1 u'PAP.Email'>
+         <Field F-0:2::p-1:0 u'address'>
+     <Entity F-1 u'SRM.Boat_Type'>
+      <Field F-1:0 u'name'>
     >>> sorted (f.id_map)
-    ['F-0', 'F-0:0', 'F-0:0:0', 'F-0:0:1', 'F-0:1', 'F-0:1.0', 'F-0:1.1', 'F-0:2', 'F-0:2::p', 'F-0:2::p-0', 'F-0:2::p-1', 'F-0:2::p-1:0', 'F-1', 'F-1:0']
+    [u'F-0', u'F-0:0', u'F-0:0:0', u'F-0:0:1', u'F-0:1', u'F-0:1.0', u'F-0:1.1', u'F-0:2', u'F-0:2::p', u'F-0:2::p-0', u'F-0:2::p-1', u'F-0:2::p-1:0', u'F-1', u'F-1:0']
     >>> [str (f.id_map [id]) for id in sorted (f.id_map)]
-    ["<Entity F-0 'PAP.Person'>", "<Fieldset F-0:0 'primary'>", "<Field F-0:0:0 'last_name'>", "<Field F-0:0:1 'first_name'>", "<Field_Composite F-0:1 'lifetime'>", "<Field F-0:1.0 'start'>", "<Field F-0:1.1 'finish'>", "<Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>", "<Entity F-0:2::p 'PAP.Person_has_Email'>", "<Field F-0:2::p-0 'desc'>", "<Entity F-0:2::p-1 'PAP.Email'>", "<Field F-0:2::p-1:0 'address'>", "<Entity F-1 'SRM.Boat_Type'>", "<Field F-1:0 'name'>"]
+    ["<Entity F-0 u'PAP.Person'>", "<Fieldset F-0:0 u'primary'>", "<Field F-0:0:0 u'last_name'>", "<Field F-0:0:1 u'first_name'>", "<Field_Composite F-0:1 u'lifetime'>", "<Field F-0:1.0 u'start'>", "<Field F-0:1.1 u'finish'>", "<Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>", "<Entity F-0:2::p u'PAP.Person_has_Email'>", "<Field F-0:2::p-0 u'desc'>", "<Entity F-0:2::p-1 u'PAP.Email'>", "<Field F-0:2::p-1:0 u'address'>", "<Entity F-1 u'SRM.Boat_Type'>", "<Field F-1:0 u'name'>"]
 
     >>> print f ["F-0:1.0"]
-    <Field F-0:1.0 'start'>
+    <Field F-0:1.0 u'start'>
     >>> print f ["F-0:2"]
-    <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
+    <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
     >>> print f ["F-0:2::p"]
-    <Entity F-0:2::p 'PAP.Person_has_Email'>
+    <Entity F-0:2::p u'PAP.Person_has_Email'>
     >>> print f ["F-0:2::p-0"]
-    <Field F-0:2::p-0 'desc'>
+    <Field F-0:2::p-0 u'desc'>
     >>> print f ["F-0:2::p-0"]
-    <Field F-0:2::p-0 'desc'>
+    <Field F-0:2::p-0 u'desc'>
     >>> print f ["F-0:2::1-0"]
-    <Field F-0:2::p-0 'desc'>
+    <Field F-0:2::p-0 u'desc'>
     >>> fel = f ["F-0:2"]
     >>> print fel.proto
-    <Entity F-0:2::p 'PAP.Person_has_Email'>
+    <Entity F-0:2::p u'PAP.Person_has_Email'>
 
     >>> g = f.copy ()
     >>> gel = g ["F-0:2"]
     >>> print gel.add_child ()
-    <Entity F-0:2::0 'PAP.Person_has_Email'>
+    <Entity F-0:2::0 u'PAP.Person_has_Email'>
     >>> print gel.add_child ()
-    <Entity F-0:2::1 'PAP.Person_has_Email'>
+    <Entity F-0:2::1 u'PAP.Person_has_Email'>
     >>> print repr (g)
     <Form F>
-     <Entity F-0 'PAP.Person'>
-      <Fieldset F-0:0 'primary'>
-       <Field F-0:0:0 'last_name'>
-       <Field F-0:0:1 'first_name'>
-      <Field_Composite F-0:1 'lifetime'>
-       <Field F-0:1.0 'start'>
-       <Field F-0:1.1 'finish'>
-      <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
-       <Entity F-0:2::0 'PAP.Person_has_Email'>
-        <Field F-0:2::0-0 'desc'>
-        <Entity F-0:2::0-1 'PAP.Email'>
-         <Field F-0:2::0-1:0 'address'>
-       <Entity F-0:2::1 'PAP.Person_has_Email'>
-        <Field F-0:2::1-0 'desc'>
-        <Entity F-0:2::1-1 'PAP.Email'>
-         <Field F-0:2::1-1:0 'address'>
-     <Entity F-1 'SRM.Boat_Type'>
-      <Field F-1:0 'name'>
+     <Entity F-0 u'PAP.Person'>
+      <Fieldset F-0:0 u'primary'>
+       <Field F-0:0:0 u'last_name'>
+       <Field F-0:0:1 u'first_name'>
+      <Field_Composite F-0:1 u'lifetime'>
+       <Field F-0:1.0 u'start'>
+       <Field F-0:1.1 u'finish'>
+      <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
+       <Entity F-0:2::0 u'PAP.Person_has_Email'>
+        <Field F-0:2::0-0 u'desc'>
+        <Entity F-0:2::0-1 u'PAP.Email'>
+         <Field F-0:2::0-1:0 u'address'>
+       <Entity F-0:2::1 u'PAP.Person_has_Email'>
+        <Field F-0:2::1-0 u'desc'>
+        <Entity F-0:2::1-1 u'PAP.Email'>
+         <Field F-0:2::1-1:0 u'address'>
+     <Entity F-1 u'SRM.Boat_Type'>
+      <Field F-1:0 u'name'>
     >>> sorted (g.id_map)
-    ['F-0', 'F-0:0', 'F-0:0:0', 'F-0:0:1', 'F-0:1', 'F-0:1.0', 'F-0:1.1', 'F-0:2', 'F-0:2::0', 'F-0:2::0-0', 'F-0:2::0-1', 'F-0:2::0-1:0', 'F-0:2::1', 'F-0:2::1-0', 'F-0:2::1-1', 'F-0:2::1-1:0', 'F-0:2::p', 'F-0:2::p-0', 'F-0:2::p-1', 'F-0:2::p-1:0', 'F-1', 'F-1:0']
+    [u'F-0', u'F-0:0', u'F-0:0:0', u'F-0:0:1', u'F-0:1', u'F-0:1.0', u'F-0:1.1', u'F-0:2', u'F-0:2::0', u'F-0:2::0-0', u'F-0:2::0-1', u'F-0:2::0-1:0', u'F-0:2::1', u'F-0:2::1-0', u'F-0:2::1-1', u'F-0:2::1-1:0', u'F-0:2::p', u'F-0:2::p-0', u'F-0:2::p-1', u'F-0:2::p-1:0', u'F-1', u'F-1:0']
     >>> print g ["F-0:2::p-0"]
-    <Field F-0:2::p-0 'desc'>
+    <Field F-0:2::p-0 u'desc'>
     >>> print g ["F-0:2::0-0"]
-    <Field F-0:2::0-0 'desc'>
+    <Field F-0:2::0-0 u'desc'>
     >>> print g ["F-0:2::1-0"]
-    <Field F-0:2::1-0 'desc'>
+    <Field F-0:2::1-0 u'desc'>
     >>> print g ["F-0:2::42-0"]
-    <Field F-0:2::p-0 'desc'>
+    <Field F-0:2::p-0 u'desc'>
     >>> tuple (str (c) for c in gel.children)
-    ("<Entity F-0:2::0 'PAP.Person_has_Email'>", "<Entity F-0:2::1 'PAP.Person_has_Email'>")
+    ("<Entity F-0:2::0 u'PAP.Person_has_Email'>", "<Entity F-0:2::1 u'PAP.Person_has_Email'>")
 
     >>> print Form ["F"]
     <Form F>

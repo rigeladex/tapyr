@@ -64,7 +64,7 @@
         , templ_name = renderer
         )
    -%}
-      {%- if elem.init.pid %}
+      {%- if elem.pid %}
         {{ GTW.call_macro ("do_button", "Delete", templ_name = renderer) }}
       {% endif -%}
       {%- if elem.collapsed %}
