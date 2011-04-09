@@ -47,6 +47,8 @@
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #     5-Apr-2011 (MG) `Admin_Alias._pns_entries` used `top.App_Type` instead
 #                     of `top.scope.App_Type` to prevent early scope creation
+#     9-Apr-2011 (MG) Support for lazy `entries` calculation added (to avoid
+#                     early scope instantiation)
 #    ««revision-date»»···
 #--
 
@@ -83,12 +85,21 @@ class Admin_Group (GTW.NAV.Dir) :
     show_aliases      = False
 
     def __init__ (self, src_dir, parent, ** kw) :
-        entries = \
-            (kw.pop ("etypes", []), self._pns_entries (* kw.pop ("PNSs", [])))
+        self.etypes  = kw.pop ("etypes", [])
+        self.PNSs    = kw.pop ("PNSs",   [])
         self.__super.__init__ (src_dir, parent, ** kw)
+        del self._entries ### delete it from the instance dict to allow the
+                          ### once property to be activated
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def _entries (self) :
+        self._entries = []
+        entries       = (self.etypes, self._pns_entries (* self.PNSs))
         self.add_entries      (self._filter_etype_entries (* entries))
         self._entries.sort    (key = TFL.Getter.short_title)
-    # end def __init__
+        return self._entries
+    # end def _entries
 
     def _filter_etype_entries (self, * args) :
         seen = set ()

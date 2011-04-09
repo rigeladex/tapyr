@@ -40,6 +40,8 @@
 #                     `GTW_pixpander`, `GTW_week_roller` renamed to lowercase
 #    26-Jan-2011 (CT) `GTW.js` added
 #     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
+#     7-Apr-2011 (MG) Use jQuery 1.5.2
+#     7-Apr-2011 (MG) Definitions for `jqPlot` added
 #    ««revision-date»»···
 #--
 
@@ -48,14 +50,14 @@ import _GTW.Media
 
 if __debug__ :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-1.4.2.js"
+        ( src      = "/media/GTW/js/jquery-1.5.2.js"
         , sort_key = -100  ## should be loaded first
         , name     = "jQuery"
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui.js", name = "jQuery_UI")
 else :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-1.4.2.min.js"
+        ( src      = "/media/GTW/js/jquery-1.5.2.min.js"
         , sort_key = -100  ## should be loaded first
         , name     = "jQuery"
         )
@@ -110,17 +112,49 @@ GTW.JS_On_Ready \
     , name = "GTW_Label_As_Placeholder"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW/jQ/pixpander.js", name = "GTW_pixpander")
+GTW.Script (src = "/media/GTW/js/GTW/jQ/pixpander.js", name = "GTW_pixpander")
 GTW.JS_On_Ready \
     ( """$("a[href$='.jpg'] > img").gtw_pixpander ();"""
       """$("a[href$='.png'] > img").gtw_pixpander ();"""
     , name = "GTW_pixpander"
     )
 
-GTW.Script (src = "/media/GTW/js/GTW/jQ/week_roller.js", name = "GTW_week_roller")
+GTW.Script \
+    (src = "/media/GTW/js/GTW/jQ/week_roller.js", name = "GTW_week_roller")
 GTW.JS_On_Ready \
     ( """$(".week-roller").gtw_week_roller (); """
     , name = "GTW_week_roller"
+    )
+### definitions for jqPlot
+GTW.CSS_Link ("/media/GTW/css/jquery.jqplot.min.css", name = "jqPlot")
+GTW.Script \
+    ( src  = "/media/GTW/js/jqPlot/jquery.jqplot.js"
+    , name = "jqPlot"
+    )
+GTW.Script \
+    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.cursor.min.js"
+    , name = "jqPlot_cursor"
+    )
+GTW.Script \
+    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.dateAxisRenderer.min.js"
+    , name = "jqPlot_dateaxis"
+    )
+GTW.Script \
+    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js"
+    , name = "jqPlot_canvastick"
+    )
+GTW.Script \
+    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.canvasTextRenderer.min.js"
+    , name = "jqPlot_canvastext"
+    )
+GTW.Script \
+    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.enhancedLegendRenderer.min.js"
+    , name = "jqPlot_legend"
+    )
+GTW.Script \
+    ( src = "/media/GTW/js/jqPlot/excanvas.js"
+    , condition = "IE"
+    , name = "jqPlot_excanvas"
     )
 
 if __name__ != "__main__" :

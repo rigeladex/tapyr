@@ -113,6 +113,8 @@ def fixtures (scope) :
     EVT   = scope.EVT
     MOM   = scope.MOM
     scope.Auth.Account_Anonymous (u"anonymous")
+    scope.Auth.Account_P.create_new_account_x \
+        ("mgl", "123", superuser = True, enabled = True, suspended = False)
     p = scope.PAP.Person (u"Glücklich", u"Eddy", raw = True)
     p = scope.PAP.Person (u"Glücklos",  u"Eddy", raw = True)
     p = scope.PAP.Person (u"Glueck",    u"Martin", raw = True)
@@ -129,7 +131,7 @@ def fixtures (scope) :
         (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
 
     page = SWP.Page \
-        (perma_name = "test-page", text = "Test Page with an event", creator= p)
+        (perma_name = "test-page", text = "Test Page with an event")
     EVT.Event (page, MOM.Date_Interval (start = "2010-01-01", raw = True))
     scope.commit                 () ### commit my `fixtures`
 # end def fixtures

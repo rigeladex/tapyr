@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -36,6 +36,9 @@
 #    21-Dec-2010 (CT) `h_title` removed
 #    22-Dec-2010 (CT) `permalink` changed to use `self.manager` instead of
 #                     home-grown code
+#     9-Apr-2011 (MG) Use getattr for accessing `perma_name`
+#                     `Mixin._get_objects` support dor dict style `Page`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -85,7 +88,11 @@ class Mixin (TFL.Meta.Object) :
 
     def _get_objects (self) :
         T  = self.Page
-        kw = self.page_args
+        if isinstance (T, dict) :
+            kw = T.copy ()
+            T  = kw.pop ("Type")
+        else :
+            kw = self.page_args
         return [T (self, o, ** kw) for o in self.query ()]
     # end def _get_objects
 
@@ -98,7 +105,7 @@ class Instance_Mixin (Mixin) :
     def __init__ (self, manager, obj, ** kw) :
         name = getattr (obj, "name", None)
         if name is None :
-            name = str (obj.perma_name)
+            name = str (getattr (obj, "perma_name", obj.pid))
         else :
             name = TFL.Ascii.sanitized_filename (name)
         self.__super.__init__ \

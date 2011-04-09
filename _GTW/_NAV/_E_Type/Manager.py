@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -59,6 +59,8 @@
 #                     `Q.date.start.D.YEAR` instead of home-grown code
 #    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
 #    22-Dec-2010 (CT) `_admin` added and used
+#     9-Apr-2011 (MG) `Manager.href_display` use getattr for `perma_name`
+#                     `Link_Manager` started
 #    ««revision-date»»···
 #--
 
@@ -117,7 +119,8 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     # end def href_change
 
     def href_display (self, obj) :
-        return pjoin (self.abs_href, obj.perma_name)
+        return pjoin \
+            (self.abs_href, getattr (obj, "perma_name", str (obj.pid)))
     # end def href_display
 
     def page_from_obj (self, obj) :
@@ -364,6 +367,40 @@ class Manager_T_Archive_Y (Manager_T_Archive) :
     # end def _year_filter
 
 # end class Manager_T_Archive_Y
+
+import _TFL.Caller
+
+class Link_Manager (Manager) :
+    """Display the links associated with the passed object"""
+
+    def __init__ (self, parent, obj, ** kw) :
+        scope = TFL.Caller.Object_Scope (obj)
+        for attr, default in ( ("title",       "%(ui_display)s")
+                             , ("short_title", "%(ui_display)s")
+                             ) :
+            value = kw.pop (attr, default)
+            if isinstance (value, basestring) :
+                value = value % scope
+            kw [attr] = value
+        self.obj  = obj
+        self.role = kw.pop ("role")
+        self.__super.__init__ \
+            ( obj.type_base_name
+            , sub_dir = "%s-%s" % (obj.type_base_name, obj.pid)
+            , parent  = parent
+            , ** kw
+            )
+    # end def __init__
+
+    def query (self) :
+        return self.ETM.query_s \
+            ( * self.query_filters
+            , sort_key = self.sort_key
+            , ** {self.role : self.obj}
+            )
+    # end def query
+
+# end class Link_Manager
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")
