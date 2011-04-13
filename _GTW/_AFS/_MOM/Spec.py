@@ -311,7 +311,8 @@ class Field_Composite (_Field_Entity_Mixin_) :
 class Field_Entity (_Field_Entity_Mixin_) :
     """Specification of an entity-holding field of a AFS form."""
 
-    Type     = Element.Field_Entity
+    defaults  = dict (collapsed = True)
+    Type      = Element.Field_Entity
 
     def default_elements (self, E_Type) :
         for f in FGP.fields (E_Type, self, set ()) :

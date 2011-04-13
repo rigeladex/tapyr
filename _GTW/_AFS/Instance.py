@@ -47,6 +47,7 @@
 #    30-Mar-2011 (CT) `display` added
 #     4-Apr-2011 (CT) `collapsed` added to `Instance.as_json_cargo`
 #     7-Apr-2011 (CT) `edit` added
+#    13-Apr-2011 (CT) `allow_new` added to `Instance.as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -194,7 +195,7 @@ class Instance (_Base_) :
             v = getattr (self, k, False)
             if v :
                 result [k] = v
-        for k in ("collapsed", ) :
+        for k in ("allow_new", "collapsed") :
             v = getattr (self, k, undef)
             if v is not undef :
                 result [k] = v

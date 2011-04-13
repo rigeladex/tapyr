@@ -90,6 +90,7 @@
 #     4-Apr-2011 (CT) `Expander` continued... (`collapsed`)
 #     5-Apr-2011 (CT) `Expander` continued....
 #     6-Apr-2011 (CT) `Expander` continued....., `AFS._post_handler` added
+#    13-Apr-2011 (CT) `Expander` continued......
 #    ««revision-date»»···
 #--
 
@@ -259,7 +260,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return handler.write_json (error = str (exc))
             get_template = self.top.Templateer.get_template
             ikw = dict \
-                ( collapsed = json.get ("collapsed")
+                ( allow_new = json.get ("allow_new")
+                , collapsed = json.get ("collapsed")
                 )
             result ["$child_ids"] = rids = []
             for e in fv.entities () :
@@ -473,7 +475,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     return handler.write_json \
                         (error = "Session expired: %s" % exc)
                 ikw = dict \
-                    ( collapsed       = req_data.get ("collapsed")
+                    ( allow_new       = req_data.get ("allow_new")
+                    , collapsed       = req_data.get ("collapsed")
                     , copy            = req_data.get ("copy")
                     , _sid            = sid
                     , _session_secret = session_secret

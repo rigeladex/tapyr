@@ -19,6 +19,7 @@
 //     1-Apr-2011 (CT) Creation continued..
 //     4-Apr-2011 (CT) Creation continued...
 //     5-Apr-2011 (CT) Creation continued....
+//    13-Apr-2011 (CT) Creation continued.....
 //    ««revision-date»»···
 //--
 
@@ -112,6 +113,7 @@
                     , { fid       : id
                       , pid       : pid
                       , sid       : $GTW.AFS.Elements.root.value.sid
+                      , allow_new : elem.allow_new
                       , collapsed : true
                       }
                     , function (response) {
@@ -146,6 +148,7 @@
                   , pid           : pid
                   , sid           : $GTW.AFS.Elements.root.value.sid
                   , new_id_suffix : child_idx
+                  , allow_new     : elem.allow_new
                   , copy          : true
                   }
                 , function (response) { _ac_response (response, p$, elem); }
@@ -167,6 +170,7 @@
                 , { fid       : id
                   , pid       : pid
                   , sid       : $GTW.AFS.Elements.root.value.sid
+                  , allow_new : elem.allow_new
                   }
                 , function (response) {
                       var anchor, root, new_elem;
@@ -225,6 +229,7 @@
                   , dataType    : "json"
                   , data        : $GTW.jsonify (
                       { cargo     : pvs
+                      , allow_new : elem.allow_new
                       , collapsed : true
                       }
                     )

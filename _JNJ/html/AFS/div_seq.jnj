@@ -35,6 +35,8 @@
 ##    30-Mar-2011 (CT) `button` instances added
 ##    31-Mar-2011 (CT) `do_button` factored
 ##     4-Apr-2011 (CT) `Delete` button only `if elem.init.pid`
+##    13-Apr-2011 (CT) Buttons, `allow_new`, and `collapsed` added to
+##                     `Field_Entity`
 ##    ««revision-date»»···
 ##--
 #}
@@ -122,9 +124,36 @@
 
 {%- macro Field_Entity (form, elem, renderer) -%}
   {#- XXX honor allow_new, is_changeable... -#}
-  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
-    {{ GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) }}
-    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+  {% call GTW.call_macro
+      ( "do_element"
+      , form, elem, renderer, class = "closed" if elem.collapsed else ""
+      , templ_name = renderer
+      )
+  -%}
+    {% call GTW.call_macro
+        ( "do_head"
+        , form, elem, renderer
+        , head = elem.display if elem.collapsed else None
+        , show_desc = False
+        , templ_name = renderer
+        )
+    -%}
+      {%- if elem.collapsed %}
+        {%- if elem.allow_new %}
+          {%- if elem.pid %}
+            {{ GTW.call_macro ("do_button", "Copy", templ_name = renderer) }}
+          {% endif -%}
+          {{ GTW.call_macro ("do_button", "New",  templ_name = renderer) }}
+        {% endif -%}
+        {{ GTW.call_macro ("do_button", "Edit",   templ_name = renderer) }}
+      {%- else %}
+        {{ GTW.call_macro ("do_button", "Save",   templ_name = renderer) }}
+        {{ GTW.call_macro ("do_button", "Cancel", templ_name = renderer) }}
+      {% endif -%}
+    {% endcall %} {# do_head #}
+    {%- if not elem.collapsed %}
+      {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+    {% endif -%}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Field_Entity -#}
 

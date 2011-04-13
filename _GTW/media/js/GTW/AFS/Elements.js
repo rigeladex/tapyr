@@ -33,6 +33,7 @@
 //     1-Apr-2011 (CT) `Element.id_suffix` added
 //     1-Apr-2011 (CT) `Entity_List.max_child_idx` and `.new_child_idx` added
 //     5-Apr-2011 (CT) `Element.remove` added
+//    13-Apr-2011 (CT) `Element.new_child_idx` added (empty)
 //    ««revision-date»»···
 //--
 
@@ -105,6 +106,9 @@
                   return Number (match [0]);
               }
               return 65535;
+          }
+        , new_child_idx : function new_child_idx () {
+              return null;
           }
         , remove : function remove () {
               var anchor = $GTW.AFS.Elements.get (this.$anchor_id);

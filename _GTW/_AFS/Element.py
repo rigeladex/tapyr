@@ -74,6 +74,7 @@
 #    31-Mar-2011 (CT) `Entity_List` changed to redefine `.instantiated`
 #     1-Apr-2011 (CT) `_Element_.instantiated` changed to honor `child_id`
 #     4-Apr-2011 (CT) s/child_id/new_id_suffix/
+#    13-Apr-2011 (CT) `_pop_in_call` added
 #    ««revision-date»»···
 #--
 
@@ -130,12 +131,13 @@ class _Element_ (TFL.Meta.Object) :
     widget        = None
     _css_class    = None
     _id           = None
+    _pop_in_call  = ("allow_new", "collapsed")
     _pop_to_self  = \
         ( "css_class", "description", "explanation"
         , "id", "id_sep", "needs_value", "prefilled", "readonly"
         , "renderer", "required", "ui_name", "widget"
         )
-    _lists_to_combine   = ("_pop_to_self", )
+    _lists_to_combine   = ("_pop_to_self", "_pop_in_call")
 
     def __init__ (self, ** kw) :
         self.pop_to_self  (kw, * self._pop_to_self)
@@ -146,7 +148,9 @@ class _Element_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        ikw    = self._instance_kw (* args, ** kw)
+        ikw = self._instance_kw (* args, ** kw)
+        for k in self._pop_in_call :
+            kw.pop (k, None)
         result = GTW.AFS.Instance \
             ( self
             , children = list (self._call_iter (* args, ** kw))

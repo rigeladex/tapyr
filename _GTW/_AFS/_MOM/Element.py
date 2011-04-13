@@ -43,6 +43,8 @@
 #     1-Apr-2011 (CT) `Entity_Link.__call__` changed to allow `link` to be
 #                     passed in
 #     5-Apr-2011 (CT) `Entity_Link.__call__` corrected
+#    13-Apr-2011 (CT) `Field_Entity.__call__` changed to allow call for
+#                     instance, support `allow_new` and `collapsed`
 #    ««revision-date»»···
 #--
 
@@ -269,16 +271,25 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
     _real_name = "Field_Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
-        attr     = ETM._etype.attributes [self.name]
-        a_type   = attr.etype_manager (ETM)
-        a_entity = getattr (entity, self.name, None)
-        a_kw     = dict (kw, ** kw.get (self.name, {}))
-        kw       = dict \
-            ( a_kw
-            , allow_new = attr.ui_allow_new and a_kw.get ("allow_new", True)
-            # XXX completer
-            )
-        return self.__super.__call__ (a_type, a_entity, ** kw)
+        if self.type_name == ETM.type_name :
+            result = self.__super.__call__ (ETM, entity, ** kw)
+        else :
+            attr     = ETM._etype.attributes [self.name]
+            a_etm    = attr.etype_manager (ETM)
+            a_entity = getattr (entity, self.name, None)
+            a_kw     = dict (kw, ** kw.get (self.name, {}))
+            kw       = dict \
+                ( a_kw
+                , allow_new = attr.ui_allow_new and a_kw.get ("allow_new", True)
+                , collapsed =
+                    (   a_kw.get    ("collapsed", True)
+                    and self.kw.get ("collapsed", True)
+                    and not (a_entity is None and attr.is_required)
+                    )
+                # XXX completer
+                )
+            result = self.__super.__call__ (a_etm, a_entity, ** kw)
+        return result
     # end def __call__
 
     def applyf (self, value, scope, entity, ** kw) :

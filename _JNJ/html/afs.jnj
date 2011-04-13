@@ -32,6 +32,7 @@
 ##    21-Mar-2011 (CT) `html/AFS/div_seq.jnj` factored
 ##    30-Mar-2011 (CT) `do_head` changed to allow `caller`, `head` and `n` added
 ##    31-Mar-2011 (CT) `do_button` added
+##    13-Apr-2011 (CT) `do_head` changed to use `show_desc`
 ##    ««revision-date»»···
 ##--
 #}
@@ -66,10 +67,10 @@
   </{{ elem.het_c }}>
 {%- endmacro -%} {#- do_element -#}
 
-{%- macro do_head (form, elem, renderer, n = 1, head = None) -%}
+{%- macro do_head (form, elem, renderer, n = 1, head = None, show_desc = True) -%}
   {%- set head_caller = kwargs.pop ("caller", None) -%}
   {%- set desc = GTW._T (elem.description)|safe %}
-  {%- if desc -%}
+  {%- if show_desc and desc -%}
     {%- set expl = GTW._T (elem.explanation)|safe %}
     <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
       {{- desc -}}
