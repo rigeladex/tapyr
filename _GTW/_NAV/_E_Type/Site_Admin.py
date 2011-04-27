@@ -85,16 +85,17 @@ class Admin_Group (GTW.NAV.Dir) :
     show_aliases      = False
 
     def __init__ (self, src_dir, parent, ** kw) :
-        self.etypes  = kw.pop ("etypes", [])
-        self.PNSs    = kw.pop ("PNSs",   [])
+        self.etypes = kw.pop ("etypes",  [])
+        self.PNSs   = kw.pop ("PNSs",    [])
         self.__super.__init__ (src_dir, parent, ** kw)
+        self._init_entries = self.__dict__ ["_entries"]
         del self._entries ### delete it from the instance dict to allow the
                           ### once property to be activated
     # end def __init__
 
     @TFL.Meta.Once_Property
     def _entries (self) :
-        self._entries = []
+        self._entries = list (self._init_entries)
         entries       = (self.etypes, self._pns_entries (* self.PNSs))
         self.add_entries      (self._filter_etype_entries (* entries))
         self._entries.sort    (key = TFL.Getter.short_title)
