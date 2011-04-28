@@ -248,6 +248,9 @@
 #                     `GTW.Session`
 #    15-Mar-2011 (CT) `Root.scope` changed to call `Create_Scope` with same
 #                     signature as `MOM.Scope.load`
+#    28-Apr-2011 (CT) `dir_template_name = None` added to `Page`
+#    28-Apr-2011 (CT) `_Page_O_.__getattr__` changed to first try `__super`,
+#                     then `obj`
 #    ««revision-date»»···
 #--
 
@@ -702,7 +705,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
 class Page (_Site_Entity_) :
     """Model one page of a web site."""
 
-    own_links       = []
+    dir_template_name = None
+    own_links         = []
 
     @Once_Property
     def parents (self) :
@@ -725,12 +729,12 @@ class _Page_O_ (Page) :
     """Page relying on an object for some of its properties."""
 
     def __getattr__ (self, name) :
-        if name != "obj" :
-            try :
+        try :
+            return self.__super.__getattr__ (name)
+        except AttributeError :
+            if name != "obj" :
                 return getattr (self.obj, name)
-            except AttributeError :
-                pass
-        return self.__super.__getattr__ (name)
+            raise
     # end def __getattr__
 
 # end class _Page_O_
@@ -1218,7 +1222,10 @@ class Root (_Dir_) :
         if CS is None :
             from _MOM import MOM
             CS = MOM.Scope.load
-        return CS (self.top.App_Type, self.top.DB_Url)
+        result = CS (self.top.App_Type, self.top.DB_Url)
+        if self.DEBUG :
+            print "Created", result
+        return result
     # end def scope
 
     def store_css (self, css_dir, prefix, map_path) :
