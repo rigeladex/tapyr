@@ -49,6 +49,7 @@
 #                     of `top.scope.App_Type` to prevent early scope creation
 #     9-Apr-2011 (MG) Support for lazy `entries` calculation added (to avoid
 #                     early scope instantiation)
+#    27-Apr-2011 (CT) `_init_entries` added
 #    ««revision-date»»···
 #--
 
