@@ -236,12 +236,18 @@
                   , processData : false
                   , timeout     : 30000
                   , type        : "POST"
+                  , error       : function (xhr_instance, status, exc) {
+                        alert ("Save failed: " + status);
+                  }
                   , success     : function (answer, status, xhr_instance) {
                         var response;
                         var anchor, root, new_elem;
                         if (! answer ["error"]) {
                             if (answer ["conflicts"]) {
                                 // XXX
+                                alert ( "Conflicts: \n"
+                                      + $GTW.inspect.show (answer.conflicts)
+                                      );
                             } else if (id === answer.$child_ids [0]) {
                                 response = answer [id];
                                 if (response !== undefined) {

@@ -33,6 +33,7 @@
 #     2-Dec-2010 (CT) `_Exc_Mixin_` and `M_Error` added and used
 #    31-Dec-2010 (CT) s/get_std_template/get_template/
 #     5-Apr-2011 (CT) `Error_408` and `Error_409` added
+#     2-May-2011 (CT) `Error_400` added
 #    ««revision-date»»···
 #--
 
@@ -181,6 +182,11 @@ class _Error_ (Status) :
     # end def __call__
 
 # end class _Error_
+
+class Error_400 (_Error_) :
+    """Bad Request."""
+    response = exceptions.BadRequest
+# end class Error_400
 
 class Error_401 (_Error_) :
     """Unauthorized."""

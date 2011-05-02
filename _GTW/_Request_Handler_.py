@@ -46,6 +46,7 @@
 #    30-Mar-2011 (CT) `** kw` added to `write_json`
 #     6-Apr-2011 (CT) Properties `content_type` and `content_encoding` added
 #     6-Apr-2011 (CT) `_handle_request_exception_nav` factored from descendents
+#     2-May-2011 (CT) `json` changed to raise `Error_400` in case of exceptions
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,10 @@ class _Request_Handler_ (object) :
     @Once_Property
     def json (self) :
         if self.content_type == "application/json" :
-            return json.loads (self.body, self.content_encoding)
+            try :
+                return json.loads (self.body, self.content_encoding)
+            except Exception as exc :
+                raise self.PNS.Error_400 (unicode (exc))
     # end def json
 
     @Once_Property

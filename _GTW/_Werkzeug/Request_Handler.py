@@ -39,6 +39,7 @@
 #    11-Mar-2011 (CT) `current_user` moved to `GTW._Request_Handler_`
 #     6-Apr-2011 (CT) `_handle_request_exception_nav` factored to
 #                     `GTW._Request_Handler_`
+#     2-May-2011 (CT) `secure_cookie` improved
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,7 @@ class Request_Handler (GTW._Request_Handler_) :
         max_form_memory_size = 1024 * 1024 * 2
     # end class Request_Class
 
+    PNS                       = GTW.Werkzeug
     Response_Class            = Response
 
     def __init__ (self, application, environ) :
@@ -117,23 +119,23 @@ class Request_Handler (GTW._Request_Handler_) :
 
     def secure_cookie (self, name) :
         ### based on the implementation of tornado.web.Request.get_secure_cookie
-        data = self.request.cookies.get (name)
-        if not data :
+        cookie = self.request.cookies.get (name)
+        if not cookie:
             return None
-        parts = data.split ("|")
+        parts = cookie.split ("|")
         if len (parts) != 3 :
             return None
+        (data, timestamp, signature) = parts
         if not _time_independent_equals \
-            (parts [2], self._cookie_signature (parts[0], parts[1])) :
+                (signature, self._cookie_signature (data, timestamp)) :
             logging.warning ("Invalid cookie signature %r", data)
             return None
-        timestamp = int (parts [1])
-        if timestamp < time.time () - self.secure_cookie_expire_time :
+        if int (timestamp) < time.time () - self.secure_cookie_expire_time :
             logging.warning ("Expired cookie %r", data)
             return None
         try:
-            return base64.b64decode (parts[0]).decode (self.cookie_encoding)
-        except:
+            return base64.b64decode (data).decode (self.cookie_encoding)
+        except Exception :
             return None
     # end def secure_cookie
     get_secure_cookie = secure_cookie

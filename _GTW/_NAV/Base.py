@@ -251,6 +251,7 @@
 #    28-Apr-2011 (CT) `dir_template_name = None` added to `Page`
 #    28-Apr-2011 (CT) `_Page_O_.__getattr__` changed to first try `__super`,
 #                     then `obj`
+#     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    ««revision-date»»···
 #--
 
@@ -666,6 +667,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def _pop_edit_session (self, handler, sid) :
         return handler.session.pop_edit_session (sid)
     # end def _pop_edit_session
+
+    def _raise_401 (self, handler) :
+        raise self.top.HTTP.Error_401 ()
+    # end def _raise_401
+
+    def _raise_403 (self, handler) :
+        raise self.top.HTTP.Error_403 ()
+    # end def _raise_403
 
     def _view (self, handler) :
         HTTP             = self.top.HTTP
@@ -1199,7 +1208,7 @@ class Root (_Dir_) :
                 raise HTTP.Error_405 ()
             if page.login_required :
                 if user and not user.authenticated :
-                    raise HTTP.Error_401 ()
+                    return page._raise_401 (handler)
             if page.allow_user (user) :
                 if page.DEBUG :
                     fmt = "[%s] %s: view execution time = %%s" % \
@@ -1212,7 +1221,7 @@ class Root (_Dir_) :
                 else :
                     return page._view (handler)
             else :
-                raise HTTP.Error_403 ()
+                return page._raise_403 (handler)
         raise HTTP.Error_404 (href)
     # end def universal_view
 

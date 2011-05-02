@@ -77,6 +77,7 @@ class Request_Handler (GTW._Request_Handler_, web.RequestHandler) :
     __metaclass__   = M_Request_Handler
     secure_cookie   = TFL.Meta.Alias_Property ("get_secure_cookie")
     DEFAULT_HANDLER = "_handle_request"
+    PNS             = GTW.Tornado
 
     @Once_Property
     def body (self) :
