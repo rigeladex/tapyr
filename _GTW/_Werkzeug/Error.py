@@ -157,10 +157,10 @@ class M_Error (M_Status) :
 class _Error_ (Status) :
     """Base class for all error responses."""
 
-    __metaclass__ = M_Error
+    __metaclass__   = M_Error
 
-    response    = None
-    status_code = property (lambda s : s.response.code)
+    response        = None
+    status_code     = property (lambda s : s.response.code)
 
     def __call__ (self, handler) :
         description = self.description

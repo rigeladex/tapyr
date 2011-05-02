@@ -103,7 +103,8 @@ class _Request_Handler_ (object) :
             try :
                 return json.loads (self.body, self.content_encoding)
             except Exception as exc :
-                raise self.PNS.Error_400 (unicode (exc))
+                err = self.request.Error = unicode (exc)
+                raise self.PNS.Error_400 (err)
     # end def json
 
     @Once_Property

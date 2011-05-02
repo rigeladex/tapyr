@@ -415,10 +415,12 @@ class Template_E (_Template_) :
 
 # end class Template_E
 
+Template (400, "html/error_400.jnj")
 Template (401, "html/error_401.jnj")
 Template (403, "html/error_403.jnj")
 Template (404, "html/error_404.jnj")
 Template (405, "html/error_405.jnj")
+Template (408, "html/error_408.jnj")
 Template (500, "html/error_500.jnj")
 Template (503, "html/error_503.jnj")
 
