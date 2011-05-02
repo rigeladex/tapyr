@@ -51,6 +51,7 @@ import _TFL._Meta.Property
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.I18N                import _
+from   _TFL.predicate           import uniq
 
 import json
 
@@ -75,7 +76,7 @@ class Value (_Base_) :
         self.children = children = []
         self.pop_to_self \
             (json_cargo, "$anchor_id", "edit", "init", "prefilled", "sid")
-        for c_id in sorted (json_cargo.get ("$child_ids", ())) :
+        for c_id in sorted (uniq (json_cargo.get ("$child_ids", ()))) :
             children.append (self.__class__ (form, c_id, json_cargo [c_id]))
     # end def __init__
 
@@ -132,6 +133,8 @@ class Value (_Base_) :
         result = self._init
         if result is None :
             result = self.elem.init
+        if isinstance (result, str) :
+            result = unicode (result)
         return result
     # end def init
 

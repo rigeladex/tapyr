@@ -342,7 +342,8 @@ class Entity (_Element_) :
             , kw.get ("_sid", 0)
             , kw.get ("_session_secret")
             )
-        return value.form_hash (sig)
+        result = value.form_hash (sig)
+        return result
     # end def form_hash
 
     def _update_sid (self, result, ** kw) :

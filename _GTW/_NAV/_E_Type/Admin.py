@@ -91,6 +91,7 @@
 #     5-Apr-2011 (CT) `Expander` continued....
 #     6-Apr-2011 (CT) `Expander` continued....., `AFS._post_handler` added
 #    13-Apr-2011 (CT) `Expander` continued......
+#     2-May-2011 (CT) `Expander` continued....... `AFS._post_handler` bug fixes
 #    ««revision-date»»···
 #--
 
@@ -257,11 +258,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             except GTW.AFS.Error.Conflict :
                 return handler.write_json (conflicts = fv.as_json_cargo)
             except Exception as exc :
-                return handler.write_json (error = str (exc))
+                return handler.write_json (error = unicode (exc))
             get_template = self.top.Templateer.get_template
             ikw = dict \
-                ( allow_new = json.get ("allow_new")
-                , collapsed = json.get ("collapsed")
+                ( allow_new       = json.get ("allow_new")
+                , collapsed       = json.get ("collapsed")
+                , _sid            = sid
+                , _session_secret = session_secret
                 )
             result ["$child_ids"] = rids = []
             for e in fv.entities () :

@@ -155,8 +155,14 @@
               }
           }
         , _setup_value : function _setup_value (kw, new_kw) {
-              kw.anchor.value [this.$id] = this.value;
-              kw.anchor.value ["$child_ids"].push (this.$id);
+              var value = kw.anchor.value;
+              var k;
+              value [this.$id] = this.value;
+              // XXX inefficient !!!
+              k = value ["$child_ids"].indexOf (this.$id);
+              if (k < 0) {
+                  value ["$child_ids"].push (this.$id);
+              }
           }
         , _sv_anchored_or_root : function _sv_anchored_or_root (kw, new_kw) {
               new_kw.anchor = this;
