@@ -33,6 +33,7 @@
 #                     and set `needs_raw_value` to allow autocompletion
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `left`
 #     9-Feb-2011 (CT) `Boat.left.ui_allow_new` set to `True`
+#     2-May-2011 (CT) `sail_number_x` added
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ class Boat (_Ancestor_Essence) :
             """Country for which the boat is registered."""
 
             kind               = Attr.Primary
+            example            = "AUT"
 
         # end class nation
 
@@ -78,10 +80,21 @@ class Boat (_Ancestor_Essence) :
             """Sail number of boat"""
 
             kind               = Attr.Primary_Optional
+            example            = "1107"
             min_value          = 1
             needs_raw_value    = True
 
         # end class sail_number
+
+        class sail_number_x (A_String) :
+            """Sail number prefix of boat."""
+
+            kind               = Attr.Primary_Optional
+            example            = "X"
+            ignore_case        = True
+            max_length         = 4
+
+        # end class sail_number_x
 
         ### Non-primary attributes
 
@@ -89,6 +102,7 @@ class Boat (_Ancestor_Essence) :
             """Name of sailboat."""
 
             kind               = Attr.Optional
+            example            = "Albatross"
             max_length         = 48
 
         # end class name
