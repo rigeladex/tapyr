@@ -47,6 +47,8 @@
 #     6-Apr-2011 (CT) Properties `content_type` and `content_encoding` added
 #     6-Apr-2011 (CT) `_handle_request_exception_nav` factored from descendents
 #     2-May-2011 (CT) `json` changed to raise `Error_400` in case of exceptions
+#     2-May-2011 (CT) `session` changed to use `self.user_session_ttl`
+#                     instead of  hard-coded value (720 days)
 #    ««revision-date»»···
 #--
 
@@ -58,6 +60,7 @@ from   _TFL                       import I18N
 from   _TFL                       import pyk
 
 import base64
+import datetime
 import hashlib
 import json
 import sys
@@ -119,12 +122,14 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def session (self) :
+        max_age     = self.user_session_ttl
         settings    = self.application.settings
         SID_Cookie  = settings.get       ("session_id",  "SESSION_ID")
         S_Class     = settings           ["Session_Class"]
         sid         = self.secure_cookie (SID_Cookie)
         session     = S_Class            (sid, settings, self._session_hasher)
-        self.set_secure_cookie           (SID_Cookie, session.sid, 720)
+        self.set_secure_cookie \
+            (SID_Cookie, session.sid, max_age = max_age)
         GTW.Notification_Collection      (session)
         return session
     # end def session
@@ -138,6 +143,14 @@ class _Request_Handler_ (object) :
     def username (self, value) :
         self.session.username = value
     # end def username
+
+    @Once_Property
+    def user_session_ttl (self) :
+        result = self.application.settings.get ("user_session_ttl", 31 * 86400)
+        if isinstance (result, datetime.timedelta) :
+            result = result.seconds
+        return result
+    # end def user_session_ttl
 
     def add_notification (self, noti) :
         notifications = self.session.notifications

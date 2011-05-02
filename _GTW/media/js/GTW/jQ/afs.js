@@ -20,6 +20,7 @@
 //     4-Apr-2011 (CT) Creation continued...
 //     5-Apr-2011 (CT) Creation continued....
 //    13-Apr-2011 (CT) Creation continued.....
+//     2-May-2011 (CT) Creation continued......
 //    ««revision-date»»···
 //--
 
@@ -248,6 +249,9 @@
                                 alert ( "Conflicts: \n"
                                       + $GTW.inspect.show (answer.conflicts)
                                       );
+                            } else if (answer ["expired"]) {
+                                // XXX display re-authorization form
+                                alert (answer.expired);
                             } else if (id === answer.$child_ids [0]) {
                                 response = answer [id];
                                 if (response !== undefined) {

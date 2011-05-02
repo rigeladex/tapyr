@@ -23,7 +23,7 @@
 #    GTW.Werkzeug.Request_Handler
 #
 # Purpose
-#    A Tornado like handler for a request
+#    A Tornado-compatible request handler
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
@@ -39,7 +39,7 @@
 #    11-Mar-2011 (CT) `current_user` moved to `GTW._Request_Handler_`
 #     6-Apr-2011 (CT) `_handle_request_exception_nav` factored to
 #                     `GTW._Request_Handler_`
-#     2-May-2011 (CT) `secure_cookie` improved
+#     2-May-2011 (CT) `secure_cookie` and `set_secure_cookie` improved
 #    ««revision-date»»···
 #--
 
@@ -80,7 +80,7 @@ class Request_Handler (GTW._Request_Handler_) :
     __metaclass__             = TFL.Meta.M_Class
 
     _real_name                = "Request"
-    secure_cookie_expire_time = 3600
+    get_secure_cookie         = TFL.Meta.Alias_Property ("secure_cookie")
     cookie_encoding           = "utf-8"
 
     class Request_Class (BaseRequest) :
@@ -130,7 +130,7 @@ class Request_Handler (GTW._Request_Handler_) :
                 (signature, self._cookie_signature (data, timestamp)) :
             logging.warning ("Invalid cookie signature %r", data)
             return None
-        if int (timestamp) < time.time () - self.secure_cookie_expire_time :
+        if int (timestamp) < time.time () - self.user_session_ttl :
             logging.warning ("Expired cookie %r", data)
             return None
         try:
@@ -138,7 +138,6 @@ class Request_Handler (GTW._Request_Handler_) :
         except Exception :
             return None
     # end def secure_cookie
-    get_secure_cookie = secure_cookie
 
     def set_cookie ( self, key
                    , value      = ""
@@ -166,17 +165,14 @@ class Request_Handler (GTW._Request_Handler_) :
         self.response.headers [key] = value
     # end def set_header
 
-    def set_secure_cookie (self, name, data, expires_days = 30, ** kw) :
+    def set_secure_cookie (self, name, data, ** kw) :
         timestamp = str (int (time.time ()))
         if isinstance (data, unicode) :
             data  = data.encode (self.cookie_encoding)
         data      = base64.b64encode       (data)
         signature = self._cookie_signature (data, timestamp)
-        data      = "|".join ((data, timestamp, signature))
-        expires   = ( datetime.datetime.utcnow ()
-                    + datetime.timedelta       (days = expires_days)
-                    )
-        self.set_cookie (name, data, expires = expires, ** kw)
+        cookie    = "|".join               ((data, timestamp, signature))
+        self.set_cookie (name, cookie, ** kw)
     # end def set_secure_cookie
 
     def set_status (self, code) :

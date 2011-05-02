@@ -251,7 +251,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return handler.write_json (error = str (exc))
             sid = fv.sid
             try :
-                session_secret = handler.session.edit_session (sid)
+                session_secret = self._get_edit_session (handler, sid)
+            except handler.session.Expired as exc :
+                return handler.write_json \
+                    ( expired = unicode (exc)
+                    , ### XXX re-authorization form (password only)
+                    )
             except LookupError as exc :
                 return handler.write_json (error = "Session expired: %s" % exc)
             try :
@@ -490,7 +495,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                 )
                             )
                 try :
-                    session_secret = handler.session.edit_session (sid)
+                    session_secret = self._get_edit_session (handler, sid)
+                except handler.session.Expired as exc :
+                    return handler.write_json \
+                        ( expired = unicode (exc)
+                        , ### XXX re-authorization form (password only)
+                        )
                 except LookupError as exc :
                     return handler.write_json \
                         (error = "Session expired: %s" % exc)

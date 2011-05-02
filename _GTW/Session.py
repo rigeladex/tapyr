@@ -33,6 +33,8 @@
 #     8-Aug-2010 (MG) `setdefault` added
 #    10-Mar-2011 (CT) `__setattr__` added
 #    11-Mar-2011 (CT) `Login`, `expiry`, `hash`, and `username` added
+#     2-May-2011 (CT) `edit_session` and `new_edit_session` changed to
+#                     support `hard_expiry` and `soft_expiry`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +107,11 @@ class Session (TFL.Meta.Object) :
     """
 
     __metaclass__      = M_Session
+
+    class Expired (LookupError) :
+        pass
+    # end class Expired
+
     _data_dict         = None
     _non_data_attrs    = set \
         (("_data", "_data_dict", "_hasher", "_sid", "_settings", "username"))
@@ -181,12 +188,22 @@ class Session (TFL.Meta.Object) :
 
     def edit_session (self, id) :
         login = self.login
-        expiry, hash = login.sessions [id]
-        if self._expired (expiry) :
+        data  = login.sessions [id]
+        if len (data) == 2 :
+            hard_expiry = soft_expiry      = data [0]
+            hash                           = data [1]
+        else :
+            hard_expiry, soft_expiry, hash = data
+        if self._expired (hard_expiry) :
             login.sessions.pop (id, None)
             raise LookupError \
                 ( "Edit session expired since %s"
-                % (expiry.strftime ("%Y/%m/%d %H:%M"), )
+                % (hard_expiry.strftime ("%Y/%m/%d %H:%M"), )
+                )
+        if soft_expiry != hard_expiry and self._expired (soft_expiry) :
+            raise self.Expired \
+                ( "Edit session expired since %s"
+                % (soft_expiry.strftime ("%Y/%m/%d %H:%M"), )
                 )
         return hash
     # end def edit_session
@@ -198,19 +215,19 @@ class Session (TFL.Meta.Object) :
 
     def new_edit_session (self, hash_sig, ttl = None) :
         assert self.login
-        expiry = self._expiry (ttl, "edit_session_ttl")
+        hard_expiry = self._expiry (ttl, "user_session_ttl")
+        soft_expiry = self._expiry (ttl, "edit_session_ttl")
         id     = uuid.uuid4 ().hex
         hash   = base64.b64encode \
-            (hashlib.sha224 (str ((hash_sig, expiry))).digest ())
-        self.login.sessions [id] = (expiry, hash)
+            ( hashlib.sha224
+                (str ((hash_sig, hard_expiry, soft_expiry))).digest ()
+            )
+        self.login.sessions [id] = (hard_expiry, soft_expiry, hash)
         return id, hash
     # end def new_edit_session
 
     def pop_edit_session (self, id) :
-        result = self.edit_session (id)
-        if result is not None :
-            self.login.sessions.pop (id, None)
-        return result
+        return self.login.sessions.pop (id, (None, )) [-1]
     # end def pop_edit_session
 
     def _new_sid (self, salt) :
