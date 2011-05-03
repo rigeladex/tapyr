@@ -3,8 +3,8 @@ FB-0 value :
         0 = "FB-0:0:0"
         1 = "FB-0:0:1"
         2 = "FB-0:0:2"
-        3 = "FB-0:0:3"
-        4 = "FB-0:1:0"
+        3 = "FB-0:1:0"
+        4 = "FB-0:1:1"
     $id = "FB-0"
     edit :
         cid = 2
@@ -27,14 +27,14 @@ FB-0 value :
         init = "AUT"
     FB-0:0:2 :
         init = "1107"
-    FB-0:0:3 :
-        init = ""
     FB-0:1:0 :
+        init = ""
+    FB-0:1:1 :
         init = ""
     init :
         cid = 2
         pid = 2
-    sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
+    sid = "LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig"
 FB-0:2::0 value :
     $child_ids :
         0 = "FB-0:2::0-0"
@@ -146,8 +146,8 @@ Form values :
             0 = "FB-0:0:0"
             1 = "FB-0:0:1"
             2 = "FB-0:0:2"
-            3 = "FB-0:0:3"
-            4 = "FB-0:1:0"
+            3 = "FB-0:1:0"
+            4 = "FB-0:1:1"
         $id = "FB-0"
         edit :
             cid = 2
@@ -170,14 +170,14 @@ Form values :
             init = "AUT"
         FB-0:0:2 :
             init = "1107"
-        FB-0:0:3 :
-            init = ""
         FB-0:1:0 :
+            init = ""
+        FB-0:1:1 :
             init = ""
         init :
             cid = 2
             pid = 2
-        sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
+        sid = "LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig"
     FB-0:2::0 :
         $child_ids :
             0 = "FB-0:2::0-0"
@@ -317,8 +317,8 @@ $GTW :
                                     0 = "FB-0:0:0"
                                     1 = "FB-0:0:1"
                                     2 = "FB-0:0:2"
-                                    3 = "FB-0:0:3"
-                                    4 = "FB-0:1:0"
+                                    3 = "FB-0:1:0"
+                                    4 = "FB-0:1:1"
                                 $id = "FB-0"
                                 edit :
                                     cid = 2
@@ -341,14 +341,14 @@ $GTW :
                                     init = "AUT"
                                 FB-0:0:2 :
                                     init = "1107"
-                                FB-0:0:3 :
-                                    init = ""
                                 FB-0:1:0 :
+                                    init = ""
+                                FB-0:1:1 :
                                     init = ""
                                 init :
                                     cid = 2
                                     pid = 2
-                                sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
+                                sid = "LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig"
                         1 :
                             $anchor_id = "FB-0"
                             $id = "FB-0:2::0"
@@ -485,8 +485,8 @@ $GTW :
                             0 = "FB-0:0:0"
                             1 = "FB-0:0:1"
                             2 = "FB-0:0:2"
-                            3 = "FB-0:0:3"
-                            4 = "FB-0:1:0"
+                            3 = "FB-0:1:0"
+                            4 = "FB-0:1:1"
                         $id = "FB-0"
                         edit :
                             cid = 2
@@ -509,21 +509,20 @@ $GTW :
                             init = "AUT"
                         FB-0:0:2 :
                             init = "1107"
-                        FB-0:0:3 :
-                            init = ""
                         FB-0:1:0 :
+                            init = ""
+                        FB-0:1:1 :
                             init = ""
                         init :
                             cid = 2
                             pid = 2
-                        sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
+                        sid = "LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig"
                 FB-0:0 :
                     $id = "FB-0:0"
                     children :
                         0 = "FB-0:0:0"
                         1 = "FB-0:0:1"
                         2 = "FB-0:0:2"
-                        3 = "FB-0:0:3"
                     collapsed = false
                     name = "primary"
                     type = "Fieldset"
@@ -592,21 +591,11 @@ $GTW :
                     function update(dict)
                     value :
                         init = "1107"
-                FB-0:0:3 :
-                    $anchor_id = "FB-0"
-                    $id = "FB-0:0:3"
-                    _super = undefined
-                    kind = "primary"
-                    label = "Sail number x"
-                    name = "sail_number_x"
-                    type = "Field"
-                    function update(dict)
-                    value :
-                        init = ""
                 FB-0:1 :
                     $id = "FB-0:1"
                     children :
                         0 = "FB-0:1:0"
+                        1 = "FB-0:1:1"
                     collapsed = true
                     name = "optional"
                     type = "Fieldset"
@@ -618,6 +607,17 @@ $GTW :
                     kind = "optional"
                     label = "Name"
                     name = "name"
+                    type = "Field"
+                    function update(dict)
+                    value :
+                        init = ""
+                FB-0:1:1 :
+                    $anchor_id = "FB-0"
+                    $id = "FB-0:1:1"
+                    _super = undefined
+                    kind = "optional"
+                    label = "Sail number x"
+                    name = "sail_number_x"
                     type = "Field"
                     function update(dict)
                     value :
@@ -1154,8 +1154,8 @@ $GTW :
                                 0 = "FB-0:0:0"
                                 1 = "FB-0:0:1"
                                 2 = "FB-0:0:2"
-                                3 = "FB-0:0:3"
-                                4 = "FB-0:1:0"
+                                3 = "FB-0:1:0"
+                                4 = "FB-0:1:1"
                             $id = "FB-0"
                             edit :
                                 cid = 2
@@ -1178,14 +1178,14 @@ $GTW :
                                 init = "AUT"
                             FB-0:0:2 :
                                 init = "1107"
-                            FB-0:0:3 :
-                                init = ""
                             FB-0:1:0 :
+                                init = ""
+                            FB-0:1:1 :
                                 init = ""
                             init :
                                 cid = 2
                                 pid = 2
-                            sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
+                            sid = "LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig"
                     1 :
                         $anchor_id = "FB-0"
                         $id = "FB-0:2::0"
@@ -1333,7 +1333,7 @@ $GTW :
 FB-0:2::0 value jsonified :
   {"init":{"cid":7,"pid":7},"sid":"z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0","FB-0:1:1"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{"init":""},"FB-0:1:1":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values after change:
     $child_ids :
         0 = "FB-0"
@@ -1344,8 +1344,8 @@ Form values after change:
             0 = "FB-0:0:0"
             1 = "FB-0:0:1"
             2 = "FB-0:0:2"
-            3 = "FB-0:0:3"
-            4 = "FB-0:1:0"
+            3 = "FB-0:1:0"
+            4 = "FB-0:1:1"
         $id = "FB-0"
         edit :
             cid = 2
@@ -1368,14 +1368,14 @@ Form values after change:
             init = "AUT"
         FB-0:0:2 :
             init = "1107"
-        FB-0:0:3 :
-            init = ""
         FB-0:1:0 :
+            init = ""
+        FB-0:1:1 :
             init = ""
         init :
             cid = 2
             pid = 2
-        sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
+        sid = "LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig"
     FB-0:2::0 :
         $child_ids :
             0 = "FB-0:2::0-0"
@@ -1480,6 +1480,6 @@ Form values after change:
         sid = "z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g"
     sid = 0
 Form values jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"LjJ-MkYSz6QxselaD8NeT-5G:2a5YHFTbpYNig","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0","FB-0:1:1"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"$anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:1:0":{"init":""},"FB-0:1:1":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"z2Wp1P:S-4gBkqNEMci0tQJ-anqXaOToH7ZK7g","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"w6pfZ9cV126kdzebJWKIfT6QasZLd2e6dh7O4g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:0.1":{"init":"2008/05/01"}},"FB-0:2::0-1:0:0:1":{"init":"Himmelfahrt"}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"eW12pOklOQqAlV9CsVuZLsdwncWDlF6FYe3Mig","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{"cid":4,"pid":4},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values of copy jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"NlcOLOnkFT9tdwf027AmLo5cyc8NKlL6iEVddg","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"init":{}},"FB-0:2::0-1:0":{"init":{},"sid":"n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":":Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:0.1":{"edit":"2008/05/01","init":""}},"FB-0:2::0-1:0:0:1":{"edit":"Himmelfahrt","init":""}}},"FB-0:2::0-2:0":{"init":{},"sid":"olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":"Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"3VDfUb:0kn9ux5Abs2QtfjSwttsyL6T7BTPRJw","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:1:0","FB-0:1:1"],"edit":{},"FB-0:0:0":{"init":{},"sid":"2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"$anchor_id":"FB-0","FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:1:0":{"init":""},"FB-0:1:1":{"init":""}},"FB-0:2::0":{"init":{},"sid":"UtcUyWMVWMEfZeA9RSCEBsCSnrbfeND6VYcmIw","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"init":{}},"FB-0:2::0-1:0":{"init":{},"sid":"n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":":Zy-KiCVwPDIlN-Zvcq7gVx6E2rK0frgII402w","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"$anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"$id":"FB-0:2::0-1:0:0:0","$child_ids":["FB-0:2::0-1:0:0:0.0","FB-0:2::0-1:0:0:0.1"],"$anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:0.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:0.1":{"edit":"2008/05/01","init":""}},"FB-0:2::0-1:0:0:1":{"edit":"Himmelfahrt","init":""}}},"FB-0:2::0-2:0":{"init":{},"sid":"olYDjjANTpCXJXfp80i93QNzK2-ZYMVkSmrv:w","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2"],"edit":{},"$anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":"Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"$anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}

@@ -251,7 +251,7 @@
                                       );
                             } else if (answer ["expired"]) {
                                 // XXX display re-authorization form
-                                alert (answer.expired);
+                                alert ("Expired: " + answer.expired);
                             } else if (id === answer.$child_ids [0]) {
                                 response = answer [id];
                                 if (response !== undefined) {

@@ -37,12 +37,16 @@
 #    14-Mar-2011 (CT) Injection of `GTW` factored to `_GTW._OMP.MOM_injector`
 #    15-Mar-2011 (CT) `_load_afs` and `_setup_afs` added
 #     5-Apr-2011 (MG) Default for `HTTP` changed to `Werkzeug`
+#     3-May-2011 (CT) Options `edit_session_ttl` and `user_session_ttl` added
 #    ««revision-date»»···
 #--
 
+from   _CAL                   import CAL
 from   _GTW                   import GTW
 from   _MOM                   import MOM
 from   _TFL                   import TFL
+
+import _CAL.Delta
 
 import _GTW._OMP.MOM_injector
 
@@ -128,6 +132,11 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         , "Break:B?Enter debugger before starting tornado/werkzeug"
         , "-debug:B=no"
         , HTTP_Opt (default = "Werkzeug")
+        , TFL.CAO.Opt.Date_Time_Delta
+            ( name        = "edit_session_ttl"
+            , default     = CAL.Date_Time_Delta (hours = 6)
+            , description = "Time to live for edit session"
+            )
         , TFL.CAO.Opt.Input_Encoding
             ( default     = "iso-8859-15"
             , description = "Default encoding for source files"
@@ -140,6 +149,11 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         , "-smtp_server:S=localhost?SMTP server used to send emails"
         , "-template_file:S=html/static.jnj"
         , "-TEST:B"
+        , TFL.CAO.Opt.Date_Time_Delta
+            ( name        = "user_session_ttl"
+            , default     = CAL.Date_Time_Delta (days = 30)
+            , description = "Time to live for user session (cookie)"
+            )
         )
     cmd__run_server__opts = cmd___server__opts
     cmd__wsgi__opts       = cmd___server__opts

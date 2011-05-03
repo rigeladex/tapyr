@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -532,7 +532,7 @@ _Command = TFL.CAO.Cmd \
     , opts        =
         ( TFL.CAO.Opt.Date
             ( name        = "delta_to"
-            , description = "Print `base_date - delta`"
+            , description = "Print `base_date - delta_to`"
             )
         , "-format:S=%Y%m%d?Format for date (not used for -delta_to)"
         , "-offset:I=0?delta to `base_date` in days"

@@ -130,7 +130,7 @@ class Request_Handler (GTW._Request_Handler_) :
                 (signature, self._cookie_signature (data, timestamp)) :
             logging.warning ("Invalid cookie signature %r", data)
             return None
-        if int (timestamp) < time.time () - self.user_session_ttl :
+        if int (timestamp) < time.time () - self.user_session_ttl_s :
             logging.warning ("Expired cookie %r", data)
             return None
         try:

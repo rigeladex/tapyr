@@ -49,6 +49,8 @@
 #     2-May-2011 (CT) `json` changed to raise `Error_400` in case of exceptions
 #     2-May-2011 (CT) `session` changed to use `self.user_session_ttl`
 #                     instead of  hard-coded value (720 days)
+#     3-May-2011 (CT) `user_session_ttl_s` added, `user_session_ttl` changed
+#                     to return `timedelta` instance instead of seconds
 #    ««revision-date»»···
 #--
 
@@ -130,7 +132,7 @@ class _Request_Handler_ (object) :
         session     = S_Class            (sid, settings, self._session_hasher)
         self.set_secure_cookie \
             (SID_Cookie, session.sid, max_age = max_age)
-        GTW.Notification_Collection      (session)
+        GTW.Notification_Collection (session)
         return session
     # end def session
 
@@ -147,10 +149,19 @@ class _Request_Handler_ (object) :
     @Once_Property
     def user_session_ttl (self) :
         result = self.application.settings.get ("user_session_ttl", 31 * 86400)
-        if isinstance (result, datetime.timedelta) :
-            result = result.seconds
+        if not isinstance (result, datetime.timedelta) :
+            result = datetime.timedelta (seconds = result)
         return result
     # end def user_session_ttl
+
+    @Once_Property
+    def user_session_ttl_s (self) :
+        ttl = self.user_session_ttl
+        try :
+            return ttl.total_seconds ()
+        except AttributeError :
+            return (ttl.days * 86400 + ttl.seconds)
+    # end def user_session_ttl_s
 
     def add_notification (self, noti) :
         notifications = self.session.notifications

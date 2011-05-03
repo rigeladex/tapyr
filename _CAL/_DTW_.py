@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,7 @@
 #     4-Jan-2007 (CT) `__init__` changed to use `localtime` if no args or kw
 #                     are passed in (and `default_to_now` removed)
 #    31-Mar-2008 (CT) `__init__` changed to dereference `_body` if necessary
+#     3-May-2011 (CT) `_init_kw` added and used for `__repr__`
 #    ««revision-date»»···
 #--
 
@@ -79,8 +80,10 @@ class _DTW_ (TFL.Meta.Object) :
             assert len (args) == 0
             assert len (kw)   == 1
             body = kw [k]
+            self._init_kw = {}
             if isinstance (body, _DTW_) :
                 body = body._body
+                self._init_kw = body._init_kw
             self._body = body
         else :
             if len (args) + len (kw) == 0 :
@@ -88,7 +91,7 @@ class _DTW_ (TFL.Meta.Object) :
             else :
                 defaults = (1, 1, 1, 0, 0, 0, 0, 0, 0)
             args += self._timetuple_slice (defaults) [len (args):]
-            attrs = {}
+            attrs = self._init_kw = {}
             for i, name in enumerate (self._init_arg_names) :
                 if name in kw :
                     attrs [name] = kw [name]
@@ -115,7 +118,10 @@ class _DTW_ (TFL.Meta.Object) :
     # end def _delta
 
     def _init_arg (self, name) :
-        return getattr (self, self._init_arg_map.get (name, name), 0)
+        if self._init_kw :
+            return self._init_kw.get (name)
+        else :
+            return getattr (self, self._init_arg_map.get (name, name), 0)
     # end def _init_arg
 
     def _new_object (self, kw) :
@@ -138,7 +144,7 @@ class _DTW_ (TFL.Meta.Object) :
         return "%s (%s)" % \
             ( self.__class__.__name__
             , ", ".join
-                  ([repr (self._init_arg (a)) for a in self._init_arg_names])
+                (repr (self._init_arg (a)) for a in self._init_arg_names)
             )
     # end def __repr__
 
