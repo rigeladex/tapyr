@@ -163,6 +163,22 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         implicit          = True
         SUPPORTED_METHODS = set (("GET", "POST"))
 
+        def _raise_401 (self, handler) :
+            if handler.json :
+                return handler.write_json \
+                    (error = _T ("Not logged in or login-session is expired"))
+            else :
+                return self.__super._raise_401 (handler)
+        # end def _raise_401
+
+        def _raise_403 (self, handler) :
+            if handler.json :
+                return handler.write_json \
+                    (error = _T ("Not authorized for this page"))
+            else :
+                return self.__super._raise_403 (handler)
+        # end def _raise_403
+
     # end class _Cmd_
 
     class AFS (_Cmd_) :
@@ -285,22 +301,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     rids.append (e.id)
             return handler.write_json (result)
         # end def _post_handler
-
-        def _raise_401 (self, handler) :
-            if handler.json :
-                return handler.write_json \
-                    (error = _T ("Not logged in or session is expired"))
-            else :
-                return self.__super._raise_401 (handler)
-        # end def _raise_401
-
-        def _raise_403 (self, handler) :
-            if handler.json :
-                return handler.write_json \
-                    (error = _T ("Not authorized for this page"))
-            else :
-                return self.__super._raise_403 (handler)
-        # end def _raise_403
 
     # end class AFS
 
