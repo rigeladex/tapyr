@@ -19,6 +19,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function () {
     var inspect;
     var blanks =

@@ -21,6 +21,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function ($) {
     var label_target = function (label$) {
         var id = label$.attr ("for");

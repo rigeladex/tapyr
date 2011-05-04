@@ -29,6 +29,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function ($) {
     $.fn.gtw_week_roller = function (options) {
         options = $.extend

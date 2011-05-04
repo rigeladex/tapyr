@@ -25,6 +25,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function ($) {
     $GTW.update
         ( { as_int_array   : function (data) {

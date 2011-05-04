@@ -19,6 +19,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function () {
     var _ = {}, hasOwnProperty = _.hasOwnProperty, token = {};
     var Set = $GTW.Class.extend (

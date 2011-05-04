@@ -23,6 +23,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function ($) {
     $.fn.gtw_pixpander = function (options) {
         options = $.extend

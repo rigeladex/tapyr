@@ -24,6 +24,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function ($) {
     $.fn.afs_form = function (afs_form, opts) {
         var options  = $.extend

@@ -21,6 +21,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function ($) {
     $.fn.gtw_input_placeholders = function (opts) {
         var options  = $.extend

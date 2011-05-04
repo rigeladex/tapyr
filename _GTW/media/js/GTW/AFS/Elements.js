@@ -37,6 +37,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function () {
     var Elements;
     var id_suffix_pat = /\d+$/;

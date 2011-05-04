@@ -18,6 +18,8 @@
 //    ««revision-date»»···
 //--
 
+"use strict";
+
 ( function () {
     var json_char_map =
         { "\\" : "\\\\", "\"" : "\\\""
