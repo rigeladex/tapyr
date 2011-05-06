@@ -255,8 +255,7 @@ class Auth (GTW.NAV.Dir) :
                             ### that page
                             next = self.href_change_pass (form.account)
                         else :
-                            username = req_data  ["username"]
-                            handler.username = username
+                            handler.username = username = req_data ["username"]
                             handler.add_notification \
                                 (_T ("Welcome %s.") % (username, ))
                         raise HTTP.Redirect_302 (next)
