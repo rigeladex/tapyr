@@ -56,6 +56,7 @@ class CSS_Defaults (Definition) :
     color_lighter_grey     = RGB_X     ("#EDEDED")
     color_light_grey       = RGB_X     ("#DEDEDE")
     color_medium_grey      = RGB_X     ("#BEBEBE")
+    color_half_grey        = RGB_X     ("#888888")
     color_dark_grey        = RGB_X     ("#444444")
     color_darker_grey      = RGB_X     ("#222222")
     color_selected         = RGB_X     ("#FF6633")
