@@ -146,7 +146,7 @@ class Request_Handler (GTW._Request_Handler_) :
                    , path       = "/"
                    , domain     = None
                    , secure     = None
-                   , httponly   = False
+                   , httponly   = True
                    ) :
         if isinstance (expires, datetime.datetime):
             timestamp = calendar.timegm (expires.utctimetuple ())
@@ -185,9 +185,7 @@ class Request_Handler (GTW._Request_Handler_) :
 
     def _cookie_signature (self, * parts):
         hash = hmac.new\
-            ( self.application.settings ["cookie_salt"]
-            , digestmod = hashlib.sha1
-            )
+            (self.settings ["cookie_salt"], digestmod = hashlib.sha1)
         for part in parts:
             hash.update (part)
         return hash.hexdigest ()

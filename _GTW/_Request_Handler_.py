@@ -124,17 +124,24 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def session (self) :
-        max_age     = self.user_session_ttl
-        settings    = self.application.settings
-        SID_Cookie  = settings.get       ("session_id",  "SESSION_ID")
+        cookie_name = self.session_cookie_name
+        settings    = self.settings
         S_Class     = settings           ["Session_Class"]
-        sid         = self.secure_cookie (SID_Cookie)
+        sid         = self.secure_cookie (cookie_name)
         session     = S_Class            (sid, settings, self._session_hasher)
-        self.set_secure_cookie \
-            (SID_Cookie, session.sid, max_age = max_age)
-        GTW.Notification_Collection (session)
+        self._set_session_cookie         (cookie_name, session)
         return session
     # end def session
+
+    @Once_Property
+    def session_cookie_name (self) :
+        return self.settings.get ("session_id",  "SESSION_ID")
+    # end def session_cookie_name
+
+    @Once_Property
+    def settings (self) :
+        return self.application.settings
+    # end def settings
 
     @property
     def username (self) :
@@ -148,7 +155,7 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def user_session_ttl (self) :
-        result = self.application.settings.get ("user_session_ttl", 31 * 86400)
+        result = self.settings.get ("user_session_ttl", 31 * 86400)
         if not isinstance (result, datetime.timedelta) :
             result = datetime.timedelta (seconds = result)
         return result
@@ -189,8 +196,7 @@ class _Request_Handler_ (object) :
             if locales :
                 locales.sort (key=lambda (l, s): s, reverse = True)
                 return [l [0] for l in locales]
-        return \
-            (self.application.settings.get ("default_locale_code", "en_US"), )
+        return (self.settings.get ("default_locale_code", "en_US"), )
     # end def get_browser_locale_codes
 
     def get_user_locale_codes (self) :
@@ -215,6 +221,12 @@ class _Request_Handler_ (object) :
         return (42, username)
     # end def _session_sig
 
+    def _set_session_cookie (self, cookie_name, session) :
+        self.set_secure_cookie \
+            (cookie_name, session.sid, max_age = self.user_session_ttl)
+        GTW.Notification_Collection (session)
+    # end def _set_session_cookie
+
 # end class _Request_Handler_
 
 class _NAV_Request_Handler_ (_Request_Handler_) :
@@ -237,7 +249,7 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
     # end def finish_request
 
     def _handle_request (self, * args, ** kw) :
-        if self.application.settings.get ("i18n", False) :
+        if self.settings.get ("i18n", False) :
             I18N.use (* self.locale_codes)
         top    = self.nav_root
         scope  = getattr (top, "scope", None)
