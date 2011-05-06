@@ -48,13 +48,30 @@ style_sheet = Style_Sheet \
                 , children         =
                     [ Rule_Attr
                         ( "[type=submit]", "[type=reset]"
-                        , width    = P.nav_col.width
+                        , width    = P.nav_col.width * 0.975
                         , children =
                             [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                            , Rule_Class
+                                ( "reset-passwd"
+                                , Border
+                                    ( color        = "#1798DD"
+                                    , radius       = Em (1)
+                                    , style        = "solid"
+                                    , width        = Px (1)
+                                    )
+                                , background_color = "#1798DD"
+                                , color            = "white"
+                                , display          = "inline"
+                                , font_weight      = "bold"
+                                , margin           = TRBL0 (l = Em (0.2))
+                                , padding          = TRBL0 ()
+                                , width            = Em    (2.0)
+                                )
                             ]
                         , ** P.nav_col.button_spec
                         )
-                    , Rule_Attr ("[type=hidden]", display = "none")]
+                    , Rule_Attr ("[type=hidden]", display = "none")
+                    ]
                 )
             , Rule
                 ( "li"
