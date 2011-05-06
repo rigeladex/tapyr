@@ -55,7 +55,7 @@ import uuid
 ### session key generation is based on the version found in Django
 ### (www.djangoproject.com)
 
-MAX_SESSION_KEY = 18446744073709551616L     # 2 << 63
+MAX_SESSION_KEY = 340282366920938463463374607431768211456L     # 2 ** 128
 # Use the system (hardware-based) random number generator if it exists.
 if hasattr(random, "SystemRandom") :
     randrange = random.SystemRandom ().randrange
