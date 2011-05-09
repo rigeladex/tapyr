@@ -84,9 +84,7 @@ GTW.Script \
 GTW.Script      (src = "/media/GTW/js/GTW/util.js", name = "GTW_util")
 GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 GTW.JS_On_Ready \
-    ( """$("a[href^='http://']").gtw_externalize ();
-         $("a[href^='https://']").gtw_externalize ();
-      """
+    ( """$("a[href^='http://'], a[href^='https://']").gtw_externalize ();"""
     , name = "GTW_Externalize"
     )
 
@@ -98,7 +96,6 @@ GTW.JS_On_Ready \
 
 GTW.Script      (src = "/media/GTW/js/GTW/jQ/input.js", name = "GTW_Input")
 GTW.JS_On_Ready \
-    ( """$("[placeholder]").gtw_input_placeholders ();"""
     , name = "GTW_Input_Placeholders"
     )
 
@@ -114,8 +111,7 @@ GTW.JS_On_Ready \
 
 GTW.Script (src = "/media/GTW/js/GTW/jQ/pixpander.js", name = "GTW_pixpander")
 GTW.JS_On_Ready \
-    ( """$("a[href$='.jpg'] > img").gtw_pixpander ();"""
-      """$("a[href$='.png'] > img").gtw_pixpander ();"""
+    ( """$("a[href$='.jpg'] > img, "a[href$='.png'] > img").gtw_pixpander ();"""
     , name = "GTW_pixpander"
     )
 
