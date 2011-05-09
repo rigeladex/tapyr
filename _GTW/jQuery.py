@@ -96,6 +96,7 @@ GTW.JS_On_Ready \
 
 GTW.Script      (src = "/media/GTW/js/GTW/jQ/input.js", name = "GTW_Input")
 GTW.JS_On_Ready \
+    ( """$("[placeholder]").gtw_input_placeholders ();"""
     , name = "GTW_Input_Placeholders"
     )
 
