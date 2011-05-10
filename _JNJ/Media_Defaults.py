@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    JNJ.CSS_Defaults
+#    JNJ.Media_Defaults
 #
 # Purpose
 #    Provide defaults for media fragments in html/*.media
@@ -45,7 +45,7 @@ from _TFL.Color           import Color as _C
 
 _C.formatter = RGB_X
 
-class CSS_Defaults (Definition) :
+class Media_Defaults (Definition) :
     """Provide defaults for CSS fragments in html/*.css"""
 
     color_desc             = RGB_X     ("#666666")
@@ -322,6 +322,6 @@ class CSS_Defaults (Definition) :
     thumbnail_size         = Px (155)
     thumbnail_selected_color = P.color_selected
 
-# end class CSS_Defaults
+# end class Media_Defaults
 
-### __END__ JNJ.CSS_Defaults
+### __END__ JNJ.Media_Defaults
