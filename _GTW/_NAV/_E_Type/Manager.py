@@ -155,17 +155,14 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         title = m_kw.pop ("title", "%s: Verwaltung" % (self.title.rstrip (".")))
         ETM   = m_kw.pop ("ETM", self._ETM)
         Type  = m_kw.pop ("Type", GTW.NAV.E_Type.Admin)
-        try :
-            return Type \
-                ( parent      = parent
-                , name        = self.name
-                , short_title = short_title
-                , title       = title
-                , ETM         = ETM
-                , ** m_kw
-                )
-        except :
-            TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
+        return Type \
+            ( parent      = parent
+            , name        = self.name
+            , short_title = short_title
+            , title       = title
+            , ETM         = ETM
+            , ** m_kw
+            )
     # end def _admin_page
 
     def _get_child (self, child, * grandchildren) :

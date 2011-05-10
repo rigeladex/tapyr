@@ -69,6 +69,18 @@ reset_sheet = Style_Sheet \
         , vertical_align           = "baseline"
         )
     , Rule
+        ( "article", "aside"
+        , "blockquote"
+        , "details", "div", "dl", "figure", "form"
+        , "h1", "h2", "h3", "h4", "h5", "h6"
+        , "ol"
+        , "p"
+        , "section"
+        , "table", "textarea"
+        , "ul"
+        , margin_bottom            = P.block_margin_bottom
+        )
+    , Rule
         ( "article", "aside", "details"
         , "figcaption", "figure", "footer", "header", "hgroup"
         , "menu", "nav", "section"

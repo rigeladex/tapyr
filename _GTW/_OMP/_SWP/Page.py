@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -38,6 +38,7 @@
 #    22-Mar-2010 (CT) `Object_PN` factored
 #    24-Mar-2010 (CT) `Page_Y` added
 #     8-Apr-2010 (CT) `year_max` removed from `Page_Y` (was a bad idea (TM))
+#    10-May-2011 (CT) `hidden` added
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,14 @@ class Page_Mixin (_Ancestor_Essence) :
             max_length         = 120
 
         # end class head_line
+
+        class hidden (A_Boolean) :
+            """Don't show page in navigation."""
+
+            kind               = Attr.Optional
+            default            = False
+
+        # end class hidden
 
         class prio (A_Int) :
             """Higher prio sorts before lower prio."""

@@ -37,8 +37,9 @@
 #    22-Dec-2010 (CT) `permalink` changed to use `self.manager` instead of
 #                     home-grown code
 #     9-Apr-2011 (MG) Use getattr for accessing `perma_name`
-#                     `Mixin._get_objects` support dor dict style `Page`
+#                     `Mixin._get_objects` support for dict style `Page`
 #                     added
+#    10-May-2011 (CT) `hidden` added
 #    ««revision-date»»···
 #--
 
@@ -115,8 +116,9 @@ class Instance_Mixin (Mixin) :
             , parent     = kw.pop ("parent", manager)
             , ** kw
             )
-        self.title       = self.__getattr__ ("title")
+        self.hidden      = getattr (obj, "hidden", False)
         self.short_title = self.__getattr__ ("short_title")
+        self.title       = self.__getattr__ ("title")
     # end def __init__
 
     @property

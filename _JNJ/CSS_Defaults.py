@@ -65,6 +65,8 @@ class CSS_Defaults (Definition) :
     css_arrow_color        = SVG_Color ("red")
     css_arrow_width        = Em (1./2)
 
+    block_margin_bottom    = Em (1./2)
+
     border_button          = "2px outset " + P.color_medium_grey
     border_simple          = "1px solid "  + P.color_medium_grey
     border_selected        = "2px solid "  + P.color_selected
