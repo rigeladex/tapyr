@@ -23,7 +23,7 @@
 #    JNJ.CSS_Defaults
 #
 # Purpose
-#    Provide defaults for CSS fragments in html/*.css
+#    Provide defaults for media fragments in html/*.media
 #
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
