@@ -51,6 +51,7 @@
 #                     instead of  hard-coded value (720 days)
 #     3-May-2011 (CT) `user_session_ttl_s` added, `user_session_ttl` changed
 #                     to return `timedelta` instance instead of seconds
+#    11-May-2011 (MG) `username`: change session id on login/logout
 #    ««revision-date»»···
 #--
 
@@ -129,7 +130,7 @@ class _Request_Handler_ (object) :
         S_Class     = settings           ["Session_Class"]
         sid         = self.secure_cookie (cookie_name)
         session     = S_Class            (sid, settings, self._session_hasher)
-        self._set_session_cookie         (cookie_name, session)
+        self._set_session_cookie         (session)
         return session
     # end def session
 
@@ -150,7 +151,9 @@ class _Request_Handler_ (object) :
 
     @username.setter
     def username (self, value) :
-        self.session.username = value
+        if value != self.username :
+            self.session.username = value
+            self._set_session_cookie (self.session.renew_session_id ())
     # end def username
 
     @Once_Property
@@ -221,7 +224,8 @@ class _Request_Handler_ (object) :
         return (42, username)
     # end def _session_sig
 
-    def _set_session_cookie (self, cookie_name, session) :
+    def _set_session_cookie (self, session) :
+        cookie_name = self.session_cookie_name
         self.set_secure_cookie \
             (cookie_name, session.sid, max_age = self.user_session_ttl)
         GTW.Notification_Collection (session)

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -48,6 +48,8 @@ from   _TFL                   import TFL
 from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL                   import sos
 
+import _GTW._OMP.Scaffold
+
 import _GTW._OMP._Auth.import_Auth
 if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
     import _GTW._OMP._EVT.import_EVT
@@ -58,7 +60,6 @@ else :
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
-import _GTW._OMP.Scaffold
 import _TFL.Filename
 import _TFL.Generators
 
@@ -167,11 +168,11 @@ class Scaffold (GTW.OMP.Scaffold) :
 
     @classmethod
     def do_create (cls, cmd) :
+        from _GTW.__test__.form_app import fixtures
         scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
         if cmd.fixtures :
-            from _GTW.__test__.form_app import fixtures
-            fixtures  (scope)
-        scope.destroy ()
+            fixtures          (scope)
+        scope.destroy         ()
     # end def do_create
 
     @classmethod

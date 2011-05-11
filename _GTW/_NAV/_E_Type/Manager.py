@@ -61,6 +61,7 @@
 #    22-Dec-2010 (CT) `_admin` added and used
 #     9-Apr-2011 (MG) `Manager.href_display` use getattr for `perma_name`
 #                     `Link_Manager` started
+#    11-May-2011 (MG) `Link_Manager` continued
 #    ««revision-date»»···
 #--
 
@@ -370,6 +371,8 @@ import _TFL.Caller
 class Link_Manager (Manager) :
     """Display the links associated with the passed object"""
 
+    allows_children = True
+
     def __init__ (self, parent, obj, ** kw) :
         scope = TFL.Caller.Object_Scope (obj)
         for attr, default in ( ("title",       "%(ui_display)s")
@@ -383,7 +386,7 @@ class Link_Manager (Manager) :
         self.role = kw.pop ("role")
         self.__super.__init__ \
             ( obj.type_base_name
-            , sub_dir = "%s-%s" % (obj.type_base_name, obj.pid)
+            , sub_dir = getattr (obj, "perma_name", str (obj.pid))
             , parent  = parent
             , ** kw
             )

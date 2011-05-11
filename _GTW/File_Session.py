@@ -32,6 +32,9 @@
 #                     `exists` and `file_name` changed to use factored method
 #                     `_file_name` (previously, `exists` and `_file_name`
 #                     differed erroneously)
+#    11-May-2011 (MG) `file_name` changed from `Once_Property` to `property`
+#                     (because `_sid` can changed during the lifetime of the
+#                     session object)
 #    ««revision-date»»···
 #--
 from   _TFL._Meta.Once_Property import Once_Property
@@ -80,7 +83,7 @@ class File_Session (GTW.Session) :
     base_path       = "/tmp"
     _non_data_attrs = set (("file_name", ))
 
-    @Once_Property
+    @property
     def file_name (self) :
         return self._file_name (self.sid)
     # end def file_name

@@ -40,6 +40,7 @@
 #                     `Mixin._get_objects` support for dict style `Page`
 #                     added
 #    10-May-2011 (CT) `hidden` added
+#    11-May-2011 (MG) `Mixin`: `Page` handling changed
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,10 @@ class Mixin (TFL.Meta.Object) :
     sort_key        = None
 
     def __init__ (self, parent, ** kw) :
+        Page_Args = kw.get ("Page")
+        if isinstance (Page_Args, dict) :
+            kw ["page_args"] = Page_Args.copy ()
+            kw ["Page"]      = kw ["page_args"].pop ("Type")
         self.__super.__init__ (parent = parent, ** kw)
         self._objects = []
         self._old_cid = -1
@@ -89,11 +94,7 @@ class Mixin (TFL.Meta.Object) :
 
     def _get_objects (self) :
         T  = self.Page
-        if isinstance (T, dict) :
-            kw = T.copy ()
-            T  = kw.pop ("Type")
-        else :
-            kw = self.page_args
+        kw = self.page_args
         return [T (self, o, ** kw) for o in self.query ()]
     # end def _get_objects
 

@@ -40,6 +40,7 @@
 #     6-Apr-2011 (CT) `_handle_request_exception_nav` factored to
 #                     `GTW._Request_Handler_`
 #     2-May-2011 (CT) `secure_cookie` and `set_secure_cookie` improved
+#    10-May-2011 (MG) `cookie` added
 #    ««revision-date»»···
 #--
 
@@ -107,6 +108,10 @@ class Request_Handler (GTW._Request_Handler_) :
     def body (self) :
         return self.request.data
     # end def body
+
+    def cookie (self, name) :
+        return self.request.cookies.get (name)
+    # end def cookie
 
     def clear (self) :
         self.response.headers.clear ()

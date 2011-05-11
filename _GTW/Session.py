@@ -35,6 +35,10 @@
 #    11-Mar-2011 (CT) `Login`, `expiry`, `hash`, and `username` added
 #     2-May-2011 (CT) `edit_session` and `new_edit_session` changed to
 #                     support `hard_expiry` and `soft_expiry`
+#    11-May-2011 (MG) `Session.__init__`: create new sid of passed `sid` does
+#                     not exists
+#                     `renew_session_id` added
+#    11-May-2011 (MG) Alphabatically sorted
 #    ««revision-date»»···
 #--
 
@@ -120,7 +124,7 @@ class Session (TFL.Meta.Object) :
     def __init__ (self, sid = None, settings = {}, hasher = None) :
         self._settings = settings
         self._hasher   = hasher or (lambda x : x)
-        if sid is None :
+        if sid is None or not self.exists (sid) :
             self._sid     = self._new_sid (settings.get ("cookie_salt"))
             self._data    = dict (login = Login ())
             self.username = None
@@ -128,15 +132,11 @@ class Session (TFL.Meta.Object) :
             self._sid     = sid
     # end def __init__
 
-    @property
-    def username (self) :
-        return self.login.username
-    # end def username
-
-    @username.setter
-    def username (self, value) :
-        self._change_username (self.login, value)
-    # end def username
+    def _change_username (self, login, value) :
+        login.username = value
+        login.hash     = self._hasher (value)
+        login.expiry   = None if value is None else self._expiry ()
+    # end def _change_username
 
     @property
     def _data (self) :
@@ -165,27 +165,6 @@ class Session (TFL.Meta.Object) :
         self._data_dict = value
     # end def _data
 
-    @property
-    def sid (self) :
-        return self._sid
-    # end def sid
-
-    @classmethod
-    def New_ID (cls, check = None, salt = "") :
-        try :
-            pid = os.getpid ()
-        except AttributeError :
-            # No getpid() in Jython, for example
-            pid = 1
-        while True :
-            id = hashlib.md5 \
-                ( "%s%s%s%s"
-                % ( randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
-                ).hexdigest ()
-            if check is None or not check (id) :
-                return id
-    # end def New_ID
-
     def edit_session (self, id) :
         login = self.login
         data  = login.sessions [id]
@@ -208,6 +187,19 @@ class Session (TFL.Meta.Object) :
         return hash
     # end def edit_session
 
+    def _expired (self, expiry) :
+        if expiry :
+            return datetime.datetime.utcnow () > expiry
+    # end def _expired
+
+    def _expiry (self, ttl = None, ttl_name = "user_session_ttl") :
+        if ttl is None :
+            ttl = self._settings.get (ttl_name, 3600)
+        if not isinstance (ttl, datetime.timedelta) :
+            ttl  = datetime.timedelta (seconds = ttl)
+        return datetime.datetime.utcnow () + ttl
+    # end def _expiry
+
     def exists (self, sid) :
         ### must be implemented by concrete backends
         return False
@@ -226,32 +218,57 @@ class Session (TFL.Meta.Object) :
         return id, hash
     # end def new_edit_session
 
-    def pop_edit_session (self, id) :
-        return self.login.sessions.pop (id, (None, )) [-1]
-    # end def pop_edit_session
+    @classmethod
+    def New_ID (cls, check = None, salt = "") :
+        try :
+            pid = os.getpid ()
+        except AttributeError :
+            # No getpid() in Jython, for example
+            pid = 1
+        while True :
+            id = hashlib.md5 \
+                ( "%s%s%s%s"
+                % ( randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
+                ).hexdigest ()
+            if check is None or not check (id) :
+                return id
+    # end def New_ID
 
     def _new_sid (self, salt) :
         return self.New_ID (self.exists, salt)
     # end def _new_sid
 
-    def _change_username (self, login, value) :
-        login.username = value
-        login.hash     = self._hasher (value)
-        login.expiry   = None if value is None else self._expiry ()
-    # end def _change_username
+    def pop_edit_session (self, id) :
+        return self.login.sessions.pop (id, (None, )) [-1]
+    # end def pop_edit_session
 
-    def _expired (self, expiry) :
-        if expiry :
-            return datetime.datetime.utcnow () > expiry
-    # end def _expired
+    def renew_session_id (self, n_sid = None) :
+        n_sid     = n_sid or self._new_sid (self._settings.get ("cookie_salt"))
+        o_sid     = self._sid
+        self._sid = n_sid
+        try :
+            self.save ()
+            with self.LET   (_sid = o_sid) :
+                self.remove ()
+        except :
+            self._sid = o_sid
+        return self
+    # end def renew_session_id
 
-    def _expiry (self, ttl = None, ttl_name = "user_session_ttl") :
-        if ttl is None :
-            ttl = self._settings.get (ttl_name, 3600)
-        if not isinstance (ttl, datetime.timedelta) :
-            ttl  = datetime.timedelta (seconds = ttl)
-        return datetime.datetime.utcnow () + ttl
-    # end def _expiry
+    @property
+    def sid (self) :
+        return self._sid
+    # end def sid
+
+    @property
+    def username (self) :
+        return self.login.username
+    # end def username
+
+    @username.setter
+    def username (self, value) :
+        self._change_username (self.login, value)
+    # end def username
 
     ### dict interface
     def get (self, key, default = None) :
