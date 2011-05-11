@@ -51,7 +51,7 @@
 #                     instead of  hard-coded value (720 days)
 #     3-May-2011 (CT) `user_session_ttl_s` added, `user_session_ttl` changed
 #                     to return `timedelta` instance instead of seconds
-#    11-May-2011 (MG) `username`: change session id on login/logout
+#    11-May-2011 (MG) `username`: change session id on username changes
 #    ««revision-date»»···
 #--
 
