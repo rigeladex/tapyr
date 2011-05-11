@@ -134,7 +134,7 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         , HTTP_Opt (default = "Werkzeug")
         , TFL.CAO.Opt.Date_Time_Delta
             ( name        = "edit_session_ttl"
-            , default     = CAL.Date_Time_Delta (hours = 6)
+            , default     = CAL.Date_Time_Delta (hours = 3)
             , description = "Time to live for edit session"
             )
         , TFL.CAO.Opt.Input_Encoding
@@ -151,7 +151,7 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         , "-TEST:B"
         , TFL.CAO.Opt.Date_Time_Delta
             ( name        = "user_session_ttl"
-            , default     = CAL.Date_Time_Delta (days = 30)
+            , default     = CAL.Date_Time_Delta (days = 3)
             , description = "Time to live for user session (cookie)"
             )
         )
