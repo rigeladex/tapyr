@@ -25,28 +25,25 @@
 #
 # Revision Dates
 #    13-May-2011 (CT) Creation
+#    17-May-2011 (CT) Use `LNX.options.split`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__     import unicode_literals
 
-from   _LNX import LNX
-from   _TFL import TFL
+from   _LNX           import LNX
+from   _TFL           import TFL
 
-from   _TFL import sos
+from   _TFL           import sos
+from   _TFL.predicate import dusplit
 
+import _LNX.options
 import _LNX.VCS_Typer
-import _TFL.CAO
+import sys
 
 path    = sos.path
-rep_map = dict \
-    ( cvs      = "CVS"
-    , git      = ".git"
-    , hg       = ".hg"
-    , svn      = ".svn"
-    )
 
-def gen (pref, dols, pred, level, max_level) :
+def gen (pref, dols, pred) :
     for d in dols :
         dol = path.join (pref, d) if pref else d
         if path.islink (dol) :
@@ -54,36 +51,20 @@ def gen (pref, dols, pred, level, max_level) :
         if path.isdir (dol) :
             if pred (dol) :
                 yield d
-            elif level < max_level :
-                for r in gen \
-                        (dol, sos.listdir (dol), pred, level + 1, max_level) :
+            elif path.exists (path.join (dol, ".VX")):
+                for r in gen (dol, sos.listdir (dol), pred) :
                     yield path.join (d, r)
 # end def gen
 
-def _main (cmd) :
-    result = set ()
-    add    = result.update
-    for a in cmd.argv :
+def _Command () :
+    result     = set ()
+    add        = result.update
+    opts, args = LNX.options.split (sys.argv [1:])
+    for a in args :
         for dol in sos.expanded_glob (a) :
-            add (gen ("", [dol], LNX.vcs_typer, 0, cmd.traversal_limit))
+            add (gen ("", [dol], LNX.vcs_typer))
     print "\n".join (sorted (result))
 # end def _main
-
-_Command = TFL.CAO.Cmd \
-    ( handler       = _main
-    , args          =
-        ( "dir_or_link:S?Directory to search or link to repository"
-        ,
-        )
-    , opts          =
-        ( "traversal_limit:I=1?"
-            "Limit how many directory levels are traversed to find repositories"
-        , "Types:S=cvs,svn,hg,git?Types of repositories to recognize"
-        )
-    , min_args      = 1
-    , description   =
-        "Find repositories in directories/links specified as arguments"
-    )
 
 if __name__ != "__main__" :
     LNX._Export_Module ()
