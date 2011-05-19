@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-05-10 13:37+0200\n"
-"PO-Revision-Date: 2011-03-29 13:30+0200\n"
+"PO-Revision-Date: 2011-05-19 09:50+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -142,10 +142,6 @@ msgstr "Tschechische Republik"
 #: _GTW._OMP._SRM.Attr_Type:0
 msgid "Date of regatta result."
 msgstr "Datum, an dem das Regattaergebnis erstellt wurde."
-
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Date of registration."
-msgstr "Datum der Anmeldung."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:61
 msgid "Denmark"
@@ -474,10 +470,6 @@ msgid_plural "Regatta_Results"
 msgstr[0] "Regattaergebnis"
 msgstr[1] "Regattaergebnisse"
 
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Registration date"
-msgstr "Datum der Anmeldung"
-
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Result"
 msgstr "Wettfahrtergebnisse"
@@ -509,6 +501,14 @@ msgstr "Segelnummer"
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number of boat"
 msgstr "Segelnummer des Boots"
+
+#: _GTW._OMP._SRM.Boat:0
+msgid "Sail number prefix of boat."
+msgstr "Segelnummerpräfix des Boots (z.B. 'X')"
+
+#: _GTW._OMP._SRM.Boat:0
+msgid "Sail number x"
+msgstr "Segelnummerpräfix"
 
 #: _GTW._OMP._SRM.Regatta_Event:0
 msgid "Sailing regatta event for one or more classes/handicaps."
@@ -651,4 +651,10 @@ msgstr "Gültige Regatta"
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
+
+#~ msgid "Date of registration."
+#~ msgstr "Datum der Anmeldung."
+
+#~ msgid "Registration date"
+#~ msgstr "Datum der Anmeldung"
 

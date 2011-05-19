@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2011-03-29 13:30+0200\n"
+"PO-Revision-Date: 2011-05-19 09:50+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,8 +23,9 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:209 _GTW/_NAV/_E_Type/Admin.py:269
-#: _GTW/_NAV/_E_Type/Admin.py:387 _GTW/_NAV/_E_Type/Admin.py:418
+#: _GTW/_NAV/_E_Type/Admin.py:236 _GTW/_NAV/_E_Type/Admin.py:339
+#: _GTW/_NAV/_E_Type/Admin.py:456 _GTW/_NAV/_E_Type/Admin.py:493
+#: _GTW/_NAV/_E_Type/Admin.py:550
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
@@ -33,7 +34,7 @@ msgstr "%s `%s` existiert nicht"
 msgid "A confirmation email has been sent to the new email address."
 msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 
-#: _GTW/_NAV/Auth.py:326
+#: _GTW/_NAV/Auth.py:325
 msgid "A confirmation has been sent to your email address."
 msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
@@ -49,7 +50,7 @@ msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 msgid "Activation successful."
 msgstr "Die Aktivierung war erfolgreich."
 
-#: _GTW/_NAV/_E_Type/Manager.py:149
+#: _GTW/_NAV/_E_Type/Manager.py:153
 msgid "Admin"
 msgstr "Verwaltung"
 
@@ -61,7 +62,7 @@ msgstr "Apr"
 msgid "April"
 msgstr "April"
 
-#: _GTW/_NAV/_E_Type/Admin.py:199 _GTW/_NAV/_E_Type/Admin.py:280
+#: _GTW/_NAV/_E_Type/Admin.py:226 _GTW/_NAV/_E_Type/Admin.py:350
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
 
@@ -73,23 +74,23 @@ msgstr "Aug"
 msgid "August"
 msgstr "August"
 
-#: _GTW/__test__/form_app.py:245
+#: _GTW/__test__/form_app.py:247
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:248
+#: _GTW/__test__/form_app.py:250
 msgid "Authorization and Account handling"
 msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
-#: _GTW/__test__/form_app.py:256
+#: _GTW/__test__/form_app.py:258
 msgid "Choice of language used for localization"
 msgstr "Auswahl der Sprache für Lokalisierung"
 
-#: _GTW/__test__/form_app.py:262 _GTW/__test__/form_app.py:264
+#: _GTW/__test__/form_app.py:264 _GTW/__test__/form_app.py:266
 msgid "Console"
 msgstr "Konsole"
 
-#: _GTW/_NAV/_E_Type/Admin.py:453
+#: _GTW/_NAV/_E_Type/Admin.py:585
 msgid "Copy"
 msgstr "Kopiere"
 
@@ -105,7 +106,7 @@ msgstr "Dezember"
 msgid "EMail verification successful."
 msgstr "Die Bestätigung der Email war erfolgreich."
 
-#: _GTW/_NAV/_E_Type/Admin.py:451
+#: _GTW/_NAV/_E_Type/Admin.py:583
 msgid "Edit"
 msgstr "Ändere"
 
@@ -113,10 +114,9 @@ msgstr "Ändere"
 msgid ""
 "Edit conflict: at least one value was changed asynchronously by another "
 "request."
-msgstr ""
-"Änderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verändert."
+msgstr "Änderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verändert."
 
-#: _GTW/_NAV/Auth.py:176 _GTW/_NAV/Auth.py:315
+#: _GTW/_NAV/Auth.py:176 _GTW/_NAV/Auth.py:314
 #, python-format
 msgid "Email confirmation for %s"
 msgstr "Email Bestätigung für %s"
@@ -134,11 +134,15 @@ msgstr "Feber"
 msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
 
-#: _GTW/__test__/form_app.py:270
+#: _GTW/__test__/form_app.py:272
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_AFS/Value.py:158
+#: _GTW/_NAV/_E_Type/Admin.py:483
+msgid "Form corrupted, unknown element id"
+msgstr "Fehlerhaftes Formular (unbekanntes Element)"
+
+#: _GTW/_AFS/Value.py:183
 msgid "Form/element is unknown"
 msgstr "Unbekanntes Formular oder Feld"
 
@@ -174,7 +178,7 @@ msgstr "Jun"
 msgid "June"
 msgstr "Juni"
 
-#: _GTW/__test__/form_app.py:253
+#: _GTW/__test__/form_app.py:255
 msgid "L10N"
 msgstr ""
 
@@ -187,7 +191,7 @@ msgstr "Sprache %s wurde ausgewählt"
 msgid "List of participants for"
 msgstr "Liste der Teilnehmer für"
 
-#: _GTW/_NAV/Auth.py:281
+#: _GTW/_NAV/Auth.py:280
 msgid "Logout successful."
 msgstr "Abmelden war erfolgreich."
 
@@ -224,6 +228,14 @@ msgstr "Emailadresse"
 msgid "New password"
 msgstr "Neues Kennwort"
 
+#: _GTW/_NAV/_E_Type/Admin.py:177
+msgid "Not authorized for this page"
+msgstr "Fehlende Autorisierung für den Zugriff auf diese Seite"
+
+#: _GTW/_NAV/_E_Type/Admin.py:169
+msgid "Not logged in or login-session is expired"
+msgstr "Felhende Anmeldung oder die Sitzung ist abgelaufen."
+
 #: _GTW/_NAV/Calendar.py:94
 msgid "Nov"
 msgstr "Nov"
@@ -252,7 +264,7 @@ msgstr "Teilnehmer"
 msgid "Password"
 msgstr "Kennwort"
 
-#: _GTW/_NAV/Auth.py:368
+#: _GTW/_NAV/Auth.py:367
 #, python-format
 msgid "Password reset for user %s on website %s"
 msgstr "Kennwort für Anwender %s auf Webseite %s zurückgesetzt"
@@ -337,7 +349,7 @@ msgstr "Das Kennwort sind nicht korrekt"
 msgid "The password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:380
+#: _GTW/_NAV/Auth.py:379
 msgid "The reset password instructions have been sent to your email address."
 msgstr ""
 "Die Information über das Setzen eines neuen Kennworts wurde an die "
@@ -387,7 +399,7 @@ msgstr "MI"
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: _GTW/_NAV/Auth.py:261
+#: _GTW/_NAV/Auth.py:260
 #, python-format
 msgid "Welcome %s."
 msgstr "Willkommen, %s."

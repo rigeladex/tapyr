@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-03-29 13:30+0200\n"
+"POT-Creation-Date: 2011-05-19 09:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,10 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Date"
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Don't show page in navigation."
 msgstr ""
 
 #: _GTW/_NAV/example/templates/i18n.jnj:8
@@ -47,6 +51,10 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Hidden"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0

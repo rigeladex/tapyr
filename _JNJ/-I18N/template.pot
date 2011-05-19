@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-03-29 13:30+0200\n"
+"POT-Creation-Date: 2011-05-19 09:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,6 +48,10 @@ msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:183
 msgid "Apply"
+msgstr ""
+
+#: _JNJ/html/error_400.jnj:36
+msgid "Bad request"
 msgstr ""
 
 #: _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
@@ -323,6 +327,10 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
+#: _JNJ/html/error_408.jnj:36
+msgid "Request Timeout"
+msgstr ""
+
 #: _JNJ/html/form.jnj:385 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr ""
@@ -380,6 +388,16 @@ msgstr ""
 
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
+msgstr ""
+
+#: _JNJ/html/error_400.jnj:46
+msgid "The request could not be understood by the server due to malformed syntax."
+msgstr ""
+
+#: _JNJ/html/error_408.jnj:46
+msgid ""
+"The request was not produced within the time that the server was prepared"
+" to wait."
 msgstr ""
 
 #: _JNJ/email/verify_new_email.jnj:41

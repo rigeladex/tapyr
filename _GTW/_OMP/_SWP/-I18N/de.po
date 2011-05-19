@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2011-03-29 13:30+0200\n"
+"PO-Revision-Date: 2011-05-19 09:50+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -74,6 +74,10 @@ msgstr "Verzeichnis"
 msgid "Directory where pictures of gallery are stored."
 msgstr "Verzeichnis, wo die Bilder der Gallerie gespeichert sind."
 
+#: _GTW._OMP._SWP.Page:0
+msgid "Don't show page in navigation."
+msgstr "Seite soll nicht ni Navigation aufscheinen."
+
 #: _GTW/_OMP/_SWP/Nav.py:152
 msgid "Events"
 msgstr "Ereignisse"
@@ -126,6 +130,10 @@ msgstr "Kopfzeile der Webseite"
 #: _GTW._OMP._SWP.Picture:0
 msgid "Height of picture."
 msgstr "Höhe des Bildes."
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Hidden"
+msgstr "Verborgen"
 
 #: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Higher prio sorts before lower prio."

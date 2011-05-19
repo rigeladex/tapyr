@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2011-03-29 13:30+0200\n"
+"PO-Revision-Date: 2011-05-19 09:50+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,8 +23,9 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:209 _GTW/_NAV/_E_Type/Admin.py:269
-#: _GTW/_NAV/_E_Type/Admin.py:387 _GTW/_NAV/_E_Type/Admin.py:418
+#: _GTW/_NAV/_E_Type/Admin.py:236 _GTW/_NAV/_E_Type/Admin.py:339
+#: _GTW/_NAV/_E_Type/Admin.py:456 _GTW/_NAV/_E_Type/Admin.py:493
+#: _GTW/_NAV/_E_Type/Admin.py:550
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
@@ -33,7 +34,7 @@ msgstr ""
 msgid "A confirmation email has been sent to the new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:326
+#: _GTW/_NAV/Auth.py:325
 msgid "A confirmation has been sent to your email address."
 msgstr ""
 
@@ -49,7 +50,7 @@ msgstr ""
 msgid "Activation successful."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Manager.py:149
+#: _GTW/_NAV/_E_Type/Manager.py:153
 msgid "Admin"
 msgstr ""
 
@@ -61,7 +62,7 @@ msgstr ""
 msgid "April"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:199 _GTW/_NAV/_E_Type/Admin.py:280
+#: _GTW/_NAV/_E_Type/Admin.py:226 _GTW/_NAV/_E_Type/Admin.py:350
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
@@ -73,23 +74,23 @@ msgstr ""
 msgid "August"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:245
+#: _GTW/__test__/form_app.py:247
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:248
+#: _GTW/__test__/form_app.py:250
 msgid "Authorization and Account handling"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:256
+#: _GTW/__test__/form_app.py:258
 msgid "Choice of language used for localization"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:262 _GTW/__test__/form_app.py:264
+#: _GTW/__test__/form_app.py:264 _GTW/__test__/form_app.py:266
 msgid "Console"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:453
+#: _GTW/_NAV/_E_Type/Admin.py:585
 msgid "Copy"
 msgstr ""
 
@@ -105,7 +106,7 @@ msgstr ""
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:451
+#: _GTW/_NAV/_E_Type/Admin.py:583
 msgid "Edit"
 msgstr ""
 
@@ -115,7 +116,7 @@ msgid ""
 "request."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:176 _GTW/_NAV/Auth.py:315
+#: _GTW/_NAV/Auth.py:176 _GTW/_NAV/Auth.py:314
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
@@ -133,11 +134,15 @@ msgstr ""
 msgid "Field `%(field)s` is required"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:270
+#: _GTW/__test__/form_app.py:272
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_AFS/Value.py:158
+#: _GTW/_NAV/_E_Type/Admin.py:483
+msgid "Form corrupted, unknown element id"
+msgstr ""
+
+#: _GTW/_AFS/Value.py:183
 msgid "Form/element is unknown"
 msgstr ""
 
@@ -173,7 +178,7 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:253
+#: _GTW/__test__/form_app.py:255
 msgid "L10N"
 msgstr ""
 
@@ -186,7 +191,7 @@ msgstr ""
 msgid "List of participants for"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:281
+#: _GTW/_NAV/Auth.py:280
 msgid "Logout successful."
 msgstr ""
 
@@ -223,6 +228,14 @@ msgstr ""
 msgid "New password"
 msgstr ""
 
+#: _GTW/_NAV/_E_Type/Admin.py:177
+msgid "Not authorized for this page"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/Admin.py:169
+msgid "Not logged in or login-session is expired"
+msgstr ""
+
 #: _GTW/_NAV/Calendar.py:94
 msgid "Nov"
 msgstr ""
@@ -251,7 +264,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:368
+#: _GTW/_NAV/Auth.py:367
 #, python-format
 msgid "Password reset for user %s on website %s"
 msgstr ""
@@ -336,7 +349,7 @@ msgstr ""
 msgid "The password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:380
+#: _GTW/_NAV/Auth.py:379
 msgid "The reset password instructions have been sent to your email address."
 msgstr ""
 
@@ -384,7 +397,7 @@ msgstr ""
 msgid "Wednesday"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:261
+#: _GTW/_NAV/Auth.py:260
 #, python-format
 msgid "Welcome %s."
 msgstr ""
