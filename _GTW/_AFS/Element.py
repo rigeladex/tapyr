@@ -75,6 +75,8 @@
 #     1-Apr-2011 (CT) `_Element_.instantiated` changed to honor `child_id`
 #     4-Apr-2011 (CT) s/child_id/new_id_suffix/
 #    13-Apr-2011 (CT) `_pop_in_call` added
+#    19-May-2011 (CT) `Form.__getitem__` changed to use `_list_element_pat`
+#                     instead of `split_hst` to massage `key` (allow recursion)
 #    ««revision-date»»···
 #--
 
@@ -89,9 +91,9 @@ import _GTW._Form.Widget_Spec
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Lists
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.predicate           import split_hst, rsplit_hst
+from   _TFL.predicate           import split_hst
 from   _TFL.pyk                 import pickle
-from   _TFL.Regexp              import Regexp
+from   _TFL.Regexp              import Regexp, re
 
 import json
 
@@ -552,6 +554,21 @@ class Form (_Element_List_) :
         return any ((s in id) for id in self.id_map)
     # end def dynamic_children_p
 
+    @Once_Property
+    def _list_element_pat (self) :
+        return Regexp \
+            ( "".join
+                ( ( re.escape (self.list_sep)
+                  , r"\d+"
+                  , r"(?:"
+                  ,   re.escape (self.root_sep)
+                  ,   r"(?P<tail>.*)"
+                  , r")?"
+                  )
+                )
+            )
+    # end def _list_element_pat
+
     def copy (self, ** kw) :
         if "id" not in kw :
             kw = dict (kw, id = self.id, REGISTER = False)
@@ -581,11 +598,14 @@ class Form (_Element_List_) :
             return self.id_map [key]
         except KeyError :
             l_sep = self.list_sep
-            if l_sep in key :
-                r_sep   = self.root_sep
-                h, _, t = split_hst (key, l_sep)
-                i, _, u = split_hst (t,   r_sep)
-                p_key   = l_sep.join ((h, r_sep.join (("p", u)) if u else "p"))
+            l_pat = self._list_element_pat
+            if l_pat.search (key) :
+                r_sep = self.root_sep
+                head  = key [:l_pat.start ()]
+                tail  = "p"
+                if l_pat.tail :
+                    tail = r_sep.join ((tail, l_pat.tail))
+                p_key = l_sep.join ((head, tail))
                 return self [p_key]
             else :
                 raise

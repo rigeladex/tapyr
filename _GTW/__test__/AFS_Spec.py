@@ -163,6 +163,7 @@ _test_code = """
        <Field None 'finish'>
       <Field None 'format'>
       <Field None 'head_line'>
+      <Field None 'hidden'>
       <Field None 'prio'>
      <Entity_List None 'Event' <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>>
       <Entity_Link None 'Event' 'GTW.OMP.EVT.Event'>
@@ -218,7 +219,8 @@ _test_code = """
         <Field F-0:3:0.1 'finish'>
        <Field F-0:3:1 'format'>
        <Field F-0:3:2 'head_line'>
-       <Field F-0:3:3 'prio'>
+       <Field F-0:3:3 'hidden'>
+       <Field F-0:3:4 'prio'>
       <Entity_List F-0:4 'Event' <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>>
        <Entity_Link F-0:4::p 'Event' 'GTW.OMP.EVT.Event'>
         <Field_Role_Hidden F-0:4::p-0 u'left' 'GTW.OMP.SWP.Page'>
@@ -287,7 +289,8 @@ _test_code = """
         <Field X-1:3:0.1 'finish'>
        <Field X-1:3:1 'format'>
        <Field X-1:3:2 'head_line'>
-       <Field X-1:3:3 'prio'>
+       <Field X-1:3:3 'hidden'>
+       <Field X-1:3:4 'prio'>
       <Entity_List X-1:4 'Event' <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>>
        <Entity_Link X-1:4::p 'Event' 'GTW.OMP.EVT.Event'>
         <Field_Role_Hidden X-1:4::p-0 u'left' 'GTW.OMP.SWP.Page'>
