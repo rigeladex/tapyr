@@ -35,6 +35,7 @@
 #    22-Mar-2011 (CT) `afs` continued
 #    29-Mar-2011 (CT) `afs` continued..
 #    30-Mar-2011 (CT) `afs` continued...
+#    19-May-2011 (CT) `afs` continued....
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,8 @@ class Media_Defaults (Definition) :
 
     class afs (Definition) :
 
+        block_margin_bottom    = Em (0.1)
+
         border_spec_input      = P_Border \
             ( color            = P.R.color_dark_grey
             , style            = "solid"
@@ -136,6 +139,8 @@ class Media_Defaults (Definition) :
             ( background_color = P.R.color_medium_grey
             , color            = P.R.text_color
             )
+
+        header_padding         = TRBL0 (b = Em (0.3), default = Em (0.2))
 
     # end class afs
 

@@ -30,6 +30,7 @@
 #    22-Mar-2011 (CT) Creation continued
 #    23-Mar-2011 (CT) Creation continued..
 #    30-Mar-2011 (CT) Creation continued...
+#    19-May-2011 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -38,18 +39,25 @@ style_sheet = Style_Sheet \
         ( ".AFS"
         , children =
             [ Rule
+                ( "div"
+                , margin           = TRBL0 (b = P.afs.block_margin_bottom)
+                )
+            , Rule
                 ( "h1"
                 , P.afs.color_spec_heading
                 , P.font_spec_normal
                 , font_size     = Percent (100)
-                , padding       = P.input_padding
+                , margin_bottom = P.afs.block_margin_bottom
+                , padding       = P.afs.header_padding
                 )
             , Rule
                 ( "h2"
                 , P.afs.color_spec_label
                 , P.font_spec_normal
                 , font_size     = Percent (100)
-                , padding       = P.input_padding
+                , margin_bottom = P.afs.block_margin_bottom
+                , padding       = P.afs.header_padding
+                , padding_top   = 0
                 )
             , Rule
                 ( "a.button"
@@ -64,19 +72,16 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
-                ( ".closed h1"
-                , P.afs.color_spec_heading_closed
-                )
-            , Rule
                 ( ".Desc"
                 , P.afs.color_spec_desc
                 , float         = "right"
                 , font_size     = Percent (80)
-                , padding       = P.input_padding
+                , padding       = P.afs.header_padding
                 , width         = "auto"
                 )
             , Rule
                 ( ".Field_Entity"
+                , padding       = Px (5)
                 , children =
                     [ Rule
                         ( "h2"
@@ -86,6 +91,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( ".Field_Composite"
+                , padding       = Px (5)
                 , children =
                     [ Rule
                         ( "h2"
@@ -95,8 +101,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( ".Field"
-                , padding_left  = Px (5)
-                , margin_bottom = Em (1.0)
+                , padding       = Px (5)
                 , children      =
                     [ Rule
                         ( "h2"
@@ -146,8 +151,26 @@ style_sheet = Style_Sheet \
                 ( "section"
                 , P.afs.border_spec_section
                 , clear            = "both"
+                , margin_bottom    = P.afs.block_margin_bottom
                 , overflow         = "auto"
                 , padding          = TRBL0 (r = 0, default = Px (2))
+                , children         =
+                    [ Rule
+                        ( ".closed"
+                        , border   = 0
+                        , margin   = 0
+                        , padding  = 0
+                        , children =
+                            [ Rule
+                                ( "h1"
+                                , P.afs.color_spec_heading_closed
+                                , border   = 0
+                                , margin   = TRBL0 (b = Px (1))
+                                , padding  = P.afs.header_padding
+                                )
+                            ]
+                        )
+                    ]
                 )
             , Rule
                 ( ".Horizo"

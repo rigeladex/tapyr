@@ -40,6 +40,7 @@
 #     6-May-2010 (MG) Switch to render mode rendering
 #    13-Oct-2010 (CT) `Entity_created_by_Person` added
 #    15-Mar-2011 (CT) Test for `GTW.AFS` added
+#    19-May-2011 (CT) More tests for `GTW.AFS` added
 #    ««revision-date»»···
 #--
 
@@ -220,12 +221,20 @@ import _GTW._OMP._PAP.Person
 
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     (include_links = ("addresses", "emails", "phones"))
+GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
+    (include_links = ("persons", ))
+GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
+    (include_links = ("persons", ))
+GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \
+    (include_links = ("persons", ))
 
 from   _MOM import MOM
 import _MOM._Attr.Date_Interval
+import _MOM._Attr.Position
 import _MOM._Attr.Time_Interval
 
 MOM.Attr.Date_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
+MOM.Attr.Position.GTW.afs_kw      = dict (renderer = "afs_fc_horizo")
 MOM.Attr.Time_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
 
 if __name__ != "__main__" :

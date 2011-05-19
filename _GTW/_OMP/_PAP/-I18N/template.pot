@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-05-19 09:50+0200\n"
+"POT-Creation-Date: 2011-05-19 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,6 +121,14 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
 msgid "First name of person"
+msgstr ""
+
+#: _MOM._Attr.Position:0
+msgid "Geographical latitude"
+msgstr ""
+
+#: _MOM._Attr.Position:0
+msgid "Geographical longitude"
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0

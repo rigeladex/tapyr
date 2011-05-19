@@ -30,6 +30,7 @@
 #    13-Oct-2010 (CT) `example` added
 #     5-Apr-2011 (MG) `distance` abd friends added
 #     6-Apr-2011 (MG) `distance` calculation moved into TFL.Sphere
+#    19-May-2011 (CT) Description for `lat` and `lon` improved
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class Position (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Attributes
 
         class lat (A_Float) :
-            """Latitude"""
+            """Geographical latitude"""
 
             kind               = Attr.Necessary
             example            = u"42"
@@ -66,7 +67,7 @@ class Position (_Ancestor_Essence) :
         # end class lat
 
         class lon (A_Float) :
-            """Longitude"""
+            """Geographical longitude"""
 
             kind               = Attr.Necessary
             example            = u"137"
