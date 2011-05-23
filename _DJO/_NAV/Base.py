@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -176,6 +176,7 @@
 #    16-Jul-2009 (CT) `nick` added and used in `h_title`
 #    21-Dec-2010 (CT) `h_title` changed (no `title junk` (TM))
 #    21-Dec-2010 (CT) `Root.home` added
+#    23-May-2011 (CT) `copyright_url` added
 #    ««revision-date»»···
 #--
 
@@ -295,6 +296,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         start = self.copyright_start
         return dict \
             ( year   = "-".join ("%s" % y for y in (start, year) if y)
+            , url    = getattr (self, "copyright_url", "/")
             , holder = self.owner
             )
     # end def copyright
