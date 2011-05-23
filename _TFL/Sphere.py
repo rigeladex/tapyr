@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Apr-2011 (MG) Creation
+#    23-May-2011 (CT) `doctest` fixed (no floating point in output)
 #    ««revision-date»»···
 #--
 
@@ -39,10 +40,10 @@ class Sphere (TFL.Meta.Object) :
 
     >>> p1 = Earth.Point (48.110278, 16.569722, 183) ### Airport Vienna    (VIE), Austria
     >>> p2 = Earth.Point (47.260278, 11.343889, 581) ### Airport Innsbruck (INN), Austria
-    >>> Earth.distance (p1, p2)
-    402469.90718483838
-    >>> Earth.distance (p2, p1)
-    402469.90718483838
+    >>> print "%10.2f" % Earth.distance (p1, p2)
+    402469.91
+    >>> print "%10.2f" % Earth.distance (p2, p1)
+    402469.91
     """
 
     class Point (TFL.Meta.Object) :
