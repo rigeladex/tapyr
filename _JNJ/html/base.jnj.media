@@ -32,6 +32,7 @@
 #    11-Jan-2011 (CT) `tablesorter` added
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    21-Feb-2011 (CT) Use `Border`
+#    24-May-2011 (CT) `overflow` forced to `visible` for `@media print`
 #    ««revision-date»»···
 #--
 
@@ -529,6 +530,7 @@ print_sheet = Style_Sheet \
                 ( "*"
                 , background      = "transparent !important"
                 , color           = "black !important"
+                , overflow        = "visible !important"
                 )
             , Rule
                 ( "a"
