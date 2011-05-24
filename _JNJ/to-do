@@ -13,7 +13,9 @@ JNJ To-Do
 
 - CSS fragments:
 
-  * .Object-List, .Object-Editor
+  * .Object-List
+
+  x .Object-Editor
 
   x @media "print"
 
