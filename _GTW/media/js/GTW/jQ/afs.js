@@ -225,22 +225,23 @@
             var id     = s$.attr    ("id");
             var elem   = $GTW.AFS.Elements.get (id);
             var pvs    = $GTW.AFS.Elements.root.packed_values (elem);
+            var json_data = $GTW.jsonify (
+                  { cargo       : pvs
+                  , allow_new   : elem.allow_new
+                  , collapsed   : true
+                  }
+                );
             $.ajax
                 ( { url         : document.URL
                   , async       : false
                   , contentType : "application/json"
                   , dataType    : "json"
-                  , data        : $GTW.jsonify (
-                      { cargo     : pvs
-                      , allow_new : elem.allow_new
-                      , collapsed : true
-                      }
-                    )
+                  , data        : json_data
                   , processData : false
                   , timeout     : 30000
                   , type        : "POST"
                   , error       : function (xhr_instance, status, exc) {
-                        alert ("Save failed: " + status);
+                        alert ("Save failed: " + status + "\n\n" + json_data);
                   }
                   , success     : function (answer, status, xhr_instance) {
                         var response;
@@ -266,7 +267,7 @@
                                 }
                             }
                         } else {
-                            alert ("Error: " + answer.error, undefined, 1);
+                            alert ("Error: " + answer.error + "\n\n" + json_data);
                         }
                         //alert ("Save response: \n" + $GTW.inspect.show (answer));
                     }
