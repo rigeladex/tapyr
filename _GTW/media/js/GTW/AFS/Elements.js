@@ -34,6 +34,7 @@
 //     1-Apr-2011 (CT) `Entity_List.max_child_idx` and `.new_child_idx` added
 //     5-Apr-2011 (CT) `Element.remove` added
 //    13-Apr-2011 (CT) `Element.new_child_idx` added (empty)
+//    25-May-2011 (CT) `Element._value_to_pack` added
 //    ««revision-date»»···
 //--
 
@@ -184,6 +185,9 @@
               kw.roots.push (this);
               new_kw.root = this;
           }
+        , _value_to_pack : function _value_to_pack () {
+              return this.value;
+          }
         }
       , { type_name : "Element" }
     );
@@ -253,12 +257,12 @@
     );
     var Field_Role_Hidden = Element.extend (
         { _setup_value : function _setup_value (kw, new_kw) {
-              if (! this.value ["init"]) {
-                  this.value.edit =
-                      Elements.id_map [kw.root.$anchor_id].value.edit;
-                  this.value.role_id = kw.root.$anchor_id;
-              }
+              this.value.role_id = kw.root.$anchor_id;
               this._super (kw, new_kw);
+          }
+        , _value_to_pack : function _value_to_pack () {
+              this.value.edit = Elements.id_map [this.value.role_id].value.edit;
+              return this.value;
           }
         }
       , { type_name : "Field_Role_Hidden" }
@@ -287,7 +291,7 @@
                   };
               for (i = 0, l = entities.length; i < l; i += 1) {
                   child = entities [i];
-                  result [child.$id] = child.value;
+                  result [child.$id] = child._value_to_pack ();
                   result.$child_ids.push (child.$id);
               }
               return result;

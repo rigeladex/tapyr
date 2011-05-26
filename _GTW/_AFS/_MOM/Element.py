@@ -45,6 +45,9 @@
 #     5-Apr-2011 (CT) `Entity_Link.__call__` corrected
 #    13-Apr-2011 (CT) `Field_Entity.__call__` changed to allow call for
 #                     instance, support `allow_new` and `collapsed`
+#    25-May-2011 (CT) `Element._changed_children` changed to consider `c.entity`
+#    25-May-2011 (CT) `Field_Role_Hidden.apply` added,
+#                     empty `._update_sid` removed
 #    ««revision-date»»···
 #--
 
@@ -62,11 +65,14 @@ class _MOM_Element_ (_Element_) :
     def _changed_children (self, value, scope, entity, ** kw) :
         result = {}
         for c in value.children :
-            if c.changed :
+            v = None
+            if c.entity :
+                v = c.entity
+            elif c.changed :
                 v = c.elem.applyf (c, scope, entity, ** kw)
                 value.conflicts += c.conflicts
-                if v is not None :
-                    result [c.elem.name] = v
+            if v is not None :
+                result [c.elem.name] = v
         return result
     # end def _changed_children
 
@@ -301,6 +307,13 @@ Field_Entity = _MOM_Field_Entity_ # end class
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
 
+    def apply (self, value, scope, ** kw) :
+        self._check_sid (value, ** kw)
+        pid = value.edit.get ("pid")
+        if pid is not None :
+            return scope.pid_query (pid)
+    # end def apply
+
     def applyf (self, value, scope, entity, ** kw) :
         pid = value.edit.get ("pid")
         if pid is not None :
@@ -313,10 +326,6 @@ class Field_Role_Hidden (Field_Entity) :
     def display (self, instance) :
         return None
     # end def display
-
-    def _update_sid (self, result, ** kw) :
-        pass
-    # end def _update_sid
 
 # end class Field_Role_Hidden
 
