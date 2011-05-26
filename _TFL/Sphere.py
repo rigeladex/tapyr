@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2011 Martin Glueck All rights reserved
 # ****************************************************************************
 #

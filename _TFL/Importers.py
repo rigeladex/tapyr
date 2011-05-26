@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2006-2010 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2005 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
@@ -43,7 +43,7 @@ import hildon
 from   _TFL.Command_Line import Command_Line
 from   _TFL.Regexp       import Regexp
 
-template = '''# -*- coding: iso-8859-1 -*-
+template = '''# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2005 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************

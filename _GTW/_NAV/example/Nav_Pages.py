@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # simple example to test if a redirect works
 from   _TFL            import TFL
 import _TFL.I18N
