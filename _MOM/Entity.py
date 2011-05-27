@@ -163,6 +163,7 @@
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `electric`
 #    22-Dec-2010 (CT) `is_relevant` moved from `Id_Entity` to `Entity`
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#    27-May-2011 (CT) Guard for unchanged `epk` added to `_set_raw`
 #    ««revision-date»»···
 #--
 
@@ -1261,7 +1262,8 @@ class Id_Entity (Entity) :
             return 0
         new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
         if pkas_ckd :
-            self._rename (new_epk, pkas_raw, pkas_ckd)
+            if tuple (new_epk) != self.epk [:-1] :
+                self._rename (new_epk, pkas_raw, pkas_ckd)
         result = self.__super._set_raw (on_error, ** kw)
         return result + len (pkas_ckd)
     # end def _set_raw

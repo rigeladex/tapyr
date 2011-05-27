@@ -43,13 +43,13 @@
                     $(":input", s$).change (field_change_cb);
                     new_elem = $GTW.AFS.Elements.create (response.json);
                     anchor =
-                        ( parent.$anchor_id !== undefined
-                        ? $GTW.AFS.Elements.get (parent.$anchor_id)
+                        ( parent.anchor_id !== undefined
+                        ? $GTW.AFS.Elements.get (parent.anchor_id)
                         : new_elem
                         );
                     root   =
-                        ( parent.$root_id !== undefined
-                        ? $GTW.AFS.Elements.get (parent.$root_id)
+                        ( parent.root_id !== undefined
+                        ? $GTW.AFS.Elements.get (parent.root_id)
                         : new_elem
                         );
                     new_elem.setup_value
@@ -70,8 +70,8 @@
                 .children   ()
                     .unwrap ();
             _bind_click (s$, copy_cb, delete_cb, edit_cb);
-            anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
-            root     = $GTW.AFS.Elements.get (elem.$root_id || anchor.$root_id);
+            anchor   = $GTW.AFS.Elements.get (elem.anchor_id);
+            root     = $GTW.AFS.Elements.get (elem.root_id || anchor.root_id);
             new_elem = $GTW.AFS.Elements.create (response.json);
             new_elem.setup_value
                 ( { anchor : anchor
@@ -188,9 +188,9 @@
                                   , edit_cb, save_cb
                                   );
                               $(":input", s$).change (field_change_cb);
-                              anchor   = $GTW.AFS.Elements.get (elem.$anchor_id);
+                              anchor   = $GTW.AFS.Elements.get (elem.anchor_id);
                               root     = $GTW.AFS.Elements.get
-                                  (elem.$root_id || anchor.$root_id);
+                                  (elem.root_id || anchor.root_id);
                               new_elem = $GTW.AFS.Elements.create (response.json);
                               new_elem.setup_value
                                   ( { anchor : anchor
@@ -211,7 +211,7 @@
             var afs_field = $GTW.AFS.Elements.get (id);
             var ini_value, new_value, old_value, anchor;
             if (afs_field !== undefined) {
-                anchor    = $GTW.AFS.Elements.get (afs_field.$anchor_id);
+                anchor    = $GTW.AFS.Elements.get (afs_field.anchor_id);
                 ini_value = afs_field.value.init;
                 new_value = f$.attr ("value");
                 old_value = afs_field.value.edit || ini_value;

@@ -34,7 +34,10 @@
 //     1-Apr-2011 (CT) `Entity_List.max_child_idx` and `.new_child_idx` added
 //     5-Apr-2011 (CT) `Element.remove` added
 //    13-Apr-2011 (CT) `Element.new_child_idx` added (empty)
-//    25-May-2011 (CT) `Element._value_to_pack` added
+//    27-May-2011 (CT) `Field_Role_Hidden._setup_value` changed to set
+//                     `value.edit` unconditionally
+//    27-May-2011 (CT) `Entity_List.setup_value` redefined to set `anchor_id`
+//                     and `root_id`
 //    ««revision-date»»···
 //--
 
@@ -114,7 +117,7 @@
               return null;
           }
         , remove : function remove () {
-              var anchor = $GTW.AFS.Elements.get (this.$anchor_id);
+              var anchor = $GTW.AFS.Elements.get (this.anchor_id);
               var id     = this.$id;
               var i, l, child, k;
               if (this ["children"] !== undefined) {
@@ -145,7 +148,7 @@
               if (this ["value"] !== undefined) {
                   this._setup_value (kw, new_kw);
                   if (this.$id !== kw.anchor.$id) {
-                      this.$anchor_id = kw.anchor.$id;
+                      this.anchor_id = kw.anchor.$id;
                   }
               }
               if (this ["children"] !== undefined) {
@@ -177,16 +180,13 @@
           }
         , _sv_anchored : function _sv_anchored (kw, new_kw) {
               if (this.$id !== kw.anchor.$id) {
-                  this.value ["$anchor_id"] = kw.anchor.$id;
+                  this.value ["anchor_id"] = kw.anchor.$id;
               }
           }
         , _sv_root : function _sv_root (kw, new_kw) {
-              this.$root_id = kw.root.$id;
+              this.root_id = kw.root.$id;
               kw.roots.push (this);
               new_kw.root = this;
-          }
-        , _value_to_pack : function _value_to_pack () {
-              return this.value;
           }
         }
       , { type_name : "Element" }
@@ -224,6 +224,11 @@
               this.max_child_idx += 1; ;
               return this.max_child_idx;
           }
+        , setup_value : function setup_value (kw) {
+              this._super (kw);
+              this.anchor_id = kw.anchor.$id;
+              this.root_id   = kw.root.$id;
+          }
         }
       , { type_name : "Entity_List" }
     );
@@ -257,12 +262,10 @@
     );
     var Field_Role_Hidden = Element.extend (
         { _setup_value : function _setup_value (kw, new_kw) {
-              this.value.role_id = kw.root.$anchor_id;
+              var raid           = kw.root.anchor_id;
+              this.value.role_id = raid;
+              this.value.edit    = Elements.id_map [raid].value.edit;
               this._super (kw, new_kw);
-          }
-        , _value_to_pack : function _value_to_pack () {
-              this.value.edit = Elements.id_map [this.value.role_id].value.edit;
-              return this.value;
           }
         }
       , { type_name : "Field_Role_Hidden" }
@@ -291,7 +294,7 @@
                   };
               for (i = 0, l = entities.length; i < l; i += 1) {
                   child = entities [i];
-                  result [child.$id] = child._value_to_pack ();
+                  result [child.$id] = child.value;
                   result.$child_ids.push (child.$id);
               }
               return result;

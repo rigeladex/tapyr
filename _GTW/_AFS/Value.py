@@ -34,6 +34,8 @@
 #    10-Mar-2011 (CT) `apply` changed to iterate over `self.entities`
 #     6-Apr-2011 (CT) `apply` changed to call `e.apply`, too
 #     6-Apr-2011 (CT) `from_json` changed to except a dict as cargo, too
+#    27-May-2011 (CT) `role_id` added
+#    27-May-2011 (CT) `__repr__` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +65,7 @@ class Value (_Base_) :
     conflicts = 0
     entity    = None
     prefilled = None
+    role_id   = None
     sid       = None
     value     = None
     _edit     = None
@@ -75,7 +78,9 @@ class Value (_Base_) :
         self.elem     = self._get_elem (form, id)
         self.children = children = []
         self.pop_to_self \
-            (json_cargo, "$anchor_id", "edit", "init", "prefilled", "sid")
+            ( json_cargo
+            , "anchor_id", "edit", "init", "prefilled", "role_id", "sid"
+            )
         for c_id in sorted (uniq (json_cargo.get ("$child_ids", ()))) :
             children.append (self.__class__ (form, c_id, json_cargo [c_id]))
     # end def __init__
@@ -183,6 +188,12 @@ class Value (_Base_) :
                 (_ ("Form/element is unknown"), unknown_id = id)
     # end def _get_elem
 
+    def __repr__ (self) :
+        result = ["%s\n    > %s" % (str (self), sorted (self.jc.iteritems ()))]
+        result.extend ("  %r" % c for c in self.children)
+        return "\n".join (result)
+    # end def __repr__
+
     def __str__ (self) :
         result = [str (self.elem), self._v_repr (self.init, "init")]
         if self.init != self.edit :
@@ -190,6 +201,8 @@ class Value (_Base_) :
         if self.sid is not None :
             result.append ("sid = %s" % (self.sid, ))
         result.append ("changes = %s" % (self.changes, ))
+        if self.role_id is not None :
+            result.append ("role_id = %s" % (self.role_id))
         return ", ".join (result)
     # end def __str__
 
