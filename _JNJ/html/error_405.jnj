@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: 405.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##    19-Feb-2010 (CT) Creation
+##    27-May-2011 (CT) `exception.valid_methods` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,10 +47,17 @@
     <h1 class="Error-Message">
       {{ GTW._T
           ( "The HTTP method `%s` isn't supported by page %s"
-          % (request.method, request.path)
-          )
+          ) % (request.method, request.path)
       }}
     </h1>
+    {%- if exception.valid_methods %}
+      {%- if GTW.len (exception.valid_methods) == 1 -%}
+        {%- set fmt = GTW._T ("Use the HTTP method '%s', instead.") -%}
+      {%- else -%}
+        {%- set fmt = GTW._T ("Use one of the HTTP methods (%s), instead.") -%}
+      {%- endif %}
+      {{ fmt % (", ".join (exception.valid_methods), ) }}
+    {% endif -%}
   {% endif %}
 {% endblock document -%}
 

@@ -216,7 +216,7 @@ class Error_405 (_Error_) :
 
     def __init__ (self, description = "", valid_methods = ()) :
         self.__super.__init__ (description)
-        self.valid_methods = valid_methods
+        self.valid_methods = sorted (valid_methods)
     # end def __init__
 
     def return_response (self, description) :
