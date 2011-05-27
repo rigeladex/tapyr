@@ -34,6 +34,7 @@
 #    31-Dec-2010 (CT) s/get_std_template/get_template/
 #     5-Apr-2011 (CT) `Error_408` and `Error_409` added
 #     2-May-2011 (CT) `Error_400` added
+#    27-May-2011 (CT) `return_response` factored and redefined in `Error_405`
 #    ««revision-date»»···
 #--
 
@@ -178,8 +179,13 @@ class _Error_ (Status) :
                 , request         = handler.request
                 )
             description = template.render (context)
-        return self.response (description)
+        return self.return_response (description)
     # end def __call__
+
+    def return_response (self, description) :
+        ### Overriden by `Error_405`
+        return self.response (description)
+    # end def return_response
 
 # end class _Error_
 
@@ -205,7 +211,20 @@ class Error_404 (_Error_) :
 
 class Error_405 (_Error_) :
     """Method Not Allowed."""
-    response = exceptions.MethodNotAllowed
+
+    response    = exceptions.MethodNotAllowed
+
+    def __init__ (self, description = "", valid_methods = ()) :
+        self.__super.__init__ (description)
+        self.valid_methods = valid_methods
+    # end def __init__
+
+    def return_response (self, description) :
+        ### - werkzeug.exceptions.MethodNotAllowed has a different signature
+        ###   than all other exception classes
+        return self.response (self.valid_methods, description)
+    # end def return_response
+
 # end class Error_405
 
 class Error_408 (_Error_) :

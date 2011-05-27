@@ -93,6 +93,7 @@
 #    13-Apr-2011 (CT) `Expander` continued......
 #     2-May-2011 (CT) `Expander` continued......., `AFS._post_handler` bug fixes
 #     2-May-2011 (CT) `AFS._raise_401` and `._raise_403` added
+#    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
 #    ««revision-date»»···
 #--
 
@@ -444,6 +445,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         name              = "delete"
         template_name     = "e_type_delete"
+        SUPPORTED_METHODS = set (("POST", ))
 
         def _view (self, request) :
             HTTP = self.top.HTTP

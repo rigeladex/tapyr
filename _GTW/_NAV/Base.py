@@ -252,6 +252,7 @@
 #    28-Apr-2011 (CT) `_Page_O_.__getattr__` changed to first try `__super`,
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
+#    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
 #    ««revision-date»»···
 #--
 
@@ -1205,7 +1206,7 @@ class Root (_Dir_) :
         HTTP = cls.top.HTTP
         if page :
             if handler.request.method not in page.SUPPORTED_METHODS :
-                raise HTTP.Error_405 ()
+                raise HTTP.Error_405 (valid_methods = page.SUPPORTED_METHODS)
             if page.login_required :
                 if user and not user.authenticated :
                     return page._raise_401 (handler)
