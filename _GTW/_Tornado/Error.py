@@ -35,6 +35,7 @@
 #    17-Aug-2010 (CT) `Error_503` added
 #    31-Dec-2010 (CT) s/get_std_template/get_template/
 #     2-May-2011 (CT) `Error_400` added
+#    27-May-2011 (CT) `Error_405.__init__` redefined to accept `valid_methods`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,14 @@ class Error_404 (_Error_) :
 
 class Error_405 (_Error_) :
     """Method Not Allowed."""
+
     status_code = 405
+
+    def __init__ (self, * args, ** kw) :
+        self.valid_methods = kw.pop ("valid_methods", None)
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
 # end class Error_405
 
 class Error_408 (_Error_) :
