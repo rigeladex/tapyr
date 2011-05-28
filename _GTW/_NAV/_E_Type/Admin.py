@@ -445,7 +445,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         name              = "delete"
         template_name     = "e_type_delete"
-        SUPPORTED_METHODS = set (("POST", ))
+        SUPPORTED_METHODS = set (("DELETE", "POST"))
 
         def _view (self, request) :
             HTTP = self.top.HTTP
