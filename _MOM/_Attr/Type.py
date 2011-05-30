@@ -167,6 +167,7 @@
 #     8-Mar-2011 (CT) `_A_Entity_.from_string` changed to check
 #                     `isinstance (s, self.Class)`
 #     8-Mar-2011 (CT) `_cls_attr` added
+#    30-May-2011 (CT) `from_string` changed to except "" for `s`
 #    ««revision-date»»···
 #--
 
@@ -334,7 +335,8 @@ class A_Attr_Type (object) :
             if s is not None :
                 return self._from_string (s, obj, glob, locl)
         except StandardError as exc :
-            raise MOM.Error.Attribute_Syntax_Error (obj, self, s, str (exc))
+            if s :
+                raise MOM.Error.Attribute_Syntax_Error (obj, self, s, str (exc))
     # end def from_string
 
     @TFL.Meta.Class_and_Instance_Method

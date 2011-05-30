@@ -34,6 +34,7 @@
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `left`
 #     9-Feb-2011 (CT) `Boat.left.ui_allow_new` set to `True`
 #     2-May-2011 (CT) `sail_number_x` added
+#    30-May-2011 (CT) `nation` changed from `Primary` to `Primary_Optional`
 #    ««revision-date»»···
 #--
 
@@ -71,7 +72,7 @@ class Boat (_Ancestor_Essence) :
         class nation (A_Nation) :
             """Country for which the boat is registered."""
 
-            kind               = Attr.Primary
+            kind               = Attr.Primary_Optional
             example            = "AUT"
 
         # end class nation
