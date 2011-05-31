@@ -362,6 +362,8 @@ class Template_E (_Template_) :
     # end def get_Media
 
     def render (self, context) :
+        if "template" not in context :
+            context.update (template = self)
         return self.template.render (context)
     # end def render
 
@@ -483,8 +485,6 @@ class Templateer (TFL.Meta.Object) :
         template = template_or_name
         if isinstance (template_or_name, basestring) :
             template = self.get_template (template_or_name)
-        if "template" not in context :
-            context.update (template = template)
         return template.render (context)
     # end def render
 
