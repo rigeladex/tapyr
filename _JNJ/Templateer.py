@@ -51,6 +51,7 @@
 #                     `JNJ.Environment.HTML` -> `GTW.env` refers to `Templateer`
 #    17-Mar-2011 (CT) `afs` and `e_type_afs` added
 #    18-Mar-2011 (CT) `Template_E.parent` added and used in `get_macro`
+#    31-May-2011 (CT) `render` changed to put `template` into `context`
 #    ««revision-date»»···
 #--
 
@@ -482,6 +483,8 @@ class Templateer (TFL.Meta.Object) :
         template = template_or_name
         if isinstance (template_or_name, basestring) :
             template = self.get_template (template_or_name)
+        if "template" not in context :
+            context.update (template = template)
         return template.render (context)
     # end def render
 

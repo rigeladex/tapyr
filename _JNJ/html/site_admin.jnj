@@ -34,6 +34,8 @@
 ##--
 #}
 
+{#- {%- include "html/e_type_admin.jnj" %} media dependency -#}
+
 {%- macro a_link (link) -%}
   <a href="{{ link.permalink }}"
      {% if link.title %}title="{{ GTW._T (link.title) }}"{% endif -%}
