@@ -36,6 +36,8 @@
 ##     7-Dec-2010 (CT) `media_item` factored and used for `Media.scripts`, too
 ##    15-Dec-2010 (CT) `exclude_robots` added
 ##     5-Jan-2011 (CT) Support `page.template.css_href`
+##    31-May-2011 (CT) Take `template` from context, if possible
+##                     (`dir_template` must NOT get the CSS of `page.template`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -54,6 +56,7 @@
 {%- import html_version as X -%}
 {%- call X.html (lang = page.language|default ("en")) -%}
   {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
+  {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
   {%- call X.head () -%}
     {%- block head_elements -%}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
@@ -69,13 +72,13 @@
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- if page.template.CSS and not page.template.css_href %}
+        {%- if template.CSS and not template.css_href %}
           <style type="text/css">
-            {{ page.template.CSS }}
+            {{ template.CSS }}
           </style>
         {% else %}
-          {%- if page.template.css_href %}
-            {{ X.link_stylesheet (page.template.css_href) }}
+          {%- if template.css_href %}
+            {{ X.link_stylesheet (template.css_href) }}
           {% endif -%}
           {%- for cssl in page.Media.css_links %}
             {% call media_item (cssl) -%}
