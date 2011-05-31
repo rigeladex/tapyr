@@ -16,6 +16,7 @@
 // Revision Dates
 //    28-Jan-2011 (CT) Creation
 //     9-Mar-2011 (CT) `copy` added
+//    31-May-2011 (MG) Mssing `var` added
 //    ««revision-date»»···
 //--
 
@@ -60,6 +61,7 @@
           }
         , keys : function keys (obj, filter) {
               var result = [];
+              var name;
               if (filter === undefined) {
                   filter = inspect.filter_own;
               }
@@ -72,6 +74,7 @@
           }
         , items : function items (obj, filter) {
               var result = [];
+              var name;
               if (filter === undefined) {
                   filter = inspect.filter_own;
               }
@@ -118,6 +121,7 @@
           }
         , values : function values (obj, filter) {
               var result = [];
+              var name;
               if (filter === undefined) {
                   filter = inspect.filter_own;
               }

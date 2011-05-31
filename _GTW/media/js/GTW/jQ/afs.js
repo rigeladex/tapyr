@@ -21,6 +21,7 @@
 //     5-Apr-2011 (CT) Creation continued....
 //    13-Apr-2011 (CT) Creation continued.....
 //     2-May-2011 (CT) Creation continued......
+//    31-May-2011 (MG) `field_change_cb` special handling for checkboxes added
 //    ««revision-date»»···
 //--
 
@@ -213,9 +214,14 @@
             if (afs_field !== undefined) {
                 anchor    = $GTW.AFS.Elements.get (afs_field.anchor_id);
                 ini_value = afs_field.value.init;
-                new_value = f$.attr ("value");
+                if (f$.attr ("type") == "checkbox") {
+                    new_value = f$.attr ("checked") ? "yes" : "no";
+                } else {
+                    new_value = f$.attr ("value");
+                }
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
+                console.log ("Changed", id, new_value, old_value);
                 // trigger `afs_change` event of `anchor`
             }
         };

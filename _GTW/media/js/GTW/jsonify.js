@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    26-Jan-2011 (CT) Creation
+//    31-May-2011 (MG) Missing `var` added
 //    ««revision-date»»···
 //--
 
@@ -26,7 +27,7 @@
         , "\b" : "\\b",  "\f" : "\\f", "\n" : "\\n", "\r" : "\\r", "\t" : "\\t"
         };
     var jsonify  = function jsonify (thing) {
-        var i, l, k, t, v;
+        var i, l, k, t, v, name;
         var rs = [];
         switch (typeof thing) {
             case "boolean" :

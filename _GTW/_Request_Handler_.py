@@ -52,6 +52,7 @@
 #     3-May-2011 (CT) `user_session_ttl_s` added, `user_session_ttl` changed
 #                     to return `timedelta` instance instead of seconds
 #    11-May-2011 (MG) `username`: change session id on username changes
+#    31-May-2011 (MG) `default_content_encoding` added
 #    ««revision-date»»···
 #--
 
@@ -71,8 +72,9 @@ import sys
 class _Request_Handler_ (object) :
     """Mixin for request handlers."""
 
-    _content_type     = None
-    _content_encoding = None
+    _content_type            = None
+    _content_encoding        = None
+    default_content_encoding = "utf-8"
 
     @property
     def content_encoding (self) :
@@ -94,7 +96,7 @@ class _Request_Handler_ (object) :
             self._content_type = ct.strip ()
             if not self._content_encoding :
                 h, s, t = split_hst (ce, "=")
-                self._content_encoding = t.strip ()
+                self._content_encoding = t.strip () or self.default_content_encoding
         return self._content_type
     # end def content_type
 

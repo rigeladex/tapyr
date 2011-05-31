@@ -77,6 +77,8 @@
 #    13-Apr-2011 (CT) `_pop_in_call` added
 #    19-May-2011 (CT) `Form.__getitem__` changed to use `_list_element_pat`
 #                     instead of `split_hst` to massage `key` (allow recursion)
+#    31-May-2011 (MG) `form_hash`: `str` calls added to convert unicode
+#                     `_sid` and `_session_secret` values to strings
 #    ««revision-date»»···
 #--
 
@@ -341,8 +343,8 @@ class Entity (_Element_) :
     def form_hash (self, value, ** kw) :
         sig = value.sig = value.form_sig \
             ( self._value_sig_t (value)
-            , kw.get ("_sid", 0)
-            , kw.get ("_session_secret")
+            , str (kw.get ("_sid", 0))
+            , str (kw.get ("_session_secret"))
             )
         result = value.form_hash (sig)
         return result
