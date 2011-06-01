@@ -590,7 +590,6 @@ $GTW :
                     kind = "primary"
                     label = "Nation"
                     name = "nation"
-                    required = true
                     type = "Field"
                     function update(dict)
                     value :

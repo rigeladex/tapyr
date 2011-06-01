@@ -79,6 +79,7 @@
 #                     instead of `split_hst` to massage `key` (allow recursion)
 #    31-May-2011 (MG) `form_hash`: `str` calls added to convert unicode
 #                     `_sid` and `_session_secret` values to strings
+#     1-Jun-2011 (CT) `form_hash` changed to apply `str` to unicode-values only
 #    ««revision-date»»···
 #--
 
@@ -341,11 +342,14 @@ class Entity (_Element_) :
     # end def apply
 
     def form_hash (self, value, ** kw) :
+        _sid = kw.get ("_sid", 0)
+        _session_secret = kw.get ("_session_secret")
+        if isinstance (_sid, unicode) :
+            _sid = str (_sid)
+        if isinstance (_session_secret, unicode) :
+            _session_secret = str (_session_secret)
         sig = value.sig = value.form_sig \
-            ( self._value_sig_t (value)
-            , str (kw.get ("_sid", 0))
-            , str (kw.get ("_session_secret"))
-            )
+            (self._value_sig_t (value), _sid, _session_secret)
         result = value.form_hash (sig)
         return result
     # end def form_hash
