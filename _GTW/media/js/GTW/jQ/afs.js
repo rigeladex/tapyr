@@ -221,7 +221,6 @@
                 }
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
-                console.log ("Changed", id, new_value, old_value);
                 // trigger `afs_change` event of `anchor`
             }
         };
