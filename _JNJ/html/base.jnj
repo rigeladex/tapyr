@@ -116,13 +116,13 @@
       {{ page.add_headers|safe }}
     {%- endblock head_elements %}
   {%- endcall %} {# X.head #}
-  <body {{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
+  <body {% if page.document_class %}class="{{ page.document_class }}" {% endif %}{{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
     {%- block body -%}
     {% call X.header (id = "header", class = "pg_head") -%}
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
     <div id="main" class="pg_main">
-      <div id="document" class="pg_body{% if page.document_class %} {{ page.document_class }}{% endif %}">
+      <div id="document" class="pg_body">
         {%- block notifications -%}
           {%- if notifications %}
             <div class="notifications">
