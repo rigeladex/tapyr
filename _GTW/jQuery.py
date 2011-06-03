@@ -42,6 +42,7 @@
 #     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
 #     7-Apr-2011 (MG) Use jQuery 1.5.2
 #     7-Apr-2011 (MG) Definitions for `jqPlot` added
+#     1-Jun-2011 (CT) `GTW_postify_a` added
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,13 @@ GTW.JS_On_Ready \
     ( """$("a[href$='.jpg'] > img, a[href$='.png'] > img").gtw_pixpander ();"""
     , name = "GTW_pixpander"
     )
+
+GTW.Script (src = "/media/GTW/js/GTW/jQ/postify_a.js", name = "GTW_postify_a")
+GTW.JS_On_Ready \
+    ( """$("a.delete").gtw_postify_a ();"""
+    , name = "GTW_postify_a"
+    )
+
 
 GTW.Script \
     (src = "/media/GTW/js/GTW/jQ/week_roller.js", name = "GTW_week_roller")

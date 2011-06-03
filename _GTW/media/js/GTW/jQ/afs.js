@@ -248,7 +248,7 @@
                   , type        : "POST"
                   , error       : function (xhr_instance, status, exc) {
                         alert ("Save failed: " + status + "\n\n" + json_data);
-                  }
+                    }
                   , success     : function (answer, status, xhr_instance) {
                         var response;
                         var anchor, root, new_elem;

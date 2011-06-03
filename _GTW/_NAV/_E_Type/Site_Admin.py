@@ -48,6 +48,7 @@
 #     5-Apr-2011 (MG) `Admin_Group._pns_entries` changed to use
 #                     `top.App_Type` instead of `top.scope.App_Type`
 #                     (prevent early scope creation)
+#     1-Jun-2011 (CT) `postify_a` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,12 @@ class Admin_Alias (GTW.NAV.Alias) :
 class Admin_Group (GTW.NAV.Dir) :
     """Model a group of E-Type admin pages."""
 
+    _Media          = GTW.Media \
+        ( scripts       =
+            ( GTW.Script (src = "/media/GTW/js/GTW/jQ/postify_a.js")
+            ,
+            )
+        )
     css_group         = "Group"
     dir_template_name = "site_admin"
     Page              = GTW.NAV.E_Type.Admin

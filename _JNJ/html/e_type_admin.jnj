@@ -32,6 +32,7 @@
 ##    20-May-2010 (CT) s/id/pid/
 ##    25-Jul-2010 (MG) `_button` changed
 ##    31-May-2011 (CT) `kind` added to `_button`
+##     1-Jun-2011 (CT) `postify_a` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -90,4 +91,10 @@
   {{- e_type_admin (page, page.E_Type, fields, objects) -}}
 {% endblock -%}
 
+{%- block body -%}
+  {{ super () }}
+  <script>
+    $("a.delete").gtw_postify_a ({ parent_selector : "tr" });
+  </script>
+{%- endblock body -%}
 {#- __END__ jinja template: e_type_admin.jnj -#}
