@@ -20,6 +20,7 @@
 //    20-Jan-2011 (CT) Rename function `GTW_pixpander` to `gtw_pixpander`
 //    26-Jan-2011 (CT) Style change
 //     5-Apr-2011 (CT) Changed to restore `width`
+//     1-Jun-2011 (CT) Bug fixed
 //    ««revision-date»»···
 //--
 
@@ -41,22 +42,18 @@
                 var sty  = img.style;
                 var wd   = img$.css ("width")
                 var show = function (event, url, style, wd) {
-                    img$.attr (
-                      { src   : url
-                      , style : style
-                      }
-                    );
-                    if (wd) {
-                      img$.css ({ width : wd });
-                    }
+                    img$
+                        .attr ({ src : url, style : style })
+                        .css  ({ width : wd ? wd : "auto" })
+                        ;
                     options.x_class && img$.toggleClass (options.x_class);
                     if (event && event.preventDefault) {
                         event.preventDefault ();
                     };
                 };
                 img$.toggle
-                    ( function (ev) { show (ev, src, sty); }
-                    , function (ev) { show (ev, a.attr ("href"), "", wd); }
+                    ( function (ev) { show (ev, a.attr ("href"), ""); }
+                    , function (ev) { show (ev, src, sty, wd); }
                     );
             }
         );
