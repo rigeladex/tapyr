@@ -15,7 +15,8 @@
 //
 // Revision Dates
 //     1-Jun-2011 (CT) Creation
-//    ««revision-date»»···
+//     7-Jun-2011 (CT) Typos fixed
+//     ««revision-date»»···
 //--
 
 "use strict";
@@ -30,7 +31,7 @@
             );
         var delete_cb  = function delete_cb (ev) {
             var a   = $(this);
-            var p   = a.closest (opts.parent_selector);
+            var p   = a.closest (options.parent_selector);
             var url = a.attr    ("href");
             do_ajax
                 ( url
@@ -63,13 +64,16 @@
                   , timeout     : 30000
                   , type        : "POST"
                   , error       : function (xhr_instance, status, exc) {
-                        alert ("Post to " + url + "failed: " + status);
+                        alert ("Post to " + url + " failed: " + status);
                     }
                   , success     : success
                   }
                 );
         };
-        $this.click (delete_cb).css ({ display : opts.display_value }).show ();
+        this
+            .click (delete_cb)
+            .css   ({ display : options.display_value })
+            .show  ();
         return this;
     }
   }
