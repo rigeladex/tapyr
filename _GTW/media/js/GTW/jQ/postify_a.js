@@ -16,7 +16,8 @@
 // Revision Dates
 //     1-Jun-2011 (CT) Creation
 //     7-Jun-2011 (CT) Typos fixed
-//     ««revision-date»»···
+//     7-Jun-2011 (CT) Support for `answer ["error"]` added to `success` handler
+//    ««revision-date»»···
 //--
 
 "use strict";
@@ -37,7 +38,9 @@
                 ( url
                 , function (answer, status, xhr_instance) {
                       var repl;
-                      if (answer ["replacement"]) {
+                      if (answer ["error"]) {
+                          alert ("Error: " + answer.error);
+                      } else if (answer ["replacement"]) {
                           repl = answer.replacement;
                           p.html (repl.html);
                           if (repl ["postify_selector"]) {

@@ -94,6 +94,7 @@
 #     2-May-2011 (CT) `Expander` continued......., `AFS._post_handler` bug fixes
 #     2-May-2011 (CT) `AFS._raise_401` and `._raise_403` added
 #    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
+#     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
 #    ««revision-date»»···
 #--
 
@@ -445,21 +446,27 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         name              = "delete"
         template_name     = "e_type_delete"
-        SUPPORTED_METHODS = set (("DELETE", "POST"))
+        SUPPORTED_METHODS = set (("POST", ))
 
-        def _view (self, request) :
-            HTTP = self.top.HTTP
-            pid  = self.args [0]
-            ETM  = self.ETM
+        def _view (self, handler) :
+            ETM        = self.ETM
+            HTTP       = self.top.HTTP
+            pid        = self.args [0]
+            request    = handler.request
+            result     = {}
             try :
                 obj = ETM.pid_query (pid)
             except LookupError :
-                request.Error = \
+                result ["error"] = \
                     (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), pid))
-                raise HTTP.Error_404 (request.path, request.Error)
-            obj.destroy ()
-            ### XXX ??? Feedback ???
-            raise HTTP.Redirect_302 (self.parent.abs_href)
+            else :
+                result ["replacement"] = dict \
+                    ( html = """<td colspan="6">%s</td>"""
+                      % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
+                      ### XXX use template to render this XXX
+                    )
+                obj.destroy ()
+            return handler.write_json (result)
         # end def _view
 
     # end class Deleter
