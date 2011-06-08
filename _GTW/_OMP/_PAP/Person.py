@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -35,6 +35,7 @@
 #    10-May-2010 (CT) `ui_display_format` redefined
 #     4-Jun-2010 (CT) `sex` added
 #    13-Oct-2010 (CT) `example` added
+#     8-Jun-2011 (MG) `_AC_Query_LN_` and `last_name.ac_query` added
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,31 @@ import _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
+class _AC_Query_LN_ (TFL.Meta.Object) :
+    """Special auto-complete query function for the last_name of a person (to
+       better handling of double names like Franz-Ferdinand)"""
+
+    def __init__ (self, attr_name, cooker = None) :
+        self.attr_name = attr_name
+        self.cooker    = cooker
+    # end def __init__
+
+    def __call__ (self, value) :
+        cooker = self.cooker
+        if cooker is not None :
+            try :
+                value = cooker (value)
+            except (ValueError, TypeError) :
+                return None
+        pvalue = "-%s" % (value, )
+        return \
+            ( getattr (Q, self.attr_name).STARTSWITH (value)
+            | getattr (Q, self.attr_name).CONTAINS   (pvalue)
+            )
+    # end def __call__
+
+# end class _AC_Query_LN_
+
 class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
     """Model a person."""
 
@@ -66,6 +92,11 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             ignore_case    = True
             max_length     = 48
             rank           = 1
+
+            @TFL.Meta.Once_Property
+            def ac_query (self) :
+                return _AC_Query_LN_ (self.ckd_name, self.cooked)
+            # end def ac_query
 
         # end class last_name
 
