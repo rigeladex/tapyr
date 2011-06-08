@@ -95,6 +95,7 @@
 #     2-May-2011 (CT) `AFS._raise_401` and `._raise_403` added
 #    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
 #     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
+#     8-Jun-2011 (CT) `AFS` attached to `change` URL
 #    ««revision-date»»···
 #--
 
@@ -773,8 +774,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def _auto_list_display
 
     _child_name_map = dict \
-        ( afs       = (AFS,       "args",  None)
-        , change    = (Changer,   "args",  None)
+        ( change    = (AFS,       "args",  None)
+        , ochange   = (Changer,   "args",  None)
         , complete  = (Completer, "forms", None)
         , completed = (Completed, "forms", None)
         , create    = (Changer,   "args",  0)
