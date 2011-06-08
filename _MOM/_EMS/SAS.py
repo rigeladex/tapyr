@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glück. All rights reserved
+# Copyright (C) 2010-2011 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -45,6 +45,7 @@
 #    20-Oct-2010 (CT) `Change_Summary.add` redefinition removed
 #    20-Oct-2010 (CT) `Manager.register_change` changed to call
 #                     `uncommitted_changes.add_pending`
+#     8-Jun-2011 (MG) `commit` added to release db resources
 #    ««revision-date»»···
 #--
 
@@ -113,6 +114,15 @@ class Manager (MOM.EMS._Manager_) :
                 (entity, self.instance (entity.__class__, entity.epk))
     # end def add
 
+    def commit (self) :
+        self.__super.commit ()
+        if not self.uncommitted_changes :
+            ### there was no commit -> we have to issue a rollback to the
+            ### session to enure that the db resources will be released
+            ### properly
+            self.session.rollback ()
+    # end def commit
+
     def changes (self, * filter, ** eq_kw) :
         query = MOM.DBW.SAS.Q_Result_Changes \
             (MOM.SCM.Change._Change_, self.session).filter (* filter, ** eq_kw)
@@ -127,10 +137,11 @@ class Manager (MOM.EMS._Manager_) :
 
     @property
     def max_cid (self) :
-        id_col   = MOM.SCM.Change._Change_._sa_table.c.cid
-        last     = self.session.execute \
-            ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
-            ).fetchone ()
+        id_col     = MOM.SCM.Change._Change_._sa_table.c.cid
+        with self.session.temp_connection () as connection :
+            last = connection.execute \
+                ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
+                ).fetchone ()
         return (last and last.cid) or 0
     # end def max_cid
 
@@ -164,7 +175,8 @@ class Manager (MOM.EMS._Manager_) :
             update = Table.update ().where \
                 ( Table.c.cid.in_ (c.cid for c in change.children)
                 ).values (parent_cid = change.cid)
-            self.session.execute (update)
+            with self.session.temp_connection () as connection :
+                connection.execute (update)
         uncommitted_changes = self.uncommitted_changes
         self.scope.db_cid   = change.cid
         self.__super.register_change    (change)
