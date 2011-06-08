@@ -86,6 +86,9 @@
 #                     guard for `entity` added
 #    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #     8-Jun-2011 (MG) `temp_connection` added and used
+#     8-Jun-2011 (MG) `temp_connection` removed again because in did not work
+#                     with `sqlite` (which can only handle one connection per
+#                     thread ((o:)
 #    ««revision-date»»···
 #--
 
@@ -424,9 +427,9 @@ class _Session_ (TFL.Meta.Object) :
 
     def load_info (self) :
         scope = self.scope
-        with self.temp_connection () as connection :
-            q     = connection.execute (self._sa_scope.select ().limit (1))
-            si = q.fetchone            ()
+        q     = self.connection.execute (self._sa_scope.select ().limit (1))
+        si = q.fetchone                 ()
+        self.rollback                   () ### release the database connection
         meta_data         = si.meta_data
         self.db_meta_data = meta_data
         meta_readonly     = getattr (meta_data, "readonly", False)
@@ -454,9 +457,8 @@ class _Session_ (TFL.Meta.Object) :
         ### re-read the read only flag from the database to be sure to be
         ### up-to-date
         scope = self.scope
-        with self.temp_connection () as connection :
-            q  = connection.execute (self._sa_scope.select ())
-            si = q.fetchone         ()
+        q     = self.connection.execute (self._sa_scope.select ())
+        si    = q.fetchone              ()
         return si and si.readonly
     # end def readonly
 
@@ -472,15 +474,6 @@ class _Session_ (TFL.Meta.Object) :
     def rollback (self) :
         self._close_connection  (TFL.Method.rollback)
     # end def rollback
-
-    @TFL.Contextmanager
-    def temp_connection (self) :
-        result      = self.engine.connect ()
-        transaction = result.begin        ()
-        yield result
-        transaction.rollback              ()
-        result.close                      ()
-    # end def temp_connection
 
     def _new_db_meta_data (self, scope) :
         return MOM.DB_Meta_Data.NEW (scope.app_type, scope)
@@ -504,16 +497,15 @@ class Session_S (_Session_) :
 
     def add_change (self, change) :
         table  = MOM.SCM.Change._Change_._sa_table
-        with self.temp_connection () as connection :
-            result = connection.execute \
-                ( table.insert
-                    ( values = dict
-                        ( pid       = change.pid
-                        , data      = change.as_pickle ()
-                        )
+        result = self.connection.execute \
+            ( table.insert
+                ( values = dict
+                    ( pid       = change.pid
+                    , data      = change.as_pickle ()
                     )
                 )
-            change.cid = result.inserted_primary_key [0]
+            )
+        change.cid = result.inserted_primary_key [0]
     # end def add_change
 
     def commit (self) :

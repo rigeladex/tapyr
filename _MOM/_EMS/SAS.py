@@ -46,6 +46,7 @@
 #    20-Oct-2010 (CT) `Manager.register_change` changed to call
 #                     `uncommitted_changes.add_pending`
 #     8-Jun-2011 (MG) `commit` added to release db resources
+#     8-Jun-2011 (MG) `max_cid`: don't used `temp_connection`
 #    ««revision-date»»···
 #--
 
@@ -138,10 +139,9 @@ class Manager (MOM.EMS._Manager_) :
     @property
     def max_cid (self) :
         id_col     = MOM.SCM.Change._Change_._sa_table.c.cid
-        with self.session.temp_connection () as connection :
-            last = connection.execute \
-                ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
-                ).fetchone ()
+        last = self.session.connection.execute \
+            ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
+            ).fetchone ()
         return (last and last.cid) or 0
     # end def max_cid
 

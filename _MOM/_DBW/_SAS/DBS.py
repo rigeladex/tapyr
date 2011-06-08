@@ -61,7 +61,7 @@ from   sqlalchemy.interfaces import PoolListener
 class _SAS_DBS_ (MOM.DBW._DBS_) :
     """Base class for all databases using sqlalchemy as db interface."""
 
-    Engine_Parameter          = dict (pool_recycle = 900)
+    Engine_Parameter          = dict (pool_recycle = 900, echo = False)
     echo                      = TFL.Meta.Alias_Property ("_sa_engine.echo")
     Commit_Conflict_Exception = sqlalchemy.exc.DBAPIError
 
