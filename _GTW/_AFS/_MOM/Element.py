@@ -48,6 +48,8 @@
 #    25-May-2011 (CT) `Element._changed_children` changed to consider `c.entity`
 #    25-May-2011 (CT) `Field_Role_Hidden.apply` added,
 #                     empty `._update_sid` removed
+#     8-Jun-2011 (CT) `_create_instance` factored to use `instance_or_new`
+#                     for all but implicit links
 #    ««revision-date»»···
 #--
 
@@ -108,7 +110,7 @@ class _MOM_Entity_ (_MOM_Element_, Entity) :
         if akw :
             ETM = scope [self.type_name]
             ### XXX error handling
-            return ETM (raw = 1, ** akw)
+            return self._create_instance (ETM, akw)
     # end def _apply_create
 
     def _check_sid (self, value, ** kw) :
@@ -116,6 +118,10 @@ class _MOM_Entity_ (_MOM_Element_, Entity) :
         if v_sid != value.sid :
             raise GTW.AFS.Error.Corrupted ()
     # end def _check_sid
+
+    def _create_instance (self, ETM, akw) :
+        return ETM.instance_or_new (raw = 1, ** akw)
+    # end def _create_instance
 
     def _instance_kw (self, ETM, entity, ** kw) :
         result = self.__super._instance_kw (ETM, entity, ** kw)
@@ -174,6 +180,10 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
     def instance_call (self, assoc, link, ** kw) :
         return self.__super.__call__ (assoc, link, ** kw)
     # end def instance_call
+
+    def _create_instance (self, ETM, akw) :
+        return ETM (raw = 1, ** akw)
+    # end def _create_instance
 
 Entity_Link = _MOM_Entity_Link_ # end class
 
