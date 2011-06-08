@@ -95,7 +95,7 @@
 #     2-May-2011 (CT) `AFS._raise_401` and `._raise_403` added
 #    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
 #     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
-#     8-Jun-2011 (CT) `AFS` attached to `change` URL
+#     8-Jun-2011 (CT) `AFS` attached to `change` URL, and to `create` URL, too
 #    ««revision-date»»···
 #--
 
@@ -778,7 +778,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , ochange   = (Changer,   "args",  None)
         , complete  = (Completer, "forms", None)
         , completed = (Completed, "forms", None)
-        , create    = (Changer,   "args",  0)
+        , create    = (AFS,       "args",  0)
+        , ocreate   = (Changer,   "args",  0)
         , delete    = (Deleter,   "args",  1)
         , expand    = (Expander,  "args",  0)
         , fields    = (Fields,    "forms", None)
