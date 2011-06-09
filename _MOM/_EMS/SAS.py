@@ -46,7 +46,7 @@
 #    20-Oct-2010 (CT) `Manager.register_change` changed to call
 #                     `uncommitted_changes.add_pending`
 #     8-Jun-2011 (MG) `commit` added to release db resources
-#     8-Jun-2011 (MG) `max_cid`: don't used `temp_connection`
+#     8-Jun-2011 (MG) `max_cid`, `register_change`: don't used `temp_connection`
 #    ««revision-date»»···
 #--
 
@@ -175,8 +175,7 @@ class Manager (MOM.EMS._Manager_) :
             update = Table.update ().where \
                 ( Table.c.cid.in_ (c.cid for c in change.children)
                 ).values (parent_cid = change.cid)
-            with self.session.temp_connection () as connection :
-                connection.execute (update)
+            self.session.connection.execute (update)
         uncommitted_changes = self.uncommitted_changes
         self.scope.db_cid   = change.cid
         self.__super.register_change    (change)
