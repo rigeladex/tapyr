@@ -44,6 +44,7 @@
 #    30-Nov-2010 (CT) `Fatal_Exceptions` added
 #    22-Mar-2011 (MG) `_SAS_DBS_` added, `create_engine` for Postgresql
 #                     redefined
+#     9-Jun-2011 (MG) `query_last_cid_on_update` added
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ class _SAS_DBS_ (MOM.DBW._DBS_) :
     Engine_Parameter          = dict (pool_recycle = 900, echo = False)
     echo                      = TFL.Meta.Alias_Property ("_sa_engine.echo")
     Commit_Conflict_Exception = sqlalchemy.exc.DBAPIError
+    query_last_cid_on_update  = False
 
     def __init__ (self, sa_engine) :
         self._sa_engine = sa_engine
@@ -161,7 +163,8 @@ class _NFB_ (_SAS_DBS_) :
 class MySQL (_NFB_) :
     """DB-specific functionality for MySQL."""
 
-    scheme = "mysql"
+    scheme                    = "mysql"
+    query_last_cid_on_update  = True
 
     @classmethod
     def create_database (cls, db_url, manager, encoding = "utf8") :

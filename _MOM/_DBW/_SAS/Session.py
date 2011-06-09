@@ -89,6 +89,11 @@
 #     8-Jun-2011 (MG) `temp_connection` removed again because in did not work
 #                     with `sqlite` (which can only handle one connection per
 #                     thread ((o:)
+#     9-Jun-2011 (MG) `SAS_Interface.last_cid` added
+#                     `SAS_Interface.reconstruct`: `r_last_cid` added
+#                     `SAS_Interface.update` changed to honor
+#                     `engine.query_last_cid_on_update`
+#                     `_Session_.load_info`: no need to `rollback`
 #    ««revision-date»»···
 #--
 
@@ -137,6 +142,7 @@ class SAS_Interface (TFL.Meta.Object) :
         self.table          = e_type._sa_table
         self.bases          = bases
         self.pk             = self.table.c [e_type._sa_pk_name]
+        self.last_cid       = self.table.c.get ("last_cid")
         self.column_map     = cm = self._gather_columns (e_type, columns, bases)
         ### e_type `None`is used during the reconstruct to get all attributes
         ### for this e_type
@@ -251,6 +257,7 @@ class SAS_Interface (TFL.Meta.Object) :
         pickle_cargo = self.pickle_cargo (row)
         entity       = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
         entity.pid   = row [self.e_type._SAQ.pid]
+        entity.r_last_cid = entity.last_cid
         return entity
     # end def reconstruct
 
@@ -353,8 +360,16 @@ class SAS_Interface (TFL.Meta.Object) :
         if values :
             session.write_access = True
             update = self.table.update ().values (values)
-            return session.connection.execute \
-                (update.where (self.pk == entity.pid))
+            where  = self.pk == entity.pid
+            if (   session.engine.query_last_cid_on_update
+               and (self.last_cid is not None)
+               and getattr (entity, "r_last_cid", None)
+               ) :
+                where  = sql.and_ (where, self.last_cid == entity.r_last_cid)
+            result     = session.connection.execute (update.where (where))
+            if not result.rowcount :
+                session.scope.rollback          ()
+                raise MOM.Error.Commit_Conflict ()
     # end def update
 
 # end class SAS_Interface
@@ -429,7 +444,6 @@ class _Session_ (TFL.Meta.Object) :
         scope = self.scope
         q     = self.connection.execute (self._sa_scope.select ().limit (1))
         si = q.fetchone                 ()
-        self.rollback                   () ### release the database connection
         meta_data         = si.meta_data
         self.db_meta_data = meta_data
         meta_readonly     = getattr (meta_data, "readonly", False)
