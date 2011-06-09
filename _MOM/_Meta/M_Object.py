@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -32,11 +32,13 @@
 #     4-Nov-2009 (CT) s/E_Type_Manager_O/E_Type_Manager.Object/
 #    24-Nov-2009 (CT) `link_map` added
 #    12-Mar-2010 (CT) `link_map` moved to `M_E_Type_Id`
+#     9-Jun-2011 (MG) `epk_split_pat` added
 #    ««revision-date»»···
 #--
 
-from   _MOM import MOM
-from   _TFL import TFL
+from   _MOM        import MOM
+from   _TFL        import TFL
+from   _TFL.Regexp import *
 
 import _MOM._Meta.M_Entity
 import _MOM.E_Type_Manager
@@ -46,6 +48,11 @@ import _TFL.defaultdict
 
 class M_Object (MOM.Meta.M_Id_Entity) :
     """Meta class of MOM.Object."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__         (name, bases, dct)
+        cls.epk_split_pat = TFL.Regexp (cls.epk_split_characters)
+    # end def __init__
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \

@@ -78,6 +78,7 @@
 #    24-Feb-2011 (CT) `Link._role_to_raw_iter` changed to use `v.epk_raw`
 #                     instead of `r.as_code (v)`
 #    24-Feb-2011 (CT) DRY cleanups for `instance` and `exists` (Object, Link)
+#     9-Jun-2011 (MG) `Object.ac_query` added
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class An_Entity (Entity) :
     # end def example
 
     def query (self, * args, ** kw) :
-        ### we need to define this function to hiode the `query` attribute of
+        ### we need to define this function to hide the `query` attribute of
         ### the entities (which is a list of all attributes with the kind
         ### `Query`)
         return TFL.Q_Result (())
@@ -247,6 +248,19 @@ class Id_Entity (Entity) :
 
 class Object (Id_Entity) :
     """Scope-specific manager for essential object-types."""
+
+    def ac_query (self, text) :
+        result     = []
+        et         = self._etype
+        epk_aqc    = [getattr (et, en).ac_query for en in et.epk_sig]
+        for epks in et.epk_splitter (text) :
+            single_value_queries = []
+            for v in epks :
+                acqs = [acq (v) for acq in epk_aqc]
+                single_value_queries.append (TFL.Filter_Or (* acqs))
+            result.append (self.query (* single_value_queries))
+        return result
+    # end def ac_query
 
     @property
     def singleton (self) :

@@ -67,6 +67,13 @@ _attr_ac_query = """
     Ferdinand tanzer False
     Ferdinand franz-ferdinand True
 
+    >>> q = PAP.Person.last_name.ac_query ("Franz")
+    >>> print " or ".join (str (p) for p in q.predicates)
+    Q.__last_name.startswith (u'franz',) or Q.__last_name.contains (u'-franz',)
+    >>> q = PAP.Person.last_name.ac_query ("Franz-F")
+    >>> print q
+    Q.__last_name.startswith (u'franz-f',)
+
     >>> a1 = PAP.Address ("Langstrasse 4",    "2244", "Spannberg", "Austria")
     >>> a2 = PAP.Address ("Glasauergasse 32", "1130", "Wien",      "Austria")
     >>> for value in "22", "11", "10" :
@@ -93,9 +100,60 @@ _attr_ac_query = """
     12 1107 False
     12 1208 True
 """
+
+_epk_splitter_test = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+    >>> scope.PAP.Person.epk_splitter ("Ma")
+    [(u'Ma',)]
+    >>> scope.PAP.Person.epk_splitter ("Martin G")
+    [(u'Martin G',), (u'Martin', u'G')]
+    >>> scope.PAP.Person.epk_splitter ("Gl Ma")
+    [(u'Gl Ma',), (u'Gl', u'Ma')]
+    >>> scope.PAP.Person.epk_splitter ("Van der Bel")
+    [(u'Van der Bel',), (u'Van der', u'Bel'), (u'Van', u'der Bel')]
+"""
+
+_ac_query = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+    >>> _ = PAP.Person ("Glueck",          "Martin")
+    >>> _ = PAP.Person ("Tanzer",          "Christian", "", "Mag.")
+    >>> _ = PAP.Person ("Franz-Ferdinand", "Karl")
+    >>> _ = PAP.Person ("Van der Bellen",  "Alexander")
+    >>> _ = PAP.Person ("van Persie",      "Robin")
+    >>> scope.commit    ()
+
+    >>> for acs in ("Ma", "Ta", "Van", "Van der B") :
+    ...     for p, qs in enumerate (PAP.Person.ac_query (acs)) :
+    ...         print p, acs
+    ...         for o in qs :
+    ...             print " ", o
+    0 Ma
+      (u'glueck', u'martin', u'', u'')
+      (u'tanzer', u'christian', u'', u'mag.')
+    0 Ta
+      (u'tanzer', u'christian', u'', u'mag.')
+    0 Van
+      (u'van der bellen', u'alexander', u'', u'')
+      (u'van persie', u'robin', u'', u'')
+    0 Van der B
+      (u'van der bellen', u'alexander', u'', u'')
+    1 Van der B
+    2 Van der B
+"""
+
 from _GTW.__test__.model import *
 
-__test__ = Scaffold.create_test_dict \
-    (dict (attr_ac_query = _attr_ac_query))
+__test__ = dict \
+    ( Scaffold.create_test_dict
+          ( dict ( attr_ac_query = _attr_ac_query
+                 , ac_query      = _ac_query)
+          )
+    , ** Scaffold.create_test_dict
+           (dict (ekp_splitter = _epk_splitter_test), backends = ("HPS", ))
+    )
 
 ### __END__ GTW.__test__.ac_query

@@ -36,6 +36,7 @@
 #     4-Jun-2010 (CT) `sex` added
 #    13-Oct-2010 (CT) `example` added
 #     8-Jun-2011 (MG) `_AC_Query_LN_` and `last_name.ac_query` added
+#     9-Jun-2011 (MG) `_AC_Query_LN_` enhanced
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,8 @@ class _AC_Query_LN_ (TFL.Meta.Object) :
                 value = cooker (value)
             except (ValueError, TypeError) :
                 return None
+        if "-" in value :
+            return getattr (Q, self.attr_name).STARTSWITH (value)
         pvalue = "-%s" % (value, )
         return \
             ( getattr (Q, self.attr_name).STARTSWITH (value)
