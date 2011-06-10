@@ -45,6 +45,7 @@
 #    22-Mar-2011 (MG) `_SAS_DBS_` added, `create_engine` for Postgresql
 #                     redefined
 #     9-Jun-2011 (MG) `query_last_cid_on_update` added
+#    10-Jun-2011 (MG) `*_pid` function changes, `connection_pid` added
 #    ««revision-date»»···
 #--
 
@@ -112,13 +113,23 @@ class _NFB_ (_SAS_DBS_) :
     """Base class for non-file based databases."""
 
     Fatal_Exceptions = (sqlalchemy.exc.OperationalError, )
+    pm               = None
 
     @classmethod
     def commit_pid (cls, pm) :
-        pm.transaction.commit   ()
-        pm.connection.close     ()
-        del pm.connection
+        if self.pm :
+            self.pm ["transaction"].commit ()
+            self.pm ["connection"].close   ()
+            self.pm = None
     # end def commit_pid
+
+    @classmethod
+    def connection_pid (cls, pm) :
+        if not self.pm :
+            self.pm ["connection" ] = conn = pm.ems.session.engine ().connect ()
+            self.pm ["transaction"] = conn.begin                   ()
+        return self.pm ["connection"]
+    # end def connection_pid
 
     @classmethod
     def delete_database (cls, db_url, manager) :
@@ -146,9 +157,10 @@ class _NFB_ (_SAS_DBS_) :
 
     @classmethod
     def rollback_pid (cls, pm) :
-        pm.transaction.rollback ()
-        pm.connection.close     ()
-        del pm.connection
+        if self.pm :
+            self.pm ["transaction"].rollback ()
+            self.pm ["connection"].close     ()
+            self.pm = None
     # end def rollback_pid
 
     @classmethod
@@ -276,9 +288,7 @@ class Postgresql (_NFB_) :
     # end def create_database
 
     @classmethod
-    def create_engine (cls, db_url
-                      , isolation_level = None
-                      ) :
+    def create_engine (cls, db_url, isolation_level = None) :
         if isolation_level is None :
             isolation_level = cls.ISOLATION_SERIALIZABLE
         return cls \
@@ -322,6 +332,13 @@ class Sqlite (_SAS_DBS_) :
     def commit_pid (cls, pm) :
         pass
     # end def commit_pid
+
+    @classmethod
+    def connection_pid (cls, pm) :
+        ### sqlite does not support a multiple connection per thread -> we
+        ### reuse the connection of the session
+        return pm.ems.session.connection
+    # end def connection_pid
 
     @classmethod
     def rollback_pid (cls, pm) :

@@ -46,6 +46,8 @@
 #    29-Mar-2011 (CT) `_Field_._field_kw` changed to set `changeable`
 #    30-Mar-2011 (CT) `include_elems` added
 #    30-Mar-2011 (CT) `Entity_Link.__call__` changed to set `name` and `ui_name`
+#    10-Jun-2011 (MG) `_Entity_Mixin_.__init__` `entity_links_group` and
+#                     `Entity_Links_Group` added
 #    ««revision-date»»···
 #--
 
@@ -111,13 +113,19 @@ class _Entity_Mixin_ (_Base_) :
             (   (Entity_Link (l) if isinstance (l, basestring) else l)
             for l in kw.pop ("include_links", ())
             )
+        etl_group = kw.pop ("entity_links_group", None)
+        if  etl_group :
+            include_links = \
+                (getattr (GTW.AFS.MOM.Spec, etl_group) (include_links), )
         for include in include_elems, include_links :
             self._elems += include
         if "include_kind_groups" in kw :
             self.pop_to_self (kw, "include_kind_groups")
         else :
             self.include_kind_groups = not any \
-                (not isinstance (e, Entity_Link) for e in self._elems)
+                (   not isinstance (e, (Entity_Link, Entity_Links_Group))
+                for e in self._elems
+                )
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -426,6 +434,25 @@ FGN = Field_Group_Necessary ()
 FGO = Field_Group_Optional  ()
 
 default_elements = (FGP, FGR, FGN, FGO)
+
+class Entity_Links_Group (_Base_) :
+    """A container holding all entity links for an entity."""
+
+    Type = Element.Group
+
+    def __init__ (self, entity_links) :
+        self.__super.__init__ ()
+        self.entity_links = entity_links
+    # end def __init__
+
+    def __call__ (self, E_Type, spec, seen, ** kw) :
+        return self.Type \
+            ( children =
+                (etl (E_Type, spec, seen, ** kw) for etl in self.entity_links)
+            )
+    # end def __call__
+
+# end class Entity_Links_Group
 
 class _Hidden_Role_ (_Base_) :
     """Specification of a hidden field describing the hidden role of an

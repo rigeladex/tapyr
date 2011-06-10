@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -34,6 +34,8 @@
 #     1-Jul-2010 (MG) `max_pid` and `__iter__` added, `type_name` factored
 #    15-Jul-2010 (MG) `close` added
 #    29-Jul-2010 (CT) `transaction = None` added to `Pid_Manager`
+#    10-Jun-2011 (MG) Handling of database connection changed to allow better
+#                     support for sqlite
 #    ««revision-date»»···
 #--
 
@@ -64,9 +66,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
 
     @TFL.Meta.Once_Property
     def connection (self) :
-        result           = self.ems.session.engine.connect ()
-        self.transaction = result.begin                    ()
-        return result
+        return self.dbs.connection_pid (self)
     # end def connection
 
     @TFL.Contextmanager
@@ -81,8 +81,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def new_context
 
     def close (self) :
-        self.rollback         ()
-        self.connection.close ()
+        self.rollback ()
     # end def close
 
     @property
@@ -131,8 +130,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def reserve
 
     def rollback (self) :
-        if self.transaction :
-            self.dbs.rollback_pid (self)
+        self.dbs.rollback_pid (self)
     # end def rollback
 
     def type_name (self, pid) :

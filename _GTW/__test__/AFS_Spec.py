@@ -25,6 +25,7 @@
 #
 # Revision Dates
 #    17-Feb-2011 (CT) Creation
+#    10-Jun-2011 (MG) `_entity_links_group` test added
 #    ««revision-date»»···
 #--
 
@@ -1528,6 +1529,66 @@ _test_code = """
 
 """
 
+_entity_links_group = """
+    >>> scope = Scaffold.scope ("hps://") # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> from _GTW._AFS._MOM import Spec
+    >>> S = Spec.Entity (include_links = ("addresses", ), entity_links_group = "Entity_Links_Group")
+    >>> x = S (scope.PAP.Person._etype)
+    >>> print repr (x)
+    <Entity None 'Person' 'GTW.OMP.PAP.Person'>
+     <Fieldset None u'primary'>
+      <Field None 'last_name'>
+      <Field None 'first_name'>
+      <Field None 'middle_name'>
+      <Field None 'title'>
+     <Fieldset None u'necessary'>
+      <Field None 'sex'>
+     <Fieldset None u'optional'>
+      <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
+       <Field None 'start'>
+       <Field None 'finish'>
+      <Field None 'salutation'>
+     <Group None>
+      <Entity_List None 'Person_has_Address' <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
+       <Entity_Link None 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
+        <Field_Role_Hidden None u'left' 'GTW.OMP.PAP.Person'>
+        <Fieldset None u'primary'>
+         <Field_Entity None 'right' 'GTW.OMP.PAP.Address'>
+          <Field None 'street'>
+          <Field None 'zip'>
+          <Field None 'city'>
+          <Field None 'country'>
+        <Fieldset None u'optional'>
+         <Field None 'desc'>
+    >>> print repr (Form ("F", children = [x]))
+    <Form F>
+     <Entity F-0 'Person' 'GTW.OMP.PAP.Person'>
+      <Fieldset F-0:0 u'primary'>
+       <Field F-0:0:0 'last_name'>
+       <Field F-0:0:1 'first_name'>
+       <Field F-0:0:2 'middle_name'>
+       <Field F-0:0:3 'title'>
+      <Fieldset F-0:1 u'necessary'>
+       <Field F-0:1:0 'sex'>
+      <Fieldset F-0:2 u'optional'>
+       <Field_Composite F-0:2:0 'lifetime' 'MOM.Date_Interval'>
+        <Field F-0:2:0.0 'start'>
+        <Field F-0:2:0.1 'finish'>
+       <Field F-0:2:1 'salutation'>
+      <Group F-0:3>
+       <Entity_List F-0:3:0 'Person_has_Address' <Entity_Link F-0:3:0::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
+        <Entity_Link F-0:3:0::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
+         <Field_Role_Hidden F-0:3:0::p-0 u'left' 'GTW.OMP.PAP.Person'>
+         <Fieldset F-0:3:0::p-1 u'primary'>
+          <Field_Entity F-0:3:0::p-1:0 'right' 'GTW.OMP.PAP.Address'>
+           <Field F-0:3:0::p-1:0:0 'street'>
+           <Field F-0:3:0::p-1:0:1 'zip'>
+           <Field F-0:3:0::p-1:0:2 'city'>
+           <Field F-0:3:0::p-1:0:3 'country'>
+         <Fieldset F-0:3:0::p-2 u'optional'>
+          <Field F-0:3:0::p-2:0 'desc'>
+"""
 from   _GTW.__test__.model      import *
 from   _GTW._AFS._MOM.Element   import Form
 from   _GTW._AFS.Instance       import Instance
@@ -1549,6 +1610,12 @@ json_copy = """\
 """
 json_bad  = """{"$id":"FC"}"""
 
-__test__ = dict (AFS_Spec = _test_code)
+__test__ = dict \
+    ( AFS_Spec           = _test_code
+    , Entity_Links_Group = _entity_links_group
+    )
+__test__ = dict \
+    ( Entity_Links_Group = _entity_links_group
+    )
 
 ### __END__ AFS_Spec

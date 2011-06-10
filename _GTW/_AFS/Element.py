@@ -80,6 +80,7 @@
 #    31-May-2011 (MG) `form_hash`: `str` calls added to convert unicode
 #                     `_sid` and `_session_secret` values to strings
 #     1-Jun-2011 (CT) `form_hash` changed to apply `str` to unicode-values only
+#    10-Jun-2011 (MG) `Group` added
 #    ««revision-date»»···
 #--
 
@@ -642,6 +643,11 @@ class Form (_Element_List_) :
     # end def Store
 
 # end class Form
+
+class Group (Fieldset) :
+    """Group elements of a form"""
+
+# end class Group
 
 __doc__ = """
 Usage example::

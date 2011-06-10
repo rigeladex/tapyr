@@ -63,6 +63,9 @@ import _GTW._OMP._SWP.import_SWP
 import _TFL.Filename
 import _TFL.Generators
 
+model_src        = sos.path.dirname (__file__)
+form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
+
 GTW.Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
     , productnick         = u"MOM-Test"
@@ -179,15 +182,22 @@ class Scaffold (GTW.OMP.Scaffold) :
     def do_run_server (cls, cmd) :
         from form_app import run
         apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return run (cmd, apt, url)
+        return run (cmd, apt, url, Create_Scope = cls._load_scope)
     # end def do_run_server
 
     @classmethod
     def do_wsgi (cls, cmd) :
         from form_app import wsgi
         apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return wsgi (cmd, apt, url)
+        return wsgi (cmd, apt, url, Create_Scope = cls._load_scope)
     # end def do_wsgi
+
+    @classmethod
+    def _load_scope (cls, apt, url) :
+        result = super (Scaffold, cls)._load_scope (apt, url)
+        cls._load_afs  (result.app_type, form_pickle_path)
+        return result
+    # end def _load_scope
 
     @classmethod
     def scope (cls, * args, ** kw) :

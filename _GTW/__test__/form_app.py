@@ -180,6 +180,7 @@ def nav ( cmd
         , auto_delegate = False
         , version       = "html/5.jnj"
         , permissive    = True
+        , ** kw
         ) :
     home_url_root = "http://localhost:9042"
     site_prefix   = pjoin (home_url_root, "")
@@ -218,6 +219,7 @@ def nav ( cmd
         , permissive            = permissive
         , DB_Url                = DB_Url
         , App_Type              = App_Type
+        , ** kw
         )
     if getattr (cmd, "create", False) :
         from model import Scaffold
@@ -278,7 +280,7 @@ def nav ( cmd
     return result
 # end def nav
 
-def wsgi (cmd, app_type, db_url) :
+def wsgi (cmd, app_type, db_url, ** kw) :
     try :
         ldir = sos.path.join (sos.path.dirname (__file__), "locale")
         TFL.I18N.load \
@@ -290,7 +292,7 @@ def wsgi (cmd, app_type, db_url) :
             )
     except ImportError :
         pass
-    NAV       = nav (cmd, app_type, db_url)
+    NAV       = nav (cmd, app_type, db_url, ** kw)
     HTTP      = NAV.HTTP
     prefix    = "media"
     media_dir = sos.path.join (NAV.web_src_root, "media")
@@ -312,8 +314,8 @@ def wsgi (cmd, app_type, db_url) :
     return app
 # end def wsgi
 
-def run (cmd, apt, url) :
-    app = wsgi                 (cmd, apt, url)
+def run (cmd, apt, url, ** kw) :
+    app = wsgi                 (cmd, apt, url, ** kw)
     app.run_development_server (port = cmd.port)
 # end def run
 

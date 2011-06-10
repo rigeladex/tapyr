@@ -38,6 +38,7 @@
 #    15-Mar-2011 (CT) `_load_afs` and `_setup_afs` added
 #     5-Apr-2011 (MG) Default for `HTTP` changed to `Werkzeug`
 #     3-May-2011 (CT) Options `edit_session_ttl` and `user_session_ttl` added
+#    10-Jun-2011 (MG) `shell` parameter `echo` added
 #    ««revision-date»»···
 #--
 
@@ -159,7 +160,7 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
     cmd__wsgi__opts       = cmd___server__opts
     cmd__shell__opts      = \
         ( "wsgi:B?Create the wsgi application before entering the shell"
-        ,
+        , "echo:B?Set the echo flag of the SQLAlchemy engine"
         ) + cmd___server__opts
     cmd__sub_commands     = ("cmd__run_server", "cmd__wsgi")
 
@@ -170,6 +171,9 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
 
     @classmethod
     def do_shell (cls, cmd) :
+        if cmd.echo :
+            from _MOM._DBW._SAS.DBS import Postgresql
+            Postgresql.Engine_Parameter ["echo"] = True
         scope = cls.do_load      (cmd)
         if cmd.wsgi :
             wsgi = cls.do_wsgi   (cmd)
