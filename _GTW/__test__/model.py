@@ -38,6 +38,7 @@
 #    11-Aug-2010 (MG) `GTW_FULL_OBJECT_MODEL` added
 #    12-Aug-2010 (MG) Fixture support handling added
 #    16-Aug-2010 (MG) `scope` added to change the default of `verbose`
+#    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -116,6 +117,7 @@ class Scaffold (GTW.OMP.Scaffold) :
         , SQL             = "'sqlite://'"
         , POS             = "'postgresql://regtest:regtest@localhost/regtest'"
         , MYS             = "'mysql://:@localhost/test'"
+        , MYST            = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
         )
     Backend_Default_Path  = dict \
         ( (k, None) for k in Backend_Parameters)

@@ -36,6 +36,7 @@
 #    17-Aug-2010 (CT) Use `unicode` instead of `str`
 #     6-Sep-2010 (CT) Adapted to change of `Race_Result` from Composite-List
 #                     to `Link1`
+#    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -46,10 +47,11 @@ class _migration_Scaffold_ (Scaffold) :
     _real_name = "Scaffold"
 
     Backend_Parameters = dict \
-        ( HPS = "'hps:///test.hps'"
-        , SQL = "'sqlite:///test.sql'"
-        , POS = "'postgresql://regtest:regtest@localhost/regtest'"
-        , MYS = "'mysql://:@localhost/test'"
+        ( HPS  = "'hps:///test.hps'"
+        , SQL  = "'sqlite:///test.sql'"
+        , POS  = "'postgresql://regtest:regtest@localhost/regtest'"
+        , MYS  = "'mysql://:@localhost/test'"
+        , MYST = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
         )
 
 Scaffold = _migration_Scaffold_ # end class
