@@ -555,11 +555,11 @@ class _Dir_ (_Site_Entity_) :
     # end def __init__
 
     @classmethod
-    def from_nav_list_file (cls, src_dir, parent = None, ** kw) :
+    def from_nav_list_file (cls, src_dir, parent = None, nav_context = {}, ** kw) :
         """Return a new `Dir` filled with information read from the file
            `navigation.list` in `src_dir`.
         """
-        context = {}
+        context = dict (nav_context)
         nl      = pjoin (src_dir, "navigation.list")
         result  = cls   (src_dir, parent = parent, ** kw)
         execfile        (nl, DJO.NAV.__dict__, context)
