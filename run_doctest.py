@@ -147,9 +147,9 @@ def _main (cmd) :
     cmd_path = list (cmd.path or [])
     replacer = Re_Replacer (r"\.py[co]", ".py")
     a        = cmd.argv [0]
+    et       = ""
     if len (cmd.argv) == 1 and not sos.path.isdir (a) :
         f  = Filename (a)
-        et = ""
         m  = f.base
         sys.path [0:0] = cmd_path
         if f.directory :
