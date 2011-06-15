@@ -31,6 +31,7 @@
 #    14-Jun-2011 (MG) `url` add the `query` of the `db_url` to
 #                     `scheme_auth` (to allow specification of the the mysql
 #                     socket file)
+#    15-Jun-2011 (MG) `url` fixed (only add `query´ if it is not empty)
 #    ««revision-date»»···
 #--
 
@@ -84,8 +85,9 @@ class _DBS_ (TFL.Meta.Object) :
         result = TFL.Url (value, fs_path = True)
         if not result.path and default_path is not None :
             result = TFL.Url.new (result, path = default_path, fs_path = True)
-        result.scheme_auth = "://".join \
-            ((result.scheme, "%s/?%s" % (result.authority, result.query)))
+        result.scheme_auth = "://".join ((result.scheme, result.authority))
+        if result.query :
+            result.scheme_auth = "?".join ((result.scheme_auth, result.query))
         result.create = False
         return result
     # end def Url
