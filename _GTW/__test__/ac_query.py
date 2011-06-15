@@ -99,6 +99,7 @@ _attr_ac_query = """
     11 1208 False
     12 1107 False
     12 1208 True
+    >>> scope.destroy ()
 """
 
 _epk_splitter_test = """
@@ -113,6 +114,7 @@ _epk_splitter_test = """
     [(u'Gl Ma',), (u'Gl', u'Ma')]
     >>> scope.PAP.Person.epk_splitter ("Van der Bel")
     [(u'Van der Bel',), (u'Van der', u'Bel'), (u'Van', u'der Bel')]
+    >>> scope.destroy ()
 """
 
 _ac_query = """
@@ -129,7 +131,7 @@ _ac_query = """
     >>> for acs in ("Ma", "Ta", "Van", "Van der B") :
     ...     for p, qs in enumerate (PAP.Person.ac_query (acs)) :
     ...         print p, acs
-    ...         for o in qs :
+    ...         for o in sorted (qs, key = lambda p : p.last_name) :
     ...             print " ", o
     0 Ma
       (u'glueck', u'martin', u'', u'')
@@ -143,6 +145,7 @@ _ac_query = """
       (u'van der bellen', u'alexander', u'', u'')
     1 Van der B
     2 Van der B
+    >>> scope.destroy ()
 """
 
 from _GTW.__test__.model import *
