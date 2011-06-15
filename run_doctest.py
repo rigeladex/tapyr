@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -54,6 +54,7 @@
 #    11-Aug-2010 (CT) Option `-format` replaced by module-level variables
 #                     `format_f` and `format_s`
 #    17-Aug-2010 (CT) `__test__` added to `_doctest_pat`
+#    14-Jun-2011 (MG) `timing` command line option added
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ import  doctest
 import  sys
 import  subprocess
 import  os
+import  time
 
 TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 
@@ -84,9 +86,9 @@ summary        = TFL.Record \
     , total    = 0
     )
 
-format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
-format_s = """%(module.__file__)s passes all of %(t)s doc-tests"""
-format_x = """%s raises exception `%r` during doc-tests"""
+format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests%(et)s"""
+format_s = """%(module.__file__)s passes all of %(t)s doc-tests%(et)s"""
+format_x = """%s raises exception `%r` during doc-tests%s"""
 sum_pat  = Regexp \
     ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
       "(?P<total>\d+) doc-tests"
@@ -146,8 +148,9 @@ def _main (cmd) :
     replacer = Re_Replacer (r"\.py[co]", ".py")
     a        = cmd.argv [0]
     if len (cmd.argv) == 1 and not sos.path.isdir (a) :
-        f = Filename (a)
-        m = f.base
+        f  = Filename (a)
+        et = ""
+        m  = f.base
         sys.path [0:0] = cmd_path
         if f.directory :
             sys.path [0:0] = [f.directory]
@@ -158,35 +161,44 @@ def _main (cmd) :
         else :
             flags = doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
         try :
+            start  = time.time ()
             module = __import__ (m)
             f, t   = doctest.testmod \
                 ( module
                 , verbose     = cmd.verbose
                 , optionflags = flags
                 )
+            exec_time = time.time () - start
         except KeyboardInterrupt :
             raise
         except StandardError, exc :
-            print >> sys.stderr, format_x % (replacer (a), exc)
+            exec_time = time.time () - start
+            if cmd.timing :
+                et = " in %7.5fs" % (exec_time, )
+            print >> sys.stderr, format_x % (replacer (a), exc, et)
             raise
         else :
             format = format_f if f else format_s
+            if cmd.timing :
+                et = " in %7.5fs" % (exec_time, )
             print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
     else :
-        path = nodiff = optimize = verbose = ""
+        path = nodiff = optimize = verbose = timing = ""
         if cmd.nodiff :
             nodiff  = " -nodiff"
         if cmd.verbose:
             verbose = " -verbose"
+        if cmd.timing :
+            timing  = " -timing"
         if cmd_path :
             path = " -path %r" % (",".join (cmd_path), )
         if sys.flags.optimize :
             optimize = " -%s" % ("O" * sys.flags.optimize, )
         script = sos.path.join \
             (Environment.script_path (), Environment.script_name ())
-        head = """%s%s %s%s%s%s""" % \
+        head = """%s%s %s%s%s%s%s""" % \
             ( sys.executable, optimize
-            , script, path, nodiff, verbose
+            , script, path, nodiff, verbose, timing
             )
         if cmd.summary :
             run_cmd = run_command_with_summary
@@ -207,6 +219,7 @@ def _main (cmd) :
                     run_dir (s)
         else :
             run_dir = run_mods
+        start = time.time ()
         for a in cmd.argv :
             if sos.path.isdir (a) :
                 run_dir (a)
@@ -215,11 +228,14 @@ def _main (cmd) :
                     run_mod (a)
         if cmd.summary :
             format = format_f if summary.failed else format_s
+            if cmd.timing :
+                et = " in %7.5fs" % (time.time () - start, )
             print "=" * 79
             print format % TFL.Caller.Scope \
                 ( f      = summary.failed
                 , module = TFL.Record (__file__ = " ".join (cmd.argv))
                 , t      = summary.total
+                , et     = et
                 ), "[%s/%s modules fail]" % \
                 (len (summary.failures), summary.modules)
             print "    %s" % \
@@ -233,6 +249,7 @@ _Command = TFL.CAO.Cmd \
         ( "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"
         , "summary:B?Summary of failed tests"
+        , "timing:B?Add timing information"
         , "transitive:B"
             "?Include all subdirectories of directories specified "
               "as arguments"

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.
@@ -28,6 +28,9 @@
 # Revision Dates
 #    23-Jun-2010 (CT) Creation
 #    30-Nov-2010 (CT) `Fatal_Exceptions` added (here, an empty tuple)
+#    14-Jun-2011 (MG) `url` add the `query` of the `db_url` to
+#                     `scheme_auth` (to allow specification of the the mysql
+#                     socket file)
 #    ««revision-date»»···
 #--
 
@@ -81,7 +84,8 @@ class _DBS_ (TFL.Meta.Object) :
         result = TFL.Url (value, fs_path = True)
         if not result.path and default_path is not None :
             result = TFL.Url.new (result, path = default_path, fs_path = True)
-        result.scheme_auth = "://".join ((result.scheme, result.authority))
+        result.scheme_auth = "://".join \
+            ((result.scheme, "%s/?%s" % (result.authority, result.query)))
         result.create = False
         return result
     # end def Url

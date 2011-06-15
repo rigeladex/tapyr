@@ -38,6 +38,7 @@
 #    11-Aug-2010 (MG) `GTW_FULL_OBJECT_MODEL` added
 #    12-Aug-2010 (MG) Fixture support handling added
 #    16-Aug-2010 (MG) `scope` added to change the default of `verbose`
+#    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,9 @@ import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
 import _TFL.Filename
 import _TFL.Generators
+
+model_src        = sos.path.dirname (__file__)
+form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
 
 GTW.Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
@@ -113,6 +117,7 @@ class Scaffold (GTW.OMP.Scaffold) :
         , SQL             = "'sqlite://'"
         , POS             = "'postgresql://regtest:regtest@localhost/regtest'"
         , MYS             = "'mysql://:@localhost/test'"
+        , MYST            = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
         )
     Backend_Default_Path  = dict \
         ( (k, None) for k in Backend_Parameters)
@@ -179,15 +184,22 @@ class Scaffold (GTW.OMP.Scaffold) :
     def do_run_server (cls, cmd) :
         from form_app import run
         apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return run (cmd, apt, url)
+        return run (cmd, apt, url, Create_Scope = cls._load_scope)
     # end def do_run_server
 
     @classmethod
     def do_wsgi (cls, cmd) :
         from form_app import wsgi
         apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return wsgi (cmd, apt, url)
+        return wsgi (cmd, apt, url, Create_Scope = cls._load_scope)
     # end def do_wsgi
+
+    @classmethod
+    def _load_scope (cls, apt, url) :
+        result = super (Scaffold, cls)._load_scope (apt, url)
+        cls._load_afs  (result.app_type, form_pickle_path)
+        return result
+    # end def _load_scope
 
     @classmethod
     def scope (cls, * args, ** kw) :

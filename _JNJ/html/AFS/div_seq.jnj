@@ -37,6 +37,7 @@
 ##     4-Apr-2011 (CT) `Delete` button only `if elem.init.pid`
 ##    13-Apr-2011 (CT) Buttons, `allow_new`, and `collapsed` added to
 ##                     `Field_Entity`
+##    10-Jun-2011 (MG) `Group` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -167,4 +168,9 @@
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Fieldset -#}
 
+{%- macro Group (form, elem, renderer) -%}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
+    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+  {%- endcall %} {# do_element #}
+{%- endmacro -%} {#- Group -#}
 {#- __END__ jinja template: html/AFS/div_seq.jnj -#}

@@ -45,6 +45,10 @@
 #    22-Mar-2011 (MG) `_SAS_DBS_` added, `create_engine` for Postgresql
 #                     redefined
 #     9-Jun-2011 (MG) `query_last_cid_on_update` added
+#    10-Jun-2011 (MG) `*_pid` function changes, `connection_pid` added
+#    14-Jun-2011 (MG) `commit_pid`, `connection_pid`, `rollback_pid` fixed
+#                     `MySQL._drop_database`: only swollow the `Unknown
+#                     database` error message
 #    ««revision-date»»···
 #--
 
@@ -112,13 +116,25 @@ class _NFB_ (_SAS_DBS_) :
     """Base class for non-file based databases."""
 
     Fatal_Exceptions = (sqlalchemy.exc.OperationalError, )
+    pm               = None
 
     @classmethod
     def commit_pid (cls, pm) :
-        pm.transaction.commit   ()
-        pm.connection.close     ()
-        del pm.connection
+        if cls.pm :
+            cls.pm ["transaction"].commit ()
+            cls.pm ["connection"].close   ()
+            cls.pm = None
+            del pm.connection
     # end def commit_pid
+
+    @classmethod
+    def connection_pid (cls, pm) :
+        if not cls.pm :
+            cls.pm = {}
+            cls.pm ["connection" ] = conn = pm.ems.session.engine.connect ()
+            cls.pm ["transaction"] = conn.begin                           ()
+        return cls.pm ["connection"]
+    # end def connection_pid
 
     @classmethod
     def delete_database (cls, db_url, manager) :
@@ -146,9 +162,11 @@ class _NFB_ (_SAS_DBS_) :
 
     @classmethod
     def rollback_pid (cls, pm) :
-        pm.transaction.rollback ()
-        pm.connection.close     ()
-        del pm.connection
+        if cls.pm :
+            cls.pm ["transaction"].rollback ()
+            cls.pm ["connection"].close     ()
+            cls.pm = None
+            del pm.connection
     # end def rollback_pid
 
     @classmethod
@@ -185,7 +203,6 @@ class MySQL (_NFB_) :
                 (db_url.value or "sqlite:///:memory:", ** cls.Engine_Parameter)
             )
         #engine.execute ("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
-        #import pdb; pdb.set_trace ()
         return engine
     # end def create_engine
 
@@ -196,9 +213,11 @@ class MySQL (_NFB_) :
         ### not exist (even using the IF EXISTS clause)
         try :
             engine.execute ("use %s" % (str (db_url.path), ))
-        except sqlalchemy.exc.OperationalError :
-            ### database does not exist -> no need to drop it
-            pass
+        except sqlalchemy.exc.OperationalError, exc :
+            if (  '(1049, "Unknown database \'%s\'")' % (db_url.path, )
+               not in exc.message
+               ) :
+                raise
         else :
             engine.execute ("DROP DATABASE IF EXISTS %s" % (str (db_url.path), ))
     # end def _drop_database
@@ -276,9 +295,7 @@ class Postgresql (_NFB_) :
     # end def create_database
 
     @classmethod
-    def create_engine (cls, db_url
-                      , isolation_level = None
-                      ) :
+    def create_engine (cls, db_url, isolation_level = None) :
         if isolation_level is None :
             isolation_level = cls.ISOLATION_SERIALIZABLE
         return cls \
@@ -320,12 +337,21 @@ class Sqlite (_SAS_DBS_) :
 
     @classmethod
     def commit_pid (cls, pm) :
-        pass
+        if hasattr (pm, "connection") :
+            del pm.connection
     # end def commit_pid
 
     @classmethod
+    def connection_pid (cls, pm) :
+        ### sqlite does not support a multiple connection per thread -> we
+        ### reuse the connection of the session
+        return pm.ems.session.connection
+    # end def connection_pid
+
+    @classmethod
     def rollback_pid (cls, pm) :
-        pass
+        if hasattr (pm, "connection") :
+            del pm.connection
     # end def rollback_pid
 
 # end class Sqlite
