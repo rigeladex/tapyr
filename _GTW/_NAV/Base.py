@@ -253,6 +253,7 @@
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
+#    15-Jun-2011 (CT) `_Page_O_.__getattr__` robustified
 #    ««revision-date»»···
 #--
 
@@ -743,7 +744,12 @@ class _Page_O_ (Page) :
             return self.__super.__getattr__ (name)
         except AttributeError :
             if name != "obj" :
-                return getattr (self.obj, name)
+                try :
+                    obj = self.obj
+                except Exception :
+                    raise AttributeError (name)
+                else :
+                    return getattr (obj, name)
             raise
     # end def __getattr__
 
