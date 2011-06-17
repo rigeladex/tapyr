@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #    11-Jun-2003 (CT) s/!= None/is not None/
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     4-Jun-2005 (CT) `str` added to show `size` instead of `bottom_right`
+#    17-Jun-2011 (CT) `Sides` added
 #    ««revision-date»»···
 #--
 
@@ -194,6 +195,16 @@ class Rect (TFL.Meta.Object) :
             return None
         return 1
     # end def point_in_rect
+
+    @classmethod
+    def Sides (cls, diagonal, ratio) :
+        """Return the sides `(a, b)` of a rectangle with `diagonal` and `ratio`
+           between the sides.
+        """
+        b = math.sqrt (diagonal * diagonal / (1 + ratio * ratio))
+        a = b * ratio
+        return a, b
+    # end def Sides
 
     def __str__ (self) :
         return "(%s, %s)" % (self.top_left, self.size)
