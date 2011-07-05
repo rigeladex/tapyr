@@ -168,6 +168,7 @@
 #                     `isinstance (s, self.Class)`
 #     8-Mar-2011 (CT) `_cls_attr` added
 #    30-May-2011 (CT) `from_string` changed to except "" for `s`
+#     5-Jul-2011 (CT) `e_completer` and `f_completer` added to `A_Attr_Type`
 #    ««revision-date»»···
 #--
 
@@ -234,6 +235,8 @@ class A_Attr_Type (object) :
     default             = None
     description         = u""
     explanation         = u""
+    e_completer         = None
+    f_completer         = None
     format              = u"%s"
     group               = u""
     hidden              = False
