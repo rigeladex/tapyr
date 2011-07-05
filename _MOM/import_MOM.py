@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -34,6 +34,7 @@
 #     7-Dec-2009 (CT) `Q` added
 #    22-Dec-2009 (CT) `Sequence_Number` removed
 #     4-May-2010 (CT) `Q` moved to `MOM.Attr.Type`
+#     5-Jul-2011 (CT) `MOM.Attr.Selector` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,8 @@ import _MOM.Error
 import _MOM.Link
 import _MOM.Object
 import _MOM.Scope
+
+import _MOM._Attr.Selector
 
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr

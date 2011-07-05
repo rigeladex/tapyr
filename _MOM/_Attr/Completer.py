@@ -64,17 +64,14 @@ class Entity_Completer (_Completer_) :
 class Field_Completer (_Completer_) :
     """Model a field completer for a MOM attribute."""
 
-    exclude  = ()
-    include  = ()
-    treshold = 1
+    dependents = ()
+    treshold   = 1
 
-    def __init__ (self, treshold = None, include = None, exclude = None) :
+    def __init__ (self, treshold = None, dependents = None) :
         if treshold is not None :
             self.treshold = treshold
-        if include is not None :
-            self.include  = include
-        if exclude is not None :
-            self.exclude  = exclude
+        if dependents is not None :
+            self.dependents = dependents
     # end def __init__
 
 # end class Field_Completer

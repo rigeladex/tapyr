@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.__test__.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
+#     5-Jul-2011 (CT) `MOM.Attr.Selector` tests added
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,29 @@ _test_code = """
     GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> print PAP.Person.count
     1
+
+    >>> S = MOM.Attr.Selector
+    >>> S.primary (PAP.Person).names
+    ('last_name', 'first_name', 'middle_name', 'title')
+    >>> S.Combo (S.primary, exclude = S.P_optional) (PAP.Person).names
+    ('last_name', 'first_name')
+    >>> S.Combo (S.primary, exclude = S.P_required) (PAP.Person).names
+    ('middle_name', 'title')
+    >>> S.necessary (PAP.Person).names
+    ('sex',)
+    >>> S.optional (PAP.Person).names
+    ('lifetime', 'salutation')
+    >>> S.required (PAP.Person).names
+    ()
+    >>> S.user (PAP.Person).names
+    ('lifetime', 'salutation', 'sex')
+    >>> pu = S.List (S.primary, S.user)
+    >>> pu (PAP.Person).names
+    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex')
+    >>> S.Combo (pu, exclude = S.P_optional) (PAP.Person).names
+    ('last_name', 'first_name')
+    >>> S.Combo (pu, exclude = S.P_required) (PAP.Person).names
+    ('middle_name', 'title', 'lifetime', 'salutation', 'sex')
 
 """
 
