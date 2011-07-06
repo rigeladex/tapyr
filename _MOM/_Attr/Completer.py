@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jul-2011 (CT) Creation
+#     6-Jul-2011 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -36,12 +37,57 @@ from   __future__            import print_function, unicode_literals
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
+from   _TFL.predicate        import uniq
+
 import _MOM._Attr
 
 import _TFL._Meta.Object
 
+class _ACI_ (TFL.Meta.Object) :
+    """Root class for attribute completer instances."""
+
+    dependents = ()
+
+    def __init__ (self, acs, attr, E_Type) :
+        self.name = attr.name
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def names (self) :
+        return tuple (uniq ((self.name, ) + self.dependents))
+    # end def names
+
+# end class _ACI_
+
+class _ACI_E_ (_ACI_) :
+    """Attribute completer instance for an `Entity_Completer`."""
+
+    def __init__ (self, acs, attr, E_Type) :
+        self.__super.__init__ (acs, attr, E_Type)
+        self.selection_treshold = acs.selection_treshold
+        self.filter_treshold    = acs.filter_treshold
+    # end def __init__
+
+# end class _ACI_E_
+
+class _ACI_F_ (_ACI_) :
+    """Attribute completer instance for a `Field_Completer`."""
+
+    def __init__ (self, acs, attr, E_Type) :
+        self.__super.__init__ (acs, attr, E_Type)
+        self.treshold = acs.treshold
+        if acs.dependents :
+            self.dependents = acs.dependents (E_Type).names
+    # end def __init__
+
+# end class _ACI_F_
+
 class _Completer_ (TFL.Meta.Object) :
     """Root class for attribute completers"""
+
+    def __call__ (self, attr, E_Type) :
+        return self.Type (self, attr, E_Type)
+    # end def __call__
 
 # end class _Completer_
 
@@ -49,14 +95,16 @@ class Entity_Completer (_Completer_) :
     """Model an entity completer for a MOM attribute."""
 
     selection_treshold = 1
+    Type               = _ACI_E_
 
     def __init__ (self, selection_treshold = None, filter_treshold = None) :
         if selection_treshold is not None :
             self.selection_treshold = selection_treshold
-        self.filter_treshold    =
+        self.filter_treshold    = \
             (    filter_treshold if filter_treshold is not None
             else self.selection_treshold
             )
+        assert self.filter_treshold <= self.selection_treshold
     # end def __init__
 
 # end class Entity_Completer
@@ -66,6 +114,7 @@ class Field_Completer (_Completer_) :
 
     dependents = ()
     treshold   = 1
+    Type       = _ACI_F_
 
     def __init__ (self, treshold = None, dependents = None) :
         if treshold is not None :

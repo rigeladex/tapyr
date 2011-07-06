@@ -169,6 +169,7 @@
 #     8-Mar-2011 (CT) `_cls_attr` added
 #    30-May-2011 (CT) `from_string` changed to except "" for `s`
 #     5-Jul-2011 (CT) `e_completer` and `f_completer` added to `A_Attr_Type`
+#     6-Jul-2011 (CT) `f_completer` added to `_A_Entity_`
 #    ««revision-date»»···
 #--
 
@@ -179,7 +180,9 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 
 import _MOM._Attr.Coll
+import _MOM._Attr.Completer
 import _MOM._Attr.Kind
+import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
 
 from   _TFL.I18N             import _, _T, _Tn
@@ -779,8 +782,9 @@ class _A_Entity_ (A_Attr_Type) :
     """Models an attribute referring to an entity."""
 
     Class             = ""
-    P_Type            = TFL.Meta.Alias_Property ("Class")
+    P_Type            = TFL.Meta.Alias_Property  ("Class")
 
+    f_completer       = MOM.Attr.Field_Completer ()
     needs_raw_value   = False
     ### allow creation of new entity for this attribute
     ui_allow_new      = True

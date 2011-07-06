@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
 #     5-Jul-2011 (CT) `MOM.Attr.Selector` tests added
+#     6-Jul-2011 (CT) Tests for `f_completer` added
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,19 @@ _test_code = """
     ('last_name', 'first_name')
     >>> S.Combo (pu, exclude = S.P_required) (PAP.Person).names
     ('middle_name', 'title', 'lifetime', 'salutation', 'sex')
+
+    >>> lnc = PAP.Person.last_name.f_completer (PAP.Person.last_name, PAP.Person)
+    >>> print lnc.name, lnc.names, lnc.treshold
+    last_name ('last_name', 'first_name', 'middle_name', 'title') 2
+    >>> fnc = PAP.Person.first_name.f_completer (PAP.Person.first_name, PAP.Person)
+    >>> print fnc.name, fnc.names, fnc.treshold
+    first_name ('first_name', 'last_name', 'middle_name', 'title') 3
+    >>> tnc = PAP.Person.title.f_completer (PAP.Person.title, PAP.Person)
+    >>> print tnc.name, tnc.names, tnc.treshold
+    title ('title',) 1
+    >>> snc = PAP.Person.salutation.f_completer (PAP.Person.salutation, PAP.Person)
+    >>> print snc.name, snc.names, snc.treshold
+    salutation ('salutation',) 1
 
 """
 

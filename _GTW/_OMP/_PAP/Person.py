@@ -37,6 +37,9 @@
 #    13-Oct-2010 (CT) `example` added
 #     8-Jun-2011 (MG) `_AC_Query_LN_` and `last_name.ac_query` added
 #     9-Jun-2011 (MG) `_AC_Query_LN_` enhanced
+#     6-Jul-2011 (CT) s/_AC_Query_LN_/_AC_Query_FL_/, added to `first_name`, too
+#     6-Jul-2011 (CT) `e_completer` added to primary attributes
+#     6-Jul-2011 (CT) `f_completer` added to primary attributes and `salutation`
 #    ««revision-date»»···
 #--
 
@@ -53,9 +56,11 @@ import _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
-class _AC_Query_LN_ (TFL.Meta.Object) :
-    """Special auto-complete query function for the last_name of a person (to
-       better handling of double names like Franz-Ferdinand)"""
+class _AC_Query_FL_ (TFL.Meta.Object) :
+    """Special auto-complete query function for the `first_name` and
+       `last_name` of a person (to better handling of double names like
+       Franz-Ferdinand).
+    """
 
     def __init__ (self, attr_name, cooker = None) :
         self.attr_name = attr_name
@@ -78,7 +83,7 @@ class _AC_Query_LN_ (TFL.Meta.Object) :
             )
     # end def __call__
 
-# end class _AC_Query_LN_
+# end class _AC_Query_FL_
 
 class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
     """Model a person."""
@@ -87,30 +92,39 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class last_name (A_String) :
-            """Last name of person"""
+        class _personal_name_ (A_String) :
 
             kind           = Attr.Primary
-            example        = u"Doe"
             ignore_case    = True
-            max_length     = 48
-            rank           = 1
 
             @TFL.Meta.Once_Property
             def ac_query (self) :
-                return _AC_Query_LN_ (self.ckd_name, self.cooked)
+                return _AC_Query_FL_ (self.ckd_name, self.cooked)
             # end def ac_query
+
+        # end class _personal_name_
+
+        class last_name (_personal_name_) :
+            """Last name of person"""
+
+            example        = u"Doe"
+            max_length     = 48
+            rank           = 1
+
+            e_completer    = Attr.Entity_Completer (2)
+            f_completer    = Attr.Field_Completer  (2, Attr.Selector.primary)
 
         # end class last_name
 
-        class first_name (A_String) :
+        class first_name (_personal_name_) :
             """First name of person"""
 
-            kind           = Attr.Primary
             example        = u"John"
-            ignore_case    = True
             max_length     = 32
             rank           = 2
+
+            e_completer    = Attr.Entity_Completer (3)
+            f_completer    = Attr.Field_Completer  (3, Attr.Selector.primary)
 
         # end class first_name
 
@@ -122,6 +136,9 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 32
             rank           = 1
 
+            e_completer    = Attr.Entity_Completer (2)
+            f_completer    = Attr.Field_Completer  (2, Attr.Selector.primary)
+
         # end class middle_name
 
         class title (A_String) :
@@ -132,6 +149,9 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 20
             rank           = 2
             ui_name        = _("Academic title")
+
+            e_completer    = Attr.Entity_Completer (max_length + 1, 1)
+            f_completer    = Attr.Field_Completer  (1)
 
         # end class title
 
@@ -149,6 +169,8 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 80
+
+            f_completer        = Attr.Field_Completer (1)
 
         # end class salutation
 
