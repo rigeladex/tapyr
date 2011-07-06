@@ -48,6 +48,7 @@
 #    30-Mar-2011 (CT) `Entity_Link.__call__` changed to set `name` and `ui_name`
 #    10-Jun-2011 (MG) `_Entity_Mixin_.__init__` `entity_links_group` and
 #                     `Entity_Links_Group` added
+#     6-Jul-2011 (CT) Use `MOM.Attr.Selector` instead of homegrown code
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ from   _GTW._AFS._MOM           import Element
 from   _GTW._Form.Widget_Spec   import Widget_Spec as WS
 import _GTW._Form._MOM.Field ### XXX remove after migration of `css_class`
 
+import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
 import _TFL._Meta.Object
@@ -308,7 +310,7 @@ class Field_Composite (_Field_Entity_Mixin_) :
     # end def __init__
 
     def default_elements (self, E_Type) :
-        fg = Field_Group_K (kind = "user_attr")
+        fg = Field_Group (attr_selector = MOM.Attr.Selector.user)
         for f in fg.fields (E_Type, self, set ()) :
             yield f
     # end def default_elements
@@ -337,11 +339,16 @@ class Field_Role_Hidden (_Field_Entity_Mixin_) :
 
 ### XXX sub-structured fields (e.g., date as year/month/date combination)
 
-class  _Field_Group_ (_Base_) :
+class  Field_Group (_Base_) :
     """Specification of a Field_Group of a AFS form."""
 
     defaults = dict (collapsed = True)
     Type     = Element.Fieldset
+
+    def __init__ (self, attr_selector, ** kw) :
+        self.attr_selector = attr_selector
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
         children = tuple \
@@ -351,6 +358,10 @@ class  _Field_Group_ (_Base_) :
         if children :
             return self.Type (children = children, ** dict (self.kw, ** kw))
     # end def __call__
+
+    def attrs (self, E_Type, spec, seen) :
+        return iter (self.attr_selector (E_Type))
+    # end def attrs
 
     def fields (self, E_Type, spec, seen) :
         attr_spec = spec.attr_spec
@@ -362,36 +373,18 @@ class  _Field_Group_ (_Base_) :
                 yield attr.AFS_Spec (** akw)
     # end def fields
 
-# end class  _Field_Group_
+# end class  Field_Group
 
-class Field_Group (_Field_Group_) :
-    """Specification of a Field_Group for a specified set of attributes."""
-
-    def __init__ (self, * names, ** kw) :
-        self._names = names
-        self.__super.__init__ (** kw)
-    # end def __init__
-
-    def attrs (self, E_Type, spec, seen) :
-        for name in self._names :
-            yield getattr (E_Type, name)
-    # end def attrs
-
-# end class Field_Group
-
-class Field_Group_K (_Field_Group_) :
+class Field_Group_K (Field_Group) :
     """Specification of a Field_Group for a specific attribute kind of a AFS
        form for an essential MOM entity.
     """
 
     def __init__ (self, ** kw) :
-        self.pop_to_self      (kw, "kind")
-        self.__super.__init__ (name = self.kind, ** kw)
+        self.pop_to_self (kw, "kind")
+        self.__super.__init__ \
+            (getattr (MOM.Attr.Selector, self.kind), name = self.kind, ** kw)
     # end def __init__
-
-    def attrs (self, E_Type, spec, seen) :
-        return getattr (E_Type, self.kind, ())
-    # end def attrs
 
 # end class Field_Group_K
 

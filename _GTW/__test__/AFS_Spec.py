@@ -26,6 +26,8 @@
 # Revision Dates
 #    17-Feb-2011 (CT) Creation
 #    10-Jun-2011 (MG) `_entity_links_group` test added
+#     6-Jul-2011 (CT) `_entity_links_group` test fixed (and `_test_code`
+#                     enabled, again)
 #    ««revision-date»»···
 #--
 
@@ -1561,33 +1563,33 @@ _entity_links_group = """
           <Field None 'country'>
         <Fieldset None u'optional'>
          <Field None 'desc'>
-    >>> print repr (Form ("F", children = [x]))
-    <Form F>
-     <Entity F-0 'Person' 'GTW.OMP.PAP.Person'>
-      <Fieldset F-0:0 u'primary'>
-       <Field F-0:0:0 'last_name'>
-       <Field F-0:0:1 'first_name'>
-       <Field F-0:0:2 'middle_name'>
-       <Field F-0:0:3 'title'>
-      <Fieldset F-0:1 u'necessary'>
-       <Field F-0:1:0 'sex'>
-      <Fieldset F-0:2 u'optional'>
-       <Field_Composite F-0:2:0 'lifetime' 'MOM.Date_Interval'>
-        <Field F-0:2:0.0 'start'>
-        <Field F-0:2:0.1 'finish'>
-       <Field F-0:2:1 'salutation'>
-      <Group F-0:3>
-       <Entity_List F-0:3:0 'Person_has_Address' <Entity_Link F-0:3:0::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
-        <Entity_Link F-0:3:0::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
-         <Field_Role_Hidden F-0:3:0::p-0 u'left' 'GTW.OMP.PAP.Person'>
-         <Fieldset F-0:3:0::p-1 u'primary'>
-          <Field_Entity F-0:3:0::p-1:0 'right' 'GTW.OMP.PAP.Address'>
-           <Field F-0:3:0::p-1:0:0 'street'>
-           <Field F-0:3:0::p-1:0:1 'zip'>
-           <Field F-0:3:0::p-1:0:2 'city'>
-           <Field F-0:3:0::p-1:0:3 'country'>
-         <Fieldset F-0:3:0::p-2 u'optional'>
-          <Field F-0:3:0::p-2:0 'desc'>
+    >>> print repr (Form ("ELG", children = [x]))
+    <Form ELG>
+     <Entity ELG-0 'Person' 'GTW.OMP.PAP.Person'>
+      <Fieldset ELG-0:0 u'primary'>
+       <Field ELG-0:0:0 'last_name'>
+       <Field ELG-0:0:1 'first_name'>
+       <Field ELG-0:0:2 'middle_name'>
+       <Field ELG-0:0:3 'title'>
+      <Fieldset ELG-0:1 u'necessary'>
+       <Field ELG-0:1:0 'sex'>
+      <Fieldset ELG-0:2 u'optional'>
+       <Field_Composite ELG-0:2:0 'lifetime' 'MOM.Date_Interval'>
+        <Field ELG-0:2:0.0 'start'>
+        <Field ELG-0:2:0.1 'finish'>
+       <Field ELG-0:2:1 'salutation'>
+      <Group ELG-0:3>
+       <Entity_List ELG-0:3:0 'Person_has_Address' <Entity_Link ELG-0:3:0::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>>
+        <Entity_Link ELG-0:3:0::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>
+         <Field_Role_Hidden ELG-0:3:0::p-0 u'left' 'GTW.OMP.PAP.Person'>
+         <Fieldset ELG-0:3:0::p-1 u'primary'>
+          <Field_Entity ELG-0:3:0::p-1:0 'right' 'GTW.OMP.PAP.Address'>
+           <Field ELG-0:3:0::p-1:0:0 'street'>
+           <Field ELG-0:3:0::p-1:0:1 'zip'>
+           <Field ELG-0:3:0::p-1:0:2 'city'>
+           <Field ELG-0:3:0::p-1:0:3 'country'>
+         <Fieldset ELG-0:3:0::p-2 u'optional'>
+          <Field ELG-0:3:0::p-2:0 'desc'>
 """
 from   _GTW.__test__.model      import *
 from   _GTW._AFS._MOM.Element   import Form
@@ -1613,9 +1615,6 @@ json_bad  = """{"$id":"FC"}"""
 __test__ = dict \
     ( AFS_Spec           = _test_code
     , Entity_Links_Group = _entity_links_group
-    )
-__test__ = dict \
-    ( Entity_Links_Group = _entity_links_group
     )
 
 ### __END__ AFS_Spec

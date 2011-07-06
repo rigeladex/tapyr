@@ -77,11 +77,11 @@ class _Combo_Selection_ (_Selection_) :
 
     exclude = None
 
-    def __init__ (self, selector, E_Type) :
+    def __init__ (self, spec, E_Type) :
         self.__super.__init__ (E_Type)
-        self.include = selector.include (E_Type)
-        if selector.exclude is not None :
-            self.exclude = selector.exclude (E_Type)
+        self.include = spec.include (E_Type)
+        if spec.exclude is not None :
+            self.exclude = spec.exclude (E_Type)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -98,9 +98,9 @@ class _Combo_Selection_ (_Selection_) :
 class _Kind_Selection_ (_Selection_) :
     """Attribute selection for a specific kind of attributes."""
 
-    def __init__ (self, selector, E_Type) :
+    def __init__ (self, spec, E_Type) :
         self.__super.__init__ (E_Type)
-        self.kind = selector.kind
+        self.kind = spec.kind
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -113,9 +113,9 @@ class _Kind_Selection_ (_Selection_) :
 class _List_Selection_ (_Selection_) :
     """Attribute selection combined from a list of selectors."""
 
-    def __init__ (self, selector, E_Type) :
+    def __init__ (self, spec, E_Type) :
         self.__super.__init__ (E_Type)
-        self.sels = tuple (s (E_Type) for s in selector.sels)
+        self.sels = tuple (s (E_Type) for s in spec.sels)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -128,9 +128,9 @@ class _List_Selection_ (_Selection_) :
 class _Name_Selection_ (_Selection_) :
     """Attribute selection specifed by a list of names."""
 
-    def __init__ (self, selector, E_Type) :
+    def __init__ (self, spec, E_Type) :
         self.__super.__init__ (E_Type)
-        self._names = tuple (selector.names)
+        self._names = tuple (spec.names)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -148,10 +148,10 @@ class _Name_Selection_ (_Selection_) :
 class _Pred_Selection_ (_Selection_) :
     """Attribute selection specifed by a predicate."""
 
-    def __init__ (self, selector, E_Type) :
+    def __init__ (self, spec, E_Type) :
         self.__super.__init__ (E_Type)
-        self.kind = selector.kind
-        self.pred = selector.pred
+        self.kind = spec.kind
+        self.pred = spec.pred
     # end def __init__
 
     @TFL.Meta.Once_Property
