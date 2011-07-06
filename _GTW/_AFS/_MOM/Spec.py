@@ -49,6 +49,7 @@
 #    10-Jun-2011 (MG) `_Entity_Mixin_.__init__` `entity_links_group` and
 #                     `Entity_Links_Group` added
 #     6-Jul-2011 (CT) Use `MOM.Attr.Selector` instead of homegrown code
+#     6-Jul-2011 (CT) `f_completer` added
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,7 @@ class _Entity_Mixin_ (_Base_) :
 
 class _Field_ (_Base_) :
 
-    def _field_kw (self, attr, ** kw) :
+    def _field_kw (self, attr, E_Type, ** kw) :
         at      = attr.attr
         ui_name = attr.ui_name or attr.name
         result  = dict \
@@ -184,6 +185,8 @@ class _Field_ (_Base_) :
             result ["input_widget"] = attr.input_widget
         if attr.explanation :
             result ["explanation"] = attr.explanation
+        if attr.f_completer :
+            result ["completer"] = attr.f_completer (attr, E_Type).as_json_cargo
         result.update (self.kw)
         result.update (kw)
         return result
@@ -200,7 +203,7 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
     def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = getattr (E_Type, self.name)
         return self.__super.__call__ \
-            (attr.P_Type, self, set (), ** self._field_kw (attr, ** kw))
+            (attr.P_Type, self, set (), ** self._field_kw (attr, E_Type, ** kw))
     # end def __call__
 
 # end class _Field_Entity_Mixin_
@@ -287,7 +290,7 @@ class Field (_Field_) :
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = getattr (E_Type, self.name)
-        return self.Type (** self._field_kw (attr, ** kw))
+        return self.Type (** self._field_kw (attr, E_Type, ** kw))
     # end def __call__
 
     def _css_classes (self, attr) :

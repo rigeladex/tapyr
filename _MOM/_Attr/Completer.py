@@ -68,6 +68,15 @@ class _ACI_E_ (_ACI_) :
         self.filter_treshold    = acs.filter_treshold
     # end def __init__
 
+    @property
+    def as_json_cargo (self) :
+        return dict \
+            ( filter_treshold    = self.filter_treshold
+            , names              = self.names
+            , selection_treshold = self.selection_treshold
+            )
+    # end def as_json_cargo
+
 # end class _ACI_E_
 
 class _ACI_F_ (_ACI_) :
@@ -79,6 +88,14 @@ class _ACI_F_ (_ACI_) :
         if acs.dependents :
             self.dependents = acs.dependents (E_Type).names
     # end def __init__
+
+    @property
+    def as_json_cargo (self) :
+        return dict \
+            ( names    = self.names
+            , treshold = self.treshold
+            )
+    # end def as_json_cargo
 
 # end class _ACI_F_
 
