@@ -5,6 +5,10 @@ Run this like::
 to get an interactive Javascript shell with GTW.js and GTW/AFS/Elements.js
 loaded
 
+or run it like this::
+
+    $ /usr/bin/d8 GTW/AFS/Elements.test
+
 */
 // Define aliases to allow direct copy/pasting from Python doctest
 var False = false, True = true;

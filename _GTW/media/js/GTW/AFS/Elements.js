@@ -38,6 +38,7 @@
 //                     `value.edit` unconditionally
 //    27-May-2011 (CT) `Entity_List.setup_value` redefined to set `anchor_id`
 //                     and `root_id`
+//     7-Jul-2011 (CT) `field_name_map` added
 //    ««revision-date»»···
 //--
 
@@ -172,6 +173,7 @@
           }
         , _sv_anchored_or_root : function _sv_anchored_or_root (kw, new_kw) {
               new_kw.anchor = this;
+              this.field_name_map = {};
               this.value.$id = this.$id;
               this.value.$child_ids = [];
               if (this.value ["init"] && ! this.value ["edit"]) {
@@ -238,6 +240,7 @@
                   this.value.init = "";
               }
               this._super (kw, new_kw);
+              kw.anchor.field_name_map [this.name] = this.$id;
           }
         }
       , { type_name : "Field" }
