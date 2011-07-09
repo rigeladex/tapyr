@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -1059,7 +1059,7 @@ def dotted_dict (d, prefix = "", sep = ".") :
        a 1
        b.c 2
        b.d.e 3
-"""
+    """
     result = {}
     if prefix :
         prefix = "%s%s" % (prefix, sep)
