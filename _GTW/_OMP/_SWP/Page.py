@@ -39,6 +39,7 @@
 #    24-Mar-2010 (CT) `Page_Y` added
 #     8-Apr-2010 (CT) `year_max` removed from `Page_Y` (was a bad idea (TM))
 #    10-May-2011 (CT) `hidden` added
+#    14-Jul-2011 (CT) `head_line.max_length` increased to 256 (from 120)
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class Page_Mixin (_Ancestor_Essence) :
             """Head line of the web page"""
 
             kind               = Attr.Optional
-            max_length         = 120
+            max_length         = 256
 
         # end class head_line
 
