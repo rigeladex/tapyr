@@ -40,6 +40,7 @@
 #     6-Jul-2011 (CT) s/_AC_Query_LN_/_AC_Query_FL_/, added to `first_name`, too
 #     6-Jul-2011 (CT) `e_completer` added to primary attributes
 #     6-Jul-2011 (CT) `f_completer` added to primary attributes and `salutation`
+#    16-Jul-2011 (CT) `_AC_Query_FL_` derived from (newly factored) `_AC_Query_S_`
 #    ««revision-date»»···
 #--
 
@@ -56,32 +57,22 @@ import _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
-class _AC_Query_FL_ (TFL.Meta.Object) :
+class _AC_Query_FL_ (MOM.Attr._AC_Query_S_) :
     """Special auto-complete query function for the `first_name` and
        `last_name` of a person (to better handling of double names like
        Franz-Ferdinand).
     """
 
-    def __init__ (self, attr_name, cooker = None) :
-        self.attr_name = attr_name
-        self.cooker    = cooker
-    # end def __init__
-
-    def __call__ (self, value) :
-        cooker = self.cooker
-        if cooker is not None :
-            try :
-                value = cooker (value)
-            except (ValueError, TypeError) :
-                return None
-        if "-" in value :
-            return getattr (Q, self.attr_name).STARTSWITH (value)
-        pvalue = "-%s" % (value, )
-        return \
-            ( getattr (Q, self.attr_name).STARTSWITH (value)
-            | getattr (Q, self.attr_name).CONTAINS   (pvalue)
-            )
-    # end def __call__
+    def query (self, value) :
+        aq = self.aq
+        if value == "" :
+            return aq.__eq__ (value)
+        elif "-" in value :
+            return aq.STARTSWITH (value)
+        else :
+            pvalue = "-%s" % (value, )
+            return aq.STARTSWITH (value) | aq.CONTAINS (pvalue)
+    # end def query
 
 # end class _AC_Query_FL_
 

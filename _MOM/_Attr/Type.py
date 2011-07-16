@@ -170,6 +170,7 @@
 #    30-May-2011 (CT) `from_string` changed to except "" for `s`
 #     5-Jul-2011 (CT) `e_completer` and `f_completer` added to `A_Attr_Type`
 #     6-Jul-2011 (CT) `f_completer` added to `_A_Entity_`
+#    16-Jul-2011 (CT) `_AC_Query_S_` added and used
 #    ««revision-date»»···
 #--
 
@@ -205,7 +206,7 @@ Q = TFL.Attr_Query ()
 class _AC_Query_ (TFL.Meta.Object) :
 
     def __init__ (self, q, cooker = None) :
-        self.q      = q
+        self.query  = q
         self.cooker = cooker
     # end def __init__
 
@@ -216,10 +217,24 @@ class _AC_Query_ (TFL.Meta.Object) :
                 value = cooker (value)
             except (ValueError, TypeError) :
                 return None
-        return self.q (value)
+        return self.query (value)
     # end def __call__
 
 # end class _AC_Query_
+
+class _AC_Query_S_ (_AC_Query_) :
+
+    def __init__ (self, attr_name, cooker = None) :
+        self.aq     = getattr (Q, attr_name)
+        self.cooker = cooker
+    # end def __init__
+
+    def query (self, value) :
+        q = self.aq.STARTSWITH if value else self.aq.__eq__
+        return q (value)
+    # end def query
+
+# end class _AC_Query_S_
 
 class A_Attr_Type (object) :
     """Root class for attribute types for the MOM meta object model."""
@@ -265,8 +280,7 @@ class A_Attr_Type (object) :
     @TFL.Meta.Once_Property
     def ac_query (self) :
         if self.needs_raw_value :
-            result = _AC_Query_ \
-                (getattr (Q, self.raw_name).STARTSWITH, unicode)
+            result = _AC_Query_S_ (self.raw_name, unicode)
         else :
             result = _AC_Query_ \
                 (getattr (Q, self.ckd_name).__eq__, self.cooked)
@@ -918,8 +932,7 @@ class _A_String_Base_ (A_Attr_Type) :
 
     @TFL.Meta.Once_Property
     def ac_query (self) :
-        return _AC_Query_ \
-            (getattr (Q, self.ckd_name).STARTSWITH, self.cooked)
+        return _AC_Query_S_ (self.ckd_name, self.cooked)
     # end def ac_query
 
     def _checkers (self, e_type, kind) :
@@ -1820,7 +1833,7 @@ Class `MOM.Attr.A_Attr_Type`
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
     if isinstance (v, MOM.Meta.M_Attr_Type)
-    ) + ("decimal", "Q")
+    ) + ("decimal", "Q", "_AC_Query_", "_AC_Query_S_")
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

@@ -79,6 +79,7 @@
 #                     instead of `r.as_code (v)`
 #    24-Feb-2011 (CT) DRY cleanups for `instance` and `exists` (Object, Link)
 #     9-Jun-2011 (MG) `Object.ac_query` added
+#    16-Jul-2011 (CT) `attr_completion` (and `_acq_gen`) added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,18 @@ class Id_Entity (Entity) :
         return self.home_scope.ems
     # end def ems
 
+    def attr_completion (self, q_attrs, val_dict, p_attrs = ()) :
+        """Return `.attrs` of `q_attrs + p_attrs` for all objects matching
+           the values in `val_dict` by the respective `ac_query`.
+        """
+        result  = []
+        filters = tuple (self._acq_gen (q_attrs, val_dict))
+        if filters :
+            query  = self.query (* filters)
+            result = list (query.attrs (* (q_attrs + p_attrs)))
+        return result
+    # end def attr_completion
+
     def example (self, full = False) :
         return self.instance_or_new \
             (raw = True, ** self._etype.example_attrs (full))
@@ -233,6 +246,13 @@ class Id_Entity (Entity) :
             ([result], self._etype.sort_key (sort_key))
         return result
     # end def query_s
+
+    def _acq_gen (self, q_attrs, val_dict) :
+        et = self._etype
+        for qa in q_attrs :
+            if qa in val_dict :
+                yield getattr (et, qa).ac_query (val_dict [qa])
+    # end def _acq_gen
 
     def _epkified (self, epk, kw) :
         this  = self

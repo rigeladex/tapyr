@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,6 +41,7 @@
 #     4-Dec-2009 (CT) `Attr_Query` based on `TFL.Q_Exp.Base` instead of
 #                     home-grown code; `Attr_Filter` removed
 #    19-Jan-2010 (CT) `Attr_Query.And` and `Attr_Query.Or` added
+#    16-Jul-2011 (CT) `__repr__` added
 #    ««revision-date»»···
 #--
 
@@ -233,6 +234,10 @@ class Filter (_Filter_S_) :
             self.attrs     = kw
     # end def __init__
 
+    def __repr__ (self) :
+        return "<%s %s>" % (self.__class__.__name__, self.predicate)
+    # end def __repr__
+
 # end class Filter
 
 class Filter_Not (_Filter_S_) :
@@ -257,6 +262,10 @@ class Filter_Not (_Filter_S_) :
     def __invert__ (self) :
         return Filter (self._not_predicate, ** self.attrs)
     # end def __invert__
+
+    def __repr__ (self) :
+        return "<%s NOT %s>" % (self.__class__.__name__, self.predicate)
+    # end def __repr__
 
 # end class Filter_Not
 
@@ -284,6 +293,10 @@ class _Filter_Q_ (_Filter_) :
     def _inverted_predicate (self) :
         return [Filter_Not (p) for p in self.predicates]
     # end def _inverted_predicate
+
+    def __repr__ (self) :
+        return "<%s %s>" % (self.__class__.__name__, self.predicates)
+    # end def __repr__
 
 # end class _Filter_Q_
 
