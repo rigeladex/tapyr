@@ -50,6 +50,7 @@
 #                     `Entity_Links_Group` added
 #     6-Jul-2011 (CT) Use `MOM.Attr.Selector` instead of homegrown code
 #     6-Jul-2011 (CT) `f_completer` added
+#    17-Jul-2011 (CT) s/f_completer/completer/
 #    ««revision-date»»···
 #--
 
@@ -185,8 +186,8 @@ class _Field_ (_Base_) :
             result ["input_widget"] = attr.input_widget
         if attr.explanation :
             result ["explanation"] = attr.explanation
-        if attr.f_completer :
-            result ["completer"] = attr.f_completer (attr, E_Type).as_json_cargo
+        if attr.completer :
+            result ["completer"] = attr.completer (attr, E_Type).as_json_cargo
         result.update (self.kw)
         result.update (kw)
         return result

@@ -169,8 +169,8 @@
 #     8-Mar-2011 (CT) `_cls_attr` added
 #    30-May-2011 (CT) `from_string` changed to except "" for `s`
 #     5-Jul-2011 (CT) `e_completer` and `f_completer` added to `A_Attr_Type`
-#     6-Jul-2011 (CT) `f_completer` added to `_A_Entity_`
 #    16-Jul-2011 (CT) `_AC_Query_S_` added and used
+#    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
 #    ««revision-date»»···
 #--
 
@@ -247,14 +247,13 @@ class A_Attr_Type (object) :
     check               = set ()
     check_syntax        = None
     code_format         = u"%r"
+    completer           = None
     computed            = None
     computed_default    = None
     db_sig_version      = 0
     default             = None
     description         = u""
     explanation         = u""
-    e_completer         = None
-    f_completer         = None
     format              = u"%s"
     group               = u""
     hidden              = False
@@ -798,7 +797,6 @@ class _A_Entity_ (A_Attr_Type) :
     Class             = ""
     P_Type            = TFL.Meta.Alias_Property  ("Class")
 
-    f_completer       = MOM.Attr.Field_Completer ()
     needs_raw_value   = False
     ### allow creation of new entity for this attribute
     ui_allow_new      = True

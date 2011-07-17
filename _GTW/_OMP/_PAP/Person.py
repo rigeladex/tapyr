@@ -41,6 +41,7 @@
 #     6-Jul-2011 (CT) `e_completer` added to primary attributes
 #     6-Jul-2011 (CT) `f_completer` added to primary attributes and `salutation`
 #    16-Jul-2011 (CT) `_AC_Query_FL_` derived from (newly factored) `_AC_Query_S_`
+#    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
 #    ««revision-date»»···
 #--
 
@@ -102,8 +103,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 48
             rank           = 1
 
-            e_completer    = Attr.Entity_Completer (2)
-            f_completer    = Attr.Field_Completer  (2, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class last_name
 
@@ -114,8 +114,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 32
             rank           = 2
 
-            e_completer    = Attr.Entity_Completer (3)
-            f_completer    = Attr.Field_Completer  (3, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (3, Attr.Selector.primary)
 
         # end class first_name
 
@@ -127,8 +126,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 32
             rank           = 1
 
-            e_completer    = Attr.Entity_Completer (2)
-            f_completer    = Attr.Field_Completer  (2, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class middle_name
 
@@ -141,8 +139,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             rank           = 2
             ui_name        = _("Academic title")
 
-            e_completer    = Attr.Entity_Completer (max_length + 1, 1)
-            f_completer    = Attr.Field_Completer  (1)
+            completer      = Attr.Completer_Spec  (1)
 
         # end class title
 
@@ -161,7 +158,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             kind               = Attr.Optional
             max_length         = 80
 
-            f_completer        = Attr.Field_Completer (1)
+            completer          = Attr.Completer_Spec (1)
 
         # end class salutation
 

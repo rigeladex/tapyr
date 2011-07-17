@@ -28,6 +28,7 @@
 # Revision Dates
 #     5-Jul-2011 (CT) Creation
 #     6-Jul-2011 (CT) Creation continued
+#    17-Jul-2011 (CT) Creation continued.. (major surgery)
 #    ««revision-date»»···
 #--
 
@@ -43,104 +44,68 @@ import _MOM._Attr
 
 import _TFL._Meta.Object
 
-class _ACI_ (TFL.Meta.Object) :
-    """Root class for attribute completer instances."""
+class Completer (TFL.Meta.Object) :
+    """Attribute completer instance for a specific E_Type."""
 
+    buddies    = ()
     dependents = ()
 
     def __init__ (self, acs, attr, E_Type) :
-        self.name = attr.name
-    # end def __init__
-
-    @TFL.Meta.Once_Property
-    def names (self) :
-        return tuple (uniq ((self.name, ) + self.dependents))
-    # end def names
-
-# end class _ACI_
-
-class _ACI_E_ (_ACI_) :
-    """Attribute completer instance for an `Entity_Completer`."""
-
-    def __init__ (self, acs, attr, E_Type) :
-        self.__super.__init__ (acs, attr, E_Type)
-        self.selection_treshold = acs.selection_treshold
-        self.filter_treshold    = acs.filter_treshold
-    # end def __init__
-
-    @property
-    def as_json_cargo (self) :
-        return dict \
-            ( filter_treshold    = self.filter_treshold
-            , names              = self.names
-            , selection_treshold = self.selection_treshold
-            )
-    # end def as_json_cargo
-
-# end class _ACI_E_
-
-class _ACI_F_ (_ACI_) :
-    """Attribute completer instance for a `Field_Completer`."""
-
-    def __init__ (self, acs, attr, E_Type) :
-        self.__super.__init__ (acs, attr, E_Type)
+        self.name     = attr.name
+        self.etn      = E_Type.type_name
         self.treshold = acs.treshold
+        if acs.buddies :
+            self.buddies = acs.buddies (E_Type).names
         if acs.dependents :
             self.dependents = acs.dependents (E_Type).names
     # end def __init__
 
+    def __call__ (self, scope, val_dict, complete_entity = False) :
+        E_Type = scope [self.etn]
+        deps   = self.dependents
+        if complete_entity :
+            deps += ("pid", "last_cid")
+        vd = dict ((k, v) for k, v in val_dict.iteritems () if v != "")
+        return E_Type.attr_completion (self.names, vd, deps)
+    # end def __call__
+
     @property
     def as_json_cargo (self) :
         return dict \
-            ( names    = self.names
+            ( names    = list (self.names)
             , treshold = self.treshold
             )
     # end def as_json_cargo
 
-# end class _ACI_F_
+    @TFL.Meta.Once_Property
+    def names (self) :
+        return tuple (uniq ((self.name, ) + self.buddies))
+    # end def names
 
-class _Completer_ (TFL.Meta.Object) :
-    """Root class for attribute completers"""
+# end class Completer
+
+class Completer_Spec (TFL.Meta.Object) :
+    """Attribute completer specification for a MOM attribute."""
+
+    buddies    = ()
+    dependents = ()
+    treshold   = 1
+    Type       = Completer
+
+    def __init__ (self, treshold = None, buddies = (), dependents = None) :
+        if treshold is not None :
+            self.treshold = treshold
+        if buddies is not None :
+            self.buddies = buddies
+        if dependents is not None :
+            self.dependents = dependents
+    # end def __init__
 
     def __call__ (self, attr, E_Type) :
         return self.Type (self, attr, E_Type)
     # end def __call__
 
-# end class _Completer_
-
-class Entity_Completer (_Completer_) :
-    """Model an entity completer for a MOM attribute."""
-
-    selection_treshold = 1
-    Type               = _ACI_E_
-
-    def __init__ (self, selection_treshold = None, filter_treshold = None) :
-        if selection_treshold is not None :
-            self.selection_treshold = selection_treshold
-        self.filter_treshold    = \
-            (    filter_treshold if filter_treshold is not None
-            else self.selection_treshold
-            )
-        assert self.filter_treshold <= self.selection_treshold
-    # end def __init__
-
-# end class Entity_Completer
-
-class Field_Completer (_Completer_) :
-    """Model a field completer for a MOM attribute."""
-
-    dependents = ()
-    treshold   = 1
-    Type       = _ACI_F_
-
-    def __init__ (self, treshold = None, dependents = None) :
-        if treshold is not None :
-            self.treshold = treshold
-        if dependents is not None :
-            self.dependents = dependents
-    # end def __init__
-
-# end class Field_Completer
+# end class Completer_Spec
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")
