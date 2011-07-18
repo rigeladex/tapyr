@@ -317,12 +317,12 @@ $GTW :
                                 0 = "FB-0:0"
                                 1 = "FB-0:1"
                                 2 = "FB-0:2"
-                            name = "Boat"
-                            name_map :
+                            field_name_map :
                                 name = "FB-0:1:0"
                                 nation = "FB-0:0:1"
                                 sail_number = "FB-0:0:2"
                                 sail_number_x = "FB-0:1:1"
+                            name = "Boat"
                             root_id = "FB-0"
                             type = "Entity"
                             type_name = "GTW.OMP.SRM.Boat"
@@ -373,10 +373,10 @@ $GTW :
                                 2 = "FB-0:2::0-2"
                                 3 = "FB-0:2::0-3"
                             collapsed = true
-                            name = "Boat_in_Regatta"
-                            name_map :
+                            field_name_map :
                                 place = "FB-0:2::0-3:0"
                                 points = "FB-0:2::0-3:1"
+                            name = "Boat_in_Regatta"
                             role_name = "left"
                             root_id = "FB-0"
                             type = "Entity_Link"
@@ -498,12 +498,12 @@ $GTW :
                         0 = "FB-0:0"
                         1 = "FB-0:1"
                         2 = "FB-0:2"
-                    name = "Boat"
-                    name_map :
+                    field_name_map :
                         name = "FB-0:1:0"
                         nation = "FB-0:0:1"
                         sail_number = "FB-0:0:2"
                         sail_number_x = "FB-0:1:1"
+                    name = "Boat"
                     root_id = "FB-0"
                     type = "Entity"
                     type_name = "GTW.OMP.SRM.Boat"
@@ -563,11 +563,11 @@ $GTW :
                     children :
                         0 = "FB-0:0:0:0"
                     collapsed = true
+                    field_name_map :
+                        name = "FB-0:0:0:0"
                     kind = "primary"
                     label = "Class"
                     name = "left"
-                    name_map :
-                        name = "FB-0:0:0:0"
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Boat_Class"
@@ -672,10 +672,10 @@ $GTW :
                         2 = "FB-0:2::0-2"
                         3 = "FB-0:2::0-3"
                     collapsed = true
-                    name = "Boat_in_Regatta"
-                    name_map :
+                    field_name_map :
                         place = "FB-0:2::0-3:0"
                         points = "FB-0:2::0-3:1"
+                    name = "Boat_in_Regatta"
                     role_name = "left"
                     root_id = "FB-0"
                     type = "Entity_Link"
@@ -826,11 +826,11 @@ $GTW :
                     children :
                         0 = "FB-0:2::0-1:0:0"
                     collapsed = true
+                    field_name_map :
+
                     kind = "primary"
                     label = "Regatta"
                     name = "right"
-                    name_map :
-
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Regatta"
@@ -881,11 +881,11 @@ $GTW :
                         0 = "FB-0:2::0-1:0:0:0"
                         1 = "FB-0:2::0-1:0:0:1"
                     collapsed = true
+                    field_name_map :
+                        name = "FB-0:2::0-1:0:0:1"
                     kind = "primary"
                     label = "Event"
                     name = "left"
-                    name_map :
-                        name = "FB-0:2::0-1:0:0:1"
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Regatta_Event"
@@ -923,12 +923,12 @@ $GTW :
                         0 = "FB-0:2::0-1:0:0:0.0"
                         1 = "FB-0:2::0-1:0:0:0.1"
                     collapsed = true
+                    field_name_map :
+                        finish = "FB-0:2::0-1:0:0:0.1"
+                        start = "FB-0:2::0-1:0:0:0.0"
                     kind = "primary"
                     label = "Date"
                     name = "date"
-                    name_map :
-                        finish = "FB-0:2::0-1:0:0:0.1"
-                        start = "FB-0:2::0-1:0:0:0.0"
                     required = true
                     type = "Field_Composite"
                     type_name = "MOM.Date_Interval_C"
@@ -995,12 +995,12 @@ $GTW :
                         1 = "FB-0:2::0-2:0:1"
                         2 = "FB-0:2::0-2:0:2"
                     collapsed = true
+                    field_name_map :
+                        mna_number = "FB-0:2::0-2:0:2"
+                        nation = "FB-0:2::0-2:0:1"
                     kind = "required"
                     label = "Skipper"
                     name = "skipper"
-                    name_map :
-                        mna_number = "FB-0:2::0-2:0:2"
-                        nation = "FB-0:2::0-2:0:1"
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Sailor"
@@ -1057,14 +1057,14 @@ $GTW :
                         2 = "FB-0:2::0-2:0:0:2"
                         3 = "FB-0:2::0-2:0:0:3"
                     collapsed = true
-                    kind = "primary"
-                    label = "Person"
-                    name = "left"
-                    name_map :
+                    field_name_map :
                         first_name = "FB-0:2::0-2:0:0:1"
                         last_name = "FB-0:2::0-2:0:0:0"
                         middle_name = "FB-0:2::0-2:0:0:2"
                         title = "FB-0:2::0-2:0:0:3"
+                    kind = "primary"
+                    label = "Person"
+                    name = "left"
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.PAP.Person"
@@ -1096,6 +1096,13 @@ $GTW :
                     $id = "FB-0:2::0-2:0:0:0"
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
+                    completer :
+                        names :
+                            0 = "last_name"
+                            1 = "first_name"
+                            2 = "middle_name"
+                            3 = "title"
+                        treshold = 2
                     kind = "primary"
                     label = "Last name"
                     name = "last_name"
@@ -1108,6 +1115,13 @@ $GTW :
                     $id = "FB-0:2::0-2:0:0:1"
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
+                    completer :
+                        names :
+                            0 = "first_name"
+                            1 = "last_name"
+                            2 = "middle_name"
+                            3 = "title"
+                        treshold = 3
                     kind = "primary"
                     label = "First name"
                     name = "first_name"
@@ -1120,6 +1134,13 @@ $GTW :
                     $id = "FB-0:2::0-2:0:0:2"
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
+                    completer :
+                        names :
+                            0 = "middle_name"
+                            1 = "last_name"
+                            2 = "first_name"
+                            3 = "title"
+                        treshold = 2
                     kind = "primary"
                     label = "Middle name"
                     name = "middle_name"
@@ -1131,6 +1152,10 @@ $GTW :
                     $id = "FB-0:2::0-2:0:0:3"
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
+                    completer :
+                        names :
+                            0 = "title"
+                        treshold = 1
                     kind = "primary"
                     label = "Academic title"
                     name = "title"
@@ -1203,12 +1228,12 @@ $GTW :
                             0 = "FB-0:0"
                             1 = "FB-0:1"
                             2 = "FB-0:2"
-                        name = "Boat"
-                        name_map :
+                        field_name_map :
                             name = "FB-0:1:0"
                             nation = "FB-0:0:1"
                             sail_number = "FB-0:0:2"
                             sail_number_x = "FB-0:1:1"
+                        name = "Boat"
                         root_id = "FB-0"
                         type = "Entity"
                         type_name = "GTW.OMP.SRM.Boat"
@@ -1259,10 +1284,10 @@ $GTW :
                             2 = "FB-0:2::0-2"
                             3 = "FB-0:2::0-3"
                         collapsed = true
-                        name = "Boat_in_Regatta"
-                        name_map :
+                        field_name_map :
                             place = "FB-0:2::0-3:0"
                             points = "FB-0:2::0-3:1"
+                        name = "Boat_in_Regatta"
                         role_name = "left"
                         root_id = "FB-0"
                         type = "Entity_Link"
