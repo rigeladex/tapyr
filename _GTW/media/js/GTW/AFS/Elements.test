@@ -14,6 +14,9 @@ Generate test output like this::
        /usr/bin/js -s -f GTW/AFS/Elements.test > GTW/AFS/Elements.test.output )
 
 */
+
+"use strict";
+
 // Define aliases to allow direct copy/pasting from Python doctest
 var False = false, True = true;
 
@@ -21,6 +24,49 @@ load ("GTW.js")
 load ("GTW/AFS/Elements.js")
 load ("GTW/inspect.js")
 load ("GTW/jsonify.js")
+
+function show_form (form) {
+    function lon (e) {
+        return ( " '"
+               + ( "label" in e
+                 ? e.label
+                 : ("name" in e ? e.name : "")
+                 )
+               + "'"
+               );
+    }
+    function aor (e, k) {
+        var aor, key = k + "_id", result = "";
+        if (key in e) {
+            aor = $GTW.AFS.Elements.id_map [e [key]];
+            result = ", " + k + " = `" + aor.type + lon (aor) + "`";
+        }
+        return result;
+    }
+    function show_element (e, indent) {
+        var indent1 = indent + "  ";
+        print
+            ( indent
+            + e.$id + " : "
+            + e.type + lon (e)
+            + aor (e, "root")
+            + aor (e, "anchor")
+            + ( "completer" in e
+              ? (", completer = " + e.completer.names )
+              : ""
+              )
+            );
+        if (e ["children"]) {
+            for (var i = 0, li = e.children.length, child; i < li; i++) {
+                child = e.child (i);
+                show_element (child, indent1);
+            }
+        }
+    }
+    show_element (form, "");
+    print ("");
+}
+
 // Argument for `$GTW.AFS.Form` copied from _GTW/__test__/AFS_Spec.py
 var f = new $GTW.AFS.Form (
       { '$id' : 'FB'
@@ -393,6 +439,8 @@ var f = new $GTW.AFS.Form (
           { 'sid' : 0 }
       }
 );
+
+show_form (f);
 
 var e = $GTW.AFS.Elements.id_map ["FB-0"];
 var l = $GTW.AFS.Elements.id_map ["FB-0:2::0"];

@@ -1,3 +1,36 @@
+FB : Form ''
+  FB-0 : Entity 'Boat', root = `Entity 'Boat'`
+    FB-0:0 : Fieldset 'primary'
+      FB-0:0:0 : Field_Entity 'Class', anchor = `Entity 'Boat'`
+        FB-0:0:0:0 : Field 'Name', anchor = `Field_Entity 'Class'`
+      FB-0:0:1 : Field 'Nation', anchor = `Entity 'Boat'`
+      FB-0:0:2 : Field 'Sail number', anchor = `Entity 'Boat'`
+    FB-0:1 : Fieldset 'optional'
+      FB-0:1:0 : Field 'Name', anchor = `Entity 'Boat'`
+      FB-0:1:1 : Field 'Sail number x', anchor = `Entity 'Boat'`
+    FB-0:2 : Entity_List 'Boat_in_Regatta', root = `Entity 'Boat'`, anchor = `Entity 'Boat'`
+      FB-0:2::0 : Entity_Link 'Boat_in_Regatta', root = `Entity 'Boat'`, anchor = `Entity 'Boat'`
+        FB-0:2::0-0 : Field_Role_Hidden 'Boat', anchor = `Entity_Link 'Boat_in_Regatta'`
+        FB-0:2::0-1 : Fieldset 'primary'
+          FB-0:2::0-1:0 : Field_Entity 'Regatta', anchor = `Entity_Link 'Boat_in_Regatta'`
+            FB-0:2::0-1:0:0 : Field_Entity 'Event', anchor = `Field_Entity 'Regatta'`
+              FB-0:2::0-1:0:0:0 : Field_Composite 'Date', anchor = `Field_Entity 'Event'`
+                FB-0:2::0-1:0:0:0.0 : Field 'Start', anchor = `Field_Composite 'Date'`
+                FB-0:2::0-1:0:0:0.1 : Field 'Finish', anchor = `Field_Composite 'Date'`
+              FB-0:2::0-1:0:0:1 : Field 'Name', anchor = `Field_Entity 'Event'`
+        FB-0:2::0-2 : Fieldset 'required'
+          FB-0:2::0-2:0 : Field_Entity 'Skipper', anchor = `Entity_Link 'Boat_in_Regatta'`
+            FB-0:2::0-2:0:0 : Field_Entity 'Person', anchor = `Field_Entity 'Skipper'`
+              FB-0:2::0-2:0:0:0 : Field 'Last name', anchor = `Field_Entity 'Person'`, completer = last_name,first_name,middle_name,title
+              FB-0:2::0-2:0:0:1 : Field 'First name', anchor = `Field_Entity 'Person'`, completer = first_name,last_name,middle_name,title
+              FB-0:2::0-2:0:0:2 : Field 'Middle name', anchor = `Field_Entity 'Person'`, completer = middle_name,last_name,first_name,title
+              FB-0:2::0-2:0:0:3 : Field 'Academic title', anchor = `Field_Entity 'Person'`, completer = title
+            FB-0:2::0-2:0:1 : Field 'Nation', anchor = `Field_Entity 'Skipper'`
+            FB-0:2::0-2:0:2 : Field 'Mna number', anchor = `Field_Entity 'Skipper'`
+        FB-0:2::0-3 : Fieldset 'optional'
+          FB-0:2::0-3:0 : Field 'Place', anchor = `Entity_Link 'Boat_in_Regatta'`
+          FB-0:2::0-3:1 : Field 'Points', anchor = `Entity_Link 'Boat_in_Regatta'`
+
 FB-0 value :
     $child_ids :
         0 = "FB-0:0:0"
