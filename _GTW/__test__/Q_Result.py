@@ -45,7 +45,6 @@ _q_result = r"""
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
 
-
     >>> q   = scope.PAP.Person.query ()
     >>> print q.count ()
     3
@@ -92,6 +91,14 @@ _q_result = r"""
     [GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> sorted (scope.PAP.Person_has_Address.query ().attrs ("person", "address"))
     [(GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Address (u's', u'c', u'z', u'c'))]
+
+    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln"))
+    (3, None)
+    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 1"))
+    (1, GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''))
+    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 4"))
+    (0, None)
+
 """
 
 from   _GTW.__test__.model import *

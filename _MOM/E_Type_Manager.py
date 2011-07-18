@@ -82,6 +82,7 @@
 #    16-Jul-2011 (CT) `attr_completion` (and `_acq_gen`) added
 #    18-Jul-2011 (CT) `attr_completion` changed to return a `Q_Result` instead
 #                     of a `list`
+#    18-Jul-2011 (CT) `query_1` added
 #    ««revision-date»»···
 #--
 
@@ -251,6 +252,15 @@ class Id_Entity (Entity) :
             ([result], self._etype.sort_key (sort_key))
         return result
     # end def query_s
+
+    def query_1 (self, * filters, ** kw) :
+        """Return the number of matches and the one single entity, if any,
+           for the conditions in `filters` and `kw`.
+        """
+        q = self.query (* filters, ** kw)
+        c = q.count ()
+        return c, q.first () if c == 1 else None
+    # end def query_1
 
     def _acq_gen (self, q_attrs, val_dict) :
         et = self._etype

@@ -62,6 +62,7 @@
 #     9-Apr-2011 (MG) `Manager.href_display` use getattr for `perma_name`
 #                     `Link_Manager` started
 #    11-May-2011 (MG) `Link_Manager` continued
+#    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -168,16 +169,10 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
 
     def _get_child (self, child, * grandchildren) :
         result = None
-        try :
-            obj = self.ETM.query (perma_name = child).one ()
-        except Exception, exc :
-            try :
-                obj = self.ETM.pid_query (child)
-            except Exception, exc :
-                pass
-            else :
-                result = self.page_from_obj (obj)
-        else :
+        n, obj = self.ETM.query_1 (perma_name = child)
+        if obj is None :
+            obj = self.ETM.pid_query (child)
+        if obj is not None :
             result = self.page_from_obj (obj)
             if grandchildren :
                 if self.Page.allows_children :
@@ -305,11 +300,8 @@ class Manager_T_Archive (Manager) :
     def _get_grandchild (self, y, grandchildren) :
         if len (grandchildren) == 1 :
             gc = grandchildren [0]
-            try :
-                obj = self.ETM.query (perma_name = gc).one ()
-            except Exception, exc :
-                pass
-            else :
+            n, obj = self.ETM.query_1 (perma_name = gc)
+            if obj is not None :
                 return self.page_from_obj (obj)
     # end def _get_grandchild
 
@@ -352,11 +344,7 @@ class Manager_T_Archive_Y (Manager_T_Archive) :
     def _get_grandchild (self, y, grandchildren) :
         if len (grandchildren) == 1 :
             gc = grandchildren [0]
-            try :
-                obj = self.ETM.query (year = y, perma_name = gc).one ()
-            except Exception, exc :
-                pass
-            else :
+            n, obj = self.ETM.query_1 (year = y, perma_name = gc)
                 return self.page_from_obj (obj)
     # end def _get_grandchild
 

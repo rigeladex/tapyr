@@ -50,6 +50,7 @@
 #                     empty `._update_sid` removed
 #     8-Jun-2011 (CT) `_create_instance` factored to use `instance_or_new`
 #                     for all but implicit links
+#    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -170,10 +171,7 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
         link  = entity
         if entity is not None :
             if not isinstance (entity, assoc._etype) :
-                try :
-                    link = assoc.query (** { self.role_name : entity }).one ()
-                except IndexError :
-                    link = None
+                n, link = assoc.query_1 (** { self.role_name : entity })
         return self.__super.__call__ (assoc, link, ** kw)
     # end def __call__
 

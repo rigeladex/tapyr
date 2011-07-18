@@ -45,6 +45,7 @@
 #                     specifying of the join condition
 #     7-Sep-2010 (MG) `attr` and `attrs` changed to return `_Q_Result_Attrs_`
 #    13-Oct-2010 (MG) Support for `raw` parameter added to `attr/(s)`
+#    18-Jul-2011 (CT) `count` changed ro return `int (count)`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +117,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         result   = self.session.connection.execute (sa_query)
         count    = result.fetchone ().count
         result.close ()
-        return count
+        return int (count)
     # end def count
 
     def distinct (self) :
