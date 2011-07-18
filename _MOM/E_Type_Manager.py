@@ -80,6 +80,8 @@
 #    24-Feb-2011 (CT) DRY cleanups for `instance` and `exists` (Object, Link)
 #     9-Jun-2011 (MG) `Object.ac_query` added
 #    16-Jul-2011 (CT) `attr_completion` (and `_acq_gen`) added
+#    18-Jul-2011 (CT) `attr_completion` changed to return a `Q_Result` instead
+#                     of a `list`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +92,8 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 from   _TFL.predicate import first, paired
+
+import itertools
 
 class Entity (TFL.Meta.Object) :
     """Base class for scope-specific E_Type managers."""
@@ -175,11 +179,12 @@ class Id_Entity (Entity) :
         """Return `.attrs` of `q_attrs + p_attrs` for all objects matching
            the values in `val_dict` by the respective `ac_query`.
         """
-        result  = []
         filters = tuple (self._acq_gen (q_attrs, val_dict))
         if filters :
-            query  = self.query (* filters)
-            result = list (query.attrs (* (q_attrs + p_attrs)))
+            query  = self.query   (* filters)
+            result = query.attrs  (* itertools.chain (q_attrs, p_attrs))
+        else :
+            result = TFL.Q_Result (())
         return result
     # end def attr_completion
 

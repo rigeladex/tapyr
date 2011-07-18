@@ -109,6 +109,17 @@ _test_code = """
     >>> sorted (lnc (scope, dict (last_name = "Ta", first_name = "Ma"), complete_entity = True))
     [(u'tanzer', u'martin', u'', u'', 4, 4)]
 
+    >>> lnc (scope, dict (last_name = "Ta")).count ()
+    5
+    >>> lnc (scope, dict (last_name = "Ta", first_name = "M")).count ()
+    2
+    >>> lnc (scope, dict (last_name = "Ta", first_name = "Ma")).count ()
+    1
+    >>> lnc (scope, dict (last_name = "Ta", first_name = "Mo")).count ()
+    0
+    >>> lnc (scope, dict ()).count ()
+    0
+
 """
 
 from   _GTW.__test__.model      import *
