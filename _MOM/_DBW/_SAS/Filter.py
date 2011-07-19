@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Martin Glueck All rights reserved
+# Copyright (C) 2009-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -45,6 +45,7 @@ import _TFL.Decorator
 import _TFL.Filter
 import _TFL.Q_Exp
 from    sqlalchemy.sql   import expression
+from    _MOM.Q_Exp_Raw   import Get_Raw
 
 SAS_Attr_Map = dict \
     ( type_name = TFL.Getter.Type_Name
@@ -81,6 +82,11 @@ def _sa_filter (self, SAQ) :
             joins.extend (ajoins)
             args.extend  (afilter)
         else :
+            if ( args
+               and isinstance (self.lhs, Get_Raw)
+               and not getattr (args [0], "IS_RAW_COL", False)
+               ) :
+                arg = args [0].MOM_Kind.from_string (arg)
             args.append (arg)
     return joins, (getattr (args [0], self.op.__name__) (args [1]), )
 # end def _sa_filter

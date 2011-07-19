@@ -134,8 +134,8 @@ class _Q_Result_ (TFL.Meta.Object) :
             if not isinstance (c, sql.expression.Operators) :
                 ajoins, aclause = c._sa_filter (self.e_type._SAQ)
             else :
-                ajoins  = ()
-                aclause = (c)
+                ajoins          = ()
+                aclause         = (c)
             result._joins .extend (ajoins)
             result._filter.extend (aclause)
         for attr, value in eq_kw.iteritems () :

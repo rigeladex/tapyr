@@ -30,6 +30,7 @@
 #     2-Sep-2010 (CT) Changed to test `HPS` backend, too
 #     2-Sep-2010 (CT) Test for `set` of `Q.lifetime.finish` added
 #     2-Sep-2010 (MG) More tests added
+#    19-Jul-2011 (MG) New tests for `RAW` queries added
 #    ««revision-date»»···
 #--
 
@@ -101,13 +102,27 @@ _q_result = r"""
 
 """
 
+_raw_query = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 2")
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
+    >>> pha = scope.PAP.Person_has_Address (p, a)
+
+    >>> scope.PAP.Person.query (Q.RAW.last_name == "LN 1").all ()
+    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+    >>> scope.PAP.Person.query (Q.RAW.lifetime.start == "2010/01/01").all ()
+    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+"""
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 from   _TFL.predicate      import first
 import datetime
 
-__test__ = Scaffold.create_test_dict (_q_result)
+__test__ = Scaffold.create_test_dict \
+    (dict (q_result = _q_result, raw_query = _raw_query))
 
 ### __END__ GTW.__test__.Q_Result
-
-

@@ -27,14 +27,15 @@
 #
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
-#    19-Jul-2011 (CT) Guard for `MOM.Entity` added
+#    19-Jul-2011 (MG) `_name` converted to `Once_Property`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__               import unicode_literals
 
-from   _MOM        import MOM
-from   _TFL        import TFL
+from   _MOM                     import MOM
+from   _TFL                     import TFL
+from   _TFL._Meta.Once_Property import Once_Property
 
 import _MOM.Entity
 import _TFL.Q_Exp
@@ -84,13 +85,13 @@ class Get_Raw (TFL.Q_Exp.Get) :
         if self._prefix :
             obj = getattr (TFL.Getter, self._prefix) (obj)
         key = self._postfix
-        if isinstance (obj, MOM.Entity) and key in obj.attributes :
+        if key in obj.attributes :
             return obj.raw_attr (key)
         else :
             return unicode (getattr (obj, key))
     # end def _getter
 
-    @property
+    @Once_Property
     def _name (self) :
         if self._prefix :
             return ".".join ((self._prefix, self._postfix))

@@ -44,18 +44,20 @@
 #     2-Sep-2010 (MG) Store the kind in the database column attributes
 #     6-Sep-2010 (MG) `Join_Query` specify the join condition
 #     6-Sep-2010 (MG) `_MOM_Query_.SAS_EQ_Clause` fixed
+#    19-Jul-2011 (MG) Support for raw queries added
 #    ««revision-date»»···
 #--
 
-from   _TFL                  import TFL
+from   _TFL                     import TFL
 import _TFL._Meta.Object
 import _TFL.Sorted_By
+from   _TFL._Meta.Once_Property import Once_Property
 
-from   _MOM                  import MOM
-from   _MOM.import_MOM       import Q
+from   _MOM                     import MOM
+from   _MOM.import_MOM          import Q
 import _MOM._DBW._SAS
 
-from    sqlalchemy           import sql
+from    sqlalchemy              import sql
 import  operator
 
 class Query (TFL.Meta.Object) :
@@ -85,6 +87,15 @@ class Query (TFL.Meta.Object) :
 
 class _MOM_Query_ (TFL.Meta.Object) :
     """Base class for all queries for MOM objects"""
+
+    @Once_Property
+    def attributes (self) :
+        return self._E_TYPE [0].attributes
+    # end def attributes
+
+    def raw_attr (self, key) :
+        return self._RAW_ATTRIBUTES.get (key, getattr (self, key))
+    # end def raw_attr
 
     def SAS_EQ_Clause (self, attr, cooked) :
         db = cooked
@@ -117,6 +128,7 @@ class MOM_Query (_MOM_Query_) :
         columns               = sa_table.columns
         self.pid              = columns [e_type._sa_pk_name]
         self._ATTRIBUTES      = []
+        self._RAW_ATTRIBUTES  = {}
         self._COMPOSITES      = []
         self._ID_ENTITY_ATTRS = {}
         self._query_fct       = {}
@@ -141,7 +153,9 @@ class MOM_Query (_MOM_Query_) :
                 attr_names = [name]
                 self._add_q (col, kind, name, attr.ckd_name)
                 if kind.needs_raw_value :
-                    rcol = columns [attr._sa_raw_col_name]
+                    rcol             = columns [attr._sa_raw_col_name]
+                    rcol.IS_RAW_COL  = True
+                    self._RAW_ATTRIBUTES [name] = rcol
                     self._add_q (rcol, kind, attr.raw_name)
                 if isinstance (kind, MOM.Attr.Link_Role) :
                     self._add_q (col, kind, attr.role_name)
@@ -152,6 +166,8 @@ class MOM_Query (_MOM_Query_) :
                         self._ID_ENTITY_ATTRS [an] = join_query
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
             self._COMPOSITES.extend (b_saq._COMPOSITES)
+            self._RAW_ATTRIBUTES = dict \
+                (b_saq._RAW_ATTRIBUTES, ** self._RAW_ATTRIBUTES)
             for name in b_saq._ATTRIBUTES :
                 setattr (self, name, b_saq [name])
                 self._ATTRIBUTES.append (name)
@@ -187,7 +203,7 @@ class MOM_Composite_Query (_MOM_Query_) :
     """Query attributes of an composite attribite"""
 
     def __init__ (self, owner_etype, e_type, kind, sa_table) :
-        self._E_TYPE      = e_type
+        self._E_TYPE      = (e_type, )
         self._SA_TABLE    = sa_table
         prefix            = kind._sa_prefix
         db_attrs, columns = e_type._sa_save_attrs.pop \
@@ -195,6 +211,7 @@ class MOM_Composite_Query (_MOM_Query_) :
         prefix_len                = len (prefix)
         attr_names                = [c.name [prefix_len:] for c in columns]
         self._ATTRIBUTES          = attr_names
+        self._RAW_ATTRIBUTES      = {}
         self._COLUMNS             = []
         self._ID_ENTITY_ATTRS     = {}
         for idx, name in \
@@ -205,6 +222,11 @@ class MOM_Composite_Query (_MOM_Query_) :
             col.MOM_Kind = getattr (e_type, name)
             setattr                (self, name, col)
             self._COLUMNS.append   (col)
+            if col.MOM_Kind.needs_raw_value :
+                col                         = columns [idx + 1]
+                col.MOM_Kind                = getattr (e_type, name)
+                col.IS_RAW_COL              = True
+                self._RAW_ATTRIBUTES [name] = col
         self._query_fct = {}
         for name, kind in db_attrs.iteritems () :
             if isinstance (kind, MOM.Attr.Query) :
