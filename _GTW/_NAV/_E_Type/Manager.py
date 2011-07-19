@@ -345,6 +345,7 @@ class Manager_T_Archive_Y (Manager_T_Archive) :
         if len (grandchildren) == 1 :
             gc = grandchildren [0]
             n, obj = self.ETM.query_1 (year = y, perma_name = gc)
+            if obj is not None :
                 return self.page_from_obj (obj)
     # end def _get_grandchild
 

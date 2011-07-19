@@ -83,6 +83,7 @@
 #    18-Jul-2011 (CT) `attr_completion` changed to return a `Q_Result` instead
 #                     of a `list`
 #    18-Jul-2011 (CT) `query_1` added
+#    19-Jul-2011 (CT) s/_cooked_epk/cooked_epk/ and factored up to `Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -189,6 +190,13 @@ class Id_Entity (Entity) :
         return result
     # end def attr_completion
 
+    def cooked_epk (self, epk, kw) :
+        (epk, kw), this  = self._epkified (epk, kw)
+        raw      = kw.get ("raw", False)
+        epk_iter = (this._raw_epk_iter if raw else this._cooked_epk_iter)
+        return tuple (epk_iter (epk)), kw, this
+    # end def cooked_epk
+
     def example (self, full = False) :
         return self.instance_or_new \
             (raw = True, ** self._etype.example_attrs (full))
@@ -196,7 +204,7 @@ class Id_Entity (Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if an object or link with primary key `epk` exists."""
-        epk, kw, this = self._cooked_epk (epk, kw)
+        epk, kw, this = self.cooked_epk (epk, kw)
         if kw :
             raise TypeError (kw)
         return this.ems.exists (this._etype, epk)
@@ -204,7 +212,7 @@ class Id_Entity (Entity) :
 
     def instance (self, * epk, ** kw) :
         """Return the object or link with primary key `epk` or None."""
-        epk, kw, this = self._cooked_epk (epk, kw)
+        epk, kw, this = self.cooked_epk (epk, kw)
         return this.ems.instance (this._etype, epk)
     # end def instance
 
@@ -306,13 +314,6 @@ class Object (Id_Entity) :
             except IndexError :
                 pass
     # end def singleton
-
-    def _cooked_epk (self, epk, kw) :
-        (epk, kw), this  = self._epkified (epk, kw)
-        raw      = kw.pop ("raw", False)
-        epk_iter = (this._raw_epk_iter if raw else this._cooked_epk_iter)
-        return tuple (epk_iter (epk)), kw, this
-    # end def _cooked_epk
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
@@ -453,13 +454,6 @@ class Link (Id_Entity) :
             raise MOM.Error.Multiplicity_Errors (etype.type_name, errors)
     # end def _checked_roles
 
-    def _cooked_epk (self, epk, kw) :
-        (epk, kw), this = self._epkified (epk, kw)
-        raw      = kw.pop ("raw", False)
-        epk_iter = (this._raw_epk_iter if raw else this._role_to_cooked_iter)
-        return tuple (epk_iter (epk)), kw, this
-    # end def _cooked_epk
-
     def _cooked_role (self, r, v) :
         result = v
         if not isinstance (result, MOM.Entity) :
@@ -508,6 +502,8 @@ class Link (Id_Entity) :
                     v = None
             yield v
     # end def _role_to_cooked_iter
+
+    _cooked_epk_iter = _role_to_cooked_iter
 
     def _role_to_raw_iter (self, epk) :
         for (r, v) in paired (self._etype.Roles, epk) :
