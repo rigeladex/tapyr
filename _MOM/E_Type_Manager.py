@@ -84,6 +84,7 @@
 #                     of a `list`
 #    18-Jul-2011 (CT) `query_1` added
 #    19-Jul-2011 (CT) s/_cooked_epk/cooked_epk/ and factored up to `Id_Entity`
+#    19-Jul-2011 (CT) `attr_completion` changed to use `Q.RAW` if argument `raw`
 #    ««revision-date»»···
 #--
 
@@ -177,14 +178,17 @@ class Id_Entity (Entity) :
         return self.home_scope.ems
     # end def ems
 
-    def attr_completion (self, q_attrs, val_dict, p_attrs = ()) :
+    def attr_completion (self, q_attrs, val_dict, p_attrs = (), raw = False) :
         """Return `.attrs` of `q_attrs + p_attrs` for all objects matching
            the values in `val_dict` by the respective `ac_query`.
         """
         filters = tuple (self._acq_gen (q_attrs, val_dict))
         if filters :
             query  = self.query  (* filters)
-            result = query.attrs (* itertools.chain (q_attrs, p_attrs))
+            attrs  = itertools.chain (q_attrs, p_attrs)
+            if raw :
+                attrs = tuple (getattr (MOM.Q.RAW, a) for a in attrs)
+            result = query.attrs (* attrs)
         else :
             result = TFL.Q_Result (())
         return result

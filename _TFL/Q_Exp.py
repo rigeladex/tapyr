@@ -697,6 +697,10 @@ class Get (Exp) :
         self._getter = getter
     # end def __init__
 
+    def __call__ (self, obj) :
+        return self.predicate (obj)
+    # end def __call__
+
     def predicate (self, obj) :
         Q = self.Q
         try :
@@ -712,10 +716,6 @@ class Get (Exp) :
             obj = getattr (TFL.Getter, head) (obj)
         setattr (obj, name, value)
     # end def SET
-
-    def __call__ (self, obj) :
-        return self.predicate (obj)
-    # end def __call__
 
     def __getattr__ (self, name) :
         full_name = ".".join ((self._name, name))

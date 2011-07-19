@@ -35,6 +35,7 @@
 #    22-Dec-2009 (CT) `Sequence_Number` removed
 #     4-May-2010 (CT) `Q` moved to `MOM.Attr.Type`
 #     5-Jul-2011 (CT) `MOM.Attr.Selector` added
+#    19-Jul-2011 (CT) `MOM.Q_Exp_Raw` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ import _MOM.Entity
 import _MOM.Error
 import _MOM.Link
 import _MOM.Object
+import _MOM.Q_Exp_Raw
 import _MOM.Scope
 
 import _MOM._Attr.Selector
