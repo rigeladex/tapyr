@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -243,7 +243,7 @@ class Manager (MOM.EMS._Manager_) :
         queries = []
         for (rn, obj) in rkw.iteritems () :
             try :
-                i    = Type.role_map [rn]
+                i = Type.role_map [rn]
             except KeyError :
                 print Type, Type.Roles, Type.role_map
                 raise

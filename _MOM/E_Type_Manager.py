@@ -183,8 +183,8 @@ class Id_Entity (Entity) :
         """
         filters = tuple (self._acq_gen (q_attrs, val_dict))
         if filters :
-            query  = self.query   (* filters)
-            result = query.attrs  (* itertools.chain (q_attrs, p_attrs))
+            query  = self.query  (* filters)
+            result = query.attrs (* itertools.chain (q_attrs, p_attrs))
         else :
             result = TFL.Q_Result (())
         return result
@@ -256,7 +256,7 @@ class Id_Entity (Entity) :
         """
         sort_key = kw.pop ("sort_key", None)
         result   = self.query (* filters, ** kw)
-        result   = TFL.Q_Result_Composite \
+        result   = self.ems.Q_Result_Composite \
             ([result], self._etype.sort_key (sort_key))
         return result
     # end def query_s
@@ -405,7 +405,7 @@ class Link (Id_Entity) :
         """
         sort_key = kw.pop ("sort_key", None)
         result   = self.r_query (* filters, ** kw)
-        result   = TFL.Q_Result_Composite \
+        result   = self.ems.Q_Result_Composite \
             ([result], self._etype.sort_key (sort_key))
         return result
     # end def r_query_s

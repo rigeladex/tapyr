@@ -46,6 +46,8 @@
 #     7-Sep-2010 (MG) `attr` and `attrs` changed to return `_Q_Result_Attrs_`
 #    13-Oct-2010 (MG) Support for `raw` parameter added to `attr/(s)`
 #    18-Jul-2011 (CT) `count` changed ro return `int (count)`
+#    19-Jul-2011 (CT) `_Q_Result_Attrs_._from_row_tuple` changed to not apply
+#                     `str` for kind-less attributes (e.g., `pid`)
 #    ««revision-date»»···
 #--
 
@@ -342,7 +344,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
             if k :
                 result.append (k.from_pickle_cargo (scope, (pc, )))
             else :
-                result.append (str (pc))
+                result.append (pc)
         return tuple (result)
     # end def _from_row_tuple
 
