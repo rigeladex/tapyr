@@ -195,7 +195,7 @@ class Scaffold (GTW.OMP.Scaffold) :
     # end def do_wsgi
 
     @classmethod
-    def _load_scope (cls, apt, url) :
+    def XXX_load_scope (cls, apt, url) :
         result = super (Scaffold, cls)._load_scope (apt, url)
         cls._load_afs  (result.app_type, form_pickle_path)
         return result
