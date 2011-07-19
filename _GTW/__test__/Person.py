@@ -120,9 +120,15 @@ _test_code = """
     >>> lnc (scope, dict ()).count ()
     0
 
+    >>> PAP.Person.query_s (Q.RAW.last_name == "Tanzer").all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
+    >>> PAP.Person.query_s (Q.RAW.last_name.STARTSWITH ("Ta")).all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
+
 """
 
 from   _GTW.__test__.model      import *
+from   _MOM.import_MOM          import Q
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

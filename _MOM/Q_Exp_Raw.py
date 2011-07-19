@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
+#    19-Jul-2011 (CT) Guard for `MOM.Entity` added
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,7 @@ from   __future__  import unicode_literals
 from   _MOM        import MOM
 from   _TFL        import TFL
 
+import _MOM.Entity
 import _TFL.Q_Exp
 
 class _RAW_ (TFL.Meta.Object) :
@@ -60,7 +62,6 @@ class _RAW_DESC_ (property) :
 
 # end class _RAW_DESC_
 
-
 TFL.Q_Exp.Base.RAW = _RAW_DESC_ ()
 
 @TFL.Add_New_Method (_RAW_)
@@ -83,7 +84,7 @@ class Get_Raw (TFL.Q_Exp.Get) :
         if self._prefix :
             obj = getattr (TFL.Getter, self._prefix) (obj)
         key = self._postfix
-        if key in obj.attributes :
+        if isinstance (obj, MOM.Entity) and key in obj.attributes :
             return obj.raw_attr (key)
         else :
             return unicode (getattr (obj, key))

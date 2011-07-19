@@ -31,6 +31,7 @@
 #     3-May-2010 (MG) New test for query attributes added
 #     5-May-2010 (MG) Additional tests added
 #     7-May-2010 (MG) `sail_number` is now a numeric string
+#    19-Jul-2011 (CT) Test for `Q.RAW` added
 #    ««revision-date»»···
 #--
 
@@ -152,6 +153,9 @@ _link2_link1 = r"""
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
     (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
 
+    >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
+    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+
 """
 
 _query_attr = r"""
@@ -184,6 +188,14 @@ _query_attr = r"""
     2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
     2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
+
+    >>> PAP.Person.query (Q.last_name == "tanzer").all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+    >>> PAP.Person.query (Q.last_name == "Tanzer").all ()
+    []
+    >>> PAP.Person.query (Q.RAW.last_name == "Tanzer").all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+
 """
 
 if 1 :
