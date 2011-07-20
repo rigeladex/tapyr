@@ -49,6 +49,8 @@
 #    30-Nov-2010 (CT) s/save_eval/safe_eval/ and removed `strip`-call from it
 #    23-Mar-2011 (CT) `_T` defined (instead of aliased) to guard against
 #                     empty argument
+#    20-Jul-2011 (CT) `_Config_._properties` added
+#    20-Jul-2011 (CT) Use encoding information from `TFL.user_config`
 #    ««revision-date»»···
 #--
 
@@ -58,28 +60,35 @@ from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
 
 import _TFL.Decorator
+import _TFL.User_Config
 
 import gettext
 import locale
 import sys
 
-_e = locale.getpreferredencoding ()
+class _Config_ (Record) :
 
-Config = Record \
+    _properties = ("choice", )
+
+    @property
+    def choice (self) :
+        """Language choice."""
+        return TFL.user_config.language
+    # end def choice
+
+    @choice.setter
+    def choice (self, value) :
+        TFL.user_config.language = value
+    # end def choice
+
+# end class _Config_
+
+Config = _Config_ \
    ( Languages  = {"" : gettext.NullTranslations ()}
    , locale_dir = "locale"
    , domains    = ("messages", )
-   , choice     = ""
-   , encoding   =
-       Record
-         ( file_system = sys.getfilesystemencoding ()
-         , input       = _e
-         , output      = _e
-         )
    )
 Config.current = Config.Null = Config.Languages [""]
-
-del _e
 
 class _Name_ (TFL.Meta.Object) :
     """Translator for names"""
@@ -146,20 +155,20 @@ def context (* lang) :
 # end def context
 
 def decode (s, errors = "replace") :
-    """Decode `s` using `Config.encoding.input`."""
+    """Decode `s` using `TFL.user_config.input_encoding`."""
     if isinstance (s, str) :
-        s = unicode (s, Config.encoding.input, errors)
+        s = unicode (s, TFL.user_config.input_encoding, errors)
     return s
 # end def decode
 
 def encode_f (s, errors = "replace") :
-    """Encodes `s` using `Config.encoding.file_system`."""
-    return s.encode (Config.encoding.file_system, errors)
+    """Encodes `s` using `TFL.user_config.file_system_encoding`."""
+    return s.encode (TFL.user_config.file_system_encoding, errors)
 # end def encode_f
 
 def encode_o (s, errors = "replace") :
-    """Encodes `s` using `Config.encoding.output`."""
-    return s.encode (Config.encoding.output, errors)
+    """Encodes `s` using `TFL.user_config.output_encoding`."""
+    return s.encode (TFL.user_config.output_encoding, errors)
 # end def encode_o
 
 def load (* languages, ** kw) :

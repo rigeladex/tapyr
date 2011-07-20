@@ -74,6 +74,8 @@
 #     9-Nov-2010 (CT) `Help` changed to recognize `all` (and `*`)
 #    17-Jan-2011 (CT) Use a `Word_Trie` instead of a `dict` to handle
 #                     abbreviations, removed `_opt_abbr` from `Cmd`
+#    20-Jul-2011 (CT) `_Encoding_.cook` changed to change `TFL.user_config`
+#                     instead of `TFL.I18N.Config`
 #    ««revision-date»»···
 #--
 
@@ -348,8 +350,8 @@ class _Encoding_ (_Spec_O_) :
     def cook (self, value, cao = None) :
         result = self.__super.cook (value, cao)
         if result :
-            from _TFL.I18N import Config
-            setattr (Config.encoding, self.abbr, result)
+            from _TFL.User_Config import user_config
+            user_config.set_default (self.name, result)
         return result
     # end def cook
 

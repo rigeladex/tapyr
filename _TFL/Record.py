@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2000-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,6 +45,8 @@
 #                     instead of explicitly quoted `%s`)
 #    21-Dec-2009 (CT) `__getstate__` and `__setstate__` added
 #    20-Feb-2010 (CT) `__contains__` added
+#    20-Jul-2011 (CT) `_properties` added to allow subclasses to define
+#                     property setters that actually work
 #    ««revision-date»»···
 #--
 
@@ -63,10 +65,14 @@ class Record (TFL.Meta.Object) :
        {'foo': 42}
     """
 
+    _properties = ()
+
     def __init__ (self, ** kw) :
         assert "_kw"           not in kw
         assert "copy"          not in kw
         assert "_formatted_kw" not in kw
+        assert "_properties"   not in kw
+        assert not any (p in kw for p in self._properties)
         self.__dict__ ["_kw"] = kw.copy ()
     # end def __init__
 
@@ -125,11 +131,17 @@ class Record (TFL.Meta.Object) :
     # end def __repr__
 
     def __setattr__ (self, name, value) :
-        self._kw [name] = value
+        if name in self._properties :
+            self.__super.__setattr__ (name, value)
+        else :
+            self._kw [name] = value
     # end def __setattr__
 
     def __setitem__ (self, name, value) :
-        self._kw [name] = value
+        if name in self._properties :
+            self.__super.__setattr__ (name, value)
+        else :
+            self._kw [name] = value
     # end def __setitem__
 
     def __setstate__ (self, state) :

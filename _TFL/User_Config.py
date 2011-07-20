@@ -50,7 +50,7 @@ class User_Config (threading.local) :
 
     file_system_encoding = sys.getfilesystemencoding ()
     input_encoding       = locale.getpreferredencoding ()
-    language             = ""
+    language             = "en"
     output_encoding      = input_encoding
     time_zone            = tz.tzutc ()
     user                 = None

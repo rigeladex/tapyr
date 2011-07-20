@@ -31,7 +31,9 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   _TFL             import TFL
+
+from   _TFL.User_Config import user_config
 
 import cPickle as pickle
 import sys
@@ -45,9 +47,7 @@ def fprint (* values, ** kw) :
        sep:  string inserted between values, default a space.
        end:  string appended after the last value, default a newline.
     """
-    def _convert (values) :
-        import _TFL.I18N
-        encoding = TFL.I18N.Config.encoding.output
+    def _convert (values, encoding) :
         for v in values :
             if not isinstance (v, basestring) :
                 v = str (v)
@@ -59,7 +59,7 @@ def fprint (* values, ** kw) :
         file = sys.stdout
     sep  = kw.pop ("sep",  " ")
     end  = kw.pop ("end",  "\n")
-    file.write (sep.join (_convert (values)) + end)
+    file.write (sep.join (_convert (values, user_config.output_encoding)) + end)
 # end def fprint
 
 ### __END__ TFL._pyk2

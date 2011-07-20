@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -60,15 +60,15 @@ class L10N (GTW.NAV.Dir) :
             HTTP      = self.top.HTTP
             language  = self.language
             with TFL.I18N.context (language) :
-                 choice = TFL.I18N.Config.choice
-                 if language.startswith (choice [0]) :
+                choice = TFL.I18N.Config.choice
+                if language.startswith (choice [0]) :
                     handler.session ["language"] = (language, )
                     handler.session.notifications.append \
                         ( GTW.Notification
                             (_T (u"Language %s selected") % language)
                         )
-                    next = handler.request.headers.get ("Referer", "/")
-                    raise HTTP.Redirect_307 (next)
+                next = handler.request.headers.get ("Referer", "/")
+                raise HTTP.Redirect_307 (next)
             raise HTTP.Error_404 ()
         # end def rendered
 

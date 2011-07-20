@@ -30,6 +30,7 @@
 #     5-Jul-2011 (CT) `MOM.Attr.Selector` tests added
 #     6-Jul-2011 (CT) Tests for `f_completer` added
 #    17-Jul-2011 (CT) s/f_completer/completer/, completion tests added
+#    19-Jul-2011 (CT) Test for `Q.RAW` added
 #    ««revision-date»»···
 #--
 
