@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -342,7 +342,7 @@ Register account
 
 Test the expiration of action
     >>> import datetime
-    >>> expires = datetime.datetime.now () - datetime.timedelta (minutes = 1)
+    >>> expires = datetime.datetime.utcnow () - datetime.timedelta (minutes = 1)
     >>> act = scope.Auth.Account_EMail_Verification (acc5, expires = expires)
     >>> act.handle ()
     Traceback (most recent call last):

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -71,6 +71,7 @@
 #    16-Sep-2010 (CT) `modified_attrs` added `Create`
 #    21-Oct-2010 (CT) `_modify_last_cid` factored and redefined for
 #                     `Attr_Composite`
+#    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    ««revision-date»»···
 #--
 
@@ -107,7 +108,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     def __init__ (self) :
         self.__super.__init__ ()
-        self.time = datetime.datetime.now ()
+        self.time = datetime.datetime.utcnow ()
     # end def __init__
 
     def add_change (self, child) :

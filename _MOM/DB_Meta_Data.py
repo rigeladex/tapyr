@@ -31,6 +31,7 @@
 #    16-Aug-2010 (CT) `COPY` changed to use `_copy_ignore` and `NEW`
 #    16-Aug-2010 (CT) `NEW`  changed to pop from `kw`
 #    30-Jan-2011 (CT) `dbid` added
+#    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
         Version = app_type.Version
         result  = cls \
             ( creator       = kw.pop ("creator", None) or TFL.Record
-                ( date          = datetime.datetime.now ()
+                ( date          = datetime.datetime.utcnow ()
                 , tool_version  = Version.id
                 , user          =
                     getattr (scope, "user", TFL.Environment.username)

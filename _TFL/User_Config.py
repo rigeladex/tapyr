@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
+#    20-Jul-2011 (CT) `get_tz` and `set_defaults` added
 #    ««revision-date»»···
 #--
 
@@ -65,12 +66,30 @@ class User_Config (threading.local) :
         self.__dict__.update (kw)
     # end def __init__
 
+    def get_tz (self, name = None) :
+        """Return tz-info for `name` (default taken from environment).
+
+           For instance::
+
+               tz.gettz ("Europe/Vienna") -->
+                   tzfile ('/usr/share/zoneinfo/Europe/Vienna')
+
+        """
+        return tz.gettz (name)
+    # end def get_tz
+
     LET = TFL.Meta.Class_and_Instance_Method (TFL.Context.attr_let)
 
     def set_default (self, name, value) :
         """Set default of attribute `name` to `value`."""
         setattr (self.__class__, name, value)
     # end def set_default
+
+    def set_defaults (self, ** kw) :
+        cls = self.__class__
+        for k, v in kw.iteritems () :
+            setattr (cls, k, v)
+    # end def set_defaults
 
 # end class User_Config
 

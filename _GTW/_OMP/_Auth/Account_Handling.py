@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -37,6 +37,7 @@
 #    15-Dec-2010 (CT) `Account_Password_Reset.handle` changed to lift
 #                     `suspended`
 #    22-Dec-2010 (CT) `_Account_Action_.electric` redefined to `True`
+#    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,8 @@ class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         token = uuid.uuid4 ().hex
         if not expires :
             etype   = self._etype
-            expires = datetime.datetime.now () + etype.expire_duration_default
+            expires = \
+                datetime.datetime.utcnow () + etype.expire_duration_default
         return self.__super.__call__ \
             (account, token = token, expires = expires, ** kw)
     # end def __call__
@@ -174,7 +176,7 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
     # end class _Attributes
 
     def handle (self, nav = None) :
-        if self.expires < datetime.datetime.now () :
+        if self.expires < datetime.datetime.utcnow () :
             raise Action_Exipred
     # end def handle
 

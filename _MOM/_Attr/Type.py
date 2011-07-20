@@ -171,6 +171,8 @@
 #     5-Jul-2011 (CT) `e_completer` and `f_completer` added to `A_Attr_Type`
 #    16-Jul-2011 (CT) `_AC_Query_S_` added and used
 #    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
+#    20-Jul-2011 (CT) `A_Date_Time` changed to use UTC for cooked value
+#    20-Jul-2011 (CT) `_A_Date_._output_format` added and used
 #    ««revision-date»»···
 #--
 
@@ -579,7 +581,7 @@ class _A_Date_ (A_Attr_Type) :
 
     @property
     def output_format (self) :
-        return self.input_formats [0]
+        return self._output_format ()
     # end def output_format
 
     def as_code (self, value) :
@@ -589,7 +591,7 @@ class _A_Date_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return unicode (value.strftime (soc.output_format))
+            return unicode (value.strftime (soc._output_format ()))
         return u""
     # end def as_string
 
@@ -608,6 +610,11 @@ class _A_Date_ (A_Attr_Type) :
                 raise ValueError (s)
             return soc.P_Type (* result [soc._tuple_off:soc._tuple_len])
     # end def _from_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _output_format (soc) :
+        return soc.input_formats [0]
+    # end def _output_format
 
 # end class _A_Date_
 
@@ -1308,7 +1315,8 @@ class A_Date_Slug (_A_String_) :
     ui_length      = 22
 
     def computed_default (self) :
-        now    = datetime.datetime.now ()
+        now    = datetime.datetime.utcnow ()
+        now   += TFL.user_config.time_zone.utcoffset (now)
         result = "%s_%06d_%s" % \
             ( now.strftime ("%Y%m%d_%H%M%S")
             , now.microsecond
@@ -1341,7 +1349,8 @@ class A_Date_Time (_A_Date_) :
             if not value.time () :
                 return value.strftime (A_Date.input_formats [0])
             else :
-                return value.strftime (soc.output_format)
+                v = value + TFL.user_config.time_zone.utcoffset (value)
+                return v.strftime (soc._output_format ())
         return u""
     # end def as_string
 
@@ -1362,8 +1371,15 @@ class A_Date_Time (_A_Date_) :
 
     @classmethod
     def now (cls) :
-        return datetime.datetime.now ()
+        return datetime.datetime.utcnow ()
     # end def now
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+        result = super (A_Date_Time, soc)._from_string (s, obj, glob, locl)
+        result -= TFL.user_config.time_zone.utcoffset (result)
+        return result
+    # end def _from_string
 
 # end class A_Date_Time
 
