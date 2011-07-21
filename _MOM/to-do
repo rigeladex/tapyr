@@ -1,6 +1,16 @@
 MOM To-Do
 =========
 
+- Query expressions (http://lucumr.pocoo.org/2011/7/19/sqlachemy-and-you/)
+
+  * extract
+
+  * func.count, func.sum, ...
+
+  * group_by
+
+  * join ???
+
 - Don't store attributes in __dict__ ???
 
   + http://morepypy.blogspot.com/2010/11/efficiently-implementing-python-objects.html
