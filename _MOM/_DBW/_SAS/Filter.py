@@ -85,6 +85,7 @@ def _sa_filter (self, SAQ) :
             if ( args
                and isinstance (self.lhs, Get_Raw)
                and not getattr (args [0], "IS_RAW_COL", False)
+               and args [0].MOM_Kind
                ) :
                 arg = args [0].MOM_Kind.from_string (arg)
             args.append (arg)

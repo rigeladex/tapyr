@@ -131,6 +131,7 @@ _test_code = """
     >>> lnc (scope, dict ()).count ()
     0
 
+    >>> GTW.BREAK = True
     >>> PAP.Person.query_s (Q.last_name == "Tanzer").all ()
     []
     >>> PAP.Person.query_s (Q.RAW.last_name == "Tanzer").all ()

@@ -112,6 +112,11 @@ _raw_query = """
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
 
+
+    >>> scope.PAP.Person.query (Q.RAW.last_cid == "1").all ()
+    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+    >>> scope.PAP.Person.query (Q.RAW.pid == "1").all ()
+    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.last_name == "LN 1").all ()
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.lifetime.start == "2010/01/01").all ()
