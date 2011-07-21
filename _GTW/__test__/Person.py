@@ -31,6 +31,7 @@
 #     6-Jul-2011 (CT) Tests for `f_completer` added
 #    17-Jul-2011 (CT) s/f_completer/completer/, completion tests added
 #    19-Jul-2011 (CT) Test for `Q.RAW` added
+#    21-Jul-2011 (CT) Test for `Q.RAW` improved
 #    ««revision-date»»···
 #--
 
@@ -96,19 +97,28 @@ _test_code = """
     >>> print snc.name, snc.names, snc.treshold
     salutation ('salutation',) 1
 
-    >>> sorted (lnc (scope, dict (last_name = "Ta")))
-    [(u'tanzer', u'christian', u'', u''), (u'tanzer', u'egon', u'', u''), (u'tanzer', u'martin', u'', u''), (u'tanzer', u'michael', u'', u''), (u'tanzer', u'walter', u'', u'')]
-    >>> sorted (lnc (scope, dict (last_name = "Ta", first_name = "M")))
-    [(u'tanzer', u'martin', u'', u''), (u'tanzer', u'michael', u'', u'')]
-    >>> sorted (lnc (scope, dict (last_name = "Ta", first_name = "Ma")))
-    [(u'tanzer', u'martin', u'', u'')]
-    >>> sorted (lnc (scope, dict (last_name = "Ta", title = "Mag.")))
-    []
+    >>> show (lnc (scope, dict (last_name = "Ta")))
+    Tanzer, Christian, '', ''
+    Tanzer, Egon, '', ''
+    Tanzer, Martin, '', ''
+    Tanzer, Michael, '', ''
+    Tanzer, Walter, '', ''
+    >>> show (lnc (scope, dict (last_name = "Ta", first_name = "M")))
+    Tanzer, Martin, '', ''
+    Tanzer, Michael, '', ''
+    >>> show (lnc (scope, dict (last_name = "Ta", first_name = "Ma")))
+    Tanzer, Martin, '', ''
+    >>> show (lnc (scope, dict (last_name = "Ta", title = "Mag.")))
+    <BLANKLINE>
 
-    >>> sorted (lnc (scope, dict (last_name = "Ta"), complete_entity = True))
-    [(u'tanzer', u'christian', u'', u'', 1, 1), (u'tanzer', u'egon', u'', u'', 2, 2), (u'tanzer', u'martin', u'', u'', 4, 4), (u'tanzer', u'michael', u'', u'', 5, 5), (u'tanzer', u'walter', u'', u'', 3, 3)]
-    >>> sorted (lnc (scope, dict (last_name = "Ta", first_name = "Ma"), complete_entity = True))
-    [(u'tanzer', u'martin', u'', u'', 4, 4)]
+    >>> show (lnc (scope, dict (last_name = "Ta"), complete_entity = True))
+    Tanzer, Christian, '', '', 1, 1
+    Tanzer, Egon, '', '', 2, 2
+    Tanzer, Martin, '', '', 4, 4
+    Tanzer, Michael, '', '', 5, 5
+    Tanzer, Walter, '', '', 3, 3
+    >>> show (lnc (scope, dict (last_name = "Ta", first_name = "Ma"), complete_entity = True))
+    Tanzer, Martin, '', '', 4, 4
 
     >>> lnc (scope, dict (last_name = "Ta")).count ()
     5
@@ -121,6 +131,8 @@ _test_code = """
     >>> lnc (scope, dict ()).count ()
     0
 
+    >>> PAP.Person.query_s (Q.last_name == "Tanzer").all ()
+    []
     >>> PAP.Person.query_s (Q.RAW.last_name == "Tanzer").all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
     >>> PAP.Person.query_s (Q.RAW.last_name.STARTSWITH ("Ta")).all ()
@@ -130,6 +142,12 @@ _test_code = """
 
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
+
+def show (ls) :
+    def _gen (ls) :
+        for l in sorted (ls) :
+            yield ", ".join (str (f) or "''" for f in l)
+    print "\n".join (_gen (ls))
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

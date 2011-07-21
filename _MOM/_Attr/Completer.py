@@ -66,7 +66,7 @@ class Completer (TFL.Meta.Object) :
         if complete_entity :
             deps += ("pid", "last_cid")
         vd = dict ((k, v) for k, v in val_dict.iteritems () if v != "")
-        return E_Type.attr_completion (self.names, vd, deps)
+        return E_Type.attr_completion (self.names, vd, deps, raw = True)
     # end def __call__
 
     @property
