@@ -85,7 +85,7 @@ class Get_Raw (TFL.Q_Exp.Get) :
         if self._prefix :
             obj = getattr (TFL.Getter, self._prefix) (obj)
         key = self._postfix
-        if key in obj.attributes :
+        if hasattr (obj, "raw_attr") and key in obj.attributes :
             return obj.raw_attr (key)
         else :
             return unicode (getattr (obj, key))
