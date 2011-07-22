@@ -53,6 +53,7 @@
 #                     relevant
 #     6-Sep-2010 (CT) `Attr._A_Composite_Collection_` removed
 #    24-Feb-2011 (CT) s/A_Object/A_Entity/
+#    22-Jul-2011 (MG) `Case_Sensitive_String` added to support MySQL
 #    ««revision-date»»···
 #--
 
@@ -145,6 +146,20 @@ def _sa_columns_composite (cls, attr, kind, unique, owner_etype, ** kw) :
     return columns
 # end def _sa_columns_composite
 
+class Case_Sensitive_String (types.TypeDecorator) :
+    """A string column which is case sensitive (which is not the default for
+       MySQL)
+    """
+
+    impl = types.String
+
+    def load_dialect_impl (self, dialect) :
+        self.impl.binary = True
+        return super (Case_Sensitive_String, self).load_dialect_impl (dialect)
+    # end def load_dialect_impl(dialect
+
+# end class Case_Sensitive_String
+
 @Add_Classmedthod ("_sa_type", Attr.A_Boolean)
 def _sa_bool (cls, attr, kind, ** kw)      : return types.Boolean   ()
 @Add_Classmedthod ("_sa_type", Attr.A_Date)
@@ -167,7 +182,7 @@ def _sa_numeric (cls, attr, kind, ** kw) :
 def _sa_string (cls, attr, kind, ** kw) :
     length = getattr (attr, "max_length", None)
     if length :
-        return types.String (length, convert_unicode = True)
+        return Case_Sensitive_String (length, convert_unicode = True)
     return types.Text (convert_unicode = True)
 # end def _sa_string
 
@@ -175,7 +190,7 @@ def _sa_string (cls, attr, kind, ** kw) :
 def _sa_file_name (cls, attr, kind, ** kw) :
     length = getattr (attr, "max_length", None)
     if length :
-        return types.String (length, convert_unicode = False)
+        return Case_Sensitive_String (length, convert_unicode = False)
     return types.Text (convert_unicode = False)
 # end def _sa_file_name
 
