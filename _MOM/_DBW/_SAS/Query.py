@@ -45,7 +45,7 @@
 #     6-Sep-2010 (MG) `Join_Query` specify the join condition
 #     6-Sep-2010 (MG) `_MOM_Query_.SAS_EQ_Clause` fixed
 #    19-Jul-2011 (MG) Support for raw queries added
-#    21-Jul-2011 (MG) `_MOM_Query_.attributes` `pid` and`last_cid` added
+#    21-Jul-2011 (MG) `_MOM_Query_.attributes` `pid` added
 #    ««revision-date»»···
 #--
 
@@ -91,8 +91,7 @@ class _MOM_Query_ (TFL.Meta.Object) :
 
     @Once_Property
     def attributes (self) :
-        return dict \
-            (self._E_TYPE [0].attributes, pid = "pid", last_cid = "last_cid")
+        return dict (self._E_TYPE [0].attributes, pid = "pid")
     # end def attributes
 
     def raw_attr (self, key) :
