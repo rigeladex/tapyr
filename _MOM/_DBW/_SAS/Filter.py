@@ -36,6 +36,7 @@
 #                     `Get.getter`)
 #     6-Sep-2010 (MG) The join list now requires a 3 element (the join
 #                     conidition or `None`)
+#    22-Jul-2011 (MG) `_sa_filter` added to `TFL.Q_Exp.Func`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.Filter
 import _TFL.Q_Exp
-from    sqlalchemy.sql   import expression
+from    sqlalchemy.sql   import expression, func, extract
 from    _MOM.Q_Exp_Raw   import Get_Raw
 
 SAS_Attr_Map = dict \
@@ -113,6 +114,12 @@ def _sa_filter (self, SAQ) :
             joins.extend  (ajoins)
             clause.extend (afilter)
     return joins, (sa_exp (* clause), )
+# end def _sa_filter
+
+@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Func)
+def _sa_filter (self, SAQ) :
+    joins, columns = self.lhs._sa_filter (SAQ)
+    return joins, (getattr (func, self.op.__name__) (columns [0]), )
 # end def _sa_filter
 
 ### __END__ MOM.DBW.SAS.Filter

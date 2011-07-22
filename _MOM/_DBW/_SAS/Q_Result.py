@@ -48,6 +48,7 @@
 #    18-Jul-2011 (CT) `count` changed ro return `int (count)`
 #    19-Jul-2011 (CT) `_Q_Result_Attrs_._from_row_tuple` changed to not apply
 #                     `str` for kind-less attributes (e.g., `pid`)
+#    22-Jul-2011 (MG) `__str__` added
 #    ««revision-date»»···
 #--
 
@@ -274,6 +275,12 @@ class _Q_Result_ (TFL.Meta.Object) :
         for row in self._query_rows () :
             yield self._from_row (row)
     # end def __iter__
+
+    def __str__ (self) :
+        sa_query = "\n     ".join \
+            (l.strip () for l in str (self.sa_query ()).split ("\n"))
+        return "SQL: %s" % (sa_query, )
+    # end def __str__
 
 # end class _Q_Result_
 

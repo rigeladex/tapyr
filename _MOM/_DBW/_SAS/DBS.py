@@ -49,6 +49,8 @@
 #    14-Jun-2011 (MG) `commit_pid`, `connection_pid`, `rollback_pid` fixed
 #                     `MySQL._drop_database`: only swollow the `Unknown
 #                     database` error message
+#    22-Jul-2011 (MG) `Sqlite.create_engine`: `PRAGMA case_sensitive_like`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -347,6 +349,13 @@ class Sqlite (_SAS_DBS_) :
         ### reuse the connection of the session
         return pm.ems.session.connection
     # end def connection_pid
+
+    @classmethod
+    def create_engine (cls, db_url, isolation_level = None) :
+        engine = super (Sqlite, cls).create_engine (db_url)
+        engine.execute ("PRAGMA case_sensitive_like = true;")
+        return engine
+    # end def create_engine
 
     @classmethod
     def rollback_pid (cls, pm) :

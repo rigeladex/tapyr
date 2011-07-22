@@ -31,6 +31,7 @@
 #     2-Sep-2010 (CT) Test for `set` of `Q.lifetime.finish` added
 #     2-Sep-2010 (MG) More tests added
 #    19-Jul-2011 (MG) New tests for `RAW` queries added
+#    22-Jul-2011 (MG) Tests for `LOWER` added
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,7 @@ _raw_query = """
     >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
     >>> p   = scope.PAP.Person  ("LN 2", "FN 2")
     >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> p   = scope.PAP.Person  ("Lname 4", "Fn 3")
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
 
@@ -121,7 +123,13 @@ _raw_query = """
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.lifetime.start == "2010/01/01").all ()
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+
+    >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("LN")).order_by (Q.last_name).all ()
+    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("Ln")).order_by (Q.last_name).all ()
+    [GTW.OMP.PAP.Person (u'lname 4', u'fn 3', u'', u'')]
 """
+
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 from   _TFL.predicate      import first
