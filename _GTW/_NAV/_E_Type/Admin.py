@@ -96,6 +96,7 @@
 #    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
 #     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
 #     8-Jun-2011 (CT) `AFS` attached to `change` URL, and to `create` URL, too
+#    22-Jul-2011 (CT) Use `Redirect_303` instead of `Redirect_302`
 #    ««revision-date»»···
 #--
 
@@ -374,7 +375,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         scope.rollback       ()
                 if err_count == 0 :
                     tail = "#pk-%s" % (obj.pid) if obj else ""
-                    raise HTTP.Redirect_302 \
+                    ### http://tumblr.jonthornton.com/post/7902581999/preventing-form-re-submission-with-http-303-redirects
+                    raise HTTP.Redirect_303 \
                         ("%s%s" % (self.parent.abs_href, tail))
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
