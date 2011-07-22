@@ -38,9 +38,9 @@
 
 {%- block document %}
   {% if request.Error %}
-    <p class="Error-Message">
+    <h1 class="Error-Message">
       {{ GTW._T (request.Error) }}
-    </p>
+    </h1>
   {% else %}
     <h1 class="Error-Message">
       {{ GTW._T ("The request could not be understood by the server due to malformed syntax.") }}

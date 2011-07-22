@@ -382,6 +382,24 @@ _test_code = """
     >>> fi  = fb (SRM.Boat, b)
     >>> fic = fb (SRM.Boat, b, copy = True)
 
+    >>> ff_ln = fb ['FB-0:2::0-2:0:0:0']
+    >>> print ff_ln
+    <Field FB-0:2::p-2:0:0:0 'last_name'>
+    >>> print formatted (ff_ln.kw)
+    { 'completer' :
+        { 'names' :
+            [ 'last_name'
+            , 'first_name'
+            , 'middle_name'
+            , 'title'
+            ]
+        , 'treshold' : 2
+        }
+    , 'kind' : 'primary'
+    , 'label' : 'Last name'
+    , 'name' : 'last_name'
+    }
+
     >>> print formatted (fi.as_json_cargo, level = 1)
       { '$id' : 'FB'
       , 'children' :

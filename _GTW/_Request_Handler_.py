@@ -99,8 +99,9 @@ class _Request_Handler_ (object) :
                 self._content_encoding = t.strip ()
                 if not self._content_encoding :
                     if __debug__ :
-                        print "Use Fallback default content encoding %s" % \
-                            (self.default_content_encoding, )
+                        if self.body :
+                            print "Use Fallback default content encoding %s" % \
+                                (self.default_content_encoding, )
                     self._content_encoding = self.default_content_encoding
         return self._content_type
     # end def content_type

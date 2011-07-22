@@ -29,6 +29,9 @@
 #     5-Jul-2011 (CT) Creation
 #     6-Jul-2011 (CT) Creation continued
 #    17-Jul-2011 (CT) Creation continued.. (major surgery)
+#    22-Jul-2011 (CT) `__call__` changed to use `E_Type.ac_query_attrs`
+#                     instead of `attr_completion`
+#    22-Jul-2011 (CT) `all_names` added
 #    ««revision-date»»···
 #--
 
@@ -60,13 +63,13 @@ class Completer (TFL.Meta.Object) :
             self.dependents = acs.dependents (E_Type).names
     # end def __init__
 
-    def __call__ (self, scope, val_dict, complete_entity = False) :
-        E_Type = scope [self.etn]
-        deps   = self.dependents
-        if complete_entity :
-            deps += ("pid", "last_cid")
-        vd = dict ((k, v) for k, v in val_dict.iteritems () if v != "")
-        return E_Type.attr_completion (self.names, vd, deps, raw = True)
+    def __call__ (self, scope, val_dict) :
+        ETM    = scope [self.etn]
+        vd     = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
+        fs     = tuple (ETM.ac_query_attrs (self.names, vd))
+        if fs :
+            return ETM.query (* fs).distinct ()
+        return TFL.Q_Result (())
     # end def __call__
 
     @property
@@ -81,6 +84,11 @@ class Completer (TFL.Meta.Object) :
     def names (self) :
         return tuple (uniq ((self.name, ) + self.buddies))
     # end def names
+
+    @TFL.Meta.Once_Property
+    def all_names (self) :
+        return tuple (uniq (self.names + self.dependents))
+    # end def all_names
 
 # end class Completer
 

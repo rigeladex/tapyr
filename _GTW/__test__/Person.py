@@ -32,6 +32,7 @@
 #    17-Jul-2011 (CT) s/f_completer/completer/, completion tests added
 #    19-Jul-2011 (CT) Test for `Q.RAW` added
 #    21-Jul-2011 (CT) Test for `Q.RAW` improved
+#    22-Jul-2011 (CT) Completer tests adapted to changes in `MOM.Attr.Completer`
 #    ««revision-date»»···
 #--
 
@@ -97,27 +98,27 @@ _test_code = """
     >>> print snc.name, snc.names, snc.treshold
     salutation ('salutation',) 1
 
-    >>> show (lnc (scope, dict (last_name = "Ta")))
+    >>> show_ac (lnc, scope, dict (last_name = "Ta"))
     Tanzer, Christian, '', ''
     Tanzer, Egon, '', ''
     Tanzer, Martin, '', ''
     Tanzer, Michael, '', ''
     Tanzer, Walter, '', ''
-    >>> show (lnc (scope, dict (last_name = "Ta", first_name = "M")))
+    >>> show_ac (lnc, scope, dict (last_name = "Ta", first_name = "M"))
     Tanzer, Martin, '', ''
     Tanzer, Michael, '', ''
-    >>> show (lnc (scope, dict (last_name = "Ta", first_name = "Ma")))
+    >>> show_ac (lnc, scope, dict (last_name = "Ta", first_name = "Ma"))
     Tanzer, Martin, '', ''
-    >>> show (lnc (scope, dict (last_name = "Ta", title = "Mag.")))
+    >>> show_ac (lnc, scope, dict (last_name = "Ta", title = "Mag."))
     <BLANKLINE>
 
-    >>> show (lnc (scope, dict (last_name = "Ta"), complete_entity = True))
+    >>> show_ac (lnc, scope, dict (last_name = "Ta"), complete_entity = True)
     Tanzer, Christian, '', '', 1, 1
     Tanzer, Egon, '', '', 2, 2
     Tanzer, Martin, '', '', 4, 4
     Tanzer, Michael, '', '', 5, 5
     Tanzer, Walter, '', '', 3, 3
-    >>> show (lnc (scope, dict (last_name = "Ta", first_name = "Ma"), complete_entity = True))
+    >>> show_ac (lnc, scope, dict (last_name = "Ta", first_name = "Ma"), complete_entity = True)
     Tanzer, Martin, '', '', 4, 4
 
     >>> lnc (scope, dict (last_name = "Ta")).count ()
@@ -143,11 +144,18 @@ _test_code = """
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
 
-def show (ls) :
-    def _gen (ls) :
-        for l in sorted (ls) :
-            yield ", ".join (str (f) or "''" for f in l)
-    print "\n".join (_gen (ls))
+from   itertools                import chain as ichain
+
+def show_ac (completer, scope, val_dict, complete_entity = False) :
+    def _gen (xs) :
+        for x in sorted (xs) :
+            yield ", ".join (str (f) or "''" for f in x)
+    q     = completer (scope, val_dict)
+    deps  = completer.dependents
+    if complete_entity :
+        deps += ("pid", "last_cid")
+    attrs = tuple (getattr (Q.RAW, a) for a in ichain (completer.names, deps))
+    print "\n".join (_gen (q.attrs (* attrs)))
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

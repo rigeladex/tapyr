@@ -97,6 +97,7 @@
 #     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
 #     8-Jun-2011 (CT) `AFS` attached to `change` URL, and to `create` URL, too
 #    22-Jul-2011 (CT) Use `Redirect_303` instead of `Redirect_302`
+#    22-Jul-2011 (CT) `AFS_Completer` started
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
     css_group           = "Type"
+    max_completions     = 20
     template_name       = "e_type_admin"
 
     _Media              = GTW.Media \
@@ -211,10 +213,15 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return ETM.pid_query (pid)
         # end def obj
 
+        @Once_Property
+        def Form (self) :
+            return AFS_Form [self.E_Type.GTW.afs_id]
+        # end def Form
+
         def form (self, obj = None, ** kw) :
             if obj is None :
                 obj = self.obj
-            return AFS_Form [self.E_Type.GTW.afs_id] (self.ETM, obj, ** kw)
+            return self.Form (self.ETM, obj, ** kw)
         # end def form
 
         def rendered (self, handler, template = None) :
@@ -307,6 +314,50 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         # end def _post_handler
 
     # end class AFS
+
+    class AFS_Completer (_Cmd_) :
+        """Do auto completion for a AFS page."""
+
+        SUPPORTED_METHODS = set (("GET", ))
+
+        def rendered (self, handler, template = None) :
+            HTTP      = self.top.HTTP
+            request   = handler.request
+            if handler.json is None :
+                raise HTTP.Error_400 \
+                    (_T ("%s only works with content-type json") % request.path)
+            result    = {}
+            E_Type    = self.E_Type
+            Form      = self.Form
+            json      = TFL.Record (** handler.json)
+            field     = Form [json.trigger]
+            attr      = getattr (E_Type, field.name)
+            completer = attr.completer (attr, E_Type)
+            query     = completer (self.top.scope, json.values)
+            n         = result ["completions"] = query.count ()
+            finished  = result ["finished"]    = n == 1
+            if finished :
+                all_names = completer.all_names
+                af     = \
+                    ( tuple (getattr (Q.RAW, a) for a in all_names)
+                    + (("pid", "last_cid") if json.complete_entity else ())
+                    )
+                values = query.attrs (* afs).first ()
+                result ["a_values"] = dict (zip (all_names, values))
+                if json.complete_entity :
+                    result ["e_value"] = dict \
+                        (zip (("pid", "cid"), values [-2:]))
+            elif n > 1 :
+                if n <= self.max_completions :
+                    result ["matches"] = query.attrs \
+                        (* (getattr (Q.RAW, a) for a in names)).all ()
+                else :
+                    result ["matches"] = query.attr (attr.name).all ()
+                    result ["partial"] = True
+            return handler.write_json (result)
+        # end def rendered
+
+    # end class AFS_Completer
 
     class Changer (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
@@ -775,20 +826,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return list (ichain (E_Type.primary, E_Type.user_attr))
     # end def _auto_list_display
 
-    _child_name_map = dict \
-        ( change    = (AFS,       "args",  None)
-        , ochange   = (Changer,   "args",  None)
-        , complete  = (Completer, "forms", None)
-        , completed = (Completed, "forms", None)
-        , create    = (AFS,       "args",  0)
-        , ocreate   = (Changer,   "args",  0)
-        , delete    = (Deleter,   "args",  1)
-        , expand    = (Expander,  "args",  0)
-        , fields    = (Fields,    "forms", None)
-        , form      = (HTML_Form, "forms", None)
-        , test      = (Test,      "forms", None)
+    _child_name_map      = dict \
+        ( change         = (AFS,           "args",  None)
+        , afs_complete   = (AFS_Completer, "args", None)
+        , ochange        = (Changer,       "args",  None)
+        , complete       = (Completer,     "forms", None)
+        , completed      = (Completed,     "forms", None)
+        , create         = (AFS,           "args",  0)
+        , ocreate        = (Changer,       "args",  0)
+        , delete         = (Deleter,       "args",  1)
+        , expand         = (Expander,      "args",  0)
+        , fields         = (Fields,        "forms", None)
+        , form           = (HTML_Form,     "forms", None)
+        , test           = (Test,          "forms", None)
         )
-    child_attrs     = {}
+    child_attrs          = {}
 
     def _get_child (self, child, * grandchildren) :
         T  = None

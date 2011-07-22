@@ -166,6 +166,8 @@ class _Error_ (Status) :
     def __call__ (self, handler) :
         description = self.description
         nav_root    = getattr (handler, "nav_root", None)
+        if not getattr (handler.request, "Error", None) :
+            handler.request.Error = description
         if nav_root :
             handler.request.user  = handler.current_user
             Templateer            = nav_root.Templateer

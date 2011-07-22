@@ -85,6 +85,8 @@
 #    18-Jul-2011 (CT) `query_1` added
 #    19-Jul-2011 (CT) s/_cooked_epk/cooked_epk/ and factored up to `Id_Entity`
 #    19-Jul-2011 (CT) `attr_completion` changed to use `Q.RAW` if argument `raw`
+#    22-Jul-2011 (CT) `attr_completion` removed, s/ac_query/ac_query_auto_split/
+#    22-Jul-2011 (CT) `_acq_gen` renamed to `ac_query_attrs`
 #    ««revision-date»»···
 #--
 
@@ -178,21 +180,12 @@ class Id_Entity (Entity) :
         return self.home_scope.ems
     # end def ems
 
-    def attr_completion (self, q_attrs, val_dict, p_attrs = (), raw = False) :
-        """Return `.attrs` of `q_attrs + p_attrs` for all objects matching
-           the values in `val_dict` by the respective `ac_query`.
-        """
-        filters = tuple (self._acq_gen (q_attrs, val_dict))
-        if filters :
-            query  = self.query  (* filters)
-            attrs  = itertools.chain (q_attrs, p_attrs)
-            if raw :
-                attrs = tuple (getattr (MOM.Q.RAW, a) for a in attrs)
-            result = query.attrs (* attrs)
-        else :
-            result = TFL.Q_Result (())
-        return result
-    # end def attr_completion
+    def ac_query_attrs (self, names, values) :
+        et = self._etype
+        for n in names :
+            if n in values :
+                yield getattr (et, n).ac_query (values [n])
+    # end def ac_query_attrs
 
     def cooked_epk (self, epk, kw) :
         (epk, kw), this  = self._epkified (epk, kw)
@@ -274,13 +267,6 @@ class Id_Entity (Entity) :
         return c, q.first () if c == 1 else None
     # end def query_1
 
-    def _acq_gen (self, q_attrs, val_dict) :
-        et = self._etype
-        for qa in q_attrs :
-            if qa in val_dict :
-                yield getattr (et, qa).ac_query (val_dict [qa])
-    # end def _acq_gen
-
     def _epkified (self, epk, kw) :
         this  = self
         etype = self._etype
@@ -296,7 +282,7 @@ class Id_Entity (Entity) :
 class Object (Id_Entity) :
     """Scope-specific manager for essential object-types."""
 
-    def ac_query (self, text) :
+    def ac_query_auto_split (self, text) :
         result     = []
         et         = self._etype
         epk_aqc    = [getattr (et, en).ac_query for en in et.epk_sig]
@@ -307,7 +293,7 @@ class Object (Id_Entity) :
                 single_value_queries.append (TFL.Filter_Or (* acqs))
             result.append (self.query (* single_value_queries))
         return result
-    # end def ac_query
+    # end def ac_query_auto_split
 
     @property
     def singleton (self) :

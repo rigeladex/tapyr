@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: 404.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -40,9 +40,9 @@
 
 {%- block document %}
   {% if request.Error %}
-    <p class="Error-Message">
+    <h1 class="Error-Message">
       {{ GTW._T (request.Error) }}
-    </p>
+    </h1>
   {% else %}
     <h1 class="Error-Message">
       {{ GTW._T ("You requested a page that doesn't exist: ") }}

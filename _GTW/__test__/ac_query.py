@@ -129,7 +129,7 @@ _ac_query = """
     >>> scope.commit    ()
 
     >>> for acs in ("Ma", "Ta", "Van", "Van der B") :
-    ...     for p, qs in enumerate (PAP.Person.ac_query (acs)) :
+    ...     for p, qs in enumerate (PAP.Person.ac_query_auto_split (acs)) :
     ...         print p, acs
     ...         for o in sorted (qs, key = lambda p : p.last_name) :
     ...             print " ", o
