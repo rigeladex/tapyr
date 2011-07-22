@@ -42,6 +42,7 @@
 #                     home-grown code; `Attr_Filter` removed
 #    19-Jan-2010 (CT) `Attr_Query.And` and `Attr_Query.Or` added
 #    16-Jul-2011 (CT) `__repr__` added
+#    22-Jul-2011 (CT) `Attr_Query.Func` added
 #    ««revision-date»»···
 #--
 
@@ -377,6 +378,14 @@ class Attr_Query (TFL.Q_Exp.Base) :
        >>> (Q.fool % 2) (R (fool = 20))
        0
 
+       >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
+       >>> (Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)
+       <Filter_And [Q.bar.lower () == Q.baz.lower (), Q.baz.lower () == Q.qux.lower ()]>
+       >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
+       False
+       >>> ((Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)) (r3)
+       True
+
     """
 
     Ignore_Exception = AttributeError
@@ -395,6 +404,10 @@ class Attr_Query (TFL.Q_Exp.Base) :
     class Call (_Filter_S_, TFL.Q_Exp.Call) :
         pass
     # end class Call
+
+    class Func (_Filter_S_, TFL.Q_Exp.Func) :
+        pass
+    # end class Func
 
 # end class Attr_Query
 

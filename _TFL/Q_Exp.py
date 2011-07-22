@@ -45,6 +45,8 @@
 #    14-Dec-2010 (CT) `Exp.D`, `Exp.DT`, and `Q._Date_` added
 #    14-Jan-2011 (CT) Common base `Q_Root` added to all query classes
 #    14-Jan-2011 (CT) `Bin` and `__binary` changed to honor `reverse`
+#    22-Jul-2011 (CT) `__call__` factored up to `Q_Root`
+#    22-Jul-2011 (CT) `LOWER` (and `Func`) added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +57,7 @@ This module implements a query expression language::
     >>> from datetime import date, datetime
     >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
     >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef", d = date (2010, 12, 14), dt = datetime (2010, 12, 14, 11, 36))
+    >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
     >>> q0 = Q.foo
     >>> q0._name
     'foo'
@@ -172,12 +175,37 @@ This module implements a query expression language::
     >>> Q.dt.DT.QUARTER (4, 2010) (r2)
     True
 
+    >>> Q.bar.LOWER.STARTSWITH ("ab")
+    Q.bar.lower ().startswith ('ab',)
+
+    >>> (Q.bar == Q.baz) (r3)
+    False
+    >>> (Q.bar.LOWER == Q.baz.LOWER) (r3)
+    True
+    >>> Q.bar (r3), Q.bar.LOWER (r3)
+    ('AbCd', 'abcd')
+    >>> Q.bar.STARTSWITH ("ab") (r3)
+    False
+    >>> Q.bar.LOWER.STARTSWITH ("ab") (r3)
+    True
+    >>> Q.bar.LOWER.STARTSWITH ("bc") (r3)
+    False
+    >>> Q.bar.CONTAINS ("bc") (r3)
+    False
+    >>> Q.bar.LOWER.CONTAINS ("bc") (r3)
+    True
+
 Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
 no way to simulate this by defining operator methods. Therefore,
 `Bin.__nonzero__` raises a TypeError to signal that an expression like
 `Q.a < Q.b < Q.c` isn't possible::
 
     >>> Q.a < Q.b < Q.c
+    Traceback (most recent call last):
+      ...
+    TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
+
+    >>> Q.bar.LOWER == Q.baz.LOWER == Q.qux.LOWER
     Traceback (most recent call last):
       ...
     TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
@@ -240,10 +268,6 @@ from   _TFL.predicate           import callable
 
 import operator
 
-class Q_Root (TFL.Meta.Object) :
-    """Base class for all classes modelling queries"""
-# end class Q_Root
-
 class Base (TFL.Meta.Object) :
     """Query generator"""
 
@@ -277,6 +301,15 @@ class Base (TFL.Meta.Object) :
 # end class Base
 
 Q = Base ()
+
+class Q_Root (TFL.Meta.Object) :
+    """Base class for all classes modelling queries"""
+
+    def __call__ (self, obj) :
+        return self.predicate (obj)
+    # end def __call__
+
+# end class Q_Root
 
 @TFL.Add_New_Method (Base)
 class Bin (Q_Root) :
@@ -332,10 +365,6 @@ class Bin (Q_Root) :
             return self.op (l, r)
     # end def predicate
 
-    def __call__ (self, obj) :
-        return self.predicate (obj)
-    # end def __call__
-
     def __nonzero__ (self) :
         return TypeError \
             ("Result of `%s` cannot be used in a boolean context" % (self, ))
@@ -367,10 +396,6 @@ class Call (Q_Root) :
         if l is not self.Q.undef :
             return self.op (l, * self.args, ** self.kw)
     # end def predicate
-
-    def __call__ (self, obj) :
-        return self.predicate (obj)
-    # end def __call__
 
     def __nonzero__ (self) :
         return TypeError \
@@ -619,6 +644,13 @@ class Exp (_Exp_) :
         return in_
     # end def IN
 
+    @property
+    def LOWER (self) :
+        def lower (val) :
+            return val.lower ()
+        return self.Q.Func (self, lower)
+    # end def LOWER
+
     @_method
     def STARTSWITH () :
         def startswith (l, r) :
@@ -686,6 +718,12 @@ class Exp_B (_Exp_) :
 # end class Exp_B
 
 @TFL.Add_New_Method (Base)
+class Func (Exp, Call) :
+    """Query function with a result that can be used in query expressions."""
+
+# end class Func
+
+@TFL.Add_New_Method (Base)
 class Get (Exp) :
     """Query getter"""
 
@@ -696,10 +734,6 @@ class Get (Exp) :
         self._name   = name
         self._getter = getter
     # end def __init__
-
-    def __call__ (self, obj) :
-        return self.predicate (obj)
-    # end def __call__
 
     def predicate (self, obj) :
         Q = self.Q
