@@ -5,7 +5,7 @@ MOM To-Do
 
   * extract
 
-  * func.count, func.sum, ...
+  * func: count, sum, min, max, ...
 
   * group_by
 
