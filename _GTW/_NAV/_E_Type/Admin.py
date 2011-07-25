@@ -98,6 +98,7 @@
 #     8-Jun-2011 (CT) `AFS` attached to `change` URL, and to `create` URL, too
 #    22-Jul-2011 (CT) Use `Redirect_303` instead of `Redirect_302`
 #    22-Jul-2011 (CT) `AFS_Completer` started
+#    24-Jul-2011 (CT) `AFS_Completer` continued
 #    ««revision-date»»···
 #--
 
@@ -349,11 +350,25 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         (zip (("pid", "cid"), values [-2:]))
             elif n > 1 :
                 if n <= self.max_completions :
-                    result ["matches"] = query.attrs \
-                        (* (getattr (Q.RAW, a) for a in names)).all ()
+                    result ["fields"]  = l = len (names)
+                    if l == 1 :
+                        result ["matches"] = query.attr \
+                            (getattr (Q.RAW, attr.name)).all ()
+                    else :
+                        result ["matches"] = query.attrs \
+                            (* (getattr (Q.RAW, a) for a in names)).all ()
                 else :
-                    result ["matches"] = query.attr (attr.name).all ()
-                    result ["partial"] = True
+                    matches = query.attr (getattr (Q.RAW, attr.name))
+                    m       = matches.count ()
+                    if m <= self.max_completions :
+                        result ["fields"]  = 1
+                        result ["matches"] = matches.all ()
+                    else :
+                        ### XXX find fewer partial matches !!!
+                        result ["fields"]  = 0
+                        result ["matches"] = []
+            else :
+                result ["matches"] = []
             return handler.write_json (result)
         # end def rendered
 
