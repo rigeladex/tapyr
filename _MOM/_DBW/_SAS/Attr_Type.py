@@ -54,6 +54,8 @@
 #     6-Sep-2010 (CT) `Attr._A_Composite_Collection_` removed
 #    24-Feb-2011 (CT) s/A_Object/A_Entity/
 #    22-Jul-2011 (MG) `Case_Sensitive_String` added to support MySQL
+#    25-Jul-2011 (MG) `SAS_Column_Class` added to support custom column
+#                     classes
 #    ««revision-date»»···
 #--
 
@@ -63,10 +65,15 @@ from   _MOM               import MOM
 import _MOM._Attr.Type
 import _MOM._Attr
 import  cPickle
+from   _MOM._DBW._SAS.Date_Column import Date_Column
 
 Attr = MOM.Attr
 
 from sqlalchemy     import types, schema
+from sqlalchemy.sql import extract, expression
+
+Attr.A_Attr_Type.SAS_Column_Class = schema.Column
+Attr.A_Date     .SAS_Column_Class = Date_Column
 
 def Add_Classmedthod  (name, * classes) :
     """Adds decorated function/class to `classes` using `name`.
@@ -96,7 +103,7 @@ def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
         sa_type = Type._sa_type (Type, kind)
     else :
         sa_type = attr._sa_type (attr, kind)
-    col = schema.Column (attr._sa_col_name, sa_type, ** kw)
+    col = cls.SAS_Column_Class (attr._sa_col_name, sa_type, ** kw)
     col.mom_kind = kind
     return (col, )
 # end def _sa_columns_simple
