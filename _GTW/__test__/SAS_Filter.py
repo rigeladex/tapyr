@@ -33,6 +33,7 @@
 #     7-May-2010 (MG) `sail_number` is now a numeric string
 #    19-Jul-2011 (CT) Test for `Q.RAW` added
 #    25-Jul-2011 (MG) `_date_queries` added
+#    25-Jul-2011 (CT) `_date_queries` corrected (s/query/query_s/)
 #    ««revision-date»»···
 #--
 
@@ -210,13 +211,13 @@ _date_queries = """
     >>> p   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2011/01/03"))
     >>> scope.commit ()
 
-    >>> print scope.PAP.Person.query (Q.lifetime.start.year == 2010).all ()
+    >>> print scope.PAP.Person.query_s (Q.lifetime.start.year == 2010).all ()
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
-    >>> print scope.PAP.Person.query (Q.lifetime.start.year <= 2010).all ()
+    >>> print scope.PAP.Person.query_s (Q.lifetime.start.year <= 2010).all ()
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
-    >>> print scope.PAP.Person.query (Q.lifetime.start.year >= 2010).all ()
+    >>> print scope.PAP.Person.query_s (Q.lifetime.start.year >= 2010).all ()
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'')]
-    >>> print scope.PAP.Person.query (Q.lifetime.start.year >  2010).all ()
+    >>> print scope.PAP.Person.query_s (Q.lifetime.start.year >  2010).all ()
     [GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'')]
 """
 
@@ -226,16 +227,11 @@ import  datetime
 
 _date_queries = Scaffold.create_test_dict (_date_queries)
 
-if 0 :
-    __test__ = dict \
-        ( composite    = _composite
-        , link1_role   = _link1_role
-        , link2_link1  = _link2_link1
-        , query_attr   = _query_attr
-        , ** _date_queries
-        )
-else :
-    #__doc__ = _date_queries
-    #__doc__ = _query_attr
-    __test__ = _date_queries
+__test__ = dict \
+    ( composite    = _composite
+    , link1_role   = _link1_role
+    , link2_link1  = _link2_link1
+    , query_attr   = _query_attr
+    , ** _date_queries
+    )
 ### __END__ GTW.__test__.SAS_Filter
