@@ -99,6 +99,7 @@
 #    22-Jul-2011 (CT) Use `Redirect_303` instead of `Redirect_302`
 #    22-Jul-2011 (CT) `AFS_Completer` started
 #    24-Jul-2011 (CT) `AFS_Completer` continued
+#    25-Jul-2011 (CT) `href_complete` added
 #    ««revision-date»»···
 #--
 
@@ -195,7 +196,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         _Media          = GTW.Media \
             ( scripts       =
-                ( GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
+                ( GTW.Script._.jQuery_UI
+                , GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
@@ -344,7 +346,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     + (("pid", "last_cid") if json.complete_entity else ())
                     )
                 values = query.attrs (* afs).first ()
-                result ["a_values"] = dict (zip (all_names, values))
+                result ["fields"]  = len  (all_names)
+                result ["matches"] = dict (zip (all_names, values))
                 if json.complete_entity :
                     result ["e_value"] = dict \
                         (zip (("pid", "cid"), values [-2:]))
@@ -785,6 +788,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def href_change (self, obj) :
         return pjoin (self.abs_href, "change", str (obj.pid))
     # end def href_change
+
+    def href_complete (self, obj = None) :
+        return pjoin (self.abs_href, "afs_complete")
+    # end def href_complete
 
     def href_delete (self, obj) :
         return pjoin (self.abs_href, "delete", str (obj.pid))

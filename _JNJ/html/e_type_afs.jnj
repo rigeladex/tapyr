@@ -31,6 +31,7 @@
 ##    17-Mar-2011 (CT) Creation
 ##    29-Mar-2011 (CT) Creation continued
 ##    31-Mar-2011 (CT) Creation continued..
+##    25-Jul-2011 (CT) `completer_url` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,7 +47,8 @@
   <script>
     $("#{{ form.id }}").afs_form
       ( {{ form.as_js }}
-      , { expander_url : "{{ page.href_expand () }}"
+      , { completer_url : "{{ page.href_complete () }}"
+        , expander_url  : "{{ page.href_expand () }}"
         }
       );
   </script>

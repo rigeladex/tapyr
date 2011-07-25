@@ -39,6 +39,7 @@
 //    27-May-2011 (CT) `Entity_List.setup_value` redefined to set `anchor_id`
 //                     and `root_id`
 //     7-Jul-2011 (CT) `field_name_map` added
+//    25-Jul-2011 (CT) `get_value` added
 //    ««revision-date»»···
 //--
 
@@ -106,6 +107,15 @@
           }
         , child : function child (i) {
               return Elements.id_map [this.children [i]];
+          }
+        , get_value : function get_value () {
+              if ("value" in this) {
+                  if ("edit" in this.value) {
+                      return this.value.edit;
+                  } else {
+                      return this.value.init;
+                  };
+              };
           }
         , id_suffix : function id_suffix () {
               var match = this.$id.match (id_suffix_pat);
