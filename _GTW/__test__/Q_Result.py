@@ -47,7 +47,7 @@ _q_result = r"""
     >>> _   = scope.PAP.Person  ("LN 2", "FN 2", title = "Dr.")
     >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
     >>> _   = scope.PAP.Person  ("LN 4", "FN 4", title = "DI")
-    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", title = "DI Dr.")
+    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", title = "DI")
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
 
@@ -109,15 +109,28 @@ _q_result = r"""
     >>> q2  = q1.attrs (Q.RAW.title)
     >>> q3  = q1.attrs (Q.RAW.title)
     >>> sorted (q2.all ())
-    [(u'DI',), (u'DI Dr.',), (u'Dr.',)]
+    [(u'DI',), (u'Dr.',)]
     >>> q2.count ()
-    3
+    2
     >>> q3.count ()
-    3
+    2
     >>> sorted (q2.all ())
-    [(u'DI',), (u'DI Dr.',), (u'Dr.',)]
+    [(u'DI',), (u'Dr.',)]
     >>> sorted (q3.all ())
-    [(u'DI',), (u'DI Dr.',), (u'Dr.',)]
+    [(u'DI',), (u'Dr.',)]
+
+    >>> q4  = q1.attrs (Q.RAW.title).distinct ()
+    >>> q5  = q1.attrs (Q.RAW.title).distinct ()
+    >>> sorted (q4.all ())
+    [(u'DI',), (u'Dr.',)]
+    >>> q4.count ()
+    2
+    >>> q5.count ()
+    2
+    >>> sorted (q4.all ())
+    [(u'DI',), (u'Dr.',)]
+    >>> sorted (q5.all ())
+    [(u'DI',), (u'Dr.',)]
 
     >>> scope.destroy ()
 
