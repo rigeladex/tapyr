@@ -187,6 +187,13 @@ class Id_Entity (Entity) :
                 yield getattr (et, n).ac_query (values [n])
     # end def ac_query_attrs
 
+    def ckd_query_attrs (self, names, values) :
+        et = self._etype
+        for n in names :
+            if n in values :
+                yield getattr (et, n).ckd_query_eq (values [n])
+    # end def ckd_query_attrs
+
     def cooked_epk (self, epk, kw) :
         (epk, kw), this  = self._epkified (epk, kw)
         raw      = kw.get ("raw", False)
@@ -266,6 +273,13 @@ class Id_Entity (Entity) :
         c = q.count ()
         return c, q.first () if c == 1 else None
     # end def query_1
+
+    def raw_query_attrs (self, names, values) :
+        et = self._etype
+        for n in names :
+            if n in values :
+                yield getattr (et, n).raw_query_eq (values [n])
+    # end def raw_query_attrs
 
     def _epkified (self, epk, kw) :
         this  = self

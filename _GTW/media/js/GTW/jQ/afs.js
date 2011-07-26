@@ -22,7 +22,8 @@
 //    13-Apr-2011 (CT) Creation continued.....
 //     2-May-2011 (CT) Creation continued......
 //    31-May-2011 (MG) `field_change_cb` special handling for checkboxes added
-//    25-Jul-2011 (CT) `_setup_callbacks` factored, `setup_completer` added
+//    25-Jul-2011 (CT) `_setup_callbacks` factored, `setup_completer` started
+//    26-Jul-2011 (CT) `setup_completer` continued
 //    ««revision-date»»···
 //--
 
@@ -32,24 +33,26 @@
     var setup_completer = function () {
         var _get_completions = function _get_completions
                 (options, elem, val, cb) {
-            var completer = elem.completer, values;
+            var completer = elem.completer, data, values;
             if ("choices" in completer) {
                 cb ($.ui.autocomplete.filter (array, val));
             } else {
                 values = _get_field_values (elem);
+                data = $GTW.jsonify
+                    ( { complete_entity : completer ["complete_entity"] || false
+                      , trigger         : elem.$id
+                      , values          : values
+                      }
+                    );
                 $.ajax
                     ( { url         : options.completer_url
                       , async       : false
                       , contentType : "application/json"
                       , dataType    : "json"
-                      , data        :
-                          { complete_entity : completer ["complete_entity"]
-                          , trigger         : elem.$id
-                          , values          : values
-                          }
+                      , data        : data
                       , processData : false
                       , timeout     : 30000
-                      , type        : "GET"
+                      , type        : "POST"
                       , error       : function (xhr_instance, status, exc) {
                             alert
                               ( "Completion failed: "
@@ -70,23 +73,19 @@
             var n = response.completions, result = [];
             if (response.completions > 0 && response.fields > 0) {
                 elem.completer.response = response;
-                if (response.fields == 1) {
-                    result = result.concat (response.matches);
-                } else {
-                    for (var i = 0, li = response.matches.length, match; i < li; i++) {
-                        match = response.matches [i];
-                        result.push
-                            ( { label : match.join (" ::: ")
-                              , value : i
-                              }
-                            );
-                    }
+                for (var i = 0, li = response.matches.length, match; i < li; i++) {
+                    match = response.matches [i];
+                    result.push
+                        ( { label : match.join (" ::: ")
+                          , value : i
+                          }
+                        );
                 };
             };
             cb (result);
         };
         var _get_field_values = function _get_field_values (elem) {
-            var id, input, value;
+            var field, id, value;
             var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
             var map    = anchor.field_name_map;
             var result = {};
@@ -96,16 +95,38 @@
                 ) {
                 name  = elem.completer.names [i];
                 id    = map [name];
-                value = elem.inp$.attr ("value");
+                field = $GTW.AFS.Elements.id_map [id];
+                value = field.inp$.attr ("value");
                 if (value && value.length > 0) {
                     result [name] = value;
                 };
-            }
+            };
             return result;
         };
         var _update = function _update (options, elem, item) {
-            // XXX
-            alert ("Selected completion " + item);
+            var completer = elem.completer;
+            var response  = completer.response;
+            var match     = response.matches [item.value];
+            if (completer ["complete_entity"]) {
+                // XXX;
+                alert ("Selected completion " + $GTW.inspect.show (match));
+            } else {
+                _update_field_values (options, elem, match);
+            }
+        };
+        var _update_field_values = function _update_field_values (options, elem, match) {
+            var field, id, value;
+            var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
+            var map    = anchor.field_name_map;
+            for ( var i = 0, li = elem.completer.names.length, name
+                ; i < li
+                ; i++
+                ) {
+                name  = elem.completer.names [i];
+                id    = map [name];
+                field = $GTW.AFS.Elements.id_map [id];
+                value = field.inp$.attr ("value", match [i]);
+            };
         };
         return function setup_completer (options, elem) {
             elem.inp$.autocomplete
@@ -120,6 +141,10 @@
                     ( "autocompleteselect"
                     , function (event, ui) {
                         _update (options, elem, ui.item);
+                        if (event && event.preventDefault) {
+                            event.preventDefault ();
+                        };
+                        return 0;
                       }
                     );
           };

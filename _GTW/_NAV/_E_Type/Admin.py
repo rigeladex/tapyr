@@ -100,6 +100,9 @@
 #    22-Jul-2011 (CT) `AFS_Completer` started
 #    24-Jul-2011 (CT) `AFS_Completer` continued
 #    25-Jul-2011 (CT) `href_complete` added
+#    26-Jul-2011 (CT) `obj`, `Form`, and `form` factored from `AFS` to `_Cmd_`
+#    26-Jul-2011 (CT) `AFS_Completed` started, `href_completed` added
+#    24-Jul-2011 (CT) `AFS_Completer` continued..
 #    ««revision-date»»···
 #--
 
@@ -168,8 +171,28 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
+        args              = (None, )
         implicit          = True
         SUPPORTED_METHODS = set (("GET", "POST"))
+
+        @property
+        def obj (self) :
+            ETM = self.ETM
+            pid = self.args and self.args [0]
+            if pid is not None :
+                return ETM.pid_query (pid)
+        # end def obj
+
+        @Once_Property
+        def Form (self) :
+            return AFS_Form [self.E_Type.GTW.afs_id]
+        # end def Form
+
+        def form (self, obj = None, ** kw) :
+            if obj is None :
+                obj = self.obj
+            return self.Form (self.ETM, obj, ** kw)
+        # end def form
 
         def _raise_401 (self, handler) :
             if handler.json :
@@ -207,25 +230,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         args            = (None, )
         template_name   = "e_type_afs"
         form_parameters = {}
-
-        @property
-        def obj (self) :
-            ETM = self.ETM
-            pid = self.args and self.args [0]
-            if pid is not None :
-                return ETM.pid_query (pid)
-        # end def obj
-
-        @Once_Property
-        def Form (self) :
-            return AFS_Form [self.E_Type.GTW.afs_id]
-        # end def Form
-
-        def form (self, obj = None, ** kw) :
-            if obj is None :
-                obj = self.obj
-            return self.Form (self.ETM, obj, ** kw)
-        # end def form
 
         def rendered (self, handler, template = None) :
             HTTP     = self.top.HTTP
@@ -318,10 +322,50 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class AFS
 
+    class AFS_Completed (_Cmd_) :
+        """Return auto completion values for a AFS page."""
+
+        SUPPORTED_METHODS = set (("POST", ))
+
+        def rendered (self, handler, template = None) :
+            HTTP      = self.top.HTTP
+            request   = handler.request
+            if handler.json is None :
+                raise HTTP.Error_400 \
+                    (_T ("%s only works with content-type json") % request.path)
+            result    = {}
+            ETM       = self.ETM
+            E_Type    = self.E_Type
+            Form      = self.Form
+            json      = TFL.Record (** handler.json)
+            field     = Form [json.trigger]
+            attr      = getattr (E_Type, field.name)
+            completer = attr.completer (attr, E_Type)
+            all_names = completer.all_names
+            names     = completer.names
+            fs        = ETM.raw_query_attrs (names, json.values)
+            query     = ETM.query (* fs)
+            af        = \
+                ( tuple (getattr (Q.RAW, a) for a in all_names)
+                + (("pid", "last_cid") if json.complete_entity else ())
+                )
+            result ["completions"] = n = query.count ()
+            if n == 1 :
+                values = query.attrs (* af).first ()
+                result ["fields"] = len  (all_names)
+                result ["values"] = dict (zip (all_names, values))
+                if json.complete_entity :
+                    result ["e_value"] = dict \
+                        (zip (("pid", "cid"), values [-2:]))
+            return handler.write_json (result)
+        # end def rendered
+
+    # end class AFS_Completed
+
     class AFS_Completer (_Cmd_) :
         """Do auto completion for a AFS page."""
 
-        SUPPORTED_METHODS = set (("GET", ))
+        SUPPORTED_METHODS = set (("POST", ))
 
         def rendered (self, handler, template = None) :
             HTTP      = self.top.HTTP
@@ -336,36 +380,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             field     = Form [json.trigger]
             attr      = getattr (E_Type, field.name)
             completer = attr.completer (attr, E_Type)
+            names     = completer.names
             query     = completer (self.top.scope, json.values)
-            n         = result ["completions"] = query.count ()
+            matches   = query.attrs (* (getattr (Q.RAW, a) for a in names)).all ()
+            n         = result ["completions"] = len (matches)
             finished  = result ["finished"]    = n == 1
-            if finished :
-                all_names = completer.all_names
-                af     = \
-                    ( tuple (getattr (Q.RAW, a) for a in all_names)
-                    + (("pid", "last_cid") if json.complete_entity else ())
-                    )
-                values = query.attrs (* afs).first ()
-                result ["fields"]  = len  (all_names)
-                result ["matches"] = dict (zip (all_names, values))
-                if json.complete_entity :
-                    result ["e_value"] = dict \
-                        (zip (("pid", "cid"), values [-2:]))
-            elif n > 1 :
+            if n :
                 if n <= self.max_completions :
-                    result ["fields"]  = l = len (names)
-                    if l == 1 :
-                        result ["matches"] = query.attr \
-                            (getattr (Q.RAW, attr.name)).all ()
-                    else :
-                        result ["matches"] = query.attrs \
-                            (* (getattr (Q.RAW, a) for a in names)).all ()
+                    result ["fields"]  = len (names)
+                    result ["matches"] = matches
                 else :
-                    matches = query.attr (getattr (Q.RAW, attr.name))
-                    m       = matches.count ()
+                    matches = query.attrs (getattr (Q.RAW, attr.name)).all ()
+                    m       = len (matches)
                     if m <= self.max_completions :
                         result ["fields"]  = 1
-                        result ["matches"] = matches.all ()
+                        result ["matches"] = matches
                     else :
                         ### XXX find fewer partial matches !!!
                         result ["fields"]  = 0
@@ -793,6 +822,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, "afs_complete")
     # end def href_complete
 
+    def href_completed (self, obj = None) :
+        return pjoin (self.abs_href, "afs_completed")
+    # end def href_completed
+
     def href_delete (self, obj) :
         return pjoin (self.abs_href, "delete", str (obj.pid))
     # end def href_delete
@@ -851,6 +884,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     _child_name_map      = dict \
         ( change         = (AFS,           "args",  None)
         , afs_complete   = (AFS_Completer, "args", None)
+        , afs_completed  = (AFS_Completed, "args", None)
         , ochange        = (Changer,       "args",  None)
         , complete       = (Completer,     "forms", None)
         , completed      = (Completed,     "forms", None)

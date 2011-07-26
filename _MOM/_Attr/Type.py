@@ -173,6 +173,7 @@
 #    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
 #    20-Jul-2011 (CT) `A_Date_Time` changed to use UTC for cooked value
 #    20-Jul-2011 (CT) `_A_Date_._output_format` added and used
+#    26-Jul-2011 (CT) `ckd_query_eq` and `raw_query_eq` added
 #    ««revision-date»»···
 #--
 
@@ -289,9 +290,23 @@ class A_Attr_Type (object) :
     # end def ac_query
 
     @TFL.Meta.Once_Property
+    def ckd_query_eq (self) :
+        return _AC_Query_ (getattr (Q, self.ckd_name).__eq__, self.cooked)
+    # end def ckd_query_eq
+
+    @TFL.Meta.Once_Property
     def example (self) :
         return self.raw_default
     # end def example
+
+    @TFL.Meta.Once_Property
+    def raw_query_eq (self) :
+        if self.needs_raw_value :
+            result = _AC_Query_ (getattr (Q, self.raw_name).__eq__, unicode)
+        else :
+            result = self.ckd_query_eq
+        return result
+    # end def raw_query_eq
 
     def __init__ (self, kind) :
         self.kind        = kind

@@ -139,6 +139,8 @@ _test_code = """
     >>> PAP.Person.query_s (Q.RAW.last_name.STARTSWITH ("Ta")).all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
 
+    >>> scope.destroy ()
+
 """
 
 from   _GTW.__test__.model      import *
