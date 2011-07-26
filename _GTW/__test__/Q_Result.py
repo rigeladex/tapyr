@@ -32,6 +32,8 @@
 #     2-Sep-2010 (MG) More tests added
 #    19-Jul-2011 (MG) New tests for `RAW` queries added
 #    22-Jul-2011 (MG) Tests for `LOWER` added
+#    26-Jul-2011 (CT) Tests (q1, q2, q3) for `attrs` combined with `count`
+#                     and `all` added
 #    ««revision-date»»···
 #--
 
@@ -41,30 +43,32 @@ _q_result = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
-    >>> p   = scope.PAP.Person  ("LN 2", "FN 2")
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 2", title = "Dr.")
     >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> _   = scope.PAP.Person  ("LN 4", "FN 4", title = "DI")
+    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", title = "DI Dr.")
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
 
     >>> q   = scope.PAP.Person.query ()
     >>> print q.count ()
-    3
+    5
     >>> len (q.all ())
-    3
+    5
     >>> print q.attr ("first_name").count ()
-    3
+    5
     >>> sorted (q.attr ("first_name"))
-    [u'fn 1', u'fn 2', u'fn 3']
+    [u'fn 1', u'fn 2', u'fn 3', u'fn 4', u'fn 5']
     >>> print q.attrs (Q.first_name).count ()
-    3
+    5
     >>> sorted (q.attrs (Q.first_name))
-    [(u'fn 1',), (u'fn 2',), (u'fn 3',)]
+    [(u'fn 1',), (u'fn 2',), (u'fn 3',), (u'fn 4',), (u'fn 5',)]
 
-    >>> sorted (q.attr (Q.lifetime.start), key = lambda v : (v.__class__.__name__, v))
+    >>> sorted (q.attr (Q.lifetime.start).distinct (), key = lambda v : (v.__class__.__name__, v))
     [None, datetime.date(2010, 1, 1), datetime.date(2010, 1, 3)]
     >>> sorted (q.attrs (Q.first_name, Q.lifetime.start, "last_name"))
-    [(u'fn 1', datetime.date(2010, 1, 1), u'ln 1'), (u'fn 2', None, u'ln 2'), (u'fn 3', datetime.date(2010, 1, 3), u'ln 3')]
+    [(u'fn 1', datetime.date(2010, 1, 1), u'ln 1'), (u'fn 2', None, u'ln 2'), (u'fn 3', datetime.date(2010, 1, 3), u'ln 3'), (u'fn 4', None, u'ln 4'), (u'fn 5', None, u'ln 5')]
 
     >>> p = scope.PAP.Person.query (pid = 1).one ()
     >>> p.salutation
@@ -95,11 +99,27 @@ _q_result = r"""
     [(GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Address (u's', u'c', u'z', u'c'))]
 
     >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln"))
-    (3, None)
+    (5, None)
     >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 1"))
     (1, GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''))
-    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 4"))
+    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 42"))
     (0, None)
+
+    >>> q1  = scope.PAP.Person.query (Q.RAW.title.STARTSWITH ("D")).distinct ()
+    >>> q2  = q1.attrs (Q.RAW.title)
+    >>> q3  = q1.attrs (Q.RAW.title)
+    >>> sorted (q2.all ())
+    [(u'DI',), (u'DI Dr.',), (u'Dr.',)]
+    >>> q2.count ()
+    3
+    >>> q3.count ()
+    3
+    >>> sorted (q2.all ())
+    [(u'DI',), (u'DI Dr.',), (u'Dr.',)]
+    >>> sorted (q3.all ())
+    [(u'DI',), (u'DI Dr.',), (u'Dr.',)]
+
+    >>> scope.destroy ()
 
 """
 
@@ -128,6 +148,9 @@ _raw_query = """
     [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("Ln")).order_by (Q.last_name).all ()
     [GTW.OMP.PAP.Person (u'lname 4', u'fn 3', u'', u'')]
+
+    >>> scope.destroy ()
+
 """
 
 from   _GTW.__test__.model import *
