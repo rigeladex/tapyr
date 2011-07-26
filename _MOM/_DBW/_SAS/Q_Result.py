@@ -49,6 +49,9 @@
 #    19-Jul-2011 (CT) `_Q_Result_Attrs_._from_row_tuple` changed to not apply
 #                     `str` for kind-less attributes (e.g., `pid`)
 #    22-Jul-2011 (MG) `__str__` added
+#    26-Jul-2011 (MG) Caching of `_sa_query` and `_kinds` fixed, caching of
+#                     query result in `__iter__` added, `count` for
+#                     `_Q_Result_Attrs_` fixed
 #    ««revision-date»»···
 #--
 
@@ -67,6 +70,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     """Base class for Q_Result using SQLAlchemy to query a SQL database."""
 
     _sa_query = None
+    _result   = None
 
     class List (list) :
         def copy (self) : return self.__class__ (self)
@@ -116,7 +120,8 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def _clone
 
     def count (self) :
-        sa_query = self.sa_query ([sql.func.count ("*").label ("count")], True)
+        sa_query = self.sa_query \
+            ([sql.func.count ("*").label ("count")], True, False)
         result   = self.session.connection.execute (sa_query)
         count    = result.fetchone ().count
         result.close ()
@@ -213,8 +218,8 @@ class _Q_Result_ (TFL.Meta.Object) :
         result.close ()
     # end def _query_rows
 
-    def sa_query (self, columns = (), joins = False) :
-        if columns or self._sa_query is None :
+    def sa_query (self, columns = (), joins = False, cache = True) :
+        if columns or self._sa_query is None or cache is False :
             sa_query, joined = self._sql_query (columns, joins)
             sa_query, joined = self._join      (sa_query, self._joins, joined)
             if self._filter :
@@ -228,6 +233,8 @@ class _Q_Result_ (TFL.Meta.Object) :
             if self._offset is not None :
                 sa_query = sa_query.offset (self._offset)
             if columns :
+                return sa_query
+            if not cache :
                 return sa_query
             self._sa_query = sa_query
         return self._sa_query
@@ -272,8 +279,15 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def where
 
     def __iter__ (self) :
-        for row in self._query_rows () :
-            yield self._from_row (row)
+        if self._result is None :
+            self._result = []
+            for row in self._query_rows () :
+                element = self._from_row (row)
+                self._result.append (element)
+                yield element
+        else :
+            for element in self._result :
+                yield element
     # end def __iter__
 
     def __str__ (self) :
@@ -317,6 +331,10 @@ class _Q_Result_Attrs_ (_Q_Result_) :
             self._attr_cols.extend (self._getters_to_columns (getters, raw))
     # end def __init__
 
+    def count (self) :
+        return len (self.all ())
+    # end def count
+
     def distinct (self, * criteria) :
         return TFL.Q_Result (self).distinct (* criteria)
     # end def distinct
@@ -359,13 +377,13 @@ class _Q_Result_Attrs_ (_Q_Result_) :
         return self._from_row_tuple (row) [0]
     # end def _from_row_single
 
-    def sa_query (self, columns = (), joins = False) :
-        if self._sa_query is None :
+    def sa_query (self, columns = (), joins = False, cache = True) :
+        if self._sa_query is None or cache is False :
             if not columns :
                 joins       = False
                 comp_query  = MOM.DBW.SAS.MOM_Composite_Query
                 columns     = []
-                self._kinds = []
+                kinds       = []
                 for req_col in self._attr_cols :
                     if isinstance (req_col, comp_query) :
                         cols = req_col._COLUMNS
@@ -373,11 +391,15 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                     else :
                         cols = req_col
                         columns.append (cols)
-                    self._kinds.append ((req_col.MOM_Kind, cols))
+                    kinds.append       ((req_col.MOM_Kind, cols))
             else :
                 joins       = True
-                self._kinds = [(None, c) for c in columns]
-            self._sa_query = self.__super.sa_query (columns, joins)
+                kinds       = [(None, c) for c in columns]
+            sa_query = self.__super.sa_query (columns, joins, cache)
+            if not cache :
+                return sa_query
+            self._sa_query = sa_query
+            self._kinds    = kinds
         return self._sa_query
     # end def sa_query
 
