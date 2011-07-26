@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,8 @@
 #     2-Sep-2010 (CT) `set` changed to use `SET` of `Q.Get`
 #     7-Sep-2010 (MG) `attr` and `attrs` return a `Q_Result` instance instead
 #                     of being an iterator
+#    26-Jul-2011 (CT) Handling of `distinct` changed so that it is passed on
+#                     to derived queries
 #    ««revision-date»»···
 #--
 
@@ -57,8 +59,12 @@
 8
 >>> qq.all ()
 [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
+>>> qq.filter (lambda x : x % 2).all ()
+[1, 3, 5, 7, 9]
 >>> qq.distinct (lambda x : x % 2).all ()
 [0, 1]
+>>> qq.all ()
+[0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
 >>> qq.distinct (lambda x : x % 3 == 0).all ()
 [0, 2]
 >>> qs = qr.filter (lambda x : x % 2 == 0)
@@ -110,6 +116,8 @@ IndexError: Query result contains 2 entries
 [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 4, 64, 25, 16, 36, 9, 49]
 >>> qc.distinct (lambda x : x % 10).all ()
 [1, 10, 4, 9, 16, 25]
+>>> qc.distinct (lambda x : x % 10).count ()
+6
 >>> qc [5:15].all ()
 [51, 61, 71, 81, 91, 10, 30, 50, 70, 90]
 >>> qc.limit (5).all ()
@@ -132,13 +140,26 @@ from   _TFL.predicate           import first, uniq, uniq_p
 import itertools
 import operator
 
+class _Q_Filter_Distinct_ (TFL.Meta.Object) :
+
+    def __init__ (self, criterion) :
+        self.criterion = criterion
+    # end def __init__
+
+    def __call__ (self, iterable) :
+        return uniq_p (iterable, self.criterion)
+    # end def __call__
+
+# end class _Q_Filter_Distinct_
+
 class _Q_Result_ (TFL.Meta.Object) :
 
     Q = TFL.Attr_Query ()
 
-    def __init__ (self, iterable) :
-        self.iterable = iterable
-        self._cache   = None
+    def __init__ (self, iterable, _distinct = False) :
+        self.iterable  = iterable
+        self._cache    = None
+        self._distinct = _distinct
     # end def __init__
 
     def all (self) :
@@ -148,7 +169,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     def attr (self, getter) :
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
-        return Q_Result ((getter (r) for r in self))
+        return Q_Result ((getter (r) for r in self), self._distinct)
     # end def attr
 
     def attrs (self, * getters) :
@@ -164,7 +185,8 @@ class _Q_Result_ (TFL.Meta.Object) :
                     getter = getattr (Q, getter)
                 yield getter
         getters = tuple (_g (getters))
-        return Q_Result ((tuple (g (r) for g in getters) for r in self))
+        return Q_Result \
+            ((tuple (g (r) for g in getters) for r in self), self._distinct)
     # end def attrs
 
     def count (self) :
@@ -174,12 +196,16 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def count
 
     def distinct (self, * criteria) :
-        criterion = None
-        if len (criteria) == 1 :
-            criterion = first (criteria)
-        elif criteria :
-            criterion = TFL.Filter_And  (* criteria)
-        return self._Q_Result_Distinct_ (self, criterion)
+        n = len (criteria)
+        if n == 0 :
+            _distinct = uniq
+        else :
+            if n == 1 :
+                criterion = first (criteria)
+            elif criteria :
+                criterion = TFL.Filter_And  (* criteria)
+            _distinct = _Q_Filter_Distinct_ (criterion)
+        return _Q_Result_ (self, _distinct = _distinct)
     # end def distinct
 
     def filter (self, * criteria, ** kw) :
@@ -194,7 +220,7 @@ class _Q_Result_ (TFL.Meta.Object) :
             criterion = first (criteria)
         else :
             criterion = TFL.Filter_And  (* criteria)
-        return self._Q_Result_Filtered_ (self, criterion)
+        return self._Q_Result_Filtered_ (self, criterion, self._distinct)
     # end def filter
 
     def first (self) :
@@ -205,23 +231,23 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def first
 
     def limit (self, limit) :
-        return self._Q_Result_Limited_ (self, limit)
+        return self._Q_Result_Limited_ (self, limit, self._distinct)
     # end def limit
 
     def offset (self, offset) :
-        return self._Q_Result_Offset_ (self, offset)
+        return self._Q_Result_Offset_ (self, offset, self._distinct)
     # end def offset
 
     def one (self) :
         result = first (self)
         if len (self._cache) > 1 :
-            raise IndexError\
+            raise IndexError \
                 ("Query result contains %s entries" % len (self._cache))
         return result
     # end def one
 
     def order_by (self, criterion) :
-        return self._Q_Result_Ordered_ (self, criterion)
+        return self._Q_Result_Ordered_ (self, criterion, self._distinct)
     # end def order_by
 
     def set (self, * args, ** kw) :
@@ -240,11 +266,14 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def set
 
     def slice (self, start, stop = None) :
-        return self._Q_Result_Sliced_ (self, start, stop)
+        return self._Q_Result_Sliced_ (self, start, stop, self._distinct)
     # end def slice
 
     def _fill_cache (self) :
-        self._cache = list (self.iterable)
+        iterable = self.iterable
+        if self._distinct :
+            iterable = self._distinct (iterable)
+        self._cache = list (iterable)
     # end def _fill_cache
 
     def __getitem__ (self, key) :
@@ -274,34 +303,19 @@ class _Q_Result_ (TFL.Meta.Object) :
 # end class _Q_Result_
 
 @TFL.Add_New_Method (_Q_Result_)
-class _Q_Result_Distinct_ (_Q_Result_) :
-
-    def __init__ (self, iterable, criterion) :
-        self.__super.__init__ (iterable)
-        self._criterion = criterion
-    # end def __init__
-
-    def _fill_cache (self) :
-        if self._criterion is None :
-            distinct = uniq   (self.iterable)
-        else :
-            distinct = uniq_p (self.iterable, self._criterion)
-        self._cache  = list (distinct)
-    # end def _fill_cache
-
-# end class _Q_Result_Distinct_
-
-@TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Filtered_ (_Q_Result_) :
 
-    def __init__ (self, iterable, criterion) :
-        self.__super.__init__ (iterable)
+    def __init__ (self, iterable, criterion, _distinct = False) :
+        self.__super.__init__ (iterable, _distinct = _distinct)
         self._criterion = criterion
     # end def __init__
 
     def _fill_cache (self) :
-        pred  = self._criterion
-        self._cache = [x for x in self.iterable if pred (x)]
+        pred     = self._criterion
+        filtered = (x for x in self.iterable if pred (x))
+        if self._distinct and not self.iterable._distinct :
+            filtered = self._distinct (filtered)
+        self._cache = list (filtered)
     # end def _fill_cache
 
 # end class _Q_Result_Filtered_
@@ -309,13 +323,16 @@ class _Q_Result_Filtered_ (_Q_Result_) :
 @TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Limited_ (_Q_Result_) :
 
-    def __init__ (self, iterable, limit) :
-        self.__super.__init__ (iterable)
+    def __init__ (self, iterable, limit, _distinct = False) :
+        self.__super.__init__ (iterable, _distinct = _distinct)
         self._limit = limit
     # end def __init__
 
     def _fill_cache (self) :
-        self._cache = self.iterable.all () [:self._limit]
+        iterable = self.iterable
+        if self._distinct and not iterable._distinct :
+            iterable = self._distinct (iterable)
+        self._cache = list (itertools.islice (iterable, None, self._limit))
     # end def _fill_cache
 
 # end class _Q_Result_Limited_
@@ -323,13 +340,16 @@ class _Q_Result_Limited_ (_Q_Result_) :
 @TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Offset_ (_Q_Result_) :
 
-    def __init__ (self, iterable, offset) :
-        self.__super.__init__ (iterable)
+    def __init__ (self, iterable, offset, _distinct = False) :
+        self.__super.__init__ (iterable, _distinct = _distinct)
         self._offset = offset
     # end def __init__
 
     def _fill_cache (self) :
-        self._cache = self.iterable.all () [self._offset:]
+        iterable = self.iterable
+        if self._distinct and not iterable._distinct :
+            iterable = self._distinct (iterable)
+        self._cache = list (itertools.islice (iterable, self._offset, None))
     # end def _fill_cache
 
 # end class _Q_Result_Offset_
@@ -337,13 +357,16 @@ class _Q_Result_Offset_ (_Q_Result_) :
 @TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Ordered_ (_Q_Result_) :
 
-    def __init__ (self, iterable, criterion) :
-        self.__super.__init__ (iterable)
+    def __init__ (self, iterable, criterion, _distinct = False) :
+        self.__super.__init__ (iterable, _distinct = _distinct)
         self._criterion = criterion
     # end def __init__
 
     def _fill_cache (self) :
-        self._cache = sorted (self.iterable, key = self._criterion)
+        iterable = self.iterable
+        if self._distinct and not iterable._distinct :
+            iterable = self._distinct (iterable)
+        self._cache = sorted (iterable, key = self._criterion)
     # end def _fill_cache
 
 # end class _Q_Result_Ordered_
@@ -351,27 +374,33 @@ class _Q_Result_Ordered_ (_Q_Result_) :
 @TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Sliced_ (_Q_Result_) :
 
-    def __init__ (self, iterable, start, stop) :
-        self.__super.__init__ (iterable)
+    def __init__ (self, iterable, start, stop, _distinct = False) :
+        self.__super.__init__ (iterable, _distinct = _distinct)
         self._start = start
-        self._stop   = stop
+        self._stop  = stop
     # end def __init__
 
     def _fill_cache (self) :
-        self._cache = self.iterable.all () [self._start:self._stop]
+        iterable = self.iterable
+        if self._distinct and not iterable._distinct :
+            iterable = self._distinct (iterable)
+        self._cache = list (itertools.islice (iterable, self._start, self._stop))
     # end def _fill_cache
 
 # end class _Q_Result_Sliced_
 
 class Q_Result (_Q_Result_) :
 
-    def __init__ (self, iterable) :
-        self.iterable = iterable
+    def __init__ (self, iterable, _distinct = False) :
+        self.iterable  = iterable
+        self._distinct = _distinct
         try :
             len (iterable)
         except TypeError :
             self._cache = None
         else :
+            if _distinct and not getattr (iterable, "_distinct", False) :
+                iterable = list (_distinct (iterable))
             self._cache = iterable
     # end def __init__
 
@@ -395,7 +424,9 @@ class Q_Result_Composite (_Q_Result_) :
         def _ (self, * args, ** kw) :
             name   = q.__name__
             result = self.__class__ \
-                ([getattr (sq, name) (* args, ** kw) for sq in self.queries])
+                ( [getattr (sq, name) (* args, ** kw) for sq in self.queries]
+                , _distinct = self._distinct
+                )
             result = getattr (result.__super, name) (* args, ** kw)
             if self._order_by :
                 result = result.order_by (self._order_by)
@@ -403,10 +434,11 @@ class Q_Result_Composite (_Q_Result_) :
         return _
     # end def super_ordered_delegate
 
-    def __init__ (self, queries, order_by = None) :
+    def __init__ (self, queries, order_by = None, _distinct = False) :
         self.queries   = queries
         self._order_by = order_by
-        self.__super.__init__ (itertools.chain (* queries))
+        self.__super.__init__ \
+            (itertools.chain (* queries), _distinct = _distinct)
     # end def __init__
 
     @super_ordered_delegate
@@ -417,7 +449,7 @@ class Q_Result_Composite (_Q_Result_) :
     def filter (self, * criteria, ** kw) :
         return self.__class__ \
             ( [q.filter (* criteria, ** kw) for q in self.queries]
-            , self._order_by
+            , self._order_by, self._distinct
             )
     # end def filter
 
@@ -443,7 +475,10 @@ class Q_Result_Composite (_Q_Result_) :
 
     def _fill_cache (self) :
         if self._order_by :
-            self._cache = sorted (self.iterable, key = self._order_by)
+            iterable = self.iterable
+            if self._distinct :
+                iterable = self._distinct (iterable)
+            self._cache = sorted (iterable, key = self._order_by)
         else :
             self.__super._fill_cache ()
     # end def _fill_cache
