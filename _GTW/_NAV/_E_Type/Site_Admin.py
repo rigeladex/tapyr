@@ -81,8 +81,9 @@ class Admin_Group (GTW.NAV.Dir) :
 
     _Media          = GTW.Media \
         ( scripts       =
-            ( GTW.Script (src = "/media/GTW/js/GTW/jQ/postify_a.js")
-            ,
+            ( GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
+            , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
+            , GTW.Script (src = "/media/GTW/js/GTW/jQ/postify_a.js")
             )
         )
     css_group         = "Group"

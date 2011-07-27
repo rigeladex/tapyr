@@ -87,6 +87,7 @@
 #    19-Jul-2011 (CT) `attr_completion` changed to use `Q.RAW` if argument `raw`
 #    22-Jul-2011 (CT) `attr_completion` removed, s/ac_query/ac_query_auto_split/
 #    22-Jul-2011 (CT) `_acq_gen` renamed to `ac_query_attrs`
+#    26-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` added
 #    ««revision-date»»···
 #--
 

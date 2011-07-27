@@ -222,6 +222,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ( GTW.Script._.jQuery_UI
                 , GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 )
