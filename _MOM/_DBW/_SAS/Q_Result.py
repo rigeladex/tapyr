@@ -53,6 +53,7 @@
 #                     query result in `__iter__` added, `count` for
 #                     `_Q_Result_Attrs_` fixed
 #    27-Jul-2011 (MG) `_Q_Result_Attrs_.count` changed to use sub queries
+#                     Alias added to sub query
 #    ««revision-date»»···
 #--
 
@@ -335,7 +336,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     def count (self) :
         sa_query = sql.select \
             ( [sql.func.count ("*").label ("count")]
-            , from_obj = self.sa_query ()
+            , from_obj = self.sa_query ().alias ("select__count")
             )
         result   = self.session.connection.execute (sa_query)
         count    = result.fetchone ().count
