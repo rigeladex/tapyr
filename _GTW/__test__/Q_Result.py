@@ -142,6 +142,9 @@ _q_result = r"""
     >>> sorted (q5.all ())
     [(u'DI',), (u'Dr.',)]
 
+    >>> q2.first ()
+    (u'DI',)
+
     >>> scope.destroy ()
 
 """
