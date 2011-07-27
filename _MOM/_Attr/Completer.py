@@ -68,7 +68,7 @@ class Completer (TFL.Meta.Object) :
         vd     = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
         fs     = tuple (ETM.ac_query_attrs (self.names, vd))
         if fs :
-            return ETM.query (* fs).distinct ()
+            return ETM.query_s (* fs).distinct ()
         return TFL.Q_Result (())
     # end def __call__
 

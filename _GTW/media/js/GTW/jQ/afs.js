@@ -25,12 +25,31 @@
 //    25-Jul-2011 (CT) `_setup_callbacks` factored, `setup_completer` started
 //    26-Jul-2011 (CT) `setup_completer` continued
 //    27-Jul-2011 (CT) `setup_completer` continued.., `$.gtw_ajax_2json` factored
+//    27-Jul-2011 (CT) `fix_ui_autocomplete` added to allow html for
+//                     auto-ccompletion labels
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
+    var bwrap = function bwrap (v) {
+        return "<b>" + v + "</b>";
+    };
+    ( function fix_ui_autocomplete () {
+        $.extend
+            ( $.ui.autocomplete.prototype
+            , { _renderItem : function (ul, item) {
+                  var result = $("<li></li>")
+                      .data     ("item.autocomplete", item)
+                      .append   ($("<a></a>").html (item.label))
+                      .appendTo (ul);
+                  return result;
+                }
+              }
+            );
+      } ()
+    );
     var setup_completer = function () {
         var _get = function _get (options, elem, val, cb) {
             var completer = elem.completer, data, values;
@@ -41,12 +60,12 @@
                 , values          : values
                 };
             $.gtw_ajax_2json
-                ( { async       : true
-                  , data        : data
-                  , success     : function (answer, status, xhr_instance) {
+                ( { async         : true
+                  , data          : data
+                  , success       : function (answer, status, xhr_instance) {
                         _get_cb (options, elem, val, cb, answer);
                     }
-                  , url         : options.completer_url
+                  , url           : options.completer_url
                   }
                 , "Completion"
                 );
@@ -58,8 +77,9 @@
                 for (var i = 0, li = response.matches.length, match; i < li; i++) {
                     match = response.matches [i];
                     result.push
-                        ( { label : match.join (" ::: ")
-                          , value : i
+                        ( { index : i
+                          , label : $.map (match, bwrap).join ("")
+                          , value : match [0]
                           }
                         );
                 };
@@ -78,7 +98,7 @@
                 name  = elem.completer.names [i];
                 id    = map [name];
                 field = $GTW.AFS.Elements.id_map [id];
-                value = field.inp$.attr ("value");
+                value = field.inp$.val ();
                 if (value && value.length > 0) {
                     result [name] = value;
                 };
@@ -88,8 +108,7 @@
         var _put = function _put (options, elem, item) {
             var completer = elem.completer;
             var response  = completer.response;
-            var match     = response.matches [item.value];
-            item.value    = item.label;
+            var match     = response.matches [item.index];
             if (completer ["complete_entity"]) {
                 // XXX;
                 alert ("Selected completion " + $GTW.inspect.show (match));
@@ -101,14 +120,13 @@
             var field, id, value;
             var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
             var map    = anchor.field_name_map;
-            for ( var i = 0, li = elem.completer.names.length, name
-                ; i < li
-                ; i++
-                ) {
-                name  = elem.completer.names [i];
-                id    = map [name];
+            var names  = elem.completer.names;
+            for (var i = 0, li = names.length; i < li; i++) {
+                id    = map [names [i]];
                 field = $GTW.AFS.Elements.id_map [id];
-                value = field.inp$.attr ("value", match [i]);
+                field.inp$
+                    .val     (match [i])
+                    .trigger ("change");
             };
         };
         return function setup_completer (options, elem) {
@@ -121,15 +139,14 @@
                     );
             } else {
                 elem.inp$.autocomplete
-                    ( { focus     : function (event, ui) {
-                            elem.inp$.attr ("value", ui.item.label);
-                            if (event && event.preventDefault) {
-                                event.preventDefault ();
-                            };
+                    ( { focus    : function (event, ui) {
+                            elem.inp$.val (ui.item.value);
+                            return false;
                         }
                       , minLength : completer.treshold
                       , select    : function (event, ui) {
                             _put (options, elem, ui.item);
+                            return false;
                         }
                       , source    : function (request, cb) {
                             _get (options, elem, request.term, cb);
@@ -344,7 +361,7 @@
                 if (f$.attr ("type") == "checkbox") {
                     new_value = f$.attr ("checked") ? "yes" : "no";
                 } else {
-                    new_value = f$.attr ("value");
+                    new_value = f$.val ();
                 }
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
@@ -389,7 +406,7 @@
                                 }
                             }
                         } else {
-                            alert ("Error: " + answer.error + "\n\n" + json_data);
+                            alert ("Error: " + answer.error + "\n\n" + $GTW.inspect.show (json_data));
                         }
                         //alert ("Save response: \n" + $GTW.inspect.show (answer));
                     }

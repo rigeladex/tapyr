@@ -31,6 +31,7 @@
 #    23-Mar-2011 (CT) Creation continued..
 #    30-Mar-2011 (CT) Creation continued...
 #    19-May-2011 (CT) Creation continued....
+#    27-Jul-2011 (CT) Rules for ".ui-autocomplete .ui-menu-item" added
 #    ««revision-date»»···
 #--
 
@@ -188,6 +189,23 @@ style_sheet = Style_Sheet \
                 ( ".Primary", ".Required"
                 , P.afs.color_spec_required
                 )
+            ]
+        )
+    , Rule
+        ( ".ui-autocomplete .ui-menu-item"
+        , children =
+            [ Rule
+                ( "b"
+                , font_weight   = "normal"
+                , padding_left  = "0.25em"
+                )
+            , Rule
+                ( "b:first-child"
+                , font_weight   = "bold"
+                , padding_left  = 0
+                , padding_right = "0.75em"
+                )
+            , Rule_Pseudo ("hover", ** P.color_spec_selected)
             ]
         )
     )
