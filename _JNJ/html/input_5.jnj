@@ -38,6 +38,13 @@
 ##--
 #}
 
+{#-
+XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
+- autocomplete
+- autofocus
+- required
+-#}
+
 {%- import "html/_input.jnj" as _common %}
 {%- set select   = _common.select       %}
 {%- set select_v = _common.select_v     %}

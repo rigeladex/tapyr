@@ -105,7 +105,17 @@ _q_result = r"""
     >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 42"))
     (0, None)
 
-    >>> q1  = scope.PAP.Person.query (Q.RAW.title.STARTSWITH ("D")).distinct ()
+    >>> q0  = scope.PAP.Person.query (Q.RAW.title.STARTSWITH ("D"))
+    >>> q1  = q0.distinct ()
+    >>> q1.count ()
+    3
+
+    >>> q9  = q0.attrs (Q.RAW.title)
+    >>> sorted (q9.all ())
+    [(u'DI',), (u'DI',), (u'Dr.',)]
+    >>> q9.count ()
+    3
+
     >>> q2  = q1.attrs (Q.RAW.title)
     >>> q3  = q1.attrs (Q.RAW.title)
     >>> sorted (q2.all ())
