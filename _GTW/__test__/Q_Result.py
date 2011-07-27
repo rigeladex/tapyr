@@ -144,6 +144,8 @@ _q_result = r"""
 
     >>> q2.first ()
     (u'DI',)
+    >>> q3.limit (1).all ()
+    [(u'DI',)]
 
     >>> scope.destroy ()
 
