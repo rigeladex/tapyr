@@ -52,6 +52,7 @@
 #    26-Jul-2011 (MG) Caching of `_sa_query` and `_kinds` fixed, caching of
 #                     query result in `__iter__` added, `count` for
 #                     `_Q_Result_Attrs_` fixed
+#    27-Jul-2011 (MG) `_Q_Result_Attrs_.count` changed to use sub queries
 #    ««revision-date»»···
 #--
 
@@ -332,6 +333,14 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     # end def __init__
 
     def count (self) :
+        sa_query = sql.select \
+            ( [sql.func.count ("*").label ("count")]
+            , from_obj = self.sa_query ()
+            )
+        result   = self.session.connection.execute (sa_query)
+        count    = result.fetchone ().count
+        result.close ()
+        return int (count)
         return len (self.all ())
     # end def count
 
