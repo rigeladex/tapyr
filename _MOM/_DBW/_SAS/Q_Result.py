@@ -54,6 +54,7 @@
 #                     `_Q_Result_Attrs_` fixed
 #    27-Jul-2011 (MG) `_Q_Result_Attrs_.count` changed to use sub queries
 #                     Alias added to sub query
+#    27-Jul-2011 (MG) `_Q_Result_Attrs_._clone` added to copy `_from_row`
 #    ««revision-date»»···
 #--
 
@@ -314,9 +315,11 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     """Return only the values of the explicitly stated attributes instead of
        MOM instances.
     """
-
+    
     _Query_Attrs    = dict \
-        (_Q_Result_._Query_Attrs, _attr_cols = (_Q_Result_.List (), True))
+        ( _Q_Result_._Query_Attrs
+        , _attr_cols = (_Q_Result_.List (), True)
+        )
 
     def __init__ ( self, e_type, session, parent
                  , getter_or_getters = None
@@ -332,6 +335,12 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                 self._from_row = self._from_row_tuple
             self._attr_cols.extend (self._getters_to_columns (getters, raw))
     # end def __init__
+
+    def _clone (self) :
+        result = self.__class__    (self.e_type, self.session, self)
+        result._from_row = getattr (result, self._from_row.__name__)
+        return result
+    # end def _clone
 
     def count (self) :
         sa_query = sql.select \
