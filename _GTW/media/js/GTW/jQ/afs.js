@@ -24,6 +24,7 @@
 //    31-May-2011 (MG) `field_change_cb` special handling for checkboxes added
 //    25-Jul-2011 (CT) `_setup_callbacks` factored, `setup_completer` started
 //    26-Jul-2011 (CT) `setup_completer` continued
+//    27-Jul-2011 (CT) `setup_completer` continued.., `$.gtw_ajax_2json` factored
 //    ««revision-date»»···
 //--
 
@@ -31,45 +32,26 @@
 
 ( function ($) {
     var setup_completer = function () {
-        var _get_completions = function _get_completions
-                (options, elem, val, cb) {
+        var _get = function _get (options, elem, val, cb) {
             var completer = elem.completer, data, values;
-            if ("choices" in completer) {
-                cb ($.ui.autocomplete.filter (array, val));
-            } else {
-                values = _get_field_values (elem);
-                data = $GTW.jsonify
-                    ( { complete_entity : completer ["complete_entity"] || false
-                      , trigger         : elem.$id
-                      , values          : values
-                      }
-                    );
-                $.ajax
-                    ( { url         : options.completer_url
-                      , async       : false
-                      , contentType : "application/json"
-                      , dataType    : "json"
-                      , data        : data
-                      , processData : false
-                      , timeout     : 30000
-                      , type        : "POST"
-                      , error       : function (xhr_instance, status, exc) {
-                            alert
-                              ( "Completion failed: "
-                              + status + " " + exc + "\n\n"
-                              + $GTW.inspect.show (values)
-                              );
-                        }
-                      , success     : function (answer, status, xhr_instance) {
-                            _get_completions_cb
-                                (options, elem, val, cb, answer);
-                        }
-                      }
-                    );
-            };
+            values = _get_field_values (elem);
+            data   =
+                { complete_entity : completer ["complete_entity"] || false
+                , trigger         : elem.$id
+                , values          : values
+                };
+            $.gtw_ajax_2json
+                ( { async       : true
+                  , data        : data
+                  , success     : function (answer, status, xhr_instance) {
+                        _get_cb (options, elem, val, cb, answer);
+                    }
+                  , url         : options.completer_url
+                  }
+                , "Completion"
+                );
         };
-        var _get_completions_cb = function _get_completions_cb
-                (options, elem, val, cb, response) {
+        var _get_cb = function _get_cb (options, elem, val, cb, response) {
             var n = response.completions, result = [];
             if (response.completions > 0 && response.fields > 0) {
                 elem.completer.response = response;
@@ -103,10 +85,11 @@
             };
             return result;
         };
-        var _update = function _update (options, elem, item) {
+        var _put = function _put (options, elem, item) {
             var completer = elem.completer;
             var response  = completer.response;
             var match     = response.matches [item.value];
+            item.value    = item.label;
             if (completer ["complete_entity"]) {
                 // XXX;
                 alert ("Selected completion " + $GTW.inspect.show (match));
@@ -129,25 +112,32 @@
             };
         };
         return function setup_completer (options, elem) {
-            elem.inp$.autocomplete
-                    ( { minLength : elem.completer.treshold
-                      , source    : function (request, cb) {
-                            _get_completions
-                                (options, elem, request.term, cb);
-                        }
-                      }
-                    )
-                .bind
-                    ( "autocompleteselect"
-                    , function (event, ui) {
-                        _update (options, elem, ui.item);
-                        if (event && event.preventDefault) {
-                            event.preventDefault ();
-                        };
-                        return 0;
+            var completer = elem.completer;
+            if ("choices" in completer) {
+                elem.inp$.autocomplete
+                    ( { minLength : completer.treshold
+                      , source    : completer.choices
                       }
                     );
-          };
+            } else {
+                elem.inp$.autocomplete
+                    ( { focus     : function (event, ui) {
+                            elem.inp$.attr ("value", ui.item.label);
+                            if (event && event.preventDefault) {
+                                event.preventDefault ();
+                            };
+                        }
+                      , minLength : completer.treshold
+                      , select    : function (event, ui) {
+                            _put (options, elem, ui.item);
+                        }
+                      , source    : function (request, cb) {
+                            _get (options, elem, request.term, cb);
+                        }
+                      }
+                    );
+            };
+        };
     } ();
     $.fn.afs_form = function (afs_form, opts) {
         var options  = $.extend
@@ -367,24 +357,14 @@
             var id     = s$.attr    ("id");
             var elem   = $GTW.AFS.Elements.get (id);
             var pvs    = $GTW.AFS.Elements.root.packed_values (elem);
-            var json_data = $GTW.jsonify (
+            var json_data =
                   { cargo       : pvs
                   , allow_new   : elem.allow_new
                   , collapsed   : true
-                  }
-                );
-            $.ajax
+                  };
+            $.gtw_ajax_2json
                 ( { url         : document.URL
-                  , async       : false
-                  , contentType : "application/json"
-                  , dataType    : "json"
                   , data        : json_data
-                  , processData : false
-                  , timeout     : 30000
-                  , type        : "POST"
-                  , error       : function (xhr_instance, status, exc) {
-                        alert ("Save failed: " + status + "\n\n" + json_data);
-                    }
                   , success     : function (answer, status, xhr_instance) {
                         var response;
                         var anchor, root, new_elem;
@@ -414,6 +394,7 @@
                         //alert ("Save response: \n" + $GTW.inspect.show (answer));
                     }
                   }
+                , "Save"
                 );
         };
         options.form$       = this;

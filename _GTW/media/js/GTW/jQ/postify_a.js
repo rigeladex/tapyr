@@ -17,6 +17,7 @@
 //     1-Jun-2011 (CT) Creation
 //     7-Jun-2011 (CT) Typos fixed
 //     7-Jun-2011 (CT) Support for `answer ["error"]` added to `success` handler
+//    27-Jul-2011 (CT) Use `gtw_ajax_2json` instead of home-grown code
 //    ««revision-date»»···
 //--
 
@@ -57,15 +58,9 @@
             };
         };
         var do_ajax  = function do_ajax (url, success) {
-            $.ajax
+            $.gtw_ajax_2json
                 ( { url         : url
-                  , async       : false
-                  , contentType : "application/json"
-                  , dataType    : "json"
-                  , processData : false
                   , data        : ""
-                  , timeout     : 30000
-                  , type        : "POST"
                   , error       : function (xhr_instance, status, exc) {
                         alert ("Post to " + url + " failed: " + status);
                     }
