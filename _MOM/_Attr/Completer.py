@@ -32,6 +32,7 @@
 #    22-Jul-2011 (CT) `__call__` changed to use `E_Type.ac_query_attrs`
 #                     instead of `attr_completion`
 #    22-Jul-2011 (CT) `all_names` added
+#    27-Jul-2011 (CT) `entity_p` added
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class Completer (TFL.Meta.Object) :
             self.buddies = acs.buddies (E_Type).names
         if acs.dependents :
             self.dependents = acs.dependents (E_Type).names
+        self.entity_p = set (self.names) == set (E_Type.epk_sig)
     # end def __init__
 
     def __call__ (self, scope, val_dict) :
@@ -75,7 +77,8 @@ class Completer (TFL.Meta.Object) :
     @property
     def as_json_cargo (self) :
         return dict \
-            ( names    = list (self.names)
+            ( entity_p = self.entity_p
+            , names    = list (self.names)
             , treshold = self.treshold
             )
     # end def as_json_cargo

@@ -27,6 +27,7 @@
 //    27-Jul-2011 (CT) `setup_completer` continued.., `$.gtw_ajax_2json` factored
 //    27-Jul-2011 (CT) `fix_ui_autocomplete` added to allow html for
 //                     auto-ccompletion labels
+//    28-Jul-2011 (CT) `setup_completer` continued...
 //    ««revision-date»»···
 //--
 
@@ -55,7 +56,7 @@
             var completer = elem.completer, data, values;
             values = _get_field_values (elem);
             data   =
-                { complete_entity : completer ["complete_entity"] || false
+                { complete_entity : completer ["entity_p"] || false
                 , trigger         : elem.$id
                 , values          : values
                 };
@@ -72,7 +73,7 @@
         };
         var _get_cb = function _get_cb (options, elem, val, cb, response) {
             var n = response.completions, result = [];
-            if (response.completions > 0 && response.fields > 0) {
+            if (n > 0 && response.fields > 0) {
                 elem.completer.response = response;
                 for (var i = 0, li = response.matches.length, match; i < li; i++) {
                     match = response.matches [i];
@@ -106,27 +107,72 @@
             return result;
         };
         var _put = function _put (options, elem, item) {
+            var data;
+            var anchor;
             var completer = elem.completer;
             var response  = completer.response;
             var match     = response.matches [item.index];
-            if (completer ["complete_entity"]) {
-                // XXX;
-                alert ("Selected completion " + $GTW.inspect.show (match));
-            } else {
-                _update_field_values (options, elem, match);
-            }
+            _update_field_values (options, elem, match, completer.names);
+            if (completer ["entity_p"]) {
+                data   =
+                    { fid             : elem.anchor_id
+                    , sid             : $GTW.AFS.Elements.root.value.sid
+                    , complete_entity : true
+                    , trigger         : elem.$id
+                    , values          : _get_field_values (elem)
+                    };
+                $.gtw_ajax_2json
+                    ( { async         : true
+                      , data          : data
+                      , success       : function (answer, status, xhri) {
+                            _put_cb (options, elem, item, answer);
+                        }
+                      , url           : options.completed_url
+                      }
+                    , "Completion"
+                    );
+            };
         };
-        var _update_field_values = function _update_field_values (options, elem, match) {
-            var field, id, value;
+        var _put_cb = function put_cb (options, elem, item, response) {
+            var anchor, av, edit, e_value;
+            if (response.completions > 0 && response.fields > 0) {
+                _update_field_values
+                    (options, elem, response.values, response.names);
+                if (elem.completer ["entity_p"])  {
+                    anchor   = $GTW.AFS.Elements.id_map [elem.anchor_id];
+                    av       = anchor.value;
+                    edit     = av.edit;
+                    e_value  = response.e_value;
+                    edit.pid = e_value.pid;
+                    edit.cid = e_value.cid;
+                    av.sid   = e_value.sid;
+                    _update_entity_init
+                        (options, elem, response.values, elem.completer.names);
+                };
+            };
+        };
+        var _update_entity_init = function _update_entity_init (options, elem, match, names) {
+            var field, id;
             var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
             var map    = anchor.field_name_map;
-            var names  = elem.completer.names;
             for (var i = 0, li = names.length; i < li; i++) {
-                id    = map [names [i]];
-                field = $GTW.AFS.Elements.id_map [id];
-                field.inp$
-                    .val     (match [i])
-                    .trigger ("change");
+                id = map [names [i]];
+                if (id && id in $GTW.AFS.Elements.id_map) {
+                    field = $GTW.AFS.Elements.id_map [id];
+                    field.value.init = match [i];
+                };
+            };
+        } ;
+        var _update_field_values = function _update_field_values (options, elem, match, names) {
+            var field, id;
+            var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
+            var map    = anchor.field_name_map;
+            for (var i = 0, li = names.length; i < li; i++) {
+                id = map [names [i]];
+                if (id && id in $GTW.AFS.Elements.id_map) {
+                    field = $GTW.AFS.Elements.id_map [id];
+                    field.inp$.val (match [i]).trigger ("change");
+                };
             };
         };
         return function setup_completer (options, elem) {
@@ -356,7 +402,6 @@
             var afs_field = $GTW.AFS.Elements.get (id);
             var ini_value, new_value, old_value, anchor;
             if (afs_field !== undefined) {
-                anchor    = $GTW.AFS.Elements.get (afs_field.anchor_id);
                 ini_value = afs_field.value.init;
                 if (f$.attr ("type") == "checkbox") {
                     new_value = f$.attr ("checked") ? "yes" : "no";
@@ -366,6 +411,7 @@
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
                 // trigger `afs_change` event of `anchor`
+                // anchor = $GTW.AFS.Elements.get (afs_field.anchor_id);
             }
         };
         var save_cb = function save_cb (ev) {
@@ -406,9 +452,11 @@
                                 }
                             }
                         } else {
-                            alert ("Error: " + answer.error + "\n\n" + $GTW.inspect.show (json_data));
+                            alert
+                                ( "Error: " + answer.error + "\n\n"
+                                + $GTW.inspect.show (json_data)
+                                );
                         }
-                        //alert ("Save response: \n" + $GTW.inspect.show (answer));
                     }
                   }
                 , "Save"

@@ -1130,6 +1130,7 @@ $GTW :
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
+                        entity_p = true
                         names :
                             0 = "last_name"
                             1 = "first_name"
@@ -1149,6 +1150,7 @@ $GTW :
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
+                        entity_p = true
                         names :
                             0 = "first_name"
                             1 = "last_name"
@@ -1168,6 +1170,7 @@ $GTW :
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
+                        entity_p = true
                         names :
                             0 = "middle_name"
                             1 = "last_name"
@@ -1186,6 +1189,7 @@ $GTW :
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
+                        entity_p = false
                         names :
                             0 = "title"
                         treshold = 1

@@ -116,6 +116,7 @@
                       return this.value.init;
                   };
               };
+              return undefined;
           }
         , id_suffix : function id_suffix () {
               var match = this.$id.match (id_suffix_pat);

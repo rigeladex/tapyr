@@ -103,6 +103,8 @@
 #    26-Jul-2011 (CT) `obj`, `Form`, and `form` factored from `AFS` to `_Cmd_`
 #    26-Jul-2011 (CT) `AFS_Completed` started, `href_completed` added
 #    24-Jul-2011 (CT) `AFS_Completer` continued..
+#    28-Jul-2011 (CT) `JSON_Error` added and used for refactored methods
+#    28-Jul-2011 (CT) `AFS_Completed` continued
 #    ««revision-date»»···
 #--
 
@@ -127,6 +129,19 @@ from   _TFL.I18N                import _, _T, _Tn
 
 from   itertools                import chain as ichain
 from   posixpath                import join  as pjoin
+
+class JSON_Error (Exception) :
+
+    def __init__ (self, __data = None, ** kw) :
+        self.__data = __data
+        self.kw     = kw
+    # end def __init__
+
+    def __call__ (self, handler) :
+        return handler.write_json (self.__data, ** self.kw)
+    # end def __call__
+
+# end class JSON_Error
 
 class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
@@ -183,16 +198,59 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return ETM.pid_query (pid)
         # end def obj
 
-        @Once_Property
-        def Form (self) :
-            return AFS_Form [self.E_Type.GTW.afs_id]
-        # end def Form
-
         def form (self, obj = None, ** kw) :
             if obj is None :
                 obj = self.obj
-            return self.Form (self.ETM, obj, ** kw)
+            Form = AFS_Form [self.E_Type.GTW.afs_id]
+            return Form (self.ETM, obj, ** kw)
         # end def form
+
+        def form_element (self, fid) :
+            try :
+                form = AFS_Form   [fid]
+                return form, form [fid]
+            except KeyError :
+                error = _T ("Form corrupted, unknown element id %s" % (fid, ))
+                raise JSON_Error (error  = error)
+        # end def form_element
+
+        def form_value (self, json_cargo) :
+            try :
+                return AFS_Value.from_json (json_cargo)
+            except Exception as exc :
+                raise JSON_Error (error = "%s" % (exc, ))
+        # end def form_value
+
+        def form_value_apply (self, fv, scope, sid, session_secret) :
+            try :
+                return fv.apply \
+                    (scope, _sid = sid, _session_secret = session_secret)
+            except GTW.AFS.Error.Conflict :
+                raise JSON_Error (conflicts = fv.as_json_cargo)
+            except Exception as exc :
+                raise JSON_Error (error = "%s" % (exc, ))
+        # end def form_value_apply
+
+        def pid_query (self, ETM, pid) :
+            try :
+                return ETM.pid_query (pid)
+            except LookupError :
+                error = _T ("%s `%s` doesn't exist!") % \
+                    (_T (self.E_Type.ui_name), pid)
+                raise JSON_Error (error = error)
+        # end def pid_query
+
+        def session_secret (self, handler, sid) :
+            try :
+                return self._get_edit_session (handler, sid)
+            except handler.session.Expired as exc :
+                raise JSON_Error \
+                    ( expired = "%s" % (exc, )
+                    , ### XXX re-authorization form (password only)
+                    )
+            except LookupError as exc :
+                raise JSON_Error (error = "Session expired: %s" % (exc, ))
+        # end def session_secret
 
         def _raise_401 (self, handler) :
             if handler.json :
@@ -281,44 +339,30 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise NotImplementedError \
                     ("AFS form post requests without content-type json")
             try :
-                fv = AFS_Value.from_json (json ["cargo"])
-            except Exception as exc :
-                return handler.write_json (error = str (exc))
-            sid = fv.sid
-            try :
-                session_secret = self._get_edit_session (handler, sid)
-            except handler.session.Expired as exc :
-                return handler.write_json \
-                    ( expired = unicode (exc)
-                    , ### XXX re-authorization form (password only)
+                fv             = self.form_value (json ["cargo"])
+                get_template   = self.top.Templateer.get_template
+                session_secret = self.session_secret (handler, fv.sid)
+                self.form_value_apply (fv, scope, fv.sid, session_secret)
+                ikw = dict \
+                    ( allow_new       = json.get ("allow_new")
+                    , collapsed       = json.get ("collapsed")
+                    , _sid            = fv.sid
+                    , _session_secret = session_secret
                     )
-            except LookupError as exc :
-                return handler.write_json (error = "Session expired: %s" % exc)
-            try :
-                fv.apply (scope, _sid = sid, _session_secret = session_secret)
-            except GTW.AFS.Error.Conflict :
-                return handler.write_json (conflicts = fv.as_json_cargo)
-            except Exception as exc :
-                return handler.write_json (error = unicode (exc))
-            get_template = self.top.Templateer.get_template
-            ikw = dict \
-                ( allow_new       = json.get ("allow_new")
-                , collapsed       = json.get ("collapsed")
-                , _sid            = sid
-                , _session_secret = session_secret
-                )
-            result ["$child_ids"] = rids = []
-            for e in fv.entities () :
-                if e.entity :
-                    obj = e.entity
-                    fi  = e.elem.instantiated (e.id, obj.ETM, obj, ** ikw)
-                    result [e.id] = dict \
-                        ( html = get_template (e.elem.renderer).call_macro
-                            (fi.widget, fi, fi, fi.renderer)
-                        , json = fi.as_json_cargo
-                        )
-                    rids.append (e.id)
-            return handler.write_json (result)
+                result ["$child_ids"] = rids = []
+                for e in fv.entities () :
+                    if e.entity :
+                        obj = e.entity
+                        fi  = e.elem.instantiated (e.id, obj.ETM, obj, ** ikw)
+                        result [e.id] = dict \
+                            ( html = get_template (e.elem.renderer).call_macro
+                                (fi.widget, fi, fi, fi.renderer)
+                            , json = fi.as_json_cargo
+                            )
+                        rids.append (e.id)
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                exc (handler)
         # end def _post_handler
 
     # end class AFS
@@ -329,36 +373,50 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         SUPPORTED_METHODS = set (("POST", ))
 
         def rendered (self, handler, template = None) :
+            ETM       = self.ETM
+            E_Type    = self.E_Type
             HTTP      = self.top.HTTP
             request   = handler.request
             if handler.json is None :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
-            result    = {}
-            ETM       = self.ETM
-            E_Type    = self.E_Type
-            Form      = self.Form
             json      = TFL.Record (** handler.json)
-            field     = Form [json.trigger]
-            attr      = getattr (E_Type, field.name)
-            completer = attr.completer (attr, E_Type)
-            all_names = completer.all_names
-            names     = completer.names
-            fs        = ETM.raw_query_attrs (names, json.values)
-            query     = ETM.query (* fs)
-            af        = \
-                ( tuple (getattr (Q.RAW, a) for a in all_names)
-                + (("pid", "last_cid") if json.complete_entity else ())
-                )
-            result ["completions"] = n = query.count ()
-            if n == 1 :
-                values = query.attrs (* af).first ()
-                result ["fields"] = len  (all_names)
-                result ["values"] = dict (zip (all_names, values))
-                if json.complete_entity :
-                    result ["e_value"] = dict \
-                        (zip (("pid", "cid"), values [-2:]))
-            return handler.write_json (result)
+            result    = {}
+            try :
+                session_secret = self.session_secret (handler, json.sid)
+                form, elem     = self.form_element (json.fid)
+                field          = form [json.trigger]
+                attr           = getattr (E_Type, field.name)
+                completer      = attr.completer (attr, E_Type)
+                all_names      = completer.all_names
+                names          = completer.names
+                fs             = ETM.raw_query_attrs (names, json.values)
+                query          = ETM.query (* fs)
+                result ["completions"] = n = query.count ()
+                if n == 1 :
+                    af     = ETM.raw_query_attrs (all_names)
+                    values = query.attrs (* af).one ()
+                    result ["fields"] = len  (all_names)
+                    result ["names"]  = all_names
+                    result ["values"] = values
+                    if json.complete_entity :
+                        obj = query.one ()
+                        ikw = dict \
+                            ( allow_new       = handler.json.get ("allow_new")
+                            , collapsed       = handler.json.get ("collapsed")
+                            , copy            = handler.json.get ("copy")
+                            , _sid            = json.sid
+                            , _session_secret = session_secret
+                            )
+                        fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
+                        result ["e_value"] = dict \
+                            ( cid = obj.last_cid
+                            , pid = obj.pid
+                            , sid = fi.sid
+                            )
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                exc (handler)
         # end def rendered
 
     # end class AFS_Completed
@@ -369,40 +427,46 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         SUPPORTED_METHODS = set (("POST", ))
 
         def rendered (self, handler, template = None) :
+            ETM       = self.ETM
+            E_Type    = self.E_Type
             HTTP      = self.top.HTTP
             request   = handler.request
             if handler.json is None :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
-            result    = {}
-            E_Type    = self.E_Type
-            Form      = self.Form
-            json      = TFL.Record (** handler.json)
-            field     = Form [json.trigger]
-            attr      = getattr (E_Type, field.name)
-            completer = attr.completer (attr, E_Type)
-            names     = completer.names
-            query     = completer (self.top.scope, json.values)
-            matches   = query.attrs (* (getattr (Q.RAW, a) for a in names)).all ()
-            n         = result ["completions"] = len (matches)
-            finished  = result ["finished"]    = n == 1
-            if n :
-                if n <= self.max_completions :
-                    result ["fields"]  = len (names)
-                    result ["matches"] = matches
-                else :
-                    matches = query.attrs (getattr (Q.RAW, attr.name)).all ()
-                    m       = len (matches)
-                    if m <= self.max_completions :
-                        result ["fields"]  = 1
+            json        = TFL.Record (** handler.json)
+            result      = {}
+            try :
+                form, field = self.form_element (json.trigger)
+                attr        = getattr (E_Type, field.name)
+                completer   = attr.completer (attr, E_Type)
+                max_n       = self.max_completions
+                names       = completer.names
+                query       = completer (self.top.scope, json.values)
+                fs          = ETM.raw_query_attrs (names)
+                matches     = query.attrs (* fs).limit (max_n + 1).all ()
+                n           = result ["completions"] = len (matches)
+                finished    = result ["finished"]    = n == 1
+                if n :
+                    if n <= max_n :
+                        result ["fields"]  = len (names)
                         result ["matches"] = matches
                     else :
-                        ### XXX find fewer partial matches !!!
-                        result ["fields"]  = 0
-                        result ["matches"] = []
-            else :
-                result ["matches"] = []
-            return handler.write_json (result)
+                        matches = query.attrs (attr.raw_query).limit \
+                            (max_n + 1).all ()
+                        m       = len (matches)
+                        if m <= max_n :
+                            result ["fields"]  = 1
+                            result ["matches"] = matches
+                        else :
+                            ### XXX find fewer partial matches !!!
+                            result ["fields"]  = 0
+                            result ["matches"] = []
+                else :
+                    result ["matches"] = []
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                exc (handler)
         # end def rendered
 
     # end class AFS_Completer
@@ -544,7 +608,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end class Completed
 
     class Deleter (_Cmd_) :
-        """Model an admin page for deleting a specific instance of a etype."""
+        """Model an admin action for deleting a specific instance of a etype."""
 
         name              = "delete"
         template_name     = "e_type_delete"
@@ -557,18 +621,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request    = handler.request
             result     = {}
             try :
-                obj = ETM.pid_query (pid)
-            except LookupError :
-                result ["error"] = \
-                    (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), pid))
-            else :
+                obj    = self.pid_query (ETM, pid)
                 result ["replacement"] = dict \
                     ( html = """<td colspan="6">%s</td>"""
                       % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
                       ### XXX use template to render this XXX
+                    , ### XXX undelete link !!!
                     )
                 obj.destroy ()
-            return handler.write_json (result)
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                exc (handler)
         # end def _view
 
     # end class Deleter
@@ -585,36 +648,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             req_data = request.req_data
             scope    = self.top.scope
             fid      = req_data.get ("fid")
-            if fid :
-                try :
-                    form = AFS_Form [fid]
-                    elem = form     [fid]
-                except KeyError :
-                    return handler.write_json \
-                        (error  = _T ("Form corrupted, unknown element id"))
-                ETM = scope [elem.type_name]
-                pid = req_data.get ("pid")
-                sid = req_data.get ("sid")
+            try :
+                form, elem     = self.form_element (fid)
+                session_secret = self.session_secret (handler, sid)
+                ETM            = scope [elem.type_name]
+                pid            = req_data.get ("pid")
+                sid            = req_data.get ("sid")
                 if pid is not None :
-                    try :
-                        obj = context ["instance"] = ETM.pid_query (pid)
-                    except LookupError :
-                        return handler.write_json \
-                            ( error  =
-                                ( _T ("%s `%s` doesn't exist!")
-                                % (_T (elem.ui_name), pid)
-                                )
-                            )
-                try :
-                    session_secret = self._get_edit_session (handler, sid)
-                except handler.session.Expired as exc :
-                    return handler.write_json \
-                        ( expired = unicode (exc)
-                        , ### XXX re-authorization form (password only)
-                        )
-                except LookupError as exc :
-                    return handler.write_json \
-                        (error = "Session expired: %s" % exc)
+                    obj = context ["instance"] = self.pid_query (ETM, pid)
                 ikw = dict \
                     ( allow_new       = req_data.get ("allow_new")
                     , collapsed       = req_data.get ("collapsed")
@@ -632,6 +673,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         (fi.widget, fi, fi, fi.renderer)
                     , json = fi.as_json_cargo
                     )
+            except JSON_Error as exc :
+                exc (handler)
         # end def rendered
 
     # end class Expander

@@ -88,6 +88,8 @@
 #    22-Jul-2011 (CT) `attr_completion` removed, s/ac_query/ac_query_auto_split/
 #    22-Jul-2011 (CT) `_acq_gen` renamed to `ac_query_attrs`
 #    26-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` added
+#    28-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` changed to
+#                     support `values = None`
 #    ««revision-date»»···
 #--
 
@@ -188,11 +190,15 @@ class Id_Entity (Entity) :
                 yield getattr (et, n).ac_query (values [n])
     # end def ac_query_attrs
 
-    def ckd_query_attrs (self, names, values) :
+    def ckd_query_attrs (self, names, values = None) :
         et = self._etype
-        for n in names :
-            if n in values :
-                yield getattr (et, n).ckd_query_eq (values [n])
+        if values is None :
+            for n in names :
+                yield getattr (et, n).ckd_query
+        else :
+            for n in names :
+                if n in values :
+                    yield getattr (et, n).ckd_query_eq (values [n])
     # end def ckd_query_attrs
 
     def cooked_epk (self, epk, kw) :
@@ -275,11 +281,15 @@ class Id_Entity (Entity) :
         return c, q.first () if c == 1 else None
     # end def query_1
 
-    def raw_query_attrs (self, names, values) :
+    def raw_query_attrs (self, names, values = None) :
         et = self._etype
-        for n in names :
-            if n in values :
-                yield getattr (et, n).raw_query_eq (values [n])
+        if values is None :
+            for n in names :
+                yield getattr (et, n).raw_query
+        else :
+            for n in names :
+                if n in values :
+                    yield getattr (et, n).raw_query_eq (values [n])
     # end def raw_query_attrs
 
     def _epkified (self, epk, kw) :
