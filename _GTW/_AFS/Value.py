@@ -36,6 +36,8 @@
 #     6-Apr-2011 (CT) `from_json` changed to except a dict as cargo, too
 #    27-May-2011 (CT) `role_id` added
 #    27-May-2011 (CT) `__repr__` added
+#     1-Aug-2011 (CT) `edit` changed to test `is None` instead of truthyness of
+#                     `._edit` (to allow setting attribute [raw] values to "")
 #    ««revision-date»»···
 #--
 
@@ -125,7 +127,10 @@ class Value (_Base_) :
 
     @property
     def edit (self) :
-        return self._edit or self.init
+        result = self._edit
+        if result is None :
+            result = self.init
+        return result
     # end def edit
 
     @edit.setter

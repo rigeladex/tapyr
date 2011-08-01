@@ -218,9 +218,11 @@
             };
         } ();
         var _bind_click = function _bind_click (context, cb) {
+            var sel;
             for (var i = 1, li = arguments.length, arg; i < li; i++) {
                 arg = arguments [i];
-                $(arg.$selector, context).click (arg);
+                sel = $(arg.$selector, context);
+                sel.click (arg);
             }
         };
         var _ac_response = function _ac_response
@@ -259,12 +261,12 @@
                 .html       (response.html)
                 .children   ()
                     .unwrap ();
+            new_elem = $GTW.AFS.Elements.create (response.json);
             anchor   = $GTW.AFS.Elements.get (elem.anchor_id);
             root     = $GTW.AFS.Elements.get (elem.root_id || anchor.root_id);
-            new_elem = $GTW.AFS.Elements.create (response.json);
             new_elem.setup_value
                 ( { anchor : anchor
-                  , root   : root
+                  , root   : root || anchor
                   , roots  : []
                   }
                 );
@@ -440,7 +442,10 @@
                                 if (response !== undefined) {
                                     s$ = _ec_response (response, s$, elem);
                                     _bind_click
-                                        (s$, copy_cb, delete_cb, edit_cb);
+                                        (s$
+                                        , add_cb, cancel_cb, copy_cb
+                                        , delete_cb, edit_cb, save_cb
+                                        );
                                 } else {
                                     alert
                                         ( "Save missing response: \n"
