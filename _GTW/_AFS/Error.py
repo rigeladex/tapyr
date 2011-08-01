@@ -28,6 +28,7 @@
 # Revision Dates
 #     2-Mar-2011 (CT) Creation
 #     8-Mar-2011 (CT) `Corrupted` added
+#     1-Aug-2011 (CT) `Base.__str__` redefined
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,10 @@ class Base (Exception) :
         self.__dict__.update  (kw)
     # end def __init__
 
+    def __str__ (self) :
+        return str (self.message)
+    # end def __str__
+
 # end class Base
 
 class Conflict (Base) :
@@ -73,7 +78,8 @@ class Conflict (Base) :
 
 class Corrupted (Base) :
 
-    message = _ ("""The form values are corrupted.""")
+    message = _ \
+        ("""The edit session has expired or the form values are corrupted.""")
     status  = 404
 
 # end class Corrupted

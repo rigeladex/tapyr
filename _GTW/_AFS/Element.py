@@ -81,6 +81,8 @@
 #                     `_sid` and `_session_secret` values to strings
 #     1-Jun-2011 (CT) `form_hash` changed to apply `str` to unicode-values only
 #    10-Jun-2011 (MG) `Group` added
+#     1-Aug-2011 (CT) `Field_Composite.het_c` and `Fieldset.het_c` changed
+#                     from `section` to `div`
 #    ««revision-date»»···
 #--
 
@@ -486,7 +488,7 @@ class Field (_Field_) :
 class Field_Composite (_Field_) :
     """Model a composite field of a AJAX-enhanced form."""
 
-    het_c       = "section" ### HTML element type to be used for the container
+    het_c       = "div"     ### HTML element type to be used for the container
     het_h       = "h2"      ### HTML element type to be used for the heading
     renderer    = "afs_div_seq"
 
@@ -510,7 +512,7 @@ class Field_Entity (Entity, _Field_) :
 class Fieldset (_Element_) :
     """Model a set of fields of an AJAX-enhanced form."""
 
-    het_c       = "section" ### HTML element type to be used for the container
+    het_c       = "div"     ### HTML element type to be used for the container
     het_h       = "h2"      ### HTML element type to be used for the heading
     id_sep      = ":"
     renderer    = "afs_div_seq"

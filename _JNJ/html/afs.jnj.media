@@ -149,7 +149,7 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
-                ( "section"
+                ( "section", ".Fieldset", ".Field_Composite"
                 , P.afs.border_spec_section
                 , clear            = "both"
                 , margin_bottom    = P.afs.block_margin_bottom

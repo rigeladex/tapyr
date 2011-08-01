@@ -105,6 +105,9 @@
 #    24-Jul-2011 (CT) `AFS_Completer` continued..
 #    28-Jul-2011 (CT) `JSON_Error` added and used for refactored methods
 #    28-Jul-2011 (CT) `AFS_Completed` continued
+#     1-Aug-2011 (CT) Use of `JSON_Error` fixed
+#                     (`return` added to `exc (handler)`)
+#     1-Aug-2011 (CT) `AFS_Completed` continued..
 #    ««revision-date»»···
 #--
 
@@ -362,7 +365,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         rids.append (e.id)
                 return handler.write_json (result)
             except JSON_Error as exc :
-                exc (handler)
+                return exc (handler)
         # end def _post_handler
 
     # end class AFS
@@ -403,20 +406,22 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         obj = query.one ()
                         ikw = dict \
                             ( allow_new       = handler.json.get ("allow_new")
-                            , collapsed       = handler.json.get ("collapsed")
-                            , copy            = handler.json.get ("copy")
+                            , collapsed       = False
+                            , copy            = False
                             , _sid            = json.sid
                             , _session_secret = session_secret
                             )
                         fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
-                        result ["e_value"] = dict \
-                            ( cid = obj.last_cid
-                            , pid = obj.pid
-                            , sid = fi.sid
+                        renderer = self.top.Templateer.get_template \
+                            (fi.renderer)
+                        result.update \
+                            ( html = renderer.call_macro
+                                (fi.widget, fi, fi, fi.renderer)
+                            , json = fi.as_json_cargo
                             )
                 return handler.write_json (result)
             except JSON_Error as exc :
-                exc (handler)
+                return exc (handler)
         # end def rendered
 
     # end class AFS_Completed
@@ -466,7 +471,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     result ["matches"] = []
                 return handler.write_json (result)
             except JSON_Error as exc :
-                exc (handler)
+                return exc (handler)
         # end def rendered
 
     # end class AFS_Completer
@@ -631,7 +636,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 obj.destroy ()
                 return handler.write_json (result)
             except JSON_Error as exc :
-                exc (handler)
+                return exc (handler)
         # end def _view
 
     # end class Deleter
@@ -649,11 +654,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             scope    = self.top.scope
             fid      = req_data.get ("fid")
             try :
-                form, elem     = self.form_element (fid)
+                pid            = req_data.get        ("pid")
+                sid            = req_data.get        ("sid")
+                form, elem     = self.form_element   (fid)
                 session_secret = self.session_secret (handler, sid)
                 ETM            = scope [elem.type_name]
-                pid            = req_data.get ("pid")
-                sid            = req_data.get ("sid")
                 if pid is not None :
                     obj = context ["instance"] = self.pid_query (ETM, pid)
                 ikw = dict \
@@ -674,7 +679,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     , json = fi.as_json_cargo
                     )
             except JSON_Error as exc :
-                exc (handler)
+                return exc (handler)
         # end def rendered
 
     # end class Expander
