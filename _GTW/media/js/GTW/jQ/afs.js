@@ -441,8 +441,8 @@
                                 response = answer [id];
                                 if (response !== undefined) {
                                     s$ = _ec_response (response, s$, elem);
-                                    _bind_click
-                                        (s$
+                                    _setup_callbacks
+                                        ( s$
                                         , add_cb, cancel_cb, copy_cb
                                         , delete_cb, edit_cb, save_cb
                                         );
