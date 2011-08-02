@@ -38,6 +38,7 @@
 #    27-May-2011 (CT) `__repr__` added
 #     1-Aug-2011 (CT) `edit` changed to test `is None` instead of truthyness of
 #                     `._edit` (to allow setting attribute [raw] values to "")
+#     2-Aug-2011 (CT) Message passed to `Error.Unknown` changed
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class Value (_Base_) :
             return form [id]
         except KeyError :
             raise GTW.AFS.Error.Unknown \
-                (_ ("Form/element is unknown"), unknown_id = id)
+                (_ ("Form/element is unknown (unknown id: %s)") % (id, ))
     # end def _get_elem
 
     def __repr__ (self) :

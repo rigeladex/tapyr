@@ -1208,7 +1208,7 @@ _test_code = """
     >>> Value.from_json (json_bad)
     Traceback (most recent call last):
       ...
-    Unknown: (u'Form/element is unknown', 404, {'unknown_id': u'FC'})
+    Unknown: Form/element is unknown (unknown id: FC)
 
     >>> fv = Value.from_json (json_edit)
     >>> fv.changes_t
@@ -1314,14 +1314,14 @@ _test_code = """
     >>> fv.apply (scope, _sid = 0)
     Traceback (most recent call last):
       ...
-    Conflict: (u'Edit conflict: at least one value was changed asynchronously by another request.', 409)
+    Conflict: Edit conflict: at least one value was changed asynchronously by another request.
     >>> p ### after `p.set (middle_name = "w.")`
     GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'w.', u'')
 
     >>> fv.apply (scope, _sid = 1)
     Traceback (most recent call last):
       ...
-    Corrupted: (u'The form values are corrupted.', 404)
+    Corrupted: The edit session has expired or the form values are corrupted.
 
     >>> gv = Value.from_json (json_copy)
     >>> gv.changes_t
