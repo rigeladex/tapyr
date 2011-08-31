@@ -35,6 +35,7 @@
 #    24-May-2011 (CT) `overflow` forced to `visible` for `@media print`
 #    15-Jun-2011 (CT) `max-width` for `img` and `object` removed (doesn't
 #                     scale height accordingly, so image is distorted)
+#    31-Aug-2011 (CT) `hr.docutils` changed
 #    ««revision-date»»···
 #--
 
@@ -457,7 +458,9 @@ style_sheet = Style_Sheet \
     ### ReST specific
     , Rule
         ( "hr.docutils"
-        , clear          = "right"
+        , clear          = "both"
+        , margin         = TRBL (Em (0.5), Percent (12.5))
+        , width          = Percent (75)
         )
     , Rule
         ( "img.align-left"
