@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Mar-2010 (CT) Creation
 #    13-Oct-2010 (CT) `example` added
+#     5-Sep-2011 (CT) `width.max_value` increased from 1000 to 1200
 #    ««revision-date»»···
 #--
 
@@ -92,7 +93,7 @@ class _Pic_ (_Ancestor_Essence) :
         class width (_Ancestor.x) :
             """Width of picture."""
 
-            max_value          = 1000
+            max_value          = 1200
             min_value          = 200
 
         # end class width
