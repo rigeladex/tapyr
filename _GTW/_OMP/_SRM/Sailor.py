@@ -30,6 +30,7 @@
 #     7-May-2010 (CT) `club` added
 #     9-Feb-2011 (CT) `Sailor.left.ui_allow_new` set to `True`
 #     7-Sep-2011 (CT) `completer` added to `nation`, `mna_number`, and `club`
+#     7-Sep-2011 (CT) `club` changed from `Optional` to `Primary_Optional`
 #    ««revision-date»»···
 #--
 
@@ -78,12 +79,10 @@ class Sailor (_Ancestor_Essence) :
 
         # end class mna_number
 
-        ### Non-primary attributes
-
         class club (A_String) :
             """Club the sailor is starting for."""
 
-            kind               = Attr.Optional
+            kind               = Attr.Primary_Optional
             max_length         = 48
             completer          = Attr.Completer_Spec  (1)
 
