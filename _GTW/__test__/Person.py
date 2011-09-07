@@ -85,6 +85,15 @@ _test_code = """
     >>> S.Combo (pu, exclude = S.P_required) (PAP.Person).names
     ('middle_name', 'title', 'lifetime', 'salutation', 'sex')
 
+    >>> S.Primary_Followers ("last_name") (PAP.Person).names
+    ('first_name', 'middle_name', 'title')
+    >>> S.Primary_Followers ("first_name") (PAP.Person).names
+    ('middle_name', 'title')
+    >>> S.Primary_Followers ("middle_name") (PAP.Person).names
+    ('title',)
+    >>> S.Primary_Followers ("title") (PAP.Person).names
+    ()
+
     >>> lnc = PAP.Person.last_name.completer (PAP.Person.last_name, PAP.Person)
     >>> print lnc.name, lnc.names, lnc.treshold
     last_name ('last_name', 'first_name', 'middle_name', 'title') 2
@@ -153,10 +162,10 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
         for x in sorted (xs) :
             yield ", ".join (str (f) or "''" for f in x)
     q     = completer (scope, val_dict)
-    deps  = completer.dependents
+    deps  = completer.all_names
     if complete_entity :
         deps += ("pid", "last_cid")
-    attrs = tuple (getattr (Q.RAW, a) for a in ichain (completer.names, deps))
+    attrs = tuple (getattr (Q.RAW, a) for a in deps)
     print "\n".join (_gen (q.attrs (* attrs)))
 
 __test__ = Scaffold.create_test_dict (_test_code)

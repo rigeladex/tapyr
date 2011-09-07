@@ -31,6 +31,7 @@
 #     4-Feb-2010 (CT) Composite `position` instead of `lat` and `lon`
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    23-Mar-2011 (CT) `region` made `Optional`, not `Primary_Optional`
+#     7-Sep-2011 (CT) `completer` specifications for primary attributes added
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,8 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 60
             rank           = 1
 
+            completer      = Attr.Completer_Spec  (3, Attr.Selector.primary)
+
         # end class street
 
         class zip (A_String) :
@@ -71,6 +74,9 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             rank           = 2
             ui_name        = "Zip code"
 
+            completer      = Attr.Completer_Spec  \
+                (1, Attr.Selector.Primary_Followers ())
+
         # end class zip
 
         class city (A_String) :
@@ -81,6 +87,9 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 30
             rank           = 3
 
+            completer      = Attr.Completer_Spec  \
+                (1, Attr.Selector.Primary_Followers ())
+
         # end class city
 
         class country (A_String) :
@@ -90,6 +99,9 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             ignore_case    = True
             max_length     = 20
             rank           = 4
+
+            completer      = Attr.Completer_Spec  \
+                (1, Attr.Selector.Primary_Followers ())
 
         # end class country
 

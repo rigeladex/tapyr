@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #     5-Jul-2011 (CT) Creation
+#     7-Sep-2011 (CT) `all` added
+#     7-Sep-2011 (CT) `Primary_Followers` added
+#                     (plus `anchor`, `_Primary_Followers_`)
 #    ««revision-date»»···
 #--
 
@@ -48,8 +51,9 @@ import itertools
 class _Selection_ (TFL.Meta.Object) :
     """Base class for attribute selections."""
 
-    def __init__ (self, E_Type) :
+    def __init__ (self, E_Type, anchor) :
         self.E_Type = E_Type
+        self.anchor = anchor
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -77,11 +81,11 @@ class _Combo_Selection_ (_Selection_) :
 
     exclude = None
 
-    def __init__ (self, spec, E_Type) :
-        self.__super.__init__ (E_Type)
-        self.include = spec.include (E_Type)
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
+        self.include = spec.include (E_Type, anchor)
         if spec.exclude is not None :
-            self.exclude = spec.exclude (E_Type)
+            self.exclude = spec.exclude (E_Type, anchor)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -98,8 +102,8 @@ class _Combo_Selection_ (_Selection_) :
 class _Kind_Selection_ (_Selection_) :
     """Attribute selection for a specific kind of attributes."""
 
-    def __init__ (self, spec, E_Type) :
-        self.__super.__init__ (E_Type)
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
         self.kind = spec.kind
     # end def __init__
 
@@ -113,9 +117,9 @@ class _Kind_Selection_ (_Selection_) :
 class _List_Selection_ (_Selection_) :
     """Attribute selection combined from a list of selectors."""
 
-    def __init__ (self, spec, E_Type) :
-        self.__super.__init__ (E_Type)
-        self.sels = tuple (s (E_Type) for s in spec.sels)
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
+        self.sels = tuple (s (E_Type, anchor) for s in spec.sels)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -128,8 +132,8 @@ class _List_Selection_ (_Selection_) :
 class _Name_Selection_ (_Selection_) :
     """Attribute selection specifed by a list of names."""
 
-    def __init__ (self, spec, E_Type) :
-        self.__super.__init__ (E_Type)
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
         self._names = tuple (spec.names)
     # end def __init__
 
@@ -148,8 +152,8 @@ class _Name_Selection_ (_Selection_) :
 class _Pred_Selection_ (_Selection_) :
     """Attribute selection specifed by a predicate."""
 
-    def __init__ (self, spec, E_Type) :
-        self.__super.__init__ (E_Type)
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
         self.kind = spec.kind
         self.pred = spec.pred
     # end def __init__
@@ -166,11 +170,30 @@ class _Pred_Selection_ (_Selection_) :
 
 # end class _Pred_Selection_
 
+class _Primary_Followers_ (_Selection_) :
+    """Selection of primary attributes following a specific attribute."""
+
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
+        self.anchor = spec.anchor or anchor
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def attrs (self) :
+        anchor = getattr (self.E_Type, self.anchor)
+        return tuple \
+            (  a for a in getattr (self.E_Type, "primary")
+            if a.rank > anchor.rank
+            )
+    # end def attrs
+
+# end class _Primary_Followers_
+
 class _Selector_ (TFL.Meta.Object) :
     """Base class for attributes selectors."""
 
-    def __call__ (self, E_Type) :
-        return self.Type (self, E_Type)
+    def __call__ (self, E_Type, anchor = None) :
+        return self.Type (self, E_Type, anchor)
     # end def __call__
 
 # end class _Selector_
@@ -245,11 +268,24 @@ class Not_Pred (Pred) :
 
 # end class Not_Pred
 
+class Primary_Followers (_Selector_) :
+    """Selector for primary attributes following a specific attribute."""
+
+    Type = _Primary_Followers_
+
+    def __init__ (self, anchor = None) :
+        self.anchor = anchor
+    # end def __init__
+
+# end class Primary_Followers
+
 necessary   = Kind ("necessary")
 optional    = Kind ("optional")
 primary     = Kind ("primary")
 required    = Kind ("required")
 user        = Kind ("user_attr")
+
+all         = List (primary, user)
 
 P_optional  = Not_Pred ((lambda x : x.is_required), "user_attr")
 P_required  = Pred     ((lambda x : x.is_required), "user_attr")

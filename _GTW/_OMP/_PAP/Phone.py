@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -31,6 +31,8 @@
 #     3-Feb-2010 (MG) `extension`  removed
 #    28-Feb-2010 (CT) Use `A_Numeric_String` instead of `A_Int` and
 #                     `A_Decimal` for `country_code`, `area_code`, and `number`
+#     7-Sep-2011 (CT) `completer` specifications for `country_code`,
+#                     `area_code`, and `number` added
 #    ««revision-date»»···
 #--
 
@@ -59,6 +61,8 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             check          = ("value != '0'", )
             rank           = 1
 
+            completer      = Attr.Completer_Spec  (1)
+
         # end class country_code
 
         class area_code (A_Numeric_String) :
@@ -69,6 +73,9 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             check          = ("value != '0'", )
             rank           = 2
 
+            completer      = Attr.Completer_Spec  \
+                (1, Attr.Selector.Name ("country_code"))
+
         # end class area_code
 
         class number (A_Numeric_String) :
@@ -78,6 +85,8 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 14
             check          = ("value != '0'", )
             rank           = 3
+
+            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class number
 

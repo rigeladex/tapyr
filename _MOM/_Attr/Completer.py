@@ -55,13 +55,13 @@ class Completer (TFL.Meta.Object) :
     dependents = ()
 
     def __init__ (self, acs, attr, E_Type) :
-        self.name     = attr.name
+        self.name     = name = attr.name
         self.etn      = E_Type.type_name
         self.treshold = acs.treshold
         if acs.buddies :
-            self.buddies = acs.buddies (E_Type).names
+            self.buddies = acs.buddies (E_Type, name).names
         if acs.dependents :
-            self.dependents = acs.dependents (E_Type).names
+            self.dependents = acs.dependents (E_Type, name).names
         self.entity_p = set (self.names) == set (E_Type.epk_sig)
     # end def __init__
 
