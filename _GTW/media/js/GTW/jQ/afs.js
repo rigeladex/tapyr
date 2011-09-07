@@ -31,6 +31,7 @@
 //    28-Jul-2011 (CT) `setup_completer` continued...
 //     1-Aug-2011 (CT) `setup_completer` continued....,
 //                     `_ec_response` refactored
+//     7-Sep-2011 (CT) `setup_completer` continued.....
 //    ««revision-date»»···
 //--
 
@@ -66,6 +67,7 @@
                 values = _get_field_values (elem);
                 data   =
                     { complete_entity : completer ["entity_p"] || false
+                    , fid             : elem.anchor_id
                     , trigger         : elem.$id
                     , values          : values
                     };
@@ -232,7 +234,6 @@
                 if (! response ["error"]) {
                     p$.append (response.html);
                     s$ = p$.children ().last ();
-                    _setup_callbacks (s$, add_cb, cancel_cb, save_cb);
                     new_elem = $GTW.AFS.Elements.create (response.json);
                     anchor =
                         ( parent.anchor_id !== undefined
@@ -250,6 +251,7 @@
                           , roots  : $GTW.AFS.Elements.root.roots
                           }
                         );
+                    _setup_callbacks (s$, add_cb, cancel_cb, save_cb);
                 } else {
                     alert ("Error: " + response.error);
                 }

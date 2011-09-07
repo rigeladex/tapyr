@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -30,6 +30,7 @@
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    26-Feb-2010 (CT) `address` is a `A_Email`, not `A_String`
+#     7-Sep-2011 (CT) `address.completer` added
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,8 @@ class _PAP_Email_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 80
             rank           = 1
             ui_name        = _("Email address")
+
+            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class address
 

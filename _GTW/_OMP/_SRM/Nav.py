@@ -32,6 +32,7 @@
 #     6-May-2010 (MG) Switch to render mode rendering
 #    31-Aug-2010 (CT) `Team` and `Team_has_Boat_in_Regatta` added
 #     6-Sep-2010 (CT) `Boat_in_Regatta` adapted to change of `race_results`
+#     7-Sep-2011 (CT) `Sailor` added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,10 @@ class Admin (object) :
             ,
             )
         , list_display   = ( "name", "date", "desc")
+        )
+
+    Sailor          = dict \
+        ( ETM       = "GTW.OMP.SRM.Sailor"
         )
 
     Team            = dict \

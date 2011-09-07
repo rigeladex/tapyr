@@ -108,6 +108,7 @@
 #     1-Aug-2011 (CT) Use of `JSON_Error` fixed
 #                     (`return` added to `exc (handler)`)
 #     1-Aug-2011 (CT) `AFS_Completed` continued..
+#     7-Sep-2011 (CT) `AFS_Completed` and `AFS_Completer` continued...
 #    ««revision-date»»···
 #--
 
@@ -376,8 +377,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         SUPPORTED_METHODS = set (("POST", ))
 
         def rendered (self, handler, template = None) :
-            ETM       = self.ETM
-            E_Type    = self.E_Type
             HTTP      = self.top.HTTP
             request   = handler.request
             if handler.json is None :
@@ -385,10 +384,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     (_T ("%s only works with content-type json") % request.path)
             json      = TFL.Record (** handler.json)
             result    = {}
+            scope     = self.top.scope
             try :
                 session_secret = self.session_secret (handler, json.sid)
                 form, elem     = self.form_element (json.fid)
-                field          = form [json.trigger]
+                field          = form  [json.trigger]
+                ETM            = scope [elem.type_name]
+                E_Type         = ETM._etype
                 attr           = getattr (E_Type, field.name)
                 completer      = attr.completer (attr, E_Type)
                 all_names      = completer.all_names
@@ -432,37 +434,39 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         SUPPORTED_METHODS = set (("POST", ))
 
         def rendered (self, handler, template = None) :
-            ETM       = self.ETM
-            E_Type    = self.E_Type
             HTTP      = self.top.HTTP
             request   = handler.request
             if handler.json is None :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
-            json        = TFL.Record (** handler.json)
-            result      = {}
+            json      = TFL.Record (** handler.json)
+            result    = {}
+            scope     = self.top.scope
             try :
-                form, field = self.form_element (json.trigger)
-                attr        = getattr (E_Type, field.name)
-                completer   = attr.completer (attr, E_Type)
-                max_n       = self.max_completions
-                names       = completer.names
-                query       = completer (self.top.scope, json.values)
-                fs          = ETM.raw_query_attrs (names)
-                matches     = query.attrs (* fs).limit (max_n + 1).all ()
-                n           = result ["completions"] = len (matches)
-                finished    = result ["finished"]    = n == 1
+                form, elem   = self.form_element (json.fid)
+                field        = form  [json.trigger]
+                ETM          = scope [elem.type_name]
+                E_Type       = ETM._etype
+                attr         = getattr (E_Type, field.name)
+                completer    = attr.completer (attr, E_Type)
+                max_n        = self.max_completions
+                names        = completer.names
+                query        = completer (self.top.scope, json.values)
+                fs           = ETM.raw_query_attrs (names)
+                matches      = query.attrs (* fs).limit (max_n + 1).all ()
+                n            = result ["completions"] = len (matches)
+                finished     = result ["finished"]    = n == 1
                 if n :
                     if n <= max_n :
-                        result ["fields"]  = len (names)
-                        result ["matches"] = matches
+                        result ["fields"]  = len    (names)
+                        result ["matches"] = sorted (matches)
                     else :
                         matches = query.attrs (attr.raw_query).limit \
                             (max_n + 1).all ()
                         m       = len (matches)
                         if m <= max_n :
                             result ["fields"]  = 1
-                            result ["matches"] = matches
+                            result ["matches"] = sorted (matches)
                         else :
                             ### XXX find fewer partial matches !!!
                             result ["fields"]  = 0

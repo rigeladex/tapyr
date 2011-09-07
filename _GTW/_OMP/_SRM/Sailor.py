@@ -29,6 +29,7 @@
 #    15-Apr-2010 (CT) Creation
 #     7-May-2010 (CT) `club` added
 #     9-Feb-2011 (CT) `Sailor.left.ui_allow_new` set to `True`
+#     7-Sep-2011 (CT) `completer` added to `nation`, `mna_number`, and `club`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class Sailor (_Ancestor_Essence) :
             """Nation for which the sailor sails."""
 
             kind               = Attr.Primary_Optional
+            completer          = Attr.Completer_Spec  (1)
 
         # end class nation
 
@@ -72,6 +74,7 @@ class Sailor (_Ancestor_Essence) :
             """Membership number in Member National Authorities (MNA)."""
 
             kind               = Attr.Primary_Optional
+            completer          = Attr.Completer_Spec  (1)
 
         # end class mna_number
 
@@ -82,6 +85,7 @@ class Sailor (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 48
+            completer          = Attr.Completer_Spec  (1)
 
         # end class club
 
