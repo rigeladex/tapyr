@@ -32,6 +32,7 @@
 #    11-May-2010 (CT) `club` added
 #    23-Nov-2010 (CT) `ui_date` changed to avoid display of `start == finish`
 #    14-Dec-2010 (CT) `year` changed from `Internal` to `Cached`
+#     8-Sep-2011 (CT) `completer` added to `name`, `club` and `desc`
 #    ««revision-date»»···
 #--
 

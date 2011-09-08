@@ -261,6 +261,7 @@
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
+              // XXX update kw.anchor.field_name_map ???
           }
         }
       , { type_name : "Field_Composite" }

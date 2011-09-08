@@ -102,7 +102,7 @@ _basic = r"""
         <Create GTW.OMP.PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), new-values = {'last_cid' : '8'}>
         <Modify GTW.OMP.PAP.Person (u'Tanzer', u'Laurens', u'', u'Mr.', 'GTW.OMP.PAP.Person'), old-values = {'last_cid' : '8', 'salutation' : u'', 'title' : u''}, new-values = {'last_cid' : '23', 'salutation' : u'Dear L.', 'title' : u'Mr.'}>
     <Change Summary for pid 8: newborn>
-        <Create GTW.OMP.SRM.Sailor ((u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), u'AUT', u'29676', 'GTW.OMP.SRM.Sailor'), new-values = {'last_cid' : '9'}>
+        <Create GTW.OMP.SRM.Sailor ((u'Tanzer', u'Laurens', u'', u'', 'GTW.OMP.PAP.Person'), u'AUT', u'29676', u'', 'GTW.OMP.SRM.Sailor'), new-values = {'last_cid' : '9'}>
     <Change Summary for pid 9: newborn, 3 changes>
         <Create GTW.OMP.SRM.Regatta_Event ((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), new-values = {'last_cid' : '10', 'perma_name' : u'himmelfahrt'}>
         <Modify GTW.OMP.SRM.Regatta_Event ((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'last_cid' : '10'}, new-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '21'}>
@@ -113,7 +113,7 @@ _basic = r"""
     <Change Summary for pid 11: newborn>
         <Create GTW.OMP.SRM.Regatta_H (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), u'Yardstick', 'GTW.OMP.SRM.Regatta_H'), new-values = {'last_cid' : '12', 'perma_name' : u'yardstick'}>
     <Change Summary for pid 12: newborn>
-        <Create GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), new-values = {'last_cid' : '13', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\')'}>
+        <Create GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), new-values = {'last_cid' : '13', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
     <Change Summary for pid 13: newborn, 1 change>
         <Create GTW.OMP.SRM.Race_Result ((((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), u'1', 'GTW.OMP.SRM.Race_Result'), new-values = {'last_cid' : '14', 'points' : u'8'}>
         <Modify GTW.OMP.SRM.Race_Result ((((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), u'1', 'GTW.OMP.SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '14'}, new-values = {'discarded' : u'yes', 'last_cid' : '24'}>
@@ -146,7 +146,7 @@ _basic = r"""
     9 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '27')), ('perma_name', (old = None, new = u'himmelfahrt'))]
     10 [('last_cid', (old = None, new = '11')), ('perma_name', (old = None, new = u'optimist'))]
     11 [('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'yardstick'))]
-    12 [('last_cid', (old = None, new = '13')), ('skipper', (old = None, new = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\')'))]
+    12 [('last_cid', (old = None, new = '13')), ('skipper', (old = None, new = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'))]
     13 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '24')), ('points', (old = None, new = u'8'))]
     14 [('last_cid', (old = None, new = '15')), ('points', (old = None, new = u'4'))]
     15 [('contents', (old = None, new = u'<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '16')), ('text', (old = None, new = u'Text for the 1. event'))]
@@ -218,13 +218,13 @@ _basic = r"""
     ...
     <Change Summary for pid 5: just died>
         <Destroy GTW.OMP.SRM.Boat ((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), old-values = {'last_cid' : '5'}>
-          <Destroy GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), old-values = {'last_cid' : '13', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\')'}>
+          <Destroy GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), old-values = {'last_cid' : '13', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\', u\'\')'}>
             <Destroy GTW.OMP.SRM.Race_Result ((((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), u'1', 'GTW.OMP.SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '24', 'points' : u'8'}>
             <Destroy GTW.OMP.SRM.Race_Result ((((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), u'2', 'GTW.OMP.SRM.Race_Result'), old-values = {'last_cid' : '15', 'points' : u'4'}>
     <Change Summary for pid 6: just died>
         <Destroy GTW.OMP.SRM.Boat ((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1134', 'GTW.OMP.SRM.Boat'), old-values = {'last_cid' : '7'}>
     <Change Summary for pid 12: just died>
-        <Destroy GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), old-values = {'last_cid' : '13', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\')'}>
+        <Destroy GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), old-values = {'last_cid' : '13', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\', u\'\')'}>
           <Destroy GTW.OMP.SRM.Race_Result ((((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), u'1', 'GTW.OMP.SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '24', 'points' : u'8'}>
           <Destroy GTW.OMP.SRM.Race_Result ((((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), (((('finish', u'2010/05/13'), ('start', u'2010/05/13')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), u'2', 'GTW.OMP.SRM.Race_Result'), old-values = {'last_cid' : '15', 'points' : u'4'}>
     <Change Summary for pid 13: just died>
@@ -237,7 +237,7 @@ _basic = r"""
     ...
     5 [('last_cid', (old = '5', new = None))]
     6 [('last_cid', (old = '7', new = None))]
-    12 [('last_cid', (old = '13', new = None)), ('skipper', (old = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\')', new = None))]
+    12 [('last_cid', (old = '13', new = None)), ('skipper', (old = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\', u\'\')', new = None))]
     13 [('discarded', (old = u'yes', new = None)), ('last_cid', (old = '24', new = None)), ('points', (old = u'8', new = None))]
     14 [('last_cid', (old = '15', new = None)), ('points', (old = u'4', new = None))]
 
