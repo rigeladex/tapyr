@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#     8-Sep-2011 (CT) `completer` added to `name`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,8 @@ class Boat_Class (_Ancestor_Essence) :
 
             kind               = Attr.Primary
             max_length         = 48
+
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class name
 

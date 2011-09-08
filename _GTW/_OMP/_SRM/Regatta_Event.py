@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -69,6 +69,7 @@ class Regatta_Event (_Ancestor_Essence) :
 
             kind               = Attr.Primary
             max_length         = 64
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class name
 
@@ -79,6 +80,7 @@ class Regatta_Event (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 8
+            completer          = Attr.Completer_Spec  (1)
 
         # end class club
 
@@ -87,6 +89,7 @@ class Regatta_Event (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 160
+            completer          = Attr.Completer_Spec  (1)
 
         # end class desc
 

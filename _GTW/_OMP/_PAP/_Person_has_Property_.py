@@ -71,6 +71,8 @@ class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 20
             ui_name        = "Description"
 
+            completer      = Attr.Completer_Spec  (1)
+
             def computed (self, obj) :
                 return getattr (obj.right, self.name, "")
             # end def computed

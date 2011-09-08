@@ -124,6 +124,8 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 20
             ui_name        = "Description"
 
+            completer      = Attr.Completer_Spec  (1)
+
         # end class desc
 
         class position (A_Position) :

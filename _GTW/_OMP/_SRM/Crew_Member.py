@@ -89,6 +89,8 @@ class Crew_Member (_Ancestor_Essence) :
             kind               = Attr.Optional
             max_length         = 32
 
+            completer          = Attr.Completer_Spec  (1)
+
         # end class role
 
     # end class _Attributes

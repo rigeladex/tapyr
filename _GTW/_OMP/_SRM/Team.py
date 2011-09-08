@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    31-Aug-2010 (CT) Creation
+#     8-Sep-2011 (CT) `completer` added to `name` and `club`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,7 @@ class Team (_Ancestor_Essence) :
 
             kind               = Attr.Primary
             max_length         = 64
+            completer          = Attr.Completer_Spec  (1)
 
         # end class name
 
@@ -77,6 +79,7 @@ class Team (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 8
+            completer          = Attr.Completer_Spec  (1)
 
         # end class club
 

@@ -32,6 +32,7 @@
 //     1-Aug-2011 (CT) `setup_completer` continued....,
 //                     `_ec_response` refactored
 //     7-Sep-2011 (CT) `setup_completer` continued.....
+//     8-Sep-2011 (CT) `setup_completer` continued...... (guards added)
 //    ««revision-date»»···
 //--
 
@@ -111,11 +112,13 @@
                     ; i++
                     ) {
                     name  = elem.completer.names [i];
-                    id    = map [name];
-                    field = $GTW.AFS.Elements.id_map [id];
-                    value = field.inp$.val ();
-                    if (value && value.length > 0) {
-                        result [name] = value;
+                    if (name in map) {
+                        id    = map [name];
+                        field = $GTW.AFS.Elements.id_map [id];
+                        value = field.inp$.val ();
+                        if (value && value.length > 0) {
+                            result [name] = value;
+                        };
                     };
                 };
                 return result;
@@ -171,11 +174,14 @@
                 var field, id;
                 var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
                 var map    = anchor.field_name_map;
-                for (var i = 0, li = names.length; i < li; i++) {
-                    id = map [names [i]];
-                    if (id && id in $GTW.AFS.Elements.id_map) {
-                        field = $GTW.AFS.Elements.id_map [id];
-                        field.value.init = match [i];
+                for (var i = 0, li = names.length, name; i < li; i++) {
+                    name = names [i];
+                    if (name in map) {
+                        id = map [name];
+                        if (id in $GTW.AFS.Elements.id_map) {
+                            field = $GTW.AFS.Elements.id_map [id];
+                            field.value.init = match [i];
+                        };
                     };
                 };
             } ;
@@ -184,11 +190,14 @@
                 var field, id;
                 var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
                 var map    = anchor.field_name_map;
-                for (var i = 0, li = names.length; i < li; i++) {
-                    id = map [names [i]];
-                    if (id && id in $GTW.AFS.Elements.id_map) {
-                        field = $GTW.AFS.Elements.id_map [id];
-                        field.inp$.val (match [i]).trigger ("change");
+                for (var i = 0, li = names.length, name; i < li; i++) {
+                    name = names [i];
+                    if (name in map) {
+                        id = map [name];
+                        if (id in $GTW.AFS.Elements.id_map) {
+                            field = $GTW.AFS.Elements.id_map [id];
+                            field.inp$.val (match [i]).trigger ("change");
+                        };
                     };
                 };
             };

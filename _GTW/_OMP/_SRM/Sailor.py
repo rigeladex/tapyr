@@ -75,7 +75,6 @@ class Sailor (_Ancestor_Essence) :
             """Membership number in Member National Authorities (MNA)."""
 
             kind               = Attr.Primary_Optional
-            completer          = Attr.Completer_Spec  (1)
 
         # end class mna_number
 
