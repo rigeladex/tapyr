@@ -71,7 +71,7 @@
 #     1-Aug-2002 (CT)  s/dsu_ed/dusort/g
 #    29-Aug-2002 (CT)  `bit_size_decorator` added
 #    06-Sep-2002 (RMA) Moved pairwise from '_predicate_21' because change
-#                      change from 29-Jul does not work for pairwise.
+#                      from 29-Jul does not work for pairwise.
 #    13-Dec-2002 (CT)  `intersection_n` and `intersection_ns` added
 #    14-Jan-2003 (CT)  `first` added
 #     4-Feb-2003 (CT)  `sorted` argument added to `split_by_key`
@@ -172,7 +172,8 @@
 #     2-Jun-2010 (CT)  `undotted_dict` added
 #    30-Jun-2010 (CT)  `sliced` added
 #     8-Sep-2010 (MG)  `dotted_dict` added
-#     9-Oct-2010 (MG) `undotted_dict`and `dotted_dict`: Parameter `sep` added
+#     9-Oct-2010 (MG)  `undotted_dict`and `dotted_dict`: Parameter `sep` added
+#     8-Sep-2011 (CT)  `first_n` added
 #    ««revision-date»»···
 #--
 
@@ -486,6 +487,29 @@ def first_diff (a, b) :
             return i
     return i + 1
 # end def first_diff
+
+def first_n (iterable, n, default = None) :
+    """Generate first n elements of iterable, filling with `default` if
+       necessary.
+
+       >>> it = (1,2,3)
+       >>> for n in range (6) :
+       ...   print n, tuple (first_n (it, n))
+       ...
+       0 ()
+       1 (1,)
+       2 (1, 2)
+       3 (1, 2, 3)
+       4 (1, 2, 3, None)
+       5 (1, 2, 3, None, None)
+    """
+    for i, x in enumerate (iterable) :
+        if i >= n :
+            break
+        yield x
+    for k in range (i+1, n) :
+        yield default
+# end def first
 
 def flatten (* lists) :
     """Returns a list containing all the elements in `lists'.
