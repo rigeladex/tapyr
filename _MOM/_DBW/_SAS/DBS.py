@@ -51,6 +51,8 @@
 #                     database` error message
 #    22-Jul-2011 (MG) `Sqlite.create_engine`: `PRAGMA case_sensitive_like`
 #                     added
+#     8-Sep-2011 (CT) s/SQLError/DBAPIError/
+#                     (SQLError doesn't exist in SQLAlchemy 0.7)
 #    ««revision-date»»···
 #--
 
@@ -142,7 +144,7 @@ class _NFB_ (_SAS_DBS_) :
     def delete_database (cls, db_url, manager) :
         try :
             cls._drop_database (db_url, manager)
-        except sqlalchemy.exc.SQLError, e:
+        except sqlalchemy.exc.DBAPIError as e:
             ### looks like we don't have the permissions to drop the database
             ### -> let's delete all tables we find using the reflection
             ### mechanism of sqlalchemy
@@ -152,7 +154,7 @@ class _NFB_ (_SAS_DBS_) :
                 meta.reflect                   ()
                 if meta.tables :
                     cls._drop_database_content (engine, meta)
-            except sqlalchemy.exc.SQLError :
+            except sqlalchemy.exc.DBAPIError :
                 pass
             engine.close ()
     # end def delete_database
