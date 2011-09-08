@@ -32,6 +32,7 @@
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/; s/birth/start/; s/death/finish/
 #    28-Apr-2010 (CT) `Date_Interval.days` added
 #    10-May-2010 (CT) `A_Date_Interval_C` added
+#     8-Sep-2011 (CT) `Date_Interval.ui_display_format` redefined
 #    ««revision-date»»···
 #--
 
@@ -120,6 +121,14 @@ class Date_Interval (_Ancestor_Essence) :
         # end class finish_after_start
 
     # end class _Predicates
+
+    @property
+    def ui_display_format (self) :
+        attrs = [self.__class__.start]
+        if self.finish and self.finish != self.start :
+            attrs.append (self.__class__.finish)
+        return self.ui_display_sep.join ("%%(%s)s" % a.name for a in attrs)
+    # end def ui_display_format
 
     def __nonzero__ (self) :
         return self.start is not None
