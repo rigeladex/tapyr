@@ -51,6 +51,7 @@
 #     8-Jun-2011 (CT) `_create_instance` factored to use `instance_or_new`
 #                     for all but implicit links
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
+#     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class _MOM_Entity_ (_MOM_Element_, Entity) :
         assert ETM.type_name == self.type_name, \
              "%s <-> %s" % (ETM.type_name, self.type_name)
         if entity is not None :
-            assert isinstance (entity, ETM._etype), \
+            assert isinstance (entity, ETM.E_Type), \
                 "%s <-> %r" % (ETM, entity)
         result = self.__super._value  (ETM, entity, ** kw)
         key    = "edit" if result.get ("prefilled") else "init"
@@ -170,7 +171,7 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
         assoc = ETM.home_scope [self.type_name]
         link  = entity
         if entity is not None :
-            if not isinstance (entity, assoc._etype) :
+            if not isinstance (entity, assoc.E_Type) :
                 n, link = assoc.query_1 (** { self.role_name : entity })
         return self.__super.__call__ (assoc, link, ** kw)
     # end def __call__
@@ -270,7 +271,7 @@ class _MOM_Field_Composite_ (_MOM_Element_, Field_Composite) :
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
-        attr     = ETM._etype.attributes [self.name]
+        attr     = ETM.E_Type.attributes [self.name]
         c_type   = attr.C_Type
         c_entity = getattr (entity, self.name, None)
         for c in self.children :
@@ -288,7 +289,7 @@ class _MOM_Field_Entity_ (Entity, Field_Entity) :
         if self.type_name == ETM.type_name :
             result = self.__super.__call__ (ETM, entity, ** kw)
         else :
-            attr     = ETM._etype.attributes [self.name]
+            attr     = ETM.E_Type.attributes [self.name]
             a_etm    = attr.etype_manager (ETM)
             a_entity = getattr (entity, self.name, None)
             a_kw     = dict (kw, ** kw.get (self.name, {}))

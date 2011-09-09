@@ -46,6 +46,7 @@
 #    22-Dec-2010 (CT) `top.E_Types` replaced by `ET_Map`
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #     5-Jan-2011 (CT) `Registration`, `Result`, and `Result_Teamrace` factored
+#     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    ««revision-date»»···
 #--
 
@@ -214,7 +215,7 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         kw    = dict \
             ( pkw
             , ETM       = ETM
-            , E_Type    = ETM._etype
+            , E_Type    = ETM.E_Type
             )
         rev   = self.obj
         query = ETM.query_s (event = rev)
@@ -250,7 +251,7 @@ class SRM (_Ancestor) :
     def href_display (self, obj) :
         scope = self.top.scope
         comps = [self.abs_href, str (obj.year)]
-        if isinstance (obj, (scope.SRM.Page._etype, scope.SRM.Regatta._etype)) :
+        if isinstance (obj, (scope.SRM.Page.E_Type, scope.SRM.Regatta.E_Type)) :
             comps.append (obj.event.perma_name)
         comps.append (obj.perma_name)
         return pjoin (* comps)

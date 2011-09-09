@@ -31,6 +31,8 @@
 #     9-Feb-2011 (CT) `Sailor.left.ui_allow_new` set to `True`
 #     7-Sep-2011 (CT) `completer` added to `nation`, `mna_number`, and `club`
 #     7-Sep-2011 (CT) `club` changed from `Optional` to `Primary_Optional`
+#     9-Sep-2011 (CT) `completer` re-added to `mna_number`,
+#                     `completer` removed from `nation`
 #    ««revision-date»»···
 #--
 
@@ -67,7 +69,6 @@ class Sailor (_Ancestor_Essence) :
             """Nation for which the sailor sails."""
 
             kind               = Attr.Primary_Optional
-            completer          = Attr.Completer_Spec  (1)
 
         # end class nation
 
@@ -75,6 +76,7 @@ class Sailor (_Ancestor_Essence) :
             """Membership number in Member National Authorities (MNA)."""
 
             kind               = Attr.Primary_Optional
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class mna_number
 

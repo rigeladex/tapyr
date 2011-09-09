@@ -90,6 +90,7 @@
 #    26-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` added
 #    28-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` changed to
 #                     support `values = None`
+#     9-Sep-2011 (CT) Property `E_Type` added
 #    ««revision-date»»···
 #--
 
@@ -124,6 +125,11 @@ class Entity (TFL.Meta.Object) :
             except KeyError :
                 pass
     # end def default_child
+
+    @property
+    def E_Type (self) :
+        return self._etype
+    # end def E_Type
 
     @TFL.Meta.Once_Property
     def is_partial (self) :

@@ -35,6 +35,7 @@
 #    12-Apr-2010 (CT) `_get_entries` factored to `Mixin`
 #    21-Jun-2010 (MG) Once property `ETM` added
 #    10-Jan-2011 (CT) `_Mgr_Base_` changed to use `sanitized_filename` on `name`
+#     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
             E_Type      = self.top.App_Type [ETM]
             del kw ["ETM"]
         else :
-            E_Type  = ETM._etype
+            E_Type  = ETM.E_Type
         title       = kw.pop  ("title",       _T (E_Type.__doc__))
         name        = kw.pop  ("name",        E_Type.ui_name)
         short_title = kw.pop  ("short_title", _T (name))

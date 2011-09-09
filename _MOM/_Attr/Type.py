@@ -175,6 +175,7 @@
 #    20-Jul-2011 (CT) `_A_Date_._output_format` added and used
 #    26-Jul-2011 (CT) `ckd_query_eq` and `raw_query_eq` added
 #    28-Jul-2011 (CT) `ckd_query` and `raw_query` added
+#     9-Sep-2011 (CT) Use `etm.E_Type` instead of `etm._etype`
 #    ««revision-date»»···
 #--
 
@@ -868,7 +869,7 @@ class _A_Entity_ (A_Attr_Type) :
     def cooked (soc, value) :
         etm = soc.etype_manager ()
         if etm :
-            soc._check_type (etm._etype, value)
+            soc._check_type (etm.E_Type, value)
         return value
     # end def cooked
 

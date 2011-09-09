@@ -109,6 +109,7 @@
 #                     (`return` added to `exc (handler)`)
 #     1-Aug-2011 (CT) `AFS_Completed` continued..
 #     7-Sep-2011 (CT) `AFS_Completed` and `AFS_Completer` continued...
+#     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    ««revision-date»»···
 #--
 
@@ -390,7 +391,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 form, elem     = self.form_element (json.fid)
                 field          = form  [json.trigger]
                 ETM            = scope [elem.type_name]
-                E_Type         = ETM._etype
+                E_Type         = ETM.E_Type
                 attr           = getattr (E_Type, field.name)
                 completer      = attr.completer (attr, E_Type)
                 all_names      = completer.all_names
@@ -446,7 +447,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 form, elem   = self.form_element (json.fid)
                 field        = form  [json.trigger]
                 ETM          = scope [elem.type_name]
-                E_Type       = ETM._etype
+                E_Type       = ETM.E_Type
                 attr         = getattr (E_Type, field.name)
                 completer    = attr.completer (attr, E_Type)
                 max_n        = self.max_completions
@@ -902,7 +903,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def list_display (self) :
         if self._list_display is None :
             return self._auto_list_display (self.ETM)
-        etype = self.ETM._etype
+        etype = self.ETM.E_Type
         return tuple \
                 (self._attr_kind (etype, a) for a in self._list_display)
     # end def list_display

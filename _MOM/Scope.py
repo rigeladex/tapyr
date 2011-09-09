@@ -87,6 +87,7 @@
 #    30-Nov-2010 (CT) `Fatal_Exceptions` added
 #     8-Mar-2011 (CT) `pid_query` added
 #    21-Mar-2011 (MG) `copy` assert fixed
+#     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    ««revision-date»»···
 #--
 
@@ -485,7 +486,7 @@ class Scope (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def relevant_roots (self) :
-        Top = self.MOM.Id_Entity._etype
+        Top = self.MOM.Id_Entity.E_Type
         return sorted \
             (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
     # end def relevant_roots
@@ -553,8 +554,8 @@ class Scope (TFL.Meta.Object) :
 
     def user_equal (self, other) :
         """Compare entities of `self` and `other` regarding user attributes."""
-        s_count = self.ems.count  (self.MOM.Id_Entity._etype,  strict = False)
-        o_count = other.ems.count (other.MOM.Id_Entity._etype, strict = False)
+        s_count = self.ems.count  (self.MOM.Id_Entity.E_Type,  strict = False)
+        o_count = other.ems.count (other.MOM.Id_Entity.E_Type, strict = False)
         if s_count == o_count :
             for e in self :
                 o = other [e.type_name].instance (* e.epk_raw, raw = True)

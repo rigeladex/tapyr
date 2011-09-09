@@ -36,6 +36,7 @@
 #     2-May-2011 (CT) `sail_number_x` added
 #    30-May-2011 (CT) `nation` changed from `Primary` to `Primary_Optional`
 #     7-Sep-2011 (CT) `completer` added for `nation` and `sail_number`
+#     9-Sep-2011 (CT) `completer` removed from `nation`
 #    ««revision-date»»···
 #--
 
@@ -76,8 +77,6 @@ class Boat (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
             example            = "AUT"
 
-            completer          = Attr.Completer_Spec  (1)
-
         # end class nation
 
         class sail_number (A_Int) :
@@ -88,7 +87,7 @@ class Boat (_Ancestor_Essence) :
             min_value          = 1
             needs_raw_value    = True
 
-            completer          = Attr.Completer_Spec  (1)
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class sail_number
 

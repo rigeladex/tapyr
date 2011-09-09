@@ -41,6 +41,7 @@
 #    17-Nov-2010 (CT) `left.sort_rank` set to `10` to have events sort by
 #                     (`date`,`time`,`left`) instead of (`left`,`date`,`time`)
 #    22-Dec-2010 (CT) `Event_occurs.electric` redefined as `Const` with `True`
+#     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    ««revision-date»»···
 #--
 
@@ -109,8 +110,8 @@ class Event (_Ancestor_Essence) :
                     ### create temporary Recurrence_Spec and Recurrence_Rule
                     ### without putting them into `home_scope`
                     scope = obj.home_scope
-                    rs = scope.EVT.Recurrence_Spec._etype (obj, scope = scope)
-                    rr = scope.EVT.Recurrence_Rule._etype (rs,  scope = scope)
+                    rs = scope.EVT.Recurrence_Spec.E_Type (obj, scope = scope)
+                    rr = scope.EVT.Recurrence_Rule.E_Type (rs,  scope = scope)
                 return list (rr.occurrences)
             # end def computed
 

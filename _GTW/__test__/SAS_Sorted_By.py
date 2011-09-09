@@ -189,9 +189,9 @@ if __name__ == "__main__11" :
     import doctest, SAS_Sorted_By
     TFL.Environment.exec_python_startup ()
     exec (doctest.testsource (SAS_Sorted_By, "SAS_Sorted_By.test"))
-    BIR = scope.SRM.Boat_in_Regatta._etype
-    R   = scope.SRM.Regatta._etype
-    RE  = scope.SRM.Regatta_Event._etype
+    BIR = scope.SRM.Boat_in_Regatta.E_Type
+    R   = scope.SRM.Regatta.E_Type
+    RE  = scope.SRM.Regatta_Event.E_Type
 
     BIRs = BIR._sa_table
     Rs   = R._sa_table

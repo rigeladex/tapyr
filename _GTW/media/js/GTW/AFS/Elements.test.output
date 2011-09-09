@@ -3,8 +3,8 @@ FB : Form ''
     FB-0:0 : Fieldset 'primary'
       FB-0:0:0 : Field_Entity 'Class', anchor = `Entity 'Boat'`
         FB-0:0:0:0 : Field 'Name', anchor = `Field_Entity 'Class'`, completer = name
-      FB-0:0:1 : Field 'Nation', anchor = `Entity 'Boat'`, completer = nation
-      FB-0:0:2 : Field 'Sail number', anchor = `Entity 'Boat'`, completer = sail_number
+      FB-0:0:1 : Field 'Nation', anchor = `Entity 'Boat'`
+      FB-0:0:2 : Field 'Sail number', anchor = `Entity 'Boat'`, completer = sail_number,left,nation
     FB-0:1 : Fieldset 'optional'
       FB-0:1:0 : Field 'Name', anchor = `Entity 'Boat'`
       FB-0:1:1 : Field 'Sail number x', anchor = `Entity 'Boat'`
@@ -25,8 +25,8 @@ FB : Form ''
               FB-0:2::0-2:0:0:1 : Field 'First name', anchor = `Field_Entity 'Person'`, completer = first_name,last_name,middle_name,title
               FB-0:2::0-2:0:0:2 : Field 'Middle name', anchor = `Field_Entity 'Person'`, completer = middle_name,last_name,first_name,title
               FB-0:2::0-2:0:0:3 : Field 'Academic title', anchor = `Field_Entity 'Person'`, completer = title
-            FB-0:2::0-2:0:1 : Field 'Nation', anchor = `Field_Entity 'Skipper'`, completer = nation
-            FB-0:2::0-2:0:2 : Field 'Mna number', anchor = `Field_Entity 'Skipper'`
+            FB-0:2::0-2:0:1 : Field 'Nation', anchor = `Field_Entity 'Skipper'`
+            FB-0:2::0-2:0:2 : Field 'Mna number', anchor = `Field_Entity 'Skipper'`, completer = mna_number,left,nation,club
             FB-0:2::0-2:0:3 : Field 'Club', anchor = `Field_Entity 'Skipper'`, completer = club
         FB-0:2::0-3 : Fieldset 'optional'
           FB-0:2::0-3:0 : Field 'Place', anchor = `Entity_Link 'Boat_in_Regatta'`
@@ -650,11 +650,6 @@ $GTW :
                     $id = "FB-0:0:1"
                     _super = undefined
                     anchor_id = "FB-0"
-                    completer :
-                        entity_p = false
-                        names :
-                            0 = "nation"
-                        treshold = 1
                     kind = "primary"
                     label = "Nation"
                     name = "nation"
@@ -667,9 +662,11 @@ $GTW :
                     _super = undefined
                     anchor_id = "FB-0"
                     completer :
-                        entity_p = false
+                        entity_p = true
                         names :
                             0 = "sail_number"
+                            1 = "left"
+                            2 = "nation"
                         treshold = 1
                     kind = "primary"
                     label = "Sail number"
@@ -1243,11 +1240,6 @@ $GTW :
                     $id = "FB-0:2::0-2:0:1"
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0"
-                    completer :
-                        entity_p = false
-                        names :
-                            0 = "nation"
-                        treshold = 1
                     kind = "primary"
                     label = "Nation"
                     name = "nation"
@@ -1259,6 +1251,14 @@ $GTW :
                     $id = "FB-0:2::0-2:0:2"
                     _super = undefined
                     anchor_id = "FB-0:2::0-2:0"
+                    completer :
+                        entity_p = true
+                        names :
+                            0 = "mna_number"
+                            1 = "left"
+                            2 = "nation"
+                            3 = "club"
+                        treshold = 1
                     kind = "primary"
                     label = "Mna number"
                     name = "mna_number"
