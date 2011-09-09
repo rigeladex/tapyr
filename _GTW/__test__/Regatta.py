@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Apr-2010 (CT) Creation
+#     9-Sep-2011 (CT) Test for `Q.RAW.left.date.start` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,9 @@ _test_code = """
     GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')
     >>> SRM.Regatta_H.instance (* reh.epk)
     GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')
+
+    >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008/05/01").all ()
+    [GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')]
 
 """
 
