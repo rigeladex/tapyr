@@ -164,6 +164,8 @@
 #    22-Dec-2010 (CT) `is_relevant` moved from `Id_Entity` to `Entity`
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    27-May-2011 (CT) Guard for unchanged `epk` added to `_set_raw`
+#     9-Sep-2011 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
+#                     support queries against integers (interpreted as `pid`)
 #    ««revision-date»»···
 #--
 
@@ -1267,6 +1269,17 @@ class Id_Entity (Entity) :
         result = self.__super._set_raw (on_error, ** kw)
         return result + len (pkas_ckd)
     # end def _set_raw
+
+    def __eq__ (self, rhs) :
+        if isinstance (rhs, int) :
+            return self.pid == rhs
+        else :
+            return id (self) == id (rhs)
+    # end def __eq__
+
+    def __hash__ (self) :
+        return id (self)
+    # end def __hash__
 
     def __unicode__ (self) :
         epk = self.epk

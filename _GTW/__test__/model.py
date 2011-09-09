@@ -39,6 +39,7 @@
 #    12-Aug-2010 (MG) Fixture support handling added
 #    16-Aug-2010 (MG) `scope` added to change the default of `verbose`
 #    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
+#     9-Sep-2011 (CT) `from import_MOM import *` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ from   _GTW                   import GTW
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
+from   _MOM.import_MOM        import *
 from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL                   import sos
 

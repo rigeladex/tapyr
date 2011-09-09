@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
+#     9-Sep-2011 (CT) Queries for `p` and `p.pid` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,15 @@ _test_code = """
     GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, s.nation, s.mna_number)
     GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+
+    >>> SRM.Sailor.query (left = p).all ()
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    >>> SRM.Sailor.query (left = p.pid).all ()
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    >>> SRM.Sailor.query (Q.left == p).all ()
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    >>> SRM.Sailor.query (Q.left == p.pid).all ()
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
 
 """
 
