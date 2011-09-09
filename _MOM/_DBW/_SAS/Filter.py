@@ -37,10 +37,13 @@
 #     6-Sep-2010 (MG) The join list now requires a 3 element (the join
 #                     conidition or `None`)
 #    22-Jul-2011 (MG) `_sa_filter` added to `TFL.Q_Exp.Func`
+#     9-Sep-2011 (MG) `_sa_filter` for `TFL.Q.Bin_Bool` and `TFL.Q.Bin_Expr`
+#                     fixed for object comparison
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
+from   _MOM              import MOM
 import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.Filter
@@ -89,6 +92,8 @@ def _sa_filter (self, SAQ) :
                and args [0].MOM_Kind
                ) :
                 arg = args [0].MOM_Kind.from_string (arg)
+            if isinstance (arg, MOM.Entity) :
+                arg = arg.pid
             args.append (arg)
     return joins, (getattr (args [0], self.op.__name__) (args [1]), )
 # end def _sa_filter
