@@ -38,6 +38,7 @@
 ##     5-Jan-2011 (CT) Support `page.template.css_href`
 ##    31-May-2011 (CT) Take `template` from context, if possible
 ##                     (`dir_template` must NOT get the CSS of `page.template`)
+##    20-Jun-2011 (MG) Make use of new `page.template_media` property
 ##    ««revision-date»»···
 ##--
 #}
@@ -72,20 +73,20 @@
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- if template.CSS and not template.css_href %}
+        {%- if page.template_media.inline_CSS %}
           <style type="text/css">
-            {{ template.CSS }}
+            {{ page.template_media.CSS }}
           </style>
         {% else %}
-          {%- if template.css_href %}
-            {{ X.link_stylesheet (template.css_href) }}
-          {% endif -%}
-          {%- for cssl in page.Media.css_links %}
-            {% call media_item (cssl) -%}
-              {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
-            {% endcall %} {# media_item #}
+          {%- for css_href in page.template_media.css_hrefs %}
+            {{ X.link_stylesheet (css_href) }}
           {% endfor -%}
         {% endif -%}
+        {%- for cssl in page.Media.css_links %}
+          {% call media_item (cssl) -%}
+            {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
+          {% endcall %} {# media_item #}
+        {% endfor -%}
       {%- endblock styles %}
         {%- block scripts %}
           {%- for jsl in page.Media.scripts %}

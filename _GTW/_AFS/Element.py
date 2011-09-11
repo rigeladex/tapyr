@@ -81,6 +81,8 @@
 #                     `_sid` and `_session_secret` values to strings
 #     1-Jun-2011 (CT) `form_hash` changed to apply `str` to unicode-values only
 #    10-Jun-2011 (MG) `Group` added
+#    15-Jun-2011 (MG) `Load` changed to `Update_Table`, `Store` removed
+#    21-Jun-2011 (MG) `Update_Table` removed
 #     1-Aug-2011 (CT) `Field_Composite.het_c` and `Fieldset.het_c` changed
 #                     from `section` to `div`
 #    ««revision-date»»···
@@ -619,30 +621,6 @@ class Form (_Element_List_) :
             else :
                 raise
     # end def __getitem__
-
-    @classmethod
-    def Load (cls, pickle_path) :
-        """Load `Table` from `pickle_path`."""
-        with open (pickle_path, "rb") as file :
-            try :
-                table = pickle.load (file)
-            except pickle.PickleError as exc :
-                raise EnvironmentError (str (exc))
-        table.update (cls.Table)
-        ### We want to set `Table` for `GTW.AFS.Element.Form`, not for a
-        ### possible descedent class
-        GTW.AFS.Element.Form.Table = table
-    # end def Load
-
-    @classmethod
-    def Store (cls, pickle_path) :
-        """Store `Table` as pickle in `pickle_path`."""
-        with open (pickle_path, "wb") as file :
-            try :
-                pickle.dump (cls.Table, file, pickle.HIGHEST_PROTOCOL)
-            except pickle.PickleError as exc :
-                raise EnvironmentError (str (exc))
-    # end def Store
 
 # end class Form
 

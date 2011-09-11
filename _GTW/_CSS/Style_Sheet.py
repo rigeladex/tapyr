@@ -34,6 +34,8 @@
 #                     object
 #    14-Jan-2011 (CT) `Parameter_Scope` moved to `GTW.Parameters.Scope`
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
+#    21-Jun-2011 (MG) `call_level` parameter added and used, `__str__` 
+#                     enhanced
 #    ««revision-date»»···
 #--
 
@@ -46,6 +48,7 @@ from   _TFL                       import TFL
 import _GTW._CSS.Media
 
 import _TFL._Meta.Object
+import _TFL.Caller
 
 class M_Style_Sheet (TFL.Meta.Object.__class__) :
     """Meta class for `Style_Sheet`"""
@@ -66,6 +69,9 @@ class Style_Sheet (TFL.Meta.Object) :
         self.name    = attrs.pop ("name",  None)
         self.rank    = attrs.pop ("rank",  0)
         self.attrs   = attrs
+        call_level   = attrs.pop ("call_level", 1)
+        if __debug__ :
+            self._source_file = TFL.Caller.globals (call_level).get ("__file__")
     # end def __init__
 
     def add_import (self, * imports) :
@@ -86,6 +92,9 @@ class Style_Sheet (TFL.Meta.Object) :
     # end def __iter__
 
     def __str__ (self) :
+        if __debug__ :
+            return "/* %s */\n%s" % \
+                (self._source_file, "\n\n".join (str (r) for r in self))
         return "\n\n".join (str (r) for r in self)
     # end def __str__
 

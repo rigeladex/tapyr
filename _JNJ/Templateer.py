@@ -52,6 +52,8 @@
 #    17-Mar-2011 (CT) `afs` and `e_type_afs` added
 #    18-Mar-2011 (CT) `Template_E.parent` added and used in `get_macro`
 #    31-May-2011 (CT) `render` changed to put `template` into `context`
+#    15-Jun-2011 (MG) `get_css` added, `get_Media` and `_eval_fragments`
+#                     changed to `classmethod`
 #    ««revision-date»»···
 #--
 
@@ -129,6 +131,7 @@ class Template_E (_Template_) :
 
     _t_path         = None
     _t_source       = None
+    Media_Fragments = set ()
 
     def __new__ (cls, env, name, path = None, * args, ** kw) :
         if path is None :
@@ -162,14 +165,17 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <style>
            element.
         """
-        media = self._Media
+        return self.get_css (self._Media)
+    # end def CSS
+
+    @classmethod
+    def get_css (cls, media) :
         if media :
-            result = "\n\n".join \
+            return "\n\n".join \
                 ( str (s) for s in
                     sorted (media.style_sheets, key = TFL.Getter.rank)
                 )
-            return result
-    # end def CSS
+    # end def get_css
 
     @Once_Property
     def extends (self) :
@@ -333,7 +339,7 @@ class Template_E (_Template_) :
 
     @Once_Property
     def _Media (self) :
-        return self.get_Media (self.env.CSS_Parameters)
+        return self.get_Media (self.env.CSS_Parameters, self.templates)
     # end def _Media
 
     def call_macro (self, name, * _args, ** _kw) :
@@ -354,11 +360,12 @@ class Template_E (_Template_) :
         return result
     # end def get_macro
 
-    def get_Media (self, P) :
+    @classmethod
+    def get_Media (cls, P, templates) :
         media_fragment_pathes = tuple \
-            (TFL.uniq (t.media_path for t in self.templates if t.media_path))
+            (TFL.uniq (t.media_path for t in templates if t.media_path))
         if media_fragment_pathes :
-            return self._eval_fragments (media_fragment_pathes, P)
+            return cls._eval_fragments (media_fragment_pathes, P)
     # end def get_Media
 
     def render (self, context) :
@@ -367,15 +374,17 @@ class Template_E (_Template_) :
         return self.template.render (context)
     # end def render
 
-    def _eval_fragments (self, fragments, P) :
+    @classmethod
+    def _eval_fragments (cls, fragments, P) :
         from _GTW import Parameters
         scope = Parameters.Scope (P)
         globs = {}
         for f in fragments :
             with open (f, "rt") as file :
+                globs ["__file__"] = f
                 exec (file, globs, scope)
         return scope
-    # end def _Eval
+    # end def _eval_fragments
 
     def _load_media (self) :
         f_path = self.media_fragment_name
@@ -388,6 +397,7 @@ class Template_E (_Template_) :
         else :
             self._media_fragment = self._coding_pat.sub ("", source, 1)
             self._media_path     = path
+            self.Media_Fragments.add (path)
     # end def _load_media
 
     def _load_template (self) :
