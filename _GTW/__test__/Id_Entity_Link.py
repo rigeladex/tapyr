@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -23,7 +23,7 @@
 #    GTW.__test__.Id_Entity_Link
 #
 # Purpose
-#    Test how generic links to obhect wuthout a relevant root work,
+#    Test how generic links to object without a relevant root work,
 #
 # Revision Dates
 #    27-Oct-2010 (MG) Creation
