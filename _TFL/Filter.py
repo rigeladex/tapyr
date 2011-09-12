@@ -43,6 +43,7 @@
 #    19-Jan-2010 (CT) `Attr_Query.And` and `Attr_Query.Or` added
 #    16-Jul-2011 (CT) `__repr__` added
 #    22-Jul-2011 (CT) `Attr_Query.Func` added
+#    12-Sep-2011 (CT) `Attr_Query.And` changed to `Attr_Query.AND`, ditto 4 `Or`
 #    ««revision-date»»···
 #--
 
@@ -390,8 +391,8 @@ class Attr_Query (TFL.Q_Exp.Base) :
 
     Ignore_Exception = AttributeError
 
-    And              = Filter_And
-    Or               = Filter_Or
+    AND              = Filter_And
+    OR               = Filter_Or
 
     class Bin_Bool (_Filter_S_, TFL.Q_Exp.Bin_Bool) :
         pass

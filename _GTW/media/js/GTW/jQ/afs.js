@@ -33,12 +33,16 @@
 //                     `_ec_response` refactored
 //     7-Sep-2011 (CT) `setup_completer` continued.....
 //     8-Sep-2011 (CT) `setup_completer` continued...... (guards added)
+//    12-Sep-2011 (CT) `Field._get_completer_value` factored,
+//                     `Field_Composite._get_completer_value` added
+//    12-Sep-2011 (CT) Shortcut `var $AFS_E = $GTW.AFS.Elements` added
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
+    var $AFS_E = $GTW.AFS.Elements;
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
     };
@@ -63,6 +67,32 @@
             , opts || {}
             );
         var setup_completer = function () {
+            $AFS_E.Field.prototype._get_completer_value = function () {
+                var result, value = this.inp$.val ();
+                if (value && value.length > 0) {
+                    result = value;
+                };
+                return result;
+            };
+            $AFS_E.Field_Composite.prototype._get_completer_value = function () {
+                var field, fv, id, name, result, value;
+                var map = this.field_name_map, n = 0, values = {};
+                for (name in map) {
+                    if (map.hasOwnProperty (name)) {
+                        id    = map [name];
+                        field = $AFS_E.id_map [id];
+                        value = field._get_completer_value ();
+                        if (value !== undefined) {
+                            n += 1;
+                            values [name] = value;
+                        };
+                    };
+                };
+                if (n > 0) {
+                    result = values;
+                };
+                return result;
+            };
             var _get = function _get (options, elem, val, cb) {
                 var completer = elem.completer, data, values;
                 values = _get_field_values (elem);
@@ -104,7 +134,7 @@
             };
             var _get_field_values = function _get_field_values (elem) {
                 var field, id, value;
-                var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id];
                 var map    = anchor.field_name_map;
                 var result = {};
                 for ( var i = 0, li = elem.completer.names.length, name
@@ -114,9 +144,9 @@
                     name  = elem.completer.names [i];
                     if (name in map) {
                         id    = map [name];
-                        field = $GTW.AFS.Elements.id_map [id];
-                        value = field.inp$.val ();
-                        if (value && value.length > 0) {
+                        field = $AFS_E.id_map [id];
+                        value = field._get_completer_value ();
+                        if (value !== undefined) {
                             result [name] = value;
                         };
                     };
@@ -133,7 +163,7 @@
                 if (completer ["entity_p"]) {
                     data   =
                         { fid             : elem.anchor_id
-                        , sid             : $GTW.AFS.Elements.root.value.sid
+                        , sid             : $AFS_E.root.value.sid
                         , allow_new       : elem.allow_new
                         , complete_entity : true
                         , trigger         : elem.$id
@@ -172,14 +202,14 @@
             var _update_entity_init = function _update_entity_init
                     (options, elem, match, names) {
                 var field, id;
-                var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id];
                 var map    = anchor.field_name_map;
                 for (var i = 0, li = names.length, name; i < li; i++) {
                     name = names [i];
                     if (name in map) {
                         id = map [name];
-                        if (id in $GTW.AFS.Elements.id_map) {
-                            field = $GTW.AFS.Elements.id_map [id];
+                        if (id in $AFS_E.id_map) {
+                            field = $AFS_E.id_map [id];
                             field.value.init = match [i];
                         };
                     };
@@ -188,14 +218,14 @@
             var _update_field_values = function _update_field_values
                     (options, elem, match, names) {
                 var field, id;
-                var anchor = $GTW.AFS.Elements.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id];
                 var map    = anchor.field_name_map;
                 for (var i = 0, li = names.length, name; i < li; i++) {
                     name = names [i];
                     if (name in map) {
                         id = map [name];
-                        if (id in $GTW.AFS.Elements.id_map) {
-                            field = $GTW.AFS.Elements.id_map [id];
+                        if (id in $AFS_E.id_map) {
+                            field = $AFS_E.id_map [id];
                             field.inp$.val (match [i]).trigger ("change");
                         };
                     };
@@ -243,21 +273,21 @@
                 if (! response ["error"]) {
                     p$.append (response.html);
                     s$ = p$.children ().last ();
-                    new_elem = $GTW.AFS.Elements.create (response.json);
+                    new_elem = $AFS_E.create (response.json);
                     anchor =
                         ( parent.anchor_id !== undefined
-                        ? $GTW.AFS.Elements.get (parent.anchor_id)
+                        ? $AFS_E.get (parent.anchor_id)
                         : new_elem
                         );
                     root   =
                         ( parent.root_id !== undefined
-                        ? $GTW.AFS.Elements.get (parent.root_id)
+                        ? $AFS_E.get (parent.root_id)
                         : new_elem
                         );
                     new_elem.setup_value
                         ( { anchor : anchor
                           , root   : root
-                          , roots  : $GTW.AFS.Elements.root.roots
+                          , roots  : $AFS_E.root.roots
                           }
                         );
                     _setup_callbacks (s$, add_cb, cancel_cb, save_cb);
@@ -272,9 +302,9 @@
                 .html       (response.html)
                 .children   ()
                     .unwrap ();
-            new_elem = $GTW.AFS.Elements.create (response.json);
-            anchor   = $GTW.AFS.Elements.get (elem.anchor_id);
-            root     = $GTW.AFS.Elements.get (elem.root_id || anchor.root_id);
+            new_elem = $AFS_E.create (response.json);
+            anchor   = $AFS_E.get (elem.anchor_id);
+            root     = $AFS_E.get (elem.root_id || anchor.root_id);
             new_elem.setup_value
                 ( { anchor : anchor
                   , root   : root || anchor
@@ -292,7 +322,7 @@
                     ( function (n) {
                         var inp$   = $(this);
                         var id     = inp$.attr ("id");
-                        var elem   = $GTW.AFS.Elements.get (id);
+                        var elem   = $AFS_E.get (id);
                         elem.inp$  = inp$;
                         if ("completer" in elem) {
                             setup_completer (options, elem);
@@ -304,12 +334,12 @@
             var b$        = $(this);
             var p$        = b$.closest ("section");
             var id        = p$.attr    ("id");
-            var parent    = $GTW.AFS.Elements.get (id);
+            var parent    = $AFS_E.get (id);
             var child_idx = parent.new_child_idx ();
             $.getJSON
                 ( options.expander_url
                 , { fid           : id
-                  , sid           : $GTW.AFS.Elements.root.value.sid
+                  , sid           : $AFS_E.root.value.sid
                   , new_id_suffix : child_idx
                   // XXX need to pass `pid` of `hidden_role` if any
                   }
@@ -321,7 +351,7 @@
             var b$     = $(this);
             var s$     = b$.closest ("section");
             var id     = s$.attr    ("id");
-            var elem   = $GTW.AFS.Elements.get (id);
+            var elem   = $AFS_E.get (id);
             var value  = elem ["value"];
             var pid    = value && value.edit.pid;
             if (pid != undefined) {
@@ -329,7 +359,7 @@
                     ( options.expander_url
                     , { fid       : id
                       , pid       : pid
-                      , sid       : $GTW.AFS.Elements.root.value.sid
+                      , sid       : $AFS_E.root.value.sid
                       , allow_new : elem.allow_new
                       , collapsed : true
                       }
@@ -354,16 +384,16 @@
             var s$        = b$.closest ("section.closed");
             var p$        = s$.parent  ();
             var id        = s$.attr    ("id");
-            var elem      = $GTW.AFS.Elements.get (id);
+            var elem      = $AFS_E.get (id);
             var value     = elem ["value"];
             var pid       = value && value.edit.pid;
-            var parent    = $GTW.AFS.Elements.get (p$.attr ("id"));
+            var parent    = $AFS_E.get (p$.attr ("id"));
             var child_idx = parent.new_child_idx ();
             $.getJSON
                 ( options.expander_url
                 , { fid           : id
                   , pid           : pid
-                  , sid           : $GTW.AFS.Elements.root.value.sid
+                  , sid           : $AFS_E.root.value.sid
                   , new_id_suffix : child_idx
                   , allow_new     : elem.allow_new
                   , copy          : true
@@ -380,14 +410,14 @@
             var b$    = $(this);
             var s$    = b$.closest ("section.closed");
             var id    = s$.attr    ("id");
-            var elem  = $GTW.AFS.Elements.get (id);
+            var elem  = $AFS_E.get (id);
             var value = elem ["value"];
             var pid   = value && value.edit.pid;
             $.getJSON
                 ( options.expander_url
                 , { fid       : id
                   , pid       : pid
-                  , sid       : $GTW.AFS.Elements.root.value.sid
+                  , sid       : $AFS_E.root.value.sid
                   , allow_new : elem.allow_new
                   }
                 , function (response, txt_status) {
@@ -408,7 +438,7 @@
         var field_change_cb = function field_change_cb (ev) {
             var f$ = $(this);
             var id = f$.attr ("id");
-            var afs_field = $GTW.AFS.Elements.get (id);
+            var afs_field = $AFS_E.get (id);
             var ini_value, new_value, old_value, anchor;
             if (afs_field !== undefined) {
                 ini_value = afs_field.value.init;
@@ -420,15 +450,15 @@
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
                 // trigger `afs_change` event of `anchor`
-                // anchor = $GTW.AFS.Elements.get (afs_field.anchor_id);
+                // anchor = $AFS_E.get (afs_field.anchor_id);
             }
         };
         var save_cb = function save_cb (ev) {
             var b$     = $(this);
             var s$     = b$.closest ("section");
             var id     = s$.attr    ("id");
-            var elem   = $GTW.AFS.Elements.get (id);
-            var pvs    = $GTW.AFS.Elements.root.packed_values (elem);
+            var elem   = $AFS_E.get (id);
+            var pvs    = $AFS_E.root.packed_values (elem);
             var json_data =
                   { cargo       : pvs
                   , allow_new   : elem.allow_new

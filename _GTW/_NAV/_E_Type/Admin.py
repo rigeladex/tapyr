@@ -110,6 +110,8 @@
 #     1-Aug-2011 (CT) `AFS_Completed` continued..
 #     7-Sep-2011 (CT) `AFS_Completed` and `AFS_Completer` continued...
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#    12-Sep-2011 (CT) `AFS._Media.scripts` changed to load `AFS/Elements.js`
+#                     before `jQ/afs.js`
 #    ««revision-date»»···
 #--
 
@@ -285,9 +287,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ( GTW.Script._.jQuery_UI
                 , GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 )
             )
         name            = "create"
