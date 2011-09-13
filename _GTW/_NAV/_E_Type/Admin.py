@@ -300,8 +300,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         args            = (None, )
         template_name   = "e_type_afs"
         form_parameters = {}
- 
-       @property
+
+        @property
         def injected_templates (self) :
             form     = AFS_Form [self.E_Type.GTW.afs_id]
             renderer = set ()
@@ -310,7 +310,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return [self.top.Templateer.get_template (r) for r in renderer]
         # end def injected_templates
 
- 
         def rendered (self, handler, template = None) :
             HTTP     = self.top.HTTP
             context  = handler.context

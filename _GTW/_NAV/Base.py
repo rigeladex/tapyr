@@ -342,7 +342,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
-    Cache_Pickler              = []
+    Cache_Pickler              = set ()
 
     title                      = ""
     hidden                     = False

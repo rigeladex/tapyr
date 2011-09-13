@@ -48,6 +48,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
     rank = 1000
 
     def __init__ (self, css_dir, prefix, clear_dir = False) :
+        if not prefix [0] == "/" :
+            prefix     = "/%s" % (prefix, )
         self.css_dir   = css_dir
         self.prefix    = prefix
         self.clear_dir = clear_dir

@@ -41,6 +41,7 @@ class _M_Injected_Templates_ (TFL.Meta.Object.__class__) :
     """Meta class for the injected templates which provides unique instances
        based on the used templates
     """
+
     Extension = {}
 
     def __call__ (cls, env, templates) :
@@ -129,5 +130,3 @@ class Template_Media (TFL.Meta.Object) :
 if __name__ != "__main__" :
     JNJ._Export ("*")
 ### __END__ JNJ.Template_Media
-
-
