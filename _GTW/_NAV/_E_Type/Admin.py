@@ -112,6 +112,7 @@
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    12-Sep-2011 (CT) `AFS._Media.scripts` changed to load `AFS/Elements.js`
 #                     before `jQ/afs.js`
+#    13-Sep-2011 (CT) `_ui_displayed` added and used in `AFS_Completer`
 #    ««revision-date»»···
 #--
 
@@ -274,6 +275,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             else :
                 return self.__super._raise_403 (handler)
         # end def _raise_403
+
+        def _ui_displayed (self, E_Type, names, matches) :
+            attrs = list (getattr (E_Type, n) for n in names)
+            for match in matches :
+                yield tuple \
+                    (a.ac_ui_display (v) for a, v in zip (attrs, match))
+        # end def _ui_displayed
 
     # end class _Cmd_
 
@@ -462,14 +470,18 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if n :
                     if n <= max_n :
                         result ["fields"]  = len    (names)
-                        result ["matches"] = sorted (matches)
+                        result ["matches"] = sorted \
+                            (self._ui_displayed (E_Type, names, matches))
                     else :
                         matches = query.attrs (attr.raw_query).limit \
                             (max_n + 1).all ()
                         m       = len (matches)
                         if m <= max_n :
                             result ["fields"]  = 1
-                            result ["matches"] = sorted (matches)
+                            result ["matches"] = sorted \
+                                ( self._ui_displayed
+                                    (E_Type, [field.name], matches)
+                                )
                         else :
                             ### XXX find fewer partial matches !!!
                             result ["fields"]  = 0

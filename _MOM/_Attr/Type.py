@@ -179,6 +179,7 @@
 #    12-Sep-2011 (CT) `_AC_Query_` changed to use init-arg `attr_name`
 #                     instead of `q` and to use `prefix` in `__call__`
 #    12-Sep-2011 (CT) `_AC_Query_C_` added and used for `_A_Composite_.ac_query`
+#    13-Sep-2011 (CT) `ac_ui_display` added
 #    ««revision-date»»···
 #--
 
@@ -355,6 +356,19 @@ class A_Attr_Type (object) :
         self.kind        = kind
         self.is_required = kind.is_required
     # end def __init__
+
+    def ac_ui_display (self, value) :
+        if self.needs_raw_value :
+            result = value
+        elif isinstance (value, MOM.Entity) :
+            result = value.ui_display
+        else :
+            try :
+                result = self.as_string (value)
+            except (TypeError, ValueError) :
+                result = value
+        return result
+    # end def ac_ui_display
 
     @classmethod
     def as_arg_ckd (cls) :
