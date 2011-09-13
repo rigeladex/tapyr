@@ -39,6 +39,7 @@
 #    22-Jul-2011 (MG) `_sa_filter` added to `TFL.Q_Exp.Func`
 #     9-Sep-2011 (MG) `_sa_filter` for `TFL.Q.Bin_Bool` and `TFL.Q.Bin_Expr`
 #                     fixed for object comparison
+#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #    ««revision-date»»···
 #--
 
@@ -49,13 +50,13 @@ import _TFL.Decorator
 import _TFL.Filter
 import _TFL.Q_Exp
 from    sqlalchemy.sql   import expression, func, extract
-from    _MOM.Q_Exp_Raw   import Get_Raw
+from    _MOM.Q_Exp_Raw   import _Get_Raw_
 
 SAS_Attr_Map = dict \
     ( type_name = TFL.Getter.Type_Name
     )
 
-@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
+@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp._Get_)
 def _sa_filter (self, SAQ) :
     joins      = []
     if "." in self._name :
@@ -76,7 +77,7 @@ def _sa_filter (self, SAQ) :
     return joins, columns
 # end def _sa_filter
 
-@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
+@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp._Bin_Bool_, TFL.Q_Exp._Bin_Expr_)
 def _sa_filter (self, SAQ) :
     args    = []
     joins   = []
@@ -87,7 +88,7 @@ def _sa_filter (self, SAQ) :
             args.extend  (afilter)
         else :
             if ( args
-               and isinstance (self.lhs, Get_Raw)
+               and isinstance (self.lhs, _Get_Raw_)
                and not getattr (args [0], "IS_RAW_COL", False)
                and args [0].MOM_Kind
                ) :
@@ -98,7 +99,7 @@ def _sa_filter (self, SAQ) :
     return joins, (getattr (args [0], self.op.__name__) (args [1]), )
 # end def _sa_filter
 
-@TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query.Call)
+@TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query._Call_)
 def _sa_filter (self, SAQ) :
     joins, clause = self.lhs._sa_filter (SAQ)
     op            = self.op.__name__.lower ()
@@ -121,7 +122,7 @@ def _sa_filter (self, SAQ) :
     return joins, (sa_exp (* clause), )
 # end def _sa_filter
 
-@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Func)
+@TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp._Func_)
 def _sa_filter (self, SAQ) :
     joins, columns = self.lhs._sa_filter (SAQ)
     return joins, (getattr (func, self.op.__name__) (columns [0]), )

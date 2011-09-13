@@ -44,6 +44,7 @@
 #    16-Jul-2011 (CT) `__repr__` added
 #    22-Jul-2011 (CT) `Attr_Query.Func` added
 #    12-Sep-2011 (CT) `Attr_Query.And` changed to `Attr_Query.AND`, ditto 4 `Or`
+#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #    ««revision-date»»···
 #--
 
@@ -394,21 +395,21 @@ class Attr_Query (TFL.Q_Exp.Base) :
     AND              = Filter_And
     OR               = Filter_Or
 
-    class Bin_Bool (_Filter_S_, TFL.Q_Exp.Bin_Bool) :
+    class _Bin_Bool_ (_Filter_S_, TFL.Q_Exp._Bin_Bool_) :
         pass
-    # end class Bin_Bool
+    # end class _Bin_Bool_
 
-    class Bin_Expr (_Filter_S_, TFL.Q_Exp.Bin_Expr) :
+    class _Bin_Expr_ (_Filter_S_, TFL.Q_Exp._Bin_Expr_) :
         pass
-    # end class Bin_Expr
+    # end class _Bin_Expr_
 
-    class Call (_Filter_S_, TFL.Q_Exp.Call) :
+    class _Call_ (_Filter_S_, TFL.Q_Exp._Call_) :
         pass
-    # end class Call
+    # end class _Call_
 
-    class Func (_Filter_S_, TFL.Q_Exp.Func) :
+    class _Func_ (_Filter_S_, TFL.Q_Exp._Func_) :
         pass
-    # end class Func
+    # end class _Func_
 
 # end class Attr_Query
 
