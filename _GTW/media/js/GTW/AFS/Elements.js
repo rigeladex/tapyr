@@ -273,6 +273,7 @@
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
+              kw.anchor.field_name_map [this.name] = this.$id;
           }
         }
       , { type_name : "Field_Entity" }
@@ -283,6 +284,7 @@
               this.value.role_id = raid;
               this.value.edit    = Elements.id_map [raid].value.edit;
               this._super (kw, new_kw);
+              kw.anchor.field_name_map [this.name] = this.$id;
           }
         }
       , { type_name : "Field_Role_Hidden" }

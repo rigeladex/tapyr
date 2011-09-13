@@ -113,6 +113,7 @@
 #    12-Sep-2011 (CT) `AFS._Media.scripts` changed to load `AFS/Elements.js`
 #                     before `jQ/afs.js`
 #    13-Sep-2011 (CT) `_ui_displayed` added and used in `AFS_Completer`
+#    13-Sep-2011 (CT) `AFS_Completer.rendered` changed to indicate partial match
 #    ««revision-date»»···
 #--
 
@@ -451,7 +452,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
             json      = TFL.Record (** handler.json)
-            result    = {}
+            result    = dict (partial = False)
             scope     = self.top.scope
             try :
                 form, elem   = self.form_element (json.fid)
@@ -478,10 +479,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         m       = len (matches)
                         if m <= max_n :
                             result ["fields"]  = 1
-                            result ["matches"] = sorted \
-                                ( self._ui_displayed
-                                    (E_Type, [field.name], matches)
-                                )
+                            matches            = ([m, "..."] for m in  matches)
+                            result ["matches"] = sorted (matches)
+                            result ["partial"] = True
                         else :
                             ### XXX find fewer partial matches !!!
                             result ["fields"]  = 0

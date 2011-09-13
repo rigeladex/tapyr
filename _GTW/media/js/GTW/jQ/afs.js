@@ -36,6 +36,7 @@
 //    12-Sep-2011 (CT) `Field._get_completer_value` factored,
 //                     `Field_Composite._get_completer_value` added
 //    12-Sep-2011 (CT) Shortcut `var $AFS_E = $GTW.AFS.Elements` added
+//    13-Sep-2011 (CT) `Field_Entity._get_completer_value` added
 //    ««revision-date»»···
 //--
 
@@ -93,6 +94,12 @@
                 };
                 return result;
             };
+            $AFS_E.Field_Entity.prototype._get_completer_value = function () {
+                var result = this.value.edit.pid;
+                return result;
+            };
+            $AFS_E.Field_Role_Hidden.prototype._get_completer_value =
+                $AFS_E.Field_Entity.prototype._get_completer_value;
             var _get = function _get (options, elem, val, cb) {
                 var completer = elem.completer, data, values;
                 values = _get_field_values (elem);
@@ -159,8 +166,11 @@
                 var completer = elem.completer;
                 var response  = completer.response;
                 var match     = response.matches [item.index];
-                _update_field_values (options, elem, match, completer.names);
-                if (completer ["entity_p"]) {
+                var names     = completer.names.slice (0, response.fields);
+                _update_field_values (options, elem, match, names);
+                if (response.partial) {
+                    // XXX ??? elem.inp$.autocomplete._trigger ("search");
+                } else if (completer ["entity_p"]) {
                     data   =
                         { fid             : elem.anchor_id
                         , sid             : $AFS_E.root.value.sid
