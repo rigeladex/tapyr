@@ -37,6 +37,8 @@
 //                     `Field_Composite._get_completer_value` added
 //    12-Sep-2011 (CT) Shortcut `var $AFS_E = $GTW.AFS.Elements` added
 //    13-Sep-2011 (CT) `Field_Entity._get_completer_value` added
+//    13-Sep-2011 (CT) `setup_completer._put` changed to continue for partial
+//                     completions
 //    ««revision-date»»···
 //--
 
@@ -169,7 +171,12 @@
                 var names     = completer.names.slice (0, response.fields);
                 _update_field_values (options, elem, match, names);
                 if (response.partial) {
-                    // XXX ??? elem.inp$.autocomplete._trigger ("search");
+                    setTimeout
+                        ( function () {
+                            elem.inp$.autocomplete ("search");
+                          }
+                        , 1
+                        );
                 } else if (completer ["entity_p"]) {
                     data   =
                         { fid             : elem.anchor_id
