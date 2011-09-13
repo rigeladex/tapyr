@@ -48,19 +48,19 @@ _test_code = """
     >>> scope.SRM.Boat_Class.instance (u'Optimist')
     GTW.OMP.SRM.Boat_Class (u'Optimist')
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 1
-    GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)
+    GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')
     >>> print scope.SRM.Boat.count
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)]
+    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
     >>> scope.commit ()
 
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 2
-    GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)
+    GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')
     >>> print scope.SRM.Boat.count
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107)]
+    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
 
     >>> b = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 3
     >>> b.set (left = laser)

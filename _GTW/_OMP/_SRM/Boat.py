@@ -37,6 +37,8 @@
 #    30-May-2011 (CT) `nation` changed from `Primary` to `Primary_Optional`
 #     7-Sep-2011 (CT) `completer` added for `nation` and `sail_number`
 #     9-Sep-2011 (CT) `completer` removed from `nation`
+#    13-Sep-2011 (CT) `sail_number_x` changed from `Primary` to
+#                     `Primary_Optional`
 #    ««revision-date»»···
 #--
 
@@ -91,6 +93,17 @@ class Boat (_Ancestor_Essence) :
 
         # end class sail_number
 
+        class sail_number_x (A_String) :
+            """Sail number prefix of boat."""
+
+            kind               = Attr.Primary_Optional
+            example            = "X"
+            ignore_case        = True
+            max_length         = 4
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+
+        # end class sail_number_x
+
         ### Non-primary attributes
 
         class name (A_String) :
@@ -101,16 +114,6 @@ class Boat (_Ancestor_Essence) :
             max_length         = 48
 
         # end class name
-
-        class sail_number_x (A_String) :
-            """Sail number prefix of boat."""
-
-            kind               = Attr.Optional
-            example            = "X"
-            ignore_case        = True
-            max_length         = 4
-
-        # end class sail_number_x
 
     # end class _Attributes
 

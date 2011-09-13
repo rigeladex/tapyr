@@ -115,14 +115,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
     >>> scope.destroy ()
 """
 

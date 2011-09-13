@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -48,7 +48,7 @@ _test_code = r"""
     >>> b3 = SRM.Boat       (bc, "Austria", 2) # doctest:+ELLIPSIS
     Traceback (most recent call last):
         ...
-    Duplicate_Link: <class 'GTW.OMP.SRM.Boat' [...]>, ((u'Optimist', ), u'AUT', 2)
+    Duplicate_Link: <class 'GTW.OMP.SRM.Boat' [...]>, ((u'Optimist', ), u'AUT', 2, u'')
     >>> b3 = SRM.Boat       (bc, "Austria", 3)
     >>> int (b3.pid)
     102
