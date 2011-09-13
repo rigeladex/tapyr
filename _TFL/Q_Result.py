@@ -37,6 +37,7 @@
 #                     of being an iterator
 #    26-Jul-2011 (CT) Handling of `distinct` changed so that it is passed on
 #                     to derived queries
+#    13-Sep-2011 (MG) `group_by` and `_Q_Result_Group_By_` added
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,11 @@ IndexError: Query result contains 2 entries
 >>> qc.limit (15).distinct (lambda x : x % 10).all ()
 [1, 10]
 
+>>> qg = Q_Result ((1, 2, 3, 4, 2, 3, 4, 4,5))
+>>> qg.all        ()
+[1, 2, 3, 4, 2, 3, 4, 4, 5]
+>>> qg.group_by (lambda x : x).all ()
+[1, 2, 3, 4, 5]
 """
 
 from   _TFL                     import TFL
@@ -230,6 +236,21 @@ class _Q_Result_ (TFL.Meta.Object) :
             return None
     # end def first
 
+    def group_by (self, * criteria, ** kw) :
+        if kw :
+            criteria = list (criteria)
+            Q = self.Q
+            for k, v in kw.iteritems () :
+                criteria.append (getattr (Q, k) == v)
+            criteria = tuple (criteria)
+        assert criteria
+        if len (criteria) == 1 :
+            criterion = first (criteria)
+        else :
+            criterion = TFL.Filter_And  (* criteria)
+        return self._Q_Result_Group_By_ (self, criterion, self._distinct)
+    # end def group_by
+
     def limit (self, limit) :
         return self._Q_Result_Limited_ (self, limit, self._distinct)
     # end def limit
@@ -319,6 +340,19 @@ class _Q_Result_Filtered_ (_Q_Result_) :
     # end def _fill_cache
 
 # end class _Q_Result_Filtered_
+
+@TFL.Add_New_Method (_Q_Result_)
+class _Q_Result_Group_By_ (_Q_Result_Filtered_) :
+
+    def _fill_cache (self) :
+        pred        = self._criterion
+        result      = dict ((pred (x), x) for x in self.iterable).itervalues ()
+        if self._distinct and not self.iterable._distinct :
+            result  = self._distinct (result)
+        self._cache = list (result)
+    # end def _fill_cache
+
+# end class _Q_Result_Group_By_
 
 @TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Limited_ (_Q_Result_) :
