@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Jan-2011 (CT) Creation
+#    13-Sep-2011 (CT) `Script_File` and `Style_File` added
 #    ««revision-date»»···
 #--
 
@@ -163,10 +164,10 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     class _Media_ (TFL.Meta.Object) :
         """Wrapper for media class"""
 
-        def __init__ (self, cls) :
+        def __init__ (self, cls, ext = None) :
             self._cls = cls
             self._    = self
-            self._ext = []
+            self._ext = ext if ext is not None else []
         # end def __init__
 
         def __call__ (self, * args, ** kw) :
@@ -190,12 +191,14 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     def __init__ (self, parameters) :
         from _GTW._CSS  import import_CSS
         from _GTW.Media import CSS_Link, JS_On_Ready, Rel_Link, Script
-        self.P           = parameters
-        self.CSS_Link    = self._Media_ (CSS_Link)
-        self.JS_On_Ready = self._Media_ (JS_On_Ready)
-        self.Rel_Link    = self._Media_ (Rel_Link)
-        self.Script      = self._Media_ (Script)
-        self.Style_Sheet = self._Media_ (import_CSS.Style_Sheet)
+        self.P                = parameters
+        self.CSS_Link         = self._Media_ (CSS_Link)
+        self.JS_On_Ready      = self._Media_ (JS_On_Ready)
+        self.Rel_Link         = self._Media_ (Rel_Link)
+        self.Script           = self._Media_ (Script)
+        self.Script_File      = self._Media_ (import_CSS.Style_File)
+        self.Style_Sheet = SS = self._Media_ (import_CSS.Style_Sheet)
+        self.Style_File       = self._Media_ (import_CSS.Style_File, SS._ext)
         self.__super.__init__ \
             ( object = import_CSS
             , locls  = dict ()
