@@ -100,8 +100,6 @@
                 var result = this.value.edit.pid;
                 return result;
             };
-            $AFS_E.Field_Role_Hidden.prototype._get_completer_value =
-                $AFS_E.Field_Entity.prototype._get_completer_value;
             var _get = function _get (options, elem, val, cb) {
                 var completer = elem.completer, data, values;
                 values = _get_field_values (elem);
