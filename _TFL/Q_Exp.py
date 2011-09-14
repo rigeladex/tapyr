@@ -48,6 +48,7 @@
 #    22-Jul-2011 (CT) `__call__` factored up to `Q_Root`
 #    22-Jul-2011 (CT) `LOWER` (and `Func`) added
 #    13-Sep-2011 (CT) All internal classes renamed to `_«name»_`
+#    14-Sep-2011 (CT) `SUM` added
 #    ««revision-date»»···
 #--
 
@@ -257,6 +258,22 @@ Queries for nested attributes are also possible::
     >>> (qm > Q.foo) (r1)
     True
 
+Q.SUM needs documenting::
+
+    >>> print Q.SUM (1)
+    Q.SUM (1)
+    >>> print Q.SUM (Q.finish - Q.start)
+    Q.SUM (Q.finish - Q.start)
+
+    >>> Q.SUM (1) (r1)
+    1
+    >>> Q.SUM (42) (r1)
+    42
+    >>> Q.SUM (Q.bar - Q.foo)  (r1)
+    95
+    >>> Q.SUM (Q.foo - Q.bar)  (r1)
+    -95
+
 """
 
 from   _TFL                     import TFL
@@ -280,6 +297,10 @@ class Base (TFL.Meta.Object) :
         if Ignore_Exception is not None :
             self.Ignore_Exception = Ignore_Exception
     # end def __init__
+
+    def SUM (self, rhs = 1) :
+        return self._Sum_ (self, rhs)
+    # end def SUM
 
     def __getattr__ (self, name) :
         if "." in name :
@@ -779,6 +800,31 @@ class _Q_Exp_Bin_Expr_ (_Bin_, _Exp_) :
     _real_name = "_Bin_Expr_"
 
 _Bin_Expr_ = _Q_Exp_Bin_Expr_ # end class
+
+@TFL.Add_New_Method (Base)
+class _Sum_ (Q_Root) :
+    """Query function for building a sum."""
+
+    def __init__ (self, Q, rhs = 1) :
+        self.Q     = Q
+        self.rhs   = rhs
+    # end def __init__
+
+    def predicate (self, obj) :
+        try :
+            pred   = self.rhs.predicate
+        except AttributeError :
+            result = self.rhs
+        else :
+            result = pred (obj)
+        return result
+    # end def predicate
+
+    def __repr__ (self) :
+        return "Q.SUM (%r)" % (self.rhs, )
+    # end def __repr__
+
+# end class _Sum_
 
 if __name__ != "__main__" :
     TFL._Export ("Q")
