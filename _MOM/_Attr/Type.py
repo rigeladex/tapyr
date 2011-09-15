@@ -181,6 +181,8 @@
 #    12-Sep-2011 (CT) `_AC_Query_C_` added and used for `_A_Composite_.ac_query`
 #    13-Sep-2011 (CT) `ac_ui_display` added
 #    15-Sep-2011 (CT) `_AC_Query_E_` added and used for `_A_Entity_.ac_query`
+#    15-Sep-2011 (CT) `_A_Entity_.C_Type` added (Alias_Property) to fix
+#                     `ac_query`
 #    ««revision-date»»···
 #--
 
@@ -896,7 +898,7 @@ class _A_Entity_ (A_Attr_Type) :
     """Models an attribute referring to an entity."""
 
     Class             = ""
-    P_Type            = TFL.Meta.Alias_Property  ("Class")
+    C_Type = P_Type   = TFL.Meta.Alias_Property  ("Class")
 
     needs_raw_value   = False
     ### allow creation of new entity for this attribute
