@@ -33,6 +33,7 @@
 #    19-Jul-2011 (CT) Test for `Q.RAW` added
 #    21-Jul-2011 (CT) Test for `Q.RAW` improved
 #    22-Jul-2011 (CT) Completer tests adapted to changes in `MOM.Attr.Completer`
+#    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
 #    ««revision-date»»···
 #--
 
@@ -94,16 +95,16 @@ _test_code = """
     >>> S.Primary_Followers ("title") (PAP.Person).names
     ()
 
-    >>> lnc = PAP.Person.last_name.completer (PAP.Person.last_name, PAP.Person)
+    >>> lnc = PAP.Person.last_name.completer
     >>> print lnc.name, lnc.names, lnc.treshold
     last_name ('last_name', 'first_name', 'middle_name', 'title') 2
-    >>> fnc = PAP.Person.first_name.completer (PAP.Person.first_name, PAP.Person)
+    >>> fnc = PAP.Person.first_name.completer
     >>> print fnc.name, fnc.names, fnc.treshold
     first_name ('first_name', 'last_name', 'middle_name', 'title') 3
-    >>> tnc = PAP.Person.title.completer (PAP.Person.title, PAP.Person)
+    >>> tnc = PAP.Person.title.completer
     >>> print tnc.name, tnc.names, tnc.treshold
     title ('title',) 1
-    >>> snc = PAP.Person.salutation.completer (PAP.Person.salutation, PAP.Person)
+    >>> snc = PAP.Person.salutation.completer
     >>> print snc.name, snc.names, snc.treshold
     salutation ('salutation',) 1
 

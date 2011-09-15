@@ -51,6 +51,7 @@
 #     6-Jul-2011 (CT) Use `MOM.Attr.Selector` instead of homegrown code
 #     6-Jul-2011 (CT) `f_completer` added
 #    17-Jul-2011 (CT) s/f_completer/completer/
+#    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
 #    ««revision-date»»···
 #--
 
@@ -187,7 +188,7 @@ class _Field_ (_Base_) :
         if attr.explanation :
             result ["explanation"] = attr.explanation
         if attr.completer :
-            result ["completer"] = attr.completer (attr, E_Type).as_json_cargo
+            result ["completer"] = attr.completer.as_json_cargo
         result.update (self.kw)
         result.update (kw)
         return result

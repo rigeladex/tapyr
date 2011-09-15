@@ -147,7 +147,7 @@ _q_result = r"""
     >>> q3.limit (1).all ()
     [(u'DI',)]
 
-    >>> sorted (q0.all ())
+    >>> sorted (q0.all (), key = scope.PAP.Person.sort_key ())
     [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
     >>> sorted (q0.attrs (Q.title, Q.SUM (1)))
     [(u'di', 1), (u'di', 1), (u'dr.', 1)]
