@@ -33,6 +33,7 @@
 #                     instead of `attr_completion`
 #    22-Jul-2011 (CT) `all_names` added
 #    27-Jul-2011 (CT) `entity_p` added
+#    15-Sep-2011 (CT) `Completer.__init__` changed to save `spec`
 #    ««revision-date»»···
 #--
 
@@ -55,8 +56,9 @@ class Completer (TFL.Meta.Object) :
     dependents = ()
 
     def __init__ (self, acs, attr, E_Type) :
-        self.name     = name = attr.name
         self.etn      = E_Type.type_name
+        self.name     = name = attr.name
+        self.spec     = acs
         self.treshold = acs.treshold
         if acs.buddies :
             self.buddies = acs.buddies (E_Type, name).names
