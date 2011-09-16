@@ -73,7 +73,7 @@ import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.multimap
 
-MAT                            = MOM.Attr
+MAT                                  = MOM.Attr
 MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj, string")
 MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj, number")
 MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj, boolean")
