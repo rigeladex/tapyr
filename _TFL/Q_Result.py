@@ -39,6 +39,7 @@
 #                     to derived queries
 #    13-Sep-2011 (MG) `group_by` and `_Q_Result_Group_By_` added
 #    16-Sep-2011 (MG) `_Attr_` and `_Attrs_Tuple_` added and used
+#    16-Sep-2011 (MG) `_Attr_` missing  compare functions added
 #    ««revision-date»»···
 #--
 
@@ -136,17 +137,18 @@ IndexError: Query result contains 2 entries
 [1, 2, 3, 4, 5]
 """
 
-from   _TFL                     import TFL
+from   _TFL                       import TFL
 
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.Filter
-
-from   _TFL.predicate           import first, uniq, uniq_p
+from   _TFL._Meta.totally_ordered import totally_ordered
+from   _TFL.predicate             import first, uniq, uniq_p
 
 import itertools
 import operator
 
+@totally_ordered
 class _Attr_ (object) :
 
     def __init__ (self, getter, value) :
@@ -171,6 +173,22 @@ class _Attr_ (object) :
     def __repr__ (self) :
         return repr (self._VALUE)
     # end def __repr__
+
+    def __hash__ (self) :
+        return hash (self._VALUE)
+    # end def __hash__
+
+    def __eq__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        return self._VALUE == rhs
+    # end def __eq__
+
+    def __lt__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        return self._VALUE < rhs
+    # end def __lt__
 
 # end class _Attr_
 
@@ -230,6 +248,8 @@ class _Q_Result_ (TFL.Meta.Object) :
     def attr (self, getter) :
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
+        #return Q_Result \
+        #    ( (getter (r) for r in self), self._distinct)
         return Q_Result \
             ((_Attr_ (getter, getter (r)) for r in self), self._distinct)
     # end def attr
