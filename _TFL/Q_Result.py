@@ -151,6 +151,7 @@ import operator
 
 @totally_ordered
 class _Attr_ (object) :
+    """Wrapper for result of `.attr` method."""
 
     def __init__ (self, getter, value) :
         self._VALUE = value
@@ -201,6 +202,7 @@ class _Attr_ (object) :
 # end class _Attr_
 
 class _Attrs_Tuple_ (tuple) :
+    """Wrapper for result of `.attrs` method."""
 
     def __new__ (cls, getters, * args) :
         return super (_Attrs_Tuple_, cls).__new__ (cls, * args)
