@@ -43,6 +43,7 @@
 #     7-Apr-2011 (MG) Use jQuery 1.5.2
 #     7-Apr-2011 (MG) Definitions for `jqPlot` added
 #     1-Jun-2011 (CT) `GTW_postify_a` added
+#    13-Sep-2011 (MG) `s/sort_key/rank/g`
 #    ««revision-date»»···
 #--
 
@@ -52,14 +53,14 @@ import _GTW.Media
 if __debug__ :
     GTW.Script \
         ( src      = "/media/GTW/js/jquery-1.5.2.js"
-        , sort_key = -100  ## should be loaded first
+        , rank     = -100  ## should be loaded first
         , name     = "jQuery"
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui.js", name = "jQuery_UI")
 else :
     GTW.Script \
         ( src      = "/media/GTW/js/jquery-1.5.2.min.js"
-        , sort_key = -100  ## should be loaded first
+        , rank     = -100  ## should be loaded first
         , name     = "jQuery"
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui-1.8.min.js", name = "jQuery_UI")
@@ -79,7 +80,7 @@ GTW.JS_On_Ready \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW.js"
     , name     = "GTW"
-    , sort_key = -50
+    , rank     = -50
     )
 
 GTW.Script      (src = "/media/GTW/js/GTW/util.js", name = "GTW_util")

@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-Jan-2011 (CT) Creation
 #    13-Sep-2011 (CT) `Script_File` and `Style_File` added
+#    13-Sep-2011 (MG) doctest added
 #    ««revision-date»»···
 #--
 
@@ -186,6 +187,7 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     js_on_ready          = property (lambda s : s.JS_On_Ready._ext)
     rel_links            = property (lambda s : s.Rel_Link._ext)
     scripts              = property (lambda s : s.Script._ext)
+    script_files         = property (lambda s : s.Script_File._ext)
     style_sheets         = property (lambda s : s.Style_Sheet._ext)
 
     def __init__ (self, parameters) :
@@ -215,6 +217,51 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
 Scope = _Parameters_Scope_ # end class
 
+import os
+
+__doc__ = r"""
+>>> from _JNJ.Media_Defaults import Media_Defaults
+>>> base_dir        = os.path.abspath \
+...    (os.path.join (os.path.dirname ("__file__"), "_GTW", "__test__"))
+>>> base_media      = os.path.join (base_dir, "_test.media")
+>>> def as_string (fragments) :
+...     return "\n\n".join \
+...                ( str (s) for s in
+...                    sorted (fragments, key = TFL.Getter.rank)
+...                )
+
+>>> scope = Scope (Media_Defaults)
+>>> globs = {}
+>>> exec (open (base_media, "rt"), globs, scope)
+>>> print as_string (scope.style_sheets)
+a, abbr, acronym, address, article, aside, audio
+  { border         : 0
+  ; font           : inherit
+  ; font-size      : 100%
+  ; margin         : 0
+  ; outline        : 0
+  ; padding        : 0
+  ; vertical-align : baseline
+  }
+<BLANKLINE>
+/* --> rules from a existing CSS file `/
+a.hide
+{
+    display:          none
+}
+/* <-- */
+>>> print as_string (scope.script_files)
+/* a test javascript file directly included */
+
+>>> scope.scripts
+[/media/GTW/js/jquery-1.5.2.min.js: text/javascript]
+>>> scope.css_links
+[all: /media/GTW/css/jquery.gritter.css]
+>>> scope.rel_links
+[href="/media/GTW/css/jquery.gritter.rel.css"]
+>>> print as_string (scope.js_on_ready)
+/* this is a JS on ready code */
+"""
 if __name__ != "__main__" :
     GTW._Export_Module ()
 ### __END__ GTW.Parameters

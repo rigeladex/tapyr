@@ -42,6 +42,8 @@
 #     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of emdia
 #                     objects
 #     7-Dec-2010 (CT) `condition` added to `Script`
+#    13-Sep-2011 (MG) `s/sort_key/rank/g`
+#    13-Sep-2011 (MG) `Rel_Link`: `__str__` and `__repr__` added
 #    ««revision-date»»···
 #--
 
@@ -104,6 +106,14 @@ class Rel_Link (TFL.Meta.Object) :
             )
     # end def attrs
 
+    def __repr__ (self) :
+        return self.attrs ()
+    # end def __repr__
+
+    def __str__ (self) :
+        return self.href
+    # end def __str__
+
 # end class Rel_Link
 
 class Script (TFL.Meta.Object) :
@@ -117,7 +127,7 @@ class Script (TFL.Meta.Object) :
                  , src         = ""
                  , body        = ""
                  , script_type = "text/javascript"
-                 , sort_key    = 0
+                 , rank        = 0
                  , name        = None
                  , condition   = ""
                  ) :
@@ -126,7 +136,7 @@ class Script (TFL.Meta.Object) :
         self.src         = src
         self.body        = body
         self.script_type = script_type
-        self.sort_key    = sort_key
+        self.rank        = rank
         self.condition   = condition
     # end def __init__
 
@@ -157,9 +167,9 @@ class JS_On_Ready (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def __init__ (self, code, sort_key = 0, name = None) :
+    def __init__ (self, code, rank = 0, name = None) :
         self.code      = code
-        self.sort_key  = sort_key
+        self.rank      = rank
     # end def __init__
 
     def __str__ (self) :
@@ -277,7 +287,7 @@ class Media_List_JSOR (Media_List_Unique) :
 
     @Once_Property
     def values (self) :
-        return tuple (sorted (self._gen_all (), key = lambda mob : mob.sort_key))
+        return tuple (sorted (self._gen_all (), key = lambda mob : mob.rank))
     # end def values
 
 # end class Media_List_JSOR
@@ -298,7 +308,7 @@ class Media_List_Script (Media_List_href, Media_List_Unique) :
     @Once_Property
     def values (self) :
         return tuple \
-            (sorted (self._gen_all (), key = lambda mob : mob.sort_key))
+            (sorted (self._gen_all (), key = lambda mob : mob.rank))
     # end def values
 
 # end class Media_List_Script

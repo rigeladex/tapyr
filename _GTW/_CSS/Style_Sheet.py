@@ -108,7 +108,7 @@ class Style_Sheet (_Style_Sheet_) :
 
 # end class Style_Sheet
 
-class Style_File (Style_Sheet) :
+class Style_File (_Style_Sheet_) :
     """Model a style file containing plain old CSS."""
 
     def __init__ (self, file_name, ** kw) :
@@ -130,7 +130,6 @@ class Style_File (Style_Sheet) :
     # end def __str__
 
 # end class Style_File
-
 
 S = Style_Sheet
 

@@ -180,14 +180,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                             }
                         );
                   """
-                , sort_key = 100
+                , rank = 100
                 )
             ,
             )
         , scripts       =
             ( GTW.Script
                 ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-                , sort_key = 100
+                , rank     = 100
                 )
             ,
             )
