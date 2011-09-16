@@ -264,7 +264,7 @@ class _MOM_Field_ (AE.Field) :
 
 Field = _MOM_Field_ # end class
 
-class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
+class _MOM_Field_Composite_ (AE.Field_Composite) :
     """Model a MOM-specific composite field of a AJAX-enhanced form."""
 
     _real_name = "Field_Composite"
