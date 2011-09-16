@@ -608,6 +608,7 @@ $GTW :
                     $id = "FB-0:0:0"
                     _super = undefined
                     allow_new = true
+                    an$ = 4
                     anchor_id = "FB-0"
                     children :
                         0 = "FB-0:0:0:0"
@@ -638,6 +639,7 @@ $GTW :
                 FB-0:0:0:0 :
                     $id = "FB-0:0:0:0"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:0:0"
                     completer :
                         entity_p = true
@@ -655,6 +657,7 @@ $GTW :
                 FB-0:0:1 :
                     $id = "FB-0:0:1"
                     _super = undefined
+                    an$ = 4
                     anchor_id = "FB-0"
                     kind = "primary"
                     label = "Nation"
@@ -666,6 +669,7 @@ $GTW :
                 FB-0:0:2 :
                     $id = "FB-0:0:2"
                     _super = undefined
+                    an$ = 4
                     anchor_id = "FB-0"
                     completer :
                         entity_p = true
@@ -685,6 +689,7 @@ $GTW :
                 FB-0:0:3 :
                     $id = "FB-0:0:3"
                     _super = undefined
+                    an$ = 4
                     anchor_id = "FB-0"
                     completer :
                         entity_p = true
@@ -712,6 +717,7 @@ $GTW :
                 FB-0:1:0 :
                     $id = "FB-0:1:0"
                     _super = undefined
+                    an$ = 4
                     anchor_id = "FB-0"
                     kind = "optional"
                     label = "Name"
@@ -866,6 +872,7 @@ $GTW :
                     $id = "FB-0:2::0-0"
                     _super = undefined
                     allow_new = false
+                    an$ = 2
                     anchor_id = "FB-0:2::0"
                     collapsed = true
                     hidden = true
@@ -897,6 +904,7 @@ $GTW :
                     $id = "FB-0:2::0-1:0"
                     _super = undefined
                     allow_new = false
+                    an$ = 4
                     anchor_id = "FB-0:2::0"
                     children :
                         0 = "FB-0:2::0-1:0:0"
@@ -951,6 +959,7 @@ $GTW :
                     $id = "FB-0:2::0-1:0:0"
                     _super = undefined
                     allow_new = false
+                    an$ = 2
                     anchor_id = "FB-0:2::0-1:0"
                     children :
                         0 = "FB-0:2::0-1:0:0:0"
@@ -994,6 +1003,7 @@ $GTW :
                 FB-0:2::0-1:0:0:0 :
                     $id = "FB-0:2::0-1:0:0:0"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-1:0:0"
                     children :
                         0 = "FB-0:2::0-1:0:0:0.0"
@@ -1022,6 +1032,7 @@ $GTW :
                 FB-0:2::0-1:0:0:0.0 :
                     $id = "FB-0:2::0-1:0:0:0.0"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-1:0:0:0"
                     kind = "necessary"
                     label = "Start"
@@ -1033,6 +1044,7 @@ $GTW :
                 FB-0:2::0-1:0:0:0.1 :
                     $id = "FB-0:2::0-1:0:0:0.1"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-1:0:0:0"
                     kind = "optional"
                     label = "Finish"
@@ -1044,6 +1056,7 @@ $GTW :
                 FB-0:2::0-1:0:0:1 :
                     $id = "FB-0:2::0-1:0:0:1"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-1:0:0"
                     completer :
                         entity_p = true
@@ -1071,6 +1084,7 @@ $GTW :
                     $id = "FB-0:2::0-2:0"
                     _super = undefined
                     allow_new = true
+                    an$ = 4
                     anchor_id = "FB-0:2::0"
                     children :
                         0 = "FB-0:2::0-2:0:0"
@@ -1138,6 +1152,7 @@ $GTW :
                     $id = "FB-0:2::0-2:0:0"
                     _super = undefined
                     allow_new = true
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0"
                     children :
                         0 = "FB-0:2::0-2:0:0:0"
@@ -1183,6 +1198,7 @@ $GTW :
                 FB-0:2::0-2:0:0:0 :
                     $id = "FB-0:2::0-2:0:0:0"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
                         entity_p = true
@@ -1203,6 +1219,7 @@ $GTW :
                 FB-0:2::0-2:0:0:1 :
                     $id = "FB-0:2::0-2:0:0:1"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
                         entity_p = true
@@ -1223,6 +1240,7 @@ $GTW :
                 FB-0:2::0-2:0:0:2 :
                     $id = "FB-0:2::0-2:0:0:2"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
                         entity_p = true
@@ -1242,6 +1260,7 @@ $GTW :
                 FB-0:2::0-2:0:0:3 :
                     $id = "FB-0:2::0-2:0:0:3"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0:0"
                     completer :
                         entity_p = false
@@ -1258,6 +1277,7 @@ $GTW :
                 FB-0:2::0-2:0:1 :
                     $id = "FB-0:2::0-2:0:1"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0"
                     kind = "primary"
                     label = "Nation"
@@ -1269,6 +1289,7 @@ $GTW :
                 FB-0:2::0-2:0:2 :
                     $id = "FB-0:2::0-2:0:2"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0"
                     completer :
                         entity_p = true
@@ -1288,6 +1309,7 @@ $GTW :
                 FB-0:2::0-2:0:3 :
                     $id = "FB-0:2::0-2:0:3"
                     _super = undefined
+                    an$ = 2
                     anchor_id = "FB-0:2::0-2:0"
                     completer :
                         entity_p = false
@@ -1313,6 +1335,7 @@ $GTW :
                 FB-0:2::0-3:0 :
                     $id = "FB-0:2::0-3:0"
                     _super = undefined
+                    an$ = 4
                     anchor_id = "FB-0:2::0"
                     kind = "optional"
                     label = "Place"
@@ -1324,6 +1347,7 @@ $GTW :
                 FB-0:2::0-3:1 :
                     $id = "FB-0:2::0-3:1"
                     _super = undefined
+                    an$ = 4
                     anchor_id = "FB-0:2::0"
                     kind = "optional"
                     label = "Points"
