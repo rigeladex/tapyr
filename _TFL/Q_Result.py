@@ -40,6 +40,8 @@
 #    13-Sep-2011 (MG) `group_by` and `_Q_Result_Group_By_` added
 #    16-Sep-2011 (MG) `_Attr_` and `_Attrs_Tuple_` added and used
 #    16-Sep-2011 (MG) `_Attr_` missing  compare functions added
+#    16-Sep-2011 (MG) `_Q_Result_Group_By_._fill_cache` support for `SUM`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -152,10 +154,11 @@ import operator
 class _Attr_ (object) :
 
     def __init__ (self, getter, value) :
-        self._VALUE = value
-        p           = getter._name.split (".", 1)
-        self._NAME  = p.pop              (0)
-        self._REST  = p and p.pop        (0)
+        self._VALUE  = value
+        p            = getter._name.split (".", 1)
+        self._NAME   = p.pop              (0)
+        self._REST   = p and p.pop        (0)
+        self._IS_SUM = isinstance (getter, TFL.Q_Exp._Sum_) and getter
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -194,17 +197,22 @@ class _Attr_ (object) :
 
 class _Attrs_Tuple_ (tuple) :
 
+    _IS_SUM = None
+
     def __new__ (cls, getters, * args) :
         return super (_Attrs_Tuple_, cls).__new__ (cls, * args)
     # end def __new__
 
     def __init__ (self, getters, * args) :
         super (_Attrs_Tuple_, self).__init__ (* args)
-        self._NAMES   = {}
+        self._NAMES          = {}
         for i, g in enumerate (getters) :
-            p = g._name.split (".", 1)
-            k = p.pop         (0)
-            self._NAMES [k] = i, p and p.pop (0)
+            p                = g._name.split (".", 1)
+            k                = p.pop         (0)
+            self._NAMES [k]  = i, p and p.pop (0)
+            if isinstance (g, TFL.Q_Exp._Sum_) :
+                self._IS_SUM = g
+                self._SUM_CO = i
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -218,6 +226,16 @@ class _Attrs_Tuple_ (tuple) :
     # end def __getattr__
 
 # end class _Attrs_Tuple_
+
+class _Sum_Aggr_ (dict) :
+
+    def __setitem__ (self, key, value) :
+        if key in self :
+            value += self [key]
+        super (_Sum_Aggr_, self).__setitem__ (key, value)
+    # end def __setitem__
+
+# end class _Sum_Aggr_
 
 class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
@@ -426,7 +444,27 @@ class _Q_Result_Group_By_ (_Q_Result_Filtered_) :
 
     def _fill_cache (self) :
         pred        = self._criterion
-        result      = dict ((pred (x), x) for x in self.iterable).itervalues ()
+        result      = dict        ()
+        sums        = _Sum_Aggr_  ()
+        sum_col     = None
+        for row in self.iterable :
+            key    = pred (row)
+            is_sum = getattr (row, "_IS_SUM", False)
+            if is_sum :
+                sums [key] = is_sum (row)
+                sum_col    = getattr (row, "_SUM_CO", None)
+            result [key]   = row
+        if sums :
+            sum_fixed      = []
+            for key, row in result.iteritems () :
+                if sum_col is None :
+                    sum_fixed.append (sums [key])
+                else :
+                    sum_fixed.append \
+                        (row [:sum_col] + (sums [key], ) + row [sum_col + 1:])
+            result         = sum_fixed
+        else :
+            result         = result.itervalues ()
         if self._distinct and not self.iterable._distinct :
             result  = self._distinct (result)
         self._cache = list (result)

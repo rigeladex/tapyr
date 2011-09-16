@@ -150,8 +150,8 @@ _q_result = r"""
 
     >>> sorted (q0.all (), key = scope.PAP.Person.sort_key ())
     [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
-    >>> sorted (q0.attrs (Q.title, Q.SUM (1)))
-    [(u'di', 1), (u'di', 1), (u'dr.', 1)]
+    >>> sorted (q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title))
+    [(u'di', 2), (u'dr.', 1)]
 
     >>> scope.destroy ()
 """
