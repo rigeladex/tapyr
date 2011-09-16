@@ -40,6 +40,7 @@
 #    13-Sep-2011 (MG) `group_by` and `_Q_Result_Group_By_` added
 #    16-Sep-2011 (MG) `_Attr_` and `_Attrs_Tuple_` added and used
 #    16-Sep-2011 (MG) `_Attr_` missing  compare functions added
+#    16-Sep-2011 (CT) `_Attr_.__eq__` and `.__lt__` robustified
 #    ««revision-date»»···
 #--
 
@@ -158,6 +159,15 @@ class _Attr_ (object) :
         self._REST  = p and p.pop        (0)
     # end def __init__
 
+    def __eq__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError from some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) == (rhs.__class__.__name__, rhs)
+    # end def __eq__
+
     def __getattr__ (self, name) :
         if name == self._NAME :
             if not self._REST :
@@ -166,29 +176,27 @@ class _Attr_ (object) :
         raise AttributeError (name)
     # end def __getattr__
 
-    def __str__ (self) :
-        return str (self._VALUE)
-    # end def __str__
+    def __hash__ (self) :
+        lhs = self._VALUE
+        return hash ((lhs.__class__.__name__, lhs))
+    # end def __hash__
+
+    def __lt__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) < (rhs.__class__.__name__, rhs)
+    # end def __lt__
 
     def __repr__ (self) :
         return repr (self._VALUE)
     # end def __repr__
 
-    def __hash__ (self) :
-        return hash (self._VALUE)
-    # end def __hash__
-
-    def __eq__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        return self._VALUE == rhs
-    # end def __eq__
-
-    def __lt__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        return self._VALUE < rhs
-    # end def __lt__
+    def __str__ (self) :
+        return str (self._VALUE)
+    # end def __str__
 
 # end class _Attr_
 
@@ -248,8 +256,6 @@ class _Q_Result_ (TFL.Meta.Object) :
     def attr (self, getter) :
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
-        #return Q_Result \
-        #    ( (getter (r) for r in self), self._distinct)
         return Q_Result \
             ((_Attr_ (getter, getter (r)) for r in self), self._distinct)
     # end def attr
@@ -268,9 +274,7 @@ class _Q_Result_ (TFL.Meta.Object) :
                 yield getter
         getters = tuple (_g (getters))
         return Q_Result \
-            ( (   _Attrs_Tuple_ (getters, tuple (g (r) for g in getters))
-              for r in self
-              )
+            ( (_Attrs_Tuple_ (getters, (g (r) for g in getters)) for r in self)
             , self._distinct
             )
     # end def attrs

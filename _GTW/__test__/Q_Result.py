@@ -179,6 +179,8 @@ _attrs_query = r"""
     >>> q2  = q.attrs (Q.last_name, Q.lifetime.start)
     >>> q2.order_by (Q.lifetime.start).all ()
     [(u'ln 1', datetime.date(2010, 1, 1)), (u'ln 3', datetime.date(2010, 1, 3)), (u'ln 2', datetime.date(2010, 1, 10)), (u'ln 4', datetime.date(2010, 1, 16)), (u'ln 5', datetime.date(2010, 2, 1))]
+
+    >>> scope.destroy ()
 """
 
 _raw_query = """
