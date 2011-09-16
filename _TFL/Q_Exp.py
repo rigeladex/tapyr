@@ -49,6 +49,7 @@
 #    22-Jul-2011 (CT) `LOWER` (and `Func`) added
 #    13-Sep-2011 (CT) All internal classes renamed to `_«name»_`
 #    14-Sep-2011 (CT) `SUM` added
+#    16-Sep-2011 (MG) `_SUM_._name` added
 #    ««revision-date»»···
 #--
 
@@ -804,6 +805,8 @@ _Bin_Expr_ = _Q_Exp_Bin_Expr_ # end class
 @TFL.Add_New_Method (Base)
 class _Sum_ (Q_Root) :
     """Query function for building a sum."""
+
+    _name = "$SUM"
 
     def __init__ (self, Q, rhs = 1) :
         self.Q     = Q
