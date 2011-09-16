@@ -34,8 +34,9 @@
 #                     object
 #    14-Jan-2011 (CT) `Parameter_Scope` moved to `GTW.Parameters.Scope`
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
-#    21-Jun-2011 (MG) `call_level` parameter added and used, `__str__` 
 #                     enhanced
+#    13-Sep-2011 (CT) `Style_File` added
+#    16-Sep-2011 (MG) `call_level` parameter added and used, `__str__`
 #    ««revision-date»»···
 #--
 
@@ -49,26 +50,42 @@ import _GTW._CSS.Media
 
 import _TFL._Meta.Object
 import _TFL.Caller
+import _TFL._Meta.Once_Property
+import _TFL.Filename
 
 class M_Style_Sheet (TFL.Meta.Object.__class__) :
     """Meta class for `Style_Sheet`"""
 
 # end class M_Style_Sheet
 
-class Style_Sheet (TFL.Meta.Object) :
-    """Model a CSS style sheet"""
+class _Style_Sheet_ (TFL.Meta.Object) :
 
     __metaclass__ = M_Style_Sheet
+
+    name          = None
+    rank          = 0
+
+    def __init__ (self, media = None, ** kw) :
+        self.media = media or GTW.CSS.Media.Type ("all")
+        self.__dict__.update (kw)
+    # end def __init__
+
+# end class _Style_Sheet_
+
+class Style_Sheet (_Style_Sheet_) :
+    """Model a CSS style sheet"""
 
     _CSS_globs    = {}
 
     def __init__ (self, * rules, ** attrs) :
-        self.rules   = list (rules)
-        self.imports = list (attrs.pop ("imports", []))
-        self.media   = attrs.pop ("media", None) or GTW.CSS.Media.Type ("all")
-        self.name    = attrs.pop ("name",  None)
-        self.rank    = attrs.pop ("rank",  0)
-        self.attrs   = attrs
+        self.__super.__init__ \
+            ( attrs   = attrs
+            , imports = list (attrs.pop ("imports", []))
+            , media   = attrs.pop ("media", None)
+            , name    = attrs.pop ("name",  None)
+            , rank    = attrs.pop ("rank",  0)
+            , rules   = list (rules)
+            )
         call_level   = attrs.pop ("call_level", 1)
         if __debug__ :
             self._source_file = TFL.Caller.globals (call_level).get ("__file__")
@@ -85,7 +102,7 @@ class Style_Sheet (TFL.Meta.Object) :
     def __iter__ (self) :
         for i in self.imports :
             for r in i :
-                yield i
+                yield r
         for r in self.rules :
             for x in r :
                 yield x
@@ -99,6 +116,29 @@ class Style_Sheet (TFL.Meta.Object) :
     # end def __str__
 
 # end class Style_Sheet
+
+class Style_File (_Style_Sheet_) :
+    """Model a style file containing plain old CSS."""
+
+    def __init__ (self, file_name, ** kw) :
+        self.__super.__init__ \
+            ( file_name = file_name
+            , name      = kw.pop ("name", None) or TFL.Filename (file_name).base
+            , ** kw
+            )
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def body (self) :
+        with open (self.file_name, "rb") as f :
+            return f.read ().strip ()
+    # end def body
+
+    def __str__ (self) :
+        return self.body
+    # end def __str__
+
+# end class Style_File
 
 S = Style_Sheet
 

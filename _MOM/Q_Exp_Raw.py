@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
 #    19-Jul-2011 (MG) `_name` converted to `Once_Property`
+#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ class _RAW_ (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        return self.Get_Raw (self.Q, name)
+        return self._Get_Raw_ (self.Q, name)
     # end def __getattr__
 
 # end class _RAW_
@@ -66,7 +67,7 @@ class _RAW_DESC_ (property) :
 TFL.Q_Exp.Base.RAW = _RAW_DESC_ ()
 
 @TFL.Add_New_Method (_RAW_)
-class Get_Raw (TFL.Q_Exp.Get) :
+class _Get_Raw_ (TFL.Q_Exp._Get_) :
     """Query getter for raw values."""
 
     def __init__ (self, Q, postfix, prefix = "") :
@@ -106,6 +107,6 @@ class Get_Raw (TFL.Q_Exp.Get) :
         return "Q.RAW.%s" % (self._name, )
     # end def __repr__
 
-# end class Get_Raw
+# end class _Get_Raw_
 
 ### __END__ MOM.Q_Exp_Raw

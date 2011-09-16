@@ -42,6 +42,7 @@
 #     6-Jul-2011 (CT) `f_completer` added to primary attributes and `salutation`
 #    16-Jul-2011 (CT) `_AC_Query_FL_` derived from (newly factored) `_AC_Query_S_`
 #    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
+#    12-Sep-2011 (CT) `prefix` added to `_AC_Query_FL_.query`
 #    ««revision-date»»···
 #--
 
@@ -64,8 +65,8 @@ class _AC_Query_FL_ (MOM.Attr._AC_Query_S_) :
        Franz-Ferdinand).
     """
 
-    def query (self, value) :
-        aq = self.aq
+    def query (self, value, prefix = None) :
+        aq = self.a_query (prefix)
         if value == "" :
             return aq.__eq__ (value)
         elif "-" in value :

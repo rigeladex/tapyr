@@ -111,6 +111,11 @@
 #     1-Aug-2011 (CT) `AFS_Completed` continued..
 #     7-Sep-2011 (CT) `AFS_Completed` and `AFS_Completer` continued...
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#    12-Sep-2011 (CT) `AFS._Media.scripts` changed to load `AFS/Elements.js`
+#                     before `jQ/afs.js`
+#    13-Sep-2011 (CT) `_ui_displayed` added and used in `AFS_Completer`
+#    13-Sep-2011 (CT) `AFS_Completer.rendered` changed to indicate partial match
+#    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
 #    ««revision-date»»···
 #--
 
@@ -177,14 +182,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                             }
                         );
                   """
-                , sort_key = 100
+                , rank = 100
                 )
             ,
             )
         , scripts       =
             ( GTW.Script
                 ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-                , sort_key = 100
+                , rank     = 100
                 )
             ,
             )
@@ -279,6 +284,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return pjoin (self.parent.abs_href, self.kind)
         # end def injected_media_href
 
+        def _ui_displayed (self, E_Type, names, matches) :
+            attrs = list (getattr (E_Type, n) for n in names)
+            for match in matches :
+                yield tuple \
+                    (a.ac_ui_display (v) for a, v in zip (attrs, match))
+        # end def _ui_displayed
+
     # end class _Cmd_
 
     class AFS (_Cmd_) :
@@ -291,9 +303,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ( GTW.Script._.jQuery_UI
                 , GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 )
             )
         name            = "create"
@@ -408,7 +420,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ETM            = scope [elem.type_name]
                 E_Type         = ETM.E_Type
                 attr           = getattr (E_Type, field.name)
-                completer      = attr.completer (attr, E_Type)
+                completer      = attr.completer
                 all_names      = completer.all_names
                 names          = completer.names
                 fs             = ETM.raw_query_attrs (names, json.values)
@@ -456,7 +468,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
             json      = TFL.Record (** handler.json)
-            result    = {}
+            result    = dict (partial = False)
             scope     = self.top.scope
             try :
                 form, elem   = self.form_element (json.fid)
@@ -464,7 +476,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ETM          = scope [elem.type_name]
                 E_Type       = ETM.E_Type
                 attr         = getattr (E_Type, field.name)
-                completer    = attr.completer (attr, E_Type)
+                completer    = attr.completer
                 max_n        = self.max_completions
                 names        = completer.names
                 query        = completer (self.top.scope, json.values)
@@ -475,14 +487,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if n :
                     if n <= max_n :
                         result ["fields"]  = len    (names)
-                        result ["matches"] = sorted (matches)
+                        result ["matches"] = sorted \
+                            (self._ui_displayed (E_Type, names, matches))
                     else :
                         matches = query.attrs (attr.raw_query).limit \
                             (max_n + 1).all ()
                         m       = len (matches)
                         if m <= max_n :
                             result ["fields"]  = 1
+                            matches            = ([m, "..."] for m in  matches)
                             result ["matches"] = sorted (matches)
+                            result ["partial"] = True
                         else :
                             ### XXX find fewer partial matches !!!
                             result ["fields"]  = 0

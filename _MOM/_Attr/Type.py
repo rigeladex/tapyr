@@ -176,6 +176,13 @@
 #    26-Jul-2011 (CT) `ckd_query_eq` and `raw_query_eq` added
 #    28-Jul-2011 (CT) `ckd_query` and `raw_query` added
 #     9-Sep-2011 (CT) Use `etm.E_Type` instead of `etm._etype`
+#    12-Sep-2011 (CT) `_AC_Query_` changed to use init-arg `attr_name`
+#                     instead of `q` and to use `prefix` in `__call__`
+#    12-Sep-2011 (CT) `_AC_Query_C_` added and used for `_A_Composite_.ac_query`
+#    13-Sep-2011 (CT) `ac_ui_display` added
+#    15-Sep-2011 (CT) `_AC_Query_E_` added and used for `_A_Entity_.ac_query`
+#    15-Sep-2011 (CT) `_A_Entity_.C_Type` added (Alias_Property) to fix
+#                     `ac_query`
 #    ««revision-date»»···
 #--
 
@@ -210,32 +217,73 @@ Q = TFL.Attr_Query ()
 
 class _AC_Query_ (TFL.Meta.Object) :
 
-    def __init__ (self, q, cooker = None) :
-        self.query  = q
-        self.cooker = cooker
+    def __init__ (self, attr_name, cooker = None) :
+        self.attr_name = attr_name
+        self.cooker    = cooker
     # end def __init__
 
-    def __call__ (self, value) :
+    def __call__ (self, value, prefix = None) :
         cooker = self.cooker
         if cooker is not None :
             try :
                 value = cooker (value)
             except (ValueError, TypeError) :
                 return None
-        return self.query (value)
+        return self.query (value, prefix)
     # end def __call__
+
+    def a_query (self, prefix = None) :
+        name = self.attr_name
+        if prefix :
+            name = ".".join ((prefix, name))
+        return getattr (Q, name)
+    # end def a_query
+
+    def query (self, value, prefix = None) :
+        return self.a_query (prefix).__eq__ (value)
+    # end def query
 
 # end class _AC_Query_
 
-class _AC_Query_S_ (_AC_Query_) :
+class _AC_Query_C_ (_AC_Query_) :
 
-    def __init__ (self, attr_name, cooker = None) :
-        self.aq     = getattr (Q, attr_name)
-        self.cooker = cooker
+    def __init__ (self, attr) :
+        self.attr = attr
     # end def __init__
 
-    def query (self, value) :
-        q = self.aq.STARTSWITH if value else self.aq.__eq__
+    @TFL.Meta.Once_Property
+    def attr_name (self) :
+        return self.attr.name
+    # end def attr_name
+
+    def __call__ (self, value, prefix = None) :
+        name   = self.attr.name
+        C_Type = self.attr.C_Type
+        pf     = ".".join ((prefix, name)) if prefix else name
+        qs     = []
+        for k, v in value.iteritems () :
+            qs.append (getattr (C_Type, k).ac_query (v, pf))
+        return Q.AND (* qs)
+    # end def __call__
+
+# end class _AC_Query_C_
+
+class _AC_Query_E_ (_AC_Query_C_) :
+
+    def __call__ (self, value, prefix = None) :
+        if isinstance (value, dict) :
+            return self.__super.__call__ (value, prefix)
+        else :
+            return self.query (value, prefix)
+    # end def __call__
+
+# end class _AC_Query_E_
+
+class _AC_Query_S_ (_AC_Query_) :
+
+    def query (self, value, prefix = None) :
+        aq = self.a_query (prefix)
+        q  = aq.STARTSWITH if value else aq.__eq__
         return q (value)
     # end def query
 
@@ -286,8 +334,7 @@ class A_Attr_Type (object) :
         if self.needs_raw_value :
             result = _AC_Query_S_ (self.raw_name, unicode)
         else :
-            result = _AC_Query_ \
-                (getattr (Q, self.ckd_name).__eq__, self.cooked)
+            result = _AC_Query_   (self.name, self.cooked)
         return result
     # end def ac_query
 
@@ -298,7 +345,7 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def ckd_query_eq (self) :
-        return _AC_Query_ (getattr (Q, self.ckd_name).__eq__, self.cooked)
+        return _AC_Query_ (self.ckd_name, self.cooked)
     # end def ckd_query_eq
 
     @TFL.Meta.Once_Property
@@ -318,7 +365,7 @@ class A_Attr_Type (object) :
     @TFL.Meta.Once_Property
     def raw_query_eq (self) :
         if self.needs_raw_value :
-            result = _AC_Query_ (getattr (Q, self.raw_name).__eq__, unicode)
+            result = _AC_Query_ (self.raw_name, unicode)
         else :
             result = self.ckd_query_eq
         return result
@@ -328,6 +375,19 @@ class A_Attr_Type (object) :
         self.kind        = kind
         self.is_required = kind.is_required
     # end def __init__
+
+    def ac_ui_display (self, value) :
+        if self.needs_raw_value :
+            result = value
+        elif isinstance (value, MOM.Entity) :
+            result = value.ui_display
+        else :
+            try :
+                result = self.as_string (value)
+            except (TypeError, ValueError) :
+                result = value
+        return result
+    # end def ac_ui_display
 
     @classmethod
     def as_arg_ckd (cls) :
@@ -510,6 +570,11 @@ class _A_Composite_ (A_Attr_Type) :
 
     Kind_Mixins       = (MOM.Attr._Composite_Mixin_, )
     needs_raw_value   = False
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        return _AC_Query_C_ (self)
+    # end def ac_query
 
     def as_code (self, value) :
         if value is not None :
@@ -833,11 +898,16 @@ class _A_Entity_ (A_Attr_Type) :
     """Models an attribute referring to an entity."""
 
     Class             = ""
-    P_Type            = TFL.Meta.Alias_Property  ("Class")
+    C_Type = P_Type   = TFL.Meta.Alias_Property  ("Class")
 
     needs_raw_value   = False
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        return _AC_Query_E_ (self)
+    # end def ac_query
 
     @TFL.Meta.Once_Property
     def example (self) :

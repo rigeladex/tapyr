@@ -47,6 +47,9 @@
 #    14-Jan-2011 (CT) `Bin` and `__binary` changed to honor `reverse`
 #    22-Jul-2011 (CT) `__call__` factored up to `Q_Root`
 #    22-Jul-2011 (CT) `LOWER` (and `Func`) added
+#    13-Sep-2011 (CT) All internal classes renamed to `_«name»_`
+#    14-Sep-2011 (CT) `SUM` added
+#    16-Sep-2011 (MG) `_SUM_._name` added
 #    ««revision-date»»···
 #--
 
@@ -197,7 +200,7 @@ This module implements a query expression language::
 
 Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
 no way to simulate this by defining operator methods. Therefore,
-`Bin.__nonzero__` raises a TypeError to signal that an expression like
+`_Bin_.__nonzero__` raises a TypeError to signal that an expression like
 `Q.a < Q.b < Q.c` isn't possible::
 
     >>> Q.a < Q.b < Q.c
@@ -256,6 +259,22 @@ Queries for nested attributes are also possible::
     >>> (qm > Q.foo) (r1)
     True
 
+Q.SUM needs documenting::
+
+    >>> print Q.SUM (1)
+    Q.SUM (1)
+    >>> print Q.SUM (Q.finish - Q.start)
+    Q.SUM (Q.finish - Q.start)
+
+    >>> Q.SUM (1) (r1)
+    1
+    >>> Q.SUM (42) (r1)
+    42
+    >>> Q.SUM (Q.bar - Q.foo)  (r1)
+    95
+    >>> Q.SUM (Q.foo - Q.bar)  (r1)
+    -95
+
 """
 
 from   _TFL                     import TFL
@@ -280,17 +299,21 @@ class Base (TFL.Meta.Object) :
             self.Ignore_Exception = Ignore_Exception
     # end def __init__
 
+    def SUM (self, rhs = 1) :
+        return self._Sum_ (self, rhs)
+    # end def SUM
+
     def __getattr__ (self, name) :
         if "." in name :
             getter = getattr (TFL.Getter, name)
         else :
             getter = operator.attrgetter (name)
-        return self.Get (self, name, getter)
+        return self._Get_ (self, name, getter)
     # end def __getattr__
 
     def __getitem__ (self, item) :
         assert not isinstance (item, slice)
-        return self.Get (self, item, operator.itemgetter (item))
+        return self._Get_ (self, item, operator.itemgetter (item))
     # end def __getitem__
 
     def __nonzero__ (self) :
@@ -312,7 +335,7 @@ class Q_Root (TFL.Meta.Object) :
 # end class Q_Root
 
 @TFL.Add_New_Method (Base)
-class Bin (Q_Root) :
+class _Bin_ (Q_Root) :
     """Binary query expression"""
 
     op_map        = dict \
@@ -375,10 +398,10 @@ class Bin (Q_Root) :
         return "%s %s %s" % (self.lhs, self.op_map.get (op, op), self.rhs)
     # end def __repr__
 
-# end class Bin
+# end class _Bin_
 
 @TFL.Add_New_Method (Base)
-class Call (Q_Root) :
+class _Call_ (Q_Root) :
     """Query expression calling a method."""
 
     predicate_precious_p = True
@@ -407,12 +430,12 @@ class Call (Q_Root) :
         return "%s.%s %r" % (self.lhs, op, self.args)
     # end def __repr__
 
-# end class Call
+# end class _Call_
 
 def __binary (op, Class) :
     name    = op.__name__
-    reverse = name in Bin.rop_map
-    op      = getattr (operator, Bin.rop_map [name] if reverse else name)
+    reverse = name in _Bin_.rop_map
+    op      = getattr (operator, _Bin_.rop_map [name] if reverse else name)
     if name in ("__eq__", "__ne__") :
         ### Allow `x == None` and `x != None`
         undefs = (Q.undef, )
@@ -428,18 +451,18 @@ def __binary (op, Class) :
 # end def __binary
 
 def _binary (op) :
-    return __binary (op, "Bin_Expr")
+    return __binary (op, "_Bin_Expr_")
 # end def _binary
 
 def _boolean (op) :
-    return __binary (op, "Bin_Bool")
+    return __binary (op, "_Bin_Bool_")
 # end def _boolean
 
 def _method (meth) :
     name = meth.__name__
     op   = meth ()
     def _ (self, * args, ** kw) :
-        return self.Q.Call (self, op, * args, ** kw)
+        return self.Q._Call_ (self, op, * args, ** kw)
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = meth.__module__
@@ -452,7 +475,7 @@ def _type_error (op) :
         raise TypeError \
             ( "Operator `%s` not applicable to boolean result of `%s`"
               ", rhs: `%s`"
-            % (Bin.op_map.get (name, name), self, rhs)
+            % (_Bin_.op_map.get (name, name), self, rhs)
             )
     _.__doc__    = op.__doc__
     _.__name__   = name
@@ -528,7 +551,7 @@ class _Date_ (TFL.Meta.Object) :
 
 # end class _Date_
 
-class _Exp_ (Q_Root) :
+class _Exp_Base_ (Q_Root) :
 
     ### Equality queries
     @_boolean
@@ -548,9 +571,9 @@ class _Exp_ (Q_Root) :
             ("Result of `%s` cannot be used in a boolean context" % (self, ))
     # end def __nonzero__
 
-# end class _Exp_
+# end class _Exp_Base_
 
-class Exp (_Exp_) :
+class _Exp_ (_Exp_Base_) :
     """Query expression"""
 
     ### Order queries
@@ -648,7 +671,7 @@ class Exp (_Exp_) :
     def LOWER (self) :
         def lower (val) :
             return val.lower ()
-        return self.Q.Func (self, lower)
+        return self.Q._Func_ (self, lower)
     # end def LOWER
 
     @_method
@@ -659,9 +682,9 @@ class Exp (_Exp_) :
         return startswith
     # end def STARTSWITH
 
-# end class Exp
+# end class _Exp_
 
-class Exp_B (_Exp_) :
+class _Exp_B_ (_Exp_Base_) :
     """Query expression for query result of type Boolean"""
 
     ### Order queries
@@ -715,16 +738,16 @@ class Exp_B (_Exp_) :
     @_type_error
     def __rsub__ (self, rhs) : pass
 
-# end class Exp_B
+# end class _Exp_B_
 
 @TFL.Add_New_Method (Base)
-class Func (Exp, Call) :
+class _Func_ (_Exp_, _Call_) :
     """Query function with a result that can be used in query expressions."""
 
-# end class Func
+# end class _Func_
 
 @TFL.Add_New_Method (Base)
-class Get (Exp) :
+class _Get_ (_Exp_) :
     """Query getter"""
 
     predicate_precious_p = True
@@ -761,23 +784,50 @@ class Get (Exp) :
         return "Q.%s" % (self._name, )
     # end def __repr__
 
-# end class Get
+# end class _Get_
 
 @TFL.Add_New_Method (Base)
-class _Q_Exp_Bin_Bool_ (Bin, Exp_B) :
+class _Q_Exp_Bin_Bool_ (_Bin_, _Exp_B_) :
     """Binary query expression evaluating to boolean"""
 
-    _real_name = "Bin_Bool"
+    _real_name = "_Bin_Bool_"
 
-Bin_Bool = _Q_Exp_Bin_Bool_ # end class
+_Bin_Bool_ = _Q_Exp_Bin_Bool_ # end class
 
 @TFL.Add_New_Method (Base)
-class _Q_Exp_Bin_Expr_ (Bin, Exp) :
+class _Q_Exp_Bin_Expr_ (_Bin_, _Exp_) :
     """Binary query expression"""
 
-    _real_name = "Bin_Expr"
+    _real_name = "_Bin_Expr_"
 
-Bin_Expr = _Q_Exp_Bin_Expr_ # end class
+_Bin_Expr_ = _Q_Exp_Bin_Expr_ # end class
+
+@TFL.Add_New_Method (Base)
+class _Sum_ (Q_Root) :
+    """Query function for building a sum."""
+
+    _name = "$SUM"
+
+    def __init__ (self, Q, rhs = 1) :
+        self.Q     = Q
+        self.rhs   = rhs
+    # end def __init__
+
+    def predicate (self, obj) :
+        try :
+            pred   = self.rhs.predicate
+        except AttributeError :
+            result = self.rhs
+        else :
+            result = pred (obj)
+        return result
+    # end def predicate
+
+    def __repr__ (self) :
+        return "Q.SUM (%r)" % (self.rhs, )
+    # end def __repr__
+
+# end class _Sum_
 
 if __name__ != "__main__" :
     TFL._Export ("Q")

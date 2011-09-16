@@ -87,6 +87,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         , _columns  = (List (), True)
         , _filter   = (List (), True)
         , _order_by = (List (), True)
+        , _group_by = (List (), True)
         )
 
     def __init__ (self, e_type, session, parent = None) :
@@ -161,6 +162,12 @@ class _Q_Result_ (TFL.Meta.Object) :
             return None
     # end def first
 
+    def group_by (self, * columns) :
+        result = self._clone ()
+        result._group_by.extend (columns)
+        return result
+    # end def group_by
+
     def _join (self, sa_query, joins, joined_tables) :
         if joins :
             sql_join      = sa_query.froms [-1]
@@ -173,6 +180,7 @@ class _Q_Result_ (TFL.Meta.Object) :
                 sa_query = sa_query.select_from (sql_join)
         return sa_query, joined_tables
     # end def _join
+
 
     def limit (self, limit) :
         result = self._clone ()
@@ -235,6 +243,8 @@ class _Q_Result_ (TFL.Meta.Object) :
                 sa_query = sa_query.limit  (self._limit)
             if self._offset is not None :
                 sa_query = sa_query.offset (self._offset)
+            if self._group_by :
+                sa_query = sa_query.group_by (* self._group_by)
             if columns :
                 return sa_query
             if not cache :
@@ -315,7 +325,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     """Return only the values of the explicitly stated attributes instead of
        MOM instances.
     """
-    
+
     _Query_Attrs    = dict \
         ( _Q_Result_._Query_Attrs
         , _attr_cols = (_Q_Result_.List (), True)

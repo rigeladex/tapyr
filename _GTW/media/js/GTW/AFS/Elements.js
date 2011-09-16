@@ -40,6 +40,8 @@
 //                     and `root_id`
 //     7-Jul-2011 (CT) `field_name_map` added
 //    25-Jul-2011 (CT) `get_value` added
+//    12-Sep-2011 (CT) `Field_Composite._setup_value` changed to update
+//                     `anchor.field_name_map`
 //    ««revision-date»»···
 //--
 
@@ -261,7 +263,7 @@
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
-              // XXX update kw.anchor.field_name_map ???
+              kw.anchor.field_name_map [this.name] = this.$id;
           }
         }
       , { type_name : "Field_Composite" }
@@ -271,6 +273,7 @@
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
+              kw.anchor.field_name_map [this.name] = this.$id;
           }
         }
       , { type_name : "Field_Entity" }
@@ -281,6 +284,7 @@
               this.value.role_id = raid;
               this.value.edit    = Elements.id_map [raid].value.edit;
               this._super (kw, new_kw);
+              kw.anchor.field_name_map [this.name] = this.$id;
           }
         }
       , { type_name : "Field_Role_Hidden" }

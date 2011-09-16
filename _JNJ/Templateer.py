@@ -178,6 +178,14 @@ class Template_E (_Template_) :
     # end def get_css
 
     @Once_Property
+    def CSS_Links (self) :
+        media = self._Media
+        if media :
+            return sorted (media.css_links, key = TFL.Getter.rank)
+        return ()
+    # end def CSS_Links
+
+    @Once_Property
     def extends (self) :
         env    = self.env
         pat    = self._extend_pat
@@ -284,7 +292,7 @@ class Template_E (_Template_) :
                        or (not static_handler.get_path (s.src))
                        or s.condition
                        ) :
-                        yield s.src
+                        yield s
             return list (TFL.uniq (_gen (media.scripts)))
     # end def scripts
 

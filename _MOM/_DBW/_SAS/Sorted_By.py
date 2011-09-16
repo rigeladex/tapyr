@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Martin Glück. All rights reserved
+# Copyright (C) 2009-2011 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -44,6 +44,7 @@
 #     7-May-2010 (MG) `_sa_order_by` for TFL.Q_Exp.* fixed to support query
 #                     attributes as well
 #    12-May-2010 (MG) `Attr_Map` cleared
+#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #    ««revision-date»»···
 #--
 
@@ -225,7 +226,7 @@ def _sa_resolve_attribute (self, SAQ, c, joins, order_clause, desc = False) :
 # end def _sa_resolve_attribute
 
 @TFL.Add_To_Class ( "_sa_order_by"
-                  , TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr, TFL.Q_Exp.Get
+                  , TFL.Q_Exp._Bin_Bool_, TFL.Q_Exp._Bin_Expr_, TFL.Q_Exp._Get_
                   )
 def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
     jo, oc = self._sa_filter (SAQ)

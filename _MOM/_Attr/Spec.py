@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -53,6 +53,8 @@
 #    24-Jun-2010 (CT) `db_attr` added
 #     9-Dec-2010 (CT) `_effective_prop_kind_mixins` changed to use
 #                     `_Auto_Update_Lazy_Mixin_` if `Computed_Set_Mixin`
+#    15-Sep-2011 (CT) s/_setup_dependent_attrs/_setup_attrs/
+#    15-Sep-2011 (CT) `_setup_attrs` extended to setup `.completer`
 #    ««revision-date»»···
 #--
 
@@ -105,7 +107,7 @@ class Spec (MOM.Prop.Spec) :
         e_type.user_attr  = self._user_attr
         e_type.db_attr.sort   (key = TFL.Sorted_By ("rank", "name"))
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
-        self._setup_dependent_attrs ()
+        self._setup_attrs     (e_type)
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :
@@ -144,12 +146,14 @@ class Spec (MOM.Prop.Spec) :
         self._prop_dict.add_alias (alias_name, real_name)
     # end def _setup_alias
 
-    def _setup_dependent_attrs (self) :
+    def _setup_attrs (self, e_type) :
         attr_dict = self._attr_dict
         for a in attr_dict.itervalues () :
             for d in a.attr.auto_up_depends :
                 attr_dict [d].dependent_attrs.add (a)
-    # end def _setup_dependent_attrs
+            if isinstance (a.completer, MOM.Attr.Completer_Spec) :
+                a.attr.completer = a.completer (a, e_type)
+    # end def _setup_attrs
 
     def _setup_prop (self, e_type, name, kind, prop) :
         self.__super._setup_prop (e_type, name, kind, prop)

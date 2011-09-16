@@ -34,6 +34,7 @@
 #    22-Jul-2011 (MG) Tests for `LOWER` added
 #    26-Jul-2011 (CT) Tests (q1, q2, q3) for `attrs` combined with `count`
 #                     and `all` added
+#    16-Sep-2011 (MG) `attrs_query` test added
 #    ««revision-date»»···
 #--
 
@@ -147,8 +148,39 @@ _q_result = r"""
     >>> q3.limit (1).all ()
     [(u'DI',)]
 
-    >>> scope.destroy ()
+    >>> sorted (q0.all (), key = scope.PAP.Person.sort_key ())
+    [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
+    >>> sorted (q0.attrs (Q.title, Q.SUM (1)))
+    [(u'di', 1), (u'di', 1), (u'dr.', 1)]
 
+    >>> scope.destroy ()
+"""
+
+_attrs_query = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = DI ("2010/01/10"), title = "Dr.")
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> _   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2010/01/16"), title = "DI")
+    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", lifetime = DI ("2010/02/01"), title = "DI")
+
+    >>> q   = scope.PAP.Person.query ()
+    >>> q.attr  ("last_name").order_by (Q.last_name).all ()
+    [u'ln 1', u'ln 2', u'ln 3', u'ln 4', u'ln 5']
+    >>> q.attr  ("lifetime.start").order_by (Q.lifetime.start).all ()
+    [datetime.date(2010, 1, 1), datetime.date(2010, 1, 3), datetime.date(2010, 1, 10), datetime.date(2010, 1, 16), datetime.date(2010, 2, 1)]
+
+    >>> q1  = q.attrs ("last_name", "first_name")
+    >>> q1.order_by (Q.last_name).all ()
+    [(u'ln 1', u'fn 1'), (u'ln 2', u'fn 2'), (u'ln 3', u'fn 3'), (u'ln 4', u'fn 4'), (u'ln 5', u'fn 5')]
+
+    >>> q2  = q.attrs (Q.last_name, Q.lifetime.start)
+    >>> q2.order_by (Q.lifetime.start).all ()
+    [(u'ln 1', datetime.date(2010, 1, 1)), (u'ln 3', datetime.date(2010, 1, 3)), (u'ln 2', datetime.date(2010, 1, 10)), (u'ln 4', datetime.date(2010, 1, 16)), (u'ln 5', datetime.date(2010, 2, 1))]
+
+    >>> scope.destroy ()
 """
 
 _raw_query = """
@@ -187,6 +219,11 @@ from   _TFL.predicate      import first
 import datetime
 
 __test__ = Scaffold.create_test_dict \
-    (dict (q_result = _q_result, raw_query = _raw_query))
+    ( dict
+        ( q_result    = _q_result
+        , raw_query   = _raw_query
+        , attrs_query = _attrs_query
+        )
+    )
 
 ### __END__ GTW.__test__.Q_Result

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Jun-2011 (MG) Creation
+#    12-Sep-2011 (CT) Tests for `lifetime` added
 #    ««revision-date»»···
 #--
 
@@ -37,8 +38,9 @@ _attr_ac_query = """
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> p1 = PAP.Person ("Glueck",          "Martin")
-    >>> p2 = PAP.Person ("Tanzer",          "Christian", "", "Mag.")
+    >>> p2 = PAP.Person ("Tanzer",          "Christian", "", "Mag.", lifetime = dict (start = u"26.9.1959", raw = True))
     >>> p3 = PAP.Person ("Franz-Ferdinand", "Karl")
+    >>> p4 = PAP.Person ("Tanzer", "Egon", lifetime = dict (start = u"1907/03/08", finish = "1994/08/04", raw = True))
     >>> for value in "Ma", "martin", "CHRi" :
     ...    q = PAP.Person.first_name.ac_query (value)
     ...    for o in (p1, p2, p3) :
@@ -66,6 +68,24 @@ _attr_ac_query = """
     Ferdinand glueck False
     Ferdinand tanzer False
     Ferdinand franz-ferdinand True
+
+    >>> q1 = PAP.Person.lifetime.ac_query (dict (start = "1959/09/26"))
+    >>> q2 = PAP.Person.lifetime.ac_query (dict (start = "1907/03/08", finish = "1994/08/04"))
+    >>> q3 = PAP.Person.lifetime.ac_query (dict (finish = "1994/08/04"))
+    >>> print q1
+    <Filter_And [Q.lifetime.start == 1959-09-26]>
+    >>> print q2
+    <Filter_And [Q.lifetime.start == 1907-03-08, Q.lifetime.finish == 1994-08-04]>
+    >>> print " and ".join (str (p) for p in q1.predicates)
+    Q.lifetime.start == 1959-09-26
+    >>> print " and ".join (str (p) for p in q2.predicates)
+    Q.lifetime.start == 1907-03-08 and Q.lifetime.finish == 1994-08-04
+    >>> PAP.Person.query_s (q1).all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    >>> PAP.Person.query_s (q2).all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u'')]
+    >>> PAP.Person.query_s (q1 | q3).all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.'), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u'')]
 
     >>> q = PAP.Person.last_name.ac_query ("Franz")
     >>> print " or ".join (str (p) for p in q.predicates)
