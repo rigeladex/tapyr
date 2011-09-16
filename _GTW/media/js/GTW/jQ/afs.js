@@ -39,6 +39,7 @@
 //    13-Sep-2011 (CT) `Field_Entity._get_completer_value` added
 //    13-Sep-2011 (CT) `setup_completer._put` changed to continue for partial
 //                     completions
+//    15-Sep-2011 (CT) `Field_Entity._get_completer_value` fixed
 //    ««revision-date»»···
 //--
 
@@ -48,6 +49,43 @@
     var $AFS_E = $GTW.AFS.Elements;
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
+    };
+    var _get_completer_values_nested = function _get_completer_values_nested () {
+        var field, fv, id, name, result, value;
+        var map = this.field_name_map, n = 0, values = {};
+        for (name in map) {
+            if (map.hasOwnProperty (name)) {
+                id    = map [name];
+                field = $AFS_E.id_map [id];
+                value = field._get_completer_value ();
+                if (value !== undefined) {
+                    n += 1;
+                    values [name] = value;
+                };
+            };
+        };
+        if (n > 0) {
+            result = values;
+        };
+        return result;
+    } ;
+    $AFS_E.Field.prototype._get_completer_value = function () {
+        var result, value = this.inp$.val ();
+        if (value && value.length > 0) {
+            result = value;
+        };
+        return result;
+    };
+    $AFS_E.Field_Composite.prototype._get_completer_value =
+        _get_completer_values_nested;
+    $AFS_E.Field_Entity.prototype._get_completer_value = function () {
+        var result, value = this.value.edit.pid;
+        if (value != null) {
+            result = value;
+        } else {
+            result = _get_completer_values_nested.call (this);
+        };
+        return result;
     };
     ( function fix_ui_autocomplete () {
         $.extend
@@ -70,36 +108,6 @@
             , opts || {}
             );
         var setup_completer = function () {
-            $AFS_E.Field.prototype._get_completer_value = function () {
-                var result, value = this.inp$.val ();
-                if (value && value.length > 0) {
-                    result = value;
-                };
-                return result;
-            };
-            $AFS_E.Field_Composite.prototype._get_completer_value = function () {
-                var field, fv, id, name, result, value;
-                var map = this.field_name_map, n = 0, values = {};
-                for (name in map) {
-                    if (map.hasOwnProperty (name)) {
-                        id    = map [name];
-                        field = $AFS_E.id_map [id];
-                        value = field._get_completer_value ();
-                        if (value !== undefined) {
-                            n += 1;
-                            values [name] = value;
-                        };
-                    };
-                };
-                if (n > 0) {
-                    result = values;
-                };
-                return result;
-            };
-            $AFS_E.Field_Entity.prototype._get_completer_value = function () {
-                var result = this.value.edit.pid;
-                return result;
-            };
             var _get = function _get (options, elem, val, cb) {
                 var completer = elem.completer, data, values;
                 values = _get_field_values (elem);

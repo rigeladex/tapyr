@@ -114,6 +114,7 @@
 #                     before `jQ/afs.js`
 #    13-Sep-2011 (CT) `_ui_displayed` added and used in `AFS_Completer`
 #    13-Sep-2011 (CT) `AFS_Completer.rendered` changed to indicate partial match
+#    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
 #    ««revision-date»»···
 #--
 
@@ -404,7 +405,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ETM            = scope [elem.type_name]
                 E_Type         = ETM.E_Type
                 attr           = getattr (E_Type, field.name)
-                completer      = attr.completer (attr, E_Type)
+                completer      = attr.completer
                 all_names      = completer.all_names
                 names          = completer.names
                 fs             = ETM.raw_query_attrs (names, json.values)
@@ -460,7 +461,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 ETM          = scope [elem.type_name]
                 E_Type       = ETM.E_Type
                 attr         = getattr (E_Type, field.name)
-                completer    = attr.completer (attr, E_Type)
+                completer    = attr.completer
                 max_n        = self.max_completions
                 names        = completer.names
                 query        = completer (self.top.scope, json.values)

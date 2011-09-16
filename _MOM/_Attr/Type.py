@@ -180,6 +180,9 @@
 #                     instead of `q` and to use `prefix` in `__call__`
 #    12-Sep-2011 (CT) `_AC_Query_C_` added and used for `_A_Composite_.ac_query`
 #    13-Sep-2011 (CT) `ac_ui_display` added
+#    15-Sep-2011 (CT) `_AC_Query_E_` added and used for `_A_Entity_.ac_query`
+#    15-Sep-2011 (CT) `_A_Entity_.C_Type` added (Alias_Property) to fix
+#                     `ac_query`
 #    ««revision-date»»···
 #--
 
@@ -242,11 +245,16 @@ class _AC_Query_ (TFL.Meta.Object) :
 
 # end class _AC_Query_
 
-class _AC_Query_C_ (TFL.Meta.Object) :
+class _AC_Query_C_ (_AC_Query_) :
 
     def __init__ (self, attr) :
         self.attr = attr
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def attr_name (self) :
+        return self.attr.name
+    # end def attr_name
 
     def __call__ (self, value, prefix = None) :
         name   = self.attr.name
@@ -259,6 +267,17 @@ class _AC_Query_C_ (TFL.Meta.Object) :
     # end def __call__
 
 # end class _AC_Query_C_
+
+class _AC_Query_E_ (_AC_Query_C_) :
+
+    def __call__ (self, value, prefix = None) :
+        if isinstance (value, dict) :
+            return self.__super.__call__ (value, prefix)
+        else :
+            return self.query (value, prefix)
+    # end def __call__
+
+# end class _AC_Query_E_
 
 class _AC_Query_S_ (_AC_Query_) :
 
@@ -879,11 +898,16 @@ class _A_Entity_ (A_Attr_Type) :
     """Models an attribute referring to an entity."""
 
     Class             = ""
-    P_Type            = TFL.Meta.Alias_Property  ("Class")
+    C_Type = P_Type   = TFL.Meta.Alias_Property  ("Class")
 
     needs_raw_value   = False
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        return _AC_Query_E_ (self)
+    # end def ac_query
 
     @TFL.Meta.Once_Property
     def example (self) :

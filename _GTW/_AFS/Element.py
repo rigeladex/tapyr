@@ -83,6 +83,7 @@
 #    10-Jun-2011 (MG) `Group` added
 #     1-Aug-2011 (CT) `Field_Composite.het_c` and `Fieldset.het_c` changed
 #                     from `section` to `div`
+#    16-Sep-2011 (CT) `anchor_id` (and `_anchor_children`) added
 #    ««revision-date»»···
 #--
 
@@ -168,6 +169,23 @@ class _Element_ (TFL.Meta.Object) :
     # end def __call__
 
     @property
+    def anchor_id (self) :
+        try :
+            d = self.kw ["an$"]
+        except KeyError :
+            pass
+        else :
+            return self.id [:- d]
+    # end def anchor_id
+
+    @anchor_id.setter
+    def anchor_id (self, anchor_id) :
+        if self.id.startswith (anchor_id) :
+            d = len (self.id) - len (anchor_id)
+            self.kw ["an$"] = d
+    # end def anchor_id
+
+    @property
     def as_json_cargo (self) :
         result         = dict (self.kw, type = self.__class__.__name__)
         result ["$id"] = self.id
@@ -196,15 +214,6 @@ class _Element_ (TFL.Meta.Object) :
                 ("Cannot change id from `%s` to `%s`" % (self._id, value))
         self._id = value
     # end def id
-
-    @property
-    def _name (self) :
-        for k in "name", "type_name" :
-            try :
-                return self.kw [k]
-            except KeyError :
-                pass
-    # end def _name
 
     def copy (self, ** kw) :
         ckw      = dict \
@@ -237,6 +246,11 @@ class _Element_ (TFL.Meta.Object) :
             for x in c.transitive_iter () :
                 yield x
     # end def transitive_iter
+
+    def _anchor_children (self, anchor_id = None) :
+        for c in self.children :
+            c._anchor_children (anchor_id)
+    # end def _anchor_children
 
     def _call_iter (self, * args, ** kw) :
         for c in self.children :
@@ -271,6 +285,15 @@ class _Element_ (TFL.Meta.Object) :
             result ["value"] = self._value (* args, ** kw)
         return result
     # end def _instance_kw
+
+    @property
+    def _name (self) :
+        for k in "name", "type_name" :
+            try :
+                return self.kw [k]
+            except KeyError :
+                pass
+    # end def _name
 
     def _set_id (self, parent, i) :
         self.id = result = parent.id_sep.join ((parent.id, str (i)))
@@ -312,6 +335,24 @@ class _Element_ (TFL.Meta.Object) :
 
 # end class _Element_
 
+class _Anchor_MI_ (_Element_) :
+
+    def _anchor_children (self, anchor_id = None) :
+        self.__super._anchor_children (self.id)
+    # end def _anchor_children
+
+# end class _Anchor_MI_
+
+class _Field_MI_ (_Element_) :
+
+    def _anchor_children (self, anchor_id = None) :
+        if anchor_id is not None :
+            self.anchor_id = anchor_id
+        self.__super._anchor_children (anchor_id)
+    # end def _anchor_children
+
+# end class _Field_MI_
+
 class _Element_List_ (_Element_) :
     """Base class for AFS classes modelling a list of elements."""
 
@@ -320,7 +361,7 @@ class _Element_List_ (_Element_) :
 
 # end class _Element_List_
 
-class Entity (_Element_) :
+class Entity (_Anchor_MI_, _Element_) :
     """Model a sub-form for a single entity."""
 
     het_c       = "section" ### HTML element type to be used for the container
@@ -367,7 +408,7 @@ class Entity (_Element_) :
 
 # end class Entity
 
-class Entity_Link (Entity) :
+class Entity_Link (_Field_MI_, Entity) :
     """Model a sub-form for a link to entity in containing sub-form."""
 
     rank = 100
@@ -414,6 +455,7 @@ class Entity_List (_Element_List_) :
         result.id_sep = self.root_sep
         if self.id :
             self._id_child_or_proto (result, i, id_map)
+        result._anchor_children (self.anchor_id)
         return result
     # end def new_child
 
@@ -469,7 +511,7 @@ class _Field_ (_Element_) :
 
 # end class Field
 
-class Field (_Field_) :
+class Field (_Field_MI_, _Field_) :
     """Model a field of an AJAX-enhanced form."""
 
     def _css_classes (self) :
@@ -485,7 +527,7 @@ class Field (_Field_) :
 
 # end class Field
 
-class Field_Composite (_Field_) :
+class Field_Composite (_Field_MI_, _Anchor_MI_, _Field_) :
     """Model a composite field of a AJAX-enhanced form."""
 
     het_c       = "div"     ### HTML element type to be used for the container
@@ -498,7 +540,7 @@ class Field_Composite (_Field_) :
 
 # end class Field_Composite
 
-class Field_Entity (Entity, _Field_) :
+class Field_Entity (_Field_MI_, Entity, _Field_) :
     """Model an entity-holding field of a AJAX-enhanced form."""
 
     het_h       = "h2"      ### HTML element type to be used for the heading
@@ -555,6 +597,7 @@ class Form (_Element_List_) :
             ((c.copy () if c.id is not None else c) for c in children)
         self.__super.__init__ (id = id, children = children, ** kw)
         self._id_children     (id, children, self.id_map)
+        self._anchor_children ()
     # end def __init__
 
     @Once_Property

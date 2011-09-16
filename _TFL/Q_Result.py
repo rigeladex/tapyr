@@ -38,6 +38,9 @@
 #    26-Jul-2011 (CT) Handling of `distinct` changed so that it is passed on
 #                     to derived queries
 #    13-Sep-2011 (MG) `group_by` and `_Q_Result_Group_By_` added
+#    16-Sep-2011 (MG) `_Attr_` and `_Attrs_Tuple_` added and used
+#    16-Sep-2011 (MG) `_Attr_` missing  compare functions added
+#    16-Sep-2011 (CT) `_Attr_.__eq__` and `.__lt__` robustified
 #    ««revision-date»»···
 #--
 
@@ -135,16 +138,96 @@ IndexError: Query result contains 2 entries
 [1, 2, 3, 4, 5]
 """
 
-from   _TFL                     import TFL
+from   _TFL                       import TFL
 
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.Filter
-
-from   _TFL.predicate           import first, uniq, uniq_p
+from   _TFL._Meta.totally_ordered import totally_ordered
+from   _TFL.predicate             import first, uniq, uniq_p
 
 import itertools
 import operator
+
+@totally_ordered
+class _Attr_ (object) :
+    """Wrapper for result of `.attr` method."""
+
+    def __init__ (self, getter, value) :
+        self._VALUE = value
+        p           = getter._name.split (".", 1)
+        self._NAME  = p.pop              (0)
+        self._REST  = p and p.pop        (0)
+    # end def __init__
+
+    def __eq__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError from some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) == (rhs.__class__.__name__, rhs)
+    # end def __eq__
+
+    def __getattr__ (self, name) :
+        if name == self._NAME :
+            if not self._REST :
+                return self._VALUE
+            return _Attr_ (getattr (Q_Result.Q, self._REST), self._VALUE)
+        raise AttributeError (name)
+    # end def __getattr__
+
+    def __hash__ (self) :
+        lhs = self._VALUE
+        return hash ((lhs.__class__.__name__, lhs))
+    # end def __hash__
+
+    def __lt__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) < (rhs.__class__.__name__, rhs)
+    # end def __lt__
+
+    def __repr__ (self) :
+        return repr (self._VALUE)
+    # end def __repr__
+
+    def __str__ (self) :
+        return str (self._VALUE)
+    # end def __str__
+
+# end class _Attr_
+
+class _Attrs_Tuple_ (tuple) :
+    """Wrapper for result of `.attrs` method."""
+
+    def __new__ (cls, getters, * args) :
+        return super (_Attrs_Tuple_, cls).__new__ (cls, * args)
+    # end def __new__
+
+    def __init__ (self, getters, * args) :
+        super (_Attrs_Tuple_, self).__init__ (* args)
+        self._NAMES   = {}
+        for i, g in enumerate (getters) :
+            p = g._name.split (".", 1)
+            k = p.pop         (0)
+            self._NAMES [k] = i, p and p.pop (0)
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        idx, rest = self._NAMES.get (name, (-1, None))
+        if rest is not None :
+            result = self [idx]
+            if rest :
+                result = _Attr_ (getattr (Q_Result.Q, rest), result)
+            return result
+        raise AttributeError (name)
+    # end def __getattr__
+
+# end class _Attrs_Tuple_
 
 class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
@@ -175,7 +258,8 @@ class _Q_Result_ (TFL.Meta.Object) :
     def attr (self, getter) :
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
-        return Q_Result ((getter (r) for r in self), self._distinct)
+        return Q_Result \
+            ((_Attr_ (getter, getter (r)) for r in self), self._distinct)
     # end def attr
 
     def attrs (self, * getters) :
@@ -192,7 +276,9 @@ class _Q_Result_ (TFL.Meta.Object) :
                 yield getter
         getters = tuple (_g (getters))
         return Q_Result \
-            ((tuple (g (r) for g in getters) for r in self), self._distinct)
+            ( (_Attrs_Tuple_ (getters, (g (r) for g in getters)) for r in self)
+            , self._distinct
+            )
     # end def attrs
 
     def count (self) :

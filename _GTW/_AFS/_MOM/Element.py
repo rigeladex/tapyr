@@ -52,17 +52,20 @@
 #                     for all but implicit links
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#    16-Sep-2011 (CT) Use `AE.` instead of `import *`
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
 
-from   _GTW._AFS.Element import *
-from   _GTW._AFS.Element import _Element_
+from   _GTW        import GTW
+from   _TFL        import TFL
+
+from   _GTW._AFS   import Element as AE
 
 import _GTW._AFS._MOM
 
-class _MOM_Element_ (_Element_) :
+class _MOM_Element_ (AE._Element_) :
 
     _real_name = "Element"
 
@@ -82,7 +85,7 @@ class _MOM_Element_ (_Element_) :
 
 Element = _MOM_Element_ # end class
 
-class _MOM_Entity_ (_MOM_Element_, Entity) :
+class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
     """Model a MOM-specific sub-form for a single entity."""
 
     _real_name = "Entity"
@@ -160,7 +163,7 @@ class _MOM_Entity_ (_MOM_Element_, Entity) :
 
 Entity = _MOM_Entity_ # end class
 
-class _MOM_Entity_Link_ (Entity_Link, Entity) :
+class _MOM_Entity_Link_ (AE.Entity_Link, Entity) :
     """Model a MOM-specific sub-form for a link to entity in containing
        sub-form.
     """
@@ -186,7 +189,7 @@ class _MOM_Entity_Link_ (Entity_Link, Entity) :
 
 Entity_Link = _MOM_Entity_Link_ # end class
 
-class _MOM_Entity_List_  (Entity_List) :
+class _MOM_Entity_List_  (AE.Entity_List) :
     """Model a MOM-specific sub-form for a list of entities."""
 
     _real_name = "Entity_List"
@@ -205,7 +208,7 @@ class _MOM_Entity_List_  (Entity_List) :
 
 Entity_List = _MOM_Entity_List_ # end class
 
-class _MOM_Field_ (Field) :
+class _MOM_Field_ (AE.Field) :
     """Model a MOM-specific field of an AJAX-enhanced form."""
 
     _real_name = "Field"
@@ -261,7 +264,7 @@ class _MOM_Field_ (Field) :
 
 Field = _MOM_Field_ # end class
 
-class _MOM_Field_Composite_ (_MOM_Element_, Field_Composite) :
+class _MOM_Field_Composite_ (AE.Field_Composite) :
     """Model a MOM-specific composite field of a AJAX-enhanced form."""
 
     _real_name = "Field_Composite"
@@ -280,7 +283,7 @@ class _MOM_Field_Composite_ (_MOM_Element_, Field_Composite) :
 
 Field_Composite = _MOM_Field_Composite_ # end class
 
-class _MOM_Field_Entity_ (Entity, Field_Entity) :
+class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
     """Model a MOM-specific entity-holding field of an AJAX-enhanced form."""
 
     _real_name = "Field_Entity"
@@ -338,7 +341,9 @@ class Field_Role_Hidden (Field_Entity) :
 
 # end class Field_Role_Hidden
 
-class _MOM_Form_ (Form) :
+Fieldset = AE.Fieldset
+
+class _MOM_Form_ (AE.Form) :
     """Model a MOM-specific AJAX-enhanced form."""
 
     _real_name = "Form"
@@ -355,6 +360,8 @@ class _MOM_Form_ (Form) :
     # end def _call_iter
 
 Form = _MOM_Form_ # end class
+
+Group = AE.Group
 
 if __name__ != "__main__" :
     GTW.AFS.MOM._Export_Module ()
