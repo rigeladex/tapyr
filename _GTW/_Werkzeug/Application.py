@@ -41,6 +41,7 @@
 #    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
 #    11-Mar-2011 (CT) `edit_session_ttl` and `user_session_ttl` added to
 #                     `default_settings`
+#    21-Jun-2011 (MG) `reload_extra_files` added
 #    ««revision-date»»···
 #--
 
@@ -118,6 +119,7 @@ class _Werkzeug_Application_ (GTW._Application_) :
                                , profile_sort_by      = ('time', 'calls')
                                , profile_restrictions = ()
                                , profile_delete_logs  = False
+                               , reload_extra_files   = None
                                ) :
         from werkzeug import run_simple
         app = self
@@ -147,6 +149,7 @@ class _Werkzeug_Application_ (GTW._Application_) :
             ( host, port, app
             , use_reloader = use_reloader
             , use_debugger = use_debugger
+            , extra_files  = reload_extra_files
             )
     # end def run_development_server
 

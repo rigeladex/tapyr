@@ -96,6 +96,7 @@
 #    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
 #     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
 #     8-Jun-2011 (CT) `AFS` attached to `change` URL, and to `create` URL, too
+#    15-Jun-2011 (MG) `AFS.injected_*` added
 #    22-Jul-2011 (CT) Use `Redirect_303` instead of `Redirect_302`
 #    22-Jul-2011 (CT) `AFS_Completer` started
 #    24-Jul-2011 (CT) `AFS_Completer` continued
@@ -181,14 +182,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                             }
                         );
                   """
-                , sort_key = 100
+                , rank = 100
                 )
             ,
             )
         , scripts       =
             ( GTW.Script
                 ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-                , sort_key = 100
+                , rank     = 100
                 )
             ,
             )
@@ -278,6 +279,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return self.__super._raise_403 (handler)
         # end def _raise_403
 
+        @property
+        def injected_media_href (self) :
+            return pjoin (self.parent.abs_href, self.kind)
+        # end def injected_media_href
+
         def _ui_displayed (self, E_Type, names, matches) :
             attrs = list (getattr (E_Type, n) for n in names)
             for match in matches :
@@ -306,6 +312,15 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         args            = (None, )
         template_name   = "e_type_afs"
         form_parameters = {}
+
+        @property
+        def injected_templates (self) :
+            form     = AFS_Form [self.E_Type.GTW.afs_id]
+            renderer = set ()
+            for c in (c for c in form.transitive_iter () if c.renderer) :
+                renderer.add (c.renderer)
+            return [self.top.Templateer.get_template (r) for r in renderer]
+        # end def injected_templates
 
         def rendered (self, handler, template = None) :
             HTTP     = self.top.HTTP
@@ -977,12 +992,23 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 name   = pjoin (* grandchildren) if grandchildren else ""
                 kw     = \
                     {"name"   : "%s/%s" % (child, name)
+                    , "kind"  : child
                     , attr    : grandchildren or (None, )
                     }
         if T :
             kw = dict (self.child_attrs.get (T.__name__, {}), ** kw)
             return T (parent = self, ** kw)
     # end def _get_child
+
+    @property
+    def children (self) :
+        for n, (T, _, _) in self._child_name_map.iteritems () :
+            yield T \
+                ( parent = self
+                , kind   = n
+                , ** self.child_attrs.get (T.__name__, {})
+                )
+    # end def children
 
 # end class Admin
 
