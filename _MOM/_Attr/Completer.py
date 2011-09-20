@@ -35,6 +35,7 @@
 #    27-Jul-2011 (CT) `entity_p` added
 #    15-Sep-2011 (CT) `Completer.__init__` changed to save `spec`
 #    20-Sep-2011 (CT) `all_names` and `dependents` removed
+#    20-Sep-2011 (CT) `C_Completer` and `E_Completer` (plus their `_Spec`) added
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ from   _TFL                  import TFL
 
 from   _TFL.predicate        import uniq
 
-import _MOM._Attr
+import _MOM._Attr.Selector
 
 import _TFL._Meta.Object
 
@@ -54,6 +55,7 @@ class Completer (TFL.Meta.Object) :
     """Attribute completer instance for a specific E_Type."""
 
     buddies    = ()
+    embedded_p = False
 
     def __init__ (self, acs, attr, E_Type) :
         self.etn      = E_Type.type_name
@@ -76,11 +78,14 @@ class Completer (TFL.Meta.Object) :
 
     @property
     def as_json_cargo (self) :
-        return dict \
+        result = dict \
             ( entity_p = self.entity_p
             , names    = list (self.names)
             , treshold = self.treshold
             )
+        if self.embedded_p :
+            result ["embedded_p"] = True
+        return result
     # end def as_json_cargo
 
     @TFL.Meta.Once_Property
@@ -88,19 +93,55 @@ class Completer (TFL.Meta.Object) :
         return tuple (uniq ((self.name, ) + self.buddies))
     # end def names
 
+    def embedded (self, spec) :
+        cls    = self.__class__
+        result = cls.__new__   (cls)
+        result.__dict__.update (self.__dict__)
+        result.__dict__.update (spec or {})
+        result.embedded_p = True
+        return result
+    # end def embedded
+
 # end class Completer
+
+class _Nested_Completer_ (Completer) :
+
+    def __init__ (self, acs, attr, E_Type) :
+        self.__super.__init__ (acs, attr, E_Type)
+        self.nested_specs = acs.nested_specs
+    # end def __init__
+
+    def derived (self, nested) :
+        if nested is not None :
+            name = nested.name
+            return nested.embedded (self.nested_specs.get (name, {}))
+    # end def derived
+
+# end class _Nested_Completer_
+
+class C_Completer (_Nested_Completer_) :
+    """A_Composite completer instance for a specific E_Type."""
+
+# end class C_Completer
+
+class E_Completer (_Nested_Completer_) :
+    """A_Entity completer instance for a specific E_Type."""
+
+# end class E_Completer
 
 class Completer_Spec (TFL.Meta.Object) :
     """Attribute completer specification for a MOM attribute."""
 
-    buddies    = ()
+    buddies    = None
     treshold   = 1
     Type       = Completer
 
-    def __init__ (self, treshold = None, buddies = ()) :
+    def __init__ (self, treshold = None, buddies = None) :
         if treshold is not None :
             self.treshold = treshold
         if buddies is not None :
+            assert isinstance (buddies, MOM.Attr.Selector._Selector_), \
+                "Expected Attr.Selector for `buddies`, got `%s`" % (buddies, )
             self.buddies = buddies
     # end def __init__
 
@@ -109,6 +150,29 @@ class Completer_Spec (TFL.Meta.Object) :
     # end def __call__
 
 # end class Completer_Spec
+
+class _Nested_Completer_Spec_ (Completer_Spec) :
+
+    def __init__ (self, buddies = None, ** kw) :
+        self.__super.__init__ (buddies = buddies)
+        self.nested_specs = kw
+    # end def __init__
+
+# end class _Nested_Completer_Spec_
+
+class C_Completer_Spec (_Nested_Completer_Spec_) :
+    """Attribute completer specification for A_Composite."""
+
+    Type       = C_Completer
+
+# end class C_Completer_Spec
+
+class E_Completer_Spec (_Nested_Completer_Spec_) :
+    """Attribute completer specification for A_Entity."""
+
+    Type       = E_Completer
+
+# end class E_Completer_Spec
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")

@@ -52,6 +52,8 @@
 #     6-Jul-2011 (CT) `f_completer` added
 #    17-Jul-2011 (CT) s/f_completer/completer/
 #    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
+#    20-Sep-2011 (CT) `_Field_._field_kw` changed to use `attr.completer` as is
+#                     (instead of `as_json_cargo`)
 #    ««revision-date»»···
 #--
 
@@ -188,7 +190,7 @@ class _Field_ (_Base_) :
         if attr.explanation :
             result ["explanation"] = attr.explanation
         if attr.completer :
-            result ["completer"] = attr.completer.as_json_cargo
+            result ["completer"] = attr.completer
         result.update (self.kw)
         result.update (kw)
         return result

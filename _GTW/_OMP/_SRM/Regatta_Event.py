@@ -63,6 +63,8 @@ class Regatta_Event (_Ancestor_Essence) :
 
             kind               = Attr.Primary
 
+            completer          = Attr.C_Completer_Spec (Attr.Selector.primary)
+
         # end class date
 
         class name (A_String) :

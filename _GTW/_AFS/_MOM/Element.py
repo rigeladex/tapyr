@@ -67,7 +67,7 @@ import _GTW._AFS._MOM
 
 class _MOM_Element_ (AE._Element_) :
 
-    _real_name = "Element"
+    _real_name    = "Element"
 
     def _changed_children (self, value, scope, entity, ** kw) :
         result = {}
@@ -318,6 +318,11 @@ Field_Entity = _MOM_Field_Entity_ # end class
 
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
+
+    def __init__ (self, ** kw) :
+        kw.pop ("completer", None)
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     def apply (self, value, scope, ** kw) :
         self._check_sid (value, ** kw)
