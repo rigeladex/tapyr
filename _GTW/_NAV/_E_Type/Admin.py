@@ -406,16 +406,15 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 E_Type         = ETM.E_Type
                 attr           = getattr (E_Type, field.name)
                 completer      = attr.completer
-                all_names      = completer.all_names
                 names          = completer.names
                 fs             = ETM.raw_query_attrs (names, json.values)
                 query          = ETM.query (* fs)
                 result ["completions"] = n = query.count ()
                 if n == 1 :
-                    af     = ETM.raw_query_attrs (all_names)
+                    af     = ETM.raw_query_attrs (names)
                     values = query.attrs (* af).one ()
-                    result ["fields"] = len  (all_names)
-                    result ["names"]  = all_names
+                    result ["fields"] = len  (names)
+                    result ["names"]  = names
                     result ["values"] = values
                     if json.complete_entity :
                         obj = query.one ()

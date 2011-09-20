@@ -34,6 +34,7 @@
 #    22-Jul-2011 (CT) `all_names` added
 #    27-Jul-2011 (CT) `entity_p` added
 #    15-Sep-2011 (CT) `Completer.__init__` changed to save `spec`
+#    20-Sep-2011 (CT) `all_names` and `dependents` removed
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,6 @@ class Completer (TFL.Meta.Object) :
     """Attribute completer instance for a specific E_Type."""
 
     buddies    = ()
-    dependents = ()
 
     def __init__ (self, acs, attr, E_Type) :
         self.etn      = E_Type.type_name
@@ -62,8 +62,6 @@ class Completer (TFL.Meta.Object) :
         self.treshold = acs.treshold
         if acs.buddies :
             self.buddies = acs.buddies (E_Type, name).names
-        if acs.dependents :
-            self.dependents = acs.dependents (E_Type, name).names
         self.entity_p = set (self.names) == set (E_Type.epk_sig)
     # end def __init__
 
@@ -90,28 +88,20 @@ class Completer (TFL.Meta.Object) :
         return tuple (uniq ((self.name, ) + self.buddies))
     # end def names
 
-    @TFL.Meta.Once_Property
-    def all_names (self) :
-        return tuple (uniq (self.names + self.dependents))
-    # end def all_names
-
 # end class Completer
 
 class Completer_Spec (TFL.Meta.Object) :
     """Attribute completer specification for a MOM attribute."""
 
     buddies    = ()
-    dependents = ()
     treshold   = 1
     Type       = Completer
 
-    def __init__ (self, treshold = None, buddies = (), dependents = None) :
+    def __init__ (self, treshold = None, buddies = ()) :
         if treshold is not None :
             self.treshold = treshold
         if buddies is not None :
             self.buddies = buddies
-        if dependents is not None :
-            self.dependents = dependents
     # end def __init__
 
     def __call__ (self, attr, E_Type) :
