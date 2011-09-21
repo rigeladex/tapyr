@@ -88,8 +88,11 @@ _link1_role = r"""
     >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By ("-event.date.start"))
     >>> for e in q.all () : print e ### sorted by descending date
     (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()),
+    u'2010/01/01', dict ())
+
     >>> scope.destroy ()
+
 """
 
 _link2_link1 = r"""
@@ -101,29 +104,31 @@ _link2_link1 = r"""
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (dict (start = "20090521", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20090521", raw = True), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (dict (start = "20100513", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20100513", raw = True), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+
     >>> scope.destroy ()
+
 """
 
 _query_attr = r"""
@@ -135,28 +140,30 @@ _query_attr = r"""
     >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", u"1107", raw = True)
     >>> p    = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s    = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (dict (start = "20090521", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20090521", raw = True), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (dict (start = "20100513", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20100513", raw = True), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q.order_by (Q.event.date.start) : print r.year, r
-    2008 ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
-    2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
+    2008 ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
+    2009 ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
+    2010 ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
     >>> for r in q.order_by (TFL.Sorted_By ("-event.date.start")) : print r.year, r
-    2010 ((dict (start = u'2010/05/13', finish = u'2010/05/13'), u'Himmelfahrt'), (u'Optimist', ))
-    2009 ((dict (start = u'2009/05/21', finish = u'2009/05/21'), u'Himmelfahrt'), (u'Optimist', ))
-    2008 ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    2010 ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
+    2009 ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
+    2008 ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
+
     >>> scope.destroy ()
+
 """
 
 if 1 :

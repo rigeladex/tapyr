@@ -67,6 +67,13 @@ class Completer (TFL.Meta.Object) :
         self.entity_p = set (self.names) == set (E_Type.epk_sig)
     # end def __init__
 
+    def copy (self) :
+        cls    = self.__class__
+        result = cls.__new__   (cls)
+        result.__dict__.update (self.__dict__)
+        return result
+    # end def copy
+
     def __call__ (self, scope, val_dict) :
         ETM    = scope [self.etn]
         vd     = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
@@ -94,9 +101,7 @@ class Completer (TFL.Meta.Object) :
     # end def names
 
     def embedded (self, spec) :
-        cls    = self.__class__
-        result = cls.__new__   (cls)
-        result.__dict__.update (self.__dict__)
+        result = self.copy ()
         result.__dict__.update (spec or {})
         result.embedded_p = True
         return result
@@ -109,12 +114,15 @@ class _Nested_Completer_ (Completer) :
     def __init__ (self, acs, attr, E_Type) :
         self.__super.__init__ (acs, attr, E_Type)
         self.nested_specs = acs.nested_specs
+        self.nested = []
     # end def __init__
 
     def derived (self, nested) :
         if nested is not None :
-            name = nested.name
-            return nested.embedded (self.nested_specs.get (name, {}))
+            name   = nested.name
+            result = nested.embedded (self.nested_specs.get (name, {}))
+            self.nested.append (result)
+            return result
     # end def derived
 
 # end class _Nested_Completer_

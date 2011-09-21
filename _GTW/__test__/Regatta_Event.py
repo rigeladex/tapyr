@@ -34,13 +34,13 @@ _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
     >>> rev.epk_raw
-    ((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
 
 """
 

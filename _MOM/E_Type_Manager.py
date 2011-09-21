@@ -91,6 +91,7 @@
 #    28-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` changed to
 #                     support `values = None`
 #     9-Sep-2011 (CT) Property `E_Type` added
+#    21-Sep-2011 (CT) `get_etype_attribute` added and used for `raw_query_attrs`
 #    ««revision-date»»···
 #--
 
@@ -135,6 +136,16 @@ class Entity (TFL.Meta.Object) :
     def is_partial (self) :
         return self._etype.is_partial
     # end def is_partial
+
+    def get_etype_attribute (self, name) :
+        etype = self._etype
+        for n in name.split (".") :
+            if etype is None :
+                raise AttributeError (name)
+            result = getattr (etype, n)
+            etype  = getattr (result, "C_Type", None)
+        return result
+    # end def get_etype_attribute
 
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
@@ -291,7 +302,8 @@ class Id_Entity (Entity) :
         et = self._etype
         if values is None :
             for n in names :
-                yield getattr (et, n).raw_query
+                attr = self.get_etype_attribute (n)
+                yield attr.raw_query
         else :
             for n in names :
                 if n in values :

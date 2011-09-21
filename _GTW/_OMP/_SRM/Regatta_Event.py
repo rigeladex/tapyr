@@ -58,15 +58,6 @@ class Regatta_Event (_Ancestor_Essence) :
 
         ### Primary attributes
 
-        class date (A_Date_Interval_C) :
-            """`start` and `finish` date of regatta"""
-
-            kind               = Attr.Primary
-
-            completer          = Attr.C_Completer_Spec (Attr.Selector.primary)
-
-        # end class date
-
         class name (A_String) :
             """Name of the regatta event."""
 
@@ -75,6 +66,15 @@ class Regatta_Event (_Ancestor_Essence) :
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class name
+
+        class date (A_Date_Interval_C) :
+            """`start` and `finish` date of regatta"""
+
+            kind               = Attr.Primary
+
+            completer          = Attr.C_Completer_Spec (Attr.Selector.primary)
+
+        # end class date
 
         ### Non-primary attributes
 

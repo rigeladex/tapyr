@@ -36,30 +36,30 @@ _test_code = """
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class (u"Optimist", max_crew = 1)
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
     >>> rev.epk_raw
-    ((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    GTW.OMP.SRM.Regatta_Event (dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt')
+    GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> reg.epk_raw
-    (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
+    ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
     >>> SRM.Regatta_C.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> reh.epk_raw
-    (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), u'Yardstick', 'GTW.OMP.SRM.Regatta_H')
+    ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), u'Yardstick', 'GTW.OMP.SRM.Regatta_H')
     >>> SRM.Regatta_H.instance (* reh.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')
+    GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')
     >>> SRM.Regatta_H.instance (* reh.epk)
-    GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')
+    GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')
 
     >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008/05/01").all ()
-    [GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), u'Yardstick')]
+    [GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')]
 
 """
 

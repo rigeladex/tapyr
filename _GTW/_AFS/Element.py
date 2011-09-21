@@ -343,7 +343,7 @@ class _Element_ (TFL.Meta.Object) :
 class _Anchor_MI_ (_Element_) :
 
     def _anchor_children (self, anchor = None) :
-        self.__super._anchor_children (self)
+        self.__super._anchor_children (anchor = self)
     # end def _anchor_children
 
 # end class _Anchor_MI_
@@ -353,8 +353,10 @@ class _Field_MI_ (_Element_) :
     def _anchor_children (self, anchor = None) :
         if anchor is not None :
             self.anchor_id = anchor.id
-            if hasattr (anchor.completer, "derived") :
-                self.completer = anchor.completer.derived (self.completer)
+            ac = anchor.completer
+            sc = self.completer
+            if hasattr (sc, "entity_p") and hasattr (ac, "derived") :
+                self.completer = ac.derived (sc)
         self.__super._anchor_children (anchor)
     # end def _anchor_children
 

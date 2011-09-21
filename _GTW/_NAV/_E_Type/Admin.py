@@ -115,6 +115,9 @@
 #    13-Sep-2011 (CT) `_ui_displayed` added and used in `AFS_Completer`
 #    13-Sep-2011 (CT) `AFS_Completer.rendered` changed to indicate partial match
 #    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
+#    21-Sep-2011 (CT) `_ui_displayed` changed to deal properly with `pid`
+#    21-Sep-2011 (CT) `AFS_Completer` and `AFS_Completed` changed to use
+#                     `pid` for entity completion
 #    ««revision-date»»···
 #--
 
@@ -278,11 +281,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return self.__super._raise_403 (handler)
         # end def _raise_403
 
-        def _ui_displayed (self, E_Type, names, matches) :
-            attrs = list (getattr (E_Type, n) for n in names)
+        def _ui_displayed (self, ETM, names, matches) :
+            def _gen () :
+                for n in names :
+                    try :
+                        attr = ETM.get_etype_attribute (n)
+                    except AttributeError :
+                        disp = lambda v : v
+                    else :
+                        disp = lambda v, attr = attr : attr.ac_ui_display (v)
+                    yield disp
+            attr_displayers = list (_gen ())
             for match in matches :
                 yield tuple \
-                    (a.ac_ui_display (v) for a, v in zip (attrs, match))
+                    (d (v) for d, v in zip (attr_displayers, match))
         # end def _ui_displayed
 
     # end class _Cmd_
@@ -404,26 +416,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 field          = form  [json.trigger]
                 ETM            = scope [elem.type_name]
                 E_Type         = ETM.E_Type
-                attr           = getattr (E_Type, field.name)
-                completer      = attr.completer
-                names          = completer.names
-                fs             = ETM.raw_query_attrs (names, json.values)
-                query          = ETM.query (* fs)
-                result ["completions"] = n = query.count ()
-                if n == 1 :
-                    af     = ETM.raw_query_attrs (names)
-                    values = query.attrs (* af).one ()
-                    result ["fields"] = len  (names)
-                    result ["names"]  = names
-                    result ["values"] = values
-                    if json.complete_entity :
-                        obj = query.one ()
+                if json.complete_entity :
+                    obj = ETM.pid_query (json.pid)
+                    result ["completions"] = n = int (obj is not None)
+                    if n == 1 :
                         ikw = dict \
-                            ( allow_new       = handler.json.get ("allow_new")
-                            , collapsed       = False
-                            , copy            = False
-                            , _sid            = json.sid
-                            , _session_secret = session_secret
+                            ( allow_new        = handler.json.get ("allow_new")
+                            , collapsed        = False
+                            , copy             = False
+                            , _sid             = json.sid
+                            , _session_secret  = session_secret
                             )
                         fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
                         renderer = self.top.Templateer.get_template \
@@ -433,6 +435,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                 (fi.widget, fi, fi, fi.renderer)
                             , json = fi.as_json_cargo
                             )
+                else :
+                    attr           = getattr (E_Type, field.name)
+                    completer      = attr.completer
+                    names          = completer.names
+                    fs             = ETM.raw_query_attrs (names, json.values)
+                    query          = ETM.query (* fs)
+                    result ["completions"] = n = query.count ()
+                    if n == 1 :
+                        af     = ETM.raw_query_attrs (names)
+                        values = query.attrs (* af).one ()
+                        result ["fields"] = len  (names)
+                        result ["names"]  = names
+                        result ["values"] = values
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
@@ -452,7 +467,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
             json      = TFL.Record (** handler.json)
-            result    = dict (partial = False)
+            result    = dict (matches = [], partial = False)
             scope     = self.top.scope
             try :
                 form, elem   = self.form_element (json.fid)
@@ -464,7 +479,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 max_n        = self.max_completions
                 names        = completer.names
                 query        = completer (self.top.scope, json.values)
-                fs           = ETM.raw_query_attrs (names)
+                fs           = tuple (ETM.raw_query_attrs (names))
+                if completer.entity_p :
+                    fs      += (Q.pid, )
+                    names   += ("pid", )
                 matches      = query.attrs (* fs).limit (max_n + 1).all ()
                 n            = result ["completions"] = len (matches)
                 finished     = result ["finished"]    = n == 1
@@ -472,22 +490,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     if n <= max_n :
                         result ["fields"]  = len    (names)
                         result ["matches"] = sorted \
-                            (self._ui_displayed (E_Type, names, matches))
+                            (self._ui_displayed (ETM, names, matches))
                     else :
-                        matches = query.attrs (attr.raw_query).limit \
-                            (max_n + 1).all ()
-                        m       = len (matches)
-                        if m <= max_n :
-                            result ["fields"]  = 1
-                            matches            = ([m, "..."] for m in  matches)
-                            result ["matches"] = sorted (matches)
-                            result ["partial"] = True
-                        else :
-                            ### XXX find fewer partial matches !!!
-                            result ["fields"]  = 0
-                            result ["matches"] = []
-                else :
-                    result ["matches"] = []
+                        if json.trigger == json.trigger_n :
+                            matches = query.attrs (attr.raw_query).limit \
+                                (max_n + 1).all ()
+                            m = len (matches)
+                            if m <= max_n :
+                                matches = ([m, "..."] for m in  matches)
+                                result ["fields"]  = 1
+                                result ["matches"] = sorted (matches)
+                                result ["partial"] = True
+                            else :
+                                ### XXX find fewer partial matches !!!
+                                result ["fields"]  = 0
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)

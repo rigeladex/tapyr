@@ -43,16 +43,17 @@ from __future__ import unicode_literals
 _q_result = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
+    >>> PAP = scope.PAP
     >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
-    >>> _   = scope.PAP.Person  ("LN 2", "FN 2", title = "Dr.")
-    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
-    >>> _   = scope.PAP.Person  ("LN 4", "FN 4", title = "DI")
-    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", title = "DI")
-    >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
-    >>> pha = scope.PAP.Person_has_Address (p, a)
+    >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> _   = PAP.Person  ("LN 2", "FN 2", title = "Dr.")
+    >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/03/01"))
+    >>> _   = PAP.Person  ("LN 4", "FN 4", title = "DI")
+    >>> _   = PAP.Person  ("LN 5", "FN 5", title = "DI")
+    >>> a   = PAP.Address ("S", "C", "Z", "C")
+    >>> pha = PAP.Person_has_Address (p, a)
 
-    >>> q   = scope.PAP.Person.query ()
+    >>> q   = PAP.Person.query ()
     >>> print q.count ()
     5
     >>> len (q.all ())
@@ -67,46 +68,46 @@ _q_result = r"""
     [(u'fn 1',), (u'fn 2',), (u'fn 3',), (u'fn 4',), (u'fn 5',)]
 
     >>> sorted (q.attr (Q.lifetime.start).distinct (), key = lambda v : (v.__class__.__name__, v))
-    [None, datetime.date(2010, 1, 1), datetime.date(2010, 1, 3)]
+    [None, datetime.date(2010, 1, 1), datetime.date(2010, 3, 1)]
     >>> sorted (q.attrs (Q.first_name, Q.lifetime.start, "last_name"))
-    [(u'fn 1', datetime.date(2010, 1, 1), u'ln 1'), (u'fn 2', None, u'ln 2'), (u'fn 3', datetime.date(2010, 1, 3), u'ln 3'), (u'fn 4', None, u'ln 4'), (u'fn 5', None, u'ln 5')]
+    [(u'fn 1', datetime.date(2010, 1, 1), u'ln 1'), (u'fn 2', None, u'ln 2'), (u'fn 3', datetime.date(2010, 3, 1), u'ln 3'), (u'fn 4', None, u'ln 4'), (u'fn 5', None, u'ln 5')]
 
-    >>> p = scope.PAP.Person.query (pid = 1).one ()
+    >>> p = PAP.Person.query (pid = 1).one ()
     >>> p.salutation
     u''
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
-    >>> q = scope.PAP.Person.query (pid = 1)
+    >>> q = PAP.Person.query (pid = 1)
     >>> q.set (("salutation", "Mr"), )
-    >>> p = scope.PAP.Person.query (pid = 1).one ()
+    >>> p = PAP.Person.query (pid = 1).one ()
     >>> p.salutation
     u'Mr'
     >>> p.lifetime # 1
     MOM.Date_Interval (start = 2010/01/01)
     >>> q.set (("lifetime.finish", datetime.date(2010, 12, 31)), )
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
-    >>> p = scope.PAP.Person.query (pid = 1).one ()
+    >>> p = PAP.Person.query (pid = 1).one ()
     >>> p.lifetime # 2
     MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
-    >>> first (scope.PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
+    >>> first (PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
     (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
-    >>> first (scope.PAP.Person.query (pid = 1).attr (Q.lifetime))
+    >>> first (PAP.Person.query (pid = 1).attr (Q.lifetime))
     MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
-    >>> sorted (scope.PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
+    >>> sorted (PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
     [(u'fn 1', MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01))]
 
-    >>> sorted (scope.PAP.Person_has_Address.query ().attr ("person"))
+    >>> sorted (PAP.Person_has_Address.query ().attr ("person"))
     [GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
-    >>> sorted (scope.PAP.Person_has_Address.query ().attrs ("person", "address"))
+    >>> sorted (PAP.Person_has_Address.query ().attrs ("person", "address"))
     [(GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Address (u's', u'c', u'z', u'c'))]
 
-    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln"))
+    >>> PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln"))
     (5, None)
-    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 1"))
+    >>> PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 1"))
     (1, GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''))
-    >>> scope.PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 42"))
+    >>> PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 42"))
     (0, None)
 
-    >>> q0  = scope.PAP.Person.query (Q.RAW.title.STARTSWITH ("D"))
+    >>> q0  = PAP.Person.query (Q.RAW.title.STARTSWITH ("D"))
     >>> q1  = q0.distinct ()
     >>> q1.count ()
     3
@@ -148,10 +149,22 @@ _q_result = r"""
     >>> q3.limit (1).all ()
     [(u'DI',)]
 
-    >>> sorted (q0.all (), key = scope.PAP.Person.sort_key ())
+    >>> sorted (q0.all (), key = PAP.Person.sort_key ())
     [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
     >>> sorted (q0.attrs (Q.title, Q.SUM (1)))
     [(u'di', 1), (u'di', 1), (u'dr.', 1)]
+
+    >>> qy = PAP.Person.lifetime.start.ac_query ("2010", prefix = "lifetime")
+    >>> qy
+    Q.lifetime.start.between (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
+    >>> qm = PAP.Person.lifetime.start.ac_query ("2010/01", prefix = "lifetime")
+    >>> qm
+    Q.lifetime.start.between (datetime.date(2010, 1, 1), datetime.date(2010, 1, 31))
+
+    >>> PAP.Person.query_s (qy).attrs (Q.last_name, Q.lifetime.start).all ()
+    [(u'ln 1', datetime.date(2010, 1, 1)), (u'ln 3', datetime.date(2010, 3, 1))]
+    >>> PAP.Person.query_s (qm).attrs (Q.last_name, Q.lifetime.start).all ()
+    [(u'ln 1', datetime.date(2010, 1, 1))]
 
     >>> scope.destroy ()
 """

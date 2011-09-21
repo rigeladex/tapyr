@@ -183,6 +183,8 @@
 #    15-Sep-2011 (CT) `_AC_Query_E_` added and used for `_A_Entity_.ac_query`
 #    15-Sep-2011 (CT) `_A_Entity_.C_Type` added (Alias_Property) to fix
 #                     `ac_query`
+#    21-Sep-2011 (CT) `_AC_Query_Date_` added and used for `A_Date.ac_query`
+#    21-Sep-2011 (CT) `_A_Composite_.__getattr__` added
 #    ««revision-date»»···
 #--
 
@@ -267,6 +269,35 @@ class _AC_Query_C_ (_AC_Query_) :
     # end def __call__
 
 # end class _AC_Query_C_
+
+class _AC_Query_Date_ (_AC_Query_) :
+
+    pat = Regexp \
+        ( r"^"
+            r"(?P<year> [0-9]{4})"
+            r"(?: [-/]"
+              r"(?P<month> [0-9]{2})"
+            r")?"
+          r"$"
+        , re.VERBOSE
+        )
+
+    def __call__ (self, value, prefix = None) :
+        pat = self.pat
+        if pat.match (value) :
+            q    = self.a_query (prefix)
+            args = (int (pat.year), )
+            if pat.month :
+                args = (int (pat.month, 10), ) + args
+                q    = q.D.MONTH
+            else :
+                q    = q.D.YEAR
+            return q (* args)
+        else :
+            return self.query (self.cooker (value), prefix)
+    # end def __call__
+
+# end class _AC_Query_Date_
 
 class _AC_Query_E_ (_AC_Query_C_) :
 
@@ -666,6 +697,11 @@ class _A_Composite_ (A_Attr_Type) :
                 C_Type = C_Type.type_name
             self.C_Type = C_Type = e_type.app_type.etypes [C_Type]
     # end def _fix_C_Type
+
+    def __getattr__ (self, name) :
+        ### to support calls like `scope.PAP.Person.lifetime.start.ac_query`
+        return getattr (self.C_Type, name)
+    # end def __getattr__
 
 # end class _A_Composite_
 
@@ -1376,6 +1412,11 @@ class A_Date (_A_Date_) :
     input_formats  = \
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        return _AC_Query_Date_ (self.name, self.cooked)
+    # end def ac_query
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :

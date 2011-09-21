@@ -71,8 +71,6 @@ class Boat (_Ancestor_Essence) :
             ui_name            = "Class"
             ui_allow_new       = True
 
-            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
-
         # end class left
 
         class nation (A_Nation) :

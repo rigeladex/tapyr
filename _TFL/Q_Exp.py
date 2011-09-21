@@ -50,6 +50,7 @@
 #    13-Sep-2011 (CT) All internal classes renamed to `_«name»_`
 #    14-Sep-2011 (CT) `SUM` added
 #    16-Sep-2011 (MG) `_SUM_._name` added
+#    21-Sep-2011 (CT) `BETWEEN` changed to guard against `val is None`
 #    ««revision-date»»···
 #--
 
@@ -632,7 +633,7 @@ class _Exp_ (_Exp_Base_) :
     def BETWEEN () :
         def between (val, lhs, rhs) :
             """between(val, lhs, rhs) -- Returns result of `lhs <= val <= rhs`"""
-            return lhs <= val <= rhs
+            return val is not None and lhs <= val <= rhs
         return between
     # end def BETWEEN
 

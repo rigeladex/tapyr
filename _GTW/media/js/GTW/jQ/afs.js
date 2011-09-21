@@ -40,6 +40,7 @@
 //    13-Sep-2011 (CT) `setup_completer._put` changed to continue for partial
 //                     completions
 //    15-Sep-2011 (CT) `Field_Entity._get_completer_value` fixed
+//    21-Sep-2011 (CT) Support for `completer.embedded_p` added
 //    ««revision-date»»···
 //--
 
@@ -109,12 +110,19 @@
             );
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
-                var completer = elem.completer, data, values;
-                values = _get_field_values (elem);
+                var anchor    = elem;
+                var completer = elem.completer;
+                var data, values;
+                while (completer.embedded_p) {
+                    anchor    = $AFS_E.id_map [anchor.anchor_id];
+                    completer = anchor.completer;
+                };
+                values = _get_field_values (anchor);
                 data   =
                     { complete_entity : completer ["entity_p"] || false
-                    , fid             : elem.anchor_id
-                    , trigger         : elem.$id
+                    , fid             : anchor.anchor_id
+                    , trigger         : anchor.$id
+                    , trigger_n       : elem.$id
                     , values          : values
                     };
                 $.gtw_ajax_2json
@@ -129,7 +137,10 @@
                     );
             };
             var _get_cb = function _get_cb (options, elem, val, cb, response) {
-                var n = response.completions, result = [];
+                var completer = elem.completer;
+                var n  = response.completions;
+                var l = Math.min (response.fields, completer.names.length);
+                var result = [];
                 if (n > 0 && response.fields > 0) {
                     elem.completer.response = response;
                     for ( var i = 0, li = response.matches.length, match
@@ -139,7 +150,8 @@
                         match = response.matches [i];
                         result.push
                             ( { index : i
-                              , label : $.map (match, bwrap).join ("")
+                              , label :
+                                  $.map (match.slice (0, l), bwrap).join ("")
                               , value : match [0]
                               }
                             );
@@ -170,13 +182,17 @@
             };
             var _put = function _put (options, elem, item) {
                 var data;
-                var anchor;
+                var anchor    = elem;
                 var completer = elem.completer;
                 var response  = completer.response;
                 var match     = response.matches [item.index];
                 var names     = completer.names.slice (0, response.fields);
-                _update_field_values (options, elem, match, names);
+                while (completer.embedded_p) {
+                    anchor    = $AFS_E.id_map [elem.anchor_id];
+                    completer = anchor.completer;
+                };
                 if (response.partial) {
+                    _update_field_values (options, elem, match, names);
                     setTimeout
                         ( function () {
                             elem.inp$.autocomplete ("search");
@@ -184,19 +200,23 @@
                         , 1
                         );
                 } else if (completer ["entity_p"]) {
+                    if (! elem.completer.embedded_p) {
+                        _update_field_values (options, elem, match, names);
+                    };
                     data   =
-                        { fid             : elem.anchor_id
-                        , sid             : $AFS_E.root.value.sid
-                        , allow_new       : elem.allow_new
+                        { allow_new       : anchor.allow_new
                         , complete_entity : true
-                        , trigger         : elem.$id
-                        , values          : _get_field_values (elem)
+                        , fid             : anchor.anchor_id
+                        , pid             : match [response.fields - 1]
+                        , sid             : $AFS_E.root.value.sid
+                        , trigger         : anchor.$id
+                        , trigger_n       : elem.$id
                         };
                     $.gtw_ajax_2json
                         ( { async         : true
                           , data          : data
                           , success       : function (answer, status, xhr_i) {
-                                _put_cb (options, elem, item, answer);
+                                _put_cb (options, anchor, answer, true);
                             }
                           , url           : options.completed_url
                           }
@@ -204,13 +224,11 @@
                         );
                 };
             };
-            var _put_cb = function put_cb (options, elem, item, response) {
+            var _put_cb = function put_cb (options, elem, response, entity_p) {
                 var s$;
                 if (response.completions > 0) {
-                    if (  (response.completions == 1)
-                       && elem.completer ["entity_p"]
-                       ) {
-                        s$ = elem.inp$.closest ("section");
+                    if ((response.completions == 1) && entity_p) {
+                        s$ = $("[id='" + response.json.$id + "']");
                         s$ = _ec_response (response, s$, elem);
                         _setup_callbacks
                             ( s$, add_cb, cancel_cb, copy_cb, delete_cb
@@ -249,7 +267,9 @@
                         id = map [name];
                         if (id in $AFS_E.id_map) {
                             field = $AFS_E.id_map [id];
-                            field.inp$.val (match [i]).trigger ("change");
+                            if ("inp$" in field) {
+                                field.inp$.val (match [i]).trigger ("change");
+                            };
                         };
                     };
                 };
@@ -265,7 +285,9 @@
                 } else {
                     elem.inp$.autocomplete
                         ( { focus    : function (event, ui) {
-                                elem.inp$.val (ui.item.value);
+                                if (! elem.completer.embedded_p) {
+                                    elem.inp$.val (ui.item.value);
+                                };
                                 return false;
                             }
                           , minLength : completer.treshold

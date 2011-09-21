@@ -62,16 +62,12 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             role_type          = GTW.OMP.SRM.Boat
             auto_cache         = True
 
-            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
-
         # end class left
 
         class right (_Ancestor.right) :
             """Regatta a boat races in."""
 
             role_type          = GTW.OMP.SRM.Regatta
-
-            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
 
         # end class right
 
