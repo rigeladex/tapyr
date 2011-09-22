@@ -86,6 +86,7 @@
 #    16-Sep-2011 (CT) `anchor_id` (and `_anchor_children`) added
 #    20-Sep-2011 (CT) `completer` added to `as_json_cargo` and
 #                     `_anchor_children`
+#    22-Sep-2011 (CT) `Entity_List` derived from `_Field_MI_`, too
 #    ««revision-date»»···
 #--
 
@@ -352,11 +353,14 @@ class _Field_MI_ (_Element_) :
 
     def _anchor_children (self, anchor = None) :
         if anchor is not None :
-            self.anchor_id = anchor.id
-            ac = anchor.completer
-            sc = self.completer
-            if hasattr (sc, "entity_p") and hasattr (ac, "derived") :
-                self.completer = ac.derived (sc)
+            if isinstance (anchor, basestring) :
+                self.anchor_id = anchor
+            else :
+                self.anchor_id = anchor.id
+                ac = anchor.completer
+                sc = self.completer
+                if hasattr (sc, "entity_p") and hasattr (ac, "derived") :
+                    self.completer = ac.derived (sc)
         self.__super._anchor_children (anchor)
     # end def _anchor_children
 
@@ -428,7 +432,7 @@ class Entity_Link (_Field_MI_, Entity) :
 
 # end class Entity_Link
 
-class Entity_List (_Element_List_) :
+class Entity_List (_Field_MI_, _Element_List_) :
     """Model a sub-form for a list of entities."""
 
     id_sep   = _Element_List_.list_sep
