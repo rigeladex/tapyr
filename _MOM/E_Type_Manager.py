@@ -92,6 +92,7 @@
 #                     support `values = None`
 #     9-Sep-2011 (CT) Property `E_Type` added
 #    21-Sep-2011 (CT) `get_etype_attribute` added and used for `raw_query_attrs`
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -143,7 +144,7 @@ class Entity (TFL.Meta.Object) :
             if etype is None :
                 raise AttributeError (name)
             result = getattr (etype, n)
-            etype  = getattr (result, "C_Type", None)
+            etype  = getattr (result, "P_Type", None)
         return result
     # end def get_etype_attribute
 
@@ -417,7 +418,7 @@ class Link (Id_Entity) :
                     role = Type.Roles [map [k]]
                     try :
                         obj = self._cooked_role (role, kw.pop (k))
-                        if not isinstance (obj, role.Class) :
+                        if not isinstance (obj, role.P_Type) :
                             return []
                         rkw [role.name] = obj
                     except MOM.Error.No_Such_Object :

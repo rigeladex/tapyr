@@ -32,6 +32,8 @@
 #    20-Sep-2010 (CT) `rank` added
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `registration_date`
 #     1-Dec-2010 (CT) `crew` added
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -127,10 +129,10 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class registration_date
 
-        class skipper (A_Entity) :
+        class skipper (A_Id_Entity) :
             """Skipper of boat."""
 
-            Class              = GTW.OMP.SRM.Sailor
+            P_Type             = GTW.OMP.SRM.Sailor
             kind               = Attr.Required
 
         # end class skipper

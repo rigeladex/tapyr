@@ -82,6 +82,7 @@
 #                     relevant
 #    26-Nov-2010 (CT) `pool_recycle = 900` added to `_create_session`
 #    22-Mar-2011 (MG) `_create_engine` moved into `dbs.create_engine`
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -284,7 +285,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             f_attr      = assoc_sa.c \
                 [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
             singleton   = isinstance (cr, MOM.Role_Cacher_1)
-            result_et   = app_type [attr_kind.Class.type_name]
+            result_et   = app_type [attr_kind.P_Type.type_name]
             def computed_crn (self) :
                 ETM     = self.home_scope [assoc_tn]
                 session = self.home_scope.ems.session

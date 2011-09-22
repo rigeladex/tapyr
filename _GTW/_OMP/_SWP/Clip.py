@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Apr-2010 (CT) Creation
 #    12-Apr-2010 (CT) Creation continued
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -102,7 +103,7 @@ class Clip_O (_Ancestor_Essence) :
                 result = obj.date_x
                 if result is not None and obj.left :
                     if not (result.start and result.finish) :
-                        result = self.C_Type \
+                        result = self.P_Type \
                             ( start  = result.start  or obj.left.date.start
                             , finish = result.finish or obj.left.date.finish
                             )

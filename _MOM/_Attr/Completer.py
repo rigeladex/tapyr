@@ -133,7 +133,7 @@ class C_Completer (_Nested_Completer_) :
 # end class C_Completer
 
 class E_Completer (_Nested_Completer_) :
-    """A_Entity completer instance for a specific E_Type."""
+    """A_Id_Entity completer instance for a specific E_Type."""
 
 # end class E_Completer
 
@@ -176,7 +176,7 @@ class C_Completer_Spec (_Nested_Completer_Spec_) :
 # end class C_Completer_Spec
 
 class E_Completer_Spec (_Nested_Completer_Spec_) :
-    """Attribute completer specification for A_Entity."""
+    """Attribute completer specification for A_Id_Entity."""
 
     Type       = E_Completer
 

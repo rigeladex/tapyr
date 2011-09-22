@@ -56,6 +56,8 @@
 #    22-Jul-2011 (MG) `Case_Sensitive_String` added to support MySQL
 #    25-Jul-2011 (MG) `SAS_Column_Class` added to support custom column
 #                     classes
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -90,7 +92,7 @@ def _sa_normal_attr (self) :
     return self.name
 # end def _sa_normal_attr
 
-@TFL.Add_To_Class ("_sa_column_name", Attr._A_Entity_)
+@TFL.Add_To_Class ("_sa_column_name", Attr._A_Id_Entity_)
 def _sa_object (self) :
     return "%s_pid" % (self.name, )
 # end def _sa_object
@@ -108,7 +110,7 @@ def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     return (col, )
 # end def _sa_columns_simple
 
-@Add_Classmedthod ("_sa_columns", Attr._A_Entity_)
+@Add_Classmedthod ("_sa_columns", Attr._A_Id_Entity_)
 def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name
@@ -135,10 +137,10 @@ def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Composite_)
 def _sa_columns_composite (cls, attr, kind, unique, owner_etype, ** kw) :
-    e_type   = kind.C_Type
+    e_type   = kind.P_Type
     bases    = e_type.__bases__
     Manager  = MOM.DBW.SAS.Manager
-    db_attrs = Manager._attr_dicts (kind.C_Type, bases)
+    db_attrs = Manager._attr_dicts (e_type, bases)
     prefix   = "__%s_" % (attr.name, )
     unique_attrs          = set ()
     if kind.is_primary :

@@ -33,6 +33,7 @@
 #    28-Apr-2010 (CT) `Date_Interval.days` added
 #    10-May-2010 (CT) `A_Date_Interval_C` added
 #     8-Sep-2011 (CT) `Date_Interval.ui_display_format` redefined
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -184,20 +185,20 @@ class Date_Interval_N (_Ancestor_Essence) :
 class A_Date_Interval (_A_Composite_) :
     """Models an attribute holding a date interval (start, finish)"""
 
-    C_Type         = Date_Interval
+    P_Type         = Date_Interval
     typ            = "Date_Interval"
 
 # end class A_Date_Interval
 
 class A_Date_Interval_C (A_Date_Interval) :
 
-    C_Type         = Date_Interval_C
+    P_Type         = Date_Interval_C
 
 # end class A_Date_Interval_C
 
 class A_Date_Interval_N (A_Date_Interval) :
 
-    C_Type         = Date_Interval_N
+    P_Type         = Date_Interval_N
 
 # end class A_Date_Interval_N
 

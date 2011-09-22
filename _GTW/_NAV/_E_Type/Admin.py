@@ -118,6 +118,7 @@
 #    21-Sep-2011 (CT) `_ui_displayed` changed to deal properly with `pid`
 #    21-Sep-2011 (CT) `AFS_Completer` and `AFS_Completed` changed to use
 #                     `pid` for entity completion
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -951,7 +952,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if "." in name :
             x = etype
             for n in name.split (".") :
-                x = getattr (x.Class, n)
+                x = getattr (x.P_Type, n)
             return TFL.Record \
                 ( name         = name
                 , ui_name      = x.ui_name

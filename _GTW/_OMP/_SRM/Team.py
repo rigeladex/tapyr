@@ -28,6 +28,8 @@
 # Revision Dates
 #    31-Aug-2010 (CT) Creation
 #     8-Sep-2011 (CT) `completer` added to `name` and `club`
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -91,10 +93,10 @@ class Team (_Ancestor_Essence) :
 
         # end class desc
 
-        class leader (A_Entity) :
+        class leader (A_Id_Entity) :
             """Leader of team."""
 
-            Class              = GTW.OMP.PAP.Person
+            P_Type             = GTW.OMP.PAP.Person
             kind               = Attr.Optional
 
         # end class leader

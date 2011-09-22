@@ -56,6 +56,7 @@
 #    11-May-2010 (CT) `_Cacher_.grn` added
 #     4-Sep-2010 (CT) Use `cache.discard` instead of `cache.remove`
 #    29-Mar-2011 (CT) `Link1.left` redefined to mixin `Init_Only_Mixin`
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -236,7 +237,7 @@ class _Cacher_ (TFL.Meta.Object) :
         assert self.attr_name not in role_type._Attributes._names
         kw =  dict \
             ( assoc        = Link.type_name
-            , Class        = attr_class
+            , P_Type       = attr_class
             , description  = desc
             , __module__   = role_type.__module__
             )

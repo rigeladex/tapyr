@@ -53,6 +53,7 @@
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    16-Sep-2011 (CT) Use `AE.` instead of `import *`
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -275,7 +276,7 @@ class _MOM_Field_Composite_ (AE.Field_Composite) :
 
     def _call_iter (self, ETM, entity, ** kw) :
         attr     = ETM.E_Type.attributes [self.name]
-        c_type   = attr.C_Type
+        c_type   = attr.P_Type
         c_entity = getattr (entity, self.name, None)
         for c in self.children :
             yield c (c_type, c_entity, ** dict (kw, ** kw.get (self.name, {})))

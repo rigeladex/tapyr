@@ -54,6 +54,7 @@
 #    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
 #    20-Sep-2011 (CT) `_Field_._field_kw` changed to use `attr.completer` as is
 #                     (instead of `as_json_cargo`)
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    ««revision-date»»···
 #--
 
@@ -324,7 +325,7 @@ class Field_Composite (_Field_Entity_Mixin_) :
 
 # end class Field_Composite
 
-@TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Entity_)
+@TFL.Add_To_Class ("AFS_Spec", MOM.Attr._A_Id_Entity_)
 class Field_Entity (_Field_Entity_Mixin_) :
     """Specification of an entity-holding field of a AFS form."""
 

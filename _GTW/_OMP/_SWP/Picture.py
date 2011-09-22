@@ -29,6 +29,7 @@
 #    22-Mar-2010 (CT) Creation
 #    13-Oct-2010 (CT) `example` added
 #     5-Sep-2011 (CT) `width.max_value` increased from 1000 to 1200
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -183,7 +184,7 @@ class Picture (_Ancestor_Essence) :
             """Picture."""
 
             kind               = Attr.Necessary
-            C_Type             = _Pic_
+            P_Type             = _Pic_
             typ                = "Picture"
 
         # end class photo
@@ -192,7 +193,7 @@ class Picture (_Ancestor_Essence) :
             """Thumbnail"""
 
             kind               = Attr.Necessary
-            C_Type             = _Thumb_
+            P_Type             = _Thumb_
             typ                = "Thumbnail"
 
         # end class thumb

@@ -94,6 +94,8 @@
 #                     `SAS_Interface.update` changed to honor
 #                     `engine.query_last_cid_on_update`
 #                     `_Session_.load_info`: no need to `rollback`
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -212,9 +214,9 @@ class SAS_Interface (TFL.Meta.Object) :
                 result.update \
                     ( self._pickle_cargo_for_table
                         ( pickle_cargo [attr_name] [0]
-                        , kind.C_Type
+                        , kind.P_Type
                         , pid
-                        , default = kind.C_Type.type_name
+                        , default = kind.P_Type.type_name
                         , columns = columns [kind] [e_type]
                         )
                     )
@@ -267,11 +269,11 @@ class SAS_Interface (TFL.Meta.Object) :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 s_prefix = kind._sa_prefix
                 columns  = TFL.defaultdict (ddict_list)
-                et       = self._setup_columns (kind.C_Type, columns, s_prefix)
+                et       = self._setup_columns (kind.P_Type, columns, s_prefix)
             else :
                 attr    = kind.attr
                 raw_col = None
-                if isinstance (attr, MOM.Attr._A_Entity_) :
+                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
                     col = cm.get ("%s%s_pid" % (prefix, kind.attr.name), None)
                 else :
                     col = cm.get ("%s%s"     % (prefix, kind.attr.name), None)
@@ -337,7 +339,7 @@ class SAS_Interface (TFL.Meta.Object) :
                 result.update \
                     ( self.value_dict
                         ( getattr (entity, attr_name)
-                        , kind.C_Type
+                        , kind.P_Type
                         , columns = columns [kind] [e_type]
                         )
                     )
