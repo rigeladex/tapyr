@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,6 +52,7 @@
 #                     crashes and burns with that)
 #    24-Sep-2009 (CT) `prop` decorator removed
 #    24-Sep-2009 (CT) `Data_Descriptor` added (as an example how to do it)
+#    22-Sep-2011 (CT) `Class_Property` added
 #    ««revision-date»»···
 #--
 
@@ -177,7 +178,7 @@ class Method_Descriptor (object) :
     # end class Bound_Method
 
     def __init__ (self, method, cls = None) :
-        self.method  = method
+        self.method  = self.__func__ = method
         self.__doc__ = method.__doc__
         self.cls     = cls
     # end def __init__
@@ -213,6 +214,119 @@ class Class_Method (Method_Descriptor) :
     # end def __get__
 
 # end class Class_Method
+
+class _Class_Property_Descriptor_ (object) :
+
+    def __init__ (self, getter) :
+        self.getter  = getter
+        self.__doc__ = getter.__func__.__doc__
+    # end def __init__
+
+    @property
+    def __name__ (self) :
+        return self.getter.__func__.__name__
+    # end def __name__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj = cls
+            cls = cls.__class__
+        result = self.getter.__get__ (obj, cls)
+        if hasattr (result, "__call__") :
+            result = result ()
+        return result
+    # end def __get__
+
+# end class _Class_Property_Descriptor_
+
+class _Class_Property_Function_ (object) :
+
+    def __init__ (self, getter) :
+        self.getter  = getter
+        self.__doc__ = getter.__doc__
+    # end def __init__
+
+    @property
+    def __name__ (self) :
+        return self.getter.__name__
+    # end def __name__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj = cls
+            cls = cls.__class__
+        return self.getter (cls)
+    # end def __get__
+
+# end class _Class_Property_Function_
+
+def Class_Property (getter) :
+    """Return a descriptor for a property that is accessible via the class
+       and via the instance.
+
+       ::
+
+        >>> from _TFL._Meta.Property import *
+        >>> from _TFL._Meta.Once_Property import Once_Property
+        >>> class Foo (object) :
+        ...     @Class_Property
+        ...     def bar (cls) :
+        ...         "Normal method bar"
+        ...         print "Normal method bar called"
+        ...         return 42
+        ...     @Class_Property
+        ...     @classmethod
+        ...     def baz (cls) :
+        ...         "classmethod baz"
+        ...         print "classmethod baz called"
+        ...         return "Frozz"
+        ...     @Class_Property
+        ...     @Class_Method
+        ...     def foo (cls) :
+        ...         "Class_Method foo"
+        ...         print "Class_Method foo called"
+        ...         return "Hello world"
+        ...     @Class_Property
+        ...     @Once_Property
+        ...     def qux (cls) :
+        ...         "Once property qux"
+        ...         print "Once property qux"
+        ...         return 42 * 42
+        ...
+        >>> foo = Foo ()
+        >>> Foo.bar
+        Normal method bar called
+        42
+        >>> foo.bar
+        Normal method bar called
+        42
+        >>>
+        >>> Foo.baz
+        classmethod baz called
+        'Frozz'
+        >>> foo.baz
+        classmethod baz called
+        'Frozz'
+        >>>
+        >>> Foo.foo
+        Class_Method foo called
+        'Hello world'
+        >>> foo.foo
+        Class_Method foo called
+        'Hello world'
+        >>>
+        >>> Foo.qux
+        Once property qux
+        1764
+        >>> foo.qux
+        1764
+
+    """
+    if hasattr (getter, "__func__") :
+        return _Class_Property_Descriptor_ (getter)
+    else :
+        return _Class_Property_Function_   (getter)
+# end def Class_Property
 
 class Class_and_Instance_Method (Method_Descriptor) :
     """Flexible method wrapper: wrapped method can be used as
@@ -431,7 +545,7 @@ class Lazy_Property (object) :
 
     def __init__ (self, name, computer, doc = None) :
         self.name     = self.__name__ = name
-        self.computer = computer
+        self.computer = self.__func__ = computer
         self.__doc__  = doc
     # end def __init__
 
