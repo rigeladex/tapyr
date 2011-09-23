@@ -87,6 +87,7 @@
 #    20-Sep-2011 (CT) `completer` added to `as_json_cargo` and
 #                     `_anchor_children`
 #    22-Sep-2011 (CT) `Entity_List` derived from `_Field_MI_`, too
+#    23-Sep-2011 (CT) `anchor_id` changed to not put `an$` into `kw`
 #    ««revision-date»»···
 #--
 
@@ -175,7 +176,7 @@ class _Element_ (TFL.Meta.Object) :
     @property
     def anchor_id (self) :
         try :
-            d = self.kw ["an$"]
+            d = self._anchor_id_delta
         except KeyError :
             pass
         else :
@@ -186,7 +187,7 @@ class _Element_ (TFL.Meta.Object) :
     def anchor_id (self, anchor_id) :
         if self.id.startswith (anchor_id) :
             d = len (self.id) - len (anchor_id)
-            self.kw ["an$"] = d
+            self._anchor_id_delta = d
     # end def anchor_id
 
     @property
