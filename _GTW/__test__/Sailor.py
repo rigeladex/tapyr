@@ -38,7 +38,9 @@ _test_code = """
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian")
-    >>> s = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
+    >>> p
+    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    >>> s = SRM.Sailor.instance_or_new (p, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> s
     GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
     >>> SRM.Sailor.instance (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)

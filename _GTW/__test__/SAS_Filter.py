@@ -139,24 +139,24 @@ _link2_link1 = r"""
     >>> date = datetime.date (2009, 1, 1)
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start > date) : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start < date) : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
     >>> date2 = datetime.date (2009, 12, 31)
     >>> qf = (Q.right.left.date.start >= date ) \
     ...    & (Q.right.left.date.start <= date2)
     >>> for r in q.filter (qf) : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
 
     >>> date3 = datetime.date (2010, 05, 13)
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
 
     >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
-    (((u'Optimist', ), u'AUT', 1107, u''), ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
 
 """
 
@@ -183,13 +183,13 @@ _query_attr = r"""
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q : print r.year, r
-    2008 ((u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
-    2009 ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
-    2010 ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
+    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
+    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
+    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2010)) : print r.year, r
-    2010 ((u'Himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
+    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
-    2009 ((u'Himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
+    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
 
     >>> PAP.Person.query (Q.last_name == "tanzer").all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]

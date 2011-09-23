@@ -191,6 +191,8 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    22-Sep-2011 (CT) `_A_Entity_` factored from `_A_Composite_` and
 #                     `_A_Id_Entity_`
+#    23-Sep-2011 (CT) `needs_raw_value` and `ignore_case` added to `db_sig`
+#    23-Sep-2011 (CT) `_A_Id_Entity_.as_code` robustified
 #    ««revision-date»»···
 #--
 
@@ -466,7 +468,12 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
-        return (self.typ, self.db_sig_version, getattr (self, "max_length", 0))
+        return \
+            ( self.typ
+            , self.db_sig_version
+            , getattr (self, "max_length", 0)
+            , self.needs_raw_value
+            )
     # end def db_sig
 
     @classmethod
@@ -964,7 +971,10 @@ class _A_Id_Entity_ (_A_Entity_) :
     # end def example
 
     def as_code (self, value) :
-        return tuple (a.as_code (a.get_value (value)) for a in value.primary)
+        if value is not None :
+            return tuple \
+                (a.as_code (a.get_value (value)) for a in value.primary)
+        return repr (u"")
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -980,9 +990,10 @@ class _A_Id_Entity_ (_A_Entity_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        etm = soc.etype_manager ()
-        if etm :
-            soc._check_type (etm.E_Type, value)
+        if value is not None :
+            etm = soc.etype_manager ()
+            if etm :
+                soc._check_type (etm.E_Type, value)
         return value
     # end def cooked
 
@@ -1165,6 +1176,11 @@ class _A_String_ (_A_String_Base_) :
     ignore_case       = False
     needs_raw_value   = False
     P_Type            = unicode
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return self.__super.db_sig + (self.ignore_case, )
+    # end def db_sig
 
 # end class _A_String_
 

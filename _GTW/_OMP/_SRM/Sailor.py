@@ -33,6 +33,7 @@
 #     7-Sep-2011 (CT) `club` changed from `Optional` to `Primary_Optional`
 #     9-Sep-2011 (CT) `completer` re-added to `mna_number`,
 #                     `completer` removed from `nation`
+#    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _GTW._OMP._SRM.Attr_Type import *
 
 import _GTW._OMP._PAP.Person
 
+import _GTW._OMP._SRM.Club
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
@@ -82,12 +84,11 @@ class Sailor (_Ancestor_Essence) :
 
         # end class mna_number
 
-        class club (A_String) :
+        class club (A_Id_Entity) :
             """Club the sailor is starting for."""
 
+            P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Primary_Optional
-            max_length         = 48
-            completer          = Attr.Completer_Spec  (1)
 
         # end class club
 

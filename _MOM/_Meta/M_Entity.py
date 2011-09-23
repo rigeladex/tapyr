@@ -505,6 +505,7 @@ class M_E_Type (M_E_Mixin) :
     # end def m_recordable_attrs
 
     def __init__ (cls, name, bases, dct) :
+        cls.P_Type = cls
         cls.__m_super.__init__  (name, bases, dct)
         cls._m_setup_children   (bases, dct)
         cls._m_setup_attributes (bases, dct)

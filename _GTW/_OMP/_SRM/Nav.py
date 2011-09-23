@@ -33,6 +33,7 @@
 #    31-Aug-2010 (CT) `Team` and `Team_has_Boat_in_Regatta` added
 #     6-Sep-2010 (CT) `Boat_in_Regatta` adapted to change of `race_results`
 #     7-Sep-2011 (CT) `Sailor` added
+#    23-Sep-2011 (CT) `Club` added
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,9 @@ class Admin (object) :
         , sort_key  = TFL.Sorted_By
             ("-right.date.start", "skipper.last_name", "skipper.first_name")
         )
+    Club = dict \
+        ( ETM       = "GTW.OMP.SRM.Club"
+        )
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"
         , sort_key  = TFL.Sorted_By ("year", "perma_name")
@@ -137,8 +141,7 @@ class Admin (object) :
                 )
             ,
             )
-        , list_display   =
-            ( "event.name", "event.date.start", "boat_class", "kind", "races", "discards")
+        , list_display   = ("event", "boat_class", "kind")
         )
 
     Regatta_H       = dict \
@@ -159,8 +162,7 @@ class Admin (object) :
                 )
             ,
             )
-        , list_display   =
-            ( "event.name", "event.date.start", "handicap", "kind", "races", "discards")
+        , list_display   = ("event", "handicap", "kind")
         )
 
     Regatta_Event = dict \

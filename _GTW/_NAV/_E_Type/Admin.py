@@ -335,7 +335,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         )
                     )
                 raise HTTP.Error_503 (request.path, request.Error)
-            if pid is not None :
+            if pid is not None and pid != "null" :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
                 except LookupError :
@@ -539,7 +539,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request  = handler.request
             req_data = request.req_data
             pid      = req_data.get ("pid") or  self.args [0]
-            if pid is not None :
+            if pid is not None and pid != "null" :
                 try :
                     obj = ETM.pid_query (pid)
                 except LookupError :
@@ -695,7 +695,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 form, elem     = self.form_element   (fid)
                 session_secret = self.session_secret (handler, sid)
                 ETM            = scope [elem.type_name]
-                if pid is not None :
+                if pid is not None and pid != "null" :
                     obj = context ["instance"] = self.pid_query (ETM, pid)
                 ikw = dict \
                     ( allow_new       = req_data.get ("allow_new")

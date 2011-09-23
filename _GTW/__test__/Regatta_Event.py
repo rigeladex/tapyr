@@ -38,9 +38,9 @@ _test_code = """
     >>> rev.epk_raw
     (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
+    GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
+    GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
 
 """
 
