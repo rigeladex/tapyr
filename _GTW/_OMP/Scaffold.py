@@ -39,6 +39,7 @@
 #     5-Apr-2011 (MG) Default for `HTTP` changed to `Werkzeug`
 #     3-May-2011 (CT) Options `edit_session_ttl` and `user_session_ttl` added
 #    10-Jun-2011 (MG) `shell` parameter `echo` added
+#    15-Jun-2011 (MG) `_load_afs` and `_setup_afs` moved into `GTW.NAV.Base`
 #    ««revision-date»»···
 #--
 
@@ -185,39 +186,6 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
     def do_wsgi (cls, cmd) :
         raise NotImplementedError
     # end def do_wsgi
-
-    @classmethod
-    def _load_afs (cls, app_type, pickle_path) :
-        from _GTW._AFS._MOM.Element import Form
-        try :
-            Form.Load (pickle_path)
-        except EnvironmentError as exc :
-            import logging
-            logging.warning \
-                ( "Loading afs forms from %s failed with exception: %s"
-                % (pickle_path, exc)
-                )
-            cls._setup_afs (app_type, pickle_path)
-    # end def _load_afs
-
-    @classmethod
-    def _setup_afs (cls, app_type, pickle_path = None) :
-        from _GTW._AFS._MOM.Element import Form
-        if not Form.Table :
-            ### mustn't do this more than once
-            for T in app_type._T_Extension :
-                if T.GTW.afs_id is not None and T.GTW.afs_spec is not None :
-                    Form (T.GTW.afs_id, children = [T.GTW.afs_spec (T)])
-        if Form.Table and pickle_path :
-            try :
-                Form.Store (pickle_path)
-            except EnvironmentError as exc :
-                import logging
-                logging.warning \
-                    ( "Storing afs forms to %s failed with exception: %s"
-                    % (pickle_path, exc)
-                    )
-    # end def _setup_afs
 
 Scaffold = _GTW_Scaffold_ # end class
 

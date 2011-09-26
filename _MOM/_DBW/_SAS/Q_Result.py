@@ -55,6 +55,7 @@
 #    27-Jul-2011 (MG) `_Q_Result_Attrs_.count` changed to use sub queries
 #                     Alias added to sub query
 #    27-Jul-2011 (MG) `_Q_Result_Attrs_._clone` added to copy `_from_row`
+#    16-Sep-2011 (MG) `group_by` fixed
 #    ««revision-date»»···
 #--
 
@@ -244,7 +245,8 @@ class _Q_Result_ (TFL.Meta.Object) :
             if self._offset is not None :
                 sa_query = sa_query.offset (self._offset)
             if self._group_by :
-                sa_query = sa_query.group_by (* self._group_by)
+                sa_query = sa_query.group_by \
+                    (* (gc (self.e_type._SAQ) for gc in self._group_by))
             if columns :
                 return sa_query
             if not cache :
@@ -384,7 +386,12 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                     attr_name       = attr_kind.raw_name
                 yield getattr (SAQ, attr_name)
             else :
-                yield getter (SAQ)
+                if isinstance (getter, TFL.Q_Exp._Sum_) :
+                    result          = sql.func.SUM (getter.rhs)
+                    result.MOM_Kind = None
+                    yield result
+                else :
+                    yield getter (SAQ)
     # end def _getters_to_columns
 
     def _from_row_tuple (self, row) :

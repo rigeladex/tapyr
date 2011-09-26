@@ -38,6 +38,9 @@
 ##     5-Jan-2011 (CT) Support `page.template.css_href`
 ##    31-May-2011 (CT) Take `template` from context, if possible
 ##                     (`dir_template` must NOT get the CSS of `page.template`)
+##    13-Sep-2011 (MG) Handling of addition media of `template` added
+##    16-Sep-2011 (MG) Make use of new `page.template_media` property
+##                     (javascript, JS_On_Ready, ...)
 ##    ««revision-date»»···
 ##--
 #}
@@ -59,6 +62,7 @@
   {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
   {%- call X.head () -%}
     {%- block head_elements -%}
+      {%- set page_media = True %}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
       {%- if page.exclude_robots %}
         <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
@@ -72,28 +76,47 @@
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- if template.CSS and not template.css_href %}
+        {%- if page.template_media.inline_CSS %}
           <style type="text/css">
-            {{ template.CSS }}
+            {{ page.template_media.CSS }}
           </style>
         {% else %}
+          {%- for css_href in page.template_media.css_hrefs %}
+            {{ X.link_stylesheet (css_href) }}
+          {% endfor -%}
+        {% endif -%}
+        {%- for cssl in page.Media.css_links %}
           {%- if template.css_href %}
             {{ X.link_stylesheet (template.css_href) }}
           {% endif -%}
+        {% endif -%}
+        {%- if page_media %}
           {%- for cssl in page.Media.css_links %}
             {% call media_item (cssl) -%}
               {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
             {% endcall %} {# media_item #}
           {% endfor -%}
         {% endif -%}
+        {%- for cssl in template.CSS_Links %}
+          {% call media_item (cssl) -%}
+            {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
+          {% endcall %} {# media_item #}
+        {% endfor -%}
       {%- endblock styles %}
         {%- block scripts %}
-          {%- for jsl in page.Media.scripts %}
+          {%- if page_media %}
+            {%- for jsl in page.Media.scripts %}
+              {% call media_item (jsl) -%}
+                <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+              {% endcall %} {# media_item #}
+            {% endfor -%}
+          {% endif -%}
+          {%- for jsl in template.scripts %}
             {% call media_item (jsl) -%}
               <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
             {% endcall %} {# media_item #}
           {% endfor -%}
-          {%- if page.Media.js_on_ready %}
+          {%- if page_media and page.Media.js_on_ready %}
             <script type="text/javascript">
               $(function ()
                 {
@@ -101,10 +124,24 @@
                 }
                );
             </script>
+          {% endif %}
+          {%- if template.JS_On_Ready %}
+            <script type="text/javascript">
+              $(function ()
+                {
+                  {% for jsor in template.JS_On_Ready %}{{ jsor|safe }}{% endfor %}
+                }
+               );
+            </script>
           {% endif -%}
         {%- endblock scripts -%}
       {%- block related_links -%}
-        {%- for rl in page.Media.rel_links %}
+        {%- if page_media %}
+          {%- for rl in page.Media.rel_links %}
+            <link {{ rl.attrs ()|safe }} />
+          {% endfor -%}
+        {% endif -%}
+        {%- for rl in template.Rel_Links %}
           <link {{ rl.attrs ()|safe }} />
         {% endfor -%}
       {%- endblock related_links -%}

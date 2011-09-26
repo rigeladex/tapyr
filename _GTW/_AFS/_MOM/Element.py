@@ -50,6 +50,7 @@
 #                     empty `._update_sid` removed
 #     8-Jun-2011 (CT) `_create_instance` factored to use `instance_or_new`
 #                     for all but implicit links
+#    21-Jun-2011 (MG) `from/as_pickle_cargo` added
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    16-Sep-2011 (CT) Use `AE.` instead of `import *`
@@ -364,6 +365,27 @@ class _MOM_Form_ (AE.Form) :
             for a, c in zip (args, self.children) :
                 yield c (a.ETM, a.entity, ** a.kw)
     # end def _call_iter
+
+    rank = 500 ### must be execute before Template_Media_Cache
+    @classmethod
+    def as_pickle_cargo (cls, nav_root) :
+        if not cls.Table :
+            ### mustn't do this more than once
+            for T in nav_root.App_Type._T_Extension :
+                if T.GTW.afs_id is not None and T.GTW.afs_spec is not None :
+                    Form (T.GTW.afs_id, children = [T.GTW.afs_spec (T)])
+        return dict (AFS_Form_Table = cls.Table)
+    # end def as_pickle_cargo
+
+    @classmethod
+    def from_pickle_cargo (cls, nav_root, cargo) :
+        """Update `Table` with `table`."""
+        table = cargo.get ("AFS_Form_Table", {})
+        table.update      (cls.Table)
+        ### We want to set `Table` for `GTW.AFS.Element.Form`, not for a
+        ### possible descedent class
+        GTW.AFS.Element.Form.Table = table
+    # end def from_pickle_cargo
 
 Form = _MOM_Form_ # end class
 
