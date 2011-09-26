@@ -253,17 +253,18 @@
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
-#    15-Jun-2011 (CT) `_Page_O_.__getattr__` robustified
-#    15-Jun-2011 (MG) `children` and `children_transitive` added
+#    26-Sep-2011 (CT) `_Page_O_.__getattr__` robustified
+#    26-Sep-2011 (MG) `children` and `children_transitive` added
 #                     `injected_templates` and `injected_media_href` added
 #                     `_setup_afs` moved in here, `store_css` renamed to
 #                     `store_media` and `injected_templates` handling added
 #                     `load_css_map` renamed to `load_media_map` and  loading
 #                     of AFS form map and injected templates map added
-#    20-Jun-2011 (MG) `template_media` added, `store_media`: parts factored
-#    21-Jun-2011 (MG) `store_media` add `suffix` to generated file names and
+#    26-Sep-2011 (MG) `template_media` added, `store_media`: parts factored
+#    26-Sep-2011 (MG) `store_media` add `suffix` to generated file names and
 #                     urls
-#    21-Jun-2011 (MG) `Root.Cache_Pickler` added and used in `store/load_cache`
+#    26-Sep-2011 (MG) `Root.Cache_Pickler` added and used in `store/load_cache`
+#    26-Sep-2011 (MG) `store_cache`: timeing info added
 #    ««revision-date»»···
 #--
 
@@ -292,7 +293,7 @@ import _TFL.multimap
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import base64
-import datetime
+import time
 import hashlib
 import signal
 import sys
@@ -341,8 +342,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
     """Model one entity that is part of a web site."""
 
     __metaclass__              = _Meta_
-
-    Cache_Pickler              = set ()
 
     title                      = ""
     hidden                     = False
@@ -1094,6 +1093,7 @@ class Dir (_Dir_) :
 class Root (_Dir_) :
 
     auto_delegate           = False  ### useful if not served by web-app
+    Cache_Pickler           = set ()
     copyright_start         = None
     copyright_url           = None
     CSS_Parameters          = None
@@ -1101,6 +1101,7 @@ class Root (_Dir_) :
     email                   = None   ### default from address
     name                    = "/"
     owner                   = None
+    page_media              = True
     redirects               = {}
     smtp                    = None
     src_root                = ""
@@ -1306,6 +1307,7 @@ class Root (_Dir_) :
 
     def store_cache (self, cache_file) :
         cargo = dict ()
+        start = time.time ()
         for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
             try :
                 cargo.update (cp.as_pickle_cargo (self))
@@ -1315,6 +1317,7 @@ class Root (_Dir_) :
                     ("Pickling of %s failed with exception `%s`.\n" % (cp, exc))
         with open (cache_file, "wb") as file :
             pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+        print "*** cache created in %s" % (time.time () - start, )
     # end def store_cache
     store_css = store_cache ### XXX remove me
 

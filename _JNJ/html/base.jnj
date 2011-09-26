@@ -38,8 +38,8 @@
 ##     5-Jan-2011 (CT) Support `page.template.css_href`
 ##    31-May-2011 (CT) Take `template` from context, if possible
 ##                     (`dir_template` must NOT get the CSS of `page.template`)
-##    13-Sep-2011 (MG) Handling of addition media of `template` added
-##    16-Sep-2011 (MG) Make use of new `page.template_media` property
+##    26-Sep-2011 (MG) Handling of additional media of `template` added
+##    26-Sep-2011 (MG) Make use of new `page.template_media` property
 ##                     (javascript, JS_On_Ready, ...)
 ##    ««revision-date»»···
 ##--
@@ -62,7 +62,6 @@
   {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
   {%- call X.head () -%}
     {%- block head_elements -%}
-      {%- set page_media = True %}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
       {%- if page.exclude_robots %}
         <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
@@ -86,11 +85,11 @@
           {% endfor -%}
         {% endif -%}
         {%- for cssl in page.Media.css_links %}
-          {%- if template.css_href %}
-            {{ X.link_stylesheet (template.css_href) }}
-          {% endif -%}
-        {% endif -%}
-        {%- if page_media %}
+            {% call media_item (cssl) -%}
+              {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
+            {% endcall %} {# media_item #}
+        {% endfor -%}
+        {%- if NAV.page_media %}
           {%- for cssl in page.Media.css_links %}
             {% call media_item (cssl) -%}
               {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
@@ -104,7 +103,9 @@
         {% endfor -%}
       {%- endblock styles %}
         {%- block scripts %}
-          {%- if page_media %}
+          {{ GTW.log_stdout (page.Media.scripts.values) }}
+          {{ GTW.log_stdout ("PM %s" % NAV.page_media) }}
+          {%- if NAV.page_media %}
             {%- for jsl in page.Media.scripts %}
               {% call media_item (jsl) -%}
                 <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
@@ -116,7 +117,7 @@
               <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
             {% endcall %} {# media_item #}
           {% endfor -%}
-          {%- if page_media and page.Media.js_on_ready %}
+          {%- if NAV.page_media and page.Media.js_on_ready %}
             <script type="text/javascript">
               $(function ()
                 {
@@ -136,7 +137,7 @@
           {% endif -%}
         {%- endblock scripts -%}
       {%- block related_links -%}
-        {%- if page_media %}
+        {%- if NAV.page_media %}
           {%- for rl in page.Media.rel_links %}
             <link {{ rl.attrs ()|safe }} />
           {% endfor -%}
