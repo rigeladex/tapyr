@@ -358,24 +358,7 @@ class _Py_Console_ (code.InteractiveInterpreter) :
 class Console (GTW.NAV.Page) :
     """Provide a interactive python console `window`."""
 
-    template_name = "console"
-
-    _Media   = GTW.Media \
-        ( css_links   =
-            ( GTW.CSS_Link ("/media/GTW/css/python-console.css")
-            , GTW.CSS_Link.jQuery_UI
-            )
-        , js_on_ready =
-            ( "$('div.console').open_shell (null, 0);"
-            ,
-            )
-        , scripts     =
-            ( GTW.Script._.jQuery
-            , GTW.Script._.jQuery_UI
-            , GTW.Script (src = "/media/GTW/js/jquery.debugger.js")
-            )
-        )
-
+    template_name     = "console"
     console           = None
     completion_cutoff = None
 

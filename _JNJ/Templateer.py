@@ -231,7 +231,7 @@ class Template_E (_Template_) :
         static_handler = self.env.static_handler
         if media and static_handler :
             def _gen (scripts) :
-                for s in sorted (scripts, key = TFL.Getter.sort_key) :
+                for s in sorted (scripts, key = TFL.Getter.rank) :
                     if s.src and not s.condition :
                         p = static_handler.get_path (s.src)
                         if p :
@@ -250,7 +250,7 @@ class Template_E (_Template_) :
         if media :
             result = ";".join \
                 ( str (s) for s in sorted
-                    (TFL.uniq (media.js_on_ready), key = TFL.Getter.sort_key)
+                    (TFL.uniq (media.js_on_ready), key = TFL.Getter.rank)
                 )
             return result
     # end def JS_On_Ready
@@ -284,16 +284,8 @@ class Template_E (_Template_) :
            separate <script src="..."> elements.
         """
         media = self._Media
-        static_handler = self.env.static_handler
-        if media and static_handler :
-            def _gen (scripts) :
-                for s in sorted (scripts, key = TFL.Getter.rank) :
-                    if (  (not s.src)
-                       or (not static_handler.get_path (s.src))
-                       or s.condition
-                       ) :
-                        yield s
-            return list (TFL.uniq (_gen (media.scripts)))
+        if media :
+            return list (TFL.uniq (media.scripts))
     # end def scripts
 
     @Once_Property

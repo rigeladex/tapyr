@@ -63,10 +63,16 @@ class CSS_Link (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def __init__ (self, href, media_type = "all", condition = "", name = None) :
+    def __init__ ( self, href
+                 , media_type = "all"
+                 , condition  = ""
+                 , name       = None
+                 , rank       = 0
+                 ) :
         self.href       = href
         self.media_type = media_type
         self.condition  = condition
+        self.rank       = rank
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -96,6 +102,7 @@ class Rel_Link (TFL.Meta.Object) :
 
     def __init__ (self, ** kw) :
         self.href = kw ["href"]
+        self.rank = kw.pop ("rank", 0)
         self._kw  = kw
     # end def __init__
 

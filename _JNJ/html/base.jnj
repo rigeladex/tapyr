@@ -84,11 +84,6 @@
             {{ X.link_stylesheet (css_href) }}
           {% endfor -%}
         {% endif -%}
-        {%- for cssl in page.Media.css_links %}
-            {% call media_item (cssl) -%}
-              {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
-            {% endcall %} {# media_item #}
-        {% endfor -%}
         {%- if NAV.page_media %}
           {%- for cssl in page.Media.css_links %}
             {% call media_item (cssl) -%}
@@ -103,8 +98,6 @@
         {% endfor -%}
       {%- endblock styles %}
         {%- block scripts %}
-          {{ GTW.log_stdout (page.Media.scripts.values) }}
-          {{ GTW.log_stdout ("PM %s" % NAV.page_media) }}
           {%- if NAV.page_media %}
             {%- for jsl in page.Media.scripts %}
               {% call media_item (jsl) -%}

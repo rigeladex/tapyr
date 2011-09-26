@@ -608,4 +608,17 @@ print_sheet = Style_Sheet \
         )
     , rank  = 1 << 16
     )
+
+### the base file requires at least the jquer<.gritter stuff for the
+### notification
+Script (GTW.Script._.jQuery)
+Script (GTW.Script._.jQuery_UI)
+Script (GTW.Script._.jQuery_Gritter)
+
+CSS_Link (GTW.CSS_Link._.jQuery_UI)
+CSS_Link ("/media/GTW/css/jquery.gritter.css", "screen")
+CSS_Link ("ie_csshover_hack.css", "screen", "lt IE 7")
+CSS_Link ("/media/GTW/css/base_ie_lt7_hacks.css", "screen", "lt IE 8")
+
+JS_On_Ready ('$.gritter.Convert_Patagraphs_to_Gitter ("notifications");')
 ### __END__ html/base.jnj.media
