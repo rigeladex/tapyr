@@ -114,6 +114,31 @@ class Template_Media_Cache (TFL.Meta.Object) :
                 yield p, t, obj
     # end def _create_css_cache
 
+    @classmethod
+    def Media_Filenames (cls, nav_root, include_templates = True) :
+        T      = nav_root.Templateer
+        result = set ()
+        def _add (t) :
+            if include_templates and t.source_path is not None :
+                result.add (t.source_path)
+            if t.media_path is not None :
+                result.add (t.media_path)
+        # end def _add
+
+        for tn in nav_root.template_names :
+            t = T.get_template (tn)
+            if t.source_path :
+                _add (t)
+                for st in t.templates :
+                    _add (st)
+        for nav in nav_root.children_transitive :
+            for t in nav.injected_templates :
+                _add (t)
+                for st in t.templates :
+                    _add (st)
+        return result
+    # end def Media_Filenames
+
     def from_pickle_cargo (self, nav_root, cargo) :
         T            = nav_root.Templateer
         for p, tns in cargo.get ("css_map_p", {}).iteritems () :
