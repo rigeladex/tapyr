@@ -39,7 +39,7 @@
 #     2-Feb-2010 (MG) `Media_List.add` added
 #     4-Feb-2010 (MG) `Media.from_list` added
 #    27-Feb-2010 (MG) `sort_key` added to javascript
-#     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of emdia
+#     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of media
 #                     objects
 #     7-Dec-2010 (CT) `condition` added to `Script`
 #    13-Sep-2011 (MG) `s/sort_key/rank/g`

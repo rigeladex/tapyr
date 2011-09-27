@@ -96,7 +96,6 @@
 #    27-May-2011 (CT) `Deleter.SUPPORTED_METHODS` restricted to `POST`
 #     7-Jun-2011 (CT) `Deleter._view` started to change to send back `json`
 #     8-Jun-2011 (CT) `AFS` attached to `change` URL, and to `create` URL, too
-#    15-Jun-2011 (MG) `AFS.injected_*` added
 #    22-Jul-2011 (CT) Use `Redirect_303` instead of `Redirect_302`
 #    22-Jul-2011 (CT) `AFS_Completer` started
 #    24-Jul-2011 (CT) `AFS_Completer` continued
@@ -120,6 +119,7 @@
 #    21-Sep-2011 (CT) `AFS_Completer` and `AFS_Completed` changed to use
 #                     `pid` for entity completion
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Entity_ attributes
+#    26-Sep-2011 (MG) `AFS.injected_*` added
 #    ««revision-date»»···
 #--
 

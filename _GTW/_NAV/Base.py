@@ -253,18 +253,11 @@
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
-#    26-Sep-2011 (CT) `_Page_O_.__getattr__` robustified
-#    26-Sep-2011 (MG) `children` and `children_transitive` added
-#                     `injected_templates` and `injected_media_href` added
+#    27-Sep-2011 (MG) `children` and `children_transitive` added
 #                     `_setup_afs` moved in here, `store_css` renamed to
-#                     `store_media` and `injected_templates` handling added
-#                     `load_css_map` renamed to `load_media_map` and  loading
-#                     of AFS form map and injected templates map added
-#    26-Sep-2011 (MG) `template_media` added, `store_media`: parts factored
-#    26-Sep-2011 (MG) `store_media` add `suffix` to generated file names and
-#                     urls
-#    26-Sep-2011 (MG) `Root.Cache_Pickler` added and used in `store/load_cache`
-#    26-Sep-2011 (MG) `store_cache`: timeing info added
+#                     `store_media`
+#    27-Sep-2011 (MG) `store_cache`: use `TFL.Context.time_block`
+#                     `P_Media` added
 #    ««revision-date»»···
 #--
 
@@ -297,7 +290,6 @@ import time
 import hashlib
 import signal
 import sys
-import time
 import uuid
 
 class _Meta_ (TFL.Meta.M_Class) :
@@ -573,6 +565,15 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return self.abs_href
     # end def permalink
 
+    @Once_Property
+    def P_Media (self) :
+        ### combine the media required by the used template and the by
+        ### injected templates
+        result = GTW.Media.from_list \
+            ((self.template, ) + tuple (self.injected_templates))
+        return result
+    # end def P_Media
+
     def relative_to (self, url, href = None) :
         href          = href or self.href
         common_prefix = commonprefix ((href, url))
@@ -632,15 +633,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
             self.template_name = value.name
             self._template     = value
     # end def template
-
-    @Once_Property
-    def template_media (self) :
-        env = self.top.Templateer.env
-        return JNJ.Template_Media \
-            ( self.template
-            , JNJ.Injected_Templates (env, self.injected_templates)
-            )
-    # end def template_media
 
     @property
     def Type (self) :
@@ -1101,7 +1093,7 @@ class Root (_Dir_) :
     email                   = None   ### default from address
     name                    = "/"
     owner                   = None
-    page_media              = True
+    _PM                     = True
     redirects               = {}
     smtp                    = None
     src_root                = ""
@@ -1306,18 +1298,29 @@ class Root (_Dir_) :
     # end def scope
 
     def store_cache (self, cache_file) :
-        cargo = dict ()
-        start = time.time ()
-        for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
-            try :
-                cargo.update (cp.as_pickle_cargo (self))
-            except StandardError as exc :
-                import logging
-                logging.warning \
-                    ("Pickling of %s failed with exception `%s`.\n" % (cp, exc))
-        with open (cache_file, "wb") as file :
-            pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
-        print "*** cache created in %s" % (time.time () - start, )
+        def _create (cache_file) :
+            cargo = dict ()
+            for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
+                try :
+                    cargo.update (cp.as_pickle_cargo (self))
+                except StandardError as exc :
+                    import logging
+                    logging.warning \
+                        ( "Pickling of %s failed with exception `%s`.\n"
+                        % (cp, exc)
+                        )
+                    if self.DEBUG :
+                        import traceback
+                        traceback.print_exc ()
+            with open (cache_file, "wb") as file :
+                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+        # end def _create
+        if self.DEBUG :
+            fmt = "*** Media cache rebuit in %ss"
+            with TFL.Context.time_block (fmt) :
+                _create (cache_file)
+        else :
+            _create (cache_file)
     # end def store_cache
     store_css = store_cache ### XXX remove me
 

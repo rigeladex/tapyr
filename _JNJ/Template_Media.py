@@ -81,7 +81,7 @@ class Injected_Templates (TFL.Meta.Object) :
     def Media (self) :
         t     = first    (self.templates)
         return t.get_Media \
-            ( self.env.CSS_Parameters
+            ( self.env
             , itertools.chain (* (t.templates for t in self.templates))
             )
     # end def Media

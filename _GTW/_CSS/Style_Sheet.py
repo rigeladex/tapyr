@@ -36,7 +36,6 @@
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
 #                     enhanced
 #    13-Sep-2011 (CT) `Style_File` added
-#    16-Sep-2011 (MG) `call_level` parameter added and used, `__str__`
 #    ««revision-date»»···
 #--
 
@@ -86,9 +85,6 @@ class Style_Sheet (_Style_Sheet_) :
             , rank    = attrs.pop ("rank",  0)
             , rules   = list (rules)
             )
-        call_level   = attrs.pop ("call_level", 1)
-        if __debug__ :
-            self._source_file = TFL.Caller.globals (call_level).get ("__file__")
     # end def __init__
 
     def add_import (self, * imports) :
@@ -109,9 +105,6 @@ class Style_Sheet (_Style_Sheet_) :
     # end def __iter__
 
     def __str__ (self) :
-        if __debug__ :
-            return "/* %s */\n%s" % \
-                (self._source_file, "\n\n".join (str (r) for r in self))
         return "\n\n".join (str (r) for r in self)
     # end def __str__
 

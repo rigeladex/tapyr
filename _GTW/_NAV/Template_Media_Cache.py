@@ -26,7 +26,7 @@
 #    Handling of the caching of media fragments for templates
 #
 # Revision Dates
-#    21-Jun-2011 (MG) Creation
+#    26-Sep-2011 (MG) Creation
 #    ««revision-date»»···
 #--
 
@@ -83,6 +83,9 @@ class Template_Media_Cache (TFL.Meta.Object) :
         except Exception as exc :
             print "CSS exception for template", t.path
             print "   ", exc
+            if __debug__ :
+                import traceback
+                traceback.print_exc ()
         else :
             if css :
                 h = hashlib.sha1     (css).digest ()
