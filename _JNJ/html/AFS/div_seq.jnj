@@ -38,6 +38,7 @@
 ##    13-Apr-2011 (CT) Buttons, `allow_new`, and `collapsed` added to
 ##                     `Field_Entity`
 ##    10-Jun-2011 (MG) `Group` added
+##    28-Sep-2011 (CT) Most buttons removed from `Field_Entity`
 ##    ««revision-date»»···
 ##--
 #}
@@ -127,29 +128,24 @@
   {#- XXX honor allow_new, is_changeable... -#}
   {% call GTW.call_macro
       ( "do_element"
-      , form, elem, renderer, class = "closed" if elem.collapsed else ""
+      , form, elem, renderer
+      , class = "closed"    if elem.collapsed else ""
+      , head = elem.display if elem.collapsed else None
       , templ_name = renderer
       )
   -%}
     {% call GTW.call_macro
         ( "do_head"
         , form, elem, renderer
-        , head = elem.display if elem.collapsed else None
+        , tail = elem.display if elem.collapsed else None
         , show_desc = False
         , templ_name = renderer
         )
     -%}
       {%- if elem.collapsed %}
-        {%- if elem.allow_new %}
-          {%- if elem.pid %}
-            {{ GTW.call_macro ("do_button", "Copy", templ_name = renderer) }}
-          {% endif -%}
-          {{ GTW.call_macro ("do_button", "New",  templ_name = renderer) }}
-        {% endif -%}
         {{ GTW.call_macro ("do_button", "Edit",   templ_name = renderer) }}
       {%- else %}
         {{ GTW.call_macro ("do_button", "Save",   templ_name = renderer) }}
-        {{ GTW.call_macro ("do_button", "Cancel", templ_name = renderer) }}
       {% endif -%}
     {% endcall %} {# do_head #}
     {%- if not elem.collapsed %}
@@ -173,4 +169,5 @@
     {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Group -#}
+
 {#- __END__ jinja template: html/AFS/div_seq.jnj -#}

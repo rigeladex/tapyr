@@ -242,6 +242,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             except GTW.AFS.Error.Conflict :
                 raise JSON_Error (conflicts = fv.as_json_cargo)
             except Exception as exc :
+                if __debug__ :
+                    import traceback; traceback.print_exc ()
                 raise JSON_Error (error = "%s" % (exc, ))
         # end def form_value_apply
 
