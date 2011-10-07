@@ -41,6 +41,8 @@
 //                     completions
 //    15-Sep-2011 (CT) `Field_Entity._get_completer_value` fixed
 //    21-Sep-2011 (CT) Support for `completer.embedded_p` added
+//     7-Oct-2011 (CT) `_put_cb` corrected
+//                     (pass `anchor` instead of `elem` to `_ec_response`)
 //    ««revision-date»»···
 //--
 
@@ -225,11 +227,12 @@
                 };
             };
             var _put_cb = function put_cb (options, elem, response, entity_p) {
-                var s$;
+                var anchor, s$;
                 if (response.completions > 0) {
                     if ((response.completions == 1) && entity_p) {
+                        anchor = $AFS_E.get (elem.anchor_id);
                         s$ = $("[id='" + response.json.$id + "']");
-                        s$ = _ec_response (response, s$, elem);
+                        s$ = _ec_response (response, s$, anchor);
                         _setup_callbacks
                             ( s$, add_cb, cancel_cb, copy_cb, delete_cb
                             , edit_cb, save_cb

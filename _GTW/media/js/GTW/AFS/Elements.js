@@ -42,6 +42,7 @@
 //    25-Jul-2011 (CT) `get_value` added
 //    12-Sep-2011 (CT) `Field_Composite._setup_value` changed to update
 //                     `anchor.field_name_map`
+//     7-Oct-2011 (CT) Guard added to `Element._setup_value`
 //    ««revision-date»»···
 //--
 
@@ -175,13 +176,15 @@
               }
           }
         , _setup_value : function _setup_value (kw, new_kw) {
-              var value = kw.anchor.value;
-              var k;
-              value [this.$id] = this.value;
-              // XXX inefficient !!!
-              k = value ["$child_ids"].indexOf (this.$id);
-              if (k < 0) {
-                  value ["$child_ids"].push (this.$id);
+              if (this.$id !== kw.anchor.$id) {
+                  var value = kw.anchor.value;
+                  var k;
+                  value [this.$id] = this.value;
+                  // XXX inefficient !!!
+                  k = value ["$child_ids"].indexOf (this.$id);
+                  if (k < 0) {
+                      value ["$child_ids"].push (this.$id);
+                  }
               }
           }
         , _sv_anchored_or_root : function _sv_anchored_or_root (kw, new_kw) {

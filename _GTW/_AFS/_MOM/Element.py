@@ -54,6 +54,7 @@
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    16-Sep-2011 (CT) Use `AE.` instead of `import *`
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#     7-Oct-2011 (CT) `Entity.apply` changed to look at `old_pid`
 #    ««revision-date»»···
 #--
 
@@ -98,7 +99,16 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
         if pid is not None :
             result = self._apply_change (pid, value, scope, ** kw)
         else :
-            result = self._apply_create (value, scope, ** kw)
+            old_pid = value.init.get ("pid")
+            if old_pid is None :
+                result = self._apply_create (value, scope, ** kw)
+            else :
+                if __debug__ :
+                    try :
+                        print "No edit pid for object:", \
+                            scope.pid_query (old_pid)
+                    except LookupError :
+                        print "No edit pid; init pid was", old_pid
         return result
     # end def apply
 
