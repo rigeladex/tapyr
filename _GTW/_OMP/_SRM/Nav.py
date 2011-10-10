@@ -34,6 +34,7 @@
 #     6-Sep-2010 (CT) `Boat_in_Regatta` adapted to change of `race_results`
 #     7-Sep-2011 (CT) `Sailor` added
 #    23-Sep-2011 (CT) `Club` added
+#     7-Oct-2011 (CT) `GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec` added
 #    ««revision-date»»···
 #--
 
@@ -191,6 +192,12 @@ class Admin (object) :
         )
 
 # end class Admin
+
+from   _GTW._AFS._MOM import Spec
+import _GTW._OMP._SRM.Boat_in_Regatta
+
+GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec = Spec.Entity \
+    (include_links = ("race_results", ))
 
 if __name__ != "__main__" :
      GTW.OMP.SRM._Export_Module ()
