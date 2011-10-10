@@ -134,7 +134,6 @@ class Template_E (_Template_) :
 
     _t_path         = None
     _t_source       = None
-    Media_Fragments = set ()
 
     def __new__ (cls, env, name, path = None, * args, ** kw) :
         if path is None :
@@ -383,7 +382,7 @@ class Template_E (_Template_) :
     def _load_media (self) :
         f_path = self.media_fragment_name
         if f_path is None :
-            f_path = "%s.media" % (self.path, )
+            f_path = "%s.media" % (self.path.split ("::", 1) [-1], )
         try :
             source, path, _ = self.env.loader.get_source (self.env, f_path)
         except TemplateNotFound :
@@ -391,7 +390,6 @@ class Template_E (_Template_) :
         else :
             self._media_fragment = self._coding_pat.sub ("", source, 1)
             self._media_path     = path
-            self.Media_Fragments.add (path)
     # end def _load_media
 
     def _load_template (self) :

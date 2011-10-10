@@ -739,6 +739,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
             ( "%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
     # end def __str__
 
+    ###
+    def active_page (self, page, level = 0) :
+        for link in self.own_links :
+            icd = getattr (link, "is_current_dir", None)
+            if icd and icd (page) :
+                if level :
+                    return link.active_page (page, level - 1)
+                return link
+        return None
+    # end def active_page
+
 # end class _Site_Entity_
 
 class Page (_Site_Entity_) :
