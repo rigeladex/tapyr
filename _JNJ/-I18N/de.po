@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2011-05-19 11:36+0200\n"
+"POT-Creation-Date: 2011-10-10 11:24+0200\n"
+"PO-Revision-Date: 2011-10-10 11:49+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.5\n"
+"Generated-By: Babel 0.9.6\n"
 
 #: _JNJ/html/activate.jnj:40
 msgid "Activation for"
@@ -83,7 +83,7 @@ msgstr "Ändere Email für"
 msgid "Change email of account %s"
 msgstr "Ändere Email für Benutzerkonto %s"
 
-#: _JNJ/html/e_type_admin.jnj:72 _JNJ/html/e_type_admin.jnj:75
+#: _JNJ/html/e_type_admin.jnj:75 _JNJ/html/e_type_admin.jnj:78
 msgid "Change object"
 msgstr "Ändere Objekt"
 
@@ -98,7 +98,7 @@ msgstr "Ändere Kennwort für Benutzerkonto %s"
 
 #: _JNJ/html/console.jnj:42
 msgid "Clear"
-msgstr "Lösche Konsole"
+msgstr "Lösche"
 
 #: _JNJ/html/rform.jnj:91
 msgid "Click to jump to the field with the first error"
@@ -112,7 +112,7 @@ msgstr "Verweis auf das nächste fehlerhafte Eingabefeld."
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/e_type_admin.jnj:59 _JNJ/html/e_type_admin.jnj:66
+#: _JNJ/html/e_type_admin.jnj:62 _JNJ/html/e_type_admin.jnj:69
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
 
@@ -125,7 +125,7 @@ msgstr "Gegenwärtig ausgewählter Tag"
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/e_type_admin.jnj:80
+#: _JNJ/html/e_type_admin.jnj:83
 msgid "Delete object"
 msgstr "Lösche Objekt"
 
@@ -242,7 +242,7 @@ msgstr "Anmeldung erforderlich"
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
-#: _JNJ/html/error_405.jnj:37
+#: _JNJ/html/error_405.jnj:38
 msgid "Method Not Allowed"
 msgstr "Zugriffsart nicht gestattet"
 
@@ -390,6 +390,11 @@ msgstr "Dia show"
 msgid "Submit"
 msgstr "Absenden"
 
+#: _JNJ/html/error_405.jnj:49
+#, python-format
+msgid "The HTTP method `%s` isn't supported by page %s"
+msgstr ""
+
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
 msgstr "Der Fehler wurde an den Webmaster gemeldet."
@@ -417,6 +422,16 @@ msgstr "Heute"
 #: _JNJ/html/cal/wr.jnj:176
 msgid "Units for `delta` movement of calendar display"
 msgstr "Einheiten für die Verschiebung der Kalenderansicht um `delta`"
+
+#: _JNJ/html/error_405.jnj:57
+#, python-format
+msgid "Use one of the HTTP methods (%s), instead."
+msgstr ""
+
+#: _JNJ/html/error_405.jnj:55
+#, python-format
+msgid "Use the HTTP method '%s', instead."
+msgstr ""
 
 #: _JNJ/html/error_500.jnj:52
 msgid ""
