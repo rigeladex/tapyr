@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-17 15:56+0100\n"
+"POT-Creation-Date: 2011-10-10 11:24+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -16,9 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.5\n"
+"Generated-By: Babel 0.9.6\n"
 
-#: _GTW/_OMP/_PAP/Person.py:100 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:141 _GTW._OMP._PAP.Person:0
 #, fuzzy
 msgid "Academic title"
 msgstr ""
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:179 _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW/_OMP/_PAP/Nav.py:180 _GTW._OMP._PAP.Person_has_Address:0
 #: _GTW._OMP._PAP.Address:0
 #, fuzzy
 msgid "Address"
@@ -75,13 +75,13 @@ msgstr ""
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:68 _GTW._OMP._PAP._Person_has_Property_:0
+#: _GTW/_OMP/_PAP/Email.py:71 _GTW._OMP._PAP._Person_has_Property_:0
 #: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
 #, fuzzy
 msgid "Description"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:167 _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW/_OMP/_PAP/Nav.py:168 _GTW._OMP._PAP.Person_has_Email:0
 #: _GTW._OMP._PAP.Email:0
 #, fuzzy
 msgid "Email"
@@ -89,7 +89,7 @@ msgid_plural "Emails"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_PAP/Email.py:59 _GTW._OMP._PAP.Email:0
+#: _GTW/_OMP/_PAP/Email.py:60 _GTW._OMP._PAP.Email:0
 #, fuzzy
 msgid "Email address"
 msgstr ""
@@ -272,12 +272,12 @@ msgid_plural "Person_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_PAP/Nav.py:112 _GTW/_OMP/_PAP/Nav.py:113
+#: _GTW/_OMP/_PAP/Nav.py:113 _GTW/_OMP/_PAP/Nav.py:114
 #, fuzzy
 msgid "Persons"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:155 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Nav.py:156 _GTW._OMP._PAP.Phone:0
 #: _GTW._OMP._PAP.Person_has_Phone:0
 #, fuzzy
 msgid "Phone"
@@ -360,10 +360,4 @@ msgstr ""
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr ""
-
-#~ msgid "Geopgraphical latitude"
-#~ msgstr ""
-
-#~ msgid "Geopgraphical longitude"
-#~ msgstr ""
 

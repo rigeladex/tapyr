@@ -38,7 +38,7 @@ case "$cmd" in
     "extract" )
         python _TFL/Babel.py extract                            \
             -bugs_address        "tanzer@swing.co.at,martin@mangari.org" \
-            -charset             iso-8859-1                              \
+            -charset             iso-8859-15                              \
             -copyright_holder    "Mag. Christian Tanzer, Martin Glueck"  \
             -global_config       _MOM/base_babel.cfg                     \
             -project             "MOM/GTW/JNJ"                           \
@@ -47,7 +47,7 @@ case "$cmd" in
         ;;
     "language" )
         lang=${1:-"de"}
-        /usr/bin/python _TFL/Babel.py language -languages "$lang" -sort $dirs
+        python _TFL/Babel.py language -languages "$lang" -sort $dirs
         ;;
     * )
         echo "Unknown command $cmd"

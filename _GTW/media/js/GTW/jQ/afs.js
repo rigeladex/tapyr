@@ -41,6 +41,14 @@
 //                     completions
 //    15-Sep-2011 (CT) `Field_Entity._get_completer_value` fixed
 //    21-Sep-2011 (CT) Support for `completer.embedded_p` added
+//     7-Oct-2011 (CT) `_put_cb` corrected
+//                     (pass `anchor` instead of `elem` to `_ec_response`)
+//    10-Oct-2011 (CT) `Field._get_completer_value` guarded for `inp$`
+//    10-Oct-2011 (CT) `_get_cb` corrected
+//                     (if `embedded_p` use `anchor.completer...`)
+//    10-Oct-2011 (CT) s/_ac_response/_response_append/
+//                     s/_ec_response/_response_replace/
+//    10-Oct-2011 (CT) `clear_cb` added
 //    ««revision-date»»···
 //--
 
@@ -69,11 +77,14 @@
             result = values;
         };
         return result;
-    } ;
+    };
     $AFS_E.Field.prototype._get_completer_value = function () {
-        var result, value = this.inp$.val ();
-        if (value && value.length > 0) {
-            result = value;
+        var result, value;
+        if ("inp$" in this) {
+            value = this.inp$.val ();
+            if (value && value.length > 0) {
+                result = value;
+            };
         };
         return result;
     };
@@ -137,11 +148,16 @@
                     );
             };
             var _get_cb = function _get_cb (options, elem, val, cb, response) {
+                var anchor    = elem;
                 var completer = elem.completer;
-                var n  = response.completions;
-                var l = Math.min (response.fields, completer.names.length);
-                var result = [];
+                var l, n      = response.completions;
+                var result    = [];
                 if (n > 0 && response.fields > 0) {
+                    while (completer.embedded_p) {
+                        anchor    = $AFS_E.id_map [anchor.anchor_id];
+                        completer = anchor.completer;
+                    };
+                    l = Math.min (response.fields, completer.names.length);
                     elem.completer.response = response;
                     for ( var i = 0, li = response.matches.length, match
                         ; i < li
@@ -225,14 +241,15 @@
                 };
             };
             var _put_cb = function put_cb (options, elem, response, entity_p) {
-                var s$;
+                var anchor, s$;
                 if (response.completions > 0) {
                     if ((response.completions == 1) && entity_p) {
+                        anchor = $AFS_E.get (elem.anchor_id);
                         s$ = $("[id='" + response.json.$id + "']");
-                        s$ = _ec_response (response, s$, elem);
+                        s$ = _response_replace (response, s$, anchor);
                         _setup_callbacks
-                            ( s$, add_cb, cancel_cb, copy_cb, delete_cb
-                            , edit_cb, save_cb
+                            ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                            , delete_cb, edit_cb, save_cb
                             );
                     } else if (response.fields > 0) {
                         _update_field_values
@@ -303,7 +320,7 @@
                 };
             };
         } ();
-        var _bind_click = function _bind_click (context, cb) {
+        var _bind_click = function _bind_click (context) {
             var sel;
             for (var i = 1, li = arguments.length, arg; i < li; i++) {
                 arg = arguments [i];
@@ -311,7 +328,28 @@
                 sel.click (arg);
             }
         };
-        var _ac_response = function _ac_response
+        var _clear_field = function _clear_field (elem) {
+            var child, value = elem ["value"];
+            if ("inp$" in elem) {
+                elem.inp$.val ("");
+            }
+            if (value) {
+                elem._clear_value ();
+                if ("$child_ids" in value) {
+                    for (var i = 0, li = value.$child_ids.length, child_id
+                        ; i < li
+                        ; i++
+                        ) {
+                        child_id = value.$child_ids [i];
+                        child    = $AFS_E.get (child_id);
+                        if (child) {
+                            _clear_field (child);
+                        };
+                    };
+                };
+            };
+        };
+        var _response_append = function _response_append
                 (response, txt_status, p$, parent) {
             var anchor, root, new_elem, s$;
             if (txt_status == "success") {
@@ -335,13 +373,13 @@
                           , roots  : $AFS_E.root.roots
                           }
                         );
-                    _setup_callbacks (s$, add_cb, cancel_cb, save_cb);
+                    _setup_callbacks (s$, add_cb, cancel_cb, clear_cb, save_cb);
                 } else {
                     alert ("Error: " + response.error);
                 }
             }
         };
-        var _ec_response = function _ec_response (response, s$, elem) {
+        var _response_replace = function _response_replace (response, s$, elem) {
             var anchor, new_elem, root;
             s$ = s$
                 .html       (response.html)
@@ -359,7 +397,7 @@
             anchor.value [new_elem.$id] = new_elem.value;
             return s$;
         };
-        var _setup_callbacks = function _setup_callbacks (context, cb) {
+        var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
             $(":input", context)
                 .change (field_change_cb)
@@ -389,7 +427,7 @@
                   // XXX need to pass `pid` of `hidden_role` if any
                   }
                 , function (response, txt_status)
-                    { _ac_response (response, txt_status, p$, parent); }
+                    { _response_append (response, txt_status, p$, parent); }
                 );
         };
         var cancel_cb = function cancel_cb (ev) {
@@ -411,8 +449,11 @@
                     , function (response, txt_status) {
                           if (txt_status == "success") {
                               if (! response ["error"]) {
-                                  s$ = _ec_response (response, s$, elem);
-                                  _bind_click (s$, copy_cb, delete_cb, edit_cb);
+                                  s$ = _response_replace (response, s$, elem);
+                                  _bind_click
+                                      ( s$
+                                      , clear_cb, copy_cb, delete_cb, edit_cb
+                                      );
                               } else {
                                   alert ("Error: " + response.error);
                               }
@@ -423,6 +464,34 @@
                 elem.remove ()
                 s$.remove   ();
             };
+        };
+        var clear_cb  = function clear_cb (ev) {
+            var b$    = $(this);
+            var s$    = b$.closest ("section");
+            var id    = s$.attr    ("id");
+            var elem  = $AFS_E.get (id);
+            _clear_field (elem);
+            $.getJSON
+                ( options.expander_url
+                , { fid       : id
+                  , pid       : null
+                  , sid       : $AFS_E.root.value.sid
+                  , allow_new : elem.allow_new
+                  }
+                , function (response, txt_status) {
+                      if (txt_status == "success") {
+                          if (! response ["error"]) {
+                              s$ = _response_replace (response, s$, elem);
+                              _setup_callbacks
+                                  ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                                  , delete_cb, edit_cb, save_cb
+                                  );
+                          } else {
+                              alert ("Error: " + response.error);
+                          }
+                      }
+                  }
+                );
         };
         var copy_cb = function copy_cb (ev) {
             var b$        = $(this);
@@ -444,7 +513,7 @@
                   , copy          : true
                   }
                 , function (response, txt_status)
-                    { _ac_response (response, txt_status, p$, elem); }
+                    { _response_append (response, txt_status, p$, elem); }
                 );
         };
         var delete_cb = function delete_cb (ev) {
@@ -468,10 +537,10 @@
                 , function (response, txt_status) {
                       if (txt_status == "success") {
                           if (! response ["error"]) {
-                              s$ = _ec_response (response, s$, elem);
+                              s$ = _response_replace (response, s$, elem);
                               _setup_callbacks
-                                  ( s$, add_cb, cancel_cb, copy_cb, delete_cb
-                                  , edit_cb, save_cb
+                                  ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                                  , delete_cb, edit_cb, save_cb
                                   );
                           } else {
                               alert ("Error: " + response.error);
@@ -526,10 +595,10 @@
                             } else if (id === answer.$child_ids [0]) {
                                 response = answer [id];
                                 if (response !== undefined) {
-                                    s$ = _ec_response (response, s$, elem);
+                                    s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks
                                         ( s$
-                                        , add_cb, cancel_cb, copy_cb
+                                        , add_cb, cancel_cb, clear_cb, copy_cb
                                         , delete_cb, edit_cb, save_cb
                                         );
                                 } else {
@@ -554,11 +623,13 @@
         options.form$       = this;
         add_cb.$selector    = ".add.button";
         cancel_cb.$selector = ".cancel.button";
+        clear_cb.$selector  = ".clear.button";
         copy_cb.$selector   = ".copy.button";
         delete_cb.$selector = ".delete.button";
         edit_cb.$selector   = ".edit.button";
         save_cb.$selector   = ".save.button";
-        _setup_callbacks (this, add_cb, copy_cb, delete_cb, edit_cb, save_cb);
+        _setup_callbacks
+            (this, add_cb, clear_cb, copy_cb, delete_cb, edit_cb, save_cb);
         return this;
     };
   } (jQuery)

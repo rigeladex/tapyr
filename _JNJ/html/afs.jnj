@@ -33,6 +33,7 @@
 ##    30-Mar-2011 (CT) `do_head` changed to allow `caller`, `head` and `n` added
 ##    31-Mar-2011 (CT) `do_button` added
 ##    13-Apr-2011 (CT) `do_head` changed to use `show_desc`
+##    28-Sep-2011 (CT) `tail` added to `do_head`
 ##    ««revision-date»»···
 ##--
 #}
@@ -67,7 +68,7 @@
   </{{ elem.het_c }}>
 {%- endmacro -%} {#- do_element -#}
 
-{%- macro do_head (form, elem, renderer, n = 1, head = None, show_desc = True) -%}
+{%- macro do_head (form, elem, renderer, n = 1, head = None, tail = None, show_desc = True) -%}
   {%- set head_caller = kwargs.pop ("caller", None) -%}
   {%- set desc = GTW._T (elem.description)|safe %}
   {%- if show_desc and desc -%}
@@ -78,6 +79,9 @@
   {%- endif -%}
   <{{ elem.het_h }}>
     {{ head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
+    {%- if tail -%}
+      : {{ tail }}
+    {% endif -%}
     {%- if head_caller %}
       {{ head_caller () }}
     {% endif -%}
