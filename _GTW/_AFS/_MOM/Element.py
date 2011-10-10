@@ -103,12 +103,8 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
             if old_pid is None :
                 result = self._apply_create (value, scope, ** kw)
             else :
-                if __debug__ :
-                    try :
-                        print "No edit pid for object:", \
-                            scope.pid_query (old_pid)
-                    except LookupError :
-                        print "No edit pid; init pid was", old_pid
+                ### Value of entity field is reset to `None`
+                result = None
         return result
     # end def apply
 
