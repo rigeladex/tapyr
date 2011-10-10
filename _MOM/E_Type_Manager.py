@@ -91,6 +91,8 @@
 #    28-Jul-2011 (CT) `ckd_query_attrs` and `raw_query_attrs` changed to
 #                     support `values = None`
 #     9-Sep-2011 (CT) Property `E_Type` added
+#    21-Sep-2011 (CT) `get_etype_attribute` added and used for `raw_query_attrs`
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -135,6 +137,16 @@ class Entity (TFL.Meta.Object) :
     def is_partial (self) :
         return self._etype.is_partial
     # end def is_partial
+
+    def get_etype_attribute (self, name) :
+        etype = self._etype
+        for n in name.split (".") :
+            if etype is None :
+                raise AttributeError (name)
+            result = getattr (etype, n)
+            etype  = getattr (result, "P_Type", None)
+        return result
+    # end def get_etype_attribute
 
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
@@ -291,7 +303,8 @@ class Id_Entity (Entity) :
         et = self._etype
         if values is None :
             for n in names :
-                yield getattr (et, n).raw_query
+                attr = self.get_etype_attribute (n)
+                yield attr.raw_query
         else :
             for n in names :
                 if n in values :
@@ -405,7 +418,7 @@ class Link (Id_Entity) :
                     role = Type.Roles [map [k]]
                     try :
                         obj = self._cooked_role (role, kw.pop (k))
-                        if not isinstance (obj, role.Class) :
+                        if not isinstance (obj, role.P_Type) :
                             return []
                         rkw [role.name] = obj
                     except MOM.Error.No_Such_Object :

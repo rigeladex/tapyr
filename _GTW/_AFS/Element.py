@@ -84,6 +84,10 @@
 #     1-Aug-2011 (CT) `Field_Composite.het_c` and `Fieldset.het_c` changed
 #                     from `section` to `div`
 #    16-Sep-2011 (CT) `anchor_id` (and `_anchor_children`) added
+#    20-Sep-2011 (CT) `completer` added to `as_json_cargo` and
+#                     `_anchor_children`
+#    22-Sep-2011 (CT) `Entity_List` derived from `_Field_MI_`, too
+#    23-Sep-2011 (CT) `anchor_id` changed to not put `an$` into `kw`
 #    ««revision-date»»···
 #--
 
@@ -125,6 +129,7 @@ class _Element_ (TFL.Meta.Object) :
     __metaclass__ = _M_Element_
 
     children      = ()
+    completer     = None
     het_c         = "div" ### HTML element type to be used for the container
     het_h         = "h2"  ### HTML element type to be used for the heading
     id_sep        = "."
@@ -142,7 +147,7 @@ class _Element_ (TFL.Meta.Object) :
     _id           = None
     _pop_in_call  = ("allow_new", "collapsed")
     _pop_to_self  = \
-        ( "css_class", "description", "explanation"
+        ( "completer", "css_class", "description", "explanation"
         , "id", "id_sep", "needs_value", "prefilled", "readonly"
         , "renderer", "required", "ui_name", "widget"
         )
@@ -171,7 +176,7 @@ class _Element_ (TFL.Meta.Object) :
     @property
     def anchor_id (self) :
         try :
-            d = self.kw ["an$"]
+            d = self._anchor_id_delta
         except KeyError :
             pass
         else :
@@ -182,12 +187,14 @@ class _Element_ (TFL.Meta.Object) :
     def anchor_id (self, anchor_id) :
         if self.id.startswith (anchor_id) :
             d = len (self.id) - len (anchor_id)
-            self.kw ["an$"] = d
+            self._anchor_id_delta = d
     # end def anchor_id
 
     @property
     def as_json_cargo (self) :
-        result         = dict (self.kw, type = self.__class__.__name__)
+        result = dict (self.kw, type = self.__class__.__name__)
+        if hasattr (self.completer, "as_json_cargo") :
+            result ["completer"] = self.completer.as_json_cargo
         result ["$id"] = self.id
         return result
     # end def as_json_cargo
@@ -247,9 +254,9 @@ class _Element_ (TFL.Meta.Object) :
                 yield x
     # end def transitive_iter
 
-    def _anchor_children (self, anchor_id = None) :
+    def _anchor_children (self, anchor = None) :
         for c in self.children :
-            c._anchor_children (anchor_id)
+            c._anchor_children (anchor)
     # end def _anchor_children
 
     def _call_iter (self, * args, ** kw) :
@@ -337,18 +344,25 @@ class _Element_ (TFL.Meta.Object) :
 
 class _Anchor_MI_ (_Element_) :
 
-    def _anchor_children (self, anchor_id = None) :
-        self.__super._anchor_children (self.id)
+    def _anchor_children (self, anchor = None) :
+        self.__super._anchor_children (anchor = self)
     # end def _anchor_children
 
 # end class _Anchor_MI_
 
 class _Field_MI_ (_Element_) :
 
-    def _anchor_children (self, anchor_id = None) :
-        if anchor_id is not None :
-            self.anchor_id = anchor_id
-        self.__super._anchor_children (anchor_id)
+    def _anchor_children (self, anchor = None) :
+        if anchor is not None :
+            if isinstance (anchor, basestring) :
+                self.anchor_id = anchor
+            else :
+                self.anchor_id = anchor.id
+                ac = anchor.completer
+                sc = self.completer
+                if hasattr (sc, "entity_p") and hasattr (ac, "derived") :
+                    self.completer = ac.derived (sc)
+        self.__super._anchor_children (anchor)
     # end def _anchor_children
 
 # end class _Field_MI_
@@ -419,7 +433,7 @@ class Entity_Link (_Field_MI_, Entity) :
 
 # end class Entity_Link
 
-class Entity_List (_Element_List_) :
+class Entity_List (_Field_MI_, _Element_List_) :
     """Model a sub-form for a list of entities."""
 
     id_sep   = _Element_List_.list_sep

@@ -42,6 +42,7 @@
 #                     (`date`,`time`,`left`) instead of (`left`,`date`,`time`)
 #    22-Dec-2010 (CT) `Event_occurs.electric` redefined as `Const` with `True`
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    ««revision-date»»···
 #--
 
@@ -229,7 +230,7 @@ class Event_occurs (_Ancestor_Essence) :
 
         # end class electric
 
-        class essence (_A_Entity_) :
+        class essence (_A_Id_Entity_) :
 
             kind               = Attr.Computed
 

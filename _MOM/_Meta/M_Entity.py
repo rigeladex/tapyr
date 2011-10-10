@@ -107,6 +107,9 @@
 #    10-Feb-2011 (CT) `_nested_classes_to_combine` defined as class attribute
 #    10-Feb-2011 (CT) `_m_combine_nested_class` factored to `TFL.Meta.M_Base`
 #    24-Feb-2011 (CT) s/A_Object/A_Entity/
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -502,7 +505,7 @@ class M_E_Type (M_E_Mixin) :
     # end def m_recordable_attrs
 
     def __init__ (cls, name, bases, dct) :
-        cls.Class = cls.C_Type = cls
+        cls.P_Type = cls
         cls.__m_super.__init__  (name, bases, dct)
         cls._m_setup_children   (bases, dct)
         cls._m_setup_attributes (bases, dct)
@@ -615,10 +618,10 @@ class M_E_Type (M_E_Mixin) :
         app_type        = cls.app_type
         for ak in attr_dict.itervalues () :
             at = ak.attr
-            if isinstance (at, MOM.Attr._A_Entity_) and at.Class :
-                ats = app_type.entity_type (at.Class)
+            if isinstance (at, MOM.Attr._A_Id_Entity_) and at.P_Type :
+                ats = app_type.entity_type (at.P_Type)
                 if ats :
-                    at.Class = ats
+                    at.P_Type = ats
         for pv in P._pred_kind.get ("object", []) :
             pn = pv.name
             for an in pv.attributes + pv.attr_none :
@@ -753,8 +756,8 @@ class M_E_Type_Id (M_E_Type) :
         sbs = []
         if cls.epk_sig :
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
-                if isinstance (pka.attr, MOM.Attr._A_Entity_) :
-                    et = pka.Class
+                if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
+                    et = pka.P_Type
                     if et :
                         sbs.extend \
                             ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
@@ -764,7 +767,7 @@ class M_E_Type_Id (M_E_Type) :
                         break
                 elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
                     sbs.extend \
-                        ("%s.%s" % (pka.name, x) for x in pka.Class.sorted_by)
+                        ("%s.%s" % (pka.name, x) for x in pka.P_Type.sorted_by)
                 else :
                     sbs.append (pka.name)
         sb = TFL.Sorted_By (* (sbs or [cls.sort_key]))

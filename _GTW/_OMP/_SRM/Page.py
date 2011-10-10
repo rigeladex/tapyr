@@ -28,6 +28,8 @@
 # Revision Dates
 #    20-Apr-2010 (CT) Creation
 #    21-Apr-2010 (CT) Creation continued
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -56,11 +58,11 @@ class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
 
         ### Primary attributes
 
-        class event (A_Entity) :
+        class event (A_Id_Entity) :
             """Regatta event to which this page belongs."""
 
             kind               = Attr.Primary
-            Class              = GTW.OMP.SRM.Regatta_Event
+            P_Type             = GTW.OMP.SRM.Regatta_Event
 
         # end class event
 

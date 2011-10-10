@@ -115,6 +115,11 @@
 #    13-Sep-2011 (CT) `_ui_displayed` added and used in `AFS_Completer`
 #    13-Sep-2011 (CT) `AFS_Completer.rendered` changed to indicate partial match
 #    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
+#    21-Sep-2011 (CT) `_ui_displayed` changed to deal properly with `pid`
+#    21-Sep-2011 (CT) `AFS_Completer` and `AFS_Completed` changed to use
+#                     `pid` for entity completion
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Entity_ attributes
+#    10-Oct-2011 (CT) Old-style form handling removed
 #    ««revision-date»»···
 #--
 
@@ -238,6 +243,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             except GTW.AFS.Error.Conflict :
                 raise JSON_Error (conflicts = fv.as_json_cargo)
             except Exception as exc :
+                if __debug__ :
+                    import traceback; traceback.print_exc ()
                 raise JSON_Error (error = "%s" % (exc, ))
         # end def form_value_apply
 
@@ -278,16 +285,25 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return self.__super._raise_403 (handler)
         # end def _raise_403
 
-        def _ui_displayed (self, E_Type, names, matches) :
-            attrs = list (getattr (E_Type, n) for n in names)
+        def _ui_displayed (self, ETM, names, matches) :
+            def _gen () :
+                for n in names :
+                    try :
+                        attr = ETM.get_etype_attribute (n)
+                    except AttributeError :
+                        disp = lambda v : v
+                    else :
+                        disp = lambda v, attr = attr : attr.ac_ui_display (v)
+                    yield disp
+            attr_displayers = list (_gen ())
             for match in matches :
                 yield tuple \
-                    (a.ac_ui_display (v) for a, v in zip (attrs, match))
+                    (d (v) for d, v in zip (attr_displayers, match))
         # end def _ui_displayed
 
     # end class _Cmd_
 
-    class AFS (_Cmd_) :
+    class Changer (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
            of a etype with an AFS form.
         """
@@ -322,7 +338,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         )
                     )
                 raise HTTP.Error_503 (request.path, request.Error)
-            if pid is not None :
+            if pid is not None and pid != "null" :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
                 except LookupError :
@@ -382,9 +398,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return exc (handler)
         # end def _post_handler
 
-    # end class AFS
+    # end class Changer
 
-    class AFS_Completed (_Cmd_) :
+    class Completed (_Cmd_) :
         """Return auto completion values for a AFS page."""
 
         SUPPORTED_METHODS = set (("POST", ))
@@ -404,27 +420,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 field          = form  [json.trigger]
                 ETM            = scope [elem.type_name]
                 E_Type         = ETM.E_Type
-                attr           = getattr (E_Type, field.name)
-                completer      = attr.completer
-                all_names      = completer.all_names
-                names          = completer.names
-                fs             = ETM.raw_query_attrs (names, json.values)
-                query          = ETM.query (* fs)
-                result ["completions"] = n = query.count ()
-                if n == 1 :
-                    af     = ETM.raw_query_attrs (all_names)
-                    values = query.attrs (* af).one ()
-                    result ["fields"] = len  (all_names)
-                    result ["names"]  = all_names
-                    result ["values"] = values
-                    if json.complete_entity :
-                        obj = query.one ()
+                if json.complete_entity :
+                    obj = ETM.pid_query (json.pid)
+                    result ["completions"] = n = int (obj is not None)
+                    if n == 1 :
                         ikw = dict \
-                            ( allow_new       = handler.json.get ("allow_new")
-                            , collapsed       = False
-                            , copy            = False
-                            , _sid            = json.sid
-                            , _session_secret = session_secret
+                            ( allow_new        = handler.json.get ("allow_new")
+                            , collapsed        = False
+                            , copy             = False
+                            , _sid             = json.sid
+                            , _session_secret  = session_secret
                             )
                         fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
                         renderer = self.top.Templateer.get_template \
@@ -434,14 +439,27 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                 (fi.widget, fi, fi, fi.renderer)
                             , json = fi.as_json_cargo
                             )
+                else :
+                    attr           = getattr (E_Type, field.name)
+                    completer      = attr.completer
+                    names          = completer.names
+                    fs             = ETM.raw_query_attrs (names, json.values)
+                    query          = ETM.query (* fs)
+                    result ["completions"] = n = query.count ()
+                    if n == 1 :
+                        af     = ETM.raw_query_attrs (names)
+                        values = query.attrs (* af).one ()
+                        result ["fields"] = len  (names)
+                        result ["names"]  = names
+                        result ["values"] = values
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
         # end def rendered
 
-    # end class AFS_Completed
+    # end class Completed
 
-    class AFS_Completer (_Cmd_) :
+    class Completer (_Cmd_) :
         """Do auto completion for a AFS page."""
 
         SUPPORTED_METHODS = set (("POST", ))
@@ -453,7 +471,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise HTTP.Error_400 \
                     (_T ("%s only works with content-type json") % request.path)
             json      = TFL.Record (** handler.json)
-            result    = dict (partial = False)
+            result    = dict (matches = [], partial = False)
             scope     = self.top.scope
             try :
                 form, elem   = self.form_element (json.fid)
@@ -465,7 +483,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 max_n        = self.max_completions
                 names        = completer.names
                 query        = completer (self.top.scope, json.values)
-                fs           = ETM.raw_query_attrs (names)
+                fs           = tuple (ETM.raw_query_attrs (names))
+                if completer.entity_p :
+                    fs      += (Q.pid, )
+                    names   += ("pid", )
                 matches      = query.attrs (* fs).limit (max_n + 1).all ()
                 n            = result ["completions"] = len (matches)
                 finished     = result ["finished"]    = n == 1
@@ -473,46 +494,141 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     if n <= max_n :
                         result ["fields"]  = len    (names)
                         result ["matches"] = sorted \
-                            (self._ui_displayed (E_Type, names, matches))
+                            (self._ui_displayed (ETM, names, matches))
                     else :
-                        matches = query.attrs (attr.raw_query).limit \
-                            (max_n + 1).all ()
-                        m       = len (matches)
-                        if m <= max_n :
-                            result ["fields"]  = 1
-                            matches            = ([m, "..."] for m in  matches)
-                            result ["matches"] = sorted (matches)
-                            result ["partial"] = True
-                        else :
-                            ### XXX find fewer partial matches !!!
-                            result ["fields"]  = 0
-                            result ["matches"] = []
-                else :
-                    result ["matches"] = []
+                        if json.trigger == json.trigger_n :
+                            matches = query.attrs (attr.raw_query).limit \
+                                (max_n + 1).all ()
+                            m = len (matches)
+                            if m <= max_n :
+                                matches = ([m, "..."] for m in  matches)
+                                result ["fields"]  = 1
+                                result ["matches"] = sorted (matches)
+                                result ["partial"] = True
+                            else :
+                                ### XXX find fewer partial matches !!!
+                                result ["fields"]  = 0
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
         # end def rendered
 
-    # end class AFS_Completer
+    # end class Completer
 
-    class Changer (_Cmd_) :
-        """Model an admin page for creating or changing a specific instance
-           of a etype.
+    class Deleter (_Cmd_) :
+        """Model an admin action for deleting a specific instance of a etype."""
+
+        name              = "delete"
+        template_name     = "e_type_delete"
+        SUPPORTED_METHODS = set (("POST", ))
+
+        def _view (self, handler) :
+            ETM        = self.ETM
+            HTTP       = self.top.HTTP
+            pid        = self.args [0]
+            request    = handler.request
+            result     = {}
+            try :
+                obj    = self.pid_query (ETM, pid)
+                result ["replacement"] = dict \
+                    ( html = """<td colspan="6">%s</td>"""
+                      % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
+                      ### XXX use template to render this XXX
+                    , ### XXX undelete link !!!
+                    )
+                obj.destroy ()
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                return exc (handler)
+        # end def _view
+
+    # end class Deleter
+
+    class Expander (_Cmd_) :
+        """Expand a sub-form (e.g., Entity_Link)"""
+
+        SUPPORTED_METHODS = set (("GET", ))
+
+        def rendered (self, handler, template = None) :
+            context  = handler.context
+            obj      = context ["instance"] = None
+            request  = handler.request
+            req_data = request.req_data
+            scope    = self.top.scope
+            fid      = req_data.get ("fid")
+            try :
+                pid            = req_data.get        ("pid")
+                sid            = req_data.get        ("sid")
+                form, elem     = self.form_element   (fid)
+                session_secret = self.session_secret (handler, sid)
+                ETM            = scope [elem.type_name]
+                if pid is not None and pid != "null" :
+                    obj = context ["instance"] = self.pid_query (ETM, pid)
+                ikw = dict \
+                    ( allow_new       = req_data.get ("allow_new")
+                    , collapsed       = req_data.get ("collapsed")
+                    , copy            = req_data.get ("copy")
+                    , _sid            = sid
+                    , _session_secret = session_secret
+                    )
+                new_id_suffix = req_data.get ("new_id_suffix")
+                if new_id_suffix is not None :
+                    ikw ["new_id_suffix"] = new_id_suffix
+                fi = elem.instantiated (fid, ETM, obj, ** ikw)
+                renderer = self.top.Templateer.get_template (fi.renderer)
+                return handler.write_json \
+                    ( html = renderer.call_macro
+                        (fi.widget, fi, fi, fi.renderer)
+                    , json = fi.as_json_cargo
+                    )
+            except JSON_Error as exc :
+                return exc (handler)
+        # end def rendered
+
+    # end class Expander
+
+    class Instance (TFL.Meta.Object) :
+        """Model a specific instance in the context of an admin page for one
+           E_Type, e.g., displayed as one line of a table.
         """
 
-        Media           = None ### cancel inherited property defined
-        name            = "create"
-        args            = (None, )
-        template_name   = "e_type_change"
-        form_parameters = {}
+        def __init__ (self, admin, obj) :
+            self.admin = admin
+            self.obj   = obj
+            self.FO    = GTW.FO (obj, admin.top.encoding)
+        # end def __init__
 
-        @property
-        def obj (self) :
-            ETM = self.ETM
-            pid = self.args and self.args [0]
-            return ETM.pid_query (pid)
-        # end def obj
+        @Once_Property
+        def fields (self) :
+            admin = self.admin
+            FO    = self.FO
+            return [(f, getattr (FO, f.name)) for f in admin.list_display]
+        # end def fields
+
+        def href_change (self) :
+            return self.admin.href_change (self.obj)
+        # end def href_change
+
+        def href_delete (self) :
+            return self.admin.href_delete (self.obj)
+        # end def href
+
+        def __getattr__ (self, name) :
+            return getattr (self.obj, name)
+        # end def __getattr__
+
+        def __iter__ (self) :
+            return iter (self.fields)
+        # end def __iter__
+
+    # end class Instance
+
+    Page = Instance
+
+    class __Obsolete_Changer (_Cmd_) :
+        ### XXX transfer `scope.readonly`, `nested_change_recorder`, error
+        ###     handling, ...
+        ###     to `Changer`
 
         def rendered (self, handler, template = None) :
             ETM      = self.ETM
@@ -523,7 +639,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request  = handler.request
             req_data = request.req_data
             pid      = req_data.get ("pid") or  self.args [0]
-            if pid is not None :
+            if pid is not None and pid != "null" :
                 try :
                     obj = ETM.pid_query (pid)
                 except LookupError :
@@ -589,266 +705,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         self._display_errors (f, indent + "  ")
         # end def _display_errors
 
-    # end class Changer
-
-    class Completer (_Cmd_) :
-        """Deliver completion information for a AJAX request."""
-
-        Media        = None ### cancel inherited property defined
-
-        def rendered (self, handler, template = None) :
-            context = handler.context
-            request = handler.request
-            result  = None
-            if request.method == "GET" :
-                form_cls, completer = self.Form.form_and_completer (self.forms)
-                if form_cls is not None :
-                    if completer.suggestions \
-                           (form_cls, handler, request.req_data) :
-                        return True ### prevent an 404 Error if we return None
-                if __debug__ :
-                    print "No completer found"
-            raise self.top.HTTP.Error_404 (request.path)
-        # end def rendered
-
-    # end class Completer
-
-    class Completed (_Cmd_) :
-        """Deliver fields for a model instance selected by completion."""
-
-        Media        = None ### cancel inherited property defined
-
-        def rendered (self, handler, template = None) :
-            request = handler.request
-            result  = None
-            if request.method == "GET" :
-                form_cls, completer = self.Form.form_and_completer (self.forms)
-                args = request.req_data
-                pid  = args.get   ("pid")
-                if not any (x is None for x in (form_cls, pid)) :
-                    if completer.complete (form_cls, handler, pid) :
-                        return True ### prevent an 404 Error if we return None
-        # end def rendered
-
-    # end class Completed
-
-    class Deleter (_Cmd_) :
-        """Model an admin action for deleting a specific instance of a etype."""
-
-        name              = "delete"
-        template_name     = "e_type_delete"
-        SUPPORTED_METHODS = set (("POST", ))
-
-        def _view (self, handler) :
-            ETM        = self.ETM
-            HTTP       = self.top.HTTP
-            pid        = self.args [0]
-            request    = handler.request
-            result     = {}
-            try :
-                obj    = self.pid_query (ETM, pid)
-                result ["replacement"] = dict \
-                    ( html = """<td colspan="6">%s</td>"""
-                      % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
-                      ### XXX use template to render this XXX
-                    , ### XXX undelete link !!!
-                    )
-                obj.destroy ()
-                return handler.write_json (result)
-            except JSON_Error as exc :
-                return exc (handler)
-        # end def _view
-
-    # end class Deleter
-
-    class Expander (_Cmd_) :
-        """Expand a sub-form (e.g., Entity_Link)"""
-
-        SUPPORTED_METHODS = set (("GET", ))
-
-        def rendered (self, handler, template = None) :
-            context  = handler.context
-            obj      = context ["instance"] = None
-            request  = handler.request
-            req_data = request.req_data
-            scope    = self.top.scope
-            fid      = req_data.get ("fid")
-            try :
-                pid            = req_data.get        ("pid")
-                sid            = req_data.get        ("sid")
-                form, elem     = self.form_element   (fid)
-                session_secret = self.session_secret (handler, sid)
-                ETM            = scope [elem.type_name]
-                if pid is not None :
-                    obj = context ["instance"] = self.pid_query (ETM, pid)
-                ikw = dict \
-                    ( allow_new       = req_data.get ("allow_new")
-                    , collapsed       = req_data.get ("collapsed")
-                    , copy            = req_data.get ("copy")
-                    , _sid            = sid
-                    , _session_secret = session_secret
-                    )
-                new_id_suffix = req_data.get ("new_id_suffix")
-                if new_id_suffix is not None :
-                    ikw ["new_id_suffix"] = new_id_suffix
-                fi = elem.instantiated (fid, ETM, obj, ** ikw)
-                renderer = self.top.Templateer.get_template (fi.renderer)
-                return handler.write_json \
-                    ( html = renderer.call_macro
-                        (fi.widget, fi, fi, fi.renderer)
-                    , json = fi.as_json_cargo
-                    )
-            except JSON_Error as exc :
-                return exc (handler)
-        # end def rendered
-
-    # end class Expander
-
-    class _Inline_ (_Cmd_) :
-        """Base class for children with need access to the inline."""
-
-        SUPPORTED_METHODS = set (("GET", ))
-
-        template_name     = "dynamic_form"
-
-        def inline (self) :
-            form   = self.Form (self.abs_href, None)
-            prefix = self.forms [0]
-            inline = \
-                    [ig for ig in form.inline_groups if ig.prefix == prefix]
-            if len (inline) == 1 :
-                return inline [0]
-        # end def inline
-
-        def object (self, inline, pid, request) :
-            form_cls = inline.form_cls
-            try :
-                return form_cls.et_man.pid_query (pid)
-            except LookupError :
-                request.Error = \
-                    ( _T ("%s `%s` doesn't exist!")
-                    % (_T (self.Form.et_man.ui_name), pid)
-                    )
-                raise self.top.HTTP.Error_404 (request.path, request.Error)
-        # end def object
-
-    # end class _Inline_
-
-    class HTML_Form (_Inline_) :
-        """Generate the html code for editing of an inline on request."""
-
-        def rendered (self, handler, template = None) :
-            inline = self.inline ()
-            if inline :
-                handler.context ["form"] = inline.prototype_form
-                return self.__super.rendered (handler, template)
-        # end def rendered
-
-    # end class HTML_Form
-
-    class Fields (_Inline_) :
-        """Return the values of the form fields for an instance."""
-
-        def rendered (self, handler, template = None) :
-            request = handler.request
-            inline = self.inline ()
-            if inline :
-                obj  = self.object \
-                    (inline, request.req_data.get ("pid"), request)
-                data = GTW.Form.MOM.Javascript.Completer.form_as_dict \
-                    (inline.form_cls (obj))
-                data ["ui_display"] = getattr (obj, "ui_display", u"")
-                if request.req_data.get ("edit", u"1") == u"1":
-                    title = _T ("Edit")
-                else :
-                    title = _T ("Copy")
-                data ["puf_title"] = "%s %s" % (title, obj.ui_display)
-                return handler.write_json (data)
-        # end def rendered
-
-    # end class Fields
-
-    class Test (_Inline_) :
-        """Return the values of the form fields for an instance."""
-
-        SUPPORTED_METHODS = set (("POST", ))
-
-        template_string   = """
-        {%- import "html/rform.jnj" as RForm %}
-        {%- if NEW_FORM -%}
-          {{- GTW.render_fofi_widget
-              (inline, "link_list_display_row", inline, iform, no, False)
-          -}}
-        {%- else -%}
-          {{- GTW.render_fofi_widget
-              (inline, "link_list_display",     inline, iform, no, False)
-          -}}
-        {%- endif -%}
-        """
-
-        def rendered (self, handler, template = None) :
-            request          = handler.request
-            master_form      = self.Form.Test_Inline (self.abs_href)
-            req_data         = request.req_data
-            no               = int (req_data.get ("__FORM_NO__", "-1"))
-            try :
-                inline, form = master_form.test_inline \
-                    (req_data, self.forms [0], no)
-                if form.error_count () :
-                    handler.context ["form"] = form
-                    result   = self.__super.rendered (handler, template)
-                else :
-                    handler.context ["inline"]   = inline
-                    handler.context ["iform"]    = form
-                    handler.context ["no"]       = no
-                    handler.context ["NEW_FORM"] = \
-                        req_data.get ("__NEW__") == "true"
-                    result   = self.top.Templateer.render_string \
-                        (self.template_string, handler.context).strip ()
-            finally :
-                self.Form.scope.rollback ()
-            return result
-        # end def rendered
-
-    # end class Test
-
-    class Instance (TFL.Meta.Object) :
-        """Model a specific instance in the context of an admin page for one
-           E_Type, e.g., displayed as one line of a table.
-        """
-
-        def __init__ (self, admin, obj) :
-            self.admin = admin
-            self.obj   = obj
-            self.FO    = GTW.FO (obj, admin.top.encoding)
-        # end def __init__
-
-        @Once_Property
-        def fields (self) :
-            admin = self.admin
-            FO    = self.FO
-            return [(f, getattr (FO, f.name)) for f in admin.list_display]
-        # end def fields
-
-        def href_change (self) :
-            return self.admin.href_change (self.obj)
-        # end def href_change
-
-        def href_delete (self) :
-            return self.admin.href_delete (self.obj)
-        # end def href
-
-        def __getattr__ (self, name) :
-            return getattr (self.obj, name)
-        # end def __getattr__
-
-        def __iter__ (self) :
-            return iter (self.fields)
-        # end def __iter__
-
-    # end class Instance
-
-    Page = Instance
+    # end class __Obsolete_Changer
 
     def __init__ (self, parent, ** kw) :
         kw ["Form_Spec"] = dict \
@@ -887,12 +744,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, "change", str (obj.pid))
     # end def href_change
 
-    def href_complete (self, obj = None) :
-        return pjoin (self.abs_href, "afs_complete")
+    def href_complete (self) :
+        return pjoin (self.abs_href, "complete")
     # end def href_complete
 
-    def href_completed (self, obj = None) :
-        return pjoin (self.abs_href, "afs_completed")
+    def href_completed (self) :
+        return pjoin (self.abs_href, "completed")
     # end def href_completed
 
     def href_delete (self, obj) :
@@ -905,7 +762,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return man.href_display (obj)
     # end def href_display
 
-    def href_expand (self, obj = None) :
+    def href_expand (self) :
         return pjoin (self.abs_href, "expand")
     # end def href_delete
 
@@ -936,7 +793,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if "." in name :
             x = etype
             for n in name.split (".") :
-                x = getattr (x.Class, n)
+                x = getattr (x.P_Type, n)
             return TFL.Record \
                 ( name         = name
                 , ui_name      = x.ui_name
@@ -951,19 +808,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def _auto_list_display
 
     _child_name_map      = dict \
-        ( change         = (AFS,           "args",  None)
-        , afs_complete   = (AFS_Completer, "args", None)
-        , afs_completed  = (AFS_Completed, "args", None)
-        , ochange        = (Changer,       "args",  None)
-        , complete       = (Completer,     "forms", None)
-        , completed      = (Completed,     "forms", None)
-        , create         = (AFS,           "args",  0)
-        , ocreate        = (Changer,       "args",  0)
+        ( change         = (Changer,       "args",  None)
+        , complete       = (Completer,     "args",  None)
+        , completed      = (Completed,     "args",  None)
+        , create         = (Changer,       "args",  0)
         , delete         = (Deleter,       "args",  1)
         , expand         = (Expander,      "args",  0)
-        , fields         = (Fields,        "forms", None)
-        , form           = (HTML_Form,     "forms", None)
-        , test           = (Test,          "forms", None)
         )
     child_attrs          = {}
 

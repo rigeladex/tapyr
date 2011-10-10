@@ -94,7 +94,7 @@ Constraints
 
 - Don't keep references to essential objects to avoid memory leaks
 
-  * problem: attributes of types like `A_Entity`
+  * problem: attributes of types like `A_Id_Entity`
 
 - Store the minimum amount of information in the history list
   necessary to support undo

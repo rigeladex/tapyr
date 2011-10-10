@@ -53,6 +53,8 @@
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    16-Sep-2011 (CT) Use `AE.` instead of `import *`
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#     7-Oct-2011 (CT) `Entity.apply` changed to look at `old_pid`
 #    ««revision-date»»···
 #--
 
@@ -67,7 +69,7 @@ import _GTW._AFS._MOM
 
 class _MOM_Element_ (AE._Element_) :
 
-    _real_name = "Element"
+    _real_name    = "Element"
 
     def _changed_children (self, value, scope, entity, ** kw) :
         result = {}
@@ -97,7 +99,12 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
         if pid is not None :
             result = self._apply_change (pid, value, scope, ** kw)
         else :
-            result = self._apply_create (value, scope, ** kw)
+            old_pid = value.init.get ("pid")
+            if old_pid is None :
+                result = self._apply_create (value, scope, ** kw)
+            else :
+                ### Value of entity field is reset to `None`
+                result = None
         return result
     # end def apply
 
@@ -275,7 +282,7 @@ class _MOM_Field_Composite_ (AE.Field_Composite) :
 
     def _call_iter (self, ETM, entity, ** kw) :
         attr     = ETM.E_Type.attributes [self.name]
-        c_type   = attr.C_Type
+        c_type   = attr.P_Type
         c_entity = getattr (entity, self.name, None)
         for c in self.children :
             yield c (c_type, c_entity, ** dict (kw, ** kw.get (self.name, {})))
@@ -318,6 +325,11 @@ Field_Entity = _MOM_Field_Entity_ # end class
 
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
+
+    def __init__ (self, ** kw) :
+        kw.pop ("completer", None)
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     def apply (self, value, scope, ** kw) :
         self._check_sid (value, ** kw)

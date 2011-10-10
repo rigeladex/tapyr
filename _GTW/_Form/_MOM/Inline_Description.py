@@ -76,6 +76,7 @@
 #                     corrected
 #    19-Aug-2010 (MG) `Collection_Inline_Description.list_display` fixed
 #     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -146,11 +147,10 @@ class GTW_Attribute_Inline_Description (_Inline_Description_) :
         scope            = et_man.home_scope
         self.attr_kind   = attr_kind = getattr (et_man._etype, self.link_name)
         self.ui_name     = attr_kind.ui_name
+        obj_etype        = attr_kind.P_Type
         if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
-            obj_etype    = attr_kind.C_Type
             generic_name = self.link_name
         else :
-            obj_etype    = attr_kind.Class
             generic_name = attr_kind.name
         obj_et_man       = getattr (scope, obj_etype.type_name)
         cls              = self.PKNS.Id_Attribute_Inline

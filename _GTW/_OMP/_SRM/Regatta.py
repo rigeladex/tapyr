@@ -37,6 +37,8 @@
 #    21-Sep-2010 (CT) `Regatta_H.is_team_race` added
 #    23-Nov-2010 (CT) `kind` added
 #    14-Dec-2010 (CT) `year` changed from `Query` to `Cached`
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -177,11 +179,11 @@ class Regatta_C (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class boat_class (A_Entity) :
+        class boat_class (A_Id_Entity) :
             """Class of boats sailing in this regatta."""
 
             kind               = Attr.Primary
-            Class              = GTW.OMP.SRM.Boat_Class
+            P_Type             = GTW.OMP.SRM.Boat_Class
 
         # end class boat_class
 

@@ -163,7 +163,7 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
         for x in sorted (xs) :
             yield ", ".join (str (f) or "''" for f in x)
     q     = completer (scope, val_dict)
-    deps  = completer.all_names
+    deps  = completer.names
     if complete_entity :
         deps += ("pid", "last_cid")
     attrs = tuple (getattr (Q.RAW, a) for a in deps)

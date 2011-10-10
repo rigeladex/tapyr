@@ -33,6 +33,7 @@
 #    23-Nov-2010 (CT) `ui_date` changed to avoid display of `start == finish`
 #    14-Dec-2010 (CT) `year` changed from `Internal` to `Cached`
 #     8-Sep-2011 (CT) `completer` added to `name`, `club` and `desc`
+#    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 from   _MOM._Attr.Date_Interval import *
 
+import _GTW._OMP._SRM.Club
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
@@ -58,30 +60,32 @@ class Regatta_Event (_Ancestor_Essence) :
 
         ### Primary attributes
 
-        class date (A_Date_Interval_C) :
-            """`start` and `finish` date of regatta"""
-
-            kind               = Attr.Primary
-
-        # end class date
-
         class name (A_String) :
             """Name of the regatta event."""
 
             kind               = Attr.Primary
+            ignore_case        = True
             max_length         = 64
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class name
 
+        class date (A_Date_Interval_C) :
+            """`start` and `finish` date of regatta"""
+
+            kind               = Attr.Primary
+
+            completer          = Attr.C_Completer_Spec (Attr.Selector.primary)
+
+        # end class date
+
         ### Non-primary attributes
 
-        class club (A_String) :
-            """Club organizing the regatta event."""
+        class club (A_Id_Entity) :
+            """Club the sailor is starting for."""
 
+            P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Optional
-            max_length         = 8
-            completer          = Attr.Completer_Spec  (1)
 
         # end class club
 

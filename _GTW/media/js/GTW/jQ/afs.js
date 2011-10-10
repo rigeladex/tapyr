@@ -40,6 +40,15 @@
 //    13-Sep-2011 (CT) `setup_completer._put` changed to continue for partial
 //                     completions
 //    15-Sep-2011 (CT) `Field_Entity._get_completer_value` fixed
+//    21-Sep-2011 (CT) Support for `completer.embedded_p` added
+//     7-Oct-2011 (CT) `_put_cb` corrected
+//                     (pass `anchor` instead of `elem` to `_ec_response`)
+//    10-Oct-2011 (CT) `Field._get_completer_value` guarded for `inp$`
+//    10-Oct-2011 (CT) `_get_cb` corrected
+//                     (if `embedded_p` use `anchor.completer...`)
+//    10-Oct-2011 (CT) s/_ac_response/_response_append/
+//                     s/_ec_response/_response_replace/
+//    10-Oct-2011 (CT) `clear_cb` added
 //    ««revision-date»»···
 //--
 
@@ -68,11 +77,14 @@
             result = values;
         };
         return result;
-    } ;
+    };
     $AFS_E.Field.prototype._get_completer_value = function () {
-        var result, value = this.inp$.val ();
-        if (value && value.length > 0) {
-            result = value;
+        var result, value;
+        if ("inp$" in this) {
+            value = this.inp$.val ();
+            if (value && value.length > 0) {
+                result = value;
+            };
         };
         return result;
     };
@@ -109,12 +121,19 @@
             );
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
-                var completer = elem.completer, data, values;
-                values = _get_field_values (elem);
+                var anchor    = elem;
+                var completer = elem.completer;
+                var data, values;
+                while (completer.embedded_p) {
+                    anchor    = $AFS_E.id_map [anchor.anchor_id];
+                    completer = anchor.completer;
+                };
+                values = _get_field_values (anchor);
                 data   =
                     { complete_entity : completer ["entity_p"] || false
-                    , fid             : elem.anchor_id
-                    , trigger         : elem.$id
+                    , fid             : anchor.anchor_id
+                    , trigger         : anchor.$id
+                    , trigger_n       : elem.$id
                     , values          : values
                     };
                 $.gtw_ajax_2json
@@ -129,8 +148,16 @@
                     );
             };
             var _get_cb = function _get_cb (options, elem, val, cb, response) {
-                var n = response.completions, result = [];
+                var anchor    = elem;
+                var completer = elem.completer;
+                var l, n      = response.completions;
+                var result    = [];
                 if (n > 0 && response.fields > 0) {
+                    while (completer.embedded_p) {
+                        anchor    = $AFS_E.id_map [anchor.anchor_id];
+                        completer = anchor.completer;
+                    };
+                    l = Math.min (response.fields, completer.names.length);
                     elem.completer.response = response;
                     for ( var i = 0, li = response.matches.length, match
                         ; i < li
@@ -139,7 +166,8 @@
                         match = response.matches [i];
                         result.push
                             ( { index : i
-                              , label : $.map (match, bwrap).join ("")
+                              , label :
+                                  $.map (match.slice (0, l), bwrap).join ("")
                               , value : match [0]
                               }
                             );
@@ -170,13 +198,17 @@
             };
             var _put = function _put (options, elem, item) {
                 var data;
-                var anchor;
+                var anchor    = elem;
                 var completer = elem.completer;
                 var response  = completer.response;
                 var match     = response.matches [item.index];
                 var names     = completer.names.slice (0, response.fields);
-                _update_field_values (options, elem, match, names);
+                while (completer.embedded_p) {
+                    anchor    = $AFS_E.id_map [elem.anchor_id];
+                    completer = anchor.completer;
+                };
                 if (response.partial) {
+                    _update_field_values (options, elem, match, names);
                     setTimeout
                         ( function () {
                             elem.inp$.autocomplete ("search");
@@ -184,19 +216,23 @@
                         , 1
                         );
                 } else if (completer ["entity_p"]) {
+                    if (! elem.completer.embedded_p) {
+                        _update_field_values (options, elem, match, names);
+                    };
                     data   =
-                        { fid             : elem.anchor_id
-                        , sid             : $AFS_E.root.value.sid
-                        , allow_new       : elem.allow_new
+                        { allow_new       : anchor.allow_new
                         , complete_entity : true
-                        , trigger         : elem.$id
-                        , values          : _get_field_values (elem)
+                        , fid             : anchor.anchor_id
+                        , pid             : match [response.fields - 1]
+                        , sid             : $AFS_E.root.value.sid
+                        , trigger         : anchor.$id
+                        , trigger_n       : elem.$id
                         };
                     $.gtw_ajax_2json
                         ( { async         : true
                           , data          : data
                           , success       : function (answer, status, xhr_i) {
-                                _put_cb (options, elem, item, answer);
+                                _put_cb (options, anchor, answer, true);
                             }
                           , url           : options.completed_url
                           }
@@ -204,17 +240,16 @@
                         );
                 };
             };
-            var _put_cb = function put_cb (options, elem, item, response) {
-                var s$;
+            var _put_cb = function put_cb (options, elem, response, entity_p) {
+                var anchor, s$;
                 if (response.completions > 0) {
-                    if (  (response.completions == 1)
-                       && elem.completer ["entity_p"]
-                       ) {
-                        s$ = elem.inp$.closest ("section");
-                        s$ = _ec_response (response, s$, elem);
+                    if ((response.completions == 1) && entity_p) {
+                        anchor = $AFS_E.get (elem.anchor_id);
+                        s$ = $("[id='" + response.json.$id + "']");
+                        s$ = _response_replace (response, s$, anchor);
                         _setup_callbacks
-                            ( s$, add_cb, cancel_cb, copy_cb, delete_cb
-                            , edit_cb, save_cb
+                            ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                            , delete_cb, edit_cb, save_cb
                             );
                     } else if (response.fields > 0) {
                         _update_field_values
@@ -249,7 +284,9 @@
                         id = map [name];
                         if (id in $AFS_E.id_map) {
                             field = $AFS_E.id_map [id];
-                            field.inp$.val (match [i]).trigger ("change");
+                            if ("inp$" in field) {
+                                field.inp$.val (match [i]).trigger ("change");
+                            };
                         };
                     };
                 };
@@ -265,7 +302,9 @@
                 } else {
                     elem.inp$.autocomplete
                         ( { focus    : function (event, ui) {
-                                elem.inp$.val (ui.item.value);
+                                if (! elem.completer.embedded_p) {
+                                    elem.inp$.val (ui.item.value);
+                                };
                                 return false;
                             }
                           , minLength : completer.treshold
@@ -281,7 +320,7 @@
                 };
             };
         } ();
-        var _bind_click = function _bind_click (context, cb) {
+        var _bind_click = function _bind_click (context) {
             var sel;
             for (var i = 1, li = arguments.length, arg; i < li; i++) {
                 arg = arguments [i];
@@ -289,7 +328,28 @@
                 sel.click (arg);
             }
         };
-        var _ac_response = function _ac_response
+        var _clear_field = function _clear_field (elem) {
+            var child, value = elem ["value"];
+            if ("inp$" in elem) {
+                elem.inp$.val ("");
+            }
+            if (value) {
+                elem._clear_value ();
+                if ("$child_ids" in value) {
+                    for (var i = 0, li = value.$child_ids.length, child_id
+                        ; i < li
+                        ; i++
+                        ) {
+                        child_id = value.$child_ids [i];
+                        child    = $AFS_E.get (child_id);
+                        if (child) {
+                            _clear_field (child);
+                        };
+                    };
+                };
+            };
+        };
+        var _response_append = function _response_append
                 (response, txt_status, p$, parent) {
             var anchor, root, new_elem, s$;
             if (txt_status == "success") {
@@ -313,13 +373,13 @@
                           , roots  : $AFS_E.root.roots
                           }
                         );
-                    _setup_callbacks (s$, add_cb, cancel_cb, save_cb);
+                    _setup_callbacks (s$, add_cb, cancel_cb, clear_cb, save_cb);
                 } else {
                     alert ("Error: " + response.error);
                 }
             }
         };
-        var _ec_response = function _ec_response (response, s$, elem) {
+        var _response_replace = function _response_replace (response, s$, elem) {
             var anchor, new_elem, root;
             s$ = s$
                 .html       (response.html)
@@ -337,7 +397,7 @@
             anchor.value [new_elem.$id] = new_elem.value;
             return s$;
         };
-        var _setup_callbacks = function _setup_callbacks (context, cb) {
+        var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
             $(":input", context)
                 .change (field_change_cb)
@@ -367,7 +427,7 @@
                   // XXX need to pass `pid` of `hidden_role` if any
                   }
                 , function (response, txt_status)
-                    { _ac_response (response, txt_status, p$, parent); }
+                    { _response_append (response, txt_status, p$, parent); }
                 );
         };
         var cancel_cb = function cancel_cb (ev) {
@@ -389,8 +449,11 @@
                     , function (response, txt_status) {
                           if (txt_status == "success") {
                               if (! response ["error"]) {
-                                  s$ = _ec_response (response, s$, elem);
-                                  _bind_click (s$, copy_cb, delete_cb, edit_cb);
+                                  s$ = _response_replace (response, s$, elem);
+                                  _bind_click
+                                      ( s$
+                                      , clear_cb, copy_cb, delete_cb, edit_cb
+                                      );
                               } else {
                                   alert ("Error: " + response.error);
                               }
@@ -401,6 +464,34 @@
                 elem.remove ()
                 s$.remove   ();
             };
+        };
+        var clear_cb  = function clear_cb (ev) {
+            var b$    = $(this);
+            var s$    = b$.closest ("section");
+            var id    = s$.attr    ("id");
+            var elem  = $AFS_E.get (id);
+            _clear_field (elem);
+            $.getJSON
+                ( options.expander_url
+                , { fid       : id
+                  , pid       : null
+                  , sid       : $AFS_E.root.value.sid
+                  , allow_new : elem.allow_new
+                  }
+                , function (response, txt_status) {
+                      if (txt_status == "success") {
+                          if (! response ["error"]) {
+                              s$ = _response_replace (response, s$, elem);
+                              _setup_callbacks
+                                  ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                                  , delete_cb, edit_cb, save_cb
+                                  );
+                          } else {
+                              alert ("Error: " + response.error);
+                          }
+                      }
+                  }
+                );
         };
         var copy_cb = function copy_cb (ev) {
             var b$        = $(this);
@@ -422,7 +513,7 @@
                   , copy          : true
                   }
                 , function (response, txt_status)
-                    { _ac_response (response, txt_status, p$, elem); }
+                    { _response_append (response, txt_status, p$, elem); }
                 );
         };
         var delete_cb = function delete_cb (ev) {
@@ -446,10 +537,10 @@
                 , function (response, txt_status) {
                       if (txt_status == "success") {
                           if (! response ["error"]) {
-                              s$ = _ec_response (response, s$, elem);
+                              s$ = _response_replace (response, s$, elem);
                               _setup_callbacks
-                                  ( s$, add_cb, cancel_cb, copy_cb, delete_cb
-                                  , edit_cb, save_cb
+                                  ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                                  , delete_cb, edit_cb, save_cb
                                   );
                           } else {
                               alert ("Error: " + response.error);
@@ -504,10 +595,10 @@
                             } else if (id === answer.$child_ids [0]) {
                                 response = answer [id];
                                 if (response !== undefined) {
-                                    s$ = _ec_response (response, s$, elem);
+                                    s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks
                                         ( s$
-                                        , add_cb, cancel_cb, copy_cb
+                                        , add_cb, cancel_cb, clear_cb, copy_cb
                                         , delete_cb, edit_cb, save_cb
                                         );
                                 } else {
@@ -532,11 +623,13 @@
         options.form$       = this;
         add_cb.$selector    = ".add.button";
         cancel_cb.$selector = ".cancel.button";
+        clear_cb.$selector  = ".clear.button";
         copy_cb.$selector   = ".copy.button";
         delete_cb.$selector = ".delete.button";
         edit_cb.$selector   = ".edit.button";
         save_cb.$selector   = ".save.button";
-        _setup_callbacks (this, add_cb, copy_cb, delete_cb, edit_cb, save_cb);
+        _setup_callbacks
+            (this, add_cb, clear_cb, copy_cb, delete_cb, edit_cb, save_cb);
         return this;
     };
   } (jQuery)

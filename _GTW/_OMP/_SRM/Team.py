@@ -28,6 +28,9 @@
 # Revision Dates
 #    31-Aug-2010 (CT) Creation
 #     8-Sep-2011 (CT) `completer` added to `name` and `club`
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +42,7 @@ from   _MOM.import_MOM          import *
 
 import _GTW._OMP._PAP.Person
 
+import _GTW._OMP._SRM.Club
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
@@ -67,6 +71,7 @@ class Team (_Ancestor_Essence) :
             """Name of the sailing team."""
 
             kind               = Attr.Primary
+            ignore_case        = True
             max_length         = 64
             completer          = Attr.Completer_Spec  (1)
 
@@ -74,12 +79,11 @@ class Team (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
-        class club (A_String) :
-            """Club the team sails for."""
+        class club (A_Id_Entity) :
+            """Club the sailor is starting for."""
 
+            P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Optional
-            max_length         = 8
-            completer          = Attr.Completer_Spec  (1)
 
         # end class club
 
@@ -91,10 +95,10 @@ class Team (_Ancestor_Essence) :
 
         # end class desc
 
-        class leader (A_Entity) :
+        class leader (A_Id_Entity) :
             """Leader of team."""
 
-            Class              = GTW.OMP.PAP.Person
+            P_Type             = GTW.OMP.PAP.Person
             kind               = Attr.Optional
 
         # end class leader

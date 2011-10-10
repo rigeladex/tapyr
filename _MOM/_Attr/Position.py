@@ -31,6 +31,7 @@
 #     5-Apr-2011 (MG) `distance` abd friends added
 #     6-Apr-2011 (MG) `distance` calculation moved into TFL.Sphere
 #    19-May-2011 (CT) Description for `lat` and `lon` improved
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -96,7 +97,7 @@ class Position (_Ancestor_Essence) :
 class A_Position (_A_Composite_) :
     """Models an attribute holding a geographical position."""
 
-    C_Type         = Position
+    P_Type         = Position
     typ            = "Position"
 
 # end class A_Position

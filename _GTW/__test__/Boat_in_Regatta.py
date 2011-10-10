@@ -40,7 +40,7 @@ _test_code = r"""
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
     >>> list (r.name for r in sorted (rev.regattas))
@@ -53,21 +53,21 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> rev.epk_raw
-    ((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event')
+    (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
     >>> reg.epk_raw
-    (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
+    ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
     >>> SRM.Regatta.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_C ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', ))
+    GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
 
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
     >>> bir.epk_raw
-    (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', u'', 'GTW.OMP.SRM.Boat'), (((('finish', u'2008/05/01'), ('start', u'2008/05/01')), u'Himmelfahrt', 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta')
+    (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', 'GTW.OMP.SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta')
     >>> SRM.Boat_in_Regatta.instance (* bir.epk_raw, raw = True)
-    GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', ), u'AUT', 1107, u''), ((dict (start = u'2008/05/01', finish = u'2008/05/01'), u'Himmelfahrt'), (u'Optimist', )))
+    GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
 
 """
 

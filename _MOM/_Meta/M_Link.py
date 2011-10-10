@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -61,6 +61,7 @@
 #                     `auto_cache_roles` depending on `_names`, not
 #                     `_own_names` (otherwise, role cachers for inherited
 #                     roles get lost)
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -174,14 +175,15 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                 r.role_index = i
                 if r.role_type :
                     ### Replace by app-type specific e-type
-                    r.attr.assoc     = r.assoc      = cls
-                    r.attr.role_type = r.attr.Class = rt = \
+                    r.attr.assoc     = r.assoc       = cls
+                    r.attr.role_type = r.attr.P_Type = rt = \
                         cls.app_type.entity_type (r.role_type)
                     r.attr.typ       = rt.type_base_name
                     rt._own_link_map [cls].add (r)
                     cr_attr = r.attr.auto_cache and r.attr.auto_cache.cr_attr
-                    if cr_attr and cr_attr.Class :
-                        cr_attr.Class = cls.app_type.entity_type (cr_attr.Class)
+                    if cr_attr and cr_attr.P_Type :
+                        cr_attr.P_Type = cls.app_type.entity_type \
+                            (cr_attr.P_Type)
                 if r.role_name != r.generic_role_name :
                     setattr \
                         ( cls, r.role_name

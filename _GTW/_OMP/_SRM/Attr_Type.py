@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -32,6 +32,7 @@
 #    12-May-2010 (CT) `A_Nation.Table` filled with `unicode` instead of `str`
 #     6-Sep-2010 (CT) `Race_Result` removed (now implemented as `Link1`)
 #    13-Oct-2010 (CT) `example` added
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -134,7 +135,7 @@ class Regatta_Result (_Ancestor_Essence) :
 class A_Regatta_Result (_A_Composite_) :
     """Information about a regatta's result."""
 
-    C_Type          = Regatta_Result
+    P_Type          = Regatta_Result
     typ             = "Regatta_Result"
 
 # end class A_Regatta_Result

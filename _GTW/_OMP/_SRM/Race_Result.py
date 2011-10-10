@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Sep-2010 (CT) Creation
+#     7-Oct-2011 (CT) `race.min_value` set to `1`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class Race_Result (_Ancestor_Essence) :
             """Number of race."""
 
             kind               = Attr.Primary
+            min_value          = 1
 
         # end class race
 

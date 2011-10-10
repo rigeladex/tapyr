@@ -42,6 +42,8 @@
 //    25-Jul-2011 (CT) `get_value` added
 //    12-Sep-2011 (CT) `Field_Composite._setup_value` changed to update
 //                     `anchor.field_name_map`
+//     7-Oct-2011 (CT) Guard added to `Element._setup_value`
+//    10-Oct-2011 (CT) `_clear_value` added to `Field` and `Field_Entity`
 //    ««revision-date»»···
 //--
 
@@ -175,13 +177,15 @@
               }
           }
         , _setup_value : function _setup_value (kw, new_kw) {
-              var value = kw.anchor.value;
-              var k;
-              value [this.$id] = this.value;
-              // XXX inefficient !!!
-              k = value ["$child_ids"].indexOf (this.$id);
-              if (k < 0) {
-                  value ["$child_ids"].push (this.$id);
+              if (this.$id !== kw.anchor.$id) {
+                  var value = kw.anchor.value;
+                  var k;
+                  value [this.$id] = this.value;
+                  // XXX inefficient !!!
+                  k = value ["$child_ids"].indexOf (this.$id);
+                  if (k < 0) {
+                      value ["$child_ids"].push (this.$id);
+                  }
               }
           }
         , _sv_anchored_or_root : function _sv_anchored_or_root (kw, new_kw) {
@@ -248,7 +252,10 @@
       , { type_name : "Entity_List" }
     );
     var Field = Element.extend (
-        { _setup_value : function _setup_value (kw, new_kw) {
+        { _clear_value : function _clear_value () {
+              this.value.edit = "";
+          }
+        , _setup_value : function _setup_value (kw, new_kw) {
               if (! this.value ["init"]) {
                   this.value.init = "";
               }
@@ -269,7 +276,11 @@
       , { type_name : "Field_Composite" }
     );
     var Field_Entity = Element.extend (
-        { _setup_value : function _setup_value (kw, new_kw) {
+        { _clear_value : function _clear_value () {
+              this.value.edit.pid = null;
+              this.value.edit.cid = null;
+          }
+        , _setup_value : function _setup_value (kw, new_kw) {
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);

@@ -183,6 +183,16 @@
 #    15-Sep-2011 (CT) `_AC_Query_E_` added and used for `_A_Entity_.ac_query`
 #    15-Sep-2011 (CT) `_A_Entity_.C_Type` added (Alias_Property) to fix
 #                     `ac_query`
+#    21-Sep-2011 (CT) `_AC_Query_Date_` added and used for `A_Date.ac_query`
+#    21-Sep-2011 (CT) `_A_Composite_.__getattr__` added
+#    22-Sep-2011 (CT) s/Object_Reference_Mixin/Id_Entity_Reference_Mixin/
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    22-Sep-2011 (CT) `_A_Entity_` factored from `_A_Composite_` and
+#                     `_A_Id_Entity_`
+#    23-Sep-2011 (CT) `needs_raw_value` and `ignore_case` added to `db_sig`
+#    23-Sep-2011 (CT) `_A_Id_Entity_.as_code` robustified
 #    ««revision-date»»···
 #--
 
@@ -258,15 +268,44 @@ class _AC_Query_C_ (_AC_Query_) :
 
     def __call__ (self, value, prefix = None) :
         name   = self.attr.name
-        C_Type = self.attr.C_Type
+        P_Type = self.attr.P_Type
         pf     = ".".join ((prefix, name)) if prefix else name
         qs     = []
         for k, v in value.iteritems () :
-            qs.append (getattr (C_Type, k).ac_query (v, pf))
+            qs.append (getattr (P_Type, k).ac_query (v, pf))
         return Q.AND (* qs)
     # end def __call__
 
 # end class _AC_Query_C_
+
+class _AC_Query_Date_ (_AC_Query_) :
+
+    pat = Regexp \
+        ( r"^"
+            r"(?P<year> [0-9]{4})"
+            r"(?: [-/]"
+              r"(?P<month> [0-9]{2})"
+            r")?"
+          r"$"
+        , re.VERBOSE
+        )
+
+    def __call__ (self, value, prefix = None) :
+        pat = self.pat
+        if pat.match (value) :
+            q    = self.a_query (prefix)
+            args = (int (pat.year), )
+            if pat.month :
+                args = (int (pat.month, 10), ) + args
+                q    = q.D.MONTH
+            else :
+                q    = q.D.YEAR
+            return q (* args)
+        else :
+            return self.query (self.cooker (value), prefix)
+    # end def __call__
+
+# end class _AC_Query_Date_
 
 class _AC_Query_E_ (_AC_Query_C_) :
 
@@ -429,7 +468,12 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
-        return (self.typ, self.db_sig_version, getattr (self, "max_length", 0))
+        return \
+            ( self.typ
+            , self.db_sig_version
+            , getattr (self, "max_length", 0)
+            , self.needs_raw_value
+            )
     # end def db_sig
 
     @classmethod
@@ -469,9 +513,9 @@ class A_Attr_Type (object) :
         return result
     # end def _cls_attr
 
-    def _fix_C_Type (self, e_type) :
+    def _fix_P_Type (self, e_type) :
         pass
-    # end def _fix_C_Type
+    # end def _fix_P_Type
 
     def _from_string (self, s, obj, glob, locl) :
         return self.cooked (s)
@@ -561,20 +605,41 @@ class _A_Collection_ (A_Attr_Type) :
 
 # end class _A_Collection_
 
-class _A_Composite_ (A_Attr_Type) :
-    """Common base class for composite attributes of an object."""
+class _A_Entity_ (A_Attr_Type) :
+    """Common base class for _A_Composite_ and _A_Id_Entity_"""
 
-    ### Type of composite attribute (derived from MOM.An_Entity)
-    C_Type            = None
-    P_Type            = TFL.Meta.Alias_Property ("C_Type")
+    ### Type of composite attribute
+    ###     (derived from MOM.An_Entity or MOM.Id_Entity)
+    P_Type            = None
 
-    Kind_Mixins       = (MOM.Attr._Composite_Mixin_, )
     needs_raw_value   = False
 
     @TFL.Meta.Once_Property
     def ac_query (self) :
-        return _AC_Query_C_ (self)
+        return self._AC_Query_ (self)
     # end def ac_query
+
+    def _fix_P_Type (self, e_type) :
+        P_Type = self.P_Type
+        if P_Type and not hasattr (P_Type, "app_type") :
+            if not isinstance (P_Type, basestring) :
+                P_Type = P_Type.type_name
+            self.P_Type = e_type.app_type.etypes [P_Type]
+    # end def _fix_P_Type
+
+    def __getattr__ (self, name) :
+        ### to support calls like `scope.PAP.Person.lifetime.start.ac_query`
+        return getattr (self.P_Type, name)
+    # end def __getattr__
+
+# end class _A_Entity_
+
+class _A_Composite_ (_A_Entity_) :
+    """Common base class for composite attributes of an object."""
+
+    Kind_Mixins       = (MOM.Attr._Composite_Mixin_, )
+
+    _AC_Query_        = _AC_Query_C_
 
     def as_code (self, value) :
         if value is not None :
@@ -600,10 +665,10 @@ class _A_Composite_ (A_Attr_Type) :
         if isinstance (value, tuple) :
             value = dict (value)
         if isinstance (value, dict) :
-            value = soc.C_Type (** value)
-        if value is not None and not isinstance (value, soc.C_Type) :
+            value = soc.P_Type (** value)
+        if value is not None and not isinstance (value, soc.P_Type) :
             raise ValueError \
-                (_T ("Value `%r` is not of type %s") % (value, soc.C_Type))
+                (_T ("Value `%r` is not of type %s") % (value, soc.P_Type))
         return value
     # end def cooked
 
@@ -611,14 +676,14 @@ class _A_Composite_ (A_Attr_Type) :
     def db_sig (self) :
         return \
             ( self.__super.db_sig
-            + (self.C_Type and self.C_Type.db_sig, )
+            + (self.P_Type and self.P_Type.db_sig, )
             )
     # end def db_sig
 
     @classmethod
     def epk_def_set_ckd (cls) :
         if cls.kind :
-            form = "if %(name)s is None : %(name)s = cls.%(name)s.C_Type ()"
+            form = "if %(name)s is None : %(name)s = cls.%(name)s.P_Type ()"
             return cls.kind.epk_def_set (form % dict (name = cls.name))
     # end def epk_def_set_ckd
 
@@ -629,15 +694,15 @@ class _A_Composite_ (A_Attr_Type) :
         if isinstance (t, tuple) :
             t = dict (t)
         t.setdefault ("raw", True)
-        return self.C_Type (** t)
+        return self.P_Type (** t)
     # end def from_string
 
     def _checkers (self, e_type, kind) :
-        self._fix_C_Type (e_type)
+        self._fix_P_Type (e_type)
         for c in self.__super._checkers (e_type, kind) :
             yield c
         name = self.name
-        for k, ps in self.C_Type._Predicates._pred_kind.iteritems () :
+        for k, ps in self.P_Type._Predicates._pred_kind.iteritems () :
             if kind.electric :
                 k = kind.kind
                 p_kind = MOM.Pred.System
@@ -658,14 +723,6 @@ class _A_Composite_ (A_Attr_Type) :
                     )
                 yield check, ()
     # end def _checkers
-
-    def _fix_C_Type (self, e_type) :
-        C_Type = self.C_Type
-        if not hasattr (C_Type, "app_type") :
-            if not isinstance (C_Type, basestring) :
-                C_Type = C_Type.type_name
-            self.C_Type = C_Type = e_type.app_type.etypes [C_Type]
-    # end def _fix_C_Type
 
 # end class _A_Composite_
 
@@ -719,7 +776,7 @@ class _A_Named_Value_ (A_Attr_Type) :
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Named_Value
 
-    C_Type            = None ### Type of cooked values
+    C_Type            = None ### Attribute type applicable to cooked values
 
     needs_raw_value   = False
 
@@ -894,20 +951,13 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 
 # end class _A_Link_Role_Right_
 
-class _A_Entity_ (A_Attr_Type) :
+class _A_Id_Entity_ (_A_Entity_) :
     """Models an attribute referring to an entity."""
 
-    Class             = ""
-    C_Type = P_Type   = TFL.Meta.Alias_Property  ("Class")
+    _AC_Query_        = _AC_Query_E_
 
-    needs_raw_value   = False
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
-
-    @TFL.Meta.Once_Property
-    def ac_query (self) :
-        return _AC_Query_E_ (self)
-    # end def ac_query
 
     @TFL.Meta.Once_Property
     def example (self) :
@@ -921,7 +971,10 @@ class _A_Entity_ (A_Attr_Type) :
     # end def example
 
     def as_code (self, value) :
-        return tuple (a.as_code (a.get_value (value)) for a in value.primary)
+        if value is not None :
+            return tuple \
+                (a.as_code (a.get_value (value)) for a in value.primary)
+        return repr (u"")
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -937,9 +990,10 @@ class _A_Entity_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        etm = soc.etype_manager ()
-        if etm :
-            soc._check_type (etm.E_Type, value)
+        if value is not None :
+            etm = soc.etype_manager ()
+            if etm :
+                soc._check_type (etm.E_Type, value)
         return value
     # end def cooked
 
@@ -954,15 +1008,15 @@ class _A_Entity_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def etype_manager (soc, obj = None) :
-        if soc.Class :
-            return getattr (soc._get_scope (obj), soc.Class.type_name, None)
+        if soc.P_Type :
+            return getattr (soc._get_scope (obj), soc.P_Type.type_name, None)
     # end def etype_manager
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        if isinstance (s, self.Class) :
+        if isinstance (s, self.P_Type) :
             return s
         elif s :
-            assert self.Class, "%s needs to define `Class`" % self
+            assert self.P_Type, "%s needs to define `P_Type`" % self
             if isinstance (s, tuple) :
                 t = s
             else :
@@ -975,7 +1029,7 @@ class _A_Entity_ (A_Attr_Type) :
 
     def _accept_object (self, obj, result) :
         if (      self.__class__.eligible_objects.im_func
-           is not _A_Entity_.eligible_objects.im_func
+           is not _A_Id_Entity_.eligible_objects.im_func
            ) :
             eo = self.eligible_objects (obj)
             if eo :
@@ -993,16 +1047,16 @@ class _A_Entity_ (A_Attr_Type) :
                       u"    must be instance of %s"
                     )
                 % ( value.type_name, unicode (value), soc.name
-                  , soc.Class.type_name
+                  , soc.P_Type.type_name
                   )
                 )
     # end def _check_type
 
     def _get_object (self, obj, epk, raw = False) :
-        if epk and isinstance (epk [-1], self.Class.Type_Name_Type) :
+        if epk and isinstance (epk [-1], self.P_Type.Type_Name_Type) :
             tn = epk [-1]
         else :
-            tn = self.Class.type_name
+            tn = self.P_Type.type_name
         scope  = self._get_scope (obj)
         etm    = scope [tn]
         result = etm.instance (* epk, raw = raw)
@@ -1026,7 +1080,7 @@ class _A_Entity_ (A_Attr_Type) :
         return obj.home_scope if obj else MOM.Scope.active
     # end def _get_scope
 
-# end class _A_Entity_
+# end class _A_Id_Entity_
 
 class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
@@ -1122,6 +1176,11 @@ class _A_String_ (_A_String_Base_) :
     ignore_case       = False
     needs_raw_value   = False
     P_Type            = unicode
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return self.__super.db_sig + (self.ignore_case, )
+    # end def db_sig
 
 # end class _A_String_
 
@@ -1233,9 +1292,9 @@ class _A_Typed_Tuple_ (_A_Typed_Collection_) :
 
 # end class _A_Typed_Tuple_
 
-class _A_Entity_Set_ (_A_Typed_Set_) :
+class _A_Id_Entity_Set_ (_A_Typed_Set_) :
 
-    C_Type         = _A_Entity_
+    C_Type         = _A_Id_Entity_
 
     def _C_as_code (self, value) :
         sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
@@ -1247,7 +1306,7 @@ class _A_Entity_Set_ (_A_Typed_Set_) :
         return self.__super._C_as_string (sorted (value, key = sk))
     # end def _C_as_string
 
-# end class _A_Entity_Set_
+# end class _A_Id_Entity_Set_
 
 class _A_Unit_ (A_Attr_Type) :
     """Mixin for attributes describing physical quantities with optional
@@ -1326,7 +1385,7 @@ class A_Boolean (_A_Named_Value_) :
 
 # end class A_Boolean
 
-class A_Cached_Role (_A_Entity_) :
+class A_Cached_Role (_A_Id_Entity_) :
     """Models an attribute referring to an object linked via an
        association.
     """
@@ -1346,7 +1405,7 @@ class A_Cached_Role_DFC (A_Cached_Role) :
 
 # end class A_Cached_Role_DFC
 
-class A_Cached_Role_Set (_A_Entity_Set_) :
+class A_Cached_Role_Set (_A_Id_Entity_Set_) :
     """Models an attribute referring to a set of objects linked via an
        association.
     """
@@ -1376,6 +1435,11 @@ class A_Date (_A_Date_) :
     input_formats  = \
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
+
+    @TFL.Meta.Once_Property
+    def ac_query (self) :
+        return _AC_Query_Date_ (self.name, self.cooked)
+    # end def ac_query
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -1641,7 +1705,7 @@ class A_Length (_A_Unit_, _A_Float_) :
 
 # end class A_Length
 
-class A_Link_Role (_A_Entity_) :
+class A_Link_Role (_A_Id_Entity_) :
     """Attribute describing a link-role."""
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
@@ -1738,13 +1802,13 @@ class A_Numeric_String (_A_String_Base_) :
 
 # end class A_Numeric_String
 
-class A_Entity (_A_Entity_) :
+class A_Id_Entity (_A_Id_Entity_) :
     """Models an attribute referring to an entity."""
 
     typ            = "Entity"
-    Kind_Mixins    = (MOM.Attr.Object_Reference_Mixin, )
+    Kind_Mixins    = (MOM.Attr.Id_Entity_Reference_Mixin, )
 
-# end class A_Entity
+# end class A_Id_Entity
 
 class A_String (_A_String_) :
     """Models a string-valued attribute of an object."""

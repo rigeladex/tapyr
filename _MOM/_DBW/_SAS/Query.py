@@ -46,6 +46,9 @@
 #     6-Sep-2010 (MG) `_MOM_Query_.SAS_EQ_Clause` fixed
 #    19-Jul-2011 (MG) Support for raw queries added
 #    21-Jul-2011 (MG) `_MOM_Query_.attributes` `pid` added
+#    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -145,7 +148,7 @@ class MOM_Query (_MOM_Query_) :
                 attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
                 comp_query = MOM_Composite_Query \
-                    (e_type, attr.C_Type, kind, sa_table)
+                    (e_type, attr.P_Type, kind, sa_table)
                 self._add_q (comp_query, kind, name, attr.ckd_name)
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind, attr))
@@ -161,7 +164,7 @@ class MOM_Query (_MOM_Query_) :
                 if isinstance (kind, MOM.Attr.Link_Role) :
                     self._add_q (col, kind, attr.role_name)
                     attr_names.append (attr.role_name)
-                if isinstance (attr, MOM.Attr._A_Entity_) :
+                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
                     join_query = Join_Query (self)
                     for an in attr_names :
                         self._ID_ENTITY_ATTRS [an] = join_query
@@ -274,7 +277,7 @@ class MOM_Composite_Query (_MOM_Query_) :
 # end class MOM_Composite_Query
 
 class Join_Query (_MOM_Query_) :
-    """A query which requires the joining of two table."""
+    """A query which requires the joining of two tables."""
 
     def __init__ (self, source) :
         self.source     = source
@@ -284,9 +287,9 @@ class Join_Query (_MOM_Query_) :
         base, sub_attr = attr_name.split (".", 1)
         column         = getattr (self.source, base)
         try :
-            o_SAQ      = column.mom_kind.Class._SAQ
+            o_SAQ      = column.mom_kind.P_Type._SAQ
         except AttributeError :
-            type_name  = column.mom_kind.Class.type_name
+            type_name  = column.mom_kind.P_Type.type_name
             raise TypeError \
                 ( "Cannot query attribute `%s` of type `%s`.\n"
                   "If you need this query consider making `%s` relevant."

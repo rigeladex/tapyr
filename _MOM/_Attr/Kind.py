@@ -156,6 +156,9 @@
 #     9-Dec-2010 (CT) `_Auto_Update_Lazy_Mixin_` added
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    29-Mar-2011 (CT) `is_changeable` and `Just_Once_Mixin` added
+#    22-Sep-2011 (CT) s/Object_Reference_Mixin/Id_Entity_Reference_Mixin/
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -456,7 +459,7 @@ class _EPK_Mixin_ (Kind) :
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
-        return self.__super.db_sig + (self.attr.Class.type_name, )
+        return self.__super.db_sig + (self.attr.P_Type.type_name, )
     # end def db_sig
 
     def get_raw_epk (self, obj) :
@@ -468,7 +471,7 @@ class _EPK_Mixin_ (Kind) :
 
     def from_pickle_cargo (self, scope, cargo) :
         if cargo and cargo [0] :
-            ETM = scope [self.attr.Class.type_name]
+            ETM = scope [self.attr.P_Type.type_name]
             return ETM.pid_query (cargo [0])
     # end def from_pickle_cargo
 
@@ -583,14 +586,9 @@ class _Composite_Mixin_ (_Co_Base_) :
     get_substance   = TFL.Meta.Alias_Property ("get_raw")
     void_values     = property (lambda s : s.void_raw_values)
 
-    @property
-    def Class (self) :
-        return self.attr.C_Type
-    # end def Class
-
     def from_pickle_cargo (self, scope, cargo) :
         if cargo and cargo [0] :
-            return self.attr.C_Type.from_attr_pickle_cargo (scope, cargo [0])
+            return self.attr.P_Type.from_attr_pickle_cargo (scope, cargo [0])
     # end def from_pickle_cargo
 
     def get_hash (self, obj, value = None) :
@@ -613,15 +611,15 @@ class _Composite_Mixin_ (_Co_Base_) :
     def reset (self, obj) :
         ### Need an empty composite at all times
         scope = obj.home_scope
-        etm   = scope [self.attr.C_Type.type_name]
+        etm   = scope [self.attr.P_Type.type_name]
         return self._set_cooked_value (obj, etm (), changed = True)
     # end def reset
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
-            if not attr_type.C_Type :
+            if not attr_type.P_Type :
                 raise TypeError \
-                    ("%s needs to define `C_Type`" % attr_type)
+                    ("%s needs to define `P_Type`" % attr_type)
             for name in ("computed_default", "default", "raw_default") :
                 d = getattr (attr_type, name)
                 if d :
@@ -1273,7 +1271,7 @@ class Sticky_Mixin (_Sticky_Mixin_) :
 
 # end class Sticky_Mixin
 
-class _Object_Reference_Mixin_ (_EPK_Mixin_) :
+class _Id_Entity_Reference_Mixin_ (_EPK_Mixin_) :
 
     def __delete__ (self, obj) :
         ### We need to manually set the value to None first in order to
@@ -1296,9 +1294,9 @@ class _Object_Reference_Mixin_ (_EPK_Mixin_) :
             pass
     # end def _unregister
 
-# end class _Object_Reference_Mixin_
+# end class _Id_Entity_Reference_Mixin_
 
-class Object_Reference_Mixin (_Object_Reference_Mixin_) :
+class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     """Kind mixin for handling object references correctly."""
 
     def _set_cooked_value (self, obj, value, changed = 42) :
@@ -1312,7 +1310,7 @@ class Object_Reference_Mixin (_Object_Reference_Mixin_) :
                 self._register (obj, value)
     # end def _set_cooked_value
 
-# end class Object_Reference_Mixin
+# end class Id_Entity_Reference_Mixin
 
 ### XXX Object-Reference- and Link-related kinds
 

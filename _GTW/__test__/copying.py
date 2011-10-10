@@ -77,10 +77,10 @@ _test_code = r"""
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (dict (start = "20080501", raw = True), u"Himmelfahrt", raw = True)
-    >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
-    >>> reh = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
-    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
+    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
+    >>> reh = SRM.Regatta_H (rev, handicap = u"Yardstick",  raw = True)
+    >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
 
     >>> rr1 = SRM.Race_Result (bir, 1, points = 8)
     >>> rr2 = SRM.Race_Result (bir, 2, points = 4)

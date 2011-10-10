@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Mar-2010 (CT) Creation
+#    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    ««revision-date»»···
 #--
 
@@ -111,7 +112,7 @@ class D2_Value_Float (_Ancestor_Essence) :
 class A_2D_Int (_A_Composite_) :
     """Models an attribute holding a two-dimensional integer-based value."""
 
-    C_Type           = D2_Value_Int
+    P_Type           = D2_Value_Int
     typ              = "D2_Value_Int"
 
 # end class A_2D_Int
@@ -119,7 +120,7 @@ class A_2D_Int (_A_Composite_) :
 class A_2D_Float (_A_Composite_) :
     """Models an attribute holding a two-dimensional float-based value."""
 
-    C_Type           = D2_Value_Float
+    P_Type           = D2_Value_Float
     typ              = "D2_Value_Float"
 
 # end class A_2D_Float

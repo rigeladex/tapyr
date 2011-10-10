@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -72,6 +72,7 @@
 #    12-Aug-2010 (MG) Sort order fixed
 #    18-Aug-2010 (MG) `Collection_Inline.setup_javascript` removed
 #    18-Aug-2010 (MG) `Collection_Inline.linked_instances` fixed
+#    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    ««revision-date»»···
 #--
 
@@ -292,7 +293,7 @@ class Link_Inline (TFL.Meta.Object) :
                 oet = etype
                 while "." in attr :
                     kind_name, attr = attr.split (".")
-                    oet             = getattr (etype, kind_name).Class
+                    oet             = getattr (etype, kind_name).P_Type
                     obj             = getattr (link,  kind_name)
                 kind = getattr     (oet, attr)
                 yield kind.get_raw (obj)

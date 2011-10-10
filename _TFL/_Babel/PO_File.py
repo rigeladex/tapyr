@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -29,6 +29,8 @@
 #    22-Jan-2010 (MG) Creation
 #    25-Jan-2010 (MG) `combine_package_translations` fixed
 #    24-Feb-2010 (MG) `_make_dir` added and used
+#    10-Oct-2011 (CT) `__getattr__` added (needed by `self.catalog.update` to
+#                     access `creation_date`)
 #    ««revision-date»»···
 #--
 
@@ -186,6 +188,12 @@ class PO_File (TFL.Meta.Object) :
     def __contains__ (self, item) :
         return item in self.catalog
     # end def __contains__
+
+    def __getattr__ (self, name) :
+        if name != "catalog" :
+            return getattr (self.catalog, name)
+        raise AttributeError (name)
+    # end def __getattr__
 
     def __iter__ (self) :
         return iter (self.catalog)
