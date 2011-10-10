@@ -44,6 +44,8 @@
 //     7-Oct-2011 (CT) `_put_cb` corrected
 //                     (pass `anchor` instead of `elem` to `_ec_response`)
 //    10-Oct-2011 (CT) `Field._get_completer_value` guarded for `inp$`
+//    10-Oct-2011 (CT) `_get_cb` corrected
+//                     (if `embedded_p` use `anchor.completer...`)
 //    ««revision-date»»···
 //--
 
@@ -143,11 +145,16 @@
                     );
             };
             var _get_cb = function _get_cb (options, elem, val, cb, response) {
+                var anchor    = elem;
                 var completer = elem.completer;
-                var n  = response.completions;
-                var l = Math.min (response.fields, completer.names.length);
-                var result = [];
+                var l, n      = response.completions;
+                var result    = [];
                 if (n > 0 && response.fields > 0) {
+                    while (completer.embedded_p) {
+                        anchor    = $AFS_E.id_map [anchor.anchor_id];
+                        completer = anchor.completer;
+                    };
+                    l = Math.min (response.fields, completer.names.length);
                     elem.completer.response = response;
                     for ( var i = 0, li = response.matches.length, match
                         ; i < li

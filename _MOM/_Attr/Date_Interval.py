@@ -34,6 +34,7 @@
 #    10-May-2010 (CT) `A_Date_Interval_C` added
 #     8-Sep-2011 (CT) `Date_Interval.ui_display_format` redefined
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    10-Oct-2011 (CT) `start.completer` added
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,7 @@ class Date_Interval (_Ancestor_Essence) :
 
             kind               = Attr.Necessary
             rank               = 1
+            completer          = Attr.Completer_Spec  (4)
 
         # end class start
 
