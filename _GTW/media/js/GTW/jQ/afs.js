@@ -43,6 +43,7 @@
 //    21-Sep-2011 (CT) Support for `completer.embedded_p` added
 //     7-Oct-2011 (CT) `_put_cb` corrected
 //                     (pass `anchor` instead of `elem` to `_ec_response`)
+//    10-Oct-2011 (CT) `Field._get_completer_value` guarded for `inp$`
 //    ««revision-date»»···
 //--
 
@@ -73,9 +74,12 @@
         return result;
     } ;
     $AFS_E.Field.prototype._get_completer_value = function () {
-        var result, value = this.inp$.val ();
-        if (value && value.length > 0) {
-            result = value;
+        var result, value;
+        if ("inp$" in this) {
+            value = this.inp$.val ();
+            if (value && value.length > 0) {
+                result = value;
+            };
         };
         return result;
     };
