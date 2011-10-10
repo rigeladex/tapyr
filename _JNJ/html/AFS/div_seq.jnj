@@ -39,6 +39,7 @@
 ##                     `Field_Entity`
 ##    10-Jun-2011 (MG) `Group` added
 ##    28-Sep-2011 (CT) Most buttons removed from `Field_Entity`
+##    10-Oct-2011 (CT) `Clear` button added to `Field_Entity`
 ##    ««revision-date»»···
 ##--
 #}
@@ -147,6 +148,7 @@
       {%- else %}
         {{ GTW.call_macro ("do_button", "Save",   templ_name = renderer) }}
       {% endif -%}
+      {{ GTW.call_macro ("do_button", "Clear",    templ_name = renderer) }}
     {% endcall %} {# do_head #}
     {%- if not elem.collapsed %}
       {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
