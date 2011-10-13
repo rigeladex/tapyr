@@ -50,6 +50,7 @@
 //                     s/_ec_response/_response_replace/
 //    10-Oct-2011 (CT) `clear_cb` added
 //    13-Oct-2011 (CT) `delete_cb` added
+//    13-Oct-2011 (CT) `_renderItem` changed locally, not globally
 //    ««revision-date»»···
 //--
 
@@ -59,6 +60,14 @@
     var $AFS_E = $GTW.AFS.Elements;
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
+    };
+    var _ac_render_item_orig = $.ui.autocomplete.prototype._renderItem;
+    var _ac_render_item_html = function _ac_render_item (ul, item) {
+        var result = $("<li></li>")
+            .data     ("item.autocomplete", item)
+            .append   ($("<a></a>").html (item.label))
+            .appendTo (ul);
+        return result;
     };
     var _get_completer_values_nested = function _get_completer_values_nested () {
         var field, fv, id, name, result, value;
@@ -100,20 +109,6 @@
         };
         return result;
     };
-    ( function fix_ui_autocomplete () {
-        $.extend
-            ( $.ui.autocomplete.prototype
-            , { _renderItem : function (ul, item) {
-                  var result = $("<li></li>")
-                      .data     ("item.autocomplete", item)
-                      .append   ($("<a></a>").html (item.label))
-                      .appendTo (ul);
-                  return result;
-                }
-              }
-            );
-      } ()
-    );
     $.fn.afs_form = function (afs_form, opts) {
         var options  = $.extend
             ( {
@@ -293,7 +288,7 @@
                 };
             };
             return function setup_completer (options, elem) {
-                var completer = elem.completer;
+                var ac, completer = elem.completer;
                 if ("choices" in completer) {
                     elem.inp$.autocomplete
                         ( { minLength : completer.treshold
@@ -301,7 +296,7 @@
                           }
                         );
                 } else {
-                    elem.inp$.autocomplete
+                    ac = elem.inp$.autocomplete
                         ( { focus    : function (event, ui) {
                                 if (! elem.completer.embedded_p) {
                                     elem.inp$.val (ui.item.value);
@@ -317,7 +312,8 @@
                                 _get (options, elem, request.term, cb);
                             }
                           }
-                        );
+                        ).data ("autocomplete");
+                    ac._renderItem = _ac_render_item_html;
                 };
             };
         } ();
@@ -400,19 +396,18 @@
         };
         var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
-            $(":input", context)
-                .change (field_change_cb)
-                .each
-                    ( function (n) {
-                        var inp$   = $(this);
-                        var id     = inp$.attr ("id");
-                        var elem   = $AFS_E.get (id);
-                        elem.inp$  = inp$;
-                        if ("completer" in elem) {
-                            setup_completer (options, elem);
-                        }
-                      }
-                    );
+            $(":input", context).each
+                ( function (n) {
+                    var inp$   = $(this);
+                    var id     = inp$.attr ("id");
+                    var elem   = $AFS_E.get (id);
+                    elem.inp$  = inp$;
+                    inp$.change (field_change_cb);
+                    if ("completer" in elem) {
+                        setup_completer (options, elem);
+                    }
+                  }
+                );
         };
         var add_cb = function add_cb (ev) {
             var b$        = $(this);
