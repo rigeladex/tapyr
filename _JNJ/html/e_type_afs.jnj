@@ -33,6 +33,7 @@
 ##    31-Mar-2011 (CT) Creation continued..
 ##    25-Jul-2011 (CT) `completer_url` added
 ##    26-Jul-2011 (CT) `completed_url` added
+##    13-Oct-2011 (CT) `deleter_url` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -50,6 +51,7 @@
       ( {{ form.as_js }}
       , { completer_url : "{{ page.href_complete  () }}"
         , completed_url : "{{ page.href_completed () }}"
+        , deleter_url   : "{{ page.href_delete    () }}"
         , expander_url  : "{{ page.href_expand    () }}"
         }
       );

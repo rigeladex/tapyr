@@ -49,6 +49,7 @@
 //    10-Oct-2011 (CT) s/_ac_response/_response_append/
 //                     s/_ec_response/_response_replace/
 //    10-Oct-2011 (CT) `clear_cb` added
+//    13-Oct-2011 (CT) `delete_cb` added
 //    ««revision-date»»···
 //--
 
@@ -517,8 +518,34 @@
                 );
         };
         var delete_cb = function delete_cb (ev) {
-            // XXX;
-            alert ("Please implement the `delete_cb`");
+            var b$    = $(this);
+            var s$    = b$.closest ("section");
+            var id    = s$.attr    ("id");
+            var elem  = $AFS_E.get (id);
+            var value = elem ["value"];
+            var pid   = value && value.edit.pid;
+            if (pid !== undefined && pid !== "") {
+                $.gtw_ajax_2json
+                    ( { url         : options.deleter_url
+                      , data        :
+                          { fid     : id
+                          , pid     : pid
+                          , sid     : $AFS_E.root.value.sid
+                          }
+                      , success     : function (response, status) {
+                            if (! response ["error"]) {
+                                s$ = _response_replace (response, s$, elem);
+                                _setup_callbacks
+                                    ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                                    , delete_cb, edit_cb, save_cb
+                                    );
+                            } else {
+                                alert ("Error: " + response.error);
+                            };
+                        }
+                      }
+                    );
+            };
         };
         var edit_cb = function edit_cb (ev) {
             var b$    = $(this);
