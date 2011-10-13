@@ -51,6 +51,7 @@
 //    10-Oct-2011 (CT) `clear_cb` added
 //    13-Oct-2011 (CT) `delete_cb` added
 //    13-Oct-2011 (CT) `_renderItem` changed locally, not globally
+//    13-Oct-2011 (CT) `gtw_autocomplete` factored into separate module
 //    ««revision-date»»···
 //--
 
@@ -60,14 +61,6 @@
     var $AFS_E = $GTW.AFS.Elements;
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
-    };
-    var _ac_render_item_orig = $.ui.autocomplete.prototype._renderItem;
-    var _ac_render_item_html = function _ac_render_item (ul, item) {
-        var result = $("<li></li>")
-            .data     ("item.autocomplete", item)
-            .append   ($("<a></a>").html (item.label))
-            .appendTo (ul);
-        return result;
     };
     var _get_completer_values_nested = function _get_completer_values_nested () {
         var field, fv, id, name, result, value;
@@ -290,13 +283,13 @@
             return function setup_completer (options, elem) {
                 var ac, completer = elem.completer;
                 if ("choices" in completer) {
-                    elem.inp$.autocomplete
+                    elem.inp$.gtw_autocomplete
                         ( { minLength : completer.treshold
                           , source    : completer.choices
                           }
                         );
                 } else {
-                    ac = elem.inp$.autocomplete
+                    elem.inp$.gtw_autocomplete
                         ( { focus    : function (event, ui) {
                                 if (! elem.completer.embedded_p) {
                                     elem.inp$.val (ui.item.value);
@@ -312,8 +305,8 @@
                                 _get (options, elem, request.term, cb);
                             }
                           }
-                        ).data ("autocomplete");
-                    ac._renderItem = _ac_render_item_html;
+                        , "html"
+                        );
                 };
             };
         } ();

@@ -327,6 +327,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/jQ/autocomplete.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
                 )
             )
