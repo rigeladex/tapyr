@@ -120,6 +120,8 @@
 #                     `pid` for entity completion
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Entity_ attributes
 #    10-Oct-2011 (CT) Old-style form handling removed
+#    13-Oct-2011 (CT) `_check_readonly` factored
+#    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
 #    ««revision-date»»···
 #--
 
@@ -269,6 +271,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise JSON_Error (error = "Session expired: %s" % (exc, ))
         # end def session_secret
 
+        def _check_readonly (self, request) :
+            if self.top.scope.readonly : ### XXX might be out-of-date !!!
+                request.Error = \
+                    (_T ( "At the moment, the database is set to "
+                          "readonly to allow maintenance."
+                        )
+                    )
+                raise self.top.HTTP.Error_503 (request.path, request.Error)
+        # end def _check_readonly
+
         def _raise_401 (self, handler) :
             if handler.json :
                 return handler.write_json \
@@ -315,6 +327,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
+                , GTW.Script (src = "/media/GTW/js/GTW/jQ/autocomplete.js")
                 , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
                 )
             )
@@ -331,13 +344,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             req_data = request.req_data
             pid      = req_data.get ("pid") or self.args [0]
             scope    = self.top.scope
-            if scope.readonly : ### XXX might be out-of-date !!!
-                request.Error = \
-                    (_T ( "At the moment, the database is set to "
-                          "readonly to allow maintenance."
-                        )
-                    )
-                raise HTTP.Error_503 (request.path, request.Error)
+            self._check_readonly (request)
             if pid is not None and pid != "null" :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
@@ -364,7 +371,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         # end def rendered
 
         def _post_handler (self, handler, scope) :
-            HTTP       = self.top.HTTP
             json       = handler.json
             request    = handler.request
             result     = {}
@@ -522,13 +528,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         template_name     = "e_type_delete"
         SUPPORTED_METHODS = set (("POST", ))
 
-        def _view (self, handler) :
+        def _post_handler_args (self, handler) :
             ETM        = self.ETM
-            HTTP       = self.top.HTTP
-            pid        = self.args [0]
+            pid        = self.args and self.args [0]
             request    = handler.request
             result     = {}
-            try :
+            if pid :
                 obj    = self.pid_query (ETM, pid)
                 result ["replacement"] = dict \
                     ( html = """<td colspan="6">%s</td>"""
@@ -537,6 +542,49 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     , ### XXX undelete link !!!
                     )
                 obj.destroy ()
+            else :
+                request.Error = \
+                    ( _T ("You need to specify a pid!"))
+                raise self.HTTP.Error_400 (request.path, request.Error)
+            return result
+        # end def _post_handler_args
+
+        def _post_handler_json (self, handler) :
+            json           = handler.json
+            request        = handler.request
+            fid            = json.get ("fid")
+            pid            = json.get ("pid")
+            sid            = json.get ("sid")
+            result         = {}
+            scope          = self.top.scope
+            session_secret = self.session_secret (handler, sid)
+            form, elem     = self.form_element   (fid)
+            ETM            = scope [elem.type_name]
+            if pid is not None and pid != "null" :
+                obj = self.pid_query (ETM, pid)
+                result ["html"] = \
+                    ( """<h2>%s</h2>"""
+                      % ( _T ("""Object "%s" deleted""")
+                        % (obj.ui_display, )
+                        )
+                      ### XXX use template to render this XXX
+                    )
+                obj.destroy ()
+            else :
+                request.Error = \
+                    ( _T ("You need to specify a pid!"))
+                raise self.HTTP.Error_400 (request.path, request.Error)
+            return result
+        # end def _post_handler_json
+
+        def _view (self, handler) :
+            self._check_readonly (handler.request)
+            try :
+                if self.args and self.args [0] :
+                    ph = self._post_handler_args
+                else :
+                    ph = self._post_handler_json
+                result = ph (handler)
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
@@ -554,11 +602,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             obj      = context ["instance"] = None
             request  = handler.request
             req_data = request.req_data
-            scope    = self.top.scope
             fid      = req_data.get ("fid")
+            pid      = req_data.get ("pid")
+            sid      = req_data.get ("sid")
+            scope    = self.top.scope
             try :
-                pid            = req_data.get        ("pid")
-                sid            = req_data.get        ("sid")
                 form, elem     = self.form_element   (fid)
                 session_secret = self.session_secret (handler, sid)
                 ETM            = scope [elem.type_name]
@@ -626,8 +674,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     Page = Instance
 
     class __Obsolete_Changer (_Cmd_) :
-        ### XXX transfer `scope.readonly`, `nested_change_recorder`, error
-        ###     handling, ...
+        ### XXX transfer `nested_change_recorder`, error handling, ...
         ###     to `Changer`
 
         def rendered (self, handler, template = None) :
@@ -752,8 +799,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, "completed")
     # end def href_completed
 
-    def href_delete (self, obj) :
-        return pjoin (self.abs_href, "delete", str (obj.pid))
+    def href_delete (self, obj = None) :
+        result = pjoin (self.abs_href, "delete")
+        if obj is not None :
+            result = pjoin (result, str (obj.pid))
+        return result
     # end def href_delete
 
     def href_display (self, obj) :
@@ -812,7 +862,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , complete       = (Completer,     "args",  None)
         , completed      = (Completed,     "args",  None)
         , create         = (Changer,       "args",  0)
-        , delete         = (Deleter,       "args",  1)
+        , delete         = (Deleter,       "args",  None)
         , expand         = (Expander,      "args",  0)
         )
     child_attrs          = {}
