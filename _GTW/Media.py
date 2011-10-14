@@ -44,6 +44,8 @@
 #     7-Dec-2010 (CT) `condition` added to `Script`
 #    13-Sep-2011 (MG) `s/sort_key/rank/g`
 #    13-Sep-2011 (MG) `Rel_Link`: `__str__` and `__repr__` added
+#    14-Oct-2011 (MG) `JS_On_Ready`: parameter `code` can be a `JS_On_Ready`
+#                     as well
 #    ««revision-date»»···
 #--
 
@@ -174,7 +176,15 @@ class JS_On_Ready (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def __init__ (self, code, rank = 0, name = None) :
+    default_rank  = object ()
+
+    def __init__ (self, code, rank = default_rank, name = None) :
+        if isinstance (code, self.__class__) :
+            if rank is self.default_rank :
+                rank   = code.rank
+            code       = code.code
+        if rank is self.default_rank :
+            rank       = 0
         self.code      = code
         self.rank      = rank
     # end def __init__
