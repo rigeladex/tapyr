@@ -49,6 +49,10 @@
 //    10-Oct-2011 (CT) s/_ac_response/_response_append/
 //                     s/_ec_response/_response_replace/
 //    10-Oct-2011 (CT) `clear_cb` added
+//    13-Oct-2011 (CT) `delete_cb` added
+//    13-Oct-2011 (CT) `_renderItem` changed locally, not globally
+//    13-Oct-2011 (CT) `gtw_autocomplete` factored into separate module
+//    14-Oct-2011 (CT) `callback`, `cmd_menu`, and `_cmds` added
 //    ««revision-date»»···
 //--
 
@@ -99,20 +103,6 @@
         };
         return result;
     };
-    ( function fix_ui_autocomplete () {
-        $.extend
-            ( $.ui.autocomplete.prototype
-            , { _renderItem : function (ul, item) {
-                  var result = $("<li></li>")
-                      .data     ("item.autocomplete", item)
-                      .append   ($("<a></a>").html (item.label))
-                      .appendTo (ul);
-                  return result;
-                }
-              }
-            );
-      } ()
-    );
     $.fn.afs_form = function (afs_form, opts) {
         var options  = $.extend
             ( {
@@ -292,15 +282,15 @@
                 };
             };
             return function setup_completer (options, elem) {
-                var completer = elem.completer;
+                var ac, completer = elem.completer;
                 if ("choices" in completer) {
-                    elem.inp$.autocomplete
+                    elem.inp$.gtw_autocomplete
                         ( { minLength : completer.treshold
                           , source    : completer.choices
                           }
                         );
                 } else {
-                    elem.inp$.autocomplete
+                    elem.inp$.gtw_autocomplete
                         ( { focus    : function (event, ui) {
                                 if (! elem.completer.embedded_p) {
                                     elem.inp$.val (ui.item.value);
@@ -316,6 +306,7 @@
                                 _get (options, elem, request.term, cb);
                             }
                           }
+                        , "html"
                         );
                 };
             };
@@ -349,6 +340,23 @@
                 };
             };
         };
+        var _cmds = function _cmds () {
+            var map = options.menu_cmds, result = [];
+            for (var i = 0, li = arguments.length, name; i < li; i++) {
+                name = arguments [i];
+                if (name in map) {
+                    result.push
+                        ( { callback : callback [name]
+                          , label    : map      [name]
+                          , name     : name
+                          }
+                        );
+                } else {
+                    alert ("Unknown command " + name);
+                }
+            };
+            return result;
+        } ;
         var _response_append = function _response_append
                 (response, txt_status, p$, parent) {
             var anchor, root, new_elem, s$;
@@ -399,19 +407,32 @@
         };
         var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
-            $(":input", context)
-                .change (field_change_cb)
-                .each
-                    ( function (n) {
-                        var inp$   = $(this);
-                        var id     = inp$.attr ("id");
-                        var elem   = $AFS_E.get (id);
-                        elem.inp$  = inp$;
-                        if ("completer" in elem) {
-                            setup_completer (options, elem);
-                        }
-                      }
-                    );
+            $(":input", context).each
+                ( function (n) {
+                    var inp$ = $(this);
+                    var id     = inp$.attr ("id");
+                    var elem   = $AFS_E.get (id);
+                    elem.inp$  = inp$;
+                    inp$.change (field_change_cb);
+                    if ("completer" in elem) {
+                        setup_completer (options, elem);
+                    };
+                  }
+                );
+        };
+        var _setup_cmd_menu = function _setup_cmd_menu (inp$) {
+            var s$     = b$.closest ("section");
+            var id     = s$.attr    ("id");
+            var elem   = $AFS_E.get (id);
+            var source = cmd_menu [elem.type_name] (elem);
+            var cmd    = source [0];
+            var cb     = callback [cmd.name];
+            // XXX bind cmd to button
+            if (source.length > 1) {
+                // XXX create menu and bind to pulldown-button
+                // http://jqueryui.com/demos/button/#splitbutton
+                // http://docs.jquery.com/UI/Menu;
+            };
         };
         var add_cb = function add_cb (ev) {
             var b$        = $(this);
@@ -517,8 +538,34 @@
                 );
         };
         var delete_cb = function delete_cb (ev) {
-            // XXX;
-            alert ("Please implement the `delete_cb`");
+            var b$    = $(this);
+            var s$    = b$.closest ("section");
+            var id    = s$.attr    ("id");
+            var elem  = $AFS_E.get (id);
+            var value = elem ["value"];
+            var pid   = value && value.edit.pid;
+            if (pid !== undefined && pid !== "") {
+                $.gtw_ajax_2json
+                    ( { url         : options.deleter_url
+                      , data        :
+                          { fid     : id
+                          , pid     : pid
+                          , sid     : $AFS_E.root.value.sid
+                          }
+                      , success     : function (response, status) {
+                            if (! response ["error"]) {
+                                s$ = _response_replace (response, s$, elem);
+                                _setup_callbacks
+                                    ( s$, add_cb, cancel_cb, clear_cb, copy_cb
+                                    , delete_cb, edit_cb, save_cb
+                                    );
+                            } else {
+                                alert ("Error: " + response.error);
+                            };
+                        }
+                      }
+                    );
+            };
         };
         var edit_cb = function edit_cb (ev) {
             var b$    = $(this);
@@ -620,6 +667,44 @@
                 , "Save"
                 );
         };
+        var callback =
+            { add                       : add_cb
+            , cancel                    : cancel_cb
+            , clear                     : clear_cb
+            , copy                      : copy_cb
+            , delete                    : delete_cb
+            , edit                      : edit_cb
+            , save                      : save_cb
+            };
+        var cmd_menu =
+            { Entity                    : function cmd_menu_entity (elem) {
+                  return _cmds ("clear", "save");
+              }
+            , Entity_Link               : function cmd_menu_entity_link (elem) {
+                  var names = [];
+                  if (elem.value.edit.pid) {
+                      names.push ("delete");
+                  }
+                  if (elem.collapsed) {
+                      names.push ("copy", "edit");
+                  } else {
+                      names.push ("clear", "save", "cancel");
+                  };
+                  return _cmds.apply (null, names);
+              }
+            , Entity_List               : function cmd_menu_entity_list (elem) {
+                  return _cmds ("add");
+              }
+            , Field_Entity              : function cmd_menu_field_entity (elem) {
+                  var names = ["clear"];
+                  if (elem.collapsed) {
+                      names.push ("edit");
+                  } else {
+                      names.push ("save", "cancel");
+                  };
+                  return _cmds.apply (null, names);
+              }
+            };
         options.form$       = this;
         add_cb.$selector    = ".add.button";
         cancel_cb.$selector = ".cancel.button";
