@@ -419,19 +419,44 @@
                     };
                   }
                 );
+            $(".cmd-menu", context).each
+                ( function (n) {
+                    _setup_cmd_menu ($(this));
+                  }
+                );
         };
-        var _setup_cmd_menu = function _setup_cmd_menu (inp$) {
-            var s$     = b$.closest ("section");
+        var _setup_cmd_menu = function _setup_cmd_menu (cmc$) {
+            var s$     = cmc$.closest ("section");
             var id     = s$.attr    ("id");
             var elem   = $AFS_E.get (id);
-            var source = cmd_menu [elem.type_name] (elem);
+            var source = cmd_menu [elem.type] (elem);
             var cmd    = source [0];
             var cb     = callback [cmd.name];
-            // XXX bind cmd to button
+            var menu   = $("<ul>");
+            $("<a class=\"default button\">")
+                .append   (cmd.label)
+                .appendTo (cmc$)
+                .click    (cmd.callback);
             if (source.length > 1) {
-                // XXX create menu and bind to pulldown-button
-                // http://jqueryui.com/demos/button/#splitbutton
+                for (var i = 1, li = source.length, cmdi; i < li; i++) {
+                    cmdi = source [i];
+                    menu.append
+                        ($("<li>").append ($("<a>").append (cmdi.label)));
+                }
+                menu.menu ();
+                // XXX bind menu to pulldown-button created below
                 // http://docs.jquery.com/UI/Menu;
+                $("<a class=\"drop button\">")
+                    .append   ($("<i>"))
+                    .appendTo (cmc$)
+                    .click
+                      ( function (ev) {
+                          alert
+                            ( "Implement menu!\n"
+                            + $GTW.inspect.show (menu.element)
+                            );
+                        }
+                      );
             };
         };
         var add_cb = function add_cb (ev) {
@@ -678,30 +703,31 @@
             };
         var cmd_menu =
             { Entity                    : function cmd_menu_entity (elem) {
-                  return _cmds ("clear", "save");
+                  return _cmds ("save", "clear");
               }
             , Entity_Link               : function cmd_menu_entity_link (elem) {
                   var names = [];
+                  if (elem.collapsed) {
+                      names.push ("edit", "copy");
+                  } else {
+                      names.push ("save", "cancel", "clear");
+                  };
                   if (elem.value.edit.pid) {
                       names.push ("delete");
                   }
-                  if (elem.collapsed) {
-                      names.push ("copy", "edit");
-                  } else {
-                      names.push ("clear", "save", "cancel");
-                  };
                   return _cmds.apply (null, names);
               }
             , Entity_List               : function cmd_menu_entity_list (elem) {
                   return _cmds ("add");
               }
             , Field_Entity              : function cmd_menu_field_entity (elem) {
-                  var names = ["clear"];
+                  var names = [];
                   if (elem.collapsed) {
                       names.push ("edit");
                   } else {
                       names.push ("save", "cancel");
                   };
+                  var names = ["clear"];
                   return _cmds.apply (null, names);
               }
             };

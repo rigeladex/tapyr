@@ -34,6 +34,7 @@
 ##    31-Mar-2011 (CT) `do_button` added
 ##    13-Apr-2011 (CT) `do_head` changed to use `show_desc`
 ##    28-Sep-2011 (CT) `tail` added to `do_head`
+##    14-Oct-2011 (CT) `do_menu` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -85,8 +86,13 @@
     {%- if head_caller %}
       {{ head_caller () }}
     {% endif -%}
+    {{ do_menu () }}
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_head -#}
+
+{%- macro do_menu () -%}
+  <span class="cmd-menu"></span>
+{%- endmacro -%} {#- do_menu -#}
 
 {%- macro Form (form) -%}
   {#- Render a form for a AFS `Form` instance `form` -#}

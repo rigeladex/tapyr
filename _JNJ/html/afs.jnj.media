@@ -33,6 +33,7 @@
 #    19-May-2011 (CT) Creation continued....
 #    27-Jul-2011 (CT) Rules for ".ui-autocomplete .ui-menu-item" added
 #    23-Sep-2011 (CT) Nowrap for `a` in `.ui-menu-item` added
+#    14-Oct-2011 (CT) `.cmd-menu` added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,7 @@ style_sheet = Style_Sheet \
                 , P.afs.color_spec_heading
                 , P.font_spec_normal
                 , font_size     = Percent (100)
+                , line_height   = Em (1.75)
                 , margin_bottom = P.afs.block_margin_bottom
                 , padding       = P.afs.header_padding
                 )
@@ -66,11 +68,65 @@ style_sheet = Style_Sheet \
                 , background_color = "inherit"
                 , color            = "inherit"
                 , float            = "right"
-                , font_size        = Percent (70)
                 , margin           = TRBL (0, Em (0.5))
                 , padding          = TRBL (Em (0.2), Em (1.5))
                 , children             =
                     [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                    ]
+                )
+            , Rule
+                ( "h1 > a.button", "h2 > a.button"
+                , font_size        = Percent (70)
+                )
+            , Rule
+                ( ".cmd-menu"
+                , border           = P.border_button
+                , float            = "right"
+                , margin_top       = Em (-0.1)
+                , padding          = 0
+                , children         =
+                    [ Rule
+                        ( "a.button"
+                        , border      = 0
+                        , display     = "inline-block"
+                        , float       = "none"
+                        , font_size   = Percent (70)
+                        , line_height = Em (2.05)
+                        , margin      = 0
+                        )
+                    , Rule
+                        ( "a.default"
+                        , padding     = TRBL (0, Em (1.5))
+                        )
+                    , Rule
+                        ( "a.drop"
+                        , border_left = "2px solid " + P.color_medium_grey
+                        , height      = Em (2.0)
+                        , padding     = 0
+                        , width       = Em (2.0)
+                        , children    =
+                            [ Rule
+                                ( "i"
+                                , Border
+                                    ( style   = "solid"
+                                    , color   = TRBL0
+                                        ( default    = "transparent"
+                                        , t          =
+                                            P.afs.color_spec_heading ["color"]
+                                        )
+                                    , width   = TRBL0
+                                        ( default    = Em (0.5)
+                                        , b          = 0
+                                        )
+                                    )
+                                , display     = "inline-block"
+                                , height      = 0
+                                , margin      = TRBL0
+                                    (l = Em (0.5), b = Em (0.15))
+                                , width       = 0
+                                )
+                            ]
+                        )
                     ]
                 )
             , Rule
