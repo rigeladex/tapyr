@@ -48,6 +48,7 @@
 
 {%- import html_version as X -%}
 {%- import "html/media_fragments.jnj" as MF with context %}
+{%- import "html/navigation.jnj"      as NF with context %}
 {%- call X.html (lang = page.language|default ("en")) -%}
   {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
   {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
@@ -123,7 +124,9 @@
       {%- block nav_block -%}
         {% call X.nav (id = "navigate", class="pg_nav") -%}
           {%- block navigate -%}
-            {%- include "html/navigation.jnj" ignore missing -%}
+            {% call NF.section (page.top.own_links, "Navigation") -%}
+              {{ NF.calendar (page) }}
+            {% endcall %} {# section #}
           {%- endblock -%}
         {%- endcall %} {# X.nav #}
       {%- endblock nav_block -%}
