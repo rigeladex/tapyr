@@ -36,6 +36,7 @@ Script (src = "/media/GTW/js/GTW/inspect.js")
 Script (src = "/media/GTW/js/GTW/jsonify.js")
 Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
 Script (src = "/media/GTW/js/GTW/jQ/util.js")
+Script (src = "/media/GTW/js/GTW/jQ/autocomplete.js")
 Script (src = "/media/GTW/js/GTW/jQ/afs.js")
 
 ### __END__ html/e_type_afs.jnj.media

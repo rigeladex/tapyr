@@ -168,40 +168,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     max_completions     = 20
     template_name       = "e_type_admin"
 
-    _Media              = GTW.Media \
-        ( js_on_ready   =
-            ( GTW.JS_On_Ready
-                ( """$("table.tablesorter").each
-                        ( function ()
-                            {
-                              var tab$ = $(this);
-                              var th$  = $("thead tr:last th", tab$);
-                              var n = th$.size () - 1;
-                              var headers = { 0 : { sorter : false } };
-                              headers [n] = { sorter : false };
-                              tab$.tablesorter
-                                ( { cssAsc    : "ascending"
-                                  , cssDesc   : "descending"
-                                  , cssHeader : "sortable"
-                                  , headers   : headers
-                                  }
-                                );
-                            }
-                        );
-                  """
-                , rank = 100
-                )
-            ,
-            )
-        , scripts       =
-            ( GTW.Script
-                ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-                , rank     = 100
-                )
-            ,
-            )
-        )
-
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
         args              = (None, )
@@ -326,17 +292,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
            of a etype with an AFS form.
         """
 
-        _Media          = GTW.Media \
-            ( scripts       =
-                ( GTW.Script._.jQuery_UI
-                , GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jQ/autocomplete.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
-                )
-            )
         name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
