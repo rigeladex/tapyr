@@ -34,6 +34,7 @@
 #                     object
 #    14-Jan-2011 (CT) `Parameter_Scope` moved to `GTW.Parameters.Scope`
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
+#                     enhanced
 #    13-Sep-2011 (CT) `Style_File` added
 #    ««revision-date»»···
 #--
@@ -47,6 +48,7 @@ from   _TFL                       import TFL
 import _GTW._CSS.Media
 
 import _TFL._Meta.Object
+import _TFL.Caller
 import _TFL._Meta.Once_Property
 import _TFL.Filename
 
@@ -108,7 +110,7 @@ class Style_Sheet (_Style_Sheet_) :
 
 # end class Style_Sheet
 
-class Style_File (Style_Sheet) :
+class Style_File (_Style_Sheet_) :
     """Model a style file containing plain old CSS."""
 
     def __init__ (self, file_name, ** kw) :
@@ -130,7 +132,6 @@ class Style_File (Style_Sheet) :
     # end def __str__
 
 # end class Style_File
-
 
 S = Style_Sheet
 

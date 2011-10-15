@@ -1,0 +1,20 @@
+Include ("_include")
+reset_sheet = Style_Sheet \
+    ( Rule
+        ( "a", "abbr", "acronym", "address", "article", "aside", "audio"
+        , border                   = border
+        , font_size                = Percent (100)
+        , font                     = "inherit"
+        , margin                   = 0
+        , outline                  = 0
+        , padding                  = 0
+        , vertical_align           = "baseline"
+        )
+    )
+
+Style_File  ("_GTW/__test__/_test.css")
+CSS_Link    ("/media/GTW/css/jquery.gritter.css")
+Rel_Link    (href = "/media/GTW/css/jquery.gritter.rel.css")
+Script      ("/media/GTW/js/jquery-1.5.2.min.js", rank = -100)
+Script_File ("_GTW/__test__/_test.js")
+

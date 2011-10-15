@@ -84,4 +84,53 @@ style_sheet = Style_Sheet \
         )
     )
 
+Script (src = "/media/GTW/js/jquery.tablesorter.min.js", rank = 100)
+Script (GTW.Script._.GTW_postify_a)
+JS_On_Ready \
+    ( """$("table.tablesorter").each
+            ( function ()
+                {
+                  var tab$ = $(this);
+                  var th$  = $("thead tr:last th", tab$);
+                  var n = th$.size () - 1;
+                  var headers = { 0 : { sorter : false } };
+                  headers [n] = { sorter : false };
+                  tab$.tablesorter
+                    ( { cssAsc    : "ascending"
+                      , cssDesc   : "descending"
+                      , cssHeader : "sortable"
+                      , headers   : headers
+                      }
+                    );
+                }
+            );
+      """
+    , rank = 100
+    )
+
+JS_On_Ready \
+    ( """$("table.tablesorter").each
+            ( function ()
+                {
+                  var tab$ = $(this);
+                  var th$  = $("thead tr:last th", tab$);
+                  var n = th$.size () - 1;
+                  var headers = { 0 : { sorter : false } };
+                  headers [n] = { sorter : false };
+                  tab$.tablesorter
+                    ( { cssAsc    : "ascending"
+                      , cssDesc   : "descending"
+                      , cssHeader : "sortable"
+                      , headers   : headers
+                      }
+                    );
+                }
+            );
+      """
+    , rank = 100
+    )
+Script \
+    ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
+    , rank     = 100
+    )
 ### __END__ html/e_type_admin.jnj.media

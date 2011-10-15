@@ -39,93 +39,8 @@
 #    ««revision-date»»···
 #--
 
-### CSS reset rules for HTML elements
-### - see http://meyerweb.com/eric/tools/css/reset/...
-reset_sheet = Style_Sheet \
-    ( Rule
-        ( "a", "abbr", "acronym", "address", "article", "aside", "audio"
-        , "b", "blockquote", "body"
-        , "canvas", "caption", "cite", "code"
-        , "dd", "del", "details", "dfn", "div", "dl", "dt"
-        , "em", "embed"
-        , "fieldset", "figcaption", "figure", "footer", "form"
-        , "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup"
-        , "html"
-        , "i", "img", "input", "ins"
-        , "kbd"
-        , "label", "legend", "li"
-        , "mark", "menu"
-        , "nav"
-        , "object", "ol", "output"
-        , "p", "pre"
-        , "q"
-        , "samp", "section", "small", "span", "strong", "sub", "summary", "sup"
-        , "table", "tbody", "td", "textarea", "tfoot", "th", "thead"
-        , "time", "tr"
-        , "ul"
-        , "var", "video"
-        , border                   = 0
-        , font_size                = Percent (100)
-        , font                     = "inherit"
-        , margin                   = 0
-        , outline                  = 0
-        , padding                  = 0
-        , vertical_align           = "baseline"
-        )
-    , Rule
-        ( "article", "aside"
-        , "blockquote"
-        , "details", "div", "dl", "figure", "form"
-        , "h1", "h2", "h3", "h4", "h5", "h6"
-        , "ol"
-        , "p"
-        , "section"
-        , "table", "textarea"
-        , "ul"
-        , margin_bottom            = P.block_margin_bottom
-        )
-    , Rule
-        ( "article", "aside", "details"
-        , "figcaption", "figure", "footer", "header", "hgroup"
-        , "menu", "nav", "section"
-        , display                  = "block"
-        )
-    , Rule
-        ( "blockquote", "q"
-        , quotes                   = "none"
-        , children                 =
-            [ Rule_Pseudo
-                ( "before", "after"
-                , content          = "none"
-                )
-            , Rule_Pseudo
-                ( "before", "after"
-                , content          = "''"
-                )
-            ]
-        )
-    , Rule ("body", line_height     = 1.44)
-    , Rule ("del",  ** P.del_spec)
-    , Rule ("hr",   ** P.hr_spec)
-    , Rule ("ins",  ** P.ins_spec)
-    , Rule ("sub",  font_size = "smaller", vertical_align  = "text-bottom")
-    , Rule ("sup",  font_size = "smaller", vertical_align  = "text-top")
-    , Rule
-        ( "table"
-        , border_collapse          = "collapse"
-        , border_spacing           = 0
-        )
-    , Rule_Pseudo
-        ( "focus"
-        , outline                  = P.outline_focus
-        , ** P.color_spec_selected
-        )
-    , Rule_Pseudo
-        ( "target"
-        , outline                  = P.outline_target
-        , ** P.color_spec_selected
-        )
-    )
+Include ("html/reset.media")
+
 base_sheet = Style_Sheet \
     ( Rule
         ( "html"
@@ -608,4 +523,17 @@ print_sheet = Style_Sheet \
         )
     , rank  = 1 << 16
     )
+
+### the base file requires at least the jquer<.gritter stuff for the
+### notification
+Script (GTW.Script._.jQuery)
+Script (GTW.Script._.jQuery_UI)
+Script (GTW.Script._.jQuery_Gritter)
+
+CSS_Link (GTW.CSS_Link._.jQuery_UI)
+CSS_Link ("/media/GTW/css/jquery.gritter.css", "screen")
+CSS_Link ("ie_csshover_hack.css", "screen", "lt IE 7")
+CSS_Link ("/media/GTW/css/base_ie_lt7_hacks.css", "screen", "lt IE 8")
+
+JS_On_Ready ('$.gritter.Convert_Patagraphs_to_Gitter ("notifications");')
 ### __END__ html/base.jnj.media

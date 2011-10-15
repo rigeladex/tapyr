@@ -52,6 +52,12 @@
 #    17-Mar-2011 (CT) `afs` and `e_type_afs` added
 #    18-Mar-2011 (CT) `Template_E.parent` added and used in `get_macro`
 #    31-May-2011 (CT) `render` changed to put `template` into `context`
+#    15-Jun-2011 (MG) `get_css` added, `get_Media` and `_eval_fragments`
+#                     changed to `classmethod`
+#    27-Sep-2011 (MG) `s/CSS_Links/css_links/`, `s/JS_On_Ready/js_on_ready/`
+#                     `js_on_ready` return the objects instead of the
+#                     combined code
+#                     `_eval_fragments`: use `scope.Eval`
 #    ««revision-date»»···
 #--
 
@@ -104,7 +110,6 @@ class Template_E (_Template_) :
 
     css_href        = None
     js_href         = None
-    js_on_ready     = None
 
     _media_fragment = None
     _media_path     = None
@@ -162,14 +167,25 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <style>
            element.
         """
-        media = self._Media
+        return self.get_css (self._Media)
+    # end def CSS
+
+    @classmethod
+    def get_css (cls, media) :
         if media :
-            result = "\n\n".join \
+            return "\n\n".join \
                 ( str (s) for s in
                     sorted (media.style_sheets, key = TFL.Getter.rank)
                 )
-            return result
-    # end def CSS
+    # end def get_css
+
+    @Once_Property
+    def css_links (self) :
+        media = self._Media
+        if media :
+            return sorted (media.css_links, key = TFL.Getter.rank)
+        return ()
+    # end def css_links
 
     @Once_Property
     def extends (self) :
@@ -208,7 +224,7 @@ class Template_E (_Template_) :
     # end def imports
 
     @Once_Property
-    def JS (self) :
+    def js (self) :
         """Combined Javascript code required by media fragments that can
            loaded from a single file or included inline in a html <script>
            element.
@@ -217,7 +233,7 @@ class Template_E (_Template_) :
         static_handler = self.env.static_handler
         if media and static_handler :
             def _gen (scripts) :
-                for s in sorted (scripts, key = TFL.Getter.sort_key) :
+                for s in sorted (scripts, key = TFL.Getter.rank) :
                     if s.src and not s.condition :
                         p = static_handler.get_path (s.src)
                         if p :
@@ -225,21 +241,17 @@ class Template_E (_Template_) :
                                 yield file.read ()
             result = "\n\n".join (TFL.uniq (_gen (media.scripts)))
             return result
-    # end def JS
+    # end def js
 
     @Once_Property
-    def JS_On_Ready (self) :
+    def js_on_ready (self) :
         """Combined Javascript code required by media fragments to be
            executed when document is ready.
         """
         media = self._Media
         if media :
-            result = ";".join \
-                ( str (s) for s in sorted
-                    (TFL.uniq (media.js_on_ready), key = TFL.Getter.sort_key)
-                )
-            return result
-    # end def JS_On_Ready
+            return sorted (TFL.uniq (media.js_on_ready), key = TFL.Getter.rank)
+    # end def js_on_ready
 
     @Once_Property
     def media_fragment (self) :
@@ -270,16 +282,8 @@ class Template_E (_Template_) :
            separate <script src="..."> elements.
         """
         media = self._Media
-        static_handler = self.env.static_handler
-        if media and static_handler :
-            def _gen (scripts) :
-                for s in sorted (scripts, key = TFL.Getter.rank) :
-                    if (  (not s.src)
-                       or (not static_handler.get_path (s.src))
-                       or s.condition
-                       ) :
-                        yield s.src
-            return list (TFL.uniq (_gen (media.scripts)))
+        if media :
+            return list (TFL.uniq (media.scripts))
     # end def scripts
 
     @Once_Property
@@ -333,7 +337,7 @@ class Template_E (_Template_) :
 
     @Once_Property
     def _Media (self) :
-        return self.get_Media (self.env.CSS_Parameters)
+        return self.get_Media (self.env, self.templates)
     # end def _Media
 
     def call_macro (self, name, * _args, ** _kw) :
@@ -354,11 +358,13 @@ class Template_E (_Template_) :
         return result
     # end def get_macro
 
-    def get_Media (self, P) :
+    @classmethod
+    def get_Media (cls, env, templates) :
+        P = env.CSS_Parameters
         media_fragment_pathes = tuple \
-            (TFL.uniq (t.media_path for t in self.templates if t.media_path))
+            (TFL.uniq (t.media_path for t in templates if t.media_path))
         if media_fragment_pathes :
-            return self._eval_fragments (media_fragment_pathes, P)
+            return cls._eval_fragments (media_fragment_pathes, P, env)
     # end def get_Media
 
     def render (self, context) :
@@ -367,20 +373,16 @@ class Template_E (_Template_) :
         return self.template.render (context)
     # end def render
 
-    def _eval_fragments (self, fragments, P) :
+    @classmethod
+    def _eval_fragments (cls, fragments, P, env = None) :
         from _GTW import Parameters
-        scope = Parameters.Scope (P)
-        globs = {}
-        for f in fragments :
-            with open (f, "rt") as file :
-                exec (file, globs, scope)
-        return scope
-    # end def _Eval
+        return Parameters.Scope (P, env).Eval (* fragments)
+    # end def _eval_fragments
 
     def _load_media (self) :
         f_path = self.media_fragment_name
         if f_path is None :
-            f_path = "%s.media" % (self.path, )
+            f_path = "%s.media" % (self.path.split ("::", 1) [-1], )
         try :
             source, path, _ = self.env.loader.get_source (self.env, f_path)
         except TemplateNotFound :

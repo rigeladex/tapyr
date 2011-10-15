@@ -1,0 +1,3 @@
+# media file which will be included
+JS_On_Ready ("/* this is a JS on ready code */")
+border = 0

@@ -1,0 +1,92 @@
+{#- jinja template: media_fragments.jnj -#}
+{#
+## Copyright (C) 2011 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg. martin@mangari.org
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/media_fragments
+##
+## Purpose
+##    Provide macros for common media fragments (e.g.: link style sheets, ...)
+##
+## Revision Dates
+##    27-Sep-2011 (MG) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro media_item (item) -%}
+  {%- onion item.condition %}
+    {% head -%}
+    <!--[if {{ item.condition }}]>
+    {% body -%}
+    {{- caller () -}}
+    {%- tail -%}
+    <![endif]-->
+  {% endonion -%} {#- item.condition -#}
+{%- endmacro -%} {#- media_item -#}
+
+{%- macro permalink (page) -%}
+  <link rel="canonical" href="{{- page.permalink -}}"/>
+  <meta name="href" content="{{- page.abs_href -}}"/>
+{%- endmacro -%} {#- permalink -#}
+
+{%- macro inline_CSS (CSS) -%}
+   <style type="text/css">
+     {{ CSS }}
+   </style>
+{%- endmacro -%} {#- inline_CSS -#}
+
+{%- macro link_css (media) -%}
+  {%- for cssl in media.css_links %}
+    {% call media_item (cssl) -%}
+      {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
+    {% endcall %} {# media_item #}
+  {% endfor -%}
+{%- endmacro -%} {#- link_css -#}
+
+{%- macro link_rel (media) -%}
+  {%- for rl in media.Rel_Links %}
+    <link {{ rl.attrs ()|safe }} />
+  {% endfor -%}
+{%- endmacro -%} {#- link_rel -#}
+
+{%- macro scripts (media) -%}
+  {%- for jsl in media.scripts %}
+    {% call media_item (jsl) -%}
+      <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+    {% endcall %} {# media_item #}
+  {% endfor -%}
+{%- endmacro -%} {#- scripts -#}
+
+{%- macro js_on_ready (media) -%}
+  {%- if media.js_on_ready %}
+      <script type="text/javascript">
+        $(function ()
+          {
+            {% for jsor in media.js_on_ready %}{{ jsor|safe }}{% endfor %}
+          }
+         );
+      </script>
+  {% endif -%}
+{%- endmacro -%} {#- js_on_ready -#}
+{#- __END__ jinja template: media_fragments.jnj -#}
+
+

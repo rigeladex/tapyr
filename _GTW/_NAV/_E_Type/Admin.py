@@ -119,6 +119,7 @@
 #    21-Sep-2011 (CT) `AFS_Completer` and `AFS_Completed` changed to use
 #                     `pid` for entity completion
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Entity_ attributes
+#    26-Sep-2011 (MG) `AFS.injected_*` added
 #    10-Oct-2011 (CT) Old-style form handling removed
 #    13-Oct-2011 (CT) `_check_readonly` factored
 #    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
@@ -166,40 +167,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     css_group           = "Type"
     max_completions     = 20
     template_name       = "e_type_admin"
-
-    _Media              = GTW.Media \
-        ( js_on_ready   =
-            ( GTW.JS_On_Ready
-                ( """$("table.tablesorter").each
-                        ( function ()
-                            {
-                              var tab$ = $(this);
-                              var th$  = $("thead tr:last th", tab$);
-                              var n = th$.size () - 1;
-                              var headers = { 0 : { sorter : false } };
-                              headers [n] = { sorter : false };
-                              tab$.tablesorter
-                                ( { cssAsc    : "ascending"
-                                  , cssDesc   : "descending"
-                                  , cssHeader : "sortable"
-                                  , headers   : headers
-                                  }
-                                );
-                            }
-                        );
-                  """
-                , sort_key = 100
-                )
-            ,
-            )
-        , scripts       =
-            ( GTW.Script
-                ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-                , sort_key = 100
-                )
-            ,
-            )
-        )
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -249,6 +216,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     import traceback; traceback.print_exc ()
                 raise JSON_Error (error = "%s" % (exc, ))
         # end def form_value_apply
+
+        @property
+        def injected_media_href (self) :
+            return pjoin (self.parent.abs_href, self.kind)
+        # end def injected_media_href
 
         def pid_query (self, ETM, pid) :
             try :
@@ -320,21 +292,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
            of a etype with an AFS form.
         """
 
-        _Media          = GTW.Media \
-            ( scripts       =
-                ( GTW.Script._.jQuery_UI
-                , GTW.Script (src = "/media/GTW/js/GTW/inspect.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/AFS/Elements.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jQ/autocomplete.js")
-                , GTW.Script (src = "/media/GTW/js/GTW/jQ/afs.js")
-                )
-            )
         name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
         form_parameters = {}
+
+        @property
+        def injected_templates (self) :
+            form     = AFS_Form [self.E_Type.GTW.afs_id]
+            renderer = set ()
+            for c in (c for c in form.transitive_iter () if c.renderer) :
+                renderer.add (c.renderer)
+            return [self.top.Templateer.get_template (r) for r in renderer]
+        # end def injected_templates
 
         def rendered (self, handler, template = None) :
             HTTP     = self.top.HTTP
@@ -877,12 +847,23 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 name   = pjoin (* grandchildren) if grandchildren else ""
                 kw     = \
                     {"name"   : "%s/%s" % (child, name)
+                    , "kind"  : child
                     , attr    : grandchildren or (None, )
                     }
         if T :
             kw = dict (self.child_attrs.get (T.__name__, {}), ** kw)
             return T (parent = self, ** kw)
     # end def _get_child
+
+    @property
+    def children (self) :
+        for n, (T, _, _) in self._child_name_map.iteritems () :
+            yield T \
+                ( parent = self
+                , kind   = n
+                , ** self.child_attrs.get (T.__name__, {})
+                )
+    # end def children
 
 # end class Admin
 

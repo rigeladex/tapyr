@@ -38,22 +38,16 @@
 ##     5-Jan-2011 (CT) Support `page.template.css_href`
 ##    31-May-2011 (CT) Take `template` from context, if possible
 ##                     (`dir_template` must NOT get the CSS of `page.template`)
+##    26-Sep-2011 (MG) Handling of additional media of `template` added
+##    26-Sep-2011 (MG) Make use of new `page.template_media` property
+##                     (javascript, JS_On_Ready, ...)
+##    27-Sep-2011 (MG) Use new `media_fragments` module
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- macro media_item (item) -%}
-  {%- onion item.condition %}
-    {% head -%}
-    <!--[if {{ item.condition }}]>
-    {% body -%}
-    {{- caller () -}}
-    {%- tail -%}
-    <![endif]-->
-  {% endonion -%} {#- item.condition -#}
-{%- endmacro -%} {#- media_item -#}
-
 {%- import html_version as X -%}
+{%- import "html/media_fragments.jnj" as MF with context %}
 {%- call X.html (lang = page.language|default ("en")) -%}
   {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
   {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
@@ -64,49 +58,38 @@
         <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
       {% endif -%}
       {% if page.permalink -%}
-        <link rel="canonical" href="{{- page.permalink -}}"/>
-        <meta name="href" content="{{- page.abs_href -}}"/>
+        {{ MF.permalink (page) }}
       {% endif %}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- if template.CSS and not template.css_href %}
-          <style type="text/css">
-            {{ template.CSS }}
-          </style>
-        {% else %}
-          {%- if template.css_href %}
-            {{ X.link_stylesheet (template.css_href) }}
-          {% endif -%}
-          {%- for cssl in page.Media.css_links %}
-            {% call media_item (cssl) -%}
-              {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
-            {% endcall %} {# media_item #}
-          {% endfor -%}
+        {%- if template.css_href %}
+          {{ X.link_stylesheet (template.css_href) }}
+        {%- else %}
+          {{ MF.inline_CSS (page.template.CSS) }}
         {% endif -%}
+        {%- if NAV._PM %}
+          {{ MF.link_css (page.Media) }}
+        {% endif -%}
+        {{ MF.link_css (page.P_Media) }}
       {%- endblock styles %}
         {%- block scripts %}
-          {%- for jsl in page.Media.scripts %}
-            {% call media_item (jsl) -%}
-              <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
-            {% endcall %} {# media_item #}
-          {% endfor -%}
-          {%- if page.Media.js_on_ready %}
-            <script type="text/javascript">
-              $(function ()
-                {
-                  {% for jsor in page.Media.js_on_ready %}{{ jsor|safe }}{% endfor %}
-                }
-               );
-            </script>
+          {%- if NAV._PM %}
+            {{ MF.scripts (page.Media) }}
           {% endif -%}
+          {{ MF.scripts (page.P_Media) }}
+          {%- if NAV._PM %}
+            {{ MF.js_on_ready (page.Media )}}
+          {% endif %}
+          {{ MF.js_on_ready (page.P_Media) }}
         {%- endblock scripts -%}
       {%- block related_links -%}
-        {%- for rl in page.Media.rel_links %}
-          <link {{ rl.attrs ()|safe }} />
-        {% endfor -%}
+        {%- if NAV._PM %}
+          {{ MF.link_rel (page.Media) }}
+        {% endif -%}
+        {{ MF.link_rel (page.P_Media) }}
       {%- endblock related_links -%}
       {%- block meta_elements -%}
         <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />

@@ -253,15 +253,21 @@
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
-#    15-Jun-2011 (CT) `_Page_O_.__getattr__` robustified
+#    27-Sep-2011 (MG) `children` and `children_transitive` added
+#                     `_setup_afs` moved in here, `store_css` renamed to
+#                     `store_media`
+#    27-Sep-2011 (MG) `store_cache`: use `TFL.Context.time_block`
+#                     `P_Media` added
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _JNJ                     import JNJ
 
 import _GTW.Media
 import _GTW._NAV
+import _JNJ.Template_Media
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -280,11 +286,10 @@ import _TFL.multimap
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import base64
-import datetime
+import time
 import hashlib
 import signal
 import sys
-import time
 import uuid
 
 class _Meta_ (TFL.Meta.M_Class) :
@@ -349,6 +354,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     _Media                     = GTW.Media ()
 
     template_names             = set ()
+    injected_templates         = ()
 
     ### ("GET", "HEAD", "POST", "DELETE", "PUT")
     SUPPORTED_METHODS   = set (("GET", ))
@@ -421,6 +427,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return Filename (self.name).base
     # end def base
 
+    @property
+    def children_transitive (self) :
+        for c in self.children :
+            yield c
+            for cc in c.children_transitive :
+                yield cc
+    # end def children_transitive
+
     @Once_Property
     def copyright (self) :
         year  = time.localtime ().tm_year
@@ -490,6 +504,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 return u"%s [%s]" % (name, self.top.h_title)
     # end def h_title
 
+    @property
+    def injected_media_href (self) :
+        return self.abs_href
+    # end def injected_media_href
+
     def is_current_dir (self, nav_page) :
         return False
     # end def is_current_dir
@@ -545,6 +564,15 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def permalink (self) :
         return self.abs_href
     # end def permalink
+
+    @Once_Property
+    def P_Media (self) :
+        ### combine the media required by the used template and the by
+        ### injected templates
+        result = GTW.Media.from_list \
+            ((self.template, ) + tuple (self.injected_templates))
+        return result
+    # end def P_Media
 
     def relative_to (self, url, href = None) :
         href          = href or self.href
@@ -711,13 +739,25 @@ class _Site_Entity_ (TFL.Meta.Object) :
             ( "%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
     # end def __str__
 
+    ###
+    def active_page (self, page, level = 0) :
+        for link in self.own_links :
+            icd = getattr (link, "is_current_dir", None)
+            if icd and icd (page) :
+                if level :
+                    return link.active_page (page, level - 1)
+                return link
+        return None
+    # end def active_page
+
 # end class _Site_Entity_
 
 class Page (_Site_Entity_) :
     """Model one page of a web site."""
 
-    dir_template_name = None
-    own_links         = []
+    dir_template_name    = None
+    own_links            = []
+    children             = ()
 
     @Once_Property
     def parents (self) :
@@ -863,6 +903,12 @@ class _Dir_ (_Site_Entity_) :
         if entries :
             self.add_entries (entries)
     # end def __init__
+
+    @property
+    def children (self) :
+        for c in self.own_links :
+            yield c
+    # end def children
 
     @property
     def dir_template (self) :
@@ -1050,6 +1096,7 @@ class Dir (_Dir_) :
 class Root (_Dir_) :
 
     auto_delegate           = False  ### useful if not served by web-app
+    Cache_Pickler           = set ()
     copyright_start         = None
     copyright_url           = None
     CSS_Parameters          = None
@@ -1057,6 +1104,7 @@ class Root (_Dir_) :
     email                   = None   ### default from address
     name                    = "/"
     owner                   = None
+    _PM                     = True
     redirects               = {}
     smtp                    = None
     src_root                = ""
@@ -1151,15 +1199,31 @@ class Root (_Dir_) :
         return unicode (self.nick or self.owner or self.name)
     # end def h_title
 
-    def load_css_map (self, map_path) :
-        T = self.Templateer
-        with open (map_path, "rb") as file :
-            map_p = pickle.load (file)
-        for p, tns in map_p.iteritems () :
-            for tn in tns :
-                t = T.get_template (tn)
-                t.css_href = p
-    # end def load_css_map
+    def load_cache (self, cache_file) :
+        try :
+            with open (cache_file, "rb") as file :
+                cargo = pickle.load (file)
+        except StandardError as exc :
+            import logging
+            logging.warning \
+                ( "Loading pickle dump %s failed with exception: %s"
+                % (pickle_path, exc)
+                )
+            self.store_cache (cache_file)
+        else :
+            for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
+                try :
+                    cp.from_pickle_cargo (self, cargo)
+                except StandardError as exc :
+                    import logging
+                    logging.warning \
+                        ( "Unpickling of %s failed with exception `%s`.\n"
+                          "Regenerate cache..."
+                        % (cp, exc)
+                        )
+                    cp.as_pickle_cargo (self)
+    # end def load_cache
+    load_css_map = load_cache ### XXX remove me
 
     @Once_Property
     def login_page (self) :
@@ -1244,36 +1308,32 @@ class Root (_Dir_) :
         return result
     # end def scope
 
-    def store_css (self, css_dir, prefix, map_path) :
-        map   = TFL.mm_list ()
-        map_p = TFL.mm_list ()
-        T     = self.Templateer
-        for tn in self.template_names :
-            t = T.get_template (tn)
-            try :
-                css = t.CSS
-            except Exception as exc :
-                print "CSS exception for template", t.path
-                print "   ", exc
-            else :
-                if css :
-                    h = hashlib.sha1 (css).digest ()
-                    k = base64.b64encode (h, "_-").rstrip ("=")
-                    map [k].append (t)
-        for k, ts in map.iteritems () :
-            cn = k + ".css"
-            p  = sos.path.join (prefix,  cn)
-            fn = sos.path.join (css_dir, cn)
-            t  = first (ts)
-            with open (fn, "wb") as file :
-                file.write (t.CSS)
-            for t in ts :
-                t.css_href = p
-                map_p [p].append (t.path)
-        if map_p :
-            with open (map_path, "wb") as file :
-                pickle.dump (map_p, file, pickle.HIGHEST_PROTOCOL)
-    # end def store_css
+    def store_cache (self, cache_file) :
+        def _create (cache_file) :
+            cargo = dict ()
+            for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
+                try :
+                    cargo.update (cp.as_pickle_cargo (self))
+                except StandardError as exc :
+                    import logging
+                    logging.warning \
+                        ( "Pickling of %s failed with exception `%s`.\n"
+                        % (cp, exc)
+                        )
+                    if self.DEBUG :
+                        import traceback
+                        traceback.print_exc ()
+            with open (cache_file, "wb") as file :
+                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+        # end def _create
+        if self.DEBUG :
+            fmt = "*** Media cache rebuit in %ss"
+            with TFL.Context.time_block (fmt) :
+                _create (cache_file)
+        else :
+            _create (cache_file)
+    # end def store_cache
+    store_css = store_cache ### XXX remove me
 
 # end class Root
 

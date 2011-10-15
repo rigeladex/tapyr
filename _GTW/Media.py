@@ -39,9 +39,13 @@
 #     2-Feb-2010 (MG) `Media_List.add` added
 #     4-Feb-2010 (MG) `Media.from_list` added
 #    27-Feb-2010 (MG) `sort_key` added to javascript
-#     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of emdia
+#     1-May-2010 (MG) Use `M_Unique_If_Named` to support reuse of media
 #                     objects
 #     7-Dec-2010 (CT) `condition` added to `Script`
+#    13-Sep-2011 (MG) `s/sort_key/rank/g`
+#    13-Sep-2011 (MG) `Rel_Link`: `__str__` and `__repr__` added
+#    14-Oct-2011 (MG) `JS_On_Ready`: parameter `code` can be a `JS_On_Ready`
+#                     as well
 #    ««revision-date»»···
 #--
 
@@ -61,10 +65,16 @@ class CSS_Link (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def __init__ (self, href, media_type = "all", condition = "", name = None) :
+    def __init__ ( self, href
+                 , media_type = "all"
+                 , condition  = ""
+                 , name       = None
+                 , rank       = 0
+                 ) :
         self.href       = href
         self.media_type = media_type
         self.condition  = condition
+        self.rank       = rank
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -94,6 +104,7 @@ class Rel_Link (TFL.Meta.Object) :
 
     def __init__ (self, ** kw) :
         self.href = kw ["href"]
+        self.rank = kw.pop ("rank", 0)
         self._kw  = kw
     # end def __init__
 
@@ -103,6 +114,14 @@ class Rel_Link (TFL.Meta.Object) :
             for (k, v) in sorted (self._kw.iteritems ())
             )
     # end def attrs
+
+    def __repr__ (self) :
+        return self.attrs ()
+    # end def __repr__
+
+    def __str__ (self) :
+        return self.href
+    # end def __str__
 
 # end class Rel_Link
 
@@ -117,7 +136,7 @@ class Script (TFL.Meta.Object) :
                  , src         = ""
                  , body        = ""
                  , script_type = "text/javascript"
-                 , sort_key    = 0
+                 , rank        = 0
                  , name        = None
                  , condition   = ""
                  ) :
@@ -126,7 +145,7 @@ class Script (TFL.Meta.Object) :
         self.src         = src
         self.body        = body
         self.script_type = script_type
-        self.sort_key    = sort_key
+        self.rank        = rank
         self.condition   = condition
     # end def __init__
 
@@ -157,9 +176,17 @@ class JS_On_Ready (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def __init__ (self, code, sort_key = 0, name = None) :
+    default_rank  = object ()
+
+    def __init__ (self, code, rank = default_rank, name = None) :
+        if isinstance (code, self.__class__) :
+            if rank is self.default_rank :
+                rank   = code.rank
+            code       = code.code
+        if rank is self.default_rank :
+            rank       = 0
         self.code      = code
-        self.sort_key  = sort_key
+        self.rank      = rank
     # end def __init__
 
     def __str__ (self) :
@@ -277,7 +304,7 @@ class Media_List_JSOR (Media_List_Unique) :
 
     @Once_Property
     def values (self) :
-        return tuple (sorted (self._gen_all (), key = lambda mob : mob.sort_key))
+        return tuple (sorted (self._gen_all (), key = lambda mob : mob.rank))
     # end def values
 
 # end class Media_List_JSOR
@@ -298,7 +325,7 @@ class Media_List_Script (Media_List_href, Media_List_Unique) :
     @Once_Property
     def values (self) :
         return tuple \
-            (sorted (self._gen_all (), key = lambda mob : mob.sort_key))
+            (sorted (self._gen_all (), key = lambda mob : mob.rank))
     # end def values
 
 # end class Media_List_Script

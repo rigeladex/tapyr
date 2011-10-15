@@ -28,6 +28,8 @@
 # Revision Dates
 #    14-Jan-2011 (CT) Creation
 #    13-Sep-2011 (CT) `Script_File` and `Style_File` added
+#    13-Sep-2011 (MG) doctest added
+#    27-Sep-2011 (MG) `Include`, `Eval`, and `_eval_file` added
 #    ««revision-date»»···
 #--
 
@@ -186,9 +188,10 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     js_on_ready          = property (lambda s : s.JS_On_Ready._ext)
     rel_links            = property (lambda s : s.Rel_Link._ext)
     scripts              = property (lambda s : s.Script._ext)
+    script_files         = property (lambda s : s.Script_File._ext)
     style_sheets         = property (lambda s : s.Style_Sheet._ext)
 
-    def __init__ (self, parameters) :
+    def __init__ (self, parameters, env = None) :
         from _GTW._CSS  import import_CSS
         from _GTW.Media import CSS_Link, JS_On_Ready, Rel_Link, Script
         self.P                = parameters
@@ -199,11 +202,37 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
         self.Script_File      = self._Media_ (import_CSS.Style_File)
         self.Style_Sheet = SS = self._Media_ (import_CSS.Style_Sheet)
         self.Style_File       = self._Media_ (import_CSS.Style_File, SS._ext)
+        self.env              = env
         self.__super.__init__ \
             ( object = import_CSS
-            , locls  = dict ()
+            , locls  = dict (Include = self.Include)
             )
     # end def __init__
+
+    def Eval (self, * fragments) :
+        self.globs = {}
+        for f in fragments :
+            self._eval_file (f)
+        return self
+    # end def Eval
+
+    def _eval_file (self, filename) :
+        with open (filename, "rt") as file :
+            self.globs ["__name__"] = filename
+            exec (file, self.globs, self)
+    # end def _eval_file
+
+    def Include (self, * includes, ** kw) :
+        ignore_missing = kw.pop ("ignore_missing", False)
+        assert not kw, kw
+        env            = self.env
+        get_source     = env.loader.get_source
+        for fn in includes :
+            if not fn.endswith (".media") :
+                fn = "%s.media" % (fn, )
+            source, path, _ = get_source (env, fn)
+            self._eval_file              (path)
+    # end def Include
 
     def __getitem__ (self, index) :
         try :
@@ -215,6 +244,51 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
 Scope = _Parameters_Scope_ # end class
 
+import os
+
+__doc__ = r"""
+>>> from _JNJ.Media_Defaults import Media_Defaults
+>>> from _JNJ.Environment    import HTML
+>>> base_dir        = os.path.abspath \
+...    (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
+>>> env             = HTML (load_path = base_dir)
+>>> base_media      = os.path.join (base_dir, "_test.media")
+>>> def as_string (fragments) :
+...     return "\n\n".join \
+...                ( str (s) for s in
+...                    sorted (fragments, key = TFL.Getter.rank)
+...                )
+
+>>> scope = Scope (Media_Defaults, env).Eval (base_media)
+>>> print as_string (scope.style_sheets)
+a, abbr, acronym, address, article, aside, audio
+  { border         : 0
+  ; font           : inherit
+  ; font-size      : 100%
+  ; margin         : 0
+  ; outline        : 0
+  ; padding        : 0
+  ; vertical-align : baseline
+  }
+<BLANKLINE>
+/* --> rules from a existing CSS file `/
+a.hide
+{
+    display:          none
+}
+/* <-- */
+>>> print as_string (scope.script_files)
+/* a test javascript file directly included */
+
+>>> scope.scripts
+[/media/GTW/js/jquery-1.5.2.min.js: text/javascript]
+>>> scope.css_links
+[all: /media/GTW/css/jquery.gritter.css]
+>>> scope.rel_links
+[href="/media/GTW/css/jquery.gritter.rel.css"]
+>>> print as_string (scope.js_on_ready)
+/* this is a JS on ready code */
+"""
 if __name__ != "__main__" :
     GTW._Export_Module ()
 ### __END__ GTW.Parameters
