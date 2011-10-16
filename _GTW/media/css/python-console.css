@@ -1,5 +1,40 @@
+/*
 .debugger .console .output
     { white-space       : pre-wrap
+    }
+
+.debugger .console
+    { background-color: #fafafa!important
+    ; color:            black
+    ; padding:          5px!important
+    ; margin:           3px 0 0 0!important
+    ; cursor:           default!important
+    }
+.debugger .console form
+    { color:            #555
+    }
+.debugger .console input
+    { background-color: #fafafa
+    ; color:            #555
+    ; width:            90%
+    ; font-family:        'Consolas', 'Deja Vu Sans Mono'
+                        , 'Bitstream Vera Sans Mono', monospace
+    ; font-size:        13px
+    ; border:           none!important
+    }
+.debugger .console .traceback
+    { margin:           5px 0 5px 25px
+    ; white-space:      normal
+    }
+.debugger .console .traceback h3
+    { background-color: #555
+    ; color:            white
+    ; margin:           -10px -10px 5px -10px
+    ; padding:          5px
+    }
+.debugger .console .traceback pre:hover
+    { background-color: #ccc
+    ; cursor:           default
     }
 
 .debugger .console
@@ -15,6 +50,7 @@
     ; background-color: white
     ; line-height:      1;
     }
+*/
 .debugger .detail p
     { margin:           0 0 8px 13px
     ; font-size:        14px
@@ -102,39 +138,6 @@
     { display:          inline
     }
 
-.debugger .console
-    { background-color: #fafafa!important
-    ; color:            black
-    ; padding:          5px!important
-    ; margin:           3px 0 0 0!important
-    ; cursor:           default!important
-    }
-.debugger .console form
-    { color:            #555
-    }
-.debugger .console input
-    { background-color: #fafafa
-    ; color:            #555
-    ; width:            90%
-    ; font-family:        'Consolas', 'Deja Vu Sans Mono'
-                        , 'Bitstream Vera Sans Mono', monospace
-    ; font-size:        13px
-    ; border:           none!important
-    }
-.debugger .console .traceback
-    { margin:           5px 0 5px 25px
-    ; white-space:      normal
-    }
-.debugger .console .traceback h3
-    { background-color: #555
-    ; color:            white
-    ; margin:           -10px -10px 5px -10px
-    ; padding:          5px
-    }
-.debugger .console .traceback pre:hover
-    { background-color: #ccc
-    ; cursor:           default
-    }
 .debugger .string
     { color:            #30799B
     }

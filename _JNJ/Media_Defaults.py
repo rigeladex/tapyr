@@ -36,6 +36,7 @@
 #    29-Mar-2011 (CT) `afs` continued..
 #    30-Mar-2011 (CT) `afs` continued...
 #    19-May-2011 (CT) `afs` continued....
+#    16-Oct-2011 (MG) `Debugger` added
 #    ««revision-date»»···
 #--
 
@@ -326,6 +327,20 @@ class Media_Defaults (Definition) :
 
     thumbnail_size         = Px (155)
     thumbnail_selected_color = P.color_selected
+
+    class Debugger (Definition) :
+
+        background_color           = P.R.background_color
+        console_border_color       = RGB_X ("#CCC")
+        console_background_color   = RGB_X ("#FAFAFA")
+        console_text_color         = "black"
+
+        form_text_color            = RGB_X ("#555")
+
+        traceback_background_color = "white"
+        traceback_text_color       = "white"
+
+    # end class Debugger
 
 # end class Media_Defaults
 

@@ -18,6 +18,7 @@
 // Revision Dates
 //    12-Jan-2011 (CT) Creation
 //    26-Jan-2011 (CT) Style change
+//    16-Oct-2011 (MG) Handling of placeholder for `password` changed
 //    ««revision-date»»···
 //--
 
@@ -62,33 +63,31 @@
                                 .blur ();
                         } else {
                             var overlay$ =
-                                $( "<"  + options.overlay_type + ">"
+                                $( '<input type="text" value="'
+                                 + ' class="_placeholder_"''
                                  + placeholder
-                                 + "</" + options.overlay_type + ">"
+                                 + '"/>'
                                  );
                             overlay$
                                 .insertBefore (target$)
+                                .addClass     (options.p_class)
                                 .css
                                     ( { height   : target$.css ("height")
-                                      , position : "absolute"
                                       , width    : target$.css ("width")
                                       }
                                     )
-                                .addClass (options.p_class)
-                                .click
-                                    ( function (ev) {
-                                        overlay$.hide ();
-                                        target$.focus ();
-                                      }
-                                    )
-                                .hide ();
-                            target$
                                 .focus
-                                    ( function (ev) { overlay$.hide (); })
+                                    ( function (ev) {
+                                        target$.show  ().focus ();
+                                        overlay$.hide ();
+                                      }
+                                    );
+                            target$
                                 .blur
                                     ( function (ev) {
                                         var v = target$.val ();
                                         if (v == "" || v == placeholder) {
+                                            target$.hide  ();
                                             overlay$.show ();
                                         };
                                       }
@@ -101,6 +100,7 @@
             .parents ("form")
                 .submit (
                     function () {
+                        $("._placeholder_").hide ();
                         $("[placeholder]", this)
                             .each (
                                 function () {
