@@ -22,6 +22,7 @@
 //    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
 //    26-Jan-2011 (CT) Style change
 //     5-Apr-2011 (CT) `Array.prototype.indexOf` defined, if necessary
+//    17-Oct-2011 (CT) Missing `var` added
 //    ««revision-date»»···
 //--
 
@@ -33,7 +34,7 @@
                 var list   = data.split (",");
                 var pat    = /^\s*\d+\s*([-+]\s*\d+)?\s*$/;
                 var result = new Array ();
-                for (i = 0; i < list.length; i+= 1) {
+                for (var i = 0; i < list.length; i+= 1) {
                     var x = list [i];
                     if (x.search (pat) != null) {
                         result.push (eval (x));

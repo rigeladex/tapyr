@@ -65,7 +65,7 @@ class Field_F (Field) :
             try :
                 return float (result)
             except :
-                pass
+                return 0
     # end def __call__
 
 # end class Field_F
@@ -122,7 +122,7 @@ class Bat_Charge (TFL.Meta.Object) :
         result.full_capacity      = fc = sum (fcs) if fcs else None
         result.remaining_capacity = rc = sum (rcs) if rcs else None
         if fc and rc :
-            result.percent = min ((rc /fc) * 100, 100.)
+            result.percent = min ((rc / fc) * 100, 100.)
         result.time = t = sum (ts) if ts else None
         if t :
             result.hours, result.minutes = divmod (t, 60)

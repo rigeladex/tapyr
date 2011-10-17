@@ -215,7 +215,7 @@ class ACPI_Updater (TFL.Meta.Object) :
                         if _ in l :
                             bat_status = _
                             break
-                percent = int (round (float (bp.percent)))
+                percent = int (round (float (bp.percent or 0)))
             now         = time.time ()
             speed       = self._get_speed ()
             temperature = int \
@@ -431,7 +431,7 @@ class ACPI_Entry (Text_LR_Entry) :
                     bat_status = "<<"
             status = s_format % (status, duration, bat_status)
             fmt    = "%3.1f" if s.bat_percent < 10  else "%2.0f"
-            value  = (fmt + "%%%s") % (s.bat_percent, remaining)
+            value  = (fmt + "%%%s") % (s.bat_percent or 0, remaining)
             tcolor = self.text_color
             self.widget.config (fill = color)
             self.l_text.config (fill = tcolor, text = status)
