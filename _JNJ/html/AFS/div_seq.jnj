@@ -40,6 +40,7 @@
 ##    10-Jun-2011 (MG) `Group` added
 ##    28-Sep-2011 (CT) Most buttons removed from `Field_Entity`
 ##    10-Oct-2011 (CT) `Clear` button added to `Field_Entity`
+##    18-Oct-2011 (CT) `do_button` calls removed
 ##    ««revision-date»»···
 ##--
 #}
@@ -49,10 +50,8 @@
 
 {%- macro Entity (form, elem, renderer) -%}
   {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
-    {% call GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) -%}
-      {{ GTW.call_macro ("do_button", "Save", templ_name = renderer) }}
-    {% endcall %} {# do_head #}
-    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_head",       form, elem, renderer, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_children",   form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity -#}
 
@@ -63,23 +62,12 @@
       , templ_name = renderer
       )
   -%}
-    {% call GTW.call_macro
+    {{ GTW.call_macro
         ( "do_head"
         , form, elem, renderer, head = elem.display if elem.collapsed else None
         , templ_name = renderer
         )
-   -%}
-      {%- if elem.pid %}
-        {{ GTW.call_macro ("do_button", "Delete", templ_name = renderer) }}
-      {% endif -%}
-      {%- if elem.collapsed %}
-        {{ GTW.call_macro ("do_button", "Copy",   templ_name = renderer) }}
-        {{ GTW.call_macro ("do_button", "Edit",   templ_name = renderer) }}
-      {%- else %}
-        {{ GTW.call_macro ("do_button", "Save",   templ_name = renderer) }}
-        {{ GTW.call_macro ("do_button", "Cancel", templ_name = renderer) }}
-      {% endif -%}
-    {% endcall %} {# do_head #}
+    }}
     {%- if not elem.collapsed %}
       {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
     {% endif -%}
@@ -89,10 +77,8 @@
 {%- macro Entity_List (form, elem, renderer) -%}
   {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
     {#- XXX Legend, controls, ... -#}
-    {% call GTW.call_macro ("do_head", form, elem, renderer, 65535, templ_name = renderer) -%}
-      {{ GTW.call_macro ("do_button", "Add", templ_name = renderer) }}
-    {% endcall %} {# do_head #}
-    {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_head",       form, elem, renderer, 65535, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_children",   form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity_List -#}
 
@@ -135,21 +121,14 @@
       , templ_name = renderer
       )
   -%}
-    {% call GTW.call_macro
+    {{ GTW.call_macro
         ( "do_head"
         , form, elem, renderer
         , tail = elem.display if elem.collapsed else None
         , show_desc = False
         , templ_name = renderer
         )
-    -%}
-      {%- if elem.collapsed %}
-        {{ GTW.call_macro ("do_button", "Edit",   templ_name = renderer) }}
-      {%- else %}
-        {{ GTW.call_macro ("do_button", "Save",   templ_name = renderer) }}
-      {% endif -%}
-      {{ GTW.call_macro ("do_button", "Clear",    templ_name = renderer) }}
-    {% endcall %} {# do_head #}
+    }}
     {%- if not elem.collapsed %}
       {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
     {% endif -%}

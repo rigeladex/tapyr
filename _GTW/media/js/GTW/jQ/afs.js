@@ -52,7 +52,9 @@
 //    13-Oct-2011 (CT) `delete_cb` added
 //    13-Oct-2011 (CT) `_renderItem` changed locally, not globally
 //    13-Oct-2011 (CT) `gtw_autocomplete` factored into separate module
-//    14-Oct-2011 (CT) `callback`, `cmd_menu`, and `_cmds` added
+//    14-Oct-2011 (CT) `callback`, `cmd_menu`, and `_cmds` added,
+//                     `_setup_cmd_menu` started
+//    18-Oct-2011 (CT) `_setup_cmd_menu` continued
 //    ««revision-date»»···
 //--
 
@@ -426,37 +428,63 @@
                 );
         };
         var _setup_cmd_menu = function _setup_cmd_menu (cmc$) {
-            var s$     = cmc$.closest ("section");
+            var s$     = cmc$.closest ("div[id],section");
             var id     = s$.attr    ("id");
             var elem   = $AFS_E.get (id);
             var source = cmd_menu [elem.type] (elem);
             var cmd    = source [0];
             var cb     = callback [cmd.name];
-            var menu   = $("<ul>");
+            var menu, drop_butt;
             $("<a class=\"default button\">")
                 .append   (cmd.label)
                 .appendTo (cmc$)
                 .click    (cmd.callback);
             if (source.length > 1) {
+                menu = $("<ul class=\"drop-menu\">");
                 for (var i = 1, li = source.length, cmdi; i < li; i++) {
                     cmdi = source [i];
                     menu.append
-                        ($("<li>").append ($("<a>").append (cmdi.label)));
+                            ( $("<li>")
+                                .append ( $("<a class=\"button\">")
+                                            .append (cmdi.label)
+                                        )
+                            )
+                        .bind ("cmd_menu_do", cmdi.callback);
                 }
-                menu.menu ();
                 // XXX bind menu to pulldown-button created below
                 // http://docs.jquery.com/UI/Menu;
-                $("<a class=\"drop button\">")
+                drop_butt = $("<a class=\"drop button\">")
                     .append   ($("<i>"))
                     .appendTo (cmc$)
                     .click
                       ( function (ev) {
-                          alert
-                            ( "Implement menu!\n"
-                            + $GTW.inspect.show (menu.element)
-                            );
+                          var menu = drop_butt.menu;
+                          if (menu.element.is (":visible")) {
+                              menu.element.hide ();
+                          } else {
+                              menu.element.show ()
+                                  .position
+                                    ( { my         : "right top"
+                                      , at         : "right bottom"
+                                      , of         : drop_butt
+                                      , collision  : "none"
+                                      }
+                                    );
+                          };
                         }
                       );
+                drop_butt.menu = menu
+                    .menu
+                        ( { select    : function (event, ui) {
+                                $(ui.item).trigger ("cmd_menu_do");
+                            }
+                          }
+                        )
+                    .appendTo (cmc$)
+                    .css      ({ top: 0, left: 0, position : "absolute" })
+                    .hide     ()
+                    .zIndex   (cmc$.zIndex () + 1)
+                    .data     ("menu");
             };
         };
         var add_cb = function add_cb (ev) {
@@ -719,6 +747,9 @@
               }
             , Entity_List               : function cmd_menu_entity_list (elem) {
                   return _cmds ("add");
+              }
+            , Field_Composite           : function cmd_menu_entity_list (elem) {
+                  return _cmds ("clear");
               }
             , Field_Entity              : function cmd_menu_field_entity (elem) {
                   var names = [];
