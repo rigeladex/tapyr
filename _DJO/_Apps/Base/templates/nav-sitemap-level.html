@@ -1,6 +1,6 @@
 {# Django template: nav-sitemap-level.html #}
 {% comment %}
-  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
   ##
   ##
@@ -14,13 +14,16 @@
   ##
   ## Revision Dates
   ##     3-Oct-2008 (CT) Creation
+  ##    18-Oct-2011 (CT) Guard for `link.hidden` added
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
 <ul>
   {% for link in link_list %}
-    {% rrender "nav-sitemap-entry.html" %}
+    {% if not link.hidden %}
+      {% rrender "nav-sitemap-entry.html" %}
+    {% endif %}
   {% endfor %}
 </ul>
 {# __END__ Django template: nav-sitemap-level.html #}
