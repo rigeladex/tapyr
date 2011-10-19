@@ -445,7 +445,7 @@
                     cmdi = source [i];
                     menu.append
                             ( $("<li>")
-                                .append ( $("<a class=\"button\">")
+                                .append ( $("<a class=\"button\" href=\"#\">")
                                             .append (cmdi.label)
                                         )
                             )
