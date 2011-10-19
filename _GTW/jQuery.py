@@ -43,6 +43,7 @@
 #     7-Apr-2011 (MG) Use jQuery 1.5.2
 #     7-Apr-2011 (MG) Definitions for `jqPlot` added
 #     1-Jun-2011 (CT) `GTW_postify_a` added
+#    19-Oct-2011 (CT) Use jQuery 1.6.4 (but without version number in filename)
 #    ««revision-date»»···
 #--
 
@@ -51,18 +52,18 @@ import _GTW.Media
 
 if __debug__ :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-1.5.2.js"
+        ( src      = "/media/GTW/js/jquery.js"
         , sort_key = -100  ## should be loaded first
         , name     = "jQuery"
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui.js", name = "jQuery_UI")
 else :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-1.5.2.min.js"
+        ( src      = "/media/GTW/js/jquery.min.js"
         , sort_key = -100  ## should be loaded first
         , name     = "jQuery"
         )
-    GTW.Script (src = "/media/GTW/js/jquery-ui-1.8.min.js", name = "jQuery_UI")
+    GTW.Script (src = "/media/GTW/js/jquery-ui.min.js", name = "jQuery_UI")
 GTW.Script (src = "/media/GTW/js/jquery.gritter.js",    name = "jQuery_Gritter")
 GTW.Script (src = "/media/GTW/js/modernizr-1.6.min.js", name = "Modernizr")
 

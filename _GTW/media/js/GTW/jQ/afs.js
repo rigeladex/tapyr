@@ -451,8 +451,6 @@
                             )
                         .bind ("cmd_menu_do", cmdi.callback);
                 }
-                // XXX bind menu to pulldown-button created below
-                // http://docs.jquery.com/UI/Menu;
                 drop_butt = $("<a class=\"drop button\">")
                     .append   ($("<i>"))
                     .appendTo (cmc$)
