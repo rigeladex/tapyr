@@ -448,8 +448,8 @@
                                 .append ( $("<a class=\"button\" href=\"#\">")
                                             .append (cmdi.label)
                                         )
+                                .bind   ("cmd_menu_do", cmdi.callback);
                             )
-                        .bind ("cmd_menu_do", cmdi.callback);
                 }
                 drop_butt = $("<a class=\"drop button\">")
                     .append   ($("<i>"))
