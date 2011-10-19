@@ -67,7 +67,7 @@ else :
 GTW.Script (src = "/media/GTW/js/jquery.gritter.js",    name = "jQuery_Gritter")
 GTW.Script (src = "/media/GTW/js/modernizr-1.6.min.js", name = "Modernizr")
 
-GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css", name = "jQuery_UI")
+GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
 GTW.CSS_Link \
     ( "/media/GTW/css/jquery.gritter.css", "screen"
     , name = "jQuery_Gritter"
