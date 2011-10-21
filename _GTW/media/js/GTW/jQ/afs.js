@@ -57,6 +57,7 @@
 //    18-Oct-2011 (CT) `_setup_cmd_menu` continued
 //    20-Oct-2011 (CT) `_setup_cmd_menu` continued, support for buttons removed
 //    20-Oct-2011 (CT) Guard for `response.json` added to `_response_replace`
+//    21-Oct-2011 (CT) `hide_cb` added to `_setup_cmd_menu`
 //    ««revision-date»»···
 //--
 
@@ -437,7 +438,7 @@
             var source = cmd_menu [elem.type] (elem);
             var cmd    = source [0];
             var cb     = callback [cmd.name];
-            var menu, drop_butt;
+            var menu, drop_butt, hide_cb;
             $("<a class=\"default button\">")
                 .append   (cmd.label)
                 .appendTo (cmc$)
@@ -472,6 +473,18 @@
                           };
                         }
                       );
+                hide_cb = function hide_cb (ev) {
+                    var menu = drop_butt.menu, tc;
+                    if (menu.element.is (":visible")) {
+                        tc = $(ev.target).closest (".cmd-menu");
+                        if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
+                            menu.element.hide ();
+                        };
+                    };
+                };
+                $(document)
+                    .bind ("click.menuhide", hide_cb)
+                    .bind ("keyup.menuhide", hide_cb);
                 for (var i = 1, li = source.length, cmdi; i < li; i++) {
                     ( function () {
                         var cmdi = source [i];
