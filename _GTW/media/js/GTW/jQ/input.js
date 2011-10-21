@@ -64,7 +64,7 @@
                         } else {
                             var overlay$ =
                                 $( '<input type="text" value="'
-                                 + ' class="_placeholder_"''
+                                 + ' class="_placeholder_"'
                                  + placeholder
                                  + '"/>'
                                  );
