@@ -52,7 +52,11 @@
 //    13-Oct-2011 (CT) `delete_cb` added
 //    13-Oct-2011 (CT) `_renderItem` changed locally, not globally
 //    13-Oct-2011 (CT) `gtw_autocomplete` factored into separate module
-//    14-Oct-2011 (CT) `callback`, `cmd_menu`, and `_cmds` added
+//    14-Oct-2011 (CT) `callback`, `cmd_menu`, and `_cmds` added,
+//                     `_setup_cmd_menu` started
+//    18-Oct-2011 (CT) `_setup_cmd_menu` continued
+//    20-Oct-2011 (CT) `_setup_cmd_menu` continued, support for buttons removed
+//    20-Oct-2011 (CT) Guard for `response.json` added to `_response_replace`
 //    ««revision-date»»···
 //--
 
@@ -237,10 +241,7 @@
                         anchor = $AFS_E.get (elem.anchor_id);
                         s$ = $("[id='" + response.json.$id + "']");
                         s$ = _response_replace (response, s$, anchor);
-                        _setup_callbacks
-                            ( s$, add_cb, cancel_cb, clear_cb, copy_cb
-                            , delete_cb, edit_cb, save_cb
-                            );
+                        _setup_callbacks (s$);
                     } else if (response.fields > 0) {
                         _update_field_values
                             (options, elem, response.values, response.names);
@@ -381,7 +382,7 @@
                           , roots  : $AFS_E.root.roots
                           }
                         );
-                    _setup_callbacks (s$, add_cb, cancel_cb, clear_cb, save_cb);
+                    _setup_callbacks (s$);
                 } else {
                     alert ("Error: " + response.error);
                 }
@@ -393,16 +394,20 @@
                 .html       (response.html)
                 .children   ()
                     .unwrap ();
-            new_elem = $AFS_E.create (response.json);
-            anchor   = $AFS_E.get (elem.anchor_id);
-            root     = $AFS_E.get (elem.root_id || anchor.root_id);
-            new_elem.setup_value
-                ( { anchor : anchor
-                  , root   : root || anchor
-                  , roots  : []
-                  }
-                );
-            anchor.value [new_elem.$id] = new_elem.value;
+            if ("json" in response) {
+                new_elem = $AFS_E.create (response.json);
+                anchor   = $AFS_E.get (elem.anchor_id);
+                root     = $AFS_E.get (elem.root_id || anchor.root_id);
+                new_elem.setup_value
+                    ( { anchor : anchor
+                      , root   : root || anchor
+                      , roots  : []
+                      }
+                    );
+                anchor.value [new_elem.$id] = new_elem.value;
+            } else {
+                delete anchor.value [elem.$id];
+            };
             return s$;
         };
         var _setup_callbacks = function _setup_callbacks (context) {
@@ -426,201 +431,257 @@
                 );
         };
         var _setup_cmd_menu = function _setup_cmd_menu (cmc$) {
-            var s$     = cmc$.closest ("section");
+            var s$     = cmc$.closest ("div[id],section");
             var id     = s$.attr    ("id");
             var elem   = $AFS_E.get (id);
             var source = cmd_menu [elem.type] (elem);
             var cmd    = source [0];
             var cb     = callback [cmd.name];
-            var menu   = $("<ul>");
+            var menu, drop_butt;
             $("<a class=\"default button\">")
                 .append   (cmd.label)
                 .appendTo (cmc$)
-                .click    (cmd.callback);
+                .click
+                  ( function cmd_click (ev) {
+                      cmd.callback.call (cmc$, s$, elem, id, ev);
+                    }
+                  );
             if (source.length > 1) {
-                for (var i = 1, li = source.length, cmdi; i < li; i++) {
-                    cmdi = source [i];
-                    menu.append
-                        ($("<li>").append ($("<a>").append (cmdi.label)));
-                }
-                menu.menu ();
-                // XXX bind menu to pulldown-button created below
-                // http://docs.jquery.com/UI/Menu;
-                $("<a class=\"drop button\">")
+                // XXX this should really use a `popup` but jquery-ui 1.8 doesn't
+                //     support that yet
+                // XXX fix when jquery-ui 1.9+ is available
+                menu = $("<ul class=\"drop-menu\">");
+                drop_butt = $("<a class=\"drop button\">")
                     .append   ($("<i>"))
                     .appendTo (cmc$)
                     .click
                       ( function (ev) {
-                          alert
-                            ( "Implement menu!\n"
-                            + $GTW.inspect.show (menu.element)
-                            );
+                          var menu = drop_butt.menu;
+                          if (menu.element.is (":visible")) {
+                              menu.element.hide ();
+                          } else {
+                              menu.element.show ()
+                                  .position
+                                    ( { my         : "right top"
+                                      , at         : "right bottom"
+                                      , of         : drop_butt
+                                      , collision  : "none"
+                                      }
+                                    )
+                                  .focus ();
+                          };
                         }
                       );
+                for (var i = 1, li = source.length, cmdi; i < li; i++) {
+                    ( function () {
+                        var cmdi = source [i];
+                        menu.append
+                          ( $("<li>")
+                              .append ( $("<a class=\"button\" href=\"#\">")
+                                          .append (cmdi.label)
+                                          .click
+                                            ( function cmd_click (ev) {
+                                                cmdi.callback.call
+                                                  (cmc$, s$, elem, id, ev);
+                                                drop_butt.menu.element.hide
+                                                  ();
+                                              }
+                                            )
+                                      )
+                          );
+                      } ()
+                    );
+                };
+                drop_butt.menu = menu
+                    .menu
+                      ( { select    : function (event, ui) {
+                              var cmd$ = $(ui.item);
+                              cmd$.trigger ("cmd_menu_do");
+                          }
+                        }
+                      )
+                    .appendTo (cmc$)
+                    .css      ({ top: 0, left: 0, position : "absolute" })
+                    .hide     ()
+                    .zIndex   (cmc$.zIndex () + 1)
+                    .data     ("menu");
             };
         };
-        var add_cb = function add_cb (ev) {
-            var b$        = $(this);
-            var p$        = b$.closest ("section");
-            var id        = p$.attr    ("id");
-            var parent    = $AFS_E.get (id);
-            var child_idx = parent.new_child_idx ();
-            $.getJSON
-                ( options.expander_url
-                , { fid           : id
-                  , sid           : $AFS_E.root.value.sid
-                  , new_id_suffix : child_idx
-                  // XXX need to pass `pid` of `hidden_role` if any
-                  }
-                , function (response, txt_status)
-                    { _response_append (response, txt_status, p$, parent); }
-                );
-        };
-        var cancel_cb = function cancel_cb (ev) {
-            var b$     = $(this);
-            var s$     = b$.closest ("section");
-            var id     = s$.attr    ("id");
-            var elem   = $AFS_E.get (id);
-            var value  = elem ["value"];
-            var pid    = value && value.edit.pid;
-            if (pid != undefined) {
-                $.getJSON
-                    ( options.expander_url
-                    , { fid       : id
-                      , pid       : pid
-                      , sid       : $AFS_E.root.value.sid
-                      , allow_new : elem.allow_new
-                      , collapsed : true
-                      }
-                    , function (response, txt_status) {
-                          if (txt_status == "success") {
-                              if (! response ["error"]) {
-                                  s$ = _response_replace (response, s$, elem);
-                                  _bind_click
-                                      ( s$
-                                      , clear_cb, copy_cb, delete_cb, edit_cb
-                                      );
+        var callback =
+            { add                       : function add_cb (p$, parent, id, ev) {
+                  var child_idx = parent.new_child_idx ();
+                  $.getJSON
+                      ( options.expander_url
+                      , { fid           : id
+                        , sid           : $AFS_E.root.value.sid
+                        , new_id_suffix : child_idx
+                        // XXX need to pass `pid` of `hidden_role` if any
+                        }
+                      , function (response, txt_status)
+                          { _response_append (response, txt_status, p$, parent); }
+                      );
+              }
+            , cancel                    : function cancel_cb (s$, elem, id, ev) {
+                  var value  = elem ["value"];
+                  var pid    = value && value.edit.pid;
+                  if (pid != undefined) {
+                      $.getJSON
+                          ( options.expander_url
+                          , { fid       : id
+                            , pid       : pid
+                            , sid       : $AFS_E.root.value.sid
+                            , allow_new : elem.allow_new
+                            , collapsed : true
+                            }
+                          , function (response, txt_status) {
+                                if (txt_status == "success") {
+                                    if (! response ["error"]) {
+                                        s$ = _response_replace
+                                            (response, s$, elem);
+                                    } else {
+                                        alert ("Error: " + response.error);
+                                    }
+                                }
+                            }
+                          );
+                  } else {
+                      elem.remove ()
+                      s$.remove   ();
+                  };
+              }
+            , clear                     : function clear_cb (s$, elem, id, ev) {
+                  _clear_field (elem);
+                  $.getJSON
+                      ( options.expander_url
+                      , { fid       : id
+                        , pid       : null
+                        , sid       : $AFS_E.root.value.sid
+                        , allow_new : elem.allow_new
+                        }
+                      , function (response, txt_status) {
+                            if (txt_status == "success") {
+                                if (! response ["error"]) {
+                                    s$ = _response_replace (response, s$, elem);
+                                    _setup_callbacks (s$);
+                                } else {
+                                    alert ("Error: " + response.error);
+                                }
+                            }
+                        }
+                      );
+              }
+            , copy                      : function copy_cb (s$, elem, id, ev) {
+                  var p$        = s$.parent  ();
+                  var value     = elem ["value"];
+                  var pid       = value && value.edit.pid;
+                  var parent    = $AFS_E.get (p$.attr ("id"));
+                  var child_idx = parent.new_child_idx ();
+                  $.getJSON
+                      ( options.expander_url
+                      , { fid           : id
+                        , pid           : pid
+                        , sid           : $AFS_E.root.value.sid
+                        , new_id_suffix : child_idx
+                        , allow_new     : elem.allow_new
+                        , copy          : true
+                        }
+                      , function (response, txt_status)
+                          { _response_append (response, txt_status, p$, elem); }
+                      );
+              }
+            , delete                    : function delete_cb (s$, elem, id, ev) {
+                  var value = elem ["value"];
+                  var pid   = value && value.edit.pid;
+                  if (pid !== undefined && pid !== "") {
+                      $.gtw_ajax_2json
+                          ( { url         : options.deleter_url
+                            , data        :
+                                { fid     : id
+                                , pid     : pid
+                                , sid     : $AFS_E.root.value.sid
+                                }
+                            , success     : function (response, status) {
+                                  if (! response ["error"]) {
+                                      s$ = _response_replace (response, s$, elem);
+                                      _setup_callbacks (s$);
+                                  } else {
+                                      alert ("Error: " + response.error);
+                                  };
+                              }
+                            }
+                          );
+                  };
+              }
+            , edit                      : function edit_cb (s$, elem, id, ev) {
+                  // used to be // var s$    = b$.closest ("section.closed");
+                  // XXX was the `.closed` necessary ???
+                  var value = elem ["value"];
+                  var pid   = value && value.edit.pid;
+                  $.getJSON
+                      ( options.expander_url
+                      , { fid       : id
+                        , pid       : pid
+                        , sid       : $AFS_E.root.value.sid
+                        , allow_new : elem.allow_new
+                        }
+                      , function (response, txt_status) {
+                            if (txt_status == "success") {
+                                if (! response ["error"]) {
+                                    s$ = _response_replace (response, s$, elem);
+                                    _setup_callbacks (s$);
+                                } else {
+                                    alert ("Error: " + response.error);
+                                }
+                            }
+                        }
+                      );
+              }
+            , save                      : function save_cb (s$, elem, id, ev) {
+                  var pvs    = $AFS_E.root.packed_values (elem);
+                  var json_data =
+                        { cargo       : pvs
+                        , allow_new   : elem.allow_new
+                        , collapsed   : true
+                        };
+                  $.gtw_ajax_2json
+                      ( { url         : document.URL
+                        , data        : json_data
+                        , success     : function (answer, status, xhr_instance) {
+                              var response;
+                              if (! answer ["error"]) {
+                                  if (answer ["conflicts"]) {
+                                      // XXX
+                                      alert ( "Conflicts: \n"
+                                            + $GTW.inspect.show (answer.conflicts)
+                                            );
+                                  } else if (answer ["expired"]) {
+                                      // XXX display re-authorization form
+                                      alert ("Expired: " + answer.expired);
+                                  } else if (id === answer.$child_ids [0]) {
+                                      response = answer [id];
+                                      if (response !== undefined) {
+                                          s$ = _response_replace (response, s$, elem);
+                                          _setup_callbacks (s$);
+                                      } else {
+                                          alert
+                                              ( "Save missing response: \n"
+                                              + $GTW.inspect.show (answer)
+                                              );
+                                      }
+                                  }
                               } else {
-                                  alert ("Error: " + response.error);
+                                  alert
+                                      ( "Error: " + answer.error
+                                      + "\n\n"
+                                      + $GTW.inspect.show (json_data)
+                                      );
                               }
                           }
-                      }
-                    );
-            } else {
-                elem.remove ()
-                s$.remove   ();
-            };
-        };
-        var clear_cb  = function clear_cb (ev) {
-            var b$    = $(this);
-            var s$    = b$.closest ("section");
-            var id    = s$.attr    ("id");
-            var elem  = $AFS_E.get (id);
-            _clear_field (elem);
-            $.getJSON
-                ( options.expander_url
-                , { fid       : id
-                  , pid       : null
-                  , sid       : $AFS_E.root.value.sid
-                  , allow_new : elem.allow_new
-                  }
-                , function (response, txt_status) {
-                      if (txt_status == "success") {
-                          if (! response ["error"]) {
-                              s$ = _response_replace (response, s$, elem);
-                              _setup_callbacks
-                                  ( s$, add_cb, cancel_cb, clear_cb, copy_cb
-                                  , delete_cb, edit_cb, save_cb
-                                  );
-                          } else {
-                              alert ("Error: " + response.error);
-                          }
-                      }
-                  }
-                );
-        };
-        var copy_cb = function copy_cb (ev) {
-            var b$        = $(this);
-            var s$        = b$.closest ("section.closed");
-            var p$        = s$.parent  ();
-            var id        = s$.attr    ("id");
-            var elem      = $AFS_E.get (id);
-            var value     = elem ["value"];
-            var pid       = value && value.edit.pid;
-            var parent    = $AFS_E.get (p$.attr ("id"));
-            var child_idx = parent.new_child_idx ();
-            $.getJSON
-                ( options.expander_url
-                , { fid           : id
-                  , pid           : pid
-                  , sid           : $AFS_E.root.value.sid
-                  , new_id_suffix : child_idx
-                  , allow_new     : elem.allow_new
-                  , copy          : true
-                  }
-                , function (response, txt_status)
-                    { _response_append (response, txt_status, p$, elem); }
-                );
-        };
-        var delete_cb = function delete_cb (ev) {
-            var b$    = $(this);
-            var s$    = b$.closest ("section");
-            var id    = s$.attr    ("id");
-            var elem  = $AFS_E.get (id);
-            var value = elem ["value"];
-            var pid   = value && value.edit.pid;
-            if (pid !== undefined && pid !== "") {
-                $.gtw_ajax_2json
-                    ( { url         : options.deleter_url
-                      , data        :
-                          { fid     : id
-                          , pid     : pid
-                          , sid     : $AFS_E.root.value.sid
-                          }
-                      , success     : function (response, status) {
-                            if (! response ["error"]) {
-                                s$ = _response_replace (response, s$, elem);
-                                _setup_callbacks
-                                    ( s$, add_cb, cancel_cb, clear_cb, copy_cb
-                                    , delete_cb, edit_cb, save_cb
-                                    );
-                            } else {
-                                alert ("Error: " + response.error);
-                            };
                         }
-                      }
-                    );
+                      , "Save"
+                      );
+              }
             };
-        };
-        var edit_cb = function edit_cb (ev) {
-            var b$    = $(this);
-            var s$    = b$.closest ("section.closed");
-            var id    = s$.attr    ("id");
-            var elem  = $AFS_E.get (id);
-            var value = elem ["value"];
-            var pid   = value && value.edit.pid;
-            $.getJSON
-                ( options.expander_url
-                , { fid       : id
-                  , pid       : pid
-                  , sid       : $AFS_E.root.value.sid
-                  , allow_new : elem.allow_new
-                  }
-                , function (response, txt_status) {
-                      if (txt_status == "success") {
-                          if (! response ["error"]) {
-                              s$ = _response_replace (response, s$, elem);
-                              _setup_callbacks
-                                  ( s$, add_cb, cancel_cb, clear_cb, copy_cb
-                                  , delete_cb, edit_cb, save_cb
-                                  );
-                          } else {
-                              alert ("Error: " + response.error);
-                          }
-                      }
-                  }
-                );
-        };
         var field_change_cb = function field_change_cb (ev) {
             var f$ = $(this);
             var id = f$.attr ("id");
@@ -639,68 +700,7 @@
                 // anchor = $AFS_E.get (afs_field.anchor_id);
             }
         };
-        var save_cb = function save_cb (ev) {
-            var b$     = $(this);
-            var s$     = b$.closest ("section");
-            var id     = s$.attr    ("id");
-            var elem   = $AFS_E.get (id);
-            var pvs    = $AFS_E.root.packed_values (elem);
-            var json_data =
-                  { cargo       : pvs
-                  , allow_new   : elem.allow_new
-                  , collapsed   : true
-                  };
-            $.gtw_ajax_2json
-                ( { url         : document.URL
-                  , data        : json_data
-                  , success     : function (answer, status, xhr_instance) {
-                        var response;
-                        if (! answer ["error"]) {
-                            if (answer ["conflicts"]) {
-                                // XXX
-                                alert ( "Conflicts: \n"
-                                      + $GTW.inspect.show (answer.conflicts)
-                                      );
-                            } else if (answer ["expired"]) {
-                                // XXX display re-authorization form
-                                alert ("Expired: " + answer.expired);
-                            } else if (id === answer.$child_ids [0]) {
-                                response = answer [id];
-                                if (response !== undefined) {
-                                    s$ = _response_replace (response, s$, elem);
-                                    _setup_callbacks
-                                        ( s$
-                                        , add_cb, cancel_cb, clear_cb, copy_cb
-                                        , delete_cb, edit_cb, save_cb
-                                        );
-                                } else {
-                                    alert
-                                        ( "Save missing response: \n"
-                                        + $GTW.inspect.show (answer)
-                                        );
-                                }
-                            }
-                        } else {
-                            alert
-                                ( "Error: " + answer.error
-                                + "\n\n"
-                                + $GTW.inspect.show (json_data)
-                                );
-                        }
-                    }
-                  }
-                , "Save"
-                );
-        };
-        var callback =
-            { add                       : add_cb
-            , cancel                    : cancel_cb
-            , clear                     : clear_cb
-            , copy                      : copy_cb
-            , delete                    : delete_cb
-            , edit                      : edit_cb
-            , save                      : save_cb
-            };
+
         var cmd_menu =
             { Entity                    : function cmd_menu_entity (elem) {
                   return _cmds ("save", "clear");
@@ -720,6 +720,9 @@
             , Entity_List               : function cmd_menu_entity_list (elem) {
                   return _cmds ("add");
               }
+            , Field_Composite           : function cmd_menu_entity_list (elem) {
+                  return _cmds ("clear");
+              }
             , Field_Entity              : function cmd_menu_field_entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
@@ -731,16 +734,8 @@
                   return _cmds.apply (null, names);
               }
             };
-        options.form$       = this;
-        add_cb.$selector    = ".add.button";
-        cancel_cb.$selector = ".cancel.button";
-        clear_cb.$selector  = ".clear.button";
-        copy_cb.$selector   = ".copy.button";
-        delete_cb.$selector = ".delete.button";
-        edit_cb.$selector   = ".edit.button";
-        save_cb.$selector   = ".save.button";
-        _setup_callbacks
-            (this, add_cb, clear_cb, copy_cb, delete_cb, edit_cb, save_cb);
+        options.form$ = this;
+        _setup_callbacks (this);
         return this;
     };
   } (jQuery)

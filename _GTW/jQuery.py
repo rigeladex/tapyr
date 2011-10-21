@@ -44,6 +44,7 @@
 #     7-Apr-2011 (MG) Definitions for `jqPlot` added
 #     1-Jun-2011 (CT) `GTW_postify_a` added
 #    13-Sep-2011 (MG) `s/sort_key/rank/g`
+#    19-Oct-2011 (CT) Use jQuery 1.6.4 (but without version number in filename)
 #    ««revision-date»»···
 #--
 
@@ -52,22 +53,22 @@ import _GTW.Media
 
 if __debug__ :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-1.5.2.js"
+        ( src      = "/media/GTW/js/jquery.js"
         , rank     = -100  ## should be loaded first
         , name     = "jQuery"
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui.js", name = "jQuery_UI")
 else :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-1.5.2.min.js"
+        ( src      = "/media/GTW/js/jquery.min.js"
         , rank     = -100  ## should be loaded first
         , name     = "jQuery"
         )
-    GTW.Script (src = "/media/GTW/js/jquery-ui-1.8.min.js", name = "jQuery_UI")
+    GTW.Script (src = "/media/GTW/js/jquery-ui.min.js", name = "jQuery_UI")
 GTW.Script (src = "/media/GTW/js/jquery.gritter.js",    name = "jQuery_Gritter")
 GTW.Script (src = "/media/GTW/js/modernizr-1.6.min.js", name = "Modernizr")
 
-GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css", name = "jQuery_UI")
+GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
 GTW.CSS_Link \
     ( "/media/GTW/css/jquery.gritter.css", "screen"
     , name = "jQuery_Gritter"
