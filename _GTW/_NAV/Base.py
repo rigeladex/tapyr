@@ -253,6 +253,7 @@
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
+#    15-Jun-2011 (CT) `_Page_O_.__getattr__` robustified
 #    27-Sep-2011 (MG) `children` and `children_transitive` added
 #                     `_setup_afs` moved in here, `store_css` renamed to
 #                     `store_media`
@@ -1327,13 +1328,12 @@ class Root (_Dir_) :
                 pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
         # end def _create
         if self.DEBUG :
-            fmt = "*** Media cache rebuit in %ss"
+            fmt = "*** Media cache %s rebuilt in %%ss" % (cache_file)
             with TFL.Context.time_block (fmt) :
                 _create (cache_file)
         else :
             _create (cache_file)
     # end def store_cache
-    store_css = store_cache ### XXX remove me
 
 # end class Root
 

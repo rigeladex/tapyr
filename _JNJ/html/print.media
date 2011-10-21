@@ -1,0 +1,123 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/print.media
+#
+# Purpose
+#    Media fragment defining the print CSS style
+#
+# Revision Dates
+#    21-Oct-2011 (CT) Creation
+#    ««revision-date»»···
+#--
+
+print_sheet = Style_Sheet \
+    ( Media.Rule
+        ( Media.Query ("print")
+        , rules                   =
+            [ Rule
+                ( "@page"
+                , margin          = Cm (2.5)
+                )
+            , Rule
+                ( "*"
+                , background      = "transparent !important"
+                , color           = "black !important"
+                , overflow        = "visible !important"
+                )
+            , Rule
+                ( "a"
+                , color           = "#000033 !important"
+                , text_decoration = "none"
+                , children        =
+                    [ Rule_Attr
+                        ( "[href]:after"
+                        , content   = """ " [" attr(href) "]" """.strip ()
+                        , font_size = "smaller"
+                        )
+                    , Rule_Class
+                        ( "button"
+                        , display   = "none"
+                        )
+                    ]
+                )
+            , Rule
+                ( "html", ".pg_main", ".pg_foot", ".pg_head"
+                , border          = 0
+                , margin          = 0
+                , padding         = 0
+                , width           = "auto"
+                )
+            , Rule
+                ( "body"
+                , border          = 0
+                , font_size       = Pt (10)
+                , height          = "auto"
+                , min_width       = 0
+                , padding_right   = 0
+                , width           = "auto"
+                , ** P.font_spec_print
+                )
+            , Rule
+                ( "em", ".em"
+                , ** dict
+                    (P.font_spec_print, font_style = "italic")
+                )
+            , Rule
+                ( "strong"
+                , ** dict
+                    (P.font_spec_print, font_weight = "bold")
+                )
+            , Rule
+                ( "pre"
+                , ** dict
+                    (P.font_spec_print, font_family = P.font_family_pre)
+                )
+            , Rule ("thead", display = "table-header-group")
+            , Rule
+                ( ".pg_body"
+                , max_width       = Em (45)
+                )
+            , Rule
+                ( ".pg_foot"
+                , bottom          = 0
+                , font_size       = Percent (75)
+                , left            = 0
+                , position        = "fixed"
+                , width           = Percent (100)
+                )
+            , Rule
+                ( ".pg_head"
+                , color           = "#666666 !important"
+                , height          = "auto"
+                )
+            , Rule
+                ( ".pg_head .logo", ".pg_nav"
+                , display         = "none"
+                , visibility      = "collapse"
+                )
+            ]
+        )
+    , rank  = 1 << 16
+    )
+
+### __END__ print

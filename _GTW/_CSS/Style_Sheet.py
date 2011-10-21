@@ -34,7 +34,6 @@
 #                     object
 #    14-Jan-2011 (CT) `Parameter_Scope` moved to `GTW.Parameters.Scope`
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
-#                     enhanced
 #    13-Sep-2011 (CT) `Style_File` added
 #    ««revision-date»»···
 #--

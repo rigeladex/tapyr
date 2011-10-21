@@ -42,6 +42,7 @@
 ##    26-Sep-2011 (MG) Make use of new `page.template_media` property
 ##                     (javascript, JS_On_Ready, ...)
 ##    27-Sep-2011 (MG) Use new `media_fragments` module
+##    21-Oct-2011 (CT) Call `NF.main` instead of home-grown `NF.section`...
 ##    ««revision-date»»···
 ##--
 #}
@@ -49,6 +50,7 @@
 {%- import html_version as X -%}
 {%- import "html/media_fragments.jnj" as MF with context %}
 {%- import "html/navigation.jnj"      as NF with context %}
+
 {%- call X.html (lang = page.language|default ("en")) -%}
   {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
   {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
@@ -60,6 +62,7 @@
       {% endif -%}
       {% if page.permalink -%}
         {{ MF.permalink (page) }}
+        <meta name="href" content="{{- page.abs_href -}}"/>
       {% endif %}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
@@ -124,9 +127,7 @@
       {%- block nav_block -%}
         {% call X.nav (id = "navigate", class="pg_nav") -%}
           {%- block navigate -%}
-            {% call NF.section (page.top.own_links, "Navigation") -%}
-              {{ NF.calendar (page) }}
-            {% endcall %} {# section #}
+            {{ NF.main (page) }}
           {%- endblock -%}
         {%- endcall %} {# X.nav #}
       {%- endblock nav_block -%}

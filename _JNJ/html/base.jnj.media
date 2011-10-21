@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,128 +36,13 @@
 #    15-Jun-2011 (CT) `max-width` for `img` and `object` removed (doesn't
 #                     scale height accordingly, so image is distorted)
 #    31-Aug-2011 (CT) `hr.docutils` changed
+#    21-Oct-2011 (CT) Factored out `base.media` and `print.media`
 #    ««revision-date»»···
 #--
 
 Include ("html/reset.media")
+Include ("html/base.media")
 
-base_sheet = Style_Sheet \
-    ( Rule
-        ( "html"
-        , height                   = Percent (100)
-        , kits                     = [P.color_spec_normal, P.font_spec_normal]
-        , overflow                 = "auto"
-        )
-    , Rule
-        ( "body"
-        , height                   = Percent (100)
-        , margin                   = TRBL (Em (0.2), Em (0.5))
-        )
-    , Rule
-        ( "blockquote"
-        , margin_left              = Em (2.5)
-        )
-    , Rule
-        ( "caption"
-        , text_align               = "center"
-        )
-    , Rule ("em", ".em", ** P.font_spec_em)
-    , Rule
-        ( "fieldset"
-        , border                   = P.border_simple
-        , padding                  = P.input_padding
-        )
-    , Rule
-        ( "form div"
-        , margin                   = TRBL0 (t = Em (0.25), b = Em (0.5))
-        )
-    , Rule
-        ( * tuple ("h%s" % (i+1) for i in range (6))
-        , ** P.font_spec_em
-        )
-    , Rule ("h1", font_size = P.h1_font_size)
-    , Rule ("h2", font_size = P.h1_font_size -  5)
-    , Rule ("h3", font_size = P.h1_font_size - 10)
-    , Rule ("h4", font_size = P.h1_font_size - 15)
-    , Rule ("h5", font_size = P.h1_font_size - 20)
-    , Rule ("h6", font_size = P.h1_font_size - 25)
-    , Rule
-        ( "input", "select", "textarea"
-        , border                   = P.border_simple
-        , font_family              = "inherit"
-        , margin                   = P.input_margin
-        , padding                  = P.input_padding
-        , children                 =
-            [ Rule_Pseudo
-                ( "focus"
-                , outline          = P.outline_focus
-                , ** P.color_spec_selected
-                )
-            ]
-        )
-    , Rule
-        ( "input"
-        , children                 =
-            [ Rule_Attr ("[type=checkbox]", vertical_align = "bottom")
-            , Rule_Attr ("[type=radio]",    vertical_align = "text-bottom")
-            ]
-        )
-    , Rule
-        ( "legend"
-        , font_weight              = "bold"
-        , padding_bottom           = Em (1./2)
-        )
-    , Rule
-        ( "ol"
-        , list_style               = "decimal outside"
-        , margin_bottom            = Em (0.5)
-        , padding_left             = Em (2.5)
-        , children                 =
-            [ Rule
-                ( "ol"
-                , list_style       = "upper-alpha"
-                , margin           = TRBL0 (b = Em (0.5), l = Em (0.5))
-                , children         =
-                    [ Rule
-                        ( "ol"
-                        , list_style = "lower-alpha"
-                        , children   =
-                            [ Rule ("ol", list_style = "lower-roman")
-                            ]
-                        )
-                    ]
-                )
-            ]
-        )
-    , Rule ("p",        margin_bottom = Em (0.5))
-    , Rule ("pre",      ** P.font_spec_pre)
-    , Rule ("strong",   font_weight = "bold")
-    , Rule ("textarea", ** P.font_spec_pre)
-    , Rule
-        ( "ul"
-        , list_style               = "disc outside"
-        , margin_bottom            = Em (0.5)
-        , padding_left             = Em (1.0)
-        , children                 =
-            [ Rule
-                ( "ul"
-                , list_style       = "square"
-                , children         =
-                    [ Rule
-                        ( "ul"
-                        , list_style = "circle"
-                        , children   =
-                            [ Rule
-                                ( "ul"
-                                , list_style = "disc"
-                                )
-                            ]
-                        )
-                    ]
-                )
-            ]
-        )
-    )
 style_sheet = Style_Sheet \
     ( Rule
         ( "a"
@@ -434,95 +319,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-print_sheet = Style_Sheet \
-    ( Media.Rule
-        ( Media.Query ("print")
-        , rules                   =
-            [ Rule
-                ( "@page"
-                , margin          = Cm (2.5)
-                )
-            , Rule
-                ( "*"
-                , background      = "transparent !important"
-                , color           = "black !important"
-                , overflow        = "visible !important"
-                )
-            , Rule
-                ( "a"
-                , color           = "#000033 !important"
-                , text_decoration = "none"
-                , children        =
-                    [ Rule_Attr
-                        ( "[href]:after"
-                        , content   = """ " [" attr(href) "]" """.strip ()
-                        , font_size = "smaller"
-                        )
-                    , Rule_Class
-                        ( "button"
-                        , display   = "none"
-                        )
-                    ]
-                )
-            , Rule
-                ( "html", ".pg_main", ".pg_foot", ".pg_head"
-                , border          = 0
-                , margin          = 0
-                , padding         = 0
-                , width           = "auto"
-                )
-            , Rule
-                ( "body"
-                , border          = 0
-                , font_size       = Pt (10)
-                , height          = "auto"
-                , min_width       = 0
-                , padding_right   = 0
-                , width           = "auto"
-                , ** P.font_spec_print
-                )
-            , Rule
-                ( "em", ".em"
-                , ** dict
-                    (P.font_spec_print, font_style = "italic")
-                )
-            , Rule
-                ( "strong"
-                , ** dict
-                    (P.font_spec_print, font_weight = "bold")
-                )
-            , Rule
-                ( "pre"
-                , ** dict
-                    (P.font_spec_print, font_family = P.font_family_pre)
-                )
-            , Rule ("thead", display = "table-header-group")
-            , Rule
-                ( ".pg_body"
-                , max_width       = Em (45)
-                )
-            , Rule
-                ( ".pg_foot"
-                , bottom          = 0
-                , font_size       = Percent (75)
-                , left            = 0
-                , position        = "fixed"
-                , width           = Percent (100)
-                )
-            , Rule
-                ( ".pg_head"
-                , color           = "#666666 !important"
-                , height          = "auto"
-                )
-            , Rule
-                ( ".pg_head .logo", ".pg_nav"
-                , display         = "none"
-                , visibility      = "collapse"
-                )
-            ]
-        )
-    , rank  = 1 << 16
-    )
+Include ("html/print.media")
 
 ### the base file requires at least the jquer<.gritter stuff for the
 ### notification

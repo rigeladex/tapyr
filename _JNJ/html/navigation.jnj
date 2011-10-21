@@ -47,6 +47,7 @@
 ##     7-Jan-2011 (CT) Use `is_current_dir` instead of home-grown code
 ##                     (and s/is_current/is_current_page/)
 ##    15-Oct-2011 (MG) `s/_entry_body/entry_body/g`
+##    21-Oct-2011 (CT) `main` added to wrap code previously at module scope
 ##    ««revision-date»»···
 ##--
 #}
@@ -252,5 +253,15 @@
     </ul>
   {% endif -%}
 {%- endmacro -%} {#- sitemap_level -#}
+
+{%- macro main (page) -%}
+  {%- set main_caller = kwargs.pop ("caller", None) -%}
+  {% call section (page.top.own_links, "Navigation") -%}
+    {{ calendar (page) }}
+  {% endcall %} {# section #}
+  {%- if main_caller %}
+    {{ main_caller () }}
+  {% endif -%}
+{%- endmacro -%} {#- main -#}
 
 {#- __END__ jinja template: html/navigation.jnj -#}

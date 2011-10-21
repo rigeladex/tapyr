@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
@@ -79,7 +79,7 @@ class Injected_Templates (TFL.Meta.Object) :
 
     @Once_Property
     def Media (self) :
-        t     = first    (self.templates)
+        t = first (self.templates)
         return t.get_Media \
             ( self.env
             , itertools.chain (* (t.templates for t in self.templates))
@@ -110,7 +110,7 @@ class Template_Media (TFL.Meta.Object) :
     def CSS (self) :
         result = []
         for T in self.template, self.injected_templates :
-            if  T and T.CSS and not getattr ( T, "css_href", False) :
+            if T and T.CSS and not getattr (T, "css_href", False) :
                 result.append (T.CSS)
         return "\n".join (result)
     # end def CSS
@@ -119,7 +119,7 @@ class Template_Media (TFL.Meta.Object) :
     def css_hrefs (self) :
         result = []
         for T in self.template, self.injected_templates :
-            if  T and getattr ( T, "css_href", False) :
+            if T and getattr (T, "css_href", False) :
                 result.append (T.css_href)
         return result
     # end def css_hrefs
