@@ -27,7 +27,12 @@
 #
 # Revision Dates
 #    31-May-2011 (CT) Creation
-#    ««revision-date»»···
+#    24-Oct-2011 (CT) Removed duplicates
+#    24-Oct-2011 (CT) Rule for first and last `th a` children of `thead tr`
+#                     added
+#    24-Oct-2011 (CT) `tablesorter` JS_On_Ready factored into
+#                     `tablesorter.media`
+#     ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
@@ -57,6 +62,12 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "thead"
                 , font_weight     = "bold"
+                , children        =
+                    [ Rule
+                        ( "tr th:first-child a", "tr th:last-child a"
+                        , P.nav_col.color_spec_heading_rev
+                        )
+                    ]
                 )
             , Rule
                 ( "td", "th"
@@ -83,30 +94,9 @@ style_sheet = Style_Sheet \
             ]
         )
     )
+Include ("html/tablesorter.media")
 
-Script (src = "/media/GTW/js/jquery.tablesorter.min.js", rank = 100)
 Script (GTW.Script._.GTW_postify_a)
-JS_On_Ready \
-    ( """$("table.tablesorter").each
-            ( function ()
-                {
-                  var tab$ = $(this);
-                  var th$  = $("thead tr:last th", tab$);
-                  var n = th$.size () - 1;
-                  var headers = { 0 : { sorter : false } };
-                  headers [n] = { sorter : false };
-                  tab$.tablesorter
-                    ( { cssAsc    : "ascending"
-                      , cssDesc   : "descending"
-                      , cssHeader : "sortable"
-                      , headers   : headers
-                      }
-                    );
-                }
-            );
-      """
-    , rank = 100
-    )
 
 JS_On_Ready \
     ( """$("table.tablesorter").each
@@ -118,19 +108,16 @@ JS_On_Ready \
                   var headers = { 0 : { sorter : false } };
                   headers [n] = { sorter : false };
                   tab$.tablesorter
-                    ( { cssAsc    : "ascending"
-                      , cssDesc   : "descending"
-                      , cssHeader : "sortable"
-                      , headers   : headers
+                    ( { cancelSelection : false
+                      , cssAsc          : "ascending"
+                      , cssDesc         : "descending"
+                      , cssHeader       : "sortable"
+                      , headers         : headers
                       }
                     );
                 }
             );
       """
     , rank = 100
-    )
-Script \
-    ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-    , rank     = 100
     )
 ### __END__ html/e_type_admin.jnj.media
