@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-10 11:24+0200\n"
+"POT-Creation-Date: 2011-10-25 13:01+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _GTW/_OMP/_PAP/Person.py:141 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:142 _GTW._OMP._PAP.Person:0
 #, fuzzy
 msgid "Academic title"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-10 11:24+0200\n"
+"POT-Creation-Date: 2011-10-25 13:01+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
+#: _JNJ/html/e_type_afs.jnj:64 _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr ""
 
@@ -54,7 +54,8 @@ msgstr ""
 msgid "Bad request"
 msgstr ""
 
-#: _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
+#: _JNJ/html/e_type_afs.jnj:65 _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259
+#: _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr ""
 
@@ -100,6 +101,10 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
+#: _JNJ/html/e_type_afs.jnj:66
+msgid "Clear fields"
+msgstr ""
+
 #: _JNJ/html/rform.jnj:91
 msgid "Click to jump to the field with the first error"
 msgstr ""
@@ -112,6 +117,10 @@ msgstr ""
 msgid "Confirm new email address"
 msgstr ""
 
+#: _JNJ/html/e_type_afs.jnj:67
+msgid "Copy"
+msgstr ""
+
 #: _JNJ/html/e_type_admin.jnj:62 _JNJ/html/e_type_admin.jnj:69
 msgid "Create new object"
 msgstr ""
@@ -120,9 +129,13 @@ msgstr ""
 msgid "Currently selected day"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:140
+#: _JNJ/html/navigation.jnj:142
 #, python-format
 msgid "Currently selected language is %s"
+msgstr ""
+
+#: _JNJ/html/e_type_afs.jnj:68
+msgid "Delete"
 msgstr ""
 
 #: _JNJ/html/e_type_admin.jnj:83
@@ -158,6 +171,10 @@ msgstr ""
 msgid "Display calendar for the selected values"
 msgstr ""
 
+#: _JNJ/html/e_type_afs.jnj:69 _JNJ/html/rform.jnj:406
+msgid "Edit"
+msgstr ""
+
 #: _JNJ/html/news.jnj:59
 msgid "Edit this entry"
 msgstr ""
@@ -189,11 +206,11 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:136
+#: _JNJ/html/navigation.jnj:138
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:135
+#: _JNJ/html/navigation.jnj:137
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -214,16 +231,16 @@ msgstr ""
 msgid "Log into website with username and password specified"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:165
+#: _JNJ/html/navigation.jnj:167
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:164
+#: _JNJ/html/navigation.jnj:166
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:310 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:170
+#: _JNJ/html/form.jnj:310 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:172
 msgid "Login"
 msgstr ""
 
@@ -340,7 +357,7 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:70 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr ""
 
@@ -353,7 +370,7 @@ msgstr ""
 msgid "Scroll by %s weeks to anchor %s."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:147
+#: _JNJ/html/navigation.jnj:149
 #, python-format
 msgid "Select language %s"
 msgstr ""

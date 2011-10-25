@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-10 11:24+0200\n"
+"POT-Creation-Date: 2011-10-25 13:01+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Club:0
 msgid "A sailing club."
-msgstr ""
+msgstr "Ein Segelclub."
 
 #: _GTW._OMP._SRM.Team:0
 msgid "A team of sailors participating in a regatta."
@@ -103,11 +103,10 @@ msgstr "Klasse von Booten, die in dieser Regatta segeln."
 
 #: _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Club:0 _GTW._OMP._SRM.Team:0
 #: _GTW._OMP._SRM.Sailor:0
-#, fuzzy
 msgid "Club"
 msgid_plural "Clubs"
 msgstr[0] "Klub"
-msgstr[1] ""
+msgstr[1] "Klubs"
 
 #: _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
 msgid "Club the sailor is starting for."
@@ -257,12 +256,11 @@ msgstr "Lüa"
 
 #: _GTW._OMP._SRM.Club:0
 msgid "Long name"
-msgstr ""
+msgstr "Name (ausfürhlich)"
 
 #: _GTW._OMP._SRM.Club:0
-#, fuzzy
 msgid "Long name of the sailing club."
-msgstr "Name des Segelboots."
+msgstr "Ausführlicher Name des Segelclubs."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:77
 msgid "Luxembourg"
@@ -542,9 +540,8 @@ msgid "Short description of the team."
 msgstr "Kurze Beschreibung des Teams."
 
 #: _GTW._OMP._SRM.Club:0
-#, fuzzy
 msgid "Short name of the sailing club."
-msgstr "Name des Segelboots."
+msgstr "Kurzname des Segelclubs."
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Skipper"
@@ -657,16 +654,4 @@ msgstr "Gültige Regatta"
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
-
-#~ msgid "Club organizing the regatta event."
-#~ msgstr "Club, der die Regatta veranstaltet."
-
-#~ msgid "Club the team sails for."
-#~ msgstr "Segelclub, für den der Segler startet."
-
-#~ msgid "Sail number prefix of boat."
-#~ msgstr "Segelnummerpräfix des Boots (z.B. 'X')"
-
-#~ msgid "Sail number x"
-#~ msgstr "Segelnummerpräfix"
 
