@@ -58,6 +58,11 @@
 //    20-Oct-2011 (CT) `_setup_cmd_menu` continued, support for buttons removed
 //    20-Oct-2011 (CT) Guard for `response.json` added to `_response_replace`
 //    21-Oct-2011 (CT) `hide_cb` added to `_setup_cmd_menu`
+//    25-Oct-2011 (CT) Guard for `_clear_value` added to `_clear_field`
+//    25-Oct-2011 (CT) `_cmds` changed to map spaces to underscores
+//    25-Oct-2011 (CT) `_response_replace` guarded and added `_setup_callbacks`
+//    25-Oct-2011 (CT) Callback names changed from lower to capitalized,
+//                     s/Clear/Clear fields/
 //    ««revision-date»»···
 //--
 
@@ -327,7 +332,9 @@
                 elem.inp$.val ("");
             }
             if (value) {
-                elem._clear_value ();
+                if ("_clear_value" in elem) {
+                    elem._clear_value ();
+                };
                 if ("$child_ids" in value) {
                     for (var i = 0, li = value.$child_ids.length, child_id
                         ; i < li
@@ -343,12 +350,13 @@
             };
         };
         var _cmds = function _cmds () {
-            var map = options.menu_cmds, result = [];
+            var key, map = options.menu_cmds, result = [];
             for (var i = 0, li = arguments.length, name; i < li; i++) {
                 name = arguments [i];
+                key  = name.replace (/ /g, "_");
                 if (name in map) {
                     result.push
-                        ( { callback : callback [name]
+                        ( { callback : callback [key]
                           , label    : map      [name]
                           , name     : name
                           }
@@ -406,8 +414,12 @@
                       }
                     );
                 anchor.value [new_elem.$id] = new_elem.value;
+                _setup_callbacks (s$);
             } else {
-                delete anchor.value [elem.$id];
+                anchor = $AFS_E.get (elem.anchor_id);
+                if (anchor) {
+                    delete anchor.value [elem.$id];
+                };
             };
             return s$;
         };
@@ -439,6 +451,7 @@
             var cmd    = source [0];
             var cb     = callback [cmd.name];
             var menu, drop_butt, hide_cb;
+            cmc$.html ("");
             $("<a class=\"default button\">")
                 .append   (cmd.label)
                 .appendTo (cmc$)
@@ -521,7 +534,7 @@
             };
         };
         var callback =
-            { add                       : function add_cb (p$, parent, id, ev) {
+            { Add                       : function add_cb (p$, parent, id, ev) {
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
                       ( options.expander_url
@@ -534,7 +547,7 @@
                           { _response_append (response, txt_status, p$, parent); }
                       );
               }
-            , cancel                    : function cancel_cb (s$, elem, id, ev) {
+            , Cancel                    : function cancel_cb (s$, elem, id, ev) {
                   var value  = elem ["value"];
                   var pid    = value && value.edit.pid;
                   if (pid != undefined) {
@@ -562,14 +575,14 @@
                       s$.remove   ();
                   };
               }
-            , clear                     : function clear_cb (s$, elem, id, ev) {
+            , Clear_fields              : function clear_cb (s$, elem, id, ev) {
                   _clear_field (elem);
                   $.getJSON
                       ( options.expander_url
-                      , { fid       : id
-                        , pid       : null
-                        , sid       : $AFS_E.root.value.sid
-                        , allow_new : elem.allow_new
+                      , { fid           : id
+                        , pid           : null
+                        , sid           : $AFS_E.root.value.sid
+                        , allow_new     : elem.allow_new
                         }
                       , function (response, txt_status) {
                             if (txt_status == "success") {
@@ -583,7 +596,7 @@
                         }
                       );
               }
-            , copy                      : function copy_cb (s$, elem, id, ev) {
+            , Copy                      : function copy_cb (s$, elem, id, ev) {
                   var p$        = s$.parent  ();
                   var value     = elem ["value"];
                   var pid       = value && value.edit.pid;
@@ -602,7 +615,7 @@
                           { _response_append (response, txt_status, p$, elem); }
                       );
               }
-            , delete                    : function delete_cb (s$, elem, id, ev) {
+            , Delete                    : function delete_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
                   if (pid !== undefined && pid !== "") {
@@ -625,7 +638,7 @@
                           );
                   };
               }
-            , edit                      : function edit_cb (s$, elem, id, ev) {
+            , Edit                      : function edit_cb (s$, elem, id, ev) {
                   // used to be // var s$    = b$.closest ("section.closed");
                   // XXX was the `.closed` necessary ???
                   var value = elem ["value"];
@@ -649,7 +662,7 @@
                         }
                       );
               }
-            , save                      : function save_cb (s$, elem, id, ev) {
+            , Save                      : function save_cb (s$, elem, id, ev) {
                   var pvs    = $AFS_E.root.packed_values (elem);
                   var json_data =
                         { cargo       : pvs
@@ -716,34 +729,34 @@
 
         var cmd_menu =
             { Entity                    : function cmd_menu_entity (elem) {
-                  return _cmds ("save", "clear");
+                  return _cmds ("Save", "Delete");
               }
             , Entity_Link               : function cmd_menu_entity_link (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push ("edit", "copy");
+                      names.push ("Edit", "Copy");
                   } else {
-                      names.push ("save", "cancel", "clear");
+                      names.push ("Save", "Cancel", "Clear fields");
                   };
                   if (elem.value.edit.pid) {
-                      names.push ("delete");
+                      names.push ("Delete");
                   }
                   return _cmds.apply (null, names);
               }
             , Entity_List               : function cmd_menu_entity_list (elem) {
-                  return _cmds ("add");
+                  return _cmds ("Add");
               }
             , Field_Composite           : function cmd_menu_entity_list (elem) {
-                  return _cmds ("clear");
+                  return _cmds ("Clear fields");
               }
             , Field_Entity              : function cmd_menu_field_entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push ("edit");
+                      names.push ("Edit");
                   } else {
-                      names.push ("save", "cancel");
+                      names.push ("Save", "Cancel");
                   };
-                  var names = ["clear"];
+                  names.push ("Clear fields");
                   return _cmds.apply (null, names);
               }
             };

@@ -35,6 +35,8 @@
 ##    26-Jul-2011 (CT) `completed_url` added
 ##    13-Oct-2011 (CT) `deleter_url` added
 ##    14-Oct-2011 (CT) `menu_cmds` and `specify_menu_cmd` added
+##    25-Oct-2011 (CT) Don't apply `lower` to command `name`,
+##                     s/Clear/Clear fields/
 ##    ««revision-date»»···
 ##--
 #}
@@ -42,7 +44,7 @@
 {#- {%- include "html/afs.jnj" %} media dependency -#}
 
 {%- macro specify_menu_cmd (name) -%}
-  {{ name.lower () }}:"{{ GTW._T (name) }}"
+  "{{ name }}":"{{ GTW._T (name) }}"
 {%- endmacro -%} {#- specify_menu_cmd -#}
 
 {%- block document %}
@@ -61,7 +63,7 @@
         , menu_cmds     : {# -#}
             { {{- specify_menu_cmd ("Add") -}}
             , {{- specify_menu_cmd ("Cancel") -}}
-            , {{- specify_menu_cmd ("Clear") -}}
+            , {{- specify_menu_cmd ("Clear fields") -}}
             , {{- specify_menu_cmd ("Copy") -}}
             , {{- specify_menu_cmd ("Delete") -}}
             , {{- specify_menu_cmd ("Edit") -}}
