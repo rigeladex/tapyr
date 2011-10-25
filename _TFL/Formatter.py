@@ -33,6 +33,7 @@
 #                     single-element structures
 #    28-Feb-2011 (CT) More output compaction (`nl_r`)
 #    28-Feb-2011 (CT) `_repr` added and used to remove leading `u` from strings
+#    25-Oct-2011 (CT) `_repr` changed to chop off trailing the `L` from longs
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,19 @@ class Formatter (TFL.Meta.Object) :
        string.
 
     >>> thing = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, 137)}]
+    >>> thinl = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, long (137))}]
     >>> print formatted (thing)
+    [ 'abc'
+    , 'dfg'
+    , { 0 :
+          ( 42
+          , 137
+          )
+      , 1 : 'abc'
+      , 2 : 'xyz'
+      }
+    ]
+    >>> print formatted (thinl)
     [ 'abc'
     , 'dfg'
     , { 0 :
@@ -177,6 +190,8 @@ class Formatter (TFL.Meta.Object) :
         result = "%r" % (thing, )
         if result.startswith (("u'", 'u"')) :
             result = result [1:]
+        if isinstance (thing, long) and result.endswith ("L") :
+            result = result [:-1]
         return result
     # end def _repr
 

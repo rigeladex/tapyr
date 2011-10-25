@@ -331,7 +331,7 @@ _more = dict \
     """
     )
 
-Scaffold.Backend_Default_Path ["SQL"] = "'test'"
+Scaffold.Backend_Default_Path ["SQL"] = "'test.sqlite'"
 __test__ = dict \
     ( Scaffold.create_test_dict (_more, ignore = ("HPS", "SQL"))
     , ** Scaffold.create_test_dict (_basic)

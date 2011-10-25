@@ -43,6 +43,7 @@
 #    16-Jul-2011 (CT) `_AC_Query_FL_` derived from (newly factored) `_AC_Query_S_`
 #    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
 #    12-Sep-2011 (CT) `prefix` added to `_AC_Query_FL_.query`
+#    25-Oct-2011 (CT) `ui_display_format` format changed (put `last_name` first)
 #    ««revision-date»»···
 #--
 
@@ -176,11 +177,14 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
         result = []
         if self.title :
             result.append ("%(title)s")
-        result.append ("%(first_name)s")
+    @property
+    def ui_display_format (self) :
+        result = ["%(last_name)s %(first_name)s"]
         if self.middle_name :
-            result.append ("%(middle_name)s")
-        result.append ("%(last_name)s")
-        return " ".join (result)
+            result.append (" %(middle_name)s")
+        if self.title :
+            result.append (", %(title)s")
+        return "".join (result)
     # end def ui_display_format
 
 Person = _PAP_Person_ # end class

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -84,8 +84,8 @@ _test_code = r"""
 
 from _GTW.__test__.model import *
 
-Scaffold.Backend_Default_Path ["SQL"] = "'test'"
-Scaffold.Backend_Default_Path ["HPS"] = "'test'"
+Scaffold.Backend_Default_Path ["SQL"] = "'test.sqlite'"
+Scaffold.Backend_Default_Path ["HPS"] = "'test.hps'"
 
 __test__ = Scaffold.create_test_dict (_test_code)
 ### __END__ GTW.__test__.readonly

@@ -118,30 +118,30 @@ _q_result = r"""
     >>> q9.count ()
     3
 
-    >>> q2  = q1.attrs (Q.RAW.title)
-    >>> q3  = q1.attrs (Q.RAW.title)
+    >>> q2  = q1.attrs (Q.RAW.title).order_by (Q.RAW.title)
+    >>> q3  = q1.attrs (Q.RAW.title).order_by (Q.RAW.title)
     >>> sorted (q2.all ())
     [(u'DI',), (u'Dr.',)]
     >>> q2.count ()
     2
     >>> q3.count ()
     2
-    >>> sorted (q2.all ())
+    >>> q2.all ()
     [(u'DI',), (u'Dr.',)]
-    >>> sorted (q3.all ())
+    >>> q3.all ()
     [(u'DI',), (u'Dr.',)]
 
-    >>> q4  = q1.attrs (Q.RAW.title).distinct ()
-    >>> q5  = q1.attrs (Q.RAW.title).distinct ()
-    >>> sorted (q4.all ())
+    >>> q4  = q2.distinct ()
+    >>> q5  = q3.distinct ()
+    >>> q4.all ()
     [(u'DI',), (u'Dr.',)]
     >>> q4.count ()
     2
     >>> q5.count ()
     2
-    >>> sorted (q4.all ())
+    >>> q4.all ()
     [(u'DI',), (u'Dr.',)]
-    >>> sorted (q5.all ())
+    >>> q5.all ()
     [(u'DI',), (u'Dr.',)]
 
     >>> q2.first ()
@@ -151,8 +151,16 @@ _q_result = r"""
 
     >>> sorted (q0.all (), key = PAP.Person.sort_key ())
     [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
-    >>> sorted (q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title))
-    [(u'di', 2), (u'dr.', 1)]
+    >>> print formatted (sorted (q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title)))
+    [
+      ( 'di'
+      , 2
+      )
+    ,
+      ( 'dr.'
+      , 1
+      )
+    ]
 
     >>> qy = PAP.Person.lifetime.start.ac_query ("2010", prefix = "lifetime")
     >>> qy
@@ -229,6 +237,10 @@ _raw_query = """
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 from   _TFL.predicate      import first
+from   _TFL.Formatter           import Formatter
+
+formatted = Formatter (width = 240)
+
 import datetime
 
 __test__ = Scaffold.create_test_dict \
