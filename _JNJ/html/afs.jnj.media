@@ -34,6 +34,7 @@
 #    27-Jul-2011 (CT) Rules for ".ui-autocomplete .ui-menu-item" added
 #    23-Sep-2011 (CT) Nowrap for `a` in `.ui-menu-item` added
 #    14-Oct-2011 (CT) `.cmd-menu` added
+#    25-Oct-2011 (CT) `hover` child added to `a.drop` rule
 #    ««revision-date»»···
 #--
 
@@ -124,6 +125,13 @@ style_sheet = Style_Sheet \
                                 , margin      = TRBL0
                                     (l = Em (0.5), b = Em (0.15))
                                 , width       = 0
+                                )
+                            , Rule_Pseudo
+                                ( "hover i"
+                                , border_color = TRBL0
+                                    ( default    = "transparent"
+                                    , t          = "red"
+                                    )
                                 )
                             ]
                         )
