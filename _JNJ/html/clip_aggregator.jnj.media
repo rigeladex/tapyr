@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    html/clip_aggregator.jnj.css
+#    html/clip_aggregator.jnj.media
 #
 # Purpose
 #    CSS fragment for template html/clip_aggregator.jnj
@@ -69,4 +69,4 @@ style_sheet = Style_Sheet \
 Script      (GTW.Script._.GTW_pixpander)
 JS_On_Ready (GTW.JS_On_Ready._.GTW_pixpander)
 
-### __END__ html/clip_aggregator.jnj.css
+### __END__ html/clip_aggregator.jnj.media
