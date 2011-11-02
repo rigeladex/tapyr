@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,6 +41,7 @@
 #    20-Oct-2004 (CT) Import for `_Scope_` added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    31-Oct-2011 (MG)  imports corrected
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ from   _TFL              import TFL
 import _TFL._SDG._C.Node
 import _TFL._SDG._C._Scope_
 
-from   Regexp            import *
+from   _TFL.Regexp       import *
 
 class _Statement_ (TFL.SDG.C.Node) :
     """Model simple statement"""
