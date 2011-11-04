@@ -90,6 +90,7 @@
 #                     `_anchor_children`
 #    22-Sep-2011 (CT) `Entity_List` derived from `_Field_MI_`, too
 #    23-Sep-2011 (CT) `anchor_id` changed to not put `an$` into `kw`
+#     4-Nov-2011 (CT) Change `new_child` to allow non-existing `anchor_id`
 #    ««revision-date»»···
 #--
 
@@ -471,7 +472,7 @@ class Entity_List (_Field_MI_, _Element_List_) :
         result.id_sep = self.root_sep
         if self.id :
             self._id_child_or_proto (result, i, id_map)
-        result._anchor_children (self.anchor_id)
+        result._anchor_children (getattr (self, "anchor_id", None))
         return result
     # end def new_child
 
