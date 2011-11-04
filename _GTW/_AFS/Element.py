@@ -93,6 +93,7 @@
 #     4-Nov-2011 (CT) Change `new_child` to allow non-existing `anchor_id`
 #     4-Nov-2011 (CT) Change `copy` to not use `__dict__` to filter attributes
 #                     (which failed to copy properties like `css_class`)
+#     4-Nov-2011 (CT) Add `description` to `Entity_List`
 #    ««revision-date»»···
 #--
 
@@ -449,8 +450,9 @@ class Entity_List (_Field_MI_, _Element_List_) :
     renderer = "afs_div_seq"
 
     def __init__ (self, proto, ** kw) :
-        self.proto   = proto
-        proto.id_sep = self.root_sep
+        self.proto       = proto
+        self.description = getattr (proto, "description", None)
+        proto.id_sep     = self.root_sep
         self.__super.__init__ (** kw)
     # end def __init__
 

@@ -36,6 +36,7 @@
 ##    28-Sep-2011 (CT) `tail` added to `do_head`
 ##    14-Oct-2011 (CT) `do_menu` added
 ##     4-Nov-2011 (CT) Change `do_element` to `strip` whitespace from `cssc`
+##     4-Nov-2011 (CT) Add `title` to `do_head`, add `show_desc` to `do_element`
 ##    ««revision-date»»···
 ##--
 #}
@@ -56,7 +57,7 @@
   {% endfor -%}
 {%- endmacro -%} {#- do_children -#}
 
-{%- macro do_element (form, elem, renderer, id_fix = "", class = "") -%}
+{%- macro do_element (form, elem, renderer, id_fix = "", class = "", show_desc = True) -%}
   {%- set elem_caller = kwargs.pop ("caller", None) -%}
   {%- set cssc =
         ( " ".join
@@ -66,7 +67,7 @@
   {%- set desc = GTW._T (elem.description)|safe %}
   <{{ elem.het_c }} id="{{ id_fix }}{{ elem.id }}"
       {%- if cssc %} class="{{ cssc }}"{% endif -%}
-      {%- if desc %} title="{{ desc }}"{% endif -%}
+      {%- if show_desc and desc %} title="{{ desc }}"{% endif -%}
   >
     {{ elem_caller () -}}
   </{{ elem.het_c }}>
@@ -81,7 +82,9 @@
       {{- desc -}}
     </div>
   {%- endif -%}
-  <{{ elem.het_h }}>
+  <{{ elem.het_h }}
+      {%- if desc %} title="{{ desc }}"{% endif -%}
+  >
     {{ head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
     {%- if tail -%}
       : {{ tail }}

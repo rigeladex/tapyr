@@ -30,6 +30,7 @@
 ##    21-Mar-2011 (CT) Creation
 ##    29-Mar-2011 (CT) `_field` changed to set `readonly`, if necessary
 ##     4-Nov-2011 (CT) Change `_field` to only set `class` if necessary
+##     4-Nov-2011 (CT) Add `named_object`, change `named_value` to use `select`
 ##    ««revision-date»»···
 ##--
 #}
@@ -58,7 +59,7 @@
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro named_value (form, elem) -%}
-  {{ X.input.select_v
+  {{ X.input.select
       ( choices  = elem.choices
       , id       = elem.id
       , name     = elem.name
@@ -66,6 +67,16 @@
       )
   }}
 {%- endmacro -%} {#- named_value -#}
+
+{%- macro named_object (form, elem) -%}
+  {{ X.input.select_v
+      ( choices  = elem.choices
+      , id       = elem.id
+      , name     = elem.name
+      , selected = elem.edit
+      )
+  }}
+{%- endmacro -%} {#- named_object -#}
 
 {%- macro number (form, elem) -%}
   {{ _field

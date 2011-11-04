@@ -48,7 +48,7 @@ msgstr "Kalenderdaten"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Dates excluded from the recurrence rule set."
-msgstr "Kalenderdaten, die von der Wiederholungsregel ausgenommen werden."
+msgstr "Kalenderdaten, die von der Wiederholungsregel ausgeschlossen werden."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Dates included in the recurrence rule set."
@@ -236,7 +236,7 @@ msgstr "Kurze Beschreibung der Regel"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Specification for recurrency of event."
-msgstr "Spezifikation für Wiederholgen eines Ereignisses."
+msgstr "Spezifikation für Wiederholungen eines Ereignisses."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Start date of the recurrence."

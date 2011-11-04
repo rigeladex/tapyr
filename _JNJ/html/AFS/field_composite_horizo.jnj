@@ -55,8 +55,8 @@
 {%- endmacro -%} {#- Field -#}
 
 {%- macro Field_Composite (form, elem, renderer) -%}
-  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
-    {{ GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, show_desc = False, templ_name = renderer) -%}
+    {{ GTW.call_macro ("do_head", form, elem, renderer, show_desc = False, templ_name = renderer) }}
     <div>
       {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
     </div>

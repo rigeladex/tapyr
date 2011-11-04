@@ -127,6 +127,7 @@ class Event (_Ancestor_Essence) :
         # end class detail
 
         class short_title (A_String) :
+            """Short title (used in navigation)."""
 
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Computed_Mixin, )

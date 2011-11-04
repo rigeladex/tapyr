@@ -57,6 +57,8 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #     4-Nov-2011 (CT) Set `css_class` for attribute kinds
 #     4-Nov-2011 (CT) Improve handling of `css_class`
+#     4-Nov-2011 (CT) Change `_Entity_Mixin_.__call__` to add `description`
+#     4-Nov-2011 (CT) Add support for `_A_Named_Object_`
 #    ««revision-date»»···
 #--
 
@@ -79,14 +81,15 @@ import _TFL.Decorator
 import _TFL.multimap
 
 MAT                                  = MOM.Attr
-MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj, string")
-MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj, number")
-MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj, boolean")
-MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj, date")
-MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj, datetime")
-MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj, email")
-MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj, text")
-MAT._A_Named_Value_.input_widget     = WS ("html/AFS/input.jnj, named_value")
+MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
+MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj,  number")
+MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
+MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
+MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
+MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")
+MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj,  text")
+MAT._A_Named_Value_.input_widget     = WS ("html/AFS/input.jnj,  named_value")
+MAT._A_Named_Object_.input_widget     = WS ("html/AFS/input.jnj, named_object")
 
 MAT.Kind.css_class                   = ""
 MAT.A_Attr_Type.css_class            = ""
@@ -149,8 +152,9 @@ class _Entity_Mixin_ (_Base_) :
         elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
         children = (e (E_Type, self, seen) for e in elems)
         ekw.update     (kw)
-        ekw.setdefault ("name",    E_Type.ui_name)
-        ekw.setdefault ("ui_name", E_Type.ui_name)
+        ekw.setdefault ("name",        E_Type.ui_name)
+        ekw.setdefault ("ui_name",     E_Type.ui_name)
+        ekw.setdefault ("description", E_Type.__doc__)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
@@ -185,9 +189,13 @@ class _Field_ (_Base_) :
             , required    = attr.is_required
             , ui_name     = ui_name
             )
-        if isinstance (at, MOM.Attr._A_Named_Value_) :
+        if isinstance (at, MOM.Attr._A_Named_Object_) :
             result ["choices"] = sorted \
-                ((k, str (v)) for k, v in at.Table.iteritems ())
+                ( ((k, str (v)) for k, v in at.Table.iteritems ())
+                , key = TFL.Getter [1]
+                )
+        elif isinstance (at, MOM.Attr._A_Named_Value_) :
+            result ["choices"] = sorted (at.Table)
         cssc = " ".join (c for c in self._css_classes (attr) if c)
         if cssc :
             result ["css_class"] = cssc
@@ -352,7 +360,7 @@ class Field_Role_Hidden (_Field_Entity_Mixin_) :
 
 ### XXX sub-structured fields (e.g., date as year/month/date combination)
 
-class  Field_Group (_Base_) :
+class Field_Group (_Base_) :
     """Specification of a Field_Group of a AFS form."""
 
     defaults = dict (collapsed = True)
@@ -386,7 +394,7 @@ class  Field_Group (_Base_) :
                 yield attr.AFS_Spec (** akw)
     # end def fields
 
-# end class  Field_Group
+# end class Field_Group
 
 class Field_Group_K (Field_Group) :
     """Specification of a Field_Group for a specific attribute kind of a AFS

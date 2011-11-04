@@ -41,6 +41,8 @@
 ##    28-Sep-2011 (CT) Most buttons removed from `Field_Entity`
 ##    10-Oct-2011 (CT) `Clear` button added to `Field_Entity`
 ##    18-Oct-2011 (CT) `do_button` calls removed
+##     4-Nov-2011 (CT) Add `show_desc = False` to `Entity`, `Entity_Link`,
+##                     `Entity_List`, `Field_Composite`, and `Field_Entity`
 ##    ««revision-date»»···
 ##--
 #}
@@ -49,8 +51,8 @@
 {#- {%- import "html/afs.jnj" as AFS %} media dependency -#}
 
 {%- macro Entity (form, elem, renderer) -%}
-  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
-    {{ GTW.call_macro ("do_head",       form, elem, renderer, templ_name = renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer, show_desc = False) -%}
+    {{ GTW.call_macro ("do_head",       form, elem, renderer, templ_name = renderer, show_desc = False) }}
     {{ GTW.call_macro ("do_children",   form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity -#}
@@ -58,14 +60,18 @@
 {%- macro Entity_Link (form, elem, renderer) -%}
   {% call GTW.call_macro
       ("do_element"
-      , form, elem, renderer, class = "closed" if elem.collapsed else ""
+      , form, elem, renderer
+      , class      = "closed" if elem.collapsed else ""
+      , show_desc  = False
       , templ_name = renderer
       )
   -%}
     {{ GTW.call_macro
         ( "do_head"
-        , form, elem, renderer, head = elem.display if elem.collapsed else None
+        , form, elem, renderer
+        , head       = elem.display if elem.collapsed else None
         , templ_name = renderer
+        , show_desc  = False
         )
     }}
     {%- if not elem.collapsed %}
@@ -75,9 +81,9 @@
 {%- endmacro -%} {#- Entity_Link -#}
 
 {%- macro Entity_List (form, elem, renderer) -%}
-  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, show_desc  = False, templ_name = renderer) -%}
     {#- XXX Legend, controls, ... -#}
-    {{ GTW.call_macro ("do_head",       form, elem, renderer, 65535, templ_name = renderer) }}
+    {{ GTW.call_macro ("do_head",       form, elem, renderer, 65535, show_desc  = False, templ_name = renderer) }}
     {{ GTW.call_macro ("do_children",   form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Entity_List -#}
@@ -105,8 +111,8 @@
 {%- endmacro -%} {#- Field -#}
 
 {%- macro Field_Composite (form, elem, renderer) -%}
-  {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer) -%}
-    {{ GTW.call_macro ("do_head", form, elem, renderer, templ_name = renderer) }}
+  {% call GTW.call_macro ("do_element", form, elem, renderer, show_desc = False, templ_name = renderer) -%}
+    {{ GTW.call_macro ("do_head", form, elem, renderer, show_desc = False, templ_name = renderer) }}
     {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
   {%- endcall %} {# do_element #}
 {%- endmacro -%} {#- Field_Composite -#}
@@ -116,16 +122,17 @@
   {% call GTW.call_macro
       ( "do_element"
       , form, elem, renderer
-      , class = "closed"    if elem.collapsed else ""
-      , head = elem.display if elem.collapsed else None
+      , class      = "closed"     if elem.collapsed else ""
+      , head       = elem.display if elem.collapsed else None
+      , show_desc  = False
       , templ_name = renderer
       )
   -%}
     {{ GTW.call_macro
         ( "do_head"
         , form, elem, renderer
-        , tail = elem.display if elem.collapsed else None
-        , show_desc = False
+        , tail       = elem.display if elem.collapsed else None
+        , show_desc  = False
         , templ_name = renderer
         )
     }}

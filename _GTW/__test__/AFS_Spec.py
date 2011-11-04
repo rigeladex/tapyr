@@ -104,7 +104,7 @@ _test_code = """
     >>> NL = chr (10)
     >>> for e in xl.transitive_iter () :
     ...   print e.__class__.__name__, e._name, getattr (e, "ui_name", None), repr (getattr (e, "description", "").replace (NL, " ")), e.renderer
-    Entity Person Person u'' afs_div_seq
+    Entity Person Person u'Model a person.' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field last_name Last name u'Last name of person' None
     Field first_name First name u'First name of person' None
@@ -118,7 +118,7 @@ _test_code = """
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
     Entity_List Person_has_Address Person_has_Address u'' afs_div_seq
-    Entity_Link Person_has_Address Person_has_Address u'' afs_div_seq
+    Entity_Link Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field_Entity right Address u'Address where person lives or works' afs_div_seq
@@ -129,7 +129,7 @@ _test_code = """
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
     Entity_List Person_has_Email Person_has_Email u'' afs_div_seq
-    Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
+    Entity_Link Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field_Entity right Email u'Email address of person' afs_div_seq
@@ -137,7 +137,7 @@ _test_code = """
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
     Entity_List Person_has_Phone Person_has_Phone u'' afs_div_seq
-    Entity_Link Person_has_Phone Person_has_Phone u'' afs_div_seq
+    Entity_Link Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field_Entity right Phone u'Phone number of person' afs_div_seq
@@ -1780,7 +1780,7 @@ _test_code = """
     ...     e = i.elem
     ...     print e.__class__.__name__, e._name, getattr (e, "ui_name", ""), repr (getattr (e, "description", "").replace (NL, " ")), e.renderer
     Form None  u'' afs_div_seq
-    Entity Person Person u'' afs_div_seq
+    Entity Person Person u'Model a person.' afs_div_seq
     Fieldset primary  u'' afs_div_seq
     Field last_name Last name u'Last name of person' None
     Field first_name First name u'First name of person' None
@@ -1795,7 +1795,7 @@ _test_code = """
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
     Entity_List Person_has_Address Person_has_Address u'' afs_div_seq
     Entity_List Person_has_Email Person_has_Email u'' afs_div_seq
-    Entity_Link Person_has_Email Person_has_Email u'' afs_div_seq
+    Entity_Link Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary  u'' afs_div_seq
     Field_Entity right Email u'Email address of person' afs_div_seq
