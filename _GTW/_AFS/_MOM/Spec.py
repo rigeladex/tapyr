@@ -55,6 +55,8 @@
 #    20-Sep-2011 (CT) `_Field_._field_kw` changed to use `attr.completer` as is
 #                     (instead of `as_json_cargo`)
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#     4-Nov-2011 (CT) Set `css_class` for attribute kinds
+#     4-Nov-2011 (CT) Improve handling of `css_class`
 #    ««revision-date»»···
 #--
 
@@ -85,6 +87,9 @@ MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj, datetime")
 MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj, email")
 MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj, text")
 MAT._A_Named_Value_.input_widget     = WS ("html/AFS/input.jnj, named_value")
+
+MAT.Kind.css_class                   = ""
+MAT.A_Attr_Type.css_class            = ""
 
 class _Base_ (TFL.Meta.Object) :
     """Base class for spec classes"""
@@ -183,9 +188,9 @@ class _Field_ (_Base_) :
         if isinstance (at, MOM.Attr._A_Named_Value_) :
             result ["choices"] = sorted \
                 ((k, str (v)) for k, v in at.Table.iteritems ())
-        if attr.css_class :
-            result ["css_class"] = " ".join \
-                (c for c in self._css_classes (attr) if c)
+        cssc = " ".join (c for c in self._css_classes (attr) if c)
+        if cssc :
+            result ["css_class"] = cssc
         if attr.input_widget :
             result ["input_widget"] = attr.input_widget
         if attr.explanation :
@@ -198,7 +203,7 @@ class _Field_ (_Base_) :
     # end def _field_kw
 
     def _css_classes (self, attr) :
-        return (attr.css_class, )
+        return (attr.css_class, attr.attr.css_class, )
     # end def _css_classes
 
 # end class _Field_
@@ -299,7 +304,7 @@ class Field (_Field_) :
     # end def __call__
 
     def _css_classes (self, attr) :
-        return (attr.css_class, attr.css_class_len)
+        return self.__super._css_classes (attr) + (attr.css_class_len, )
     # end def _css_classes
 
 # end class Field

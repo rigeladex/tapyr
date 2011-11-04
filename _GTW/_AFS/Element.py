@@ -91,6 +91,8 @@
 #    22-Sep-2011 (CT) `Entity_List` derived from `_Field_MI_`, too
 #    23-Sep-2011 (CT) `anchor_id` changed to not put `an$` into `kw`
 #     4-Nov-2011 (CT) Change `new_child` to allow non-existing `anchor_id`
+#     4-Nov-2011 (CT) Change `copy` to not use `__dict__` to filter attributes
+#                     (which failed to copy properties like `css_class`)
 #    ««revision-date»»···
 #--
 
@@ -145,6 +147,7 @@ class _Element_ (TFL.Meta.Object) :
     readonly      = False
     renderer      = None
     root_sep      = "-"
+    undef         = object ()
     widget        = None
     _css_class    = None
     _id           = None
@@ -226,9 +229,12 @@ class _Element_ (TFL.Meta.Object) :
     # end def id
 
     def copy (self, ** kw) :
+        undef    = self.undef
         ckw      = dict \
-            ( (k, getattr (self, k))
-            for k in self._pop_to_self if k in self.__dict__
+            (  (k, v)
+            for k, v in
+                ((k, getattr (self, k, undef)) for k in self._pop_to_self)
+            if k != "id" and v is not undef
             )
         ckw.update (self.kw, ** kw)
         children = [c.copy () for c in self.children] if self.children else None

@@ -193,6 +193,7 @@
 #                     `_A_Id_Entity_`
 #    23-Sep-2011 (CT) `needs_raw_value` and `ignore_case` added to `db_sig`
 #    23-Sep-2011 (CT) `_A_Id_Entity_.as_code` robustified
+#     4-Nov-2011 (CT) Redefine `_A_Typed_Collection_.ui_length`
 #    ««revision-date»»···
 #--
 
@@ -1243,6 +1244,11 @@ class _A_Typed_Collection_ (_A_Collection_) :
             result = self.R_Type (C_fs (c, obj, glob, locl) for c in t)
         return result
     # end def from_string
+
+    @TFL.Meta.Once_Property
+    def ui_length (self) :
+        return (self.C_Type.ui_length + 2) * 5
+    # end def ui_length
 
     def _checkers (self, e_type, kind) :
         C_Type = self.C_Type

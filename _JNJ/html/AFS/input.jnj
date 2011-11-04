@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    21-Mar-2011 (CT) Creation
 ##    29-Mar-2011 (CT) `_field` changed to set `readonly`, if necessary
+##     4-Nov-2011 (CT) Change `_field` to only set `class` if necessary
 ##    ««revision-date»»···
 ##--
 #}
@@ -104,12 +105,14 @@
 {%- macro _field (typ, fo, elem) -%}
   {%- set id = elem.id -%}
   {%- set kw = GTW.dict
-      ( class         = elem.css_class
-      , id            = id
+      ( id            = id
       , name          = elem.name
       , value         = elem.edit
       )
   -%}
+  {%- if elem.css_class %}
+    {%- do kw.update (class = elem.css_class) %}
+  {% endif -%}
   {%- do kw.update (kwargs) -%}
   {%- if elem.prefilled or elem.readonly -%}
     {%- do kw.setdefault ("readonly", "readonly") -%}

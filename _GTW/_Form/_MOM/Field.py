@@ -65,11 +65,13 @@ MAT.A_Text.widget              = WS ("html/field.jnj, text")
 MAT._A_Named_Value_.widget     = WS ("html/field.jnj, named_value")
 
 MAT.Kind.css_class             = ""
-MAT.Primary.css_class          = "Required"
-MAT.Primary_Optional.css_class = "Optional"
-MAT.Required.css_class         = "Required"
-MAT.Necessary.css_class        = "Necessary"
-MAT.Optional.css_class         = "Optional"
+if 0 :
+    ### Don't need this for AFS forms
+    MAT.Primary.css_class          = "Required"
+    MAT.Primary_Optional.css_class = "Optional"
+    MAT.Required.css_class         = "Required"
+    MAT.Necessary.css_class        = "Necessary"
+    MAT.Optional.css_class         = "Optional"
 
 MER                            = MOM.Error
 MER.Invalid_Attribute.widget   = WS ("html/mom_errors.jnj, invalide_attribute")
