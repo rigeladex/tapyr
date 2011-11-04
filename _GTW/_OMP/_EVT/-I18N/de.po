@@ -214,7 +214,7 @@ msgid ""
 "Negative numbers count from the end of the year\n"
 "(-1 means the last day of the year)."
 msgstr ""
-"Schränke die Wiederholungen auf die angegebenen Tage des jahres ein.\n"
+"Schränke die Wiederholungen auf die angegebenen Tage des Jahres ein.\n"
 "Negative Zahlen zählen vom Ende des Jahres\n"
 "(-1 bedeutet den letzten Tag des Jahres)."
 
