@@ -62,6 +62,7 @@
 #                     `_own_names` (otherwise, role cachers for inherited
 #                     roles get lost)
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#     7-Nov-2011 (CT) Redefine `_m_new_e_type_dict` to add `other_role_name`
 #    ««revision-date»»···
 #--
 
@@ -76,12 +77,23 @@ import itertools
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
+    _orn = {}
+
     def other_role_name (cls, role_name) :
         raise TypeError \
             ( "%s.%s.other_role_name needs to be explicitly defined"
             % (cls.type_name, role_name)
             )
     # end def other_role_name
+
+    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        result = cls.__m_super._m_new_e_type_dict \
+            ( app_type, etypes, bases
+            , other_role_name = cls._orn
+            , ** kw
+            )
+        return result
+    # end def _m_new_e_type_dict
 
     def _m_setup_etype_auto_props (cls) :
         cls.__m_super._m_setup_etype_auto_props ()

@@ -59,6 +59,8 @@
 #     4-Nov-2011 (CT) Improve handling of `css_class`
 #     4-Nov-2011 (CT) Change `_Entity_Mixin_.__call__` to add `description`
 #     4-Nov-2011 (CT) Add support for `_A_Named_Object_`
+#     7-Nov-2011 (CT) Change `Entity_Link._get_role_name` to use
+#                     `other_role_name` to find `result`
 #    ««revision-date»»···
 #--
 
@@ -287,13 +289,21 @@ class Entity_Link (Entity) :
             try :
                result = assoc.Roles [r_map [E_Type.type_name]].name
             except KeyError :
-                n = self.name
-                if n in r_map :
-                    result = assoc.Roles [r_map [n]].name
-                elif n.endswith ("s") and n [:-1] in r_map :
-                    result = assoc.Roles [r_map [n [:-1]]].name
+                if len (assoc.Roles) == 1 :
+                    result = assoc.Roles [0].name
                 else :
-                    raise TypeError ("No role-name defined for %s" % n)
+                    n = self.name
+                    if n in r_map :
+                        role = assoc.Roles [r_map [n]]
+                    elif n.endswith ("s") and n [:-1] in r_map :
+                        role = assoc.Roles [r_map [n [:-1]]]
+                    else :
+                        raise TypeError ("No role-name defined for %s" % n)
+                    if role.generic_role_name in assoc.other_role_name :
+                        rn = assoc.other_role_name [role.generic_role_name]
+                        result = assoc.Roles [r_map [rn]].name
+                    else :
+                        raise TypeError ("No role-name defined for %s" % n)
             self.kw ["role_name"] = result
         return result
     # end def _get_role_name
