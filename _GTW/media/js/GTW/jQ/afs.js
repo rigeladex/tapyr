@@ -63,6 +63,7 @@
 //    25-Oct-2011 (CT) `_response_replace` guarded and added `_setup_callbacks`
 //    25-Oct-2011 (CT) Callback names changed from lower to capitalized,
 //                     s/Clear/Clear fields/
+//     7-Nov-2011 (CT) Factor `_trigger_completion`, `focus` if `treshold == 0`
 //    ««revision-date»»···
 //--
 
@@ -210,11 +211,7 @@
                 if (response.partial) {
                     _update_field_values (options, elem, match, names);
                     setTimeout
-                        ( function () {
-                            elem.inp$.autocomplete ("search");
-                          }
-                        , 1
-                        );
+                        (function () { _trigger_completion  (elem); }, 1);
                 } else if (completer ["entity_p"]) {
                     if (! elem.completer.embedded_p) {
                         _update_field_values (options, elem, match, names);
@@ -253,6 +250,9 @@
                             (options, elem, response.values, response.names);
                     };
                 };
+            };
+            var _trigger_completion = function _trigger_completion (elem) {
+                elem.inp$.autocomplete ("search");
             };
             var _update_entity_init = function _update_entity_init
                     (options, elem, match, names) {
@@ -314,6 +314,15 @@
                             }
                           }
                         , "html"
+                        );
+                };
+                if (completer.treshold === 0) {
+                    elem.inp$.focus
+                        ( function (ev)
+                            { if (elem.inp$.val () === "") {
+                                  _trigger_completion (elem);
+                              };
+                            }
                         );
                 };
             };
