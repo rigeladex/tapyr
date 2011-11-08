@@ -61,6 +61,7 @@
 #     8-Nov-2011 (CT) Change `_apply_create` to check `value.conflicts`
 #     8-Nov-2011 (CT) Change `Field_Composite.applyf` to update `entity`
 #                     before up-chaining
+#     8-Nov-2011 (CT) Change `Field_Entity.__call__` to honor `attr.raw_default`
 #    ««revision-date»»···
 #--
 
@@ -310,6 +311,8 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
             attr     = ETM.E_Type.attributes [self.name]
             a_etm    = attr.etype_manager (ETM)
             a_entity = getattr (entity, self.name, None)
+            if a_entity is None and attr.raw_default :
+                a_entity = a_etm.instance (attr.raw_default, raw = True)
             a_kw     = dict (kw, ** kw.get (self.name, {}))
             kw       = dict \
                 ( a_kw
