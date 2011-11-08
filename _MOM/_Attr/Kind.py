@@ -160,6 +160,7 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #     8-Nov-2011 (CT) Add `Id_Entity_Reference_Mixin._check_sanity` for `P_Type`
+#     8-Nov-2011 (CT) Use `Error.Required_Empty` for `_Required_Mixin_` check
 #    ««revision-date»»···
 #--
 
@@ -515,7 +516,15 @@ class _Required_Mixin_ (Kind) :
     is_required          = True
 
     def _checkers (self, e_type) :
-        yield "value is not None and value != ''", (self.name, )
+        name = self.name
+        yield MOM.Pred.Attribute_Check \
+            ( name       = "%s_not_empty" % (name, )
+            , attr       = name
+            , assertion  = "value is not None and value != ''"
+            , attr_none  = (name, )
+            , kind       = MOM.Pred.Object
+            , Error_Type = MOM.Error.Required_Empty
+            )
         for c in self.__super._checkers (e_type) :
             yield c
     # end def _checkers

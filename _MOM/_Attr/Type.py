@@ -194,6 +194,7 @@
 #    23-Sep-2011 (CT) `needs_raw_value` and `ignore_case` added to `db_sig`
 #    23-Sep-2011 (CT) `_A_Id_Entity_.as_code` robustified
 #     4-Nov-2011 (CT) Redefine `_A_Typed_Collection_.ui_length`
+#     8-Nov-2011 (CT) Change `_checkers` to yield check only, not `(check, ())`
 #    ««revision-date»»···
 #--
 
@@ -503,7 +504,7 @@ class A_Attr_Type (object) :
 
     def _checkers (self, e_type, kind) :
         for c in sorted (self.check) :
-            yield c, ()
+            yield c
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
@@ -722,7 +723,7 @@ class _A_Composite_ (_A_Entity_) :
                           ### Space necessary to avoid inheritance of `__doc__`
                         )
                     )
-                yield check, ()
+                yield check
     # end def _checkers
 
 # end class _A_Composite_
@@ -845,11 +846,11 @@ class _A_Number_ (A_Attr_Type) :
     def _checkers (self, e_type, kind) :
         if self.min_value is not None :
             if self.max_value is not None :
-                yield "%s <= value <= %s" % (self.min_value, self.max_value), ()
+                yield "%s <= value <= %s" % (self.min_value, self.max_value)
             else :
-                yield "%s <= value" % (self.min_value, ), ()
+                yield "%s <= value" % (self.min_value, )
         elif self.max_value :
-            yield "value <= %s" % (self.max_value, ), ()
+            yield "value <= %s" % (self.max_value, )
         for c in self.__super._checkers (e_type, kind) :
             yield c
     # end def _checkers
@@ -1117,7 +1118,7 @@ class _A_String_Base_ (A_Attr_Type) :
                       % (name, self.max_length)
                     )
                 )
-            yield check, ()
+            yield check
     # end def _checkers
 
 # end class _A_String_Base_

@@ -1641,34 +1641,34 @@ Primary key attributes
     >>> scope.BMT.Trap ("", None)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+    Invariant_Errors: Condition `name_not_empty` :  (name is not None and name != '')
         name = u''
-      Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+      Condition `serial_no_not_empty` :  (serial_no is not None and serial_no != '')
         serial_no = None
     >>> scope.BMT.Trap ("ha", None)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+    Invariant_Errors: Condition `serial_no_not_empty` :  (serial_no is not None and serial_no != '')
         serial_no = None
     >>> scope.BMT.Trap ("", 0)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+    Invariant_Errors: Condition `name_not_empty` :  (name is not None and name != '')
         name = u''
     >>> scope.BMT.Trap (None, 0)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+    Invariant_Errors: Condition `name_not_empty` :  (name is not None and name != '')
         name = None
     >>> scope.BMT.Trap ("ha", "", raw = True)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+    Invariant_Errors: Condition `serial_no_not_empty` :  (serial_no is not None and serial_no != '')
         serial_no = None
     >>> scope.BMT.Trap ("", "7", raw = True)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+    Invariant_Errors: Condition `name_not_empty` :  (name is not None and name != '')
         name = u''
 
 Rollback of uncommited changes

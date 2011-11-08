@@ -49,23 +49,23 @@ _composite = r"""
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> q = EVT.Event.query ().order_by (TFL.Sorted_By (Q.date.start))
     >>> for e in q.all () : print e
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
 
     >>> for e in EVT.Event.query (sort_key = EVT.Event.sorted_by) :
     ...     print e
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By ("-date.start")) :
     ...     print e
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By (Q.left.perma_name)) :
     ...     print e
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
 
     >>> scope.destroy ()
 
@@ -83,12 +83,12 @@ _link1_role = r"""
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> q = EVT.Event_occurs.query_s ()
     >>> for e in q.all () : print e ### default sort order
-    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
-    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u''), u'2010/01/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
     >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By ("-event.date.start"))
     >>> for e in q.all () : print e ### sorted by descending date
-    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()),
+    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u''),
     u'2010/01/01', dict ())
 
     >>> scope.destroy ()

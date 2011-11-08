@@ -124,13 +124,13 @@ _basic = r"""
     <Change Summary for pid 16: newborn>
         <Create GTW.OMP.SWP.Page (u'event-2-text', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>Text for the 2. event</p>\n', 'date' : (('start', u'2010/09/08'),), 'last_cid' : '17', 'text' : u'Text for the 2. event'}>
     <Change Summary for pid 17: newborn>
-        <Create GTW.OMP.EVT.Event ((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', 'GTW.OMP.EVT.Event'), new-values = {'last_cid' : '18'}>
+        <Create GTW.OMP.EVT.Event ((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'GTW.OMP.EVT.Event'), new-values = {'last_cid' : '18'}>
     <Change Summary for pid 19: newborn, 2 changes>
-        <Create GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), new-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '19'}>
-        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'', 'last_cid' : '19'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '28'}>
-        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08', 'last_cid' : '28'}, new-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '29'}>
+        <Create GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), new-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '19'}>
+        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'', 'last_cid' : '19'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '28'}>
+        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08', 'last_cid' : '28'}, new-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '29'}>
     <Change Summary for pid 20: newborn>
-        <Create GTW.OMP.EVT.Recurrence_Rule ((((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), u'', u'', 'GTW.OMP.EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '20', 'start' : u'2010/08/01', 'unit' : u'Weekly'}>
+        <Create GTW.OMP.EVT.Recurrence_Rule ((((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), u'', u'', 'GTW.OMP.EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '20', 'start' : u'2010/08/01', 'unit' : u'Weekly'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
@@ -179,7 +179,7 @@ _basic = r"""
     >>> scope.commit ()
 
     >>> print rs1.attr_as_code()
-    ((u'event-1-text', ), dict (start = u'2010/08/18'), dict ()), date_exceptions = u"u'2010/08/15'", dates = u"u'2010/09/08',u'2010/10/08'"
+    ((u'event-1-text', ), dict (start = u'2010/08/18'), dict (), u''), date_exceptions = u"u'2010/08/15'", dates = u"u'2010/09/08',u'2010/10/08'"
     >>> rs1.set (date_exceptions = None)
     1
     >>> rs1.event.date.set (finish = datetime.date (2010, 8, 19), start = datetime.date (2010, 8, 13))
@@ -192,10 +192,10 @@ _basic = r"""
     ...     print csp
     ...
     <Change Summary for pid 17: 1 change>
-        <Modify GTW.OMP.EVT.Event ((u'event-1-text', 'GTW.OMP.SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', 'GTW.OMP.EVT.Event'), old-values = {'date' : (('start', u'2010/08/18'),), 'last_cid' : '18'}, new-values = {'date' : (('finish', u'2010/08/19'), ('start', u'2010/08/13')), 'last_cid' : '31'}>
+        <Modify GTW.OMP.EVT.Event ((u'event-1-text', 'GTW.OMP.SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'GTW.OMP.EVT.Event'), old-values = {'date' : (('start', u'2010/08/18'),), 'last_cid' : '18'}, new-values = {'date' : (('finish', u'2010/08/19'), ('start', u'2010/08/13')), 'last_cid' : '31'}>
     <Change Summary for pid 19: 2 changes>
-        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '29'}, new-values = {'date_exceptions' : u'', 'last_cid' : '30'}>
-        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '30'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '32'}>
+        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '29'}, new-values = {'date_exceptions' : u'', 'last_cid' : '30'}>
+        <Modify GTW.OMP.EVT.Recurrence_Spec (((u'event-1-text', 'GTW.OMP.SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'GTW.OMP.EVT.Event'), 'GTW.OMP.EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '30'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '32'}>
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
     ...

@@ -94,6 +94,8 @@
 #     4-Nov-2011 (CT) Change `copy` to not use `__dict__` to filter attributes
 #                     (which failed to copy properties like `css_class`)
 #     4-Nov-2011 (CT) Add `description` to `Entity_List`
+#     8-Nov-2011 (CT) Add `_pop_allow_new` so `allow_new` can be passed down to
+#                     all children during `__call__`
 #    ««revision-date»»···
 #--
 
@@ -132,28 +134,29 @@ class M_Form (_M_Element_) :
 class _Element_ (TFL.Meta.Object) :
     """Base class for AFS element classes."""
 
-    __metaclass__ = _M_Element_
+    __metaclass__   = _M_Element_
 
-    children      = ()
-    completer     = None
-    het_c         = "div" ### HTML element type to be used for the container
-    het_h         = "h2"  ### HTML element type to be used for the heading
-    id_sep        = "."
-    id_suffix_pat = Regexp (r"\d+$")
-    init          = ""
-    list_sep      = "::"
-    needs_value   = False
-    prefilled     = False
-    rank          = 0
-    readonly      = False
-    renderer      = None
-    root_sep      = "-"
-    undef         = object ()
-    widget        = None
-    _css_class    = None
-    _id           = None
-    _pop_in_call  = ("allow_new", "collapsed")
-    _pop_to_self  = \
+    children        = ()
+    completer       = None
+    het_c           = "div" ### HTML element type to be used for the container
+    het_h           = "h2"  ### HTML element type to be used for the heading
+    id_sep          = "."
+    id_suffix_pat   = Regexp (r"\d+$")
+    init            = ""
+    list_sep        = "::"
+    needs_value     = False
+    prefilled       = False
+    rank            = 0
+    readonly        = False
+    renderer        = None
+    root_sep        = "-"
+    undef           = object ()
+    widget          = None
+    _css_class      = None
+    _id             = None
+    _pop_allow_new  = False
+    _pop_in_call    = ("collapsed", )
+    _pop_to_self    = \
         ( "completer", "css_class", "description", "explanation"
         , "id", "id_sep", "needs_value", "prefilled", "readonly"
         , "renderer", "required", "ui_name", "widget"
@@ -300,6 +303,8 @@ class _Element_ (TFL.Meta.Object) :
         result = dict (kw)
         if self.needs_value :
             result ["value"] = self._value (* args, ** kw)
+        if self._pop_allow_new :
+            result.pop ("allow_new", None)
         return result
     # end def _instance_kw
 
@@ -534,10 +539,12 @@ class _Field_ (_Element_) :
         self.__super.__init__ (name = name, ** kw)
     # end def __init__
 
-# end class Field
+# end class _Field_
 
 class Field (_Field_MI_, _Field_) :
     """Model a field of an AJAX-enhanced form."""
+
+    _pop_allow_new = True
 
     def _css_classes (self) :
         return (self._css_class, )
@@ -558,6 +565,8 @@ class Field_Composite (_Field_MI_, _Anchor_MI_, _Field_) :
     het_c       = "div"     ### HTML element type to be used for the container
     het_h       = "h2"      ### HTML element type to be used for the heading
     renderer    = "afs_div_seq"
+
+    _pop_allow_new = True
 
     def _value_sig (self, instance) :
         return (str (instance.id), self.name, instance.form_sig ())

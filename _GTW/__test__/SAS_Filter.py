@@ -57,20 +57,20 @@ _composite = r"""
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event.query ()
     >>> for e in q.all () : print e ### all
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict ())
-    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict ())
-    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
+    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')
+    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u'')
     >>> q = EVT.Event.query ().filter (Q.date.start > date)
     >>> for e in q.all () : print e ### filtered 1
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
     >>> q = EVT.Event.query ().filter (Q.date.start >= date)
     >>> for e in q.all () : print e ### filtered 2
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
     >>> q = EVT.Event.query ().filter (left = p1)
     >>> for e in q.all () : print e ### filtered 3
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
 """
 
 _link1_role = r"""
@@ -93,26 +93,26 @@ _link1_role = r"""
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event_occurs.query ()
     >>> for e in q.all () : print e ### all
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict ()), u'2010/03/01', dict ())
-    (((u'event-3-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
-    (((u'event-4-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u''), u'2010/03/01', dict ())
+    (((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
+    (((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u''), u'2010/01/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start > date)
     >>> for e in q.all () : print e ### filter 1
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start >= date)
     >>> for e in q.all () : print e ### filter 2
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict ()), u'2010/03/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u''), u'2010/03/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (event = e1)
     >>> for e in q.all () : print e ### filter 3
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict ()), u'2010/04/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
     >>> q = EVT.Event.query ().filter (Q.date.alive)
     >>> for e in q.all () : print e ### filter 4
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict ())
-    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict ())
-    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
+    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')
+    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u'')
 """
 
 _link2_link1 = r"""

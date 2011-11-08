@@ -62,17 +62,21 @@
 #     8-Nov-2011 (CT) Change `Field_Composite.applyf` to update `entity`
 #                     before up-chaining
 #     8-Nov-2011 (CT) Change `Field_Entity.__call__` to honor `attr.raw_default`
+#     8-Nov-2011 (CT) Change `_create_instance` to pass `exc.any_required_empty`
+#     8-Nov-2011 (CT) Change `Field._value` to check `entity` vs. `allow_new`
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
 
 from   _GTW        import GTW
+from   _MOM        import MOM
 from   _TFL        import TFL
 
 from   _GTW._AFS   import Element as AE
 
 import _GTW._AFS._MOM
+import _MOM.Error
 
 class _MOM_Element_ (AE._Element_) :
 
@@ -139,7 +143,11 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
     # end def _check_sid
 
     def _create_instance (self, ETM, akw) :
-        return ETM.instance_or_new (raw = 1, ** akw)
+        try :
+            return ETM.instance_or_new (raw = 1, ** akw)
+        except MOM.Error.Invariant_Errors as exc :
+            if not exc.any_required_empty :
+                raise
     # end def _create_instance
 
     def _instance_kw (self, ETM, entity, ** kw) :
@@ -262,6 +270,12 @@ class _MOM_Field_ (AE.Field) :
         result = self.__super._value (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
         akw    = kw.get (self.name, {})
+        if entity is None and not kw.get ("allow_new") :
+            ### No entity, no `allow_new`:
+            ### * only existing entities can be selected
+            ### * default values interfere with auto-completion
+            ### * don't put them in `result`
+            return result
         key    = \
             (    "edit"
             if   result.get ("prefilled") or kw.get ("copy", False)

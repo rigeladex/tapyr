@@ -44,6 +44,7 @@
 #    30-Jun-2010 (CT) `Readonly_DB` added
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    22-Mar-2011 (MG) `Commit_Conflict` added
+#     8-Nov-2011 (CT) Add `Required_Empty` and `any_required_empty`
 #    ««revision-date»»···
 #--
 
@@ -352,6 +353,11 @@ class Invariant_Error (_Invariant_Error_) :
 
 # end class Invariant_Error
 
+class Required_Empty (Invariant_Error) :
+    """Primary attribute must not be empty."""
+
+# end class Required_Empty
+
 class Quant_Error (Invariant_Error) :
     """Raised when a quantifier invariant of a MOM object/link is violated."""
 
@@ -465,8 +471,14 @@ class Invariant_Errors (Error) :
 
     def __init__ (self, errors) :
         sort_key = lambda e : e.inv.name
-        Error.__init__ (self, sorted (errors, key = sort_key))
+        errors   = self.errors = sorted (errors, key = sort_key)
+        Error.__init__ (self, errors)
     # end def __init__
+
+    @property
+    def any_required_empty (self) :
+        return any (isinstance (e, Required_Empty) for e in self.errors)
+    # end def any_required_empty
 
     def str_arg (self, args) :
         result = []

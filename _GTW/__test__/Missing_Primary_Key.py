@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -41,7 +41,7 @@ _test_code = r"""
     >>> PAP.Person (last_name = u"last_name", first_name = u"", raw = True)
     Traceback (most recent call last):
       ...
-    Invariant_Errors: Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
+    Invariant_Errors: Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
         first_name = u''
     >>> print PAP.Person.count
     0
@@ -55,10 +55,10 @@ _test_code = r"""
     ...
     Traceback (most recent call last):
       ...
-    Invariant_Errors: Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
+    Invariant_Errors: Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
         first_name = u''
     >>> errors
-    [Invariant_Errors([Invariant_Error(GTW.OMP.PAP.Person (u'last_name', u'', u'', u''), Condition `AC_check_first_name_0` :  (first_name is not None and first_name != '')
+    [Invariant_Errors([Required_Empty(GTW.OMP.PAP.Person (u'last_name', u'', u'', u''), Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
         first_name = u'', (), ())],)]
     >>> print PAP.Person.count
     0

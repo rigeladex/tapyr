@@ -117,7 +117,7 @@ _test_code = """
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
-    Entity_List Person_has_Address Person_has_Address u'' afs_div_seq
+    Entity_List Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
     Entity_Link Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
@@ -128,7 +128,7 @@ _test_code = """
     Field country Country u'Country' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List Person_has_Email Person_has_Email u'' afs_div_seq
+    Entity_List Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
     Entity_Link Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
@@ -136,7 +136,7 @@ _test_code = """
     Field address Email address u'Email address (including domain)' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List Person_has_Phone Person_has_Phone u'' afs_div_seq
+    Entity_List Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
     Entity_Link Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary None u'' afs_div_seq
@@ -178,6 +178,8 @@ _test_code = """
         <Field_Composite None 'time' 'MOM.Time_Interval'>
          <Field None 'start'>
          <Field None 'finish'>
+        <Field_Entity None 'calendar' 'GTW.OMP.EVT.Calendar'>
+         <Field None 'name'>
        <Fieldset None u'optional'>
         <Field None 'detail'>
         <Field None 'short_title'>
@@ -234,6 +236,8 @@ _test_code = """
          <Field_Composite F-0:4::p-1:1 'time' 'MOM.Time_Interval'>
           <Field F-0:4::p-1:1.0 'start'>
           <Field F-0:4::p-1:1.1 'finish'>
+         <Field_Entity F-0:4::p-1:2 'calendar' 'GTW.OMP.EVT.Calendar'>
+          <Field F-0:4::p-1:2:0 'name'>
         <Fieldset F-0:4::p-2 u'optional'>
          <Field F-0:4::p-2:0 'detail'>
          <Field F-0:4::p-2:1 'short_title'>
@@ -304,6 +308,8 @@ _test_code = """
          <Field_Composite X-1:4::p-1:1 'time' 'MOM.Time_Interval'>
           <Field X-1:4::p-1:1.0 'start'>
           <Field X-1:4::p-1:1.1 'finish'>
+         <Field_Entity X-1:4::p-1:2 'calendar' 'GTW.OMP.EVT.Calendar'>
+          <Field X-1:4::p-1:2:0 'name'>
         <Fieldset X-1:4::p-2 u'optional'>
          <Field X-1:4::p-2:0 'detail'>
          <Field X-1:4::p-2:1 'short_title'>
@@ -1752,7 +1758,7 @@ _test_code = """
     >>> for i in fip.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FP> [('sid', 0)]
-    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 13}), ('sid', 'vxYJv8BmTKSxB29Aesc7g78eHgRFld4VeZ9gGA')]
+    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 14}), ('sid', '4Gp-GodgH3Th6drkjYZW-MMO11Gj2tVjwN2:Fw')]
     <Fieldset FP-0:0 u'primary'> []
     <Field FP-0:0:0 'last_name'> [(u'init', u'Tanzer')]
     <Field FP-0:0:1 'first_name'> [(u'init', u'Laurens')]
@@ -1767,10 +1773,10 @@ _test_code = """
     <Field FP-0:2:1 'salutation'> []
     <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
     <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
-    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [(u'init', {'pid': 9, 'cid': 19}), ('sid', 'PBIMhIxHY22pBYGyYmS7CYZI8GaZgT23usy8VA')]
-    <Field_Role_Hidden FP-0:4::0-0 u'left' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 13}), ('sid', 'wKjvBWwkYT1t4GwlOdZNiM6uMD9JjbNM5Q:d7Q')]
+    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [(u'init', {'pid': 9, 'cid': 21}), ('sid', 'KeCu4vOnuwNMf1loCI:IiGC7QwzJ-3qa8X5OHA')]
+    <Field_Role_Hidden FP-0:4::0-0 u'left' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 14}), ('sid', '2MaKwqFALvptOXWHXpjCUdAh6mbHpOTbVoQREQ')]
     <Fieldset FP-0:4::0-1 u'primary'> []
-    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [(u'init', {'pid': 8, 'cid': 18}), ('sid', 'gbhf0Xv80pbhGMzTD1uFjuKXtTP:FU1XGZpGBQ')]
+    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [(u'init', {'pid': 8, 'cid': 20}), ('sid', '3n3GioDrGc5OaUvxfFCZFOfE8jTv:CQJd7vsnA')]
     <Field FP-0:4::0-1:0:0 'address'> [(u'init', u'laurens.tanzer@gmail.com')]
     <Fieldset FP-0:4::0-2 u'optional'> []
     <Field FP-0:4::0-2:0 'desc'> []
@@ -1793,8 +1799,8 @@ _test_code = """
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
-    Entity_List Person_has_Address Person_has_Address u'' afs_div_seq
-    Entity_List Person_has_Email Person_has_Email u'' afs_div_seq
+    Entity_List Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
+    Entity_List Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
     Entity_Link Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
     Field_Role_Hidden left Person u'' afs_div_seq
     Fieldset primary  u'' afs_div_seq
@@ -1802,7 +1808,7 @@ _test_code = """
     Field address Email address u'Email address (including domain)' None
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List Person_has_Phone Person_has_Phone u'' afs_div_seq
+    Entity_List Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
 
 """
 

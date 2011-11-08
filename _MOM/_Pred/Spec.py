@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,7 @@
 #     5-Jan-2010 (CT) `_setup_attr_checker` and `__init__` refactored to use
 #                     `attr._checkers` instead of home-grown code
 #     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
+#     8-Nov-2011 (CT) Remove `attr_none` from `_setup_attr_checker`
 #    ««revision-date»»···
 #--
 
@@ -79,11 +80,10 @@ class Spec (MOM.Prop.Spec) :
     def _setup_attr_checker (self, e_type, attr) :
         kind = (MOM.Pred.Object, MOM.Pred.System) [attr.electric]
         stem = "AC_check_%s" % (attr.name, )
-        for i, (check, attr_none) in enumerate (attr._checkers (e_type)) :
+        for i, check in enumerate (attr._checkers (e_type)) :
             if isinstance (check, basestring) :
                 name      = "%s_%d" % (stem, i)
-                prop_type = MOM.Pred.Attribute_Check \
-                    (name, attr.name, check, attr_none)
+                prop_type = MOM.Pred.Attribute_Check (name, attr.name, check)
             else :
                 prop_type = check
                 kind      = check.kind
