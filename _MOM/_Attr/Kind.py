@@ -159,6 +159,7 @@
 #    22-Sep-2011 (CT) s/Object_Reference_Mixin/Id_Entity_Reference_Mixin/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#     8-Nov-2011 (CT) Add `Id_Entity_Reference_Mixin._check_sanity` for `P_Type`
 #    ««revision-date»»···
 #--
 
@@ -1298,6 +1299,14 @@ class _Id_Entity_Reference_Mixin_ (_EPK_Mixin_) :
 
 class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     """Kind mixin for handling object references correctly."""
+
+    def _check_sanity (self, attr_type) :
+        if __debug__ :
+            if not attr_type.P_Type :
+                raise TypeError \
+                    ("%s needs to define `P_Type`" % attr_type)
+        self.__super._check_sanity (attr_type)
+    # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42) :
         old_value = self.get_value (obj)
