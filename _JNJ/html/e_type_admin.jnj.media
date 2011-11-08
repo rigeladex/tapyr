@@ -32,7 +32,8 @@
 #                     added
 #    24-Oct-2011 (CT) `tablesorter` JS_On_Ready factored into
 #                     `tablesorter.media`
-#     ««revision-date»»···
+#     8-Nov-2011 (CT) Add `GTW.Script._.GTW_jq_util`
+#    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
@@ -97,6 +98,7 @@ style_sheet = Style_Sheet \
 Include ("html/tablesorter.media")
 
 Script (GTW.Script._.GTW_postify_a)
+Script (GTW.Script._.GTW_jq_util)
 
 JS_On_Ready \
     ( """$("table.tablesorter").each
