@@ -93,6 +93,8 @@
 #     9-Sep-2011 (CT) Property `E_Type` added
 #    21-Sep-2011 (CT) `get_etype_attribute` added and used for `raw_query_attrs`
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#     8-Nov-2011 (CT) Add exception handler to `ac_query_attrs` (for some
+#                     attribute types, partial completions can trigger errors)
 #    ««revision-date»»···
 #--
 
@@ -205,7 +207,12 @@ class Id_Entity (Entity) :
         et = self._etype
         for n in names :
             if n in values :
-                yield getattr (et, n).ac_query (values [n])
+                try :
+                    vq = getattr (et, n).ac_query (values [n])
+                except (ValueError, TypeError) :
+                    pass
+                else :
+                    yield vq
     # end def ac_query_attrs
 
     def ckd_query_attrs (self, names, values = None) :

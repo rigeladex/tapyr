@@ -64,6 +64,8 @@
 //    25-Oct-2011 (CT) Callback names changed from lower to capitalized,
 //                     s/Clear/Clear fields/
 //     7-Nov-2011 (CT) Factor `_trigger_completion`, `focus` if `treshold == 0`
+//     8-Nov-2011 (CT) Use `elem.anchor_id || elem.root_id` to fix top-level
+//                     completion
 //    ««revision-date»»···
 //--
 
@@ -141,7 +143,15 @@
                     ( { async         : true
                       , data          : data
                       , success       : function (answer, status, xhr_i) {
-                            _get_cb (options, elem, val, cb, answer);
+                              if (! answer ["error"]) {
+                                  _get_cb (options, elem, val, cb, answer);
+                              } else {
+                                  alert
+                                      ( "Error: " + answer.error
+                                      + "\n\n"
+                                      + $GTW.inspect.show (data)
+                                      );
+                              };
                         }
                       , url           : options.completer_url
                       }
@@ -241,7 +251,7 @@
                 var anchor, s$;
                 if (response.completions > 0) {
                     if ((response.completions == 1) && entity_p) {
-                        anchor = $AFS_E.get (elem.anchor_id);
+                        anchor = $AFS_E.get (elem.anchor_id || elem.root_id);
                         s$ = $("[id='" + response.json.$id + "']");
                         s$ = _response_replace (response, s$, anchor);
                         _setup_callbacks (s$);
@@ -257,7 +267,7 @@
             var _update_entity_init = function _update_entity_init
                     (options, elem, match, names) {
                 var field, id;
-                var anchor = $AFS_E.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id || elem.root_id];
                 var map    = anchor.field_name_map;
                 for (var i = 0, li = names.length, name; i < li; i++) {
                     name = names [i];
@@ -273,7 +283,7 @@
             var _update_field_values = function _update_field_values
                     (options, elem, match, names) {
                 var field, id;
-                var anchor = $AFS_E.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id || elem.root_id];
                 var map    = anchor.field_name_map;
                 for (var i = 0, li = names.length, name; i < li; i++) {
                     name = names [i];
@@ -414,8 +424,8 @@
                     .unwrap ();
             if ("json" in response) {
                 new_elem = $AFS_E.create (response.json);
-                anchor   = $AFS_E.get (elem.anchor_id);
-                root     = $AFS_E.get (elem.root_id || anchor.root_id);
+                anchor   = $AFS_E.get (elem.anchor_id || elem.root_id);
+                root     = $AFS_E.get (elem.root_id   || anchor.root_id);
                 new_elem.setup_value
                     ( { anchor : anchor
                       , root   : root || anchor
@@ -687,7 +697,8 @@
                                   if (answer ["conflicts"]) {
                                       // XXX
                                       alert ( "Conflicts: \n"
-                                            + $GTW.inspect.show (answer.conflicts)
+                                            + $GTW.inspect.show
+                                                (answer.conflicts)
                                             );
                                   } else if (answer ["expired"]) {
                                       // XXX display re-authorization form

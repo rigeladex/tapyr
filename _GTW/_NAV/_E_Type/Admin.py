@@ -123,8 +123,11 @@
 #    10-Oct-2011 (CT) Old-style form handling removed
 #    13-Oct-2011 (CT) `_check_readonly` factored
 #    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
+#     8-Nov-2011 (CT) Factor `field_element` and guard it against `KeyError`
 #    ««revision-date»»···
 #--
+
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -181,6 +184,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             if pid is not None :
                 return ETM.pid_query (pid)
         # end def obj
+
+        def field_element (self, form, fid) :
+            try :
+                return form  [fid]
+            except KeyError :
+                error = _T ("Form corrupted, unknown element id %s" % (fid, ))
+                raise JSON_Error (error  = error)
+        # end def field_element
 
         def form (self, obj = None, ** kw) :
             if obj is None :
@@ -392,8 +403,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             scope     = self.top.scope
             try :
                 session_secret = self.session_secret (handler, json.sid)
-                form, elem     = self.form_element (json.fid)
-                field          = form  [json.trigger]
+                form, elem     = self.form_element   (json.fid)
+                field          = self.field_element  (form, json.trigger)
                 ETM            = scope [elem.type_name]
                 E_Type         = ETM.E_Type
                 if json.complete_entity :
@@ -450,8 +461,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             result    = dict (matches = [], partial = False)
             scope     = self.top.scope
             try :
-                form, elem   = self.form_element (json.fid)
-                field        = form  [json.trigger]
+                form, elem   = self.form_element  (json.fid)
+                field        = self.field_element (form, json.trigger)
                 ETM          = scope [elem.type_name]
                 E_Type       = ETM.E_Type
                 attr         = getattr (E_Type, field.name)
