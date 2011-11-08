@@ -110,6 +110,7 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#     8-Nov-2011 (CT) Add `M_Entity.change_attribute_default`
 #    ««revision-date»»···
 #--
 
@@ -339,6 +340,21 @@ class M_Entity (M_E_Mixin) :
         """Add `pred` to `cls`"""
         cls._m_add_prop (pred, cls._Predicates, verbose, override)
     # end def add_predicate
+
+    def change_attribute_default (cls, name, raw_default = None, default = None) :
+        """Change (raw or cooked) default of attribute with `name`."""
+        attr = getattr (cls._Attributes, name)
+        if raw_default is not None :
+            assert default is None, \
+                ( "Can't specify both raw default and %s "
+                  "and cooked default %s for %s"
+                % (raw_default, default, attr)
+                )
+            attr.raw_default = raw_default
+        else :
+            attr.default     = default
+            attr.raw_default = attr.as_string (default)
+    # end def change_attribute_default
 
     def m_init_etypes (cls) :
         """Initialize bare essential types for all classes in `cls._S_Extension`."""
