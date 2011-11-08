@@ -56,6 +56,11 @@
 #    16-Sep-2011 (CT) Use `AE.` instead of `import *`
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #     7-Oct-2011 (CT) `Entity.apply` changed to look at `old_pid`
+#     8-Nov-2011 (CT) Change `_changed_children` and `Field.applyf` to not
+#                     check for changes
+#     8-Nov-2011 (CT) Change `_apply_create` to check `value.conflicts`
+#     8-Nov-2011 (CT) Change `Field_Composite.applyf` to update `entity`
+#                     before up-chaining
 #    ««revision-date»»···
 #--
 
@@ -78,7 +83,7 @@ class _MOM_Element_ (AE._Element_) :
             v = None
             if c.entity :
                 v = c.entity
-            elif c.changed :
+            else :
                 v = c.elem.applyf (c, scope, entity, ** kw)
                 value.conflicts += c.conflicts
             if v is not None :
@@ -120,9 +125,9 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
 
     def _apply_create (self, value, scope, ** kw) :
         akw = self._changed_children (value, scope, None, ** kw)
-        if akw :
-            ETM = scope [self.type_name]
+        if akw and not value.conflicts :
             ### XXX error handling
+            ETM = scope [self.type_name]
             return self._create_instance (ETM, akw)
     # end def _apply_create
 
@@ -228,7 +233,7 @@ class _MOM_Field_ (AE.Field) :
             if value.init != dbv:
                 value.conflicts += 1
                 value.asyn       = result = dbv
-            elif value.init != value.edit :
+            else :
                 result = value.edit
         else :
             result = value.edit
@@ -272,12 +277,14 @@ class _MOM_Field_ (AE.Field) :
 
 Field = _MOM_Field_ # end class
 
-class _MOM_Field_Composite_ (AE.Field_Composite) :
+class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
     """Model a MOM-specific composite field of a AJAX-enhanced form."""
 
     _real_name = "Field_Composite"
 
     def applyf (self, value, scope, entity, ** kw) :
+        if entity is not None :
+            entity = getattr (entity, self.name)
         return self._changed_children (value, scope, entity, ** kw)
     # end def applyf
 
