@@ -29,6 +29,7 @@
 #    15-Mar-2010 (CT) Creation
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
+#     8-Nov-2011 (CT) `Calendar` added
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,10 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    Event           =  dict \
+    Calendar        = dict \
+        ( ETM       = "GTW.OMP.EVT.Calendar"
+        )
+    Event           = dict \
         ( ETM       = "GTW.OMP.EVT.Event"
         , Form_args =
             ( FGD

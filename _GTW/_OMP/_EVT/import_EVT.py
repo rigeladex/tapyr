@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    10-Mar-2010 (CT) Creation
+#     8-Nov-2011 (CT) `Calendar` added
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,8 @@ from   _GTW                   import GTW
 
 import _GTW._OMP._EVT
 import _GTW._OMP._EVT.Entity
+
+import _GTW._OMP._EVT.Calendar
 import _GTW._OMP._EVT.Event
 import _GTW._OMP._EVT.Recurrence_Spec
 
