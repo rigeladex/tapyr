@@ -97,6 +97,7 @@
 #     8-Nov-2011 (CT) Add `_pop_allow_new` so `allow_new` can be passed down to
 #                     all children during `__call__`
 #     9-Nov-2011 (CT) Add default for `allow_new` to `Entity.__call__`
+#     9-Nov-2011 (CT) Add `_pop_allow_new` to `Fieldset` and `Form`
 #    ««revision-date»»···
 #--
 
@@ -595,6 +596,8 @@ class Fieldset (_Element_) :
     id_sep      = ":"
     renderer    = "afs_div_seq"
 
+    _pop_allow_new = True
+
     def display (self, instance) :
         return "; ".join (c.display for c in instance.children if c.display)
     # end def display
@@ -612,14 +615,16 @@ class Fieldset (_Element_) :
 class Form (_Element_List_) :
     """Model a AJAX-enhanced form."""
 
-    __metaclass__ = M_Form
+    __metaclass__  = M_Form
 
-    het_c         = "section" ### HTML element type to be used for the container
-    het_h         = "h1"      ### HTML element type to be used for the heading
-    id_sep        = _Element_List_.root_sep
-    needs_value   = True
-    renderer      = "afs_div_seq"
-    Table         = {}
+    het_c          = "section" ### HTML element type to be used for container
+    het_h          = "h1"      ### HTML element type to be used for heading
+    id_sep         = _Element_List_.root_sep
+    needs_value    = True
+    renderer       = "afs_div_seq"
+    Table          = {}
+
+    _pop_allow_new = True
 
     def __init__ (self, id, children, ** kw) :
         self.id_map = {}
