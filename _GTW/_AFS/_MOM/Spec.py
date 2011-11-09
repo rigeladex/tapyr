@@ -61,6 +61,7 @@
 #     4-Nov-2011 (CT) Add support for `_A_Named_Object_`
 #     7-Nov-2011 (CT) Change `Entity_Link._get_role_name` to use
 #                     `other_role_name` to find `result`
+#     9-Nov-2011 (CT) Add `css_align` for attribute types
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,12 @@ MAT._A_Named_Object_.input_widget     = WS ("html/AFS/input.jnj, named_object")
 
 MAT.Kind.css_class                   = ""
 MAT.A_Attr_Type.css_class            = ""
+
+MAT.A_Attr_Type.css_align            = ""
+MAT._A_Number_.css_align             = "right"
+MAT.A_Date.css_align                 = "right"
+MAT.A_Numeric_String.css_align       = "right"
+MAT.A_Time.css_align                 = "right"
 
 class _Base_ (TFL.Meta.Object) :
     """Base class for spec classes"""

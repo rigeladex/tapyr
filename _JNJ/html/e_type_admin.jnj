@@ -53,7 +53,9 @@
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />
       {% for f in fields %}
-        <col class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}" />
+        <col class="{{ f.ui_name }}"
+          {%- if f.css_align %} align="{{ f.css_align }}"{% endif -%}
+        />
       {% endfor %}
       <col class="{{ E_Type.ui_name }}-cmd-change" />
     </colgroup>
@@ -61,7 +63,7 @@
       <tr>
         {{ _button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "circle-plus", "add") }}
         {% for f in fields %}
-          <th class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}"
+          <th class="{{ f.ui_name }}"
               scope="col" title="{{ GTW._T (f.description) }}">
             {{ GTW._T (f.ui_name) }}
           </th>
@@ -74,7 +76,10 @@
         <tr id="pk-{{ o.pid }}">
           {{ _button (page, E_Type, "td", o.href_change (), o.pid, GTW._T ("Change object"), "pencil", "change") }}
           {% for f, v in o %}
-            <td class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}">
+            {%- set align =
+              (" align-%s" % (f.css_align, )) if f.css_align else ""
+            -%}
+            <td class="{{ f.name }}{{ align }}">
               <a href="{{ o.href_change () }}" title="{{ GTW._T ("Change object") }} {{ o.pid }}">
                 {{ v }}
               </a>
