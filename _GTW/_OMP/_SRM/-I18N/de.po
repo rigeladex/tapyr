@@ -256,7 +256,7 @@ msgstr "Lüa"
 
 #: _GTW._OMP._SRM.Club:0
 msgid "Long name"
-msgstr "Name (ausfürhlich)"
+msgstr "Name (ausführlich)"
 
 #: _GTW._OMP._SRM.Club:0
 msgid "Long name of the sailing club."
