@@ -56,6 +56,7 @@
 #                     Alias added to sub query
 #    27-Jul-2011 (MG) `_Q_Result_Attrs_._clone` added to copy `_from_row`
 #    16-Sep-2011 (MG) `group_by` fixed
+#     9-Nov-2011 (MG) `_joins` handling of new element `outerjoin` added
 #    ««revision-date»»···
 #--
 
@@ -173,10 +174,13 @@ class _Q_Result_ (TFL.Meta.Object) :
         if joins :
             sql_join      = sa_query.froms [-1]
             no_joins      = len (joined_tables)
-            for src, dst, cond in reversed (joins) :
+            for src, dst, cond, outerjoin in reversed (joins) :
                 if dst not in joined_tables :
-                    joined_tables.add        (dst)
-                    sql_join = sql_join.join (dst, onclause = cond)
+                    joined_tables.add                 (dst)
+                    if outerjoin :
+                        sql_join = sql_join.outerjoin (dst, onclause = cond)
+                    else :
+                        sql_join = sql_join.join      (dst, onclause = cond)
             if len (joined_tables) > no_joins :
                 sa_query = sa_query.select_from (sql_join)
         return sa_query, joined_tables
