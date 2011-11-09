@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Apr-2010 (CT) Creation
 #    29-Mar-2011 (CT) Test for change of `Init_Only_Mixin` attribute added
+#     9-Nov-2011 (CT) Add test for `sail_number_head` and `sail_number_tail`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,14 @@ _test_code = """
     Traceback (most recent call last):
       ...
     AttributeError: Init-only attribute `GTW.OMP.SRM.Boat.left` cannot be changed from `(u'Optimist')` to `(u'Laser')` after object creation
+
+    >>> c = SRM.Boat (u"Optimist", None, "OE 42", raw = True)
+    >>> print (c.sail_number, c.sail_number_head, c.sail_number_tail)
+    (u'oe 42', u'OE', u'42')
+    >>> print (c.FO.sail_number, c.FO.sail_number_head, c.FO.sail_number_tail)
+    ('OE 42', u'OE', u'42')
+    >>> print (b.sail_number, b.sail_number_head, b.sail_number_tail)
+    (u'1107', u'', u'1107')
 
 """
 

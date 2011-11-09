@@ -41,6 +41,7 @@
 #                     `Primary_Optional`
 #    23-Sep-2011 (CT) `sail_number_x` and `sail_number` merged into a single
 #                     attribute of type `A_String`, kind `Primary_Optional`
+#     9-Nov-2011 (CT) Add cached attributes `sail_number_head` and `_tail`
 #    ««revision-date»»···
 #--
 
@@ -53,11 +54,18 @@ import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.Regexp              import Regexp, re
 
 _Ancestor_Essence = GTW.OMP.SRM.Link1
 
 class Boat (_Ancestor_Essence) :
     """Boat of a specific boat-class."""
+
+    _sail_number_pat = Regexp \
+        ( r"(?P<head> \D*)"
+          r"(?P<tail> .*)"
+        , re.VERBOSE
+        )
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -104,6 +112,43 @@ class Boat (_Ancestor_Essence) :
             max_length         = 48
 
         # end class name
+
+        class sail_number_head (A_String) :
+            """Non numeric head of `sail_number`, if any."""
+
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("sail_number",)
+
+            def computed (self, obj) :
+                number = obj.raw_attr ("sail_number")
+                if number :
+                    pat   = obj._sail_number_pat
+                    match = pat.match (number)
+                    if match :
+                        return pat.head.strip ()
+            # end def computed
+
+        # end class sail_number_head
+
+        class sail_number_tail (A_String) :
+            """Numeric tail of `sail_number`."""
+
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("sail_number",)
+
+            def computed (self, obj) :
+                number = obj.raw_attr ("sail_number")
+                if number :
+                    pat   = obj._sail_number_pat
+                    match = pat.match (number)
+                    if match :
+                        return pat.tail.strip ()
+                return number
+            # end def computed
+
+        # end class sail_number_tail
 
     # end class _Attributes
 
