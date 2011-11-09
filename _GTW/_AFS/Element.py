@@ -96,6 +96,7 @@
 #     4-Nov-2011 (CT) Add `description` to `Entity_List`
 #     8-Nov-2011 (CT) Add `_pop_allow_new` so `allow_new` can be passed down to
 #                     all children during `__call__`
+#     9-Nov-2011 (CT) Add default for `allow_new` to `Entity.__call__`
 #    ««revision-date»»···
 #--
 
@@ -404,6 +405,7 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
+        kw.setdefault ("allow_new", True)
         result = self.__super.__call__ (* args, ** kw)
         self._update_sid (result, ** kw)
         return result
