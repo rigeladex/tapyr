@@ -29,6 +29,7 @@
 #    27-Apr-2010 (CT) Creation
 #    29-Mar-2011 (CT) Test for change of `Init_Only_Mixin` attribute added
 #     9-Nov-2011 (CT) Add test for `sail_number_head` and `sail_number_tail`
+#    10-Nov-2011 (CT) Add test for `Name_Clash`
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,11 @@ _test_code = """
     ('OE 42', u'OE', u'42')
     >>> print (b.sail_number, b.sail_number_head, b.sail_number_tail)
     (u'1107', u'', u'1107')
+
+    >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
+    Traceback (most recent call last):
+      ...
+    Name_Clash: new definition of (u'Optimist') clashes with existing (u'Optimist')
 
 """
 
