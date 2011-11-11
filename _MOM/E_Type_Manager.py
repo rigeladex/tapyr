@@ -95,6 +95,7 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #     8-Nov-2011 (CT) Add exception handler to `ac_query_attrs` (for some
 #                     attribute types, partial completions can trigger errors)
+#    11-Nov-2011 (CT) Replace `ac_query` by `Q.AC`
 #    ««revision-date»»···
 #--
 
@@ -208,7 +209,7 @@ class Id_Entity (Entity) :
         for n in names :
             if n in values :
                 try :
-                    vq = getattr (et, n).ac_query (values [n])
+                    vq = getattr (et, n).Q.AC (values [n])
                 except (ValueError, TypeError) :
                     pass
                 else :
@@ -336,7 +337,7 @@ class Object (Id_Entity) :
     def ac_query_auto_split (self, text) :
         result     = []
         et         = self._etype
-        epk_aqc    = [getattr (et, en).ac_query for en in et.epk_sig]
+        epk_aqc    = [getattr (et, en).Q.AC for en in et.epk_sig]
         for epks in et.epk_splitter (text) :
             single_value_queries = []
             for v in epks :

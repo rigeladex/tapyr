@@ -44,6 +44,7 @@
 #    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
 #    12-Sep-2011 (CT) `prefix` added to `_AC_Query_FL_.query`
 #    25-Oct-2011 (CT) `ui_display_format` format changed (put `last_name` first)
+#    11-Nov-2011 (CT) Adapt to change of `MOM.Attr.Filter`
 #    ««revision-date»»···
 #--
 
@@ -60,8 +61,8 @@ import _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
-class _AC_Query_FL_ (MOM.Attr._AC_Query_S_) :
-    """Special auto-complete query function for the `first_name` and
+class _Auto_Complete_FL_ (MOM.Attr.Filter.Auto_Complete_S) :
+    """Special auto-complete query filter for the `first_name` and
        `last_name` of a person (to better handling of double names like
        Franz-Ferdinand).
     """
@@ -77,7 +78,16 @@ class _AC_Query_FL_ (MOM.Attr._AC_Query_S_) :
             return aq.STARTSWITH (value) | aq.CONTAINS (pvalue)
     # end def query
 
-# end class _AC_Query_FL_
+# end class _Auto_Complete_FL_
+
+class _String_FL_ (MOM.Attr.Filter.String) :
+
+    Table = dict \
+        ( MOM.Attr.Filter.String.Table
+        , AC                 = _Auto_Complete_FL_
+        )
+
+# end class _String_FL_
 
 class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
     """Model a person."""
@@ -90,11 +100,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             ignore_case    = True
-
-            @TFL.Meta.Once_Property
-            def ac_query (self) :
-                return _AC_Query_FL_ (self.ckd_name, self.cooked)
-            # end def ac_query
+            Q_Ckd_Type     = _String_FL_
 
         # end class _personal_name_
 
