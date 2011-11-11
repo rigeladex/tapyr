@@ -254,7 +254,7 @@ class A_Attr_Type (object) :
     needs_raw_value     = False
     Pickler             = None
     P_Type              = None ### Python type of attribute values
-    Q_Ckd_Type          = MOM.Attr.Filter.Base
+    Q_Ckd_Type          = MOM.Attr.Filter.Ckd
     Q_Raw_Type          = MOM.Attr.Filter.Raw
     query               = None
     query_fct           = None

@@ -61,7 +61,7 @@ import _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
-class _Auto_Complete_FL_ (MOM.Attr.Filter.Auto_Complete_S) :
+class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
     """Special auto-complete query filter for the `first_name` and
        `last_name` of a person (to better handling of double names like
        Franz-Ferdinand).
@@ -78,16 +78,16 @@ class _Auto_Complete_FL_ (MOM.Attr.Filter.Auto_Complete_S) :
             return aq.STARTSWITH (value) | aq.CONTAINS (pvalue)
     # end def query
 
-# end class _Auto_Complete_FL_
+# end class Auto_Complete_PN
 
-class _String_FL_ (MOM.Attr.Filter.String) :
+class Filter_String_FL (MOM.Attr.Filter.String) :
 
     Table = dict \
         ( MOM.Attr.Filter.String.Table
-        , AC                 = _Auto_Complete_FL_
+        , AC                 = Auto_Complete_PN
         )
 
-# end class _String_FL_
+# end class Filter_String_FL
 
 class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
     """Model a person."""
@@ -100,7 +100,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             ignore_case    = True
-            Q_Ckd_Type     = _String_FL_
+            Q_Ckd_Type     = Filter_String_FL
 
         # end class _personal_name_
 

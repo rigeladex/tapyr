@@ -54,10 +54,14 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if not name.startswith ("_") :
-            cls.op_nam = name.lower ()
+            cls.op_nam = name.lower ().replace ("_", "-")
             if cls.op_sym is None :
                 cls.op_sym = cls.op_nam
     # end def __init__
+
+    def __str__ (cls) :
+        return "<Attr.Filter %s [%s]>" % (cls.op_fct, cls.op_sym)
+    # end def __str__
 
 # end class _M_Filter_
 
@@ -98,9 +102,14 @@ class _Filter_ (TFL.Meta.Object) :
         return q (value)
     # end def query
 
+    def __str__ (self) :
+        return "<Attr.%s %s.%s [%s]>" % \
+            (self.__class__.__name__, self.attr_name, self.op_fct, self.op_sym)
+    # end def __str__
+
 # end class _Filter_
 
-class _Filter_Composite_ (_Filter_) :
+class _Composite_ (_Filter_) :
     """Base class for composite-attribute filters."""
 
     def __call__ (self, value, prefix = None) :
@@ -119,9 +128,9 @@ class _Filter_Composite_ (_Filter_) :
             return Q.AND (* qs)
     # end def __call__
 
-# end class _Filter_Composite_
+# end class _Composite_
 
-class _Filter_Date_ (_Filter_) :
+class _Date_ (_Filter_) :
     """Base class for date-attribute filters."""
 
     pat = Regexp \
@@ -150,9 +159,9 @@ class _Filter_Date_ (_Filter_) :
             return self.__super.__call__ (value, prefix)
     # end def __call__
 
-# end class _Filter_Date_
+# end class _Date_
 
-class _Filter_Id_Entity_ (_Filter_Composite_) :
+class _Id_Entity_ (_Composite_) :
     """Base class for entity-attribute filters."""
 
     def __call__ (self, value, prefix = None) :
@@ -162,9 +171,9 @@ class _Filter_Id_Entity_ (_Filter_Composite_) :
             return self.query (value, prefix)
     # end def __call__
 
-# end class _Filter_Id_Entity_
+# end class _Id_Entity_
 
-class _Filter_String_ (_Filter_) :
+class _String_ (_Filter_) :
     """Base class for string-attribute filters."""
 
     def query (self, value, prefix = None) :
@@ -173,30 +182,32 @@ class _Filter_String_ (_Filter_) :
         return q (value)
     # end def query
 
-# end class _Filter_String_
+# end class _String_
 
 class Auto_Complete (_Filter_) :
     """Attribute query filter for auto-completion."""
 
     op_fct        = "__eq__"
+    op_sym        = "auto-complete"
 
 # end class Auto_Complete
 
-class Auto_Complete_S (_Filter_String_) :
+class Auto_Complete_S (_String_) :
     """String-Attribute query filter for auto-completion."""
 
     op_fct        = "STARTSWITH"
+    op_sym        = "auto-complete"
 
 # end class Auto_Complete
 
-class Contains (_Filter_String_) :
+class Contains (_String_) :
     """Attribute query filter for contains."""
 
     op_fct        = "CONTAINS"
 
 # end class Contains
 
-class Ends_With (_Filter_String_) :
+class Ends_With (_String_) :
     """Attribute query for ends-with."""
 
     op_fct        = "ENDSWITH"
@@ -243,104 +254,104 @@ class Less_Than (_Filter_) :
 
 # end class Less_Than
 
-class Starts_With (_Filter_String_) :
+class Starts_With (_String_) :
     """Attribute query for starts-with."""
 
     op_fct        = "STARTSWITH"
 
 # end class Starts_With
 
-class Composite_Auto_Complete (Auto_Complete, _Filter_Composite_) :
+class Composite_Auto_Complete (Auto_Complete, _Composite_) :
     """Composite-Attribute query filter for auto-completion."""
 
 # end class Composite_Auto_Complete
 
-class Composite_Equal (Equal, _Filter_Composite_) :
+class Composite_Equal (Equal, _Composite_) :
     """Composite-Attribute query filter for equality."""
 
 # end class Composite_Equal
 
-class Composite_Greater_Equal (Greater_Equal, _Filter_Composite_) :
+class Composite_Greater_Equal (Greater_Equal, _Composite_) :
     """Composite-Attribute query filter for greater-equal."""
 
 # end class Composite_Greater_Equal
 
-class Composite_Greater_Than (Greater_Than, _Filter_Composite_) :
+class Composite_Greater_Than (Greater_Than, _Composite_) :
     """Composite-Attribute query filter for greater-than."""
 
 # end class Composite_Greater_Than
 
-class Composite_Less_Equal (Less_Equal, _Filter_Composite_) :
+class Composite_Less_Equal (Less_Equal, _Composite_) :
     """Composite-Attribute query filter for less-than."""
 
 # end class Composite_Less_Equal
 
-class Composite_Less_Than (Less_Than, _Filter_Composite_) :
+class Composite_Less_Than (Less_Than, _Composite_) :
     """Composite-Attribute query filter for less-equal."""
 
 # end class Composite_Less_Than
 
-class Date_Auto_Complete (Auto_Complete, _Filter_Date_) :
+class Date_Auto_Complete (Auto_Complete, _Date_) :
     """Date-Attribute query filter for auto-completion."""
 
 # end class Date_Auto_Complete
 
-class Date_Equal (Equal, _Filter_Date_) :
+class Date_Equal (Equal, _Date_) :
     """Date-Attribute query filter for equality."""
 
 # end class Date_Equal
 
-class Date_Greater_Equal (Greater_Equal, _Filter_Date_) :
+class Date_Greater_Equal (Greater_Equal, _Date_) :
     """Date-Attribute query filter for greater-equal."""
 
 # end class Date_Greater_Equal
 
-class Date_Greater_Than (Greater_Than, _Filter_Date_) :
+class Date_Greater_Than (Greater_Than, _Date_) :
     """Date-Attribute query filter for greater-than."""
 
 # end class Date_Greater_Than
 
-class Date_Less_Equal (Less_Equal, _Filter_Date_) :
+class Date_Less_Equal (Less_Equal, _Date_) :
     """Date-Attribute query filter for less-than."""
 
 # end class Date_Less_Equal
 
-class Date_Less_Than (Less_Than, _Filter_Date_) :
+class Date_Less_Than (Less_Than, _Date_) :
     """Date-Attribute query filter for less-equal."""
 
 # end class Date_Less_Than
 
-class Id_Entity_Auto_Complete (Auto_Complete, _Filter_Id_Entity_) :
+class Id_Entity_Auto_Complete (Auto_Complete, _Id_Entity_) :
     """Id_Entity-Attribute query filter for auto-completion."""
 
 # end class Id_Entity_Auto_Complete
 
-class Id_Entity_Equal (Equal, _Filter_Id_Entity_) :
+class Id_Entity_Equal (Equal, _Id_Entity_) :
     """Id_Entity-Attribute query filter for equality."""
 
 # end class Id_Entity_Equal
 
-class Id_Entity_Greater_Equal (Greater_Equal, _Filter_Id_Entity_) :
+class Id_Entity_Greater_Equal (Greater_Equal, _Id_Entity_) :
     """Id_Entity-Attribute query filter for greater-equal."""
 
 # end class Id_Entity_Greater_Equal
 
-class Id_Entity_Greater_Than (Greater_Than, _Filter_Id_Entity_) :
+class Id_Entity_Greater_Than (Greater_Than, _Id_Entity_) :
     """Id_Entity-Attribute query filter for greater-than."""
 
 # end class Id_Entity_Greater_Than
 
-class Id_Entity_Less_Equal (Less_Equal, _Filter_Id_Entity_) :
+class Id_Entity_Less_Equal (Less_Equal, _Id_Entity_) :
     """Id_Entity-Attribute query filter for less-than."""
 
 # end class Id_Entity_Less_Equal
 
-class Id_Entity_Less_Than (Less_Than, _Filter_Id_Entity_) :
+class Id_Entity_Less_Than (Less_Than, _Id_Entity_) :
     """Id_Entity-Attribute query filter for less-equal."""
 
 # end class Id_Entity_Less_Than
 
-class Base (TFL.Meta.Object) :
+class Ckd (TFL.Meta.Object) :
 
     Table = dict \
         ( AC                 = Auto_Complete
@@ -366,19 +377,34 @@ class Base (TFL.Meta.Object) :
     # end def cooker
 
     def __getattr__ (self, name) :
+        attr = self.attr
         try :
             result_type = self.Table [name]
         except KeyError :
-            raise AttributeError (name)
+            try :
+                comp = getattr (attr, name)
+            except AttributeError :
+                raise
+            else :
+                q = getattr (comp, "Q", None)
+                if isinstance (q, Ckd) :
+                    result = q
+                else :
+                    raise AttributeError (name)
         else :
-            result = result_type (self.attr, self.cooker, self.attr_name)
-            setattr (self, name, result)
-            return result
+            result = result_type (attr, self.cooker, self.attr_name)
+        setattr (self, name, result)
+        return result
     # end def __getattr__
 
-# end class Base
+    def __str__ (self) :
+        return "<%s.Q [Attr.Filter.%s]>" % \
+            (self.attr_name, self.__class__.__name__)
+    # end def __str__
 
-class Composite (Base) :
+# end class Ckd
+
+class Composite (Ckd) :
 
     Table = dict \
         ( AC                 = Composite_Auto_Complete
@@ -391,7 +417,7 @@ class Composite (Base) :
 
 # end class Composite
 
-class Date (Base) :
+class Date (Ckd) :
 
     Table = dict \
         ( AC                 = Date_Auto_Complete
@@ -404,7 +430,7 @@ class Date (Base) :
 
 # end class Date
 
-class Id_Entity (Base) :
+class Id_Entity (Ckd) :
 
     Table = dict \
         ( AC                 = Id_Entity_Auto_Complete
@@ -417,10 +443,10 @@ class Id_Entity (Base) :
 
 # end class Id_Entity
 
-class String (Base) :
+class String (Ckd) :
 
     Table = dict \
-        ( Base.Table
+        ( Ckd.Table
         , AC                 = Auto_Complete_S
         , CONTAINS           = Contains
         , ENDSWITH           = Ends_With
@@ -429,7 +455,7 @@ class String (Base) :
 
 # end class String
 
-class Raw (Base) :
+class Raw (Ckd) :
 
     Table = String.Table
 
