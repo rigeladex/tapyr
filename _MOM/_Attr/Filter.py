@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    11-Nov-2011 (CT) Creation
+#    12-Nov-2011 (CT) Move `AC` from `Table` to separate property
+#    12-Nov-2011 (CT) Add `op_key` and use that as `Table` keys (`EQ`/`__eq__`)
 #    ««revision-date»»···
 #--
 
@@ -57,10 +59,14 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
             cls.op_nam = name.lower ().replace ("_", "-")
             if cls.op_sym is None :
                 cls.op_sym = cls.op_nam
+            op_key = cls.op_fct
+            if op_key.startswith ("__") :
+                op_key = op_key.replace ("_", "").upper ()
+            cls.op_key = op_key
     # end def __init__
 
     def __str__ (cls) :
-        return "<Attr.Filter %s [%s]>" % (cls.op_fct, cls.op_sym)
+        return "<Attr.Filter %s [%s]>" % (cls.op_key, cls.op_sym)
     # end def __str__
 
 # end class _M_Filter_
@@ -104,7 +110,7 @@ class _Filter_ (TFL.Meta.Object) :
 
     def __str__ (self) :
         return "<Attr.%s %s.%s [%s]>" % \
-            (self.__class__.__name__, self.attr_name, self.op_fct, self.op_sym)
+            (self.__class__.__name__, self.attr_name, self.op_key, self.op_sym)
     # end def __str__
 
 # end class _Filter_
@@ -119,7 +125,7 @@ class _Composite_ (_Filter_) :
         def _gen () :
             for k, v in value.iteritems () :
                 attr = getattr (P_Type, k)
-                q    = getattr (attr.Q, self.op_fct)
+                q    = getattr (attr.Q, self.op_key)
                 r    = q (v, pf)
                 if r is not None :
                     yield r
@@ -354,17 +360,22 @@ class Id_Entity_Less_Than (Less_Than, _Id_Entity_) :
 class Ckd (TFL.Meta.Object) :
 
     Table = dict \
-        ( AC                 = Auto_Complete
-        , __eq__             = Equal
-        , __ge__             = Greater_Equal
-        , __gt__             = Greater_Than
-        , __le__             = Less_Equal
-        , __lt__             = Less_Than
+        ( EQ                 = Equal
+        , GE                 = Greater_Equal
+        , GT                 = Greater_Than
+        , LE                 = Less_Equal
+        , LT                 = Less_Than
         )
+    _AC   = Auto_Complete
 
     def __init__ (self, attr) :
         self.attr = attr
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def AC (self) :
+        return self._AC (self.attr, self.cooker, self.attr_name)
+    # end def AC
 
     @TFL.Meta.Once_Property
     def attr_name (self) :
@@ -407,39 +418,39 @@ class Ckd (TFL.Meta.Object) :
 class Composite (Ckd) :
 
     Table = dict \
-        ( AC                 = Composite_Auto_Complete
-        , __eq__             = Composite_Equal
-        , __ge__             = Composite_Greater_Equal
-        , __gt__             = Composite_Greater_Than
-        , __le__             = Composite_Less_Equal
-        , __lt__             = Composite_Less_Than
+        ( EQ                 = Composite_Equal
+        , GE                 = Composite_Greater_Equal
+        , GT                 = Composite_Greater_Than
+        , LE                 = Composite_Less_Equal
+        , LT                 = Composite_Less_Than
         )
+    _AC   = Composite_Auto_Complete
 
 # end class Composite
 
 class Date (Ckd) :
 
     Table = dict \
-        ( AC                 = Date_Auto_Complete
-        , __eq__             = Date_Equal
-        , __ge__             = Date_Greater_Equal
-        , __gt__             = Date_Greater_Than
-        , __le__             = Date_Less_Equal
-        , __lt__             = Date_Less_Than
+        ( EQ                 = Date_Equal
+        , GE                 = Date_Greater_Equal
+        , GT                 = Date_Greater_Than
+        , LE                 = Date_Less_Equal
+        , LT                 = Date_Less_Than
         )
+    _AC   = Date_Auto_Complete
 
 # end class Date
 
 class Id_Entity (Ckd) :
 
     Table = dict \
-        ( AC                 = Id_Entity_Auto_Complete
-        , __eq__             = Id_Entity_Equal
-        , __ge__             = Id_Entity_Greater_Equal
-        , __gt__             = Id_Entity_Greater_Than
-        , __le__             = Id_Entity_Less_Equal
-        , __lt__             = Id_Entity_Less_Than
+        ( EQ                 = Id_Entity_Equal
+        , GE                 = Id_Entity_Greater_Equal
+        , GT                 = Id_Entity_Greater_Than
+        , LE                 = Id_Entity_Less_Equal
+        , LT                 = Id_Entity_Less_Than
         )
+    _AC   = Id_Entity_Auto_Complete
 
 # end class Id_Entity
 
@@ -447,17 +458,15 @@ class String (Ckd) :
 
     Table = dict \
         ( Ckd.Table
-        , AC                 = Auto_Complete_S
         , CONTAINS           = Contains
         , ENDSWITH           = Ends_With
         , STARTSWITH         = Starts_With
         )
+    _AC   = Auto_Complete_S
 
 # end class String
 
-class Raw (Ckd) :
-
-    Table = String.Table
+class Raw (String) :
 
     @TFL.Meta.Once_Property
     def attr_name (self) :

@@ -82,10 +82,7 @@ class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
 
 class Filter_String_FL (MOM.Attr.Filter.String) :
 
-    Table = dict \
-        ( MOM.Attr.Filter.String.Table
-        , AC                 = Auto_Complete_PN
-        )
+    _AC = Auto_Complete_PN
 
 # end class Filter_String_FL
 

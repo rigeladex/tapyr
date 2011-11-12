@@ -57,19 +57,19 @@ _test_code = """
     String <Attr.Auto_Complete_PN first_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_S middle_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_S title.STARTSWITH [auto-complete]>
-    Date_Interval <Attr.Composite_Auto_Complete lifetime.__eq__ [auto-complete]>
+    Date_Interval <Attr.Composite_Auto_Complete lifetime.EQ [auto-complete]>
     String <Attr.Auto_Complete_S salutation.STARTSWITH [auto-complete]>
-    Sex <Attr.Auto_Complete sex.__eq__ [auto-complete]>
+    Sex <Attr.Auto_Complete sex.EQ [auto-complete]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.Q.__eq__
-    String <Attr.Equal last_name.__eq__ [==]>
-    String <Attr.Equal first_name.__eq__ [==]>
-    String <Attr.Equal middle_name.__eq__ [==]>
-    String <Attr.Equal title.__eq__ [==]>
-    Date_Interval <Attr.Composite_Equal lifetime.__eq__ [==]>
-    String <Attr.Equal salutation.__eq__ [==]>
-    Sex <Attr.Equal sex.__eq__ [==]>
+    ...     print attr.typ, attr.Q.GE
+    String <Attr.Greater_Equal last_name.GE [>=]>
+    String <Attr.Greater_Equal first_name.GE [>=]>
+    String <Attr.Greater_Equal middle_name.GE [>=]>
+    String <Attr.Greater_Equal title.GE [>=]>
+    Date_Interval <Attr.Composite_Greater_Equal lifetime.GE [>=]>
+    String <Attr.Greater_Equal salutation.GE [>=]>
+    Sex <Attr.Greater_Equal sex.GE [>=]>
 
     >>> for attr in person_attrs :
     ...     print attr.typ, getattr (attr.Q, "CONTAINS", "** CONTAINS undefined **")
@@ -87,13 +87,13 @@ _test_code = """
 
     >>> for attr in lifetime_attrs :
     ...     print attr.typ, attr.Q.AC
-    Date <Attr.Date_Auto_Complete start.__eq__ [auto-complete]>
-    Date <Attr.Date_Auto_Complete finish.__eq__ [auto-complete]>
+    Date <Attr.Date_Auto_Complete start.EQ [auto-complete]>
+    Date <Attr.Date_Auto_Complete finish.EQ [auto-complete]>
 
     >>> for attr in lifetime_attrs :
     ...     print attr, getattr (PAP.Person.E_Type.lifetime.Q, attr.name).AC
-    Date `start` <Attr.Date_Auto_Complete start.__eq__ [auto-complete]>
-    Date `finish` <Attr.Date_Auto_Complete finish.__eq__ [auto-complete]>
+    Date `start` <Attr.Date_Auto_Complete start.EQ [auto-complete]>
+    Date `finish` <Attr.Date_Auto_Complete finish.EQ [auto-complete]>
 
     >>> scope.destroy ()
 
