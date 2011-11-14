@@ -59,7 +59,7 @@ class _Query_Mixin_ (GTW.NAV.E_Type.Mixin) :
 
     @property
     def count (self) :
-        if self.query_filters or self.query_restriction :
+        if self.query_filters :
             result = self.query ().count_transitive ()
         else :
             result = self.ETM.count_transitive

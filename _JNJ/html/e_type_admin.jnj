@@ -46,9 +46,16 @@
 {%- endmacro -%} {#- _button -#}
 
 {%- macro e_type_admin (page, E_Type, fields, objects) -%}
+  {%- set count = GTW.len (objects) %}
+  {%- set total = page.count %}
   <table class="Object-List tablesorter">
     <caption>
-      {{ GTW._T (E_Type.ui_name) }} ({{- GTW.len (objects) -}})
+      {{ GTW._T (E_Type.ui_name) }}
+        ({{- count -}}
+         {%- if total != count -%}
+           /{{- total -}}
+         {%- endif -%}
+        )
     </caption>
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />
