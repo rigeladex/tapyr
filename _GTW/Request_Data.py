@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -37,6 +37,7 @@
 #    21-Feb-2010 (MG) `pop` added
 #    20-Mar-2010 (MG) Moved into `GTW` package
 #    28-Jun-2010 (MG) `iterkeys` added
+#    14-Nov-2011 (CT) Change `iteritems` to `_convert_element`
 #    ««revision-date»»···
 #--
 
@@ -72,8 +73,9 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     # end def get
 
     def iteritems (self) :
+        convert = self._convert_element
         for n in self.data.iterkeys () :
-            yield n, self [n]
+            yield n, convert (self [n])
     # end def iteritems
 
     def iterkeys (self) :
@@ -87,6 +89,10 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     def __contains__ (self, item) :
         return item in self.data
     # end def __contains__
+
+    def __iter__ (self) :
+        return self.iterkeys ()
+    # end def __iter__
 
     def __repr__ (self) :
         return repr (self.data)
