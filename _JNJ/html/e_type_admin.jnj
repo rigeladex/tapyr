@@ -48,7 +48,7 @@
 {%- macro e_type_admin (page, E_Type, fields, objects) -%}
   <table class="Object-List tablesorter">
     <caption>
-      {{ GTW._T (page.name) }}
+      {{ GTW._T (E_Type.ui_name) }} ({{- GTW.len (objects) -}})
     </caption>
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />

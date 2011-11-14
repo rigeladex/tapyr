@@ -29,6 +29,7 @@
 #    11-Nov-2011 (CT) Creation
 #    12-Nov-2011 (CT) Move `AC` from `Table` to separate property
 #    12-Nov-2011 (CT) Add `op_key` and use that as `Table` keys (`EQ`/`__eq__`)
+#    14-Nov-2011 (CT) Change `Ckd.__getattr__` to support dotted attribute names
 #    ««revision-date»»···
 #--
 
@@ -393,7 +394,7 @@ class Ckd (TFL.Meta.Object) :
             result_type = self.Table [name]
         except KeyError :
             try :
-                comp = getattr (attr, name)
+                comp = getattr (Q, name) (attr)
             except AttributeError :
                 raise
             else :

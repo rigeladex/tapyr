@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Nov-2011 (CT) Creation
+#    14-Nov-2011 (CT) Add `__nonzero__`
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,10 @@ class Query_Restriction (TFL.Meta.Object) :
             if pat.match (k) :
                 yield self._setup_attr (E_Type, pat, data.pop (k))
     # end def _setup_filters
+
+    def __nonzero__ (self) :
+        return bool (self.limit or self.offset or self.filters)
+    # end def __nonzero__
 
 # end class Query_Restriction
 

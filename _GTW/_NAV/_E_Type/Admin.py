@@ -124,6 +124,7 @@
 #    13-Oct-2011 (CT) `_check_readonly` factored
 #    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
 #     8-Nov-2011 (CT) Factor `field_element` and guard it against `KeyError`
+#    14-Nov-2011 (CT) Add support for `query_restriction`
 #    ««revision-date»»···
 #--
 
@@ -142,6 +143,7 @@ import _GTW.jQuery
 
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
+from   _GTW._NAV._E_Type.Query_Restriction import Query_Restriction as QR
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -812,12 +814,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def list_display
 
     def rendered (self, handler, template = None) :
-        objects = self._get_entries ()
-        handler.context.update \
-            ( fields  = self.list_display
-            , objects = objects
-            )
-        return self.__super.rendered (handler, template)
+        def _ (self, handler, template, objects) :
+            handler.context.update \
+                ( fields            = self.list_display
+                , objects           = objects
+                , query_restriction = self.query_restriction
+                )
+            return self.__super.rendered (handler, template)
+        qr = QR (self.ETM.E_Type, handler.request.req_data)
+        if qr :
+            with self.LET (query_restriction = qr) :
+                return _ (self, handler, template, self._get_objects ())
+        else :
+            return _ (self, handler, template, self._get_entries ())
     # end def rendered
 
     def _attr_kind (self, etype, name) :

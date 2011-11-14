@@ -38,6 +38,7 @@
 #    20-Mar-2010 (MG) Moved into `GTW` package
 #    28-Jun-2010 (MG) `iterkeys` added
 #    14-Nov-2011 (CT) Change `iteritems` to `_convert_element`
+#    14-Nov-2011 (CT) Add `__nonzero__`
 #    ««revision-date»»···
 #--
 
@@ -91,8 +92,12 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     # end def __contains__
 
     def __iter__ (self) :
-        return self.iterkeys ()
+        return iter (self.data)
     # end def __iter__
+
+    def __nonzero__ (self) :
+        return bool (self.data)
+    # end def __nonzero__
 
     def __repr__ (self) :
         return repr (self.data)

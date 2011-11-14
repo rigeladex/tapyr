@@ -259,6 +259,8 @@
 #                     `store_media`
 #    27-Sep-2011 (MG) `store_cache`: use `TFL.Context.time_block`
 #                     `P_Media` added
+#    14-Nov-2011 (CT) Add `q_href`, `q_prefix`, and `qx_prefix`
+#                     (factored from `GTW.NAV.Calendar`)
 #    ««revision-date»»···
 #--
 
@@ -336,18 +338,20 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
-    title                      = ""
+    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
     hidden                     = False
     href                       = ""
+    implicit                   = False
     input_encoding             = "iso-8859-15"
     nick                       = ""
+    parent                     = None
     pid                        = None
+    q_prefix                   = "q"
+    qx_prefix                  = "qx"
     rank                       = 10
     short_title                = ""
+    title                      = ""
     top                        = None
-    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
-    implicit                   = False
-    parent                     = None
 
     _dump_type                 = "dict"
     _template                  = None
@@ -574,6 +578,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
             ((self.template, ) + tuple (self.injected_templates))
         return result
     # end def P_Media
+
+    @property
+    def q_href (self) :
+        return pjoin (self.abs_href, self.q_prefix)
+    # end def q_href
 
     def relative_to (self, url, href = None) :
         href          = href or self.href

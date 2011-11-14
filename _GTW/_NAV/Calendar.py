@@ -46,6 +46,8 @@
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #     7-Jan-2011 (CT) `is_current_dir` redefined
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
+#    14-Nov-2011 (CT) Factor `q_href`, `q_prefix`, and `qx_prefix` to
+#                     `GTW.NAV._Site_Entity_`
 #    ««revision-date»»···
 #--
 
@@ -101,8 +103,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
         )
     dir_template_name  = template_name = "calendar"
     pid                = "Cal"
-    q_prefix           = "q"
-    qx_prefix          = "qx"
     week_roller_size   = 6
 
     event_manager_name = "GTW.OMP.EVT.Event_occurs"
@@ -270,11 +270,6 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
     def min_year (self) :
         return self.anchor.year - self.year_window_size
     # end def min_year
-
-    @property
-    def q_href (self) :
-        return pjoin (self.abs_href, self.q_prefix)
-    # end def q_href
 
     @property
     def today (self) :
