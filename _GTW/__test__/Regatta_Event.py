@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Apr-2010 (CT) Creation
+#    14-Nov-2011 (CT) Add tests for `query` and `query_s` with `sort_key`
 #    ««revision-date»»···
 #--
 
@@ -34,13 +35,26 @@ _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
+    >>> RE  = SRM.Regatta_Event
+    >>> rev = RE (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
     >>> rev.epk_raw
     (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
-    >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
+    >>> RE.instance (* rev.epk_raw, raw = True)
     GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
-    >>> SRM.Regatta_Event.instance (* rev.epk)
+    >>> RE.instance (* rev.epk)
     GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
+
+    >>> sort_key = TFL.Sorted_By ("-right.date.start", "skipper.last_name", "skipper.first_name")
+
+    >>> print sort_key
+    <Sorted_By: Descending-Getter function for `.right.date.start`, Getter function for `.skipper.last_name`, Getter function for `.skipper.first_name`>
+    >>> print RE.E_Type.sort_key (sort_key)
+    <Sorted_By: Getter function for `.relevant_root.type_name`, Getter function for `.epk_sig`, <Sorted_By: Descending-Getter function for `.right.date.start`, Getter function for `.skipper.last_name`, Getter function for `.skipper.first_name`>>
+
+    >>> list (RE.query (sort_key = sort_key))
+    [GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))]
+    >>> list (RE.query_s (sort_key = sort_key))
+    [GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))]
 
 """
 
