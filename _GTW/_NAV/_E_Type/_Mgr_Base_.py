@@ -67,7 +67,7 @@ class _Query_Mixin_ (GTW.NAV.E_Type.Mixin) :
     # end def count
 
     def query (self) :
-        result = self.ETM.query_s \
+        result = self.ETM.query \
             (* self.query_filters, sort_key = self.sort_key)
         if self.query_restriction :
             result = self.query_restriction (result)

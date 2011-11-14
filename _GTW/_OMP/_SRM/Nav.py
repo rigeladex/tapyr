@@ -35,6 +35,7 @@
 #     7-Sep-2011 (CT) `Sailor` added
 #    23-Sep-2011 (CT) `Club` added
 #     7-Oct-2011 (CT) `GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec` added
+#    14-Nov-2011 (CT) Correct `Boat_in_Regatta.sort-key`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,10 @@ class Admin (object) :
                 )
             )
         , sort_key  = TFL.Sorted_By
-            ("-right.date.start", "skipper.last_name", "skipper.first_name")
+            ( "-regatta.event.date.start"
+            , "skipper.person.last_name"
+            , "skipper.person.first_name"
+            )
         )
     Club = dict \
         ( ETM       = "GTW.OMP.SRM.Club"

@@ -293,6 +293,8 @@ class Id_Entity (Entity) :
         """
         sort_key = kw.pop ("sort_key", None)
         result   = self.query (* filters, ** kw)
+        ### `self._etype.sort_key` uses `relevant_root.type_name` and
+        ### `epk_sig`, both of which aren't supported by SQL databases
         result   = self.ems.Q_Result_Composite \
             ([result], self._etype.sort_key (sort_key))
         return result
