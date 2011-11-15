@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -36,7 +36,7 @@ doctests
     >>> Print
 """
 from _MOM._DBW._SAS.__doc__ import \
-     __doc__, __test__, MOM, BMT, show, NL, sos, remove
+     __doc__, __test__, MOM, BMT, show, NL, sos, remove, formatted
 
 if __name__ == "__main__" :
     import doctest

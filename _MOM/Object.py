@@ -68,7 +68,7 @@ class _MOM_Object_ (MOM.Id_Entity) :
         r_query = scope.ems.r_query
         for r in itertools.chain (* self.__class__.link_map.itervalues ()) :
             result.update (r_query (r.assoc, {r.name : self}, strict = True))
-        return sorted (result, key = scope.MOM.Id_Entity.sort_key ())
+        return sorted (result, key = scope.MOM.Id_Entity.sort_key_pm ())
     # end def all_links
 
     @classmethod
@@ -93,7 +93,7 @@ class Named_Object (Object) :
         class name (A_Name) :
             """Unique name of the object."""
 
-            kind       = Attr.Primary
+            kind        = Attr.Primary
 
         # end class name
 

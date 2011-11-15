@@ -139,7 +139,7 @@ class Manager (MOM.EMS._Manager_) :
         r_map  = self._r_map
         result = sorted \
             ( itertools.chain (* (rm [obj_id] for rm in r_map.itervalues ()))
-            , key = self.scope.MOM.Id_Entity.sort_key ()
+            , key = self.scope.MOM.Id_Entity.sort_key_pm ()
             )
         return result
     # end def all_links

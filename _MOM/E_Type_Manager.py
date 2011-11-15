@@ -96,6 +96,7 @@
 #     8-Nov-2011 (CT) Add exception handler to `ac_query_attrs` (for some
 #                     attribute types, partial completions can trigger errors)
 #    11-Nov-2011 (CT) Replace `ac_query` by `Q.AC`
+#    15-Nov-2011 (CT) Change `query_s` and `r_query_s`
 #    ««revision-date»»···
 #--
 
@@ -289,14 +290,14 @@ class Id_Entity (Entity) :
 
     def query_s (self, * filters, ** kw) :
         """Return `self.query (* filters, ** kw)`
-           sorted by `Type.sort_key (kw.get ("sort_key"))`.
+           sorted by `kw.get ("sort_key", Type.sort_key)`.
         """
-        sort_key = kw.pop ("sort_key", None)
+        ### Need to use `Q_Result_Composite` because `Type.sort_key` doesn't
+        ### work with some backends (SQL, I am looking at you)
+        Type     = self._etype
+        sort_key = kw.pop ("sort_key", Type.sort_key)
         result   = self.query (* filters, ** kw)
-        ### `self._etype.sort_key` uses `relevant_root.type_name` and
-        ### `epk_sig`, both of which aren't supported by SQL databases
-        result   = self.ems.Q_Result_Composite \
-            ([result], self._etype.sort_key (sort_key))
+        result   = self.ems.Q_Result_Composite ([result], sort_key)
         return result
     # end def query_s
 
@@ -445,12 +446,14 @@ class Link (Id_Entity) :
 
     def r_query_s (self, * filters, ** kw) :
         """Return `self.r_query (* filters, ** kw)`
-           sorted by `Type.sort_key (kw.get ("sort_key"))`.
+           sorted by `kw.get ("sort_key", Type.sort_key)`.
         """
-        sort_key = kw.pop ("sort_key", None)
+        ### Need to use `Q_Result_Composite` because `Type.sort_key` doesn't
+        ### work with some backends (SQL, I am looking at you)
+        Type     = self._etype
+        sort_key = kw.pop ("sort_key", Type.sort_key)
         result   = self.r_query (* filters, ** kw)
-        result   = self.ems.Q_Result_Composite \
-            ([result], self._etype.sort_key (sort_key))
+        result   = self.ems.Q_Result_Composite ([result], sort_key)
         return result
     # end def r_query_s
 
@@ -470,7 +473,7 @@ class Link (Id_Entity) :
                     (r_query (r.assoc, {r.name : pk}, strict = strict))
         result = self.ems.Q_Result_Composite (queries)
         if sort_key is not None :
-            result = result.order_by (Type.sort_key (sort_key))
+            result = result.order_by (Type.sort_key_pm (sort_key))
         return result
     # end def links_of
 

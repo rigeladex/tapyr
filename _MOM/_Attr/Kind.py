@@ -492,8 +492,13 @@ class _EPK_Mixin_ (Kind) :
 
     def sort_key (self, obj) :
         v = self.get_value (obj)
-        return v.__class__.sort_key () (v)
+        return v.__class__.sort_key (v)
     # end def sort_key
+
+    def sort_key_pm (self, obj) :
+        v = self.get_value (obj)
+        return v.__class__.sort_key_pm () (v)
+    # end def sort_key_pm
 
     def _set_cooked_inner (self, obj, value, changed = 42) :
         scope = obj.home_scope

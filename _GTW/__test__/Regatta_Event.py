@@ -48,8 +48,8 @@ _test_code = """
 
     >>> print sort_key
     <Sorted_By: Descending-Getter function for `.date.start`, Getter function for `.name`>
-    >>> print RE.E_Type.sort_key (sort_key)
-    <Sorted_By: Getter function for `.relevant_root.type_name`, Getter function for `.epk_sig`, <Sorted_By: Descending-Getter function for `.date.start`, Getter function for `.name`>>
+    >>> print RE.E_Type.sort_key_pm (sort_key)
+    <Sorted_By: Getter function for `.relevant_root.type_name`, <Sorted_By: Descending-Getter function for `.date.start`, Getter function for `.name`>>
 
     >>> list (RE.query (sort_key = sort_key))
     [GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))]

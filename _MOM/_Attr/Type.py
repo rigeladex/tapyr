@@ -1202,12 +1202,12 @@ class _A_Id_Entity_Set_ (_A_Typed_Set_) :
     C_Type         = _A_Id_Entity_
 
     def _C_as_code (self, value) :
-        sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
+        sk = MOM.Scope.active.MOM.Id_Entity.sort_key
         return self.__super._C_as_code (sorted (value, key = sk))
     # end def _C_as_code
 
     def _C_as_string (self, value) :
-        sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
+        sk = MOM.Scope.active.MOM.Id_Entity.sort_key
         return self.__super._C_as_string (sorted (value, key = sk))
     # end def _C_as_string
 

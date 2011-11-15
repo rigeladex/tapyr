@@ -70,6 +70,7 @@ _composite = r"""
     >>> scope.destroy ()
 
 """
+
 _link1_role = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -174,20 +175,12 @@ if 1 :
             (action = "error", category = sa_exc.SAWarning)
     from _GTW.__test__.model import *
     __test__ = Scaffold.create_test_dict \
-        ( dict ( composite   = _composite
-               , link1_role  = _link1_role
-               , link2_link1 = _link2_link1
-               , query_attr  = _query_attr
+        ( dict ( composite       = _composite
+               , link1_role      = _link1_role
+               , link2_link1     = _link2_link1
+               , query_attr      = _query_attr
                )
         )
-    if 0 :
-        __test__ = Scaffold.create_test_dict \
-            (
-            #  _composite
-            # _link1_role
-             _link2_link1
-            # _query_attr
-            )
 
 from _GTW.__test__.model import *
 from _MOM.import_MOM     import Q

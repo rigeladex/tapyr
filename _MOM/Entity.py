@@ -166,6 +166,7 @@
 #    27-May-2011 (CT) Guard for unchanged `epk` added to `_set_raw`
 #     9-Sep-2011 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
 #                     support queries against integers (interpreted as `pid`)
+#    15-Nov-2011 (CT) Add defaults for `polymorphic_epk` and `polymorphic_epks`
 #    ««revision-date»»···
 #--
 
@@ -219,6 +220,8 @@ class Entity (TFL.Meta.Object) :
     is_relevant           = False
     is_used               = True
     rank                  = 0
+    polymorphic_epk       = None   ### Set by meta machinery
+    polymorphic_epks      = None   ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
     show_package_prefix   = False
     ui_display_sep        = ", "

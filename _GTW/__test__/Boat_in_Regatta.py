@@ -74,8 +74,8 @@ _test_code = r"""
 
     >>> print sort_key
     <Sorted_By: Descending-Getter function for `.regatta.event.date.start`, Getter function for `.skipper.person.last_name`, Getter function for `.skipper.person.first_name`>
-    >>> print BiR.E_Type.sort_key (sort_key)
-    <Sorted_By: Getter function for `.relevant_root.type_name`, Getter function for `.epk_sig`, <Sorted_By: Descending-Getter function for `.regatta.event.date.start`, Getter function for `.skipper.person.last_name`, Getter function for `.skipper.person.first_name`>>
+    >>> print BiR.E_Type.sort_key_pm (sort_key)
+    <Sorted_By: Getter function for `.relevant_root.type_name`, <Sorted_By: Descending-Getter function for `.regatta.event.date.start`, Getter function for `.skipper.person.last_name`, Getter function for `.skipper.person.first_name`>>
 
     >>> list (BiR.query (sort_key = sort_key))
     [GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))]

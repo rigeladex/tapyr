@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Martin Glueck All rights reserved
+# Copyright (C) 2009-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos
+from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos, formatted
 from   _TFL.Regexp import Dict_Replacer, re
 
 filter_dbw_pat = re.compile \

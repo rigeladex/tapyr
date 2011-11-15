@@ -43,6 +43,9 @@
 #    16-Sep-2011 (CT) `_Attr_.__eq__` and `.__lt__` robustified
 #    16-Sep-2011 (MG) `_Q_Result_Group_By_._fill_cache` support for `SUM`
 #                     added
+#    15-Nov-2011 (CT) Change `_Attrs_Tuple_.__init__` to not pass `* args` to
+#                     `__super` to avoid: `DeprecationWarning:
+#                         object.__init__() takes no parameters`
 #    ««revision-date»»···
 #--
 
@@ -214,7 +217,7 @@ class _Attrs_Tuple_ (tuple) :
     # end def __new__
 
     def __init__ (self, getters, * args) :
-        super (_Attrs_Tuple_, self).__init__ (* args)
+        super (_Attrs_Tuple_, self).__init__ ()
         self._NAMES          = {}
         for i, g in enumerate (getters) :
             p                = g._name.split (".", 1)

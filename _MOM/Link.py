@@ -81,6 +81,8 @@ class _MOM_Link_ (_Ancestor_Essence) :
     entity_kind           = "link"
     is_partial            = True
     is_synthetic          = False
+    polymorphic_epk       = True ### Set by meta machinery
+    polymorphic_epks      = True ### Set by meta machinery
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

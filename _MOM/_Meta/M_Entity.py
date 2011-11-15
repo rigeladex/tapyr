@@ -111,6 +111,12 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #     8-Nov-2011 (CT) Add `M_Entity.change_attribute_default`
+#    15-Nov-2011 (CT) Add `polymorphic_epks` to `_m_create_e_types`
+#    15-Nov-2011 (CT) s/sort_key/sort_key_pm/; s/__sort_key/sort_key/
+#    15-Nov-2011 (CT) Remove `epk_sig` from `sort_key_pm`
+#                     (`Sorted_by` does the right thing now)
+#    15-Nov-2011 (CT) Change default for `sorted_by_epk` from `sort_key_pm`
+#                     to `sort_key`
 #    ««revision-date»»···
 #--
 
@@ -241,12 +247,18 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         for s in SX :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
         for t in reversed (app_type._T_Extension) :
-            if getattr (t, "polymorphic_epk", None) :
+            if t.polymorphic_epk :
                 for b in t.__bases__ :
                     if getattr (b, "polymorphic_epk", None) is False :
                         b.polymorphic_epk = True
         for t in app_type._T_Extension :
+            t.polymorphic_epks = t.polymorphic_epk or any \
+                (   pka.P_Type.polymorphic_epks or pka.P_Type.polymorphic_epk
+                for pka in t.primary
+                if  isinstance (pka.attr, MOM.Attr._A_Id_Entity_) and pka.P_Type
+                )
             t._m_setup_sorted_by ()
+        for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
             ### `link_map` that are only available after *all* etypes have
             ### already been created
@@ -729,7 +741,12 @@ class M_E_Type_Id (M_E_Type) :
         return result
     # end def link_map
 
-    def sort_key (cls, sort_key = None) :
+    def sort_key_pm (cls, sort_key = None) :
+        return TFL.Sorted_By \
+            ("relevant_root.type_name", sort_key or cls.sort_key)
+    # end def sort_key_pm
+
+    def sort_key (cls, entity) :
         ###
         ### Using `cls.sorted_by` here fails in Python 3.x for sorting
         ### lists with different link types
@@ -738,19 +755,11 @@ class M_E_Type_Id (M_E_Type) :
         ###     `cls.sorted_by` of their common ancestor doesn't do
         ###     the right thing (TM)
         ###
-        ### `__sort_key` re-evaluates `sorted_by` for each `entity` to be
+        ### `sort_key` re-evaluates `sorted_by` for each `entity` to be
         ### sorted and thus avoids this problem
         ###
-        ### `epk_sig` needs to be included to support subclasses of a
-        ### specific `relevant_root` to extend `epk`
-        ###
-        return TFL.Sorted_By \
-            ("relevant_root.type_name", "epk_sig", sort_key or cls.__sort_key)
-    # end def sort_key
-
-    def __sort_key (cls, entity) :
         return entity.sorted_by (entity)
-    # end def __sort_key
+    # end def sort_key
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
@@ -770,6 +779,7 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_setup_sorted_by (cls) :
         sbs = []
+        sb_default = [cls.sort_key]
         if cls.epk_sig :
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
                 if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
@@ -778,15 +788,15 @@ class M_E_Type_Id (M_E_Type) :
                         sbs.extend \
                             ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
                     else :
-                        ### Class is to abstract: need to use `cls.sort_key`
-                        sbs = [cls.sort_key]
+                        ### Class is too abstract: need to use `cls.sort_key_pm`
+                        sbs = sb_default
                         break
                 elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
                     sbs.extend \
                         ("%s.%s" % (pka.name, x) for x in pka.P_Type.sorted_by)
                 else :
                     sbs.append (pka.name)
-        sb = TFL.Sorted_By (* (sbs or [cls.sort_key]))
+        sb = TFL.Sorted_By (* (sbs or sb_default))
         cls.sorted_by_epk = sb
     # end def _m_setup_sorted_by
 
