@@ -83,6 +83,12 @@ _test_code = """
       ...
     Name_Clash: new definition of (u'Optimist') clashes with existing (u'Optimist')
 
+    >>> s1 = TFL.Sorted_By ("name")
+    >>> s2 = TFL.Sorted_By ("-name")
+    >>> SRM.Boat_Class.query ().order_by (s1).all ()
+    [GTW.OMP.SRM.Boat_Class (u'Laser'), GTW.OMP.SRM.Boat_Class (u'Optimist')]
+    >>> SRM.Boat_Class.query ().order_by (s1).order_by (s2).all ()
+    [GTW.OMP.SRM.Boat_Class (u'Optimist'), GTW.OMP.SRM.Boat_Class (u'Laser')]
 """
 
 from _GTW.__test__.model import *
