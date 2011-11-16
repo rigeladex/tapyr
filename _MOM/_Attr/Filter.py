@@ -30,6 +30,7 @@
 #    12-Nov-2011 (CT) Move `AC` from `Table` to separate property
 #    12-Nov-2011 (CT) Add `op_key` and use that as `Table` keys (`EQ`/`__eq__`)
 #    14-Nov-2011 (CT) Change `Ckd.__getattr__` to support dotted attribute names
+#    16-Nov-2011 (CT) Add translation markup (`_`)
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ import _MOM._Attr
 
 import _TFL._Meta.Object
 
+from   _TFL.I18N             import _
 from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
@@ -202,7 +204,7 @@ class Auto_Complete (_Filter_) :
 class Auto_Complete_S (_String_) :
     """String-Attribute query filter for auto-completion."""
 
-    op_fct        = "STARTSWITH"
+    op_fct        = _ ("STARTSWITH")
     op_sym        = "auto-complete"
 
 # end class Auto_Complete
@@ -210,14 +212,14 @@ class Auto_Complete_S (_String_) :
 class Contains (_String_) :
     """Attribute query filter for contains."""
 
-    op_fct        = "CONTAINS"
+    op_fct        = _ ("CONTAINS")
 
 # end class Contains
 
 class Ends_With (_String_) :
     """Attribute query for ends-with."""
 
-    op_fct        = "ENDSWITH"
+    op_fct        = _ ("ENDSWITH")
 
 # end class Ends_With
 
@@ -264,7 +266,7 @@ class Less_Than (_Filter_) :
 class Starts_With (_String_) :
     """Attribute query for starts-with."""
 
-    op_fct        = "STARTSWITH"
+    op_fct        = _ ("STARTSWITH")
 
 # end class Starts_With
 

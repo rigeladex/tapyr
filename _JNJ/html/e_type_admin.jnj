@@ -33,6 +33,7 @@
 ##    25-Jul-2010 (MG) `_button` changed
 ##    31-May-2011 (CT) `kind` added to `_button`
 ##     1-Jun-2011 (CT) `postify_a` added
+##    16-Nov-2011 (CT) Start implementation of `qr_control`
 ##    ««revision-date»»···
 ##--
 #}
@@ -45,20 +46,78 @@
   </{{ tag }}>
 {%- endmacro -%} {#- _button -#}
 
-{%- macro e_type_admin (page, E_Type, fields, objects) -%}
-  {%- set qr    = page.query_restriction %}
-  {%- set count = GTW.len (objects) %}
-  {%- set total = page.count %}
-  {#- set total_f = qr.total_f #}
-  <table class="Object-List tablesorter">
-    <caption>
-      {{ GTW._T (E_Type.ui_name) }}
-        ({{- count -}}
-         {%- if total != count -%}
-           /{{- total -}}
-         {%- endif -%}
+{%- macro _qr_field (name, title, value, label) -%}
+  {%- set caller = kwargs.pop ("caller",   None) -%}
+  <li title="{{ title }}">
+    <label for="{{ name }}">
+      {{ label or GTW._T (name.capitalize ()) }}
+    </label>
+    {%- if caller -%}{{- caller () -}}{%- endif -%}
+    {{ X.input.text
+        ( name      = name
+        , value     = value
         )
-    </caption>
+    }}
+  </li>
+{%- endmacro -%} {#- _qr_field -#}
+
+{%- macro _qr_tr (af) -%}
+  <tr title="">
+    <td class="name">
+      <label for="{{ af.key }}">
+        {{ "/".join (af.ui_names) }}
+      </label>
+    </td>
+    <td class="op">
+      <a href="#" class="button">
+        {{ GTW._T (af.op) }}
+      </a>
+    </td>
+    <td class="value">
+      {{ X.input.text
+          ( name      = af.key
+          , value     = af.value
+          )
+      }}
+    </td>
+  </tr>
+{%- endmacro -%} {#- _qr_tr -#}
+
+{%- macro qr_control (page, E_Type, qr) -%}
+  {%- import "html/form.jnj" as Form %}
+  {%- set action = page.abs_href -%}
+  {% call Form.form (action = action, method = "get", class = "restrictions") -%}
+    {{ X.input.submit
+        ( name      = "Apply"
+        , title     = GTW._T ("Display list of objects matching the restriction")
+        , value     = GTW._T ("Apply")
+        )
+    }}
+    <ul class="limits">
+      {{ _qr_field ("limit",    GTW._T ("Limit number of entities displayed"),    qr.limit) }}
+      {{ _qr_field ("offset",   GTW._T ("Number of first entity to display"),     qr.offset) }}
+      {{ _qr_field ("order_by", GTW._T ("Field(s) to use for ordering entities"), ", ".join (qr.order_by)) }}
+    </ul>
+    {%- if qr.filters %}
+      <table class="attrs">
+        <tbody>
+          {%- for af in qr.filters %}
+            {{ _qr_tr (af) }}
+          {% endfor -%}
+        </tbody>
+      </table>
+    {% endif -%}
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- qr_control -#}
+
+{%- macro e_type_admin (page, E_Type, fields, objects) -%}
+  {%- set qr      = page.query_restriction %}
+  {%- set count   = GTW.len (objects) %}
+  {# XXX remove this line #}{%- set total_f = count %}{%- set total_u = count %}
+  {#- set total_f = qr.total_f #}
+  {#- set total_u = qr.total_u #}
+  {{ qr_control (page, E_Type, qr) }}
+  <table class="Object-List tablesorter">
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />
       {% for f in fields %}

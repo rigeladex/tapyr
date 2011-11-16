@@ -196,6 +196,7 @@
 #     4-Nov-2011 (CT) Redefine `_A_Typed_Collection_.ui_length`
 #     8-Nov-2011 (CT) Change `_checkers` to yield check only, not `(check, ())`
 #    11-Nov-2011 (CT) Factor `MOM.Attr.Filter`, replace `ac_query` by `Q.AC`
+#    16-Nov-2011 (CT) Add `sorted_by` to `_A_Composite_` and `_A_Id_Entity_`
 #    ««revision-date»»···
 #--
 
@@ -540,6 +541,19 @@ class _A_Composite_ (_A_Entity_) :
 
     Q_Ckd_Type          = MOM.Attr.Filter.Composite
 
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return \
+            ( self.__super.db_sig
+            + (self.P_Type and self.P_Type.db_sig, )
+            )
+    # end def db_sig
+
+    @TFL.Meta.Once_Property
+    def sorted_by (self) :
+        return self.P_Type.sorted_by
+    # end def sorted_by
+
     def as_code (self, value) :
         if value is not None :
             return "dict (%s)" % \
@@ -570,14 +584,6 @@ class _A_Composite_ (_A_Entity_) :
                 (_T ("Value `%r` is not of type %s") % (value, soc.P_Type))
         return value
     # end def cooked
-
-    @TFL.Meta.Once_Property
-    def db_sig (self) :
-        return \
-            ( self.__super.db_sig
-            + (self.P_Type and self.P_Type.db_sig, )
-            )
-    # end def db_sig
 
     @classmethod
     def epk_def_set_ckd (cls) :
@@ -868,6 +874,11 @@ class _A_Id_Entity_ (_A_Entity_) :
             result = etm.example ()
         return self.as_string (result)
     # end def example
+
+    @TFL.Meta.Once_Property
+    def sorted_by (self) :
+        return self.P_Type.sorted_by_epk
+    # end def sorted_by
 
     def as_code (self, value) :
         if value is not None :

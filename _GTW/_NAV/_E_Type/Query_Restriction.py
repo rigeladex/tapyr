@@ -35,6 +35,7 @@ from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _MOM.import_MOM          import MOM, Q
 
 import _GTW._NAV._E_Type
 
@@ -46,19 +47,22 @@ import _TFL.Record
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Regexp              import Regexp, re
 
+from   itertools                import chain as ichain
+
 class Query_Restriction (TFL.Meta.Object) :
     """Model a query restriction as specified by `req_data` of a `GET` request."""
 
-    count     = 0
-    filters   = ()
-    filters_q = ()
-    limit     = None
-    offset    = None
-    query_b   = None
-    query_f   = None
+    count       = 0
+    filters     = ()
+    filters_q   = ()
+    limit       = None
+    offset      = None
+    order_by    = ()
+    order_by_q  = ()
+    query_b     = None
+    query_f     = None
 
-    _np      = r"[a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*"
-    _a_pat   = Regexp \
+    _a_pat      = Regexp \
         ( r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
           r"___"
           r"(?P<op> [A-Z]+)"
@@ -68,33 +72,37 @@ class Query_Restriction (TFL.Meta.Object) :
 
     @classmethod
     def from_request_data (cls, E_Type, req_data) :
-        data   = dict (req_data.iteritems ())
-        result = cls \
+        data     = dict  (req_data.iteritems ())
+        result   = cls \
             ( limit           = data.pop ("limit",  None)
             , offset          = data.pop ("offset", None)
             , other_req_data  = data
             )
-        result._setup_filters (E_Type, data)
+        result._setup_filters  (E_Type, data)
+        result._setup_order_by (E_Type, data)
         return result
     # end def from_request_data
 
     def __init__ (self, limit = None, offset = None, ** kw) :
-        if limit is not None :
+        if limit :
             self.limit  = int (limit)
-        if offset is not None :
+        if offset :
             self.offset = int (offset)
         self.__dict__.update (kw)
     # end def __init__
 
     def __call__ (self, base_query) :
-        self.query_b = self.query_f = base_query
+        self.query_b = base_query
         result = base_query
         if self.filters_q :
-            result = self.query_f = result.filter (* self.filters_q)
+            result = result.filter (* self.filters_q)
+        if self.order_by_q :
+            result = result.order_by (self.order_by_q)
+        self.query_f = result
         if self.offset :
-            result = result.offset (self.offset)
+            result = result.offset   (self.offset)
         if self.limit :
-            result = result.limit  (self.limit)
+            result = result.limit    (self.limit)
         return result
     # end def __call__
 
@@ -127,20 +135,21 @@ class Query_Restriction (TFL.Meta.Object) :
     # end def _nested_attrs
 
     def _setup_attr (self, E_Type, pat, k, value) :
-        name  = pat.name
-        op    = pat.op
-        names = name.split ("__")
-        attrs = tuple (self._nested_attrs (E_Type, names))
-        q     = attrs [-1].Q
-        pre   = ".".join (names [:-1]) or None
+        name   = pat.name
+        op     = pat.op
+        names  = name.split ("__")
+        attrs  = tuple (self._nested_attrs (E_Type, names))
+        q      = attrs [-1].Q
+        prefix = ".".join (names [:-1]) or None
+        qop    = getattr (q, op)
         f = TFL.Record \
             ( key      = k
             , name     = ".".join (names)
-            , op       = op
+            , op       = qop.op_sym
             , ui_names = tuple (_T (a.ui_name) for a in attrs)
             , value    = value
             )
-        return f, getattr (q, op) (value, pre)
+        return f, qop (value, prefix)
     # end def _setup_attr
 
     def _setup_filters (self, E_Type, data) :
@@ -149,8 +158,32 @@ class Query_Restriction (TFL.Meta.Object) :
             for k, pat in self._filter_matches (data, self._a_pat)
             )
         if matches :
-            self.filters, self.filters_q = (tuple (l) for l in zip (* matches))
+            self.filters, self.filters_q = zip (* matches)
     # end def _setup_filters
+
+    def _setup_order_by_1 (self, E_Type, s) :
+        s     = s.strip ()
+        sign  = "-" if s.startswith ("-") else ""
+        names = s [bool (sign): ].split (".")
+        attrs = tuple (self._nested_attrs (E_Type, names))
+        last  = attrs [-1]
+        if isinstance (last.attr, MOM.Attr._A_Entity_) :
+            PT   = getattr (attrs [-1], "P_Type", None)
+            pre  = ".".join (names)
+            keys = tuple ("%s%s.%s" % (sign, pre, k) for k in PT.sorted_by)
+        else :
+            keys = (s, )
+        return s, keys
+    # end def _setup_order_by_1
+
+    def _setup_order_by (self, E_Type, data) :
+        s = data.pop ("order_by", "").strip ()
+        if s :
+            order_by = \
+                (self._setup_order_by_1 (E_Type, n) for n in s.split (","))
+            self.order_by, criteria = zip (* order_by)
+            self.order_by_q = TFL.Sorted_By (* ichain (* criteria))
+    # end def _setup_order_by
 
     def __nonzero__ (self) :
         return bool (self.limit or self.offset or self.filters_q)

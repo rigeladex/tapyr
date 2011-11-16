@@ -47,13 +47,19 @@ _test_code = """
     >>> print qr.limit, qr.offset
     24 None
     >>> print qr.filters
-    (Record (key = 'last_name___GE', name = u'last_name', op = 'GE', ui_names = (u'Last name',), value = u'Lee'), Record (key = 'lifetime__start___EQ', name = u'lifetime.start', op = 'EQ', ui_names = (u'Lifetime', u'Start'), value = u'2008'))
+    (Record (key = 'last_name___GE', name = u'last_name', op = u'>=', ui_names = (u'Last name',), value = u'Lee'), Record (key = 'lifetime__start___EQ', name = u'lifetime.start', op = u'==', ui_names = (u'Lifetime', u'Start'), value = u'2008'))
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print sorted (qr.other_req_data.items ())
     [('foo', u'bar')]
     >>> print sorted (rd)
     ['foo', 'last_name___GE', 'lifetime__start___EQ', 'limit']
+
+    >>> qo = QR.from_request_data (PAP.Person.E_Type, dict (order_by = "-lifetime,last_name"))
+    >>> print qo.order_by
+    (u'-lifetime', u'last_name')
+    >>> print qo.order_by_q
+    <Sorted_By: Descending-Getter function for `.lifetime.start`, Descending-Getter function for `.lifetime.finish`, Getter function for `.last_name`>
 
     >>> scope.destroy ()
 

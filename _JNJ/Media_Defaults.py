@@ -80,6 +80,7 @@ class Media_Defaults (Definition) :
         , cursor           = "pointer"
         , margin           = TRBL0 (t = Em (1./4), b = Em (3./4))
         , padding          = TRBL  (Em (0.5), Em (1.5))
+        , ** Border (radius = Px (10))
         )
 
     col_padding            = Px (5)

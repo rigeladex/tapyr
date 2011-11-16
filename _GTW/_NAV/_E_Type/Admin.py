@@ -126,6 +126,7 @@
 #     8-Nov-2011 (CT) Factor `field_element` and guard it against `KeyError`
 #    14-Nov-2011 (CT) Add support for `query_restriction`
 #    16-Nov-2011 (CT) Change `render` to always `LET` `query_restriction`
+#    16-Nov-2011 (CT) Add property `head_line`
 #    ««revision-date»»···
 #--
 
@@ -757,10 +758,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             raise
     # end def Form
 
-    @Once_Property
-    def manager (self) :
-        return self.etype_manager (self.E_Type)
-    # end def manager
+    @property
+    def head_line (self) :
+        return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), self.count)
+    # end def head_line
 
     @Once_Property
     def href (self) :
@@ -813,6 +814,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return tuple \
             (self._attr_kind (etype, a) for a in self._list_display)
     # end def list_display
+
+    @Once_Property
+    def manager (self) :
+        return self.etype_manager (self.E_Type)
+    # end def manager
 
     def rendered (self, handler, template = None) :
         def _ (self, handler, template, objects) :
