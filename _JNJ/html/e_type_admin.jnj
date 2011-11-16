@@ -46,8 +46,10 @@
 {%- endmacro -%} {#- _button -#}
 
 {%- macro e_type_admin (page, E_Type, fields, objects) -%}
+  {%- set qr    = page.query_restriction %}
   {%- set count = GTW.len (objects) %}
   {%- set total = page.count %}
+  {#- set total_f = qr.total_f #}
   <table class="Object-List tablesorter">
     <caption>
       {{ GTW._T (E_Type.ui_name) }}

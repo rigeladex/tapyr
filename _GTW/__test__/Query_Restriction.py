@@ -37,21 +37,23 @@ _test_code = """
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
 
-    >>> qe = QR (PAP.Person.E_Type, dict (qux = "42", qix = "Miles"))
+    >>> qe = QR.from_request_data (PAP.Person.E_Type, dict (qux = "42", qix = "Miles"))
     >>> print qe.limit, qe.offset, qe.filters, sorted (qe.other_req_data.items ())
     None None () [('qix', u'Miles'), ('qux', u'42')]
 
     >>> rd = dict (
-    ...   limit = 24, last_name___EQ = "Lee", lifetime__start___GE = "2008", foo = "bar")
-    >>> qr = QR (PAP.Person.E_Type, rd)
+    ...   limit = 24, last_name___GE = "Lee", lifetime__start___EQ = "2008", foo = "bar")
+    >>> qr = QR.from_request_data (PAP.Person.E_Type, rd)
     >>> print qr.limit, qr.offset
     24 None
     >>> print qr.filters
-    (Q.last_name == lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
+    (Record (key = 'last_name___GE', name = u'last_name', op = 'GE', ui_names = (u'Last name',), value = u'Lee'), Record (key = 'lifetime__start___EQ', name = u'lifetime.start', op = 'EQ', ui_names = (u'Lifetime', u'Start'), value = u'2008'))
+    >>> print qr.filters_q
+    (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print sorted (qr.other_req_data.items ())
     [('foo', u'bar')]
     >>> print sorted (rd)
-    ['foo', 'last_name___EQ', 'lifetime__start___GE', 'limit']
+    ['foo', 'last_name___GE', 'lifetime__start___EQ', 'limit']
 
     >>> scope.destroy ()
 

@@ -125,6 +125,7 @@
 #    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
 #     8-Nov-2011 (CT) Factor `field_element` and guard it against `KeyError`
 #    14-Nov-2011 (CT) Add support for `query_restriction`
+#    16-Nov-2011 (CT) Change `render` to always `LET` `query_restriction`
 #    ««revision-date»»···
 #--
 
@@ -810,7 +811,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return self._auto_list_display (self.ETM)
         etype = self.ETM.E_Type
         return tuple \
-                (self._attr_kind (etype, a) for a in self._list_display)
+            (self._attr_kind (etype, a) for a in self._list_display)
     # end def list_display
 
     def rendered (self, handler, template = None) :
@@ -821,12 +822,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 , query_restriction = self.query_restriction
                 )
             return self.__super.rendered (handler, template)
-        qr = QR (self.ETM.E_Type, handler.request.req_data)
-        if qr :
-            with self.LET (query_restriction = qr) :
-                return _ (self, handler, template, self._get_objects ())
-        else :
-            return _ (self, handler, template, self._get_entries ())
+        qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
+        with self.LET (query_restriction = qr) :
+            os = self._get_objects () if qr else self._get_entries ()
+            return _ (self, handler, template, os)
     # end def rendered
 
     def _attr_kind (self, etype, name) :
