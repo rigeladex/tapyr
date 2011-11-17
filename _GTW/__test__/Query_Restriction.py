@@ -39,13 +39,13 @@ _test_code = """
 
     >>> qe = QR.from_request_data (PAP.Person.E_Type, dict (qux = "42", qix = "Miles"))
     >>> print qe.limit, qe.offset, qe.filters, sorted (qe.other_req_data.items ())
-    None None () [('qix', u'Miles'), ('qux', u'42')]
+    0 0 () [('qix', u'Miles'), ('qux', u'42')]
 
     >>> rd = dict (
     ...   limit = 24, last_name___GE = "Lee", lifetime__start___EQ = "2008", foo = "bar")
     >>> qr = QR.from_request_data (PAP.Person.E_Type, rd)
     >>> print qr.limit, qr.offset
-    24 None
+    24 0
     >>> print qr.filters
     (Record (key = 'last_name___GE', name = u'last_name', op = u'>=', ui_names = (u'Last name',), value = u'Lee'), Record (key = 'lifetime__start___EQ', name = u'lifetime.start', op = u'==', ui_names = (u'Lifetime', u'Start'), value = u'2008'))
     >>> print qr.filters_q

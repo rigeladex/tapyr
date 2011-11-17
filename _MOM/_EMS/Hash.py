@@ -74,6 +74,8 @@
 #    17-May-2010 (CT) `register_change` changed to accept `change` with `cid`
 #    18-May-2010 (CT) Use `Change_Manager` instead of home-grown code
 #    28-Sep-2010 (CT) s/rollback/_rollback/
+#    17-Nov-2011 (CT) Change `rename` to not remove `entity` from `table`
+#                     if `renamer` raises an exception
 #    ««revision-date»»···
 #--
 
@@ -232,8 +234,12 @@ class Manager (MOM.EMS._Manager_) :
             else :
                 raise MOM.Error.Name_Clash (entity, old)
         self._remove (entity)
-        renamer      ()
-        self.add     (entity, entity.pid)
+        try :
+            renamer ()
+        except :
+            self.add (entity, entity.pid)
+            raise
+        self.add (entity, entity.pid)
     # end def rename
 
     def r_query (self, Type, rkw, * filters, ** kw) :

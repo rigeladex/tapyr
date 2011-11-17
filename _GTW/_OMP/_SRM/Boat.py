@@ -37,11 +37,13 @@
 #    30-May-2011 (CT) `nation` changed from `Primary` to `Primary_Optional`
 #     7-Sep-2011 (CT) `completer` added for `nation` and `sail_number`
 #     9-Sep-2011 (CT) `completer` removed from `nation`
-#    13-Sep-2011 (CT) `sail_number_x` changed from `Primary` to
+#    13-Sep-2011 (CT) `sail_number_x` changed from `Optional` to
 #                     `Primary_Optional`
 #    23-Sep-2011 (CT) `sail_number_x` and `sail_number` merged into a single
 #                     attribute of type `A_String`, kind `Primary_Optional`
 #     9-Nov-2011 (CT) Add cached attributes `sail_number_head` and `_tail`
+#    17-Nov-2011 (CT) Split off `sail_number_x` again (to fix sorting)
+#    17-Nov-2011 (CT) Redefine `ui_display_format` and `ui_display_sep`
 #    ««revision-date»»···
 #--
 
@@ -61,11 +63,7 @@ _Ancestor_Essence = GTW.OMP.SRM.Link1
 class Boat (_Ancestor_Essence) :
     """Boat of a specific boat-class."""
 
-    _sail_number_pat = Regexp \
-        ( r"(?P<head> \D*)"
-          r"(?P<tail> .*)"
-        , re.VERBOSE
-        )
+    ui_display_sep        = " "
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -91,16 +89,27 @@ class Boat (_Ancestor_Essence) :
 
         # end class nation
 
-        class sail_number (A_String) :
+        class sail_number (A_Int) :
             """Sail number of boat"""
 
             kind               = Attr.Primary_Optional
-            example            = "X 2827"
-            ignore_case        = True
-            max_length         = 10
+            example            = "2827"
+            min_value          = 0
+            needs_raw_value    = True
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class sail_number
+
+        class sail_number_x (A_String) :
+            """Sail number prefix of boat."""
+
+            kind               = Attr.Primary_Optional
+            example            = "X"
+            ignore_case        = True
+            max_length         = 8
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+
+        # end class sail_number_x
 
         ### Non-primary attributes
 
@@ -118,15 +127,10 @@ class Boat (_Ancestor_Essence) :
 
             kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("sail_number",)
+            auto_up_depends    = ("sail_number_x",)
 
             def computed (self, obj) :
-                number = obj.raw_attr ("sail_number")
-                if number :
-                    pat   = obj._sail_number_pat
-                    match = pat.match (number)
-                    if match :
-                        return pat.head.strip ()
+                return obj.raw_attr ("sail_number_x")
             # end def computed
 
         # end class sail_number_head
@@ -139,13 +143,7 @@ class Boat (_Ancestor_Essence) :
             auto_up_depends    = ("sail_number",)
 
             def computed (self, obj) :
-                number = obj.raw_attr ("sail_number")
-                if number :
-                    pat   = obj._sail_number_pat
-                    match = pat.match (number)
-                    if match :
-                        return pat.tail.strip ()
-                return number
+                return obj.raw_attr ("sail_number")
             # end def computed
 
         # end class sail_number_tail
@@ -169,6 +167,20 @@ class Boat (_Ancestor_Essence) :
         # end class valid_vintage
 
     # end class _Predicates
+
+    @property
+    def ui_display_format (self) :
+        cls  = self.__class__
+        head = result = "%(left)s"
+        tail = self.ui_display_sep.join \
+            (   "%%(%s)s" % (a.name, )
+            for a in (cls.nation, cls.sail_number_x, cls.sail_number)
+            if  a.has_substance (self)
+            )
+        if tail :
+            result = ", ".join ((head, tail))
+        return result
+    # end def ui_display_format
 
 # end class Boat
 

@@ -166,7 +166,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
         scope = obj.home_scope
         etm   = getattr (scope, cls.type_name)
         for l in etm.links_of (obj) :
-            l.destroy () ### scope.ems.remove (l)
+            scope.remove (l)
     # end def destroy_links
 
     def _m_setup_attributes (cls, bases, dct) :

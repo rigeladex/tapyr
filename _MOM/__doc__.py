@@ -1451,7 +1451,7 @@ Deleting objects and links
     defaultdict(<type 'list'>, {})
     >>> sorted (d.type_name for d in m.dependencies)
     ['BMT.Rodent_in_Trap']
-    >>> sorted (d.type_name for d in t1.dependencies)
+    >>> sorted (d.type_name for d in t1.dependencies) ### 1
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
 
     >>> m_id  = m.pid
@@ -1466,15 +1466,19 @@ Deleting objects and links
 
     >>> t1.catch
     BMT.Mouse (u'mighty_mouse')
+    >>> m
+    BMT.Mouse (u'mighty_mouse')
     >>> m.destroy ()
     >>> t1.catch
 
     .. ### DBW-specific start
 
+    >>> show (t1.all_links ())
+    [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956))]
     >>> show (scope.ems.all_links (m_id))
     []
 
-    >>> sorted (d.type_name for d in t1.dependencies)
+    >>> sorted (d.type_name for d in t1.dependencies) ### 2
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
 
     .. ### DBW-specific finish
