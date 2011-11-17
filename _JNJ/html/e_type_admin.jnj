@@ -34,6 +34,8 @@
 ##    31-May-2011 (CT) `kind` added to `_button`
 ##     1-Jun-2011 (CT) `postify_a` added
 ##    16-Nov-2011 (CT) Start implementation of `qr_control`
+##    17-Nov-2011 (CT) Remove `count`, `total_f`, and `total_u`
+##                     (`page.head_line` contains those now)
 ##    ««revision-date»»···
 ##--
 #}
@@ -111,11 +113,7 @@
 {%- endmacro -%} {#- qr_control -#}
 
 {%- macro e_type_admin (page, E_Type, fields, objects) -%}
-  {%- set qr      = page.query_restriction %}
-  {%- set count   = GTW.len (objects) %}
-  {# XXX remove this line #}{%- set total_f = count %}{%- set total_u = count %}
-  {#- set total_f = qr.total_f #}
-  {#- set total_u = qr.total_u #}
+  {%- set qr = page.query_restriction %}
   {{ qr_control (page, E_Type, qr) }}
   <table class="Object-List tablesorter">
     <colgroup>

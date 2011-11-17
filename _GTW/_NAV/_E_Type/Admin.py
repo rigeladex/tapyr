@@ -127,6 +127,7 @@
 #    14-Nov-2011 (CT) Add support for `query_restriction`
 #    16-Nov-2011 (CT) Change `render` to always `LET` `query_restriction`
 #    16-Nov-2011 (CT) Add property `head_line`
+#    17-Nov-2011 (CT) Change `head_line` to provide `total_f` and `total_u`
 #    ««revision-date»»···
 #--
 
@@ -760,7 +761,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @property
     def head_line (self) :
-        return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), self.count)
+        co      = getattr (self, "query_size", None)
+        if co is None :
+            co  = self.count
+        qr      = self.query_restriction
+        tail    = "%s" % (co, )
+        if qr :
+            cf  = qr.total_f
+            cu  = qr.total_u
+            sep = "/"
+            if cf and cf != co :
+                tail = "%s%s%s" % (tail, sep, cf)
+                sep  = "//"
+            if cu and cu != cf :
+                tail = "%s%s%s" % (tail, sep, cu)
+        return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), tail)
     # end def head_line
 
     @Once_Property
@@ -831,7 +846,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
         with self.LET (query_restriction = qr) :
             os = self._get_objects () if qr else self._get_entries ()
-            return _ (self, handler, template, os)
+            with self.LET (query_size = len (os)) :
+                result = _ (self, handler, template, os)
+            return result
     # end def rendered
 
     def _attr_kind (self, etype, name) :
