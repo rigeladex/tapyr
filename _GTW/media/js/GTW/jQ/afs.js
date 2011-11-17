@@ -66,6 +66,7 @@
 //     7-Nov-2011 (CT) Factor `_trigger_completion`, `focus` if `treshold == 0`
 //     8-Nov-2011 (CT) Use `elem.anchor_id || elem.root_id` to fix top-level
 //                     completion
+//    17-Nov-2011 (CT) Use `console.error` instead of `alert` (most situations)
 //    ««revision-date»»···
 //--
 
@@ -146,11 +147,7 @@
                               if (! answer ["error"]) {
                                   _get_cb (options, elem, val, cb, answer);
                               } else {
-                                  alert
-                                      ( "Error: " + answer.error
-                                      + "\n\n"
-                                      + $GTW.inspect.show (data)
-                                      );
+                                  console.error ("Ajax error", answer, data);
                               };
                         }
                       , url           : options.completer_url
@@ -412,7 +409,7 @@
                         );
                     _setup_callbacks (s$);
                 } else {
-                    alert ("Error: " + response.error);
+                    console.error ("Ajax Error", response);
                 }
             }
         };
@@ -584,7 +581,7 @@
                                         s$ = _response_replace
                                             (response, s$, elem);
                                     } else {
-                                        alert ("Error: " + response.error);
+                                        console.error ("Ajax Error", response);
                                     }
                                 }
                             }
@@ -609,7 +606,7 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    alert ("Error: " + response.error);
+                                    console.error ("Ajax Error", response);
                                 }
                             }
                         }
@@ -650,7 +647,7 @@
                                       s$ = _response_replace (response, s$, elem);
                                       _setup_callbacks (s$);
                                   } else {
-                                      alert ("Error: " + response.error);
+                                      console.error ("Ajax Error", response);
                                   };
                               }
                             }
@@ -675,7 +672,7 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    alert ("Error: " + response.error);
+                                    console.error ("Ajax Error", response);
                                 }
                             }
                         }
@@ -709,18 +706,13 @@
                                           s$ = _response_replace (response, s$, elem);
                                           _setup_callbacks (s$);
                                       } else {
-                                          alert
-                                              ( "Save missing response: \n"
-                                              + $GTW.inspect.show (answer)
-                                              );
+                                          console.error
+                                              ("Save missing response", answer);
                                       }
                                   }
                               } else {
-                                  alert
-                                      ( "Error: " + answer.error
-                                      + "\n\n"
-                                      + $GTW.inspect.show (json_data)
-                                      );
+                                  console.error
+                                      ("Save error", answer, json_data);
                               }
                           }
                         }

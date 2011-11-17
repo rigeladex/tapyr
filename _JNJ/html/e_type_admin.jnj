@@ -36,6 +36,8 @@
 ##    16-Nov-2011 (CT) Start implementation of `qr_control`
 ##    17-Nov-2011 (CT) Remove `count`, `total_f`, and `total_u`
 ##                     (`page.head_line` contains those now)
+##    17-Nov-2011 (CT) Continue implementation of `qr_control` (`_qr_button`,
+##                     "Next", ...)
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,6 +49,12 @@
     >{{ desc }}</a>
   </{{ tag }}>
 {%- endmacro -%} {#- _button -#}
+
+{%- macro _qr_button (name, title) -%}
+  <button name="{{ name.upper () }}" title="{{ title }}" type="submit">
+    {{ GTW._T (name) }}
+  </button>
+{%- endmacro -%} {#- _qr_button -#}
 
 {%- macro _qr_field (name, title, value, label) -%}
   {%- set caller = kwargs.pop ("caller",   None) -%}
@@ -89,12 +97,25 @@
   {%- import "html/form.jnj" as Form %}
   {%- set action = page.abs_href -%}
   {% call Form.form (action = action, method = "get", class = "restrictions") -%}
-    {{ X.input.submit
-        ( name      = "Apply"
-        , title     = GTW._T ("Display list of objects matching the restriction")
-        , value     = GTW._T ("Apply")
+    {{ _qr_button
+        ( GTW._  ("Apply")
+        , GTW._T ("Display list of objects matching the restriction")
         )
     }}
+    {%- if qr.next_p %}
+      {{ _qr_button
+          ( GTW._  ("Next")
+          , GTW._T ("Display next batch of objects matching the restriction")
+          )
+      }}
+    {% endif -%}
+    {%- if qr.prev_p %}
+      {{ _qr_button
+          ( GTW._  ("Prev")
+          , GTW._T ("Display previous batch of objects matching the restriction")
+          )
+      }}
+    {% endif -%}
     <ul class="limits">
       {{ _qr_field ("limit",    GTW._T ("Limit number of entities displayed"),    qr.limit) }}
       {{ _qr_field ("offset",   GTW._T ("Number of first entity to display"),     qr.offset) }}

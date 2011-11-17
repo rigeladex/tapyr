@@ -27,7 +27,8 @@
 #
 # Revision Dates
 #    14-Nov-2011 (CT) Creation
-#    16-Nov-2011 (CT) Creation continued
+#    16-Nov-2011 (CT) Creation continued (order_by, ...)
+#    17-Nov-2011 (CT) Creation continued.. (NEXT, PREV, ...)
 #    ««revision-date»»···
 #--
 
@@ -52,11 +53,10 @@ from   itertools                import chain as ichain
 class Query_Restriction (TFL.Meta.Object) :
     """Model a query restriction as specified by `req_data` of a `GET` request."""
 
-    count       = 0
     filters     = ()
     filters_q   = ()
-    limit       = None
-    offset      = None
+    limit       = 0
+    offset      = 0
     order_by    = ()
     order_by_q  = ()
     query_b     = None
@@ -78,6 +78,14 @@ class Query_Restriction (TFL.Meta.Object) :
             , offset          = data.pop ("offset", None)
             , other_req_data  = data
             )
+        limit = result.limit
+        if limit :
+            if "NEXT" in data :
+                result.offset += limit
+            elif "PREV" in data :
+                result.offset  = min (result.offset - limit, 0)
+        elif "PREV" in data :
+            result.offset = 0
         result._setup_filters  (E_Type, data)
         result._setup_order_by (E_Type, data)
         return result
@@ -107,6 +115,17 @@ class Query_Restriction (TFL.Meta.Object) :
     # end def __call__
 
     @Once_Property
+    def next_p (self) :
+        limit = self.limit
+        return limit and self.offset + limit < self.total_f
+    # end def next_p
+
+    @Once_Property
+    def prev_p (self) :
+        return self.offset > 0
+    # end def prev_p
+
+    @Once_Property
     def total_f (self) :
         if self.query_f is not None :
             return self.query_f.count ()
@@ -131,7 +150,7 @@ class Query_Restriction (TFL.Meta.Object) :
         for name in names :
             attr = getattr (T, name)
             yield attr
-            T = getattr (attr, "P_Type", None)
+            T = getattr (attr, "E_Type", None)
     # end def _nested_attrs
 
     def _setup_attr (self, E_Type, pat, k, value) :
@@ -167,8 +186,8 @@ class Query_Restriction (TFL.Meta.Object) :
         names = s [bool (sign): ].split (".")
         attrs = tuple (self._nested_attrs (E_Type, names))
         last  = attrs [-1]
-        if isinstance (last.attr, MOM.Attr._A_Entity_) :
-            PT   = getattr (attrs [-1], "P_Type", None)
+        PT    = getattr (attrs [-1], "E_Type", None)
+        if PT :
             pre  = ".".join (names)
             keys = tuple ("%s%s.%s" % (sign, pre, k) for k in PT.sorted_by)
         else :

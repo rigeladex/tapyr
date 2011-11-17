@@ -197,6 +197,7 @@
 #     8-Nov-2011 (CT) Change `_checkers` to yield check only, not `(check, ())`
 #    11-Nov-2011 (CT) Factor `MOM.Attr.Filter`, replace `ac_query` by `Q.AC`
 #    16-Nov-2011 (CT) Add `sorted_by` to `_A_Composite_` and `_A_Id_Entity_`
+#    17-Nov-2011 (CT) Add `E_Type`
 #    ««revision-date»»···
 #--
 
@@ -246,6 +247,7 @@ class A_Attr_Type (object) :
     db_sig_version      = 0
     default             = None
     description         = u""
+    E_Type              = None ### E_Type of `_A_Entity_`, if any
     explanation         = u""
     format              = u"%s"
     group               = u""
@@ -293,7 +295,7 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def ckd_query_eq (self) :
-        return self.Q_Ckd.__eq__
+        return self.Q_Ckd.EQ
     # end def ckd_query_eq
 
     @TFL.Meta.Once_Property
@@ -312,7 +314,7 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def raw_query_eq (self) :
-        return self.Q_Raw.__eq__ if self.needs_raw_value else self.Q_Ckd.__eq__
+        return self.Q_Raw.EQ if self.needs_raw_value else self.Q_Ckd.EQ
     # end def raw_query_eq
 
     def __init__ (self, kind) :
@@ -518,6 +520,11 @@ class _A_Entity_ (A_Attr_Type) :
     P_Type            = None
 
     needs_raw_value   = False
+
+    @property
+    def E_Type (self) :
+        return self.P_Type
+    # end def E_Type
 
     def _fix_P_Type (self, e_type) :
         P_Type = self.P_Type

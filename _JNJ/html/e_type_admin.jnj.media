@@ -33,6 +33,9 @@
 #    24-Oct-2011 (CT) `tablesorter` JS_On_Ready factored into
 #                     `tablesorter.media`
 #     8-Nov-2011 (CT) Add `GTW.Script._.GTW_jq_util`
+#    16-Nov-2011 (CT) Add rules for `.restrictions`
+#    17-Nov-2011 (CT) Add rules for `.restrictions` and `JS_On_Ready` for
+#                     `button`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +102,23 @@ style_sheet = Style_Sheet \
         , list_style       = "none"
         , children           =
             [ Rule
+                ( "button"
+                , background_color = P.nav_col.background_color
+                , border           = P.border_simple
+                , border_width     = Px (1)
+                , margin           = 0
+                , children         =
+                    [ Rule_Attr
+                        ( "[type=submit]"
+                        , Border       = P.border_button
+                        , float        = "right"
+                        , margin       = TRBL0 (t = Em (0.5), l = Em (1))
+                        , text_align   = "center"
+                        , ** Border (radius = Px (10))
+                        )
+                    ]
+                )
+            , Rule
                 ( "input"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple
@@ -110,7 +130,8 @@ style_sheet = Style_Sheet \
                         ( "[type=submit]"
                         , Border       = P.border_button
                         , float        = "right"
-                        , margin       = TRBL0 (t = Em (1))
+                        , margin       = TRBL0 (t = Em (1), l = Em (1))
+                        , padding      = TRBL  (Em (0.20))
                         , text_align   = "center"
                         , width        = Em ( 5)
                         , ** Border (radius = Px (10))
@@ -207,6 +228,17 @@ JS_On_Ready \
                     );
                 }
             );
+      """
+    , rank = 100
+    )
+
+JS_On_Ready \
+    ( """$("button[name=NEXT]").button
+            ({ icons : { primary : "ui-icon-arrowthick-1-e" }, text : false });
+         $("button[name=PREV]").button
+            ({ icons : { primary : "ui-icon-arrowthick-1-w" }, text : false });
+         $("button[name=APPLY]").button
+            ({ icons : { primary : "ui-icon-check" }, text : false });
       """
     , rank = 100
     )
