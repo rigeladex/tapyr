@@ -50,9 +50,12 @@
   </{{ tag }}>
 {%- endmacro -%} {#- _button -#}
 
-{%- macro _qr_button (name, title) -%}
-  <button name="{{ name.upper () }}" title="{{ title }}" type="submit">
-    {{ GTW._T (name) }}
+{%- macro _qr_button (name, title, typ = "submit", text = None) -%}
+  <button name="{{ name.upper () }}" title="{{ title }}" type="{{ typ }}"
+    {{ kwargs|xmlattr }}
+    {%- if typ == "button" %} class="disabled"{%- endif -%}
+  >
+    {{ text or GTW._T (name) }}
   </button>
 {%- endmacro -%} {#- _qr_button -#}
 
@@ -72,7 +75,7 @@
 {%- endmacro -%} {#- _qr_field -#}
 
 {%- macro _qr_tr (af) -%}
-  <tr title="">
+  <tr id="{{ af.key }}" title="">
     <td class="name">
       <label for="{{ af.key }}">
         {{ "/".join (af.ui_names) }}
@@ -102,20 +105,25 @@
         , GTW._T ("Display list of objects matching the restriction")
         )
     }}
-    {%- if qr.next_p %}
-      {{ _qr_button
-          ( GTW._  ("Next")
-          , GTW._T ("Display next batch of objects matching the restriction")
-          )
-      }}
-    {% endif -%}
-    {%- if qr.prev_p %}
-      {{ _qr_button
-          ( GTW._  ("Prev")
-          , GTW._T ("Display previous batch of objects matching the restriction")
-          )
-      }}
-    {% endif -%}
+    {{ _qr_button
+        ( GTW._  ("Next")
+        , GTW._T ("Display next batch of objects matching the restriction")
+        , ("submit" if qr.next_p else  "button")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Prev")
+        , GTW._T ("Display previous batch of objects matching the restriction")
+        , "submit" if qr.prev_p else  "button"
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Add")
+        , GTW._T ("Add a rule to restrict the objects to a specific attribute value")
+        , "button"
+        , GTW._T ("Add restriction")
+        )
+    }}
     <ul class="limits">
       {{ _qr_field ("limit",    GTW._T ("Limit number of entities displayed"),    qr.limit) }}
       {{ _qr_field ("offset",   GTW._T ("Number of first entity to display"),     qr.offset) }}

@@ -31,6 +31,8 @@
 #    12-Nov-2011 (CT) Add `op_key` and use that as `Table` keys (`EQ`/`__eq__`)
 #    14-Nov-2011 (CT) Change `Ckd.__getattr__` to support dotted attribute names
 #    16-Nov-2011 (CT) Add translation markup (`_`)
+#    17-Nov-2011 (CT) Add `NE` operator
+#    17-Nov-2011 (CT) Add `_Type_` and `_M_Type_`
 #    ««revision-date»»···
 #--
 
@@ -263,6 +265,14 @@ class Less_Than (_Filter_) :
 
 # end class Less_Than
 
+class Not_Equal (_Filter_) :
+    """Attribute query filter for in-equality."""
+
+    op_fct        = "__ne__"
+    op_sym        = "!="
+
+# end class Not_Equal
+
 class Starts_With (_String_) :
     """Attribute query for starts-with."""
 
@@ -300,6 +310,11 @@ class Composite_Less_Than (Less_Than, _Composite_) :
 
 # end class Composite_Less_Than
 
+class Composite_Not_Equal (Not_Equal, _Composite_) :
+    """Composite-Attribute query filter for in-equality."""
+
+# end class Composite_Not_Equal
+
 class Date_Auto_Complete (Auto_Complete, _Date_) :
     """Date-Attribute query filter for auto-completion."""
 
@@ -329,6 +344,11 @@ class Date_Less_Than (Less_Than, _Date_) :
     """Date-Attribute query filter for less-equal."""
 
 # end class Date_Less_Than
+
+class Date_Not_Equal (Not_Equal, _Date_) :
+    """Date-Attribute query filter for in-equality."""
+
+# end class Date_Not_Equal
 
 class Id_Entity_Auto_Complete (Auto_Complete, _Id_Entity_) :
     """Id_Entity-Attribute query filter for auto-completion."""
@@ -360,7 +380,32 @@ class Id_Entity_Less_Than (Less_Than, _Id_Entity_) :
 
 # end class Id_Entity_Less_Than
 
-class Ckd (TFL.Meta.Object) :
+class Id_Entity_Not_Equal (Not_Equal, _Id_Entity_) :
+    """Id_Entity-Attribute query filter for in-equality."""
+
+# end class Id_Entity_Not_Equal
+
+class _M_Type_ (TFL.Meta.Object.__class__) :
+    """Meta class for Type classes."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        cls.op_keys = sorted (cls.Table)
+    # end def __init__
+
+    def __str__ (cls) :
+        return "<Attr.Type.Filter %s %s>" % (cls.__name__, cls.op_keys)
+    # end def __str__
+
+# end class _M_Type_
+
+class _Type_ (TFL.Meta.Object) :
+    """Base class for Type classes.
+
+       A Type class provides all filters for a set of Attr.Type classes.
+    """
+
+    __metaclass__ = _M_Type_
 
     Table = dict \
         ( EQ                 = Equal
@@ -368,8 +413,8 @@ class Ckd (TFL.Meta.Object) :
         , GT                 = Greater_Than
         , LE                 = Less_Equal
         , LT                 = Less_Than
+        , NE                 = Not_Equal
         )
-    _AC   = Auto_Complete
 
     def __init__ (self, attr) :
         self.attr = attr
@@ -412,13 +457,19 @@ class Ckd (TFL.Meta.Object) :
     # end def __getattr__
 
     def __str__ (self) :
-        return "<%s.Q [Attr.Filter.%s]>" % \
+        return "<%s.Q [Attr.Type.Filter %s]>" % \
             (self.attr_name, self.__class__.__name__)
     # end def __str__
 
+# end class _Type_
+
+class Ckd (_Type_) :
+
+    _AC   = Auto_Complete
+
 # end class Ckd
 
-class Composite (Ckd) :
+class Composite (_Type_) :
 
     Table = dict \
         ( EQ                 = Composite_Equal
@@ -426,12 +477,13 @@ class Composite (Ckd) :
         , GT                 = Composite_Greater_Than
         , LE                 = Composite_Less_Equal
         , LT                 = Composite_Less_Than
+        , NE                 = Composite_Not_Equal
         )
     _AC   = Composite_Auto_Complete
 
 # end class Composite
 
-class Date (Ckd) :
+class Date (_Type_) :
 
     Table = dict \
         ( EQ                 = Date_Equal
@@ -439,12 +491,13 @@ class Date (Ckd) :
         , GT                 = Date_Greater_Than
         , LE                 = Date_Less_Equal
         , LT                 = Date_Less_Than
+        , NE                 = Date_Not_Equal
         )
     _AC   = Date_Auto_Complete
 
 # end class Date
 
-class Id_Entity (Ckd) :
+class Id_Entity (_Type_) :
 
     Table = dict \
         ( EQ                 = Id_Entity_Equal
@@ -452,12 +505,13 @@ class Id_Entity (Ckd) :
         , GT                 = Id_Entity_Greater_Than
         , LE                 = Id_Entity_Less_Equal
         , LT                 = Id_Entity_Less_Than
+        , NE                 = Id_Entity_Not_Equal
         )
     _AC   = Id_Entity_Auto_Complete
 
 # end class Id_Entity
 
-class String (Ckd) :
+class String (_Type_) :
 
     Table = dict \
         ( Ckd.Table

@@ -104,19 +104,18 @@ style_sheet = Style_Sheet \
             [ Rule
                 ( "button"
                 , background_color = P.nav_col.background_color
-                , border           = P.border_simple
+                , border           = P.border_button
                 , border_width     = Px (1)
-                , margin           = 0
+                , float            = "right"
+                , margin           = TRBL0 (t = Em (0.5), l = Em (0.2))
+                , text_align       = "center"
                 , children         =
-                    [ Rule_Attr
-                        ( "[type=submit]"
-                        , Border       = P.border_button
-                        , float        = "right"
-                        , margin       = TRBL0 (t = Em (0.5), l = Em (1))
-                        , text_align   = "center"
-                        , ** Border (radius = Px (10))
+                    [ Rule_Class
+                        ( "disabled"
+                        , background_color = P.color_light_grey
                         )
                     ]
+                , ** Border (radius = Px (10))
                 )
             , Rule
                 ( "input"
@@ -239,6 +238,8 @@ JS_On_Ready \
             ({ icons : { primary : "ui-icon-arrowthick-1-w" }, text : false });
          $("button[name=APPLY]").button
             ({ icons : { primary : "ui-icon-check" }, text : false });
+         $("button[name=ADD]").button
+            ({ icons : { primary : "ui-icon-plusthick" }, text : false });
       """
     , rank = 100
     )
