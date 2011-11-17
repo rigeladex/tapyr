@@ -42,6 +42,9 @@
 #    11-Mar-2011 (CT) `edit_session_ttl` and `user_session_ttl` added to
 #                     `default_settings`
 #    21-Jun-2011 (MG) `reload_extra_files` added
+#    17-Nov-2011 (MG) `run_development_server`: patch
+#                     `werkzeug.serving.make_server` to run
+#                     `GTW.NAV.Root.top.Run_on_Launch`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +67,7 @@ from    werkzeug.wrappers import BaseRequest, BaseResponse
 import  datetime
 import  re
 import  warnings
+
 
 class _Werkzeug_Application_ (GTW._Application_) :
     """A WSGI Application"""
@@ -122,6 +126,20 @@ class _Werkzeug_Application_ (GTW._Application_) :
                                , reload_extra_files   = None
                                ) :
         from werkzeug import run_simple
+        from werkzeug import serving
+        make_server = serving.make_server
+        def _make_server (* msargs, ** mskw) :
+            try :
+                from _GTW._NAV.Base import Root
+            except ImportError :
+                pass
+            else :
+                while Root.top.Run_on_Launch :
+                    fct, args = Root.top.Run_on_Launch.pop (0)
+                    fct (args)
+            return make_server (* msargs, ** mskw)
+        # end def _make_server
+        serving.make_server = _make_server
         app = self
         use_debugger = self._server_opts.get ("debug",       False)
         use_reloader = self._server_opts.get ("auto_reload", False)

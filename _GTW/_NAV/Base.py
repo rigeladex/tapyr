@@ -261,6 +261,7 @@
 #                     `P_Media` added
 #    14-Nov-2011 (CT) Add `q_href`, `q_prefix`, and `qx_prefix`
 #                     (factored from `GTW.NAV.Calendar`)
+#    17-Nov-2011 (MG) `Root.Run_on_Launch` added
 #    ««revision-date»»···
 #--
 
@@ -1107,6 +1108,7 @@ class Root (_Dir_) :
 
     auto_delegate           = False  ### useful if not served by web-app
     Cache_Pickler           = set ()
+    Run_on_Launch           = []
     copyright_start         = None
     copyright_url           = None
     CSS_Parameters          = None
