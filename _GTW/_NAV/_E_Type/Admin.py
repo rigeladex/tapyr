@@ -123,8 +123,15 @@
 #    10-Oct-2011 (CT) Old-style form handling removed
 #    13-Oct-2011 (CT) `_check_readonly` factored
 #    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
+#     8-Nov-2011 (CT) Factor `field_element` and guard it against `KeyError`
+#    14-Nov-2011 (CT) Add support for `query_restriction`
+#    16-Nov-2011 (CT) Change `render` to always `LET` `query_restriction`
+#    16-Nov-2011 (CT) Add property `head_line`
+#    17-Nov-2011 (CT) Change `head_line` to provide `total_f` and `total_u`
 #    ««revision-date»»···
 #--
+
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -139,6 +146,7 @@ import _GTW.jQuery
 
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
+from   _GTW._NAV._E_Type.Query_Restriction import Query_Restriction as QR
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -181,6 +189,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             if pid is not None :
                 return ETM.pid_query (pid)
         # end def obj
+
+        def field_element (self, form, fid) :
+            try :
+                return form  [fid]
+            except KeyError :
+                error = _T ("Form corrupted, unknown element id %s" % (fid, ))
+                raise JSON_Error (error  = error)
+        # end def field_element
 
         def form (self, obj = None, ** kw) :
             if obj is None :
@@ -392,8 +408,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             scope     = self.top.scope
             try :
                 session_secret = self.session_secret (handler, json.sid)
-                form, elem     = self.form_element (json.fid)
-                field          = form  [json.trigger]
+                form, elem     = self.form_element   (json.fid)
+                field          = self.field_element  (form, json.trigger)
                 ETM            = scope [elem.type_name]
                 E_Type         = ETM.E_Type
                 if json.complete_entity :
@@ -450,8 +466,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             result    = dict (matches = [], partial = False)
             scope     = self.top.scope
             try :
-                form, elem   = self.form_element (json.fid)
-                field        = form  [json.trigger]
+                form, elem   = self.form_element  (json.fid)
+                field        = self.field_element (form, json.trigger)
                 ETM          = scope [elem.type_name]
                 E_Type       = ETM.E_Type
                 attr         = getattr (E_Type, field.name)
@@ -743,10 +759,24 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             raise
     # end def Form
 
-    @Once_Property
-    def manager (self) :
-        return self.etype_manager (self.E_Type)
-    # end def manager
+    @property
+    def head_line (self) :
+        co      = getattr (self, "query_size", None)
+        if co is None :
+            co  = self.count
+        qr      = self.query_restriction
+        tail    = "%s" % (co, )
+        if qr :
+            cf  = qr.total_f
+            cu  = qr.total_u
+            sep = "/"
+            if cf and cf != co :
+                tail = "%s%s%s" % (tail, sep, cf)
+                sep  = "//"
+            if cu and cu != cf :
+                tail = "%s%s%s" % (tail, sep, cu)
+        return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), tail)
+    # end def head_line
 
     @Once_Property
     def href (self) :
@@ -797,16 +827,28 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return self._auto_list_display (self.ETM)
         etype = self.ETM.E_Type
         return tuple \
-                (self._attr_kind (etype, a) for a in self._list_display)
+            (self._attr_kind (etype, a) for a in self._list_display)
     # end def list_display
 
+    @Once_Property
+    def manager (self) :
+        return self.etype_manager (self.E_Type)
+    # end def manager
+
     def rendered (self, handler, template = None) :
-        objects = self._get_entries ()
-        handler.context.update \
-            ( fields  = self.list_display
-            , objects = objects
-            )
-        return self.__super.rendered (handler, template)
+        def _ (self, handler, template, objects) :
+            handler.context.update \
+                ( fields            = self.list_display
+                , objects           = objects
+                , query_restriction = self.query_restriction
+                )
+            return self.__super.rendered (handler, template)
+        qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
+        with self.LET (query_restriction = qr) :
+            os = self._get_objects () if qr else self._get_entries ()
+            with self.LET (query_size = len (os)) :
+                result = _ (self, handler, template, os)
+            return result
     # end def rendered
 
     def _attr_kind (self, etype, name) :

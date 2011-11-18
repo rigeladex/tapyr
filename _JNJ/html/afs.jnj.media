@@ -34,6 +34,8 @@
 #    27-Jul-2011 (CT) Rules for ".ui-autocomplete .ui-menu-item" added
 #    23-Sep-2011 (CT) Nowrap for `a` in `.ui-menu-item` added
 #    14-Oct-2011 (CT) `.cmd-menu` added
+#    25-Oct-2011 (CT) `hover` child added to `a.drop` rule
+#     4-Nov-2011 (CT) Add rule for `input.Long` and `input.Very-Long`
 #    ««revision-date»»···
 #--
 
@@ -125,6 +127,13 @@ style_sheet = Style_Sheet \
                                     (l = Em (0.5), b = Em (0.15))
                                 , width       = 0
                                 )
+                            , Rule_Pseudo
+                                ( "hover i"
+                                , border_color = TRBL0
+                                    ( default    = "transparent"
+                                    , t          = "red"
+                                    )
+                                )
                             ]
                         )
                     ]
@@ -192,6 +201,15 @@ style_sheet = Style_Sheet \
                                 ( "[readonly]"
                                 , P.afs.border_spec_readonly
                                 , P.afs.color_spec_readonly
+                                )
+                            ]
+                        )
+                    , Rule
+                        ( "input"
+                        , children      =
+                            [ Rule_Class
+                                ( "Long", "Very-Long"
+                                , width = Percent (99)
                                 )
                             ]
                         )

@@ -57,6 +57,16 @@
 //    18-Oct-2011 (CT) `_setup_cmd_menu` continued
 //    20-Oct-2011 (CT) `_setup_cmd_menu` continued, support for buttons removed
 //    20-Oct-2011 (CT) Guard for `response.json` added to `_response_replace`
+//    21-Oct-2011 (CT) `hide_cb` added to `_setup_cmd_menu`
+//    25-Oct-2011 (CT) Guard for `_clear_value` added to `_clear_field`
+//    25-Oct-2011 (CT) `_cmds` changed to map spaces to underscores
+//    25-Oct-2011 (CT) `_response_replace` guarded and added `_setup_callbacks`
+//    25-Oct-2011 (CT) Callback names changed from lower to capitalized,
+//                     s/Clear/Clear fields/
+//     7-Nov-2011 (CT) Factor `_trigger_completion`, `focus` if `treshold == 0`
+//     8-Nov-2011 (CT) Use `elem.anchor_id || elem.root_id` to fix top-level
+//                     completion
+//    17-Nov-2011 (CT) Use `console.error` instead of `alert` (most situations)
 //    ««revision-date»»···
 //--
 
@@ -134,7 +144,11 @@
                     ( { async         : true
                       , data          : data
                       , success       : function (answer, status, xhr_i) {
-                            _get_cb (options, elem, val, cb, answer);
+                              if (! answer ["error"]) {
+                                  _get_cb (options, elem, val, cb, answer);
+                              } else {
+                                  console.error ("Ajax error", answer, data);
+                              };
                         }
                       , url           : options.completer_url
                       }
@@ -204,11 +218,7 @@
                 if (response.partial) {
                     _update_field_values (options, elem, match, names);
                     setTimeout
-                        ( function () {
-                            elem.inp$.autocomplete ("search");
-                          }
-                        , 1
-                        );
+                        (function () { _trigger_completion  (elem); }, 1);
                 } else if (completer ["entity_p"]) {
                     if (! elem.completer.embedded_p) {
                         _update_field_values (options, elem, match, names);
@@ -238,7 +248,7 @@
                 var anchor, s$;
                 if (response.completions > 0) {
                     if ((response.completions == 1) && entity_p) {
-                        anchor = $AFS_E.get (elem.anchor_id);
+                        anchor = $AFS_E.get (elem.anchor_id || elem.root_id);
                         s$ = $("[id='" + response.json.$id + "']");
                         s$ = _response_replace (response, s$, anchor);
                         _setup_callbacks (s$);
@@ -248,10 +258,13 @@
                     };
                 };
             };
+            var _trigger_completion = function _trigger_completion (elem) {
+                elem.inp$.autocomplete ("search");
+            };
             var _update_entity_init = function _update_entity_init
                     (options, elem, match, names) {
                 var field, id;
-                var anchor = $AFS_E.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id || elem.root_id];
                 var map    = anchor.field_name_map;
                 for (var i = 0, li = names.length, name; i < li; i++) {
                     name = names [i];
@@ -267,7 +280,7 @@
             var _update_field_values = function _update_field_values
                     (options, elem, match, names) {
                 var field, id;
-                var anchor = $AFS_E.id_map [elem.anchor_id];
+                var anchor = $AFS_E.id_map [elem.anchor_id || elem.root_id];
                 var map    = anchor.field_name_map;
                 for (var i = 0, li = names.length, name; i < li; i++) {
                     name = names [i];
@@ -310,6 +323,15 @@
                         , "html"
                         );
                 };
+                if (completer.treshold === 0) {
+                    elem.inp$.focus
+                        ( function (ev)
+                            { if (elem.inp$.val () === "") {
+                                  _trigger_completion (elem);
+                              };
+                            }
+                        );
+                };
             };
         } ();
         var _bind_click = function _bind_click (context) {
@@ -326,7 +348,9 @@
                 elem.inp$.val ("");
             }
             if (value) {
-                elem._clear_value ();
+                if ("_clear_value" in elem) {
+                    elem._clear_value ();
+                };
                 if ("$child_ids" in value) {
                     for (var i = 0, li = value.$child_ids.length, child_id
                         ; i < li
@@ -342,12 +366,13 @@
             };
         };
         var _cmds = function _cmds () {
-            var map = options.menu_cmds, result = [];
+            var key, map = options.menu_cmds, result = [];
             for (var i = 0, li = arguments.length, name; i < li; i++) {
                 name = arguments [i];
+                key  = name.replace (/ /g, "_");
                 if (name in map) {
                     result.push
-                        ( { callback : callback [name]
+                        ( { callback : callback [key]
                           , label    : map      [name]
                           , name     : name
                           }
@@ -384,7 +409,7 @@
                         );
                     _setup_callbacks (s$);
                 } else {
-                    alert ("Error: " + response.error);
+                    console.error ("Ajax Error", response);
                 }
             }
         };
@@ -396,8 +421,8 @@
                     .unwrap ();
             if ("json" in response) {
                 new_elem = $AFS_E.create (response.json);
-                anchor   = $AFS_E.get (elem.anchor_id);
-                root     = $AFS_E.get (elem.root_id || anchor.root_id);
+                anchor   = $AFS_E.get (elem.anchor_id || elem.root_id);
+                root     = $AFS_E.get (elem.root_id   || anchor.root_id);
                 new_elem.setup_value
                     ( { anchor : anchor
                       , root   : root || anchor
@@ -405,8 +430,12 @@
                       }
                     );
                 anchor.value [new_elem.$id] = new_elem.value;
+                _setup_callbacks (s$);
             } else {
-                delete anchor.value [elem.$id];
+                anchor = $AFS_E.get (elem.anchor_id);
+                if (anchor) {
+                    delete anchor.value [elem.$id];
+                };
             };
             return s$;
         };
@@ -437,7 +466,8 @@
             var source = cmd_menu [elem.type] (elem);
             var cmd    = source [0];
             var cb     = callback [cmd.name];
-            var menu, drop_butt;
+            var menu, drop_butt, hide_cb;
+            cmc$.html ("");
             $("<a class=\"default button\">")
                 .append   (cmd.label)
                 .appendTo (cmc$)
@@ -472,6 +502,18 @@
                           };
                         }
                       );
+                hide_cb = function hide_cb (ev) {
+                    var menu = drop_butt.menu, tc;
+                    if (menu.element.is (":visible")) {
+                        tc = $(ev.target).closest (".cmd-menu");
+                        if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
+                            menu.element.hide ();
+                        };
+                    };
+                };
+                $(document)
+                    .bind ("click.menuhide", hide_cb)
+                    .bind ("keyup.menuhide", hide_cb);
                 for (var i = 1, li = source.length, cmdi; i < li; i++) {
                     ( function () {
                         var cmdi = source [i];
@@ -508,7 +550,7 @@
             };
         };
         var callback =
-            { add                       : function add_cb (p$, parent, id, ev) {
+            { Add                       : function add_cb (p$, parent, id, ev) {
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
                       ( options.expander_url
@@ -521,7 +563,7 @@
                           { _response_append (response, txt_status, p$, parent); }
                       );
               }
-            , cancel                    : function cancel_cb (s$, elem, id, ev) {
+            , Cancel                    : function cancel_cb (s$, elem, id, ev) {
                   var value  = elem ["value"];
                   var pid    = value && value.edit.pid;
                   if (pid != undefined) {
@@ -539,7 +581,7 @@
                                         s$ = _response_replace
                                             (response, s$, elem);
                                     } else {
-                                        alert ("Error: " + response.error);
+                                        console.error ("Ajax Error", response);
                                     }
                                 }
                             }
@@ -549,14 +591,14 @@
                       s$.remove   ();
                   };
               }
-            , clear                     : function clear_cb (s$, elem, id, ev) {
+            , Clear_fields              : function clear_cb (s$, elem, id, ev) {
                   _clear_field (elem);
                   $.getJSON
                       ( options.expander_url
-                      , { fid       : id
-                        , pid       : null
-                        , sid       : $AFS_E.root.value.sid
-                        , allow_new : elem.allow_new
+                      , { fid           : id
+                        , pid           : null
+                        , sid           : $AFS_E.root.value.sid
+                        , allow_new     : elem.allow_new
                         }
                       , function (response, txt_status) {
                             if (txt_status == "success") {
@@ -564,13 +606,13 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    alert ("Error: " + response.error);
+                                    console.error ("Ajax Error", response);
                                 }
                             }
                         }
                       );
               }
-            , copy                      : function copy_cb (s$, elem, id, ev) {
+            , Copy                      : function copy_cb (s$, elem, id, ev) {
                   var p$        = s$.parent  ();
                   var value     = elem ["value"];
                   var pid       = value && value.edit.pid;
@@ -589,7 +631,7 @@
                           { _response_append (response, txt_status, p$, elem); }
                       );
               }
-            , delete                    : function delete_cb (s$, elem, id, ev) {
+            , Delete                    : function delete_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
                   if (pid !== undefined && pid !== "") {
@@ -605,14 +647,14 @@
                                       s$ = _response_replace (response, s$, elem);
                                       _setup_callbacks (s$);
                                   } else {
-                                      alert ("Error: " + response.error);
+                                      console.error ("Ajax Error", response);
                                   };
                               }
                             }
                           );
                   };
               }
-            , edit                      : function edit_cb (s$, elem, id, ev) {
+            , Edit                      : function edit_cb (s$, elem, id, ev) {
                   // used to be // var s$    = b$.closest ("section.closed");
                   // XXX was the `.closed` necessary ???
                   var value = elem ["value"];
@@ -630,13 +672,13 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    alert ("Error: " + response.error);
+                                    console.error ("Ajax Error", response);
                                 }
                             }
                         }
                       );
               }
-            , save                      : function save_cb (s$, elem, id, ev) {
+            , Save                      : function save_cb (s$, elem, id, ev) {
                   var pvs    = $AFS_E.root.packed_values (elem);
                   var json_data =
                         { cargo       : pvs
@@ -652,7 +694,8 @@
                                   if (answer ["conflicts"]) {
                                       // XXX
                                       alert ( "Conflicts: \n"
-                                            + $GTW.inspect.show (answer.conflicts)
+                                            + $GTW.inspect.show
+                                                (answer.conflicts)
                                             );
                                   } else if (answer ["expired"]) {
                                       // XXX display re-authorization form
@@ -663,18 +706,13 @@
                                           s$ = _response_replace (response, s$, elem);
                                           _setup_callbacks (s$);
                                       } else {
-                                          alert
-                                              ( "Save missing response: \n"
-                                              + $GTW.inspect.show (answer)
-                                              );
+                                          console.error
+                                              ("Save missing response", answer);
                                       }
                                   }
                               } else {
-                                  alert
-                                      ( "Error: " + answer.error
-                                      + "\n\n"
-                                      + $GTW.inspect.show (json_data)
-                                      );
+                                  console.error
+                                      ("Save error", answer, json_data);
                               }
                           }
                         }
@@ -703,34 +741,34 @@
 
         var cmd_menu =
             { Entity                    : function cmd_menu_entity (elem) {
-                  return _cmds ("save", "clear");
+                  return _cmds ("Save", "Delete");
               }
             , Entity_Link               : function cmd_menu_entity_link (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push ("edit", "copy");
+                      names.push ("Edit", "Copy");
                   } else {
-                      names.push ("save", "cancel", "clear");
+                      names.push ("Save", "Cancel", "Clear fields");
                   };
                   if (elem.value.edit.pid) {
-                      names.push ("delete");
+                      names.push ("Delete");
                   }
                   return _cmds.apply (null, names);
               }
             , Entity_List               : function cmd_menu_entity_list (elem) {
-                  return _cmds ("add");
+                  return _cmds ("Add");
               }
             , Field_Composite           : function cmd_menu_entity_list (elem) {
-                  return _cmds ("clear");
+                  return _cmds ("Clear fields");
               }
             , Field_Entity              : function cmd_menu_field_entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push ("edit");
+                      names.push ("Edit");
                   } else {
-                      names.push ("save", "cancel");
+                      names.push ("Save", "Cancel");
                   };
-                  var names = ["clear"];
+                  names.push ("Clear fields");
                   return _cmds.apply (null, names);
               }
             };

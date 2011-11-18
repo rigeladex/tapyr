@@ -149,6 +149,9 @@ _test_code = """
     >>> PAP.Person.query_s (Q.RAW.last_name.STARTSWITH ("Ta")).all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
 
+    >>> PAP.Person.query ().order_by (TFL.Sorted_By ("-first_name")).count ()
+    5
+
     >>> scope.destroy ()
 
 """

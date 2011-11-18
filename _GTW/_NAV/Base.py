@@ -253,11 +253,15 @@
 #                     then `obj`
 #     2-May-2011 (CT) `_raise_401` and `_raise_403` factored
 #    27-May-2011 (CT) `valid_methods` passed to `HTTP.Error_405`
+#    15-Jun-2011 (CT) `_Page_O_.__getattr__` robustified
 #    27-Sep-2011 (MG) `children` and `children_transitive` added
 #                     `_setup_afs` moved in here, `store_css` renamed to
 #                     `store_media`
 #    27-Sep-2011 (MG) `store_cache`: use `TFL.Context.time_block`
 #                     `P_Media` added
+#    14-Nov-2011 (CT) Add `q_href`, `q_prefix`, and `qx_prefix`
+#                     (factored from `GTW.NAV.Calendar`)
+#    17-Nov-2011 (MG) `Root.Run_on_Launch` added
 #    ««revision-date»»···
 #--
 
@@ -335,18 +339,20 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
-    title                      = ""
+    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
     hidden                     = False
     href                       = ""
+    implicit                   = False
     input_encoding             = "iso-8859-15"
     nick                       = ""
+    parent                     = None
     pid                        = None
+    q_prefix                   = "q"
+    qx_prefix                  = "qx"
     rank                       = 10
     short_title                = ""
+    title                      = ""
     top                        = None
-    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
-    implicit                   = False
-    parent                     = None
 
     _dump_type                 = "dict"
     _template                  = None
@@ -573,6 +579,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
             ((self.template, ) + tuple (self.injected_templates))
         return result
     # end def P_Media
+
+    @property
+    def q_href (self) :
+        return pjoin (self.abs_href, self.q_prefix)
+    # end def q_href
 
     def relative_to (self, url, href = None) :
         href          = href or self.href
@@ -1097,6 +1108,7 @@ class Root (_Dir_) :
 
     auto_delegate           = False  ### useful if not served by web-app
     Cache_Pickler           = set ()
+    Run_on_Launch           = []
     copyright_start         = None
     copyright_url           = None
     CSS_Parameters          = None
@@ -1327,13 +1339,12 @@ class Root (_Dir_) :
                 pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
         # end def _create
         if self.DEBUG :
-            fmt = "*** Media cache rebuit in %ss"
+            fmt = "*** Media cache %s rebuilt in %%ss" % (cache_file)
             with TFL.Context.time_block (fmt) :
                 _create (cache_file)
         else :
             _create (cache_file)
     # end def store_cache
-    store_css = store_cache ### XXX remove me
 
 # end class Root
 

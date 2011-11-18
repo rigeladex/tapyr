@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -32,8 +32,11 @@
 #    22-Mar-2010 (CT) `Object_PN` added (factored from `SWP.Page`)
 #     6-Sep-2010 (CT) `perma_name.max_length` set to `80` (bad MySQL)
 #    13-Oct-2010 (CT) `creator` removed
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM          import *
 from   _MOM._Attr.Date_Interval import *

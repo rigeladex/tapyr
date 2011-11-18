@@ -32,8 +32,11 @@
 #     6-Apr-2011 (MG) `distance` calculation moved into TFL.Sphere
 #    19-May-2011 (CT) Description for `lat` and `lon` improved
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _TFL                  import TFL
 from   _MOM                  import MOM

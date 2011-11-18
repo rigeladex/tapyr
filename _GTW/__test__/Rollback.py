@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -30,7 +30,7 @@
 #    ««revision-date»»···
 #--
 
-test_code = r"""
+simple = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
@@ -43,9 +43,27 @@ test_code = r"""
     >>> scope.rollback ()
 """
 
+create = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> PAP = scope.PAP
+    >>> per = PAP.Person                   ("ln", "fn")
+    >>> scope.commit                       ()
+    >>> p   = PAP.Person                   ("ln", "fn1")
+    >>> per = PAP.Person                   ("ln", "fn")
+    Traceback (most recent call last):
+    ...
+    Name_Clash: new definition of (u'ln', u'fn', u'', u'') clashes with existing (u'ln', u'fn', u'', u'')
+
+"""
 from   _GTW.__test__.model                      import *
 import  datetime
 
-__test__ = Scaffold.create_test_dict (test_code)
+__test__ = Scaffold.create_test_dict \
+    ( dict ( simple = simple
+           , create = create
+           )
+    )
 
 ### __END__ GTW.__test__.Rename

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -28,8 +28,11 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #     3-Feb-2010 (MG) `is_partial` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW

@@ -36,6 +36,8 @@
 #    15-Sep-2011 (CT) `Completer.__init__` changed to save `spec`
 #    20-Sep-2011 (CT) `all_names` and `dependents` removed
 #    20-Sep-2011 (CT) `C_Completer` and `E_Completer` (plus their `_Spec`) added
+#     7-Nov-2011 (CT) Change `Completer.__call__` to query results for
+#                     `treshold == 0` without `fs`
 #    ««revision-date»»···
 #--
 
@@ -78,7 +80,7 @@ class Completer (TFL.Meta.Object) :
         ETM    = scope [self.etn]
         vd     = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
         fs     = tuple (ETM.ac_query_attrs (self.names, vd))
-        if fs :
+        if fs or self.treshold == 0 :
             return ETM.query_s (* fs).distinct ()
         return TFL.Q_Result (())
     # end def __call__

@@ -27,7 +27,7 @@
 ##    Provide macros for common media fragments (e.g.: link style sheets, ...)
 ##
 ## Revision Dates
-##    27-Sep-2011 (MG) Creation
+##    27-Sep-2011 (MG) Creation (factored from `base.jnj`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -45,7 +45,6 @@
 
 {%- macro permalink (page) -%}
   <link rel="canonical" href="{{- page.permalink -}}"/>
-  <meta name="href" content="{{- page.abs_href -}}"/>
 {%- endmacro -%} {#- permalink -#}
 
 {%- macro inline_CSS (CSS) -%}

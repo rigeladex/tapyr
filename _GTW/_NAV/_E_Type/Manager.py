@@ -63,6 +63,7 @@
 #                     `Link_Manager` started
 #    11-May-2011 (MG) `Link_Manager` continued
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
+#    14-Nov-2011 (CT) Use `__super.query` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -209,7 +210,7 @@ class Manager_T (Manager) :
     query_limit       = 7
 
     def query (self) :
-        result = self.ETM.query (* self.query_filters, sort_key = self.sort_key)
+        result = self.__super.query ()
         if self.query_limit :
             result = result.limit (self.query_limit)
         return result
@@ -381,13 +382,12 @@ class Link_Manager (Manager) :
             )
     # end def __init__
 
-    def query (self) :
-        return self.ETM.query_s \
-            ( * self.query_filters
-            , sort_key = self.sort_key
-            , ** {self.role : self.obj}
-            )
-    # end def query
+    @Once_Property
+    def query_filters (self) :
+        result = list (self.__super.query_filters)
+        result.append (getattr (Q, self.role) == self.obj)
+        return tuple  (result)
+    # end def query_filters
 
 # end class Link_Manager
 

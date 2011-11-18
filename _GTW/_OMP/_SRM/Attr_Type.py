@@ -33,8 +33,11 @@
 #     6-Sep-2010 (CT) `Race_Result` removed (now implemented as `Link1`)
 #    13-Oct-2010 (CT) `example` added
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *

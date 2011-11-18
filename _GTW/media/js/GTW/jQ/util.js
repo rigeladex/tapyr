@@ -26,10 +26,9 @@
             ( { async       : false                  // defaults settings
               , error       : function
                 (xhr_instance, status, exc) {
-                    alert
+                    console.error
                         ( (name || "Ajax request") + " failed: "
-                        + status + " " + exc + "\n\n"
-                        + $GTW.inspect.show (opts.data)
+                        , status, exc, opts.data
                         );
                 }
               , timeout     : 30000

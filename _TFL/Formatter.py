@@ -33,6 +33,9 @@
 #                     single-element structures
 #    28-Feb-2011 (CT) More output compaction (`nl_r`)
 #    28-Feb-2011 (CT) `_repr` added and used to remove leading `u` from strings
+#    25-Oct-2011 (CT) `_repr` changed to chop off trailing the `L` from longs
+#    18-Nov-2011 (CT) Add optional argument `sep`
+#    18-Nov-2011 (CT) Add formatting of `TFL.Record`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +44,7 @@ from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.Generators
+import _TFL.Record
 
 from   itertools import chain as ichain
 
@@ -49,6 +53,7 @@ class Formatter (TFL.Meta.Object) :
        string.
 
     >>> thing = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, 137)}]
+    >>> thinl = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, long (137))}]
     >>> print formatted (thing)
     [ 'abc'
     , 'dfg'
@@ -60,6 +65,23 @@ class Formatter (TFL.Meta.Object) :
       , 2 : 'xyz'
       }
     ]
+    >>> print formatted_1 (thing)
+    ['abc', 'dfg', {0 : (42, 137), 1 : 'abc', 2 : 'xyz'}]
+
+    >>> print formatted (thinl)
+    [ 'abc'
+    , 'dfg'
+    , { 0 :
+          ( 42
+          , 137
+          )
+      , 1 : 'abc'
+      , 2 : 'xyz'
+      }
+    ]
+    >>> print formatted_1 (thinl)
+    ['abc', 'dfg', {0 : (42, 137), 1 : 'abc', 2 : 'xyz'}]
+
     >>> thing.append (thing)
     >>> print formatted (thing)
     [ 'abc'
@@ -73,15 +95,43 @@ class Formatter (TFL.Meta.Object) :
       }
     , <Recursion on list...>
     ]
+    >>> print formatted_1 (thing)
+    ['abc', 'dfg', {0 : (42, 137), 1 : 'abc', 2 : 'xyz'}, <Recursion on list...>]
+
+    >>> thinr = TFL.Record (foo = 42, bar = u"wrzl", baz = "MadamImadam")
+    >>> print formatted (thinr)
+    Record
+    ( bar = 'wrzl'
+    , baz = 'MadamImadam'
+    , foo = 42
+    )
+    >>> print formatted_1 (thinr)
+    Record (bar = 'wrzl', baz = 'MadamImadam', foo = 42)
+
+    >>> thinq = ["abc", "dfg", { 1 : "yxz" }, thinr]
+    >>> print formatted (thinq)
+    [ 'abc'
+    , 'dfg'
+    , { 1 : 'yxz' }
+    , Record
+      ( bar = 'wrzl'
+      , baz = 'MadamImadam'
+      , foo = 42
+      )
+    ]
+    >>> print formatted_1 (thinq)
+    ['abc', 'dfg', {1 : 'yxz'}, Record (bar = 'wrzl', baz = 'MadamImadam', foo = 42)]
+
     """
 
-    def __init__ (self, indent = 2, width = 80) :
+    def __init__ (self, indent = 2, width = 80, sep = "\n") :
         self.indent = indent
         self.width  = width
+        self.sep    = sep
     # end def __init__
 
     def __call__ (self, thing, level = 0, seen = None, leader = "") :
-        return "\n".join (self.format_iter (thing, level, seen, leader))
+        return self.sep.join (self.format_iter (thing, level, seen, leader))
     # end def __call__
 
     def format_iter (self, thing, level = 0, seen = None, leader = "", nl_r = False) :
@@ -107,6 +157,8 @@ class Formatter (TFL.Meta.Object) :
         a = ()
         if isinstance (thing, dict) :
             f = self._format_dict
+        elif isinstance (thing, TFL.Record) :
+            f = self._format_record
         elif isinstance (thing, list) :
             f = self._format_list
             a = "[", "]"
@@ -149,7 +201,10 @@ class Formatter (TFL.Meta.Object) :
         sep = open
         if thing :
             head = leader
-            tail = clos if len (thing) == 1 else ""
+            if len (thing) == 1 :
+                tail = clos if clos != ")" else ",)"
+            else :
+                tail = ""
             for v in thing :
                 vl = "%s%s " % (ws, sep)
                 it = TFL.Look_Ahead_Gen \
@@ -161,8 +216,8 @@ class Formatter (TFL.Meta.Object) :
                     elif head :
                         yield head.rstrip ()
                         head = ""
-                    tail = ""
                     yield l
+                    tail = ""
                 sep = ","
             yield "%s%s" % (ws, clos)
         else :
@@ -173,18 +228,57 @@ class Formatter (TFL.Meta.Object) :
         yield "%s%s" % (leader, self._repr (thing))
     # end def _format_obj
 
+    def _format_record (self, thing, level, seen, ws, leader) :
+        kw = thing._kw
+        if len (kw) == 1 :
+           for k, v in sorted (kw.iteritems ()) :
+                yield "%sRecord (%s = %s)" % \
+                    (leader or ws, k, formatted_1 (v))
+                break
+        elif kw :
+            head = "%sRecord%s%s" % (leader, self.sep, ws)
+            sep  = "("
+            for k, v in sorted (kw.iteritems ()) :
+                rk = str (k)
+                vl = "%s%s %s = " % (head, sep, rk)
+                for l in self.format_iter (v, level + 2, seen, vl, True) :
+                    yield l
+                head = ws
+                sep  = ","
+            yield "%s)" % (ws, )
+        else :
+            yield "%sRecord ()" % (leader or ws, )
+    # end def _format_record
+
     def _repr (self, thing) :
         result = "%r" % (thing, )
         if result.startswith (("u'", 'u"')) :
             result = result [1:]
+        if isinstance (thing, long) and result.endswith ("L") :
+            result = result [:-1]
         return result
     # end def _repr
-
 
 # end class Formatter
 
 formatted = Formatter ()
 
+_formatted_1 = Formatter (indent = 0, width = 2 << 10, sep = " ")
+
+def formatted_1 (* args, ** kw) :
+    result = \
+        ( _formatted_1 (* args, ** kw)
+            .replace (" ,", ",")
+            .replace ("( ", "(")
+            .replace ("[ ", "[")
+            .replace ("{ ", "{")
+            .replace (" )", ")")
+            .replace (" ]", "]")
+            .replace (" }", "}")
+        )
+    return result
+# end def formatted_1
+
 if __name__ != "__main__" :
-    TFL._Export ("Formatter", "formatted")
+    TFL._Export ("Formatter", "formatted", "formatted_1")
 ### __END__ TFL.Formatter

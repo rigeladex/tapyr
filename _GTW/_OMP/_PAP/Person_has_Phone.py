@@ -30,8 +30,11 @@
 #     3-Feb-2010 (CT) `_Person_has_Property_` factored
 #    19-Feb-2010 (MG) `left.auto_cache` added
 #    28-Feb-2010 (CT) `extension` is a `A_Numeric_String` (instead of `A_Int`)
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW

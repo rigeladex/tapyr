@@ -43,8 +43,12 @@
 #    22-Dec-2010 (CT) `Event_occurs.electric` redefined as `Const` with `True`
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
+#     8-Nov-2011 (CT) Add `calendar`, `left.completer`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Type            import *
@@ -54,6 +58,7 @@ from   _MOM._Attr.Time_Interval   import *
 from   _GTW                       import GTW
 
 import _GTW._OMP._EVT.Entity
+import _GTW._OMP._EVT.Calendar
 
 from   _TFL.I18N                  import _, _T, _Tn
 
@@ -75,11 +80,12 @@ class Event (_Ancestor_Essence) :
             import _GTW._OMP._SWP.Page
             role_type          = GTW.OMP.SWP.Page
             role_name          = "object"
+            auto_cache         = "events"
 
             ### give `date` and `time` priority for sorting
             sort_rank          = 10
 
-            auto_cache         = "events"
+            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
 
         # end class left
 
@@ -96,6 +102,16 @@ class Event (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
 
         # end class time
+
+        class calendar (A_Id_Entity) :
+            """Calendar to which the event belongs"""
+
+            P_Type             = GTW.OMP.EVT.Calendar
+            kind               = Attr.Primary_Optional
+            completer          = Attr.E_Completer_Spec ()
+            ui_allow_new       = False
+
+        # end class calendar
 
         ### Non-primary attributes
 
@@ -127,6 +143,7 @@ class Event (_Ancestor_Essence) :
         # end class detail
 
         class short_title (A_String) :
+            """Short title (used in navigation)."""
 
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Computed_Mixin, )
@@ -257,7 +274,7 @@ class Event_occurs (_Ancestor_Essence) :
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj :
+                if obj and obj.event :
                     return obj.event.title
             # end def computed
 

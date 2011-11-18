@@ -110,6 +110,15 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#     8-Nov-2011 (CT) Add `M_Entity.change_attribute_default`
+#    15-Nov-2011 (CT) Add `polymorphic_epks` to `_m_create_e_types`
+#    15-Nov-2011 (CT) s/sort_key/sort_key_pm/; s/__sort_key/sort_key/
+#    15-Nov-2011 (CT) Remove `epk_sig` from `sort_key_pm`
+#                     (`Sorted_by` does the right thing now)
+#    15-Nov-2011 (CT) Change default for `sorted_by_epk` from `sort_key_pm`
+#                     to `sort_key`
+#    18-Nov-2011 (CT) Derive `Type_Name_Type` from `unicode`  instead of `str`
+#    18-Nov-2011 (CT) Add `cls.AQ = MOM.Attr.Filter.E_Type_Attr_Query (cls)`
 #    ««revision-date»»···
 #--
 
@@ -131,10 +140,15 @@ import _MOM.E_Type_Manager
 
 import sys
 
-class Type_Name_Type (str) :
+class Type_Name_Type (unicode) :
     """Type used for `type_name`."""
 
-    pass
+    def __repr__ (self) :
+        result = super (Type_Name_Type, self).__repr__ ()
+        if result.startswith (("u'", 'u"')) :
+            result = result [1:]
+        return result
+    # end def __repr__
 
 # end class Type_Name_Type
 
@@ -212,7 +226,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             result = ".".join ((pkg_ns._Package_Namespace__qname, name))
         else :
             result = name
-        return result
+        return unicode (result)
     # end def pns_qualified
 
     def set_default_child (cls, child) :
@@ -223,7 +237,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     def set_ui_name (cls, ui_name) :
         """Sets `ui_name` of `cls`"""
         if not cls.show_package_prefix :
-            cls.ui_name = ui_name
+            cls.ui_name = Type_Name_Type    (ui_name)
         else :
             cls.ui_name = cls.pns_qualified (ui_name)
     # end def set_alias
@@ -240,12 +254,18 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         for s in SX :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
         for t in reversed (app_type._T_Extension) :
-            if getattr (t, "polymorphic_epk", None) :
+            if t.polymorphic_epk :
                 for b in t.__bases__ :
                     if getattr (b, "polymorphic_epk", None) is False :
                         b.polymorphic_epk = True
         for t in app_type._T_Extension :
+            t.polymorphic_epks = t.polymorphic_epk or any \
+                (   pka.P_Type.polymorphic_epks or pka.P_Type.polymorphic_epk
+                for pka in t.primary
+                if  isinstance (pka.attr, MOM.Attr._A_Id_Entity_) and pka.P_Type
+                )
             t._m_setup_sorted_by ()
+        for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
             ### `link_map` that are only available after *all* etypes have
             ### already been created
@@ -283,7 +303,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , M_E_Type      = cls.M_E_Type
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
-            , _real_name    = cls.type_base_name           ### M_Autorename
+            , _real_name    = str (cls.type_base_name)     ### M_Autorename
             , ** kw
             )
     # end def _m_new_e_type_dict
@@ -294,7 +314,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     # end def _m_setup_prop_names
 
     def _set_type_names (cls, base_name) :
-        cls.type_base_name = base_name
+        cls.type_base_name = cls.Type_Name_Type (base_name)
         cls.type_name      = cls.Type_Name_Type (cls.pns_qualified (base_name))
         cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
     # end def _set_type_names
@@ -305,7 +325,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             kind = app_type.name
         else :
             kind = getattr (cls, "_Class_Kind", "unknown")
-        return "<class %r [%s]>" % (cls.type_name, kind)
+        return "<class %r [%s]>" % (str (cls.type_name), kind)
     # end def __repr__
 
 # end class M_E_Mixin
@@ -340,6 +360,21 @@ class M_Entity (M_E_Mixin) :
         cls._m_add_prop (pred, cls._Predicates, verbose, override)
     # end def add_predicate
 
+    def change_attribute_default (cls, name, raw_default = None, default = None) :
+        """Change (raw or cooked) default of attribute with `name`."""
+        attr = getattr (cls._Attributes, name)
+        if raw_default is not None :
+            assert default is None, \
+                ( "Can't specify both raw default and %s "
+                  "and cooked default %s for %s"
+                % (raw_default, default, attr)
+                )
+            attr.raw_default = raw_default
+        else :
+            attr.default     = default
+            attr.raw_default = attr.as_string (default)
+    # end def change_attribute_default
+
     def m_init_etypes (cls) :
         """Initialize bare essential types for all classes in `cls._S_Extension`."""
         if not cls._BET_map :
@@ -368,7 +403,7 @@ class M_Entity (M_E_Mixin) :
         for s in SX :
             tbn = s.type_base_name
             bet = M_E_Mixin \
-                ( "_BET_%s_" % s.type_base_name
+                ( "_BET_%s_" % str (s.type_base_name)
                 , tuple (getattr (b, "__BET", b) for b in s.__bases__)
                 , dict
                     ( app_type            = None
@@ -376,7 +411,7 @@ class M_Entity (M_E_Mixin) :
                     , is_partial          = s.is_partial
                     , PNS                 = s.PNS
                     , show_package_prefix = s.show_package_prefix
-                    , _real_name          = tbn
+                    , _real_name          = str (tbn)
                     , __module__          = s.__module__
                     )
                 )
@@ -612,6 +647,7 @@ class M_E_Type (M_E_Mixin) :
     # end def _m_scope
 
     def _m_setup_attributes (cls, bases, dct) :
+        cls.AQ = MOM.Attr.Filter.E_Type_Attr_Query (cls)
         cls._Attributes = A = cls._Attributes (cls)
         cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict
@@ -713,7 +749,12 @@ class M_E_Type_Id (M_E_Type) :
         return result
     # end def link_map
 
-    def sort_key (cls, sort_key = None) :
+    def sort_key_pm (cls, sort_key = None) :
+        return TFL.Sorted_By \
+            ("relevant_root.type_name", sort_key or cls.sort_key)
+    # end def sort_key_pm
+
+    def sort_key (cls, entity) :
         ###
         ### Using `cls.sorted_by` here fails in Python 3.x for sorting
         ### lists with different link types
@@ -722,19 +763,11 @@ class M_E_Type_Id (M_E_Type) :
         ###     `cls.sorted_by` of their common ancestor doesn't do
         ###     the right thing (TM)
         ###
-        ### `__sort_key` re-evaluates `sorted_by` for each `entity` to be
+        ### `sort_key` re-evaluates `sorted_by` for each `entity` to be
         ### sorted and thus avoids this problem
         ###
-        ### `epk_sig` needs to be included to support subclasses of a
-        ### specific `relevant_root` to extend `epk`
-        ###
-        return TFL.Sorted_By \
-            ("relevant_root.type_name", "epk_sig", sort_key or cls.__sort_key)
-    # end def sort_key
-
-    def __sort_key (cls, entity) :
         return entity.sorted_by (entity)
-    # end def __sort_key
+    # end def sort_key
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
@@ -754,6 +787,7 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_setup_sorted_by (cls) :
         sbs = []
+        sb_default = [cls.sort_key]
         if cls.epk_sig :
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
                 if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
@@ -762,15 +796,15 @@ class M_E_Type_Id (M_E_Type) :
                         sbs.extend \
                             ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
                     else :
-                        ### Class is to abstract: need to use `cls.sort_key`
-                        sbs = [cls.sort_key]
+                        ### Class is too abstract: need to use `cls.sort_key_pm`
+                        sbs = sb_default
                         break
                 elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
                     sbs.extend \
                         ("%s.%s" % (pka.name, x) for x in pka.P_Type.sorted_by)
                 else :
                     sbs.append (pka.name)
-        sb = TFL.Sorted_By (* (sbs or [cls.sort_key]))
+        sb = TFL.Sorted_By (* (sbs or sb_default))
         cls.sorted_by_epk = sb
     # end def _m_setup_sorted_by
 

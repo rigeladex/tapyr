@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2004-2011 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -64,8 +64,4 @@ import _TFL._SDG._C.Typedef
 import _TFL._SDG._C.Var
 import _TFL._SDG._C.While
 
-### backward compatibility
-from Formatted_Stream import Formatted_C_Stream, Formatted_Stream
-C.Formatted_Stream   = Formatted_Stream
-C.Formatted_C_Stream = Formatted_C_Stream
 ### __END__ TFL.SDG.C.import_C

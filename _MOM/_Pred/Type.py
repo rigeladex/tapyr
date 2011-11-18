@@ -38,6 +38,7 @@
 #    11-Mar-2010 (CT) `check_always` removed (was a Bad Idea (tm))
 #    22-Jun-2010 (CT) `is_mandatory` added
 #     8-Feb-2011 (CT) s/Mandatory/Required/
+#     8-Nov-2011 (CT) Factor `Error_Type` and allow `** kw` in `Attribute_Check`
 #    ««revision-date»»···
 #--
 
@@ -242,6 +243,8 @@ class Condition (_Condition_) :
 
     __metaclass__ = MOM.Meta.M_Pred_Type_Condition
 
+    Error_Type    = MOM.Error.Invariant_Error
+
     def _satisfied (self, obj, glob_dict, val_dict) :
         """Checks if `obj' satisfies the invariant.
            `attr_dict' can provide values for `self.attributes'.
@@ -251,11 +254,11 @@ class Condition (_Condition_) :
                 self.error = None
             else :
                 self._add_entities_to_extra_links (val_dict.itervalues ())
-                self.error = MOM.Error.Invariant_Error (obj, self)
+                self.error = self.Error_Type (obj, self)
         except StandardError as exc :
             print "Exception `%s` in evaluation of predicate `%s` for %s" \
                 % (exc, self.name, obj)
-            self.error = MOM.Error.Invariant_Error (obj, self)
+            self.error = self.Error_Type (obj, self)
         return not self.error
     # end def _satisfied
 
@@ -301,6 +304,8 @@ class _Quantifier_ (_Condition_) :
 
     __metaclass__   = MOM.Meta.M_Pred_Type_Quantifier
 
+    Error_Type      = MOM.Error.Quant_Error
+
     attr_code       = None
     """code object for displaying attribute values of violating sequence
        elements.
@@ -320,13 +325,13 @@ class _Quantifier_ (_Condition_) :
             seq = self._q_sequence (obj, gd, val_dict)
         except StandardError as exc :
             self.val_desc ["*** Exception ***"] = repr (exc)
-            self.error = MOM.Error.Quant_Error (obj, self)
+            self.error = self.Error_Type (obj, self)
         else :
             try :
                 res = self._quantified (seq, obj, gd, val_dict)
             except StandardError as exc:
                 self.val_desc ["*** Exception ***"] = str (exc)
-                self.error = MOM.Error.Quant_Error (obj, self)
+                self.error = self.Error_Type (obj, self)
             else :
                 not_none = filter (None, res)
                 if self._is_correct (not_none) :
@@ -339,7 +344,7 @@ class _Quantifier_ (_Condition_) :
                         vs = flattened (violators)
                     self._add_entities_to_extra_links (vs)
                     self._add_entities_to_extra_links (val_dict.itervalues ())
-                    self.error = MOM.Error.Quant_Error \
+                    self.error = self.Error_Type \
                         (obj, self, violators, violator_values)
         return not self.error
     # end def _satisfied
@@ -441,7 +446,7 @@ class U_Quant (_Quantifier_) :
 
 # end class U_Quant
 
-def Attribute_Check (name, attr, assertion, attr_none = ()) :
+def Attribute_Check (name, attr, assertion, attr_none = (), ** kw) :
     attributes = () if attr_none else (attr, )
     try :
         result = MOM.Meta.M_Pred_Type_Condition \
@@ -452,6 +457,7 @@ def Attribute_Check (name, attr, assertion, attr_none = ()) :
                 , attr_none  = attr_none
                 , __doc__    = " "
                     ### Space necessary to avoid inheritance of `Condition.__doc__`
+                , ** kw
                 )
             )
     except Exception :

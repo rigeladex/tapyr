@@ -56,6 +56,9 @@
 #                     Alias added to sub query
 #    27-Jul-2011 (MG) `_Q_Result_Attrs_._clone` added to copy `_from_row`
 #    16-Sep-2011 (MG) `group_by` fixed
+#     9-Nov-2011 (MG) `_joins` handling of new element `outerjoin` added
+#    16-Nov-2011 (MG) Ordering of stacked `order_by` clauses changed
+#    16-Nov-2011 (MG) `count`: drop `_order_by` for counts
 #    ««revision-date»»···
 #--
 
@@ -125,8 +128,8 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def _clone
 
     def count (self) :
-        sa_query = self.sa_query \
-            ([sql.func.count ("*").label ("count")], True, False)
+        columns = [sql.func.count ("*").label ("count")]
+        sa_query = self.sa_query (columns, True, False, False)
         result   = self.session.connection.execute (sa_query)
         count    = result.fetchone ().count
         result.close ()
@@ -173,10 +176,13 @@ class _Q_Result_ (TFL.Meta.Object) :
         if joins :
             sql_join      = sa_query.froms [-1]
             no_joins      = len (joined_tables)
-            for src, dst, cond in reversed (joins) :
+            for src, dst, cond, outerjoin in reversed (joins) :
                 if dst not in joined_tables :
-                    joined_tables.add        (dst)
-                    sql_join = sql_join.join (dst, onclause = cond)
+                    joined_tables.add                 (dst)
+                    if outerjoin :
+                        sql_join = sql_join.outerjoin (dst, onclause = cond)
+                    else :
+                        sql_join = sql_join.join      (dst, onclause = cond)
             if len (joined_tables) > no_joins :
                 sa_query = sa_query.select_from (sql_join)
         return sa_query, joined_tables
@@ -212,7 +218,7 @@ class _Q_Result_ (TFL.Meta.Object) :
             joins               = ()
             order_clause        = (criterion, )
         result._joins   .extend (joins)
-        result._order_by.extend (order_clause)
+        result._order_by.append (order_clause)
         result._columns .extend \
             (getattr (oc, "element", oc) for oc in order_clause)
         return result
@@ -230,14 +236,22 @@ class _Q_Result_ (TFL.Meta.Object) :
         result.close ()
     # end def _query_rows
 
-    def sa_query (self, columns = (), joins = False, cache = True) :
+    def sa_query ( self
+                 , columns = ()
+                 , joins   = False
+                 , cache   = True
+                 , order   = True
+                 ) :
         if columns or self._sa_query is None or cache is False :
             sa_query, joined = self._sql_query (columns, joins)
             sa_query, joined = self._join      (sa_query, self._joins, joined)
             if self._filter :
                 sa_query = sa_query.where (sql.expression.and_ (* self._filter))
-            if self._order_by :
-                sa_query = sa_query.order_by (* self._order_by)
+            if self._order_by and order :
+                order_by = []
+                for x in reversed (self._order_by) :
+                    order_by.extend (x)
+                sa_query = sa_query.order_by (* order_by)
             if self._distinct :
                 sa_query = sa_query.distinct ()
             if self._limit is not None :

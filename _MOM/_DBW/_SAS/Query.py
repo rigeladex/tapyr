@@ -49,6 +49,8 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#     9-Nov-2011 (MG) `Join_Query.__call__`: handling of new `outerjoin`
+#                     element in the `joins` list added
 #    ««revision-date»»···
 #--
 
@@ -298,7 +300,15 @@ class Join_Query (_MOM_Query_) :
         sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
         joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
         joins.append \
-            ((self.source._SA_TABLE, o_SAQ._SA_TABLE, column == o_SAQ.pid))
+            ( ( self.source._SA_TABLE
+              , o_SAQ._SA_TABLE
+              , column == o_SAQ.pid
+              , not isinstance
+                    ( column.mom_kind
+                    , (MOM.Attr.Primary, MOM.Attr.Necessary)
+                    )
+              )
+            )
         return joins, oc
     # end def __call__
 

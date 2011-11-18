@@ -93,6 +93,10 @@
 #     9-Sep-2011 (CT) Property `E_Type` added
 #    21-Sep-2011 (CT) `get_etype_attribute` added and used for `raw_query_attrs`
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#     8-Nov-2011 (CT) Add exception handler to `ac_query_attrs` (for some
+#                     attribute types, partial completions can trigger errors)
+#    11-Nov-2011 (CT) Replace `ac_query` by `Q.AC`
+#    15-Nov-2011 (CT) Change `query_s` and `r_query_s`
 #    ««revision-date»»···
 #--
 
@@ -205,7 +209,12 @@ class Id_Entity (Entity) :
         et = self._etype
         for n in names :
             if n in values :
-                yield getattr (et, n).ac_query (values [n])
+                try :
+                    vq = getattr (et, n).Q.AC (values [n])
+                except (ValueError, TypeError) :
+                    pass
+                else :
+                    yield vq
     # end def ac_query_attrs
 
     def ckd_query_attrs (self, names, values = None) :
@@ -281,12 +290,14 @@ class Id_Entity (Entity) :
 
     def query_s (self, * filters, ** kw) :
         """Return `self.query (* filters, ** kw)`
-           sorted by `Type.sort_key (kw.get ("sort_key"))`.
+           sorted by `kw.get ("sort_key", Type.sort_key)`.
         """
-        sort_key = kw.pop ("sort_key", None)
+        ### Need to use `Q_Result_Composite` because `Type.sort_key` doesn't
+        ### work with some backends (SQL, I am looking at you)
+        Type     = self._etype
+        sort_key = kw.pop ("sort_key", Type.sort_key)
         result   = self.query (* filters, ** kw)
-        result   = self.ems.Q_Result_Composite \
-            ([result], self._etype.sort_key (sort_key))
+        result   = self.ems.Q_Result_Composite ([result], sort_key)
         return result
     # end def query_s
 
@@ -329,7 +340,7 @@ class Object (Id_Entity) :
     def ac_query_auto_split (self, text) :
         result     = []
         et         = self._etype
-        epk_aqc    = [getattr (et, en).ac_query for en in et.epk_sig]
+        epk_aqc    = [getattr (et, en).Q.AC for en in et.epk_sig]
         for epks in et.epk_splitter (text) :
             single_value_queries = []
             for v in epks :
@@ -435,12 +446,14 @@ class Link (Id_Entity) :
 
     def r_query_s (self, * filters, ** kw) :
         """Return `self.r_query (* filters, ** kw)`
-           sorted by `Type.sort_key (kw.get ("sort_key"))`.
+           sorted by `kw.get ("sort_key", Type.sort_key)`.
         """
-        sort_key = kw.pop ("sort_key", None)
+        ### Need to use `Q_Result_Composite` because `Type.sort_key` doesn't
+        ### work with some backends (SQL, I am looking at you)
+        Type     = self._etype
+        sort_key = kw.pop ("sort_key", Type.sort_key)
         result   = self.r_query (* filters, ** kw)
-        result   = self.ems.Q_Result_Composite \
-            ([result], self._etype.sort_key (sort_key))
+        result   = self.ems.Q_Result_Composite ([result], sort_key)
         return result
     # end def r_query_s
 
@@ -460,7 +473,7 @@ class Link (Id_Entity) :
                     (r_query (r.assoc, {r.name : pk}, strict = strict))
         result = self.ems.Q_Result_Composite (queries)
         if sort_key is not None :
-            result = result.order_by (Type.sort_key (sort_key))
+            result = result.order_by (Type.sort_key_pm (sort_key))
         return result
     # end def links_of
 

@@ -33,8 +33,12 @@
 #    30-Apr-2010 (MG) Adapted to new form's
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
+#     7-Nov-2011 (CT) Remove boilerplate from `afs_spec` for Entity_Link `clips`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _TFL                     import TFL
 from   _GTW                     import GTW
@@ -215,15 +219,15 @@ import _GTW._OMP._SWP.Page
 
 GTW.OMP.SWP.Page.GTW.afs_spec = Spec.Entity \
     ( include_links =
-        ( Spec.Entity_Link
+        ( "creator"
+        , Spec.Entity_Link
             ( "events"
             , include_links =
-                ( Spec.Entity_Link("recurrence", include_links = ("rules", ))
+                ( Spec.Entity_Link ("recurrence", include_links = ("rules", ))
                 ,
                 )
             )
-        , "creator"
-        , Spec.Entity_Link ("clips", role_name = "object")
+        , "clips"
         )
     )
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,16 +33,17 @@
 #                     `Filename (name).base`
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    31-Oct-2011 (MG)  imports corrected
 #    ««revision-date»»···
 #--
 
 
 
-from   Filename          import Filename
+from   _TFL.Filename     import Filename
 from   _TFL              import TFL
 import _TFL._SDG._C._Scope_
 import _TFL._SDG._C.Comment
-import time
+import  time
 
 class Module (TFL.SDG.C._Scope_) :
     """Models a C module."""

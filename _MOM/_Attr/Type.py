@@ -193,6 +193,11 @@
 #                     `_A_Id_Entity_`
 #    23-Sep-2011 (CT) `needs_raw_value` and `ignore_case` added to `db_sig`
 #    23-Sep-2011 (CT) `_A_Id_Entity_.as_code` robustified
+#     4-Nov-2011 (CT) Redefine `_A_Typed_Collection_.ui_length`
+#     8-Nov-2011 (CT) Change `_checkers` to yield check only, not `(check, ())`
+#    11-Nov-2011 (CT) Factor `MOM.Attr.Filter`, replace `ac_query` by `Q.AC`
+#    16-Nov-2011 (CT) Add `sorted_by` to `_A_Composite_` and `_A_Id_Entity_`
+#    17-Nov-2011 (CT) Add `E_Type`
 #    ««revision-date»»···
 #--
 
@@ -201,6 +206,8 @@ from   __future__            import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+
+from   _MOM._Attr.Filter     import Q
 
 import _MOM._Attr.Coll
 import _MOM._Attr.Completer
@@ -223,111 +230,6 @@ import itertools
 import math
 import time
 
-Q = TFL.Attr_Query ()
-
-class _AC_Query_ (TFL.Meta.Object) :
-
-    def __init__ (self, attr_name, cooker = None) :
-        self.attr_name = attr_name
-        self.cooker    = cooker
-    # end def __init__
-
-    def __call__ (self, value, prefix = None) :
-        cooker = self.cooker
-        if cooker is not None :
-            try :
-                value = cooker (value)
-            except (ValueError, TypeError) :
-                return None
-        return self.query (value, prefix)
-    # end def __call__
-
-    def a_query (self, prefix = None) :
-        name = self.attr_name
-        if prefix :
-            name = ".".join ((prefix, name))
-        return getattr (Q, name)
-    # end def a_query
-
-    def query (self, value, prefix = None) :
-        return self.a_query (prefix).__eq__ (value)
-    # end def query
-
-# end class _AC_Query_
-
-class _AC_Query_C_ (_AC_Query_) :
-
-    def __init__ (self, attr) :
-        self.attr = attr
-    # end def __init__
-
-    @TFL.Meta.Once_Property
-    def attr_name (self) :
-        return self.attr.name
-    # end def attr_name
-
-    def __call__ (self, value, prefix = None) :
-        name   = self.attr.name
-        P_Type = self.attr.P_Type
-        pf     = ".".join ((prefix, name)) if prefix else name
-        qs     = []
-        for k, v in value.iteritems () :
-            qs.append (getattr (P_Type, k).ac_query (v, pf))
-        return Q.AND (* qs)
-    # end def __call__
-
-# end class _AC_Query_C_
-
-class _AC_Query_Date_ (_AC_Query_) :
-
-    pat = Regexp \
-        ( r"^"
-            r"(?P<year> [0-9]{4})"
-            r"(?: [-/]"
-              r"(?P<month> [0-9]{2})"
-            r")?"
-          r"$"
-        , re.VERBOSE
-        )
-
-    def __call__ (self, value, prefix = None) :
-        pat = self.pat
-        if pat.match (value) :
-            q    = self.a_query (prefix)
-            args = (int (pat.year), )
-            if pat.month :
-                args = (int (pat.month, 10), ) + args
-                q    = q.D.MONTH
-            else :
-                q    = q.D.YEAR
-            return q (* args)
-        else :
-            return self.query (self.cooker (value), prefix)
-    # end def __call__
-
-# end class _AC_Query_Date_
-
-class _AC_Query_E_ (_AC_Query_C_) :
-
-    def __call__ (self, value, prefix = None) :
-        if isinstance (value, dict) :
-            return self.__super.__call__ (value, prefix)
-        else :
-            return self.query (value, prefix)
-    # end def __call__
-
-# end class _AC_Query_E_
-
-class _AC_Query_S_ (_AC_Query_) :
-
-    def query (self, value, prefix = None) :
-        aq = self.a_query (prefix)
-        q  = aq.STARTSWITH if value else aq.__eq__
-        return q (value)
-    # end def query
-
-# end class _AC_Query_S_
-
 class A_Attr_Type (object) :
     """Root class for attribute types for the MOM meta object model."""
 
@@ -345,6 +247,7 @@ class A_Attr_Type (object) :
     db_sig_version      = 0
     default             = None
     description         = u""
+    E_Type              = None ### E_Type of `_A_Entity_`, if any
     explanation         = u""
     format              = u"%s"
     group               = u""
@@ -354,6 +257,8 @@ class A_Attr_Type (object) :
     needs_raw_value     = False
     Pickler             = None
     P_Type              = None ### Python type of attribute values
+    Q_Ckd_Type          = MOM.Attr.Filter.Ckd
+    Q_Raw_Type          = MOM.Attr.Filter.Raw
     query               = None
     query_fct           = None
     rank                = 0
@@ -369,13 +274,19 @@ class A_Attr_Type (object) :
     _t_rank             = 0
 
     @TFL.Meta.Once_Property
-    def ac_query (self) :
-        if self.needs_raw_value :
-            result = _AC_Query_S_ (self.raw_name, unicode)
-        else :
-            result = _AC_Query_   (self.name, self.cooked)
-        return result
-    # end def ac_query
+    def Q (self) :
+        return self.Q_Raw if self.needs_raw_value else self.Q_Ckd
+    # end def Q
+
+    @TFL.Meta.Once_Property
+    def Q_Ckd (self) :
+        return self.Q_Ckd_Type (self)
+    # end def Q_Ckd
+
+    @TFL.Meta.Once_Property
+    def Q_Raw (self) :
+        return self.Q_Raw_Type (self)
+    # end def Q_Raw
 
     @TFL.Meta.Once_Property
     def ckd_query (self) :
@@ -384,7 +295,7 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def ckd_query_eq (self) :
-        return _AC_Query_ (self.ckd_name, self.cooked)
+        return self.Q_Ckd.EQ
     # end def ckd_query_eq
 
     @TFL.Meta.Once_Property
@@ -403,11 +314,7 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Once_Property
     def raw_query_eq (self) :
-        if self.needs_raw_value :
-            result = _AC_Query_ (self.raw_name, unicode)
-        else :
-            result = self.ckd_query_eq
-        return result
+        return self.Q_Raw.EQ if self.needs_raw_value else self.Q_Ckd.EQ
     # end def raw_query_eq
 
     def __init__ (self, kind) :
@@ -502,7 +409,7 @@ class A_Attr_Type (object) :
 
     def _checkers (self, e_type, kind) :
         for c in sorted (self.check) :
-            yield c, ()
+            yield c
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
@@ -614,10 +521,10 @@ class _A_Entity_ (A_Attr_Type) :
 
     needs_raw_value   = False
 
-    @TFL.Meta.Once_Property
-    def ac_query (self) :
-        return self._AC_Query_ (self)
-    # end def ac_query
+    @property
+    def E_Type (self) :
+        return self.P_Type
+    # end def E_Type
 
     def _fix_P_Type (self, e_type) :
         P_Type = self.P_Type
@@ -628,7 +535,7 @@ class _A_Entity_ (A_Attr_Type) :
     # end def _fix_P_Type
 
     def __getattr__ (self, name) :
-        ### to support calls like `scope.PAP.Person.lifetime.start.ac_query`
+        ### to support calls like `scope.PAP.Person.lifetime.start.Q
         return getattr (self.P_Type, name)
     # end def __getattr__
 
@@ -637,9 +544,22 @@ class _A_Entity_ (A_Attr_Type) :
 class _A_Composite_ (_A_Entity_) :
     """Common base class for composite attributes of an object."""
 
-    Kind_Mixins       = (MOM.Attr._Composite_Mixin_, )
+    Kind_Mixins         = (MOM.Attr._Composite_Mixin_, )
 
-    _AC_Query_        = _AC_Query_C_
+    Q_Ckd_Type          = MOM.Attr.Filter.Composite
+
+    @TFL.Meta.Once_Property
+    def db_sig (self) :
+        return \
+            ( self.__super.db_sig
+            + (self.P_Type and self.P_Type.db_sig, )
+            )
+    # end def db_sig
+
+    @TFL.Meta.Once_Property
+    def sorted_by (self) :
+        return self.P_Type.sorted_by
+    # end def sorted_by
 
     def as_code (self, value) :
         if value is not None :
@@ -671,14 +591,6 @@ class _A_Composite_ (_A_Entity_) :
                 (_T ("Value `%r` is not of type %s") % (value, soc.P_Type))
         return value
     # end def cooked
-
-    @TFL.Meta.Once_Property
-    def db_sig (self) :
-        return \
-            ( self.__super.db_sig
-            + (self.P_Type and self.P_Type.db_sig, )
-            )
-    # end def db_sig
 
     @classmethod
     def epk_def_set_ckd (cls) :
@@ -721,7 +633,7 @@ class _A_Composite_ (_A_Entity_) :
                           ### Space necessary to avoid inheritance of `__doc__`
                         )
                     )
-                yield check, ()
+                yield check
     # end def _checkers
 
 # end class _A_Composite_
@@ -844,11 +756,11 @@ class _A_Number_ (A_Attr_Type) :
     def _checkers (self, e_type, kind) :
         if self.min_value is not None :
             if self.max_value is not None :
-                yield "%s <= value <= %s" % (self.min_value, self.max_value), ()
+                yield "%s <= value <= %s" % (self.min_value, self.max_value)
             else :
-                yield "%s <= value" % (self.min_value, ), ()
+                yield "%s <= value" % (self.min_value, )
         elif self.max_value :
-            yield "value <= %s" % (self.max_value, ), ()
+            yield "value <= %s" % (self.max_value, )
         for c in self.__super._checkers (e_type, kind) :
             yield c
     # end def _checkers
@@ -954,7 +866,7 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 class _A_Id_Entity_ (_A_Entity_) :
     """Models an attribute referring to an entity."""
 
-    _AC_Query_        = _AC_Query_E_
+    Q_Ckd_Type          = MOM.Attr.Filter.Id_Entity
 
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
@@ -969,6 +881,11 @@ class _A_Id_Entity_ (_A_Entity_) :
             result = etm.example ()
         return self.as_string (result)
     # end def example
+
+    @TFL.Meta.Once_Property
+    def sorted_by (self) :
+        return self.P_Type.sorted_by_epk
+    # end def sorted_by
 
     def as_code (self, value) :
         if value is not None :
@@ -1088,12 +1005,13 @@ class _A_String_Base_ (A_Attr_Type) :
     default           = u""
     example           = u"foo"
     max_length        = 0
+    Q_Ckd_Type        = MOM.Attr.Filter.String
     ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
 
     @TFL.Meta.Once_Property
-    def ac_query (self) :
-        return _AC_Query_S_ (self.ckd_name, self.cooked)
-    # end def ac_query
+    def Q (self) :
+        return self.Q_Ckd
+    # end def Q
 
     def _checkers (self, e_type, kind) :
         for c in self.__super._checkers (e_type, kind) :
@@ -1116,7 +1034,7 @@ class _A_String_Base_ (A_Attr_Type) :
                       % (name, self.max_length)
                     )
                 )
-            yield check, ()
+            yield check
     # end def _checkers
 
 # end class _A_String_Base_
@@ -1244,6 +1162,11 @@ class _A_Typed_Collection_ (_A_Collection_) :
         return result
     # end def from_string
 
+    @TFL.Meta.Once_Property
+    def ui_length (self) :
+        return (self.C_Type.ui_length + 2) * 5
+    # end def ui_length
+
     def _checkers (self, e_type, kind) :
         C_Type = self.C_Type
         if C_Type :
@@ -1297,12 +1220,12 @@ class _A_Id_Entity_Set_ (_A_Typed_Set_) :
     C_Type         = _A_Id_Entity_
 
     def _C_as_code (self, value) :
-        sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
+        sk = MOM.Scope.active.MOM.Id_Entity.sort_key
         return self.__super._C_as_code (sorted (value, key = sk))
     # end def _C_as_code
 
     def _C_as_string (self, value) :
-        sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
+        sk = MOM.Scope.active.MOM.Id_Entity.sort_key
         return self.__super._C_as_string (sorted (value, key = sk))
     # end def _C_as_string
 
@@ -1431,15 +1354,11 @@ class A_Date (_A_Date_) :
     example        = u"2010/10/10"
     typ            = "Date"
     P_Type         = datetime.date
+    Q_Ckd_Type     = MOM.Attr.Filter.Date
     ui_length      = 12
     input_formats  = \
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
-
-    @TFL.Meta.Once_Property
-    def ac_query (self) :
-        return _AC_Query_Date_ (self.name, self.cooked)
-    # end def ac_query
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -2012,9 +1931,8 @@ Class `MOM.Attr.A_Attr_Type`
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
     if isinstance (v, MOM.Meta.M_Attr_Type)
-    ) + ("decimal", "Q", "_AC_Query_", "_AC_Query_S_")
+    ) + ("decimal", "Q")
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)
-    MOM._Export      ("Q")
 ### __END__ MOM.Attr.Type

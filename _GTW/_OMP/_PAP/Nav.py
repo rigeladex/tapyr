@@ -41,8 +41,11 @@
 #    13-Oct-2010 (CT) `Entity_created_by_Person` added
 #    15-Mar-2011 (CT) Test for `GTW.AFS` added
 #    19-May-2011 (CT) More tests for `GTW.AFS` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _TFL                     import TFL
 from   _GTW                     import GTW

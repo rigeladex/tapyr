@@ -43,8 +43,13 @@
 #    16-Jul-2011 (CT) `_AC_Query_FL_` derived from (newly factored) `_AC_Query_S_`
 #    17-Jul-2011 (CT) s/f_completer/completer/, removed `e_completer`
 #    12-Sep-2011 (CT) `prefix` added to `_AC_Query_FL_.query`
+#    25-Oct-2011 (CT) `ui_display_format` format changed (put `last_name` first)
+#    11-Nov-2011 (CT) Adapt to change of `MOM.Attr.Filter`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM             import *
 from   _MOM._Attr.Date_Interval    import *
@@ -59,8 +64,8 @@ import _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
-class _AC_Query_FL_ (MOM.Attr._AC_Query_S_) :
-    """Special auto-complete query function for the `first_name` and
+class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
+    """Special auto-complete query filter for the `first_name` and
        `last_name` of a person (to better handling of double names like
        Franz-Ferdinand).
     """
@@ -76,7 +81,14 @@ class _AC_Query_FL_ (MOM.Attr._AC_Query_S_) :
             return aq.STARTSWITH (value) | aq.CONTAINS (pvalue)
     # end def query
 
-# end class _AC_Query_FL_
+# end class Auto_Complete_PN
+
+class Filter_String_FL (MOM.Attr.Filter.String) :
+
+    _real_name = "String_FL"
+    _Table     = dict (AC = Auto_Complete_PN)
+
+# end class Filter_String_FL
 
 class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
     """Model a person."""
@@ -89,11 +101,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             ignore_case    = True
-
-            @TFL.Meta.Once_Property
-            def ac_query (self) :
-                return _AC_Query_FL_ (self.ckd_name, self.cooked)
-            # end def ac_query
+            Q_Ckd_Type     = Filter_String_FL
 
         # end class _personal_name_
 
@@ -176,11 +184,14 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
         result = []
         if self.title :
             result.append ("%(title)s")
-        result.append ("%(first_name)s")
+    @property
+    def ui_display_format (self) :
+        result = ["%(last_name)s %(first_name)s"]
         if self.middle_name :
-            result.append ("%(middle_name)s")
-        result.append ("%(last_name)s")
-        return " ".join (result)
+            result.append (" %(middle_name)s")
+        if self.title :
+            result.append (", %(title)s")
+        return "".join (result)
     # end def ui_display_format
 
 Person = _PAP_Person_ # end class

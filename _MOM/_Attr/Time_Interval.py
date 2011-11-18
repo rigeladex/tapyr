@@ -28,8 +28,11 @@
 # Revision Dates
 #     8-Mar-2010 (CT) Creation
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_

@@ -56,17 +56,28 @@
 #    16-Sep-2011 (CT) Use `AE.` instead of `import *`
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #     7-Oct-2011 (CT) `Entity.apply` changed to look at `old_pid`
+#     8-Nov-2011 (CT) Change `_changed_children` and `Field.applyf` to not
+#                     check for changes
+#     8-Nov-2011 (CT) Change `_apply_create` to check `value.conflicts`
+#     8-Nov-2011 (CT) Change `Field_Composite.applyf` to update `entity`
+#                     before up-chaining
+#     8-Nov-2011 (CT) Change `Field_Entity.__call__` to honor `attr.raw_default`
+#     8-Nov-2011 (CT) Change `_create_instance` to pass `exc.any_required_empty`
+#     8-Nov-2011 (CT) Change `Field._value` to check `entity` vs. `allow_new`
+#    18-Nov-2011 (CT) Apply `str` to `.type_name` (in `_value_sig_t`)
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
 
 from   _GTW        import GTW
+from   _MOM        import MOM
 from   _TFL        import TFL
 
 from   _GTW._AFS   import Element as AE
 
 import _GTW._AFS._MOM
+import _MOM.Error
 
 class _MOM_Element_ (AE._Element_) :
 
@@ -78,7 +89,7 @@ class _MOM_Element_ (AE._Element_) :
             v = None
             if c.entity :
                 v = c.entity
-            elif c.changed :
+            else :
                 v = c.elem.applyf (c, scope, entity, ** kw)
                 value.conflicts += c.conflicts
             if v is not None :
@@ -120,9 +131,9 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
 
     def _apply_create (self, value, scope, ** kw) :
         akw = self._changed_children (value, scope, None, ** kw)
-        if akw :
-            ETM = scope [self.type_name]
+        if akw and not value.conflicts :
             ### XXX error handling
+            ETM = scope [self.type_name]
             return self._create_instance (ETM, akw)
     # end def _apply_create
 
@@ -133,7 +144,11 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
     # end def _check_sid
 
     def _create_instance (self, ETM, akw) :
-        return ETM.instance_or_new (raw = 1, ** akw)
+        try :
+            return ETM.instance_or_new (raw = 1, ** akw)
+        except MOM.Error.Invariant_Errors as exc :
+            if not exc.any_required_empty :
+                raise
     # end def _create_instance
 
     def _instance_kw (self, ETM, entity, ** kw) :
@@ -166,7 +181,7 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
         init = instance.init
         return tuple \
             ( (k, init.get (k)) for k in ("pid", "cid")
-            ) + (str (instance.id), self.type_name)
+            ) + (str (instance.id), str (self.type_name))
     # end def _value_sig_t
 
 Entity = _MOM_Entity_ # end class
@@ -228,7 +243,7 @@ class _MOM_Field_ (AE.Field) :
             if value.init != dbv:
                 value.conflicts += 1
                 value.asyn       = result = dbv
-            elif value.init != value.edit :
+            else :
                 result = value.edit
         else :
             result = value.edit
@@ -256,6 +271,12 @@ class _MOM_Field_ (AE.Field) :
         result = self.__super._value (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
         akw    = kw.get (self.name, {})
+        if entity is None and not kw.get ("allow_new") :
+            ### No entity, no `allow_new`:
+            ### * only existing entities can be selected
+            ### * default values interfere with auto-completion
+            ### * don't put them in `result`
+            return result
         key    = \
             (    "edit"
             if   result.get ("prefilled") or kw.get ("copy", False)
@@ -272,12 +293,14 @@ class _MOM_Field_ (AE.Field) :
 
 Field = _MOM_Field_ # end class
 
-class _MOM_Field_Composite_ (AE.Field_Composite) :
+class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
     """Model a MOM-specific composite field of a AJAX-enhanced form."""
 
     _real_name = "Field_Composite"
 
     def applyf (self, value, scope, entity, ** kw) :
+        if entity is not None :
+            entity = getattr (entity, self.name)
         return self._changed_children (value, scope, entity, ** kw)
     # end def applyf
 
@@ -303,6 +326,8 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
             attr     = ETM.E_Type.attributes [self.name]
             a_etm    = attr.etype_manager (ETM)
             a_entity = getattr (entity, self.name, None)
+            if a_entity is None and attr.raw_default :
+                a_entity = a_etm.instance (attr.raw_default, raw = True)
             a_kw     = dict (kw, ** kw.get (self.name, {}))
             kw       = dict \
                 ( a_kw

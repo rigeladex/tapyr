@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # #*** <License> ************************************************************#
@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Sep-2011 (MG) Creation
 #    21-Oct-2011 (MG) `_create_css_cache` creating of directory added
+#    21-Oct-2011 (CT) Esthetics
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     rank = 1000
 
     def __init__ (self, css_dir, prefix, clear_dir = False) :
-        if not prefix [0] == "/" :
+        if not prefix.startswith ("/") :
             prefix     = "/%s" % (prefix, )
         self.css_dir   = css_dir
         self.prefix    = prefix
@@ -126,8 +127,6 @@ class Template_Media_Cache (TFL.Meta.Object) :
                 result.add (t.source_path)
             if t.media_path is not None :
                 result.add (t.media_path)
-        # end def _add
-
         for tn in nav_root.template_names :
             t = T.get_template (tn)
             if t.source_path :
@@ -143,7 +142,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def Media_Filenames
 
     def from_pickle_cargo (self, nav_root, cargo) :
-        T            = nav_root.Templateer
+        T = nav_root.Templateer
         for p, tns in cargo.get ("css_map_p", {}).iteritems () :
             for tn in tns :
                 T.get_template (tn).css_href = p

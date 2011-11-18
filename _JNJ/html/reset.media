@@ -26,11 +26,9 @@
 #    Define the reset CSS styles
 #
 # Revision Dates
-#    27-Sep-2011 (MG) Creation
+#    27-Sep-2011 (MG) Creation (factored from `base.jnj.media`)
 #    ««revision-date»»···
 #--
-
-from   __future__  import unicode_literals
 
 ### CSS reset rules for HTML elements
 ### - see http://meyerweb.com/eric/tools/css/reset/...

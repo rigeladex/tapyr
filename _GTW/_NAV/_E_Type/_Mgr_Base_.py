@@ -36,6 +36,7 @@
 #    21-Jun-2010 (MG) Once property `ETM` added
 #    10-Jan-2011 (CT) `_Mgr_Base_` changed to use `sanitized_filename` on `name`
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#    14-Nov-2011 (CT) Factored `_Query_Mixin_`, add `query_restriction`
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,31 @@ import _TFL.Filter
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 
-class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
+class _Query_Mixin_ (GTW.NAV.E_Type.Mixin) :
+    """Mixin for GTW.NAV.E_Type classes using `query`"""
+
+    query_restriction = None
+
+    @property
+    def count (self) :
+        if self.query_filters :
+            result = self.query ().count_transitive ()
+        else :
+            result = self.ETM.count_transitive
+        return result
+    # end def count
+
+    def query (self) :
+        result = self.ETM.query \
+            (* self.query_filters, sort_key = self.sort_key)
+        if self.query_restriction is not None :
+            result = self.query_restriction (result)
+        return result
+    # end def query
+
+# end class _Query_Mixin_
+
+class _Mgr_Base_ (_Query_Mixin_) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
 
     def __init__ (self, parent, ** kw) :
@@ -75,27 +100,13 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
             )
     # end def __init__
 
-    @property
-    def count (self) :
-        if self.query_filters :
-            result = self.query ().count_transitive ()
-        else :
-            result = self.ETM.count_transitive
-        return result
-    # end def count
-
     @Once_Property
     def ETM (self) :
         return self.scope [self._ETM]
     # end def ETM
 
-    def query (self) :
-        return self.ETM.query_s \
-            (* self.query_filters, sort_key = self.sort_key)
-    # end def query
-
 # end class _Mgr_Base_
 
 if __name__ != "__main__" :
-    GTW.NAV.E_Type._Export ("_Mgr_Base_")
+    GTW.NAV.E_Type._Export ("_Mgr_Base_", "_Query_Mixin_")
 ### __END__ GTW.NAV.E_Type._Mgr_Base_

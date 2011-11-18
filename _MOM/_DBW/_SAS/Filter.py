@@ -40,6 +40,8 @@
 #     9-Sep-2011 (MG) `_sa_filter` for `TFL.Q.Bin_Bool` and `TFL.Q.Bin_Expr`
 #                     fixed for object comparison
 #    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
+#     9-Nov-2011 (MG) `TFL.Q_Exp._Get_._sa_filter`: new element outerjoin
+#                     added to `joins` list
 #    ««revision-date»»···
 #--
 
@@ -73,7 +75,7 @@ def _sa_filter (self, SAQ) :
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well
         if col.table != SAQ._SA_TABLE :
-           joins.append ((SAQ._SA_TABLE, col.table, None))
+           joins.append ((SAQ._SA_TABLE, col.table, None, False))
     return joins, columns
 # end def _sa_filter
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2004-2011 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -35,15 +35,16 @@
 #    11-Sep-2006 (MZO) [21459] searchpath fixed
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    31-Oct-2011 (MG)  imports corrected
 #    ««revision-date»»···
 #--
 
 
 
 from   _TFL              import TFL
-from   Filename          import Filename
+from   _TFL.Filename     import Filename
 import _TFL._SDG._C.Node
-import sos
+from   _TFL              import sos
 import sys
 
 class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :

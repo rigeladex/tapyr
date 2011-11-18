@@ -90,6 +90,16 @@
 #                     `_anchor_children`
 #    22-Sep-2011 (CT) `Entity_List` derived from `_Field_MI_`, too
 #    23-Sep-2011 (CT) `anchor_id` changed to not put `an$` into `kw`
+#     4-Nov-2011 (CT) Change `new_child` to allow non-existing `anchor_id`
+#     4-Nov-2011 (CT) Change `copy` to not use `__dict__` to filter attributes
+#                     (which failed to copy properties like `css_class`)
+#     4-Nov-2011 (CT) Add `description` to `Entity_List`
+#     8-Nov-2011 (CT) Add `_pop_allow_new` so `allow_new` can be passed down to
+#                     all children during `__call__`
+#     9-Nov-2011 (CT) Add default for `allow_new` to `Entity.__call__`
+#     9-Nov-2011 (CT) Add `_pop_allow_new` to `Fieldset` and `Form`
+#    18-Nov-2011 (CT) Apply `str` to `.name` and `.type_name`
+#                     (in `__str__`, `_value_sig` and `_value_sig_t`)
 #    ««revision-date»»···
 #--
 
@@ -128,27 +138,29 @@ class M_Form (_M_Element_) :
 class _Element_ (TFL.Meta.Object) :
     """Base class for AFS element classes."""
 
-    __metaclass__ = _M_Element_
+    __metaclass__   = _M_Element_
 
-    children      = ()
-    completer     = None
-    het_c         = "div" ### HTML element type to be used for the container
-    het_h         = "h2"  ### HTML element type to be used for the heading
-    id_sep        = "."
-    id_suffix_pat = Regexp (r"\d+$")
-    init          = ""
-    list_sep      = "::"
-    needs_value   = False
-    prefilled     = False
-    rank          = 0
-    readonly      = False
-    renderer      = None
-    root_sep      = "-"
-    widget        = None
-    _css_class    = None
-    _id           = None
-    _pop_in_call  = ("allow_new", "collapsed")
-    _pop_to_self  = \
+    children        = ()
+    completer       = None
+    het_c           = "div" ### HTML element type to be used for the container
+    het_h           = "h2"  ### HTML element type to be used for the heading
+    id_sep          = "."
+    id_suffix_pat   = Regexp (r"\d+$")
+    init            = ""
+    list_sep        = "::"
+    needs_value     = False
+    prefilled       = False
+    rank            = 0
+    readonly        = False
+    renderer        = None
+    root_sep        = "-"
+    undef           = object ()
+    widget          = None
+    _css_class      = None
+    _id             = None
+    _pop_allow_new  = False
+    _pop_in_call    = ("collapsed", )
+    _pop_to_self    = \
         ( "completer", "css_class", "description", "explanation"
         , "id", "id_sep", "needs_value", "prefilled", "readonly"
         , "renderer", "required", "ui_name", "widget"
@@ -225,9 +237,12 @@ class _Element_ (TFL.Meta.Object) :
     # end def id
 
     def copy (self, ** kw) :
+        undef    = self.undef
         ckw      = dict \
-            ( (k, getattr (self, k))
-            for k in self._pop_to_self if k in self.__dict__
+            (  (k, v)
+            for k, v in
+                ((k, getattr (self, k, undef)) for k in self._pop_to_self)
+            if k != "id" and v is not undef
             )
         ckw.update (self.kw, ** kw)
         children = [c.copy () for c in self.children] if self.children else None
@@ -292,6 +307,8 @@ class _Element_ (TFL.Meta.Object) :
         result = dict (kw)
         if self.needs_value :
             result ["value"] = self._value (* args, ** kw)
+        if self._pop_allow_new :
+            result.pop ("allow_new", None)
         return result
     # end def _instance_kw
 
@@ -336,6 +353,11 @@ class _Element_ (TFL.Meta.Object) :
         for k in "name", "type_name" :
             n = self.kw.get (k)
             if n is not None :
+                if isinstance (n, unicode) :
+                    try :
+                        n = str (n)
+                    except :
+                        pass
                 v = "%r" % n
                 if infos [-1] != v :
                     infos.append (v)
@@ -391,6 +413,7 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
+        kw.setdefault ("allow_new", True)
         result = self.__super.__call__ (* args, ** kw)
         self._update_sid (result, ** kw)
         return result
@@ -419,7 +442,7 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def _update_sid
 
     def _value_sig_t (self, instance) :
-        return (str (instance.id), self.type_name, instance.init)
+        return (str (instance.id), str (self.type_name), instance.init)
     # end def _value_sig_t
 
 # end class Entity
@@ -442,8 +465,9 @@ class Entity_List (_Field_MI_, _Element_List_) :
     renderer = "afs_div_seq"
 
     def __init__ (self, proto, ** kw) :
-        self.proto   = proto
-        proto.id_sep = self.root_sep
+        self.proto       = proto
+        self.description = getattr (proto, "description", None)
+        proto.id_sep     = self.root_sep
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -471,7 +495,7 @@ class Entity_List (_Field_MI_, _Element_List_) :
         result.id_sep = self.root_sep
         if self.id :
             self._id_child_or_proto (result, i, id_map)
-        result._anchor_children (self.anchor_id)
+        result._anchor_children (getattr (self, "anchor_id", None))
         return result
     # end def new_child
 
@@ -506,6 +530,11 @@ class Entity_List (_Field_MI_, _Element_List_) :
         n = getattr (self, "name", None) or getattr (self, "type_name", None)
         p = str (self.proto)
         if n :
+            if isinstance (n, unicode) :
+                try :
+                    n = str (n)
+                except :
+                    pass
             return "<%s %s %r %s>" % (self.__class__.__name__, self.id, n, p)
         else :
             return "<%s %s %s>"    % (self.__class__.__name__, self.id, p)
@@ -525,17 +554,19 @@ class _Field_ (_Element_) :
         self.__super.__init__ (name = name, ** kw)
     # end def __init__
 
-# end class Field
+# end class _Field_
 
 class Field (_Field_MI_, _Field_) :
     """Model a field of an AJAX-enhanced form."""
+
+    _pop_allow_new = True
 
     def _css_classes (self) :
         return (self._css_class, )
     # end def _css_classes
 
     def _value_sig (self, instance) :
-        result = (str (instance.id), self.name, instance.init)
+        result = (str (instance.id), str (self.name), instance.init)
         if getattr (instance, "prefilled", False) :
             result = (result, True)
         return result
@@ -550,8 +581,10 @@ class Field_Composite (_Field_MI_, _Anchor_MI_, _Field_) :
     het_h       = "h2"      ### HTML element type to be used for the heading
     renderer    = "afs_div_seq"
 
+    _pop_allow_new = True
+
     def _value_sig (self, instance) :
-        return (str (instance.id), self.name, instance.form_sig ())
+        return (str (instance.id), str (self.name), instance.form_sig ())
     # end def _value_sig
 
 # end class Field_Composite
@@ -562,7 +595,7 @@ class Field_Entity (_Field_MI_, Entity, _Field_) :
     het_h       = "h2"      ### HTML element type to be used for the heading
 
     def _value_sig (self, instance) :
-        return (str (instance.id), self.name)
+        return (str (instance.id), str (self.name))
     # end def _value_sig
 
 # end class Field_Entity
@@ -574,6 +607,8 @@ class Fieldset (_Element_) :
     het_h       = "h2"      ### HTML element type to be used for the heading
     id_sep      = ":"
     renderer    = "afs_div_seq"
+
+    _pop_allow_new = True
 
     def display (self, instance) :
         return "; ".join (c.display for c in instance.children if c.display)
@@ -592,14 +627,16 @@ class Fieldset (_Element_) :
 class Form (_Element_List_) :
     """Model a AJAX-enhanced form."""
 
-    __metaclass__ = M_Form
+    __metaclass__  = M_Form
 
-    het_c         = "section" ### HTML element type to be used for the container
-    het_h         = "h1"      ### HTML element type to be used for the heading
-    id_sep        = _Element_List_.root_sep
-    needs_value   = True
-    renderer      = "afs_div_seq"
-    Table         = {}
+    het_c          = "section" ### HTML element type to be used for container
+    het_h          = "h1"      ### HTML element type to be used for heading
+    id_sep         = _Element_List_.root_sep
+    needs_value    = True
+    renderer       = "afs_div_seq"
+    Table          = {}
+
+    _pop_allow_new = True
 
     def __init__ (self, id, children, ** kw) :
         self.id_map = {}

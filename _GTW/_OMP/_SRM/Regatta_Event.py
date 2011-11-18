@@ -34,8 +34,12 @@
 #    14-Dec-2010 (CT) `year` changed from `Internal` to `Cached`
 #     8-Sep-2011 (CT) `completer` added to `name`, `club` and `desc`
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
+#     9-Nov-2011 (CT) Change `computed` methods to use `FO`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
@@ -118,7 +122,7 @@ class Regatta_Event (_Ancestor_Essence) :
             auto_up_depends    = ("name", )
 
             def computed (self, obj) :
-                return obj.name
+                return obj.FO.name
             # end def computed
 
         # end class title
@@ -130,7 +134,7 @@ class Regatta_Event (_Ancestor_Essence) :
             auto_up_depends    = ("date", "name", "desc")
 
             def computed (self, obj) :
-                return " ".join ((obj.desc or obj.name, obj.ui_date))
+                return " ".join ((obj.FO.desc or obj.FO.name, obj.ui_date))
             # end def computed
 
         # end class title

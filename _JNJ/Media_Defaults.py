@@ -37,6 +37,8 @@
 #    30-Mar-2011 (CT) `afs` continued...
 #    19-May-2011 (CT) `afs` continued....
 #    16-Oct-2011 (MG) `Debugger` added
+#    24-Oct-2011 (CT) `color_spec_heading_rev` added
+#    24-Oct-2011 (CT) `tablesorter` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +80,7 @@ class Media_Defaults (Definition) :
         , cursor           = "pointer"
         , margin           = TRBL0 (t = Em (1./4), b = Em (3./4))
         , padding          = TRBL  (Em (0.5), Em (1.5))
+        , ** Border (radius = Px (10))
         )
 
     col_padding            = Px (5)
@@ -161,6 +164,11 @@ class Media_Defaults (Definition) :
             , color            = P.background_color
             )
 
+        color_spec_heading_rev = P_dict \
+            ( background_color = P.background_color
+            , color            = P.R.color_heading
+            )
+
         color_spec_label       = P_dict \
             ( background_color = P.background_color
             , color            = P.R.text_color
@@ -222,6 +230,15 @@ class Media_Defaults (Definition) :
         week_height            = Em    (8)
 
     # end class cal
+
+    class tablesorter (Definition) :
+
+        color_marker           = "white"
+        margin_top             = Px (8)
+        opacity                = 0.75
+        width                  = Px (5)
+
+    # end class tablesorter
 
     color_spec_error       = P_dict \
         ( background_color = P.background_color

@@ -28,8 +28,11 @@
 # Revision Dates
 #     6-Sep-2010 (CT) Creation
 #     7-Sep-2010 (CT) `_change_callback` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM            import *
 from   _MOM.import_MOM            import _A_Named_Value_
@@ -387,6 +390,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
                 (  (k, getattr (dateutil.rrule, k.upper ()))
                 for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))
                 )
+            typ                = "Unit"
             default            = Table ["Daily"]
             rank               = -99
 

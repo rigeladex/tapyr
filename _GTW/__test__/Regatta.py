@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Apr-2010 (CT) Creation
 #     9-Sep-2011 (CT) Test for `Q.RAW.left.date.start` added
+#    15-Nov-2011 (CT) Add tests for `sorted_by` and `sort_key`
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,8 @@ _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
+    >>> PAP = scope.PAP
+    >>> p = PAP.Person ("Tanzer", "Christian")
     >>> bc  = SRM.Boat_Class (u"Optimist", max_crew = 1)
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
     >>> rev.epk_raw
@@ -61,9 +64,40 @@ _test_code = """
     >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008/05/01").all ()
     [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')]
 
+    >>> print reg.sorted_by
+    <Sorted_By: Getter function for `.left.name`, Getter function for `.left.date.start`, Getter function for `.left.date.finish`, Getter function for `.boat_class.name`>
+    >>> print reh.sorted_by
+    <Sorted_By: Getter function for `.left.name`, Getter function for `.left.date.start`, Getter function for `.left.date.finish`, Getter function for `.handicap`>
+
+    >>> sk = TFL.Sorted_By (scope.MOM.Id_Entity.sort_key)
+    >>> print sk (reg)
+    (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'Optimist'))),)
+    >>> print sk (reh)
+    (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'Yardstick'))),)
+
+    >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008/05/01").order_by (sk).all ()
+    [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')]
+
+    >>> scope.MOM.Id_Entity.query_s ().order_by (sk).all ()
+    [GTW.OMP.SRM.Boat_Class (u'Optimist'), GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick'), GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+
+    >>> for x in scope.MOM.Id_Entity.query_s ().order_by (sk) :
+    ...    print x, NL, "   ", sk (x)
+    (u'Optimist')
+        (('tuple', (('unicode', u'Optimist'),)),)
+    (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
+        (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)))),)
+    ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
+        (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'Optimist'))),)
+    ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')
+        (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'Yardstick'))),)
+    (u'tanzer', u'christian', u'', u'')
+        (('tuple', (('unicode', u'tanzer'), ('unicode', u'christian'), ('unicode', u''), ('unicode', u''))),)
+
 """
 
 from _GTW.__test__.model import *
+NL = chr (10)
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

@@ -22,7 +22,7 @@
 //    20-Jan-2011 (CT) Rename functions `GTW_Externalize` to `gtw_externalize`
 //    26-Jan-2011 (CT) Style change
 //     5-Apr-2011 (CT) `Array.prototype.indexOf` defined, if necessary
-//    17-Oct-2011 (CT) Missing `var` added
+//    14-Oct-2011 (MG) Missing `var` added to `as_int_array`
 //    ««revision-date»»···
 //--
 

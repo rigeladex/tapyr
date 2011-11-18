@@ -39,6 +39,7 @@
 #    14-Dec-2010 (CT) `year` changed from `Query` to `Cached`
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
 

@@ -34,8 +34,11 @@
 #     9-Sep-2011 (CT) `completer` re-added to `mna_number`,
 #                     `completer` removed from `nation`
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *

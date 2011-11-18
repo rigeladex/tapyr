@@ -33,6 +33,11 @@
 ##    25-Jul-2010 (MG) `_button` changed
 ##    31-May-2011 (CT) `kind` added to `_button`
 ##     1-Jun-2011 (CT) `postify_a` added
+##    16-Nov-2011 (CT) Start implementation of `qr_control`
+##    17-Nov-2011 (CT) Remove `count`, `total_f`, and `total_u`
+##                     (`page.head_line` contains those now)
+##    17-Nov-2011 (CT) Continue implementation of `qr_control` (`_qr_button`,
+##                     "Next", ...)
 ##    ««revision-date»»···
 ##--
 #}
@@ -45,15 +50,107 @@
   </{{ tag }}>
 {%- endmacro -%} {#- _button -#}
 
+{%- macro _qr_button (name, title, typ = "submit", text = None) -%}
+  <button name="{{ name.upper () }}" title="{{ title }}" type="{{ typ }}"
+    {{ kwargs|xmlattr }}
+    {%- if typ == "button" %} class="disabled"{%- endif -%}
+  >
+    {{ text or GTW._T (name) }}
+  </button>
+{%- endmacro -%} {#- _qr_button -#}
+
+{%- macro _qr_field (name, title, value, label) -%}
+  {%- set caller = kwargs.pop ("caller",   None) -%}
+  <li title="{{ title }}">
+    <label for="{{ name }}">
+      {{ label or GTW._T (name.capitalize ()) }}
+    </label>
+    {%- if caller -%}{{- caller () -}}{%- endif -%}
+    {{ X.input.text
+        ( name      = name
+        , value     = value
+        )
+    }}
+  </li>
+{%- endmacro -%} {#- _qr_field -#}
+
+{%- macro _qr_tr (af) -%}
+  <tr id="{{ af.key }}" title="">
+    <td class="name">
+      <label for="{{ af.key }}">
+        {{ "/".join (af.ui_names) }}
+      </label>
+    </td>
+    <td class="op">
+      <a href="#" class="button">
+        {{ GTW._T (af.op) }}
+      </a>
+    </td>
+    <td class="value">
+      {{ X.input.text
+          ( name      = af.key
+          , value     = af.value
+          )
+      }}
+    </td>
+  </tr>
+{%- endmacro -%} {#- _qr_tr -#}
+
+{%- macro qr_control (page, E_Type, qr) -%}
+  {%- import "html/form.jnj" as Form %}
+  {%- set action = page.abs_href -%}
+  {% call Form.form (action = action, method = "get", class = "restrictions") -%}
+    {{ _qr_button
+        ( GTW._  ("Apply")
+        , GTW._T ("Display list of objects matching the restriction")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Next")
+        , GTW._T ("Display next batch of objects matching the restriction")
+        , ("submit" if qr.next_p else  "button")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Prev")
+        , GTW._T ("Display previous batch of objects matching the restriction")
+        , "submit" if qr.prev_p else  "button"
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Add")
+        , GTW._T ("Add a rule to restrict the objects to a specific attribute value")
+        , "button"
+        , GTW._T ("Add restriction")
+        )
+    }}
+    <ul class="limits">
+      {{ _qr_field ("limit",    GTW._T ("Limit number of entities displayed"),    qr.limit) }}
+      {{ _qr_field ("offset",   GTW._T ("Number of first entity to display"),     qr.offset) }}
+      {{ _qr_field ("order_by", GTW._T ("Field(s) to use for ordering entities"), ", ".join (qr.order_by)) }}
+    </ul>
+    {%- if qr.filters %}
+      <table class="attrs">
+        <tbody>
+          {%- for af in qr.filters %}
+            {{ _qr_tr (af) }}
+          {% endfor -%}
+        </tbody>
+      </table>
+    {% endif -%}
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- qr_control -#}
+
 {%- macro e_type_admin (page, E_Type, fields, objects) -%}
+  {%- set qr = page.query_restriction %}
+  {{ qr_control (page, E_Type, qr) }}
   <table class="Object-List tablesorter">
-    <caption>
-      {{ GTW._T (page.name) }}
-    </caption>
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />
       {% for f in fields %}
-        <col class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}" />
+        <col class="{{ f.ui_name }}"
+          {%- if f.css_align %} align="{{ f.css_align }}"{% endif -%}
+        />
       {% endfor %}
       <col class="{{ E_Type.ui_name }}-cmd-change" />
     </colgroup>
@@ -61,7 +158,7 @@
       <tr>
         {{ _button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "circle-plus", "add") }}
         {% for f in fields %}
-          <th class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}"
+          <th class="{{ f.ui_name }}"
               scope="col" title="{{ GTW._T (f.description) }}">
             {{ GTW._T (f.ui_name) }}
           </th>
@@ -74,7 +171,10 @@
         <tr id="pk-{{ o.pid }}">
           {{ _button (page, E_Type, "td", o.href_change (), o.pid, GTW._T ("Change object"), "pencil", "change") }}
           {% for f, v in o %}
-            <td class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}">
+            {%- set align =
+              (" align-%s" % (f.css_align, )) if f.css_align else ""
+            -%}
+            <td class="{{ f.name }}{{ align }}">
               <a href="{{ o.href_change () }}" title="{{ GTW._T ("Change object") }} {{ o.pid }}">
                 {{ v }}
               </a>

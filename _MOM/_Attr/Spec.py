@@ -55,8 +55,11 @@
 #                     `_Auto_Update_Lazy_Mixin_` if `Computed_Set_Mixin`
 #    15-Sep-2011 (CT) s/_setup_dependent_attrs/_setup_attrs/
 #    15-Sep-2011 (CT) `_setup_attrs` extended to setup `.completer`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL

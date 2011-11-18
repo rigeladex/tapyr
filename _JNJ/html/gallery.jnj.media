@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     2-Jan-2011 (CT) Creation
+#    17-Nov-2011 (CT) Add `Script` and `JS_On_Ready`
 #    ««revision-date»»···
 #--
 
@@ -100,5 +101,8 @@ style_sheet = Style_Sheet \
             ]
         )
     )
+
+Script      (GTW.Script._.GTW_Gallery)
+JS_On_Ready (GTW.JS_On_Ready._.GTW_Gallery)
 
 ### __END__ html/gallery.jnj.media

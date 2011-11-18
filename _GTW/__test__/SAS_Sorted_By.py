@@ -49,27 +49,28 @@ _composite = r"""
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> q = EVT.Event.query ().order_by (TFL.Sorted_By (Q.date.start))
     >>> for e in q.all () : print e
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
 
     >>> for e in EVT.Event.query (sort_key = EVT.Event.sorted_by) :
     ...     print e
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By ("-date.start")) :
     ...     print e
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By (Q.left.perma_name)) :
     ...     print e
-    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict ())
-    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict ())
+    ((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u'')
+    ((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u'')
 
     >>> scope.destroy ()
 
 """
+
 _link1_role = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -83,12 +84,12 @@ _link1_role = r"""
     ...     (p2.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> q = EVT.Event_occurs.query_s ()
     >>> for e in q.all () : print e ### default sort order
-    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()), u'2010/01/01', dict ())
-    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u''), u'2010/01/01', dict ())
+    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
     >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By ("-event.date.start"))
     >>> for e in q.all () : print e ### sorted by descending date
-    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict ()), u'2010/02/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict ()),
+    (((u'event-1-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
+    (((u'event-2-text', ), dict (start = u'2010/01/01'), dict (), u''),
     u'2010/01/01', dict ())
 
     >>> scope.destroy ()
@@ -118,14 +119,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT', u'1107'), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
 
     >>> scope.destroy ()
 
@@ -174,20 +175,12 @@ if 1 :
             (action = "error", category = sa_exc.SAWarning)
     from _GTW.__test__.model import *
     __test__ = Scaffold.create_test_dict \
-        ( dict ( composite   = _composite
-               , link1_role  = _link1_role
-               , link2_link1 = _link2_link1
-               , query_attr  = _query_attr
+        ( dict ( composite       = _composite
+               , link1_role      = _link1_role
+               , link2_link1     = _link2_link1
+               , query_attr      = _query_attr
                )
         )
-    if 0 :
-        __test__ = Scaffold.create_test_dict \
-            (
-            #  _composite
-            # _link1_role
-             _link2_link1
-            # _query_attr
-            )
 
 from _GTW.__test__.model import *
 from _MOM.import_MOM     import Q

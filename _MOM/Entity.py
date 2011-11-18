@@ -166,6 +166,7 @@
 #    27-May-2011 (CT) Guard for unchanged `epk` added to `_set_raw`
 #     9-Sep-2011 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
 #                     support queries against integers (interpreted as `pid`)
+#    15-Nov-2011 (CT) Add defaults for `polymorphic_epk` and `polymorphic_epks`
 #    ««revision-date»»···
 #--
 
@@ -219,6 +220,8 @@ class Entity (TFL.Meta.Object) :
     is_relevant           = False
     is_used               = True
     rank                  = 0
+    polymorphic_epk       = None   ### Set by meta machinery
+    polymorphic_epks      = None   ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
     show_package_prefix   = False
     ui_display_sep        = ", "
@@ -682,7 +685,7 @@ class An_Entity (Entity) :
     # end def SCM_Change_Attr
 
     def as_pickle_cargo (self) :
-        return (self.type_name, self.as_attr_pickle_cargo ())
+        return (str (self.type_name), self.as_attr_pickle_cargo ())
     # end def as_pickle_cargo
 
     def as_string (self) :
@@ -907,8 +910,8 @@ class Id_Entity (Entity) :
     @TFL.Meta.Once_Property
     def epk (self) :
         """Essential primary key"""
-        return \
-            tuple (a.get_value (self) for a in self.primary) + (self.type_name,)
+        return tuple \
+            (a.get_value (self) for a in self.primary) + (self.type_name,)
     # end def epk
 
     @property
@@ -943,8 +946,10 @@ class Id_Entity (Entity) :
     @property
     def epk_raw (self) :
         """Essential primary key as raw values"""
-        return tuple \
-            (a.get_raw_epk (self) for a in self.primary) + (self.type_name,)
+        return \
+            ( tuple (a.get_raw_epk (self) for a in self.primary)
+            + (self.type_name, )
+            )
     # end def epk_raw
 
     @property
@@ -984,7 +989,7 @@ class Id_Entity (Entity) :
     # end def async_changes
 
     def as_pickle_cargo (self) :
-        return (self.type_name, self.as_attr_pickle_cargo (), self.pid)
+        return (str (self.type_name), self.as_attr_pickle_cargo (), self.pid)
     # end def as_pickle_cargo
 
     def attr_as_code (self) :

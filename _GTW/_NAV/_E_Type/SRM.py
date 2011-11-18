@@ -47,6 +47,7 @@
 #     3-Jan-2011 (CT) `delegate_view_p` replaced by `dir_template_name`
 #     5-Jan-2011 (CT) `Registration`, `Result`, and `Result_Teamrace` factored
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#     9-Nov-2011 (CT) Fix `head_line` for `Registration`
 #    ««revision-date»»···
 #--
 
@@ -155,8 +156,8 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
             ( self.Registration
                 ( self
                 , head_line   = u"%s %s<br />%s, %s" %
-                    ( _T (u"Registration list")
-                    , obj.name, obj.event.short_title, obj.event.FO.date
+                    ( _T (u"Registration list"), obj.name
+                    , obj.event.FO.short_title, obj.event.ui_date
                     )
                 , name        = u"%s.html" % (np.lower (), )
                 , short_title = np

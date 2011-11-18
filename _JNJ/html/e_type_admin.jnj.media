@@ -27,6 +27,15 @@
 #
 # Revision Dates
 #    31-May-2011 (CT) Creation
+#    24-Oct-2011 (CT) Removed duplicates
+#    24-Oct-2011 (CT) Rule for first and last `th a` children of `thead tr`
+#                     added
+#    24-Oct-2011 (CT) `tablesorter` JS_On_Ready factored into
+#                     `tablesorter.media`
+#     8-Nov-2011 (CT) Add `GTW.Script._.GTW_jq_util`
+#    16-Nov-2011 (CT) Add rules for `.restrictions`
+#    17-Nov-2011 (CT) Add rules for `.restrictions` and `JS_On_Ready` for
+#                     `button`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +66,12 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "thead"
                 , font_weight     = "bold"
+                , children        =
+                    [ Rule
+                        ( "tr th:first-child a", "tr th:last-child a"
+                        , P.nav_col.color_spec_heading_rev
+                        )
+                    ]
                 )
             , Rule
                 ( "td", "th"
@@ -82,31 +97,116 @@ style_sheet = Style_Sheet \
                 )
             ]
         )
+    , Rule
+        ( ".restrictions"
+        , list_style       = "none"
+        , children           =
+            [ Rule
+                ( "button"
+                , background_color = P.nav_col.background_color
+                , border           = P.border_button
+                , border_width     = Px (1)
+                , float            = "right"
+                , margin           = TRBL0 (t = Em (0.5), l = Em (0.2))
+                , text_align       = "center"
+                , children         =
+                    [ Rule_Class
+                        ( "disabled"
+                        , background_color = P.color_light_grey
+                        )
+                    ]
+                , ** Border (radius = Px (10))
+                )
+            , Rule
+                ( "input"
+                , background_color = P.nav_col.background_color
+                , border           = P.border_simple
+                , border_width     = Px (1)
+                , margin           = 0
+                , padding          = TRBL (Px (1), Em (0.20))
+                , children         =
+                    [ Rule_Attr
+                        ( "[type=submit]"
+                        , Border       = P.border_button
+                        , float        = "right"
+                        , margin       = TRBL0 (t = Em (1), l = Em (1))
+                        , padding      = TRBL  (Em (0.20))
+                        , text_align   = "center"
+                        , width        = Em ( 5)
+                        , ** Border (radius = Px (10))
+                        )
+                    ]
+                )
+            , Rule
+                ( "input", "li", "tr"
+                , children         =
+                    [ Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
+                    ]
+                )
+            , Rule
+                ( "li"
+                , margin           = TRBL0 (r = Em (1))
+                )
+            , Rule
+                ( "ul"
+                , padding          = 0
+                )
+            , Rule
+                ( ".attrs"
+                , children         =
+                    [ Rule
+                        ( "td"
+                        , border       = 0
+                        , padding      = TRBL0
+                            (t = Px (2), b = Px (2), l = Px (5))
+                        , children     =
+                            [ Rule_Class
+                                ( "value"
+                                , width        = Em ( 8)
+                                )
+                            , Rule_Class
+                                ( "name"
+                                , text_align   = "right"
+                                )
+                            ]
+                        )
+                    , Rule
+                        ( ".button"
+                        , border_width = Px (1)
+                        , color        = "inherit"
+                        , margin       = TRBL (0, Px (2))
+                        , padding      = TRBL (Px (2), Px (5))
+                        , ** Border (radius = Px (10))
+                        )
+                    ]
+                )
+            , Rule
+                ( ".limits"
+                , children         =
+                    [ Rule
+                        ( "li"
+                        , display      = "inline-block"
+                        )
+                    , Rule
+                        ( "input", "label"
+                        , display      = "block"
+                        , text_align   = "right"
+                        , width        = Em ( 8)
+                        )
+                    , Rule
+                        ( "input[name=order_by]", "label[for=order_by]"
+                        , text_align   = "left"
+                        , width        = Em (16)
+                        )
+                    ]
+                )
+            ]
+        )
     )
+Include ("html/tablesorter.media")
 
-Script (src = "/media/GTW/js/jquery.tablesorter.min.js", rank = 100)
 Script (GTW.Script._.GTW_postify_a)
-JS_On_Ready \
-    ( """$("table.tablesorter").each
-            ( function ()
-                {
-                  var tab$ = $(this);
-                  var th$  = $("thead tr:last th", tab$);
-                  var n = th$.size () - 1;
-                  var headers = { 0 : { sorter : false } };
-                  headers [n] = { sorter : false };
-                  tab$.tablesorter
-                    ( { cssAsc    : "ascending"
-                      , cssDesc   : "descending"
-                      , cssHeader : "sortable"
-                      , headers   : headers
-                      }
-                    );
-                }
-            );
-      """
-    , rank = 100
-    )
+Script (GTW.Script._.GTW_jq_util)
 
 JS_On_Ready \
     ( """$("table.tablesorter").each
@@ -118,10 +218,11 @@ JS_On_Ready \
                   var headers = { 0 : { sorter : false } };
                   headers [n] = { sorter : false };
                   tab$.tablesorter
-                    ( { cssAsc    : "ascending"
-                      , cssDesc   : "descending"
-                      , cssHeader : "sortable"
-                      , headers   : headers
+                    ( { cancelSelection : false
+                      , cssAsc          : "ascending"
+                      , cssDesc         : "descending"
+                      , cssHeader       : "sortable"
+                      , headers         : headers
                       }
                     );
                 }
@@ -129,9 +230,18 @@ JS_On_Ready \
       """
     , rank = 100
     )
-Script \
-    ( src      = "/media/GTW/js/jquery.tablesorter.min.js"
-    , rank     = 100
+
+JS_On_Ready \
+    ( """$("button[name=NEXT]").button
+            ({ icons : { primary : "ui-icon-arrowthick-1-e" }, text : false });
+         $("button[name=PREV]").button
+            ({ icons : { primary : "ui-icon-arrowthick-1-w" }, text : false });
+         $("button[name=APPLY]").button
+            ({ icons : { primary : "ui-icon-check" }, text : false });
+         $("button[name=ADD]").button
+            ({ icons : { primary : "ui-icon-plusthick" }, text : false });
+      """
+    , rank = 100
     )
 Script (GTW.Script._.GTW_postify_a)
 JS_On_Ready \

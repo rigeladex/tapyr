@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-10 11:24+0200\n"
+"POT-Creation-Date: 2011-10-25 13:01+0200\n"
 "PO-Revision-Date: 2011-10-10 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -23,13 +23,13 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:254 _GTW/_NAV/_E_Type/Admin.py:345
-#: _GTW/_NAV/_E_Type/Admin.py:549 _GTW/_NAV/_E_Type/Admin.py:747
+#: _GTW/_NAV/_E_Type/Admin.py:229 _GTW/_NAV/_E_Type/Admin.py:323
+#: _GTW/_NAV/_E_Type/Admin.py:664
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:412 _GTW/_NAV/_E_Type/Admin.py:471
+#: _GTW/_NAV/_E_Type/Admin.py:389 _GTW/_NAV/_E_Type/Admin.py:448
 #, python-format
 msgid "%s only works with content-type json"
 msgstr ""
@@ -66,7 +66,7 @@ msgstr "Apr"
 msgid "April"
 msgstr "April"
 
-#: _GTW/_NAV/_E_Type/Admin.py:335 _GTW/_NAV/_E_Type/Admin.py:560
+#: _GTW/_NAV/_E_Type/Admin.py:249 _GTW/_NAV/_E_Type/Admin.py:675
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
 
@@ -94,10 +94,6 @@ msgstr "Auswahl der Sprache für Lokalisierung"
 msgid "Console"
 msgstr "Konsole"
 
-#: _GTW/_NAV/_E_Type/Admin.py:782
-msgid "Copy"
-msgstr "Kopiere"
-
 #: _GTW/_NAV/Calendar.py:94
 msgid "Dec"
 msgstr "Dez"
@@ -109,10 +105,6 @@ msgstr "Dezember"
 #: _GTW/_NAV/Auth.py:106
 msgid "EMail verification successful."
 msgstr "Die Bestätigung der Email war erfolgreich."
-
-#: _GTW/_NAV/_E_Type/Admin.py:780
-msgid "Edit"
-msgstr "Ändere"
 
 #: _GTW/_AFS/Error.py:72
 msgid ""
@@ -142,7 +134,7 @@ msgstr "Feld `%(field)s` muss ausgefüllt werden"
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:227
+#: _GTW/_NAV/_E_Type/Admin.py:197
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr "Fehlerhaftes Formular (unbekanntes Element %s)"
@@ -234,11 +226,11 @@ msgstr "Emailadresse"
 msgid "New password"
 msgstr "Neues Kennwort"
 
-#: _GTW/_NAV/_E_Type/Admin.py:282
+#: _GTW/_NAV/_E_Type/Admin.py:267
 msgid "Not authorized for this page"
 msgstr "Fehlende Autorisierung für den Zugriff auf diese Seite"
 
-#: _GTW/_NAV/_E_Type/Admin.py:274
+#: _GTW/_NAV/_E_Type/Admin.py:259
 msgid "Not logged in or login-session is expired"
 msgstr "Felhende Anmeldung oder die Sitzung ist abgelaufen."
 
@@ -250,7 +242,7 @@ msgstr "Nov"
 msgid "November"
 msgstr "November"
 
-#: _GTW/_NAV/_E_Type/Admin.py:670
+#: _GTW/_NAV/_E_Type/Admin.py:510 _GTW/_NAV/_E_Type/Admin.py:537
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr "Objekt \"%s\" gelöscht"
@@ -414,6 +406,10 @@ msgstr "Mittwoch"
 #, python-format
 msgid "Welcome %s."
 msgstr "Willkommen, %s."
+
+#: _GTW/_NAV/_E_Type/Admin.py:517 _GTW/_NAV/_E_Type/Admin.py:545
+msgid "You need to specify a pid!"
+msgstr ""
 
 #: _GTW/HTML.py:52
 msgid "email address"

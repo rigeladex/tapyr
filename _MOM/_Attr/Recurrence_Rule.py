@@ -46,8 +46,11 @@
 #     4-Sep-2010 (CT) s/owner/owner.owner/ where necessary (change of
 #                     _A_Composite_Collection_)
 #    13-Oct-2010 (CT) `example` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM import *
 from   _MOM.import_MOM import \
