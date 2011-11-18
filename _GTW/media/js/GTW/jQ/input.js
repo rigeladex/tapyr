@@ -64,8 +64,8 @@
                         } else {
                             var overlay$ =
                                 $( '<input type="text" value="'
+                                 +  placeholder + '"'
                                  + ' class="_placeholder_"'
-                                 + placeholder
                                  + '"/>'
                                  );
                             overlay$
@@ -81,7 +81,8 @@
                                         target$.show  ().focus ();
                                         overlay$.hide ();
                                       }
-                                    );
+                                    )
+                                .hide ();
                             target$
                                 .blur
                                     ( function (ev) {

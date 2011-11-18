@@ -90,11 +90,4 @@
 {%- block document %}
   {{- e_type_admin (page, page.E_Type, fields, objects) -}}
 {% endblock -%}
-
-{%- block body -%}
-  {{ super () }}
-  <script>
-    $("a.delete").gtw_postify_a ({ parent_selector : "tr" });
-  </script>
-{%- endblock body -%}
 {#- __END__ jinja template: e_type_admin.jnj -#}
