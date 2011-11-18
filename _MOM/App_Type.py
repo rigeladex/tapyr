@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -38,6 +38,7 @@
 #    24-Jun-2010 (CT) `db_sig` and `db_version_hash` added
 #    30-Jun-2010 (CT) `Once_Property` for `Version` added
 #    22-Dec-2010 (CT) `etypes_by_pns` addded
+#    18-Nov-2011 (CT) Add `attribute_types`
 #    ««revision-date»»···
 #--
 
@@ -121,6 +122,16 @@ class _App_Type_ (TFL.Meta.Object) :
 
 class _App_Type_D_ (_App_Type_) :
     """App_Type derived for a specific combination of `EMS` and `DBW`"""
+
+    @TFL.Meta.Once_Property
+    def attribute_types (self) :
+        result = set ()
+        for T in self._T_Extension :
+            if not T.is_partial :
+                for ak in T.primary + T.user_attr :
+                    result.add (ak.attr)
+        return sorted (result, key = TFL.Sorted_By ("typ", "name"))
+    # end def attribute_types
 
     @TFL.Meta.Once_Property
     def db_version_hash (self) :

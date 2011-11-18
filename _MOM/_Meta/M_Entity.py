@@ -118,6 +118,7 @@
 #    15-Nov-2011 (CT) Change default for `sorted_by_epk` from `sort_key_pm`
 #                     to `sort_key`
 #    18-Nov-2011 (CT) Derive `Type_Name_Type` from `unicode`  instead of `str`
+#    18-Nov-2011 (CT) Add `cls.AQ = MOM.Attr.Filter.E_Type_Attr_Query (cls)`
 #    ««revision-date»»···
 #--
 
@@ -646,6 +647,7 @@ class M_E_Type (M_E_Mixin) :
     # end def _m_scope
 
     def _m_setup_attributes (cls, bases, dct) :
+        cls.AQ = MOM.Attr.Filter.E_Type_Attr_Query (cls)
         cls._Attributes = A = cls._Attributes (cls)
         cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict

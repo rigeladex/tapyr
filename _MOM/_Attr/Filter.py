@@ -33,6 +33,7 @@
 #    16-Nov-2011 (CT) Add translation markup (`_`)
 #    17-Nov-2011 (CT) Add `NE` operator
 #    17-Nov-2011 (CT) Add `_Type_` and `_M_Type_`
+#    18-Nov-2011 (CT) Move `AC` into `_Table`; add `Op_Map`, `E_Type_Attr_Query`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ import _MOM._Attr
 import _TFL._Meta.Object
 
 from   _TFL.I18N             import _
+from   _TFL.predicate        import split_hst
 from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
@@ -125,11 +127,11 @@ class _Composite_ (_Filter_) :
 
     def __call__ (self, value, prefix = None) :
         name   = self.attr.name
-        P_Type = self.attr.P_Type
+        E_Type = self.attr.E_Type
         pf     = ".".join ((prefix, name)) if prefix else name
         def _gen () :
             for k, v in value.iteritems () :
-                attr = getattr (P_Type, k)
+                attr = getattr (E_Type, k)
                 q    = getattr (attr.Q, self.op_key)
                 r    = q (v, pf)
                 if r is not None :
@@ -390,7 +392,8 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        cls.op_keys = sorted (cls.Table)
+        cls.Op_Map  = dict  (cls.Table, ** cls._Table)
+        cls.op_keys = tuple (sorted (cls.Table))
     # end def __init__
 
     def __str__ (cls) :
@@ -407,7 +410,8 @@ class _Type_ (TFL.Meta.Object) :
 
     __metaclass__ = _M_Type_
 
-    Table = dict \
+    ### `Table` maps the operations that can sensibly be selected in a UI
+    Table  = dict \
         ( EQ                 = Equal
         , GE                 = Greater_Equal
         , GT                 = Greater_Than
@@ -415,15 +419,14 @@ class _Type_ (TFL.Meta.Object) :
         , LT                 = Less_Than
         , NE                 = Not_Equal
         )
+    ### `_Table` maps additonal operations that don't make sense in a UI
+    _Table = dict \
+        ( AC                 = Auto_Complete
+        )
 
     def __init__ (self, attr) :
         self.attr = attr
     # end def __init__
-
-    @TFL.Meta.Once_Property
-    def AC (self) :
-        return self._AC (self.attr, self.cooker, self.attr_name)
-    # end def AC
 
     @TFL.Meta.Once_Property
     def attr_name (self) :
@@ -438,7 +441,7 @@ class _Type_ (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         attr = self.attr
         try :
-            result_type = self.Table [name]
+            result_type = self.Op_Map [name]
         except KeyError :
             try :
                 comp = getattr (Q, name) (attr)
@@ -446,7 +449,7 @@ class _Type_ (TFL.Meta.Object) :
                 raise
             else :
                 q = getattr (comp, "Q", None)
-                if isinstance (q, Ckd) :
+                if isinstance (q, _Type_) :
                     result = q
                 else :
                     raise AttributeError (name)
@@ -465,27 +468,28 @@ class _Type_ (TFL.Meta.Object) :
 
 class Ckd (_Type_) :
 
-    _AC   = Auto_Complete
+    pass
 
 # end class Ckd
 
 class Composite (_Type_) :
 
-    Table = dict \
-        ( EQ                 = Composite_Equal
+    Table  = dict ()
+    _Table = dict \
+        ( AC                 = Composite_Auto_Complete
+        , EQ                 = Composite_Equal
         , GE                 = Composite_Greater_Equal
         , GT                 = Composite_Greater_Than
         , LE                 = Composite_Less_Equal
         , LT                 = Composite_Less_Than
         , NE                 = Composite_Not_Equal
         )
-    _AC   = Composite_Auto_Complete
 
 # end class Composite
 
 class Date (_Type_) :
 
-    Table = dict \
+    Table  = dict \
         ( EQ                 = Date_Equal
         , GE                 = Date_Greater_Equal
         , GT                 = Date_Greater_Than
@@ -493,33 +497,38 @@ class Date (_Type_) :
         , LT                 = Date_Less_Than
         , NE                 = Date_Not_Equal
         )
-    _AC   = Date_Auto_Complete
+    _Table = dict \
+        ( AC                 = Date_Auto_Complete
+        )
 
 # end class Date
 
 class Id_Entity (_Type_) :
 
-    Table = dict \
-        ( EQ                 = Id_Entity_Equal
+    Table  = dict ()
+    _Table = dict \
+        ( AC                 = Id_Entity_Auto_Complete
+        , EQ                 = Id_Entity_Equal
         , GE                 = Id_Entity_Greater_Equal
         , GT                 = Id_Entity_Greater_Than
         , LE                 = Id_Entity_Less_Equal
         , LT                 = Id_Entity_Less_Than
         , NE                 = Id_Entity_Not_Equal
         )
-    _AC   = Id_Entity_Auto_Complete
 
 # end class Id_Entity
 
 class String (_Type_) :
 
-    Table = dict \
-        ( Ckd.Table
+    Table  = dict \
+        ( _Type_.Table
         , CONTAINS           = Contains
         , ENDSWITH           = Ends_With
         , STARTSWITH         = Starts_With
         )
-    _AC   = Auto_Complete_S
+    _Table = dict \
+        ( AC                 = Auto_Complete_S
+        )
 
 # end class String
 
@@ -536,6 +545,25 @@ class Raw (String) :
     # end def cooker
 
 # end class Raw
+
+class E_Type_Attr_Query (TFL.Meta.Object) :
+    """Query object for `E_Type` returning an essential attribute's `Q`"""
+
+    def __init__ (self, E_Type) :
+        self.E_Type = E_Type
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        head, _, tail = split_hst (name, ".")
+        result = getattr (self.E_Type, head).Q
+        if tail :
+            result = getattr (Q, tail) (result)
+        else :
+            setattr (self, name, result)
+        return result
+    # end def __getattr__
+
+# end class E_Type_Attr_Query
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()

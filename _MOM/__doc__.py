@@ -1810,22 +1810,8 @@ Setting attribute values with Queries
 
 """
 
-from   _TFL.Formatter           import Formatter
+from   _TFL.Formatter           import Formatter, formatted_1 as formatted1
 formatted  = Formatter (width = 240)
-_formatted1 = Formatter (indent = 0, width = 2 << 16, sep = " ")
-
-def formatted1 (* args, ** kw) :
-    result = \
-        ( _formatted1 (* args, ** kw)
-            .replace (" ,", ",")
-            .replace ("( ", "(")
-            .replace ("[ ", "[")
-            .replace ("{ ", "{")
-            .replace (" )", ")")
-            .replace (" ]", "]")
-            .replace (" }", "}")
-        )
-    return result
 
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"
