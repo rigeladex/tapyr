@@ -243,7 +243,9 @@ JS_On_Ready \
       """
     , rank = 100
     )
+
 Script (GTW.Script._.GTW_postify_a)
 JS_On_Ready \
     ("""$("a.delete").gtw_postify_a ({ parent_selector : "tr" });""")
+
 ### __END__ html/e_type_admin.jnj.media

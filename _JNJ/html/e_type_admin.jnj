@@ -190,4 +190,5 @@
 {%- block document %}
   {{- e_type_admin (page, page.E_Type, fields, objects) -}}
 {% endblock -%}
+
 {#- __END__ jinja template: e_type_admin.jnj -#}
