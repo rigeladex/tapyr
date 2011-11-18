@@ -32,8 +32,11 @@
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    23-Mar-2011 (CT) `region` made `Optional`, not `Primary_Optional`
 #     7-Sep-2011 (CT) `completer` specifications for primary attributes added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _MOM._Attr.Position    import *

@@ -36,8 +36,11 @@
 #    23-Sep-2011 (CT) `Club` added
 #     7-Oct-2011 (CT) `GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec` added
 #    14-Nov-2011 (CT) Correct `Boat_in_Regatta.sort-key`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _TFL                     import TFL
 from   _GTW                     import GTW

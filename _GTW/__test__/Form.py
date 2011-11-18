@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -38,12 +38,12 @@ r"""
     ('Person_has_Address', <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Address'>)
     ('Person_has_Email', <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Email'>)
     ('Person_has_Phone', <class '_GTW._Form._MOM.Inline_Instance.Link_Inline_Instance_Person__Person_has_Phone'>)
-    ('lifetime', <class '_GTW._Form._MOM.Inline_Instance.An_Attribute_Inline_Instance_Person__Date_Interval'>)
+    (u'lifetime', <class '_GTW._Form._MOM.Inline_Instance.An_Attribute_Inline_Instance_Person__Date_Interval'>)
     >>> form = form_cls ("/post/")
     >>> form.form_name
     'Person'
     >>> [il.form_cls.form_name for il in form.inline_groups]
-    ['Person__Person_has_Phone', 'Person__Person_has_Email', 'Person__Person_has_Address']
+    [u'Person__Person_has_Phone', u'Person__Person_has_Email', u'Person__Person_has_Address']
     >>> for l in form.Media.js_on_ready : print l
     /* setup form `GTW_OMP_PAP_Person` */
     <BLANKLINE>

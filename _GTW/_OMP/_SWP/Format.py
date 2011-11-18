@@ -31,8 +31,11 @@
 #    17-Mar-2010 (CT) Use `ReST.to_html` instead of `GTW.ReST.to_html`
 #    17-Mar-2010 (CT) `Cleaner` added to `HTML`
 #    22-Mar-2011 (CT) `M_Format.__str__` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                   import GTW
 from   _ReST                  import ReST as RST

@@ -45,8 +45,11 @@
 #    12-Sep-2011 (CT) `prefix` added to `_AC_Query_FL_.query`
 #    25-Oct-2011 (CT) `ui_display_format` format changed (put `last_name` first)
 #    11-Nov-2011 (CT) Adapt to change of `MOM.Attr.Filter`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM             import *
 from   _MOM._Attr.Date_Interval    import *
@@ -82,7 +85,8 @@ class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
 
 class Filter_String_FL (MOM.Attr.Filter.String) :
 
-    _AC = Auto_Complete_PN
+    _real_name = "String_FL"
+    _Table     = dict (AC = Auto_Complete_PN)
 
 # end class Filter_String_FL
 

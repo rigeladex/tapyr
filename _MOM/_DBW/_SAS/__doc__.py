@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos, formatted
+from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos, formatted, formatted1
 from   _TFL.Regexp import Dict_Replacer, re
 
 filter_dbw_pat = re.compile \

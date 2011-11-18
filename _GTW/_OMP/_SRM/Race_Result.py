@@ -28,8 +28,11 @@
 # Revision Dates
 #     6-Sep-2010 (CT) Creation
 #     7-Oct-2011 (CT) `race.min_value` set to `1`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *

@@ -56,6 +56,7 @@
 #    28-Sep-2010 (CT) Adapted to change of `epk_raw`
 #    20-Dec-2010 (CT) Python 2.7 compatibility
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
+#    18-Nov-2011 (CT) Add `formatted1` to get rid of `u` prefixes
 #    ««revision-date»»···
 #--
 
@@ -752,7 +753,7 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
     [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
 
-    >>> sorted (ET_Id_Entity.relevant_roots)
+    >>> print formatted1 (sorted (ET_Id_Entity.relevant_roots))
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
     >>> ET_Person.relevant_root
     <class 'BMT.Person' [BMT__Hash__HPS]>
@@ -763,16 +764,16 @@ The app-type specific entity-types are ready to be used by
 
     >>> sorted (ET_Person.children)
     []
-    >>> sorted (ET_Rodent.children)
+    >>> print formatted1 (sorted (ET_Rodent.children))
     ['BMT.Mouse', 'BMT.Rat']
     >>> sorted (ET_Rodent.children.itervalues (), key = TFL.Getter.type_name)
     [<class 'BMT.Mouse' [BMT__Hash__HPS]>, <class 'BMT.Rat' [BMT__Hash__HPS]>]
     >>> sorted (ET_Rat.children)
     []
 
-    >>> sorted (apt.etypes)
+    >>> print formatted1 (sorted (apt.etypes))
     ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._MOM_Link_n_']
-    >>> [t.type_name for t in apt._T_Extension]
+    >>> print formatted1 ([t.type_name for t in apt._T_Extension])
     ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print u"%%-35s %%s" %% (t.type_name, t.epk_sig)
@@ -1449,9 +1450,9 @@ Deleting objects and links
 
     >>> m.object_referring_attributes
     defaultdict(<type 'list'>, {})
-    >>> sorted (d.type_name for d in m.dependencies)
+    >>> print formatted1 (sorted (d.type_name for d in m.dependencies))
     ['BMT.Rodent_in_Trap']
-    >>> sorted (d.type_name for d in t1.dependencies) ### 1
+    >>> print formatted1 (sorted (d.type_name for d in t1.dependencies)) ### 1
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
 
     >>> m_id  = m.pid
@@ -1478,7 +1479,7 @@ Deleting objects and links
     >>> show (scope.ems.all_links (m_id))
     []
 
-    >>> sorted (d.type_name for d in t1.dependencies) ### 2
+    >>> print formatted1 (sorted (d.type_name for d in t1.dependencies)) ### 2
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
 
     .. ### DBW-specific finish
@@ -1810,7 +1811,21 @@ Setting attribute values with Queries
 """
 
 from   _TFL.Formatter           import Formatter
-formatted = Formatter (width = 240)
+formatted  = Formatter (width = 240)
+_formatted1 = Formatter (indent = 0, width = 2 << 16, sep = " ")
+
+def formatted1 (* args, ** kw) :
+    result = \
+        ( _formatted1 (* args, ** kw)
+            .replace (" ,", ",")
+            .replace ("( ", "(")
+            .replace ("[ ", "[")
+            .replace ("{ ", "{")
+            .replace (" )", ")")
+            .replace (" ]", "]")
+            .replace (" }", "}")
+        )
+    return result
 
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"

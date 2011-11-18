@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This package is part of the package GTW.
@@ -51,8 +51,11 @@
 #    15-Dec-2010 (CT) `Account_P_Manager.reset_password` fixed
 #    22-Dec-2010 (CT) `_Auth_Account_.electric`, `.is_partial` and
 #                     `.is_relevant` redefined to `True`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW

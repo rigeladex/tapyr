@@ -117,6 +117,7 @@
 #                     (`Sorted_by` does the right thing now)
 #    15-Nov-2011 (CT) Change default for `sorted_by_epk` from `sort_key_pm`
 #                     to `sort_key`
+#    18-Nov-2011 (CT) Derive `Type_Name_Type` from `unicode`  instead of `str`
 #    ««revision-date»»···
 #--
 
@@ -138,10 +139,15 @@ import _MOM.E_Type_Manager
 
 import sys
 
-class Type_Name_Type (str) :
+class Type_Name_Type (unicode) :
     """Type used for `type_name`."""
 
-    pass
+    def __repr__ (self) :
+        result = super (Type_Name_Type, self).__repr__ ()
+        if result.startswith (("u'", 'u"')) :
+            result = result [1:]
+        return result
+    # end def __repr__
 
 # end class Type_Name_Type
 
@@ -219,7 +225,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             result = ".".join ((pkg_ns._Package_Namespace__qname, name))
         else :
             result = name
-        return result
+        return unicode (result)
     # end def pns_qualified
 
     def set_default_child (cls, child) :
@@ -230,7 +236,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     def set_ui_name (cls, ui_name) :
         """Sets `ui_name` of `cls`"""
         if not cls.show_package_prefix :
-            cls.ui_name = ui_name
+            cls.ui_name = Type_Name_Type    (ui_name)
         else :
             cls.ui_name = cls.pns_qualified (ui_name)
     # end def set_alias
@@ -296,7 +302,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , M_E_Type      = cls.M_E_Type
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
-            , _real_name    = cls.type_base_name           ### M_Autorename
+            , _real_name    = str (cls.type_base_name)     ### M_Autorename
             , ** kw
             )
     # end def _m_new_e_type_dict
@@ -307,7 +313,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     # end def _m_setup_prop_names
 
     def _set_type_names (cls, base_name) :
-        cls.type_base_name = base_name
+        cls.type_base_name = cls.Type_Name_Type (base_name)
         cls.type_name      = cls.Type_Name_Type (cls.pns_qualified (base_name))
         cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
     # end def _set_type_names
@@ -318,7 +324,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             kind = app_type.name
         else :
             kind = getattr (cls, "_Class_Kind", "unknown")
-        return "<class %r [%s]>" % (cls.type_name, kind)
+        return "<class %r [%s]>" % (str (cls.type_name), kind)
     # end def __repr__
 
 # end class M_E_Mixin
@@ -396,7 +402,7 @@ class M_Entity (M_E_Mixin) :
         for s in SX :
             tbn = s.type_base_name
             bet = M_E_Mixin \
-                ( "_BET_%s_" % s.type_base_name
+                ( "_BET_%s_" % str (s.type_base_name)
                 , tuple (getattr (b, "__BET", b) for b in s.__bases__)
                 , dict
                     ( app_type            = None
@@ -404,7 +410,7 @@ class M_Entity (M_E_Mixin) :
                     , is_partial          = s.is_partial
                     , PNS                 = s.PNS
                     , show_package_prefix = s.show_package_prefix
-                    , _real_name          = tbn
+                    , _real_name          = str (tbn)
                     , __module__          = s.__module__
                     )
                 )

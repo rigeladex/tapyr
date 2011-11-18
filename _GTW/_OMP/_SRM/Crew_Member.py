@@ -30,8 +30,11 @@
 #    13-Oct-2010 (CT) Derive from `Link2` instead of `Link1`
 #     1-Dec-2010 (CT) `key` added
 #     9-Feb-2011 (CT) `right.ui_allow_new` set to `True`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *

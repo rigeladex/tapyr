@@ -161,8 +161,11 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #     8-Nov-2011 (CT) Add `Id_Entity_Reference_Mixin._check_sanity` for `P_Type`
 #     8-Nov-2011 (CT) Use `Error.Required_Empty` for `_Required_Mixin_` check
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _TFL                  import TFL
 from   _MOM                  import MOM

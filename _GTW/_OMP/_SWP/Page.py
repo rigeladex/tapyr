@@ -40,8 +40,11 @@
 #     8-Apr-2010 (CT) `year_max` removed from `Page_Y` (was a bad idea (TM))
 #    10-May-2011 (CT) `hidden` added
 #    14-Jul-2011 (CT) `head_line.max_length` increased to 256 (from 120)
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM          import *
 from   _MOM._Attr.Date_Interval import *

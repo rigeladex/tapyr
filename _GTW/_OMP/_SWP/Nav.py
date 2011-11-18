@@ -34,8 +34,11 @@
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
 #     7-Nov-2011 (CT) Remove boilerplate from `afs_spec` for Entity_Link `clips`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _TFL                     import TFL
 from   _GTW                     import GTW

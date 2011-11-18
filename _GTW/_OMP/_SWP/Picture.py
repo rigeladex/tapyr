@@ -30,8 +30,11 @@
 #    13-Oct-2010 (CT) `example` added
 #     5-Sep-2011 (CT) `width.max_value` increased from 1000 to 1200
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM          import *
 from   _GTW                     import GTW

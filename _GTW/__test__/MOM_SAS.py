@@ -36,7 +36,7 @@ doctests
     >>> Print
 """
 from _MOM._DBW._SAS.__doc__ import \
-     __doc__, __test__, MOM, BMT, show, NL, sos, remove, formatted
+     __doc__, __test__, MOM, BMT, show, NL, sos, remove, formatted, formatted1
 
 if __name__ == "__main__" :
     import doctest

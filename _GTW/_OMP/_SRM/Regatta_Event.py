@@ -35,8 +35,11 @@
 #     8-Sep-2011 (CT) `completer` added to `name`, `club` and `desc`
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #     9-Nov-2011 (CT) Change `computed` methods to use `FO`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *

@@ -64,6 +64,7 @@
 #     8-Nov-2011 (CT) Change `Field_Entity.__call__` to honor `attr.raw_default`
 #     8-Nov-2011 (CT) Change `_create_instance` to pass `exc.any_required_empty`
 #     8-Nov-2011 (CT) Change `Field._value` to check `entity` vs. `allow_new`
+#    18-Nov-2011 (CT) Apply `str` to `.type_name` (in `_value_sig_t`)
 #    ««revision-date»»···
 #--
 
@@ -180,7 +181,7 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
         init = instance.init
         return tuple \
             ( (k, init.get (k)) for k in ("pid", "cid")
-            ) + (str (instance.id), self.type_name)
+            ) + (str (instance.id), str (self.type_name))
     # end def _value_sig_t
 
 Entity = _MOM_Entity_ # end class

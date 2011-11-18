@@ -33,8 +33,11 @@
 #                     `A_Decimal` for `country_code`, `area_code`, and `number`
 #     7-Sep-2011 (CT) `completer` specifications for `country_code`,
 #                     `area_code`, and `number` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW

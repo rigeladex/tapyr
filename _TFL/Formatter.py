@@ -34,6 +34,7 @@
 #    28-Feb-2011 (CT) More output compaction (`nl_r`)
 #    28-Feb-2011 (CT) `_repr` added and used to remove leading `u` from strings
 #    25-Oct-2011 (CT) `_repr` changed to chop off trailing the `L` from longs
+#    18-Nov-2011 (CT) Add optional argument `sep`
 #    ««revision-date»»···
 #--
 
@@ -88,13 +89,14 @@ class Formatter (TFL.Meta.Object) :
     ]
     """
 
-    def __init__ (self, indent = 2, width = 80) :
+    def __init__ (self, indent = 2, width = 80, sep = "\n") :
         self.indent = indent
         self.width  = width
+        self.sep    = sep
     # end def __init__
 
     def __call__ (self, thing, level = 0, seen = None, leader = "") :
-        return "\n".join (self.format_iter (thing, level, seen, leader))
+        return self.sep.join (self.format_iter (thing, level, seen, leader))
     # end def __call__
 
     def format_iter (self, thing, level = 0, seen = None, leader = "", nl_r = False) :
@@ -174,8 +176,8 @@ class Formatter (TFL.Meta.Object) :
                     elif head :
                         yield head.rstrip ()
                         head = ""
-                    tail = ""
                     yield l
+                    tail = ""
                 sep = ","
             yield "%s%s" % (ws, clos)
         else :
@@ -194,7 +196,6 @@ class Formatter (TFL.Meta.Object) :
             result = result [:-1]
         return result
     # end def _repr
-
 
 # end class Formatter
 

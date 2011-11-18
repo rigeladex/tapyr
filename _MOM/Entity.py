@@ -685,7 +685,7 @@ class An_Entity (Entity) :
     # end def SCM_Change_Attr
 
     def as_pickle_cargo (self) :
-        return (self.type_name, self.as_attr_pickle_cargo ())
+        return (str (self.type_name), self.as_attr_pickle_cargo ())
     # end def as_pickle_cargo
 
     def as_string (self) :
@@ -910,8 +910,8 @@ class Id_Entity (Entity) :
     @TFL.Meta.Once_Property
     def epk (self) :
         """Essential primary key"""
-        return \
-            tuple (a.get_value (self) for a in self.primary) + (self.type_name,)
+        return tuple \
+            (a.get_value (self) for a in self.primary) + (self.type_name,)
     # end def epk
 
     @property
@@ -946,8 +946,10 @@ class Id_Entity (Entity) :
     @property
     def epk_raw (self) :
         """Essential primary key as raw values"""
-        return tuple \
-            (a.get_raw_epk (self) for a in self.primary) + (self.type_name,)
+        return \
+            ( tuple (a.get_raw_epk (self) for a in self.primary)
+            + (self.type_name, )
+            )
     # end def epk_raw
 
     @property
@@ -987,7 +989,7 @@ class Id_Entity (Entity) :
     # end def async_changes
 
     def as_pickle_cargo (self) :
-        return (self.type_name, self.as_attr_pickle_cargo (), self.pid)
+        return (str (self.type_name), self.as_attr_pickle_cargo (), self.pid)
     # end def as_pickle_cargo
 
     def attr_as_code (self) :

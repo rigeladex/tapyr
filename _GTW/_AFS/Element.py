@@ -98,6 +98,8 @@
 #                     all children during `__call__`
 #     9-Nov-2011 (CT) Add default for `allow_new` to `Entity.__call__`
 #     9-Nov-2011 (CT) Add `_pop_allow_new` to `Fieldset` and `Form`
+#    18-Nov-2011 (CT) Apply `str` to `.name` and `.type_name`
+#                     (in `__str__`, `_value_sig` and `_value_sig_t`)
 #    ««revision-date»»···
 #--
 
@@ -351,6 +353,11 @@ class _Element_ (TFL.Meta.Object) :
         for k in "name", "type_name" :
             n = self.kw.get (k)
             if n is not None :
+                if isinstance (n, unicode) :
+                    try :
+                        n = str (n)
+                    except :
+                        pass
                 v = "%r" % n
                 if infos [-1] != v :
                     infos.append (v)
@@ -435,7 +442,7 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def _update_sid
 
     def _value_sig_t (self, instance) :
-        return (str (instance.id), self.type_name, instance.init)
+        return (str (instance.id), str (self.type_name), instance.init)
     # end def _value_sig_t
 
 # end class Entity
@@ -523,6 +530,11 @@ class Entity_List (_Field_MI_, _Element_List_) :
         n = getattr (self, "name", None) or getattr (self, "type_name", None)
         p = str (self.proto)
         if n :
+            if isinstance (n, unicode) :
+                try :
+                    n = str (n)
+                except :
+                    pass
             return "<%s %s %r %s>" % (self.__class__.__name__, self.id, n, p)
         else :
             return "<%s %s %s>"    % (self.__class__.__name__, self.id, p)
@@ -554,7 +566,7 @@ class Field (_Field_MI_, _Field_) :
     # end def _css_classes
 
     def _value_sig (self, instance) :
-        result = (str (instance.id), self.name, instance.init)
+        result = (str (instance.id), str (self.name), instance.init)
         if getattr (instance, "prefilled", False) :
             result = (result, True)
         return result
@@ -572,7 +584,7 @@ class Field_Composite (_Field_MI_, _Anchor_MI_, _Field_) :
     _pop_allow_new = True
 
     def _value_sig (self, instance) :
-        return (str (instance.id), self.name, instance.form_sig ())
+        return (str (instance.id), str (self.name), instance.form_sig ())
     # end def _value_sig
 
 # end class Field_Composite
@@ -583,7 +595,7 @@ class Field_Entity (_Field_MI_, Entity, _Field_) :
     het_h       = "h2"      ### HTML element type to be used for the heading
 
     def _value_sig (self, instance) :
-        return (str (instance.id), self.name)
+        return (str (instance.id), str (self.name))
     # end def _value_sig
 
 # end class Field_Entity

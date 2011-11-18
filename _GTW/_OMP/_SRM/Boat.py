@@ -44,8 +44,11 @@
 #     9-Nov-2011 (CT) Add cached attributes `sail_number_head` and `_tail`
 #    17-Nov-2011 (CT) Split off `sail_number_x` again (to fix sorting)
 #    17-Nov-2011 (CT) Redefine `ui_display_format` and `ui_display_sep`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *

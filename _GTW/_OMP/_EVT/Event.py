@@ -44,8 +44,11 @@
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #     8-Nov-2011 (CT) Add `calendar`, `left.completer`
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Type            import *
