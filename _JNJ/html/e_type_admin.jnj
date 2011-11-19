@@ -36,8 +36,8 @@
 ##    16-Nov-2011 (CT) Start implementation of `qr_control`
 ##    17-Nov-2011 (CT) Remove `count`, `total_f`, and `total_u`
 ##                     (`page.head_line` contains those now)
-##    17-Nov-2011 (CT) Continue implementation of `qr_control` (`_qr_button`,
-##                     "Next", ...)
+##    17-Nov-2011 (CT) Continue `qr_control` (`_qr_button`, "Next", ...)
+##    19-Nov-2011 (CT) Continue `qr_control` ("First", "Last")
 ##    ««revision-date»»···
 ##--
 #}
@@ -106,6 +106,12 @@
         )
     }}
     {{ _qr_button
+        ( GTW._  ("Last")
+        , GTW._T ("Display last batch of objects matching the restriction")
+        , ("submit" if qr.next_p else  "button")
+        )
+    }}
+    {{ _qr_button
         ( GTW._  ("Next")
         , GTW._T ("Display next batch of objects matching the restriction")
         , ("submit" if qr.next_p else  "button")
@@ -115,6 +121,12 @@
         ( GTW._  ("Prev")
         , GTW._T ("Display previous batch of objects matching the restriction")
         , "submit" if qr.prev_p else  "button"
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("First")
+        , GTW._T ("Display first batch of objects matching the restriction")
+        , ("submit" if qr.prev_p else  "button")
         )
     }}
     {{ _qr_button

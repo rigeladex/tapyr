@@ -29,6 +29,7 @@
 #    14-Nov-2011 (CT) Creation
 #    16-Nov-2011 (CT) Creation continued (order_by, ...)
 #    17-Nov-2011 (CT) Creation continued.. (NEXT, PREV, ...)
+#    19-Nov-2011 (CT) Creation continued... (FIRST, LAST)
 #    ««revision-date»»···
 #--
 
@@ -80,11 +81,15 @@ class Query_Restriction (TFL.Meta.Object) :
             )
         limit = result.limit
         if limit :
-            if "NEXT" in data :
+            if "LAST" in data :
+                result.offset = - limit
+            elif "FIRST" in data :
+                result.offset = 0
+            elif "NEXT" in data :
                 result.offset += limit
             elif "PREV" in data :
                 result.offset  = min (result.offset - limit, 0)
-        elif "PREV" in data :
+        elif "FIRST" in data or "PREV" in data :
             result.offset = 0
         result._setup_filters  (E_Type, data)
         result._setup_order_by (E_Type, data)
@@ -107,8 +112,9 @@ class Query_Restriction (TFL.Meta.Object) :
         if self.order_by_q :
             result = result.order_by (self.order_by_q)
         self.query_f = result
-        if self.offset :
-            result = result.offset   (self.offset)
+        offset = self.offset_f
+        if offset :
+            result = result.offset   (offset)
         if self.limit :
             result = result.limit    (self.limit)
         return result
@@ -116,13 +122,24 @@ class Query_Restriction (TFL.Meta.Object) :
 
     @Once_Property
     def next_p (self) :
-        limit = self.limit
-        return limit and self.offset + limit < self.total_f
+        limit  = self.limit
+        if limit :
+            offset = self.offset_f
+            total  = self.total_f
+            return offset + limit < total
     # end def next_p
 
     @Once_Property
+    def offset_f (self) :
+        result = self.offset
+        if result < 0 :
+            result = self.total_f + result
+        return result
+    # end def offset_f
+
+    @Once_Property
     def prev_p (self) :
-        return self.offset > 0
+        return self.offset_f > 0
     # end def prev_p
 
     @Once_Property

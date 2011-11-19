@@ -36,6 +36,7 @@
 #    16-Nov-2011 (CT) Add rules for `.restrictions`
 #    17-Nov-2011 (CT) Add rules for `.restrictions` and `JS_On_Ready` for
 #                     `button`
+#    19-Nov-2011 (CT) Add `FIRST` and `LAST` to `JS_On_Ready` for `button`
 #    ««revision-date»»···
 #--
 
@@ -232,14 +233,19 @@ JS_On_Ready \
     )
 
 JS_On_Ready \
-    ( """$("button[name=NEXT]").button
-            ({ icons : { primary : "ui-icon-arrowthick-1-e" }, text : false });
-         $("button[name=PREV]").button
-            ({ icons : { primary : "ui-icon-arrowthick-1-w" }, text : false });
-         $("button[name=APPLY]").button
-            ({ icons : { primary : "ui-icon-check" }, text : false });
-         $("button[name=ADD]").button
-            ({ icons : { primary : "ui-icon-plusthick" }, text : false });
+    ( """
+        $("button[name=FIRST]").button
+           ({ icons : { primary : "ui-icon-arrowthick-1-n" }, text : false });
+        $("button[name=LAST]").button
+           ({ icons : { primary : "ui-icon-arrowthick-1-s" }, text : false });
+        $("button[name=NEXT]").button
+           ({ icons : { primary : "ui-icon-arrowthick-1-e" }, text : false });
+        $("button[name=PREV]").button
+           ({ icons : { primary : "ui-icon-arrowthick-1-w" }, text : false });
+        $("button[name=APPLY]").button
+           ({ icons : { primary : "ui-icon-check" }, text : false });
+        $("button[name=ADD]").button
+           ({ icons : { primary : "ui-icon-plusthick" }, text : false });
       """
     , rank = 100
     )
