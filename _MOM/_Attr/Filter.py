@@ -34,8 +34,9 @@
 #    17-Nov-2011 (CT) Add `NE` operator
 #    17-Nov-2011 (CT) Add `_Type_` and `_M_Type_`
 #    18-Nov-2011 (CT) Move `AC` into `_Table`; add `Op_Map`, `E_Type_Attr_Query`
-#    20-Nov-2011 (CT) Add `Signatures` and `sig_key`
+#    20-Nov-2011 (CT) Add `Signatures` and `Sig_Key`
 #    20-Nov-2011 (CT) Put `EQ`, `NE` into `Id_Entity.Table`
+#    20-Nov-2011 (CT) Add `Children`
 #    ««revision-date»»···
 #--
 
@@ -395,13 +396,13 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         cls.Op_Map  = dict  (cls.Table, ** cls._Table)
-        cls.op_keys = tuple (sorted (cls.Table))
-        if cls.op_keys and cls.op_keys not in cls.Signatures :
-            cls.Signatures [cls.op_keys] = len (cls.Signatures)
+        cls.Op_Keys = tuple (sorted (cls.Table))
+        if cls.Op_Keys and cls.Op_Keys not in cls.Signatures :
+            cls.Signatures [cls.Op_Keys] = len (cls.Signatures)
     # end def __init__
 
     def __str__ (cls) :
-        return "<Attr.Type.Filter %s %s>" % (cls.__name__, cls.op_keys)
+        return "<Attr.Type.Filter %s %s>" % (cls.__name__, cls.Op_Keys)
     # end def __str__
 
 # end class _M_Type_
@@ -441,15 +442,20 @@ class _Type_ (TFL.Meta.Object) :
     # end def attr_name
 
     @TFL.Meta.Once_Property
+    def Children (self) :
+        return ()
+    # end def Children
+
+    @TFL.Meta.Once_Property
     def cooker (self) :
         return self.attr.cooked
     # end def cooker
 
     @TFL.Meta.Once_Property
-    def sig_key (self) :
-        if self.op_keys :
-            return self.Signatures [self.op_keys]
-    # end def sig_key
+    def Sig_Key (self) :
+        if self.Op_Keys :
+            return self.Signatures [self.Op_Keys]
+    # end def Sig_Key
 
     def __getattr__ (self, name) :
         attr = self.attr
@@ -498,6 +504,11 @@ class Composite (_Type_) :
         , NE                 = Composite_Not_Equal
         )
 
+    @TFL.Meta.Once_Property
+    def Children (self) :
+        return tuple (c.Q for c in self.attr.E_Type.user_attr)
+    # end def Children
+
 # end class Composite
 
 class Date (_Type_) :
@@ -530,6 +541,11 @@ class Id_Entity (_Type_) :
         , LE                 = Id_Entity_Less_Equal
         , LT                 = Id_Entity_Less_Than
         )
+
+    @TFL.Meta.Once_Property
+    def Children (self) :
+        return tuple (c.Q for c in self.attr.E_Type.primary)
+    # end def Children
 
 # end class Id_Entity
 

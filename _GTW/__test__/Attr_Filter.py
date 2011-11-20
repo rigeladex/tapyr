@@ -134,11 +134,55 @@ _test_code = """
     >>> print PAP.Person_has_Phone.E_Type.AQ.person.lifetime.start
     <start.Q [Attr.Type.Filter Date]>
 
+    >>> def show_Q (a, level = 0) :
+    ...     print "%%s%%-20s%%s" %% ("  " * level, a.attr_name, a.Sig_Key)
+    ...     for c in a.Children :
+    ...         show_Q (c, level + 1)
+    >>> for pka in PAP.Person_has_Phone.E_Type.primary :
+    ...     show_Q (pka.Q)
+    left                1
+      last_name           2
+      first_name          2
+      middle_name         2
+      title               2
+    right               1
+      country_code        2
+      area_code           2
+      number              2
+    extension           2
+
+    >>> for pka in MOM.Attr.Selector.all (scope.SRM.Boat_in_Regatta.E_Type) :
+    ...     show_Q (pka.Q)
+    left                1
+      left                1
+        name                2
+      nation              0
+      __raw_sail_number   2
+      sail_number_x       2
+    right               1
+      left                1
+        name                2
+        date                None
+          start               0
+          finish              0
+    skipper             1
+      left                1
+        last_name           2
+        first_name          2
+        middle_name         2
+        title               2
+      nation              0
+      mna_number          2
+      club                1
+        name                2
+    place               0
+    points              0
+
     >>> seen = set ()
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
     ...     k = at.typ, at.needs_raw_value
     ...     if k not in seen :
-    ...         print at.typ, at.Q.__class__, at.Q.sig_key
+    ...         print at.typ, at.Q.__class__, at.Q.Sig_Key
     ...         seen.add (k)
     Account <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
     Address <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
@@ -193,8 +237,8 @@ _test_code = """
     X <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
     Y <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
 
-    >>> for sig, sig_key in sorted (at.Q.Signatures.iteritems (), key = TFL.Getter [1]) :
-    ...     print sig_key, sig
+    >>> for sig, Sig_Key in sorted (at.Q.Signatures.iteritems (), key = TFL.Getter [1]) :
+    ...     print Sig_Key, sig
     0 ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')
     1 ('EQ', 'NE')
     2 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')
