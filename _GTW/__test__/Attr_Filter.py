@@ -111,8 +111,8 @@ _test_code = """
     Sex <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
     >>> for attr in php_attrs :
     ...     print attr.typ, attr.Q.__class__
-    Person <Attr.Type.Filter Id_Entity ()>
-    Phone <Attr.Type.Filter Id_Entity ()>
+    Person <Attr.Type.Filter Id_Entity ('EQ', 'NE')>
+    Phone <Attr.Type.Filter Id_Entity ('EQ', 'NE')>
     Numeric_String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
     >>> for attr in lifetime_attrs :
@@ -138,60 +138,66 @@ _test_code = """
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
     ...     k = at.typ, at.needs_raw_value
     ...     if k not in seen :
-    ...         print at.typ, at.Q.__class__
+    ...         print at.typ, at.Q.__class__, at.Q.sig_key
     ...         seen.add (k)
-    Account <Attr.Type.Filter Id_Entity ()>
-    Address <Attr.Type.Filter Id_Entity ()>
-    Boat <Attr.Type.Filter Id_Entity ()>
-    Boat_Class <Attr.Type.Filter Id_Entity ()>
-    Boat_in_Regatta <Attr.Type.Filter Id_Entity ()>
-    Boolean <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Date <Attr.Type.Filter Date ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Date-Slug <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Date-Time <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Date_Interval <Attr.Type.Filter Composite ()>
-    Date_List <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Directory <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Email <Attr.Type.Filter Id_Entity ()>
-    Email <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Entity <Attr.Type.Filter Id_Entity ()>
-    Event <Attr.Type.Filter Id_Entity ()>
-    Float <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Format <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Gallery <Attr.Type.Filter Id_Entity ()>
-    Group <Attr.Type.Filter Id_Entity ()>
-    Id_Entity <Attr.Type.Filter Id_Entity ()>
-    Int <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Int <Attr.Type.Filter Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Int_List <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Name <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Nation <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Numeric_String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Object_PN <Attr.Type.Filter Id_Entity ()>
-    Page <Attr.Type.Filter Id_Entity ()>
-    Person <Attr.Type.Filter Id_Entity ()>
-    Phone <Attr.Type.Filter Id_Entity ()>
-    Picture <Attr.Type.Filter Composite ()>
-    Position <Attr.Type.Filter Composite ()>
-    Recurrence_Spec <Attr.Type.Filter Id_Entity ()>
-    Regatta <Attr.Type.Filter Id_Entity ()>
-    Regatta_C <Attr.Type.Filter Id_Entity ()>
-    Regatta_Event <Attr.Type.Filter Id_Entity ()>
-    Regatta_Result <Attr.Type.Filter Composite ()>
-    Sailor <Attr.Type.Filter Id_Entity ()>
-    Sex <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Team <Attr.Type.Filter Id_Entity ()>
-    Text <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Thumbnail <Attr.Type.Filter Composite ()>
-    Time <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Time_Interval <Attr.Type.Filter Composite ()>
-    Unit <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Url <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Weekday_RR_List <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    X <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Y <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
+    Account <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Address <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Boat <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Boat_Class <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Boat_in_Regatta <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Boolean <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Date <Attr.Type.Filter Date ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Date-Slug <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Date-Time <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Date_Interval <Attr.Type.Filter Composite ()> None
+    Date_List <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Directory <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Email <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Email <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Entity <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Event <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Float <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Format <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Gallery <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Group <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Id_Entity <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Int <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Int <Attr.Type.Filter Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Int_List <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Name <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Nation <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Numeric_String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Object_PN <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Page <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Person <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Phone <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Picture <Attr.Type.Filter Composite ()> None
+    Position <Attr.Type.Filter Composite ()> None
+    Recurrence_Spec <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Regatta <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Regatta_C <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Regatta_Event <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Regatta_Result <Attr.Type.Filter Composite ()> None
+    Sailor <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Sex <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    String <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Team <Attr.Type.Filter Id_Entity ('EQ', 'NE')> 1
+    Text <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Thumbnail <Attr.Type.Filter Composite ()> None
+    Time <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Time_Interval <Attr.Type.Filter Composite ()> None
+    Unit <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Url <Attr.Type.Filter String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 2
+    Weekday_RR_List <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    X <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Y <Attr.Type.Filter Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+
+    >>> for sig, sig_key in sorted (at.Q.Signatures.iteritems (), key = TFL.Getter [1]) :
+    ...     print sig_key, sig
+    0 ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')
+    1 ('EQ', 'NE')
+    2 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')
 
     >>> scope.destroy ()
 

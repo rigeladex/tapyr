@@ -34,6 +34,8 @@
 #    17-Nov-2011 (CT) Add `NE` operator
 #    17-Nov-2011 (CT) Add `_Type_` and `_M_Type_`
 #    18-Nov-2011 (CT) Move `AC` into `_Table`; add `Op_Map`, `E_Type_Attr_Query`
+#    20-Nov-2011 (CT) Add `Signatures` and `sig_key`
+#    20-Nov-2011 (CT) Put `EQ`, `NE` into `Id_Entity.Table`
 #    ««revision-date»»···
 #--
 
@@ -394,6 +396,8 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
         cls.__m_super.__init__ (name, bases, dct)
         cls.Op_Map  = dict  (cls.Table, ** cls._Table)
         cls.op_keys = tuple (sorted (cls.Table))
+        if cls.op_keys and cls.op_keys not in cls.Signatures :
+            cls.Signatures [cls.op_keys] = len (cls.Signatures)
     # end def __init__
 
     def __str__ (cls) :
@@ -409,6 +413,9 @@ class _Type_ (TFL.Meta.Object) :
     """
 
     __metaclass__ = _M_Type_
+
+    deep          = False
+    Signatures    = {}
 
     ### `Table` maps the operations that can sensibly be selected in a UI
     Table  = dict \
@@ -437,6 +444,12 @@ class _Type_ (TFL.Meta.Object) :
     def cooker (self) :
         return self.attr.cooked
     # end def cooker
+
+    @TFL.Meta.Once_Property
+    def sig_key (self) :
+        if self.op_keys :
+            return self.Signatures [self.op_keys]
+    # end def sig_key
 
     def __getattr__ (self, name) :
         attr = self.attr
@@ -505,15 +518,17 @@ class Date (_Type_) :
 
 class Id_Entity (_Type_) :
 
-    Table  = dict ()
+    deep   = True
+    Table  = dict \
+        ( EQ                 = Id_Entity_Equal
+        , NE                 = Id_Entity_Not_Equal
+        )
     _Table = dict \
         ( AC                 = Id_Entity_Auto_Complete
-        , EQ                 = Id_Entity_Equal
         , GE                 = Id_Entity_Greater_Equal
         , GT                 = Id_Entity_Greater_Than
         , LE                 = Id_Entity_Less_Equal
         , LT                 = Id_Entity_Less_Than
-        , NE                 = Id_Entity_Not_Equal
         )
 
 # end class Id_Entity
