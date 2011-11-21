@@ -49,4 +49,10 @@
   {{- e_type.admin (page, fields, objects) -}}
 {% endblock -%}
 
+{%- block body_tail_scripts -%}
+  {{ super () }}
+  <script>
+  </script>
+{% endblock body_tail_scripts -%}
+
 {#- __END__ jinja template: html/e_type_admin.jnj -#}

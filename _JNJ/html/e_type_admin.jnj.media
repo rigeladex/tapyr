@@ -38,6 +38,7 @@
 #                     `button`
 #    19-Nov-2011 (CT) Add `FIRST` and `LAST` to `JS_On_Ready` for `button`
 #    21-Nov-2011 (CT) Add rules for `.Object-List`
+#    21-Nov-2011 (CT) Remove `tablesorter`, un-DRY `JS_On_Ready` for `button`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,10 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "thead"
                 , font_weight     = "bold"
+                )
+            , Rule
+                ( "td.delete"
+                , display         = "none"
                 )
             , Rule
                 ( "td", "th"
@@ -233,54 +238,50 @@ style_sheet = Style_Sheet \
             ]
         )
     )
-Include ("html/tablesorter.media")
 
 Script (GTW.Script._.GTW_postify_a)
 Script (GTW.Script._.GTW_jq_util)
 
 JS_On_Ready \
-    ( """$("table.tablesorter").each
-            ( function ()
-                {
-                  var tab$ = $(this);
-                  var th$  = $("thead tr:last th", tab$);
-                  var n = th$.size () - 1;
-                  var headers = { 0 : { sorter : false } };
-                  headers [n] = { sorter : false };
-                  tab$.tablesorter
-                    ( { cancelSelection : false
-                      , cssAsc          : "ascending"
-                      , cssDesc         : "descending"
-                      , cssHeader       : "sortable"
-                      , headers         : headers
-                      }
-                    );
-                }
-            );
-      """
-    , rank = 100
-    )
-
-JS_On_Ready \
     ( """
-        $("button[name=FIRST]").button
-           ({ icons : { primary : "ui-icon-arrowthick-1-n" }, text : false });
-        $("button[name=LAST]").button
-           ({ icons : { primary : "ui-icon-arrowthick-1-s" }, text : false });
-        $("button[name=NEXT]").button
-           ({ icons : { primary : "ui-icon-arrowthick-1-e" }, text : false });
-        $("button[name=PREV]").button
-           ({ icons : { primary : "ui-icon-arrowthick-1-w" }, text : false });
-        $("button[name=APPLY]").button
-           ({ icons : { primary : "ui-icon-check" }, text : false });
-        $("button[name=ADD]").button
-           ({ icons : { primary : "ui-icon-plusthick" }, text : false });
+        ( function () {
+            var map =
+                { APPLY : "check"
+                , ADD   : "plusthick"
+                , FIRST : "arrowthick-1-n"
+                , LAST  : "arrowthick-1-s"
+                , NEXT  : "arrowthick-1-e"
+                , PREV  : "arrowthick-1-w"
+                };
+            $("button[name]").each
+                ( function () {
+                      var b$   = $(this);
+                      var name = this.name;
+                      if (name in map) {
+                          b$.button
+                              ( { icons :
+                                    { primary : "ui-icon-" + map [name]
+                                    }
+                                , text  : false
+                                }
+                              );
+                      }
+                  }
+                );
+          } ()
+        );
       """
     , rank = 100
     )
 
 Script (GTW.Script._.GTW_postify_a)
 JS_On_Ready \
-    ("""$("a.delete").gtw_postify_a ({ parent_selector : "tr" });""")
+    ( """
+        $("a.delete").gtw_postify_a
+            ( { hidden_selector : "td"
+              , parent_selector : "tr"
+              }
+            );"""
+    )
 
 ### __END__ html/e_type_admin.jnj.media

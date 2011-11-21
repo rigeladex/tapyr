@@ -71,6 +71,6 @@
         }
       );
   </script>
-{%- endblock body_tail_scripts -%}
+{% endblock body_tail_scripts -%}
 
 {#- __END__ jinja template: html/e_type_afs.jnj -#}

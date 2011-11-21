@@ -18,6 +18,7 @@
 //     7-Jun-2011 (CT) Typos fixed
 //     7-Jun-2011 (CT) Support for `answer ["error"]` added to `success` handler
 //    27-Jul-2011 (CT) Use `gtw_ajax_2json` instead of home-grown code
+//    21-Nov-2011 (CT) Add `hidden_selector`
 //    ««revision-date»»···
 //--
 
@@ -72,6 +73,15 @@
             .click (delete_cb)
             .css   ({ display : options.display_value })
             .show  ();
+        if ("hidden_selector" in options) {
+            this.each
+                ( function () {
+                      var a = $(this);
+                      var p = a.closest (options.hidden_selector);
+                      p.css ({ display : options.display_value }).show ();
+                  }
+                );
+        };
         return this;
     }
   }
