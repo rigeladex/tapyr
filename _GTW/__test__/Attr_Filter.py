@@ -135,7 +135,7 @@ _test_code = """
     <start.Q [Attr.Type.Filter Date]>
 
     >>> def show_Q (a, level = 0) :
-    ...     print "%%s%%-20s%%s" %% ("  " * level, a.attr_name, a.Sig_Key)
+    ...     print "%%s%%-20s%%s" %% ("  " * level, a._attr_name, a.Sig_Key)
     ...     for c in a.Children :
     ...         show_Q (c, level + 1)
     >>> for pka in PAP.Person_has_Phone.E_Type.primary :

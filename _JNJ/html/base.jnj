@@ -43,6 +43,7 @@
 ##                     (javascript, JS_On_Ready, ...)
 ##    27-Sep-2011 (MG) Use new `media_fragments` module
 ##    21-Oct-2011 (CT) Call `NF.main` instead of home-grown `NF.section`...
+##    21-Nov-2011 (CT) Add block `body_tail_scripts`
 ##    ««revision-date»»···
 ##--
 #}
@@ -136,6 +137,7 @@
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
     {%- endblock body -%}
+    {%- block body_tail_scripts -%}{%- endblock body_tail_scripts -%}
   </body>
 {%- endcall -%} {#- X.html -#}
 {#- __END__ jinja template: html/base.jnj -#}

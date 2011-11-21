@@ -37,6 +37,7 @@
 #    20-Nov-2011 (CT) Add `Signatures` and `Sig_Key`
 #    20-Nov-2011 (CT) Put `EQ`, `NE` into `Id_Entity.Table`
 #    20-Nov-2011 (CT) Add `Children`
+#    21-Nov-2011 (CT) Rename `_Type_.attr_name` to `._attr_name`
 #    ««revision-date»»···
 #--
 
@@ -437,9 +438,9 @@ class _Type_ (TFL.Meta.Object) :
     # end def __init__
 
     @TFL.Meta.Once_Property
-    def attr_name (self) :
+    def _attr_name (self) :
         return self.attr.name
-    # end def attr_name
+    # end def _attr_name
 
     @TFL.Meta.Once_Property
     def Children (self) :
@@ -473,14 +474,14 @@ class _Type_ (TFL.Meta.Object) :
                 else :
                     raise AttributeError (name)
         else :
-            result = result_type (attr, self.cooker, self.attr_name)
+            result = result_type (attr, self.cooker, self._attr_name)
         setattr (self, name, result)
         return result
     # end def __getattr__
 
     def __str__ (self) :
         return "<%s.Q [Attr.Type.Filter %s]>" % \
-            (self.attr_name, self.__class__.__name__)
+            (self._attr_name, self.__class__.__name__)
     # end def __str__
 
 # end class _Type_
@@ -566,9 +567,9 @@ class String (_Type_) :
 class Raw (String) :
 
     @TFL.Meta.Once_Property
-    def attr_name (self) :
+    def _attr_name (self) :
         return self.attr.raw_name
-    # end def attr_name
+    # end def _attr_name
 
     @TFL.Meta.Once_Property
     def cooker (self) :

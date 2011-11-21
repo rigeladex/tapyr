@@ -855,9 +855,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if "." in name :
             x = etype
             for n in name.split (".") :
-                x = getattr (x.P_Type, n)
+                x = getattr (x.E_Type, n)
             return TFL.Record \
                 ( name         = name
+                , attr         = x.attr
                 , ui_name      = x.ui_name
                 , description  = x.description
                 )

@@ -198,6 +198,7 @@
 #    11-Nov-2011 (CT) Factor `MOM.Attr.Filter`, replace `ac_query` by `Q.AC`
 #    16-Nov-2011 (CT) Add `sorted_by` to `_A_Composite_` and `_A_Id_Entity_`
 #    17-Nov-2011 (CT) Add `E_Type`
+#    21-Nov-2011 (CT) Add `ui_name_T`
 #    ««revision-date»»···
 #--
 
@@ -316,6 +317,13 @@ class A_Attr_Type (object) :
     def raw_query_eq (self) :
         return self.Q_Raw.EQ if self.needs_raw_value else self.Q_Ckd.EQ
     # end def raw_query_eq
+
+    @property
+    def ui_name_T (self) :
+        """Localized `ui_name`."""
+        ### Must not be a `Once_Property`, because `language` can change
+        return _T (self.ui_name)
+    # end def ui_name_T
 
     def __init__ (self, kind) :
         self.kind        = kind

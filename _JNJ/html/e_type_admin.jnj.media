@@ -37,6 +37,7 @@
 #    17-Nov-2011 (CT) Add rules for `.restrictions` and `JS_On_Ready` for
 #                     `button`
 #    19-Nov-2011 (CT) Add `FIRST` and `LAST` to `JS_On_Ready` for `button`
+#    21-Nov-2011 (CT) Add rules for `.Object-List`
 #    ««revision-date»»···
 #--
 
@@ -67,16 +68,28 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "thead"
                 , font_weight     = "bold"
-                , children        =
-                    [ Rule
-                        ( "tr th:first-child a", "tr th:last-child a"
-                        , P.nav_col.color_spec_heading_rev
-                        )
-                    ]
                 )
             , Rule
                 ( "td", "th"
                 , font_size       = "small"
+                , children        =
+                    [ Rule_Class
+                        ( "cmd b"
+                        , background_color  = P.background_color
+                        , border            = P.border_button
+                        , border_width      = Px (1)
+                        , color             = P.color_target
+                        , display           = "block"
+                        , padding           = TRBL  (Em (0.10), Em (0.40), Em (0.20))
+                        , children          =
+                            [ Rule_Pseudo
+                                ( "hover", "focus"
+                                , ** P.color_spec_selected
+                                )
+                            ]
+                        , ** Border (radius = Px (5))
+                        )
+                    ]
                 )
             , Rule
                 ( "th.Group[colspan]"

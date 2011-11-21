@@ -52,7 +52,7 @@
   {{ GTW.call_macro (form.type, form, templ_name = form.renderer) }}
 {% endblock -%}
 
-{%- block body -%}
+{%- block body_tail_scripts -%}
   {{ super () }}
   <script>
     $("#{{ form.id }}").afs_form
@@ -73,5 +73,5 @@
         }
       );
   </script>
-{%- endblock body -%}
+{%- endblock body_tail_scripts -%}
 {#- __END__ jinja template: html/e_type_afs.jnj -#}
