@@ -356,7 +356,7 @@ msgstr "Anzahl der Streicher in der Regatta"
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "Number of race."
-msgstr "Segelnummer des Boots"
+msgstr "Wettfahrt."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Number of races sailed in regatta"
@@ -400,7 +400,7 @@ msgstr "Status des Ergebnisses."
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "Race"
-msgstr "Frankreich"
+msgstr "Wettfahrt"
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "Race result of a `Boat_in_Regatta`."
