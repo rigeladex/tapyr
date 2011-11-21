@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    21-Nov-2011 (CT) Creation (factored from html/e_type_admin.jnj)
+##    21-Nov-2011 (CT) Continue `qr_control` (change `order_by`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -59,12 +60,15 @@
     <label for="{{ name }}">
       {{ label or GTW._T (name.capitalize ()) }}
     </label>
-    {%- if caller -%}{{- caller () -}}{%- endif -%}
-    {{ X.input.text
-        ( name      = name
-        , value     = value
-        )
-    }}
+    {%- if caller %}
+      {{- caller () -}}
+    {%- else %}
+      {{ X.input.text
+          ( name      = name
+          , value     = value
+          )
+      }}
+    {%- endif -%}
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
@@ -90,9 +94,10 @@
   </tr>
 {%- endmacro -%} {#- qr_tr -#}
 
-{%- macro qr_control (page, E_Type, qr) -%}
+{%- macro qr_control (page, fields, qr) -%}
   {%- import "html/form.jnj" as Form %}
   {%- set action = page.abs_href -%}
+  {%- set E_Type = page.E_Type %}
   {% call Form.form (action = action, method = "get", class = "restrictions") -%}
     {{ qr_button
         ( GTW._  ("Apply")
@@ -131,23 +136,51 @@
         )
     }}
     <ul class="limits">
-      {{ qr_field ("limit",    GTW._T ("Limit number of entities displayed"),    qr.limit) }}
-      {{ qr_field ("offset",   GTW._T ("Number of first entity to display"),     qr.offset) }}
-      {{ qr_field ("order_by", GTW._T ("Field(s) to use for ordering entities"), ", ".join (qr.order_by)) }}
+      {{ qr_field
+          ( "limit"
+          , GTW._T ("Limit number of entities displayed")
+          ,    qr.limit
+          )
+      }}
+      {{ qr_field
+          ( "offset"
+          , GTW._T ("Number of first entity to display")
+          , qr.offset
+          )
+      }}
+      {% call qr_field
+          ( "order_by"
+          , GTW._T ("Field(s) to use for ordering entities")
+          , GTW._T ("Order by")
+          )
+      %}
+        {{ X.input.text
+            ( name      = "order_by"
+            , value     = qr.order_by_names
+            , class     = "hidden"
+            )
+        }}
+        {{ X.input.text
+            ( name      = "order_by"
+            , value     = qr.order_by_ui_names
+            , disabled  = True
+            , class     = "ui-value"
+            )
+        }}
+      {% endcall %} {# qr_field #}
     </ul>
-    {%- if qr.filters %}
-      <table class="attrs">
-        <tbody>
-          {%- for af in qr.filters %}
-            {{ qr_tr (af) }}
-          {% endfor -%}
-        </tbody>
-      </table>
-    {% endif -%}
+    <table class="attrs">
+      <tbody>
+        {%- for af in qr.filters %}
+          {{ qr_tr (af) }}
+        {% endfor -%}
+      </tbody>
+    </table>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- qr_control -#}
 
-{%- macro admin_table (page, E_Type, fields, objects) -%}
+{%- macro admin_table (page, fields, objects) -%}
+  {%- set E_Type = page.E_Type %}
   <table class="Object-List tablesorter">
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />
@@ -191,9 +224,9 @@
   </table>
 {%- endmacro -%} {#- admin_table -#}
 
-{%- macro admin (page, E_Type, fields, objects) -%}
-  {{ qr_control  (page, E_Type, page.query_restriction) }}
-  {{ admin_table (page, E_Type, fields, objects) }}
+{%- macro admin (page, fields, objects) -%}
+  {{ qr_control  (page, fields, page.query_restriction) }}
+  {{ admin_table (page, fields, objects) }}
 {%- endmacro -%} {#- admin -#}
 
 {#- __END__ jinja template: html/_e_type.jnj -#}

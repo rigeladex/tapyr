@@ -30,6 +30,7 @@
 #    16-Nov-2011 (CT) Creation continued (order_by, ...)
 #    17-Nov-2011 (CT) Creation continued.. (NEXT, PREV, ...)
 #    19-Nov-2011 (CT) Creation continued... (FIRST, LAST)
+#    21-Nov-2011 (CT) Creation continued... (order_by_names, order_by_ui_names)
 #    ««revision-date»»···
 #--
 
@@ -138,6 +139,21 @@ class Query_Restriction (TFL.Meta.Object) :
     # end def offset_f
 
     @Once_Property
+    def order_by_names (self) :
+        if self.order_by :
+            return ", ".join (ob.name for ob in self.order_by)
+    # end def order_by_names
+
+    @Once_Property
+    def order_by_ui_names (self) :
+        if self.order_by :
+            return ", ".join \
+                (   "%s%s" % (ob.sign, "/".join (ob.ui_names))
+                for ob in self.order_by
+                )
+    # end def order_by_ui_names
+
+    @Once_Property
     def prev_p (self) :
         return self.offset_f > 0
     # end def prev_p
@@ -179,7 +195,8 @@ class Query_Restriction (TFL.Meta.Object) :
         prefix = ".".join (names [:-1]) or None
         qop    = getattr (q, op)
         f = TFL.Record \
-            ( key      = k
+            ( attr     = attrs [-1]
+            , key      = k
             , name     = ".".join (names)
             , op       = qop.op_sym
             , ui_names = tuple (_T (a.ui_name) for a in attrs)
@@ -203,13 +220,19 @@ class Query_Restriction (TFL.Meta.Object) :
         names = s [bool (sign): ].split (".")
         attrs = tuple (self._nested_attrs (E_Type, names))
         last  = attrs [-1]
-        PT    = getattr (attrs [-1], "E_Type", None)
-        if PT :
+        ET    = getattr (attrs [-1], "E_Type", None)
+        if ET :
             pre  = ".".join (names)
-            keys = tuple ("%s%s.%s" % (sign, pre, k) for k in PT.sorted_by)
+            keys = tuple ("%s%s.%s" % (sign, pre, k) for k in ET.sorted_by)
         else :
             keys = (s, )
-        return s, keys
+        f = TFL.Record \
+            ( attr     = attrs [-1]
+            , name     = s
+            , sign     = sign
+            , ui_names = tuple (_T (a.ui_name) for a in attrs)
+            )
+        return f, keys
     # end def _setup_order_by_1
 
     def _setup_order_by (self, E_Type, data) :

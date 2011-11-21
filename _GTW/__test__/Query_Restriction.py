@@ -47,7 +47,7 @@ _test_code = """
     >>> print qr.limit, qr.offset
     24 0
     >>> print formatted_1 (qr.filters)
-    (Record (key = 'last_name___GE', name = 'last_name', op = '>=', ui_names = ('Last name',), value = 'Lee'), Record (key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', ui_names = ('Lifetime', 'Start'), value = '2008'))
+    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', ui_names = ('Last name',), value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', ui_names = ('Lifetime', 'Start'), value = '2008'))
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print formatted_1 (sorted (qr.other_req_data.items ()))
@@ -57,7 +57,7 @@ _test_code = """
 
     >>> qo = QR.from_request_data (PAP.Person.E_Type, dict (order_by = "-lifetime,last_name"))
     >>> print formatted_1 (qo.order_by)
-    ('-lifetime', 'last_name')
+    (Record (attr = Date_Interval `lifetime`, name = '-lifetime', ui_names = ('Lifetime',)), Record (attr = String `last_name`, name = 'last_name', ui_names = ('Last name',)))
     >>> print qo.order_by_q
     <Sorted_By: Descending-Getter function for `.lifetime.start`, Descending-Getter function for `.lifetime.finish`, Getter function for `.last_name`>
 

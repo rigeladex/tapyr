@@ -149,6 +149,15 @@ style_sheet = Style_Sheet \
                         , width        = Em ( 5)
                         , ** Border (radius = Px (10))
                         )
+                    , Rule_Class
+                        ( "hidden"
+                        , display      = "none"
+                        , visibility   = "hidden"
+                        )
+                    , Rule_Class
+                        ( "ui-value"
+                        , color        = "inherit"
+                        )
                     ]
                 )
             , Rule
@@ -159,7 +168,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "li"
-                , margin           = TRBL0 (r = Em (1))
+                , margin           = TRBL0 (r = Em (0.5))
                 )
             , Rule
                 ( "ul"
@@ -205,12 +214,19 @@ style_sheet = Style_Sheet \
                         ( "input", "label"
                         , display      = "block"
                         , text_align   = "right"
-                        , width        = Em ( 8)
+                        , width        = Em ( 5)
+                        , children     =
+                            [ Rule_Class
+                                ( "hidden"
+                                , display      = "none"
+                                , visibility   = "hidden"
+                                )
+                            ]
                         )
                     , Rule
                         ( "input[name=order_by]", "label[for=order_by]"
                         , text_align   = "left"
-                        , width        = Em (16)
+                        , width        = Em (18)
                         )
                     ]
                 )

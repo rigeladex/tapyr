@@ -46,7 +46,7 @@
 {%- import "html/_e_type.jnj" as e_type %}
 
 {%- block document %}
-  {{- e_type.admin (page, page.E_Type, fields, objects) -}}
+  {{- e_type.admin (page, fields, objects) -}}
 {% endblock -%}
 
 {#- __END__ jinja template: html/e_type_admin.jnj -#}
