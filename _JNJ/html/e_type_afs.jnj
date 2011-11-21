@@ -42,8 +42,6 @@
 ##--
 #}
 
-{#- {%- include "html/afs.jnj" %} media dependency -#}
-
 {%- macro specify_menu_cmd (name) -%}
   "{{ name }}":"{{ GTW._T (name) }}"
 {%- endmacro -%} {#- specify_menu_cmd -#}
@@ -74,4 +72,5 @@
       );
   </script>
 {%- endblock body_tail_scripts -%}
+
 {#- __END__ jinja template: html/e_type_afs.jnj -#}

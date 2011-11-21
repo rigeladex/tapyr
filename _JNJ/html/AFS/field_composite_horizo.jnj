@@ -37,7 +37,6 @@
 #}
 
 {%- import html_version as X -%}
-{#- {%- import "html/AFS/div_seq.jnj" as P %} media dependency -#}
 
 {%- macro Field (form, elem, renderer) -%}
   {% call GTW.call_macro

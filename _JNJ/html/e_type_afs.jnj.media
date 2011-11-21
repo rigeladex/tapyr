@@ -27,8 +27,11 @@
 #
 # Revision Dates
 #    27-Sep-2011 (MG) Creation
+#    21-Nov-2011 (CT) Add `Include` for `html/afs.jnj.media`
 #    ««revision-date»»···
 #--
+
+Include ("html/afs.jnj.media")
 
 Script (GTW.Script._.jQuery_UI)
 Script (GTW.Script._.GTW)

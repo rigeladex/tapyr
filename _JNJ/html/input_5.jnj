@@ -34,6 +34,7 @@
 ##    16-Feb-2010 (CT) `select` added
 ##    16-Feb-2010 (CT) `select_v` added
 ##    22-Mar-2011 (CT) `_input_c` added
+##    21-Nov-2011 (CT) Add `option`
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,6 +47,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 -#}
 
 {%- import "html/_input.jnj" as _common %}
+{%- set option   = _common.option       %}
 {%- set select   = _common.select       %}
 {%- set select_v = _common.select_v     %}
 {%- set textarea = _common.textarea     %}

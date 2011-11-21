@@ -48,7 +48,6 @@
 #}
 
 {%- import html_version as X -%}
-{#- {%- import "html/afs.jnj" as AFS %} media dependency -#}
 
 {%- macro Entity (form, elem, renderer) -%}
   {% call GTW.call_macro ("do_element", form, elem, renderer, templ_name = renderer, show_desc = False) -%}

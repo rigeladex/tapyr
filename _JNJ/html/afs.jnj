@@ -43,7 +43,6 @@
 
 {%- import html_version as X -%}
 {%- import "html/form.jnj" as FM %}
-{#- {%- include "html/AFS/input.jnj" %} media dependency -#}
 
 {%- macro do_button (name) -%}
   <a class="{{ name.lower () }} button">{{GTW._T (name)}}</a>
