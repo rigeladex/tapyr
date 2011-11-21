@@ -39,6 +39,7 @@
 #    28-Jun-2010 (MG) `iterkeys` added
 #    14-Nov-2011 (CT) Change `iteritems` to `_convert_element`
 #    14-Nov-2011 (CT) Add `__nonzero__`
+#    21-Nov-2011 (CT) Change `_convert_element` to `logging` instead of `assert`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,8 @@ from   _TFL              import TFL
 import _TFL._Meta.Object
 
 from   _GTW              import GTW
+
+import  logging
 
 class _GTW_Request_Data_ (TFL.Meta.Object) :
     """Convert the list values into no lists during access."""
@@ -56,9 +59,13 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
         self.data = data
     # end def __init__
 
-    def _convert_element (self, value) :
+    def _convert_element (self, key, value) :
         if isinstance (value, (list, tuple)) :
-            assert len (value) == 1
+            if len (value) != 1 :
+                logging.warning \
+                    ( "Got multiple values for '%s', using '%s', ignoring: %s"
+                    , key, value [0], value [1:]
+                    )
             value = value [0]
         if value is not None and not isinstance (value, unicode) :
             return unicode (value, "utf8", "replace")
@@ -66,17 +73,17 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     # end def _convert_element
 
     def __getitem__ (self, key) :
-        return self._convert_element (self.data [key])
+        return self._convert_element (key, self.data [key])
     # end def __getitem__
 
     def get (self, key, default = None) :
-        return self._convert_element (self.data.get (key, default))
+        return self._convert_element (key, self.data.get (key, default))
     # end def get
 
     def iteritems (self) :
         convert = self._convert_element
-        for n in self.data.iterkeys () :
-            yield n, convert (self [n])
+        for key in self.data.iterkeys () :
+            yield key, convert (key, self [key])
     # end def iteritems
 
     def iterkeys (self) :
@@ -84,7 +91,7 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     # end def iterkeys
 
     def pop (self, key, default = None) :
-        return self._convert_element (self.data.pop (key, default))
+        return self._convert_element (key, self.data.pop (key, default))
     # end def pop
 
     def __contains__ (self, item) :
