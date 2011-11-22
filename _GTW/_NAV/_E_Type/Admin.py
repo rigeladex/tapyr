@@ -128,6 +128,7 @@
 #    16-Nov-2011 (CT) Change `render` to always `LET` `query_restriction`
 #    16-Nov-2011 (CT) Add property `head_line`
 #    17-Nov-2011 (CT) Change `head_line` to provide `total_f` and `total_u`
+#    22-Nov-2011 (CT) Add guard for `completer` to `Complete[dr].rendered`
 #    ««revision-date»»···
 #--
 
@@ -432,18 +433,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                             , json = fi.as_json_cargo
                             )
                 else :
-                    attr           = getattr (E_Type, field.name)
-                    completer      = attr.completer
-                    names          = completer.names
-                    fs             = ETM.raw_query_attrs (names, json.values)
-                    query          = ETM.query (* fs)
-                    result ["completions"] = n = query.count ()
-                    if n == 1 :
-                        af     = ETM.raw_query_attrs (names)
-                        values = query.attrs (* af).one ()
-                        result ["fields"] = len  (names)
-                        result ["names"]  = names
-                        result ["values"] = values
+                    attr      = getattr (E_Type, field.name)
+                    completer = attr.completer
+                    if completer is not None :
+                        names = completer.names
+                        fs    = ETM.raw_query_attrs (names, json.values)
+                        query = ETM.query (* fs)
+                        result ["completions"] = n = query.count ()
+                        if n == 1 :
+                            af     = ETM.raw_query_attrs (names)
+                            values = query.attrs (* af).one ()
+                            result ["fields"] = len  (names)
+                            result ["names"]  = names
+                            result ["values"] = values
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
@@ -472,34 +474,35 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 E_Type       = ETM.E_Type
                 attr         = getattr (E_Type, field.name)
                 completer    = attr.completer
-                max_n        = self.max_completions
-                names        = completer.names
-                query        = completer (self.top.scope, json.values)
-                fs           = tuple (ETM.raw_query_attrs (names))
-                if completer.entity_p :
-                    fs      += (Q.pid, )
-                    names   += ("pid", )
-                matches      = query.attrs (* fs).limit (max_n + 1).all ()
-                n            = result ["completions"] = len (matches)
-                finished     = result ["finished"]    = n == 1
-                if n :
-                    if n <= max_n :
-                        result ["fields"]  = len    (names)
-                        result ["matches"] = sorted \
-                            (self._ui_displayed (ETM, names, matches))
-                    else :
-                        if json.trigger == json.trigger_n :
-                            matches = query.attrs (attr.raw_query).limit \
-                                (max_n + 1).all ()
-                            m = len (matches)
-                            if m <= max_n :
-                                matches = ([m, "..."] for m in  matches)
-                                result ["fields"]  = 1
-                                result ["matches"] = sorted (matches)
-                                result ["partial"] = True
-                            else :
-                                ### XXX find fewer partial matches !!!
-                                result ["fields"]  = 0
+                if completer is not None :
+                    max_n        = self.max_completions
+                    names        = completer.names
+                    query        = completer (self.top.scope, json.values)
+                    fs           = tuple (ETM.raw_query_attrs (names))
+                    if completer.entity_p :
+                        fs      += (Q.pid, )
+                        names   += ("pid", )
+                    matches      = query.attrs (* fs).limit (max_n + 1).all ()
+                    n            = result ["completions"] = len (matches)
+                    finished     = result ["finished"]    = n == 1
+                    if n :
+                        if n <= max_n :
+                            result ["fields"]  = len    (names)
+                            result ["matches"] = sorted \
+                                (self._ui_displayed (ETM, names, matches))
+                        else :
+                            if json.trigger == json.trigger_n :
+                                matches = query.attrs (attr.raw_query).limit \
+                                    (max_n + 1).all ()
+                                m = len (matches)
+                                if m <= max_n :
+                                    matches = ([m, "..."] for m in  matches)
+                                    result ["fields"]  = 1
+                                    result ["matches"] = sorted (matches)
+                                    result ["partial"] = True
+                                else :
+                                    ### XXX find fewer partial matches !!!
+                                    result ["fields"]  = 0
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
