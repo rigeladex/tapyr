@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    21-Nov-2011 (CT) Creation (factored from html/e_type_admin.jnj)
 ##    21-Nov-2011 (CT) Continue `qr_control` (change `order_by`)
+##    22-Nov-2011 (CT) Continue `qr_control`..
 ##    ««revision-date»»···
 ##--
 #}
@@ -56,15 +57,17 @@
 
 {%- macro qr_field (name, title, value, label) -%}
   {%- set caller = kwargs.pop ("caller",   None) -%}
+  {%- set id = "QR-" + name %}
   <li title="{{ title }}">
-    <label for="{{ name }}">
+    <label for="{{ id }}">
       {{ label or GTW._T (name.capitalize ()) }}
     </label>
     {%- if caller %}
       {{- caller () -}}
     {%- else %}
       {{ X.input.text
-          ( name      = name
+          ( id        = id
+          , name      = name
           , value     = value
           )
       }}
@@ -72,21 +75,23 @@
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
-{%- macro qr_tr (af) -%}
-  <tr id="{{ af.key }}" title="">
+{%- macro qr_tr (qr, af) -%}
+  {%- set ui_name = qr.ui_sep.join (af.ui_names) %}
+  <tr title="{{ ui_name }}">
     <td class="name">
       <label for="{{ af.key }}">
-        {{ "/".join (af.ui_names) }}
+        {{ ui_name }}
       </label>
     </td>
-    <td class="op">
-      <a href="#" class="button">
-        {{ GTW._T (af.op) }}
+    <td class="op" title="{{ af.op_nam }}">
+      <a class="button">
+        {{ GTW._T (af.op)|escape }}
       </a>
     </td>
     <td class="value">
       {{ X.input.text
-          ( name      = af.key
+          ( id        = af.key
+          , name      = af.key
           , value     = af.value
           )
       }}
@@ -98,7 +103,7 @@
   {%- import "html/form.jnj" as Form %}
   {%- set action = page.abs_href -%}
   {%- set E_Type = page.E_Type %}
-  {% call Form.form (action = action, method = "get", class = "restrictions") -%}
+  {% call Form.form (action = action, method = "get", class = "QR") -%}
     {{ qr_button
         ( GTW._  ("Apply")
         , GTW._T ("Display list of objects matching the restriction")
@@ -139,7 +144,7 @@
       {{ qr_field
           ( "limit"
           , GTW._T ("Limit number of entities displayed")
-          ,    qr.limit
+          , qr.limit
           )
       }}
       {{ qr_field
@@ -161,7 +166,8 @@
             )
         }}
         {{ X.input.text
-            ( name      = "order_by"
+            ( id        = "QR-order_by"
+            , name      = "order_by"
             , value     = qr.order_by_ui_names
             , disabled  = True
             , class     = "ui-value"
@@ -172,7 +178,7 @@
     <table class="attrs">
       <tbody>
         {%- for af in qr.filters %}
-          {{ qr_tr (af) }}
+          {{ qr_tr (qr, af) }}
         {% endfor -%}
       </tbody>
     </table>
@@ -185,9 +191,7 @@
     <colgroup>
       <col class="{{ E_Type.ui_name }}-cmd-change" />
       {% for f in fields %}
-        <col class="{{ f.attr.ui_name }}"
-          {%- if f.attr.css_align %} align="{{ f.attr.css_align }}"{% endif -%}
-        />
+        <col class="{{ f.attr.ui_name }}"/>
       {% endfor %}
       <col class="{{ E_Type.ui_name }}-cmd-change" />
     </colgroup>

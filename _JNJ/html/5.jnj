@@ -1,6 +1,6 @@
 {#- jinja template: html/5.jnj -#}
 {#
-## Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
+##    22-Nov-2011 (CT) Replace `<meta name="Content-URL` with `<!-- Content-URL`
 ##    ««revision-date»»···
 ##--
 #}
@@ -64,7 +65,7 @@
 
 {%- macro meta_content_url (url) -%}
   {%- do kwargs.pop("caller", "") -%}
-  <meta name="Content-URL" content="{{ url }}"{{ kwargs|xmlattr }}/>
+  <!-- Content-URL="{{ url }}"{{ kwargs|xmlattr }}-->
 {%- endmacro -%}
 
 {%- macro nav () -%}

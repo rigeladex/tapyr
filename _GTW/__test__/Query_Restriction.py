@@ -69,92 +69,77 @@ _test_code = """
     { 'filters' :
         [ { 'children' :
               [ { 'children' :
-                    [ { 'children' :
-                          []
-                      , 'name' : 'name'
+                    [ { 'name' : 'name'
                       , 'sig_key' : 2
                       , 'ui_name' : 'Name'
                       }
                     ]
+                , 'deep' : True
                 , 'name' : 'left'
                 , 'sig_key' : 1
                 , 'ui_name' : 'Class'
                 }
-              , { 'children' :
-                    []
-                , 'name' : 'nation'
+              , { 'name' : 'nation'
                 , 'sig_key' : 0
                 , 'ui_name' : 'Nation'
                 }
-              , { 'children' :
-                    []
-                , 'name' : 'sail_number'
+              , { 'name' : 'sail_number'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Sail number'
                 }
-              , { 'children' :
-                    []
-                , 'name' : 'sail_number_x'
+              , { 'name' : 'sail_number_x'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Sail number x'
                 }
               ]
+          , 'deep' : True
           , 'name' : 'left'
           , 'sig_key' : 1
           , 'ui_name' : 'Boat'
           }
         , { 'children' :
               [ { 'children' :
-                    [ { 'children' :
-                          []
-                      , 'name' : 'name'
+                    [ { 'name' : 'name'
                       , 'sig_key' : 2
                       , 'ui_name' : 'Name'
                       }
                     , { 'children' :
-                          [ { 'children' :
-                                []
-                            , 'name' : 'start'
+                          [ { 'name' : 'start'
                             , 'sig_key' : 0
                             , 'ui_name' : 'Start'
                             }
-                          , { 'children' :
-                                []
-                            , 'name' : 'finish'
+                          , { 'name' : 'finish'
                             , 'sig_key' : 0
                             , 'ui_name' : 'Finish'
                             }
                           ]
                       , 'name' : 'date'
-                      , 'sig_key' : None
                       , 'ui_name' : 'Date'
                       }
                     ]
+                , 'deep' : True
                 , 'name' : 'left'
                 , 'sig_key' : 1
                 , 'ui_name' : 'Event'
                 }
               ]
+          , 'deep' : True
           , 'name' : 'right'
           , 'sig_key' : 1
           , 'ui_name' : 'Regatta'
           }
-        , { 'children' :
-              []
-          , 'name' : 'points'
+        , { 'name' : 'points'
           , 'sig_key' : 0
           , 'ui_name' : 'Points'
           }
-        , { 'children' :
-              []
-          , 'name' : 'place'
+        , { 'name' : 'place'
           , 'sig_key' : 0
           , 'ui_name' : 'Place'
           }
         ]
     , 'name_sep' : '__'
     , 'op_sep' : '___'
-     , 'sig_map' :
+    , 'sig_map' :
         { 0 :
             ( 'EQ'
             , 'GE'
@@ -179,6 +164,7 @@ _test_code = """
             , 'STARTSWITH'
             )
         }
+    , 'ui_sep' : '/'
     }
 
     >>> scope.destroy ()

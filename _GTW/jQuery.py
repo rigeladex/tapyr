@@ -46,6 +46,7 @@
 #    13-Sep-2011 (MG) `s/sort_key/rank/g`
 #    19-Oct-2011 (CT) Use jQuery 1.6.4 (but without version number in filename)
 #     8-Nov-2011 (CT) Add `GTW_jq_util`
+#    22-Nov-2011 (CT) Add `GTW_query_restriction`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,12 @@ GTW.JS_On_Ready \
     , name = "GTW_postify_a"
     )
 
-GTW.Script      (src = "/media/GTW/js/GTW/jQ/util.js", name = "GTW_jq_util")
+GTW.Script \
+    ( src = "/media/GTW/js/GTW/jQ/query_restriction.js"
+    , name = "GTW_query_restriction"
+    )
+
+GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js", name = "GTW_jq_util")
 
 GTW.Script \
     (src = "/media/GTW/js/GTW/jQ/week_roller.js", name = "GTW_week_roller")

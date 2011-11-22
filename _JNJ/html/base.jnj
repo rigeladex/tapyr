@@ -59,11 +59,11 @@
     {%- block head_elements -%}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
       {%- if page.exclude_robots %}
-        <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+        <meta name="robots" content="NOINDEX, NOFOLLOW">
       {% endif -%}
       {% if page.permalink -%}
         {{ MF.permalink (page) }}
-        <meta name="href" content="{{- page.abs_href -}}"/>
+        <!-- href="{{- page.abs_href -}}"-->
       {% endif %}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
@@ -97,7 +97,7 @@
         {{ MF.link_rel (page.P_Media) }}
       {%- endblock related_links -%}
       {%- block meta_elements -%}
-        <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />
+        <!-- copyright "{{ page.copyright.year }} {{ page.copyright.holder }}"-->
         <meta name="generator" content="GTW, JNJ, Jinja2" />
         {{ X.meta_content_url (page.permalink) }}
       {%- endblock meta_elements -%}

@@ -39,6 +39,7 @@
 ##    17-Nov-2011 (CT) Continue `qr_control` (`_qr_button`, "Next", ...)
 ##    19-Nov-2011 (CT) Continue `qr_control` ("First", "Last")
 ##    21-Nov-2011 (CT) Factor `html/_e_type.jnj`
+##    22-Nov-2011 (CT) Add `body_tail_scripts` for `gtw_query_restriction`
 ##    ««revision-date»»···
 ##--
 #}
@@ -52,6 +53,7 @@
 {%- block body_tail_scripts -%}
   {{ super () }}
   <script>
+    $("form.QR").gtw_query_restriction ({{ page.qr_spec.as_json }});
   </script>
 {% endblock body_tail_scripts -%}
 

@@ -39,6 +39,7 @@
 #    20-Nov-2011 (CT) Add `Children`
 #    21-Nov-2011 (CT) Rename `_Type_.attr_name` to `._attr_name`
 #    22-Nov-2011 (CT) Add `_Type_.as_json_cargo`
+#    22-Nov-2011 (CT) Add `specialized`, streamline `as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,8 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if not name.startswith ("_") :
-            cls.op_nam = name.lower ().replace ("_", "-")
+            if not getattr (cls, "specialized", False) :
+                cls.op_nam = name.lower ().replace ("_", "-")
             if cls.op_sym is None :
                 cls.op_sym = cls.op_nam
             op_key = cls.op_fct
@@ -130,6 +132,8 @@ class _Filter_ (TFL.Meta.Object) :
 class _Composite_ (_Filter_) :
     """Base class for composite-attribute filters."""
 
+    specialized = True
+
     def __call__ (self, value, prefix = None) :
         name   = self.attr.name
         E_Type = self.attr.E_Type
@@ -150,6 +154,8 @@ class _Composite_ (_Filter_) :
 
 class _Date_ (_Filter_) :
     """Base class for date-attribute filters."""
+
+    specialized = True
 
     pat = Regexp \
         ( r"^"
@@ -181,6 +187,8 @@ class _Date_ (_Filter_) :
 
 class _Id_Entity_ (_Composite_) :
     """Base class for entity-attribute filters."""
+
+    specialized = True
 
     def __call__ (self, value, prefix = None) :
         if isinstance (value, dict) :
@@ -440,13 +448,21 @@ class _Type_ (TFL.Meta.Object) :
 
     @property
     def as_json_cargo (self) :
-        attr = self.attr
-        return dict \
+        attr     = self.attr
+        Children = self.Children
+        deep     = self.deep
+        Sig_Key  = self.Sig_Key
+        result   = dict \
             ( name     = attr.name
-            , sig_key  = self.Sig_Key
             , ui_name  = attr.ui_name_T
-            , children = [c.as_json_cargo for c in self.Children]
             )
+        if Children :
+            result ["children"] = [c.as_json_cargo for c in Children]
+        if deep :
+            result ["deep"]     = deep
+        if Sig_Key is not None :
+            result ["sig_key"]  = Sig_Key
+        return result
     # end def as_json_cargo
 
     @TFL.Meta.Once_Property

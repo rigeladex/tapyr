@@ -39,6 +39,8 @@
 #    19-Nov-2011 (CT) Add `FIRST` and `LAST` to `JS_On_Ready` for `button`
 #    21-Nov-2011 (CT) Add rules for `.Object-List`
 #    21-Nov-2011 (CT) Remove `tablesorter`, un-DRY `JS_On_Ready` for `button`
+#    22-Nov-2011 (CT) s/.restrictions/.QR/
+#    22-Nov-2011 (CT) Add `Script` for `GTW_query_restriction`
 #    ««revision-date»»···
 #--
 
@@ -117,7 +119,7 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
-        ( ".restrictions"
+        ( ".QR"
         , list_style       = "none"
         , children           =
             [ Rule
@@ -239,8 +241,9 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script (GTW.Script._.GTW_postify_a)
 Script (GTW.Script._.GTW_jq_util)
+Script (GTW.Script._.GTW_postify_a)
+Script (GTW.Script._.GTW_query_restriction)
 
 JS_On_Ready \
     ( """
@@ -274,7 +277,6 @@ JS_On_Ready \
     , rank = 100
     )
 
-Script (GTW.Script._.GTW_postify_a)
 JS_On_Ready \
     ( """
         $("a.delete").gtw_postify_a

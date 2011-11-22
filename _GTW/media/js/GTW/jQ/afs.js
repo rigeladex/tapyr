@@ -514,22 +514,22 @@
                 $(document)
                     .bind ("click.menuhide", hide_cb)
                     .bind ("keyup.menuhide", hide_cb);
-                for (var i = 1, li = source.length, cmdi; i < li; i++) {
+                for (var i = 1, li = source.length; i < li; i++) {
                     ( function () {
                         var cmdi = source [i];
                         menu.append
                           ( $("<li>")
-                              .append ( $("<a class=\"button\" href=\"#\">")
-                                          .append (cmdi.label)
-                                          .click
-                                            ( function cmd_click (ev) {
-                                                cmdi.callback.call
-                                                  (cmc$, s$, elem, id, ev);
-                                                drop_butt.menu.element.hide
-                                                  ();
-                                              }
-                                            )
+                              .append
+                                ( $("<a class=\"button\" href=\"#\">")
+                                    .append (cmdi.label)
+                                    .click
+                                      ( function cmd_click (ev) {
+                                          cmdi.callback.call
+                                              (cmc$, s$, elem, id, ev);
+                                          drop_butt.menu.element.hide ();
+                                        }
                                       )
+                                )
                           );
                       } ()
                     );

@@ -68,6 +68,7 @@ class Query_Restriction (TFL.Meta.Object) :
     order_by_q  = ()
     query_b     = None
     query_f     = None
+    ui_sep      = "/"
 
     _a_pat      = Regexp \
         ( "".join
@@ -207,6 +208,7 @@ class Query_Restriction (TFL.Meta.Object) :
             , key      = k
             , name     = ".".join (names)
             , op       = qop.op_sym
+            , op_nam   = _T (qop.op_nam)
             , ui_names = tuple (_T (a.ui_name) for a in attrs)
             , value    = value
             )
@@ -278,6 +280,7 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
             , name_sep  = Query_Restriction.name_sep
             , op_sep    = Query_Restriction.op_sep
             , sig_map   = self.sig_map
+            , ui_sep    = Query_Restriction.ui_sep
             )
     # end def as_json_cargo
 
