@@ -29,6 +29,7 @@
 #
 # Revision Dates
 #    18-Nov-2011 (MG) Creation
+#    22-Nov-2011 (MG) Import of `GTW.NAV.Template_Media_Cache` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ import _GTW._OMP.Scaffold
 import _GTW._Werkzeug
 import _GTW._NAV.Base
 import _GTW._NAV.Console
+import _GTW._NAV.Template_Media_Cache
 import _GTW._NAV.Permission
 import _GTW._NAV._E_Type.Admin
 import _GTW._NAV._E_Type.Site_Admin

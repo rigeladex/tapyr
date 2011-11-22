@@ -29,6 +29,7 @@
 #    26-Sep-2011 (MG) Creation
 #    21-Oct-2011 (MG) `_create_css_cache` creating of directory added
 #    21-Oct-2011 (CT) Esthetics
+#    22-Nov-2011 (MG) Use `sos.mkdir_p` instead of `sos.mkdir`
 #    ««revision-date»»···
 #--
 
@@ -105,7 +106,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
 
     def _create_css_cache (self, suffix, css_map) :
         if not os.path.isdir (self.css_dir) :
-            os.mkdir (self.css_dir)
+            os.mkdir_p (self.css_dir)
         for k, ts_and_obj in css_map.iteritems () :
             cn = "%s-%s.css" % (suffix, k)
             p  = pjoin        (self.prefix,  cn)
