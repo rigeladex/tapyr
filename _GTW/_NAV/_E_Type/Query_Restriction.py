@@ -31,6 +31,7 @@
 #    17-Nov-2011 (CT) Creation continued.. (NEXT, PREV, ...)
 #    19-Nov-2011 (CT) Creation continued... (FIRST, LAST)
 #    21-Nov-2011 (CT) Creation continued... (order_by_names, order_by_ui_names)
+#    22-Nov-2011 (CT) Creation continued.... (Query_Restriction_Spec)
 #    ««revision-date»»···
 #--
 
@@ -48,9 +49,11 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL.Record
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import uniq
 from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
+import json
 
 class Query_Restriction (TFL.Meta.Object) :
     """Model a query restriction as specified by `req_data` of a `GET` request."""
@@ -58,29 +61,34 @@ class Query_Restriction (TFL.Meta.Object) :
     filters     = ()
     filters_q   = ()
     limit       = 0
+    name_sep    = "__"
     offset      = 0
+    op_sep      = "___"
     order_by    = ()
     order_by_q  = ()
     query_b     = None
     query_f     = None
 
     _a_pat      = Regexp \
-        ( r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
-          r"___"
-          r"(?P<op> [A-Z]+)"
-          r"$"
+        ( "".join
+            ( ( r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
+              , op_sep
+              , r"(?P<op> [A-Z]+)"
+              , r"$"
+              )
+            )
         , re.VERBOSE
         )
 
     @classmethod
     def from_request_data (cls, E_Type, req_data) :
-        data     = dict  (req_data.iteritems ())
-        result   = cls \
+        data   = dict (req_data.iteritems ())
+        result = cls \
             ( limit           = data.pop ("limit",  None)
             , offset          = data.pop ("offset", None)
             , other_req_data  = data
             )
-        limit = result.limit
+        limit  = result.limit
         if limit :
             if "LAST" in data :
                 result.offset = - limit
@@ -249,6 +257,55 @@ class Query_Restriction (TFL.Meta.Object) :
     # end def __nonzero__
 
 # end class Query_Restriction
+
+class Query_Restriction_Spec (TFL.Meta.Object) :
+    """Query restriction spec for a GTW.NAV.E_Type page."""
+
+    def __init__ (self, E_Type, fields) :
+        self.E_Type = E_Type
+        self.fields = fields
+    # end def __init__
+
+    @property
+    def as_json (self) :
+        return json.dumps (self.as_json_cargo, sort_keys = True)
+    # end def as_json
+
+    @property
+    def as_json_cargo (self) :
+        return dict \
+            ( filters   = [f.as_json_cargo for f in self.filters]
+            , name_sep  = Query_Restriction.name_sep
+            , op_sep    = Query_Restriction.op_sep
+            , sig_map   = self.sig_map
+            )
+    # end def as_json_cargo
+
+    @Once_Property
+    def filters (self) :
+        return tuple (f.attr.Q for f in self.fields)
+    # end def filters
+
+    @Once_Property
+    def filters_transitive (self) :
+        def _gen (filters) :
+            for f in filters :
+                yield f
+                for c in f.Children :
+                    yield c
+        return tuple (_gen (self.filters))
+    # end def filters_transitive
+
+    @Once_Property
+    def sig_map (self) :
+        result = {}
+        Signatures = MOM.Attr.Filter._Type_.Signatures
+        for f in uniq (f.Op_Keys for f in self.filters_transitive) :
+            result [Signatures [f]] = f
+        return result
+    # end def sig_map
+
+# end class Query_Restriction_Spec
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")

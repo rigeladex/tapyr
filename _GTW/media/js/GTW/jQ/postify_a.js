@@ -41,7 +41,7 @@
                 , function (answer, status, xhr_instance) {
                       var repl;
                       if (answer ["error"]) {
-                          alert ("Error: " + answer.error);
+                          console.error ("Delete error", answer);
                       } else if (answer ["replacement"]) {
                           repl = answer.replacement;
                           p.html (repl.html);

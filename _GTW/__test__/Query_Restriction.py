@@ -36,6 +36,7 @@ _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
 
     >>> qe = QR.from_request_data (PAP.Person.E_Type, dict (qux = "42", qix = "Miles"))
     >>> print qe.limit, qe.offset, qe.filters, formatted_1 (sorted (qe.other_req_data.items ()))
@@ -57,17 +58,139 @@ _test_code = """
 
     >>> qo = QR.from_request_data (PAP.Person.E_Type, dict (order_by = "-lifetime,last_name"))
     >>> print formatted_1 (qo.order_by)
-    (Record (attr = Date_Interval `lifetime`, name = '-lifetime', ui_names = ('Lifetime',)), Record (attr = String `last_name`, name = 'last_name', ui_names = ('Last name',)))
+    (Record (attr = Date_Interval `lifetime`, name = '-lifetime', sign = '-', ui_names = ('Lifetime',)), Record (attr = String `last_name`, name = 'last_name', sign = '', ui_names = ('Last name',)))
     >>> print qo.order_by_q
     <Sorted_By: Descending-Getter function for `.lifetime.start`, Descending-Getter function for `.lifetime.finish`, Getter function for `.last_name`>
+
+    >>> AS  = MOM.Attr.Selector
+    >>> BiR = SRM.Boat_in_Regatta.E_Type
+    >>> qrs = QRS (BiR, AS.List (AS.primary, AS.Name ("points", "place")) (BiR))
+    >>> print formatted (qrs.as_json_cargo)
+    { 'filters' :
+        [ { 'children' :
+              [ { 'children' :
+                    [ { 'children' :
+                          []
+                      , 'name' : 'name'
+                      , 'sig_key' : 2
+                      , 'ui_name' : 'Name'
+                      }
+                    ]
+                , 'name' : 'left'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Class'
+                }
+              , { 'children' :
+                    []
+                , 'name' : 'nation'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Nation'
+                }
+              , { 'children' :
+                    []
+                , 'name' : 'sail_number'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Sail number'
+                }
+              , { 'children' :
+                    []
+                , 'name' : 'sail_number_x'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Sail number x'
+                }
+              ]
+          , 'name' : 'left'
+          , 'sig_key' : 1
+          , 'ui_name' : 'Boat'
+          }
+        , { 'children' :
+              [ { 'children' :
+                    [ { 'children' :
+                          []
+                      , 'name' : 'name'
+                      , 'sig_key' : 2
+                      , 'ui_name' : 'Name'
+                      }
+                    , { 'children' :
+                          [ { 'children' :
+                                []
+                            , 'name' : 'start'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Start'
+                            }
+                          , { 'children' :
+                                []
+                            , 'name' : 'finish'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Finish'
+                            }
+                          ]
+                      , 'name' : 'date'
+                      , 'sig_key' : None
+                      , 'ui_name' : 'Date'
+                      }
+                    ]
+                , 'name' : 'left'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Event'
+                }
+              ]
+          , 'name' : 'right'
+          , 'sig_key' : 1
+          , 'ui_name' : 'Regatta'
+          }
+        , { 'children' :
+              []
+          , 'name' : 'points'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Points'
+          }
+        , { 'children' :
+              []
+          , 'name' : 'place'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Place'
+          }
+        ]
+    , 'name_sep' : '__'
+    , 'op_sep' : '___'
+     , 'sig_map' :
+        { 0 :
+            ( 'EQ'
+            , 'GE'
+            , 'GT'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            )
+        , 1 :
+            ( 'EQ'
+            , 'NE'
+            )
+        , 2 :
+            ( 'CONTAINS'
+            , 'ENDSWITH'
+            , 'EQ'
+            , 'GE'
+            , 'GT'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            , 'STARTSWITH'
+            )
+        }
+    }
 
     >>> scope.destroy ()
 
 """
 
 from   _GTW.__test__.model                 import *
-from   _GTW._NAV._E_Type.Query_Restriction import Query_Restriction as QR
-from   _TFL.Formatter                      import formatted_1
+from   _GTW._NAV._E_Type.Query_Restriction import \
+     ( Query_Restriction      as QR
+     , Query_Restriction_Spec as QRS
+     )
+from   _TFL.Formatter                      import formatted, formatted_1
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

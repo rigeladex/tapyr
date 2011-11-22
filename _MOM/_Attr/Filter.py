@@ -38,6 +38,7 @@
 #    20-Nov-2011 (CT) Put `EQ`, `NE` into `Id_Entity.Table`
 #    20-Nov-2011 (CT) Add `Children`
 #    21-Nov-2011 (CT) Rename `_Type_.attr_name` to `._attr_name`
+#    22-Nov-2011 (CT) Add `_Type_.as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -436,6 +437,17 @@ class _Type_ (TFL.Meta.Object) :
     def __init__ (self, attr) :
         self.attr = attr
     # end def __init__
+
+    @property
+    def as_json_cargo (self) :
+        attr = self.attr
+        return dict \
+            ( name     = attr.name
+            , sig_key  = self.Sig_Key
+            , ui_name  = attr.ui_name_T
+            , children = [c.as_json_cargo for c in self.Children]
+            )
+    # end def as_json_cargo
 
     @TFL.Meta.Once_Property
     def _attr_name (self) :

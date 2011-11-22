@@ -129,6 +129,7 @@
 #    16-Nov-2011 (CT) Add property `head_line`
 #    17-Nov-2011 (CT) Change `head_line` to provide `total_f` and `total_u`
 #    22-Nov-2011 (CT) Add guard for `completer` to `Complete[dr].rendered`
+#    22-Nov-2011 (CT) Add `qr_spec`
 #    ««revision-date»»···
 #--
 
@@ -147,7 +148,10 @@ import _GTW.jQuery
 
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
-from   _GTW._NAV._E_Type.Query_Restriction import Query_Restriction as QR
+from   _GTW._NAV._E_Type.Query_Restriction import \
+     ( Query_Restriction      as QR
+     , Query_Restriction_Spec as QRS
+     )
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -837,6 +841,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def manager (self) :
         return self.etype_manager (self.E_Type)
     # end def manager
+
+    @Once_Property
+    def qr_spec (self) :
+        return QRS (self.E_Type, self.list_display)
+    # end def qr_spec
 
     def rendered (self, handler, template = None) :
         def _ (self, handler, template, objects) :
