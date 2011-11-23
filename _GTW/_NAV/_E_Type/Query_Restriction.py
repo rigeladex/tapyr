@@ -32,7 +32,7 @@
 #    19-Nov-2011 (CT) Creation continued... (FIRST, LAST)
 #    21-Nov-2011 (CT) Creation continued... (order_by_names, order_by_ui_names)
 #    22-Nov-2011 (CT) Creation continued.... (Query_Restriction_Spec)
-#    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`)
+#    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`, add `op_map`)
 #    ««revision-date»»···
 #--
 
@@ -210,6 +210,7 @@ class Query_Restriction (TFL.Meta.Object) :
             , name     = ".".join (names)
             , op       = qop.op_sym
             , op_nam   = _T (qop.op_nam)
+            , op_desc  = _T (qop.desc)
             , ui_names = tuple (_T (a.ui_name) for a in attrs)
             , value    = value
             )
@@ -279,6 +280,7 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
         return dict \
             ( filters   = [f.as_json_cargo for f in self.filters]
             , name_sep  = Query_Restriction.name_sep
+            , op_map    = self.op_map
             , op_sep    = Query_Restriction.op_sep
             , sig_map   = self.sig_map
             , ui_sep    = Query_Restriction.ui_sep
@@ -299,6 +301,14 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
                     yield c
         return tuple (_gen (self.filters))
     # end def filters_transitive
+
+    @property
+    def op_map (self) :
+        result = {}
+        for k, v in MOM.Attr.Filter._Type_.Base_Op_Table.iteritems () :
+            result [k] = dict (desc = _T (v.desc), sym = _T (v.op_sym))
+        return result
+    # end def op_map
 
     @Once_Property
     def sig_map (self) :

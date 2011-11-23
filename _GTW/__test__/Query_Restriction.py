@@ -48,7 +48,7 @@ _test_code = """
     >>> print qr.limit, qr.offset
     24 0
     >>> print formatted_1 (qr.filters)
-    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', ui_names = ('Last name',), value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', ui_names = ('Lifetime', 'Start'), value = '2008'))
+    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', op_nam = 'greater-equal', ui_names = ('Last name',), value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', op_nam = 'equal', ui_names = ('Lifetime', 'Start'), value = '2008'))
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print formatted_1 (sorted (qr.other_req_data.items ()))
@@ -138,6 +138,44 @@ _test_code = """
           }
         ]
     , 'name_sep' : '__'
+    , 'op_map' :
+        { 'CONTAINS' :
+            { 'desc' : 'Select entities where the attribute contains the specified value'
+            , 'sym' : 'contains'
+            }
+        , 'ENDSWITH' :
+            { 'desc' : 'Select entities where the attribute value ends with the specified value'
+            , 'sym' : 'ends-with'
+            }
+        , 'EQ' :
+            { 'desc' : 'Select entities where the attribute is equal to the specified value'
+            , 'sym' : '=='
+            }
+        , 'GE' :
+            { 'desc' : 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , 'sym' : '>='
+            }
+        , 'GT' :
+            { 'desc' : 'Select entities where the attribute is greater than the specified value'
+            , 'sym' : '>'
+            }
+        , 'LE' :
+            { 'desc' : 'Select entities where the attribute is less than, or equal to, the specified value'
+            , 'sym' : '<='
+            }
+        , 'LT' :
+            { 'desc' : 'Select entities where the attribute is less than the specified value'
+            , 'sym' : '<'
+            }
+        , 'NE' :
+            { 'desc' : 'Select entities where the attribute is not equal to the specified value'
+            , 'sym' : '!='
+            }
+        , 'STARTSWITH' :
+            { 'desc' : 'Select entities where the attribute value starts with the specified value'
+            , 'sym' : 'starts-with'
+            }
+        }
     , 'op_sep' : '___'
     , 'sig_map' :
         { 0 :
@@ -176,7 +214,8 @@ from   _GTW._NAV._E_Type.Query_Restriction import \
      ( Query_Restriction      as QR
      , Query_Restriction_Spec as QRS
      )
-from   _TFL.Formatter                      import formatted, formatted_1
+from   _TFL.Formatter                      import Formatter, formatted_1
+formatted = Formatter (width = 240)
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

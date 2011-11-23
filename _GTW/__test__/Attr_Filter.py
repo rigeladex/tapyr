@@ -243,6 +243,18 @@ _test_code = """
     1 ('EQ', 'NE')
     2 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')
 
+    >>> for k, v in sorted (at.Q.Base_Op_Table.iteritems ()) :
+    ...     print "%%-12s %%s" %% (k, v)
+    CONTAINS     <Attr.Filter CONTAINS [contains]>
+    ENDSWITH     <Attr.Filter ENDSWITH [ends-with]>
+    EQ           <Attr.Filter EQ [==]>
+    GE           <Attr.Filter GE [>=]>
+    GT           <Attr.Filter GT [>]>
+    LE           <Attr.Filter LE [<=]>
+    LT           <Attr.Filter LT [<]>
+    NE           <Attr.Filter NE [!=]>
+    STARTSWITH   <Attr.Filter STARTSWITH [starts-with]>
+
     >>> scope.destroy ()
 
 """

@@ -76,14 +76,14 @@
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
-{%- macro qr_tr_x (ui_name, key, op_nam, op, value) -%}
+{%- macro qr_tr_x (ui_name, key, op_desc, op, value) -%}
   <tr title="{{ ui_name }}">
     <td class="name">
       <label for="{{ key }}">
         {{ ui_name }}
       </label>
     </td>
-    <td class="op" title="{{ op_nam }}">
+    <td class="op" title="{{ op_desc }}">
       <a class="button">
         {{- op|escape -}}
       </a>
@@ -97,7 +97,7 @@
 
 {%- macro qr_tr (qr, af) -%}
   {%- set ui_name = qr.ui_sep.join (af.ui_names) %}
-  {{- qr_tr_x (ui_name, af.key, af.op_nam, GTW._T (af.op), af.value) }}
+  {{- qr_tr_x (ui_name, af.key, af.op_desc, GTW._T (af.op), af.value) }}
 {%- endmacro -%} {#- qr_tr -#}
 
 {%- macro qr_control (page, fields, qr) -%}

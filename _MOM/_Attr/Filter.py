@@ -40,6 +40,7 @@
 #    21-Nov-2011 (CT) Rename `_Type_.attr_name` to `._attr_name`
 #    22-Nov-2011 (CT) Add `_Type_.as_json_cargo`
 #    22-Nov-2011 (CT) Add `specialized`, streamline `as_json_cargo`
+#    23-Nov-2011 (CT) Add `Base_Op_Table`, define `desc` for base operations
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,8 @@ Q = TFL.Attr_Query ()
 class _M_Filter_ (TFL.Meta.Object.__class__) :
     """Meta class for Filter classes."""
 
+    Base_Op_Table = {}
+
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if not name.startswith ("_") :
@@ -77,6 +80,8 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
             if op_key.startswith ("__") :
                 op_key = op_key.replace ("_", "").upper ()
             cls.op_key = op_key
+            if op_key not in cls.Base_Op_Table :
+                cls.Base_Op_Table [op_key] = cls
     # end def __init__
 
     def __str__ (cls) :
@@ -210,25 +215,11 @@ class _String_ (_Filter_) :
 
 # end class _String_
 
-class Auto_Complete (_Filter_) :
-    """Attribute query filter for auto-completion."""
-
-    op_fct        = "__eq__"
-    op_sym        = "auto-complete"
-
-# end class Auto_Complete
-
-class Auto_Complete_S (_String_) :
-    """String-Attribute query filter for auto-completion."""
-
-    op_fct        = _ ("STARTSWITH")
-    op_sym        = "auto-complete"
-
-# end class Auto_Complete
-
 class Contains (_String_) :
     """Attribute query filter for contains."""
 
+    desc          = _ \
+        ("Select entities where the attribute contains the specified value")
     op_fct        = _ ("CONTAINS")
 
 # end class Contains
@@ -236,6 +227,10 @@ class Contains (_String_) :
 class Ends_With (_String_) :
     """Attribute query for ends-with."""
 
+    desc          = _ \
+        ( "Select entities where the attribute value ends "
+          "with the specified value"
+        )
     op_fct        = _ ("ENDSWITH")
 
 # end class Ends_With
@@ -243,6 +238,8 @@ class Ends_With (_String_) :
 class Equal (_Filter_) :
     """Attribute query filter for equality."""
 
+    desc          = _ \
+        ("Select entities where the attribute is equal to the specified value")
     op_fct        = "__eq__"
     op_sym        = "=="
 
@@ -251,6 +248,10 @@ class Equal (_Filter_) :
 class Greater_Equal (_Filter_) :
     """Attribute query filter for greater-equal."""
 
+    desc          = _ \
+        ( "Select entities where the attribute is greater than, "
+          "or equal to, the specified value"
+        )
     op_fct        = "__ge__"
     op_sym        = ">="
 
@@ -259,6 +260,10 @@ class Greater_Equal (_Filter_) :
 class Greater_Than (_Filter_) :
     """Attribute query filter for greater-than."""
 
+    desc          = _ \
+        ( "Select entities where the attribute is greater than "
+          "the specified value"
+        )
     op_fct        = "__gt__"
     op_sym        = ">"
 
@@ -267,6 +272,10 @@ class Greater_Than (_Filter_) :
 class Less_Equal (_Filter_) :
     """Attribute query filter for less-equal."""
 
+    desc          = _ \
+        ( "Select entities where the attribute is less than, "
+          "or equal to, the specified value"
+        )
     op_fct        = "__le__"
     op_sym        = "<="
 
@@ -275,6 +284,10 @@ class Less_Equal (_Filter_) :
 class Less_Than (_Filter_) :
     """Attribute query filter for less-than."""
 
+    desc          = _ \
+        ( "Select entities where the attribute is less than "
+          "the specified value"
+        )
     op_fct        = "__lt__"
     op_sym        = "<"
 
@@ -283,6 +296,10 @@ class Less_Than (_Filter_) :
 class Not_Equal (_Filter_) :
     """Attribute query filter for in-equality."""
 
+    desc          = _ \
+        ( "Select entities where the attribute is not "
+          "equal to the specified value"
+        )
     op_fct        = "__ne__"
     op_sym        = "!="
 
@@ -291,9 +308,27 @@ class Not_Equal (_Filter_) :
 class Starts_With (_String_) :
     """Attribute query for starts-with."""
 
+    desc          = _ \
+        ( "Select entities where the attribute value starts "
+          "with the specified value"
+        )
     op_fct        = _ ("STARTSWITH")
 
 # end class Starts_With
+
+class Auto_Complete (Equal) :
+    """Attribute query filter for auto-completion."""
+
+    op_sym        = "auto-complete"
+
+# end class Auto_Complete
+
+class Auto_Complete_S (Starts_With) :
+    """String-Attribute query filter for auto-completion."""
+
+    op_sym        = "auto-complete"
+
+# end class Auto_Complete
 
 class Composite_Auto_Complete (Auto_Complete, _Composite_) :
     """Composite-Attribute query filter for auto-completion."""
@@ -424,6 +459,8 @@ class _Type_ (TFL.Meta.Object) :
     """
 
     __metaclass__ = _M_Type_
+
+    Base_Op_Table = _Filter_.Base_Op_Table
 
     deep          = False
     Signatures    = {}

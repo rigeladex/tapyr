@@ -15,7 +15,7 @@
 //
 // Revision Dates
 //    22-Nov-2011 (CT) Creation
-//    23-Nov-2011 (CT) Creation continued (new_attr_filter, ...)
+//    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
 //    ««revision-date»»···
 //--
 
@@ -67,6 +67,19 @@
                 return result;
               } ()
             );
+        var op_map_by_sym =
+            ( function () {
+                var result = {}, k, v;
+                for (k in qrs.op_map) {
+                    if (qrs.op_map.hasOwnProperty (k)) {
+                        v              = qrs.op_map [k];
+                        v.key          = k;
+                        result [v.sym] = v;
+                    }
+                }
+                return result;
+              } ()
+            );
         var add_cb = function add_cb (ev) {
             var target = $(ev.target);
             var choice = target.data ("choice");
@@ -97,7 +110,8 @@
         };
         var new_attr_filter = function new_attr_filter (choice) {
             var S = selectors;
-            var key = choice.key + qrs.op_sep + "EQ"; // last-op ???
+            var op  = op_map_by_sym ["=="] ; // last-op ???
+            var key = choice.key + qrs.op_sep + op.key;
             // XXX choice.deep ....
             var result = options.attr_filter_html.clone (true);
             result.attr ("title", choice.label);
@@ -105,8 +119,8 @@
                 .attr   ("for", key)
                 .append (choice.label);
             $(S.attr_filter_op, result)
-                .append ("==")   // last-op ???
-                .attr ("title", "equal")
+                .append (op.sym)
+                .attr   ("title", op.desc)
                 .click  (op_cb); // XXX use 1 `delegate` instead of n `click`
             $(S.attr_filter_value, result)
                 .attr ({ id : key, name : key });
