@@ -40,6 +40,7 @@
 ##    19-Nov-2011 (CT) Continue `qr_control` ("First", "Last")
 ##    21-Nov-2011 (CT) Factor `html/_e_type.jnj`
 ##    22-Nov-2011 (CT) Add `body_tail_scripts` for `gtw_query_restriction`
+##    23-Nov-2011 (CT) Add `attr_filter_html` to `gtw_query_restriction`
 ##    ««revision-date»»···
 ##--
 #}
@@ -52,8 +53,14 @@
 
 {%- block body_tail_scripts -%}
   {{ super () }}
+  {%- set afh = GTW.call_macro ("html/_e_type.jnj, qr_tr_x")
+        |replace ('"', '\\"')|replace ("\n", "")
+  %}
   <script>
-    $("form.QR").gtw_query_restriction ({{ page.qr_spec.as_json }});
+    $("form.QR").gtw_query_restriction
+      ( {{ page.qr_spec.as_json }}
+      , { attr_filter_html : $("{{ afh|safe }}") }
+      );
   </script>
 {% endblock body_tail_scripts -%}
 

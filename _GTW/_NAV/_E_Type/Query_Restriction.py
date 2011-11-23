@@ -32,6 +32,7 @@
 #    19-Nov-2011 (CT) Creation continued... (FIRST, LAST)
 #    21-Nov-2011 (CT) Creation continued... (order_by_names, order_by_ui_names)
 #    22-Nov-2011 (CT) Creation continued.... (Query_Restriction_Spec)
+#    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`)
 #    ««revision-date»»···
 #--
 
@@ -144,7 +145,7 @@ class Query_Restriction (TFL.Meta.Object) :
         result = self.offset
         if result < 0 :
             result = self.total_f + result
-        return result
+        return max (result, 0)
     # end def offset_f
 
     @Once_Property

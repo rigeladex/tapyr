@@ -30,6 +30,7 @@
 ##    21-Nov-2011 (CT) Creation (factored from html/e_type_admin.jnj)
 ##    21-Nov-2011 (CT) Continue `qr_control` (change `order_by`)
 ##    22-Nov-2011 (CT) Continue `qr_control`..
+##    23-Nov-2011 (CT) Continue `qr_control`... (factor `qr_tr_x`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -75,28 +76,28 @@
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
-{%- macro qr_tr (qr, af) -%}
-  {%- set ui_name = qr.ui_sep.join (af.ui_names) %}
+{%- macro qr_tr_x (ui_name, key, op_nam, op, value) -%}
   <tr title="{{ ui_name }}">
     <td class="name">
-      <label for="{{ af.key }}">
+      <label for="{{ key }}">
         {{ ui_name }}
       </label>
     </td>
-    <td class="op" title="{{ af.op_nam }}">
+    <td class="op" title="{{ op_nam }}">
       <a class="button">
-        {{ GTW._T (af.op)|escape }}
+        {{- op|escape -}}
       </a>
     </td>
     <td class="value">
-      {{ X.input.text
-          ( id        = af.key
-          , name      = af.key
-          , value     = af.value
-          )
-      }}
+      {{ X.input.text (id = key, name = key, value = value) }}
     </td>
+    <td class="disabler"></td>
   </tr>
+{%- endmacro -%} {#- qr_tr -#}
+
+{%- macro qr_tr (qr, af) -%}
+  {%- set ui_name = qr.ui_sep.join (af.ui_names) %}
+  {{- qr_tr_x (ui_name, af.key, af.op_nam, GTW._T (af.op), af.value) }}
 {%- endmacro -%} {#- qr_tr -#}
 
 {%- macro qr_control (page, fields, qr) -%}

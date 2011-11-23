@@ -36,6 +36,7 @@
 #    14-Oct-2011 (CT) `.cmd-menu` added
 #    25-Oct-2011 (CT) `hover` child added to `a.drop` rule
 #     4-Nov-2011 (CT) Add rule for `input.Long` and `input.Very-Long`
+#    23-Nov-2011 (CT) Factor rules for `.cmd-menu`
 #    ««revision-date»»···
 #--
 
@@ -79,64 +80,6 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "h1 > a.button", "h2 > a.button"
                 , font_size        = Percent (70)
-                )
-            , Rule
-                ( ".cmd-menu"
-                , border           = P.border_button
-                , float            = "right"
-                , margin_top       = Em (-0.1)
-                , padding          = 0
-                , children         =
-                    [ Rule
-                        ( "a.button"
-                        , border      = 0
-                        , display     = "inline-block"
-                        , float       = "none"
-                        , font_size   = Percent (70)
-                        , line_height = Em (2.05)
-                        , margin      = 0
-                        )
-                    , Rule
-                        ( "a.default"
-                        , padding     = TRBL (0, Em (1.5))
-                        )
-                    , Rule
-                        ( "a.drop"
-                        , border_left = "2px solid " + P.color_medium_grey
-                        , height      = Em (2.0)
-                        , padding     = 0
-                        , width       = Em (2.0)
-                        , children    =
-                            [ Rule
-                                ( "i"
-                                , Border
-                                    ( style   = "solid"
-                                    , color   = TRBL0
-                                        ( default    = "transparent"
-                                        , t          =
-                                            P.afs.color_spec_heading ["color"]
-                                        )
-                                    , width   = TRBL0
-                                        ( default    = Em (0.5)
-                                        , b          = 0
-                                        )
-                                    )
-                                , display     = "inline-block"
-                                , height      = 0
-                                , margin      = TRBL0
-                                    (l = Em (0.5), b = Em (0.15))
-                                , width       = 0
-                                )
-                            , Rule_Pseudo
-                                ( "hover i"
-                                , border_color = TRBL0
-                                    ( default    = "transparent"
-                                    , t          = "red"
-                                    )
-                                )
-                            ]
-                        )
-                    ]
                 )
             , Rule
                 ( ".Desc"
@@ -287,5 +230,7 @@ style_sheet = Style_Sheet \
             ]
         )
     )
+
+Include ("html/cmd_menu.media")
 
 ### __END__ html/afs.jnj.media

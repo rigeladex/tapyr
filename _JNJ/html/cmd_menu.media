@@ -1,0 +1,94 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/cmd_menu.media
+#
+# Purpose
+#    Media fragment for cmd-menu
+#
+# Revision Dates
+#    23-Nov-2011 (CT) Creation (factored from html/afs.jnj.media)
+#    ««revision-date»»···
+#--
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".cmd-menu"
+        , border           = P.border_button
+        , float            = "right"
+        , margin_top       = Em (-0.1)
+        , padding          = 0
+        , children         =
+            [ Rule
+                ( "a.button"
+                , border      = 0
+                , display     = "inline-block"
+                , float       = "none"
+                , font_size   = Percent (70)
+                , line_height = Em (2.05)
+                , margin      = 0
+                )
+            , Rule
+                ( "a.default"
+                , padding     = TRBL (0, Em (1.5))
+                )
+            , Rule
+                ( "a.drop"
+                , border_left = "2px solid " + P.color_medium_grey
+                , height      = Em (2.0)
+                , padding     = 0
+                , width       = Em (2.0)
+                , children    =
+                    [ Rule
+                        ( "i"
+                        , Border
+                            ( style   = "solid"
+                            , color   = TRBL0
+                                ( default    = "transparent"
+                                , t          =
+                                    P.afs.color_spec_heading ["color"]
+                                )
+                            , width   = TRBL0
+                                ( default    = Em (0.5)
+                                , b          = 0
+                                )
+                            )
+                        , display     = "inline-block"
+                        , height      = 0
+                        , margin      = TRBL0
+                            (l = Em (0.5), b = Em (0.15))
+                        , width       = 0
+                        )
+                    , Rule_Pseudo
+                        ( "hover i"
+                        , border_color = TRBL0
+                            ( default    = "transparent"
+                            , t          = "red"
+                            )
+                        )
+                    ]
+                )
+            ]
+        )
+    )
+
+### __END__ html/cmd_menu.media

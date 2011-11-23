@@ -41,6 +41,7 @@
 #    21-Nov-2011 (CT) Remove `tablesorter`, un-DRY `JS_On_Ready` for `button`
 #    22-Nov-2011 (CT) s/.restrictions/.QR/
 #    22-Nov-2011 (CT) Add `Script` for `GTW_query_restriction`
+#    23-Nov-2011 (CT) Include `html/cmd_menu.media`
 #    ««revision-date»»···
 #--
 
@@ -165,12 +166,13 @@ style_sheet = Style_Sheet \
                         ( "ui-value"
                         , color        = "inherit"
                         )
+                    , Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
                     ]
                 )
             , Rule
-                ( "input", "li", "tr"
+                ( "li", "tr"
                 , children         =
-                    [ Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
+                    [ Rule_Pseudo ("hover", ** P.color_spec_selected)
                     ]
                 )
             , Rule
@@ -191,12 +193,17 @@ style_sheet = Style_Sheet \
                             (t = Px (2), b = Px (2), l = Px (5))
                         , children     =
                             [ Rule_Class
-                                ( "value"
-                                , width        = Em ( 8)
-                                )
-                            , Rule_Class
                                 ( "name"
                                 , text_align   = "right"
+                                )
+                            , Rule_Class
+                                ( "op"
+                                , color        = P.color_target
+                                , text_align   = "right"
+                                )
+                            , Rule_Class
+                                ( "value"
+                                , width        = Em ( 8)
                                 )
                             ]
                         )
@@ -276,6 +283,8 @@ JS_On_Ready \
       """
     , rank = 100
     )
+
+Include ("html/cmd_menu.media")
 
 JS_On_Ready \
     ( """

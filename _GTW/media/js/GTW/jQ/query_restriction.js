@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    22-Nov-2011 (CT) Creation
+//    23-Nov-2011 (CT) Creation continued (new_attr_filter, ...)
 //    ««revision-date»»···
 //--
 
@@ -67,47 +68,23 @@
               } ()
             );
         var add_cb = function add_cb (ev) {
-            var a$     = $(ev.target);
-            var choice = a$.data ("choice");
-            var key    = choice.key + qrs.op_sep + "EQ"; // last-op ???
-            var tr$    = $(tr_selector (choice.label), qr$).last ();
-            if (! tr$.length) {
-                tr$ = $( selectors.attrs_container + " "
-                       + selectors.attr_filter_container
-                       ).last ();
+            var target = $(ev.target);
+            var choice = target.data ("choice");
+            var afs$   = $(selectors.attr_filter_container, qr$);
+            var head$  = afs$.filter
+                ( function () {
+                    return $(this).attr ("title") <= choice.label;
+                  }
+                );
+            var nf$ = new_attr_filter (choice);
+            if (head$.length) {
+                head$.last ().after  (nf$);
+            } else if (afs$.length) {
+                afs$.first ().before (nf$);
+            } else {
+                $(selectors.attrs_container).append (nf$);
             };
-            tr$.after
-                ( $("<tr title=\"" + choice.label + "\">")
-                    .append
-                        ( $("<td class=\"name\">")
-                            .append
-                                ( $("<label for=\"" + key + "\">")
-                                    .append (choice.label)
-                                )
-                        )
-                    .append
-                        ( $("<td class=\"op\">")
-                            .append
-                                ( $("<a class=\"button\">")
-                                    .append ("==") // last-op ???
-                                    .click  (op_cb)
-                                )
-                        )
-                    .append
-                        ( $("<td class=\"value\">")
-                            .append
-                                ( $( "<input id=\"" + key + "\""
-                                   + " name=\"" + key + "\""
-                                   + " type=\"text\""
-                                   + " value=\"\""
-                                   + ">"
-                                   )
-                                )
-                        )
-                    .data ("choice", choice)
-                )
-            // TBD
-            console.info ("Add callback", ev, choice, tr$);
+            nf$.find (selectors.attr_filter_value).focus ();
         };
         var hide_menu_cb = function hide_menu_cb (ev) {
             var menu$ = $(".drop-menu"), tc;
@@ -118,27 +95,46 @@
                 };
             };
         };
+        var new_attr_filter = function new_attr_filter (choice) {
+            var S = selectors;
+            var key = choice.key + qrs.op_sep + "EQ"; // last-op ???
+            // XXX choice.deep ....
+            var result = options.attr_filter_html.clone (true);
+            result.attr ("title", choice.label);
+            $(S.attr_filter_label, result)
+                .attr   ("for", key)
+                .append (choice.label);
+            $(S.attr_filter_op, result)
+                .append ("==")   // last-op ???
+                .attr ("title", "equal")
+                .click  (op_cb); // XXX use 1 `delegate` instead of n `click`
+            $(S.attr_filter_value, result)
+                .attr ({ id : key, name : key });
+            result.data ("choice", choice);
+            return result;
+        } ;
         var op_cb = function op_cb (ev) {
             console.info ("Op callback", ev);
             // TDB
         } ;
         var setup_menu = function setup_menu (but$, choices, cb) {
-            var menu = $("<ul class=\"drop-menu\">");
+            var menu = $("<ul class=\"drop-menu cmd-menu\">");
             for (var i = 0, li = choices.length; i < li; i++) {
                 ( function () {
                     var c = choices [i];
                     menu.append
                       ( $("<li>")
-                          .append ( $("<a class=\"button\" href=\"#\">")
-                                      .append (c.label)
-                                      .click
-                                        ( function cmd_click (ev) {
-                                            cb (ev);
-                                            but$.data ("menu$").element.hide ();
-                                          }
-                                        )
-                                      .data   ("choice", c)
-                                  )
+                          .append
+                              ( $("<a class=\"button\" href=\"#\">")
+                                  .append (c.label)
+                                  .click
+                                      ( function cmd_click (ev) {
+                                          cb (ev);
+                                          but$.data ("menu$").element.hide ();
+                                        }
+                                      )
+                                  .data   ("choice", c)
+                              )
                       );
                   } ()
                 );
@@ -152,7 +148,7 @@
                           menu.element.show ()
                               .position
                                 ( { my         : "right top"
-                                  , at         : "right top"
+                                  , at         : "right bottom"
                                   , of         : but$
                                   , collision  : "none"
                                   }
@@ -182,13 +178,18 @@
                   );
         };
         var tr_selector = function tr_selector (label) {
-            var s = selectors.attr_filter_container + "[title='"+label+"']";
-            return $(s, qr$);
+            var head = selectors.attr_filter_container, tail;
+            if (label.length) {
+                tail = "[title^='"+label+"']";
+            } else {
+                tail = "[title]";
+            };
+            return head + tail;
         };
         $(document)
             .bind ("click.menuhide", hide_menu_cb)
             .bind ("keyup.menuhide", hide_menu_cb);
-        $(options.selectors.add_button)
+        $(selectors.add_button)
             .each
                 ( function () {
                     setup_menu ($(this), attr_filters, add_cb);
