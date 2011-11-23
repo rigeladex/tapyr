@@ -655,8 +655,6 @@
                   };
               }
             , Edit                      : function edit_cb (s$, elem, id, ev) {
-                  // used to be // var s$    = b$.closest ("section.closed");
-                  // XXX was the `.closed` necessary ???
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
                   $.getJSON

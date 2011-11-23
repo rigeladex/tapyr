@@ -42,8 +42,9 @@
             , opts || {}
             , { selectors : selectors }
             );
-        var qr$   = $(this);
-        var body$ = $("body").last ();
+        var qr$    = $(this);
+        var body$  = $("body").last ();
+        var af_map = {};
         var attr_filters =
             ( function () {
                 var result = [];
@@ -58,6 +59,7 @@
                             f.label = f.ui_name;
                         };
                         result.push (f);
+                        af_map [f.label] = f;
                         if ("children" in f) {
                             add (f.children, f.key, f.label);
                         };
@@ -74,15 +76,33 @@
                     if (qrs.op_map.hasOwnProperty (k)) {
                         v              = qrs.op_map [k];
                         v.key          = k;
+                        v.label        = v.sym;
                         result [v.sym] = v;
-                    }
-                }
+                    };
+                };
                 return result;
               } ()
             );
-        var add_cb = function add_cb (ev) {
-            var target = $(ev.target);
-            var choice = target.data ("choice");
+        var sig_map =
+            ( function () {
+                var result = {}, k, v;
+                for (k in qrs.sig_map) {
+                    if (qrs.sig_map.hasOwnProperty (k)) {
+                        v = qrs.sig_map [k];
+                        result [k] = $.map
+                            ( v
+                            , function (value) {
+                                return qrs.op_map [value];
+                              }
+                            );
+                    };
+                };
+                return result;
+              } ()
+            );
+        var add_attr_filter_cb = function add_attr_filter_cb (ev) {
+            var target$ = $(ev.target);
+            var choice = target$.data ("choice");
             var afs$   = $(selectors.attr_filter_container, qr$);
             var head$  = afs$.filter
                 ( function () {
@@ -99,6 +119,10 @@
             };
             nf$.find (selectors.attr_filter_value).focus ();
         };
+        var attach_menu = function attach_menu (but$, menu) {
+            but$.click (menu_click_cb)
+                .data  ("menu$", menu);
+        };
         var hide_menu_cb = function hide_menu_cb (ev) {
             var menu$ = $(".drop-menu"), tc;
             if (menu$.is (":visible")) {
@@ -107,6 +131,34 @@
                     menu$.hide ();
                 };
             };
+        };
+        var menu_click_cb = function menu_click_cb (ev) {
+            var but$ = $(ev.target);
+            var menu = but$.data ("menu$");
+            if (menu.element.is (":visible")) {
+                menu.element.hide ();
+            } else {
+                menu.element
+                    .show ()
+                    .position
+                      ( { my         : "right top"
+                        , at         : "right bottom"
+                        , of         : but$
+                        , collision  : "none"
+                        }
+                      )
+                    .zIndex (but$.zIndex () + 1)
+                    .focus  ();
+                if (ev && "stopPropagation" in ev) {
+                    ev.stopPropagation ();
+                };
+            };
+        };
+        var menu_select_cb = function menu_select_cb (ev) {
+            var target$ = $(ev.target);
+            var menu$   = target$.closest (".cmd-menu");
+            target$.data ("callback") (ev);
+            menu$.hide ();
         };
         var new_attr_filter = function new_attr_filter (choice) {
             var S = selectors;
@@ -121,18 +173,14 @@
             $(S.attr_filter_op, result)
                 .append (op.sym)
                 .attr   ("title", op.desc)
-                .click  (op_cb); // XXX use 1 `delegate` instead of n `click`
+                .each   (setup_op_button);
             $(S.attr_filter_value, result)
                 .attr ({ id : key, name : key });
             result.data ("choice", choice);
             return result;
-        } ;
-        var op_cb = function op_cb (ev) {
-            console.info ("Op callback", ev);
-            // TDB
-        } ;
-        var setup_menu = function setup_menu (but$, choices, cb) {
-            var menu = $("<ul class=\"drop-menu cmd-menu\">");
+        };
+        var new_menu = function new_menu (but$, choices, cb) {
+            var menu = $("<ul class=\"drop-menu cmd-menu\">"), result;
             for (var i = 0, li = choices.length; i < li; i++) {
                 ( function () {
                     var c = choices [i];
@@ -141,55 +189,49 @@
                           .append
                               ( $("<a class=\"button\" href=\"#\">")
                                   .append (c.label)
-                                  .click
-                                      ( function cmd_click (ev) {
-                                          cb (ev);
-                                          but$.data ("menu$").element.hide ();
+                                  .click  (menu_select_cb)
+                                  .data
+                                      ( { but$   : but$
+                                        , callback : cb
+                                        , choice : c
                                         }
                                       )
-                                  .data   ("choice", c)
                               )
                       );
                   } ()
                 );
-            }
-            but$.click
-                  ( function (ev) {
-                      var menu = but$.data ("menu$");
-                      if (menu.element.is (":visible")) {
-                          menu.element.hide ();
-                      } else {
-                          menu.element.show ()
-                              .position
-                                ( { my         : "right top"
-                                  , at         : "right bottom"
-                                  , of         : but$
-                                  , collision  : "none"
-                                  }
-                                )
-                              .focus ();
-                          if (ev && "stopPropagation" in ev) {
-                              ev.stopPropagation ();
-                          };
-                      };
-                    }
-                  )
-                .data
-                  ( "menu$"
-                  , menu.menu
-                          ( { select    : function (event, ui) {
-                                console.info ("Menu selection", event, ui);
-                                var cmd$ = $(ui.item);
-                                cmd$.trigger ("cmd_menu_do");
-                              }
-                            }
-                          )
-                        .appendTo (body$)
-                        .css      ({ top: 0, left: 0, position : "absolute" })
-                        .hide     ()
-                        .zIndex   (but$.zIndex () + 1)
-                        .data     ("menu")
-                  );
+            };
+            result = menu
+                .menu     ({})
+                .appendTo (body$)
+                .css      ({ top: 0, left: 0, position : "absolute" })
+                .hide     ()
+                .data     ("menu");
+            return result;
+        };
+        var op_select_cb = function op_cb (ev) {
+            var S = selectors;
+            var target$ = $(ev.target);
+            var choice  = target$.data  ("choice");
+            var but$    = target$.data  ("but$");
+            var afc$    = but$.closest (selectors.attr_filter_container);
+            var label$  = $(S.attr_filter_label, afc$);
+            var op$     = $(S.attr_filter_op,    afc$);
+            var value$  = $(S.attr_filter_value, afc$);
+            var name    = value$.attr ("name");
+            var prefix  = name.split (qrs.op_sep) [0];
+            var key     = prefix + qrs.op_sep + choice.key;
+            label$.attr ("for", key);
+            op$ .html   (choice.label)
+                .attr   ("title", choice.desc);
+            value$.attr ({ id : key, name : key});
+        };
+        var setup_op_button = function setup_op_button () {
+            var but$ = $(this);
+            var afc$ = but$.closest (selectors.attr_filter_container);
+            var afs  = af_map  [afc$.attr ("title")];
+            var ops  = sig_map [afs.sig_key];
+            attach_menu (but$, new_menu (but$, ops, op_select_cb));
         };
         var tr_selector = function tr_selector (label) {
             var head = selectors.attr_filter_container, tail;
@@ -206,10 +248,13 @@
         $(selectors.add_button)
             .each
                 ( function () {
-                    setup_menu ($(this), attr_filters, add_cb);
+                    var but$ = $(this);
+                    attach_menu
+                      (but$, new_menu (but$, attr_filters, add_attr_filter_cb));
                   }
                 )
             .removeClass ("disabled");
+        $(selectors.attr_filter_op).each (setup_op_button);
         return this;
     }
   } (jQuery)
