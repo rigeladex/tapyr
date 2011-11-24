@@ -125,11 +125,12 @@
 #    13-Oct-2011 (CT) `Deleter` changed to support json requests, too
 #     8-Nov-2011 (CT) Factor `field_element` and guard it against `KeyError`
 #    14-Nov-2011 (CT) Add support for `query_restriction`
-#    16-Nov-2011 (CT) Change `render` to always `LET` `query_restriction`
+#    16-Nov-2011 (CT) Change `rendered` to always `LET` `query_restriction`
 #    16-Nov-2011 (CT) Add property `head_line`
 #    17-Nov-2011 (CT) Change `head_line` to provide `total_f` and `total_u`
 #    22-Nov-2011 (CT) Add guard for `completer` to `Complete[dr].rendered`
 #    22-Nov-2011 (CT) Add `qr_spec`
+#    24-Nov-2011 (CT) Change `rendered` to support json requests
 #    ««revision-date»»···
 #--
 
@@ -848,18 +849,26 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def qr_spec
 
     def rendered (self, handler, template = None) :
-        def _ (self, handler, template, objects) :
-            handler.context.update \
-                ( fields            = self.list_display
-                , objects           = objects
-                , query_restriction = self.query_restriction
-                )
-            return self.__super.rendered (handler, template)
         qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
         with self.LET (query_restriction = qr) :
-            os = self._get_objects () if qr else self._get_entries ()
-            with self.LET (query_size = len (os)) :
-                result = _ (self, handler, template, os)
+            objects = self._get_objects () if qr else self._get_entries ()
+            with self.LET (query_size = len (objects)) :
+                handler.context.update \
+                    ( fields            = self.list_display
+                    , objects           = objects
+                    , query_restriction = self.query_restriction
+                    )
+                if handler.wants_json :
+                    macro  = "e_type,admin_table"
+                    result = handler.write_json \
+                        ( dict
+                            ( head_line        = self.head_line
+                            , object_container = self.top.Templateer.call_macro
+                                (macro, self, self.list_display, objects)
+                            )
+                        )
+                else :
+                    result = self.__super.rendered (handler, template)
             return result
     # end def rendered
 

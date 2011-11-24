@@ -53,6 +53,7 @@
 #                     to return `timedelta` instance instead of seconds
 #    11-May-2011 (MG) `username`: change session id on username changes
 #    31-May-2011 (MG) `default_content_encoding` added
+#    24-Nov-2011 (CT) Add `accept_header` and `wants_json`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,11 @@ class _Request_Handler_ (object) :
     _content_type            = None
     _content_encoding        = None
     default_content_encoding = "utf-8"
+
+    @property
+    def accept_header (self) :
+        return self.request.headers.get ("Accept", "")
+    # end def accept_header
 
     @property
     def content_encoding (self) :
@@ -180,6 +186,11 @@ class _Request_Handler_ (object) :
         except AttributeError :
             return (ttl.days * 86400 + ttl.seconds)
     # end def user_session_ttl_s
+
+    @Once_Property
+    def wants_json (self) :
+        return "json" in self.accept_header
+    # end def wants_json
 
     def add_notification (self, noti) :
         notifications = self.session.notifications

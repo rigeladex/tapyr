@@ -58,6 +58,7 @@
 #                     `js_on_ready` return the objects instead of the
 #                     combined code
 #                     `_eval_fragments`: use `scope.Eval`
+#    24-Nov-2011 (CT) Add `Templateer.call_macro`
 #    ««revision-date»»···
 #--
 
@@ -450,6 +451,7 @@ Template ("calendar_week",                "html/cal_week.jnj")
 Template ("console",                      "html/console.jnj")
 Template ("default",                      "html/error.jnj")
 Template ("dynamic_form",                 "html/dynamic_form.jnj")
+Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
 Template ("e_type_afs",                   "html/e_type_afs.jnj")
 Template ("e_type_aggregator",            "html/e_type_aggregator.jnj")
@@ -470,14 +472,19 @@ class Templateer (TFL.Meta.Object) :
     Context         = dict
 
     def __init__ (self, * args, ** kw) :
+        self.GTW = GTW = JNJ.GTW (self)
         self.env = env = JNJ.Environment.HTML \
-            (* args, GTW = JNJ.GTW (self), ** kw)
+            (* args, GTW = GTW, ** kw)
         self.Template_Type = T = Template_E.New \
             ("x", Map = {}, By_Path = {})
         self.Template_Map  = T.Map
         for t in Template.Map.itervalues () :
             T.copy (env, t)
     # end def __init__
+
+    def call_macro (self, macro_name, * _args, ** _kw) :
+        return self.GTW.call_macro (macro_name, * _args, ** _kw)
+    # end def call_macro
 
     def get_template (self, name) :
         return self.Template_Type (self.env, name)

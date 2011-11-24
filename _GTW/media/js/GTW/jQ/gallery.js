@@ -36,7 +36,7 @@
               , prev        : "button.prev"
               , tail        : "button.last"
               }
-            , opts.controls || {}
+            , apts && opts ["controls"] || {}
             );
         var options  = $.extend
             ( { delay           : 3000

@@ -34,6 +34,8 @@
               , attr_filter_ui_value  : "td input.ui-value"
               , attrs_container       : "table.attrs"
               , disabled_button       : "button[class=disabled]"
+              , head_line             : "h1.headline"
+              , object_container      : "table.Object-List"
               , order_by_ui           : "input.ui-value[name=order_by]"
               , order_by_value        : "input.value[name=order_by]"
               , submit                : "[type=submit]"
@@ -262,6 +264,31 @@
             var ops  = sig_map [afs.sig_key];
             attach_menu (but$, new_menu (but$, ops, op_select_cb));
         };
+        var submit_ajax_cb = function submit_ajax_cb (response) {
+            var S = selectors;
+            var hl$ = $(S.head_line);
+            var oc$ = $(S.object_container);
+            var url = qr$.attr ("action") + "?" + qr$.serialize ();
+            if ("object_container" in response) {
+                oc$.last ().replaceWith (response.object_container);
+            };
+            if ("head_line" in response) {
+                hl$.html (response.head_line);
+            };
+            $GTW.push_history (url);
+            console.info ("Submit ajax response", response);
+        };
+        var submit_cb = function submit_cb (ev) {
+            var S = selectors;
+            var target$ = $(ev.target);
+            var form$   = target$.closest ($("form"));
+            var args    = form$.serialize ()
+                + "&" + this.name + "=" + this.value;
+            $.getJSON (form$.attr ("action"), args, submit_ajax_cb);
+            if (ev && ev.preventDefault) {
+                ev.preventDefault ();
+            };
+        };
         var tr_selector = function tr_selector (label) {
             var head = selectors.attr_filter_container, tail;
             if (label.length) {
@@ -289,6 +316,7 @@
             (selectors.attr_filter_disabler).each (setup_disabler);
         $(selectors.attrs_container)
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
+        qr$.delegate  (selectors.submit, "click", submit_cb);
         return this;
     }
   } (jQuery)

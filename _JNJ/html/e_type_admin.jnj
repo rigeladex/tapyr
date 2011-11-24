@@ -45,7 +45,7 @@
 ##--
 #}
 
-{%- import "html/_e_type.jnj" as e_type %}
+{%- import "html/e_type.m.jnj" as e_type %}
 
 {%- block document %}
   {{- e_type.admin (page, fields, objects) -}}
@@ -53,7 +53,7 @@
 
 {%- block body_tail_scripts -%}
   {{ super () }}
-  {%- set afh = GTW.call_macro ("html/_e_type.jnj, qr_tr_x")
+  {%- set afh = GTW.call_macro ("html/e_type.m.jnj, qr_tr_x")
         |replace ('"', '\\"')|replace ("\n", "")
   %}
   <script>

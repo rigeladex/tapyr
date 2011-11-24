@@ -24,8 +24,7 @@
     $.gtw_ajax_2json = function (opts, name) {
         var options  = $.extend
             ( { async       : false                  // defaults settings
-              , error       : function
-                (xhr_instance, status, exc) {
+              , error       : function (xhr_instance, status, exc) {
                     console.error
                         ( (name || "Ajax request") + " failed: "
                         , status, exc, opts.data
