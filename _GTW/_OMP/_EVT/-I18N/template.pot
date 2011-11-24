@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-25 13:01+0200\n"
+"POT-Creation-Date: 2011-11-24 11:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
+#: _GTW._OMP._EVT.Calendar:0 _GTW._OMP._EVT.Event:0
+msgid "Calendar"
+msgid_plural "Calendars"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Calendar to which the event belongs"
+msgstr ""
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Count"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Daily"
 msgstr ""
 
@@ -100,12 +110,12 @@ msgstr ""
 msgid "Maximum number of recurrences."
 msgstr ""
 
-#: _GTW._OMP._EVT.Event:0
-msgid "Model a calendary event (or set of recurring events)"
+#: _GTW._OMP._EVT.Calendar:0
+msgid "Model a calendar of events."
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Models a string-valued attribute of an object."
+msgid "Model a calendary event (or set of recurring events)"
 msgstr ""
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
@@ -116,8 +126,12 @@ msgstr ""
 msgid "Month day"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Monthly"
+msgstr ""
+
+#: _GTW._OMP._EVT.Calendar:0
+msgid "Name of the calendar"
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
@@ -138,11 +152,11 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:75
+#: _GTW/_OMP/_EVT/Nav.py:82
 msgid "Recurrence exceptions"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:81
+#: _GTW/_OMP/_EVT/Nav.py:88
 msgid "Recurrence rule set"
 msgstr ""
 
@@ -150,7 +164,7 @@ msgstr ""
 msgid "Recurrence rule specifying a set of dates to include or exclude."
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:70
+#: _GTW/_OMP/_EVT/Nav.py:77
 msgid "Recurrence rules"
 msgstr ""
 
@@ -214,6 +228,10 @@ msgstr ""
 msgid "Restrict the recurrences to the week numbers specified."
 msgstr ""
 
+#: _GTW._OMP._EVT.Calendar:0
+msgid "Short description of calendar"
+msgstr ""
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Short description of the rule"
 msgstr ""
@@ -262,7 +280,7 @@ msgstr ""
 msgid "Week day"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Weekly"
 msgstr ""
 
@@ -270,7 +288,7 @@ msgstr ""
 msgid "Year day"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Yearly"
 msgstr ""
 

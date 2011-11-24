@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-25 13:01+0200\n"
+"POT-Creation-Date: 2011-11-24 11:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,17 @@ msgstr ""
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:64 _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
+#: _JNJ/html/_e_type.jnj:138 _JNJ/html/e_type_afs.jnj:63
+#: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:139
+msgid "Add a rule to restrict the objects to a specific attribute value"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:141
+msgid "Add restriction"
 msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:107
@@ -46,7 +55,7 @@ msgstr ""
 msgid "Anchor year for calendar display"
 msgstr ""
 
-#: _JNJ/html/cal/wr.jnj:183
+#: _JNJ/html/_e_type.jnj:109 _JNJ/html/cal/wr.jnj:183
 msgid "Apply"
 msgstr ""
 
@@ -54,12 +63,12 @@ msgstr ""
 msgid "Bad request"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:65 _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259
+#: _JNJ/html/e_type_afs.jnj:64 _JNJ/html/form.jnj:162 _JNJ/html/rform.jnj:259
 #: _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr ""
 
-#: _JNJ/html/AFS/input.jnj:116
+#: _JNJ/html/AFS/input.jnj:130
 msgid "Cannot be changed"
 msgstr ""
 
@@ -84,7 +93,7 @@ msgstr ""
 msgid "Change email of account %s"
 msgstr ""
 
-#: _JNJ/html/e_type_admin.jnj:75 _JNJ/html/e_type_admin.jnj:78
+#: _JNJ/html/_e_type.jnj:214 _JNJ/html/_e_type.jnj:220
 msgid "Change object"
 msgstr ""
 
@@ -101,7 +110,7 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:66
+#: _JNJ/html/e_type_afs.jnj:65
 msgid "Clear fields"
 msgstr ""
 
@@ -117,11 +126,11 @@ msgstr ""
 msgid "Confirm new email address"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:67
+#: _JNJ/html/e_type_afs.jnj:66
 msgid "Copy"
 msgstr ""
 
-#: _JNJ/html/e_type_admin.jnj:62 _JNJ/html/e_type_admin.jnj:69
+#: _JNJ/html/_e_type.jnj:201 _JNJ/html/_e_type.jnj:208
 msgid "Create new object"
 msgstr ""
 
@@ -134,16 +143,20 @@ msgstr ""
 msgid "Currently selected language is %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:68
+#: _JNJ/html/e_type_afs.jnj:67
 msgid "Delete"
 msgstr ""
 
-#: _JNJ/html/e_type_admin.jnj:83
+#: _JNJ/html/_e_type.jnj:225
 msgid "Delete object"
 msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:156
 msgid "Delta"
+msgstr ""
+
+#: _JNJ/html/e_type_admin.jnj:64
+msgid "Disable this attribute restriction"
 msgstr ""
 
 #: _JNJ/html/form.jnj:384 _JNJ/html/rform.jnj:431
@@ -171,7 +184,27 @@ msgstr ""
 msgid "Display calendar for the selected values"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:69 _JNJ/html/rform.jnj:406
+#: _JNJ/html/_e_type.jnj:133
+msgid "Display first batch of objects matching the restriction"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:115
+msgid "Display last batch of objects matching the restriction"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:110
+msgid "Display list of objects matching the restriction"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:121
+msgid "Display next batch of objects matching the restriction"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:127
+msgid "Display previous batch of objects matching the restriction"
+msgstr ""
+
+#: _JNJ/html/e_type_afs.jnj:68 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr ""
 
@@ -185,7 +218,11 @@ msgid_plural "Errors"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _JNJ/html/gallery.jnj:49
+#: _JNJ/html/_e_type.jnj:159
+msgid "Field(s) to use for ordering entities"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:132 _JNJ/html/gallery.jnj:49
 msgid "First"
 msgstr ""
 
@@ -215,12 +252,16 @@ msgstr ""
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:53
+#: _JNJ/html/_e_type.jnj:114 _JNJ/html/gallery.jnj:53
 msgid "Last"
 msgstr ""
 
 #: _JNJ/html/gallery.jnj:53
 msgid "Last picture"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:147
+msgid "Limit number of entities displayed"
 msgstr ""
 
 #: _JNJ/html/form.jnj:309
@@ -273,7 +314,7 @@ msgstr ""
 msgid "Move calendar display by delta units"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:52
+#: _JNJ/html/_e_type.jnj:120 _JNJ/html/gallery.jnj:52
 msgid "Next"
 msgstr ""
 
@@ -285,8 +326,16 @@ msgstr ""
 msgid "Next picture"
 msgstr ""
 
+#: _JNJ/html/_e_type.jnj:153
+msgid "Number of first entity to display"
+msgstr ""
+
 #: _JNJ/html/cal/wr.jnj:141 _JNJ/html/cal/wr.jnj:149
 msgid "Number of weeks displayed"
+msgstr ""
+
+#: _JNJ/html/_e_type.jnj:160
+msgid "Order by"
 msgstr ""
 
 #: _JNJ/html/error_404.jnj:38
@@ -316,7 +365,7 @@ msgstr ""
 msgid "Please try again later. "
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:50
+#: _JNJ/html/_e_type.jnj:126 _JNJ/html/gallery.jnj:50
 msgid "Prev"
 msgstr ""
 
@@ -330,6 +379,10 @@ msgstr ""
 
 #: _JNJ/html/clip_aggregator.jnj:55
 msgid "Read the full article at"
+msgstr ""
+
+#: _JNJ/html/e_type_admin.jnj:66
+msgid "Reenable this attribute restriction"
 msgstr ""
 
 #: _JNJ/html/form.jnj:328
@@ -357,7 +410,7 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:70 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:69 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr ""
 

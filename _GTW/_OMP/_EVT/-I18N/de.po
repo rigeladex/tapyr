@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-25 13:01+0200\n"
+"POT-Creation-Date: 2011-11-24 11:22+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,11 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
+#: _GTW._OMP._EVT.Calendar:0 _GTW._OMP._EVT.Event:0
+msgid "Calendar"
+msgid_plural "Calendars"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Calendar to which the event belongs"
+msgstr "Kalendar des Ereignisses"
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Count"
 msgstr "Anzahl"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Daily"
 msgstr "Täglich"
 
@@ -102,13 +112,13 @@ msgstr "Ist Ausnahme"
 msgid "Maximum number of recurrences."
 msgstr "Maximale Anzahl von Wiederholungen."
 
+#: _GTW._OMP._EVT.Calendar:0
+msgid "Model a calendar of events."
+msgstr "Kalender mit Ereignissen."
+
 #: _GTW._OMP._EVT.Event:0
 msgid "Model a calendary event (or set of recurring events)"
 msgstr "Kalendarisches Ereignis (oder Menge von Ereignis-Wiederholungen)"
-
-#: _GTW._OMP._EVT.Event:0
-msgid "Models a string-valued attribute of an object."
-msgstr ""
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Month"
@@ -118,9 +128,13 @@ msgstr "Monat"
 msgid "Month day"
 msgstr "Monatstag"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Monthly"
 msgstr "Monatlich"
+
+#: _GTW._OMP._EVT.Calendar:0
+msgid "Name of the calendar"
+msgstr "Name des Kalenders"
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Object which this event is bound to."
@@ -140,11 +154,11 @@ msgstr "Abstand vom Ostersonntag (positiv oder negativ, 0 bedeutet Ostersonntag)
 msgid "Period"
 msgstr "Periode"
 
-#: _GTW/_OMP/_EVT/Nav.py:75
+#: _GTW/_OMP/_EVT/Nav.py:82
 msgid "Recurrence exceptions"
 msgstr "Ausnahmen von der Wiederholung"
 
-#: _GTW/_OMP/_EVT/Nav.py:81
+#: _GTW/_OMP/_EVT/Nav.py:88
 msgid "Recurrence rule set"
 msgstr "Wiederholungsregel"
 
@@ -154,7 +168,7 @@ msgstr ""
 "Wiederholungsregel, die eine Menge von Kalenderdaten für Einschluss oder "
 "Ausschluss definiert."
 
-#: _GTW/_OMP/_EVT/Nav.py:70
+#: _GTW/_OMP/_EVT/Nav.py:77
 msgid "Recurrence rules"
 msgstr "Wiederholungsregeln"
 
@@ -230,6 +244,10 @@ msgstr ""
 msgid "Restrict the recurrences to the week numbers specified."
 msgstr "Schränke die Wiederholungen auf die angegebenen Kalenderwochen ein."
 
+#: _GTW._OMP._EVT.Calendar:0
+msgid "Short description of calendar"
+msgstr "Kurze Beschreibung des Kalenders"
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Short description of the rule"
 msgstr "Kurze Beschreibung der Regel"
@@ -280,7 +298,7 @@ msgstr "Woche"
 msgid "Week day"
 msgstr "Wochentag"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Weekly"
 msgstr "Wöchentlich"
 
@@ -288,7 +306,10 @@ msgstr "Wöchentlich"
 msgid "Year day"
 msgstr "Tag des Jahres"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:388
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Yearly"
 msgstr "Jährlich"
+
+#~ msgid "Models a string-valued attribute of an object."
+#~ msgstr ""
 

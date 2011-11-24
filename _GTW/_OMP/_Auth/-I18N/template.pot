@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-10-25 13:01+0200\n"
+"POT-Creation-Date: 2011-11-24 11:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,7 +117,7 @@ msgid_plural "Groups"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_Auth/Nav.py:74 _GTW/_OMP/_Auth/Nav.py:75
+#: _GTW/_OMP/_Auth/Nav.py:77 _GTW/_OMP/_Auth/Nav.py:78
 msgid "Groups"
 msgstr ""
 
