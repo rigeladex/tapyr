@@ -42,6 +42,7 @@
 #    22-Nov-2011 (CT) s/.restrictions/.QR/
 #    22-Nov-2011 (CT) Add `Script` for `GTW_query_restriction`
 #    23-Nov-2011 (CT) Include `html/cmd_menu.media`
+#    24-Nov-2011 (CT) Add rule for `.disabler`
 #    ««revision-date»»···
 #--
 
@@ -92,7 +93,7 @@ style_sheet = Style_Sheet \
                         , children          =
                             [ Rule_Pseudo
                                 ( "hover", "focus"
-                                , ** P.color_spec_selected
+                                , ** P.color_spec_selected_rev
                                 )
                             ]
                         , ** Border (radius = Px (5))
@@ -208,7 +209,20 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     , Rule
-                        ( ".button"
+                        ( ".disabler .button"
+                        , border_width = Px (1)
+                        , margin       = 0
+                        , padding      = 0
+                        , children         =
+                            [ Rule_Pseudo
+                                ( "hover"
+                                , ** P.color_spec_selected_rev
+                                )
+                            ]
+                        , ** Border (radius = Px (10))
+                        )
+                    , Rule
+                        ( ".op .button"
                         , border_width = Px (1)
                         , color        = "inherit"
                         , margin       = TRBL (0, Px (2))

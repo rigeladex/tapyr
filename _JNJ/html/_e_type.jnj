@@ -88,12 +88,12 @@
         {{- op|escape -}}
       </a>
     </td>
-    <td class="value">
-      {{ X.input.text (id = key, name = key, value = value) }}
+    <td>
+      {{ X.input.text (id = key, name = key, value = value, class = "value") }}
     </td>
     <td class="disabler"></td>
   </tr>
-{%- endmacro -%} {#- qr_tr -#}
+{%- endmacro -%} {#- qr_tr_x -#}
 
 {%- macro qr_tr (qr, af) -%}
   {%- set ui_name = qr.ui_sep.join (af.ui_names) %}
@@ -163,7 +163,7 @@
         {{ X.input.text
             ( name      = "order_by"
             , value     = qr.order_by_names
-            , class     = "hidden"
+            , class     = "value hidden"
             )
         }}
         {{ X.input.text

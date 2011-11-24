@@ -39,6 +39,7 @@
 #    16-Oct-2011 (MG) `Debugger` added
 #    24-Oct-2011 (CT) `color_spec_heading_rev` added
 #    24-Oct-2011 (CT) `tablesorter` added
+#    24-Nov-2011 (CT) Add `color_spec_selected_rev`
 #    ««revision-date»»···
 #--
 
@@ -271,6 +272,10 @@ class Media_Defaults (Definition) :
     color_spec_selected    = P_dict \
         ( background_color = SVG_Color ("yellow")
         , color            = SVG_Color ("red")
+        )
+    color_spec_selected_rev= P_dict \
+        ( background_color = SVG_Color ("red")
+        , color            = SVG_Color ("yellow")
         )
     color_spec_strong      = P_dict \
         ( background_color = P.background_color

@@ -16,6 +16,7 @@
 // Revision Dates
 //    22-Nov-2011 (CT) Creation
 //    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
+//    24-Nov-2011 (CT) Creation continued.. (disabler_cb, ...)
 //    ««revision-date»»···
 //--
 
@@ -25,14 +26,16 @@
     $.fn.gtw_query_restriction = function (qrs, opts) {
         var selectors = $.extend
             ( { add_button            : "button[name=ADD]"
-              , attrs_container       : "table.attrs"
               , attr_filter_container : "tr"
+              , attr_filter_disabler  : "td.disabler"
               , attr_filter_label     : "td.name label"
               , attr_filter_op        : "td.op a.button"
-              , attr_filter_value     : "td.value input"
+              , attr_filter_value     : "td input.value"
+              , attr_filter_ui_value  : "td input.ui-value"
+              , attrs_container       : "table.attrs"
               , disabled_button       : "button[class=disabled]"
               , order_by_ui           : "input.ui-value[name=order_by]"
-              , order_by_value        : "input.hidden[name=order_by]"
+              , order_by_value        : "input.value[name=order_by]"
               , submit                : "[type=submit]"
               }
             , opts && opts ["selectors"] || {}
@@ -123,6 +126,26 @@
             but$.click (menu_click_cb)
                 .data  ("menu$", menu);
         };
+        var disabler_cb = function disabler_cb (ev) {
+            var S = selectors;
+            var afc$     = $(ev.target).closest (S.attr_filter_container);
+            var dis$     = $(S.attr_filter_disabler, afc$);
+            var value$   = $(S.attr_filter_value, afc$);
+            var disabled = value$.prop ("disabled");
+            if (! disabled) {
+                value$.prop ("disabled", true);
+                dis$.attr ("title", options.attr_filter_enabler_title)
+                    .find (".button")
+                        .addClass    ("ui-icon-plusthick")
+                        .removeClass ("ui-icon-minusthick");
+            } else {
+                value$.removeProp ("disabled").focus ();
+                dis$.attr ("title", options.attr_filter_disabler_title)
+                    .find (".button")
+                        .addClass    ("ui-icon-minusthick")
+                        .removeClass ("ui-icon-plusthick");
+            };
+        };
         var hide_menu_cb = function hide_menu_cb (ev) {
             var menu$ = $(".drop-menu"), tc;
             if (menu$.is (":visible")) {
@@ -138,6 +161,7 @@
             if (menu.element.is (":visible")) {
                 menu.element.hide ();
             } else {
+                hide_menu_cb (ev);
                 menu.element
                     .show ()
                     .position
@@ -226,6 +250,11 @@
                 .attr   ("title", choice.desc);
             value$.attr ({ id : key, name : key});
         };
+        var setup_disabler = function setup_disabler () {
+            var dis$ = $(this);
+            dis$.append ($("<a class=\"button ui-icon ui-icon-minusthick\">"))
+                .attr   ("title", options.attr_filter_disabler_title);
+        };
         var setup_op_button = function setup_op_button () {
             var but$ = $(this);
             var afc$ = but$.closest (selectors.attr_filter_container);
@@ -255,6 +284,11 @@
                 )
             .removeClass ("disabled");
         $(selectors.attr_filter_op).each (setup_op_button);
+        $(selectors.attr_filter_disabler).each (setup_disabler);
+        options.attr_filter_html.find
+            (selectors.attr_filter_disabler).each (setup_disabler);
+        $(selectors.attrs_container)
+            .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         return this;
     }
   } (jQuery)
