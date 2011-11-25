@@ -32,6 +32,7 @@
 ##    22-Nov-2011 (CT) Continue `qr_control`..
 ##    23-Nov-2011 (CT) Continue `qr_control`... (factor `qr_tr_x`)
 ##    25-Nov-2011 (CT) Continue `qr_control`... (`admin_postifier`)
+##    25-Nov-2011 (CT) Change `admin_table` to not put field values into `<a>`
 ##    ««revision-date»»···
 ##--
 #}
@@ -215,13 +216,10 @@ function postifier () { {# -#}
           {{ obj_button (page, E_Type, "td", o.href_change (), o.pid, GTW._T ("Change object"), "pencil", "change") }}
           {% for f, v in o %}
             {%- set align =
-              (" align-%s" % (f.attr.css_align, )) if f.attr.css_align else ""
+                   (" class=\"align-%s\"" % (f.attr.css_align, ))
+                if f.attr.css_align else ""
             -%}
-            <td class="{{ f.name }}{{ align }}">
-              <a href="{{ o.href_change () }}" title="{{ GTW._T ("Change object") }} {{ o.pid }}">
-                {{ v }}
-              </a>
-            </td>
+            <td{{ align }}>{{ v }}</td>
           {% endfor %}
           {{ obj_button (page, E_Type, "td", o.href_delete (), o.pid, GTW._T ("Delete object"), "trash", "delete", "delete") }}
         </tr>

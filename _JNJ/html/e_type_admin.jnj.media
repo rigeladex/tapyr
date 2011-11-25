@@ -44,6 +44,8 @@
 #    23-Nov-2011 (CT) Include `html/cmd_menu.media`
 #    24-Nov-2011 (CT) Add rule for `.disabler`
 #    25-Nov-2011 (CT) Move `postify_a` from `JS_On_Ready` to `e_type_admin.jnj`
+#    25-Nov-2011 (CT) Add rule for `tr.active` to `.Object-List`
+#    25-Nov-2011 (CT) Add `$(".Object-List tbody tr").each...` to `JS_On_Ready`
 #    ««revision-date»»···
 #--
 
@@ -111,6 +113,16 @@ style_sheet = Style_Sheet \
                         , font_size = "normal"
                         , display   = "block"
                         , padding   = TRBL0 (t = Px (2), b = Px (4))
+                        )
+                    ]
+                )
+            , Rule
+                ( "tr.active"
+                , cursor          = "pointer"
+                , children        =
+                    [ Rule_Pseudo
+                        ( "hover"
+                        , ** P.color_spec_selected
                         )
                     ]
                 )
@@ -267,9 +279,10 @@ Script (GTW.Script._.GTW_jq_util)
 Script (GTW.Script._.GTW_postify_a)
 Script (GTW.Script._.GTW_query_restriction)
 
+### XXX Move the functions into a .js file and just call them here!
 JS_On_Ready \
     ( """
-        ( function () {
+      ( function () {
             var map =
                 { APPLY : "check"
                 , ADD   : "plusthick"
@@ -294,7 +307,27 @@ JS_On_Ready \
                   }
                 );
           } ()
+      );
+      $(".Object-List tbody tr").each
+        ( function () {
+            var tr$  = $(this);
+            var ac$  = tr$.find ($("td.change a"));
+            var href = ac$.attr ("href");
+            tr$
+              .addClass ("active")
+              .attr ("title", ac$.attr ("title"))
+              .find ("td").each
+                ( function () {
+                    var td$ = $(this);
+                    var html = td$.html ();
+                    if (! td$.hasClass ("cmd")) {
+                      td$.html ($("<a href=\\"" + href + "\\">").append (html));
+                    };
+                  }
+                );
+          }
         );
+
       """
     , rank = 100
     )

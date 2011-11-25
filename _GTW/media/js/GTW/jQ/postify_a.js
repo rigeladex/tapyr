@@ -19,6 +19,7 @@
 //     7-Jun-2011 (CT) Support for `answer ["error"]` added to `success` handler
 //    27-Jul-2011 (CT) Use `gtw_ajax_2json` instead of home-grown code
 //    21-Nov-2011 (CT) Add `hidden_selector`
+//    25-Nov-2011 (CT) Add `stopPropagation` to `delete_cb `
 //    ««revision-date»»···
 //--
 
@@ -54,8 +55,11 @@
                       }
                   }
                 );
-            if (ev && ev.preventDefault) {
+            if (ev && "preventDefault" in ev) {
                 ev.preventDefault ();
+            };
+            if (ev && "stopPropagation" in ev) {
+                ev.stopPropagation ();
             };
         };
         var do_ajax  = function do_ajax (url, success) {
