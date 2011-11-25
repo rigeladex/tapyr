@@ -862,11 +862,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     , query_restriction = self.query_restriction
                     )
                 if handler.wants_json :
+                    T = self.top.Templateer
                     macro  = "e_type,admin_table"
                     result = handler.write_json \
                         ( dict
                             ( head_line        = self.head_line
-                            , object_container = self.top.Templateer.call_macro
+                            , object_container = T.call_macro
                                 (macro, self, self.list_display, objects)
                             )
                         )

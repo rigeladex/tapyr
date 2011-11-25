@@ -43,6 +43,7 @@
 #    22-Nov-2011 (CT) Add `Script` for `GTW_query_restriction`
 #    23-Nov-2011 (CT) Include `html/cmd_menu.media`
 #    24-Nov-2011 (CT) Add rule for `.disabler`
+#    25-Nov-2011 (CT) Move `postify_a` from `JS_On_Ready` to `e_type_admin.jnj`
 #    ««revision-date»»···
 #--
 
@@ -299,14 +300,5 @@ JS_On_Ready \
     )
 
 Include ("html/cmd_menu.media")
-
-JS_On_Ready \
-    ( """
-        $("a.delete").gtw_postify_a
-            ( { hidden_selector : "td"
-              , parent_selector : "tr"
-              }
-            );"""
-    )
 
 ### __END__ html/e_type_admin.jnj.media

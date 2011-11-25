@@ -17,6 +17,7 @@
 //    22-Nov-2011 (CT) Creation
 //    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
 //    24-Nov-2011 (CT) Creation continued.. (disabler_cb, submit_cb)
+//    25-Nov-2011 (CT) Creation continued... (options.postifier)
 //    ««revision-date»»···
 //--
 
@@ -274,6 +275,9 @@
             };
             if ("head_line" in response) {
                 hl$.html (response.head_line);
+            };
+            if ("postifier" in options) {
+                options.postifier ();
             };
             $GTW.push_history (url);
             console.info ("Submit ajax response", response);

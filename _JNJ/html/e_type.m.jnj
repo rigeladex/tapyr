@@ -31,6 +31,7 @@
 ##    21-Nov-2011 (CT) Continue `qr_control` (change `order_by`)
 ##    22-Nov-2011 (CT) Continue `qr_control`..
 ##    23-Nov-2011 (CT) Continue `qr_control`... (factor `qr_tr_x`)
+##    25-Nov-2011 (CT) Continue `qr_control`... (`admin_postifier`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -185,6 +186,13 @@
     </table>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- qr_control -#}
+
+{%- macro admin_postifier () -%}
+function postifier () { {# -#}
+  $("a.delete").gtw_postify_a {# -#}
+    ({hidden_selector : "td", parent_selector : "tr"}); {# -#}
+}
+{%- endmacro -%} {#- admin_postifier -#}
 
 {%- macro admin_table (page, fields, objects) -%}
   {%- set E_Type = page.E_Type %}
