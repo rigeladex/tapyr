@@ -33,6 +33,7 @@
 #    21-Nov-2011 (CT) Creation continued... (order_by_names, order_by_ui_names)
 #    22-Nov-2011 (CT) Creation continued.... (Query_Restriction_Spec)
 #    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`, add `op_map`)
+#    25-Nov-2011 (CT) Creation continued..... (restrict `offset_f` to `total_f`)
 #    ««revision-date»»···
 #--
 
@@ -142,10 +143,12 @@ class Query_Restriction (TFL.Meta.Object) :
 
     @Once_Property
     def offset_f (self) :
-        result = self.offset
+        result  = self.offset
+        total_f = self.total_f
+        limit   = self.limit
         if result < 0 :
-            result = self.total_f + result
-        return max (result, 0)
+            result = total_f + result
+        return max (min (result, total_f - limit), 0)
     # end def offset_f
 
     @Once_Property

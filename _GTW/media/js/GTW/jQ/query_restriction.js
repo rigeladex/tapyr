@@ -36,7 +36,9 @@
               , attrs_container       : "table.attrs"
               , disabled_button       : "button[class=disabled]"
               , head_line             : "h1.headline"
+              , limit                 : "input[name=limit]"
               , object_container      : "table.Object-List"
+              , offset                : "input[name=offset]"
               , order_by_ui           : "input.ui-value[name=order_by]"
               , order_by_value        : "input.value[name=order_by]"
               , submit                : "[type=submit]"
@@ -267,20 +269,24 @@
         };
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S = selectors;
-            var hl$ = $(S.head_line);
-            var oc$ = $(S.object_container);
-            var url = qr$.attr ("action") + "?" + qr$.serialize ();
+            var of$ = $(S.offset);
             if ("object_container" in response) {
-                oc$.last ().replaceWith (response.object_container);
+                $(S.object_container).last ().replaceWith
+                    (response.object_container);
             };
             if ("head_line" in response) {
-                hl$.html (response.head_line);
+                $(S.head_line).html (response.head_line);
+            };
+            if ("limit" in response) {
+                $(S.limit).val (response.limit);
+            };
+            if ("offset" in response) {
+                $(S.offset).val (response.offset);
             };
             if ("postifier" in options) {
                 options.postifier ();
             };
-            $GTW.push_history (url);
-            console.info ("Submit ajax response", response);
+            $GTW.push_history (qr$.attr ("action") + "?" + qr$.serialize ());
         };
         var submit_cb = function submit_cb (ev) {
             var S = selectors;

@@ -133,6 +133,8 @@
 #    24-Nov-2011 (CT) Change `rendered` to support json requests
 #    25-Nov-2011 (CT) Add `template_iter`, factor (AFS specific) `Form`,
 #                     factor `changer_injected_templates`
+#    25-Nov-2011 (CT) Add `limit` and `offset` to result of `rendered` for json
+#    25-Nov-2011 (CT) Change `head_line` to subtract `qr.offset_f`
 #    ««revision-date»»···
 #--
 
@@ -782,10 +784,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             cu  = qr.total_u
             sep = "/"
             if cf and cf != co :
-                tail = "%s%s%s" % (tail, sep, cf)
+                tail = "%s%s%s" % (tail, sep, cf - qr.offset_f)
                 sep  = "//"
             if cu and cu != cf :
-                tail = "%s%s%s" % (tail, sep, cu)
+                tail = "%s%s%s" % (tail, sep, cu - qr.offset_f)
         return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), tail)
     # end def head_line
 
@@ -867,8 +869,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     result = handler.write_json \
                         ( dict
                             ( head_line        = self.head_line
+                            , limit            = qr.limit
                             , object_container = T.call_macro
                                 (macro, self, self.list_display, objects)
+                            , offset           = qr.offset
                             )
                         )
                 else :
