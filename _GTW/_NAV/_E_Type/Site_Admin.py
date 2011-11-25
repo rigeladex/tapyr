@@ -49,6 +49,7 @@
 #                     `top.App_Type` instead of `top.scope.App_Type`
 #                     (prevent early scope creation)
 #     1-Jun-2011 (CT) `postify_a` added
+#    25-Nov-2011 (CT) Add `template_iter`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,14 @@ class Admin_Group (GTW.NAV.Dir) :
         self.add_entries      (self._filter_etype_entries (* entries))
         self._entries.sort    (key = TFL.Getter.short_title)
     # end def __init__
+
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        for e in self._entries :
+            for t in e.template_iter () :
+                yield t
+    # end def template_iter
 
     def _filter_etype_entries (self, * args) :
         seen = set ()

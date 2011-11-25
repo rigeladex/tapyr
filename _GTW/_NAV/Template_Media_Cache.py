@@ -26,10 +26,11 @@
 #    Handling of the caching of media fragments for templates
 #
 # Revision Dates
-#    26-Sep-2011 (MG) Creation
+#    26-Sep-2011 (MG) Creation (factored from GTW.NAV.Base.load_css, store_css)
 #    21-Oct-2011 (MG) `_create_css_cache` creating of directory added
 #    21-Oct-2011 (CT) Esthetics
 #    22-Nov-2011 (MG) Use `sos.mkdir_p` instead of `sos.mkdir`
+#    25-Nov-2011 (CT) Use `nav_root.template_iter` (major surgery)
 #    ««revision-date»»···
 #--
 
@@ -37,10 +38,10 @@ from   _GTW                   import GTW
 import _GTW._NAV
 
 from   _TFL                   import TFL
-from   _TFL                   import sos as os
+from   _TFL                   import sos
+from   _TFL.predicate         import first
+
 import _TFL._Meta.Object
-from    _TFL.predicate        import first
-from   _JNJ                   import JNJ
 
 import  hashlib
 import  base64
@@ -61,26 +62,17 @@ class Template_Media_Cache (TFL.Meta.Object) :
     def as_pickle_cargo (self, nav_root) :
         if self.clear_dir :
             self._clear_dir ()
-        T            = nav_root.Templateer
-        css_map_t    = TFL.mm_list ()
-        css_map_i    = TFL.mm_list ()
-        css_map_p    = TFL.mm_list ()
-        it_media_map = TFL.mm_list ()
-        for tn in nav_root.template_names :
-            t = T.get_template (tn)
+        css_map_t = TFL.mm_list ()
+        css_map_p = {}
+        for t in nav_root.template_iter () :
             self._add_to_css_map (t, css_map_t)
-        for nav in nav_root.children_transitive :
-            t = JNJ.Injected_Templates (T.env, nav.injected_templates)
-            if t is not None :
-                self._add_to_css_map (t, css_map_i, nav)
-        for p, t, _   in self._create_css_cache ("t", css_map_t) :
-            css_map_p [p].append (t.path)
-        for p, t, nav in self._create_css_cache ("i", css_map_i) :
-            it_media_map [p].append (nav.injected_media_href)
-        return dict (css_map_t = css_map_p, css_map_i = it_media_map)
+        for p, t in self._create_css_cache (css_map_t) :
+            css_map_p [t.name] = p
+        nav_root.Templateer.Template_Type.css_href_map = css_map_p
+        return dict (css_map_p = css_map_p)
     # end def as_pickle_cargo
 
-    def _add_to_css_map (self, t, css_map, obj = None) :
+    def _add_to_css_map (self, t, css_map) :
         try :
             css = t.CSS
         except Exception as exc :
@@ -93,60 +85,48 @@ class Template_Media_Cache (TFL.Meta.Object) :
             if css :
                 h = hashlib.sha1     (css).digest ()
                 k = base64.b64encode (h, "_-").rstrip ("=")
-                css_map [k].append   ((t, obj))
+                css_map [k].append   (t)
     # end def _add_to_css_map
 
     def _clear_dir (self) :
-        for fod in os.listdir_full (self.css_dir) :
-            if os.path.isdir (fod) :
-                os.rmdir  (fod, True)
+        for fod in sos.listdir_full (self.css_dir) :
+            if sos.path.isdir (fod) :
+                sos.rmdir  (fod, True)
             else :
-                os.unlink (fod)
+                sos.unlink (fod)
     # end def _clear_dir
 
-    def _create_css_cache (self, suffix, css_map) :
-        if not os.path.isdir (self.css_dir) :
-            os.mkdir_p (self.css_dir)
-        for k, ts_and_obj in css_map.iteritems () :
-            cn = "%s-%s.css" % (suffix, k)
-            p  = pjoin        (self.prefix,  cn)
-            fn = os.path.join (self.css_dir, cn)
-            t  = first        (ts_and_obj) [0]
+    def _create_css_cache (self, css_map) :
+        if not sos.path.isdir (self.css_dir) :
+            sos.mkdir_p (self.css_dir)
+        for k, ts in css_map.iteritems () :
+            cn = "%s.css" %    (k)
+            p  = pjoin         (self.prefix,  cn)
+            fn = sos.path.join (self.css_dir, cn)
+            t  = ts [0]
             with open (fn, "wb") as file :
                 file.write (t.CSS)
-            for t, obj in ts_and_obj :
-                t.css_href = p
-                yield p, t, obj
+            for t in ts :
+                yield p, t
     # end def _create_css_cache
 
     @classmethod
     def Media_Filenames (cls, nav_root, include_templates = True) :
-        T      = nav_root.Templateer
         result = set ()
-        def _add (t) :
-            if include_templates and t.source_path is not None :
-                result.add (t.source_path)
-            if t.media_path is not None :
-                result.add (t.media_path)
-        for tn in nav_root.template_names :
-            t = T.get_template (tn)
-            if t.source_path :
-                _add (t)
-                for st in t.templates :
-                    _add (st)
-        for nav in nav_root.children_transitive :
-            for t in nav.injected_templates :
-                _add (t)
-                for st in t.templates :
-                    _add (st)
+        def _add (ts) :
+            for t in ts :
+                if include_templates and t.source_path is not None :
+                    result.add (t.source_path)
+                if t.media_path is not None :
+                    result.add (t.media_path)
+        for t in nav_root.template_iter () :
+            _add (t.templates)
         return result
     # end def Media_Filenames
 
     def from_pickle_cargo (self, nav_root, cargo) :
-        T = nav_root.Templateer
-        for p, tns in cargo.get ("css_map_p", {}).iteritems () :
-            for tn in tns :
-                T.get_template (tn).css_href = p
+        css_map_p = cargo.get ("css_map_p", {})
+        nav_root.Templateer.Template_Type.css_href_map = css_map_p
     # end def from_pickle_cargo
 
     def __str__ (self) :

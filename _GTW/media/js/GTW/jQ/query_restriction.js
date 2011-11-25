@@ -16,7 +16,7 @@
 // Revision Dates
 //    22-Nov-2011 (CT) Creation
 //    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
-//    24-Nov-2011 (CT) Creation continued.. (disabler_cb, ...)
+//    24-Nov-2011 (CT) Creation continued.. (disabler_cb, submit_cb)
 //    ««revision-date»»···
 //--
 

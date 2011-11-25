@@ -71,6 +71,7 @@ import _JNJ.Environment
 import _JNJ.GTW
 
 import _TFL._Meta.Object
+import _TFL.Accessor
 import _TFL.predicate
 
 from   _TFL._Meta.Once_Property import Once_Property
@@ -87,6 +88,7 @@ class _Template_ (TFL.Meta.Object) :
         self.path                = path
         self.media_fragment_name = media_fragment_name
         self.parent_name         = parent_name
+        self.id                  = len (self.Map)
         self.Map [name]          = self
     # end def _init_
 
@@ -109,7 +111,7 @@ class Template (_Template_) :
 class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
-    css_href        = None
+    css_href_map    = {}
     js_href         = None
 
     _media_fragment = None
@@ -137,22 +139,23 @@ class Template_E (_Template_) :
     _t_source       = None
 
     def __new__ (cls, env, name, path = None, * args, ** kw) :
-        if path is None :
-            path = name
         if path in cls.By_Path :
             result = cls.By_Path [path]
         elif name in cls.Map :
             result = cls.Map     [name]
         else :
+            if path is None :
+                path = name
             result = _Template_.__new__ (cls)
             result._init_ (env, name, path, * args, ** kw)
         return result
     # end def __new__
 
     def _init_ (self, env, * args, ** kw) :
+        self.env      = env
+        self.injected = kw.pop ("injected", ())
+        self._macros  = {}
         self.__super._init_ (* args, ** kw)
-        self.env     = env
-        self._macros = {}
         if self.path not in self.By_Path :
             self.By_Path [self.path] = self
     # end def _init_
@@ -170,6 +173,11 @@ class Template_E (_Template_) :
         """
         return self.get_css (self._Media)
     # end def CSS
+
+    @property
+    def css_href (self) :
+        return self.css_href_map.get (self.name)
+    # end def css_href
 
     @classmethod
     def get_css (cls, media) :
@@ -306,7 +314,7 @@ class Template_E (_Template_) :
 
     @Once_Property
     def templates (self) :
-        return list (reversed (self.templates_e)) + self.templates_i
+        return tuple (reversed (self.templates_e)) + self.templates_i
     # end def templates
 
     @Once_Property
@@ -316,7 +324,7 @@ class Template_E (_Template_) :
             if self.extends :
                 for e in self.extends.templates_e :
                     yield e
-        return list (TFL.uniq (_gen ()))
+        return tuple (TFL.uniq (_gen ()))
     # end def templates_e
 
     @Once_Property
@@ -333,7 +341,9 @@ class Template_E (_Template_) :
             for e in reversed (self.templates_e) :
                 for i in _gen_i (e.imports) :
                     yield i
-        return list (_gen ())
+            for i in _gen_i (self.injected) :
+                yield i
+        return tuple (_gen ())
     # end def templates_i
 
     @Once_Property
@@ -476,9 +486,9 @@ class Templateer (TFL.Meta.Object) :
         self.env = env = JNJ.Environment.HTML \
             (* args, GTW = GTW, ** kw)
         self.Template_Type = T = Template_E.New \
-            ("x", Map = {}, By_Path = {})
+            ("x", Map = {}, By_Path = {}, css_href_map = {})
         self.Template_Map  = T.Map
-        for t in Template.Map.itervalues () :
+        for t in sorted (Template.Map.itervalues (), key = TFL.Getter.id) :
             T.copy (env, t)
     # end def __init__
 
@@ -486,8 +496,20 @@ class Templateer (TFL.Meta.Object) :
         return self.GTW.call_macro (macro_name, * _args, ** _kw)
     # end def call_macro
 
-    def get_template (self, name) :
-        return self.Template_Type (self.env, name)
+    def get_template (self, name, injected = ()) :
+        T      = self.Template_Type
+        result = T (self.env, name)
+        if injected :
+            name_i = "%s|%s" % \
+                (result.name, "|".join (str (t.name) for t in injected))
+            if name_i in T.Map :
+                result = T.Map [name_i]
+            else :
+                path   = result.path ### avoid lookup `T.By_Path [result.path]`
+                args   = result.args [2:]
+                result = T (self.env, name_i, None, * args, injected = injected)
+                result.path = path
+        return result
     # end def get_template
 
     def render (self, template_or_name, context) :

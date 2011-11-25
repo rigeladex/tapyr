@@ -262,16 +262,19 @@
 #    14-Nov-2011 (CT) Add `q_href`, `q_prefix`, and `qx_prefix`
 #                     (factored from `GTW.NAV.Calendar`)
 #    17-Nov-2011 (MG) `Root.Run_on_Launch` added
+#    25-Nov-2011 (CT) Change `template` to pass `injected_templates` to
+#                     `Templateer.get_template`, ditto for `dir_template`
+#    25-Nov-2011 (CT) Add `template_iter` and `sub_dir_iter`
+#    25-Nov-2011 (CT) Remove `children`, `children_transitive`, and
+#                     `injected_media_href`
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
-from   _JNJ                     import JNJ
 
 import _GTW.Media
 import _GTW._NAV
-import _JNJ.Template_Media
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -290,10 +293,10 @@ import _TFL.multimap
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import base64
-import time
 import hashlib
 import signal
 import sys
+import time
 import uuid
 
 class _Meta_ (TFL.Meta.M_Class) :
@@ -433,14 +436,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return Filename (self.name).base
     # end def base
 
-    @property
-    def children_transitive (self) :
-        for c in self.children :
-            yield c
-            for cc in c.children_transitive :
-                yield cc
-    # end def children_transitive
-
     @Once_Property
     def copyright (self) :
         year  = time.localtime ().tm_year
@@ -510,11 +505,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 return u"%s [%s]" % (name, self.top.h_title)
     # end def h_title
 
-    @property
-    def injected_media_href (self) :
-        return self.abs_href
-    # end def injected_media_href
-
     def is_current_dir (self, nav_page) :
         return False
     # end def is_current_dir
@@ -573,11 +563,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def P_Media (self) :
-        ### combine the media required by the used template and the by
-        ### injected templates
-        result = GTW.Media.from_list \
-            ((self.template, ) + tuple (self.injected_templates))
-        return result
+        return self.template
     # end def P_Media
 
     @property
@@ -629,7 +615,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if self._template is None :
             t_name = getattr (self, "template_name", None)
             if t_name :
-                self._template = self.Templateer.get_template (t_name)
+                self._template = self.Templateer.get_template \
+                    (t_name, self.injected_templates)
         return self._template
     # end def template
 
@@ -644,6 +631,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
             self.template_name = value.name
             self._template     = value
     # end def template
+
+    def template_iter (self) :
+        t = self.template
+        if t :
+            yield t
+    # end def template_iter
 
     @property
     def Type (self) :
@@ -768,7 +761,6 @@ class Page (_Site_Entity_) :
 
     dir_template_name    = None
     own_links            = []
-    children             = ()
 
     @Once_Property
     def parents (self) :
@@ -900,12 +892,13 @@ class Alias (Page) :
 class _Dir_ (_Site_Entity_) :
     """Model one directory of a web site."""
 
-    Page            = Page
+    Page                   = Page
 
-    dir             = ""
-    sub_dir         = ""
+    dir                    = ""
+    sub_dir                = ""
 
-    _dir_template   = None
+    injected_dir_templates = ()
+    _dir_template          = None
 
     def __init__ (self, parent = None, ** kw) :
         entries = kw.pop ("entries", [])
@@ -916,17 +909,12 @@ class _Dir_ (_Site_Entity_) :
     # end def __init__
 
     @property
-    def children (self) :
-        for c in self.own_links :
-            yield c
-    # end def children
-
-    @property
     def dir_template (self) :
         if self._dir_template is None :
             t_name = getattr (self, "dir_template_name", None)
             if t_name :
-                self._dir_template = self.Templateer.get_template (t_name)
+                self._dir_template = self.Templateer.get_template \
+                    (t_name, self.injected_dir_templates)
         return self._dir_template
     # end def dir_template
 
@@ -1071,6 +1059,21 @@ class _Dir_ (_Site_Entity_) :
                 return page.rendered (handler, template)
         return self.__super.rendered (handler, template or dt)
     # end def rendered
+
+    def sub_dir_iter (self) :
+        for e in self.own_links :
+            if isinstance (e, Dir) :
+                yield e
+    # end def sub_dir_iter
+
+    def template_iter (self) :
+        for t in self.template, self.dir_template :
+            if t :
+                yield t
+        for d in self.sub_dir_iter () :
+            for t in d.template_iter () :
+                yield t
+    # end def template_iter
 
     def _get_child (self, child, * grandchildren) :
         for owl in self.own_links :
@@ -1235,7 +1238,6 @@ class Root (_Dir_) :
                         )
                     cp.as_pickle_cargo (self)
     # end def load_cache
-    load_css_map = load_cache ### XXX remove me
 
     @Once_Property
     def login_page (self) :
@@ -1280,34 +1282,6 @@ class Root (_Dir_) :
         return result
     # end def page_from_href
 
-    @classmethod
-    def universal_view (cls, handler) :
-        href = handler.request.path [1:]
-        user = handler.current_user
-        page = cls.page_from_href (href)
-        HTTP = cls.top.HTTP
-        if page :
-            if handler.request.method not in page.SUPPORTED_METHODS :
-                raise HTTP.Error_405 (valid_methods = page.SUPPORTED_METHODS)
-            if page.login_required :
-                if user and not user.authenticated :
-                    return page._raise_401 (handler)
-            if page.allow_user (user) :
-                if page.DEBUG :
-                    fmt = "[%s] %s: view execution time = %%s" % \
-                        ( time.strftime
-                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
-                        , href
-                        )
-                    with TFL.Context.time_block (fmt, sys.stderr) :
-                        return page._view (handler)
-                else :
-                    return page._view (handler)
-            else :
-                return page._raise_403 (handler)
-        raise HTTP.Error_404 (href)
-    # end def universal_view
-
     @Once_Property
     def scope (self) :
         CS = self.top.Create_Scope
@@ -1345,6 +1319,48 @@ class Root (_Dir_) :
         else :
             _create (cache_file)
     # end def store_cache
+
+    def template_iter (self) :
+        seen = set ()
+        gett = self.Templateer.get_template
+        def _gen () :
+            for tn in self.template_names :
+                yield gett (tn)
+            for t in self.__super.template_iter () :
+                yield t
+        for t in _gen () :
+            if t.id not in seen :
+                yield t
+                seen.add (t.id)
+    # end def template_iter
+
+    @classmethod
+    def universal_view (cls, handler) :
+        href = handler.request.path [1:]
+        user = handler.current_user
+        page = cls.page_from_href (href)
+        HTTP = cls.top.HTTP
+        if page :
+            if handler.request.method not in page.SUPPORTED_METHODS :
+                raise HTTP.Error_405 (valid_methods = page.SUPPORTED_METHODS)
+            if page.login_required :
+                if user and not user.authenticated :
+                    return page._raise_401 (handler)
+            if page.allow_user (user) :
+                if page.DEBUG :
+                    fmt = "[%s] %s: view execution time = %%s" % \
+                        ( time.strftime
+                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
+                        , href
+                        )
+                    with TFL.Context.time_block (fmt, sys.stderr) :
+                        return page._view (handler)
+                else :
+                    return page._view (handler)
+            else :
+                return page._raise_403 (handler)
+        raise HTTP.Error_404 (href)
+    # end def universal_view
 
 # end class Root
 

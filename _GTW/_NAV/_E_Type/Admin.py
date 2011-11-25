@@ -131,6 +131,8 @@
 #    22-Nov-2011 (CT) Add guard for `completer` to `Complete[dr].rendered`
 #    22-Nov-2011 (CT) Add `qr_spec`
 #    24-Nov-2011 (CT) Change `rendered` to support json requests
+#    25-Nov-2011 (CT) Add `template_iter`, factor (AFS specific) `Form`,
+#                     factor `changer_injected_templates`
 #    ««revision-date»»···
 #--
 
@@ -207,8 +209,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def form (self, obj = None, ** kw) :
             if obj is None :
                 obj = self.obj
-            Form = AFS_Form [self.E_Type.GTW.afs_id]
-            return Form (self.ETM, obj, ** kw)
+            return self.parent.Form (self.ETM, obj, ** kw)
         # end def form
 
         def form_element (self, fid) :
@@ -238,11 +239,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     import traceback; traceback.print_exc ()
                 raise JSON_Error (error = "%s" % (exc, ))
         # end def form_value_apply
-
-        @property
-        def injected_media_href (self) :
-            return pjoin (self.parent.abs_href, self.kind)
-        # end def injected_media_href
 
         def pid_query (self, ETM, pid) :
             try :
@@ -321,11 +317,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         @property
         def injected_templates (self) :
-            form     = AFS_Form [self.E_Type.GTW.afs_id]
-            renderer = set ()
-            for c in (c for c in form.transitive_iter () if c.renderer) :
-                renderer.add (c.renderer)
-            return [self.top.Templateer.get_template (r) for r in renderer]
+            return self.parent.changer_injected_templates
         # end def injected_templates
 
         def rendered (self, handler, template = None) :
@@ -667,6 +659,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     Page = Instance
 
+    @Once_Property
+    def __Obsolete_Form (self) :
+        try :
+            return GTW.Form.MOM.Instance.New \
+               (self.ETM, * self.Form_Spec ["args"], ** self.Form_Spec ["kw"])
+        except Exception :
+            import traceback; traceback.print_exc ()
+            raise
+    # end def Obsolete_Form
+
     class __Obsolete_Changer (_Cmd_) :
         ### XXX transfer `nested_change_recorder`, error handling, ...
         ###     to `Changer`
@@ -689,11 +691,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         % (_T (E_Type.ui_name), pid)
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
-            form  = self.Form \
+            form  = self.__Obsolete_Form \
                 ( self.abs_href, obj, cancel_href = self.parent.abs_href
                 , ** self.form_parameters
                 )
-            scope = self.Form.scope
+            scope = self.top.scope
             if scope.readonly : ### XXX might be out-of-date !!!
                 request.Error = \
                     (_T ( "At the moment, the database is set to "
@@ -758,13 +760,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def __init__
 
     @Once_Property
+    def changer_injected_templates (self) :
+        renderers = set (self.Form.renderer_iter ())
+        return tuple (self.top.Templateer.get_template (r) for r in renderers)
+    # end def changer_injected_templates
+
+    @Once_Property
     def Form (self) :
-        try :
-            return GTW.Form.MOM.Instance.New \
-               (self.ETM, * self.Form_Spec ["args"], ** self.Form_Spec ["kw"])
-        except Exception :
-            import traceback; traceback.print_exc ()
-            raise
+        return AFS_Form [self.E_Type.GTW.afs_id]
     # end def Form
 
     @property
@@ -871,6 +874,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     result = self.__super.rendered (handler, template)
             return result
     # end def rendered
+
+    def template_iter (self) :
+        T = self.top.Templateer
+        yield self.template
+        yield T.get_template \
+            (self.Changer.template_name, self.changer_injected_templates)
+        yield T.get_template (self.Deleter.template_name)
+    # end def template_iter
 
     def _attr_kind (self, etype, name) :
         if "." in name :

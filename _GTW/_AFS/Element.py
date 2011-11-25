@@ -100,6 +100,7 @@
 #     9-Nov-2011 (CT) Add `_pop_allow_new` to `Fieldset` and `Form`
 #    18-Nov-2011 (CT) Apply `str` to `.name` and `.type_name`
 #                     (in `__str__`, `_value_sig` and `_value_sig_t`)
+#    25-Nov-2011 (CT) Add `renderer_iter`
 #    ««revision-date»»···
 #--
 
@@ -263,6 +264,12 @@ class _Element_ (TFL.Meta.Object) :
             this._id_children (id, this.children, {})
         return this (* args, ** kw)
     # end def instantiated
+
+    def renderer_iter (self) :
+        for e in self.transitive_iter () :
+            if e.renderer :
+                yield e.renderer
+    # end def renderer_iter
 
     def transitive_iter (self) :
         yield self
