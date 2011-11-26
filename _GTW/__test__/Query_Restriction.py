@@ -48,7 +48,7 @@ _test_code = """
     >>> print qr.limit, qr.offset
     24 0
     >>> print formatted_1 (qr.filters)
-    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', op_nam = 'greater-equal', ui_names = ('Last name',), value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', op_nam = 'equal', ui_names = ('Lifetime', 'Start'), value = '2008'))
+    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', op_desc = 'Select entities where the attribute is greater than, or equal to, the specified value', op_nam = 'greater-equal', ui_names = ('Last name',), value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', op_desc = 'Select entities where the attribute is equal to the specified value', op_nam = 'equal', ui_names = ('Lifetime', 'Start'), value = '2008'))
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print formatted_1 (sorted (qr.other_req_data.items ()))
