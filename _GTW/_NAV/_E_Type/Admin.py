@@ -134,7 +134,7 @@
 #    25-Nov-2011 (CT) Add `template_iter`, factor (AFS specific) `Form`,
 #                     factor `changer_injected_templates`
 #    25-Nov-2011 (CT) Add `limit` and `offset` to result of `rendered` for json
-#    25-Nov-2011 (CT) Change `head_line` to subtract `qr.offset_f`
+#    26-Nov-2011 (CT) Add `button_types` and `buttons` to `rendered`
 #    ««revision-date»»···
 #--
 
@@ -784,10 +784,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             cu  = qr.total_u
             sep = "/"
             if cf and cf != co :
-                tail = "%s%s%s" % (tail, sep, cf - qr.offset_f)
+                tail = "%s%s%s" % (tail, sep, cf)
                 sep  = "//"
             if cu and cu != cf :
-                tail = "%s%s%s" % (tail, sep, cu - qr.offset_f)
+                tail = "%s%s%s" % (tail, sep, cu)
         return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), tail)
     # end def head_line
 
@@ -854,24 +854,47 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def qr_spec
 
     def rendered (self, handler, template = None) :
+        fields = self.list_display
         qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
         with self.LET (query_restriction = qr) :
             objects = self._get_objects () if qr else self._get_entries ()
-            with self.LET (query_size = len (objects)) :
+            next_p  = qr.next_p
+            prev_p  = qr.prev_p
+            button_types = dict \
+                ( FIRST  = "submit" if prev_p else "button"
+                , LAST   = "submit" if next_p else "button"
+                , NEXT   = "submit" if next_p else "button"
+                , PREV   = "submit" if prev_p else "button"
+                )
+            with self.LET \
+                     ( query_size   = len (objects)
+                     , button_types = button_types
+                     ) :
                 handler.context.update \
-                    ( fields            = self.list_display
+                    ( fields            = fields
                     , objects           = objects
                     , query_restriction = self.query_restriction
                     )
                 if handler.wants_json :
-                    T = self.top.Templateer
-                    macro  = "e_type,admin_table"
+                    template   = self.top.Templateer.get_template ("e_type")
+                    call_macro = template.call_macro
+                    buttons    = dict \
+                        ( FIRST = call_macro
+                            ("qr_button_first", self, fields, qr)
+                        , LAST  = call_macro
+                            ("qr_button_last",  self, fields, qr)
+                        , NEXT  = call_macro
+                            ("qr_button_next",  self, fields, qr)
+                        , PREV  = call_macro
+                            ("qr_button_prev",  self, fields, qr)
+                        )
                     result = handler.write_json \
                         ( dict
-                            ( head_line        = self.head_line
+                            ( buttons          = buttons
+                            , head_line        = self.head_line
                             , limit            = qr.limit
-                            , object_container = T.call_macro
-                                (macro, self, self.list_display, objects)
+                            , object_container = call_macro
+                                ("admin_table", self, fields, objects)
                             , offset           = qr.offset
                             )
                         )

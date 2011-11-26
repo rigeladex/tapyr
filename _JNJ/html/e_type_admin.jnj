@@ -41,6 +41,7 @@
 ##    21-Nov-2011 (CT) Factor `html/_e_type.jnj`
 ##    22-Nov-2011 (CT) Add `body_tail_scripts` for `gtw_query_restriction`
 ##    23-Nov-2011 (CT) Add `attr_filter_html` to `gtw_query_restriction`
+##    26-Nov-2011 (CT) Add `setup_obj_list` to `gtw_query_restriction`
 ##    ««revision-date»»···
 ##--
 #}
@@ -62,6 +63,7 @@
             "{{ GTW._T ("Disable this attribute restriction") }}"
         , attr_filter_enabler_title :
             "{{ GTW._T ("Reenable this attribute restriction") }}"
+        , setup_obj_list : $GTW.ETA$.setup_obj_list
         }
       );
   </script>

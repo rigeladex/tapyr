@@ -34,6 +34,7 @@
 #    22-Nov-2011 (CT) Creation continued.... (Query_Restriction_Spec)
 #    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`, add `op_map`)
 #    25-Nov-2011 (CT) Creation continued..... (restrict `offset_f` to `total_f`)
+#    26-Nov-2011 (CT) Creation continued...... (fix `offset` and `offset_f`)
 #    ««revision-date»»···
 #--
 
@@ -91,7 +92,7 @@ class Query_Restriction (TFL.Meta.Object) :
             , offset          = data.pop ("offset", None)
             , other_req_data  = data
             )
-        limit  = result.limit
+        limit = result.limit
         if limit :
             if "LAST" in data :
                 result.offset = - limit
@@ -100,7 +101,7 @@ class Query_Restriction (TFL.Meta.Object) :
             elif "NEXT" in data :
                 result.offset += limit
             elif "PREV" in data :
-                result.offset  = min (result.offset - limit, 0)
+                result.offset  = result.offset - limit
         elif "FIRST" in data or "PREV" in data :
             result.offset = 0
         result._setup_filters  (E_Type, data)
@@ -110,7 +111,7 @@ class Query_Restriction (TFL.Meta.Object) :
 
     def __init__ (self, limit = None, offset = None, ** kw) :
         if limit :
-            self.limit  = int (limit)
+            self.limit  = max (int (limit), 0)
         if offset :
             self.offset = int (offset)
         self.__dict__.update (kw)
@@ -146,9 +147,12 @@ class Query_Restriction (TFL.Meta.Object) :
         result  = self.offset
         total_f = self.total_f
         limit   = self.limit
-        if result < 0 :
+        if result < - total_f :
+            result = self.offset = 0
+        elif result < 0 :
             result = total_f + result
-        return max (min (result, total_f - limit), 0)
+        result = max (min (result, total_f - limit), 0)
+        return result
     # end def offset_f
 
     @Once_Property

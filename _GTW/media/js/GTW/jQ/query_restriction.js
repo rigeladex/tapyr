@@ -17,7 +17,8 @@
 //    22-Nov-2011 (CT) Creation
 //    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
 //    24-Nov-2011 (CT) Creation continued.. (disabler_cb, submit_cb)
-//    26-Nov-2011 (CT) Creation continued... ($GTW.ETA$.setup_obj_list)
+//    26-Nov-2011 (CT) Creation continued...
+//                     (setup_obj_list, GTW_buttonify, fix_buttons)
 //    ««revision-date»»···
 //--
 
@@ -25,8 +26,19 @@
 
 ( function ($, undefined) {
     $.fn.gtw_query_restriction = function (qrs, opts) {
+        var icon_map  = $.extend
+            ( { APPLY          : "check"
+              , ADD            : "plusthick"
+              , FIRST          : "arrowthick-1-n"
+              , LAST           : "arrowthick-1-s"
+              , NEXT           : "arrowthick-1-e"
+              , PREV           : "arrowthick-1-w"
+              }
+            , opts && opts ["icon_map"] || {}
+            );
         var selectors = $.extend
             ( { add_button            : "button[name=ADD]"
+              , button                : "button[name]"
               , attr_filter_container : "tr"
               , attr_filter_disabler  : "td.disabler"
               , attr_filter_label     : "td.name label"
@@ -48,7 +60,9 @@
         var options  = $.extend
             ( {}
             , opts || {}
-            , { selectors : selectors }
+            , { icon_map  : icon_map
+              , selectors : selectors
+              }
             );
         var qr$    = $(this);
         var body$  = $("body").last ();
@@ -150,6 +164,20 @@
                         .addClass    ("ui-icon-minusthick")
                         .removeClass ("ui-icon-plusthick");
             };
+        };
+        var fix_buttons = function fix_buttons (buttons) {
+            var name, sel, value, old$, new$;
+            for (name in buttons) {
+                if (buttons.hasOwnProperty (name)) {
+                    value = buttons [name];
+                    sel   = selectors.add_button.replace ("ADD", name);
+                    old$  = $(sel);
+                    new$  = $(value);
+                    old$.replaceWith (new$);
+                };
+            };
+            $(selectors.button).gtw_buttonify
+                (icon_map, options.buttonify_options);
         };
         var hide_menu_cb = function hide_menu_cb (ev) {
             var menu$ = $(".drop-menu"), tc;
@@ -283,7 +311,12 @@
             if ("offset" in response) {
                 $(S.offset).val (response.offset);
             };
-            $GTW.ETA$.setup_obj_list ();
+            if ("buttons" in response) {
+                fix_buttons (response.buttons);
+            };
+            if ("setup_obj_list" in options) {
+                options.setup_obj_list ();
+            };
             $GTW.push_history (qr$.attr ("action") + "?" + qr$.serialize ());
         };
         var submit_cb = function submit_cb (ev) {
@@ -309,6 +342,7 @@
         $(document)
             .bind ("click.menuhide", hide_menu_cb)
             .bind ("keyup.menuhide", hide_menu_cb);
+        $(selectors.button).gtw_buttonify (icon_map, options.buttonify_options);
         $(selectors.add_button)
             .each
                 ( function () {

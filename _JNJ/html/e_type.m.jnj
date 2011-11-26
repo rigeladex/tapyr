@@ -32,6 +32,8 @@
 ##    22-Nov-2011 (CT) Continue `qr_control`..
 ##    23-Nov-2011 (CT) Continue `qr_control`... (factor `qr_tr_x`)
 ##    25-Nov-2011 (CT) Change `admin_table` to not put field values into `<a>`
+##    26-Nov-2011 (CT) Continue `qr_control`....
+##                     (`button_types`, `qr_button_first`, ...)
 ##    ««revision-date»»···
 ##--
 #}
@@ -48,14 +50,52 @@
   </{{ tag }}>
 {%- endmacro -%} {#- obj_button -#}
 
-{%- macro qr_button (name, title, typ = "submit", text = None) -%}
-  <button name="{{ name.upper () }}" title="{{ title }}" type="{{ typ }}"
+{%- macro qr_button (page, name, title, default_typ="submit", text = None) -%}
+  {%- set NAME = name.upper () %}
+  {%- set typ  = page.button_types.get (NAME, default_typ) %}
+  <button name="{{ NAME }}" title="{{ title }}" type="{{ typ }}"
     {{ kwargs|xmlattr }}
     {%- if typ == "button" %} class="disabled"{%- endif -%}
   >
     {{ text or GTW._T (name) }}
   </button>
 {%- endmacro -%} {#- qr_button -#}
+
+{%- macro qr_button_first (page, fields, qr) -%}
+  {{ qr_button
+      ( page
+      , GTW._  ("First")
+      , GTW._T ("Display first batch of objects matching the restriction")
+      )
+  }}
+{%- endmacro -%} {#- qr_button_first -#}
+
+{%- macro qr_button_last (page, fields, qr) -%}
+  {{ qr_button
+      ( page
+      , GTW._  ("Last")
+      , GTW._T ("Display last batch of objects matching the restriction")
+      )
+  }}
+{%- endmacro -%} {#- qr_button_last -#}
+
+{%- macro qr_button_next (page, fields, qr) -%}
+  {{ qr_button
+      ( page
+      , GTW._  ("Next")
+      , GTW._T ("Display next batch of objects matching the restriction")
+      )
+  }}
+{%- endmacro -%} {#- qr_button_next -#}
+
+{%- macro qr_button_prev (page, fields, qr) -%}
+  {{ qr_button
+      ( page
+      , GTW._  ("Prev")
+      , GTW._T ("Display previous batch of objects matching the restriction")
+      )
+  }}
+{%- endmacro -%} {#- qr_button_prev -#}
 
 {%- macro qr_field (name, title, value, label) -%}
   {%- set caller = kwargs.pop ("caller",   None) -%}
@@ -107,36 +147,18 @@
   {%- set E_Type = page.E_Type %}
   {% call Form.form (action = action, method = "get", class = "QR") -%}
     {{ qr_button
-        ( GTW._  ("Apply")
+        ( page
+        , GTW._  ("Apply")
         , GTW._T ("Display list of objects matching the restriction")
         )
     }}
+    {{ qr_button_last  (page, fields, qr) }}
+    {{ qr_button_next  (page, fields, qr) }}
+    {{ qr_button_prev  (page, fields, qr) }}
+    {{ qr_button_first (page, fields, qr) }}
     {{ qr_button
-        ( GTW._  ("Last")
-        , GTW._T ("Display last batch of objects matching the restriction")
-        , ("submit" if qr.next_p else  "button")
-        )
-    }}
-    {{ qr_button
-        ( GTW._  ("Next")
-        , GTW._T ("Display next batch of objects matching the restriction")
-        , ("submit" if qr.next_p else  "button")
-        )
-    }}
-    {{ qr_button
-        ( GTW._  ("Prev")
-        , GTW._T ("Display previous batch of objects matching the restriction")
-        , "submit" if qr.prev_p else  "button"
-        )
-    }}
-    {{ qr_button
-        ( GTW._  ("First")
-        , GTW._T ("Display first batch of objects matching the restriction")
-        , ("submit" if qr.prev_p else  "button")
-        )
-    }}
-    {{ qr_button
-        ( GTW._  ("Add")
+        ( page
+        , GTW._  ("Add")
         , GTW._T ("Add a rule to restrict the objects to a specific attribute value")
         , "button"
         , GTW._T ("Add restriction")
@@ -152,7 +174,7 @@
       {{ qr_field
           ( "offset"
           , GTW._T ("Number of first entity to display")
-          , qr.offset
+          , qr.offset_f
           )
       }}
       {% call qr_field
