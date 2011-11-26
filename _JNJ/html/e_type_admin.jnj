@@ -41,7 +41,6 @@
 ##    21-Nov-2011 (CT) Factor `html/_e_type.jnj`
 ##    22-Nov-2011 (CT) Add `body_tail_scripts` for `gtw_query_restriction`
 ##    23-Nov-2011 (CT) Add `attr_filter_html` to `gtw_query_restriction`
-##    25-Nov-2011 (CT) Add `postifier`
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,10 +54,7 @@
 {%- block body_tail_scripts -%}
   {{ super () }}
   {%- set afh = e_type.qr_tr_x ()|replace ('"', '\\"')|replace ("\n", "")|safe %}
-  {%- set postifier = e_type.admin_postifier ()|safe %}
   <script>
-    {{ postifier }}
-    postifier ();
     $("form.QR").gtw_query_restriction
       ( {{ page.qr_spec.as_json }}
       , { attr_filter_html : $("{{ afh }}")
@@ -66,7 +62,6 @@
             "{{ GTW._T ("Disable this attribute restriction") }}"
         , attr_filter_enabler_title :
             "{{ GTW._T ("Reenable this attribute restriction") }}"
-        , postifier : postifier
         }
       );
   </script>

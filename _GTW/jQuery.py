@@ -47,6 +47,7 @@
 #    19-Oct-2011 (CT) Use jQuery 1.6.4 (but without version number in filename)
 #     8-Nov-2011 (CT) Add `GTW_jq_util`
 #    22-Nov-2011 (CT) Add `GTW_query_restriction`
+#    26-Nov-2011 (CT) Add `GTW_e_type_admin`
 #    ««revision-date»»···
 #--
 
@@ -91,6 +92,15 @@ GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 GTW.JS_On_Ready \
     ( """$("a[href^='http://'], a[href^='https://']").gtw_externalize ();"""
     , name = "GTW_Externalize"
+    )
+
+GTW.Script \
+    ( src = "/media/GTW/js/GTW/jQ/e_type_admin.js"
+    , name = "GTW_e_type_admin"
+    )
+GTW.JS_On_Ready \
+    ( """$GTW.ETA$.setup_obj_list (); """
+    , name = "GTW_e_type_admin"
     )
 
 GTW.Script      (src = "/media/GTW/js/GTW/jQ/gallery.js", name = "GTW_Gallery")

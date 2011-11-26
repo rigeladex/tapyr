@@ -45,7 +45,7 @@
 #    24-Nov-2011 (CT) Add rule for `.disabler`
 #    25-Nov-2011 (CT) Move `postify_a` from `JS_On_Ready` to `e_type_admin.jnj`
 #    25-Nov-2011 (CT) Add rule for `tr.active` to `.Object-List`
-#    25-Nov-2011 (CT) Add `$(".Object-List tbody tr").each...` to `JS_On_Ready`
+#    26-Nov-2011 (CT) Add `Script` and `JS_On_Ready` for `GTW_e_type_admin`
 #    ««revision-date»»···
 #--
 
@@ -277,7 +277,10 @@ style_sheet = Style_Sheet \
 
 Script (GTW.Script._.GTW_jq_util)
 Script (GTW.Script._.GTW_postify_a)
+Script (GTW.Script._.GTW_e_type_admin)
 Script (GTW.Script._.GTW_query_restriction)
+
+JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
 
 ### XXX Move the functions into a .js file and just call them here!
 JS_On_Ready \
@@ -308,25 +311,6 @@ JS_On_Ready \
                 );
           } ()
       );
-      $(".Object-List tbody tr").each
-        ( function () {
-            var tr$  = $(this);
-            var ac$  = tr$.find ($("td.change a"));
-            var href = ac$.attr ("href");
-            tr$
-              .addClass ("active")
-              .attr ("title", ac$.attr ("title"))
-              .find ("td").each
-                ( function () {
-                    var td$ = $(this);
-                    var html = td$.html ();
-                    if (! td$.hasClass ("cmd")) {
-                      td$.html ($("<a href=\\"" + href + "\\">").append (html));
-                    };
-                  }
-                );
-          }
-        );
 
       """
     , rank = 100

@@ -17,7 +17,7 @@
 //    22-Nov-2011 (CT) Creation
 //    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
 //    24-Nov-2011 (CT) Creation continued.. (disabler_cb, submit_cb)
-//    25-Nov-2011 (CT) Creation continued... (options.postifier)
+//    26-Nov-2011 (CT) Creation continued... ($GTW.ETA$.setup_obj_list)
 //    ««revision-date»»···
 //--
 
@@ -283,9 +283,7 @@
             if ("offset" in response) {
                 $(S.offset).val (response.offset);
             };
-            if ("postifier" in options) {
-                options.postifier ();
-            };
+            $GTW.ETA$.setup_obj_list ();
             $GTW.push_history (qr$.attr ("action") + "?" + qr$.serialize ());
         };
         var submit_cb = function submit_cb (ev) {
