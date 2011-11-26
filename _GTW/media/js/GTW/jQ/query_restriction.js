@@ -8,7 +8,7 @@
 //
 //++
 // Name
-//    qGTW/jQ/uery_restriction.js
+//    GTW/jQ/uery_restriction.js
 //
 // Purpose
 //    jQuery plugin for a query restriction form
