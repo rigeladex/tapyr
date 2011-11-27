@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,17 +32,15 @@
 #                      Bug in `__getattr__' of `_divisors' corrected
 #    11-Jun-2003 (CT)  s/== None/is None/
 #    11-Feb-2006 (CT)  Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    27-Nov-2011 (CT)  Modernize
 #    ««revision-date»»···
 #--
 
-
-
-import math
 from   _TFL           import TFL
 from   _TFL.predicate import sorted
 from   _TFL.primes_4  import primes
+
+import math
 
 class OverflowError (ValueError) : pass
 
@@ -85,28 +83,28 @@ class _Divisor_Dag_ :
     # end def __init__
 
     def has_divisor (self, d) :
-        return self._divisors.has_key (d)
+        return d in self._divisors
     # end def has_divisor
 
     def as_string (self, head = "    ", level = 0, seen = None) :
         if seen is None :
-            seen    = {}
-        results     = ["%s%s" % (head * level, self.number)]
-        if seen.has_key (self) :
+            seen = set ()
+        results  = ["%s%s" % (head * level, self.number)]
+        if self in seen :
             results [0] = "%s..." % (results [0], )
         else :
-            add     = results.append
-            level   = level + 1
+            add   = results.append
+            level = level + 1
             for sd in self.subdags :
                 add (sd.as_string (head, level, seen))
-        seen [self] = 1
+        seen.add (self)
         return "\n".join (results)
     # end def as_string
 
     def _depth_first_list (self, V, dfl) :
-        if V.has_key (self.number) :
+        if self.number in V :
             return
-        V[self.number] = 1
+        V [self.number] = 1
         for sd in self.subdags :
             sd._depth_first_list (V, dfl)
         dfl.append (self)
@@ -139,16 +137,16 @@ class _Divisor_Dag_ :
         if name == "_divisors" :
             result = self._divisors = self._get_divisors ()
         elif name == "divisors" :
-            result = self.divisors = sorted (self._divisors.keys ())
+            result = self.divisors = sorted (self._divisors)
         elif name == "prime_factors" :
-            result = self.prime_factors \
-                   = sorted (filter (primes.is_prime, self._divisors.keys ()))
+            result = self.prime_factors = \
+                sorted (d for d in self._divisors if primes.is_prime (d))
         elif name == "_edges" :
             ### just to cash edges as dictionary
             result = self._edges = self._get_edges ()
         elif name == "edges" :
             ### use cached edge dictionary
-            result = self.edges = self._edges.keys ()
+            result = self.edges = list (self._edges)
             result.sort    ()
             result.reverse ()
         elif name == "nodes" :
@@ -159,9 +157,7 @@ class _Divisor_Dag_ :
     # end def _add_subdag
 
     def __str__ (self) :
-        return "%s : %s" % ( self.number
-                           , map (lambda x : x.number, self.subdags)
-                           )
+        return "%s : %s" % (self.number, list (x.number for x in self.subdags))
     # end def __str__
 
     def __repr__ (self) :
