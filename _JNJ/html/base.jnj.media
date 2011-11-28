@@ -38,6 +38,7 @@
 #    31-Aug-2011 (CT) `hr.docutils` changed
 #    21-Oct-2011 (CT) Factored out `base.media` and `print.media`
 #    24-Oct-2011 (CT) `tablesorter` rule factored into `tablesorter.media`
+#    28-Nov-2011 (CT) Remove `max-width` from `.pg_main`
 #    ««revision-date»»···
 #--
 
@@ -115,7 +116,6 @@ style_sheet = Style_Sheet \
     , Rule
         ( ".pg_main"
         , clear         = "both"
-        , max_width     = P.pg_main_max_width
         , min_width     = P.pg_main_min_width
         , overflow      = "auto"
         , padding_left  = P.nav_col.full_width + P.col_padding

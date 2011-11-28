@@ -34,6 +34,7 @@
 ##    25-Nov-2011 (CT) Change `admin_table` to not put field values into `<a>`
 ##    26-Nov-2011 (CT) Continue `qr_control`....
 ##                     (`button_types`, `qr_button_first`, ...)
+##    28-Nov-2011 (CT) Continue `qr_control` (`order_by_form`...)
 ##    ««revision-date»»···
 ##--
 #}
@@ -50,15 +51,60 @@
   </{{ tag }}>
 {%- endmacro -%} {#- obj_button -#}
 
-{%- macro qr_button (page, name, title, default_typ="submit", text = None) -%}
+{%- macro order_by_form () -%}
+  <form class = "QR" {# -#}
+      title="{{ GTW._T ("Form to select the order-by criteria used to order the objects") }}"{# -#}
+  >
+    {{ _qr_button
+        ( GTW._  ("Apply")
+        , GTW._T ("Use set of order-by criteria currently displayed in order-by form")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Cancel")
+        , GTW._T ("Leave order-by form without changing set of order-by criteria")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Clear")
+        , GTW._T ("Reset order-by criteria")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Add")
+        , GTW._T ("Add an order-by criterion ")
+        , GTW._T ("Add criterion")
+        )
+    }}
+    <ul class="criteria">
+    </ul>
+    <ul class="prototype hidden">
+      <li>
+        <input></input>
+        <span class="direction"></span>
+        <span class="remover" {# -#}
+            title="{{ GTW._T ("Remove this order-by criterion") }}">{# -#}
+        </span>
+      </li>
+    </ul>
+  </form>
+{%- endmacro -%} {#- order_by_form -#}
+
+{%- macro _qr_button (name, title, typ, text) -%}
   {%- set NAME = name.upper () %}
-  {%- set typ  = page.button_types.get (NAME, default_typ) %}
-  <button name="{{ NAME }}" title="{{ title }}" type="{{ typ }}"
-    {{ kwargs|xmlattr }}
-    {%- if typ == "button" %} class="disabled"{%- endif -%}
+  <button name="{{ NAME }}" title="{{ title }}" type="{{ typ or "button" }}"
+    {{ kwargs|xmlattr -}}
   >
     {{ text or GTW._T (name) }}
   </button>
+{%- endmacro -%} {#- _qr_button -#}
+
+{%- macro qr_button (page, name, title, default_typ="submit", text = None) -%}
+  {%- set typ = page.button_types.get (NAME, default_typ) %}
+  {%- set kw  = GTW.dict
+      (kwargs, class="disabled") if typ == "button" else kwargs
+  -%}
+  {{ _qr_button (name, title, typ, text, ** kwargs) }}
 {%- endmacro -%} {#- qr_button -#}
 
 {%- macro qr_button_first (page, fields, qr) -%}
@@ -191,10 +237,9 @@
         }}
         {{ X.input.text
             ( id        = "QR-order_by"
-            , name      = "order_by"
             , value     = qr.order_by_ui_names
             , disabled  = True
-            , class     = "ui-value"
+            , class     = "value display"
             )
         }}
       {% endcall %} {# qr_field #}

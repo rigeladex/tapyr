@@ -42,6 +42,7 @@
 ##    22-Nov-2011 (CT) Add `body_tail_scripts` for `gtw_query_restriction`
 ##    23-Nov-2011 (CT) Add `attr_filter_html` to `gtw_query_restriction`
 ##    26-Nov-2011 (CT) Add `setup_obj_list` to `gtw_query_restriction`
+##    28-Nov-2011 (CT) Add `order_by_form_...` to `gtw_query_restriction`
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,6 +56,7 @@
 {%- block body_tail_scripts -%}
   {{ super () }}
   {%- set afh = e_type.qr_tr_x ()|replace ('"', '\\"')|replace ("\n", "")|safe %}
+  {%- set obf = e_type.order_by_form ()|replace ('"', '\\"')|replace ("\n", "")|safe %}
   <script>
     $("form.QR").gtw_query_restriction
       ( {{ page.qr_spec.as_json }}
@@ -63,6 +65,11 @@
             "{{ GTW._T ("Disable this attribute restriction") }}"
         , attr_filter_enabler_title :
             "{{ GTW._T ("Reenable this attribute restriction") }}"
+        , order_by_form_html : $("{{ obf }}")
+        , order_by_desc_title :
+            "{{ GTW._T ("Display objects in descending order of the attribute") }}"
+        , order_by_asc_title :
+            "{{ GTW._T ("Display objects in ascending order of the attribute") }}"
         , setup_obj_list : $GTW.ETA$.setup_obj_list
         }
       );

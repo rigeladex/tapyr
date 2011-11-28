@@ -38,6 +38,7 @@
             );
         var selectors = $.extend
             ( { add_button            : "button[name=ADD]"
+              , ascending             : ".asc"
               , button                : "button[name]"
               , attr_filter_container : "tr"
               , attr_filter_disabler  : "td.disabler"
@@ -46,19 +47,27 @@
               , attr_filter_value     : "td input.value"
               , attr_filter_ui_value  : "td input.ui-value"
               , attrs_container       : "table.attrs"
+              , descending            : ".desc"
               , disabled_button       : "button[class=disabled]"
               , head_line             : "h1.headline"
               , limit                 : "input[name=limit]"
               , object_container      : "table.Object-List"
               , offset                : "input[name=offset]"
-              , order_by_ui           : "input.ui-value[name=order_by]"
-              , order_by_value        : "input.value[name=order_by]"
+              , order_by_criteria     : "ul.criteria"
+              , order_by_criterion    : "li"
+              , order_by_direction    : ".direction"
+              , order_by_display      : "input.value.display[id=QR-order_by]"
+              , order_by_value        : "input.value.hidden[name=order_by]"
+              , remover               : ".remover"
               , submit                : "[type=submit]"
               }
             , opts && opts ["selectors"] || {}
             );
         var options  = $.extend
-            ( {}
+            ( { asc_class             : "ui-icon-circle-triangle-n"
+              , desc_class            : "ui-icon-circle-triangle-s"
+              , remover_class         : "ui-icon-trash"
+              }
             , opts || {}
             , { icon_map  : icon_map
               , selectors : selectors
@@ -66,7 +75,7 @@
             );
         var qr$    = $(this);
         var body$  = $("body").last ();
-        var af_map = {};
+        var af_map = {}, ob_widget$;
         var attr_filters =
             ( function () {
                 var result = [];
@@ -80,6 +89,7 @@
                             f.key   = f.name;
                             f.label = f.ui_name;
                         };
+                        f.order_by_key = f.key.replace (qrs.name_sep, ".");
                         result.push (f);
                         af_map [f.label] = f;
                         if ("children" in f) {
@@ -143,6 +153,7 @@
         };
         var attach_menu = function attach_menu (but$, menu) {
             but$.click (menu_click_cb)
+                .focus (menu_click_cb)
                 .data  ("menu$", menu);
         };
         var disabler_cb = function disabler_cb (ev) {
@@ -283,6 +294,46 @@
                 .attr   ("title", choice.desc);
             value$.attr ({ id : key, name : key});
         };
+        var order_by_cb = function order_by_cb (ev) {
+            var S       = selectors;
+            var target$ = $(ev.target);
+            var li$     = target$.closest ("li");
+            var hidden$ = li$.find (selectors.order_by_value).last ();
+            if (ob_widget$ == null) {
+                ob_widget$ = setup_order_by_widget (target$);
+            }
+            ob_widget$.dialog ("open");
+            console.info ("Order by callback  ", target$, li$, hidden$);
+            if (ev && ev.preventDefault) {
+                ev.preventDefault ();
+            };
+            if (ev && "stopPropagation" in ev) {
+                ev.stopPropagation ();
+            };
+        };
+        var order_by_dir_cb = function order_by_asc_cb (ev) {
+            var target$ = $(ev.target);
+            var old_class, new_class, title;
+            if (target$.hasClass (options.asc_class)) {
+                old_class = options.asc_class;
+                new_class = options.desc_class;
+                title     = options.order_by_desc_title;
+            } else {
+                old_class = options.desc_class;
+                new_class = options.asc_class;
+                title     = options.order_by_asc_title;
+            };
+            target$
+                .removeClass (old_class)
+                .addClass    (new_class)
+                .attr        ("title", title);
+        };
+        var order_by_remove_cb = function order_by_remove_cb (ev) {
+            var S       = selectors;
+            var target$ = $(ev.target);
+            var crit$   = target$.closest (S.order_by_criterion);
+            crit$.empty ();
+        } ;
         var setup_disabler = function setup_disabler () {
             var dis$ = $(this);
             dis$.append ($("<a class=\"button ui-icon ui-icon-minusthick\">"))
@@ -294,6 +345,32 @@
             var afs  = af_map  [afc$.attr ("title")];
             var ops  = sig_map [afs.sig_key];
             attach_menu (but$, new_menu (but$, ops, op_select_cb));
+        };
+        var setup_order_by = function setup_order_by () {
+            var li$ = $(this).closest ("li");
+            li$.hd_input ({ callback : order_by_cb });
+            // attach_menu (display$, new_menu (display$, attr_filters, order_by_cb));
+        };
+        var setup_order_by_widget = function setup_order_by_widget (but$) {
+            var S = selectors;
+            var obf$ = options.order_by_form_html;
+            var result = obf$.dialog
+                ( { autoOpen : false
+                  , title    : obf$.attr ("title")
+                  }
+                );
+            obf$.find (S.order_by_direction)
+                .append
+                    ( $("<a class=\"button ui-icon " +options.asc_class+ "\">")
+                        .attr  ("title", options.order_by_asc_title)
+                        .click (order_by_dir_cb)
+                    );
+            obf$.find (S.remover)
+                .append
+                    ( $("<a class=\"button ui-icon " +options.remover_class+ "\">")
+                        .click (order_by_remove_cb)
+                    );
+            return result;
         };
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S = selectors;
@@ -358,6 +435,7 @@
             (selectors.attr_filter_disabler).each (setup_disabler);
         $(selectors.attrs_container)
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
+        $(selectors.order_by_display).each (setup_order_by);
         qr$.delegate  (selectors.submit, "click", submit_cb);
         return this;
     }

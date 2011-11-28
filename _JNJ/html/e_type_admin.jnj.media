@@ -173,12 +173,7 @@ style_sheet = Style_Sheet \
                         , ** Border (radius = Px (10))
                         )
                     , Rule_Class
-                        ( "hidden"
-                        , display      = "none"
-                        , visibility   = "hidden"
-                        )
-                    , Rule_Class
-                        ( "ui-value"
+                        ( "value.display"
                         , color        = "inherit"
                         )
                     , Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
@@ -246,29 +241,34 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
+                ( ".hidden"
+                , display      = "none"
+                , visibility   = "hidden"
+                )
+            , Rule
                 ( ".limits"
                 , children         =
                     [ Rule
                         ( "li"
-                        , display      = "inline-block"
+                        , display        = "inline-block"
+                        , vertical_align = "top"
                         )
                     , Rule
                         ( "input", "label"
-                        , display      = "block"
-                        , text_align   = "right"
-                        , width        = Em ( 5)
-                        , children     =
-                            [ Rule_Class
-                                ( "hidden"
-                                , display      = "none"
-                                , visibility   = "hidden"
-                                )
-                            ]
+                        , display        = "block"
+                        , text_align     = "right"
+                        , width          = Em ( 5)
                         )
                     , Rule
-                        ( "input[name=order_by]", "label[for=order_by]"
-                        , text_align   = "left"
-                        , width        = Em (18)
+                        ( "input.hidden"
+                        , display        = "none"
+                        )
+                    , Rule
+                        ( "input[name=order_by]"
+                        , "label[for=QR-order_by]"
+                        , "[id=QR-order_by]"
+                        , text_align     = "left"
+                        , width          = "auto"
                         )
                     ]
                 )
@@ -281,6 +281,8 @@ Script (GTW.Script._.GTW_postify_a)
 Script (GTW.Script._.GTW_buttonify)
 Script (GTW.Script._.GTW_e_type_admin)
 Script (GTW.Script._.GTW_query_restriction)
+
+Script (GTW.Script (src = "/media/GTW/js/GTW/jQ/hd_input.js"))
 
 JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
 
