@@ -61,15 +61,15 @@
     $("form.QR").gtw_query_restriction
       ( {{ page.qr_spec.as_json }}
       , { attr_filter_html : $("{{ afh }}")
-        , attr_filter_disabler_title :
-            "{{ GTW._T ("Disable this attribute restriction") }}"
-        , attr_filter_enabler_title :
-            "{{ GTW._T ("Reenable this attribute restriction") }}"
+        , disabler_title : "{{ GTW._T ("Disable") }}"
+        , enabler_title : "{{ GTW._T ("Reenable") }}"
         , order_by_form_html : $("{{ obf }}")
         , order_by_desc_title :
             "{{ GTW._T ("Display objects in descending order of the attribute") }}"
         , order_by_asc_title :
             "{{ GTW._T ("Display objects in ascending order of the attribute") }}"
+        , order_by_sortable_title :
+            "{{ GTW._T ("Drag the order-by criteria up or down to change their priority") }}"
         , setup_obj_list : $GTW.ETA$.setup_obj_list
         }
       );

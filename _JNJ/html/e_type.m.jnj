@@ -34,7 +34,8 @@
 ##    25-Nov-2011 (CT) Change `admin_table` to not put field values into `<a>`
 ##    26-Nov-2011 (CT) Continue `qr_control`....
 ##                     (`button_types`, `qr_button_first`, ...)
-##    28-Nov-2011 (CT) Continue `qr_control` (`order_by_form`...)
+##    28-Nov-2011 (CT) Continue `qr_control` (`order_by_form`)
+##    29-Nov-2011 (CT) Continue `qr_control` (`order_by_form`...)
 ##    ««revision-date»»···
 ##--
 #}
@@ -52,39 +53,40 @@
 {%- endmacro -%} {#- obj_button -#}
 
 {%- macro order_by_form () -%}
-  <form class = "QR" {# -#}
-      title="{{ GTW._T ("Form to select the order-by criteria used to order the objects") }}"{# -#}
+  <form class = "QR order-by" {# -#}
+      title="{{ GTW._T ("Order-by Criteria") }}"{# -#}
   >
-    {{ _qr_button
-        ( GTW._  ("Apply")
-        , GTW._T ("Use set of order-by criteria currently displayed in order-by form")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Cancel")
-        , GTW._T ("Leave order-by form without changing set of order-by criteria")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Clear")
-        , GTW._T ("Reset order-by criteria")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Add")
-        , GTW._T ("Add an order-by criterion ")
-        , GTW._T ("Add criterion")
-        )
-    }}
+    <div class="bbox">
+      {{ _qr_button
+          ( GTW._  ("Apply")
+          , GTW._T ("Use set of criteria currently displayed in order-by form")
+          )
+      }}
+      {{ _qr_button
+          ( GTW._  ("Cancel")
+          , GTW._T ("Leave form without changing set of order-by criteria")
+          )
+      }}
+      {{ _qr_button
+          ( GTW._  ("Clear")
+          , GTW._T ("Reset order-by criteria")
+          )
+      }}
+      {{ _qr_button
+          ( GTW._  ("Add")
+          , GTW._T ("Add an order-by criterion")
+          , text = GTW._T ("Add criterion")
+          )
+      }}
+    <p></p>
+    </div>
     <ul class="criteria">
     </ul>
     <ul class="prototype hidden">
       <li>
-        <input></input>
-        <span class="direction"></span>
-        <span class="remover" {# -#}
-            title="{{ GTW._T ("Remove this order-by criterion") }}">{# -#}
-        </span>
+        <a class="button disabler"></a>
+        <a class="button direction"></a>
+        <b></b>
       </li>
     </ul>
   </form>

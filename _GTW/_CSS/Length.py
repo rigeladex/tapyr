@@ -32,6 +32,7 @@
 #     2-Jan-2011 (CT) `TRBL` added
 #    12-Jan-2011 (CT) `__neg__` and `__pos__` added
 #    21-Feb-2011 (CT) `HV` added
+#    29-Nov-2011 (CT) Add `Rem`
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,12 @@ class Length (TFL.Meta.Object) :
 
     >>> print (Percent (100), Percent (100) / 2, Percent (100) / 3)
     100% 50.0% 33.3333333333%
+
+    >>> print (Rem (2))
+    2rem
+    >>> print (Rem (2.5))
+    2.5rem
+
     """
 
     __metaclass__ = M_Length
@@ -243,6 +250,11 @@ class Px (Length) :
     """Relative CSS length unit: size of pixel of viewing device."""
 
 # end class Px
+
+class Rem (Length) :
+    """Relative CSS3 length unit: font size of the element relative to the root font size."""
+
+# end class Rem
 
 class TRBL0 (TFL.Meta.Object) :
     """Top/right/bottom/left spec, undefined values are 0.

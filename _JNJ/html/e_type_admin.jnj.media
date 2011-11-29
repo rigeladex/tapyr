@@ -47,6 +47,7 @@
 #    25-Nov-2011 (CT) Add rule for `tr.active` to `.Object-List`
 #    26-Nov-2011 (CT) Add `Script` and `JS_On_Ready` for `GTW_e_type_admin`
 #    26-Nov-2011 (CT) Replace `JS_On_Ready` for `button` by `GTW_buttonify`
+#    29-Nov-2011 (CT) Add rules for `.criteria` to `.QR`
 #    ««revision-date»»···
 #--
 
@@ -136,13 +137,11 @@ style_sheet = Style_Sheet \
         )
     , Rule
         ( ".QR"
-        , list_style       = "none"
         , children           =
             [ Rule
                 ( "button"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_button
-                , border_width     = Px (1)
                 , float            = "right"
                 , margin           = TRBL0 (t = Em (0.5), l = Em (0.2))
                 , text_align       = "center"
@@ -158,7 +157,6 @@ style_sheet = Style_Sheet \
                 ( "input"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple
-                , border_width     = Px (1)
                 , margin           = 0
                 , padding          = TRBL (Px (1), Em (0.20))
                 , children         =
@@ -191,6 +189,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "ul"
+                , list_style       = "none"
                 , padding          = 0
                 )
             , Rule
@@ -241,9 +240,67 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
+                ( ".criteria"
+                , border_bottom    = Px (1)
+                , font_size        = Rem (1)
+                , children         =
+                    [ Rule
+                        ( "a.button"
+                        , border_width = Px (1)
+                        , display      = "inline-block"
+                        , margin       = 0
+                        , padding      = 0
+                        , children         =
+                            [ Rule_Class
+                                ( "disabler"
+                                , margin_right = Em (1)
+                                )
+                            , Rule_Pseudo
+                                ( "hover"
+                                , ** P.color_spec_selected_rev
+                                )
+                            ]
+                        , ** Border (radius = Px (10))
+                        )
+                    , Rule
+                        ( "b"
+                        , display      = "inline-block"
+                        )
+                    , Rule
+                        ( "li"
+                        , border       = P.border_simple
+                        , border_bottom  = 0
+                        , clear        = "both"
+                        , cursor       = "pointer"
+                        , display      = "block"
+                        , min_height   = Em (1.33)
+                        , padding      = TRBL (Em (0.75), Em (0.25), Em (0.5))
+                        , children         =
+                            [ Rule_Class
+                                ( "disabled"
+                                , opacity  = 0.5
+                                )
+                            , Rule_Pseudo
+                                ( "nth-child(2n+1)"
+                                , ** P.color_spec_row1
+                                )
+                            , Rule_Pseudo
+                                ( "nth-child(2n)"
+                                , ** P.color_spec_row2
+                                )
+                            , Rule_Pseudo
+                                ( "hover"
+                                , ** P.color_spec_selected
+                                )
+                            ]
+                        )
+                    ]
+                , ** P.font_spec_normal
+                )
+            , Rule
                 ( ".hidden"
-                , display      = "none"
-                , visibility   = "hidden"
+                , display          = "none"
+                , visibility       = "hidden"
                 )
             , Rule
                 ( ".limits"
@@ -269,6 +326,16 @@ style_sheet = Style_Sheet \
                         , "[id=QR-order_by]"
                         , text_align     = "left"
                         , width          = "auto"
+                        )
+                    ]
+                )
+            , Rule_Class
+                ( "order-by"
+                , padding          = 0
+                , children         =
+                    [ Rule
+                        ( ".bbox p"
+                        , clear    = "both"
                         )
                     ]
                 )
