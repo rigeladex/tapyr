@@ -161,7 +161,6 @@
         };
         var attach_menu = function attach_menu (but$, menu) {
             but$.click (menu_click_cb)
-                .focus (menu_click_cb)
                 .data  ("menu$", menu);
         };
         var disabler_cb = function disabler_cb (ev) {
@@ -307,9 +306,12 @@
                 { add_criterion : function add_criterion (ev) {
                       var S       = selectors;
                       var target$ = $(ev.target);
-                      var choice  = target$.data ("choice");
-                      var c$      = order_by.new_criterion (choice.label);
+                      var choice  = target$.data ("choice").label;
+                      var c$      = order_by.new_criterion (choice);
+                      var but$    = ob_widget$.find (S.add_button);
+                      var menu$   = but$.data ("menu$").element;
                       ob_widget$.find (S.order_by_criteria).append (c$);
+                      order_by.toggle_criteria (menu$, choice, "addClass");
                   }
                 , apply       : function apply (ev) {
                       var S     = selectors;
@@ -339,7 +341,10 @@
                   }
                 , clear       : function clear (ev, ui) {
                       var S = selectors;
+                      var but$    = ob_widget$.find (S.add_button);
+                      var menu$   = but$.data ("menu$").element;
                       ob_widget$.find (S.order_by_criteria).empty ();
+                      menu$.find ("a.button").removeClass ("ui-state-disabled");
                   }
                 , close       : function close (ev) {
                       ob_widget$.dialog ("close");
@@ -357,18 +362,25 @@
                       var target$  = $(ev.target);
                       var crit$    = target$.closest (S.order_by_criterion);
                       var disabled = crit$.hasClass ("disabled");
+                      var but$     = ob_widget$.find (S.add_button);
+                      var menu$    = but$.data ("menu$").element;
+                      var choice   = crit$.find ("b").html ();
                       if (! disabled) {
                           crit$.addClass ("disabled");
                           target$
                               .attr ("title", options.enabler_title)
                               .addClass    ("ui-icon-plusthick")
                               .removeClass ("ui-icon-minusthick");
+                          order_by.toggle_criteria
+                              (menu$, choice, "removeClass");
                       } else {
                           crit$.removeClass ("disabled");
                           target$
                               .attr ("title", options.disabler_title)
                               .addClass    ("ui-icon-minusthick")
                               .removeClass ("ui-icon-plusthick");
+                          order_by.toggle_criteria
+                              (menu$, choice, "addClass");
                       };
                       if (ev && "preventDefault" in ev) {
                           ev.preventDefault ();
@@ -415,8 +427,10 @@
               }
             , prefill           : function prefill (choices) {
                   var S       = selectors;
-                  var crit$   = ob_widget$.find (S.order_by_criteria);
-                  var desc;
+                  var crits$  = ob_widget$.find  (S.order_by_criteria);
+                  var but$    = ob_widget$.find (S.add_button);
+                  var menu$   = but$.data ("menu$").element;
+                  var c$, desc;
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
                       choice = choices [i]
                           .replace (/^\s*/, "").replace (/\s*$/, "");
@@ -425,7 +439,9 @@
                           desc = true;
                           choice = choice.slice (1);
                       }
-                      crit$.append (order_by.new_criterion (choice, desc));
+                      c$ = order_by.new_criterion (choice, desc);
+                      crits$.append (c$);
+                      order_by.toggle_criteria (menu$, choice, "addClass");
                   };
               }
             , setup             : function setup () {
@@ -483,6 +499,25 @@
                   result.delegate
                       (S.order_by_criterion, "click", order_by.cb.dir);
                   return result;
+              }
+            , toggle_criteria   : function toggle_criteria (menu$, choice, toggler) {
+                  var cl = choice.length;
+                  menu$.find ("a.button").each
+                      ( function () {
+                          var a$ = $(this);
+                          var label      = a$.html ();
+                          var label_head = label.slice (0, cl);
+                          var label_sep  = label [cl];
+                          var match =
+                              (  (cl <= label.length)
+                              && (!label_sep)
+                              || (label_sep === "/")
+                              );
+                          if (match && (choice === label_head)) {
+                              a$ [toggler] ("ui-state-disabled");
+                          };
+                        }
+                      );
               }
             , toggle_dir        : function toggle_dir (dir$) {
                   var old_class, new_class, title;
