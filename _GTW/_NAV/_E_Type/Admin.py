@@ -135,6 +135,7 @@
 #                     factor `changer_injected_templates`
 #    25-Nov-2011 (CT) Add `limit` and `offset` to result of `rendered` for json
 #    26-Nov-2011 (CT) Add `button_types` and `buttons` to `rendered`
+#    30-Nov-2011 (CT) Add class variable `Admin.button_types`
 #    ««revision-date»»···
 #--
 
@@ -185,6 +186,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     css_group           = "Type"
     max_completions     = 20
     template_name       = "e_type_admin"
+
+    button_types        = dict \
+        ( ADD           = "button"
+        , APPLY         = "submit"
+        , CANCEL        = "button"
+        , CLEAR         = "button"
+        , CLOSE         = "button"
+        )
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -861,7 +870,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             next_p  = qr.next_p
             prev_p  = qr.prev_p
             button_types = dict \
-                ( FIRST  = "submit" if prev_p else "button"
+                ( self.button_types
+                , FIRST  = "submit" if prev_p else "button"
                 , LAST   = "submit" if next_p else "button"
                 , NEXT   = "submit" if next_p else "button"
                 , PREV   = "submit" if prev_p else "button"

@@ -29,8 +29,8 @@
 ( function ($, undefined) {
     $.fn.gtw_query_restriction = function (qrs, opts) {
         var icon_map  = $.extend
-            ( { APPLY          : "check"
-              , ADD            : "plusthick"
+            ( { ADD            : "plusthick"
+              , APPLY          : "check"
               , CANCEL         : "closethick"
               , CLEAR          : "trash"
               , FIRST          : "arrowthick-1-n"
@@ -602,8 +602,7 @@
                     attach_menu
                       (but$, new_menu (but$, attr_filters, add_attr_filter_cb));
                   }
-                )
-            .removeClass ("disabled");
+                );
         $(selectors.attr_filter_op).each (setup_op_button);
         $(selectors.attr_filter_disabler).each (setup_disabler);
         options.attr_filter_html.find
@@ -611,7 +610,7 @@
         $(selectors.attrs_container)
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         $(selectors.order_by_display).each (order_by.setup);
-        qr$.delegate  (selectors.submit, "click", submit_cb);
+        qr$.delegate (selectors.submit, "click", submit_cb);
         return this;
     }
   } (jQuery)

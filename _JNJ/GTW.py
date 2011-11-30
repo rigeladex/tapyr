@@ -49,6 +49,7 @@
 #    27-Nov-2010 (CT) `formatted` added
 #    18-Mar-2011 (CT) `get_macro` changed to use `Template_E.get_macro`
 #    22-Mar-2011 (CT) `dict` added
+#    30-Nov-2011 (CT) Add `filtered_join`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ from   _GTW               import HTML
 
 from   _TFL               import sos
 from   _TFL.I18N          import _, _T, _Tn
+from   _TFL.predicate     import filtered_join
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -112,6 +114,8 @@ class GTW (TFL.Meta.Object) :
                 return v.sorted_by (v)
         return result
     # end def eval_sorted_by
+
+    filtered_join = staticmethod (filtered_join)
 
     def firstof (self, * args) :
         if len (args) == 1 and isinstance (args [0], (tuple, list)) :

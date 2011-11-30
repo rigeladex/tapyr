@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    26-Nov-2011 (CT) Creation
+//    30-Nov-2011 (CT) Add `disabled`
 //    ««revision-date»»···
 //--
 
@@ -33,7 +34,8 @@
                   var name = this.name;
                   if (name in icon_map) {
                       b$.button
-                          ( { icons :
+                          ( { disabled : b$.hasClass ("disabled")
+                            , icons :
                                 { primary : "ui-icon-" + icon_map [name]
                                 }
                             , text  : options.text
