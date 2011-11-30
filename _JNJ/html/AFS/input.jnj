@@ -31,6 +31,7 @@
 ##    29-Mar-2011 (CT) `_field` changed to set `readonly`, if necessary
 ##     4-Nov-2011 (CT) Change `_field` to only set `class` if necessary
 ##     4-Nov-2011 (CT) Add `named_object`, change `named_value` to use `select`
+##    30-Nov-2011 (CT) Change `_field` to add `required` to `kw`
 ##    ««revision-date»»···
 ##--
 #}
@@ -127,8 +128,15 @@
   {%- do kw.update (kwargs) -%}
   {%- if elem.prefilled or elem.readonly -%}
     {%- do kw.setdefault ("readonly", "readonly") -%}
-    {%- do kw.setdefault ("title",    GTW._T ("Cannot be changed")) -%}
+    {%- do kw.setdefault ("title", GTW._T ("Cannot be changed")) -%}
   {%- endif -%}
+  {%- if GTW.getattr (elem, "required", False) %}
+    {#- `elem.reqired` returns `Undefined`, yet `getattr` returns the
+    ##  excpected value (that's in `elem.as_json_cargo`)
+    ##  Bad, Jinja, Bad!
+    -#}
+    {%- do kw.update (required = True) %}
+  {% endif -%}
   {{ typ (** kw) }}
 {%- endmacro -%} {#- _field -#}
 

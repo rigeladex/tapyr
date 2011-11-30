@@ -50,6 +50,7 @@
 #    18-Mar-2011 (CT) `get_macro` changed to use `Template_E.get_macro`
 #    22-Mar-2011 (CT) `dict` added
 #    30-Nov-2011 (CT) Add `filtered_join`
+#    30-Nov-2011 (CT) Add `dir` and `getattr`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,9 @@ class GTW (TFL.Meta.Object) :
     # end def call_macro
 
     dict = staticmethod (dict)
+
+    if __debug__ :
+        dir = staticmethod (dir)
 
     def email_uri (self, email, text = None, ** kw) :
         """Returns a mailto URI for `email`.
@@ -150,6 +154,7 @@ class GTW (TFL.Meta.Object) :
         return result
     # end def get_macro
 
+    getattr    = staticmethod (getattr)
     Getter     = TFL.Getter
 
     len        = staticmethod (len)

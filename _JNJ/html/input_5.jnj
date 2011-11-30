@@ -36,6 +36,7 @@
 ##    22-Mar-2011 (CT) `_input_c` added
 ##    21-Nov-2011 (CT) Add `option`
 ##    22-Nov-2011 (CT) Add handling of `disabled` to `_input`
+##    30-Nov-2011 (CT) Add handling of `required` to `_input`
 ##    ««revision-date»»···
 ##--
 #}
@@ -56,8 +57,10 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- macro _input (typ, kw) -%}
   {%- do kw.pop("caller", "") -%}
   {%- set disabled = kw.pop ("disabled", None) %}
+  {%- set required = kw.pop ("required", None) %}
   <input type="{{ typ }}"{{ kw|xmlattr }}
     {%- if disabled %} disabled{% endif -%}
+    {%- if required %} required{% endif -%}
   />
 {%- endmacro -%} {#- text -#}
 

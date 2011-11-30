@@ -393,6 +393,8 @@ _test_code = """
     >>> ff_ln = fb ['FB-0:2::0-2:0:0:0']
     >>> print ff_ln
     <Field FB-0:2::p-2:0:0:0 'last_name'>
+    >>> print ff_ln.name, ff_ln.required
+    last_name True
     >>> print formatted (ff_ln.kw)
     { 'kind' : 'primary'
     , 'label' : 'Last name'
