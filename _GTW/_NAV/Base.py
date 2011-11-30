@@ -267,6 +267,8 @@
 #    25-Nov-2011 (CT) Add `template_iter` and `sub_dir_iter`
 #    25-Nov-2011 (CT) Remove `children`, `children_transitive`, and
 #                     `injected_media_href`
+#    30-Nov-2011 (CT) Add `raise` and `logging.warning` to `load_cache` and
+#                     `store_cache`
 #    ««revision-date»»···
 #--
 
@@ -1215,28 +1217,31 @@ class Root (_Dir_) :
     # end def h_title
 
     def load_cache (self, cache_file) :
+        import logging
         try :
             with open (cache_file, "rb") as file :
                 cargo = pickle.load (file)
         except StandardError as exc :
-            import logging
             logging.warning \
                 ( "Loading pickle dump %s failed with exception: %s"
-                % (pickle_path, exc)
+                % (cache_file, exc)
                 )
-            self.store_cache (cache_file)
+            if self.DEBUG :
+                self.store_cache (cache_file)
+            else :
+                raise
         else :
+            logging.info ("Loaded pickle dump %s successfully" % (cache_file, ))
             for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
                 try :
                     cp.from_pickle_cargo (self, cargo)
                 except StandardError as exc :
-                    import logging
                     logging.warning \
                         ( "Unpickling of %s failed with exception `%s`.\n"
                           "Regenerate cache..."
                         % (cp, exc)
                         )
-                    cp.as_pickle_cargo (self)
+                    raise
     # end def load_cache
 
     @Once_Property
@@ -1295,13 +1300,13 @@ class Root (_Dir_) :
     # end def scope
 
     def store_cache (self, cache_file) :
+        import logging
         def _create (cache_file) :
             cargo = dict ()
             for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
                 try :
                     cargo.update (cp.as_pickle_cargo (self))
                 except StandardError as exc :
-                    import logging
                     logging.warning \
                         ( "Pickling of %s failed with exception `%s`.\n"
                         % (cp, exc)
@@ -1309,9 +1314,18 @@ class Root (_Dir_) :
                     if self.DEBUG :
                         import traceback
                         traceback.print_exc ()
-            with open (cache_file, "wb") as file :
-                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                    raise
+            try :
+                with open (cache_file, "wb") as file :
+                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+            except StandardError as exc :
+                logging.warning \
+                    ( "Storing pickle dump %s failed with exception: %s"
+                    % (cache_file, exc)
+                    )
+                raise
         # end def _create
+
         if self.DEBUG :
             fmt = "*** Media cache %s rebuilt in %%ss" % (cache_file)
             with TFL.Context.time_block (fmt) :
