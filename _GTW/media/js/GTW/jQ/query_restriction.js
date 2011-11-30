@@ -21,6 +21,7 @@
 //                     (setup_obj_list, GTW_buttonify, fix_buttons)
 //    28-Nov-2011 (CT) Creation continued.... (order_by_cb, ...)
 //    29-Nov-2011 (CT) Creation continued..... (order_by...)
+//    30-Nov-2011 (CT) Creation continued..... (ev.delegateTarget)
 //    ««revision-date»»···
 //--
 
@@ -87,6 +88,7 @@
         var attr_filters =
             ( function () {
                 var result = [];
+                var name_sep = new RegExp (qrs.name_sep, "g");
                 var add = function add (filters, prefix, ui_prefix) {
                     for (var i = 0, li = filters.length, f; i < li; i++) {
                         f = filters [i];
@@ -97,7 +99,7 @@
                             f.key   = f.name;
                             f.label = f.ui_name;
                         };
-                        f.order_by_key = f.key.replace (qrs.name_sep, ".");
+                        f.order_by_key = f.key.replace (name_sep, ".");
                         result.push (f);
                         af_map [f.label] = f;
                         if ("children" in f) {
@@ -141,7 +143,7 @@
               } ()
             );
         var add_attr_filter_cb = function add_attr_filter_cb (ev) {
-            var target$ = $(ev.target);
+            var target$ = $(ev.delegateTarget);
             var choice  = target$.data ("choice");
             var afs$    = $(selectors.attr_filter_container, qr$);
             var head$   = afs$.filter
@@ -207,7 +209,7 @@
             };
         };
         var menu_click_cb = function menu_click_cb (ev) {
-            var but$ = $(ev.target);
+            var but$ = $(ev.delegateTarget);
             var menu = but$.data ("menu$");
             if (menu.element.is (":visible")) {
                 menu.element.hide ();
@@ -230,7 +232,7 @@
             };
         };
         var menu_select_cb = function menu_select_cb (ev) {
-            var target$ = $(ev.target);
+            var target$ = $(ev.delegateTarget);
             var menu$   = target$.closest (".cmd-menu");
             target$.data ("callback") (ev);
             menu$.hide ();
@@ -286,7 +288,7 @@
         };
         var op_select_cb = function op_cb (ev) {
             var S = selectors;
-            var target$ = $(ev.target);
+            var target$ = $(ev.delegateTarget);
             var choice  = target$.data  ("choice");
             var but$    = target$.data  ("but$");
             var afc$    = but$.closest (selectors.attr_filter_container);
@@ -305,13 +307,14 @@
             { cb              :
                 { add_criterion : function add_criterion (ev) {
                       var S       = selectors;
-                      var target$ = $(ev.target);
+                      var target$ = $(ev.delegateTarget);
                       var choice  = target$.data ("choice").label;
                       var c$      = order_by.new_criterion (choice);
                       var but$    = ob_widget$.find (S.add_button);
                       var menu$   = but$.data ("menu$").element;
                       ob_widget$.find (S.order_by_criteria).append (c$);
                       order_by.toggle_criteria (menu$, choice, "addClass");
+                      ob_widget$.find (S.apply_button).focus ();
                   }
                 , apply       : function apply (ev) {
                       var S     = selectors;
@@ -325,12 +328,14 @@
                                 if (! c$.hasClass ("disabled")) {
                                     var dir$  = c$.find (S.order_by_direction);
                                     var label = v$.html ();
-                                    var desc  = dir$.hasClass
-                                        (options.desc_class);
-                                    var sign  = desc ? "-" : "";
-                                    var af    = af_map [label];
-                                    displays.push (sign + label);
-                                    values.push   (sign + af.order_by_key);
+                                    if (label) {
+                                        var desc  = dir$.hasClass
+                                            (options.desc_class);
+                                        var sign  = desc ? "-" : "";
+                                        var af    = af_map [label];
+                                        displays.push (sign + label);
+                                        values.push   (sign + af.order_by_key);
+                                    };
                                 };
                             }
                           )
@@ -382,16 +387,11 @@
                           order_by.toggle_criteria
                               (menu$, choice, "addClass");
                       };
-                      if (ev && "preventDefault" in ev) {
-                          ev.preventDefault ();
-                      };
-                      if (ev && "stopPropagation" in ev) {
-                          ev.stopPropagation ();
-                      };
+                      return false;
                   }
                 , open        : function open (ev) {
                       var S       = selectors;
-                      var target$ = $(ev.target);
+                      var target$ = $(ev.delegateTarget);
                       var li$     = target$.closest ("li");
                       var hidden$ = li$.find (selectors.order_by_value).last ();
                       var width   = qr$.width ();
@@ -434,14 +434,16 @@
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
                       choice = choices [i]
                           .replace (/^\s*/, "").replace (/\s*$/, "");
-                      desc = false;
-                      if (choice [0] === "-") {
-                          desc = true;
-                          choice = choice.slice (1);
-                      }
-                      c$ = order_by.new_criterion (choice, desc);
-                      crits$.append (c$);
-                      order_by.toggle_criteria (menu$, choice, "addClass");
+                      if (choice.length) {
+                          desc = false;
+                          if (choice [0] === "-") {
+                              desc = true;
+                              choice = choice.slice (1);
+                          }
+                          c$ = order_by.new_criterion (choice, desc);
+                          crits$.append (c$);
+                          order_by.toggle_criteria (menu$, choice, "addClass");
+                      };
                   };
               }
             , setup             : function setup () {
@@ -578,9 +580,7 @@
             var args    = form$.serialize ()
                 + "&" + this.name + "=" + this.value;
             $.getJSON (form$.attr ("action"), args, submit_ajax_cb);
-            if (ev && ev.preventDefault) {
-                ev.preventDefault ();
-            };
+            return false;
         };
         var tr_selector = function tr_selector (label) {
             var head = selectors.attr_filter_container, tail;
