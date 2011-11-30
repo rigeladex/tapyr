@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-24 11:22+0100\n"
+"POT-Creation-Date: 2011-11-30 09:34+0100\n"
 "PO-Revision-Date: 2011-10-10 11:56+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -236,23 +236,31 @@ msgstr "Wähle Entitäten aus, deren Attributwert gleich dem angegebenen Wert ist"
 
 #: _MOM/_Attr/Filter.py:264
 msgid "Select entities where the attribute is greater than the specified value"
-msgstr "Wähle Entitäten aus, deren Attributwert grösser als der angegebene Wert ist"
+msgstr ""
+"Wähle Entitäten aus, deren Attributwert grösser als der angegebene Wert "
+"ist"
 
 #: _MOM/_Attr/Filter.py:252
 msgid ""
 "Select entities where the attribute is greater than, or equal to, the "
 "specified value"
-msgstr "Wähle Entitäten aus, deren Attributwert grösser/gleich als der angegebene Wert ist"
+msgstr ""
+"Wähle Entitäten aus, deren Attributwert grösser/gleich als der angegebene"
+" Wert ist"
 
 #: _MOM/_Attr/Filter.py:288
 msgid "Select entities where the attribute is less than the specified value"
-msgstr "Wähle Entitäten aus, deren Attributwert kleiner als der angegebene Wert ist"
+msgstr ""
+"Wähle Entitäten aus, deren Attributwert kleiner als der angegebene Wert "
+"ist"
 
 #: _MOM/_Attr/Filter.py:276
 msgid ""
 "Select entities where the attribute is less than, or equal to, the "
 "specified value"
-msgstr "Wähle Entitäten aus, deren Attributwert kleiner/gleich als der angegebene Wert ist"
+msgstr ""
+"Wähle Entitäten aus, deren Attributwert kleiner/gleich als der angegebene"
+" Wert ist"
 
 #: _MOM/_Attr/Filter.py:300
 msgid "Select entities where the attribute is not equal to the specified value"

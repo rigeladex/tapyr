@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-24 11:22+0100\n"
+"POT-Creation-Date: 2011-11-30 09:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,13 +23,13 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:250 _GTW/_NAV/_E_Type/Admin.py:344
-#: _GTW/_NAV/_E_Type/Admin.py:687
+#: _GTW/_NAV/_E_Type/Admin.py:258 _GTW/_NAV/_E_Type/Admin.py:348
+#: _GTW/_NAV/_E_Type/Admin.py:701
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:410 _GTW/_NAV/_E_Type/Admin.py:470
+#: _GTW/_NAV/_E_Type/Admin.py:414 _GTW/_NAV/_E_Type/Admin.py:474
 #, python-format
 msgid "%s only works with content-type json"
 msgstr ""
@@ -66,7 +66,7 @@ msgstr ""
 msgid "April"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:270 _GTW/_NAV/_E_Type/Admin.py:698
+#: _GTW/_NAV/_E_Type/Admin.py:278 _GTW/_NAV/_E_Type/Admin.py:712
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr ""
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:202 _GTW/_NAV/_E_Type/Admin.py:218
+#: _GTW/_NAV/_E_Type/Admin.py:216 _GTW/_NAV/_E_Type/Admin.py:231
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr ""
@@ -226,11 +226,11 @@ msgstr ""
 msgid "New password"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:288
+#: _GTW/_NAV/_E_Type/Admin.py:296
 msgid "Not authorized for this page"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:280
+#: _GTW/_NAV/_E_Type/Admin.py:288
 msgid "Not logged in or login-session is expired"
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr ""
 msgid "November"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:533 _GTW/_NAV/_E_Type/Admin.py:560
+#: _GTW/_NAV/_E_Type/Admin.py:537 _GTW/_NAV/_E_Type/Admin.py:564
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr ""
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Welcome %s."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:540 _GTW/_NAV/_E_Type/Admin.py:568
+#: _GTW/_NAV/_E_Type/Admin.py:544 _GTW/_NAV/_E_Type/Admin.py:572
 msgid "You need to specify a pid!"
 msgstr ""
 
