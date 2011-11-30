@@ -22,6 +22,7 @@
 //    30-Nov-2010 (CT) `scroll` added and used
 //    20-Jan-2011 (CT) Rename function `GTW_Gallery` to `gtw_gallery`
 //    26-Jan-2011 (CT) Style change
+//    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
 //    ««revision-date»»···
 //--
 
@@ -83,12 +84,10 @@
             );
             scroll ($(thumb));
             $(thumb).addClass ("selected");
-            if (event && event.preventDefault) {
-                event.preventDefault ();
-            };
+            return false;
         };
-        var next  = function (event) { show (options.current + 1, event); };
-        var prev  = function (event) { show (options.current - 1, event); };
+        var next  = function (event) { return show (options.current + 1, event); };
+        var prev  = function (event) { return show (options.current - 1, event); };
         var start = function (event) {
             options.play_cb = window.setInterval (next, options.delay);
             $(options.controls.play)
@@ -120,23 +119,24 @@
             .each ( function (n) { $(this).data ("GTW-gallery-index", n); })
             .click
                 ( function (ev) {
-                    stop (ev); show ($(this).data ("GTW-gallery-index"), ev);
+                    stop (ev);
+                    return show ($(this).data ("GTW-gallery-index"), ev);
                   }
                 );
         $(options.controls.next)
-            .click (function (ev) { stop (ev); next (ev); })
+            .click (function (ev) { stop (ev); return next (ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-next" }, text : false });
         $(options.controls.prev)
-            .click (function (ev) { stop (ev); prev (ev); })
+            .click (function (ev) { stop (ev); return prev (ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-prev" }, text : false });
         $(options.controls.head)
-            .click (function (ev) { stop (ev); show (0, ev); })
+            .click (function (ev) { stop (ev); return show (0, ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-start" }, text : false });
         $(options.controls.tail)
-            .click (function (ev) { stop (ev); show (-1, ev); })
+            .click (function (ev) { stop (ev); return show (-1, ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-end" }, text : false });
         $(options.controls.play)

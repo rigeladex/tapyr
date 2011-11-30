@@ -427,7 +427,7 @@
               }
             , prefill           : function prefill (choices) {
                   var S       = selectors;
-                  var crits$  = ob_widget$.find  (S.order_by_criteria);
+                  var crits$  = ob_widget$.find (S.order_by_criteria);
                   var but$    = ob_widget$.find (S.add_button);
                   var menu$   = but$.data ("menu$").element;
                   var c$, desc;

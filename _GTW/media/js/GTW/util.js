@@ -66,9 +66,9 @@
         this.click
             ( function (event) {
                   window.open (this.href).focus ();
-                  if (event && event.preventDefault) {
+                  if (event && "preventDefault" in event) {
                       event.preventDefault ();
-                  }
+                  };
               }
             ).addClass ("external");
         return this;

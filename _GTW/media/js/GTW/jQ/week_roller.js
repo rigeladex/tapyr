@@ -26,6 +26,7 @@
 //    30-Nov-2010 (CT) Handling of `.echo` changed
 //    20-Jan-2011 (CT) Rename function `GTW_week_roller` to `gtw_week_roller`
 //    26-Jan-2011 (CT) Style change
+//    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
 //    ««revision-date»»···
 //--
 
@@ -94,9 +95,7 @@
                                 };
                                 day$.addClass (options.selected_class);
                                 options.selected = day;
-                                if (ev && ev.preventDefault) {
-                                    ev.preventDefault ();
-                                };
+                                return false;
                             }
                         );
                     };
@@ -132,9 +131,7 @@
                                     };
                                 }
                               );
-                            if (ev && ev.preventDefault) {
-                                ev.preventDefault ();
-                            };
+                            return false;
                         }
                     );
                 }
