@@ -51,6 +51,7 @@
 #    22-Mar-2011 (CT) `dict` added
 #    30-Nov-2011 (CT) Add `filtered_join`
 #    30-Nov-2011 (CT) Add `dir` and `getattr`
+#     1-Dec-2011 (CT) Add `styler`
 #    ««revision-date»»···
 #--
 
@@ -209,6 +210,7 @@ class GTW (TFL.Meta.Object) :
     reversed   = staticmethod (reversed)
     sorted     = staticmethod (sorted)
     Sorted_By  = TFL.Sorted_By
+    styler     = staticmethod (HTML.Styler)
 
     def tel_uri (self, phone_number, text = None, ** kw) :
         """Returns a telephone URI for `phone_number`.

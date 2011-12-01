@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -30,6 +30,7 @@
 #    17-Mar-2010 (CT) `Cleaner` added
 #     3-Aug-2010 (CT) `obfuscator` completely revamped (letting jQuery
 #                     rewrite the obfuscated `<a...</a>` elements)
+#     1-Dec-2011 (CT) Add `Styler`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,13 @@ class Cleaner (TFL.Meta.Object) :
     # end def __unicode__
 
 # end class Cleaner
+
+Styler = Multi_Re_Replacer \
+    ( Re_Replacer (r"---",            r"&#0032;&mdash;&#0032;")
+    , Re_Replacer (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
+    , Re_Replacer (r"\.\.\.",         r"&#0133;")
+    , Re_Replacer (r"\%2d\%2d",       r"--")
+    )
 
 if __name__ != "__main__" :
     GTW._Export_Module ()
