@@ -269,6 +269,7 @@
 #                     `injected_media_href`
 #    30-Nov-2011 (CT) Add `raise` and `logging.warning` to `load_cache` and
 #                     `store_cache`
+#     1-Dec-2011 (CT) Change `Root.template_iter` to include error templates
 #    ««revision-date»»···
 #--
 
@@ -1063,9 +1064,9 @@ class _Dir_ (_Site_Entity_) :
     # end def rendered
 
     def sub_dir_iter (self) :
-        for e in self.own_links :
-            if isinstance (e, Dir) :
-                yield e
+        for owl in self.own_links :
+            if isinstance (owl, Dir) :
+                yield owl
     # end def sub_dir_iter
 
     def template_iter (self) :
@@ -1339,6 +1340,8 @@ class Root (_Dir_) :
         gett = self.Templateer.get_template
         def _gen () :
             for tn in self.template_names :
+                yield gett (tn)
+            for tn in self.Templateer.error_template_names :
                 yield gett (tn)
             for t in self.__super.template_iter () :
                 yield t

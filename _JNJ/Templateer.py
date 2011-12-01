@@ -59,6 +59,7 @@
 #                     combined code
 #                     `_eval_fragments`: use `scope.Eval`
 #    24-Nov-2011 (CT) Add `Templateer.call_macro`
+#     1-Dec-2011 (CT) Add `error_templates` and `error_template_names`
 #    ««revision-date»»···
 #--
 
@@ -431,14 +432,16 @@ class Template_E (_Template_) :
 
 # end class Template_E
 
-Template (400, "html/error_400.jnj")
-Template (401, "html/error_401.jnj")
-Template (403, "html/error_403.jnj")
-Template (404, "html/error_404.jnj")
-Template (405, "html/error_405.jnj")
-Template (408, "html/error_408.jnj")
-Template (500, "html/error_500.jnj")
-Template (503, "html/error_503.jnj")
+error_templates = \
+    [ Template (400, "html/error_400.jnj")
+    , Template (401, "html/error_401.jnj")
+    , Template (403, "html/error_403.jnj")
+    , Template (404, "html/error_404.jnj")
+    , Template (405, "html/error_405.jnj")
+    , Template (408, "html/error_408.jnj")
+    , Template (500, "html/error_500.jnj")
+    , Template (503, "html/error_503.jnj")
+    ]
 
 Template ("account_activate",             "html/activate.jnj")
 Template ("account_change_email",         "html/change_email.jnj")
@@ -480,6 +483,8 @@ class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""
 
     Context         = dict
+
+    error_template_names = list (t.name for t in error_templates)
 
     def __init__ (self, * args, ** kw) :
         self.GTW = GTW = JNJ.GTW (self)
