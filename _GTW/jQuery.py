@@ -48,6 +48,7 @@
 #     8-Nov-2011 (CT) Add `GTW_jq_util`
 #    22-Nov-2011 (CT) Add `GTW_query_restriction`
 #    26-Nov-2011 (CT) Add `GTW_e_type_admin`, `GTW_buttonify`
+#     2-Dec-2011 (CT) Use `modernizr.custom.js` instead of specific version
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,12 @@ else :
         )
     GTW.Script (src = "/media/GTW/js/jquery-ui.min.js", name = "jQuery_UI")
 GTW.Script (src = "/media/GTW/js/jquery.gritter.js",    name = "jQuery_Gritter")
-GTW.Script (src = "/media/GTW/js/modernizr-1.6.min.js", name = "Modernizr")
+
+GTW.Script \
+    ( src  = "/media/GTW/js/modernizr.custom.js"
+    , name = "Modernizr"
+    , rank = -1000   ## should be loaded really first
+    )
 
 GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
 GTW.CSS_Link \

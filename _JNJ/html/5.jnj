@@ -29,6 +29,8 @@
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
 ##    22-Nov-2011 (CT) Replace `<meta name="Content-URL` with `<!-- Content-URL`
+##     2-Dec-2011 (CT) Add macro `script`, factor `shiv` from `head`
+##     2-Dec-2011 (CT) Add `class="no-js"` to `html`
 ##    ««revision-date»»···
 ##--
 #}
@@ -37,7 +39,7 @@
 
 {%- macro html (lang) -%}
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="{{ lang }}" class="no-js">
   {{ caller () }}
 </html>
 {%- endmacro -%}
@@ -48,9 +50,6 @@
 
 {%- macro head () -%}
 <head>
-  <!--[if IE]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
   {{ caller () }}
 </head>
 {%- endmacro -%}
@@ -74,10 +73,23 @@
 </nav>
 {%- endmacro -%}
 
+{%- macro script (src = None, body = "") -%}
+  <script {%- if src %} src="{{ src }}"{% endif %}>
+    {{- body|safe -}}
+    {%- if caller %}{{ caller () }}{% endif -%}
+  </script>
+{%- endmacro -%} {#- script -#}
+
 {%- macro section () -%}
 <section{{ kwargs|xmlattr }}>
   {{ caller () }}
 </section>
 {%- endmacro -%}
+
+{%- macro shiv () -%}
+  <!--[if IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+{%- endmacro -%} {#- shiv -#}
 
 {#- __END__ jinja template: html/5.jnj -#}

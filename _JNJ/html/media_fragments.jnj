@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    27-Sep-2011 (MG) Creation (factored from `base.jnj`)
+##     2-Dec-2011 (CT) Use `X.script` instead of home-grown markup
 ##    ««revision-date»»···
 ##--
 #}
@@ -70,22 +71,23 @@
 {%- macro scripts (media) -%}
   {%- for jsl in media.scripts %}
     {% call media_item (jsl) -%}
-      <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+      {{ X.script (src = jsl.src, body =  jsl.body) }}
     {% endcall %} {# media_item #}
   {% endfor -%}
 {%- endmacro -%} {#- scripts -#}
 
 {%- macro js_on_ready (media) -%}
   {%- if media.js_on_ready %}
-      <script type="text/javascript">
-        $(function ()
-          {
-            {% for jsor in media.js_on_ready %}{{ jsor|safe }}{% endfor %}
-          }
-         );
-      </script>
+    {% call X.script () -%}
+      $(function ()
+        {
+          {% for jsor in media.js_on_ready %}{{ jsor|safe }}{% endfor %}
+        }
+       );
+    {% endcall %} {# X.script #}
   {% endif -%}
 {%- endmacro -%} {#- js_on_ready -#}
+
 {#- __END__ jinja template: media_fragments.jnj -#}
 
 

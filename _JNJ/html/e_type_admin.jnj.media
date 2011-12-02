@@ -49,11 +49,39 @@
 #    26-Nov-2011 (CT) Replace `JS_On_Ready` for `button` by `GTW_buttonify`
 #    29-Nov-2011 (CT) Add rules for `.criteria` to `.QR`
 #    30-Nov-2011 (CT) Add more rules for `.criteria` to `.QR`
+#     2-Dec-2011 (CT) Add rules for `.no-js`
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
+        ( ".no-js"
+        , children           =
+            [ Rule
+                ( ".Object-List"
+                , children   =
+                    [ Rule
+                        ( "td:first-child", "td:last-child"
+                        , "th:first-child", "th:last-child"
+                        , display          = "none"
+                        , visibility       = "hidden"
+                        )
+                    ]
+                )
+            , Rule
+                ( ".QR"
+                , children   =
+                    [ Rule
+                        ( "button[name=ADD]", "button.disabled"
+                        , display          = "none"
+                        , visibility       = "hidden"
+                        )
+                    ]
+                )
+            ]
+
+        )
+    , Rule
         ( ".Object-List"
         , min_width          = Percent (50)
         , children           =

@@ -1,6 +1,6 @@
 {#- jinja template: html/x.jnj -#}
 {#
-## Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
 ##    12-Jan-2010 (CT) Creation continued
+##     2-Dec-2011 (CT) Add macros `script` and `shiv`
 ##    ««revision-date»»···
 ##--
 #}
@@ -73,10 +74,20 @@
 </div>
 {%- endmacro -%}
 
+{%- macro script (src = None, body = "") -%}
+  <script {%- if src %} src="{{ src }}"{% endif %} type="text/javascript">
+    {{- body|safe -}}
+    {%- if caller %}{{ caller () }}{% endif -%}
+  </script>
+{%- endmacro -%} {#- script -#}
+
 {%- macro section () -%}
 <div class="section {{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
   {{ caller () }}
 </div>
 {%- endmacro -%}
+
+{%- macro shiv () -%}
+{%- endmacro -%} {#- shiv -#}
 
 {#- __END__ jinja template: html/x.jnj -#}
