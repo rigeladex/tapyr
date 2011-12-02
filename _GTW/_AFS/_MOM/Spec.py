@@ -62,6 +62,7 @@
 #     7-Nov-2011 (CT) Change `Entity_Link._get_role_name` to use
 #                     `other_role_name` to find `result`
 #     9-Nov-2011 (CT) Add `css_align` for attribute types
+#     2-Dec-2011 (CT) Add `MAT._A_Id_Entity_.input_widget`
 #    ««revision-date»»···
 #--
 
@@ -85,14 +86,15 @@ import _TFL.multimap
 
 MAT                                  = MOM.Attr
 MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
-MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj,  number")
 MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
 MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
 MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
 MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")
 MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj,  text")
+MAT._A_Id_Entity_.input_widget       = WS ("html/AFS/input.jnj,  id_entity")
+MAT._A_Named_Object_.input_widget    = WS ("html/AFS/input.jnj,  named_object")
 MAT._A_Named_Value_.input_widget     = WS ("html/AFS/input.jnj,  named_value")
-MAT._A_Named_Object_.input_widget     = WS ("html/AFS/input.jnj, named_object")
+MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj,  number")
 
 MAT.Kind.css_class                   = ""
 MAT.A_Attr_Type.css_class            = ""

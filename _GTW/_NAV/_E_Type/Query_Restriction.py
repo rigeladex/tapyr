@@ -35,6 +35,7 @@
 #    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`, add `op_map`)
 #    25-Nov-2011 (CT) Creation continued..... (restrict `offset_f` to `total_f`)
 #    26-Nov-2011 (CT) Creation continued...... (fix `offset` and `offset_f`)
+#     2-Dec-2011 (CT) Creation continued....... (guard `sig_map` for `f`...)
 #    ««revision-date»»···
 #--
 
@@ -64,14 +65,14 @@ class Query_Restriction (TFL.Meta.Object) :
     filters     = ()
     filters_q   = ()
     limit       = 0
-    name_sep    = "__"
+    name_sep    = MOM.Attr.Filter.id_sep
     offset      = 0
     op_sep      = "___"
     order_by    = ()
     order_by_q  = ()
     query_b     = None
     query_f     = None
-    ui_sep      = "/"
+    ui_sep      = MOM.Attr.Filter.ui_sep
 
     _a_pat      = Regexp \
         ( "".join
@@ -272,9 +273,9 @@ class Query_Restriction (TFL.Meta.Object) :
 class Query_Restriction_Spec (TFL.Meta.Object) :
     """Query restriction spec for a GTW.NAV.E_Type page."""
 
-    def __init__ (self, E_Type, fields) :
+    def __init__ (self, E_Type, field_names) :
         self.E_Type = E_Type
-        self.fields = fields
+        self.field_names = field_names
     # end def __init__
 
     @property
@@ -296,7 +297,8 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
 
     @Once_Property
     def filters (self) :
-        return tuple (f.attr.Q for f in self.fields)
+        ET = self.E_Type
+        return tuple (getattr (ET.AQ, f) for f in self.field_names)
     # end def filters
 
     @Once_Property
@@ -322,7 +324,8 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
         result = {}
         Signatures = MOM.Attr.Filter._Type_.Signatures
         for f in uniq (f.Op_Keys for f in self.filters_transitive) :
-            result [Signatures [f]] = f
+            if f :
+                result [Signatures [f]] = f
         return result
     # end def sig_map
 

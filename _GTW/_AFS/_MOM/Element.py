@@ -65,6 +65,7 @@
 #     8-Nov-2011 (CT) Change `_create_instance` to pass `exc.any_required_empty`
 #     8-Nov-2011 (CT) Change `Field._value` to check `entity` vs. `allow_new`
 #    18-Nov-2011 (CT) Apply `str` to `.type_name` (in `_value_sig_t`)
+#     2-Dec-2011 (CT) Change `Entity._value_cp` to include `uid`
 #    ««revision-date»»···
 #--
 
@@ -172,8 +173,9 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
 
     def _value_cp (self, ETM, entity, ** kw) :
         return {} if kw.get ("copy", False) else dict \
-            ( cid = getattr (entity, "last_cid", None)
-            , pid = getattr (entity, "pid",      None)
+            ( cid = getattr (entity, "last_cid",   None)
+            , pid = getattr (entity, "pid",        None)
+            , uid = getattr (entity, "ui_display", None)
             )
     # end def _value_cp
 

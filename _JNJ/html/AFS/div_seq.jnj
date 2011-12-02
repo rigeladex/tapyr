@@ -43,6 +43,7 @@
 ##    18-Oct-2011 (CT) `do_button` calls removed
 ##     4-Nov-2011 (CT) Add `show_desc = False` to `Entity`, `Entity_Link`,
 ##                     `Entity_List`, `Field_Composite`, and `Field_Entity`
+##     2-Dec-2011 (CT) Remove argument `form` from call of `input_widget`
 ##    ««revision-date»»···
 ##--
 #}
@@ -105,7 +106,7 @@
       <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
       <b class="Status"></b>
     </{{ elem.het_h }}>
-    {{ GTW.call_macro (elem.input_widget, form, elem) }}
+    {{ GTW.call_macro (elem.input_widget, elem) }}
   {% endcall %} {# do_element #}
 {%- endmacro -%} {#- Field -#}
 

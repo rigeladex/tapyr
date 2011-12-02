@@ -37,6 +37,7 @@
 ##    21-Nov-2011 (CT) Add `option`
 ##    22-Nov-2011 (CT) Add handling of `disabled` to `_input`
 ##    30-Nov-2011 (CT) Add handling of `required` to `_input`
+##     2-Dec-2011 (CT) Change `_input` to `pop` empty `name`
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,9 +56,13 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- set textarea = _common.textarea     %}
 
 {%- macro _input (typ, kw) -%}
-  {%- do kw.pop("caller", "") -%}
+  {%- do kw.pop ("caller", "") -%}
   {%- set disabled = kw.pop ("disabled", None) %}
   {%- set required = kw.pop ("required", None) %}
+  {% if not kw.get ("name", None) -%}
+    {#- Remove empty `name` from `kw` -#}
+    {%- do kw.pop ("name", None) -%}
+  {%- endif -%}
   <input type="{{ typ }}"{{ kw|xmlattr }}
     {%- if disabled %} disabled{% endif -%}
     {%- if required %} required{% endif -%}

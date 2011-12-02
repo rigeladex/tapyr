@@ -41,6 +41,10 @@
 #    22-Nov-2011 (CT) Add `_Type_.as_json_cargo`
 #    22-Nov-2011 (CT) Add `specialized`, streamline `as_json_cargo`
 #    23-Nov-2011 (CT) Add `Base_Op_Table`, define `desc` for base operations
+#     2-Dec-2011 (CT) Add `Boolean (_Type_)`
+#     2-Dec-2011 (CT) Add `outer`, `Inner`, and `as_template_elem`
+#     2-Dec-2011 (CT) Factor `_Composite_`, move parts of
+#                     `_Type_.__getattr__` there
 #    ««revision-date»»···
 #--
 
@@ -54,7 +58,7 @@ import _MOM._Attr
 import _TFL._Meta.Object
 
 from   _TFL.I18N             import _
-from   _TFL.predicate        import split_hst
+from   _TFL.predicate        import filtered_join, split_hst
 from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
@@ -62,7 +66,9 @@ import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 import _TFL.Filter
 
-Q = TFL.Attr_Query ()
+Q      = TFL.Attr_Query ()
+id_sep = "__"
+ui_sep = "/"
 
 class _M_Filter_ (TFL.Meta.Object.__class__) :
     """Meta class for Filter classes."""
@@ -466,7 +472,7 @@ class _Type_ (TFL.Meta.Object) :
     Signatures    = {}
 
     ### `Table` maps the operations that can sensibly be selected in a UI
-    Table  = dict \
+    Table   = dict \
         ( EQ                 = Equal
         , GE                 = Greater_Equal
         , GT                 = Greater_Than
@@ -475,37 +481,38 @@ class _Type_ (TFL.Meta.Object) :
         , NE                 = Not_Equal
         )
     ### `_Table` maps additonal operations that don't make sense in a UI
-    _Table = dict \
+    _Table  = dict \
         ( AC                 = Auto_Complete
         )
 
-    def __init__ (self, attr) :
-        self.attr = attr
+    def __init__ (self, attr, outer = None) :
+        self._attr  = attr
+        self._outer = outer
     # end def __init__
 
-    @property
+    @property    ### depends on currently selected language (I18N/L10N)
     def as_json_cargo (self) :
-        attr     = self.attr
         Children = self.Children
-        deep     = self.deep
-        Sig_Key  = self.Sig_Key
         result   = dict \
-            ( name     = attr.name
-            , ui_name  = attr.ui_name_T
+            ( self._as_json_cargo_inv
+            , ui_name  = self._attr.ui_name_T
             )
         if Children :
             result ["children"] = [c.as_json_cargo for c in Children]
-        if deep :
-            result ["deep"]     = deep
-        if Sig_Key is not None :
-            result ["sig_key"]  = Sig_Key
         return result
     # end def as_json_cargo
 
-    @TFL.Meta.Once_Property
-    def _attr_name (self) :
-        return self.attr.name
-    # end def _attr_name
+    @property    ### depends on currently selected language (I18N/L10N)
+    def as_template_elem (self) :
+        Children = self.Children
+        result   = dict \
+            ( self._as_template_elem_inv
+            , ui_name  = self._ui_name_T
+            )
+        if Children :
+            result ["children"] = [c.as_template_elem for c in Children]
+        return TFL.Record (** result)
+    # end def as_template_elem
 
     @TFL.Meta.Once_Property
     def Children (self) :
@@ -513,43 +520,95 @@ class _Type_ (TFL.Meta.Object) :
     # end def Children
 
     @TFL.Meta.Once_Property
-    def cooker (self) :
-        return self.attr.cooked
-    # end def cooker
-
-    @TFL.Meta.Once_Property
     def Sig_Key (self) :
         if self.Op_Keys :
             return self.Signatures [self.Op_Keys]
     # end def Sig_Key
 
+    @TFL.Meta.Once_Property
+    def _as_json_cargo_inv (self) :
+        attr     = self._attr
+        deep     = self.deep
+        Sig_Key  = self.Sig_Key
+        result   = dict (name = attr.name)
+        if deep :
+            result ["deep"]     = deep
+        if Sig_Key is not None :
+            result ["sig_key"]  = Sig_Key
+        return result
+    # end def _as_json_cargo_inv
+
+    @TFL.Meta.Once_Property
+    def _as_template_elem_inv (self) :
+        result   = dict \
+            ( self._as_json_cargo_inv
+            , attr     = self._attr
+            , id       = self._id
+            , q_name   = self._q_name
+            )
+        return result
+    # end def _as_template_elem_inv
+
+    @TFL.Meta.Once_Property
+    def _attr_name (self) :
+        return self._attr.name
+    # end def _attr_name
+
+    @TFL.Meta.Once_Property
+    def _cooker (self) :
+        return self._attr.cooked
+    # end def _cooker
+
+    @TFL.Meta.Once_Property
+    def _id (self) :
+        outer = self._outer
+        return filtered_join (id_sep, (outer and outer._id, self._attr.name))
+    # end def _id
+
+    @TFL.Meta.Once_Property
+    def _q_name (self) :
+        outer = self._outer
+        return filtered_join (".", (outer and outer._q_name, self._attr.name))
+    # end def _q_name
+
+    @property    ### depends on currently selected language (I18N/L10N)
+    def _ui_name_T (self) :
+        outer = self._outer
+        return filtered_join \
+            (ui_sep, (outer and outer._ui_name_T, self._attr.ui_name_T))
+    # end def _ui_name_T
+
+    def Inner (self, outer) :
+        assert not self._outer
+        return self.__class__ (self._attr, outer)
+    # end def Inner
+
     def __getattr__ (self, name) :
-        attr = self.attr
+        attr = self._attr
         try :
             result_type = self.Op_Map [name]
         except KeyError :
-            try :
-                comp = getattr (Q, name) (attr)
-            except AttributeError :
-                raise
-            else :
-                q = getattr (comp, "Q", None)
-                if isinstance (q, _Type_) :
-                    result = q
-                else :
-                    raise AttributeError (name)
+            raise AttributeError (name)
         else :
-            result = result_type (attr, self.cooker, self._attr_name)
-        setattr (self, name, result)
-        return result
+            result = result_type (attr, self._cooker, self._attr_name)
+            setattr (self, name, result)
+            return result
     # end def __getattr__
 
     def __str__ (self) :
         return "<%s.Q [Attr.Type.Filter %s]>" % \
-            (self._attr_name, self.__class__.__name__)
+            (self._q_name, self.__class__.__name__)
     # end def __str__
 
 # end class _Type_
+
+class Boolean (_Type_) :
+
+    Table  = dict \
+        ( EQ                 = Equal
+        )
+
+# end class Boolean
 
 class Ckd (_Type_) :
 
@@ -557,7 +616,32 @@ class Ckd (_Type_) :
 
 # end class Ckd
 
-class Composite (_Type_) :
+class _Composite_ (_Type_) :
+
+    @TFL.Meta.Once_Property
+    def Children (self) :
+        return tuple \
+            (getattr (self, c.name) for c in self._inner_attrs)
+    # end def Children
+
+    def __getattr__ (self, name) :
+        try :
+            result = self.__super.__getattr__ (name)
+        except AttributeError :
+            head, _, tail = split_hst (name, ".")
+            try :
+                result = getattr (self._attr.E_Type, head).Q.Inner (self)
+                setattr (self, head, result)
+                if tail :
+                    result = getattr (result, tail)
+            except AttributeError :
+                raise AttributeError (name)
+        return result
+    # end def __getattr__
+
+# end class _Composite_
+
+class Composite (_Composite_) :
 
     Table  = dict ()
     _Table = dict \
@@ -570,10 +654,10 @@ class Composite (_Type_) :
         , NE                 = Composite_Not_Equal
         )
 
-    @TFL.Meta.Once_Property
-    def Children (self) :
-        return tuple (c.Q for c in self.attr.E_Type.user_attr)
-    # end def Children
+    @property
+    def _inner_attrs (self) :
+        return self._attr.E_Type.user_attr
+    # end def _inner_attrs
 
 # end class Composite
 
@@ -593,7 +677,7 @@ class Date (_Type_) :
 
 # end class Date
 
-class Id_Entity (_Type_) :
+class Id_Entity (_Composite_) :
 
     deep   = True
     Table  = dict \
@@ -608,10 +692,10 @@ class Id_Entity (_Type_) :
         , LT                 = Id_Entity_Less_Than
         )
 
-    @TFL.Meta.Once_Property
-    def Children (self) :
-        return tuple (c.Q for c in self.attr.E_Type.primary)
-    # end def Children
+    @property
+    def _inner_attrs (self) :
+        return self._attr.E_Type.primary
+    # end def _inner_attrs
 
 # end class Id_Entity
 
@@ -633,13 +717,13 @@ class Raw (String) :
 
     @TFL.Meta.Once_Property
     def _attr_name (self) :
-        return self.attr.raw_name
+        return self._attr.raw_name
     # end def _attr_name
 
     @TFL.Meta.Once_Property
-    def cooker (self) :
+    def _cooker (self) :
         return unicode
-    # end def cooker
+    # end def _cooker
 
 # end class Raw
 

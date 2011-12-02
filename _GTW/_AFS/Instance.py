@@ -48,6 +48,7 @@
 #     4-Apr-2011 (CT) `collapsed` added to `Instance.as_json_cargo`
 #     7-Apr-2011 (CT) `edit` added
 #    13-Apr-2011 (CT) `allow_new` added to `Instance.as_json_cargo`
+#     2-Dec-2011 (CT) Move property `pid` from `Instance` to `_Base_`, add `uid`
 #    ««revision-date»»···
 #--
 
@@ -82,10 +83,26 @@ class _Base_ (TFL.Meta.Object) :
         return result
     # end def as_json_cargo
 
+    @property
+    def pid (self) :
+        try :
+            return self.edit and self.edit.get ("pid")
+        except LookupError :
+            pass
+    # end def pid
+
     @Once_Property
     def type (self) :
         return self.elem.__class__.__name__
     # end def type
+
+    @property
+    def uid (self) :
+        try :
+            return self.edit and self.edit.get ("uid")
+        except LookupError :
+            pass
+    # end def uid
 
     @Once_Property
     def widget (self) :
@@ -231,14 +248,6 @@ class Instance (_Base_) :
             result = self.elem.init
         return result
     # end def init
-
-    @property
-    def pid (self) :
-        try :
-            return self.edit and self.edit.get ("pid")
-        except LookupError :
-            pass
-    # end def pid
 
     @property
     def prefilled (self) :

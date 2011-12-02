@@ -199,6 +199,7 @@
 #    16-Nov-2011 (CT) Add `sorted_by` to `_A_Composite_` and `_A_Id_Entity_`
 #    17-Nov-2011 (CT) Add `E_Type`
 #    21-Nov-2011 (CT) Add `ui_name_T`
+#     2-Dec-2011 (CT) Add `A_Boolean.Q_Ckd_Type`
 #    ««revision-date»»···
 #--
 
@@ -1299,6 +1300,7 @@ class A_Boolean (_A_Named_Value_) :
 
     example        = u"no"
     typ            = "Boolean"
+    Q_Ckd_Type     = MOM.Attr.Filter.Boolean
     P_Type         = bool
     ui_length      = 5
 

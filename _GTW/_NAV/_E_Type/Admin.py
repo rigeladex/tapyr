@@ -136,6 +136,8 @@
 #    25-Nov-2011 (CT) Add `limit` and `offset` to result of `rendered` for json
 #    26-Nov-2011 (CT) Add `button_types` and `buttons` to `rendered`
 #    30-Nov-2011 (CT) Add class variable `Admin.button_types`
+#     2-Dec-2011 (CT) Change `_auto_list_display` to `Once_Property`, change
+#                     `qr_spec` to work with dotted names in `_list_display`
 #    ««revision-date»»···
 #--
 
@@ -846,7 +848,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     @Once_Property
     def list_display (self) :
         if self._list_display is None :
-            return self._auto_list_display (self.ETM)
+            return self._auto_list_display
         etype = self.ETM.E_Type
         return tuple \
             (self._attr_kind (etype, a) for a in self._list_display)
@@ -859,7 +861,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def qr_spec (self) :
-        return QRS (self.E_Type, self.list_display)
+        field_names = self._list_display
+        if field_names is None :
+            field_names = tuple (a.name for a in self._auto_list_display)
+        return QRS (self.E_Type, field_names)
     # end def qr_spec
 
     def rendered (self, handler, template = None) :
@@ -936,7 +941,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return getattr (etype, name)
     # end def _attr_kind
 
-    def _auto_list_display (self, E_Type) :
+    @Once_Property
+    def _auto_list_display (self, ) :
+        E_Type = self.ETM.E_Type
         return list (ichain (E_Type.primary, E_Type.user_attr))
     # end def _auto_list_display
 

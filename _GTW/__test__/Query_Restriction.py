@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Nov-2011 (CT) Creation
+#     2-Dec-2011 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -64,19 +65,20 @@ _test_code = """
 
     >>> AS  = MOM.Attr.Selector
     >>> BiR = SRM.Boat_in_Regatta.E_Type
-    >>> qrs = QRS (BiR, AS.List (AS.primary, AS.Name ("points", "place")) (BiR))
+    >>> fns = AS.List (AS.primary, AS.Name ("points", "place")) (BiR).names
+    >>> qrs = QRS (BiR, fns)
     >>> print formatted (qrs.as_json_cargo)
     { 'filters' :
         [ { 'children' :
               [ { 'children' :
                     [ { 'name' : 'name'
-                      , 'sig_key' : 2
+                      , 'sig_key' : 3
                       , 'ui_name' : 'Name'
                       }
                     ]
                 , 'deep' : True
                 , 'name' : 'left'
-                , 'sig_key' : 1
+                , 'sig_key' : 2
                 , 'ui_name' : 'Class'
                 }
               , { 'name' : 'nation'
@@ -84,23 +86,23 @@ _test_code = """
                 , 'ui_name' : 'Nation'
                 }
               , { 'name' : 'sail_number'
-                , 'sig_key' : 2
+                , 'sig_key' : 3
                 , 'ui_name' : 'Sail number'
                 }
               , { 'name' : 'sail_number_x'
-                , 'sig_key' : 2
+                , 'sig_key' : 3
                 , 'ui_name' : 'Sail number x'
                 }
               ]
           , 'deep' : True
           , 'name' : 'left'
-          , 'sig_key' : 1
+          , 'sig_key' : 2
           , 'ui_name' : 'Boat'
           }
         , { 'children' :
               [ { 'children' :
                     [ { 'name' : 'name'
-                      , 'sig_key' : 2
+                      , 'sig_key' : 3
                       , 'ui_name' : 'Name'
                       }
                     , { 'children' :
@@ -119,13 +121,13 @@ _test_code = """
                     ]
                 , 'deep' : True
                 , 'name' : 'left'
-                , 'sig_key' : 1
+                , 'sig_key' : 2
                 , 'ui_name' : 'Event'
                 }
               ]
           , 'deep' : True
           , 'name' : 'right'
-          , 'sig_key' : 1
+          , 'sig_key' : 2
           , 'ui_name' : 'Regatta'
           }
         , { 'name' : 'points'
@@ -186,11 +188,11 @@ _test_code = """
             , 'LT'
             , 'NE'
             )
-        , 1 :
+        , 2 :
             ( 'EQ'
             , 'NE'
             )
-        , 2 :
+        , 3 :
             ( 'CONTAINS'
             , 'ENDSWITH'
             , 'EQ'
@@ -204,6 +206,156 @@ _test_code = """
         }
     , 'ui_sep' : '/'
     }
+
+    >>> def show_f (f, indent = "") :
+    ...     print "%%s%%s" %% (indent, f), f._outer
+    ...     for c in f.Children :
+    ...         show_f (c, indent + "    ")
+
+    >>> for f in qrs.filters :
+    ...     show_f (f)
+    <left.Q [Attr.Type.Filter Id_Entity]> None
+        <left.left.Q [Attr.Type.Filter Id_Entity]> <left.Q [Attr.Type.Filter Id_Entity]>
+            <left.left.name.Q [Attr.Type.Filter String]> <left.left.Q [Attr.Type.Filter Id_Entity]>
+        <left.nation.Q [Attr.Type.Filter Ckd]> <left.Q [Attr.Type.Filter Id_Entity]>
+        <left.sail_number.Q [Attr.Type.Filter Raw]> <left.Q [Attr.Type.Filter Id_Entity]>
+        <left.sail_number_x.Q [Attr.Type.Filter String]> <left.Q [Attr.Type.Filter Id_Entity]>
+    <right.Q [Attr.Type.Filter Id_Entity]> None
+        <right.left.Q [Attr.Type.Filter Id_Entity]> <right.Q [Attr.Type.Filter Id_Entity]>
+            <right.left.name.Q [Attr.Type.Filter String]> <right.left.Q [Attr.Type.Filter Id_Entity]>
+            <right.left.date.Q [Attr.Type.Filter Composite]> <right.left.Q [Attr.Type.Filter Id_Entity]>
+                <right.left.date.start.Q [Attr.Type.Filter Date]> <right.left.date.Q [Attr.Type.Filter Composite]>
+                <right.left.date.finish.Q [Attr.Type.Filter Date]> <right.left.date.Q [Attr.Type.Filter Composite]>
+    <points.Q [Attr.Type.Filter Ckd]> None
+    <place.Q [Attr.Type.Filter Ckd]> None
+
+    >>> print formatted (list (f.as_template_elem for f in qrs.filters))
+    [ Record
+      ( attr = Boat `left`
+      , children =
+          [ Record
+            ( attr = Boat_Class `left`
+            , children =
+                [ Record
+                  ( attr = String `name`
+                  , id = 'left__left__name'
+                  , name = 'name'
+                  , q_name = 'left.left.name'
+                  , sig_key = 3
+                  , ui_name = 'Boat/Class/Name'
+                  )
+                ]
+            , deep = True
+            , id = 'left__left'
+            , name = 'left'
+            , q_name = 'left.left'
+            , sig_key = 2
+            , ui_name = 'Boat/Class'
+            )
+          , Record
+            ( attr = Nation `nation`
+            , id = 'left__nation'
+            , name = 'nation'
+            , q_name = 'left.nation'
+            , sig_key = 0
+            , ui_name = 'Boat/Nation'
+            )
+          , Record
+            ( attr = Int `sail_number`
+            , id = 'left__sail_number'
+            , name = 'sail_number'
+            , q_name = 'left.sail_number'
+            , sig_key = 3
+            , ui_name = 'Boat/Sail number'
+            )
+          , Record
+            ( attr = String `sail_number_x`
+            , id = 'left__sail_number_x'
+            , name = 'sail_number_x'
+            , q_name = 'left.sail_number_x'
+            , sig_key = 3
+            , ui_name = 'Boat/Sail number x'
+            )
+          ]
+      , deep = True
+      , id = 'left'
+      , name = 'left'
+      , q_name = 'left'
+      , sig_key = 2
+      , ui_name = 'Boat'
+      )
+    , Record
+      ( attr = Regatta `right`
+      , children =
+          [ Record
+            ( attr = Regatta_Event `left`
+            , children =
+                [ Record
+                  ( attr = String `name`
+                  , id = 'right__left__name'
+                  , name = 'name'
+                  , q_name = 'right.left.name'
+                  , sig_key = 3
+                  , ui_name = 'Regatta/Event/Name'
+                  )
+                , Record
+                  ( attr = Date_Interval `date`
+                  , children =
+                      [ Record
+                        ( attr = Date `start`
+                        , id = 'right__left__date__start'
+                        , name = 'start'
+                        , q_name = 'right.left.date.start'
+                        , sig_key = 0
+                        , ui_name = 'Regatta/Event/Date/Start'
+                        )
+                      , Record
+                        ( attr = Date `finish`
+                        , id = 'right__left__date__finish'
+                        , name = 'finish'
+                        , q_name = 'right.left.date.finish'
+                        , sig_key = 0
+                        , ui_name = 'Regatta/Event/Date/Finish'
+                        )
+                      ]
+                  , id = 'right__left__date'
+                  , name = 'date'
+                  , q_name = 'right.left.date'
+                  , ui_name = 'Regatta/Event/Date'
+                  )
+                ]
+            , deep = True
+            , id = 'right__left'
+            , name = 'left'
+            , q_name = 'right.left'
+            , sig_key = 2
+            , ui_name = 'Regatta/Event'
+            )
+          ]
+      , deep = True
+      , id = 'right'
+      , name = 'right'
+      , q_name = 'right'
+      , sig_key = 2
+      , ui_name = 'Regatta'
+      )
+    , Record
+      ( attr = Int `points`
+      , id = 'points'
+      , name = 'points'
+      , q_name = 'points'
+      , sig_key = 0
+      , ui_name = 'Points'
+      )
+    , Record
+      ( attr = Int `place`
+      , id = 'place'
+      , name = 'place'
+      , q_name = 'place'
+      , sig_key = 0
+      , ui_name = 'Place'
+      )
+    ]
 
     >>> scope.destroy ()
 

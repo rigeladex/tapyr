@@ -32,34 +32,52 @@
 ##     4-Nov-2011 (CT) Change `_field` to only set `class` if necessary
 ##     4-Nov-2011 (CT) Add `named_object`, change `named_value` to use `select`
 ##    30-Nov-2011 (CT) Change `_field` to add `required` to `kw`
+##     2-Dec-2011 (CT) Add `id_entity`; remove argument `form` from signatures
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
 
-{%- macro boolean (form, elem) -%}
+{%- macro boolean (elem) -%}
   {%- set kw = {} if not elem.cooked else dict (checked = "checked") %}
-  {{ _field (X.input.checkbox, form, elem, ** kw) }}
+  {{ _field (X.input.checkbox, elem, ** kw) }}
 {%- endmacro -%} {#- boolean -#}
 
-{%- macro date (form, elem) -%}
-  {{ _field (X.input.date, form, elem) }}
+{%- macro date (elem) -%}
+  {{ _field (X.input.date, elem) }}
 {%- endmacro -%} {#- date -#}
 
-{%- macro datetime (form, elem) -%}
-  {{ _field (X.input.datetime, form, elem) }}
+{%- macro datetime (elem) -%}
+  {{ _field (X.input.datetime, elem) }}
 {%- endmacro -%} {#- datetime -#}
 
-{%- macro email (form, elem) -%}
-  {{ _field (X.input.email, form, elem) }}
+{%- macro email (elem) -%}
+  {{ _field (X.input.email, elem) }}
 {%- endmacro -%} {#- email -#}
 
-{%- macro hidden (form, elem) -%}
-  {{ _field (X.input.hidden, form, elem)}}
+{%- macro hidden (elem) -%}
+  {{ _field (X.input.hidden, elem)}}
 {%- endmacro -%} {#- hidden -#}
 
-{%- macro named_value (form, elem) -%}
+{%- macro id_entity (elem) -%}
+  {{ X.input.text
+      ( class     = "value hidden"
+      , name      = elem.name
+      , value     = elem.pid
+      )
+  }}
+  {{ _field
+      ( X.input.text, elem
+      , class     = "value display"
+      , disabled  = True
+      , name      = None
+      , value     = elem.uid
+      )
+  }}
+{%- endmacro -%} {#- id_entity -#}
+
+{%- macro named_value (elem) -%}
   {{ X.input.select
       ( choices  = elem.choices
       , id       = elem.id
@@ -69,7 +87,7 @@
   }}
 {%- endmacro -%} {#- named_value -#}
 
-{%- macro named_object (form, elem) -%}
+{%- macro named_object (elem) -%}
   {{ X.input.select_v
       ( choices  = elem.choices
       , id       = elem.id
@@ -79,30 +97,30 @@
   }}
 {%- endmacro -%} {#- named_object -#}
 
-{%- macro number (form, elem) -%}
+{%- macro number (elem) -%}
   {{ _field
-      ( X.input.number, form, elem
+      ( X.input.number, elem
       , max           = elem.max_value
       , min           = elem.min_value
       )
   }}
 {%- endmacro -%} {#- number -#}
 
-{%- macro password (form, elem) -%}
-  {{ _field (X.input.password, form, elem) }}
+{%- macro password (elem) -%}
+  {{ _field (X.input.password, elem) }}
 {%- endmacro -%} {#- password -#}
 
-{%- macro string (form, elem) -%}
+{%- macro string (elem) -%}
   {{ _field
-      ( X.input.text, form, elem
+      ( X.input.text, elem
       , max_length    = elem.max_length
       )
   }}
 {%- endmacro -%} {#- string -#}
 
-{%- macro text (form, elem) -%}
+{%- macro text (elem) -%}
   {{ _field
-      ( X.input.textarea, form, elem
+      ( X.input.textarea, elem
       , cols          = elem.cols or 80
       , max_length    = elem.max_length
       , rows          = elem.rows or 32
@@ -110,11 +128,11 @@
   }}
 {%- endmacro -%} {#- text -#}
 
-{%- macro time (form, elem) -%}
-  {{ _field (X.input.time, form, elem) }}
+{%- macro time (elem) -%}
+  {{ _field (X.input.time, elem) }}
 {%- endmacro -%} {#- time -#}
 
-{%- macro _field (typ, fo, elem) -%}
+{%- macro _field (typ, elem) -%}
   {%- set id = elem.id -%}
   {%- set kw = GTW.dict
       ( id            = id
