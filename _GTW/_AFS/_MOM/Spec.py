@@ -63,6 +63,9 @@
 #                     `other_role_name` to find `result`
 #     9-Nov-2011 (CT) Add `css_align` for attribute types
 #     2-Dec-2011 (CT) Add `MAT._A_Id_Entity_.input_widget`
+#     4-Dec-2011 (CT) Use `attr.Choices` instead of home-grown code
+#     4-Dec-2011 (CT) Comment out `Boolean.input_widget` (FF8 doesn't
+#                     submit unchecked checkboxes!)
 #    ««revision-date»»···
 #--
 
@@ -86,7 +89,7 @@ import _TFL.multimap
 
 MAT                                  = MOM.Attr
 MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
-MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
+###MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
 MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
 MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
 MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")
@@ -200,13 +203,8 @@ class _Field_ (_Base_) :
             , required    = attr.is_required
             , ui_name     = ui_name
             )
-        if isinstance (at, MOM.Attr._A_Named_Object_) :
-            result ["choices"] = sorted \
-                ( ((k, str (v)) for k, v in at.Table.iteritems ())
-                , key = TFL.Getter [1]
-                )
-        elif isinstance (at, MOM.Attr._A_Named_Value_) :
-            result ["choices"] = sorted (at.Table)
+        if at.Choices :
+            result ["choices"] = at.Choices
         cssc = " ".join (c for c in self._css_classes (attr) if c)
         if cssc :
             result ["css_class"] = cssc

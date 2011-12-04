@@ -201,6 +201,8 @@
 #    21-Nov-2011 (CT) Add `ui_name_T`
 #     2-Dec-2011 (CT) Add `A_Boolean.Q_Ckd_Type`
 #     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
+#     4-Dec-2011 (CT) Add `Boolean.cooked` (to fix `Boolean.Q.EQ ("no")`)
+#     4-Dec-2011 (CT) Add `Choices`
 #    ««revision-date»»···
 #--
 
@@ -243,6 +245,7 @@ class A_Attr_Type (object) :
     auto_up_depends     = ()
     check               = set ()
     check_syntax        = None
+    Choices             = None
     code_format         = u"%r"
     completer           = None
     computed            = None
@@ -718,8 +721,13 @@ class _A_Named_Value_ (A_Attr_Type) :
             raise
     # end def as_string
 
+    @TFL.Meta.Once_Property
+    def Choices (self) :
+        return sorted (self.Table)
+    # end def Choices
+
     def eligible_raw_values (self, obj = None) :
-        return sorted (self.__class__.Table.iterkeys ())
+        return sorted (self.__class__.Table)
     # end def eligible_raw_values
 
     def _from_string (self, s, obj, glob, locl) :
@@ -1141,6 +1149,14 @@ class _A_Named_Object_ (_A_Named_Value_) :
 
     # end class Pickler
 
+    @TFL.Meta.Once_Property
+    def Choices (self) :
+        return sorted \
+            ( ((k, str (v)) for k, v in self.Table.iteritems ())
+            , key = TFL.Getter [1]
+            )
+    # end def Choices
+
 # end class _A_Named_Object_
 
 class _A_Typed_Collection_ (_A_Collection_) :
@@ -1309,6 +1325,18 @@ class A_Boolean (_A_Named_Value_) :
         ( no       = False
         , yes      = True
         )
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, basestring) :
+            try :
+                return soc.Table [value]
+            except KeyError :
+                raise ValueError \
+                    (u"%s not in %s" % (s, sorted (soc.Table)))
+        else :
+            return bool (value)
+    # end def cooked
 
     def _from_string (self, s, obj, glob, locl) :
         if not s :

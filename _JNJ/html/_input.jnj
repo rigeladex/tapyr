@@ -33,6 +33,8 @@
 ##                     `selected` (otherwise the first value is selected by
 ##                     Firefox)
 ##    10-Oct-2011 (CT) `select` changed to always include an empty `option`
+##     4-Dec-2011 (CT) Change `select` to include empty `option` at end if
+##                     `selected` (otherwise FF8 displays the empty value)
 ##    ««revision-date»»···
 ##--
 #}
@@ -48,7 +50,9 @@
 {%- macro select (name, choices = (), selected = None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
   <select name="{{ name }}"{{ kwargs|xmlattr }}>
-    {{ option ("---", "", "") }}
+    {%- if not selected %}
+      {{ option ("---", "", "") }}
+    {% endif -%}
     {%- if choices -%}
       {%- for c in choices %}
         {{ option (c, None, selected) }}
@@ -56,6 +60,9 @@
     {%- elif caller -%}
       {{ caller () }}
     {%- endif %}
+    {%- if selected %}
+      {{ option ("---", "", "") }}
+    {% endif -%}
   </select>
 {%- endmacro -%} {#- select -#}
 

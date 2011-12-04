@@ -29,6 +29,7 @@
 #     4-Dec-2011 (CT) Creation (factored from MOM.Attr.Filter)
 #     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
 #     4-Dec-2011 (CT) Add `_full_name`
+#     4-Dec-2011 (CT) Add `choices` to `_as_template_elem_inv`
 #    ««revision-date»»···
 #--
 
@@ -148,12 +149,15 @@ class _Type_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def _as_template_elem_inv (self) :
+        attr     = self._attr
         result   = dict \
             ( self._as_json_cargo_inv
-            , attr        = self._attr
+            , attr        = attr
             , id          = self._id
             , full_name   = self._full_name
             )
+        if attr.Choices :
+            result ["choices"] = attr.Choices
         return result
     # end def _as_template_elem_inv
 
@@ -207,6 +211,10 @@ class _Type_ (TFL.Meta.Object) :
             setattr (self, name, result)
             return result
     # end def __getattr__
+
+    def __repr__ (self) :
+        return str (self)
+    # end def __repr__
 
     def __str__ (self) :
         return "<%s.Q [Attr.Type.Querier %s]>" % \

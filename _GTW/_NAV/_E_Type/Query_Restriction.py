@@ -200,17 +200,19 @@ class Query_Restriction (TFL.Meta.Object) :
         name   = ".".join (names)
         q      = getattr (E_Type.AQ, name)
         qop    = getattr (q, op)
-        f = TFL.Record \
-            ( attr     = q._attr
-            , key      = k
-            , name     = name
+        ate    = q.as_template_elem
+        f = dict \
+            ( ate._kw
+            , attr     = q._attr
+            , edit     = value
+            , id       = k
+            , name     = k
             , op       = qop.op_sym
             , op_nam   = _T (qop.op_nam)
             , op_desc  = _T (qop.desc)
-            , ui_name  = q._ui_name_T
             , value    = value
             )
-        return f, qop (value)
+        return TFL.Record (** f), qop (value)
     # end def _setup_attr
 
     def _setup_filters (self, E_Type, data) :
@@ -232,13 +234,15 @@ class Query_Restriction (TFL.Meta.Object) :
             keys = tuple ("%s%s.%s" % (sign, name, k) for k in ET.sorted_by)
         else :
             keys = (s, )
-        f = TFL.Record \
-            ( attr     = q._attr
+        ate   = q.as_template_elem
+        f     = dict \
+            ( ate._kw
+            , attr     = q._attr
             , name     = s
             , sign     = sign
-            , ui_name  = "%s%s" % (sign, q._ui_name_T)
+            , ui_name  = "%s%s" % (sign, ate.ui_name)
             )
-        return f, keys
+        return TFL.Record (** f), keys
     # end def _setup_order_by_1
 
     def _setup_order_by (self, E_Type, data) :

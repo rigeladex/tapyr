@@ -48,8 +48,36 @@ _test_code = """
     >>> qr = QR.from_request_data (PAP.Person.E_Type, rd)
     >>> print qr.limit, qr.offset
     24 0
-    >>> print formatted_1 (qr.filters)
-    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', op_desc = 'Select entities where the attribute is greater than, or equal to, the specified value', op_nam = 'greater-equal', ui_name = 'Last name', value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', op_desc = 'Select entities where the attribute is equal to the specified value', op_nam = 'equal', ui_name = 'Lifetime/Start', value = '2008'))
+
+    >>> print formatted (qr.filters)
+    ( Record
+      ( attr = String `last_name`
+      , edit = 'Lee'
+      , full_name = 'last_name'
+      , id = 'last_name___GE'
+      , name = 'last_name___GE'
+      , op = '>='
+      , op_desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+      , op_nam = 'greater-equal'
+      , sig_key = 3
+      , ui_name = 'Last name'
+      , value = 'Lee'
+      )
+    , Record
+      ( attr = Date `start`
+      , edit = '2008'
+      , full_name = 'lifetime.start'
+      , id = 'lifetime__start___EQ'
+      , name = 'lifetime__start___EQ'
+      , op = '=='
+      , op_desc = 'Select entities where the attribute is equal to the specified value'
+      , op_nam = 'equal'
+      , sig_key = 0
+      , ui_name = 'Lifetime/Start'
+      , value = '2008'
+      )
+    )
+
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print formatted_1 (sorted (qr.other_req_data.items ()))
@@ -58,8 +86,44 @@ _test_code = """
     ['foo', 'last_name___GE', 'lifetime__start___EQ', 'limit']
 
     >>> qo = QR.from_request_data (PAP.Person.E_Type, dict (order_by = "-lifetime,last_name"))
-    >>> print formatted_1 (qo.order_by)
-    (Record (attr = Date_Interval `lifetime`, name = '-lifetime', sign = '-', ui_name = '-Lifetime'), Record (attr = String `last_name`, name = 'last_name', sign = '', ui_name = 'Last name'))
+    >>> print formatted (qo.order_by)
+    ( Record
+      ( attr = Date_Interval `lifetime`
+      , children =
+          [ Record
+            ( attr = Date `start`
+            , full_name = 'lifetime.start'
+            , id = 'lifetime__start'
+            , name = 'start'
+            , sig_key = 0
+            , ui_name = 'Lifetime/Start'
+            )
+          , Record
+            ( attr = Date `finish`
+            , full_name = 'lifetime.finish'
+            , id = 'lifetime__finish'
+            , name = 'finish'
+            , sig_key = 0
+            , ui_name = 'Lifetime/Finish'
+            )
+          ]
+      , full_name = 'lifetime'
+      , id = 'lifetime'
+      , name = '-lifetime'
+      , sign = '-'
+      , ui_name = '-Lifetime'
+      )
+    , Record
+      ( attr = String `last_name`
+      , full_name = 'last_name'
+      , id = 'last_name'
+      , name = 'last_name'
+      , sig_key = 3
+      , sign = ''
+      , ui_name = 'Last name'
+      )
+    )
+
     >>> print qo.order_by_q
     <Sorted_By: Descending-Getter function for `.lifetime.start`, Descending-Getter function for `.lifetime.finish`, Getter function for `.last_name`>
 
@@ -254,6 +318,168 @@ _test_code = """
             )
           , Record
             ( attr = Nation `nation`
+            , choices =
+                [
+                  ( 'AUS'
+                  , 'Australia'
+                  )
+                ,
+                  ( 'AUT'
+                  , 'Austria'
+                  )
+                ,
+                  ( 'BEL'
+                  , 'Belgium'
+                  )
+                ,
+                  ( 'CAN'
+                  , 'Canada'
+                  )
+                ,
+                  ( 'CRO'
+                  , 'Croatia'
+                  )
+                ,
+                  ( 'CYP'
+                  , 'Cyprus'
+                  )
+                ,
+                  ( 'CZE'
+                  , 'Czech Republic'
+                  )
+                ,
+                  ( 'DEN'
+                  , 'Denmark'
+                  )
+                ,
+                  ( 'EST'
+                  , 'Estonia'
+                  )
+                ,
+                  ( 'FIN'
+                  , 'Finland'
+                  )
+                ,
+                  ( 'FRA'
+                  , 'France'
+                  )
+                ,
+                  ( 'GER'
+                  , 'Germany'
+                  )
+                ,
+                  ( 'GBR'
+                  , 'Great Britain'
+                  )
+                ,
+                  ( 'GRE'
+                  , 'Greece'
+                  )
+                ,
+                  ( 'HUN'
+                  , 'Hungary'
+                  )
+                ,
+                  ( 'ISL'
+                  , 'Iceland'
+                  )
+                ,
+                  ( 'IRL'
+                  , 'Ireland'
+                  )
+                ,
+                  ( 'ITA'
+                  , 'Italy'
+                  )
+                ,
+                  ( 'LAT'
+                  , 'Latvia'
+                  )
+                ,
+                  ( 'LIE'
+                  , 'Lichtenstein'
+                  )
+                ,
+                  ( 'LTU'
+                  , 'Lithuania'
+                  )
+                ,
+                  ( 'LUX'
+                  , 'Luxembourg'
+                  )
+                ,
+                  ( 'MLT'
+                  , 'Malta'
+                  )
+                ,
+                  ( 'MON'
+                  , 'Monaco'
+                  )
+                ,
+                  ( 'MNE'
+                  , 'Montenegro'
+                  )
+                ,
+                  ( 'NED'
+                  , 'Netherlands'
+                  )
+                ,
+                  ( 'NZL'
+                  , 'New Zealand'
+                  )
+                ,
+                  ( 'NOR'
+                  , 'Norway'
+                  )
+                ,
+                  ( 'POL'
+                  , 'Poland'
+                  )
+                ,
+                  ( 'POR'
+                  , 'Portugal'
+                  )
+                ,
+                  ( 'ROU'
+                  , 'Romania'
+                  )
+                ,
+                  ( 'RUS'
+                  , 'Russia'
+                  )
+                ,
+                  ( 'SRB'
+                  , 'Serbia'
+                  )
+                ,
+                  ( 'SVK'
+                  , 'Slovakia'
+                  )
+                ,
+                  ( 'SLO'
+                  , 'Slovenia'
+                  )
+                ,
+                  ( 'ESP'
+                  , 'Spain'
+                  )
+                ,
+                  ( 'SWE'
+                  , 'Sweden'
+                  )
+                ,
+                  ( 'SUI'
+                  , 'Switzerland'
+                  )
+                ,
+                  ( 'UKR'
+                  , 'Ukraine'
+                  )
+                ,
+                  ( 'USA'
+                  , 'United States'
+                  )
+                ]
             , full_name = 'left.nation'
             , id = 'left__nation'
             , name = 'nation'
