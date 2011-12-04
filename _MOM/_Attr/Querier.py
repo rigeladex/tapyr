@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     4-Dec-2011 (CT) Creation (factored from MOM.Attr.Filter)
+#     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
 #    ««revision-date»»···
 #--
 
@@ -190,13 +191,12 @@ class _Type_ (TFL.Meta.Object) :
     # end def Inner
 
     def __getattr__ (self, name) :
-        attr = self._attr
         try :
             result_type = self.Op_Map [name]
         except KeyError :
             raise AttributeError (name)
         else :
-            result = result_type (attr, self._cooker, self._attr_name)
+            result = result_type (self)
             setattr (self, name, result)
             return result
     # end def __getattr__

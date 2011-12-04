@@ -46,6 +46,7 @@
 #     2-Dec-2011 (CT) Factor `_Composite_`, move parts of
 #                     `_Type_.__getattr__` there
 #     4-Dec-2011 (CT) Factor classes to `MOM.Attr.Querier`
+#     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
 #    ««revision-date»»···
 #--
 
@@ -100,10 +101,8 @@ class _Filter_ (TFL.Meta.Object) :
     op_fct        = None ### Must be redefined for subclasses or instances
     op_sym        = None ### Must be redefined for subclasses
 
-    def __init__ (self, attr, cooker = None, name = None) :
-        self.attr      = attr
-        self.attr_name = name or self.attr.name
-        self.cooker    = cooker
+    def __init__ (self, querier) :
+        self.querier = querier
     # end def __init__
 
     def __call__ (self, value, prefix = None) :
@@ -115,6 +114,21 @@ class _Filter_ (TFL.Meta.Object) :
                 return None
         return self.query (value, prefix)
     # end def __call__
+
+    @TFL.Meta.Once_Property
+    def attr (self) :
+        return self.querier._attr
+    # end def attr
+
+    @TFL.Meta.Once_Property
+    def attr_name (self) :
+        return self.querier._attr_name
+    # end def attr_name
+
+    @TFL.Meta.Once_Property
+    def cooker (self) :
+        return self.querier._cooker
+    # end def cooker
 
     def a_query (self, prefix = None) :
         name = self.attr_name
