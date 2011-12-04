@@ -200,6 +200,7 @@
 #    17-Nov-2011 (CT) Add `E_Type`
 #    21-Nov-2011 (CT) Add `ui_name_T`
 #     2-Dec-2011 (CT) Add `A_Boolean.Q_Ckd_Type`
+#     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
 #    ««revision-date»»···
 #--
 
@@ -214,6 +215,7 @@ from   _MOM._Attr.Filter     import Q
 import _MOM._Attr.Coll
 import _MOM._Attr.Completer
 import _MOM._Attr.Kind
+import _MOM._Attr.Querier
 import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
 
@@ -224,7 +226,6 @@ from   _TFL                  import sos
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 import _TFL.Currency
-import _TFL.Filter
 
 import datetime
 import decimal
@@ -259,8 +260,8 @@ class A_Attr_Type (object) :
     needs_raw_value     = False
     Pickler             = None
     P_Type              = None ### Python type of attribute values
-    Q_Ckd_Type          = MOM.Attr.Filter.Ckd
-    Q_Raw_Type          = MOM.Attr.Filter.Raw
+    Q_Ckd_Type          = MOM.Attr.Querier.Ckd
+    Q_Raw_Type          = MOM.Attr.Querier.Raw
     query               = None
     query_fct           = None
     rank                = 0
@@ -555,7 +556,7 @@ class _A_Composite_ (_A_Entity_) :
 
     Kind_Mixins         = (MOM.Attr._Composite_Mixin_, )
 
-    Q_Ckd_Type          = MOM.Attr.Filter.Composite
+    Q_Ckd_Type          = MOM.Attr.Querier.Composite
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
@@ -875,7 +876,7 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 class _A_Id_Entity_ (_A_Entity_) :
     """Models an attribute referring to an entity."""
 
-    Q_Ckd_Type          = MOM.Attr.Filter.Id_Entity
+    Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
 
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
@@ -1014,7 +1015,7 @@ class _A_String_Base_ (A_Attr_Type) :
     default           = u""
     example           = u"foo"
     max_length        = 0
-    Q_Ckd_Type        = MOM.Attr.Filter.String
+    Q_Ckd_Type        = MOM.Attr.Querier.String
     ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
 
     @TFL.Meta.Once_Property
@@ -1300,7 +1301,7 @@ class A_Boolean (_A_Named_Value_) :
 
     example        = u"no"
     typ            = "Boolean"
-    Q_Ckd_Type     = MOM.Attr.Filter.Boolean
+    Q_Ckd_Type     = MOM.Attr.Querier.Boolean
     P_Type         = bool
     ui_length      = 5
 
@@ -1364,7 +1365,7 @@ class A_Date (_A_Date_) :
     example        = u"2010/10/10"
     typ            = "Date"
     P_Type         = datetime.date
-    Q_Ckd_Type     = MOM.Attr.Filter.Date
+    Q_Ckd_Type     = MOM.Attr.Querier.Date
     ui_length      = 12
     input_formats  = \
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")

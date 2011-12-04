@@ -214,20 +214,20 @@ _test_code = """
 
     >>> for f in qrs.filters :
     ...     show_f (f)
-    <left.Q [Attr.Type.Filter Id_Entity]> None
-        <left.left.Q [Attr.Type.Filter Id_Entity]> <left.Q [Attr.Type.Filter Id_Entity]>
-            <left.left.name.Q [Attr.Type.Filter String]> <left.left.Q [Attr.Type.Filter Id_Entity]>
-        <left.nation.Q [Attr.Type.Filter Ckd]> <left.Q [Attr.Type.Filter Id_Entity]>
-        <left.sail_number.Q [Attr.Type.Filter Raw]> <left.Q [Attr.Type.Filter Id_Entity]>
-        <left.sail_number_x.Q [Attr.Type.Filter String]> <left.Q [Attr.Type.Filter Id_Entity]>
-    <right.Q [Attr.Type.Filter Id_Entity]> None
-        <right.left.Q [Attr.Type.Filter Id_Entity]> <right.Q [Attr.Type.Filter Id_Entity]>
-            <right.left.name.Q [Attr.Type.Filter String]> <right.left.Q [Attr.Type.Filter Id_Entity]>
-            <right.left.date.Q [Attr.Type.Filter Composite]> <right.left.Q [Attr.Type.Filter Id_Entity]>
-                <right.left.date.start.Q [Attr.Type.Filter Date]> <right.left.date.Q [Attr.Type.Filter Composite]>
-                <right.left.date.finish.Q [Attr.Type.Filter Date]> <right.left.date.Q [Attr.Type.Filter Composite]>
-    <points.Q [Attr.Type.Filter Ckd]> None
-    <place.Q [Attr.Type.Filter Ckd]> None
+    <left.Q [Attr.Type.Querier Id_Entity]> None
+        <left.left.Q [Attr.Type.Querier Id_Entity]> <left.Q [Attr.Type.Querier Id_Entity]>
+            <left.left.name.Q [Attr.Type.Querier String]> <left.left.Q [Attr.Type.Querier Id_Entity]>
+        <left.nation.Q [Attr.Type.Querier Ckd]> <left.Q [Attr.Type.Querier Id_Entity]>
+        <left.sail_number.Q [Attr.Type.Querier Raw]> <left.Q [Attr.Type.Querier Id_Entity]>
+        <left.sail_number_x.Q [Attr.Type.Querier String]> <left.Q [Attr.Type.Querier Id_Entity]>
+    <right.Q [Attr.Type.Querier Id_Entity]> None
+        <right.left.Q [Attr.Type.Querier Id_Entity]> <right.Q [Attr.Type.Querier Id_Entity]>
+            <right.left.name.Q [Attr.Type.Querier String]> <right.left.Q [Attr.Type.Querier Id_Entity]>
+            <right.left.date.Q [Attr.Type.Querier Composite]> <right.left.Q [Attr.Type.Querier Id_Entity]>
+                <right.left.date.start.Q [Attr.Type.Querier Date]> <right.left.date.Q [Attr.Type.Querier Composite]>
+                <right.left.date.finish.Q [Attr.Type.Querier Date]> <right.left.date.Q [Attr.Type.Querier Composite]>
+    <points.Q [Attr.Type.Querier Ckd]> None
+    <place.Q [Attr.Type.Querier Ckd]> None
 
     >>> print formatted (list (f.as_template_elem for f in qrs.filters))
     [ Record

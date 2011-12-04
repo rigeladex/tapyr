@@ -46,6 +46,8 @@
 #    25-Oct-2011 (CT) `ui_display_format` format changed (put `last_name` first)
 #    11-Nov-2011 (CT) Adapt to change of `MOM.Attr.Filter`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     4-Dec-2011 (CT) Adapt to factoring of `MOM.Attr.Querier` from
+#                     `MOM.Attr.Filter`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +85,7 @@ class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
 
 # end class Auto_Complete_PN
 
-class Filter_String_FL (MOM.Attr.Filter.String) :
+class Filter_String_FL (MOM.Attr.Querier.String) :
 
     _real_name = "String_FL"
     _Table     = dict (AC = Auto_Complete_PN)

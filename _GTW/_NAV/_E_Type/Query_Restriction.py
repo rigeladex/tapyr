@@ -36,6 +36,7 @@
 #    25-Nov-2011 (CT) Creation continued..... (restrict `offset_f` to `total_f`)
 #    26-Nov-2011 (CT) Creation continued...... (fix `offset` and `offset_f`)
 #     2-Dec-2011 (CT) Creation continued....... (guard `sig_map` for `f`...)
+#     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
 #    ««revision-date»»···
 #--
 
@@ -65,14 +66,14 @@ class Query_Restriction (TFL.Meta.Object) :
     filters     = ()
     filters_q   = ()
     limit       = 0
-    name_sep    = MOM.Attr.Filter.id_sep
+    name_sep    = MOM.Attr.Querier.id_sep
     offset      = 0
     op_sep      = "___"
     order_by    = ()
     order_by_q  = ()
     query_b     = None
     query_f     = None
-    ui_sep      = MOM.Attr.Filter.ui_sep
+    ui_sep      = MOM.Attr.Querier.ui_sep
 
     _a_pat      = Regexp \
         ( "".join
@@ -314,7 +315,7 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
     @property
     def op_map (self) :
         result = {}
-        for k, v in MOM.Attr.Filter._Type_.Base_Op_Table.iteritems () :
+        for k, v in MOM.Attr.Querier._Type_.Base_Op_Table.iteritems () :
             result [k] = dict (desc = _T (v.desc), sym = _T (v.op_sym))
         return result
     # end def op_map
@@ -322,7 +323,7 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
     @Once_Property
     def sig_map (self) :
         result = {}
-        Signatures = MOM.Attr.Filter._Type_.Signatures
+        Signatures = MOM.Attr.Querier._Type_.Signatures
         for f in uniq (f.Op_Keys for f in self.filters_transitive) :
             if f :
                 result [Signatures [f]] = f
