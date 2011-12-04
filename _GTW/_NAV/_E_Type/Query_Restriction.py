@@ -36,7 +36,7 @@
 #    25-Nov-2011 (CT) Creation continued..... (restrict `offset_f` to `total_f`)
 #    26-Nov-2011 (CT) Creation continued...... (fix `offset` and `offset_f`)
 #     2-Dec-2011 (CT) Creation continued....... (guard `sig_map` for `f`...)
-#     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
+#     4-Dec-2011 (CT) Creation continued........ (`MOM.Attr.Querier`, `.AQ`)
 #    ««revision-date»»···
 #--
 
@@ -166,10 +166,7 @@ class Query_Restriction (TFL.Meta.Object) :
     @Once_Property
     def order_by_ui_names (self) :
         if self.order_by :
-            return ", ".join \
-                (   "%s%s" % (ob.sign, "/".join (ob.ui_names))
-                for ob in self.order_by
-                )
+            return ", ".join (ob.ui_name for ob in self.order_by)
     # end def order_by_ui_names
 
     @Once_Property
@@ -197,33 +194,23 @@ class Query_Restriction (TFL.Meta.Object) :
                 yield k, pat
     # end def _filter_matches
 
-    def _nested_attrs (self, E_Type, names) :
-        T = E_Type
-        for name in names :
-            attr = getattr (T, name)
-            yield attr
-            T = getattr (attr, "E_Type", None)
-    # end def _nested_attrs
-
     def _setup_attr (self, E_Type, pat, k, value) :
-        name   = pat.name
         op     = pat.op
-        names  = name.split ("__")
-        attrs  = tuple (self._nested_attrs (E_Type, names))
-        q      = attrs [-1].Q
-        prefix = ".".join (names [:-1]) or None
+        names  = pat.name.split ("__")
+        name   = ".".join (names)
+        q      = getattr (E_Type.AQ, name)
         qop    = getattr (q, op)
         f = TFL.Record \
-            ( attr     = attrs [-1]
+            ( attr     = q._attr
             , key      = k
-            , name     = ".".join (names)
+            , name     = name
             , op       = qop.op_sym
             , op_nam   = _T (qop.op_nam)
             , op_desc  = _T (qop.desc)
-            , ui_names = tuple (_T (a.ui_name) for a in attrs)
+            , ui_name  = q._ui_name_T
             , value    = value
             )
-        return f, qop (value, prefix)
+        return f, qop (value)
     # end def _setup_attr
 
     def _setup_filters (self, E_Type, data) :
@@ -238,20 +225,18 @@ class Query_Restriction (TFL.Meta.Object) :
     def _setup_order_by_1 (self, E_Type, s) :
         s     = s.strip ()
         sign  = "-" if s.startswith ("-") else ""
-        names = s [bool (sign): ].split (".")
-        attrs = tuple (self._nested_attrs (E_Type, names))
-        last  = attrs [-1]
-        ET    = getattr (attrs [-1], "E_Type", None)
+        name  = s [bool (sign): ]
+        q     = getattr (E_Type.AQ, name)
+        ET    = getattr (q._attr, "E_Type", None)
         if ET :
-            pre  = ".".join (names)
-            keys = tuple ("%s%s.%s" % (sign, pre, k) for k in ET.sorted_by)
+            keys = tuple ("%s%s.%s" % (sign, name, k) for k in ET.sorted_by)
         else :
             keys = (s, )
         f = TFL.Record \
-            ( attr     = attrs [-1]
+            ( attr     = q._attr
             , name     = s
             , sign     = sign
-            , ui_names = tuple (_T (a.ui_name) for a in attrs)
+            , ui_name  = "%s%s" % (sign, q._ui_name_T)
             )
         return f, keys
     # end def _setup_order_by_1

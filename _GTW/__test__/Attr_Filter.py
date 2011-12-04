@@ -92,14 +92,19 @@ _test_code = """
     Sex ** CONTAINS undefined **
 
     >>> for attr in lifetime_attrs :
-    ...     print attr.typ, attr.Q.AC
-    Date <Attr.Date_Auto_Complete start.EQ [auto-complete]>
-    Date <Attr.Date_Auto_Complete finish.EQ [auto-complete]>
+    ...     print attr.typ, attr.Q
+    Date <start.Q [Attr.Type.Querier Date]>
+    Date <finish.Q [Attr.Type.Querier Date]>
 
     >>> for attr in lifetime_attrs :
-    ...     print attr, getattr (PAP.Person.E_Type.lifetime.Q, attr.name).AC
-    Date `start` <Attr.Date_Auto_Complete start.EQ [auto-complete]>
-    Date `finish` <Attr.Date_Auto_Complete finish.EQ [auto-complete]>
+    ...     print attr.typ, getattr (PAP.Person.E_Type.AQ.lifetime, attr.name)
+    Date <lifetime.start.Q [Attr.Type.Querier Date]>
+    Date <lifetime.finish.Q [Attr.Type.Querier Date]>
+
+    >>> for attr in lifetime_attrs :
+    ...     print attr, getattr (PAP.Person.E_Type.lifetime.Q, attr.name)
+    Date `start` <lifetime.start.Q [Attr.Type.Querier Date]>
+    Date `finish` <lifetime.finish.Q [Attr.Type.Querier Date]>
 
     >>> for attr in person_attrs :
     ...     print attr.typ, attr.Q.__class__

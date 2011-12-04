@@ -49,7 +49,7 @@ _test_code = """
     >>> print qr.limit, qr.offset
     24 0
     >>> print formatted_1 (qr.filters)
-    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', op_desc = 'Select entities where the attribute is greater than, or equal to, the specified value', op_nam = 'greater-equal', ui_names = ('Last name',), value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', op_desc = 'Select entities where the attribute is equal to the specified value', op_nam = 'equal', ui_names = ('Lifetime', 'Start'), value = '2008'))
+    (Record (attr = String `last_name`, key = 'last_name___GE', name = 'last_name', op = '>=', op_desc = 'Select entities where the attribute is greater than, or equal to, the specified value', op_nam = 'greater-equal', ui_name = 'Last name', value = 'Lee'), Record (attr = Date `start`, key = 'lifetime__start___EQ', name = 'lifetime.start', op = '==', op_desc = 'Select entities where the attribute is equal to the specified value', op_nam = 'equal', ui_name = 'Lifetime/Start', value = '2008'))
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
     >>> print formatted_1 (sorted (qr.other_req_data.items ()))
@@ -59,7 +59,7 @@ _test_code = """
 
     >>> qo = QR.from_request_data (PAP.Person.E_Type, dict (order_by = "-lifetime,last_name"))
     >>> print formatted_1 (qo.order_by)
-    (Record (attr = Date_Interval `lifetime`, name = '-lifetime', sign = '-', ui_names = ('Lifetime',)), Record (attr = String `last_name`, name = 'last_name', sign = '', ui_names = ('Last name',)))
+    (Record (attr = Date_Interval `lifetime`, name = '-lifetime', sign = '-', ui_name = '-Lifetime'), Record (attr = String `last_name`, name = 'last_name', sign = '', ui_name = 'Last name'))
     >>> print qo.order_by_q
     <Sorted_By: Descending-Getter function for `.lifetime.start`, Descending-Getter function for `.lifetime.finish`, Getter function for `.last_name`>
 
@@ -218,7 +218,7 @@ _test_code = """
         <left.left.Q [Attr.Type.Querier Id_Entity]> <left.Q [Attr.Type.Querier Id_Entity]>
             <left.left.name.Q [Attr.Type.Querier String]> <left.left.Q [Attr.Type.Querier Id_Entity]>
         <left.nation.Q [Attr.Type.Querier Ckd]> <left.Q [Attr.Type.Querier Id_Entity]>
-        <left.sail_number.Q [Attr.Type.Querier Raw]> <left.Q [Attr.Type.Querier Id_Entity]>
+        <left.__raw_sail_number.Q [Attr.Type.Querier Raw]> <left.Q [Attr.Type.Querier Id_Entity]>
         <left.sail_number_x.Q [Attr.Type.Querier String]> <left.Q [Attr.Type.Querier Id_Entity]>
     <right.Q [Attr.Type.Querier Id_Entity]> None
         <right.left.Q [Attr.Type.Querier Id_Entity]> <right.Q [Attr.Type.Querier Id_Entity]>
@@ -238,49 +238,49 @@ _test_code = """
             , children =
                 [ Record
                   ( attr = String `name`
+                  , full_name = 'left.left.name'
                   , id = 'left__left__name'
                   , name = 'name'
-                  , q_name = 'left.left.name'
                   , sig_key = 3
                   , ui_name = 'Boat/Class/Name'
                   )
                 ]
             , deep = True
+            , full_name = 'left.left'
             , id = 'left__left'
             , name = 'left'
-            , q_name = 'left.left'
             , sig_key = 2
             , ui_name = 'Boat/Class'
             )
           , Record
             ( attr = Nation `nation`
+            , full_name = 'left.nation'
             , id = 'left__nation'
             , name = 'nation'
-            , q_name = 'left.nation'
             , sig_key = 0
             , ui_name = 'Boat/Nation'
             )
           , Record
             ( attr = Int `sail_number`
+            , full_name = 'left.sail_number'
             , id = 'left__sail_number'
             , name = 'sail_number'
-            , q_name = 'left.sail_number'
             , sig_key = 3
             , ui_name = 'Boat/Sail number'
             )
           , Record
             ( attr = String `sail_number_x`
+            , full_name = 'left.sail_number_x'
             , id = 'left__sail_number_x'
             , name = 'sail_number_x'
-            , q_name = 'left.sail_number_x'
             , sig_key = 3
             , ui_name = 'Boat/Sail number x'
             )
           ]
       , deep = True
+      , full_name = 'left'
       , id = 'left'
       , name = 'left'
-      , q_name = 'left'
       , sig_key = 2
       , ui_name = 'Boat'
       )
@@ -292,9 +292,9 @@ _test_code = """
             , children =
                 [ Record
                   ( attr = String `name`
+                  , full_name = 'right.left.name'
                   , id = 'right__left__name'
                   , name = 'name'
-                  , q_name = 'right.left.name'
                   , sig_key = 3
                   , ui_name = 'Regatta/Event/Name'
                   )
@@ -303,55 +303,55 @@ _test_code = """
                   , children =
                       [ Record
                         ( attr = Date `start`
+                        , full_name = 'right.left.date.start'
                         , id = 'right__left__date__start'
                         , name = 'start'
-                        , q_name = 'right.left.date.start'
                         , sig_key = 0
                         , ui_name = 'Regatta/Event/Date/Start'
                         )
                       , Record
                         ( attr = Date `finish`
+                        , full_name = 'right.left.date.finish'
                         , id = 'right__left__date__finish'
                         , name = 'finish'
-                        , q_name = 'right.left.date.finish'
                         , sig_key = 0
                         , ui_name = 'Regatta/Event/Date/Finish'
                         )
                       ]
+                  , full_name = 'right.left.date'
                   , id = 'right__left__date'
                   , name = 'date'
-                  , q_name = 'right.left.date'
                   , ui_name = 'Regatta/Event/Date'
                   )
                 ]
             , deep = True
+            , full_name = 'right.left'
             , id = 'right__left'
             , name = 'left'
-            , q_name = 'right.left'
             , sig_key = 2
             , ui_name = 'Regatta/Event'
             )
           ]
       , deep = True
+      , full_name = 'right'
       , id = 'right'
       , name = 'right'
-      , q_name = 'right'
       , sig_key = 2
       , ui_name = 'Regatta'
       )
     , Record
       ( attr = Int `points`
+      , full_name = 'points'
       , id = 'points'
       , name = 'points'
-      , q_name = 'points'
       , sig_key = 0
       , ui_name = 'Points'
       )
     , Record
       ( attr = Int `place`
+      , full_name = 'place'
       , id = 'place'
       , name = 'place'
-      , q_name = 'place'
       , sig_key = 0
       , ui_name = 'Place'
       )

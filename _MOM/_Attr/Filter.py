@@ -47,6 +47,7 @@
 #                     `_Type_.__getattr__` there
 #     4-Dec-2011 (CT) Factor classes to `MOM.Attr.Querier`
 #     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
+#     4-Dec-2011 (CT) Remove `prefix` from `__call__`, `a_query` and `query`
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ from   _TFL                  import TFL
 import _MOM._Attr
 
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
 from   _TFL.I18N             import _
 from   _TFL.Regexp           import Regexp, re
@@ -105,14 +107,14 @@ class _Filter_ (TFL.Meta.Object) :
         self.querier = querier
     # end def __init__
 
-    def __call__ (self, value, prefix = None) :
+    def __call__ (self, value) :
         cooker = self.cooker
         if cooker is not None :
             try :
                 value = cooker (value)
             except (ValueError, TypeError) :
                 return None
-        return self.query (value, prefix)
+        return self.query (value)
     # end def __call__
 
     @TFL.Meta.Once_Property
@@ -130,16 +132,13 @@ class _Filter_ (TFL.Meta.Object) :
         return self.querier._cooker
     # end def cooker
 
-    def a_query (self, prefix = None) :
-        name = self.attr_name
-        if prefix :
-            name = ".".join ((prefix, name))
-        return getattr (Q, name)
+    @TFL.Meta.Once_Property
+    def a_query (self) :
+        return getattr (Q, self.querier._q_name)
     # end def a_query
 
-    def query (self, value, prefix = None) :
-        aq = self.a_query (prefix)
-        q  = getattr (aq, self.op_fct)
+    def query (self, value) :
+        q = getattr (self.a_query, self.op_fct)
         return q (value)
     # end def query
 
@@ -155,20 +154,21 @@ class _Composite_ (_Filter_) :
 
     specialized = True
 
-    def __call__ (self, value, prefix = None) :
-        name   = self.attr.name
+    def __call__ (self, value) :
+        q      = self.querier
         E_Type = self.attr.E_Type
-        pf     = ".".join ((prefix, name)) if prefix else name
         def _gen () :
             for k, v in value.iteritems () :
-                attr = getattr (E_Type, k)
-                q    = getattr (attr.Q, self.op_key)
-                r    = q (v, pf)
+                qk   = getattr (q, k)
+                qop  = getattr (qk, self.op_key)
+                r    = qop     (v)
                 if r is not None :
                     yield r
         qs = tuple (_gen ())
-        if qs :
+        if len (qs) > 1 :
             return Q.AND (* qs)
+        elif qs :
+            return qs [0]
     # end def __call__
 
 # end class _Composite_
@@ -189,10 +189,10 @@ class _Date_ (_Filter_) :
         , re.VERBOSE
         )
 
-    def __call__ (self, value, prefix = None) :
+    def __call__ (self, value) :
         pat = self.pat
         if pat.match (value) :
-            q    = self.a_query (prefix)
+            q    = self.a_query
             args = (int (pat.year), )
             if pat.month :
                 args = (int (pat.month, 10), ) + args
@@ -201,7 +201,7 @@ class _Date_ (_Filter_) :
                 q    = q.D.YEAR
             return q (* args)
         else :
-            return self.__super.__call__ (value, prefix)
+            return self.__super.__call__ (value)
     # end def __call__
 
 # end class _Date_
@@ -211,11 +211,11 @@ class _Id_Entity_ (_Composite_) :
 
     specialized = True
 
-    def __call__ (self, value, prefix = None) :
+    def __call__ (self, value) :
         if isinstance (value, dict) :
-            return self.__super.__call__ (value, prefix)
+            return self.__super.__call__ (value)
         else :
-            return self.query (value, prefix)
+            return self.query (value)
     # end def __call__
 
 # end class _Id_Entity_
@@ -223,8 +223,8 @@ class _Id_Entity_ (_Composite_) :
 class _String_ (_Filter_) :
     """Base class for string-attribute filters."""
 
-    def query (self, value, prefix = None) :
-        aq = self.a_query (prefix)
+    def query (self, value) :
+        aq = self.a_query
         q  = getattr (aq, self.op_fct) if value else aq.__eq__
         return q (value)
     # end def query

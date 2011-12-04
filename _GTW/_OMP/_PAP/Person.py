@@ -72,8 +72,8 @@ class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
        Franz-Ferdinand).
     """
 
-    def query (self, value, prefix = None) :
-        aq = self.a_query (prefix)
+    def query (self, value) :
+        aq = self.a_query
         if value == "" :
             return aq.__eq__ (value)
         elif "-" in value :

@@ -192,8 +192,7 @@
 {%- endmacro -%} {#- qr_tr_x -#}
 
 {%- macro qr_tr (qr, af) -%}
-  {%- set ui_name = qr.ui_sep.join (af.ui_names) %}
-  {{- qr_tr_x (ui_name, af.key, af.op_desc, GTW._T (af.op), af.value) }}
+  {{- qr_tr_x (af.ui_name, af.key, af.op_desc, GTW._T (af.op), af.value) }}
 {%- endmacro -%} {#- qr_tr -#}
 
 {%- macro qr_control (page, fields, qr) -%}

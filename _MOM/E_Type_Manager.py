@@ -97,6 +97,8 @@
 #                     attribute types, partial completions can trigger errors)
 #    11-Nov-2011 (CT) Replace `ac_query` by `Q.AC`
 #    15-Nov-2011 (CT) Change `query_s` and `r_query_s`
+#     4-Dec-2011 (CT) Change `ac_query_attrs` and `ac_query_auto_split` to
+#                     use `E_Type.AQ`
 #    ««revision-date»»···
 #--
 
@@ -206,11 +208,11 @@ class Id_Entity (Entity) :
     # end def ems
 
     def ac_query_attrs (self, names, values) :
-        et = self._etype
+        AQ = self._etype.AQ
         for n in names :
             if n in values :
                 try :
-                    vq = getattr (et, n).Q.AC (values [n])
+                    vq = getattr (AQ, n).AC (values [n])
                 except (ValueError, TypeError) :
                     pass
                 else :
@@ -340,7 +342,8 @@ class Object (Id_Entity) :
     def ac_query_auto_split (self, text) :
         result     = []
         et         = self._etype
-        epk_aqc    = [getattr (et, en).Q.AC for en in et.epk_sig]
+        AQ         = et.AQ
+        epk_aqc    = [getattr (AQ, en).AC for en in et.epk_sig]
         for epks in et.epk_splitter (text) :
             single_value_queries = []
             for v in epks :

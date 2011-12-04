@@ -28,6 +28,7 @@
 # Revision Dates
 #     4-Dec-2011 (CT) Creation (factored from MOM.Attr.Filter)
 #     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
+#     4-Dec-2011 (CT) Add `_full_name`
 #    ««revision-date»»···
 #--
 
@@ -149,9 +150,9 @@ class _Type_ (TFL.Meta.Object) :
     def _as_template_elem_inv (self) :
         result   = dict \
             ( self._as_json_cargo_inv
-            , attr     = self._attr
-            , id       = self._id
-            , q_name   = self._q_name
+            , attr        = self._attr
+            , id          = self._id
+            , full_name   = self._full_name
             )
         return result
     # end def _as_template_elem_inv
@@ -167,6 +168,12 @@ class _Type_ (TFL.Meta.Object) :
     # end def _cooker
 
     @TFL.Meta.Once_Property
+    def _full_name (self) :
+        outer = self._outer
+        return filtered_join (".", (outer and outer._q_name, self._attr.name))
+    # end def _full_name
+
+    @TFL.Meta.Once_Property
     def _id (self) :
         outer = self._outer
         return filtered_join (id_sep, (outer and outer._id, self._attr.name))
@@ -175,7 +182,7 @@ class _Type_ (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def _q_name (self) :
         outer = self._outer
-        return filtered_join (".", (outer and outer._q_name, self._attr.name))
+        return filtered_join (".", (outer and outer._q_name, self._attr_name))
     # end def _q_name
 
     @property    ### depends on currently selected language (I18N/L10N)

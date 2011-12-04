@@ -162,10 +162,10 @@ _q_result = r"""
       )
     ]
 
-    >>> qy = PAP.Person.lifetime.start.Q.AC ("2010", prefix = "lifetime")
+    >>> qy = PAP.Person.AQ.lifetime.start.AC ("2010")
     >>> qy
     Q.lifetime.start.between (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
-    >>> qm = PAP.Person.lifetime.start.Q.AC ("2010/01", prefix = "lifetime")
+    >>> qm = PAP.Person.AQ.lifetime.start.AC ("2010/01")
     >>> qm
     Q.lifetime.start.between (datetime.date(2010, 1, 1), datetime.date(2010, 1, 31))
 

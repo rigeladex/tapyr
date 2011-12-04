@@ -43,7 +43,7 @@ _attr_ac_query = """
     >>> p3 = PAP.Person ("Franz-Ferdinand", "Karl")
     >>> p4 = PAP.Person ("Tanzer", "Egon", lifetime = dict (start = u"1907/03/08", finish = "1994/08/04", raw = True))
     >>> for value in "Ma", "martin", "CHRi" :
-    ...    q = PAP.Person.first_name.Q.AC (value)
+    ...    q = PAP.Person.AQ.first_name.AC (value)
     ...    for o in (p1, p2, p3) :
     ...        print value, o.first_name, q (o)
     Ma martin True
@@ -57,7 +57,7 @@ _attr_ac_query = """
     CHRi karl False
 
     >>> for value in "Gl", "Glueck", "Ferdinand" :
-    ...    q = PAP.Person.last_name.Q.AC (value)
+    ...    q = PAP.Person.AQ.last_name.AC (value)
     ...    for o in (p1, p2, p3) :
     ...        print value, o.last_name, q (o)
     Gl glueck True
@@ -70,14 +70,15 @@ _attr_ac_query = """
     Ferdinand tanzer False
     Ferdinand franz-ferdinand True
 
-    >>> q1 = PAP.Person.lifetime.Q.AC (dict (start = "1959/09/26"))
-    >>> q2 = PAP.Person.lifetime.Q.AC (dict (start = "1907/03/08", finish = "1994/08/04"))
-    >>> q3 = PAP.Person.lifetime.Q.AC (dict (finish = "1994/08/04"))
-    >>> q4 = PAP.Person.lifetime.Q.EQ (dict (start = "1907", finish = "1994"))
-    >>> q5 = PAP.Person.first_name.Q.CONTAINS ("ti")
+    >>> q1  = PAP.Person.AQ.lifetime.AC (dict (start = "1959/09/26"))
+    >>> q2  = PAP.Person.AQ.lifetime.AC (dict (start = "1907/03/08", finish = "1994/08/04"))
+    >>> q3  = PAP.Person.AQ.lifetime.AC (dict (finish = "1994/08/04"))
+    >>> q4  = PAP.Person.lifetime.Q.EQ (dict (start = "1907", finish = "1994"))
+    >>> q5  = PAP.Person.first_name.Q.CONTAINS ("ti")
+    >>> qs1 = PAP.Person.AQ.lifetime.start.AC ("1959/09/26")
 
     >>> print q1
-    <Filter_And [Q.lifetime.start == 1959-09-26]>
+    Q.lifetime.start == 1959-09-26
     >>> print q2
     <Filter_And [Q.lifetime.start == 1907-03-08, Q.lifetime.finish == 1994-08-04]>
     >>> print q4
@@ -85,11 +86,11 @@ _attr_ac_query = """
     >>> print q5
     Q.first_name.contains (u'ti',)
 
-    >>> print " and ".join (str (p) for p in q1.predicates)
+    >>> print qs1
     Q.lifetime.start == 1959-09-26
+
     >>> print " and ".join (str (p) for p in q2.predicates)
     Q.lifetime.start == 1907-03-08 and Q.lifetime.finish == 1994-08-04
-
 
     >>> PAP.Person.query_s (q1).all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
@@ -102,17 +103,20 @@ _attr_ac_query = """
     >>> list (p.ui_display for p in PAP.Person.query_s (q5))
     [u'Glueck Martin', u'Tanzer Christian, Mag.']
 
-    >>> q = PAP.Person.last_name.Q.AC ("Franz")
+    >>> PAP.Person.query_s (qs1).all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+
+    >>> q = PAP.Person.AQ.last_name.AC ("Franz")
     >>> print " or ".join (str (p) for p in q.predicates)
     Q.last_name.startswith (u'franz',) or Q.last_name.contains (u'-franz',)
-    >>> q = PAP.Person.last_name.Q.AC ("Franz-F")
+    >>> q = PAP.Person.AQ.last_name.AC ("Franz-F")
     >>> print q
     Q.last_name.startswith (u'franz-f',)
 
     >>> a1 = PAP.Address ("Langstrasse 4",    "2244", "Spannberg", "Austria")
     >>> a2 = PAP.Address ("Glasauergasse 32", "1130", "Wien",      "Austria")
     >>> for value in "22", "11", "10" :
-    ...    q = PAP.Address.zip.Q.AC (value)
+    ...    q = PAP.Address.AQ.zip.AC (value)
     ...    for o in (a1, a2) :
     ...        print value, o.zip, q (o)
     22 2244 True
@@ -127,7 +131,7 @@ _attr_ac_query = """
     >>> b1    = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 1
     >>> b2    = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1208", raw = True) ### 2
     >>> for value in "11", "12" :
-    ...    q = SRM.Boat.sail_number.Q.AC (value)
+    ...    q = SRM.Boat.AQ.sail_number.AC (value)
     ...    for o in (b1, b2) :
     ...        print value, o.sail_number, q (o)
     11 1107 True
