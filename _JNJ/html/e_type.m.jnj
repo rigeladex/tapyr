@@ -206,7 +206,7 @@
     </td>
     <td class="op" title="{{ af.op_desc }}">
       <a class="button">
-        {{- GTW._T (af.op)|escape -}}
+        {{- GTW.styler (GTW._T (af.op)) -}}
       </a>
     </td>
     <td>

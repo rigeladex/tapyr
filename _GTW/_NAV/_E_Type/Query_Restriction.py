@@ -37,6 +37,7 @@
 #    26-Nov-2011 (CT) Creation continued...... (fix `offset` and `offset_f`)
 #     2-Dec-2011 (CT) Creation continued....... (guard `sig_map` for `f`...)
 #     4-Dec-2011 (CT) Creation continued........ (`MOM.Attr.Querier`, `.AQ`)
+#     5-Dec-2011 (CT) Creation continued......... (add `label` to `op_map`, )
 #    ««revision-date»»···
 #--
 
@@ -44,9 +45,11 @@ from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
-from   _MOM.import_MOM          import MOM, Q
 
+from   _GTW.HTML                import Styler
 import _GTW._NAV._E_Type
+
+from   _MOM.import_MOM          import MOM, Q
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -305,7 +308,12 @@ class Query_Restriction_Spec (TFL.Meta.Object) :
     def op_map (self) :
         result = {}
         for k, v in MOM.Attr.Querier._Type_.Base_Op_Table.iteritems () :
-            result [k] = dict (desc = _T (v.desc), sym = _T (v.op_sym))
+            sym = _T (v.op_sym)
+            result [k] = dict \
+                ( desc  = _T (v.desc)
+                , label = Styler (sym)
+                , sym   = sym
+                )
         return result
     # end def op_map
 

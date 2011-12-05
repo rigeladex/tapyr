@@ -207,38 +207,47 @@ _test_code = """
     , 'op_map' :
         { 'CONTAINS' :
             { 'desc' : 'Select entities where the attribute contains the specified value'
+            , 'label' : 'contains'
             , 'sym' : 'contains'
             }
         , 'ENDSWITH' :
             { 'desc' : 'Select entities where the attribute value ends with the specified value'
+            , 'label' : 'ends-with'
             , 'sym' : 'ends-with'
             }
         , 'EQ' :
             { 'desc' : 'Select entities where the attribute is equal to the specified value'
+            , 'label' : '&equiv;'
             , 'sym' : '=='
             }
         , 'GE' :
             { 'desc' : 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , 'label' : '&ge;'
             , 'sym' : '>='
             }
         , 'GT' :
             { 'desc' : 'Select entities where the attribute is greater than the specified value'
+            , 'label' : '&gt;'
             , 'sym' : '>'
             }
         , 'LE' :
             { 'desc' : 'Select entities where the attribute is less than, or equal to, the specified value'
+            , 'label' : '&le;'
             , 'sym' : '<='
             }
         , 'LT' :
             { 'desc' : 'Select entities where the attribute is less than the specified value'
+            , 'label' : '&lt;'
             , 'sym' : '<'
             }
         , 'NE' :
             { 'desc' : 'Select entities where the attribute is not equal to the specified value'
+            , 'label' : '&ne;'
             , 'sym' : '!='
             }
         , 'STARTSWITH' :
             { 'desc' : 'Select entities where the attribute value starts with the specified value'
+            , 'label' : 'starts-with'
             , 'sym' : 'starts-with'
             }
         }

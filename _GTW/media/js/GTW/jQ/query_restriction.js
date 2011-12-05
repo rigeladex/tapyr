@@ -116,10 +116,10 @@
                 var result = {}, k, v;
                 for (k in qrs.op_map) {
                     if (qrs.op_map.hasOwnProperty (k)) {
-                        v              = qrs.op_map [k];
-                        v.key          = k;
-                        v.label        = v.sym;
-                        result [v.sym] = v;
+                        v                = qrs.op_map [k];
+                        v.key            = k;
+                        result [v.sym]   = v;
+                        result [v.label] = v;
                     };
                 };
                 return result;
@@ -248,7 +248,7 @@
                 .attr   ("for", key)
                 .append (choice.label);
             $(S.attr_filter_op, result)
-                .append (op.sym)
+                .append (op.label || op.sym)
                 .attr   ("title", op.desc)
                 .each   (setup_op_button);
             $(S.attr_filter_value, result)
