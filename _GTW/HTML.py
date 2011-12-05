@@ -31,6 +31,7 @@
 #     3-Aug-2010 (CT) `obfuscator` completely revamped (letting jQuery
 #                     rewrite the obfuscated `<a...</a>` elements)
 #     1-Dec-2011 (CT) Add `Styler`
+#     5-Dec-2011 (CT) Add `Entity_Map` and use in `Styler`
 #    ««revision-date»»···
 #--
 
@@ -130,11 +131,24 @@ class Cleaner (TFL.Meta.Object) :
 
 # end class Cleaner
 
+Entity_Map = \
+    { r"---"          : r"&#0032;&mdash;&#0032;"
+    , r"..."          : r"&#8230;"
+    , r"(c)"          : r"&#0032;&copy;&#0032;"
+    , r"!="           : r"&ne;"
+    , r">="           : r"&ge;"
+    , r">"            : r"&gt;"
+    , r"<="           : r"&le;"
+    , r"<"            : r"&lt;"
+    , r"+/-"          : r"&plusmn;"
+    , r"+-"           : r"&plusmn;"
+    , r"&"            : r"&amp;"
+    }
+
 Styler = Multi_Re_Replacer \
-    ( Re_Replacer (r"---",            r"&#0032;&mdash;&#0032;")
-    , Re_Replacer (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
-    , Re_Replacer (r"\.\.\.",         r"&#0133;")
-    , Re_Replacer (r"\%2d\%2d",       r"--")
+    ( Dict_Replacer (Entity_Map)
+    , Re_Replacer   (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
+    , Re_Replacer   (r"\%2d\%2d",       r"--")
     )
 
 if __name__ != "__main__" :
