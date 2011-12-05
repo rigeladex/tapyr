@@ -21,7 +21,8 @@
 //                     (setup_obj_list, GTW_buttonify, fix_buttons)
 //    28-Nov-2011 (CT) Creation continued.... (order_by_cb, ...)
 //    29-Nov-2011 (CT) Creation continued..... (order_by...)
-//    30-Nov-2011 (CT) Creation continued..... (ev.delegateTarget)
+//    30-Nov-2011 (CT) Creation continued...... (ev.delegateTarget)
+//     5-Dec-2011 (CT) Creation continued....... (s/input/:input/ for selectors)
 //    ««revision-date»»···
 //--
 
@@ -50,24 +51,24 @@
               , attr_filter_disabler  : "td.disabler"
               , attr_filter_label     : "td.name label"
               , attr_filter_op        : "td.op a.button"
-              , attr_filter_value     : "td input.value"
-              , attr_filter_ui_value  : "td input.ui-value"
+              , attr_filter_value     : "td :input.value"
+              , attr_filter_ui_value  : "td :input.ui-value"
               , attrs_container       : "table.attrs"
               , cancel_button         : "button[name=CANCEL]"
               , clear_button          : "button[name=CLEAR]"
               , descending            : ".desc"
               , disabled_button       : "button[class=disabled]"
               , head_line             : "h1.headline"
-              , limit                 : "input[name=limit]"
+              , limit                 : ":input[name=limit]"
               , object_container      : "table.Object-List"
-              , offset                : "input[name=offset]"
+              , offset                : ":input[name=offset]"
               , order_by_criteria     : "ul.criteria"
               , order_by_criterion    : "li"
               , order_by_direction    : ".direction"
               , order_by_disabler     : ".disabler"
-              , order_by_display      : "input.value.display[id=QR-order_by]"
+              , order_by_display      : ":input.value.display[id=QR-order_by]"
               , order_by_proto        : "ul.prototype li"
-              , order_by_value        : "input.value.hidden[name=order_by]"
+              , order_by_value        : ":input.value.hidden[name=order_by]"
               , submit                : "[type=submit]"
               }
             , opts && opts ["selectors"] || {}
@@ -242,7 +243,13 @@
             var op  = op_map_by_sym ["=="] ; // last-op ???
             var key = choice.key + qrs.op_sep + op.key;
             // XXX choice.deep ....
+            if (! "attr_filter_html" in choice) {
+                // XXX
+                // ??? one attr_filter_html per choice or one per choice/op ???
+                // getJSON --> choice.attr_filter_html;
+            };
             var result = options.attr_filter_html.clone (true);
+                      // choice.attr_filter_html.clone (true);
             result.attr ("title", choice.label);
             $(S.attr_filter_label, result)
                 .attr   ("for", key)

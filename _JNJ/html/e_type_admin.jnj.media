@@ -247,9 +247,11 @@ style_sheet = Style_Sheet \
                         )
                     , Rule
                         ( ".disabler .button"
-                        , border_width = Px (1)
-                        , margin       = 0
-                        , padding      = 0
+                        , border_width     = Px (1)
+                        , display          = "inline-block"
+                        , margin           = 0
+                        , padding          = 0
+                        , vertical_align   = "middle"
                         , children         =
                             [ Rule_Pseudo
                                 ( "hover"

@@ -33,6 +33,7 @@
 ##     4-Nov-2011 (CT) Add `named_object`, change `named_value` to use `select`
 ##    30-Nov-2011 (CT) Change `_field` to add `required` to `kw`
 ##     2-Dec-2011 (CT) Add `id_entity`; remove argument `form` from signatures
+##     5-Dec-2011 (CT) Add support for keyword arguments to all macros here
 ##    ««revision-date»»···
 ##--
 #}
@@ -45,19 +46,19 @@
 {%- endmacro -%} {#- boolean -#}
 
 {%- macro date (elem) -%}
-  {{ _field (X.input.date, elem) }}
+  {{ _field (X.input.date, elem, ** kwargs) }}
 {%- endmacro -%} {#- date -#}
 
 {%- macro datetime (elem) -%}
-  {{ _field (X.input.datetime, elem) }}
+  {{ _field (X.input.datetime, elem, ** kwargs) }}
 {%- endmacro -%} {#- datetime -#}
 
 {%- macro email (elem) -%}
-  {{ _field (X.input.email, elem) }}
+  {{ _field (X.input.email, elem, ** kwargs) }}
 {%- endmacro -%} {#- email -#}
 
 {%- macro hidden (elem) -%}
-  {{ _field (X.input.hidden, elem)}}
+  {{ _field (X.input.hidden, elem, ** kwargs)}}
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro id_entity (elem) -%}
@@ -78,58 +79,63 @@
 {%- endmacro -%} {#- id_entity -#}
 
 {%- macro named_value (elem) -%}
-  {{ X.input.select
+  {%- set kw = GTW.dict
       ( choices  = elem.choices
       , id       = elem.id
       , name     = elem.name
       , selected = elem.edit
       )
-  }}
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ X.input.select (** kw) }}
 {%- endmacro -%} {#- named_value -#}
 
 {%- macro named_object (elem) -%}
-  {{ X.input.select_v
+  {%- set kw = GTW.dict
       ( choices  = elem.choices
       , id       = elem.id
       , name     = elem.name
       , selected = elem.edit
       )
-  }}
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ X.input.select_v (** kw) }}
 {%- endmacro -%} {#- named_object -#}
 
 {%- macro number (elem) -%}
-  {{ _field
-      ( X.input.number, elem
-      , max           = elem.max_value
+  {%- set kw = GTW.dict
+      ( max           = elem.max_value
       , min           = elem.min_value
       )
-  }}
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ _field (X.input.number, elem, ** kw) }}
 {%- endmacro -%} {#- number -#}
 
 {%- macro password (elem) -%}
-  {{ _field (X.input.password, elem) }}
+  {{ _field (X.input.password, elem, ** kwargs) }}
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (elem) -%}
-  {{ _field
-      ( X.input.text, elem
-      , max_length    = elem.max_length
-      )
-  }}
+  {%- set kw = GTW.dict (max_length = elem.max_length) -%}
+  {%- do kw.update (kwargs) %}
+  {{ _field (X.input.text, elem, ** kw) }}
 {%- endmacro -%} {#- string -#}
 
 {%- macro text (elem) -%}
-  {{ _field
-      ( X.input.textarea, elem
-      , cols          = elem.cols or 80
+  {%- set kw = GTW.dict
+      ( cols          = elem.cols or 80
       , max_length    = elem.max_length
       , rows          = elem.rows or 32
       )
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ _field (X.input.textarea, elem, ** kw)
   }}
 {%- endmacro -%} {#- text -#}
 
 {%- macro time (elem) -%}
-  {{ _field (X.input.time, elem) }}
+  {{ _field (X.input.time, elem, ** kwargs) }}
 {%- endmacro -%} {#- time -#}
 
 {%- macro _field (typ, elem) -%}
@@ -140,10 +146,12 @@
       , value         = elem.edit
       )
   -%}
-  {%- if elem.css_class %}
-    {%- do kw.update (class = elem.css_class) %}
-  {% endif -%}
   {%- do kw.update (kwargs) -%}
+  {%- if elem.css_class %}
+    {%- do kw.update
+      (class = GTW.filtered_join (" ", (kw.get ("class", ""), elem.css_class)))
+    %}
+  {% endif -%}
   {%- if elem.prefilled or elem.readonly -%}
     {%- do kw.setdefault ("readonly", "readonly") -%}
     {%- do kw.setdefault ("title", GTW._T ("Cannot be changed")) -%}

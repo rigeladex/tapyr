@@ -56,9 +56,10 @@ _test_code = """
       , full_name = 'last_name'
       , id = 'last_name___GE'
       , name = 'last_name___GE'
-      , op = '>='
-      , op_desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
-      , op_nam = 'greater-equal'
+      , op = Record
+          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+          , label = '&ge;'
+          )
       , sig_key = 3
       , ui_name = 'Last name'
       , value = 'Lee'
@@ -69,9 +70,10 @@ _test_code = """
       , full_name = 'lifetime.start'
       , id = 'lifetime__start___EQ'
       , name = 'lifetime__start___EQ'
-      , op = '=='
-      , op_desc = 'Select entities where the attribute is equal to the specified value'
-      , op_nam = 'equal'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = '&equiv;'
+          )
       , sig_key = 0
       , ui_name = 'Lifetime/Start'
       , value = '2008'

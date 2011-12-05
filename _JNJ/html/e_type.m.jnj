@@ -200,17 +200,13 @@
 {%- macro qr_tr (qr, af) -%}
   <tr title="{{ af.ui_name }}">
     <td class="name">
-      <label for="{{ af.id }}">
-        {{ af.ui_name }}
-      </label>
+      <label for="{{ af.id }}">{{ af.ui_name }}</label>
     </td>
-    <td class="op" title="{{ af.op_desc }}">
-      <a class="button">
-        {{- GTW.styler (GTW._T (af.op)) -}}
-      </a>
+    <td class="op" title="{{ af.op.desc }}">
+      <a class="button">{{- af.op.label -}}</a>
     </td>
     <td>
-      {{ GTW.call_macro (af.attr.input_widget, af) }}
+      {{ GTW.call_macro (af.attr.input_widget, af, class = "value") }}
     </td>
     <td class="disabler"></td>
   </tr>

@@ -206,14 +206,15 @@ class Query_Restriction (TFL.Meta.Object) :
         ate    = q.as_template_elem
         f = dict \
             ( ate._kw
-            , attr     = q._attr
-            , edit     = value
-            , id       = k
-            , name     = k
-            , op       = qop.op_sym
-            , op_nam   = _T (qop.op_nam)
-            , op_desc  = _T (qop.desc)
-            , value    = value
+            , attr   = q._attr
+            , edit   = value
+            , id     = k
+            , name   = k
+            , op     = TFL.Record
+                ( desc   = _T (qop.desc)
+                , label  = Styler (_T (qop.op_sym))
+                )
+            , value  = value
             )
         return TFL.Record (** f), qop (value)
     # end def _setup_attr
