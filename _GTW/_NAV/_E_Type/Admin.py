@@ -138,6 +138,8 @@
 #    30-Nov-2011 (CT) Add class variable `Admin.button_types`
 #     2-Dec-2011 (CT) Change `_auto_list_display` to `Once_Property`, change
 #                     `qr_spec` to work with dotted names in `_list_display`
+#     5-Dec-2011 (CT) Factor `_Cmd_Json_`
+#     5-Dec-2011 (CT) Start `QX`
 #    ««revision-date»»···
 #--
 
@@ -318,6 +320,26 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class _Cmd_
 
+    class _Cmd_Json_ (_Cmd_) :
+
+        def needs_json_msg (self, request) :
+            return _T ("%s only works with content-type json") % request.path
+        # end def needs_json_msg
+
+        def rendered (self, handler, template = None) :
+            HTTP    = self.top.HTTP
+            request = handler.request
+            if handler.json is None :
+                raise HTTP.Error_400 (self.needs_json_msg (request))
+            try :
+                result = self._rendered (handler, template, HTTP, request)
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                return exc (handler)
+        # end def rendered
+
+    # end class _Cmd_Json_
+
     class Changer (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
            of a etype with an AFS form.
@@ -403,120 +425,103 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Changer
 
-    class Completed (_Cmd_) :
+    class Completed (_Cmd_Json_) :
         """Return auto completion values for a AFS page."""
 
         SUPPORTED_METHODS = set (("POST", ))
 
-        def rendered (self, handler, template = None) :
-            HTTP      = self.top.HTTP
-            request   = handler.request
-            if handler.json is None :
-                raise HTTP.Error_400 \
-                    (_T ("%s only works with content-type json") % request.path)
-            json      = TFL.Record (** handler.json)
-            result    = {}
-            scope     = self.top.scope
-            try :
-                session_secret = self.session_secret (handler, json.sid)
-                form, elem     = self.form_element   (json.fid)
-                field          = self.field_element  (form, json.trigger)
-                ETM            = scope [elem.type_name]
-                E_Type         = ETM.E_Type
-                if json.complete_entity :
-                    obj = ETM.pid_query (json.pid)
-                    result ["completions"] = n = int (obj is not None)
+        def _rendered (self, handler, template, HTTP, request) :
+            json           = TFL.Record (** handler.json)
+            result         = {}
+            scope          = self.top.scope
+            session_secret = self.session_secret (handler, json.sid)
+            form, elem     = self.form_element   (json.fid)
+            field          = self.field_element  (form, json.trigger)
+            ETM            = scope [elem.type_name]
+            E_Type         = ETM.E_Type
+            if json.complete_entity :
+                obj = ETM.pid_query (json.pid)
+                result ["completions"] = n = int (obj is not None)
+                if n == 1 :
+                    ikw = dict \
+                        ( allow_new        = handler.json.get ("allow_new")
+                        , collapsed        = False
+                        , copy             = False
+                        , _sid             = json.sid
+                        , _session_secret  = session_secret
+                        )
+                    fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
+                    renderer = self.top.Templateer.get_template (fi.renderer)
+                    result.update \
+                        ( html = renderer.call_macro
+                            (fi.widget, fi, fi, fi.renderer)
+                        , json = fi.as_json_cargo
+                        )
+            else :
+                attr      = getattr (E_Type, field.name)
+                completer = attr.completer
+                if completer is not None :
+                    names = completer.names
+                    fs    = ETM.raw_query_attrs (names, json.values)
+                    query = ETM.query (* fs)
+                    result ["completions"] = n = query.count ()
                     if n == 1 :
-                        ikw = dict \
-                            ( allow_new        = handler.json.get ("allow_new")
-                            , collapsed        = False
-                            , copy             = False
-                            , _sid             = json.sid
-                            , _session_secret  = session_secret
-                            )
-                        fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
-                        renderer = self.top.Templateer.get_template \
-                            (fi.renderer)
-                        result.update \
-                            ( html = renderer.call_macro
-                                (fi.widget, fi, fi, fi.renderer)
-                            , json = fi.as_json_cargo
-                            )
-                else :
-                    attr      = getattr (E_Type, field.name)
-                    completer = attr.completer
-                    if completer is not None :
-                        names = completer.names
-                        fs    = ETM.raw_query_attrs (names, json.values)
-                        query = ETM.query (* fs)
-                        result ["completions"] = n = query.count ()
-                        if n == 1 :
-                            af     = ETM.raw_query_attrs (names)
-                            values = query.attrs (* af).one ()
-                            result ["fields"] = len  (names)
-                            result ["names"]  = names
-                            result ["values"] = values
-                return handler.write_json (result)
-            except JSON_Error as exc :
-                return exc (handler)
+                        af     = ETM.raw_query_attrs (names)
+                        values = query.attrs (* af).one ()
+                        result ["fields"] = len  (names)
+                        result ["names"]  = names
+                        result ["values"] = values
+            return result
         # end def rendered
 
     # end class Completed
 
-    class Completer (_Cmd_) :
+    class Completer (_Cmd_Json_) :
         """Do auto completion for a AFS page."""
 
         SUPPORTED_METHODS = set (("POST", ))
 
-        def rendered (self, handler, template = None) :
-            HTTP      = self.top.HTTP
-            request   = handler.request
-            if handler.json is None :
-                raise HTTP.Error_400 \
-                    (_T ("%s only works with content-type json") % request.path)
-            json      = TFL.Record (** handler.json)
-            result    = dict (matches = [], partial = False)
-            scope     = self.top.scope
-            try :
-                form, elem   = self.form_element  (json.fid)
-                field        = self.field_element (form, json.trigger)
-                ETM          = scope [elem.type_name]
-                E_Type       = ETM.E_Type
-                attr         = getattr (E_Type, field.name)
-                completer    = attr.completer
-                if completer is not None :
-                    max_n        = self.max_completions
-                    names        = completer.names
-                    query        = completer (self.top.scope, json.values)
-                    fs           = tuple (ETM.raw_query_attrs (names))
-                    if completer.entity_p :
-                        fs      += (Q.pid, )
-                        names   += ("pid", )
-                    matches      = query.attrs (* fs).limit (max_n + 1).all ()
-                    n            = result ["completions"] = len (matches)
-                    finished     = result ["finished"]    = n == 1
-                    if n :
-                        if n <= max_n :
-                            result ["fields"]  = len    (names)
-                            result ["matches"] = sorted \
-                                (self._ui_displayed (ETM, names, matches))
-                        else :
-                            if json.trigger == json.trigger_n :
-                                matches = query.attrs (attr.raw_query).limit \
-                                    (max_n + 1).all ()
-                                m = len (matches)
-                                if m <= max_n :
-                                    matches = ([m, "..."] for m in  matches)
-                                    result ["fields"]  = 1
-                                    result ["matches"] = sorted (matches)
-                                    result ["partial"] = True
-                                else :
-                                    ### XXX find fewer partial matches !!!
-                                    result ["fields"]  = 0
-                return handler.write_json (result)
-            except JSON_Error as exc :
-                return exc (handler)
-        # end def rendered
+        def _rendered (self, handler, template, HTTP, request) :
+            json           = TFL.Record (** handler.json)
+            result         = dict (matches = [], partial = False)
+            scope          = self.top.scope
+            form, elem     = self.form_element  (json.fid)
+            field          = self.field_element (form, json.trigger)
+            ETM            = scope [elem.type_name]
+            E_Type         = ETM.E_Type
+            attr           = getattr (E_Type, field.name)
+            completer      = attr.completer
+            if completer is not None :
+                max_n      = self.max_completions
+                names      = completer.names
+                query      = completer (self.top.scope, json.values)
+                fs         = tuple (ETM.raw_query_attrs (names))
+                if completer.entity_p :
+                    fs    += (Q.pid, )
+                    names += ("pid", )
+                matches    = query.attrs (* fs).limit (max_n + 1).all ()
+                n          = result ["completions"] = len (matches)
+                finished   = result ["finished"]    = n == 1
+                if n :
+                    if n <= max_n :
+                        result ["fields"]  = len    (names)
+                        result ["matches"] = sorted \
+                            (self._ui_displayed (ETM, names, matches))
+                    else :
+                        if json.trigger == json.trigger_n :
+                            matches = query.attrs (attr.raw_query).limit \
+                                (max_n + 1).all ()
+                            m = len (matches)
+                            if m <= max_n :
+                                matches = ([m, "..."] for m in  matches)
+                                result ["fields"]  = 1
+                                result ["matches"] = sorted (matches)
+                                result ["partial"] = True
+                            else :
+                                ### XXX find fewer partial matches !!!
+                                result ["fields"]  = 0
+            return result
+        # end def _rendered
 
     # end class Completer
 
@@ -671,6 +676,37 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end class Instance
 
     Page = Instance
+
+    class QX (_Cmd_Json_) :
+        """Process AJAX queries"""
+
+        SUPPORTED_METHODS = set (("POST", ))
+
+        class Renderer (object) :
+
+            def af_html (self, parent, handler, template, HTTP, request) :
+                result     = {}
+                json       = TFL.Record (** handler.json)
+                E_Type     = parent.E_Type
+                qr         = QR.from_request_data (E_Type, {json.key : ""})
+                template   = parent.top.Templateer.get_template ("e_type")
+                call_macro = template.call_macro
+                result ["html"] = call_macro ("qr_tr", qr, qr.filters [0])
+                return result
+            # end def af_html
+
+        # end class Renderer
+
+        def _rendered (self, handler, template, HTTP, request) :
+            try :
+                renderer = getattr (self.Renderer, self.args [0])
+            except AttributeError :
+                raise HTTP.Error_404 (request.path)
+            else :
+                return renderer (self, handler, template, HTTP, request)
+        # end def _rendered
+
+    # end class QX
 
     @Once_Property
     def __Obsolete_Form (self) :
@@ -954,6 +990,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , create         = (Changer,       "args",  0)
         , delete         = (Deleter,       "args",  None)
         , expand         = (Expander,      "args",  0)
+        , qx             = (QX,            "args",  1)
         )
     child_attrs          = {}
 

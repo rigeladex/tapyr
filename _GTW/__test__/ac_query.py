@@ -29,6 +29,7 @@
 #     8-Jun-2011 (MG) Creation
 #    12-Sep-2011 (CT) Tests for `lifetime` added
 #    11-Nov-2011 (CT) Add tests for `Q.__eq__` and `Q.CONTAINS`
+#     5-Dec-2011 (CT) Add tests for `Sailor.AQ.left.AC(dict(last_name = "Tan"))`
 #    ««revision-date»»···
 #--
 
@@ -38,10 +39,12 @@ _attr_ac_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
     >>> p1 = PAP.Person ("Glueck",          "Martin")
     >>> p2 = PAP.Person ("Tanzer",          "Christian", "", "Mag.", lifetime = dict (start = u"26.9.1959", raw = True))
     >>> p3 = PAP.Person ("Franz-Ferdinand", "Karl")
     >>> p4 = PAP.Person ("Tanzer", "Egon", lifetime = dict (start = u"1907/03/08", finish = "1994/08/04", raw = True))
+    >>> s2 = SRM.Sailor (p2)
     >>> for value in "Ma", "martin", "CHRi" :
     ...    q = PAP.Person.AQ.first_name.AC (value)
     ...    for o in (p1, p2, p3) :
@@ -75,7 +78,8 @@ _attr_ac_query = """
     >>> q3  = PAP.Person.AQ.lifetime.AC (dict (finish = "1994/08/04"))
     >>> q4  = PAP.Person.lifetime.Q.EQ (dict (start = "1907", finish = "1994"))
     >>> q5  = PAP.Person.first_name.Q.CONTAINS ("ti")
-    >>> qs1 = PAP.Person.AQ.lifetime.start.AC ("1959/09/26")
+    >>> q6  = PAP.Person.AQ.lifetime.AC (dict (start = "1959"))
+    >>> q7 = PAP.Person.AQ.lifetime.start.AC ("1959/09/26")
 
     >>> print q1
     Q.lifetime.start == 1959-09-26
@@ -85,8 +89,10 @@ _attr_ac_query = """
     <Filter_And [Q.lifetime.start.between (datetime.date(1907, 1, 1), datetime.date(1907, 12, 31)), Q.lifetime.finish.between (datetime.date(1994, 1, 1), datetime.date(1994, 12, 31))]>
     >>> print q5
     Q.first_name.contains (u'ti',)
+    >>> print q6
+    Q.lifetime.start.between (datetime.date(1959, 1, 1), datetime.date(1959, 12, 31))
 
-    >>> print qs1
+    >>> print q7
     Q.lifetime.start == 1959-09-26
 
     >>> print " and ".join (str (p) for p in q2.predicates)
@@ -103,7 +109,10 @@ _attr_ac_query = """
     >>> list (p.ui_display for p in PAP.Person.query_s (q5))
     [u'Glueck Martin', u'Tanzer Christian, Mag.']
 
-    >>> PAP.Person.query_s (qs1).all ()
+    >>> PAP.Person.query_s (q6).all ()
+    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+
+    >>> PAP.Person.query_s (q7).all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
 
     >>> q = PAP.Person.AQ.last_name.AC ("Franz")
@@ -112,6 +121,19 @@ _attr_ac_query = """
     >>> q = PAP.Person.AQ.last_name.AC ("Franz-F")
     >>> print q
     Q.last_name.startswith (u'franz-f',)
+
+    >>> qs1  = SRM.Sailor.AQ.left.AC (dict (last_name = "Tan"))
+    >>> qs2  = SRM.Sailor.AQ.left.last_name.AC ("Tan")
+
+    >>> print qs1
+    <Filter_Or [Q.left.last_name.startswith (u'tan',), Q.left.last_name.contains (u'-tan',)]>
+    >>> print qs2
+    <Filter_Or [Q.left.last_name.startswith (u'tan',), Q.left.last_name.contains (u'-tan',)]>
+
+    >>> SRM.Sailor.query_s (qs1).all ()
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', u'', u'')]
+    >>> SRM.Sailor.query_s (qs2).all ()
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', u'', u'')]
 
     >>> a1 = PAP.Address ("Langstrasse 4",    "2244", "Spannberg", "Austria")
     >>> a2 = PAP.Address ("Glasauergasse 32", "1130", "Wien",      "Austria")

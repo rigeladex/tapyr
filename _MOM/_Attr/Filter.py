@@ -48,6 +48,7 @@
 #     4-Dec-2011 (CT) Factor classes to `MOM.Attr.Querier`
 #     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
 #     4-Dec-2011 (CT) Remove `prefix` from `__call__`, `a_query` and `query`
+#     5-Dec-2011 (CT) Add and use `base_op_key`
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,8 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
             cls.op_key = op_key
             if op_key not in cls.Base_Op_Table :
                 cls.Base_Op_Table [op_key] = cls
+            if cls.base_op_key is None :
+                cls.base_op_key = op_key
     # end def __init__
 
     def __str__ (cls) :
@@ -102,6 +105,7 @@ class _Filter_ (TFL.Meta.Object) :
 
     op_fct        = None ### Must be redefined for subclasses or instances
     op_sym        = None ### Must be redefined for subclasses
+    base_op_key   = None
 
     def __init__ (self, querier) :
         self.querier = querier
@@ -159,8 +163,8 @@ class _Composite_ (_Filter_) :
         E_Type = self.attr.E_Type
         def _gen () :
             for k, v in value.iteritems () :
-                qk   = getattr (q, k)
-                qop  = getattr (qk, self.op_key)
+                qk   = getattr (q,  k)
+                qop  = getattr (qk, self.base_op_key)
                 r    = qop     (v)
                 if r is not None :
                     yield r
@@ -336,6 +340,7 @@ class Auto_Complete (Equal) :
     """Attribute query filter for auto-completion."""
 
     op_sym        = "auto-complete"
+    base_op_key   = "AC"
 
 # end class Auto_Complete
 

@@ -77,9 +77,9 @@ class Completer (TFL.Meta.Object) :
     # end def copy
 
     def __call__ (self, scope, val_dict) :
-        ETM    = scope [self.etn]
-        vd     = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
-        fs     = tuple (ETM.ac_query_attrs (self.names, vd))
+        ETM = scope [self.etn]
+        vd  = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
+        fs  = tuple (ETM.ac_query_attrs (self.names, vd))
         if fs or self.treshold == 0 :
             return ETM.query_s (* fs).distinct ()
         return TFL.Q_Result (())

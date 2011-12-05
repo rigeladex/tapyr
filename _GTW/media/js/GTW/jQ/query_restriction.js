@@ -247,6 +247,7 @@
                 // XXX
                 // ??? one attr_filter_html per choice or one per choice/op ???
                 // getJSON --> choice.attr_filter_html;
+                // url = ".../qx/af_html", json_data = { key : key }
             };
             var result = options.attr_filter_html.clone (true);
                       // choice.attr_filter_html.clone (true);
