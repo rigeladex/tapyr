@@ -432,8 +432,7 @@
                   var menu$   = but$.data ("menu$").element;
                   var c$, desc;
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
-                      choice = choices [i]
-                          .replace (/^\s*/, "").replace (/\s*$/, "");
+                      choice = $.trim (choices [i]);
                       if (choice.length) {
                           desc = false;
                           if (choice [0] === "-") {
