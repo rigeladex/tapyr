@@ -621,9 +621,7 @@
                 .html (op.label || op.sym)
                 .attr ("title", op.desc);
         };
-        $(document)
-            .bind ("click.menuhide", hide_menu_cb)
-            .bind ("keyup.menuhide", hide_menu_cb);
+        $(document).bind ("click.menuhide keyup.menuhide", hide_menu_cb);
         $(selectors.button).gtw_buttonify (icon_map, options.buttonify_options);
         $(selectors.add_button, qr$)
             .each
