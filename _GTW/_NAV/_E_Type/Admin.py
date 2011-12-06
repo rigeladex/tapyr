@@ -700,6 +700,25 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class QX_AF_Html
 
+    class QX_Order_By_Form (_QX_) :
+        """Process AJAX query for order-by form"""
+
+        def rendered (self, handler, template = None) :
+            HTTP       = self.top.HTTP
+            request    = handler.request
+            result     = {}
+            E_Type     = self.E_Type
+            template   = self.top.Templateer.get_template ("e_type")
+            call_macro = template.call_macro
+            try :
+                result ["html"] = call_macro ("order_by_form")
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                return exc (handler)
+        # end def _rendered
+
+    # end class QX_Order_By_Form
+
     @Once_Property
     def __Obsolete_Form (self) :
         try :
@@ -872,6 +891,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, self.qx_prefix, "af_html")
     # end def href_qx_af_html
 
+    def href_qx_obf (self) :
+        return pjoin (self.abs_href, self.qx_prefix, "obf")
+    # end def href_qx_obf
+
     def is_current_dir (self, nav_page) :
         p = nav_page.href
         return p.startswith (self.href) and p != self.href
@@ -981,15 +1004,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     child_attrs          = {}
     _child_name_map      = dict \
-        ( change         = (Changer,       "args",  None)
-        , complete       = (Completer,     "args",  None)
-        , completed      = (Completed,     "args",  None)
-        , create         = (Changer,       "args",  0)
-        , delete         = (Deleter,       "args",  None)
-        , expand         = (Expander,      "args",  0)
+        ( change         = (Changer,          "args",  None)
+        , complete       = (Completer,        "args",  None)
+        , completed      = (Completed,        "args",  None)
+        , create         = (Changer,          "args",  0)
+        , delete         = (Deleter,          "args",  None)
+        , expand         = (Expander,         "args",  0)
         )
     _qx_name_map         = dict \
-        ( af_html        = (QX_AF_Html,    "args",  0)
+        ( af_html        = (QX_AF_Html,       "args",  0)
+        , obf            = (QX_Order_By_Form, "args",  0)
         )
 
     def _get_child (self, child, * grandchildren) :

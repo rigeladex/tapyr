@@ -43,7 +43,8 @@
 ##    23-Nov-2011 (CT) Add `attr_filter_html` to `gtw_query_restriction`
 ##    26-Nov-2011 (CT) Add `setup_obj_list` to `gtw_query_restriction`
 ##    28-Nov-2011 (CT) Add `order_by_form_...` to `gtw_query_restriction`
-##     6-Dec-2011 (CT) Replace `attr_filter_html` by `qx_af_html_url`
+##     6-Dec-2011 (CT) Replace `attr_filter_html` by `qx_af_html_url`,
+##                     `order_by_form_html` by `qx_obf_url`
 ##    ««revision-date»»···
 ##--
 #}
@@ -56,20 +57,19 @@
 
 {%- block body_tail_scripts -%}
   {{ super () }}
-  {%- set obf = e_type.order_by_form ()|replace ('"', '\\"')|replace ("\n", "")|safe %}
   <script>
     $("form.QR").gtw_query_restriction
       ( {{ page.qr_spec.as_json }}
-      , { qx_af_html_url : "{{ page.href_qx_af_html () }}"
-        , disabler_title : "{{ GTW._T ("Disable") }}"
+      , { disabler_title : "{{ GTW._T ("Disable") }}"
         , enabler_title : "{{ GTW._T ("Reenable") }}"
-        , order_by_form_html : $("{{ obf }}")
         , order_by_desc_title :
             "{{ GTW._T ("Display objects in descending order of the attribute") }}"
         , order_by_asc_title :
             "{{ GTW._T ("Display objects in ascending order of the attribute") }}"
         , order_by_sortable_title :
             "{{ GTW._T ("Drag the order-by criteria up or down to change their priority") }}"
+        , qx_af_html_url : "{{ page.href_qx_af_html () }}"
+        , qx_obf_url : "{{ page.href_qx_obf () }}"
         , setup_obj_list : $GTW.ETA$.setup_obj_list
         }
       );

@@ -40,7 +40,7 @@
         if ("callback" in options) {
             display$.bind ("focus click", options.callback);
         }
-        display$.removeProp ("disabled");
+        display$.prop ("disabled", false);
         return this;
     }
   } (jQuery)

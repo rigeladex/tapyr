@@ -23,7 +23,8 @@
 //    29-Nov-2011 (CT) Creation continued (order_by...)
 //    30-Nov-2011 (CT) Creation continued (ev.delegateTarget)
 //     5-Dec-2011 (CT) Creation continued (s/input/:input/ for selectors)
-//     6-Dec-2011 (CT) Creation continued (use `gtw_ajax_2json`,
+//     6-Dec-2011 (CT) Creation continued (use `gtw_ajax_2json`
+//                     [qx_af_html_url, qx_obf_url],
 //                     `active_menu_but_class`, `adjust_op_menu`)
 //    ««revision-date»»···
 //--
@@ -203,7 +204,7 @@
                         .addClass    ("ui-icon-plusthick")
                         .removeClass ("ui-icon-minusthick");
             } else {
-                value$.removeProp ("disabled").focus ();
+                value$.prop ("disabled", false).focus ();
                 dis$.attr ("title", options.disabler_title)
                     .find (".button")
                         .addClass    ("ui-icon-minusthick")
@@ -504,7 +505,30 @@
             , setup_widget      : function setup_widget (but$) {
                   var S      = selectors;
                   var obf$   = options.order_by_form_html;
-                  var result = obf$.dialog
+                  var result;
+                  if (! obf$) {
+                      $.gtw_ajax_2json
+                          ( { async       : false
+                            , success     : function (response, status) {
+                                if (! response ["error"]) {
+                                    if ("html" in response) {
+                                        obf$ = $(response.html);
+                                        options.order_by_form_html = obf$;
+                                    } else {
+                                        console.error ("Ajax Error", response);
+                                    };
+                                } else {
+                                  console.error ("Ajax Error", response);
+                                }
+                              }
+                            , url         : options.qx_obf_url
+                            }
+                          );
+                      if (! obf$) {
+                          return;
+                      };
+                  };
+                  result = obf$.dialog
                       ( { autoOpen : false
                         , title    : obf$.attr ("title")
                         }
