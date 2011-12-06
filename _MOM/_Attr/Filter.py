@@ -49,6 +49,8 @@
 #     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
 #     4-Dec-2011 (CT) Remove `prefix` from `__call__`, `a_query` and `query`
 #     5-Dec-2011 (CT) Add and use `base_op_key`
+#     6-Dec-2011 (CT) Change `_Filter_.__call__` to handle un-cookable
+#                     `value == ""`
 #    ««revision-date»»···
 #--
 
@@ -117,7 +119,10 @@ class _Filter_ (TFL.Meta.Object) :
             try :
                 value = cooker (value)
             except (ValueError, TypeError) :
-                return None
+                if value == "" :
+                    value = None
+                else :
+                    return None
         return self.query (value)
     # end def __call__
 

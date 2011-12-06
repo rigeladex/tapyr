@@ -16,14 +16,15 @@
 // Revision Dates
 //    22-Nov-2011 (CT) Creation
 //    23-Nov-2011 (CT) Creation continued (new_attr_filter, op_map_by_sym, ...)
-//    24-Nov-2011 (CT) Creation continued.. (disabler_cb, submit_cb)
-//    26-Nov-2011 (CT) Creation continued...
+//    24-Nov-2011 (CT) Creation continued (disabler_cb, submit_cb)
+//    26-Nov-2011 (CT) Creation continued
 //                     (setup_obj_list, GTW_buttonify, fix_buttons)
-//    28-Nov-2011 (CT) Creation continued.... (order_by_cb, ...)
-//    29-Nov-2011 (CT) Creation continued..... (order_by...)
-//    30-Nov-2011 (CT) Creation continued...... (ev.delegateTarget)
-//     5-Dec-2011 (CT) Creation continued....... (s/input/:input/ for selectors)
-//     6-Dec-2011 (CT) Creation continued........ (use `gtw_ajax_2json`)
+//    28-Nov-2011 (CT) Creation continued (order_by_cb, ...)
+//    29-Nov-2011 (CT) Creation continued (order_by...)
+//    30-Nov-2011 (CT) Creation continued (ev.delegateTarget)
+//     5-Dec-2011 (CT) Creation continued (s/input/:input/ for selectors)
+//     6-Dec-2011 (CT) Creation continued (use `gtw_ajax_2json`,
+//                     `active_menu_but_class`, `adjust_op_menu`)
 //    ««revision-date»»···
 //--
 
@@ -75,7 +76,8 @@
             , opts && opts ["selectors"] || {}
             );
         var options  = $.extend
-            ( { asc_class             : "ui-icon-triangle-1-s"
+            ( { active_menu_but_class : "active-menu-button"
+              , asc_class             : "ui-icon-triangle-1-s"
               , desc_class            : "ui-icon-triangle-1-n"
               , sortable_class        : "ui-icon-arrowthick-2-n-s"
               }
@@ -102,6 +104,7 @@
                             f.label = f.ui_name;
                         };
                         f.order_by_key = f.key.replace (name_sep, ".");
+                        f.ops_selected = [];
                         result.push (f);
                         af_map [f.label] = f;
                         if ("children" in f) {
@@ -115,13 +118,17 @@
             );
         var op_map_by_sym =
             ( function () {
-                var result = {}, k, v;
+                var result = {}, k, v, label;
                 for (k in qrs.op_map) {
                     if (qrs.op_map.hasOwnProperty (k)) {
-                        v                = qrs.op_map [k];
-                        v.key            = k;
-                        result [v.sym]   = v;
-                        result [v.label] = v;
+                        v              = qrs.op_map [k];
+                        v.key          = k;
+                        // if label contains stuff like `&ge;` we need to
+                        // run it through `html` because we'll later want
+                        // to look up `but$.html ()` in `op_map_by_sym`
+                        label          = $("<a>").append (v.label).html ();
+                        result [v.sym] = v;
+                        result [label] = v;
                     };
                 };
                 return result;
@@ -162,6 +169,22 @@
                 $(selectors.attrs_container).append (nf$);
             };
             nf$.find (selectors.attr_filter_value).focus ();
+        };
+        var adjust_op_menu = function adjust_op_menu (afs) {
+            var menu$ = afs.ops_menu$;
+            menu$.element.find ("a.button").each
+                ( function () {
+                    var a$    = $(this);
+                    var label = a$.html ();
+                    var map   = afs.ops_selected;
+                    var op    = op_map_by_sym [label];
+                    if (map [op.sym]) {
+                        a$.addClass    ("ui-state-disabled");
+                    } else {
+                        a$.removeClass ("ui-state-disabled");
+                    };
+                  }
+                );
         };
         var attach_menu = function attach_menu (but$, menu) {
             but$.click (menu_click_cb)
@@ -207,16 +230,23 @@
                 tc = $(ev.target).closest (".drop-menu");
                 if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
                     menu$.hide ();
+                    $("."+options.active_menu_but_class)
+                        .removeClass (options.active_menu_but_class);
                 };
             };
         };
         var menu_click_cb = function menu_click_cb (ev) {
             var but$ = $(ev.delegateTarget);
             var menu = but$.data ("menu$");
+            var opts = menu.element.data ("options");
             if (menu.element.is (":visible")) {
                 menu.element.hide ();
+                but$.removeClass (options.active_menu_but_class);
             } else {
-                hide_menu_cb (ev);
+                hide_menu_cb (ev); // hide other open menus, if any
+                if (opts && "open" in opts) {
+                    opts.open (ev, menu);
+                };
                 menu.element
                     .show ()
                     .position
@@ -228,6 +258,7 @@
                       )
                     .zIndex (but$.zIndex () + 1)
                     .focus  ();
+                but$.addClass (options.active_menu_but_class);
                 if (ev && "stopPropagation" in ev) {
                     ev.stopPropagation ();
                 };
@@ -237,6 +268,8 @@
             var target$ = $(ev.delegateTarget);
             var menu$   = target$.closest (".cmd-menu");
             target$.data ("callback") (ev);
+            $("."+options.active_menu_but_class)
+                .removeClass (options.active_menu_but_class);
             menu$.hide ();
         };
         var new_attr_filter = function new_attr_filter (choice) {
@@ -280,8 +313,9 @@
             $(S.attr_filter_op, result).each (setup_op_button);
             return result;
         };
-        var new_menu = function new_menu (but$, choices, cb) {
+        var new_menu = function new_menu (choices, cb, options) {
             var menu = $("<ul class=\"drop-menu cmd-menu\">"), result;
+            menu.data ({ options : options });
             for (var i = 0, li = choices.length; i < li; i++) {
                 ( function () {
                     var c = choices [i];
@@ -292,8 +326,7 @@
                                   .append (c.label)
                                   .click  (menu_select_cb)
                                   .data
-                                      ( { but$   : but$
-                                        , callback : cb
+                                      ( { callback : cb
                                         , choice : c
                                         }
                                       )
@@ -310,16 +343,17 @@
                 .data     ("menu");
             return result;
         };
-        var op_select_cb = function op_cb (ev) {
-            var S = selectors;
+        var op_select_cb = function op_select_cb (ev) {
+            var S       = selectors;
             var target$ = $(ev.delegateTarget);
             var choice  = target$.data ("choice");
-            var but$    = target$.data ("but$");
+            var but$    = $("."+options.active_menu_but_class).first ();
             var afc$    = but$.closest (S.attr_filter_container);
-            var name    = value$.attr  ("name");
+            var value$  = $(S.attr_filter_value, afc$);
+            var name    = value$.attr ("name");
             var prefix  = name.split   (qrs.op_sep) [0];
             var key     = prefix + qrs.op_sep + choice.key;
-            update_attr_filter_op (afc$, op, key);
+            update_attr_filter_op (afc$, choice, key);
         };
         var order_by =
             { cb              :
@@ -499,9 +533,7 @@
                               attach_menu
                                 ( but$
                                 , new_menu
-                                    ( but$
-                                    , attr_filters, order_by.cb.add_criterion
-                                    )
+                                    (attr_filters, order_by.cb.add_criterion)
                                 );
                             }
                           );
@@ -560,11 +592,23 @@
                 .attr   ("title", options.disabler_title);
         };
         var setup_op_button = function setup_op_button () {
-            var but$ = $(this);
-            var afc$ = but$.closest (selectors.attr_filter_container);
-            var afs  = af_map  [afc$.attr ("title")];
-            var ops  = sig_map [afs.sig_key];
-            attach_menu (but$, new_menu (but$, ops, op_select_cb));
+            var but$   = $(this);
+            var afc$   = but$.closest (selectors.attr_filter_container);
+            var afs    = af_map [afc$.attr ("title")];
+            var label  = but$.html ();
+            var op     = op_map_by_sym [label];
+            if (! ("ops_menu$" in afs)) {
+                afs.ops_menu$ = new_menu
+                    ( sig_map [afs.sig_key]
+                    , op_select_cb
+                    , { open : function (ev, menu) {
+                            adjust_op_menu (afs);
+                        }
+                      }
+                    );
+            };
+            attach_menu (but$, afs.ops_menu$);
+            afs.ops_selected [op.sym] = true;
         };
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S = selectors;
@@ -609,7 +653,13 @@
             return head + tail;
         };
         var update_attr_filter_op = function update_attr_filter_op (afc$, op, key) {
-            var S = selectors;
+            var S    = selectors;
+            var afs  = af_map  [afc$.attr ("title")];
+            var but$ = $(S.attr_filter_op, afc$);
+            var oop  = op_map_by_sym [but$.html ()];
+            if (oop) {
+                afs.ops_selected [oop.sym] = false;
+            };
             $(S.attr_filter_label, afc$).attr ("for", key);
             $(S.attr_filter_value, afc$)
                 .not (".hidden")
@@ -618,17 +668,17 @@
                 .not (".display")
                     .attr ("name", key);
             $(S.attr_filter_op,    afc$)
-                .html (op.label || op.sym)
-                .attr ("title", op.desc);
+                .attr ("title", op.desc)
+                .html (op.label);
+            afs.ops_selected [op.sym] = true;
         };
         $(document).bind ("click.menuhide keyup.menuhide", hide_menu_cb);
         $(selectors.button).gtw_buttonify (icon_map, options.buttonify_options);
         $(selectors.add_button, qr$)
             .each
                 ( function () {
-                    var but$ = $(this);
                     attach_menu
-                      (but$, new_menu (but$, attr_filters, add_attr_filter_cb));
+                        ($(this), new_menu (attr_filters, add_attr_filter_cb));
                   }
                 );
         $(selectors.attr_filter_op).each (setup_op_button);

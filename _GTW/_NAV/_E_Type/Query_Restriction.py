@@ -28,16 +28,17 @@
 # Revision Dates
 #    14-Nov-2011 (CT) Creation
 #    16-Nov-2011 (CT) Creation continued (order_by, ...)
-#    17-Nov-2011 (CT) Creation continued.. (NEXT, PREV, ...)
-#    19-Nov-2011 (CT) Creation continued... (FIRST, LAST)
-#    21-Nov-2011 (CT) Creation continued... (order_by_names, order_by_ui_names)
-#    22-Nov-2011 (CT) Creation continued.... (Query_Restriction_Spec)
-#    23-Nov-2011 (CT) Creation continued.... (fix `offset_f`, add `op_map`)
-#    25-Nov-2011 (CT) Creation continued..... (restrict `offset_f` to `total_f`)
-#    26-Nov-2011 (CT) Creation continued...... (fix `offset` and `offset_f`)
-#     2-Dec-2011 (CT) Creation continued....... (guard `sig_map` for `f`...)
-#     4-Dec-2011 (CT) Creation continued........ (`MOM.Attr.Querier`, `.AQ`)
-#     5-Dec-2011 (CT) Creation continued......... (add `label` to `op_map`, )
+#    17-Nov-2011 (CT) Creation continued (NEXT, PREV, ...)
+#    19-Nov-2011 (CT) Creation continued (FIRST, LAST)
+#    21-Nov-2011 (CT) Creation continued (order_by_names, order_by_ui_names)
+#    22-Nov-2011 (CT) Creation continued (Query_Restriction_Spec)
+#    23-Nov-2011 (CT) Creation continued (fix `offset_f`, add `op_map`)
+#    25-Nov-2011 (CT) Creation continued (restrict `offset_f` to `total_f`)
+#    26-Nov-2011 (CT) Creation continued (fix `offset` and `offset_f`)
+#     2-Dec-2011 (CT) Creation continued (guard `sig_map` for `f`...)
+#     4-Dec-2011 (CT) Creation continued (`MOM.Attr.Querier`, `.AQ`)
+#     5-Dec-2011 (CT) Creation continued (add `label` to `op_map`, )
+#     6-Dec-2011 (CT) Creation continued (filter `None` in `_setup_filters`)
 #    ««revision-date»»···
 #--
 
@@ -216,14 +217,16 @@ class Query_Restriction (TFL.Meta.Object) :
                 )
             , value  = value
             )
-        return TFL.Record (** f), qop (value)
+        fq = qop (value)
+        return TFL.Record (** f), fq
     # end def _setup_attr
 
     def _setup_filters (self, E_Type, data) :
-        matches = tuple \
+        matches = \
             (   self._setup_attr (E_Type, pat, k, data.pop (k))
             for k, pat in self._filter_matches (data, self._a_pat)
             )
+        matches = tuple ((f, fq) for f, fq in matches if fq is not None)
         if matches :
             self.filters, self.filters_q = zip (* matches)
     # end def _setup_filters
