@@ -140,6 +140,7 @@
 #                     `qr_spec` to work with dotted names in `_list_display`
 #     5-Dec-2011 (CT) Factor `_Cmd_Json_`
 #     5-Dec-2011 (CT) Start `QX`
+#     6-Dec-2011 (CT) Continue `QX`
 #    ««revision-date»»···
 #--
 
@@ -677,36 +678,27 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     Page = Instance
 
-    class QX (_Cmd_Json_) :
-        """Process AJAX queries"""
+    class _QX_ (_Cmd_Json_) :
 
         SUPPORTED_METHODS = set (("POST", ))
 
-        class Renderer (object) :
+    # end class QX
 
-            def af_html (self, parent, handler, template, HTTP, request) :
-                result     = {}
-                json       = TFL.Record (** handler.json)
-                E_Type     = parent.E_Type
-                qr         = QR.from_request_data (E_Type, {json.key : ""})
-                template   = parent.top.Templateer.get_template ("e_type")
-                call_macro = template.call_macro
-                result ["html"] = call_macro ("qr_tr", qr, qr.filters [0])
-                return result
-            # end def af_html
-
-        # end class Renderer
+    class QX_AF_Html (_QX_) :
+        """Process AJAX query for attr-filter's html"""
 
         def _rendered (self, handler, template, HTTP, request) :
-            try :
-                renderer = getattr (self.Renderer, self.args [0])
-            except AttributeError :
-                raise HTTP.Error_404 (request.path)
-            else :
-                return renderer (self, handler, template, HTTP, request)
+            result     = {}
+            json       = TFL.Record (** handler.json)
+            E_Type     = self.E_Type
+            qr         = QR.from_request_data (E_Type, {json.key : ""})
+            template   = self.top.Templateer.get_template ("e_type")
+            call_macro = template.call_macro
+            result ["html"] = call_macro ("qr_tr", qr, qr.filters [0])
+            return result
         # end def _rendered
 
-    # end class QX
+    # end class QX_AF_Html
 
     @Once_Property
     def __Obsolete_Form (self) :
@@ -876,6 +868,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, "expand")
     # end def href_delete
 
+    def href_qx_af_html (self) :
+        return pjoin (self.abs_href, self.qx_prefix, "af_html")
+    # end def href_qx_af_html
+
     def is_current_dir (self, nav_page) :
         p = nav_page.href
         return p.startswith (self.href) and p != self.href
@@ -983,6 +979,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return list (ichain (E_Type.primary, E_Type.user_attr))
     # end def _auto_list_display
 
+    child_attrs          = {}
     _child_name_map      = dict \
         ( change         = (Changer,       "args",  None)
         , complete       = (Completer,     "args",  None)
@@ -990,20 +987,27 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , create         = (Changer,       "args",  0)
         , delete         = (Deleter,       "args",  None)
         , expand         = (Expander,      "args",  0)
-        , qx             = (QX,            "args",  1)
         )
-    child_attrs          = {}
+    _qx_name_map         = dict \
+        ( af_html        = (QX_AF_Html,    "args",  0)
+        )
 
     def _get_child (self, child, * grandchildren) :
-        T  = None
-        kw = {}
-        if child in self._child_name_map :
-            C, attr, n = self._child_name_map [child]
+        kw  = {}
+        map = None
+        T   = None
+        if child == self.qx_prefix and grandchildren :
+            child, grandchildren = grandchildren [0], grandchildren [1:]
+            map = self._qx_name_map
+        elif child in self._child_name_map :
+            map = self._child_name_map
+        if map is not None :
+            C, attr, n = map [child]
             if n is None or len (grandchildren) == n :
                 T      = C
                 name   = pjoin (* grandchildren) if grandchildren else ""
                 kw     = \
-                    {"name"   : "%s/%s" % (child, name)
+                    { "name"  : "%s/%s" % (child, name)
                     , "kind"  : child
                     , attr    : grandchildren or (None, )
                     }

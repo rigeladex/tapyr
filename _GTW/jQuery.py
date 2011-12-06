@@ -49,6 +49,8 @@
 #    22-Nov-2011 (CT) Add `GTW_query_restriction`
 #    26-Nov-2011 (CT) Add `GTW_e_type_admin`, `GTW_buttonify`
 #     2-Dec-2011 (CT) Use `modernizr.custom.js` instead of specific version
+#     6-Dec-2011 (CT) Add `GTW_jsonify`, `GTW_afs_elements`, `GTW_inspect`,
+#                     `GTW_jq_afs`, and `GTW_autocomplete`
 #    ««revision-date»»···
 #--
 
@@ -93,6 +95,15 @@ GTW.Script \
     , rank     = -50
     )
 
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/AFS/Elements.js"
+    , name     = "GTW_afs_elements"
+    )
+
+GTW.Script      (src = "/media/GTW/js/GTW/inspect.js", name = "GTW_inspect")
+
+GTW.Script      (src = "/media/GTW/js/GTW/jsonify.js", name = "GTW_jsonify")
+
 GTW.Script      (src = "/media/GTW/js/GTW/util.js", name = "GTW_util")
 GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 GTW.JS_On_Ready \
@@ -103,6 +114,16 @@ GTW.JS_On_Ready \
 GTW.Script \
     ( src = "/media/GTW/js/GTW/jQ/buttonify.js"
     , name = "GTW_buttonify"
+    )
+
+GTW.Script \
+    ( src = "/media/GTW/js/GTW/jQ/afs.js"
+    , name = "GTW_jq_afs"
+    )
+
+GTW.Script \
+    ( src = "/media/GTW/js/GTW/jQ/autocomplete.js"
+    , name = "GTW_autocomplete"
     )
 
 GTW.Script \

@@ -38,7 +38,8 @@
 ##    29-Nov-2011 (CT) Continue `qr_control` (`order_by_form`...)
 ##    30-Nov-2011 (CT) Continue `qr_control` (`qr_button`...)
 ##     4-Dec-2011 (CT) Continue `qr_control`
-##                     (Change `qr_tr` to use `input_widget`)
+##                     (Change `qr_tr` to use `af.attr.input_widget`)
+##     6-Dec-2011 (CT) Continue `qr_control` (remove `qr_tr_x`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -173,29 +174,6 @@
     {%- endif -%}
   </li>
 {%- endmacro -%} {#- qr_field -#}
-
-{%- macro qr_tr_x (ui_name, key, op_desc, op, value) -%}
-  <tr title="{{ ui_name }}">
-    <td class="name">
-      <label for="{{ key }}">
-        {{ ui_name }}
-      </label>
-    </td>
-    <td class="op" title="{{ op_desc }}">
-      <a class="button">
-        {{- op|escape -}}
-      </a>
-    </td>
-    <td>
-      {{ X.input.text (id = key, name = key, value = value, class = "value") }}
-    </td>
-    <td class="disabler"></td>
-  </tr>
-{%- endmacro -%} {#- qr_tr_x -#}
-
-{%- macro qr_tr (qr, af) -%}
-  {{- qr_tr_x (af.ui_name, af.key, af.op_desc, GTW._T (af.op), af.value) }}
-{%- endmacro -%} {#- qr_tr -#}
 
 {%- macro qr_tr (qr, af) -%}
   <tr title="{{ af.ui_name }}">

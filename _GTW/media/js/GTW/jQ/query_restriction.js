@@ -23,6 +23,7 @@
 //    29-Nov-2011 (CT) Creation continued..... (order_by...)
 //    30-Nov-2011 (CT) Creation continued...... (ev.delegateTarget)
 //     5-Dec-2011 (CT) Creation continued....... (s/input/:input/ for selectors)
+//     6-Dec-2011 (CT) Creation continued........ (use `gtw_ajax_2json`)
 //    ««revision-date»»···
 //--
 
@@ -242,26 +243,41 @@
             var S = selectors;
             var op  = op_map_by_sym ["=="] ; // last-op ???
             var key = choice.key + qrs.op_sep + op.key;
-            // XXX choice.deep ....
-            if (! "attr_filter_html" in choice) {
-                // XXX
-                // ??? one attr_filter_html per choice or one per choice/op ???
-                // getJSON --> choice.attr_filter_html;
-                // url = ".../qx/af_html", json_data = { key : key }
+            var ajx = false;
+            if (! ("attr_filter_html" in choice)) {
+                $.gtw_ajax_2json
+                    ( { async       : false
+                      , data        :
+                          { key     : key
+                          }
+                      , success     : function (response, status) {
+                            if (! response ["error"]) {
+                                if ("html" in response) {
+                                  choice.attr_filter_html = $(response.html);
+                                  choice.attr_filter_html
+                                      .find (selectors.attr_filter_disabler)
+                                          .each (setup_disabler);
+                                  ajx = true;
+                                } else {
+                                  console.error ("Ajax Error", response);
+                                }
+                            } else {
+                                console.error ("Ajax Error", response);
+                            };
+                        }
+                      , url         : options.qx_af_html_url
+                      }
+                    , "Attribute filter"
+                    );
+                if (!ajx) {
+                  return;
+                };
             };
-            var result = options.attr_filter_html.clone (true);
-                      // choice.attr_filter_html.clone (true);
-            result.attr ("title", choice.label);
-            $(S.attr_filter_label, result)
-                .attr   ("for", key)
-                .append (choice.label);
-            $(S.attr_filter_op, result)
-                .append (op.label || op.sym)
-                .attr   ("title", op.desc)
-                .each   (setup_op_button);
-            $(S.attr_filter_value, result)
-                .attr ({ id : key, name : key });
-            result.data ("choice", choice);
+            var result = choice.attr_filter_html
+                .clone (true)
+                .data  ("choice", choice);
+            update_attr_filter_op (result, op, key);
+            $(S.attr_filter_op, result).each (setup_op_button);
             return result;
         };
         var new_menu = function new_menu (but$, choices, cb) {
@@ -297,19 +313,13 @@
         var op_select_cb = function op_cb (ev) {
             var S = selectors;
             var target$ = $(ev.delegateTarget);
-            var choice  = target$.data  ("choice");
-            var but$    = target$.data  ("but$");
-            var afc$    = but$.closest (selectors.attr_filter_container);
-            var label$  = $(S.attr_filter_label, afc$);
-            var op$     = $(S.attr_filter_op,    afc$);
-            var value$  = $(S.attr_filter_value, afc$);
-            var name    = value$.attr ("name");
-            var prefix  = name.split (qrs.op_sep) [0];
+            var choice  = target$.data ("choice");
+            var but$    = target$.data ("but$");
+            var afc$    = but$.closest (S.attr_filter_container);
+            var name    = value$.attr  ("name");
+            var prefix  = name.split   (qrs.op_sep) [0];
             var key     = prefix + qrs.op_sep + choice.key;
-            label$.attr ("for", key);
-            op$ .html   (choice.label)
-                .attr   ("title", choice.desc);
-            value$.attr ({ id : key, name : key});
+            update_attr_filter_op (afc$, op, key);
         };
         var order_by =
             { cb              :
@@ -598,6 +608,19 @@
             };
             return head + tail;
         };
+        var update_attr_filter_op = function update_attr_filter_op (afc$, op, key) {
+            var S = selectors;
+            $(S.attr_filter_label, afc$).attr ("for", key);
+            $(S.attr_filter_value, afc$)
+                .not (".hidden")
+                    .attr ("id", key)
+                    .end ()
+                .not (".display")
+                    .attr ("name", key);
+            $(S.attr_filter_op,    afc$)
+                .html (op.label || op.sym)
+                .attr ("title", op.desc);
+        };
         $(document)
             .bind ("click.menuhide", hide_menu_cb)
             .bind ("keyup.menuhide", hide_menu_cb);
@@ -612,8 +635,6 @@
                 );
         $(selectors.attr_filter_op).each (setup_op_button);
         $(selectors.attr_filter_disabler).each (setup_disabler);
-        options.attr_filter_html.find
-            (selectors.attr_filter_disabler).each (setup_disabler);
         $(selectors.attrs_container)
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         $(selectors.order_by_display).each (order_by.setup);

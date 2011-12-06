@@ -62,15 +62,16 @@
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro id_entity (elem) -%}
+  {%- set class = kwargs.pop ("class", None)  %}
   {{ X.input.text
-      ( class     = "value hidden"
+      ( class     = GTW.filtered_join (" ", (class, "hidden"))
       , name      = elem.name
       , value     = elem.pid
       )
   }}
   {{ _field
       ( X.input.text, elem
-      , class     = "value display"
+      , class     = GTW.filtered_join (" ", (class, "display"))
       , disabled  = True
       , name      = None
       , value     = elem.uid
