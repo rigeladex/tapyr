@@ -30,7 +30,6 @@
 ##    21-Nov-2011 (CT) Creation (factored from html/e_type_admin.jnj)
 ##    21-Nov-2011 (CT) Continue `qr_control` (change `order_by`)
 ##    22-Nov-2011 (CT) Continue `qr_control`..
-##    23-Nov-2011 (CT) Continue `qr_control`... (factor `qr_tr_x`)
 ##    25-Nov-2011 (CT) Change `admin_table` to not put field values into `<a>`
 ##    26-Nov-2011 (CT) Continue `qr_control`....
 ##                     (`button_types`, `qr_button_first`, ...)
@@ -38,13 +37,70 @@
 ##    29-Nov-2011 (CT) Continue `qr_control` (`order_by_form`...)
 ##    30-Nov-2011 (CT) Continue `qr_control` (`qr_button`...)
 ##     4-Dec-2011 (CT) Continue `qr_control`
-##                     (Change `qr_tr` to use `af.attr.input_widget`)
-##     6-Dec-2011 (CT) Continue `qr_control` (remove `qr_tr_x`)
+##                     (Change `attr_filter_tr` to use `af.attr.input_widget`)
+##     7-Dec-2011 (CT) Continue `qr_control`
+##                     (factor `attr_filter_table`, add `entity_selector_form`)
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import html_version as X -%}
+{%- import html_version    as X -%}
+{%- import "html/form.jnj" as Form %}
+
+{%- macro attr_filter_table (filters) -%}
+  <table class="{{ kwargs.get ("class", "attrs") }}">
+    <tbody>
+      {%- for af in filters %}
+        {{ attr_filter_tr (af) }}
+      {% endfor -%}
+    </tbody>
+  </table>
+{%- endmacro -%} {#- attr_filter_table -#}
+
+{%- macro attr_filter_tr (af) -%}
+  <tr title="{{ af.ui_name }}">
+    <td class="name">
+      <label for="{{ af.id }}">{{ af.ui_name }}</label>
+    </td>
+    <td class="op" title="{{ af.op.desc }}">
+      <a class="button">{{- af.op.label -}}</a>
+    </td>
+    <td class="value">
+      {{ GTW.call_macro (af.attr.input_widget, af, class = "value") }}
+    </td>
+    <td class="disabler"></td>
+  </tr>
+{%- endmacro -%} {#- attr_filter_tr -#}
+
+{%- macro entity_selector_form (page, af, filters) -%}
+  <form class = "QR ES" {# -#}
+      title="{{ GTW._T ("Select entity for attribute %s") % af.ui_name }}"{# -#}
+  >
+    <div class="bbox">
+      {{ _qr_button
+          ( GTW._  ("Apply")
+          , GTW._T ("Use the currently selected entity")
+          )
+      }}
+      {{ _qr_button
+          ( GTW._  ("Cancel")
+          , GTW._T ("Leave form without selecting entity ")
+          )
+      }}
+      {{ _qr_button
+          ( GTW._  ("Clear")
+          , GTW._T ("Reset fields")
+          )
+      }}
+    <p></p>
+    </div>
+    <input class="hidden" name="__attribute_selector_for__" {# -#}
+      title="{{ af.attr.E_Type.type_name }}" {# -#}
+      value="{{ af.id }}" {# -#}
+    >
+    {{ attr_filter_table (filters) }}
+  </form>
+{%- endmacro -%} {#- entity_selector_form -#}
 
 {%- macro obj_button (page, E_Type, tag, href, name, desc, icon, kind, a_class=None) -%}
   <{{ tag }} class="cmd {{ kind }}">
@@ -115,7 +171,7 @@
   {{ _qr_button (name, title, typ, text, disabled = disabled, ** kwargs) }}
 {%- endmacro -%} {#- qr_button -#}
 
-{%- macro qr_button_first (page, fields, qr) -%}
+{%- macro qr_button_first (page, qr) -%}
   {{ qr_button
       ( page
       , GTW._  ("First")
@@ -125,7 +181,7 @@
   }}
 {%- endmacro -%} {#- qr_button_first -#}
 
-{%- macro qr_button_last (page, fields, qr) -%}
+{%- macro qr_button_last (page, qr) -%}
   {{ qr_button
       ( page
       , GTW._  ("Last")
@@ -135,7 +191,7 @@
   }}
 {%- endmacro -%} {#- qr_button_last -#}
 
-{%- macro qr_button_next (page, fields, qr) -%}
+{%- macro qr_button_next (page, qr) -%}
   {{ qr_button
       ( page
       , GTW._  ("Next")
@@ -145,7 +201,7 @@
   }}
 {%- endmacro -%} {#- qr_button_next -#}
 
-{%- macro qr_button_prev (page, fields, qr) -%}
+{%- macro qr_button_prev (page, qr) -%}
   {{ qr_button
       ( page
       , GTW._  ("Prev")
@@ -175,23 +231,7 @@
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
-{%- macro qr_tr (qr, af) -%}
-  <tr title="{{ af.ui_name }}">
-    <td class="name">
-      <label for="{{ af.id }}">{{ af.ui_name }}</label>
-    </td>
-    <td class="op" title="{{ af.op.desc }}">
-      <a class="button">{{- af.op.label -}}</a>
-    </td>
-    <td>
-      {{ GTW.call_macro (af.attr.input_widget, af, class = "value") }}
-    </td>
-    <td class="disabler"></td>
-  </tr>
-{%- endmacro -%} {#- qr_tr -#}
-
-{%- macro qr_control (page, fields, qr) -%}
-  {%- import "html/form.jnj" as Form %}
+{%- macro qr_control (page, qr) -%}
   {%- set action = page.abs_href -%}
   {%- set E_Type = page.E_Type %}
   {% call Form.form (action = action, method = "get", class = "QR") -%}
@@ -201,10 +241,10 @@
         , GTW._T ("Display list of objects matching the restriction")
         )
     }}
-    {{ qr_button_last  (page, fields, qr) }}
-    {{ qr_button_next  (page, fields, qr) }}
-    {{ qr_button_prev  (page, fields, qr) }}
-    {{ qr_button_first (page, fields, qr) }}
+    {{ qr_button_last  (page, qr) }}
+    {{ qr_button_next  (page, qr) }}
+    {{ qr_button_prev  (page, qr) }}
+    {{ qr_button_first (page, qr) }}
     {{ qr_button
         ( page
         , GTW._  ("Add")
@@ -246,13 +286,7 @@
         }}
       {% endcall %} {# qr_field #}
     </ul>
-    <table class="attrs">
-      <tbody>
-        {%- for af in qr.filters %}
-          {{ qr_tr (qr, af) }}
-        {% endfor -%}
-      </tbody>
-    </table>
+    {{ attr_filter_table (qr.filters) }}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- qr_control -#}
 
@@ -290,7 +324,7 @@
 {%- endmacro -%} {#- admin_table -#}
 
 {%- macro admin (page, fields, objects) -%}
-  {{ qr_control  (page, fields, page.query_restriction) }}
+  {{ qr_control  (page, page.query_restriction) }}
   {{ admin_table (page, fields, objects) }}
 {%- endmacro -%} {#- admin -#}
 

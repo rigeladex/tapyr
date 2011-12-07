@@ -30,6 +30,7 @@
 #     4-Dec-2011 (CT) Change signature of `_Filter_.__init__` to `(querier)`
 #     4-Dec-2011 (CT) Add `_full_name`
 #     4-Dec-2011 (CT) Add `choices` to `_as_template_elem_inv`
+#     7-Dec-2011 (CT) Add `E_Type`
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,11 @@ class _Type_ (TFL.Meta.Object) :
     def Children (self) :
         return ()
     # end def Children
+
+    @TFL.Meta.Once_Property
+    def E_Type (self) :
+        return self._attr.E_Type
+    # end def E_Type
 
     @TFL.Meta.Once_Property
     def Sig_Key (self) :

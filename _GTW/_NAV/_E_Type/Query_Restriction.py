@@ -37,8 +37,9 @@
 #    26-Nov-2011 (CT) Creation continued (fix `offset` and `offset_f`)
 #     2-Dec-2011 (CT) Creation continued (guard `sig_map` for `f`...)
 #     4-Dec-2011 (CT) Creation continued (`MOM.Attr.Querier`, `.AQ`)
-#     5-Dec-2011 (CT) Creation continued (add `label` to `op_map`, )
+#     5-Dec-2011 (CT) Creation continued (add `label` to `op_map`)
 #     6-Dec-2011 (CT) Creation continued (filter `None` in `_setup_filters`)
+#     7-Dec-2011 (CT) Creation continued (classmethod `Filter`)
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,7 @@ import _GTW._NAV._E_Type
 from   _MOM.import_MOM          import MOM, Q
 
 import _TFL._Meta.Object
+import _TFL._Meta.Property
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL.Record
@@ -79,16 +81,25 @@ class Query_Restriction (TFL.Meta.Object) :
     query_f     = None
     ui_sep      = MOM.Attr.Querier.ui_sep
 
+    _name_p     = r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
+    _op_p       = r"(?P<op> [A-Z]+)"
     _a_pat      = Regexp \
-        ( "".join
-            ( ( r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
-              , op_sep
-              , r"(?P<op> [A-Z]+)"
-              , r"$"
-              )
-            )
+        ( "".join ((_name_p, op_sep, _op_p, r"$"))
         , re.VERBOSE
         )
+
+    _a_pat_opt  = Regexp \
+        ( "".join ((_name_p, r"(?:", op_sep, _op_p, r")?", r"$"))
+        , re.VERBOSE
+        )
+
+    @classmethod
+    def Filter (cls, E_Type, key, value = None, default_op = "AC") :
+        pat = cls._a_pat_opt
+        if pat.match (key) :
+            result, _ = cls._setup_attr (E_Type, pat, key, value, default_op)
+            return result
+    # end def Filter
 
     @classmethod
     def from_request_data (cls, E_Type, req_data) :
@@ -198,14 +209,19 @@ class Query_Restriction (TFL.Meta.Object) :
                 yield k, pat
     # end def _filter_matches
 
-    def _setup_attr (self, E_Type, pat, k, value) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _setup_attr (soc, E_Type, pat, k, value, default_op = "EQ") :
         op     = pat.op
+        if not op :
+            op = default_op
+            k  = soc.op_sep.join ((k, default_op))
         names  = pat.name.split ("__")
         name   = ".".join (names)
         q      = getattr (E_Type.AQ, name)
         qop    = getattr (q, op)
         ate    = q.as_template_elem
-        f = dict \
+        fq     = qop (value)
+        f      = dict \
             ( ate._kw
             , attr   = q._attr
             , edit   = value
@@ -217,7 +233,6 @@ class Query_Restriction (TFL.Meta.Object) :
                 )
             , value  = value
             )
-        fq = qop (value)
         return TFL.Record (** f), fq
     # end def _setup_attr
 

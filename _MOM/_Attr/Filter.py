@@ -51,6 +51,7 @@
 #     5-Dec-2011 (CT) Add and use `base_op_key`
 #     6-Dec-2011 (CT) Change `_Filter_.__call__` to handle un-cookable
 #                     `value == ""`
+#     7-Dec-2011 (CT) Add guard for `value` to `_Date_.__call__`
 #    ««revision-date»»···
 #--
 
@@ -200,7 +201,7 @@ class _Date_ (_Filter_) :
 
     def __call__ (self, value) :
         pat = self.pat
-        if pat.match (value) :
+        if value and pat.match (value) :
             q    = self.a_query
             args = (int (pat.year), )
             if pat.month :

@@ -39,7 +39,7 @@
             );
         var display$ = $(selectors.display, this);
         if ("callback" in options) {
-            display$.bind ("focus click", options.callback);
+            display$.bind ("focus", options.callback);
         }
         display$.prop ("disabled", false);
         return this;

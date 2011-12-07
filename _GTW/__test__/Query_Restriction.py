@@ -49,6 +49,37 @@ _test_code = """
     >>> print qr.limit, qr.offset
     24 0
 
+    >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name"))
+    Record
+    ( attr = String `last_name`
+    , edit = None
+    , full_name = 'last_name'
+    , id = 'last_name___AC'
+    , name = 'last_name___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute value starts with the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 3
+    , ui_name = 'Last name'
+    , value = None
+    )
+    >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE"))
+    Record
+    ( attr = String `last_name`
+    , edit = None
+    , full_name = 'last_name'
+    , id = 'last_name___GE'
+    , name = 'last_name___GE'
+    , op = Record
+        ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+        , label = '&ge;'
+        )
+    , sig_key = 3
+    , ui_name = 'Last name'
+    , value = None
+    )
+
     >>> print formatted (qr.filters)
     ( Record
       ( attr = String `last_name`

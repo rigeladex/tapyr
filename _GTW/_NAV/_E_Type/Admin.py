@@ -695,7 +695,43 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             qr         = QR.from_request_data (E_Type, {json.key : ""})
             template   = self.top.Templateer.get_template ("e_type")
             call_macro = template.call_macro
-            result ["html"] = call_macro ("qr_tr", qr, qr.filters [0])
+            result ["html"] = call_macro ("attr_filter_tr", qr.filters [0])
+            return result
+        # end def _rendered
+
+    # end class QX_AF_Html
+
+    class QX_Entity_Selector_Form (_QX_) :
+        """Process AJAX query for entity-selector form"""
+
+        def _rendered (self, handler, template, HTTP, request) :
+            def _geni (aq) :
+                for q in aq.Children :
+                    if q.Children :
+                        for c in _geni (q) :
+                            yield c
+                    else :
+                        yield q
+            def _gen (ET, af) :
+                for c in af.attr.Q.Children :
+                    q = getattr (ET.AQ, c._attr.name)
+                    if q.Children :
+                        for c in _geni (q) :
+                            yield c
+                    else :
+                        yield q
+            json       = TFL.Record (** handler.json)
+            E_Type     = self.E_Type
+            af         = QR.Filter (E_Type, json.key)
+            ET         = af.attr.E_Type
+            filters    = tuple (QR.Filter (ET, q._id) for q in _gen (ET, af))
+            template   = self.top.Templateer.get_template ("e_type")
+            call_macro = template.call_macro
+            result = dict \
+                ( callbacks = [] ### XXX
+                , html      = call_macro
+                    ("entity_selector_form", self, af, filters)
+                )
             return result
         # end def _rendered
 
@@ -892,6 +928,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, self.qx_prefix, "af_html")
     # end def href_qx_af_html
 
+    def href_qx_esf (self) :
+        return pjoin (self.abs_href, self.qx_prefix, "esf")
+    # end def href_qx_esf
+
     def href_qx_obf (self) :
         return pjoin (self.abs_href, self.qx_prefix, "obf")
     # end def href_qx_obf
@@ -950,14 +990,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     template   = self.top.Templateer.get_template ("e_type")
                     call_macro = template.call_macro
                     buttons    = dict \
-                        ( FIRST = call_macro
-                            ("qr_button_first", self, fields, qr)
-                        , LAST  = call_macro
-                            ("qr_button_last",  self, fields, qr)
-                        , NEXT  = call_macro
-                            ("qr_button_next",  self, fields, qr)
-                        , PREV  = call_macro
-                            ("qr_button_prev",  self, fields, qr)
+                        ( FIRST = call_macro ("qr_button_first", self, qr)
+                        , LAST  = call_macro ("qr_button_last",  self, qr)
+                        , NEXT  = call_macro ("qr_button_next",  self, qr)
+                        , PREV  = call_macro ("qr_button_prev",  self, qr)
                         )
                     result = handler.write_json \
                         ( dict
@@ -1006,16 +1042,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     child_attrs          = {}
     _child_name_map      = dict \
-        ( change         = (Changer,          "args",  None)
-        , complete       = (Completer,        "args",  None)
-        , completed      = (Completed,        "args",  None)
-        , create         = (Changer,          "args",  0)
-        , delete         = (Deleter,          "args",  None)
-        , expand         = (Expander,         "args",  0)
+        ( change         = (Changer,                 "args",  None)
+        , complete       = (Completer,               "args",  None)
+        , completed      = (Completed,               "args",  None)
+        , create         = (Changer,                 "args",  0)
+        , delete         = (Deleter,                 "args",  None)
+        , expand         = (Expander,                "args",  0)
         )
     _qx_name_map         = dict \
-        ( af_html        = (QX_AF_Html,       "args",  0)
-        , obf            = (QX_Order_By_Form, "args",  0)
+        ( af_html        = (QX_AF_Html,              "args",  0)
+        , esf            = (QX_Entity_Selector_Form, "args",  0)
+        , obf            = (QX_Order_By_Form,        "args",  0)
         )
 
     def _get_child (self, child, * grandchildren) :

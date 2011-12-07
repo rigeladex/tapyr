@@ -27,6 +27,7 @@
 //                     [qx_af_html_url, qx_obf_url],
 //                     `active_menu_but_class`, `adjust_op_menu`)
 //     7-Dec-2011 (CT) Creation continued (`response.callbacks`)
+//     7-Dec-2011 (CT) Creation continued (reorganize `options`)
 //    ««revision-date»»···
 //--
 
@@ -200,13 +201,13 @@
             var disabled = value$.prop ("disabled");
             if (! disabled) {
                 value$.prop ("disabled", true);
-                dis$.attr ("title", options.enabler_title)
+                dis$.attr ("title", options.title.enabler)
                     .find (".button")
                         .addClass    ("ui-icon-plusthick")
                         .removeClass ("ui-icon-minusthick");
             } else {
                 value$.prop ("disabled", false).focus ();
-                dis$.attr ("title", options.disabler_title)
+                dis$.attr ("title", options.title.disabler)
                     .find (".button")
                         .addClass    ("ui-icon-minusthick")
                         .removeClass ("ui-icon-plusthick");
@@ -300,7 +301,7 @@
                                 console.error ("Ajax Error", response);
                             };
                         }
-                      , url         : options.qx_af_html_url
+                      , url         : options.url.qx_af_html
                       }
                     , "Attribute filter"
                     );
@@ -427,7 +428,7 @@
                       if (! disabled) {
                           crit$.addClass ("disabled");
                           target$
-                              .attr ("title", options.enabler_title)
+                              .attr ("title", options.title.enabler)
                               .addClass    ("ui-icon-plusthick")
                               .removeClass ("ui-icon-minusthick");
                           order_by.toggle_criteria
@@ -435,7 +436,7 @@
                       } else {
                           crit$.removeClass ("disabled");
                           target$
-                              .attr ("title", options.disabler_title)
+                              .attr ("title", options.title.disabler)
                               .addClass    ("ui-icon-minusthick")
                               .removeClass ("ui-icon-plusthick");
                           order_by.toggle_criteria
@@ -522,7 +523,7 @@
                                   console.error ("Ajax Error", response);
                                 }
                               }
-                            , url         : options.qx_obf_url
+                            , url         : options.url.qx_obf
                             }
                           );
                       if (! obf$) {
@@ -542,7 +543,7 @@
                               .css ("float", "right")
 
                           )
-                      .attr ("title", options.order_by_sortable_title);
+                      .attr ("title", options.title.order_by_sortable);
                   result.find (S.order_by_criteria).sortable
                       ( { close       : order_by.cb.clear
                         , distance    : 5
@@ -567,10 +568,10 @@
                   result.find (S.clear_button).click  (order_by.cb.clear);
                   result.find (S.order_by_direction)
                       .addClass ("ui-icon " + options.asc_class)
-                      .attr     ("title", options.order_by_asc_title);
+                      .attr     ("title", options.title.order_by_asc);
                   result.find (S.order_by_disabler)
                       .addClass ("ui-icon ui-icon-minusthick")
-                      .attr     ("title", options.disabler_title)
+                      .attr     ("title", options.title.disabler)
                       .click    (order_by.cb.disabler);
                   result.delegate
                       (S.order_by_criterion, "click", order_by.cb.dir);
@@ -600,11 +601,11 @@
                   if (dir$.hasClass (options.asc_class)) {
                       old_class = options.asc_class;
                       new_class = options.desc_class;
-                      title     = options.order_by_desc_title;
+                      title     = options.title.order_by_desc;
                   } else {
                       old_class = options.desc_class;
                       new_class = options.asc_class;
-                      title     = options.order_by_asc_title;
+                      title     = options.title.order_by_asc;
                   };
                   dir$.removeClass (old_class)
                       .addClass    (new_class)
@@ -614,7 +615,7 @@
         var setup_disabler = function setup_disabler () {
             var dis$ = $(this);
             dis$.append ($("<a class=\"button ui-icon ui-icon-minusthick\">"))
-                .attr   ("title", options.disabler_title);
+                .attr   ("title", options.title.disabler);
         };
         var setup_op_button = function setup_op_button () {
             var but$   = $(this);
@@ -660,7 +661,7 @@
                     ; i++
                     ) {
                     cbn = response.callbacks [i];
-                    cb  = options.callbacks  [cbn];
+                    cb  = options.callback [cbn];
                     if (cb) {
                         cb ();
                     };
@@ -721,6 +722,29 @@
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         $(selectors.order_by_display).each (order_by.setup);
         qr$.delegate (selectors.submit, "click", submit_cb);
+        // XXX quick test only
+        // XXX re/move
+        $.gtw_ajax_2json
+            ( { async       : false
+              , data        :
+                  { key     : "right__left___NE"
+                  }
+              , success     : function (response, status) {
+                    if (! response ["error"]) {
+                        if ("html" in response) {
+                          // body$.append
+                              ($(response.html));
+                        } else {
+                          console.error ("Ajax Error", response);
+                        }
+                    } else {
+                        console.error ("Ajax Error", response);
+                    };
+                }
+              , url         : options.url.qx_esf
+              }
+            , "Attribute filter"
+            );
         return this;
     }
   } (jQuery)
