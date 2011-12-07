@@ -67,6 +67,7 @@
 //     8-Nov-2011 (CT) Use `elem.anchor_id || elem.root_id` to fix top-level
 //                     completion
 //    17-Nov-2011 (CT) Use `console.error` instead of `alert` (most situations)
+//     7-Dec-2011 (CT) Change plugin name to `gtw_afs_form`
 //    ««revision-date»»···
 //--
 
@@ -117,7 +118,7 @@
         };
         return result;
     };
-    $.fn.afs_form = function (afs_form, opts) {
+    $.fn.gtw_afs_form = function (afs_form, opts) {
         var options  = $.extend
             ( {
               }

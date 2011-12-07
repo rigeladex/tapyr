@@ -53,7 +53,7 @@
 {%- block body_tail_scripts -%}
   {{ super () }}
   <script>
-    $("#{{ form.id }}").afs_form
+    $("#{{ form.id }}").gtw_afs_form
       ( {{ form.as_js }}
       , { completer_url : "{{ page.href_complete  () }}"
         , completed_url : "{{ page.href_completed () }}"

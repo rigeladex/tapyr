@@ -500,7 +500,7 @@
               }
             , setup             : function setup () {
                   var li$ = $(this).closest ("li");
-                  li$.hd_input ({ callback : order_by.cb.open });
+                  li$.gtw_hd_input ({ callback : order_by.cb.open });
               }
             , setup_widget      : function setup_widget (but$) {
                   var S      = selectors;

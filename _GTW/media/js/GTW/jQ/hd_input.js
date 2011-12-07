@@ -15,13 +15,14 @@
 //
 // Revision Dates
 //    28-Nov-2011 (CT) Creation
+//     7-Dec-2011 (CT) Change plugin name to `gtw_hd_input`
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($, undefined) {
-    $.fn.hd_input = function (opts) {
+    $.fn.gtw_hd_input = function (opts) {
         var selectors = $.extend
             ( { container   : "li"
               , display     : ".value.display"
