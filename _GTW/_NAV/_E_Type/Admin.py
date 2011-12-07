@@ -141,7 +141,7 @@
 #     5-Dec-2011 (CT) Factor `_Cmd_Json_`
 #     5-Dec-2011 (CT) Start `QX`
 #     6-Dec-2011 (CT) Continue `QX`
-#     7-Dec-2011 (CT) Add `callbacks` to json response of `rendered`
+#     7-Dec-2011 (CT) Continue `QX (`callbacks`, `QX_Entity_Selector_Form`, ...)
 #    ««revision-date»»···
 #--
 
@@ -692,10 +692,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             result     = {}
             json       = TFL.Record (** handler.json)
             E_Type     = self.E_Type
-            qr         = QR.from_request_data (E_Type, {json.key : ""})
+            af         = QR.Filter (E_Type, json.key)
             template   = self.top.Templateer.get_template ("e_type")
             call_macro = template.call_macro
-            result ["html"] = call_macro ("attr_filter_tr", qr.filters [0])
+            result ["html"] = call_macro ("attr_filter_tr", af)
             return result
         # end def _rendered
 
