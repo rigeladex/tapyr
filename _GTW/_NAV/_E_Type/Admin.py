@@ -141,6 +141,7 @@
 #     5-Dec-2011 (CT) Factor `_Cmd_Json_`
 #     5-Dec-2011 (CT) Start `QX`
 #     6-Dec-2011 (CT) Continue `QX`
+#     7-Dec-2011 (CT) Add `callbacks` to json response of `rendered`
 #    ««revision-date»»···
 #--
 
@@ -961,6 +962,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     result = handler.write_json \
                         ( dict
                             ( buttons          = buttons
+                            , callbacks        = ["setup_obj_list"]
                             , head_line        = self.head_line
                             , limit            = qr.limit
                             , object_container = call_macro

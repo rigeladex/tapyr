@@ -45,6 +45,7 @@
 ##    28-Nov-2011 (CT) Add `order_by_form_...` to `gtw_query_restriction`
 ##     6-Dec-2011 (CT) Replace `attr_filter_html` by `qx_af_html_url`,
 ##                     `order_by_form_html` by `qx_obf_url`
+##     7-Dec-2011 (CT) Put `setup_obj_list` into `callbacks`
 ##    ««revision-date»»···
 ##--
 #}
@@ -60,7 +61,10 @@
   <script>
     $("form.QR").gtw_query_restriction
       ( {{ page.qr_spec.as_json }}
-      , { disabler_title : "{{ GTW._T ("Disable") }}"
+      , { callbacks :
+            { setup_obj_list : $GTW.ETA$.setup_obj_list
+            }
+        , disabler_title : "{{ GTW._T ("Disable") }}"
         , enabler_title : "{{ GTW._T ("Reenable") }}"
         , order_by_desc_title :
             "{{ GTW._T ("Display objects in descending order of the attribute") }}"
@@ -70,7 +74,6 @@
             "{{ GTW._T ("Drag the order-by criteria up or down to change their priority") }}"
         , qx_af_html_url : "{{ page.href_qx_af_html () }}"
         , qx_obf_url : "{{ page.href_qx_obf () }}"
-        , setup_obj_list : $GTW.ETA$.setup_obj_list
         }
       );
   </script>

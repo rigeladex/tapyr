@@ -26,6 +26,7 @@
 //     6-Dec-2011 (CT) Creation continued (use `gtw_ajax_2json`
 //                     [qx_af_html_url, qx_obf_url],
 //                     `active_menu_but_class`, `adjust_op_menu`)
+//     7-Dec-2011 (CT) Creation continued (`response.callbacks`)
 //    ««revision-date»»···
 //--
 
@@ -653,8 +654,17 @@
             if ("buttons" in response) {
                 fix_buttons (response.buttons);
             };
-            if ("setup_obj_list" in options) {
-                options.setup_obj_list ();
+            if ("callbacks" in response) {
+                for ( var i = 0, li = response.callbacks.length, cb, cbn
+                    ; i < li
+                    ; i++
+                    ) {
+                    cbn = response.callbacks [i];
+                    cb  = options.callbacks  [cbn];
+                    if (cb) {
+                        cb ();
+                    };
+                };
             };
             $GTW.push_history (qr$.attr ("action") + "?" + qr$.serialize ());
         };
