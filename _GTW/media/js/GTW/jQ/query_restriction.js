@@ -28,6 +28,7 @@
 //                     `active_menu_but_class`, `adjust_op_menu`)
 //     7-Dec-2011 (CT) Creation continued (`response.callbacks`)
 //     7-Dec-2011 (CT) Creation continued (reorganize `options`)
+//    12-Dec-2011 (CT) Creation continued (start `setup_completer`)
 //    ««revision-date»»···
 //--
 
@@ -48,33 +49,33 @@
             , opts && opts ["icon_map"] || {}
             );
         var selectors = $.extend
-            ( { add_button            : "button[name=ADD]"
-              , apply_button          : "button[name=APPLY]"
-              , ascending             : ".asc"
-              , button                : "button[name]"
-              , attr_filter_container : "tr"
-              , attr_filter_disabler  : "td.disabler"
-              , attr_filter_label     : "td.name label"
-              , attr_filter_op        : "td.op a.button"
-              , attr_filter_value     : "td :input.value"
-              , attr_filter_ui_value  : "td :input.ui-value"
-              , attrs_container       : "table.attrs"
-              , cancel_button         : "button[name=CANCEL]"
-              , clear_button          : "button[name=CLEAR]"
-              , descending            : ".desc"
-              , disabled_button       : "button[class=disabled]"
-              , head_line             : "h1.headline"
-              , limit                 : ":input[name=limit]"
-              , object_container      : "table.Object-List"
-              , offset                : ":input[name=offset]"
-              , order_by_criteria     : "ul.criteria"
-              , order_by_criterion    : "li"
-              , order_by_direction    : ".direction"
-              , order_by_disabler     : ".disabler"
-              , order_by_display      : ":input.value.display[id=QR-order_by]"
-              , order_by_proto        : "ul.prototype li"
-              , order_by_value        : ":input.value.hidden[name=order_by]"
-              , submit                : "[type=submit]"
+            ( { add_button               : "button[name=ADD]"
+              , apply_button             : "button[name=APPLY]"
+              , ascending                : ".asc"
+              , button                   : "button[name]"
+              , attr_filter_container    : "tr"
+              , attr_filter_disabler     : "td.disabler"
+              , attr_filter_label        : "td.name label"
+              , attr_filter_op           : "td.op a.button"
+              , attr_filter_value        : "td :input.value"
+              , attr_filter_value_entity : "td.value.Entity"
+              , attrs_container          : "table.attrs"
+              , cancel_button            : "button[name=CANCEL]"
+              , clear_button             : "button[name=CLEAR]"
+              , descending               : ".desc"
+              , disabled_button          : "button[class=disabled]"
+              , head_line                : "h1.headline"
+              , limit                    : ":input[name=limit]"
+              , object_container         : "table.Object-List"
+              , offset                   : ":input[name=offset]"
+              , order_by_criteria        : "ul.criteria"
+              , order_by_criterion       : "li"
+              , order_by_direction       : ".direction"
+              , order_by_disabler        : ".disabler"
+              , order_by_display         : ":input.value.display[id=QR-order_by]"
+              , order_by_proto           : "ul.prototype li"
+              , order_by_value           : ":input.value.hidden[name=order_by]"
+              , submit                   : "[type=submit]"
               }
             , opts && opts ["selectors"] || {}
             );
@@ -171,7 +172,8 @@
             } else {
                 $(selectors.attrs_container).append (nf$);
             };
-            nf$.find (selectors.attr_filter_value).focus ();
+            $(selectors.attr_filter_value,        nf$).focus ();
+            $(selectors.attr_filter_value_entity, nf$).each  (setup_completer);
         };
         var adjust_op_menu = function adjust_op_menu (afs) {
             var menu$ = afs.ops_menu$;
@@ -354,7 +356,7 @@
             var afc$    = but$.closest (S.attr_filter_container);
             var value$  = $(S.attr_filter_value, afc$);
             var name    = value$.attr ("name");
-            var prefix  = name.split   (qrs.op_sep) [0];
+            var prefix  = name.split  (qrs.op_sep) [0];
             var key     = prefix + qrs.op_sep + choice.key;
             update_attr_filter_op (afc$, choice, key);
         };
@@ -636,6 +638,49 @@
             attach_menu (but$, afs.ops_menu$);
             afs.ops_selected [op.sym] = true;
         };
+        var setup_completer = function () {
+            var focus_cb = function focus_cb (ev) {
+                var target$ = $(ev.delegateTarget);
+                var key     = target$.prop    ("id");
+                var width   = qr$.width ();
+                $.gtw_ajax_2json
+                    ( { async       : false
+                      , data        :
+                          { key     : key
+                          }
+                      , success     : function (response, status) {
+                            var widget;
+                            if (! response ["error"]) {
+                                if ("html" in response) {
+                                    widget = $(response.html)
+                                        .dialog ({ autoOpen : true });
+                                    widget
+                                        .dialog ("option", "width", width*0.75)
+                                        .dialog ("widget")
+                                            .position
+                                                ( { my         : "top"
+                                                  , at         : "bottom"
+                                                  , of         : target$
+                                                  , collision  : "none"
+                                                  }
+                                                );
+                                    // TBD: bindings, completer, CSS rules
+                                } else {
+                                  console.error ("Ajax Error", response);
+                                }
+                            } else {
+                                console.error ("Ajax Error", response);
+                            };
+                        }
+                      , url         : options.url.qx_esf
+                      }
+                    , "Entity completer"
+                    );
+            };
+            return function setup_completer () {
+                    $(this).gtw_hd_input ({ callback : focus_cb });
+                };
+        } ();
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S = selectors;
             var of$ = $(S.offset);
@@ -698,10 +743,10 @@
             $(S.attr_filter_label, afc$).attr ("for", key);
             $(S.attr_filter_value, afc$)
                 .not (".hidden")
-                    .attr ("id", key)
+                    .prop ("id", key)
                     .end ()
                 .not (".display")
-                    .attr ("name", key);
+                    .prop ("name", key);
             $(S.attr_filter_op,    afc$)
                 .attr ("title", op.desc)
                 .html (op.label);
@@ -718,6 +763,7 @@
                 );
         $(selectors.attr_filter_op).each (setup_op_button);
         $(selectors.attr_filter_disabler).each (setup_disabler);
+        $(selectors.attr_filter_value_entity).each (setup_completer);
         $(selectors.attrs_container)
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         $(selectors.order_by_display).each (order_by.setup);

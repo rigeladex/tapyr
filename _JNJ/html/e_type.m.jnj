@@ -40,7 +40,7 @@
 ##                     (Change `attr_filter_tr` to use `af.attr.input_widget`)
 ##     7-Dec-2011 (CT) Continue `qr_control`
 ##                     (factor `attr_filter_table`, add `entity_selector_form`)
-##    12-Dec-2011 (CT) Continue `qr_control` (`af.Class`)
+##    12-Dec-2011 (CT) Continue `qr_control` (`af.Class`, `need_op`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -48,24 +48,26 @@
 {%- import html_version    as X -%}
 {%- import "html/form.jnj" as Form %}
 
-{%- macro attr_filter_table (filters) -%}
+{%- macro attr_filter_table (filters, need_op = True) -%}
   <table class="{{ kwargs.get ("class", "attrs") }}">
     <tbody>
       {%- for af in filters %}
-        {{ attr_filter_tr (af) }}
+        {{ attr_filter_tr (af, need_op) }}
       {% endfor -%}
     </tbody>
   </table>
 {%- endmacro -%} {#- attr_filter_table -#}
 
-{%- macro attr_filter_tr (af) -%}
+{%- macro attr_filter_tr (af, need_op = True) -%}
   <tr title="{{ af.ui_name }}">
     <td class="name">
       <label for="{{ af.id }}">{{ af.ui_name }}</label>
     </td>
-    <td class="op" title="{{ af.op.desc }}">
-      <a class="button">{{- af.op.label -}}</a>
-    </td>
+    {%- if need_op %}
+      <td class="op" title="{{ af.op.desc }}">
+        <a class="button">{{- af.op.label -}}</a>
+      </td>
+    {% endif -%}
     <td class="value{%- if af.Class %} {{ af.Class }}{%- endif -%}">
       {{ GTW.call_macro (af.attr.input_widget, af, class = "value") }}
     </td>
@@ -99,7 +101,7 @@
       title="{{ af.attr.E_Type.type_name }}" {# -#}
       value="{{ af.id }}" {# -#}
     >
-    {{ attr_filter_table (filters) }}
+    {{ attr_filter_table (filters, need_op = False) }}
   </form>
 {%- endmacro -%} {#- entity_selector_form -#}
 
