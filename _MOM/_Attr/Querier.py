@@ -31,6 +31,7 @@
 #     4-Dec-2011 (CT) Add `_full_name`
 #     4-Dec-2011 (CT) Add `choices` to `_as_template_elem_inv`
 #     7-Dec-2011 (CT) Add `E_Type`
+#    12-Dec-2011 (CT) Add `Class`, remove `deep`
 #    ««revision-date»»···
 #--
 
@@ -78,7 +79,7 @@ class _Type_ (TFL.Meta.Object) :
 
     Base_Op_Table = Filter._Filter_.Base_Op_Table
 
-    deep          = False
+    Class         = None
     Signatures    = {}
 
     ### `Table` maps the operations that can sensibly be selected in a UI
@@ -143,11 +144,11 @@ class _Type_ (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def _as_json_cargo_inv (self) :
         attr     = self._attr
-        deep     = self.deep
+        Class    = self.Class
         Sig_Key  = self.Sig_Key
         result   = dict (name = attr.name)
-        if deep :
-            result ["deep"]     = deep
+        if Class :
+            result ["Class"]    = Class
         if Sig_Key is not None :
             result ["sig_key"]  = Sig_Key
         return result
@@ -306,7 +307,7 @@ class Date (_Type_) :
 
 class Id_Entity (_Composite_) :
 
-    deep   = True
+    Class  = "Entity"
     Table  = dict \
         ( EQ                 = Filter.Id_Entity_Equal
         , NE                 = Filter.Id_Entity_Not_Equal

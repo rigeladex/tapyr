@@ -40,6 +40,7 @@
 ##                     (Change `attr_filter_tr` to use `af.attr.input_widget`)
 ##     7-Dec-2011 (CT) Continue `qr_control`
 ##                     (factor `attr_filter_table`, add `entity_selector_form`)
+##    12-Dec-2011 (CT) Continue `qr_control` (`af.Class`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -65,7 +66,7 @@
     <td class="op" title="{{ af.op.desc }}">
       <a class="button">{{- af.op.label -}}</a>
     </td>
-    <td class="value">
+    <td class="value{%- if af.Class %} {{ af.Class }}{%- endif -%}">
       {{ GTW.call_macro (af.attr.input_widget, af, class = "value") }}
     </td>
     <td class="disabler"></td>

@@ -166,14 +166,15 @@ _test_code = """
     >>> qrs = QRS (BiR, fns)
     >>> print formatted (qrs.as_json_cargo)
     { 'filters' :
-        [ { 'children' :
-              [ { 'children' :
+        [ { 'Class' : 'Entity'
+          , 'children' :
+              [ { 'Class' : 'Entity'
+                , 'children' :
                     [ { 'name' : 'name'
                       , 'sig_key' : 3
                       , 'ui_name' : 'Name'
                       }
                     ]
-                , 'deep' : True
                 , 'name' : 'left'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Class'
@@ -191,13 +192,14 @@ _test_code = """
                 , 'ui_name' : 'Sail number x'
                 }
               ]
-          , 'deep' : True
           , 'name' : 'left'
           , 'sig_key' : 2
           , 'ui_name' : 'Boat'
           }
-        , { 'children' :
-              [ { 'children' :
+        , { 'Class' : 'Entity'
+          , 'children' :
+              [ { 'Class' : 'Entity'
+                , 'children' :
                     [ { 'name' : 'name'
                       , 'sig_key' : 3
                       , 'ui_name' : 'Name'
@@ -216,13 +218,11 @@ _test_code = """
                       , 'ui_name' : 'Date'
                       }
                     ]
-                , 'deep' : True
                 , 'name' : 'left'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Event'
                 }
               ]
-          , 'deep' : True
           , 'name' : 'right'
           , 'sig_key' : 2
           , 'ui_name' : 'Regatta'
@@ -337,10 +337,12 @@ _test_code = """
 
     >>> print formatted (list (f.as_template_elem for f in qrs.filters))
     [ Record
-      ( attr = Boat `left`
+      ( Class = 'Entity'
+      , attr = Boat `left`
       , children =
           [ Record
-            ( attr = Boat_Class `left`
+            ( Class = 'Entity'
+            , attr = Boat_Class `left`
             , children =
                 [ Record
                   ( attr = String `name`
@@ -351,7 +353,6 @@ _test_code = """
                   , ui_name = 'Boat/Class/Name'
                   )
                 ]
-            , deep = True
             , full_name = 'left.left'
             , id = 'left__left'
             , name = 'left'
@@ -545,7 +546,6 @@ _test_code = """
             , ui_name = 'Boat/Sail number x'
             )
           ]
-      , deep = True
       , full_name = 'left'
       , id = 'left'
       , name = 'left'
@@ -553,10 +553,12 @@ _test_code = """
       , ui_name = 'Boat'
       )
     , Record
-      ( attr = Regatta `right`
+      ( Class = 'Entity'
+      , attr = Regatta `right`
       , children =
           [ Record
-            ( attr = Regatta_Event `left`
+            ( Class = 'Entity'
+            , attr = Regatta_Event `left`
             , children =
                 [ Record
                   ( attr = String `name`
@@ -592,7 +594,6 @@ _test_code = """
                   , ui_name = 'Regatta/Event/Date'
                   )
                 ]
-            , deep = True
             , full_name = 'right.left'
             , id = 'right__left'
             , name = 'left'
@@ -600,7 +601,6 @@ _test_code = """
             , ui_name = 'Regatta/Event'
             )
           ]
-      , deep = True
       , full_name = 'right'
       , id = 'right'
       , name = 'right'
