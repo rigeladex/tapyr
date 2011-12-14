@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-May-2010 (MG) Creation
 #     3-May-2010 (CT) Creation continued
+#    14-Dec-2011 (CT) Add tests for `attrs`
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,8 @@ _test_code = r"""
     >>> q   = SRM.Regatta.query ().filter (df)
     >>> fs  = tuple (x.QR for x in BiR.AQ.regatta.Unwrapped_Atoms)
     >>> fsn = tuple (x._name for x in fs)
+    >>> fss = ('left.__raw_name', 'left.date')
+    >>> fst = ('left', )
 
     >>> fs
     (Q.left.__raw_name, Q.left.date.__start, Q.left.date.__finish)
@@ -103,6 +106,12 @@ _test_code = r"""
 
     >>> sorted (q.attrs (* fsn))
     [(u'Himmelfahrt', datetime.date(2008, 5, 1), None), (u'Himmelfahrt', datetime.date(2008, 5, 1), None)]
+
+    >>> sorted (q.attrs (* fss))
+    [(u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01)), (u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01))]
+
+    >>> sorted (q.attrs (* fst))
+    [(GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),), (GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),)]
 
 """
 
