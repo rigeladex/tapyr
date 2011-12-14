@@ -82,6 +82,28 @@ _test_code = r"""
     >>> list (BiR.query_s (sort_key = sort_key))
     [GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))]
 
+    >>> df = SRM.Regatta.AQ.event.date.start.EQ ("2008")
+    >>> df
+    Q.left.date.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31))
+
+    >>> q   = SRM.Regatta.query ().filter (df)
+    >>> fs  = tuple (x.QR for x in BiR.AQ.regatta.Unwrapped_Atoms)
+    >>> fsn = tuple (x._name for x in fs)
+
+    >>> fs
+    (Q.left.__raw_name, Q.left.date.__start, Q.left.date.__finish)
+    >>> fsn
+    ('left.__raw_name', 'left.date.__start', 'left.date.__finish')
+
+    >>> sorted (q)
+    [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')]
+
+    >>> sorted (q.attrs (* fs))
+    [(u'Himmelfahrt', datetime.date(2008, 5, 1), None), (u'Himmelfahrt', datetime.date(2008, 5, 1), None)]
+
+    >>> sorted (q.attrs (* fsn))
+    [(u'Himmelfahrt', datetime.date(2008, 5, 1), None), (u'Himmelfahrt', datetime.date(2008, 5, 1), None)]
+
 """
 
 from _GTW.__test__.model import *

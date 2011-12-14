@@ -30,6 +30,7 @@
 #    12-Nov-2011 (CT) Creation continued
 #    18-Nov-2011 (CT) Creation continued..
 #     2-Dec-2011 (CT) Creation continued...
+#    13-Dec-2011 (CT) Creation continued.... (`.Atoms`)
 #    ««revision-date»»···
 #--
 
@@ -183,6 +184,60 @@ _test_code = """
         name                3
     place               0
     points              0
+
+    >>> def show_QA (a) :
+    ...     print repr (a._attr)
+    ...     for c in a.Atoms :
+    ...         print "   ", repr (c._attr), c._full_name
+    >>> def show_QUA (a) :
+    ...     print repr (a._attr), "unwrapped"
+    ...     for c in a.Unwrapped_Atoms :
+    ...         print "   ", repr (c._attr), c._full_name
+    >>> for pka in MOM.Attr.Selector.all (scope.SRM.Boat_in_Regatta.E_Type) :
+    ...     show_QA (pka.Q)
+    ...     show_QUA (pka.Q)
+    Boat `left`
+        String `name` left.left.name
+        Nation `nation` left.nation
+        Int `sail_number` left.sail_number
+        String `sail_number_x` left.sail_number_x
+    Boat `left` unwrapped
+        String `name` left.name
+        Nation `nation` nation
+        Int `sail_number` sail_number
+        String `sail_number_x` sail_number_x
+    Regatta `right`
+        String `name` right.left.name
+        Date `start` right.left.date.start
+        Date `finish` right.left.date.finish
+    Regatta `right` unwrapped
+        String `name` left.name
+        Date `start` left.date.start
+        Date `finish` left.date.finish
+    Entity `skipper`
+        String `last_name` skipper.left.last_name
+        String `first_name` skipper.left.first_name
+        String `middle_name` skipper.left.middle_name
+        String `title` skipper.left.title
+        Nation `nation` skipper.nation
+        String `mna_number` skipper.mna_number
+        String `name` skipper.club.name
+    Entity `skipper` unwrapped
+        String `last_name` left.last_name
+        String `first_name` left.first_name
+        String `middle_name` left.middle_name
+        String `title` left.title
+        Nation `nation` nation
+        String `mna_number` mna_number
+        String `name` club.name
+    Int `place`
+        Int `place` place
+    Int `place` unwrapped
+        Int `place` place
+    Int `points`
+        Int `points` points
+    Int `points` unwrapped
+        Int `points` points
 
     >>> seen = set ()
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -58,6 +58,7 @@
 #    14-Oct-2010 (CT) `symbolic_ref_pat` and `_symbolic_default` removed
 #    24-Nov-2010 (CT) `M_Attr_Type_Typed_Collection._elements_from_cargo_p`
 #                     fixed (`C_Type`)
+#    13-Dec-2011 (CT) Set `raw_name` to `ckd_name` unless `needs_raw_value`
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,10 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
         cls._d_rank = M_Attr_Type.count
         if not name.startswith (("_A_", "A_")) :
             cls.ckd_name = "__%s"     % (cls.name, )
-            cls.raw_name = "__raw_%s" % (cls.name, )
+            cls.raw_name = \
+                (    "__raw_%s" % (cls.name, ) if cls.needs_raw_value
+                else cls.ckd_name
+                )
             cls.renameds = set ()
             for b in bases :
                 bn = getattr (b, "ckd_name", None)
@@ -221,8 +225,8 @@ class M_Attr_Type_String (M_Attr_Type) :
     """
 
     def __init__ (cls, name, bases, dct) :
-        cls.__m_super.__init__ (name, bases, dct)
         cls.needs_raw_value = bool (cls.ignore_case)
+        cls.__m_super.__init__ (name, bases, dct)
         if cls.ignore_case :
             cls.cooked = staticmethod (_unicode_lower)
         else :

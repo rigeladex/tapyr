@@ -32,6 +32,8 @@
 #     4-Dec-2011 (CT) Add `choices` to `_as_template_elem_inv`
 #     7-Dec-2011 (CT) Add `E_Type`
 #    12-Dec-2011 (CT) Add `Class`, remove `deep`
+#    13-Dec-2011 (CT) Add `Atoms`, `Unwrapped`, and `Unwrapped_Atoms`
+#    13-Dec-2011 (CT) Add `QC` and `QR`
 #    ««revision-date»»···
 #--
 
@@ -126,6 +128,11 @@ class _Type_ (TFL.Meta.Object) :
     # end def as_template_elem
 
     @TFL.Meta.Once_Property
+    def Atoms (self) :
+        return (self, )
+    # end def Atoms
+
+    @TFL.Meta.Once_Property
     def Children (self) :
         return ()
     # end def Children
@@ -136,10 +143,33 @@ class _Type_ (TFL.Meta.Object) :
     # end def E_Type
 
     @TFL.Meta.Once_Property
+    def QC (self, ) :
+        return getattr (Filter.Q, self._q_name)
+    # end def Q
+
+    @TFL.Meta.Once_Property
+    def QR (self, ) :
+        return getattr (Filter.Q, self._q_name_raw)
+    # end def QR
+
+    @TFL.Meta.Once_Property
     def Sig_Key (self) :
         if self.Op_Keys :
             return self.Signatures [self.Op_Keys]
     # end def Sig_Key
+
+    @TFL.Meta.Once_Property
+    def Unwrapped (self) :
+        result = self
+        if self._outer :
+            result = self.__class__ (self._attr)
+        return result
+    # end def Unwrapped
+
+    @TFL.Meta.Once_Property
+    def Unwrapped_Atoms (self) :
+        return (self.Unwrapped, )
+    # end def Unwrapped_Atoms
 
     @TFL.Meta.Once_Property
     def _as_json_cargo_inv (self) :
@@ -196,6 +226,13 @@ class _Type_ (TFL.Meta.Object) :
         return filtered_join (".", (outer and outer._q_name, self._attr_name))
     # end def _q_name
 
+    @TFL.Meta.Once_Property
+    def _q_name_raw (self) :
+        outer = self._outer
+        return filtered_join \
+            (".", (outer and outer._q_name, self._attr.raw_name))
+    # end def _q_name_raw
+
     @property    ### depends on currently selected language (I18N/L10N)
     def _ui_name_T (self) :
         outer = self._outer
@@ -203,10 +240,10 @@ class _Type_ (TFL.Meta.Object) :
             (ui_sep, (outer and outer._ui_name_T, self._attr.ui_name_T))
     # end def _ui_name_T
 
-    def Inner (self, outer) :
+    def Wrapped (self, outer) :
         assert not self._outer
         return self.__class__ (self._attr, outer)
-    # end def Inner
+    # end def Wrapped
 
     def __getattr__ (self, name) :
         try :
@@ -247,10 +284,20 @@ class Ckd (_Type_) :
 class _Composite_ (_Type_) :
 
     @TFL.Meta.Once_Property
+    def Atoms (self) :
+        return tuple (a for c in self.Children for a in c.Atoms)
+    # end def Atoms
+
+    @TFL.Meta.Once_Property
     def Children (self) :
         return tuple \
             (getattr (self, c.name) for c in self._inner_attrs)
     # end def Children
+
+    @TFL.Meta.Once_Property
+    def Unwrapped_Atoms (self) :
+        return tuple (a for c in self.Children for a in c.Unwrapped.Atoms)
+    # end def Unwrapped_Atoms
 
     def __getattr__ (self, name) :
         try :
@@ -258,7 +305,7 @@ class _Composite_ (_Type_) :
         except AttributeError :
             head, _, tail = split_hst (name, ".")
             try :
-                result = getattr (self._attr.E_Type, head).Q.Inner (self)
+                result = getattr (self._attr.E_Type, head).Q.Wrapped (self)
                 setattr (self, head, result)
                 if tail :
                     result = getattr (result, tail)
