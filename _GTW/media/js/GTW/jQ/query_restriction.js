@@ -160,9 +160,10 @@
               } ()
             );
         var add_attr_filter_cb = function add_attr_filter_cb (ev) {
+            var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
             var choice  = target$.data ("choice");
-            var afs$    = $(selectors.attr_filter_container, qr$);
+            var afs$    = $(S.attr_filter_container, qr$);
             var head$   = afs$.filter
                 ( function () {
                     return $(this).attr ("title") <= choice.label;
@@ -174,10 +175,10 @@
             } else if (afs$.length) {
                 afs$.first ().before (nf$);
             } else {
-                $(selectors.attrs_container).append (nf$);
+                $(S.attrs_container).append (nf$);
             };
-            $(selectors.attr_filter_value,        nf$).focus ();
-            $(selectors.attr_filter_value_entity, nf$).each  (setup_completer);
+            $(S.attr_filter_value,        nf$).focus ();
+            $(S.attr_filter_value_entity, nf$).each  (setup_completer);
         };
         var adjust_op_menu = function adjust_op_menu (afs) {
             var menu$ = afs.ops_menu$;
@@ -200,7 +201,7 @@
                 .data  ("menu$", menu);
         };
         var disabler_cb = function disabler_cb (ev) {
-            var S = selectors;
+            var S = options.selectors;
             var afc$     = $(ev.target).closest (S.attr_filter_container);
             var dis$     = $(S.attr_filter_disabler, afc$);
             var value$   = $(S.attr_filter_value, afc$);
@@ -220,18 +221,18 @@
             };
         };
         var fix_buttons = function fix_buttons (buttons) {
+            var S = options.selectors;
             var name, sel, value, old$, new$;
             for (name in buttons) {
                 if (buttons.hasOwnProperty (name)) {
                     value = buttons [name];
-                    sel   = selectors.add_button.replace ("ADD", name);
+                    sel   = S.add_button.replace ("ADD", name);
                     old$  = $(sel);
                     new$  = $(value);
                     old$.replaceWith (new$);
                 };
             };
-            $(selectors.button).gtw_buttonify
-                (icon_map, options.buttonify_options);
+            $(S.button).gtw_buttonify (icon_map, options.buttonify_options);
         };
         var hide_menu_cb = function hide_menu_cb (ev) {
             var menu$ = $(".drop-menu"), tc;
@@ -282,7 +283,7 @@
             menu$.hide ();
         };
         var new_attr_filter = function new_attr_filter (choice) {
-            var S = selectors;
+            var S = options.selectors;
             var op  = op_map_by_sym ["=="] ; // last-op ???
             var key = choice.key + qrs.op_sep + op.key;
             var ajx = false;
@@ -297,7 +298,7 @@
                                 if ("html" in response) {
                                   choice.attr_filter_html = $(response.html);
                                   choice.attr_filter_html
-                                      .find (selectors.attr_filter_disabler)
+                                      .find (S.attr_filter_disabler)
                                           .each (setup_disabler);
                                   ajx = true;
                                 } else {
@@ -353,7 +354,7 @@
             return result;
         };
         var op_select_cb = function op_select_cb (ev) {
-            var S       = selectors;
+            var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
             var choice  = target$.data ("choice");
             var but$    = $("."+options.active_menu_but_class).first ();
@@ -367,7 +368,7 @@
         var order_by =
             { cb              :
                 { add_criterion : function add_criterion (ev) {
-                      var S       = selectors;
+                      var S       = options.selectors;
                       var target$ = $(ev.delegateTarget);
                       var choice  = target$.data ("choice").label;
                       var c$      = order_by.new_criterion (choice);
@@ -378,7 +379,7 @@
                       ob_widget$.find (S.apply_button).focus ();
                   }
                 , apply       : function apply (ev) {
-                      var S     = selectors;
+                      var S     = options.selectors;
                       var crit$ = ob_widget$.find
                           (S.order_by_criteria + " " + S.order_by_criterion);
                       var displays = [], values = [];
@@ -406,7 +407,7 @@
                       qr$.find (S.apply_button).focus ();
                   }
                 , clear       : function clear (ev, ui) {
-                      var S = selectors;
+                      var S = options.selectors;
                       var but$    = ob_widget$.find (S.add_button);
                       var menu$   = but$.data ("menu$").element;
                       ob_widget$.find (S.order_by_criteria).empty ();
@@ -417,14 +418,14 @@
                       order_by.cb.clear ();
                   }
                 , dir         : function dir (ev) {
-                      var S        = selectors;
+                      var S        = options.selectors;
                       var target$  = $(ev.target);
                       var crit$    = target$.closest (S.order_by_criterion);
                       var dir$     = crit$.find (S.order_by_direction);
                       order_by.toggle_dir (dir$);
                   }
                 , disabler    : function disabler (ev) {
-                      var S        = selectors;
+                      var S        = options.selectors;
                       var target$  = $(ev.target);
                       var crit$    = target$.closest (S.order_by_criterion);
                       var disabled = crit$.hasClass ("disabled");
@@ -451,10 +452,10 @@
                       return false;
                   }
                 , open        : function open (ev) {
-                      var S       = selectors;
+                      var S       = options.selectors;
                       var target$ = $(ev.delegateTarget);
                       var li$     = target$.closest ("li");
-                      var hidden$ = li$.find (selectors.order_by_value).last ();
+                      var hidden$ = li$.find (S.order_by_value).last ();
                       var width   = qr$.width ();
                       var dialog;
                       if (ob_widget$ == null) {
@@ -476,7 +477,7 @@
                   }
                 }
             , new_criterion     : function new_criterion (label, desc) {
-                  var S      = selectors;
+                  var S      = options.selectors;
                   var result = ob_widget$.find (S.order_by_proto).clone (true);
                   var dir$;
                   result.find ("b").html (label);
@@ -487,7 +488,7 @@
                   return result;
               }
             , prefill           : function prefill (choices) {
-                  var S       = selectors;
+                  var S       = options.selectors;
                   var crits$  = ob_widget$.find (S.order_by_criteria);
                   var but$    = ob_widget$.find (S.add_button);
                   var menu$   = but$.data ("menu$").element;
@@ -511,7 +512,7 @@
                   li$.gtw_hd_input ({ callback : order_by.cb.open });
               }
             , setup_widget      : function setup_widget (but$) {
-                  var S      = selectors;
+                  var S      = options.selectors;
                   var obf$   = options.order_by_form_html;
                   var result;
                   if (! obf$) {
@@ -618,7 +619,7 @@
         };
         var setup_op_button = function setup_op_button () {
             var but$   = $(this);
-            var afc$   = but$.closest (selectors.attr_filter_container);
+            var afc$   = but$.closest (options.selectors.attr_filter_container);
             var afs    = af_map [afc$.attr ("title")];
             var label  = but$.html ();
             var op     = op_map_by_sym [label];
@@ -637,7 +638,7 @@
         };
         var setup_completer = function () {
             var focus_cb = function focus_cb (ev) {
-                var S       = selectors;
+                var S       = options.selectors;
                 var target$ = $(ev.delegateTarget);
                 var key     = target$.prop ("id");
                 var widget;
@@ -842,7 +843,7 @@
             };
         } ();
         var submit_ajax_cb = function submit_ajax_cb (response) {
-            var S = selectors;
+            var S = options.selectors;
             var of$ = $(S.offset);
             if ("object_container" in response) {
                 $(S.object_container).last ().replaceWith
@@ -875,7 +876,7 @@
             $GTW.push_history (qr$.attr ("action") + "?" + qr$.serialize ());
         };
         var submit_cb = function submit_cb (ev) {
-            var S = selectors;
+            var S = options.selectors;
             var target$ = $(ev.target);
             var form$   = target$.closest ($("form"));
             var args    = form$.serialize ()
@@ -884,7 +885,7 @@
             return false;
         };
         var tr_selector = function tr_selector (label) {
-            var head = selectors.attr_filter_container, tail;
+            var head = options.selectors.attr_filter_container, tail;
             if (label.length) {
                 tail = "[title^='"+label+"']";
             } else {
@@ -893,7 +894,7 @@
             return head + tail;
         };
         var update_attr_filter_op = function update_attr_filter_op (afc$, op, key) {
-            var S    = selectors;
+            var S    = options.selectors;
             var afs  = af_map  [afc$.attr ("title")];
             var but$ = $(S.attr_filter_op, afc$);
             var oop  = op_map_by_sym [but$.html ()];
