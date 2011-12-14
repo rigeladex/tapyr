@@ -445,7 +445,8 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                         kind = req_col.MOM_Kind
                     except AttributeError :
                         if __debug__ :
-                            import sys; print >> sys.stderr, req_col, cols
+                            import sys; print >> sys.stderr, "###", \
+                                "SAS _Q_Result_Attrs_ error", req_col, cols
                         raise
                     else :
                         kinds.append ((kind, cols))

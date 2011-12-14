@@ -77,6 +77,8 @@
             }
         , url :
             { qx_af_html : "{{ page.href_qx_af_html () }}"
+            , qx_esf_completed : "{{ page.href_qx_esf_completed () }}"
+            , qx_esf_completer : "{{ page.href_qx_esf_completer () }}"
             , qx_esf : "{{ page.href_qx_esf () }}"
             , qx_obf : "{{ page.href_qx_obf () }}"
             }

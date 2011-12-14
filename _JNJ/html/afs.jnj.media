@@ -37,6 +37,7 @@
 #    25-Oct-2011 (CT) `hover` child added to `a.drop` rule
 #     4-Nov-2011 (CT) Add rule for `input.Long` and `input.Very-Long`
 #    23-Nov-2011 (CT) Factor rules for `.cmd-menu`
+#    14-Dec-2011 (CT) Factor rules for `.ui-autocomplete .ui-menu-item`
 #    ««revision-date»»···
 #--
 
@@ -209,28 +210,9 @@ style_sheet = Style_Sheet \
                 )
             ]
         )
-    , Rule
-        ( ".ui-autocomplete .ui-menu-item"
-        , children =
-            [ Rule
-                ("a"
-                , white_space   = "nowrap"
-                )
-            , Rule
-                ( "b"
-                , font_weight   = "normal"
-                , padding_left  = "0.25em"
-                )
-            , Rule
-                ( "b:first-child"
-                , font_weight   = "bold"
-                , padding_left  = 0
-                , padding_right = "0.75em"
-                )
-            ]
-        )
     )
 
+Include ("html/autocomplete.media")
 Include ("html/cmd_menu.media")
 
 ### __END__ html/afs.jnj.media

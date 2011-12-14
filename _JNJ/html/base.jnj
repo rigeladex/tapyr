@@ -44,6 +44,7 @@
 ##    27-Sep-2011 (MG) Use new `media_fragments` module
 ##    21-Oct-2011 (CT) Call `NF.main` instead of home-grown `NF.section`...
 ##    21-Nov-2011 (CT) Add block `body_tail_scripts`
+##    14-Dec-2011 (CT) Move `js_on_ready` to `body_tail_scripts`
 ##    ««revision-date»»···
 ##--
 #}
@@ -61,9 +62,12 @@
       {%- if page.exclude_robots %}
         <meta name="robots" content="NOINDEX, NOFOLLOW">
       {% endif -%}
+      {%- block related_links -%}
+        {%- if NAV._PM %}{{ MF.link_rel (page.Media) }}{% endif -%}
+        {{ MF.link_rel (page.P_Media) }}
+      {%- endblock related_links -%}
       {% if page.permalink -%}
         {{ MF.permalink (page) }}
-        <!-- href="{{- page.abs_href -}}"-->
       {% endif %}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
@@ -75,27 +79,13 @@
         {%- else %}
           {{ MF.inline_CSS (page.template.CSS) }}
         {% endif -%}
-        {%- if NAV._PM %}
-          {{ MF.link_css (page.Media) }}
-        {% endif -%}
+        {%- if NAV._PM %}{{ MF.link_css (page.Media) }}{% endif -%}
         {{ MF.link_css (page.P_Media) }}
       {%- endblock styles %}
         {%- block scripts %}
-          {%- if NAV._PM %}
-            {{ MF.scripts (page.Media) }}
-          {% endif -%}
+          {%- if NAV._PM %}{{ MF.scripts (page.Media) }}{% endif -%}
           {{ MF.scripts (page.P_Media) }}
-          {%- if NAV._PM %}
-            {{ MF.js_on_ready (page.Media )}}
-          {% endif %}
-          {{ MF.js_on_ready (page.P_Media) }}
         {%- endblock scripts -%}
-      {%- block related_links -%}
-        {%- if NAV._PM %}
-          {{ MF.link_rel (page.Media) }}
-        {% endif -%}
-        {{ MF.link_rel (page.P_Media) }}
-      {%- endblock related_links -%}
       {%- block meta_elements -%}
         <!-- copyright "{{ page.copyright.year }} {{ page.copyright.holder }}"-->
         <meta name="generator" content="GTW, JNJ, Jinja2" />
@@ -137,26 +127,11 @@
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
     {%- endblock body -%}
-    {%- block body_tail_scripts -%}{%- endblock body_tail_scripts -%}
+    {%- block body_tail_scripts -%}
+      {%- if NAV._PM %}{{ MF.js_on_ready (page.Media )}}{% endif %}
+      {{ MF.js_on_ready (page.P_Media) }}
+    {%- endblock body_tail_scripts -%}
   </body>
 {%- endcall -%} {#- X.html -#}
+
 {#- __END__ jinja template: html/base.jnj -#}
-
-
-{#-
-## How to test:
-
-from _JNJ.Environment import HTML
-from _TFL.Record import *
-
-env5 = HTML ()
-envx = HTML (version = "html/x.jnj")
-page = Record (copyright = None, Media = None, NAV = None, top = None)
-
-t5 = env5.get_template ("html/base.jnj")
-print t5.render (page = page)
-
-tx = envx.get_template ("html/base.jnj")
-print tx.render (page = page)
-
--#}

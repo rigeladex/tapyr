@@ -29,12 +29,16 @@
 //     7-Dec-2011 (CT) Creation continued (`response.callbacks`)
 //     7-Dec-2011 (CT) Creation continued (reorganize `options`)
 //    12-Dec-2011 (CT) Creation continued (start `setup_completer`)
+//    13-Dec-2011 (CT) Creation continued (continue `setup_completer`)
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($, undefined) {
+    var bwrap = function bwrap (v) {
+        return "<b>" + v + "</b>";
+    };
     $.fn.gtw_query_restriction = function (qrs, opts) {
         var icon_map  = $.extend
             ( { ADD            : "plusthick"
@@ -258,7 +262,7 @@
                       ( { my         : "right top"
                         , at         : "right bottom"
                         , of         : but$
-                        , collision  : "none"
+                        , collision  : "fit"
                         }
                       )
                     .zIndex (but$.zIndex () + 1)
@@ -459,14 +463,14 @@
                       order_by.cb.clear ();
                       order_by.prefill  (target$.val ().split (","));
                       ob_widget$
-                          .dialog ("option", "width", width * 0.75)
+                          .dialog ("option", "width", "auto")
                           .dialog ("open")
                           .dialog ("widget")
                               .position
                                   ( { my         : "top"
                                     , at         : "bottom"
                                     , of         : target$
-                                    , collision  : "none"
+                                    , collision  : "fit"
                                     }
                                   );
                   }
@@ -538,13 +542,6 @@
                         }
                       );
                   result.find (S.order_by_proto)
-                      .append
-                          ( $("<a href=\"#\">")
-                              .addClass
-                                  ("button ui-icon " + options.sortable_class)
-                              .css ("float", "right")
-
-                          )
                       .attr ("title", options.title.order_by_sortable);
                   result.find (S.order_by_criteria).sortable
                       ( { close       : order_by.cb.clear
@@ -640,31 +637,193 @@
         };
         var setup_completer = function () {
             var focus_cb = function focus_cb (ev) {
+                var S       = selectors;
                 var target$ = $(ev.delegateTarget);
-                var key     = target$.prop    ("id");
-                var width   = qr$.width ();
+                var key     = target$.prop ("id");
+                var widget;
+                var apply_cb = function apply_cb (ev) {
+                    var but$ = $(ev.delegateTarget);
+                    var hidden$, response;
+                    if (! but$.hasClass ("ui-state-disabled")) {
+                        response = widget.data ("completed_response");
+                        if (response ["value"] && response ["display"]) {
+                            hidden$ = target$.siblings
+                                ("[name=\"" + key + "\"]").first ();
+                            target$.val (response.display);
+                            hidden$.val (response.value);
+                            close_cb    (ev);
+                            qr$.find    (S.apply_button).focus ();
+                        };
+                    };
+                    return false;
+                };
+                var clear_cb = function clear_cb (ev) {
+                    widget.find (":input").not ("button").each
+                        ( function () {
+                            $(this).val ("");
+                          }
+                        );
+                    widget.find (S.apply_button).addClass ("ui-state-disabled");
+                };
+                var close_cb = function close_cb (ev) {
+                    widget.dialog ("destroy");
+                };
+                var completed_cb = function completed_cb (inp$, response) {
+                    close_cb ();
+                    widget = setup_widget (response);
+                    widget
+                        .data ("completed_response", response)
+                        .find (S.apply_button)
+                            .removeClass ("ui-state-disabled");
+                };
+                var get_ccb = function get_ccb (inp$, term, cb, response) {
+                    var label;
+                    var l = response.fields - !response.partial; // skip pid
+                    var v = response.fields - 1;
+                    var result = [];
+                    inp$.data ("completer_response", response);
+                    if (response.completions > 0 && response.fields > 0) {
+                        for ( var i = 0, li = response.matches.length, match
+                            ; i < li
+                            ; i++
+                            ) {
+                            match = response.matches [i];
+                            label = $.map (match.slice (0, l), bwrap).join ("");
+                            result.push
+                                ( { index : i
+                                  , label : label
+                                  , value : match [v]
+                                  }
+                                );
+                        };
+                    };
+                    cb (result);
+                };
+                var get_completions = function get_completions (inp$, term, cb) {
+                    var aid = widget
+                        .find ("[name=__attribute_selector_for__]").val ();
+                    var trigger = inp$.prop ("id");
+                    var n = 0, values = {};
+                    widget.find (":input").not ("button").each
+                        ( function () {
+                            var i$ = $(this);
+                            var k  = i$.prop ("id");
+                            var v  = i$.val  ();
+                            if (k && v) {
+                                values [k] = v;
+                                n += 1;
+                            };
+                          }
+                        );
+                    if (n > 0) {
+                        $.gtw_ajax_2json
+                            ( { async         : true
+                              , data          :
+                                  { aid       : aid
+                                  , trigger   : trigger
+                                  , trigger_n : trigger
+                                  , values    : values
+                                  }
+                              , success       : function (answer, status, xhr) {
+                                  if (! answer ["error"]) {
+                                      get_ccb (inp$, term, cb, answer);
+                                  } else {
+                                      console.error
+                                          ("Ajax error", answer, data);
+                                  };
+                                }
+                              , url           : options.url.qx_esf_completer
+                              }
+                            , "Completion"
+                            );
+                    };
+                };
+                var select_cb = function select_cb (ev, inp$, item) {
+                    var aid = widget
+                        .find ("[name=__attribute_selector_for__]").val ();
+                    var response = inp$.data ("completer_response");
+                    var trigger  = inp$.prop ("id");
+                    if (response.partial) {
+                        inp$.val (item.value);
+                        setTimeout
+                            (function () { inp$.autocomplete ("search"); }, 1);
+                    } else {
+                        $.gtw_ajax_2json
+                            ( { async         : true
+                              , data          :
+                                  { aid       : aid
+                                  , pid       : item.value
+                                  }
+                              , success       : function (answer, status, xhr) {
+                                    completed_cb (inp$, answer);
+                                }
+                              , url           : options.url.qx_esf_completed
+                              }
+                            , "Completion"
+                            );
+                    }
+                };
+                var setup_widget = function setup_widget (response) {
+                    var result = $(response.html)
+                        .dialog
+                            ( { autoOpen : false
+                              , close    : close_cb
+                              }
+                            );
+                    result.dialog ("option", "width", "auto");
+                    result.find (S.button)
+                        .gtw_buttonify
+                            ( icon_map
+                            , options.buttonify_options
+                            );
+                    result.find (S.apply_button)
+                        .addClass ("ui-state-disabled")
+                        .click    (apply_cb);
+                    result.find (S.cancel_button).click (close_cb);
+                    result.find (S.clear_button).click  (clear_cb);
+                    result.find (":input").not ("button").each
+                        ( function () {
+                            var inp$ = $(this);
+                            inp$.gtw_autocomplete
+                                ( { focus     : function (event, ui) {
+                                        return false;
+                                    }
+                                  , minLength : 1
+                                  , select    : function (event, ui) {
+                                        select_cb (event, inp$, ui.item);
+                                        return false;
+                                    }
+                                  , source    : function (req, cb) {
+                                        get_completions (inp$, req.term, cb);
+                                    }
+                                  }
+                                , "html"
+                                );
+                          }
+                        );
+                    result.find ("form").submit (apply_cb);
+                    result
+                        .dialog ("open")
+                        .dialog ("widget")
+                            .position
+                                ( { my         : "right top"
+                                  , at         : "right bottom"
+                                  , of         : target$
+                                  , collision  : "fit"
+                                  }
+                                );
+                    result.find (":input").first ().focus ();
+                    return result;
+                };
                 $.gtw_ajax_2json
                     ( { async       : false
                       , data        :
                           { key     : key
                           }
                       , success     : function (response, status) {
-                            var widget;
                             if (! response ["error"]) {
                                 if ("html" in response) {
-                                    widget = $(response.html)
-                                        .dialog ({ autoOpen : true });
-                                    widget
-                                        .dialog ("option", "width", width*0.75)
-                                        .dialog ("widget")
-                                            .position
-                                                ( { my         : "top"
-                                                  , at         : "bottom"
-                                                  , of         : target$
-                                                  , collision  : "none"
-                                                  }
-                                                );
-                                    // TBD: bindings, completer, CSS rules
+                                    widget = setup_widget (response);
                                 } else {
                                   console.error ("Ajax Error", response);
                                 }
@@ -676,10 +835,11 @@
                       }
                     , "Entity completer"
                     );
+                return false;
             };
             return function setup_completer () {
-                    $(this).gtw_hd_input ({ callback : focus_cb });
-                };
+                $(this).gtw_hd_input ({ callback : focus_cb });
+            };
         } ();
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S = selectors;
@@ -768,29 +928,6 @@
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         $(selectors.order_by_display).each (order_by.setup);
         qr$.delegate (selectors.submit, "click", submit_cb);
-        // XXX quick test only
-        // XXX re/move
-        $.gtw_ajax_2json
-            ( { async       : false
-              , data        :
-                  { key     : "right__left___NE"
-                  }
-              , success     : function (response, status) {
-                    if (! response ["error"]) {
-                        if ("html" in response) {
-                          // body$.append
-                              ($(response.html));
-                        } else {
-                          console.error ("Ajax Error", response);
-                        }
-                    } else {
-                        console.error ("Ajax Error", response);
-                    };
-                }
-              , url         : options.url.qx_esf
-              }
-            , "Attribute filter"
-            );
         return this;
     }
   } (jQuery)

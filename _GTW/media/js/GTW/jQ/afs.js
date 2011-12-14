@@ -496,7 +496,7 @@
                                     ( { my         : "right top"
                                       , at         : "right bottom"
                                       , of         : drop_butt
-                                      , collision  : "none"
+                                      , collision  : "fit"
                                       }
                                     )
                                   .focus ();

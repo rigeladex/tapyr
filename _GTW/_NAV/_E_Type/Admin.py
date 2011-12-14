@@ -141,7 +141,9 @@
 #     5-Dec-2011 (CT) Factor `_Cmd_Json_`
 #     5-Dec-2011 (CT) Start `QX`
 #     6-Dec-2011 (CT) Continue `QX`
-#     7-Dec-2011 (CT) Continue `QX (`callbacks`, `QX_Entity_Selector_Form`, ...)
+#     7-Dec-2011 (CT) Continue `QX` (`callbacks`, `QX_Entity_Selector_Form`...)
+#    13-Dec-2011 (CT) Continue `QX` (`QX_Completer`, use `QR.Filter_Atoms`)
+#    14-Dec-2011 (CT) Continue `QX` (`QX_Completed`, `_fix_filters`)
 #    ««revision-date»»···
 #--
 
@@ -340,6 +342,49 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return exc (handler)
         # end def rendered
 
+        def _rendered_completions (self, ETM, attr, query, names, entity_p, json) :
+            result = dict (matches = [], partial = False)
+            max_n  = self.max_completions
+            AQ     = ETM.E_Type.AQ
+            fs     = tuple (getattr (AQ, n).QR for n in names)
+            if entity_p :
+                fs    += (Q.pid, )
+                names += ("pid", )
+            matches    = query.attrs (* fs).limit (max_n + 1).all ()
+            n          = result ["completions"] = len (matches)
+            finished   = result ["finished"]    = n == 1
+            if n :
+                if n <= max_n :
+                    result ["fields"]  = len    (names)
+                    result ["matches"] = sorted \
+                        (self._ui_displayed (ETM, names, matches))
+                else :
+                    if json.trigger == json.trigger_n :
+                        matches = query.attrs (attr.raw_query).limit \
+                            (max_n + 1).all ()
+                        m = len (matches)
+                        if m <= max_n :
+                            matches = ([m, "..."] for m in  matches)
+                            result ["fields"]  = 1
+                            result ["matches"] = sorted (matches)
+                            result ["partial"] = True
+                        else :
+                            ### XXX find fewer partial matches !!!
+                            result ["fields"]  = 0
+            return result
+        # end def _rendered_completions
+
+        def _rendered_esf (self, af, filters, ** kw) :
+            template = self.top.Templateer.get_template ("e_type")
+            result   = dict \
+                ( callbacks = [] ### XXX
+                , html      = template.call_macro
+                    ("entity_selector_form", self, af, filters)
+                , ** kw
+                )
+            return result
+        # end def _rendered_esf
+
     # end class _Cmd_Json_
 
     class Changer (_Cmd_) :
@@ -497,31 +542,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 max_n      = self.max_completions
                 names      = completer.names
                 query      = completer (self.top.scope, json.values)
-                fs         = tuple (ETM.raw_query_attrs (names))
-                if completer.entity_p :
-                    fs    += (Q.pid, )
-                    names += ("pid", )
-                matches    = query.attrs (* fs).limit (max_n + 1).all ()
-                n          = result ["completions"] = len (matches)
-                finished   = result ["finished"]    = n == 1
-                if n :
-                    if n <= max_n :
-                        result ["fields"]  = len    (names)
-                        result ["matches"] = sorted \
-                            (self._ui_displayed (ETM, names, matches))
-                    else :
-                        if json.trigger == json.trigger_n :
-                            matches = query.attrs (attr.raw_query).limit \
-                                (max_n + 1).all ()
-                            m = len (matches)
-                            if m <= max_n :
-                                matches = ([m, "..."] for m in  matches)
-                                result ["fields"]  = 1
-                                result ["matches"] = sorted (matches)
-                                result ["partial"] = True
-                            else :
-                                ### XXX find fewer partial matches !!!
-                                result ["fields"]  = 0
+                result     = self._rendered_completions \
+                    (ETM, attr, query, names, completer.entity_p, json)
             return result
         # end def _rendered
 
@@ -701,41 +723,57 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class QX_AF_Html
 
-    class QX_Entity_Selector_Form (_QX_) :
-        """Process AJAX query for entity-selector form"""
+    class QX_Completed (_QX_) :
+        """Process AJAX query for entity auto completions"""
 
         def _rendered (self, handler, template, HTTP, request) :
-            def _geni (aq) :
-                for q in aq.Children :
-                    if q.Children :
-                        for c in _geni (q) :
-                            yield c
-                    else :
-                        yield q
-            def _gen (ET, af) :
-                for c in af.attr.Q.Children :
-                    q = getattr (ET.AQ, c._attr.name)
-                    if q.Children :
-                        for c in _geni (q) :
-                            yield c
-                    else :
-                        yield q
-            json       = TFL.Record (** handler.json)
-            E_Type     = self.E_Type
-            af         = QR.Filter (E_Type, json.key)
-            ET         = af.attr.E_Type
-            filters    = tuple (QR.Filter (ET, q._id) for q in _gen (ET, af))
-            template   = self.top.Templateer.get_template ("e_type")
-            call_macro = template.call_macro
-            result = dict \
-                ( callbacks = [] ### XXX
-                , html      = call_macro
-                    ("entity_selector_form", self, af, filters)
+            json    = TFL.Record      (** handler.json)
+            af      = QR.Filter       (self.E_Type, json.aid)
+            filters = QR.Filter_Atoms (af)
+            ETM     = self.top.scope  [af.attr.E_Type.type_name]
+            obj     = ETM.pid_query   (json.pid)
+            for f in filters :
+                f.edit = f.value = f.Q.QR (obj)
+            result  = self._rendered_esf \
+                ( af, filters
+                , value     = obj.pid
+                , display   = str (obj.FO)
                 )
             return result
         # end def _rendered
 
-    # end class QX_AF_Html
+    # end class QX_Completed
+
+    class QX_Completer (_QX_) :
+        """Process AJAX query for entity auto completions"""
+
+        def _rendered (self, handler, template, HTTP, request) :
+            json   = TFL.Record (** handler.json)
+            af     = QR.Filter  (self.E_Type, json.aid)
+            names  = tuple (f.Unwrapped._full_name for f in af.attr.Q.Children)
+            ET     = af.attr.E_Type
+            qr     = QR.from_request_data (ET, json.values)
+            ETM    = self.top.scope [ET.type_name]
+            query  = qr (ETM.query ())
+            result = self._rendered_completions \
+                (ETM, af.attr, query, names, True, json)
+            return result
+        # end def _rendered
+
+    # end class QX_Completer
+
+    class QX_Entity_Selector_Form (_QX_) :
+        """Process AJAX query for entity-selector form"""
+
+        def _rendered (self, handler, template, HTTP, request) :
+            json    = TFL.Record         (** handler.json)
+            af      = QR.Filter          (self.E_Type, json.key)
+            filters = QR.Filter_Atoms    (af)
+            result  = self._rendered_esf (af, filters)
+            return result
+        # end def _rendered
+
+    # end class QX_Entity_Selector_Form
 
     class QX_Order_By_Form (_QX_) :
         """Process AJAX query for order-by form"""
@@ -862,6 +900,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return tuple (self.top.Templateer.get_template (r) for r in renderers)
     # end def changer_injected_templates
 
+    @property
+    def children (self) :
+        for n, (T, _, _) in self._child_name_map.iteritems () :
+            yield T \
+                ( parent = self
+                , kind   = n
+                , ** self.child_attrs.get (T.__name__, {})
+                )
+    # end def children
+
     @Once_Property
     def Form (self) :
         return AFS_Form [self.E_Type.GTW.afs_id]
@@ -928,6 +976,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, self.qx_prefix, "af_html")
     # end def href_qx_af_html
 
+    def href_qx_esf_completed (self) :
+        return pjoin (self.abs_href, self.qx_prefix, "esf_completed")
+    # end def href_qx_esf_completed
+
+    def href_qx_esf_completer (self) :
+        return pjoin (self.abs_href, self.qx_prefix, "esf_completer")
+    # end def href_qx_esf_completer
+
     def href_qx_esf (self) :
         return pjoin (self.abs_href, self.qx_prefix, "esf")
     # end def href_qx_esf
@@ -966,6 +1022,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def rendered (self, handler, template = None) :
         fields = self.list_display
         qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
+        self._fix_filters (qr.filters)
         with self.LET (query_restriction = qr) :
             objects = self._get_objects () if qr else self._get_entries ()
             next_p  = qr.next_p
@@ -1051,6 +1108,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         )
     _qx_name_map         = dict \
         ( af_html        = (QX_AF_Html,              "args",  0)
+        , esf_completed  = (QX_Completed,            "args",  0)
+        , esf_completer  = (QX_Completer,            "args",  0)
         , esf            = (QX_Entity_Selector_Form, "args",  0)
         , obf            = (QX_Order_By_Form,        "args",  0)
         )
@@ -1079,15 +1138,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return T (parent = self, ** kw)
     # end def _get_child
 
-    @property
-    def children (self) :
-        for n, (T, _, _) in self._child_name_map.iteritems () :
-            yield T \
-                ( parent = self
-                , kind   = n
-                , ** self.child_attrs.get (T.__name__, {})
-                )
-    # end def children
+    def _fix_filters (self, filters) :
+        scope = self.top.scope
+        for f in filters :
+            if isinstance (f.Q, MOM.Attr.Querier.Id_Entity) and f.value :
+                try :
+                    o = scope.pid_query (int (f.value))
+                except (TypeError, ValueError, LookupError) :
+                    pass
+                else :
+                    f.uid = o.ui_display
+    # end def _fix_filters
 
 # end class Admin
 

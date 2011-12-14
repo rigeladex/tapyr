@@ -1,7 +1,7 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-15 -*-
 # Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
-# ****************************************************************************
+# #*** <License> ************************************************************#
 # This module is part of the package JNJ.
 #
 # This module is free software: you can redistribute it and/or modify
@@ -11,36 +11,46 @@
 #
 # This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this module. If not, see <http://www.gnu.org/licenses/>.
-# ****************************************************************************
+# #*** </License> ***********************************************************#
 #
 #++
 # Name
-#    html/_input.jnj.media
+#    html/autocomplete.media
 #
 # Purpose
-#    CSS fragment for template html/_input.jnj
+#    Media fragment for autocompletion
 #
 # Revision Dates
-#     3-Jan-2011 (CT) Creation
+#    14-Dec-2011 (CT) Creation
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
-        ( "input"
+        ( ".ui-autocomplete .ui-menu-item"
         , children =
-            [ Rule_Class ("Short",        width = Em      ( 5))
-            , Rule_Class ("Moderate-Len", width = Em      ( 6))
-            , Rule_Class ("Medium-Len",   width = Em      ( 9))
-            , Rule_Class ("Long",         width = Percent (100))
-            , Rule_Class ("Very-Long",    width = Percent (100))
+            [ Rule
+                ("a"
+                , white_space   = "nowrap"
+                )
+            , Rule
+                ( "b"
+                , font_weight   = "normal"
+                , padding_left  = "0.25em"
+                )
+            , Rule
+                ( "b:first-child"
+                , font_weight   = "bold"
+                , padding_left  = 0
+                , padding_right = "0.75em"
+                )
             ]
         )
     )
 
-### __END__ html/_input.jnj.media
+### __END__ autocomplete

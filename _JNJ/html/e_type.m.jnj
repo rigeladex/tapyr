@@ -79,29 +79,27 @@
   <form class = "QR ES" {# -#}
       title="{{ GTW._T ("Select entity for attribute %s") % af.ui_name }}"{# -#}
   >
-    <div class="bbox">
-      {{ _qr_button
-          ( GTW._  ("Apply")
-          , GTW._T ("Use the currently selected entity")
-          )
-      }}
-      {{ _qr_button
-          ( GTW._  ("Cancel")
-          , GTW._T ("Leave form without selecting entity ")
-          )
-      }}
-      {{ _qr_button
-          ( GTW._  ("Clear")
-          , GTW._T ("Reset fields")
-          )
-      }}
-    <p></p>
-    </div>
     <input class="hidden" name="__attribute_selector_for__" {# -#}
       title="{{ af.attr.E_Type.type_name }}" {# -#}
       value="{{ af.id }}" {# -#}
     >
     {{ attr_filter_table (filters, need_op = False) }}
+    {{ _qr_button
+        ( GTW._  ("Apply")
+        , GTW._T ("Use the currently selected entity")
+        , "submit"
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Cancel")
+        , GTW._T ("Leave form without selecting entity ")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Clear")
+        , GTW._T ("Reset fields")
+        )
+    }}
   </form>
 {%- endmacro -%} {#- entity_selector_form -#}
 
@@ -119,32 +117,7 @@
   <form class = "QR order-by" {# -#}
       title="{{ GTW._T ("Order-by Criteria") }}"{# -#}
   >
-    <div class="bbox">
-      {{ _qr_button
-          ( GTW._  ("Apply")
-          , GTW._T ("Use set of criteria currently displayed in order-by form")
-          )
-      }}
-      {{ _qr_button
-          ( GTW._  ("Cancel")
-          , GTW._T ("Leave form without changing set of order-by criteria")
-          )
-      }}
-      {{ _qr_button
-          ( GTW._  ("Clear")
-          , GTW._T ("Reset order-by criteria")
-          )
-      }}
-      {{ _qr_button
-          ( GTW._  ("Add")
-          , GTW._T ("Add an order-by criterion")
-          , text = GTW._T ("Add criterion")
-          )
-      }}
-    <p></p>
-    </div>
-    <ul class="criteria">
-    </ul>
+    <ul class="criteria"></ul>
     <ul class="prototype hidden">
       <li>
         <a class="button disabler"></a>
@@ -152,6 +125,27 @@
         <b></b>
       </li>
     </ul>
+    {{ _qr_button
+        ( GTW._  ("Apply")
+        , GTW._T ("Use set of criteria currently displayed in order-by form")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Cancel")
+        , GTW._T ("Leave form without changing set of order-by criteria")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Clear")
+        , GTW._T ("Reset order-by criteria")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Add")
+        , GTW._T ("Add an order-by criterion")
+        , text = GTW._T ("Add criterion")
+        )
+    }}
   </form>
 {%- endmacro -%} {#- order_by_form -#}
 

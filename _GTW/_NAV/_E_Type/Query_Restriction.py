@@ -40,6 +40,7 @@
 #     5-Dec-2011 (CT) Creation continued (add `label` to `op_map`)
 #     6-Dec-2011 (CT) Creation continued (filter `None` in `_setup_filters`)
 #     7-Dec-2011 (CT) Creation continued (classmethod `Filter`)
+#    13-Dec-2011 (CT) Creation continued (classmethod `Filter_Atoms`)
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,12 @@ class Query_Restriction (TFL.Meta.Object) :
             result, _ = cls._setup_attr (E_Type, pat, key, value, default_op)
             return result
     # end def Filter
+
+    @classmethod
+    def Filter_Atoms (cls, af) :
+        ET = af.attr.E_Type
+        return tuple (cls.Filter (ET, q._id) for q in af.attr.Q.Unwrapped_Atoms)
+    # end def Filter_Atoms
 
     @classmethod
     def from_request_data (cls, E_Type, req_data) :
@@ -231,6 +238,7 @@ class Query_Restriction (TFL.Meta.Object) :
                 ( desc   = _T (qop.desc)
                 , label  = Styler (_T (qop.op_sym))
                 )
+            , Q      = q
             , value  = value
             )
         return TFL.Record (** f), fq

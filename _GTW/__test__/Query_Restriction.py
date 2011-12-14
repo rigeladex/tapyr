@@ -51,7 +51,8 @@ _test_code = """
 
     >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name"))
     Record
-    ( attr = String `last_name`
+    ( Q = <last_name.Q [Attr.Type.Querier String_FL]>
+    , attr = String `last_name`
     , edit = None
     , full_name = 'last_name'
     , id = 'last_name___AC'
@@ -66,7 +67,8 @@ _test_code = """
     )
     >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE"))
     Record
-    ( attr = String `last_name`
+    ( Q = <last_name.Q [Attr.Type.Querier String_FL]>
+    , attr = String `last_name`
     , edit = None
     , full_name = 'last_name'
     , id = 'last_name___GE'
@@ -82,7 +84,8 @@ _test_code = """
 
     >>> print formatted (qr.filters)
     ( Record
-      ( attr = String `last_name`
+      ( Q = <last_name.Q [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
       , edit = 'Lee'
       , full_name = 'last_name'
       , id = 'last_name___GE'
@@ -96,7 +99,8 @@ _test_code = """
       , value = 'Lee'
       )
     , Record
-      ( attr = Date `start`
+      ( Q = <lifetime.start.Q [Attr.Type.Querier Date]>
+      , attr = Date `start`
       , edit = '2008'
       , full_name = 'lifetime.start'
       , id = 'lifetime__start___EQ'

@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    27-Sep-2011 (MG) Creation (factored from `base.jnj`)
 ##     2-Dec-2011 (CT) Use `X.script` instead of home-grown markup
+##    14-Dec-2011 (CT) Change `link_rel` to access `rel_links`, not `Rel_Links`
 ##    ««revision-date»»···
 ##--
 #}
@@ -63,7 +64,7 @@
 {%- endmacro -%} {#- link_css -#}
 
 {%- macro link_rel (media) -%}
-  {%- for rl in media.Rel_Links %}
+  {%- for rl in media.rel_links %}
     <link {{ rl.attrs ()|safe }} />
   {% endfor -%}
 {%- endmacro -%} {#- link_rel -#}
@@ -89,5 +90,3 @@
 {%- endmacro -%} {#- js_on_ready -#}
 
 {#- __END__ jinja template: media_fragments.jnj -#}
-
-

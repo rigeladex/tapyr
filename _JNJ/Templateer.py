@@ -60,6 +60,7 @@
 #                     `_eval_fragments`: use `scope.Eval`
 #    24-Nov-2011 (CT) Add `Templateer.call_macro`
 #     1-Dec-2011 (CT) Add `error_templates` and `error_template_names`
+#    14-Dec-2011 (CT) Add `rel_links`
 #    ««revision-date»»···
 #--
 
@@ -285,6 +286,13 @@ class Template_E (_Template_) :
         if self.parent_name :
             return self.Map [self.parent_name]
     # end def parent
+
+    @Once_Property
+    def rel_links (self) :
+        media = self._Media
+        if media :
+            return sorted (TFL.uniq (media.rel_links), key = TFL.Getter.rank)
+    # end def js_on_ready
 
     @Once_Property
     def scripts (self) :
