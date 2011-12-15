@@ -620,26 +620,25 @@
                 var apply_cb = function apply_cb (ev) {
                     var but$ = $(ev.delegateTarget);
                     var hidden$, response;
-                    if (! but$.hasClass ("ui-state-disabled")) {
-                        response = widget.data ("completed_response");
-                        if (response ["value"] && response ["display"]) {
-                            hidden$ = target$.siblings
-                                ("[name=\"" + key + "\"]").first ();
-                            target$.val (response.display);
-                            hidden$.val (response.value);
-                            close_cb    (ev);
-                            qr$.find    (S.apply_button).focus ();
-                        };
+                    response = widget.data ("completed_response");
+                    if (response ["value"] && response ["display"]) {
+                        hidden$ = target$.siblings
+                            ("[name=\"" + key + "\"]").first ();
+                        target$.val (response.display);
+                        hidden$.val (response.value);
+                        close_cb    (ev);
+                        qr$.find    (S.apply_button).focus ();
                     };
                     return false;
                 };
                 var clear_cb = function clear_cb (ev) {
-                    widget.find (":input").not ("button").each
+                    widget.find (":input").not ("button, .hidden").each
                         ( function () {
                             $(this).val ("");
                           }
                         );
-                    widget.find (S.apply_button).addClass ("ui-state-disabled");
+                    widget.find (S.apply_button)
+                        .button ("option", "disabled", true);
                 };
                 var close_cb = function close_cb (ev) {
                     widget.dialog ("destroy");
@@ -650,7 +649,7 @@
                     widget
                         .data ("completed_response", response)
                         .find (S.apply_button)
-                            .removeClass ("ui-state-disabled");
+                            .button ("option", "disabled", false);
                 };
                 var get_ccb = function get_ccb (inp$, term, cb, response) {
                     var label;
@@ -680,17 +679,19 @@
                         .find ("[name=__attribute_selector_for__]").val ();
                     var trigger = inp$.prop ("id");
                     var n = 0, values = {};
-                    widget.find (":input").not ("button").each
-                        ( function () {
-                            var i$ = $(this);
-                            var k  = i$.prop ("id");
-                            var v  = i$.val  ();
-                            if (k && v) {
-                                values [k] = v;
-                                n += 1;
-                            };
-                          }
-                        );
+                    if (aid) {
+                        widget.find (":input").not ("button, .hidden").each
+                            ( function () {
+                                var i$ = $(this);
+                                var k  = i$.prop ("id");
+                                var v  = i$.val  ();
+                                if (k && v) {
+                                    values [k] = v;
+                                    n += 1;
+                                };
+                              }
+                            );
+                    };
                     if (n > 0) {
                         $.gtw_ajax_2json
                             ( { async         : true
@@ -750,8 +751,8 @@
                     result.find (S.button)
                         .gtw_buttonify (icons, options.buttonify_options);
                     result.find (S.apply_button)
-                        .addClass ("ui-state-disabled")
-                        .click    (apply_cb);
+                        .button ("option", "disabled", true)
+                        .click  (apply_cb);
                     result.find (S.cancel_button).click (close_cb);
                     result.find (S.clear_button).click  (clear_cb);
                     result.find (":input").not (S.button).each
