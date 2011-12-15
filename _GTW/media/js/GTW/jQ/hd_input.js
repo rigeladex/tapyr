@@ -24,15 +24,12 @@
 ( function ($, undefined) {
     $.fn.gtw_hd_input = function (opts) {
         var selectors = $.extend
-            ( { container   : "li"
-              , display     : ".value.display"
-              , hidden      : ".value.hidden"
+            ( { display     : ".value.display"
               }
             , opts && opts ["selectors"] || {}
             );
         var options  = $.extend
-            ( { id_prefix   : ""
-              }
+            ( {}
             , opts || {}
             , { selectors : selectors
               }

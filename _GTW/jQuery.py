@@ -51,6 +51,7 @@
 #     2-Dec-2011 (CT) Use `modernizr.custom.js` instead of specific version
 #     6-Dec-2011 (CT) Add `GTW_jsonify`, `GTW_afs_elements`, `GTW_inspect`,
 #                     `GTW_jq_afs`, and `GTW_autocomplete`
+#    15-Dec-2011 (CT) Add `GTW_UI_Icon_Map`
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,12 @@ GTW.Script \
     ( src      = "/media/GTW/js/GTW.js"
     , name     = "GTW"
     , rank     = -50
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/UI_Icon_Map.js"
+    , name     = "GTW_UI_Icon_Map"
+    , rank     = -40
     )
 
 GTW.Script \

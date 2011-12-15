@@ -16,6 +16,7 @@
 // Revision Dates
 //    26-Nov-2011 (CT) Creation
 //    30-Nov-2011 (CT) Add `disabled`
+//    15-Dec-2011 (CT) Use `UI_Icon_Map`, add `gtw_iconify`
 //    ««revision-date»»···
 //--
 
@@ -23,7 +24,8 @@
 
 ( function ($, undefined) {
     $.fn.gtw_buttonify = function (icon_map, opts) {
-        var options  = $.extend
+        var icons   = new $GTW.UI_Icon_Map (icon_map);
+        var options = $.extend
             ( { text      : false
               }
             , opts || {}
@@ -32,20 +34,38 @@
             ( function () {
                   var b$   = $(this);
                   var name = this.name;
-                  if (name in icon_map) {
+                  if (name in icons.map) {
                       b$.button
                           ( { disabled : b$.hasClass ("disabled")
-                            , icons :
-                                { primary : "ui-icon-" + icon_map [name]
-                                }
-                            , text  : options.text
+                            , icons    : { primary : icons.ui_class (name) }
+                            , text     : options.text
                             }
                           );
                   };
               }
             );
         return this;
-    }
+    };
+    $.fn.gtw_iconify = function (icon_map, opts) {
+        var icons   = new $GTW.UI_Icon_Map (icon_map);
+        var options = $.extend
+            ( {}
+            , opts || {}
+            );
+        $(this).each
+            ( function () {
+                  var b$   = $(this);
+                  var name = this.name;
+                  if (name in icons.map) {
+                      b$.addClass ("ui-icon " + icons.ui_class (name));
+                      if (b$.hasClass ("disabled")) {
+                          b$.addClass ("ui-state-disabled");
+                      };
+                  };
+              }
+            );
+        return this;
+    };
   } (jQuery)
 );
 

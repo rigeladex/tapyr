@@ -30,6 +30,8 @@
 //     7-Dec-2011 (CT) Creation continued (reorganize `options`)
 //    12-Dec-2011 (CT) Creation continued (start `setup_completer`)
 //    13-Dec-2011 (CT) Creation continued (continue `setup_completer`)
+//    15-Dec-2011 (CT) Creation continued (use `$GTW.UI_Icon_Map`,
+//                     `.toggleClass`)
 //    ««revision-date»»···
 //--
 
@@ -40,18 +42,7 @@
         return "<b>" + v + "</b>";
     };
     $.fn.gtw_query_restriction = function (qrs, opts) {
-        var icon_map  = $.extend
-            ( { ADD            : "plusthick"
-              , APPLY          : "check"
-              , CANCEL         : "closethick"
-              , CLEAR          : "trash"
-              , FIRST          : "arrowthick-1-n"
-              , LAST           : "arrowthick-1-s"
-              , NEXT           : "arrowthick-1-e"
-              , PREV           : "arrowthick-1-w"
-              }
-            , opts && opts ["icon_map"] || {}
-            );
+        var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
             ( { add_button               : "button[name=ADD]"
               , apply_button             : "button[name=APPLY]"
@@ -83,15 +74,21 @@
               }
             , opts && opts ["selectors"] || {}
             );
-        var options  = $.extend
-            ( { active_menu_but_class : "active-menu-button"
-              , asc_class             : "ui-icon-triangle-1-s"
-              , desc_class            : "ui-icon-triangle-1-n"
-              , sortable_class        : "ui-icon-arrowthick-2-n-s"
+        var ui_class = $.extend
+            ( { active_menu_button    : "active-menu-button"
+              , disable               : icons.ui_class ("DISABLE")
+              , enable                : icons.ui_class ("ENABLE")
+              , sort_asc              : icons.ui_class ("SORT_ASC")
+              , sort_desc             : icons.ui_class ("SORT_DESC")
               }
+            , opts && opts ["ui_class"] || {}
+            );
+        var options  = $.extend
+            ( {}
             , opts || {}
-            , { icon_map  : icon_map
+            , { icon_map  : icons
               , selectors : selectors
+              , ui_class  : ui_class
               }
             );
         var qr$    = $(this);
@@ -188,11 +185,7 @@
                     var label = a$.html ();
                     var map   = afs.ops_selected;
                     var op    = op_map_by_sym [label];
-                    if (map [op.sym]) {
-                        a$.addClass    ("ui-state-disabled");
-                    } else {
-                        a$.removeClass ("ui-state-disabled");
-                    };
+                    a$.toggleClass ("ui-state-disabled", !! map [op.sym]);
                   }
                 );
         };
@@ -201,24 +194,19 @@
                 .data  ("menu$", menu);
         };
         var disabler_cb = function disabler_cb (ev) {
-            var S = options.selectors;
+            var S        = options.selectors;
             var afc$     = $(ev.target).closest (S.attr_filter_container);
             var dis$     = $(S.attr_filter_disabler, afc$);
-            var value$   = $(S.attr_filter_value, afc$);
-            var disabled = value$.prop ("disabled");
-            if (! disabled) {
-                value$.prop ("disabled", true);
-                dis$.attr ("title", options.title.enabler)
-                    .find (".button")
-                        .addClass    ("ui-icon-plusthick")
-                        .removeClass ("ui-icon-minusthick");
-            } else {
-                value$.prop ("disabled", false).focus ();
-                dis$.attr ("title", options.title.disabler)
-                    .find (".button")
-                        .addClass    ("ui-icon-minusthick")
-                        .removeClass ("ui-icon-plusthick");
-            };
+            var but$     = dis$.find (".button");
+            var val$     = $(S.attr_filter_value, afc$);
+            var disabled = val$.prop ("disabled");
+            var title    = disabled ?
+                options.title.disabler : options.title.enabler;
+            but$.toggleClass (options.ui_class.enable,  !disabled)
+                .toggleClass (options.ui_class.disable,  disabled);
+            dis$.attr ("title", title);
+            val$.prop ("disabled", !disabled);
+            return false;
         };
         var fix_buttons = function fix_buttons (buttons) {
             var S = options.selectors;
@@ -232,7 +220,7 @@
                     old$.replaceWith (new$);
                 };
             };
-            $(S.button).gtw_buttonify (icon_map, options.buttonify_options);
+            $(S.button).gtw_buttonify (icons, options.buttonify_options);
         };
         var hide_menu_cb = function hide_menu_cb (ev) {
             var menu$ = $(".drop-menu"), tc;
@@ -240,8 +228,8 @@
                 tc = $(ev.target).closest (".drop-menu");
                 if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
                     menu$.hide ();
-                    $("."+options.active_menu_but_class)
-                        .removeClass (options.active_menu_but_class);
+                    $("." + options.ui_class.active_menu_button)
+                        .removeClass (options.ui_class.active_menu_button);
                 };
             };
         };
@@ -251,7 +239,7 @@
             var opts = menu.element.data ("options");
             if (menu.element.is (":visible")) {
                 menu.element.hide ();
-                but$.removeClass (options.active_menu_but_class);
+                but$.removeClass (options.ui_class.active_menu_button);
             } else {
                 hide_menu_cb (ev); // hide other open menus, if any
                 if (opts && "open" in opts) {
@@ -268,7 +256,7 @@
                       )
                     .zIndex (but$.zIndex () + 1)
                     .focus  ();
-                but$.addClass (options.active_menu_but_class);
+                but$.addClass (options.ui_class.active_menu_button);
                 if (ev && "stopPropagation" in ev) {
                     ev.stopPropagation ();
                 };
@@ -278,8 +266,8 @@
             var target$ = $(ev.delegateTarget);
             var menu$   = target$.closest (".cmd-menu");
             target$.data ("callback") (ev);
-            $("."+options.active_menu_but_class)
-                .removeClass (options.active_menu_but_class);
+            $("."+options.ui_class.active_menu_button)
+                .removeClass (options.ui_class.active_menu_button);
             menu$.hide ();
         };
         var new_attr_filter = function new_attr_filter (choice) {
@@ -357,10 +345,10 @@
             var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
             var choice  = target$.data ("choice");
-            var but$    = $("."+options.active_menu_but_class).first ();
+            var but$    = $("."+options.ui_class.active_menu_button).first ();
             var afc$    = but$.closest (S.attr_filter_container);
-            var value$  = $(S.attr_filter_value, afc$);
-            var name    = value$.attr ("name");
+            var val$  = $(S.attr_filter_value, afc$);
+            var name    = val$.attr ("name");
             var prefix  = name.split  (qrs.op_sep) [0];
             var key     = prefix + qrs.op_sep + choice.key;
             update_attr_filter_op (afc$, choice, key);
@@ -375,7 +363,7 @@
                       var but$    = ob_widget$.find (S.add_button);
                       var menu$   = but$.data ("menu$").element;
                       ob_widget$.find (S.order_by_criteria).append (c$);
-                      order_by.toggle_criteria (menu$, choice, "addClass");
+                      order_by.toggle_criteria (menu$, choice, true);
                       ob_widget$.find (S.apply_button).focus ();
                   }
                 , apply       : function apply (ev) {
@@ -392,7 +380,7 @@
                                     var label = v$.html ();
                                     if (label) {
                                         var desc  = dir$.hasClass
-                                            (options.desc_class);
+                                            (options.ui_class.sort_desc);
                                         var sign  = desc ? "-" : "";
                                         var af    = af_map [label];
                                         displays.push (sign + label);
@@ -432,23 +420,14 @@
                       var but$     = ob_widget$.find (S.add_button);
                       var menu$    = but$.data ("menu$").element;
                       var choice   = crit$.find ("b").html ();
-                      if (! disabled) {
-                          crit$.addClass ("disabled");
-                          target$
-                              .attr ("title", options.title.enabler)
-                              .addClass    ("ui-icon-plusthick")
-                              .removeClass ("ui-icon-minusthick");
-                          order_by.toggle_criteria
-                              (menu$, choice, "removeClass");
-                      } else {
-                          crit$.removeClass ("disabled");
-                          target$
-                              .attr ("title", options.title.disabler)
-                              .addClass    ("ui-icon-minusthick")
-                              .removeClass ("ui-icon-plusthick");
-                          order_by.toggle_criteria
-                              (menu$, choice, "addClass");
-                      };
+                      var title    = disabled ?
+                          options.title.disabler : options.title.enabler;
+                      crit$.toggleClass ("disabled", !disabled);
+                      target$
+                          .attr        ("title", title)
+                          .toggleClass (options.ui_class.enable,  !disabled)
+                          .toggleClass (options.ui_class.disable,  disabled);
+                      order_by.toggle_criteria (menu$, choice, disabled);
                       return false;
                   }
                 , open        : function open (ev) {
@@ -503,7 +482,7 @@
                           }
                           c$ = order_by.new_criterion (choice, desc);
                           crits$.append (c$);
-                          order_by.toggle_criteria (menu$, choice, "addClass");
+                          order_by.toggle_criteria (menu$, choice, true);
                       };
                   };
               }
@@ -551,7 +530,7 @@
                         }
                       );
                   result.find (S.button)
-                      .gtw_buttonify (icon_map, options.buttonify_options);
+                      .gtw_buttonify (icons, options.buttonify_options);
                   result.find (S.add_button)
                       .each
                           ( function () {
@@ -567,17 +546,17 @@
                   result.find (S.cancel_button).click (order_by.cb.close);
                   result.find (S.clear_button).click  (order_by.cb.clear);
                   result.find (S.order_by_direction)
-                      .addClass ("ui-icon " + options.asc_class)
+                      .addClass ("ui-icon " + options.ui_class.sort_asc)
                       .attr     ("title", options.title.order_by_asc);
                   result.find (S.order_by_disabler)
-                      .addClass ("ui-icon ui-icon-minusthick")
+                      .addClass ("ui-icon " + options.ui_class.disable)
                       .attr     ("title", options.title.disabler)
                       .click    (order_by.cb.disabler);
                   result.delegate
                       (S.order_by_criterion, "click", order_by.cb.dir);
                   return result;
               }
-            , toggle_criteria   : function toggle_criteria (menu$, choice, toggler) {
+            , toggle_criteria   : function toggle_criteria (menu$, choice, state) {
                   var cl = choice.length;
                   menu$.find ("a.button").each
                       ( function () {
@@ -591,30 +570,26 @@
                               || (label_sep === "/")
                               );
                           if (match && (choice === label_head)) {
-                              a$ [toggler] ("ui-state-disabled");
+                              a$.toggleClass ("ui-state-disabled", state);
                           };
                         }
                       );
               }
             , toggle_dir        : function toggle_dir (dir$) {
-                  var old_class, new_class, title;
-                  if (dir$.hasClass (options.asc_class)) {
-                      old_class = options.asc_class;
-                      new_class = options.desc_class;
-                      title     = options.title.order_by_desc;
-                  } else {
-                      old_class = options.desc_class;
-                      new_class = options.asc_class;
-                      title     = options.title.order_by_asc;
-                  };
-                  dir$.removeClass (old_class)
-                      .addClass    (new_class)
+                  var asc   = dir$.hasClass (options.ui_class.sort_asc);
+                  var title = asc ?
+                      options.title.order_by_desc : options.title.order_by_asc;
+                  dir$.toggleClass (options.ui_class.sort_asc, !asc)
+                      .toggleClass (options.ui_class.sort_desc, asc)
                       .attr        ("title", title);
               }
             };
         var setup_disabler = function setup_disabler () {
             var dis$ = $(this);
-            dis$.append ($("<a class=\"button ui-icon ui-icon-minusthick\">"))
+            dis$.append
+                    ( $("<a class=\"button\" name=\"DISABLE\">")
+                        .gtw_iconify (icons)
+                    )
                 .attr   ("title", options.title.disabler);
         };
         var setup_op_button = function setup_op_button () {
@@ -773,16 +748,13 @@
                             );
                     result.dialog ("option", "width", "auto");
                     result.find (S.button)
-                        .gtw_buttonify
-                            ( icon_map
-                            , options.buttonify_options
-                            );
+                        .gtw_buttonify (icons, options.buttonify_options);
                     result.find (S.apply_button)
                         .addClass ("ui-state-disabled")
                         .click    (apply_cb);
                     result.find (S.cancel_button).click (close_cb);
                     result.find (S.clear_button).click  (clear_cb);
-                    result.find (":input").not ("button").each
+                    result.find (":input").not (S.button).each
                         ( function () {
                             var inp$ = $(this);
                             inp$.gtw_autocomplete
@@ -914,7 +886,7 @@
             afs.ops_selected [op.sym] = true;
         };
         $(document).bind ("click.menuhide keyup.menuhide", hide_menu_cb);
-        $(selectors.button).gtw_buttonify (icon_map, options.buttonify_options);
+        $(selectors.button).gtw_buttonify (icons, options.buttonify_options);
         $(selectors.add_button, qr$)
             .each
                 ( function () {
