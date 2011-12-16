@@ -118,8 +118,8 @@ _test_code = """
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     >>> for attr in php_attrs :
     ...     print attr.typ, attr.Q.__class__
-    Person <Attr.Type.Querier Id_Entity ('EQ', 'NE')>
-    Phone <Attr.Type.Querier Id_Entity ('EQ', 'NE')>
+    Person <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
+    Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     >>> for attr in lifetime_attrs :
@@ -245,11 +245,11 @@ _test_code = """
     ...     if k not in seen :
     ...         print at.typ, at.Q.__class__, at.Q.Sig_Key
     ...         seen.add (k)
-    Account <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Address <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Boat <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Boat <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boolean <Attr.Type.Querier Boolean ('EQ',)> 1
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Date-Slug <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
@@ -257,37 +257,37 @@ _test_code = """
     Date_Interval <Attr.Type.Querier Composite ()> None
     Date_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Directory <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Email <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Email <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Email <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Entity <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Event <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Entity <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Event <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Float <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Format <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
-    Gallery <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Group <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Id_Entity <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Gallery <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Group <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Id_Entity <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Int_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Name <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Nation <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Object_PN <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Page <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Person <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Phone <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Object_PN <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Page <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Person <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Picture <Attr.Type.Querier Composite ()> None
     Position <Attr.Type.Querier Composite ()> None
-    Recurrence_Spec <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Regatta <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Regatta_C <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Regatta_Event <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Recurrence_Spec <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Regatta <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Regatta_C <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Regatta_Event <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Regatta_Result <Attr.Type.Querier Composite ()> None
-    Sailor <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Sailor <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Team <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
+    Team <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Text <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Thumbnail <Attr.Type.Querier Composite ()> None
     Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
@@ -302,7 +302,7 @@ _test_code = """
     ...     print Sig_Key, sig
     0 ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')
     1 ('EQ',)
-    2 ('EQ', 'NE')
+    2 ('EQ', 'IN', 'NE')
     3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')
 
     >>> for k, v in sorted (at.Q.Base_Op_Table.iteritems ()) :

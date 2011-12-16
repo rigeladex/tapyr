@@ -90,6 +90,7 @@ class _Type_ (TFL.Meta.Object) :
         ( EQ                 = Filter.Equal
         , GE                 = Filter.Greater_Equal
         , GT                 = Filter.Greater_Than
+        , IN                 = Filter.In
         , LE                 = Filter.Less_Equal
         , LT                 = Filter.Less_Than
         , NE                 = Filter.Not_Equal
@@ -97,7 +98,6 @@ class _Type_ (TFL.Meta.Object) :
     ### `_Table` maps additonal operations that don't make sense in a UI
     _Table  = dict \
         ( AC                 = Filter.Auto_Complete
-        , IN                 = Filter.In
         )
 
     def __init__ (self, attr, outer = None) :
@@ -345,13 +345,13 @@ class Date (_Type_) :
         ( EQ                 = Filter.Date_Equal
         , GE                 = Filter.Date_Greater_Equal
         , GT                 = Filter.Date_Greater_Than
+        , IN                 = Filter.Date_In
         , LE                 = Filter.Date_Less_Equal
         , LT                 = Filter.Date_Less_Than
         , NE                 = Filter.Date_Not_Equal
         )
     _Table = dict \
         ( AC                 = Filter.Date_Auto_Complete
-        , IN                 = Filter.Date_In
         )
 
 # end class Date
@@ -361,13 +361,13 @@ class Id_Entity (_Composite_) :
     Class  = "Entity"
     Table  = dict \
         ( EQ                 = Filter.Id_Entity_Equal
+        , IN                 = Filter.Id_Entity_In
         , NE                 = Filter.Id_Entity_Not_Equal
         )
     _Table = dict \
         ( AC                 = Filter.Id_Entity_Auto_Complete
         , GE                 = Filter.Id_Entity_Greater_Equal
         , GT                 = Filter.Id_Entity_Greater_Than
-        , IN                 = Filter.Id_Entity_In
         , LE                 = Filter.Id_Entity_Less_Equal
         , LT                 = Filter.Id_Entity_Less_Than
         )
@@ -389,7 +389,6 @@ class String (_Type_) :
         )
     _Table = dict \
         ( AC                 = Filter.Auto_Complete_S
-        , IN                 = Filter.In
         )
 
 # end class String
