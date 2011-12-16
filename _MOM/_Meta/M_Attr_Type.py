@@ -59,6 +59,8 @@
 #    24-Nov-2010 (CT) `M_Attr_Type_Typed_Collection._elements_from_cargo_p`
 #                     fixed (`C_Type`)
 #    13-Dec-2011 (CT) Set `raw_name` to `ckd_name` unless `needs_raw_value`
+#    16-Dec-2011 (CT) Set `raw_name` to `name` unless `needs_raw_value`
+#                     (`name` because that will trigger `computed` if necessary)
 #    ««revision-date»»···
 #--
 
@@ -79,10 +81,10 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
         M_Attr_Type.count += 1
         cls._d_rank = M_Attr_Type.count
         if not name.startswith (("_A_", "A_")) :
-            cls.ckd_name = "__%s"     % (cls.name, )
+            cls.ckd_name = "__%s" % (cls.name, )
             cls.raw_name = \
                 (    "__raw_%s" % (cls.name, ) if cls.needs_raw_value
-                else cls.ckd_name
+                else cls.name ### don't want `ckd_name` here (`computed`...)
                 )
             cls.renameds = set ()
             for b in bases :

@@ -94,18 +94,18 @@ _test_code = r"""
     >>> fst = ('left', )
 
     >>> fs
-    (Q.left.__raw_name, Q.left.date.__start, Q.left.date.__finish)
+    (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish)
     >>> fsn
-    ('left.__raw_name', 'left.date.__start', 'left.date.__finish')
+    ('left.__raw_name', 'left.date.start', 'left.date.finish')
 
     >>> sorted (q)
     [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')]
 
     >>> sorted (q.attrs (* fs))
-    [(u'Himmelfahrt', datetime.date(2008, 5, 1), None), (u'Himmelfahrt', datetime.date(2008, 5, 1), None)]
+    [(u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1)), (u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1))]
 
     >>> sorted (q.attrs (* fsn))
-    [(u'Himmelfahrt', datetime.date(2008, 5, 1), None), (u'Himmelfahrt', datetime.date(2008, 5, 1), None)]
+    [(u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1)), (u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1))]
 
     >>> sorted (q.attrs (* fss))
     [(u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01)), (u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01))]
