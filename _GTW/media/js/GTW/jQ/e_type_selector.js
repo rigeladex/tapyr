@@ -16,6 +16,7 @@
 //
 // Revision Dates
 //    15-Dec-2011 (CT) Creation
+//    16-Dec-2011 (CT) Cache `ajax_repsonse`
 //    ««revision-date»»···
 //--
 
@@ -41,6 +42,7 @@
               , selectors : selectors
               }
             );
+        var ajax_repsonse;
         var focus_cb = function focus_cb (ev) {
             var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
@@ -220,26 +222,31 @@
                 inputs$.first ().focus ();
                 return result;
             };
-            $.gtw_ajax_2json
-                ( { async       : false
-                  , data        :
-                      { key     : key
-                      }
-                  , success     : function (response, status) {
-                        if (! response ["error"]) {
-                            if ("html" in response) {
-                                widget = setup_widget (response);
+            if (!ajax_repsonse) {
+                $.gtw_ajax_2json
+                    ( { async       : false
+                      , data        :
+                          { key     : key
+                          }
+                      , success     : function (response, status) {
+                            if (! response ["error"]) {
+                                if ("html" in response) {
+                                    ajax_repsonse = response;
+                                } else {
+                                  console.error ("Ajax Error", response);
+                                }
                             } else {
-                              console.error ("Ajax Error", response);
-                            }
-                        } else {
-                            console.error ("Ajax Error", response);
-                        };
-                    }
-                  , url         : options.url.qx_esf
-                  }
-                , "Entity completer"
-                );
+                                console.error ("Ajax Error", response);
+                            };
+                        }
+                      , url         : options.url.qx_esf
+                      }
+                    , "Entity completer"
+                    );
+            };
+            if (ajax_repsonse) {
+                widget = setup_widget (ajax_repsonse);
+            };
             return false;
         };
         this.each
