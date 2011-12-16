@@ -174,6 +174,29 @@ _q_result = r"""
     >>> PAP.Person.query_s (qm).attrs (Q.last_name, Q.lifetime.start).all ()
     [(u'ln 1', datetime.date(2010, 1, 1))]
 
+    >>> _   = PAP.Person  ("LN 1", "FN 2", title = "DI")
+    >>> _   = PAP.Person  ("LN 4", "FN 1", title = "DI")
+    >>> _   = PAP.Person  ("LN 4", "FN 2", title = "DI")
+    >>> _   = PAP.Person  ("LN 5", "FN 2", title = "DI")
+
+    >>> q = PAP.Person.query_s ()
+    >>> qfn = PAP.Person.AQ.first_name
+    >>> qln = PAP.Person.AQ.last_name
+
+    >>> print q.count ()
+    9
+    >>> sorted (q.attrs ("first_name", "last_name"))
+    [(u'fn 1', u'ln 1'), (u'fn 1', u'ln 4'), (u'fn 2', u'ln 1'), (u'fn 2', u'ln 2'), (u'fn 2', u'ln 4'), (u'fn 2', u'ln 5'), (u'fn 3', u'ln 3'), (u'fn 4', u'ln 4'), (u'fn 5', u'ln 5')]
+
+    >>> sorted (q.filter (qfn.IN (["FN 1", "FN 5", "LN 3"])).attrs ("first_name", "last_name"))
+    [(u'fn 1', u'ln 1'), (u'fn 1', u'ln 4'), (u'fn 5', u'ln 5')]
+
+    >>> sorted (q.filter (qfn.IN (["FN 1", "FN 2"])).attrs ("first_name", "last_name"))
+    [(u'fn 1', u'ln 1'), (u'fn 1', u'ln 4'), (u'fn 2', u'ln 1'), (u'fn 2', u'ln 2'), (u'fn 2', u'ln 4'), (u'fn 2', u'ln 5')]
+
+    >>> sorted (q.filter (qln.IN (["LN 4", "LN 5"])).attrs ("first_name", "last_name"))
+    [(u'fn 1', u'ln 4'), (u'fn 2', u'ln 4'), (u'fn 2', u'ln 5'), (u'fn 4', u'ln 4'), (u'fn 5', u'ln 5')]
+
     >>> scope.destroy ()
 """
 

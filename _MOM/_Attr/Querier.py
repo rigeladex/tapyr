@@ -34,6 +34,7 @@
 #    12-Dec-2011 (CT) Add `Class`, remove `deep`
 #    13-Dec-2011 (CT) Add `Atoms`, `Unwrapped`, and `Unwrapped_Atoms`
 #    13-Dec-2011 (CT) Add `QC` and `QR`
+#    16-Dec-2011 (CT) Add `IN`
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,7 @@ class _Type_ (TFL.Meta.Object) :
     ### `_Table` maps additonal operations that don't make sense in a UI
     _Table  = dict \
         ( AC                 = Filter.Auto_Complete
+        , IN                 = Filter.In
         )
 
     def __init__ (self, attr, outer = None) :
@@ -324,6 +326,7 @@ class Composite (_Composite_) :
         , EQ                 = Filter.Composite_Equal
         , GE                 = Filter.Composite_Greater_Equal
         , GT                 = Filter.Composite_Greater_Than
+        , IN                 = Filter.Composite_In
         , LE                 = Filter.Composite_Less_Equal
         , LT                 = Filter.Composite_Less_Than
         , NE                 = Filter.Composite_Not_Equal
@@ -348,6 +351,7 @@ class Date (_Type_) :
         )
     _Table = dict \
         ( AC                 = Filter.Date_Auto_Complete
+        , IN                 = Filter.Date_In
         )
 
 # end class Date
@@ -363,6 +367,7 @@ class Id_Entity (_Composite_) :
         ( AC                 = Filter.Id_Entity_Auto_Complete
         , GE                 = Filter.Id_Entity_Greater_Equal
         , GT                 = Filter.Id_Entity_Greater_Than
+        , IN                 = Filter.Id_Entity_In
         , LE                 = Filter.Id_Entity_Less_Equal
         , LT                 = Filter.Id_Entity_Less_Than
         )
@@ -384,6 +389,7 @@ class String (_Type_) :
         )
     _Table = dict \
         ( AC                 = Filter.Auto_Complete_S
+        , IN                 = Filter.In
         )
 
 # end class String

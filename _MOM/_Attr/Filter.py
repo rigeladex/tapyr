@@ -52,6 +52,7 @@
 #     6-Dec-2011 (CT) Change `_Filter_.__call__` to handle un-cookable
 #                     `value == ""`
 #     7-Dec-2011 (CT) Add guard for `value` to `_Date_.__call__`
+#    16-Dec-2011 (CT) Add class `In` and its subclasses
 #    ««revision-date»»···
 #--
 
@@ -295,6 +296,27 @@ class Greater_Than (_Filter_) :
 
 # end class Greater_Than
 
+class In (_Filter_) :
+    """Attribute query filter for membership."""
+
+    desc          = _ \
+        ( "Select entities where the attribute is a member of the "
+          "specified list of values"
+        )
+    op_fct        = _ ("IN")
+
+    @TFL.Meta.Once_Property
+    def cooker (self) :
+        qc = self.querier._cooker
+        def _ (v) :
+            if isinstance (v, basestring) :
+                v = list (qc (x.strip ()) for x in v.split (","))
+            return qc (v)
+        return _
+    # end def cooker
+
+# end class In
+
 class Less_Equal (_Filter_) :
     """Attribute query filter for less-equal."""
 
@@ -377,6 +399,11 @@ class Composite_Greater_Than (Greater_Than, _Composite_) :
 
 # end class Composite_Greater_Than
 
+class Composite_In (In, _Composite_) :
+    """Composite-Attribute query filter for membership."""
+
+# end class Composite_In
+
 class Composite_Less_Equal (Less_Equal, _Composite_) :
     """Composite-Attribute query filter for less-than."""
 
@@ -412,6 +439,11 @@ class Date_Greater_Than (Greater_Than, _Date_) :
 
 # end class Date_Greater_Than
 
+class Date_In (In, _Date_) :
+    """Date-Attribute query filter for membership."""
+
+# end class Date_In
+
 class Date_Less_Equal (Less_Equal, _Date_) :
     """Date-Attribute query filter for less-than."""
 
@@ -446,6 +478,11 @@ class Id_Entity_Greater_Than (Greater_Than, _Id_Entity_) :
     """Id_Entity-Attribute query filter for greater-than."""
 
 # end class Id_Entity_Greater_Than
+
+class Id_Entity_In (In, _Id_Entity_) :
+    """Id_Entity-Attribute query filter for membership."""
+
+# end class Id_Entity_In
 
 class Id_Entity_Less_Equal (Less_Equal, _Id_Entity_) :
     """Id_Entity-Attribute query filter for less-than."""

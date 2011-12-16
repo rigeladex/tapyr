@@ -267,6 +267,11 @@ _test_code = """
             , 'label' : '&gt;'
             , 'sym' : '>'
             }
+        , 'IN' :
+            { 'desc' : 'Select entities where the attribute is a member of the specified list of values'
+            , 'label' : 'in'
+            , 'sym' : 'in'
+            }
         , 'LE' :
             { 'desc' : 'Select entities where the attribute is less than, or equal to, the specified value'
             , 'label' : '&le;'
@@ -294,6 +299,7 @@ _test_code = """
             ( 'EQ'
             , 'GE'
             , 'GT'
+            , 'IN'
             , 'LE'
             , 'LT'
             , 'NE'
@@ -308,6 +314,7 @@ _test_code = """
             , 'EQ'
             , 'GE'
             , 'GT'
+            , 'IN'
             , 'LE'
             , 'LT'
             , 'NE'

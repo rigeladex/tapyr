@@ -109,23 +109,23 @@ _test_code = """
 
     >>> for attr in person_attrs :
     ...     print attr.typ, attr.Q.__class__
-    String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     Date_Interval <Attr.Type.Querier Composite ()>
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
+    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     >>> for attr in php_attrs :
     ...     print attr.typ, attr.Q.__class__
     Person <Attr.Type.Querier Id_Entity ('EQ', 'NE')>
     Phone <Attr.Type.Querier Id_Entity ('EQ', 'NE')>
-    Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     >>> for attr in lifetime_attrs :
     ...     print attr.typ, attr.Q.__class__
-    Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
-    Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')>
+    Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
+    Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
 
     >>> print PAP.Person_has_Phone.E_Type.person.Q
     <left.Q [Attr.Type.Querier Id_Entity]>
@@ -251,27 +251,27 @@ _test_code = """
     Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Boolean <Attr.Type.Querier Boolean ('EQ',)> 1
-    Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Date-Slug <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Date-Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Date-Slug <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Date-Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Date_Interval <Attr.Type.Querier Composite ()> None
-    Date_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Directory <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Date_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Directory <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Email <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Email <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Email <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Entity <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Event <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Float <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Format <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Float <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Format <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Gallery <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Group <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Id_Entity <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Int_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Name <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Nation <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Int_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Name <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Nation <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Object_PN <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Page <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Person <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
@@ -284,26 +284,26 @@ _test_code = """
     Regatta_Event <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
     Regatta_Result <Attr.Type.Querier Composite ()> None
     Sailor <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Team <Attr.Type.Querier Id_Entity ('EQ', 'NE')> 2
-    Text <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Text <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Thumbnail <Attr.Type.Querier Composite ()> None
-    Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Time_Interval <Attr.Type.Querier Composite ()> None
-    Unit <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Url <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    Weekday_RR_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    X <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
-    Y <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')> 0
+    Unit <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Url <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Weekday_RR_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    X <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Y <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
 
     >>> for sig, Sig_Key in sorted (at.Q.Signatures.iteritems (), key = TFL.Getter [1]) :
     ...     print Sig_Key, sig
-    0 ('EQ', 'GE', 'GT', 'LE', 'LT', 'NE')
+    0 ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')
     1 ('EQ',)
     2 ('EQ', 'NE')
-    3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'LE', 'LT', 'NE', 'STARTSWITH')
+    3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')
 
     >>> for k, v in sorted (at.Q.Base_Op_Table.iteritems ()) :
     ...     print "%%-12s %%s" %% (k, v)
@@ -312,6 +312,7 @@ _test_code = """
     EQ           <Attr.Filter EQ [==]>
     GE           <Attr.Filter GE [>=]>
     GT           <Attr.Filter GT [>]>
+    IN           <Attr.Filter IN [in]>
     LE           <Attr.Filter LE [<=]>
     LT           <Attr.Filter LT [<]>
     NE           <Attr.Filter NE [!=]>
