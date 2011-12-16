@@ -37,7 +37,7 @@
                   if (name in icons.map) {
                       b$.button
                           ( { disabled : b$.hasClass ("disabled")
-                            , icons    : { primary : icons.ui_class (name) }
+                            , icons    : { primary : icons.ui_class [name] }
                             , text     : options.text
                             }
                           );
@@ -57,7 +57,7 @@
                   var b$   = $(this);
                   var name = this.name;
                   if (name in icons.map) {
-                      b$.addClass ("ui-icon " + icons.ui_class (name));
+                      b$.addClass ("ui-icon " + icons.ui_class [name]);
                       if (b$.hasClass ("disabled")) {
                           b$.addClass ("ui-state-disabled");
                       };

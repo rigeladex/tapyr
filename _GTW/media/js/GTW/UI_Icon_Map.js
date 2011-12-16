@@ -35,26 +35,36 @@
         , SORT_ASC    : "triangle-1-s"
         , SORT_DESC   : "triangle-1-n"
         };
+    var selectors = {};
     var UI_Icon_Map = $GTW.Class.extend (
         { init        : function init (icon_map) {
+              this.defaults = $GTW.UI_Icon_Map.defaults;
               if ("map" in icon_map) {
-                  this.map = icon_map.map;
+                  this.map       = icon_map.map;
+                  this.selectors = icon_map.selectors;
+                  this.ui_class  = icon_map.ui_class;
               } else {
-                  this.map = $.extend
-                      ($GTW.UI_Icon_Map.defaults, icon_map || {});
+                  this.map       = $.extend ({}, this.defaults, icon_map || {});
+                  this.selectors = { button : "button[name]" };
+                  this.ui_class  = {};
+                  for (var name in this.map) {
+                      if (this.map.hasOwnProperty (name)) {
+                          this.selectors [name.toLowerCase () + "_button"] =
+                              "button[name=" + name + "]";
+                          this.ui_class [name] = "ui-icon-" + this.map [name];
+                      };
+                  };
               };
-          }
-        , ui_class    : function ui_class (name) {
-              var v = name;
-              if (name in this.map) {
-                  v = this.map [name];
-              };
-              return "ui-icon-" + v;
           }
         }
-      , { defaults : default_icon_map }
+      , { defaults    : default_icon_map
+        }
     );
     $GTW.UI_Icon_Map = UI_Icon_Map;
+    for (var name in default_icon_map) {
+        if (default_icon_map.hasOwnProperty (name)) {
+        };
+    };
   } ()
 );
 
