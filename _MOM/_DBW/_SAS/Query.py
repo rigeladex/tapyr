@@ -51,6 +51,8 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #     9-Nov-2011 (MG) `Join_Query.__call__`: handling of new `outerjoin`
 #                     element in the `joins` list added
+#    16-Dec-2011 (MG) `MOM_Composite_Query`: `MOM_C_Kind` added, accessors
+#                     for cooked and raw name added
 #    ««revision-date»»···
 #--
 
@@ -224,15 +226,20 @@ class MOM_Composite_Query (_MOM_Query_) :
             (  (i, an) for (i, an) in enumerate (attr_names)
             if not an.startswith ("__raw_")
             )  :
-            col          = columns [idx]
-            col.MOM_Kind = getattr (e_type, name)
-            setattr                (self, name, col)
+            col            = columns [idx]
+            c_kind         = getattr (e_type, name)
+            col.MOM_Kind   = c_kind
+            col.MOM_C_Kind = kind
+            setattr                (self, name,            col)
+            setattr                (self, c_kind.ckd_name, col)
             self._COLUMNS.append   (col)
-            if col.MOM_Kind.needs_raw_value :
+            if c_kind.needs_raw_value :
                 col                         = columns [idx + 1]
                 col.MOM_Kind                = getattr (e_type, name)
+                col.MOM_C_Kind              = kind
                 col.IS_RAW_COL              = True
                 self._RAW_ATTRIBUTES [name] = col
+                setattr (self, kind.raw_name, col)
         self._query_fct = {}
         for name, kind in db_attrs.iteritems () :
             if isinstance (kind, MOM.Attr.Query) :

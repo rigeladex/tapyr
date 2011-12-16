@@ -42,6 +42,8 @@
 #    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #     9-Nov-2011 (MG) `TFL.Q_Exp._Get_._sa_filter`: new element outerjoin
 #                     added to `joins` list
+#    16-Dec-2011 (MG) `TFL.Q_Exp._Get_._sa_filter` support for
+#                     `MOM_Composite_Query` added
 #    ««revision-date»»···
 #--
 
@@ -74,7 +76,9 @@ def _sa_filter (self, SAQ) :
         col            = columns [0]
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well
-        if col.table != SAQ._SA_TABLE :
+        if isinstance (col, MOM.DBW.SAS.MOM_Composite_Query) :
+            columns = col._COLUMNS
+        elif col.table != SAQ._SA_TABLE :
            joins.append ((SAQ._SA_TABLE, col.table, None, False))
     return joins, columns
 # end def _sa_filter

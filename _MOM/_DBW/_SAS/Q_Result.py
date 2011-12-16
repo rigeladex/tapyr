@@ -59,6 +59,8 @@
 #     9-Nov-2011 (MG) `_joins` handling of new element `outerjoin` added
 #    16-Nov-2011 (MG) Ordering of stacked `order_by` clauses changed
 #    16-Nov-2011 (MG) `count`: drop `_order_by` for counts
+#    16-Dec-2011 (MG) `_Q_Result_Attrs_` changed to handle nested composite
+#                     and ID entity attributes added
 #    ««revision-date»»···
 #--
 
@@ -344,7 +346,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
 
     _Query_Attrs    = dict \
         ( _Q_Result_._Query_Attrs
-        , _attr_cols = (_Q_Result_.List (), True)
+        , _attr_qs  = (_Q_Result_.List (), True)
         )
 
     def __init__ ( self, e_type, session, parent
@@ -359,7 +361,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
             else :
                 getters        = getter_or_getters
                 self._from_row = self._from_row_tuple
-            self._attr_cols.extend (self._getters_to_columns (getters, raw))
+            self._attr_qs.extend (self._getters_to_columns (getters, raw))
     # end def __init__
 
     def _clone (self) :
@@ -385,27 +387,19 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     # end def distinct
 
     def _getters_to_columns (self, getters, raw) :
-        Q   = MOM.Q
-        SAQ = self.e_type._SAQ
+        Q     = MOM.Q
+        if raw :
+            Q = Q.RAW
+        SAQ   = self.e_type._SAQ
         for getter in getters :
             if isinstance (getter, basestring) :
                 getter = getattr (Q, getter)
-            if raw :
-                attr_name = getter._name
-                if "." in attr_name :
-                    path, attr_name = attr_name.rsplit (".", 1)
-                    SAQ             = getattr (Q, path) (SAQ)
-                attr_kind           = getattr (SAQ._E_TYPE [0], attr_name, None)
-                if attr_kind and attr_kind.needs_raw_value :
-                    attr_name       = attr_kind.raw_name
-                yield getattr (SAQ, attr_name)
-            else :
-                if isinstance (getter, TFL.Q_Exp._Sum_) :
+            if isinstance (getter, TFL.Q_Exp._Sum_) :
                     result          = sql.func.SUM (getter.rhs)
                     result.MOM_Kind = None
                     yield result
-                else :
-                    yield getter (SAQ)
+            else :
+                yield getter
     # end def _getters_to_columns
 
     def _from_row_tuple (self, row) :
@@ -430,26 +424,22 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     def sa_query (self, columns = (), joins = False, cache = True) :
         if self._sa_query is None or cache is False :
             if not columns :
-                joins       = False
-                comp_query  = MOM.DBW.SAS.MOM_Composite_Query
+                joins       = []
                 columns     = []
                 kinds       = []
-                for req_col in self._attr_cols :
-                    if isinstance (req_col, comp_query) :
-                        cols = req_col._COLUMNS
+                for attr_q in self._attr_qs :
+                    if isinstance (attr_q, sql.functions.sum) :
+                        columns.append (attr_q)
+                        kinds.append ((None, attr_q))
+                    else :
+                        q_j, q_o = attr_q._sa_order_by (self.e_type._SAQ)
+                        joins.extend (q_j)
+                        cols     = [getattr (oc, "element", oc) for oc in q_o]
                         columns.extend (cols)
-                    else :
-                        cols = req_col
-                        columns.append (cols)
-                    try :
-                        kind = req_col.MOM_Kind
-                    except AttributeError :
-                        if __debug__ :
-                            import sys; print >> sys.stderr, "###", \
-                                "SAS _Q_Result_Attrs_ error", req_col, cols
-                        raise
-                    else :
-                        kinds.append ((kind, cols))
+                        if len (cols) > 1 :
+                            kinds.append   ((cols [0].MOM_C_Kind, cols))
+                        else :
+                            kinds.append   ((cols [0].MOM_Kind, cols [0]))
             else :
                 joins       = True
                 kinds       = [(None, c) for c in columns]
