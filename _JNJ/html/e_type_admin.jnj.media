@@ -51,7 +51,8 @@
 #    30-Nov-2011 (CT) Add more rules for `.criteria` to `.QR`
 #     2-Dec-2011 (CT) Add rules for `.no-js`
 #     6-Dec-2011 (CT) Add `Script` for `GTW_jsonify`
-#    15-Dec-2011 (CT) Add `Script` for `GTW_UI_Icon_Map`
+#    15-Dec-2011 (CT) Add `Script` for `GTW_UI_Icon_Map` and
+#                     `GTW_e_type_selector `
 #    ««revision-date»»···
 #--
 
@@ -394,6 +395,7 @@ Script (GTW.Script._.GTW_jsonify)
 Script (GTW.Script._.GTW_postify_a)
 Script (GTW.Script._.GTW_buttonify)
 Script (GTW.Script._.GTW_autocomplete)
+Script (GTW.Script._.GTW_e_type_selector)
 Script (GTW.Script._.GTW_e_type_admin)
 Script (GTW.Script._.GTW_query_restriction)
 

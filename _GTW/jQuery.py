@@ -51,7 +51,7 @@
 #     2-Dec-2011 (CT) Use `modernizr.custom.js` instead of specific version
 #     6-Dec-2011 (CT) Add `GTW_jsonify`, `GTW_afs_elements`, `GTW_inspect`,
 #                     `GTW_jq_afs`, and `GTW_autocomplete`
-#    15-Dec-2011 (CT) Add `GTW_UI_Icon_Map`
+#    15-Dec-2011 (CT) Add `GTW_UI_Icon_Map`, `GTW_e_type_selector`
 #    ««revision-date»»···
 #--
 
@@ -119,8 +119,9 @@ GTW.JS_On_Ready \
     )
 
 GTW.Script \
-    ( src = "/media/GTW/js/GTW/jQ/buttonify.js"
+    ( src  = "/media/GTW/js/GTW/jQ/buttonify.js"
     , name = "GTW_buttonify"
+    , rank = -10
     )
 
 GTW.Script \
@@ -140,6 +141,11 @@ GTW.Script \
 GTW.JS_On_Ready \
     ( """$GTW.ETA$.setup_obj_list (); """
     , name = "GTW_e_type_admin"
+    )
+
+GTW.Script \
+    ( src = "/media/GTW/js/GTW/jQ/e_type_selector.js"
+    , name = "GTW_e_type_selector"
     )
 
 GTW.Script      (src = "/media/GTW/js/GTW/jQ/gallery.js", name = "GTW_Gallery")
