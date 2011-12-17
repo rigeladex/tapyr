@@ -44,6 +44,8 @@
 #                     added to `joins` list
 #    16-Dec-2011 (MG) `TFL.Q_Exp._Get_._sa_filter` support for
 #                     `MOM_Composite_Query` added
+#    17-Dec-2011 (MG) `TFL.Attr_Query._Call_._sa_filter`: convert args for
+#                     `in_` operator
 #    ««revision-date»»···
 #--
 
@@ -109,7 +111,10 @@ def _sa_filter (self, SAQ) :
 def _sa_filter (self, SAQ) :
     joins, clause = self.lhs._sa_filter (SAQ)
     op            = self.op.__name__.lower ()
-    return joins, (getattr (clause [0], op) (* self.args), )
+    args          = self.args
+    if op == "in_" :
+        args = [eval (a) for a in self.args]
+    return joins, (getattr (clause [0], op) (* args), )
 # end def _sa_filter
 
 TFL._Filter_Q_.predicate_precious_p = True
