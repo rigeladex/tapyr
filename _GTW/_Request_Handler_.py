@@ -189,6 +189,8 @@ class _Request_Handler_ (object) :
 
     @Once_Property
     def wants_json (self) :
+        ### XXX need to parse the accept header (quality preferences!)
+        ### http://shiflett.org/blog/2011/may/the-accept-header
         return "json" in self.accept_header
     # end def wants_json
 

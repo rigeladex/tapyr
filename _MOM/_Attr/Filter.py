@@ -53,6 +53,7 @@
 #                     `value == ""`
 #     7-Dec-2011 (CT) Add guard for `value` to `_Date_.__call__`
 #    16-Dec-2011 (CT) Add class `In` and its subclasses
+#    19-Dec-2011 (CT) Fix `In.cooker`
 #    ««revision-date»»···
 #--
 
@@ -310,8 +311,8 @@ class In (_Filter_) :
         qc = self.querier._cooker
         def _ (v) :
             if isinstance (v, basestring) :
-                v = list (qc (x.strip ()) for x in v.split (","))
-            return qc (v)
+                v = list (x.strip () for x in v.split (","))
+            return list (qc (x) for x in v)
         return _
     # end def cooker
 

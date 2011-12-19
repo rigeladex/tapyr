@@ -190,7 +190,7 @@ _q_result = r"""
 
     >>> qin = qfn.IN (["FN 1", "FN 5", "LN 3"])
     >>> qin.args
-    (u"[u'fn 1', u'fn 5', u'ln 3']",)
+    ([u'fn 1', u'fn 5', u'ln 3'],)
 
     >>> sorted (q.filter (qfn.IN (["FN 1", "FN 5", "LN 3"])).attrs ("first_name", "last_name"))
     [(u'fn 1', u'ln 1'), (u'fn 1', u'ln 4'), (u'fn 5', u'ln 5')]
