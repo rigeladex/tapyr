@@ -45,6 +45,7 @@
 #    22-Jul-2011 (CT) `Attr_Query.Func` added
 #    12-Sep-2011 (CT) `Attr_Query.And` changed to `Attr_Query.AND`, ditto 4 `Or`
 #    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
+#    19-Dec-2011 (CT) Add shortcut `Attr_Query.NOT`
 #    ««revision-date»»···
 #--
 
@@ -393,6 +394,7 @@ class Attr_Query (TFL.Q_Exp.Base) :
     Ignore_Exception = AttributeError
 
     AND              = Filter_And
+    NOT              = Filter_Not
     OR               = Filter_Or
 
     class _Bin_Bool_ (_Filter_S_, TFL.Q_Exp._Bin_Bool_) :
