@@ -118,8 +118,9 @@
 #    15-Nov-2011 (CT) Change default for `sorted_by_epk` from `sort_key_pm`
 #                     to `sort_key`
 #    18-Nov-2011 (CT) Derive `Type_Name_Type` from `unicode`  instead of `str`
-#    18-Nov-2011 (CT) Add `cls.AQ = MOM.Attr.Filter.E_Type_Attr_Query (cls)`
+#    18-Nov-2011 (CT) Add `cls.AQ = MOM.Attr.Filter.E_Type (cls)`
 #     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
+#    20-Dec-2011 (CT) Add `sig_attr`
 #    ««revision-date»»···
 #--
 
@@ -648,7 +649,7 @@ class M_E_Type (M_E_Mixin) :
     # end def _m_scope
 
     def _m_setup_attributes (cls, bases, dct) :
-        cls.AQ = MOM.Attr.Querier.E_Type_Attr_Query (cls)
+        cls.AQ = MOM.Attr.Querier.E_Type (cls)
         cls._Attributes = A = cls._Attributes (cls)
         cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict
@@ -718,7 +719,7 @@ class M_E_Type_An (M_E_Type) :
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
-        cls.hash_sig = cls.user_attr
+        cls.hash_sig = cls.sig_attr = cls.user_attr
         assert not cls.primary, \
             "An_Entity `%s` cannot have primary attributes" % (cls.type_name, )
     # end def _m_setup_attributes
@@ -775,6 +776,7 @@ class M_E_Type_Id (M_E_Type) :
         cls.is_editable = (not cls.electric.default) and cls.user_attr
         cls.show_in_ui  = \
             (cls.record_changes and cls.generate_doc and not cls.is_partial)
+        cls.sig_attr = cls.primary
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :

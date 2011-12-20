@@ -35,6 +35,9 @@
 #    13-Dec-2011 (CT) Add `Atoms`, `Unwrapped`, and `Unwrapped_Atoms`
 #    13-Dec-2011 (CT) Add `QC` and `QR`
 #    16-Dec-2011 (CT) Add `IN`
+#    20-Dec-2011 (CT) Use `.sig_attr` instead of home-grown code
+#    20-Dec-2011 (CT) Factor `_Container_`, derive `E_Type` from it
+#    20-Dec-2011 (CT) Add `Children_Transitive`, `E_Type.As_Json`
 #    ««revision-date»»···
 #--
 
@@ -47,13 +50,34 @@ from   _MOM._Attr            import Filter
 
 import _TFL._Meta.Object
 
-from   _TFL.predicate        import filtered_join, split_hst
+from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.predicate        import filtered_join, split_hst, uniq
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 id_sep = "__"
+op_sep = "___"
 ui_sep = "/"
+
+class _Container_ (TFL.Meta.Object) :
+
+    @TFL.Meta.Once_Property
+    def Atoms (self) :
+        return tuple (a for c in self.Children for a in c.Atoms)
+    # end def Atoms
+
+    @TFL.Meta.Once_Property
+    def Children (self) :
+        return tuple (getattr (self, c.name) for c in self._attrs)
+    # end def Children
+
+    @TFL.Meta.Once_Property
+    def Unwrapped_Atoms (self) :
+        return tuple (a for c in self.Children for a in c.Unwrapped.Atoms)
+    # end def Unwrapped_Atoms
+
+# end class _Container_
 
 class _M_Type_ (TFL.Meta.Object.__class__) :
     """Meta class for Type classes."""
@@ -106,28 +130,28 @@ class _Type_ (TFL.Meta.Object) :
     # end def __init__
 
     @property    ### depends on currently selected language (I18N/L10N)
-    def as_json_cargo (self) :
+    def As_Json_Cargo (self) :
         Children = self.Children
         result   = dict \
             ( self._as_json_cargo_inv
             , ui_name  = self._attr.ui_name_T
             )
         if Children :
-            result ["children"] = [c.as_json_cargo for c in Children]
+            result ["children"] = [c.As_Json_Cargo for c in Children]
         return result
-    # end def as_json_cargo
+    # end def As_Json_Cargo
 
     @property    ### depends on currently selected language (I18N/L10N)
-    def as_template_elem (self) :
+    def As_Template_Elem (self) :
         Children = self.Children
         result   = dict \
             ( self._as_template_elem_inv
             , ui_name  = self._ui_name_T
             )
         if Children :
-            result ["children"] = [c.as_template_elem for c in Children]
+            result ["children"] = [c.As_Template_Elem for c in Children]
         return TFL.Record (** result)
-    # end def as_template_elem
+    # end def As_Template_Elem
 
     @TFL.Meta.Once_Property
     def Atoms (self) :
@@ -140,6 +164,11 @@ class _Type_ (TFL.Meta.Object) :
     # end def Children
 
     @TFL.Meta.Once_Property
+    def Children_Transitive (self) :
+        return tuple (self._children_transitive ())
+    # end def Children_Transitive
+
+    @TFL.Meta.Once_Property
     def E_Type (self) :
         return self._attr.E_Type
     # end def E_Type
@@ -147,7 +176,7 @@ class _Type_ (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def QC (self, ) :
         return getattr (Filter.Q, self._q_name)
-    # end def Q
+    # end def QC
 
     @TFL.Meta.Once_Property
     def QR (self, ) :
@@ -247,6 +276,13 @@ class _Type_ (TFL.Meta.Object) :
         return self.__class__ (self._attr, outer)
     # end def Wrapped
 
+    def _children_transitive (self) :
+        yield self
+        for c in self.Children :
+            for ct in c.Children_Transitive :
+                yield ct
+    # end def _children_transitive
+
     def __getattr__ (self, name) :
         try :
             result_type = self.Op_Map [name]
@@ -263,11 +299,35 @@ class _Type_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return "<%s.Q [Attr.Type.Querier %s]>" % \
+        return "<%s.AQ [Attr.Type.Querier %s]>" % \
             (self._q_name, self.__class__.__name__)
     # end def __str__
 
 # end class _Type_
+
+class _Composite_ (_Container_, _Type_) :
+
+    @TFL.Meta.Once_Property
+    def _attrs (self) :
+        return self._attr.E_Type.sig_attr
+    # end def _attrs
+
+    def __getattr__ (self, name) :
+        try :
+            result = self.__super.__getattr__ (name)
+        except AttributeError :
+            head, _, tail = split_hst (name, ".")
+            try :
+                result = getattr (self._attr.E_Type, head).AQ.Wrapped (self)
+                setattr (self, head, result)
+                if tail :
+                    result = getattr (result, tail)
+            except AttributeError :
+                raise AttributeError (name)
+        return result
+    # end def __getattr__
+
+# end class _Composite_
 
 class Boolean (_Type_) :
 
@@ -283,41 +343,6 @@ class Ckd (_Type_) :
 
 # end class Ckd
 
-class _Composite_ (_Type_) :
-
-    @TFL.Meta.Once_Property
-    def Atoms (self) :
-        return tuple (a for c in self.Children for a in c.Atoms)
-    # end def Atoms
-
-    @TFL.Meta.Once_Property
-    def Children (self) :
-        return tuple \
-            (getattr (self, c.name) for c in self._inner_attrs)
-    # end def Children
-
-    @TFL.Meta.Once_Property
-    def Unwrapped_Atoms (self) :
-        return tuple (a for c in self.Children for a in c.Unwrapped.Atoms)
-    # end def Unwrapped_Atoms
-
-    def __getattr__ (self, name) :
-        try :
-            result = self.__super.__getattr__ (name)
-        except AttributeError :
-            head, _, tail = split_hst (name, ".")
-            try :
-                result = getattr (self._attr.E_Type, head).Q.Wrapped (self)
-                setattr (self, head, result)
-                if tail :
-                    result = getattr (result, tail)
-            except AttributeError :
-                raise AttributeError (name)
-        return result
-    # end def __getattr__
-
-# end class _Composite_
-
 class Composite (_Composite_) :
 
     Table  = dict ()
@@ -331,11 +356,6 @@ class Composite (_Composite_) :
         , LT                 = Filter.Composite_Less_Than
         , NE                 = Filter.Composite_Not_Equal
         )
-
-    @property
-    def _inner_attrs (self) :
-        return self._attr.E_Type.user_attr
-    # end def _inner_attrs
 
 # end class Composite
 
@@ -372,11 +392,6 @@ class Id_Entity (_Composite_) :
         , LT                 = Filter.Id_Entity_Less_Than
         )
 
-    @property
-    def _inner_attrs (self) :
-        return self._attr.E_Type.primary
-    # end def _inner_attrs
-
 # end class Id_Entity
 
 class String (_Type_) :
@@ -407,24 +422,80 @@ class Raw (String) :
 
 # end class Raw
 
-class E_Type_Attr_Query (TFL.Meta.Object) :
-    """Query object for `E_Type` returning an essential attribute's `Q`"""
+class E_Type (_Container_) :
+    """Query object for `E_Type` returning an essential attribute's `AQ`"""
 
-    def __init__ (self, E_Type) :
+    def __init__ (self, E_Type, _attr_selector = None) :
         self.E_Type = E_Type
+        self._attr_selector = _attr_selector
     # end def __init__
+
+    @property
+    def As_Json (self) :
+        import json
+        return json.dumps (self.As_Json_Cargo, sort_keys = True)
+    # end def as_json
+
+    @property
+    def As_Json_Cargo (self) :
+        return dict \
+            ( filters   = [f.As_Json_Cargo for f in self.Children]
+            , name_sep  = id_sep
+            , op_map    = self.Op_Map
+            , op_sep    = op_sep
+            , sig_map   = self.Sig_Map
+            , ui_sep    = ui_sep
+            )
+    # end def As_Json_Cargo
+
+    @TFL.Meta.Once_Property
+    def Children_Transitive (self) :
+        return tuple (ct for c in self.Children for ct in c.Children_Transitive)
+    # end def Children_Transitive
+
+    @property
+    def Op_Map (self) :
+        result = {}
+        for k, v in _Type_.Base_Op_Table.iteritems () :
+            sym = _T (v.op_sym)
+            result [k] = dict \
+                ( desc  = _T (v.desc)
+                , sym   = sym
+                )
+        return result
+    # end def Op_Map
+
+    @TFL.Meta.Once_Property
+    def Sig_Map (self) :
+        result = {}
+        Signatures = _Type_.Signatures
+        for f in uniq (f.Op_Keys for f in self.Children_Transitive) :
+            if f :
+                result [Signatures [f]] = f
+        return result
+    # end def Sig_Map
+
+    @TFL.Meta.Once_Property
+    def _attrs (self) :
+        E_Type   = self.E_Type
+        attr_sel = self._attr_selector
+        if attr_sel is None :
+            result = E_Type.sig_attr
+        else :
+            result = attr_sel (E_Type)
+        return result
+    # end def _attrs
 
     def __getattr__ (self, name) :
         head, _, tail = split_hst (name, ".")
-        result = getattr (self.E_Type, head).Q
+        result = getattr (self.E_Type, head).AQ
+        setattr (self, head, result)
         if tail :
             result = getattr (Filter.Q, tail) (result)
-        else :
-            setattr (self, name, result)
         return result
     # end def __getattr__
 
-# end class E_Type_Attr_Query
+# end class E_Type
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()

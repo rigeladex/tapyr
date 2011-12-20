@@ -41,6 +41,7 @@
 #     6-Dec-2011 (CT) Creation continued (filter `None` in `_setup_filters`)
 #     7-Dec-2011 (CT) Creation continued (classmethod `Filter`)
 #    13-Dec-2011 (CT) Creation continued (classmethod `Filter_Atoms`)
+#    20-Dec-2011 (CT) Creation continued (factor to `MOM.Attr.Querier.E_Type`)
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,6 @@ from   _TFL.predicate           import uniq
 from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
-import json
 
 class Query_Restriction (TFL.Meta.Object) :
     """Model a query restriction as specified by `req_data` of a `GET` request."""
@@ -75,7 +75,7 @@ class Query_Restriction (TFL.Meta.Object) :
     limit       = 0
     name_sep    = MOM.Attr.Querier.id_sep
     offset      = 0
-    op_sep      = "___"
+    op_sep      = MOM.Attr.Querier.op_sep
     order_by    = ()
     order_by_q  = ()
     query_b     = None
@@ -105,7 +105,8 @@ class Query_Restriction (TFL.Meta.Object) :
     @classmethod
     def Filter_Atoms (cls, af) :
         ET = af.attr.E_Type
-        return tuple (cls.Filter (ET, q._id) for q in af.attr.Q.Unwrapped_Atoms)
+        return tuple \
+            (cls.Filter (ET, q._id) for q in af.attr.AQ.Unwrapped_Atoms)
     # end def Filter_Atoms
 
     @classmethod
@@ -226,7 +227,7 @@ class Query_Restriction (TFL.Meta.Object) :
         name   = ".".join (names)
         q      = getattr (E_Type.AQ, name)
         qop    = getattr (q, op)
-        ate    = q.as_template_elem
+        ate    = q.As_Template_Elem
         fq     = qop (value)
         f      = dict \
             ( ate._kw
@@ -238,7 +239,7 @@ class Query_Restriction (TFL.Meta.Object) :
                 ( desc   = _T (qop.desc)
                 , label  = Styler (_T (qop.op_sym))
                 )
-            , Q      = q
+            , AQ     = q
             , value  = value
             )
         return TFL.Record (** f), fq
@@ -264,7 +265,7 @@ class Query_Restriction (TFL.Meta.Object) :
             keys = tuple ("%s%s.%s" % (sign, name, k) for k in ET.sorted_by)
         else :
             keys = (s, )
-        ate   = q.as_template_elem
+        ate   = q.As_Template_Elem
         f     = dict \
             ( ate._kw
             , attr     = q._attr
@@ -290,69 +291,21 @@ class Query_Restriction (TFL.Meta.Object) :
 
 # end class Query_Restriction
 
-class Query_Restriction_Spec (TFL.Meta.Object) :
+class Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
     """Query restriction spec for a GTW.NAV.E_Type page."""
 
     def __init__ (self, E_Type, field_names) :
-        self.E_Type = E_Type
-        self.field_names = field_names
+        self.__super.__init__ (E_Type, MOM.Attr.Selector.Name (* field_names))
     # end def __init__
 
     @property
-    def as_json (self) :
-        return json.dumps (self.as_json_cargo, sort_keys = True)
-    # end def as_json
-
-    @property
-    def as_json_cargo (self) :
-        return dict \
-            ( filters   = [f.as_json_cargo for f in self.filters]
-            , name_sep  = Query_Restriction.name_sep
-            , op_map    = self.op_map
-            , op_sep    = Query_Restriction.op_sep
-            , sig_map   = self.sig_map
-            , ui_sep    = Query_Restriction.ui_sep
-            )
-    # end def as_json_cargo
-
-    @Once_Property
-    def filters (self) :
-        ET = self.E_Type
-        return tuple (getattr (ET.AQ, f) for f in self.field_names)
-    # end def filters
-
-    @Once_Property
-    def filters_transitive (self) :
-        def _gen (filters) :
-            for f in filters :
-                yield f
-                for c in f.Children :
-                    yield c
-        return tuple (_gen (self.filters))
-    # end def filters_transitive
-
-    @property
-    def op_map (self) :
-        result = {}
-        for k, v in MOM.Attr.Querier._Type_.Base_Op_Table.iteritems () :
-            sym = _T (v.op_sym)
-            result [k] = dict \
-                ( desc  = _T (v.desc)
-                , label = Styler (sym)
-                , sym   = sym
-                )
+    def As_Json_Cargo (self) :
+        result = self.__super.As_Json_Cargo
+        op_map = result ["op_map"]
+        for k, v in op_map.iteritems () :
+            v ["label"] = Styler (v ["sym"])
         return result
-    # end def op_map
-
-    @Once_Property
-    def sig_map (self) :
-        result = {}
-        Signatures = MOM.Attr.Querier._Type_.Signatures
-        for f in uniq (f.Op_Keys for f in self.filters_transitive) :
-            if f :
-                result [Signatures [f]] = f
-        return result
-    # end def sig_map
+    # end def As_Json_Cargo
 
 # end class Query_Restriction_Spec
 

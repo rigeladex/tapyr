@@ -36,10 +36,91 @@
 
 from   __future__  import unicode_literals
 
+def show_dir (o) :
+    return list (x for x in dir (o) if "a" <= x [0] <= "z")
+
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
+
+    >>> show_dir (PAP.Person.E_Type.AQ)
+    ['pop_to_self']
+
+    >>> for aq in PAP.Person.E_Type.AQ.Children :
+    ...     print aq
+    <last_name.AQ [Attr.Type.Querier String_FL]>
+    <first_name.AQ [Attr.Type.Querier String_FL]>
+    <middle_name.AQ [Attr.Type.Querier String]>
+    <title.AQ [Attr.Type.Querier String]>
+
+    >>> show_dir ( PAP.Person.E_Type.AQ)
+    ['first_name', 'last_name', 'middle_name', 'pop_to_self', 'title']
+
+    >>> paq = MOM.Attr.Querier.E_Type (PAP.Person.E_Type, MOM.Attr.Selector.all)
+    >>> for aq in paq.Children :
+    ...     print aq
+    <last_name.AQ [Attr.Type.Querier String_FL]>
+    <first_name.AQ [Attr.Type.Querier String_FL]>
+    <middle_name.AQ [Attr.Type.Querier String]>
+    <title.AQ [Attr.Type.Querier String]>
+    <lifetime.AQ [Attr.Type.Querier Composite]>
+    <salutation.AQ [Attr.Type.Querier String]>
+    <sex.AQ [Attr.Type.Querier Ckd]>
+
+    >>> for aq in paq.Children_Transitive :
+    ...     print aq
+    <last_name.AQ [Attr.Type.Querier String_FL]>
+    <first_name.AQ [Attr.Type.Querier String_FL]>
+    <middle_name.AQ [Attr.Type.Querier String]>
+    <title.AQ [Attr.Type.Querier String]>
+    <lifetime.AQ [Attr.Type.Querier Composite]>
+    <lifetime.start.AQ [Attr.Type.Querier Date]>
+    <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <salutation.AQ [Attr.Type.Querier String]>
+    <sex.AQ [Attr.Type.Querier Ckd]>
+
+    >>> for aq in paq.Atoms :
+    ...     print aq
+    <last_name.AQ [Attr.Type.Querier String_FL]>
+    <first_name.AQ [Attr.Type.Querier String_FL]>
+    <middle_name.AQ [Attr.Type.Querier String]>
+    <title.AQ [Attr.Type.Querier String]>
+    <lifetime.start.AQ [Attr.Type.Querier Date]>
+    <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <salutation.AQ [Attr.Type.Querier String]>
+    <sex.AQ [Attr.Type.Querier Ckd]>
+
+    >>> show_dir ( PAP.Person_has_Phone.E_Type.AQ)
+    ['pop_to_self']
+
+    >>> for aq in PAP.Person_has_Phone.E_Type.AQ.Atoms :
+    ...     print aq
+    <left.last_name.AQ [Attr.Type.Querier String_FL]>
+    <left.first_name.AQ [Attr.Type.Querier String_FL]>
+    <left.middle_name.AQ [Attr.Type.Querier String]>
+    <left.title.AQ [Attr.Type.Querier String]>
+    <right.country_code.AQ [Attr.Type.Querier String]>
+    <right.area_code.AQ [Attr.Type.Querier String]>
+    <right.number.AQ [Attr.Type.Querier String]>
+    <extension.AQ [Attr.Type.Querier String]>
+
+    >>> show_dir ( PAP.Person_has_Phone.E_Type.AQ)
+    ['extension', 'left', 'pop_to_self', 'right']
+
+    >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Atoms :
+    ...     print aq
+    <left.last_name.AQ [Attr.Type.Querier String_FL]>
+    <left.first_name.AQ [Attr.Type.Querier String_FL]>
+    <left.middle_name.AQ [Attr.Type.Querier String]>
+    <left.title.AQ [Attr.Type.Querier String]>
+
+    >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Unwrapped_Atoms :
+    ...     print aq
+    <last_name.AQ [Attr.Type.Querier String_FL]>
+    <first_name.AQ [Attr.Type.Querier String_FL]>
+    <middle_name.AQ [Attr.Type.Querier String]>
+    <title.AQ [Attr.Type.Querier String]>
 
     >>> person_attrs   = MOM.Attr.Selector.all (PAP.Person.E_Type)
     >>> php_attrs      = MOM.Attr.Selector.all (PAP.Person_has_Phone.E_Type)
@@ -53,17 +134,17 @@ _test_code = """
     ('start', 'finish')
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.Q
-    String <last_name.Q [Attr.Type.Querier String_FL]>
-    String <first_name.Q [Attr.Type.Querier String_FL]>
-    String <middle_name.Q [Attr.Type.Querier String]>
-    String <title.Q [Attr.Type.Querier String]>
-    Date_Interval <lifetime.Q [Attr.Type.Querier Composite]>
-    String <salutation.Q [Attr.Type.Querier String]>
-    Sex <sex.Q [Attr.Type.Querier Ckd]>
+    ...     print attr.typ, attr.AQ
+    String <last_name.AQ [Attr.Type.Querier String_FL]>
+    String <first_name.AQ [Attr.Type.Querier String_FL]>
+    String <middle_name.AQ [Attr.Type.Querier String]>
+    String <title.AQ [Attr.Type.Querier String]>
+    Date_Interval <lifetime.AQ [Attr.Type.Querier Composite]>
+    String <salutation.AQ [Attr.Type.Querier String]>
+    Sex <sex.AQ [Attr.Type.Querier Ckd]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.Q.AC
+    ...     print attr.typ, attr.AQ.AC
     String <Attr.Auto_Complete_PN last_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_PN first_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_S middle_name.STARTSWITH [auto-complete]>
@@ -73,7 +154,7 @@ _test_code = """
     Sex <Attr.Auto_Complete sex.EQ [auto-complete]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.Q.GE
+    ...     print attr.typ, attr.AQ.GE
     String <Attr.Greater_Equal last_name.GE [>=]>
     String <Attr.Greater_Equal first_name.GE [>=]>
     String <Attr.Greater_Equal middle_name.GE [>=]>
@@ -83,7 +164,7 @@ _test_code = """
     Sex <Attr.Greater_Equal sex.GE [>=]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, getattr (attr.Q, "CONTAINS", "** CONTAINS undefined **")
+    ...     print attr.typ, getattr (attr.AQ, "CONTAINS", "** CONTAINS undefined **")
     String <Attr.Contains last_name.CONTAINS [contains]>
     String <Attr.Contains first_name.CONTAINS [contains]>
     String <Attr.Contains middle_name.CONTAINS [contains]>
@@ -93,22 +174,22 @@ _test_code = """
     Sex ** CONTAINS undefined **
 
     >>> for attr in lifetime_attrs :
-    ...     print attr.typ, attr.Q
-    Date <start.Q [Attr.Type.Querier Date]>
-    Date <finish.Q [Attr.Type.Querier Date]>
+    ...     print attr.typ, attr.AQ
+    Date <start.AQ [Attr.Type.Querier Date]>
+    Date <finish.AQ [Attr.Type.Querier Date]>
 
     >>> for attr in lifetime_attrs :
     ...     print attr.typ, getattr (PAP.Person.E_Type.AQ.lifetime, attr.name)
-    Date <lifetime.start.Q [Attr.Type.Querier Date]>
-    Date <lifetime.finish.Q [Attr.Type.Querier Date]>
+    Date <lifetime.start.AQ [Attr.Type.Querier Date]>
+    Date <lifetime.finish.AQ [Attr.Type.Querier Date]>
 
     >>> for attr in lifetime_attrs :
-    ...     print attr, getattr (PAP.Person.E_Type.lifetime.Q, attr.name)
-    Date `start` <lifetime.start.Q [Attr.Type.Querier Date]>
-    Date `finish` <lifetime.finish.Q [Attr.Type.Querier Date]>
+    ...     print attr, getattr (PAP.Person.E_Type.lifetime.AQ, attr.name)
+    Date `start` <lifetime.start.AQ [Attr.Type.Querier Date]>
+    Date `finish` <lifetime.finish.AQ [Attr.Type.Querier Date]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.Q.__class__
+    ...     print attr.typ, attr.AQ.__class__
     String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
@@ -116,37 +197,39 @@ _test_code = """
     Date_Interval <Attr.Type.Querier Composite ()>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
+
     >>> for attr in php_attrs :
-    ...     print attr.typ, attr.Q.__class__
+    ...     print attr.typ, attr.AQ.__class__
     Person <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+
     >>> for attr in lifetime_attrs :
-    ...     print attr.typ, attr.Q.__class__
+    ...     print attr.typ, attr.AQ.__class__
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
 
-    >>> print PAP.Person_has_Phone.E_Type.person.Q
-    <left.Q [Attr.Type.Querier Id_Entity]>
-    >>> print PAP.Person_has_Phone.E_Type.person.Q.lifetime
-    <left.lifetime.Q [Attr.Type.Querier Composite]>
-    >>> print PAP.Person_has_Phone.E_Type.person.Q.lifetime.start
-    <left.lifetime.start.Q [Attr.Type.Querier Date]>
+    >>> print PAP.Person_has_Phone.E_Type.person.AQ
+    <left.AQ [Attr.Type.Querier Id_Entity]>
+    >>> print PAP.Person_has_Phone.E_Type.person.AQ.lifetime
+    <left.lifetime.AQ [Attr.Type.Querier Composite]>
+    >>> print PAP.Person_has_Phone.E_Type.person.AQ.lifetime.start
+    <left.lifetime.start.AQ [Attr.Type.Querier Date]>
 
     >>> print PAP.Person_has_Phone.E_Type.AQ.person
-    <left.Q [Attr.Type.Querier Id_Entity]>
+    <left.AQ [Attr.Type.Querier Id_Entity]>
     >>> print PAP.Person_has_Phone.E_Type.AQ.person.lifetime
-    <left.lifetime.Q [Attr.Type.Querier Composite]>
+    <left.lifetime.AQ [Attr.Type.Querier Composite]>
     >>> print PAP.Person_has_Phone.E_Type.AQ.person.lifetime.start
-    <left.lifetime.start.Q [Attr.Type.Querier Date]>
+    <left.lifetime.start.AQ [Attr.Type.Querier Date]>
 
     >>> def show_Q (a, level = 0) :
     ...     print "%%s%%-20s%%s" %% ("  " * level, a._attr_name, a.Sig_Key)
     ...     for c in a.Children :
     ...         show_Q (c, level + 1)
     >>> for pka in PAP.Person_has_Phone.E_Type.primary :
-    ...     show_Q (pka.Q)
+    ...     show_Q (pka.AQ)
     left                2
       last_name           3
       first_name          3
@@ -159,7 +242,7 @@ _test_code = """
     extension           3
 
     >>> for pka in MOM.Attr.Selector.all (scope.SRM.Boat_in_Regatta.E_Type) :
-    ...     show_Q (pka.Q)
+    ...     show_Q (pka.AQ)
     left                2
       left                2
         name                3
@@ -194,8 +277,8 @@ _test_code = """
     ...     for c in a.Unwrapped_Atoms :
     ...         print "   ", repr (c._attr), c._full_name
     >>> for pka in MOM.Attr.Selector.all (scope.SRM.Boat_in_Regatta.E_Type) :
-    ...     show_QA (pka.Q)
-    ...     show_QUA (pka.Q)
+    ...     show_QA (pka.AQ)
+    ...     show_QUA (pka.AQ)
     Boat `left`
         String `name` left.left.name
         Nation `nation` left.nation
@@ -243,7 +326,7 @@ _test_code = """
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
     ...     k = at.typ, at.needs_raw_value
     ...     if k not in seen :
-    ...         print at.typ, at.Q.__class__, at.Q.Sig_Key
+    ...         print at.typ, at.AQ.__class__, at.AQ.Sig_Key
     ...         seen.add (k)
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
@@ -298,14 +381,14 @@ _test_code = """
     X <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Y <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
 
-    >>> for sig, Sig_Key in sorted (at.Q.Signatures.iteritems (), key = TFL.Getter [1]) :
+    >>> for sig, Sig_Key in sorted (at.AQ.Signatures.iteritems (), key = TFL.Getter [1]) :
     ...     print Sig_Key, sig
     0 ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')
     1 ('EQ',)
     2 ('EQ', 'IN', 'NE')
     3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')
 
-    >>> for k, v in sorted (at.Q.Base_Op_Table.iteritems ()) :
+    >>> for k, v in sorted (at.AQ.Base_Op_Table.iteritems ()) :
     ...     print "%%-12s %%s" %% (k, v)
     CONTAINS     <Attr.Filter CONTAINS [contains]>
     ENDSWITH     <Attr.Filter ENDSWITH [ends-with]>

@@ -30,6 +30,7 @@
 #     7-Sep-2011 (CT) `all` added
 #     7-Sep-2011 (CT) `Primary_Followers` added
 #                     (plus `anchor`, `_Primary_Followers_`)
+#    20-Dec-2011 (CT) Add `sig`
 #    ««revision-date»»···
 #--
 
@@ -283,6 +284,7 @@ necessary   = Kind ("necessary")
 optional    = Kind ("optional")
 primary     = Kind ("primary")
 required    = Kind ("required")
+sig         = Kind ("sig_attr")
 user        = Kind ("user_attr")
 
 all         = List (primary, user)

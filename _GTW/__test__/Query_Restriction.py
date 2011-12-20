@@ -51,7 +51,7 @@ _test_code = """
 
     >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name"))
     Record
-    ( Q = <last_name.Q [Attr.Type.Querier String_FL]>
+    ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
     , attr = String `last_name`
     , edit = None
     , full_name = 'last_name'
@@ -67,7 +67,7 @@ _test_code = """
     )
     >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE"))
     Record
-    ( Q = <last_name.Q [Attr.Type.Querier String_FL]>
+    ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
     , attr = String `last_name`
     , edit = None
     , full_name = 'last_name'
@@ -84,7 +84,7 @@ _test_code = """
 
     >>> print formatted (qr.filters)
     ( Record
-      ( Q = <last_name.Q [Attr.Type.Querier String_FL]>
+      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
       , edit = 'Lee'
       , full_name = 'last_name'
@@ -99,7 +99,7 @@ _test_code = """
       , value = 'Lee'
       )
     , Record
-      ( Q = <lifetime.start.Q [Attr.Type.Querier Date]>
+      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
       , attr = Date `start`
       , edit = '2008'
       , full_name = 'lifetime.start'
@@ -168,7 +168,8 @@ _test_code = """
     >>> BiR = SRM.Boat_in_Regatta.E_Type
     >>> fns = AS.List (AS.primary, AS.Name ("points", "place")) (BiR).names
     >>> qrs = QRS (BiR, fns)
-    >>> print formatted (qrs.as_json_cargo)
+
+    >>> print formatted (qrs.As_Json_Cargo)
     { 'filters' :
         [ { 'Class' : 'Entity'
           , 'children' :
@@ -330,24 +331,24 @@ _test_code = """
     ...     for c in f.Children :
     ...         show_f (c, indent + "    ")
 
-    >>> for f in qrs.filters :
+    >>> for f in qrs.Children :
     ...     show_f (f)
-    <left.Q [Attr.Type.Querier Id_Entity]> None
-        <left.left.Q [Attr.Type.Querier Id_Entity]> <left.Q [Attr.Type.Querier Id_Entity]>
-            <left.left.name.Q [Attr.Type.Querier String]> <left.left.Q [Attr.Type.Querier Id_Entity]>
-        <left.nation.Q [Attr.Type.Querier Ckd]> <left.Q [Attr.Type.Querier Id_Entity]>
-        <left.__raw_sail_number.Q [Attr.Type.Querier Raw]> <left.Q [Attr.Type.Querier Id_Entity]>
-        <left.sail_number_x.Q [Attr.Type.Querier String]> <left.Q [Attr.Type.Querier Id_Entity]>
-    <right.Q [Attr.Type.Querier Id_Entity]> None
-        <right.left.Q [Attr.Type.Querier Id_Entity]> <right.Q [Attr.Type.Querier Id_Entity]>
-            <right.left.name.Q [Attr.Type.Querier String]> <right.left.Q [Attr.Type.Querier Id_Entity]>
-            <right.left.date.Q [Attr.Type.Querier Composite]> <right.left.Q [Attr.Type.Querier Id_Entity]>
-                <right.left.date.start.Q [Attr.Type.Querier Date]> <right.left.date.Q [Attr.Type.Querier Composite]>
-                <right.left.date.finish.Q [Attr.Type.Querier Date]> <right.left.date.Q [Attr.Type.Querier Composite]>
-    <points.Q [Attr.Type.Querier Ckd]> None
-    <place.Q [Attr.Type.Querier Ckd]> None
+    <left.AQ [Attr.Type.Querier Id_Entity]> None
+        <left.left.AQ [Attr.Type.Querier Id_Entity]> <left.AQ [Attr.Type.Querier Id_Entity]>
+            <left.left.name.AQ [Attr.Type.Querier String]> <left.left.AQ [Attr.Type.Querier Id_Entity]>
+        <left.nation.AQ [Attr.Type.Querier Ckd]> <left.AQ [Attr.Type.Querier Id_Entity]>
+        <left.__raw_sail_number.AQ [Attr.Type.Querier Raw]> <left.AQ [Attr.Type.Querier Id_Entity]>
+        <left.sail_number_x.AQ [Attr.Type.Querier String]> <left.AQ [Attr.Type.Querier Id_Entity]>
+    <right.AQ [Attr.Type.Querier Id_Entity]> None
+        <right.left.AQ [Attr.Type.Querier Id_Entity]> <right.AQ [Attr.Type.Querier Id_Entity]>
+            <right.left.name.AQ [Attr.Type.Querier String]> <right.left.AQ [Attr.Type.Querier Id_Entity]>
+            <right.left.date.AQ [Attr.Type.Querier Composite]> <right.left.AQ [Attr.Type.Querier Id_Entity]>
+                <right.left.date.start.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
+                <right.left.date.finish.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
+    <points.AQ [Attr.Type.Querier Ckd]> None
+    <place.AQ [Attr.Type.Querier Ckd]> None
 
-    >>> print formatted (list (f.as_template_elem for f in qrs.filters))
+    >>> print formatted (list (f.As_Template_Elem for f in qrs.Children))
     [ Record
       ( Class = 'Entity'
       , attr = Boat `left`

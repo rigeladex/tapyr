@@ -167,6 +167,7 @@
 #     9-Sep-2011 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
 #                     support queries against integers (interpreted as `pid`)
 #    15-Nov-2011 (CT) Add defaults for `polymorphic_epk` and `polymorphic_epks`
+#    20-Dec-2011 (CT) Remove `sorted` from `attr_as_code`
 #    ««revision-date»»···
 #--
 
@@ -365,11 +366,8 @@ class Entity (TFL.Meta.Object) :
     # end def as_code
 
     def attr_as_code (self) :
-        return ", ".join \
-            ( "%s = %s" % (a.name, a.as_code (v))
-            for (a, v) in sorted
-                (self.user_attr_iter (), key = TFL.Getter [0].name)
-            )
+        uai = self.user_attr_iter ()
+        return ", ".join ("%s = %s" % (a.name, a.as_code (v)) for (a, v) in uai)
     # end def attr_as_code
 
     def attr_value_maybe (self, name) :
@@ -665,7 +663,7 @@ class An_Entity (Entity) :
     @property
     def ui_display_format (self) :
         return self.ui_display_sep.join \
-            ( "%%(%s)s" % a.name for a in self.user_attr
+            ( "%%(%s)s" % a.name for a in self.sig_attr
             if a.has_substance (self)
             )
     # end def ui_display_format

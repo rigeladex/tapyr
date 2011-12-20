@@ -99,6 +99,8 @@
 #    15-Nov-2011 (CT) Change `query_s` and `r_query_s`
 #     4-Dec-2011 (CT) Change `ac_query_attrs` and `ac_query_auto_split` to
 #                     use `E_Type.AQ`
+#    20-Dec-2011 (CT) Remove `ckd_query_attrs`
+#    20-Dec-2011 (CT) Add guard against `None` to `ac_query_attrs`
 #    ««revision-date»»···
 #--
 
@@ -216,19 +218,9 @@ class Id_Entity (Entity) :
                 except (ValueError, TypeError) :
                     pass
                 else :
-                    yield vq
+                    if vq is not None :
+                        yield vq
     # end def ac_query_attrs
-
-    def ckd_query_attrs (self, names, values = None) :
-        et = self._etype
-        if values is None :
-            for n in names :
-                yield getattr (et, n).ckd_query
-        else :
-            for n in names :
-                if n in values :
-                    yield getattr (et, n).ckd_query_eq (values [n])
-    # end def ckd_query_attrs
 
     def cooked_epk (self, epk, kw) :
         (epk, kw), this  = self._epkified (epk, kw)

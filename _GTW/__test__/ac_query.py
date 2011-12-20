@@ -76,8 +76,8 @@ _attr_ac_query = """
     >>> q1  = PAP.Person.AQ.lifetime.AC (dict (start = "1959/09/26"))
     >>> q2  = PAP.Person.AQ.lifetime.AC (dict (start = "1907/03/08", finish = "1994/08/04"))
     >>> q3  = PAP.Person.AQ.lifetime.AC (dict (finish = "1994/08/04"))
-    >>> q4  = PAP.Person.lifetime.Q.EQ (dict (start = "1907", finish = "1994"))
-    >>> q5  = PAP.Person.first_name.Q.CONTAINS ("ti")
+    >>> q4  = PAP.Person.lifetime.AQ.EQ (dict (start = "1907", finish = "1994"))
+    >>> q5  = PAP.Person.first_name.AQ.CONTAINS ("ti")
     >>> q6  = PAP.Person.AQ.lifetime.AC (dict (start = "1959"))
     >>> q7 = PAP.Person.AQ.lifetime.start.AC ("1959/09/26")
 

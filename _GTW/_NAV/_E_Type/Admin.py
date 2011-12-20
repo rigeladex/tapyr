@@ -733,7 +733,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             ETM     = self.top.scope  [af.attr.E_Type.type_name]
             obj     = ETM.pid_query   (json.pid)
             for f in filters :
-                f.edit = f.value = f.Q.QR (obj)
+                f.edit = f.value = f.AQ.QR (obj)
             result  = self._rendered_esf \
                 ( af, filters
                 , value     = obj.pid
@@ -750,7 +750,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def _rendered (self, handler, template, HTTP, request) :
             json   = TFL.Record (** handler.json)
             af     = QR.Filter  (self.E_Type, json.aid)
-            names  = tuple (f.Unwrapped._full_name for f in af.attr.Q.Children)
+            names  = tuple (f.Unwrapped._full_name for f in af.attr.AQ.Children)
             ET     = af.attr.E_Type
             qr     = QR.from_request_data (ET, json.values)
             ETM    = self.top.scope [ET.type_name]
@@ -1141,7 +1141,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def _fix_filters (self, filters) :
         scope = self.top.scope
         for f in filters :
-            if isinstance (f.Q, MOM.Attr.Querier.Id_Entity) and f.value :
+            if isinstance (f.AQ, MOM.Attr.Querier.Id_Entity) and f.value :
                 try :
                     o = scope.pid_query (int (f.value))
                 except (TypeError, ValueError, LookupError) :

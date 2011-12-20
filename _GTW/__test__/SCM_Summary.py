@@ -179,7 +179,7 @@ _basic = r"""
     >>> scope.commit ()
 
     >>> print rs1.attr_as_code()
-    ((u'event-1-text', ), dict (start = u'2010/08/18'), dict (), u''), date_exceptions = u"u'2010/08/15'", dates = u"u'2010/09/08',u'2010/10/08'"
+    ((u'event-1-text', ), dict (start = u'2010/08/18'), dict (), u''), dates = u"u'2010/09/08',u'2010/10/08'", date_exceptions = u"u'2010/08/15'"
     >>> rs1.set (date_exceptions = None)
     1
     >>> rs1.event.date.set (finish = datetime.date (2010, 8, 19), start = datetime.date (2010, 8, 13))

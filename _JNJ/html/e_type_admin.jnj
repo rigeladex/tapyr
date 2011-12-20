@@ -61,7 +61,7 @@
   {{ super () }}
   <script>
     $("form.QR").gtw_query_restriction
-      ( {{ page.qr_spec.as_json }}
+      ( {{ page.qr_spec.As_Json }}
       , { callback :
             { setup_obj_list : $GTW.ETA$.setup_obj_list
             }

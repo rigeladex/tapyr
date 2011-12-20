@@ -203,6 +203,9 @@
 #     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
 #     4-Dec-2011 (CT) Add `Boolean.cooked` (to fix `Boolean.Q.EQ ("no")`)
 #     4-Dec-2011 (CT) Add `Choices`
+#    20-Dec-2011 (CT) Change `_A_Composite_.as_code` to use `attr_as_code`
+#    20-Dec-2011 (CT) s/Q/AQ/
+#    20-Dec-2011 (CT) Remove `ckd_query` and `ckd_query_eq`
 #    ««revision-date»»···
 #--
 
@@ -280,9 +283,9 @@ class A_Attr_Type (object) :
     _t_rank             = 0
 
     @TFL.Meta.Once_Property
-    def Q (self) :
+    def AQ (self) :
         return self.Q_Raw if self.needs_raw_value else self.Q_Ckd
-    # end def Q
+    # end def AQ
 
     @TFL.Meta.Once_Property
     def Q_Ckd (self) :
@@ -295,32 +298,19 @@ class A_Attr_Type (object) :
     # end def Q_Raw
 
     @TFL.Meta.Once_Property
-    def ckd_query (self) :
-        return getattr (Q, self.ckd_name)
-    # end def ckd_query
-
-    @TFL.Meta.Once_Property
-    def ckd_query_eq (self) :
-        return self.Q_Ckd.EQ
-    # end def ckd_query_eq
-
-    @TFL.Meta.Once_Property
     def example (self) :
         return self.raw_default
     # end def example
 
     @TFL.Meta.Once_Property
     def raw_query (self) :
-        if self.needs_raw_value :
-            result = getattr (Q, self.raw_name)
-        else :
-            result = self.ckd_query
+        result = getattr (Q, self.raw_name)
         return result
     # end def raw_query
 
     @TFL.Meta.Once_Property
     def raw_query_eq (self) :
-        return self.Q_Raw.EQ if self.needs_raw_value else self.Q_Ckd.EQ
+        return self.AQ.EQ
     # end def raw_query_eq
 
     @property
@@ -548,7 +538,7 @@ class _A_Entity_ (A_Attr_Type) :
     # end def _fix_P_Type
 
     def __getattr__ (self, name) :
-        ### to support calls like `scope.PAP.Person.lifetime.start.Q
+        ### to support calls like `scope.PAP.Person.lifetime.start.AQ
         return getattr (self.P_Type, name)
     # end def __getattr__
 
@@ -576,13 +566,7 @@ class _A_Composite_ (_A_Entity_) :
 
     def as_code (self, value) :
         if value is not None :
-            return "dict (%s)" % \
-                ( ", ".join
-                    (   "%s = %s" % (a.name, a.as_code (a.get_value (value)))
-                    for a in value.user_attr if a.has_substance (value)
-                    )
-                ,
-                )
+            return "dict (%s)" % (value.attr_as_code (), )
         return u""
     # end def as_code
 
@@ -1027,9 +1011,9 @@ class _A_String_Base_ (A_Attr_Type) :
     ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
 
     @TFL.Meta.Once_Property
-    def Q (self) :
+    def AQ (self) :
         return self.Q_Ckd
-    # end def Q
+    # end def AQ
 
     def _checkers (self, e_type, kind) :
         for c in self.__super._checkers (e_type, kind) :
