@@ -144,6 +144,7 @@
 #     7-Dec-2011 (CT) Continue `QX` (`callbacks`, `QX_Entity_Selector_Form`...)
 #    13-Dec-2011 (CT) Continue `QX` (`QX_Completer`, use `QR.Filter_Atoms`)
 #    14-Dec-2011 (CT) Continue `QX` (`QX_Completed`, `_fix_filters`)
+#    21-Dec-2011 (CT) Continue `QX` (refactor `_rendered_completions`)
 #    ««revision-date»»···
 #--
 
@@ -171,6 +172,7 @@ import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import uniq
 
 from   itertools                import chain as ichain
 from   posixpath                import join  as pjoin
@@ -312,7 +314,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     try :
                         attr = ETM.get_etype_attribute (n)
                     except AttributeError :
-                        disp = lambda v : v
+                        disp = lambda v : getattr (v, "ui_display", v)
                     else :
                         disp = lambda v, attr = attr : attr.ac_ui_display (v)
                     yield disp
@@ -342,7 +344,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return exc (handler)
         # end def rendered
 
-        def _rendered_completions (self, ETM, attr, query, names, entity_p, json) :
+        def _rendered_completions (self, ETM, query, names, entity_p, json) :
             result = dict (matches = [], partial = False)
             max_n  = self.max_completions
             AQ     = ETM.E_Type.AQ
@@ -360,7 +362,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         (self._ui_displayed (ETM, names, matches))
                 else :
                     if json.trigger == json.trigger_n :
-                        matches = query.attrs (attr.raw_query).limit \
+                        matches = query.attrs (fs [0]).limit \
                             (max_n + 1).all ()
                         m = len (matches)
                         if m <= max_n :
@@ -373,6 +375,67 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                             result ["fields"]  = 0
             return result
         # end def _rendered_completions
+
+        def _rendered_completions (self, ETM, query, names, entity_p, json) :
+            if entity_p :
+                fct = self._rendered_completions_e
+            else :
+                fct = self._rendered_completions_a
+            return fct (ETM, query, names, json)
+        # end def _rendered_completions
+
+        def _rendered_completions_a (self, ETM, query, names, json) :
+            result   = dict (matches = [], partial = False)
+            max_n    = self.max_completions + 1
+            AQ       = ETM.E_Type.AQ
+            fs       = tuple (getattr (AQ, n).QR for n in names)
+            matches  = query.attrs (* fs).limit (max_n).all ()
+            n        = result ["completions"] = len (matches)
+            finished = result ["finished"]    = n == 1
+            if n :
+                if n < max_n :
+                    result ["fields"]  = len    (names)
+                    result ["matches"] = sorted \
+                        (self._ui_displayed (ETM, names, matches))
+                else :
+                    if json.trigger == json.trigger_n :
+                        s_matches = query.attrs (fs [0]).limit (max_n).all ()
+                        m = len (s_matches)
+                        if m < max_n :
+                            s_matches = \
+                                ( [m [0], "..."] for m in self._ui_displayed
+                                    (ETM, names [:1], s_matches)
+                                )
+                            result ["fields"]  = 1
+                            result ["matches"] = sorted (s_matches)
+                            result ["partial"] = True
+                        else :
+                            ### XXX find fewer partial matches !!!
+                            result ["fields"]  = 0
+            return result
+        # end def _rendered_completions_a
+
+        def _rendered_completions_e (self, ETM, query, names, json) :
+            result   = dict (partial = False)
+            max_n    = self.max_completions + 1
+            AQ       = ETM.E_Type.AQ
+            matches  = query.limit (max_n).all ()
+            n        = result ["completions"] = len (matches)
+            finished = result ["finished"]    = n == 1
+            if n :
+                if n < max_n :
+                    result ["fields"]  = 2
+                    result ["matches"] = list \
+                        ((m.ui_display, m.pid) for m in matches)
+                else :
+                    result = dict \
+                        ( self._rendered_completions_a
+                            (ETM, query, names [:1], json)
+                        , ** result
+                        )
+                    result ["partial"] = True
+            return result
+        # end def _rendered_completions_e
 
         def _rendered_esf (self, af, filters, ** kw) :
             template = self.top.Templateer.get_template ("e_type")
@@ -529,21 +592,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         SUPPORTED_METHODS = set (("POST", ))
 
         def _rendered (self, handler, template, HTTP, request) :
-            json           = TFL.Record (** handler.json)
-            result         = dict (matches = [], partial = False)
-            scope          = self.top.scope
-            form, elem     = self.form_element  (json.fid)
-            field          = self.field_element (form, json.trigger)
-            ETM            = scope [elem.type_name]
-            E_Type         = ETM.E_Type
-            attr           = getattr (E_Type, field.name)
-            completer      = attr.completer
+            json       = TFL.Record (** handler.json)
+            result     = dict (matches = [], partial = False)
+            scope      = self.top.scope
+            form, elem = self.form_element  (json.fid)
+            field      = self.field_element (form, json.trigger)
+            ETM        = scope [elem.type_name]
+            E_Type     = ETM.E_Type
+            attr       = getattr (E_Type, field.name)
+            completer  = attr.completer
             if completer is not None :
-                max_n      = self.max_completions
-                names      = completer.names
-                query      = completer (self.top.scope, json.values)
-                result     = self._rendered_completions \
-                    (ETM, attr, query, names, completer.entity_p, json)
+                names  = completer.names
+                query  = completer (self.top.scope, json.values)
+                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
+                result = self._rendered_completions \
+                    (ETM, query, names, completer.entity_p, json)
             return result
         # end def _rendered
 
@@ -750,14 +813,22 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def _rendered (self, handler, template, HTTP, request) :
             json   = TFL.Record (** handler.json)
             af     = QR.Filter  (self.E_Type, json.aid)
-            names  = tuple (f.Unwrapped._full_name for f in af.attr.AQ.Children)
             ET     = af.attr.E_Type
+            at     = QR.Filter  (ET, json.trigger)
+            names  = tuple \
+                ( uniq
+                    ( ichain
+                        ( (at.AQ._full_name, )
+                        , tuple (f._full_name for f in ET.AQ.Atoms)
+                        )
+                    )
+                )
             qr     = QR.from_request_data (ET, json.values)
             ETM    = self.top.scope [ET.type_name]
-            query  = qr (ETM.query ())
-            result = self._rendered_completions \
-                (ETM, af.attr, query, names, True, json)
-            return result
+            query  = qr (ETM.query_s ()).distinct ()
+            entity_p = getattr (json, "entity_p", False)
+            return self._rendered_completions \
+                (ETM, query, names, entity_p, json)
         # end def _rendered
 
     # end class QX_Completer

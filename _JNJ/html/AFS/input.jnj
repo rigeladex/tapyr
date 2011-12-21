@@ -34,6 +34,7 @@
 ##    30-Nov-2011 (CT) Change `_field` to add `required` to `kw`
 ##     2-Dec-2011 (CT) Add `id_entity`; remove argument `form` from signatures
 ##     5-Dec-2011 (CT) Add support for keyword arguments to all macros here
+##    21-Dec-2011 (CT) Add `title` to display-input of `id_entity`
 ##    ««revision-date»»···
 ##--
 #}
@@ -74,6 +75,7 @@
       , class     = GTW.filtered_join (" ", (class, "display"))
       , disabled  = True
       , name      = None
+      , title     = elem.uid
       , value     = elem.uid
       )
   }}

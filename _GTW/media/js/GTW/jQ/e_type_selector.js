@@ -16,7 +16,10 @@
 //
 // Revision Dates
 //    15-Dec-2011 (CT) Creation
-//    16-Dec-2011 (CT) Cache `ajax_repsonse`
+//    16-Dec-2011 (CT) Cache `ajax_response`
+//    21-Dec-2011 (CT) Set `title` in `apply_cb`
+//    21-Dec-2011 (CT) Change `select_cb` to not repeat partial search after
+//                     a single match
 //    ««revision-date»»···
 //--
 
@@ -35,14 +38,14 @@
             , opts && opts ["selectors"] || {}
             );
         var options  = $.extend
-            ( {
+            ( { treshold  : 1
               }
             , opts || {}
             , { icon_map  : icons
               , selectors : selectors
               }
             );
-        var ajax_repsonse;
+        var ajax_response;
         var focus_cb = function focus_cb (ev) {
             var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
@@ -55,9 +58,12 @@
                 if (response ["value"] && response ["display"]) {
                     hidden$ = target$.siblings
                         ("[name=\"" + key + "\"]").first ();
-                    target$.val (response.display);
-                    hidden$.val (response.value);
-                    close_cb    (ev);
+                    target$
+                        .prop ("title", response.display)
+                        .val  (response.display);
+                    hidden$
+                        .val  (response.value);
+                    close_cb  (ev);
                     if ("esf_focusee" in options) {
                         options.esf_focusee.focus ();
                     };
@@ -129,6 +135,7 @@
                         ( { async         : true
                           , data          :
                               { aid       : aid
+                              , entity_p  : true
                               , trigger   : trigger
                               , trigger_n : trigger
                               , values    : values
@@ -153,8 +160,17 @@
                 var trigger  = inp$.prop ("id");
                 if (response.partial) {
                     inp$.val (item.value);
-                    setTimeout
-                        (function () { inp$.autocomplete ("search"); }, 1);
+                    if (response.matches.length > 1) {
+                        setTimeout
+                            ( function () {
+                                inp$.focus ();
+                                inp$.autocomplete ("search");
+                              }
+                            , 1
+                            );
+                    } else {
+                        inputs$.eq (item.index + 1).focus ();
+                    };
                 } else {
                     $.gtw_ajax_2json
                         ( { async         : true
@@ -195,7 +211,7 @@
                             ( { focus     : function (event, ui) {
                                     return false;
                                 }
-                              , minLength : 1
+                              , minLength : options.treshold
                               , select    : function (event, ui) {
                                     select_cb (event, inp$, ui.item);
                                     return false;
@@ -222,7 +238,7 @@
                 inputs$.first ().focus ();
                 return result;
             };
-            if (!ajax_repsonse) {
+            if (!ajax_response) {
                 $.gtw_ajax_2json
                     ( { async       : false
                       , data        :
@@ -231,7 +247,7 @@
                       , success     : function (response, status) {
                             if (! response ["error"]) {
                                 if ("html" in response) {
-                                    ajax_repsonse = response;
+                                    ajax_response = response;
                                 } else {
                                   console.error ("Ajax Error", response);
                                 }
@@ -244,8 +260,8 @@
                     , "Entity completer"
                     );
             };
-            if (ajax_repsonse) {
-                widget = setup_widget (ajax_repsonse);
+            if (ajax_response) {
+                widget = setup_widget (ajax_response);
             };
             return false;
         };

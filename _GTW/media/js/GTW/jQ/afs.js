@@ -160,13 +160,15 @@
                 var anchor    = elem;
                 var completer = elem.completer;
                 var l, n      = response.completions;
+                var rl        = response.fields -
+                    (completer ["entity_p"] && !response.partial); // skip pid
                 var result    = [];
                 if (n > 0 && response.fields > 0) {
                     while (completer.embedded_p) {
                         anchor    = $AFS_E.id_map [anchor.anchor_id];
                         completer = anchor.completer;
                     };
-                    l = Math.min (response.fields, completer.names.length);
+                    l = Math.min (rl, completer.names.length);
                     elem.completer.response = response;
                     for ( var i = 0, li = response.matches.length, match
                         ; i < li
@@ -307,9 +309,6 @@
                 } else {
                     elem.inp$.gtw_autocomplete
                         ( { focus    : function (event, ui) {
-                                if (! elem.completer.embedded_p) {
-                                    elem.inp$.val (ui.item.value);
-                                };
                                 return false;
                             }
                           , minLength : completer.treshold

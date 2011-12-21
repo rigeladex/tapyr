@@ -78,7 +78,8 @@
             , opts && opts ["ui_class"] || {}
             );
         var options  = $.extend
-            ( {}
+            ( { treshold  : 0
+              }
             , opts || {}
             , { icon_map  : icons
               , selectors : selectors
