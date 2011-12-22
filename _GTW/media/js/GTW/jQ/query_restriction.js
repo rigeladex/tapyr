@@ -33,6 +33,7 @@
 //    15-Dec-2011 (CT) Creation continued (use `$GTW.UI_Icon_Map`,
 //                     `.toggleClass`)
 //    16-Dec-2011 (CT) Creation continued (factor e_type_selector.js)
+//    22-Dec-2011 (CT) s/children/attrs/ (in `attr_filters`)
 //    ««revision-date»»···
 //--
 
@@ -107,8 +108,8 @@
                         f.ops_selected = [];
                         result.push (f);
                         af_map [f.label] = f;
-                        if ("children" in f) {
-                            add (f.children, f.key, f.label);
+                        if ("attrs" in f) {
+                            add (f.attrs, f.key, f.label);
                         };
                     };
                 };

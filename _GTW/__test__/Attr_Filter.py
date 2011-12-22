@@ -47,7 +47,7 @@ _test_code = """
     >>> show_dir (PAP.Person.E_Type.AQ)
     ['pop_to_self']
 
-    >>> for aq in PAP.Person.E_Type.AQ.Children :
+    >>> for aq in PAP.Person.E_Type.AQ.Attrs :
     ...     print aq
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
@@ -58,7 +58,7 @@ _test_code = """
     ['first_name', 'last_name', 'middle_name', 'pop_to_self', 'title']
 
     >>> paq = MOM.Attr.Querier.E_Type (PAP.Person.E_Type, MOM.Attr.Selector.all)
-    >>> for aq in paq.Children :
+    >>> for aq in paq.Attrs :
     ...     print aq
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
@@ -68,7 +68,7 @@ _test_code = """
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
 
-    >>> for aq in paq.Children_Transitive :
+    >>> for aq in paq.Attrs_Transitive :
     ...     print aq
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
@@ -226,7 +226,7 @@ _test_code = """
 
     >>> def show_Q (a, level = 0) :
     ...     print "%%s%%-20s%%s" %% ("  " * level, a._attr_name, a.Sig_Key)
-    ...     for c in a.Children :
+    ...     for c in a.Attrs :
     ...         show_Q (c, level + 1)
     >>> for pka in PAP.Person_has_Phone.E_Type.primary :
     ...     show_Q (pka.AQ)

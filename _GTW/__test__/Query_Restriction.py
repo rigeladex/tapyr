@@ -126,7 +126,7 @@ _test_code = """
     >>> print formatted (qo.order_by)
     ( Record
       ( attr = Date_Interval `lifetime`
-      , children =
+      , attrs =
           [ Record
             ( attr = Date `start`
             , full_name = 'lifetime.start'
@@ -172,9 +172,9 @@ _test_code = """
     >>> print formatted (qrs.As_Json_Cargo)
     { 'filters' :
         [ { 'Class' : 'Entity'
-          , 'children' :
+          , 'attrs' :
               [ { 'Class' : 'Entity'
-                , 'children' :
+                , 'attrs' :
                     [ { 'name' : 'name'
                       , 'sig_key' : 3
                       , 'ui_name' : 'Name'
@@ -202,14 +202,14 @@ _test_code = """
           , 'ui_name' : 'Boat'
           }
         , { 'Class' : 'Entity'
-          , 'children' :
+          , 'attrs' :
               [ { 'Class' : 'Entity'
-                , 'children' :
+                , 'attrs' :
                     [ { 'name' : 'name'
                       , 'sig_key' : 3
                       , 'ui_name' : 'Name'
                       }
-                    , { 'children' :
+                    , { 'attrs' :
                           [ { 'name' : 'start'
                             , 'sig_key' : 0
                             , 'ui_name' : 'Start'
@@ -328,10 +328,10 @@ _test_code = """
 
     >>> def show_f (f, indent = "") :
     ...     print "%%s%%s" %% (indent, f), f._outer
-    ...     for c in f.Children :
+    ...     for c in f.Attrs :
     ...         show_f (c, indent + "    ")
 
-    >>> for f in qrs.Children :
+    >>> for f in qrs.Attrs :
     ...     show_f (f)
     <left.AQ [Attr.Type.Querier Id_Entity]> None
         <left.left.AQ [Attr.Type.Querier Id_Entity]> <left.AQ [Attr.Type.Querier Id_Entity]>
@@ -348,15 +348,15 @@ _test_code = """
     <points.AQ [Attr.Type.Querier Ckd]> None
     <place.AQ [Attr.Type.Querier Ckd]> None
 
-    >>> print formatted (list (f.As_Template_Elem for f in qrs.Children))
+    >>> print formatted (list (f.As_Template_Elem for f in qrs.Attrs))
     [ Record
       ( Class = 'Entity'
       , attr = Boat `left`
-      , children =
+      , attrs =
           [ Record
             ( Class = 'Entity'
             , attr = Boat_Class `left`
-            , children =
+            , attrs =
                 [ Record
                   ( attr = String `name`
                   , full_name = 'left.left.name'
@@ -568,11 +568,11 @@ _test_code = """
     , Record
       ( Class = 'Entity'
       , attr = Regatta `right`
-      , children =
+      , attrs =
           [ Record
             ( Class = 'Entity'
             , attr = Regatta_Event `left`
-            , children =
+            , attrs =
                 [ Record
                   ( attr = String `name`
                   , full_name = 'right.left.name'
@@ -583,7 +583,7 @@ _test_code = """
                   )
                 , Record
                   ( attr = Date_Interval `date`
-                  , children =
+                  , attrs =
                       [ Record
                         ( attr = Date `start`
                         , full_name = 'right.left.date.start'

@@ -38,6 +38,7 @@
 #    20-Dec-2011 (CT) Use `.sig_attr` instead of home-grown code
 #    20-Dec-2011 (CT) Factor `_Container_`, derive `E_Type` from it
 #    20-Dec-2011 (CT) Add `Children_Transitive`, `E_Type.As_Json`
+#    22-Dec-2011 (CT) s/Children/Attrs/
 #    ««revision-date»»···
 #--
 
@@ -64,17 +65,17 @@ class _Container_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def Atoms (self) :
-        return tuple (a for c in self.Children for a in c.Atoms)
+        return tuple (a for c in self.Attrs for a in c.Atoms)
     # end def Atoms
 
     @TFL.Meta.Once_Property
-    def Children (self) :
+    def Attrs (self) :
         return tuple (getattr (self, c.name) for c in self._attrs)
-    # end def Children
+    # end def Attrs
 
     @TFL.Meta.Once_Property
     def Unwrapped_Atoms (self) :
-        return tuple (a for c in self.Children for a in c.Unwrapped.Atoms)
+        return tuple (a for c in self.Attrs for a in c.Unwrapped.Atoms)
     # end def Unwrapped_Atoms
 
 # end class _Container_
@@ -131,25 +132,25 @@ class _Type_ (TFL.Meta.Object) :
 
     @property    ### depends on currently selected language (I18N/L10N)
     def As_Json_Cargo (self) :
-        Children = self.Children
+        Attrs = self.Attrs
         result   = dict \
             ( self._as_json_cargo_inv
             , ui_name  = self._attr.ui_name_T
             )
-        if Children :
-            result ["children"] = [c.As_Json_Cargo for c in Children]
+        if Attrs :
+            result ["attrs"] = [c.As_Json_Cargo for c in Attrs]
         return result
     # end def As_Json_Cargo
 
     @property    ### depends on currently selected language (I18N/L10N)
     def As_Template_Elem (self) :
-        Children = self.Children
+        Attrs = self.Attrs
         result   = dict \
             ( self._as_template_elem_inv
             , ui_name  = self._ui_name_T
             )
-        if Children :
-            result ["children"] = [c.As_Template_Elem for c in Children]
+        if Attrs :
+            result ["attrs"] = [c.As_Template_Elem for c in Attrs]
         return TFL.Record (** result)
     # end def As_Template_Elem
 
@@ -159,14 +160,14 @@ class _Type_ (TFL.Meta.Object) :
     # end def Atoms
 
     @TFL.Meta.Once_Property
-    def Children (self) :
+    def Attrs (self) :
         return ()
-    # end def Children
+    # end def Attrs
 
     @TFL.Meta.Once_Property
-    def Children_Transitive (self) :
-        return tuple (self._children_transitive ())
-    # end def Children_Transitive
+    def Attrs_Transitive (self) :
+        return tuple (self._attrs_transitive ())
+    # end def Attrs_Transitive
 
     @TFL.Meta.Once_Property
     def E_Type (self) :
@@ -276,12 +277,12 @@ class _Type_ (TFL.Meta.Object) :
         return self.__class__ (self._attr, outer)
     # end def Wrapped
 
-    def _children_transitive (self) :
+    def _attrs_transitive (self) :
         yield self
-        for c in self.Children :
-            for ct in c.Children_Transitive :
+        for c in self.Attrs :
+            for ct in c.Attrs_Transitive :
                 yield ct
-    # end def _children_transitive
+    # end def _attrs_transitive
 
     def __getattr__ (self, name) :
         try :
@@ -439,7 +440,7 @@ class E_Type (_Container_) :
     @property
     def As_Json_Cargo (self) :
         return dict \
-            ( filters   = [f.As_Json_Cargo for f in self.Children]
+            ( filters   = [f.As_Json_Cargo for f in self.Attrs]
             , name_sep  = id_sep
             , op_map    = self.Op_Map
             , op_sep    = op_sep
@@ -449,9 +450,9 @@ class E_Type (_Container_) :
     # end def As_Json_Cargo
 
     @TFL.Meta.Once_Property
-    def Children_Transitive (self) :
-        return tuple (ct for c in self.Children for ct in c.Children_Transitive)
-    # end def Children_Transitive
+    def Attrs_Transitive (self) :
+        return tuple (ct for c in self.Attrs for ct in c.Attrs_Transitive)
+    # end def Attrs_Transitive
 
     @property
     def Op_Map (self) :
@@ -469,7 +470,7 @@ class E_Type (_Container_) :
     def Sig_Map (self) :
         result = {}
         Signatures = _Type_.Signatures
-        for f in uniq (f.Op_Keys for f in self.Children_Transitive) :
+        for f in uniq (f.Op_Keys for f in self.Attrs_Transitive) :
             if f :
                 result [Signatures [f]] = f
         return result
