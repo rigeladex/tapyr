@@ -1186,7 +1186,7 @@ class Query (_Cached_, _Computed_Mixin_) :
        type).
     """
 
-    kind        = "query"
+    kind       = "query"
 
     def _get_computed (self, obj) :
         attr   = self.attr

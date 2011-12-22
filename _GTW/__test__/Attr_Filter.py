@@ -53,9 +53,12 @@ _test_code = """
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
     <title.AQ [Attr.Type.Querier String]>
+    <lifetime.AQ [Attr.Type.Querier Composite]>
+    <salutation.AQ [Attr.Type.Querier String]>
+    <sex.AQ [Attr.Type.Querier Ckd]>
 
     >>> show_dir ( PAP.Person.E_Type.AQ)
-    ['first_name', 'last_name', 'middle_name', 'pop_to_self', 'title']
+    ['first_name', 'last_name', 'lifetime', 'middle_name', 'pop_to_self', 'salutation', 'sex', 'title']
 
     >>> paq = MOM.Attr.Querier.E_Type (PAP.Person.E_Type, MOM.Attr.Selector.all)
     >>> for aq in paq.Attrs :
@@ -77,6 +80,7 @@ _test_code = """
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
 
@@ -88,6 +92,7 @@ _test_code = """
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
 
@@ -100,13 +105,20 @@ _test_code = """
     <left.first_name.AQ [Attr.Type.Querier String_FL]>
     <left.middle_name.AQ [Attr.Type.Querier String]>
     <left.title.AQ [Attr.Type.Querier String]>
+    <left.lifetime.start.AQ [Attr.Type.Querier Date]>
+    <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
+    <left.salutation.AQ [Attr.Type.Querier String]>
+    <left.sex.AQ [Attr.Type.Querier Ckd]>
     <right.country_code.AQ [Attr.Type.Querier String]>
     <right.area_code.AQ [Attr.Type.Querier String]>
     <right.number.AQ [Attr.Type.Querier String]>
+    <right.desc.AQ [Attr.Type.Querier String]>
     <extension.AQ [Attr.Type.Querier String]>
+    <desc.AQ [Attr.Type.Querier String]>
 
     >>> show_dir ( PAP.Person_has_Phone.E_Type.AQ)
-    ['extension', 'left', 'pop_to_self', 'right']
+    ['desc', 'extension', 'left', 'pop_to_self', 'right']
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Atoms :
     ...     print aq
@@ -114,6 +126,11 @@ _test_code = """
     <left.first_name.AQ [Attr.Type.Querier String_FL]>
     <left.middle_name.AQ [Attr.Type.Querier String]>
     <left.title.AQ [Attr.Type.Querier String]>
+    <left.lifetime.start.AQ [Attr.Type.Querier Date]>
+    <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
+    <left.salutation.AQ [Attr.Type.Querier String]>
+    <left.sex.AQ [Attr.Type.Querier Ckd]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Unwrapped_Atoms :
     ...     print aq
@@ -121,6 +138,10 @@ _test_code = """
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
     <title.AQ [Attr.Type.Querier String]>
+    <lifetime.start.AQ [Attr.Type.Querier Date]>
+    <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <salutation.AQ [Attr.Type.Querier String]>
+    <sex.AQ [Attr.Type.Querier Ckd]>
 
     >>> person_attrs   = MOM.Attr.Selector.all (PAP.Person.E_Type)
     >>> php_attrs      = MOM.Attr.Selector.all (PAP.Person_has_Phone.E_Type)
@@ -131,7 +152,7 @@ _test_code = """
     >>> php_attrs.names
     ('left', 'right', 'extension', 'desc')
     >>> lifetime_attrs.names
-    ('start', 'finish')
+    ('start', 'finish', 'alive')
 
     >>> for attr in person_attrs :
     ...     print attr.typ, attr.AQ
@@ -177,16 +198,19 @@ _test_code = """
     ...     print attr.typ, attr.AQ
     Date <start.AQ [Attr.Type.Querier Date]>
     Date <finish.AQ [Attr.Type.Querier Date]>
+    Boolean <alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in lifetime_attrs :
     ...     print attr.typ, getattr (PAP.Person.E_Type.AQ.lifetime, attr.name)
     Date <lifetime.start.AQ [Attr.Type.Querier Date]>
     Date <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    Boolean <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in lifetime_attrs :
     ...     print attr, getattr (PAP.Person.E_Type.lifetime.AQ, attr.name)
     Date `start` <lifetime.start.AQ [Attr.Type.Querier Date]>
     Date `finish` <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    Boolean `alive` <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in person_attrs :
     ...     print attr.typ, attr.AQ.__class__
@@ -209,6 +233,7 @@ _test_code = """
     ...     print attr.typ, attr.AQ.__class__
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
+    Boolean <Attr.Type.Querier Boolean ('EQ',)>
 
     >>> print PAP.Person_has_Phone.E_Type.person.AQ
     <left.AQ [Attr.Type.Querier Id_Entity]>
@@ -228,43 +253,75 @@ _test_code = """
     ...     print "%%s%%-20s%%s" %% ("  " * level, a._attr_name, a.Sig_Key)
     ...     for c in a.Attrs :
     ...         show_Q (c, level + 1)
+    >>> AQ = PAP.Person_has_Phone.AQ
     >>> for pka in PAP.Person_has_Phone.E_Type.primary :
-    ...     show_Q (pka.AQ)
+    ...     show_Q (getattr (AQ, pka.name))
     left                2
       last_name           3
       first_name          3
       middle_name         3
       title               3
+      lifetime            None
+        start               0
+        finish              0
+        alive               1
+      salutation          3
+      sex                 0
     right               2
       country_code        3
       area_code           3
       number              3
+      desc                3
     extension           3
 
-    >>> for pka in MOM.Attr.Selector.all (scope.SRM.Boat_in_Regatta.E_Type) :
-    ...     show_Q (pka.AQ)
+    >>> for pka in scope.SRM.Boat_in_Regatta.E_Type.AQ.Attrs :
+    ...     show_Q (pka)
     left                2
       left                2
         name                3
+        max_crew            0
+        beam                0
+        loa                 0
+        sail_area           0
       nation              0
       __raw_sail_number   3
       sail_number_x       3
+      name                3
     right               2
       left                2
         name                3
         date                None
           start               0
           finish              0
+          alive               1
+        club                2
+          name                3
+          long_name           3
+        desc                3
+      discards            0
+      kind                3
+      races               0
+      result              None
+        date                0
+        software            3
+        status              3
     skipper             2
       left                2
         last_name           3
         first_name          3
         middle_name         3
         title               3
+        lifetime            None
+          start               0
+          finish              0
+          alive               1
+        salutation          3
+        sex                 0
       nation              0
       mna_number          3
       club                2
         name                3
+        long_name           3
     place               0
     points              0
 
@@ -276,35 +333,63 @@ _test_code = """
     ...     print repr (a._attr), "unwrapped"
     ...     for c in a.Unwrapped_Atoms :
     ...         print "   ", repr (c._attr), c._full_name
-    >>> for pka in MOM.Attr.Selector.all (scope.SRM.Boat_in_Regatta.E_Type) :
-    ...     show_QA (pka.AQ)
-    ...     show_QUA (pka.AQ)
+    >>> for pka in scope.SRM.Boat_in_Regatta.E_Type.AQ.Attrs :
+    ...     show_QA (pka)
+    ...     show_QUA (pka)
     Boat `left`
         String `name` left.left.name
+        Int `max_crew` left.left.max_crew
+        Float `beam` left.left.beam
+        Float `loa` left.left.loa
+        Float `sail_area` left.left.sail_area
         Nation `nation` left.nation
         Int `sail_number` left.sail_number
         String `sail_number_x` left.sail_number_x
+        String `name` left.name
     Boat `left` unwrapped
         String `name` left.name
         Nation `nation` nation
         Int `sail_number` sail_number
         String `sail_number_x` sail_number_x
+        String `name` name
     Regatta `right`
         String `name` right.left.name
         Date `start` right.left.date.start
         Date `finish` right.left.date.finish
+        Boolean `alive` right.left.date.alive
+        String `name` right.left.club.name
+        String `long_name` right.left.club.long_name
+        String `desc` right.left.desc
+        Int `discards` right.discards
+        String `kind` right.kind
+        Int `races` right.races
+        Date-Time `date` right.result.date
+        String `software` right.result.software
+        String `status` right.result.status
     Regatta `right` unwrapped
         String `name` left.name
         Date `start` left.date.start
         Date `finish` left.date.finish
+        Int `discards` discards
+        String `kind` kind
+        Int `races` races
+        Date-Time `date` result.date
+        String `software` result.software
+        String `status` result.status
     Entity `skipper`
         String `last_name` skipper.left.last_name
         String `first_name` skipper.left.first_name
         String `middle_name` skipper.left.middle_name
         String `title` skipper.left.title
+        Date `start` skipper.left.lifetime.start
+        Date `finish` skipper.left.lifetime.finish
+        Boolean `alive` skipper.left.lifetime.alive
+        String `salutation` skipper.left.salutation
+        Sex `sex` skipper.left.sex
         Nation `nation` skipper.nation
         String `mna_number` skipper.mna_number
         String `name` skipper.club.name
+        String `long_name` skipper.club.long_name
     Entity `skipper` unwrapped
         String `last_name` left.last_name
         String `first_name` left.first_name

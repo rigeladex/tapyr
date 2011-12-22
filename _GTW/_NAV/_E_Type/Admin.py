@@ -145,6 +145,7 @@
 #    13-Dec-2011 (CT) Continue `QX` (`QX_Completer`, use `QR.Filter_Atoms`)
 #    14-Dec-2011 (CT) Continue `QX` (`QX_Completed`, `_fix_filters`)
 #    21-Dec-2011 (CT) Continue `QX` (refactor `_rendered_completions`)
+#    22-Dec-2011 (CT) Continue `QX` (change `qr_spec` to not pass `field_names`)
 #    ««revision-date»»···
 #--
 
@@ -1084,10 +1085,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def qr_spec (self) :
-        field_names = self._list_display
-        if field_names is None :
-            field_names = tuple (a.name for a in self._auto_list_display)
-        return QRS (self.E_Type, field_names)
+        return QRS (self.E_Type)
     # end def qr_spec
 
     def rendered (self, handler, template = None) :

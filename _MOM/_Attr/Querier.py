@@ -39,6 +39,9 @@
 #    20-Dec-2011 (CT) Factor `_Container_`, derive `E_Type` from it
 #    20-Dec-2011 (CT) Add `Children_Transitive`, `E_Type.As_Json`
 #    22-Dec-2011 (CT) s/Children/Attrs/
+#    22-Dec-2011 (CT) Add `_attr_selector` to `_Type_` and use it in
+#                     `_Container_._attrs`
+#    22-Dec-2011 (CT) Add `E_Type.Select`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +80,11 @@ class _Container_ (TFL.Meta.Object) :
     def Unwrapped_Atoms (self) :
         return tuple (a for c in self.Attrs for a in c.Unwrapped.Atoms)
     # end def Unwrapped_Atoms
+
+    @TFL.Meta.Once_Property
+    def _attrs (self) :
+        return self._attr_selector (self.E_Type)
+    # end def _attrs
 
 # end class _Container_
 
@@ -128,6 +136,7 @@ class _Type_ (TFL.Meta.Object) :
     def __init__ (self, attr, outer = None) :
         self._attr  = attr
         self._outer = outer
+        self._attr_selector = outer and outer._attr_selector
     # end def __init__
 
     @property    ### depends on currently selected language (I18N/L10N)
@@ -235,6 +244,22 @@ class _Type_ (TFL.Meta.Object) :
         return self._attr.name
     # end def _attr_name
 
+    @property
+    def _attr_selector (self) :
+        return getattr (self, "__attr_selector", None) or MOM.Attr.Selector.sig
+    # end def _attr_selector
+
+    @_attr_selector.setter
+    def _attr_selector (self, value) :
+        if value is None :
+            value = MOM.Attr.Selector.sig
+        elif not (  value is MOM.Attr.Selector.all
+                 or isinstance (value, MOM.Attr.Selector.Kind)
+                 ) :
+            value = MOM.Attr.Selector.sig
+        setattr (self, "__attr_selector", value)
+    # end def _attr_selector
+
     @TFL.Meta.Once_Property
     def _cooker (self) :
         return self._attr.cooked
@@ -307,11 +332,6 @@ class _Type_ (TFL.Meta.Object) :
 # end class _Type_
 
 class _Composite_ (_Container_, _Type_) :
-
-    @TFL.Meta.Once_Property
-    def _attrs (self) :
-        return self._attr.E_Type.sig_attr
-    # end def _attrs
 
     def __getattr__ (self, name) :
         try :
@@ -426,10 +446,16 @@ class Raw (String) :
 class E_Type (_Container_) :
     """Query object for `E_Type` returning an essential attribute's `AQ`"""
 
+    _id = _q_name = _ui_name_T = None
+
     def __init__ (self, E_Type, _attr_selector = None) :
         self.E_Type = E_Type
         self._attr_selector = _attr_selector
     # end def __init__
+
+    def Select (self, _attr_selector) :
+        return self.__class__ (self.E_Type, _attr_selector)
+    # end def Select
 
     @property
     def As_Json (self) :
@@ -439,8 +465,9 @@ class E_Type (_Container_) :
 
     @property
     def As_Json_Cargo (self) :
+        filters = [f.As_Json_Cargo for f in self.Attrs]
         return dict \
-            ( filters   = [f.As_Json_Cargo for f in self.Attrs]
+            ( filters   = filters
             , name_sep  = id_sep
             , op_map    = self.Op_Map
             , op_sep    = op_sep
@@ -476,25 +503,33 @@ class E_Type (_Container_) :
         return result
     # end def Sig_Map
 
-    @TFL.Meta.Once_Property
-    def _attrs (self) :
-        E_Type   = self.E_Type
-        attr_sel = self._attr_selector
-        if attr_sel is None :
-            result = E_Type.sig_attr
-        else :
-            result = attr_sel (E_Type)
-        return result
-    # end def _attrs
+    @property
+    def _attr_selector (self) :
+        return getattr (self, "__attr_selector")
+    # end def _attr_selector
+
+    @_attr_selector.setter
+    def _attr_selector (self, value) :
+        setattr (self, "__attr_selector", value or MOM.Attr.Selector.all)
+    # end def _attr_selector
 
     def __getattr__ (self, name) :
         head, _, tail = split_hst (name, ".")
-        result = getattr (self.E_Type, head).AQ
+        result = getattr (self.E_Type, head).AQ.Wrapped (self)
         setattr (self, head, result)
         if tail :
             result = getattr (Filter.Q, tail) (result)
         return result
     # end def __getattr__
+
+    def __repr__ (self) :
+        return "<Attr.Type.Querier.%s for %s>" % \
+            (self.__class__.__name__, self.E_Type.type_name)
+    # end def __repr__
+
+    def __str__ (self) :
+        return "<%s.AQ>" % (self.E_Type.type_name, )
+    # end def __str__
 
 # end class E_Type
 

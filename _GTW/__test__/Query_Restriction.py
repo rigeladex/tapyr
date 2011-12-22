@@ -143,6 +143,18 @@ _test_code = """
             , sig_key = 0
             , ui_name = 'Lifetime/Finish'
             )
+          , Record
+            ( attr = Boolean `alive`
+            , choices =
+                [ 'no'
+                , 'yes'
+                ]
+            , full_name = 'lifetime.alive'
+            , id = 'lifetime__alive'
+            , name = 'alive'
+            , sig_key = 1
+            , ui_name = 'Lifetime/Alive'
+            )
           ]
       , full_name = 'lifetime'
       , id = 'lifetime'
@@ -333,20 +345,20 @@ _test_code = """
 
     >>> for f in qrs.Attrs :
     ...     show_f (f)
-    <left.AQ [Attr.Type.Querier Id_Entity]> None
+    <left.AQ [Attr.Type.Querier Id_Entity]> <GTW.OMP.SRM.Boat_in_Regatta.AQ>
         <left.left.AQ [Attr.Type.Querier Id_Entity]> <left.AQ [Attr.Type.Querier Id_Entity]>
             <left.left.name.AQ [Attr.Type.Querier String]> <left.left.AQ [Attr.Type.Querier Id_Entity]>
         <left.nation.AQ [Attr.Type.Querier Ckd]> <left.AQ [Attr.Type.Querier Id_Entity]>
         <left.__raw_sail_number.AQ [Attr.Type.Querier Raw]> <left.AQ [Attr.Type.Querier Id_Entity]>
         <left.sail_number_x.AQ [Attr.Type.Querier String]> <left.AQ [Attr.Type.Querier Id_Entity]>
-    <right.AQ [Attr.Type.Querier Id_Entity]> None
+    <right.AQ [Attr.Type.Querier Id_Entity]> <GTW.OMP.SRM.Boat_in_Regatta.AQ>
         <right.left.AQ [Attr.Type.Querier Id_Entity]> <right.AQ [Attr.Type.Querier Id_Entity]>
             <right.left.name.AQ [Attr.Type.Querier String]> <right.left.AQ [Attr.Type.Querier Id_Entity]>
             <right.left.date.AQ [Attr.Type.Querier Composite]> <right.left.AQ [Attr.Type.Querier Id_Entity]>
                 <right.left.date.start.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
                 <right.left.date.finish.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
-    <points.AQ [Attr.Type.Querier Ckd]> None
-    <place.AQ [Attr.Type.Querier Ckd]> None
+    <points.AQ [Attr.Type.Querier Ckd]> <GTW.OMP.SRM.Boat_in_Regatta.AQ>
+    <place.AQ [Attr.Type.Querier Ckd]> <GTW.OMP.SRM.Boat_in_Regatta.AQ>
 
     >>> print formatted (list (f.As_Template_Elem for f in qrs.Attrs))
     [ Record

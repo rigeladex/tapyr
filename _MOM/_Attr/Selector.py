@@ -31,6 +31,8 @@
 #     7-Sep-2011 (CT) `Primary_Followers` added
 #                     (plus `anchor`, `_Primary_Followers_`)
 #    20-Dec-2011 (CT) Add `sig`
+#    22-Dec-2011 (CT) Add `query`, change `_Selector_.__call__` to allow
+#                     composite/entity attributes for `E_Type`
 #    ««revision-date»»···
 #--
 
@@ -194,6 +196,8 @@ class _Selector_ (TFL.Meta.Object) :
     """Base class for attributes selectors."""
 
     def __call__ (self, E_Type, anchor = None) :
+        if isinstance (E_Type, MOM.Attr.Kind) :
+            E_Type = E_Type.E_Type
         return self.Type (self, E_Type, anchor)
     # end def __call__
 
@@ -222,6 +226,10 @@ class Kind (_Selector_) :
         self.kind = kind
     # end def __init__
 
+    def __repr__ (self) :
+        return "<MOM.Attr.Selector.Kind %s>" % (self.kind, )
+    # end def __repr__
+
 # end class Kind
 
 class List (_Selector_) :
@@ -234,6 +242,11 @@ class List (_Selector_) :
         self.sels = sels
     # end def __init__
 
+    def __repr__ (self) :
+        return "<MOM.Attr.Selector.List %s>" % \
+            ([repr (s) for s in self.sels], )
+    # end def __repr__
+
 # end class List
 
 class Name (_Selector_) :
@@ -245,6 +258,10 @@ class Name (_Selector_) :
         assert names
         self.names = names
     # end def __init__
+
+    def __repr__ (self) :
+        return "<MOM.Attr.Selector.Name %s>" % (self.names, )
+    # end def __repr__
 
 # end class Name
 
@@ -283,11 +300,12 @@ class Primary_Followers (_Selector_) :
 necessary   = Kind ("necessary")
 optional    = Kind ("optional")
 primary     = Kind ("primary")
+query       = Kind ("query")
 required    = Kind ("required")
 sig         = Kind ("sig_attr")
 user        = Kind ("user_attr")
 
-all         = List (primary, user)
+all         = List (primary, user, query)
 
 P_optional  = Not_Pred ((lambda x : x.is_required), "user_attr")
 P_required  = Pred     ((lambda x : x.is_required), "user_attr")

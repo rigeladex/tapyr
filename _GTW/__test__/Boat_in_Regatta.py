@@ -87,31 +87,52 @@ _test_code = r"""
     >>> df
     Q.left.date.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31))
 
-    >>> q   = SRM.Regatta.query ().filter (df)
-    >>> fs  = tuple (x.QR for x in BiR.AQ.regatta.Unwrapped_Atoms)
+    >>> AQ  = BiR.AQ.Select (MOM.Attr.Selector.sig)
+    >>> q   = SRM.Regatta.query_s ().filter (df)
+    >>> fs  = tuple (x.QR for x in AQ.regatta.Unwrapped_Atoms)
     >>> fsn = tuple (x._name for x in fs)
     >>> fss = ('left.__raw_name', 'left.date')
     >>> fst = ('left', )
 
+    >>> AQ
+    <Attr.Type.Querier.E_Type for GTW.OMP.SRM.Boat_in_Regatta>
+    >>> AQ._attr_selector
+    <MOM.Attr.Selector.Kind sig_attr>
+    >>> AQ.left._attr_selector
+    <MOM.Attr.Selector.Kind sig_attr>
+    >>> AQ.right.left.date._attr_selector
+    <MOM.Attr.Selector.Kind sig_attr>
+
     >>> fs
     (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish)
-    >>> fsn
-    ('left.__raw_name', 'left.date.start', 'left.date.finish')
 
-    >>> sorted (q)
+    >>> list (q)
     [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), u'Yardstick')]
 
-    >>> sorted (q.attrs (* fs))
+    >>> list (q.attrs (* fs))
     [(u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1)), (u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1))]
 
-    >>> sorted (q.attrs (* fsn))
+    >>> list (q.attrs (* fsn))
     [(u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1)), (u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1))]
 
-    >>> sorted (q.attrs (* fss))
+    >>> list (q.attrs (* fss))
     [(u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01)), (u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01))]
 
-    >>> sorted (q.attrs (* fst))
+    >>> list (q.attrs (* fst))
     [(GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),), (GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),)]
+
+    >>> AQ  = BiR.AQ.Select (MOM.Attr.Selector.all)
+    >>> AQ
+    <Attr.Type.Querier.E_Type for GTW.OMP.SRM.Boat_in_Regatta>
+    >>> AQ._attr_selector
+    <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
+    >>> AQ.left._attr_selector
+    <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
+    >>> AQ.right.left.date._attr_selector
+    <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
+
+    >>> tuple (x.QR for x in AQ.regatta.Atoms)
+    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.discards, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
 
 """
 

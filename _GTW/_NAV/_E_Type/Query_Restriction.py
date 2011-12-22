@@ -42,6 +42,7 @@
 #     7-Dec-2011 (CT) Creation continued (classmethod `Filter`)
 #    13-Dec-2011 (CT) Creation continued (classmethod `Filter_Atoms`)
 #    20-Dec-2011 (CT) Creation continued (factor to `MOM.Attr.Querier.E_Type`)
+#    22-Dec-2011 (CT) Creation continued (make `field_names` optional)
 #    ««revision-date»»···
 #--
 
@@ -294,8 +295,9 @@ class Query_Restriction (TFL.Meta.Object) :
 class Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
     """Query restriction spec for a GTW.NAV.E_Type page."""
 
-    def __init__ (self, E_Type, field_names) :
-        self.__super.__init__ (E_Type, MOM.Attr.Selector.Name (* field_names))
+    def __init__ (self, E_Type, field_names = None) :
+        sel = MOM.Attr.Selector.Name (* field_names) if field_names else None
+        self.__super.__init__ (E_Type, sel)
     # end def __init__
 
     @property

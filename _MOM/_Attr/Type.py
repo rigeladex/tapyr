@@ -206,6 +206,7 @@
 #    20-Dec-2011 (CT) Change `_A_Composite_.as_code` to use `attr_as_code`
 #    20-Dec-2011 (CT) s/Q/AQ/
 #    20-Dec-2011 (CT) Remove `ckd_query` and `ckd_query_eq`
+#    22-Dec-2011 (CT) Add `A_Date.completer`
 #    ««revision-date»»···
 #--
 
@@ -1375,6 +1376,7 @@ class A_Date (_A_Date_) :
     """Models a date-valued attribute of an object."""
 
     example        = u"2010/10/10"
+    completer      = MOM.Attr.Completer_Spec  (4)
     typ            = "Date"
     P_Type         = datetime.date
     Q_Ckd_Type     = MOM.Attr.Querier.Date

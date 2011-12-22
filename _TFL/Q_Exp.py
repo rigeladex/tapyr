@@ -51,6 +51,7 @@
 #    14-Sep-2011 (CT) `SUM` added
 #    16-Sep-2011 (MG) `_SUM_._name` added
 #    21-Sep-2011 (CT) `BETWEEN` changed to guard against `val is None`
+#    22-Dec-2011 (CT) Change `_Bin_.__repr__` to honor `reverse`
 #    ««revision-date»»···
 #--
 
@@ -396,7 +397,10 @@ class _Bin_ (Q_Root) :
 
     def __repr__ (self) :
         op = self.op.__name__
-        return "%s %s %s" % (self.lhs, self.op_map.get (op, op), self.rhs)
+        lhs, rhs = self.lhs, self.rhs
+        if self.reverse :
+            lhs, rhs = rhs, lhs
+        return "%s %s %s" % (lhs, self.op_map.get (op, op), rhs)
     # end def __repr__
 
 # end class _Bin_

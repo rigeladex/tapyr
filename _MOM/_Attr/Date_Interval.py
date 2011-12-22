@@ -36,6 +36,7 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    10-Oct-2011 (CT) `start.completer` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    22-Dec-2011 (CT) Move `completer` from `start` to `A_Date`
 #    ««revision-date»»···
 #--
 
@@ -107,7 +108,6 @@ class Date_Interval (_Ancestor_Essence) :
 
             kind               = Attr.Necessary
             rank               = 1
-            completer          = Attr.Completer_Spec  (4)
 
         # end class start
 

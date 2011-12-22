@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -39,6 +39,7 @@
 #    26-May-2010 (CT) `__init__` changed to copy `_own_names` and `_names`
 #                     from (essential) class to (app-type specific) instance
 #    14-Oct-2010 (CT) `Kind_Mixins` added as `Spec` variable
+#    22-Dec-2011 (CT) Change `_effective_prop_kind` to set `kind` to `kind.kind`
 #    ««revision-date»»···
 #--
 
@@ -113,7 +114,10 @@ class _Prop_Spec_ (TFL.Meta.Object) :
                 result = self._mixed_kinds [kinds] = kind.__class__ \
                     ( "__".join (k.kind_name for k in reversed (kinds))
                     , kinds
-                    , dict (__module__ = kind.__module__)
+                    , dict
+                        ( __module__ = kind.__module__
+                        , kind       = kind.kind
+                        )
                     )
         return result
     # end def _effective_prop_kind
