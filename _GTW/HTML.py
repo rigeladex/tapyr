@@ -32,6 +32,7 @@
 #                     rewrite the obfuscated `<a...</a>` elements)
 #     1-Dec-2011 (CT) Add `Styler`
 #     5-Dec-2011 (CT) Add `Entity_Map` and use in `Styler`
+#    23-Dec-2011 (CT) Factor `Styler_Safe` and `Entity_Map_Safe`
 #    ««revision-date»»···
 #--
 
@@ -138,19 +139,26 @@ Entity_Map = \
     , r"!="           : r"&ne;"
     , r"=="           : r"&equiv;"
     , r">="           : r"&ge;"
-    , r">"            : r"&gt;"
     , r"<="           : r"&le;"
-    , r"<"            : r"&lt;"
     , r"+/-"          : r"&plusmn;"
     , r"+-"           : r"&plusmn;"
+    }
+Entity_Map_Safe = \
+    { r">"            : r"&gt;"
+    , r"<"            : r"&lt;"
     , r"&"            : r"&amp;"
     }
+Entity_Map_Safe.update (Entity_Map)
 
-Styler = Multi_Re_Replacer \
-    ( Dict_Replacer (Entity_Map)
-    , Re_Replacer   (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
+_dash_replacers = \
+    ( Re_Replacer   (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
     , Re_Replacer   (r"\%2d\%2d",       r"--")
     )
+
+Styler = Multi_Re_Replacer (Dict_Replacer (Entity_Map), * _dash_replacers)
+
+Styler_Safe = Multi_Re_Replacer \
+    (Dict_Replacer (Entity_Map_Safe), * _dash_replacers)
 
 if __name__ != "__main__" :
     GTW._Export_Module ()

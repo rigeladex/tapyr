@@ -43,6 +43,7 @@
 #    13-Dec-2011 (CT) Creation continued (classmethod `Filter_Atoms`)
 #    20-Dec-2011 (CT) Creation continued (factor to `MOM.Attr.Querier.E_Type`)
 #    22-Dec-2011 (CT) Creation continued (make `field_names` optional)
+#    23-Dec-2011 (CT) Creation continued (use `Styler_Safe`, not `Styler`)
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ from   __future__  import unicode_literals
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-from   _GTW.HTML                import Styler
+from   _GTW.HTML                import Styler_Safe
 import _GTW._NAV._E_Type
 
 from   _MOM.import_MOM          import MOM, Q
@@ -238,7 +239,7 @@ class Query_Restriction (TFL.Meta.Object) :
             , name   = k
             , op     = TFL.Record
                 ( desc   = _T (qop.desc)
-                , label  = Styler (_T (qop.op_sym))
+                , label  = Styler_Safe (_T (qop.op_sym))
                 )
             , AQ     = q
             , value  = value
@@ -305,7 +306,7 @@ class Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
         result = self.__super.As_Json_Cargo
         op_map = result ["op_map"]
         for k, v in op_map.iteritems () :
-            v ["label"] = Styler (v ["sym"])
+            v ["label"] = Styler_Safe (v ["sym"])
         return result
     # end def As_Json_Cargo
 
