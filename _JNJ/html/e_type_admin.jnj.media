@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -53,6 +53,7 @@
 #     6-Dec-2011 (CT) Add `Script` for `GTW_jsonify`
 #    15-Dec-2011 (CT) Add `Script` for `GTW_UI_Icon_Map` and
 #                     `GTW_e_type_selector `
+#     3-Jan-2012 (CT) Remove `Script` references covered by `requires`
 #    ««revision-date»»···
 #--
 
@@ -389,17 +390,8 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script (GTW.Script._.GTW_UI_Icon_Map)
-Script (GTW.Script._.GTW_jq_util)
-Script (GTW.Script._.GTW_jsonify)
-Script (GTW.Script._.GTW_postify_a)
-Script (GTW.Script._.GTW_buttonify)
-Script (GTW.Script._.GTW_autocomplete)
-Script (GTW.Script._.GTW_e_type_selector)
-Script (GTW.Script._.GTW_e_type_admin)
-Script (GTW.Script._.GTW_query_restriction)
-
 Script (GTW.Script (src = "/media/GTW/js/GTW/jQ/hd_input.js"))
+Script (GTW.Script._.GTW_e_type_admin)
 
 JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
 

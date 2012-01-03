@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -605,7 +605,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             if completer is not None :
                 names  = completer.names
                 query  = completer (self.top.scope, json.values)
-                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
                 result = self._rendered_completions \
                     (ETM, query, names, completer.entity_p, json)
             return result

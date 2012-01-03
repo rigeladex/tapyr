@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -30,6 +30,8 @@
 #    13-Sep-2011 (CT) `Script_File` and `Style_File` added
 #    13-Sep-2011 (MG) doctest added
 #    27-Sep-2011 (MG) `Include`, `Eval`, and `_eval_file` added
+#     3-Jan-2012 (CT) Add and use `_Media`, change `_Media_.__call__` to not
+#                     unnecessarily wrap media objects
 #    ««revision-date»»···
 #--
 
@@ -173,7 +175,11 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
         # end def __init__
 
         def __call__ (self, * args, ** kw) :
-            result = self._cls (* args, ** kw)
+            cls = self._cls
+            if len (args) == 1 and (isinstance (args [0], cls)) and not kw :
+                result = args [0]
+            else :
+                result = cls (* args, ** kw)
             self._ext.append (result)
             return result
         # end def __call__
@@ -184,10 +190,10 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     # end class _Media_
 
-    css_links            = property (lambda s : s.CSS_Link._ext)
-    js_on_ready          = property (lambda s : s.JS_On_Ready._ext)
-    rel_links            = property (lambda s : s.Rel_Link._ext)
-    scripts              = property (lambda s : s.Script._ext)
+    css_links            = property (lambda s : s._Media.css_links)
+    js_on_ready          = property (lambda s : s._Media.js_on_ready)
+    rel_links            = property (lambda s : s._Media.rel_links)
+    scripts              = property (lambda s : s._Media.scripts)
     script_files         = property (lambda s : s.Script_File._ext)
     style_sheets         = property (lambda s : s.Style_Sheet._ext)
 
@@ -207,20 +213,16 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             ( object = import_CSS
             , locls  = dict (Include = self.Include)
             )
+        self._setup_media ()
     # end def __init__
 
     def Eval (self, * fragments) :
         self.globs = {}
         for f in fragments :
             self._eval_file (f)
+        self._setup_media ()
         return self
     # end def Eval
-
-    def _eval_file (self, filename) :
-        with open (filename, "rt") as file :
-            self.globs ["__name__"] = filename
-            exec (file, self.globs, self)
-    # end def _eval_file
 
     def Include (self, * includes, ** kw) :
         ignore_missing = kw.pop ("ignore_missing", False)
@@ -233,6 +235,22 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             source, path, _ = get_source (env, fn)
             self._eval_file              (path)
     # end def Include
+
+    def _eval_file (self, filename) :
+        with open (filename, "rt") as file :
+            self.globs ["__name__"] = filename
+            exec (file, self.globs, self)
+    # end def _eval_file
+
+    def _setup_media (self) :
+        from _GTW.Media import Media
+        self._Media = Media \
+            ( self.CSS_Link._ext
+            , self.Script._ext
+            , self.JS_On_Ready._ext
+            , self.Rel_Link._ext
+            )
+    # end def _setup_media
 
     def __getitem__ (self, index) :
         try :
@@ -249,15 +267,14 @@ import os
 __doc__ = r"""
 >>> from _JNJ.Media_Defaults import Media_Defaults
 >>> from _JNJ.Environment    import HTML
+>>> import _GTW.jQuery
 >>> base_dir        = os.path.abspath \
 ...    (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
 >>> env             = HTML (load_path = base_dir)
 >>> base_media      = os.path.join (base_dir, "_test.media")
 >>> def as_string (fragments) :
 ...     return "\n\n".join \
-...                ( str (s) for s in
-...                    sorted (fragments, key = TFL.Getter.rank)
-...                )
+...         (str (s) for s in sorted (fragments, key = TFL.Getter.rank))
 
 >>> scope = Scope (Media_Defaults, env).Eval (base_media)
 >>> print as_string (scope.style_sheets)
@@ -280,11 +297,11 @@ a.hide
 >>> print as_string (scope.script_files)
 /* a test javascript file directly included */
 
->>> scope.scripts
-[/media/GTW/js/jquery-1.5.2.min.js: text/javascript]
->>> scope.css_links
+>>> list (scope.scripts)
+[/media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/inspect.js: text/javascript, /media/GTW/js/GTW/AFS/Elements.js: text/javascript]
+>>> list (scope.css_links)
 [all: /media/GTW/css/jquery.gritter.css]
->>> scope.rel_links
+>>> list (scope.rel_links)
 [href="/media/GTW/css/jquery.gritter.rel.css"]
 >>> print as_string (scope.js_on_ready)
 /* this is a JS on ready code */

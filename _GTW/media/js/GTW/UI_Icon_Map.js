@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -61,10 +61,6 @@
         }
     );
     $GTW.UI_Icon_Map = UI_Icon_Map;
-    for (var name in default_icon_map) {
-        if (default_icon_map.hasOwnProperty (name)) {
-        };
-    };
   } ()
 );
 

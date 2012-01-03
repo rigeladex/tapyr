@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2011 Martin Glueck All rights reserved
+# Copyright (C) 2011-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -29,18 +29,11 @@
 #    27-Sep-2011 (MG) Creation
 #    21-Nov-2011 (CT) Add `Include` for `html/afs.jnj.media`
 #     6-Dec-2011 (CT) Use `GTW.Script._...` instead of home-grown definitions
+#     3-Jan-2012 (CT) Remove `Script` references covered by `requires`
+#     3-Jan-2012 (CT) Move remaining `GTW.Script` to `html/afs.jnj.media`
 #    ««revision-date»»···
 #--
 
 Include ("html/afs.jnj.media")
-
-Script (GTW.Script._.jQuery_UI)
-Script (GTW.Script._.GTW)
-Script (GTW.Script._.GTW_jsonify)
-Script (GTW.Script._.GTW_inspect)
-Script (GTW.Script._.GTW_afs_elements)
-Script (GTW.Script._.GTW_autocomplete)
-Script (GTW.Script._.GTW_jq_util)
-Script (GTW.Script._.GTW_jq_afs)
 
 ### __END__ html/e_type_afs.jnj.media

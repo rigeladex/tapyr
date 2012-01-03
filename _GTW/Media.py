@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -46,6 +46,7 @@
 #    13-Sep-2011 (MG) `Rel_Link`: `__str__` and `__repr__` added
 #    14-Oct-2011 (MG) `JS_On_Ready`: parameter `code` can be a `JS_On_Ready`
 #                     as well
+#     3-Jan-2012 (CT) Factor `_Object_`, add and use `requires` and `objects`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,34 @@ from   _TFL._Meta.Property                import Alias_Property
 
 from   posixpath import join as pjoin
 
-class CSS_Link (TFL.Meta.Object) :
+class _Object_ (TFL.Meta.Object) :
+    """Base class for media objects."""
+
+    requires = ()
+
+    @Once_Property
+    def objects (self) :
+        def _gen (s) :
+            for r in s.requires :
+                for o in r.objects :
+                    yield o
+            yield s
+        return tuple (_gen (self))
+    # end def objects
+
+    @classmethod
+    def _sanitized (cls, mobs, Mob_Type = None) :
+        if Mob_Type is None :
+            Mob_Type = cls
+        for mob in mobs :
+            if not isinstance (mob, Mob_Type) :
+                mob = Mob_Type (mob)
+            yield mob
+    # end def _sanitized
+
+# end class _Object_
+
+class CSS_Link (_Object_) :
     """Model a CSS link object."""
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
@@ -99,7 +127,7 @@ class CSS_Link (TFL.Meta.Object) :
 
 # end class CSS_Link
 
-class Rel_Link (TFL.Meta.Object) :
+class Rel_Link (_Object_) :
     """Model a `rel` link object."""
 
     def __init__ (self, ** kw) :
@@ -125,7 +153,7 @@ class Rel_Link (TFL.Meta.Object) :
 
 # end class Rel_Link
 
-class Script (TFL.Meta.Object) :
+class Script (_Object_) :
     """Model a script element"""
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
@@ -139,6 +167,7 @@ class Script (TFL.Meta.Object) :
                  , rank        = 0
                  , name        = None
                  , condition   = ""
+                 , requires    = ()
                  ) :
         assert src or body
         assert not (src and body)
@@ -147,6 +176,7 @@ class Script (TFL.Meta.Object) :
         self.script_type = script_type
         self.rank        = rank
         self.condition   = condition
+        self.requires    = tuple (self._sanitized (requires))
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -171,7 +201,7 @@ class Script (TFL.Meta.Object) :
 
 # end class Script
 
-class JS_On_Ready (TFL.Meta.Object) :
+class JS_On_Ready (_Object_) :
     """A javascript code which should be executed once the document is loaded"""
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
@@ -215,7 +245,8 @@ class Media_List (TFL.Meta.Object) :
 
     def _gen_all (self) :
         for mob in self._gen_own () :
-            yield mob
+            for o in mob.objects :
+                yield o
         name = self.name
         for child in self.media.children :
             for mob in getattr (child, name) :
@@ -245,10 +276,10 @@ class Media_List (TFL.Meta.Object) :
 
     def _sanitized (self, mobs) :
         Mob_Type = self.Mob_Type
-        for mob in mobs :
-            if Mob_Type and not isinstance (mob, Mob_Type) :
-                mob = Mob_Type (mob)
-            yield mob
+        if Mob_Type :
+            return Mob_Type._sanitized (mobs)
+        else :
+            return mobs
     # end def _sanitized
 
 # end class Media_List
@@ -324,8 +355,7 @@ class Media_List_Script (Media_List_href, Media_List_Unique) :
 
     @Once_Property
     def values (self) :
-        return tuple \
-            (sorted (self._gen_all (), key = lambda mob : mob.rank))
+        return tuple (sorted (self._gen_all (), key = lambda mob : mob.rank))
     # end def values
 
 # end class Media_List_Script

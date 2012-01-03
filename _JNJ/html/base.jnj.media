@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -317,7 +317,6 @@ Script (GTW.Script._.Modernizr)
 
 ### the base file requires at least the jquery.gritter stuff for the
 ### notification
-Script (GTW.Script._.jQuery)
 Script (GTW.Script._.jQuery_UI)
 Script (GTW.Script._.jQuery_Gritter)
 
