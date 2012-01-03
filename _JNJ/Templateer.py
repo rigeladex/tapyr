@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -61,6 +61,7 @@
 #    24-Nov-2011 (CT) Add `Templateer.call_macro`
 #     1-Dec-2011 (CT) Add `error_templates` and `error_template_names`
 #    14-Dec-2011 (CT) Add `rel_links`
+#     3-Jan-2012 (CT) Fix `js`
 #    ««revision-date»»···
 #--
 
@@ -240,17 +241,20 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <script>
            element.
         """
-        media = self._Media
-        static_handler = self.env.static_handler
-        if media and static_handler :
+        media    = self._Media
+        sh       = self.env.static_handler
+        encoding = self.env.encoding
+        if media and sh :
             def _gen (scripts) :
                 for s in sorted (scripts, key = TFL.Getter.rank) :
                     if s.src and not s.condition :
-                        p = static_handler.get_path (s.src)
-                        if p :
-                            with open (p, "rb") as file :
-                                yield file.read ()
-            result = "\n\n".join (TFL.uniq (_gen (media.scripts)))
+                        match = sh.matching_path (s.src)
+                        if match :
+                            p = sh.type.get_path (match, sh.kw ["maps"])
+                            if p :
+                                with open (p, "rb") as file :
+                                    yield file.read ().decode (encoding)
+            result = b"\n\n".join (TFL.uniq (_gen (media.scripts)))
             return result
     # end def js
 

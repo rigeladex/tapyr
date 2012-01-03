@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -45,6 +45,7 @@
 #    17-Nov-2011 (MG) `run_development_server`: patch
 #                     `werkzeug.serving.make_server` to run
 #                     `GTW.NAV.Root.top.Run_on_Launch`
+#     3-Jan-2012 (CT) Factor `Url_Handler`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ import _GTW._Werkzeug.Request_Data
 import _GTW._Werkzeug.Request_Handler
 import _GTW._Werkzeug.Static_File_Handler
 import _GTW._Werkzeug.Upload_Handler
+import _GTW._Werkzeug.Url_Handler
 
 from    werkzeug          import ClosingIterator
 from    werkzeug.wrappers import BaseRequest, BaseResponse
@@ -67,7 +69,6 @@ from    werkzeug.wrappers import BaseRequest, BaseResponse
 import  datetime
 import  re
 import  warnings
-
 
 class _Werkzeug_Application_ (GTW._Application_) :
     """A WSGI Application"""
@@ -87,7 +88,7 @@ class _Werkzeug_Application_ (GTW._Application_) :
             warnings.warn \
                 ( "Cookie salt should be specified for every application! "
                   "Using default `cookie_salt`!"
-                 , UserWarning
+                , UserWarning
                 )
         encoding                = kw.pop ("encoding", "utf-8")
         BaseRequest.charset     = BaseResponse.charset = encoding
@@ -99,20 +100,10 @@ class _Werkzeug_Application_ (GTW._Application_) :
 
     def __call__ (self, environ, start_response) :
         path = environ ["PATH_INFO"]
-        for pat, handler_cls, kw in self.handlers :
-            match = pat.match (path)
+        for uha in self.handlers :
+            match = uha.pat.match (path)
             if match :
-                sn, pi = match.groups ()
-                environ ["PATH_INFO"]   = pi
-                environ ["SCRIPT_NAME"] = sn
-                handler = handler_cls (self, environ, ** kw)
-                try :
-                    return handler (environ, start_response)
-                except GTW.Werkzeug.Status, exc :
-                    response = handler._handle_request_exception (exc)
-                    if response :
-                        return response (environ, start_response)
-                    raise
+                return uha (environ, start_response, match)
     # end def __call__
 
     def run_development_server ( self
@@ -174,6 +165,11 @@ class _Werkzeug_Application_ (GTW._Application_) :
     def _handler_pattern (self, prefix) :
         return re.compile ("(%s)(/.*)$" % (prefix, ))
     # end def _handler_pattern
+
+    def _init_handler (self, handler_spec) :
+        return GTW.Werkzeug.Url_Handler \
+            (self, * self.__super._init_handler (handler_spec))
+    # end def _init_handler
 
     def _init_static_handler (self, handler_spec) :
         return self._init_handler (handler_spec)

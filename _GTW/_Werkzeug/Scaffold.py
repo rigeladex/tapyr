@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Martin Glueck All rights reserved
+# Copyright (C) 2011-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -23,13 +23,14 @@
 #    GTW.Werkzeug.Scaffold
 #
 # Purpose
-#    Provide a scaffold for creating instances of MOM.App_Type and MOM.Scope
-#    , managing their databases, and creating a WSGI application or staring a
+#    Provide a scaffold for creating instances of MOM.App_Type and MOM.Scope,
+#    managing their databases, and creating a WSGI application or staring a
 #    development web server based on the werkzeug framework
 #
 # Revision Dates
 #    18-Nov-2011 (MG) Creation
 #    22-Nov-2011 (MG) Import of `GTW.NAV.Template_Media_Cache` added
+#     3-Jan-2012 (CT) Fix `nav.Templateer.env.static_handler`
 #    ««revision-date»»···
 #--
 
@@ -128,7 +129,7 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
             , static_handler      = static_handler
             , user_session_ttl    = cmd.user_session_ttl.date_time_delta
             )
-        nav.Templateer.env.static_handler = static_handler
+        nav.Templateer.env.static_handler = app.handlers [0]
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
         return app

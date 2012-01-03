@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -55,7 +55,7 @@ class _Application_ (TFL.Meta.Object) :
             prefix, handler, hkw = handler_spec
         else :
             prefix, handler      = handler_spec
-        return ((self._handler_pattern (prefix), handler, hkw))
+        return (self._handler_pattern (prefix), handler, hkw)
     # end def _init_handler
 
 # end class _Application_

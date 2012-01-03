@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -85,6 +85,7 @@ def HTML \
         , html_version = version
         )
     result.CSS_Parameters = CSS_Parameters
+    result.encoding = encoding
     result.static_handler = None
     if i18n :
         result.install_gettext_translations (TFL.I18N)
