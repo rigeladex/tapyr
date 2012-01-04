@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Martin Glueck All rights reserved
+# Copyright (C) 2011-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.NAV.
@@ -42,6 +42,7 @@ from   _TFL                   import sos
 from   _TFL.predicate         import first
 
 import _TFL._Meta.Object
+import _TFL.multimap
 
 import  hashlib
 import  base64
@@ -51,10 +52,10 @@ class Template_Media_Cache (TFL.Meta.Object) :
 
     rank = 1000
 
-    def __init__ (self, css_dir, prefix, clear_dir = False) :
+    def __init__ (self, media_dir, prefix, clear_dir = False) :
         if not prefix.startswith ("/") :
             prefix     = "/%s" % (prefix, )
-        self.css_dir   = css_dir
+        self.media_dir = media_dir
         self.prefix    = prefix
         self.clear_dir = clear_dir
     # end def __init__
@@ -89,7 +90,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def _add_to_css_map
 
     def _clear_dir (self) :
-        for fod in sos.listdir_full (self.css_dir) :
+        for fod in sos.listdir_full (self.media_dir) :
             if sos.path.isdir (fod) :
                 sos.rmdir  (fod, True)
             else :
@@ -97,12 +98,12 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def _clear_dir
 
     def _create_css_cache (self, css_map) :
-        if not sos.path.isdir (self.css_dir) :
-            sos.mkdir_p (self.css_dir)
+        if not sos.path.isdir (self.media_dir) :
+            sos.mkdir_p (self.media_dir)
         for k, ts in css_map.iteritems () :
             cn = "%s.css" %    (k)
             p  = pjoin         (self.prefix,  cn)
-            fn = sos.path.join (self.css_dir, cn)
+            fn = sos.path.join (self.media_dir, cn)
             t  = ts [0]
             with open (fn, "wb") as file :
                 file.write (t.CSS)
@@ -130,7 +131,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def from_pickle_cargo
 
     def __str__ (self) :
-        return "Template_Media_Cache (%r, %r)" % (self.css_dir, self.prefix)
+        return "Template_Media_Cache (%r, %r)" % (self.media_dir, self.prefix)
     # end def __str__
 
 # end class Template_Media_Cache

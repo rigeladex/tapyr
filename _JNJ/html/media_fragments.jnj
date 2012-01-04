@@ -1,6 +1,6 @@
 {#- jinja template: media_fragments.jnj -#}
 {#
-## Copyright (C) 2011 Martin Glueck All rights reserved
+## Copyright (C) 2011-2012 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -72,7 +72,7 @@
 {%- macro scripts (media) -%}
   {%- for jsl in media.scripts %}
     {% call media_item (jsl) -%}
-      {{ X.script (src = jsl.src, body =  jsl.body) }}
+      {{ X.script (src = jsl.src, body = jsl.body) }}
     {% endcall %} {# media_item #}
   {% endfor -%}
 {%- endmacro -%} {#- scripts -#}
@@ -80,10 +80,8 @@
 {%- macro js_on_ready (media) -%}
   {%- if media.js_on_ready %}
     {% call X.script () -%}
-      $(function ()
-        {
-          {% for jsor in media.js_on_ready %}{{ jsor|safe }}{% endfor %}
-        }
+      $(function () {# -#}
+        { {% for jsor in media.js_on_ready %}{{ jsor|safe }}{% endfor %} } {# -#}
        );
     {% endcall %} {# X.script #}
   {% endif -%}

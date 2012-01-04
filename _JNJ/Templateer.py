@@ -75,6 +75,7 @@ import _JNJ.GTW
 
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.multimap
 import _TFL.predicate
 
 from   _TFL._Meta.Once_Property import Once_Property
@@ -115,7 +116,7 @@ class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
     css_href_map    = {}
-    js_href         = None
+    js_href_map     = TFL.mm_list ()
 
     _media_fragment = None
     _media_path     = None
@@ -244,17 +245,17 @@ class Template_E (_Template_) :
         media    = self._Media
         sh       = self.env.static_handler
         encoding = self.env.encoding
-        if media and sh :
+        maps     = sh.kw ["maps"]
+        if media and sh and maps :
             def _gen (scripts) :
                 for s in sorted (scripts, key = TFL.Getter.rank) :
-                    if s.src and not s.condition :
-                        match = sh.matching_path (s.src)
-                        if match :
-                            p = sh.type.get_path (match, sh.kw ["maps"])
-                            if p :
-                                with open (p, "rb") as file :
-                                    yield file.read ().decode (encoding)
-            result = b"\n\n".join (TFL.uniq (_gen (media.scripts)))
+                    match = sh.matching_path (s.src)
+                    if match :
+                        p = sh.type.get_path (match, maps)
+                        if p :
+                            with open (p, "rb") as file :
+                                yield file.read ().decode (encoding)
+            result = b"\n\n".join (TFL.uniq (_gen (self.scripts_c)))
             return result
     # end def js
 
@@ -307,6 +308,22 @@ class Template_E (_Template_) :
         if media :
             return list (TFL.uniq (media.scripts))
     # end def scripts
+
+    @Once_Property
+    def scripts_c (self) :
+        """Scripts required by media fragments that can be cached."""
+        scripts = self.scripts
+        if scripts :
+            return list (s for s in scripts if s.cache_p)
+    # end def scripts_c
+
+    @Once_Property
+    def scripts_x (self) :
+        """Scripts required by media fragments that can not be cached."""
+        scripts = self.scripts
+        if scripts :
+            return list (s for s in scripts if not s.cache_p)
+    # end def scripts_x
 
     @Once_Property
     def source (self) :

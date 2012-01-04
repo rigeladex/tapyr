@@ -47,6 +47,7 @@
 #    14-Oct-2011 (MG) `JS_On_Ready`: parameter `code` can be a `JS_On_Ready`
 #                     as well
 #     3-Jan-2012 (CT) Factor `_Object_`, add and use `requires` and `objects`
+#     4-Jan-2012 (CT) Add `Script.cache_p`
 #    ««revision-date»»···
 #--
 
@@ -178,6 +179,13 @@ class Script (_Object_) :
         self.condition   = condition
         self.requires    = tuple (self._sanitized (requires))
     # end def __init__
+
+    @Once_Property
+    def cache_p (self) :
+        src = self.src
+        return src and not \
+            (self.condition or src.startswith (("http://", "https://")))
+    # end def cache_p
 
     def __eq__ (self, rhs) :
         try :

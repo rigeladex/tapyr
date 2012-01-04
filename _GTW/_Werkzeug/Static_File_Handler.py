@@ -32,6 +32,7 @@
 #                     and Tornado
 #    14-Jan-2011 (CT) `get_path` factored
 #     3-Jan-2012 (CT) Change `get_path` into `classmethod`
+#     4-Jan-2012 (CT) Fix typos, stylos
 #    ««revision-date»»···
 #--
 from   _GTW                           import GTW
@@ -39,16 +40,17 @@ import _GTW._Werkzeug.Request_Handler
 import _GTW._Werkzeug.Error
 import _GTW.Static_File_Map
 
+from    datetime import  datetime
+
 import  os
 import  stat
 import  time
-import  datetime
 import  email
 import  mimetypes
 
 class _Static_File_Handler_ (GTW.Werkzeug.Request_Handler) :
-    """A static file handler which shpuld only be used during development to
-       server static files directly form the disk.
+    """A static file handler which should only be used during development to
+       serve static files directly from the disk.
     """
 
     block_size = 10 * 1024
@@ -82,25 +84,21 @@ class _Static_File_Handler_ (GTW.Werkzeug.Request_Handler) :
         # content has not been modified
         request     = self.request
         stat_result = os.stat (file_name)
-        modified    = datetime.datetime.fromtimestamp \
-            (stat_result [stat.ST_MTIME])
+        modified    = datetime.fromtimestamp (stat_result [stat.ST_MTIME])
         file_size   = stat_result [stat.ST_SIZE]
         ims_value   = request.headers.get ("If-Modified-Since")
         if ims_value is not None :
             date_tuple = email.utils.parsedate (ims_value)
-            if_since   = datetime.datetime.fromtimestamp \
-                (time.mktime (date_tuple))
+            if_since   = datetime.fromtimestamp (time.mktime (date_tuple))
             if if_since >= modified :
                 self.set_status (304)
                 return
-
         self.set_header ("Last-Modified",  modified)
         self.set_header ("Content-Length", file_size)
         self.set_header ("Cache-Control",  "public")
         mime_type, encoding = mimetypes.guess_type (file_name)
         if mime_type :
             self.set_header ("Content-Type", mime_type)
-
         if include_body :
             with open (file_name, "rb") as file :
                 for x in xrange (1 + file_size // self.block_size) :

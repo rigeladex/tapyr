@@ -30,7 +30,7 @@
 #    13-Sep-2011 (CT) `Script_File` and `Style_File` added
 #    13-Sep-2011 (MG) doctest added
 #    27-Sep-2011 (MG) `Include`, `Eval`, and `_eval_file` added
-#     3-Jan-2012 (CT) Add and use `_Media`, change `_Media_.__call__` to not
+#     3-Jan-2012 (CT) Add and use `_Media`, change `_MOB_.__call__` to not
 #                     unnecessarily wrap media objects
 #    ««revision-date»»···
 #--
@@ -165,8 +165,8 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     _real_name = "Scope"
 
-    class _Media_ (TFL.Meta.Object) :
-        """Wrapper for media class"""
+    class _MOB_ (TFL.Meta.Object) :
+        """Wrapper for media object class"""
 
         def __init__ (self, cls, ext = None) :
             self._cls = cls
@@ -188,7 +188,7 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             return getattr (self._cls, name)
         # end def __getattr__
 
-    # end class _Media_
+    # end class _MOB_
 
     css_links            = property (lambda s : s._Media.css_links)
     js_on_ready          = property (lambda s : s._Media.js_on_ready)
@@ -201,13 +201,13 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
         from _GTW._CSS  import import_CSS
         from _GTW.Media import CSS_Link, JS_On_Ready, Rel_Link, Script
         self.P                = parameters
-        self.CSS_Link         = self._Media_ (CSS_Link)
-        self.JS_On_Ready      = self._Media_ (JS_On_Ready)
-        self.Rel_Link         = self._Media_ (Rel_Link)
-        self.Script           = self._Media_ (Script)
-        self.Script_File      = self._Media_ (import_CSS.Style_File)
-        self.Style_Sheet = SS = self._Media_ (import_CSS.Style_Sheet)
-        self.Style_File       = self._Media_ (import_CSS.Style_File, SS._ext)
+        self.CSS_Link         = self._MOB_ (CSS_Link)
+        self.JS_On_Ready      = self._MOB_ (JS_On_Ready)
+        self.Rel_Link         = self._MOB_ (Rel_Link)
+        self.Script           = self._MOB_ (Script)
+        self.Script_File      = self._MOB_ (import_CSS.Style_File)
+        self.Style_Sheet = SS = self._MOB_ (import_CSS.Style_Sheet)
+        self.Style_File       = self._MOB_ (import_CSS.Style_File, SS._ext)
         self.env              = env
         self.__super.__init__ \
             ( object = import_CSS
