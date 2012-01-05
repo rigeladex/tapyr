@@ -30,6 +30,8 @@
 ##    27-Sep-2011 (MG) Creation (factored from `base.jnj`)
 ##     2-Dec-2011 (CT) Use `X.script` instead of home-grown markup
 ##    14-Dec-2011 (CT) Change `link_rel` to access `rel_links`, not `Rel_Links`
+##     5-Jan-2012 (CT) Change `scripts` to just pass `jsl`, not `jsl.src` and
+##                     `jsl.body`
 ##    ««revision-date»»···
 ##--
 #}
@@ -72,7 +74,7 @@
 {%- macro scripts (media) -%}
   {%- for jsl in media.scripts %}
     {% call media_item (jsl) -%}
-      {{ X.script (src = jsl.src, body = jsl.body) }}
+      {{ X.script (src = jsl) }}
     {% endcall %} {# media_item #}
   {% endfor -%}
 {%- endmacro -%} {#- scripts -#}

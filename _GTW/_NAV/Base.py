@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -258,7 +258,6 @@
 #                     `_setup_afs` moved in here, `store_css` renamed to
 #                     `store_media`
 #    27-Sep-2011 (MG) `store_cache`: use `TFL.Context.time_block`
-#                     `P_Media` added
 #    14-Nov-2011 (CT) Add `q_href`, `q_prefix`, and `qx_prefix`
 #                     (factored from `GTW.NAV.Calendar`)
 #    17-Nov-2011 (MG) `Root.Run_on_Launch` added
@@ -563,11 +562,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def permalink (self) :
         return self.abs_href
     # end def permalink
-
-    @Once_Property
-    def P_Media (self) :
-        return self.template
-    # end def P_Media
 
     @property
     def q_href (self) :
@@ -1122,7 +1116,6 @@ class Root (_Dir_) :
     email                   = None   ### default from address
     name                    = "/"
     owner                   = None
-    _PM                     = True
     redirects               = {}
     smtp                    = None
     src_root                = ""

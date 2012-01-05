@@ -48,6 +48,7 @@
 #                     as well
 #     3-Jan-2012 (CT) Factor `_Object_`, add and use `requires` and `objects`
 #     4-Jan-2012 (CT) Add `Script.cache_p`
+#     5-Jan-2012 (CT) Remove `Script.body`
 #    ««revision-date»»···
 #--
 
@@ -161,50 +162,51 @@ class Script (_Object_) :
 
     href          = Alias_Property ("src")
 
-    def __init__ ( self
-                 , src         = ""
-                 , body        = ""
+    def __init__ ( self, src
                  , script_type = "text/javascript"
                  , rank        = 0
                  , name        = None
                  , condition   = ""
                  , requires    = ()
+                 , may_cache   = True
                  ) :
-        assert src or body
-        assert not (src and body)
+        assert src
         self.src         = src
-        self.body        = body
         self.script_type = script_type
         self.rank        = rank
         self.condition   = condition
         self.requires    = tuple (self._sanitized (requires))
+        self.may_cache   = may_cache
     # end def __init__
 
     @Once_Property
+    def absolute_p (self) :
+        return self.src.startswith (("http://", "https://"))
+    # end def absolute_p
+
+    @Once_Property
     def cache_p (self) :
-        src = self.src
-        return src and not \
-            (self.condition or src.startswith (("http://", "https://")))
+        return self.may_cache and not (self.condition or self.absolute_p)
     # end def cache_p
 
     def __eq__ (self, rhs) :
         try :
-            rhs = (rhs.src, rhs.body, rhs.script_type)
+            rhs = (rhs.src, rhs.script_type)
         except AttributeError :
             pass
-        return (self.src, self.body, self.script_type) == rhs
+        return (self.src, self.script_type) == rhs
     # end def __eq__
 
     def __hash__ (self) :
-        return hash ((self.src, self.body, self.script_type))
+        return hash ((self.src, self.script_type))
     # end def __hash__
 
     def __repr__ (self) :
-        return "%s: %s" % (self.src or self.body, self.script_type)
+        return "%s: %s" % (self.src, self.script_type)
     # end def __repr__
 
     def __str__ (self) :
-        return self.src or self.body
+        return self.src
     # end def __str__
 
 # end class Script

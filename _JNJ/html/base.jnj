@@ -1,6 +1,6 @@
 {#- jinja template: html/base.jnj -#}
 {#
-## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -45,6 +45,8 @@
 ##    21-Oct-2011 (CT) Call `NF.main` instead of home-grown `NF.section`...
 ##    21-Nov-2011 (CT) Add block `body_tail_scripts`
 ##    14-Dec-2011 (CT) Move `js_on_ready` to `body_tail_scripts`
+##     5-Jan-2012 (CT) s/page.P_Media/template/
+##     5-Jan-2012 (CT) Remove use of `page.Media`
 ##    ««revision-date»»···
 ##--
 #}
@@ -63,8 +65,7 @@
         <meta name="robots" content="NOINDEX, NOFOLLOW">
       {% endif -%}
       {%- block related_links -%}
-        {%- if NAV._PM %}{{ MF.link_rel (page.Media) }}{% endif -%}
-        {{ MF.link_rel (page.P_Media) }}
+        {{ MF.link_rel (template) }}
       {%- endblock related_links -%}
       {% if page.permalink -%}
         {{ MF.permalink (page) }}
@@ -77,14 +78,12 @@
         {%- if template.css_href %}
           {{ X.link_stylesheet (template.css_href) }}
         {%- else %}
-          {{ MF.inline_CSS (page.template.CSS) }}
+          {{ MF.inline_CSS (template.CSS) }}
         {% endif -%}
-        {%- if NAV._PM %}{{ MF.link_css (page.Media) }}{% endif -%}
-        {{ MF.link_css (page.P_Media) }}
+        {{ MF.link_css (template) }}
       {%- endblock styles %}
         {%- block scripts %}
-          {%- if NAV._PM %}{{ MF.scripts (page.Media) }}{% endif -%}
-          {{ MF.scripts (page.P_Media) }}
+          {{ MF.scripts (template) }}
         {%- endblock scripts -%}
       {%- block meta_elements -%}
         <!-- copyright "{{ page.copyright.year }} {{ page.copyright.holder }}"-->
@@ -128,8 +127,7 @@
     {%- endcall -%} {# X.footer #}
     {%- endblock body -%}
     {%- block body_tail_scripts -%}
-      {%- if NAV._PM %}{{ MF.js_on_ready (page.Media )}}{% endif %}
-      {{ MF.js_on_ready (page.P_Media) }}
+      {{ MF.js_on_ready (template) }}
     {%- endblock body_tail_scripts -%}
   </body>
 {%- endcall -%} {#- X.html -#}
