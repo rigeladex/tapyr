@@ -62,6 +62,7 @@
 #     1-Dec-2011 (CT) Add `error_templates` and `error_template_names`
 #    14-Dec-2011 (CT) Add `rel_links`
 #     3-Jan-2012 (CT) Fix `js`
+#     5-Jan-2012 (CT) Add `get_cached_media`, `Media_Map`, `_Media_[CR]`
 #    ««revision-date»»···
 #--
 
@@ -115,8 +116,8 @@ class Template (_Template_) :
 class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
+    Media_Map       = {}
     css_href_map    = {}
-    js_href_map     = TFL.mm_list ()
 
     _media_fragment = None
     _media_path     = None
@@ -175,7 +176,7 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <style>
            element.
         """
-        return self.get_css (self._Media)
+        return self.get_css (self._Media_R)
     # end def CSS
 
     @property
@@ -242,7 +243,7 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <script>
            element.
         """
-        media    = self._Media
+        media    = self._Media_R
         sh       = self.env.static_handler
         encoding = self.env.encoding
         maps     = sh.kw ["maps"]
@@ -255,7 +256,7 @@ class Template_E (_Template_) :
                         if p :
                             with open (p, "rb") as file :
                                 yield file.read ().decode (encoding)
-            result = b"\n\n".join (TFL.uniq (_gen (self.scripts_c)))
+            result = "\n\n".join (TFL.uniq (_gen (self.scripts_c)))
             return result
     # end def js
 
@@ -267,6 +268,7 @@ class Template_E (_Template_) :
         media = self._Media
         if media :
             return sorted (TFL.uniq (media.js_on_ready), key = TFL.Getter.rank)
+        return ()
     # end def js_on_ready
 
     @Once_Property
@@ -297,7 +299,8 @@ class Template_E (_Template_) :
         media = self._Media
         if media :
             return sorted (TFL.uniq (media.rel_links), key = TFL.Getter.rank)
-    # end def js_on_ready
+        return ()
+    # end def rel_links
 
     @Once_Property
     def scripts (self) :
@@ -306,23 +309,26 @@ class Template_E (_Template_) :
         """
         media = self._Media
         if media :
-            return list (TFL.uniq (media.scripts))
+            return tuple (TFL.uniq (media.scripts))
+        return ()
     # end def scripts
 
     @Once_Property
     def scripts_c (self) :
         """Scripts required by media fragments that can be cached."""
-        scripts = self.scripts
-        if scripts :
-            return list (s for s in scripts if s.cache_p)
+        media = self._Media_R
+        if media :
+            return tuple (s for s in TFL.uniq (media.scripts) if s.cache_p)
+        return ()
     # end def scripts_c
 
     @Once_Property
     def scripts_x (self) :
         """Scripts required by media fragments that can not be cached."""
-        scripts = self.scripts
-        if scripts :
-            return list (s for s in scripts if not s.cache_p)
+        media = self._Media_R
+        if media :
+            return tuple (s for s in TFL.uniq (media.scripts) if not s.cache_p)
+        return ()
     # end def scripts_x
 
     @Once_Property
@@ -376,15 +382,41 @@ class Template_E (_Template_) :
         return tuple (_gen ())
     # end def templates_i
 
-    @Once_Property
+    @property
     def _Media (self) :
-        return self.get_Media (self.env, self.templates)
+        result = self._Media_C
+        if result is None :
+            result = self._Media_R
+        return result
     # end def _Media
+
+    @property
+    def _Media_C (self) :
+        return self.Media_Map.get (self.name)
+    # end def _Media_C
+
+    @Once_Property
+    def _Media_R (self) :
+        return self.get_Media_R (self.env, self.templates)
+    # end def _Media_R
 
     def call_macro (self, name, * _args, ** _kw) :
         macro = self.get_macro (name)
         return macro (* _args, ** _kw)
     # end def call_macro
+
+    def get_cached_media (self, css_href, js_href) :
+        from _GTW.Media import Media
+        result = Media \
+            ( self.css_links
+            , self.scripts_x  + ((js_href, ) if js_href else ())
+            , ("\n".join (str (x) for x in self.js_on_ready), )
+            , self.rel_links
+            )
+        if css_href :
+            self.css_href_map [self.name] = css_href
+        return result
+    # end def get_cached_media
 
     def get_macro (self, name) :
         result = self._macros.get (name)
@@ -400,13 +432,13 @@ class Template_E (_Template_) :
     # end def get_macro
 
     @classmethod
-    def get_Media (cls, env, templates) :
+    def get_Media_R (cls, env, templates) :
         P = env.CSS_Parameters
         media_fragment_pathes = tuple \
             (TFL.uniq (t.media_path for t in templates if t.media_path))
         if media_fragment_pathes :
             return cls._eval_fragments (media_fragment_pathes, P, env)
-    # end def get_Media
+    # end def get_Media_R
 
     def render (self, context) :
         if "template" not in context :
@@ -520,7 +552,7 @@ class Templateer (TFL.Meta.Object) :
         self.env = env = JNJ.Environment.HTML \
             (* args, GTW = GTW, ** kw)
         self.Template_Type = T = Template_E.New \
-            ("x", Map = {}, By_Path = {}, css_href_map = {})
+            ("x", By_Path = {}, Map = {}, Media_Map = {}, css_href_map = {})
         self.Template_Map  = T.Map
         for t in sorted (Template.Map.itervalues (), key = TFL.Getter.id) :
             T.copy (env, t)

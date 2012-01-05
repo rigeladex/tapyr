@@ -31,6 +31,7 @@
 #    21-Oct-2011 (CT) Esthetics
 #    22-Nov-2011 (MG) Use `sos.mkdir_p` instead of `sos.mkdir`
 #    25-Nov-2011 (CT) Use `nav_root.template_iter` (major surgery)
+#     5-Jan-2012 (CT) Add caching for `js`, call `t.get_cached_media` (SURGERY)
 #    ««revision-date»»···
 #--
 
@@ -63,31 +64,41 @@ class Template_Media_Cache (TFL.Meta.Object) :
     def as_pickle_cargo (self, nav_root) :
         if self.clear_dir :
             self._clear_dir ()
-        css_map_t = TFL.mm_list ()
-        css_map_p = {}
-        for t in nav_root.template_iter () :
-            self._add_to_css_map (t, css_map_t)
-        for p, t in self._create_css_cache (css_map_t) :
-            css_map_p [t.name] = p
-        nav_root.Templateer.Template_Type.css_href_map = css_map_p
-        return dict (css_map_p = css_map_p)
+        css_map = {}
+        js_map  = {}
+        TT      = nav_root.Templateer.Template_Type
+        for t in TFL.uniq (nav_root.template_iter ()) :
+            css_href              = self._add_to_map   (t, "CSS", css_map)
+            js_href               = self._add_to_map   (t, "js",  js_map)
+            TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
+        self._create_cache ("CSS", css_map)
+        self._create_cache ("js",  js_map)
+        return dict (css_href_map = TT.css_href_map, Media_Map = TT.Media_Map)
     # end def as_pickle_cargo
 
-    def _add_to_css_map (self, t, css_map) :
+    def _add_to_map (self, t, name, map) :
         try :
-            css = t.CSS
+            attr = getattr (t, name)
         except Exception as exc :
-            print "CSS exception for template", t.path
+            print name, "exception for template", t.path
             print "   ", exc
             if __debug__ :
                 import traceback
                 traceback.print_exc ()
         else :
-            if css :
-                h = hashlib.sha1     (css).digest ()
-                k = base64.b64encode (h, "_-").rstrip ("=")
-                css_map [k].append   (t)
-    # end def _add_to_css_map
+            if attr :
+                attr = attr.encode      (t.env.encoding)
+                h    = hashlib.sha1     (attr).digest ()
+                k    = base64.b64encode (h, "_-").rstrip ("=")
+                if k not in map :
+                    cn      = ".".join      ((k, name.lower ()))
+                    href    = pjoin         (self.prefix,    cn)
+                    fn      = sos.path.join (self.media_dir, cn)
+                    map [k] = (href, fn, attr)
+                else :
+                    href = map [k] [0]
+                return href
+    # end def _add_to_map
 
     def _clear_dir (self) :
         for fod in sos.listdir_full (self.media_dir) :
@@ -97,19 +108,14 @@ class Template_Media_Cache (TFL.Meta.Object) :
                 sos.unlink (fod)
     # end def _clear_dir
 
-    def _create_css_cache (self, css_map) :
-        if not sos.path.isdir (self.media_dir) :
-            sos.mkdir_p (self.media_dir)
-        for k, ts in css_map.iteritems () :
-            cn = "%s.css" %    (k)
-            p  = pjoin         (self.prefix,  cn)
-            fn = sos.path.join (self.media_dir, cn)
-            t  = ts [0]
+    def _create_cache (self, name, map) :
+        media_dir = self.media_dir
+        if not sos.path.isdir (media_dir) :
+            sos.mkdir_p (media_dir)
+        for k, (href, fn, attr) in map.iteritems () :
             with open (fn, "wb") as file :
-                file.write (t.CSS)
-            for t in ts :
-                yield p, t
-    # end def _create_css_cache
+                file.write (attr)
+    # end def _create_cache
 
     @classmethod
     def Media_Filenames (cls, nav_root, include_templates = True) :
@@ -126,8 +132,9 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def Media_Filenames
 
     def from_pickle_cargo (self, nav_root, cargo) :
-        css_map_p = cargo.get ("css_map_p", {})
-        nav_root.Templateer.Template_Type.css_href_map = css_map_p
+        TT              = nav_root.Templateer.Template_Type
+        TT.css_href_map = cargo.get ("css_href_map", {})
+        TT.Media_Map    = cargo.get ("Media_Map",    {})
     # end def from_pickle_cargo
 
     def __str__ (self) :
