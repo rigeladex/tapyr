@@ -98,8 +98,9 @@ GTW.Script \
 
 GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
 GTW.CSS_Link \
-    ( "/media/GTW/css/jquery.gritter.css", "screen"
-    , name = "jQuery_Gritter"
+    ( "/media/GTW/css/jquery.gritter.css"
+    , media_type = "screen"
+    , name       = "jQuery_Gritter"
     )
 GTW.JS_On_Ready \
     ( '$.gritter.Convert_Patagraphs_to_Gitter ("notifications");'

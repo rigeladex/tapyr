@@ -49,6 +49,7 @@
 #     3-Jan-2012 (CT) Factor `_Object_`, add and use `requires` and `objects`
 #     4-Jan-2012 (CT) Add `Script.cache_p`
 #     5-Jan-2012 (CT) Remove `Script.body`
+#     8-Jan-2012 (CT) Use `.pop_to_self` to reduce footprint of media objects
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,7 @@ from   posixpath import join as pjoin
 class _Object_ (TFL.Meta.Object) :
     """Base class for media objects."""
 
+    rank     = 0
     requires = ()
 
     @Once_Property
@@ -95,16 +97,13 @@ class CSS_Link (_Object_) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    def __init__ ( self, href
-                 , media_type = "all"
-                 , condition  = ""
-                 , name       = None
-                 , rank       = 0
-                 ) :
-        self.href       = href
-        self.media_type = media_type
-        self.condition  = condition
-        self.rank       = rank
+    condition     = ""
+    media_type    = "all"
+    name          = None
+
+    def __init__ (self, href, ** kw) :
+        self.href = href
+        self.pop_to_self (kw, "condition", "media_type", "name", "rank")
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -134,7 +133,7 @@ class Rel_Link (_Object_) :
 
     def __init__ (self, ** kw) :
         self.href = kw ["href"]
-        self.rank = kw.pop ("rank", 0)
+        self.pop_to_self (kw, "rank")
         self._kw  = kw
     # end def __init__
 
@@ -162,21 +161,21 @@ class Script (_Object_) :
 
     href          = Alias_Property ("src")
 
-    def __init__ ( self, src
-                 , script_type = "text/javascript"
-                 , rank        = 0
-                 , name        = None
-                 , condition   = ""
-                 , requires    = ()
-                 , may_cache   = True
-                 ) :
+    condition     = ""
+    may_cache     = True
+    name          = None
+    script_type   = "text/javascript"
+
+    def __init__ (self, src, ** kw) :
         assert src
-        self.src         = src
-        self.script_type = script_type
-        self.rank        = rank
-        self.condition   = condition
-        self.requires    = tuple (self._sanitized (requires))
-        self.may_cache   = may_cache
+        self.src  = src
+        self.pop_to_self \
+            ( kw
+            , "condition", "may_cache", "name", "rank", "requires"
+            , "script_type"
+            )
+        if self.requires :
+            self.requires = tuple (self._sanitized (self.requires))
     # end def __init__
 
     @Once_Property
@@ -217,16 +216,19 @@ class JS_On_Ready (_Object_) :
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     default_rank  = object ()
+    name          = None
 
-    def __init__ (self, code, rank = default_rank, name = None) :
+    def __init__ (self, code, rank = default_rank, ** kw) :
         if isinstance (code, self.__class__) :
             if rank is self.default_rank :
                 rank   = code.rank
             code       = code.code
-        if rank is self.default_rank :
+        elif rank is self.default_rank :
             rank       = 0
         self.code      = code
-        self.rank      = rank
+        if self.rank :
+            self.rank  = rank
+        self.pop_to_self (kw, "name")
     # end def __init__
 
     def __str__ (self) :
@@ -384,7 +386,7 @@ class Media (TFL.Meta.Object) :
        all: /b/c.css
        >>> tuple (str (l) for l in m.scripts)
        ('/test/js/foo.js', '/test/js/bar.js', 'http://baz.js')
-       >>> n = Media (("/test/styles/a.css", CSS_Link ("c.css", "screen")))
+       >>> n = Media (("/test/styles/a.css", CSS_Link ("c.css", media_type = "screen")))
        >>> print NL.join (repr (l) for l in n.css_links)
        all: /test/styles/a.css
        screen: /test/styles/c.css
