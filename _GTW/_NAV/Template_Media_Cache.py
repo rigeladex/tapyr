@@ -32,11 +32,13 @@
 #    22-Nov-2011 (MG) Use `sos.mkdir_p` instead of `sos.mkdir`
 #    25-Nov-2011 (CT) Use `nav_root.template_iter` (major surgery)
 #     5-Jan-2012 (CT) Add caching for `js`, call `t.get_cached_media` (SURGERY)
+#     9-Jan-2012 (CT) Add `minifier`, cache `js` only `if not nav_root.TEST`
 #    ««revision-date»»···
 #--
 
 from   _GTW                   import GTW
 import _GTW._NAV
+import _GTW.Media
 
 from   _TFL                   import TFL
 from   _TFL                   import sos
@@ -66,13 +68,15 @@ class Template_Media_Cache (TFL.Meta.Object) :
             self._clear_dir ()
         css_map = {}
         js_map  = {}
+        TEST    = nav_root.TEST
         TT      = nav_root.Templateer.Template_Type
         for t in TFL.uniq (nav_root.template_iter ()) :
-            css_href              = self._add_to_map   (t, "CSS", css_map)
-            js_href               = self._add_to_map   (t, "js",  js_map)
+            css_href = self._add_to_map (t, "CSS", css_map)
+            js_href  = None if TEST else self._add_to_map (t, "js", js_map)
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
-        self._create_cache ("CSS", css_map)
-        self._create_cache ("js",  js_map)
+        self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
+        if not TEST :
+            self._create_cache ("js", js_map, GTW.minified_js)
         return dict (css_href_map = TT.css_href_map, Media_Map = TT.Media_Map)
     # end def as_pickle_cargo
 
@@ -108,12 +112,14 @@ class Template_Media_Cache (TFL.Meta.Object) :
                 sos.unlink (fod)
     # end def _clear_dir
 
-    def _create_cache (self, name, map) :
+    def _create_cache (self, name, map, minifier = None) :
         media_dir = self.media_dir
         if not sos.path.isdir (media_dir) :
             sos.mkdir_p (media_dir)
         for k, (href, fn, attr) in map.iteritems () :
             with open (fn, "wb") as file :
+                if minifier is not None :
+                    attr = minifier (attr)
                 file.write (attr)
     # end def _create_cache
 

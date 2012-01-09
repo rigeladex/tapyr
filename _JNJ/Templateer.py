@@ -63,6 +63,7 @@
 #    14-Dec-2011 (CT) Add `rel_links`
 #     3-Jan-2012 (CT) Fix `js`
 #     5-Jan-2012 (CT) Add `get_cached_media`, `Media_Map`, `_Media_[CR]`
+#     9-Jan-2012 (CT) Fix `get_cached_media` (use `.scripts` unless `js_href`)
 #    ««revision-date»»···
 #--
 
@@ -407,9 +408,13 @@ class Template_E (_Template_) :
 
     def get_cached_media (self, css_href, js_href) :
         from _GTW.Media import Media
+        if js_href :
+            scripts = self.scripts_x  + (js_href, )
+        else :
+            scripts = self.scripts
         result = Media \
             ( self.css_links
-            , self.scripts_x  + ((js_href, ) if js_href else ())
+            , scripts
             , ("\n".join (str (x) for x in self.js_on_ready), )
             , self.rel_links
             )

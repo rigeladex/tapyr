@@ -50,6 +50,7 @@
 #     4-Jan-2012 (CT) Add `Script.cache_p`
 #     5-Jan-2012 (CT) Remove `Script.body`
 #     8-Jan-2012 (CT) Use `.pop_to_self` to reduce footprint of media objects
+#     9-Jan-2012 (CT) Add `minified_css` and `minified_js`
 #    ««revision-date»»···
 #--
 
@@ -426,6 +427,32 @@ class Media (TFL.Meta.Object) :
     # end def from_list
 
 # end class Media
+
+def minified_css (style, keep_bang_comments = True) :
+    """Return minified CSS `style`"""
+    try :
+        from rcssmin import cssmin
+    except ImportError :
+        return style
+    else :
+        try :
+            return cssmin (style, keep_bang_comments = keep_bang_comments)
+        except Exception as exc :
+            return style
+# end def minified_css
+
+def minified_js (code) :
+    """Return minified javascript `code`."""
+    try :
+        from rjsmin import jsmin
+    except ImportError :
+        return code
+    else :
+        try :
+            return jsmin (code)
+        except Exception as exc :
+            return code
+# end def minified_js
 
 if __name__ != "__main__":
     GTW._Export ("*")
