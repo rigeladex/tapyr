@@ -429,8 +429,9 @@ class Media (TFL.Meta.Object) :
 # end class Media
 
 def minified_css (style, keep_bang_comments = True) :
-    """Return minified CSS `style`"""
+    """Return minified CSS `style`."""
     try :
+        ### http://opensource.perlig.de/rcssmin/
         from rcssmin import cssmin
     except ImportError :
         return style
@@ -444,6 +445,7 @@ def minified_css (style, keep_bang_comments = True) :
 def minified_js (code) :
     """Return minified javascript `code`."""
     try :
+        ### http://opensource.perlig.de/rjsmin/
         from rjsmin import jsmin
     except ImportError :
         return code
