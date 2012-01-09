@@ -59,41 +59,42 @@
 from   _GTW import GTW
 import _GTW.Media
 
+GTW.Script \
+    ( src       = "/media/GTW/js/modernizr.custom.js"
+    , may_cache = False
+    , name      = "Modernizr"
+    , rank      = -10000   ## should be loaded really first
+    )
+
 if __debug__ :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery.js"
-        , rank     = -101  ## should be loaded first
-        , name     = "jQuery"
+        ( src       = "/media/GTW/js/jquery.js"
+        , rank      = -101  ## should be loaded first
+        , name      = "jQuery"
         )
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-ui.js"
-        , name     = "jQuery_UI"
-        , rank     = -100  ## should be loaded first
-        , requires = (GTW.Script._.jQuery, )
+        ( src       = "/media/GTW/js/jquery-ui.js"
+        , name      = "jQuery_UI"
+        , rank      = -100  ## should be loaded first
+        , requires  = (GTW.Script._.jQuery, )
         )
 else :
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery.min.js"
-        , rank     = -101  ## should be loaded first
-        , name     = "jQuery"
+        ( src       = "/media/GTW/js/jquery.min.js"
+        , rank      = -101  ## should be loaded first
+        , name      = "jQuery"
         )
     GTW.Script \
-        ( src      = "/media/GTW/js/jquery-ui.min.js"
-        , name     = "jQuery_UI"
-        , rank     = -100  ## should be loaded first
-        , requires = (GTW.Script._.jQuery, )
+        ( src       = "/media/GTW/js/jquery-ui.min.js"
+        , name      = "jQuery_UI"
+        , rank      = -100  ## should be loaded first
+        , requires  = (GTW.Script._.jQuery, )
         )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/jquery.gritter.js"
-    , name     = "jQuery_Gritter"
-    , requires = (GTW.Script._.jQuery, )
-    )
-
-GTW.Script \
-    ( src  = "/media/GTW/js/modernizr.custom.js"
-    , name = "Modernizr"
-    , rank = -10000   ## should be loaded really first
+    ( src       = "/media/GTW/js/jquery.gritter.js"
+    , name      = "jQuery_Gritter"
+    , requires  = (GTW.Script._.jQuery, )
     )
 
 GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")

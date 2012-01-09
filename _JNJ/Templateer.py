@@ -185,15 +185,6 @@ class Template_E (_Template_) :
         return self.css_href_map.get (self.name)
     # end def css_href
 
-    @classmethod
-    def get_css (cls, media) :
-        if media :
-            return "\n\n".join \
-                ( str (s) for s in
-                    sorted (media.style_sheets, key = TFL.Getter.rank)
-                )
-    # end def get_css
-
     @Once_Property
     def css_links (self) :
         media = self._Media
@@ -422,6 +413,15 @@ class Template_E (_Template_) :
             self.css_href_map [self.name] = css_href
         return result
     # end def get_cached_media
+
+    @classmethod
+    def get_css (cls, media) :
+        if media :
+            return "\n\n".join \
+                ( str (s) for s in
+                    sorted (media.style_sheets, key = TFL.Getter.rank)
+                )
+    # end def get_css
 
     def get_macro (self, name) :
         result = self._macros.get (name)
