@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: e_type_admin.jnj -#}
 {#
-## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -47,6 +47,7 @@
 ##                     `order_by_form_html` by `qx_obf_url`
 ##     7-Dec-2011 (CT) Put `setup_obj_list` into `callbacks`
 ##     7-Dec-2011 (CT) Add `qx_esf`, reorganize `options`
+##    16-Jan-2012 (CT) Add `qx_asf`, `select_attr_sortable`
 ##    ««revision-date»»···
 ##--
 #}
@@ -74,9 +75,12 @@
                 "{{ GTW._T ("Display objects in ascending order of the attribute") }}"
             , order_by_sortable :
                 "{{ GTW._T ("Drag the order-by criteria up or down to change their priority") }}"
+            , select_attr_sortable :
+                "{{ GTW._T ("Drag the attributes up or down to change their priority") }}"
             }
         , url :
             { qx_af_html : "{{ page.href_qx_af_html () }}"
+            , qx_asf : "{{ page.href_qx_asf () }}"
             , qx_esf_completed : "{{ page.href_qx_esf_completed () }}"
             , qx_esf_completer : "{{ page.href_qx_esf_completer () }}"
             , qx_esf : "{{ page.href_qx_esf () }}"

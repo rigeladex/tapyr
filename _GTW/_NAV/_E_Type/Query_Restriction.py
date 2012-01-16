@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.NAV.E_Type.
@@ -44,6 +44,7 @@
 #    20-Dec-2011 (CT) Creation continued (factor to `MOM.Attr.Querier.E_Type`)
 #    22-Dec-2011 (CT) Creation continued (make `field_names` optional)
 #    23-Dec-2011 (CT) Creation continued (use `Styler_Safe`, not `Styler`)
+#    16-Jan-2012 (CT) Creation continued (add `fields` and `_setup_fields`)
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ from   itertools                import chain as ichain
 class Query_Restriction (TFL.Meta.Object) :
     """Model a query restriction as specified by `req_data` of a `GET` request."""
 
+    fields      = ()
     filters     = ()
     filters_q   = ()
     limit       = 0
@@ -131,6 +133,7 @@ class Query_Restriction (TFL.Meta.Object) :
                 result.offset  = result.offset - limit
         elif "FIRST" in data or "PREV" in data :
             result.offset = 0
+        result._setup_fields   (E_Type, data)
         result._setup_filters  (E_Type, data)
         result._setup_order_by (E_Type, data)
         return result
@@ -247,6 +250,16 @@ class Query_Restriction (TFL.Meta.Object) :
         return TFL.Record (** f), fq
     # end def _setup_attr
 
+    def _setup_fields (self, E_Type, data) :
+        def _gen (fs) :
+            for f in fs :
+                r = f.strip ()
+                if r :
+                    yield r
+        self.fields = tuple \
+            (_gen (data.pop ("fields", "").strip ().split (",")))
+    # end def _setup_fields
+
     def _setup_filters (self, E_Type, data) :
         matches = \
             (   self._setup_attr (E_Type, pat, k, data.pop (k))
@@ -281,14 +294,21 @@ class Query_Restriction (TFL.Meta.Object) :
     def _setup_order_by (self, E_Type, data) :
         s = data.pop ("order_by", "").strip ()
         if s :
-            order_by = \
-                (self._setup_order_by_1 (E_Type, n) for n in s.split (","))
+            def _gen (ns) :
+                for n in ns :
+                    try :
+                        r = self._setup_order_by_1 (E_Type, n)
+                    except AttributeError as exc :
+                        pass
+                    else :
+                        yield r
+            order_by = _gen (s.split (","))
             self.order_by, criteria = zip (* order_by)
             self.order_by_q = TFL.Sorted_By (* ichain (* criteria))
     # end def _setup_order_by
 
     def __nonzero__ (self) :
-        return bool (self.limit or self.offset or self.filters_q)
+        return bool (self.fields or self.limit or self.offset or self.filters_q)
     # end def __nonzero__
 
 # end class Query_Restriction

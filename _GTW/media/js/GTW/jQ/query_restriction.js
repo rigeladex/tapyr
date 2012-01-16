@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -34,6 +34,7 @@
 //                     `.toggleClass`)
 //    16-Dec-2011 (CT) Creation continued (factor e_type_selector.js)
 //    22-Dec-2011 (CT) s/children/attrs/ (in `attr_filters`)
+//    16-Jan-2012 (CT) Creation continued (`attr_select`)
 //    ««revision-date»»···
 //--
 
@@ -53,6 +54,7 @@
               , attrs_container          : "table.attrs"
               , descending               : ".desc"
               , disabled_button          : "button[class=disabled]"
+              , disabler                 : ".disabler"
               , head_line                : "h1.headline"
               , limit                    : ":input[name=limit]"
               , object_container         : "table.Object-List"
@@ -60,10 +62,12 @@
               , order_by_criteria        : "ul.criteria"
               , order_by_criterion       : "li"
               , order_by_direction       : ".direction"
-              , order_by_disabler        : ".disabler"
               , order_by_display         : ":input.value.display[id=QR-order_by]"
-              , order_by_proto           : "ul.prototype li"
               , order_by_value           : ":input.value.hidden[name=order_by]"
+              , prototype                : "ul.prototype li"
+              , select_attr_attributes   : "ul.attributes"
+              , select_attr_item         : "li"
+              , select_attr_value        : ":input.value.hidden[name=fields]"
               , submit                   : "[type=submit]"
               }
             , icons.selectors
@@ -89,7 +93,7 @@
             );
         var qr$    = $(this);
         var body$  = $("body").last ();
-        var af_map = {}, ob_widget$;
+        var af_map = {}, as_widget$, ob_widget$;
         var attr_filters =
             ( function () {
                 var result = [];
@@ -104,10 +108,11 @@
                             f.key   = f.name;
                             f.label = f.ui_name;
                         };
-                        f.order_by_key = f.key.replace (name_sep, ".");
-                        f.ops_selected = [];
+                        f.q_name          = f.key.replace (name_sep, ".");
+                        f.ops_selected    = [];
+                        af_map [f.label]  = f;
+                        af_map [f.q_name] = f;
                         result.push (f);
-                        af_map [f.label] = f;
                         if ("attrs" in f) {
                             add (f.attrs, f.key, f.label);
                         };
@@ -189,6 +194,202 @@
             but$.click (menu_click_cb)
                 .data  ("menu$", menu);
         };
+        var attr_select =
+            { cb              :
+                { add         : function add (ev) {
+                      var S       = options.selectors;
+                      var target$ = $(ev.delegateTarget);
+                      var choice  = target$.data ("choice").label;
+                      var c$      = attr_select.new_attr (choice);
+                      var but$    = as_widget$.find (S.add_button);
+                      var menu$   = but$.data ("menu$").element;
+                      as_widget$.find    (S.select_attr_attributes).append (c$);
+                      attr_select.toggle (menu$, choice, true);
+                      as_widget$.find    (S.apply_button).focus ();
+                  }
+                , apply       : function apply (ev) {
+                      var S      = options.selectors;
+                      var attrs$ = as_widget$.find
+                          (S.select_attr_attributes + " " + S.select_attr_item);
+                      var values = [];
+                      attrs$.each
+                          ( function () {
+                                var a$ = $(this);
+                                var v$ = a$.find ("b");
+                                if (! a$.hasClass ("disabled")) {
+                                    var label = v$.html ();
+                                    if (label) {
+                                        var af = af_map [label];
+                                        values.push (af.q_name);
+                                    };
+                                };
+                            }
+                          )
+                      $(S.select_attr_value).val (values.join   (", "));
+                      attr_select.cb.close ();
+                      qr$.find (S.apply_button).focus ();
+                  }
+                , clear       : function clear (ev, ui) {
+                      var S = options.selectors;
+                      var but$    = as_widget$.find (S.add_button);
+                      var menu$   = but$.data ("menu$").element;
+                      as_widget$.find (S.select_attr_attributes).empty ();
+                      menu$.find ("a.button").removeClass ("ui-state-disabled");
+                  }
+                , close       : function close (ev) {
+                      as_widget$.dialog ("close");
+                      attr_select.cb.clear ();
+                  }
+                , disabler    : function disabler (ev) {
+                      var S        = options.selectors;
+                      var target$  = $(ev.target);
+                      var attr$    = target$.closest (S.select_attr_item);
+                      var disabled = attr$.hasClass  ("disabled");
+                      var but$     = as_widget$.find (S.add_button);
+                      var menu$    = but$.data ("menu$").element;
+                      var choice   = attr$.find ("b").html ();
+                      var title    = disabled ?
+                          options.title.disabler : options.title.enabler;
+                      attr$.toggleClass ("disabled", !disabled);
+                      target$
+                          .attr        ("title", title)
+                          .toggleClass (options.ui_class.enable,  !disabled)
+                          .toggleClass (options.ui_class.disable,  disabled);
+                      attr_select.toggle (menu$, choice, disabled);
+                      return false;
+                  }
+                , open        : function open (ev) {
+                      var S       = options.selectors;
+                      var target$ = $(ev.delegateTarget);
+                      var li$     = target$.closest ("li");
+                      var value$  = $(S.select_attr_value);
+                      var val     = value$.val ();
+                      var width   = qr$.width  ();
+                      var dialog;
+                      if (as_widget$ == null) {
+                          as_widget$ = attr_select.setup_widget (target$);
+                      };
+                      attr_select.cb.clear ();
+                      attr_select.prefill  (val ? val.split (",") : []);
+                      as_widget$
+                          .dialog ("option", "width", "auto")
+                          .dialog ("open")
+                          .dialog ("widget")
+                              .position
+                                  ( { my         : "top"
+                                    , at         : "bottom"
+                                    , of         : target$
+                                    , collision  : "fit"
+                                    }
+                                  );
+                  }
+                }
+            , new_attr          : function new_attr (label) {
+                  var S      = options.selectors;
+                  var result = as_widget$.find (S.prototype).clone (true);
+                  var dir$;
+                  result.find ("b").html (label);
+                  return result;
+              }
+            , prefill           : function prefill (choices) {
+                  var S       = options.selectors;
+                  var attrs$  = as_widget$.find (S.select_attr_attributes);
+                  var but$    = as_widget$.find (S.add_button);
+                  var menu$   = but$.data ("menu$").element;
+                  var a$;
+                  for (var i = 0, li = choices.length, choice; i < li; i++) {
+                      choice = $.trim (choices [i]);
+                      if (choice.length) {
+                          var af = af_map [choice];
+                          a$ = attr_select.new_attr (af.label);
+                          attrs$.append (a$);
+                          attr_select.toggle (menu$, choice, true);
+                      };
+                  };
+              }
+            , setup             : function setup () {
+                  $(this).click (attr_select.cb.open);
+              }
+            , setup_widget      : function setup_widget (but$) {
+                  var S      = options.selectors;
+                  var saf$   = options ["select_attr_form_html"];
+                  var result;
+                  if (! saf$) {
+                      $.gtw_ajax_2json
+                          ( { async       : false
+                            , success     : function (response, status) {
+                                if (! response ["error"]) {
+                                    if ("html" in response) {
+                                        saf$ = $(response.html);
+                                        options.select_attr_form_html = saf$;
+                                    } else {
+                                        console.error ("Ajax Error", response);
+                                    };
+                                } else {
+                                  console.error ("Ajax Error", response);
+                                }
+                              }
+                            , url         : options.url.qx_asf
+                            }
+                          );
+                      if (! saf$) {
+                          return;
+                      };
+                  };
+                  result = saf$.dialog
+                      ( { autoOpen : false
+                        , title    : saf$.attr ("title")
+                        }
+                      );
+                  result.find (S.prototype)
+                      .attr ("title", options.title.select_attr_sortable);
+                  result.find (S.select_attr_attributes).sortable
+                      ( { close       : attr_select.cb.clear
+                        , distance    : 5
+                        , placeholder : "ui-state-highlight"
+                        }
+                      );
+                  result.find (S.button)
+                      .gtw_buttonify (icons, options.buttonify_options);
+                  result.find (S.add_button)
+                      .each
+                          ( function () {
+                              var but$ = $(this);
+                              attach_menu
+                                ( but$
+                                , new_menu (attr_filters, attr_select.cb.add)
+                                );
+                            }
+                          );
+                  result.find (S.apply_button).click  (attr_select.cb.apply);
+                  result.find (S.cancel_button).click (attr_select.cb.close);
+                  result.find (S.clear_button).click  (attr_select.cb.clear);
+                  result.find (S.disabler)
+                      .addClass ("ui-icon " + options.ui_class.disable)
+                      .attr     ("title", options.title.disabler)
+                      .click    (attr_select.cb.disabler);
+                  return result;
+              }
+            , toggle         : function toggle (menu$, choice, state) {
+                  var cl = choice.length;
+                  menu$.find ("a.button").each
+                      ( function () {
+                          var a$ = $(this);
+                          var label      = a$.html ();
+                          var label_head = label.slice (0, cl);
+                          var label_sep  = label [cl];
+                          var match =
+                              (  (cl <= label.length)
+                              && (!label_sep)
+                              || (label_sep === "/")
+                              );
+                          if (match && (choice === label_head)) {
+                              a$.toggleClass ("ui-state-disabled", state);
+                          };
+                        }
+                      );
+              }
+            };
         var disabler_cb = function disabler_cb (ev) {
             var S        = options.selectors;
             var afc$     = $(ev.target).closest (S.attr_filter_container);
@@ -381,7 +582,7 @@
                                         var sign  = desc ? "-" : "";
                                         var af    = af_map [label];
                                         displays.push (sign + label);
-                                        values.push   (sign + af.order_by_key);
+                                        values.push   (sign + af.q_name);
                                     };
                                 };
                             }
@@ -431,7 +632,6 @@
                       var S       = options.selectors;
                       var target$ = $(ev.delegateTarget);
                       var li$     = target$.closest ("li");
-                      var hidden$ = li$.find (S.order_by_value).last ();
                       var width   = qr$.width ();
                       var dialog;
                       if (ob_widget$ == null) {
@@ -454,7 +654,7 @@
                 }
             , new_criterion     : function new_criterion (label, desc) {
                   var S      = options.selectors;
-                  var result = ob_widget$.find (S.order_by_proto).clone (true);
+                  var result = ob_widget$.find (S.prototype).clone (true);
                   var dir$;
                   result.find ("b").html (label);
                   if (desc) {
@@ -489,7 +689,7 @@
               }
             , setup_widget      : function setup_widget (but$) {
                   var S      = options.selectors;
-                  var obf$   = options.order_by_form_html;
+                  var obf$   = options ["order_by_form_html"];
                   var result;
                   if (! obf$) {
                       $.gtw_ajax_2json
@@ -518,7 +718,7 @@
                         , title    : obf$.attr ("title")
                         }
                       );
-                  result.find (S.order_by_proto)
+                  result.find (S.prototype)
                       .attr ("title", options.title.order_by_sortable);
                   result.find (S.order_by_criteria).sortable
                       ( { close       : order_by.cb.clear
@@ -545,7 +745,7 @@
                   result.find (S.order_by_direction)
                       .addClass ("ui-icon " + options.ui_class.sort_asc)
                       .attr     ("title", options.title.order_by_asc);
-                  result.find (S.order_by_disabler)
+                  result.find (S.disabler)
                       .addClass ("ui-icon " + options.ui_class.disable)
                       .attr     ("title", options.title.disabler)
                       .click    (order_by.cb.disabler);
@@ -699,6 +899,7 @@
         $(selectors.attrs_container)
             .delegate (selectors.attr_filter_disabler, "click", disabler_cb);
         $(selectors.order_by_display).each (order_by.setup);
+        $(selectors.config_button).each    (attr_select.setup);
         qr$.delegate (selectors.submit, "click", submit_cb);
         return this;
     }

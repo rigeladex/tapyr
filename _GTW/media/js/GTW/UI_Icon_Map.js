@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    15-Dec-2011 (CT) Creation
+//    16-Jan-2012 (CT) Add `CONFIG`
 //    ««revision-date»»···
 //--
 
@@ -26,6 +27,7 @@
         , APPLY       : "check"
         , CANCEL      : "closethick"
         , CLEAR       : "trash"
+        , CONFIG      : "wrench"
         , DISABLE     : "minusthick"
         , ENABLE      : "plusthick"
         , FIRST       : "arrowthick-1-n"

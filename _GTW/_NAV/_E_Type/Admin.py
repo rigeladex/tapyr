@@ -146,6 +146,7 @@
 #    14-Dec-2011 (CT) Continue `QX` (`QX_Completed`, `_fix_filters`)
 #    21-Dec-2011 (CT) Continue `QX` (refactor `_rendered_completions`)
 #    22-Dec-2011 (CT) Continue `QX` (change `qr_spec` to not pass `field_names`)
+#    16-Jan-2012 (CT) Add `Field`, `qr.fields`, and `QX_Select_Attr_Form`
 #    ««revision-date»»···
 #--
 
@@ -726,6 +727,43 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Expander
 
+    class Field (TFL.Meta.Object) :
+        """Model a field describing an attribute."""
+
+        def __init__ (self, aq) :
+            self.aq = aq
+        # end def __init__
+
+        @Once_Property
+        def attr (self) :
+            return self.aq._attr
+        # end def attr
+
+        @property ### depends on currently selected language (I18N/L10N)
+        def description (self) :
+            return _T (self.attr.description)
+        # end def description
+
+        @Once_Property
+        def name (self) :
+            return self.aq._q_name
+        # end def name
+
+        @property ### depends on currently selected language (I18N/L10N)
+        def ui_name (self) :
+            return self.attr.ui_name_T
+        # end def ui_name
+
+        def value (self, o) :
+            return getattr (o, self.aq._q_name)
+        # end def value
+
+        def __getattr__ (self, name) :
+            return getattr (self.attr, name)
+        # end def __getattr__
+
+    # end class Field
+
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
            E_Type, e.g., displayed as one line of a table.
@@ -741,7 +779,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def fields (self) :
             admin = self.admin
             FO    = self.FO
-            return [(f, getattr (FO, f.name)) for f in admin.list_display]
+            return tuple ((f, f.value (FO)) for f in admin.fields)
         # end def fields
 
         def href_change (self) :
@@ -865,6 +903,25 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class QX_Order_By_Form
 
+    class QX_Select_Attr_Form (_QX_) :
+        """Process AJAX query for select-attr form"""
+
+        def rendered (self, handler, template = None) :
+            HTTP       = self.top.HTTP
+            request    = handler.request
+            result     = {}
+            E_Type     = self.E_Type
+            template   = self.top.Templateer.get_template ("e_type")
+            call_macro = template.call_macro
+            try :
+                result ["html"] = call_macro ("select_attr_form")
+                return handler.write_json (result)
+            except JSON_Error as exc :
+                return exc (handler)
+        # end def _rendered
+
+    # end class QX_Select_Attr_Form
+
     @Once_Property
     def __Obsolete_Form (self) :
         try :
@@ -961,7 +1018,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             (args = kw.pop ("Form_args", ()), kw = kw.pop ("Form_kw", {}))
         kw ["_list_display"] = kw.pop ("list_display", None)
         self.__super.__init__ (parent, ** kw)
-        self.prefix = pjoin (parent.prefix, self.name)
+        self.prefix     = pjoin (parent.prefix, self.name)
+        self._field_map = {}
         self.top.ET_Map [self.E_Type.type_name].admin = self
     # end def __init__
 
@@ -1047,6 +1105,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return pjoin (self.abs_href, self.qx_prefix, "af_html")
     # end def href_qx_af_html
 
+    def href_qx_asf (self) :
+        return pjoin (self.abs_href, self.qx_prefix, "asf")
+    # end def href_qx_asf
+
     def href_qx_esf_completed (self) :
         return pjoin (self.abs_href, self.qx_prefix, "esf_completed")
     # end def href_qx_esf_completed
@@ -1070,11 +1132,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def list_display (self) :
-        if self._list_display is None :
-            return self._auto_list_display
-        etype = self.ETM.E_Type
-        return tuple \
-            (self._attr_kind (etype, a) for a in self._list_display)
+        result = self._list_display
+        if result is None :
+            result = self._auto_list_display
+        return result
     # end def list_display
 
     @Once_Property
@@ -1087,11 +1148,17 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return QRS (self.E_Type)
     # end def qr_spec
 
+    @Once_Property
+    def _auto_list_display (self, ) :
+        E_Type = self.ETM.E_Type
+        return tuple (a.name for a in ichain (E_Type.primary, E_Type.user_attr))
+    # end def _auto_list_display
+
     def rendered (self, handler, template = None) :
-        fields = self.list_display
         qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
         self._fix_filters (qr.filters)
-        with self.LET (query_restriction = qr) :
+        fields = self._fields (qr.fields or self.list_display)
+        with self.LET (fields = fields, query_restriction = qr) :
             objects = self._get_objects () if qr else self._get_entries ()
             next_p  = qr.next_p
             prev_p  = qr.prev_p
@@ -1144,27 +1211,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         yield T.get_template (self.Deleter.template_name)
     # end def template_iter
 
-    def _attr_kind (self, etype, name) :
-        if "." in name :
-            x = etype
-            for n in name.split (".") :
-                x = getattr (x.E_Type, n)
-            return TFL.Record \
-                ( name         = name
-                , attr         = x.attr
-                , ui_name      = x.ui_name
-                , description  = x.description
-                )
-        else :
-            return getattr (etype, name)
-    # end def _attr_kind
-
-    @Once_Property
-    def _auto_list_display (self, ) :
-        E_Type = self.ETM.E_Type
-        return list (ichain (E_Type.primary, E_Type.user_attr))
-    # end def _auto_list_display
-
     child_attrs          = {}
     _child_name_map      = dict \
         ( change         = (Changer,                 "args",  None)
@@ -1176,11 +1222,25 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         )
     _qx_name_map         = dict \
         ( af_html        = (QX_AF_Html,              "args",  0)
+        , asf            = (QX_Select_Attr_Form,     "args",  0)
         , esf_completed  = (QX_Completed,            "args",  0)
         , esf_completer  = (QX_Completer,            "args",  0)
         , esf            = (QX_Entity_Selector_Form, "args",  0)
         , obf            = (QX_Order_By_Form,        "args",  0)
         )
+
+    def _fields (self, names) :
+        def _gen (E_Type, names, map) :
+            AQ    = E_Type.AQ
+            Field = self.Field
+            for n in names :
+                try :
+                    f = map [n]
+                except KeyError :
+                    f = map [n] = Field (getattr (AQ, n))
+                yield f
+        return tuple (_gen (self.E_Type, names, self._field_map))
+    # end def _fields
 
     def _get_child (self, child, * grandchildren) :
         kw  = {}

@@ -1,6 +1,6 @@
 {#- jinja template: _e_type.jnj -#}
 {#
-## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -41,6 +41,7 @@
 ##     7-Dec-2011 (CT) Continue `qr_control`
 ##                     (factor `attr_filter_table`, add `entity_selector_form`)
 ##    12-Dec-2011 (CT) Continue `qr_control` (`af.Class`, `need_op`)
+##    16-Jan-2012 (CT) Continue `qr_control` (`select_attr_form`, `Config`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -244,11 +245,19 @@
     {{ qr_button_first (page, qr) }}
     {{ qr_button
         ( page
+        , GTW._  ("Config")
+        , GTW._T ("Select the attributes to be displayed for each object")
+        , GTW._T ("Select attributes")
+        )
+    }}
+    {{ qr_button
+        ( page
         , GTW._  ("Add")
         , GTW._T ("Add a rule to restrict the objects to a specific attribute value")
         , GTW._T ("Add restriction")
         )
     }}
+    <input class="value hidden" name="fields" value="{{ ','.join (qr.fields) }}">
     <ul class="limits">
       {{ qr_field
           ( "limit"
@@ -287,6 +296,41 @@
   {% endcall %} {# form #}
 {%- endmacro -%} {#- qr_control -#}
 
+{%- macro select_attr_form () -%}
+  <form class = "QR select-attr" {# -#}
+      title="{{ GTW._T ("Select the attributes to be displayed for each object") }}"{# -#}
+  >
+    <ul class="attributes"></ul>
+    <ul class="prototype hidden">
+      <li>
+        <a class="button disabler"></a>
+        <b></b>
+      </li>
+    </ul>
+    {{ _qr_button
+        ( GTW._  ("Apply")
+        , GTW._T ("Use set of attributes currently displayed in form")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Cancel")
+        , GTW._T ("Leave form without changing set of attributes to display")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Clear")
+        , GTW._T ("Reset form to default")
+        )
+    }}
+    {{ _qr_button
+        ( GTW._  ("Add")
+        , GTW._T ("Add an attribute to be displayed")
+        , text = GTW._T ("Add attribute")
+        )
+    }}
+  </form>
+{%- endmacro -%} {#- select_attr_form -#}
+
 {%- macro admin_table (page, fields, objects) -%}
   {%- set E_Type = page.E_Type %}
   <table class="Object-List">
@@ -294,10 +338,7 @@
       <tr>
         {{ obj_button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "plus", "add") }}
         {% for f in fields %}
-          <th class="{{ f.attr.ui_name }}"
-              scope="col" title="{{ GTW._T (f.attr.description) }}">
-            {{ f.attr.ui_name_T }}
-          </th>
+          <th scope="col" title="{{ f.description }}">{{ f.ui_name }}</th>
         {% endfor %}
         {{ obj_button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "plus", "add") }}
       </tr>
