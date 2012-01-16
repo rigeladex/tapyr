@@ -118,7 +118,7 @@
   <form class = "QR order-by" {# -#}
       title="{{ GTW._T ("Order-by Criteria") }}"{# -#}
   >
-    <ul class="criteria"></ul>
+    <ul class="attributes"></ul>
     <ul class="prototype hidden">
       <li>
         <a class="button disabler"></a>
@@ -257,7 +257,7 @@
         , GTW._T ("Add restriction")
         )
     }}
-    <input class="value hidden" name="fields" value="{{ ','.join (qr.fields) }}">
+    <input class="value hidden" name="fields" value="{{ ','.join (qr.fields or page.list_display) }}">
     <ul class="limits">
       {{ qr_field
           ( "limit"

@@ -59,7 +59,7 @@
               , limit                    : ":input[name=limit]"
               , object_container         : "table.Object-List"
               , offset                   : ":input[name=offset]"
-              , order_by_criteria        : "ul.criteria"
+              , order_by_criteria        : "ul.attributes"
               , order_by_criterion       : "li"
               , order_by_direction       : ".direction"
               , order_by_display         : ":input.value.display[id=QR-order_by]"
