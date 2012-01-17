@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -30,6 +30,7 @@
 #    27-Dec-2010 (CT) Creation continued
 #    29-Dec-2010 (CT) Creation finished
 #     2-Jan-2011 (CT) `__add__` and `__radd__` added
+#    17-Jan-2012 (CT) Change `HSL` to be compatible with CSS
 #    ««revision-date»»···
 #--
 
@@ -222,43 +223,43 @@ class Value (TFL.Meta.Object) :
 # end class Value
 
 class M_Color (TFL.Meta.Object.__class__) :
-    """Meta class for `Color`."""
+    """Meta class for `_Color_`."""
 
 # end class M_Color
 
-class Color (TFL.Meta.Object) :
+class _Color_ (TFL.Meta.Object) :
     """Base class modelling a mutable color.
 
     >>> c = RGB_8 (255, 0, 0)
     >>> d = c.as_RGB_X
     >>> h = d.as_HSL
     >>> print c, d, h
-    rgb(255, 0, 0) #F00 hsl(0.0, 1.0, 0.5)
+    rgb(255, 0, 0) #F00 hsl(0, 100%, 50%)
 
     >>> cn = ~ c
     >>> hn = ~ h
     >>> print cn, hn
-    rgb(0, 255, 255) hsl(180.0, 1.0, 0.5)
+    rgb(0, 255, 255) hsl(180, 100%, 50%)
 
     >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
     >>> da = ca.as_RGB_X
     >>> ha = da.as_HSL
     >>> print ca, da, ha
-    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0.0, 1.0, 0.5, 0.25)
+    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0, 100%, 50%, 0.25)
 
     >>> b  = RGB (0, 0, 0)
     >>> hb = b.as_HSL
     >>> w  = RGB (1, 1, 1)
     >>> hw = w.as_HSL
     >>> print b, ~b, hb, ~hb
-    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
     >>> print ~w, w, ~hw, hw
-    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
 
     >>> print c * 0.5, w * 0.8
     rgb(127, 0, 0) rgb(80%, 80%, 80%)
 
-    >>> Color.formatter = RGB_X
+    >>> _Color_.formatter = RGB_X
     >>> print b, ~b, hb, ~hb
     #000 #FFF #000 #FFF
     >>> print cn, hn
@@ -266,19 +267,19 @@ class Color (TFL.Meta.Object) :
     >>> print ca, da, ha
     rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
 
-    >>> Color.formatter = HSL
+    >>> _Color_.formatter = HSL
     >>> print b, ~b, hb, ~hb
-    hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0) hsl(0.0, 0.0, 0.0) hsl(0.0, 0.0, 1.0)
+    hsl(0, 0%, 0%) hsl(0, 0%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
     >>> print cn, hn
-    hsl(180.0, 1.0, 0.5) hsl(180.0, 1.0, 0.5)
+    hsl(180, 100%, 50%) hsl(180, 100%, 50%)
     >>> print ca, da, ha
-    hsla(0.0, 1.0, 0.5, 0.25) hsla(0.0, 1.0, 0.5, 0.25) hsla(0.0, 1.0, 0.5, 0.25)
+    hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25)
 
-    >>> Color.formatter = RGB_X
+    >>> _Color_.formatter = RGB_X
     >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
     #808080 #8B0000 rgba(0, 0, 255, 0.5)
 
-    >>> Color.formatter = None
+    >>> _Color_.formatter = None
     >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
     "grey" "darkred" rgba(0, 0, 255, 0.5)
 
@@ -472,15 +473,17 @@ class Color (TFL.Meta.Object) :
         return self.formatted ()
     # end def __str__
 
-# end class Color
+# end class _Color_
 
-class HSL (Color) :
+class HSL (_Color_) :
     """Model a color specified by hue/saturation/lightness values."""
 
     name = "hsl"
 
     def __init__ (self, hue, saturation, lightness, alpha = None) :
-        self.__super.__init__ ((hue, saturation, lightness), alpha)
+        hue = (((hue % 360.0) + 360.0) % 360.0)
+        self.__super.__init__ \
+            ((hue, saturation / 100.0, lightness / 100.0), alpha)
     # end def __init__
 
     @property
@@ -489,12 +492,13 @@ class HSL (Color) :
     # end def as_HSL
 
     def _formatted_values (self) :
-        return "%s, %s, %s" % self.value.hsl
+        h, s, l = self.value.hsl
+        return "%d, %d%%, %d%%" % (h, s * 100, l * 100)
     # end def _formatted_values
 
 # end class HSL
 
-class RGB (Color) :
+class RGB (_Color_) :
     """Model a color specified by red/green/blue values."""
 
     name = "rgb"
@@ -761,6 +765,11 @@ class SVG_Color (RGB_X) :
         self.__super.__init__ (self.Map [key], alpha)
     # end def __init__
 
+    @property
+    def as_RGB_X (self) :
+        return RGB_X.cast (self)
+    # end def as_RGB_X
+
     def formatted (self) :
         if self.alpha is None :
             name = self.Pam.get (self.value.hex)
@@ -784,7 +793,7 @@ class SVG_Color (RGB_X) :
 
 __all__ = tuple \
     ( k for (k, v) in globals ().iteritems ()
-    if k != "Color" and isinstance (v, M_Color)
+    if k != "_Color_" and isinstance (v, M_Color)
     )
 
 if __name__ != "__main__" :

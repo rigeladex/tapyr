@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -33,6 +33,7 @@
 #    12-Jan-2011 (CT) `__neg__` and `__pos__` added
 #    21-Feb-2011 (CT) `HV` added
 #    29-Nov-2011 (CT) Add `Rem`
+#    17-Jan-2012 (CT) Add `Ch`, `Vh`, `Vm`, `Vw`, function `Length`
 #    ««revision-date»»···
 #--
 
@@ -45,19 +46,40 @@ from   _TFL                       import TFL
 import _GTW._CSS
 
 import _TFL._Meta.Object
+from   _TFL._Meta.Once_Property   import Once_Property
+
+from   _TFL.Regexp                import Regexp, re
 
 class M_Length (TFL.Meta.Object.__class__) :
-    """Meta class for `Length`."""
+    """Meta class for `_Length_`."""
+
+    _Unit_Map = {}
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        if name != "Length" and cls.unit_name is None :
+        if name != "_Length_" and cls.unit_name is None :
             cls.unit_name = name.lower ()
+        if cls.unit_name :
+            assert cls.unit_name not in cls._Unit_Map
+            cls._Unit_Map [cls.unit_name] = cls
     # end def __init__
+
+    @Once_Property
+    def Pat (cls) :
+        return Regexp \
+            ( r"^"
+            + r"(?P<number> [-+]? \d+ (?: \.\d*)?)"
+            + r"(?P<unit>"
+            + "|".join (re.escape (u) for u in sorted (cls._Unit_Map))
+            + r")"
+            + r"$"
+            , re.VERBOSE | re.IGNORECASE
+            )
+    # end def Pat
 
 # end class M_Length
 
-class Length (TFL.Meta.Object) :
+class _Length_ (TFL.Meta.Object) :
     """Model a CSS length value.
 
     >>> print (Px (3))
@@ -190,39 +212,93 @@ class Length (TFL.Meta.Object) :
             return "0"
     # end def __str__
 
-# end class Length
+# end class _Length_
 
-class Cm (Length) :
+def Length (v) :
+    """Convert strings and length objects to the appropriate `_Length_` instances.
+
+    >>> print (Length ("1em"))
+    1em
+    >>> print (Length ("1ch"))
+    1ch
+    >>> print (Length ("1vw"))
+    1vw
+    >>> print (Length (Px (5)))
+    5px
+    >>> print (Length (0))
+    0
+    >>> print (Length (0.0))
+    0
+    >>> print (Length ("0"))
+    0
+    >>> print (Length (1))
+    Traceback (most recent call last):
+      ...
+    ValueError: 1
+    >>> print (Length ("1"))
+    Traceback (most recent call last):
+      ...
+    ValueError: 1
+    >>> print (Length ("1vx"))
+    Traceback (most recent call last):
+      ...
+    ValueError: 1vx
+
+    """
+    if v in (0, "0") :
+        result = Px (0)
+    elif isinstance (v, basestring) :
+        pat = _Length_.Pat
+        v   = v.strip ()
+        if pat.match (v) :
+            T      = _Length_._Unit_Map [pat.unit.lower ()]
+            n      = pat.number
+            result = T (float (n) if ("." in n) else int (n, 10))
+        else :
+            raise ValueError (v)
+    elif isinstance (v, _Length_) :
+        result = v
+    else :
+        raise ValueError (v)
+    return result
+# end def Length
+
+class Ch (_Length_) :
+    """Relative CSS length unit: width of the "0" glyph in the element's font."""
+
+# end class Ch
+
+class Cm (_Length_) :
     """Absolute CSS length unit: centimeters."""
 
 # end class Cm
 
-class Em (Length) :
+class Em (_Length_) :
     """Relative CSS length unit: font size of the element."""
 
 # end class Em
 
-class Ex (Length) :
+class Ex (_Length_) :
     """Relative CSS length unit: x-height of the element's font."""
 
 # end class Ex
 
-class In (Length) :
+class In (_Length_) :
     """Absolute CSS length unit: inches."""
 
 # end class In
 
-class Mm (Length) :
+class Mm (_Length_) :
     """Absolute CSS length unit: millimeters."""
 
 # end class Mm
 
-class Pc (Length) :
+class Pc (_Length_) :
     """Absolute CSS length unit: picas (1 pc == 12 points)."""
 
 # end class Pc
 
-class Percent (Length) :
+class Percent (_Length_) :
     """Relative CSS unit: percentages."""
 
     unit_name = "%"
@@ -241,32 +317,47 @@ class Percent (Length) :
 
 # end class Percent
 
-class Pt (Length) :
+class Pt (_Length_) :
     """Absolute CSS length unit: points (1pt == 1/72 inch)."""
 
 # end class Pt
 
-class Px (Length) :
-    """Relative CSS length unit: size of pixel of viewing device."""
+class Px (_Length_) :
+    """Relative CSS length unit: pixels (1px == 1/96 inch)."""
 
 # end class Px
 
-class Rem (Length) :
+class Rem (_Length_) :
     """Relative CSS3 length unit: font size of the element relative to the root font size."""
 
 # end class Rem
+
+class Vh (_Length_) :
+    """Relative CSS3 length unit: 1/100th of the viewport's height."""
+
+# end class Vh
+
+class Vm (_Length_) :
+    """Relative CSS3 length unit: minimum of `Vh` or `Vw`."""
+
+# end class Vm
+
+class Vw (_Length_) :
+    """Relative CSS3 length unit: 1/100th of the viewport's width."""
+
+# end class Vw
 
 class TRBL0 (TFL.Meta.Object) :
     """Top/right/bottom/left spec, undefined values are 0.
 
     >>> print (TRBL0 (0))
     0
-    >>> print (TRBL0 (1, 2, 1, 2))
-    1 2
-    >>> print (TRBL0 (1, 2, 3, 2))
-    1 2 3
-    >>> print (TRBL0 (1, 2, 3, 4))
-    1 2 3 4
+    >>> print (TRBL0 (Px (1), Px (2), Px (1), Px (2)))
+    1px 2px
+    >>> print (TRBL0 (Px (1), Px (2), Px (3), Px (2)))
+    1px 2px 3px
+    >>> print (TRBL0 (Px (1), Px (2), Px (3), Px (4)))
+    1px 2px 3px 4px
     >>> print (TRBL0 (Px (1), Em (1)))
     1px 1em 0 0
     >>> print (TRBL0 (Px (1), 0, Em (1)))
@@ -301,7 +392,7 @@ class TRBL0 (TFL.Meta.Object) :
 
     def __init__ (self, t = None, r = None, b = None, l = None, default = 0) :
         self.values = tuple \
-            ((v if v is not None else default) for v in (t, r, b, l))
+            (Length (v if v is not None else default) for v in (t, r, b, l))
     # end def __init__
 
     def __nonzero__ (self) :
@@ -379,10 +470,9 @@ class HV (TFL.Meta.Object) :
 
 # end class HV
 
-
 __all__ = tuple \
     ( k for (k, v) in globals ().iteritems () if getattr (v, "unit_name", None)
-    ) + ("TRBL0", "TRBL")
+    ) + ("Length", "TRBL0", "TRBL", "HV")
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)

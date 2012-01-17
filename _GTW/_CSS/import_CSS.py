@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -32,13 +32,13 @@
 # Revision Dates
 #     1-Jan-2011 (CT) Creation
 #    21-Feb-2011 (CT) `Border` added
+#    17-Jan-2012 (CT) Import `GTW.CSS.Color` instead of `TFL.Color`
 #    ««revision-date»»···
 #--
 
-from _TFL.Color            import *
-
 from _GTW._CSS             import Media
 from _GTW._CSS.Border      import *
+from _GTW._CSS.Color       import *
 from _GTW._CSS.Length      import *
 from _GTW._CSS.Rule        import *
 from _GTW._CSS.Style_Sheet import *

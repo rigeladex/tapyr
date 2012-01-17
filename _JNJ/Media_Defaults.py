@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -46,9 +46,7 @@
 from _GTW._CSS.import_CSS import *
 from _GTW.Parameters      import Definition, P, P_dict
 
-from _TFL.Color           import Color as _C
-
-_C.formatter = RGB_X
+Color.formatter = RGB_X
 
 class Media_Defaults (Definition) :
     """Provide defaults for CSS fragments in html/*.css"""
