@@ -35,6 +35,7 @@
 //    16-Dec-2011 (CT) Creation continued (factor e_type_selector.js)
 //    22-Dec-2011 (CT) s/children/attrs/ (in `attr_filters`)
 //    16-Jan-2012 (CT) Creation continued (`attr_select`)
+//    17-Jan-2012 (CT) Creation continued (add `focus` to `op_select_cb`)
 //    ««revision-date»»···
 //--
 
@@ -175,7 +176,7 @@
             } else {
                 $(S.attrs_container).append (nf$);
             };
-            $(S.attr_filter_value,        nf$).focus ();
+            $(S.attr_filter_value, nf$).focus ();
             setup_esf (nf$);
         };
         var adjust_op_menu = function adjust_op_menu (afs) {
@@ -550,6 +551,12 @@
             var prefix  = name.split  (qrs.op_sep) [0];
             var key     = prefix + qrs.op_sep + choice.key;
             update_attr_filter_op (afc$, choice, key);
+            setTimeout
+                ( function () {
+                    $(S.attr_filter_value, afc$).focus ();
+                  }
+                , 1
+                );
         };
         var order_by =
             { cb              :
