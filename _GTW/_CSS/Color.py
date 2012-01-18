@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Jan-2012 (CT) Creation
+#    18-Jan-2012 (CT) Add `C_TRBL0` and `C_TRBL`
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,7 @@ from   _GTW                       import GTW
 from   _TFL                       import TFL
 
 import _GTW._CSS
+import _GTW._CSS._TRBL_
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -70,6 +72,9 @@ class _Color_Converter_ (TFL.Meta.Object) :
     #808000
     >>> print (Color ("transparent"))
     transparent
+
+    >>> print (Color (SVG_Color ("olive")).as_RGB_X)
+    #808000
 
     """
 
@@ -146,6 +151,8 @@ class _Color_Converter_ (TFL.Meta.Object) :
                 result  = self._convert (RGB_P, percent, self.rgb_p_pattern)
             else :
                 raise ValueError (v)
+        elif isinstance (v, _Color_) :
+            result = v
         else :
             raise ValueError (v)
         return result
@@ -185,7 +192,37 @@ class _Color_Converter_ (TFL.Meta.Object) :
 
 Color = _Color_Converter_ ()
 
-__all__ = tuple (TFL._.Color.__all__ + ("Color", ))
+class C_TRBL0 (GTW.CSS._TRBL0_) :
+    """Top/right/bottom/left color spec, undefined values are `transparent`.
+
+    >>> print (C_TRBL0 ())
+    transparent
+    >>> print (C_TRBL0 ("red"))
+    red transparent transparent
+
+    >>> print (C_TRBL0 (t = "#F00"))
+    #F00 transparent transparent
+
+    """ # "#"
+
+    default = "transparent"
+    Type    = Color
+
+# end class C_TRBL0
+
+class C_TRBL (GTW.CSS._TRBL_, C_TRBL0) :
+    """Top/right/bottom/left color spec, repeated values.
+
+    >>> print (C_TRBL ("red"))
+    red
+    >>> print (C_TRBL ("red", "blue"))
+    red blue
+
+    """
+
+# end class C_TRBL
+
+__all__ = tuple (TFL._.Color.__all__ + ("Color", "C_TRBL", "C_TRBL0"))
 
 if __name__ != "__main__" :
     GTW.CSS._Export (* __all__)

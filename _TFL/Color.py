@@ -31,6 +31,8 @@
 #    29-Dec-2010 (CT) Creation finished
 #     2-Jan-2011 (CT) `__add__` and `__radd__` added
 #    17-Jan-2012 (CT) Change `HSL` to be compatible with CSS
+#    18-Jan-2012 (CT) Add `_Color_.__eq__` and `__hash__`
+#    18-Jan-2012 (CT) Return `name`, not `"name"`, from `SVG_Color.formatted`
 #    ««revision-date»»···
 #--
 
@@ -454,6 +456,19 @@ class _Color_ (TFL.Meta.Object) :
         return rhs + str (self)
     # end def __radd__
 
+    def __eq__ (self, rhs) :
+        try :
+            rhs = getattr (rhs, "rgb"), getattr (rhs, "alpha")
+        except AttributeError :
+            return False
+        else :
+            return (self.rgb, self.alpha) == rhs
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash (self.rgb, self.alpha)
+    # end def __hash__
+
     def __invert__ (self) :
         return self.__class__.from_value \
             (Value (rgb = tuple (1.0 - v for v in self.rgb)), self.alpha)
@@ -774,7 +789,7 @@ class SVG_Color (RGB_X) :
         if self.alpha is None :
             name = self.Pam.get (self.value.hex)
             if name is not None :
-                return '"%s"' % (name, )
+                return name
             else :
                 return self._formatted_values ()
         else :

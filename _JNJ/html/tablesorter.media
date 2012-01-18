@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -42,7 +42,7 @@ style_sheet = Style_Sheet \
                 ( "th.sortable:after"
                 , Border
                     ( style       = "solid solid none"
-                    , color       = TRBL0
+                    , color       = C_TRBL0
                         ( default = "transparent"
                         , t       = P.tablesorter.color_marker
                         )
@@ -69,7 +69,7 @@ style_sheet = Style_Sheet \
                 ( "th.ascending:after"
                 , Border
                     ( style       = "solid"
-                    , color       = TRBL
+                    , color       = C_TRBL
                         ( P.tablesorter.color_marker
                         , "transparent"
                         )

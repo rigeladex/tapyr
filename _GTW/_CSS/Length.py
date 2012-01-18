@@ -35,6 +35,7 @@
 #    29-Nov-2011 (CT) Add `Rem`
 #    17-Jan-2012 (CT) Add `Ch`, `Vh`, `Vm`, `Vw`, function `Length`
 #    18-Jan-2012 (CT) Add support for arithmetic operators to `TRBL`, `TRBL0`
+#    18-Jan-2012 (CT) Factor `_TRBL_`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ from   _GTW                       import GTW
 from   _TFL                       import TFL
 
 import _GTW._CSS
+import _GTW._CSS._TRBL_
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -171,7 +173,7 @@ class _Length_ (TFL.Meta.Object) :
     # end def __int__
 
     def __hash__ (self) :
-        return (self.unit_name, self.value)
+        return hash (self.unit_name, self.value)
     # end def __hash__
 
     def __mod__ (self, rhs) :
@@ -361,7 +363,7 @@ class Vw (_Length_) :
 
 # end class Vw
 
-class TRBL0 (TFL.Meta.Object) :
+class TRBL0 (GTW.CSS._TRBL0_) :
     """Top/right/bottom/left spec, undefined values are 0.
 
     >>> print (TRBL0 (0))
@@ -399,15 +401,8 @@ class TRBL0 (TFL.Meta.Object) :
 
     """
 
-    b = property (lambda s : s.values [2])
-    l = property (lambda s : s.values [3])
-    r = property (lambda s : s.values [1])
-    t = property (lambda s : s.values [0])
-
-    def __init__ (self, t = None, r = None, b = None, l = None, default = 0) :
-        self.values = tuple \
-            (Length (v if v is not None else default) for v in (t, r, b, l))
-    # end def __init__
+    default = 0
+    Type    = staticmethod (Length)
 
     def __abs__ (self) :
         return self.__class__ (* tuple (abs (v) for v in self.values))
@@ -432,10 +427,6 @@ class TRBL0 (TFL.Meta.Object) :
         return self.__class__ (* tuple (v // rhs for v in self.values))
     # end def __floordiv__
 
-    def __iter__ (self) :
-        return iter (self.values)
-    # end def __iter__
-
     def __mod__ (self, rhs) :
         return self.__class__ (* tuple (v % rhs for v in self.values))
     # end def __mod__
@@ -450,23 +441,9 @@ class TRBL0 (TFL.Meta.Object) :
         return self.__class__ (* tuple (-v for v in self.values))
     # end def __neg__
 
-    def __nonzero__ (self) :
-        return any (self.values)
-    # end def __nonzero__
-
     def __pos__ (self) :
         return self
     # end def __pos__
-
-    def __str__ (self) :
-        values = list (self.values)
-        for h, t in ((-1, -3), (-1, -3), (0, 1)) :
-            if values [h] == values [t] :
-                values.pop ()
-            else :
-                break
-        return " ".join (str (v) for v in values)
-    # end def __str__
 
     def __sub__ (self, rhs) :
         if isinstance (rhs, _Length_) :
@@ -479,7 +456,7 @@ class TRBL0 (TFL.Meta.Object) :
 
 # end class TRBL0
 
-class TRBL (TRBL0) :
+class TRBL (GTW.CSS._TRBL_, TRBL0) :
     """Top/right/bottom/left spec, repeated values.
 
     >>> print (TRBL ())
@@ -517,20 +494,6 @@ class TRBL (TRBL0) :
     1em auto
 
     """
-
-    def __init__ (self, * values) :
-        assert len (values) < 5, str (values)
-        l = len (values)
-        if not l :
-            values = (0, ) * 4
-        elif l == 1 :
-            values = values * 4
-        elif l == 2 :
-            values = values * 2
-        elif l == 3 :
-            values += (values [1], )
-        self.__super.__init__ (* values)
-    # end def __init__
 
 # end class TRBL
 

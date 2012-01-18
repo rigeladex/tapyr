@@ -232,28 +232,28 @@ style_sheet = Style_Sheet \
     , Rule
         ( ".css-arrow-d"
         , Border
-            ( color = TRBL0 (default = "transparent",     t = P.css_arrow_color)
+            ( color = C_TRBL0 (t = P.css_arrow_color)
             , width = TRBL0 (default = P.css_arrow_width, b = 0)
             )
         )
     , Rule
         ( ".css-arrow-l"
         , Border
-            ( color = TRBL0 (default = "transparent",     r = P.css_arrow_color)
+            ( color = C_TRBL0 (r = P.css_arrow_color)
             , width = TRBL0 (default = P.css_arrow_width, l = 0)
             )
         )
     , Rule
         ( ".css-arrow-r"
         , Border
-            ( color = TRBL0 (default = "transparent",     l = P.css_arrow_color)
+            ( color = C_TRBL0 (l = P.css_arrow_color)
             , width = TRBL0 (default = P.css_arrow_width, r = 0)
             )
         )
     , Rule
         ( ".css-arrow-u"
         , Border
-            ( color = TRBL0 (default = "transparent",     b = P.css_arrow_color)
+            ( color = C_TRBL0 (b = P.css_arrow_color)
             , width = TRBL0 (default = P.css_arrow_width, t = 0)
             )
         )

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -140,7 +140,7 @@ style_sheet = Style_Sheet \
                         ( "i"
                         , Border
                             ( style   = "solid"
-                            , color   = TRBL0
+                            , color   = C_TRBL0
                                 ( default    = "transparent"
                                 , l          = P.nav_col.mark_color_link
                                 )
@@ -163,7 +163,7 @@ style_sheet = Style_Sheet \
                 ( "a.current-section i"
                 , Border
                     ( style   = "solid"
-                    , color   = TRBL0
+                    , color   = C_TRBL0
                         ( default = "transparent"
                         , t       = P.nav_col.mark_color_section
                         )
@@ -183,7 +183,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "a.current-section.current-link i"
-                , border_color   = TRBL0
+                , border_color   = C_TRBL0
                     (default = "transparent", t = P.nav_col.mark_color_link)
                 )
             , Rule ("a",         text_decoration = "none")
