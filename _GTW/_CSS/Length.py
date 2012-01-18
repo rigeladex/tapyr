@@ -34,6 +34,7 @@
 #    21-Feb-2011 (CT) `HV` added
 #    29-Nov-2011 (CT) Add `Rem`
 #    17-Jan-2012 (CT) Add `Ch`, `Vh`, `Vm`, `Vw`, function `Length`
+#    18-Jan-2012 (CT) Add support for arithmetic operators to `TRBL`, `TRBL0`
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,11 @@ class _Length_ (TFL.Meta.Object) :
     >>> print (Rem (2.5))
     2.5rem
 
+    >>> print (Rem (-2))
+    -2rem
+    >>> print (abs (Rem (-2)))
+    2rem
+
     """
 
     __metaclass__ = M_Length
@@ -112,6 +118,10 @@ class _Length_ (TFL.Meta.Object) :
     def __init__ (self, value = 0) :
         self.value = value
     # end def __init__
+
+    def __abs__ (self) :
+        return self.__class__ (abs (self.value))
+    # end def __abs__
 
     def __add__ (self, rhs) :
         if not isinstance (rhs, self.__class__) :
@@ -214,6 +224,8 @@ class _Length_ (TFL.Meta.Object) :
 
 # end class _Length_
 
+_length_keywords = set (("auto", "inherit"))
+
 def Length (v) :
     """Convert strings and length objects to the appropriate `_Length_` instances.
 
@@ -250,7 +262,9 @@ def Length (v) :
     elif isinstance (v, basestring) :
         pat = _Length_.Pat
         v   = v.strip ()
-        if pat.match (v) :
+        if v in _length_keywords :
+            result = v
+        elif pat.match (v) :
             T      = _Length_._Unit_Map [pat.unit.lower ()]
             n      = pat.number
             result = T (float (n) if ("." in n) else int (n, 10))
@@ -395,9 +409,54 @@ class TRBL0 (TFL.Meta.Object) :
             (Length (v if v is not None else default) for v in (t, r, b, l))
     # end def __init__
 
+    def __abs__ (self) :
+        return self.__class__ (* tuple (abs (v) for v in self.values))
+    # end def __abs__
+
+    def __add__ (self, rhs) :
+        if isinstance (rhs, _Length_) :
+            rhs = (rhs, ) * 4
+        elif isinstance (rhs, (tuple, list)) :
+            rhs = self.__class__ (* rhs)
+        return self.__class__ \
+            (* tuple (v + r for v, r in zip (self.values, rhs)))
+    # end def __add__
+
+    def __div__ (self, rhs) :
+        return self.__class__ (* tuple (v / rhs for v in self.values))
+    # end def __div__
+
+    __truediv__ = __div__
+
+    def __floordiv__ (self, rhs) :
+        return self.__class__ (* tuple (v // rhs for v in self.values))
+    # end def __floordiv__
+
+    def __iter__ (self) :
+        return iter (self.values)
+    # end def __iter__
+
+    def __mod__ (self, rhs) :
+        return self.__class__ (* tuple (v % rhs for v in self.values))
+    # end def __mod__
+
+    def __mul__ (self, rhs) :
+        return self.__class__ (* tuple (v * rhs for v in self.values))
+    # end def __mul__
+
+    __rmul__ = __mul__
+
+    def __neg__ (self) :
+        return self.__class__ (* tuple (-v for v in self.values))
+    # end def __neg__
+
     def __nonzero__ (self) :
         return any (self.values)
     # end def __nonzero__
+
+    def __pos__ (self) :
+        return self
+    # end def __pos__
 
     def __str__ (self) :
         values = list (self.values)
@@ -408,6 +467,15 @@ class TRBL0 (TFL.Meta.Object) :
                 break
         return " ".join (str (v) for v in values)
     # end def __str__
+
+    def __sub__ (self, rhs) :
+        if isinstance (rhs, _Length_) :
+            rhs = (rhs, ) * 4
+        elif isinstance (rhs, (tuple, list)) :
+            rhs = self.__class__ (* rhs)
+        return self.__class__ \
+            (* tuple (v - r for v, r in zip (self.values, rhs)))
+    # end def __sub__
 
 # end class TRBL0
 
@@ -428,6 +496,26 @@ class TRBL (TRBL0) :
     1em 2px 3ex 4cm
     >>> print (TRBL (Em (1), Px (0), Ex (3), Cm (4)))
     1em 0 3ex 4cm
+
+    >>> print (-TRBL (Em (1), Px (2)))
+    -1em -2px
+
+    >>> print (TRBL ("1em", "8vw"))
+    1em 8vw
+    >>> print (TRBL ("1em", "8vw") + (Em (3), "7vw"))
+    4em 15vw
+    >>> print (TRBL ("1em", "8em") + Em (4))
+    5em 12em
+    >>> print (TRBL ("1em", "8em") * 2)
+    2em 16em
+    >>> print ((TRBL ("1em", "8em") * 2) - Em (1))
+    1em 15em
+    >>> print (4 * TRBL ("1em", "8em"))
+    4em 32em
+
+    >>> print (TRBL ("1em", "auto"))
+    1em auto
+
     """
 
     def __init__ (self, * values) :
