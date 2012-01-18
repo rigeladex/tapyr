@@ -94,7 +94,8 @@
             );
         var qr$    = $(this);
         var body$  = $("body").last ();
-        var af_map = {}, as_widget$, ob_widget$;
+        var af_map = {};
+        var as_widget$, ob_widget$;
         var attr_filters =
             ( function () {
                 var result = [];
@@ -297,11 +298,11 @@
                   var attrs$  = as_widget$.find (S.select_attr_attributes);
                   var but$    = as_widget$.find (S.add_button);
                   var menu$   = but$.data ("menu$").element;
-                  var a$;
+                  var af, a$;
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
                       choice = $.trim (choices [i]);
                       if (choice.length) {
-                          var af = af_map [choice];
+                          af = af_map [choice];
                           a$ = attr_select.new_attr (af.label);
                           attrs$.append (a$);
                           attr_select.toggle (menu$, choice, true);

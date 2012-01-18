@@ -755,7 +755,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         # end def ui_name
 
         def value (self, o) :
-            return getattr (o, self.aq._q_name)
+            return getattr (o, self.name)
         # end def value
 
         def __getattr__ (self, name) :

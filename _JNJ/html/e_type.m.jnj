@@ -42,6 +42,7 @@
 ##                     (factor `attr_filter_table`, add `entity_selector_form`)
 ##    12-Dec-2011 (CT) Continue `qr_control` (`af.Class`, `need_op`)
 ##    16-Jan-2012 (CT) Continue `qr_control` (`select_attr_form`, `Config`)
+##    18-Jan-2012 (CT) Continue `qr_control` (Use `GTW.attr_join` for `fields`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -229,7 +230,7 @@
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
-{%- macro qr_control (page, qr) -%}
+{%- macro qr_control (page, fields, qr) -%}
   {%- set action = page.abs_href -%}
   {%- set E_Type = page.E_Type %}
   {% call Form.form (action = action, method = "get", class = "QR") -%}
@@ -257,7 +258,9 @@
         , GTW._T ("Add restriction")
         )
     }}
-    <input class="value hidden" name="fields" value="{{ ','.join (qr.fields or page.list_display) }}">
+    <input class="value hidden" name="fields" {# -#}
+      value="{{ GTW.attr_join (',', fields, 'name') }}"{# -#}
+    >
     <ul class="limits">
       {{ qr_field
           ( "limit"
@@ -347,7 +350,7 @@
       {% for o in objects %}
         <tr id="pk-{{ o.pid }}">
           {{ obj_button (page, E_Type, "td", o.href_change (), o.pid, GTW._T ("Change object"), "pencil", "change") }}
-          {% for f, v in o %}
+          {% for f, v in o.fields %}
             {%- set align =
                    (" class=\"align-%s\"" % (f.attr.css_align, ))
                 if f.attr.css_align else ""
@@ -362,7 +365,7 @@
 {%- endmacro -%} {#- admin_table -#}
 
 {%- macro admin (page, fields, objects) -%}
-  {{ qr_control  (page, page.query_restriction) }}
+  {{ qr_control  (page, fields, page.query_restriction) }}
   {{ admin_table (page, fields, objects) }}
 {%- endmacro -%} {#- admin -#}
 

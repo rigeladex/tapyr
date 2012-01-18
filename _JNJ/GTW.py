@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,6 +52,7 @@
 #    30-Nov-2011 (CT) Add `filtered_join`
 #    30-Nov-2011 (CT) Add `dir` and `getattr`
 #     1-Dec-2011 (CT) Add `styler`
+#    18-Jan-2012 (CT) Add `attr_join`
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,16 @@ class GTW (TFL.Meta.Object) :
         self.env               = env
         self.render_mode_stack = []
     # end def __init__
+
+    def attr_join (self, sep, objects, attr_name) :
+        """Join the values of attribute `attr_name` of `objects` by `sep`."""
+        def _gen (objects, attr_name) :
+            for o in objects :
+                a = getattr (o, attr_name)
+                if a :
+                    yield a
+        return sep.join (_gen (objects, attr_name))
+    # end def attr_join
 
     def call_macro (self, macro_name, * _args, ** _kw) :
         """Call macro named by `macro_name` passing `* _args, ** _kw`."""
