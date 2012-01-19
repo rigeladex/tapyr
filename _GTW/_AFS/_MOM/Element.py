@@ -155,7 +155,10 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
     def _instance_kw (self, ETM, entity, ** kw) :
         result = self.__super._instance_kw (ETM, entity, ** kw)
         if entity is not None :
-            result ["_display"] = entity.ui_display
+            result.update \
+                ( _display = entity.ui_display
+                , entity   = entity
+                )
         return result
     # end def _instance_kw
 
@@ -201,11 +204,15 @@ class _MOM_Entity_Link_ (AE.Entity_Link, Entity) :
         if entity is not None :
             if not isinstance (entity, assoc.E_Type) :
                 n, link = assoc.query_1 (** { self.role_name : entity })
-        return self.__super.__call__ (assoc, link, ** kw)
+        return self.__super.__call__ (assoc, link, role_entity = entity, ** kw)
     # end def __call__
 
     def instance_call (self, assoc, link, ** kw) :
-        return self.__super.__call__ (assoc, link, ** kw)
+        return self.__super.__call__ \
+            ( assoc, link
+            , role_entity = getattr (link, self.role_name, None)
+            , ** kw
+            )
     # end def instance_call
 
     def _create_instance (self, ETM, akw) :
@@ -339,6 +346,8 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
                     and self.kw.get ("collapsed", True)
                     and not (a_entity is None and attr.is_required)
                     )
+                , outer_entity = entity
+                , role_entity  = None
                 )
             result = self.__super.__call__ (a_etm, a_entity, ** kw)
         return result

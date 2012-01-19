@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is free software: you can redistribute it and/or modify
@@ -1433,6 +1433,23 @@ _test_code = """
     <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'> , pid = 4 , sid = fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA
     <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'> , pid = 3 , sid = jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA
     <Field_Entity FB-0:2::0-2:0:3 'club' 'GTW.OMP.SRM.Club'> , pid = None , sid = diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ
+
+    >>> def show_instance (i) :
+    ...   def show_entity (i, name) :
+    ...     e = getattr (i, name)
+    ...     return "%1.1s = %s" % (name, getattr (e, "pid", "-"))
+    ...   return "%-72s %s %s %s" % (i.elem, show_entity (i, "entity"), show_entity (i, "outer_entity"), show_entity (i, "role_entity"))
+    >>> for i in fi.entity_children () :
+    ...     print show_instance (i)
+    <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>                                  e = 2 o = - r = -
+    <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>                  e = 1 o = 2 r = -
+    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>  e = 7 o = - r = 2
+    <Field_Role_Hidden FB-0:2::0-0 'left' 'GTW.OMP.SRM.Boat'>                e = 2 o = 7 r = -
+    <Field_Entity FB-0:2::0-1:0 'right' 'GTW.OMP.SRM.Regatta'>               e = 6 o = 7 r = -
+    <Field_Entity FB-0:2::0-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>        e = 5 o = 6 r = -
+    <Field_Entity FB-0:2::0-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>              e = 4 o = 7 r = -
+    <Field_Entity FB-0:2::0-2:0:0 'left' 'GTW.OMP.PAP.Person'>               e = 3 o = 4 r = -
+    <Field_Entity FB-0:2::0-2:0:3 'club' 'GTW.OMP.SRM.Club'>                 e = - o = 4 r = -
 
     >>> g_sig_map = {}
     >>> for i in fic.entity_children () :

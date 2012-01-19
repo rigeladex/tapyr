@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -177,21 +177,25 @@ class _Base_ (TFL.Meta.Object) :
 class Instance (_Base_) :
     """Model an instance of an AFS form element."""
 
-    children    = ()
-    cooked      = None
-    max_length  = None
-    max_value   = None
-    min_value   = None
-    sort_json   = False
-    value       = None
-    _display    = None
-    _undef      = object ()
+    children      = ()
+    cooked        = None
+    entity        = None
+    max_length    = None
+    max_value     = None
+    min_value     = None
+    outer_entity  = None
+    role_entity   = None
+    sort_json     = False
+    value         = None
+    _display      = None
+    _undef        = object ()
 
     def __init__ (self, elem, ** kw) :
         self.pop_to_self \
             ( kw
             , "allow_new", "children", "collapsed", "cooked", "copy"
-            , "max_length", "max_value", "min_value", "value"
+            , "entity", "max_length", "max_value", "min_value"
+            , "outer_entity", "role_entity", "value"
             , "_display", "_session_secret", "_sid"
             )
         self.elem = elem
