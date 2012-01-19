@@ -269,6 +269,7 @@
 #    30-Nov-2011 (CT) Add `raise` and `logging.warning` to `load_cache` and
 #                     `store_cache`
 #     1-Dec-2011 (CT) Change `Root.template_iter` to include error templates
+#    19-Jan-2012 (CT) Factor `_cache_pickles`
 #    ««revision-date»»···
 #--
 
@@ -288,6 +289,7 @@ from   _TFL                     import sos
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
+import _TFL.Accessor
 import _TFL.Context
 import _TFL.defaultdict
 import _TFL.multimap
@@ -296,6 +298,7 @@ from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import base64
 import hashlib
+import logging
 import signal
 import sys
 import time
@@ -1211,7 +1214,6 @@ class Root (_Dir_) :
     # end def h_title
 
     def load_cache (self, cache_file) :
-        import logging
         try :
             with open (cache_file, "rb") as file :
                 cargo = pickle.load (file)
@@ -1226,16 +1228,8 @@ class Root (_Dir_) :
                 raise
         else :
             logging.info ("Loaded pickle dump %s successfully" % (cache_file, ))
-            for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
-                try :
-                    cp.from_pickle_cargo (self, cargo)
-                except StandardError as exc :
-                    logging.warning \
-                        ( "Unpickling of %s failed with exception `%s`.\n"
-                          "Regenerate cache..."
-                        % (cp, exc)
-                        )
-                    raise
+            for cp in self._cache_pickles ("Unpickling", "Regenerate cache..."):
+                cp.from_pickle_cargo (self, cargo)
     # end def load_cache
 
     @Once_Property
@@ -1294,21 +1288,10 @@ class Root (_Dir_) :
     # end def scope
 
     def store_cache (self, cache_file) :
-        import logging
         def _create (cache_file) :
             cargo = dict ()
-            for cp in sorted (self.Cache_Pickler, key = lambda cp : cp.rank) :
-                try :
-                    cargo.update (cp.as_pickle_cargo (self))
-                except StandardError as exc :
-                    logging.warning \
-                        ( "Pickling of %s failed with exception `%s`.\n"
-                        % (cp, exc)
-                        )
-                    if self.DEBUG :
-                        import traceback
-                        traceback.print_exc ()
-                    raise
+            for cp in self._cache_pickles ("Pickling") :
+                cargo.update (cp.as_pickle_cargo (self))
             try :
                 with open (cache_file, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
@@ -1371,6 +1354,21 @@ class Root (_Dir_) :
                 return page._raise_403 (handler)
         raise HTTP.Error_404 (href)
     # end def universal_view
+
+    def _cache_pickles (self, msg_head, msg_tail = "") :
+        for cp in sorted (self.Cache_Pickler, key = TFL.Getter.cache_rank) :
+            try :
+                yield cp
+            except StandardError as exc :
+                logging.warning \
+                    ( "%s of %s failed with exception `%s`.\n%s"
+                    % (msg_head, cp, exc, msg_tail)
+                    )
+                if self.DEBUG :
+                    import traceback
+                    traceback.print_exc ()
+                raise
+    # end def _cache_pickles
 
 # end class Root
 

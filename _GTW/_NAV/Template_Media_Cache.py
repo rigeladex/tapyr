@@ -33,6 +33,7 @@
 #    25-Nov-2011 (CT) Use `nav_root.template_iter` (major surgery)
 #     5-Jan-2012 (CT) Add caching for `js`, call `t.get_cached_media` (SURGERY)
 #     9-Jan-2012 (CT) Add `minifier`, cache `js` only `if not nav_root.TEST`
+#    19-Jan-2012 (CT) s/rank/cache_rank/
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ from    posixpath import join as pjoin
 
 class Template_Media_Cache (TFL.Meta.Object) :
 
-    rank = 1000
+    cache_rank = 1000
 
     def __init__ (self, media_dir, prefix, clear_dir = False) :
         if not prefix.startswith ("/") :

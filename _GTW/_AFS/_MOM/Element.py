@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -339,7 +339,6 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
                     and self.kw.get ("collapsed", True)
                     and not (a_entity is None and attr.is_required)
                     )
-                # XXX completer
                 )
             result = self.__super.__call__ (a_etm, a_entity, ** kw)
         return result
@@ -388,6 +387,8 @@ class _MOM_Form_ (AE.Form) :
 
     _real_name = "Form"
 
+    cache_rank = -500
+
     def _call_iter (self, * args, ** kw) :
         if len (self.children) == 1 and len (args) <= 2 :
             c = self.children [0]
@@ -399,7 +400,6 @@ class _MOM_Form_ (AE.Form) :
                 yield c (a.ETM, a.entity, ** a.kw)
     # end def _call_iter
 
-    rank = 500 ### must be execute before Template_Media_Cache
     @classmethod
     def as_pickle_cargo (cls, nav_root) :
         if not cls.Table :
