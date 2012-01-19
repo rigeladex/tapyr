@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -63,6 +63,7 @@
 #                     roles get lost)
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #     7-Nov-2011 (CT) Redefine `_m_new_e_type_dict` to add `other_role_name`
+#    19-Jan-2012 (CT) Remove `raise MOM.Error.No_Scope` from `M_E_Type.__call__`
 #    ««revision-date»»···
 #--
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -88,6 +88,7 @@
 #     8-Mar-2011 (CT) `pid_query` added
 #    21-Mar-2011 (MG) `copy` assert fixed
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
+#    19-Jan-2012 (CT) Change `add` to consider `entity._home_scope`
 #    ««revision-date»»···
 #--
 
@@ -247,6 +248,9 @@ class Scope (TFL.Meta.Object) :
 
     def add (self, entity) :
         """Adds `entity` to scope `self`."""
+        if entity._home_scope is None :
+            entity.home_scope = self
+            entity._finish__init__ ()
         self.ems.add (entity)
         if not entity.electric :
             self.record_change (MOM.SCM.Change.Create, entity)

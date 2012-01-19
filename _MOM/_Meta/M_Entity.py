@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -549,8 +549,6 @@ class M_E_Type (M_E_Mixin) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        if "scope" not in kw :
-            raise MOM.Error.No_Scope
         return cls._m_call (* args, ** kw)
     # end def __call__
 

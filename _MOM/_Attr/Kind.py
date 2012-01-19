@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -162,6 +162,8 @@
 #     8-Nov-2011 (CT) Add `Id_Entity_Reference_Mixin._check_sanity` for `P_Type`
 #     8-Nov-2011 (CT) Use `Error.Required_Empty` for `_Required_Mixin_` check
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    19-Jan-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
+#                     consider `obj._home_scope`, append to `obj._init_pending`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +174,7 @@ from   _MOM                  import MOM
 
 import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
+import _TFL.Functor
 
 import _MOM._Attr
 import _MOM._Meta.M_Attr_Kind
@@ -1328,12 +1331,17 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     def _set_cooked_value (self, obj, value, changed = 42) :
         old_value = self.get_value (obj)
         changed   = old_value is not value
+        scope_p   = obj._home_scope is not None
         if changed :
-            if old_value :
+            if old_value and scope_p :
                 self._unregister (obj, old_value)
             self.__super._set_cooked_value (obj, value, changed)
-            if value and not isinstance (value, basestring) :
-                self._register (obj, value)
+            if value :
+                if scope_p :
+                    self._register (obj, value)
+                else :
+                    obj._init_pending.append \
+                        (TFL.Functor (self._register, obj, value))
     # end def _set_cooked_value
 
 # end class Id_Entity_Reference_Mixin

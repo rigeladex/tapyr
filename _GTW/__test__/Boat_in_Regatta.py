@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -29,6 +29,8 @@
 #     3-May-2010 (MG) Creation
 #     3-May-2010 (CT) Creation continued
 #    14-Dec-2011 (CT) Add tests for `attrs`
+#    19-Jan-2012 (CT) Add tests for `object_referring_attributes`
+#    19-Jan-2012 (CT) Add `_delayed` tests
 #    ««revision-date»»···
 #--
 
@@ -134,10 +136,99 @@ _test_code = r"""
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
     (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.discards, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
 
+    >>> show_ora (bir)         ### before destroy
+    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'') : Entity `skipper`
+    >>> show_dep (bir.skipper) ### before destroy
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))) : 1
+    >>> print bir.skipper
+    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    >>> bir.skipper is s
+    True
+    >>> bir.skipper.destroy ()
+    >>> show_ora (bir)  ### after destroy
+    ---
+    >>> show_dep (s)    ### after destroy
+    ---
+    >>> print bir.skipper
+    None
+
+    >>> scope.destroy ()
+
+"""
+
+_delayed  = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
+    >>> bc  = SRM.Boat_Class.E_Type ("Optimist", max_crew = 1)
+    >>> b   = SRM.Boat.E_Type (bc, u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person.E_Type (u"Tanzer", u"Christian")
+    >>> s   = SRM.Sailor.E_Type (p, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
+    >>> rev = SRM.Regatta_Event.E_Type (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
+    >>> reg = SRM.Regatta_C.E_Type (rev, boat_class = bc, raw = True)
+    >>> reh = SRM.Regatta_H.E_Type (rev, handicap = u"Yardstick", raw = True)
+    >>> bir = SRM.Boat_in_Regatta.E_Type (b, reg, skipper = s)
+
+    >>> list (r.name for r in sorted (getattr (rev, "regattas", [])))
+    []
+
+    >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = u"calculated with REGATTA.yellow8.com", status = "final", raw = True))
+    1
+    >>> unicode (reg.FO.result)
+    u'2009/05/26 10:20:00, calculated with REGATTA.yellow8.com, final'
+
+    >>> show_ora (bir)  ### before scope.add
+    ---
+    >>> show_dep (s)    ### before scope.add
+    ---
+
+    >>> for _ in (bc, b, p, s, rev, reg, reh, bir) :
+    ...     scope.add (_)
+
+    >>> list (r.name for r in sorted (rev.regattas))
+    [u'Optimist', u'Yardstick']
+
+    >>> show_ora (bir)         ### before destroy
+    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'') : Entity `skipper`
+    >>> show_dep (bir.skipper) ### before destroy
+    (((u'Optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))) : 1
+    >>> print bir.skipper
+    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    >>> bir.skipper is s
+    True
+    >>> bir.skipper.destroy ()
+    >>> show_ora (bir)  ### after destroy
+    ---
+    >>> show_dep (s)    ### after destroy
+    ---
+    >>> print bir.skipper
+    None
+
+    >>> scope.destroy ()
+
 """
 
 from _GTW.__test__.model import *
 
-__test__ = Scaffold.create_test_dict (_test_code)
+def show_ora (x) :
+    if x.object_referring_attributes :
+        for k, vs in sorted (x.object_referring_attributes.iteritems ()) :
+            print k, ":", ", ".join (str (v) for v in vs)
+    else :
+            print "---"
+def show_dep (x) :
+    if x.dependencies :
+        for k, v in sorted (x.dependencies.iteritems ()) :
+            print k, ":", v
+    else :
+            print "---"
+
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( normal  = _test_code
+        , delayed = _delayed
+        )
+    )
 
 ### __END__ GTW.__test__.Boat_in_Regatta

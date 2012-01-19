@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -78,7 +78,6 @@ class Functor (TFL.Function) :
     # end def __call__
 
     def __repr__ (self) :
-        from _TFL.predicate import sorted
         tail = ""
         kw   = self.kw
         if kw :

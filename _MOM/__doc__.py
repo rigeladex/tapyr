@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -1460,10 +1460,11 @@ Deleting objects and links
     >>> t2_id = t2.pid
     >>> show (scope.ems.all_links (m_id))
     [((u'mighty_mouse', ), (u'x', 1))]
-    >>> show (scope.ems.all_links (t1_id))
-    [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), ((u'mighty_mouse', ), (u'x', 1))]
 
     .. ### DBW-specific finish
+
+    >>> show (t1.all_links ())
+    [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), ((u'mighty_mouse', ), (u'x', 1))]
 
     >>> t1.catch
     BMT.Mouse (u'mighty_mouse')
@@ -1472,10 +1473,11 @@ Deleting objects and links
     >>> m.destroy ()
     >>> t1.catch
 
-    .. ### DBW-specific start
-
     >>> show (t1.all_links ())
     [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956))]
+
+    .. ### DBW-specific start
+
     >>> show (scope.ems.all_links (m_id))
     []
 

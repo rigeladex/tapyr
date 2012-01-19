@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -168,6 +168,8 @@
 #                     support queries against integers (interpreted as `pid`)
 #    15-Nov-2011 (CT) Add defaults for `polymorphic_epk` and `polymorphic_epks`
 #    20-Dec-2011 (CT) Remove `sorted` from `attr_as_code`
+#    19-Jan-2012 (CT) Add `_init_pending`, make `_home_scope` optional
+#    19-Jan-2012 (CT) Call `_finish__init__` only if `_home_scope`
 #    ««revision-date»»···
 #--
 
@@ -215,7 +217,6 @@ class Entity (TFL.Meta.Object) :
     deprecated_attr_names = {}
     electric              = False
     generate_doc          = True
-    home_scope            = None
     init_finished         = False
     is_partial            = True
     is_relevant           = False
@@ -230,6 +231,8 @@ class Entity (TFL.Meta.Object) :
 
     _app_globals          = {}
     _dicts_to_combine     = ("deprecated_attr_names", )
+    _home_scope           = None
+    _init_pending         = ()
 
     _Class_Kind           = "Spec Essence"
 
@@ -310,6 +313,16 @@ class Entity (TFL.Meta.Object) :
     # end class _FO_
 
     @property
+    def home_scope (self) :
+        return self._home_scope or MOM.Scope.active
+    # end def home_scope
+
+    @home_scope.setter
+    def home_scope (self, value) :
+        self._home_scope = value
+    # end def home_scope
+
+    @property
     def raw_attr_dict (self) :
         return dict \
             (  (a.name, a.get_raw (self))
@@ -326,8 +339,7 @@ class Entity (TFL.Meta.Object) :
         if cls.is_partial :
             raise MOM.Error.Partial_Type (cls.type_name)
         result = super (Entity, cls).__new__ (cls)
-        if not result.home_scope :
-            result.home_scope = kw.get ("scope", MOM.Scope.active)
+        result._home_scope = kw.get ("scope")
         result._init_meta_attrs ()
         return result
     # end def __new__
@@ -430,7 +442,7 @@ class Entity (TFL.Meta.Object) :
     # end def raw_attr
 
     def record_attr_change (self, kw) :
-        if kw and not self.electric :
+        if kw and self._home_scope and not self.electric :
             self.home_scope.record_change (self.SCM_Change_Attr, self, kw)
     # end def record_attr_change
 
@@ -505,6 +517,12 @@ class Entity (TFL.Meta.Object) :
     def _finish__init__ (self) :
         """Redefine this to perform additional initialization."""
         self.init_finished = True
+        for ip in self._init_pending :
+            ip ()
+        try :
+            del self._init_pending
+        except AttributeError :
+            pass
     # end def _finish__init__
 
     def _init_attributes (self) :
@@ -514,6 +532,8 @@ class Entity (TFL.Meta.Object) :
     def _init_meta_attrs (self) :
         self._attr_man  = MOM.Attr.Manager (self._Attributes)
         self._pred_man  = MOM.Pred.Manager (self._Predicates)
+        if self._home_scope is None :
+            self._init_pending = []
     # end def _init_meta_attrs
 
     def _kw_check_required (self, attr_dict, on_error = None) :
@@ -548,7 +568,7 @@ class Entity (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def _record_context (self, gen, Change) :
-        if self.electric :
+        if self.electric or not self._home_scope :
             yield
         else :
             rvr = dict (gen)
@@ -628,8 +648,9 @@ class Entity (TFL.Meta.Object) :
     # end def _set_raw
 
     def _store_attr_error (self, exc) :
-        print ("Warning: Setting attribute failked with exception %s" % (exc, ))
-        self.home_scope._attr_errors.append (exc)
+        print ("Warning: Setting attribute failed with exception %s" % (exc, ))
+        if self._home_scope :
+            self.home_scope._attr_errors.append (exc)
     # end def _store_attr_error
 
     def __getattr__ (self, name) :
@@ -757,7 +778,7 @@ class An_Entity (Entity) :
         raw = bool (kw.pop ("raw", False))
         self._kw_check_required (kw)
         if kw :
-            set = (self._set_ckd, self._set_raw) [raw]
+            set = self._set_raw if raw else self._set_ckd
             set (** kw)
     # end def _main__init__
 
@@ -1035,10 +1056,11 @@ class Id_Entity (Entity) :
 
     def destroy (self) :
         """Remove entity from `home_scope`."""
-        if self is self.home_scope.root :
-            self.home_scope.destroy ()
-        else :
-            self.home_scope.remove (self)
+        if self._home_scope :
+            if self is self.home_scope.root :
+                self.home_scope.destroy ()
+            else :
+                self.home_scope.remove (self)
     # end def destroy
 
     def destroy_dependency (self, other) :
@@ -1216,12 +1238,13 @@ class Id_Entity (Entity) :
         self.implicit = kw.pop ("implicit", False)
         ### Need to use `__super.` methods here because it's not a `rename`
         raw      = bool (kw.pop ("raw", False))
-        setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
+        setter   = self.__super._set_raw if raw else self.__super._set_ckd
         epk, kw  = self.epkified  (* epk, ** kw)
         self._kw_check_required (kw)
         kw.update (self._init_epk (epk))
         setter    (** kw)
-        self._finish__init__ ()
+        if self._home_scope is not None :
+            self._finish__init__ ()
         required_errors = self._pred_man.required_errors
         if required_errors :
             raise MOM.Error.Invariant_Errors (required_errors)
