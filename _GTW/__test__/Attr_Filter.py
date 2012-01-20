@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -318,7 +318,7 @@ _test_code = """
         salutation          3
         sex                 0
       nation              0
-      mna_number          3
+      __raw_mna_number    3
       club                2
         name                3
         long_name           3
@@ -387,7 +387,7 @@ _test_code = """
         String `salutation` skipper.left.salutation
         Sex `sex` skipper.left.sex
         Nation `nation` skipper.nation
-        String `mna_number` skipper.mna_number
+        Int `mna_number` skipper.mna_number
         String `name` skipper.club.name
         String `long_name` skipper.club.long_name
     Entity `skipper` unwrapped
@@ -396,7 +396,7 @@ _test_code = """
         String `middle_name` left.middle_name
         String `title` left.title
         Nation `nation` nation
-        String `mna_number` mna_number
+        Int `mna_number` mna_number
         String `name` club.name
     Int `place`
         Int `place` place

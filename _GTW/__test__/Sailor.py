@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.__test__.
@@ -42,26 +42,26 @@ _test_code = """
     GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> s = SRM.Sailor.instance_or_new (p, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> s
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> SRM.Sailor.instance (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, s.nation, s.mna_number)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
 
     >>> SRM.Sailor.query (left = p).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (left = p.pid).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left == p).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left == p.pid).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left.pid == p.pid).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left.pid == p).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
 
 """
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Martin Glueck All rights reserved
+# Copyright (C) 2011-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -131,9 +131,9 @@ _attr_ac_query = """
     <Filter_Or [Q.left.last_name.startswith (u'tan',), Q.left.last_name.contains (u'-tan',)]>
 
     >>> SRM.Sailor.query_s (qs1).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', u'', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
     >>> SRM.Sailor.query_s (qs2).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', u'', u'')]
+    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
 
     >>> a1 = PAP.Address ("Langstrasse 4",    "2244", "Spannberg", "Austria")
     >>> a2 = PAP.Address ("Glasauergasse 32", "1130", "Wien",      "Austria")

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -151,16 +151,8 @@ _q_result = r"""
 
     >>> sorted (q0.all (), key = PAP.Person.sort_key)
     [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
-    >>> print formatted (sorted (q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title)))
-    [
-      ( 'di'
-      , 2
-      )
-    ,
-      ( 'dr.'
-      , 1
-      )
-    ]
+    >>> print sorted ((t, int (c)) for (t, c) in q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title))
+    [(u'di', 2), (u'dr.', 1)]
 
     >>> qy = PAP.Person.AQ.lifetime.start.AC ("2010")
     >>> qy
