@@ -66,6 +66,7 @@
 #     8-Nov-2011 (CT) Change `Field._value` to check `entity` vs. `allow_new`
 #    18-Nov-2011 (CT) Apply `str` to `.type_name` (in `_value_sig_t`)
 #     2-Dec-2011 (CT) Change `Entity._value_cp` to include `uid`
+#    20-Jan-2012 (CT) s/_check_sid/check_sid/ and let client call it
 #    ««revision-date»»···
 #--
 
@@ -107,7 +108,6 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
     init       = {}
 
     def apply (self, value, scope, ** kw) :
-        self._check_sid (value, ** kw)
         pid = value.edit.get ("pid")
         if pid is not None :
             result = self._apply_change (pid, value, scope, ** kw)
@@ -120,6 +120,12 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
                 result = None
         return result
     # end def apply
+
+    def check_sid (self, value, ** kw) :
+        v_sid = self.form_hash (value, ** kw)
+        if v_sid != value.sid :
+            raise GTW.AFS.Error.Corrupted ()
+    # end def check_sid
 
     def _apply_change (self, pid, value, scope, ** kw) :
         entity = scope.pid_query (pid)
@@ -137,12 +143,6 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
             ETM = scope [self.type_name]
             return self._create_instance (ETM, akw)
     # end def _apply_create
-
-    def _check_sid (self, value, ** kw) :
-        v_sid = self.form_hash (value, ** kw)
-        if v_sid != value.sid :
-            raise GTW.AFS.Error.Corrupted ()
-    # end def _check_sid
 
     def _create_instance (self, ETM, akw) :
         try :
@@ -369,7 +369,6 @@ class Field_Role_Hidden (Field_Entity) :
     # end def __init__
 
     def apply (self, value, scope, ** kw) :
-        self._check_sid (value, ** kw)
         pid = value.edit.get ("pid")
         if pid is not None :
             return scope.pid_query (pid)
