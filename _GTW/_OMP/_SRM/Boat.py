@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -45,6 +45,7 @@
 #    17-Nov-2011 (CT) Split off `sail_number_x` again (to fix sorting)
 #    17-Nov-2011 (CT) Redefine `ui_display_format` and `ui_display_sep`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    20-Jan-2012 (CT) Add `sail_number.max_value`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,7 @@ class Boat (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
             example            = "2827"
             min_value          = 0
+            max_value          = 999999
             needs_raw_value    = True
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 

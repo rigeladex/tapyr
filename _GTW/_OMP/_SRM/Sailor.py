@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -35,6 +35,7 @@
 #                     `completer` removed from `nation`
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    20-Jan-2012 (CT) Change `mna_number` from `A_String` to `A_Int`
 #    ««revision-date»»···
 #--
 
@@ -79,11 +80,15 @@ class Sailor (_Ancestor_Essence) :
 
         # end class nation
 
-        class mna_number (A_String) :
+        class mna_number (A_Int) :
             """Membership number in Member National Authorities (MNA)."""
 
             kind               = Attr.Primary_Optional
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+            min_value          = 0
+            max_value          = 999999
+            needs_raw_value    = True
+            css_align          = "right"
 
         # end class mna_number
 

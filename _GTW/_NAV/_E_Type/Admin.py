@@ -147,6 +147,7 @@
 #    21-Dec-2011 (CT) Continue `QX` (refactor `_rendered_completions`)
 #    22-Dec-2011 (CT) Continue `QX` (change `qr_spec` to not pass `field_names`)
 #    16-Jan-2012 (CT) Add `Field`, `qr.fields`, and `QX_Select_Attr_Form`
+#    20-Jan-2012 (CT) Change `Field.name` to use `._full_name`, not `._q_name`
 #    ««revision-date»»···
 #--
 
@@ -746,7 +747,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         @Once_Property
         def name (self) :
-            return self.aq._q_name
+            return self.aq._full_name
         # end def name
 
         @property ### depends on currently selected language (I18N/L10N)

@@ -208,6 +208,7 @@ class _MOM_Entity_Link_ (AE.Entity_Link, Entity) :
     # end def __call__
 
     def instance_call (self, assoc, link, ** kw) :
+        kw.pop ("role_entity", None)
         return self.__super.__call__ \
             ( assoc, link
             , role_entity = getattr (link, self.role_name, None)

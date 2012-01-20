@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -96,6 +96,7 @@
 #                     `_Session_.load_info`: no need to `rollback`
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    20-Jan-2012 (CT) Esthetics
 #    ««revision-date»»···
 #--
 
@@ -649,8 +650,9 @@ class Session_S (_Session_) :
     def update_change (self, change) :
         table  = MOM.SCM.Change._Change_._sa_table
         self.connection.execute \
-            ( table.update (values = dict (data = change.as_pickle ())
-                           ).where (table.c.cid == change.cid)
+            ( table
+                .update (values = dict (data = change.as_pickle ()))
+                .where  (table.c.cid == change.cid)
             )
     # end def update_change
 

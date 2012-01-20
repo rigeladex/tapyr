@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -318,9 +318,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def _create_SCM_table (cls, metadata) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
             ( "change_history", metadata
-            , schema.Column ("cid",       types.Integer,     primary_key = True)
-            , schema.Column ("pid",       types.Integer,     nullable    = True)
-            , schema.Column ("data",      types.LargeBinary, nullable    = True)
+            , schema.Column ("cid",  types.Integer,     primary_key = True)
+            , schema.Column ("pid",  types.Integer,     nullable    = True)
+            , schema.Column ("data", types.LargeBinary, nullable    = True)
             , schema.Column
                   ( "parent_cid"
                   , types.Integer
