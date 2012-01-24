@@ -121,6 +121,9 @@
 #    18-Nov-2011 (CT) Add `cls.AQ = MOM.Attr.Filter.E_Type (cls)`
 #     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
 #    20-Dec-2011 (CT) Add `sig_attr`
+#    24-Jan-2012 (CT) Change `M_Entity._m_init_prop_specs` to set `show_in_ui`
+#    24-Jan-2012 (CT) Change `M_E_Type_Id._m_setup_attributes` to use
+#                     `show_in_ui` instead of `generate_doc`
 #    ««revision-date»»···
 #--
 
@@ -427,6 +430,8 @@ class M_Entity (M_E_Mixin) :
     def _m_init_prop_specs (cls, name, bases, dct) :
         if "is_partial" not in dct :
             setattr (cls, "is_partial", False)
+        if "show_in_ui" not in dct :
+            setattr (cls, "show_in_ui", True)
         for psn in cls._nested_classes_to_combine :
             cls._m_combine_nested_class (psn, bases, dct)
         if "ui_display" not in cls._Attributes.__dict__ :
@@ -773,7 +778,7 @@ class M_E_Type_Id (M_E_Type) :
         cls.__m_super._m_setup_attributes (bases, dct)
         cls.is_editable = (not cls.electric.default) and cls.user_attr
         cls.show_in_ui  = \
-            (cls.record_changes and cls.generate_doc and not cls.is_partial)
+            (cls.record_changes and cls.show_in_ui and not cls.is_partial)
         cls.sig_attr = cls.primary
     # end def _m_setup_attributes
 

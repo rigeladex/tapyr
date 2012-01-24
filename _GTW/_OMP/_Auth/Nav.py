@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -31,6 +31,8 @@
 #     2-May-2010 (MG) Simplified
 #     6-May-2010 (MG) Switch to render mode rendering
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
+#                     i.e., stuff related to non-AFS forms
 #    ««revision-date»»···
 #--
 
@@ -39,45 +41,13 @@ from   __future__            import unicode_literals
 from   _TFL.I18N                import _
 from   _GTW                     import GTW
 
-import _GTW._NAV._E_Type.Admin
 from   _GTW._NAV.Permission     import Is_Superuser
-import _GTW._Form._MOM.Javascript
-
-from   _GTW._Form._MOM.Inline_Description      import \
-    ( Link_Inline_Description      as LID
-    , Attribute_Inline_Description as AID
-    )
-from   _GTW._Form._MOM.Field_Group_Description import \
-    ( Field_Group_Description as FGD
-    , Field_Prefixer          as FP
-    , Wildcard_Field          as WF
-    )
-from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
-
-primary = WF ("primary")
 
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    group_completer  =GTW.Form.MOM.Javascript.Completer \
-        ( fields    = "name"
-        , triggers  = dict (name = dict (min_chars = 1))
-        , name      = "Group_Completer"
-        )
-
     Account          = dict \
         ( ETM        = "GTW.OMP.Auth.Account_P"
-        , Form_args  =
-            ( FGD ()
-            , LID
-                ( "GTW.OMP.Auth.Account_in_Group"
-                , FGD ("group")
-                , field_attrs = dict
-                    (group = dict (completer = group_completer))
-                , legend    = _("Groups")
-                , title     = _("Groups")
-                )
-            )
         , permission = Is_Superuser ()
         )
 
