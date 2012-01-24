@@ -150,6 +150,7 @@
 #    20-Jan-2012 (CT) Change `Field.name` to use `._full_name`, not `._q_name`
 #    24-Jan-2012 (CT) Add property `sort_key` (default `E_Type.sorted_by_epk`)
 #    24-Jan-2012 (CT) Change `Changer.rendered` to pass `.form_parameters`
+#    24-Jan-2012 (CT) Add `changer`, put properties before methods
 #    ««revision-date»»···
 #--
 
@@ -1090,6 +1091,40 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         self._sort_key = value
     # end def sort_key
 
+    @Once_Property
+    def list_display (self) :
+        result = self._list_display
+        if result is None :
+            result = self._auto_list_display
+        return result
+    # end def list_display
+
+    @Once_Property
+    def manager (self) :
+        return self.etype_manager (self.E_Type)
+    # end def manager
+
+    @Once_Property
+    def qr_spec (self) :
+        return QRS (self.E_Type)
+    # end def qr_spec
+
+    @Once_Property
+    def _auto_list_display (self, ) :
+        E_Type = self.ETM.E_Type
+        return tuple (a.name for a in ichain (E_Type.primary, E_Type.user_attr))
+    # end def _auto_list_display
+
+    def changer (self, pid = None, form_parameters = None, ** kw) :
+        kw = dict (self.child_attrs.get ("Changer", {}), ** kw)
+        return self.Changer \
+            ( pid
+            , form_parameters = form_parameters or {}
+            , parent          = self
+            , ** kw
+            )
+    # end def changer
+
     def href_create (self) :
         return pjoin (self.abs_href, "create")
     # end def href_create
@@ -1151,30 +1186,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         p = nav_page.href
         return p.startswith (self.href) and p != self.href
     # end def is_current_dir
-
-    @Once_Property
-    def list_display (self) :
-        result = self._list_display
-        if result is None :
-            result = self._auto_list_display
-        return result
-    # end def list_display
-
-    @Once_Property
-    def manager (self) :
-        return self.etype_manager (self.E_Type)
-    # end def manager
-
-    @Once_Property
-    def qr_spec (self) :
-        return QRS (self.E_Type)
-    # end def qr_spec
-
-    @Once_Property
-    def _auto_list_display (self, ) :
-        E_Type = self.ETM.E_Type
-        return tuple (a.name for a in ichain (E_Type.primary, E_Type.user_attr))
-    # end def _auto_list_display
 
     def rendered (self, handler, template = None) :
         qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
