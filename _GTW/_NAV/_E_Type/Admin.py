@@ -148,6 +148,7 @@
 #    22-Dec-2011 (CT) Continue `QX` (change `qr_spec` to not pass `field_names`)
 #    16-Jan-2012 (CT) Add `Field`, `qr.fields`, and `QX_Select_Attr_Form`
 #    20-Jan-2012 (CT) Change `Field.name` to use `._full_name`, not `._q_name`
+#    24-Jan-2012 (CT) Add property `sort_key` (default `E_Type.sorted_by_epk`)
 #    ««revision-date»»···
 #--
 
@@ -207,6 +208,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , CLEAR         = "button"
         , CLOSE         = "button"
         )
+
+    _sort_key           = None
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -1068,6 +1071,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def href (self) :
         return pjoin (self.prefix, u"")
     # end def href
+
+    @property
+    def sort_key (self) :
+        result = self._sort_key
+        if result is None :
+            result = self.E_Type.sorted_by_epk
+        return result
+    # end def sort_key
+
+    @sort_key.setter
+    def sort_key (self, value) :
+        self._sort_key = value
+    # end def sort_key
 
     def href_create (self) :
         return pjoin (self.abs_href, "create")
