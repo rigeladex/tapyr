@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -53,6 +53,7 @@
 #                     element in the `joins` list added
 #    16-Dec-2011 (MG) `MOM_Composite_Query`: `MOM_C_Kind` added, accessors
 #                     for cooked and raw name added
+#    24-Jan-2012 (MG) `Join_Query.__call__` fixed
 #    ««revision-date»»···
 #--
 
@@ -308,7 +309,7 @@ class Join_Query (_MOM_Query_) :
         joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
         joins.append \
             ( ( self.source._SA_TABLE
-              , o_SAQ._SA_TABLE
+              , o_SAQ.pid.table
               , column == o_SAQ.pid
               , not isinstance
                     ( column.mom_kind
@@ -316,6 +317,15 @@ class Join_Query (_MOM_Query_) :
                     )
               )
             )
+        for b in o_SAQ._E_TYPE [1] :
+            j_SAQ = b._SAQ
+            joins.append \
+                ( ( j_SAQ._SA_TABLE
+                  , o_SAQ._SA_TABLE
+                  , j_SAQ.pid == o_SAQ._SA_TABLE.columns [o_SAQ._E_TYPE [0]._sa_pk_name]
+                  , False
+                  )
+                )
         return joins, oc
     # end def __call__
 
