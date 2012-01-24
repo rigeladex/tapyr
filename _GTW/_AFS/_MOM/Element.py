@@ -67,6 +67,9 @@
 #    18-Nov-2011 (CT) Apply `str` to `.type_name` (in `_value_sig_t`)
 #     2-Dec-2011 (CT) Change `Entity._value_cp` to include `uid`
 #    20-Jan-2012 (CT) s/_check_sid/check_sid/ and let client call it
+#    24-Jan-2012 (CT) Redefine `Field.__call__`
+#                     and `Field_Composite.__call__` to pass `f_kw` to `__super`
+#    24-Jan-2012 (CT) Change `Field_Entity.__call__` to pass `f_kw` to `__super`
 #    ««revision-date»»···
 #--
 
@@ -246,6 +249,11 @@ class _MOM_Field_ (AE.Field) :
 
     _real_name = "Field"
 
+    def __call__ (self, ETM, entity, ** kw) :
+        f_kw = dict (kw, ** kw.pop (self.name, {}))
+        return self.__super.__call__ (ETM, entity, ** f_kw)
+    # end def __call__
+
     def applyf (self, value, scope, entity, ** kw) :
         result = None
         if entity is not None :
@@ -280,7 +288,6 @@ class _MOM_Field_ (AE.Field) :
     def _value (self, ETM, entity, ** kw) :
         result = self.__super._value (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
-        akw    = kw.get (self.name, {})
         if entity is None and not kw.get ("allow_new") :
             ### No entity, no `allow_new`:
             ### * only existing entities can be selected
@@ -292,8 +299,8 @@ class _MOM_Field_ (AE.Field) :
             if   result.get ("prefilled") or kw.get ("copy", False)
             else "init"
             )
-        if "init" in akw :
-            result [key] = akw ["init"]
+        if "init" in kw :
+            result [key] = kw ["init"]
             key = "init"
         init = attr.get_raw (entity)
         if init :
@@ -308,6 +315,11 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
 
     _real_name = "Field_Composite"
 
+    def __call__ (self, ETM, entity, ** kw) :
+        f_kw = dict (kw, ** kw.pop (self.name, {}))
+        return self.__super.__call__ (ETM, entity, ** f_kw)
+    # end def __call__
+
     def applyf (self, value, scope, entity, ** kw) :
         if entity is not None :
             entity = getattr (entity, self.name)
@@ -315,11 +327,12 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
-        attr     = ETM.E_Type.attributes [self.name]
+        name     = self.name
+        attr     = ETM.E_Type.attributes [name]
         c_type   = attr.P_Type
-        c_entity = getattr (entity, self.name, None)
+        c_entity = getattr (entity, name, None)
         for c in self.children :
-            yield c (c_type, c_entity, ** dict (kw, ** kw.get (self.name, {})))
+            yield c (c_type, c_entity, ** kw)
     # end def _call_iter
 
 Field_Composite = _MOM_Field_Composite_ # end class
@@ -330,27 +343,27 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
     _real_name = "Field_Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
+        f_kw = dict (kw, ** kw.pop (self.name, {}))
         if self.type_name == ETM.type_name :
-            result = self.__super.__call__ (ETM, entity, ** kw)
+            result = self.__super.__call__ (ETM, entity, ** f_kw)
         else :
             attr     = ETM.E_Type.attributes [self.name]
             a_etm    = attr.etype_manager (ETM)
             a_entity = getattr (entity, self.name, None)
             if a_entity is None and attr.raw_default :
                 a_entity = a_etm.instance (attr.raw_default, raw = True)
-            a_kw     = dict (kw, ** kw.get (self.name, {}))
-            kw       = dict \
-                ( a_kw
-                , allow_new = attr.ui_allow_new and a_kw.get ("allow_new", True)
+            f_kw     = dict \
+                ( f_kw
+                , allow_new = attr.ui_allow_new and f_kw.get ("allow_new", True)
                 , collapsed =
-                    (   a_kw.get    ("collapsed", True)
+                    (   f_kw.get    ("collapsed", True)
                     and self.kw.get ("collapsed", True)
                     and not (a_entity is None and attr.is_required)
                     )
                 , outer_entity = entity
                 , role_entity  = None
                 )
-            result = self.__super.__call__ (a_etm, a_entity, ** kw)
+            result = self.__super.__call__ (a_etm, a_entity, ** f_kw)
         return result
     # end def __call__
 

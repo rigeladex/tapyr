@@ -149,6 +149,7 @@
 #    16-Jan-2012 (CT) Add `Field`, `qr.fields`, and `QX_Select_Attr_Form`
 #    20-Jan-2012 (CT) Change `Field.name` to use `._full_name`, not `._q_name`
 #    24-Jan-2012 (CT) Add property `sort_key` (default `E_Type.sorted_by_epk`)
+#    24-Jan-2012 (CT) Change `Changer.rendered` to pass `.form_parameters`
 #    ««revision-date»»···
 #--
 
@@ -494,7 +495,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             else :
                 sid, session_secret = self._new_edit_session (handler)
                 form = self.form \
-                    (obj, _sid = sid, _session_secret = session_secret)
+                    ( obj
+                    , _sid            = sid
+                    , _session_secret = session_secret
+                    , ** self.form_parameters
+                    )
                 self.Media = self._get_media \
                     (head = getattr (form, "Media", None))
                 context.update (form = form)
