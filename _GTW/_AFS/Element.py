@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -101,6 +101,7 @@
 #    18-Nov-2011 (CT) Apply `str` to `.name` and `.type_name`
 #                     (in `__str__`, `_value_sig` and `_value_sig_t`)
 #    25-Nov-2011 (CT) Add `renderer_iter`
+#    25-Jan-2012 (CT) Factor `_child_kw`, add `_pass_in_call`
 #    ««revision-date»»···
 #--
 
@@ -159,6 +160,10 @@ class _Element_ (TFL.Meta.Object) :
     widget          = None
     _css_class      = None
     _id             = None
+    _pass_in_call   = \
+        ( "copy", "prefilled", "readonly", "renderer"
+        , "_sid", "_session_secret"
+        )
     _pop_allow_new  = False
     _pop_in_call    = ("collapsed", )
     _pop_to_self    = \
@@ -166,7 +171,7 @@ class _Element_ (TFL.Meta.Object) :
         , "id", "id_sep", "needs_value", "prefilled", "readonly"
         , "renderer", "required", "ui_name", "widget"
         )
-    _lists_to_combine   = ("_pop_to_self", "_pop_in_call")
+    _lists_to_combine   = ("_pop_to_self", "_pop_in_call", "_pass_in_call")
 
     def __init__ (self, ** kw) :
         self.pop_to_self  (kw, * self._pop_to_self)
@@ -287,6 +292,15 @@ class _Element_ (TFL.Meta.Object) :
         for c in self.children :
             yield c (* args, ** kw)
     # end def _call_iter
+
+    def _child_kw (self, kw) :
+        def _gen (kw, pass_in_call) :
+            for k in pass_in_call :
+                v = kw.get (k)
+                if v is not None :
+                    yield k, v
+        return dict (_gen (kw, self._pass_in_call))
+    # end def _child_kw
 
     def _css_classes (self) :
         return (self._css_class, self.__class__.__name__)

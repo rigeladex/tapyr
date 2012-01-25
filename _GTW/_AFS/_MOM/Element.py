@@ -70,6 +70,8 @@
 #    24-Jan-2012 (CT) Redefine `Field.__call__`
 #                     and `Field_Composite.__call__` to pass `f_kw` to `__super`
 #    24-Jan-2012 (CT) Change `Field_Entity.__call__` to pass `f_kw` to `__super`
+#    25-Jan-2012 (CT) Redefine `Field_Entity._call_iter` to consider `prefilled`
+#    25-Jan-2012 (CT) Use `_child_kw`
 #    ««revision-date»»···
 #--
 
@@ -316,7 +318,7 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
     _real_name = "Field_Composite"
 
     def __call__ (self, ETM, entity, ** kw) :
-        f_kw = dict (kw, ** kw.pop (self.name, {}))
+        f_kw = dict (self._child_kw (kw), ** kw.get (self.name, {}))
         return self.__super.__call__ (ETM, entity, ** f_kw)
     # end def __call__
 
@@ -343,7 +345,7 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
     _real_name = "Field_Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
-        f_kw = dict (kw, ** kw.pop (self.name, {}))
+        f_kw = dict (self._child_kw (kw), ** kw.get (self.name, {}))
         if self.type_name == ETM.type_name :
             result = self.__super.__call__ (ETM, entity, ** f_kw)
         else :
@@ -370,6 +372,12 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
     def applyf (self, value, scope, entity, ** kw) :
         return value.entity
     # end def applyf
+
+    def _call_iter (self, ETM, entity, ** kw) :
+        if not (self.prefilled or kw.get ("prefilled")) :
+            return self.__super._call_iter (ETM, entity, ** kw)
+        return ()
+    # end def _call_iter
 
 Field_Entity = _MOM_Field_Entity_ # end class
 

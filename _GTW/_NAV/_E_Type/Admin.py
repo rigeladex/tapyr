@@ -1115,13 +1115,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return tuple (a.name for a in ichain (E_Type.primary, E_Type.user_attr))
     # end def _auto_list_display
 
-    def changer (self, pid = None, form_parameters = None, ** kw) :
+    def changer (self, pid = None, ** kw) :
         kw = dict (self.child_attrs.get ("Changer", {}), ** kw)
         return self.Changer \
             ( pid
-            , form_parameters = form_parameters or {}
+            , form_parameters = dict (kw) if kw else {}
             , parent          = self
-            , ** kw
             )
     # end def changer
 

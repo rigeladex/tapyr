@@ -36,16 +36,10 @@
 
 from   __future__  import unicode_literals
 
-def show_dir (o) :
-    return list (x for x in dir (o) if "a" <= x [0] <= "z")
-
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
-
-    >>> show_dir (PAP.Person.E_Type.AQ)
-    ['pop_to_self']
 
     >>> for aq in PAP.Person.E_Type.AQ.Attrs :
     ...     print aq
@@ -56,9 +50,6 @@ _test_code = """
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-
-    >>> show_dir ( PAP.Person.E_Type.AQ)
-    ['first_name', 'last_name', 'lifetime', 'middle_name', 'pop_to_self', 'salutation', 'sex', 'title']
 
     >>> paq = MOM.Attr.Querier.E_Type (PAP.Person.E_Type, MOM.Attr.Selector.all)
     >>> for aq in paq.Attrs :
@@ -96,9 +87,6 @@ _test_code = """
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
 
-    >>> show_dir ( PAP.Person_has_Phone.E_Type.AQ)
-    ['pop_to_self']
-
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.Atoms :
     ...     print aq
     <left.last_name.AQ [Attr.Type.Querier String_FL]>
@@ -116,9 +104,6 @@ _test_code = """
     <right.desc.AQ [Attr.Type.Querier String]>
     <extension.AQ [Attr.Type.Querier String]>
     <desc.AQ [Attr.Type.Querier String]>
-
-    >>> show_dir ( PAP.Person_has_Phone.E_Type.AQ)
-    ['desc', 'extension', 'left', 'pop_to_self', 'right']
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Atoms :
     ...     print aq
