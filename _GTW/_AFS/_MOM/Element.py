@@ -240,7 +240,10 @@ class _MOM_Entity_Link_ (AE.Entity_Link, _MOM_Entity_MI_) :
         if entity is not None :
             if not isinstance (entity, assoc.E_Type) :
                 n, link = assoc.query_1 (** { self.role_name : entity })
-        return self.__super.__call__ (assoc, link, role_entity = entity, ** kw)
+                kw.update (role_entity = entity)
+            else :
+                kw.update (role_entity = kw.get ("outer_entity"))
+        return self.__super.__call__ (assoc, link, ** kw)
     # end def __call__
 
     def instance_call (self, assoc, link, ** kw) :
