@@ -1,6 +1,6 @@
 {#- jinja template: input.jnj -#}
 {#
-## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -75,8 +75,8 @@
       , class     = GTW.filtered_join (" ", (class, "display"))
       , disabled  = True
       , name      = None
-      , title     = elem.uid
-      , value     = elem.uid
+      , title     = elem.ui_display
+      , value     = elem.ui_display
       )
   }}
 {%- endmacro -%} {#- id_entity -#}

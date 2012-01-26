@@ -17,7 +17,7 @@ FB : Form ''
               FB-0:2::0-1:0:0:0 : Field 'Name', anchor = `Field_Entity 'Event'`, completer = name,date
               FB-0:2::0-1:0:0:1 : Field_Composite 'Date', anchor = `Field_Entity 'Event'`, completer = date,name
                 FB-0:2::0-1:0:0:1.0 : Field 'Start', anchor = `Field_Composite 'Date'`, completer = start
-                FB-0:2::0-1:0:0:1.1 : Field 'Finish', anchor = `Field_Composite 'Date'`
+                FB-0:2::0-1:0:0:1.1 : Field 'Finish', anchor = `Field_Composite 'Date'`, completer = finish
         FB-0:2::0-2 : Fieldset 'required'
           FB-0:2::0-2:0 : Field_Entity 'Skipper', anchor = `Entity_Link 'Boat_in_Regatta'`
             FB-0:2::0-2:0:0 : Field_Entity 'Person', anchor = `Field_Entity 'Skipper'`, completer = left,nation,mna_number,club
@@ -171,16 +171,10 @@ FB-0:2::0 value :
             $id = "FB-0:2::0-2:0:3"
             anchor_id = "FB-0:2::0-2:0"
             edit :
-                cid :
-
-                pid :
 
             FB-0:2::0-2:0:3:0 :
                 init = ""
             init :
-                cid :
-
-                pid :
 
             sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
         init :
@@ -338,16 +332,10 @@ Form values :
                 $id = "FB-0:2::0-2:0:3"
                 anchor_id = "FB-0:2::0-2:0"
                 edit :
-                    cid :
-
-                    pid :
 
                 FB-0:2::0-2:0:3:0 :
                     init = ""
                 init :
-                    cid :
-
-                    pid :
 
                 sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
             init :
@@ -386,7 +374,6 @@ $GTW :
                     roots :
                         0 :
                             $id = "FB-0"
-                            allow_new = true
                             children :
                                 0 = "FB-0:0"
                                 1 = "FB-0:1"
@@ -441,7 +428,6 @@ $GTW :
                                 sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
                         1 :
                             $id = "FB-0:2::0"
-                            allow_new = true
                             anchor_id = "FB-0"
                             children :
                                 0 = "FB-0:2::0-0"
@@ -562,16 +548,10 @@ $GTW :
                                         $id = "FB-0:2::0-2:0:3"
                                         anchor_id = "FB-0:2::0-2:0"
                                         edit :
-                                            cid :
-
-                                            pid :
 
                                         FB-0:2::0-2:0:3:0 :
                                             init = ""
                                         init :
-                                            cid :
-
-                                            pid :
 
                                         sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
                                     init :
@@ -592,7 +572,6 @@ $GTW :
                         sid = 0
                 FB-0 :
                     $id = "FB-0"
-                    allow_new = true
                     children :
                         0 = "FB-0:0"
                         1 = "FB-0:1"
@@ -775,7 +754,6 @@ $GTW :
                 FB-0:2 :
                     $id = "FB-0:2"
                     _super = undefined
-                    allow_new = true
                     anchor_id = "FB-0"
                     children :
                         0 = "FB-0:2::0"
@@ -787,7 +765,6 @@ $GTW :
                     function update(dict)
                 FB-0:2::0 :
                     $id = "FB-0:2::0"
-                    allow_new = true
                     anchor_id = "FB-0"
                     children :
                         0 = "FB-0:2::0-0"
@@ -908,16 +885,10 @@ $GTW :
                                 $id = "FB-0:2::0-2:0:3"
                                 anchor_id = "FB-0:2::0-2:0"
                                 edit :
-                                    cid :
-
-                                    pid :
 
                                 FB-0:2::0-2:0:3:0 :
                                     init = ""
                                 init :
-                                    cid :
-
-                                    pid :
 
                                 sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
                             init :
@@ -1134,6 +1105,12 @@ $GTW :
                     $id = "FB-0:2::0-1:0:0:1.1"
                     _super = undefined
                     anchor_id = "FB-0:2::0-1:0:0:1"
+                    completer :
+                        embedded_p = true
+                        entity_p = false
+                        names :
+                            0 = "finish"
+                        treshold = 4
                     kind = "optional"
                     label = "Finish"
                     name = "finish"
@@ -1216,16 +1193,10 @@ $GTW :
                             $id = "FB-0:2::0-2:0:3"
                             anchor_id = "FB-0:2::0-2:0"
                             edit :
-                                cid :
-
-                                pid :
 
                             FB-0:2::0-2:0:3:0 :
                                 init = ""
                             init :
-                                cid :
-
-                                pid :
 
                             sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
                         init :
@@ -1417,16 +1388,10 @@ $GTW :
                         $id = "FB-0:2::0-2:0:3"
                         anchor_id = "FB-0:2::0-2:0"
                         edit :
-                            cid :
-
-                            pid :
 
                         FB-0:2::0-2:0:3:0 :
                             init = ""
                         init :
-                            cid :
-
-                            pid :
 
                         sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
                 FB-0:2::0-2:0:3:0 :
@@ -1485,7 +1450,6 @@ $GTW :
                 roots :
                     0 :
                         $id = "FB-0"
-                        allow_new = true
                         children :
                             0 = "FB-0:0"
                             1 = "FB-0:1"
@@ -1540,7 +1504,6 @@ $GTW :
                             sid = "hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q"
                     1 :
                         $id = "FB-0:2::0"
-                        allow_new = true
                         anchor_id = "FB-0"
                         children :
                             0 = "FB-0:2::0-0"
@@ -1661,16 +1624,10 @@ $GTW :
                                     $id = "FB-0:2::0-2:0:3"
                                     anchor_id = "FB-0:2::0-2:0"
                                     edit :
-                                        cid :
-
-                                        pid :
 
                                     FB-0:2::0-2:0:3:0 :
                                         init = ""
                                     init :
-                                        cid :
-
-                                        pid :
 
                                     sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
                                 init :
@@ -1714,9 +1671,9 @@ $GTW :
     function update(dict)
     version = "1.0"
 FB-0:2::0 value jsonified :
-  {"init":{"cid":7,"pid":7},"sid":"WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"ORsB0LFjw5hzuHauaOA1M3usp415XdhUdQ0tfQ","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"siR36p3Hsut0dtJQl-h3TjrWxG6qhX9soaq6:g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{"cid":null,"pid":null},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{"cid":null,"pid":null},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
+  {"init":{"cid":7,"pid":7},"sid":"WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"ORsB0LFjw5hzuHauaOA1M3usp415XdhUdQ0tfQ","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"siR36p3Hsut0dtJQl-h3TjrWxG6qhX9soaq6:g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"ORsB0LFjw5hzuHauaOA1M3usp415XdhUdQ0tfQ","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"siR36p3Hsut0dtJQl-h3TjrWxG6qhX9soaq6:g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{"cid":null,"pid":null},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{"cid":null,"pid":null},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"ORsB0LFjw5hzuHauaOA1M3usp415XdhUdQ0tfQ","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"siR36p3Hsut0dtJQl-h3TjrWxG6qhX9soaq6:g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values after change:
     $child_ids :
         0 = "FB-0"
@@ -1861,16 +1818,10 @@ Form values after change:
                 $id = "FB-0:2::0-2:0:3"
                 anchor_id = "FB-0:2::0-2:0"
                 edit :
-                    cid :
-
-                    pid :
 
                 FB-0:2::0-2:0:3:0 :
                     init = ""
                 init :
-                    cid :
-
-                    pid :
 
                 sid = "diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ"
             init :
@@ -1887,6 +1838,6 @@ Form values after change:
         sid = "WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A"
     sid = 0
 Form values jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"ORsB0LFjw5hzuHauaOA1M3usp415XdhUdQ0tfQ","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"siR36p3Hsut0dtJQl-h3TjrWxG6qhX9soaq6:g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{"cid":null,"pid":null},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{"cid":null,"pid":null},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"hr-jUx4QHTv6rHr09XNKhgpG8von21skUQ4C9Q","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qPzMz88f1x3RjbWOPHj4PR2ZthTO:EW:MNddnA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"WL-78I4-zhVeNm1-xWrXjotyN8mcfb-yZGgf6A","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"ORsB0LFjw5hzuHauaOA1M3usp415XdhUdQ0tfQ","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"t0nRFI5GFozOgzRVAMlfEVZeU9oCHiVfFTBuWw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"siR36p3Hsut0dtJQl-h3TjrWxG6qhX9soaq6:g","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"fDjH5uIO03Wdnc5gX3D7C88Msxfp807Dd15LdA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"jCVvrVL7cxthrwL4:mPenABA:H4vtKSITQhTuA","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values of copy jsonified after change:
   {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"NlcOLOnkFT9tdwf027AmLo5cyc8NKlL6iEVddg","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"2SMjmpittgN68fuUf1yK7xN-uRxHK4q2kDJOlA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"anchor_id":"FB-0","FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"MilQWW-BQ:1Kfxi2ptEelkCAqwhaXWaRbFloTA","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"init":{},"sid":"emH:n2fr5Vojp8:mNyEhadFeTvrt0Hb26l7S4Q","role_id":"FB-0","edit":{}},"FB-0:2::0-1:0":{"init":{},"sid":"n4dFoUTWL2ZKZ1e-igGdLTtkVfW3LOxorspVfw","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"EgH8LtkA05g5MO-6ez4Hbj7J:Lb-almSesfpGQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"edit":"Himmelfahrt","init":""},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:1.1":{"edit":"2008/05/01","init":""}}}},"FB-0:2::0-2:0":{"init":{},"sid":"VdaPLnEfWE8YrlzFrGXYLZgp5jLgdQt1avEw7A","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":"Z:YWrkrkIu19OHcrW0W6DFmkEXuuZ7TAjiV5qQ","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""},"FB-0:2::0-2:0:3":{"init":{},"sid":"diNMsTC-2yU41VucKcBWUSQGe1b0O2mYXb8WjQ","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}

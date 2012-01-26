@@ -524,8 +524,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 session_secret = self.session_secret (handler, fv.sid)
                 self.form_value_apply (fv, scope, fv.sid, session_secret)
                 ikw = dict \
-                    ( allow_new       = json.get ("allow_new")
-                    , collapsed       = json.get ("collapsed")
+                    ( allow_new       = bool (json.get ("allow_new"))
+                    , collapsed       = bool (json.get ("collapsed"))
                     , _sid            = fv.sid
                     , _session_secret = session_secret
                     )
@@ -566,7 +566,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 result ["completions"] = n = int (obj is not None)
                 if n == 1 :
                     ikw = dict \
-                        ( allow_new        = handler.json.get ("allow_new")
+                        ( allow_new        = bool (handler.json.get ("allow_new"))
                         , collapsed        = False
                         , copy             = False
                         , _sid             = json.sid
@@ -715,8 +715,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if pid is not None and pid != "null" :
                     obj = context ["instance"] = self.pid_query (ETM, pid)
                 ikw = dict \
-                    ( allow_new       = req_data.get ("allow_new")
-                    , collapsed       = req_data.get ("collapsed")
+                    ( allow_new       = bool (req_data.get ("allow_new"))
+                    , collapsed       = bool (req_data.get ("collapsed"))
                     , copy            = req_data.get ("copy")
                     , _sid            = sid
                     , _session_secret = session_secret
@@ -1307,7 +1307,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 except (TypeError, ValueError, LookupError) :
                     pass
                 else :
-                    f.uid = o.ui_display
+                    f.ui_display = o.ui_display
     # end def _fix_filters
 
 # end class Admin

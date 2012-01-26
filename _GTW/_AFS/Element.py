@@ -102,6 +102,8 @@
 #                     (in `__str__`, `_value_sig` and `_value_sig_t`)
 #    25-Nov-2011 (CT) Add `renderer_iter`
 #    25-Jan-2012 (CT) Factor `_child_kw`, add `_pass_in_call`
+#    26-Jan-2012 (CT) Add support for `form_kw`, change `_child_kw` accordingly
+#    26-Jan-2012 (CT) Change `Entity.__call__` to not add `allow_new` to `kw`
 #    ««revision-date»»···
 #--
 
@@ -160,10 +162,7 @@ class _Element_ (TFL.Meta.Object) :
     widget          = None
     _css_class      = None
     _id             = None
-    _pass_in_call   = \
-        ( "copy", "prefilled", "readonly", "renderer"
-        , "_sid", "_session_secret"
-        )
+    _pass_form_kw   = ("prefilled", "readonly", "renderer")
     _pop_allow_new  = False
     _pop_in_call    = ("collapsed", )
     _pop_to_self    = \
@@ -171,7 +170,7 @@ class _Element_ (TFL.Meta.Object) :
         , "id", "id_sep", "needs_value", "prefilled", "readonly"
         , "renderer", "required", "ui_name", "widget"
         )
-    _lists_to_combine   = ("_pop_to_self", "_pop_in_call", "_pass_in_call")
+    _lists_to_combine   = ("_pop_to_self", "_pop_in_call", "_pass_form_kw")
 
     def __init__ (self, ** kw) :
         self.pop_to_self  (kw, * self._pop_to_self)
@@ -260,6 +259,7 @@ class _Element_ (TFL.Meta.Object) :
     # end def display
 
     def instantiated (self, id, * args, ** kw) :
+        kw.setdefault ("form_kw", {})
         new_id_suffix = kw.pop ("new_id_suffix", None)
         this          = self
         if new_id_suffix :
@@ -294,12 +294,7 @@ class _Element_ (TFL.Meta.Object) :
     # end def _call_iter
 
     def _child_kw (self, kw) :
-        def _gen (kw, pass_in_call) :
-            for k in pass_in_call :
-                v = kw.get (k)
-                if v is not None :
-                    yield k, v
-        return dict (_gen (kw, self._pass_in_call))
+        return dict (kw, form_kw = kw ["form_kw"].get (self.name, {}))
     # end def _child_kw
 
     def _css_classes (self) :
@@ -325,9 +320,14 @@ class _Element_ (TFL.Meta.Object) :
     # end def _id_children
 
     def _instance_kw (self, * args, ** kw) :
-        result = dict (kw)
+        result  = dict (kw)
+        form_kw = result ["form_kw"]
+        if form_kw :
+            for k in self._pass_form_kw :
+                if k in form_kw :
+                    result [k] = form_kw [k]
         if self.needs_value :
-            result ["value"] = self._value (* args, ** kw)
+            result ["value"] = self._value (* args, ** result)
         if self._pop_allow_new :
             result.pop ("allow_new", None)
         return result
@@ -348,7 +348,7 @@ class _Element_ (TFL.Meta.Object) :
     # end def _set_id
 
     def _value (self, * args, ** kw) :
-        p = self.prefilled or kw.get ("prefilled")
+        p = self.prefilled or kw ["form_kw"].get ("prefilled")
         return {"prefilled" : True} if p else {}
     # end def _value
 
@@ -434,7 +434,6 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        kw.setdefault ("allow_new", True)
         result = self.__super.__call__ (* args, ** kw)
         self._update_sid (result, ** kw)
         return result
@@ -506,6 +505,7 @@ class Entity_List (_Field_MI_, _Element_List_) :
     # end def copy
 
     def instantiated (self, id, * args, ** kw) :
+        kw.setdefault ("form_kw", {})
         new_id_suffix = kw.pop ("new_id_suffix")
         child         = self.new_child (new_id_suffix, {})
         return child (* args, ** kw)
@@ -657,8 +657,6 @@ class Form (_Element_List_) :
     renderer       = "afs_div_seq"
     Table          = {}
 
-    _pop_allow_new = True
-
     def __init__ (self, id, children, ** kw) :
         self.id_map = {}
         Table = self.Table
@@ -673,6 +671,11 @@ class Form (_Element_List_) :
         self._id_children     (id, children, self.id_map)
         self._anchor_children ()
     # end def __init__
+
+    def __call__ (self, * args, ** kw) :
+        kw.setdefault ("form_kw", {})
+        return self.__super.__call__ (* args, ** kw)
+    # end def __call__
 
     @Once_Property
     def dynamic_children_p (self) :

@@ -72,6 +72,10 @@
 #    24-Jan-2012 (CT) Change `Field_Entity.__call__` to pass `f_kw` to `__super`
 #    25-Jan-2012 (CT) Redefine `Field_Entity._call_iter` to consider `prefilled`
 #    25-Jan-2012 (CT) Use `_child_kw`
+#    26-Jan-2012 (CT) Factor `_MOM_Entity_MI_`,
+#                     move code from its `_value` to newly redefined `__call__`
+#    26-Jan-2012 (CT) Redefine `_MOM_Entity_._instance_kw` to add `allow_new`
+#    26-Jan-2012 (CT) Add support for `form_kw`; add `show_defaults`
 #    ««revision-date»»···
 #--
 
@@ -106,11 +110,21 @@ class _MOM_Element_ (AE._Element_) :
 
 Element = _MOM_Element_ # end class
 
-class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
-    """Model a MOM-specific sub-form for a single entity."""
+class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
 
-    _real_name = "Entity"
     init       = {}
+
+    def __call__ (self, ETM, entity, ** kw) :
+        assert ETM.type_name == self.type_name, \
+             "%s <-> %s" % (ETM.type_name, self.type_name)
+        if entity is None and "init" in kw ["form_kw"] :
+            entity = kw ["form_kw"] ["init"]
+        if entity is not None :
+            assert isinstance (entity, ETM.E_Type), \
+                "%s <-> %r" % (ETM, entity)
+        result = self.__super.__call__ (ETM, entity, ** kw)
+        return result
+    # end def __call__
 
     def apply (self, value, scope, ** kw) :
         pid = value.edit.get ("pid")
@@ -164,27 +178,30 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
                 ( _display = entity.ui_display
                 , entity   = entity
                 )
+        prefilled = self.prefilled or result.get ("prefilled")
+        if prefilled :
+            result.update \
+                ( collapsed = True
+                , prefilled = prefilled
+                )
         return result
     # end def _instance_kw
 
     def _value (self, ETM, entity, ** kw) :
-        assert ETM.type_name == self.type_name, \
-             "%s <-> %s" % (ETM.type_name, self.type_name)
-        if entity is not None :
-            assert isinstance (entity, ETM.E_Type), \
-                "%s <-> %r" % (ETM, entity)
         result = self.__super._value  (ETM, entity, ** kw)
-        key    = "edit" if result.get ("prefilled") else "init"
+        key    = "edit" if kw.get ("prefilled") else "init"
         result [key] = self._value_cp (ETM, entity, ** kw)
         return result
     # end def _value
 
     def _value_cp (self, ETM, entity, ** kw) :
-        return {} if kw.get ("copy", False) else dict \
-            ( cid = getattr (entity, "last_cid",   None)
-            , pid = getattr (entity, "pid",        None)
-            , uid = getattr (entity, "ui_display", None)
-            )
+        result = {}
+        if entity and not kw.get ("copy", False) :
+            result = dict \
+                ( cid = entity.last_cid
+                , pid = entity.pid
+                )
+        return result
     # end def _value_cp
 
     def _value_sig_t (self, instance) :
@@ -194,9 +211,23 @@ class _MOM_Entity_ (_MOM_Element_, AE.Entity) :
             ) + (str (instance.id), str (self.type_name))
     # end def _value_sig_t
 
+# end class _MOM_Entity_MI_
+
+class _MOM_Entity_ (_MOM_Entity_MI_) :
+    """Model a MOM-specific sub-form for a single entity."""
+
+    _real_name = "Entity"
+
+    def _instance_kw (self, ETM, entity, ** kw) :
+        result = self.__super._instance_kw (ETM, entity, ** kw)
+        if "allow_new" not in kw :
+            kw ["allow_new"] = entity is None
+        return result
+    # end def _instance_kw
+
 Entity = _MOM_Entity_ # end class
 
-class _MOM_Entity_Link_ (AE.Entity_Link, Entity) :
+class _MOM_Entity_Link_ (AE.Entity_Link, _MOM_Entity_MI_) :
     """Model a MOM-specific sub-form for a link to entity in containing
        sub-form.
     """
@@ -290,23 +321,18 @@ class _MOM_Field_ (AE.Field) :
     def _value (self, ETM, entity, ** kw) :
         result = self.__super._value (ETM, entity, ** kw)
         attr   = ETM.attributes [self.name]
-        if entity is None and not kw.get ("allow_new") :
-            ### No entity, no `allow_new`:
-            ### * only existing entities can be selected
-            ### * default values interfere with auto-completion
-            ### * don't put them in `result`
-            return result
-        key    = \
-            (    "edit"
-            if   result.get ("prefilled") or kw.get ("copy", False)
-            else "init"
-            )
-        if "init" in kw :
-            result [key] = kw ["init"]
-            key = "init"
-        init = attr.get_raw (entity)
-        if init :
-            result [key] = init
+        if kw.get ("show_defaults", True) :
+            key    = \
+                (    "edit"
+                if   result.get ("prefilled") or kw.get ("copy", False)
+                else "init"
+                )
+            if "init" in kw ["form_kw"] :
+                result [key] = kw ["form_kw"] ["init"]
+                key = "init"
+            init = attr.get_raw (entity)
+            if init :
+                result [key] = init
         return result
     # end def _value
 
@@ -318,7 +344,7 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
     _real_name = "Field_Composite"
 
     def __call__ (self, ETM, entity, ** kw) :
-        f_kw = dict (self._child_kw (kw), ** kw.get (self.name, {}))
+        f_kw = self._child_kw (kw)
         return self.__super.__call__ (ETM, entity, ** f_kw)
     # end def __call__
 
@@ -339,31 +365,41 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
 
 Field_Composite = _MOM_Field_Composite_ # end class
 
-class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
+class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
     """Model a MOM-specific entity-holding field of an AJAX-enhanced form."""
 
     _real_name = "Field_Entity"
 
     def __call__ (self, ETM, entity, ** kw) :
-        f_kw = dict (self._child_kw (kw), ** kw.get (self.name, {}))
+        f_kw = self._child_kw (kw)
         if self.type_name == ETM.type_name :
+            ### this clause is taken when a part of the form is called
+            ### directly like `Form [id].instantiated (...)`
             result = self.__super.__call__ (ETM, entity, ** f_kw)
         else :
-            attr     = ETM.E_Type.attributes [self.name]
-            a_etm    = attr.etype_manager (ETM)
-            a_entity = getattr (entity, self.name, None)
+            ### this clause is taken when the whole form is processed
+            ### starting with `Form (...)`
+            attr         = ETM.E_Type.attributes [self.name]
+            a_etm        = attr.etype_manager (ETM)
+            a_entity     = getattr (entity, self.name, None)
+            allow_new    = attr.ui_allow_new and f_kw.get ("allow_new", True)
             if a_entity is None and attr.raw_default :
                 a_entity = a_etm.instance (attr.raw_default, raw = True)
-            f_kw     = dict \
+            f_kw         = dict \
                 ( f_kw
-                , allow_new = attr.ui_allow_new and f_kw.get ("allow_new", True)
-                , collapsed =
+                , allow_new      = allow_new
+                , collapsed      =
                     (   f_kw.get    ("collapsed", True)
                     and self.kw.get ("collapsed", True)
                     and not (a_entity is None and attr.is_required)
                     )
-                , outer_entity = entity
-                , role_entity  = None
+                , outer_entity   = entity
+                , role_entity    = None
+                , show_defaults  = a_entity is not None or allow_new
+                    ### No entity, no `allow_new`
+                    ### * only existing entities can be selected
+                    ### * default values interfere with auto-completion
+                    ### --> don't show them in form
                 )
             result = self.__super.__call__ (a_etm, a_entity, ** f_kw)
         return result
@@ -374,7 +410,7 @@ class _MOM_Field_Entity_ (Entity, AE.Field_Entity) :
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
-        if not (self.prefilled or kw.get ("prefilled")) :
+        if not (self.prefilled or kw ["form_kw"].get ("prefilled")) :
             return self.__super._call_iter (ETM, entity, ** kw)
         return ()
     # end def _call_iter
@@ -383,6 +419,8 @@ Field_Entity = _MOM_Field_Entity_ # end class
 
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
+
+    _pop_allow_new = True
 
     def __init__ (self, ** kw) :
         kw.pop ("completer", None)

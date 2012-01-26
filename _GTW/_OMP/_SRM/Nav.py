@@ -104,8 +104,7 @@ class Admin (object) :
     Team               = dict \
         ( ETM          = "GTW.OMP.SRM.Team"
         , sort_key     = TFL.Sorted_By
-            ( "-regatta"
-            # "-regatta.event.date.start"
+            ( "-regatta.event.date.start"
             , "name"
             )
         , list_display = ("regatta", "name", "club", "leader")
