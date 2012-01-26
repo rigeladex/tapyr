@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -68,6 +68,7 @@
 //                     completion
 //    17-Nov-2011 (CT) Use `console.error` instead of `alert` (most situations)
 //     7-Dec-2011 (CT) Change plugin name to `gtw_afs_form`
+//    26-Jan-2012 (CT) Add `type!=hidden` and `elem`-guard to `_setup_callbacks`
 //    ««revision-date»»···
 //--
 
@@ -441,15 +442,17 @@
         };
         var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
-            $(":input", context).each
+            $(":input[type!=hidden]", context).each
                 ( function (n) {
                     var inp$ = $(this);
                     var id     = inp$.attr ("id");
                     var elem   = $AFS_E.get (id);
-                    elem.inp$  = inp$;
-                    inp$.change (field_change_cb);
-                    if ("completer" in elem) {
-                        setup_completer (options, elem);
+                    if (elem) {
+                        elem.inp$  = inp$;
+                        inp$.change (field_change_cb);
+                        if ("completer" in elem) {
+                            setup_completer (options, elem);
+                        };
                     };
                   }
                 );
