@@ -151,6 +151,7 @@
 #    24-Jan-2012 (CT) Add property `sort_key` (default `E_Type.sorted_by_epk`)
 #    24-Jan-2012 (CT) Change `Changer.rendered` to pass `.form_parameters`
 #    24-Jan-2012 (CT) Add `changer`, put properties before methods
+#    26-Jan-2012 (CT) Change `Changer.rendered` to pass `referrer` to `.form`
 #    ««revision-date»»···
 #--
 
@@ -497,6 +498,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 sid, session_secret = self._new_edit_session (handler)
                 form = self.form \
                     ( obj
+                    , referrer        = request.referrer
                     , _sid            = sid
                     , _session_secret = session_secret
                     , ** self.form_parameters

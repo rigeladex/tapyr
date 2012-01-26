@@ -1,6 +1,6 @@
 {#- jinja template: afs.jnj -#}
 {#
-## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -37,6 +37,7 @@
 ##    14-Oct-2011 (CT) `do_menu` added
 ##     4-Nov-2011 (CT) Change `do_element` to `strip` whitespace from `cssc`
 ##     4-Nov-2011 (CT) Add `title` to `do_head`, add `show_desc` to `do_element`
+##    26-Jan-2012 (CT) Add `next_form_kw` to `Form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -102,6 +103,15 @@
 {%- macro Form (form) -%}
   {#- Render a form for a AFS `Form` instance `form` -#}
   {%- set form_caller = kwargs.pop ("caller", None) -%}
+  {%- if "next_form_kw" not in kwargs and form.referrer %}
+    {%- do kwargs.update
+        ( next_form_kw = dict
+            ( name     = "__next__"
+            , value    = form.referrer
+            )
+        )
+    -%}
+  {% endif -%}
   {% call FM.form
       ( action     = ""
       , class      = form.css_class

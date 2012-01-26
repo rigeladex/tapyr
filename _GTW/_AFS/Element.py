@@ -104,6 +104,7 @@
 #    25-Jan-2012 (CT) Factor `_child_kw`, add `_pass_in_call`
 #    26-Jan-2012 (CT) Add support for `form_kw`, change `_child_kw` accordingly
 #    26-Jan-2012 (CT) Change `Entity.__call__` to not add `allow_new` to `kw`
+#    26-Jan-2012 (CT) Add `referrer` to `Form`
 #    ««revision-date»»···
 #--
 
@@ -654,6 +655,7 @@ class Form (_Element_List_) :
     het_h          = "h1"      ### HTML element type to be used for heading
     id_sep         = _Element_List_.root_sep
     needs_value    = True
+    referrer       = None
     renderer       = "afs_div_seq"
     Table          = {}
 
@@ -674,6 +676,7 @@ class Form (_Element_List_) :
 
     def __call__ (self, * args, ** kw) :
         kw.setdefault ("form_kw", {})
+        self.referrer = kw.pop ("referrer", None)
         return self.__super.__call__ (* args, ** kw)
     # end def __call__
 

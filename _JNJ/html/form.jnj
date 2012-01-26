@@ -1,6 +1,6 @@
 {#- jinja template: form.jnj -#}
 {#
-## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -72,6 +72,7 @@
 ##                     `<a>` for `Cancel`
 ##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
 ##    12-Nov-2010 (CT) `form` changed to include `div.buttons` only if necessary
+##    26-Jan-2012 (CT) Use `request.path_x` for `next`, if available
 ##    ««revision-date»»···
 ##--
 #}
@@ -277,15 +278,15 @@
 {%- endmacro -%} {#- inlines_as_table -#}
 
 {%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
-  {%- set Auth          = page.SC.Auth %}
-  {%- set login_caller  = kwargs.pop ("caller", None) -%}
-  {%- set action        = kwargs.pop ("action", Auth.href_login) -%}
-  {%- set next          = kwargs.pop ("next",   request.path) -%}
+  {%- set Auth     = page.SC.Auth %}
+  {%- set l_caller = kwargs.pop ("caller", None) -%}
+  {%- set action   = kwargs.pop ("action", Auth.href_login) -%}
+  {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
   {%- if next.endswith (Auth.href_login) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
   {% call form (action = action, ** kwargs) -%}
-    {%- if login_caller -%}{{- login_caller () -}}{%- endif -%}
+    {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
       <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
       <li>
@@ -333,15 +334,15 @@
 {%- endmacro -%} {#- login_inline -#}
 
 {%- macro logout_inline (page, request) -%}
-  {%- set Auth          = page.SC.Auth %}
-  {%- set logout_caller = kwargs.pop ("caller", None) -%}
-  {%- set action        = kwargs.pop ("action", Auth.href_logout) -%}
-  {%- set next          = kwargs.pop ("next",   request.path) -%}
+  {%- set Auth     = page.SC.Auth %}
+  {%- set l_caller = kwargs.pop ("caller", None) -%}
+  {%- set action   = kwargs.pop ("action", Auth.href_logout) -%}
+  {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
   {%- if next.endswith (Auth.href_logout) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
   {% call form (action = action, ** kwargs) -%}
-    {%- if logout_caller -%}{{- logout_caller () -}}{%- endif -%}
+    {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
       <li>
         {{ X.input.submit
