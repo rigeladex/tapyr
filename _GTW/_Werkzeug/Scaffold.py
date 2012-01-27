@@ -29,6 +29,7 @@
 #
 # Revision Dates
 #    27-Jan-2012 (CT) Recreation (re-factored from SC-AMS specific code)
+#    27-Jan-2012 (CT) Factor `_wsgi_app`
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ import _JNJ.Templateer
 from   _TFL                import sos
 import _TFL.SMTP
 
-class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
+class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
 
     _real_name            = "Scaffold"
 
@@ -78,7 +79,7 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
 
     @classmethod
     def do_run_server (cls, cmd) :
-        app = cls.do_wsgi (cmd)
+        app = cls._wsgi_app (cmd)
         kw  = dict (port = cmd.port)
         if cmd.watch_media_files :
             kw ["reload_extra_files"] = getattr \
@@ -88,50 +89,7 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
 
     @classmethod
     def do_wsgi (cls, cmd) :
-        apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        if not cmd.suppress_translation_loading :
-            try :
-                ldir = sos.path.join (cls.app_path, "locale")
-                translations = TFL.I18N.load \
-                    ( * cmd.languages
-                    , domains    = ("messages", )
-                    , use        = cmd.locale_code
-                    , locale_dir = ldir
-                    )
-            except ImportError :
-                translations = None
-        TFL.user_config.set_defaults \
-            (time_zone = TFL.user_config.get_tz (cmd.time_zone))
-        cls._setup_cache ()
-        nav = cls.create_nav (cmd, apt, url, Create_Scope = cls._load_scope)
-        if cmd._name.endswith ("run_server") :
-            nav.Run_on_Launch.append ((cls.init_app_cache, nav))
-        else :
-            cls.init_app_cache (nav)
-        HTTP           = nav.HTTP
-        prefix         = "media"
-        media_dir      = sos.path.join (cls.web_src_root, "media")
-        static_handler = HTTP.Static_File_Handler \
-            (prefix, media_dir, GTW.static_file_map)
-        app            = HTTP.Application \
-            ( ("", HTTP.NAV_Request_Handler, dict (nav_root = nav))
-            , Session_Class       = GTW.File_Session
-            , auto_reload         = cmd.auto_reload
-            , cookie_salt         = cls.SALT
-            , default_locale_code = cmd.locale_code
-            , debug               = cmd.debug
-            , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
-            , encoding            = nav.encoding
-            , i18n                = True
-            , login_url           = nav.SC.Auth.href_login
-            , session_id          = bytes ("SESSION_ID")
-            , static_handler      = static_handler
-            , user_session_ttl    = cmd.user_session_ttl.date_time_delta
-            )
-        nav.Templateer.env.static_handler = app.handlers [0]
-        if cmd.Break :
-            TFL.Environment.py_shell (vars ())
-        return app
+        return cls._wsgi_app (cmd)
     # end def do_wsgi
 
     @classmethod
@@ -172,8 +130,9 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
 
     @classmethod
     def _create_scope (cls, apt, url, verbose = False) :
-        result = super  (Scaffold, cls)._create_scope (apt, url, verbose)
-        cls.fixtures    (result)
+        result = super (_GTW_Werkzeug_Scaffold_, cls)._create_scope \
+            (apt, url, verbose)
+        cls.fixtures (result)
         return result
     # end def _create_scope
 
@@ -188,7 +147,56 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
             cls._setup_cache_p = True
     # end def _setup_cache
 
-Scaffold =_GTW_Werkzeug_Scaffold # end class
+    @classmethod
+    def _wsgi_app (cls, cmd) :
+        apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        if not cmd.suppress_translation_loading :
+            try :
+                ldir = sos.path.join (cls.app_path, "locale")
+                translations = TFL.I18N.load \
+                    ( * cmd.languages
+                    , domains    = ("messages", )
+                    , use        = cmd.locale_code
+                    , locale_dir = ldir
+                    )
+            except ImportError :
+                translations = None
+        TFL.user_config.set_defaults \
+            (time_zone = TFL.user_config.get_tz (cmd.time_zone))
+        cls._setup_cache ()
+        prefix         = "media"
+        media_dir      = sos.path.join (cls.web_src_root, "media")
+        nav            = cls.create_nav \
+            (cmd, apt, url, Create_Scope = cls._load_scope)
+        HTTP           = nav.HTTP
+        static_handler = HTTP.Static_File_Handler \
+            (prefix, media_dir, GTW.static_file_map)
+        app            = HTTP.Application \
+            ( ("", HTTP.NAV_Request_Handler, dict (nav_root = nav))
+            , Session_Class       = GTW.File_Session
+            , auto_reload         = cmd.auto_reload
+            , cookie_salt         = cls.SALT
+            , default_locale_code = cmd.locale_code
+            , debug               = cmd.debug
+            , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
+            , encoding            = nav.encoding
+            , i18n                = True
+            , login_url           = nav.SC.Auth.href_login
+            , session_id          = bytes ("SESSION_ID")
+            , static_handler      = static_handler
+            , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+            )
+        nav.Templateer.env.static_handler = app.handlers [0]
+        if cmd.Break :
+            TFL.Environment.py_shell (vars ())
+        if cmd._name.endswith ("run_server") :
+            nav.Run_on_Launch.append ((cls.init_app_cache, nav))
+        else :
+            cls.init_app_cache (nav)
+        return app
+    # end def _wsgi_app
+
+Scaffold = _GTW_Werkzeug_Scaffold_ # end class
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")

@@ -51,6 +51,7 @@
 #     1-Jun-2011 (CT) `postify_a` added
 #    25-Nov-2011 (CT) Add `template_iter`
 #    24-Jan-2012 (CT) Remove `_Media`
+#    27-Jan-2012 (CT) Remove guard for `T.electric.default` from `_pns_entries`
 #    ««revision-date»»···
 #--
 
@@ -122,7 +123,7 @@ class Admin_Group (GTW.NAV.Dir) :
             PNS = app_type.PNS_Map [pns]
             Nav = getattr (getattr (PNS, "Nav", None), "Admin", None)
             for T in app_type.etypes_by_pns [pns] :
-                if T.is_relevant and T.show_in_ui and not T.electric.default :
+                if T.is_relevant and T.show_in_ui :
                     admin = ET_Map [T.type_name].admin
                     if (not admin) or self.show_aliases :
                         aa = getattr (T, "admin_args", {})

@@ -1283,7 +1283,7 @@ class Root (_Dir_) :
             CS = MOM.Scope.load
         result = CS (self.top.App_Type, self.top.DB_Url)
         if self.DEBUG :
-            print "Created", result
+            print "Loaded", result
         return result
     # end def scope
 

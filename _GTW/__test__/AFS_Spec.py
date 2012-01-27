@@ -114,7 +114,7 @@ _test_code = """
     Fieldset necessary None u'' afs_div_seq
     Field sex Sex u'Sex of a person.' None
     Fieldset optional None u'' afs_div_seq
-    Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_div_seq
+    Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_fc_horizo
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
@@ -1880,7 +1880,7 @@ _test_code = """
     Fieldset necessary  u'' afs_div_seq
     Field sex Sex u'Sex of a person.' None
     Fieldset optional  u'' afs_div_seq
-    Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_div_seq
+    Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_fc_horizo
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
