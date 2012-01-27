@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Martin Glueck All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
 #
@@ -24,61 +24,57 @@
 #
 # Purpose
 #    Provide a scaffold for creating instances of MOM.App_Type and MOM.Scope,
-#    managing their databases, and creating a WSGI application or staring a
+#    managing their databases, and creating a WSGI application or starting a
 #    development web server based on the werkzeug framework
 #
 # Revision Dates
-#    18-Nov-2011 (MG) Creation
-#    22-Nov-2011 (MG) Import of `GTW.NAV.Template_Media_Cache` added
-#     3-Jan-2012 (CT) Fix `nav.Templateer.env.static_handler`
+#    27-Jan-2012 (CT) Recreation (re-factored from SC-AMS specific code)
 #    ««revision-date»»···
 #--
 
 from   __future__          import unicode_literals
+
 from   _TFL                import TFL
 from   _GTW                import GTW
-import _GTW._OMP.Scaffold
-import _GTW._Werkzeug
+
+import _GTW.Media
 import _GTW._NAV.Base
 import _GTW._NAV.Console
-import _GTW._NAV.Template_Media_Cache
 import _GTW._NAV.Permission
+import _GTW._NAV.Template_Media_Cache
 import _GTW._NAV._E_Type.Admin
 import _GTW._NAV._E_Type.Site_Admin
+import _GTW._OMP.Scaffold
+import _GTW._Werkzeug
+
+import _JNJ.Templateer
+
 from   _TFL                import sos
 import _TFL.SMTP
-import _JNJ.Templateer
 
 class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
 
-    _real_name = "Scaffold"
+    _real_name            = "Scaffold"
 
-    ### SALT should be change from every real application
-    SALT                = bytes \
-        ("Needs to defined in the application to a unique string")
+    SALT                  = bytes \
+        ("Needs to defined uniquely for each application")
 
-    Default_Locale_Code = "de"
-    base_template_dir   = sos.path.dirname (_JNJ.__file__)
+    base_template_dir     = sos.path.dirname (_JNJ.__file__)
 
-    cmd___server__opts  = \
-        [ "suppress_translation_loading:B?Don't load the the translation "
-            "files during startup"
-        ]
-    cmd__run_server__opts = GTW.OMP.Scaffold.cmd__run_server__opts + \
-       cmd___server__opts                                          + \
-       [ "watch_media_files:B?Add the .media files to list files watched "
-         "by automatic reloader"
-       ]
+    cmd___server__opts    = \
+        ( "suppress_translation_loading:B"
+            "?Don't load the the translation files during startup"
+        ,
+        )
+    cmd__run_server__opts = cmd___server__opts + \
+        ( "watch_media_files:B"
+            "?Add the .media files to list files watched by automatic reloader"
+        ,
+        )
 
-    cmd__wsgi__opts       = GTW.OMP.Scaffold.cmd__wsgi__opts       + \
-       cmd___server__opts
+    cmd__wsgi__opts       = cmd___server__opts
 
-    @classmethod
-    def _create_scope (cls, apt, url, verbose = False) :
-        result = super  (Scaffold, cls)._create_scope (apt, url, verbose)
-        cls.fixtures    (result)
-        return result
-    # end def _create_scope
+    _setup_cache_p        = False
 
     @classmethod
     def do_run_server (cls, cmd) :
@@ -93,25 +89,28 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
     @classmethod
     def do_wsgi (cls, cmd) :
         apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        ###    (cmd, apt, url, Create_Scope = cls._load_scope)
         if not cmd.suppress_translation_loading :
             try :
-                ldir = sos.path.join (sos.path.dirname (__file__), "locale")
+                ldir = sos.path.join (cls.app_path, "locale")
                 translations = TFL.I18N.load \
-                    ( "de", "en"
+                    ( * cmd.languages
                     , domains    = ("messages", )
-                    , use        = "de"
+                    , use        = cmd.locale_code
                     , locale_dir = ldir
                     )
             except ImportError :
                 translations = None
         TFL.user_config.set_defaults \
-            (time_zone = TFL.user_config.get_tz ("Europe/Vienna"))
-        nav            = cls.create_nav \
-            (cmd, apt, url, Create_Scope = cls._load_scope)
+            (time_zone = TFL.user_config.get_tz (cmd.time_zone))
+        cls._setup_cache ()
+        nav = cls.create_nav (cmd, apt, url, Create_Scope = cls._load_scope)
+        if cmd._name.endswith ("run_server") :
+            nav.Run_on_Launch.append ((cls.init_app_cache, nav))
+        else :
+            cls.init_app_cache (nav)
         HTTP           = nav.HTTP
         prefix         = "media"
-        media_dir      = sos.path.join (nav.web_src_root, "media")
+        media_dir      = sos.path.join (cls.web_src_root, "media")
         static_handler = HTTP.Static_File_Handler \
             (prefix, media_dir, GTW.static_file_map)
         app            = HTTP.Application \
@@ -119,7 +118,7 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
             , Session_Class       = GTW.File_Session
             , auto_reload         = cmd.auto_reload
             , cookie_salt         = cls.SALT
-            , default_locale_code = cls.Default_Locale_Code
+            , default_locale_code = cmd.locale_code
             , debug               = cmd.debug
             , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
             , encoding            = nav.encoding
@@ -145,21 +144,21 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
         map_path = sos.path.join (cls.jnj_src, "app_cache.pck")
         def load_cache () :
             try :
-                nav.load_cache (map_path)
+                nav.load_cache  (map_path)
             except IOError :
                 pass
         if nav.DEBUG :
             try :
-                nav.store_cache   (map_path)
-            except EnvironmentError :
-                print "***", map_path
+                nav.store_cache (map_path)
+            except EnvironmentError as exc :
+                print "***", exc, map_path
                 load_cache ()
         else :
             load_cache ()
     # end def init_app_cache
 
-    @staticmethod
-    def _nav_admin_group (name, title, * pnss, ** kw) :
+    @classmethod
+    def nav_admin_group (cls, name, title, * pnss, ** kw) :
         return dict \
             ( sub_dir        = name
             , short_title    = kw.pop ("short_title", name)
@@ -169,7 +168,25 @@ class _GTW_Werkzeug_Scaffold (GTW.OMP.Scaffold) :
             , Type           = kw.pop ("Type", GTW.NAV.E_Type.Admin_Group)
             , ** kw
             )
-    # end def _nav_admin_group
+    # end def nav_admin_group
+
+    @classmethod
+    def _create_scope (cls, apt, url, verbose = False) :
+        result = super  (Scaffold, cls)._create_scope (apt, url, verbose)
+        cls.fixtures    (result)
+        return result
+    # end def _create_scope
+
+    @classmethod
+    def _setup_cache (cls) :
+        if not cls._setup_cache_p :
+            CP = GTW.NAV.Root.Cache_Pickler
+            mc_fix = "media/v"
+            mc_dir = sos.path.join (cls.web_src_root, mc_fix)
+            CP.add (GTW.AFS.MOM.Element.Form)
+            CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
+            cls._setup_cache_p = True
+    # end def _setup_cache
 
 Scaffold =_GTW_Werkzeug_Scaffold # end class
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Nav.
@@ -33,15 +33,16 @@
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    11-Jan-2011 (CT) `rendered` changed to pass `handler` to `update_locals`
 #    11-Mar-2011 (CT) `rendered` changed to update `handler` in all calls
+#    27-Jan-2012 (CT) Use `console_context`
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 from   _TFL.predicate     import dusplit
-from   _MOM.import_MOM    import Q
-import _TFL.Url
+
 import _TFL.I18N
 import _TFL.Py_Interpreter
+import _TFL.Url
 
 from   _GTW           import GTW
 import _GTW._NAV.Base
@@ -297,7 +298,6 @@ class _Py_Console_ (code.InteractiveInterpreter) :
         self.more         = False
         self.input_buffer = []
         code.InteractiveInterpreter.__init__ (self, locls)
-        self.locals.update (Q = Q)
     # end def __init__
 
     def update_locals (self, ** kw) :
@@ -365,7 +365,14 @@ class Console (GTW.NAV.Page) :
     @TFL.Meta.Once_Property
     def console (self) :
         top = self.top
-        return _Py_Console_ (dict (NAV  = top, page = self, scope = top.scope))
+        return _Py_Console_ \
+            ( dict
+                ( getattr (top, "console_context", {})
+                , NAV   = top
+                , page  = self
+                , scope = top.scope
+                )
+            )
     # end def console
 
     def _completion_cand_cahr (self, candidate, pos) :

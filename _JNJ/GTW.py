@@ -53,6 +53,7 @@
 #    30-Nov-2011 (CT) Add `dir` and `getattr`
 #     1-Dec-2011 (CT) Add `styler`
 #    18-Jan-2012 (CT) Add `attr_join`
+#    27-Jan-2012 (CT) Change `email_uri` to allow tuple argument
 #    ««revision-date»»···
 #--
 
@@ -112,6 +113,8 @@ class GTW (TFL.Meta.Object) :
 
            http://tools.ietf.org/html/rfc3966
         """
+        if text is None and isinstance (email, tuple) :
+            email, text = email
         return self.uri (scheme = "mailto", uri = email, text = text, ** kw)
     # end def email_uri
 
