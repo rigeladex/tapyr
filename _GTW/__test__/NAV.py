@@ -149,44 +149,41 @@ _test_code = """
     >>> css_map = TFL.defaultdict (list)
     >>> for k, v in TTT.css_href_map.iteritems () :
     ...     css_map [v].append (k)
-    >>> for k, vs in sorted (css_map.iteritems ()) :
-    ...     print k
-    ...     for v in sorted (vs) :
-    ...         print "   ", v
-    /media/v/0Pcm-NSOhrQuFrp-1EZ4p2VJNKI.css
-        gallery
-    /media/v/LQFzAXV4CQLMdHTs_74aGFkEuJo.css
-        e_type_admin
-        site_admin
-    /media/v/S1qxm4y7Vuv-5rRscOAg0IQjzxE.css
-        photo
-    /media/v/UEaMBA3iAK_T2Q4GMsoebcV9LsA.css
-        console
-    /media/v/X5kD75KBlBWf-QjaLh3OkXIAMJ4.css
-        400
-        401
-        403
-        404
-        405
-        408
-        500
-        503
-        account_activate
-        account_change_email
-        account_change_password
-        account_register
-        account_reset_password
-        calendar
-        calendar_day
-        html/static.jnj
-        login
-        video
-    /media/v/qJFoRX0222xpkHwtm93N9zK7TQk.css
-        e_type_afs
-        e_type_afs|afs_div_seq
-        e_type_afs|afs_div_seq|afs_fc_horizo
-    /media/v/yTjTWxqppwn8E3XBLz9ZuxaXAU4.css
-        calendar_qx
+    >>> css_users = sorted (sorted (vs) for vs in css_map.itervalues ())
+    >>> print formatted (css_users)
+    [ [ 400
+      , 401
+      , 403
+      , 404
+      , 405
+      , 408
+      , 500
+      , 503
+      , 'account_activate'
+      , 'account_change_email'
+      , 'account_change_password'
+      , 'account_register'
+      , 'account_reset_password'
+      , 'calendar'
+      , 'calendar_day'
+      , 'html/static.jnj'
+      , 'login'
+      , 'video'
+      ]
+    , [ 'calendar_qx' ]
+    , [ 'console' ]
+    ,
+      [ 'e_type_admin'
+      , 'site_admin'
+      ]
+    ,
+      [ 'e_type_afs'
+      , 'e_type_afs|afs_div_seq'
+      , 'e_type_afs|afs_div_seq|afs_fc_horizo'
+      ]
+    , [ 'gallery' ]
+    , [ 'photo' ]
+    ]
 
 """
 
@@ -198,6 +195,10 @@ os.environ.update \
     )
 
 from   _GTW.__test__.model      import *
+
+from   _TFL.Formatter           import Formatter
+
+formatted = Formatter (width = 240)
 
 __test__ = dict \
     ( NAV_test = _test_code
