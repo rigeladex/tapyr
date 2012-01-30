@@ -463,10 +463,10 @@ class M_Id_Entity (M_Entity) :
     _epkified_head = """def epkified_%(suffix)s (cls, %(args)s) :"""
     _epkified_tail = """return (%(epk)s), kw\n"""
 
-    def __init__ (cls, name, bases, dict) :
-        assert "__init__" not in dict, \
+    def __init__ (cls, name, bases, dct) :
+        assert "__init__" not in dct, \
           "%s: please redefine `_finish__init__`, not __init__" % cls
-        cls.__m_super.__init__  (name, bases, dict)
+        cls.__m_super.__init__  (name, bases, dct)
     # end def __init__
 
     def _m_auto_epkified (cls, epk_sig, args, code, suffix) :
@@ -785,7 +785,8 @@ class M_E_Type_Id (M_E_Type) :
     def _m_setup_children (cls, bases, dct) :
         cls.__m_super._m_setup_children (bases, dct)
         if cls.is_relevant :
-            if not any (getattr (b, "is_relevant", False) for b in bases) :
+            rel_bases = any (getattr (b, "is_relevant", False) for b in bases)
+            if not rel_bases :
                 cls.relevant_root = cls
         else :
             cls.relevant_roots = {}

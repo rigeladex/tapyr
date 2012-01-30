@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -176,10 +176,7 @@ class Date_Interval_N (_Ancestor_Essence) :
         class start (_Ancestor.start) :
 
             Kind_Mixins        = (Attr.Sticky_Mixin, )
-
-            def computed_default (self) :
-                return self.now ()
-            # end def computed_default
+            computed_default   = A_Date.now
 
         # end class start
 

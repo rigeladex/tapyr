@@ -127,10 +127,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
             kind               = Attr.Internal
             Kind_Mixins        = (Attr.Init_Only_Mixin, )
-
-            def computed_default (self) :
-                return self.now ()
-            # end def computed_default
+            computed_default   = A_Date.now
 
         # end class registration_date
 

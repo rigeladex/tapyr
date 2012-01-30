@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -42,6 +42,7 @@ _simple_test = r"""
 
 Now, let's try to load this scope again (which should work since we have the
 same database version):
+
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
     >>> scope.guid                      == guid
@@ -50,7 +51,8 @@ same database version):
     True
     >>> scope.destroy ()
 
-Now let's simulate a change of teh database version hash:
+Now let's simulate a change of the database version hash:
+
     >>> apt.db_version_hash = "<a version hash which should never happen>"
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Traceback (most recent call last):
@@ -60,8 +62,10 @@ Now let's simulate a change of teh database version hash:
       Scope database version hash: ...
 
 Cleanup:
+
     >>> apt.db_version_hash = dbv
     >>> apt.delete_database (url)
+
 """
 
 _real_db_create_cmd = r"""
@@ -79,8 +83,7 @@ _real_db_test = r"""
     ...     , env    = env
     ...     )
     >>> sout, serr = cmd.communicate ()
-    >>> print sout.strip ()  # doctest:+ELLIPSIS
-    Ignore _GTW._OMP._EVT.import_EVT
+    >>> print sout.strip ().split ("\n") [-1]  # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> serr
     ''
@@ -90,13 +93,14 @@ _real_db_test = r"""
     Incompatible_DB_Version: Cannot load database because of a database version hash missmatch:
       Tool  database version hash: ...
       Scope database version hash: ...
+
 """
+
 from   _GTW.__test__.model import *
 from   _TFL                import Environment
 import subprocess
-import cStringIO
 import sys
-import  os
+import os
 
 Scaffold.Backend_Default_Path ["SQL"] = "'test.sqlite'"
 # dict (simple_test = _simple_test)
