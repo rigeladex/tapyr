@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -120,7 +120,7 @@ _test_code = """
     >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of (u'Optimist') clashes with existing (u'Optimist')
+    Name_Clash: new definition of GTW.OMP.SRM.Boat_Class (u'Optimist') clashes with existing GTW.OMP.SRM.Boat_Class (u'Optimist')
 
     >>> scope.destroy ()
 
