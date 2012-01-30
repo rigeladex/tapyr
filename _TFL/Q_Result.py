@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,6 +46,8 @@
 #    15-Nov-2011 (CT) Change `_Attrs_Tuple_.__init__` to not pass `* args` to
 #                     `__super` to avoid: `DeprecationWarning:
 #                         object.__init__() takes no parameters`
+#    30-Jan-2012 (CT) Add `_Attr_.__nonzero__`, `__int__`, `.__float__`;
+#                     define all `_Attr_` comparison operators explicitly
 #    ««revision-date»»···
 #--
 
@@ -148,13 +150,11 @@ from   _TFL                       import TFL
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.Filter
-from   _TFL._Meta.totally_ordered import totally_ordered
 from   _TFL.predicate             import first, uniq, uniq_p
 
 import itertools
 import operator
 
-@totally_ordered
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
 
@@ -175,6 +175,10 @@ class _Attr_ (object) :
         return (lhs.__class__.__name__, lhs) == (rhs.__class__.__name__, rhs)
     # end def __eq__
 
+    def __float__ (self) :
+        return float (self._VALUE)
+    # end def __float__
+
     def __getattr__ (self, name) :
         if name == self._NAME :
             if not self._REST :
@@ -183,10 +187,41 @@ class _Attr_ (object) :
         raise AttributeError (name)
     # end def __getattr__
 
+    def __ge__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) >= (rhs.__class__.__name__, rhs)
+    # end def __ge__
+
+    def __gt__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) > (rhs.__class__.__name__, rhs)
+    # end def __gt__
+
     def __hash__ (self) :
         lhs = self._VALUE
         return hash ((lhs.__class__.__name__, lhs))
     # end def __hash__
+
+    def __int__ (self) :
+        return int (self._VALUE)
+    # end def __int__
+
+    def __le__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) <= (rhs.__class__.__name__, rhs)
+    # end def __le__
 
     def __lt__ (self, rhs) :
         if isinstance (rhs, _Attr_) :
@@ -197,6 +232,19 @@ class _Attr_ (object) :
         return (lhs.__class__.__name__, lhs) < (rhs.__class__.__name__, rhs)
     # end def __lt__
 
+    def __ne__ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        ### Compare `(x.__class__.__name__, x)` to avoid TypeError from some
+        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
+        return (lhs.__class__.__name__, lhs) != (rhs.__class__.__name__, rhs)
+    # end def __ne__
+
+    def __nonzero__ (self) :
+        return bool (self._VALUE)
+    # end def __nonzero__
+
     def __repr__ (self) :
         return repr (self._VALUE)
     # end def __repr__
@@ -204,6 +252,10 @@ class _Attr_ (object) :
     def __str__ (self) :
         return str (self._VALUE)
     # end def __str__
+
+    def __unicode__ (self) :
+        return unicode (self._VALUE)
+    # end def __unicode__
 
 # end class _Attr_
 
