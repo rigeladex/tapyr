@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -76,6 +76,7 @@
 #                     abbreviations, removed `_opt_abbr` from `Cmd`
 #    20-Jul-2011 (CT) `_Encoding_.cook` changed to change `TFL.user_config`
 #                     instead of `TFL.I18N.Config`
+#    30-Jan-2012 (CT) Add `CAO.GET`
 #    ««revision-date»»···
 #--
 
@@ -1185,6 +1186,10 @@ class CAO (TFL.Meta.Object) :
             return handler (self)
         return self
     # end def __call__
+
+    def GET (self, name, default) :
+        return getattr (self, name, default)
+    # end def GET
 
     def _attribute_value (self, name, map = None) :
         if map is None :

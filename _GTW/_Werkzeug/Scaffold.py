@@ -30,6 +30,7 @@
 # Revision Dates
 #    27-Jan-2012 (CT) Recreation (re-factored from SC-AMS specific code)
 #    27-Jan-2012 (CT) Factor `_wsgi_app`
+#    30-Jan-2012 (CT) Change `_wsgi_app` to `cmd.GET ("cookie_salt")`
 #    ««revision-date»»···
 #--
 
@@ -175,7 +176,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             ( ("", HTTP.NAV_Request_Handler, dict (nav_root = nav))
             , Session_Class       = GTW.File_Session
             , auto_reload         = cmd.auto_reload
-            , cookie_salt         = cls.SALT
+            , cookie_salt         = cmd.GET ("cookie_salt", cls.SALT)
             , default_locale_code = cmd.locale_code
             , debug               = cmd.debug
             , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
