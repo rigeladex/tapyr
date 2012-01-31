@@ -68,7 +68,8 @@ _test_code = r"""
 
     >>> fmt = "%%(type_name)-45s  %%(polymorphic_epk)-5s  %%(epk_sig)s"
     >>> rets = list (et for et in scope.app_type._T_Extension if et.PNS != MOM and et.is_relevant)
-    >>> for et in sorted (rets, key = TFL.Sorted_By ("epk_sig", "type_name")) :
+    >>> rets = sorted (rets, key = TFL.Sorted_By ("epk_sig", "type_name"))
+    >>> for et in rets :
     ...     print (fmt %% TFL.Caller.Object_Scope (et))
     GTW.OMP.PAP.Email                              False  ('address',)
     GTW.OMP.PAP.Phone                              False  ('country_code', 'area_code', 'number')
@@ -259,6 +260,54 @@ _test_code = r"""
 
     >>> print (sorted (rr.type_name for rr in scope.relevant_roots))
     ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Boat_Class', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page', 'GTW.OMP.SWP.Picture']
+
+    >>> fmt = "%%-45s  %%-20s  %%s"
+    >>> for et in rets :
+    ...     print (fmt %% (et.type_name, et.epk_sig_root.type_name if et.epk_sig_root is not et else "=", et.epk_sig))
+    GTW.OMP.PAP.Email                              =                     ('address',)
+    GTW.OMP.PAP.Phone                              =                     ('country_code', 'area_code', 'number')
+    GTW.OMP.PAP.Person                             =                     ('last_name', 'first_name', 'middle_name', 'title')
+    GTW.OMP.Auth.Account_Activation                =                     ('left',)
+    GTW.OMP.Auth.Account_Password_Change_Required  =                     ('left',)
+    GTW.OMP.EVT.Recurrence_Spec                    =                     ('left',)
+    GTW.OMP.SRM.Regatta                            =                     ('left',)
+    GTW.OMP.SRM.Regatta_C                          =                     ('left', 'boat_class')
+    GTW.OMP.EVT.Event_occurs                       =                     ('left', 'date', 'time')
+    GTW.OMP.EVT.Event                              =                     ('left', 'date', 'time', 'calendar')
+    GTW.OMP.SWP.Clip_O                             =                     ('left', 'date_x')
+    GTW.OMP.SRM.Regatta_H                          =                     ('left', 'handicap')
+    GTW.OMP.EVT.Recurrence_Rule                    =                     ('left', 'is_exception', 'desc')
+    GTW.OMP.SRM.Team                               =                     ('left', 'name')
+    GTW.OMP.SRM.Sailor                             =                     ('left', 'nation', 'mna_number', 'club')
+    GTW.OMP.SRM.Boat                               =                     ('left', 'nation', 'sail_number', 'sail_number_x')
+    GTW.OMP.SWP.Picture                            =                     ('left', 'number')
+    GTW.OMP.SRM.Race_Result                        =                     ('left', 'race')
+    GTW.OMP.Auth.Account_in_Group                  =                     ('left', 'right')
+    GTW.OMP.PAP.Entity_created_by_Person           =                     ('left', 'right')
+    GTW.OMP.PAP.Person_has_Address                 =                     ('left', 'right')
+    GTW.OMP.PAP.Person_has_Email                   =                     ('left', 'right')
+    GTW.OMP.SRM.Boat_in_Regatta                    =                     ('left', 'right')
+    GTW.OMP.SRM.Crew_Member                        =                     ('left', 'right')
+    GTW.OMP.SRM.Team_has_Boat_in_Regatta           =                     ('left', 'right')
+    GTW.OMP.PAP.Person_has_Phone                   =                     ('left', 'right', 'extension')
+    GTW.OMP.Auth.Account_EMail_Verification        =                     ('left', 'token')
+    GTW.OMP.Auth.Account_Password_Reset            =                     ('left', 'token')
+    GTW.OMP.Auth.Account                           =                     ('name',)
+    GTW.OMP.Auth.Account_Anonymous                 GTW.OMP.Auth.Account  ('name',)
+    GTW.OMP.Auth.Account_P                         GTW.OMP.Auth.Account  ('name',)
+    GTW.OMP.Auth.Group                             =                     ('name',)
+    GTW.OMP.EVT.Calendar                           =                     ('name',)
+    GTW.OMP.SRM.Boat_Class                         =                     ('name',)
+    GTW.OMP.SRM.Club                               =                     ('name',)
+    GTW.OMP.SRM.Regatta_Event                      =                     ('name', 'date')
+    GTW.OMP.SWP.Clip_X                             GTW.OMP.SWP.Page      ('perma_name',)
+    GTW.OMP.SWP.Gallery                            =                     ('perma_name',)
+    GTW.OMP.SWP.Page                               =                     ('perma_name',)
+    GTW.OMP.SWP.Page_U                             GTW.OMP.SWP.Page      ('perma_name',)
+    GTW.OMP.SWP.Page_V                             GTW.OMP.SWP.Page      ('perma_name',)
+    GTW.OMP.SRM.Page                               =                     ('perma_name', 'event')
+    GTW.OMP.SWP.Page_Y                             =                     ('perma_name', 'year')
+    GTW.OMP.PAP.Address                            =                     ('street', 'zip', 'city', 'country')
 
     >>> scope.destroy ()
 

@@ -126,6 +126,7 @@
 #                     `show_in_ui` instead of `generate_doc`
 #    31-Jan-2012 (CT) Propagate `polymorphic_epk` directly to
 #                     `relevant_root`, let all children inherit that value
+#    31-Jan-2012 (CT) Add `epk_sig_root` to `M_E_Type_Id._m_setup_children`
 #    ««revision-date»»···
 #--
 
@@ -499,7 +500,8 @@ class M_Id_Entity (M_Entity) :
             , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "_d_rank")
             )
         epk_sig   = tuple (a.name for a in pkas)
-        rel_bases = (b for b in bases if getattr (b, "is_relevant", False))
+        rel_bases = tuple \
+            (b for b in bases if getattr (b, "is_relevant", False))
         pol_epk   = any_true \
             ( (  getattr (rb, "polymorphic_epk", False)
               or rb.epk_sig != epk_sig
@@ -791,9 +793,14 @@ class M_E_Type_Id (M_E_Type) :
     def _m_setup_children (cls, bases, dct) :
         cls.__m_super._m_setup_children (bases, dct)
         if cls.is_relevant :
-            rel_bases = any (getattr (b, "is_relevant", False) for b in bases)
+            rel_bases = tuple \
+                (b for b in bases if getattr (b, "is_relevant", False))
             if not rel_bases :
                 cls.relevant_root = cls
+            epk_sig  = cls.epk_sig
+            es_roots = tuple (rb for rb in rel_bases if rb.epk_sig == epk_sig)
+            if not es_roots :
+                cls.epk_sig_root = cls
         else :
             cls.relevant_roots = {}
     # end def _m_setup_children
