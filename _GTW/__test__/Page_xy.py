@@ -37,56 +37,197 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> SWP = scope.SWP
 
-    >>> SWP.Page_X ("foo", text = "X")
-    GTW.OMP.SWP.Page_X (u'foo')
-    >>> SWP.Page_X.query_s (perma_name = "foo").all ()
-    [GTW.OMP.SWP.Page_X (u'foo')]
-    >>> SWP.Page_Y.query_s (perma_name = "foo").all ()
+    >>> SWP.Page_U ("foo", text = "U")
+    GTW.OMP.SWP.Page_U (u'foo')
+    >>> SWP.Page_U.query_s (perma_name = "foo").all ()
+    [GTW.OMP.SWP.Page_U (u'foo')]
+    >>> SWP.Page_V.query_s (perma_name = "foo").all ()
     []
     >>> SWP.Page.query_s (perma_name = "foo").all ()
-    [GTW.OMP.SWP.Page_X (u'foo')]
+    [GTW.OMP.SWP.Page_U (u'foo')]
 
-    >>> SWP.Page_Y ("foo", text = "Y")
+    >>> SWP.Page_V ("foo", text = "V")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of GTW.OMP.SWP.Page_Y (u'foo') clashes with existing GTW.OMP.SWP.Page_X (u'foo')
-    >>> SWP.Page_X.query_s (perma_name = "foo").all ()
-    [GTW.OMP.SWP.Page_X (u'foo')]
-    >>> SWP.Page_Y.query_s (perma_name = "foo").all ()
+    Name_Clash: new definition of GTW.OMP.SWP.Page_V (u'foo') clashes with existing GTW.OMP.SWP.Page_U (u'foo')
+    >>> SWP.Page_U.query_s (perma_name = "foo").all ()
+    [GTW.OMP.SWP.Page_U (u'foo')]
+    >>> SWP.Page_V.query_s (perma_name = "foo").all ()
     []
     >>> SWP.Page.query_s (perma_name = "foo").all ()
-    [GTW.OMP.SWP.Page_X (u'foo')]
+    [GTW.OMP.SWP.Page_U (u'foo')]
 
-    >>> SWP.Page_Y ("bar", text = "Y")
-    GTW.OMP.SWP.Page_Y (u'bar')
-    >>> SWP.Page_X.query_s ().all ()
-    [GTW.OMP.SWP.Page_X (u'foo')]
-    >>> SWP.Page_Y.query_s ().all ()
-    [GTW.OMP.SWP.Page_Y (u'bar')]
+    >>> SWP.Page_V ("bar", text = "V")
+    GTW.OMP.SWP.Page_V (u'bar')
+    >>> SWP.Page_U.query_s ().all ()
+    [GTW.OMP.SWP.Page_U (u'foo')]
+    >>> SWP.Page_V.query_s ().all ()
+    [GTW.OMP.SWP.Page_V (u'bar')]
     >>> SWP.Page.query_s ().all ()
-    [GTW.OMP.SWP.Page_Y (u'bar'), GTW.OMP.SWP.Page_X (u'foo')]
+    [GTW.OMP.SWP.Page_V (u'bar'), GTW.OMP.SWP.Page_U (u'foo')]
+
+    >>> fmt = "%%(type_name)-45s  %%(polymorphic_epk)-5s  %%(epk_sig)s"
+    >>> rets = list (et for et in scope.app_type._T_Extension if et.PNS != MOM and et.is_relevant)
+    >>> for et in sorted (rets, key = TFL.Sorted_By ("epk_sig", "type_name")) :
+    ...     print (fmt %% TFL.Caller.Object_Scope (et))
+    GTW.OMP.PAP.Email                              False  ('address',)
+    GTW.OMP.PAP.Phone                              False  ('country_code', 'area_code', 'number')
+    GTW.OMP.PAP.Person                             False  ('last_name', 'first_name', 'middle_name', 'title')
+    GTW.OMP.Auth.Account_Activation                False  ('left',)
+    GTW.OMP.Auth.Account_Password_Change_Required  False  ('left',)
+    GTW.OMP.EVT.Recurrence_Spec                    False  ('left',)
+    GTW.OMP.SRM.Regatta                            True   ('left',)
+    GTW.OMP.SRM.Regatta_C                          True   ('left', 'boat_class')
+    GTW.OMP.EVT.Event_occurs                       False  ('left', 'date', 'time')
+    GTW.OMP.EVT.Event                              False  ('left', 'date', 'time', 'calendar')
+    GTW.OMP.SWP.Clip_O                             False  ('left', 'date_x')
+    GTW.OMP.SRM.Regatta_H                          True   ('left', 'handicap')
+    GTW.OMP.EVT.Recurrence_Rule                    False  ('left', 'is_exception', 'desc')
+    GTW.OMP.SRM.Team                               False  ('left', 'name')
+    GTW.OMP.SRM.Sailor                             False  ('left', 'nation', 'mna_number', 'club')
+    GTW.OMP.SRM.Boat                               False  ('left', 'nation', 'sail_number', 'sail_number_x')
+    GTW.OMP.SWP.Picture                            False  ('left', 'number')
+    GTW.OMP.SRM.Race_Result                        False  ('left', 'race')
+    GTW.OMP.Auth.Account_in_Group                  False  ('left', 'right')
+    GTW.OMP.PAP.Entity_created_by_Person           False  ('left', 'right')
+    GTW.OMP.PAP.Person_has_Address                 False  ('left', 'right')
+    GTW.OMP.PAP.Person_has_Email                   False  ('left', 'right')
+    GTW.OMP.SRM.Boat_in_Regatta                    False  ('left', 'right')
+    GTW.OMP.SRM.Crew_Member                        False  ('left', 'right')
+    GTW.OMP.SRM.Team_has_Boat_in_Regatta           False  ('left', 'right')
+    GTW.OMP.PAP.Person_has_Phone                   False  ('left', 'right', 'extension')
+    GTW.OMP.Auth.Account_EMail_Verification        False  ('left', 'token')
+    GTW.OMP.Auth.Account_Password_Reset            False  ('left', 'token')
+    GTW.OMP.Auth.Account                           False  ('name',)
+    GTW.OMP.Auth.Account_Anonymous                 False  ('name',)
+    GTW.OMP.Auth.Account_P                         False  ('name',)
+    GTW.OMP.Auth.Group                             False  ('name',)
+    GTW.OMP.EVT.Calendar                           False  ('name',)
+    GTW.OMP.SRM.Boat_Class                         False  ('name',)
+    GTW.OMP.SRM.Club                               False  ('name',)
+    GTW.OMP.SRM.Regatta_Event                      False  ('name', 'date')
+    GTW.OMP.SWP.Clip_X                             False  ('perma_name',)
+    GTW.OMP.SWP.Gallery                            False  ('perma_name',)
+    GTW.OMP.SWP.Page                               True   ('perma_name',)
+    GTW.OMP.SWP.Page_U                             False  ('perma_name',)
+    GTW.OMP.SWP.Page_V                             False  ('perma_name',)
+    GTW.OMP.SRM.Page                               True   ('perma_name', 'event')
+    GTW.OMP.SWP.Page_Y                             True   ('perma_name', 'year')
+    GTW.OMP.PAP.Address                            False  ('street', 'zip', 'city', 'country')
+
+
+    >>> fmt = "%%(type_name)-45s  %%(is_relevant)-5s  %%(polymorphic_epk)-5s  %%(polymorphic_epks)-5s"
+    >>> for et in scope.app_type._T_Extension :
+    ...   if et.PNS != MOM :
+    ...     print (fmt %% TFL.Caller.Object_Scope (et))
+    GTW.OMP.Auth.Entity                            False  None   False
+    GTW.OMP.Auth.Object                            False  False  False
+    GTW.OMP.Auth.Account                           True   False  False
+    GTW.OMP.Auth.Account_Anonymous                 True   False  False
+    GTW.OMP.Auth.Account_P                         True   False  False
+    GTW.OMP.Auth.Group                             True   False  False
+    GTW.OMP.Auth.Account_in_Group                  True   False  False
+    GTW.OMP.Auth._Account_Action_                  False  False  False
+    GTW.OMP.Auth.Account_Activation                True   False  False
+    GTW.OMP.Auth.Account_Password_Change_Required  True   False  False
+    GTW.OMP.Auth._Account_Token_Action_            False  False  False
+    GTW.OMP.Auth.Account_EMail_Verification        True   False  False
+    GTW.OMP.Auth.Account_Password_Reset            True   False  False
+    GTW.OMP.EVT.Entity                             False  None   False
+    GTW.OMP.EVT.Object                             False  False  False
+    GTW.OMP.EVT.Link1                              False  False  False
+    GTW.OMP.EVT.Link2                              False  False  False
+    GTW.OMP.EVT.Calendar                           True   False  False
+    GTW.OMP.PAP.Entity                             False  None   False
+    GTW.OMP.PAP.Person                             True   False  False
+    GTW.OMP.SWP.Entity                             False  None   False
+    GTW.OMP.SWP.Link1                              False  False  False
+    GTW.OMP.SWP.Link2                              False  False  False
+    GTW.OMP.SWP.Object                             False  True   True
+    GTW.OMP.SWP.Object_PN                          False  True   True
+    GTW.OMP.SWP.Page_Mixin                         False  None   False
+    GTW.OMP.SWP.Page                               True   True   True
+    GTW.OMP.SWP.Page_Y                             True   True   True
+    GTW.OMP.EVT.Event                              True   False  True
+    GTW.OMP.EVT.Event_occurs                       True   False  True
+    GTW.OMP.EVT._Recurrence_Mixin_                 False  False  False
+    GTW.OMP.EVT.Recurrence_Spec                    True   False  True
+    GTW.OMP.EVT.Recurrence_Rule                    True   False  True
+    GTW.OMP.PAP.Address                            True   False  False
+    GTW.OMP.PAP.Email                              True   False  False
+    GTW.OMP.PAP.Phone                              True   False  False
+    GTW.OMP.PAP._Person_has_Property_              False  False  False
+    GTW.OMP.PAP.Person_has_Address                 True   False  False
+    GTW.OMP.PAP.Entity_created_by_Person           True   False  True
+    GTW.OMP.PAP.Person_has_Email                   True   False  False
+    GTW.OMP.PAP.Person_has_Phone                   True   False  False
+    GTW.OMP.SRM.Regatta_Result                     False  None   False
+    GTW.OMP.SRM.Entity                             False  None   False
+    GTW.OMP.SRM.Link1                              False  True   True
+    GTW.OMP.SRM.Link2                              False  False  False
+    GTW.OMP.SRM.Object                             False  True   True
+    GTW.OMP.SRM.Boat_Class                         True   False  False
+    GTW.OMP.SRM.Boat                               True   False  False
+    GTW.OMP.SRM.Club                               True   False  False
+    GTW.OMP.SRM.Regatta_Event                      True   False  False
+    GTW.OMP.SWP.Clip_O                             True   False  True
+    GTW.OMP.SWP.Clip_X                             True   False  False
+    GTW.OMP.SWP.Gallery                            True   False  False
+    GTW.OMP.SWP.Picture                            True   False  False
+    GTW.OMP.SRM.Page                               True   True   True
+    GTW.OMP.SRM.Regatta                            True   True   True
+    GTW.OMP.SRM.Regatta_C                          True   True   True
+    GTW.OMP.SRM.Regatta_H                          True   True   True
+    GTW.OMP.SRM.Sailor                             True   False  False
+    GTW.OMP.SRM.Boat_in_Regatta                    True   False  True
+    GTW.OMP.SRM.Race_Result                        True   False  True
+    GTW.OMP.SRM.Team                               True   False  True
+    GTW.OMP.SRM.Crew_Member                        True   False  True
+    GTW.OMP.SRM.Team_has_Boat_in_Regatta           True   False  True
+    GTW.OMP.SWP.Page_U                             True   False  False
+    GTW.OMP.SWP.Page_V                             True   False  False
+
+    >>> cls = scope.GTW.OMP.SWP.Page_V.E_Type
+    >>> bases = cls.__bases__
+    >>> rel_bases = tuple (b for b in bases if getattr (b, "is_relevant", False))
+    >>> pol_epks = tuple ((getattr (rb, "polymorphic_epk", False) or rb.epk_sig != epk_sig) for rb in rel_bases)
+    >>> print (tuple (t.type_name for t in rel_bases))
+    ('GTW.OMP.SWP.Page',)
+    >>> print (pol_epks)
+    (True,)
+
+    >>> print (fmt %% TFL.Caller.Object_Scope (scope.GTW.OMP.SWP.Page.E_Type))
+    GTW.OMP.SWP.Page                               True   True   True
+    >>> print (fmt %% TFL.Caller.Object_Scope (cls))
+    GTW.OMP.SWP.Page_V                             True   False  False
+
+    >>> fmt = "%%-45s  %%s"
+    >>> for et in scope.app_type._T_Extension :
+    ...     print (fmt %% (et.type_name, sorted (getattr (et, "relevant_roots", {}))))
+
 
     >>> scope.destroy ()
 
 """
 
 from _GTW.__test__.model import *
+from   _TFL.predicate        import any_true
 
 _Ancestor_Essence = GTW.OMP.SWP.Page
 
-class Page_X (_Ancestor_Essence) :
-    """Page of type X"""
+class Page_U (_Ancestor_Essence) :
+    """Page of type U"""
 
-    ui_name = "Page X"
+    ui_name = "Page U"
 
-# end class Page_X
+# end class Page_U
 
-class Page_Y (_Ancestor_Essence) :
-    """Page of type Y"""
+class Page_V (_Ancestor_Essence) :
+    """Page of type V"""
 
-    ui_name = "Page Y"
+    ui_name = "Page V"
 
-# end class Page_Y
+# end class Page_V
 
 __test__ = Scaffold.create_test_dict \
     ( dict
