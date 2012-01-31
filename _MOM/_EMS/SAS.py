@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glück. All rights reserved
+# Copyright (C) 2010-2012 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -47,6 +47,7 @@
 #                     `uncommitted_changes.add_pending`
 #     8-Jun-2011 (MG) `commit` added to release db resources
 #     8-Jun-2011 (MG) `max_cid`, `register_change`: don't used `temp_connection`
+#    31-Jan-2012 (MG) `Session.add` use `epk_sig_root` for `polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -99,9 +100,16 @@ class Manager (MOM.EMS._Manager_) :
             ### since we have a polymorphic epk the database layer cannot
             ### check the name clash -> therefore we need to make an extra
             ### query for this.
-            existing = self.instance (entity.__class__, entity.epk)
-            if existing :
+            epk_sig_root          = entity.epk_sig_root
+            epk_sig_root_epk_dict = dict \
+                ((a, getattr (entity, a)) for a in epk_sig_root.epk_sig)
+            try :
+                existing = self.query (epk_sig_root).filter \
+                    (** epk_sig_root_epk_dict).one ()
                 raise MOM.Error.Name_Clash (entity, existing)
+            except IndexError :
+                pass ### If the index error is raised the object does not
+                     ### exist -> we can create a new object with this epk
         max_c = entity.max_count
         if max_c and max_c <= self.query (entity.__class__).count () :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
