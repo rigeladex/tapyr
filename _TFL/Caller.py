@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -61,6 +61,8 @@
 #                     instead of `NameError`
 #    24-Jan-2008 (CT) More doctests added
 #    11-Sep-2009 (CT) `Object_Scope_Mutable` added
+#    31-Jan-2012 (CT) Change `Object_Scope.__init__` to pass
+#                     `object.__dict__` through `dict` (to allow classes, too)
 #    ««revision-date»»···
 #--
 
@@ -224,7 +226,7 @@ class Object_Scope (Scope) :
 
     def __init__ (self, object, locls = None) :
         self.__super.__init__ \
-            (depth = 1, globs = object.__dict__, locls = locls)
+            (depth = 1, globs = dict (object.__dict__), locls = locls)
         self.object = object
     # end def __init__
 

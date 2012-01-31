@@ -124,6 +124,8 @@
 #    24-Jan-2012 (CT) Change `M_Entity._m_init_prop_specs` to set `show_in_ui`
 #    24-Jan-2012 (CT) Change `M_E_Type_Id._m_setup_attributes` to use
 #                     `show_in_ui` instead of `generate_doc`
+#    31-Jan-2012 (CT) Propagate `polymorphic_epk` directly to
+#                     `relevant_root`, let all children inherit that value
 #    ««revision-date»»···
 #--
 
@@ -260,12 +262,14 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
         for t in reversed (app_type._T_Extension) :
             if t.polymorphic_epk :
-                for b in t.__bases__ :
-                    if getattr (b, "polymorphic_epk", None) is False :
-                        b.polymorphic_epk = True
+                if t.relevant_root :
+                    t.relevant_root.polymorphic_epk = True
         for t in app_type._T_Extension :
             t.polymorphic_epks = t.polymorphic_epk or any \
-                (   pka.P_Type.polymorphic_epks or pka.P_Type.polymorphic_epk
+                (   (  pka.P_Type.polymorphic_epks
+                    or pka.P_Type.polymorphic_epk
+                    or not pka.P_Type.relevant_root
+                    )
                 for pka in t.primary
                 if  isinstance (pka.attr, MOM.Attr._A_Id_Entity_) and pka.P_Type
                 )
@@ -508,19 +512,21 @@ class M_Id_Entity (M_Entity) :
             (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
         d_raw     = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
-        result    = cls.__m_super._m_new_e_type_dict \
-            ( app_type, etypes, bases
-            , epk_sig         = epk_sig
+        r_kw = dict \
+            ( epk_sig         = epk_sig
             , epkified_ckd    = cls._m_auto_epkified
                 (epk_sig, a_ckd, d_ckd, "ckd")
             , epkified_raw    = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
             , is_relevant     = cls.is_relevant or (not cls.is_partial)
-            , polymorphic_epk = pol_epk
             , _all_link_map   = None
             , _own_link_map   = TFL.defaultdict (set)
             , ** kw
             )
+        if pol_epk :
+            r_kw ["polymorphic_epk"] = pol_epk
+        result    = cls.__m_super._m_new_e_type_dict \
+            (app_type, etypes, bases, ** r_kw)
         return result
     # end def _m_new_e_type_dict
 

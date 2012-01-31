@@ -172,6 +172,8 @@
 #    19-Jan-2012 (CT) Call `_finish__init__` only if `_home_scope`
 #    24-Jan-2012 (CT) Remove `generate_doc`, `auto_display`, and `save_to_db`
 #    24-Jan-2012 (CT) Add `show_in_ui`
+#    31-Jan-2012 (CT) Change defaults for `polymorphic_epk` & `polymorphic_epks`
+#                     from `None` to `False`
 #    ««revision-date»»···
 #--
 
@@ -223,8 +225,8 @@ class Entity (TFL.Meta.Object) :
     is_relevant           = False
     is_used               = True
     rank                  = 0
-    polymorphic_epk       = None   ### Set by meta machinery
-    polymorphic_epks      = None   ### Set by meta machinery
+    polymorphic_epk       = False  ### Set by meta machinery
+    polymorphic_epks      = False  ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
     show_in_ui            = True   ### Modified by meta machinery
     show_package_prefix   = False
