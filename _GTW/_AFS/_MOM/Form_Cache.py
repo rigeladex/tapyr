@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Feb-2012 (CT) Creation (factored from GTW.AFS.MOM.Element.Form)
+#     1-Feb-2012 (CT) Add `Extra`
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,42 @@ from   _TFL                   import TFL
 from   _GTW._AFS._MOM.Element import Form
 
 import _TFL._Meta.Object
+
+class Extra (TFL.Meta.Object) :
+    """Specification for an extra, i.e., non-automatically generated, AFS
+       form.
+    """
+
+    def __init__ (self, fid, * entities) :
+        assert entities, "Need at least one entity for Extra"
+        self.fid      = fid
+        self.entities = entities
+    # end def __init__
+
+    def __call__ (self, app_type) :
+        return Form (self.fid, children = list (self._gen_children (app_type)))
+    # end def __call__
+
+    def _gen_children (self, app_type) :
+        for e in self.entities :
+            if isinstance (e, basestring) :
+                name = e
+                spec = None
+                kw   = {}
+            elif isinstance (e, dict) :
+                name = e ["name"]
+                spec = e.get ("spec")
+                kw   = e.get ("kw", {})
+            else :
+                name = e.name
+                spec = getattr (e, "spec")
+                kw   = getattr (e, "kw", {})
+            T = app_type [name]
+            S = spec or T.GTW.afs_spec
+            yield S (T, ** kw)
+    # end def _gen_children
+
+# end class Extra
 
 class _Form_Cache_ (TFL.Meta.Object) :
     """Handle cache for AFS forms"""

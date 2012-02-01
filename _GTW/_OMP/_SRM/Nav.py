@@ -40,6 +40,7 @@
 #    24-Jan-2012 (CT) Add `_crew` to `GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec`
 #    24-Jan-2012 (CT) Remove `Form_args`, `regatta_completer`,
 #                     i.e., stuff related to non-AFS forms
+#     1-Feb-2012 (CT) Add `Extra` "AF_BiR" to `Form_Cache`
 #    ««revision-date»»···
 #--
 
@@ -117,11 +118,30 @@ class Admin (object) :
 
 # end class Admin
 
-from   _GTW._AFS._MOM import Spec
+from   _GTW._AFS._MOM            import Spec
+from   _GTW._AFS._MOM.Form_Cache import Extra, Form_Cache
+
 import _GTW._OMP._SRM.Boat_in_Regatta
 
 GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec = Spec.Entity \
     (include_links = ("_crew", "race_results", ))
+
+Form_Cache.add \
+    ( Extra
+        ( "AF_BiR"
+        , dict
+            ( name = "GTW.OMP.SRM.Boat_in_Regatta"
+            , spec = Spec.Entity
+                ( attr_spec = dict
+                    ( right = dict
+                        ( prefilled = True
+                        )
+                    )
+                , include_links = ("_crew", )
+                )
+            )
+        )
+    )
 
 if __name__ != "__main__" :
      GTW.OMP.SRM._Export_Module ()
