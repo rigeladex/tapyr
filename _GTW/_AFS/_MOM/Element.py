@@ -76,6 +76,8 @@
 #                     move code from its `_value` to newly redefined `__call__`
 #    26-Jan-2012 (CT) Redefine `_MOM_Entity_._instance_kw` to add `allow_new`
 #    26-Jan-2012 (CT) Add support for `form_kw`; add `show_defaults`
+#     1-Feb-2012 (CT) Factor `Form.as_pickle_cargo` and `.from_pickle_cargo` to
+#                     separate module `Form_Cache`
 #    ««revision-date»»···
 #--
 
@@ -470,26 +472,6 @@ class _MOM_Form_ (AE.Form) :
             for a, c in zip (args, self.children) :
                 yield c (a.ETM, a.entity, ** a.kw)
     # end def _call_iter
-
-    @classmethod
-    def as_pickle_cargo (cls, nav_root) :
-        if not cls.Table :
-            ### mustn't do this more than once
-            for T in nav_root.App_Type._T_Extension :
-                if T.GTW.afs_id is not None and T.GTW.afs_spec is not None :
-                    Form (T.GTW.afs_id, children = [T.GTW.afs_spec (T)])
-        return dict (AFS_Form_Table = cls.Table)
-    # end def as_pickle_cargo
-
-    @classmethod
-    def from_pickle_cargo (cls, nav_root, cargo) :
-        """Update `Table` with `table`."""
-        table = cargo.get ("AFS_Form_Table", {})
-        table.update      (cls.Table)
-        ### We want to set `Table` for `GTW.AFS.Element.Form`, not for a
-        ### possible descedent class
-        GTW.AFS.Element.Form.Table = table
-    # end def from_pickle_cargo
 
 Form = _MOM_Form_ # end class
 

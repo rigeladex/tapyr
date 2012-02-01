@@ -31,6 +31,7 @@
 #    27-Jan-2012 (CT) Recreation (re-factored from SC-AMS specific code)
 #    27-Jan-2012 (CT) Factor `_wsgi_app`
 #    30-Jan-2012 (CT) Change `_wsgi_app` to `cmd.GET ("cookie_salt")`
+#     1-Feb-2012 (CT) Use newly factored `GTW.AFS.MOM.Form_Cache`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,8 @@ from   _TFL                import TFL
 from   _GTW                import GTW
 
 import _GTW.Media
+import _GTW._AFS._MOM.Form_Cache
+import _GTW._AFS._MOM.Spec
 import _GTW._NAV.Base
 import _GTW._NAV.Console
 import _GTW._NAV.Permission
@@ -143,7 +146,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             CP = GTW.NAV.Root.Cache_Pickler
             mc_fix = "media/v"
             mc_dir = sos.path.join (cls.web_src_root, mc_fix)
-            CP.add (GTW.AFS.MOM.Element.Form)
+            CP.add (GTW.AFS.MOM.Form_Cache)
             CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
             cls._setup_cache_p = True
     # end def _setup_cache
