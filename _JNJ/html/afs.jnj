@@ -38,6 +38,7 @@
 ##     4-Nov-2011 (CT) Change `do_element` to `strip` whitespace from `cssc`
 ##     4-Nov-2011 (CT) Add `title` to `do_head`, add `show_desc` to `do_element`
 ##    26-Jan-2012 (CT) Add `next_form_kw` to `Form`
+##     2-Feb-2012 (CT) Change `do_head` to consider `prefilled` and `readonly`
 ##    ««revision-date»»···
 ##--
 #}
@@ -82,17 +83,28 @@
       {{- desc -}}
     </div>
   {%- endif -%}
+  {%- set csscs = [] %}
+  {%- if elem.prefilled %}
+    {%- do csscs.append ("prefilled") %}
+  {% endif -%}
+  {%- if elem.readonly %}
+    {%- do csscs.append ("readonly") %}
+  {% endif -%}
+  {%- set cssc  = " ".join (csscs).strip () %}
   <{{ elem.het_h }}
+      {%- if cssc %} class="{{ cssc }}"{% endif -%}
       {%- if desc %} title="{{ desc }}"{% endif -%}
   >
-    {{ head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
+    {{- head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
     {%- if tail -%}
       : {{ tail }}
     {% endif -%}
     {%- if head_caller %}
       {{ head_caller () }}
     {% endif -%}
-    {{ do_menu () }}
+    {%- if not (elem.prefilled or elem.readonly) -%}
+      {{ do_menu () }}
+    {% endif -%}
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_head -#}
 
