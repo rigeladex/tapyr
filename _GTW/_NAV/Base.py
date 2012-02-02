@@ -316,6 +316,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
+        result._kw = dict (kw)
         if not result.implicit :
             href = result.href
             pid  = result.pid

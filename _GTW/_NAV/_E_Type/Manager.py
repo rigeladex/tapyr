@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -64,6 +64,7 @@
 #    11-May-2011 (MG) `Link_Manager` continued
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #    14-Nov-2011 (CT) Use `__super.query` instead of home-grown code
+#     2-Feb-2012 (CT) Robustify `_get_child` (`Manager`, `Manager_T_Archive`)
 #    ««revision-date»»···
 #--
 
@@ -172,7 +173,10 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         result = None
         n, obj = self.ETM.query_1 (perma_name = child)
         if obj is None :
-            obj = self.ETM.pid_query (child)
+            try :
+                obj = self.ETM.pid_query (child)
+            except LookupError :
+                pass
         if obj is not None :
             result = self.page_from_obj (obj)
             if grandchildren :
@@ -286,7 +290,7 @@ class Manager_T_Archive (Manager) :
             entries = self._entries
             try :
                 year = first (e for e in entries if e.year == y)
-            except IndexError :
+            except (IndexError, AttributeError) :
                 pass
             else :
                 if not grandchildren :

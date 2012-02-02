@@ -152,6 +152,8 @@
 #    24-Jan-2012 (CT) Change `Changer.rendered` to pass `.form_parameters`
 #    24-Jan-2012 (CT) Add `changer`, put properties before methods
 #    26-Jan-2012 (CT) Change `Changer.rendered` to pass `referrer` to `.form`
+#     2-Feb-2012 (CT) Add property for `form_id`,
+#                     move `form_parameters` to `Admin`
 #    ««revision-date»»···
 #--
 
@@ -201,6 +203,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
     css_group           = "Type"
+    form_parameters     = {}
     max_completions     = 20
     template_name       = "e_type_admin"
 
@@ -212,6 +215,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , CLOSE         = "button"
         )
 
+    _form_id            = None
     _sort_key           = None
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
@@ -239,7 +243,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def form (self, obj = None, ** kw) :
             if obj is None :
                 obj = self.obj
-            return self.parent.Form (self.ETM, obj, ** kw)
+            return self.parent.Form \
+                (self.ETM, obj, ** dict (self.form_parameters, ** kw))
         # end def form
 
         def form_element (self, fid) :
@@ -467,7 +472,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
-        form_parameters = {}
 
         @property
         def injected_templates (self) :
@@ -501,7 +505,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     , referrer        = request.referrer
                     , _sid            = sid
                     , _session_secret = session_secret
-                    , ** self.form_parameters
                     )
                 self.Media = self._get_media \
                     (head = getattr (form, "Media", None))
@@ -1032,7 +1035,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         self.__super.__init__ (parent, ** kw)
         self.prefix     = pjoin (parent.prefix, self.name)
         self._field_map = {}
-        self.top.ET_Map [self.E_Type.type_name].admin = self
+        if not self.implicit :
+            self.top.ET_Map [self.E_Type.type_name].admin = self
     # end def __init__
 
     @Once_Property
@@ -1053,8 +1057,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def Form (self) :
-        return AFS_Form [self.E_Type.GTW.afs_id]
+        return AFS_Form [self.form_id]
     # end def Form
+
+    @property
+    def form_id (self) :
+        _form_id = self._form_id
+        return self.E_Type.GTW.afs_id if (_form_id is None) else _form_id
+    # end def form_id
+
+    @form_id.setter
+    def form_id (self, value) :
+        self._form_id = value
+    # end def form_id
 
     @property
     def head_line (self) :
@@ -1121,7 +1136,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         kw = dict (self.child_attrs.get ("Changer", {}), ** kw)
         return self.Changer \
             ( pid
-            , form_parameters = dict (kw) if kw else {}
+            , form_parameters = dict (self.form_parameters, ** kw)
             , parent          = self
             )
     # end def changer

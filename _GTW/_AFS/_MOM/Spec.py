@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -230,7 +230,9 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
     def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = getattr (E_Type, self.name)
         return self.__super.__call__ \
-            (attr.P_Type, self, set (), ** self._field_kw (attr, E_Type, ** kw))
+            ( attr.P_Type, self, set ()
+            , ** self._field_kw (attr, E_Type, ** kw)
+            )
     # end def __call__
 
 # end class _Field_Entity_Mixin_

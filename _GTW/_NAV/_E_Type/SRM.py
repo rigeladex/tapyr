@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -48,6 +48,7 @@
 #     5-Jan-2011 (CT) `Registration`, `Result`, and `Result_Teamrace` factored
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #     9-Nov-2011 (CT) Fix `head_line` for `Registration`
+#     2-Feb-2012 (CT) Add `href_register` and `bir_admin`
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,13 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         self.name = obj.perma_name
     # end def __init__
 
+    def href_register (self) :
+        start = self.obj.event.date.start
+        now   = self.obj.event.__class__.date.start.now ()
+        if self.DEBUG or now < start :
+            return pjoin (self.abs_href, "admin", "create")
+    # end def href_register
+
     def _get_child (self, child, * grandchildren) :
         ### XXX "register"
         entries = self._entries
@@ -107,15 +115,6 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 result = result._get_child (* grandchildren)
             return result
     # end def _get_child
-
-    if 0 :
-        def _get_entries (self) :
-            try :
-                return self.__super._get_entries ()
-            except Exception as exc :
-                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
-                raise
-        # end def _get_entries
 
     def _get_objects (self) :
         np     = _T (u"Participants")
@@ -165,6 +164,24 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , regatta     = obj
                 )
             )
+        bir_admin = self.top.ET_Map ["SRM.Boat_in_Regatta"]
+        if bir_admin :
+            kw = dict \
+                ( bir_admin._kw
+                , form_id         = "AF_BiR"
+                , form_parameters = dict
+                    ( form_kw     = dict
+                        ( right   = dict
+                            ( prefilled = True
+                            , init      = obj
+                            )
+                        )
+                    )
+                , implicit        = True
+                , name            = "admin"
+                , parent          = self
+                )
+            result.append (bir_admin.__class__ (** kw))
         return result
     # end def _get_objects
 
