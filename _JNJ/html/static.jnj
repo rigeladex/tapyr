@@ -1,7 +1,7 @@
 {%- extends "html/base.jnj" %}
 {#- jinja template: static.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -38,5 +38,3 @@
 {%- endblock document -%}
 
 {#- __END__ jinja template: static.jnj -#}
-
-

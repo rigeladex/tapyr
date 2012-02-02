@@ -87,9 +87,6 @@
   {%- if elem.prefilled %}
     {%- do csscs.append ("prefilled") %}
   {% endif -%}
-  {%- if elem.readonly %}
-    {%- do csscs.append ("readonly") %}
-  {% endif -%}
   {%- set cssc  = " ".join (csscs).strip () %}
   <{{ elem.het_h }}
       {%- if cssc %} class="{{ cssc }}"{% endif -%}

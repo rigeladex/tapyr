@@ -134,7 +134,7 @@ Form_Cache.add \
             ( name = "GTW.OMP.SRM.Boat_in_Regatta"
             , spec = Spec.Entity
                 ( attr_spec  = dict
-                    ( right  = dict (prefilled  = True, rank = -1)
+                    ( right  = dict (prefilled  = True)
                     , place  = dict (show_in_ui = False)
                     , points = dict (show_in_ui = False)
                     )

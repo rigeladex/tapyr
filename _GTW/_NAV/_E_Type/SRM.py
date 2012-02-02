@@ -49,6 +49,7 @@
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #     9-Nov-2011 (CT) Fix `head_line` for `Registration`
 #     2-Feb-2012 (CT) Add `href_register` and `bir_admin`
+#     2-Feb-2012 (CT) Add `Regatta_Event.Page` with template `regatta_page`
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     def href_register (self) :
         start = self.obj.event.date.start
         now   = self.obj.event.__class__.date.start.now ()
-        if self.DEBUG or now < start :
+        if now < start :
             return pjoin (self.abs_href, "admin", "create")
     # end def href_register
 
@@ -198,6 +199,12 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
 
     dir_template_name = None
 
+    class Page (GTW.NAV.E_Type.Instance) :
+
+        template_name = "regatta_page"
+
+    # end class Page
+
     def __init__ (self, manager, obj, ** kw) :
         kw ["src_dir"] = kw ["sub_dir"] = obj.perma_name
         self.__super.__init__ (manager, obj, ** kw)
@@ -221,19 +228,18 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         scope  = self.obj.home_scope
         today  = datetime.date.today ()
         for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
-            if scope.SRM.Boat_in_Regatta.r_query (right = r).count () :
-                kw  = dict \
-                    ( pkw
-                    , ETM       = scope [r.type_name]
-                    , E_Type    = r.__class__
-                    )
-                result.append (Regatta (self, r, page_args = pkw, ** kw))
+            kw  = dict \
+                ( pkw
+                , ETM       = scope [r.type_name]
+                , E_Type    = r.__class__
+                )
+            result.append (Regatta (self, r, page_args = pkw, ** kw))
         result.extend (self._get_pages ())
         return result
     # end def _get_objects
 
     def _get_pages (self) :
-        T     = GTW.NAV.E_Type.Instance
+        T     = self.Page
         ETM   = self.scope.SRM.Page
         pkw   = self.page_args
         kw    = dict \

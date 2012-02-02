@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -40,6 +40,7 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     2-Feb-2012 (CT) Don't apply `sanitized_filename` to `name`
 #    ««revision-date»»···
 #--
 
@@ -110,7 +111,7 @@ class Regatta (_Ancestor_Essence) :
             auto_up_depends    = ("name", )
 
             def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.name.lower ())
+                return TFL.Ascii.sanitized_filename (obj.name).lower ()
             # end def computed
 
         # end class perma_name
@@ -200,7 +201,7 @@ class Regatta_C (_Ancestor_Essence) :
             auto_up_depends    = ("boat_class", )
 
             def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.boat_class.name)
+                return obj.boat_class.name
             # end def computed
 
         # end class name
@@ -238,7 +239,7 @@ class Regatta_H (_Ancestor_Essence) :
             auto_up_depends    = ("handicap", )
 
             def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.handicap)
+                return obj.handicap
             # end def computed
 
         # end class name

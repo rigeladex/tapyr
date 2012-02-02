@@ -39,6 +39,7 @@
 #    23-Nov-2011 (CT) Factor rules for `.cmd-menu`
 #    14-Dec-2011 (CT) Factor rules for `.ui-autocomplete .ui-menu-item`
 #     3-Jan-2012 (CT) Add `Script` for `GTW.Script._.GTW_jq_afs`
+#     2-Feb-2012 (CT) Add rule for `.prefilled`
 #    ««revision-date»»···
 #--
 
@@ -175,19 +176,28 @@ style_sheet = Style_Sheet \
                 , margin_bottom    = P.afs.block_margin_bottom
                 , overflow         = "auto"
                 , padding          = TRBL0 (r = 0, default = Px (2))
+                )
+            , Rule
+                ( "section"
                 , children         =
-                    [ Rule
-                        ( ".closed"
+                    [ Rule_Class
+                        ( "closed"
                         , border   = 0
                         , margin   = 0
                         , padding  = 0
                         , children =
                             [ Rule
-                                ( "h1"
+                                ( "h1", "h2"
                                 , P.afs.color_spec_heading_closed
                                 , border   = 0
                                 , margin   = TRBL0 (b = Px (1))
                                 , padding  = P.afs.header_padding
+                                )
+                            , Rule
+                                ( ".prefilled"
+                                , P.afs.border_spec_section
+                                , P.color_spec_normal
+                                , P.font_spec_pre
                                 )
                             ]
                         )

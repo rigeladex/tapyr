@@ -142,7 +142,7 @@ style_sheet = Style_Sheet \
         ( ".pg_body"
         , width          = "100%"
         , children       =
-            [ Rule ("p", max_width = Em (40))
+            [ Rule ("p", max_width = Rem (40))
             # XXX ??? ".login div", "form.login"
             ]
         )
