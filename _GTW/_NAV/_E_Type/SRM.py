@@ -104,8 +104,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     # end def href_register
 
     def _get_child (self, child, * grandchildren) :
-        ### XXX "register"
-        entries = self._entries
+        entries = self._entries or self._get_objects ()
         try :
             result = first (e for e in entries if e.name == child)
         except IndexError :
@@ -164,8 +163,9 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , regatta     = obj
                 )
             )
-        bir_admin = self.top.ET_Map ["SRM.Boat_in_Regatta"]
-        if bir_admin :
+        bir = self.top.ET_Map ["GTW.OMP.SRM.Boat_in_Regatta"]
+        if bir and bir.admin :
+            bir_admin = bir.admin
             kw = dict \
                 ( bir_admin._kw
                 , form_id         = "AF_BiR"

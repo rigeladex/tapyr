@@ -41,6 +41,7 @@
 #    24-Jan-2012 (CT) Remove `Form_args`, `regatta_completer`,
 #                     i.e., stuff related to non-AFS forms
 #     1-Feb-2012 (CT) Add `Extra` "AF_BiR" to `Form_Cache`
+#     2-Feb-2012 (CT) Add `attr_spec` parameters to `AF_BiR`
 #    ««revision-date»»···
 #--
 
@@ -132,10 +133,10 @@ Form_Cache.add \
         , dict
             ( name = "GTW.OMP.SRM.Boat_in_Regatta"
             , spec = Spec.Entity
-                ( attr_spec = dict
-                    ( right = dict
-                        ( prefilled = True
-                        )
+                ( attr_spec  = dict
+                    ( right  = dict (prefilled  = True, rank = -1)
+                    , place  = dict (show_in_ui = False)
+                    , points = dict (show_in_ui = False)
                     )
                 , include_links = ("_crew", )
                 )

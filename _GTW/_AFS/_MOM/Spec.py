@@ -66,6 +66,7 @@
 #     4-Dec-2011 (CT) Use `attr.Choices` instead of home-grown code
 #     4-Dec-2011 (CT) Comment out `Boolean.input_widget` (FF8 doesn't
 #                     submit unchecked checkboxes!)
+#     2-Feb-2012 (CT) Add `rank` and `show_in_ui` to `Field_Group`
 #    ««revision-date»»···
 #--
 
@@ -391,10 +392,9 @@ class Field_Group (_Base_) :
     # end def __init__
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
-        children = tuple \
-            (   f (E_Type, spec, seen, ** kw)
-            for f in self.fields (E_Type, spec, seen)
-            )
+        fields = sorted \
+            (self.fields (E_Type, spec, seen), key = TFL.Getter.rank)
+        children = tuple (f (E_Type, spec, seen, ** kw) for f in fields)
         if children :
             return self.Type (children = children, ** dict (self.kw, ** kw))
     # end def __call__
@@ -410,7 +410,8 @@ class Field_Group (_Base_) :
             if name not in seen :
                 seen.add   (name)
                 akw = dict (attr_spec [name], name = name)
-                yield attr.AFS_Spec (** akw)
+                if akw.get ("show_in_ui", True) :
+                    yield attr.AFS_Spec (** akw)
     # end def fields
 
 # end class Field_Group
