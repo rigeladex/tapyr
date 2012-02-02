@@ -165,18 +165,24 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
             )
         bir = self.top.ET_Map ["GTW.OMP.SRM.Boat_in_Regatta"]
         if bir and bir.admin :
+            form_kw   = dict \
+                ( right   = dict
+                    ( prefilled   = True
+                    , init        = obj
+                    )
+                )
+            if isinstance (obj, scope.SRM.Regatta_C.E_Type) :
+                form_kw ["left"] = dict \
+                    ( left = dict
+                        ( prefilled   = True
+                        , init        = obj.boat_class
+                        )
+                    )
             bir_admin = bir.admin
             kw = dict \
                 ( bir_admin._kw
                 , form_id         = "AF_BiR"
-                , form_parameters = dict
-                    ( form_kw     = dict
-                        ( right   = dict
-                            ( prefilled = True
-                            , init      = obj
-                            )
-                        )
-                    )
+                , form_parameters = dict (form_kw = form_kw)
                 , implicit        = True
                 , name            = "admin"
                 , parent          = self
