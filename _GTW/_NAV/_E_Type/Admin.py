@@ -154,6 +154,7 @@
 #    26-Jan-2012 (CT) Change `Changer.rendered` to pass `referrer` to `.form`
 #     2-Feb-2012 (CT) Add property for `form_id`,
 #                     move `form_parameters` to `Admin`
+#     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
 #    ««revision-date»»···
 #--
 
@@ -303,7 +304,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise self.top.HTTP.Error_503 (request.path, request.Error)
+                raise self.top.HTTP.Error_503 (request.Error)
         # end def _check_readonly
 
         def _raise_401 (self, handler) :
@@ -495,7 +496,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         ( _T ("%s `%s` doesn't exist!")
                         % (_T (self.E_Type.ui_name), pid)
                         )
-                    raise HTTP.Error_404 (request.path, request.Error)
+                    raise HTTP.Error_404 (request.Error)
             if request.method == "POST" :
                 return self._post_handler (handler, scope)
             else :
@@ -652,7 +653,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             else :
                 request.Error = \
                     ( _T ("You need to specify a pid!"))
-                raise self.HTTP.Error_400 (request.path, request.Error)
+                raise self.HTTP.Error_400 (request.Error)
             return result
         # end def _post_handler_args
 
@@ -680,7 +681,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             else :
                 request.Error = \
                     ( _T ("You need to specify a pid!"))
-                raise self.HTTP.Error_400 (request.path, request.Error)
+                raise self.HTTP.Error_400 (request.Error)
             return result
         # end def _post_handler_json
 
@@ -968,7 +969,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         ( _T ("%s `%s` doesn't exist!")
                         % (_T (E_Type.ui_name), pid)
                         )
-                    raise HTTP.Error_404 (request.path, request.Error)
+                    raise HTTP.Error_404 (request.Error)
             form  = self.__Obsolete_Form \
                 ( self.abs_href, obj, cancel_href = self.parent.abs_href
                 , ** self.form_parameters
@@ -980,7 +981,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise HTTP.Error_503 (request.path)
+                raise HTTP.Error_503 ()
             if request.method == "POST" :
                 err_count = 0
                 if req_data.get ("cancel") :
