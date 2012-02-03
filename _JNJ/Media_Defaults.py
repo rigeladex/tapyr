@@ -147,6 +147,38 @@ class Media_Defaults (Definition) :
 
     # end class afs
 
+    class color (Definition) :
+
+        ### muted colors
+        m_black                = RGB_X     ("#111111")
+        m_blue                 = RGB_X     ("#0088DD")
+        m_green                = RGB_X     ("#00AA00")
+        m_red                  = RGB_X     ("#CC3333")
+        n_orange               = RGB_X     ("#FFA022")
+        m_pink                 = RGB_X     ("#DD4499")
+        m_purple               = RGB_X     ("#AA33BB")
+        m_white                = RGB_X     ("#EEEEEE")
+        m_yellow               = RGB_X     ("#FFF00F")
+
+        ### pure colors
+        p_black                = SVG_Color ("black")
+        p_blue                 = SVG_Color ("blue")
+        p_cyan                 = SVG_Color ("cyan")
+        p_gray                 = SVG_Color ("gray")
+        p_green                = SVG_Color ("green")
+        p_lime                 = SVG_Color ("lime")
+        p_magenta              = SVG_Color ("magenta")
+        p_maroon               = SVG_Color ("maroon")
+        p_navy                 = SVG_Color ("navy")
+        p_olive                = SVG_Color ("olive")
+        p_purple               = SVG_Color ("purple")
+        p_red                  = SVG_Color ("red")
+        p_teal                 = SVG_Color ("teal")
+        p_white                = SVG_Color ("white")
+        p_yellow               = SVG_Color ("yellow")
+
+    # end class color
+
     class nav_col (Definition) :
 
         background_color       = RGB_X     ("#EFF3FE")
