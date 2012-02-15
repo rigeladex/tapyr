@@ -78,6 +78,8 @@
 #    26-Jan-2012 (CT) Add support for `form_kw`; add `show_defaults`
 #     1-Feb-2012 (CT) Factor `Form.as_pickle_cargo` and `.from_pickle_cargo` to
 #                     separate module `Form_Cache`
+#    15-Feb-2012 (CT) Redefine `Entity_List.__call__` and ._child_kw` to pass
+#                     `form_kw` and extract `max_links`
 #    ««revision-date»»···
 #--
 
@@ -268,6 +270,11 @@ class _MOM_Entity_List_  (AE.Entity_List) :
 
     _real_name = "Entity_List"
 
+    def __call__ (self, ETM, entity, ** kw) :
+        f_kw = self._child_kw (kw)
+        return self.__super.__call__ (ETM, entity, ** f_kw)
+    # end def __call__
+
     def _call_iter (self, ETM, entity, ** kw) :
         if entity is not None :
             cs     = []
@@ -279,6 +286,13 @@ class _MOM_Entity_List_  (AE.Entity_List) :
             for link, c in cs :
                 yield c.instance_call (assoc, link, ** kw)
     # end def _call_iter
+
+    def _child_kw (self, kw) :
+        result = self.__super._child_kw (kw)
+        if "max_links" in result ["form_kw"] :
+            result ["max_links"] = result ["form_kw"].pop ("max_links")
+        return result
+    # end def _child_kw
 
 Entity_List = _MOM_Entity_List_ # end class
 

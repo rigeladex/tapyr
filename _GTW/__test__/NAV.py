@@ -70,6 +70,7 @@ _test_code = """
     login
     photo
     regatta_calendar
+    regatta_page
     regatta_registration
     regatta_result
     regatta_result_teamrace

@@ -50,6 +50,7 @@
 #     9-Nov-2011 (CT) Fix `head_line` for `Registration`
 #     2-Feb-2012 (CT) Add `href_register` and `bir_admin`
 #     2-Feb-2012 (CT) Add `Regatta_Event.Page` with template `regatta_page`
+#    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `form_kw`
 #    ««revision-date»»···
 #--
 
@@ -167,16 +168,21 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         bir = self.top.ET_Map ["GTW.OMP.SRM.Boat_in_Regatta"]
         if bir and bir.admin :
             form_kw   = dict \
-                ( right   = dict
+                ( right = dict
                     ( prefilled   = True
                     , init        = obj
                     )
                 )
             if isinstance (obj, scope.SRM.Regatta_C.E_Type) :
-                form_kw ["left"] = dict \
+                form_kw.update \
                     ( left = dict
-                        ( prefilled   = True
-                        , init        = obj.boat_class
+                        ( left = dict
+                            ( prefilled   = True
+                            , init        = obj.boat_class
+                            )
+                        )
+                    , Crew_Member = dict
+                        ( max_links   = obj.boat_class.max_crew - 1
                         )
                     )
             bir_admin = bir.admin

@@ -207,6 +207,7 @@
 #    20-Dec-2011 (CT) s/Q/AQ/
 #    20-Dec-2011 (CT) Remove `ckd_query` and `ckd_query_eq`
 #    22-Dec-2011 (CT) Add `A_Date.completer`
+#    15-Feb-2012 (CT) Change unlimited `A_Link_Role.max_links` from `0` to `-1`
 #    ««revision-date»»···
 #--
 
@@ -1657,7 +1658,7 @@ class A_Link_Role (_A_Id_Entity_) :
     auto_cache        = False
     dfc_synthesizer   = None
     kind              = MOM.Attr.Link_Role
-    max_links         = 0
+    max_links         = -1
     role_name         = None
     role_type         = None
     ### don't allow creation of new object for this attribute

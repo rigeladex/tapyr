@@ -29,6 +29,7 @@
 #     6-Jul-2011 (CT) `_entity_links_group` test fixed (and `_test_code`
 #                     enabled, again)
 #    26-Jan-2012 (CT) Add `_prefilled_test`
+#    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `_prefilled_test`
 #    ««revision-date»»···
 #--
 
@@ -1902,7 +1903,13 @@ _prefilled_test = """
     Creating new scope MOMT__...
 
     >>> from _GTW._AFS._MOM import Spec
-        >>> SB = Spec.Entity ()
+    >>> SB = Spec.Entity (
+    ...       attr_spec  = dict
+    ...           ( place       = dict (show_in_ui = False)
+    ...           , points      = dict (show_in_ui = False)
+    ...           )
+    ...     , include_links = ("_crew", )
+    ...     )
     >>> fb = Form ("FBR", children = [SB (scope.SRM.Boat_in_Regatta)])
 
     >>> print repr (fb)
@@ -1932,9 +1939,23 @@ _prefilled_test = """
         <Field FBR-0:1:0:2 'mna_number'>
         <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'>
          <Field FBR-0:1:0:3:0 'name'>
-      <Fieldset FBR-0:2 'optional'>
-       <Field FBR-0:2:0 'place'>
-       <Field FBR-0:2:1 'points'>
+      <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>>
+       <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>
+        <Field_Role_Hidden FBR-0:2::p-0 'left' 'GTW.OMP.SRM.Boat_in_Regatta'>
+        <Fieldset FBR-0:2::p-1 'primary'>
+         <Field_Entity FBR-0:2::p-1:0 'right' 'GTW.OMP.SRM.Sailor'>
+          <Field_Entity FBR-0:2::p-1:0:0 'left' 'GTW.OMP.PAP.Person'>
+           <Field FBR-0:2::p-1:0:0:0 'last_name'>
+           <Field FBR-0:2::p-1:0:0:1 'first_name'>
+           <Field FBR-0:2::p-1:0:0:2 'middle_name'>
+           <Field FBR-0:2::p-1:0:0:3 'title'>
+          <Field FBR-0:2::p-1:0:1 'nation'>
+          <Field FBR-0:2::p-1:0:2 'mna_number'>
+          <Field_Entity FBR-0:2::p-1:0:3 'club' 'GTW.OMP.SRM.Club'>
+           <Field FBR-0:2::p-1:0:3:0 'name'>
+        <Fieldset FBR-0:2::p-2 'optional'>
+         <Field FBR-0:2::p-2:0 'key'>
+         <Field FBR-0:2::p-2:1 'role'>
 
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
@@ -1947,7 +1968,7 @@ _prefilled_test = """
     >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
     >>> scope.commit ()
 
-    >>> fib = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (init = reg)))
+    >>> fib = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (init = reg), Crew_Member = dict (max_links   = 1)))
 
     >>> for i in fib.entity_children () :
     ...     print show_instance (i)
@@ -1963,7 +1984,7 @@ _prefilled_test = """
     >>> for i in fib.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FBR> [('sid', 0)]
-    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', '45sQHb0C8Bu404F8EH9Z92lO7c8dPfpY53lUKg')]
+    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ')]
     <Fieldset FBR-0:0 'primary'> []
     <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'> [(u'init', {}), ('sid', 'PZxpoexBBpodhZhRn59fOL71TnSdn4kXiOsAew')]
     <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> [(u'init', {}), ('sid', 'ez2dI6ZAaxqfK:EO9ViTl:5NBHR-eUQOjoVHJw')]
@@ -1988,15 +2009,13 @@ _prefilled_test = """
     <Field FBR-0:1:0:2 'mna_number'> []
     <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'> [(u'init', {}), ('sid', 'HGdmzzBmx7eTgUjpwJCq1mQaKuM2Iny3ZHKSuw')]
     <Field FBR-0:1:0:3:0 'name'> []
-    <Fieldset FBR-0:2 'optional'> []
-    <Field FBR-0:2:0 'place'> []
-    <Field FBR-0:2:1 'points'> []
+    <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> []
 
-    >>> fib_p = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (prefilled = True, init = reg)))
+    >>> fib_p = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (prefilled = True, init = reg), Crew_Member = dict (max_links   = 1)))
     >>> for i in fib_p.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FBR> [('sid', 0)]
-    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', '45sQHb0C8Bu404F8EH9Z92lO7c8dPfpY53lUKg')]
+    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ')]
     <Fieldset FBR-0:0 'primary'> []
     <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'> [(u'init', {}), ('sid', 'PZxpoexBBpodhZhRn59fOL71TnSdn4kXiOsAew')]
     <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> [(u'init', {}), ('sid', 'ez2dI6ZAaxqfK:EO9ViTl:5NBHR-eUQOjoVHJw')]
@@ -2016,9 +2035,7 @@ _prefilled_test = """
     <Field FBR-0:1:0:2 'mna_number'> []
     <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'> [(u'init', {}), ('sid', 'HGdmzzBmx7eTgUjpwJCq1mQaKuM2Iny3ZHKSuw')]
     <Field FBR-0:1:0:3:0 'name'> []
-    <Fieldset FBR-0:2 'optional'> []
-    <Field FBR-0:2:0 'place'> []
-    <Field FBR-0:2:1 'points'> []
+    <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> []
 
     >>> print formatted (fib.as_json_cargo, level = 1)
       { '$id' : 'FBR'
@@ -2414,27 +2431,10 @@ _prefilled_test = """
                   , 'type' : 'Fieldset'
                   }
                 , { '$id' : 'FBR-0:2'
-                  , 'children' :
-                      [ { '$id' : 'FBR-0:2:0'
-                        , 'kind' : 'optional'
-                        , 'label' : 'Place'
-                        , 'name' : 'place'
-                        , 'type' : 'Field'
-                        , 'value' :
-                            {}
-                        }
-                      , { '$id' : 'FBR-0:2:1'
-                        , 'kind' : 'optional'
-                        , 'label' : 'Points'
-                        , 'name' : 'points'
-                        , 'type' : 'Field'
-                        , 'value' :
-                            {}
-                        }
-                      ]
-                  , 'collapsed' : True
-                  , 'name' : 'optional'
-                  , 'type' : 'Fieldset'
+                  , 'max_links' : 1
+                  , 'name' : 'Crew_Member'
+                  , 'type' : 'Entity_List'
+                  , 'type_name' : 'GTW.OMP.SRM.Crew_Member'
                   }
                 ]
             , 'name' : 'Boat_in_Regatta'
@@ -2443,7 +2443,7 @@ _prefilled_test = """
             , 'value' :
                 { 'init' :
                     {}
-                , 'sid' : '45sQHb0C8Bu404F8EH9Z92lO7c8dPfpY53lUKg'
+                , 'sid' : 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ'
                 }
             }
           ]
@@ -2760,27 +2760,10 @@ _prefilled_test = """
                   , 'type' : 'Fieldset'
                   }
                 , { '$id' : 'FBR-0:2'
-                  , 'children' :
-                      [ { '$id' : 'FBR-0:2:0'
-                        , 'kind' : 'optional'
-                        , 'label' : 'Place'
-                        , 'name' : 'place'
-                        , 'type' : 'Field'
-                        , 'value' :
-                            {}
-                        }
-                      , { '$id' : 'FBR-0:2:1'
-                        , 'kind' : 'optional'
-                        , 'label' : 'Points'
-                        , 'name' : 'points'
-                        , 'type' : 'Field'
-                        , 'value' :
-                            {}
-                        }
-                      ]
-                  , 'collapsed' : True
-                  , 'name' : 'optional'
-                  , 'type' : 'Fieldset'
+                  , 'max_links' : 1
+                  , 'name' : 'Crew_Member'
+                  , 'type' : 'Entity_List'
+                  , 'type_name' : 'GTW.OMP.SRM.Crew_Member'
                   }
                 ]
             , 'name' : 'Boat_in_Regatta'
@@ -2789,7 +2772,7 @@ _prefilled_test = """
             , 'value' :
                 { 'init' :
                     {}
-                , 'sid' : '45sQHb0C8Bu404F8EH9Z92lO7c8dPfpY53lUKg'
+                , 'sid' : 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ'
                 }
             }
           ]
