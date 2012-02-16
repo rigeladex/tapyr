@@ -155,6 +155,8 @@
 #     2-Feb-2012 (CT) Add property for `form_id`,
 #                     move `form_parameters` to `Admin`
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
+#    16-Feb-2012 (CT) Change `Change.rendered` to deal with `cancel`
+#    16-Feb-2012 (CT) Add `obj.pid` to `form.referrer`
 #    ««revision-date»»···
 #--
 
@@ -488,7 +490,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             pid      = req_data.get ("pid") or self.args [0]
             scope    = self.top.scope
             self._check_readonly (request)
-            if pid is not None and pid != "null" :
+            if pid == "null" :
+                pid = None
+            if pid is not None :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
                 except LookupError :
@@ -498,12 +502,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         )
                     raise HTTP.Error_404 (request.Error)
             if request.method == "POST" :
-                return self._post_handler (handler, scope)
+                if req_data.get ("cancel") :
+                    ### the user has clicked on the cancel button and not on
+                    ### the submit button
+                    scope.rollback ()
+                    return handler.write_json ({})
+                else :
+                    return self._post_handler (handler, scope)
             else :
                 sid, session_secret = self._new_edit_session (handler)
                 form = self.form \
                     ( obj
-                    , referrer        = request.referrer
+                    , referrer        = "%s%s" %
+                        ( request.referrer
+                        , "#pk-%s" % (obj.pid, ) if obj else ""
+                        )
                     , _sid            = sid
                     , _session_secret = session_secret
                     )

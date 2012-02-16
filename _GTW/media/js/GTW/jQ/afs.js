@@ -69,6 +69,8 @@
 //    17-Nov-2011 (CT) Use `console.error` instead of `alert` (most situations)
 //     7-Dec-2011 (CT) Change plugin name to `gtw_afs_form`
 //    26-Jan-2012 (CT) Add `type!=hidden` and `elem`-guard to `_setup_callbacks`
+//    16-Feb-2012 (CT) Add and delegate `submit_cb`
+//    16-Feb-2012 (CT) Remove `Save` from `cmd_menu`
 //    ««revision-date»»···
 //--
 
@@ -120,10 +122,17 @@
         return result;
     };
     $.fn.gtw_afs_form = function (afs_form, opts) {
+        var selectors = $.extend
+            ( { submit                   : "[type=submit]"
+              }
+            , opts && opts ["selectors"] || {}
+            );
         var options  = $.extend
             ( {
               }
             , opts || {}
+            , { selectors : selectors
+              }
             );
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
@@ -344,23 +353,25 @@
             }
         };
         var _clear_field = function _clear_field (elem) {
-            var child, value = elem ["value"];
-            if ("inp$" in elem) {
-                elem.inp$.val ("");
-            }
-            if (value) {
-                if ("_clear_value" in elem) {
-                    elem._clear_value ();
-                };
-                if ("$child_ids" in value) {
-                    for (var i = 0, li = value.$child_ids.length, child_id
-                        ; i < li
-                        ; i++
-                        ) {
-                        child_id = value.$child_ids [i];
-                        child    = $AFS_E.get (child_id);
-                        if (child) {
-                            _clear_field (child);
+            if (! elem ["prefilled"]) {
+                var child, value = elem ["value"];
+                if ("inp$" in elem) {
+                    elem.inp$.val ("");
+                }
+                if (value) {
+                    if ("_clear_value" in elem) {
+                        elem._clear_value ();
+                    };
+                    if ("$child_ids" in value) {
+                        for (var i = 0, li = value.$child_ids.length, child_id
+                            ; i < li
+                            ; i++
+                            ) {
+                            child_id = value.$child_ids [i];
+                            child    = $AFS_E.get (child_id);
+                            if (child) {
+                                _clear_field (child);
+                            };
                         };
                     };
                 };
@@ -373,8 +384,8 @@
                 key  = name.replace (/ /g, "_");
                 if (name in map) {
                     result.push
-                        ( { callback : callback [key]
-                          , label    : map      [name]
+                        ( { callback : cmd_callback [key]
+                          , label    : map          [name]
                           , name     : name
                           }
                         );
@@ -467,92 +478,96 @@
             var id     = s$.attr    ("id");
             var elem   = $AFS_E.get (id);
             var source = cmd_menu [elem.type] (elem);
-            var cmd    = source [0];
-            var cb     = callback [cmd.name];
-            var menu, drop_butt, hide_cb;
-            cmc$.html ("");
-            $("<a class=\"default button\">")
-                .append   (cmd.label)
-                .appendTo (cmc$)
-                .click
-                  ( function cmd_click (ev) {
-                      cmd.callback.call (cmc$, s$, elem, id, ev);
-                    }
-                  );
-            if (source.length > 1) {
-                // XXX this should really use a `popup` but jquery-ui 1.8 doesn't
-                //     support that yet
-                // XXX fix when jquery-ui 1.9+ is available
-                menu = $("<ul class=\"drop-menu\">");
-                drop_butt = $("<a class=\"drop button\">")
-                    .append   ($("<i>"))
+            var cb, cmd, drop_butt, hide_cb, menu;
+            if (source.length > 0) {
+                cmd = source [0];
+                cb  = cmd_callback [cmd.name];
+                cmc$.html ("");
+                $("<a class=\"default button\">")
+                    .append   (cmd.label)
                     .appendTo (cmc$)
                     .click
-                      ( function (ev) {
-                          var menu = drop_butt.menu;
-                          if (menu.element.is (":visible")) {
-                              menu.element.hide ();
-                          } else {
-                              menu.element.show ()
-                                  .position
-                                    ( { my         : "right top"
-                                      , at         : "right bottom"
-                                      , of         : drop_butt
-                                      , collision  : "fit"
-                                      }
-                                    )
-                                  .focus ();
-                          };
+                      ( function cmd_click (ev) {
+                          cmd.callback.call (cmc$, s$, elem, id, ev);
                         }
                       );
-                hide_cb = function hide_cb (ev) {
-                    var menu = drop_butt.menu, tc;
-                    if (menu.element.is (":visible")) {
-                        tc = $(ev.target).closest (".cmd-menu");
-                        if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
-                            menu.element.hide ();
+                if (source.length > 1) {
+                    // XXX this should really use a `popup` but jquery-ui 1.8 doesn't
+                    //     support that yet
+                    // XXX fix when jquery-ui 1.9+ is available
+                    menu = $("<ul class=\"drop-menu\">");
+                    drop_butt = $("<a class=\"drop button\">")
+                        .append   ($("<i>"))
+                        .appendTo (cmc$)
+                        .click
+                          ( function (ev) {
+                              var menu = drop_butt.menu;
+                              if (menu.element.is (":visible")) {
+                                  menu.element.hide ();
+                              } else {
+                                  menu.element.show ()
+                                      .position
+                                        ( { my         : "right top"
+                                          , at         : "right bottom"
+                                          , of         : drop_butt
+                                          , collision  : "fit"
+                                          }
+                                        )
+                                      .focus ();
+                              };
+                            }
+                          );
+                    hide_cb = function hide_cb (ev) {
+                        var menu = drop_butt.menu, tc;
+                        if (menu.element.is (":visible")) {
+                            tc = $(ev.target).closest (".cmd-menu");
+                            if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
+                                menu.element.hide ();
+                            };
                         };
                     };
+                    $(document)
+                        .bind ("click.menuhide", hide_cb)
+                        .bind ("keyup.menuhide", hide_cb);
+                    for (var i = 1, li = source.length; i < li; i++) {
+                        ( function () {
+                            var cmdi = source [i];
+                            menu.append
+                              ( $("<li>")
+                                  .append
+                                    ( $("<a class=\"button\" href=\"#\">")
+                                        .append (cmdi.label)
+                                        .click
+                                          ( function cmd_click (ev) {
+                                              cmdi.callback.call
+                                                  (cmc$, s$, elem, id, ev);
+                                              drop_butt.menu.element.hide ();
+                                            }
+                                          )
+                                    )
+                              );
+                          } ()
+                        );
+                    };
+                    drop_butt.menu = menu
+                        .menu
+                          ( { select    : function (event, ui) {
+                                  var cmd$ = $(ui.item);
+                                  cmd$.trigger ("cmd_menu_do");
+                              }
+                            }
+                          )
+                        .appendTo (cmc$)
+                        .css      ({ top: 0, left: 0, position : "absolute" })
+                        .hide     ()
+                        .zIndex   (cmc$.zIndex () + 1)
+                        .data     ("menu");
                 };
-                $(document)
-                    .bind ("click.menuhide", hide_cb)
-                    .bind ("keyup.menuhide", hide_cb);
-                for (var i = 1, li = source.length; i < li; i++) {
-                    ( function () {
-                        var cmdi = source [i];
-                        menu.append
-                          ( $("<li>")
-                              .append
-                                ( $("<a class=\"button\" href=\"#\">")
-                                    .append (cmdi.label)
-                                    .click
-                                      ( function cmd_click (ev) {
-                                          cmdi.callback.call
-                                              (cmc$, s$, elem, id, ev);
-                                          drop_butt.menu.element.hide ();
-                                        }
-                                      )
-                                )
-                          );
-                      } ()
-                    );
-                };
-                drop_butt.menu = menu
-                    .menu
-                      ( { select    : function (event, ui) {
-                              var cmd$ = $(ui.item);
-                              cmd$.trigger ("cmd_menu_do");
-                          }
-                        }
-                      )
-                    .appendTo (cmc$)
-                    .css      ({ top: 0, left: 0, position : "absolute" })
-                    .hide     ()
-                    .zIndex   (cmc$.zIndex () + 1)
-                    .data     ("menu");
+            } else {
+                cmc$.hide ();
             };
         };
-        var callback =
+        var cmd_callback =
             { Add                       : function add_cb (p$, parent, id, ev) {
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
@@ -739,41 +754,81 @@
                 // anchor = $AFS_E.get (afs_field.anchor_id);
             }
         };
-
         var cmd_menu =
-            { Entity                    : function cmd_menu_entity (elem) {
-                  return _cmds ("Save", "Delete");
+            { Entity                    : function Entity (elem) {
+                  var names = [];
+                  if (elem.value.edit.pid) {
+                      names.push ("Delete");
+                  };
+                  return _cmds.apply (null, names);
               }
-            , Entity_Link               : function cmd_menu_entity_link (elem) {
+            , Entity_Link               : function Entity_Link (elem) {
                   var names = [];
                   if (elem.collapsed) {
                       names.push ("Edit", "Copy");
                   } else {
-                      names.push ("Save", "Cancel", "Clear fields");
+                      names.push ("Clear fields", "Cancel");
                   };
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
                   }
                   return _cmds.apply (null, names);
               }
-            , Entity_List               : function cmd_menu_entity_list (elem) {
+            , Entity_List               : function Entity_List (elem) {
                   return _cmds ("Add");
               }
-            , Field_Composite           : function cmd_menu_entity_list (elem) {
+            , Field_Composite           : function Field_Composite (elem) {
                   return _cmds ("Clear fields");
               }
-            , Field_Entity              : function cmd_menu_field_entity (elem) {
+            , Field_Entity              : function Field_Entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
                       names.push ("Edit");
                   } else {
-                      names.push ("Save", "Cancel");
+                      names.push ("Clear fields", "Cancel");
                   };
-                  names.push ("Clear fields");
                   return _cmds.apply (null, names);
               }
             };
+        var submit_cb = function submit_cb (ev) {
+            var target$   = $(ev.target);
+            var name      = target$.attr ("name");
+            var pvs       = $AFS_E.root.packed_values ();
+            var json_data = { cargo : pvs };
+            json_data [name] = true;
+            $.gtw_ajax_2json
+                ( { url         : document.URL
+                  , data        : json_data
+                  , success     : function (answer, status, xhr_instance) {
+                        if (! answer ["error"]) {
+                            if (answer ["conflicts"]) {
+                                // XXX
+                                alert
+                                    ( "Conflicts: \n"
+                                    + $GTW.inspect.show (answer.conflicts)
+                                    );
+                            } else if (answer ["expired"]) {
+                                // XXX display re-authorization form
+                                alert ("Expired: " + answer.expired);
+                            } else {
+                                console.info
+                                    ( name + " of form " + document.URL
+                                    + " was successful!"
+                                    );
+                                window.location = options.next_url;
+                            }
+                        } else {
+                            console.error
+                                ("Submit error", answer, json_data);
+                        }
+                    }
+                  }
+                , "Submit"
+                );
+            return false;
+        } ;
         options.form$ = this;
+        this.delegate (selectors.submit, "click", submit_cb);
         _setup_callbacks (this);
         return this;
     };

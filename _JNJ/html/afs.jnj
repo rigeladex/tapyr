@@ -39,6 +39,7 @@
 ##     4-Nov-2011 (CT) Add `title` to `do_head`, add `show_desc` to `do_element`
 ##    26-Jan-2012 (CT) Add `next_form_kw` to `Form`
 ##     2-Feb-2012 (CT) Change `do_head` to consider `prefilled` and `readonly`
+##    16-Feb-2012 (CT) Add `cancel_kw` and `submit_kws` to call of `FM.form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -125,6 +126,15 @@
       ( action     = ""
       , class      = form.css_class
       , id         = form.id
+      , cancel_kw  = dict
+          ( href   = form.referrer
+          )
+      , submit_kws =
+          [ dict
+              ( title = GTW._T ("Send form data to server and leave form")
+              , value = GTW._T ("Submit")
+              )
+          ]
       , ** kwargs
       )
   -%}
