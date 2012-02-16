@@ -276,7 +276,7 @@ style_sheet = Style_Sheet \
         )
     , Rule
         ( "pre.literal-block"
-        , font           = P.font_family_normal
+        , font_family    = P.font_family_normal
         , padding_left   = Em (5)
         )
     , Rule

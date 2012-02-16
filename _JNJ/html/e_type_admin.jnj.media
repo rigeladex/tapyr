@@ -145,7 +145,7 @@ style_sheet = Style_Sheet \
                     [ Rule
                         ( "a"
                         , P.nav_col.color_spec_heading
-                        , font_size = "normal"
+                        , font_size = "medium"
                         , display   = "block"
                         , padding   = TRBL0 (t = Px (2), b = Px (4))
                         )
