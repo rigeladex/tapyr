@@ -73,6 +73,7 @@
 ##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
 ##    12-Nov-2010 (CT) `form` changed to include `div.buttons` only if necessary
 ##    26-Jan-2012 (CT) Use `request.path_x` for `next`, if available
+##    16-Feb-2012 (CT) Add `class="button"` to `login_inline`, `logout_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -324,7 +325,7 @@
       </li>
       {%- if allow_register %}
         <li class="nav-link level-0">
-          <a href="{{ Auth.href_register }}"
+          <a href="{{ Auth.href_register }}" class="button"
             title="{{ GTW._T ("Register a new account") }}"
           >{{ GTW._T ("Register") }}</a>
         </li>
@@ -354,12 +355,12 @@
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
       <li>
-        <a href="{{ Auth.href_change_email (request.user) }}"
+        <a href="{{ Auth.href_change_email (request.user) }}" class="button"
           title="{{ GTW._T ("Change email of account %s") % request.user.name }}"
         >{{ GTW._T ("Change email") }}</a>
       </li>
       <li>
-        <a href="{{ Auth.href_change_pass (request.user) }}"
+        <a href="{{ Auth.href_change_pass (request.user) }}" class="button"
           title="{{ GTW._T ("Change password of account %s") % request.user.name }}"
         >{{ GTW._T ("Change password") }}</a>
       </li>
