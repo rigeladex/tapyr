@@ -271,6 +271,7 @@
 #     1-Dec-2011 (CT) Change `Root.template_iter` to include error templates
 #    19-Jan-2012 (CT) Factor `_cache_pickles`
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
+#    16-Feb-2012 (CT) Save `_orig_kw` in `_Meta_.__call__`
 #    ««revision-date»»···
 #--
 
@@ -317,7 +318,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
-        result._kw = dict (kw)
+        result._orig_kw = dict (kw)
         if not result.implicit :
             href = result.href
             pid  = result.pid

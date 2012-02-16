@@ -187,7 +187,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                     )
             bir_admin = bir.admin
             kw = dict \
-                ( bir_admin._kw
+                ( bir_admin._orig_kw
                 , form_id         = "AF_BiR"
                 , form_parameters = dict (form_kw = form_kw)
                 , implicit        = True
