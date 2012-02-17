@@ -155,8 +155,8 @@
 #     2-Feb-2012 (CT) Add property for `form_id`,
 #                     move `form_parameters` to `Admin`
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
-#    16-Feb-2012 (CT) Change `Change.rendered` to deal with `cancel`
 #    16-Feb-2012 (CT) Add `obj.pid` to `form.referrer`
+#    16-Feb-2012 (CT) Change `Change._post_handler` to deal with `cancel`
 #    ««revision-date»»···
 #--
 
@@ -502,13 +502,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         )
                     raise HTTP.Error_404 (request.Error)
             if request.method == "POST" :
-                if req_data.get ("cancel") :
-                    ### the user has clicked on the cancel button and not on
-                    ### the submit button
-                    scope.rollback ()
-                    return handler.write_json ({})
-                else :
-                    return self._post_handler (handler, scope)
+                return self._post_handler (handler, scope)
             else :
                 sid, session_secret = self._new_edit_session (handler)
                 form = self.form \
@@ -538,27 +532,34 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise NotImplementedError \
                     ("AFS form post requests without content-type json")
             try :
-                fv             = self.form_value (json ["cargo"])
-                get_template   = self.top.Templateer.get_template
-                session_secret = self.session_secret (handler, fv.sid)
-                self.form_value_apply (fv, scope, fv.sid, session_secret)
-                ikw = dict \
-                    ( allow_new       = bool (json.get ("allow_new"))
-                    , collapsed       = bool (json.get ("collapsed"))
-                    , _sid            = fv.sid
-                    , _session_secret = session_secret
-                    )
-                result ["$child_ids"] = rids = []
-                for e in fv.entities () :
-                    if e.entity :
-                        obj = e.entity
-                        fi  = e.elem.instantiated (e.id, obj.ETM, obj, ** ikw)
-                        result [e.id] = dict \
-                            ( html = get_template (e.elem.renderer).call_macro
-                                (fi.widget, fi, fi, fi.renderer)
-                            , json = fi.as_json_cargo
-                            )
-                        rids.append (e.id)
+                if json.get ("cancel") :
+                    ### the user has clicked on the cancel button and not on
+                    ### the submit button
+                    scope.rollback ()
+                else :
+                    fv             = self.form_value (json ["cargo"])
+                    get_template   = self.top.Templateer.get_template
+                    session_secret = self.session_secret (handler, fv.sid)
+                    self.form_value_apply (fv, scope, fv.sid, session_secret)
+                    ikw = dict \
+                        ( allow_new       = bool (json.get ("allow_new"))
+                        , collapsed       = bool (json.get ("collapsed"))
+                        , _sid            = fv.sid
+                        , _session_secret = session_secret
+                        )
+                    result ["$child_ids"] = rids = []
+                    for e in fv.entities () :
+                        if e.entity :
+                            obj = e.entity
+                            fi  = e.elem.instantiated \
+                                (e.id, obj.ETM, obj, ** ikw)
+                            result [e.id] = dict \
+                                ( html = get_template
+                                    (e.elem.renderer).call_macro
+                                        (fi.widget, fi, fi, fi.renderer)
+                                , json = fi.as_json_cargo
+                                )
+                            rids.append (e.id)
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
