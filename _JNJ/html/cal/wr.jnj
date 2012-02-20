@@ -1,6 +1,6 @@
 {#- jinja template: wr.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -66,12 +66,7 @@
                  , "today"   if d == cal.today else ""
                 )).strip ()
             -%}
-            {%- set div_cls = " ".join
-                (( "date"
-                 , d.month_name
-                 , "event" if events else ""
-                )).strip ()
-            -%}
+            {%- set div_cls = " ".join (("date", d.month_name)) -%}
             <td class="{{ td_cls }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
               <span class="{{ div_cls }}">
                 {{- W.week_day_head (cal, weeks, d, events) -}}

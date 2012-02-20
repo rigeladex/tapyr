@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -49,14 +49,14 @@ style_sheet = Style_Sheet \
                 ( "span"
                 , children         =
                     [ Rule_Class
+                        ( "date", "date a", "event a"
+                        , display  = "block"
+                        )
+                    , Rule_Class
                         ( "event"
                         , background_color = P.cal.event_bg
                         , border_bottom    = P.border_simple
                         , display          = "block"
-                        )
-                    , Rule_Class
-                        ( "date", "date a", "event a"
-                        , display  = "block"
                         )
                     ]
                 )
@@ -69,11 +69,23 @@ style_sheet = Style_Sheet \
                         ( ".date"
                         , text_align = "right"
                         , children   =
-                            [ Rule (".month", color = P.cal.month_color)
+                            [ Rule
+                                ( ".month"
+                                , color      = P.cal.month_color
+                                )
                             , Rule
                                 ( "a"
-                                , display  = "inline-block"
-                                , width    = Percent (100)
+                                , display    = "inline-block"
+                                , width      = Percent (100)
+                                )
+                            ]
+                        )
+                    , Rule_Class
+                        ( "saturday", "sunday"
+                        , children   =
+                            [ Rule
+                                ( ".date span"
+                                , color      = P.cal.weekend_color
                                 )
                             ]
                         )
@@ -97,11 +109,12 @@ style_sheet = Style_Sheet \
                 , children         =
                     [ Rule_Class
                         ( "week-number"
-                        , background_color = P.cal.date_bg
+                        , background_color = P.cal.week_bg
                         , color            = P.cal.week_color
-                        , text_align       = "left"
+                        , padding          = TRBL0 (r = Em (0.5))
+                        , text_align       = "right"
                         , vertical_align   = "top"
-                        , width            = Em (2)
+                        , width            = Em (1.75)
                         )
                     ]
                 )

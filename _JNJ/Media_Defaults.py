@@ -249,14 +249,15 @@ class Media_Defaults (Definition) :
 
     class cal (Definition) :
 
-        date_bg                = RGB_X ("#DDDDDD")
+        date_bg                = P.R.color_medium_grey
         date_padding           = TRBL0 (r = Em (1./4), b = Em (1./10))
         event_bg               = RGB_X ("#FFF8AF")
         font_size              = Em    (0.7)
         line_height            = 1.5
         holiday_bg             = RGB_X ("#CCFFFF")
-        month_color            = RGB_X ("#ABABAB")
-        weekend_color          = RGB_X ("#00FFFF")
+        month_color            = RGB_X ("#777777")
+        weekend_color          = P.R.color.m_blue
+        week_bg                = P.R.color_heading
         week_color             = RGB_8 (255, 153, 0)
         week_height            = Em    (8)
 
