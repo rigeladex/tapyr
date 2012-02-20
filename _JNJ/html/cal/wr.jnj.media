@@ -55,7 +55,9 @@ style_sheet = Style_Sheet \
                     , Rule_Class
                         ( "event"
                         , background_color = P.cal.event_bg
-                        , border_bottom    = P.border_simple
+                        , border           = P.border_simple
+                        , border_top       = 0
+                        , padding          = TRBL (0, Px (2))
                         , display          = "block"
                         )
                     ]
