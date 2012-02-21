@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ReST.
@@ -53,8 +53,7 @@ def _uri_role (role, rawtext, text, lineno, inliner, options={}, content=[]) :
         ref  = "%s:%s" % (scheme, uri)
     else :
         ref  = uri
-    contents = u"""<a href="%s">%s</a>""" % (ref, text)
-    node     = nodes.reference (rawtext, text, refuri = ref, ** options)
+    node = nodes.reference (rawtext, text, refuri = ref, ** options)
     return [node], []
 # end def _uri_role
 
