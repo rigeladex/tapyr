@@ -71,14 +71,16 @@
 //    26-Jan-2012 (CT) Add `type!=hidden` and `elem`-guard to `_setup_callbacks`
 //    16-Feb-2012 (CT) Add and delegate `submit_cb`
 //    16-Feb-2012 (CT) Remove `Save` from `cmd_menu`
+//    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
+    var L      = $GTW.L;
     var $AFS_E = $GTW.AFS.Elements;
-    var bwrap = function bwrap (v) {
+    var bwrap  = function bwrap (v) {
         return "<b>" + v + "</b>";
     };
     var _get_completer_values_nested = function _get_completer_values_nested () {
@@ -483,8 +485,7 @@
                 cmd = source [0];
                 cb  = cmd_callback [cmd.name];
                 cmc$.html ("");
-                $("<a class=\"default button\">")
-                    .append   (cmd.label)
+                $(L ("a.default.button", {}, cmd.label))
                     .appendTo (cmc$)
                     .click
                       ( function cmd_click (ev) {
@@ -495,9 +496,8 @@
                     // XXX this should really use a `popup` but jquery-ui 1.8 doesn't
                     //     support that yet
                     // XXX fix when jquery-ui 1.9+ is available
-                    menu = $("<ul class=\"drop-menu\">");
-                    drop_butt = $("<a class=\"drop button\">")
-                        .append   ($("<i>"))
+                    menu = $(L ("ul.drop-menu"));
+                    drop_butt = $(L ("a.drop.button", {}, L ("i")))
                         .appendTo (cmc$)
                         .click
                           ( function (ev) {
@@ -533,17 +533,13 @@
                         ( function () {
                             var cmdi = source [i];
                             menu.append
-                              ( $("<li>")
-                                  .append
-                                    ( $("<a class=\"button\" href=\"#\">")
-                                        .append (cmdi.label)
-                                        .click
-                                          ( function cmd_click (ev) {
-                                              cmdi.callback.call
-                                                  (cmc$, s$, elem, id, ev);
-                                              drop_butt.menu.element.hide ();
-                                            }
-                                          )
+                              ( $(L ("li", {}, L ("a.button", {}, cmdi.label)))
+                                  .click
+                                    ( function cmd_click (ev) {
+                                        cmdi.callback.call
+                                            (cmc$, s$, elem, id, ev);
+                                        drop_butt.menu.element.hide ();
+                                      }
                                     )
                               );
                           } ()

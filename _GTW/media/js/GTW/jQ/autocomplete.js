@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -15,17 +15,19 @@
 //
 // Revision Dates
 //    13-Oct-2011 (CT) Creation
+//    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
+    var L = $GTW.L;
     var renderer =
         { html          : function _ac_render_item_html (ul, item) {
-              var result = $("<li></li>")
+              var result = $(L ("li"))
                   .data     ("item.autocomplete", item)
-                  .append   ($("<a></a>").html (item.label))
+                  .append   ($(L ("a", {}, item.label)))
                   .appendTo (ul);
               return result;
           }

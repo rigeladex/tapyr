@@ -53,6 +53,7 @@
 #                     `GTW_jq_afs`, and `GTW_autocomplete`
 #    15-Dec-2011 (CT) Add `GTW_UI_Icon_Map`, `GTW_e_type_selector`
 #     3-Jan-2012 (CT) Add `requires` to `Script` definitions
+#    21-Feb-2012 (CT) Add `GTW_L`
 #    ««revision-date»»···
 #--
 
@@ -130,6 +131,12 @@ GTW.Script \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jsonify.js"
     , name     = "GTW_jsonify"
+    , requires = (GTW.Script._.GTW, )
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/L.js"
+    , name     = "GTW_L"
     , requires = (GTW.Script._.GTW, )
     )
 
