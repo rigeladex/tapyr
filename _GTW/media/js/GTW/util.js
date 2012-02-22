@@ -1,5 +1,5 @@
 //-*- coding: iso-8859-1 -*-
-// Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -23,6 +23,7 @@
 //    26-Jan-2011 (CT) Style change
 //     5-Apr-2011 (CT) `Array.prototype.indexOf` defined, if necessary
 //    14-Oct-2011 (MG) Missing `var` added to `as_int_array`
+//    22-Feb-2012 (CT) Change `fix_a_nospam` to take data from `next` `b.nospam`
 //    ««revision-date»»···
 //--
 
@@ -45,9 +46,9 @@
           , fix_a_nospam   : function ($) {
                 $("a.nospam").each (
                     function () {
-                        var rel = $(this).attr ("rel");
-                        if (rel != null) {
-                            var aia = $GTW.as_int_array (rel);
+                        var data = $(this).next ("b.nospam").attr ("title");
+                        if (data != null) {
+                            var aia = $GTW.as_int_array (data);
                             $(this).replaceWith
                                 (String.fromCharCode.apply (null, aia));
                         };

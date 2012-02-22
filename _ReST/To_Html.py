@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ReST.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Mar-2010 (CT) Creation
+#    22-Feb-2012 (CT) Import `_ReST.Directives`
 #    ««revision-date»»···
 #--
 
@@ -34,6 +35,7 @@ from   _ReST                    import ReST
 from   _TFL                     import TFL
 
 import _ReST.Roles
+import _ReST.Directives
 
 from   _TFL.predicate           import uniq
 from   _TFL._Meta.Once_Property import Once_Property

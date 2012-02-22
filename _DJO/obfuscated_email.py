@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #    25-May-2009 (CT) Creation
 #     3-Aug-2010 (CT) Completely revamped
+#    22-Feb-2012 (CT) Change `_obfuscator_format` so it's valid html5
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,8 @@ from   _TFL.Regexp     import *
 from   random          import randrange
 
 _obfuscator_format = """\
-<a class="nospam" title="%(need)s" rel="%(js_args)s">%(text)s</a>\
+<a class="nospam" title="%(need)s">%(text)s</a>\
+<b class="nospam" title="%(js_args)s"></b>\
 """
 
 def obfuscated (text) :

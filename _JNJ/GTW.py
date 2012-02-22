@@ -54,6 +54,7 @@
 #     1-Dec-2011 (CT) Add `styler`
 #    18-Jan-2012 (CT) Add `attr_join`
 #    27-Jan-2012 (CT) Change `email_uri` to allow tuple argument
+#    22-Feb-2012 (CT) Add `vimeo_video` and `youtube_video`
 #    ««revision-date»»···
 #--
 
@@ -248,10 +249,13 @@ class GTW (TFL.Meta.Object) :
         return result
     # end def uri
 
-    zip  = staticmethod (zip)
-    _T   = staticmethod (_T)
-    _    = staticmethod (_)
-    _Tn  = staticmethod (_Tn)
+    vimeo_video   = staticmethod (HTML.vimeo_video)
+    youtube_video = staticmethod (HTML.youtube_video)
+
+    zip           = staticmethod (zip)
+    _T            = staticmethod (_T)
+    _             = staticmethod (_)
+    _Tn           = staticmethod (_Tn)
 
 # end class GTW
 

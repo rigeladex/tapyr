@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -191,6 +191,7 @@ class Page_ReST (DJO.NAV.Page) :
         from django.contrib.markup.templatetags.markup \
             import restructuredtext
         import _ReST.Roles
+        import _ReST.Directives
         return restructuredtext
     # end def markup_to_html
 
