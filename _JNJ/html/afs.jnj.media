@@ -42,6 +42,7 @@
 #     2-Feb-2012 (CT) Add rule for `.prefilled`
 #    16-Feb-2012 (CT) Add rule for `input[type=submit]`
 #    21-Feb-2012 (CT) Add `Script` for `GTW_L`
+#    23-Feb-2012 (CT) Add rules for `.Status.bad`, `.good`, and `.missing`
 #    ««revision-date»»···
 #--
 
@@ -121,16 +122,6 @@ style_sheet = Style_Sheet \
                     [ Rule
                         ( "h2"
                         , P.afs.color_spec_label
-                        , children      =
-                            [ Rule
-                                ( ".Status"
-                                , background_color  = "red" # "transparent"
-                                , display           = "inline-block"
-                                , height            = Px (10)
-                                , width             = Px (10)
-                                , ** Border (radius = Px (5))
-                                )
-                            ]
                         )
                     , Rule
                         ( "input", "select", "textarea"
@@ -168,6 +159,31 @@ style_sheet = Style_Sheet \
                     , Rule
                         ( "textarea"
                         , font_size     = Percent (95)
+                        )
+                    , Rule
+                        ( ".Status"
+                        , Border (radius = P.afs.status_size // 2)
+                        , display           = "inline-block"
+                        , height            = P.afs.status_size
+                        , margin_right      = P.afs.status_size
+                        , width             = P.afs.status_size
+                        , children          =
+                            [ Rule_Class
+                                ( "bad"
+                                , background_color  =
+                                    P.color_status_bad
+                                )
+                            , Rule_Class
+                                ( "good"
+                                , background_color  =
+                                    P.color_status_good
+                                )
+                            , Rule_Class
+                                ( "missing"
+                                , background_color  =
+                                    P.color_status_missing
+                                )
+                            ]
                         )
                     ]
                 )

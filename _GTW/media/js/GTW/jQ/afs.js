@@ -72,6 +72,7 @@
 //    16-Feb-2012 (CT) Add and delegate `submit_cb`
 //    16-Feb-2012 (CT) Remove `Save` from `cmd_menu`
 //    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
+//    23-Feb-2012 (CT) Change `field_change_cb` to update `$("b.Status")`
 //    ««revision-date»»···
 //--
 
@@ -455,7 +456,7 @@
         };
         var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
-            $(":input[type!=hidden]", context).each
+            $(".Field :input", context).each
                 ( function (n) {
                     var inp$ = $(this);
                     var id     = inp$.attr ("id");
@@ -746,6 +747,17 @@
                 }
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
+                if (f$.attr ("required")) {
+                    var l$ = $("label[for='" + id + "']");
+                    var b$ = $("b.Status", l$);
+                    b$.toggleClass ("missing", !  new_value)
+                      .toggleClass ("good",    !! new_value);
+                };
+                if ("checker" in afs_field) {
+                    var status = afs_field.checker (afs_field, new_value);
+                    b$.toggleClass ("bad",     !  status)
+                      .toggleClass ("good",    !! status);
+                };
                 // trigger `afs_change` event of `anchor`
                 // anchor = $AFS_E.get (afs_field.anchor_id);
             }

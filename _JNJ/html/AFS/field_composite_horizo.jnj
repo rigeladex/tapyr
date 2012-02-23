@@ -1,7 +1,7 @@
 
 {#- jinja template: field_composite_horizo.jnj -#}
 {#
-## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -33,6 +33,7 @@
 ##    30-Mar-2011 (CT) Use `GTW.call_macro` to call `do_children`,
 ##                     `do_element`, and `do_head`
 ##     2-Dec-2011 (CT) Remove argument `form` from call of `input_widget`
+##    23-Feb-2012 (CT) Factor `do_label` to `afs.jnj`
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,10 +47,7 @@
       , templ_name = renderer
       )
   -%}
-    <{{ elem.het_h }}>
-      <label for="{{ elem.id }}">{{ GTW._T (elem.label) }}</label>
-      <b class="Status"></b>
-    </{{ elem.het_h }}>
+    {{ GTW.call_macro ("do_label",        elem, templ_name = renderer) }}
     {{ GTW.call_macro (elem.input_widget, elem) }}
   {% endcall %} {# do_element #}
 {%- endmacro -%} {#- Field -#}

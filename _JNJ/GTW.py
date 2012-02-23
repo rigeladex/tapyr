@@ -105,9 +105,7 @@ class GTW (TFL.Meta.Object) :
     # end def call_macro
 
     dict = staticmethod (dict)
-
-    if __debug__ :
-        dir = staticmethod (dir)
+    dir  = staticmethod (dir)
 
     def email_uri (self, email, text = None, ** kw) :
         """Returns a mailto URI for `email`.

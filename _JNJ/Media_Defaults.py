@@ -40,6 +40,7 @@
 #    24-Oct-2011 (CT) `color_spec_heading_rev` added
 #    24-Oct-2011 (CT) `tablesorter` added
 #    24-Nov-2011 (CT) Add `color_spec_selected_rev`
+#    23-Feb-2012 (CT) Add `color_status_{bad,good,missing}`, `afs.status_size`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,38 @@ Color.formatter = RGB_X
 
 class Media_Defaults (Definition) :
     """Provide defaults for CSS fragments in html/*.css"""
+
+    class color (Definition) :
+
+        ### muted colors
+        m_black                = RGB_X     ("#111111")
+        m_blue                 = RGB_X     ("#0088DD")
+        m_green                = RGB_X     ("#00AA00")
+        m_red                  = RGB_X     ("#CC3333")
+        m_orange               = RGB_X     ("#FFA022")
+        m_pink                 = RGB_X     ("#DD4499")
+        m_purple               = RGB_X     ("#AA33BB")
+        m_white                = RGB_X     ("#EEEEEE")
+        m_yellow               = RGB_X     ("#FFF00F")
+
+        ### pure colors
+        p_black                = SVG_Color ("black")
+        p_blue                 = SVG_Color ("blue")
+        p_cyan                 = SVG_Color ("cyan")
+        p_gray                 = SVG_Color ("gray")
+        p_green                = SVG_Color ("green")
+        p_lime                 = SVG_Color ("lime")
+        p_magenta              = SVG_Color ("magenta")
+        p_maroon               = SVG_Color ("maroon")
+        p_navy                 = SVG_Color ("navy")
+        p_olive                = SVG_Color ("olive")
+        p_purple               = SVG_Color ("purple")
+        p_red                  = SVG_Color ("red")
+        p_teal                 = SVG_Color ("teal")
+        p_white                = SVG_Color ("white")
+        p_yellow               = SVG_Color ("yellow")
+
+    # end class color
 
     color_desc             = RGB_X     ("#666666")
     color_focus            = SVG_Color ("yellow")
@@ -63,6 +96,9 @@ class Media_Defaults (Definition) :
     color_dark_grey        = RGB_X     ("#444444")
     color_darker_grey      = RGB_X     ("#222222")
     color_selected         = RGB_X     ("#FF6633")
+    color_status_bad       = RGB_X     ("#FF6666")
+    color_status_good      = RGB_X     ("#AAEEAA")
+    color_status_missing   = RGB_X     ("#FFDD00")
     color_target           = RGB_X     ("#FF6633")
 
     css_arrow_color        = SVG_Color ("red")
@@ -109,6 +145,7 @@ class Media_Defaults (Definition) :
             , style            = "solid"
             , width            = TRBL0 (l = Px (2), default = Px (1))
             )
+
         color_spec_desc        = P_dict \
             ( background_color = P.R.color_desc
             , color            = P.R.background_color
@@ -144,40 +181,9 @@ class Media_Defaults (Definition) :
             )
 
         header_padding         = TRBL0 (b = Em (0.3), default = Em (0.2))
+        status_size            = Px (12)
 
     # end class afs
-
-    class color (Definition) :
-
-        ### muted colors
-        m_black                = RGB_X     ("#111111")
-        m_blue                 = RGB_X     ("#0088DD")
-        m_green                = RGB_X     ("#00AA00")
-        m_red                  = RGB_X     ("#CC3333")
-        n_orange               = RGB_X     ("#FFA022")
-        m_pink                 = RGB_X     ("#DD4499")
-        m_purple               = RGB_X     ("#AA33BB")
-        m_white                = RGB_X     ("#EEEEEE")
-        m_yellow               = RGB_X     ("#FFF00F")
-
-        ### pure colors
-        p_black                = SVG_Color ("black")
-        p_blue                 = SVG_Color ("blue")
-        p_cyan                 = SVG_Color ("cyan")
-        p_gray                 = SVG_Color ("gray")
-        p_green                = SVG_Color ("green")
-        p_lime                 = SVG_Color ("lime")
-        p_magenta              = SVG_Color ("magenta")
-        p_maroon               = SVG_Color ("maroon")
-        p_navy                 = SVG_Color ("navy")
-        p_olive                = SVG_Color ("olive")
-        p_purple               = SVG_Color ("purple")
-        p_red                  = SVG_Color ("red")
-        p_teal                 = SVG_Color ("teal")
-        p_white                = SVG_Color ("white")
-        p_yellow               = SVG_Color ("yellow")
-
-    # end class color
 
     class nav_col (Definition) :
 
@@ -274,7 +280,7 @@ class Media_Defaults (Definition) :
 
     color_spec_error       = P_dict \
         ( background_color = P.background_color
-        , color            = SVG_Color ("red")
+        , color            = P.color_status_bad
         )
     color_spec_heading     = P_dict \
         ( background_color = P.background_color

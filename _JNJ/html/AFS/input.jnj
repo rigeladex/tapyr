@@ -159,11 +159,7 @@
     {%- do kw.setdefault ("readonly", "readonly") -%}
     {%- do kw.setdefault ("title", GTW._T ("Cannot be changed")) -%}
   {%- endif -%}
-  {%- if GTW.getattr (elem, "required", False) %}
-    {#- `elem.reqired` returns `Undefined`, yet `getattr` returns the
-    ##  excpected value (that's in `elem.as_json_cargo`)
-    ##  Bad, Jinja, Bad!
-    -#}
+  {%- if elem.required %}
     {%- do kw.update (required = True) %}
   {% endif -%}
   {{ typ (** kw) }}
