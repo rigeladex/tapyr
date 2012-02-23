@@ -174,8 +174,8 @@ class GTW (TFL.Meta.Object) :
     len        = staticmethod (len)
     list       = staticmethod (list)
 
-    def log_stdout (self, text) :
-        print text
+    def log_stdout (self, * text) :
+        print " ".join (text)
         return ""
     # end def log_stdout
 

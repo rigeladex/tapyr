@@ -15,7 +15,6 @@
 //
 // Revision Dates
 //    13-Oct-2011 (CT) Creation
-//    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
 //    ««revision-date»»···
 //--
 
@@ -25,9 +24,9 @@
     var L = $GTW.L;
     var renderer =
         { html          : function _ac_render_item_html (ul, item) {
-              var result = $(L ("li"))
+              var result = $("<li>")
                   .data     ("item.autocomplete", item)
-                  .append   ($(L ("a", {}, item.label)))
+                  .append   ($("<a>").html (item.label))
                   .appendTo (ul);
               return result;
           }

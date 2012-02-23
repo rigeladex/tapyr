@@ -1,6 +1,6 @@
 {#- jinja template: _input.jnj -#}
 {#
-## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -35,13 +35,14 @@
 ##    10-Oct-2011 (CT) `select` changed to always include an empty `option`
 ##     4-Dec-2011 (CT) Change `select` to include empty `option` at end if
 ##                     `selected` (otherwise FF8 displays the empty value)
+##    23-Feb-2012 (CT) Change option to always compare `value` to `selected`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- macro option (content, value = None, selected = None) -%}
   {%- set sa = ' selected="selected"'
-        if (value or content) == selected else ""
+        if selected and (value == selected or content == selected) else ""
   -%}
   {%- set va = (' value="%s"' % (value, )) if value != None else "" -%}
   <option{{ va }}{{ sa }}{{ kwargs|xmlattr }}>{{ GTW._T (content) }}</option>
