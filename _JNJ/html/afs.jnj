@@ -118,10 +118,9 @@
 {%- endmacro -%} {#- do_head -#}
 
 {%- macro do_label (elem) -%}
-  {%- set status = "missing" if (elem.required and not elem.edit) else "good" %}
   <{{ elem.het_h }}>
     <label for="{{ elem.id }}">{# -#}
-      <b class="Status {{ status }}"></b>{{ GTW._T (elem.label) -}}
+      <b class="Status"></b>{{ GTW._T (elem.label) -}}
     </label>
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_label -#}

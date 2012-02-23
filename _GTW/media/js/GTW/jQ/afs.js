@@ -73,6 +73,8 @@
 //    16-Feb-2012 (CT) Remove `Save` from `cmd_menu`
 //    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
 //    23-Feb-2012 (CT) Change `field_change_cb` to update `$("b.Status")`
+//    23-Feb-2012 (CT) Change `_setup_callbacks` to trigger `change` for `input`
+//    23-Feb-2012 (CT) Change `field_change_cb` to update bad/missing of `input`
 //    ««revision-date»»···
 //--
 
@@ -463,7 +465,8 @@
                     var elem   = $AFS_E.get (id);
                     if (elem) {
                         elem.inp$  = inp$;
-                        inp$.change (field_change_cb);
+                        inp$.change  (field_change_cb)
+                            .trigger ("change");
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
@@ -736,7 +739,10 @@
         var field_change_cb = function field_change_cb (ev) {
             var f$ = $(this);
             var id = f$.attr ("id");
+            var l$ = $("label[for='" + id + "']");
+            var b$ = $("b.Status", l$);
             var afs_field = $AFS_E.get (id);
+            var status = true;
             var ini_value, new_value, old_value, anchor;
             if (afs_field !== undefined) {
                 ini_value = afs_field.value.init;
@@ -747,16 +753,16 @@
                 }
                 old_value = afs_field.value.edit || ini_value;
                 afs_field.value.edit = new_value;
-                if (f$.attr ("required")) {
-                    var l$ = $("label[for='" + id + "']");
-                    var b$ = $("b.Status", l$);
-                    b$.toggleClass ("missing", !  new_value)
-                      .toggleClass ("good",    !! new_value);
-                };
                 if ("checker" in afs_field) {
-                    var status = afs_field.checker (afs_field, new_value);
-                    b$.toggleClass ("bad",     !  status)
-                      .toggleClass ("good",    !! status);
+                    status = afs_field.checker (afs_field, new_value);
+                };
+                b$.toggleClass ("bad",     !  status)
+                  .toggleClass ("good",    !! status);
+                f$.toggleClass ("bad",     !  status);
+                if (f$.attr ("required")) {
+                    b$.toggleClass ("missing", !  (new_value))
+                      .toggleClass ("good",    !! (new_value && status));
+                    f$.toggleClass ("missing", !  (new_value));
                 };
                 // trigger `afs_change` event of `anchor`
                 // anchor = $AFS_E.get (afs_field.anchor_id);

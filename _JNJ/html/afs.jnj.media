@@ -134,7 +134,7 @@ style_sheet = Style_Sheet \
                             [ Rule_Pseudo
                                 ( "focus"
                                 , P.color_spec_selected
-                                , outline                  = P.outline_focus
+                                , outline           = P.outline_focus
                                 )
                             , Rule_Attr
                                 ( "[readonly]"
@@ -161,6 +161,16 @@ style_sheet = Style_Sheet \
                         , font_size     = Percent (95)
                         )
                     , Rule
+                        ( ".bad"
+                        , background_color  = P.color_bg_bad
+                        , border_color      = P.color_status_bad
+                        )
+                    , Rule
+                        ( ".missing"
+                        , background_color  = P.color_bg_missing
+                        , border_color      = P.color_status_missing
+                        )
+                    , Rule
                         ( ".Status"
                         , Border (radius = P.afs.status_size // 2)
                         , display           = "inline-block"
@@ -170,18 +180,15 @@ style_sheet = Style_Sheet \
                         , children          =
                             [ Rule_Class
                                 ( "bad"
-                                , background_color  =
-                                    P.color_status_bad
+                                , background_color  = P.color_status_bad
                                 )
                             , Rule_Class
                                 ( "good"
-                                , background_color  =
-                                    P.color_status_good
+                                , background_color  = P.color_status_good
                                 )
                             , Rule_Class
                                 ( "missing"
-                                , background_color  =
-                                    P.color_status_missing
+                                , background_color  = P.color_status_missing
                                 )
                             ]
                         )

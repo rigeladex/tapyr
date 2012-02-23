@@ -41,6 +41,7 @@
 #    24-Oct-2011 (CT) `tablesorter` added
 #    24-Nov-2011 (CT) Add `color_spec_selected_rev`
 #    23-Feb-2012 (CT) Add `color_status_{bad,good,missing}`, `afs.status_size`
+#    23-Feb-2012 (CT) Add `color_bg_bad` and `color_bg_missing`
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,8 @@ class Media_Defaults (Definition) :
 
     # end class color
 
+    color_bg_bad           = RGB_X     ("#FFEEEE")
+    color_bg_missing       = RGB_X     ("#FFFFBB")
     color_desc             = RGB_X     ("#666666")
     color_focus            = SVG_Color ("yellow")
     color_heading          = RGB_X     ("#34444D")
