@@ -489,7 +489,7 @@
                 cmd = source [0];
                 cb  = cmd_callback [cmd.name];
                 cmc$.html ("");
-                $(L ("a.default.button", {}, cmd.label))
+                $(L ("a.default.button", { html : cmd.label }))
                     .appendTo (cmc$)
                     .click
                       ( function cmd_click (ev) {
@@ -537,8 +537,10 @@
                         ( function () {
                             var cmdi = source [i];
                             menu.append
-                              ( $(L ("li", {}, L ("a.button", {}, cmdi.label)))
-                                  .click
+                              ($(L  ( "li", {}
+                                    , L ("a.button", { html : cmdi.label })
+                                    )
+                                ).click
                                     ( function cmd_click (ev) {
                                         cmdi.callback.call
                                             (cmc$, s$, elem, id, ev);

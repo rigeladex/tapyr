@@ -36,6 +36,7 @@
 //    22-Dec-2011 (CT) s/children/attrs/ (in `attr_filters`)
 //    16-Jan-2012 (CT) Creation continued (`attr_select`)
 //    17-Jan-2012 (CT) Creation continued (add `focus` to `op_select_cb`)
+//    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
 //    ««revision-date»»···
 //--
 
@@ -190,7 +191,9 @@
                     var label = a$.html ();
                     var map   = afs.ops_selected;
                     var op    = op_map_by_sym [label];
-                    a$.toggleClass ("ui-state-disabled", !! map [op.sym]);
+                    if (op) {
+                        a$.toggleClass ("ui-state-disabled", !! map [op.sym]);
+                    };
                   }
                 );
         };
@@ -522,7 +525,7 @@
                     menu.append
                       ( $(L ("li"))
                           .append
-                              ( $(L ("a.button", {}, c.label))
+                              ( $(L ("a.button", { html : c.label }))
                                   .click (menu_select_cb)
                                   .data  ({callback : cb, choice : c})
                               )
