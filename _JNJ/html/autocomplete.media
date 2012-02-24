@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Dec-2011 (CT) Creation
+#    24-Feb-2012 (CT) Add `:not(:last-child)` to rule for `b:first-child`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ style_sheet = Style_Sheet \
                 , padding_left  = "0.25em"
                 )
             , Rule
-                ( "b:first-child"
+                ( "b:first-child:not(:last-child)"
                 , font_weight   = "bold"
                 , padding_left  = 0
                 , padding_right = "0.75em"
