@@ -370,7 +370,8 @@ class M_Entity (M_E_Mixin) :
         cls._m_add_prop (pred, cls._Predicates, verbose, override)
     # end def add_predicate
 
-    def change_attribute_default (cls, name, raw_default = None, default = None) :
+    def change_attribute_default \
+            (cls, name, raw_default = None, default = None) :
         """Change (raw or cooked) default of attribute with `name`."""
         attr = getattr (cls._Attributes, name)
         if raw_default is not None :
