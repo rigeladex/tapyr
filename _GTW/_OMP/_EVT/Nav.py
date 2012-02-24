@@ -33,6 +33,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Remove `Form_args`,
 #                     i.e., stuff related to non-AFS forms
+#    24-Feb-2012 (CT) Remove `Event_occurs` (too electric by far)
 #    ««revision-date»»···
 #--
 
@@ -54,10 +55,6 @@ class Admin (object) :
         , list_display  = ("left", "date", "time", "calendar")
         , sort_key      = TFL.Sorted_By
             ("-date.start", "-time.start", "left")
-        )
-
-    Event_occurs        = dict \
-        ( ETM           = "GTW.OMP.EVT.Event_occurs"
         )
 
 # end class Admin
