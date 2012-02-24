@@ -75,6 +75,7 @@
 //    23-Feb-2012 (CT) Change `field_change_cb` to update `$("b.Status")`
 //    23-Feb-2012 (CT) Change `_setup_callbacks` to trigger `change` for `input`
 //    23-Feb-2012 (CT) Change `field_change_cb` to update bad/missing of `input`
+//    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
 //    ««revision-date»»···
 //--
 

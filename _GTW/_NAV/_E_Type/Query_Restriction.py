@@ -45,6 +45,7 @@
 #    22-Dec-2011 (CT) Creation continued (make `field_names` optional)
 #    23-Dec-2011 (CT) Creation continued (use `Styler_Safe`, not `Styler`)
 #    16-Jan-2012 (CT) Creation continued (add `fields` and `_setup_fields`)
+#    24-Feb-2012 (CT) Add `kw` to `from_request_data`
 #    ««revision-date»»···
 #--
 
@@ -114,8 +115,8 @@ class Query_Restriction (TFL.Meta.Object) :
     # end def Filter_Atoms
 
     @classmethod
-    def from_request_data (cls, E_Type, req_data) :
-        data   = dict (req_data.iteritems ())
+    def from_request_data (cls, E_Type, req_data, ** kw) :
+        data   = dict (kw, ** dict (req_data.iteritems ()))
         result = cls \
             ( limit           = data.pop ("limit",  None)
             , offset          = data.pop ("offset", None)

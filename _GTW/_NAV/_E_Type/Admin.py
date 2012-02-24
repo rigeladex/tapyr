@@ -157,6 +157,7 @@
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
 #    16-Feb-2012 (CT) Add `obj.pid` to `form.referrer`
 #    16-Feb-2012 (CT) Change `Change._post_handler` to deal with `cancel`
+#    24-Feb-2012 (CT) Add and use `default_qr_kw` with `limit = 25`
 #    ««revision-date»»···
 #--
 
@@ -206,6 +207,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
     css_group           = "Type"
+    default_qr_kw       = dict \
+        ( limit         = 25
+        )
     form_parameters     = {}
     max_completions     = 20
     template_name       = "e_type_admin"
@@ -1219,7 +1223,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def is_current_dir
 
     def rendered (self, handler, template = None) :
-        qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
+        qr = QR.from_request_data \
+            ( self.ETM.E_Type, handler.request.req_data
+            , ** self.default_qr_kw
+            )
         self._fix_filters (qr.filters)
         fields = self._fields (qr.fields or self.list_display)
         with self.LET (fields = fields, query_restriction = qr) :
