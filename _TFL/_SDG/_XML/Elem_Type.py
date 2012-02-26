@@ -34,6 +34,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    20-Nov-2007 (MG)  Imports fixed
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,7 @@
    </Test>
 
 """
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Element
 import _TFL.Caller

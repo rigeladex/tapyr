@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,9 +38,11 @@
 #    20-Nov-2007 (MG)  Imports fixed
 #    29-Nov-2007 (CT)  `_attr_values` changed to not use `textwrap` (quoted
 #                      values should *not* be wrapped)
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._XML
 import _TFL._SDG.Node
@@ -54,7 +56,7 @@ class _XML_Node_ (TFL.SDG.Node) :
 
     attr_names           = ()
     base_indent          = "  "
-
+    enconding            = "iso-8859-15"
     init_arg_defaults    = dict \
         ( description    = None
         ,
@@ -92,8 +94,8 @@ class _XML_Node_ (TFL.SDG.Node) :
         if attr_values :
             for a, v in attr_values :
                 if v is not None :
-                    v = str (v).replace ("'", "&quot;")
-                    yield '''%s="%s"''' % (a, v)
+                    v = unicode (v).replace ("'", "&quot;")
+                    yield u'''%s="%s"''' % (a, v)
     # end def _attr_iter
 
     def _attr_values (self, * args, ** kw) :

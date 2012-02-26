@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,11 +38,13 @@
 #    18-Oct-2007 (MZO) [25170] line break in description introduced
 #    25-Apr-2008 (MG)  `_setup_initializers`: handling for nested structs
 #                      extended
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
 
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression
@@ -119,7 +121,7 @@ class Struct (TFL.SDG.C._Decl_) :
             return f
         m = self.field_pat.match (f)
         if not m :
-            print f
+            print (f)
             raise TFL.SDG.Invalid_Node, (self, f)
         name   = m.group ("name").strip ()
         type   = m.group ("type").strip ()

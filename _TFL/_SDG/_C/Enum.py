@@ -30,11 +30,13 @@
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
 
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 from   _TFL.predicate    import split_hst
 import _TFL._SDG._C.Node
@@ -118,4 +120,3 @@ class Enum (TFL.SDG.C.Node, TFL.SDG.Leaf) :
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*")
 ### __END__ TFL.SDG.C.Enum
-

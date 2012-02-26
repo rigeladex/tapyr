@@ -39,6 +39,7 @@
 #    17-Apr-2007 (CED) Test for `Define_Constant` adapted
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
@@ -375,6 +376,7 @@ line3 long
 ### missing tests
 ###
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL._SDG._C.import_C import C
 
 ### __END__ TFL.SDG.C._Test

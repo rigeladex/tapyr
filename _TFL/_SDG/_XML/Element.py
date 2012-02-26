@@ -32,9 +32,11 @@
 #     5-Sep-2005 (CT) `XML.Node` factored
 #     6-Sep-2005 (CT) `xml_format` changed (`elem_type.rear0` empty instead
 #                     of space)
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._XML.Node
 

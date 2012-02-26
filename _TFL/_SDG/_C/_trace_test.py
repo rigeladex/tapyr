@@ -24,4 +24,3 @@ if __name__ == "__main__" :
 
     v = C.Var ("int", "test", 2)
     v.write_to_c_stream ()
-

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,9 +37,11 @@
 #    20-Sep-2005 (CT) Doctest with over-long attributes added
 #    29-Nov-2007 (CT) Another doctest with over-long attributes added
 #    29-Aug-2008 (CT) Import for `Elem_Type` added to fix doctest
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Comment
 import _TFL._SDG._XML.Doctype
@@ -147,7 +149,7 @@ class Document (TFL.SDG.XML.Node) :
     front_args           = ("root_element", )
     init_arg_defaults    = dict \
         ( doctype        = None
-        , encoding       = "iso-8859-1"
+        , encoding       = "iso-8859-15"
         , root_element   = None
         , standalone     = "yes"
         , xml_version    = 1.0

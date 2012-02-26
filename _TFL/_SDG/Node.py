@@ -75,6 +75,7 @@
 #    20-Nov-2007 (MG)  Imports fixed
 #     2-Apr-2008 (MG) `Node` now inherits from `TFL.Meta.Object` instead of
 #                     `object`
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
@@ -354,7 +355,7 @@ method call to `_formatted_attrs`.
 ...              )
 ...     , name = "R"
 ...     )
->>> print root
+>>> print (root)
 T_Node R
     T_Node a
         Leaf a.1
@@ -362,7 +363,7 @@ T_Node R
     T_Node b
         Node b.x
         Leaf b.z
->>> print chr (10).join (root.as_repr ())
+>>> print (chr (10).join (root.as_repr ()))
 T_Node
     ( T_Node
         ( Leaf
@@ -383,6 +384,7 @@ T_Node
     )
 """
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL.Caller
 import _TFL.NO_List
@@ -596,7 +598,7 @@ class Node (TFL.Meta.Object) :
             else :
                 kw_err [k] = v
         if kw_err :
-            print self.__class__, self.init_arg_defaults
+            print (self.__class__, self.init_arg_defaults)
             raise TypeError, "unexpected keyword arguments: %s" % kw_err
     # end def _init_kw
 
@@ -674,8 +676,8 @@ root = T_Node \
              )
     , name = "R"
     )
-print root
-print repr (root)
+print (root)
+print (repr (root))
 
 from _TFL._SDG.Node import *
 class T_Node (Node) :
@@ -687,7 +689,7 @@ root = T_Node \
              )
     , name = "R"
     )
-print chr (10).join (root.as_repr ())
+print (chr (10).join (root.as_repr ()))
 """
 
 if __name__ != "__main__" :

@@ -41,9 +41,11 @@
 #    31-Jul-2007 (MG)  Add description to `h_format`
 #    18-Oct-2007 (MZO) [25170] `init_comments` added
 #     6-Dec-2007 (CT) Imports fixed
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression

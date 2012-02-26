@@ -34,9 +34,11 @@
 #                     values for `sep`)
 #    20-Nov-2007 (MG) Imports fixed
 #    29-Aug-2008 (CT) s/super(...)/__m_super/
+#    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL                            import TFL
 
 import _TFL._Meta.M_Auto_Combine_Dicts
