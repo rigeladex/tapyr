@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -39,6 +39,7 @@
 #     1-Aug-2011 (CT) `edit` changed to test `is None` instead of truthyness of
 #                     `._edit` (to allow setting attribute [raw] values to "")
 #     2-Aug-2011 (CT) Message passed to `Error.Unknown` changed
+#    20-Jan-2012 (CT) Add and use `_check_sids`
 #    ««revision-date»»···
 #--
 
@@ -63,16 +64,17 @@ import json
 class Value (_Base_) :
     """Model the value of an AFS form element."""
 
-    anchor_id = None
-    asyn      = None
-    conflicts = 0
-    entity    = None
-    prefilled = None
-    role_id   = None
-    sid       = None
-    value     = None
-    _edit     = None
-    _init     = None
+    anchor_id     = None
+    asyn          = None
+    conflicts     = 0
+    entity        = None
+    prefilled     = None
+    role_id       = None
+    sid           = None
+    value         = None
+    _apply_key    = TFL.Sorted_By ("elem.rank", "-id")
+    _edit         = None
+    _init         = None
 
     def __init__ (self, form, id, json_cargo) :
         self.form     = form
@@ -170,16 +172,19 @@ class Value (_Base_) :
 
     def apply (self, * args, ** kw) :
         conflicts = 0
-        key       = TFL.Sorted_By ("elem.rank", "-id")
-        for e in self.entities () :
-            for c in sorted (e.entity_children (), key = key) :
-                c.entity   = c.elem.apply (c, * args, ** kw)
-                conflicts += c.conflicts
+        entities  = sorted (self.entity_children (), key = self._apply_key)
+        self._check_sids   (entities, ** kw)
+        for e in entities :
             e.entity   = e.elem.apply (e, * args, ** kw)
             conflicts += e.conflicts
         if conflicts :
             raise GTW.AFS.Error.Conflict ()
     # end def apply
+
+    def _check_sids (self, entities, ** kw) :
+        for e in entities :
+            e.elem.check_sid (e, ** kw)
+    # end def _check_sids
 
     def _child_sig_iter (self, c, cig) :
         yield cig

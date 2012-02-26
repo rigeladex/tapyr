@@ -36,12 +36,14 @@
 //    22-Dec-2011 (CT) s/children/attrs/ (in `attr_filters`)
 //    16-Jan-2012 (CT) Creation continued (`attr_select`)
 //    17-Jan-2012 (CT) Creation continued (add `focus` to `op_select_cb`)
+//    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($, undefined) {
+    var L = $GTW.L;
     $.fn.gtw_query_restriction = function (qrs, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
@@ -134,6 +136,7 @@
                         // if label contains stuff like `&ge;` we need to
                         // run it through `html` because we'll later want
                         // to look up `but$.html ()` in `op_map_by_sym`
+                        //     Can't use `L`, because that keeps html-quotes
                         label          = $("<a>").append (v.label).html ();
                         result [v.sym] = v;
                         result [label] = v;
@@ -188,7 +191,9 @@
                     var label = a$.html ();
                     var map   = afs.ops_selected;
                     var op    = op_map_by_sym [label];
-                    a$.toggleClass ("ui-state-disabled", !! map [op.sym]);
+                    if (op) {
+                        a$.toggleClass ("ui-state-disabled", !! map [op.sym]);
+                    };
                   }
                 );
         };
@@ -512,22 +517,17 @@
             return result;
         };
         var new_menu = function new_menu (choices, cb, options) {
-            var menu = $("<ul class=\"drop-menu cmd-menu\">"), result;
+            var menu = $(L ("ul.drop-menu.cmd-menu")), result;
             menu.data ({ options : options });
             for (var i = 0, li = choices.length; i < li; i++) {
                 ( function () {
                     var c = choices [i];
                     menu.append
-                      ( $("<li>")
+                      ( $(L ("li"))
                           .append
-                              ( $("<a class=\"button\" href=\"#\">")
-                                  .append (c.label)
-                                  .click  (menu_select_cb)
-                                  .data
-                                      ( { callback : cb
-                                        , choice : c
-                                        }
-                                      )
+                              ( $(L ("a.button", { html : c.label }))
+                                  .click (menu_select_cb)
+                                  .data  ({callback : cb, choice : c})
                               )
                       );
                   } ()
@@ -792,10 +792,8 @@
         var setup_disabler = function setup_disabler () {
             var dis$ = $(this);
             dis$.append
-                    ( $("<a class=\"button\" name=\"DISABLE\">")
-                        .gtw_iconify (icons)
-                    )
-                .attr   ("title", options.title.disabler);
+                    ($(L ("a.button", {name : "DISABLE"})).gtw_iconify (icons))
+                .attr ("title", options.title.disabler);
         };
         var setup_esf = function setup_esf (cntxt) {
             var S = options.selectors;

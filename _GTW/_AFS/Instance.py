@@ -49,6 +49,8 @@
 #     7-Apr-2011 (CT) `edit` added
 #    13-Apr-2011 (CT) `allow_new` added to `Instance.as_json_cargo`
 #     2-Dec-2011 (CT) Move property `pid` from `Instance` to `_Base_`, add `uid`
+#    26-Jan-2012 (CT) Add `form_kw` and `show_defaults` to `pop_to_self`
+#    26-Jan-2012 (CT) Replace `Base.uid` by `Instance.ui_display`
 #    ««revision-date»»···
 #--
 
@@ -95,14 +97,6 @@ class _Base_ (TFL.Meta.Object) :
     def type (self) :
         return self.elem.__class__.__name__
     # end def type
-
-    @property
-    def uid (self) :
-        try :
-            return self.edit and self.edit.get ("uid")
-        except LookupError :
-            pass
-    # end def uid
 
     @Once_Property
     def widget (self) :
@@ -194,8 +188,8 @@ class Instance (_Base_) :
         self.pop_to_self \
             ( kw
             , "allow_new", "children", "collapsed", "cooked", "copy"
-            , "entity", "max_length", "max_value", "min_value"
-            , "outer_entity", "role_entity", "value"
+            , "entity", "form_kw", "max_length", "max_value", "min_value"
+            , "outer_entity", "role_entity", "show_defaults", "value"
             , "_display", "_session_secret", "_sid"
             )
         self.elem = elem
@@ -263,6 +257,11 @@ class Instance (_Base_) :
     def sid (self) :
         return self.value and self.value.get ("sid")
     # end def sid
+
+    @property
+    def ui_display (self) :
+        return self._display or ""
+    # end def ui_display
 
     ### compatibility with JNJ/html/field.jnj macros
     def get_id (self, x) :

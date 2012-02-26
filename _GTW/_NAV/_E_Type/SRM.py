@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -48,6 +48,9 @@
 #     5-Jan-2011 (CT) `Registration`, `Result`, and `Result_Teamrace` factored
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #     9-Nov-2011 (CT) Fix `head_line` for `Registration`
+#     2-Feb-2012 (CT) Add `href_register` and `bir_admin`
+#     2-Feb-2012 (CT) Add `Regatta_Event.Page` with template `regatta_page`
+#    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `form_kw`
 #    ««revision-date»»···
 #--
 
@@ -95,9 +98,15 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         self.name = obj.perma_name
     # end def __init__
 
+    def href_register (self) :
+        start = self.obj.event.date.start
+        now   = self.obj.event.__class__.date.start.now ()
+        if now < start :
+            return pjoin (self.abs_href, "admin", "create")
+    # end def href_register
+
     def _get_child (self, child, * grandchildren) :
-        ### XXX "register"
-        entries = self._entries
+        entries = self._entries or self._get_objects ()
         try :
             result = first (e for e in entries if e.name == child)
         except IndexError :
@@ -107,15 +116,6 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 result = result._get_child (* grandchildren)
             return result
     # end def _get_child
-
-    if 0 :
-        def _get_entries (self) :
-            try :
-                return self.__super._get_entries ()
-            except Exception as exc :
-                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
-                raise
-        # end def _get_entries
 
     def _get_objects (self) :
         np     = _T (u"Participants")
@@ -165,6 +165,36 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , regatta     = obj
                 )
             )
+        bir = self.top.ET_Map ["GTW.OMP.SRM.Boat_in_Regatta"]
+        if bir and bir.admin :
+            form_kw   = dict \
+                ( right = dict
+                    ( prefilled   = True
+                    , init        = obj
+                    )
+                )
+            if isinstance (obj, scope.SRM.Regatta_C.E_Type) :
+                form_kw.update \
+                    ( left = dict
+                        ( left = dict
+                            ( prefilled   = True
+                            , init        = obj.boat_class
+                            )
+                        )
+                    , Crew_Member = dict
+                        ( max_links   = obj.boat_class.max_crew - 1
+                        )
+                    )
+            bir_admin = bir.admin
+            kw = dict \
+                ( bir_admin._orig_kw
+                , form_id         = "AF_BiR"
+                , form_parameters = dict (form_kw = form_kw)
+                , implicit        = True
+                , name            = "admin"
+                , parent          = self
+                )
+            result.append (bir_admin.__class__ (** kw))
         return result
     # end def _get_objects
 
@@ -174,6 +204,12 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta event."""
 
     dir_template_name = None
+
+    class Page (GTW.NAV.E_Type.Instance) :
+
+        template_name = "regatta_page"
+
+    # end class Page
 
     def __init__ (self, manager, obj, ** kw) :
         kw ["src_dir"] = kw ["sub_dir"] = obj.perma_name
@@ -198,19 +234,18 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         scope  = self.obj.home_scope
         today  = datetime.date.today ()
         for r in sorted (self.obj.regattas, key = TFL.Sorted_By ("name")) :
-            if scope.SRM.Boat_in_Regatta.r_query (right = r).count () :
-                kw  = dict \
-                    ( pkw
-                    , ETM       = scope [r.type_name]
-                    , E_Type    = r.__class__
-                    )
-                result.append (Regatta (self, r, page_args = pkw, ** kw))
+            kw  = dict \
+                ( pkw
+                , ETM       = scope [r.type_name]
+                , E_Type    = r.__class__
+                )
+            result.append (Regatta (self, r, page_args = pkw, ** kw))
         result.extend (self._get_pages ())
         return result
     # end def _get_objects
 
     def _get_pages (self) :
-        T     = GTW.NAV.E_Type.Instance
+        T     = self.Page
         ETM   = self.scope.SRM.Page
         pkw   = self.page_args
         kw    = dict \

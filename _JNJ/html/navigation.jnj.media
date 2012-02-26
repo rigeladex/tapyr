@@ -233,14 +233,19 @@ style_sheet = Style_Sheet \
                     , Rule ("span.event", border = 0)
                     , Rule
                         ( "th.week-number"
-                        , height = Em (1.5)
-                        , width  = Em (1.5)
+                        , height     = Em (1.5)
+                        , padding    = TRBL0 (0, Em (0.25), Em (0.1))
+                        , width      = Em (1.5)
                         )
                     , Rule
                         ( "thead"
                         , display = "none"
                         )
                     , Rule ("th", padding = TRBL (0, Em (0.25), Em (0.1)))
+                    , Rule
+                        ( ".date"
+                        , background_color = "inherit"
+                        )
                     , Rule
                         ( ".saturday", ".sunday"
                         , color = "inherit"

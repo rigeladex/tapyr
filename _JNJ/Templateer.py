@@ -64,6 +64,8 @@
 #     3-Jan-2012 (CT) Fix `js`
 #     5-Jan-2012 (CT) Add `get_cached_media`, `Media_Map`, `_Media_[CR]`
 #     9-Jan-2012 (CT) Fix `get_cached_media` (use `.scripts` unless `js_href`)
+#    27-Jan-2012 (CT) Fix `__eq__` and `__hash__`,
+#                     add `__lt__` and `totally_ordered`
 #    ««revision-date»»···
 #--
 
@@ -80,8 +82,9 @@ import _TFL.Accessor
 import _TFL.multimap
 import _TFL.predicate
 
-from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.Regexp              import *
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL._Meta.totally_ordered import totally_ordered
+from   _TFL.Regexp                import *
 
 from jinja2.exceptions import TemplateNotFound
 
@@ -114,6 +117,7 @@ class Template (_Template_) :
 
 # end class Template
 
+@totally_ordered
 class Template_E (_Template_) :
     """Describe a Jinja template for a specific Jinja environment."""
 
@@ -481,15 +485,19 @@ class Template_E (_Template_) :
     # end def _load_template
 
     def __eq__ (self, rhs) :
-        return self.source_path == getattr (rhs, "source_path", rhs)
+        return self.name == getattr (rhs, "name", rhs)
     # end def __eq__
 
     def __hash__ (self) :
-        return hash (self.source_path)
+        return hash (self.name)
     # end def __hash__
 
+    def __lt__ (self, rhs) :
+        return self.name < getattr (rhs, "name", rhs)
+    # end def __lt__
+
     def __repr__ (self) :
-        return "<JNJ.Template_E %s>" % (self.path, )
+        return "<JNJ.Template_E %s [%s]>" % (self.name, self.path)
     # end def __repr__
 
     def __str__ (self) :
@@ -539,6 +547,7 @@ Template ("gallery",                      "html/gallery.jnj")
 Template ("login",                        "html/login.jnj")
 Template ("photo",                        "html/photo.jnj")
 Template ("regatta_calendar",             "html/regatta_calendar.jnj")
+Template ("regatta_page",                 "html/regatta_page.jnj")
 Template ("regatta_registration",         "html/regatta_registration.jnj")
 Template ("regatta_result",               "html/regatta_result.jnj")
 Template ("regatta_result_teamrace",      "html/regatta_result_teamrace.jnj")
@@ -548,14 +557,13 @@ Template ("video",                        "html/video.jnj")
 class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""
 
-    Context         = dict
+    Context = dict
 
     error_template_names = list (t.name for t in error_templates)
 
     def __init__ (self, * args, ** kw) :
         self.GTW = GTW = JNJ.GTW (self)
-        self.env = env = JNJ.Environment.HTML \
-            (* args, GTW = GTW, ** kw)
+        self.env = env = JNJ.Environment.HTML (* args, GTW = GTW, ** kw)
         self.Template_Type = T = Template_E.New \
             ("x", By_Path = {}, Map = {}, Media_Map = {}, css_href_map = {})
         self.Template_Map  = T.Map

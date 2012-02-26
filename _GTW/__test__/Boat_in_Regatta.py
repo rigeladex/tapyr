@@ -137,11 +137,11 @@ _test_code = r"""
     (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.discards, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
 
     >>> show_ora (bir)         ### before destroy
-    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'') : Entity `skipper`
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'') : Entity `skipper`
     >>> show_dep (bir.skipper) ### before destroy
     (((u'Optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))) : 1
     >>> print bir.skipper
-    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> bir.skipper is s
     True
     >>> bir.skipper.destroy ()
@@ -190,11 +190,11 @@ _delayed  = r"""
     [u'Optimist', u'Yardstick']
 
     >>> show_ora (bir)         ### before destroy
-    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'') : Entity `skipper`
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'') : Entity `skipper`
     >>> show_dep (bir.skipper) ### before destroy
     (((u'Optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))) : 1
     >>> print bir.skipper
-    ((u'tanzer', u'christian', u'', u''), u'AUT', u'29676', u'')
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> bir.skipper is s
     True
     >>> bir.skipper.destroy ()

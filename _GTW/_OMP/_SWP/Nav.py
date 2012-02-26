@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -35,6 +35,8 @@
 #     6-May-2010 (MG) Switch to render mode rendering
 #     7-Nov-2011 (CT) Remove boilerplate from `afs_spec` for Entity_Link `clips`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
+#                     i.e., stuff related to non-AFS forms
 #    ««revision-date»»···
 #--
 
@@ -43,44 +45,13 @@ from   __future__            import unicode_literals
 from   _TFL                     import TFL
 from   _GTW                     import GTW
 
-import _GTW._NAV._E_Type.Admin
-import _GTW._Form._MOM.Javascript
-import _GTW._OMP._PAP.Nav
-
-from   _GTW._Form._MOM.Inline_Description      import \
-    ( Link_Inline_Description      as LID
-    , Attribute_Inline_Description as AID
-    )
-from   _GTW._Form._MOM.Field_Group_Description import \
-    ( Field_Group_Description as FGD
-    , Field_Prefixer          as FP
-    , Wildcard_Field          as WF
-    )
-from  _GTW._Form.Widget_Spec    import Widget_Spec as WS
-
 from   _TFL.I18N                import _
-
-primary  = WF ("primary")
 
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    creator_completer = GTW.OMP.PAP.Nav.Admin.person_completer
-
-    Clip_X          = dict \
-        ( ETM       = "GTW.OMP.SWP.Clip_X"
-        , Form_args =
-            ( FGD
-                ( primary, "title"
-                , AID
-                    ( "date"
-                    , FGD (render_mode = "table")
-                    , legend = _("Publication and expiration date")
-                    )
-                , "format", "text", "link_to"
-                )
-            ,
-            )
+    Clip_X               = dict \
+        ( ETM            = "GTW.OMP.SWP.Clip_X"
         , list_display   =
             ( "ui_display", "short_title", "date", "creator", "format"
             , "last_changed"
@@ -88,96 +59,13 @@ class Admin (object) :
         , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
         )
 
-    Gallery         = dict \
-        ( ETM       = "GTW.OMP.SWP.Gallery"
-        , Form_args =
-            ( FGD
-                ( primary, "short_title", "title", "directory"
-                , AID
-                    ( "date"
-                    , FGD (render_mode = "table")
-                    , legend        = _("Publication and expiration date")
-                    )
-                 ### XXX put LID for Entity_created_by_Person here
-#                , AID
-#                    ( "creator"
-#                    , FGD
-#                        ( primary
-#                        , render_mode = "table"
-#                        , css_class   = "inline-instance"
-#                        )
-#                    , completer      = creator_completer
-#                    , legend         = _("Photographer")
-#                    )
-                )
-            ,
-            )
+    Gallery              = dict \
+        ( ETM            = "GTW.OMP.SWP.Gallery"
         , sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
         )
 
-    Page            = dict \
-        ( ETM       = "GTW.OMP.SWP.Page"
-        , Form_args =
-            ( FGD
-                ( primary, "short_title", "title"
-                , AID
-                    ( "date"
-                    , FGD (render_mode = "table")
-                    , legend = _("Publication and expiration date")
-                    )
-                 ### XXX put LID for Entity_created_by_Person here
-#                , AID
-#                    ( "creator"
-#                    , FGD ( primary
-#                          , render_mode = "table"
-#                          , css_class = "inline-instance"
-#                          )
-#                    , completer = creator_completer
-#                    , legend = _("Creator of the contents of the web page")
-#                    )
-                , "head_line", "format", "text"
-                )
-            , LID
-                ( "GTW.OMP.EVT.Event"
-                , FGD
-                    ( AID ( "date"
-                          , render_mode = "table"
-                          , legend      = _("Date interval of event")
-                          , title       = _("Date interval")
-                          )
-                    , AID ( "time"
-                          , render_mode = "table"
-                          , legend      = _("Time interval of event")
-                          , title       = _("Time interval")
-                          )
-                    , "detail"
-                    , legend    = _("Events associated to page")
-                    , render_mode = "div_seq"
-                    , title     = _("Events")
-                    )
-                , LID
-                    ( "GTW.OMP.EVT.Recurrence_Spec"
-                    , FGD (render_mode = "div_seq")
-                    , legend = _("Recurrence rule")
-                    )
-                )
-            , LID
-                ( "GTW.OMP.SWP.Clip_O"
-                , FGD
-                    ( "abstract"
-                    #, widget = "html/form.jnj, fg_div_seq"
-                    , AID
-                        ( "date_x"
-                        , render_mode = "table"
-                        , legend      = _("Date interval of news clip")
-                        , title       = _("Date interval")
-                        )
-                    , legend    = _("News clip for page")
-                    , title     = _("Clip")
-                    )
-                )
-            , FGD ()
-            )
+    Page                 = dict \
+        ( ETM            = "GTW.OMP.SWP.Page"
         , list_display   =
             ( "ui_display", "short_title", "date", "creator", "format"
             , "last_changed"
@@ -185,29 +73,8 @@ class Admin (object) :
         , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
         )
 
-    Picture         = dict \
-        ( ETM       = "GTW.OMP.SWP.Picture"
-        , Form_args =
-            ( FGD
-                ( AID
-                    ( "gallery"
-                    , FGD (primary, render_mode = "table")
-                    , legend        = _("Gallery")
-                    )
-                , "number"
-                , AID
-                    ( "photo"
-                    , FGD (render_mode = "table")
-                    , legend        = _("Photo")
-                    )
-                , AID
-                    ( "thumb"
-                    , FGD (render_mode = "table")
-                    , legend        = _("Thumbnail")
-                    )
-                )
-            ,
-            )
+    Picture              = dict \
+        ( ETM            = "GTW.OMP.SWP.Picture"
         , sort_key       = TFL.Sorted_By \
             ("-left.date.start", "left.perma_name", "number")
         )

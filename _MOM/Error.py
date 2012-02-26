@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -45,6 +45,7 @@
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    22-Mar-2011 (MG) `Commit_Conflict` added
 #     8-Nov-2011 (CT) Add `Required_Empty` and `any_required_empty`
+#    30-Jan-2012 (CT) Change `Name_Clash` to show `.type_name`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,11 @@ class Name_Clash (Error) :
 
     def __init__ (self, new, old) :
         self.args = \
-            ("new definition of", new, "clashes with existing", old or "object")
+            ( "new definition of"
+            , new.type_name, new
+            , "clashes with existing"
+            , old.type_name if old else "", old or "object"
+            )
     # end def __init__
 
 # end class Name_Clash

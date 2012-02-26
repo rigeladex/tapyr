@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -54,7 +54,7 @@ create = r"""
     >>> per = PAP.Person                   ("ln", "fn")
     Traceback (most recent call last):
     ...
-    Name_Clash: new definition of (u'ln', u'fn', u'', u'') clashes with existing (u'ln', u'fn', u'', u'')
+    Name_Clash: new definition of GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'') clashes with existing GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')
 
 """
 from   _GTW.__test__.model                      import *

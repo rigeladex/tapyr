@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -41,6 +41,7 @@
 #                     `GTW._Request_Handler_`
 #     2-May-2011 (CT) `secure_cookie` and `set_secure_cookie` improved
 #    10-May-2011 (MG) `cookie` added
+#    26-Jan-2012 (CT) Add `path_x` and `referrer` to `Request_Class`
 #    ««revision-date»»···
 #--
 
@@ -85,8 +86,23 @@ class Request_Handler (GTW._Request_Handler_) :
     cookie_encoding           = "utf-8"
 
     class Request_Class (BaseRequest) :
+
         max_content_length   = 1024 * 1024 * 4
         max_form_memory_size = 1024 * 1024 * 2
+
+        @Once_Property
+        def path_x (self) :
+            result = self.path
+            if self.query_string :
+                result = "%s?%s" % (result, self.query_string)
+            return result
+        # end def path_x
+
+        @Once_Property
+        def referrer (self) :
+            return self.headers.get ("Referer")
+        # end def referrer
+
     # end class Request_Class
 
     PNS                       = GTW.Werkzeug

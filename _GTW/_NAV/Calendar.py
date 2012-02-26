@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -48,6 +48,7 @@
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
 #    14-Nov-2011 (CT) Factor `q_href`, `q_prefix`, and `qx_prefix` to
 #                     `GTW.NAV._Site_Entity_`
+#     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
 #    ««revision-date»»···
 #--
 
@@ -156,7 +157,7 @@ class Calendar (_Mixin_, GTW.NAV.Dir) :
                 q_args = self._q_args (handler)
             except Exception, exc :
                 print exc
-                raise self.top.HTTP.Error_404 (handler.request.path)
+                raise self.top.HTTP.Error_404 ()
             if q_args.anchor != self.anchor :
                 self = handler.context ["page"] = self.__class__ \
                     ( parent = self

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -50,6 +50,8 @@
 #                     (prevent early scope creation)
 #     1-Jun-2011 (CT) `postify_a` added
 #    25-Nov-2011 (CT) Add `template_iter`
+#    24-Jan-2012 (CT) Remove `_Media`
+#    27-Jan-2012 (CT) Remove guard for `T.electric.default` from `_pns_entries`
 #    ««revision-date»»···
 #--
 
@@ -80,13 +82,6 @@ class Admin_Alias (GTW.NAV.Alias) :
 class Admin_Group (GTW.NAV.Dir) :
     """Model a group of E-Type admin pages."""
 
-    _Media          = GTW.Media \
-        ( scripts       =
-            ( GTW.Script (src = "/media/GTW/js/GTW/jsonify.js")
-            , GTW.Script (src = "/media/GTW/js/GTW/jQ/util.js")
-            , GTW.Script (src = "/media/GTW/js/GTW/jQ/postify_a.js")
-            )
-        )
     css_group         = "Group"
     dir_template_name = "site_admin"
     Page              = GTW.NAV.E_Type.Admin
@@ -128,7 +123,7 @@ class Admin_Group (GTW.NAV.Dir) :
             PNS = app_type.PNS_Map [pns]
             Nav = getattr (getattr (PNS, "Nav", None), "Admin", None)
             for T in app_type.etypes_by_pns [pns] :
-                if T.is_relevant and not T.electric.default :
+                if T.is_relevant and T.show_in_ui :
                     admin = ET_Map [T.type_name].admin
                     if (not admin) or self.show_aliases :
                         aa = getattr (T, "admin_args", {})

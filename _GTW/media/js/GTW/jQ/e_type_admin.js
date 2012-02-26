@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -15,12 +15,14 @@
 //
 // Revision Dates
 //    26-Nov-2011 (CT) Creation
+//    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
+    var L = $GTW.L;
     $.fn.gtw_e_type_admin_postify = function (opts) {
         var options  = $.extend
             ( { hidden_selector : "td"
@@ -53,9 +55,7 @@
                         var inner_html = td$.html ();
                         if (! td$.hasClass ("cmd")) {
                           td$.html
-                              ($("<a href=\"" + href + "\">")
-                                  .append (inner_html)
-                              );
+                              ($(L ("a", { href : href, html : inner_html})));
                         };
                       }
                     );

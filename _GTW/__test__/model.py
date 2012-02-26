@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -40,31 +40,60 @@
 #    16-Aug-2010 (MG) `scope` added to change the default of `verbose`
 #    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
 #     9-Sep-2011 (CT) `from import_MOM import *` added
+#    27-Jan-2012 (CT) Derive from `GTW.Werkzeug.Scaffold`
 #    ««revision-date»»···
 #--
 
-from   _GTW                   import GTW
-from   _MOM                   import MOM
-from   _TFL                   import TFL
+from   _GTW                     import GTW
+from   _JNJ                     import JNJ
+from   _MOM                     import MOM
+from   _TFL                     import TFL
 
-from   _MOM.import_MOM        import *
-from   _MOM.Product_Version   import Product_Version, IV_Number
-from   _TFL                   import sos
+from   _MOM.import_MOM          import *
+from   _MOM.Product_Version     import Product_Version, IV_Number
+
+from   _TFL                     import sos
+from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL._Meta.Property      import Class_Property
+from   _TFL.I18N              import _, _T, _Tn
 
 import _GTW._OMP.Scaffold
+import _GTW._Werkzeug.Scaffold
 
 import _GTW._OMP._Auth.import_Auth
+
 if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
     import _GTW._OMP._EVT.import_EVT
+    import _GTW._OMP._EVT.Nav
     PNS_Dict = dict (EVT = GTW.OMP.EVT)
 else :
     PNS_Dict = dict ()
     print "Ignore _GTW._OMP._EVT.import_EVT"
+
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
+
+import _GTW._OMP._PAP.Nav
+import _GTW._OMP._SRM.Nav
+import _GTW._OMP._SWP.Nav
+
+import _GTW._NAV.import_NAV
+import _GTW._NAV.Calendar
+import _GTW._NAV.Console
+import _GTW._NAV._E_Type.Gallery
+import _GTW._NAV._E_Type.SRM
+
+import _JNJ.Templateer
+
 import _TFL.Filename
 import _TFL.Generators
+
+from   posixpath import join  as pjoin
+
+import _GTW._AFS._MOM.Spec
+
+GTW.AFS.MOM.Spec.setup_defaults ()
 
 model_src        = sos.path.dirname (__file__)
 form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
@@ -89,7 +118,9 @@ GTW.Version = Product_Version \
         )
     )
 
-class Scaffold (GTW.OMP.Scaffold) :
+class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
+
+    _real_name            = "Scaffold"
 
     ANS                   = GTW
     nick                  = u"MOMT"
@@ -101,6 +132,8 @@ class Scaffold (GTW.OMP.Scaffold) :
         , SWP             = GTW.OMP.SWP
         , ** PNS_Dict
         )
+    SALT                  = bytes \
+        ( "ohQueiro7theG4vai9shi4oi9iedeethaeshooqu7oThi9Eecephaj")
 
     cmd__base__opts_x     = \
         ( "-config:C=~/.gtw-test.config?File specifying defaults for options"
@@ -132,6 +165,99 @@ class Scaffold (GTW.OMP.Scaffold) :
     # end def combiner
 
     @classmethod
+    def create_nav (cls, cmd, app_type, db_url, ** kw) :
+        from _JNJ.Media_Defaults import Media_Defaults
+        CSS_Parameters = Media_Defaults ()
+        home_url_root  = "http://localhost:9042"
+        site_prefix    = pjoin (home_url_root, "")
+        template_dirs  = [cls.jnj_src]
+        result = GTW.NAV.Root \
+            ( auto_delegate   = False
+            , DB_Url          = db_url
+            , App_Type        = app_type
+            , CSS_Parameters  = CSS_Parameters
+            , DEBUG           = cmd.debug
+            , encoding        = cmd.output_encoding
+            , HTTP            = cmd.HTTP
+            , input_encoding  = cmd.input_encoding
+            , language        = "de"
+            , permissive      = False
+            , site_url        = home_url_root
+            , site_prefix     = site_prefix
+            , src_dir         = cls.web_src_root
+            , template_name   = cmd.template_file
+            , version         = "html/5.jnj"
+            , Templateer      = JNJ.Templateer
+                ( encoding        = cmd.input_encoding
+                , globals         = dict (site_base = cmd.template_file)
+                , i18n            = True
+                , load_path       = template_dirs
+                , trim_blocks     = True
+                , version         = "html/5.jnj"
+                , CSS_Parameters  = CSS_Parameters
+                )
+            , TEST            = cmd.TEST
+            , ** kw
+            )
+        result.add_entries \
+            ( [ dict
+                  ( sub_dir         = "Admin"
+                  , short_title     = "Admin"
+                  , pid             = "Admin"
+                  , title           = u"Verwaltung der Homepage"
+                  , head_line       = u"Administration der Homepage"
+                  , login_required  = True
+                  , Type            = GTW.NAV.E_Type.Site_Admin
+                  , entries         =
+                      [ cls.nav_admin_group
+                          ( "Personenverwaltung"
+                          , "Verwaltung von Personen und ihren Eigenschaften"
+                          , "GTW.OMP.PAP"
+                          )
+                      , cls.nav_admin_group
+                          ( "Benutzerverwaltung"
+                          , "Verwaltung von Benutzer-Konten und Gruppen"
+                          , "GTW.OMP.Auth"
+                          , permission = GTW.NAV.Is_Superuser ()
+                          )
+                      , cls.nav_admin_group
+                          ( "Regattaverwaltung"
+                          , "Verwaltung von Regatten, Booten, "
+                            "Teilnehmern und Ergebnissen"
+                          , "GTW.OMP.SRM"
+                          , show_aliases = True
+                          )
+                      , cls.nav_admin_group
+                          ( "Webseitenverwaltung"
+                          , "Verwaltung der Webseiten"
+                          , "GTW.OMP.SWP", "GTW.OMP.EVT"
+                          , show_aliases = True
+                          )
+                      ]
+                  )
+              , dict
+                  ( src_dir         = _ ("Auth")
+                  , pid             = "Auth"
+                  , prefix          = "Auth"
+                  , short_title     = _ (u"Authorization and Account handling")
+                  , Type            = GTW.NAV.Auth
+                  , hidden          = True
+                  )
+              , dict
+                  ( src_dir         = _ ("L10N")
+                  , prefix          = "L10N"
+                  , short_title     =
+                    _ (u"Choice of language used for localization")
+                  , Type            = GTW.NAV.L10N
+                  , country_map     = dict \
+                      ( de          = "AT")
+                  )
+              ]
+            )
+        return result
+    # end def create_nav
+
+    @classmethod
     def create_test_dict ( cls, test_spec
                          , backends = None
                          , bpt      = 1
@@ -161,6 +287,38 @@ class Scaffold (GTW.OMP.Scaffold) :
     # end def create_test_dict
 
     @classmethod
+    def do_create (cls, cmd) :
+        scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
+        cls.fixtures  (scope)
+        scope.destroy ()
+    # end def do_create
+
+    @classmethod
+    def fixtures (cls, scope) :
+        if sos.environ.get ("GTW_FIXTURES") :
+            from _GTW.__test__.form_app import fixtures
+            fixtures (scope)
+    # end def fixtures
+
+    @Class_Property
+    @Once_Property
+    def jnj_src (cls) :
+        return "/tmp/test"
+    # end def jnj_src
+
+    @classmethod
+    def scope (cls, * args, ** kw) :
+        verbose = kw.pop ("verbose", True)
+        return super (Scaffold, cls).scope (* args, verbose = verbose, ** kw)
+    # end def scope
+
+    @Class_Property
+    @Once_Property
+    def web_src_root (cls) :
+        return "/tmp/test"
+    # end def web_src_root
+
+    @classmethod
     def _backend_spec (cls, backends) :
         i = 0
         for b in backends :
@@ -174,42 +332,13 @@ class Scaffold (GTW.OMP.Scaffold) :
     # end def _backend_spec
 
     @classmethod
-    def do_create (cls, cmd) :
-        from _GTW.__test__.form_app import fixtures
-        scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
-        if cmd.fixtures :
-            fixtures          (scope)
-        scope.destroy         ()
-    # end def do_create
-
-    @classmethod
-    def do_run_server (cls, cmd) :
-        from form_app import run
-        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return run (cmd, apt, url, Create_Scope = cls._load_scope)
-    # end def do_run_server
-
-    @classmethod
-    def do_wsgi (cls, cmd) :
-        from form_app import wsgi
-        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return wsgi (cmd, apt, url, Create_Scope = cls._load_scope)
-    # end def do_wsgi
-
-    @classmethod
-    def XXX_load_scope (cls, apt, url) :
-        result = super (Scaffold, cls)._load_scope (apt, url)
-        cls._load_afs  (result.app_type, form_pickle_path)
+    def _wsgi_app (cls, cmd) :
+        cls.do_create (cmd)
+        result = super (Scaffold, cls)._wsgi_app (cmd)
         return result
-    # end def _load_scope
+    # end def _wsgi_app
 
-    @classmethod
-    def scope (cls, * args, ** kw) :
-        verbose = kw.pop ("verbose", True)
-        return super (Scaffold, cls).scope (* args, verbose = verbose, ** kw)
-    # end def scope
-
-# end class Scaffold
+Scaffold = _GTW__test__Scaffold_ # end class
 
 Scope = Scaffold.scope
 

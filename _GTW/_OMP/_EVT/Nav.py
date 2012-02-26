@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -31,6 +31,9 @@
 #     2-May-2010 (MG) Simplified
 #     8-Nov-2011 (CT) `Calendar` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    24-Jan-2012 (CT) Remove `Form_args`,
+#                     i.e., stuff related to non-AFS forms
+#    24-Feb-2012 (CT) Remove `Event_occurs` (too electric by far)
 #    ««revision-date»»···
 #--
 
@@ -39,67 +42,19 @@ from   __future__            import unicode_literals
 from   _TFL                     import TFL
 from   _GTW                     import GTW
 
-import _GTW._NAV._E_Type.Admin
-import _GTW._Form._MOM.Javascript
-
-from   _GTW._Form._MOM.Inline_Description      import \
-    ( Link_Inline_Description       as LID
-    , Attribute_Inline_Description  as AID
-    , Collection_Inline_Description as CID
-    )
-from   _GTW._Form._MOM.Field_Group_Description import \
-    ( Field_Group_Description as FGD
-    , Field_Prefixer          as FP
-    , Wildcard_Field          as WF
-    )
-from  _GTW._Form.Widget_Spec    import Widget_Spec as WS
-
 from   _TFL.I18N                import _
-
-primary = WF ("primary")
 
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    Calendar        = dict \
-        ( ETM       = "GTW.OMP.EVT.Calendar"
+    Calendar            = dict \
+        ( ETM           = "GTW.OMP.EVT.Calendar"
         )
-    Event           = dict \
-        ( ETM       = "GTW.OMP.EVT.Event"
-        , Form_args =
-            ( FGD
-                ( "object", "date", "time", "detail", "short_title"
-                )
-            , LID
-                ( "GTW.OMP.EVT.Recurrence_Spec"
-                , CID
-                    ( "rules"
-                    , legend = _("Recurrence rules")
-                    , popup  = False
-                    )
-                , CID
-                    ( "rule_exceptions"
-                    , legend = _("Recurrence exceptions")
-                    , popup  = False
-                    )
-                , FGD
-                    ( "dates", "date_exceptions"
-                    )
-                , legend = _("Recurrence rule set")
-                )
-            )
-        )
-
-    Event_occurs    = dict \
-        ( ETM       = "GTW.OMP.EVT.Event_occurs"
-        , Form_args =
-            ( FGD
-                ( AID ("event", FGD ("object"))
-                , "date"
-                , "time"
-                )
-            ,
-            )
+    Event               = dict \
+        ( ETM           = "GTW.OMP.EVT.Event"
+        , list_display  = ("left", "date", "time", "calendar")
+        , sort_key      = TFL.Sorted_By
+            ("-date.start", "-time.start", "left")
         )
 
 # end class Admin

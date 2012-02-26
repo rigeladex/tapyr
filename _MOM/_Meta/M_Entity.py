@@ -121,6 +121,12 @@
 #    18-Nov-2011 (CT) Add `cls.AQ = MOM.Attr.Filter.E_Type (cls)`
 #     4-Dec-2011 (CT) Replace `MOM.Attr.Filter` by `MOM.Attr.Querier`
 #    20-Dec-2011 (CT) Add `sig_attr`
+#    24-Jan-2012 (CT) Change `M_Entity._m_init_prop_specs` to set `show_in_ui`
+#    24-Jan-2012 (CT) Change `M_E_Type_Id._m_setup_attributes` to use
+#                     `show_in_ui` instead of `generate_doc`
+#    31-Jan-2012 (CT) Propagate `polymorphic_epk` directly to
+#                     `relevant_root`, let all children inherit that value
+#    31-Jan-2012 (CT) Add `epk_sig_root` to `M_E_Type_Id._m_setup_children`
 #    ««revision-date»»···
 #--
 
@@ -257,12 +263,14 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
         for t in reversed (app_type._T_Extension) :
             if t.polymorphic_epk :
-                for b in t.__bases__ :
-                    if getattr (b, "polymorphic_epk", None) is False :
-                        b.polymorphic_epk = True
+                if t.relevant_root :
+                    t.relevant_root.polymorphic_epk = True
         for t in app_type._T_Extension :
             t.polymorphic_epks = t.polymorphic_epk or any \
-                (   pka.P_Type.polymorphic_epks or pka.P_Type.polymorphic_epk
+                (   (  pka.P_Type.polymorphic_epks
+                    or pka.P_Type.polymorphic_epk
+                    or not pka.P_Type.relevant_root
+                    )
                 for pka in t.primary
                 if  isinstance (pka.attr, MOM.Attr._A_Id_Entity_) and pka.P_Type
                 )
@@ -362,7 +370,8 @@ class M_Entity (M_E_Mixin) :
         cls._m_add_prop (pred, cls._Predicates, verbose, override)
     # end def add_predicate
 
-    def change_attribute_default (cls, name, raw_default = None, default = None) :
+    def change_attribute_default \
+            (cls, name, raw_default = None, default = None) :
         """Change (raw or cooked) default of attribute with `name`."""
         attr = getattr (cls._Attributes, name)
         if raw_default is not None :
@@ -427,6 +436,8 @@ class M_Entity (M_E_Mixin) :
     def _m_init_prop_specs (cls, name, bases, dct) :
         if "is_partial" not in dct :
             setattr (cls, "is_partial", False)
+        if "show_in_ui" not in dct :
+            setattr (cls, "show_in_ui", True)
         for psn in cls._nested_classes_to_combine :
             cls._m_combine_nested_class (psn, bases, dct)
         if "ui_display" not in cls._Attributes.__dict__ :
@@ -458,10 +469,10 @@ class M_Id_Entity (M_Entity) :
     _epkified_head = """def epkified_%(suffix)s (cls, %(args)s) :"""
     _epkified_tail = """return (%(epk)s), kw\n"""
 
-    def __init__ (cls, name, bases, dict) :
-        assert "__init__" not in dict, \
+    def __init__ (cls, name, bases, dct) :
+        assert "__init__" not in dct, \
           "%s: please redefine `_finish__init__`, not __init__" % cls
-        cls.__m_super.__init__  (name, bases, dict)
+        cls.__m_super.__init__  (name, bases, dct)
     # end def __init__
 
     def _m_auto_epkified (cls, epk_sig, args, code, suffix) :
@@ -490,7 +501,8 @@ class M_Id_Entity (M_Entity) :
             , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "_d_rank")
             )
         epk_sig   = tuple (a.name for a in pkas)
-        rel_bases = (b for b in bases if getattr (b, "is_relevant", False))
+        rel_bases = tuple \
+            (b for b in bases if getattr (b, "is_relevant", False))
         pol_epk   = any_true \
             ( (  getattr (rb, "polymorphic_epk", False)
               or rb.epk_sig != epk_sig
@@ -503,19 +515,21 @@ class M_Id_Entity (M_Entity) :
             (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
         d_raw     = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
-        result    = cls.__m_super._m_new_e_type_dict \
-            ( app_type, etypes, bases
-            , epk_sig         = epk_sig
+        r_kw = dict \
+            ( epk_sig         = epk_sig
             , epkified_ckd    = cls._m_auto_epkified
                 (epk_sig, a_ckd, d_ckd, "ckd")
             , epkified_raw    = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
             , is_relevant     = cls.is_relevant or (not cls.is_partial)
-            , polymorphic_epk = pol_epk
             , _all_link_map   = None
             , _own_link_map   = TFL.defaultdict (set)
             , ** kw
             )
+        if pol_epk :
+            r_kw ["polymorphic_epk"] = pol_epk
+        result    = cls.__m_super._m_new_e_type_dict \
+            (app_type, etypes, bases, ** r_kw)
         return result
     # end def _m_new_e_type_dict
 
@@ -773,15 +787,21 @@ class M_E_Type_Id (M_E_Type) :
         cls.__m_super._m_setup_attributes (bases, dct)
         cls.is_editable = (not cls.electric.default) and cls.user_attr
         cls.show_in_ui  = \
-            (cls.record_changes and cls.generate_doc and not cls.is_partial)
+            (cls.record_changes and cls.show_in_ui and not cls.is_partial)
         cls.sig_attr = cls.primary
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :
         cls.__m_super._m_setup_children (bases, dct)
         if cls.is_relevant :
-            if not any (getattr (b, "is_relevant", False) for b in bases) :
+            rel_bases = tuple \
+                (b for b in bases if getattr (b, "is_relevant", False))
+            if not rel_bases :
                 cls.relevant_root = cls
+            epk_sig  = cls.epk_sig
+            es_roots = tuple (rb for rb in rel_bases if rb.epk_sig == epk_sig)
+            if not es_roots :
+                cls.epk_sig_root = cls
         else :
             cls.relevant_roots = {}
     # end def _m_setup_children

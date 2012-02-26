@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.CSS.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Feb-2011 (CT) Creation
 #    23-Mar-2011 (CT) `P_Border` added
+#    16-Feb-2012 (CT) Disable prefixes for `radius` (validator->errors)
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,8 @@ from   _GTW.Parameters            import P_dict
 import _GTW._CSS
 
 _prefix_map = dict \
-    ( radius     = ("-moz", "-webkit")
+    ( radius     = () ### ("-moz", "-webkit")
+        ### 16-Feb-2012 prefixes not necessary anymore, validator gives errors
     )
 
 def Border (** declarations) :

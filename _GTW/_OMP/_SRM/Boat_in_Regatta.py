@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -35,6 +35,7 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    26-Jan-2012 (CT) Set `Boat_in_Regatta.left.ui_allow_new`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Boat racing in a regatta."""
 
             role_type          = GTW.OMP.SRM.Boat
+            ui_allow_new       = True
             auto_cache         = True
 
         # end class left
@@ -125,10 +127,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
             kind               = Attr.Internal
             Kind_Mixins        = (Attr.Init_Only_Mixin, )
-
-            def computed_default (self) :
-                return self.now ()
-            # end def computed_default
+            computed_default   = A_Date.now
 
         # end class registration_date
 

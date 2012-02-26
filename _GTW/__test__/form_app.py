@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -38,7 +38,7 @@
 #    ««revision-date»»···
 #--
 
-from   _GTW.__test__.model import MOM, GTW, Scaffold
+from   _GTW.__test__.model import MOM, GTW, Scaffold as GTW__test__Scaffold
 from   _JNJ                import JNJ
 import _GTW._NAV.import_NAV
 import _GTW.jQuery
@@ -298,7 +298,8 @@ def wsgi (cmd, app_type, db_url, ** kw) :
     media_dir = sos.path.join (NAV.web_src_root, "media")
     app       = HTTP.Application \
         ( ("", HTTP.NAV_Request_Handler, dict (nav_root = NAV))
-        , cookie_salt    = "ahn*eTh:2uGu6la/weiwaiz1b43N;aNg0eetie$Chae^2eEjeuth7e"
+        , cookie_salt    =
+            "queikiec4zaemaitei7kua7ieT3foh7ohph9ahf9shie4aeyuu7Zee"
         , i18n           = True
         , login_url      = NAV.SC.Auth.href_login
         , Session_Class  = GTW.File_Session
@@ -319,6 +320,20 @@ def run (cmd, apt, url, ** kw) :
     app.run_development_server (port = cmd.port)
 # end def run
 
+class Scaffold (GTW__test__Scaffold) :
+
+    @classmethod
+    def do_run_server (cls, cmd) :
+        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        return run (cmd, apt, url, Create_Scope = cls._load_scope)
+    # end def do_run_server
+
+    @classmethod
+    def do_wsgi (cls, cmd) :
+        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+        return wsgi (cmd, apt, url, Create_Scope = cls._load_scope)
+    # end def do_wsgi
+
+# end class Scaffold
+
 ### __END__ GTW.__test__.form_app
-
-

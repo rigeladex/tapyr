@@ -39,6 +39,10 @@
 #    23-Nov-2011 (CT) Factor rules for `.cmd-menu`
 #    14-Dec-2011 (CT) Factor rules for `.ui-autocomplete .ui-menu-item`
 #     3-Jan-2012 (CT) Add `Script` for `GTW.Script._.GTW_jq_afs`
+#     2-Feb-2012 (CT) Add rule for `.prefilled`
+#    16-Feb-2012 (CT) Add rule for `input[type=submit]`
+#    21-Feb-2012 (CT) Add `Script` for `GTW_L`
+#    23-Feb-2012 (CT) Add rules for `.Status.bad`, `.good`, and `.missing`
 #    ««revision-date»»···
 #--
 
@@ -118,16 +122,6 @@ style_sheet = Style_Sheet \
                     [ Rule
                         ( "h2"
                         , P.afs.color_spec_label
-                        , children      =
-                            [ Rule
-                                ( ".Status"
-                                , background_color  = "red" # "transparent"
-                                , display           = "inline-block"
-                                , height            = Px (10)
-                                , width             = Px (10)
-                                , ** Border (radius = Px (5))
-                                )
-                            ]
                         )
                     , Rule
                         ( "input", "select", "textarea"
@@ -140,7 +134,7 @@ style_sheet = Style_Sheet \
                             [ Rule_Pseudo
                                 ( "focus"
                                 , P.color_spec_selected
-                                , outline                  = P.outline_focus
+                                , outline           = P.outline_focus
                                 )
                             , Rule_Attr
                                 ( "[readonly]"
@@ -166,6 +160,55 @@ style_sheet = Style_Sheet \
                         ( "textarea"
                         , font_size     = Percent (95)
                         )
+                    , Rule
+                        ( ".bad"
+                        , background_color  = P.color_bg_bad
+                        , border_color      = P.color_status_bad
+                        )
+                    , Rule
+                        ( ".missing"
+                        , background_color  = P.color_bg_missing
+                        , border_color      = P.color_status_missing
+                        )
+                    , Rule
+                        ( ".Status"
+                        , Border (radius = P.afs.status_size // 2)
+                        , display           = "inline-block"
+                        , height            = P.afs.status_size
+                        , margin_right      = P.afs.status_size
+                        , width             = P.afs.status_size
+                        , children          =
+                            [ Rule_Class
+                                ( "bad"
+                                , background_color  = P.color_status_bad
+                                )
+                            , Rule_Class
+                                ( "good"
+                                , background_color  = P.color_status_good
+                                )
+                            , Rule_Class
+                                ( "missing"
+                                , background_color  = P.color_status_missing
+                                )
+                            ]
+                        )
+                    ]
+                )
+            , Rule
+                ( "input"
+                , children         =
+                    [ Rule_Attr
+                        ( "[type=submit]"
+                        , background_color = P.color_heading
+                        , Border           = P.border_button
+                        , color            = P.color_selected
+                        , float            = "right"
+                        , font_size        = Percent (115)
+                        , font_weight      = "bold"
+                        , margin           = TRBL (Em (1.0))
+                        , padding          = TRBL (Em (0.5), Em (1.5))
+                        )
+                    , Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
                     ]
                 )
             , Rule
@@ -175,19 +218,28 @@ style_sheet = Style_Sheet \
                 , margin_bottom    = P.afs.block_margin_bottom
                 , overflow         = "auto"
                 , padding          = TRBL0 (r = 0, default = Px (2))
+                )
+            , Rule
+                ( "section"
                 , children         =
-                    [ Rule
-                        ( ".closed"
+                    [ Rule_Class
+                        ( "closed"
                         , border   = 0
                         , margin   = 0
                         , padding  = 0
                         , children =
                             [ Rule
-                                ( "h1"
+                                ( "h1", "h2"
                                 , P.afs.color_spec_heading_closed
                                 , border   = 0
                                 , margin   = TRBL0 (b = Px (1))
                                 , padding  = P.afs.header_padding
+                                )
+                            , Rule
+                                ( ".prefilled"
+                                , P.afs.border_spec_section
+                                , P.color_spec_normal
+                                , P.font_spec_pre
                                 )
                             ]
                         )
@@ -216,6 +268,7 @@ style_sheet = Style_Sheet \
 Include ("html/autocomplete.media")
 Include ("html/cmd_menu.media")
 
+Script  (GTW.Script._.GTW_L)
 Script  (GTW.Script._.GTW_jq_afs)
 
 ### __END__ html/afs.jnj.media

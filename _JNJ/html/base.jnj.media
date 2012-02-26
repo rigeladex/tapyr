@@ -40,6 +40,7 @@
 #    24-Oct-2011 (CT) `tablesorter` rule factored into `tablesorter.media`
 #    28-Nov-2011 (CT) Remove `max-width` from `.pg_main`
 #     2-Dec-2011 (CT) Add `Modernizr`, remove `ie_csshover_hack.css`
+#    22-Feb-2012 (CT) Add more rules for `.centered`, add `align-center`
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ style_sheet = Style_Sheet \
         ( ".pg_body"
         , width          = "100%"
         , children       =
-            [ Rule ("p", max_width = Em (40))
+            [ Rule ("p", max_width = Rem (40))
             # XXX ??? ".login div", "form.login"
             ]
         )
@@ -158,7 +159,11 @@ style_sheet = Style_Sheet \
         )
     ### Various classes
     , Rule (".Error-Message", ** P.color_spec_error)
-    , Rule (".centered",      text_align = "center")
+    , Rule
+        ( ".centered"
+        , clear          = "both"
+        , text_align     = "center"
+        )
     , Rule (".clickable",     cursor     = "pointer")
     , Rule
       ( ".deleted"
@@ -200,12 +205,17 @@ style_sheet = Style_Sheet \
         , width          = "auto"
         )
     , Rule
-        ( "img.centered", "table.centered"
-        , display        = "block"
-        , height         = "auto"
-        , margin         = "1em auto"
-        , text_align     = "left"
-        , width          = "auto"
+        ( "div", "img", "table"
+        , children       =
+            [ Rule_Class
+                ( "centered"
+                , display        = "block"
+                , height         = "auto"
+                , margin         = "1em auto"
+                , text_align     = "left"
+                , width          = "auto"
+                )
+            ]
         )
     , Rule
         ( "img.pixpanded"
@@ -265,18 +275,39 @@ style_sheet = Style_Sheet \
         , width          = Percent (75)
         )
     , Rule
+        ( ".align-center"
+        , clear          = "both"
+        , text_align     = "center"
+        )
+    , Rule
+        ( ".align-left"
+        , text_align     = "left"
+        )
+    , Rule
+        ( ".align-right"
+        , text_align     = "right"
+        )
+    , Rule
+        ( "img.align-center"
+        , clear          = "both"
+        , display        = "block"
+        , margin         = "1em auto"
+        )
+    , Rule
         ( "img.align-left"
+        , clear          = "left"
         , float          = "left"
         , margin         = TRBL0 (t = Px (1), b = Px (1), r = Px (5))
         )
     , Rule
         ( "img.align-right"
+        , clear          = "right"
         , float          = "right"
         , margin         = TRBL0 (t = Px (1), b = Px (1), l = Px (5))
         )
     , Rule
         ( "pre.literal-block"
-        , font           = P.font_family_normal
+        , font_family    = P.font_family_normal
         , padding_left   = Em (5)
         )
     , Rule

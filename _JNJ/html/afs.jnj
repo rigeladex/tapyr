@@ -1,6 +1,6 @@
 {#- jinja template: afs.jnj -#}
 {#
-## Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -37,6 +37,10 @@
 ##    14-Oct-2011 (CT) `do_menu` added
 ##     4-Nov-2011 (CT) Change `do_element` to `strip` whitespace from `cssc`
 ##     4-Nov-2011 (CT) Add `title` to `do_head`, add `show_desc` to `do_element`
+##    26-Jan-2012 (CT) Add `next_form_kw` to `Form`
+##     2-Feb-2012 (CT) Change `do_head` to consider `prefilled` and `readonly`
+##    16-Feb-2012 (CT) Add `cancel_kw` and `submit_kws` to call of `FM.form`
+##    23-Feb-2012 (CT) Add `do_description` and `do_label`
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,6 +59,16 @@
     {{ GTW.call_macro (c.widget, form, c, r, templ_name = r) }}
   {% endfor -%}
 {%- endmacro -%} {#- do_children -#}
+
+{%- macro do_description (elem) -%}
+  {%- set desc = GTW._T (elem.description)|safe %}
+  {%- if desc -%}
+    {%- set expl = GTW._T (elem.explanation)|safe %}
+    <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
+      {{- desc -}}
+    </div>
+  {%- endif -%}
+{%- endmacro -%} {#- do_description -#}
 
 {%- macro do_element (form, elem, renderer, id_fix = "", class = "", show_desc = True) -%}
   {%- set elem_caller = kwargs.pop ("caller", None) -%}
@@ -81,19 +95,35 @@
       {{- desc -}}
     </div>
   {%- endif -%}
+  {%- set csscs = [] %}
+  {%- if elem.prefilled %}
+    {%- do csscs.append ("prefilled") %}
+  {% endif -%}
+  {%- set cssc  = " ".join (csscs).strip () %}
   <{{ elem.het_h }}
+      {%- if cssc %} class="{{ cssc }}"{% endif -%}
       {%- if desc %} title="{{ desc }}"{% endif -%}
   >
-    {{ head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
+    {{- head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
     {%- if tail -%}
       : {{ tail }}
     {% endif -%}
     {%- if head_caller %}
       {{ head_caller () }}
     {% endif -%}
-    {{ do_menu () }}
+    {%- if not (elem.prefilled or elem.readonly) -%}
+      {{ do_menu () }}
+    {% endif -%}
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_head -#}
+
+{%- macro do_label (elem) -%}
+  <{{ elem.het_h }}>
+    <label for="{{ elem.id }}">{# -#}
+      <b class="Status"></b>{{ GTW._T (elem.label) -}}
+    </label>
+  </{{ elem.het_h }}>
+{%- endmacro -%} {#- do_label -#}
 
 {%- macro do_menu () -%}
   <span class="cmd-menu"></span>
@@ -102,10 +132,28 @@
 {%- macro Form (form) -%}
   {#- Render a form for a AFS `Form` instance `form` -#}
   {%- set form_caller = kwargs.pop ("caller", None) -%}
+  {%- if "next_form_kw" not in kwargs and form.referrer %}
+    {%- do kwargs.update
+        ( next_form_kw = dict
+            ( name     = "__next__"
+            , value    = form.referrer
+            )
+        )
+    -%}
+  {% endif -%}
   {% call FM.form
       ( action     = ""
       , class      = form.css_class
       , id         = form.id
+      , cancel_kw  = dict
+          ( href   = form.referrer
+          )
+      , submit_kws =
+          [ dict
+              ( title = GTW._T ("Send form data to server and leave form")
+              , value = GTW._T ("Submit")
+              )
+          ]
       , ** kwargs
       )
   -%}

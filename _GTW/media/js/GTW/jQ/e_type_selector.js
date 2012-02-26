@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -20,6 +20,7 @@
 //    21-Dec-2011 (CT) Set `title` in `apply_cb`
 //    21-Dec-2011 (CT) Change `select_cb` to not repeat partial search after
 //                     a single match
+//    24-Feb-2012 (CT) Change `get_completions` to handle `n == 0` correctly
 //    ««revision-date»»···
 //--
 
@@ -152,6 +153,8 @@
                           }
                         , "Completion"
                         );
+                } else {
+                    cb ([]);
                 };
             };
             var select_cb = function select_cb (ev, inp$, item) {

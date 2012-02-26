@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -44,12 +44,14 @@
 #    16-Aug-2010 (CT) `-verbose` added
 #    16-Aug-2010 (MG) `verbose` handling in `scope` fixed
 #    16-Aug-2010 (CT) `cmd__delete` and friends added
+#    27-Jan-2012 (CT) `app_path` added
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 
 from   _TFL                   import sos
+from   _TFL.object_globals    import class_module
 
 import _MOM.DB_Man
 import _MOM._EMS.Backends
@@ -88,6 +90,11 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
 class _M_Scaffold_ (TFL.Meta.M_Auto_Combine) :
     """Meta class for `Scaffold`"""
+
+    @property
+    def app_path (cls) :
+        return sos.path.dirname (class_module (cls).__file__)
+    # end def app_path
 
     @TFL.Meta.Once_Property
     def cmd (cls) :

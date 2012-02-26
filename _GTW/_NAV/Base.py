@@ -270,6 +270,8 @@
 #                     `store_cache`
 #     1-Dec-2011 (CT) Change `Root.template_iter` to include error templates
 #    19-Jan-2012 (CT) Factor `_cache_pickles`
+#     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
+#    16-Feb-2012 (CT) Save `_orig_kw` in `_Meta_.__call__`
 #    ««revision-date»»···
 #--
 
@@ -316,6 +318,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
+        result._orig_kw = dict (kw)
         if not result.implicit :
             href = result.href
             pid  = result.pid
@@ -722,7 +725,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
             )
         result = self.rendered (handler)
         if result is None :
-            raise HTTP.Error_404 (request.url)
+            raise HTTP.Error_404 ()
         if result != True :
             handler.write (result)
     # end def _view
@@ -1149,7 +1152,7 @@ class Root (_Dir_) :
 
         @property
         def manager (self) :
-            return  self._manager
+            return self._manager
         # end def manager
 
         @manager.setter
@@ -1283,7 +1286,7 @@ class Root (_Dir_) :
             CS = MOM.Scope.load
         result = CS (self.top.App_Type, self.top.DB_Url)
         if self.DEBUG :
-            print "Created", result
+            print "Loaded", result
         return result
     # end def scope
 
@@ -1352,7 +1355,7 @@ class Root (_Dir_) :
                     return page._view (handler)
             else :
                 return page._raise_403 (handler)
-        raise HTTP.Error_404 (href)
+        raise HTTP.Error_404 ()
     # end def universal_view
 
     def _cache_pickles (self, msg_head, msg_tail = "") :
@@ -1420,7 +1423,7 @@ class Stopper (Page) :
         if sos.path.exists (self.sentinel_name) :
             signal.alarm   (self.delay)
         else :
-            raise HTTP.Error_404 (request.url)
+            raise HTTP.Error_404 ()
     # end def _view
 
 # end class Stopper

@@ -1,5 +1,5 @@
 //-*- coding: iso-8859-1 -*-
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -45,6 +45,9 @@
 //     7-Oct-2011 (CT) Guard added to `Element._setup_value`
 //    10-Oct-2011 (CT) `_clear_value` added to `Field` and `Field_Entity`
 //    20-Oct-2011 (CT) `_clear_value` added to `Entity_Link`
+//    16-Feb-2012 (CT) Factor `add` in `packed_values`, support `role_id` there
+//    17-Feb-2012 (CT) Add `callback_map` to module `GTW.AFS`
+//    17-Feb-2012 (CT) Add and use `Element._setup_callbacks`
 //    ««revision-date»»···
 //--
 
@@ -81,13 +84,15 @@
                       value = spec [name]
                       if (name === "children") {
                           value = create_list (value);
-                      }
+                      } else if (name === "js_callbacks") {
+                          this._setup_callbacks (value);
+                      };
                       this [name] = value;
-                  }
-              }
+                  };
+              };
               if (this ["$id"] !== undefined) {
                   Elements.id_map [this.$id] = this;
-              }
+              };
           }
         , changed : function changed () {
               var i, l, child, has_value;
@@ -176,6 +181,17 @@
                       }
                   }
               }
+          }
+        , _setup_callbacks : function _setup_callbacks (js_callbacks) {
+              var cb_map = GTW.AFS.callback_map;
+              for (var i = 0, li = js_callbacks.length, cb_spec; i < li; i++) {
+                  cb_spec = js_callbacks [i];
+                  if (cb_spec.cb_name in cb_map) {
+                      cb_spec ["callback"] = cb_map [cb_spec.cb_name];
+                  } else {
+                      console.error ("Unkown callback referenced by", cb_spec);
+                  };
+              };
           }
         , _setup_value : function _setup_value (kw, new_kw) {
               if (this.$id !== kw.anchor.$id) {
@@ -319,7 +335,7 @@
               return Elements.id_map [id];
           }
         , packed_values : function packed_values () {
-              var i, l, child;
+              var i, l;
               var form     = this;
               var entities = arguments.length > 0 ? arguments : form.roots;
               var result   =
@@ -327,10 +343,19 @@
                   , sid        : form.value.sid
                   , $child_ids : []
                   };
+              var add = function add (elem, result) {
+                  var r;
+                  result [elem.$id] = elem.value;
+                  result.$child_ids.push (elem.$id);
+                  if ("role_id" in elem.value) {
+                      r = get (elem.value.role_id);
+                      if (r) {
+                          add (r, result);
+                      };
+                  };
+              };
               for (i = 0, l = entities.length; i < l; i += 1) {
-                  child = entities [i];
-                  result [child.$id] = child.value;
-                  result.$child_ids.push (child.$id);
+                  add (entities [i], result);
               }
               return result;
           }
@@ -369,6 +394,7 @@
     $GTW.AFS = new $GTW.Module (
         { Elements              : Elements
         , Form                  : Form
+        , callback_map          : {}
         }
     );
   } ()

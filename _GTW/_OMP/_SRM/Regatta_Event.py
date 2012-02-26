@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -36,6 +36,7 @@
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #     9-Nov-2011 (CT) Change `computed` methods to use `FO`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    24-Jan-2012 (CT) Correct `club.description`
 #    ««revision-date»»···
 #--
 
@@ -86,7 +87,7 @@ class Regatta_Event (_Ancestor_Essence) :
         ### Non-primary attributes
 
         class club (A_Id_Entity) :
-            """Club the sailor is starting for."""
+            """Club that organizes the regatta."""
 
             P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Optional

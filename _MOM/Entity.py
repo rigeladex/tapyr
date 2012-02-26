@@ -170,6 +170,10 @@
 #    20-Dec-2011 (CT) Remove `sorted` from `attr_as_code`
 #    19-Jan-2012 (CT) Add `_init_pending`, make `_home_scope` optional
 #    19-Jan-2012 (CT) Call `_finish__init__` only if `_home_scope`
+#    24-Jan-2012 (CT) Remove `generate_doc`, `auto_display`, and `save_to_db`
+#    24-Jan-2012 (CT) Add `show_in_ui`
+#    31-Jan-2012 (CT) Change defaults for `polymorphic_epk` & `polymorphic_epks`
+#                     from `None` to `False`
 #    ««revision-date»»···
 #--
 
@@ -216,15 +220,15 @@ class Entity (TFL.Meta.Object) :
 
     deprecated_attr_names = {}
     electric              = False
-    generate_doc          = True
     init_finished         = False
     is_partial            = True
     is_relevant           = False
     is_used               = True
     rank                  = 0
-    polymorphic_epk       = None   ### Set by meta machinery
-    polymorphic_epks      = None   ### Set by meta machinery
+    polymorphic_epk       = False  ### Set by meta machinery
+    polymorphic_epks      = False  ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
+    show_in_ui            = True   ### Modified by meta machinery
     show_package_prefix   = False
     ui_display_sep        = ", "
     x_locked              = False
@@ -812,16 +816,13 @@ class Id_Entity (Entity) :
 
     __metaclass__         = MOM.Meta.M_Id_Entity
 
-    auto_display          = ()
     is_partial            = True
     max_count             = 0
     record_changes        = True
     refuse_links          = set ()
-    save_to_db            = True
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
     tutorial              = None
 
-    _lists_to_combine     = ("auto_display", )
     _sets_to_combine      = ("refuse_links", )
 
     class _Attributes (Entity._Attributes) :
@@ -1400,10 +1401,6 @@ Class Attributes
 `MOM.Id_Entity` provides a number of class attributes that control various
 aspects of the use of an essential class by the framework.
 
-.. attribute:: auto_display
-
-  Lists (names of) the attributes that should be displayed by the UI.
-
 .. attribute:: default_child
 
   Specifies which child of a partial class should be used by the UI by
@@ -1463,9 +1460,15 @@ aspects of the use of an essential class by the framework.
   objects of a derived class should not participate in associations of
   a base class.
 
-.. attribute:: save_to_db
+.. attribute:: show_in_ui
 
-  Entity will be saved to database only if `save_to_db` is True.
+  Class is shown in the UI only if `show_in_ui` is True.
+
+  `show_in_ui` is not inherited --- it must be set to `False` for every single
+  class that shouldn't be shown in the UI.
+
+  The meta machinery modifies `show_in_ui` by combining it with
+  `record_changes` and `not is_partial`.
 
 .. attribute:: show_package_prefix
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -101,6 +101,7 @@
 #                     use `E_Type.AQ`
 #    20-Dec-2011 (CT) Remove `ckd_query_attrs`
 #    20-Dec-2011 (CT) Add guard against `None` to `ac_query_attrs`
+#    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
 #    ««revision-date»»···
 #--
 
@@ -484,7 +485,7 @@ class Link (Id_Entity) :
         errors  = []
         r_query = self.ems.r_query
         for r, pk in zip (etype.Roles, epk) :
-            if r.max_links :
+            if r.max_links >= 0 :
                 links = r_query (r.assoc, {r.name : pk}, strict = True)
                 nol   = links.count ()
                 if nol >= r.max_links :

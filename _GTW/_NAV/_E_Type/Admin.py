@@ -148,6 +148,16 @@
 #    22-Dec-2011 (CT) Continue `QX` (change `qr_spec` to not pass `field_names`)
 #    16-Jan-2012 (CT) Add `Field`, `qr.fields`, and `QX_Select_Attr_Form`
 #    20-Jan-2012 (CT) Change `Field.name` to use `._full_name`, not `._q_name`
+#    24-Jan-2012 (CT) Add property `sort_key` (default `E_Type.sorted_by_epk`)
+#    24-Jan-2012 (CT) Change `Changer.rendered` to pass `.form_parameters`
+#    24-Jan-2012 (CT) Add `changer`, put properties before methods
+#    26-Jan-2012 (CT) Change `Changer.rendered` to pass `referrer` to `.form`
+#     2-Feb-2012 (CT) Add property for `form_id`,
+#                     move `form_parameters` to `Admin`
+#     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
+#    16-Feb-2012 (CT) Add `obj.pid` to `form.referrer`
+#    16-Feb-2012 (CT) Change `Change._post_handler` to deal with `cancel`
+#    24-Feb-2012 (CT) Add and use `default_qr_kw` with `limit = 25`
 #    ««revision-date»»···
 #--
 
@@ -197,6 +207,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
     css_group           = "Type"
+    default_qr_kw       = dict \
+        ( limit         = 25
+        )
+    form_parameters     = {}
     max_completions     = 20
     template_name       = "e_type_admin"
 
@@ -207,6 +221,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         , CLEAR         = "button"
         , CLOSE         = "button"
         )
+
+    _form_id            = None
+    _sort_key           = None
 
     class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
@@ -233,7 +250,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def form (self, obj = None, ** kw) :
             if obj is None :
                 obj = self.obj
-            return self.parent.Form (self.ETM, obj, ** kw)
+            return self.parent.Form \
+                (self.ETM, obj, ** dict (self.form_parameters, ** kw))
         # end def form
 
         def form_element (self, fid) :
@@ -292,7 +310,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise self.top.HTTP.Error_503 (request.path, request.Error)
+                raise self.top.HTTP.Error_503 (request.Error)
         # end def _check_readonly
 
         def _raise_401 (self, handler) :
@@ -461,7 +479,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
-        form_parameters = {}
 
         @property
         def injected_templates (self) :
@@ -477,7 +494,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             pid      = req_data.get ("pid") or self.args [0]
             scope    = self.top.scope
             self._check_readonly (request)
-            if pid is not None and pid != "null" :
+            if pid == "null" :
+                pid = None
+            if pid is not None :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
                 except LookupError :
@@ -485,13 +504,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         ( _T ("%s `%s` doesn't exist!")
                         % (_T (self.E_Type.ui_name), pid)
                         )
-                    raise HTTP.Error_404 (request.path, request.Error)
+                    raise HTTP.Error_404 (request.Error)
             if request.method == "POST" :
                 return self._post_handler (handler, scope)
             else :
                 sid, session_secret = self._new_edit_session (handler)
                 form = self.form \
-                    (obj, _sid = sid, _session_secret = session_secret)
+                    ( obj
+                    , referrer        = "%s%s" %
+                        ( request.referrer
+                        , "#pk-%s" % (obj.pid, ) if obj else ""
+                        )
+                    , _sid            = sid
+                    , _session_secret = session_secret
+                    )
                 self.Media = self._get_media \
                     (head = getattr (form, "Media", None))
                 context.update (form = form)
@@ -510,27 +536,34 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise NotImplementedError \
                     ("AFS form post requests without content-type json")
             try :
-                fv             = self.form_value (json ["cargo"])
-                get_template   = self.top.Templateer.get_template
-                session_secret = self.session_secret (handler, fv.sid)
-                self.form_value_apply (fv, scope, fv.sid, session_secret)
-                ikw = dict \
-                    ( allow_new       = json.get ("allow_new")
-                    , collapsed       = json.get ("collapsed")
-                    , _sid            = fv.sid
-                    , _session_secret = session_secret
-                    )
-                result ["$child_ids"] = rids = []
-                for e in fv.entities () :
-                    if e.entity :
-                        obj = e.entity
-                        fi  = e.elem.instantiated (e.id, obj.ETM, obj, ** ikw)
-                        result [e.id] = dict \
-                            ( html = get_template (e.elem.renderer).call_macro
-                                (fi.widget, fi, fi, fi.renderer)
-                            , json = fi.as_json_cargo
-                            )
-                        rids.append (e.id)
+                if json.get ("cancel") :
+                    ### the user has clicked on the cancel button and not on
+                    ### the submit button
+                    scope.rollback ()
+                else :
+                    fv             = self.form_value (json ["cargo"])
+                    get_template   = self.top.Templateer.get_template
+                    session_secret = self.session_secret (handler, fv.sid)
+                    self.form_value_apply (fv, scope, fv.sid, session_secret)
+                    ikw = dict \
+                        ( allow_new       = bool (json.get ("allow_new"))
+                        , collapsed       = bool (json.get ("collapsed"))
+                        , _sid            = fv.sid
+                        , _session_secret = session_secret
+                        )
+                    result ["$child_ids"] = rids = []
+                    for e in fv.entities () :
+                        if e.entity :
+                            obj = e.entity
+                            fi  = e.elem.instantiated \
+                                (e.id, obj.ETM, obj, ** ikw)
+                            result [e.id] = dict \
+                                ( html = get_template
+                                    (e.elem.renderer).call_macro
+                                        (fi.widget, fi, fi, fi.renderer)
+                                , json = fi.as_json_cargo
+                                )
+                            rids.append (e.id)
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
@@ -557,7 +590,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 result ["completions"] = n = int (obj is not None)
                 if n == 1 :
                     ikw = dict \
-                        ( allow_new        = handler.json.get ("allow_new")
+                        ( allow_new        = bool (handler.json.get ("allow_new"))
                         , collapsed        = False
                         , copy             = False
                         , _sid             = json.sid
@@ -638,7 +671,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             else :
                 request.Error = \
                     ( _T ("You need to specify a pid!"))
-                raise self.HTTP.Error_400 (request.path, request.Error)
+                raise self.HTTP.Error_400 (request.Error)
             return result
         # end def _post_handler_args
 
@@ -666,7 +699,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             else :
                 request.Error = \
                     ( _T ("You need to specify a pid!"))
-                raise self.HTTP.Error_400 (request.path, request.Error)
+                raise self.HTTP.Error_400 (request.Error)
             return result
         # end def _post_handler_json
 
@@ -706,8 +739,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if pid is not None and pid != "null" :
                     obj = context ["instance"] = self.pid_query (ETM, pid)
                 ikw = dict \
-                    ( allow_new       = req_data.get ("allow_new")
-                    , collapsed       = req_data.get ("collapsed")
+                    ( allow_new       = bool (req_data.get ("allow_new"))
+                    , collapsed       = bool (req_data.get ("collapsed"))
                     , copy            = req_data.get ("copy")
                     , _sid            = sid
                     , _session_secret = session_secret
@@ -954,7 +987,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         ( _T ("%s `%s` doesn't exist!")
                         % (_T (E_Type.ui_name), pid)
                         )
-                    raise HTTP.Error_404 (request.path, request.Error)
+                    raise HTTP.Error_404 (request.Error)
             form  = self.__Obsolete_Form \
                 ( self.abs_href, obj, cancel_href = self.parent.abs_href
                 , ** self.form_parameters
@@ -966,7 +999,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                           "readonly to allow maintenance."
                         )
                     )
-                raise HTTP.Error_503 (request.path)
+                raise HTTP.Error_503 ()
             if request.method == "POST" :
                 err_count = 0
                 if req_data.get ("cancel") :
@@ -1021,7 +1054,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         self.__super.__init__ (parent, ** kw)
         self.prefix     = pjoin (parent.prefix, self.name)
         self._field_map = {}
-        self.top.ET_Map [self.E_Type.type_name].admin = self
+        if not self.implicit :
+            self.top.ET_Map [self.E_Type.type_name].admin = self
     # end def __init__
 
     @Once_Property
@@ -1042,8 +1076,19 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def Form (self) :
-        return AFS_Form [self.E_Type.GTW.afs_id]
+        return AFS_Form [self.form_id]
     # end def Form
+
+    @property
+    def form_id (self) :
+        _form_id = self._form_id
+        return self.E_Type.GTW.afs_id if (_form_id is None) else _form_id
+    # end def form_id
+
+    @form_id.setter
+    def form_id (self, value) :
+        self._form_id = value
+    # end def form_id
 
     @property
     def head_line (self) :
@@ -1068,6 +1113,52 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     def href (self) :
         return pjoin (self.prefix, u"")
     # end def href
+
+    @property
+    def sort_key (self) :
+        result = self._sort_key
+        if result is None :
+            result = self.E_Type.sorted_by_epk
+        return result
+    # end def sort_key
+
+    @sort_key.setter
+    def sort_key (self, value) :
+        self._sort_key = value
+    # end def sort_key
+
+    @Once_Property
+    def list_display (self) :
+        result = self._list_display
+        if result is None :
+            result = self._auto_list_display
+        return result
+    # end def list_display
+
+    @Once_Property
+    def manager (self) :
+        return self.etype_manager (self.E_Type)
+    # end def manager
+
+    @Once_Property
+    def qr_spec (self) :
+        return QRS (self.E_Type)
+    # end def qr_spec
+
+    @Once_Property
+    def _auto_list_display (self, ) :
+        E_Type = self.ETM.E_Type
+        return tuple (a.name for a in ichain (E_Type.primary, E_Type.user_attr))
+    # end def _auto_list_display
+
+    def changer (self, pid = None, ** kw) :
+        kw = dict (self.child_attrs.get ("Changer", {}), ** kw)
+        return self.Changer \
+            ( pid
+            , form_parameters = dict (self.form_parameters, ** kw)
+            , parent          = self
+            )
+    # end def changer
 
     def href_create (self) :
         return pjoin (self.abs_href, "create")
@@ -1131,32 +1222,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return p.startswith (self.href) and p != self.href
     # end def is_current_dir
 
-    @Once_Property
-    def list_display (self) :
-        result = self._list_display
-        if result is None :
-            result = self._auto_list_display
-        return result
-    # end def list_display
-
-    @Once_Property
-    def manager (self) :
-        return self.etype_manager (self.E_Type)
-    # end def manager
-
-    @Once_Property
-    def qr_spec (self) :
-        return QRS (self.E_Type)
-    # end def qr_spec
-
-    @Once_Property
-    def _auto_list_display (self, ) :
-        E_Type = self.ETM.E_Type
-        return tuple (a.name for a in ichain (E_Type.primary, E_Type.user_attr))
-    # end def _auto_list_display
-
     def rendered (self, handler, template = None) :
-        qr = QR.from_request_data (self.ETM.E_Type, handler.request.req_data)
+        qr = QR.from_request_data \
+            ( self.ETM.E_Type, handler.request.req_data
+            , ** self.default_qr_kw
+            )
         self._fix_filters (qr.filters)
         fields = self._fields (qr.fields or self.list_display)
         with self.LET (fields = fields, query_restriction = qr) :
@@ -1276,7 +1346,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 except (TypeError, ValueError, LookupError) :
                     pass
                 else :
-                    f.uid = o.ui_display
+                    f.ui_display = o.ui_display
     # end def _fix_filters
 
 # end class Admin

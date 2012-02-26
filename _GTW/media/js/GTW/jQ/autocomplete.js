@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -21,11 +21,12 @@
 "use strict";
 
 ( function ($) {
+    var L = $GTW.L;
     var renderer =
         { html          : function _ac_render_item_html (ul, item) {
-              var result = $("<li></li>")
+              var result = $("<li>")
                   .data     ("item.autocomplete", item)
-                  .append   ($("<a></a>").html (item.label))
+                  .append   ($("<a>").html (item.label))
                   .appendTo (ul);
               return result;
           }

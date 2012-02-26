@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -66,6 +66,8 @@
 #     4-Dec-2011 (CT) Use `attr.Choices` instead of home-grown code
 #     4-Dec-2011 (CT) Comment out `Boolean.input_widget` (FF8 doesn't
 #                     submit unchecked checkboxes!)
+#     2-Feb-2012 (CT) Add `rank` and `show_in_ui` to `Field_Group`
+#    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
 #    ««revision-date»»···
 #--
 
@@ -230,7 +232,9 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
     def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = getattr (E_Type, self.name)
         return self.__super.__call__ \
-            (attr.P_Type, self, set (), ** self._field_kw (attr, E_Type, ** kw))
+            ( attr.P_Type, self, set ()
+            , ** self._field_kw (attr, E_Type, ** kw)
+            )
     # end def __call__
 
 # end class _Field_Entity_Mixin_
@@ -267,16 +271,17 @@ class Entity_Link (Entity) :
         role_name  = self._get_role_name (assoc,     E_Type)
         role       = getattr (assoc, role_name)
         r_name     = role.generic_role_name
+        max_links  = kw.get ("max_links", role.max_links)
         seen       = set ([r_name])
         with self.LET (hidden_role_name = r_name) :
             result = self.__super.__call__ (assoc, self, seen, ** kw)
-        if role.max_links != 1 :
+        if max_links not in (0, 1) :
             elkw = dict (kw)
             elkw.setdefault ("name",      result.ui_name)
             elkw.setdefault ("ui_name",   result.ui_name)
             elkw.setdefault ("type_name", assoc.type_name)
-            if role.max_links > 0 :
-                elkw.setdefault (max_links = role.max_links)
+            if max_links > 1 :
+                elkw.setdefault ("max_links", max_links)
             result = Element.Entity_List (proto = result, ** elkw)
         return result
     # end def __call__
@@ -389,10 +394,9 @@ class Field_Group (_Base_) :
     # end def __init__
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
-        children = tuple \
-            (   f (E_Type, spec, seen, ** kw)
-            for f in self.fields (E_Type, spec, seen)
-            )
+        fields = sorted \
+            (self.fields (E_Type, spec, seen), key = TFL.Getter.rank)
+        children = tuple (f (E_Type, spec, seen, ** kw) for f in fields)
         if children :
             return self.Type (children = children, ** dict (self.kw, ** kw))
     # end def __call__
@@ -408,7 +412,8 @@ class Field_Group (_Base_) :
             if name not in seen :
                 seen.add   (name)
                 akw = dict (attr_spec [name], name = name)
-                yield attr.AFS_Spec (** akw)
+                if akw.get ("show_in_ui", True) :
+                    yield attr.AFS_Spec (** akw)
     # end def fields
 
 # end class Field_Group

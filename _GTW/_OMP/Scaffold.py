@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.
@@ -40,6 +40,8 @@
 #     3-May-2011 (CT) Options `edit_session_ttl` and `user_session_ttl` added
 #    10-Jun-2011 (MG) `shell` parameter `echo` added
 #    15-Jun-2011 (MG) `_load_afs` and `_setup_afs` moved into `GTW.NAV.Base`
+#    27-Jan-2012 (CT) Add `-languages`, `-locale_code`, and `-time_zone` to
+#                     `cmd___server__opts`
 #    ««revision-date»»···
 #--
 
@@ -130,9 +132,17 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
     ANS                   = GTW
 
     cmd___server__opts = \
-        ( "auto_reload:B=yes?Autoload of werkzeug, only works with no sqlite db"
-        , "Break:B?Enter debugger before starting tornado/werkzeug"
+        ( "-auto_reload:B=yes"
+              "?Autoload of werkzeug, only works with no sqlite db"
+        , "-Break:B?Enter debugger before starting tornado/werkzeug"
         , "-debug:B=no"
+        , "-languages:T,=en,de?Languages for which to load translations"
+        , "-locale_code:S=en_US?Code of locale to use"
+        , "-port:I=8090?Server port"
+        , "-smtp_server:S=localhost?SMTP server used to send emails"
+        , "-template_file:S=html/static.jnj"
+        , "-TEST:B"
+        , "-time_zone:S=UTC?Time zone to use"
         , HTTP_Opt (default = "Werkzeug")
         , TFL.CAO.Opt.Date_Time_Delta
             ( name        = "edit_session_ttl"
@@ -147,10 +157,6 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
             ( default     = "utf-8"
             , description = "Default encoding for generated html"
             )
-        , "port:I=8090?Server port"
-        , "-smtp_server:S=localhost?SMTP server used to send emails"
-        , "-template_file:S=html/static.jnj"
-        , "-TEST:B"
         , TFL.CAO.Opt.Date_Time_Delta
             ( name        = "user_session_ttl"
             , default     = CAL.Date_Time_Delta (days = 3)

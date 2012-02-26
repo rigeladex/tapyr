@@ -53,6 +53,8 @@
 #    30-Nov-2011 (CT) Add `dir` and `getattr`
 #     1-Dec-2011 (CT) Add `styler`
 #    18-Jan-2012 (CT) Add `attr_join`
+#    27-Jan-2012 (CT) Change `email_uri` to allow tuple argument
+#    22-Feb-2012 (CT) Add `vimeo_video` and `youtube_video`
 #    ««revision-date»»···
 #--
 
@@ -103,15 +105,15 @@ class GTW (TFL.Meta.Object) :
     # end def call_macro
 
     dict = staticmethod (dict)
-
-    if __debug__ :
-        dir = staticmethod (dir)
+    dir  = staticmethod (dir)
 
     def email_uri (self, email, text = None, ** kw) :
         """Returns a mailto URI for `email`.
 
            http://tools.ietf.org/html/rfc3966
         """
+        if text is None and isinstance (email, tuple) :
+            email, text = email
         return self.uri (scheme = "mailto", uri = email, text = text, ** kw)
     # end def email_uri
 
@@ -172,8 +174,8 @@ class GTW (TFL.Meta.Object) :
     len        = staticmethod (len)
     list       = staticmethod (list)
 
-    def log_stdout (self, text) :
-        print text
+    def log_stdout (self, * text) :
+        print " ".join (text)
         return ""
     # end def log_stdout
 
@@ -245,10 +247,13 @@ class GTW (TFL.Meta.Object) :
         return result
     # end def uri
 
-    zip  = staticmethod (zip)
-    _T   = staticmethod (_T)
-    _    = staticmethod (_)
-    _Tn  = staticmethod (_Tn)
+    vimeo_video   = staticmethod (HTML.vimeo_video)
+    youtube_video = staticmethod (HTML.youtube_video)
+
+    zip           = staticmethod (zip)
+    _T            = staticmethod (_T)
+    _             = staticmethod (_)
+    _Tn           = staticmethod (_Tn)
 
 # end class GTW
 
