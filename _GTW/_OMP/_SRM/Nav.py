@@ -42,6 +42,7 @@
 #                     i.e., stuff related to non-AFS forms
 #     1-Feb-2012 (CT) Add `Extra` "AF_BiR" to `Form_Cache`
 #     2-Feb-2012 (CT) Add `attr_spec` parameters to `AF_BiR`
+#    27-Feb-2012 (CT) Add `GTW.OMP.SRM.Club.GTW.afs_kw` (`collapsed = False`)
 #    ««revision-date»»···
 #--
 
@@ -124,6 +125,7 @@ from   _GTW._AFS._MOM.Form_Cache import Extra, Form_Cache
 
 import _GTW._OMP._SRM.Boat_in_Regatta
 
+GTW.OMP.SRM.Club.GTW.afs_kw = dict (collapsed  = False)
 GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec = Spec.Entity \
     (include_links = ("_crew", "race_results", ))
 
@@ -133,10 +135,10 @@ Form_Cache.add \
         , dict
             ( name = "GTW.OMP.SRM.Boat_in_Regatta"
             , spec = Spec.Entity
-                ( attr_spec  = dict
-                    ( right  = dict (prefilled  = True)
-                    , place  = dict (show_in_ui = False)
-                    , points = dict (show_in_ui = False)
+                ( attr_spec     = dict
+                    ( right     = dict (prefilled  = True)
+                    , place     = dict (show_in_ui = False)
+                    , points    = dict (show_in_ui = False)
                     )
                 , include_links = ("_crew", )
                 )

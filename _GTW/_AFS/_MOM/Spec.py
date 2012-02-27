@@ -68,6 +68,7 @@
 #                     submit unchecked checkboxes!)
 #     2-Feb-2012 (CT) Add `rank` and `show_in_ui` to `Field_Group`
 #    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
+#    27-Feb-2012 (CT) Mix `defaults` and `kw` in `__call__`, not in `__init__`
 #    ««revision-date»»···
 #--
 
@@ -118,7 +119,7 @@ class _Base_ (TFL.Meta.Object) :
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "rank")
-        self.kw = dict (self.defaults, ** kw)
+        self.kw = dict (kw)
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -164,13 +165,15 @@ class _Entity_Mixin_ (_Base_) :
     def __call__ (self, E_Type, spec = None, seen = None, ** kw) :
         if seen is None :
             seen = set ()
-        ekw      = dict (E_Type.GTW.afs_kw or {}, ** self.kw)
         elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
         children = (e (E_Type, self, seen) for e in elems)
-        ekw.update     (kw)
-        ekw.setdefault ("name",        E_Type.ui_name)
-        ekw.setdefault ("ui_name",     E_Type.ui_name)
-        ekw.setdefault ("description", E_Type.__doc__)
+        ekw      = dict (self.defaults)
+        ekw.update      (E_Type.GTW.afs_kw or {})
+        ekw.update      (self.kw)
+        ekw.update      (kw)
+        ekw.setdefault  ("name",        E_Type.ui_name)
+        ekw.setdefault  ("ui_name",     E_Type.ui_name)
+        ekw.setdefault  ("description", E_Type.__doc__)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
@@ -329,8 +332,9 @@ class Field (_Field_) :
     Type     = Element.Field
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
-        attr = getattr (E_Type, self.name)
-        return self.Type (** self._field_kw (attr, E_Type, ** kw))
+        attr = getattr   (E_Type, self.name)
+        ekw  = dict      (self.defaults, ** kw)
+        return self.Type (** self._field_kw (attr, E_Type, ** ekw))
     # end def __call__
 
     def _css_classes (self, attr) :
@@ -398,7 +402,8 @@ class Field_Group (_Base_) :
             (self.fields (E_Type, spec, seen), key = TFL.Getter.rank)
         children = tuple (f (E_Type, spec, seen, ** kw) for f in fields)
         if children :
-            return self.Type (children = children, ** dict (self.kw, ** kw))
+            ekw  = dict      (self.defaults, ** self.kw)
+            return self.Type (children = children, ** dict (ekw, ** kw))
     # end def __call__
 
     def attrs (self, E_Type, spec, seen) :
@@ -520,7 +525,7 @@ def setup_defaults (default_spec = None, id_prefix = "AF") :
         if T.GTW.afs_kw is None :
             T.GTW.afs_kw   = {}
         if T.GTW.afs_spec is None and not T.is_partial :
-            T.GTW.afs_spec = default_spec
+            T.GTW.afs_spec  = default_spec
 # end def setup_defaults
 
 if __name__ != "__main__" :
