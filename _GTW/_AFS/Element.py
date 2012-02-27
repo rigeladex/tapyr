@@ -105,6 +105,7 @@
 #    26-Jan-2012 (CT) Add support for `form_kw`, change `_child_kw` accordingly
 #    26-Jan-2012 (CT) Change `Entity.__call__` to not add `allow_new` to `kw`
 #    26-Jan-2012 (CT) Add `referrer` to `Form`
+#    27-Feb-2012 (CT) Add `names`
 #    ««revision-date»»···
 #--
 
@@ -153,6 +154,7 @@ class _Element_ (TFL.Meta.Object) :
     id_suffix_pat   = Regexp (r"\d+$")
     init            = ""
     list_sep        = "::"
+    names           = ()
     needs_value     = False
     prefilled       = False
     rank            = 0
@@ -241,6 +243,14 @@ class _Element_ (TFL.Meta.Object) :
                 ("Cannot change id from `%s` to `%s`" % (self._id, value))
         self._id = value
     # end def id
+
+    @property
+    def name (self) :
+        try :
+            return self.kw ["name"]
+        except KeyError :
+            pass
+    # end def name
 
     def copy (self, ** kw) :
         undef    = self.undef
@@ -391,6 +401,11 @@ class _Element_ (TFL.Meta.Object) :
 class _Anchor_MI_ (_Element_) :
 
     def _anchor_children (self, anchor = None) :
+        if anchor is not None :
+            if not isinstance (anchor, basestring) :
+                self.names = list (anchor.names)
+                if self.name :
+                    self.names.append (self.name)
         self.__super._anchor_children (anchor = self)
     # end def _anchor_children
 
@@ -517,7 +532,15 @@ class Entity_List (_Field_MI_, _Element_List_) :
         result.id_sep = self.root_sep
         if self.id :
             self._id_child_or_proto (result, i, id_map)
-        result._anchor_children (getattr (self, "anchor_id", None))
+        anchor_id = getattr (self, "anchor_id", None)
+        if anchor_id :
+            try :
+                anchor = self.id_map [anchor_id]
+            except KeyError :
+                pass
+            else :
+                result.names = list (anchor.names) + [self.name]
+        result._anchor_children (anchor_id)
         return result
     # end def new_child
 

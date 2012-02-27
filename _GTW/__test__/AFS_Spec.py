@@ -30,6 +30,7 @@
 #                     enabled, again)
 #    26-Jan-2012 (CT) Add `_prefilled_test`
 #    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `_prefilled_test`
+#    27-Feb-2012 (CT) Add test for `.names`
 #    ««revision-date»»···
 #--
 
@@ -402,6 +403,24 @@ _test_code = """
     , 'label' : 'Last name'
     , 'name' : 'last_name'
     }
+
+    >>> for e in fb.transitive_iter () :
+    ...   if e.names :
+    ...     print e.id, e.__class__.__name__, e.names, e.anchor_id, e.type_name.split(".")[-1]
+    FB-0:0:0 Field_Entity ['left'] FB-0 Boat_Class
+
+    >>> for e in fi.transitive_iter () :
+    ...   if e.names :
+    ...     print e.id, e.elem.__class__.__name__, e.names, e.anchor_id, e.type_name.split(".")[-1]
+    FB-0:0:0 Field_Entity ['left'] FB-0 Boat_Class
+    FB-0:2::0 Entity_Link ['Boat_in_Regatta'] FB-0 Boat_in_Regatta
+    FB-0:2::0-0 Field_Role_Hidden ['Boat_in_Regatta', u'left'] FB-0:2::0 Boat
+    FB-0:2::0-1:0 Field_Entity ['Boat_in_Regatta', 'right'] FB-0:2::0 Regatta
+    FB-0:2::0-1:0:0 Field_Entity ['Boat_in_Regatta', 'right', 'left'] FB-0:2::0-1:0 Regatta_Event
+    FB-0:2::0-1:0:0:1 Field_Composite ['Boat_in_Regatta', 'right', 'left', 'date'] FB-0:2::0-1:0:0 Date_Interval_C
+    FB-0:2::0-2:0 Field_Entity ['Boat_in_Regatta', 'skipper'] FB-0:2::0 Sailor
+    FB-0:2::0-2:0:0 Field_Entity ['Boat_in_Regatta', 'skipper', 'left'] FB-0:2::0-2:0 Person
+    FB-0:2::0-2:0:3 Field_Entity ['Boat_in_Regatta', 'skipper', 'club'] FB-0:2::0-2:0 Club
 
     >>> print formatted (fi.as_json_cargo, level = 1)
       { '$id' : 'FB'

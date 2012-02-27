@@ -158,6 +158,8 @@
 #    16-Feb-2012 (CT) Add `obj.pid` to `form.referrer`
 #    16-Feb-2012 (CT) Change `Change._post_handler` to deal with `cancel`
 #    24-Feb-2012 (CT) Add and use `default_qr_kw` with `limit = 25`
+#    27-Feb-2012 (CT) Add and use `_nested_form_parameters`; factor
+#                     `instantiated`
 #    ««revision-date»»···
 #--
 
@@ -282,6 +284,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 raise JSON_Error (error = "%s" % (exc, ))
         # end def form_value_apply
 
+        def instantiated (self, elem, fid, ETM, obj, kw) :
+            ikw = dict (self._nested_form_parameters (elem), ** kw)
+            return elem.instantiated (fid, ETM, obj, ** ikw)
+        # end def instantiated
+
         def pid_query (self, ETM, pid) :
             try :
                 return ETM.pid_query (pid)
@@ -312,6 +319,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     )
                 raise self.top.HTTP.Error_503 (request.Error)
         # end def _check_readonly
+
+        def _nested_form_parameters (self, elem) :
+            result = {}
+            fkw    = self.form_parameters.get ("form_kw")
+            if fkw :
+                for name in elem.names  :
+                    try :
+                        fkw = fkw [name]
+                    except KeyError :
+                        break
+                else :
+                    result = dict (form_kw = {elem.name : fkw})
+            return result
+        # end def _nested_form_parameters
 
         def _raise_401 (self, handler) :
             if handler.json :
@@ -555,8 +576,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     for e in fv.entities () :
                         if e.entity :
                             obj = e.entity
-                            fi  = e.elem.instantiated \
-                                (e.id, obj.ETM, obj, ** ikw)
+                            fi  = self.instantiated \
+                                (e.elem, e.id, obj.ETM, obj, ikw)
                             result [e.id] = dict \
                                 ( html = get_template
                                     (e.elem.renderer).call_macro
@@ -596,7 +617,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         , _sid             = json.sid
                         , _session_secret  = session_secret
                         )
-                    fi  = elem.instantiated (json.fid, ETM, obj, ** ikw)
+                    fi  = self.instantiated (elem, json.fid, ETM, obj, ikw)
                     renderer = self.top.Templateer.get_template (fi.renderer)
                     result.update \
                         ( html = renderer.call_macro
@@ -748,7 +769,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 new_id_suffix = req_data.get ("new_id_suffix")
                 if new_id_suffix is not None :
                     ikw ["new_id_suffix"] = new_id_suffix
-                fi = elem.instantiated (fid, ETM, obj, ** ikw)
+                fi = self.instantiated (elem, fid, ETM, obj, ikw)
                 renderer = self.top.Templateer.get_template (fi.renderer)
                 return handler.write_json \
                     ( html = renderer.call_macro

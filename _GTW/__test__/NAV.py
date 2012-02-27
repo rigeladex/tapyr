@@ -136,7 +136,6 @@ _test_code = """
     Admin/Webseitenverwaltung/Calendar/ e_type_admin
     Admin/Webseitenverwaltung/Clip_X/ e_type_admin
     Admin/Webseitenverwaltung/Event/ e_type_admin
-    Admin/Webseitenverwaltung/Event_occurs/ e_type_admin
     Admin/Webseitenverwaltung/Gallery/ e_type_admin
     Admin/Webseitenverwaltung/Page/ e_type_admin
     Admin/Webseitenverwaltung/Picture/ e_type_admin
