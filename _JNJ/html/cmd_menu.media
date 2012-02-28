@@ -33,6 +33,54 @@
 style_sheet = Style_Sheet \
     ( Rule
         ( ".cmd-menu"
+        , float            = "right"
+        , padding          = 0
+        , children         =
+            [ Rule
+                ( "a.button"
+                , display     = "inline-block"
+                , float       = "none"
+                , font_size   = Percent (70)
+                , line_height = Em (1.5)
+                , margin      = TRBL0 (l = Em (0.5))
+                )
+            , Rule
+                ( "a.default"
+                , padding     = TRBL (0, Em (1.0))
+                )
+            , Rule
+                ( "a.drop"
+                , height      = Em (1.5)
+                , padding     = 0
+                , width       = Em (1.5)
+                , children    =
+                    [ Rule
+                        ( "i"
+                        , Border
+                            ( style   = "solid"
+                            , color   = C_TRBL0
+                                ( t   = P.afs.color_spec_heading ["color"])
+                            , width   = TRBL (Em (0.75), Em (0.5), 0)
+                            )
+                        , display     = "inline-block"
+                        , height      = 0
+                        , margin      = TRBL0 (l = Em (0.325))
+                        , width       = 0
+                        )
+                    , Rule_Pseudo
+                        ( "hover i"
+                        , border_color = C_TRBL0 (t = "red")
+                        )
+                    ]
+                )
+            ]
+        )
+    )
+
+if False :
+  style_sheet = Style_Sheet \
+    ( Rule
+        ( ".cmd-menu"
         , border           = P.border_button
         , float            = "right"
         , margin_top       = Em (-0.1)

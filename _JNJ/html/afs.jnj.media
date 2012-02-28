@@ -58,7 +58,7 @@ style_sheet = Style_Sheet \
                 ( "h1"
                 , P.afs.color_spec_heading
                 , P.font_spec_normal
-                , font_size     = Percent (100)
+                , font_size     = Percent (110)
                 , line_height   = Em (1.75)
                 , margin_bottom = P.afs.block_margin_bottom
                 , padding       = P.afs.header_padding
@@ -67,10 +67,10 @@ style_sheet = Style_Sheet \
                 ( "h2"
                 , P.afs.color_spec_label
                 , P.font_spec_normal
-                , font_size     = Percent (100)
+                , font_size     = Percent (105)
+                , line_height   = Em (1.75)
                 , margin_bottom = P.afs.block_margin_bottom
                 , padding       = P.afs.header_padding
-                , padding_top   = 0
                 )
             , Rule
                 ( "a.button"
@@ -122,6 +122,9 @@ style_sheet = Style_Sheet \
                     [ Rule
                         ( "h2"
                         , P.afs.color_spec_label
+                        , font_size     = Percent (100)
+                        , line_height   = Em (1.0)
+                        , padding       = TRBL (Em (0.15), 0)
                         )
                     , Rule
                         ( "input", "select", "textarea"
@@ -140,6 +143,10 @@ style_sheet = Style_Sheet \
                                 ( "[readonly]"
                                 , P.afs.border_spec_readonly
                                 , P.afs.color_spec_readonly
+                                )
+                            , Rule_Pseudo
+                                ( "required"
+                                , border_width  = Px (2)
                                 )
                             ]
                         )

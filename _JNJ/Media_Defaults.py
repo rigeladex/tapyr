@@ -183,7 +183,7 @@ class Media_Defaults (Definition) :
             , color            = P.R.text_color
             )
 
-        header_padding         = TRBL0 (b = Em (0.3), default = Em (0.2))
+        header_padding         = TRBL (Em (0.2), Em (0.2), Em (0.3), Em (0.5))
         status_size            = Px (12)
 
     # end class afs
