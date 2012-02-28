@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -23,13 +23,13 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:258 _GTW/_NAV/_E_Type/Admin.py:348
-#: _GTW/_NAV/_E_Type/Admin.py:701
+#: _GTW/_NAV/_E_Type/Admin.py:296 _GTW/_NAV/_E_Type/Admin.py:525
+#: _GTW/_NAV/_E_Type/Admin.py:1008
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:414 _GTW/_NAV/_E_Type/Admin.py:474
+#: _GTW/_NAV/_E_Type/Admin.py:374
 #, python-format
 msgid "%s only works with content-type json"
 msgstr ""
@@ -54,39 +54,39 @@ msgstr ""
 msgid "Activation successful."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Manager.py:155
+#: _GTW/_NAV/_E_Type/Manager.py:156
 msgid "Admin"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:94
+#: _GTW/_NAV/Calendar.py:95
 msgid "Apr"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:100
+#: _GTW/_NAV/Calendar.py:101
 msgid "April"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:278 _GTW/_NAV/_E_Type/Admin.py:712
+#: _GTW/_NAV/_E_Type/Admin.py:316 _GTW/_NAV/_E_Type/Admin.py:1019
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:95
+#: _GTW/_NAV/Calendar.py:96
 msgid "Aug"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:101
+#: _GTW/_NAV/Calendar.py:102
 msgid "August"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:249
+#: _GTW/__test__/form_app.py:249 _GTW/__test__/model.py:239
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:252
+#: _GTW/__test__/form_app.py:252 _GTW/__test__/model.py:242
 msgid "Authorization and Account handling"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:260
+#: _GTW/__test__/form_app.py:260 _GTW/__test__/model.py:250
 msgid "Choice of language used for localization"
 msgstr ""
 
@@ -94,11 +94,11 @@ msgstr ""
 msgid "Console"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:96
+#: _GTW/_NAV/Calendar.py:97
 msgid "Dec"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:102
+#: _GTW/_NAV/Calendar.py:103
 msgid "December"
 msgstr ""
 
@@ -117,11 +117,11 @@ msgstr ""
 msgid "Email confirmation for %s"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:93
+#: _GTW/_NAV/Calendar.py:94
 msgid "Feb"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:99
+#: _GTW/_NAV/Calendar.py:100
 msgid "February"
 msgstr ""
 
@@ -134,49 +134,49 @@ msgstr ""
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:216 _GTW/_NAV/_E_Type/Admin.py:231
+#: _GTW/_NAV/_E_Type/Admin.py:248 _GTW/_NAV/_E_Type/Admin.py:264
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr ""
 
-#: _GTW/_AFS/Value.py:194
+#: _GTW/_AFS/Value.py:199
 #, python-format
 msgid "Form/element is unknown (unknown id: %s)"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:86
+#: _GTW/_NAV/Calendar.py:87
 msgid "Fri"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:90
+#: _GTW/_NAV/Calendar.py:91
 msgid "Friday"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:93
+#: _GTW/_NAV/Calendar.py:94
 msgid "Jan"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:99
+#: _GTW/_NAV/Calendar.py:100
 msgid "January"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:95
+#: _GTW/_NAV/Calendar.py:96
 msgid "Jul"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:101
+#: _GTW/_NAV/Calendar.py:102
 msgid "July"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:94
+#: _GTW/_NAV/Calendar.py:95
 msgid "Jun"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:100
+#: _GTW/_NAV/Calendar.py:101
 msgid "June"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:257
+#: _GTW/__test__/form_app.py:257 _GTW/__test__/model.py:247
 msgid "L10N"
 msgstr ""
 
@@ -193,27 +193,27 @@ msgstr ""
 msgid "Logout successful."
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:93
+#: _GTW/_NAV/Calendar.py:94
 msgid "Mar"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:99
+#: _GTW/_NAV/Calendar.py:100
 msgid "March"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:94 _GTW/_NAV/Calendar.py:100
+#: _GTW/_NAV/Calendar.py:95 _GTW/_NAV/Calendar.py:101
 msgid "May"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:86
 msgid "Mon"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:89
+#: _GTW/_NAV/Calendar.py:90
 msgid "Monday"
 msgstr ""
 
-#: _GTW/HTML.py:70
+#: _GTW/HTML.py:80
 #, python-format
 msgid "Need Javascript for displaying %s"
 msgstr ""
@@ -226,32 +226,32 @@ msgstr ""
 msgid "New password"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:296
+#: _GTW/_NAV/_E_Type/Admin.py:348
 msgid "Not authorized for this page"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:288
+#: _GTW/_NAV/_E_Type/Admin.py:340
 msgid "Not logged in or login-session is expired"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:96
+#: _GTW/_NAV/Calendar.py:97
 msgid "Nov"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:102
+#: _GTW/_NAV/Calendar.py:103
 msgid "November"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:537 _GTW/_NAV/_E_Type/Admin.py:564
+#: _GTW/_NAV/_E_Type/Admin.py:687 _GTW/_NAV/_E_Type/Admin.py:714
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:96
+#: _GTW/_NAV/Calendar.py:97
 msgid "Oct"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:102
+#: _GTW/_NAV/Calendar.py:103
 msgid "October"
 msgstr ""
 
@@ -296,27 +296,27 @@ msgstr ""
 msgid "Results for"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:86
+#: _GTW/_NAV/Calendar.py:87
 msgid "Sat"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:90
+#: _GTW/_NAV/Calendar.py:91
 msgid "Saturday"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:95
+#: _GTW/_NAV/Calendar.py:96
 msgid "Sep"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:101
+#: _GTW/_NAV/Calendar.py:102
 msgid "September"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:86
+#: _GTW/_NAV/Calendar.py:87
 msgid "Sun"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:90
+#: _GTW/_NAV/Calendar.py:91
 msgid "Sunday"
 msgstr ""
 
@@ -368,19 +368,19 @@ msgstr ""
 msgid "This username is not registered"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:86
 msgid "Thu"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:89
+#: _GTW/_NAV/Calendar.py:90
 msgid "Thursday"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:86
 msgid "Tue"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:89
+#: _GTW/_NAV/Calendar.py:90
 msgid "Tuesday"
 msgstr ""
 
@@ -392,11 +392,11 @@ msgstr ""
 msgid "Username or password incorrect"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:85
+#: _GTW/_NAV/Calendar.py:86
 msgid "Wed"
 msgstr ""
 
-#: _GTW/_NAV/Calendar.py:89
+#: _GTW/_NAV/Calendar.py:90
 msgid "Wednesday"
 msgstr ""
 
@@ -405,15 +405,15 @@ msgstr ""
 msgid "Welcome %s."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:544 _GTW/_NAV/_E_Type/Admin.py:572
+#: _GTW/_NAV/_E_Type/Admin.py:694 _GTW/_NAV/_E_Type/Admin.py:722
 msgid "You need to specify a pid!"
 msgstr ""
 
-#: _GTW/HTML.py:52
+#: _GTW/HTML.py:62
 msgid "email address"
 msgstr ""
 
-#: _GTW/HTML.py:53
+#: _GTW/HTML.py:63
 msgid "phone number"
 msgstr ""
 

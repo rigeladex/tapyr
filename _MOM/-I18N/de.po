@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2012 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-10-10 11:56+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _MOM/Entity.py:1072
+#: _MOM/Entity.py:1093
 #, python-format
 msgid ""
 "%s\n"
@@ -28,7 +28,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1694
+#: _MOM/_Attr/Type.py:1712
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -50,11 +50,11 @@ msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
 
-#: _MOM/_Attr/Filter.py:223
+#: _MOM/_Attr/Filter.py:251
 msgid "CONTAINS"
 msgstr "enthält"
 
-#: _MOM/_Meta/M_Entity.py:174
+#: _MOM/_Meta/M_Entity.py:182
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -68,12 +68,12 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:1177
+#: _MOM/_Attr/Kind.py:1180
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr "Berechnetes Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:1032
+#: _MOM/_Attr/Kind.py:1035
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -96,7 +96,7 @@ msgid_plural "Date_Interval_Ns"
 msgstr[0] "Date_Interval_N"
 msgstr[1] "Date_Interval_N"
 
-#: _MOM/_Attr/Filter.py:234
+#: _MOM/_Attr/Filter.py:262
 msgid "ENDSWITH"
 msgstr "endet-mit"
 
@@ -122,13 +122,17 @@ msgstr "Enddatum des Intervalls"
 msgid "Finish time of interval"
 msgstr "Schlusszeit des Intervalls"
 
+#: _MOM/_Attr/Filter.py:307
+msgid "IN"
+msgstr ""
+
 #: _MOM.Entity:0
 msgid "Id_Entity"
 msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1280
+#: _MOM/_Attr/Type.py:1284
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -193,7 +197,7 @@ msgid_plural "Named_Objects"
 msgstr[0] "Benanntes-Objekt"
 msgstr[1] "Benannte-Objekte"
 
-#: _MOM/_Attr/Type.py:998
+#: _MOM/_Attr/Type.py:994
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
@@ -204,12 +208,12 @@ msgid_plural "Objects"
 msgstr[0] "Objekt"
 msgstr[1] "Objekte"
 
-#: _MOM/_Attr/Kind.py:899
+#: _MOM/_Attr/Kind.py:902
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:909
+#: _MOM/_Attr/Kind.py:912
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -218,7 +222,7 @@ msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
 msgid "SA"
 msgstr "Sa"
 
-#: _MOM/_Attr/Filter.py:315
+#: _MOM/_Attr/Filter.py:364
 msgid "STARTSWITH"
 msgstr "beginnt-mit"
 
@@ -226,21 +230,29 @@ msgstr "beginnt-mit"
 msgid "SU"
 msgstr "So"
 
-#: _MOM/_Attr/Filter.py:222
+#: _MOM/_Attr/Filter.py:250
 msgid "Select entities where the attribute contains the specified value"
 msgstr "Wähle Entitäten aus, deren Attributwert den angegebenen Wert beinhaltet"
 
-#: _MOM/_Attr/Filter.py:242
+#: _MOM/_Attr/Filter.py:304
+msgid ""
+"Select entities where the attribute is a member of the specified list of "
+"values"
+msgstr "
+""Wähle Entitäten aus, deren Attributwert in der angegebenen Liste von "
+"Werten enthalten ist"
+
+#: _MOM/_Attr/Filter.py:270
 msgid "Select entities where the attribute is equal to the specified value"
 msgstr "Wähle Entitäten aus, deren Attributwert gleich dem angegebenen Wert ist"
 
-#: _MOM/_Attr/Filter.py:264
+#: _MOM/_Attr/Filter.py:292
 msgid "Select entities where the attribute is greater than the specified value"
 msgstr ""
 "Wähle Entitäten aus, deren Attributwert grösser als der angegebene Wert "
 "ist"
 
-#: _MOM/_Attr/Filter.py:252
+#: _MOM/_Attr/Filter.py:280
 msgid ""
 "Select entities where the attribute is greater than, or equal to, the "
 "specified value"
@@ -248,13 +260,13 @@ msgstr ""
 "Wähle Entitäten aus, deren Attributwert grösser/gleich als der angegebene"
 " Wert ist"
 
-#: _MOM/_Attr/Filter.py:288
+#: _MOM/_Attr/Filter.py:337
 msgid "Select entities where the attribute is less than the specified value"
 msgstr ""
 "Wähle Entitäten aus, deren Attributwert kleiner als der angegebene Wert "
 "ist"
 
-#: _MOM/_Attr/Filter.py:276
+#: _MOM/_Attr/Filter.py:325
 msgid ""
 "Select entities where the attribute is less than, or equal to, the "
 "specified value"
@@ -262,15 +274,15 @@ msgstr ""
 "Wähle Entitäten aus, deren Attributwert kleiner/gleich als der angegebene"
 " Wert ist"
 
-#: _MOM/_Attr/Filter.py:300
+#: _MOM/_Attr/Filter.py:349
 msgid "Select entities where the attribute is not equal to the specified value"
 msgstr "Wähle Entitäten aus, deren Attributwert ungleich dem angegebenen Wert ist"
 
-#: _MOM/_Attr/Filter.py:231
+#: _MOM/_Attr/Filter.py:259
 msgid "Select entities where the attribute value ends with the specified value"
 msgstr "Wähle Entitäten aus, deren Attributwert mit dem angegebenen Wert endet"
 
-#: _MOM/_Attr/Filter.py:312
+#: _MOM/_Attr/Filter.py:361
 msgid "Select entities where the attribute value starts with the specified value"
 msgstr "Wähle Entitäten aus, deren Attributwert mit dem angegebenen Wert beginnt"
 
@@ -316,7 +328,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] "Zeitraum"
 msgstr[1] "Zeiträume"
 
-#: _MOM/_Attr/Kind.py:364
+#: _MOM/_Attr/Kind.py:367
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
@@ -325,7 +337,7 @@ msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
-#: _MOM/_Attr/Kind.py:900
+#: _MOM/_Attr/Kind.py:903
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
@@ -334,7 +346,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:599
+#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:590
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -359,7 +371,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:993
+#: _MOM/_Attr/Type.py:989
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"

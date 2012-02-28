@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -155,20 +155,8 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Nav.py:82
-msgid "Recurrence exceptions"
-msgstr ""
-
-#: _GTW/_OMP/_EVT/Nav.py:88
-msgid "Recurrence rule set"
-msgstr ""
-
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Recurrence rule specifying a set of dates to include or exclude."
-msgstr ""
-
-#: _GTW/_OMP/_EVT/Nav.py:77
-msgid "Recurrence rules"
 msgstr ""
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0

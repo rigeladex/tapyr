@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2012 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -108,7 +108,11 @@ msgid_plural "Clubs"
 msgstr[0] "Klub"
 msgstr[1] "Klubs"
 
-#: _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
+#: _GTW._OMP._SRM.Regatta_Event:0
+msgid "Club that organizes the regatta."
+msgstr "Segelclub, der die Regatta veranstaltet."
+
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
 msgid "Club the sailor is starting for."
 msgstr "Segelclub, für den der Segler startet."
 

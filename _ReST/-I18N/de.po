@@ -1,0 +1,36 @@
+# German translations for MOM/GTW/JNJ.
+# Copyright (C) 2012 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
+# Christian Tanzer <tanzer@swing.co.at>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
+"PO-Revision-Date: 2012-02-28 12:33+0100\n"
+"Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: _ReST/Roles.py:80
+msgid "\\u2018"
+msgstr "\\u201A"
+
+#: _ReST/Roles.py:80
+msgid "\\u2019"
+msgstr ""
+
+#: _ReST/Roles.py:79
+msgid "\\u201C"
+msgstr "\\u201E"
+
+#: _ReST/Roles.py:79
+msgid "\\u201D"
+msgstr ""
+

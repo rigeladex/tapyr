@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _GTW/_OMP/_PAP/Person.py:149 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:151 _GTW._OMP._PAP.Person:0
 #, fuzzy
 msgid "Academic title"
 msgstr ""
@@ -27,8 +27,7 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:183 _GTW._OMP._PAP.Person_has_Address:0
-#: _GTW._OMP._PAP.Address:0
+#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Address:0
 #, fuzzy
 msgid "Address"
 msgid_plural "Addresses"
@@ -81,8 +80,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:171 _GTW._OMP._PAP.Person_has_Email:0
-#: _GTW._OMP._PAP.Email:0
+#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Email:0
 #, fuzzy
 msgid "Email"
 msgid_plural "Emails"
@@ -272,13 +270,7 @@ msgid_plural "Person_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_PAP/Nav.py:116 _GTW/_OMP/_PAP/Nav.py:117
-#, fuzzy
-msgid "Persons"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Nav.py:159 _GTW._OMP._PAP.Phone:0
-#: _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Person_has_Phone:0
 #, fuzzy
 msgid "Phone"
 msgid_plural "Phones"

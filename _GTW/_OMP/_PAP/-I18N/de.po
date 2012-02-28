@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _GTW/_OMP/_PAP/Person.py:149 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:151 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr "Akademischer Titel"
 
@@ -26,8 +26,7 @@ msgstr "Akademischer Titel"
 msgid "Academic title."
 msgstr "Titel."
 
-#: _GTW/_OMP/_PAP/Nav.py:183 _GTW._OMP._PAP.Person_has_Address:0
-#: _GTW._OMP._PAP.Address:0
+#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Address:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] "Adresse"
@@ -74,8 +73,7 @@ msgstr "Geburtstag (und Sterbetag)"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: _GTW/_OMP/_PAP/Nav.py:171 _GTW._OMP._PAP.Person_has_Email:0
-#: _GTW._OMP._PAP.Email:0
+#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Email:0
 msgid "Email"
 msgid_plural "Emails"
 msgstr[0] "Email"
@@ -249,12 +247,7 @@ msgid_plural "Person_has_Phones"
 msgstr[0] "Person hat Telefon"
 msgstr[1] "Person hat Telefone"
 
-#: _GTW/_OMP/_PAP/Nav.py:116 _GTW/_OMP/_PAP/Nav.py:117
-msgid "Persons"
-msgstr "Personen"
-
-#: _GTW/_OMP/_PAP/Nav.py:159 _GTW._OMP._PAP.Phone:0
-#: _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] "Telefon"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -109,7 +109,11 @@ msgid_plural "Clubs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
+#: _GTW._OMP._SRM.Regatta_Event:0
+msgid "Club that organizes the regatta."
+msgstr ""
+
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
 msgid "Club the sailor is starting for."
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2011-11-30 09:34+0100\n"
+"POT-Creation-Date: 2012-02-28 12:33+0100\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -118,10 +118,6 @@ msgid "Group"
 msgid_plural "Groups"
 msgstr[0] "Gruppe"
 msgstr[1] "Gruppen"
-
-#: _GTW/_OMP/_Auth/Nav.py:77 _GTW/_OMP/_Auth/Nav.py:78
-msgid "Groups"
-msgstr "Gruppen"
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Model a group of accounts."
