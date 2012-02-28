@@ -75,9 +75,12 @@ def _deleted_role (role, rawtext, text, lineno, inliner, options={}, content=[])
 
 register_local_role ("deleted", _deleted_role)
 
+### http://de.wikipedia.org/wiki/Anf%C3%BChrungszeichen
 _quot_map = dict \
-    ( qd  = (_ ("\u201C"), _ ("\u201D"))
-    , qs  = (_ ("\u2018"), _ ("\u2019"))
+    ( qd  = (_("\u201C"), _("\u201D")) # ("&ldquo;",  "&rdquo;")
+    , qf  = (_("\u2039"), _("\u203A")) # ("&lsaquo;", "&rsaquo;")
+    , qg  = (_("«"),      _("»"))      # ("&laquo;",  "&raquo;")
+    , qs  = (_("\u2018"), _("\u2019")) # ("&lsquo;",  "&rsquo;")
     )
 
 def _quoted_role \
@@ -90,6 +93,8 @@ def _quoted_role \
 
 register_local_role ("q",  _quoted_role)
 register_local_role ("qd", _quoted_role)
+register_local_role ("qf", _quoted_role)
+register_local_role ("qg", _quoted_role)
 register_local_role ("qs", _quoted_role)
 
 ### __END__ ReST.Roles

@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This script is part of the Christian Tanzer's python package set.
@@ -27,12 +27,13 @@
 #
 # Revision Dates
 #    30-Jan-2010 (CT) Creation
+#    28-Feb-2012 (CT) Add `ReST`, turn `dirs` into an optional argument
 #    ««revision-date»»···
 #--
 
 cmd=${1:?"Specify a command: extract | language"}; shift
-
-dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_NAV/example _JNJ _ReST"
+lang=${1:-"de"}; shift
+dirs=${1:-"_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_NAV/example _JNJ _ReST"}; shift
 
 case "$cmd" in
     "extract" )
@@ -46,7 +47,6 @@ case "$cmd" in
                 $dirs
         ;;
     "language" )
-        lang=${1:-"de"}
         python _TFL/Babel.py language -languages "$lang" -sort $dirs
         ;;
     * )

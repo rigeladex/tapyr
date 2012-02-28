@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-02-28 12:33+0100\n"
+"POT-Creation-Date: 2012-02-28 13:09+0100\n"
 "PO-Revision-Date: 2012-02-28 12:33+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,19 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _ReST/Roles.py:80
+#: _ReST/Roles.py:83
 msgid "\\u2018"
 msgstr "\\u201A"
 
-#: _ReST/Roles.py:80
+#: _ReST/Roles.py:83
 msgid "\\u2019"
-msgstr ""
+msgstr "\\u2018"
 
-#: _ReST/Roles.py:79
+#: _ReST/Roles.py:80
 msgid "\\u201C"
 msgstr "\\u201E"
 
-#: _ReST/Roles.py:79
+#: _ReST/Roles.py:80
 msgid "\\u201D"
-msgstr ""
+msgstr "\\u201C"
+
+#: _ReST/Roles.py:81
+msgid "\\u2039"
+msgstr "\\u203A"
+
+#: _ReST/Roles.py:81
+msgid "\\u203A"
+msgstr "\\u2039"
+
+#: _ReST/Roles.py:82
+msgid "«"
+msgstr "»"
+
+#: _ReST/Roles.py:82
+msgid "»"
+msgstr "«"
 
