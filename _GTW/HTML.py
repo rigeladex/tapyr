@@ -35,6 +35,7 @@
 #    23-Dec-2011 (CT) Factor `Styler_Safe` and `Entity_Map_Safe`
 #    22-Feb-2012 (CT) Add `Video`, `Vimeo` and `Youtube`
 #    22-Feb-2012 (CT) Change `_obfuscator_format` so it's valid html5
+#    28-Feb-2012 (CT) Add `Re_Replacer` for `,--`
 #    ««revision-date»»···
 #--
 
@@ -157,7 +158,8 @@ Entity_Map_Safe = \
 Entity_Map_Safe.update (Entity_Map)
 
 _dash_replacers = \
-    ( Re_Replacer   (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
+    ( Re_Replacer   (r",--",            r",&ndash;&#0032;")
+    , Re_Replacer   (r"(?<!<!)--(?!>)", r"&#0032;&ndash;&#0032;")
     , Re_Replacer   (r"\%2d\%2d",       r"--")
     )
 
