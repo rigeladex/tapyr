@@ -28,10 +28,15 @@
 # Revision Dates
 #    15-Feb-2010 (CT) Creation
 #    15-Jan-2011 (CT) `deleted` role added
+#    28-Feb-2012 (CT) Add `_quoted_role`
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division
+from   __future__  import print_function, unicode_literals
+
 from   _ReST                      import ReST
+from   _TFL.I18N                  import _, _T
 from   _TFL.Regexp                import *
 
 from   docutils                   import nodes, utils
@@ -69,5 +74,22 @@ def _deleted_role (role, rawtext, text, lineno, inliner, options={}, content=[])
 # end def _deleted_role
 
 register_local_role ("deleted", _deleted_role)
+
+_quot_map = dict \
+    ( qd  = (_ ("\u201C"), _ ("\u201D"))
+    , qs  = (_ ("\u2018"), _ ("\u2019"))
+    )
+
+def _quoted_role \
+        (role, rawtext, text, lineno, inliner, options={}, content=[]) :
+    ql, qr = _quot_map.get (role) or _quot_map ["qd"]
+    text   = "%s%s%s" % (_T (ql), text, _T (qr))
+    node   = nodes.inline (rawtext, text, ** options)
+    return [node], []
+# end def _quoted_role
+
+register_local_role ("q",  _quoted_role)
+register_local_role ("qd", _quoted_role)
+register_local_role ("qs", _quoted_role)
 
 ### __END__ ReST.Roles
