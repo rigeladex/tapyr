@@ -56,6 +56,7 @@
 #     3-Jan-2012 (CT) Remove `Script` references covered by `requires`
 #    16-Jan-2012 (CT) Add rules for `.select-attr`
 #    21-Feb-2012 (CT) Add `Script` for `GTW_L`
+#    29-Feb-2012 (CT) Add rule for `cmd-button`, remove rule for `cmd b`
 #    ««revision-date»»···
 #--
 
@@ -122,20 +123,15 @@ style_sheet = Style_Sheet \
                 , font_size       = "small"
                 , children        =
                     [ Rule_Class
-                        ( "cmd b"
-                        , background_color  = P.background_color
-                        , border            = P.border_button
-                        , border_width      = Px (1)
-                        , color             = P.color_target
-                        , display           = "block"
-                        , padding           = TRBL  (Em (0.10), Em (0.40), Em (0.20))
+                        ( "cmd-button"
+                        , padding           = Em (0.2)
                         , children          =
-                            [ Rule_Pseudo
-                                ( "hover", "focus"
-                                , ** P.color_spec_selected_rev
+                            [ Rule
+                                ( "b"
+                                , border_width      = Px (1)
+                                , display           = "block"
                                 )
                             ]
-                        , ** Border (radius = Px (5))
                         )
                     ]
                 )
@@ -400,6 +396,7 @@ Script (GTW.Script._.GTW_e_type_admin)
 JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
 
 Include ("html/autocomplete.media")
+Include ("html/cmd_button.media")
 Include ("html/cmd_menu.media")
 
 ### __END__ html/e_type_admin.jnj.media

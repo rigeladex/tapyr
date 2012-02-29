@@ -54,6 +54,7 @@
 #    15-Dec-2011 (CT) Add `GTW_UI_Icon_Map`, `GTW_e_type_selector`
 #     3-Jan-2012 (CT) Add `requires` to `Script` definitions
 #    21-Feb-2012 (CT) Add `GTW_L`
+#    29-Feb-2012 (CT) Add more `requires` to `GTW_jq_af`
 #    ««revision-date»»···
 #--
 
@@ -197,6 +198,8 @@ GTW.Script \
     , requires =
         ( GTW.Script._.GTW_afs_elements
         , GTW.Script._.GTW_autocomplete
+        , GTW.Script._.GTW_buttonify
+        , GTW.Script._.GTW_UI_Icon_Map
         )
     )
 

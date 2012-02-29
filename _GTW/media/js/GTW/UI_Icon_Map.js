@@ -16,6 +16,7 @@
 // Revision Dates
 //    15-Dec-2011 (CT) Creation
 //    16-Jan-2012 (CT) Add `CONFIG`
+//    29-Feb-2012 (CT) Add `COPY`, `DELETE`, `EDIT`, and `RESET`
 //    ««revision-date»»···
 //--
 
@@ -28,12 +29,16 @@
         , CANCEL      : "closethick"
         , CLEAR       : "trash"
         , CONFIG      : "wrench"
+        , COPY        : "copy"
+        , DELETE      : "trash"
         , DISABLE     : "minusthick"
+        , EDIT        : "pencil"
         , ENABLE      : "plusthick"
         , FIRST       : "arrowthick-1-n"
         , LAST        : "arrowthick-1-s"
         , NEXT        : "arrowthick-1-e"
         , PREV        : "arrowthick-1-w"
+        , RESET       : "refresh"
         , SORT_ASC    : "triangle-1-s"
         , SORT_DESC   : "triangle-1-n"
         };

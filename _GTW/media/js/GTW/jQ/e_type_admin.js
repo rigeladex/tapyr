@@ -23,7 +23,7 @@
 
 ( function ($) {
     var L = $GTW.L;
-    $.fn.gtw_e_type_admin_postify = function (opts) {
+    $.fn.gtw_e_type_admin_postify = function gtw_e_type_admin_postify (opts) {
         var options  = $.extend
             ( { hidden_selector : "td"
               , parent_selector : "tr"
@@ -33,7 +33,7 @@
         $(this).gtw_postify_a (options);
         return this;
     };
-    $.fn.gtw_e_type_admin_linkify = function (opts) {
+    $.fn.gtw_e_type_admin_linkify = function gtw_e_type_admin_linkify (opts) {
         var options  = $.extend
             ( { a_selector  : "td.change a"
               , td_selector : "td"
@@ -53,7 +53,7 @@
                     ( function () {
                         var td$ = $(this);
                         var inner_html = td$.html ();
-                        if (! td$.hasClass ("cmd")) {
+                        if (! td$.hasClass ("cmd-button")) {
                           td$.html
                               ($(L ("a", { href : href, html : inner_html})));
                         };
@@ -75,6 +75,9 @@
             { options            :
                 { linkify_selector   : "tbody tr"
                 , obj_list_selector  : ".Object-List"
+                , postify_options    :
+                    { display_value  : "table-cell"
+                    }
                 , postify_selector   : "a.delete"
                 }
             , setup_obj_list     : setup_obj_list

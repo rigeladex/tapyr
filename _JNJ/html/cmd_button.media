@@ -1,0 +1,74 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/cmd_button.media
+#
+# Purpose
+#    Media fragment for cmd-button
+#
+# Revision Dates
+#    29-Feb-2012 (CT) Creation
+#    ««revision-date»»···
+#--
+
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".cmd-button"
+        , padding       = 0
+        , children      =
+            [ Rule
+                ( "a"
+                , background_color  = "transparent"
+                , border_color      = "transparent"
+                , display           = "inline-block"
+                , margin            = TRBL0 (b = Em (0.075))
+                , padding           = 0
+                )
+            , Rule
+                ( "b"
+                , P.button_spec
+                , Border
+                    ( color         = P.color_half_grey
+                    , radius        = Em (0.75)
+                    )
+                , background_color  = P.color_lighter_grey
+                , padding           = TRBL (Em (0.15), Em (0.25))
+                , margin            = 0
+                , children          =
+                    [ Rule_Pseudo
+                        ( "not(:first-child)"
+                        , margin    = TRBL0 (l = Em (0.5))
+                        )
+                    ]
+                )
+            , Rule
+                ( "a", "b"
+                , children          =
+                    [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                    ]
+                )
+            ]
+        )
+    )
+
+### __END__ html/cmd_button.media

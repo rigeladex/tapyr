@@ -106,7 +106,7 @@
 {%- endmacro -%} {#- entity_selector_form -#}
 
 {%- macro obj_button (page, E_Type, tag, href, name, desc, icon, kind, a_class=None) -%}
-  <{{ tag }} class="cmd {{ kind }}">
+  <{{ tag }} class="cmd-button {{ kind }}">
     <b>
     <a href="{{ href }}" title="{{ desc }} {{ name }}"
        class="ui-icon ui-icon-{{ icon }}{%- if a_class %} {{ a_class }}{% endif -%}"

@@ -39,13 +39,14 @@
 ##                     s/Clear/Clear fields/
 ##    25-Oct-2011 (CT) Mark command names for translation
 ##    16-Feb-2012 (CT) Add `next_url`
+##    29-Feb-2012 (CT) Add `titles`, factor `urls` into separate, nested object
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- macro specify_menu_cmd (name) -%}
-  "{{ name }}":"{{ GTW._T (name) }}"
-{%- endmacro -%} {#- specify_menu_cmd -#}
+{%- macro trans (s, t = None) -%}
+  "{{ s }}":"{{ GTW._T (t or s) }}"
+{%- endmacro -%} {#- trans -#}
 
 {%- block document %}
   {{ GTW.call_macro (form.type, form, templ_name = form.renderer) }}
@@ -56,20 +57,31 @@
   <script>
     $("#{{ form.id }}").gtw_afs_form
       ( {{ form.as_js }}
-      , { completer_url : "{{ page.href_complete  () }}"
-        , completed_url : "{{ page.href_completed () }}"
-        , deleter_url   : "{{ page.href_delete    () }}"
-        , expander_url  : "{{ page.href_expand    () }}"
-        , menu_cmds     : {# -#}
-            { {{- specify_menu_cmd (GTW._ ("Add")) -}}
-            , {{- specify_menu_cmd (GTW._ ("Cancel")) -}}
-            , {{- specify_menu_cmd (GTW._ ("Clear fields")) -}}
-            , {{- specify_menu_cmd (GTW._ ("Copy")) -}}
-            , {{- specify_menu_cmd (GTW._ ("Delete")) -}}
-            , {{- specify_menu_cmd (GTW._ ("Edit")) -}}
-            , {{- specify_menu_cmd (GTW._ ("Save")) -}}
+      , { cmds : {# -#}
+            { {{- trans (GTW._ ("Add")) -}}
+            , {{- trans (GTW._ ("Cancel")) -}}
+            , {{- trans (GTW._ ("Reset")) -}}
+            , {{- trans (GTW._ ("Copy")) -}}
+            , {{- trans (GTW._ ("Delete")) -}}
+            , {{- trans (GTW._ ("Edit")) -}}
+            , {{- trans (GTW._ ("Save")) -}}
             }
-        , next_url : "{{ form.referrer or page.parent.abs_href }}"
+        , titles : {# -#}
+            { {{- trans ("Add",    GTW._ ("Create new object")) -}}
+            , {{- trans ("Cancel", GTW._ ("Discard changes")) -}}
+            , {{- trans ("Reset",  GTW._ ("Reset fields to start values")) -}}
+            , {{- trans ("Copy",   GTW._ ("Make a copy of this object")) -}}
+            , {{- trans ("Delete", GTW._ ("Delete this object")) -}}
+            , {{- trans ("Edit",   GTW._ ("Change attributes of this object")) -}}
+            , {{- trans ("Save",   GTW._ ("Save the attribute values as displayed in form fields")) -}}
+            }
+        , url : {# -#}
+            { completer : "{{ page.href_complete  () }}" {# -#}
+            , completed : "{{ page.href_completed () }}" {# -#}
+            , deleter   : "{{ page.href_delete    () }}" {# -#}
+            , expander  : "{{ page.href_expand    () }}" {# -#}
+            , next      : "{{ form.referrer or page.parent.abs_href }}" {# -#}
+            }
         }
       );
   </script>

@@ -76,6 +76,7 @@
 //    23-Feb-2012 (CT) Change `_setup_callbacks` to trigger `change` for `input`
 //    23-Feb-2012 (CT) Change `field_change_cb` to update bad/missing of `input`
 //    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
+//    29-Feb-2012 (CT) Replace `_setup_cmd_menu` by `_setup_cmd_buttons`
 //    ««revision-date»»···
 //--
 
@@ -128,16 +129,19 @@
         return result;
     };
     $.fn.gtw_afs_form = function (afs_form, opts) {
+        var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
             ( { submit                   : "[type=submit]"
               }
+            , icons.selectors
             , opts && opts ["selectors"] || {}
             );
         var options  = $.extend
             ( {
               }
             , opts || {}
-            , { selectors : selectors
+            , { icon_map  : icons
+              , selectors : selectors
               }
             );
         var setup_completer = function () {
@@ -167,7 +171,7 @@
                                   console.error ("Ajax error", answer, data);
                               };
                         }
-                      , url           : options.completer_url
+                      , url           : options.url.completer
                       }
                     , "Completion"
                     );
@@ -257,7 +261,7 @@
                           , success       : function (answer, status, xhr_i) {
                                 _put_cb (options, anchor, answer, true);
                             }
-                          , url           : options.completed_url
+                          , url           : options.url.completed
                           }
                         , "Completion"
                         );
@@ -384,15 +388,16 @@
             };
         };
         var _cmds = function _cmds () {
-            var key, map = options.menu_cmds, result = [];
+            var key, map = options.cmds, result = [];
             for (var i = 0, li = arguments.length, name; i < li; i++) {
                 name = arguments [i];
                 key  = name.replace (/ /g, "_");
                 if (name in map) {
                     result.push
-                        ( { callback : cmd_callback [key]
-                          , label    : map          [name]
-                          , name     : name
+                        ( { callback : cmd_callback   [key]
+                          , label    : map            [name]
+                          , name     : name.toUpperCase ()
+                          , title    : options.titles [name]
                           }
                         );
                 } else {
@@ -479,102 +484,41 @@
                     _setup_cmd_menu ($(this));
                   }
                 );
+            $(".cmd-button", context).each
+                ( function (n) {
+                    _setup_cmd_buttons ($(this));
+                  }
+                );
         };
-        var _setup_cmd_menu = function _setup_cmd_menu (cmc$) {
+        var _setup_cmd_buttons = function _setup_cmd_buttons (cmc$) {
             var s$     = cmc$.closest ("div[id],section");
-            var id     = s$.attr    ("id");
-            var elem   = $AFS_E.get (id);
+            var id     = s$.attr      ("id");
+            var elem   = $AFS_E.get   (id);
             var source = cmd_menu [elem.type] (elem);
-            var cb, cmd, drop_butt, hide_cb, menu;
-            if (source.length > 0) {
-                cmd = source [0];
-                cb  = cmd_callback [cmd.name];
-                cmc$.html ("");
-                $(L ("a.default.button", { html : cmd.label }))
-                    .appendTo (cmc$)
-                    .click
-                      ( function cmd_click (ev) {
-                          cmd.callback.call (cmc$, s$, elem, id, ev);
-                        }
-                      );
-                if (source.length > 1) {
-                    // XXX this should really use a `popup` but jquery-ui 1.8 doesn't
-                    //     support that yet
-                    // XXX fix when jquery-ui 1.9+ is available
-                    menu = $(L ("ul.drop-menu"));
-                    drop_butt = $(L ("a.drop.button", {}, L ("i")))
-                        .appendTo (cmc$)
-                        .click
-                          ( function (ev) {
-                              var menu = drop_butt.menu;
-                              if (menu.element.is (":visible")) {
-                                  menu.element.hide ();
-                              } else {
-                                  menu.element.show ()
-                                      .position
-                                        ( { my         : "right top"
-                                          , at         : "right bottom"
-                                          , of         : drop_butt
-                                          , collision  : "fit"
-                                          }
-                                        )
-                                      .focus ();
-                              };
-                            }
-                          );
-                    hide_cb = function hide_cb (ev) {
-                        var menu = drop_butt.menu, tc;
-                        if (menu.element.is (":visible")) {
-                            tc = $(ev.target).closest (".cmd-menu");
-                            if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
-                                menu.element.hide ();
-                            };
-                        };
-                    };
-                    $(document)
-                        .bind ("click.menuhide", hide_cb)
-                        .bind ("keyup.menuhide", hide_cb);
-                    for (var i = 1, li = source.length; i < li; i++) {
-                        ( function () {
-                            var cmdi = source [i];
-                            menu.append
-                              ($(L  ( "li", {}
-                                    , L ("a.button", { html : cmdi.label })
-                                    )
-                                ).click
-                                    ( function cmd_click (ev) {
-                                        cmdi.callback.call
-                                            (cmc$, s$, elem, id, ev);
-                                        drop_butt.menu.element.hide ();
-                                      }
-                                    )
-                              );
-                          } ()
+            cmc$.attr ("title", "").html ("");
+            for (var i = 0, li = source.length; i < li; i++) {
+                ( function () {
+                    var cmd = source [i];
+                    var ht  = "a.ui-icon." + icons.ui_class [cmd.name];
+                    cmc$.append
+                        ($( L ( "b", { title : cmd.title }
+                              , L (ht, { html : cmd.label })
+                              )
+                          ).click
+                              ( function cmd_click (ev) {
+                                  cmd.callback.call (cmc$, s$, elem, id, ev);
+                                }
+                              )
                         );
-                    };
-                    drop_butt.menu = menu
-                        .menu
-                          ( { select    : function (event, ui) {
-                                  var cmd$ = $(ui.item);
-                                  cmd$.trigger ("cmd_menu_do");
-                              }
-                            }
-                          )
-                        .appendTo (cmc$)
-                        .css      ({ top: 0, left: 0, position : "absolute" })
-                        .hide     ()
-                        .zIndex   (cmc$.zIndex () + 1)
-                        .data     ("menu");
-                };
-            } else {
-                cmc$.hide ();
+                  } ()
+                );
             };
         };
         var cmd_callback =
             { Add                       : function add_cb (p$, parent, id, ev) {
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
-                      ( options.expander_url
+                      ( options.url.expander
                       , { fid           : id
                         , sid           : $AFS_E.root.value.sid
                         , new_id_suffix : child_idx
@@ -589,7 +533,7 @@
                   var pid    = value && value.edit.pid;
                   if (pid != undefined) {
                       $.getJSON
-                          ( options.expander_url
+                          ( options.url.expander
                           , { fid       : id
                             , pid       : pid
                             , sid       : $AFS_E.root.value.sid
@@ -612,27 +556,6 @@
                       s$.remove   ();
                   };
               }
-            , Clear_fields              : function clear_cb (s$, elem, id, ev) {
-                  _clear_field (elem);
-                  $.getJSON
-                      ( options.expander_url
-                      , { fid           : id
-                        , pid           : null
-                        , sid           : $AFS_E.root.value.sid
-                        , allow_new     : elem.allow_new
-                        }
-                      , function (response, txt_status) {
-                            if (txt_status == "success") {
-                                if (! response ["error"]) {
-                                    s$ = _response_replace (response, s$, elem);
-                                    _setup_callbacks (s$);
-                                } else {
-                                    console.error ("Ajax Error", response);
-                                }
-                            }
-                        }
-                      );
-              }
             , Copy                      : function copy_cb (s$, elem, id, ev) {
                   var p$        = s$.parent  ();
                   var value     = elem ["value"];
@@ -640,7 +563,7 @@
                   var parent    = $AFS_E.get (p$.attr ("id"));
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
-                      ( options.expander_url
+                      ( options.url.expander
                       , { fid           : id
                         , pid           : pid
                         , sid           : $AFS_E.root.value.sid
@@ -657,7 +580,7 @@
                   var pid   = value && value.edit.pid;
                   if (pid !== undefined && pid !== "") {
                       $.gtw_ajax_2json
-                          ( { url         : options.deleter_url
+                          ( { url         : options.url.deleter
                             , data        :
                                 { fid     : id
                                 , pid     : pid
@@ -679,11 +602,32 @@
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
                   $.getJSON
-                      ( options.expander_url
+                      ( options.url.expander
                       , { fid       : id
                         , pid       : pid
                         , sid       : $AFS_E.root.value.sid
                         , allow_new : elem.allow_new
+                        }
+                      , function (response, txt_status) {
+                            if (txt_status == "success") {
+                                if (! response ["error"]) {
+                                    s$ = _response_replace (response, s$, elem);
+                                    _setup_callbacks (s$);
+                                } else {
+                                    console.error ("Ajax Error", response);
+                                }
+                            }
+                        }
+                      );
+              }
+            , Reset                     : function reset_cb (s$, elem, id, ev) {
+                  _clear_field (elem);
+                  $.getJSON
+                      ( options.url.expander
+                      , { fid           : id
+                        , pid           : null
+                        , sid           : $AFS_E.root.value.sid
+                        , allow_new     : elem.allow_new
                         }
                       , function (response, txt_status) {
                             if (txt_status == "success") {
@@ -784,7 +728,7 @@
                   if (elem.collapsed) {
                       names.push ("Edit", "Copy");
                   } else {
-                      names.push ("Clear fields", "Cancel");
+                      names.push ("Reset", "Cancel");
                   };
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
@@ -795,14 +739,14 @@
                   return _cmds ("Add");
               }
             , Field_Composite           : function Field_Composite (elem) {
-                  return _cmds ("Clear fields");
+                  return _cmds ("Reset");
               }
             , Field_Entity              : function Field_Entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
                       names.push ("Edit");
                   } else {
-                      names.push ("Clear fields", "Cancel");
+                      names.push ("Reset", "Cancel");
                   };
                   return _cmds.apply (null, names);
               }
@@ -832,7 +776,7 @@
                                     ( name + " of form " + document.URL
                                     + " was successful!"
                                     );
-                                window.location = options.next_url;
+                                window.location = options.url.next;
                             }
                         } else {
                             console.error

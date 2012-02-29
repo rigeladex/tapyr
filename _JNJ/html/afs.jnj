@@ -41,6 +41,7 @@
 ##     2-Feb-2012 (CT) Change `do_head` to consider `prefilled` and `readonly`
 ##    16-Feb-2012 (CT) Add `cancel_kw` and `submit_kws` to call of `FM.form`
 ##    23-Feb-2012 (CT) Add `do_description` and `do_label`
+##    29-Feb-2012 (CT) Replace `do_menu` by `do_cmds`, use class `cmd-button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -112,7 +113,7 @@
       {{ head_caller () }}
     {% endif -%}
     {%- if not (elem.prefilled or elem.readonly) -%}
-      {{ do_menu () }}
+      {{ do_cmds () }}
     {% endif -%}
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_head -#}
@@ -125,9 +126,9 @@
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_label -#}
 
-{%- macro do_menu () -%}
-  <span class="cmd-menu"></span>
-{%- endmacro -%} {#- do_menu -#}
+{%- macro do_cmds () -%}
+  <span class="cmd-button"></span>
+{%- endmacro -%} {#- do_cmds -#}
 
 {%- macro Form (form) -%}
   {#- Render a form for a AFS `Form` instance `form` -#}
