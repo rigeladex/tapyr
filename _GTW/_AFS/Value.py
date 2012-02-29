@@ -64,7 +64,7 @@ import json
 class Value (_Base_) :
     """Model the value of an AFS form element."""
 
-    anchor_id     = None
+    apply_key     = TFL.Sorted_By ("elem.rank", "-id")
     asyn          = None
     conflicts     = 0
     entity        = None
@@ -72,7 +72,6 @@ class Value (_Base_) :
     role_id       = None
     sid           = None
     value         = None
-    _apply_key    = TFL.Sorted_By ("elem.rank", "-id")
     _edit         = None
     _init         = None
 
@@ -172,7 +171,7 @@ class Value (_Base_) :
 
     def apply (self, * args, ** kw) :
         conflicts = 0
-        entities  = sorted (self.entity_children (), key = self._apply_key)
+        entities  = sorted (self.entity_children (), key = self.apply_key)
         self._check_sids   (entities, ** kw)
         for e in entities :
             e.entity   = e.elem.apply (e, * args, ** kw)

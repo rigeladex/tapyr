@@ -80,6 +80,8 @@
 #                     separate module `Form_Cache`
 #    15-Feb-2012 (CT) Redefine `Entity_List.__call__` and ._child_kw` to pass
 #                     `form_kw` and extract `max_links`
+#    29-Feb-2012 (CT) Set `Field_Role_Hidden.rank` to `Entity_Link.rank - 1`
+#    29-Feb-2012 (CT) Redefine `Field_Role_Hidden._anchor_self`
 #    ««revision-date»»···
 #--
 
@@ -439,6 +441,7 @@ Field_Entity = _MOM_Field_Entity_ # end class
 class Field_Role_Hidden (Field_Entity) :
     """Hidden field description a hidden role of an Entity_Link."""
 
+    rank           = Entity_Link.rank - 1
     _pop_allow_new = True
 
     def __init__ (self, ** kw) :
@@ -464,6 +467,16 @@ class Field_Role_Hidden (Field_Entity) :
     def display (self, instance) :
         return None
     # end def display
+
+    def _anchor_self (self, anchor) :
+        if anchor is not None :
+            self.__super._anchor_self (anchor)
+            ### need to fix `.anchor_id` and `.anchor`: should point to the
+            ### anchor of anchor (which is a link to anchor.anchor)
+            anchor = self.anchor
+            if anchor and anchor.anchor :
+                self.anchor_id = anchor.anchor.id
+    # end def _anchor_self
 
 # end class Field_Role_Hidden
 

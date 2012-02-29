@@ -106,6 +106,9 @@
 #    26-Jan-2012 (CT) Change `Entity.__call__` to not add `allow_new` to `kw`
 #    26-Jan-2012 (CT) Add `referrer` to `Form`
 #    27-Feb-2012 (CT) Add `names`
+#    29-Feb-2012 (CT) Factor `_anchor_self`, add use of it to `_Anchor_MI_`
+#    29-Feb-2012 (CT) Add `anchor`, `root`, `type_base_name`
+#    29-Feb-2012 (CT) Redefine `_anchor_children` for `Entity_List` (`proto`)
 #    ««revision-date»»···
 #--
 
@@ -196,10 +199,17 @@ class _Element_ (TFL.Meta.Object) :
     # end def __call__
 
     @property
+    def anchor (self) :
+        aid = self.anchor_id
+        if aid :
+            return self.root [aid]
+    # end def anchor
+
+    @property
     def anchor_id (self) :
         try :
             d = self._anchor_id_delta
-        except KeyError :
+        except AttributeError :
             pass
         else :
             return self.id [:- d]
@@ -252,6 +262,19 @@ class _Element_ (TFL.Meta.Object) :
             pass
     # end def name
 
+    @Once_Property
+    def root (self) :
+        return Form [self.id]
+    # end def root
+
+    @Once_Property
+    def type_base_name (self) :
+        try :
+            return self.type_name.split (".") [-1]
+        except AttributeError :
+            pass
+    # end def type_base_name
+
     def copy (self, ** kw) :
         undef    = self.undef
         ckw      = dict \
@@ -298,6 +321,14 @@ class _Element_ (TFL.Meta.Object) :
         for c in self.children :
             c._anchor_children (anchor)
     # end def _anchor_children
+
+    def _anchor_self (self, anchor) :
+        if anchor is not None :
+            if isinstance (anchor, basestring) :
+                self.anchor_id = anchor
+            else :
+                self.anchor_id = anchor.id
+    # end def _anchor_self
 
     def _call_iter (self, * args, ** kw) :
         for c in self.children :
@@ -402,10 +433,12 @@ class _Anchor_MI_ (_Element_) :
 
     def _anchor_children (self, anchor = None) :
         if anchor is not None :
-            if not isinstance (anchor, basestring) :
-                self.names = list (anchor.names)
-                if self.name :
-                    self.names.append (self.name)
+            self._anchor_self (anchor)
+            if isinstance (anchor, basestring) :
+                anchor = self.anchor
+            self.names = list (anchor.names)
+            if self.name :
+                self.names.append (self.name)
         self.__super._anchor_children (anchor = self)
     # end def _anchor_children
 
@@ -415,14 +448,13 @@ class _Field_MI_ (_Element_) :
 
     def _anchor_children (self, anchor = None) :
         if anchor is not None :
+            self._anchor_self (anchor)
             if isinstance (anchor, basestring) :
-                self.anchor_id = anchor
-            else :
-                self.anchor_id = anchor.id
-                ac = anchor.completer
-                sc = self.completer
-                if hasattr (sc, "entity_p") and hasattr (ac, "derived") :
-                    self.completer = ac.derived (sc)
+                anchor = self.anchor
+            ac = anchor.completer
+            sc = self.completer
+            if hasattr (sc, "entity_p") and hasattr (ac, "derived") :
+                self.completer = ac.derived (sc)
         self.__super._anchor_children (anchor)
     # end def _anchor_children
 
@@ -532,14 +564,10 @@ class Entity_List (_Field_MI_, _Element_List_) :
         result.id_sep = self.root_sep
         if self.id :
             self._id_child_or_proto (result, i, id_map)
-        anchor_id = getattr (self, "anchor_id", None)
+        anchor_id = self.anchor_id
         if anchor_id :
-            try :
-                anchor = self.id_map [anchor_id]
-            except KeyError :
-                pass
-            else :
-                result.names = list (anchor.names) + [self.name]
+            anchor = self.anchor
+            result.names = list (anchor.names) + [self.name]
         result._anchor_children (anchor_id)
         return result
     # end def new_child
@@ -551,6 +579,11 @@ class Entity_List (_Field_MI_, _Element_List_) :
             for x in self.proto.transitive_iter () :
                 yield x
     # end def transitive_iter
+
+    def _anchor_children (self, anchor = None) :
+        self.__super._anchor_children (anchor)
+        self.proto._anchor_children   (anchor)
+    # end def _anchor_children
 
     def _formatted (self, level = 0) :
         result = [self.__super._formatted (level)]

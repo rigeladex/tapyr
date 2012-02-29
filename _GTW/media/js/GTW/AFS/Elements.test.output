@@ -353,6 +353,8 @@ Form values :
     sid = 0
 $GTW :
     AFS :
+        callback_map :
+
         Elements :
             function create(spec)
             Element : function constructor()
@@ -1373,7 +1375,7 @@ $GTW :
                     anchor_id = "FB-0:2::0-2:0"
                     children :
                         0 = "FB-0:2::0-2:0:3:0"
-                    collapsed = true
+                    collapsed = false
                     field_name_map :
                         name = "FB-0:2::0-2:0:3:0"
                     kind = "primary"
@@ -1653,6 +1655,7 @@ $GTW :
     Class : function constructor()
     copyright = "Copyright (C) 2011 Christian Tanzer"
     inspect :
+        blanks = "                                                                         "
         function copy(obj, filter)
         function filter_function(name, obj)
         function filter_not_function(name, obj)

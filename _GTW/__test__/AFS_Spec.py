@@ -30,7 +30,8 @@
 #                     enabled, again)
 #    26-Jan-2012 (CT) Add `_prefilled_test`
 #    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `_prefilled_test`
-#    27-Feb-2012 (CT) Add test for `.names`
+#    27-Feb-2012 (CT) Add tests for `.names`
+#    29-Feb-2012 (CT) Add tests for `anchor_id`
 #    ««revision-date»»···
 #--
 
@@ -405,22 +406,38 @@ _test_code = """
     }
 
     >>> for e in fb.transitive_iter () :
+    ...   if e.root is not fb :
+    ...     print e, e.root
+    ...   if e.anchor_id != getattr (e.anchor, "id", None) :
+    ...     print e, e.anchor_id, e.anchor
+    >>> print e, e.root
+    <Field FB-0:2::p-3:1 'points'> <Form FB>
+
+    >>> for e in fb.transitive_iter () :
     ...   if e.names :
-    ...     print e.id, e.__class__.__name__, e.names, e.anchor_id, e.type_name.split(".")[-1]
-    FB-0:0:0 Field_Entity ['left'] FB-0 Boat_Class
+    ...     print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id, e.type_base_name, e.__class__.__name__, e.names)
+    FB-0:0:0             FB-0                 Boat_Class           Field_Entity         ['left']
+    FB-0:2::p            FB-0                 Boat_in_Regatta      Entity_Link          ['Boat_in_Regatta']
+    FB-0:2::p-0          FB-0                 Boat                 Field_Role_Hidden    ['Boat_in_Regatta', u'left']
+    FB-0:2::p-1:0        FB-0:2::p            Regatta              Field_Entity         ['Boat_in_Regatta', 'right']
+    FB-0:2::p-1:0:0      FB-0:2::p-1:0        Regatta_Event        Field_Entity         ['Boat_in_Regatta', 'right', 'left']
+    FB-0:2::p-1:0:0:1    FB-0:2::p-1:0:0      Date_Interval_C      Field_Composite      ['Boat_in_Regatta', 'right', 'left', 'date']
+    FB-0:2::p-2:0        FB-0:2::p            Sailor               Field_Entity         ['Boat_in_Regatta', 'skipper']
+    FB-0:2::p-2:0:0      FB-0:2::p-2:0        Person               Field_Entity         ['Boat_in_Regatta', 'skipper', 'left']
+    FB-0:2::p-2:0:3      FB-0:2::p-2:0        Club                 Field_Entity         ['Boat_in_Regatta', 'skipper', 'club']
 
     >>> for e in fi.transitive_iter () :
     ...   if e.names :
-    ...     print e.id, e.elem.__class__.__name__, e.names, e.anchor_id, e.type_name.split(".")[-1]
-    FB-0:0:0 Field_Entity ['left'] FB-0 Boat_Class
-    FB-0:2::0 Entity_Link ['Boat_in_Regatta'] FB-0 Boat_in_Regatta
-    FB-0:2::0-0 Field_Role_Hidden ['Boat_in_Regatta', u'left'] FB-0:2::0 Boat
-    FB-0:2::0-1:0 Field_Entity ['Boat_in_Regatta', 'right'] FB-0:2::0 Regatta
-    FB-0:2::0-1:0:0 Field_Entity ['Boat_in_Regatta', 'right', 'left'] FB-0:2::0-1:0 Regatta_Event
-    FB-0:2::0-1:0:0:1 Field_Composite ['Boat_in_Regatta', 'right', 'left', 'date'] FB-0:2::0-1:0:0 Date_Interval_C
-    FB-0:2::0-2:0 Field_Entity ['Boat_in_Regatta', 'skipper'] FB-0:2::0 Sailor
-    FB-0:2::0-2:0:0 Field_Entity ['Boat_in_Regatta', 'skipper', 'left'] FB-0:2::0-2:0 Person
-    FB-0:2::0-2:0:3 Field_Entity ['Boat_in_Regatta', 'skipper', 'club'] FB-0:2::0-2:0 Club
+    ...     print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id, e.type_base_name, e.elem.__class__.__name__, e.names)
+    FB-0:0:0             FB-0                 Boat_Class           Field_Entity         ['left']
+    FB-0:2::0            FB-0                 Boat_in_Regatta      Entity_Link          ['Boat_in_Regatta']
+    FB-0:2::0-0          FB-0                 Boat                 Field_Role_Hidden    ['Boat_in_Regatta', u'left']
+    FB-0:2::0-1:0        FB-0:2::0            Regatta              Field_Entity         ['Boat_in_Regatta', 'right']
+    FB-0:2::0-1:0:0      FB-0:2::0-1:0        Regatta_Event        Field_Entity         ['Boat_in_Regatta', 'right', 'left']
+    FB-0:2::0-1:0:0:1    FB-0:2::0-1:0:0      Date_Interval_C      Field_Composite      ['Boat_in_Regatta', 'right', 'left', 'date']
+    FB-0:2::0-2:0        FB-0:2::0            Sailor               Field_Entity         ['Boat_in_Regatta', 'skipper']
+    FB-0:2::0-2:0:0      FB-0:2::0-2:0        Person               Field_Entity         ['Boat_in_Regatta', 'skipper', 'left']
+    FB-0:2::0-2:0:3      FB-0:2::0-2:0        Club                 Field_Entity         ['Boat_in_Regatta', 'skipper', 'club']
 
     >>> print formatted (fi.as_json_cargo, level = 1)
       { '$id' : 'FB'
@@ -1580,6 +1597,36 @@ _test_code = """
 
     >>> v.edit.get ("pid")
 
+    >>> for e in fv.transitive_iter () :
+    ...   if e.names :
+    ...     print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id, e.type_base_name, e.elem.__class__.__name__, e.names)
+    FB-0:0:0             FB-0                 Boat_Class           Field_Entity         ['left']
+    FB-0:2::0            FB-0                 Boat_in_Regatta      Entity_Link          ['Boat_in_Regatta']
+    FB-0:2::0-0          FB-0                 Boat                 Field_Role_Hidden    ['Boat_in_Regatta', u'left']
+    FB-0:2::0-1:0        FB-0:2::0            Regatta              Field_Entity         ['Boat_in_Regatta', 'right']
+    FB-0:2::0-1:0:0      FB-0:2::0-1:0        Regatta_Event        Field_Entity         ['Boat_in_Regatta', 'right', 'left']
+    FB-0:2::0-1:0:0:1    FB-0:2::0-1:0:0      Date_Interval_C      Field_Composite      ['Boat_in_Regatta', 'right', 'left', 'date']
+    FB-0:2::0-2:0        FB-0:2::0            Sailor               Field_Entity         ['Boat_in_Regatta', 'skipper']
+    FB-0:2::0-2:0:0      FB-0:2::0-2:0        Person               Field_Entity         ['Boat_in_Regatta', 'skipper', 'left']
+    FB-0:2::0-2:0:3      FB-0:2::0-2:0        Club                 Field_Entity         ['Boat_in_Regatta', 'skipper', 'club']
+
+    >>> for e in sorted (fv.entity_children (), key = fv.apply_key) :
+    ...     print "%4d %-20s %-20s %-20s %s" % (e.rank, e.id, e.anchor_id or "", e.elem.type_base_name, e.elem.__class__.__name__)
+       0 FB-0:2::0-2:0:3      FB-0:2::0-2:0        Club                 Field_Entity
+       0 FB-0:2::0-2:0:0      FB-0:2::0-2:0        Person               Field_Entity
+       0 FB-0:2::0-2:0        FB-0:2::0            Sailor               Field_Entity
+       0 FB-0:2::0-1:0:0      FB-0:2::0-1:0        Regatta_Event        Field_Entity
+       0 FB-0:2::0-1:0        FB-0:2::0            Regatta              Field_Entity
+       0 FB-0:0:0             FB-0                 Boat_Class           Field_Entity
+       0 FB-0                                      Boat                 Entity
+      99 FB-0:2::0-0          FB-0                 Boat                 Field_Role_Hidden
+     100 FB-0:2::0            FB-0                 Boat_in_Regatta      Entity_Link
+
+    >>> for e in sorted (fv.entity_children (), key = fv.apply_key) :
+    ...  if e.role_id :
+    ...    print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id or "", e.role_id, e.elem.type_base_name, e.elem.__class__.__name__)
+    FB-0:2::0-0          FB-0                 FB-0                 Boat                 Field_Role_Hidden
+
     >>> p ### before `fv.apply`
     GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'', u'')
     >>> fv.apply (scope, _sid = 0)
@@ -1634,17 +1681,16 @@ _test_code = """
     <Field FB-0:2::p-3:0 'place'>, init-v = '', changes = 0
     <Field FB-0:2::p-3:1 'points'>, init-v = '', changes = 0
 
-    >>> key = TFL.Sorted_By ("elem.rank", "-id")
-    >>> for v in sorted (gv.entity_children (), key = key) :
+    >>> for v in sorted (gv.entity_children (), key = gv.apply_key) :
     ...     print v.elem
     <Field_Entity FB-0:2::p-2:0:3 'club' 'GTW.OMP.SRM.Club'>
     <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>
     <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>
     <Field_Entity FB-0:2::p-1:0:0 'left' 'GTW.OMP.SRM.Regatta_Event'>
     <Field_Entity FB-0:2::p-1:0 'right' 'GTW.OMP.SRM.Regatta'>
-    <Field_Role_Hidden FB-0:2::p-0 'left' 'GTW.OMP.SRM.Boat'>
     <Field_Entity FB-0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>
     <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'>
+    <Field_Role_Hidden FB-0:2::p-0 'left' 'GTW.OMP.SRM.Boat'>
     <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>
 
     >>> for v in gv.entities () :
