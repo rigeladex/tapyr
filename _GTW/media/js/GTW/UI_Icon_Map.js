@@ -32,6 +32,7 @@
         , COPY        : "copy"
         , DELETE      : "trash"
         , DISABLE     : "minusthick"
+        , DONE        : "check"
         , EDIT        : "pencil"
         , ENABLE      : "plusthick"
         , FIRST       : "arrowthick-1-n"

@@ -40,6 +40,7 @@
 ##    25-Oct-2011 (CT) Mark command names for translation
 ##    16-Feb-2012 (CT) Add `next_url`
 ##    29-Feb-2012 (CT) Add `titles`, factor `urls` into separate, nested object
+##     1-Mar-2012 (CT) Add `Done` to `cmds`, `titles`
 ##    ««revision-date»»···
 ##--
 #}
@@ -60,6 +61,7 @@
       , { cmds : {# -#}
             { {{- trans (GTW._ ("Add")) -}}
             , {{- trans (GTW._ ("Cancel")) -}}
+            , {{- trans (GTW._ ("Done")) -}}
             , {{- trans (GTW._ ("Reset")) -}}
             , {{- trans (GTW._ ("Copy")) -}}
             , {{- trans (GTW._ ("Delete")) -}}
@@ -69,6 +71,7 @@
         , titles : {# -#}
             { {{- trans ("Add",    GTW._ ("Create new object")) -}}
             , {{- trans ("Cancel", GTW._ ("Discard changes")) -}}
+            , {{- trans ("Done",   GTW._ ("Accept changes")) -}}
             , {{- trans ("Reset",  GTW._ ("Reset fields to start values")) -}}
             , {{- trans ("Copy",   GTW._ ("Make a copy of this object")) -}}
             , {{- trans ("Delete", GTW._ ("Delete this object")) -}}

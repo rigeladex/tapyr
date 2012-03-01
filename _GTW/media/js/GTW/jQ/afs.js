@@ -77,6 +77,8 @@
 //    23-Feb-2012 (CT) Change `field_change_cb` to update bad/missing of `input`
 //    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
 //    29-Feb-2012 (CT) Replace `_setup_cmd_menu` by `_setup_cmd_buttons`
+//     1-Mar-2012 (CT) Fix sequence of command buttons
+//     1-Mar-2012 (CT) Add stub for `Done` command callback
 //    ««revision-date»»···
 //--
 
@@ -479,11 +481,6 @@
                     };
                   }
                 );
-            $(".cmd-menu", context).each
-                ( function (n) {
-                    _setup_cmd_menu ($(this));
-                  }
-                );
             $(".cmd-button", context).each
                 ( function (n) {
                     _setup_cmd_buttons ($(this));
@@ -494,7 +491,7 @@
             var s$     = cmc$.closest ("div[id],section");
             var id     = s$.attr      ("id");
             var elem   = $AFS_E.get   (id);
-            var source = cmd_menu [elem.type] (elem);
+            var source = cmd_set [elem.type] (elem);
             cmc$.attr ("title", "").html ("");
             for (var i = 0, li = source.length; i < li; i++) {
                 ( function () {
@@ -597,6 +594,9 @@
                             }
                           );
                   };
+              }
+            , Done                      : function done_cb (s$, elem, id, ev) {
+                  alert ("Done still needs to be implemented");
               }
             , Edit                      : function edit_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
@@ -715,7 +715,7 @@
                 // anchor = $AFS_E.get (afs_field.anchor_id);
             }
         };
-        var cmd_menu =
+        var cmd_set =
             { Entity                    : function Entity (elem) {
                   var names = [];
                   if (elem.value.edit.pid) {
@@ -725,14 +725,14 @@
               }
             , Entity_Link               : function Entity_Link (elem) {
                   var names = [];
-                  if (elem.collapsed) {
-                      names.push ("Edit", "Copy");
-                  } else {
-                      names.push ("Reset", "Cancel");
-                  };
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
                   }
+                  if (elem.collapsed) {
+                      names.push ("Copy", "Edit");
+                  } else {
+                      names.push ("Reset", "Cancel", "Done");
+                  };
                   return _cmds.apply (null, names);
               }
             , Entity_List               : function Entity_List (elem) {
@@ -746,7 +746,7 @@
                   if (elem.collapsed) {
                       names.push ("Edit");
                   } else {
-                      names.push ("Reset", "Cancel");
+                      names.push ("Reset", "Cancel", "Done");
                   };
                   return _cmds.apply (null, names);
               }
