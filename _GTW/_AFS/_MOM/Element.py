@@ -82,6 +82,9 @@
 #                     `form_kw` and extract `max_links`
 #    29-Feb-2012 (CT) Set `Field_Role_Hidden.rank` to `Entity_Link.rank - 1`
 #    29-Feb-2012 (CT) Redefine `Field_Role_Hidden._anchor_self`
+#     1-Mar-2012 (CT) Add `results` to `apply`, `applyf`, and their callees
+#     1-Mar-2012 (CT) Change `Field_Role_Hidden.apply` and `.applyf` to return
+#                     `results [value.anchor_id]`, if possible
 #    ««revision-date»»···
 #--
 
@@ -100,14 +103,14 @@ class _MOM_Element_ (AE._Element_) :
 
     _real_name    = "Element"
 
-    def _changed_children (self, value, scope, entity, ** kw) :
+    def _changed_children (self, value, results, scope, entity, ** kw) :
         result = {}
         for c in value.children :
             v = None
             if c.entity :
                 v = c.entity
             else :
-                v = c.elem.applyf (c, scope, entity, ** kw)
+                v = c.elem.applyf (c, results, scope, entity, ** kw)
                 value.conflicts += c.conflicts
             if v is not None :
                 result [c.elem.name] = v
@@ -132,14 +135,14 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
         return result
     # end def __call__
 
-    def apply (self, value, scope, ** kw) :
+    def apply (self, value, results, scope, ** kw) :
         pid = value.edit.get ("pid")
         if pid is not None :
-            result = self._apply_change (pid, value, scope, ** kw)
+            result = self._apply_change (pid, value, results, scope, ** kw)
         else :
             old_pid = value.init.get ("pid")
             if old_pid is None :
-                result = self._apply_create (value, scope, ** kw)
+                result = self._apply_create (value, results, scope, ** kw)
             else :
                 ### Value of entity field is reset to `None`
                 result = None
@@ -152,17 +155,17 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
             raise GTW.AFS.Error.Corrupted ()
     # end def check_sid
 
-    def _apply_change (self, pid, value, scope, ** kw) :
+    def _apply_change (self, pid, value, results, scope, ** kw) :
         entity = scope.pid_query (pid)
-        akw    = self._changed_children (value, scope, entity, ** kw)
+        akw    = self._changed_children (value, results, scope, entity, ** kw)
         if akw and not value.conflicts :
             ### XXX error handling
             entity.set_raw (** akw)
         return entity
     # end def _apply_change
 
-    def _apply_create (self, value, scope, ** kw) :
-        akw = self._changed_children (value, scope, None, ** kw)
+    def _apply_create (self, value, results, scope, ** kw) :
+        akw = self._changed_children (value, results, scope, None, ** kw)
         if akw and not value.conflicts :
             ### XXX error handling
             ETM = scope [self.type_name]
@@ -308,7 +311,7 @@ class _MOM_Field_ (AE.Field) :
         return self.__super.__call__ (ETM, entity, ** f_kw)
     # end def __call__
 
-    def applyf (self, value, scope, entity, ** kw) :
+    def applyf (self, value, results, scope, entity, ** kw) :
         result = None
         if entity is not None :
             dbv = entity.raw_attr (self.name)
@@ -369,10 +372,10 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
         return self.__super.__call__ (ETM, entity, ** f_kw)
     # end def __call__
 
-    def applyf (self, value, scope, entity, ** kw) :
+    def applyf (self, value, results, scope, entity, ** kw) :
         if entity is not None :
             entity = getattr (entity, self.name)
-        return self._changed_children (value, scope, entity, ** kw)
+        return self._changed_children (value, results, scope, entity, ** kw)
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
@@ -426,7 +429,7 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
         return result
     # end def __call__
 
-    def applyf (self, value, scope, entity, ** kw) :
+    def applyf (self, value, results, scope, entity, ** kw) :
         return value.entity
     # end def applyf
 
@@ -449,19 +452,17 @@ class Field_Role_Hidden (Field_Entity) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    def apply (self, value, scope, ** kw) :
-        pid = value.edit.get ("pid")
-        if pid is not None :
-            return scope.pid_query (pid)
+    def apply (self, value, results, scope, ** kw) :
+        try :
+            return results [value.anchor_id]
+        except KeyError :
+            pid = value.edit.get ("pid")
+            if pid is not None :
+                return scope.pid_query (pid)
     # end def apply
 
-    def applyf (self, value, scope, entity, ** kw) :
-        pid = value.edit.get ("pid")
-        if pid is not None :
-            result = scope.pid_query (pid)
-        else :
-            result = getattr (entity, "self.name", None)
-        return result
+    def applyf (self, value, results, scope, entity, ** kw) :
+        return self.apply (value, results, scope, ** kw)
     # end def applyf
 
     def display (self, instance) :

@@ -642,7 +642,7 @@
                       );
               }
             , Save                      : function save_cb (s$, elem, id, ev) {
-                  var pvs    = $AFS_E.root.packed_values (elem);
+                  var pvs = $AFS_E.root.packed_values (elem);
                   var json_data =
                         { cargo       : pvs
                         , allow_new   : elem.allow_new
@@ -752,10 +752,10 @@
               }
             };
         var submit_cb = function submit_cb (ev) {
-            var target$   = $(ev.target);
-            var name      = target$.attr ("name");
-            var pvs       = $AFS_E.root.packed_values ();
-            var json_data = { cargo : pvs };
+            var target$      = $(ev.target);
+            var name         = target$.attr ("name");
+            var pvs          = $AFS_E.root.packed_values ();
+            var json_data    = { cargo : pvs };
             json_data [name] = true;
             $.gtw_ajax_2json
                 ( { url         : document.URL

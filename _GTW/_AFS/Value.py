@@ -40,6 +40,8 @@
 #                     `._edit` (to allow setting attribute [raw] values to "")
 #     2-Aug-2011 (CT) Message passed to `Error.Unknown` changed
 #    20-Jan-2012 (CT) Add and use `_check_sids`
+#     1-Mar-2012 (CT) Change `apply` to accumulate `results` and pass
+#                     `results` to `elem.apply`
 #    ««revision-date»»···
 #--
 
@@ -172,9 +174,10 @@ class Value (_Base_) :
     def apply (self, * args, ** kw) :
         conflicts = 0
         entities  = sorted (self.entity_children (), key = self.apply_key)
+        results   = {}
         self._check_sids   (entities, ** kw)
         for e in entities :
-            e.entity   = e.elem.apply (e, * args, ** kw)
+            e.entity = results [e.id] = e.elem.apply (e, results, * args, ** kw)
             conflicts += e.conflicts
         if conflicts :
             raise GTW.AFS.Error.Conflict ()
