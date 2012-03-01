@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-02-28 12:33+0100\n"
+"POT-Creation-Date: 2012-03-01 09:49+0100\n"
 "PO-Revision-Date: 2011-11-24 11:29+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgid "Activation for"
 msgstr "Aktivierung für"
 
 #: _JNJ/html/e_type.m.jnj:146 _JNJ/html/e_type.m.jnj:256
-#: _JNJ/html/e_type.m.jnj:329 _JNJ/html/e_type_afs.jnj:64
+#: _JNJ/html/e_type.m.jnj:329 _JNJ/html/e_type_afs.jnj:61
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr "Erzeuge"
@@ -85,7 +85,7 @@ msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
 #: _JNJ/html/e_type.m.jnj:96 _JNJ/html/e_type.m.jnj:136
-#: _JNJ/html/e_type.m.jnj:319 _JNJ/html/e_type_afs.jnj:65
+#: _JNJ/html/e_type.m.jnj:319 _JNJ/html/e_type_afs.jnj:62
 #: _JNJ/html/form.jnj:164 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -101,6 +101,10 @@ msgstr "Ändern"
 #: _JNJ/html/change_password.jnj:39
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
+
+#: _JNJ/html/e_type_afs.jnj:75
+msgid "Change attributes of this object"
+Msgstr "Ändere Attribute des Objekts"
 
 #: _JNJ/html/form.jnj:360
 msgid "Change email"
@@ -133,10 +137,6 @@ msgstr "Ändere Kennwort für Benutzerkonto %s"
 msgid "Clear"
 msgstr "Lösche"
 
-#: _JNJ/html/e_type_afs.jnj:66
-msgid "Clear fields"
-msgstr "Lösche Eingabefelder"
-
 #: _JNJ/html/rform.jnj:91
 msgid "Click to jump to the field with the first error"
 msgstr "Verweis auf das erste fehlerhafte Eingabefeld."
@@ -153,11 +153,12 @@ msgstr "Konfiguriere"
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/e_type_afs.jnj:67
+#: _JNJ/html/e_type_afs.jnj:64
 msgid "Copy"
 msgstr "Kopiere"
 
 #: _JNJ/html/e_type.m.jnj:342 _JNJ/html/e_type.m.jnj:346
+#: _JNJ/html/e_type_afs.jnj:70
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
 
@@ -170,13 +171,17 @@ msgstr "Gegenwärtig ausgewählter Tag"
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/e_type_afs.jnj:68
+#: _JNJ/html/e_type_afs.jnj:65
 msgid "Delete"
 msgstr "Lösche"
 
 #: _JNJ/html/e_type.m.jnj:360
 msgid "Delete object"
 msgstr "Lösche Objekt"
+
+#: _JNJ/html/e_type_afs.jnj:74
+msgid "Delete this object"
+msgstr "Lösche dieses Objekt"
 
 #: _JNJ/html/cal/wr.jnj:151
 msgid "Delta"
@@ -202,6 +207,10 @@ msgstr "Verwerfen aller Änderungen im Sub-Formular"
 #: _JNJ/html/rform.jnj:456
 msgid "Discard all changes made and leave popup-form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Sub-Formulars"
+
+#: _JNJ/html/e_type_afs.jnj:71
+msgid "Discard changes"
+msgstr "Verwerfen aller Änderungen"
 
 #: _JNJ/html/cal/wr.jnj:184
 msgid "Display calendar anchored on today"
@@ -242,8 +251,8 @@ msgstr "Stelle vorige Seite dar"
 #: _JNJ/html/e_type_admin.jnj:79
 msgid "Drag the attributes up or down to change their priority"
 msgstr ""
-"Ziehe die Attribute mit der Maus an eine andere Position um die "
-"Priorität zu ändern"
+"Ziehe die Attribute mit der Maus an eine andere Position um die Priorität"
+" zu ändern"
 
 #: _JNJ/html/e_type_admin.jnj:77
 msgid "Drag the order-by criteria up or down to change their priority"
@@ -251,7 +260,7 @@ msgstr ""
 "Ziehe die Ordnungskriterien mit der Maus an eine andere Position um die "
 "Priorität zu ändern"
 
-#: _JNJ/html/e_type_afs.jnj:69 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:66 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr "Ändere"
 
@@ -311,7 +320,9 @@ msgstr "Letztes Bild"
 
 #: _JNJ/html/e_type.m.jnj:320
 msgid "Leave form without changing set of attributes to display"
-msgstr "Verlasse das Formular ohne die Menge der darzustellenden Attribute zu ändern"
+msgstr ""
+"Verlasse das Formular ohne die Menge der darzustellenden Attribute zu "
+"ändern"
 
 #: _JNJ/html/e_type.m.jnj:137
 msgid "Leave form without changing set of order-by criteria"
@@ -358,6 +369,10 @@ msgstr "Anmeldung erforderlich"
 #, python-format
 msgid "Logout %s"
 msgstr "Melde %s ab"
+
+#: _JNJ/html/e_type_afs.jnj:73
+msgid "Make a copy of this object"
+msgstr "Kopiere dieses Objekt"
 
 #: _JNJ/html/error_405.jnj:38
 msgid "Method Not Allowed"
@@ -468,13 +483,18 @@ msgstr "Registrieren eines neuen Benutzerkontos für "
 msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
-#: _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432 _JNJ/html/rform.jnj:454
+#: _JNJ/html/e_type_afs.jnj:63 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
+#: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
 
 #: _JNJ/html/e_type.m.jnj:102
 msgid "Reset fields"
 msgstr "Lösche Eingabefelder"
+
+#: _JNJ/html/e_type_afs.jnj:72
+msgid "Reset fields to start values"
+msgstr "Setze Eingabefelder auf Startwerte zurück"
 
 #: _JNJ/html/e_type.m.jnj:325
 msgid "Reset form to default"
@@ -489,9 +509,13 @@ msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/e_type_afs.jnj:70 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:67 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr "Sichern"
+
+#: _JNJ/html/e_type_afs.jnj:76
+msgid "Save the attribute values as displayed in form fields"
+msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 
 #: _JNJ/html/rform.jnj:450
 msgid "Save values in form entries"
@@ -524,7 +548,7 @@ msgstr "Wähle die Attribute die für jedes Objekt dargestellt werden sollen"
 msgid "Selected picture"
 msgstr "Ausgewähltes Bild"
 
-#: _JNJ/html/afs.jnj:153 _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
+#: _JNJ/html/afs.jnj:154 _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr "Schicke Daten an den Server und beende das Formular"
 
@@ -544,7 +568,7 @@ msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 msgid "Slide show"
 msgstr "Dia show"
 
-#: _JNJ/html/afs.jnj:154 _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
+#: _JNJ/html/afs.jnj:155 _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr "Absenden"
 
