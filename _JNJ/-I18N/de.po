@@ -104,7 +104,7 @@ msgstr "Ändere Kennwort für"
 
 #: _JNJ/html/e_type_afs.jnj:75
 msgid "Change attributes of this object"
-Msgstr "Ändere Attribute des Objekts"
+msgstr "Ändere Attribute des Objekts"
 
 #: _JNJ/html/form.jnj:360
 msgid "Change email"
