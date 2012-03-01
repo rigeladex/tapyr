@@ -30,7 +30,8 @@
 #    ««revision-date»»···
 #--
 
-style_sheet = Style_Sheet \
+if False :
+  style_sheet = Style_Sheet \
     ( Rule
         ( ".cmd-menu"
         , float            = "right"
@@ -77,8 +78,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-if False :
-  style_sheet = Style_Sheet \
+style_sheet = Style_Sheet \
     ( Rule
         ( ".cmd-menu"
         , border           = P.border_button
