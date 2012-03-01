@@ -42,6 +42,7 @@
 #    24-Nov-2011 (CT) Add `color_spec_selected_rev`
 #    23-Feb-2012 (CT) Add `color_status_{bad,good,missing}`, `afs.status_size`
 #    23-Feb-2012 (CT) Add `color_bg_bad` and `color_bg_missing`
+#     1-Mar-2012 (CT) Change `pg_main_max_width` from `Em (50)` to `Em (45)`
 #    ««revision-date»»···
 #--
 
@@ -384,7 +385,7 @@ class Media_Defaults (Definition) :
     outline_target         = "2px dotted "  + P.color_target
 
     pg_head_height         = Px (100)
-    pg_main_max_width      = Em (50)
+    pg_main_max_width      = Em (45)
     pg_main_min_width      = Em (15)
 
     thumbnail_size         = Px (155)

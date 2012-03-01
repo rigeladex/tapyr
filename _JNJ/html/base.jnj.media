@@ -41,6 +41,8 @@
 #    28-Nov-2011 (CT) Remove `max-width` from `.pg_main`
 #     2-Dec-2011 (CT) Add `Modernizr`, remove `ie_csshover_hack.css`
 #    22-Feb-2012 (CT) Add more rules for `.centered`, add `align-center`
+#     1-Mar-2012 (CT) Add rule for `div.centered .line`, use
+#                     `P.pg_main_max_width` instead of literal
 #    ««revision-date»»···
 #--
 
@@ -143,7 +145,7 @@ style_sheet = Style_Sheet \
         ( ".pg_body"
         , width          = "100%"
         , children       =
-            [ Rule ("p", max_width = Rem (40))
+            [ Rule ("p", max_width = P.pg_main_max_width)
             # XXX ??? ".login div", "form.login"
             ]
         )
@@ -216,6 +218,11 @@ style_sheet = Style_Sheet \
                 , width          = "auto"
                 )
             ]
+        )
+    , Rule
+        ( "div.centered .line"
+        , max_width      = P.pg_main_max_width
+        , text_align     = "center"
         )
     , Rule
         ( "img.pixpanded"
