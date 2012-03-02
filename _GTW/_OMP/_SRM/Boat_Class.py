@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -29,6 +29,7 @@
 #    15-Apr-2010 (CT) Creation
 #     8-Sep-2011 (CT) `completer` added to `name`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     2-Mar-2012 (CT) Set `name.ignore_case` to `True`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,7 @@ class Boat_Class (_Ancestor_Essence) :
             """Name of class of sailboats."""
 
             kind               = Attr.Primary
+            ignore_case        = True
             max_length         = 48
 
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
