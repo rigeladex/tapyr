@@ -85,6 +85,8 @@
 #     1-Mar-2012 (CT) Add `results` to `apply`, `applyf`, and their callees
 #     1-Mar-2012 (CT) Change `Field_Role_Hidden.apply` and `.applyf` to return
 #                     `results [value.anchor_id]`, if possible
+#     2-Mar-2012 (CT) Move `_value_sig_t` from `_MOM_Entity_MI_` to
+#                     `_MOM_Entity_`
 #    ««revision-date»»···
 #--
 
@@ -213,13 +215,6 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
         return result
     # end def _value_cp
 
-    def _value_sig_t (self, instance) :
-        init = instance.init
-        return tuple \
-            ( (k, init.get (k)) for k in ("pid", "cid")
-            ) + (str (instance.id), str (self.type_name))
-    # end def _value_sig_t
-
 # end class _MOM_Entity_MI_
 
 class _MOM_Entity_ (_MOM_Entity_MI_) :
@@ -233,6 +228,13 @@ class _MOM_Entity_ (_MOM_Entity_MI_) :
             kw ["allow_new"] = entity is None
         return result
     # end def _instance_kw
+
+    def _value_sig_t (self, instance) :
+        init = instance.init
+        return tuple \
+            ( (k, init.get (k)) for k in ("pid", "cid")
+            ) + (str (instance.id), str (self.type_name))
+    # end def _value_sig_t
 
 Entity = _MOM_Entity_ # end class
 

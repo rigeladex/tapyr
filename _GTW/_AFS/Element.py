@@ -109,6 +109,7 @@
 #    29-Feb-2012 (CT) Factor `_anchor_self`, add use of it to `_Anchor_MI_`
 #    29-Feb-2012 (CT) Add `anchor`, `root`, `type_base_name`
 #    29-Feb-2012 (CT) Redefine `_anchor_children` for `Entity_List` (`proto`)
+#     2-Mar-2012 (CT) Remove `instance.init` from `_value_sig`
 #    ««revision-date»»···
 #--
 
@@ -510,7 +511,7 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def _update_sid
 
     def _value_sig_t (self, instance) :
-        return (str (instance.id), str (self.type_name), instance.init)
+        return (str (instance.id), str (self.type_name))
     # end def _value_sig_t
 
 # end class Entity
@@ -644,7 +645,7 @@ class Field (_Field_MI_, _Field_) :
     # end def _css_classes
 
     def _value_sig (self, instance) :
-        result = (str (instance.id), str (self.name), instance.init)
+        result = (str (instance.id), str (self.name))
         if getattr (instance, "prefilled", False) :
             result = (result, True)
         return result
