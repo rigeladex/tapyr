@@ -41,7 +41,6 @@
         , html              : "innerHTML"
         , inner_html        : "innerHTML"
         , max_length        : "maxLength"
-        , read_only         : "readonly"
         , tab_index         : "tabindex"
         , text              : "textContent"
         , xml_lang          : "xml:lang"
