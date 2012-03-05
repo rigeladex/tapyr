@@ -87,6 +87,10 @@
 #                     `results [value.anchor_id]`, if possible
 #     2-Mar-2012 (CT) Move `_value_sig_t` from `_MOM_Entity_MI_` to
 #                     `_MOM_Entity_`
+#     5-Mar-2012 (CT) Factor `_apply_for_pid`,
+#                     redefine it for `Field_Entity` to consider `allow_new`
+#     5-Mar-2012 (CT) Redefine `Field_Entity._child_kw` to extract `allow_new`
+#     5-Mar-2012 (CT) Change `apply` to ignore `old_pid`
 #    ««revision-date»»···
 #--
 
@@ -138,16 +142,11 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
     # end def __call__
 
     def apply (self, value, results, scope, ** kw) :
-        pid = value.edit.get ("pid")
+        pid = self._apply_for_pid (value, kw)
         if pid is not None :
             result = self._apply_change (pid, value, results, scope, ** kw)
         else :
-            old_pid = value.init.get ("pid")
-            if old_pid is None :
-                result = self._apply_create (value, results, scope, ** kw)
-            else :
-                ### Value of entity field is reset to `None`
-                result = None
+            result = self._apply_create (value, results, scope, ** kw)
         return result
     # end def apply
 
@@ -173,6 +172,10 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
             ETM = scope [self.type_name]
             return self._create_instance (ETM, akw)
     # end def _apply_create
+
+    def _apply_for_pid (self, value, kw) :
+        return value.edit.get ("pid")
+    # end def _apply_for_pid
 
     def _create_instance (self, ETM, akw) :
         try :
@@ -435,11 +438,23 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
         return value.entity
     # end def applyf
 
+    def _apply_for_pid (self, value, kw) :
+        if not getattr (value, "allow_new", False) :
+            return self.__super._apply_for_pid (value, kw)
+    # end def _apply_for_pid
+
     def _call_iter (self, ETM, entity, ** kw) :
         if not (self.prefilled or kw ["form_kw"].get ("prefilled")) :
             return self.__super._call_iter (ETM, entity, ** kw)
         return ()
     # end def _call_iter
+
+    def _child_kw (self, kw) :
+        result = self.__super._child_kw (kw)
+        if "allow_new" in result ["form_kw"] :
+            result ["allow_new"] = result ["form_kw"].pop ("allow_new")
+        return result
+    # end def _child_kw
 
 Field_Entity = _MOM_Field_Entity_ # end class
 

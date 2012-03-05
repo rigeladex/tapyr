@@ -315,7 +315,7 @@ var f = new $GTW.AFS.Form (
                                     , 'allow_new' : True
                                     , 'children' :
                                         [ { '$id' : 'FB-0:2::0-2:0:0'
-                                          , 'allow_new' : True
+                                          , 'allow_new' : False
                                           , 'children' :
                                               [ { '$id' : 'FB-0:2::0-2:0:0:0'
                                                 , 'completer' :

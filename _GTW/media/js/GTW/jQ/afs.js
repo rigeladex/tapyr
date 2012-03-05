@@ -79,6 +79,7 @@
 //    29-Feb-2012 (CT) Replace `_setup_cmd_menu` by `_setup_cmd_buttons`
 //     1-Mar-2012 (CT) Fix sequence of command buttons
 //     1-Mar-2012 (CT) Add stub for `Done` command callback
+//     5-Mar-2012 (CT) Add stub for `Select` command callback
 //    ««revision-date»»···
 //--
 
@@ -682,6 +683,11 @@
                       , "Save"
                       );
               }
+            , Select : function select_cb (s$, elem, id, ev) {
+                  var value = elem ["value"];
+                  var pid   = value && value.edit.pid;
+                  alert ("XXX select_cb needs to be implemented");
+              }
             };
         var field_change_cb = function field_change_cb (ev) {
             var f$ = $(this);
@@ -720,6 +726,8 @@
                   var names = [];
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
+                  } else {
+                      names.push ("Reset");
                   };
                   return _cmds.apply (null, names);
               }
@@ -744,7 +752,7 @@
             , Field_Entity              : function Field_Entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push ("Edit");
+                      names.push (elem.allow_new ? "Edit" : "Select");
                   } else {
                       names.push ("Reset", "Cancel", "Done");
                   };

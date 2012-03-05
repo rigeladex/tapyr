@@ -48,6 +48,8 @@
 //    16-Feb-2012 (CT) Factor `add` in `packed_values`, support `role_id` there
 //    17-Feb-2012 (CT) Add `callback_map` to module `GTW.AFS`
 //    17-Feb-2012 (CT) Add and use `Element._setup_callbacks`
+//     5-Mar-2012 (CT) Change `Field_Entity._setup_value` to copy `allow_new`
+//                     to `value`
 //    ««revision-date»»···
 //--
 
@@ -305,6 +307,7 @@
               this._sv_anchored_or_root (kw, new_kw);
               this._sv_anchored         (kw, new_kw);
               this._super               (kw, new_kw);
+              this.value.allow_new = this.allow_new;
               kw.anchor.field_name_map [this.name] = this.$id;
           }
         }

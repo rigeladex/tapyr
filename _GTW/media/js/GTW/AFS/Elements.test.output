@@ -48,6 +48,7 @@ FB-0 value :
         $child_ids :
             0 = "FB-0:0:0:0"
         $id = "FB-0:0:0"
+        allow_new = true
         anchor_id = "FB-0"
         edit :
             cid = 1
@@ -94,6 +95,7 @@ FB-0:2::0 value :
         $child_ids :
             0 = "FB-0:2::0-1:0:0"
         $id = "FB-0:2::0-1:0"
+        allow_new = false
         anchor_id = "FB-0:2::0"
         edit :
             cid = 6
@@ -103,6 +105,7 @@ FB-0:2::0 value :
                 0 = "FB-0:2::0-1:0:0:0"
                 1 = "FB-0:2::0-1:0:0:1"
             $id = "FB-0:2::0-1:0:0"
+            allow_new = false
             anchor_id = "FB-0:2::0-1:0"
             edit :
                 cid = 5
@@ -134,6 +137,7 @@ FB-0:2::0 value :
             2 = "FB-0:2::0-2:0:2"
             3 = "FB-0:2::0-2:0:3"
         $id = "FB-0:2::0-2:0"
+        allow_new = true
         anchor_id = "FB-0:2::0"
         edit :
             cid = 4
@@ -145,6 +149,7 @@ FB-0:2::0 value :
                 2 = "FB-0:2::0-2:0:0:2"
                 3 = "FB-0:2::0-2:0:0:3"
             $id = "FB-0:2::0-2:0:0"
+            allow_new = false
             anchor_id = "FB-0:2::0-2:0"
             edit :
                 cid = 3
@@ -169,6 +174,7 @@ FB-0:2::0 value :
             $child_ids :
                 0 = "FB-0:2::0-2:0:3:0"
             $id = "FB-0:2::0-2:0:3"
+            allow_new = true
             anchor_id = "FB-0:2::0-2:0"
             edit :
 
@@ -209,6 +215,7 @@ Form values :
             $child_ids :
                 0 = "FB-0:0:0:0"
             $id = "FB-0:0:0"
+            allow_new = true
             anchor_id = "FB-0"
             edit :
                 cid = 1
@@ -255,6 +262,7 @@ Form values :
             $child_ids :
                 0 = "FB-0:2::0-1:0:0"
             $id = "FB-0:2::0-1:0"
+            allow_new = false
             anchor_id = "FB-0:2::0"
             edit :
                 cid = 6
@@ -264,6 +272,7 @@ Form values :
                     0 = "FB-0:2::0-1:0:0:0"
                     1 = "FB-0:2::0-1:0:0:1"
                 $id = "FB-0:2::0-1:0:0"
+                allow_new = false
                 anchor_id = "FB-0:2::0-1:0"
                 edit :
                     cid = 5
@@ -295,6 +304,7 @@ Form values :
                 2 = "FB-0:2::0-2:0:2"
                 3 = "FB-0:2::0-2:0:3"
             $id = "FB-0:2::0-2:0"
+            allow_new = true
             anchor_id = "FB-0:2::0"
             edit :
                 cid = 4
@@ -306,6 +316,7 @@ Form values :
                     2 = "FB-0:2::0-2:0:0:2"
                     3 = "FB-0:2::0-2:0:0:3"
                 $id = "FB-0:2::0-2:0:0"
+                allow_new = false
                 anchor_id = "FB-0:2::0-2:0"
                 edit :
                     cid = 3
@@ -330,6 +341,7 @@ Form values :
                 $child_ids :
                     0 = "FB-0:2::0-2:0:3:0"
                 $id = "FB-0:2::0-2:0:3"
+                allow_new = true
                 anchor_id = "FB-0:2::0-2:0"
                 edit :
 
@@ -406,6 +418,7 @@ $GTW :
                                     $child_ids :
                                         0 = "FB-0:0:0:0"
                                     $id = "FB-0:0:0"
+                                    allow_new = true
                                     anchor_id = "FB-0"
                                     edit :
                                         cid = 1
@@ -473,6 +486,7 @@ $GTW :
                                     $child_ids :
                                         0 = "FB-0:2::0-1:0:0"
                                     $id = "FB-0:2::0-1:0"
+                                    allow_new = false
                                     anchor_id = "FB-0:2::0"
                                     edit :
                                         cid = 6
@@ -482,6 +496,7 @@ $GTW :
                                             0 = "FB-0:2::0-1:0:0:0"
                                             1 = "FB-0:2::0-1:0:0:1"
                                         $id = "FB-0:2::0-1:0:0"
+                                        allow_new = false
                                         anchor_id = "FB-0:2::0-1:0"
                                         edit :
                                             cid = 5
@@ -513,6 +528,7 @@ $GTW :
                                         2 = "FB-0:2::0-2:0:2"
                                         3 = "FB-0:2::0-2:0:3"
                                     $id = "FB-0:2::0-2:0"
+                                    allow_new = true
                                     anchor_id = "FB-0:2::0"
                                     edit :
                                         cid = 4
@@ -524,6 +540,7 @@ $GTW :
                                             2 = "FB-0:2::0-2:0:0:2"
                                             3 = "FB-0:2::0-2:0:0:3"
                                         $id = "FB-0:2::0-2:0:0"
+                                        allow_new = false
                                         anchor_id = "FB-0:2::0-2:0"
                                         edit :
                                             cid = 3
@@ -548,6 +565,7 @@ $GTW :
                                         $child_ids :
                                             0 = "FB-0:2::0-2:0:3:0"
                                         $id = "FB-0:2::0-2:0:3"
+                                        allow_new = true
                                         anchor_id = "FB-0:2::0-2:0"
                                         edit :
 
@@ -604,6 +622,7 @@ $GTW :
                             $child_ids :
                                 0 = "FB-0:0:0:0"
                             $id = "FB-0:0:0"
+                            allow_new = true
                             anchor_id = "FB-0"
                             edit :
                                 cid = 1
@@ -658,6 +677,7 @@ $GTW :
                         $child_ids :
                             0 = "FB-0:0:0:0"
                         $id = "FB-0:0:0"
+                        allow_new = true
                         anchor_id = "FB-0"
                         edit :
                             cid = 1
@@ -810,6 +830,7 @@ $GTW :
                             $child_ids :
                                 0 = "FB-0:2::0-1:0:0"
                             $id = "FB-0:2::0-1:0"
+                            allow_new = false
                             anchor_id = "FB-0:2::0"
                             edit :
                                 cid = 6
@@ -819,6 +840,7 @@ $GTW :
                                     0 = "FB-0:2::0-1:0:0:0"
                                     1 = "FB-0:2::0-1:0:0:1"
                                 $id = "FB-0:2::0-1:0:0"
+                                allow_new = false
                                 anchor_id = "FB-0:2::0-1:0"
                                 edit :
                                     cid = 5
@@ -850,6 +872,7 @@ $GTW :
                                 2 = "FB-0:2::0-2:0:2"
                                 3 = "FB-0:2::0-2:0:3"
                             $id = "FB-0:2::0-2:0"
+                            allow_new = true
                             anchor_id = "FB-0:2::0"
                             edit :
                                 cid = 4
@@ -861,6 +884,7 @@ $GTW :
                                     2 = "FB-0:2::0-2:0:0:2"
                                     3 = "FB-0:2::0-2:0:0:3"
                                 $id = "FB-0:2::0-2:0:0"
+                                allow_new = false
                                 anchor_id = "FB-0:2::0-2:0"
                                 edit :
                                     cid = 3
@@ -885,6 +909,7 @@ $GTW :
                                 $child_ids :
                                     0 = "FB-0:2::0-2:0:3:0"
                                 $id = "FB-0:2::0-2:0:3"
+                                allow_new = true
                                 anchor_id = "FB-0:2::0-2:0"
                                 edit :
 
@@ -957,6 +982,7 @@ $GTW :
                         $child_ids :
                             0 = "FB-0:2::0-1:0:0"
                         $id = "FB-0:2::0-1:0"
+                        allow_new = false
                         anchor_id = "FB-0:2::0"
                         edit :
                             cid = 6
@@ -966,6 +992,7 @@ $GTW :
                                 0 = "FB-0:2::0-1:0:0:0"
                                 1 = "FB-0:2::0-1:0:0:1"
                             $id = "FB-0:2::0-1:0:0"
+                            allow_new = false
                             anchor_id = "FB-0:2::0-1:0"
                             edit :
                                 cid = 5
@@ -1014,6 +1041,7 @@ $GTW :
                             0 = "FB-0:2::0-1:0:0:0"
                             1 = "FB-0:2::0-1:0:0:1"
                         $id = "FB-0:2::0-1:0:0"
+                        allow_new = false
                         anchor_id = "FB-0:2::0-1:0"
                         edit :
                             cid = 5
@@ -1158,6 +1186,7 @@ $GTW :
                             2 = "FB-0:2::0-2:0:2"
                             3 = "FB-0:2::0-2:0:3"
                         $id = "FB-0:2::0-2:0"
+                        allow_new = true
                         anchor_id = "FB-0:2::0"
                         edit :
                             cid = 4
@@ -1169,6 +1198,7 @@ $GTW :
                                 2 = "FB-0:2::0-2:0:0:2"
                                 3 = "FB-0:2::0-2:0:0:3"
                             $id = "FB-0:2::0-2:0:0"
+                            allow_new = false
                             anchor_id = "FB-0:2::0-2:0"
                             edit :
                                 cid = 3
@@ -1193,6 +1223,7 @@ $GTW :
                             $child_ids :
                                 0 = "FB-0:2::0-2:0:3:0"
                             $id = "FB-0:2::0-2:0:3"
+                            allow_new = true
                             anchor_id = "FB-0:2::0-2:0"
                             edit :
 
@@ -1208,7 +1239,7 @@ $GTW :
                 FB-0:2::0-2:0:0 :
                     $id = "FB-0:2::0-2:0:0"
                     _super = undefined
-                    allow_new = true
+                    allow_new = false
                     anchor_id = "FB-0:2::0-2:0"
                     children :
                         0 = "FB-0:2::0-2:0:0:0"
@@ -1243,6 +1274,7 @@ $GTW :
                             2 = "FB-0:2::0-2:0:0:2"
                             3 = "FB-0:2::0-2:0:0:3"
                         $id = "FB-0:2::0-2:0:0"
+                        allow_new = false
                         anchor_id = "FB-0:2::0-2:0"
                         edit :
                             cid = 3
@@ -1388,6 +1420,7 @@ $GTW :
                         $child_ids :
                             0 = "FB-0:2::0-2:0:3:0"
                         $id = "FB-0:2::0-2:0:3"
+                        allow_new = true
                         anchor_id = "FB-0:2::0-2:0"
                         edit :
 
@@ -1482,6 +1515,7 @@ $GTW :
                                 $child_ids :
                                     0 = "FB-0:0:0:0"
                                 $id = "FB-0:0:0"
+                                allow_new = true
                                 anchor_id = "FB-0"
                                 edit :
                                     cid = 1
@@ -1549,6 +1583,7 @@ $GTW :
                                 $child_ids :
                                     0 = "FB-0:2::0-1:0:0"
                                 $id = "FB-0:2::0-1:0"
+                                allow_new = false
                                 anchor_id = "FB-0:2::0"
                                 edit :
                                     cid = 6
@@ -1558,6 +1593,7 @@ $GTW :
                                         0 = "FB-0:2::0-1:0:0:0"
                                         1 = "FB-0:2::0-1:0:0:1"
                                     $id = "FB-0:2::0-1:0:0"
+                                    allow_new = false
                                     anchor_id = "FB-0:2::0-1:0"
                                     edit :
                                         cid = 5
@@ -1589,6 +1625,7 @@ $GTW :
                                     2 = "FB-0:2::0-2:0:2"
                                     3 = "FB-0:2::0-2:0:3"
                                 $id = "FB-0:2::0-2:0"
+                                allow_new = true
                                 anchor_id = "FB-0:2::0"
                                 edit :
                                     cid = 4
@@ -1600,6 +1637,7 @@ $GTW :
                                         2 = "FB-0:2::0-2:0:0:2"
                                         3 = "FB-0:2::0-2:0:0:3"
                                     $id = "FB-0:2::0-2:0:0"
+                                    allow_new = false
                                     anchor_id = "FB-0:2::0-2:0"
                                     edit :
                                         cid = 3
@@ -1624,6 +1662,7 @@ $GTW :
                                     $child_ids :
                                         0 = "FB-0:2::0-2:0:3:0"
                                     $id = "FB-0:2::0-2:0:3"
+                                    allow_new = true
                                     anchor_id = "FB-0:2::0-2:0"
                                     edit :
 
@@ -1674,9 +1713,9 @@ $GTW :
     function update(dict)
     version = "1.0"
 FB-0:2::0 value jsonified :
-  {"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
+  {"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false,"FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","allow_new":false,"FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false,"FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true,"FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false,"FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","allow_new":false,"FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false,"FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":""},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values after change:
     $child_ids :
         0 = "FB-0"
@@ -1697,6 +1736,7 @@ Form values after change:
             $child_ids :
                 0 = "FB-0:0:0:0"
             $id = "FB-0:0:0"
+            allow_new = true
             anchor_id = "FB-0"
             edit :
                 cid = 1
@@ -1743,6 +1783,7 @@ Form values after change:
             $child_ids :
                 0 = "FB-0:2::0-1:0:0"
             $id = "FB-0:2::0-1:0"
+            allow_new = false
             anchor_id = "FB-0:2::0"
             edit :
                 cid = 6
@@ -1752,6 +1793,7 @@ Form values after change:
                     0 = "FB-0:2::0-1:0:0:0"
                     1 = "FB-0:2::0-1:0:0:1"
                 $id = "FB-0:2::0-1:0:0"
+                allow_new = false
                 anchor_id = "FB-0:2::0-1:0"
                 edit :
                     cid = 5
@@ -1783,6 +1825,7 @@ Form values after change:
                 2 = "FB-0:2::0-2:0:2"
                 3 = "FB-0:2::0-2:0:3"
             $id = "FB-0:2::0-2:0"
+            allow_new = true
             anchor_id = "FB-0:2::0"
             edit :
                 cid = 4
@@ -1794,6 +1837,7 @@ Form values after change:
                     2 = "FB-0:2::0-2:0:0:2"
                     3 = "FB-0:2::0-2:0:0:3"
                 $id = "FB-0:2::0-2:0:0"
+                allow_new = false
                 anchor_id = "FB-0:2::0-2:0"
                 edit :
                     cid = 3
@@ -1819,6 +1863,7 @@ Form values after change:
                 $child_ids :
                     0 = "FB-0:2::0-2:0:3:0"
                 $id = "FB-0:2::0-2:0:3"
+                allow_new = true
                 anchor_id = "FB-0:2::0-2:0"
                 edit :
 
@@ -1841,6 +1886,6 @@ Form values after change:
         sid = "cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q"
     sid = 0
 Form values jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true,"FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false,"FB-0:2::0-1:0:0":{"init":{"cid":5,"pid":5},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{"cid":5,"pid":5},"anchor_id":"FB-0:2::0-1:0","allow_new":false,"FB-0:2::0-1:0:0:0":{"init":"Himmelfahrt"},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"init":"2008/05/01"},"FB-0:2::0-1:0:0:1.1":{"init":"2008/05/01"}}}},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false,"FB-0:2::0-2:0:0:0":{"init":"Tanzer"},"FB-0:2::0-2:0:0:1":{"init":"Laurens"},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 Form values of copy jsonified after change:
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"fOgxYfYbDsURsl0aNGbG6Z1YIV-ZkAKRcYOCfQ","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"anchor_id":"FB-0","FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"init":{},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{}},"FB-0:2::0-1:0":{"init":{},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"anchor_id":"FB-0:2::0","FB-0:2::0-1:0:0":{"init":{},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"anchor_id":"FB-0:2::0-1:0","FB-0:2::0-1:0:0:0":{"edit":"Himmelfahrt","init":""},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:1.1":{"edit":"2008/05/01","init":""}}}},"FB-0:2::0-2:0":{"init":{},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{},"anchor_id":"FB-0:2::0","FB-0:2::0-2:0:0":{"init":{},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{},"sid":"fOgxYfYbDsURsl0aNGbG6Z1YIV-ZkAKRcYOCfQ","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{},"FB-0:0:0":{"init":{},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{},"anchor_id":"FB-0","allow_new":true,"FB-0:0:0:0":{"edit":"Optimist","init":""}},"FB-0:0:1":{"edit":"AUT","init":""},"FB-0:0:2":{"edit":"1107","init":""},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{},"FB-0:2::0-0":{"init":{},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{}},"FB-0:2::0-1:0":{"init":{},"sid":"fMnHFpRBFhgHmQbqTGqMP4uYQZTUb6F-EY-W3A","$id":"FB-0:2::0-1:0","$child_ids":["FB-0:2::0-1:0:0"],"edit":{},"anchor_id":"FB-0:2::0","allow_new":false,"FB-0:2::0-1:0:0":{"init":{},"sid":"LAbHfFpehW2v0SWTtWejFZHcgiof12F6tEXqHQ","$id":"FB-0:2::0-1:0:0","$child_ids":["FB-0:2::0-1:0:0:0","FB-0:2::0-1:0:0:1"],"edit":{},"anchor_id":"FB-0:2::0-1:0","allow_new":false,"FB-0:2::0-1:0:0:0":{"edit":"Himmelfahrt","init":""},"FB-0:2::0-1:0:0:1":{"$id":"FB-0:2::0-1:0:0:1","$child_ids":["FB-0:2::0-1:0:0:1.0","FB-0:2::0-1:0:0:1.1"],"anchor_id":"FB-0:2::0-1:0:0","FB-0:2::0-1:0:0:1.0":{"edit":"2008/05/01","init":""},"FB-0:2::0-1:0:0:1.1":{"edit":"2008/05/01","init":""}}}},"FB-0:2::0-2:0":{"init":{},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{},"sid":"Io5Zp4Z90IV9HegDgIdelmsssgusjRQhFhHAag","$id":"FB-0:2::0-2:0:0","$child_ids":["FB-0:2::0-2:0:0:0","FB-0:2::0-2:0:0:1","FB-0:2::0-2:0:0:2","FB-0:2::0-2:0:0:3"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:0:0":{"edit":"Tanzer","init":""},"FB-0:2::0-2:0:0:1":{"edit":"Laurens","init":""},"FB-0:2::0-2:0:0:2":{"init":"","edit":"William II"},"FB-0:2::0-2:0:0:3":{"init":""}},"FB-0:2::0-2:0:1":{"edit":"AUT","init":""},"FB-0:2::0-2:0:2":{"edit":"29676","init":""},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}

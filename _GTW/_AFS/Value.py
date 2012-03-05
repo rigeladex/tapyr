@@ -42,6 +42,7 @@
 #    20-Jan-2012 (CT) Add and use `_check_sids`
 #     1-Mar-2012 (CT) Change `apply` to accumulate `results` and pass
 #                     `results` to `elem.apply`
+#     5-Mar-2012 (CT) Add `allow_new` to `pop_to_self`
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,8 @@ class Value (_Base_) :
         self.children = children = []
         self.pop_to_self \
             ( json_cargo
-            , "anchor_id", "edit", "init", "prefilled", "role_id", "sid"
+            , "allow_new", "anchor_id", "edit", "init"
+            , "prefilled", "role_id", "sid"
             )
         for c_id in sorted (uniq (json_cargo.get ("$child_ids", ()))) :
             children.append (self.__class__ (form, c_id, json_cargo [c_id]))

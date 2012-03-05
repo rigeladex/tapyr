@@ -41,6 +41,7 @@
 ##    16-Feb-2012 (CT) Add `next_url`
 ##    29-Feb-2012 (CT) Add `titles`, factor `urls` into separate, nested object
 ##     1-Mar-2012 (CT) Add `Done` to `cmds`, `titles`
+##     5-Mar-2012 (CT) Add `Select`
 ##    ««revision-date»»···
 ##--
 #}
@@ -61,21 +62,23 @@
       , { cmds : {# -#}
             { {{- trans (GTW._ ("Add")) -}}
             , {{- trans (GTW._ ("Cancel")) -}}
-            , {{- trans (GTW._ ("Done")) -}}
-            , {{- trans (GTW._ ("Reset")) -}}
             , {{- trans (GTW._ ("Copy")) -}}
             , {{- trans (GTW._ ("Delete")) -}}
+            , {{- trans (GTW._ ("Done")) -}}
             , {{- trans (GTW._ ("Edit")) -}}
+            , {{- trans (GTW._ ("Reset")) -}}
+            , {{- trans (GTW._ ("Select")) -}}
             , {{- trans (GTW._ ("Save")) -}}
             }
         , titles : {# -#}
             { {{- trans ("Add",    GTW._ ("Create new object")) -}}
             , {{- trans ("Cancel", GTW._ ("Discard changes")) -}}
-            , {{- trans ("Done",   GTW._ ("Accept changes")) -}}
-            , {{- trans ("Reset",  GTW._ ("Reset fields to start values")) -}}
             , {{- trans ("Copy",   GTW._ ("Make a copy of this object")) -}}
             , {{- trans ("Delete", GTW._ ("Delete this object")) -}}
+            , {{- trans ("Done",   GTW._ ("Accept changes")) -}}
             , {{- trans ("Edit",   GTW._ ("Change attributes of this object")) -}}
+            , {{- trans ("Reset",  GTW._ ("Reset fields to start values")) -}}
+            , {{- trans ("Select", GTW._ ("Select an object as value for this field")) -}}
             , {{- trans ("Save",   GTW._ ("Save the attribute values as displayed in form fields")) -}}
             }
         , url : {# -#}

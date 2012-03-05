@@ -49,6 +49,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import unicode_literals
+
 from   _TFL           import TFL
 from   _MOM           import MOM
 
@@ -502,7 +504,7 @@ class Invalid_Attribute (Error, AttributeError) :
 
     def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
         msg = \
-            ( "Can't set %s attribute %s.%s to `%s`"
+            ( "Can't set %s attribute %s.%s to `%r`"
             % (kind, entity.type_base_name, name, val)
             )
         if exc :

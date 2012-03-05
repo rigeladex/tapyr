@@ -17,18 +17,21 @@
 //    15-Dec-2011 (CT) Creation
 //    16-Jan-2012 (CT) Add `CONFIG`
 //    29-Feb-2012 (CT) Add `COPY`, `DELETE`, `EDIT`, and `RESET`
+//     5-Mar-2012 (CT) Add `HELP`, `INFO`, `REFRESH`, and `SELECT`,
+//                     change icons of `CONFIG` and `RESET`
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function () {
+    // http://jqueryui.com/themeroller/ has a list of jquery framework icons
     var default_icon_map =
         { ADD         : "plusthick"
         , APPLY       : "check"
         , CANCEL      : "closethick"
         , CLEAR       : "trash"
-        , CONFIG      : "wrench"
+        , CONFIG      : "gear"
         , COPY        : "copy"
         , DELETE      : "trash"
         , DISABLE     : "minusthick"
@@ -36,10 +39,14 @@
         , EDIT        : "pencil"
         , ENABLE      : "plusthick"
         , FIRST       : "arrowthick-1-n"
+        , HELP        : "help"
+        , INFO        : "info"
         , LAST        : "arrowthick-1-s"
         , NEXT        : "arrowthick-1-e"
         , PREV        : "arrowthick-1-w"
-        , RESET       : "refresh"
+        , REFRESH     : "refresh"
+        , RESET       : "arrowreturnthick-1-n"
+        , SELECT      : "pencil"
         , SORT_ASC    : "triangle-1-s"
         , SORT_DESC   : "triangle-1-n"
         };
