@@ -686,7 +686,8 @@
             , Select : function select_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
-                  alert ("XXX select_cb needs to be implemented");
+                  // alert ("XXX select_cb needs to be implemented");
+                  return cmd_callback.Edit (s$, elem, id, ev);
               }
             };
         var field_change_cb = function field_change_cb (ev) {

@@ -438,6 +438,16 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
         return value.entity
     # end def applyf
 
+    def _apply_create (self, value, results, scope, ** kw) :
+        ### just for debugging as long as select_cb isn't implemented in JS
+        if value.edit.get ("pid") is None :
+            return self.__super._apply_create (value, results, scope, ** kw)
+        else :
+            if __debug__ :
+                entity = scope.pid_query (value.edit.pid)
+                print "*** Change in AFS form for Field_Entity without allow_new", entity
+    # end def _apply_create
+
     def _apply_for_pid (self, value, kw) :
         if not getattr (value, "allow_new", False) :
             return self.__super._apply_for_pid (value, kw)

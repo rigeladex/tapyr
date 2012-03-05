@@ -1926,20 +1926,42 @@ _test_code = """
       > (('FB-0:2::0-2:0:3', 'GTW.OMP.SRM.Club'), ('FB-0:2::0-2:0:3:0', 'name'), 0)
       < (('FB-0:2::0-2:0:3', 'GTW.OMP.SRM.Club'), ('FB-0:2::0-2:0:3:0', 'name'), 0)
 
+"""
+
+_person_test = """
+    >>> NL = chr (10)
+
+    >>> scope = Scaffold.scope ("hps://") # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> from _GTW._AFS._MOM import Spec
+    >>> SL = Spec.Entity (include_links = ("addresses", "emails", "phones"))
+    >>> xl = SL (scope.PAP.Person.E_Type)
+
+    >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> b   = SRM.Boat.instance_or_new (u"Optimist", u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
+    >>> s   = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
+    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
+    >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
+
     >>> em  = PAP.Email ("laurens.tanzer@gmail.com")
     >>> phe = PAP.Person_has_Email (p, em)
     >>> scope.commit ()
+
     >>> fp  = Form ("FP", children = [xl])
     >>> fip = fp (PAP.Person, p)
 
     >>> for i in fip.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FP> [('sid', 0)]
-    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 13}), ('sid', 'yC56K2wjBh4Gyczvb-F:5jHb-nhqHsLvD:n9lQ')]
+    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 3}), ('sid', 'Xv1-aSH1pKVZGBVxce:V18yKm5-q:3IgenOqQA')]
     <Fieldset FP-0:0 'primary'> []
     <Field FP-0:0:0 'last_name'> [(u'init', u'Tanzer')]
     <Field FP-0:0:1 'first_name'> [(u'init', u'Laurens')]
-    <Field FP-0:0:2 'middle_name'> [(u'init', u'w.')]
+    <Field FP-0:0:2 'middle_name'> []
     <Field FP-0:0:3 'title'> []
     <Fieldset FP-0:1 'necessary'> []
     <Field FP-0:1:0 'sex'> []
@@ -1950,10 +1972,10 @@ _test_code = """
     <Field FP-0:2:1 'salutation'> []
     <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
     <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
-    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [(u'init', {'pid': 9, 'cid': 19}), ('sid', 'c36my1sUz-sS5RB61HW0fDVE3oGiXwP1YT-rxQ')]
-    <Field_Role_Hidden FP-0:4::0-0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 13}), ('sid', 'Khb3aMSN:S0BMDJLtIuhOZrHk1qT6P6AwAvd4Q')]
+    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [(u'init', {'pid': 9, 'cid': 9}), ('sid', 'c36my1sUz-sS5RB61HW0fDVE3oGiXwP1YT-rxQ')]
+    <Field_Role_Hidden FP-0:4::0-0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 3}), ('sid', 'Khb3aMSN:S0BMDJLtIuhOZrHk1qT6P6AwAvd4Q')]
     <Fieldset FP-0:4::0-1 'primary'> []
-    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [(u'init', {'pid': 8, 'cid': 18}), ('sid', '0t3RCRxWf2syyJrKUjINQOmgZC3RWk4PzKRJVA')]
+    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [(u'init', {'pid': 8, 'cid': 8}), ('sid', '0t3RCRxWf2syyJrKUjINQOmgZC3RWk4PzKRJVA')]
     <Field FP-0:4::0-1:0:0 'address'> [(u'init', u'laurens.tanzer@gmail.com')]
     <Fieldset FP-0:4::0-2 'optional'> []
     <Field FP-0:4::0-2:0 'desc'> []
@@ -1986,7 +2008,6 @@ _test_code = """
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None
     Entity_List Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
-
 """
 
 _prefilled_test = """
@@ -2969,6 +2990,7 @@ json_bad  = """{"$id":"FC"}"""
 __test__ = dict \
     ( AFS_Spec           = _test_code
     , Entity_Links_Group = _entity_links_group
+    , Person             = _person_test
     , Prefilled          = _prefilled_test
     )
 
