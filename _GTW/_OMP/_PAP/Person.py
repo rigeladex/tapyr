@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -48,6 +48,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     4-Dec-2011 (CT) Adapt to factoring of `MOM.Attr.Querier` from
 #                     `MOM.Attr.Filter`
+#     6-Mar-2012 (CT) Factor `Subject`
 #    ««revision-date»»···
 #--
 
@@ -62,9 +63,9 @@ from   _GTW                        import GTW
 from   _GTW._OMP._PAP              import PAP
 from   _TFL.I18N                   import _
 
-import _GTW._OMP._PAP.Entity
+import _GTW._OMP._PAP.Subject
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = PAP.Subject
 
 class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
     """Special auto-complete query filter for the `first_name` and
@@ -92,12 +93,14 @@ class Filter_String_FL (MOM.Attr.Querier.String) :
 
 # end class Filter_String_FL
 
-class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
+class _PAP_Person_ (_Ancestor_Essence) :
     """Model a person."""
 
     _real_name = "Person"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
+
+        ### Primary attributes
 
         class _personal_name_ (A_String) :
 
@@ -154,12 +157,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class title
 
-        class lifetime (A_Date_Interval) :
-            """Date of birth [`start`] (and death [`finish`])"""
-
-            kind           = Attr.Optional
-
-        # end class lifetime
+        ### Non-primary attributes
 
         class salutation (A_String) :
             """Salutation to be used when communicating with person (e.g., in
