@@ -211,4 +211,4 @@ __all__ = tuple \
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)
-### __END__ MOM.Attr.Lifetime
+### __END__ MOM.Attr.Date_Interval
