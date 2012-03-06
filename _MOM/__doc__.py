@@ -1317,14 +1317,14 @@ Changing objects and links
     >>> print m.as_code ()
     BMT.Mouse (u'mighty_mouse', color = u'black', weight = 25.0)
     >>> try :
-    ...   m.set (weight = "one ton")
+    ...   m.set (weight = "'one ton'")
     ... except ValueError :
     ...   pass
-    Error in `cooked` of `Float `weight`` for value `one ton` [(u'mighty_mouse')]
+    Error in `cooked` of `Float `weight`` for value `'one ton'` [(u'mighty_mouse')]
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...
-    Invalid_Attribute: Can't set necessary attribute Mouse.weight to `one ton`
+    Invalid_Attribute: Can't set necessary attribute Mouse.weight to `'one ton'`
         `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`
