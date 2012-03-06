@@ -26,6 +26,18 @@
 
 "use strict";
 
+// Todo for refactoring
+// - encapsulate locals of `focus_cb` into context object and pass it to
+//   function parameters
+//
+// - key: function parameter to determine it instead of hardcoded
+//   `target$.prop ("id")`
+//
+// - apply_cb: function parameter
+//
+// -
+// ««text»»···
+
 ( function ($, undefined) {
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
