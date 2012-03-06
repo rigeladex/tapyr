@@ -164,6 +164,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    19-Jan-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
 #                     consider `obj._home_scope`, append to `obj._init_pending`
+#     6-Mar-2012 (CT) Add sanity check for `Syntax_Re_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -381,6 +382,12 @@ class Kind (MOM.Prop.Kind) :
     def _check_sanity (self, attr_type) :
         if __debug__ :
             self._check_sanity_default (attr_type)
+            if isinstance (attr_type, attr_type.Syntax_Re_Mixin) :
+                if attr_type._syntax_re is None :
+                    raise ValueError \
+                        ( "`%s` needs a definition for `_syntax_re`"
+                        % (attr_type, )
+                        )
     # end def _check_sanity
 
     def _check_sanity_default (self, attr_type) :

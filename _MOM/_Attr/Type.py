@@ -208,6 +208,8 @@
 #    20-Dec-2011 (CT) Remove `ckd_query` and `ckd_query_eq`
 #    22-Dec-2011 (CT) Add `A_Date.completer`
 #    15-Feb-2012 (CT) Change unlimited `A_Link_Role.max_links` from `0` to `-1`
+#     6-Mar-2012 (CT) Use `_` at class level, not `_T`
+#     6-Mar-2012 (CT) Factor `Syntax_Re_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -226,7 +228,7 @@ import _MOM._Attr.Querier
 import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
 
-from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.I18N             import _, _T
 from   _TFL.Regexp           import *
 from   _TFL                  import sos
 
@@ -442,6 +444,27 @@ class A_Attr_Type (object) :
     # end def __str__
 
 # end class A_Attr_Type
+
+class Syntax_Re_Mixin (TFL.Meta.Object) :
+    """Mixin to check the syntax of a raw value via a regular expression
+       `_syntax_re`.
+    """
+
+    _syntax_re = None
+
+    def check_syntax (self, obj, value) :
+        if value :
+            super = self.__super.check_syntax
+            if super is not None :
+                super (obj, value)
+            v = value.strip ()
+            if not self._syntax_re.match (v) :
+                raise MOM.Error.Attribute_Syntax_Error (obj, self, value)
+    # end def check_syntax
+
+# end class Syntax_Re_Mixin
+
+A_Attr_Type.Syntax_Re_Mixin = Syntax_Re_Mixin
 
 class _A_Binary_String_ (A_Attr_Type) :
     """Base type for attributes written to database as binary string."""
@@ -1702,26 +1725,16 @@ class A_Link_Role_EB (A_Link_Role) :
 
 # end class A_Link_Role_EB
 
-class A_Name (_A_String_) :
+class A_Name (Syntax_Re_Mixin, _A_String_) :
     """Models a name-valued attribute of an object."""
 
     typ                = "Name"
     max_length         = 32
-    identifier_pattern = Regexp (u"^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
-    syntax             = _T \
+    _syntax_re         = Regexp (u"^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
+    syntax             = _ \
         ( u"A name must start with a letter or underscore and continue with "
           u"letters, digits, and underscores."
         )
-
-    def check_syntax (self, obj, value) :
-        if value :
-            super = self.__super.check_syntax
-            if super is not None :
-                super (obj, value)
-            v = value.strip ()
-            if not self.identifier_pattern.match (v) :
-                raise MOM.Error.Attribute_Syntax_Error (obj, self, value)
-    # end def check_syntax
 
 # end class A_Name
 
