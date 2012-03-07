@@ -210,6 +210,9 @@
 #    15-Feb-2012 (CT) Change unlimited `A_Link_Role.max_links` from `0` to `-1`
 #     6-Mar-2012 (CT) Use `_` at class level, not `_T`
 #     6-Mar-2012 (CT) Factor `Syntax_Re_Mixin`
+#     7-Mar-2012 (CT) Change ancestor of `A_Attr_Type` from `object` to
+#                     `TFL.Meta.Object` (to avoid MRO conflict for
+#                     Syntax_Re_Mixin [which derives from `TFL.Meta.Object`])
 #    ««revision-date»»···
 #--
 
@@ -242,7 +245,7 @@ import itertools
 import math
 import time
 
-class A_Attr_Type (object) :
+class A_Attr_Type (TFL.Meta.Object) :
     """Root class for attribute types for the MOM meta object model."""
 
     __metaclass__       = MOM.Meta.M_Attr_Type
