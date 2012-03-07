@@ -42,6 +42,7 @@
 ##    16-Feb-2012 (CT) Add `cancel_kw` and `submit_kws` to call of `FM.form`
 ##    23-Feb-2012 (CT) Add `do_description` and `do_label`
 ##    29-Feb-2012 (CT) Replace `do_menu` by `do_cmds`, use class `cmd-button`
+##     7-Mar-2012 (CT) Change `do_head` to wrap `tail` inside an `<i>` element
 ##    ««revision-date»»···
 ##--
 #}
@@ -105,10 +106,12 @@
       {%- if cssc %} class="{{ cssc }}"{% endif -%}
       {%- if desc %} title="{{ desc }}"{% endif -%}
   >
-    {{- head or GTW._Tn (elem.ui_name or elem.name, n = n) }}
-    {%- if tail -%}
-      : {{ tail }}
-    {% endif -%}
+    {{- head or GTW._Tn (elem.ui_name or elem.name, n = n) -}}
+    <i>
+      {%- if tail %}
+        {{- tail -}}
+      {% endif -%}
+    </i>
     {%- if head_caller %}
       {{ head_caller () }}
     {% endif -%}

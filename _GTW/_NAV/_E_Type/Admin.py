@@ -160,6 +160,7 @@
 #    24-Feb-2012 (CT) Add and use `default_qr_kw` with `limit = 25`
 #    27-Feb-2012 (CT) Add and use `_nested_form_parameters`; factor
 #                     `instantiated`
+#     7-Mar-2012 (CT) Factor `_get_attr_filter`, add handling of `json.fid`
 #    ««revision-date»»···
 #--
 
@@ -385,6 +386,23 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             except JSON_Error as exc :
                 return exc (handler)
         # end def rendered
+
+        def _get_attr_filter (self, json) :
+            ET  = self.E_Type
+            etn = None
+            if "key" in json :
+                key = json.key
+            else :
+                form, elem = self.form_element   (json.fid)
+                field      = self.field_element  (form, json.trigger)
+                etn        = elem.type_name
+                key        = field.name
+            if "etn" in json :
+                etn = json.etn
+            if etn is not None :
+                ET  = self.scope [etn].E_Type
+            return QR.Filter (ET, key)
+        # end def _get_attr_filter
 
         def _rendered_completions (self, ETM, query, names, entity_p, json) :
             result = dict (matches = [], partial = False)
@@ -883,8 +901,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         """Process AJAX query for entity auto completions"""
 
         def _rendered (self, handler, template, HTTP, request) :
-            json    = TFL.Record      (** handler.json)
-            af      = QR.Filter       (self.E_Type, json.aid)
+            json    = TFL.Record (** handler.json)
+            af      = self._get_attr_filter (json)
             filters = QR.Filter_Atoms (af)
             ETM     = self.top.scope  [af.attr.E_Type.type_name]
             obj     = ETM.pid_query   (json.pid)
@@ -905,7 +923,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         def _rendered (self, handler, template, HTTP, request) :
             json   = TFL.Record (** handler.json)
-            af     = QR.Filter  (self.E_Type, json.aid)
+            af     = self._get_attr_filter (json)
             ET     = af.attr.E_Type
             at     = QR.Filter  (ET, json.trigger)
             names  = tuple \
@@ -930,10 +948,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         """Process AJAX query for entity-selector form"""
 
         def _rendered (self, handler, template, HTTP, request) :
-            json    = TFL.Record         (** handler.json)
-            af      = QR.Filter          (self.E_Type, json.key)
-            filters = QR.Filter_Atoms    (af)
-            result  = self._rendered_esf (af, filters)
+            json    = TFL.Record (** handler.json)
+            af      = self._get_attr_filter (json)
+            filters = QR.Filter_Atoms       (af)
+            result  = self._rendered_esf    (af, filters)
             return result
         # end def _rendered
 

@@ -22,6 +22,7 @@
 //                     a single match
 //    24-Feb-2012 (CT) Change `get_completions` to handle `n == 0` correctly
 //     7-Mar-2012 (CT) Factor `ET_Selector` and `ET_Selector_HD`
+//     7-Mar-2012 (CT) Add `ET_Selector_AFS`, refactor as necessary
 //    ««revision-date»»···
 //--
 
@@ -34,7 +35,9 @@
     var ET_Selector = $GTW.Class.extend (
         { defaults              :
             { icon_map          : {}
-            , selectors         : {}
+            , selectors         :
+                { aid           : "[name=__attribute_selector_for__]"
+                }
             , treshold          : 1
             }
         , init                  : function init (opts) {
@@ -63,14 +66,12 @@
           }
         , activate_cb           : function activate_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
-              self.target$ = $(ev.delegateTarget);
-              self.key     = self.get_key (ev, self.target$);
+              self.target$  = $(ev.delegateTarget);
+              self.esf_data = self.get_esf_data (ev, self.target$);
               if (! self.ajax_response) {
                   $.gtw_ajax_2json
                       ( { async       : false
-                        , data        :
-                            { key     : self.key
-                            }
+                        , data        : self.esf_data
                         , success     : function (response, status) {
                               if (! response ["error"]) {
                                   if ("html" in response) {
@@ -90,6 +91,18 @@
                       );
               } else {
                   self.widget = self.setup_widget (self.ajax_response);
+              };
+              return false;
+          }
+        , apply_cb              : function apply_cb (ev) {
+              var self = (ev && "data" in ev) ? ev.data || this : this;
+              var response = self.widget.data ("completed_response");
+              if (response ["value"] && response ["display"]) {
+                  self._apply_cb_inner (ev, response);
+              };
+              self.close_cb  (ev);
+              if ("esf_focusee" in self.options) {
+                  self.options.esf_focusee.focus ();
               };
               return false;
           }
@@ -143,10 +156,10 @@
         , get_completions       : function get_completions (inp$, term, cb) {
               var self     = this;
               var S        = self.options.selectors;
-              var aid      = self.widget.find (S.aid).val ();
               var trigger  = inp$.prop ("id");
               var values   = {}, n = 0;
-              if (aid) {
+              self.completion_data = self.get_completion_data ();
+              if (self.completion_data.key) {
                   self.widget.find (":input").not ("button, .hidden").each
                       ( function () {
                           var i$ = $(this);
@@ -162,13 +175,14 @@
               if (n > 0) {
                   $.gtw_ajax_2json
                       ( { async         : true
-                        , data          :
-                            { aid       : aid
-                            , entity_p  : true
-                            , trigger   : trigger
-                            , trigger_n : trigger
-                            , values    : values
-                            }
+                        , data          : $.extend
+                            ( { entity_p  : true
+                              , trigger   : trigger
+                              , trigger_n : trigger
+                              , values    : values
+                              }
+                            , self.completion_data
+                            )
                         , success       : function (answer, status, xhr) {
                             if (! answer ["error"]) {
                                 self.get_ccb (inp$, term, cb, answer);
@@ -187,9 +201,7 @@
         , select_cb             : function select_cb (ev, inp$, item) {
               var self     = this;
               var S        = self.options.selectors;
-              var aid      = self.widget.find (S.aid).val ();
               var response = inp$.data ("completer_response");
-              var trigger  = inp$.prop ("id");
               if (response.partial) {
                   inp$.val (item.value);
                   if (response.matches.length > 1) {
@@ -206,10 +218,11 @@
               } else {
                   $.gtw_ajax_2json
                       ( { async         : true
-                        , data          :
-                            { aid       : aid
-                            , pid       : item.value
-                            }
+                        , data          : $.extend
+                            ( { pid     : item.value
+                              }
+                            , self.completion_data
+                            )
                         , success       : function (answer, status, xhr) {
                               self.completed_cb (inp$, answer);
                           }
@@ -275,40 +288,49 @@
           }
         }
     );
-    var ET_Selector_HD = ET_Selector.extend (
-        { defaults              : $.extend
-            ( {}
-            , ET_Selector.defaults
-            , { selectors       :
-                  { aid         : "[name=__attribute_selector_for__]"
-                  }
-              }
-            )
-        , apply_cb              : function apply_cb (ev) {
-              var self = (ev && "data" in ev) ? ev.data || this : this;
-              var but$ = $(ev.delegateTarget);
-              var hidden$, response;
-              response = self.widget.data ("completed_response");
-              if (response ["value"] && response ["display"]) {
-                  hidden$ = self.target$.siblings
-                      ("[name=\"" + self.key + "\"]").first ();
-                  self.target$
-                      .prop ("title", response.display)
-                      .val  (response.display);
-                  hidden$
-                      .val  (response.value);
-                  self.close_cb  (ev);
-                  if ("esf_focusee" in self.options) {
-                      self.options.esf_focusee.focus ();
-                  };
-              };
-              return false;
+    var ET_Selector_AFS = ET_Selector.extend (
+        { get_completion_data   : function get_completion_data () {
+              var aid$ = this.widget.find (this.options.selectors.aid);
+              return { key : aid$.val (), etn : aid$.prop ("title") };
           }
-        , get_key               : function get_key (ev, target$) {
-              return target$.prop ("id");
+        , get_esf_data          : function get_esf_data (ev, target$) {
+              var result =
+                  { fid     : this.options.afs.elem.anchor_id
+                  , trigger : this.options.afs.fid
+                  };
+              return result;
+          }
+        , _apply_cb_inner       : function (ev, response) {
+              self.options.afs.apply_cb (response.display, response.value);
           }
         }
     );
+    var ET_Selector_HD = ET_Selector.extend (
+        { get_completion_data   : function get_completion_data () {
+              var aid$ = this.widget.find (this.options.selectors.aid);
+              return { key : aid$.val () };
+          }
+        , get_esf_data          : function get_esf_data (ev, target$) {
+              return { key : target$.prop ("id") };
+          }
+        , _apply_cb_inner       : function (ev, response) {
+              var hidden$ = self.target$.siblings
+                  ("[name=\"" + self.esf_data.key + "\"]").first ();
+              self.target$
+                  .prop ("title", response.display).val (response.display);
+              hidden$.val (response.value);
+          }
+        }
+    );
+    $.fn.gtw_e_type_selector_afs = function (opts) {
+        this.each
+            ( function () {
+                var selector = new ET_Selector_AFS (opts);
+                $(this).data ("selector_afs", selector);
+              }
+            );
+        return this;
+    };
     $.fn.gtw_e_type_selector_hd = function (opts) {
         this.each
             ( function () {

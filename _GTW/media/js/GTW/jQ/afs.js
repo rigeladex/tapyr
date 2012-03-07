@@ -80,6 +80,7 @@
 //     1-Mar-2012 (CT) Fix sequence of command buttons
 //     1-Mar-2012 (CT) Add stub for `Done` command callback
 //     5-Mar-2012 (CT) Add stub for `Select` command callback
+//     7-Mar-2012 (CT) Implement `select_cb` based on `gtw_e_type_selector_afs`
 //    ««revision-date»»···
 //--
 
@@ -684,10 +685,24 @@
                       );
               }
             , Select : function select_cb (s$, elem, id, ev) {
-                  var value = elem ["value"];
-                  var pid   = value && value.edit.pid;
-                  // alert ("XXX select_cb needs to be implemented");
-                  return cmd_callback.Edit (s$, elem, id, ev);
+                  var target$  = $(ev.delegateTarget);
+                  var selector = target$.data ("selector_afs");
+                  if (! selector) {
+                      target$.gtw_e_type_selector_afs
+                          ( { afs :
+                                { apply_cb : function (display, value) {
+                                      elem.value.edit.pid = value;
+                                      s$.find ("h2 i").html (display);
+                                  }
+                                , elem : elem
+                                , fid  : id
+                                }
+                            , url  : options.url
+                            }
+                          );
+                      selector = target$.data ("selector_afs");
+                  };
+                  selector.activate_cb (ev);
               }
             };
         var field_change_cb = function field_change_cb (ev) {
