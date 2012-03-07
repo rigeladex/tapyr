@@ -795,9 +795,10 @@
                     ($(L ("a.button", {name : "DISABLE"})).gtw_iconify (icons))
                 .attr ("title", options.title.disabler);
         };
-        var setup_esf = function setup_esf (cntxt) {
+        var setup_esf = function setup_esf (context) {
             var S = options.selectors;
-            $(S.attr_filter_value_entity, cntxt).gtw_e_type_selector (options);
+            $(S.attr_filter_value_entity, context).gtw_e_type_selector_hd
+                (options);
         };
         var setup_op_button = function setup_op_button () {
             var but$   = $(this);
