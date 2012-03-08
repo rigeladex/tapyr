@@ -81,6 +81,8 @@
 //     1-Mar-2012 (CT) Add stub for `Done` command callback
 //     5-Mar-2012 (CT) Add stub for `Select` command callback
 //     7-Mar-2012 (CT) Implement `select_cb` based on `gtw_e_type_selector_afs`
+//     8-Mar-2012 (CT) Change `select_cb` to pass `anchor`
+//     8-Mar-2012 (CT) Change `select_cb` to delete `elem.value.edit.cid`
 //    ««revision-date»»···
 //--
 
@@ -685,17 +687,25 @@
                       );
               }
             , Select : function select_cb (s$, elem, id, ev) {
+                  var anchor   = $AFS_E.get (elem.anchor_id || elem.root_id);
                   var target$  = $(ev.delegateTarget);
                   var selector = target$.data ("selector_afs");
+                  var apply_cb = function apply_cb (display, value) {
+                      if ("value" in elem && "edit" in elem ["value"]) {
+                          elem.value.edit.pid = value;
+                          if ("cid" in elem.value.edit) {
+                              delete elem.value.edit.cid;
+                          };
+                      };
+                      s$.find ("h2 i").html (display);
+                  } ;
                   if (! selector) {
                       target$.gtw_e_type_selector_afs
                           ( { afs :
-                                { apply_cb : function (display, value) {
-                                      elem.value.edit.pid = value;
-                                      s$.find ("h2 i").html (display);
-                                  }
-                                , elem : elem
-                                , fid  : id
+                                { anchor   : anchor
+                                , apply_cb : apply_cb
+                                , elem     : elem
+                                , fid      : id
                                 }
                             , url  : options.url
                             }

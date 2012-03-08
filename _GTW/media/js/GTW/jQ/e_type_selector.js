@@ -23,6 +23,7 @@
 //    24-Feb-2012 (CT) Change `get_completions` to handle `n == 0` correctly
 //     7-Mar-2012 (CT) Factor `ET_Selector` and `ET_Selector_HD`
 //     7-Mar-2012 (CT) Add `ET_Selector_AFS`, refactor as necessary
+//     8-Mar-2012 (CT) Fix bugs in `ET_Selector_AFS`, `ET_Selector_HD`
 //    ««revision-date»»···
 //--
 
@@ -290,18 +291,24 @@
     );
     var ET_Selector_AFS = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
-              var aid$ = this.widget.find (this.options.selectors.aid);
-              return { key : aid$.val (), etn : aid$.prop ("title") };
+              var opts = this.options;
+              var aid$ = this.widget.find (opts.selectors.aid);
+              var result =
+                  { key : aid$.val ()
+                  , etn : opts.afs.anchor.type_name // aid$.prop ("title")
+                  };
+              return result;
           }
         , get_esf_data          : function get_esf_data (ev, target$) {
+              var opts = this.options;
               var result =
-                  { fid     : this.options.afs.elem.anchor_id
-                  , trigger : this.options.afs.fid
+                  { fid     : opts.afs.elem.anchor_id
+                  , trigger : opts.afs.fid
                   };
               return result;
           }
         , _apply_cb_inner       : function (ev, response) {
-              self.options.afs.apply_cb (response.display, response.value);
+              this.options.afs.apply_cb (response.display, response.value);
           }
         }
     );
@@ -314,9 +321,9 @@
               return { key : target$.prop ("id") };
           }
         , _apply_cb_inner       : function (ev, response) {
-              var hidden$ = self.target$.siblings
-                  ("[name=\"" + self.esf_data.key + "\"]").first ();
-              self.target$
+              var hidden$ = this.target$.siblings
+                  ("[name=\"" + this.esf_data.key + "\"]").first ();
+              this.target$
                   .prop ("title", response.display).val (response.display);
               hidden$.val (response.value);
           }
