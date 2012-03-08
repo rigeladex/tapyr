@@ -538,7 +538,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             if pid is not None :
                 try :
                     obj = context ["instance"] = self.ETM.pid_query (pid)
-                except LookupError :
+                except (LookupError, ValueError) :
                     request.Error = \
                         ( _T ("%s `%s` doesn't exist!")
                         % (_T (self.E_Type.ui_name), pid)

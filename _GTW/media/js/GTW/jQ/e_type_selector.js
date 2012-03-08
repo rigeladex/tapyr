@@ -24,6 +24,7 @@
 //     7-Mar-2012 (CT) Factor `ET_Selector` and `ET_Selector_HD`
 //     7-Mar-2012 (CT) Add `ET_Selector_AFS`, refactor as necessary
 //     8-Mar-2012 (CT) Fix bugs in `ET_Selector_AFS`, `ET_Selector_HD`
+//     8-Mar-2012 (CT) Add `options.completer_position` and `.dialog_position`
 //    ««revision-date»»···
 //--
 
@@ -33,13 +34,20 @@
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
     };
+    var default_position =
+        { my         : "right top"
+        , at         : "right bottom"
+        , collision  : "fit"
+        };
     var ET_Selector = $GTW.Class.extend (
         { defaults              :
-            { icon_map          : {}
-            , selectors         :
-                { aid           : "[name=__attribute_selector_for__]"
+            { completer_position  : default_position
+            , dialog_position     : default_position
+            , icon_map            : {}
+            , selectors           :
+                { aid             : "[name=__attribute_selector_for__]"
                 }
-            , treshold          : 1
+            , treshold            : 1
             }
         , init                  : function init (opts) {
               var icon_map = $.extend
@@ -47,6 +55,7 @@
                   , this.defaults.icon_map
                   , opts && opts ["icon_map"] || {}
                   );
+              var completer_position, dialog_position;
               this.icons = new $GTW.UI_Icon_Map (icon_map);
               this.selectors = $.extend
                   ( {}
@@ -54,12 +63,24 @@
                   , this.icons.selectors
                   , opts && opts ["selectors"] || {}
                   );
+              completer_position = $.extend
+                  ( {}
+                  , this.defaults.completer_position
+                  , opts && opts ["completer_position"] || {}
+                  );
+              dialog_position = $.extend
+                  ( {}
+                  , this.defaults.dialog_position
+                  , opts && opts ["dialog_position"] || {}
+                  );
               this.options = $.extend
                   ( {}
                   , this.defaults
                   , opts || {}
-                  , { icon_map  : this.icons
-                    , selectors : this.selectors
+                  , { icon_map           : this.icons
+                    , completer_position : completer_position
+                    , dialog_position    : dialog_position
+                    , selectors          : this.selectors
                     }
                   );
               this.ajax_response = undefined;
@@ -261,6 +282,7 @@
                                   return false;
                               }
                             , minLength : options.treshold
+                            , position  : options.completer_position
                             , select    : function (event, ui) {
                                   self.select_cb (event, inp$, ui.item);
                                   return false;
@@ -278,11 +300,11 @@
                   .dialog ("open")
                   .dialog ("widget")
                       .position
-                          ( { my         : "right top"
-                            , at         : "right bottom"
-                            , of         : self.target$
-                            , collision  : "fit"
-                            }
+                          ( $.extend
+                              ( {}
+                              , options.dialog_position
+                              , { of : self.target$ }
+                              )
                           );
               this.inputs$.first ().focus ();
               return result;

@@ -43,6 +43,7 @@
 #    22-Feb-2012 (CT) Add more rules for `.centered`, add `align-center`
 #     1-Mar-2012 (CT) Add rule for `div.centered .line`, use
 #                     `P.pg_main_max_width` instead of literal
+#     8-Mar-2012 (CT) Add rule for `li.ui-menu-item`
 #    ««revision-date»»···
 #--
 
@@ -178,6 +179,11 @@ style_sheet = Style_Sheet \
         , font_size      = P.h1_font_size + 10
         , ** P.color_spec_heading
         )
+    , Rule
+        ( ".hidden"
+        , display        = "none"
+        , visibility     = "hidden"
+        )
     , Rule (".just-c",        text_align     = "center")
     , Rule (".just-l",        text_align     = "left")
     , Rule (".just-r",        text_align     = "right")
@@ -232,6 +238,10 @@ style_sheet = Style_Sheet \
         , margin         = "auto"
         , padding        = TRBL (Px (5), 0)
         , width          = "auto"
+        )
+    , Rule
+        ( "li.ui-menu-item"
+        , background_color = P.color_bg_menu
         )
     , Rule
         ( ".section + .section"

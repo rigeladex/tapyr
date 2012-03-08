@@ -37,6 +37,8 @@
 //    16-Jan-2012 (CT) Creation continued (`attr_select`)
 //    17-Jan-2012 (CT) Creation continued (add `focus` to `op_select_cb`)
 //    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
+//     8-Mar-2012 (CT) Add `options.completer_position`, `.dialog_position`,
+//                     `.menu_position`, adjust positions of various popups
 //    ««revision-date»»···
 //--
 
@@ -45,7 +47,26 @@
 ( function ($, undefined) {
     var L = $GTW.L;
     $.fn.gtw_query_restriction = function (qrs, opts) {
-        var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
+        var completer_position = $.extend
+            ( { my         : "left top"
+              , at         : "left bottom"
+              }
+            , opts && opts ["completer_position"] || {}
+            );
+        var dialog_position = $.extend
+            ( { my         : "right top"
+              , at         : "right bottom"
+              }
+            , opts && opts ["dialog_position"] || {}
+            );
+        var icons = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
+        var menu_position  = $.extend
+            ( { my         : "right top"
+              , at         : "left bottom"
+              , collision  : "fit"
+              }
+            , opts && opts ["menu_position"] || {}
+            );
         var selectors = $.extend
             ( { ascending                : ".asc"
               , attr_filter_container    : "tr"
@@ -89,9 +110,12 @@
             ( { treshold  : 0
               }
             , opts || {}
-            , { icon_map  : icons
-              , selectors : selectors
-              , ui_class  : ui_class
+            , { completer_position  : completer_position
+              , dialog_position     : dialog_position
+              , icon_map            : icons
+              , menu_position       : menu_position
+              , selectors           : selectors
+              , ui_class            : ui_class
               }
             );
         var qr$    = $(this);
@@ -283,11 +307,11 @@
                           .dialog ("open")
                           .dialog ("widget")
                               .position
-                                  ( { my         : "top"
-                                    , at         : "bottom"
-                                    , of         : target$
-                                    , collision  : "fit"
-                                    }
+                                  ( $.extend
+                                      ( {}
+                                      , options.dialog_position
+                                      , { of : target$ }
+                                      )
                                   );
                   }
                 }
@@ -453,11 +477,11 @@
                 menu.element
                     .show ()
                     .position
-                      ( { my         : "right top"
-                        , at         : "right bottom"
-                        , of         : but$
-                        , collision  : "fit"
-                        }
+                      ( $.extend
+                          ( options.menu_position
+                          , opts && opts ["position"] || {}
+                          , { of : but$ }
+                          )
                       )
                     .zIndex (but$.zIndex () + 1)
                     .focus  ();
@@ -652,11 +676,11 @@
                           .dialog ("open")
                           .dialog ("widget")
                               .position
-                                  ( { my         : "top"
-                                    , at         : "bottom"
-                                    , of         : target$
-                                    , collision  : "fit"
-                                    }
+                                  ( $.extend
+                                      ( {}
+                                      , options.dialog_position
+                                      , { of : target$ }
+                                      )
                                   );
                   }
                 }
@@ -810,9 +834,8 @@
                 afs.ops_menu$ = new_menu
                     ( sig_map [afs.sig_key]
                     , op_select_cb
-                    , { open : function (ev, menu) {
-                            adjust_op_menu (afs);
-                        }
+                    , { open     : function (ev, menu) { adjust_op_menu (afs); }
+                      , position : { my : "left top" }
                       }
                     );
             };

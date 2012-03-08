@@ -91,6 +91,8 @@
 #                     redefine it for `Field_Entity` to consider `allow_new`
 #     5-Mar-2012 (CT) Redefine `Field_Entity._child_kw` to extract `allow_new`
 #     5-Mar-2012 (CT) Change `apply` to ignore `old_pid`
+#     8-Mar-2012 (CT) Change `Field_Entity._call_iter` to consider `allow_new`
+#                     (do not include `children` unless `allow_new`)
 #    ««revision-date»»···
 #--
 
@@ -421,7 +423,7 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
                     (   f_kw.get    ("collapsed", True)
                     and self.kw.get ("collapsed", True)
                     and not (a_entity is None and attr.is_required)
-                    )
+                    ) or not allow_new
                 , outer_entity   = entity
                 , role_entity    = None
                 , show_defaults  = a_entity is not None or allow_new
@@ -454,7 +456,8 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
     # end def _apply_for_pid
 
     def _call_iter (self, ETM, entity, ** kw) :
-        if not (self.prefilled or kw ["form_kw"].get ("prefilled")) :
+        prefilled = self.prefilled or kw ["form_kw"].get ("prefilled")
+        if kw.get ("allow_new", True) and not prefilled :
             return self.__super._call_iter (ETM, entity, ** kw)
         return ()
     # end def _call_iter
