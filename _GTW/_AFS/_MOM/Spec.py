@@ -69,6 +69,7 @@
 #     2-Feb-2012 (CT) Add `rank` and `show_in_ui` to `Field_Group`
 #    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
 #    27-Feb-2012 (CT) Mix `defaults` and `kw` in `__call__`, not in `__init__`
+#     9-Mar-2012 (CT) Redefine `Field_Entity._field_kw` to add `allow_new`
 #    ««revision-date»»···
 #--
 
@@ -375,6 +376,13 @@ class Field_Entity (_Field_Entity_Mixin_) :
         for f in FGP.fields (E_Type, self, set ()) :
             yield f
     # end def default_elements
+
+    def _field_kw (self, attr, E_Type, ** kw) :
+        result = self.__super._field_kw (attr, E_Type, ** kw)
+        if "allow_new" not in result :
+            result ["allow_new"] = attr.ui_allow_new
+        return result
+    # end def _field_kw
 
 # end class Field_Entity
 

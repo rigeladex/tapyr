@@ -41,6 +41,7 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     2-Feb-2012 (CT) Don't apply `sanitized_filename` to `name`
+#     9-Mar-2012 (CT) Change `Regatta_C.name.computed` to use `.ui_display`
 #    ««revision-date»»···
 #--
 
@@ -201,7 +202,7 @@ class Regatta_C (_Ancestor_Essence) :
             auto_up_depends    = ("boat_class", )
 
             def computed (self, obj) :
-                return obj.boat_class.name
+                return obj.boat_class.ui_display
             # end def computed
 
         # end class name

@@ -896,7 +896,7 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 class _A_Id_Entity_ (_A_Entity_) :
     """Models an attribute referring to an entity."""
 
-    Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
+    Q_Ckd_Type        = MOM.Attr.Querier.Id_Entity
 
     ### allow creation of new entity for this attribute
     ui_allow_new      = True

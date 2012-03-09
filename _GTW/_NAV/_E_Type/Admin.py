@@ -161,6 +161,7 @@
 #    27-Feb-2012 (CT) Add and use `_nested_form_parameters`; factor
 #                     `instantiated`
 #     7-Mar-2012 (CT) Factor `_get_attr_filter`, add handling of `json.fid`
+#     9-Mar-2012 (CT) Extract `allow_new` only if its in `req_data` or `json`
 #    ««revision-date»»···
 #--
 
@@ -585,11 +586,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     session_secret = self.session_secret (handler, fv.sid)
                     self.form_value_apply (fv, scope, fv.sid, session_secret)
                     ikw = dict \
-                        ( allow_new       = bool (json.get ("allow_new"))
-                        , collapsed       = bool (json.get ("collapsed"))
+                        ( collapsed       = bool (json.get ("collapsed"))
                         , _sid            = fv.sid
                         , _session_secret = session_secret
                         )
+                    if "allow_new" in json :
+                        ikw ["allow_new"] = bool (json.get ("allow_new"))
                     result ["$child_ids"] = rids = []
                     for e in fv.entities () :
                         if e.entity :
@@ -629,12 +631,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 result ["completions"] = n = int (obj is not None)
                 if n == 1 :
                     ikw = dict \
-                        ( allow_new        = bool (handler.json.get ("allow_new"))
-                        , collapsed        = False
+                        ( collapsed        = False
                         , copy             = False
                         , _sid             = json.sid
                         , _session_secret  = session_secret
                         )
+                    if "allow_new" in json :
+                        ikw ["allow_new"] = bool (json.allow_new)
                     fi  = self.instantiated (elem, json.fid, ETM, obj, ikw)
                     renderer = self.top.Templateer.get_template (fi.renderer)
                     result.update \
@@ -778,12 +781,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if pid is not None and pid != "null" :
                     obj = context ["instance"] = self.pid_query (ETM, pid)
                 ikw = dict \
-                    ( allow_new       = bool (req_data.get ("allow_new"))
-                    , collapsed       = bool (req_data.get ("collapsed"))
+                    ( collapsed       = bool (req_data.get ("collapsed"))
                     , copy            = req_data.get ("copy")
                     , _sid            = sid
                     , _session_secret = session_secret
                     )
+                if "allow_new" in req_data :
+                    ikw ["allow_new"] = bool (req_data ["allow_new"])
                 new_id_suffix = req_data.get ("new_id_suffix")
                 if new_id_suffix is not None :
                     ikw ["new_id_suffix"] = new_id_suffix

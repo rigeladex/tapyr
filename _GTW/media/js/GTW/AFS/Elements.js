@@ -134,7 +134,7 @@
               var match = this.$id.match (id_suffix_pat);
               if (match !== null) {
                   return Number (match [0]);
-              }
+              };
               return 65535;
           }
         , new_child_idx : function new_child_idx () {
@@ -149,20 +149,20 @@
                       child = this.child (i);
                       if (child) {
                           child.remove ();
-                      }
-                  }
-              }
+                      };
+                  };
+              };
               if (anchor) {
                   delete anchor.value [id];
                   k = anchor.value ["$child_ids"].indexOf (id);
                   if (k >= 0) {
                       anchor.value ["$child_ids"].splice (k, 1);
-                  }
-              }
+                  };
+              };
               k = Elements.root.roots.indexOf (this);
               if (k >= 0) {
                   Elements.root.roots.splice (k, 1);
-              }
+              };
               delete Elements.id_map [id];
           }
         , setup_value : function setup_value (kw) {
@@ -173,16 +173,22 @@
                   this._setup_value (kw, new_kw);
                   if (this.$id !== kw.anchor.$id) {
                       this.anchor_id = kw.anchor.$id;
-                  }
+                  };
+                  if ("allow_new" in this) {
+                      this.value.allow_new = this.allow_new;
+                  };
               }
+              if (this ["completer"] && ! this ["completer"] ["embedded_p"]) {
+                  this.completer.embedded_p = false;
+              };
               if (this ["children"] !== undefined) {
                   for (i = 0, l = this.children.length; i < l; i += 1) {
                       child = this.child (i);
                       if (child) {
                           child.setup_value (new_kw);
-                      }
-                  }
-              }
+                      };
+                  };
+              };
           }
         , _setup_callbacks : function _setup_callbacks (js_callbacks) {
               var cb_map = GTW.AFS.callback_map;
@@ -204,7 +210,7 @@
                   k = value ["$child_ids"].indexOf (this.$id);
                   if (k < 0) {
                       value ["$child_ids"].push (this.$id);
-                  }
+                  };
               }
           }
         , _sv_anchored_or_root : function _sv_anchored_or_root (kw, new_kw) {
@@ -214,12 +220,12 @@
               this.value.$child_ids = [];
               if (this.value ["init"] && ! this.value ["edit"]) {
                   this.value.edit = $GTW.inspect.copy (this.value.init);
-              }
+              };
           }
         , _sv_anchored : function _sv_anchored (kw, new_kw) {
               if (this.$id !== kw.anchor.$id) {
                   this.value ["anchor_id"] = kw.anchor.$id;
-              }
+              };
           }
         , _sv_root : function _sv_root (kw, new_kw) {
               this.root_id = kw.root.$id;

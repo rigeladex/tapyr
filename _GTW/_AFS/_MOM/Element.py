@@ -87,12 +87,11 @@
 #                     `results [value.anchor_id]`, if possible
 #     2-Mar-2012 (CT) Move `_value_sig_t` from `_MOM_Entity_MI_` to
 #                     `_MOM_Entity_`
-#     5-Mar-2012 (CT) Factor `_apply_for_pid`,
-#                     redefine it for `Field_Entity` to consider `allow_new`
 #     5-Mar-2012 (CT) Redefine `Field_Entity._child_kw` to extract `allow_new`
 #     5-Mar-2012 (CT) Change `apply` to ignore `old_pid`
 #     8-Mar-2012 (CT) Change `Field_Entity._call_iter` to consider `allow_new`
 #                     (do not include `children` unless `allow_new`)
+#     9-Mar-2012 (CT) Redefine `Field_Entity.apply` to consider `allow_new
 #    ««revision-date»»···
 #--
 
@@ -144,7 +143,7 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
     # end def __call__
 
     def apply (self, value, results, scope, ** kw) :
-        pid = self._apply_for_pid (value, kw)
+        pid = value.edit.get ("pid")
         if pid is not None :
             result = self._apply_change (pid, value, results, scope, ** kw)
         else :
@@ -174,10 +173,6 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
             ETM = scope [self.type_name]
             return self._create_instance (ETM, akw)
     # end def _apply_create
-
-    def _apply_for_pid (self, value, kw) :
-        return value.edit.get ("pid")
-    # end def _apply_for_pid
 
     def _create_instance (self, ETM, akw) :
         try :
@@ -397,15 +392,32 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
 Field_Composite = _MOM_Field_Composite_ # end class
 
 class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
-    """Model a MOM-specific entity-holding field of an AJAX-enhanced form."""
+    """Model a MOM-specific entity-holding field of an AJAX-enhanced form.
+
+       A Field_Entity models an attribute that refers to another entity.
+
+       If `allow_new` is false, the form doesn't allow the creation of new
+       entities for this field, only existing entities can be selected. In
+       this case, no change of attribute values is allowed.
+
+       If `allow_new` is true, the form allows the creation of new entities
+       for this field. In this case, changes of epk-attributes will force
+       a copy of an existing object (instead of renaming it) -- otherwise the
+       danger of confusion are too big.
+    """
 
     _real_name = "Field_Entity"
+
+    def __init__ (self, allow_new = False, ** kw) :
+        self.__super.__init__ (allow_new = allow_new, ** kw)
+    # end def __init__
 
     def __call__ (self, ETM, entity, ** kw) :
         f_kw = self._child_kw (kw)
         if self.type_name == ETM.type_name :
             ### this clause is taken when a part of the form is called
             ### directly like `Form [id].instantiated (...)`
+            f_kw.setdefault ("allow_new", self.allow_new)
             result = self.__super.__call__ (ETM, entity, ** f_kw)
         else :
             ### this clause is taken when the whole form is processed
@@ -413,9 +425,9 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
             attr         = ETM.E_Type.attributes [self.name]
             a_etm        = attr.etype_manager (ETM)
             a_entity     = getattr (entity, self.name, None)
-            allow_new    = attr.ui_allow_new and f_kw.get ("allow_new", True)
             if a_entity is None and attr.raw_default :
                 a_entity = a_etm.instance (attr.raw_default, raw = True)
+            allow_new    = f_kw.get ("allow_new", self.allow_new)
             f_kw         = dict \
                 ( f_kw
                 , allow_new      = allow_new
@@ -436,36 +448,31 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
         return result
     # end def __call__
 
+    def apply (self, value, results, scope, ** kw) :
+        if getattr (value, "allow_new") :
+            return self._apply_create (value, results, scope, ** kw)
+        else :
+            pid = value.edit.get ("pid")
+            if pid is not None :
+                return scope.pid_query (pid)
+    # end def apply
+
     def applyf (self, value, results, scope, entity, ** kw) :
         return value.entity
     # end def applyf
 
-    def _apply_create (self, value, results, scope, ** kw) :
-        ### just for debugging as long as select_cb isn't implemented in JS
-        if value.edit.get ("pid") is None :
-            return self.__super._apply_create (value, results, scope, ** kw)
-        else :
-            if __debug__ :
-                entity = scope.pid_query (value.edit.pid)
-                print "*** Change in AFS form for Field_Entity without allow_new", entity
-    # end def _apply_create
-
-    def _apply_for_pid (self, value, kw) :
-        if not getattr (value, "allow_new", False) :
-            return self.__super._apply_for_pid (value, kw)
-    # end def _apply_for_pid
-
     def _call_iter (self, ETM, entity, ** kw) :
         prefilled = self.prefilled or kw ["form_kw"].get ("prefilled")
-        if kw.get ("allow_new", True) and not prefilled :
+        if kw.get ("allow_new") and not prefilled :
             return self.__super._call_iter (ETM, entity, ** kw)
         return ()
     # end def _call_iter
 
     def _child_kw (self, kw) :
         result = self.__super._child_kw (kw)
-        if "allow_new" in result ["form_kw"] :
-            result ["allow_new"] = result ["form_kw"].pop ("allow_new")
+        f_kw   = result ["form_kw"]
+        if "allow_new" in f_kw :
+            result ["allow_new"] = f_kw.pop ("allow_new")
         return result
     # end def _child_kw
 

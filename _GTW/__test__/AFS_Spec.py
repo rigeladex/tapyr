@@ -34,6 +34,7 @@
 #    29-Feb-2012 (CT) Add tests for `anchor_id`
 #     5-Mar-2012 (CT) Add tests for `allow_new`
 #     8-Mar-2012 (CT) Adapt tests to changes in AFS handling (allow_new...)
+#     9-Mar-2012 (CT) Add tests for `allow_new`
 #    ««revision-date»»···
 #--
 
@@ -389,8 +390,8 @@ _test_code = """
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s   = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True)
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
-    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
-    >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
+    >>> reo = SRM.Regatta_C (rev, boat_class = bc)
+    >>> bir = SRM.Boat_in_Regatta (b, reo, skipper = s)
 
     >>> scope.commit ()
 
@@ -407,6 +408,27 @@ _test_code = """
     , 'label' : 'Last name'
     , 'name' : 'last_name'
     }
+
+    >>> for e in fb.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.__class__.__name__, e.allow_new)
+    FB-0:0:0             Boat_Class           Field_Entity         True
+    FB-0:2::p-0          Boat                 Field_Role_Hidden    False
+    FB-0:2::p-1:0        Regatta              Field_Entity         False
+    FB-0:2::p-1:0:0      Regatta_Event        Field_Entity         False
+    FB-0:2::p-2:0        Sailor               Field_Entity         True
+    FB-0:2::p-2:0:0      Person               Field_Entity         True
+    FB-0:2::p-2:0:3      Club                 Field_Entity         True
+
+    >>> for e in fi.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.elem.__class__.__name__, e.allow_new)
+    FB-0:0:0             Boat_Class           Field_Entity         True
+    FB-0:2::0-0          Boat                 Field_Role_Hidden    False
+    FB-0:2::0-1:0        Regatta              Field_Entity         False
+    FB-0:2::0-2:0        Sailor               Field_Entity         True
+    FB-0:2::0-2:0:0      Person               Field_Entity         False
+    FB-0:2::0-2:0:3      Club                 Field_Entity         True
 
     >>> for e in fb.transitive_iter () :
     ...   if e.root is not fb :
@@ -1275,6 +1297,26 @@ _test_code = """
     <Entity FB-0 'Boat' 'GTW.OMP.SRM.Boat'> 0
     <Entity_Link FB-0:2::p 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> 0
 
+    >>> for e in fi.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.elem.__class__.__name__, e.allow_new)
+    FB-0:0:0             Boat_Class           Field_Entity         True
+    FB-0:2::0-0          Boat                 Field_Role_Hidden    False
+    FB-0:2::0-1:0        Regatta              Field_Entity         False
+    FB-0:2::0-2:0        Sailor               Field_Entity         True
+    FB-0:2::0-2:0:0      Person               Field_Entity         False
+    FB-0:2::0-2:0:3      Club                 Field_Entity         True
+
+    >>> for e in fv.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.elem.__class__.__name__, e.allow_new)
+    FB-0:0:0             Boat_Class           Field_Entity         True
+    FB-0:2::0-0          Boat                 Field_Role_Hidden    False
+    FB-0:2::0-1:0        Regatta              Field_Entity         False
+    FB-0:2::0-2:0        Sailor               Field_Entity         True
+    FB-0:2::0-2:0:0      Person               Field_Entity         False
+    FB-0:2::0-2:0:3      Club                 Field_Entity         True
+
     >>> v_sig_map = {}
     >>> for v in fv.entity_children () :
     ...     vh = v.elem.form_hash (v)
@@ -1394,8 +1436,8 @@ _person_test = """
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s   = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True)
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
-    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
-    >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
+    >>> reo = SRM.Regatta_C (rev, boat_class = bc)
+    >>> bir = SRM.Boat_in_Regatta (b, reo, skipper = s)
 
     >>> em  = PAP.Email ("laurens.tanzer@gmail.com")
     >>> phe = PAP.Person_has_Email (p, em)
@@ -1524,15 +1566,64 @@ _prefilled_test = """
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> b   = SRM.Boat.instance_or_new (u"Optimist", u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
-    >>> s   = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True)
+    >>> s   = SRM.Sailor.instance_or_new (p,  nation = u"AUT", mna_number = u"29676", raw = True)
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
-    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
-    >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
+    >>> reo = SRM.Regatta_C (rev, boat_class = bc)
+    >>> bio = SRM.Boat_in_Regatta (b, reo, skipper = s)
+
+    >>> bc2 = SRM.Boat_Class ("Laser2",   max_crew = 2)
+    >>> b2  = SRM.Boat.instance_or_new (u"Laser2",   u"AUT", u"4321", raw = True)
+    >>> p2  = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
+    >>> s2  = SRM.Sailor.instance_or_new (p2, nation = u"AUT", raw = True)
+    >>> rey = SRM.Regatta_H (rev, "Yardstick")
+    >>> biy = SRM.Boat_in_Regatta (b2, rey, skipper = s)
+    >>> crw = SRM.Crew_Member (biy, s2)
+
     >>> scope.commit ()
 
-    >>> fib = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (init = reg), Crew_Member = dict (max_links   = 1)))
+    >>> fob = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (init = reo), Crew_Member = dict (max_links = 1)))
+    >>> fyb = fb (SRM.Boat_in_Regatta, biy)
 
-    >>> for i in fib.entity_children () :
+    >>> for e in fb.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.__class__.__name__, e.allow_new)
+    FBR-0:0:0            Boat                 Field_Entity         True
+    FBR-0:0:0:0          Boat_Class           Field_Entity         True
+    FBR-0:0:1            Regatta              Field_Entity         False
+    FBR-0:0:1:0          Regatta_Event        Field_Entity         False
+    FBR-0:1:0            Sailor               Field_Entity         True
+    FBR-0:1:0:0          Person               Field_Entity         True
+    FBR-0:1:0:3          Club                 Field_Entity         True
+    FBR-0:2::p-0         Boat_in_Regatta      Field_Role_Hidden    False
+    FBR-0:2::p-1:0       Sailor               Field_Entity         True
+    FBR-0:2::p-1:0:0     Person               Field_Entity         True
+    FBR-0:2::p-1:0:3     Club                 Field_Entity         True
+
+    >>> for e in fob.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.elem.__class__.__name__, e.allow_new)
+    FBR-0:0:0            Boat                 Field_Entity         True
+    FBR-0:0:0:0          Boat_Class           Field_Entity         True
+    FBR-0:0:1            Regatta              Field_Entity         False
+    FBR-0:1:0            Sailor               Field_Entity         True
+    FBR-0:1:0:0          Person               Field_Entity         True
+    FBR-0:1:0:3          Club                 Field_Entity         True
+
+    >>> for e in fyb.transitive_iter () :
+    ...   if hasattr (e, "allow_new") :
+    ...     print "%-20s %-20s %-20s %s" % (e.id, e.type_base_name, e.elem.__class__.__name__, e.allow_new)
+    FBR-0:0:0            Boat                 Field_Entity         True
+    FBR-0:0:0:0          Boat_Class           Field_Entity         True
+    FBR-0:0:1            Regatta              Field_Entity         False
+    FBR-0:1:0            Sailor               Field_Entity         True
+    FBR-0:1:0:0          Person               Field_Entity         True
+    FBR-0:1:0:3          Club                 Field_Entity         True
+    FBR-0:2::0-0         Boat_in_Regatta      Field_Role_Hidden    False
+    FBR-0:2::0-1:0       Sailor               Field_Entity         True
+    FBR-0:2::0-1:0:0     Person               Field_Entity         True
+    FBR-0:2::0-1:0:3     Club                 Field_Entity         True
+
+    >>> for i in fob.entity_children () :
     ...     print show_instance (i)
     <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>           e = - o = - r = -
     <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'>                       e = - o = - r = -
@@ -1542,7 +1633,7 @@ _prefilled_test = """
     <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'>                   e = - o = - r = -
     <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'>                     e = - o = - r = -
 
-    >>> for i in fib.transitive_iter () :
+    >>> for i in fob.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FBR> [('sid', 0)]
     <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ')]
@@ -1567,8 +1658,8 @@ _prefilled_test = """
     <Field FBR-0:1:0:3:0 'name'> []
     <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> []
 
-    >>> fib_p = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (prefilled = True, init = reg), Crew_Member = dict (max_links   = 1)))
-    >>> for i in fib_p.transitive_iter () :
+    >>> fob_p = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (prefilled = True, init = reo), Crew_Member = dict (max_links   = 1)))
+    >>> for i in fob_p.transitive_iter () :
     ...     print i.elem, sorted ((i.value or {}).iteritems ())
     <Form FBR> [('sid', 0)]
     <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ')]
@@ -1593,7 +1684,7 @@ _prefilled_test = """
     <Field FBR-0:1:0:3:0 'name'> []
     <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> []
 
-    >>> print formatted (fib.as_json_cargo, level = 1)
+    >>> print formatted (fob.as_json_cargo, level = 1)
       { '$id' : 'FBR'
       , 'children' :
           [ { '$id' : 'FBR-0'
@@ -1920,7 +2011,7 @@ _prefilled_test = """
       }
 
 
-    >>> print formatted (fib_p.as_json_cargo, level = 1)
+    >>> print formatted (fob_p.as_json_cargo, level = 1)
       { '$id' : 'FBR'
       , 'children' :
           [ { '$id' : 'FBR-0'
@@ -2335,7 +2426,7 @@ def show_instance (i) :
 ### `json_value` copied from output of::
 ###     /usr/bin/js -s -f GTW/AFS/Elements.test
 json_value = """\
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true,"FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2}},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"p2RvjP735uCrdIOAVP1V:cwc7:9-nI82DsRatw","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"bRXl:AccCuREMDWBGh4aTAZRE4:INKGLWR8hvw","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true,"FB-0:0:0:0":{"init":"Optimist"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"p2RvjP735uCrdIOAVP1V:cwc7:9-nI82DsRatw","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"bRXl:AccCuREMDWBGh4aTAZRE4:INKGLWR8hvw","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
 """
 json_bad  = """{"$id":"FC"}"""
 

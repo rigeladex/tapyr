@@ -249,18 +249,20 @@
                     setTimeout
                         (function () { _trigger_completion  (elem); }, 1);
                 } else if (completer ["entity_p"]) {
-                    if (! elem.completer.embedded_p) {
+                    if (! completer.embedded_p) {
                         _update_field_values (options, elem, match, names);
                     };
                     data   =
-                        { allow_new       : anchor.allow_new
-                        , complete_entity : true
+                        { complete_entity : true
                         , fid             : anchor.anchor_id
                         , pid             : match [response.fields - 1]
                         , sid             : $AFS_E.root.value.sid
                         , trigger         : anchor.$id
                         , trigger_n       : elem.$id
                         };
+                    if ("allow_new" in anchor) {
+                        data.allow_new = anchor.allow_new;
+                    };
                     $.gtw_ajax_2json
                         ( { async         : true
                           , data          : data
