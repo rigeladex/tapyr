@@ -213,6 +213,7 @@
 #     7-Mar-2012 (CT) Change ancestor of `A_Attr_Type` from `object` to
 #                     `TFL.Meta.Object` (to avoid MRO conflict for
 #                     Syntax_Re_Mixin [which derives from `TFL.Meta.Object`])
+#    14-Mar-2012 (CT) Add `Eval_Mixin` and `_A_String_Ascii_`
 #    ««revision-date»»···
 #--
 
@@ -447,6 +448,19 @@ class A_Attr_Type (TFL.Meta.Object) :
     # end def __str__
 
 # end class A_Attr_Type
+
+class Eval_Mixin (TFL.Meta.Object) :
+    """Mixin to use `eval` the raw value to convert the raw value."""
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if value is not None :
+            result = eval (value, {"__builtins__" : {}}, {})
+            return super (Eval_Mixin, soc).cooked (result)
+        return value
+    # end def cooked
+
+# end class Eval_Mixin
 
 class Syntax_Re_Mixin (TFL.Meta.Object) :
     """Mixin to check the syntax of a raw value via a regular expression
@@ -1131,6 +1145,27 @@ class _A_String_ (_A_String_Base_) :
     # end def db_sig
 
 # end class _A_String_
+
+class _A_String_Ascii_ (_A_String_) :
+    """Base class for ascii-string-valued attributes of an object."""
+
+    P_Type            = str
+    _cooked_re        = Regexp \
+        ( "^[\x00-\x7F]*$"
+        , re.VERBOSE
+        )
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if value is not None :
+            value = super (Eval_Mixin, soc).cooked (value)
+            if not self._cooked_re.match (value) :
+                raise ValueError (value)
+        return value
+    # end def cooked
+
+
+# end class _A_String_Ascii_
 
 class _A_Named_Object_ (_A_Named_Value_) :
     """Common base class for attributes holding named objects (that can't be

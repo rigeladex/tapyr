@@ -77,6 +77,7 @@
 #    20-Jul-2011 (CT) `_Encoding_.cook` changed to change `TFL.user_config`
 #                     instead of `TFL.I18N.Config`
 #    30-Jan-2012 (CT) Add `CAO.GET`
+#    14-Mar-2012 (CT) Add empty `__builtins__` to `_safe_eval`
 #    ««revision-date»»···
 #--
 
@@ -296,7 +297,7 @@ class _Spec_ (TFL.Meta.Object) :
     def _safe_eval (self, value) :
         if value :
             try :
-                return eval (value, {}, {})
+                return eval (value, {"__builtins__" : {}}, {})
             except Exception :
                 raise Err ("Invalid value `%s` for %s" % (value, self))
     # end def _safe_eval
