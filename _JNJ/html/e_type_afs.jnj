@@ -43,6 +43,7 @@
 ##     1-Mar-2012 (CT) Add `Done` to `cmds`, `titles`
 ##     5-Mar-2012 (CT) Add `Select`
 ##     7-Mar-2012 (CT) Add `url` entries for `qx_esf...`
+##    16-Mar-2012 (CT) Add `<noscript>` to signal need of Javascript
 ##    ««revision-date»»···
 ##--
 #}
@@ -52,6 +53,9 @@
 {%- endmacro -%} {#- trans -#}
 
 {%- block document %}
+  <noscript>
+    <h1>{{ GTW._T ("Javascript is needed to use this page") }}</h1>
+  </noscript>
   {{ GTW.call_macro (form.type, form, templ_name = form.renderer) }}
 {% endblock -%}
 

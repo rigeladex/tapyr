@@ -48,6 +48,7 @@
 ##     7-Dec-2011 (CT) Put `setup_obj_list` into `callbacks`
 ##     7-Dec-2011 (CT) Add `qx_esf`, reorganize `options`
 ##    16-Jan-2012 (CT) Add `qx_asf`, `select_attr_sortable`
+##    16-Mar-2012 (CT) Add `<noscript>` to signal need of Javascript
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,6 +56,9 @@
 {%- import "html/e_type.m.jnj" as e_type %}
 
 {%- block document %}
+  <noscript>
+    <h1>{{ GTW._T ("Javascript is needed to fully use this page") }}</h1>
+  </noscript>
   {{- e_type.admin (page, fields, objects) -}}
 {% endblock -%}
 
