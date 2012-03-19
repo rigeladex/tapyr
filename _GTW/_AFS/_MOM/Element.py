@@ -92,6 +92,7 @@
 #     8-Mar-2012 (CT) Change `Field_Entity._call_iter` to consider `allow_new`
 #                     (do not include `children` unless `allow_new`)
 #     9-Mar-2012 (CT) Redefine `Field_Entity.apply` to consider `allow_new
+#    19-Mar-2012 (CT) Change `Field_Entity.apply` to consider `prefilled`, too
 #    ««revision-date»»···
 #--
 
@@ -413,11 +414,13 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
     # end def __init__
 
     def __call__ (self, ETM, entity, ** kw) :
-        f_kw = self._child_kw (kw)
+        f_kw      = self._child_kw (kw)
+        allow_new = f_kw.get ("allow_new", self.allow_new) \
+            and not f_kw.get ("prefilled")
         if self.type_name == ETM.type_name :
             ### this clause is taken when a part of the form is called
             ### directly like `Form [id].instantiated (...)`
-            f_kw.setdefault ("allow_new", self.allow_new)
+            f_kw ["allow_new"] = allow_new
             result = self.__super.__call__ (ETM, entity, ** f_kw)
         else :
             ### this clause is taken when the whole form is processed
@@ -427,7 +430,6 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
             a_entity     = getattr (entity, self.name, None)
             if a_entity is None and attr.raw_default :
                 a_entity = a_etm.instance (attr.raw_default, raw = True)
-            allow_new    = f_kw.get ("allow_new", self.allow_new)
             f_kw         = dict \
                 ( f_kw
                 , allow_new      = allow_new
@@ -449,7 +451,7 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
     # end def __call__
 
     def apply (self, value, results, scope, ** kw) :
-        if getattr (value, "allow_new") :
+        if getattr (value, "allow_new") and not getattr (value, "prefilled") :
             return self._apply_create (value, results, scope, ** kw)
         else :
             pid = value.edit.get ("pid")
