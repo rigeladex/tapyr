@@ -162,6 +162,7 @@
 #                     `instantiated`
 #     7-Mar-2012 (CT) Factor `_get_attr_filter`, add handling of `json.fid`
 #     9-Mar-2012 (CT) Extract `allow_new` only if its in `req_data` or `json`
+#    19-Mar-2012 (CT) Change `Completed._rendered` to pass `collapsed = True`
 #    ««revision-date»»···
 #--
 
@@ -630,14 +631,16 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 obj = ETM.pid_query (json.pid)
                 result ["completions"] = n = int (obj is not None)
                 if n == 1 :
+                    allow_new = \
+                        bool (json.allow_new) if "allow_new" in json else False
                     ikw = dict \
-                        ( collapsed        = False
+                        ( collapsed        = True
                         , copy             = False
                         , _sid             = json.sid
                         , _session_secret  = session_secret
                         )
-                    if "allow_new" in json :
-                        ikw ["allow_new"] = bool (json.allow_new)
+                    if allow_new :
+                        ikw ["allow_new"] = allow_new
                     fi  = self.instantiated (elem, json.fid, ETM, obj, ikw)
                     renderer = self.top.Templateer.get_template (fi.renderer)
                     result.update \
