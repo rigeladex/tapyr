@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -37,6 +37,8 @@
 #     6-Sep-2010 (CT) Adapted to change of `Race_Result` from Composite-List
 #                     to `Link1`
 #    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
+#    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
+#    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    ««revision-date»»···
 #--
 
@@ -97,12 +99,13 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> bc  = SRM.Boat_Class.instance (u"Optimist")
+    >>> ys  = SRM.Handicap ("Yardstick")
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
-    >>> reg = SRM.Regatta_C (rev, boat_class = bc)
-    >>> reh = SRM.Regatta_H (rev, handicap = u"Yardstick",  raw = True)
+    >>> reg = SRM.Regatta_C (rev, bc)
+    >>> reh = SRM.Regatta_H (rev, ys)
     >>> bir = SRM.Boat_in_Regatta (b, reg, skipper = s)
 
     >>> rr1 = SRM.Race_Result (bir, 1, points = 8)
@@ -110,13 +113,13 @@ _test_code = r"""
 
     >>> scope.commit ()
     >>> scope.MOM.Id_Entity.count_transitive
-    35
+    36
     >>> int (scope.query_changes (parent = None).count ())
-    35
+    36
     >>> int (scope.query_changes ().count ())
-    36
+    37
     >>> int (scope.ems.max_cid)
-    36
+    37
 
     >>> bc.set (loa = 2.43)
     1
@@ -127,14 +130,14 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.count_transitive
-    35
+    36
     >>> int (scope.query_changes ().count ())
-    39
+    40
     >>> int (scope.ems.max_cid)
-    39
+    40
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
-    >>> b = scope.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
+    >>> b = SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
     >>> print b.last_cid
     7
     >>> c = scope.query_changes (cid = b.last_cid).one ()
@@ -149,12 +152,12 @@ _test_code = r"""
     >>> [s for s in scope if not s.last_cid] ### before expunge
     []
     >>> sum ((not s.last_cid) for s in scope), sum (bool (s.last_cid) for s in scope) ### before expunge
-    (0, 35)
+    (0, 36)
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
     >>> [s for s in scope if not s.last_cid] ### after expunge
     []
     >>> sum ((not s.last_cid) for s in scope), sum (bool (s.last_cid) for s in scope)  ### after expunge
-    (0, 35)
+    (0, 36)
 
     Save contents of scope to database and destroy scope:
 
@@ -178,11 +181,11 @@ _test_code = r"""
     Loading scope MOMT__...
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_s, scope_t))
-    (35, 35)
+    (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_s, scope_t))
     True
     >>> int (scope_t.ems.max_cid)
-    39
+    40
     >>> len (scope_t.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> [s for (s, t) in zip (scope_s, scope_t) if s.last_cid != t.last_cid or not s.last_cid]
@@ -206,17 +209,17 @@ _test_code = r"""
     Loading scope MOMT__...
 
     >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_t, scope_u))
-    (35, 35)
+    (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_t, scope_u))
     True
     >>> int (scope_u.ems.max_cid)
-    39
+    40
     >>> len (scope_u.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> [s for (s, t) in zip (scope_t, scope_u) if s.last_cid != t.last_cid or not s.last_cid]
     []
 
-    >>> b = scope_u.SRM.Boat_Class.query (name = u"Aquila Schwert").one ()
+    >>> b = scope_u.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
     >>> print b.last_cid
     7
     >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope

@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    30-Jan-2012 (CT) Creation
+#    19-Mar-2012 (CT) Adapt to factoring of `PAP.Subject`
+#    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    ««revision-date»»···
 #--
 
@@ -77,12 +79,12 @@ _test_code = r"""
     GTW.OMP.Auth.Account_Activation                False  ('left',)
     GTW.OMP.Auth.Account_Password_Change_Required  False  ('left',)
     GTW.OMP.EVT.Recurrence_Spec                    False  ('left',)
-    GTW.OMP.SRM.Regatta                            True   ('left',)
-    GTW.OMP.SRM.Regatta_C                          True   ('left', 'boat_class')
+    GTW.OMP.SRM.Regatta                            False  ('left', 'boat_class')
+    GTW.OMP.SRM.Regatta_C                          False  ('left', 'boat_class')
+    GTW.OMP.SRM.Regatta_H                          False  ('left', 'boat_class')
     GTW.OMP.EVT.Event_occurs                       False  ('left', 'date', 'time')
     GTW.OMP.EVT.Event                              False  ('left', 'date', 'time', 'calendar')
     GTW.OMP.SWP.Clip_O                             False  ('left', 'date_x')
-    GTW.OMP.SRM.Regatta_H                          True   ('left', 'handicap')
     GTW.OMP.EVT.Recurrence_Rule                    False  ('left', 'is_exception', 'desc')
     GTW.OMP.SRM.Team                               False  ('left', 'name')
     GTW.OMP.SRM.Sailor                             False  ('left', 'nation', 'mna_number', 'club')
@@ -106,6 +108,8 @@ _test_code = r"""
     GTW.OMP.EVT.Calendar                           False  ('name',)
     GTW.OMP.SRM.Boat_Class                         False  ('name',)
     GTW.OMP.SRM.Club                               False  ('name',)
+    GTW.OMP.SRM.Handicap                           False  ('name',)
+    GTW.OMP.SRM._Boat_Class_                       False  ('name',)
     GTW.OMP.SRM.Regatta_Event                      False  ('name', 'date')
     GTW.OMP.SWP.Clip_X                             True   ('perma_name',)
     GTW.OMP.SWP.Gallery                            False  ('perma_name',)
@@ -140,6 +144,7 @@ _test_code = r"""
     GTW.OMP.EVT.Link2                              False  False  False
     GTW.OMP.EVT.Calendar                           True   False  False
     GTW.OMP.PAP.Entity                             False  False  False
+    GTW.OMP.PAP.Subject                            False  False  False
     GTW.OMP.PAP.Person                             True   False  False
     GTW.OMP.SWP.Entity                             False  False  False
     GTW.OMP.SWP.Link1                              False  False  False
@@ -167,7 +172,9 @@ _test_code = r"""
     GTW.OMP.SRM.Link1                              False  False  False
     GTW.OMP.SRM.Link2                              False  False  False
     GTW.OMP.SRM.Object                             False  False  False
+    GTW.OMP.SRM._Boat_Class_                       True   False  False
     GTW.OMP.SRM.Boat_Class                         True   False  False
+    GTW.OMP.SRM.Handicap                           True   False  False
     GTW.OMP.SRM.Boat                               True   False  False
     GTW.OMP.SRM.Club                               True   False  False
     GTW.OMP.SRM.Regatta_Event                      True   False  False
@@ -176,15 +183,15 @@ _test_code = r"""
     GTW.OMP.SWP.Gallery                            True   False  False
     GTW.OMP.SWP.Picture                            True   False  False
     GTW.OMP.SRM.Page                               True   True   True
-    GTW.OMP.SRM.Regatta                            True   True   True
-    GTW.OMP.SRM.Regatta_C                          True   True   True
-    GTW.OMP.SRM.Regatta_H                          True   True   True
+    GTW.OMP.SRM.Regatta                            True   False  False
+    GTW.OMP.SRM.Regatta_C                          True   False  False
+    GTW.OMP.SRM.Regatta_H                          True   False  False
     GTW.OMP.SRM.Sailor                             True   False  False
-    GTW.OMP.SRM.Boat_in_Regatta                    True   False  True
-    GTW.OMP.SRM.Race_Result                        True   False  True
-    GTW.OMP.SRM.Team                               True   False  True
-    GTW.OMP.SRM.Crew_Member                        True   False  True
-    GTW.OMP.SRM.Team_has_Boat_in_Regatta           True   False  True
+    GTW.OMP.SRM.Boat_in_Regatta                    True   False  False
+    GTW.OMP.SRM.Race_Result                        True   False  False
+    GTW.OMP.SRM.Team                               True   False  False
+    GTW.OMP.SRM.Crew_Member                        True   False  False
+    GTW.OMP.SRM.Team_has_Boat_in_Regatta           True   False  False
     GTW.OMP.SWP.Page_U                             True   True   True
     GTW.OMP.SWP.Page_V                             True   True   True
 
@@ -193,12 +200,12 @@ _test_code = r"""
     ...     rr =  et.relevant_root.type_name if et.relevant_root else sorted (getattr (et, "relevant_roots", {}))
     ...     if rr :
     ...         print (fmt %% (et.type_name, rr))
-    MOM.Id_Entity                                  ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Boat_Class', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page', 'GTW.OMP.SWP.Picture']
+    MOM.Id_Entity                                  ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta', 'GTW.OMP.SRM._Boat_Class_', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page', 'GTW.OMP.SWP.Picture']
     MOM.Link                                       ['GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Picture']
     MOM.Link1                                      ['GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Picture']
     MOM._MOM_Link_n_                               ['GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta']
     MOM.Link2                                      ['GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta']
-    MOM.Object                                     ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Boat_Class', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page']
+    MOM.Object                                     ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM._Boat_Class_', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page']
     MOM.Named_Object                               ['GTW.OMP.Auth.Group']
     GTW.OMP.Auth.Object                            ['GTW.OMP.Auth.Group']
     GTW.OMP.Auth.Account                           GTW.OMP.Auth.Account
@@ -215,6 +222,7 @@ _test_code = r"""
     GTW.OMP.EVT.Object                             ['GTW.OMP.EVT.Calendar']
     GTW.OMP.EVT.Link1                              ['GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec']
     GTW.OMP.EVT.Calendar                           GTW.OMP.EVT.Calendar
+    GTW.OMP.PAP.Subject                            ['GTW.OMP.PAP.Person']
     GTW.OMP.PAP.Person                             GTW.OMP.PAP.Person
     GTW.OMP.SWP.Link1                              ['GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Picture']
     GTW.OMP.SWP.Object                             ['GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page']
@@ -236,8 +244,10 @@ _test_code = r"""
     GTW.OMP.PAP.Person_has_Phone                   GTW.OMP.PAP.Person_has_Phone
     GTW.OMP.SRM.Link1                              ['GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team']
     GTW.OMP.SRM.Link2                              ['GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta']
-    GTW.OMP.SRM.Object                             ['GTW.OMP.SRM.Boat_Class', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Regatta_Event']
-    GTW.OMP.SRM.Boat_Class                         GTW.OMP.SRM.Boat_Class
+    GTW.OMP.SRM.Object                             ['GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM._Boat_Class_']
+    GTW.OMP.SRM._Boat_Class_                       GTW.OMP.SRM._Boat_Class_
+    GTW.OMP.SRM.Boat_Class                         GTW.OMP.SRM._Boat_Class_
+    GTW.OMP.SRM.Handicap                           GTW.OMP.SRM._Boat_Class_
     GTW.OMP.SRM.Boat                               GTW.OMP.SRM.Boat
     GTW.OMP.SRM.Club                               GTW.OMP.SRM.Club
     GTW.OMP.SRM.Regatta_Event                      GTW.OMP.SRM.Regatta_Event
@@ -259,7 +269,7 @@ _test_code = r"""
     GTW.OMP.SWP.Page_V                             GTW.OMP.SWP.Page
 
     >>> print (sorted (rr.type_name for rr in scope.relevant_roots))
-    ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Boat_Class', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page', 'GTW.OMP.SWP.Picture']
+    ['GTW.OMP.Auth.Account', 'GTW.OMP.Auth.Account_Activation', 'GTW.OMP.Auth.Account_EMail_Verification', 'GTW.OMP.Auth.Account_Password_Change_Required', 'GTW.OMP.Auth.Account_Password_Reset', 'GTW.OMP.Auth.Account_in_Group', 'GTW.OMP.Auth.Group', 'GTW.OMP.EVT.Calendar', 'GTW.OMP.EVT.Event', 'GTW.OMP.EVT.Event_occurs', 'GTW.OMP.EVT.Recurrence_Rule', 'GTW.OMP.EVT.Recurrence_Spec', 'GTW.OMP.PAP.Address', 'GTW.OMP.PAP.Email', 'GTW.OMP.PAP.Entity_created_by_Person', 'GTW.OMP.PAP.Person', 'GTW.OMP.PAP.Person_has_Address', 'GTW.OMP.PAP.Person_has_Email', 'GTW.OMP.PAP.Person_has_Phone', 'GTW.OMP.PAP.Phone', 'GTW.OMP.SRM.Boat', 'GTW.OMP.SRM.Boat_in_Regatta', 'GTW.OMP.SRM.Club', 'GTW.OMP.SRM.Crew_Member', 'GTW.OMP.SRM.Race_Result', 'GTW.OMP.SRM.Regatta', 'GTW.OMP.SRM.Regatta_Event', 'GTW.OMP.SRM.Sailor', 'GTW.OMP.SRM.Team', 'GTW.OMP.SRM.Team_has_Boat_in_Regatta', 'GTW.OMP.SRM._Boat_Class_', 'GTW.OMP.SWP.Clip_O', 'GTW.OMP.SWP.Gallery', 'GTW.OMP.SWP.Page', 'GTW.OMP.SWP.Picture']
 
     >>> fmt = "%%-45s  %%-20s  %%s"
     >>> for et in rets :
@@ -270,12 +280,12 @@ _test_code = r"""
     GTW.OMP.Auth.Account_Activation                =                     ('left',)
     GTW.OMP.Auth.Account_Password_Change_Required  =                     ('left',)
     GTW.OMP.EVT.Recurrence_Spec                    =                     ('left',)
-    GTW.OMP.SRM.Regatta                            =                     ('left',)
-    GTW.OMP.SRM.Regatta_C                          =                     ('left', 'boat_class')
+    GTW.OMP.SRM.Regatta                            =                     ('left', 'boat_class')
+    GTW.OMP.SRM.Regatta_C                          GTW.OMP.SRM.Regatta   ('left', 'boat_class')
+    GTW.OMP.SRM.Regatta_H                          GTW.OMP.SRM.Regatta   ('left', 'boat_class')
     GTW.OMP.EVT.Event_occurs                       =                     ('left', 'date', 'time')
     GTW.OMP.EVT.Event                              =                     ('left', 'date', 'time', 'calendar')
     GTW.OMP.SWP.Clip_O                             =                     ('left', 'date_x')
-    GTW.OMP.SRM.Regatta_H                          =                     ('left', 'handicap')
     GTW.OMP.EVT.Recurrence_Rule                    =                     ('left', 'is_exception', 'desc')
     GTW.OMP.SRM.Team                               =                     ('left', 'name')
     GTW.OMP.SRM.Sailor                             =                     ('left', 'nation', 'mna_number', 'club')
@@ -297,8 +307,10 @@ _test_code = r"""
     GTW.OMP.Auth.Account_P                         GTW.OMP.Auth.Account  ('name',)
     GTW.OMP.Auth.Group                             =                     ('name',)
     GTW.OMP.EVT.Calendar                           =                     ('name',)
-    GTW.OMP.SRM.Boat_Class                         =                     ('name',)
+    GTW.OMP.SRM.Boat_Class                         GTW.OMP.SRM._Boat_Class_  ('name',)
     GTW.OMP.SRM.Club                               =                     ('name',)
+    GTW.OMP.SRM.Handicap                           GTW.OMP.SRM._Boat_Class_  ('name',)
+    GTW.OMP.SRM._Boat_Class_                       =                     ('name',)
     GTW.OMP.SRM.Regatta_Event                      =                     ('name', 'date')
     GTW.OMP.SWP.Clip_X                             GTW.OMP.SWP.Page      ('perma_name',)
     GTW.OMP.SWP.Gallery                            =                     ('perma_name',)

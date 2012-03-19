@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-Nov-2011 (CT) Creation
 #     2-Dec-2011 (CT) Creation continued..
+#    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    ««revision-date»»···
 #--
 
@@ -239,6 +240,17 @@ _test_code = """
                 , 'sig_key' : 2
                 , 'ui_name' : 'Event'
                 }
+              , { 'Class' : 'Entity'
+                , 'attrs' :
+                    [ { 'name' : 'name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Name'
+                      }
+                    ]
+                , 'name' : 'boat_class'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Boat class'
+                }
               ]
           , 'name' : 'right'
           , 'sig_key' : 2
@@ -357,6 +369,8 @@ _test_code = """
             <right.left.date.AQ [Attr.Type.Querier Composite]> <right.left.AQ [Attr.Type.Querier Id_Entity]>
                 <right.left.date.start.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
                 <right.left.date.finish.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
+        <right.boat_class.AQ [Attr.Type.Querier Id_Entity]> <right.AQ [Attr.Type.Querier Id_Entity]>
+            <right.boat_class.name.AQ [Attr.Type.Querier String]> <right.boat_class.AQ [Attr.Type.Querier Id_Entity]>
     <points.AQ [Attr.Type.Querier Ckd]> <GTW.OMP.SRM.Boat_in_Regatta.AQ>
     <place.AQ [Attr.Type.Querier Ckd]> <GTW.OMP.SRM.Boat_in_Regatta.AQ>
 
@@ -624,6 +638,25 @@ _test_code = """
             , name = 'left'
             , sig_key = 2
             , ui_name = 'Regatta/Event'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `boat_class`
+            , attrs =
+                [ Record
+                  ( attr = String `name`
+                  , full_name = 'right.boat_class.name'
+                  , id = 'right__boat_class__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Regatta/Boat class/Name'
+                  )
+                ]
+            , full_name = 'right.boat_class'
+            , id = 'right__boat_class'
+            , name = 'boat_class'
+            , sig_key = 2
+            , ui_name = 'Regatta/Boat class'
             )
           ]
       , full_name = 'right'

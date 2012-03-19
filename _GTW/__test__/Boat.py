@@ -30,6 +30,7 @@
 #    29-Mar-2011 (CT) Test for change of `Init_Only_Mixin` attribute added
 #     9-Nov-2011 (CT) Add test for `sail_number_head` and `sail_number_tail`
 #    10-Nov-2011 (CT) Add test for `Name_Clash`
+#    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    ««revision-date»»···
 #--
 
@@ -38,31 +39,31 @@ _test_code = """
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> SRM.Boat_Class ("Optimist", max_crew = 1)
-    GTW.OMP.SRM.Boat_Class (u'Optimist')
+    GTW.OMP.SRM.Boat_Class (u'optimist')
     >>> print scope.SRM.Boat_Class.count ### 1
     1
     >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
     >>> print scope.SRM.Boat_Class.count ### 2
     2
 
-    >>> scope.SRM.Boat_Class.query (name = u'Optimist').all ()
-    [GTW.OMP.SRM.Boat_Class (u'Optimist')]
+    >>> scope.SRM.Boat_Class.query (name = u'optimist').all ()
+    [GTW.OMP.SRM.Boat_Class (u'optimist')]
     >>> scope.SRM.Boat_Class.instance (u'Optimist')
-    GTW.OMP.SRM.Boat_Class (u'Optimist')
+    GTW.OMP.SRM.Boat_Class (u'optimist')
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 1
-    GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')
+    GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
     >>> print scope.SRM.Boat.count ### 3
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
+    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> scope.commit ()
 
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 2
-    GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')
+    GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
     >>> print scope.SRM.Boat.count ### 4
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
+    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> b = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 3
     >>> c = SRM.Boat (u"Optimist", None, "42", "OE", raw = True)
@@ -70,7 +71,7 @@ _test_code = """
     >>> print scope.SRM.Boat.count ### 5
     2
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
+    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print (c.sail_number, c.sail_number_head, c.sail_number_tail)
     (42, u'OE', u'42')
@@ -82,9 +83,9 @@ _test_code = """
     >>> s1 = TFL.Sorted_By ("name")
     >>> s2 = TFL.Sorted_By ("-name")
     >>> SRM.Boat_Class.query ().order_by (s1).all ()
-    [GTW.OMP.SRM.Boat_Class (u'Laser'), GTW.OMP.SRM.Boat_Class (u'Optimist')]
+    [GTW.OMP.SRM.Boat_Class (u'laser'), GTW.OMP.SRM.Boat_Class (u'optimist')]
     >>> SRM.Boat_Class.query ().order_by (s1).order_by (s2).all ()
-    [GTW.OMP.SRM.Boat_Class (u'Optimist'), GTW.OMP.SRM.Boat_Class (u'Laser')]
+    [GTW.OMP.SRM.Boat_Class (u'optimist'), GTW.OMP.SRM.Boat_Class (u'laser')]
 
     >>> print SRM.Boat.sail_number.Q_Raw.EQ
     <Attr.Equal __raw_sail_number.EQ [==]>
@@ -100,11 +101,11 @@ _test_code = """
 
     >>> bq = SRM.Boat.query_s ()
     >>> bq.all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
+    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.EQ ("1107")).all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
+    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.AC ("11")).all ()
-    [GTW.OMP.SRM.Boat ((u'Optimist', ), u'AUT', 1107, u'')]
+    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print scope.SRM.Boat.count ### 6
     2
@@ -112,7 +113,7 @@ _test_code = """
     >>> b.set (left = laser)
     Traceback (most recent call last):
       ...
-    AttributeError: Init-only attribute `GTW.OMP.SRM.Boat.left` cannot be changed from `(u'Optimist')` to `(u'Laser')` after object creation
+    AttributeError: Init-only attribute `GTW.OMP.SRM.Boat.left` cannot be changed from `(u'optimist')` to `(u'laser')` after object creation
 
     >>> print scope.SRM.Boat.count ### 7
     2
@@ -120,7 +121,7 @@ _test_code = """
     >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of GTW.OMP.SRM.Boat_Class (u'Optimist') clashes with existing GTW.OMP.SRM.Boat_Class (u'Optimist')
+    Name_Clash: new definition of GTW.OMP.SRM.Boat_Class (u'optimist') clashes with existing GTW.OMP.SRM.Boat_Class (u'optimist')
 
     >>> scope.destroy ()
 

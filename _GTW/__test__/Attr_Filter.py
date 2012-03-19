@@ -31,6 +31,7 @@
 #    18-Nov-2011 (CT) Creation continued..
 #     2-Dec-2011 (CT) Creation continued...
 #    13-Dec-2011 (CT) Creation continued.... (`.Atoms`)
+#    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    ««revision-date»»···
 #--
 
@@ -283,6 +284,8 @@ _test_code = """
           name                3
           long_name           3
         desc                3
+      boat_class          2
+        name                3
       discards            0
       kind                3
       races               0
@@ -345,6 +348,7 @@ _test_code = """
         String `name` right.left.club.name
         String `long_name` right.left.club.long_name
         String `desc` right.left.desc
+        String `name` right.boat_class.name
         Int `discards` right.discards
         String `kind` right.kind
         Int `races` right.races
@@ -355,6 +359,7 @@ _test_code = """
         String `name` left.name
         Date `start` left.date.start
         Date `finish` left.date.finish
+        String `name` boat_class.name
         Int `discards` discards
         String `kind` kind
         Int `races` races

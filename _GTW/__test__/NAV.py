@@ -151,7 +151,8 @@ _test_code = """
     ...     css_map [v].append (k)
     >>> css_users = sorted (sorted (vs) for vs in css_map.itervalues ())
     >>> print formatted (css_users)
-    [ [ 400
+    [
+      [ 400
       , 401
       , 403
       , 404
@@ -172,10 +173,7 @@ _test_code = """
       ]
     , [ 'calendar_qx' ]
     , [ 'console' ]
-    ,
-      [ 'e_type_admin'
-      , 'site_admin'
-      ]
+    , [ 'e_type_admin' ]
     ,
       [ 'e_type_afs'
       , 'e_type_afs|afs_div_seq'
@@ -183,6 +181,7 @@ _test_code = """
       ]
     , [ 'gallery' ]
     , [ 'photo' ]
+    , [ 'site_admin' ]
     ]
 
 """

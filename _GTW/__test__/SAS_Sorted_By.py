@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -33,6 +33,7 @@
 #    10-Aug-2010 (MG) Test changed to allow different backends
 #    16-Aug-2010 (MG) Test fixed
 #    20-Dec-2010 (CT) Python 2.7 compatibility
+#    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    ««revision-date»»···
 #--
 
@@ -119,14 +120,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
 
     >>> scope.destroy ()
 
@@ -155,13 +156,13 @@ _query_attr = r"""
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q.order_by (Q.event.date.start) : print r.year, r
-    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
-    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
-    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
+    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
+    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
+    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', ))
     >>> for r in q.order_by (TFL.Sorted_By ("-event.date.start")) : print r.year, r
-    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
-    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
-    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
+    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', ))
+    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
+    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
 
     >>> scope.destroy ()
 

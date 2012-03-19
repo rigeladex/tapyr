@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -34,6 +34,7 @@
 #    19-Jul-2011 (CT) Test for `Q.RAW` added
 #    25-Jul-2011 (MG) `_date_queries` added
 #    25-Jul-2011 (CT) `_date_queries` corrected (s/query/query_s/)
+#    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    ««revision-date»»···
 #--
 
@@ -139,24 +140,24 @@ _link2_link1 = r"""
     >>> date = datetime.date (2009, 1, 1)
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start > date) : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start < date) : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
     >>> date2 = datetime.date (2009, 12, 31)
     >>> qf = (Q.right.left.date.start >= date ) \
     ...    & (Q.right.left.date.start <= date2)
     >>> for r in q.filter (qf) : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', )))
 
     >>> date3 = datetime.date (2010, 05, 13)
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
 
     >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
-    (((u'Optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
 
 """
 
@@ -183,13 +184,13 @@ _query_attr = r"""
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q : print r.year, r
-    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'Optimist', ))
-    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
-    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
+    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
+    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
+    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2010)) : print r.year, r
-    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'Optimist', ))
+    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
-    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'Optimist', ))
+    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
 
     >>> PAP.Person.query (Q.last_name == "tanzer").all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]

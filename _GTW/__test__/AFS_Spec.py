@@ -35,6 +35,7 @@
 #     5-Mar-2012 (CT) Add tests for `allow_new`
 #     8-Mar-2012 (CT) Adapt tests to changes in AFS handling (allow_new...)
 #     9-Mar-2012 (CT) Add tests for `allow_new`
+#    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    ««revision-date»»···
 #--
 
@@ -368,6 +369,8 @@ _test_code = """
            <Field_Composite FB-0:2::p-1:0:0:1 'date' 'MOM.Date_Interval_C'>
             <Field FB-0:2::p-1:0:0:1.0 'start'>
             <Field FB-0:2::p-1:0:0:1.1 'finish'>
+          <Field_Entity FB-0:2::p-1:0:1 'boat_class' 'GTW.OMP.SRM._Boat_Class_'>
+           <Field FB-0:2::p-1:0:1:0 'name'>
         <Fieldset FB-0:2::p-2 'required'>
          <Field_Entity FB-0:2::p-2:0 'skipper' 'GTW.OMP.SRM.Sailor'>
           <Field_Entity FB-0:2::p-2:0:0 'left' 'GTW.OMP.PAP.Person'>
@@ -416,6 +419,7 @@ _test_code = """
     FB-0:2::p-0          Boat                 Field_Role_Hidden    False
     FB-0:2::p-1:0        Regatta              Field_Entity         False
     FB-0:2::p-1:0:0      Regatta_Event        Field_Entity         False
+    FB-0:2::p-1:0:1      _Boat_Class_         Field_Entity         True
     FB-0:2::p-2:0        Sailor               Field_Entity         True
     FB-0:2::p-2:0:0      Person               Field_Entity         True
     FB-0:2::p-2:0:3      Club                 Field_Entity         True
@@ -447,6 +451,7 @@ _test_code = """
     FB-0:2::p-1:0        FB-0:2::p            Regatta              Field_Entity         ['Boat_in_Regatta', 'right']
     FB-0:2::p-1:0:0      FB-0:2::p-1:0        Regatta_Event        Field_Entity         ['Boat_in_Regatta', 'right', 'left']
     FB-0:2::p-1:0:0:1    FB-0:2::p-1:0:0      Date_Interval_C      Field_Composite      ['Boat_in_Regatta', 'right', 'left', 'date']
+    FB-0:2::p-1:0:1      FB-0:2::p-1:0        _Boat_Class_         Field_Entity         ['Boat_in_Regatta', 'right', 'boat_class']
     FB-0:2::p-2:0        FB-0:2::p            Sailor               Field_Entity         ['Boat_in_Regatta', 'skipper']
     FB-0:2::p-2:0:0      FB-0:2::p-2:0        Person               Field_Entity         ['Boat_in_Regatta', 'skipper', 'left']
     FB-0:2::p-2:0:3      FB-0:2::p-2:0        Club                 Field_Entity         ['Boat_in_Regatta', 'skipper', 'club']
@@ -1532,6 +1537,8 @@ _prefilled_test = """
          <Field_Composite FBR-0:0:1:0:1 'date' 'MOM.Date_Interval_C'>
           <Field FBR-0:0:1:0:1.0 'start'>
           <Field FBR-0:0:1:0:1.1 'finish'>
+        <Field_Entity FBR-0:0:1:1 'boat_class' 'GTW.OMP.SRM._Boat_Class_'>
+         <Field FBR-0:0:1:1:0 'name'>
       <Fieldset FBR-0:1 'required'>
        <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'>
         <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'>
@@ -1564,18 +1571,19 @@ _prefilled_test = """
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> ys  = SRM.Handicap ("Yardstick")
     >>> b   = SRM.Boat.instance_or_new (u"Optimist", u"AUT", u"1107", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s   = SRM.Sailor.instance_or_new (p,  nation = u"AUT", mna_number = u"29676", raw = True)
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
-    >>> reo = SRM.Regatta_C (rev, boat_class = bc)
+    >>> reo = SRM.Regatta_C (rev, bc)
     >>> bio = SRM.Boat_in_Regatta (b, reo, skipper = s)
 
     >>> bc2 = SRM.Boat_Class ("Laser2",   max_crew = 2)
     >>> b2  = SRM.Boat.instance_or_new (u"Laser2",   u"AUT", u"4321", raw = True)
     >>> p2  = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s2  = SRM.Sailor.instance_or_new (p2, nation = u"AUT", raw = True)
-    >>> rey = SRM.Regatta_H (rev, "Yardstick")
+    >>> rey = SRM.Regatta_H (rev, ys)
     >>> biy = SRM.Boat_in_Regatta (b2, rey, skipper = s)
     >>> crw = SRM.Crew_Member (biy, s2)
 
@@ -1591,6 +1599,7 @@ _prefilled_test = """
     FBR-0:0:0:0          Boat_Class           Field_Entity         True
     FBR-0:0:1            Regatta              Field_Entity         False
     FBR-0:0:1:0          Regatta_Event        Field_Entity         False
+    FBR-0:0:1:1          _Boat_Class_         Field_Entity         True
     FBR-0:1:0            Sailor               Field_Entity         True
     FBR-0:1:0:0          Person               Field_Entity         True
     FBR-0:1:0:3          Club                 Field_Entity         True
@@ -1628,7 +1637,7 @@ _prefilled_test = """
     <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'>           e = - o = - r = -
     <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'>                       e = - o = - r = -
     <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'>               e = - o = - r = -
-    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'>                   e = 6 o = - r = -
+    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'>                   e = 7 o = - r = -
     <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'>                  e = - o = - r = -
     <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'>                   e = - o = - r = -
     <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'>                     e = - o = - r = -
@@ -1644,7 +1653,7 @@ _prefilled_test = """
     <Field FBR-0:0:0:1 'nation'> []
     <Field FBR-0:0:0:2 'sail_number'> []
     <Field FBR-0:0:0:3 'sail_number_x'> []
-    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> [(u'init', {'pid': 6, 'cid': 6}), ('sid', 'RpX3swPPYy5ypS5bZVXhHKScJWrnagm7iPfVOw')]
+    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> [(u'init', {'pid': 7, 'cid': 7}), ('sid', 'RpX3swPPYy5ypS5bZVXhHKScJWrnagm7iPfVOw')]
     <Fieldset FBR-0:1 'required'> []
     <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'> [(u'init', {}), ('sid', 'LzXeRZzmCjA83NnVTL3VEnNDcfDyCrc7Gx9YGQ')]
     <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {}), ('sid', 'qYtMo1EwXQYG:ASSo0e-3SP77BzuGLK1L6ZsJA')]
@@ -1670,7 +1679,7 @@ _prefilled_test = """
     <Field FBR-0:0:0:1 'nation'> []
     <Field FBR-0:0:0:2 'sail_number'> []
     <Field FBR-0:0:0:3 'sail_number_x'> []
-    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> [(u'edit', {'pid': 6, 'cid': 6}), (u'prefilled', True), ('sid', 'Spqx1iNkGlhnK0-oeBRKG1MnSre6Qwlb8Y2ebQ')]
+    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> [(u'edit', {'pid': 7, 'cid': 7}), (u'prefilled', True), ('sid', 'Spqx1iNkGlhnK0-oeBRKG1MnSre6Qwlb8Y2ebQ')]
     <Fieldset FBR-0:1 'required'> []
     <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'> [(u'init', {}), ('sid', 'LzXeRZzmCjA83NnVTL3VEnNDcfDyCrc7Gx9YGQ')]
     <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {}), ('sid', 'qYtMo1EwXQYG:ASSo0e-3SP77BzuGLK1L6ZsJA')]
@@ -1795,8 +1804,8 @@ _prefilled_test = """
                         , 'type_name' : 'GTW.OMP.SRM.Regatta'
                         , 'value' :
                             { 'init' :
-                                { 'cid' : 6
-                                , 'pid' : 6
+                                { 'cid' : 7
+                                , 'pid' : 7
                                 }
                             , 'sid' : 'RpX3swPPYy5ypS5bZVXhHKScJWrnagm7iPfVOw'
                             }
@@ -2123,8 +2132,8 @@ _prefilled_test = """
                         , 'type_name' : 'GTW.OMP.SRM.Regatta'
                         , 'value' :
                             { 'edit' :
-                                { 'cid' : 6
-                                , 'pid' : 6
+                                { 'cid' : 7
+                                , 'pid' : 7
                                 }
                             , 'prefilled' : True
                             , 'sid' : 'Spqx1iNkGlhnK0-oeBRKG1MnSre6Qwlb8Y2ebQ'
