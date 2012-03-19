@@ -48,6 +48,7 @@ _Ancestor_Essence = GTW.OMP.SRM.Object
 class _Boat_Class_ (_Ancestor_Essence) :
 
     is_partial  = True
+    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
