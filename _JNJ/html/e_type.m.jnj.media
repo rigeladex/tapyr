@@ -51,21 +51,6 @@ style_sheet = Style_Sheet \
         ( ".QR"
         , children           =
             [ Rule
-                ( "button"
-                , background_color = P.nav_col.background_color
-                , border           = P.border_button
-                , float            = "right"
-                , margin           = TRBL0 (t = Em (0.5), l = Em (0.2))
-                , text_align       = "center"
-                , children         =
-                    [ Rule_Class
-                        ( "disabled"
-                        , background_color = P.color_light_grey
-                        )
-                    ]
-                , ** Border (radius = Px (10))
-                )
-            , Rule
                 ( "input"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple
@@ -265,6 +250,21 @@ style_sheet = Style_Sheet \
                 ( ".ui-state-default"
                 , border           = 0
                 , font_weight      = "normal"
+                )
+            , Rule
+                ( ".ui-button"
+                , background_color = P.nav_col.background_color
+                , border           = P.border_button
+                , float            = "right"
+                , margin           = TRBL0 (t = Em (0.5), l = Em (0.2))
+                , text_align       = "center"
+                , children         =
+                    [ Rule_Class
+                        ( "disabled"
+                        , background_color = P.color_light_grey
+                        )
+                    ]
+                , ** Border (radius = Px (10))
                 )
             ]
         , ** P.font_spec_normal
