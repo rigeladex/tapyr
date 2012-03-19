@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Mar-2012 (CT) Creation
+#    19-Mar-2012 (CT) Add rule for `ui-state-default`
 #    ««revision-date»»···
 #--
 
@@ -259,6 +260,11 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     ]
+                )
+            , Rule
+                ( ".ui-state-default"
+                , border           = 0
+                , font_weight      = "normal"
                 )
             ]
         , ** P.font_spec_normal

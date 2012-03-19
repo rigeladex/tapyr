@@ -39,6 +39,7 @@
 //    23-Feb-2012 (CT) Use `{ html: XXX }` as argument to `L`
 //     8-Mar-2012 (CT) Add `options.completer_position`, `.dialog_position`,
 //                     `.menu_position`, adjust positions of various popups
+//    19-Mar-2012 (CT) Use `.ui-state-default` in parent of `.ui-icon`
 //    ««revision-date»»···
 //--
 
@@ -398,7 +399,8 @@
                   result.find (S.disabler)
                       .addClass ("ui-icon " + options.ui_class.disable)
                       .attr     ("title", options.title.disabler)
-                      .click    (attr_select.cb.disabler);
+                      .click    (attr_select.cb.disabler)
+                      .parent   ().addClass ("ui-state-default");
                   return result;
               }
             , toggle         : function toggle (menu$, choice, state) {
@@ -776,11 +778,13 @@
                   result.find (S.clear_button).click  (order_by.cb.clear);
                   result.find (S.order_by_direction)
                       .addClass ("ui-icon " + options.ui_class.sort_asc)
-                      .attr     ("title", options.title.order_by_asc);
+                      .attr     ("title", options.title.order_by_asc)
+                      .parent   ().addClass ("ui-state-default");
                   result.find (S.disabler)
                       .addClass ("ui-icon " + options.ui_class.disable)
                       .attr     ("title", options.title.disabler)
-                      .click    (order_by.cb.disabler);
+                      .click    (order_by.cb.disabler)
+                      .parent   ().addClass ("ui-state-default");
                   result.delegate
                       (S.order_by_criterion, "click", order_by.cb.dir);
                   return result;
@@ -817,7 +821,8 @@
             var dis$ = $(this);
             dis$.append
                     ($(L ("a.button", {name : "DISABLE"})).gtw_iconify (icons))
-                .attr ("title", options.title.disabler);
+                .attr    ("title", options.title.disabler)
+                .parent  ().addClass ("ui-state-default");
         };
         var setup_esf = function setup_esf (context) {
             var S = options.selectors;

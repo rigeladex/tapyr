@@ -83,6 +83,7 @@
 //     7-Mar-2012 (CT) Implement `select_cb` based on `gtw_e_type_selector_afs`
 //     8-Mar-2012 (CT) Change `select_cb` to pass `anchor`
 //     8-Mar-2012 (CT) Change `select_cb` to delete `elem.value.edit.cid`
+//    19-Mar-2012 (CT) Use `.ui-state-default` in parent of `.ui-icon`
 //    ««revision-date»»···
 //--
 
@@ -504,7 +505,7 @@
                     var cmd = source [i];
                     var ht  = "a.ui-icon." + icons.ui_class [cmd.name];
                     cmc$.append
-                        ($( L ( "b", { title : cmd.title }
+                        ($( L ( "b.ui-state-default", { title : cmd.title }
                               , L (ht, { html : cmd.label })
                               )
                           ).click

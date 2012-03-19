@@ -43,6 +43,7 @@
 ##    12-Dec-2011 (CT) Continue `qr_control` (`af.Class`, `need_op`)
 ##    16-Jan-2012 (CT) Continue `qr_control` (`select_attr_form`, `Config`)
 ##    18-Jan-2012 (CT) Continue `qr_control` (Use `GTW.attr_join` for `fields`)
+##    19-Mar-2012 (CT) Change `obj_button` to use class `ui-state-default`
 ##    ««revision-date»»···
 ##--
 #}
@@ -107,10 +108,10 @@
 
 {%- macro obj_button (page, E_Type, tag, href, name, desc, icon, kind, a_class=None) -%}
   <{{ tag }} class="cmd-button {{ kind }}">
-    <b>
-    <a href="{{ href }}" title="{{ desc }} {{ name }}"
-       class="ui-icon ui-icon-{{ icon }}{%- if a_class %} {{ a_class }}{% endif -%}"
-    >{{ desc }}</a>
+    <b class="ui-state-default">
+      <a href="{{ href }}" title="{{ desc }} {{ name }}"
+         class="ui-icon ui-icon-{{ icon }}{%- if a_class %} {{ a_class }}{% endif -%}"
+      >{{ desc }}</a>
     </b>
   </{{ tag }}>
 {%- endmacro -%} {#- obj_button -#}

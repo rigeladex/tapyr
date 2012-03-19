@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -17,6 +17,8 @@
 //    26-Nov-2011 (CT) Creation
 //    30-Nov-2011 (CT) Add `disabled`
 //    15-Dec-2011 (CT) Use `UI_Icon_Map`, add `gtw_iconify`
+//    19-Mar-2012 (CT) Change `gtw_iconify` to use `.ui-state-default` in
+//                     parent of `.ui-icon`
 //    ««revision-date»»···
 //--
 
@@ -55,11 +57,13 @@
         $(this).each
             ( function () {
                   var b$   = $(this);
+                  var p$   = b$.parent  ();
                   var name = this.name;
                   if (name in icons.map) {
                       b$.addClass ("ui-icon " + icons.ui_class [name]);
+                      p$.addClass ("ui-state-default");
                       if (b$.hasClass ("disabled")) {
-                          b$.addClass ("ui-state-disabled");
+                          p$.addClass ("ui-state-disabled");
                       };
                   };
               }
