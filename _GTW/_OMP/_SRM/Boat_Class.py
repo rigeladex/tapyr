@@ -30,6 +30,7 @@
 #     8-Sep-2011 (CT) `completer` added to `name`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     2-Mar-2012 (CT) Set `name.ignore_case` to `True`
+#    19-Mar-2012 (CT) Factor `_Boat_Class_`, add `Handicap`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,32 @@ from   _TFL.I18N                import _, _T, _Tn
 
 _Ancestor_Essence = GTW.OMP.SRM.Object
 
+class _Boat_Class_ (_Ancestor_Essence) :
+
+    is_partial  = True
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        ### Primary attributes
+
+        class name (A_String) :
+
+            kind               = Attr.Primary
+            ignore_case        = True
+            max_length         = 48
+
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+
+        # end class name
+
+    # end class _Attributes
+
+# end class _Boat_Class_
+
+_Ancestor_Essence = _Boat_Class_
+
 class Boat_Class (_Ancestor_Essence) :
     """Model a class of sailboats"""
 
@@ -53,14 +80,8 @@ class Boat_Class (_Ancestor_Essence) :
 
         ### Primary attributes
 
-        class name (A_String) :
+        class name (_Ancestor.name) :
             """Name of class of sailboats."""
-
-            kind               = Attr.Primary
-            ignore_case        = True
-            max_length         = 48
-
-            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class name
 
@@ -105,8 +126,24 @@ class Boat_Class (_Ancestor_Essence) :
 
 # end class Boat_Class
 
+_Ancestor_Essence = _Boat_Class_
+
+class Handicap (_Ancestor_Essence) :
+    """Model a handicap formula for sailboats."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class name (_Ancestor.name) :
+            """Name of handicap formula."""
+
+        # end class name
+
+    # end class _Attributes
+
+# end class Handicap
+
 if __name__ != "__main__" :
-    GTW.OMP.SRM._Export ("*")
+    GTW.OMP.SRM._Export ("*", "_Boat_Class_")
 ### __END__ GTW.OMP.SRM.Boat_Class
-
-

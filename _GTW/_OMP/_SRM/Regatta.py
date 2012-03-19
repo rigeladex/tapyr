@@ -42,6 +42,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     2-Feb-2012 (CT) Don't apply `sanitized_filename` to `name`
 #     9-Mar-2012 (CT) Change `Regatta_C.name.computed` to use `.ui_display`
+#    19-Mar-2012 (CT) Factor `boat_class` to `Regatta`, reify `SRM.Handicap`
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,14 @@ class Regatta (_Ancestor_Essence) :
 
         # end class left
 
+        class boat_class (A_Id_Entity) :
+            """Class of boats sailing in this regatta."""
+
+            kind               = Attr.Primary
+            P_Type             = GTW.OMP.SRM._Boat_Class_
+
+        # end class boat_class
+
         ### Non-primary attributes
 
         class discards (A_Int) :
@@ -102,6 +111,11 @@ class Regatta (_Ancestor_Essence) :
 
             kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("boat_class", )
+
+            def computed (self, obj) :
+                return obj.boat_class.ui_display
+            # end def computed
 
         # end class name
 
@@ -182,10 +196,8 @@ class Regatta_C (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class boat_class (A_Id_Entity) :
-            """Class of boats sailing in this regatta."""
+        class boat_class (_Ancestor.boat_class) :
 
-            kind               = Attr.Primary
             P_Type             = GTW.OMP.SRM.Boat_Class
 
         # end class boat_class
@@ -196,16 +208,6 @@ class Regatta_C (_Ancestor_Essence) :
             default            = False
 
         # end class is_team_race
-
-        class name (_Ancestor.name) :
-
-            auto_up_depends    = ("boat_class", )
-
-            def computed (self, obj) :
-                return obj.boat_class.ui_display
-            # end def computed
-
-        # end class name
 
     # end class _Attributes
 
@@ -220,13 +222,13 @@ class Regatta_H (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class handicap (A_String) :
+        class boat_class (_Ancestor.boat_class) :
             """Name of handicap system used for this regatta."""
 
-            kind               = Attr.Primary
-            max_length         = 10
+            P_Type             = GTW.OMP.SRM.Handicap
+            ui_name            = "Handicap"
 
-        # end class handicap
+        # end class boat_class
 
         class is_team_race (A_Boolean) :
 
@@ -234,16 +236,6 @@ class Regatta_H (_Ancestor_Essence) :
             default            = False
 
         # end class is_team_race
-
-        class name (_Ancestor.name) :
-
-            auto_up_depends    = ("handicap", )
-
-            def computed (self, obj) :
-                return obj.handicap
-            # end def computed
-
-        # end class name
 
     # end class _Attributes
 
