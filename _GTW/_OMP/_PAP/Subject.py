@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Mar-2012 (CT) Creation
+#    19-Mar-2012 (CT) Add `is_partial = True` to `Subject`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,9 @@ _Ancestor_Essence = MOM.Object
 class _PAP_Subject_ (PAP.Entity, _Ancestor_Essence) :
     """Model a legal subject, i.e., a person or company."""
 
-    _real_name = "Subject"
+    _real_name  = "Subject"
+
+    is_partial  = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
