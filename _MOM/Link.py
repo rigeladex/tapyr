@@ -57,6 +57,7 @@
 #     4-Sep-2010 (CT) Use `cache.discard` instead of `cache.remove`
 #    29-Mar-2011 (CT) `Link1.left` redefined to mixin `Init_Only_Mixin`
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    23-Mar-2012 (CT) Add `copy`, `copy_args`, and `link_type_name`
 #    ««revision-date»»···
 #--
 
@@ -216,6 +217,8 @@ class Link3 (_Ancestor_Essence) :
 
 class _Cacher_ (TFL.Meta.Object) :
 
+    link_type_name     = None
+
     def __init__ (self, attr_name = None) :
         self.role_name = None
         self.grn       = None
@@ -223,11 +226,18 @@ class _Cacher_ (TFL.Meta.Object) :
         self.attr_name = attr_name
     # end def __init__
 
+    def copy (self, Link, role) :
+        result = self.__class__ (* self.copy_args)
+        result.setup (Link, role)
+        return result
+    # end def copy
+
     def setup (self, Link, role) :
         assert self.role_name is None
-        self.role_name = role_name = role.role_name
-        self.grn       = role.generic_role_name
-        attr_name = self.attr_name
+        self.link_type_name = Link.type_name
+        self.role_name      = role_name = role.role_name
+        self.grn            = role.generic_role_name
+        attr_name           = self.attr_name
         if attr_name is None or attr_name == True :
             self.attr_name = self._auto_attr_name (Link, role) + self._suffix
         assert isinstance (self.attr_name, basestring)
@@ -249,6 +259,11 @@ class _Cacher_ (TFL.Meta.Object) :
 
 @TFL.Add_To_Class ("Cacher", MOM.Meta.M_Link1)
 class Link_Cacher (_Cacher_) :
+
+    @property
+    def copy_args (self) :
+        return (self.attr_name, )
+    # end def copy_args
 
     def setup (self, Link, role) :
         self.max_links = max_links = role.max_links
@@ -311,9 +326,14 @@ class Role_Cacher (_Cacher_) :
 
     def __init__ (self, attr_name = None, other_role_name = None) :
         self.__super.__init__ (attr_name)
-        self.other_role_name = other_role_name
+        self.other_role_name = self._orn = other_role_name
         self.other_role      = None
     # end def __init__
+
+    @property
+    def copy_args (self) :
+        return (self.attr_name, self._orn)
+    # end def copy_args
 
     def setup (self, Link, role) :
         other_role_name = \

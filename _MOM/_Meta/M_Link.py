@@ -64,6 +64,9 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #     7-Nov-2011 (CT) Redefine `_m_new_e_type_dict` to add `other_role_name`
 #    19-Jan-2012 (CT) Remove `raise MOM.Error.No_Scope` from `M_E_Type.__call__`
+#    23-Mar-2012 (CT) Change `_m_setup_etype_auto_props` to setup `auto_cache`
+#                     properly even if `cls.type_name != rc.link_type_name`
+#                     (i.e., for descendent classes)
 #    ««revision-date»»···
 #--
 
@@ -100,16 +103,17 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         cls.__m_super._m_setup_etype_auto_props ()
         roles = set ()
         for a in cls._Attributes._names.itervalues () :
-            if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
-                if a.auto_cache :
+            if issubclass (a, MOM.Attr.A_Link_Role) :
+                if a.role_type and a.auto_cache :
                     roles.add (a)
-        for a in cls._Attributes._own_names.itervalues () :
-            if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
-                rc = a.auto_cache
-                if rc :
-                    if not isinstance (rc, MOM._.Link._Cacher_) :
-                        rc = a.auto_cache = cls.Cacher (rc)
-                    rc.setup (cls, a)
+        for a in roles :
+            rc = a.auto_cache
+            if not isinstance (rc, MOM._.Link._Cacher_) :
+                rc = a.auto_cache = cls.Cacher (rc)
+            if rc.link_type_name is None :
+                rc.setup (cls, a)
+            elif cls.type_name != rc.link_type_name :
+                a.auto_cache = rc.copy (cls, a)
         cls.auto_cache_roles = tuple (a.auto_cache for a in roles)
     # end def _m_setup_etype_auto_props
 
