@@ -58,6 +58,7 @@
 #    29-Mar-2011 (CT) `Link1.left` redefined to mixin `Init_Only_Mixin`
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    23-Mar-2012 (CT) Add `copy`, `copy_args`, and `link_type_name`
+#    24-Mar-2012 (CT) Add `__repr__` to `_Cacher_`
 #    ««revision-date»»···
 #--
 
@@ -243,6 +244,10 @@ class _Cacher_ (TFL.Meta.Object) :
         assert isinstance (self.attr_name, basestring)
     # end def setup
 
+    def _repr_tail (self) :
+        return ""
+    # end def _repr_tail
+
     def _setup_attr (self, CR, Link, role, role_type, attr_class, desc) :
         assert self.attr_name not in role_type._Attributes._names
         kw =  dict \
@@ -254,6 +259,14 @@ class _Cacher_ (TFL.Meta.Object) :
         self.cr_attr = cr = type (CR) (self.attr_name, (CR, ), kw)
         role_type.add_attribute (cr)
     # end def _setup_attr
+
+    def __repr__ (self) :
+        return "<%s (%s) %s --> %s%s>" % \
+            ( self.__class__.__name__, self.link_type_name
+            , self.role_name, self.attr_name
+            , self._repr_tail ()
+            )
+    # end def __repr__
 
 # end class _Cacher_
 
@@ -372,6 +385,10 @@ class Role_Cacher (_Cacher_) :
     def _auto_attr_name (self, Link, role) :
         return role.role_name
     # end def _auto_attr_name
+
+    def _repr_tail (self) :
+        return " [%s]" % (self.other_role.role_type.type_name, )
+    # end def _repr_tail
 
 # end class Role_Cacher
 

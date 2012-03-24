@@ -165,6 +165,7 @@
 #    19-Jan-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
 #                     consider `obj._home_scope`, append to `obj._init_pending`
 #     6-Mar-2012 (CT) Add sanity check for `Syntax_Re_Mixin`
+#    24-Mar-2012 (CT) Use `acr_map` to get cacher for `Link_Role`
 #    ««revision-date»»···
 #--
 
@@ -980,7 +981,7 @@ class Link_Role (_EPK_Mixin_, Primary) :
     get_role               = TFL.Meta.Alias_Property ("get_value")
 
     def _set_cooked_value (self, obj, value, changed = 42) :
-        ac = self.auto_cache
+        ac = obj.__class__.acr_map.get (self.name)
         if ac :
             old_value = self.get_value (obj)
             if old_value is not None :

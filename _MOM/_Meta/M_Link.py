@@ -67,6 +67,8 @@
 #    23-Mar-2012 (CT) Change `_m_setup_etype_auto_props` to setup `auto_cache`
 #                     properly even if `cls.type_name != rc.link_type_name`
 #                     (i.e., for descendent classes)
+#    24-Mar-2012 (CT) Change `_m_setup_etype_auto_props` to not overwrite
+#                     `auto_cache` (don't rewrite ancestor's `auto_cache`)
 #    ««revision-date»»···
 #--
 
@@ -102,19 +104,21 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     def _m_setup_etype_auto_props (cls) :
         cls.__m_super._m_setup_etype_auto_props ()
         roles = set ()
+        cls.acr_map = acr_map = dict (getattr (cls, "acr_map", {}))
         for a in cls._Attributes._names.itervalues () :
             if issubclass (a, MOM.Attr.A_Link_Role) :
                 if a.role_type and a.auto_cache :
                     roles.add (a)
         for a in roles :
-            rc = a.auto_cache
+            rc = acr_map.get (a.name) or a.auto_cache
             if not isinstance (rc, MOM._.Link._Cacher_) :
-                rc = a.auto_cache = cls.Cacher (rc)
+                rc = cls.Cacher (a.auto_cache)
             if rc.link_type_name is None :
-                rc.setup (cls, a)
+                rc.setup     (cls, a)
             elif cls.type_name != rc.link_type_name :
-                a.auto_cache = rc.copy (cls, a)
-        cls.auto_cache_roles = tuple (a.auto_cache for a in roles)
+                rc = rc.copy (cls, a)
+            acr_map [a.name] = rc
+        cls.auto_cache_roles = tuple (acr_map.get (a.name) for a in roles)
     # end def _m_setup_etype_auto_props
 
 # end class M_Link
@@ -196,7 +200,8 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                         cls.app_type.entity_type (r.role_type)
                     r.attr.typ       = rt.type_base_name
                     rt._own_link_map [cls].add (r)
-                    cr_attr = r.attr.auto_cache and r.attr.auto_cache.cr_attr
+                    ac      = cls.acr_map.get (r.attr.name)
+                    cr_attr = ac and ac.cr_attr
                     if cr_attr and cr_attr.P_Type :
                         cr_attr.P_Type = cls.app_type.entity_type \
                             (cr_attr.P_Type)
