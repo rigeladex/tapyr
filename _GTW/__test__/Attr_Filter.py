@@ -409,6 +409,7 @@ _test_code = """
     Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boolean <Attr.Type.Querier Boolean ('EQ',)> 1
+    Company <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Date-Slug <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Date-Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -20,18 +20,19 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Person_has_Phone
+#    GTW.OMP.PAP.Subject_has_Property
 #
 # Purpose
-#    Model the link between a person and a phone number
+#    Base class for link between Subject and some other object
 #
 # Revision Dates
-#    30-Dec-2009 (CT) Creation
-#     3-Feb-2010 (CT) `_Person_has_Property_` factored
-#    19-Feb-2010 (MG) `left.auto_cache` added
-#    28-Feb-2010 (CT) `extension` is a `A_Numeric_String` (instead of `A_Int`)
+#     3-Feb-2010 (CT) Creation
+#    19-Feb-2010 (MG) `left.auto_cache` removed
+#    28-Feb-2010 (CT) `desc` defined with `Computed_Mixin`
+#     9-Feb-2011 (CT) `right.ui_allow_new` set to `True`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
-#    22-Mar-2012 (CT) Factor `Subject_has_Phone`
+#    22-Mar-2012 (CT) Change from `_Person_has_Property_` to
+#                     `Subject_has_Property`
 #    ««revision-date»»···
 #--
 
@@ -40,16 +41,16 @@ from   __future__            import unicode_literals
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
-from   _GTW._OMP._PAP.Person                 import Person
-from   _GTW._OMP._PAP.Subject_has_Phone      import Subject_has_Phone
+from   _GTW._OMP._PAP.Subject import Subject
 
-_Ancestor_Essence = Subject_has_Phone
+_Ancestor_Essence = MOM.Link2
 
-class Person_has_Phone (_Ancestor_Essence) :
-    """Model the link between a person and a phone number"""
+class Subject_has_Property (PAP.Entity, _Ancestor_Essence) :
+    """Base class for link between Subject and some other object"""
+
+    is_partial = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -57,23 +58,36 @@ class Person_has_Phone (_Ancestor_Essence) :
 
         class left (_Ancestor.left) :
 
-            role_type      = Person
-            auto_cache     = True
+            role_type      = Subject
 
         # end class left
 
-        class extension (A_Numeric_String) :
-            """Extension number used in PBX"""
+        class right (_Ancestor.right) :
 
-            kind            = Attr.Primary_Optional
-            max_length      = 5
+            ui_allow_new   = True
 
-        # end class extension
+        # end class right
+
+        class desc (A_String) :
+            """Short description of the link"""
+
+            kind           = Attr.Optional
+            Kind_Mixins    = (Attr.Computed_Mixin, )
+            max_length     = 20
+            ui_name        = "Description"
+
+            completer      = Attr.Completer_Spec  (1)
+
+            def computed (self, obj) :
+                return getattr (obj.right, self.name, "")
+            # end def computed
+
+        # end class desc
 
     # end class _Attributes
 
-# end class Person_has_Phone
+# end class Subject_has_Property
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
-### __END__ GTW.OMP.PAP.Person_has_Phone
+### __END__ GTW.OMP.PAP.Subject_has_Property

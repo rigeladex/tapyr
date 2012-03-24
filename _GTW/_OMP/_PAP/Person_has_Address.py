@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -30,6 +30,7 @@
 #     3-Feb-2010 (CT) `_Person_has_Property_` factored
 #    19-Feb-2010 (MG) `left.auto_cache` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    22-Mar-2012 (CT) Factor `Subject_has_Address`
 #    ««revision-date»»···
 #--
 
@@ -40,10 +41,10 @@ from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 
 import _GTW._OMP._PAP.Entity
-from   _GTW._OMP._PAP._Person_has_Property_  import _Person_has_Property_
-from   _GTW._OMP._PAP.Address                import Address
+from   _GTW._OMP._PAP.Person                 import Person
+from   _GTW._OMP._PAP.Subject_has_Address    import Subject_has_Address
 
-_Ancestor_Essence = _Person_has_Property_
+_Ancestor_Essence = Subject_has_Address
 
 class Person_has_Address (_Ancestor_Essence) :
     """Model the link between a person and an address"""
@@ -54,17 +55,10 @@ class Person_has_Address (_Ancestor_Essence) :
 
         class left (_Ancestor.left) :
 
-            auto_cache    = True
+            role_type      = Person
+            auto_cache     = True
 
         # end class left
-
-        class right (_Ancestor.right) :
-            """Address where person lives or works"""
-
-            role_type     = Address
-            auto_cache    = "addresses"
-
-        # end class right
 
     # end class _Attributes
 

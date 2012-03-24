@@ -44,6 +44,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
 #                     i.e., stuff related to non-AFS forms
+#    22-Mar-2012 (CT) Add `Company` and its links
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,11 @@ class Admin (object) :
         , sort_key       = TFL.Sorted_By ( "zip", "street")
         )
 
+    Company              = dict \
+        ( ETM            = "GTW.OMP.PAP.Company"
+        , list_display   = ("name", "short_name", "lifetime")
+        )
+
     Email                = dict \
         ( ETM            = "GTW.OMP.PAP.Email"
         , list_display   = ("ui_display", "desc")
@@ -79,6 +85,18 @@ class Admin (object) :
     Phone                = dict \
         ( ETM            = "GTW.OMP.PAP.Phone"
         , list_display   = ("ui_display", "desc")
+        )
+
+    Company_has_Address  = dict \
+        ( ETM            = "GTW.OMP.PAP.Company_has_Address"
+        )
+
+    Company_has_Email    = dict \
+        ( ETM            = "GTW.OMP.PAP.Company_has_Email"
+        )
+
+    Company_has_Phone    = dict \
+        ( ETM            = "GTW.OMP.PAP.Company_has_Phone"
         )
 
     Entity_created_by_Person = dict \
@@ -103,14 +121,16 @@ class Admin (object) :
 from   _GTW._AFS._MOM import Spec
 import _GTW._OMP._PAP.Person
 
+GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
+    (include_links = ("addresses", "emails", "phones"))
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     (include_links = ("addresses", "emails", "phones"))
 GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", ))
+    (include_links = ("persons", "companies"))
 GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", ))
+    (include_links = ("persons", "companies"))
 GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", ))
+    (include_links = ("persons", "companies"))
 
 from   _MOM import MOM
 import _MOM._Attr.Date_Interval

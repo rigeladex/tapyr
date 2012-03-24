@@ -20,35 +20,46 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.import_PAP
+#    GTW.OMP.PAP.Company_has_Address
 #
 # Purpose
-#    Import PAP object model
+#    Model the link between a company and an address
 #
 # Revision Dates
-#    30-Dec-2009 (CT) Creation
-#    13-Oct-2010 (CT) `Entity_created_by_Person` added
-#    22-Mar-2012 (CT) Add `Company` and its links
+#    22-Mar-2012 (CT) Creation
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 
-import _GTW._OMP._PAP.Address
-import _GTW._OMP._PAP.Company
-import _GTW._OMP._PAP.Email
 import _GTW._OMP._PAP.Entity
-import _GTW._OMP._PAP.Phone
-import _GTW._OMP._PAP.Person
+from   _GTW._OMP._PAP.Company                import Company
+from   _GTW._OMP._PAP.Subject_has_Address    import Subject_has_Address
 
-import _GTW._OMP._PAP.Company_has_Address
-import _GTW._OMP._PAP.Company_has_Email
-import _GTW._OMP._PAP.Company_has_Phone
-import _GTW._OMP._PAP.Entity_created_by_Person
-import _GTW._OMP._PAP.Person_has_Address
-import _GTW._OMP._PAP.Person_has_Email
-import _GTW._OMP._PAP.Person_has_Phone
+_Ancestor_Essence = Subject_has_Address
 
-### __END__ GTW.OMP.PAP.import_PAP
+class Company_has_Address (_Ancestor_Essence) :
+    """Model the link between a company and an address"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+
+            role_type      = Company
+            auto_cache     = "companies"
+
+        # end class left
+
+    # end class _Attributes
+
+# end class Company_has_Address
+
+if __name__ != "__main__" :
+    GTW.OMP.PAP._Export ("*")
+### __END__ GTW.OMP.PAP.Company_has_Address

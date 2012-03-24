@@ -20,35 +20,52 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.import_PAP
+#    GTW.OMP.PAP.Subject_has_Email
 #
 # Purpose
-#    Import PAP object model
+#    Model the link between a subject and an email address
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
-#    13-Oct-2010 (CT) `Entity_created_by_Person` added
-#    22-Mar-2012 (CT) Add `Company` and its links
+#     3-Feb-2010 (CT) `_Person_has_Property_` factored
+#    19-Feb-2010 (MG) `left.auto_cache` added
+#    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__            import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 
-import _GTW._OMP._PAP.Address
-import _GTW._OMP._PAP.Company
-import _GTW._OMP._PAP.Email
 import _GTW._OMP._PAP.Entity
-import _GTW._OMP._PAP.Phone
-import _GTW._OMP._PAP.Person
+from   _GTW._OMP._PAP.Subject_has_Property   import Subject_has_Property
+from   _GTW._OMP._PAP.Email                  import Email
 
-import _GTW._OMP._PAP.Company_has_Address
-import _GTW._OMP._PAP.Company_has_Email
-import _GTW._OMP._PAP.Company_has_Phone
-import _GTW._OMP._PAP.Entity_created_by_Person
-import _GTW._OMP._PAP.Person_has_Address
-import _GTW._OMP._PAP.Person_has_Email
-import _GTW._OMP._PAP.Person_has_Phone
+_Ancestor_Essence = Subject_has_Property
 
-### __END__ GTW.OMP.PAP.import_PAP
+class Subject_has_Email (_Ancestor_Essence) :
+    """Model the link between a subject and an email address"""
+
+    is_partial = True
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class right (_Ancestor.right) :
+            """Email address of subject"""
+
+            role_type     = Email
+            auto_cache    = True
+
+        # end class right
+
+    # end class _Attributes
+
+# end class Subject_has_Email
+
+if __name__ != "__main__" :
+    GTW.OMP.PAP._Export ("*")
+### __END__ GTW.OMP.PAP.Subject_has_Email

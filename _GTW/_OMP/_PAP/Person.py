@@ -65,8 +65,6 @@ from   _TFL.I18N                   import _
 
 import _GTW._OMP._PAP.Subject
 
-_Ancestor_Essence = PAP.Subject
-
 class Auto_Complete_PN (MOM.Attr.Filter.Auto_Complete_S) :
     """Special auto-complete query filter for the `first_name` and
        `last_name` of a person (to better handling of double names like
@@ -92,6 +90,8 @@ class Filter_String_FL (MOM.Attr.Querier.String) :
     _Table     = dict (AC = Auto_Complete_PN)
 
 # end class Filter_String_FL
+
+_Ancestor_Essence = PAP.Subject
 
 class _PAP_Person_ (_Ancestor_Essence) :
     """Model a person."""

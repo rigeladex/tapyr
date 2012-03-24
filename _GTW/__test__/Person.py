@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package MOM.__test__.
+# This module is part of the package GTW.__test__.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.__test__.Person
+#    GTW.__test__.Person
 #
 # Purpose
 #    Test PAP.Person creation and querying
@@ -174,4 +174,4 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
-### __END__ MOM.__test__.Person
+### __END__ GTW.__test__.Person

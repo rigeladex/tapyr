@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Mar-2012 (CT) Creation
+#    23-Mar-2012 (CT) Change `short_name` from `Primary_Optional` to `Optional`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class _PAP_Company_ (_Ancestor_Essence) :
             """Short name of company"""
 
             example            = "JDI"
-            kind               = Attr.Primary_Optional
+            kind               = Attr.Optional
             max_length         = 12
             ignore_case        = True
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)

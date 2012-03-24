@@ -113,6 +113,10 @@ _test_code = """
     Admin/Benutzerverwaltung/ html/static.jnj
     Admin/Personenverwaltung/ html/static.jnj
     Admin/Personenverwaltung/Address/ e_type_admin
+    Admin/Personenverwaltung/Company/ e_type_admin
+    Admin/Personenverwaltung/Company_has_Address/ e_type_admin
+    Admin/Personenverwaltung/Company_has_Email/ e_type_admin
+    Admin/Personenverwaltung/Company_has_Phone/ e_type_admin
     Admin/Personenverwaltung/Email/ e_type_admin
     Admin/Personenverwaltung/Entity_created_by_Person/ e_type_admin
     Admin/Personenverwaltung/Person/ e_type_admin

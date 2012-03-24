@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -77,6 +77,7 @@
 #    19-Aug-2010 (MG) `Collection_Inline_Description.list_display` fixed
 #     1-Feb-2011 (CT) Changed `src` of GTW-specific js-files
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    24-Mar-2012 (CT) Adapt to change of `auto_cache`
 #    ««revision-date»»···
 #--
 
@@ -246,7 +247,10 @@ class GTW_Link_Inline_Description (_Inline_Description_) :
                     ]
             if not self.legend :
                 if len (other_roles) == 1 and other_roles [0].auto_cache :
-                    ack = getattr (et_man, other_roles [0].auto_cache.attr_name)
+                    ack = getattr \
+                        ( et_man
+                        , link_et_man.acr_map [other_roles [0].name].attr_name
+                        )
                     self.legend = TFL.I18N._T (ack.ui_name)
                 else :
                     self.legend = TFL.I18N._T (link_et_man.ui_name)

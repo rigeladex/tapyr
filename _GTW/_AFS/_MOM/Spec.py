@@ -314,7 +314,10 @@ class Entity_Link (Entity) :
                     elif n.endswith ("s") and n [:-1] in r_map :
                         role = assoc.Roles [r_map [n [:-1]]]
                     else :
-                        raise TypeError ("No role-name defined for %s" % n)
+                        raise TypeError \
+                            ( "No role-name defined for %s [%s]"
+                            % (n, E_Type.type_name)
+                            )
                     if role.generic_role_name in assoc.other_role_name :
                         rn = assoc.other_role_name [role.generic_role_name]
                         result = assoc.Roles [r_map [rn]].name
