@@ -97,7 +97,7 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
     _syntax_re        = Regexp \
         ( r"^"
           r"(?: [0-9A-F]{2} :){5} [0-9A-F]{2}"
-        , r"$"
+          r"$"
         , re.VERBOSE | re.IGNORECASE
         )
 

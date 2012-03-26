@@ -119,6 +119,7 @@ class Admin (object) :
 # end class Admin
 
 from   _GTW._AFS._MOM import Spec
+import _GTW._OMP._PAP.Company
 import _GTW._OMP._PAP.Person
 
 GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \

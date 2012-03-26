@@ -2008,7 +2008,7 @@ Class `MOM.Attr.A_Attr_Type`
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
     if isinstance (v, MOM.Meta.M_Attr_Type)
-    ) + ("decimal", "Q")
+    ) + ("decimal", "Eval_Mixin", "Q", "Syntax_Re_Mixin")
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

@@ -66,7 +66,8 @@ class Float_Interval (_Ancestor_Essence) :
             """Center of interval."""
 
             kind               = Attr.Query
-            query              = (Q.lower + Q.upper)  / 2
+            query              = (Q.lower + Q.upper) * 0.5
+            auto_up_depends    = ("lower", "upper")
 
         # end class center
 
@@ -75,6 +76,7 @@ class Float_Interval (_Ancestor_Essence) :
 
             kind               = Attr.Query
             query              = Q.upper - Q.lower
+            auto_up_depends    = ("lower", "upper")
 
         # end class length
 

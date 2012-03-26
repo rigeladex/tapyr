@@ -249,7 +249,8 @@ class _Cacher_ (TFL.Meta.Object) :
     # end def _repr_tail
 
     def _setup_attr (self, CR, Link, role, role_type, attr_class, desc) :
-        assert self.attr_name not in role_type._Attributes._names
+        assert self.attr_name not in role_type._Attributes._names, \
+            ( "%s: %s\n  %s" % (CR, Link, self))
         kw =  dict \
             ( assoc        = Link.type_name
             , P_Type       = attr_class
