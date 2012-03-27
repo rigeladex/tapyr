@@ -116,6 +116,13 @@ _test_code = """
     >>> PAP.Person_has_Email.acr_map.get ("right", False)
     <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>
 
+    >>> PAP.Subject_has_Email.auto_cache_roles
+    (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>,)
+    >>> PAP.Company_has_Email.auto_cache_roles
+    (<Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>)
+    >>> PAP.Person_has_Email.auto_cache_roles
+    (<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>)
+
 """
 
 from   _GTW.__test__.model      import *
