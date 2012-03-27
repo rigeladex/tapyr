@@ -214,6 +214,7 @@
 #                     `TFL.Meta.Object` (to avoid MRO conflict for
 #                     Syntax_Re_Mixin [which derives from `TFL.Meta.Object`])
 #    14-Mar-2012 (CT) Add `Eval_Mixin` and `_A_String_Ascii_`
+#    27-Mar-2012 (CT) Add `electric` to mark framework-generated attributes
 #    ««revision-date»»···
 #--
 
@@ -264,7 +265,8 @@ class A_Attr_Type (TFL.Meta.Object) :
     db_sig_version      = 0
     default             = None
     description         = u""
-    E_Type              = None ### E_Type of `_A_Entity_`, if any
+    E_Type              = None  ### E_Type of `_A_Entity_`, if any
+    electric            = False ### True if created by framework
     explanation         = u""
     format              = u"%s"
     group               = u""
@@ -273,7 +275,7 @@ class A_Attr_Type (TFL.Meta.Object) :
     Kind_Mixins         = ()
     needs_raw_value     = False
     Pickler             = None
-    P_Type              = None ### Python type of attribute values
+    P_Type              = None  ### Python type of attribute values
     Q_Ckd_Type          = MOM.Attr.Querier.Ckd
     Q_Raw_Type          = MOM.Attr.Querier.Raw
     query               = None
@@ -1399,6 +1401,7 @@ class A_Cached_Role (_A_Id_Entity_) :
        association.
     """
 
+    electric       = True
     kind           = MOM.Attr.Cached_Role
     typ            = "Cached_Role"
     hidden         = True
@@ -1419,6 +1422,7 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
        association.
     """
 
+    electric       = True
     kind           = MOM.Attr.Cached_Role_Set
     typ            = "Cached_Role_Set"
     hidden         = True

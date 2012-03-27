@@ -59,6 +59,8 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    23-Mar-2012 (CT) Add `copy`, `copy_args`, and `link_type_name`
 #    24-Mar-2012 (CT) Add `__repr__` to `_Cacher_`
+#    27-Mar-2012 (CT) Change `_Cacher_._setup_attr` to allow redefinition of
+#                     `electric` attributes
 #    ««revision-date»»···
 #--
 
@@ -249,16 +251,24 @@ class _Cacher_ (TFL.Meta.Object) :
     # end def _repr_tail
 
     def _setup_attr (self, CR, Link, role, role_type, attr_class, desc) :
-        assert self.attr_name not in role_type._Attributes._names, \
-            ( "%s: %s\n  %s" % (CR, Link, self))
+        attr_name = self.attr_name
+        if __debug__ :
+            if attr_name in role_type._Attributes._names :
+                a = getattr (role_type._Attributes, attr_name)
+                if not a.electric :
+                    raise TypeError \
+                        ( "Name conflict between attribute '%s' "
+                          "and auto-cache %s: %s\n  %s"
+                        % (attr_name, CR, Link, self)
+                        )
         kw =  dict \
             ( assoc        = Link.type_name
             , P_Type       = attr_class
             , description  = desc
             , __module__   = role_type.__module__
             )
-        self.cr_attr = cr = type (CR) (self.attr_name, (CR, ), kw)
-        role_type.add_attribute (cr)
+        self.cr_attr = cr = type (CR) (attr_name, (CR, ), kw)
+        role_type.add_attribute (cr, override = True)
     # end def _setup_attr
 
     def __repr__ (self) :
