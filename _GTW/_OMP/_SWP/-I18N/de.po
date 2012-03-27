@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-01 09:49+0100\n"
+"POT-Creation-Date: 2012-03-27 18:46+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -111,7 +111,7 @@ msgstr "Höhe des Bildes."
 msgid "Hidden"
 msgstr "Verborgen"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Higher prio sorts before lower prio."
 msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
 
@@ -213,7 +213,7 @@ msgstr[1] "Bilder"
 msgid "Picture."
 msgstr "Bild."
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Prio"
 msgstr "Priorität"
 

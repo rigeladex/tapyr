@@ -33,7 +33,7 @@
 
 cmd=${1:?"Specify a command: extract | language"}; shift
 lang=${1:-"de"}; shift
-dirs=${1:-"_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_NAV/example _JNJ _ReST"}; shift
+dirs=${1:-"_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _JNJ _ReST"}; shift
 
 case "$cmd" in
     "extract" )

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-01 09:49+0100\n"
+"POT-Creation-Date: 2012-03-27 18:46+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -23,13 +23,13 @@ msgstr ""
 msgid "%s `%s` does not exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:296 _GTW/_NAV/_E_Type/Admin.py:525
-#: _GTW/_NAV/_E_Type/Admin.py:1008
+#: _GTW/_NAV/_E_Type/Admin.py:299 _GTW/_NAV/_E_Type/Admin.py:545
+#: _GTW/_NAV/_E_Type/Admin.py:1033
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:374
+#: _GTW/_NAV/_E_Type/Admin.py:377
 #, python-format
 msgid "%s only works with content-type json"
 msgstr ""
@@ -66,7 +66,7 @@ msgstr ""
 msgid "April"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:316 _GTW/_NAV/_E_Type/Admin.py:1019
+#: _GTW/_NAV/_E_Type/Admin.py:319 _GTW/_NAV/_E_Type/Admin.py:1044
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
@@ -134,12 +134,12 @@ msgstr ""
 msgid "File upload test"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:248 _GTW/_NAV/_E_Type/Admin.py:264
+#: _GTW/_NAV/_E_Type/Admin.py:251 _GTW/_NAV/_E_Type/Admin.py:267
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr ""
 
-#: _GTW/_AFS/Value.py:198
+#: _GTW/_AFS/Value.py:203
 #, python-format
 msgid "Form/element is unknown (unknown id: %s)"
 msgstr ""
@@ -185,7 +185,7 @@ msgstr ""
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:154
+#: _GTW/_NAV/_E_Type/SRM.py:156
 msgid "List of participants for"
 msgstr ""
 
@@ -226,11 +226,11 @@ msgstr ""
 msgid "New password"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:348
+#: _GTW/_NAV/_E_Type/Admin.py:351
 msgid "Not authorized for this page"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:340
+#: _GTW/_NAV/_E_Type/Admin.py:343
 msgid "Not logged in or login-session is expired"
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr ""
 msgid "November"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:687 _GTW/_NAV/_E_Type/Admin.py:714
+#: _GTW/_NAV/_E_Type/Admin.py:711 _GTW/_NAV/_E_Type/Admin.py:738
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr ""
@@ -259,7 +259,7 @@ msgstr ""
 msgid "One of the passwords is incorrect"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:121
+#: _GTW/_NAV/_E_Type/SRM.py:123
 msgid "Participants"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 msgid "Please repeat the new password."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:159
+#: _GTW/_NAV/_E_Type/SRM.py:161
 msgid "Registration list"
 msgstr ""
 
@@ -288,11 +288,11 @@ msgstr ""
 msgid "Repeat new password"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:122
+#: _GTW/_NAV/_E_Type/SRM.py:124
 msgid "Results"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:136 _GTW/_NAV/_E_Type/SRM.py:150
+#: _GTW/_NAV/_E_Type/SRM.py:138 _GTW/_NAV/_E_Type/SRM.py:152
 msgid "Results for"
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Welcome %s."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:694 _GTW/_NAV/_E_Type/Admin.py:722
+#: _GTW/_NAV/_E_Type/Admin.py:718 _GTW/_NAV/_E_Type/Admin.py:746
 msgid "You need to specify a pid!"
 msgstr ""
 

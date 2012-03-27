@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-01 09:49+0100\n"
+"POT-Creation-Date: 2012-03-27 18:46+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgid ""
 "    Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1712
+#: _MOM/_Attr/Type.py:1777
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -61,12 +61,12 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:1180
+#: _MOM/_Attr/Kind.py:1188
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:1035
+#: _MOM/_Attr/Kind.py:1043
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -132,7 +132,7 @@ msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1284
+#: _MOM/_Attr/Type.py:1347
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -204,7 +204,7 @@ msgid_plural "Named_Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:994
+#: _MOM/_Attr/Type.py:1036
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr ""
@@ -216,12 +216,12 @@ msgid_plural "Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:902
+#: _MOM/_Attr/Kind.py:910
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:912
+#: _MOM/_Attr/Kind.py:920
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -329,7 +329,7 @@ msgid_plural "Time_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Kind.py:367
+#: _MOM/_Attr/Kind.py:369
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -338,7 +338,7 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:903
+#: _MOM/_Attr/Kind.py:911
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
@@ -347,7 +347,7 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:590
+#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:632
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -376,7 +376,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:989
+#: _MOM/_Attr/Type.py:1031
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""

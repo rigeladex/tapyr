@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -85,7 +85,7 @@ class Config_File (TFL.Meta.Object) :
                 for name, module_spec in config.items (section) :
                     self.extractors [name] = self._load_function (module_spec)
             elif section == "defaults" :
-                self.defaults      = dict (config.items (section))
+                self.defaults = dict (config.items (section))
             else :
                 extractor, pattern               = section.split (":")
                 extractor                        = extractor.lower ()
@@ -104,8 +104,8 @@ class Config_File (TFL.Meta.Object) :
         if filename :
             config = ConfigParser.RawConfigParser (dict_type = odict)
             if not hasattr (filename, "read") :
-                filename         = open  ((filename))
-            config.readfp                (filename)
+                filename = open ((filename))
+            config.readfp (filename)
         return config
     # end def _as_config_parser
 
@@ -122,11 +122,12 @@ class Config_File (TFL.Meta.Object) :
         return mo.get (option, de.get (option, default))
     # end def get
 
-    def get_list ( self, option
-                 , method          = None
-                 , default         = ()
-                 , combine_default = False
-                 ) :
+    def get_list \
+            ( self, option
+            , method          = None
+            , default         = ()
+            , combine_default = False
+            ) :
         value = self.get (option, method, default)
         if isinstance (value, basestring) :
             value = set (p.strip () for p in value.split (","))

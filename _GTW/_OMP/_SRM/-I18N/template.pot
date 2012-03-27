@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-01 09:49+0100\n"
+"POT-Creation-Date: 2012-03-27 18:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -190,9 +190,11 @@ msgstr ""
 msgid "Greece"
 msgstr ""
 
-#: _GTW._OMP._SRM.Regatta:0
+#: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_Class:0
 msgid "Handicap"
-msgstr ""
+msgid_plural "Handicaps"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:73
 msgid "Hungary"
@@ -298,8 +300,16 @@ msgstr ""
 msgid "Model a class of sailboats"
 msgstr ""
 
+#: _GTW._OMP._SRM.Boat_Class:0
+msgid "Model a handicap formula for sailboats."
+msgstr ""
+
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Models a Boolean attribute of an object."
+msgstr ""
+
+#: _GTW._OMP._SRM.Boat_Class:0
+msgid "Models a string-valued attribute of an object."
 msgstr ""
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:83
@@ -312,6 +322,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Name of class of sailboats."
+msgstr ""
+
+#: _GTW._OMP._SRM.Boat_Class:0
+msgid "Name of handicap formula."
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0

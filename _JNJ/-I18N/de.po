@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-01 09:49+0100\n"
+"POT-Creation-Date: 2012-03-27 18:46+0200\n"
 "PO-Revision-Date: 2011-11-24 11:29+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,39 +18,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
+#: _JNJ/html/e_type_afs.jnj:83
+msgid "Accept changes"
+msgstr "Akzeptiere Änderungen"
+
 #: _JNJ/html/activate.jnj:40
 msgid "Activation for"
 msgstr "Aktivierung für"
 
-#: _JNJ/html/e_type.m.jnj:146 _JNJ/html/e_type.m.jnj:256
-#: _JNJ/html/e_type.m.jnj:329 _JNJ/html/e_type_afs.jnj:61
+#: _JNJ/html/e_type.m.jnj:147 _JNJ/html/e_type.m.jnj:257
+#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:68
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr "Erzeuge"
 
-#: _JNJ/html/e_type.m.jnj:257
+#: _JNJ/html/e_type.m.jnj:258
 msgid "Add a rule to restrict the objects to a specific attribute value"
 msgstr ""
 "Gib eine Regel dazu, die die Entitäten auf solche mit einem bestimmten "
 "Attributwert einschränkt"
 
-#: _JNJ/html/e_type.m.jnj:330
+#: _JNJ/html/e_type.m.jnj:331
 msgid "Add an attribute to be displayed"
 msgstr "Gib ein Attribut zur Liste der darzustellenden Attribut dazu"
 
-#: _JNJ/html/e_type.m.jnj:147
+#: _JNJ/html/e_type.m.jnj:148
 msgid "Add an order-by criterion"
 msgstr "Gib ein Ordnungskriterium dazu"
 
-#: _JNJ/html/e_type.m.jnj:331
+#: _JNJ/html/e_type.m.jnj:332
 msgid "Add attribute"
 msgstr "Zusätzliches Attribut"
 
-#: _JNJ/html/e_type.m.jnj:148
+#: _JNJ/html/e_type.m.jnj:149
 msgid "Add criterion"
 msgstr "Zusätzliches Kriterium"
 
-#: _JNJ/html/e_type.m.jnj:258
+#: _JNJ/html/e_type.m.jnj:259
 msgid "Add restriction"
 msgstr "Zusätzliche Sucheinschränkung"
 
@@ -74,8 +78,8 @@ msgstr "Anker-Monat für Kalenderansicht"
 msgid "Anchor year for calendar display"
 msgstr "Anker-Jahr für Kalenderansicht"
 
-#: _JNJ/html/e_type.m.jnj:90 _JNJ/html/e_type.m.jnj:131
-#: _JNJ/html/e_type.m.jnj:239 _JNJ/html/e_type.m.jnj:314
+#: _JNJ/html/e_type.m.jnj:91 _JNJ/html/e_type.m.jnj:132
+#: _JNJ/html/e_type.m.jnj:240 _JNJ/html/e_type.m.jnj:315
 #: _JNJ/html/cal/wr.jnj:178
 msgid "Apply"
 msgstr "Los"
@@ -84,8 +88,8 @@ msgstr "Los"
 msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
-#: _JNJ/html/e_type.m.jnj:96 _JNJ/html/e_type.m.jnj:136
-#: _JNJ/html/e_type.m.jnj:319 _JNJ/html/e_type_afs.jnj:62
+#: _JNJ/html/e_type.m.jnj:97 _JNJ/html/e_type.m.jnj:137
+#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:69
 #: _JNJ/html/form.jnj:164 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -102,7 +106,7 @@ msgstr "Ändern"
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/e_type_afs.jnj:75
+#: _JNJ/html/e_type_afs.jnj:84
 msgid "Change attributes of this object"
 msgstr "Ändere Attribute des Objekts"
 
@@ -119,7 +123,7 @@ msgstr "Ändere Email für"
 msgid "Change email of account %s"
 msgstr "Ändere Email für Benutzerkonto %s"
 
-#: _JNJ/html/e_type.m.jnj:352
+#: _JNJ/html/e_type.m.jnj:353
 msgid "Change object"
 msgstr "Ändere Objekt"
 
@@ -132,8 +136,8 @@ msgstr "Ändere Kennwort"
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
 
-#: _JNJ/html/console.jnj:42 _JNJ/html/e_type.m.jnj:101
-#: _JNJ/html/e_type.m.jnj:141 _JNJ/html/e_type.m.jnj:324
+#: _JNJ/html/console.jnj:42 _JNJ/html/e_type.m.jnj:102
+#: _JNJ/html/e_type.m.jnj:142 _JNJ/html/e_type.m.jnj:325
 msgid "Clear"
 msgstr "Lösche"
 
@@ -145,7 +149,7 @@ msgstr "Verweis auf das erste fehlerhafte Eingabefeld."
 msgid "Click to jump to the next error"
 msgstr "Verweis auf das nächste fehlerhafte Eingabefeld."
 
-#: _JNJ/html/e_type.m.jnj:249
+#: _JNJ/html/e_type.m.jnj:250
 msgid "Config"
 msgstr "Konfiguriere"
 
@@ -153,12 +157,12 @@ msgstr "Konfiguriere"
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/e_type_afs.jnj:64
+#: _JNJ/html/e_type_afs.jnj:70
 msgid "Copy"
 msgstr "Kopiere"
 
-#: _JNJ/html/e_type.m.jnj:342 _JNJ/html/e_type.m.jnj:346
-#: _JNJ/html/e_type_afs.jnj:70
+#: _JNJ/html/e_type.m.jnj:343 _JNJ/html/e_type.m.jnj:347
+#: _JNJ/html/e_type_afs.jnj:79
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
 
@@ -171,15 +175,15 @@ msgstr "Gegenwärtig ausgewählter Tag"
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/e_type_afs.jnj:65
+#: _JNJ/html/e_type_afs.jnj:71
 msgid "Delete"
 msgstr "Lösche"
 
-#: _JNJ/html/e_type.m.jnj:360
+#: _JNJ/html/e_type.m.jnj:361
 msgid "Delete object"
 msgstr "Lösche Objekt"
 
-#: _JNJ/html/e_type_afs.jnj:74
+#: _JNJ/html/e_type_afs.jnj:82
 msgid "Delete this object"
 msgstr "Lösche dieses Objekt"
 
@@ -187,7 +191,7 @@ msgstr "Lösche dieses Objekt"
 msgid "Delta"
 msgstr "Delta"
 
-#: _JNJ/html/e_type_admin.jnj:70
+#: _JNJ/html/e_type_admin.jnj:74
 msgid "Disable"
 msgstr "Schalte aus"
 
@@ -208,7 +212,7 @@ msgstr "Verwerfen aller Änderungen im Sub-Formular"
 msgid "Discard all changes made and leave popup-form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Sub-Formulars"
 
-#: _JNJ/html/e_type_afs.jnj:71
+#: _JNJ/html/e_type_afs.jnj:80
 msgid "Discard changes"
 msgstr "Verwerfen aller Änderungen"
 
@@ -220,47 +224,51 @@ msgstr "Verankere die Kalenderansicht am heutigen Tag"
 msgid "Display calendar for the selected values"
 msgstr "Passe Kalenderansicht an die ausgewählten Werte an"
 
-#: _JNJ/html/e_type.m.jnj:177
+#: _JNJ/html/e_type.m.jnj:178
 msgid "Display first batch of objects matching the restriction"
 msgstr "Stelle erste Seite dar"
 
-#: _JNJ/html/e_type.m.jnj:187
+#: _JNJ/html/e_type.m.jnj:188
 msgid "Display last batch of objects matching the restriction"
 msgstr "Stelle letzte Seite dar"
 
-#: _JNJ/html/e_type.m.jnj:240
+#: _JNJ/html/e_type.m.jnj:241
 msgid "Display list of objects matching the restriction"
 msgstr "Stelle die Entitäten dar, die die Sucheinschränkung(en) erfüllen"
 
-#: _JNJ/html/e_type.m.jnj:197
+#: _JNJ/html/e_type.m.jnj:198
 msgid "Display next batch of objects matching the restriction"
 msgstr "Stelle nächste Seite dar"
 
-#: _JNJ/html/e_type_admin.jnj:75
+#: _JNJ/html/e_type_admin.jnj:79
 msgid "Display objects in ascending order of the attribute"
 msgstr "Stelle Objekte in aufsteigender Reihenfolge bezogen auf das Attribut dar"
 
-#: _JNJ/html/e_type_admin.jnj:73
+#: _JNJ/html/e_type_admin.jnj:77
 msgid "Display objects in descending order of the attribute"
 msgstr "Stelle Objekte in absteigender Reihenfolge bezogen auf das Attribut dar"
 
-#: _JNJ/html/e_type.m.jnj:207
+#: _JNJ/html/e_type.m.jnj:208
 msgid "Display previous batch of objects matching the restriction"
 msgstr "Stelle vorige Seite dar"
 
-#: _JNJ/html/e_type_admin.jnj:79
+#: _JNJ/html/e_type_afs.jnj:72
+msgid "Done"
+msgstr "Fertig"
+
+#: _JNJ/html/e_type_admin.jnj:83
 msgid "Drag the attributes up or down to change their priority"
 msgstr ""
 "Ziehe die Attribute mit der Maus an eine andere Position um die Priorität"
 " zu ändern"
 
-#: _JNJ/html/e_type_admin.jnj:77
+#: _JNJ/html/e_type_admin.jnj:81
 msgid "Drag the order-by criteria up or down to change their priority"
 msgstr ""
 "Ziehe die Ordnungskriterien mit der Maus an eine andere Position um die "
 "Priorität zu ändern"
 
-#: _JNJ/html/e_type_afs.jnj:66 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:73 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr "Ändere"
 
@@ -274,11 +282,11 @@ msgid_plural "Errors"
 msgstr[0] "Fehler"
 msgstr[1] "Fehler"
 
-#: _JNJ/html/e_type.m.jnj:279
+#: _JNJ/html/e_type.m.jnj:280
 msgid "Field(s) to use for ordering entities"
 msgstr "Felder, die zur Sortierung verwendet werden"
 
-#: _JNJ/html/e_type.m.jnj:176 _JNJ/html/gallery.jnj:49
+#: _JNJ/html/e_type.m.jnj:177 _JNJ/html/gallery.jnj:49
 msgid "First"
 msgstr "Erstes"
 
@@ -301,6 +309,14 @@ msgstr ""
 "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
 "Webmaster."
 
+#: _JNJ/html/e_type_admin.jnj:60
+msgid "Javascript is needed to fully use this page"
+msgstr "Für diese Seite wird Javascript benötigt."
+
+#: _JNJ/html/e_type_afs.jnj:57
+msgid "Javascript is needed to use this page"
+msgstr "Für diese Seite wird Javascript benötigt."
+
 #: _JNJ/html/navigation.jnj:138
 msgid "Language"
 msgstr "Sprache"
@@ -310,7 +326,7 @@ msgstr "Sprache"
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
 
-#: _JNJ/html/e_type.m.jnj:186 _JNJ/html/gallery.jnj:53
+#: _JNJ/html/e_type.m.jnj:187 _JNJ/html/gallery.jnj:53
 msgid "Last"
 msgstr "Letztes"
 
@@ -318,21 +334,21 @@ msgstr "Letztes"
 msgid "Last picture"
 msgstr "Letztes Bild"
 
-#: _JNJ/html/e_type.m.jnj:320
+#: _JNJ/html/e_type.m.jnj:321
 msgid "Leave form without changing set of attributes to display"
 msgstr ""
 "Verlasse das Formular ohne die Menge der darzustellenden Attribute zu "
 "ändern"
 
-#: _JNJ/html/e_type.m.jnj:137
+#: _JNJ/html/e_type.m.jnj:138
 msgid "Leave form without changing set of order-by criteria"
 msgstr "Verlasse das Formular ohne die Ordnungskriterien zu ändern"
 
-#: _JNJ/html/e_type.m.jnj:97
+#: _JNJ/html/e_type.m.jnj:98
 msgid "Leave form without selecting entity "
 msgstr "Verlasse das Formular ohne eine Entität auszuwählen "
 
-#: _JNJ/html/e_type.m.jnj:267
+#: _JNJ/html/e_type.m.jnj:268
 msgid "Limit number of entities displayed"
 msgstr "Anzahl der dargestellten Entitäten"
 
@@ -370,7 +386,7 @@ msgstr "Anmeldung erforderlich"
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
-#: _JNJ/html/e_type_afs.jnj:73
+#: _JNJ/html/e_type_afs.jnj:81
 msgid "Make a copy of this object"
 msgstr "Kopiere dieses Objekt"
 
@@ -390,7 +406,7 @@ msgstr "Mehr"
 msgid "Move calendar display by delta units"
 msgstr "Verschiebe die Kalenderansicht um `delta` Einheiten"
 
-#: _JNJ/html/e_type.m.jnj:196 _JNJ/html/gallery.jnj:52
+#: _JNJ/html/e_type.m.jnj:197 _JNJ/html/gallery.jnj:52
 msgid "Next"
 msgstr "Nächstes"
 
@@ -402,7 +418,7 @@ msgstr "Nächster Fehler"
 msgid "Next picture"
 msgstr "Nächstes Bild"
 
-#: _JNJ/html/e_type.m.jnj:273
+#: _JNJ/html/e_type.m.jnj:274
 msgid "Number of first entity to display"
 msgstr "Position der ersten dargestellten Entität"
 
@@ -410,11 +426,11 @@ msgstr "Position der ersten dargestellten Entität"
 msgid "Number of weeks displayed"
 msgstr "Anzahl der dargestellten Wochen"
 
-#: _JNJ/html/e_type.m.jnj:280
+#: _JNJ/html/e_type.m.jnj:281
 msgid "Order by"
 msgstr "Ordne nach"
 
-#: _JNJ/html/e_type.m.jnj:120
+#: _JNJ/html/e_type.m.jnj:121
 msgid "Order-by Criteria"
 msgstr "Ordnungskriterien"
 
@@ -447,7 +463,7 @@ msgstr ""
 msgid "Please try again later. "
 msgstr "Bitte versichen Sie es später nochmals."
 
-#: _JNJ/html/e_type.m.jnj:206 _JNJ/html/gallery.jnj:50
+#: _JNJ/html/e_type.m.jnj:207 _JNJ/html/gallery.jnj:50
 msgid "Prev"
 msgstr "Voriges"
 
@@ -463,7 +479,7 @@ msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
 msgid "Read the full article at"
 msgstr "Lies den vollständigen Bericht unter"
 
-#: _JNJ/html/e_type_admin.jnj:71
+#: _JNJ/html/e_type_admin.jnj:75
 msgid "Reenable"
 msgstr "Schalte ein"
 
@@ -483,24 +499,24 @@ msgstr "Registrieren eines neuen Benutzerkontos für "
 msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
-#: _JNJ/html/e_type_afs.jnj:63 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
+#: _JNJ/html/e_type_afs.jnj:74 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
 #: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: _JNJ/html/e_type.m.jnj:102
+#: _JNJ/html/e_type.m.jnj:103
 msgid "Reset fields"
 msgstr "Lösche Eingabefelder"
 
-#: _JNJ/html/e_type_afs.jnj:72
+#: _JNJ/html/e_type_afs.jnj:85
 msgid "Reset fields to start values"
 msgstr "Setze Eingabefelder auf Startwerte zurück"
 
-#: _JNJ/html/e_type.m.jnj:325
+#: _JNJ/html/e_type.m.jnj:326
 msgid "Reset form to default"
 msgstr "Setze das Formular auf Ausgangswerte zurück"
 
-#: _JNJ/html/e_type.m.jnj:142
+#: _JNJ/html/e_type.m.jnj:143
 msgid "Reset order-by criteria"
 msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 
@@ -509,11 +525,11 @@ msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/e_type_afs.jnj:67 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:76 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr "Sichern"
 
-#: _JNJ/html/e_type_afs.jnj:76
+#: _JNJ/html/e_type_afs.jnj:87
 msgid "Save the attribute values as displayed in form fields"
 msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 
@@ -526,11 +542,19 @@ msgstr "Sicher alle Werte in den Formularfeldern"
 msgid "Scroll by %s weeks to anchor %s."
 msgstr "Verschiebe Ansicht um %s Wochen auf Anker-Datum %s."
 
-#: _JNJ/html/e_type.m.jnj:251
+#: _JNJ/html/e_type_afs.jnj:75
+msgid "Select"
+msgstr "Wähle aus"
+
+#: _JNJ/html/e_type_afs.jnj:86
+msgid "Select an object as value for this field"
+msgstr "Wähle ein Objekt als Wert dieses Felds aus"
+
+#: _JNJ/html/e_type.m.jnj:252
 msgid "Select attributes"
 msgstr "Wähle Attribute aus"
 
-#: _JNJ/html/e_type.m.jnj:82
+#: _JNJ/html/e_type.m.jnj:83
 #, python-format
 msgid "Select entity for attribute %s"
 msgstr "Wähle Entität für Attribut %s aus"
@@ -540,7 +564,7 @@ msgstr "Wähle Entität für Attribut %s aus"
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
 
-#: _JNJ/html/e_type.m.jnj:250 _JNJ/html/e_type.m.jnj:304
+#: _JNJ/html/e_type.m.jnj:251 _JNJ/html/e_type.m.jnj:305
 msgid "Select the attributes to be displayed for each object"
 msgstr "Wähle die Attribute die für jedes Objekt dargestellt werden sollen"
 
@@ -548,7 +572,7 @@ msgstr "Wähle die Attribute die für jedes Objekt dargestellt werden sollen"
 msgid "Selected picture"
 msgstr "Ausgewähltes Bild"
 
-#: _JNJ/html/afs.jnj:154 _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
+#: _JNJ/html/afs.jnj:157 _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr "Schicke Daten an den Server und beende das Formular"
 
@@ -568,7 +592,7 @@ msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 msgid "Slide show"
 msgstr "Dia show"
 
-#: _JNJ/html/afs.jnj:155 _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
+#: _JNJ/html/afs.jnj:158 _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr "Absenden"
 
@@ -610,11 +634,11 @@ msgstr "Einheiten für die Verschiebung der Kalenderansicht um `delta`"
 msgid "Use one of the HTTP methods (%s), instead."
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:315
+#: _JNJ/html/e_type.m.jnj:316
 msgid "Use set of attributes currently displayed in form"
 msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 
-#: _JNJ/html/e_type.m.jnj:132
+#: _JNJ/html/e_type.m.jnj:133
 msgid "Use set of criteria currently displayed in order-by form"
 msgstr "Verwende die Ordnungskriterien die momentan im Formular eingeschaltet sind"
 
@@ -623,7 +647,7 @@ msgstr "Verwende die Ordnungskriterien die momentan im Formular eingeschaltet si
 msgid "Use the HTTP method '%s', instead."
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:91
+#: _JNJ/html/e_type.m.jnj:92
 msgid "Use the currently selected entity"
 msgstr "Verwende die gegenwärtig ausgewählte Entität"
 

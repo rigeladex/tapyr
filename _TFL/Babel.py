@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -38,6 +38,7 @@
 #    26-Feb-2010 (CT) `process_count` forced to `1`
 #    ««revision-date»»···
 #--
+
 from   _TFL           import TFL
 import _TFL.defaultdict
 import _TFL._Babel.Extract
