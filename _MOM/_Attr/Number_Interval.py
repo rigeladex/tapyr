@@ -20,13 +20,13 @@
 #
 #++
 # Name
-#    MOM.Attr.Float_Interval
+#    MOM.Attr.Number_Interval
 #
 # Purpose
-#    Composite attribute type for interval of float values
+#    Factory for composite attribute types modelling an interval of numbers
 #
 # Revision Dates
-#     6-Mar-2012 (CT) Creation
+#    28-Mar-2012 (CT) Creation (factored from un-DRY `Float_Interval`)
 #    ««revision-date»»···
 #--
 
@@ -35,12 +35,12 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   __future__            import unicode_literals
 
 from   _MOM.import_MOM       import *
-from   _MOM.import_MOM       import _A_Composite_
+from   _MOM.import_MOM       import _A_Composite_, _A_Number_
 
 _Ancestor_Essence = MOM.An_Entity
 
-class Float_Interval (_Ancestor_Essence) :
-    """Model a interval of float values (lower, upper)."""
+class _Interval_ (_Ancestor_Essence) :
+    """Model an interval (lower, upper)."""
 
     ui_display_sep = " - "
 
@@ -48,21 +48,21 @@ class Float_Interval (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class lower (A_Float) :
+        class lower (_A_Number_) :
             """Lower bound of interval."""
 
             kind               = Attr.Necessary
 
         # end class lower
 
-        class upper (A_Float) :
+        class upper (_A_Number_) :
             """Upper bound of interval."""
 
             kind               = Attr.Necessary
 
         # end class upper
 
-        class center (A_Float) :
+        class center (_A_Number_) :
             """Center of interval."""
 
             kind               = Attr.Query
@@ -71,7 +71,7 @@ class Float_Interval (_Ancestor_Essence) :
 
         # end class center
 
-        class length (A_Float) :
+        class length (_A_Number_) :
             """Length of interval."""
 
             kind               = Attr.Query
@@ -97,21 +97,58 @@ class Float_Interval (_Ancestor_Essence) :
 
     # end class _Predicates
 
-# end class Float_Interval
+# end class _Interval_
 
-class A_Float_Interval (_A_Composite_) :
-    """Models an attribute holding a interval of float values (lower, upper)"""
+def new_interval_attr_type (bounds_type, name = None) :
+    if name is None and bounds_type.__name__.startswith ("A_") :
+        name = bounds_type.__name__ [2:]
+    def new_attr (_Attr, attr_name) :
+        ancestor = getattr (_Attr, attr_name)
+        return ancestor.__class__ (attr_name, (bounds_type, ancestor), {})
+    cls_name    = "%s_Interval" % (name, )
+    _Attributes = _Interval_._Attributes.__class__ \
+        ( "_Attributes"
+        , (_Interval_._Attributes, )
+        , dict
+            (  (n, new_attr (_Interval_._Attributes, n))
+            for n in ("lower", "upper", "center", "length")
+            )
+        )
+    Interval_Type =  _Interval_.__class__ \
+        ( cls_name
+        , (_Interval_, )
+        , dict
+            ( _Attributes = _Attributes
+            , __doc__ = "Model an interval of %s values (lower, upper)."
+                % (name.lower (), )
+            # __module__ = ...
+            )
+        )
+    A_Interval_Type = _A_Composite_.__class__ \
+        ( "A_%s" % (cls_name, )
+        , (_A_Composite_, )
+        , dict
+            ( P_Type  = Interval_Type
+            , typ     = cls_name
+            , __doc__ =
+                ( "Models an attribute holding a interval of %s "
+                  "values (lower, upper)"
+                % (name.lower (), )
+                )
+            # __module__ = ...
+            )
+        )
+    return Interval_Type, A_Interval_Type
+# end def new_interval_attr_type
 
-    P_Type         = Float_Interval
-    typ            = "Float_Interval"
-
-# end class A_Float_Interval
+Float_Interval,     A_Float_Interval     = new_interval_attr_type (A_Float)
+Frequency_Interval, A_Frequency_Interval = new_interval_attr_type (A_Freqency)
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    )
+    if isinstance (v, MOM.Meta.M_Attr_Type) and not v.__name__ == "_Interval_"
+    ) + ("new_interval_attr_type", )
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")
-### __END__ MOM.Attr.Float_Interval
+### __END__ MOM.Attr.Number_Interval

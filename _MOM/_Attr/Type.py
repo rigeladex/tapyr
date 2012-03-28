@@ -215,6 +215,7 @@
 #                     Syntax_Re_Mixin [which derives from `TFL.Meta.Object`])
 #    14-Mar-2012 (CT) Add `Eval_Mixin` and `_A_String_Ascii_`
 #    27-Mar-2012 (CT) Add `electric` to mark framework-generated attributes
+#    28-Mar-2012 (CT) Add `A_Freqency`
 #    ««revision-date»»···
 #--
 
@@ -1347,7 +1348,7 @@ class _A_Unit_ (A_Attr_Type) :
                       ( _T (u"Invalid unit %s, specify one of %s")
                       % (unit, self.eligible_raw_values ())
                       )
-        return self.__super._from_string (obj, s, glob, locl) * factor
+        return self.__super._from_string (s, obj, glob, locl) * factor
     # end def _from_string
 
 # end class _A_Unit_
@@ -1682,6 +1683,21 @@ class A_Filename (_A_Filename_) :
 class A_Float (_A_Float_) :
     code_format    = "%s"
 # end class A_Float
+
+class A_Freqency (_A_Unit_, _A_Float_) :
+    """Models a frequency attribute with unit information."""
+
+    typ              = "Frequency"
+    needs_raw_value  = True
+    _unit_dict       = dict \
+        ( Hz         = 1
+        , kHz        = 1.E3
+        , MHz        = 1.E6
+        , GHz        = 1.E9
+        , THz        = 1.E12
+        )
+
+# end class A_Freqency
 
 class A_Int (_A_Int_) :
     pass
