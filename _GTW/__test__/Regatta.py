@@ -31,6 +31,7 @@
 #    15-Nov-2011 (CT) Add tests for `sorted_by` and `sort_key`
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    29-Mar-2012 (CT) Add test for cached role `regattas`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,20 @@ _test_code = """
         (('tuple', (('unicode', u'tanzer'), ('unicode', u'christian'), ('unicode', u''), ('unicode', u''))),)
     (u'yardstick')
         (('tuple', (('unicode', u'yardstick'),)),)
+
+    >>> sorted (SRM.Regatta.acr_map.values ())
+    [<Link_Cacher_n (GTW.OMP.SRM.Regatta) event --> regattas>]
+    >>> sorted (SRM.Regatta_C.acr_map.values ())
+    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_C) event --> regattas>]
+    >>> sorted (SRM.Regatta_H.acr_map.values ())
+    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_H) event --> regattas>]
+
+    >>> crs = SRM.Regatta_Event.regattas
+    >>> print crs, ":", crs.assoc
+    Cached_Role_Set `regattas` : GTW.OMP.SRM.Regatta
+
+    >>> sorted (rev.regattas)
+    [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'yardstick', ))]
 
 """
 

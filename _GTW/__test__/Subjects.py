@@ -116,11 +116,11 @@ _test_code = """
     >>> PAP.Person_has_Email.acr_map.get ("right", False)
     <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>
 
-    >>> sorted (PAP.Subject_has_Email.acr_map.values ())
+    >>> sorted (PAP.Subject_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
     [<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>]
-    >>> sorted (PAP.Company_has_Email.acr_map.values ())
-    [<Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>]
-    >>> sorted (PAP.Person_has_Email.acr_map.values ())
+    >>> sorted (PAP.Company_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
+    [<Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>]
+    >>> sorted (PAP.Person_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
     [<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>]
 
     >>> def show_emails (ET) :
@@ -134,7 +134,6 @@ _test_code = """
 
     >>> show_emails (PAP.Person)
     <class '_GTW._OMP._PAP.Person.emails'> GTW.OMP.PAP.Person_has_Email : `Email` linked to `person`
-
 
 """
 
