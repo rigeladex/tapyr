@@ -52,6 +52,8 @@
 #    22-Dec-2010 (CT) `_Auth_Account_.electric`, `.is_partial` and
 #                     `.is_relevant` redefined to `True`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    29-Mar-2012 (CT) Redefine `Account_Anonymous.x_locked` instead of
+#                     `.electric`
 #    ««revision-date»»···
 #--
 
@@ -143,19 +145,19 @@ class Account_Anonymous (_Ancestor_Essence) :
 
         # end class active
 
-        class electric (_Ancestor_Essence._Attributes.electric) :
-
-            kind       = Attr.Const
-            default    = True
-
-        # end class electric
-
         class superuser (_Ancestor_Essence._Attributes.superuser) :
 
             kind       = Attr.Const
             default    = False
 
         # end class superuser
+
+        class x_locked (_Ancestor_Essence._Attributes.x_locked) :
+
+            kind       = Attr.Const
+            default    = True
+
+        # end class x_locked
 
     # end class _Attributes
 
