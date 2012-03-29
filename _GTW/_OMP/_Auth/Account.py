@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This package is part of the package GTW.
@@ -55,7 +55,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__             import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
@@ -71,7 +71,7 @@ _Ancestor_Essence = MOM.Object
 class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
     """Model an user account."""
 
-    _real_name = "Account"
+    _real_name  = "Account"
 
     is_partial  = True
     is_relevant = True
@@ -158,7 +158,6 @@ class Account_Anonymous (_Ancestor_Essence) :
         # end class superuser
 
     # end class _Attributes
-
 
 # end class Account_Anonymous
 
