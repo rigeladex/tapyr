@@ -177,7 +177,9 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def insert (self, session, entity) :
         session.write_access = True
-        base_pks = dict (pid = entity.pid)
+        base_pks = dict ()
+        if not self.bases :
+            base_pks ["pid"] = entity.pid
         pk_map   = self.e_type._sa_pk_base
         for b in self.bases :
             base_pks [pk_map [b.type_name]] = b._SAS.insert (session, entity)
@@ -481,7 +483,7 @@ class _Session_ (TFL.Meta.Object) :
     # end def readonly
 
     def register_scope (self, scope) :
-        kw               = dict (scope_guid = self.db_meta_data.guid)
+        kw               = dict ()
         kw ["meta_data"] = self.db_meta_data
         kw ["readonly"]  = getattr (self.db_meta_data, "readonly", False)
         result = self.execute (self._sa_scope.insert ().values (** kw))
@@ -509,6 +511,7 @@ class Session_S (_Session_) :
 
     def add (self, entity, id = None) :
         with self.scope.ems.pm.context (entity, id) :
+            # import pdb;pdb.set_trace ()
             entity.__class__._SAS.insert  (self, entity)
         self._pid_map [entity.pid] = entity
     # end def add
