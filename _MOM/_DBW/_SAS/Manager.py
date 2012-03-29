@@ -83,6 +83,7 @@
 #    26-Nov-2010 (CT) `pool_recycle = 900` added to `_create_session`
 #    22-Mar-2011 (MG) `_create_engine` moved into `dbs.create_engine`
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
+#    29-Mar-2012 (MG) `_cached_role` handling fixed
 #    ««revision-date»»···
 #--
 
@@ -210,7 +211,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         attr_spec = e_type._Attributes
         for name, attr_cls in attr_spec._own_names.iteritems () :
             if attr_cls and issubclass (attr_cls, cls.cached_role_attr_classes) :
-                ### import pdb; pdb.set_trace ()
                 acd      = attr_spec._own_names [name] = attr_cls.New \
                     ( kind        = MOM.Attr.Cached
                     , Kind_Mixins = (MOM.Attr.Computed_Mixin, )
@@ -242,7 +242,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if unique is not None and not e_type.polymorphic_epk :
                 sa_table.append_constraint (unique)
         for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
-            if cr.grn in assoc_et._Attributes._own_names :
+            if cr.attr_name in e_type._Attributes._own_names :
                 ### setup cached role only for the etype first defining the
                 ### role attribute, not it's descendents
                 cls._cached_role \
@@ -267,32 +267,26 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _attr_dicts
 
     def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
-        assoc_tn = assoc_et.type_name
+        assoc_tn = attr_kind.assoc
         if isinstance (cr, MOM.Link_Cacher) :
             singleton = isinstance (cr, MOM.Link_Cacher_1)
             attr        = getattr (MOM.Q, cr.role_name)
             def computed_crn (self) :
                 ETM     = self.home_scope [assoc_tn]
                 query   = ETM.query (attr == self.pid)
+                #print assoc_et, cr, attr_kind
+                #import pdb;pdb.set_trace ()
                 if singleton :
                     return query.first ()
                 return query
             # end def computed_crn
         else :
-            assoc_sa    = assoc_et._sa_table
-            q_attr      = assoc_sa.c \
-                [getattr (assoc_et, cr.role_name      ).attr._sa_col_name]
-            f_attr      = assoc_sa.c \
-                [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
+            attr_name   = cr.grn
+            query_attr  = getattr (MOM.Q, cr.other_role.name)
             singleton   = isinstance (cr, MOM.Role_Cacher_1)
-            result_et   = app_type [attr_kind.P_Type.type_name]
             def computed_crn (self) :
                 ETM     = self.home_scope [assoc_tn]
-                session = self.home_scope.ems.session
-                links   = sql.select ((q_attr,)).where (f_attr == self.pid)
-                query   = MOM.DBW.SAS.Q_Result \
-                    ( result_et, session
-                    ).where (result_et._SAQ.pid.in_ (links))
+                query   = ETM.query (query_attr == self).attr (attr_name)
                 if singleton :
                     return query.first ()
                 return query
