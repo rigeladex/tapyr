@@ -167,36 +167,36 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
     @classmethod
     def create_nav (cls, cmd, app_type, db_url, ** kw) :
         from _JNJ.Media_Defaults import Media_Defaults
-        CSS_Parameters = Media_Defaults ()
+        Media_Parameters = Media_Defaults ()
         home_url_root  = "http://localhost:9042"
         site_prefix    = pjoin (home_url_root, "")
         template_dirs  = [cls.jnj_src]
         result = GTW.NAV.Root \
-            ( auto_delegate   = False
-            , DB_Url          = db_url
-            , App_Type        = app_type
-            , CSS_Parameters  = CSS_Parameters
-            , DEBUG           = cmd.debug
-            , encoding        = cmd.output_encoding
-            , HTTP            = cmd.HTTP
-            , input_encoding  = cmd.input_encoding
-            , language        = "de"
-            , permissive      = False
-            , site_url        = home_url_root
-            , site_prefix     = site_prefix
-            , src_dir         = cls.web_src_root
-            , template_name   = cmd.template_file
-            , version         = "html/5.jnj"
-            , Templateer      = JNJ.Templateer
-                ( encoding        = cmd.input_encoding
-                , globals         = dict (site_base = cmd.template_file)
-                , i18n            = True
-                , load_path       = template_dirs
-                , trim_blocks     = True
-                , version         = "html/5.jnj"
-                , CSS_Parameters  = CSS_Parameters
+            ( auto_delegate     = False
+            , DB_Url            = db_url
+            , App_Type          = app_type
+            , Media_Parameters  = Media_Parameters
+            , DEBUG             = cmd.debug
+            , encoding          = cmd.output_encoding
+            , HTTP              = cmd.HTTP
+            , input_encoding    = cmd.input_encoding
+            , language          = "de"
+            , permissive        = False
+            , site_url          = home_url_root
+            , site_prefix       = site_prefix
+            , src_dir           = cls.web_src_root
+            , template_name     = cmd.template_file
+            , version           = "html/5.jnj"
+            , Templateer        = JNJ.Templateer
+                ( encoding          = cmd.input_encoding
+                , globals           = dict (site_base = cmd.template_file)
+                , i18n              = True
+                , load_path         = template_dirs
+                , trim_blocks       = True
+                , version           = "html/5.jnj"
+                , Media_Parameters  = Media_Parameters
                 )
-            , TEST            = cmd.TEST
+            , TEST              = cmd.TEST
             , ** kw
             )
         result.add_entries \

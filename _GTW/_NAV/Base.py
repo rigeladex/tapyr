@@ -272,6 +272,7 @@
 #    19-Jan-2012 (CT) Factor `_cache_pickles`
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
 #    16-Feb-2012 (CT) Save `_orig_kw` in `_Meta_.__call__`
+#    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -1114,15 +1115,15 @@ class Root (_Dir_) :
 
     auto_delegate           = False  ### useful if not served by web-app
     Cache_Pickler           = set ()
-    Run_on_Launch           = []
     copyright_start         = None
     copyright_url           = None
-    CSS_Parameters          = None
     DEBUG                   = False
     email                   = None   ### default from address
+    Media_Parameters        = None
     name                    = "/"
     owner                   = None
     redirects               = {}
+    Run_on_Launch           = []
     smtp                    = None
     src_root                = ""
     target                  = None

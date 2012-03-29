@@ -66,6 +66,7 @@
 #     9-Jan-2012 (CT) Fix `get_cached_media` (use `.scripts` unless `js_href`)
 #    27-Jan-2012 (CT) Fix `__eq__` and `__hash__`,
 #                     add `__lt__` and `totally_ordered`
+#    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -442,7 +443,7 @@ class Template_E (_Template_) :
 
     @classmethod
     def get_Media_R (cls, env, templates) :
-        P = env.CSS_Parameters
+        P = env.Media_Parameters
         media_fragment_pathes = tuple \
             (TFL.uniq (t.media_path for t in templates if t.media_path))
         if media_fragment_pathes :

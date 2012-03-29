@@ -35,6 +35,7 @@
 #    23-Feb-2010 (MG) `Default_Extensions` factored
 #     3-Jan-2011 (CT) `CSS_Parameters` added
 #    16-Mar-2011 (CT) Optional argument `GTW` added to `HTML`
+#    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -53,14 +54,14 @@ from jinja2 import Environment, FileSystemLoader, ChoiceLoader, PrefixLoader
 Default_Extensions = ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
 
 def HTML \
-        ( version        = "html/5.jnj"
-        , load_path      = ()
-        , loader         = None
-        , globals        = {}
-        , encoding       = "iso-8859-1"
-        , i18n           = False
-        , CSS_Parameters = None
-        , GTW            = None
+        ( version          = "html/5.jnj"
+        , load_path        = ()
+        , loader           = None
+        , globals          = {}
+        , encoding         = "iso-8859-1"
+        , i18n             = False
+        , Media_Parameters = None
+        , GTW              = None
         , ** kw
         ) :
     jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "iso-8859-1")
@@ -84,9 +85,9 @@ def HTML \
         , GTW          = GTW
         , html_version = version
         )
-    result.CSS_Parameters = CSS_Parameters
-    result.encoding       = encoding
-    result.static_handler = None
+    result.Media_Parameters = Media_Parameters
+    result.encoding         = encoding
+    result.static_handler   = None
     if i18n :
         result.install_gettext_translations (TFL.I18N)
     return result

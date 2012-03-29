@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #                     aren't `self.declarations`
 #    11-Sep-2009 (CT) `Parameters`, `Parameter_Scope` and `Style_Sheet.Read`
 #                     added
+#    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ def Parameters (* bases, ** kw) :
     """Model parameters for CSS rules and stylesheets, defined by `kw` and
        inherited from `bases`.
     """
-    return type ("CSS_Parameters", bases, kw)
+    return type ("Media_Parameters", bases, kw)
 # end def Parameters
 
 class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
