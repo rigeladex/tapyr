@@ -174,6 +174,7 @@
 #    24-Jan-2012 (CT) Add `show_in_ui`
 #    31-Jan-2012 (CT) Change defaults for `polymorphic_epk` & `polymorphic_epks`
 #                     from `None` to `False`
+#    29-Mar-2012 (CT) Factor `all_links` up from `MOM.Object`
 #    ««revision-date»»···
 #--
 
@@ -1000,6 +1001,15 @@ class Id_Entity (Entity) :
               if a.has_substance (self)
             )
     # end def ui_display_format
+
+    def all_links (self) :
+        result  = set ()
+        scope   = self.home_scope
+        r_query = scope.ems.r_query
+        for r in itertools.chain (* self.__class__.link_map.itervalues ()) :
+            result.update (r_query (r.assoc, {r.name : self}, strict = True))
+        return sorted (result, key = scope.MOM.Id_Entity.sort_key_pm ())
+    # end def all_links
 
     def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)

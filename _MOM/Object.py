@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -36,6 +36,7 @@
 #    28-Nov-2009 (CT) `is_partial = True` added to all classes
 #     2-Dec-2009 (CT) `all_links` changed to use `ems.role_query`
 #     9-Jun-2011 (MG) `epk_*` added
+#    29-Mar-2012 (CT) Factor `all_links` to `MOM.Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -61,15 +62,6 @@ class _MOM_Object_ (MOM.Id_Entity) :
     entity_kind           = "object"
 
     epk_split_characters  = "[;,+-/|\s]"
-
-    def all_links (self) :
-        result  = set ()
-        scope   = self.home_scope
-        r_query = scope.ems.r_query
-        for r in itertools.chain (* self.__class__.link_map.itervalues ()) :
-            result.update (r_query (r.assoc, {r.name : self}, strict = True))
-        return sorted (result, key = scope.MOM.Id_Entity.sort_key_pm ())
-    # end def all_links
 
     @classmethod
     def epk_splitter (cls, text) :
