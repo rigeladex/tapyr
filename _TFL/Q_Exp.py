@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -147,7 +147,7 @@ This module implements a query expression language::
     >>> Q.foo * -1
     Q.foo * -1
     >>> -1 * Q.foo
-    Q.foo * -1
+    -1 * Q.foo
 
     >>> qm = Q.foo.D.MONTH (2, 2010)
     >>> qm, qm.lhs, qm.op.__name__

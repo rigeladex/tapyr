@@ -283,7 +283,7 @@ class _Color_ (TFL.Meta.Object) :
 
     >>> _Color_.formatter = None
     >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
-    "grey" "darkred" rgba(0, 0, 255, 0.5)
+    grey darkred rgba(0, 0, 255, 0.5)
 
     """
 

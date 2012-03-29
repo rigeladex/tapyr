@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,6 +45,7 @@
 #                     are passed in (and `default_to_now` removed)
 #    31-Mar-2008 (CT) `__init__` changed to dereference `_body` if necessary
 #     3-May-2011 (CT) `_init_kw` added and used for `__repr__`
+#    29-Mar-2012 (CT) Add `_xtra_arg_names` and `_xtra_kw` (to support `tzinfo`)
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class _DTW_ (TFL.Meta.Object) :
     _init_arg_names  = ()
     _init_arg_map    = {}
     _timetuple_slice = None
+    _xtra_arg_names  = ()
 
     _body            = property \
         ( lambda self        : getattr (self, self._kind)
@@ -92,11 +94,12 @@ class _DTW_ (TFL.Meta.Object) :
                 defaults = (1, 1, 1, 0, 0, 0, 0, 0, 0)
             args += self._timetuple_slice (defaults) [len (args):]
             attrs = self._init_kw = {}
+            xkw   = self._xtra_kw = dict (kw)
             for i, name in enumerate (self._init_arg_names) :
-                if name in kw :
-                    attrs [name] = kw [name]
-                else :
-                    attrs [name] = args [i]
+                attrs [name] = xkw.pop (name, args [i])
+            for name in self._xtra_arg_names :
+                if name in xkw :
+                    attrs [name] = xkw.pop (name)
             self._body = self._new_object (attrs)
     # end def __init__
 

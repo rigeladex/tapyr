@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,8 @@
 #     7-Jan-2008 (CT) `as_utc` added
 #    31-Mar-2008 (CT) `combine` added
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
+#    29-Mar-2012 (CT) Add support for `tzinfo`; factor `as_local`; use
+#                     `CAL.Time._from_string_match_kw`
 #    ««revision-date»»···
 #--
 
@@ -117,6 +119,15 @@ class Date_Time (CAL.Date, CAL.Time) :
        Date_Time (2008, 4, 7, 10, 16, 42, 0)
        >>> dt.as_utc ()
        Date_Time (2008, 4, 7, 8, 16, 42, 0)
+
+       >>> dt = Date_Time.from_string ("2012-03-29 10:06:46 -0400")
+       >>> dt
+       Date_Time (2012, 3, 29, 10, 6, 46, 0)
+       >>> dt.as_local ()
+       Date_Time (2012, 3, 29, 16, 6, 46, 0)
+       >>> dt.as_utc ()
+       Date_Time (2012, 3, 29, 14, 6, 46, 0)
+
     """
 
     _Type            = datetime.datetime
@@ -137,20 +148,29 @@ class Date_Time (CAL.Date, CAL.Time) :
               r"(?P<microsecond> \d+)"
             r")?"
           r")?"
-          #r"(?: \s"
-          #  r"(?P<tzoff> [-+]\d{4,4})"
-          #r")?"
+          r"(?: \s"
+            r"(?P<tzinfo> [-+]\d{4,4})"
+          r")?"
         , flags = re.VERBOSE | re.IGNORECASE
         )
 
     from _CAL.Delta import Date_Time_Delta as Delta
 
+    def as_local (self) :
+        """Return `self` converted to local time."""
+        from dateutil.tz import tzlocal
+        local = self
+        if not local.tzinfo :
+            local = self.replace (tzinfo = tzlocal ())
+        return self.__class__ \
+            (** {self._kind : local._body.astimezone (tzlocal ())})
+    # end def as_local
+
     def as_utc (self) :
         """Return `self` converted to `UTC`."""
-        from dateutil.tz import tzlocal
-        local = self.replace (tzinfo = tzlocal ())
-        delta = self.Delta   (seconds = local._body.utcoffset ().seconds)
-        return self - delta
+        local = self.as_local ()
+        delta = self.Delta    (seconds = local._body.utcoffset ().seconds)
+        return local - delta
     # end def as_utc
 
     @classmethod
@@ -211,9 +231,7 @@ class Date_Time (CAL.Date, CAL.Time) :
         t  = s [match.end () :].lstrip ().lstrip ("T")
         if t and cls.time_pattern.match (t) :
             match = cls.time_pattern.last_match
-            for k, v in match.groupdict ().iteritems () :
-                if v :
-                    kw [k] = int (v)
+            kw.update (CAL.Time._from_string_match_kw (t, match))
         return kw
     # end def _from_string_match_kw
 

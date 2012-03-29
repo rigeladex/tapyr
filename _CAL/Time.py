@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,6 +37,7 @@
 #    13-Nov-2007 (CT) `as_degrees` added
 #    14-Nov-2007 (CT) `hh_mm` added
 #     4-Aug-2008 (MG) `from_string` added
+#    29-Mar-2012 (CT) Add support for `tzinfo`, factor `_from_string_match_kw`
 #    ««revision-date»»···
 #--
 
@@ -105,18 +106,23 @@ class Time (CAL._DTW_) :
     _kind            = "time"
     _init_arg_names  = ("hour", "minute", "second", "microsecond")
     _timetuple_slice = lambda s, tt : tt [3:6] + (0, )
+    _xtra_arg_names  = ("tzinfo", )
 
     hour             = property (TFL.Getter._body.hour)
     minute           = property (TFL.Getter._body.minute)
     second           = property (TFL.Getter._body.second)
     microsecond      = property (TFL.Getter._body.microsecond)
+    tzinfo           = property (TFL.Getter._body.tzinfo)
 
     pattern          = Regexp \
-        ( "  (?P<hour>\d{1,2})"
-          ": (?P<minute>\d{1,2})"
-          "(: (?P<second>\d{1,2})"
-          "(. (?P<microsecond>\d+))?)?"
-        , re.X
+        ( r"  (?P<hour>\d{1,2})"
+          r": (?P<minute>\d{1,2})"
+          r"(: (?P<second>\d{1,2})"
+          r"(. (?P<microsecond>\d+))?)?"
+          r"(?: \s"
+            r"(?P<tzinfo> [-+]\d{4,4})"
+          r")?"
+        , re.VERBOSE
         )
 
     from _CAL.Delta import Time_Delta as Delta
@@ -163,10 +169,7 @@ class Time (CAL._DTW_) :
     @classmethod
     def from_string (cls, s) :
         if cls.pattern.match (s) :
-            kw = dict \
-                (   (n, int (v or "0"))
-                for (n, v) in cls.pattern.groupdict ().iteritems ()
-                )
+            kw = cls._from_string_match_kw (s, cls.pattern.last_match)
             return cls (** kw)
         raise ValueError (s)
     # end def from_string
@@ -192,6 +195,22 @@ class Time (CAL._DTW_) :
             result += (self.microsecond / 1000.)
         return result
     # end def seconds
+
+    @classmethod
+    def _from_string_match_kw (cls, s, match) :
+        assert match
+        kw = {}
+        for k, v in match.groupdict ().iteritems () :
+            if v :
+                if k == "tzinfo" :
+                    from dateutil.tz import tzoffset
+                    v = tzoffset \
+                        (None, (int (v [:-2]) * 60 + int (v [-2:])) * 60)
+                else :
+                    v = int (v)
+                kw [k] = v
+        return kw
+    # end def _from_string_match_kw
 
     def __add__ (self, rhs) :
         result = self.as_delta () + self._delta (rhs)
