@@ -216,6 +216,8 @@
 #    14-Mar-2012 (CT) Add `Eval_Mixin` and `_A_String_Ascii_`
 #    27-Mar-2012 (CT) Add `electric` to mark framework-generated attributes
 #    28-Mar-2012 (CT) Add `A_Freqency`
+#    29-Mar-2012 (CT) Change `_A_Unit_._unit_pattern` to not force whitespace
+#                     between a plain number and the unit
 #    ««revision-date»»···
 #--
 
@@ -1316,7 +1318,14 @@ class _A_Unit_ (A_Attr_Type) :
     _default_unit  = None ### set by meta class
     _unit_dict     = {}
     _unit_pattern  = Regexp \
-        ( ur"[])a-zA-Z_0-9] \s+ (?P<unit> [a-zA-Z]+ (?: / [a-zA-Z]+)?) \s*$"
+        ( r"(?: "
+              r"^ \d+ (?: \.\d*)? (?: [eE]\d+)? \s*" ### plain number
+          r"|"
+              r"[])a-zA-Z_0-9] \s+" ### expression followed by whitespace(s)
+          r")"
+          r"(?P<unit> [a-zA-Z]+ (?: / [a-zA-Z]+)?)"
+          r"\s*"
+          r"$"
         , re.VERBOSE
         )
 
