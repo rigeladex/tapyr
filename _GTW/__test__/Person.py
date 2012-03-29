@@ -174,4 +174,21 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
+if __name__ == "__main__" :
+    scope = Scaffold.scope ("sqlite:///")
+
+    PAP   = scope.PAP
+    p1    = PAP.Person ("l", "f1")
+    p2    = PAP.Person ("l", "f2")
+    e1    = PAP.Email  ("l.f1@test.com")
+    e2    = PAP.Email  ("l.f2@test.com")
+    e3    = PAP.Email  ("office@test.com")
+    PAP.Person_has_Email (p1, e1)
+    PAP.Person_has_Email (p2, e2)
+    PAP.Person_has_Email (p1, e3)
+    PAP.Person_has_Email (p2, e3)
+
+    print "Emails", p1.emails
+    print "Persons", e3.persons
+    print "Persons", e2.persons
 ### __END__ GTW.__test__.Person
