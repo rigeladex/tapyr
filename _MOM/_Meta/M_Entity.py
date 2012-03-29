@@ -127,6 +127,7 @@
 #    31-Jan-2012 (CT) Propagate `polymorphic_epk` directly to
 #                     `relevant_root`, let all children inherit that value
 #    31-Jan-2012 (CT) Add `epk_sig_root` to `M_E_Type_Id._m_setup_children`
+#    29-Mar-2012 (CT) Change `link_map` to exclude partial E_Types
 #    ««revision-date»»···
 #--
 
@@ -759,7 +760,8 @@ class M_E_Type_Id (M_E_Type) :
                     if k not in refuse :
                         result [k].update (v)
             for k, v in cls._own_link_map.iteritems () :
-                result [k].update (v)
+                if not k.is_partial :
+                    result [k].update (v)
         return result
     # end def link_map
 
