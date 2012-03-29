@@ -275,6 +275,8 @@
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    29-Mar-2012 (CT) Change `allow_user` to return `False` if
 #                     `login_required` and `not user`
+#    29-Mar-2012 (CT) Replace `_Dir_.rendered` by `_effective`, change
+#                     `universal_view` to use `_effective`
 #    ««revision-date»»···
 #--
 
@@ -657,6 +659,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if self.top.domain :
             return "webmaster@%s" % self.top.domain
     # end def webmaster
+
+    @Once_Property
+    def _effective (self) :
+        return self
+    # end def _effective
 
     def _formatted_attr (self, name) :
         v = getattr (self, name)
@@ -1053,22 +1060,6 @@ class _Dir_ (_Site_Entity_) :
         return result
     # end def new_sub_dir
 
-    def rendered (self, handler, template = None) :
-        dt = self.dir_template
-        if dt is None :
-            try :
-                page = first (self.own_links)
-            except IndexError :
-                pass
-            else :
-                handler.context.update \
-                    ( nav_page = page
-                    , page     = page
-                    )
-                return page.rendered (handler, template)
-        return self.__super.rendered (handler, template or dt)
-    # end def rendered
-
     def sub_dir_iter (self) :
         for owl in self.own_links :
             if isinstance (owl, Dir) :
@@ -1083,6 +1074,19 @@ class _Dir_ (_Site_Entity_) :
             for t in d.template_iter () :
                 yield t
     # end def template_iter
+
+    @property
+    def _effective (self) :
+        dt = self.dir_template
+        if dt is None :
+            try :
+                page = first (self.own_links)
+            except IndexError :
+                pass
+            else :
+                return page
+        return self
+    # end def _effective
 
     def _get_child (self, child, * grandchildren) :
         for owl in self.own_links :
@@ -1339,10 +1343,11 @@ class Root (_Dir_) :
     @classmethod
     def universal_view (cls, handler) :
         href = handler.request.path [1:]
-        user = handler.current_user
         page = cls.page_from_href (href)
         HTTP = cls.top.HTTP
         if page :
+            page = page._effective
+            user = handler.current_user
             if handler.request.method not in page.SUPPORTED_METHODS :
                 raise HTTP.Error_405 (valid_methods = page.SUPPORTED_METHODS)
             if page.login_required :
