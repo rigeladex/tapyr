@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    28-Mar-2012 (CT) Creation (factored from un-DRY `Float_Interval`)
+#    29-Mar-2012 (CT) Add `__module__` to `__class__` calls
+#    29-Mar-2012 (CT) Rename `new_interval_attr_type` to `make`, add doctest
 #    ««revision-date»»···
 #--
 
@@ -36,6 +38,8 @@ from   __future__            import unicode_literals
 
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_, _A_Number_
+
+import _TFL.Caller
 
 _Ancestor_Essence = MOM.An_Entity
 
@@ -99,34 +103,55 @@ class _Interval_ (_Ancestor_Essence) :
 
 # end class _Interval_
 
-def new_interval_attr_type (bounds_type, name = None) :
+def make (bounds_type, name = None) :
+    """Make a new composite type and a new attribute type for `bounds_type`.
+
+    >>> Int_Interval, A_Int_Interval = MOM.Attr.Number_Interval.make (A_Int)
+    >>> Int_Interval
+    <class 'MOM.Int_Interval' [Spec Essence]>
+    >>> Int_Interval._Attributes.lower.mro () [:2]
+    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Int'>]
+    >>> Int_Interval._Attributes.lower.P_Type
+    <type 'int'>
+
+    >>> Float_Interval._Attributes.lower.mro () [:2]
+    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Float'>]
+    >>> Float_Interval._Attributes.lower.P_Type
+    <type 'float'>
+
+    >>> Frequency_Interval._Attributes.lower.mro () [:2]
+    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Freqency'>]
+    >>> Frequency_Interval._Attributes.lower.P_Type
+    <type 'float'>
+
+    """
     if name is None and bounds_type.__name__.startswith ("A_") :
         name = bounds_type.__name__ [2:]
-    def new_attr (_Attr, attr_name) :
+    def new_attr (_Attr, attr_name, module) :
         ancestor = getattr (_Attr, attr_name)
-        return ancestor.__class__ (attr_name, (bounds_type, ancestor), {})
+        return ancestor.__class__ \
+            (attr_name, (bounds_type, ancestor), dict (__module__ = module))
     cls_name    = "%s_Interval" % (name, )
+    module      = TFL.Caller.globals () ["__name__"]
     _Attributes = _Interval_._Attributes.__class__ \
         ( "_Attributes"
         , (_Interval_._Attributes, )
         , dict
-            (  (n, new_attr (_Interval_._Attributes, n))
+            (  (n, new_attr (_Interval_._Attributes, n, module))
             for n in ("lower", "upper", "center", "length")
             )
         )
     Interval_Type =  _Interval_.__class__ \
-        ( cls_name
-        , (_Interval_, )
+        ( cls_name, (_Interval_, )
         , dict
             ( _Attributes = _Attributes
             , __doc__ = "Model an interval of %s values (lower, upper)."
                 % (name.lower (), )
-            # __module__ = ...
+            , __module__ = module
             )
         )
     A_Interval_Type = _A_Composite_.__class__ \
-        ( "A_%s" % (cls_name, )
-        , (_A_Composite_, )
+        ( "A_%s" % (cls_name, ), (_A_Composite_, )
         , dict
             ( P_Type  = Interval_Type
             , typ     = cls_name
@@ -135,20 +160,21 @@ def new_interval_attr_type (bounds_type, name = None) :
                   "values (lower, upper)"
                 % (name.lower (), )
                 )
-            # __module__ = ...
+            , __module__ = module
             )
         )
     return Interval_Type, A_Interval_Type
-# end def new_interval_attr_type
+# end def make
 
-Float_Interval,     A_Float_Interval     = new_interval_attr_type (A_Float)
-Frequency_Interval, A_Frequency_Interval = new_interval_attr_type (A_Freqency)
+Float_Interval,     A_Float_Interval     = make (A_Float)
+Frequency_Interval, A_Frequency_Interval = make (A_Freqency)
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
     if isinstance (v, MOM.Meta.M_Attr_Type) and not v.__name__ == "_Interval_"
-    ) + ("new_interval_attr_type", )
+    )
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")
+    MOM.Attr._Export_Module ()
 ### __END__ MOM.Attr.Number_Interval
