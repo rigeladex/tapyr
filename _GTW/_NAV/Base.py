@@ -273,6 +273,8 @@
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
 #    16-Feb-2012 (CT) Save `_orig_kw` in `_Meta_.__call__`
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
+#    29-Mar-2012 (CT) Change `allow_user` to return `False` if
+#                     `login_required` and `not user`
 #    ««revision-date»»···
 #--
 
@@ -430,13 +432,16 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def account_manager
 
     def allow_user (self, user) :
-        if user and self.login_required :
-            if not (user.authenticated and user.active) :
+        if self.login_required :
+            if user :
+                if not (user.authenticated and user.active) :
+                    return False
+                if not user.superuser :
+                    for p in self._permissions () :
+                        if not p (user, self) :
+                            return False
+            else :
                 return False
-            if not user.superuser :
-                for p in self._permissions () :
-                    if not p (user, self) :
-                        return False
         return True
     # end def allow_user
 
