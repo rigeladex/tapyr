@@ -97,6 +97,7 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    20-Jan-2012 (CT) Esthetics
+#    29-Mar-2012 (MG) `Session.delete`: filter partial links
 #    ««revision-date»»···
 #--
 
@@ -551,12 +552,13 @@ class Session_S (_Session_) :
         execute = self.connection.execute
         link_map = getattr (entity.__class__, "link_map", {})
         for assoc, roles in link_map.iteritems () :
-            role = tuple (roles) [0]
-            for row in execute \
-                    ( assoc._SAS.select.where
-                        (getattr (assoc._SAQ, role.attr.name) == entity.pid)
-                    ) :
-                self.instance_from_row (assoc, row).destroy ()
+            if not assoc.is_partial :
+                role = tuple (roles) [0]
+                for row in execute \
+                        ( assoc._SAS.select.where
+                            (getattr (assoc._SAQ, role.attr.name) == entity.pid)
+                        ) :
+                    self.instance_from_row (assoc, row).destroy ()
         entity.__class__._SAS.delete (self, entity)
         entity.pid = None
     # end def delete
