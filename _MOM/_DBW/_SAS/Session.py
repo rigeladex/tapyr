@@ -98,6 +98,8 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    20-Jan-2012 (CT) Esthetics
 #    29-Mar-2012 (MG) `Session.delete`: filter partial links
+#    30-Mar-2012 (MG) `_in_rollback` checks added to prevent database
+#                     activities during transaction rollback
 #    ««revision-date»»···
 #--
 
@@ -159,10 +161,11 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def __init__
 
     def delete (self, session, entity) :
-        session.connection.execute \
-            (self.table.delete ().where (self.pk == entity.pid))
-        for b in self.bases :
-            b._SAS.delete (session, entity)
+        if not session._in_rollback :
+            session.connection.execute \
+                (self.table.delete ().where (self.pk == entity.pid))
+            for b in self.bases :
+                b._SAS.delete (session, entity)
     # end def delete
 
     def _gather_columns (self, e_type, columns, bases) :
@@ -176,30 +179,33 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def _gather_columns
 
     def insert (self, session, entity) :
-        session.write_access = True
-        base_pks = dict ()
-        if not self.bases :
-            base_pks ["pid"] = entity.pid
-        pk_map   = self.e_type._sa_pk_base
-        for b in self.bases :
-            base_pks [pk_map [b.type_name]] = b._SAS.insert (session, entity)
-        result = session.connection.execute \
-            ( self.table.insert ().values
-                (self.value_dict (entity, self.e_type, base_pks))
-            )
-        return result.inserted_primary_key [0]
+        if not session._in_rollback :
+            session.write_access = True
+            base_pks = dict ()
+            if not self.bases :
+                base_pks ["pid"] = entity.pid
+            pk_map   = self.e_type._sa_pk_base
+            for b in self.bases :
+                base_pks [pk_map [b.type_name]] = b._SAS.insert \
+                    (session, entity)
+            result = session.connection.execute \
+                ( self.table.insert ().values
+                    (self.value_dict (entity, self.e_type, base_pks))
+                )
+            return result.inserted_primary_key [0]
     # end def insert
 
     def insert_cargo (self, session, pid, pickle_cargo, type_name = None) :
-        session.write_access = True
-        type_name = type_name or self.e_type.type_name
-        for b in self.bases :
-            b._SAS.insert_cargo (session, pid, pickle_cargo, type_name)
-        session.connection.execute \
-            ( self.table.insert ().values
-                ( self._pickle_cargo_for_table
-                    (pickle_cargo, self.e_type, pid, default = type_name))
-            )
+        if not session._in_rollback :
+            session.write_access = True
+            type_name = type_name or self.e_type.type_name
+            for b in self.bases :
+                b._SAS.insert_cargo (session, pid, pickle_cargo, type_name)
+            session.connection.execute \
+                ( self.table.insert ().values
+                    ( self._pickle_cargo_for_table
+                        (pickle_cargo, self.e_type, pid, default = type_name))
+                )
     # end def insert_cargo
 
     def _pickle_cargo_for_table ( self, pickle_cargo
@@ -359,23 +365,25 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def update (self, session, entity, attrs = set ()) :
         ### TFL.BREAK ()
-        for b in self.bases :
-            b._SAS.update (session, entity, attrs)
-        values     = self.value_dict \
-            (entity, e_type = self.e_type, attrs = attrs)
-        if values :
-            session.write_access = True
-            update = self.table.update ().values (values)
-            where  = self.pk == entity.pid
-            if (   session.engine.query_last_cid_on_update
-               and (self.last_cid is not None)
-               and getattr (entity, "r_last_cid", None)
-               ) :
-                where  = sql.and_ (where, self.last_cid == entity.r_last_cid)
-            result     = session.connection.execute (update.where (where))
-            if not result.rowcount :
-                session.scope.rollback          ()
-                raise MOM.Error.Commit_Conflict ()
+        if not session._in_rollback :
+            for b in self.bases :
+                b._SAS.update (session, entity, attrs)
+            values     = self.value_dict \
+                (entity, e_type = self.e_type, attrs = attrs)
+            if values :
+                session.write_access = True
+                update = self.table.update ().values (values)
+                where  = self.pk == entity.pid
+                if (   session.engine.query_last_cid_on_update
+                   and (self.last_cid is not None)
+                   and getattr (entity, "r_last_cid", None)
+                   ) :
+                    where  = sql.and_ \
+                        (where, self.last_cid == entity.r_last_cid)
+                result     = session.connection.execute (update.where (where))
+                if not result.rowcount :
+                    session.scope.rollback          ()
+                    raise MOM.Error.Commit_Conflict ()
     # end def update
 
 # end class SAS_Interface
@@ -384,11 +392,11 @@ class _Session_ (TFL.Meta.Object) :
     """A database session"""
 
     transaction = None
-
     def __init__ (self, scope, engine) :
         self.scope        = scope
         self.engine       = engine
         self.write_access = False
+        self._in_rollback = 0
     # end def __init__
 
     def change_readonly (self, state) :
@@ -443,7 +451,8 @@ class _Session_ (TFL.Meta.Object) :
     # end def create
 
     def execute (self, * args, ** kw) :
-        return self.connection.execute (* args, ** kw)
+        if not self._in_rollback :
+            return self.connection.execute (* args, ** kw)
     # end def execute
 
     def load_info (self) :
@@ -477,8 +486,8 @@ class _Session_ (TFL.Meta.Object) :
         ### re-read the read only flag from the database to be sure to be
         ### up-to-date
         scope = self.scope
-        q     = self.connection.execute (self._sa_scope.select ())
-        si    = q.fetchone              ()
+        q     = self.execute (self._sa_scope.select ())
+        si    = q.fetchone   ()
         return si and si.readonly
     # end def readonly
 
@@ -507,26 +516,27 @@ class Session_S (_Session_) :
     def __init__ (self, scope, engine) :
         self.__super.__init__ (scope, engine)
         self.expunge  ()
+        self._in_rollback = 0
     # end def __init__
 
     def add (self, entity, id = None) :
         with self.scope.ems.pm.context (entity, id) :
-            # import pdb;pdb.set_trace ()
             entity.__class__._SAS.insert  (self, entity)
         self._pid_map [entity.pid] = entity
     # end def add
 
     def add_change (self, change) :
-        table  = MOM.SCM.Change._Change_._sa_table
-        result = self.connection.execute \
-            ( table.insert
-                ( values = dict
-                    ( pid       = change.pid
-                    , data      = change.as_pickle ()
+        if not self._in_rollback :
+            table  = MOM.SCM.Change._Change_._sa_table
+            result = self.execute \
+                ( table.insert
+                    ( values = dict
+                        ( pid       = change.pid
+                        , data      = change.as_pickle ()
+                        )
                     )
                 )
-            )
-        change.cid = result.inserted_primary_key [0]
+            change.cid = result.inserted_primary_key [0]
     # end def add_change
 
     def commit (self) :
@@ -552,17 +562,20 @@ class Session_S (_Session_) :
     def delete (self, entity) :
         self.flush                   ()
         self._pid_map.pop            (entity.pid)
-        execute = self.connection.execute
-        link_map = getattr (entity.__class__, "link_map", {})
-        for assoc, roles in link_map.iteritems () :
-            if not assoc.is_partial :
-                role = tuple (roles) [0]
-                for row in execute \
-                        ( assoc._SAS.select.where
-                            (getattr (assoc._SAQ, role.attr.name) == entity.pid)
-                        ) :
-                    self.instance_from_row (assoc, row).destroy ()
-        entity.__class__._SAS.delete (self, entity)
+        if not self._in_rollback :
+            execute = self.connection.execute
+            link_map = getattr (entity.__class__, "link_map", {})
+            for assoc, roles in link_map.iteritems () :
+                if not assoc.is_partial :
+                    role = tuple (roles) [0]
+                    for row in execute \
+                            ( assoc._SAS.select.where
+                                (   getattr (assoc._SAQ, role.attr.name)
+                                 == entity.pid
+                                )
+                            ) :
+                        self.instance_from_row (assoc, row).destroy ()
+            entity.__class__._SAS.delete (self, entity)
         entity.pid = None
     # end def delete
 
@@ -633,13 +646,16 @@ class Session_S (_Session_) :
 
     def rollback (self) :
         if self.transaction :
-            scope = self.scope
-            for c in reversed (scope.ems.uncommitted_changes) :
-                if c.undoable :
-                    c.undo (scope)
+            self._in_rollback += 1
+            scope              = self.scope
+            with scope.historian.temp_recorder (MOM.SCM.Ignorer) :
+                for c in reversed (scope.ems.uncommitted_changes) :
+                    if c.undoable :
+                        c.undo (scope)
             self.__super.rollback ()
-            self._pid_map    = self._saved ["pid_map"]
-            self._cid_map    = self._saved ["cid_map"]
+            self._in_rollback -= 1
+            self._pid_map      = self._saved ["pid_map"]
+            self._cid_map      = self._saved ["cid_map"]
     # end def rollback
 
     def _modify_change_iter (self, change_list) :
@@ -654,7 +670,7 @@ class Session_S (_Session_) :
 
     def update_change (self, change) :
         table  = MOM.SCM.Change._Change_._sa_table
-        self.connection.execute \
+        self.execute \
             ( table
                 .update (values = dict (data = change.as_pickle ()))
                 .where  (table.c.cid == change.cid)
@@ -692,7 +708,7 @@ class Session_PC (_Session_) :
         table  = MOM.SCM.Change._Change_._sa_table
         for no, (chg_cls, chg_dct, children_pc) in enumerate (change_iter) :
             cid = chg_dct ["cid"]
-            self.connection.execute \
+            self.execute \
                 ( table.insert
                     ( values = dict
                         ( cid        = cid
