@@ -84,6 +84,8 @@
 #    22-Mar-2011 (MG) `_create_engine` moved into `dbs.create_engine`
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    29-Mar-2012 (MG) `_cached_role` handling fixed
+#    30-Mar-2012 (MG) Use `Case_Sensitive_String` as column type for raw
+#                     values
 #    ««revision-date»»···
 #--
 
@@ -94,7 +96,7 @@ from   _MOM                      import MOM
 import _MOM._DBW
 import _MOM._DBW._Manager_
 import _MOM._DBW._SAS
-import _MOM._DBW._SAS.Attr_Type
+from   _MOM._DBW._SAS.Attr_Type  import Case_Sensitive_String
 import _MOM._DBW._SAS.Attr_Kind
 import _MOM._DBW._SAS.DBS
 import _MOM._DBW._SAS.Pid_Manager
@@ -407,7 +409,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     raw_name   = "%s%s" % (prefix, raw_name)
                 col = schema.Column \
                     ( raw_name
-                    , types.String (length = 60, convert_unicode = True)
+                    , Case_Sensitive_String
+                        (length = 60, convert_unicode = True)
                     )
                 attr._sa_raw_col_name = raw_name
                 result.append (col)
