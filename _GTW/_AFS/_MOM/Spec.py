@@ -70,6 +70,10 @@
 #    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
 #    27-Feb-2012 (CT) Mix `defaults` and `kw` in `__call__`, not in `__init__`
 #     9-Mar-2012 (CT) Redefine `Field_Entity._field_kw` to add `allow_new`
+#     4-Apr-2012 (CT) Change `Field_Entity.default_elements` to include
+#                     `FGR.fields` if `allow_new`
+#     4-Apr-2012 (CT) Add `Field_Group_Required.defaults` with
+#                     `collapsed = False`
 #    ««revision-date»»···
 #--
 
@@ -166,8 +170,6 @@ class _Entity_Mixin_ (_Base_) :
     def __call__ (self, E_Type, spec = None, seen = None, ** kw) :
         if seen is None :
             seen = set ()
-        elems    = sorted (self.elements (E_Type), key = TFL.Getter.rank)
-        children = (e (E_Type, self, seen) for e in elems)
         ekw      = dict (self.defaults)
         ekw.update      (E_Type.GTW.afs_kw or {})
         ekw.update      (self.kw)
@@ -175,6 +177,8 @@ class _Entity_Mixin_ (_Base_) :
         ekw.setdefault  ("name",        E_Type.ui_name)
         ekw.setdefault  ("ui_name",     E_Type.ui_name)
         ekw.setdefault  ("description", E_Type.__doc__)
+        elems    = sorted (self.elements (E_Type, ekw), key = TFL.Getter.rank)
+        children = (e (E_Type, self, seen) for e in elems)
         return self.Type \
             ( children  = tuple (c for c in children if c is not None)
             , type_name = E_Type.type_name
@@ -182,13 +186,13 @@ class _Entity_Mixin_ (_Base_) :
             )
     # end def __call__
 
-    def default_elements (self, E_Type) :
+    def default_elements (self, E_Type, ekw) :
         return default_elements
     # end def default_elements
 
-    def elements (self, E_Type) :
+    def elements (self, E_Type, ekw) :
         if self.include_kind_groups :
-            for e in self.default_elements (E_Type) :
+            for e in self.default_elements (E_Type, ekw) :
                 yield e
         for e in self._elems :
             yield e
@@ -360,7 +364,7 @@ class Field_Composite (_Field_Entity_Mixin_) :
         self.include_kind_groups = True
     # end def __init__
 
-    def default_elements (self, E_Type) :
+    def default_elements (self, E_Type, ekw) :
         fg = Field_Group (attr_selector = MOM.Attr.Selector.user)
         for f in fg.fields (E_Type, self, set ()) :
             yield f
@@ -375,9 +379,12 @@ class Field_Entity (_Field_Entity_Mixin_) :
     defaults  = dict (collapsed = True)
     Type      = Element.Field_Entity
 
-    def default_elements (self, E_Type) :
+    def default_elements (self, E_Type, ekw) :
         for f in FGP.fields (E_Type, self, set ()) :
             yield f
+        if ekw.get ("allow_new") :
+            for f in FGR.fields (E_Type, self, set ()) :
+                yield f
     # end def default_elements
 
     def _field_kw (self, attr, E_Type, ** kw) :
@@ -475,6 +482,7 @@ class Field_Group_Primary (Field_Group_K) :
 class Field_Group_Required (Field_Group_K) :
     """Specification of a field group for required attributes."""
 
+    defaults  = dict (collapsed = False)
     kind      = "required"
     rank      = -300
 

@@ -94,6 +94,15 @@ var f = new $GTW.AFS.Form (
                               , 'value' :
                                   { 'init' : 'Optimist' }
                               }
+                            , { '$id' : 'FB-0:0:0:1'
+                              , 'kind' : 'required'
+                              , 'label' : 'Max crew'
+                              , 'name' : 'max_crew'
+                              , 'required' : True
+                              , 'type' : 'Field'
+                              , 'value' :
+                                  { 'init' : '1' }
+                              }
                             ]
                         , 'collapsed' : True
                         , 'kind' : 'primary'
@@ -107,7 +116,7 @@ var f = new $GTW.AFS.Form (
                                 { 'cid' : 1
                                 , 'pid' : 1
                                 }
-                            , 'sid' : 'Rw6IMdH81aA0p9tM913CN3evOrad3uO7pXw7gQ'
+                            , 'sid' : 'AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA'
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
@@ -326,7 +335,7 @@ var f = new $GTW.AFS.Form (
                                         }
                                     }
                                   ]
-                              , 'collapsed' : True
+                              , 'collapsed' : False
                               , 'name' : 'required'
                               , 'type' : 'Fieldset'
                               }

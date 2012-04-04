@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -33,6 +33,7 @@
 #    20-Dec-2011 (CT) Add `sig`
 #    22-Dec-2011 (CT) Add `query`, change `_Selector_.__call__` to allow
 #                     composite/entity attributes for `E_Type`
+#     4-Apr-2012 (CT) Use `TFL.Getter.is_required` instead of home-grown lambda
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ import _MOM._Attr
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL.Accessor
 
 import itertools
 
@@ -307,8 +309,8 @@ user        = Kind ("user_attr")
 
 all         = List (primary, user, query)
 
-P_optional  = Not_Pred ((lambda x : x.is_required), "user_attr")
-P_required  = Pred     ((lambda x : x.is_required), "user_attr")
+P_optional  = Not_Pred (TFL.Getter.is_required, "user_attr")
+P_required  = Pred     (TFL.Getter.is_required, "user_attr")
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()
