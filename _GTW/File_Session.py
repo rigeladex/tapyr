@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -35,6 +35,7 @@
 #    11-May-2011 (MG) `file_name` changed from `Once_Property` to `property`
 #                     (because `_sid` can changed during the lifetime of the
 #                     session object)
+#     5-Apr-2012 (CT) Sort alphabetically
 #    ««revision-date»»···
 #--
 from   _TFL._Meta.Once_Property import Once_Property
@@ -92,17 +93,17 @@ class File_Session (GTW.Session) :
         return os.path.exists (self._file_name (sid))
     # end def exists
 
-    def save (self) :
-        with open (self.file_name, "wb") as f :
-            cPickle.dump (self._data, f)
-    # end def save
-
     def remove (self) :
         try :
             os.unlink (self.file_name)
         except EnvironmentError :
             pass
     # end def remove
+
+    def save (self) :
+        with open (self.file_name, "wb") as f :
+            cPickle.dump (self._data, f)
+    # end def save
 
     def _file_name (self, sid) :
         return os.path.join (self.base_path, "%s.sid" % (sid, ))

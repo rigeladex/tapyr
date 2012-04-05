@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -39,6 +39,9 @@
 #                     not exists
 #                     `renew_session_id` added
 #    11-May-2011 (MG) Alphabatically sorted
+#     5-Apr-2012 (CT) Sort alphabetically, `_...` at end,
+#                     properties right after `__init__`
+#     5-Apr-2012 (CT) Add stubs for `remove` and `save`
 #    ««revision-date»»···
 #--
 
@@ -132,11 +135,20 @@ class Session (TFL.Meta.Object) :
             self._sid     = sid
     # end def __init__
 
-    def _change_username (self, login, value) :
-        login.username = value
-        login.hash     = self._hasher (value)
-        login.expiry   = None if value is None else self._expiry ()
-    # end def _change_username
+    @property
+    def sid (self) :
+        return self._sid
+    # end def sid
+
+    @property
+    def username (self) :
+        return self.login.username
+    # end def username
+
+    @username.setter
+    def username (self, value) :
+        self._change_username (self.login, value)
+    # end def username
 
     @property
     def _data (self) :
@@ -187,23 +199,14 @@ class Session (TFL.Meta.Object) :
         return hash
     # end def edit_session
 
-    def _expired (self, expiry) :
-        if expiry :
-            return datetime.datetime.utcnow () > expiry
-    # end def _expired
-
-    def _expiry (self, ttl = None, ttl_name = "user_session_ttl") :
-        if ttl is None :
-            ttl = self._settings.get (ttl_name, 3600)
-        if not isinstance (ttl, datetime.timedelta) :
-            ttl  = datetime.timedelta (seconds = ttl)
-        return datetime.datetime.utcnow () + ttl
-    # end def _expiry
-
     def exists (self, sid) :
-        ### must be implemented by concrete backends
-        return False
+        raise NotImplementedError \
+            ("%s must implement `exists`" % (self.__class__, ))
     # end def exists
+
+    def get (self, key, default = None) :
+        return self._data.get (key, default)
+    # end def get
 
     def new_edit_session (self, hash_sig, ttl = None) :
         assert self.login
@@ -234,13 +237,18 @@ class Session (TFL.Meta.Object) :
                 return id
     # end def New_ID
 
-    def _new_sid (self, salt) :
-        return self.New_ID (self.exists, salt)
-    # end def _new_sid
+    def pop (self, name, default = None) :
+        return self._data.pop (name, default)
+    # end def pop
 
     def pop_edit_session (self, id) :
         return self.login.sessions.pop (id, (None, )) [-1]
     # end def pop_edit_session
+
+    def remove (self) :
+        raise NotImplementedError \
+            ("%s must implement `remove`" % (self.__class__, ))
+    # end def remove
 
     def renew_session_id (self, n_sid = None) :
         n_sid     = n_sid or self._new_sid (self._settings.get ("cookie_salt"))
@@ -255,29 +263,10 @@ class Session (TFL.Meta.Object) :
         return self
     # end def renew_session_id
 
-    @property
-    def sid (self) :
-        return self._sid
-    # end def sid
-
-    @property
-    def username (self) :
-        return self.login.username
-    # end def username
-
-    @username.setter
-    def username (self, value) :
-        self._change_username (self.login, value)
-    # end def username
-
-    ### dict interface
-    def get (self, key, default = None) :
-        return self._data.get (key, default)
-    # end def get
-
-    def pop (self, name, default = None) :
-        return self._data.pop (name, default)
-    # end def pop
+    def save (self) :
+        raise NotImplementedError \
+            ("%s must implement `save`" % (self.__class__, ))
+    # end def save
 
     def setdefault (self, key, default = None) :
         if key not in self._data :
@@ -285,30 +274,48 @@ class Session (TFL.Meta.Object) :
         return self._data [key]
     # end def setdefault
 
+    def _change_username (self, login, value) :
+        login.username = value
+        login.hash     = self._hasher (value)
+        login.expiry   = None if value is None else self._expiry ()
+    # end def _change_username
+
+    def _expired (self, expiry) :
+        if expiry :
+            return datetime.datetime.utcnow () > expiry
+    # end def _expired
+
+    def _expiry (self, ttl = None, ttl_name = "user_session_ttl") :
+        if ttl is None :
+            ttl = self._settings.get (ttl_name, 3600)
+        if not isinstance (ttl, datetime.timedelta) :
+            ttl  = datetime.timedelta (seconds = ttl)
+        return datetime.datetime.utcnow () + ttl
+    # end def _expiry
+
+    def _new_sid (self, salt) :
+        return self.New_ID (self.exists, salt)
+    # end def _new_sid
+
     def __contains__ (self, item) :
         return item in self._data
     # end def __contains__
+
+    def __delattr__ (self, name) :
+        del self [name]
+    # end def
 
     def __delitem__ (self, key) :
         self._data.pop (key, None)
     # end def __delitem__
 
-    def __getitem__ (self, key) :
-        return self._data [key]
-    # end def __getitem__
-
-    def __setitem__ (self, key, value) :
-        self._data [key] = value
-    # end def __setitem__
-
-    ### allow attribute like access
-    def __delattr__ (self, name) :
-        del self [name]
-    # end def
-
     def __getattr__ (self, name) :
         return self.get (name)
     # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return self._data [key]
+    # end def __getitem__
 
     def __setattr__ (self, name, value) :
         if name in self._non_data_attrs :
@@ -317,6 +324,10 @@ class Session (TFL.Meta.Object) :
             self._data [name] = value
             return value
     # end def __setattr__
+
+    def __setitem__ (self, key, value) :
+        self._data [key] = value
+    # end def __setitem__
 
 # end class Session
 
