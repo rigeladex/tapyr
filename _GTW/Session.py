@@ -42,6 +42,7 @@
 #     5-Apr-2012 (CT) Sort alphabetically, `_...` at end,
 #                     properties right after `__init__`
 #     5-Apr-2012 (CT) Add stubs for `remove` and `save`
+#     5-Apr-2012 (CT) Rename `Login` to `User`
 #    ««revision-date»»···
 #--
 
@@ -69,34 +70,34 @@ if hasattr(random, "SystemRandom") :
 else:
     randrange = random.randrange
 
-class Login (TFL.Meta.Object) :
-    """Encapsulate login information for session."""
+class User (TFL.Meta.Object) :
+    """Encapsulate user information for session."""
 
-    expiry    = None
-    hash      = None
-    _username = None
+    expiry = None
+    hash   = None
+    _name  = None
 
     def __init__ (self) :
-        self.username = None
+        self.name = None
     # end def __init__
 
     @property
-    def username (self) :
-        return self._username
-    # end def username
+    def name (self) :
+        return self._name
+    # end def name
 
-    @username.setter
-    def username (self, value) :
-        if value is None or value != self._username :
-            self._username = value
-            self.sessions  = {}
-    # end def username
+    @name.setter
+    def name (self, value) :
+        if value is None or value != self._name :
+            self._name    = value
+            self.sessions = {}
+    # end def name
 
     def __nonzero__ (self) :
-        return self._username is not None
+        return self._name is not None
     # end def __nonzero__
 
-# end class Login
+# end class User
 
 class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
     """Meta class for Session."""
@@ -106,30 +107,30 @@ class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
 class Session (TFL.Meta.Object) :
     """Base class for sessions
 
-       >>> from _GTW.Session import *
-       >>> session  = Session( None, "salt")
-       >>> session2 = Session( None, "salt")
+       >>> from _GTW.Memory_Session import Memory_Session
+       >>> session  = Memory_Session (None, dict (cookie_salt = "salt"))
+       >>> session2 = Memory_Session (None, dict (cookie_salt = "salt"))
        >>> session.sid != session2.sid
        True
     """
 
     __metaclass__      = M_Session
 
-    class Expired (LookupError) :
-        pass
-    # end class Expired
-
     _data_dict         = None
     _non_data_attrs    = set \
         (("_data", "_data_dict", "_hasher", "_sid", "_settings", "username"))
     _sets_to_combine   = ("_non_data_attrs", )
+
+    class Expired (LookupError) :
+        pass
+    # end class Expired
 
     def __init__ (self, sid = None, settings = {}, hasher = None) :
         self._settings = settings
         self._hasher   = hasher or (lambda x : x)
         if sid is None or not self.exists (sid) :
             self._sid     = self._new_sid (settings.get ("cookie_salt"))
-            self._data    = dict (login = Login ())
+            self._data    = dict (user = User ())
             self.username = None
         else :
             self._sid     = sid
@@ -142,12 +143,12 @@ class Session (TFL.Meta.Object) :
 
     @property
     def username (self) :
-        return self.login.username
+        return self.user.name
     # end def username
 
     @username.setter
     def username (self, value) :
-        self._change_username (self.login, value)
+        self._change_user (self.user, value)
     # end def username
 
     @property
@@ -156,15 +157,15 @@ class Session (TFL.Meta.Object) :
         result = self._data_dict
         if result is None :
             result = self._data_dict = loaded = self._load ()
-        login   = result ["login"]
+        user   = result ["user"]
         expired = \
-            (  (login.hash != self._hasher (login.username))
-            or self._expired (login.expiry)
+            (  (user.hash != self._hasher (user.name))
+            or self._expired (user.expiry)
             )
         if expired :
-            self._change_username (login, None)
+            self._change_user (user, None)
         elif loaded :
-            for id in list (login.sessions) :
+            for id in list (user.sessions) :
                 try :
                     self.edit_session (id)
                 except LookupError :
@@ -178,20 +179,19 @@ class Session (TFL.Meta.Object) :
     # end def _data
 
     def edit_session (self, id) :
-        login = self.login
-        data  = login.sessions [id]
+        user = self.user
+        data = user.sessions [id]
         if len (data) == 2 :
-            hard_expiry = soft_expiry      = data [0]
-            hash                           = data [1]
+            hard_expiry, soft_expiry, hash = data [0], None, data [1]
         else :
             hard_expiry, soft_expiry, hash = data
         if self._expired (hard_expiry) :
-            login.sessions.pop (id, None)
+            user.sessions.pop (id, None)
             raise LookupError \
                 ( "Edit session expired since %s"
                 % (hard_expiry.strftime ("%Y/%m/%d %H:%M"), )
                 )
-        if soft_expiry != hard_expiry and self._expired (soft_expiry) :
+        if soft_expiry and self._expired (soft_expiry) :
             raise self.Expired \
                 ( "Edit session expired since %s"
                 % (soft_expiry.strftime ("%Y/%m/%d %H:%M"), )
@@ -209,7 +209,7 @@ class Session (TFL.Meta.Object) :
     # end def get
 
     def new_edit_session (self, hash_sig, ttl = None) :
-        assert self.login
+        assert self.user
         hard_expiry = self._expiry (ttl, "user_session_ttl")
         soft_expiry = self._expiry (ttl, "edit_session_ttl")
         id     = uuid.uuid4 ().hex
@@ -217,17 +217,18 @@ class Session (TFL.Meta.Object) :
             ( hashlib.sha224
                 (str ((hash_sig, hard_expiry, soft_expiry))).digest ()
             )
-        self.login.sessions [id] = (hard_expiry, soft_expiry, hash)
+        self.user.sessions [id] = (hard_expiry, soft_expiry, hash)
         return id, hash
     # end def new_edit_session
 
     @classmethod
     def New_ID (cls, check = None, salt = "") :
         try :
-            pid = os.getpid ()
+            getpid = os.getpid
         except AttributeError :
-            # No getpid() in Jython, for example
             pid = 1
+        else :
+            pid = getpid ()
         while True :
             id = hashlib.md5 \
                 ( "%s%s%s%s"
@@ -242,7 +243,7 @@ class Session (TFL.Meta.Object) :
     # end def pop
 
     def pop_edit_session (self, id) :
-        return self.login.sessions.pop (id, (None, )) [-1]
+        return self.user.sessions.pop (id, (None, )) [-1]
     # end def pop_edit_session
 
     def remove (self) :
@@ -274,11 +275,11 @@ class Session (TFL.Meta.Object) :
         return self._data [key]
     # end def setdefault
 
-    def _change_username (self, login, value) :
-        login.username = value
-        login.hash     = self._hasher (value)
-        login.expiry   = None if value is None else self._expiry ()
-    # end def _change_username
+    def _change_user (self, user, value) :
+        user.name   = value
+        user.hash   = self._hasher (value)
+        user.expiry = None if value is None else self._expiry ()
+    # end def _change_user
 
     def _expired (self, expiry) :
         if expiry :
