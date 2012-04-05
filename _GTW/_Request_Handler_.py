@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -54,6 +54,7 @@
 #    11-May-2011 (MG) `username`: change session id on username changes
 #    31-May-2011 (MG) `default_content_encoding` added
 #    24-Nov-2011 (CT) Add `accept_header` and `wants_json`
+#     5-Apr-2012 (CT) Remove `current_user`; move `_get_user` to `GTW.NAV`
 #    ««revision-date»»···
 #--
 
@@ -111,11 +112,6 @@ class _Request_Handler_ (object) :
                     self._content_encoding = self.default_content_encoding
         return self._content_type
     # end def content_type
-
-    @property
-    def current_user (self) :
-        return None
-    # end def current_user
 
     @Once_Property
     def json (self) :
@@ -258,11 +254,6 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
     """Mixin for all request handlers using GTW.NAV"""
 
     @property
-    def current_user (self) :
-        return self._get_user (self.username)
-    # end def current_user
-
-    @property
     def scope (self) :
         return getattr (self.nav_root, "scope", None)
     # end def scope
@@ -312,27 +303,9 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
                 pass
     # end def _handle_request_exception_nav
 
-    def _get_user (self, username) :
-        top    = self.nav_root
-        result = top.anonymous_account
-        if username :
-            try :
-                result = top.account_manager.query (name = username).one ()
-            except IndexError :
-                pass
-            except Exception as exc :
-                pyk.fprint \
-                    ( ">>> Exception"
-                    , exc
-                    , "when trying to determine the user"
-                    , file = sys.stderr
-                    )
-        return result
-    # end def _get_user
-
     def _session_sig (self, username) :
         scope = self.scope
-        user  = self._get_user (username)
+        user  = self.nav_root._get_user (username)
         return \
             ( getattr (user, "password", username)
             , scope and scope.db_meta_data.dbid

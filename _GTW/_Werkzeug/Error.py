@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Werkzeug.
@@ -35,6 +35,7 @@
 #     5-Apr-2011 (CT) `Error_408` and `Error_409` added
 #     2-May-2011 (CT) `Error_400` added
 #    27-May-2011 (CT) `return_response` factored and redefined in `Error_405`
+#     5-Apr-2012 (CT) Remove assignment to `handler.request.user`
 #    ««revision-date»»···
 #--
 
@@ -169,7 +170,6 @@ class _Error_ (Status) :
         if not getattr (handler.request, "Error", None) :
             handler.request.Error = description
         if nav_root :
-            handler.request.user  = handler.current_user
             Templateer            = nav_root.Templateer
             template              = Templateer.get_template (self.status_code)
             context               = Templateer.Context \

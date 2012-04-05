@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Tornado.
@@ -36,6 +36,7 @@
 #    31-Dec-2010 (CT) s/get_std_template/get_template/
 #     2-May-2011 (CT) `Error_400` added
 #    27-May-2011 (CT) `Error_405.__init__` redefined to accept `valid_methods`
+#     5-Apr-2012 (CT) Remove assignment to `handler.request.user`
 #    ««revision-date»»···
 #--
 
@@ -120,7 +121,6 @@ class _Error_ (Status) :
 
     def __call__ (self, handler, nav_root = None) :
         if nav_root :
-            handler.request.user = handler.current_user
             Templateer           = nav_root.Templateer
             template             = Templateer.get_template (self.status_code)
             context              = Templateer.Context \

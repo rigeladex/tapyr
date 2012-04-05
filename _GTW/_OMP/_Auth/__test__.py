@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -29,6 +29,7 @@
 #    18-Feb-2010 (MG) Creation
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
+#     5-Apr-2012 (CT) Use `.create_new_account_x` to create accounts
 #    ««revision-date»»···
 #--
 
@@ -40,9 +41,9 @@ Test if we can set a e-type specific manager class
     <class '_GTW._OMP._Auth.Account_Handling.Account_Token_Manager'>
 
 let's create some accounts
-    >>> acc1 = scope.Auth.Account_P \\
+    >>> acc1 = scope.Auth.Account_P.create_new_account_x  \\
     ...     ("user1@example.com", password = "passwd1", enabled = True)
-    >>> acc2 = scope.Auth.Account_P \\
+    >>> acc2 = scope.Auth.Account_P.create_new_account_x  \\
     ...     ("user2@example.com", password = "passwd1", enabled = True)
     >>> acc1.suspended = acc2.suspended = False
     >>> acc1.name, acc2.name
@@ -387,6 +388,7 @@ NAV.add_entries \
 
 def GET (url, * args, ** kw) :
     handler = HTTP.Handler (url, "GET", * args, ** kw)
+    TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
     NAV.universal_view (handler)
     return handler
 # end def GET
@@ -397,7 +399,4 @@ def POST (url, * args, ** kw) :
     return handler
 # end def POST
 
-#print NAV.top.Table
 ### __END__ GTW.OMP.Auth.__test__
-
-

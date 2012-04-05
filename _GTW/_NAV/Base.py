@@ -277,6 +277,10 @@
 #                     `login_required` and `not user`
 #    29-Mar-2012 (CT) Replace `_Dir_.rendered` by `_effective`, change
 #                     `universal_view` to use `_effective`
+#     5-Apr-2012 (CT) Convert `universal_view` to instance method, set
+#                     `handler.request.user` there, not in `_view`
+#     5-Apr-2012 (CT) Move `_get_user` in here from `GTW.Request_Handler`
+#     5-Apr-2012 (CT) Change `_new_edit_session` to allow `anonymous_account`
 #    ««revision-date»»···
 #--
 
@@ -698,12 +702,32 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return handler.session.edit_session (sid)
     # end def _get_edit_session
 
+    def _get_user (self, username) :
+        result = self.anonymous_account
+        if username :
+            try :
+                result = self.account_manager.query (name = username).one ()
+            except IndexError :
+                pass
+            except Exception as exc :
+                pyk.fprint \
+                    ( ">>> Exception"
+                    , exc
+                    , "when trying to determine the user"
+                    , file = sys.stderr
+                    )
+        return result
+    # end def _get_user
+
     def _new_edit_session (self, handler, ttl = None) :
-        cu = handler.current_user
-        assert cu and cu.password
         dbmd = self.top.scope.db_meta_data
+        user = handler.request.user
+        if user is not self.anonymous_account :
+            hash = user.password
+        else :
+            hash = handler.username = uuid.uuid1 ().hex
         return handler.session.new_edit_session \
-            ((cu.password, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
+            ((hash, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
     # end def _new_edit_session
 
     def _permissions (self) :
@@ -729,7 +753,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def _view (self, handler) :
         HTTP             = self.top.HTTP
         request          = handler.request
-        request.user     = handler.current_user
         request.req_data = HTTP.Request_Data (handler)
         handler.context  = self.render_context \
             ( lang          = "_".join (uniq (TFL.I18N.Config.choice))
@@ -1340,14 +1363,13 @@ class Root (_Dir_) :
                 seen.add (t.id)
     # end def template_iter
 
-    @classmethod
-    def universal_view (cls, handler) :
+    def universal_view (self, handler) :
+        user = handler.request.user = self._get_user (handler.username)
         href = handler.request.path [1:]
-        page = cls.page_from_href (href)
-        HTTP = cls.top.HTTP
+        page = self.page_from_href (href)
+        HTTP = self.HTTP
         if page :
             page = page._effective
-            user = handler.current_user
             if handler.request.method not in page.SUPPORTED_METHODS :
                 raise HTTP.Error_405 (valid_methods = page.SUPPORTED_METHODS)
             if page.login_required :
