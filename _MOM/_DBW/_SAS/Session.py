@@ -100,6 +100,7 @@
 #    29-Mar-2012 (MG) `Session.delete`: filter partial links
 #    30-Mar-2012 (MG) `_in_rollback` checks added to prevent database
 #                     activities during transaction rollback
+#    10-Apr-2012 (CT) Remove debug message from `flush`
 #    ««revision-date»»···
 #--
 
@@ -592,9 +593,6 @@ class Session_S (_Session_) :
             entity = self._pid_map.get (pid)
             if entity is not None :
                 entity.__class__._SAS.update (self, entity, attrs)
-            else :
-                if __debug__ :
-                    print "SAS.Session.flush: Pid", pid, "not in map", attrs
         pending.clear ()
         #self.engine.echo = False
     # end def flush
