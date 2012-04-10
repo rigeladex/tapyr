@@ -41,6 +41,7 @@ simple = r"""
 
     >>> per.lifetime.finish = datetime.date (2010, 2, 1)
     >>> scope.rollback ()
+    >>> scope.destroy  ()
 """
 
 create = r"""
@@ -55,6 +56,7 @@ create = r"""
     Traceback (most recent call last):
     ...
     Name_Clash: new definition of GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'') clashes with existing GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')
+    >>> scope.destroy  ()
 
 """
 from   _GTW.__test__.model                      import *
@@ -65,5 +67,11 @@ __test__ = Scaffold.create_test_dict \
            , create = create
            )
     )
-
+if __name__ == "__main__" :
+    scope = Scaffold.scope ('postgresql://regtest:regtest@localhost/regtest', None)
+    PAP = scope.PAP
+    per = PAP.Person                   ("ln", "fn")
+    scope.commit                       ()
+    p   = PAP.Person                   ("ln", "fn1")
+    per = PAP.Person                   ("ln", "fn")
 ### __END__ GTW.__test__.Rename
