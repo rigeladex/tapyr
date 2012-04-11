@@ -869,6 +869,36 @@ The app-type specific entity-types are ready to be used by
     ...   if et.polymorphic_epks or et.polymorphic_epk :
     ...     print et.type_name, et.polymorphic_epk, et.polymorphic_epks
 
+
+    >>> def show_children (T, level = 0) :
+    ...     print "  " * level, T.type_name
+    ...     l1 = level + 1
+    ...     for c in sorted (T.children.itervalues (), key = TFL.Getter.i_rank) :
+    ...         show_children (c, l1)
+    >>> show_children (apt._T_Extension [2])
+     MOM.Id_Entity
+       MOM.Link
+         MOM.Link1
+           BMT.Rodent_is_sick
+         MOM._MOM_Link_n_
+           MOM.Link2
+             MOM.Link2_Ordered
+             BMT.Rodent_in_Trap
+             BMT.Person_owns_Trap
+           MOM.Link3
+             BMT.Person_sets_Trap_at_Location
+       MOM.Object
+         MOM.Named_Object
+           BMT.Rodent
+             BMT.Mouse
+               BMT.Beaver
+                 BMT.Otter
+             BMT.Rat
+           BMT.Trap
+             BMT.Supertrap
+         BMT.Location
+         BMT.Person
+
 Scope
 -----
 
