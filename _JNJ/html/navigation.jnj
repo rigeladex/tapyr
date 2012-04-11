@@ -1,6 +1,6 @@
 {#- jinja template: html/navigation.jnj -#}
 {#
-## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -48,6 +48,7 @@
 ##                     (and s/is_current/is_current_page/)
 ##    15-Oct-2011 (MG) `s/_entry_body/entry_body/g`
 ##    21-Oct-2011 (CT) `main` added to wrap code previously at module scope
+##    11-Apr-2012 (CT) Change `entry_body` to use `GTW._T (link.short_title)`
 ##    ««revision-date»»···
 ##--
 #}
@@ -69,7 +70,7 @@
   {%- if link.a_img -%}
     <img alt="{{ link.short_title }}" src="{{ link.a_img }}" />
   {%- else -%}
-    {{ link.short_title|safe }}
+    {{ GTW._T (link.short_title) }}
   {%- endif -%}
 {%- endmacro -%} {#- entry_body -#}
 
