@@ -175,6 +175,8 @@
 #    31-Jan-2012 (CT) Change defaults for `polymorphic_epk` & `polymorphic_epks`
 #                     from `None` to `False`
 #    29-Mar-2012 (CT) Factor `all_links` up from `MOM.Object`
+#    11-Apr-2012 (CT) Delay call of `_finish__init__` (called by `Scope.add`)
+#    11-Apr-2012 (CT) Change `__eq__` (and `__hash__`) to use `pid` (and `guid`)
 #    ««revision-date»»···
 #--
 
@@ -237,7 +239,6 @@ class Entity (TFL.Meta.Object) :
     _app_globals          = {}
     _dicts_to_combine     = ("deprecated_attr_names", )
     _home_scope           = None
-    _init_pending         = ()
 
     _Class_Kind           = "Spec Essence"
 
@@ -360,7 +361,6 @@ class Entity (TFL.Meta.Object) :
         result = cls.__new__    (cls, scope = scope)
         result._init_attributes ()
         result.set_pickle_cargo (cargo)
-        result._finish__init__  ()
         return result
     # end def from_attr_pickle_cargo
 
@@ -521,6 +521,7 @@ class Entity (TFL.Meta.Object) :
 
     def _finish__init__ (self) :
         """Redefine this to perform additional initialization."""
+        assert not self.init_finished
         self.init_finished = True
         for ip in self._init_pending :
             ip ()
@@ -535,10 +536,9 @@ class Entity (TFL.Meta.Object) :
     # end def _init_attributes_
 
     def _init_meta_attrs (self) :
-        self._attr_man  = MOM.Attr.Manager (self._Attributes)
-        self._pred_man  = MOM.Pred.Manager (self._Predicates)
-        if self._home_scope is None :
-            self._init_pending = []
+        self._init_pending = []
+        self._attr_man     = MOM.Attr.Manager (self._Attributes)
+        self._pred_man     = MOM.Pred.Manager (self._Predicates)
     # end def _init_meta_attrs
 
     def _kw_check_required (self, attr_dict, on_error = None) :
@@ -662,6 +662,10 @@ class Entity (TFL.Meta.Object) :
         ### just to ease up-chaining in descendents
         raise AttributeError ("%r <%s>" % (name, self.type_name))
     # end def __getattr__
+
+    def __ne__ (self, rhs) :
+        return not (self == rhs)
+    # end def __ne__
 
     def __repr__ (self) :
         try :
@@ -819,6 +823,7 @@ class Id_Entity (Entity) :
 
     is_partial            = True
     max_count             = 0
+    pid                   = None  ### set by `scope.ems.add`
     record_changes        = True
     refuse_links          = set ()
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
@@ -1254,8 +1259,6 @@ class Id_Entity (Entity) :
         self._kw_check_required (kw)
         kw.update (self._init_epk (epk))
         setter    (** kw)
-        if self._home_scope is not None :
-            self._finish__init__ ()
         required_errors = self._pred_man.required_errors
         if required_errors :
             raise MOM.Error.Invariant_Errors (required_errors)
@@ -1311,11 +1314,15 @@ class Id_Entity (Entity) :
         if isinstance (rhs, int) :
             return self.pid == rhs
         else :
-            return id (self) == id (rhs)
+            try :
+                rhs = (rhs.pid, rhs.home_scope.guid)
+            except AttributeError :
+                pass
+            return (self.pid, self.home_scope.guid) == rhs
     # end def __eq__
 
     def __hash__ (self) :
-        return id (self)
+        return hash ((self.pid, self.home_scope.guid))
     # end def __hash__
 
     def __unicode__ (self) :

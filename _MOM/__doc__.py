@@ -974,6 +974,9 @@ appropriate class:
     >>> PoT   = scope.BMT.Person_owns_Trap
     >>> PTL   = scope.BMT.Person_sets_Trap_at_Location
 
+    >>> m == m, m != m, m == b, m != b, m == "", m != ""
+    (True, False, False, True, False, True)
+
     >>> RiT (p, t4)
     Traceback (most recent call last):
       ...
@@ -1003,23 +1006,23 @@ appropriate class:
 Creating a link will automatically set `auto_cached` attributes of the objects
 participating of the link, like `Trap.setter` and `Trap.location`::
 
-    >>> t1.setter, t1.location
+    >>> t1.setter, t1.location  ### before creation of Person_sets_Trap_at_Location
     (None, None)
     >>> PTL (p, t1, l1)
     BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956))
-    >>> t1.setter, t1.location
+    >>> t1.setter, t1.location  ### after creation of Person_sets_Trap_at_Location
     (BMT.Person (u'luke', u'lucky', u''), BMT.Location (-16.268799, 48.189956))
-    >>> t2.setter, t2.location
+    >>> t2.setter, t2.location  ### before creation of Person_sets_Trap_at_Location
     (None, None)
     >>> PTL (p, t2, l2)
     BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313))
-    >>> t2.setter, t2.location
+    >>> t2.setter, t2.location  ### after creation of Person_sets_Trap_at_Location
     (BMT.Person (u'luke', u'lucky', u''), BMT.Location (-16.74077, 48.463313))
-    >>> t3.setter, t3.location
+    >>> t3.setter, t3.location  ### before creation of Person_sets_Trap_at_Location
     (None, None)
     >>> PTL (p, t3, l2)
     BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313))
-    >>> t3.setter, t3.location
+    >>> t3.setter, t3.location  ### after creation of Person_sets_Trap_at_Location
     (BMT.Person (u'luke', u'lucky', u''), BMT.Location (-16.74077, 48.463313))
 
 Queries

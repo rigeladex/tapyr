@@ -89,6 +89,8 @@
 #    21-Mar-2011 (MG) `copy` assert fixed
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    19-Jan-2012 (CT) Change `add` to consider `entity._home_scope`
+#    11-Apr-2012 (CT) Change `add` and `add_from_pickle_cargo` to call
+#                     `._finish__init__` after `self.ems.add`
 #    ««revision-date»»···
 #--
 
@@ -250,8 +252,9 @@ class Scope (TFL.Meta.Object) :
         """Adds `entity` to scope `self`."""
         if entity._home_scope is None :
             entity.home_scope = self
-            entity._finish__init__ ()
         self.ems.add (entity)
+        if not entity.init_finished :
+            entity._finish__init__ ()
         if not entity.electric :
             self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
@@ -271,6 +274,8 @@ class Scope (TFL.Meta.Object) :
                     (type_name, pid, cargo, self.app_type)
             else :
                 self.ems.add (result, id = pid)
+                if not result.init_finished :
+                    result._finish__init__ ()
                 return result
     # end def add_from_pickle_cargo
 

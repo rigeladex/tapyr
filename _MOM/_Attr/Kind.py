@@ -166,6 +166,8 @@
 #                     consider `obj._home_scope`, append to `obj._init_pending`
 #     6-Mar-2012 (CT) Add sanity check for `Syntax_Re_Mixin`
 #    24-Mar-2012 (CT) Use `acr_map` to get cacher for `Link_Role`
+#    11-Apr-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
+#                     always append to `obj._init_pending`
 #    ««revision-date»»···
 #--
 
@@ -1345,11 +1347,8 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
                 self._unregister (obj, old_value)
             self.__super._set_cooked_value (obj, value, changed)
             if value :
-                if scope_p :
-                    self._register (obj, value)
-                else :
-                    obj._init_pending.append \
-                        (TFL.Functor (self._register, obj, value))
+                obj._init_pending.append \
+                    (TFL.Functor (self._register, obj, value))
     # end def _set_cooked_value
 
 # end class Id_Entity_Reference_Mixin

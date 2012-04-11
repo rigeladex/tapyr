@@ -283,6 +283,8 @@
 #     5-Apr-2012 (CT) Change `_new_edit_session` to allow `anonymous_account`
 #    11-Apr-2012 (CT) Change `_Dir_._effective` to return `page._effective`
 #    11-Apr-2012 (CT) Re-add `_Dir_.rendered` to use `.dir_template`, if any
+#    11-Apr-2012 (CT) Change `_new_edit_session` to use `!=`, not `is not` to
+#                     compare `user` and `anonymous_account`
 #    ««revision-date»»···
 #--
 
@@ -724,7 +726,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def _new_edit_session (self, handler, ttl = None) :
         dbmd = self.top.scope.db_meta_data
         user = handler.request.user
-        if user is not self.anonymous_account :
+        if user != self.anonymous_account :
             hash = user.password
         else :
             hash = handler.username = uuid.uuid1 ().hex
