@@ -281,6 +281,8 @@
 #                     `handler.request.user` there, not in `_view`
 #     5-Apr-2012 (CT) Move `_get_user` in here from `GTW.Request_Handler`
 #     5-Apr-2012 (CT) Change `_new_edit_session` to allow `anonymous_account`
+#    11-Apr-2012 (CT) Change `_Dir_._effective` to return `page._effective`
+#    11-Apr-2012 (CT) Re-add `_Dir_.rendered` to use `.dir_template`, if any
 #    ««revision-date»»···
 #--
 
@@ -1089,6 +1091,10 @@ class _Dir_ (_Site_Entity_) :
                 yield owl
     # end def sub_dir_iter
 
+    def rendered (self, handler, template = None) :
+        return self.__super.rendered (handler, template or self.dir_template)
+    # end def rendered
+
     def template_iter (self) :
         for t in self.template, self.dir_template :
             if t :
@@ -1107,7 +1113,7 @@ class _Dir_ (_Site_Entity_) :
             except IndexError :
                 pass
             else :
-                return page
+                return page._effective
         return self
     # end def _effective
 
