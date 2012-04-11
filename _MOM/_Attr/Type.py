@@ -218,6 +218,7 @@
 #    28-Mar-2012 (CT) Add `A_Freqency`
 #    29-Mar-2012 (CT) Change `_A_Unit_._unit_pattern` to not force whitespace
 #                     between a plain number and the unit
+#    11-Apr-2012 (CT) Add `A_Url_X`
 #    ««revision-date»»···
 #--
 
@@ -1894,6 +1895,13 @@ class A_Url (_A_String_) :
     check          = ("""value.startswith (("/", "http://", "https://"))""", )
 
 # end class A_Url
+
+class A_Url_X (A_Url) :
+    """Models an url-valued attribute of an object."""
+
+    check          = ("""value.startswith (("http://", "https://"))""", )
+
+# end class A_Url_X
 
 class A_Year (A_Int) :
     """Models a year-valued attribute of an object."""
