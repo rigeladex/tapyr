@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-28 08:32+0200\n"
+"POT-Creation-Date: 2012-04-11 13:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,7 +168,7 @@ msgstr ""
 msgid "Currently selected day"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:142
+#: _JNJ/html/navigation.jnj:143
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
@@ -309,11 +309,11 @@ msgstr ""
 msgid "Javascript is needed to use this page"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:138
+#: _JNJ/html/navigation.jnj:139
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:137
+#: _JNJ/html/navigation.jnj:138
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -350,16 +350,16 @@ msgstr ""
 msgid "Log into website with username and password specified"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:167
+#: _JNJ/html/navigation.jnj:168
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:166
+#: _JNJ/html/navigation.jnj:167
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:172
+#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:173
 msgid "Login"
 msgstr ""
 
@@ -547,7 +547,7 @@ msgstr ""
 msgid "Select entity for attribute %s"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:149
+#: _JNJ/html/navigation.jnj:150
 #, python-format
 msgid "Select language %s"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-03-28 08:32+0200\n"
+"POT-Creation-Date: 2012-04-11 13:40+0200\n"
 "PO-Revision-Date: 2011-11-24 11:29+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -170,7 +170,7 @@ msgstr "Erzeuge neues Objekt"
 msgid "Currently selected day"
 msgstr "Gegenwärtig ausgewählter Tag"
 
-#: _JNJ/html/navigation.jnj:142
+#: _JNJ/html/navigation.jnj:143
 #, python-format
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
@@ -317,11 +317,11 @@ msgstr "Für diese Seite wird Javascript benötigt."
 msgid "Javascript is needed to use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
-#: _JNJ/html/navigation.jnj:138
+#: _JNJ/html/navigation.jnj:139
 msgid "Language"
 msgstr "Sprache"
 
-#: _JNJ/html/navigation.jnj:137
+#: _JNJ/html/navigation.jnj:138
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
@@ -360,16 +360,16 @@ msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 msgid "Log into website with username and password specified"
 msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
-#: _JNJ/html/navigation.jnj:167
+#: _JNJ/html/navigation.jnj:168
 msgid "Logged in"
 msgstr "Angemeldet"
 
-#: _JNJ/html/navigation.jnj:166
+#: _JNJ/html/navigation.jnj:167
 #, python-format
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:172
+#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:173
 msgid "Login"
 msgstr "Anmelden"
 
@@ -559,7 +559,7 @@ msgstr "Wähle Attribute aus"
 msgid "Select entity for attribute %s"
 msgstr "Wähle Entität für Attribut %s aus"
 
-#: _JNJ/html/navigation.jnj:149
+#: _JNJ/html/navigation.jnj:150
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
