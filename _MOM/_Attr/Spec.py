@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -56,6 +56,7 @@
 #    15-Sep-2011 (CT) s/_setup_dependent_attrs/_setup_attrs/
 #    15-Sep-2011 (CT) `_setup_attrs` extended to setup `.completer`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    12-Apr-2012 (CT) Add `e_type.primary_required` and `.primary_optional`
 #    ««revision-date»»···
 #--
 
@@ -111,6 +112,10 @@ class Spec (MOM.Prop.Spec) :
         e_type.db_attr.sort   (key = TFL.Sorted_By ("rank", "name"))
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
         self._setup_attrs     (e_type)
+        e_type.primary_required = list \
+            (p for p in e_type.primary if p.is_required)
+        e_type.primary_optional = e_type.primary \
+            [len (e_type.primary_required): ]
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

@@ -32,6 +32,7 @@
 #    10-Nov-2011 (CT) Add test for `Name_Clash`
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    12-Apr-2012 (CT) Add tests for `max_crew` predicate
+#    12-Apr-2012 (CT) Add tests for `on_error`
 #    ««revision-date»»···
 #--
 
@@ -158,6 +159,45 @@ _test_code = """
     >>> errors
     [Invariant_Errors([Invariant_Error(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
         max_crew = 5, (), ())],)]
+
+    >>> b.b_class.set (max_crew = None)
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `max_crew_not_empty` :  (max_crew is not None and max_crew != '')
+        max_crew = None
+    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = None)`
+    [('object', [Required_Empty(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` :  (max_crew is not None and max_crew != '')
+        max_crew = None, (), ())]), ('region', []), ('system', [])]
+
+    >>> b.b_class.max_crew = None
+    Traceback (most recent call last):
+      ...
+    Required_Empty: Condition `max_crew_not_empty` :  (max_crew is not None and max_crew != '')
+        max_crew = None
+
+    >>> errors = []
+    >>> SRM.Boat_Class ("Seascape 18", on_error = errors.append)
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',) Instead it got: ('Seascape 18')
+    >>> errors
+    [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',)", u"Instead it got: ('Seascape 18')")]
+
+    >>> errors = []
+    >>> SRM.Boat_Class (max_crew = 4, on_error = errors.append)
+    Traceback (most recent call last):
+      ...
+    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',) Instead it got: (max_crew = 4)
+    >>> errors
+    [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: (max_crew = 4)')]
+
+    >>> errors = []
+    >>> SRM.Boat_Class (on_error = errors.append)
+    Traceback (most recent call last):
+      ...
+    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',) Instead it got: ()
+    >>> errors
+    [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: ()')]
 
     >>> scope.destroy ()
 

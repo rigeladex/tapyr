@@ -177,6 +177,8 @@
 #    29-Mar-2012 (CT) Factor `all_links` up from `MOM.Object`
 #    11-Apr-2012 (CT) Delay call of `_finish__init__` (called by `Scope.add`)
 #    11-Apr-2012 (CT) Change `__eq__` (and `__hash__`) to use `pid` (and `guid`)
+#    12-Apr-2012 (CT) Raise `Required_Missing`, not `TypeError`, in `epkified`
+#    12-Apr-2012 (CT) Adapt `_kw_check_required` to change of `Required_Missing`
 #    ««revision-date»»···
 #--
 
@@ -541,19 +543,19 @@ class Entity (TFL.Meta.Object) :
         self._pred_man     = MOM.Pred.Manager (self._Predicates)
     # end def _init_meta_attrs
 
-    def _kw_check_required (self, attr_dict, on_error = None) :
-        missing = list \
-            (k for k in (m.name for m in self.required) if k not in attr_dict)
+    def _kw_check_required (self, * args, ** kw) :
+        needed  = tuple (m.name for m in self.required)
+        missing = tuple (k for k in needed if k not in kw)
         if missing :
-            if on_error is None :
-                on_error = self._raise_attr_error
-            error = self._pred_man.missing_required = \
-                MOM.Error.Required_Missing (missing, list (attr_dict))
+            on_error = kw.pop ("on_error", self._raise_attr_error)
+            error = MOM.Error.Required_Missing \
+                (self.__class__, needed, missing, args, kw)
+            self._pred_man.missing_required = error
             on_error (error)
     # end def _kw_check_required
 
-    def _kw_check_predicates (self, attr_dict, on_error, kind = "object") :
-        result = not self.is_correct (attr_dict, kind)
+    def _kw_check_predicates (self, kw, on_error, kind = "object") :
+        result = not self.is_correct (kw, kind)
         if result :
             errors = self._pred_man.errors [kind]
             if on_error is None :
@@ -785,7 +787,7 @@ class An_Entity (Entity) :
 
     def _main__init__ (self, * args, ** kw) :
         raw = bool (kw.pop ("raw", False))
-        self._kw_check_required (kw)
+        self._kw_check_required (* args, ** kw)
         if kw :
             set = self._set_raw if raw else self._set_ckd
             set (** kw)
@@ -1096,28 +1098,20 @@ class Id_Entity (Entity) :
     @classmethod
     def epkified (cls, * epk, ** kw) :
         if epk and isinstance (epk [-1], cls.Type_Name_Type) :
-            epk = epk [:-1]
-        ### `epkified_ckd` and `epkified_raw` auto-created by meta machinery
+            epk  = epk [:-1]
         raw      = bool (kw.get ("raw", False))
         epkifier = (cls.epkified_ckd, cls.epkified_raw) [raw]
+            ### `epkified_ckd` and `epkified_raw` are created by meta machinery
         try :
             return epkifier (* epk, ** kw)
         except TypeError, exc :
-            kw.pop ("on_error", None)
-            raise TypeError \
-                ( _T  ( "%s\n    %s needs the arguments: (%s)"
-                          "\n    Instead it got: (%s)"
-                      )
-                % ( exc, cls.type_name
-                  , ", ".join (x for x in (epkifier.args, "** kw") if x)
-                  , ", ".join
-                      ( itertools.chain
-                          ( (repr (x) for x in epk)
-                          , ("%s = %r" % (k, v) for k, v in kw.iteritems ())
-                          )
-                      )
-                  )
-                )
+            on_error = kw.pop ("on_error", cls._raise_attr_error)
+            needed   = tuple (m.name for m in cls.primary_required)
+            missing  = tuple (p for p in needed [len (epk):] if p not in kw)
+            error    = MOM.Error.Required_Missing \
+                (cls, needed, missing, epk, kw)
+            on_error (error)
+            raise error
     # end def epkified
 
     def is_defined (self)  :
@@ -1256,7 +1250,7 @@ class Id_Entity (Entity) :
         setter   = self.__super._set_raw if raw else self.__super._set_ckd
             ### Need to use `__super.` methods here because it's not a `rename`
         epk, kw  = self.epkified  (* epk, ** kw)
-        self._kw_check_required (kw)
+        self._kw_check_required   (* epk, ** kw)
         kw.update (self._init_epk (epk))
         setter    (** kw)
         required_errors = self._pred_man.required_errors

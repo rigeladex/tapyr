@@ -40,11 +40,13 @@ _test_code = r"""
     >>> errors = []
     >>> print PAP.Person.count
     0
-    >>> PAP.Person (last_name = u"last_name", first_name = u"", raw = True)
+    >>> PAP.Person (last_name = u"", first_name = u"", raw = True)
     Traceback (most recent call last):
       ...
     Invariant_Errors: Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
         first_name = u''
+      Condition `last_name_not_empty` :  (last_name is not None and last_name != '')
+        last_name = u''
     >>> errors
     []
     >>> print PAP.Person.count
@@ -65,6 +67,13 @@ _test_code = r"""
         first_name = u'', (), ())],)]
     >>> print PAP.Person.count
     0
+
+    >>> PAP.Person.epkified_ckd.args
+    u"last_name, first_name, middle_name = u'', title = u''"
+    >>> PAP.Person.epk_sig
+    ('last_name', 'first_name', 'middle_name', 'title')
+    >>> PAP.Person.primary_required
+    [String `last_name`, String `first_name`]
 
 """
 

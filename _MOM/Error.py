@@ -46,6 +46,8 @@
 #    22-Mar-2011 (MG) `Commit_Conflict` added
 #     8-Nov-2011 (CT) Add `Required_Empty` and `any_required_empty`
 #    30-Jan-2012 (CT) Change `Name_Clash` to show `.type_name`
+#    12-Apr-2012 (CT) Change `Required_Missing` to use `I18N`,
+#                     make it compatible to `Invariant_Error`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +61,10 @@ from   _TFL.Record    import Record
 
 import _TFL.Caller
 import _TFL.I18N
+
+from   _TFL.I18N      import _, _T, _Tn
+
+import itertools
 
 class Exception_Handled (Exception) :
     """Raised after an exception was already handled to bail out from an
@@ -111,21 +117,37 @@ class Invalid_Seq_Nr (Error) :
 # end class Invalid_Seq_Nr
 
 class Required_Missing (Error) :
-    """Raised when a required attribute is missing."""
+    """Raised when required attributes are missing."""
 
-    arg_sep     = " "
-    is_required = True
+    arg_sep        = " "
+    extra_links    = []
+    inv_desc       = _ ("All required attributes must be supplied")
+    is_required    = True
+    val_dict       = {}
+    val_desc       = {}
+    violators      = ()
+    violators_attr = ()
 
-    def __init__ (self, missing, provided) :
-        self.missing  = missing
-        self.provided = provided
-        self.args     = \
-            ( "Required argument"
-            , "s" if len (missing) > 1 else ""
-            , ", ".join (repr (m) for m in missing)
-            , "are" if len (missing) > 1 else "is"
-            , "missing from provided arguments:"
-            , ", ".join (repr (p) for p in provided)
+    class inv :
+        name       = "required_not_missing"
+
+    def __init__ (self, e_type, needed, missing, epk, kw) :
+        self.e_type     = e_type
+        self.attributes = self.needed = needed
+        self.missing    = missing
+        self.epk        = epk
+        self.kw         = kw
+        self.args       = \
+            ( _T  ("%s needs the required attributes: %s")
+            % (e_type.type_name, needed)
+            , _T ("Instead it got: (%s)")
+            % (", ".join
+                  ( itertools.chain
+                      ( (repr (x) for x in epk)
+                      , ("%s = %r" % (k, v) for k, v in kw.iteritems ())
+                      )
+                  )
+              )
             )
     # end def __init__
 

@@ -1074,9 +1074,7 @@ inherit from, a `relevant_root`:
     >>> scope.MOM.Object.instance (u"mighty_mouse")
     Traceback (most recent call last):
       ...
-    TypeError: epkified_ckd() takes exactly 1 argument (2 given)
-        MOM.Object needs the arguments: (** kw)
-        Instead it got: (u'mighty_mouse')
+    Required_Missing: MOM.Object needs the required attributes: () Instead it got: (u'mighty_mouse')
     >>> scope.MOM.Named_Object.instance ("mighty_mouse")
     Traceback (most recent call last):
       ...
