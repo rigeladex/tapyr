@@ -1252,7 +1252,7 @@ class Just_Once_Mixin (Kind) :
     """Mixin allowing attribute to be set to a non-default valuer just once."""
 
     is_changeable         = False
-    _x_format             = \
+    _x_format             = _ \
         ( "Attribute `%s.%s` cannot be "
           "changed from `%s` to `%s`; it can be set only once!"
         )
@@ -1277,7 +1277,7 @@ class Just_Once_Mixin (Kind) :
 class Init_Only_Mixin (Just_Once_Mixin) :
     """Mixin restricting attribute changes to the object initialization."""
 
-    _x_format             = \
+    _x_format             = _ \
         ( "Init-only attribute `%s.%s` cannot be "
           "changed from `%s` to `%s` after object creation"
         )

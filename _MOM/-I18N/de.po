@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-11 13:40+0200\n"
+"POT-Creation-Date: 2012-04-12 13:11+0200\n"
 "PO-Revision-Date: 2011-10-10 11:56+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1802
+#: _MOM/_Attr/Type.py:1803
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -49,6 +49,15 @@ msgid "An_Entity"
 msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
+
+#: _MOM/_Attr/Kind.py:1256
+#, python-format
+msgid ""
+"Attribute `%s.%s` cannot be changed from `%s` to `%s`; it can be set only"
+" once!"
+msgstr ""
+"Das Wert des Attributs `%s.%s` kann nicht von `%s` auf `%s` "
+"geändert werden; der Wert kann nur einmal gesetzt werden!"
 
 #: _MOM/_Attr/Filter.py:251
 msgid "CONTAINS"
@@ -132,7 +141,16 @@ msgid_plural "Id_Entitys"
 msgstr[0] "Id-Entität"
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1357
+#: _MOM/_Attr/Kind.py:1281
+#, python-format
+msgid ""
+"Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
+"object creation"
+msgstr ""
+"Der Wert des Attributs `%s.%s` kann nach der Objekterzeugung nicht von `%s` "
+"auf `%s` geändert werden"
+
+#: _MOM/_Attr/Type.py:1358
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -197,7 +215,7 @@ msgid_plural "Named_Objects"
 msgstr[0] "Benanntes-Objekt"
 msgstr[1] "Benannte-Objekte"
 
-#: _MOM/_Attr/Type.py:1039
+#: _MOM/_Attr/Type.py:1040
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
@@ -348,7 +366,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:635
+#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:636
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -373,7 +391,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:1034
+#: _MOM/_Attr/Type.py:1035
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"

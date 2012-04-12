@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-11 13:40+0200\n"
+"POT-Creation-Date: 2012-04-12 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgid ""
 "    Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1802
+#: _MOM/_Attr/Type.py:1803
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -45,6 +45,13 @@ msgid "An_Entity"
 msgid_plural "An_Entitys"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _MOM/_Attr/Kind.py:1256
+#, python-format
+msgid ""
+"Attribute `%s.%s` cannot be changed from `%s` to `%s`; it can be set only"
+" once!"
+msgstr ""
 
 #: _MOM/_Attr/Filter.py:251
 msgid "CONTAINS"
@@ -124,7 +131,14 @@ msgid_plural "Id_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1357
+#: _MOM/_Attr/Kind.py:1281
+#, python-format
+msgid ""
+"Init-only attribute `%s.%s` cannot be changed from `%s` to `%s` after "
+"object creation"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1358
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -189,7 +203,7 @@ msgid_plural "Named_Objects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:1039
+#: _MOM/_Attr/Type.py:1040
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr ""
@@ -328,7 +342,7 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:635
+#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:636
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -353,7 +367,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1034
+#: _MOM/_Attr/Type.py:1035
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""
