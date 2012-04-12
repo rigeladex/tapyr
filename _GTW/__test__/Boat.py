@@ -139,14 +139,25 @@ _test_code = """
     [('object', []), ('region', []), ('system', [])]
 
 
+    >>> errors = []
     >>> b.b_class.set (max_crew = 0)
     Traceback (most recent call last):
       ...
     Invariant_Errors: Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
         max_crew = 0
-    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set`
+    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 0)`
     [('object', [Invariant_Error(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
         max_crew = 0, (), ())]), ('region', []), ('system', [])]
+    >>> errors
+    []
+    >>> b.b_class.set (max_crew = 5, on_error = errors.append)
+    1
+    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 5)`
+    [('object', [Invariant_Error(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+        max_crew = 5, (), ())]), ('region', []), ('system', [])]
+    >>> errors
+    [Invariant_Errors([Invariant_Error(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+        max_crew = 5, (), ())],)]
 
     >>> scope.destroy ()
 

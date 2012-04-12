@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -29,6 +29,7 @@
 # Revision Dates
 #    22-Jun-2010 (MG) Creation
 #    22-Jun-2010 (CT) Creation continued
+#    12-Apr-2012 (CT) Extend tests for `on_error`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
+    >>> errors = []
     >>> print PAP.Person.count
     0
     >>> PAP.Person (last_name = u"last_name", first_name = u"", raw = True)
@@ -43,9 +45,10 @@ _test_code = r"""
       ...
     Invariant_Errors: Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
         first_name = u''
+    >>> errors
+    []
     >>> print PAP.Person.count
     0
-    >>> errors = []
     >>> PAP.Person \
     ...     ( last_name  = u"last_name"
     ...     , first_name = u""
@@ -68,6 +71,5 @@ _test_code = r"""
 from _GTW.__test__.model import *
 
 __test__ = Scaffold.create_test_dict (_test_code)
-
 
 ### __END__ GTW.__test__.Missing_Primary_Key
