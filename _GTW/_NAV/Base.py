@@ -285,6 +285,7 @@
 #    11-Apr-2012 (CT) Re-add `_Dir_.rendered` to use `.dir_template`, if any
 #    11-Apr-2012 (CT) Change `_new_edit_session` to use `!=`, not `is not` to
 #                     compare `user` and `anonymous_account`
+#    12-Apr-2012 (CT) Improve readability of `_new_edit_session`
 #    ««revision-date»»···
 #--
 
@@ -726,12 +727,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def _new_edit_session (self, handler, ttl = None) :
         dbmd = self.top.scope.db_meta_data
         user = handler.request.user
-        if user != self.anonymous_account :
-            hash = user.password
+        if user == self.anonymous_account :
+            u_hash = handler.username = uuid.uuid1 ().hex
         else :
-            hash = handler.username = uuid.uuid1 ().hex
+            u_hash = user.password
         return handler.session.new_edit_session \
-            ((hash, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
+            ((u_hash, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
     # end def _new_edit_session
 
     def _permissions (self) :
