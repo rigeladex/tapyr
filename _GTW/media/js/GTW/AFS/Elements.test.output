@@ -2,8 +2,6 @@ FB : Form ''
   FB-0 : Entity 'Boat', root = `Entity 'Boat'`
     FB-0:0 : Fieldset 'primary'
       FB-0:0:0 : Field_Entity 'Class', anchor = `Entity 'Boat'`
-        FB-0:0:0:0 : Field 'Name', anchor = `Field_Entity 'Class'`, completer = name
-        FB-0:0:0:1 : Field 'Max crew', anchor = `Field_Entity 'Class'`
       FB-0:0:1 : Field 'Nation', anchor = `Entity 'Boat'`
       FB-0:0:2 : Field 'Sail number', anchor = `Entity 'Boat'`, completer = sail_number,left,nation,sail_number_x
       FB-0:0:3 : Field 'Sail number x', anchor = `Entity 'Boat'`, completer = sail_number_x,left,nation,sail_number
@@ -38,22 +36,17 @@ FB-0 value :
         pid = 2
     FB-0:0:0 :
         $child_ids :
-            0 = "FB-0:0:0:0"
-            1 = "FB-0:0:0:1"
+
         $id = "FB-0:0:0"
         allow_new = true
         anchor_id = "FB-0"
         edit :
             cid = 1
             pid = 1
-        FB-0:0:0:0 :
-            init = "Optimist"
-        FB-0:0:0:1 :
-            init = "1"
         init :
             cid = 1
             pid = 1
-        sid = "AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA"
+        sid = "DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ"
     FB-0:0:1 :
         init = "AUT"
     FB-0:0:2 :
@@ -172,22 +165,17 @@ Form values :
             pid = 2
         FB-0:0:0 :
             $child_ids :
-                0 = "FB-0:0:0:0"
-                1 = "FB-0:0:0:1"
+
             $id = "FB-0:0:0"
             allow_new = true
             anchor_id = "FB-0"
             edit :
                 cid = 1
                 pid = 1
-            FB-0:0:0:0 :
-                init = "Optimist"
-            FB-0:0:0:1 :
-                init = "1"
             init :
                 cid = 1
                 pid = 1
-            sid = "AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA"
+            sid = "DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ"
         FB-0:0:1 :
             init = "AUT"
         FB-0:0:2 :
@@ -342,22 +330,17 @@ $GTW :
                                     pid = 2
                                 FB-0:0:0 :
                                     $child_ids :
-                                        0 = "FB-0:0:0:0"
-                                        1 = "FB-0:0:0:1"
+
                                     $id = "FB-0:0:0"
                                     allow_new = true
                                     anchor_id = "FB-0"
                                     edit :
                                         cid = 1
                                         pid = 1
-                                    FB-0:0:0:0 :
-                                        init = "Optimist"
-                                    FB-0:0:0:1 :
-                                        init = "1"
                                     init :
                                         cid = 1
                                         pid = 1
-                                    sid = "AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA"
+                                    sid = "DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ"
                                 FB-0:0:1 :
                                     init = "AUT"
                                 FB-0:0:2 :
@@ -513,22 +496,17 @@ $GTW :
                             pid = 2
                         FB-0:0:0 :
                             $child_ids :
-                                0 = "FB-0:0:0:0"
-                                1 = "FB-0:0:0:1"
+
                             $id = "FB-0:0:0"
                             allow_new = true
                             anchor_id = "FB-0"
                             edit :
                                 cid = 1
                                 pid = 1
-                            FB-0:0:0:0 :
-                                init = "Optimist"
-                            FB-0:0:0:1 :
-                                init = "1"
                             init :
                                 cid = 1
                                 pid = 1
-                            sid = "AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA"
+                            sid = "DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ"
                         FB-0:0:1 :
                             init = "AUT"
                         FB-0:0:2 :
@@ -557,68 +535,30 @@ $GTW :
                     _super = undefined
                     allow_new = true
                     anchor_id = "FB-0"
-                    children :
-                        0 = "FB-0:0:0:0"
-                        1 = "FB-0:0:0:1"
                     collapsed = true
                     field_name_map :
-                        max_crew = "FB-0:0:0:1"
-                        name = "FB-0:0:0:0"
+
                     kind = "primary"
                     label = "Class"
                     name = "left"
+                    readonly = true
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.SRM.Boat_Class"
                     function update(dict)
                     value :
                         $child_ids :
-                            0 = "FB-0:0:0:0"
-                            1 = "FB-0:0:0:1"
+
                         $id = "FB-0:0:0"
                         allow_new = true
                         anchor_id = "FB-0"
                         edit :
                             cid = 1
                             pid = 1
-                        FB-0:0:0:0 :
-                            init = "Optimist"
-                        FB-0:0:0:1 :
-                            init = "1"
                         init :
                             cid = 1
                             pid = 1
-                        sid = "AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA"
-                FB-0:0:0:0 :
-                    $id = "FB-0:0:0:0"
-                    _super = undefined
-                    anchor_id = "FB-0:0:0"
-                    completer :
-                        embedded_p = false
-                        entity_p = true
-                        names :
-                            0 = "name"
-                        treshold = 1
-                    kind = "primary"
-                    label = "Name"
-                    name = "name"
-                    required = true
-                    type = "Field"
-                    function update(dict)
-                    value :
-                        init = "Optimist"
-                FB-0:0:0:1 :
-                    $id = "FB-0:0:0:1"
-                    _super = undefined
-                    anchor_id = "FB-0:0:0"
-                    kind = "required"
-                    label = "Max crew"
-                    name = "max_crew"
-                    required = true
-                    type = "Field"
-                    function update(dict)
-                    value :
-                        init = "1"
+                        sid = "DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ"
                 FB-0:0:1 :
                     $id = "FB-0:0:1"
                     _super = undefined
@@ -967,6 +907,7 @@ $GTW :
                     kind = "primary"
                     label = "Person"
                     name = "left"
+                    readonly = true
                     required = true
                     type = "Field_Entity"
                     type_name = "GTW.OMP.PAP.Person"
@@ -1129,22 +1070,17 @@ $GTW :
                                 pid = 2
                             FB-0:0:0 :
                                 $child_ids :
-                                    0 = "FB-0:0:0:0"
-                                    1 = "FB-0:0:0:1"
+
                                 $id = "FB-0:0:0"
                                 allow_new = true
                                 anchor_id = "FB-0"
                                 edit :
                                     cid = 1
                                     pid = 1
-                                FB-0:0:0:0 :
-                                    init = "Optimist"
-                                FB-0:0:0:1 :
-                                    init = "1"
                                 init :
                                     cid = 1
                                     pid = 1
-                                sid = "AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA"
+                                sid = "DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ"
                             FB-0:0:1 :
                                 init = "AUT"
                             FB-0:0:2 :
@@ -1298,4 +1234,4 @@ $GTW :
 FB-0:2::0 value jsonified :
   {"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"p2RvjP735uCrdIOAVP1V:cwc7:9-nI82DsRatw","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"bRXl:AccCuREMDWBGh4aTAZRE4:INKGLWR8hvw","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA","$id":"FB-0:0:0","$child_ids":["FB-0:0:0:0","FB-0:0:0:1"],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true,"FB-0:0:0:0":{"init":"Optimist"},"FB-0:0:0:1":{"init":"1"}},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"p2RvjP735uCrdIOAVP1V:cwc7:9-nI82DsRatw","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"bRXl:AccCuREMDWBGh4aTAZRE4:INKGLWR8hvw","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"59qvPP7ZAJ6finbdGcMiWiW:hU:RluWUip075w","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ","$id":"FB-0:0:0","$child_ids":[],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"cbeCOfHqyGocXEPipotIQf:KqRdqneXDJrfY3Q","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"psDtraUauCpC0h1G78Z7oVhLsnES7gmBRDcung","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"p2RvjP735uCrdIOAVP1V:cwc7:9-nI82DsRatw","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OyioNbx6FdkpElAjZcK4w8FrKD259SyiFZwnmQ","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"bRXl:AccCuREMDWBGh4aTAZRE4:INKGLWR8hvw","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"3arQQd-LRu6uD-9kewD1k8eGTOcXFpD6eaSnRA","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}

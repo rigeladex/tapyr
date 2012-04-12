@@ -1252,9 +1252,9 @@ class Id_Entity (Entity) :
 
     def _main__init__ (self, * epk, ** kw) :
         self.implicit = kw.pop ("implicit", False)
-        ### Need to use `__super.` methods here because it's not a `rename`
         raw      = bool (kw.pop ("raw", False))
         setter   = self.__super._set_raw if raw else self.__super._set_ckd
+            ### Need to use `__super.` methods here because it's not a `rename`
         epk, kw  = self.epkified  (* epk, ** kw)
         self._kw_check_required (kw)
         kw.update (self._init_epk (epk))

@@ -93,6 +93,8 @@
 #                     (do not include `children` unless `allow_new`)
 #     9-Mar-2012 (CT) Redefine `Field_Entity.apply` to consider `allow_new
 #    19-Mar-2012 (CT) Change `Field_Entity.apply` to consider `prefilled`, too
+#    12-Apr-2012 (CT) Change `Field_Entity.__call__` to set `readonly`
+#                     according to `changeable` (and factor `_MOM_Field_MI_`)
 #    ««revision-date»»···
 #--
 
@@ -304,7 +306,13 @@ class _MOM_Entity_List_  (AE.Entity_List) :
 
 Entity_List = _MOM_Entity_List_ # end class
 
-class _MOM_Field_ (AE.Field) :
+class _MOM_Field_MI_ (_MOM_Element_, AE._Field_) :
+
+    changeable = True
+
+# end class _MOM_Field_MI_
+
+class _MOM_Field_ (_MOM_Field_MI_, AE.Field) :
     """Model a MOM-specific field of an AJAX-enhanced form."""
 
     _real_name = "Field"
@@ -333,10 +341,11 @@ class _MOM_Field_ (AE.Field) :
         attr   = ETM.attributes [self.name]
         value  = result ["value"]
         init   = value.get ("init", "")
-        result ["cooked"]   = attr.from_string (init) if init else None
+        result ["cooked"]   = cooked = \
+            attr.from_string (init) if init else None
         result ["_display"] = init
         if not kw.get ("copy", False) :
-            if (not attr.is_changeable) and init != attr.raw_default :
+            if (not self.changeable) and cooked != attr.default :
                 result ["readonly"] = True
         for k in "max_length", "max_value", "min_value" :
             v = getattr (attr, k, None)
@@ -392,7 +401,7 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
 
 Field_Composite = _MOM_Field_Composite_ # end class
 
-class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
+class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
     """Model a MOM-specific entity-holding field of an AJAX-enhanced form.
 
        A Field_Entity models an attribute that refers to another entity.
@@ -421,6 +430,8 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
             ### this clause is taken when a part of the form is called
             ### directly like `Form [id].instantiated (...)`
             f_kw ["allow_new"] = allow_new
+            if not (self.changeable or entity is None) :
+                f_kw ["readonly"] = True
             result = self.__super.__call__ (ETM, entity, ** f_kw)
         else :
             ### this clause is taken when the whole form is processed
@@ -430,6 +441,7 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
             a_entity     = getattr (entity, self.name, None)
             if a_entity is None and attr.raw_default :
                 a_entity = a_etm.instance (attr.raw_default, raw = True)
+            readonly     = not (self.changeable or a_entity is None)
             f_kw         = dict \
                 ( f_kw
                 , allow_new      = allow_new
@@ -437,7 +449,7 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
                     (   f_kw.get    ("collapsed", True)
                     and self.kw.get ("collapsed", True)
                     and not (a_entity is None and attr.is_required)
-                    ) or not allow_new
+                    ) or readonly or not allow_new
                 , outer_entity   = entity
                 , role_entity    = None
                 , show_defaults  = a_entity is not None or allow_new
@@ -446,6 +458,8 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
                     ### * default values interfere with auto-completion
                     ### --> don't show them in form
                 )
+            if readonly :
+                f_kw ["readonly"] = readonly
             result = self.__super.__call__ (a_etm, a_entity, ** f_kw)
         return result
     # end def __call__
@@ -464,8 +478,12 @@ class _MOM_Field_Entity_ (_MOM_Entity_MI_, AE.Field_Entity) :
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
-        prefilled = self.prefilled or kw ["form_kw"].get ("prefilled")
-        if kw.get ("allow_new") and not prefilled :
+        readonly = \
+            ( self.prefilled
+            or kw ["form_kw"].get ("prefilled")
+            or kw.get ("readonly")
+            )
+        if kw.get ("allow_new") and not readonly :
             return self.__super._call_iter (ETM, entity, ** kw)
         return ()
     # end def _call_iter

@@ -78,36 +78,11 @@ var f = new $GTW.AFS.Form (
                   , 'children' :
                       [ { '$id' : 'FB-0:0:0'
                         , 'allow_new' : True
-                        , 'children' :
-                            [ { '$id' : 'FB-0:0:0:0'
-                              , 'completer' :
-                                  { 'entity_p' : True
-                                  , 'names' :
-    [ 'name' ]
-                                  , 'treshold' : 1
-                                  }
-                              , 'kind' : 'primary'
-                              , 'label' : 'Name'
-                              , 'name' : 'name'
-                              , 'required' : True
-                              , 'type' : 'Field'
-                              , 'value' :
-                                  { 'init' : 'Optimist' }
-                              }
-                            , { '$id' : 'FB-0:0:0:1'
-                              , 'kind' : 'required'
-                              , 'label' : 'Max crew'
-                              , 'name' : 'max_crew'
-                              , 'required' : True
-                              , 'type' : 'Field'
-                              , 'value' :
-                                  { 'init' : '1' }
-                              }
-                            ]
                         , 'collapsed' : True
                         , 'kind' : 'primary'
                         , 'label' : 'Class'
                         , 'name' : 'left'
+                        , 'readonly' : True
                         , 'required' : True
                         , 'type' : 'Field_Entity'
                         , 'type_name' : 'GTW.OMP.SRM.Boat_Class'
@@ -116,7 +91,7 @@ var f = new $GTW.AFS.Form (
                                 { 'cid' : 1
                                 , 'pid' : 1
                                 }
-                            , 'sid' : 'AYjhdSJEKXsEv5hQm5GOJi5088MQuwud2bhjmA'
+                            , 'sid' : 'DS:kCufPm7dIyPobFEWipmvQ95oIUb85qsZOdQ'
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
@@ -250,6 +225,7 @@ var f = new $GTW.AFS.Form (
                                           , 'kind' : 'primary'
                                           , 'label' : 'Person'
                                           , 'name' : 'left'
+                                          , 'readonly' : True
                                           , 'required' : True
                                           , 'type' : 'Field_Entity'
                                           , 'type_name' : 'GTW.OMP.PAP.Person'
