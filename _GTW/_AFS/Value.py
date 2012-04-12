@@ -43,6 +43,7 @@
 #     1-Mar-2012 (CT) Change `apply` to accumulate `results` and pass
 #                     `results` to `elem.apply`
 #     5-Mar-2012 (CT) Add `allow_new` to `pop_to_self`
+#    12-Apr-2012 (CT) Add `errors` and `on_error` to `apply`
 #    ««revision-date»»···
 #--
 
@@ -176,10 +177,15 @@ class Value (_Base_) :
     def apply (self, * args, ** kw) :
         conflicts = 0
         entities  = sorted (self.entity_children (), key = self.apply_key)
-        results   = {}
+        results   = self.results = {}
+        errors    = self.errors  = {}
         self._check_sids   (entities, ** kw)
         for e in entities :
-            e.entity = results [e.id] = e.elem.apply (e, results, * args, ** kw)
+            e.errors = []
+            e.entity = results [e.id] = e.elem.apply \
+                (e, results, * args, on_error = e.errors.append, ** kw)
+            if e.errors :
+                errors [e.id] = e.errors
             conflicts += e.conflicts
         if conflicts :
             raise GTW.AFS.Error.Conflict ()

@@ -95,6 +95,7 @@
 #    19-Mar-2012 (CT) Change `Field_Entity.apply` to consider `prefilled`, too
 #    12-Apr-2012 (CT) Change `Field_Entity.__call__` to set `readonly`
 #                     according to `changeable` (and factor `_MOM_Field_MI_`)
+#    12-Apr-2012 (CT) Add `on_error` to `apply` and its callees
 #    ««revision-date»»···
 #--
 
@@ -113,14 +114,14 @@ class _MOM_Element_ (AE._Element_) :
 
     _real_name    = "Element"
 
-    def _changed_children (self, value, results, scope, entity, ** kw) :
+    def _changed_children (self, value, results, scope, entity, on_error = None, ** kw) :
         result = {}
         for c in value.children :
             v = None
             if c.entity :
                 v = c.entity
             else :
-                v = c.elem.applyf (c, results, scope, entity, ** kw)
+                v = c.elem.applyf (c, results, scope, entity, on_error = None, ** kw)
                 value.conflicts += c.conflicts
             if v is not None :
                 result [c.elem.name] = v
@@ -160,26 +161,28 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
             raise GTW.AFS.Error.Corrupted ()
     # end def check_sid
 
-    def _apply_change (self, pid, value, results, scope, ** kw) :
+    def _apply_change (self, pid, value, results, scope, on_error = None, ** kw) :
         entity = scope.pid_query (pid)
-        akw    = self._changed_children (value, results, scope, entity, ** kw)
+        akw    = self._changed_children \
+            (value, results, scope, entity, on_error = on_error, ** kw)
         if akw and not value.conflicts :
             ### XXX error handling
-            entity.set_raw (** akw)
+            entity.set_raw (on_error = on_error, ** akw)
         return entity
     # end def _apply_change
 
-    def _apply_create (self, value, results, scope, ** kw) :
-        akw = self._changed_children (value, results, scope, None, ** kw)
+    def _apply_create (self, value, results, scope, on_error = None, ** kw) :
+        akw = self._changed_children \
+            (value, results, scope, None, on_error = on_error, ** kw)
         if akw and not value.conflicts :
             ### XXX error handling
             ETM = scope [self.type_name]
-            return self._create_instance (ETM, akw)
+            return self._create_instance (ETM, akw, on_error)
     # end def _apply_create
 
-    def _create_instance (self, ETM, akw) :
+    def _create_instance (self, ETM, akw, on_error) :
         try :
-            return ETM.instance_or_new (raw = 1, ** akw)
+            return ETM.instance_or_new (raw = 1, on_error = on_error, ** akw)
         except MOM.Error.Invariant_Errors as exc :
             if not exc.any_required_empty :
                 raise
@@ -269,8 +272,8 @@ class _MOM_Entity_Link_ (AE.Entity_Link, _MOM_Entity_MI_) :
             )
     # end def instance_call
 
-    def _create_instance (self, ETM, akw) :
-        return ETM (raw = 1, ** akw)
+    def _create_instance (self, ETM, akw, on_error) :
+        return ETM (raw = 1, on_error = on_error, ** akw)
     # end def _create_instance
 
 Entity_Link = _MOM_Entity_Link_ # end class
@@ -322,7 +325,7 @@ class _MOM_Field_ (_MOM_Field_MI_, AE.Field) :
         return self.__super.__call__ (ETM, entity, ** f_kw)
     # end def __call__
 
-    def applyf (self, value, results, scope, entity, ** kw) :
+    def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
         result = None
         if entity is not None :
             dbv = entity.raw_attr (self.name)
@@ -384,10 +387,11 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
         return self.__super.__call__ (ETM, entity, ** f_kw)
     # end def __call__
 
-    def applyf (self, value, results, scope, entity, ** kw) :
+    def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
         if entity is not None :
             entity = getattr (entity, self.name)
-        return self._changed_children (value, results, scope, entity, ** kw)
+        return self._changed_children \
+            (value, results, scope, entity, on_error = on_error, ** kw)
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
@@ -464,16 +468,17 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
         return result
     # end def __call__
 
-    def apply (self, value, results, scope, ** kw) :
+    def apply (self, value, results, scope, on_error = None, ** kw) :
         if getattr (value, "allow_new") and not getattr (value, "prefilled") :
-            return self._apply_create (value, results, scope, ** kw)
+            return self._apply_create \
+                (value, results, scope, on_error = on_error, ** kw)
         else :
             pid = value.edit.get ("pid")
             if pid is not None :
                 return scope.pid_query (pid)
     # end def apply
 
-    def applyf (self, value, results, scope, entity, ** kw) :
+    def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
         return value.entity
     # end def applyf
 
@@ -509,7 +514,7 @@ class Field_Role_Hidden (Field_Entity) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    def apply (self, value, results, scope, ** kw) :
+    def apply (self, value, results, scope, on_error = None, ** kw) :
         try :
             return results [value.anchor_id]
         except KeyError :
@@ -518,8 +523,8 @@ class Field_Role_Hidden (Field_Entity) :
                 return scope.pid_query (pid)
     # end def apply
 
-    def applyf (self, value, results, scope, entity, ** kw) :
-        return self.apply (value, results, scope, ** kw)
+    def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
+        return self.apply (value, results, scope, on_error = on_error, ** kw)
     # end def applyf
 
     def display (self, instance) :
