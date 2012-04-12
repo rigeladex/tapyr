@@ -31,6 +31,7 @@
 #     9-Nov-2011 (CT) Add test for `sail_number_head` and `sail_number_tail`
 #    10-Nov-2011 (CT) Add test for `Name_Clash`
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
+#    12-Apr-2012 (CT) Add tests for `max_crew` predicate
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,30 @@ _test_code = """
     Traceback (most recent call last):
       ...
     Name_Clash: new definition of GTW.OMP.SRM.Boat_Class (u'optimist') clashes with existing GTW.OMP.SRM.Boat_Class (u'optimist')
+
+    >>> print scope.SRM.Boat.count ### 8
+    2
+
+    >>> print sorted (b.b_class._pred_man.errors.items ()) ### before invariant errors
+    [('object', []), ('region', []), ('system', [])]
+
+    >>> b.b_class.max_crew = 0
+    Traceback (most recent call last):
+      ...
+    Invariant_Error: Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+        max_crew = 0
+    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `setattr`
+    [('object', []), ('region', []), ('system', [])]
+
+
+    >>> b.b_class.set (max_crew = 0)
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+        max_crew = 0
+    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set`
+    [('object', [Invariant_Error(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+        max_crew = 0, (), ())]), ('region', []), ('system', [])]
 
     >>> scope.destroy ()
 
