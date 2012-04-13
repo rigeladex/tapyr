@@ -96,6 +96,7 @@
 #    12-Apr-2012 (CT) Change `Field_Entity.__call__` to set `readonly`
 #                     according to `changeable` (and factor `_MOM_Field_MI_`)
 #    12-Apr-2012 (CT) Add `on_error` to `apply` and its callees
+#    13-Apr-2012 (CT) Add guards for `value.edit` to `Field.applyf`
 #    ««revision-date»»···
 #--
 
@@ -332,9 +333,9 @@ class _MOM_Field_ (_MOM_Field_MI_, AE.Field) :
             if value.init != dbv:
                 value.conflicts += 1
                 value.asyn       = result = dbv
-            else :
+            elif value.edit or value.edit != value.init :
                 result = value.edit
-        else :
+        elif value.edit or value.edit != value.init :
             result = value.edit
         return result
     # end def applyf

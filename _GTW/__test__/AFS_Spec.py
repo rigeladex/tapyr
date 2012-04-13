@@ -1312,6 +1312,7 @@ _test_code = """
     GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'', u'')
     >>> fv.apply (scope, _sid = 0)
     >>> print formatted (fv.errors)
+    {}
 
     >>> fv.apply (scope, _sid = 1)
     Traceback (most recent call last):
