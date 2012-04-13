@@ -97,6 +97,9 @@
 #                     according to `changeable` (and factor `_MOM_Field_MI_`)
 #    12-Apr-2012 (CT) Add `on_error` to `apply` and its callees
 #    13-Apr-2012 (CT) Add guards for `value.edit` to `Field.applyf`
+#    13-Apr-2012 (CT) Redefine `Field_Entity._apply_create` to call newly
+#                     factored `_apply_get` if there wasn't any attribute
+#                     change
 #    ««revision-date»»···
 #--
 
@@ -471,17 +474,30 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
 
     def apply (self, value, results, scope, on_error = None, ** kw) :
         if getattr (value, "allow_new") and not getattr (value, "prefilled") :
-            return self._apply_create \
-                (value, results, scope, on_error = on_error, ** kw)
+            applier = self._apply_create
         else :
-            pid = value.edit.get ("pid")
-            if pid is not None :
-                return scope.pid_query (pid)
+            applier = self._apply_get
+        return applier (value, results, scope, on_error = on_error, ** kw)
     # end def apply
 
     def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
         return value.entity
     # end def applyf
+
+    def _apply_create (self, value, results, scope, on_error = None, ** kw) :
+        result = self.__super._apply_create \
+            (value, results, scope, on_error = on_error, ** kw)
+        if result is None :
+            result = self._apply_get \
+                (value, results, scope, on_error = on_error, ** kw)
+        return result
+    # end def _apply_create
+
+    def _apply_get (self, value, results, scope, on_error = None, ** kw) :
+        pid = value.edit.get ("pid")
+        if pid is not None :
+            return scope.pid_query (pid)
+    # end def _apply_get
 
     def _call_iter (self, ETM, entity, ** kw) :
         readonly = \
