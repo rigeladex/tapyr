@@ -67,6 +67,7 @@
 #    27-Jan-2012 (CT) Fix `__eq__` and `__hash__`,
 #                     add `__lt__` and `totally_ordered`
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
+#    15-Apr-2012 (CT) Apply `sorted` to `injected` in `Templateer.get_template`
 #    ««revision-date»»···
 #--
 
@@ -581,7 +582,9 @@ class Templateer (TFL.Meta.Object) :
         result = T (self.env, name)
         if injected :
             name_i = "%s|%s" % \
-                (result.name, "|".join (str (t.name) for t in injected))
+                ( result.name
+                , "|".join (str (t.name) for t in sorted (injected))
+                )
             if name_i in T.Map :
                 result = T.Map [name_i]
             else :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -30,6 +30,8 @@
 #    16-Jan-2011 (CT) `Node_P` and `Word_Trie_P` factored
 #    16-Jan-2011 (CT) `matches_damerau` added (Damerau-Levenshtein)
 #    17-Jan-2011 (CT) `completions` and `update` added
+#    15-Apr-2012 (CT) Add `sorted` to guarantee determistic output
+#                     for `PYTHONHASHSEED="random"`
 #    ««revision-date»»···
 #--
 
@@ -80,8 +82,8 @@ class Node (object) :
         if children :
             tail = "\n  ".join \
                 ( itertools.chain
-                    ( * (   c.visualized ().split ("\n")
-                        for c in children.itervalues ()
+                    ( * (   cn.visualized ().split ("\n")
+                        for ck, cn in sorted (children.iteritems ())
                         )
                     )
                 )
@@ -200,6 +202,13 @@ class Word_Trie (TFL.Meta.Object) :
       >
       <Node
         <Node
+          <Node
+            <Value beta>
+          >
+        >
+      >
+      <Node
+        <Node
           <Value cab
             <Node
               <Value cabby>
@@ -214,13 +223,6 @@ class Word_Trie (TFL.Meta.Object) :
         >
         <Node
           <Value cub>
-        >
-      >
-      <Node
-        <Node
-          <Node
-            <Value beta>
-          >
         >
       >
     >
@@ -342,12 +344,12 @@ class Word_Trie (TFL.Meta.Object) :
         return self._match_iter (self._match_col_iter_l, word, max_edits)
     # end def match_iter_levenshtein
 
-    def matches_damerau (self, word, max_edits, result_type = list) :
+    def matches_damerau (self, word, max_edits, result_type = sorted) :
         """Return all matches with a Damerau-Levenshtein distance <= max_edits."""
         return result_type (self.match_iter_damerau (word, max_edits))
     # end def matches_damerau
 
-    def matches_levenshtein (self, word, max_edits, result_type = list) :
+    def matches_levenshtein (self, word, max_edits, result_type = sorted) :
         """Return all matches with a Levenshtein distance <= max_edits."""
         return result_type (self.match_iter_levenshtein (word, max_edits))
     # end def matches_levenshtein

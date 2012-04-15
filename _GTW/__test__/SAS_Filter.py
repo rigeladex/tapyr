@@ -35,8 +35,12 @@
 #    25-Jul-2011 (MG) `_date_queries` added
 #    25-Jul-2011 (CT) `_date_queries` corrected (s/query/query_s/)
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
+#    15-Apr-2012 (CT) Use `show` to guarantee deterministic order
 #    ««revision-date»»···
 #--
+
+def show (q) :
+    return sorted (str (x) for x in q)
 
 _composite = r"""
     >>> scope = Scaffold.scope ("sqlite://")
@@ -57,20 +61,20 @@ _composite = r"""
     ...     (p4.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event.query ()
-    >>> for e in q.all () : print e ### all
+    >>> for e in show (q) : print e ### all
     ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
     ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
     ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')
     ((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u'')
     >>> q = EVT.Event.query ().filter (Q.date.start > date)
-    >>> for e in q.all () : print e ### filtered 1
+    >>> for e in show (q) : print e ### filtered 1
     ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
     >>> q = EVT.Event.query ().filter (Q.date.start >= date)
-    >>> for e in q.all () : print e ### filtered 2
+    >>> for e in show (q) : print e ### filtered 2
     ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
     ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
     >>> q = EVT.Event.query ().filter (left = p1)
-    >>> for e in q.all () : print e ### filtered 3
+    >>> for e in show (q) : print e ### filtered 3
     ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
 """
 
@@ -93,23 +97,23 @@ _link1_role = r"""
     ...     (p4.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event_occurs.query ()
-    >>> for e in q.all () : print e ### all
+    >>> for e in show (q) : print e ### all
     (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
     (((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u''), u'2010/03/01', dict ())
     (((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
     (((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u''), u'2010/01/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start > date)
-    >>> for e in q.all () : print e ### filter 1
+    >>> for e in show (q) : print e ### filter 1
     (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start >= date)
-    >>> for e in q.all () : print e ### filter 2
+    >>> for e in show (q) : print e ### filter 2
     (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
     (((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u''), u'2010/03/01', dict ())
     >>> q = EVT.Event_occurs.query ().filter (event = e1)
-    >>> for e in q.all () : print e ### filter 3
+    >>> for e in show (q) : print e ### filter 3
     (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
     >>> q = EVT.Event.query ().filter (Q.date.alive)
-    >>> for e in q.all () : print e ### filter 4
+    >>> for e in show (q) : print e ### filter 4
     ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
     ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
     ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')

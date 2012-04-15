@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,8 @@
 #     3-May-2011 (CT) `from_string` added
 #     3-May-2011 (CT) CAO argument/option types added for `Date_Delta`,
 #                     `Date_Time_Delta`, and `Time_Delta`
+#    15-Apr-2012 (CT) Fix `_from_string_match_kw` (use `+=` instead of `=` in
+#                     `else` of `k.startswith ("sub")`)
 #    ««revision-date»»···
 #--
 
@@ -108,7 +110,7 @@ class _Delta_ (CAL._DTW_) :
                         kw ["minutes"]      += int (m)
                         kw ["seconds"]      += int (s)
                 else :
-                    kw [k] = int (v)
+                    kw [k] += int (v)
         return kw
     # end def _from_string_match_kw
 
@@ -212,9 +214,9 @@ class Time_Delta (_DT_Delta_) :
     >>> Time_Delta.from_string("7:42:37.00025")
     Time_Delta (7, 42, 37, 0, 250)
     >>> Time_Delta.from_string ("1.5h10.25m7.125s")
-    Time_Delta (1, 10, 22, 125, 0)
+    Time_Delta (1, 40, 22, 125, 0)
     >>> Time_Delta.from_string ("1.5 hours 10.25 minutes 7.125 seconds")
-    Time_Delta (1, 10, 22, 125, 0)
+    Time_Delta (1, 40, 22, 125, 0)
     """
 
     seconds          = property (TFL.Getter._body.seconds)

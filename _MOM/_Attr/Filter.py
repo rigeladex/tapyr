@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -54,6 +54,8 @@
 #     7-Dec-2011 (CT) Add guard for `value` to `_Date_.__call__`
 #    16-Dec-2011 (CT) Add class `In` and its subclasses
 #    19-Dec-2011 (CT) Fix `In.cooker`
+#    15-Apr-2012 (CT) Add `sorted` to `_Composite_.__call__._gen` to ensure
+#                     deterministic order of dict iteration (`PYTHONHASHSEED`)
 #    ««revision-date»»···
 #--
 
@@ -170,7 +172,7 @@ class _Composite_ (_Filter_) :
         q      = self.querier
         E_Type = self.attr.E_Type
         def _gen () :
-            for k, v in value.iteritems () :
+            for k, v in sorted (value.iteritems ()) :
                 qk   = getattr (q,  k)
                 qop  = getattr (qk, self.base_op_key)
                 r    = qop     (v)

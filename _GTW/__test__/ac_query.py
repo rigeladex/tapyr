@@ -30,6 +30,7 @@
 #    12-Sep-2011 (CT) Tests for `lifetime` added
 #    11-Nov-2011 (CT) Add tests for `Q.__eq__` and `Q.CONTAINS`
 #     5-Dec-2011 (CT) Add tests for `Sailor.AQ.left.AC(dict(last_name = "Tan"))`
+#    15-Apr-2012 (CT) Adapt to change of `MOM.Attr.Filter.Composite`
 #    ««revision-date»»···
 #--
 
@@ -84,9 +85,9 @@ _attr_ac_query = """
     >>> print q1
     Q.lifetime.start == 1959-09-26
     >>> print q2
-    <Filter_And [Q.lifetime.start == 1907-03-08, Q.lifetime.finish == 1994-08-04]>
+    <Filter_And [Q.lifetime.finish == 1994-08-04, Q.lifetime.start == 1907-03-08]>
     >>> print q4
-    <Filter_And [Q.lifetime.start.between (datetime.date(1907, 1, 1), datetime.date(1907, 12, 31)), Q.lifetime.finish.between (datetime.date(1994, 1, 1), datetime.date(1994, 12, 31))]>
+    <Filter_And [Q.lifetime.finish.between (datetime.date(1994, 1, 1), datetime.date(1994, 12, 31)), Q.lifetime.start.between (datetime.date(1907, 1, 1), datetime.date(1907, 12, 31))]>
     >>> print q5
     Q.first_name.contains (u'ti',)
     >>> print q6
@@ -96,7 +97,7 @@ _attr_ac_query = """
     Q.lifetime.start == 1959-09-26
 
     >>> print " and ".join (str (p) for p in q2.predicates)
-    Q.lifetime.start == 1907-03-08 and Q.lifetime.finish == 1994-08-04
+    Q.lifetime.finish == 1994-08-04 and Q.lifetime.start == 1907-03-08
 
     >>> PAP.Person.query_s (q1).all ()
     [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]

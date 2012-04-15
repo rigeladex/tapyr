@@ -36,6 +36,8 @@
 #     8-Mar-2012 (CT) Adapt tests to changes in AFS handling (allow_new...)
 #     9-Mar-2012 (CT) Add tests for `allow_new`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    15-Apr-2012 (CT) Use `formatted_1` instead of `sorted` to guarantee
+#                     determistic order of nested dicts
 #    ««revision-date»»···
 #--
 
@@ -1348,31 +1350,31 @@ _person_test = """
     >>> fip = fp (PAP.Person, p)
 
     >>> for i in fip.transitive_iter () :
-    ...     print i.elem, sorted ((i.value or {}).iteritems ())
-    <Form FP> [('sid', 0)]
-    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 3}), ('sid', 'Xv1-aSH1pKVZGBVxce:V18yKm5-q:3IgenOqQA')]
-    <Fieldset FP-0:0 'primary'> []
-    <Field FP-0:0:0 'last_name'> [(u'init', u'Tanzer')]
-    <Field FP-0:0:1 'first_name'> [(u'init', u'Laurens')]
-    <Field FP-0:0:2 'middle_name'> []
-    <Field FP-0:0:3 'title'> []
-    <Fieldset FP-0:1 'necessary'> []
-    <Field FP-0:1:0 'sex'> []
-    <Fieldset FP-0:2 'optional'> []
-    <Field_Composite FP-0:2:0 'lifetime' 'MOM.Date_Interval'> []
-    <Field FP-0:2:0.0 'start'> []
-    <Field FP-0:2:0.1 'finish'> []
-    <Field FP-0:2:1 'salutation'> []
-    <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> []
-    <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> []
-    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> [(u'init', {'pid': 9, 'cid': 9}), ('sid', 'c36my1sUz-sS5RB61HW0fDVE3oGiXwP1YT-rxQ')]
-    <Field_Role_Hidden FP-0:4::0-0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {'pid': 3, 'cid': 3}), ('sid', 'Khb3aMSN:S0BMDJLtIuhOZrHk1qT6P6AwAvd4Q')]
-    <Fieldset FP-0:4::0-1 'primary'> []
-    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> [(u'init', {'pid': 8, 'cid': 8}), ('sid', '0t3RCRxWf2syyJrKUjINQOmgZC3RWk4PzKRJVA')]
-    <Field FP-0:4::0-1:0:0 'address'> [(u'init', u'laurens.tanzer@gmail.com')]
-    <Fieldset FP-0:4::0-2 'optional'> []
-    <Field FP-0:4::0-2:0 'desc'> []
-    <Entity_List FP-0:5 'Person_has_Phone' <Entity_Link FP-0:5::p 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>> []
+    ...     print i.elem, formatted_1 ((i.value or {}))
+    <Form FP> {'sid' : 0}
+    <Entity FP-0 'Person' 'GTW.OMP.PAP.Person'> {'init' : {'cid' : 3, 'pid' : 3}, 'sid' : 'Xv1-aSH1pKVZGBVxce:V18yKm5-q:3IgenOqQA'}
+    <Fieldset FP-0:0 'primary'> {}
+    <Field FP-0:0:0 'last_name'> {'init' : 'Tanzer'}
+    <Field FP-0:0:1 'first_name'> {'init' : 'Laurens'}
+    <Field FP-0:0:2 'middle_name'> {}
+    <Field FP-0:0:3 'title'> {}
+    <Fieldset FP-0:1 'necessary'> {}
+    <Field FP-0:1:0 'sex'> {}
+    <Fieldset FP-0:2 'optional'> {}
+    <Field_Composite FP-0:2:0 'lifetime' 'MOM.Date_Interval'> {}
+    <Field FP-0:2:0.0 'start'> {}
+    <Field FP-0:2:0.1 'finish'> {}
+    <Field FP-0:2:1 'salutation'> {}
+    <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'GTW.OMP.PAP.Person_has_Address'>> {}
+    <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'>> {}
+    <Entity_Link FP-0:4::0 'Person_has_Email' 'GTW.OMP.PAP.Person_has_Email'> {'init' : {'cid' : 9, 'pid' : 9}, 'sid' : 'c36my1sUz-sS5RB61HW0fDVE3oGiXwP1YT-rxQ'}
+    <Field_Role_Hidden FP-0:4::0-0 'left' 'GTW.OMP.PAP.Person'> {'init' : {'cid' : 3, 'pid' : 3}, 'sid' : 'Khb3aMSN:S0BMDJLtIuhOZrHk1qT6P6AwAvd4Q'}
+    <Fieldset FP-0:4::0-1 'primary'> {}
+    <Field_Entity FP-0:4::0-1:0 'right' 'GTW.OMP.PAP.Email'> {'init' : {'cid' : 8, 'pid' : 8}, 'sid' : '0t3RCRxWf2syyJrKUjINQOmgZC3RWk4PzKRJVA'}
+    <Field FP-0:4::0-1:0:0 'address'> {'init' : 'laurens.tanzer@gmail.com'}
+    <Fieldset FP-0:4::0-2 'optional'> {}
+    <Field FP-0:4::0-2:0 'desc'> {}
+    <Entity_List FP-0:5 'Person_has_Phone' <Entity_Link FP-0:5::p 'Person_has_Phone' 'GTW.OMP.PAP.Person_has_Phone'>> {}
 
     >>> for i in fip.transitive_iter () :
     ...     e = i.elem
@@ -1540,57 +1542,57 @@ _prefilled_test = """
     <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'>                     e = - o = - r = -
 
     >>> for i in fob.transitive_iter () :
-    ...     print i.elem, sorted ((i.value or {}).iteritems ())
-    <Form FBR> [('sid', 0)]
-    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ')]
-    <Fieldset FBR-0:0 'primary'> []
-    <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'> [(u'init', {}), ('sid', 'kgmbbNrwNwnZ0I0YoMHdjD93SffA3gBPjErb4A')]
-    <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> [(u'init', {}), ('sid', 'bfQU5GmZ6Ml1MOW4y4OYEPp-yWkyGcE5SO3x1Q')]
-    <Field FBR-0:0:0:0:0 'name'> []
-    <Field FBR-0:0:0:0:1 'max_crew'> []
-    <Field FBR-0:0:0:1 'nation'> []
-    <Field FBR-0:0:0:2 'sail_number'> []
-    <Field FBR-0:0:0:3 'sail_number_x'> []
-    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> [(u'init', {'pid': 7, 'cid': 7}), ('sid', 'RpX3swPPYy5ypS5bZVXhHKScJWrnagm7iPfVOw')]
-    <Fieldset FBR-0:1 'required'> []
-    <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'> [(u'init', {}), ('sid', 'LzXeRZzmCjA83NnVTL3VEnNDcfDyCrc7Gx9YGQ')]
-    <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {}), ('sid', 'qYtMo1EwXQYG:ASSo0e-3SP77BzuGLK1L6ZsJA')]
-    <Field FBR-0:1:0:0:0 'last_name'> []
-    <Field FBR-0:1:0:0:1 'first_name'> []
-    <Field FBR-0:1:0:0:2 'middle_name'> []
-    <Field FBR-0:1:0:0:3 'title'> []
-    <Field FBR-0:1:0:1 'nation'> []
-    <Field FBR-0:1:0:2 'mna_number'> []
-    <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'> [(u'init', {}), ('sid', 'N62-rA25FHO3sDQAiDnA8eotUI7mJqP63dxgZg')]
-    <Field FBR-0:1:0:3:0 'name'> []
-    <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> []
+    ...     print i.elem, formatted_1 ((i.value or {}))
+    <Form FBR> {'sid' : 0}
+    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> {'init' : {}, 'sid' : 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ'}
+    <Fieldset FBR-0:0 'primary'> {}
+    <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'> {'init' : {}, 'sid' : 'kgmbbNrwNwnZ0I0YoMHdjD93SffA3gBPjErb4A'}
+    <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> {'init' : {}, 'sid' : 'bfQU5GmZ6Ml1MOW4y4OYEPp-yWkyGcE5SO3x1Q'}
+    <Field FBR-0:0:0:0:0 'name'> {}
+    <Field FBR-0:0:0:0:1 'max_crew'> {}
+    <Field FBR-0:0:0:1 'nation'> {}
+    <Field FBR-0:0:0:2 'sail_number'> {}
+    <Field FBR-0:0:0:3 'sail_number_x'> {}
+    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> {'init' : {'cid' : 7, 'pid' : 7}, 'sid' : 'RpX3swPPYy5ypS5bZVXhHKScJWrnagm7iPfVOw'}
+    <Fieldset FBR-0:1 'required'> {}
+    <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'> {'init' : {}, 'sid' : 'LzXeRZzmCjA83NnVTL3VEnNDcfDyCrc7Gx9YGQ'}
+    <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'> {'init' : {}, 'sid' : 'qYtMo1EwXQYG:ASSo0e-3SP77BzuGLK1L6ZsJA'}
+    <Field FBR-0:1:0:0:0 'last_name'> {}
+    <Field FBR-0:1:0:0:1 'first_name'> {}
+    <Field FBR-0:1:0:0:2 'middle_name'> {}
+    <Field FBR-0:1:0:0:3 'title'> {}
+    <Field FBR-0:1:0:1 'nation'> {}
+    <Field FBR-0:1:0:2 'mna_number'> {}
+    <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'> {'init' : {}, 'sid' : 'N62-rA25FHO3sDQAiDnA8eotUI7mJqP63dxgZg'}
+    <Field FBR-0:1:0:3:0 'name'> {}
+    <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> {}
 
     >>> fob_p = fb (SRM.Boat_in_Regatta, None, form_kw = dict (right = dict (prefilled = True, init = reo), Crew_Member = dict (max_links   = 1)))
     >>> for i in fob_p.transitive_iter () :
-    ...     print i.elem, sorted ((i.value or {}).iteritems ())
-    <Form FBR> [('sid', 0)]
-    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> [(u'init', {}), ('sid', 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ')]
-    <Fieldset FBR-0:0 'primary'> []
-    <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'> [(u'init', {}), ('sid', 'kgmbbNrwNwnZ0I0YoMHdjD93SffA3gBPjErb4A')]
-    <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> [(u'init', {}), ('sid', 'bfQU5GmZ6Ml1MOW4y4OYEPp-yWkyGcE5SO3x1Q')]
-    <Field FBR-0:0:0:0:0 'name'> []
-    <Field FBR-0:0:0:0:1 'max_crew'> []
-    <Field FBR-0:0:0:1 'nation'> []
-    <Field FBR-0:0:0:2 'sail_number'> []
-    <Field FBR-0:0:0:3 'sail_number_x'> []
-    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> [(u'edit', {'pid': 7, 'cid': 7}), (u'prefilled', True), ('sid', 'Spqx1iNkGlhnK0-oeBRKG1MnSre6Qwlb8Y2ebQ')]
-    <Fieldset FBR-0:1 'required'> []
-    <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'> [(u'init', {}), ('sid', 'LzXeRZzmCjA83NnVTL3VEnNDcfDyCrc7Gx9YGQ')]
-    <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'> [(u'init', {}), ('sid', 'qYtMo1EwXQYG:ASSo0e-3SP77BzuGLK1L6ZsJA')]
-    <Field FBR-0:1:0:0:0 'last_name'> []
-    <Field FBR-0:1:0:0:1 'first_name'> []
-    <Field FBR-0:1:0:0:2 'middle_name'> []
-    <Field FBR-0:1:0:0:3 'title'> []
-    <Field FBR-0:1:0:1 'nation'> []
-    <Field FBR-0:1:0:2 'mna_number'> []
-    <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'> [(u'init', {}), ('sid', 'N62-rA25FHO3sDQAiDnA8eotUI7mJqP63dxgZg')]
-    <Field FBR-0:1:0:3:0 'name'> []
-    <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> []
+    ...     print i.elem, formatted_1 ((i.value or {}))
+    <Form FBR> {'sid' : 0}
+    <Entity FBR-0 'Boat_in_Regatta' 'GTW.OMP.SRM.Boat_in_Regatta'> {'init' : {}, 'sid' : 'BJSDQfe7QboIqhHUSacBF6TkN6kDkJOEx-K9GQ'}
+    <Fieldset FBR-0:0 'primary'> {}
+    <Field_Entity FBR-0:0:0 'left' 'GTW.OMP.SRM.Boat'> {'init' : {}, 'sid' : 'kgmbbNrwNwnZ0I0YoMHdjD93SffA3gBPjErb4A'}
+    <Field_Entity FBR-0:0:0:0 'left' 'GTW.OMP.SRM.Boat_Class'> {'init' : {}, 'sid' : 'bfQU5GmZ6Ml1MOW4y4OYEPp-yWkyGcE5SO3x1Q'}
+    <Field FBR-0:0:0:0:0 'name'> {}
+    <Field FBR-0:0:0:0:1 'max_crew'> {}
+    <Field FBR-0:0:0:1 'nation'> {}
+    <Field FBR-0:0:0:2 'sail_number'> {}
+    <Field FBR-0:0:0:3 'sail_number_x'> {}
+    <Field_Entity FBR-0:0:1 'right' 'GTW.OMP.SRM.Regatta'> {'edit' : {'cid' : 7, 'pid' : 7}, 'prefilled' : True, 'sid' : 'Spqx1iNkGlhnK0-oeBRKG1MnSre6Qwlb8Y2ebQ'}
+    <Fieldset FBR-0:1 'required'> {}
+    <Field_Entity FBR-0:1:0 'skipper' 'GTW.OMP.SRM.Sailor'> {'init' : {}, 'sid' : 'LzXeRZzmCjA83NnVTL3VEnNDcfDyCrc7Gx9YGQ'}
+    <Field_Entity FBR-0:1:0:0 'left' 'GTW.OMP.PAP.Person'> {'init' : {}, 'sid' : 'qYtMo1EwXQYG:ASSo0e-3SP77BzuGLK1L6ZsJA'}
+    <Field FBR-0:1:0:0:0 'last_name'> {}
+    <Field FBR-0:1:0:0:1 'first_name'> {}
+    <Field FBR-0:1:0:0:2 'middle_name'> {}
+    <Field FBR-0:1:0:0:3 'title'> {}
+    <Field FBR-0:1:0:1 'nation'> {}
+    <Field FBR-0:1:0:2 'mna_number'> {}
+    <Field_Entity FBR-0:1:0:3 'club' 'GTW.OMP.SRM.Club'> {'init' : {}, 'sid' : 'N62-rA25FHO3sDQAiDnA8eotUI7mJqP63dxgZg'}
+    <Field FBR-0:1:0:3:0 'name'> {}
+    <Entity_List FBR-0:2 'Crew_Member' <Entity_Link FBR-0:2::p 'Crew_Member' 'GTW.OMP.SRM.Crew_Member'>> {}
 
     >>> print formatted (fob.as_json_cargo, level = 1)
       { '$id' : 'FBR'
@@ -2332,7 +2334,7 @@ from   _GTW._AFS._MOM.Element   import Form
 from   _GTW._AFS.Instance       import Instance
 from   _GTW._AFS.Value          import Value
 
-from   _TFL.Formatter           import Formatter
+from   _TFL.Formatter           import Formatter, formatted_1
 
 formatted = Formatter (width = 240)
 

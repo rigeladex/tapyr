@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
 #    30-Jan-2010 (MG) `get_list`: `combine_default` added
+#    15-Apr-2012 (CT) Fix doctests
 #    ««revision-date»»···
 #--
 
@@ -42,26 +43,36 @@ from    babel.util             import odict
 
 class Config_File (TFL.Meta.Object) :
     """A extractor config file.
-       >>> import cStringIO
-       >>> source = '''[defaults]
-       ... load_translations = _MOM, _GTW
-       ...
-       ... [extractors]
-       ... MOM = _MOM.Babel:Extract
-       ...
-       ... [MOM: **/__babel__.py]
-       ...
-       ... [python: **.py]
-       ... ignore_pattern = **/__*__.py, **/_OMP/**.py
-       ... '''
-       >>> file = cStringIO.StringIO (source)
-       >>> cfg = Config_File (file)
-       >>> cfg.defaults
-       {'loaded_translations': <PO_File MOM/GTW/JNJ>, 'load_translations': '_MOM, _GTW'}
-       >>> sorted (cfg.extractors.iteritems ())# doctest:+ELLIPSIS
-       [('mom', ...), ('python', <function Python at ...>)]
-       >>> cfg.patterns.keys ()
-       ['mom', 'python']
+
+    >>> from   _TFL.Formatter import formatted_1
+    >>> import cStringIO
+
+    >>> source = '''[defaults]
+    ... load_translations = _MOM, _GTW
+    ...
+    ... [extractors]
+    ... MOM = _MOM.Babel:Extract
+    ...
+    ... [MOM: **/__babel__.py]
+    ...
+    ... [python: **.py]
+    ... ignore_pattern = **/__*__.py, **/_OMP/**.py
+    ... '''
+
+    >>> file = cStringIO.StringIO (source)
+    >>> cfg = Config_File (file)
+    Combine translations from /swing/Project/Python/_MOM/-I18N/template.pot /swing/Project/Python/_GTW/-I18N/template.pot
+    <BLANKLINE>
+
+    >>> print formatted_1 (cfg.defaults)
+    {'load_translations' : '_MOM, _GTW', 'loaded_translations' : <PO_File MOM/GTW/JNJ>}
+
+    >>> sorted (cfg.extractors.iteritems ())# doctest:+ELLIPSIS
+    [('mom', ...), ('python', <function Python at ...>)]
+
+    >>> sorted (cfg.patterns)
+    ['mom', 'python']
+
     """
 
     load_translation_key = "load_translations"
