@@ -168,6 +168,7 @@
 #    24-Mar-2012 (CT) Use `acr_map` to get cacher for `Link_Role`
 #    11-Apr-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
 #                     always append to `obj._init_pending`
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -522,8 +523,8 @@ class _EPK_Mixin_ (Kind) :
             etm = scope [value.type_name]
             val = etm.instance (* value.epk_raw, raw = True)
             if val is None :
-                raise MOM.Error.Link_Scope_Mix_Error \
-                    (scope, value.home_scope, scope)
+                raise MOM.Error.Link_Scope_Mix \
+                    (value.type_name, value, value.home_scope, obj, scope)
             else :
                 value = val
         return self._set_cooked_value (obj, value, changed)

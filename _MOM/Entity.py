@@ -179,6 +179,7 @@
 #    11-Apr-2012 (CT) Change `__eq__` (and `__hash__`) to use `pid` (and `guid`)
 #    12-Apr-2012 (CT) Raise `Required_Missing`, not `TypeError`, in `epkified`
 #    12-Apr-2012 (CT) Adapt `_kw_check_required` to change of `Required_Missing`
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -418,7 +419,7 @@ class Entity (TFL.Meta.Object) :
                     try :
                         result [name] = attr.from_string (value)
                     except (TypeError, ValueError) as err :
-                        raise MOM.Error.Invalid_Attribute \
+                        raise MOM.Error.Attribute_Value \
                             (soc, name, value, attr.kind, err)
                 except Exception as exc :
                     on_error (exc)
@@ -479,13 +480,13 @@ class Entity (TFL.Meta.Object) :
             if attr :
                 if not attr.is_settable :
                     on_error \
-                        ( MOM.Error.Invalid_Attribute
+                        ( MOM.Error.Attribute_Set
                             (self, name, val, attr.kind)
                         )
                 else :
                     yield (cnam, val, attr)
             elif name != "raw" :
-                on_error (MOM.Error.Unknown_Attribute (self, name, val))
+                on_error (MOM.Error.Attribute_Unknown (self, name, val))
     # end def set_attr_iter
 
     def set_pickle_cargo (self, cargo) :
@@ -560,7 +561,7 @@ class Entity (TFL.Meta.Object) :
             errors = self._pred_man.errors [kind]
             if on_error is None :
                 on_error = self._raise_attr_error
-            on_error (MOM.Error.Invariant_Errors (errors))
+            on_error (MOM.Error.Invariants (errors))
         return result
     # end def _kw_check_predicates
 
@@ -618,16 +619,16 @@ class Entity (TFL.Meta.Object) :
         tc  = man.total_changes
         if kw :
             ckd_kw = {}
-            to_do     = []
+            to_do  = []
             if on_error is None :
                 on_error = self._raise_attr_error
             for name, val, attr in self.set_attr_iter (kw, on_error) :
                 if val is not None :
                     try :
                         ckd_kw [name] = ckd_val = attr.from_string (val, self)
-                    except ValueError as err:
+                    except (TypeError, ValueError) as err:
                         on_error \
-                            ( MOM.Error.Invalid_Attribute
+                            ( MOM.Error.Attribute_Value
                                 (self, name, val, attr.kind, err)
                             )
                         if __debug__ :
@@ -1255,7 +1256,7 @@ class Id_Entity (Entity) :
         setter    (** kw)
         required_errors = self._pred_man.required_errors
         if required_errors :
-            raise MOM.Error.Invariant_Errors (required_errors)
+            raise MOM.Error.Invariants (required_errors)
     # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :

@@ -91,6 +91,7 @@
 #    19-Jan-2012 (CT) Change `add` to consider `entity._home_scope`
 #    11-Apr-2012 (CT) Change `add` and `add_from_pickle_cargo` to call
 #                     `._finish__init__` after `self.ems.add`
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -316,7 +317,7 @@ class Scope (TFL.Meta.Object) :
         if ucc :
             errs = self.r_incorrect (eiter = ucc.entities (ems))
             if errs :
-                raise MOM.Error.Invariant_Errors (errs)
+                raise MOM.Error.Invariants (errs)
         self.ems.commit ()
     # end def commit
 
@@ -437,7 +438,7 @@ class Scope (TFL.Meta.Object) :
         """
         try :
             self.compute_defaults_internal (gauge)
-        except MOM.Error.Invariant_Error :
+        except MOM.Error.Invariant :
             pass
         with self.as_active () :
             return self._check_inv (gauge, "system")

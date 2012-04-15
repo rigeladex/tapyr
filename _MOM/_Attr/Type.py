@@ -219,6 +219,7 @@
 #    29-Mar-2012 (CT) Change `_A_Unit_._unit_pattern` to not force whitespace
 #                     between a plain number and the unit
 #    11-Apr-2012 (CT) Add `A_Url_X`
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -380,7 +381,7 @@ class A_Attr_Type (TFL.Meta.Object) :
         if len (errors) == 1 :
             raise errors [0]
         elif errors :
-            raise MOM.Error.Invariant_Errors (errors)
+            raise MOM.Error.Invariants (errors)
     # end def check_invariant
 
     @TFL.Meta.Class_and_Instance_Method
@@ -416,7 +417,7 @@ class A_Attr_Type (TFL.Meta.Object) :
                 return self._from_string (s, obj, glob, locl)
         except StandardError as exc :
             if s :
-                raise MOM.Error.Attribute_Syntax_Error (obj, self, s, str (exc))
+                raise MOM.Error.Attribute_Syntax (obj, self, s, str (exc))
     # end def from_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -482,7 +483,7 @@ class Syntax_Re_Mixin (TFL.Meta.Object) :
                 super (obj, value)
             v = value.strip ()
             if not self._syntax_re.match (v) :
-                raise MOM.Error.Attribute_Syntax_Error (obj, self, value)
+                raise MOM.Error.Attribute_Syntax (obj, self, value)
     # end def check_syntax
 
 # end class Syntax_Re_Mixin
@@ -1032,12 +1033,12 @@ class _A_Id_Entity_ (_A_Entity_) :
                 return self.cooked  (result)
             else :
                 raise ValueError \
-                    ( _T (u"object %s %s not eligible, specify one of: %s")
+                    ( _T ("object %s %s not eligible, specify one of: %s")
                     % (tn, epk, self.eligible_raw_values (obj))
                     )
         else :
-            raise MOM.Error.No_Such_Object, \
-                (  _T (u"No object of type %s with epk %s in scope %s")
+            raise MOM.Error.No_Such_Entity \
+                (  _T ("No object of type %s with epk %s in scope %s")
                 % (tn, epk, scope.name)
                 )
     # end def _get_object
@@ -1112,12 +1113,12 @@ class _A_Filename_ (_A_String_Base_) :
 
     def _check_dir (self, d) :
         if not sos.path.isdir (d) :
-            raise MOM.Error.No_Such_Directory, d
+            raise MOM.Error.No_Such_Directory (d)
     # end def _check_dir
 
     def _check_read (self, s) :
         if "r" in self.open_mode and not sos.path.isfile (s):
-            raise MOM.Error.No_Such_File, s
+            raise MOM.Error.No_Such_File (s)
     # end def _check_read
 
     def _check_open (self, s, mode) :
@@ -1770,7 +1771,7 @@ class A_Link_Role (_A_Id_Entity_) :
         soc.__super._check_type (etype, value)
         tn = soc.assoc.type_name
         if tn in value.refuse_links :
-            raise MOM.Error.Link_Type_Error \
+            raise MOM.Error.Link_Type \
                 ( tn
                 , soc.role_type
                 , soc.role_type.type_name

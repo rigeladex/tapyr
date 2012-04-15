@@ -102,6 +102,7 @@
 #    20-Dec-2011 (CT) Remove `ckd_query_attrs`
 #    20-Dec-2011 (CT) Add guard against `None` to `ac_query_attrs`
 #    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -361,7 +362,7 @@ class Object (Id_Entity) :
             if v is not None :
                 try :
                     yield pka.cooked (v)
-                except MOM.Error.No_Such_Object :
+                except MOM.Error.No_Such_Entity :
                     yield None
             else :
                 yield None
@@ -372,7 +373,7 @@ class Object (Id_Entity) :
             if v is not None :
                 try :
                     yield pka.from_string (v, None)
-                except MOM.Error.No_Such_Object :
+                except MOM.Error.No_Such_Entity :
                     yield None
             else :
                 yield None
@@ -428,7 +429,7 @@ class Link (Id_Entity) :
                         if not isinstance (obj, role.P_Type) :
                             return []
                         rkw [role.name] = obj
-                    except MOM.Error.No_Such_Object :
+                    except MOM.Error.No_Such_Entity :
                         return []
         ems = self.ems
         if rkw :
@@ -490,7 +491,7 @@ class Link (Id_Entity) :
                 nol   = links.count ()
                 if nol >= r.max_links :
                     errors.append \
-                        ( MOM.Error.Multiplicity_Error \
+                        ( MOM.Error.Multiplicity
                             (pk, r.max_links, epk, list (links))
                         )
         if errors :
@@ -516,7 +517,7 @@ class Link (Id_Entity) :
                     v = self._cooked_role (pka, v)
                 elif v is not None :
                     v = pka.from_string   (v, None)
-            except MOM.Error.No_Such_Object :
+            except MOM.Error.No_Such_Entity :
                 v = None
             yield v
     # end def _raw_epk_iter
@@ -529,7 +530,7 @@ class Link (Id_Entity) :
                 ### `raw` is not specified
                 try :
                     v = self._cooked_role (r, v)
-                except MOM.Error.No_Such_Object :
+                except MOM.Error.No_Such_Entity :
                     if auto_create :
                         scope = self.home_scope
                         et    = scope [r.role_type.type_name]
@@ -541,7 +542,7 @@ class Link (Id_Entity) :
             elif v is not None :
                 try :
                     v = pka.cooked (v)
-                except MOM.Error.No_Such_Object :
+                except MOM.Error.No_Such_Entity :
                     v = None
             yield v
     # end def _role_to_cooked_iter

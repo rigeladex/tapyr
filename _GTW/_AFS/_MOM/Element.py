@@ -100,6 +100,7 @@
 #    13-Apr-2012 (CT) Redefine `Field_Entity._apply_create` to call newly
 #                     factored `_apply_get` if there wasn't any attribute
 #                     change
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -187,7 +188,7 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
     def _create_instance (self, ETM, akw, on_error) :
         try :
             return ETM.instance_or_new (raw = 1, on_error = on_error, ** akw)
-        except MOM.Error.Invariant_Errors as exc :
+        except MOM.Error.Invariants as exc :
             if not exc.any_required_empty :
                 raise
     # end def _create_instance

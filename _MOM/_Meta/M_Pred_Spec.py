@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Sep-2009 (CT) Creation (factored from TOM.Meta.M_Pred_Spec)
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -45,9 +46,10 @@ class M_Pred_Spec (MOM.Meta.M_Prop_Spec) :
     """
 
     def _m_inconsistent_prop (cls, n, v, _names, dict) :
-        return MOM.Error.Inconsistent_Predicate, \
+        return MOM.Error.Inconsistent_Predicate \
             ( "%s: Predicate `%s = %r` of %s clashes with %s"
-            ) % (dict ["__module__"], n, v, dict ["__name__"], _names [n])
+            % (dict ["__module__"], n, v, dict ["__name__"], _names [n])
+            )
     # end def _m_inconsistent_prop
 
 # end class M_Pred_Spec

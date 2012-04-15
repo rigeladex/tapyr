@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -34,6 +34,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    18-Mar-2011 (CT) `choices` changed to be `property`
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ if 0 :
     MAT.Optional.css_class         = "Optional"
 
 MER                            = MOM.Error
-MER.Invalid_Attribute.widget   = WS ("html/mom_errors.jnj, invalide_attribute")
+MER.Attribute_Value.widget     = WS ("html/mom_errors.jnj, invalide_attribute")
 
 _css_len_classes = TFL.Ival_Map \
     ( (    7, "Short")

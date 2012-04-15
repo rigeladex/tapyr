@@ -48,73 +48,472 @@
 #    30-Jan-2012 (CT) Change `Name_Clash` to show `.type_name`
 #    12-Apr-2012 (CT) Change `Required_Missing` to use `I18N`,
 #                     make it compatible to `Invariant_Error`
+#    15-Apr-2012 (CT) Complete overhaul: cleanup, renamings, reparentings, I18N
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
 
-from   _TFL           import TFL
-from   _MOM           import MOM
+from   _TFL                     import TFL
+from   _MOM                     import MOM
 
-from   _TFL.predicate import *
-from   _TFL.Record    import Record
+from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import *
+from   _TFL.Record              import Record
 
 import _TFL.Caller
+import _TFL.Accessor
 import _TFL.I18N
-
-from   _TFL.I18N      import _, _T, _Tn
 
 import itertools
 
-class Exception_Handled (Exception) :
+class Exception_Handled (BaseException) :
     """Raised after an exception was already handled to bail out from an
        arbitrary position in a call-tree. Should be ignored further up.
     """
 # end class Exception_Handled
 
-class DB_Error (StandardError) :
-    pass
-# end class DB_Error
-
-class Error (StandardError) :
+class Error (Exception) :
     """Root class of MOM exceptions"""
 
-    arg_sep     = u", "
+    arg_sep     = ", "
     is_required = False
+
+    @Once_Property
+    def as_str (self) :
+        return TFL.I18N.encode_o (unicode (self))
+    # end def as_str
+
+    @Once_Property
+    def as_unicode (self) :
+        return self.arg_sep.join (self.str_arg (self.args))
+    # end def as_unicode
 
     def str_arg (self, args) :
         return (unicode (a) for a in args if a)
     # end def str_arg
 
-    def __cmp__ (self, other) :
-        return cmp (str (self), str (other))
-    # end def __cmp__
+    def __eq__ (self, other) :
+        return self.as_str == str (other)
+    # end def __eq__
+
+    def __le__ (self, other) :
+        return self.as_str <= str (other)
+    # end def __le__
+
+    def __lt__ (self, other) :
+        return self.as_str < str (other)
+    # end def __lt__
 
     def __hash__ (self) :
-        return hash (str (self))
+        return hash (self.as_str)
     # end def __hash__
 
     def __str__ (self) :
-        return TFL.I18N.encode_o (unicode (self))
+        return self.as_str
     # end def __str__
 
     def __unicode__ (self) :
-        return self.arg_sep.join (self.str_arg (self.args))
+        return self.as_unicode
     # end def __unicode__
 
 # end class Error
 
-class Invalid_Name (Error) :
-    """Raised when an invalid name is given for an object to be created."""
-# end class Invalid_Name
+class _Invariant_ (Error) :
 
-class Invalid_Primary_Key (Error) :
-    """Raised when an invalid primary key is given for an identified entity to be created."""
-# end class Invalid_Name
+    def __init__ (self, obj) :
+        self.obj            = obj
+        self.violators      = ()
+        self.violators_attr = ()
+        self.attributes     = ()
+        self.extra_links    = ()
+    # end def __init__
 
-class Invalid_Seq_Nr (Error) :
-    """Raised when an invalid sequence number is given for an ordered link to be created."""
-# end class Invalid_Seq_Nr
+    ### redefine in descendents
+    def name            (self)                  : return _T ("Invariant error")
+    def description     (self, indent = "")     : return ""
+    def explanation     (self, indent = "")     : return ""
+    def assertion       (self, indent = "")     : return ""
+
+    ### just for compatibility with Quant
+    def violator_values (self, indent = "    ") : return ()
+
+    def _clean_this (self, s) :
+        s = s.replace ("this.", "")
+        s = s.replace (".name", "")
+        return s
+    # end def _clean_this
+
+# end class _Invariant_
+
+class Attribute (Error) :
+
+    def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
+        msg = \
+            ( _T ("Can't set %s attribute %s.%s to `%r`")
+            % (kind, entity.type_base_name, name, val)
+            )
+        if exc :
+            msg = "%s\n    %s" % (msg, exc)
+        self.args      = (msg, )
+        self.entity    = entity
+        self.kind      = kind
+        self.attribute = name
+        self.value     = val
+    # end def __init__
+
+    def correct (self) :
+        pass
+    # end def correct
+
+# end class Attribute
+
+class Attribute_Set (Attribute, AttributeError) :
+    """Attribute can't be set."""
+
+# end class Attribute_Set
+
+class Attribute_Syntax (_Invariant_, ValueError) :
+    """Raised for syntax errors in attributes of MOM objects/links."""
+
+    def __init__ (self, obj, attr, val, exc_str = "") :
+        _Invariant_.__init__ (self, obj)
+        self.args         = (obj, attr, val, exc_str)
+        self.obj          = obj
+        self.attributes   = (attr, )
+        self.attr         = attr
+        self.is_required  = attr.is_required
+        self.val          = val
+        self.exc_str      = exc_str
+    # end def __init__
+
+    @Once_Property
+    def as_unicode (self) :
+        result = \
+            ( _T ( "`%s` for : `%r`"
+                   "\n     expected type  : `%s`"
+                   "\n     got      value : `%s`"
+                   "\n     of       type  : `%s`"
+                 )
+            % ( self.exc_str or _T ("Syntax error")
+              , self.attr, self.attr.typ, self.val, type (self.val)
+              )
+            )
+        if self.attr.syntax :
+            result = "\n".join ((result, self.attr.syntax))
+        return result
+    # end def as_unicode
+
+    def assertion (self) :
+        result = \
+            ( _T ("Syntax error: \n  expected type `%s`\n  got value `%s`")
+            % (self.attr.typ, self.val)
+            )
+        if self.attr.syntax :
+            result = "%s\n    %s: %s" % \
+                (result, _T ("Syntax"), self.attr.syntax)
+        if self.exc_str :
+            result = "%s\n    %s: %s" % \
+                (result, _T ("Exception"), self.exc_str)
+        return result
+    # end def assertion
+
+    def name (self) :
+        return "Invalid Attribute `%s'" % (self.attr.name, )
+    # end def name
+
+    def description (self, indent = "") :
+        return self.assertion ()
+    # end def description
+
+# end class Attribute_Syntax
+
+class Attribute_Unknown (Attribute, AttributeError) :
+    """An unknown name was used to set an attribute."""
+
+    def correct (self) :
+        """Try to correct this error."""
+        self.entity.correct_unknown_attr (self)
+    # end def correct
+
+# end class Attribute_Unknown
+
+class Attribute_Value (Attribute, ValueError) :
+    """Invalid value for attribute."""
+
+# end class Attribute_Value
+
+class Circular_Link (Error) :
+    """Raised when a link is added to an association which results directly or indirectly in a circular link."""
+# end class Circular_Link
+
+class DB (Error) :
+    pass
+# end class DB
+
+class Commit_Conflict (DB) :
+    """Conflict during commit of database."""
+# end class Commit_Conflict
+
+class Duplicate_Link (Error) :
+    """Raised when a link is added to an association more than once."""
+# end class Duplicate_Link
+
+class Empty_DB (DB) :
+    """Database is empty."""
+# end class Empty_DB
+
+class Incompatible_DB_Version (DB) :
+    """Database version is not compatible to software version."""
+# end class Incompatible_DB_Version
+
+class Inconsistent_Attribute (Error) :
+    pass
+# end class Inconsistent_Attribute
+
+class Inconsistent_Predicate (Error) :
+    pass
+# end class Inconsistent_Predicate
+
+class Invariant (_Invariant_) :
+
+    def __init__ (self, obj, inv, violators = (), violators_attr = ()) :
+        _Invariant_.__init__ (self, obj)
+        self.args           = (obj, inv, violators, violators_attr)
+        self.inv            = inv
+        self.is_required    = inv.is_required
+        self.attributes     = inv.attributes + inv.attr_none
+        self.extra_links    = list (inv.extra_links ())
+        self.val_dict       = dict (inv.val_dict)
+        self.val_desc       = dict (inv.val_desc)
+        self.violators      = violators
+        self.violators_attr = violators_attr
+        description         = inv.description
+        try :
+            self.inv_desc   = description % TFL.Caller.Object_Scope (obj)
+        except TypeError :
+            self.inv_desc   = description
+    # end def __init__
+
+    @Once_Property
+    def as_unicode (self) :
+        return self._as_string \
+            ( "%s `%s` " % (_T ("Condition"), _T (self.inv.name))
+            + ": %s %s%s"
+            , "    "
+            )
+    # end def as_unicode
+
+    def assertion (self, indent = "    ") :
+        return self._as_string ("%s\n" + indent + "%s%s", indent)
+    # end def assertion
+
+    def attribute_values (self, head = None) :
+        return self._attribute_values (self.val_dict, head)
+    # end def attribute_values
+
+    def description (self, indent = "") :
+        result = self._tail (indent)
+        inv    = self.inv
+        if inv.description and inv.assertion :
+            result = ("\n" + indent).join \
+                (["`%s`" % inv.assertion, "", result])
+        return self._clean_this (result)
+    # end def description
+
+    def explanation (self, indent = "") :
+        return self.inv.explanation
+    # end def explanation
+
+    def name (self) :
+        return self.inv_desc or self.inv.assertion
+    # end def name
+
+    def parameter_values (self, head = None) :
+        return self._attribute_values (self.val_desc, head)
+    # end def parameter_values
+
+    def _as_string (self, format, indent = "    ") :
+        inv = self.inv
+        ass = inv.assertion
+        if ass :
+            ass = "(%s)" % (ass, )
+        return self._clean_this \
+            (format % (self.inv_desc, ass, self._tail (indent)))
+    # end def _as_string
+
+    def _attribute_values (self, dict, head = None) :
+        tail = head or []
+        for attr, val in sorted (dict.items ()) :
+            if attr != "this" :
+                tail.append ("%s = %r" % (attr, val))
+        return tail
+    # end def _attribute_values
+
+    def _tail (self, indent = "    ") :
+        result = self.parameter_values (self.attribute_values ())
+        more   = self.inv.error_info   ()
+        if more :
+            if isinstance (more, (str, unicode)) :
+                result.append (more)
+            else :
+                result.extend (more)
+        if result :
+            result.insert (0, "")
+        return ("\n" + indent).join (result)
+    # end def _tail
+
+# end class Invariant
+
+class Invariants (Error) :
+
+    arg_sep = "\n  "
+
+    def __init__ (self, errors) :
+        errors = self.errors = sorted (errors, key = TFL.Getter.inv.name)
+        Error.__init__ (self, errors)
+    # end def __init__
+
+    @property
+    def any_required_empty (self) :
+        return any (isinstance (e, Required_Empty) for e in self.errors)
+    # end def any_required_empty
+
+    def str_arg (self, args) :
+        result = []
+        add    = result.append
+        for a in args [0] :
+            try :
+                add (unicode (a))
+            except StandardError as exc :
+                add ("%s --> %s" % (repr (a), exc))
+        return result
+    # end def str_arg
+
+# end class Invariants
+
+class Link_Scope_Mix (Error) :
+    """Raised when objects with different home scopes are put into a link."""
+# end class Link_Scope_Mix
+
+class Link_Type (Error) :
+    """Raised when a link is created with wrong object types."""
+# end class Link_Type
+
+class Multiplicity (Error) :
+    """Raised when the maximum multiplicity for an association is violated."""
+
+    def __init__ (self, etype, max_links, * args) :
+        self.args = \
+            ( _T ("Maximum number of links for %s is %d %s")
+            % (etype, max_links, args)
+            ,
+            )
+    # end def __init__
+
+# end class Multiplicity
+
+class Multiplicity_Errors (Error) :
+    pass
+# end class Multiplicity_Errors
+
+class Name_Clash (Error) :
+    """Raised when one name is used for more than one object."""
+
+    arg_sep = " "
+
+    def __init__ (self, new, old) :
+        otn = old.type_name if old else ""
+        self.args = \
+            ( _T ("new definition of %s %s clashes with existing %s %s")
+            % (new.type_name, new, otn, old or _T ("object"))
+            ,
+            )
+    # end def __init__
+
+# end class Name_Clash
+
+class No_Such_Directory (Error) :
+    """Raised for a file specification containing a non-existent directory."""
+# end class No_Such_Directory
+
+class No_Such_Entity (Error) :
+    """Raised if an unknown epk is passed for an object or link-role."""
+# end class No_Such_Entity
+
+class No_Such_File (Error) :
+    """Raised for a file specification of a non-existing file."""
+# end class No_Such_File
+
+class Partial_Type (Error) :
+    """Raised when creation of an object of a partial type is tried."""
+# end class Partial_Type
+
+class Quant (Invariant) :
+    """Raised when a quantifier invariant of a MOM object/link is violated."""
+
+    Ancestor = __Ancestor = Invariant
+
+    def violator_values (self, indent = "    ", sep = ", ") :
+        inv  = self.inv
+        result = []
+        bvars  = inv.bvar [1:-1].split (",")
+        for v, d in paired (self.violators, self.violators_attr) :
+            if len (bvars) > 1 and isinstance (v, (list, tuple)) :
+                result.append \
+                    (sep.join (map (self._violator_value, paired (bvars, v))))
+            elif isinstance (v, (list, tuple)) :
+                result.append \
+                    ("%s : [%s]" % (inv.bvar, ", ".join (map (unicode, v))))
+            elif type (v) != type (self) : ### v is not a class instance
+                result.append ("%s : %s" % (inv.bvar, v))
+            else :
+                result.append \
+                    ("%s = `%s'" % (inv.bvar, getattr (v, "name", v)))
+            if d :
+                try :
+                    items = d.items ()
+                except AttributeError :
+                    result.append (d)
+                else :
+                    result.append \
+                        ( indent
+                        + sep.join
+                              (   "%s = %s" % (a, val)
+                              for (a, val) in sorted (d.iteritems ())
+                              )
+                        )
+        return result
+    # end def violator_values
+
+    def _tail (self, indent = "    ") :
+        result = self.__Ancestor._tail (self, indent)
+        tail   = self.violator_values  ()
+        if tail :
+            tail.insert (0, "")
+        return "%s%s" % (result, ("\n" + indent).join (tail))
+    # end def _tail
+
+    def _violator_value (self, x) :
+        n, o = x
+        if isinstance (o, Record) :
+            v = o
+        else :
+            v = getattr (o, "name", o)
+        return "%s : `%s'" % (n, v)
+    # end def _violator_value
+
+# end class Quant
+
+class Readonly_DB (DB) :
+    """Database is set to readonly."""
+# end class Readonly_DB
+
+class Required_Empty (Invariant) :
+    """Primary attribute must not be empty."""
+
+# end class Required_Empty
 
 class Required_Missing (Error) :
     """Raised when required attributes are missing."""
@@ -153,443 +552,18 @@ class Required_Missing (Error) :
 
 # end class Required_Missing
 
-class Name_Clash (Error) :
-    """Raised when one name is used for more than one object."""
-
-    arg_sep = " "
-
-    def __init__ (self, new, old) :
-        self.args = \
-            ( "new definition of"
-            , new.type_name, new
-            , "clashes with existing"
-            , old.type_name if old else "", old or "object"
-            )
-    # end def __init__
-
-# end class Name_Clash
-
-class No_Such_Directory (Error) :
-    """Raised for a file specification containing a non-existent directory."""
-# end class No_Such_Directory
-
-class No_Such_File (Error) :
-    """Raised for a file specification of a non-existing file."""
-# end class No_Such_File
-
-class No_Such_Link (Error) :
-    """Raised if names/objects are passed to association which aren't linked."""
-# end class No_Such_Link
-
-class No_Such_Object (Error) :
-    """Raised if an unknown epk is passed for an object or link-role."""
-# end class No_Such_Link
-
-class Partial_Type (Error) :
-    """Raised when creation of an object of a partial type is tried."""
-# end class Partial_Type
-
 class Too_Many_Objects (Error) :
     """Raised when too many objects are created."""
 
-    arg_sep = " "
-
     def __init__ (self, obj, max_count) :
         self.args = \
-            "cannot create more than", max_count, "objects of", obj.type_name
+            ( _T ("Cannot create more than %d objects of %s")
+            % (max_count, obj.type_name)
+            ,
+            )
     # end def __init__
 
 # end class Too_Many_Objects
-
-class Undefined_Cross_Ref (Error) :
-    """Raised when a cross-referenced object/link is undefined or the
-       cross-referenced attribute of that entity is undefined.
-    """
-# end class Undefined_Cross_Ref
-
-class Unknown_Assoc (Error) :
-    """Raised when a cross-referenced link refers to an unknown association."""
-# end class Unknown_Assoc
-
-class Duplicate_Link (Error) :
-    """Raised when a link is added to an association more than once."""
-# end class Duplicate_Link
-
-class Duplicate_Seq_Nr (Error) :
-    """Raised when a sequence number is added to an ordered association more than once."""
-# end class Duplicate_Seq_Nr
-
-class Assoc_Link_Error (Error) :
-    """Raised when a link of wrong type is added to an association."""
-# end class Assoc_Link_Error
-
-class Empty_Link_Error (Error) :
-    """Raised when an empty link is added to an association."""
-# end class Empty_Link_Error
-
-class Link_Type_Error (Error) :
-    """Raised when a link is created with wrong object types."""
-# end class Link_Type_Error
-
-class Link_Scope_Mix_Error (Error) :
-    """Raised when objects with different home scopes are put into a link."""
-# end class Link_Scope_Mix_Error
-
-class Circular_Link (Error) :
-    """Raised when a link is added to an association which results directly or indirectly in a circular link."""
-# end class Circular_Link
-
-class Incomplete_Assoc_Error (Error) :
-    """Raised when an association without link type is defined."""
-# end class Incomplete_Assoc_Error
-
-class Multiplicity_Error (Error) :
-    """Raised when the maximum multiplicity for an association is violated."""
-
-    def __repr__ (self) :
-        args = self.args
-        return "Maximum number of links for %s is %d %s" % \
-            (args [0], args [1], args [2:])
-    # end def __repr__
-
-# end class Multiplicity_Error
-
-class Multiplicity_Errors (Error) :
-    pass
-# end class Multiplicity_Errors
-
-class Inconsistent_Attribute (Error) :
-    pass
-# end class Inconsistent_Attribute
-
-class Locked_Attribute (Error) :
-    pass
-# end class Locked_Attribute
-
-class _Invariant_Error_ (Error) :
-
-    def __init__ (self, obj) :
-        self.obj            = obj
-        self.violators      = ()
-        self.violators_attr = ()
-        self.attributes     = ()
-        self.extra_links    = ()
-    # end def __init__
-
-    ### redefine in descendents
-    def name            (self)                  : return "Invariant error"
-    def description     (self, indent = "")     : return ""
-    def explanation     (self, indent = "")     : return ""
-    def assertion       (self, indent = "")     : return ""
-
-    ### just for compatibility with Quant_Error
-    def violator_values (self, indent = "    ") : return ()
-
-    def _clean_this (self, s) :
-        s = s.replace ("this.", "")
-        s = s.replace (".name", "")
-        return s
-    # end def _clean_this
-
-# end class _Invariant_Error_
-
-class Invariant_Error (_Invariant_Error_) :
-
-    def __init__ (self, obj, inv, violators = (), violators_attr = ()) :
-        _Invariant_Error_.__init__ (self, obj)
-        self.args           = (obj, inv, violators, violators_attr)
-        self.inv            = inv
-        self.is_required    = inv.is_required
-        self.attributes     = inv.attributes + inv.attr_none
-        self.extra_links    = list (inv.extra_links ())
-        self.val_dict       = dict (inv.val_dict)
-        self.val_desc       = dict (inv.val_desc)
-        self.violators      = violators
-        self.violators_attr = violators_attr
-        description         = inv.description
-        try :
-            self.inv_desc   = description % TFL.Caller.Object_Scope (obj)
-        except TypeError :
-            self.inv_desc   = description
-    # end def __init__
-
-    def _as_string (self, format, indent = "    ") :
-        inv = self.inv
-        ass = inv.assertion
-        if ass :
-            ass = "(%s)" % (ass, )
-        return self._clean_this \
-            (format % (self.inv_desc, ass, self._tail (indent)))
-    # end def _as_string
-
-    def assertion (self, indent = "    ") :
-        return self._as_string ("%s\n" + indent + "%s%s", indent)
-    # end def assertion
-
-    def _attribute_values (self, dict, head = None) :
-        tail = head or []
-        for attr, val in dict.items () :
-            if attr != "this" :
-                tail.append ("%s = %r" % (attr, val))
-        return tail
-    # end def _attribute_values
-
-    def attribute_values (self, head = None) :
-        return self._attribute_values (self.val_dict, head)
-    # end def attribute_values
-
-    def description (self, indent = "") :
-        result = self._tail (indent)
-        inv    = self.inv
-        if inv.description and inv.assertion :
-            result = ("\n" + indent).join \
-                (["`%s`" % inv.assertion, "", result])
-        return self._clean_this (result)
-    # end def description
-
-    def explanation (self, indent = "") :
-        return self.inv.explanation
-    # end def explanation
-
-    def name (self) :
-        return self.inv_desc or self.inv.assertion
-    # end def name
-
-    def parameter_values (self, head = None) :
-        return self._attribute_values (self.val_desc, head)
-    # end def parameter_values
-
-    def __unicode__ (self) :
-        return self._as_string \
-            ( u"Condition `%s` " % (self.inv.name, )
-            + u": %s %s%s"
-            , u"    "
-            )
-    # end def __unicode__
-
-    def _tail (self, indent = "    ") :
-        result = self.parameter_values (self.attribute_values ())
-        more   = self.inv.error_info   ()
-        if more :
-            if isinstance (more, (str, unicode)) :
-                result.append (more)
-            else :
-                result.extend (more)
-        if result :
-            result.insert (0, "")
-        return ("\n" + indent).join (result)
-    # end def _tail
-
-# end class Invariant_Error
-
-class Required_Empty (Invariant_Error) :
-    """Primary attribute must not be empty."""
-
-# end class Required_Empty
-
-class Quant_Error (Invariant_Error) :
-    """Raised when a quantifier invariant of a MOM object/link is violated."""
-
-    Ancestor = __Ancestor = Invariant_Error
-
-    def _tail (self, indent = "    ") :
-        result = self.__Ancestor._tail (self, indent)
-        tail   = self.violator_values  ()
-        if tail :
-            tail.insert (0, "")
-        return "%s%s" % (result, ("\n" + indent).join (tail))
-    # end def _tail
-
-    def _violator_value (self, x) :
-        n, o = x
-        if isinstance (o, Record) :
-            v = o
-        else :
-            v = getattr (o, "name", o)
-        return "%s : `%s'" % (n, v)
-    # end def _violator_value
-
-    def violator_values (self, indent = "    ", sep = ", ") :
-        inv  = self.inv
-        result = []
-        bvars  = inv.bvar [1:-1].split (",")
-        for v, d in paired (self.violators, self.violators_attr) :
-            if len (bvars) > 1 and isinstance (v, (list, tuple)) :
-                result.append \
-                    (sep.join (map (self._violator_value, paired (bvars, v))))
-            elif isinstance (v, (list, tuple)) :
-                result.append \
-                    ("%s : [%s]" % (inv.bvar, ", ".join (map (unicode, v))))
-            elif type (v) != type (self) : ### v is not a class instance
-                result.append ("%s : %s" % (inv.bvar, v))
-            else :
-                result.append \
-                    ("%s = `%s'" % (inv.bvar, getattr (v, "name", v)))
-            if d :
-                try :
-                    items = d.items ()
-                except AttributeError :
-                    result.append (d)
-                else :
-                    result.append \
-                        ( indent
-                        + sep.join
-                              (   "%s = %s" % (a, val)
-                              for (a, val) in sorted (d.iteritems ())
-                              )
-                        )
-        return result
-    # end def violator_values
-
-# end class Quant_Error
-
-class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
-    """Raised for syntax errors in attributes of MOM objects/links."""
-
-    def __init__ (self, obj, attr, val, exc_str = "") :
-        _Invariant_Error_.__init__ (self, obj)
-        self.args         = (obj, attr, val, exc_str)
-        self.obj          = obj
-        self.attributes   = (attr, )
-        self.attr         = attr
-        self.is_required  = attr.is_required
-        self.val          = val
-        self.exc_str      = exc_str
-    # end def __init__
-
-    def name (self) :
-        return "Invalid Attribute `%s'" % (self.attr.name, )
-    # end def name
-
-    def description (self, indent = "") :
-        return self.assertion ()
-    # end def description
-
-    def __unicode__ (self) :
-        result = \
-            ( (u"`%s` for : `%r`"
-               u"\n     expected type  : `%s`"
-               u"\n     got      value : `%s`"
-               u"\n     of       type  : `%s`"
-              )
-            % ( self.exc_str or u"Syntax error"
-              , self.attr, self.attr.typ, self.val, type (self.val)
-              )
-            )
-        if self.attr.syntax :
-            result = u"\n".join ((result, self.attr.syntax))
-        return result
-    # end def __unicode__
-
-    def assertion (self) :
-        result = ( "Syntax error: \n  expected type `%s`\n  got value `%s`"
-                 % (self.attr.typ, self.val)
-                 )
-        if self.attr.syntax :
-            result = "%s\n    Syntax: %s" % (result, self.attr.syntax)
-        if self.exc_str :
-            result = "%s\n    Exception: %s" % (result, self.exc_str)
-        return result
-    # end def assertion
-
-# end class Attribute_Syntax_Error
-
-class Invariant_Errors (Error) :
-
-    arg_sep = u"\n  "
-
-    def __init__ (self, errors) :
-        sort_key = lambda e : e.inv.name
-        errors   = self.errors = sorted (errors, key = sort_key)
-        Error.__init__ (self, errors)
-    # end def __init__
-
-    @property
-    def any_required_empty (self) :
-        return any (isinstance (e, Required_Empty) for e in self.errors)
-    # end def any_required_empty
-
-    def str_arg (self, args) :
-        result = []
-        add    = result.append
-        for a in args [0] :
-            try :
-                add (unicode (a))
-            except StandardError as exc :
-                add ("%s --> %s" % (repr (a), exc))
-        return result
-    # end def str_arg
-
-# end class Invariant_Errors
-
-class Invalid_Attribute (Error, AttributeError) :
-
-    def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
-        msg = \
-            ( "Can't set %s attribute %s.%s to `%r`"
-            % (kind, entity.type_base_name, name, val)
-            )
-        if exc :
-            msg = "%s\n    %s" % (msg, exc)
-        self.args      = (msg, )
-        self.entity    = entity
-        self.kind      = kind
-        self.attribute = name
-        self.value     = val
-    # end def __init__
-
-    def correct (self) :
-        pass
-    # end def correct
-
-# end class Invalid_Attribute
-
-class Unknown_Attribute (Invalid_Attribute) :
-
-    def correct (self) :
-        """Try to correct this error."""
-        self.entity.correct_unknown_attr (self)
-    # end def correct
-
-# end class Unknown_Attribute
-
-class Invalid_Attribute_Type (Error) :
-    pass
-# end class Invalid_Attribute_Type
-
-class Already_Editing (Error) :
-    pass
-# end class Already_Editing
-
-class Type_Not_In_Scope (Error) :
-    pass
-# end class Type_Not_In_Scope
-
-class Cannot_Rename_Root_Object (Error) :
-    pass
-# end class Cannot_Rename_Root_Object
-
-class Commit_Conflict (DB_Error) :
-    pass
-# end class Commit_Conflict
-
-class Incompatible_DB_Version (DB_Error) :
-    pass
-# end class Incompatible_DB_Version
-
-class Empty_DB (DB_Error) :
-    pass
-# end class Empty_DB
-
-class Readonly_DB (DB_Error) :
-    """Database is set to readonly."""
-# end class Readonly_DB
-
-class No_Scope (Error) :
-    """Try to create an instance without specifing the owning scope."""
-    pass
-# end class No_Scope
-
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

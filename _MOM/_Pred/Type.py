@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -39,6 +39,7 @@
 #    22-Jun-2010 (CT) `is_mandatory` added
 #     8-Feb-2011 (CT) s/Mandatory/Required/
 #     8-Nov-2011 (CT) Factor `Error_Type` and allow `** kw` in `Attribute_Check`
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -243,7 +244,7 @@ class Condition (_Condition_) :
 
     __metaclass__ = MOM.Meta.M_Pred_Type_Condition
 
-    Error_Type    = MOM.Error.Invariant_Error
+    Error_Type    = MOM.Error.Invariant
 
     def _satisfied (self, obj, glob_dict, val_dict) :
         """Checks if `obj' satisfies the invariant.
@@ -304,7 +305,7 @@ class _Quantifier_ (_Condition_) :
 
     __metaclass__   = MOM.Meta.M_Pred_Type_Quantifier
 
-    Error_Type      = MOM.Error.Quant_Error
+    Error_Type      = MOM.Error.Quant
 
     attr_code       = None
     """code object for displaying attribute values of violating sequence

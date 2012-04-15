@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
@@ -90,6 +90,7 @@
 #     4-Aug-2010 (MG) Render mode `table` added to `_Instance_`
 #     6-Aug-2010 (MG) `M_Instance.scope` added
 #     8-Aug-2010 (MG) State handling changed, inline `testing` changed
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -370,8 +371,8 @@ class _Instance_ (GTW.Form._Form_) :
                 else :
                     self.instance = self._create_instance \
                         (on_error = errors.append)
-            except MOM.Error.Invariant_Errors :
-                ### since we pass an on_error hanlder an ` Invariant_Errors`
+            except MOM.Error.Invariants :
+                ### since we pass an on_error hanlder an ` Invariants`
                 ### exception can only be raise in case of propblems with
                 ### mandatory attributes in which case the errors are already
                 ### stored in the `errors` list and therefore don't need to
@@ -415,7 +416,7 @@ class _Instance_ (GTW.Form._Form_) :
     def _handle_errors (self, error_list, field = None) :
         for error_or_list in error_list :
             error_list = (error_or_list, )
-            if isinstance (error_or_list, MOM.Error.Invariant_Errors) :
+            if isinstance (error_or_list, MOM.Error.Invariants) :
                 error_list = error_or_list.args [0]
             for error in error_list :
                 field      = None

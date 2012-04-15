@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -34,6 +34,7 @@
 #    11-Mar-2010 (CT) `check_kind` change of `25-Feb` revoked
 #    22-Jun-2010 (CT) `mandatory_errors` and `missing_mandatory` added
 #     8-Feb-2011 (CT) s/Mandatory/Required/
+#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class Manager (TFL.Meta.Object) :
         if callable (attr.check_syntax) :
             try :
                 attr.check_syntax (obj, value)
-            except MOM.Error.Attribute_Syntax_Error as exc :
+            except MOM.Error.Attribute_Syntax as exc :
                 result.append (exc)
         return result
     # end def check_attribute
@@ -122,7 +123,7 @@ class Manager (TFL.Meta.Object) :
                     value = get_attr_val (attr)
                     if value :
                         attr.check_syntax (obj, value)
-                except MOM.Error.Attribute_Syntax_Error as exc :
+                except MOM.Error.Attribute_Syntax as exc :
                     errors.append (exc)
         return MOM.Pred.Err_and_Warn_List (errors, warnings)
     # end def check_kind
