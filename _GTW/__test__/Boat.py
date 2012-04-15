@@ -120,6 +120,9 @@ _test_code = """
     >>> print scope.SRM.Boat.count ### 7
     2
 
+    >>> SRM.Boat.query_s ().all () ### before Name_Clash
+    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+
     >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Traceback (most recent call last):
       ...
@@ -127,6 +130,9 @@ _test_code = """
 
     >>> print scope.SRM.Boat.count ### 8
     2
+
+    >>> SRM.Boat.query_s ().all () ### after Name_Clash
+    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### before invariant errors
     [('object', []), ('region', []), ('system', [])]
