@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,12 +39,9 @@
 #     3-Feb-2005 (CT) `max_cmds_per_group` added
 #    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
 #     6-Apr-2005 (CT) `clear` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    15-Apr-2012 (CT) Fix imports that didn't use `_TFL.`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL           import TFL
 import _TFL._TKT.Mixin
@@ -170,7 +167,7 @@ class Command_Interfacer (TFL.TKT.Mixin) :
 class _Test_CI_ (Command_Interfacer) :
 
     def __init__ (self, AC) :
-        from NO_List import NO_List
+        from _TFL.NO_List import NO_List
         self.__super.__init__ (AC = AC)
         self.elements   = NO_List ()
         self.activation = []
@@ -194,7 +191,7 @@ class _Test_CI_ (Command_Interfacer) :
             , cmd_name        = None
             , ** kw
             ) :
-        from Record import Record
+        from _TFL.Record import Record
         self.elements.insert \
             (index, Record (name = name, callback = callback))
     # end def add_command
@@ -217,7 +214,7 @@ class _Test_CI_ (Command_Interfacer) :
 
     ### separator specific methods
     def add_separator (self, name = None, index = None, delta = 0) :
-        from Record import Record
+        from _TFL.Record import Record
         if name is None :
             name = "sep_%d" % (len (self.elements), )
         self.elements.insert (index, Record (name = name, is_sep = "-" * 20))

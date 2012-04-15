@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #    29-Nov-2007 (CT) Doctest of `R_Point_R` corrected
 #    29-Nov-2007 (CT) Use `sum` instead of `reduce/operator.add`
 #    29-Nov-2007 (CT) Use `@property` instead of `__getattr__`
+#    15-Apr-2012 (CT) Add `import _TFL._D2.Line` to doctest of `R_Point_L`
 #    ««revision-date»»···
 #--
 
@@ -247,6 +248,7 @@ class R_Point_P (_R_Point_) :
 class R_Point_L (_R_Point_) :
     """Point positioned relative to a line.
 
+       >>> import _TFL._D2.Line
        >>> l = D2.Line   (Point (0, 0), Point (20, 10))
        >>> q = R_Point_L (l, 0.5, Point (2, 2))
        >>> r = -q

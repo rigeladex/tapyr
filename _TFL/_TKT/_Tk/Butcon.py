@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,9 @@
 #    20-Feb-2005 (CT)  s/widget/wtk_widget/
 #    23-Feb-2005 (CT)  `exposed_widget` added
 #    25-Feb-2005 (RSC) Added _interface_test
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    15-Apr-2012 (CT)  Import `predicate` from `_TFL`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk
@@ -46,7 +43,7 @@ import _TFL._TKT._Tk.Widget
 import _TFL._TKT.Butcon
 
 from   CTK                  import *
-from   predicate            import dict_from_list
+from   _TFL.predicate       import dict_from_list
 
 import weakref
 

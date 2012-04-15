@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,7 +47,7 @@ class _TKT_Styler_ (TFL.Meta.Object) :
 
 
        >>> from _TFL._UI.Style import *
-       >>> from predicate import *
+       >>> from _TFL.predicate import *
        >>> class Test_Styler (Styler) :
        ...     Opts = dict_from_list (
        ...         ("background", "foreground", "underline"))

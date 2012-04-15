@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -95,7 +95,7 @@ import _TFL._TKT._Tk.Widget
 import _TFL._TKT.Text
 
 from   CTK                  import *
-from   predicate            import *
+from   _TFL.predicate       import *
 
 import weakref
 
