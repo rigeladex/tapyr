@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,7 +57,7 @@
 ...   points="350,75  379,161 469,161 397,215 423,301 350,250 277,301 "
 ...   "303,215 231,161 321,161"))
 >>> svg.write_to_xml_stream ()
-<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
 <!DOCTYPE svg PUBLIC
     "-//W3C//DTD SVG 1.1//EN"
     "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -98,7 +98,7 @@ class _SVG_Document_ (TFL.SDG.XML.Document) :
 
        >>> svg = Document (Root ())
        >>> svg.write_to_xml_stream ()
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <!DOCTYPE svg PUBLIC
            "-//W3C//DTD SVG 1.1//EN"
            "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -107,7 +107,7 @@ class _SVG_Document_ (TFL.SDG.XML.Document) :
        >>> svg = Document (
        ...     Root (viewBox="10 60 450 260", width="100%", height="100%"))
        >>> svg.write_to_xml_stream (output_width = 65)
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <!DOCTYPE svg PUBLIC
            "-//W3C//DTD SVG 1.1//EN"
            "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">

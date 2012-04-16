@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2004-2012 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -43,29 +43,27 @@
 #    ««revision-date»»···
 #--
 
-
-
 """
 >>> NL = chr (10)
 >>> C.Comment.out_level = 5
 >>> v = C.Var ("int", "test", 2)
->>> print NL.join (v.as_c_code ())
+>>> print (NL.join (v.as_c_code ()))
 int test = 2;
 >>> v = C.Var (name = "test", type = "short", description = "desc")
->>> print NL.join (v.as_c_code ())
+>>> print (NL.join (v.as_c_code ()))
 short test;
     /* desc                                                                  */
 
 >>> c = C.Comment ("This is a comment", stars = 2)
->>> print NL.join (c.as_c_code ())
+>>> print (NL.join (c.as_c_code ()))
 /** This is a comment                                                       **/
 >>> c = C.Comment ("And now a multi line", "comment with 3 stars", stars = 3)
->>> print NL.join (c.as_c_code ())
+>>> print (NL.join (c.as_c_code ()))
 /*** And now a multi line                                                  ***/
 /*** comment with 3 stars                                                  ***/
 
 >>> f = C.Function ("int", "func", "int foo, short bar")
->>> print NL.join (f.as_c_code ()).strip ()
+>>> print (NL.join (f.as_c_code ()).strip ())
 int func
     ( int foo
     , short bar
@@ -77,7 +75,7 @@ int func
 ...                , description = "A function description"
 ...                , explanation = "A function explanation"
 ...                )
->>> print NL.join (f.as_c_code ()).strip ()
+>>> print (NL.join (f.as_c_code ()).strip ())
 int func
     ( int foo
     , short bar
@@ -89,7 +87,7 @@ int func
 
 >>> f = C.Function ( "int", "func", "void")
 >>> f.add (C.For ("i = 0", "i++", "i < 10"))
->>> print NL.join (f.as_c_code ()).strip ()
+>>> print (NL.join (f.as_c_code ()).strip ())
 int func (void)
 {
     for (i = 0; i++; i < 10)
@@ -97,14 +95,14 @@ int func (void)
       };
 };
 
->>> print NL.join (f.as_h_code ()).strip ()
+>>> print (NL.join (f.as_h_code ()).strip ())
 int func (void);
 
 >>> f = C.Function ( "int", "func", "void")
 >>> f.add ("i = 0")
 >>> f.add (C.While ("i < 10", "i++"))
 >>> f.add (C.Do_While ("i > 0", "i--"))
->>> print NL.join (f.as_c_code ()).strip ()
+>>> print (NL.join (f.as_c_code ()).strip ())
 int func (void)
 {
     i = 0;
@@ -129,7 +127,7 @@ int func (void)
 >>> f.add (if_e)
 >>> if_e.add (C.Elseif ("y > 0", '''error ("in elseif path")'''))
 >>> if_e.add (C.Else ('''error ("in else path")'''))
->>> print NL.join (f.as_c_code ()).strip ()
+>>> print (NL.join (f.as_c_code ()).strip ())
 int if_tests (void)
 {
     if (i > 0)
@@ -166,7 +164,7 @@ int if_tests (void)
 ...                  , C.Default_Case ("hugo ()")
 ...                  )
 ...       )
->>> print NL.join (f.as_c_code ()).strip ()
+>>> print (NL.join (f.as_c_code ()).strip ())
 void switch_test (void)
 {
     switch (quuux)
@@ -185,13 +183,13 @@ void switch_test (void)
 };
 
 >>> t = C.Typedef ("unsigend long", "ubyte4")
->>> print NL.join (t.as_c_code ()).strip ()
+>>> print (NL.join (t.as_c_code ()).strip ())
 typedef unsigend long ubyte4;
 >>> s = C.Struct ("my_struct")
 >>> s.add ("ubyte4 field_1")
 >>> s.add ("sbyte2 field_2_s")
 >>> t = C.Typedef (s, "my_struct")
->>> print NL.join (t.as_c_code ()).strip ()
+>>> print (NL.join (t.as_c_code ()).strip ())
 typedef struct _my_struct
   {
     ubyte4 field_1;
@@ -201,7 +199,7 @@ typedef struct _my_struct
 >>> s = C.Struct ("my_struct_stand", standalone = True)
 >>> s.add ("ubyte4 field_1")
 >>> s.add ("sbyte2 field_2_s")
->>> print NL.join (s.as_c_code ()).strip ()
+>>> print (NL.join (s.as_c_code ()).strip ())
 struct _my_struct_stand
   {
     ubyte4 field_1;
@@ -210,13 +208,13 @@ struct _my_struct_stand
 
 >>> d = dict (field_1 = 10, field_2_s = 1)
 >>> v = C.Var ("my_struct", "test", init_dict = d)
->>> print NL.join (v.as_c_code ()).strip ()
+>>> print (NL.join (v.as_c_code ()).strip ())
 my_struct test =
   { 10 /* field_1                                                            */
   , 1 /* field_2_s                                                           */
   };
 
->>> print NL.join (v.as_h_code ()).strip ()
+>>> print (NL.join (v.as_h_code ()).strip ())
 my_struct test;
 
 >>> s = C.Struct ( "TDFT_Sign_Mask"
@@ -224,12 +222,12 @@ my_struct test;
 ...              , "unsigned long extend_mask // mask for sign extension"
 ...              )
 >>> a0 = C.Array ("int", "test", 1, init = (0, ))
->>> print NL.join ([l.rstrip () for l in a0.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in a0.as_c_code ()]))
 int test [1] =
   { 0 /* [0]                                                                 */
   };
 >>> a1 = C.Array ("int", "ar", 2, init = (0, 1), static = True)
->>> print NL.join ([l.rstrip () for l in a1.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in a1.as_c_code ()]))
 static int ar [2] =
   { 0 /* [0]                                                                 */
   , 1 /* [1]                                                                 */
@@ -239,7 +237,7 @@ static int ar [2] =
 ...                       , dict (bit_mask = 142, extend_mask = -1)
 ...                       ]
 ...              )
->>> print NL.join ([l.rstrip () for l in a2.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in a2.as_c_code ()]))
 TDFT_Sign_Mask fubars [2] =
   { { 57 /* bit_mask                                                         */
     , 137 /* extend_mask                                                     */
@@ -250,7 +248,7 @@ TDFT_Sign_Mask fubars [2] =
   };
 
 >>> a = C.Array ("ubyte2", "aa", (2,2), ((0,1),(2,3)))
->>> print NL.join (a.as_c_code ())
+>>> print (NL.join (a.as_c_code ()))
 ubyte2 aa [2][2] =
   { { 0 /* [0][0]                                                            */
     , 1 /* [0][1]                                                            */
@@ -261,7 +259,7 @@ ubyte2 aa [2][2] =
   };
 >>> d = dict (bit_mask = 42, extend_mask = 24)
 >>> v = C.Var (name = "stuct_var", type = "TDFT_Sign_Mask", init_dict = d)
->>> print NL.join ([l.rstrip () for l in v.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in v.as_c_code ()]))
 TDFT_Sign_Mask stuct_var =
   { 42 /* bit_mask                                                           */
   , 24 /* extend_mask                                                        */
@@ -270,7 +268,7 @@ TDFT_Sign_Mask stuct_var =
 >>> a = C.Array ("int", "int_array", bounds = 2)
 >>> s = C.Struct ("test_struct", "ubyte1 field_1", "int field_2 [2]")
 >>> t = C.Typedef (s, "my_type")
->>> print NL.join ([l.rstrip () for l in t.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in t.as_c_code ()]))
 typedef struct _test_struct
   {
     ubyte1 field_1;
@@ -281,51 +279,51 @@ typedef struct _test_struct
 >>> e2 = C.Enum ("foobaz", ["VALUE_D"])
 >>> t1 = C.Typedef (e1, "foobar")
 >>> t2 = C.Typedef (e2, "foobaz")
->>> print NL.join ([l.rstrip () for l in t1.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in t1.as_c_code ()]))
 typedef enum _foobar
   { VALUE_A
   , VALUE_B = 2
   , VALUE_C
   } foobar;
 
->>> print NL.join ([l.rstrip () for l in t2.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in t2.as_c_code ()]))
 typedef enum _foobaz {VALUE_D} foobaz;
 
 >>> d = C.Macro ("define foo", "", "line1", "line2")
->>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in d.as_c_code ()]))
 #define foo line1 \\
 line2
 
 >>> d = C.Define ("foo", None, "line1")
->>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in d.as_c_code ()]))
 #define foo() line1
 
 >>> d = C.Define ("foo", "arg1", "line1")
->>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in d.as_c_code ()]))
 #define foo(arg1) line1
 
 >>> d = C.Define ("foo", "arg1,arg2", "line1", "line2", "line3 long")
->>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in d.as_c_code ()]))
 #define foo(arg1,arg2) line1 \\
 line2 \\
 line3 long
 
 >>> dc = C.Define_Constant ("foo", "42")
->>> print NL.join ([l.rstrip () for l in dc.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in dc.as_c_code ()]))
 #define foo (42)
 
 >>> e = C.Preprocessor_Error ("this is fishy")
->>> print NL.join ([l.rstrip () for l in e.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in e.as_c_code ()]))
 #error this is fishy
 
 >>> i = C.Include ("define.h")
->>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_c_code ()]))
 #include <define.h>
 >>> i = C.Sys_Include ("define.h")
->>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_c_code ()]))
 #include <define.h>
 >>> i = C.App_Include ("define.h")
->>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_c_code ()]))
 #include "define.h"
 
 >>> i = C.Macro_If ( "cond1"
@@ -336,7 +334,7 @@ line3 long
 ...                    )
 ...                , C.Macro_Else (C.Define ("path", "", "else"))
 ...                )
->>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_c_code ()]))
 #if cond1
   #define path then
 #elif cond2
@@ -345,7 +343,7 @@ line3 long
   #define path else
 #endif /* if cond1 */
 
->>> print NL.join ([l.rstrip () for l in i.as_h_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_h_code ()]))
 #if cond1
   #define path then
 #elif cond2
@@ -355,19 +353,19 @@ line3 long
 #endif /* if cond1 */
 
 >>> i = C.Macro_Ifdef ("cond1", C.Define ("path", "", "then"))
->>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_c_code ()]))
 #ifdef cond1
   #define path then
 #endif /* ifdef cond1 */
 
 >>> i = C.Macro_Ifndef ("cond1", C.Define ("path", "", "then"))
->>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in i.as_c_code ()]))
 #ifndef cond1
   #define path then
 #endif /* ifndef cond1 */
 
 >>> b=C.Documentation_Block ("line1", "line2", block_name = "aaa")
->>> print NL.join ([l.rstrip () for l in b.as_c_code ()])
+>>> print (NL.join ([l.rstrip () for l in b.as_c_code ()]))
 /* aaa: */
 /*      line1 */
 /*      line2 */

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,11 +41,11 @@ class Comment (TFL.SDG.XML.Leaf) :
     """Model a comment of a XML document
 
        >>> c = Comment ("Just a test of a XML comment -- with illicit token")
-       >>> print chr (10).join (c.formatted ("xml_format"))
+       >>> print (chr (10).join (c.formatted ("xml_format")))
        <!-- Just a test of a XML comment ··· with illicit token -->
        >>> c = Comment ('''A two line
        ... comment for a change''')
-       >>> print chr (10).join (c.formatted ("xml_format"))
+       >>> print (chr (10).join (c.formatted ("xml_format")))
        <!-- A two line
             comment for a change
        -->

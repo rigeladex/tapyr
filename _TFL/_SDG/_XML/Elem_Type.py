@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,7 +53,7 @@
    >>> d.add (X ("A bar-less X", bar = None))
    >>> d.add (Y (baz = None, x_attrs = dict (qux = 84, quy = 85)))
    >>> d.write_to_xml_stream ()
-   <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+   <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
    <Test>
      Test for TFL.SDG.XML.Elem_Type creation and use
      <X bar="42" baz="quuux" foo="wibble">

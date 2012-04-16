@@ -58,8 +58,8 @@ class Document (TFL.SDG.XML.Node) :
        ...              , doctype     = "memo"
        ...              , description = "Just a test"
        ...              )
-       >>> print chr (10).join (d.formatted ("xml_format"))
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       >>> print (chr (10).join (d.formatted ("xml_format")))
+       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <!DOCTYPE memo >
        <!-- Just a test -->
        <Memo>
@@ -74,8 +74,8 @@ class Document (TFL.SDG.XML.Node) :
        ...                                  ("memo", dtd = "memo.dtd")
        ...              , description = "Just a test"
        ...              )
-       >>> print chr (10).join (d.formatted ("xml_format"))
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       >>> print (chr (10).join (d.formatted ("xml_format")))
+       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <!DOCTYPE memo SYSTEM "memo.dtd">
        <!-- Just a test -->
        <Memo>
@@ -96,7 +96,7 @@ class Document (TFL.SDG.XML.Node) :
        ...              , encoding        = "UTF-8"
        ...              , standalone      = "no"
        ...              )
-       >>> print chr (10).join (s.formatted ("xml_format"))
+       >>> print (chr (10).join (s.formatted ("xml_format")))
        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
        <svg height="100%" viewBox="10 60 450 260" width="100%"
             xmlns="http://www.w3.org/2000/svg"
@@ -113,8 +113,8 @@ class Document (TFL.SDG.XML.Node) :
        ...         , "VERSION"       : "1.0.0a"
        ...         }
        >>> d = Document (TFL.SDG.XML.Element ("fx:FIBEX", x_attrs = attrs ))
-       >>> print chr (10).join (d.formatted ("xml_format"))
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       >>> print (chr (10).join (d.formatted ("xml_format")))
+       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <fx:FIBEX VERSION="1.0.0a"
                  xmlns:flexray="http://www.asam.net/xml/fbx/flexray"
                  xmlns:fx="http://www.asam.net/xml/fbx"
@@ -136,7 +136,7 @@ class Document (TFL.SDG.XML.Node) :
        >>> root.add (child)
        >>> d = Document (root)
        >>> d.write_to_xml_stream ()
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <foo xmlns="http://foo/bar">
          <bar baz1="This really is the value of baz1"
               baz2="This really is the value of baz2"

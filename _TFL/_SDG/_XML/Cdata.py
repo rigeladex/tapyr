@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,7 +45,7 @@ class Cdata (TFL.SDG.XML.Leaf) :
        ... <Memo>
        ... </Memo>
        ... ''')
-       >>> print chr (10).join (c.formatted ("xml_format"))
+       >>> print (chr (10).join (c.formatted ("xml_format")))
        <![CDATA[
          <?xml version="1.0"?>
          <!DOCTYPE memo SYSTEM "memo.dtd">

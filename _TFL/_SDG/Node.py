@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -367,20 +367,20 @@ T_Node R
 T_Node
     ( T_Node
         ( Leaf
-            (name = 'a.1')
+            (name = u'a.1')
         , Leaf
-            (name = 'a.2')
-        , hansi = 'A'
-        , name = 'a'
+            (name = u'a.2')
+        , hansi = u'A'
+        , name = u'a'
         )
     , T_Node
         ( Node
-            (name = 'b.x')
+            (name = u'b.x')
         , Leaf
-            (name = 'b.z')
-        , name = 'b'
+            (name = u'b.z')
+        , name = u'b'
         )
-    , name = 'R'
+    , name = u'R'
     )
 """
 
