@@ -120,6 +120,7 @@ _test_code = """
 
     >>> print scope.SRM.Boat.count ### 7
     2
+    >>> scope.commit ()
 
     >>> SRM.Boat.query_s ().all () ### before Name_Clash
     [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]

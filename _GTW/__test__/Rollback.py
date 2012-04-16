@@ -56,6 +56,12 @@ create = r"""
     Traceback (most recent call last):
     ...
     Name_Clash: new definition of GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'') clashes with existing GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')
+
+    ### the name clash resulted in a rollback of the scope. Therefore only
+    ### one Person object should be in the database after the name clash
+    >>> PAP.Person.count
+    1
+
     >>> scope.destroy  ()
 
 """
