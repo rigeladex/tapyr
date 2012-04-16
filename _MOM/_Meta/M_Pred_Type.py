@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Meta.M_Pred_Type)
+#    16-Apr-2012 (CT) Fix stylo
 #    ««revision-date»»···
 #--
 
@@ -130,9 +131,10 @@ class M_Pred_Type_Quantifier (M_Pred_Type) :
         cls.__m_super.__init__ (name, bases, dict)
         if cls.bvar and cls.assertion :
             quantifier = cls.quantifier_fmt % (cls.bvar, cls.assertion)
-            setattr ( cls, "assert_code"
-                    , compile (quantifier, quantifier, "eval")
-                    )
+            setattr \
+                ( cls, "assert_code"
+                , compile (quantifier, quantifier, "eval")
+                )
         guard = cls.guard
         if guard :
             if not getattr (cls, "guard_attr", None) :

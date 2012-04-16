@@ -141,7 +141,7 @@ _test_code = """
     >>> b.b_class.max_crew = 0
     Traceback (most recent call last):
       ...
-    Invariant: Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+    Invariant: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `setattr`
     [('object', []), ('region', []), ('system', [])]
@@ -151,42 +151,42 @@ _test_code = """
     >>> b.b_class.set (max_crew = 0)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
+    Invariants: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 0)`
-    [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
-        max_crew = 0, (), ())]), ('region', []), ('system', [])]
+    [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+        max_crew = 0)]), ('region', []), ('system', [])]
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
     1
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 5)`
-    [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
-        max_crew = 5, (), ())]), ('region', []), ('system', [])]
+    [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+        max_crew = 5)]), ('region', []), ('system', [])]
     >>> errors
-    [Invariants([Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` :  (1 <= max_crew <= 4)
-        max_crew = 5, (), ())],)]
+    [Invariants(Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+        max_crew = 5),)]
 
     >>> b.b_class.set (max_crew = None)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `max_crew_not_empty` :  (max_crew is not None and max_crew != '')
+    Invariants: Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
         max_crew = None
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = None)`
-    [('object', [Required_Empty(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` :  (max_crew is not None and max_crew != '')
-        max_crew = None, (), ())]), ('region', []), ('system', [])]
+    [('object', [Required_Empty(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+        max_crew = None)]), ('region', []), ('system', [])]
 
     >>> b.b_class.max_crew = None
     Traceback (most recent call last):
       ...
-    Required_Empty: Condition `max_crew_not_empty` :  (max_crew is not None and max_crew != '')
+    Required_Empty: Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
         max_crew = None
 
     >>> errors = []
     >>> SRM.Boat_Class ("Seascape 18", on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',) Instead it got: ('Seascape 18')
+    Invariants: GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',); Instead it got: ('Seascape 18')
     >>> errors
     [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',)", u"Instead it got: ('Seascape 18')")]
 
@@ -194,7 +194,7 @@ _test_code = """
     >>> SRM.Boat_Class (max_crew = 4, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',) Instead it got: (max_crew = 4)
+    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',); Instead it got: (max_crew = 4)
     >>> errors
     [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: (max_crew = 4)')]
 
@@ -202,7 +202,7 @@ _test_code = """
     >>> SRM.Boat_Class (on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',) Instead it got: ()
+    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',); Instead it got: ()
     >>> errors
     [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: ()')]
 

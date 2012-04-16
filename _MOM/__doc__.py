@@ -57,7 +57,8 @@
 #    20-Dec-2010 (CT) Python 2.7 compatibility
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    18-Nov-2011 (CT) Add `formatted1` to get rid of `u` prefixes
-#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
+#    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -1075,7 +1076,7 @@ inherit from, a `relevant_root`:
     >>> scope.MOM.Object.instance (u"mighty_mouse")
     Traceback (most recent call last):
       ...
-    Required_Missing: MOM.Object needs the required attributes: () Instead it got: (u'mighty_mouse')
+    TypeError: MOM.Object needs the arguments (), got (u'mighty_mouse',) instead
     >>> scope.MOM.Named_Object.instance ("mighty_mouse")
     Traceback (most recent call last):
       ...
@@ -1318,9 +1319,8 @@ Changing objects and links
     Traceback (most recent call last):
       ...
     Invariants: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 (length <= 5)
-        length = 9
-        middle_name = u'zacharias'
-        length = u'len (middle_name)'
+        length = 9 «« len (middle_name)
+        middle_name = 'zacharias'
 
     >>> m
     BMT.Mouse (u'mighty_mouse')
@@ -1334,12 +1334,12 @@ Changing objects and links
     >>> m.weight = 0
     Traceback (most recent call last):
       ...
-    Invariant: Condition `AC_check_weight_0` :  (weight > 0)
+    Invariant: Condition `AC_check_weight_0` : weight > 0
         weight = 0.0
     >>> m.set (weight = -5.0)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `AC_check_weight_0` :  (weight > 0)
+    Invariants: Condition `AC_check_weight_0` : weight > 0
         weight = -5.0
     >>> m.weight = 10
     >>> print m.as_code ()
@@ -1360,7 +1360,6 @@ Changing objects and links
         `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`
-         of       type  : `<type 'str'>`
     >>> m.set_raw (color = "yellow", weight = "6*7")
     2
     >>> m.color, m.weight
@@ -1391,12 +1390,12 @@ Changing objects and links
     >>> l1.set (lat =  91.5)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `AC_check_lat_1` :  (-90.0 <= lat <= 90.0)
+    Invariants: Condition `AC_check_lat_1` : -90.0 <= lat <= 90.0
         lat = 91.5
     >>> l1.set (lon = 270.0)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `AC_check_lon_1` :  (-180.0 <= lon <= 180.0)
+    Invariants: Condition `AC_check_lon_1` : -180.0 <= lon <= 180.0
         lon = 270.0
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
@@ -1416,9 +1415,9 @@ Changing objects and links
     >>> for err in rit.errors :
     ...     print err
     Condition `valid_weight` : Weight of `rodent` must not exceed `max_weight` of `trap`. (rodent.weight <= trap.max_weight)
-        rodent = BMT.Mouse (u'mighty_mouse')
-        trap = BMT.Trap (u'x', 1)
+        rodent = mighty_mouse
         rodent.weight = 42.0
+        trap = x, 1
         trap.max_weight = 20.0
 
     >>> pot = PoT.instance (p, t1)
@@ -1717,35 +1716,35 @@ Primary key attributes
     >>> scope.BMT.Trap ("", None)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` :  (name is not None and name != '')
-        name = u''
-      Condition `serial_no_not_empty` :  (serial_no is not None and serial_no != '')
+    Invariants: Condition `name_not_empty` : name is not None and name != ''
+        name = ''
+      Condition `serial_no_not_empty` : serial_no is not None and serial_no != ''
         serial_no = None
     >>> scope.BMT.Trap ("ha", None)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `serial_no_not_empty` :  (serial_no is not None and serial_no != '')
+    Invariants: Condition `serial_no_not_empty` : serial_no is not None and serial_no != ''
         serial_no = None
     >>> scope.BMT.Trap ("", 0)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` :  (name is not None and name != '')
-        name = u''
+    Invariants: Condition `name_not_empty` : name is not None and name != ''
+        name = ''
     >>> scope.BMT.Trap (None, 0)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` :  (name is not None and name != '')
+    Invariants: Condition `name_not_empty` : name is not None and name != ''
         name = None
     >>> scope.BMT.Trap ("ha", "", raw = True)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `serial_no_not_empty` :  (serial_no is not None and serial_no != '')
+    Invariants: Condition `serial_no_not_empty` : serial_no is not None and serial_no != ''
         serial_no = None
     >>> scope.BMT.Trap ("", "7", raw = True)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` :  (name is not None and name != '')
-        name = u''
+    Invariants: Condition `name_not_empty` : name is not None and name != ''
+        name = ''
 
 Rollback of uncommited changes
 ------------------------------

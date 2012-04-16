@@ -62,6 +62,7 @@ from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import *
 from   _TFL.Record              import Record
 
+import _TFL._Meta.Object
 import _TFL.Caller
 import _TFL.Accessor
 import _TFL.I18N
@@ -77,8 +78,10 @@ class Exception_Handled (BaseException) :
 class Error (Exception) :
     """Root class of MOM exceptions"""
 
-    arg_sep     = ", "
-    is_required = False
+    __metaclass__ = TFL.Meta.Object.__class__
+
+    arg_sep       = ", "
+    is_required   = False
 
     @Once_Property
     def as_str (self) :
@@ -91,7 +94,12 @@ class Error (Exception) :
     # end def as_unicode
 
     def str_arg (self, args) :
-        return (unicode (a) for a in args if a)
+        for a in args :
+            try :
+                s = unicode (a)
+            except Exception as exc :
+                s = "%s --> %s" % (repr (a), exc)
+            yield s
     # end def str_arg
 
     def __eq__ (self, other) :
@@ -122,27 +130,41 @@ class Error (Exception) :
 
 class _Invariant_ (Error) :
 
+    attributes     = ()
+    extra_links    = ()
+    indent         = " " * 4
+    val_disp       = {}
+    val_desc       = {}
+
     def __init__ (self, obj) :
-        self.obj            = obj
-        self.violators      = ()
-        self.violators_attr = ()
-        self.attributes     = ()
-        self.extra_links    = ()
+        self.obj = obj
     # end def __init__
 
-    ### redefine in descendents
-    def name            (self)                  : return _T ("Invariant error")
-    def description     (self, indent = "")     : return ""
-    def explanation     (self, indent = "")     : return ""
-    def assertion       (self, indent = "")     : return ""
+    @property
+    def description (self) :
+        return ""
+    # end def description
 
-    ### just for compatibility with Quant
-    def violator_values (self, indent = "    ") : return ()
+    @property
+    def explanation (self) :
+        return ""
+    # end def explanation
+
+    @property
+    def head (self) :
+        return _T ("Invariant error")
+    # end def head
+
+    def assertion (self) :
+        result = []
+        for info in self.head, self.description, self.explanation :
+            if info :
+                result.append (info)
+        return ("\n" + self.indent).join (result)
+    # end def assertion
 
     def _clean_this (self, s) :
-        s = s.replace ("this.", "")
-        s = s.replace (".name", "")
-        return s
+        return s.replace ("this.", "")
     # end def _clean_this
 
 # end class _Invariant_
@@ -177,8 +199,11 @@ class Attribute_Set (Attribute, AttributeError) :
 class Attribute_Syntax (_Invariant_, ValueError) :
     """Raised for syntax errors in attributes of MOM objects/links."""
 
+    class inv :
+        name       = "syntax_valid"
+
     def __init__ (self, obj, attr, val, exc_str = "") :
-        _Invariant_.__init__ (self, obj)
+        self.__super.__init__ (obj)
         self.args         = (obj, attr, val, exc_str)
         self.obj          = obj
         self.attributes   = (attr, )
@@ -194,10 +219,9 @@ class Attribute_Syntax (_Invariant_, ValueError) :
             ( _T ( "`%s` for : `%r`"
                    "\n     expected type  : `%s`"
                    "\n     got      value : `%s`"
-                   "\n     of       type  : `%s`"
                  )
             % ( self.exc_str or _T ("Syntax error")
-              , self.attr, self.attr.typ, self.val, type (self.val)
+              , self.attr, self.attr.typ, self.val
               )
             )
         if self.attr.syntax :
@@ -205,27 +229,25 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         return result
     # end def as_unicode
 
-    def assertion (self) :
-        result = \
+    @Once_Property
+    def head (self) :
+        return \
             ( _T ("Syntax error: \n  expected type `%s`\n  got value `%s`")
             % (self.attr.typ, self.val)
             )
+    # end def head
+
+    @Once_Property
+    def description (self) :
         if self.attr.syntax :
-            result = "%s\n    %s: %s" % \
-                (result, _T ("Syntax"), self.attr.syntax)
-        if self.exc_str :
-            result = "%s\n    %s: %s" % \
-                (result, _T ("Exception"), self.exc_str)
-        return result
-    # end def assertion
-
-    def name (self) :
-        return "Invalid Attribute `%s'" % (self.attr.name, )
-    # end def name
-
-    def description (self, indent = "") :
-        return self.assertion ()
+            return "%s: %s" % (_T ("Syntax"), _T (self.attr.syntax))
     # end def description
+
+    @Once_Property
+    def explanation (self) :
+        if self.exc_str :
+            return "%s: %s" % (_T ("Exception"), self.exc_str)
+    # end def explanation
 
 # end class Attribute_Syntax
 
@@ -278,17 +300,15 @@ class Inconsistent_Predicate (Error) :
 
 class Invariant (_Invariant_) :
 
-    def __init__ (self, obj, inv, violators = (), violators_attr = ()) :
-        _Invariant_.__init__ (self, obj)
-        self.args           = (obj, inv, violators, violators_attr)
+    def __init__ (self, obj, inv) :
+        self.__super.__init__ (obj)
+        self.args           = (obj, inv)
         self.inv            = inv
         self.is_required    = inv.is_required
         self.attributes     = inv.attributes + inv.attr_none
-        self.extra_links    = list (inv.extra_links ())
-        self.val_dict       = dict (inv.val_dict)
+        self.extra_links    = list (inv.extra_links)
+        self.val_disp       = dict (inv.val_disp)
         self.val_desc       = dict (inv.val_desc)
-        self.violators      = violators
-        self.violators_attr = violators_attr
         description         = inv.description
         try :
             self.inv_desc   = description % TFL.Caller.Object_Scope (obj)
@@ -299,69 +319,79 @@ class Invariant (_Invariant_) :
     @Once_Property
     def as_unicode (self) :
         return self._as_string \
-            ( "%s `%s` " % (_T ("Condition"), _T (self.inv.name))
-            + ": %s %s%s"
-            , "    "
-            )
+            (head = "%s `%s` : " % (_T ("Condition"), _T (self.inv.name)))
     # end def as_unicode
 
-    def assertion (self, indent = "    ") :
-        return self._as_string ("%s\n" + indent + "%s%s", indent)
-    # end def assertion
-
-    def attribute_values (self, head = None) :
-        return self._attribute_values (self.val_dict, head)
-    # end def attribute_values
-
-    def description (self, indent = "") :
-        result = self._tail (indent)
+    @Once_Property
+    def description (self) :
         inv    = self.inv
+        more   = inv.error_info
+        result = []
         if inv.description and inv.assertion :
-            result = ("\n" + indent).join \
-                (["`%s`" % inv.assertion, "", result])
-        return self._clean_this (result)
+            result.append ("(%s)" % (inv.assertion, ))
+        if more :
+            result.extend (more)
+        return "\n".join (result)
     # end def description
 
-    def explanation (self, indent = "") :
+    @Once_Property
+    def description_plus (self) :
+        description = self.description
+        result      = self._tail ("")
+        if description :
+            result = "\n".join ((description, "", result))
+        return self._clean_this (result)
+    # end def description_plus
+
+    @Once_Property
+    def explanation (self) :
         return self.inv.explanation
     # end def explanation
 
-    def name (self) :
+    @Once_Property
+    def head (self) :
         return self.inv_desc or self.inv.assertion
-    # end def name
+    # end def head
+
+    def assertion (self) :
+        indent = self.indent
+        return self._as_string (sep = "\n" + indent, indent = indent)
+    # end def assertion
+
+    def attribute_values (self, head = None) :
+        return self._attribute_values (self.val_disp, head)
+    # end def attribute_values
 
     def parameter_values (self, head = None) :
         return self._attribute_values (self.val_desc, head)
     # end def parameter_values
 
-    def _as_string (self, format, indent = "    ") :
-        inv = self.inv
-        ass = inv.assertion
-        if ass :
-            ass = "(%s)" % (ass, )
-        return self._clean_this \
-            (format % (self.inv_desc, ass, self._tail (indent)))
+    def _as_string (self, sep = " ", head = "", indent = None) :
+        desc   = self.description
+        result = [head]
+        if self.head :
+            result.extend ((self.head, sep))
+        if desc :
+            result.append (desc)
+        result.append (self._tail (indent))
+        return self._clean_this ("".join (result))
     # end def _as_string
 
     def _attribute_values (self, dict, head = None) :
-        tail = head or []
-        for attr, val in sorted (dict.items ()) :
-            if attr != "this" :
-                tail.append ("%s = %r" % (attr, val))
-        return tail
+        result = head or []
+        for k, v in sorted (dict.iteritems ()) :
+            result.append ("%s = %s" % (k, v))
+        return result
     # end def _attribute_values
 
-    def _tail (self, indent = "    ") :
+    def _tail (self, indent = None) :
+        if indent is None :
+            indent = self.indent
         result = self.parameter_values (self.attribute_values ())
-        more   = self.inv.error_info   ()
-        if more :
-            if isinstance (more, (str, unicode)) :
-                result.append (more)
-            else :
-                result.extend (more)
+        sep    = "\n" + indent
         if result :
-            result.insert (0, "")
-        return ("\n" + indent).join (result)
+            result = itertools.chain ([""], result)
+        return sep.join (result)
     # end def _tail
 
 # end class Invariant
@@ -372,24 +402,13 @@ class Invariants (Error) :
 
     def __init__ (self, errors) :
         errors = self.errors = sorted (errors, key = TFL.Getter.inv.name)
-        Error.__init__ (self, errors)
+        self.__super.__init__ (* errors)
     # end def __init__
 
     @property
     def any_required_empty (self) :
         return any (isinstance (e, Required_Empty) for e in self.errors)
     # end def any_required_empty
-
-    def str_arg (self, args) :
-        result = []
-        add    = result.append
-        for a in args [0] :
-            try :
-                add (unicode (a))
-            except StandardError as exc :
-                add ("%s --> %s" % (repr (a), exc))
-        return result
-    # end def str_arg
 
 # end class Invariants
 
@@ -405,10 +424,9 @@ class Multiplicity (Error) :
     """Raised when the maximum multiplicity for an association is violated."""
 
     def __init__ (self, etype, max_links, * args) :
-        self.args = \
+        self.__super.__init__ \
             ( _T ("Maximum number of links for %s is %d %s")
             % (etype, max_links, args)
-            ,
             )
     # end def __init__
 
@@ -425,10 +443,9 @@ class Name_Clash (Error) :
 
     def __init__ (self, new, old) :
         otn = old.type_name if old else ""
-        self.args = \
+        self.__super.__init__ \
             ( _T ("new definition of %s %s clashes with existing %s %s")
             % (new.type_name, new, otn, old or _T ("object"))
-            ,
             )
     # end def __init__
 
@@ -453,55 +470,56 @@ class Partial_Type (Error) :
 class Quant (Invariant) :
     """Raised when a quantifier invariant of a MOM object/link is violated."""
 
-    Ancestor = __Ancestor = Invariant
+    def __init__ (self, obj, inv, violators, violators_attr) :
+        self.violators      = violators
+        self.violators_attr = violators_attr
+        self.__super.__init__ (obj, inv)
+    # end def __init__
 
-    def violator_values (self, indent = "    ", sep = ", ") :
-        inv  = self.inv
+    def violator_values (self, indent = None, sep = ", ") :
+        if indent is None :
+            indent = self.indent
+        inv    = self.inv
         result = []
         bvars  = inv.bvar [1:-1].split (",")
         for v, d in paired (self.violators, self.violators_attr) :
             if len (bvars) > 1 and isinstance (v, (list, tuple)) :
                 result.append \
-                    (sep.join (map (self._violator_value, paired (bvars, v))))
+                    ( sep.join
+                        (self._violator_value (x) for x in paired (bvars, v))
+                    )
             elif isinstance (v, (list, tuple)) :
                 result.append \
                     ("%s : [%s]" % (inv.bvar, ", ".join (map (unicode, v))))
-            elif type (v) != type (self) : ### v is not a class instance
-                result.append ("%s : %s" % (inv.bvar, v))
             else :
-                result.append \
-                    ("%s = `%s'" % (inv.bvar, getattr (v, "name", v)))
+                result.append ("%s : %r" % (inv.bvar, v))
             if d :
                 try :
-                    items = d.items ()
+                    items = d.iteritems ()
                 except AttributeError :
                     result.append (d)
                 else :
                     result.append \
                         ( indent
                         + sep.join
-                              (   "%s = %s" % (a, val)
-                              for (a, val) in sorted (d.iteritems ())
-                              )
+                            ("%s = %s" % (a, x) for (a, x) in sorted (items))
                         )
         return result
     # end def violator_values
 
-    def _tail (self, indent = "    ") :
-        result = self.__Ancestor._tail (self, indent)
-        tail   = self.violator_values  ()
+    def _tail (self, indent = None) :
+        if indent is None :
+            indent = self.indent
+        result = self.__super._tail   (indent)
+        sep    = "\n" + indent
+        tail   = self.violator_values ()
         if tail :
-            tail.insert (0, "")
-        return "%s%s" % (result, ("\n" + indent).join (tail))
+            result = itertools.chain (result, tail)
+        return sep.join (result)
     # end def _tail
 
-    def _violator_value (self, x) :
-        n, o = x
-        if isinstance (o, Record) :
-            v = o
-        else :
-            v = getattr (o, "name", o)
-        return "%s : `%s'" % (n, v)
+    def _violator_value (self, kv) :
+        return "%s : %r" % kv
     # end def _violator_value
 
 # end class Quant
@@ -513,42 +531,55 @@ class Readonly_DB (DB) :
 class Required_Empty (Invariant) :
     """Primary attribute must not be empty."""
 
+    is_required    = True
+
 # end class Required_Empty
 
-class Required_Missing (Error) :
+class Required_Missing (_Invariant_) :
     """Raised when required attributes are missing."""
 
-    arg_sep        = " "
-    extra_links    = []
-    inv_desc       = _ ("All required attributes must be supplied")
+    arg_sep        = "; "
     is_required    = True
-    val_dict       = {}
-    val_desc       = {}
-    violators      = ()
-    violators_attr = ()
 
     class inv :
         name       = "required_not_missing"
 
     def __init__ (self, e_type, needed, missing, epk, kw) :
+        self.__super.__init__ (e_type)
         self.e_type     = e_type
         self.attributes = self.needed = needed
         self.missing    = missing
         self.epk        = epk
         self.kw         = kw
-        self.args       = \
-            ( _T  ("%s needs the required attributes: %s")
-            % (e_type.type_name, needed)
-            , _T ("Instead it got: (%s)")
+        self.args       = (self.head, self.description)
+    # end def __init__
+
+    @Once_Property
+    def head (self) :
+        return  \
+            (  _T ("%s needs the required attributes: %s")
+            % (self.e_type.type_name, self.needed)
+            )
+    # end def head
+
+    @Once_Property
+    def description (self) :
+        return \
+            ( _T ("Instead it got: (%s)")
             % (", ".join
                   ( itertools.chain
-                      ( (repr (x) for x in epk)
-                      , ("%s = %r" % (k, v) for k, v in kw.iteritems ())
+                      ( (repr (x) for x in self.epk)
+                      , ("%s = %r" % (k, v) for k, v in self.kw.iteritems ())
                       )
                   )
               )
             )
-    # end def __init__
+    # end def description
+
+    @Once_Property
+    def explanation (self) :
+        return _T ("All required attributes must be supplied")
+    # end def explanation
 
 # end class Required_Missing
 
@@ -556,10 +587,9 @@ class Too_Many_Objects (Error) :
     """Raised when too many objects are created."""
 
     def __init__ (self, obj, max_count) :
-        self.args = \
+        self.__super.__init__ \
             ( _T ("Cannot create more than %d objects of %s")
             % (max_count, obj.type_name)
-            ,
             )
     # end def __init__
 

@@ -30,7 +30,8 @@
 #    22-Jun-2010 (MG) Creation
 #    22-Jun-2010 (CT) Creation continued
 #    12-Apr-2012 (CT) Extend tests for `on_error`
-#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
+#    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -44,14 +45,15 @@ _test_code = r"""
     >>> PAP.Person (last_name = u"", first_name = u"", raw = True)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
-        first_name = u''
-      Condition `last_name_not_empty` :  (last_name is not None and last_name != '')
-        last_name = u''
+    Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
+        first_name = ''
+      Condition `last_name_not_empty` : last_name is not None and last_name != ''
+        last_name = ''
     >>> errors
     []
     >>> print PAP.Person.count
     0
+
     >>> PAP.Person \
     ...     ( last_name  = u"last_name"
     ...     , first_name = u""
@@ -61,11 +63,16 @@ _test_code = r"""
     ...
     Traceback (most recent call last):
       ...
-    Invariants: Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
-        first_name = u''
+    Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
+        first_name = ''
     >>> errors
-    [Invariants([Required_Empty(GTW.OMP.PAP.Person (u'last_name', u'', u'', u''), Condition `first_name_not_empty` :  (first_name is not None and first_name != '')
-        first_name = u'', (), ())],)]
+    [Invariants(Required_Empty(GTW.OMP.PAP.Person (u'last_name', u'', u'', u''), Condition `first_name_not_empty` : first_name is not None and first_name != ''
+        first_name = ''),)]
+    >>> for e in errors :
+    ...     print e
+    Condition `first_name_not_empty` : first_name is not None and first_name != ''
+        first_name = ''
+
     >>> print PAP.Person.count
     0
 

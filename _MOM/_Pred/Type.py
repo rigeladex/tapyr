@@ -40,8 +40,13 @@
 #     8-Feb-2011 (CT) s/Mandatory/Required/
 #     8-Nov-2011 (CT) Factor `Error_Type` and allow `** kw` in `Attribute_Check`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    16-Apr-2012 (CT) Simplify `_Quantifier_._satisfied`, `._is_correct`
+#    16-Apr-2012 (CT) Add `val_disp` containing FO-formatted attribute values
+#    16-Apr-2012 (CT) Convert `error_info` and `extra_links` to property
 #    ««revision-date»»···
 #--
+
+from   __future__  import unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -82,11 +87,27 @@ class _Condition_ (object):
         self.attr_dict      = attr_dict
         self.val_desc       = {}
         self.val_dict       = {}
+        self.val_disp       = {}
         self.error          = None
         self._error_info    = []
         self._extra_links_d = []
         self.satisfied (obj, attr_dict)
     # end def __init__
+
+    @property
+    def error_info (self) :
+        """Additional information about the object violating the predicate.
+
+           Override when necessary.
+        """
+        return self._error_info
+    # end def error_info
+
+    @property
+    def extra_links (self) :
+        """Additional links to be displayed."""
+        return tuple (self._extra_links_d) + tuple (self._extra_links_s)
+    # end def extra_links
 
     def satisfied (self, obj, attr_dict = {}) :
         """Checks if `obj' satisfies the invariant.
@@ -98,8 +119,9 @@ class _Condition_ (object):
         glob_dict = obj.globals ()
         if not self._guard_open (obj, attr_dict, glob_dict) :
             return True
-        self.val_desc = {}
-        self.val_dict = val_dict = self._val_dict (obj, attr_dict)
+        val_desc = self.val_desc = {}
+        val_disp = self.val_disp = {}
+        val_dict = self.val_dict = self._val_dict (obj, attr_dict)
         if not val_dict :
             return True
         for p in self.parameters :
@@ -107,16 +129,72 @@ class _Condition_ (object):
                 (p, obj, glob_dict, val_dict, "parameter")
             if val is None or exc is not None :
                 return True
-            self.val_desc [p] = val
+            val_desc [p] = val
         for b, expr in self.bindings.iteritems () :
             exc, val = self._eval_expr \
                 (expr, obj, glob_dict, val_dict, "binding")
             if exc is not None :
                 return True
-            self.val_dict [b] = val
-            self.val_desc [b] = expr
+            val_dict [b] = val
+            val_disp [b] = "%r «« %s" % (val, expr)
         return self._satisfied (obj, glob_dict, val_dict)
     # end def satisfied
+
+    def set_attr_value (self, obj, dict, attr, val_dict) :
+        if "." in attr :
+            return self.set_c_attr_value (obj, dict, attr, val_dict)
+        else :
+            return self.set_s_attr_value (obj, dict, attr, val_dict)
+    # end def set_attr_value
+
+    def set_c_attr_value (self, obj, dict, c_attr, val_dict) :
+        attr, tail = c_attr.split (".", 1)
+        result = self.set_s_attr_value (obj, dict, attr, val_dict)
+        for a in tail.split (".") :
+            if result is None :
+                return None
+            if hasattr (result, a) or (attr in self.attr_none) :
+                result = getattr (result, a, None)
+            else :
+                raise AttributeError \
+                    ( "Invalid invariant: references undefined attribute "
+                      "`%s'\n    %s: %s"
+                    % (attr, obj, self.assertion)
+                    )
+        self.val_disp [c_attr] = obj.FO (c_attr, result)
+        return result
+    # end def set_c_attr_value
+
+    def set_s_attr_value (self, obj, dict, name, val_dict) :
+        result = None
+        if name in dict :
+            attr   = getattr (obj.__class__, name, None)
+            result = dict [name]
+            if attr is not None and result is not None :
+                try :
+                    result = attr.cooked (result)
+                except Exception, exc :
+                    print "Error in `cooked` of `%s` for value `%s` [%s]" % \
+                        (attr, result, obj)
+                    raise
+        elif hasattr (obj, name) or (name in self.attr_none) :
+            result = self.kind.get_attr_value (obj, name)
+        else :
+            raise AttributeError \
+                ( "Invalid invariant `%s` references undefined attribute `%s`"
+                  "\n    %s:"
+                  "\n    %s"
+                % (self.name, name, obj, self.assertion)
+                )
+        val_dict [name] = result
+        self.val_disp [name] = obj.FO (name, result)
+        return result
+    # end def set_s_attr_value
+
+    def _add_entities_to_extra_links (self, lst) :
+        self._extra_links_d.extend \
+            (e for e in lst if isinstance (e, MOM.Entity.Essence))
+    # end def _add_entities_to_extra_links
 
     def _eval_expr (self, expr, obj, glob_dict, val_dict, kind, text = None) :
         try :
@@ -143,56 +221,6 @@ class _Condition_ (object):
         return result
     # end def _guard_open
 
-    def set_attr_value (self, obj, dict, attr, val_dict) :
-        if "." in attr :
-            return self.set_c_attr_value (obj, dict, attr, val_dict)
-        else :
-            return self.set_s_attr_value (obj, dict, attr, val_dict)
-    # end def set_attr_value
-
-    def set_s_attr_value (self, obj, dict, name, val_dict) :
-        result = None
-        if name in dict :
-            attr   = getattr (obj.__class__, name, None)
-            result = dict [name]
-            if attr is not None and result is not None :
-                try :
-                    result = attr.cooked (result)
-                except Exception, exc :
-                    print "Error in `cooked` of `%s` for value `%s` [%s]" % \
-                        (attr, result, obj)
-                    raise
-        elif hasattr (obj, name) or (name in self.attr_none) :
-            result = self.kind.get_attr_value (obj, name)
-        else :
-            raise AttributeError \
-                ( "Invalid invariant `%s` references undefined attribute `%s`"
-                  "\n    %s:"
-                  "\n    %s"
-                % (self.name, name, obj, self.assertion)
-                )
-        val_dict [name] = result
-        return result
-    # end def set_s_attr_value
-
-    def set_c_attr_value (self, obj, dict, c_attr, val_dict) :
-        attr, tail = c_attr.split (".", 1)
-        result = self.set_s_attr_value (obj, dict, attr, val_dict)
-        for a in tail.split (".") :
-            if result is None :
-                return None
-            if hasattr (result, a) or (attr in self.attr_none) :
-                result = getattr (result, a, None)
-            else :
-                raise AttributeError \
-                    ( "Invalid invariant: references undefined attribute "
-                      "`%s'\n    %s: %s"
-                    % (attr, obj, self.assertion)
-                    )
-        self.val_desc [c_attr] = result
-        return result
-    # end def set_c_attr_value
-
     def _val_dict (self, obj, attr_dict = {}) :
         result = dict (this = obj)
         for a in self.attributes :
@@ -203,39 +231,16 @@ class _Condition_ (object):
         return result
     # end def _val_dict
 
+    def __nonzero__ (self) :
+        return not self.error
+    # end def __nonzero__
+
     def __repr__ (self) :
         if self.error :
             return "%s"    % (self.error, )
         else :
             return "%s %s" % (self.name, "satisfied")
     # end def __repr__
-
-    def __nonzero__ (self) :
-        return not self.error
-    # end def __nonzero__
-
-    def rank_cmp (self, other) :
-        other_rank = getattr (other, "rank", other)
-        return cmp (self.rank, other_rank)
-    # end def rank_cmp
-
-    def error_info (self) :
-        """Additional information about the object violating the predicate.
-
-           Override when necessary.
-        """
-        return self._error_info
-    # end def error_info
-
-    def _add_entities_to_extra_links (self, lst) :
-        self._extra_links_d.extend \
-            (e for e in lst if isinstance (e, MOM.Entity.Essence))
-    # end def _add_entities_to_extra_links
-
-    def extra_links (self) :
-        """Additional links to be displayed."""
-        return tuple (self._extra_links_d) + tuple (self._extra_links_s)
-    # end def extra_links
 
 # end class _Condition_
 
@@ -245,23 +250,6 @@ class Condition (_Condition_) :
     __metaclass__ = MOM.Meta.M_Pred_Type_Condition
 
     Error_Type    = MOM.Error.Invariant
-
-    def _satisfied (self, obj, glob_dict, val_dict) :
-        """Checks if `obj' satisfies the invariant.
-           `attr_dict' can provide values for `self.attributes'.
-        """
-        try    :
-            if self.eval_condition (obj, glob_dict, val_dict) :
-                self.error = None
-            else :
-                self._add_entities_to_extra_links (val_dict.itervalues ())
-                self.error = self.Error_Type (obj, self)
-        except StandardError as exc :
-            print "Exception `%s` in evaluation of predicate `%s` for %s" \
-                % (exc, self.name, obj)
-            self.error = self.Error_Type (obj, self)
-        return not self.error
-    # end def _satisfied
 
     def eval_condition (self, obj, glob_dict, val_dict) :
         """Do **not** override this function directly!
@@ -298,6 +286,23 @@ class Condition (_Condition_) :
             )
     # end def eval_condition_assert_code_as_function
 
+    def _satisfied (self, obj, glob_dict, val_dict) :
+        """Checks if `obj' satisfies the invariant.
+           `attr_dict' can provide values for `self.attributes'.
+        """
+        try    :
+            if self.eval_condition (obj, glob_dict, val_dict) :
+                self.error = None
+            else :
+                self._add_entities_to_extra_links (val_dict.itervalues ())
+                self.error = self.Error_Type (obj, self)
+        except StandardError as exc :
+            print "Exception `%s` in evaluation of predicate `%s` for %s" \
+                % (exc, self.name, obj)
+            self.error = self.Error_Type (obj, self)
+        return not self.error
+    # end def _satisfied
+
 # end class Condition
 
 class _Quantifier_ (_Condition_) :
@@ -314,63 +319,7 @@ class _Quantifier_ (_Condition_) :
     bvar            = None
     bvar_attr       = ()
     seq             = None
-    seq_code        = None
-    """code object for `seq`"""
-
-    def _satisfied (self, obj, glob_dict, val_dict) :
-        ###+ the `gd` hackery is necessary for the `eval` of `self.attr_code`
-        gd = glob_dict.copy ()
-        gd.update (val_dict)
-        ###-
-        try :
-            seq = self._q_sequence (obj, gd, val_dict)
-        except StandardError as exc :
-            self.val_desc ["*** Exception ***"] = repr (exc)
-            self.error = self.Error_Type (obj, self)
-        else :
-            try :
-                res = self._quantified (seq, obj, gd, val_dict)
-            except StandardError as exc:
-                self.val_desc ["*** Exception ***"] = str (exc)
-                self.error = self.Error_Type (obj, self)
-            else :
-                not_none = filter (None, res)
-                if self._is_correct (not_none) :
-                    self.error = None
-                else :
-                    violators, violator_values = self._attr_val \
-                        (obj, res, seq, gd, val_dict)
-                    vs = violators
-                    if "," in self.bvar :
-                        vs = flattened (violators)
-                    self._add_entities_to_extra_links (vs)
-                    self._add_entities_to_extra_links (val_dict.itervalues ())
-                    self.error = self.Error_Type \
-                        (obj, self, violators, violator_values)
-        return not self.error
-    # end def _satisfied
-
-    def _q_sequence (self, obj, glob_dict, val_dict) :
-        try :
-            return list (eval (self.seq_code, glob_dict, val_dict))
-        except StandardError :
-            traceback.print_exc ()
-            return ()
-    # end def _q_sequence
-
-    def _eval_over_seq (self, seq, code, glob_dict, val_dict) :
-        if seq :
-            val_dict ["seq"] = seq
-            res              = eval (code, glob_dict, val_dict)
-            del val_dict ["seq"]
-        else :
-            res              = ()
-        return res
-    # end def _eval_over_seq
-
-    def _quantified (self, seq, obj, glob_dict, val_dict) :
-        return self._eval_over_seq (seq, self.assert_code, glob_dict, val_dict)
-    # end def _quantified
+    seq_code        = None ### code object for `seq`
 
     def _attr_val (self, obj, res, seq, glob_dict, val_dict) :
         violators = []
@@ -390,6 +339,56 @@ class _Quantifier_ (_Condition_) :
         return violators, v_values
     # end def _attr_val
 
+    def _eval_over_seq (self, seq, code, glob_dict, val_dict) :
+        if seq :
+            val_dict ["seq"] = seq
+            res = eval (code, glob_dict, val_dict)
+            del val_dict ["seq"]
+        else :
+            res = ()
+        return res
+    # end def _eval_over_seq
+
+    def _quantified (self, seq, obj, glob_dict, val_dict) :
+        return self._eval_over_seq (seq, self.assert_code, glob_dict, val_dict)
+    # end def _quantified
+
+    def _q_sequence (self, obj, glob_dict, val_dict) :
+        try :
+            return list (eval (self.seq_code, glob_dict, val_dict))
+        except StandardError :
+            if __debug__ :
+                traceback.print_exc ()
+            return ()
+    # end def _q_sequence
+
+    def _satisfied (self, obj, glob_dict, val_dict) :
+        ###+ the `gd` hackery is necessary for the `eval` of `self.attr_code`
+        gd = glob_dict.copy ()
+        gd.update (val_dict)
+        ###-
+        try :
+            seq = self._q_sequence (obj, gd, val_dict)
+            res = self._quantified (seq, obj, gd, val_dict)
+        except StandardError as exc :
+            self.val_desc ["*** Exception ***"] = repr (exc)
+            self.error = self.Error_Type (obj, self)
+        else :
+            if self._is_correct (r for r in res if r) :
+                self.error = None
+            else :
+                violators, violator_values = self._attr_val \
+                    (obj, res, seq, gd, val_dict)
+                vs = violators
+                if "," in self.bvar :
+                    vs = flattened (violators)
+                self._add_entities_to_extra_links (vs)
+                self._add_entities_to_extra_links (val_dict.itervalues ())
+                self.error = self.Error_Type \
+                    (obj, self, violators, violator_values)
+        return not self.error
+    # end def _satisfied
+
 # end class _Quantifier_
 
 class E_Quant (_Quantifier_) :
@@ -398,7 +397,7 @@ class E_Quant (_Quantifier_) :
     """
 
     def _is_correct (self, res) :
-        return len (res) > 0
+        return any (res)
     # end def _is_correct
 
     def _is_violator (self, result, res_seq) :
@@ -418,7 +417,7 @@ class N_Quant (_Quantifier_) :
     upper_limit = None
 
     def _is_correct (self, res) :
-        return self.lower_limit <= len (res) <= self.upper_limit
+        return self.lower_limit <= len (tuple (res)) <= self.upper_limit
     # end def _is_correct
 
     def _is_violator (self, result, res_seq) :
@@ -438,7 +437,7 @@ class U_Quant (_Quantifier_) :
     __metaclass__ = MOM.Meta.M_Pred_Type_U_Quantifier
 
     def _is_correct (self, res) :
-        return len (res) == 0
+        return not any (res)
     # end def _is_correct
 
     def _is_violator (self, result, res_seq) :

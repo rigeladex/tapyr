@@ -180,6 +180,8 @@
 #    12-Apr-2012 (CT) Raise `Required_Missing`, not `TypeError`, in `epkified`
 #    12-Apr-2012 (CT) Adapt `_kw_check_required` to change of `Required_Missing`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    16-Apr-2012 (CT) Factor `FO.__call__`, add optional argument `value`
+#    16-Apr-2012 (CT) Change `epkified` to `raise TypeError` if `not missing`
 #    ««revision-date»»···
 #--
 
@@ -280,26 +282,46 @@ class Entity (TFL.Meta.Object) :
     class _FO_ (TFL.Meta.Object) :
         """Formatter for attributes of object."""
 
+        undefined = object ()
+
         def __init__ (self, obj) :
             self.__obj = obj
         # end def __init__
 
-        def __getattr__ (self, name) :
-            obj = self.__obj
+        def __call__ (self, name, value = undefined) :
+            getter   = getattr (TFL.Getter, name)
+            obj      = self.__obj
             try :
-                att = getattr (TFL.Getter, name) (obj.__class__)
+                attr = getter (obj.__class__)
             except AttributeError :
-                result = getattr (obj, name)
+                result = repr (getter (obj))
             else :
-                ckd = att.get_value (obj)
-                if isinstance (ckd, Entity) :
-                    return ckd.FO
+                if value is self.undefined :
+                    value   = attr.get_value (obj)
+                    get_raw = lambda : attr.get_raw  (obj)
                 else :
-                    uid = getattr (ckd, "ui_display", None)
+                    def get_raw () :
+                        result = attr.attr.as_string (value)
+                        if isinstance (value, basestring) :
+                            result = repr (result)
+                            if result.startswith (("u'", 'u"')) :
+                                result = result [1:]
+                        elif result == "" :
+                            result = "None"
+                        return result
+                if isinstance (value, Entity) :
+                    return value.FO
+                else :
+                    uid = getattr (value, "ui_display", None)
                     if uid :
                         result = uid
                     else :
-                        result = att.get_raw (obj)
+                        result = get_raw ()
+            return result
+        # end def __call__
+
+        def __getattr__ (self, name) :
+            result = self (name)
             setattr (self, name, result)
             return result
         # end def __getattr__
@@ -906,7 +928,8 @@ class Id_Entity (Entity) :
                 add    = result.append
                 for a in obj.necessary :
                     if not a.has_substance (obj) :
-                        add ("Necessary attribute %s is not defined" % (a, ))
+                        m = _T ("Necessary attribute %s is not defined") % (a, )
+                        add (m)
                 self._error_info.extend (result)
                 return not result
             # end def eval_condition
@@ -1109,9 +1132,15 @@ class Id_Entity (Entity) :
             on_error = kw.pop ("on_error", cls._raise_attr_error)
             needed   = tuple (m.name for m in cls.primary_required)
             missing  = tuple (p for p in needed [len (epk):] if p not in kw)
-            error    = MOM.Error.Required_Missing \
-                (cls, needed, missing, epk, kw)
-            on_error (error)
+            if missing :
+                error = MOM.Error.Required_Missing \
+                    (cls, needed, missing, epk, kw)
+                on_error (error)
+            else :
+                raise TypeError \
+                    ( _T ("%s needs the arguments %s, got %s instead")
+                    % (cls.type_name, needed, epk)
+                    )
             raise error
     # end def epkified
 
