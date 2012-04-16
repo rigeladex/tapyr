@@ -33,6 +33,7 @@
 #    17-Jan-2012 (CT) Change `HSL` to be compatible with CSS
 #    18-Jan-2012 (CT) Add `_Color_.__eq__` and `__hash__`
 #    18-Jan-2012 (CT) Return `name`, not `"name"`, from `SVG_Color.formatted`
+#    16-Apr-2012 (CT) Add `sorted` to `.iteritems`
 #    ««revision-date»»···
 #--
 
@@ -800,7 +801,7 @@ class SVG_Color (RGB_X) :
     def Pam (self) :
         if self._Pam is None :
             self.__class__._Pam = dict \
-                ((v, k) for (k, v) in self.Map.iteritems ())
+                ((v, k) for (k, v) in sorted (self.Map.iteritems ()))
         return self._Pam
     # end def Pam
 
