@@ -48,6 +48,7 @@ _test_code = r"""
     >>> SWP.Page.query_s (perma_name = "foo").all ()
     [GTW.OMP.SWP.Page_U (u'foo')]
 
+    >>> scope.commit ()
     >>> SWP.Page_V ("foo", text = "V")
     Traceback (most recent call last):
       ...

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -65,6 +65,7 @@
 #                     calling `clear` on the existing one
 #    28-Sep-2010 (CT) `rollback` changed to use `temp_change_recorder`,
 #                     `_rollback` factored
+#    16-Apr-2012 (MG) `add` added
 #    ««revision-date»»···
 #--
 
@@ -91,6 +92,14 @@ class _Manager_ (TFL.Meta.Object) :
 
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
+
+    def add (self, entity, id = None) :
+        try :
+            self._add (entity, id)
+        except MOM.Error.Name_Clash, exc :
+            self.rollback ()
+            raise exc
+    # end def add
 
     @classmethod
     def connect (cls, scope, db_url) :

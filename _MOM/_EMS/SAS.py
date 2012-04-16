@@ -48,6 +48,9 @@
 #     8-Jun-2011 (MG) `commit` added to release db resources
 #     8-Jun-2011 (MG) `max_cid`, `register_change`: don't used `temp_connection`
 #    31-Jan-2012 (MG) `Session.add` use `epk_sig_root` for `polymorphic_epk`
+#    16-Apr-2012 (MG) `add` renamed to `_add` and rollback in case of
+#                     Name_Clash removed (this is now handled by the
+#                     _Manager_.add) method
 #    ««revision-date»»···
 #--
 
@@ -92,36 +95,6 @@ class Manager (MOM.EMS._Manager_) :
     Change_Summary     = Change_Summary
 
     Q_Result           = MOM.DBW.SAS.Q_Result
-
-    def add (self, entity, id = None) :
-        ses = self.session
-        ses.flush () ### add all pending operations to the database transaction
-        if entity.polymorphic_epk :
-            ### since we have a polymorphic epk the database layer cannot
-            ### check the name clash -> therefore we need to make an extra
-            ### query for this.
-            epk_sig_root          = entity.epk_sig_root
-            epk_sig_root_epk_dict = dict \
-                ((a, getattr (entity, a)) for a in epk_sig_root.epk_sig)
-            try :
-                existing = self.query (epk_sig_root).filter \
-                    (** epk_sig_root_epk_dict).one ()
-                raise MOM.Error.Name_Clash (entity, existing)
-            except IndexError :
-                pass ### If the index error is raised the object does not
-                     ### exist -> we can create a new object with this epk
-        max_c = entity.max_count
-        if max_c and max_c <= self.query (entity.__class__).count () :
-            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        try :
-            ses.add   (entity, id)
-        except SAS_Exception.IntegrityError as exc :
-            ses.rollback ()
-            if __debug__ :
-                print exc
-            raise MOM.Error.Name_Clash \
-                (entity, self.instance (entity.__class__, entity.epk))
-    # end def add
 
     def commit (self) :
         self.__super.commit ()
@@ -206,6 +179,33 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Name_Clash (entity, old_entity)
         renamer     ()
     # end def rename
+
+    def _add (self, entity, id = None) :
+        ses = self.session
+        ses.flush () ### add all pending operations to the database transaction
+        if entity.polymorphic_epk :
+            ### since we have a polymorphic epk the database layer cannot
+            ### check the name clash -> therefore we need to make an extra
+            ### query for this.
+            epk_sig_root          = entity.epk_sig_root
+            epk_sig_root_epk_dict = dict \
+                ((a, getattr (entity, a)) for a in epk_sig_root.epk_sig)
+            try :
+                existing = self.query (epk_sig_root).filter \
+                    (** epk_sig_root_epk_dict).one ()
+                raise MOM.Error.Name_Clash (entity, existing)
+            except IndexError :
+                pass ### If the index error is raised the object does not
+                     ### exist -> we can create a new object with this epk
+        max_c = entity.max_count
+        if max_c and max_c <= self.query (entity.__class__).count () :
+            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
+        try :
+            ses.add   (entity, id)
+        except SAS_Exception.IntegrityError as exc :
+            raise MOM.Error.Name_Clash \
+                (entity, self.instance (entity.__class__, entity.epk))
+    # end def _add
 
     def _query_multi_root (self, Type) :
         QR = self.Q_Result
