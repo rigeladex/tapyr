@@ -43,6 +43,7 @@
 #    16-Apr-2012 (CT) Simplify `_Quantifier_._satisfied`, `._is_correct`
 #    16-Apr-2012 (CT) Add `val_disp` containing FO-formatted attribute values
 #    16-Apr-2012 (CT) Convert `error_info` and `extra_links` to property
+#    17-Apr-2012 (CT) Remove `val_desc`, use `val_disp` instead
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,6 @@ class _Condition_ (object):
         self.kind           = kind
         self.obj            = obj
         self.attr_dict      = attr_dict
-        self.val_desc       = {}
         self.val_dict       = {}
         self.val_disp       = {}
         self.error          = None
@@ -119,7 +119,6 @@ class _Condition_ (object):
         glob_dict = obj.globals ()
         if not self._guard_open (obj, attr_dict, glob_dict) :
             return True
-        val_desc = self.val_desc = {}
         val_disp = self.val_disp = {}
         val_dict = self.val_dict = self._val_dict (obj, attr_dict)
         if not val_dict :
@@ -129,7 +128,7 @@ class _Condition_ (object):
                 (p, obj, glob_dict, val_dict, "parameter")
             if val is None or exc is not None :
                 return True
-            val_desc [p] = val
+            val_disp [p] = repr (val)
         for b, expr in self.bindings.iteritems () :
             exc, val = self._eval_expr \
                 (expr, obj, glob_dict, val_dict, "binding")
@@ -335,7 +334,7 @@ class _Quantifier_ (_Condition_) :
             for r, s in zip (res, seq) :
                 if self._is_violator (r, res) :
                     violators.append (s)
-            v_values = [] * len (violators)
+            v_values = []
         return violators, v_values
     # end def _attr_val
 
@@ -371,7 +370,7 @@ class _Quantifier_ (_Condition_) :
             seq = self._q_sequence (obj, gd, val_dict)
             res = self._quantified (seq, obj, gd, val_dict)
         except StandardError as exc :
-            self.val_desc ["*** Exception ***"] = repr (exc)
+            self.val_disp ["*** Exception ***"] = repr (exc)
             self.error = self.Error_Type (obj, self)
         else :
             if self._is_correct (r for r in res if r) :

@@ -32,6 +32,7 @@
 #    12-Apr-2012 (CT) Extend tests for `on_error`
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
+#    17-Apr-2012 (CT) Add test for `as_json_cargo (* errors)`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,53 @@ _test_code = r"""
     ...     print e
     Condition `first_name_not_empty` : first_name is not None and first_name != ''
         first_name = ''
+
+    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [ { 'attributes' :
+    [ 'first_name' ]
+      , 'bindings' :
+          [
+            ( 'first_name'
+            , "''"
+            )
+          ]
+      , 'head' : "first_name is not None and first_name != ''"
+      , 'is_required' : True
+      }
+    ]
+
+    >>> errors = []
+    >>> PAP.Person (last_name = u"", first_name = u"", raw = True, on_error = errors.append)
+    Traceback (most recent call last):
+      ...
+    Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
+        first_name = ''
+      Condition `last_name_not_empty` : last_name is not None and last_name != ''
+        last_name = ''
+    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [ { 'attributes' :
+    [ 'first_name' ]
+      , 'bindings' :
+          [
+            ( 'first_name'
+            , "''"
+            )
+          ]
+      , 'head' : "first_name is not None and first_name != ''"
+      , 'is_required' : True
+      }
+    , { 'attributes' :
+    [ 'last_name' ]
+      , 'bindings' :
+          [
+            ( 'last_name'
+            , "''"
+            )
+          ]
+      , 'head' : "last_name is not None and last_name != ''"
+      , 'is_required' : True
+      }
+    ]
 
     >>> print PAP.Person.count
     0

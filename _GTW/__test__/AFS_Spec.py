@@ -2334,10 +2334,6 @@ from   _GTW._AFS._MOM.Element   import Form
 from   _GTW._AFS.Instance       import Instance
 from   _GTW._AFS.Value          import Value
 
-from   _TFL.Formatter           import Formatter, formatted_1
-
-formatted = Formatter (width = 240)
-
 Instance.sort_json = True
 
 def show_instance (i) :

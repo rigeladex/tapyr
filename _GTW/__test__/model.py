@@ -41,6 +41,7 @@
 #    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
 #     9-Sep-2011 (CT) `from import_MOM import *` added
 #    27-Jan-2012 (CT) Derive from `GTW.Werkzeug.Scaffold`
+#    17-Apr-2012 (CT) Add `formatted`, `formatted_1`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,11 @@ from   _MOM.Product_Version     import Product_Version, IV_Number
 from   _TFL                     import sos
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Class_Property
-from   _TFL.I18N              import _, _T, _Tn
+from   _TFL.I18N                import _, _T, _Tn
+
+from   _TFL.Formatter           import Formatter, formatted_1
+
+formatted = Formatter (width = 240)
 
 import _GTW._OMP.Scaffold
 import _GTW._Werkzeug.Scaffold

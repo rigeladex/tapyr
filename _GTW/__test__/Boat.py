@@ -33,7 +33,8 @@
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    12-Apr-2012 (CT) Add tests for `max_crew` predicate
 #    12-Apr-2012 (CT) Add tests for `on_error`
-#    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
+#    17-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
 #    ««revision-date»»···
 #--
 
@@ -167,6 +168,21 @@ _test_code = """
     >>> errors
     [Invariants(Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5),)]
+    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [ { 'attributes' :
+    [ 'max_crew' ]
+      , 'bindings' :
+          [
+            ( 'max_crew'
+            , '5'
+            )
+          ]
+      , 'extra_links' :
+    [ 1 ]
+      , 'head' : '1 <= max_crew <= 4'
+      , 'is_required' : True
+      }
+    ]
 
     >>> b.b_class.set (max_crew = None)
     Traceback (most recent call last):
@@ -198,6 +214,15 @@ _test_code = """
     Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',); Instead it got: (max_crew = 4)
     >>> errors
     [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: (max_crew = 4)')]
+    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [ { 'attributes' :
+    ( 'name' ,)
+      , 'description' : 'Instead it got: (max_crew = 4)'
+      , 'explanation' : 'All required attributes must be supplied'
+      , 'head' : "GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)"
+      , 'is_required' : True
+      }
+    ]
 
     >>> errors = []
     >>> SRM.Boat_Class (on_error = errors.append)

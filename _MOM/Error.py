@@ -49,6 +49,8 @@
 #    12-Apr-2012 (CT) Change `Required_Missing` to use `I18N`,
 #                     make it compatible to `Invariant_Error`
 #    15-Apr-2012 (CT) Complete overhaul: cleanup, renamings, reparentings, I18N
+#    16-Apr-2012 (CT) Continue complete overhaul: __super, refactoring, cleanup
+#    17-Apr-2012 (CT) Add `as_json_cargo`, factor `Invariant.bindings`, cleanup
 #    ««revision-date»»···
 #--
 
@@ -75,13 +77,51 @@ class Exception_Handled (BaseException) :
     """
 # end class Exception_Handled
 
+def as_json_cargo (* excs) :
+    def _gen (excs) :
+        for exc in excs :
+            try :
+                cargo = exc.as_json_cargo
+            except AttributeError :
+                cargo = dict \
+                    ( description = unicode (exc)
+                    , head        = exc.__class__.__name__
+                    )
+            if isinstance (cargo, (list, tuple)) :
+                for c in cargo :
+                    yield c
+            else :
+                yield cargo
+    return list (_gen (excs))
+# end def as_json_cargo
+
 class Error (Exception) :
     """Root class of MOM exceptions"""
 
-    __metaclass__ = TFL.Meta.Object.__class__
+    __metaclass__    = TFL.Meta.Object.__class__
 
-    arg_sep       = ", "
-    is_required   = False
+    arg_sep          = ", "
+    is_required      = False
+
+    _json_map        = dict \
+        ( as_unicode = "description"
+        )
+
+    _json_attributes = \
+        ( "as_unicode"
+        , "is_required"
+        )
+
+    @Once_Property
+    def as_json_cargo (self) :
+        json_map = self._json_map
+        result   = {}
+        for k in self._json_attributes :
+            v = getattr (self, k, None)
+            if v :
+                result [json_map.get (k, k)] = v
+        return result
+    # end def as_json_cargo
 
     @Once_Property
     def as_str (self) :
@@ -130,25 +170,44 @@ class Error (Exception) :
 
 class _Invariant_ (Error) :
 
-    attributes     = ()
-    extra_links    = ()
-    indent         = " " * 4
-    val_disp       = {}
-    val_desc       = {}
+    attributes       = ()
+    description      = ""
+    description_plus = ""
+    explanation      = ""
+    extra_links      = ()
+    indent           = " " * 4
+    val_disp         = {}
+
+    _json_attributes = \
+        ( "attributes"
+        , "bindings"
+        , "description"
+        , "explanation"
+        , "head"
+        , "is_required"
+        )
 
     def __init__ (self, obj) :
         self.obj = obj
     # end def __init__
 
-    @property
-    def description (self) :
-        return ""
-    # end def description
+    @Once_Property
+    def as_json_cargo (self) :
+        result = self.__super.as_json_cargo
+        xtra   = list \
+            (   pid
+            for pid in (getattr (x, "pid", None) for x in self.extra_links)
+            if  pid is not None
+            )
+        if xtra :
+            result ["extra_links"] = xtra
+        return result
+    # end def as_json_cargo
 
-    @property
-    def explanation (self) :
-        return ""
-    # end def explanation
+    @Once_Property
+    def bindings (self) :
+        return sorted (self.val_disp.iteritems ())
+    # end def bindings
 
     @property
     def head (self) :
@@ -164,12 +223,26 @@ class _Invariant_ (Error) :
     # end def assertion
 
     def _clean_this (self, s) :
-        return s.replace ("this.", "")
+        return s.replace ("this.", "").strip ()
     # end def _clean_this
+
+    def _formatted_bindings (self) :
+        for k, v in self.bindings :
+            if isinstance (v, (list, tuple)) :
+                v = ", ".join (v)
+            yield "%s = %s" % (k, v)
+    # end def _formatted_bindings
 
 # end class _Invariant_
 
 class Attribute (Error) :
+
+    _json_attributes = \
+        ( "as_unicode"
+        , "attributes"
+        , "bindings"
+        , "is_required"
+        )
 
     def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
         msg = \
@@ -178,12 +251,18 @@ class Attribute (Error) :
             )
         if exc :
             msg = "%s\n    %s" % (msg, exc)
-        self.args      = (msg, )
-        self.entity    = entity
-        self.kind      = kind
-        self.attribute = name
-        self.value     = val
+        self.args       = (msg, )
+        self.entity     = entity
+        self.kind       = kind
+        self.attribute  = name
+        self.attributes = (name, )
+        self.value      = val
     # end def __init__
+
+    @Once_Property
+    def bindings (self) :
+        return ((self.attribute, self.value), )
+    # end def bindings
 
     def correct (self) :
         pass
@@ -206,41 +285,47 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         self.__super.__init__ (obj)
         self.args         = (obj, attr, val, exc_str)
         self.obj          = obj
+        self.attribute    = attr
         self.attributes   = (attr, )
-        self.attr         = attr
         self.is_required  = attr.is_required
-        self.val          = val
+        self.value        = val
         self.exc_str      = exc_str
     # end def __init__
 
     @Once_Property
     def as_unicode (self) :
+        attr   = self.attribute
         result = \
             ( _T ( "`%s` for : `%r`"
                    "\n     expected type  : `%s`"
                    "\n     got      value : `%s`"
                  )
             % ( self.exc_str or _T ("Syntax error")
-              , self.attr, self.attr.typ, self.val
+              , attr, attr.typ, self.value
               )
             )
-        if self.attr.syntax :
-            result = "\n".join ((result, self.attr.syntax))
+        if attr.syntax :
+            result = "\n".join ((result, attr.syntax))
         return result
     # end def as_unicode
+
+    @Once_Property
+    def bindings (self) :
+        return ((self.attribute, self.value), )
+    # end def bindings
 
     @Once_Property
     def head (self) :
         return \
             ( _T ("Syntax error: \n  expected type `%s`\n  got value `%s`")
-            % (self.attr.typ, self.val)
+            % (self.attribute.typ, self.value)
             )
     # end def head
 
     @Once_Property
     def description (self) :
-        if self.attr.syntax :
-            return "%s: %s" % (_T ("Syntax"), _T (self.attr.syntax))
+        if self.attribute.syntax :
+            return "%s: %s" % (_T ("Syntax"), _T (self.attribute.syntax))
     # end def description
 
     @Once_Property
@@ -305,10 +390,9 @@ class Invariant (_Invariant_) :
         self.args           = (obj, inv)
         self.inv            = inv
         self.is_required    = inv.is_required
-        self.attributes     = inv.attributes + inv.attr_none
-        self.extra_links    = list (inv.extra_links)
-        self.val_disp       = dict (inv.val_disp)
-        self.val_desc       = dict (inv.val_desc)
+        self.attributes     = sorted (inv.attributes + inv.attr_none)
+        self.extra_links    = list   (inv.extra_links)
+        self.val_disp       = dict   (inv.val_disp)
         description         = inv.description
         try :
             self.inv_desc   = description % TFL.Caller.Object_Scope (obj)
@@ -358,14 +442,6 @@ class Invariant (_Invariant_) :
         return self._as_string (sep = "\n" + indent, indent = indent)
     # end def assertion
 
-    def attribute_values (self, head = None) :
-        return self._attribute_values (self.val_disp, head)
-    # end def attribute_values
-
-    def parameter_values (self, head = None) :
-        return self._attribute_values (self.val_desc, head)
-    # end def parameter_values
-
     def _as_string (self, sep = " ", head = "", indent = None) :
         desc   = self.description
         result = [head]
@@ -377,20 +453,13 @@ class Invariant (_Invariant_) :
         return self._clean_this ("".join (result))
     # end def _as_string
 
-    def _attribute_values (self, dict, head = None) :
-        result = head or []
-        for k, v in sorted (dict.iteritems ()) :
-            result.append ("%s = %s" % (k, v))
-        return result
-    # end def _attribute_values
-
     def _tail (self, indent = None) :
         if indent is None :
             indent = self.indent
-        result = self.parameter_values (self.attribute_values ())
+        result = []
         sep    = "\n" + indent
-        if result :
-            result = itertools.chain ([""], result)
+        if self.bindings :
+            result = itertools.chain ([""], self._formatted_bindings ())
         return sep.join (result)
     # end def _tail
 
@@ -404,6 +473,11 @@ class Invariants (Error) :
         errors = self.errors = sorted (errors, key = TFL.Getter.inv.name)
         self.__super.__init__ (* errors)
     # end def __init__
+
+    @Once_Property
+    def as_json_cargo (self) :
+        return list (e.as_json_cargo for e in self.errors)
+    # end def as_json_cargo
 
     @property
     def any_required_empty (self) :
@@ -433,7 +507,12 @@ class Multiplicity (Error) :
 # end class Multiplicity
 
 class Multiplicity_Errors (Error) :
-    pass
+
+    @Once_Property
+    def as_json_cargo (self) :
+        return list (a.as_json_cargo for a in self.args)
+    # end def as_json_cargo
+
 # end class Multiplicity_Errors
 
 class Name_Clash (Error) :
@@ -476,51 +555,34 @@ class Quant (Invariant) :
         self.__super.__init__ (obj, inv)
     # end def __init__
 
-    def violator_values (self, indent = None, sep = ", ") :
-        if indent is None :
-            indent = self.indent
-        inv    = self.inv
-        result = []
-        bvars  = inv.bvar [1:-1].split (",")
+    @Once_Property
+    def bindings (self) :
+        result = sorted \
+            (itertools.chain (self.__super.bindings, self._violator_values ()))
+        return result
+    # end def bindings
+
+    def _violator_values (self) :
+        bvars = inv.bvar [1:-1].split (",")
         for v, d in paired (self.violators, self.violators_attr) :
             if len (bvars) > 1 and isinstance (v, (list, tuple)) :
-                result.append \
-                    ( sep.join
-                        (self._violator_value (x) for x in paired (bvars, v))
-                    )
+                for k, v in paired (bvars, v) :
+                    yield (str (k), repr (r))
             elif isinstance (v, (list, tuple)) :
-                result.append \
-                    ("%s : [%s]" % (inv.bvar, ", ".join (map (unicode, v))))
+                yield \
+                    (str (inv.bvar), "[%s]" % (", ".join (map (unicode, v)), ))
             else :
-                result.append ("%s : %r" % (inv.bvar, v))
+                yield (str (inv.bvar), repr (v))
             if d :
                 try :
                     items = d.iteritems ()
                 except AttributeError :
-                    result.append (d)
+                    val = repr (d)
                 else :
-                    result.append \
-                        ( indent
-                        + sep.join
-                            ("%s = %s" % (a, x) for (a, x) in sorted (items))
-                        )
-        return result
-    # end def violator_values
-
-    def _tail (self, indent = None) :
-        if indent is None :
-            indent = self.indent
-        result = self.__super._tail   (indent)
-        sep    = "\n" + indent
-        tail   = self.violator_values ()
-        if tail :
-            result = itertools.chain (result, tail)
-        return sep.join (result)
-    # end def _tail
-
-    def _violator_value (self, kv) :
-        return "%s : %r" % kv
-    # end def _violator_value
+                    val = sorted \
+                        ((str (a), repr (x)) for (a, x) in items)
+                yield repr (v), val
+    # end def _violator_values
 
 # end class Quant
 
