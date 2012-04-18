@@ -84,6 +84,8 @@
 //     8-Mar-2012 (CT) Change `select_cb` to pass `anchor`
 //     8-Mar-2012 (CT) Change `select_cb` to delete `elem.value.edit.cid`
 //    19-Mar-2012 (CT) Use `.ui-state-default` in parent of `.ui-icon`
+//    18-Apr-2012 (CT) Factor `options.selectors.input_field`
+//    18-Apr-2012 (CT) Add (stub) clause for `answer ["errors"]` to `submit_cb`
 //    ««revision-date»»···
 //--
 
@@ -138,7 +140,8 @@
     $.fn.gtw_afs_form = function (afs_form, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
-            ( { submit                   : "[type=submit]"
+            ( { input_field              : ".Field :input:not(:hidden)"
+              , submit                   : "[type=submit]"
               }
             , icons.selectors
             , opts && opts ["selectors"] || {}
@@ -242,7 +245,7 @@
                 var match     = response.matches [item.index];
                 var names     = completer.names.slice (0, response.fields);
                 while (completer.embedded_p) {
-                    anchor    = $AFS_E.id_map [elem.anchor_id];
+                    anchor    = $AFS_E.id_map [anchor.anchor_id];
                     completer = anchor.completer;
                 };
                 if (response.partial) {
@@ -473,7 +476,7 @@
         };
         var _setup_callbacks = function _setup_callbacks (context) {
             _bind_click.apply (null, arguments);
-            $(".Field :input", context).each
+            $(options.selectors.input_field, context).each
                 ( function (n) {
                     var inp$ = $(this);
                     var id     = inp$.attr ("id");
@@ -667,6 +670,8 @@
                                             + $GTW.inspect.show
                                                 (answer.conflicts)
                                             );
+                                  } else if (answer ["errors"]) {
+                                      alert ("Errors: " + answer.errors);
                                   } else if (answer ["expired"]) {
                                       // XXX display re-authorization form
                                       alert ("Expired: " + answer.expired);
@@ -801,10 +806,11 @@
                         if (! answer ["error"]) {
                             if (answer ["conflicts"]) {
                                 // XXX
-                                alert
-                                    ( "Conflicts: \n"
-                                    + $GTW.inspect.show (answer.conflicts)
-                                    );
+                                console.error ("Conflicts", answer);
+                                alert ("Submit conflicts: more info in console");
+                            } else if (answer ["errors"]) {
+                                console.error ("Errors", answer);
+                                alert ("Submit error: more info in console");
                             } else if (answer ["expired"]) {
                                 // XXX display re-authorization form
                                 alert ("Expired: " + answer.expired);
@@ -816,8 +822,8 @@
                                 window.location = options.url.next;
                             }
                         } else {
-                            console.error
-                                ("Submit error", answer, json_data);
+                            console.error ("Submit error", answer, json_data);
+                            alert ("Submit error: more info in console");
                         }
                     }
                   }

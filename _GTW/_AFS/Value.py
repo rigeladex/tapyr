@@ -44,17 +44,22 @@
 #                     `results` to `elem.apply`
 #     5-Mar-2012 (CT) Add `allow_new` to `pop_to_self`
 #    12-Apr-2012 (CT) Add `errors` and `on_error` to `apply`
+#    18-Apr-2012 (CT) Change `apply` to use `MOM.Error.as_json_cargo`, break
+#                     on `MOM.Error.Error`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import unicode_literals, absolute_import
 
 from   _GTW                     import GTW
+from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 import _GTW._AFS.Element
 import _GTW._AFS.Error
 from   _GTW._AFS.Instance       import _Base_
+
+import _MOM.Error
 
 import _TFL.Sorted_By
 import _TFL._Meta.Property
@@ -176,17 +181,23 @@ class Value (_Base_) :
 
     def apply (self, * args, ** kw) :
         conflicts = 0
+        do_break  = False
         entities  = sorted (self.entity_children (), key = self.apply_key)
         results   = self.results = {}
         errors    = self.errors  = {}
         self._check_sids   (entities, ** kw)
         for e in entities :
             e.errors = []
-            e.entity = results [e.id] = e.elem.apply \
-                (e, results, * args, on_error = e.errors.append, ** kw)
+            try :
+                e.entity = results [e.id] = e.elem.apply \
+                    (e, results, * args, on_error = e.errors.append, ** kw)
+            except MOM.Error.Error :
+                do_break = True
             if e.errors :
-                errors [e.id] = e.errors
+                errors [e.id] = e.errors = MOM.Error.as_json_cargo (* e.errors)
             conflicts += e.conflicts
+            if do_break :
+                break
         if conflicts :
             raise GTW.AFS.Error.Conflict ()
     # end def apply

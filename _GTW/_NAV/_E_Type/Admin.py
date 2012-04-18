@@ -163,6 +163,7 @@
 #     7-Mar-2012 (CT) Factor `_get_attr_filter`, add handling of `json.fid`
 #     9-Mar-2012 (CT) Extract `allow_new` only if its in `req_data` or `json`
 #    19-Mar-2012 (CT) Change `Completed._rendered` to pass `collapsed = True`
+#    18-Apr-2012 (CT) Change `Change._post_handler` to consider `fv.errors`
 #    ««revision-date»»···
 #--
 
@@ -586,26 +587,29 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     get_template   = self.top.Templateer.get_template
                     session_secret = self.session_secret (handler, fv.sid)
                     self.form_value_apply (fv, scope, fv.sid, session_secret)
-                    ikw = dict \
-                        ( collapsed       = bool (json.get ("collapsed"))
-                        , _sid            = fv.sid
-                        , _session_secret = session_secret
-                        )
-                    if "allow_new" in json :
-                        ikw ["allow_new"] = bool (json.get ("allow_new"))
-                    result ["$child_ids"] = rids = []
-                    for e in fv.entities () :
-                        if e.entity :
-                            obj = e.entity
-                            fi  = self.instantiated \
-                                (e.elem, e.id, obj.ETM, obj, ikw)
-                            result [e.id] = dict \
-                                ( html = get_template
-                                    (e.elem.renderer).call_macro
-                                        (fi.widget, fi, fi, fi.renderer)
-                                , json = fi.as_json_cargo
-                                )
-                            rids.append (e.id)
+                    if fv.errors :
+                        result ["errors"] = fv.errors
+                    else :
+                        ikw = dict \
+                            ( collapsed       = bool (json.get ("collapsed"))
+                            , _sid            = fv.sid
+                            , _session_secret = session_secret
+                            )
+                        if "allow_new" in json :
+                            ikw ["allow_new"] = bool (json.get ("allow_new"))
+                        result ["$child_ids"] = rids = []
+                        for e in fv.entities () :
+                            if e.entity :
+                                obj = e.entity
+                                fi  = self.instantiated \
+                                    (e.elem, e.id, obj.ETM, obj, ikw)
+                                result [e.id] = dict \
+                                    ( html = get_template
+                                        (e.elem.renderer).call_macro
+                                            (fi.widget, fi, fi, fi.renderer)
+                                    , json = fi.as_json_cargo
+                                    )
+                                rids.append (e.id)
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)
