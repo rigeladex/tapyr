@@ -27,18 +27,21 @@
 #
 # Revision Dates
 #    30-Mar-2012 (CT) Creation
+#    18-Apr-2012 (CT) Use `I18N.decode` and `pyk.fprint`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import, division, unicode_literals
 
 from   _TFL             import TFL
 from   _CAL             import CAL
 
 from   _TFL.Regexp      import Regexp, Multi_Re_Replacer, Re_Replacer, re
+from   _TFL             import pyk
 
 import _CAL.Date_Time
 import _TFL.CAO
+import _TFL.I18N
 
 date_time_localizer_pattern = Regexp \
     ( ( r"(?P<head> ^|[[(\s])"
@@ -90,13 +93,15 @@ def _main (cmd) :
     if cmd.output :
         sys.stdout = open (cmd.output, "a")
     for l in lines :
+        if isinstance (l, str) :
+            l = TFL.I18N.decode (l)
         ll = date_time_localizer (l, cmd.format)
         try :
-            print (ll, end = "")
+            pyk.fprint (ll, end = "")
         except IOError :
             import sys
             sys.exit (0)
-    print ()
+    pyk.fprint ()
 # end def _main
 
 _Command = TFL.CAO.Cmd \

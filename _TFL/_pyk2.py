@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Jun-2010 (CT) Creation
 #     5-Jan-2011 (CT) `pickle` added
+#    18-Apr-2012 (CT) Change `fprint` to encode `sep` and `end`, too
 #    ««revision-date»»···
 #--
 
@@ -47,19 +48,20 @@ def fprint (* values, ** kw) :
        sep:  string inserted between values, default a space.
        end:  string appended after the last value, default a newline.
     """
-    def _convert (values, encoding) :
-        for v in values :
-            if not isinstance (v, basestring) :
-                v = str (v)
-            if isinstance (v, unicode) :
-                v = v.encode (encoding, "replace")
-            yield v
+    def _convert (v, encoding) :
+        if not isinstance (v, basestring) :
+            v = unicode (v)
+        if isinstance (v, unicode) :
+            v = v.encode (encoding, "replace")
+        return v
     file = kw.pop ("file", None)
     if file is None :
         file = sys.stdout
-    sep  = kw.pop ("sep",  " ")
-    end  = kw.pop ("end",  "\n")
-    file.write (sep.join (_convert (values, user_config.output_encoding)) + end)
+    enc  = user_config.output_encoding
+    sep  = _convert (kw.pop ("sep",  " "),  enc)
+    end  = _convert (kw.pop ("end",  "\n"), enc)
+    txt  = sep.join (_convert (v, enc) for v in values)
+    file.write (txt + end)
 # end def fprint
 
 ### __END__ TFL._pyk2
