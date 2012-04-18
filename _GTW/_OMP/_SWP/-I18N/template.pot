@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-12 13:11+0200\n"
+"POT-Creation-Date: 2012-04-18 09:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -221,11 +221,11 @@ msgid ""
 "belongs to."
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title"
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title (used in navigation)."
 msgstr ""
 
@@ -249,7 +249,7 @@ msgstr ""
 msgid "Thumbnail"
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Title"
 msgstr ""
 

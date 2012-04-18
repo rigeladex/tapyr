@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-12 13:11+0200\n"
+"POT-Creation-Date: 2012-04-18 09:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _GTW._OMP._EVT.Calendar:0 _GTW._OMP._EVT.Event:0
+#: _GTW._OMP._EVT.Event:0 _GTW._OMP._EVT.Calendar:0
 msgid "Calendar"
 msgid_plural "Calendars"
 msgstr[0] ""
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Easter offset"
 msgstr ""
 
-#: _GTW._OMP._EVT.Recurrence_Spec:0 _GTW._OMP._EVT.Event:0
+#: _GTW._OMP._EVT.Event:0 _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Event"
 msgid_plural "Events"
 msgstr[0] ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-12 13:11+0200\n"
+"POT-Creation-Date: 2012-04-18 09:43+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -228,11 +228,11 @@ msgid ""
 "belongs to."
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title"
 msgstr "Kurztitel"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title (used in navigation)."
 msgstr "Kurztitel (wird in Navigation verwendet)."
 
@@ -260,7 +260,7 @@ msgstr "Miniaturbild"
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Title"
 msgstr "Titel"
 

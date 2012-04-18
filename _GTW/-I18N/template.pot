@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-12 13:11+0200\n"
+"POT-Creation-Date: 2012-04-18 09:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,15 +78,15 @@ msgstr ""
 msgid "August"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:249 _GTW/__test__/model.py:239
+#: _GTW/__test__/form_app.py:249 _GTW/__test__/model.py:244
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:252 _GTW/__test__/model.py:242
+#: _GTW/__test__/form_app.py:252 _GTW/__test__/model.py:247
 msgid "Authorization and Account handling"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:260 _GTW/__test__/model.py:250
+#: _GTW/__test__/form_app.py:260 _GTW/__test__/model.py:255
 msgid "Choice of language used for localization"
 msgstr ""
 
@@ -139,7 +139,7 @@ msgstr ""
 msgid "Form corrupted, unknown element id %s"
 msgstr ""
 
-#: _GTW/_AFS/Value.py:203
+#: _GTW/_AFS/Value.py:209
 #, python-format
 msgid "Form/element is unknown (unknown id: %s)"
 msgstr ""
@@ -176,7 +176,7 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: _GTW/__test__/form_app.py:257 _GTW/__test__/model.py:247
+#: _GTW/__test__/form_app.py:257 _GTW/__test__/model.py:252
 msgid "L10N"
 msgstr ""
 

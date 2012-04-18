@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-12 13:11+0200\n"
+"POT-Creation-Date: 2012-04-18 09:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,8 +50,8 @@ msgstr ""
 msgid "Belgium"
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat:0 _GTW._OMP._SRM.Boat_in_Regatta:0
-#: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
+#: _GTW._OMP._SRM.Boat_in_Regatta:0 _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
+#: _GTW._OMP._SRM.Boat:0
 msgid "Boat"
 msgid_plural "Boats"
 msgstr[0] ""
@@ -101,8 +101,8 @@ msgstr ""
 msgid "Class of boats sailing in this regatta."
 msgstr ""
 
-#: _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Club:0 _GTW._OMP._SRM.Team:0
-#: _GTW._OMP._SRM.Sailor:0
+#: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta_Event:0
+#: _GTW._OMP._SRM.Club:0
 msgid "Club"
 msgid_plural "Clubs"
 msgstr[0] ""
@@ -112,7 +112,7 @@ msgstr[1] ""
 msgid "Club that organizes the regatta."
 msgstr ""
 
-#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
+#: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Team:0
 msgid "Club the sailor is starting for."
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Greece"
 msgstr ""
 
-#: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_Class:0
+#: _GTW._OMP._SRM.Boat_Class:0 _GTW._OMP._SRM.Regatta:0
 msgid "Handicap"
 msgid_plural "Handicaps"
 msgstr[0] ""
@@ -348,7 +348,7 @@ msgstr ""
 msgid "Name of the sailing team."
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat:0 _GTW._OMP._SRM.Sailor:0
+#: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Boat:0
 msgid "Nation"
 msgstr ""
 
@@ -384,7 +384,7 @@ msgstr ""
 msgid "Person which sails as crew member on `boat_in_regatta`"
 msgstr ""
 
-#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Boat_in_Regatta:0
+#: _GTW._OMP._SRM.Boat_in_Regatta:0 _GTW._OMP._SRM.Team:0
 msgid "Place"
 msgstr ""
 
@@ -396,7 +396,7 @@ msgstr ""
 msgid "Place of team in this regatta."
 msgstr ""
 
-#: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Boat_in_Regatta:0
+#: _GTW._OMP._SRM.Boat_in_Regatta:0 _GTW._OMP._SRM.Race_Result:0
 msgid "Points"
 msgstr ""
 
@@ -434,8 +434,8 @@ msgstr[1] ""
 msgid "Races"
 msgstr ""
 
-#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
+#: _GTW._OMP._SRM.Boat_in_Regatta:0 _GTW._OMP._SRM.Team:0
+#: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta"
 msgid_plural "Regattas"
 msgstr[0] ""
@@ -593,7 +593,7 @@ msgstr ""
 msgid "Spain"
 msgstr ""
 
-#: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Attr_Type:0
+#: _GTW._OMP._SRM.Attr_Type:0 _GTW._OMP._SRM.Race_Result:0
 msgid "Status"
 msgstr ""
 
