@@ -86,6 +86,9 @@
 //    19-Mar-2012 (CT) Use `.ui-state-default` in parent of `.ui-icon`
 //    18-Apr-2012 (CT) Factor `options.selectors.input_field`
 //    18-Apr-2012 (CT) Add (stub) clause for `answer ["errors"]` to `submit_cb`
+//    19-Apr-2012 (CT) Add `options.selectors.focusables`,
+//                     add calls to `focus` to `_setup_callbacks` and `_put_cb`
+//    19-Apr-2012 (CT) Add `_display_error_map` and its callees
 //    ««revision-date»»···
 //--
 
@@ -140,7 +143,11 @@
     $.fn.gtw_afs_form = function (afs_form, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
-            ( { input_field              : ".Field :input:not(:hidden)"
+            ( { entity_errors            : "section.entity-errors"
+              , err_msg                  : "div.error-msg"
+              , focusables               :
+                  ".Field :input:not(:hidden), .cmd-button [href=#EDIT], .cmd-button [href=#SELECT]"
+              , input_field              : ".Field :input:not(:hidden)"
               , submit                   : "[type=submit]"
               }
             , icons.selectors
@@ -280,13 +287,30 @@
                 };
             };
             var _put_cb = function put_cb (options, elem, response, entity_p) {
-                var anchor, s$;
+                var S = options.selectors;
+                var anchor, ifs$, id, s$;
                 if (response.completions > 0) {
                     if ((response.completions == 1) && entity_p) {
                         anchor = $AFS_E.get (elem.anchor_id || elem.root_id);
-                        s$ = $("[id='" + response.json.$id + "']");
+                        id = response.json.$id;
+                        s$ = $("[id='" + id + "']");
                         s$ = _response_replace (response, s$, anchor);
                         _setup_callbacks (s$);
+                        ifs$ = $(S.input_field, s$);
+                        if (! ifs$.length) {
+                            ifs$ = $(S.input_field)
+                                .filter
+                                    ( function (index) {
+                                        return "id" in this && this ["id"] > id;
+                                      }
+                                    );
+                        };
+                        if (! ifs$.length) {
+                            // no input fields remaining below the field(s)
+                            // just completed --> focus on submit button
+                            ifs$ = $(S.submit);
+                        };
+                        ifs$.first ().focus ();
                     } else if (response.fields > 0) {
                         _update_field_values
                             (options, elem, response.values, response.names);
@@ -311,7 +335,7 @@
                         };
                     };
                 };
-            } ;
+            };
             var _update_field_values = function _update_field_values
                     (options, elem, match, names) {
                 var field, id;
@@ -406,18 +430,136 @@
                 key  = name.replace (/ /g, "_");
                 if (name in map) {
                     result.push
-                        ( { callback : cmd_callback   [key]
-                          , label    : map            [name]
+                        ( { callback : cmd_callback     [key]
+                          , label    : map              [name]
                           , name     : name.toUpperCase ()
-                          , title    : options.titles [name]
+                          , title    : options.titles   [name]
                           }
                         );
                 } else {
                     alert ("Unknown command " + name);
-                }
+                };
             };
             return result;
-        } ;
+        };
+        var _display_error = function _display_error (elem, elem$, errs$, err) {
+            var S         = options.selectors;
+            var map       = elem.field_name_map;
+            var attrs     = "attributes" in err && err ["attributes"];
+            var err$      = $(L (S.err_msg));
+            var field_map = {};
+            var fields$;
+            if (attrs) {
+                fields$ = $.map
+                    ( attrs
+                    , function (name) {
+                        var b$, field, f$, id = map [name], l$;
+                        if (id in $AFS_E.id_map) {
+                            field = $AFS_E.id_map [id];
+                            l$ = $("label[for='" + id + "']");
+                            b$ = $("b.Status", l$);
+                            if ("inp$" in field) {
+                                f$ = field.inp$;
+                                field_map [name] = f$;
+                                f$.addClass ("bad");
+                                b$.toggleClass ("bad",  true)
+                                  .toggleClass ("good", false);
+                                return f$;
+                            };
+                        };
+                      }
+                    );
+            };
+            errs$.append (err$);
+            err$.append
+                ($( L ( "h2"
+                      , { html : (attrs ? attrs [0] + ": " : "") + err.head }
+                      )
+                  )
+                );
+            if ("description" in err) {
+                err$.append
+                    ($(L ("div.description", { html : err.description })));
+            };
+            if ("bindings" in err) {
+                _display_error_bindings (err$, err, attrs, field_map);
+            };
+            if ("explanation" in err) {
+                err$.append
+                    ($(L ("div.explanation", { html : err.explanation })));
+            };
+            if (fields$) {
+                err$.click
+                    ( function (ev) {
+                        fields$ [0].focus ();
+                      }
+                    );
+            };
+        };
+        var _display_errors = function _display_errors (id, errors) {
+            var S    = options.selectors;
+            var elem = $AFS_E.get (id);
+            var elem$, errs$;
+            if (elem.collapsed) {
+                // XXX open `elem`;
+            };
+            elem$ = $("[id='" + id + "']");
+            errs$ = $(S.entity_errors);
+            if (! errs$.length) {
+                $("h1, h2, h3", elem$).first ()
+                    .after ($( L (S.entity_errors)));
+                errs$ = $(S.entity_errors);
+            };
+            elem$.addClass ("bad");
+            errs$.html
+                ($(L ("h1", { html : options.texts ["Entity-Errors"]})));
+            for (var i = 0, li = errors.length, err; i < li; i++) {
+                err = errors [i];
+                _display_error (elem, elem$, errs$, err);
+            };
+        };
+        var _display_error_binding = function _display_error_binding
+                (name, value, field_map, bs$) {
+            var tr$ =
+                $( L ("tr", {}, L ( "td.name",  { html : name })))
+                    .click
+                        ( function (ev) {
+                            field_map [name].focus ();
+                          }
+                        );
+            if (value) {
+                tr$ .append (L ( "td",       { html : "="   }))
+                    .append (L ( "td.value", { html : value }));
+            };
+            bs$.append (tr$);
+        };
+        var _display_error_bindings = function _display_error_bindings
+                (err$, err, attrs, field_map) {
+            var bs$ = $(L ("table.bindings")), seen = {};
+            var name;
+            err$.append (bs$);
+            for (var i = 0, li = err.bindings.length, b; i < li; i++) {
+                b           = err.bindings [i];
+                name        = b [0];
+                seen [name] = true;
+                _display_error_binding (name, b [1], field_map, bs$);
+            };
+            for (var j = 0, lj = attrs.length, attr; j < lj; j++) {
+                attr = attrs [j];
+                if (! (attr in seen)) {
+                    _display_error_binding (attr, null, field_map, bs$);
+                };
+            };
+        };
+        var _display_error_map = function _display_error_map (error_map) {
+            var id, errors;
+            for (id in error_map) {
+                if (error_map.hasOwnProperty (id)) {
+                    errors = error_map [id];
+                    _display_errors (id, errors);
+                };
+            };
+        };
         var _response_append = function _response_append
                 (response, txt_status, p$, parent) {
             var anchor, root, new_elem, s$;
@@ -445,8 +587,8 @@
                     _setup_callbacks (s$);
                 } else {
                     console.error ("Ajax Error", response);
-                }
-            }
+                };
+            };
         };
         var _response_replace = function _response_replace (response, s$, elem) {
             var anchor, new_elem, root;
@@ -475,8 +617,9 @@
             return s$;
         };
         var _setup_callbacks = function _setup_callbacks (context) {
+            var S = options.selectors;
             _bind_click.apply (null, arguments);
-            $(options.selectors.input_field, context).each
+            $(S.input_field, context).each
                 ( function (n) {
                     var inp$ = $(this);
                     var id     = inp$.attr ("id");
@@ -496,6 +639,10 @@
                     _setup_cmd_buttons ($(this));
                   }
                 );
+            $(S.focusables, context)
+                .addClass  ("focusable")
+                .first     (":input")
+                    .focus ();
         };
         var _setup_cmd_buttons = function _setup_cmd_buttons (cmc$) {
             var s$     = cmc$.closest ("div[id],section");
@@ -509,7 +656,9 @@
                     var ht  = "a.ui-icon." + icons.ui_class [cmd.name];
                     cmc$.append
                         ($( L ( "b.ui-state-default", { title : cmd.title }
-                              , L (ht, { html : cmd.label })
+                              , L ( ht
+                                  , { html : cmd.label , href : "#" + cmd.name }
+                                  )
                               )
                           ).click
                               ( function cmd_click (ev) {
@@ -554,8 +703,8 @@
                                             (response, s$, elem);
                                     } else {
                                         console.error ("Ajax Error", response);
-                                    }
-                                }
+                                    };
+                                };
                             }
                           );
                   } else {
@@ -625,8 +774,8 @@
                                     _setup_callbacks (s$);
                                 } else {
                                     console.error ("Ajax Error", response);
-                                }
-                            }
+                                };
+                            };
                         }
                       );
               }
@@ -646,8 +795,8 @@
                                     _setup_callbacks (s$);
                                 } else {
                                     console.error ("Ajax Error", response);
-                                }
-                            }
+                                };
+                            };
                         }
                       );
               }
@@ -683,12 +832,12 @@
                                       } else {
                                           console.error
                                               ("Save missing response", answer);
-                                      }
-                                  }
+                                      };
+                                  };
                               } else {
                                   console.error
                                       ("Save error", answer, json_data);
-                              }
+                              };
                           }
                         }
                       , "Save"
@@ -706,7 +855,7 @@
                           };
                       };
                       s$.find ("h2 i").html (display);
-                  } ;
+                  };
                   if (! selector) {
                       target$.gtw_e_type_selector_afs
                           ( { afs :
@@ -723,38 +872,6 @@
                   selector.activate_cb (ev);
               }
             };
-        var field_change_cb = function field_change_cb (ev) {
-            var f$ = $(this);
-            var id = f$.attr ("id");
-            var l$ = $("label[for='" + id + "']");
-            var b$ = $("b.Status", l$);
-            var afs_field = $AFS_E.get (id);
-            var status = true;
-            var ini_value, new_value, old_value, anchor;
-            if (afs_field !== undefined) {
-                ini_value = afs_field.value.init;
-                if (f$.attr ("type") == "checkbox") {
-                    new_value = f$.attr ("checked") ? "yes" : "no";
-                } else {
-                    new_value = f$.val ();
-                }
-                old_value = afs_field.value.edit || ini_value;
-                afs_field.value.edit = new_value;
-                if ("checker" in afs_field) {
-                    status = afs_field.checker (afs_field, new_value);
-                };
-                b$.toggleClass ("bad",     !  status)
-                  .toggleClass ("good",    !! status);
-                f$.toggleClass ("bad",     !  status);
-                if (f$.attr ("required")) {
-                    b$.toggleClass ("missing", !  (new_value))
-                      .toggleClass ("good",    !! (new_value && status));
-                    f$.toggleClass ("missing", !  (new_value));
-                };
-                // trigger `afs_change` event of `anchor`
-                // anchor = $AFS_E.get (afs_field.anchor_id);
-            }
-        };
         var cmd_set =
             { Entity                    : function Entity (elem) {
                   var names = [];
@@ -769,7 +886,7 @@
                   var names = [];
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
-                  }
+                  };
                   if (elem.collapsed) {
                       names.push ("Copy", "Edit");
                   } else {
@@ -793,6 +910,38 @@
                   return _cmds.apply (null, names);
               }
             };
+        var field_change_cb = function field_change_cb (ev) {
+            var f$ = $(this);
+            var id = f$.attr ("id");
+            var l$ = $("label[for='" + id + "']");
+            var b$ = $("b.Status", l$);
+            var afs_field = $AFS_E.get (id);
+            var status = true;
+            var ini_value, new_value, old_value, anchor;
+            if (afs_field !== undefined) {
+                ini_value = afs_field.value.init;
+                if (f$.attr ("type") == "checkbox") {
+                    new_value = f$.attr ("checked") ? "yes" : "no";
+                } else {
+                    new_value = f$.val ();
+                };
+                old_value = afs_field.value.edit || ini_value;
+                afs_field.value.edit = new_value;
+                if ("checker" in afs_field) {
+                    status = afs_field.checker (afs_field, new_value);
+                };
+                b$.toggleClass ("bad",     !  status)
+                  .toggleClass ("good",    !! status);
+                f$.toggleClass ("bad",     !  status);
+                if (f$.attr ("required")) {
+                    b$.toggleClass ("missing", !  (new_value))
+                      .toggleClass ("good",    !! (new_value && status));
+                    f$.toggleClass ("missing", !  (new_value));
+                };
+                // trigger `afs_change` event of `anchor`
+                // anchor = $AFS_E.get (afs_field.anchor_id);
+            }
+        };
         var submit_cb = function submit_cb (ev) {
             var target$      = $(ev.target);
             var name         = target$.attr ("name");
@@ -810,7 +959,7 @@
                                 alert ("Submit conflicts: more info in console");
                             } else if (answer ["errors"]) {
                                 console.error ("Errors", answer);
-                                alert ("Submit error: more info in console");
+                                _display_error_map (answer.errors);
                             } else if (answer ["expired"]) {
                                 // XXX display re-authorization form
                                 alert ("Expired: " + answer.expired);
@@ -820,17 +969,17 @@
                                     + " was successful!"
                                     );
                                 window.location = options.url.next;
-                            }
+                            };
                         } else {
                             console.error ("Submit error", answer, json_data);
                             alert ("Submit error: more info in console");
-                        }
+                        };
                     }
                   }
                 , "Submit"
                 );
             return false;
-        } ;
+        };
         options.form$ = this;
         this.delegate (selectors.submit, "click", submit_cb);
         _setup_callbacks (this);

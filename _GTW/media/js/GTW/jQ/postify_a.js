@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -20,6 +20,8 @@
 //    27-Jul-2011 (CT) Use `gtw_ajax_2json` instead of home-grown code
 //    21-Nov-2011 (CT) Add `hidden_selector`
 //    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
+//    19-Apr-2012 (CT) If `"hidden_selector" in options` --> set `display` of
+//                     `this` to `"inherit"` to placate Chrome
 //    ««revision-date»»···
 //--
 
@@ -68,10 +70,7 @@
                   }
                 );
         };
-        this
-            .click (delete_cb)
-            .css   ({ display : options.display_value })
-            .show  ();
+        this.click (delete_cb);
         if ("hidden_selector" in options) {
             this.each
                 ( function () {
@@ -80,6 +79,9 @@
                       p.css ({ display : options.display_value }).show ();
                   }
                 );
+            this.css ({ display : "inherit" }).show ();
+        } else {
+            this.css ({ display : options.display_value }).show ();
         };
         return this;
     }

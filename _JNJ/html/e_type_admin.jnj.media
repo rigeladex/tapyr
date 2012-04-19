@@ -58,6 +58,7 @@
 #    21-Feb-2012 (CT) Add `Script` for `GTW_L`
 #    29-Feb-2012 (CT) Add rule for `cmd-button`, remove rule for `cmd b`
 #     8-Mar-2012 (CT) Factor rules for `.QR` to `html/e_type.m.jnj.media`
+#    19-Apr-2012 (CT) Add rule for `.ui-state-default` to placate Chrome
 #    ««revision-date»»···
 #--
 
@@ -153,6 +154,11 @@ style_sheet = Style_Sheet \
                 ( ".Count"
                 , padding         = TRBL0 (r = Em (0.1), l = Em (0.5))
                 , text_align      = "right"
+                )
+            , Rule ### otherwise, Chrome has wrong dimensions
+                ( ".ui-state-default"
+                , height          = Px (16)
+                , width           = Px (16)
                 )
             ]
         )

@@ -1,6 +1,6 @@
 {#- jinja template:  html/input_5.jnj -#}
 {#
-## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -38,6 +38,7 @@
 ##    22-Nov-2011 (CT) Add handling of `disabled` to `_input`
 ##    30-Nov-2011 (CT) Add handling of `required` to `_input`
 ##     2-Dec-2011 (CT) Change `_input` to `pop` empty `name`
+##    19-Apr-2012 (CT) Change `number` to use `_input_c`, not `_input`
 ##    ««revision-date»»···
 ##--
 #}
@@ -116,7 +117,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- endmacro -%}
 
 {%- macro number () -%}
-  {{ _input ("number", kwargs) }}
+  {{ _input_c ("number", kwargs) }}
 {%- endmacro -%}
 
 {%- macro password () -%}

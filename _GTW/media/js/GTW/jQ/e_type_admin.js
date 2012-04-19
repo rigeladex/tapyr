@@ -16,6 +16,7 @@
 // Revision Dates
 //    26-Nov-2011 (CT) Creation
 //    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
+//    19-Apr-2012 (CT) Add `options.postify_options.hidden_selector`
 //    ««revision-date»»···
 //--
 
@@ -73,12 +74,13 @@
         };
         $GTW.ETA$ = new $GTW.Module (
             { options            :
-                { linkify_selector   : "tbody tr"
-                , obj_list_selector  : ".Object-List"
-                , postify_options    :
-                    { display_value  : "table-cell"
+                { linkify_selector    : "tbody tr"
+                , obj_list_selector   : ".Object-List"
+                , postify_options     :
+                    { display_value   : "table-cell"
+                    , hidden_selector : "td"
                     }
-                , postify_selector   : "a.delete"
+                , postify_selector    : "a.delete"
                 }
             , setup_obj_list     : setup_obj_list
             }

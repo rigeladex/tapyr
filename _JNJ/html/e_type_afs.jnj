@@ -44,6 +44,7 @@
 ##     5-Mar-2012 (CT) Add `Select`
 ##     7-Mar-2012 (CT) Add `url` entries for `qx_esf...`
 ##    16-Mar-2012 (CT) Add `<noscript>` to signal need of Javascript
+##    19-Apr-2012 (CT) Add `texts ["Entity-Errors"]`
 ##    ««revision-date»»···
 ##--
 #}
@@ -74,6 +75,9 @@
             , {{- trans (GTW._ ("Reset")) -}}
             , {{- trans (GTW._ ("Select")) -}}
             , {{- trans (GTW._ ("Save")) -}}
+            }
+        , texts : {# -#}
+            { {{- trans ("Entity-Errors", GTW._ ("Please change the fields that have errors")) -}}
             }
         , titles : {# -#}
             { {{- trans ("Add",    GTW._ ("Create new object")) -}}

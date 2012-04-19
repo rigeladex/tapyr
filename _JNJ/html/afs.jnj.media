@@ -45,6 +45,7 @@
 #    23-Feb-2012 (CT) Add rules for `.Status.bad`, `.good`, and `.missing`
 #    29-Feb-2012 (CT) Include `cmd_button.media` instead of `cmd_menu.media`
 #     7-Mar-2012 (CT) Add child rule `i:before` to `.AFS h2`
+#    19-Apr-2012 (CT) Add rules for `.bad`, `.entity-errors` and `.focusable`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,11 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "h1 > a.button", "h2 > a.button"
                 , font_size     = Percent (70)
+                )
+            , Rule
+                ( ".bad"
+                , border_color      = P.color_status_bad
+                , border_width      = Px (3)
                 )
             , Rule
                 ( ".cmd-button"
@@ -255,6 +261,41 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
+                ( ".entity-errors"
+                , background_color = P.color_status_bad
+                , padding          = P.afs.header_padding
+                , children         =
+                    [ Rule
+                        ( "h1", "h2"
+                        , background_color = "inherit"
+                        , color            = "inherit"
+                        , padding          = 0
+                        )
+                    , Rule
+                        ( ".bindings tr"
+                        , padding          = TRBL (0, Em (0.25))
+                        , children         =
+                            [ Rule
+                                ( "td", "td + td"
+                                , border      = 0
+                                , padding     = TRBL (0, Em (0.25))
+                                )
+                            , Rule
+                                ( ".value"
+                                , color       = P.color_status_bad
+                                , font_weight = "bold"
+                                )
+                            ]
+                        )
+                    , Rule
+                        ( ".error-msg"
+                        , Border           = P.border_button
+                        , cursor           = "pointer"
+                        , padding          = TRBL0 (r = 0, default = Em (0.25))
+                        )
+                    ]
+                )
+            , Rule
                 ( ".Horizo"
                 , float            = "left"
                 )
@@ -269,6 +310,16 @@ style_sheet = Style_Sheet \
             , Rule
                 ( ".Primary", ".Required"
                 , P.afs.color_spec_required
+                )
+            , Rule
+                ( ".focusable"
+                , outline          = "2px solid " + P.color_light_grey
+                , children         =
+                    [ Rule_Pseudo
+                        ( "focus"
+                        , border_color = P.color.m_blue
+                        )
+                    ]
                 )
             ]
         )
