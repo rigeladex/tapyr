@@ -54,6 +54,7 @@
 #    19-Apr-2012 (CT) Generalize `_formatted_bindings` for use in
 #                     `Required_Missing.description`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name`
+#    19-Apr-2012 (CT) Change `_formatted_bindings` to remove @*$&@*% `u` prefix
 #    ««revision-date»»···
 #--
 
@@ -233,11 +234,14 @@ class _Invariant_ (Error) :
     def _formatted_bindings (self, bindings = None) :
         if bindings is None :
             bindings = self.bindings
-        format = "%s = %r" if self.raw else "%s = %s"
         for k, v in bindings :
             if isinstance (v, (list, tuple)) :
-                v = ", ".join (v)
-            yield format % (k, v)
+                v = ", ".join ("%s" % (x, ) for x in v)
+            elif v is not None :
+                v = ("%r" if self.raw else "%s") % (v, )
+                if v.startswith (('u"', "u'")) :
+                    v = v [1:]
+            yield "%s = %s" % (k, v)
     # end def _formatted_bindings
 
 # end class _Invariant_
