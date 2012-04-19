@@ -55,7 +55,7 @@ create = r"""
     >>> per = PAP.Person                   ("ln", "fn")
     Traceback (most recent call last):
     ...
-    Name_Clash: new definition of GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'') clashes with existing GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')
+    Name_Clash: new definition of Person (u'ln', u'fn', u'', u'') clashes with existing Person (u'ln', u'fn', u'', u'')
 
     ### the name clash resulted in a rollback of the scope. Therefore only
     ### one Person object should be in the database after the name clash

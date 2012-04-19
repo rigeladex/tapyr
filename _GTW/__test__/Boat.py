@@ -117,7 +117,7 @@ _test_code = """
     >>> b.set (left = laser)
     Traceback (most recent call last):
       ...
-    AttributeError: Init-only attribute `GTW.OMP.SRM.Boat.left` cannot be changed from `(u'optimist')` to `(u'laser')` after object creation
+    AttributeError: Init-only attribute `Boat.left` cannot be changed from `(u'optimist')` to `(u'laser')` after object creation
 
     >>> print scope.SRM.Boat.count ### 7
     2
@@ -129,7 +129,7 @@ _test_code = """
     >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of GTW.OMP.SRM.Boat_Class (u'optimist') clashes with existing GTW.OMP.SRM.Boat_Class (u'optimist')
+    Name_Clash: new definition of Boat_Class (u'optimist') clashes with existing Boat_Class (u'optimist')
 
     >>> print scope.SRM.Boat.count ### 8
     2
@@ -203,23 +203,23 @@ _test_code = """
     >>> SRM.Boat_Class ("Seascape 18", on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',); Instead it got: ('Seascape 18')
+    Invariants: Boat_Class needs the required attributes: ('max_crew',); Instead it got: ('Seascape 18')
     >>> errors
-    [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('max_crew',)", u"Instead it got: ('Seascape 18')")]
+    [Required_Missing(u"Boat_Class needs the required attributes: ('max_crew',)", u"Instead it got: ('Seascape 18')")]
 
     >>> errors = []
     >>> SRM.Boat_Class (max_crew = 4, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',); Instead it got: (max_crew = 4)
+    Required_Missing: Boat_Class needs the required attributes: ('name',); Instead it got: (max_crew = 4)
     >>> errors
-    [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: (max_crew = 4)')]
+    [Required_Missing(u"Boat_Class needs the required attributes: ('name',)", u'Instead it got: (max_crew = 4)')]
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
     ( 'name' ,)
       , 'description' : 'Instead it got: (max_crew = 4)'
       , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)"
+      , 'head' : "Boat_Class needs the required attributes: ('name',)"
       , 'is_required' : True
       }
     ]
@@ -228,9 +228,24 @@ _test_code = """
     >>> SRM.Boat_Class (on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',); Instead it got: ()
+    Required_Missing: Boat_Class needs the required attributes: ('name',); Instead it got: ()
     >>> errors
-    [Required_Missing(u"GTW.OMP.SRM.Boat_Class needs the required attributes: ('name',)", u'Instead it got: ()')]
+    [Required_Missing(u"Boat_Class needs the required attributes: ('name',)", u'Instead it got: ()')]
+
+    >>> errors = []
+    >>> SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
+    Traceback (most recent call last):
+      ...
+    Required_Missing: Boat needs the required attributes: ('left',); Instead it got: (sail_number = '187042')
+    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [ { 'attributes' :
+    ( 'left' ,)
+      , 'description' : "Instead it got: (sail_number = '187042')"
+      , 'explanation' : 'All required attributes must be supplied'
+      , 'head' : "Boat needs the required attributes: ('left',)"
+      , 'is_required' : True
+      }
+    ]
 
     >>> scope.destroy ()
 

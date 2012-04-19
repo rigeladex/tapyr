@@ -182,6 +182,8 @@
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    16-Apr-2012 (CT) Factor `FO.__call__`, add optional argument `value`
 #    16-Apr-2012 (CT) Change `epkified` to `raise TypeError` if `not missing`
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
+#                     exceptions
 #    ««revision-date»»···
 #--
 
@@ -368,7 +370,7 @@ class Entity (TFL.Meta.Object) :
 
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
-            raise MOM.Error.Partial_Type (cls.type_name)
+            raise MOM.Error.Partial_Type (_T (cls.ui_name))
         result = super (Entity, cls).__new__ (cls)
         result._home_scope = kw.get ("scope")
         result._init_meta_attrs ()
@@ -696,7 +698,7 @@ class Entity (TFL.Meta.Object) :
         try :
             return TFL.I18N.encode_o (self._repr (self.type_name))
         except AttributeError :
-            return "<%s Incomplete>" % (self.type_name, )
+            return "<%s Incomplete>" % (_T (self.ui_name), )
     # end def __repr__
 
     def __str__ (self) :
@@ -1139,7 +1141,7 @@ class Id_Entity (Entity) :
             else :
                 raise TypeError \
                     ( _T ("%s needs the arguments %s, got %s instead")
-                    % (cls.type_name, needed, epk)
+                    % (_T (cls.ui_name), needed, epk)
                     )
             raise error
     # end def epkified

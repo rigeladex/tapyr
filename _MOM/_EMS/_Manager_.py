@@ -66,6 +66,8 @@
 #    28-Sep-2010 (CT) `rollback` changed to use `temp_change_recorder`,
 #                     `_rollback` factored
 #    16-Apr-2012 (MG) `add` added
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
+#                     exceptions
 #    ««revision-date»»···
 #--
 
@@ -190,7 +192,7 @@ class _Manager_ (TFL.Meta.Object) :
                   , _T ("Use one of the types %s instead.")
                   )
                 )
-            % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
+            % (_T (Type.ui_name), ", ".join (sorted (Type.relevant_roots)))
             )
     # end def instance
 
@@ -208,8 +210,8 @@ class _Manager_ (TFL.Meta.Object) :
         result = self.pm.query (int (pid))
         if Type is not None and not isinstance (result, Type.Essence) :
             raise LookupError \
-                ( "Pid `%r` is instance of type %s, not of type `%s`"
-                % (pid, result.type_name, Type.type_name)
+                ( _T ("Pid `%r` is instance of type %s, not of type `%s`")
+                % (pid, _T (result.ui_name), _T (Type.ui_name))
                 )
         return result
     # end def pid_query

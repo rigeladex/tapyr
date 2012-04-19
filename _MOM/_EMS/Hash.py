@@ -77,6 +77,8 @@
 #    17-Nov-2011 (CT) Change `rename` to not remove `entity` from `table`
 #                     if `renamer` raises an exception
 #    16-Apr-2012 (MG) `add` renamed to `_add`
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
+#                     exceptions
 #    ««revision-date»»···
 #--
 
@@ -177,7 +179,7 @@ class Manager (MOM.EMS._Manager_) :
                   , _T ("Use one of the types %s instead.")
                   )
                 )
-            % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
+            % (_T (Type.ui_name), ", ".join (sorted (Type.relevant_roots)))
             )
     # end def instance
 

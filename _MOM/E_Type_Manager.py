@@ -103,6 +103,8 @@
 #    20-Dec-2011 (CT) Add guard against `None` to `ac_query_attrs`
 #    15-Feb-2012 (CT) Adapt to change of `max_links` (now `-1` means unlimited)
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
+#                     exceptions
 #    ««revision-date»»···
 #--
 
@@ -112,7 +114,8 @@ from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
-from   _TFL.predicate import first, paired
+from   _TFL.predicate        import first, paired
+from   _TFL.I18N             import _, _T, _Tn
 
 import itertools
 
@@ -495,7 +498,7 @@ class Link (Id_Entity) :
                             (pk, r.max_links, epk, list (links))
                         )
         if errors :
-            raise MOM.Error.Multiplicity_Errors (etype.type_name, errors)
+            raise MOM.Error.Multiplicity_Errors (_T (etype.ui_name), errors)
     # end def _checked_roles
 
     def _cooked_role (self, r, v) :

@@ -220,6 +220,8 @@
 #                     between a plain number and the unit
 #    11-Apr-2012 (CT) Add `A_Url_X`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
+#                     exceptions
 #    ««revision-date»»···
 #--
 
@@ -1014,8 +1016,8 @@ class _A_Id_Entity_ (_A_Entity_) :
                       u"\n"
                       u"    must be instance of %s"
                     )
-                % ( value.type_name, unicode (value), soc.name
-                  , soc.P_Type.type_name
+                % ( _T (value.ui_name), unicode (value), soc.name
+                  , _T (soc.P_Type.ui_name)
                   )
                 )
     # end def _check_type
@@ -1774,7 +1776,7 @@ class A_Link_Role (_A_Id_Entity_) :
             raise MOM.Error.Link_Type \
                 ( tn
                 , soc.role_type
-                , soc.role_type.type_name
+                , _T (soc.role_type.ui_name)
                 , value
                 , type (value)
                 )

@@ -169,6 +169,8 @@
 #    11-Apr-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
 #                     always append to `obj._init_pending`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
+#                     exceptions
 #    ««revision-date»»···
 #--
 
@@ -524,7 +526,7 @@ class _EPK_Mixin_ (Kind) :
             val = etm.instance (* value.epk_raw, raw = True)
             if val is None :
                 raise MOM.Error.Link_Scope_Mix \
-                    (value.type_name, value, value.home_scope, obj, scope)
+                    (_T (value.ui_name), value, value.home_scope, obj, scope)
             else :
                 value = val
         return self._set_cooked_value (obj, value, changed)
@@ -914,14 +916,14 @@ class _Primary_ (_User_) :
                   , _T ("Use `set` or `set_raw` to change it.")
                   )
                 )
-            % (obj.type_name, self.name)
+            % (_T (obj.ui_name), self.name)
             )
     # end def __set__
 
     def __delete__ (self, obj, value) :
         raise AttributeError \
             ( _T ("Primary attribute `%s.%s` cannot be deleted")
-            % (obj.type_name, self.name)
+            % (_T (obj.ui_name), self.name)
             )
     # end def __delete__
 
@@ -1044,7 +1046,7 @@ class Const (_Cached_) :
     def __set__ (self, obj, value) :
         raise AttributeError \
             ( _T ("Constant attribute `%s.%s` cannot be changed")
-            % (obj.type_name, self.name)
+            % (_T (obj.ui_name), self.name)
             )
     # end def __set__
 
@@ -1189,7 +1191,7 @@ class Computed (_Cached_, _Computed_Mixin_) :
     def __set__ (self, obj, value) :
         raise AttributeError \
             ( _T ("Computed attribute `%s.%s` cannot be assigned")
-            % (obj.type_name, self.name)
+            % (_T (obj.ui_name), self.name)
             )
     # end def __set__
 
@@ -1268,7 +1270,7 @@ class Just_Once_Mixin (Kind) :
             if self._change_forbidden (old_value) :
                 raise AttributeError \
                     ( _T (self._x_format)
-                    % (obj.type_name, self.name, old_value, value)
+                    % (_T (obj.ui_name), self.name, old_value, value)
                     )
         self.__super._set_cooked_value_inner (obj, value)
     # end def _set_cooked_value_inner

@@ -983,7 +983,7 @@ appropriate class:
     >>> scope.MOM.Named_Object (u"foo")
     Traceback (most recent call last):
       ...
-    Partial_Type: MOM.Named_Object
+    Partial_Type: Named_Object
 
     >>> p     = scope.BMT.Person     ("luke", "lucky")
     >>> p
@@ -1012,15 +1012,16 @@ appropriate class:
     >>> RiT (p, t4)
     Traceback (most recent call last):
       ...
-    ValueError: BMT.Person (u'luke', u'lucky', u'') not eligible for attribute left,
-        must be instance of BMT.Rodent
+    ValueError: Person (u'luke', u'lucky', u'') not eligible for attribute left,
+        must be instance of Rodent
+
     >>> rit1 = RiT (m, t1)
     >>> rit1
     BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1))
     >>> RiT (m, t2)
     Traceback (most recent call last):
       ...
-    Multiplicity_Errors: BMT.Rodent_in_Trap, [Multiplicity(u"Maximum number of links for (u'mighty_mouse') is 1 ((BMT.Mouse (u'mighty_mouse'), BMT.Trap (u'x', 2)), [BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1))])",)]
+    Multiplicity_Errors: Rodent_in_Trap, [Multiplicity(u"Maximum number of links for (u'mighty_mouse') is 1 ((BMT.Mouse (u'mighty_mouse'), BMT.Trap (u'x', 2)), [BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1))])",)]
     >>> RiT (r, t3)
     BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1))
     >>> RiT (axel, t2)
@@ -1076,11 +1077,11 @@ inherit from, a `relevant_root`:
     >>> scope.MOM.Object.instance (u"mighty_mouse")
     Traceback (most recent call last):
       ...
-    TypeError: MOM.Object needs the arguments (), got (u'mighty_mouse',) instead
+    TypeError: Object needs the arguments (), got (u'mighty_mouse',) instead
     >>> scope.MOM.Named_Object.instance ("mighty_mouse")
     Traceback (most recent call last):
       ...
-    TypeError: Cannot query `instance` of non-root type `MOM.Named_Object`.
+    TypeError: Cannot query `instance` of non-root type `Named_Object`.
     Use one of the types BMT.Rodent, BMT.Trap instead.
 
     >>> scope.BMT.Rodent.instance (u"mighty_mouse")
@@ -1302,7 +1303,7 @@ Changing objects and links
     >>> axel.name = u"betty"
     Traceback (most recent call last):
       ...
-    AttributeError: Primary attribute `BMT.Rat.name` cannot be assigned.
+    AttributeError: Primary attribute `Rat.name` cannot be assigned.
     Use `set` or `set_raw` to change it.
     >>> axel.set (name = "betty")
     1

@@ -51,6 +51,9 @@
 #    15-Apr-2012 (CT) Complete overhaul: cleanup, renamings, reparentings, I18N
 #    16-Apr-2012 (CT) Continue complete overhaul: __super, refactoring, cleanup
 #    17-Apr-2012 (CT) Add `as_json_cargo`, factor `Invariant.bindings`, cleanup
+#    19-Apr-2012 (CT) Generalize `_formatted_bindings` for use in
+#                     `Required_Missing.description`
+#    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name`
 #    ««revision-date»»···
 #--
 
@@ -187,8 +190,9 @@ class _Invariant_ (Error) :
         , "is_required"
         )
 
-    def __init__ (self, obj) :
+    def __init__ (self, obj, raw = False) :
         self.obj = obj
+        self.raw = raw
     # end def __init__
 
     @Once_Property
@@ -226,11 +230,14 @@ class _Invariant_ (Error) :
         return s.replace ("this.", "").strip ()
     # end def _clean_this
 
-    def _formatted_bindings (self) :
-        for k, v in self.bindings :
+    def _formatted_bindings (self, bindings = None) :
+        if bindings is None :
+            bindings = self.bindings
+        format = "%s = %r" if self.raw else "%s = %s"
+        for k, v in bindings :
             if isinstance (v, (list, tuple)) :
                 v = ", ".join (v)
-            yield "%s = %s" % (k, v)
+            yield format % (k, v)
     # end def _formatted_bindings
 
 # end class _Invariant_
@@ -521,10 +528,10 @@ class Name_Clash (Error) :
     arg_sep = " "
 
     def __init__ (self, new, old) :
-        otn = old.type_name if old else ""
+        otn = _T (old.ui_name) if old else ""
         self.__super.__init__ \
             ( _T ("new definition of %s %s clashes with existing %s %s")
-            % (new.type_name, new, otn, old or _T ("object"))
+            % (_T (new.ui_name), new, otn, old or _T ("object"))
             )
     # end def __init__
 
@@ -606,8 +613,10 @@ class Required_Missing (_Invariant_) :
     class inv :
         name       = "required_not_missing"
 
-    def __init__ (self, e_type, needed, missing, epk, kw) :
-        self.__super.__init__ (e_type)
+    def __init__ (self, e_type, needed, missing, epk, kw, raw = False) :
+        kw  = dict   (kw)
+        raw = kw.pop ("raw", raw)
+        self.__super.__init__ (e_type, raw)
         self.e_type     = e_type
         self.attributes = self.needed = needed
         self.missing    = missing
@@ -620,7 +629,7 @@ class Required_Missing (_Invariant_) :
     def head (self) :
         return  \
             (  _T ("%s needs the required attributes: %s")
-            % (self.e_type.type_name, self.needed)
+            % (_T (self.e_type.ui_name), self.needed)
             )
     # end def head
 
@@ -631,7 +640,7 @@ class Required_Missing (_Invariant_) :
             % (", ".join
                   ( itertools.chain
                       ( (repr (x) for x in self.epk)
-                      , ("%s = %r" % (k, v) for k, v in self.kw.iteritems ())
+                      , self._formatted_bindings (self.kw.iteritems ())
                       )
                   )
               )
@@ -651,7 +660,7 @@ class Too_Many_Objects (Error) :
     def __init__ (self, obj, max_count) :
         self.__super.__init__ \
             ( _T ("Cannot create more than %d objects of %s")
-            % (max_count, obj.type_name)
+            % (max_count, _T (obj.ui_name))
             )
     # end def __init__
 

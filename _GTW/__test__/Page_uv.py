@@ -52,7 +52,7 @@ _test_code = r"""
     >>> SWP.Page_V ("foo", text = "V")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of GTW.OMP.SWP.Page_V (u'foo') clashes with existing GTW.OMP.SWP.Page_U (u'foo')
+    Name_Clash: new definition of Page V (u'foo') clashes with existing Page U (u'foo')
     >>> SWP.Page_U.query_s (perma_name = "foo").all ()
     [GTW.OMP.SWP.Page_U (u'foo')]
     >>> SWP.Page_V.query_s (perma_name = "foo").all ()
