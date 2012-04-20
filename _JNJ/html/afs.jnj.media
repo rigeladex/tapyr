@@ -176,14 +176,14 @@ style_sheet = Style_Sheet \
                         , font_size     = Percent (95)
                         )
                     , Rule
-                        ( ".bad"
-                        , background_color  = P.color_bg_bad
-                        , border_color      = P.color_status_bad
-                        )
-                    , Rule
                         ( ".missing"
                         , background_color  = P.color_bg_missing
                         , border_color      = P.color_status_missing
+                        )
+                    , Rule
+                        ( ".bad"
+                        , background_color  = P.color_bg_bad
+                        , border_color      = P.color_status_bad
                         )
                     , Rule
                         ( ".Status"
@@ -194,16 +194,16 @@ style_sheet = Style_Sheet \
                         , width             = P.afs.status_size
                         , children          =
                             [ Rule_Class
-                                ( "bad"
-                                , background_color  = P.color_status_bad
-                                )
-                            , Rule_Class
                                 ( "good"
                                 , background_color  = P.color_status_good
                                 )
                             , Rule_Class
                                 ( "missing"
                                 , background_color  = P.color_status_missing
+                                )
+                            , Rule_Class
+                                ( "bad"
+                                , background_color  = P.color_status_bad
                                 )
                             ]
                         )
@@ -272,18 +272,27 @@ style_sheet = Style_Sheet \
                         , padding          = 0
                         )
                     , Rule
-                        ( ".bindings tr"
-                        , padding          = TRBL (0, Em (0.25))
+                        ( ".bindings"
+                        , min_width        = Percent (50)
                         , children         =
                             [ Rule
-                                ( "td", "td + td"
-                                , border      = 0
-                                , padding     = TRBL (0, Em (0.25))
+                                ( ".name"
+                                , text_align  = "left"
+                                )
+                            , Rule
+                                ( ".sep"
+                                , text_align  = "right"
+                                , width       = Em (1.0)
                                 )
                             , Rule
                                 ( ".value"
                                 , color       = P.color_status_bad
                                 , font_weight = "bold"
+                                )
+                            , Rule
+                                ( "td", "td + td", "tr"
+                                , border      = 0
+                                , padding     = TRBL (0, Em (0.25))
                                 )
                             ]
                         )

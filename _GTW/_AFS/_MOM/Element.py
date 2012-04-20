@@ -180,17 +180,18 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
         akw = self._changed_children \
             (value, results, scope, None, on_error = on_error, ** kw)
         if akw and not value.conflicts :
-            ### XXX error handling
             ETM = scope [self.type_name]
             return self._create_instance (ETM, akw, on_error)
     # end def _apply_create
 
     def _create_instance (self, ETM, akw, on_error) :
         try :
-            return ETM.instance_or_new (raw = 1, on_error = on_error, ** akw)
+            result = ETM.instance_or_new (raw = 1, on_error = on_error, ** akw)
         except MOM.Error.Invariants as exc :
             if not exc.any_required_empty :
                 raise
+        else :
+            return result
     # end def _create_instance
 
     def _instance_kw (self, ETM, entity, ** kw) :

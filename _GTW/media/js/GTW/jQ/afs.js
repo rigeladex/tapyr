@@ -89,6 +89,8 @@
 //    19-Apr-2012 (CT) Add `options.selectors.focusables`,
 //                     add calls to `focus` to `_setup_callbacks` and `_put_cb`
 //    19-Apr-2012 (CT) Add `_display_error_map` and its callees
+//    20-Apr-2012 (CT) Add support for `missing_t` and `bindings_t` to
+//                     `_display_error` and `_display_error_bindings`
 //    ««revision-date»»···
 //--
 
@@ -443,33 +445,59 @@
             return result;
         };
         var _display_error = function _display_error (elem, elem$, errs$, err) {
-            var S         = options.selectors;
-            var map       = elem.field_name_map;
-            var attrs     = "attributes" in err && err ["attributes"];
-            var err$      = $(L (S.err_msg));
-            var field_map = {};
-            var fields$;
-            if (attrs) {
-                fields$ = $.map
-                    ( attrs
-                    , function (name) {
-                        var b$, field, f$, id = map [name], l$;
-                        if (id in $AFS_E.id_map) {
-                            field = $AFS_E.id_map [id];
-                            l$ = $("label[for='" + id + "']");
-                            b$ = $("b.Status", l$);
-                            if ("inp$" in field) {
-                                f$ = field.inp$;
-                                field_map [name] = f$;
-                                f$.addClass ("bad");
-                                b$.toggleClass ("bad",  true)
-                                  .toggleClass ("good", false);
-                                return f$;
+            var S          = options.selectors;
+            var bindings_t = {};
+            var field_map  = {};
+            var map        = elem.field_name_map;
+            var attrs      = "attributes" in err && err ["attributes"];
+            var missing_t  = "missing_t"  in err && err ["missing_t"];
+            var err$       = $(L (S.err_msg));
+            var _input     = function (field, id, name) {
+                var b$, f$, l$;
+                f$ = field.inp$;
+                l$ = $("label[for='" + id + "']");
+                b$ = $("b.Status", l$);
+                field_map [name] = f$;
+                f$.addClass ("bad");
+                b$.toggleClass ("bad",  true)
+                  .toggleClass ("good", false);
+                return f$;
+            };
+            var fields$   = function (attrs) {
+                var field, id, q_name, t_field, t_map, t_name;
+                var result = [];
+                for (var i = 0, li = attrs.length, name; i < li; i++) {
+                    name = attrs [i];
+                    id   = map [name];
+                    if (id in $AFS_E.id_map) {
+                        field = $AFS_E.id_map [id];
+                        if ("inp$" in field) {
+                            result.push (_input (field, id, name));
+                        } else if (missing_t && name in missing_t) {
+                            bindings_t [name] = [];
+                            for ( var j = 0
+                                ,     lj = missing_t [name].length
+                                ,     t_name
+                                ; j < lj
+                                ; j++
+                                ) {
+                                t_name = missing_t [name] [j];
+                                id = field.field_name_map [t_name];
+                                if (id in $AFS_E.id_map) {
+                                    t_field = $AFS_E.id_map [id];
+                                    if ("inp$" in t_field) {
+                                        q_name = name + "." + t_name;
+                                        bindings_t [name].push (q_name);
+                                        result.push
+                                            (_input (t_field, id, q_name));
+                                    };
+                                };
                             };
                         };
-                      }
-                    );
-            };
+                    };
+                };
+                return result;
+              } (attrs);
             errs$.append (err$);
             err$.append
                 ($( L ( "h2"
@@ -482,24 +510,26 @@
                     ($(L ("div.description", { html : err.description })));
             };
             if ("bindings" in err) {
-                _display_error_bindings (err$, err, attrs, field_map);
+                _display_error_bindings
+                    (err$, err, attrs, field_map, bindings_t);
             };
             if ("explanation" in err) {
                 err$.append
                     ($(L ("div.explanation", { html : err.explanation })));
             };
-            if (fields$) {
+            if (fields$.length) {
                 err$.click
                     ( function (ev) {
                         fields$ [0].focus ();
                       }
                     );
             };
+            return fields$;
         };
         var _display_errors = function _display_errors (id, errors) {
             var S    = options.selectors;
             var elem = $AFS_E.get (id);
-            var elem$, errs$;
+            var elem$, errs$, fields$ = [];
             if (elem.collapsed) {
                 // XXX open `elem`;
             };
@@ -515,49 +545,60 @@
                 ($(L ("h1", { html : options.texts ["Entity-Errors"]})));
             for (var i = 0, li = errors.length, err; i < li; i++) {
                 err = errors [i];
-                _display_error (elem, elem$, errs$, err);
+                fields$.push (_display_error (elem, elem$, errs$, err));
             };
         };
         var _display_error_binding = function _display_error_binding
                 (name, value, field_map, bs$) {
-            var tr$ =
-                $( L ("tr", {}, L ( "td.name",  { html : name })))
-                    .click
-                        ( function (ev) {
-                            field_map [name].focus ();
-                          }
-                        );
+            var inp$;
+            var tr$ = $( L ("tr", {}, L ("td.name",  { html : name })));
+            if (name in field_map) {
+                inp$ = field_map [name];
+                tr$.click
+                    ( function (ev) {
+                        inp$.focus ();
+                        return false;
+                      }
+                    );
+            };
             if (value) {
-                tr$ .append (L ( "td",       { html : "="   }))
+                tr$ .append (L ( "td.sep",   { html : "="   }))
                     .append (L ( "td.value", { html : value }));
+            } else {
+                $("td", tr$).first ().attr ("colspan", "3")
             };
             bs$.append (tr$);
         };
         var _display_error_bindings = function _display_error_bindings
-                (err$, err, attrs, field_map) {
-            var bs$ = $(L ("table.bindings")), seen = {};
-            var name;
+                (err$, err, attrs, field_map, bindings_t) {
+            var bs$ = $(L ("table.bindings"));
+            var name, name_t;
             err$.append (bs$);
             for (var i = 0, li = err.bindings.length, b; i < li; i++) {
-                b           = err.bindings [i];
-                name        = b [0];
-                seen [name] = true;
+                b = err.bindings [i];
+                name = b [0];
                 _display_error_binding (name, b [1], field_map, bs$);
-            };
-            for (var j = 0, lj = attrs.length, attr; j < lj; j++) {
-                attr = attrs [j];
-                if (! (attr in seen)) {
-                    _display_error_binding (attr, null, field_map, bs$);
+                if (name in bindings_t) {
+                    for ( var j = 0, lj = bindings_t [name].length, name_t
+                        ; j < lj
+                        ; j++
+                        ) {
+                        name_t = bindings_t [name] [j];
+                        _display_error_binding (name_t, null, field_map, bs$);;
+                    };
                 };
             };
         };
         var _display_error_map = function _display_error_map (error_map) {
-            var id, errors;
+            var id, errors, fields$ = [];
             for (id in error_map) {
                 if (error_map.hasOwnProperty (id)) {
                     errors = error_map [id];
-                    _display_errors (id, errors);
+                    fields$.push (_display_errors (id, errors));
                 };
+            };
+            if (fields$.length) {
+                fields$ [0].focus ();
             };
         };
         var _response_append = function _response_append

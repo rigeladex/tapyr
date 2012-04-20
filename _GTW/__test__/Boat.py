@@ -42,6 +42,7 @@ _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
+
     >>> SRM.Boat_Class ("Optimist", max_crew = 1)
     GTW.OMP.SRM.Boat_Class (u'optimist')
     >>> print scope.SRM.Boat_Class.count ### 1
@@ -161,7 +162,7 @@ _test_code = """
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
-    1
+    0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 5)`
     [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5)]), ('region', []), ('system', [])]
@@ -203,23 +204,31 @@ _test_code = """
     >>> SRM.Boat_Class ("Seascape 18", on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Boat_Class needs the required attributes: ('max_crew',); Instead it got: ('Seascape 18')
+    Invariants: Boat_Class needs the required attributes: ('name', 'max_crew')
+      Instead it got: (name = 'Seascape 18')
     >>> errors
-    [Required_Missing(u"Boat_Class needs the required attributes: ('max_crew',)", u"Instead it got: ('Seascape 18')")]
+    [Required_Missing(u"Boat_Class needs the required attributes: ('name', 'max_crew')", u"Instead it got: (name = 'Seascape 18')")]
 
     >>> errors = []
     >>> SRM.Boat_Class (max_crew = 4, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: Boat_Class needs the required attributes: ('name',); Instead it got: (max_crew = 4)
+    Invariants: Boat_Class needs the primary attribute: ('name',)
+      Instead it got: (max_crew = 4)
     >>> errors
-    [Required_Missing(u"Boat_Class needs the required attributes: ('name',)", u'Instead it got: (max_crew = 4)')]
+    [Required_Missing(u"Boat_Class needs the primary attribute: ('name',)", u'Instead it got: (max_crew = 4)')]
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
     ( 'name' ,)
+      , 'bindings' :
+          [
+            ( 'name'
+            , None
+            )
+          ]
       , 'description' : 'Instead it got: (max_crew = 4)'
       , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "Boat_Class needs the required attributes: ('name',)"
+      , 'head' : "Boat_Class needs the primary attribute: ('name',)"
       , 'is_required' : True
       }
     ]
@@ -228,22 +237,83 @@ _test_code = """
     >>> SRM.Boat_Class (on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: Boat_Class needs the required attributes: ('name',); Instead it got: ()
+    Invariants: Boat_Class needs the primary attribute: ('name',)
+      Instead it got: ()
+      Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+        max_crew = None
+      Condition `name_not_empty` : name is not None and name != ''
+        name = ''
     >>> errors
-    [Required_Missing(u"Boat_Class needs the required attributes: ('name',)", u'Instead it got: ()')]
+    [Required_Missing(u"Boat_Class needs the primary attribute: ('name',)", u'Instead it got: ()'), Invariants(Required_Empty(u'Boat_Class', Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+        max_crew = None), Required_Empty(u'Boat_Class', Condition `name_not_empty` : name is not None and name != ''
+        name = ''))]
 
     >>> errors = []
     >>> SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Required_Missing: Boat needs the required attributes: ('left',); Instead it got: (sail_number = '187042')
+    Invariants: Boat needs the primary attribute: ('left',)
+      Instead it got: (sail_number = 187042)
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
     ( 'left' ,)
-      , 'description' : "Instead it got: (sail_number = '187042')"
+      , 'bindings' :
+          [
+            ( 'left'
+            , None
+            )
+          ]
+      , 'description' : 'Instead it got: (sail_number = 187042)'
       , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "Boat needs the required attributes: ('left',)"
+      , 'head' : "Boat needs the primary attribute: ('left',)"
       , 'is_required' : True
+      , 'missing_t' :
+          { 'left' :
+              [ 'name'
+              , 'max_crew'
+              ]
+          }
+      }
+    ]
+
+    >>> errors = []
+    >>> SRM.Boat (sail_number = "-187042", raw = True, on_error = errors.append)
+    Traceback (most recent call last):
+      ...
+    Invariants: Condition `AC_check_sail_number_0` : 0 <= sail_number <= 999999
+        sail_number = -187042
+      Boat needs the primary attribute: ('left',)
+      Instead it got: (sail_number = -187042)
+
+    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [ { 'attributes' :
+    ( 'left' ,)
+      , 'bindings' :
+          [
+            ( 'left'
+            , None
+            )
+          ]
+      , 'description' : 'Instead it got: (sail_number = -187042)'
+      , 'explanation' : 'All required attributes must be supplied'
+      , 'head' : "Boat needs the primary attribute: ('left',)"
+      , 'is_required' : True
+      , 'missing_t' :
+          { 'left' :
+              [ 'name'
+              , 'max_crew'
+              ]
+          }
+      }
+    , { 'attributes' :
+    [ 'sail_number' ]
+      , 'bindings' :
+          [
+            ( 'sail_number'
+            , '-187042'
+            )
+          ]
+      , 'head' : '0 <= sail_number <= 999999'
       }
     ]
 

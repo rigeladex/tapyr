@@ -184,6 +184,14 @@
 #    16-Apr-2012 (CT) Change `epkified` to `raise TypeError` if `not missing`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
+#    20-Apr-2012 (CT) Change `Id_Entity._main__init__` to wrap
+#                     `MOM.Error.Required_Missing` in `MOM.Error.Invariants`
+#                     after checking predicates
+#    20-Apr-2012 (CT) Factor `_kw_raw_check_predicates`
+#    20-Apr-2012 (CT) Change `_set_ckd` and `_set_raw` to not set attributes in
+#                     case of predicate errors
+#    20-Apr-2012 (CT) Change `errors` to return `iter (self._pred_man)` instead
+#                     of home-grown code (that lacked `missing_required`)
 #    ««revision-date»»···
 #--
 
@@ -504,9 +512,7 @@ class Entity (TFL.Meta.Object) :
             if attr :
                 if not attr.is_settable :
                     on_error \
-                        ( MOM.Error.Attribute_Set
-                            (self, name, val, attr.kind)
-                        )
+                        (MOM.Error.Attribute_Set (self, name, val, attr.kind))
                 else :
                     yield (cnam, val, attr)
             elif name != "raw" :
@@ -572,22 +578,56 @@ class Entity (TFL.Meta.Object) :
         needed  = tuple (m.name for m in self.required)
         missing = tuple (k for k in needed if k not in kw)
         if missing :
-            on_error = kw.pop ("on_error", self._raise_attr_error)
+            on_error   = kw.pop ("on_error", self._raise_attr_error)
+            all_needed = tuple (m.name for m in self.primary_required) + needed
             error = MOM.Error.Required_Missing \
-                (self.__class__, needed, missing, args, kw)
-            self._pred_man.missing_required = error
+                (self.__class__, all_needed, missing, args, kw)
             on_error (error)
+            raise error
     # end def _kw_check_required
 
-    def _kw_check_predicates (self, kw, on_error, kind = "object") :
-        result = not self.is_correct (kw, kind)
-        if result :
+    def _kw_check_predicates (self, kind = "object", on_error = None, ** kw) :
+        result = self.is_correct (kw, kind)
+        if not result :
             errors = self._pred_man.errors [kind]
             if on_error is None :
                 on_error = self._raise_attr_error
             on_error (MOM.Error.Invariants (errors))
         return result
     # end def _kw_check_predicates
+
+    def _kw_raw_check_predicates (self, on_error = None, ** kw) :
+        ckd_kw = {}
+        to_do  = []
+        if on_error is None :
+            on_error = self._raise_attr_error
+        for name, val, attr in self.set_attr_iter (kw, on_error) :
+            if val is not None :
+                try :
+                    ckd_kw [name] = ckd_val = attr.from_string (val, self)
+                except (TypeError, ValueError) as err:
+                    on_error \
+                        ( MOM.Error.Attribute_Value
+                            (self, name, val, attr.kind, err)
+                        )
+                    if __debug__ :
+                        print (err)
+                    to_do.append ((attr, u"", None))
+                except StandardError as exc :
+                    print \
+                      ( exc
+                      , "; object %s, attribute %s: %s [%s]"
+                      % (self, name, val, type (val))
+                      )
+                    if __debug__ :
+                        traceback.print_exc ()
+                else :
+                    to_do.append ((attr, val, ckd_val))
+            else :
+                to_do.append ((attr, u"", None))
+        result = self._kw_check_predicates (on_error = on_error, ** ckd_kw)
+        return result, to_do
+    # end def _kw_raw_check_predicates
 
     def _print_attr_err (self, exc) :
         print (self, exc)
@@ -626,10 +666,11 @@ class Entity (TFL.Meta.Object) :
     def _set_ckd (self, on_error = None, ** kw) :
         man = self._attr_man
         tc  = man.total_changes
+        man.reset_pending ()
         if kw :
-            self._kw_check_predicates (kw, on_error)
-            for name, val, attr in self.set_attr_iter (kw, on_error) :
-                attr._set_cooked (self, val)
+            if self._kw_check_predicates (on_error = on_error, ** kw) :
+                for name, val, attr in self.set_attr_iter (kw, on_error) :
+                    attr._set_cooked (self, val)
         if man.updates_pending :
             try :
                 man.do_updates_pending (self)
@@ -642,38 +683,12 @@ class Entity (TFL.Meta.Object) :
         man = self._attr_man
         tc  = man.total_changes
         if kw :
-            ckd_kw = {}
-            to_do  = []
-            if on_error is None :
-                on_error = self._raise_attr_error
-            for name, val, attr in self.set_attr_iter (kw, on_error) :
-                if val is not None :
-                    try :
-                        ckd_kw [name] = ckd_val = attr.from_string (val, self)
-                    except (TypeError, ValueError) as err:
-                        on_error \
-                            ( MOM.Error.Attribute_Value
-                                (self, name, val, attr.kind, err)
-                            )
-                        if __debug__ :
-                            print (err)
-                        to_do.append ((attr, u"", None))
-                    except StandardError as exc :
-                        print \
-                          ( exc
-                          , "; object %s, attribute %s: %s [%s]"
-                          % (self, name, val, type (val))
-                          )
-                        if __debug__ :
-                            traceback.print_exc ()
-                    else :
-                        to_do.append ((attr, val, ckd_val))
-                else :
-                    to_do.append ((attr, u"", None))
-            self._kw_check_predicates (ckd_kw, on_error)
+            is_correct, to_do = self._kw_raw_check_predicates \
+                (on_error = on_error, ** kw)
             man.reset_pending ()
-            for attr, raw_val, val in to_do :
-                attr._set_raw (self, raw_val, val)
+            if is_correct :
+                for attr, raw_val, val in to_do :
+                    attr._set_raw (self, raw_val, val)
         if man.updates_pending :
             man.do_updates_pending (self)
         return man.total_changes - tc
@@ -1008,8 +1023,7 @@ class Id_Entity (Entity) :
 
     @property
     def errors (self) :
-        return itertools.chain \
-            (* (pk for pk in self._pred_man.errors.itervalues ()))
+        return iter (self._pred_man)
     # end def errors
 
     @property
@@ -1136,14 +1150,14 @@ class Id_Entity (Entity) :
             missing  = tuple (p for p in needed [len (epk):] if p not in kw)
             if missing :
                 error = MOM.Error.Required_Missing \
-                    (cls, needed, missing, epk, kw)
+                    (cls, needed, missing, epk, kw, "primary")
                 on_error (error)
+                raise error
             else :
                 raise TypeError \
                     ( _T ("%s needs the arguments %s, got %s instead")
                     % (_T (cls.ui_name), needed, epk)
                     )
-            raise error
     # end def epkified
 
     def is_defined (self)  :
@@ -1278,16 +1292,26 @@ class Id_Entity (Entity) :
 
     def _main__init__ (self, * epk, ** kw) :
         self.implicit = kw.pop ("implicit", False)
-        raw      = bool (kw.pop ("raw", False))
-        setter   = self.__super._set_raw if raw else self.__super._set_ckd
+        raw           = bool (kw.pop ("raw", False))
+        setter        = self.__super._set_raw if raw else self.__super._set_ckd
             ### Need to use `__super.` methods here because it's not a `rename`
-        epk, kw  = self.epkified  (* epk, ** kw)
-        self._kw_check_required   (* epk, ** kw)
+        try :
+            epk, kw = self.epkified (* epk, ** kw)
+            self._kw_check_required (* epk, ** kw)
+        except MOM.Error.Required_Missing as exc :
+            self._pred_man.missing_required = exc
+            kw.update (self._init_epk (epk))
+            checker = \
+                (  self._kw_raw_check_predicates
+                if raw else self._kw_check_predicates
+                )
+            checker (** kw)
+            raise MOM.Error.Invariants (self._pred_man)
         kw.update (self._init_epk (epk))
-        setter    (** kw)
+        setter (** kw)
         required_errors = self._pred_man.required_errors
         if required_errors :
-            raise MOM.Error.Invariants (required_errors)
+            raise MOM.Error.Invariants (self._pred_man)
     # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
@@ -1298,7 +1322,7 @@ class Id_Entity (Entity) :
                 attr._set_cooked_inner (self, v)
                 attr._set_raw_inner    (self, pkas_raw [k], v)
             self._reset_epk ()
-        self._kw_check_predicates (pkas_ckd, None)
+        self._kw_check_predicates (on_error = None, ** pkas_ckd)
         self.home_scope.rename    (self, tuple (new_epk), _renamer)
     # end def _rename
 

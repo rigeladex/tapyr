@@ -67,7 +67,7 @@ _test_code = r"""
     Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
         first_name = ''
     >>> errors
-    [Invariants(Required_Empty(GTW.OMP.PAP.Person (u'last_name', u'', u'', u''), Condition `first_name_not_empty` : first_name is not None and first_name != ''
+    [Invariants(Required_Empty(u'Person', Condition `first_name_not_empty` : first_name is not None and first_name != ''
         first_name = ''),)]
     >>> for e in errors :
     ...     print e

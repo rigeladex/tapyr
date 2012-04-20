@@ -55,6 +55,11 @@
 #                     `Required_Missing.description`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name`
 #    19-Apr-2012 (CT) Change `_formatted_bindings` to remove @*$&@*% `u` prefix
+#    20-Apr-2012 (CT) Add `_Invariant_.all_bindings`, put them into
+#                     `as_json_cargo` as `bindings`
+#    20-Apr-2012 (CT) Factor `Invariants._sort_key` and robustify
+#    20-Apr-2012 (CT) Improve output of `Required_Missing`
+#    20-Apr-2012 (CT) Add `Required_Missing.missing_t`
 #    ««revision-date»»···
 #--
 
@@ -107,13 +112,13 @@ class Error (Exception) :
     arg_sep          = ", "
     is_required      = False
 
-    _json_map        = dict \
-        ( as_unicode = "description"
-        )
-
     _json_attributes = \
         ( "as_unicode"
         , "is_required"
+        )
+
+    _json_map        = dict \
+        ( as_unicode = "description"
         )
 
     @Once_Property
@@ -183,18 +188,29 @@ class _Invariant_ (Error) :
     val_disp         = {}
 
     _json_attributes = \
-        ( "attributes"
-        , "bindings"
+        ( "all_bindings"
+        , "attributes"
         , "description"
         , "explanation"
         , "head"
         , "is_required"
+        )
+    _json_map        = dict \
+        ( all_bindings = "bindings"
         )
 
     def __init__ (self, obj, raw = False) :
         self.obj = obj
         self.raw = raw
     # end def __init__
+
+    @Once_Property
+    def all_bindings (self) :
+        result = self.bindings
+        result.extend \
+            ((a, None) for a in self.attributes if a not in self.val_disp)
+        return sorted (result)
+    # end def bindings
 
     @Once_Property
     def as_json_cargo (self) :
@@ -398,17 +414,17 @@ class Invariant (_Invariant_) :
 
     def __init__ (self, obj, inv) :
         self.__super.__init__ (obj)
-        self.args           = (obj, inv)
-        self.inv            = inv
-        self.is_required    = inv.is_required
-        self.attributes     = sorted (inv.attributes + inv.attr_none)
-        self.extra_links    = list   (inv.extra_links)
-        self.val_disp       = dict   (inv.val_disp)
-        description         = inv.description
+        self.args         = (obj, inv) if obj.pid else (_T (obj.ui_name), inv)
+        self.inv          = inv
+        self.is_required  = inv.is_required
+        self.attributes   = sorted (inv.attributes + inv.attr_none)
+        self.extra_links  = list   (inv.extra_links)
+        self.val_disp     = dict   (inv.val_disp)
+        description       = inv.description
         try :
-            self.inv_desc   = description % TFL.Caller.Object_Scope (obj)
+            self.inv_desc = description % TFL.Caller.Object_Scope (obj)
         except TypeError :
-            self.inv_desc   = description
+            self.inv_desc = description
     # end def __init__
 
     @Once_Property
@@ -481,7 +497,7 @@ class Invariants (Error) :
     arg_sep = "\n  "
 
     def __init__ (self, errors) :
-        errors = self.errors = sorted (errors, key = TFL.Getter.inv.name)
+        errors = self.errors = sorted (errors, key = self._sort_key)
         self.__super.__init__ (* errors)
     # end def __init__
 
@@ -494,6 +510,13 @@ class Invariants (Error) :
     def any_required_empty (self) :
         return any (isinstance (e, Required_Empty) for e in self.errors)
     # end def any_required_empty
+
+    def _sort_key (self, err) :
+        try :
+            return err.inv.name
+        except AttributeError :
+            return str (err)
+    # end def _sort_key
 
 # end class Invariants
 
@@ -617,23 +640,37 @@ class Required_Missing (_Invariant_) :
     class inv :
         name       = "required_not_missing"
 
-    def __init__ (self, e_type, needed, missing, epk, kw, raw = False) :
+    def __init__ \
+            (self, e_type, needed, missing, epk, kw, kind = _("required")) :
         kw  = dict   (kw)
-        raw = kw.pop ("raw", raw)
+        raw = kw.pop ("raw", False)
         self.__super.__init__ (e_type, raw)
         self.e_type     = e_type
         self.attributes = self.needed = needed
         self.missing    = missing
-        self.epk        = epk
+        self.epk        = tuple (repr (x) for x in epk)
         self.kw         = kw
+        self.kind       = kind
         self.args       = (self.head, self.description)
     # end def __init__
 
     @Once_Property
+    def as_json_cargo (self) :
+        result = self.__super.as_json_cargo
+        missing_t = self.missing_t
+        if missing_t :
+            result ["missing_t"] = missing_t
+        return result
+    # end def as_json_cargo
+
+    @Once_Property
     def head (self) :
         return  \
-            (  _T ("%s needs the required attributes: %s")
-            % (_T (self.e_type.ui_name), self.needed)
+            (  _Tn ( "%s needs the %s attribute: %s"
+                   , "%s needs the %s attributes: %s"
+                   , len (self.needed)
+                   )
+            % (_T (self.e_type.ui_name), _T (self.kind), self.needed)
             )
     # end def head
 
@@ -643,7 +680,8 @@ class Required_Missing (_Invariant_) :
             ( _T ("Instead it got: (%s)")
             % (", ".join
                   ( itertools.chain
-                      ( (repr (x) for x in self.epk)
+                      ( self._formatted_bindings
+                          (zip (self.e_type.epk_sig, self.epk))
                       , self._formatted_bindings (self.kw.iteritems ())
                       )
                   )
@@ -655,6 +693,29 @@ class Required_Missing (_Invariant_) :
     def explanation (self) :
         return _T ("All required attributes must be supplied")
     # end def explanation
+
+    @Once_Property
+    def missing_t (self) :
+        AQ = self.e_type.AQ
+        def _gen (AQ, missing) :
+            for m in missing :
+                t = list \
+                    ( a._attr.name
+                    for a in getattr (AQ, m).Attrs
+                    if  a._attr.is_required
+                    )
+                if t :
+                    yield m, t
+        return dict (_gen (self.e_type.AQ, self.missing))
+        return tuple \
+            ( itertools.chain
+                ( a._full_name
+                for m in self.missing
+                for a in getattr (AQ, m).Attrs
+                if  a._attr.is_required
+                )
+            )
+    # end def missing_t
 
 # end class Required_Missing
 

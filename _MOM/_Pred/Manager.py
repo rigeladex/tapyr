@@ -35,6 +35,7 @@
 #    22-Jun-2010 (CT) `mandatory_errors` and `missing_mandatory` added
 #     8-Feb-2011 (CT) s/Mandatory/Required/
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    20-Apr-2012 (CT) Add `__iter__`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,8 @@ import _MOM.Error
 import _TFL._Meta.Object
 
 from   _TFL.predicate        import callable, dusplit
+
+import itertools
 
 class Manager (TFL.Meta.Object) :
     """Predicate manager for instances of MOM entities (objects and links).
@@ -67,7 +70,7 @@ class Manager (TFL.Meta.Object) :
     def reset_predicates (self) :
         self.errors   = errors   = {}
         self.warnings = warnings = {}
-        self.missing_required   = None
+        self.missing_required    = None
         for k in self.pred_kind.iterkeys () :
             errors   [k] = []
             warnings [k] = []
@@ -157,6 +160,13 @@ class Manager (TFL.Meta.Object) :
                 return lambda obj, attr_dict = {} : []
         raise AttributeError, name
     # end def __getattr__
+
+    def __iter__ (self) :
+        result = itertools.chain (* self.errors.itervalues ())
+        if self.missing_required is not None :
+            result = itertools.chain (self.missing_required, result)
+        return result
+    # end def __iter__
 
 # end class Manager
 

@@ -105,6 +105,8 @@
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
+#    20-Apr-2012 (CT) Change `Link.__call__` and `instance_or_new` to let
+#                     `MOM.Entity` handle `MOM.Error.Required_Missing`
 #    ««revision-date»»···
 #--
 
@@ -228,7 +230,7 @@ class Id_Entity (Entity) :
     # end def ac_query_attrs
 
     def cooked_epk (self, epk, kw) :
-        (epk, kw), this  = self._epkified (epk, kw)
+        (epk, kw), this  = self._epkified (* epk, ** kw)
         raw      = kw.get ("raw", False)
         epk_iter = (this._raw_epk_iter if raw else this._cooked_epk_iter)
         return tuple (epk_iter (epk)), kw, this
@@ -254,7 +256,11 @@ class Id_Entity (Entity) :
     # end def instance
 
     def instance_or_new (self, * epk, ** kw) :
-        result = self.instance (* epk, ** kw)
+        try :
+            result = self.instance (* epk, ** kw)
+        except MOM.Error.Error :
+            ### let MOM.Entity handle this case
+            result = None
         if result is None :
             result = self (* epk, ** kw)
         return result
@@ -321,13 +327,18 @@ class Id_Entity (Entity) :
                     yield getattr (et, n).raw_query_eq (values [n])
     # end def raw_query_attrs
 
-    def _epkified (self, epk, kw) :
+    def _epkified (self, * epk, ** kw) :
         this  = self
         etype = self._etype
         if epk and isinstance (epk [-1], etype.Type_Name_Type) :
             this  = self.home_scope [epk [-1]]
             epk   = epk [:-1]
             etype = this._etype
+        ### Don't pass `on_error` through here to avoid `Link.__call__`
+        ### ending up with doubled error messages in case of
+        ### `MOM.Error.Required_Missing`
+        kw = dict (kw)
+        kw.pop ("on_error", None)
         return etype.epkified (* epk, ** kw), this
     # end def _epkified
 
@@ -388,12 +399,17 @@ class Link (Id_Entity) :
     """Scope-specific manager for essential link-types."""
 
     def __call__ (self, * args, ** kw) :
-        (args, kw), this = self._epkified (args, kw)
-        self._checked_roles (* args, ** kw)
-        if kw.get ("raw", False) :
-            args = tuple (self._role_to_raw_iter    (args))
-        else :
-            args = tuple (self._role_to_cooked_iter (args, auto_create = True))
+        try :
+            (args, kw), this = self._epkified (* args, ** kw)
+            self._checked_roles (* args, ** kw)
+            if kw.get ("raw", False) :
+                args = tuple (self._role_to_raw_iter (args))
+            else :
+                args = tuple \
+                    (self._role_to_cooked_iter (args, auto_create = True))
+        except MOM.Error.Required_Missing :
+            ### let MOM.Entity handle this case
+            pass
         return self.__super.__call__ (* args, ** kw)
     # end def __call__
 
