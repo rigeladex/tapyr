@@ -43,6 +43,8 @@
 #     2-Feb-2012 (CT) Don't apply `sanitized_filename` to `name`
 #     9-Mar-2012 (CT) Change `Regatta_C.name.computed` to use `.ui_display`
 #    19-Mar-2012 (CT) Factor `boat_class` to `Regatta`, reify `SRM.Handicap`
+#    20-Apr-2012 (CT) Add `Regatta_H.handicap` to fix jinja template that
+#                     depends on it
 #    ««revision-date»»···
 #--
 
@@ -236,6 +238,18 @@ class Regatta_H (_Ancestor_Essence) :
             default            = False
 
         # end class is_team_race
+
+        class handicap (A_Blob) :
+
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("boat_class",)
+
+            def computed (self, obj) :
+                return obj.boat_class
+            # end def computed
+
+        # end class handicap
 
     # end class _Attributes
 
