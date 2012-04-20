@@ -584,7 +584,7 @@
                         ; j++
                         ) {
                         name_t = bindings_t [name] [j];
-                        _display_error_binding (name_t, null, field_map, bs$);;
+                        _display_error_binding (name_t, null, field_map, bs$);
                     };
                 };
             };
