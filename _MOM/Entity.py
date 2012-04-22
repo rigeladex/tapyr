@@ -192,6 +192,9 @@
 #                     case of predicate errors
 #    20-Apr-2012 (CT) Change `errors` to return `iter (self._pred_man)` instead
 #                     of home-grown code (that lacked `missing_required`)
+#    22-Apr-2012 (CT) Rename argument `kind` of `is_correct` and
+#                     `_kw_check_required` to `_kind` to avoid possible name
+#                     clash with an attribute with name `kind`
 #    ««revision-date»»···
 #--
 
@@ -467,8 +470,8 @@ class Entity (TFL.Meta.Object) :
         return any (a.has_substance (self) for a in self.user_attr)
     # end def has_substance
 
-    def is_correct (self, attr_dict = {}, kind = "object")  :
-        ews = self._pred_man.check_kind (kind, self, attr_dict)
+    def is_correct (self, attr_dict = {}, _kind = "object")  :
+        ews = self._pred_man.check_kind (_kind, self, attr_dict)
         return not ews
     # end def is_correct
 
@@ -586,10 +589,10 @@ class Entity (TFL.Meta.Object) :
             raise error
     # end def _kw_check_required
 
-    def _kw_check_predicates (self, kind = "object", on_error = None, ** kw) :
-        result = self.is_correct (kw, kind)
+    def _kw_check_predicates (self, _kind = "object", on_error = None, ** kw) :
+        result = self.is_correct (kw, _kind)
         if not result :
-            errors = self._pred_man.errors [kind]
+            errors = self._pred_man.errors [_kind]
             if on_error is None :
                 on_error = self._raise_attr_error
             on_error (MOM.Error.Invariants (errors))

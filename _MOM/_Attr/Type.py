@@ -222,6 +222,8 @@
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
+#    22-Apr-2012 (CT) Adapt to signature change of `is_correct`
+#                     (`kind` -->`_kind`)
 #    ««revision-date»»···
 #--
 
@@ -673,7 +675,7 @@ class _A_Composite_ (_A_Entity_) :
                 check  = MOM.Pred.Condition.__class__ \
                     ( p_name, (MOM.Pred.Condition, )
                     , dict
-                        ( assertion  = "%s.is_correct (kind = %r)" % (name, k)
+                        ( assertion  = "%s.is_correct (_kind = %r)" % (name, k)
                         , attributes = (name, )
                         , kind       = p_kind
                         , name       = p_name
