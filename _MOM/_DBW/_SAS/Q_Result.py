@@ -62,6 +62,7 @@
 #    16-Dec-2011 (MG) `_Q_Result_Attrs_` changed to handle nested composite
 #                     and ID entity attributes added
 #    23-Apr-2012 (MG) `__bool__` added
+#    23-Apr-2012 (CT) Rename `__bool__` to `__nonzero__`
 #    ««revision-date»»···
 #--
 
@@ -309,10 +310,6 @@ class _Q_Result_ (TFL.Meta.Object) :
         return self
     # end def where
 
-    def __bool__ (self) :
-        return self.count () > 0
-    # end def __bool__
-
     def __iter__ (self) :
         if self._result is None :
             self._result = []
@@ -324,6 +321,10 @@ class _Q_Result_ (TFL.Meta.Object) :
             for element in self._result :
                 yield element
     # end def __iter__
+
+    def __nonzero__ (self) :
+        return self.count () > 0
+    # end def __nonzero__
 
     def __str__ (self) :
         sa_query = "\n     ".join \

@@ -191,7 +191,7 @@ class Value (_Base_) :
             try :
                 e.entity = results [e.id] = e.elem.apply \
                     (e, results, * args, on_error = e.errors.append, ** kw)
-            except MOM.Error.Error :
+            except MOM.Error.Error as exc :
                 do_break = True
             if e.errors :
                 errors [e.id] = e.errors = MOM.Error.as_json_cargo (* e.errors)

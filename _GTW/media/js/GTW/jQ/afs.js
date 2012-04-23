@@ -91,6 +91,7 @@
 //    19-Apr-2012 (CT) Add `_display_error_map` and its callees
 //    20-Apr-2012 (CT) Add support for `missing_t` and `bindings_t` to
 //                     `_display_error` and `_display_error_bindings`
+//    23-Apr-2012 (CT) Use `.concat` instead of `.push` to extend array
 //    ««revision-date»»···
 //--
 
@@ -545,8 +546,10 @@
                 ($(L ("h1", { html : options.texts ["Entity-Errors"]})));
             for (var i = 0, li = errors.length, err; i < li; i++) {
                 err = errors [i];
-                fields$.push (_display_error (elem, elem$, errs$, err));
+                fields$ = fields$.concat
+                    (_display_error (elem, elem$, errs$, err));
             };
+            return fields$;
         };
         var _display_error_binding = function _display_error_binding
                 (name, value, field_map, bs$) {
@@ -594,7 +597,7 @@
             for (id in error_map) {
                 if (error_map.hasOwnProperty (id)) {
                     errors = error_map [id];
-                    fields$.push (_display_errors (id, errors));
+                    fields$ = fields$.concat (_display_errors (id, errors));
                 };
             };
             if (fields$.length) {

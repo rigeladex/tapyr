@@ -101,6 +101,9 @@
 #                     factored `_apply_get` if there wasn't any attribute
 #                     change
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    23-Apr-2012 (CT) Change `_MOM_Entity_MI_._create_instance` to use
+#                     `query_s` and `ETM ()` instead of `ETM.instance_or_new`
+#                     (to protect against ambiguous input)
 #    ««revision-date»»···
 #--
 
@@ -185,12 +188,25 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
     # end def _apply_create
 
     def _create_instance (self, ETM, akw, on_error) :
+        error = None
         try :
-            result = ETM.instance_or_new (raw = 1, on_error = on_error, ** akw)
+            matches = ETM.query_s (* ETM.raw_query_attrs (akw, akw))
+            count   = matches.count ()
+            if not count :
+                result = ETM (raw = 1, on_error = on_error, ** akw)
+            elif count == 1 :
+                result = matches.one ()
+            else :
+                error = MOM.Error.Ambiguous_Epk \
+                    (ETM.E_Type, (), akw, count, * matches.limit (3).all ())
+                if on_error is not None :
+                    on_error (error)
         except MOM.Error.Invariants as exc :
             if not exc.any_required_empty :
                 raise
         else :
+            if error is not None :
+                raise error
             return result
     # end def _create_instance
 

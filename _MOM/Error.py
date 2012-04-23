@@ -60,6 +60,7 @@
 #    20-Apr-2012 (CT) Factor `Invariants._sort_key` and robustify
 #    20-Apr-2012 (CT) Improve output of `Required_Missing`
 #    20-Apr-2012 (CT) Add `Required_Missing.missing_t`
+#    23-Apr-2012 (CT) Add `Ambiguous_Epk`
 #    ««revision-date»»···
 #--
 
@@ -253,7 +254,9 @@ class _Invariant_ (Error) :
         for k, v in bindings :
             if isinstance (v, (list, tuple)) :
                 v = ", ".join ("%s" % (x, ) for x in v)
-            elif v is not None :
+            elif v is None :
+                v = _T ("None")
+            else :
                 v = ("%r" if self.raw else "%s") % (v, )
                 if v.startswith (('u"', "u'")) :
                     v = v [1:]
@@ -261,6 +264,79 @@ class _Invariant_ (Error) :
     # end def _formatted_bindings
 
 # end class _Invariant_
+
+class Ambiguous_Epk (_Invariant_) :
+
+    arg_sep        = ". "
+    raw            = False
+
+    def __init__ (self, e_type, epk, kw, count, * matches) :
+        assert 1 < count <= len (matches)
+        self.e_type     = e_type
+        self.epk        = tuple (repr (x) for x in epk)
+        self.kw         = kw
+        self.count      = count
+        self.matches    = tuple (m.ui_display for m in matches)
+        self.FO         = matches [0].FO
+    # end def __init__
+
+    @Once_Property
+    def all_bindings (self) :
+        result = self.bindings
+        given  = dict (result)
+        e_type = self.e_type
+        result.extend \
+            ( (a.name, None)
+            for a in itertools.chain (e_type.primary, e_type.required)
+            if  a.name not in given
+            )
+        return sorted (result)
+    # end def bindings
+
+    @Once_Property
+    def args (self) :
+        attrs = _T ("Attributes given: (%s)") % \
+            ( ", ".join
+                ( self._formatted_bindings
+                    ((k, v) for k, v in self.bindings if v is not None)
+                )
+            )
+        return (self.head, attrs, self.description)
+    # end def args
+
+    @Once_Property
+    def bindings (self) :
+        FO = self.FO
+        return sorted \
+            (   (k, (str (FO (k, v)) if v is not None else v))
+            for (k, v) in itertools.chain
+                ( (zip (self.e_type.epk_sig, self.epk))
+                , self.kw.iteritems ()
+                )
+            )
+    # end def bindings
+
+    @Once_Property
+    def head (self) :
+        return \
+            ( _T
+              ("The given attributes match %s entities instead of one or none")
+            % (self.count, )
+            )
+    # end def head
+
+    @Once_Property
+    def description (self) :
+        matches = self.matches
+        more    = self.count - len (matches)
+        result  = \
+            ( _T ("Matching entities: %s%s")
+            % ("; ".join (matches), " ..." if more else "")
+            )
+        return result
+    # end def description
+
+# end class Ambiguous_Epk
 
 class Attribute (Error) :
 

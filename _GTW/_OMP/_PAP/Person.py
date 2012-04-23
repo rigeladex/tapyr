@@ -128,7 +128,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             max_length     = 32
             rank           = 2
 
-            completer      = Attr.Completer_Spec  (3, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class first_name
 
