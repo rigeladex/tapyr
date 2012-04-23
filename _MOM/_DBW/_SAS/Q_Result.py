@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Martin Glueck All rights reserved
+# Copyright (C) 2009-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -61,6 +61,7 @@
 #    16-Nov-2011 (MG) `count`: drop `_order_by` for counts
 #    16-Dec-2011 (MG) `_Q_Result_Attrs_` changed to handle nested composite
 #                     and ID entity attributes added
+#    23-Apr-2012 (MG) `__bool__` added
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,6 @@ class _Q_Result_ (TFL.Meta.Object) :
         return sa_query, joined_tables
     # end def _join
 
-
     def limit (self, limit) :
         result = self._clone ()
         result._limit = limit
@@ -308,6 +308,10 @@ class _Q_Result_ (TFL.Meta.Object) :
         self._filter.append (expr)
         return self
     # end def where
+
+    def __bool__ (self) :
+        return self.count () > 0
+    # end def __bool__
 
     def __iter__ (self) :
         if self._result is None :
