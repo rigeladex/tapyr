@@ -45,6 +45,7 @@
 #    16-Aug-2010 (MG) `verbose` handling in `scope` fixed
 #    16-Aug-2010 (CT) `cmd__delete` and friends added
 #    27-Jan-2012 (CT) `app_path` added
+#    24-Apr-2012 (CT) Add call to `db_man_t.ems.compact` to `_do_migration`
 #    ««revision-date»»···
 #--
 
@@ -458,6 +459,7 @@ class _MOM_Scaffold_ (TFL.Meta.Object) :
         if cmd.verbose :
             cls._print_info  (apt_s, url_s, db_man_s.db_meta_data, "    ")
             cls._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
+        db_man_t.ems.compact ()
         db_man_t.destroy ()
     # end def _do_migration
 
