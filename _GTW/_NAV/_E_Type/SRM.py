@@ -51,6 +51,8 @@
 #     2-Feb-2012 (CT) Add `href_register` and `bir_admin`
 #     2-Feb-2012 (CT) Add `Regatta_Event.Page` with template `regatta_page`
 #    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `form_kw`
+#    24-Apr-2012 (CT) Change `Regatta_Event._get_objects` to determine
+#                     sequence according to `today > date.start`
 #    ««revision-date»»···
 #--
 
@@ -242,7 +244,11 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , E_Type    = r.__class__
                 )
             result.append (Regatta (self, r, page_args = pkw, ** kw))
-        result.extend (self._get_pages ())
+        pages = self._get_pages ()
+        if today >= self.obj.date.start :
+            result.extend (pages)
+        else :
+            result = pages + result
         return result
     # end def _get_objects
 
