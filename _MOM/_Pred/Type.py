@@ -135,7 +135,7 @@ class _Condition_ (object):
             if exc is not None :
                 return True
             val_dict [b] = val
-            val_disp [b] = "%r лл %s" % (val, expr)
+            val_disp [b] = "%r << %s" % (val, expr)
         return self._satisfied (obj, glob_dict, val_dict)
     # end def satisfied
 

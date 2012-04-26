@@ -1320,7 +1320,7 @@ Changing objects and links
     Traceback (most recent call last):
       ...
     Invariants: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 (length <= 5)
-        length = 9 лл len (middle_name)
+        length = 9 << len (middle_name)
         middle_name = 'zacharias'
 
     >>> m
