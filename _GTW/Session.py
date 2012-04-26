@@ -43,6 +43,7 @@
 #                     properties right after `__init__`
 #     5-Apr-2012 (CT) Add stubs for `remove` and `save`
 #     5-Apr-2012 (CT) Rename `Login` to `User`
+#    26-Apr-2012 (CT) Change `_date` to create `User()` if `._load` returns `{}`
 #    ««revision-date»»···
 #--
 
@@ -157,7 +158,9 @@ class Session (TFL.Meta.Object) :
         result = self._data_dict
         if result is None :
             result = self._data_dict = loaded = self._load ()
-        user   = result ["user"]
+        user   = result.get ("user")
+        if user is None :
+            user = result ["user"] = User ()
         expired = \
             (  (user.hash != self._hasher (user.name))
             or self._expired (user.expiry)

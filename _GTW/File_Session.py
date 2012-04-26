@@ -36,13 +36,18 @@
 #                     (because `_sid` can changed during the lifetime of the
 #                     session object)
 #     5-Apr-2012 (CT) Sort alphabetically
+#    26-Apr-2012 (CT) Add debug output to `_load`, split its exception handler
 #    ««revision-date»»···
 #--
-from   _TFL._Meta.Once_Property import Once_Property
+
 from   _GTW                     import GTW
+from   _TFL                     import pyk
+from   _TFL._Meta.Once_Property import Once_Property
+
 import _GTW.Session
 import  cPickle
 import  os
+import  sys
 
 class File_Session (GTW.Session) :
     """Stores the session data in a file on disk.
@@ -110,11 +115,30 @@ class File_Session (GTW.Session) :
     # end def _file_name
 
     def _load (self) :
+        result = {}
         try :
             with open (self.file_name, "rb") as f :
-                return cPickle.load (f)
-        except :
-            return {}
+                cargo = f.read ()
+        except Exception as exc :
+            pyk.fprint \
+                ( ">>> Exception"
+                , exc
+                , "when trying to load session data from"
+                , self.file_name
+                , file = sys.stderr
+                )
+        else :
+            try :
+                result = cPickle.loads (cargo)
+            except Exception as exc :
+                pyk.fprint \
+                    ( ">>> Exception"
+                    , exc
+                    , "when trying to unpickle session data from"
+                    , self.file_name
+                    , file = sys.stderr
+                    )
+        return result
     # end def _load
 
 # end class File_Session
