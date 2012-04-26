@@ -100,7 +100,7 @@ _test_code = """
     last_name ('last_name', 'first_name', 'middle_name', 'title') 2
     >>> fnc = PAP.Person.first_name.completer
     >>> print fnc.name, fnc.names, fnc.treshold
-    first_name ('first_name', 'last_name', 'middle_name', 'title') 3
+    first_name ('first_name', 'last_name', 'middle_name', 'title') 2
     >>> tnc = PAP.Person.title.completer
     >>> print tnc.name, tnc.names, tnc.treshold
     title ('title',) 1

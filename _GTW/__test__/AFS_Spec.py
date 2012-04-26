@@ -1763,7 +1763,7 @@ _prefilled_test = """
                                             , 'middle_name'
                                             , 'title'
                                             ]
-                                        , 'treshold' : 3
+                                        , 'treshold' : 2
                                         }
                                     , 'kind' : 'primary'
                                     , 'label' : 'First name'
@@ -2101,7 +2101,7 @@ _prefilled_test = """
                                             , 'middle_name'
                                             , 'title'
                                             ]
-                                        , 'treshold' : 3
+                                        , 'treshold' : 2
                                         }
                                     , 'kind' : 'primary'
                                     , 'label' : 'First name'

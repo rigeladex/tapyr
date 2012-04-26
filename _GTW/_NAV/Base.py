@@ -287,6 +287,7 @@
 #                     compare `user` and `anonymous_account`
 #    12-Apr-2012 (CT) Improve readability of `_new_edit_session`
 #    26-Apr-2012 (CT) Change `_Dir_.template_iter` to also yield `_effective...`
+#    26-Apr-2012 (CT) Add import for pyk
 #    ««revision-date»»···
 #--
 
@@ -302,7 +303,7 @@ from   _TFL.predicate           import uniq
 from   _TFL.pyk                 import pickle
 from   _TFL.Record              import Record
 from   _TFL.Regexp              import Dict_Replacer
-from   _TFL                     import sos
+from   _TFL                     import pyk, sos
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
