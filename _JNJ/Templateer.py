@@ -406,7 +406,7 @@ class Template_E (_Template_) :
     def get_cached_media (self, css_href, js_href) :
         from _GTW.Media import Media
         if js_href :
-            scripts = self.scripts_x  + (js_href, )
+            scripts = self.scripts_x + (js_href, )
         else :
             scripts = self.scripts
         result = Media \

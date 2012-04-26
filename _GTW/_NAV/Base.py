@@ -286,6 +286,7 @@
 #    11-Apr-2012 (CT) Change `_new_edit_session` to use `!=`, not `is not` to
 #                     compare `user` and `anonymous_account`
 #    12-Apr-2012 (CT) Improve readability of `_new_edit_session`
+#    26-Apr-2012 (CT) Change `_Dir_.template_iter` to also yield `_effective...`
 #    ««revision-date»»···
 #--
 
@@ -1101,6 +1102,10 @@ class _Dir_ (_Site_Entity_) :
     def template_iter (self) :
         for t in self.template, self.dir_template :
             if t :
+                yield t
+        eff = self._effective
+        if eff is not self :
+            for t in eff.template_iter () :
                 yield t
         for d in self.sub_dir_iter () :
             for t in d.template_iter () :

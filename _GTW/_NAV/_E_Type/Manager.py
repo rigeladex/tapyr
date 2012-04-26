@@ -65,6 +65,8 @@
 #    18-Jul-2011 (CT) Use `query_1` instead of home-grown code
 #    14-Nov-2011 (CT) Use `__super.query` instead of home-grown code
 #     2-Feb-2012 (CT) Robustify `_get_child` (`Manager`, `Manager_T_Archive`)
+#    26-Apr-2012 (CT) Redefine `Manager.template_iter` to also yield
+#                     `._admin...`
 #    ««revision-date»»···
 #--
 
@@ -142,6 +144,14 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             result.append (self.disp_filter)
         return tuple (result)
     # end def query_filters
+
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        if self._admin :
+            for t in self._admin.template_iter () :
+                yield t
+    # end def template_iter
 
     @Once_Property
     def type_name (self) :
