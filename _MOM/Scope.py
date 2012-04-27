@@ -93,6 +93,7 @@
 #                     `._finish__init__` after `self.ems.add`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    27-Apr-2012 (CT) Add call to `.rollback` to `commit` in case of errors
+#    27-Apr-2012 (CT) Add exception handler around `rollback` to `commit`
 #    ««revision-date»»···
 #--
 
@@ -320,7 +321,10 @@ class Scope (TFL.Meta.Object) :
             errs = self.r_incorrect (eiter = ucc.entities (ems))
             if errs :
                 exc = MOM.Error.Invariants (errs.errors)
-                self.ems.rollback ()
+                try :
+                    self.ems.rollback ()
+                except Exception as rexc :
+                    print rexc
                 raise exc
         self.ems.commit ()
     # end def commit
