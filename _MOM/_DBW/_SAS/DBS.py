@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -53,6 +53,8 @@
 #                     added
 #     8-Sep-2011 (CT) s/SQLError/DBAPIError/
 #                     (SQLError doesn't exist in SQLAlchemy 0.7)
+#    27-Apr-2012 (MG) `reserve_cid` implemented for Postgresql, `reserve_pid`
+#                     changed
 #    ««revision-date»»···
 #--
 
@@ -327,9 +329,15 @@ class Postgresql (_NFB_) :
     # end def _drop_database_content
 
     @classmethod
+    def reserve_cid (cls, connection, cid) :
+        connection.execute \
+            ("SELECT setval('change_history_cid_seq', %d)" % (cid, ))
+    # end def reserve_cid
+
+    @classmethod
     def reserve_pid (cls, connection, pid) :
         connection.execute \
-            ("ALTER SEQUENCE pid_seq RESTART WITH %d" % (pid + 1, ))
+            ("SELECT setval('pid_seq', %d)" % (pid, ))
     # end def reserve_pid
 
 # end class Postgresql

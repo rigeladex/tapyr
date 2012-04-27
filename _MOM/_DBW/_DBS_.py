@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.
@@ -31,7 +31,8 @@
 #    14-Jun-2011 (MG) `url` add the `query` of the `db_url` to
 #                     `scheme_auth` (to allow specification of the the mysql
 #                     socket file)
-#    15-Jun-2011 (MG) `url` fixed (only add `queryŽ if it is not empty)
+#    15-Jun-2011 (MG) `url` fixed (only add `query` if it is not empty)
+#    27-Apr-2012 (MG) `reserve_cid` added
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,11 @@ class _DBS_ (TFL.Meta.Object) :
         except OSError :
             pass
     # end def delete_database
+
+    @classmethod
+    def reserve_cid (cls, connection, cid) :
+        pass
+    # end def reserve_cid
 
     @classmethod
     def reserve_pid (cls, connection, pid) :

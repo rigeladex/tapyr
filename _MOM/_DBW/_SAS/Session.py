@@ -101,6 +101,7 @@
 #    30-Mar-2012 (MG) `_in_rollback` checks added to prevent database
 #                     activities during transaction rollback
 #    10-Apr-2012 (CT) Remove debug message from `flush`
+#    27-Apr-2012 (MG) `Session_PC.consume` handling of `max_cid` added
 #    ««revision-date»»···
 #--
 
@@ -393,6 +394,7 @@ class _Session_ (TFL.Meta.Object) :
     """A database session"""
 
     transaction = None
+
     def __init__ (self, scope, engine) :
         self.scope        = scope
         self.engine       = engine
@@ -678,7 +680,7 @@ class Session_S (_Session_) :
 # end class Session_S
 
 class Session_PC (_Session_) :
-    """A session bound to a DB mangager deailing with pickle cargos"""
+    """A session bound to a DB manager deailing with pickle cargos"""
 
     def change_query (self, ** kw) :
         query = MOM.DBW.SAS.Q_Result_Changes (MOM.SCM.Change._Change_, self)
@@ -697,15 +699,19 @@ class Session_PC (_Session_) :
                 ### lead to performance issues
                 self.commit ()
         self.commit         ()
-        self._count = 0
+        self._count  = 0
+        self.max_cid = 0
         self._consume_change_iter (change_iter, chunk_size, None)
+        self.commit         ()
+        pm.dbs.reserve_cid  (self.connection, self.max_cid)
         self.commit         ()
     # end def consume
 
     def _consume_change_iter (self, change_iter, chunk_size, parent_cid) :
         table  = MOM.SCM.Change._Change_._sa_table
         for no, (chg_cls, chg_dct, children_pc) in enumerate (change_iter) :
-            cid = chg_dct ["cid"]
+            cid          = chg_dct ["cid"]
+            self.max_cid = max (self.max_cid, cid)
             self.execute \
                 ( table.insert
                     ( values = dict
