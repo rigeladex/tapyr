@@ -92,6 +92,8 @@
 //    20-Apr-2012 (CT) Add support for `missing_t` and `bindings_t` to
 //                     `_display_error` and `_display_error_bindings`
 //    23-Apr-2012 (CT) Use `.concat` instead of `.push` to extend array
+//    27-Apr-2012 (CT) Change `_display_error` to not display `attrs[0]`
+//                     before `head`
 //    ««revision-date»»···
 //--
 
@@ -500,12 +502,7 @@
                 return result;
               } (attrs);
             errs$.append (err$);
-            err$.append
-                ($( L ( "h2"
-                      , { html : (attrs ? attrs [0] + ": " : "") + err.head }
-                      )
-                  )
-                );
+            err$.append ($( L ( "h2", { html : err.head })));
             if ("description" in err) {
                 err$.append
                     ($(L ("div.description", { html : err.description })));
