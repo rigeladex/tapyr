@@ -102,6 +102,9 @@
 #                     activities during transaction rollback
 #    10-Apr-2012 (CT) Remove debug message from `flush`
 #    27-Apr-2012 (MG) `Session_PC.consume` handling of `max_cid` added
+#    27-Apr-2012 (MG) `_Session_.close` try to close the connection added
+#                     (this is required for Sqlite to make sure that the file
+#                     is really closed)
 #    ««revision-date»»···
 #--
 
@@ -419,7 +422,11 @@ class _Session_ (TFL.Meta.Object) :
         self.scope.ems.pm.close  ()
         ### close all connections inside the pool
         ### import pdb; pdb.set_trace ()
-        self.engine.close        ()
+        self.engine.close         ()
+        try :
+            self.connection.close ()
+        except :
+            pass
         self.engine = None
     # end def close
 
