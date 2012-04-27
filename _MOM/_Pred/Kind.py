@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,7 @@
 #    25-Feb-2010 (CT) `check_pred_p` added (honoring `check_always`)
 #    11-Mar-2010 (CT) `check_pred_p` removed (was a Bad Idea (tm))
 #     2-Sep-2010 (CT) `Region` added
+#    27-Apr-2012 (CT) Add `Region` to last paragraph of `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -147,10 +148,10 @@ Class `MOM.Pred.Kind`
     class gets instantiated by :class:`~_MOM._Pred.Spec.Spec` which passes
     the `type` to the kind's `__init__`.
 
-    This module provides two kinds of predicates: :class:`Object` and
-    :class:`System`. A specific application or application domain can define
-    additional kinds of predicates by providing additional classes derived
-    from :class:`Kind`.
+    This module provides three kinds of predicates: :class:`Object`,
+    :class:`Region`, and :class:`System`. A specific application or
+    application domain can define additional kinds of predicates by providing
+    additional classes derived from :class:`Kind`.
 
 .. autoclass:: Object
 .. autoclass:: Region

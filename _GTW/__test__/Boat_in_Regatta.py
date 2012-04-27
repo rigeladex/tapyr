@@ -33,6 +33,7 @@
 #    19-Jan-2012 (CT) Add `_delayed` tests
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    27-Apr-2012 (CT) Add test for `skipper_not_multiplexed`
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,24 @@ _test_code = r"""
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
     (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
 
+    >>> scope.commit ()
+    >>> b8   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1108", raw = True)
+    >>> bir8 = SRM.Boat_in_Regatta (b8, reg, skipper = s)
+    >>> bir8.other_boots_skippered.all ()
+    [GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    >>> scope.commit ()
+    Traceback (most recent call last):
+    ...
+    Invariants: Condition `skipper_not_multiplexed` : A sailor can't be skipper of more than one boat in a single
+    regatta event. (other_boots_skippered_count == 0)
+        boat = Optimist, AUT 1108
+        other_boots_skippered_count = 1 << other_boots_skippered.count ()
+        regatta = Himmelfahrt 2008/05/01, Optimist
+        skipper = Tanzer Christian, AUT, 29676
+    >>> err =  first (bir8.errors)
+    >>> print formatted_1 (err.as_json_cargo)
+    {'attributes' : ['boat', 'regatta', 'skipper'], 'bindings' : [('boat', 'Optimist, AUT 1108'), ('other_boots_skippered_count', '1 << this.other_boots_skippered.count ()'), ('regatta', 'Himmelfahrt 2008/05/01, Optimist'), ('skipper', 'Tanzer Christian, AUT, 29676')], 'description' : '(other_boots_skippered_count == 0)', 'extra_links' : [(9, 'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist')], 'head' : "A sailor can't be skipper of more than one boat in a single\nregatta event."}
+
     >>> show_ora (bir)         ### before destroy
     ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'') : Entity `skipper`
     >>> show_dep (bir.skipper) ### before destroy
@@ -214,6 +233,7 @@ _delayed  = r"""
 """
 
 from _GTW.__test__.model import *
+from _TFL.predicate      import first
 
 def show_ora (x) :
     if x.object_referring_attributes :

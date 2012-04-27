@@ -44,6 +44,7 @@
 #    16-Apr-2012 (CT) Add `val_disp` containing FO-formatted attribute values
 #    16-Apr-2012 (CT) Convert `error_info` and `extra_links` to property
 #    17-Apr-2012 (CT) Remove `val_desc`, use `val_disp` instead
+#    27-Apr-2012 (CT) Add argument `obj` to `_add_entities_to_extra_links`
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class _Condition_ (object):
         return result
     # end def set_s_attr_value
 
-    def _add_entities_to_extra_links (self, lst) :
+    def _add_entities_to_extra_links (self, obj, lst) :
         self._extra_links_d.extend \
             (e for e in lst if isinstance (e, MOM.Entity.Essence))
     # end def _add_entities_to_extra_links
@@ -293,7 +294,7 @@ class Condition (_Condition_) :
             if self.eval_condition (obj, glob_dict, val_dict) :
                 self.error = None
             else :
-                self._add_entities_to_extra_links (val_dict.itervalues ())
+                self._add_entities_to_extra_links (obj, [])
                 self.error = self.Error_Type (obj, self)
         except StandardError as exc :
             print "Exception `%s` in evaluation of predicate `%s` for %s" \
@@ -381,8 +382,7 @@ class _Quantifier_ (_Condition_) :
                 vs = violators
                 if "," in self.bvar :
                     vs = flattened (violators)
-                self._add_entities_to_extra_links (vs)
-                self._add_entities_to_extra_links (val_dict.itervalues ())
+                self._add_entities_to_extra_links (obj, vs)
                 self.error = self.Error_Type \
                     (obj, self, violators, violator_values)
         return not self.error

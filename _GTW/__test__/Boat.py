@@ -178,8 +178,6 @@ _test_code = """
             , '5'
             )
           ]
-      , 'extra_links' :
-    [ 1 ]
       , 'head' : '1 <= max_crew <= 4'
       , 'is_required' : True
       }

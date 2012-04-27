@@ -46,6 +46,8 @@
 #    12-Apr-2012 (CT) Add `errors` and `on_error` to `apply`
 #    18-Apr-2012 (CT) Change `apply` to use `MOM.Error.as_json_cargo`, break
 #                     on `MOM.Error.Error`
+#    27-Apr-2012 (CT) Factor `record_errors`, change apply to
+#                     `e.errors.append (exc)` if necessary
 #    ««revision-date»»···
 #--
 
@@ -192,15 +194,21 @@ class Value (_Base_) :
                 e.entity = results [e.id] = e.elem.apply \
                     (e, results, * args, on_error = e.errors.append, ** kw)
             except MOM.Error.Error as exc :
+                if not e.errors :
+                    e.errors.append (exc)
                 do_break = True
-            if e.errors :
-                errors [e.id] = e.errors = MOM.Error.as_json_cargo (* e.errors)
+            self.record_errors (e)
             conflicts += e.conflicts
             if do_break :
                 break
         if conflicts :
             raise GTW.AFS.Error.Conflict ()
     # end def apply
+
+    def record_errors (self, e) :
+        if e.errors :
+            self.errors [e.id] = e.errors = MOM.Error.as_json_cargo (* e.errors)
+    # end def record_errors
 
     def _check_sids (self, entities, ** kw) :
         for e in entities :

@@ -591,6 +591,7 @@
                     };
                 };
             };
+            // XXX add extra_links
         };
         var _display_error_map = function _display_error_map (error_map) {
             var id, errors, fields$ = [];

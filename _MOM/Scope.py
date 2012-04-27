@@ -92,6 +92,7 @@
 #    11-Apr-2012 (CT) Change `add` and `add_from_pickle_cargo` to call
 #                     `._finish__init__` after `self.ems.add`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
+#    27-Apr-2012 (CT) Add call to `.rollback` to `commit` in case of errors
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,7 @@ import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
+import itertools
 import traceback
 import uuid
 
@@ -317,7 +319,9 @@ class Scope (TFL.Meta.Object) :
         if ucc :
             errs = self.r_incorrect (eiter = ucc.entities (ems))
             if errs :
-                raise MOM.Error.Invariants (errs)
+                exc = MOM.Error.Invariants (errs.errors)
+                self.ems.rollback ()
+                raise exc
         self.ems.commit ()
     # end def commit
 

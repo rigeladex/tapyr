@@ -1313,8 +1313,6 @@ _test_code = """
     >>> p ### before `fv.apply`
     GTW.OMP.PAP.Person (u'tanzer', u'laurens', u'', u'')
     >>> fv.apply (scope, _sid = 0)
-    >>> print formatted (fv.errors)
-    {}
 
     >>> fv.apply (scope, _sid = 1)
     Traceback (most recent call last):
@@ -1481,9 +1479,11 @@ _prefilled_test = """
     >>> bc2 = SRM.Boat_Class ("Laser2",   max_crew = 2)
     >>> b2  = SRM.Boat.instance_or_new (u"Laser2",   u"AUT", u"4321", raw = True)
     >>> p2  = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
+    >>> p3  = PAP.Person.instance_or_new (u"Tanzer", u"Clarissa")
     >>> s2  = SRM.Sailor.instance_or_new (p2, nation = u"AUT", raw = True)
+    >>> s3  = SRM.Sailor.instance_or_new (p3, nation = u"AUT", raw = True)
     >>> rey = SRM.Regatta_H (rev, ys)
-    >>> biy = SRM.Boat_in_Regatta (b2, rey, skipper = s)
+    >>> biy = SRM.Boat_in_Regatta (b2, rey, skipper = s3)
     >>> crw = SRM.Crew_Member (biy, s2)
 
     >>> scope.commit ()

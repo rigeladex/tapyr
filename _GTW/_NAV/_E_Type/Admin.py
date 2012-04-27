@@ -164,6 +164,8 @@
 #     9-Mar-2012 (CT) Extract `allow_new` only if its in `req_data` or `json`
 #    19-Mar-2012 (CT) Change `Completed._rendered` to pass `collapsed = True`
 #    18-Apr-2012 (CT) Change `Change._post_handler` to consider `fv.errors`
+#    27-Apr-2012 (CT) Change `Change._post_handler` to `commit` and
+#                     to call `fv.record_errors` if commit fails
 #    ««revision-date»»···
 #--
 
@@ -574,6 +576,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             json       = handler.json
             request    = handler.request
             result     = {}
+            scope      = self.top.scope
             if json is None :
                 raise NotImplementedError \
                     ("AFS form post requests without content-type json")
@@ -587,6 +590,14 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     get_template   = self.top.Templateer.get_template
                     session_secret = self.session_secret (handler, fv.sid)
                     self.form_value_apply (fv, scope, fv.sid, session_secret)
+                    if not fv.errors :
+                        try :
+                            scope.commit ()
+                        except Exception as exc :
+                            for e in fv.entities () :
+                                if e.entity :
+                                    e.errors = tuple (e.entity.errors)
+                                    fv.record_errors (e)
                     if fv.errors :
                         result ["errors"] = fv.errors
                     else :

@@ -36,6 +36,7 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    26-Jan-2012 (CT) Set `Boat_in_Regatta.left.ui_allow_new`
+#    27-Apr-2012 (CT) Add predicate `skipper_not_multiplexed`
 #    ««revision-date»»···
 #--
 
@@ -139,7 +140,55 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class skipper
 
+        class other_boots_skippered (A_Blob) :
+            """Other links of this `skipper` to a boat in this `regatta.event`.
+            """
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                if obj is not None :
+                    ETM = obj.home_scope [obj.type_name]
+                    return ETM.query_s \
+                        ( Q.pid           != obj.pid
+                        , Q.regatta.event == obj.regatta.event
+                        , Q.skipper       == obj.skipper
+                        )
+            # end def computed
+
+        # end class other_boots_skippered
+
     # end class _Attributes
+
+    class _Predicates (_Ancestor_Essence._Predicates) :
+
+        _Ancestor = _Ancestor_Essence._Predicates
+
+        class skipper_not_multiplexed (Pred.Condition) :
+            """A sailor can't be skipper of more than one boat in a single
+               regatta event.
+            """
+
+            kind               = Pred.Region
+            assertion          = "other_boots_skippered_count == 0"
+            attributes         = ("boat", "regatta", "skipper")
+            bindings           = dict \
+                ( other_boots_skippered_count =
+                    "this.other_boots_skippered.count ()"
+                )
+            _xtra_added        = False
+
+            def _add_entities_to_extra_links (self, obj, lst) :
+                self.__super._add_entities_to_extra_links (obj, lst)
+                if not self._xtra_added :
+                    self._extra_links_d.extend \
+                        (obj.other_boots_skippered.all () or ())
+                    self._xtra_added = True
+            # end def _add_entities_to_extra_links
+
+        # end class skipper_not_multiplexed
+
+    # end class _Predicates
 
 # end class Boat_in_Regatta
 

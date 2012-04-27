@@ -61,6 +61,9 @@
 #    20-Apr-2012 (CT) Improve output of `Required_Missing`
 #    20-Apr-2012 (CT) Add `Required_Missing.missing_t`
 #    23-Apr-2012 (CT) Add `Ambiguous_Epk`
+#    27-Apr-2012 (CT) Add `ui_display` to json cargo of `extra_links`
+#    27-Apr-2012 (CT) Change `_Invariant_.bindings` to apply `unicode` to values
+#    27-Apr-2012 (CT) Add and use `Invariants._flattened`
 #    ««revision-date»»···
 #--
 
@@ -216,10 +219,15 @@ class _Invariant_ (Error) :
     @Once_Property
     def as_json_cargo (self) :
         result = self.__super.as_json_cargo
-        xtra   = list \
-            (   pid
-            for pid in (getattr (x, "pid", None) for x in self.extra_links)
-            if  pid is not None
+        xtra   = sorted \
+            ( (   (pid, d)
+              for pid, d in
+                    (   (getattr (x, "pid", None), x.ui_display)
+                    for x in self.extra_links
+                    )
+              if  pid is not None
+              )
+            , key = TFL.Getter [1]
             )
         if xtra :
             result ["extra_links"] = xtra
@@ -228,7 +236,7 @@ class _Invariant_ (Error) :
 
     @Once_Property
     def bindings (self) :
-        return sorted (self.val_disp.iteritems ())
+        return sorted ((k, unicode (v)) for k, v in self.val_disp.iteritems ())
     # end def bindings
 
     @property
@@ -573,7 +581,8 @@ class Invariants (Error) :
     arg_sep = "\n  "
 
     def __init__ (self, errors) :
-        errors = self.errors = sorted (errors, key = self._sort_key)
+        errors = self.errors = sorted \
+            (self._flattened (errors), key = self._sort_key)
         self.__super.__init__ (* errors)
     # end def __init__
 
@@ -587,11 +596,23 @@ class Invariants (Error) :
         return any (isinstance (e, Required_Empty) for e in self.errors)
     # end def any_required_empty
 
+    def _flattened (self, errors) :
+        for e in errors :
+            ee = getattr (e, "errors", None)
+            if ee is not None :
+                e = tuple (ee)
+            if isinstance (e, (list, tuple)) :
+                for x in self._flattened (e) :
+                    yield x
+            else :
+                yield e
+    # end def _flattened
+
     def _sort_key (self, err) :
         try :
             return err.inv.name
         except AttributeError :
-            return str (err)
+            return unicode (err)
     # end def _sort_key
 
 # end class Invariants
