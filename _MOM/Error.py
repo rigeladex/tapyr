@@ -64,6 +64,7 @@
 #    27-Apr-2012 (CT) Add `ui_display` to json cargo of `extra_links`
 #    27-Apr-2012 (CT) Change `_Invariant_.bindings` to apply `unicode` to values
 #    27-Apr-2012 (CT) Add and use `Invariants._flattened`
+#    30-Apr-2012 (CT) Add `Duplicate_Link.__init__`
 #    ««revision-date»»···
 #--
 
@@ -476,6 +477,14 @@ class Commit_Conflict (DB) :
 
 class Duplicate_Link (Error) :
     """Raised when a link is added to an association more than once."""
+
+    def __init__ (self, etype, old, epk, kw) :
+        self.__super.__init__ \
+            ( _T ("There already exists a link: %s %s")
+            % (_T (etype.ui_name), old.ui_display)
+            )
+    # end def __init__
+
 # end class Duplicate_Link
 
 class Empty_DB (DB) :
