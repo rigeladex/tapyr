@@ -107,6 +107,7 @@
 #                     exceptions
 #    20-Apr-2012 (CT) Change `Link.__call__` and `instance_or_new` to let
 #                     `MOM.Entity` handle `MOM.Error.Required_Missing`
+#    30-Apr-2012 (CT) Add `epk, kw` to call of `Duplicate_Link`
 #    ««revision-date»»···
 #--
 
@@ -501,7 +502,7 @@ class Link (Id_Entity) :
         etype = self._etype
         if self.ems.exists (etype, epk) :
             raise MOM.Error.Duplicate_Link \
-                (etype, self.ems.instance (etype, epk))
+                (etype, self.ems.instance (etype, epk), epk, kw)
         errors  = []
         r_query = self.ems.r_query
         for r, pk in zip (etype.Roles, epk) :
