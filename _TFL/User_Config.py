@@ -72,7 +72,7 @@ class User_Config (threading.local) :
 
     @property
     def time_zone (self) :
-        if _time_zone is None :
+        if self._time_zone is None :
             if self.tz is not None :
                 self._time_zone = self.tz.tzutc ()
         return self._time_zone
