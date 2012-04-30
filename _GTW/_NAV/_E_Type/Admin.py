@@ -166,6 +166,7 @@
 #    18-Apr-2012 (CT) Change `Change._post_handler` to consider `fv.errors`
 #    27-Apr-2012 (CT) Change `Change._post_handler` to `commit` and
 #                     to call `fv.record_errors` if commit fails
+#    30-Apr-2012 (CT) Add `submit_callback` to `Admin.Changer._post_handler`
 #    ««revision-date»»···
 #--
 
@@ -220,6 +221,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         )
     form_parameters     = {}
     max_completions     = 20
+    submit_callback     = None
     template_name       = "e_type_admin"
 
     button_types        = dict \
@@ -576,7 +578,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             json       = handler.json
             request    = handler.request
             result     = {}
-            scope      = self.top.scope
             if json is None :
                 raise NotImplementedError \
                     ("AFS form post requests without content-type json")
@@ -621,6 +622,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                     , json = fi.as_json_cargo
                                     )
                                 rids.append (e.id)
+                        if TFL.callable (self.submit_callback) :
+                            try :
+                                self.submit_callback \
+                                    (handler, scope, fv, result)
+                            except Exception as exc :
+                                import traceback; traceback.print_exc ()
                 return handler.write_json (result)
             except JSON_Error as exc :
                 return exc (handler)

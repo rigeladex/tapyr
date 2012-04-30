@@ -1,6 +1,6 @@
 {#- jinja template: email.jnj -#}
 {#-
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    19-Feb-2010 (CT) Creation
+##    30-Apr-2012 (CT) Use `page.encoding`
 ##    ««revision-date»»···
 ##--
 -#}
@@ -42,7 +43,7 @@
 {%- endif -%}
 From:    {{ GTW.firstof (email_from, page.webmaster) }}
 To:      {{ email_to }}
-Content-type: text/plain; charset=utf-8
+Content-type: text/plain; charset={{- page.encoding or "iso-8859-15" }}
 {{ "\n".join (headers) }}
 {%- endblock headers %}
 

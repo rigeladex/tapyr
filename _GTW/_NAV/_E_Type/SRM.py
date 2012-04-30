@@ -53,8 +53,11 @@
 #    15-Feb-2012 (CT) Add `Crew_Member.max_links` to `form_kw`
 #    24-Apr-2012 (CT) Change `Regatta_Event._get_objects` to determine
 #                     sequence according to `today > date.start`
+#    30-Apr-2012 (CT) Add and use `_register_submit_callback`
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import, unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -75,6 +78,8 @@ import datetime
 
 class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta."""
+
+    register_email_template = "regatta_register_email"
 
     class Registration (GTW.NAV.Page) :
 
@@ -198,10 +203,49 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , implicit        = True
                 , name            = "admin"
                 , parent          = self
+                , submit_callback = self._register_submit_callback
                 )
             result.append (bir_admin.__class__ (** kw))
         return result
     # end def _get_objects
+
+    def _register_submit_callback (self, handler, scope, fv, result) :
+        def _gen (scope, results) :
+            from _MOM._Attr import Selector as S
+            AQ = S.List (S.primary, S.user)
+            SRM = scope.SRM
+            for k, x in sorted (results.iteritems ()) :
+                if isinstance (x, (SRM.Boat.E_Type, SRM.Sailor.E_Type)) :
+                    yield x.type_name, tuple \
+                        ( "%s = '%s'" % (a.name, getattr (x.FO, a.name))
+                        for a in AQ (x)
+                        if  a.has_substance (x)
+                        )
+        message = "\n".join \
+            (   "%s (%s)" % (t, ", ".join (a))
+            for t, a in _gen (scope, fv.results)
+            )
+        try :
+            email = self.email
+            self.send_email \
+                ( self.register_email_template
+                , email_from    = email
+                , email_to      = email
+                , email_subject =
+                    _T ("%s: regatta registration") % (self.obj.ui_display, )
+                , message       = message
+                , NAV           = self.top
+                , page          = self
+                , request       = handler.request
+                )
+        except Exception as exc :
+            print \
+                ( "Sending regatta registration email to %r failed "
+                  "with exception %s"
+                % (email, exc)
+                )
+            print message
+    # end def _register_submit_callback
 
 # end class Regatta
 

@@ -68,6 +68,7 @@
 #                     add `__lt__` and `totally_ordered`
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    15-Apr-2012 (CT) Apply `sorted` to `injected` in `Templateer.get_template`
+#    30-Apr-2012 (CT) Add `regatta_register_email`
 #    ««revision-date»»···
 #--
 
@@ -550,6 +551,7 @@ Template ("login",                        "html/login.jnj")
 Template ("photo",                        "html/photo.jnj")
 Template ("regatta_calendar",             "html/regatta_calendar.jnj")
 Template ("regatta_page",                 "html/regatta_page.jnj")
+Template ("regatta_register_email",       "email/regatta_register.jnj")
 Template ("regatta_registration",         "html/regatta_registration.jnj")
 Template ("regatta_result",               "html/regatta_result.jnj")
 Template ("regatta_result_teamrace",      "html/regatta_result_teamrace.jnj")
