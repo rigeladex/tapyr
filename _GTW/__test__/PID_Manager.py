@@ -49,7 +49,7 @@ _test_code = r"""
     >>> b3 = SRM.Boat       (bc, "Austria", 2) # doctest:+ELLIPSIS
     Traceback (most recent call last):
         ...
-    Duplicate_Link: <class 'GTW.OMP.SRM.Boat' [...]>, ((u'optimist', ), u'AUT', 2, u'')
+    Duplicate_Link: There already exists a link: Boat Optimist, AUT 2
     >>> b3 = SRM.Boat       (bc, "Austria", 3)
     >>> int (b3.pid)
     102
