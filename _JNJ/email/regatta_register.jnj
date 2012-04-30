@@ -34,8 +34,9 @@
 #}
 
 {%- block body -%}
-User {{ request.user }} connecting from {{ request.host }} registered for
-regatta {{ page.obj.event.FO.short_title }}, {{ page.obj.event.ui_date }}:
+User {{ request.user }} connecting from {{ request.remote_addr }}
+registered for regatta
+{{ page.obj.event.FO.short_title }}, {{ page.obj.event.ui_date }}:
 
 {{ message }}
 {%- endblock body -%}
