@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -28,18 +28,21 @@
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
 #    20-Jul-2011 (CT) `get_tz` and `set_defaults` added
+#    30-Apr-2012 (CT) Convert `tz` to lazy `Once_Property`, allow
+#                     `ImportError` by `dateutil`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import unicode_literals, absolute_import
 
 from   _MOM        import MOM
 from   _TFL        import TFL
 
+from   _TFL._Meta.Once_Property import Once_Property
+
 import _TFL._Meta.Property
 import _TFL.Context
 
-from   dateutil    import tz
 import locale
 import threading
 import sys
@@ -53,8 +56,9 @@ class User_Config (threading.local) :
     input_encoding       = locale.getpreferredencoding ()
     language             = "en"
     output_encoding      = input_encoding
-    time_zone            = tz.tzutc ()
     user                 = None
+
+    _time_zone           = None
 
     def __init__ (self, ** kw) :
         if self._initialzed :
@@ -66,6 +70,28 @@ class User_Config (threading.local) :
         self.__dict__.update (kw)
     # end def __init__
 
+    @property
+    def time_zone (self) :
+        if _time_zone is None :
+            if self.tz is not None :
+                self._time_zone = self.tz.tzutc ()
+        return self._time_zone
+    # end def time_zone
+
+    @time_zone.setter
+    def time_zone (self, value) :
+        self._time_zone = value
+    # end def time_zone
+
+    @Once_Property
+    def tz (self) :
+        try :
+            from dateutil import tz
+            return tz
+        except ImportError :
+            pass
+    # end def tz
+
     def get_tz (self, name = None) :
         """Return tz-info for `name` (default taken from environment).
 
@@ -75,7 +101,8 @@ class User_Config (threading.local) :
                    tzfile ('/usr/share/zoneinfo/Europe/Vienna')
 
         """
-        return tz.gettz (name)
+        if self.tz is not None :
+            return self.tz.gettz (name)
     # end def get_tz
 
     LET = TFL.Meta.Class_and_Instance_Method (TFL.Context.attr_let)
