@@ -288,6 +288,8 @@
 #    12-Apr-2012 (CT) Improve readability of `_new_edit_session`
 #    26-Apr-2012 (CT) Change `_Dir_.template_iter` to also yield `_effective...`
 #    26-Apr-2012 (CT) Add import for pyk
+#    30-Apr-2012 (CT) Convert `email` to property, use for `send_email`;
+#                     convert `webmaster` to property or `Root`
 #    ««revision-date»»···
 #--
 
@@ -382,6 +384,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     top                        = None
 
     _dump_type                 = "dict"
+    _email                     = None   ### default from address
     _template                  = None
 
     _Media                     = GTW.Media ()
@@ -490,6 +493,22 @@ class _Site_Entity_ (TFL.Meta.Object) :
             , indent, self.__class__.__name__, sep, lines, indent
             )
     # end def dump
+
+    @property
+    def email (self) :
+        result = self._email
+        if result is None :
+            result = self.webmaster
+            if isinstance (result, tuple) :
+                result = "%s <%s>" % (result [1], result [0])
+            self._email = result
+        return result
+    # end def email
+
+    @email.setter
+    def email (self, value) :
+        self._email = value
+    # end def email
 
     def etype_manager (self, obj) :
         etn = getattr (obj, "type_name", None)
@@ -619,16 +638,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def send_email (self, template, ** context) :
         email_from = context.get ("email_from")
         if not email_from :
-            context ["email_from"] = \
-                (  self.webmaster
-                or "webmaster@" + context.get ("host", self.site_url)
-                )
+            context ["email_from"] = self.email
         if self.smtp :
             text = self.top.Templateer.render (template, context).encode \
                 (self.encoding, "replace")
             self.smtp (text)
         else :
-            print "*** Cannot send email because `smpt` is undefined ***"
+            print "*** Cannot send email because `smtp` is undefined ***"
             print text
     # end def send_email
 
@@ -664,12 +680,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def Type (self) :
         return self.__class__.__name__
     # end def Type
-
-    @property
-    def webmaster (self) :
-        if self.top.domain :
-            return "webmaster@%s" % self.top.domain
-    # end def webmaster
 
     @Once_Property
     def _effective (self) :
@@ -1164,8 +1174,8 @@ class Root (_Dir_) :
     Cache_Pickler           = set ()
     copyright_start         = None
     copyright_url           = None
+    Create_Scope            = None
     DEBUG                   = False
-    email                   = None   ### default from address
     Media_Parameters        = None
     name                    = "/"
     owner                   = None
@@ -1175,12 +1185,11 @@ class Root (_Dir_) :
     src_root                = ""
     target                  = None
     translator              = None
-    webmaster               = None
 
     _dump_type              = "GTW.NAV.Root.from_dict_list \\"
     _login_required         = False
     _permission             = None
-    Create_Scope            = None
+    _webmaster              = None
 
     class E_Type_Desc (TFL.Meta.Object) :
 
@@ -1405,6 +1414,22 @@ class Root (_Dir_) :
                 return page._raise_403 (handler)
         raise HTTP.Error_404 ()
     # end def universal_view
+
+    @property
+    def webmaster (self) :
+        result = self._webmaster
+        if result is None :
+            domain = self.domain or self.site_url
+            if domain.startswith ("www.") :
+                domain = domain [4:]
+            result = self._webmaster = "webmaster@%s" % (domain, )
+        return result
+    # end def webmaster
+
+    @webmaster.setter
+    def webmaster (self, value) :
+        self._webmaster = value
+    # end def webmaster
 
     def _cache_pickles (self, msg_head, msg_tail = "") :
         for cp in sorted (self.Cache_Pickler, key = TFL.Getter.cache_rank) :
