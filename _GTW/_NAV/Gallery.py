@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -222,6 +222,8 @@ class Gallery (GTW.NAV.Page) :
 
     def _get_child (self, child, * grandchildren) :
         if not grandchildren :
+            if child == "index.html" :
+                return self
             for p in self.photos :
                 if child == p.name :
                     return p

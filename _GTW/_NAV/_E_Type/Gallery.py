@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -159,8 +159,11 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     def _get_child (self, child, * grandchildren) :
         if not grandchildren :
-            n = int (child.split (".") [0])
-            return self.pictures [n-1]
+            if child == "index.html" :
+                return self
+            else :
+                n = int (child.split (".") [0])
+                return self.pictures [n-1]
     # end def _get_child
 
 # end class Gallery

@@ -185,7 +185,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         if obj is None :
             try :
                 obj = self.ETM.pid_query (child)
-            except LookupError :
+            except (LookupError, ValueError) :
                 pass
         if obj is not None :
             result = self.page_from_obj (obj)
@@ -194,6 +194,8 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
                     result = result._get_child (* grandchildren)
                 else :
                     result = None
+        if result is None :
+            return self.__super._get_child (child, * grandchildren)
         return result
     # end def _get_child
 
@@ -282,7 +284,8 @@ class Manager_T_Archive (Manager) :
                 result = first \
                     (e for e in self._entries if e.perma_name == child)
             except IndexError :
-                pass
+                if child == "index.html" and not grandchildren :
+                    return self
             else :
                 if grandchildren :
                     result = result._get_child (* grandchildren)

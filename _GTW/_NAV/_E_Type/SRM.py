@@ -114,7 +114,8 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         try :
             result = first (e for e in entries if e.name == child)
         except IndexError :
-            pass
+            if child == "index.html" and not grandchildren :
+                return self
         else :
             if grandchildren :
                 result = result._get_child (* grandchildren)
@@ -225,7 +226,8 @@ class Regatta_Event (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         try :
             result = first (e for e in entries if e.name == child)
         except IndexError :
-            pass
+            if child == "index.html" and not grandchildren :
+                return self
         else :
             if grandchildren :
                 result = result._get_child (* grandchildren)
