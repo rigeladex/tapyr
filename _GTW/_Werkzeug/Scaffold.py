@@ -32,6 +32,7 @@
 #    27-Jan-2012 (CT) Factor `_wsgi_app`
 #    30-Jan-2012 (CT) Change `_wsgi_app` to `cmd.GET ("cookie_salt")`
 #     1-Feb-2012 (CT) Use newly factored `GTW.AFS.MOM.Form_Cache`
+#    30-Apr-2012 (MG) Allow none existing `Auth`
 #    ««revision-date»»···
 #--
 
@@ -185,7 +186,8 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
             , encoding            = nav.encoding
             , i18n                = True
-            , login_url           = nav.SC.Auth.href_login
+            , login_url           = getattr
+                  (getattr (nav.SC, "Auth", None), "href_login", None)
             , session_id          = bytes ("SESSION_ID")
             , static_handler      = static_handler
             , user_session_ttl    = cmd.user_session_ttl.date_time_delta
