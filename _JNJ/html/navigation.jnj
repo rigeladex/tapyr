@@ -49,6 +49,7 @@
 ##    15-Oct-2011 (MG) `s/_entry_body/entry_body/g`
 ##    21-Oct-2011 (CT) `main` added to wrap code previously at module scope
 ##    11-Apr-2012 (CT) Change `entry_body` to use `GTW._T (link.short_title)`
+##     3-May-2012 (CT) Add guard, default for `lang` to macro `language_section`
 ##    ««revision-date»»···
 ##--
 #}
@@ -132,8 +133,11 @@
 {%- macro language_section (page, request) -%}
   {%- set L10N = page.top.SC.L10N %}
   {%- if L10N %}
+    {%- if not lang %}
+      {%- set lang = page.language %}
+    {% endif -%}
     {%- set langs = L10N.languages %}
-    {%- if langs|length > 1 %}
+    {%- if lang and langs|length > 1 %}
       {% call X.section (class="language-selection") -%}
         <h1 title="{{ GTW._T ("Languages that can be selected for %s") % request.host }}">
           {{- GTW._T ("Language") -}}

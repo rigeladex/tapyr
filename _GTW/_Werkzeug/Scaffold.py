@@ -33,6 +33,7 @@
 #    30-Jan-2012 (CT) Change `_wsgi_app` to `cmd.GET ("cookie_salt")`
 #     1-Feb-2012 (CT) Use newly factored `GTW.AFS.MOM.Form_Cache`
 #    30-Apr-2012 (MG) Allow none existing `Auth`
+#     3-May-2012 (CT) Pass `languages` to `HTTP.Application`
 #    ««revision-date»»···
 #--
 
@@ -161,7 +162,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
                 translations = TFL.I18N.load \
                     ( * cmd.languages
                     , domains    = ("messages", )
-                    , use        = cmd.locale_code
+                    , use        = cmd.locale_code or "en"
                     , locale_dir = ldir
                     )
             except ImportError :
@@ -186,6 +187,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
             , encoding            = nav.encoding
             , i18n                = True
+            , languages           = set (cmd.languages)
             , login_url           = getattr
                   (getattr (nav.SC, "Auth", None), "href_login", None)
             , session_id          = bytes ("SESSION_ID")

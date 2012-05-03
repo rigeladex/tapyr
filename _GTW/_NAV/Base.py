@@ -290,6 +290,7 @@
 #    26-Apr-2012 (CT) Add import for pyk
 #    30-Apr-2012 (CT) Convert `email` to property, use for `send_email`;
 #                     convert `webmaster` to property or `Root`
+#     3-May-2012 (CT) Add default for `Root.language`
 #    ««revision-date»»···
 #--
 
@@ -1176,6 +1177,7 @@ class Root (_Dir_) :
     copyright_url           = None
     Create_Scope            = None
     DEBUG                   = False
+    language                = "en"
     Media_Parameters        = None
     name                    = "/"
     owner                   = None

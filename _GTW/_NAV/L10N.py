@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -29,6 +29,7 @@
 #    22-Feb-2010 (CT) Creation
 #    22-Feb-2010 (CT) `languages` and `flag` added
 #    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
+#     3-May-2012 (CT) Add `flag_dir`, change `flag` to use it
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,11 @@ import _GTW._NAV.Base
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL                     import sos
+
+import itertools
+
+from   posixpath                import join as pjoin
 
 class L10N (GTW.NAV.Dir) :
     """Navigation directory for selecting a language for localization."""
@@ -84,13 +90,24 @@ class L10N (GTW.NAV.Dir) :
         if isinstance (lang, basestring) :
             lang = lang.split ("_")
         map = self.country_map
-        for l in reversed (lang) :
-            k      = (map.get (l) or l).lower ()
-            flag   = "/media/GTW/icons/flags/%s.png" % (k, )
-            exists = True # XXX # GTW.static_map.exists (flag)
-            if exists :
-                return flag
+        for l in itertools.chain (reversed (lang), (self.language, "en")) :
+            k = (map.get (l) or l).lower ()
+            if k :
+                f = "%s.png" % (k, )
+                if sos.path.exists (sos.path.join (self.flag_dir, f)) :
+                    return pjoin ("/media/GTW/icons/flags", f)
     # end def flag
+
+    @Once_Property
+    def flag_dir (self) :
+        return sos.path.normpath \
+            ( sos.path.join
+                ( sos.path.dirname (__file__)
+                , ".."
+                , "media/icons/flags"
+                )
+            )
+    # end def flag_dir
 
     @Once_Property
     def languages (self) :
@@ -111,7 +128,7 @@ class L10N (GTW.NAV.Dir) :
         if not grandchildren :
             result = self.languages.get (child)
             if result is None :
-                result = self.languages.get (child.split ("_"))
+                result = self.languages.get (child.split ("_") [0])
             if result is not None :
                 return result
     # end def _get_child

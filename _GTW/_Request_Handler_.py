@@ -55,6 +55,8 @@
 #    31-May-2011 (MG) `default_content_encoding` added
 #    24-Nov-2011 (CT) Add `accept_header` and `wants_json`
 #     5-Apr-2012 (CT) Remove `current_user`; move `_get_user` to `GTW.NAV`
+#     3-May-2012 (CT) Change `get_browser_locale_codes` to consider
+#                     `supported; `use `en`, not `en_US`, as last resort
 #    ««revision-date»»···
 #--
 
@@ -203,24 +205,30 @@ class _Request_Handler_ (object) :
         if "Accept-Language" in self.request.headers :
             languages = self.request.headers ["Accept-Language"].split (",")
             locales   = []
+            supported = self.settings.get ("languages", set ())
             for language in languages :
                 parts = language.strip ().split (";")
-                if len (parts) > 1 and parts [1].startswith ("q="):
-                    try :
-                        score = float (parts [1][2:])
-                    except (ValueError, TypeError):
-                        score = 0.0
-                else:
-                    score = 1.0
-                locales.append ((parts [0], score))
+                l = parts [0]
+                if l in supported :
+                    if len (parts) > 1 and parts [1].startswith ("q="):
+                        try :
+                            score = float (parts [1][2:])
+                        except (ValueError, TypeError):
+                            score = 0.0
+                    else:
+                        score = 1.0
+                    locales.append ((l, score))
             if locales :
                 locales.sort (key=lambda (l, s): s, reverse = True)
                 return [l [0] for l in locales]
-        return (self.settings.get ("default_locale_code", "en_US"), )
+        return (self.settings.get ("default_locale_code", "en"), )
     # end def get_browser_locale_codes
 
     def get_user_locale_codes (self) :
-        return self.session.get ("language")
+        supported = self.settings.get ("languages", set ())
+        result    = tuple \
+            (l for l in self.session.get ("language", ()) if l in supported)
+        return result
     # end def get_user_locale_codes
 
     def write_json (self, __data = None, ** kw) :
