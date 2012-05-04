@@ -292,6 +292,7 @@
 #                     convert `webmaster` to property or `Root`
 #     3-May-2012 (CT) Add default for `Root.language`
 #     4-May-2012 (CT) Rename `login_page` to `login_url`
+#     4-May-2012 (CT) Add logging to `Stopper._view`
 #    ««revision-date»»···
 #--
 
@@ -1499,6 +1500,10 @@ class Stopper (Page) :
         if sos.path.exists (self.sentinel_name) :
             signal.alarm   (self.delay)
         else :
+            logging.error \
+                ( "%s doesn't exist"
+                % sos.path.abspath (self.sentinel_name)
+                )
             raise HTTP.Error_404 ()
     # end def _view
 
