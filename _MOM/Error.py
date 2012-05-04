@@ -771,10 +771,11 @@ class Required_Missing (_Invariant_) :
 
     @Once_Property
     def head (self) :
+        n = len (self.needed)
         return  \
             (  _Tn ( "%s needs the %s attribute: %s"
                    , "%s needs the %s attributes: %s"
-                   , len (self.needed)
+                   , n
                    )
             % (_T (self.e_type.ui_name), _T (self.kind), self.needed)
             )

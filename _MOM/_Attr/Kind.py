@@ -171,6 +171,7 @@
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
+#     4-May-2012 (CT) Add I18N marker `_` to `kind = <kind>` statements
 #    ««revision-date»»···
 #--
 
@@ -893,7 +894,7 @@ class _Volatile_ (Kind) :
 class _Cached_ (_Volatile_, _System_) :
 
     is_settable = False
-    kind        = "cached"
+    kind        = _ ("cached")
 
     def _inc_changes (self, man, obj, value) :
         pass
@@ -907,7 +908,7 @@ class _Primary_ (_User_) :
     """
 
     is_primary  = True
-    kind        = "primary"
+    kind        = _ ("primary")
 
     def __set__ (self, obj, value) :
         raise AttributeError \
@@ -1000,7 +1001,7 @@ class Link_Role (_EPK_Mixin_, Primary) :
 class Required (_Required_Mixin_, _User_) :
     """Required attribute: must immediately be defined by the tool user."""
 
-    kind        = "required"
+    kind        = _ ("required")
     void_values = (None, "")
 
     _k_rank     = -5
@@ -1014,7 +1015,7 @@ class Required (_Required_Mixin_, _User_) :
 class Necessary (_User_) :
     """Necessary attribute: must eventually be defined by the tool user."""
 
-    kind        = "necessary"
+    kind        = _ ("necessary")
     _k_rank     = -4
 
     def to_save (self, obj) :
@@ -1026,7 +1027,7 @@ class Necessary (_User_) :
 class Optional (_User_) :
     """Optional attribute: if undefined, the `default` value is used, if any."""
 
-    kind        = "optional"
+    kind        = _ ("optional")
     _k_rank     = -4
 
 # end class Optional
@@ -1034,14 +1035,14 @@ class Optional (_User_) :
 class Internal (_DB_System_) :
     """Internal attribute: value is defined by some component of the tool."""
 
-    kind = "internal"
+    kind = _ ("internal")
 
 # end class Internal
 
 class Const (_Cached_) :
     """Constant attribute (has static default value that cannot be changed)."""
 
-    kind        = "constant"
+    kind        = _ ("constant")
 
     def __set__ (self, obj, value) :
         raise AttributeError \
@@ -1178,7 +1179,7 @@ class Computed (_Cached_, _Computed_Mixin_) :
        :class:`Auto_Cached` or :class:`Sync_Cached` don't work.
     """
 
-    kind        = "computed"
+    kind        = _ ("computed")
 
     def get_value (self, obj) :
         return self._get_computed (obj)
@@ -1202,7 +1203,7 @@ class Query (_Cached_, _Computed_Mixin_) :
        type).
     """
 
-    kind       = "query"
+    kind       = _ ("query")
 
     def _get_computed (self, obj) :
         attr   = self.attr

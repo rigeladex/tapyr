@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-18 09:43+0200\n"
+"POT-Creation-Date: 2012-05-04 10:49+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -22,8 +22,8 @@ msgstr ""
 msgid "A password reset is pending for the linked account."
 msgstr "Zurücksetzen des Kennworts für dieses Benutzerkonto ist ausständig."
 
-#: _GTW._OMP._Auth.Account_in_Group:0 _GTW._OMP._Auth.Account_Handling:0
-#: _GTW._OMP._Auth.Account:0
+#: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account:0
+#: _GTW._OMP._Auth.Account_in_Group:0
 msgid "Account"
 msgid_plural "Accounts"
 msgstr[0] "Benutzerkonto"
@@ -113,7 +113,7 @@ msgstr "Verfalldatum für diese Aktion"
 msgid "Expires"
 msgstr "Verfällt"
 
-#: _GTW._OMP._Auth.Account_in_Group:0 _GTW._OMP._Auth.Group:0
+#: _GTW._OMP._Auth.Group:0 _GTW._OMP._Auth.Account_in_Group:0
 msgid "Group"
 msgid_plural "Groups"
 msgstr[0] "Gruppe"

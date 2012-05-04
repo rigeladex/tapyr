@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-18 09:43+0200\n"
+"POT-Creation-Date: 2012-05-04 10:49+0200\n"
 "PO-Revision-Date: 2011-11-24 11:29+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _JNJ/html/e_type_afs.jnj:83
+#: _JNJ/html/e_type_afs.jnj:87
 msgid "Accept changes"
 msgstr "Akzeptiere Änderungen"
 
@@ -27,7 +27,7 @@ msgid "Activation for"
 msgstr "Aktivierung für"
 
 #: _JNJ/html/e_type.m.jnj:147 _JNJ/html/e_type.m.jnj:257
-#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:68
+#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:69
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr "Erzeuge"
@@ -89,7 +89,7 @@ msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
 #: _JNJ/html/e_type.m.jnj:97 _JNJ/html/e_type.m.jnj:137
-#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:69
+#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:70
 #: _JNJ/html/form.jnj:164 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -106,7 +106,7 @@ msgstr "Ändern"
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/e_type_afs.jnj:84
+#: _JNJ/html/e_type_afs.jnj:88
 msgid "Change attributes of this object"
 msgstr "Ändere Attribute des Objekts"
 
@@ -157,12 +157,12 @@ msgstr "Konfiguriere"
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/e_type_afs.jnj:70
+#: _JNJ/html/e_type_afs.jnj:71
 msgid "Copy"
 msgstr "Kopiere"
 
 #: _JNJ/html/e_type.m.jnj:343 _JNJ/html/e_type.m.jnj:347
-#: _JNJ/html/e_type_afs.jnj:79
+#: _JNJ/html/e_type_afs.jnj:83
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
 
@@ -170,12 +170,12 @@ msgstr "Erzeuge neues Objekt"
 msgid "Currently selected day"
 msgstr "Gegenwärtig ausgewählter Tag"
 
-#: _JNJ/html/navigation.jnj:143
+#: _JNJ/html/navigation.jnj:147
 #, python-format
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/e_type_afs.jnj:71
+#: _JNJ/html/e_type_afs.jnj:72
 msgid "Delete"
 msgstr "Lösche"
 
@@ -183,7 +183,7 @@ msgstr "Lösche"
 msgid "Delete object"
 msgstr "Lösche Objekt"
 
-#: _JNJ/html/e_type_afs.jnj:82
+#: _JNJ/html/e_type_afs.jnj:86
 msgid "Delete this object"
 msgstr "Lösche dieses Objekt"
 
@@ -212,7 +212,7 @@ msgstr "Verwerfen aller Änderungen im Sub-Formular"
 msgid "Discard all changes made and leave popup-form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Sub-Formulars"
 
-#: _JNJ/html/e_type_afs.jnj:80
+#: _JNJ/html/e_type_afs.jnj:84
 msgid "Discard changes"
 msgstr "Verwerfen aller Änderungen"
 
@@ -252,7 +252,7 @@ msgstr "Stelle Objekte in absteigender Reihenfolge bezogen auf das Attribut dar"
 msgid "Display previous batch of objects matching the restriction"
 msgstr "Stelle vorige Seite dar"
 
-#: _JNJ/html/e_type_afs.jnj:72
+#: _JNJ/html/e_type_afs.jnj:73
 msgid "Done"
 msgstr "Fertig"
 
@@ -268,7 +268,7 @@ msgstr ""
 "Ziehe die Ordnungskriterien mit der Maus an eine andere Position um die "
 "Priorität zu ändern"
 
-#: _JNJ/html/e_type_afs.jnj:73 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:74 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr "Ändere"
 
@@ -304,24 +304,22 @@ msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
 
 #: _JNJ/html/error_404.jnj:54
 #, python-format
-msgid "If a link under %s refers to %s, please contact the webmaster."
-msgstr ""
-"Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
-"Webmaster."
+msgid "If a link under %s refers to %s, please contact the %s."
+msgstr "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem %s."
 
 #: _JNJ/html/e_type_admin.jnj:60
 msgid "Javascript is needed to fully use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
-#: _JNJ/html/e_type_afs.jnj:57
+#: _JNJ/html/e_type_afs.jnj:58
 msgid "Javascript is needed to use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
-#: _JNJ/html/navigation.jnj:139
+#: _JNJ/html/navigation.jnj:143
 msgid "Language"
 msgstr "Sprache"
 
-#: _JNJ/html/navigation.jnj:138
+#: _JNJ/html/navigation.jnj:142
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
@@ -360,16 +358,16 @@ msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 msgid "Log into website with username and password specified"
 msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
-#: _JNJ/html/navigation.jnj:168
+#: _JNJ/html/navigation.jnj:172
 msgid "Logged in"
 msgstr "Angemeldet"
 
-#: _JNJ/html/navigation.jnj:167
+#: _JNJ/html/navigation.jnj:171
 #, python-format
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:173
+#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:177
 msgid "Login"
 msgstr "Anmelden"
 
@@ -386,7 +384,7 @@ msgstr "Anmeldung erforderlich"
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
-#: _JNJ/html/e_type_afs.jnj:81
+#: _JNJ/html/e_type_afs.jnj:85
 msgid "Make a copy of this object"
 msgstr "Kopiere dieses Objekt"
 
@@ -451,6 +449,10 @@ msgstr "Dauerhafter Verweis"
 msgid "Play"
 msgstr "Lauf"
 
+#: _JNJ/html/e_type_afs.jnj:80
+msgid "Please change the fields that have errors"
+msgstr "Bitte ändern sie die fehlerbehafteten Eingabefelder"
+
 #: _JNJ/email/reset_password.jnj:44
 msgid ""
 "Please click the following link to change the temporary password to a new"
@@ -499,7 +501,7 @@ msgstr "Registrieren eines neuen Benutzerkontos für "
 msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
-#: _JNJ/html/e_type_afs.jnj:74 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
+#: _JNJ/html/e_type_afs.jnj:75 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
 #: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -508,7 +510,7 @@ msgstr "Zurücksetzen"
 msgid "Reset fields"
 msgstr "Lösche Eingabefelder"
 
-#: _JNJ/html/e_type_afs.jnj:85
+#: _JNJ/html/e_type_afs.jnj:89
 msgid "Reset fields to start values"
 msgstr "Setze Eingabefelder auf Startwerte zurück"
 
@@ -525,11 +527,11 @@ msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/e_type_afs.jnj:76 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:77 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr "Sichern"
 
-#: _JNJ/html/e_type_afs.jnj:87
+#: _JNJ/html/e_type_afs.jnj:91
 msgid "Save the attribute values as displayed in form fields"
 msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 
@@ -542,11 +544,11 @@ msgstr "Sicher alle Werte in den Formularfeldern"
 msgid "Scroll by %s weeks to anchor %s."
 msgstr "Verschiebe Ansicht um %s Wochen auf Anker-Datum %s."
 
-#: _JNJ/html/e_type_afs.jnj:75
+#: _JNJ/html/e_type_afs.jnj:76
 msgid "Select"
 msgstr "Wähle aus"
 
-#: _JNJ/html/e_type_afs.jnj:86
+#: _JNJ/html/e_type_afs.jnj:90
 msgid "Select an object as value for this field"
 msgstr "Wähle ein Objekt als Wert dieses Felds aus"
 
@@ -559,7 +561,7 @@ msgstr "Wähle Attribute aus"
 msgid "Select entity for attribute %s"
 msgstr "Wähle Entität für Attribut %s aus"
 
-#: _JNJ/html/navigation.jnj:150
+#: _JNJ/html/navigation.jnj:154
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
@@ -599,7 +601,7 @@ msgstr "Absenden"
 #: _JNJ/html/error_405.jnj:49
 #, python-format
 msgid "The HTTP method `%s` isn't supported by page %s"
-msgstr ""
+msgstr "Die HTTP-Methode `%s` wird von der Seite %s nicht unterstützt"
 
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
@@ -632,7 +634,7 @@ msgstr "Einheiten für die Verschiebung der Kalenderansicht um `delta`"
 #: _JNJ/html/error_405.jnj:57
 #, python-format
 msgid "Use one of the HTTP methods (%s), instead."
-msgstr ""
+msgstr "Verwenden Sie eine der HTTP-Methoden (%s)."
 
 #: _JNJ/html/e_type.m.jnj:316
 msgid "Use set of attributes currently displayed in form"
@@ -645,7 +647,7 @@ msgstr "Verwende die Ordnungskriterien die momentan im Formular eingeschaltet si
 #: _JNJ/html/error_405.jnj:55
 #, python-format
 msgid "Use the HTTP method '%s', instead."
-msgstr ""
+msgstr "Verwenden Sie die HTTP-Methode '%s'."
 
 #: _JNJ/html/e_type.m.jnj:92
 msgid "Use the currently selected entity"
@@ -704,6 +706,10 @@ msgstr "Tag"
 #: _JNJ/html/cal/wr.jnj:166
 msgid "month"
 msgstr "Monat"
+
+#: _JNJ/html/error_404.jnj:56
+msgid "webmaster"
+msgstr "Webmaster"
 
 #: _JNJ/html/cal/wr.jnj:165
 msgid "week"

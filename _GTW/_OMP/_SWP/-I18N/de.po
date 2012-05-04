@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-18 09:43+0200\n"
+"POT-Creation-Date: 2012-05-04 10:49+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -95,11 +95,11 @@ msgstr ""
 "Der Text darf keine Kommentare enthalten:\n"
 "%s"
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Head line"
 msgstr "Kopfzeile"
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
 msgstr "Kopfzeile der Webseite"
 
@@ -111,7 +111,7 @@ msgstr "Höhe des Bildes."
 msgid "Hidden"
 msgstr "Verborgen"
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Higher prio sorts before lower prio."
 msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
 
@@ -213,7 +213,7 @@ msgstr[1] "Bilder"
 msgid "Picture."
 msgstr "Bild."
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Prio"
 msgstr "Priorität"
 
@@ -228,15 +228,15 @@ msgid ""
 "belongs to."
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Short title"
 msgstr "Kurztitel"
 
-#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Short title (used in navigation)."
 msgstr "Kurztitel (wird in Navigation verwendet)."
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Text"
 msgstr "Text"
 
@@ -260,7 +260,7 @@ msgstr "Miniaturbild"
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Title"
 msgstr "Titel"
 

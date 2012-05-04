@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: 404.jnj -#}
 {#
-## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -51,8 +51,10 @@
     <p>
       {%- block error_explanation -%}
         {{ GTW._T
-            ("If a link under %s refers to %s, please contact the webmaster.")
-          % (request.host, request.path)
+            ("If a link under %s refers to %s, please contact the %s.")
+          % ( request.host, request.path
+            , GTW.email_uri (page.webmaster, GTW._T ("webmaster"))
+            )
         }}
       {%- endblock error_explanation -%}
     </p>

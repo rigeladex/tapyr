@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-18 09:43+0200\n"
+"POT-Creation-Date: 2012-05-04 10:49+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject_has_Address:0 _GTW._OMP._PAP.Address:0
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Subject_has_Address:0
 #, fuzzy
 msgid "Address"
 msgid_plural "Addresses"
@@ -52,8 +52,8 @@ msgstr ""
 msgid "City, town, or village"
 msgstr ""
 
-#: _GTW._OMP._PAP.Company:0 _GTW._OMP._PAP.Company_has_Phone:0
-#: _GTW._OMP._PAP.Company_has_Email:0 _GTW._OMP._PAP.Company_has_Address:0
+#: _GTW._OMP._PAP.Company:0 _GTW._OMP._PAP.Company_has_Email:0
+#: _GTW._OMP._PAP.Company_has_Phone:0 _GTW._OMP._PAP.Company_has_Address:0
 msgid "Company"
 msgid_plural "Companys"
 msgstr[0] ""
@@ -102,13 +102,13 @@ msgstr ""
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:74 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Email:0
+#: _GTW/_OMP/_PAP/Email.py:74 _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0
 #: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Property:0
 #, fuzzy
 msgid "Description"
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject_has_Email:0 _GTW._OMP._PAP.Email:0
+#: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Subject_has_Email:0
 #, fuzzy
 msgid "Email"
 msgid_plural "Emails"
@@ -332,7 +332,7 @@ msgstr ""
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
-#: _GTW._OMP._PAP.Address:0 _MOM._Attr.Position:0
+#: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
 #, fuzzy
 msgid "Position"
 msgid_plural "Positions"
@@ -399,7 +399,7 @@ msgstr ""
 msgid "Street (or place) and house number"
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject_has_Property:0 _GTW._OMP._PAP.Subject:0
+#: _GTW._OMP._PAP.Subject:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject"
 msgid_plural "Subjects"
 msgstr[0] ""

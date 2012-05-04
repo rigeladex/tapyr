@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-04-18 09:43+0200\n"
+"POT-Creation-Date: 2012-05-04 10:49+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -97,12 +97,12 @@ msgid ""
 "%s"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 #, fuzzy
 msgid "Head line"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
 msgstr ""
 
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 msgid "Higher prio sorts before lower prio."
 msgstr ""
 
@@ -219,7 +219,7 @@ msgstr[1] ""
 msgid "Picture."
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 #, fuzzy
 msgid "Prio"
 msgstr ""
@@ -235,16 +235,16 @@ msgid ""
 "belongs to."
 msgstr ""
 
-#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 #, fuzzy
 msgid "Short title"
 msgstr ""
 
-#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Short title (used in navigation)."
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
 #, fuzzy
 msgid "Text"
 msgstr ""
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Thumbnail"
 msgstr ""
 
-#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 #, fuzzy
 msgid "Title"
 msgstr ""
