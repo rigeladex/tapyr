@@ -291,6 +291,7 @@
 #    30-Apr-2012 (CT) Convert `email` to property, use for `send_email`;
 #                     convert `webmaster` to property or `Root`
 #     3-May-2012 (CT) Add default for `Root.language`
+#     4-May-2012 (CT) Rename `login_page` to `login_url`
 #    ««revision-date»»···
 #--
 
@@ -1295,10 +1296,10 @@ class Root (_Dir_) :
     # end def load_cache
 
     @Once_Property
-    def login_page (self) :
+    def login_url (self) :
         if "Auth" in self.SC :
             return self.SC.Auth.href_login
-    # end def login_page
+    # end def login_url
 
     @classmethod
     def page_from_href (cls, href) :

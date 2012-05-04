@@ -34,6 +34,7 @@
 #     1-Feb-2012 (CT) Use newly factored `GTW.AFS.MOM.Form_Cache`
 #    30-Apr-2012 (MG) Allow none existing `Auth`
 #     3-May-2012 (CT) Pass `languages` to `HTTP.Application`
+#     4-May-2012 (CT) Use `nav.login_url` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -188,8 +189,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             , encoding            = nav.encoding
             , i18n                = True
             , languages           = set (cmd.languages)
-            , login_url           = getattr
-                  (getattr (nav.SC, "Auth", None), "href_login", None)
+            , login_url           = nav.login_url
             , session_id          = bytes ("SESSION_ID")
             , static_handler      = static_handler
             , user_session_ttl    = cmd.user_session_ttl.date_time_delta
