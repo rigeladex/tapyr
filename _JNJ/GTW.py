@@ -53,8 +53,9 @@
 #    30-Nov-2011 (CT) Add `dir` and `getattr`
 #     1-Dec-2011 (CT) Add `styler`
 #    18-Jan-2012 (CT) Add `attr_join`
-#    27-Jan-2012 (CT) Change `email_uri` to allow tuple argument
+#    27-Jan-2012 (CT) Change `email_uri` to allow tuple argument for `email`
 #    22-Feb-2012 (CT) Add `vimeo_video` and `youtube_video`
+#     4-May-2012 (CT) Change `email_uri` to allow email-tuple and `text` passed
 #    ««revision-date»»···
 #--
 
@@ -112,8 +113,10 @@ class GTW (TFL.Meta.Object) :
 
            http://tools.ietf.org/html/rfc3966
         """
-        if text is None and isinstance (email, tuple) :
-            email, text = email
+        if isinstance (email, tuple) :
+            email, email_text = email
+        if text is None :
+            text = email_text
         return self.uri (scheme = "mailto", uri = email, text = text, ** kw)
     # end def email_uri
 
