@@ -46,6 +46,7 @@
 #    29-Feb-2012 (CT) Include `cmd_button.media` instead of `cmd_menu.media`
 #     7-Mar-2012 (CT) Add child rule `i:before` to `.AFS h2`
 #    19-Apr-2012 (CT) Add rules for `.bad`, `.entity-errors` and `.focusable`
+#     7-May-2012 (CT) Add rule for `.no-js` to hide form if no javascript
 #    ««revision-date»»···
 #--
 
@@ -329,6 +330,16 @@ style_sheet = Style_Sheet \
                         , border_color = P.color.m_blue
                         )
                     ]
+                )
+            ]
+        )
+    , Rule
+        ( ".no-js"
+        , children           =
+            [ Rule
+                ( ".AFS"
+                , display          = "none"
+                , visibility       = "hidden"
                 )
             ]
         )
