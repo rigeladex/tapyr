@@ -57,6 +57,7 @@
 #    15-Sep-2011 (CT) `_setup_attrs` extended to setup `.completer`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    12-Apr-2012 (CT) Add `e_type.primary_required` and `.primary_optional`
+#     7-May-2012 (CT) Add `e_type.edit_attr` and `.id_entity_attr`
 #    ««revision-date»»···
 #--
 
@@ -112,6 +113,11 @@ class Spec (MOM.Prop.Spec) :
         e_type.db_attr.sort   (key = TFL.Sorted_By ("rank", "name"))
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
         self._setup_attrs     (e_type)
+        e_type.edit_attr = tuple (MOM.Attr.Selector.editable (e_type))
+        e_type.id_entity_attr   = tuple \
+            (  a for a in e_type.edit_attr
+            if isinstance (a, MOM.Attr._EPK_Mixin_)
+            )
         e_type.primary_required = list \
             (p for p in e_type.primary if p.is_required)
         e_type.primary_optional = e_type.primary \

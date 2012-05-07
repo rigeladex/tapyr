@@ -34,6 +34,7 @@
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    27-Apr-2012 (CT) Add test for `skipper_not_multiplexed`
+#     7-May-2012 (CT) Add test for `crew_number_valid`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
+    >>> BiR = SRM.Boat_in_Regatta
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> ys  = SRM.Handicap ("Yardstick")
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
@@ -70,13 +72,12 @@ _test_code = r"""
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
     GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
 
-    >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+    >>> bir = BiR (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
     >>> bir.epk_raw
     (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', u'', 'GTW.OMP.SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta')
-    >>> SRM.Boat_in_Regatta.instance (* bir.epk_raw, raw = True)
+    >>> BiR.instance (* bir.epk_raw, raw = True)
     GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
 
-    >>> BiR = SRM.Boat_in_Regatta
     >>> sort_key = TFL.Sorted_By ("-regatta.event.date.start", "skipper.person.last_name", "skipper.person.first_name")
 
     >>> print sort_key
@@ -141,8 +142,9 @@ _test_code = r"""
     (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
 
     >>> scope.commit ()
+
     >>> b8   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1108", raw = True)
-    >>> bir8 = SRM.Boat_in_Regatta (b8, reg, skipper = s)
+    >>> bir8 = BiR (b8, reg, skipper = s)
     >>> bir8.other_boots_skippered.all ()
     [GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
     >>> scope.commit ()
@@ -157,6 +159,22 @@ _test_code = r"""
     >>> err =  first (bir8.errors)
     >>> print formatted_1 (err.as_json_cargo)
     {'attributes' : ['boat', 'regatta', 'skipper'], 'bindings' : [('boat', 'Optimist, AUT 1108'), ('other_boots_skippered_count', '1 << this.other_boots_skippered.count ()'), ('regatta', 'Himmelfahrt 2008/05/01, Optimist'), ('skipper', 'Tanzer Christian, AUT, 29676')], 'description' : '(other_boots_skippered_count == 0)', 'extra_links' : [(9, 'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist')], 'head' : "A sailor can't be skipper of more than one boat in a single\nregatta event."}
+
+    >>> scope.rollback ()
+
+    >>> p2  = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
+    >>> s2  = SRM.Sailor.instance_or_new (p2, nation = u"AUT", raw = True)
+    >>> cr = SRM.Crew_Member (bir, s2)
+
+    >>> scope.commit ()
+    Traceback (most recent call last):
+      ...
+    Invariants: Condition `crew_number_valid` : The number of crew members must be less than
+    `boat.b_class.max_crew`. (number_of_crew < boat.b_class.max_crew)
+        boat = Optimist, AUT 1107
+        boat.b_class.max_crew = 1
+        crew = [GTW.OMP.SRM.Sailor ((u'tanzer', u'laurens', u'', u''), u'AUT', None, u'')]
+        number_of_crew = 1 << len (crew)
 
     >>> show_ora (bir)         ### before destroy
     ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'') : Entity `skipper`
@@ -183,6 +201,7 @@ _delayed  = r"""
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
+    >>> BiR = SRM.Boat_in_Regatta
     >>> bc  = SRM.Boat_Class.E_Type ("Optimist", max_crew = 1)
     >>> ys  = SRM.Handicap.E_Type ("Yardstick")
     >>> b   = SRM.Boat.E_Type (bc, u"AUT", u"1107", raw = True)
@@ -191,7 +210,7 @@ _delayed  = r"""
     >>> rev = SRM.Regatta_Event.E_Type (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
     >>> reg = SRM.Regatta_C.E_Type (rev, bc, raw = True)
     >>> reh = SRM.Regatta_H.E_Type (rev, ys, raw = True)
-    >>> bir = SRM.Boat_in_Regatta.E_Type (b, reg, skipper = s)
+    >>> bir = BiR.E_Type (b, reg, skipper = s)
 
     >>> list (r.name for r in sorted (getattr (rev, "regattas", [])))
     []

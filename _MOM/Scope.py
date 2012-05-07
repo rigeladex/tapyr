@@ -94,6 +94,7 @@
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    27-Apr-2012 (CT) Add call to `.rollback` to `commit` in case of errors
 #    27-Apr-2012 (CT) Add exception handler around `rollback` to `commit`
+#     7-May-2012 (CT) Pass `ucc.entities_transitive` to `r_incorrect` (`commit`)
 #    ««revision-date»»···
 #--
 
@@ -318,7 +319,7 @@ class Scope (TFL.Meta.Object) :
         ems = self.ems
         ucc = ems.uncommitted_changes
         if ucc :
-            errs = self.r_incorrect (eiter = ucc.entities (ems))
+            errs = self.r_incorrect (eiter = ucc.entities_transitive (ems))
             if errs :
                 exc = MOM.Error.Invariants (errs.errors)
                 try :
