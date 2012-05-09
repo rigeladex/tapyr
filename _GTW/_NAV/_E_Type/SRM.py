@@ -72,6 +72,7 @@ import _GTW._NAV._E_Type.Mixin
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
+from   _TFL                     import pyk
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 from   posixpath                import join  as pjoin
@@ -238,12 +239,12 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , request       = handler.request
                 )
         except Exception as exc :
-            print \
+            pyk.fprint \
                 ( "Sending regatta registration email to %r failed "
                   "with exception %s"
                 % (email, exc)
                 )
-            print message
+            pyk.fprint (message)
     # end def _register_submit_callback
 
 # end class Regatta

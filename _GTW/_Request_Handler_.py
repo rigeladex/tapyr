@@ -57,6 +57,8 @@
 #     5-Apr-2012 (CT) Remove `current_user`; move `_get_user` to `GTW.NAV`
 #     3-May-2012 (CT) Change `get_browser_locale_codes` to consider
 #                     `supported; `use `en`, not `en_US`, as last resort
+#     9-May-2012 (CT) Add `headers` and `body` to debug info in `content_type`
+#     9-May-2012 (CT) Add handler for `Exception` to `_handle_request`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +73,7 @@ import base64
 import datetime
 import hashlib
 import json
+import logging
 import sys
 
 class _Request_Handler_ (object) :
@@ -107,11 +110,17 @@ class _Request_Handler_ (object) :
                 h, s, t = split_hst (ce, "=")
                 self._content_encoding = t.strip ()
                 if not self._content_encoding :
+                    dce = self.default_content_encoding
                     if __debug__ :
                         if self.body :
-                            print "Use Fallback default content encoding %s" % \
-                                (self.default_content_encoding, )
-                    self._content_encoding = self.default_content_encoding
+                            from _TFL.Formatter import formatted_1
+                            logging.warning \
+                                ( "Use fallback default content encoding %s"
+                                  "\n    Headers: %s"
+                                  "\n    Body: %s"
+                                % (dce, formatted_1 (headers), self.body)
+                                )
+                    self._content_encoding = dce
         return self._content_type
     # end def content_type
 
@@ -287,8 +296,10 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
             self.finish_request (scope)
         except FEs :
             result = top.HTTP.Error_503 (), top
-        except top.HTTP.Error_503 as exc:
+        except top.HTTP.Error_503 as exc :
             result = exc, top
+        except Exception as exc :
+            result = top.HTTP.Error_500 (str (exc)), top
         return result
     # end def _handle_request
 

@@ -167,6 +167,9 @@
 #    27-Apr-2012 (CT) Change `Change._post_handler` to `commit` and
 #                     to call `fv.record_errors` if commit fails
 #    30-Apr-2012 (CT) Add `submit_callback` to `Admin.Changer._post_handler`
+#     9-May-2012 (CT) Fix `referrer` in `Changer.rendered` (mustn't be `"None"`)
+#     9-May-2012 (CT) Don't raise `NotImplementedError` in
+#                     `Changer._post_handler`, use `logging.warning` instead
 #    ««revision-date»»···
 #--
 
@@ -198,6 +201,8 @@ from   _TFL.predicate           import uniq
 
 from   itertools                import chain as ichain
 from   posixpath                import join  as pjoin
+
+import logging
 
 class JSON_Error (Exception) :
 
@@ -558,7 +563,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 form = self.form \
                     ( obj
                     , referrer        = "%s%s" %
-                        ( request.referrer
+                        ( request.referrer or ""
                         , "#pk-%s" % (obj.pid, ) if obj else ""
                         )
                     , _sid            = sid
@@ -579,8 +584,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request    = handler.request
             result     = {}
             if json is None :
-                raise NotImplementedError \
-                    ("AFS form post requests without content-type json")
+                from _TFL.Formatter import formatted_1
+                logging.warning \
+                    ( "AFS form post requests without content-type json"
+                      "\n    Headers: %s"                      "\n    Body: %s"
+                    % (formatted_1 (request.headers), handler.body)
+                    )
+                return handler.write_json (result)
             try :
                 if json.get ("cancel") :
                     ### the user has clicked on the cancel button and not on
