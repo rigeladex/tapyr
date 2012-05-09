@@ -56,6 +56,9 @@
 #    30-Apr-2012 (CT) Add and use `_register_submit_callback`
 #     7-May-2012 (CT) Change `Regatta._get_objects` to DRY
 #     7-May-2012 (CT) Add attribute `bir_admin` to `Regatta`
+#     9-May-2012 (CT) Remove attribute `bir_admin` from `result` of
+#                     `_get_objects` (would break permissions), change
+#                     `href_register` and `_get_child` to hide `bir_admin`
 #    ««revision-date»»···
 #--
 
@@ -114,7 +117,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
             start = self.obj.event.date.start
             now   = self.obj.event.__class__.date.start.now ()
             if now < start :
-                return pjoin (self.abs_href, "admin", "create")
+                return pjoin (self.abs_href, "register")
         ### XXX implement registration for team race, too
     # end def href_register
 
@@ -125,6 +128,8 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         except IndexError :
             if child == "index.html" and not grandchildren :
                 return self
+            elif self.bir_admin and child == "register" and not grandchildren :
+                return self.bir_admin._get_child ("create")
         else :
             if grandchildren :
                 result = result._get_child (* grandchildren)
@@ -193,7 +198,6 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                         ( max_links   = obj.boat_class.max_crew - 1
                         )
                     )
-            bir.admin = bir.admin
             kw = dict \
                 ( bir.admin._orig_kw
                 , default_qr_kw   = dict (right___EQ = obj.pid)
@@ -204,8 +208,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , parent          = self
                 , submit_callback = self._register_submit_callback
                 )
-            self.bir_admin = ba = bir.admin.__class__ (** kw)
-            result.append (ba)
+            self.bir_admin = bir.admin.__class__ (** kw)
         return result
     # end def _get_objects
 
