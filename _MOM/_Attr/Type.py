@@ -224,6 +224,7 @@
 #                     exceptions
 #    22-Apr-2012 (CT) Adapt to signature change of `is_correct`
 #                     (`kind` -->`_kind`)
+#    10-May-2012 (CT) Add `A_Angle`
 #    ««revision-date»»···
 #--
 
@@ -1169,12 +1170,11 @@ class _A_String_Ascii_ (_A_String_) :
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if value is not None :
-            value = super (Eval_Mixin, soc).cooked (value)
+            value = super (_A_String_Ascii_, soc).cooked (value)
             if not self._cooked_re.match (value) :
                 raise ValueError (value)
         return value
     # end def cooked
-
 
 # end class _A_String_Ascii_
 
@@ -1367,6 +1367,24 @@ class _A_Unit_ (A_Attr_Type) :
     # end def _from_string
 
 # end class _A_Unit_
+
+class A_Angle (_A_Float_) :
+    """Models an attribute specifying an angle in degrees."""
+
+    typ              = "Angle"
+    max_value        = 360
+    min_value        = 0
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if value is not None :
+            value = super (A_Angle, soc).cooked (value)
+            if value == 360 :
+                value -= 360
+        return value
+    # end def cooked
+
+# end class A_Angle
 
 class A_Blob (A_Attr_Type) :
     """Generic type for binary attributes that aren't set by the user."""
