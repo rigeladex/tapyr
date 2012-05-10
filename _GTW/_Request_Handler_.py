@@ -59,6 +59,8 @@
 #                     `supported; `use `en`, not `en_US`, as last resort
 #     9-May-2012 (CT) Add `headers` and `body` to debug info in `content_type`
 #     9-May-2012 (CT) Add handler for `Exception` to `_handle_request`
+#    10-May-2012 (CT) Change `_handle_request` to call `_send_error_email`,
+#                     don't return `Error_500` if `wants_json`
 #    ««revision-date»»···
 #--
 
@@ -299,7 +301,16 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         except top.HTTP.Error_503 as exc :
             result = exc, top
         except Exception as exc :
-            result = top.HTTP.Error_500 (str (exc)), top
+            import traceback
+            tb = traceback.format_exc ()
+            try :
+                top._send_error_email (self, exc, tb)
+            except Exception as exc :
+                print tb
+                print "*" * 70
+                traceback.print_exc ()
+            if not self.wants_json :
+                result = top.HTTP.Error_500 (str (exc)), top
         return result
     # end def _handle_request
 

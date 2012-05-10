@@ -293,6 +293,7 @@
 #     3-May-2012 (CT) Add default for `Root.language`
 #     4-May-2012 (CT) Rename `login_page` to `login_url`
 #     4-May-2012 (CT) Add logging to `Stopper._view`
+#    10-May-2012 (CT) Add `_send_error_email`, `error_email_template`, `Raiser`
 #    ««revision-date»»···
 #--
 
@@ -372,6 +373,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     __metaclass__              = _Meta_
 
     anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
+    error_email_template       = "error_email"
     hidden                     = False
     href                       = ""
     implicit                   = False
@@ -650,6 +652,31 @@ class _Site_Entity_ (TFL.Meta.Object) :
             print "*** Cannot send email because `smtp` is undefined ***"
             print text
     # end def send_email
+
+    def _send_error_email (self, handler, exc, tbi) :
+        email     = self.email
+        request   = handler.request
+        headers   = request.headers
+        message   = "Headers:\n    %s\n\n%s" % \
+            ( "\n    ".join
+                ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
+            , tbi
+            )
+        if self.DEBUG :
+            print "Exception:", exc
+            print message
+        else :
+            self.send_email \
+                ( self.error_email_template
+                , email_from    = email
+                , email_to      = email
+                , email_subject = ("Error: %s") % (exc, )
+                , message       = message
+                , NAV           = self.top
+                , page          = self
+                , request       = request
+                )
+    # end def _send_error_email
 
     @property
     def template (self) :
@@ -1483,7 +1510,7 @@ class Stopper (Page) :
     """Page that stops the running process if a sentinel file is found."""
 
     delay            = 1
-    exclude_robots   = False ### don't want this to appear in `robots.txt`
+    exclude_robots   = True ### don't want this to appear in `robots.txt`
     sentinel_name    = "time_to_die"
 
     def __init__ (self, * args, ** kw) :
@@ -1505,6 +1532,18 @@ class Stopper (Page) :
                 % sos.path.abspath (self.sentinel_name)
                 )
             raise HTTP.Error_404 ()
+    # end def _view
+
+# end class Stopper
+
+class Raiser (Page) :
+    """Page that raises an error 500."""
+
+    exclude_robots   = True ### don't want this to appear in `robots.txt`
+    hidden           = True
+
+    def _view (self, handler) :
+        raise self.top.HTTP.Error_500 ("Wilful raisement")
     # end def _view
 
 # end class Stopper

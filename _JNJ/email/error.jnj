@@ -1,0 +1,43 @@
+{%- extends "email/email.jnj" %}
+{#- jinja template: error.jnj -#}
+{#
+## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    error
+##
+## Purpose
+##    Email sent to webmaster if an unhandled error occurs
+##
+## Revision Dates
+##    10-May-2012 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- block body -%}
+User {{ request.user }} connecting from {{ request.remote_addr }} requesting
+{{ request.path }} triggered an error.
+
+{{ message }}
+{%- endblock body -%}
+
+{#- __END__ jinja template: error.jnj -#}

@@ -36,6 +36,7 @@
 #     2-May-2011 (CT) `Error_400` added
 #    27-May-2011 (CT) `return_response` factored and redefined in `Error_405`
 #     5-Apr-2012 (CT) Remove assignment to `handler.request.user`
+#    10-May-2012 (CT) Add `__str__`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,15 @@ class Status (StandardError, TFL.Meta.Object) :
         self.description = description
         self.args        = args
     # end def __init__
+
+    def __str__ (self) :
+        result = self.description
+        if isinstance (result, unicode) :
+            result = result.encode ("utf-8")
+        elif not isinstance (result, str) :
+            result = str (result)
+        return result
+    # end def __str__
 
 # end class Status
 
