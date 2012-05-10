@@ -170,6 +170,9 @@
 #     9-May-2012 (CT) Fix `referrer` in `Changer.rendered` (mustn't be `"None"`)
 #     9-May-2012 (CT) Don't raise `NotImplementedError` in
 #                     `Changer._post_handler`, use `logging.warning` instead
+#    10-May-2012 (CT) Factor `_Changer_`, add `Creator`,
+#                     add `Changer._login_required` and
+#                     `Deleter._login_required`
 #    ««revision-date»»···
 #--
 
@@ -522,12 +525,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class _Cmd_Json_
 
-    class Changer (_Cmd_) :
+    class _Changer_ (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
            of a etype with an AFS form.
         """
 
-        name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
 
@@ -643,6 +645,15 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 return exc (handler)
         # end def _post_handler
 
+    # end class _Changer_
+
+    class Changer (_Changer_) :
+        """Model an admin page for changing an existing instance
+           of a etype with an AFS form."""
+
+        name            = "change"
+        _login_required = True
+
     # end class Changer
 
     class Completed (_Cmd_Json_) :
@@ -724,12 +735,23 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Completer
 
+    class Creator (_Changer_) :
+        """Model an admin page for creating a new instance
+           of a etype with an AFS form.
+        """
+
+        name            = "create"
+
+    # end class Creator
+
     class Deleter (_Cmd_) :
         """Model an admin action for deleting a specific instance of a etype."""
 
         name              = "delete"
         template_name     = "e_type_delete"
         SUPPORTED_METHODS = set (("POST", ))
+
+        _login_required   = True
 
         def _post_handler_args (self, handler) :
             ETM        = self.ETM
@@ -1365,7 +1387,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         ( change         = (Changer,                 "args",  None)
         , complete       = (Completer,               "args",  None)
         , completed      = (Completed,               "args",  None)
-        , create         = (Changer,                 "args",  0)
+        , create         = (Creator,                 "args",  0)
         , delete         = (Deleter,                 "args",  None)
         , expand         = (Expander,                "args",  0)
         )

@@ -279,5 +279,5 @@ class Error_503 (_Error_) :
 # end class Error_500
 
 if __name__ != "__main__" :
-    GTW.Werkzeug._Export ("*", "_Redirect_")
+    GTW.Werkzeug._Export ("*", "_Error_", "_Redirect_")
 ### __END__ GTW.Werkzeug.Error

@@ -294,6 +294,8 @@
 #     4-May-2012 (CT) Rename `login_page` to `login_url`
 #     4-May-2012 (CT) Add logging to `Stopper._view`
 #    10-May-2012 (CT) Add `_send_error_email`, `error_email_template`, `Raiser`
+#    10-May-2012 (CT) Defaults for `_login_required` and `_permission` moved
+#                     to class level
 #    ««revision-date»»···
 #--
 
@@ -390,6 +392,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     _dump_type                 = "dict"
     _email                     = None   ### default from address
+    _login_required            = False
+    _permission                = None
     _template                  = None
 
     _Media                     = GTW.Media ()
@@ -410,8 +414,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if "Media" in kw :
             self._Media = kw.pop ("Media")
         self._exclude_robots = kw.pop ("exclude_robots", False)
-        self._login_required = kw.pop ("login_required", False)
-        self._permission     = kw.pop ("permission",     None)
+        if "login_required" in kw :
+            self._login_required = kw.pop ("login_required")
+        if "permission" in kw :
+            self._permission     = kw.pop ("permission")
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
@@ -664,7 +670,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
             )
         if self.DEBUG :
             print "Exception:", exc
+            print "Request path", request.path
             print message
+            print handler.body
         else :
             self.send_email \
                 ( self.error_email_template

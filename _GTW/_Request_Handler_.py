@@ -287,20 +287,24 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         if self.settings.get ("i18n", False) :
             I18N.use (* self.locale_codes)
         top    = self.nav_root
+        HTTP   = top.HTTP
         scope  = getattr (top, "scope", None)
         FEs    = getattr (scope, "Fatal_Exceptions", ())
         result = (None, None)
         try :
             try :
                 top.universal_view (self)
-            except top.HTTP._Redirect_ as redirect :
+            except HTTP._Redirect_ as redirect :
                 result = redirect, top
             self.finish_request (scope)
         except FEs :
-            result = top.HTTP.Error_503 (), top
-        except top.HTTP.Error_503 as exc :
+            result = HTTP.Error_503 (), top
+        except HTTP.Error_503 as exc :
             result = exc, top
         except Exception as exc :
+            is_500 = isinstance (exc, HTTP.Error_500)
+            if isinstance (exc, HTTP._Error_) and not is_500 :
+                raise
             import traceback
             tb = traceback.format_exc ()
             try :
@@ -310,7 +314,10 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
                 print "*" * 70
                 traceback.print_exc ()
             if not self.wants_json :
-                result = top.HTTP.Error_500 (str (exc)), top
+                if is_500 :
+                    result = exc, top
+                else :
+                    result = top.HTTP.Error_500 (str (exc)), top
         return result
     # end def _handle_request
 
