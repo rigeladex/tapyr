@@ -173,6 +173,8 @@
 #    10-May-2012 (CT) Factor `_Changer_`, add `Creator`,
 #                     add `Changer._login_required` and
 #                     `Deleter._login_required`
+#    11-May-2012 (CT) Add exception handler around call of `.write_json` to
+#                     `_Changer_._post_handler` to email `result`
 #    ««revision-date»»···
 #--
 
@@ -640,7 +642,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                     (handler, scope, fv, result)
                             except Exception as exc :
                                 import traceback; traceback.print_exc ()
-                return handler.write_json (result)
+                try :
+                    return handler.write_json (result)
+                except Exception as exc :
+                    from _TFL.Formatter import formatted
+                    self._send_error_email (handler, exc, formatted (result))
+                    raise
             except JSON_Error as exc :
                 return exc (handler)
         # end def _post_handler
