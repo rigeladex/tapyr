@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
 "PO-Revision-Date: 2011-10-10 11:56+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _MOM/Error.py:776
+#: _MOM/Error.py:780
 #, python-format
 msgid "%s needs the %s attribute: %s"
 msgid_plural "%s needs the %s attributes: %s"
@@ -30,13 +30,13 @@ msgstr[1] "%s benötigt die %sen Attribute: %s"
 msgid "%s needs the arguments %s, got %s instead"
 msgstr "%s benötigt die Argumente: %s. Stattdessen erhalten: %s"
 
-#: _MOM/_Attr/Type.py:1808
+#: _MOM/_Attr/Type.py:1831
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
 msgstr ""
-"Ein Name beginng mit einem Buchstaben oder Unterstrich, gefolgt\"\n"
-"\"von Buchstaben, Ziffern und Unterstrichen."
+"Ein Name beginng mit einem Buchstaben oder Unterstrich, gefolgt "
+"von Buchstaben, Ziffern und Unterstrichen."
 
 #: _MOM.Entity:0
 msgid "All necessary attributes must be defined."
@@ -46,7 +46,7 @@ msgstr "Alle erforderlichen Attribute müssen definiert sein."
 msgid "All object invariants must be satisfied."
 msgstr "Alle Predikate von Objekten müssen erfüllt sein."
 
-#: _MOM/Error.py:801
+#: _MOM/Error.py:805
 msgid "All required attributes must be supplied"
 msgstr "Alle erforderlichen Attribute müssen beigestellt werden"
 
@@ -55,6 +55,10 @@ msgid "An_Entity"
 msgid_plural "An_Entitys"
 msgstr[0] "An-Entität"
 msgstr[1] ""
+
+#: _MOM/_Attr/Type.py:1378
+msgid "Angle"
+msgstr "Winkel"
 
 #: _MOM/_Attr/Kind.py:1260
 #, python-format
@@ -65,28 +69,44 @@ msgstr ""
 "Das Wert des Attributs `%s.%s` kann nicht von `%s` auf `%s` geändert "
 "werden; der Wert kann nur einmal gesetzt werden!"
 
-#: _MOM/Error.py:307
+#: _MOM/Error.py:311
 #, python-format
 msgid "Attributes given: (%s)"
 msgstr "Attribute: (%s)"
+
+#: _MOM/_Attr/Type.py:1396
+msgid "Blob"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1406
+msgid "Boolean"
+msgstr "Wahrheitswert"
 
 #: _MOM/_Attr/Filter.py:253
 msgid "CONTAINS"
 msgstr "enthält"
 
+#: _MOM/_Attr/Type.py:1444
+msgid "Cached_Role"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1465
+msgid "Cached_Role_Set"
+msgstr ""
+
 #: _MOM/_Meta/M_Entity.py:183
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
-"Typ %s kann nicht direkt mit %r erzeugt werden, stattdessen muss\"\n"
-"\"scope.%s %r verwendet werden"
+"Typ %s kann nicht direkt mit %r erzeugt werden, stattdessen muss "
+"scope.%s %r verwendet werden"
 
-#: _MOM/Error.py:361
+#: _MOM/Error.py:365
 #, python-format
 msgid "Can't set %s attribute %s.%s to `%r`"
 msgstr "Das %s Attribut %s.%s kann nicht auf den Wert `%r` gesetzt werden"
 
-#: _MOM/Error.py:834
+#: _MOM/Error.py:838
 #, python-format
 msgid "Cannot create more than %d objects of %s"
 msgstr "Es können nicht mehr als %d Objekte des Typs %s erzeugt werden"
@@ -98,12 +118,16 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
+#: _MOM/_Attr/Type.py:1474
+msgid "Character"
+msgstr "Buchstabe"
+
 #: _MOM/_Attr/Kind.py:1194
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr "Berechnetes Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/Error.py:526
+#: _MOM/Error.py:530
 msgid "Condition"
 msgstr "Bedingung"
 
@@ -111,6 +135,23 @@ msgstr "Bedingung"
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
+
+#: _MOM/_Attr/Type.py:1484
+msgid "Date"
+msgstr "Datum"
+
+#: _MOM/_Attr/Type.py:1527
+msgid "Date-Slug"
+msgstr "Datumsstempel"
+
+#: _MOM/_Attr/Type.py:1547
+msgid "Date-Time"
+msgstr "Datum+Zeit"
+
+#: _MOM/_Attr/Type.py:1580 _MOM/_Attr/Type.py:1582
+#, python-format
+msgid "Date/time expected, got %r"
+msgstr "Datum+Zeit erwartet, stattdessen erhalten: %r"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Date_Interval"
@@ -130,17 +171,37 @@ msgid_plural "Date_Interval_Ns"
 msgstr[0] "Date_Interval_N"
 msgstr[1] "Date_Interval_N"
 
+#: _MOM/_Attr/Type.py:1516
+msgid "Date_List"
+msgstr "Datumsliste"
+
+#: _MOM/_Attr/Type.py:1603
+msgid "Date_Time_List"
+msgstr "Datum+Zeit-Liste"
+
+#: _MOM/_Attr/Type.py:849 _MOM/_Attr/Type.py:1668
+msgid "Decimal"
+msgstr "Dezimalzahl"
+
+#: _MOM/_Attr/Type.py:1638
+msgid "Directory"
+msgstr "Verzeichnis"
+
 #: _MOM/_Attr/Filter.py:264
 msgid "ENDSWITH"
 msgstr "endet-mit"
 
-#: _MOM.Entity:0
+#: _MOM/_Attr/Type.py:1658
+msgid "Email"
+msgstr ""
+
+#: _MOM.Entity:0 _MOM/_Attr/Type.py:1862
 msgid "Entity"
 msgid_plural "Entitys"
 msgstr[0] "Entität"
 msgstr[1] "Entitäten"
 
-#: _MOM/Error.py:446
+#: _MOM/Error.py:450
 msgid "Exception"
 msgstr "Fehlerbedingung"
 
@@ -148,7 +209,11 @@ msgstr "Fehlerbedingung"
 msgid "FR"
 msgstr "Fr"
 
-#: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
+#: _MOM/_Attr/Type.py:1708
+msgid "Filename"
+msgstr "Dateiname"
+
+#: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "Finish"
 msgstr "Ende"
 
@@ -159,6 +224,14 @@ msgstr "Enddatum des Intervalls"
 #: _MOM._Attr.Time_Interval:0
 msgid "Finish time of interval"
 msgstr "Schlusszeit des Intervalls"
+
+#: _MOM/_Attr/Type.py:863
+msgid "Float"
+msgstr "Gleitkommazahl"
+
+#: _MOM/_Attr/Type.py:1728
+msgid "Frequency"
+msgstr "Frequenz"
 
 #: _MOM/_Attr/Filter.py:309
 msgid "IN"
@@ -179,19 +252,39 @@ msgstr ""
 "Der Wert des Attributs `%s.%s` kann nach der Objekterzeugung nicht von "
 "`%s` auf `%s` geändert werden"
 
-#: _MOM/Error.py:787
+#: _MOM/Error.py:791
 #, python-format
 msgid "Instead it got: (%s)"
 msgstr "Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1363
+#: _MOM/_Attr/Type.py:871
+msgid "Int"
+msgstr "Zahl"
+
+#: _MOM/_Attr/Type.py:1747
+msgid "Int_List"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1367
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
 
-#: _MOM/Error.py:245
+#: _MOM/Error.py:248
 msgid "Invariant error"
 msgstr "Invariantenfehler"
+
+#: _MOM/_Attr/Type.py:892
+msgid "L_Middle"
+msgstr "Links-der-Mitte"
+
+#: _MOM/_Attr/Type.py:882
+msgid "Left"
+msgstr "Links"
+
+#: _MOM/_Attr/Type.py:1755
+msgid "Length"
+msgstr "Länge"
 
 #: _MOM.Link:0
 msgid "Link"
@@ -227,15 +320,19 @@ msgstr[1] "3-Verknüpfungen"
 msgid "MO"
 msgstr "Mo"
 
-#: _MOM/Error.py:342
+#: _MOM/Error.py:346
 #, python-format
 msgid "Matching entities: %s%s"
 msgstr "Kollidierende Entitäten: %s%s"
 
-#: _MOM/Error.py:642
+#: _MOM/Error.py:646
 #, python-format
 msgid "Maximum number of links for %s is %d %s"
 msgstr "Die Maximalanzahl von %s Verknüpfungen ist %d %s"
+
+#: _MOM/_Attr/Type.py:902
+msgid "Middle"
+msgstr "Mitte"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Model a date interval (start, finish)."
@@ -253,7 +350,7 @@ msgstr "Beschreibe ein Datumsintervall (Anfang, Ende [Default: Anfang])."
 msgid "Model a time interval (start, finish)"
 msgstr "Beschreibe ein zetiliches Intervall (Anfang, Ende)"
 
-#: _MOM.Object:0
+#: _MOM.Object:0 _MOM/_Attr/Type.py:1827
 msgid "Name"
 msgstr "Name"
 
@@ -268,14 +365,18 @@ msgstr[1] "Benannte-Objekte"
 msgid "Necessary attribute %s is not defined"
 msgstr "Das erforderliche Attribut %s ist undefiniert"
 
-#: _MOM/_Attr/Type.py:1045
+#: _MOM/_Attr/Type.py:1050
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/Error.py:267
+#: _MOM/Error.py:270
 msgid "None"
 msgstr "Keine"
+
+#: _MOM/_Attr/Type.py:1843
+msgid "Numeric_String"
+msgstr "Numerische Zeichenkette"
 
 #: _MOM.Object:0
 msgid "Object"
@@ -297,6 +398,14 @@ msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
+
+#: _MOM/_Attr/Type.py:912
+msgid "R_Middle"
+msgstr "Rechts-der-Mitte"
+
+#: _MOM/_Attr/Type.py:922
+msgid "Right"
+msgstr "Rechts"
 
 #: _MOM/_Attr/Recurrence_Rule.py:73
 msgid "SA"
@@ -320,9 +429,8 @@ msgid ""
 "values"
 msgstr ""
 "\n"
-"\"\"Wähle Entitäten aus, deren Attributwert in der angegebenen Liste von "
-"\"\n"
-"\"Werten enthalten ist"
+"Wähle Entitäten aus, deren Attributwert in der angegebenen Liste von "
+"Werten enthalten ist"
 
 #: _MOM/_Attr/Filter.py:272
 msgid "Select entities where the attribute is equal to the specified value"
@@ -376,7 +484,7 @@ msgstr "Laufende Nummer"
 msgid "Sequence number of a link in an ordered association."
 msgstr "Laufende Nummer einer Verknüpfung in einer geordneten Assoziation."
 
-#: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
+#: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "Start"
 msgstr "Anfang"
 
@@ -388,15 +496,19 @@ msgstr "Anfangsdatum des Intervalls"
 msgid "Start time of interval"
 msgstr "Anfangszeit des Intervalls"
 
-#: _MOM/Error.py:440
+#: _MOM/_Attr/Type.py:1870
+msgid "String"
+msgstr "Zeichenkette"
+
+#: _MOM/Error.py:444
 msgid "Syntax"
 msgstr "Syntax"
 
-#: _MOM/Error.py:415
+#: _MOM/Error.py:419
 msgid "Syntax error"
 msgstr "Syntaxfehler"
 
-#: _MOM/Error.py:432
+#: _MOM/Error.py:436
 #, python-format
 msgid ""
 "Syntax error: \n"
@@ -415,6 +527,10 @@ msgstr "Do"
 msgid "TU"
 msgstr "Di"
 
+#: _MOM/_Attr/Type.py:1880
+msgid "Text"
+msgstr "Text"
+
 #: _MOM._Attr.Date_Interval:0
 msgid "The finish date must be later than the start date"
 msgstr "Das Enddatum muss später als das Anfangsdatum sein"
@@ -423,10 +539,19 @@ msgstr "Das Enddatum muss später als das Anfangsdatum sein"
 msgid "The finish time must be later than the start time"
 msgstr "Die Schlusszeit muss später als die Anfangszeit sein"
 
-#: _MOM/Error.py:483
+#: _MOM/Error.py:487
 #, python-format
 msgid "There already exists a link: %s %s"
 msgstr "Es gibt bereits eine Verknüpfung: %s %s"
+
+#: _MOM/_Attr/Type.py:1889
+msgid "Time"
+msgstr "Zeit"
+
+#: _MOM/_Attr/Type.py:1904 _MOM/_Attr/Type.py:1906
+#, python-format
+msgid "Time expected, got %r"
+msgstr "Zeit erwartet, stattdessen erhalten: %r"
 
 #: _MOM._Attr.Time_Interval:0
 msgid "Time_Interval"
@@ -443,6 +568,10 @@ msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
+#: _MOM/_Attr/Type.py:1921
+msgid "Url"
+msgstr "Inernetadresse"
+
 #: _MOM/_Attr/Kind.py:917
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
@@ -452,7 +581,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:641
+#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:644
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -461,7 +590,11 @@ msgstr "Wert `%r` hat nicht den Typ %s"
 msgid "WE"
 msgstr "Mi"
 
-#: _MOM/Error.py:411
+#: _MOM/_Attr/Type.py:1938
+msgid "Year"
+msgstr "Jahr"
+
+#: _MOM/Error.py:415
 #, python-format
 msgid ""
 "`%s` for : `%r`\n"
@@ -488,7 +621,7 @@ msgstr "berechnet"
 msgid "constant"
 msgstr "konstant"
 
-#: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
+#: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "finish_after_start"
 msgstr ""
 
@@ -508,16 +641,16 @@ msgstr "mittig"
 msgid "necessary"
 msgstr "notwendig"
 
-#: _MOM/Error.py:666
+#: _MOM/Error.py:670
 #, python-format
 msgid "new definition of %s %s clashes with existing %s %s"
 msgstr "Neue Definition von %s %s ist in Konflikt mit bestehender %s %s"
 
-#: _MOM/Error.py:667
+#: _MOM/Error.py:671
 msgid "object"
 msgstr "Objekt"
 
-#: _MOM/_Attr/Type.py:1040
+#: _MOM/_Attr/Type.py:1045
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"
@@ -538,7 +671,7 @@ msgstr "primär"
 msgid "query"
 msgstr "anfragend"
 
-#: _MOM/Error.py:750 _MOM/_Attr/Kind.py:1004
+#: _MOM/Error.py:754 _MOM/_Attr/Kind.py:1004
 msgid "required"
 msgstr "erforderlich"
 

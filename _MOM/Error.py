@@ -434,7 +434,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
     def head (self) :
         return \
             ( _T ("Syntax error: \n  expected type `%s`\n  got value `%s`")
-            % (self.attribute.typ, self.value)
+            % (_T (self.attribute.typ), self.value)
             )
     # end def head
 

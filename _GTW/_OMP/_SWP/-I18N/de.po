@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -45,14 +45,6 @@ msgid "D2_Value_Int"
 msgid_plural "D2_Value_Ints"
 msgstr[0] ""
 msgstr[1] ""
-
-#: _GTW._OMP._SWP.Entity:0
-msgid "Date"
-msgstr "Datum"
-
-#: _GTW._OMP._SWP.Gallery:0
-msgid "Directory"
-msgstr "Verzeichnis"
 
 #: _GTW._OMP._SWP.Gallery:0
 msgid "Directory where pictures of gallery are stored."
@@ -95,11 +87,11 @@ msgstr ""
 "Der Text darf keine Kommentare enthalten:\n"
 "%s"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Head line"
 msgstr "Kopfzeile"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Head line of the web page"
 msgstr "Kopfzeile der Webseite"
 
@@ -111,7 +103,7 @@ msgstr "Höhe des Bildes."
 msgid "Hidden"
 msgstr "Verborgen"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Higher prio sorts before lower prio."
 msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
 
@@ -213,7 +205,7 @@ msgstr[1] "Bilder"
 msgid "Picture."
 msgstr "Bild."
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Prio"
 msgstr "Priorität"
 
@@ -228,17 +220,13 @@ msgid ""
 "belongs to."
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title"
 msgstr "Kurztitel"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title (used in navigation)."
 msgstr "Kurztitel (wird in Navigation verwendet)."
-
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
-msgid "Text"
-msgstr "Text"
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Text for news clip in markup specified by `format`."
@@ -260,7 +248,7 @@ msgstr "Miniaturbild"
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Title"
 msgstr "Titel"
 
@@ -303,14 +291,22 @@ msgid "Y"
 msgstr "Y"
 
 #: _GTW._OMP._SWP.Page:0
-msgid "Year"
-msgstr "Jahr"
-
-#: _GTW._OMP._SWP.Page:0
 msgid "Year to which the web page applies."
 msgstr "Jahr, auf das sich die Webseite bezieht."
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "date"
 msgstr "Datum"
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#~ msgid "Directory"
+#~ msgstr "Verzeichnis"
+
+#~ msgid "Text"
+#~ msgstr "Text"
+
+#~ msgid "Year"
+#~ msgstr "Jahr"
 

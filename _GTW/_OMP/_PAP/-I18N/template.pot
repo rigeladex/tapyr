@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Subject_has_Address:0
+#: _GTW._OMP._PAP.Subject_has_Address:0 _GTW._OMP._PAP.Address:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
@@ -48,8 +48,8 @@ msgstr ""
 msgid "City, town, or village"
 msgstr ""
 
-#: _GTW._OMP._PAP.Company:0 _GTW._OMP._PAP.Company_has_Email:0
-#: _GTW._OMP._PAP.Company_has_Phone:0 _GTW._OMP._PAP.Company_has_Address:0
+#: _GTW._OMP._PAP.Company_has_Email:0 _GTW._OMP._PAP.Company:0
+#: _GTW._OMP._PAP.Company_has_Address:0 _GTW._OMP._PAP.Company_has_Phone:0
 msgid "Company"
 msgid_plural "Companys"
 msgstr[0] ""
@@ -93,16 +93,11 @@ msgstr ""
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:74 _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0
-#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Property:0
+#: _GTW/_OMP/_PAP/Email.py:74 _GTW._OMP._PAP.Email:0
+#: _GTW._OMP._PAP.Subject_has_Property:0 _GTW._OMP._PAP.Phone:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Description"
 msgstr ""
-
-#: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Subject_has_Email:0
-msgid "Email"
-msgid_plural "Emails"
-msgstr[0] ""
-msgstr[1] ""
 
 #: _GTW/_OMP/_PAP/Email.py:63 _GTW._OMP._PAP.Email:0
 msgid "Email address"
@@ -262,8 +257,8 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: _GTW._OMP._PAP.Person_has_Phone:0 _GTW._OMP._PAP.Person:0
-#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Person:0
+#: _GTW._OMP._PAP.Person_has_Phone:0 _GTW._OMP._PAP.Person_has_Email:0
 msgid "Person"
 msgid_plural "Persons"
 msgstr[0] ""
@@ -291,7 +286,7 @@ msgid_plural "Person_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Subject_has_Phone:0 _GTW._OMP._PAP.Phone:0
+#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Phone:0
 msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] ""
@@ -369,7 +364,7 @@ msgstr ""
 msgid "Street (or place) and house number"
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject:0 _GTW._OMP._PAP.Subject_has_Property:0
+#: _GTW._OMP._PAP.Subject_has_Property:0 _GTW._OMP._PAP.Subject:0
 msgid "Subject"
 msgid_plural "Subjects"
 msgstr[0] ""

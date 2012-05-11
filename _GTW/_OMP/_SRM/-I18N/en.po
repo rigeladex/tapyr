@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -107,8 +107,8 @@ msgstr ""
 msgid "Class of boats sailing in this regatta."
 msgstr ""
 
-#: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Club:0 _GTW._OMP._SRM.Team:0
-#: _GTW._OMP._SRM.Regatta_Event:0
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Sailor:0
+#: _GTW._OMP._SRM.Club:0
 #, fuzzy
 msgid "Club"
 msgid_plural "Clubs"
@@ -119,7 +119,7 @@ msgstr[1] ""
 msgid "Club that organizes the regatta."
 msgstr ""
 
-#: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Team:0
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Sailor:0
 msgid "Club the sailor is starting for."
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Estonia"
 msgstr ""
 
-#: _GTW._OMP._SRM.Page:0 _GTW._OMP._SRM.Regatta:0
+#: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Page:0
 msgid "Event"
 msgstr ""
 
@@ -197,7 +197,7 @@ msgstr ""
 msgid "Greece"
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat_Class:0 _GTW._OMP._SRM.Regatta:0
+#: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_Class:0
 #, fuzzy
 msgid "Handicap"
 msgid_plural "Handicaps"
@@ -392,7 +392,7 @@ msgstr ""
 msgid "Person which sails as crew member on `boat_in_regatta`"
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat_in_Regatta:0 _GTW._OMP._SRM.Team:0
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Place"
 msgstr ""
 
@@ -442,8 +442,8 @@ msgstr[1] ""
 msgid "Races"
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat_in_Regatta:0 _GTW._OMP._SRM.Regatta:0
-#: _GTW._OMP._SRM.Team:0
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Regatta:0
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Regatta"
 msgid_plural "Regattas"
 msgstr[0] ""
@@ -601,7 +601,7 @@ msgstr ""
 msgid "Spain"
 msgstr ""
 
-#: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Attr_Type:0
+#: _GTW._OMP._SRM.Attr_Type:0 _GTW._OMP._SRM.Race_Result:0
 msgid "Status"
 msgstr ""
 
@@ -621,7 +621,7 @@ msgstr ""
 msgid "Switzerland"
 msgstr ""
 
-#: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0 _GTW._OMP._SRM.Team:0
+#: _GTW._OMP._SRM.Team:0 _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "Team"
 msgid_plural "Teams"
 msgstr[0] ""
@@ -638,6 +638,12 @@ msgstr[1] ""
 msgid ""
 "The crew members of a boat will be sorted by `key`, if\n"
 "defined, by order of creation otherwise."
+msgstr ""
+
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid ""
+"The number of crew members must be less than\n"
+"`boat.b_class.max_crew`."
 msgstr ""
 
 #: _GTW._OMP._SRM.Race_Result:0
@@ -678,6 +684,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "`vintage` must not lie in the future."
+msgstr ""
+
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid "crew_number_valid"
 msgstr ""
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0

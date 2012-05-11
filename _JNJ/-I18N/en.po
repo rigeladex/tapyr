@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _JNJ/html/e_type_afs.jnj:87
+#: _JNJ/html/e_type_afs.jnj:89
 msgid "Accept changes"
 msgstr ""
 
@@ -27,7 +27,7 @@ msgid "Activation for"
 msgstr ""
 
 #: _JNJ/html/e_type.m.jnj:147 _JNJ/html/e_type.m.jnj:257
-#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:69
+#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:71
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr ""
@@ -87,7 +87,7 @@ msgid "Bad request"
 msgstr ""
 
 #: _JNJ/html/e_type.m.jnj:97 _JNJ/html/e_type.m.jnj:137
-#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:70
+#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:72
 #: _JNJ/html/form.jnj:164 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr ""
@@ -104,7 +104,7 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:88
+#: _JNJ/html/e_type_afs.jnj:90
 msgid "Change attributes of this object"
 msgstr ""
 
@@ -155,12 +155,12 @@ msgstr ""
 msgid "Confirm new email address"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:71
+#: _JNJ/html/e_type_afs.jnj:73
 msgid "Copy"
 msgstr ""
 
 #: _JNJ/html/e_type.m.jnj:343 _JNJ/html/e_type.m.jnj:347
-#: _JNJ/html/e_type_afs.jnj:83
+#: _JNJ/html/e_type_afs.jnj:85
 msgid "Create new object"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Currently selected language is %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:72
+#: _JNJ/html/e_type_afs.jnj:74
 msgid "Delete"
 msgstr ""
 
@@ -181,7 +181,7 @@ msgstr ""
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:86
+#: _JNJ/html/e_type_afs.jnj:88
 msgid "Delete this object"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "Discard all changes made and leave popup-form"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:84
+#: _JNJ/html/e_type_afs.jnj:86
 msgid "Discard changes"
 msgstr ""
 
@@ -250,7 +250,7 @@ msgstr ""
 msgid "Display previous batch of objects matching the restriction"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:73
+#: _JNJ/html/e_type_afs.jnj:75
 msgid "Done"
 msgstr ""
 
@@ -262,7 +262,7 @@ msgstr ""
 msgid "Drag the order-by criteria up or down to change their priority"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:74 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:76 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr ""
 
@@ -305,7 +305,7 @@ msgstr ""
 msgid "Javascript is needed to fully use this page"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:58
+#: _JNJ/html/e_type_afs.jnj:60
 msgid "Javascript is needed to use this page"
 msgstr ""
 
@@ -376,7 +376,7 @@ msgstr ""
 msgid "Logout %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:85
+#: _JNJ/html/e_type_afs.jnj:87
 msgid "Make a copy of this object"
 msgstr ""
 
@@ -441,7 +441,7 @@ msgstr ""
 msgid "Play"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:80
+#: _JNJ/html/e_type_afs.jnj:82
 msgid "Please change the fields that have errors"
 msgstr ""
 
@@ -491,7 +491,7 @@ msgstr ""
 msgid "Request Timeout"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:75 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
+#: _JNJ/html/e_type_afs.jnj:77 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
 #: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr ""
@@ -500,7 +500,7 @@ msgstr ""
 msgid "Reset fields"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:89
+#: _JNJ/html/e_type_afs.jnj:91
 msgid "Reset fields to start values"
 msgstr ""
 
@@ -517,11 +517,11 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:77 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:79 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:91
+#: _JNJ/html/e_type_afs.jnj:93
 msgid "Save the attribute values as displayed in form fields"
 msgstr ""
 
@@ -534,11 +534,11 @@ msgstr ""
 msgid "Scroll by %s weeks to anchor %s."
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:76
+#: _JNJ/html/e_type_afs.jnj:78
 msgid "Select"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:90
+#: _JNJ/html/e_type_afs.jnj:92
 msgid "Select an object as value for this field"
 msgstr ""
 

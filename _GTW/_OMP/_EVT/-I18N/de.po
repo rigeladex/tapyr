@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
 "PO-Revision-Date: 2011-05-19 11:36+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _GTW._OMP._EVT.Calendar:0 _GTW._OMP._EVT.Event:0
+#: _GTW._OMP._EVT.Event:0 _GTW._OMP._EVT.Calendar:0
 msgid "Calendar"
 msgid_plural "Calendars"
 msgstr[0] ""
@@ -257,10 +257,6 @@ msgstr ""
 "Wiederholungen eines Ereignisses."
 
 #: _GTW._OMP._EVT.Event:0
-msgid "Time"
-msgstr "Zeit"
-
-#: _GTW._OMP._EVT.Event:0
 msgid "Time (interval) of occurrence"
 msgstr "Zeitraum des Ereignisses"
 
@@ -297,4 +293,7 @@ msgstr "Tag des Jahres"
 #: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
 msgid "Yearly"
 msgstr "Jährlich"
+
+#~ msgid "Time"
+#~ msgstr "Zeit"
 

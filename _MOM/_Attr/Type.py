@@ -838,8 +838,7 @@ class _A_Number_ (A_Attr_Type) :
                 try :
                     return soc._call_eval (val, g, {})
                 except (NameError, ValueError, TypeError) :
-                    raise ValueError \
-                        (_T ("%s expected, got %r") % (soc.typ, value))
+                    raise ValueError
     # end def _from_string
 
 # end class _A_Number_
@@ -847,7 +846,7 @@ class _A_Number_ (A_Attr_Type) :
 class _A_Decimal_ (_A_Number_) :
     """Models a decimal-number valued attribute of an object."""
 
-    typ            = "Decimal"
+    typ            = _ ("Decimal")
     P_Type         = decimal.Decimal
     code_format    = "%s"
 
@@ -861,7 +860,7 @@ class _A_Decimal_ (_A_Number_) :
 class _A_Float_ (_A_Number_) :
     """Models a floating-point attribute of an object."""
 
-    typ         = "Float"
+    typ         = _ ("Float")
     P_Type      = float
 
 # end class _A_Float_
@@ -869,7 +868,7 @@ class _A_Float_ (_A_Number_) :
 class _A_Int_ (_A_Number_) :
     """Models an integer attribute of an object."""
 
-    typ         = "Int"
+    typ         = _ ("Int")
     P_Type      = int
 
 # end class _A_Int_
@@ -880,7 +879,7 @@ class _A_Link_Role_Left_ (A_Attr_Type) :
     generic_role_name = "left"
     rank              = 0
     role_abbreviation = "l"
-    typ               = "Left"
+    typ               = _ ("Left")
 
 # end class _A_Link_Role_Left_
 
@@ -890,7 +889,7 @@ class _A_Link_Role_L_Middle_ (A_Attr_Type) :
     generic_role_name = "l_middle"
     rank              = 1
     role_abbreviation = "lm"
-    typ               = "L_Middle"
+    typ               = _ ("L_Middle")
 
 # end class _A_Link_Role_L_Middle_
 
@@ -900,7 +899,7 @@ class _A_Link_Role_Middle_ (A_Attr_Type) :
     generic_role_name = "middle"
     rank              = 2
     role_abbreviation = "m"
-    typ               = "Middle"
+    typ               = _ ("Middle")
 
 # end class _A_Link_Role_Middle_
 
@@ -910,7 +909,7 @@ class _A_Link_Role_R_Middle_ (A_Attr_Type) :
     generic_role_name = "r_middle"
     rank              = 3
     role_abbreviation = "rm"
-    typ               = "R_Middle"
+    typ               = _ ("R_Middle")
 
 # end class _A_Link_Role_R_Middle_
 
@@ -920,7 +919,7 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
     generic_role_name = "right"
     rank              = 4
     role_abbreviation = "r"
-    typ               = "Right"
+    typ               = _ ("Right")
 
 # end class _A_Link_Role_Right_
 
@@ -1376,7 +1375,7 @@ class _A_Unit_ (A_Attr_Type) :
 class A_Angle (_A_Float_) :
     """Models an attribute specifying an angle in degrees."""
 
-    typ              = "Angle"
+    typ              = _ ("Angle")
     max_value        = 360
     min_value        = 0
 
@@ -1394,7 +1393,7 @@ class A_Angle (_A_Float_) :
 class A_Blob (A_Attr_Type) :
     """Generic type for binary attributes that aren't set by the user."""
 
-    typ                 = "Blob"
+    typ                 = _ ("Blob")
     kind                = MOM.Attr._Cached_
     hidden              = True
 
@@ -1404,7 +1403,7 @@ class A_Boolean (_A_Named_Value_) :
     """Models a Boolean attribute of an object."""
 
     example        = u"no"
-    typ            = "Boolean"
+    typ            = _ ("Boolean")
     Q_Ckd_Type     = MOM.Attr.Querier.Boolean
     P_Type         = bool
     ui_length      = 5
@@ -1442,7 +1441,7 @@ class A_Cached_Role (_A_Id_Entity_) :
 
     electric       = True
     kind           = MOM.Attr.Cached_Role
-    typ            = "Cached_Role"
+    typ            = _ ("Cached_Role")
     hidden         = True
 
 # end class A_Cached_Role
@@ -1463,7 +1462,7 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
 
     electric       = True
     kind           = MOM.Attr.Cached_Role_Set
-    typ            = "Cached_Role_Set"
+    typ            = _ ("Cached_Role_Set")
     hidden         = True
 
 # end class A_Cached_Role_Set
@@ -1472,7 +1471,7 @@ class A_Char (_A_String_) :
     """Models an attribute holding a single character."""
 
     example        = u"X"
-    typ            = "Character"
+    typ            = _ ("Character")
     max_length     = 1
 
 # end class A_Char
@@ -1482,7 +1481,7 @@ class A_Date (_A_Date_) :
 
     example        = u"2010/10/10"
     completer      = MOM.Attr.Completer_Spec  (4)
-    typ            = "Date"
+    typ            = _ ("Date")
     P_Type         = datetime.date
     Q_Ckd_Type     = MOM.Attr.Querier.Date
     ui_length      = 12
@@ -1514,7 +1513,7 @@ class A_Date (_A_Date_) :
 class A_Date_List (_A_Typed_List_) :
     """Models a list-valued attribute comprising date elements."""
 
-    typ            = "Date_List"
+    typ            = _ ("Date_List")
     C_Type         = A_Date
 
 # end class A_Date_List
@@ -1525,7 +1524,7 @@ class A_Date_Slug (_A_String_) :
     """
 
     example        = u"20101010_000042_137"
-    typ            = "Date-Slug"
+    typ            = _ ("Date-Slug")
     ui_length      = 22
 
     def computed_default (self) :
@@ -1545,7 +1544,7 @@ class A_Date_Time (_A_Date_) :
     """Models a date-time-valued attribute of an object."""
 
     example        = u"2010/10/10 06:42"
-    typ            = "Date-Time"
+    typ            = _ ("Date-Time")
     P_Type         = datetime.datetime
     ui_length      = 18
     input_formats  = tuple \
@@ -1601,7 +1600,7 @@ class A_Date_Time (_A_Date_) :
 class A_Date_Time_List (_A_Typed_List_) :
     """Models a list-valued attribute comprising date/time elements."""
 
-    typ            = "Date_Time_List"
+    typ            = _ ("Date_Time_List")
     C_Type         = A_Date_Time
 
 # end class A_Date_Time_List
@@ -1636,7 +1635,7 @@ class A_Decimal (_A_Decimal_) :
 class A_Dirname (_A_Filename_) :
     """Models an attribute of an object specifying a directory."""
 
-    typ         = "Directory"
+    typ         = _ ("Directory")
 
     def _from_string (self, s, obj, glob, locl) :
         s = self.__super._from_string (s, obj, glob, locl)
@@ -1656,7 +1655,7 @@ class A_Dirname (_A_Filename_) :
 class A_Email (_A_String_) :
     """An email address"""
 
-    typ                = "Email"
+    typ                = _ ("Email")
     max_length         = 80
 
     ### XXX check_syntax
@@ -1666,7 +1665,7 @@ class A_Email (_A_String_) :
 class A_Euro_Amount (_A_Decimal_) :
     """Models an attribute holding an amount of Euros."""
 
-    typ              = "Decimal"
+    typ              = _ ("Decimal")
     P_Type           = TFL.Currency
 
     _string_cleaner  = Re_Replacer \
@@ -1706,7 +1705,7 @@ class A_Euro_Amount (_A_Decimal_) :
 class A_Filename (_A_Filename_) :
     """Models an attribute of an object specifying a filename."""
 
-    typ         = "Filename"
+    typ         = _ ("Filename")
 
     def _from_string (self, s, obj, glob, locl) :
         s = self.__super._from_string (s, obj, glob, locl)
@@ -1726,7 +1725,7 @@ class A_Float (_A_Float_) :
 class A_Freqency (_A_Unit_, _A_Float_) :
     """Models a frequency attribute with unit information."""
 
-    typ              = "Frequency"
+    typ              = _ ("Frequency")
     needs_raw_value  = True
     _unit_dict       = dict \
         ( Hz         = 1
@@ -1745,7 +1744,7 @@ class A_Int (_A_Int_) :
 class A_Int_List (_A_Typed_List_) :
     """Models a list-valued attribute comprising integer elements."""
 
-    typ            = "Int_List"
+    typ            = _ ("Int_List")
     C_Type         = A_Int
 
 # end class A_Int_List
@@ -1753,7 +1752,7 @@ class A_Int_List (_A_Typed_List_) :
 class A_Length (_A_Unit_, _A_Float_) :
     """Models a length attribute with unit information."""
 
-    typ            = "Length"
+    typ            = _ ("Length")
     _unit_dict     = dict \
         ( { "in"   : 0.0254 }
         , cm       = 1.e-2
@@ -1825,7 +1824,7 @@ class A_Link_Role_EB (A_Link_Role) :
 class A_Name (Syntax_Re_Mixin, _A_String_) :
     """Models a name-valued attribute of an object."""
 
-    typ                = "Name"
+    typ                = _ ("Name")
     max_length         = 32
     _syntax_re         = Regexp (u"^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
     syntax             = _ \
@@ -1841,7 +1840,7 @@ class A_Numeric_String (_A_String_Base_) :
     """
 
     example           = u"42"
-    typ               = "Numeric_String"
+    typ               = _ ("Numeric_String")
 
     P_Type            = unicode
     as_number         = int
@@ -1860,7 +1859,7 @@ class A_Numeric_String (_A_String_Base_) :
 class A_Id_Entity (_A_Id_Entity_) :
     """Models an attribute referring to an entity."""
 
-    typ            = "Entity"
+    typ            = _ ("Entity")
     Kind_Mixins    = (MOM.Attr.Id_Entity_Reference_Mixin, )
 
 # end class A_Id_Entity
@@ -1868,7 +1867,7 @@ class A_Id_Entity (_A_Id_Entity_) :
 class A_String (_A_String_) :
     """Models a string-valued attribute of an object."""
 
-    typ            = "String"
+    typ            = _ ("String")
     max_length     = 64
 
 # end class A_String
@@ -1878,7 +1877,7 @@ class A_Text (_A_String_) :
        arbitrary length.
     """
 
-    typ            = "Text"
+    typ            = _ ("Text")
     max_length     = None
 
 # end class A_Text
@@ -1887,7 +1886,7 @@ class A_Time (_A_Date_) :
     """Models a time-valued attribute of an object."""
 
     example        = u"06:42"
-    typ            = "Time"
+    typ            = _ ("Time")
     P_Type         = datetime.time
     ui_length      = 8
     input_formats  = ("%H:%M:%S", "%H:%M")
@@ -1919,7 +1918,7 @@ class A_Url (_A_String_) :
     """Models an url-valued attribute of an object."""
 
     example        = u"/bar"
-    typ            = "Url"
+    typ            = _ ("Url")
     max_length     = 160
     check          = ("""value.startswith (("/", "http://", "https://"))""", )
 
@@ -1936,7 +1935,7 @@ class A_Year (A_Int) :
     """Models a year-valued attribute of an object."""
 
     example        = "2000"
-    typ            = "Year"
+    typ            = _ ("Year")
     min_value      = 1900
     max_value      = 2100
 
