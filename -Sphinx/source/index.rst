@@ -7,7 +7,6 @@ Documentation for Tanzer's Python packages
 
    TFL/index
    MOM/index
-   TOM/index
 
 Indices and tables
 ==================
