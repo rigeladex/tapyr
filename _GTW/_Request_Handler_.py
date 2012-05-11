@@ -120,10 +120,12 @@ class _Request_Handler_ (object) :
                             from _TFL.Formatter import formatted_1
                             logging.warning \
                                 ( "Use fallback default content encoding %s"
-                                  "\n    %s --> %s"
+                                  "\n    [%s] %s --> %s"
                                   "\n    Headers: %s"
                                   "\n    Body: %s"
                                 % ( dce
+                                  , datetime.datetime.now ().replace
+                                      (microsecond = 0)
                                   , request.remote_addr, request.path
                                   , formatted_1 (headers)
                                   , self.body
