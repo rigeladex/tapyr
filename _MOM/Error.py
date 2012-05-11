@@ -66,6 +66,8 @@
 #    27-Apr-2012 (CT) Add and use `Invariants._flattened`
 #    30-Apr-2012 (CT) Add `Duplicate_Link.__init__`
 #    11-May-2012 (CT) Add message to `assert` in `Ambiguous_Epk.__init__`
+#    11-May-2012 (CT) Change `Attribute_Syntax` to use
+#                     `self.attribute.name`, not `self.attribute`, for json
 #    ««revision-date»»···
 #--
 
@@ -400,7 +402,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         self.args         = (obj, attr, val, exc_str)
         self.obj          = obj
         self.attribute    = attr
-        self.attributes   = (attr, )
+        self.attributes   = (attr.name, )
         self.is_required  = attr.is_required
         self.value        = val
         self.exc_str      = exc_str
@@ -425,7 +427,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
 
     @Once_Property
     def bindings (self) :
-        return ((self.attribute, self.value), )
+        return ((self.attribute.name, self.value), )
     # end def bindings
 
     @Once_Property

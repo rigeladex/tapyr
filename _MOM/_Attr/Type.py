@@ -225,6 +225,8 @@
 #    22-Apr-2012 (CT) Adapt to signature change of `is_correct`
 #                     (`kind` -->`_kind`)
 #    10-May-2012 (CT) Add `A_Angle`
+#    11-May-2012 (CT) `_A_Number_._from_string` changed to raise `ValueError`
+#                     if `_call_eval` fails
 #    ««revision-date»»···
 #--
 
@@ -826,15 +828,18 @@ class _A_Number_ (A_Attr_Type) :
         if value :
             try :
                 return soc.P_Type (value)
-            except (ValueError, TypeError) :
-                if soc._string_fixer :
-                    value = soc._string_fixer (value)
+            except (ValueError, TypeError) as exc :
+                val = soc._string_fixer (value) if soc._string_fixer else value
                 g = dict \
                     ( math.__dict__
                     , Decimal      = decimal.Decimal
                     , __builtins__ = {}
                     )
-                return soc._call_eval (value, g, {})
+                try :
+                    return soc._call_eval (val, g, {})
+                except (NameError, ValueError, TypeError) :
+                    raise ValueError \
+                        (_T ("%s expected, got %r") % (soc.typ, value))
     # end def _from_string
 
 # end class _A_Number_
@@ -1101,13 +1106,13 @@ class _A_Filename_ (_A_String_Base_) :
     needs_raw_value   = False
 
     open_mode         = "w"
-    """`open_mode' defines the mode to use for opening the file specified
-       by the attribute's value.
+    """`open_mode` defines the mode to use for opening the file specified
+       by the value of the attribute.
        """
 
     do_check         = True
-    """`do_check' specifies whether the existence of a file as specified by
-       the attribute's value is checked by `from_string'.
+    """`do_check` specifies whether the existence of a file as specified by
+       the attribute's value is checked by `from_string`.
        """
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1179,7 +1184,7 @@ class _A_String_Ascii_ (_A_String_) :
 # end class _A_String_Ascii_
 
 class _A_Named_Object_ (_A_Named_Value_) :
-    """Common base class for attributes holding named objects (that can't be
+    """Common base class for attributes holding named objects (that cannot be
        directly put into a database).
     """
 
@@ -1360,9 +1365,9 @@ class _A_Unit_ (A_Attr_Type) :
                 factor = self._unit_dict [unit]
             except KeyError :
                 raise ValueError \
-                      ( _T (u"Invalid unit %s, specify one of %s")
-                      % (unit, self.eligible_raw_values ())
-                      )
+                    ( _T (u"Invalid unit %s, specify one of %s")
+                    % (unit, self.eligible_raw_values ())
+                    )
         return self.__super._from_string (s, obj, glob, locl) * factor
     # end def _from_string
 
@@ -1572,9 +1577,10 @@ class A_Date_Time (_A_Date_) :
                 try :
                     value = soc._from_string (value)
                 except ValueError :
-                    raise TypeError ("Date/time expected, got %r" % (value, ))
+                    raise TypeError \
+                        (_T ("Date/time expected, got %r") % (value, ))
             else :
-                raise TypeError ("Date/time expected, got %r" % (value, ))
+                raise TypeError (_T ("Date/time expected, got %r") % (value, ))
         return value
     # end def cooked
 
@@ -1896,9 +1902,9 @@ class A_Time (_A_Date_) :
             try :
                 value = soc._from_string (value)
             except ValueError :
-                raise TypeError ("Time expected, got %r" % (value, ))
+                raise TypeError (_T ("Time expected, got %r") % (value, ))
         elif not isinstance (value, datetime.time) :
-            raise TypeError ("Time expected, got %r" % (value, ))
+            raise TypeError (_T ("Time expected, got %r") % (value, ))
         return value
     # end def cooked
 
