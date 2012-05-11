@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -31,6 +31,7 @@
 #    24-Feb-2010 (MG) `_make_dir` added and used
 #    10-Oct-2011 (CT) `__getattr__` added (needed by `self.catalog.update` to
 #                     access `creation_date`)
+#    11-May-2012 (CT) Print `pkg` in case of `ImportError`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,11 @@ class PO_File (TFL.Meta.Object) :
     def combine_package_translations (cls, packages) :
         files = []
         for pkg in (p.strip () for p in packages) :
-            __import__ (pkg)
+            try :
+                __import__ (pkg)
+            except ImportError as exc :
+                print exc, repr (pkg)
+                raise
             base_dir = os.path.dirname (sys.modules [pkg].__file__)
             pot_file = os.path.join (base_dir, "-I18N", "template.pot")
             if os.path.isfile (pot_file) :
