@@ -65,6 +65,7 @@
 #    27-Apr-2012 (CT) Change `_Invariant_.bindings` to apply `unicode` to values
 #    27-Apr-2012 (CT) Add and use `Invariants._flattened`
 #    30-Apr-2012 (CT) Add `Duplicate_Link.__init__`
+#    11-May-2012 (CT) Add message to `assert` in `Ambiguous_Epk.__init__`
 #    ««revision-date»»···
 #--
 
@@ -280,7 +281,8 @@ class Ambiguous_Epk (_Invariant_) :
     raw            = False
 
     def __init__ (self, e_type, epk, kw, count, * matches) :
-        assert 1 < count <= len (matches)
+        assert 1 < count <= len (matches), \
+            "count = %s, matches = %s" % (count, matches)
         self.e_type     = e_type
         self.epk        = tuple (repr (x) for x in epk)
         self.kw         = kw
