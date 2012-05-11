@@ -61,6 +61,7 @@
 #     9-May-2012 (CT) Add handler for `Exception` to `_handle_request`
 #    10-May-2012 (CT) Change `_handle_request` to call `_send_error_email`,
 #                     don't return `Error_500` if `wants_json`
+#    11-May-2012 (CT) Add `remote_addr`, `path` to debug info in `content_type`
 #    ««revision-date»»···
 #--
 
@@ -105,7 +106,8 @@ class _Request_Handler_ (object) :
     @property
     def content_type (self) :
         if self._content_type is None :
-            headers   = self.request.headers
+            request   = self.request
+            headers   = request.headers
             ct, _, ce = split_hst (headers.get ("content-type", ""), ";")
             self._content_type = ct.strip ()
             if not self._content_encoding :
@@ -118,9 +120,14 @@ class _Request_Handler_ (object) :
                             from _TFL.Formatter import formatted_1
                             logging.warning \
                                 ( "Use fallback default content encoding %s"
+                                  "\n    %s --> %s"
                                   "\n    Headers: %s"
                                   "\n    Body: %s"
-                                % (dce, formatted_1 (headers), self.body)
+                                % ( dce
+                                  , request.remote_addr, request.path
+                                  , formatted_1 (headers)
+                                  , self.body
+                                  )
                                 )
                     self._content_encoding = dce
         return self._content_type
