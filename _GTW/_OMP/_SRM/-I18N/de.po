@@ -34,7 +34,7 @@ msgstr "Ein Segelclub."
 msgid ""
 "A sailor can't be skipper of more than one boat in a single\n"
 "regatta event."
-msgstr ""
+msgstr "Ein Segler kann in einer Regatta nicht mehr als ein Boot segeln."
 
 #: _GTW._OMP._SRM.Team:0
 msgid "A team of sailors participating in a regatta."
@@ -643,7 +643,7 @@ msgstr ""
 msgid ""
 "The number of crew members must be less than\n"
 "`boat.b_class.max_crew`."
-msgstr ""
+msgstr "Die Anzahl der Crewmitglieder muss kleiner als die Maximalzahl für die Bootsklasse sein."
 
 #: _GTW._OMP._SRM.Race_Result:0
 msgid "The result of this race is discarded."
@@ -687,11 +687,11 @@ msgstr "Das Baujahr kann nicht in der Zukunft liegen."
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "crew_number_valid"
-msgstr ""
+msgstr "Gültige Anzahl an Crewmitgliedern"
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "skipper_not_multiplexed"
-msgstr ""
+msgstr "Skipper nicht auf mehreren Booten"
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "valid_regatta"
