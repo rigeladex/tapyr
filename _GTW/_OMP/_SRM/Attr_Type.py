@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -34,10 +34,11 @@
 #    13-Oct-2010 (CT) `example` added
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    11-May-2012 (CT) Add `RSA` to `A_Nation`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__               import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
@@ -52,49 +53,50 @@ class A_Nation (_A_Named_Object_) :
 
     ### http://en.wikipedia.org/wiki/List_of_IOC_country_codes
 
-    example    = u"AUT"
+    example    = "AUT"
     typ        = "Nation"
     Table      = \
-        { u"AUS" :  _(u"Australia")
-        , u"AUT" :  _(u"Austria")
-        , u"BEL" :  _(u"Belgium")
-        , u"CAN" :  _(u"Canada")
-        , u"CRO" :  _(u"Croatia")
-        , u"CYP" :  _(u"Cyprus")
-        , u"CZE" :  _(u"Czech Republic")
-        , u"DEN" :  _(u"Denmark")
-        , u"ESP" :  _(u"Spain")
-        , u"EST" :  _(u"Estonia")
-        , u"FIN" :  _(u"Finland")
-        , u"FRA" :  _(u"France")
-        , u"GBR" :  _(u"Great Britain")
-        , u"GER" :  _(u"Germany")
-        , u"GRE" :  _(u"Greece")
-        , u"HUN" :  _(u"Hungary")
-        , u"IRL" :  _(u"Ireland")
-        , u"ISL" :  _(u"Iceland")
-        , u"ITA" :  _(u"Italy")
-        , u"LAT" :  _(u"Latvia")
-        , u"LIE" :  _(u"Lichtenstein")
-        , u"LTU" :  _(u"Lithuania")
-        , u"LUX" :  _(u"Luxembourg")
-        , u"MLT" :  _(u"Malta")
-        , u"MNE" :  _(u"Montenegro")
-        , u"MON" :  _(u"Monaco")
-        , u"NED" :  _(u"Netherlands")
-        , u"NOR" :  _(u"Norway")
-        , u"NZL" :  _(u"New Zealand")
-        , u"POL" :  _(u"Poland")
-        , u"POR" :  _(u"Portugal")
-        , u"ROU" :  _(u"Romania")
-        , u"RUS" :  _(u"Russia")
-        , u"SLO" :  _(u"Slovenia")
-        , u"SRB" :  _(u"Serbia")
-        , u"SUI" :  _(u"Switzerland")
-        , u"SVK" :  _(u"Slovakia")
-        , u"SWE" :  _(u"Sweden")
-        , u"UKR" :  _(u"Ukraine")
-        , u"USA" :  _(u"United States")
+        { "AUS" :  _("Australia")
+        , "AUT" :  _("Austria")
+        , "BEL" :  _("Belgium")
+        , "CAN" :  _("Canada")
+        , "CRO" :  _("Croatia")
+        , "CYP" :  _("Cyprus")
+        , "CZE" :  _("Czech Republic")
+        , "DEN" :  _("Denmark")
+        , "ESP" :  _("Spain")
+        , "EST" :  _("Estonia")
+        , "FIN" :  _("Finland")
+        , "FRA" :  _("France")
+        , "GBR" :  _("Great Britain")
+        , "GER" :  _("Germany")
+        , "GRE" :  _("Greece")
+        , "HUN" :  _("Hungary")
+        , "IRL" :  _("Ireland")
+        , "ISL" :  _("Iceland")
+        , "ITA" :  _("Italy")
+        , "LAT" :  _("Latvia")
+        , "LIE" :  _("Lichtenstein")
+        , "LTU" :  _("Lithuania")
+        , "LUX" :  _("Luxembourg")
+        , "MLT" :  _("Malta")
+        , "MNE" :  _("Montenegro")
+        , "MON" :  _("Monaco")
+        , "NED" :  _("Netherlands")
+        , "NOR" :  _("Norway")
+        , "NZL" :  _("New Zealand")
+        , "POL" :  _("Poland")
+        , "POR" :  _("Portugal")
+        , "ROU" :  _("Romania")
+        , "RSA" :  _("South Africa")
+        , "RUS" :  _("Russia")
+        , "SLO" :  _("Slovenia")
+        , "SRB" :  _("Serbia")
+        , "SUI" :  _("Switzerland")
+        , "SVK" :  _("Slovakia")
+        , "SWE" :  _("Sweden")
+        , "UKR" :  _("Ukraine")
+        , "USA" :  _(u"United States")
         }
 
 # end class A_Nation
