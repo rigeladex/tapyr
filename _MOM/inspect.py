@@ -35,6 +35,9 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _MOM import MOM
 from   _TFL import TFL
 
+import _MOM._Meta.M_Entity
+import _TFL.Accessor
+
 def show_children (T, bi = "  ", level = 0, seen = None) :
     """Display tree of children of essential type `T`."""
     if seen is None :
@@ -46,6 +49,11 @@ def show_children (T, bi = "  ", level = 0, seen = None) :
             show_children (c, bi, l1, seen)
             seen.add (c)
 # end def show_children
+
+def parents (T) :
+    """Return the essential parents of essential type `T`."""
+    return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
+# end def parents
 
 if __name__ != "__main__" :
     MOM._Export_Module ()
