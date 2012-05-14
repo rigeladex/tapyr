@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -29,6 +29,7 @@
 #     6-Sep-2010 (CT) Creation
 #     7-Sep-2010 (CT) `_change_callback` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    14-May-2012 (CT) Replace `unit.C_Type` by `unit.P_Type`
 #    ««revision-date»»···
 #--
 
@@ -383,9 +384,9 @@ class Recurrence_Rule (_Ancestor_Essence) :
                `unit`.
             """
 
-            C_Type             = A_Int
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
+            P_Type             = int
             Table              = dict \
                 (  (k, getattr (dateutil.rrule, k.upper ()))
                 for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))

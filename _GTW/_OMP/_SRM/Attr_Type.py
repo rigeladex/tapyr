@@ -35,6 +35,7 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    11-May-2012 (CT) Add `RSA` to `A_Nation`
+#    14-May-2012 (CT) Add `A_Nation.P_Type`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ class A_Nation (_A_Named_Object_) :
 
     example    = "AUT"
     typ        = "Nation"
+    P_Type     = unicode
     Table      = \
         { "AUS" :  _("Australia")
         , "AUT" :  _("Austria")

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -28,6 +28,7 @@
 # Revision Dates
 #     4-Jun-2010 (CT) Creation
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    14-May-2012 (CT) Add `A_Sex.P_Type`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ class A_Sex (_A_Named_Object_) :
 
     example   = u"F"
     typ       = "Sex"
+    P_Type    = unicode
     Table     = \
         { u"F"  : _(u"Female")
         , u"M"  : _(u"Male")

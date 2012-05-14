@@ -58,8 +58,10 @@
 #                     classes
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
-#    14-May-2012 (CT) Print exception info in `_sa_columns_simple`
-#    14-May-2012 (MG) Attach `_sa_type` to `_A_Float_` instead of `A_Float`
+#    14-May-2012 (CT) Replace concrete `_sa_type` implementations for
+#                     `A_Boolean`, `A_Date`, `A_Date_Time`, `A_Float`,
+#                     `A_Int`, and `A_Time` by generic `_sa_type` for
+#                     `A_Attr_Type`
 #    ««revision-date»»···
 #--
 
@@ -71,10 +73,21 @@ import _MOM._Attr
 import  cPickle
 from   _MOM._DBW._SAS.Date_Column import Date_Column
 
-Attr = MOM.Attr
-
 from sqlalchemy     import types, schema
 from sqlalchemy.sql import extract, expression
+
+import datetime
+
+_sa_type_map = \
+    { bool              : types.Boolean
+    , datetime.date     : types.Date
+    , datetime.datetime : types.DateTime
+    , datetime.time     : types.Time
+    , float             : types.Float
+    , int               : types.Integer
+    }
+
+Attr = MOM.Attr
 
 Attr.A_Attr_Type.SAS_Column_Class = schema.Column
 Attr.A_Date     .SAS_Column_Class = Date_Column
@@ -101,16 +114,10 @@ def _sa_object (self) :
 
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
 def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
-    Pickler = attr.Pickler
-    Type    = getattr (Pickler, "Type", attr)
-    try :
-        sa_type = Type._sa_type (Type, kind)
-    except Exception as exc :
-        import pdb;pdb.set_trace ()
-        print exc
-        print cls, attr, kind, unique, owner_etype, sorted (kw.items ())
-        raise
-    col = cls.SAS_Column_Class (attr._sa_col_name, sa_type, ** kw)
+    Pickler      = attr.Pickler
+    Type         = getattr (Pickler, "Type", attr)
+    sa_type      = Type._sa_type (Type, kind)
+    col          = cls.SAS_Column_Class (attr._sa_col_name, sa_type, ** kw)
     col.mom_kind = kind
     return (col, )
 # end def _sa_columns_simple
@@ -174,18 +181,19 @@ class Case_Sensitive_String (types.TypeDecorator) :
 
 # end class Case_Sensitive_String
 
-@Add_Classmedthod ("_sa_type", Attr.A_Boolean)
-def _sa_bool (cls, attr, kind, ** kw)      : return types.Boolean   ()
-@Add_Classmedthod ("_sa_type", Attr.A_Date)
-def _sa_date (cls, attr, kind, ** kw)      : return types.Date      ()
-@Add_Classmedthod ("_sa_type", Attr.A_Date_Time)
-def _sa_date_time (cls, attr, kind, ** kw) : return types.DateTime  ()
-@Add_Classmedthod ("_sa_type", Attr.A_Time)
-def _sa_time (cls, attr, kind, ** kw)      : return types.Time      ()
-@Add_Classmedthod ("_sa_type", Attr._A_Float_)
-def _sa_float (cls, attr, kind, ** kw)     : return types.Float     ()
-@Add_Classmedthod ("_sa_type", Attr.A_Int)
-def _sa_int (cls, attr, kind, ** kw)       : return types.Integer   ()
+@Add_Classmedthod ("_sa_type", Attr.A_Attr_Type)
+def _sa_type_generic (cls, attr, kind, ** kw) :
+    P_Type = attr.P_Type
+    try :
+        T = _sa_type_map [P_Type]
+    except KeyError :
+        raise AttributeError \
+            ( "Attribute %s needs either a `Pickler` or a `P_Type` definition"
+            % (kind, )
+            )
+    else :
+        return T ()
+# end def _sa_type_generic
 
 @Add_Classmedthod ("_sa_type", Attr.A_Decimal)
 def _sa_numeric (cls, attr, kind, ** kw) :

@@ -227,6 +227,7 @@
 #    10-May-2012 (CT) Add `A_Angle`
 #    11-May-2012 (CT) `_A_Number_._from_string` changed to raise `ValueError`
 #                     if `_call_eval` fails
+#    14-May-2012 (CT) Add `_A_Filename_.P_Type`
 #    ««revision-date»»···
 #--
 
@@ -1103,6 +1104,7 @@ class _A_Filename_ (_A_String_Base_) :
     """Base class for attributes holding filenames."""
 
     needs_raw_value   = False
+    P_Type            = str
 
     open_mode         = "w"
     """`open_mode` defines the mode to use for opening the file specified
