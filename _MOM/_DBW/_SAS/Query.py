@@ -57,6 +57,8 @@
 #    24-Jan-2012 (MG) `Join_Query.__call__` order of joins fixed (sqlite does
 #                     not mapper, but other database do)
 #    14-May-2012 (CT) Print exception info in `MOM_Composite_Query, __init__`
+#    14-May-2012 (MG) `MOM_Composite_Query.__init__` query attribute handling
+#                     fixed
 #    ««revision-date»»···
 #--
 
@@ -245,19 +247,20 @@ class MOM_Composite_Query (_MOM_Query_) :
                 self._RAW_ATTRIBUTES [name] = col
                 setattr (self, kind.raw_name, col)
         self._query_fct = {}
-        for name, kind in db_attrs.iteritems () :
-            if isinstance (kind, MOM.Attr.Query) :
-                query_fct = getattr (kind.attr, "query_fct")
+        for name, c_kind in db_attrs.iteritems () :
+            if isinstance (c_kind, MOM.Attr.Query) :
+                query_fct = getattr (c_kind.attr, "query_fct")
                 if query_fct :
-                    self._query_fct [name] = kind.attr
+                    self._query_fct [name] = c_kind.attr
                 else :
-                    col = kind.attr.query._sa_filter (self) [1] [0]
+                    col = c_kind.attr.query._sa_filter (self) [1] [0]
                     try :
-                        col.MOM.Kind = kind
+                        col.MOM_kind   = c_kind
+                        col.MOM_C_Kind = kind
                     except Exception as exc :
                         import sys
                         print >> sys.stderr, exc
-                        print >> sys.stderr, owner_etype, e_type, name, kind
+                        print >> sys.stderr, owner_etype, e_type, name, c_kind, kind
                         raise
                     setattr (self, name, col)
     # end def __init__
