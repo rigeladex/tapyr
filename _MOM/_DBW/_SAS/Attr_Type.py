@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -58,6 +58,7 @@
 #                     classes
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
+#    14-May-2012 (CT) Print exception info in `_sa_columns_simple`
 #    ««revision-date»»···
 #--
 
@@ -100,11 +101,13 @@ def _sa_object (self) :
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
 def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     Pickler = attr.Pickler
-    Type    = getattr (Pickler, "Type", None)
-    if Type :
+    Type    = getattr (Pickler, "Type", attr)
+    try :
         sa_type = Type._sa_type (Type, kind)
-    else :
-        sa_type = attr._sa_type (attr, kind)
+    except Exception as exc :
+        print exc
+        print cls, attr, kind, unique, owner_etype, sorted (kw.items ())
+        raise
     col = cls.SAS_Column_Class (attr._sa_col_name, sa_type, ** kw)
     col.mom_kind = kind
     return (col, )

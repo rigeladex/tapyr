@@ -59,14 +59,16 @@
 #    18-Nov-2011 (CT) Add `formatted1` to get rid of `u` prefixes
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
+#    14-May-2012 (CT) Add `Supertrap.weights` to test `A_Float_Interval`
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM          import *
-from   _MOM._Attr.Date_Interval import *
-from   _MOM.Product_Version     import Product_Version, IV_Number
-from   _TFL.Package_Namespace   import Derived_Package_Namespace
-from   _TFL                     import sos
+from   _MOM.import_MOM            import *
+from   _MOM._Attr.Date_Interval   import *
+from   _MOM._Attr.Number_Interval import A_Float_Interval
+from   _MOM.Product_Version       import Product_Version, IV_Number
+from   _TFL.Package_Namespace     import Derived_Package_Namespace
+from   _TFL                       import sos
 
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
@@ -319,6 +321,20 @@ _Ancestor_Essence = Trap
 
 class Supertrap (_Ancestor_Essence) :
     """An enormously improved Trap."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class weights (A_Float_Interval) :
+            """Range of weights this trap can safely hold"""
+
+            kind               = Attr.Necessary
+
+        # end class weights
+
+    # end class _Attributes
+
 # end class Supertrap
 
 _Ancestor_Essence = MOM.Link1
@@ -568,7 +584,11 @@ defined:
 
     >>> %(import_EMS)s as EMS
     >>> %(import_DBW)s as DBW
-    >>> apt = MOM.App_Type (u"BMT", BMT).Derived (EMS, DBW)
+    >>> try :
+    ...   apt = MOM.App_Type (u"BMT", BMT).Derived (EMS, DBW)
+    ... except Exception as exc :
+    ...   import traceback; traceback.print_exc ()
+    ...   import os; os.abort ()
 
 Creating a derived app-type replaces the specification of the
 essential classes with bare essential classes:
@@ -745,15 +765,15 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Trap._Attributes._own_names)
     ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q']
     >>> sorted (ET_Supertrap._Attributes._own_names)
-    ['ui_display']
+    ['ui_display', 'weights']
     >>> sorted (ET_Trap._Attributes._names)
     ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
     [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
 
     >>> print formatted1 (sorted (ET_Id_Entity.relevant_roots))
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -774,9 +794,9 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> print formatted1 (sorted (apt.etypes))
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Freqency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
     >>> print formatted1 ([t.type_name for t in apt._T_Extension])
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Freqency_Interval', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print u"%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
@@ -791,6 +811,9 @@ The app-type specific entity-types are ready to be used by
     MOM.Date_Interval                   ()
     MOM.Date_Interval_C                 ()
     MOM.Date_Interval_N                 ()
+    MOM._Interval_                      ()
+    MOM.Float_Interval                  ()
+    MOM.Freqency_Interval               ()
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -831,6 +854,12 @@ The app-type specific entity-types are ready to be used by
         ('start', 'finish')
     MOM.Date_Interval_N
         ('start', 'finish')
+    MOM._Interval_
+        ('lower', 'upper')
+    MOM.Float_Interval
+        (u'lower', u'upper')
+    MOM.Freqency_Interval
+        (u'lower', u'upper')
     BMT.Location
         ('lon', 'lat')
     BMT.Person

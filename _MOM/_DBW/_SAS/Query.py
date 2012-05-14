@@ -56,6 +56,7 @@
 #    24-Jan-2012 (MG) `Join_Query.__call__` fixed
 #    24-Jan-2012 (MG) `Join_Query.__call__` order of joins fixed (sqlite does
 #                     not mapper, but other database do)
+#    14-May-2012 (CT) Print exception info in `MOM_Composite_Query, __init__`
 #    ««revision-date»»···
 #--
 
@@ -250,8 +251,14 @@ class MOM_Composite_Query (_MOM_Query_) :
                 if query_fct :
                     self._query_fct [name] = kind.attr
                 else :
-                    col          = kind.attr.query._sa_filter (self) [1] [0]
-                    col.MOM.Kind = kind
+                    col = kind.attr.query._sa_filter (self) [1] [0]
+                    try :
+                        col.MOM.Kind = kind
+                    except Exception as exc :
+                        import sys
+                        print >> sys.stderr, exc
+                        print >> sys.stderr, owner_etype, e_type, name, kind
+                        raise
                     setattr (self, name, col)
     # end def __init__
 
