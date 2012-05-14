@@ -542,6 +542,10 @@ _test_code = """
                   , 'Slovenia'
                   )
                 ,
+                  ( 'RSA'
+                  , 'South Africa'
+                  )
+                ,
                   ( 'ESP'
                   , 'Spain'
                   )
