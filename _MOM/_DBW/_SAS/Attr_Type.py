@@ -59,6 +59,7 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    14-May-2012 (CT) Print exception info in `_sa_columns_simple`
+#    14-May-2012 (MG) Attach `_sa_type` to `_A_Float_` instead of `A_Float`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,7 @@ def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     try :
         sa_type = Type._sa_type (Type, kind)
     except Exception as exc :
+        import pdb;pdb.set_trace ()
         print exc
         print cls, attr, kind, unique, owner_etype, sorted (kw.items ())
         raise
@@ -180,7 +182,7 @@ def _sa_date (cls, attr, kind, ** kw)      : return types.Date      ()
 def _sa_date_time (cls, attr, kind, ** kw) : return types.DateTime  ()
 @Add_Classmedthod ("_sa_type", Attr.A_Time)
 def _sa_time (cls, attr, kind, ** kw)      : return types.Time      ()
-@Add_Classmedthod ("_sa_type", Attr.A_Float)
+@Add_Classmedthod ("_sa_type", Attr._A_Float_)
 def _sa_float (cls, attr, kind, ** kw)     : return types.Float     ()
 @Add_Classmedthod ("_sa_type", Attr.A_Int)
 def _sa_int (cls, attr, kind, ** kw)       : return types.Integer   ()
