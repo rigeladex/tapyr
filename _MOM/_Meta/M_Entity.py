@@ -128,6 +128,7 @@
 #                     `relevant_root`, let all children inherit that value
 #    31-Jan-2012 (CT) Add `epk_sig_root` to `M_E_Type_Id._m_setup_children`
 #    29-Mar-2012 (CT) Change `link_map` to exclude partial E_Types
+#    14-May-2012 (CT) Remove `children_iter`, use `children.itervalues` instead
 #    ««revision-date»»···
 #--
 
@@ -575,7 +576,7 @@ class M_E_Type (M_E_Mixin) :
             if result.check :
                 cls._Predicates._setup_attr_checker (cls, result)
             if transitive :
-                for c in cls.children_iter () :
+                for c in cls.children.itervalues () :
                     c.add_attribute \
                         ( attr
                         , verbose   = False
@@ -590,7 +591,7 @@ class M_E_Type (M_E_Mixin) :
         result = cls._m_add_prop \
             (pred, cls._Predicates, verbose, parent, override)
         if transitive and result is not None :
-            for c in cls.children_iter () :
+            for c in cls.children.itervalues () :
                 c.add_predicate \
                     ( pred
                     , verbose   = False
@@ -607,15 +608,6 @@ class M_E_Type (M_E_Mixin) :
         """
         pass
     # end def after_creation
-
-    def children_iter (cls) :
-        """Generates the etypes of all children of `cls`."""
-        etype = cls.app_type.entity_type
-        for c in cls.children :
-            et = etype (c)
-            if et :
-                yield et
-    # end def children_iter
 
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
         name = prop.__name__
@@ -905,7 +897,6 @@ XXX
       Adds the newly created `etype` to the `app_type`.
 
     .. automethod:: after_creation
-    .. automethod:: children_iter
 
 
 """
