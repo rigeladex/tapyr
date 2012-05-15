@@ -78,6 +78,7 @@
 #                     instead of `TFL.I18N.Config`
 #    30-Jan-2012 (CT) Add `CAO.GET`
 #    14-Mar-2012 (CT) Add empty `__builtins__` to `_safe_eval`
+#    15-May-2012 (CT) Allow abbreviations for `Cmd_Choice`
 #    ««revision-date»»···
 #--
 
@@ -436,19 +437,16 @@ class Cmd_Choice (TFL.Meta.Object) :
     def __init__ (self, name, * cmds, ** kw) :
         self.name        = name
         self.sub_cmds    = dict   ((c._name, c) for c in cmds)
+        self.sub_abbr    = Trie   (self.sub_cmds)
         self.description = kw.pop ("description", "")
         assert not kw
     # end def __init__
 
     def __call__ (self, value, cao) :
-        try :
-            cao._cmd = sc = self.sub_cmds [value]
-        except KeyError :
-            raise Err \
-                ( "Unkown sub-command `%s`, specify one of: (%s)"
-                % (value, ", ".join (sorted (self.sub_cmds)))
-                )
+        cao._cmd     = sc = self._get_sub_cmd (value)
         cao._name         = " ".join ([cao._name, sc._name])
+        cao._min_args     = sc._min_args
+        cao._max_args     = sc._max_args
         cao._arg_list [:] = sc._arg_list
         cao._arg_dict.clear   ()
         cao._arg_dict.update  (sc._arg_dict)
@@ -457,8 +455,6 @@ class Cmd_Choice (TFL.Meta.Object) :
         cao._opt_abbr.update  (sc._opt_dict, sc._opt_alias)
         cao._opt_alias.update (sc._opt_alias)
         cao._opt_conf.extend  (sc._opt_conf)
-        cao._min_args = sc._min_args
-        cao._max_args = sc._max_args
     # end def __call__
 
     @property
@@ -474,6 +470,25 @@ class Cmd_Choice (TFL.Meta.Object) :
     def max_name_length (self) :
         return max (sc.max_name_length for sc in self.sub_cmds.itervalues ())
     # end def max_name_length
+
+    def _get_sub_cmd (self, name) :
+        sub_abbr = self.sub_abbr
+        sub_cmds = self.sub_cmds
+        matches, unique = sub_abbr.completions (name)
+        if unique :
+            return sub_cmds [unique]
+        else :
+            if matches :
+                raise Err \
+                    ( "Ambiguous sub-command `%s`, matches any of %s"
+                    % (name, matches)
+                    )
+            else :
+                raise Err \
+                    ( "Unkown sub-command `%s`, specify one of: (%s)"
+                    % (name, ", ".join (sorted (sub_cmds)))
+                    )
+    # end def _get_sub_cmd
 
     def __getattr__ (self, name) :
         return self.sub_cmds [name]
