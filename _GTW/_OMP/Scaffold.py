@@ -42,6 +42,7 @@
 #    15-Jun-2011 (MG) `_load_afs` and `_setup_afs` moved into `GTW.NAV.Base`
 #    27-Jan-2012 (CT) Add `-languages`, `-locale_code`, and `-time_zone` to
 #                     `cmd___server__opts`
+#    15-May-2012 (CT) Add sub-command `setup_cache`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,16 @@ class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
     # end def cmd__run_server
 
     @TFL.Meta.Once_Property
+    def cmd__setup_cache (cls) :
+        """Sub-command for setting up the cache of the application"""
+        return TFL.CAO.Cmd \
+            ( name        = "setup_cache"
+            , handler     = cls.__do_setup_cache
+            , opts        = cls.cmd__setup_cache__opts
+            )
+    # end def cmd__run_server
+
+    @TFL.Meta.Once_Property
     def cmd__wsgi (cls) :
         """Sub-command for running as wsgi application"""
         return TFL.CAO.Cmd \
@@ -113,6 +124,11 @@ class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
         return cls.do_run_server (cmd)
     # end def __do_run_server
 
+    def __do_setup_cache (cls, cmd) :
+        """Setup the cache of the application."""
+        return cls.do_setup_cache (cmd)
+    # end def __do_setup_cache
+
     def __do_wsgi (cls, cmd) :
         """Run as wsgi application."""
         return cls.do_wsgi (cmd)
@@ -122,16 +138,17 @@ class _GTW_M_Scaffold_ (MOM.Scaffold.__class__) :
 
 class _GTW_Scaffold_ (MOM.Scaffold) :
 
-    __metaclass__         = _GTW_M_Scaffold_
-    _real_name            = "Scaffold"
-    _lists_to_combine     = MOM.Scaffold._lists_to_combine + \
+    __metaclass__           = _GTW_M_Scaffold_
+    _real_name              = "Scaffold"
+    _lists_to_combine       = MOM.Scaffold._lists_to_combine + \
         ( "cmd__run_server__opts"
+        , "cmd__setup_cache__opts"
         , "cmd__wsgi__opts"
         )
 
-    ANS                   = GTW
+    ANS                     = GTW
 
-    cmd___server__opts = \
+    cmd___server__opts      = \
         ( "-auto_reload:B=yes"
               "?Autoload of werkzeug, only works with no sqlite db"
         , "-Break:B?Enter debugger before starting tornado/werkzeug"
@@ -145,36 +162,43 @@ class _GTW_Scaffold_ (MOM.Scaffold) :
         , "-time_zone:S=UTC?Time zone to use"
         , HTTP_Opt (default = "Werkzeug")
         , TFL.CAO.Opt.Date_Time_Delta
-            ( name        = "edit_session_ttl"
-            , default     = CAL.Date_Time_Delta (hours = 3)
-            , description = "Time to live for edit session"
+            ( name          = "edit_session_ttl"
+            , default       = CAL.Date_Time_Delta (hours = 3)
+            , description   = "Time to live for edit session"
             )
         , TFL.CAO.Opt.Input_Encoding
-            ( default     = "iso-8859-15"
-            , description = "Default encoding for source files"
+            ( default       = "iso-8859-15"
+            , description   = "Default encoding for source files"
             )
         , TFL.CAO.Opt.Output_Encoding
-            ( default     = "utf-8"
-            , description = "Default encoding for generated html"
+            ( default       = "utf-8"
+            , description   = "Default encoding for generated html"
             )
         , TFL.CAO.Opt.Date_Time_Delta
-            ( name        = "user_session_ttl"
-            , default     = CAL.Date_Time_Delta (days = 3)
-            , description = "Time to live for user session (cookie)"
+            ( name          = "user_session_ttl"
+            , default       = CAL.Date_Time_Delta (days = 3)
+            , description   = "Time to live for user session (cookie)"
             )
         )
-    cmd__run_server__opts = cmd___server__opts
-    cmd__wsgi__opts       = cmd___server__opts
-    cmd__shell__opts      = \
+    cmd__run_server__opts   = cmd___server__opts
+    cmd__setup_cache__opts  = cmd___server__opts
+    cmd__shell__opts        = \
         ( "wsgi:B?Create the wsgi application before entering the shell"
         , "echo:B?Set the echo flag of the SQLAlchemy engine"
         ) + cmd___server__opts
-    cmd__sub_commands     = ("cmd__run_server", "cmd__wsgi")
+    cmd__sub_commands       = \
+        ( "cmd__run_server", "cmd__setup_cache", "cmd__wsgi")
+    cmd__wsgi__opts         = cmd___server__opts
 
     @classmethod
     def do_run_server (cls, cmd) :
         raise NotImplementedError
     # end def do_run_server
+
+    @classmethod
+    def do_setup_cache (cls, cmd) :
+        raise NotImplementedError
+    # end def do_setup_cache
 
     @classmethod
     def do_shell (cls, cmd) :

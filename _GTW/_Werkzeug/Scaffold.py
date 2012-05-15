@@ -35,6 +35,7 @@
 #    30-Apr-2012 (MG) Allow none existing `Auth`
 #     3-May-2012 (CT) Pass `languages` to `HTTP.Application`
 #     4-May-2012 (CT) Use `nav.login_url` instead of home-grown code
+#    15-May-2012 (CT) Implement sub-command `setup_cache`, factor `cache_path`
 #    ««revision-date»»···
 #--
 
@@ -62,27 +63,33 @@ import _TFL.SMTP
 
 class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
 
-    _real_name            = "Scaffold"
+    _real_name              = "Scaffold"
 
-    SALT                  = bytes \
+    SALT                    = bytes \
         ("Needs to defined uniquely for each application")
 
-    base_template_dir     = sos.path.dirname (_JNJ.__file__)
+    base_template_dir       = sos.path.dirname (_JNJ.__file__)
 
-    cmd___server__opts    = \
+    cmd___server__opts      = \
         ( "suppress_translation_loading:B"
             "?Don't load the the translation files during startup"
         ,
         )
-    cmd__run_server__opts = cmd___server__opts + \
+    cmd__run_server__opts   = cmd___server__opts + \
         ( "watch_media_files:B"
             "?Add the .media files to list files watched by automatic reloader"
         ,
         )
 
-    cmd__wsgi__opts       = cmd___server__opts
+    cmd__setup_cache__opts  = cmd___server__opts
+    cmd__wsgi__opts         = cmd___server__opts
 
-    _setup_cache_p        = False
+    _setup_cache_p          = False
+
+    @classmethod
+    def cache_path (cls) :
+        return sos.path.join (cls.jnj_src, "app_cache.pck")
+    # end def cache_path
 
     @classmethod
     def do_run_server (cls, cmd) :
@@ -93,6 +100,14 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
                 (GTW.NAV.Root.top, "Media_Filenames", ())
         app.run_development_server (** kw)
     # end def do_run_server
+
+    @classmethod
+    def do_setup_cache (cls, cmd) :
+        app = cls._wsgi_app (cmd)
+        nav = GTW.NAV.Root.top
+        if not nav.DEBUG :
+            nav.store_cache (cls.cache_path ())
+    # end def do_setup_cache
 
     @classmethod
     def do_wsgi (cls, cmd) :
@@ -106,17 +121,17 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
 
     @classmethod
     def init_app_cache (cls, nav) :
-        map_path = sos.path.join (cls.jnj_src, "app_cache.pck")
+        cache_path = cls.cache_path ()
         def load_cache () :
             try :
-                nav.load_cache  (map_path)
+                nav.load_cache  (cache_path)
             except IOError :
                 pass
         if nav.DEBUG :
             try :
-                nav.store_cache (map_path)
+                nav.store_cache (cache_path)
             except EnvironmentError as exc :
-                print "***", exc, map_path
+                print "***", exc, cache_path
                 load_cache ()
         else :
             load_cache ()
