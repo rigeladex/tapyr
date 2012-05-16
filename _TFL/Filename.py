@@ -86,6 +86,8 @@
 #    23-Jun-2009 (CT)  `split_ext` added to deal with changed behavior of
 #                      `os.path.splitext` in Python 2.6+
 #    20-May-2010 (CT) `__main__` added
+#    16-May-2012 (CT) Fix `abs_name`, `real_name`, `relative_to` for `Directory`
+#                     (result must NOT contain `base_ext`)
 #    ««revision-date»»···
 #--
 
@@ -165,8 +167,10 @@ class Filename (TFL.Meta.Object):
        '/usr/local/spam.py'
     """
 
-    as_dir  = property (lambda s : s._as_dir  (s.name))
-    as_file = property (lambda s : s._as_file (s.name))
+    as_dir    = property (lambda s : s._as_dir  (s.name))
+    as_file   = property (lambda s : s._as_file (s.name))
+
+    _base_ext = property (lambda s : s.base_ext)
 
     def __init__ (self, name, * defaults, ** kw) :
         """Constructs the filename from the `name' and the optional `defaults'
@@ -244,7 +248,7 @@ class Filename (TFL.Meta.Object):
 
     def abs_name (self) :
         """Return the absolute filename corresponding to `self'."""
-        return sos.path.join (self.abs_directory (), self.base_ext)
+        return sos.path.join (self.abs_directory (), self._base_ext)
     # end def abs_name
 
     @classmethod
@@ -292,7 +296,7 @@ class Filename (TFL.Meta.Object):
         """Return the absolute filename corresponding to `self'
            after resolving all symlinks.
         """
-        return sos.path.join (self.real_directory (), self.base_ext)
+        return sos.path.join (self.real_directory (), self._base_ext)
     # end def real_name
 
     def relative_to (self, other) :
@@ -310,8 +314,8 @@ class Filename (TFL.Meta.Object):
         """
         if not other :
             return ""
-        self   = Filename (self,  absolute = 1)
-        other  = Filename (other, absolute = 1)
+        self   = self.__class__ (self,  absolute = 1)
+        other  = self.__class__ (other, absolute = 1)
         pairs  = paired (self.directories (), other.directories ())
         i      = 0
         for (s, o) in pairs :
@@ -325,7 +329,7 @@ class Filename (TFL.Meta.Object):
         differences = pairs  [i:]
         up          = [".." for (s, o) in differences if o]
         down        = [s    for (s, o) in differences if s]
-        return "/".join (((up + down) or ["."]) + [self.base_ext])
+        return "/".join (((up + down) or ["."]) + [self._base_ext])
     # end def relative_to
 
     @classmethod
@@ -410,6 +414,8 @@ class Dirname (Filename) :
         >>> g.name.endswith ('/_TFL/')
         True
     """
+
+    _base_ext = ""
 
     def __init__ (self, name, ** kw) :
         if isinstance (name, Filename) :
