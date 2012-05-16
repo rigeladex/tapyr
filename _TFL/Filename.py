@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -223,7 +223,8 @@ class Filename (TFL.Meta.Object):
                 self.base = default.base
             if not self.ext :
                 self.ext  = default.ext
-        self.base_ext = self.base + self.ext
+        self.base_ext  = self.base + self.ext
+        self.directory = path.expanduser (self.directory)
         if absolute :
             self.make_absolute ()
         else :
@@ -233,23 +234,13 @@ class Filename (TFL.Meta.Object):
             self.name = path.join (self.directory, self.base_ext)
     # end def __init__
 
-    if    hasattr (sos.path, "abspath") :
-        def abs_directory (self) :
-            """Return the directory name converted to absolute path string."""
-            result = sos.path.abspath (self.directory)
-            if (not result) :
-                result = sos.getcwd ()
-            return result
-        # end def abs_directory
-    else :
-        def abs_directory (self) :
-            """Return the directory name converted to absolute path string."""
-            result = self.directory
-            if (not result) or (result == sos.curdir) :
-                result = sos.getcwd ()
-            return result
-        # end def abs_directory
-    # end if hasattr (sos.path, "abspath")
+    def abs_directory (self) :
+        """Return the directory name converted to absolute path string."""
+        result = sos.path.abspath (self.directory)
+        if (not result) :
+            result = sos.getcwd ()
+        return result
+    # end def abs_directory
 
     def abs_name (self) :
         """Return the absolute filename corresponding to `self'."""
