@@ -38,7 +38,7 @@
 #    ««revision-date»»···
 #--
 
-from   _GTW.__test__.model import MOM, GTW, Scaffold as GTW__test__Scaffold
+from   _GTW.__test__.model import MOM, GTW, Scaffold as _GTW__test__Scaffold_
 from   _JNJ                import JNJ
 import _GTW._NAV.import_NAV
 import _GTW.jQuery
@@ -320,20 +320,20 @@ def run (cmd, apt, url, ** kw) :
     app.run_development_server (port = cmd.port)
 # end def run
 
-class Scaffold (GTW__test__Scaffold) :
+class _FA_Scaffold_ (Scaffold.__class__) :
 
-    @classmethod
-    def do_run_server (cls, cmd) :
-        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return run (cmd, apt, url, Create_Scope = cls._load_scope)
-    # end def do_run_server
+    def _handle_run_server (self, cmd) :
+        apt, url  = self.app_type_and_url (cmd.db_url, cmd.db_name)
+        return run (cmd, apt, url, Create_Scope = self._load_scope)
+    # end def _handle_run_server
 
-    @classmethod
-    def do_wsgi (cls, cmd) :
-        apt, url  = cls.app_type_and_url (cmd.db_url, cmd.db_name)
-        return wsgi (cmd, apt, url, Create_Scope = cls._load_scope)
-    # end def do_wsgi
+    def _handle_wsgi (self, cmd) :
+        apt, url  = self.app_type_and_url (cmd.db_url, cmd.db_name)
+        return wsgi (cmd, apt, url, Create_Scope = self._load_scope)
+    # end def _handle_wsgi
 
-# end class Scaffold
+# end class _FA_Scaffold_
+
+Scaffold = _FA_Scaffold_ ()
 
 ### __END__ GTW.__test__.form_app

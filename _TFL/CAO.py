@@ -79,6 +79,7 @@
 #    30-Jan-2012 (CT) Add `CAO.GET`
 #    14-Mar-2012 (CT) Add empty `__builtins__` to `_safe_eval`
 #    15-May-2012 (CT) Allow abbreviations for `Cmd_Choice`
+#    17-May-2012 (CT) Add optional argument `defaults` to `Cmd`
 #    ««revision-date»»···
 #--
 
@@ -984,6 +985,7 @@ class Cmd (TFL.Meta.Object) :
             , do_keywords   = False
             , put_keywords  = False
             , helper        = None
+            , defaults      = {}
             ) :
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
@@ -1002,7 +1004,8 @@ class Cmd (TFL.Meta.Object) :
         self._put_keywords  = put_keywords
         if helper is not None :
             self._helper    = helper
-        self._setup_opts (opts)
+        self.defaults       = dict (defaults)
+        self._setup_opts (opts, self.defaults)
         self._setup_args (args)
         self._setup_buns (buns)
     # end def __init__
@@ -1107,15 +1110,17 @@ class Cmd (TFL.Meta.Object) :
         self._bun_dict = dict ((b._name, b) for b in buns)
     # end def _setup_buns
 
-    def _setup_opt  (self, opt, od, al, index) :
-        od [opt.name] = opt
-        opt.kind      = "option"
-        opt.index     = index
+    def _setup_opt  (self, opt, od, al, index, default = None) :
+        od [opt.name]   = opt
+        opt.kind        = "option"
+        opt.index       = index
+        if default is not None :
+            opt.default = default
         if opt.alias :
             al [opt.alias] = opt.name
     # end def _setup_opt
 
-    def _setup_opts (self, opts) :
+    def _setup_opts (self, opts, defaults) :
         self._opt_dict  = od = {}
         self._opt_alias = al = {}
         self._opt_conf  = oc = []
@@ -1124,7 +1129,7 @@ class Cmd (TFL.Meta.Object) :
                 o = Arg.from_string (o.lstrip ("-"))
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
-            self._setup_opt (o, od, al, i)
+            self._setup_opt (o, od, al, i, defaults.get (o.name))
             if isinstance (o, _Config_) :
                 oc.append (o)
         oc.sort (key = TFL.Getter.rank)

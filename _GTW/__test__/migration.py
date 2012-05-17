@@ -44,9 +44,7 @@
 
 from _GTW.__test__.model import *
 
-class _migration_Scaffold_ (Scaffold) :
-
-    _real_name = "Scaffold"
+class _Migration_Scaffold_ (Scaffold.__class__) :
 
     Backend_Parameters = dict \
         ( HPS  = "'hps:///test.hps'"
@@ -56,7 +54,9 @@ class _migration_Scaffold_ (Scaffold) :
         , MYST = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
         )
 
-Scaffold = _migration_Scaffold_ # end class
+# end class _Migration_Scaffold_
+
+Scaffold = _Migration_Scaffold_ ()
 
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS

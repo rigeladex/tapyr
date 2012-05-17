@@ -20,12 +20,12 @@
 #
 #++
 # Name
-#    GTW.Werkzeug.Scaffold
+#    GTW.Werkzeug.Command
 #
 # Purpose
-#    Provide a scaffold for creating instances of MOM.App_Type and MOM.Scope,
-#    managing their databases, and creating a WSGI application or starting a
-#    development web server based on the werkzeug framework
+#    Provide an extendable Command for creating instances of MOM.App_Type
+#    and MOM.Scope, managing their databases, and creating a WSGI application
+#    or starting a development web server based on the werkzeug framework
 #
 # Revision Dates
 #    27-Jan-2012 (CT) Recreation (re-factored from SC-AMS specific code)
@@ -36,6 +36,8 @@
 #     3-May-2012 (CT) Pass `languages` to `HTTP.Application`
 #     4-May-2012 (CT) Use `nav.login_url` instead of home-grown code
 #    15-May-2012 (CT) Implement sub-command `setup_cache`, factor `cache_path`
+#    17-May-2012 (CT) Derive from `GTW.OMP.Command` instead of `.Scaffold`,
+#                     rename from `Scaffold` to `Command`
 #    ««revision-date»»···
 #--
 
@@ -53,7 +55,7 @@ import _GTW._NAV.Permission
 import _GTW._NAV.Template_Media_Cache
 import _GTW._NAV._E_Type.Admin
 import _GTW._NAV._E_Type.Site_Admin
-import _GTW._OMP.Scaffold
+import _GTW._OMP.Command
 import _GTW._Werkzeug
 
 import _JNJ.Templateer
@@ -61,67 +63,70 @@ import _JNJ.Templateer
 from   _TFL                import sos
 import _TFL.SMTP
 
-class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
+class _GT2W_Command_ (GTW.OMP._Command_) :
 
-    _real_name              = "Scaffold"
+    _rn_prefix              = "_GT2W"
+
+_Command_ = _GT2W_Command_ # end class
+
+class GT2W_Command (GTW.OMP.Command) :
+
+    _rn_prefix              = "GT2W"
 
     SALT                    = bytes \
         ("Needs to defined uniquely for each application")
 
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
 
-    cmd___server__opts      = \
-        ( "suppress_translation_loading:B"
-            "?Don't load the the translation files during startup"
-        ,
-        )
-    cmd__run_server__opts   = cmd___server__opts + \
-        ( "watch_media_files:B"
-            "?Add the .media files to list files watched by automatic reloader"
-        ,
-        )
+    ### Sub-commands defined as class attributes to allow redefinition by
+    ### derived classes; meta class puts their names into `_sub_commands`
+    class _GT2W_Server_Base_ (_Command_, GTW.OMP.Command._Server_Base_) :
+        ### Base for server-related commands
 
-    cmd__setup_cache__opts  = cmd___server__opts
-    cmd__wsgi__opts         = cmd___server__opts
+        is_partial              = True
+        _opts                   = \
+            ( "suppress_translation_loading:B"
+                "?Don't load the the translation files during startup"
+            ,
+            )
+
+    # end class _GT2W_Server_Base_
+
+    class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
+
+        _opts                   = \
+            ( "watch_media_files:B"
+                "?Add the .media files to list files watched by "
+                "automatic reloader"
+            ,
+            )
+
+    _Run_Server_ = _GT2W_Run_Server_ # end class
+
+    class _GT2W_Setup_Cache_ (_GT2W_Server_Base_, GTW.OMP.Command._Setup_Cache_) :
+        pass
+    _Setup_Cache_ = _GT2W_Setup_Cache_ # end class
+
+    class _GT2W_Shell_ (_GT2W_Server_Base_, GTW.OMP.Command._Shell_) :
+        pass
+    _Shell_ = _GT2W_Shell_ # end class
+
+    class _GT2W_WSGI_ (_GT2W_Server_Base_, GTW.OMP.Command._WSGI_) :
+        pass
+    _WSGI_ = _GT2W_WSGI_ # end class
 
     _setup_cache_p          = False
 
-    @classmethod
-    def cache_path (cls) :
-        return sos.path.join (cls.jnj_src, "app_cache.pck")
+    def cache_path (self) :
+        return sos.path.join (self.jnj_src, "app_cache.pck")
     # end def cache_path
 
-    @classmethod
-    def do_run_server (cls, cmd) :
-        app = cls._wsgi_app (cmd)
-        kw  = dict (port = cmd.port)
-        if cmd.watch_media_files :
-            kw ["reload_extra_files"] = getattr \
-                (GTW.NAV.Root.top, "Media_Filenames", ())
-        app.run_development_server (** kw)
-    # end def do_run_server
-
-    @classmethod
-    def do_setup_cache (cls, cmd) :
-        app = cls._wsgi_app (cmd)
-        nav = GTW.NAV.Root.top
-        if not nav.DEBUG :
-            nav.store_cache (cls.cache_path ())
-    # end def do_setup_cache
-
-    @classmethod
-    def do_wsgi (cls, cmd) :
-        return cls._wsgi_app (cmd)
-    # end def do_wsgi
-
-    @classmethod
-    def fixtures (cls, scope) :
+    def fixtures (self, scope) :
         pass
     # end def fixtures
 
-    @classmethod
-    def init_app_cache (cls, nav) :
-        cache_path = cls.cache_path ()
+    def init_app_cache (self, nav) :
+        cache_path = self.cache_path ()
         def load_cache () :
             try :
                 nav.load_cache  (cache_path)
@@ -137,8 +142,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             load_cache ()
     # end def init_app_cache
 
-    @classmethod
-    def nav_admin_group (cls, name, title, * pnss, ** kw) :
+    def nav_admin_group (self, name, title, * pnss, ** kw) :
         return dict \
             ( sub_dir        = name
             , short_title    = kw.pop ("short_title", name)
@@ -150,31 +154,47 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             )
     # end def nav_admin_group
 
-    @classmethod
-    def _create_scope (cls, apt, url, verbose = False) :
-        result = super (_GTW_Werkzeug_Scaffold_, cls)._create_scope \
-            (apt, url, verbose)
-        cls.fixtures (result)
+    def _handle_run_server (self, cmd) :
+        app = self._wsgi_app (cmd)
+        kw  = dict (port = cmd.port)
+        if cmd.watch_media_files :
+            kw ["reload_extra_files"] = getattr \
+                (GTW.NAV.Root.top, "Media_Filenames", ())
+        app.run_development_server (** kw)
+    # end def _handle_run_server
+
+    def _handle_setup_cache (self, cmd) :
+        app = self._wsgi_app (cmd)
+        nav = GTW.NAV.Root.top
+        if not nav.DEBUG :
+            nav.store_cache (self.cache_path ())
+    # end def _handle_setup_cache
+
+    def _handle_wsgi (self, cmd) :
+        return self._wsgi_app (cmd)
+    # end def _handle_wsgi
+
+    def _create_scope (self, apt, url, verbose = False) :
+        result = self.__super._create_scope (apt, url, verbose)
+        self.fixtures (result)
         return result
     # end def _create_scope
 
-    @classmethod
-    def _setup_cache (cls) :
-        if not cls._setup_cache_p :
+    def _setup_cache (self) :
+        if not self._setup_cache_p :
             CP = GTW.NAV.Root.Cache_Pickler
             mc_fix = "media/v"
-            mc_dir = sos.path.join (cls.web_src_root, mc_fix)
+            mc_dir = sos.path.join (self.web_src_root, mc_fix)
             CP.add (GTW.AFS.MOM.Form_Cache)
             CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
-            cls._setup_cache_p = True
+            self._setup_cache_p = True
     # end def _setup_cache
 
-    @classmethod
-    def _wsgi_app (cls, cmd) :
-        apt, url = cls.app_type_and_url (cmd.db_url, cmd.db_name)
+    def _wsgi_app (self, cmd) :
+        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         if not cmd.suppress_translation_loading :
             try :
-                ldir = sos.path.join (cls.app_path, "locale")
+                ldir = sos.path.join (self.app_path, "locale")
                 translations = TFL.I18N.load \
                     ( * cmd.languages
                     , domains    = ("messages", )
@@ -185,11 +205,11 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
                 translations = None
         TFL.user_config.set_defaults \
             (time_zone = TFL.user_config.get_tz (cmd.time_zone))
-        cls._setup_cache ()
+        self._setup_cache ()
         prefix         = "media"
-        media_dir      = sos.path.join (cls.web_src_root, "media")
-        nav            = cls.create_nav \
-            (cmd, apt, url, Create_Scope = cls._load_scope)
+        media_dir      = sos.path.join (self.web_src_root, "media")
+        nav            = self.create_nav \
+            (cmd, apt, url, Create_Scope = self._load_scope)
         HTTP           = nav.HTTP
         static_handler = HTTP.Static_File_Handler \
             (prefix, media_dir, GTW.static_file_map)
@@ -197,7 +217,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
             ( ("", HTTP.NAV_Request_Handler, dict (nav_root = nav))
             , Session_Class       = GTW.File_Session
             , auto_reload         = cmd.auto_reload
-            , cookie_salt         = cmd.GET ("cookie_salt", cls.SALT)
+            , cookie_salt         = cmd.GET ("cookie_salt", self.SALT)
             , default_locale_code = cmd.locale_code
             , debug               = cmd.debug
             , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
@@ -213,14 +233,14 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
         if cmd._name.endswith ("run_server") :
-            nav.Run_on_Launch.append ((cls.init_app_cache, nav))
+            nav.Run_on_Launch.append ((self.init_app_cache, nav))
         else :
-            cls.init_app_cache (nav)
+            self.init_app_cache (nav)
         return app
     # end def _wsgi_app
 
-Scaffold = _GTW_Werkzeug_Scaffold_ # end class
+Command = GT2W_Command # end class
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")
-### __END__ GTW.Werkzeug.Scaffold
+### __END__ GTW.Werkzeug.Command

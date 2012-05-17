@@ -1,0 +1,188 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package TFL.
+#
+# This module is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this module; if not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    TFL.Command
+#
+# Purpose
+#    Base class for an interactive command using CAO to define/process
+#    arguments and options
+#
+# Revision Dates
+#    17-May-2012 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   __future__  import absolute_import, division, print_function, unicode_literals
+
+from   _TFL                   import TFL
+
+from   _TFL                   import pyk
+from   _TFL.I18N              import _, _T, _Tn
+from   _TFL.object_globals    import object_module
+from   _TFL.predicate         import first
+
+import _TFL.CAO
+import _TFL._Meta.M_Auto_Combine
+import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
+
+class _M_Command_ (TFL.Meta.M_Auto_Combine) :
+    """Meta class for `Command`"""
+
+    def __new__ (mcls, name, bases, dct) :
+        prefix = dct.get ("_rn_prefix") or first \
+            (getattr (b, "_rn_prefix", None) for b in bases)
+        if prefix and name.startswith (prefix) and "_real_name" not in dct :
+            dct ["_real_name"] = name [len (prefix):]
+        if "_name" not in dct :
+            dct ["_name"] = dct.get ("_real_name", name).strip ("_").lower ()
+        dct.setdefault ("is_partial", False)
+        dct ["_sub_commands"] = _scs = set (dct.get ("_sub_commands", ()))
+        _scs.update \
+            (  v.__name__ for v in dct.itervalues ()
+            if isinstance (v, _M_Command_) and not getattr (v, "is_partial", 0)
+            )
+        return super (_M_Command_, mcls).__new__ (mcls, name, bases, dct)
+    # end def __new__
+
+# end class _M_Command_
+
+class TFL_Command (TFL.Meta.Object) :
+    """Base class for interactive commands."""
+
+    __metaclass__           = _M_Command_
+    _real_name              = "Command"
+    _rn_prefix              = "TFL"
+
+    _dicts_to_combine       = ("_defaults", )
+    _lists_to_combine       = ("_args", "_buns", "_opts")
+    _sets_to_combine        = ("_sub_commands", )
+
+    cmd_choice_name         = _ ("command")
+    do_keywords             = False
+    handler                 = None
+    helper                  = None
+    min_args                = 0
+    max_args                = -1
+    put_keywords            = False
+
+    _args                   = ()
+    _buns                   = ()
+    _defaults               = {}
+    _description            = ""
+    _name                   = None
+    _opts                   = ()
+    _sub_commands           = set ()
+
+    def __init__ (self, _name = None, _top_cmd = None, ** kw) :
+        if _name is not None :
+            self._name      = _name
+        self._init_kw       = kw
+        self._top_cmd       = _top_cmd
+        self.cmd            = TFL.CAO.Cmd \
+            ( args          = self.args
+            , buns          = self.buns
+            , defaults      = self.defaults
+            , description   = self.description
+            , do_keywords   = self.do_keywords
+            , handler       = self.handler
+            , helper        = self.helper
+            , name          = self.name
+            , max_args      = self.max_args
+            , min_args      = self.min_args
+            , opts          = self.opts
+            , put_keywords  = self.put_keywords
+            )
+    # end def __init__
+
+    def __call__ (self, _argv = None, ** _kw) :
+        return self.cmd (_argv, ** _kw)
+    # end def __call__
+
+    @TFL.Meta.Once_Property
+    def args (self) :
+        if self._sub_commands :
+            assert not self._args, \
+                ( "Cannot specify both args %s and sub-commands %s"
+                , (self._args, self._sub_commands)
+                )
+            name = _T (self.cmd_choice_name)
+            scs  = tuple (sc.cmd for sc in self.sub_commands)
+            return (TFL.CAO.Cmd_Choice (name, * scs), )
+        else :
+            return self._args
+    # end def args
+
+    @TFL.Meta.Once_Property
+    def buns (self) :
+        return self._buns
+    # end def buns
+
+    @TFL.Meta.Once_Property
+    def defaults (self) :
+        result = dict (self._defaults)
+        result.update (self.dynamic_defaults (result))
+        result.update (self._init_kw)
+        return result
+    # end def defaults
+
+    @TFL.Meta.Once_Property
+    def description (self) :
+        return self._description or self.__class__.__doc__
+    # end def description
+
+    @TFL.Meta.Once_Property
+    def name (self) :
+        if self._top_cmd :
+            return self._name or self.__class__.__name__.strip ("_")
+        else :
+            return object_module (self).__file__
+    # end def name
+
+    @TFL.Meta.Once_Property
+    def opts (self) :
+        return self._opts
+    # end def opts
+
+    @TFL.Meta.Once_Property
+    def sub_commands (self) :
+        def _gen (self) :
+            defaults   = self.defaults
+            _top_cmd   = self._top_cmd or self
+            for sc in self._sub_commands :
+                if isinstance (sc, basestring) :
+                    sc = getattr  (self, sc)
+                if not isinstance (sc, TFL.CAO.Cmd) :
+                    sc = sc (_top_cmd = _top_cmd, ** defaults)
+                yield sc
+        return tuple (_gen (self))
+    # end def sub_commands
+
+    def dynamic_defaults (self, defaults) :
+        return {}
+    # end def dynamic_defaults
+
+Command = TFL_Command # end class
+
+if __name__ != "__main__" :
+    TFL._Export ("*")
+### __END__ TFL.Command
