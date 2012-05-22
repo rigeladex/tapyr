@@ -1167,7 +1167,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def changer_injected_templates (self) :
-        renderers = set (self.Form.renderer_iter ())
+        renderers = set (self.Form.renderer_iter () if self.Form else ())
         return tuple (self.top.Templateer.get_template (r) for r in renderers)
     # end def changer_injected_templates
 
@@ -1183,7 +1183,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def Form (self) :
-        return AFS_Form [self.form_id]
+        try :
+            result = AFS_Form [self.form_id]
+        except Exception as exc :
+            print exc, self.href, self.E_Type, self.form_id
+            raise
+        else :
+            return result
     # end def Form
 
     @property
