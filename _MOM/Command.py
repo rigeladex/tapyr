@@ -47,6 +47,7 @@
 #    24-Apr-2012 (CT) Add call to `db_man_t.ems.compact` to `_do_migration`
 #    17-May-2012 (CT) Derive from `TFL.Command`,
 #                     rename from `Scaffold` to `Command`
+#    22-May-2012 (CT) Remove unused imports
 #    ««revision-date»»···
 #--
 
@@ -60,11 +61,9 @@ import _MOM._EMS.Backends
 
 import _TFL.CAO
 import _TFL.Command
-import _TFL.Filename
-import _TFL._Meta.M_Auto_Combine
-import _TFL._Meta.Object
-import _TFL._Meta.Once_Property
 import _TFL.Environment
+import _TFL.Filename
+import _TFL._Meta.Once_Property
 
 class SA_WE_Opt (TFL.CAO.Bool) :
     """Turn SA warnings into errors"""

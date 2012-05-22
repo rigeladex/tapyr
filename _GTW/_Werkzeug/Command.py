@@ -38,6 +38,7 @@
 #    15-May-2012 (CT) Implement sub-command `setup_cache`, factor `cache_path`
 #    17-May-2012 (CT) Derive from `GTW.OMP.Command` instead of `.Scaffold`,
 #                     rename from `Scaffold` to `Command`
+#    22-May-2012 (CT) Remove unused imports
 #    ««revision-date»»···
 #--
 
@@ -46,14 +47,8 @@ from   __future__          import unicode_literals
 from   _TFL                import TFL
 from   _GTW                import GTW
 
-import _GTW.Media
 import _GTW._AFS._MOM.Form_Cache
-import _GTW._AFS._MOM.Spec
-import _GTW._NAV.Base
-import _GTW._NAV.Console
-import _GTW._NAV.Permission
 import _GTW._NAV.Template_Media_Cache
-import _GTW._NAV._E_Type.Admin
 import _GTW._NAV._E_Type.Site_Admin
 import _GTW._OMP.Command
 import _GTW._Werkzeug
