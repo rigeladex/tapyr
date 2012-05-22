@@ -151,18 +151,10 @@ class GTW_Command (MOM.Command) :
     class _GTW_Run_Server_ (_GTW_Server_Base_) :
         """Run as application server."""
 
-        def handler (self, cmd) :
-            return self._top_cmd._handle_run_server (cmd)
-        # end def handler
-
     _Run_Server_ = _GTW_Run_Server_ # end class
 
     class _GTW_Setup_Cache_ (_GTW_Server_Base_) :
         """Setup the cache of the application."""
-
-        def handler (self, cmd) :
-            return self._top_cmd._handle_setup_cache (cmd)
-        # end def handler
 
     _Setup_Cache_ = _GTW_Setup_Cache_ # end class
 
@@ -177,10 +169,6 @@ class GTW_Command (MOM.Command) :
 
     class _GTW_WSGI_ (_GTW_Server_Base_) :
         """Run as wsgi application."""
-
-        def handler (self, cmd) :
-            return self._top_cmd._handle_wsgi (cmd)
-        # end def handler
 
     _WSGI_ = _GTW_WSGI_ # end class
 

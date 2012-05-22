@@ -48,16 +48,17 @@
 #    17-May-2012 (CT) Derive from `TFL.Command`,
 #                     rename from `Scaffold` to `Command`
 #    22-May-2012 (CT) Remove unused imports
+#    22-May-2012 (CT) Factor `app_path` to `TFL.Command.app_dir`
+#    22-May-2012 (CT) Factor `TFL.Sub_Command`
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 
-from   _TFL                   import sos
-from   _TFL.object_globals    import object_module
-
 import _MOM.DB_Man
 import _MOM._EMS.Backends
+
+from   _TFL                   import sos
 
 import _TFL.CAO
 import _TFL.Command
@@ -88,7 +89,7 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
 # end class SA_WE_Opt
 
-class _MOM_Command_ (TFL.Command) :
+class _MOM_Command_ (TFL.Sub_Command) :
 
     _rn_prefix              = "_MOM"
 
@@ -144,36 +145,20 @@ class MOM_Command (TFL.Command) :
     class _MOM_Create_ (_Command_) :
         """Create database specified by `-db_url`."""
 
-        def handler (self, cmd) :
-            return self._top_cmd._handle_create (cmd)
-        # end def handler
-
     _Create_ = _MOM_Create_ # end class
 
     class _MOM_Delete_ (_Command_) :
         """Delete database specified by `-db_url`."""
-
-        def handler (self, cmd) :
-            return self._top_cmd._handle_delete (cmd)
-        # end def handler
 
     _Delete_ = _MOM_Delete_ # end class
 
     class _MOM_Info_ (_Command_) :
         """Display info about database specified by `-db_url`."""
 
-        def handler (self, cmd) :
-            return self._top_cmd._handle_info (cmd)
-        # end def handler
-
     _Info_ = _MOM_Info_ # end class
 
     class _MOM_Load_ (_Command_) :
         """Load database specified by `-db_url`."""
-
-        def handler (self, cmd) :
-            return self._top_cmd._handle_load (cmd)
-        # end def handler
 
     _Load_ = _MOM_Load_ # end class
 
@@ -186,10 +171,6 @@ class MOM_Command (TFL.Command) :
             , "readonly:B?Mark database `db_url` as readonly"
             , "target_db_url:S?Database url for target database"
             )
-
-        def handler (self, cmd) :
-            return self._top_cmd._handle_migrate (cmd)
-        # end def handler
 
     _Migrate_ = _MOM_Migrate_ # end class
 
@@ -207,30 +188,17 @@ class MOM_Command (TFL.Command) :
             ,
             )
 
-        def handler (self, cmd) :
-            return self._top_cmd._handle_readonly (cmd)
-        # end def handler
-
     _Readonly_ = _MOM_Readonly_ # end class
 
     class _MOM_Shell_ (_Command_) :
         """Open interactive python shell."""
 
-        def handler (self, cmd) :
-            return self._top_cmd._handle_shell (cmd)
-        # end def handler
-
     _Shell_ = _MOM_Shell_ # end class
-
-    @TFL.Meta.Once_Property
-    def app_path (self) :
-        return sos.path.dirname (object_module (self).__file__)
-    # end def app_path
 
     @TFL.Meta.Once_Property
     def default_db_name (self) :
         return sos.path.join \
-            ( self.app_path
+            ( self.app_dir
             , self._default_db_name or self.ANS.__name__.lower ()
             )
     # end def default_db_name

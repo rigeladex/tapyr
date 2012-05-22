@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    17-May-2012 (CT) Creation
+#    22-May-2012 (CT) Add `Sub_Command`, `app_dir`, and `app_path`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _TFL                   import TFL
 
 from   _TFL                   import pyk
+from   _TFL                   import sos
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.object_globals    import object_module
 from   _TFL.predicate         import first
@@ -119,6 +121,16 @@ class TFL_Command (TFL.Meta.Object) :
     # end def __call__
 
     @TFL.Meta.Once_Property
+    def app_dir (self) :
+        return sos.path.dirname (self.app_path)
+    # end def app_dir
+
+    @TFL.Meta.Once_Property
+    def app_path (self) :
+        return object_module (self).__file__
+    # end def app_path
+
+    @TFL.Meta.Once_Property
     def args (self) :
         if self._sub_commands :
             assert not self._args, \
@@ -155,7 +167,7 @@ class TFL_Command (TFL.Meta.Object) :
         if self._top_cmd :
             return self._name or self.__class__.__name__.strip ("_")
         else :
-            return object_module (self).__file__
+            return self.app_path
     # end def name
 
     @TFL.Meta.Once_Property
@@ -182,6 +194,22 @@ class TFL_Command (TFL.Meta.Object) :
     # end def dynamic_defaults
 
 Command = TFL_Command # end class
+
+class TFL_Sub_Command (Command) :
+    """Base class for sub-commands."""
+
+    _real_name              = "Sub_Command"
+
+    def handler (self, cmd) :
+        return self._handler (cmd)
+    # end def handler
+
+    @TFL.Meta.Once_Property
+    def _handler (self) :
+        return getattr (self._top_cmd, "_handle_" + self.name)
+    # end def _handler
+
+Sub_Command = TFL_Sub_Command # end class
 
 if __name__ != "__main__" :
     TFL._Export ("*")

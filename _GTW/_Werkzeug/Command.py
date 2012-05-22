@@ -39,6 +39,7 @@
 #    17-May-2012 (CT) Derive from `GTW.OMP.Command` instead of `.Scaffold`,
 #                     rename from `Scaffold` to `Command`
 #    22-May-2012 (CT) Remove unused imports
+#    22-May-2012 (CT) Use `app_dir`, not `app_path`
 #    ««revision-date»»···
 #--
 
@@ -189,7 +190,7 @@ class GT2W_Command (GTW.OMP.Command) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         if not cmd.suppress_translation_loading :
             try :
-                ldir = sos.path.join (self.app_path, "locale")
+                ldir = sos.path.join (self.app_dir, "locale")
                 translations = TFL.I18N.load \
                     ( * cmd.languages
                     , domains    = ("messages", )
