@@ -29,6 +29,7 @@
 #    30-Jan-2010 (CT) Creation
 #    28-Feb-2012 (CT) Add `ReST`, turn `dirs` into an optional argument
 #    11-May-2012 (CT) Rename to babel.sh, add `compile` command
+#    23-May-2012 (CT) Use `python`, not `/usr/bin/python` in `compile`
 #    ««revision-date»»···
 #--
 
@@ -61,7 +62,7 @@ case "$cmd" in
         for lang in $(IFS=, ; echo ${langs})
         do
             mkdir -p "./locale/${lang}/LC_MESSAGES"
-            /usr/bin/python "${lib}/_TFL/Babel.py" compile \
+            python "${lib}/_TFL/Babel.py" compile \
                -use_fuzzy \
                -languages "${lang}" -combine -import_file "${model}" \
                -output_file "./locale/${lang}/LC_MESSAGES/messages.mo"
