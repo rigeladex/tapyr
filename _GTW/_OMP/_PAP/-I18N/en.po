@@ -9,17 +9,16 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2012-05-11 17:51+0200\n"
-"PO-Revision-Date: 2011-05-19 11:36+0200\n"
+"PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 0.9.4\n"
 
 #: _GTW/_OMP/_PAP/Person.py:154 _GTW._OMP._PAP.Person:0
-#, fuzzy
 msgid "Academic title"
 msgstr ""
 
@@ -27,8 +26,7 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject_has_Address:0 _GTW._OMP._PAP.Address:0
-#, fuzzy
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Subject_has_Address:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
@@ -39,12 +37,10 @@ msgid "Address where subject lives or works"
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
-#, fuzzy
 msgid "Area code"
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
-#, fuzzy
 msgid "City"
 msgstr ""
 
@@ -52,41 +48,36 @@ msgstr ""
 msgid "City, town, or village"
 msgstr ""
 
-#: _GTW._OMP._PAP.Company_has_Email:0 _GTW._OMP._PAP.Company:0
-#: _GTW._OMP._PAP.Company_has_Address:0 _GTW._OMP._PAP.Company_has_Phone:0
+#: _GTW._OMP._PAP.Company_has_Phone:0 _GTW._OMP._PAP.Company:0
+#: _GTW._OMP._PAP.Company_has_Address:0 _GTW._OMP._PAP.Company_has_Email:0
 msgid "Company"
 msgid_plural "Companys"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Company_has_Address:0
-#, fuzzy
 msgid "Company_has_Address"
 msgid_plural "Company_has_Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Company_has_Email:0
-#, fuzzy
 msgid "Company_has_Email"
 msgid_plural "Company_has_Emails"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Company_has_Phone:0
-#, fuzzy
 msgid "Company_has_Phone"
 msgid_plural "Company_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Address:0
-#, fuzzy
 msgid "Country"
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
-#, fuzzy
 msgid "Country code"
 msgstr ""
 
@@ -102,15 +93,12 @@ msgstr ""
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:74 _GTW._OMP._PAP.Email:0
-#: _GTW._OMP._PAP.Subject_has_Property:0 _GTW._OMP._PAP.Phone:0
-#: _GTW._OMP._PAP.Address:0
-#, fuzzy
+#: _GTW/_OMP/_PAP/Email.py:74 _GTW._OMP._PAP.Subject_has_Property:0
+#: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
 msgid "Description"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Email.py:63 _GTW._OMP._PAP.Email:0
-#, fuzzy
 msgid "Email address"
 msgstr ""
 
@@ -133,7 +121,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Person_has_Phone:0
-#, fuzzy
 msgid "Extension"
 msgstr ""
 
@@ -141,12 +128,11 @@ msgstr ""
 msgid "Extension number used in PBX"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Attr_Type.py:50
+#: _GTW/_OMP/_PAP/Attr_Type.py:52
 msgid "Female"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
-#, fuzzy
 msgid "First name"
 msgstr ""
 
@@ -167,7 +153,6 @@ msgid "Geographical position"
 msgstr ""
 
 #: _MOM._Attr.Position:0
-#, fuzzy
 msgid "Height"
 msgstr ""
 
@@ -180,7 +165,6 @@ msgid "International country code of phone number (without prefix)"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
-#, fuzzy
 msgid "Last name"
 msgstr ""
 
@@ -189,27 +173,22 @@ msgid "Last name of person"
 msgstr ""
 
 #: _MOM._Attr.Position:0
-#, fuzzy
 msgid "Latitude"
 msgstr ""
 
 #: _GTW._OMP._PAP.Subject:0
-#, fuzzy
 msgid "Lifetime"
 msgstr ""
 
 #: _MOM._Attr.Position:0
-#, fuzzy
 msgid "Longitude"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Attr_Type.py:51
-#, fuzzy
+#: _GTW/_OMP/_PAP/Attr_Type.py:53
 msgid "Male"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
-#, fuzzy
 msgid "Middle name"
 msgstr ""
 
@@ -274,13 +253,11 @@ msgid "National area code of phone number (without prefix)"
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
-#, fuzzy
 msgid "Number"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Person:0
-#: _GTW._OMP._PAP.Person_has_Phone:0 _GTW._OMP._PAP.Person_has_Email:0
-#, fuzzy
+#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Person"
 msgid_plural "Persons"
 msgstr[0] ""
@@ -291,28 +268,24 @@ msgid "Person that created the `entity`."
 msgstr ""
 
 #: _GTW._OMP._PAP.Person_has_Address:0
-#, fuzzy
 msgid "Person_has_Address"
 msgid_plural "Person_has_Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Person_has_Email:0
-#, fuzzy
 msgid "Person_has_Email"
 msgid_plural "Person_has_Emails"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Person_has_Phone:0
-#, fuzzy
 msgid "Person_has_Phone"
 msgid_plural "Person_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Phone:0
-#, fuzzy
+#: _GTW._OMP._PAP.Subject_has_Phone:0 _GTW._OMP._PAP.Phone:0
 msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] ""
@@ -327,14 +300,12 @@ msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
 #: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
-#, fuzzy
 msgid "Position"
 msgid_plural "Positions"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Address:0
-#, fuzzy
 msgid "Region"
 msgstr ""
 
@@ -385,7 +356,6 @@ msgid "State or province or region"
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
-#, fuzzy
 msgid "Street"
 msgstr ""
 
@@ -393,28 +363,25 @@ msgstr ""
 msgid "Street (or place) and house number"
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject_has_Property:0 _GTW._OMP._PAP.Subject:0
+#: _GTW._OMP._PAP.Subject:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject"
 msgid_plural "Subjects"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Subject_has_Address:0
-#, fuzzy
 msgid "Subject_has_Address"
 msgid_plural "Subject_has_Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Subject_has_Email:0
-#, fuzzy
 msgid "Subject_has_Email"
 msgid_plural "Subject_has_Emails"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Subject_has_Phone:0
-#, fuzzy
 msgid "Subject_has_Phone"
 msgid_plural "Subject_has_Phones"
 msgstr[0] ""
@@ -427,16 +394,10 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._PAP.Address:0
-#, fuzzy
 msgid "Zip code"
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr ""
-
-#~ msgid "Email"
-#~ msgid_plural "Emails"
-#~ msgstr[0] ""
-#~ msgstr[1] ""
 
