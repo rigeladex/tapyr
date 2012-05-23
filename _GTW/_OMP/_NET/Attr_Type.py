@@ -29,7 +29,7 @@
 #     6-Mar-2012 (CT) Creation
 #    22-May-2012 (RS) Add `A_IP6_Address`, `A_IP6_Network` and common
 #                     ancestor `A_IP_Address`, extend syntax checks
-#    23-May-2012 (RS) Rename `A_IP6_Address` -> `_A_IP_Address_`
+#    23-May-2012 (RS) Rename `A_IP_Address` -> `_A_IP_Address_`
 #    23-May-2012 (RS) Add `_syntax_re` for `_A_IP_Address_`
 #    ««revision-date»»···
 #--
