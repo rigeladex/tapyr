@@ -94,6 +94,7 @@ class GTWD_Command (_Command_) :
         , "-project_name:S?Name of project"
         , "-root_path:P?Root path of application versioning"
         , "-verbose:B"
+        , "-vcs:S?Name of version control system used"
         , TFL.CAO.Opt.Output_Encoding
             ( description   = "Default encoding for generated files"
             )
@@ -185,12 +186,14 @@ class GTWD_Command (_Command_) :
     class _GTWD_Update_ (_Sub_Command_) :
         """Update the source code of the application."""
 
-        _opts               = \
-            ( "-vcs:S?Name of version control system used"
-            ,
-            )
-
     _Update_ = _GTWD_Update_ # end class
+
+    class _GTWD_VC_ (_Sub_Command_) :
+        """Run a command of the version control system"""
+
+        min_args            = 1
+
+    _VC_ = _GTWD_VC_ # end class
 
     @TFL.Meta.Once_Property
     def pbc (self) :
@@ -319,6 +322,21 @@ class GTWD_Command (_Command_) :
                     if not cmd.dry_run :
                         upd ()
     # end def _handle_update
+
+    def _handle_vc (self, cmd) :
+        cwd  = self.pbl.cwd
+        root = pjoin (cmd.root_path, cmd.apply_to_version)
+        vcs  = self.pbl [cmd.vcs]
+        args = cmd.argv
+        with cwd (root) :
+            for d in cmd.app_dir, cmd.lib_dir :
+                with cwd (d) :
+                    if cmd.verbose or cmd.dry_run :
+                        print ("cd", self.pbl.path ())
+                        print (vcs, " ".join (args))
+                    if not cmd.dry_run :
+                        vcs (* args)
+    # end def _handle_vc
 
     def _P (self, cmd) :
         active  = sos.path.realpath     (cmd.active_name)
