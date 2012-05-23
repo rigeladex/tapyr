@@ -39,14 +39,19 @@ from   _TFL                   import TFL
 
 import _GTW.deploy
 
+class _GTW_OMP_Sub_Command_ (TFL.Sub_Command) :
+
+    _rn_prefix = "_GTW_OMP"
+
+_Sub_Command_ = _GTW_OMP_Sub_Command_ # end class
+
 class GTW_OMP_Command (GTW.deploy.Command) :
     """Manage deployment applications based on GTW.OMP."""
 
     _rn_prefix              = "GTW_OMP_"
 
-    class _GTW_OMP_Babel_ (GTW.deploy.Command._Babel_) :
+    class _GTW_OMP_Babel_ (_Sub_Command_, GTW.deploy.Command._Babel_) :
 
-        _rn_prefix              = "_GTW_OMP"
         _package_dirs           = \
             [ "_MOM"
             , "_GTW"
@@ -58,6 +63,45 @@ class GTW_OMP_Command (GTW.deploy.Command) :
             ]
 
     _Babel_ = _GTW_OMP_Babel_ # end class
+
+    class _GTW_OMP_Migrate_ (_Sub_Command_) :
+        """Migrate database from `active` or file to file or `passive`."""
+
+        _opts                   = \
+            ( "-Active:B?Migrate database from `active_name`"
+            , "-Passive:B?Migrate database to `passive_name`"
+            , "-db_name:Q=migration?Name of migration database"
+            )
+
+    _Migrate_ = _GTW_OMP_Migrate_ # end class
+
+    def _handle_migrate (self, cmd) :
+        P      = self._P (cmd)
+        cwd    = self.pbl.cwd
+        pyc    = self.pbc.python
+        db_url = "hps://" + cmd.db_name
+        args   = ("-overwrite", "-verbose")
+        if cmd.app_config :
+            args += ("-config", ":".join (cmd.app_config))
+        def _do (path, migration_cmd) :
+            with cwd (P.root / path / cmd.app_dir) :
+                if cmd.verbose or cmd.dry_run :
+                    print ("cd", self.pbl.path ())
+                    print (migration_cmd, " ".join (args))
+                if not cmd.dry_run :
+                    migration_cmd (* args)
+        if cmd.Active :
+            cmd_a = pyc \
+                [cmd.app_module, "@mig1", "-target_db_url", db_url, "-readonly"]
+            _do ( P.active
+                , pyc
+                    [ cmd.app_module, "@mig1", "-target_db_url", db_url
+                    , "-readonly"
+                    ]
+                )
+        if cmd.Passive :
+            _do ( P.passive, pyc [cmd.app_module, "@mig2", "-db_url", db_url])
+    # end def _handle_migrate
 
 Command = GTW_OMP_Command # end class
 

@@ -43,7 +43,7 @@ class GT2W_Command (GTW.deploy.Command) :
 
     class _GT2W_Babel_ (GTW.deploy.Command._Babel_) :
 
-        _rn_prefix          = "GT2W"
+        _rn_prefix          = "_GT2W"
         _package_dirs       = [ "_JNJ", "_ReST"]
 
     _Babel_ = _GT2W_Babel_ # end class

@@ -81,6 +81,7 @@ class GTWD_Command (_Command_) :
 
     _opts                   = \
         ( "-active_name:S?Name of symbolic link for active version"
+        , "-app_config:P:?Config file(s) for application"
         , "-app_dir:S?Name of directory holding the application"
         , "-app_module:S=app.py?Name of main module of application"
         , "-apply_to_version:S?Name of version to apply command to"
