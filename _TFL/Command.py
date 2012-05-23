@@ -29,6 +29,7 @@
 # Revision Dates
 #    17-May-2012 (CT) Creation
 #    22-May-2012 (CT) Add `Sub_Command`, `app_dir`, and `app_path`
+#    23-May-2012 (CT) Add `lib_dir`, `Sub_Command._handler_prefix`
 #    ««revision-date»»···
 #--
 
@@ -158,6 +159,11 @@ class TFL_Command (TFL.Meta.Object) :
     # end def defaults
 
     @TFL.Meta.Once_Property
+    def lib_dir (self) :
+        return sos.path.dirname (sos.path.dirname (__file__))
+    # end def lib_dir
+
+    @TFL.Meta.Once_Property
     def description (self) :
         return self._description or self.__class__.__doc__
     # end def description
@@ -199,6 +205,7 @@ class TFL_Sub_Command (Command) :
     """Base class for sub-commands."""
 
     _real_name              = "Sub_Command"
+    _handler_prefix         = ""
 
     def handler (self, cmd) :
         return self._handler (cmd)
@@ -206,7 +213,8 @@ class TFL_Sub_Command (Command) :
 
     @TFL.Meta.Once_Property
     def _handler (self) :
-        return getattr (self._top_cmd, "_handle_" + self.name)
+        handler_name = "".join (("_handle_", self._handler_prefix, self.name))
+        return getattr (self._top_cmd, handler_name)
     # end def _handler
 
 Sub_Command = TFL_Sub_Command # end class
