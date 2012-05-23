@@ -228,6 +228,7 @@
 #    11-May-2012 (CT) `_A_Number_._from_string` changed to raise `ValueError`
 #                     if `_call_eval` fails
 #    14-May-2012 (CT) Add `_A_Filename_.P_Type`
+#    23-May-2012 (RS) Make docstrings useable for end-user
 #    ««revision-date»»···
 #--
 
@@ -845,7 +846,7 @@ class _A_Number_ (A_Attr_Type) :
 # end class _A_Number_
 
 class _A_Decimal_ (_A_Number_) :
-    """Models a decimal-number valued attribute of an object."""
+    """Decimal-number valued attribute of an object."""
 
     typ            = _ ("Decimal")
     P_Type         = decimal.Decimal
@@ -859,7 +860,7 @@ class _A_Decimal_ (_A_Number_) :
 # end class _A_Decimal_
 
 class _A_Float_ (_A_Number_) :
-    """Models a floating-point attribute of an object."""
+    """Floating-point attribute."""
 
     typ         = _ ("Float")
     P_Type      = float
@@ -867,7 +868,7 @@ class _A_Float_ (_A_Number_) :
 # end class _A_Float_
 
 class _A_Int_ (_A_Number_) :
-    """Models an integer attribute of an object."""
+    """Integer attribute."""
 
     typ         = _ ("Int")
     P_Type      = int
@@ -875,7 +876,7 @@ class _A_Int_ (_A_Number_) :
 # end class _A_Int_
 
 class _A_Link_Role_Left_ (A_Attr_Type) :
-    """Attribute modelling the left role of a link."""
+    """Left role of a link."""
 
     generic_role_name = "left"
     rank              = 0
@@ -885,7 +886,7 @@ class _A_Link_Role_Left_ (A_Attr_Type) :
 # end class _A_Link_Role_Left_
 
 class _A_Link_Role_L_Middle_ (A_Attr_Type) :
-    """Attribute modelling the left-middle role of a link."""
+    """Left-middle role of a link."""
 
     generic_role_name = "l_middle"
     rank              = 1
@@ -895,7 +896,7 @@ class _A_Link_Role_L_Middle_ (A_Attr_Type) :
 # end class _A_Link_Role_L_Middle_
 
 class _A_Link_Role_Middle_ (A_Attr_Type) :
-    """Attribute modelling the middle role of a link."""
+    """Middle role of a link."""
 
     generic_role_name = "middle"
     rank              = 2
@@ -905,7 +906,7 @@ class _A_Link_Role_Middle_ (A_Attr_Type) :
 # end class _A_Link_Role_Middle_
 
 class _A_Link_Role_R_Middle_ (A_Attr_Type) :
-    """Attribute modelling the right-middle role of a link."""
+    """Right-middle role of a link."""
 
     generic_role_name = "r_middle"
     rank              = 3
@@ -915,7 +916,7 @@ class _A_Link_Role_R_Middle_ (A_Attr_Type) :
 # end class _A_Link_Role_R_Middle_
 
 class _A_Link_Role_Right_ (A_Attr_Type) :
-    """Attribute modelling the right role of a link."""
+    """Right role of a link."""
 
     generic_role_name = "right"
     rank              = 4
@@ -925,7 +926,7 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 # end class _A_Link_Role_Right_
 
 class _A_Id_Entity_ (_A_Entity_) :
-    """Models an attribute referring to an entity."""
+    """Attribute referring to an entity."""
 
     Q_Ckd_Type        = MOM.Attr.Querier.Id_Entity
 
@@ -1375,7 +1376,7 @@ class _A_Unit_ (A_Attr_Type) :
 # end class _A_Unit_
 
 class A_Angle (_A_Float_) :
-    """Models an attribute specifying an angle in degrees."""
+    """Angle in degrees."""
 
     typ              = _ ("Angle")
     max_value        = 360
@@ -1402,7 +1403,7 @@ class A_Blob (A_Attr_Type) :
 # end class A_Blob
 
 class A_Boolean (_A_Named_Value_) :
-    """Models a Boolean attribute of an object."""
+    """Boolean attribute."""
 
     example        = u"no"
     typ            = _ ("Boolean")
@@ -1437,8 +1438,7 @@ class A_Boolean (_A_Named_Value_) :
 # end class A_Boolean
 
 class A_Cached_Role (_A_Id_Entity_) :
-    """Models an attribute referring to an object linked via an
-       association.
+    """Attribute referring to an object linked via an association.
     """
 
     electric       = True
@@ -1449,7 +1449,7 @@ class A_Cached_Role (_A_Id_Entity_) :
 # end class A_Cached_Role
 
 class A_Cached_Role_DFC (A_Cached_Role) :
-    """Models an attribute to an object linked via an association or derived
+    """Attribute referring to an object linked via an association or derived
        from a container.
     """
 
@@ -1458,8 +1458,7 @@ class A_Cached_Role_DFC (A_Cached_Role) :
 # end class A_Cached_Role_DFC
 
 class A_Cached_Role_Set (_A_Id_Entity_Set_) :
-    """Models an attribute referring to a set of objects linked via an
-       association.
+    """Attribute referring to a set of objects linked via an association.
     """
 
     electric       = True
@@ -1470,7 +1469,7 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
 # end class A_Cached_Role_Set
 
 class A_Char (_A_String_) :
-    """Models an attribute holding a single character."""
+    """A single character."""
 
     example        = u"X"
     typ            = _ ("Character")
@@ -1479,7 +1478,7 @@ class A_Char (_A_String_) :
 # end class A_Char
 
 class A_Date (_A_Date_) :
-    """Models a date-valued attribute of an object."""
+    """Date value."""
 
     example        = u"2010/10/10"
     completer      = MOM.Attr.Completer_Spec  (4)
@@ -1513,7 +1512,7 @@ class A_Date (_A_Date_) :
 # end class A_Date
 
 class A_Date_List (_A_Typed_List_) :
-    """Models a list-valued attribute comprising date elements."""
+    """List of dates."""
 
     typ            = _ ("Date_List")
     C_Type         = A_Date
@@ -1521,8 +1520,7 @@ class A_Date_List (_A_Typed_List_) :
 # end class A_Date_List
 
 class A_Date_Slug (_A_String_) :
-    """Models an atribute that stores a unique value based on the date/time
-       of entity creation.
+    """Unique value based on the date/time of entity creation.
     """
 
     example        = u"20101010_000042_137"
@@ -1543,7 +1541,7 @@ class A_Date_Slug (_A_String_) :
 # end class A_Date_Slug
 
 class A_Date_Time (_A_Date_) :
-    """Models a date-time-valued attribute of an object."""
+    """Date-time value."""
 
     example        = u"2010/10/10 06:42"
     typ            = _ ("Date-Time")
@@ -1600,7 +1598,7 @@ class A_Date_Time (_A_Date_) :
 # end class A_Date_Time
 
 class A_Date_Time_List (_A_Typed_List_) :
-    """Models a list-valued attribute comprising date/time elements."""
+    """List of date/time elements."""
 
     typ            = _ ("Date_Time_List")
     C_Type         = A_Date_Time
@@ -1608,7 +1606,7 @@ class A_Date_Time_List (_A_Typed_List_) :
 # end class A_Date_Time_List
 
 class A_Decimal (_A_Decimal_) :
-    """Models a decimal-number valued attribute of an object."""
+    """Decimal number."""
 
     __metaclass__  = MOM.Meta.M_Attr_Type_Decimal
 
@@ -1635,7 +1633,7 @@ class A_Decimal (_A_Decimal_) :
 # end class A_Decimal
 
 class A_Dirname (_A_Filename_) :
-    """Models an attribute of an object specifying a directory."""
+    """Directory in the file system."""
 
     typ         = _ ("Directory")
 
@@ -1665,7 +1663,7 @@ class A_Email (_A_String_) :
 # end class A_Email
 
 class A_Euro_Amount (_A_Decimal_) :
-    """Models an attribute holding an amount of Euros."""
+    """Amount in Euro."""
 
     typ              = _ ("Decimal")
     P_Type           = TFL.Currency
@@ -1705,7 +1703,7 @@ class A_Euro_Amount (_A_Decimal_) :
 # end class A_Euro_Amount
 
 class A_Filename (_A_Filename_) :
-    """Models an attribute of an object specifying a filename."""
+    """Name of file in the file system."""
 
     typ         = _ ("Filename")
 
@@ -1725,7 +1723,7 @@ class A_Float (_A_Float_) :
 # end class A_Float
 
 class A_Freqency (_A_Unit_, _A_Float_) :
-    """Models a frequency attribute with unit information."""
+    """Frequency with unit information (e.g. 2.437 GHz)."""
 
     typ              = _ ("Frequency")
     needs_raw_value  = True
@@ -1744,7 +1742,7 @@ class A_Int (_A_Int_) :
 # end class A_Int
 
 class A_Int_List (_A_Typed_List_) :
-    """Models a list-valued attribute comprising integer elements."""
+    """List of integer elements."""
 
     typ            = _ ("Int_List")
     C_Type         = A_Int
@@ -1752,7 +1750,7 @@ class A_Int_List (_A_Typed_List_) :
 # end class A_Int_List
 
 class A_Length (_A_Unit_, _A_Float_) :
-    """Models a length attribute with unit information."""
+    """Length with unit information."""
 
     typ            = _ ("Length")
     _unit_dict     = dict \
@@ -1772,7 +1770,7 @@ class A_Length (_A_Unit_, _A_Float_) :
 # end class A_Length
 
 class A_Link_Role (_A_Id_Entity_) :
-    """Attribute describing a link-role."""
+    """Link-role."""
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
 
@@ -1812,19 +1810,19 @@ class A_Link_Role (_A_Id_Entity_) :
 # end class A_Link_Role
 
 class A_Link_Role_AB (A_Link_Role) :
-    """Attribute describing a link-role of an attribute-based link."""
+    """Link-role of an attribute-based link."""
 
     attr_name         = None
 
 # end class A_Link_Role_AB
 
 class A_Link_Role_EB (A_Link_Role) :
-    """Attribute describing a link-role of an entity-based link."""
+    """Link-role of an entity-based link."""
 
 # end class A_Link_Role_EB
 
 class A_Name (Syntax_Re_Mixin, _A_String_) :
-    """Models a name-valued attribute of an object."""
+    """Name of an object."""
 
     typ                = _ ("Name")
     max_length         = 32
@@ -1837,8 +1835,7 @@ class A_Name (Syntax_Re_Mixin, _A_String_) :
 # end class A_Name
 
 class A_Numeric_String (_A_String_Base_) :
-    """Models an string-valued attribute that holds a numeric value (as
-       string).
+    """String that holds a numeric value.
     """
 
     example           = u"42"
@@ -1859,7 +1856,7 @@ class A_Numeric_String (_A_String_Base_) :
 # end class A_Numeric_String
 
 class A_Id_Entity (_A_Id_Entity_) :
-    """Models an attribute referring to an entity."""
+    """An entity."""
 
     typ            = _ ("Entity")
     Kind_Mixins    = (MOM.Attr.Id_Entity_Reference_Mixin, )
@@ -1867,7 +1864,7 @@ class A_Id_Entity (_A_Id_Entity_) :
 # end class A_Id_Entity
 
 class A_String (_A_String_) :
-    """Models a string-valued attribute of an object."""
+    """A string."""
 
     typ            = _ ("String")
     max_length     = 64
@@ -1875,8 +1872,7 @@ class A_String (_A_String_) :
 # end class A_String
 
 class A_Text (_A_String_) :
-    """Models a string-valued attribute of an object which allows text of
-       arbitrary length.
+    """Arbitrary-length text.
     """
 
     typ            = _ ("Text")
@@ -1885,7 +1881,7 @@ class A_Text (_A_String_) :
 # end class A_Text
 
 class A_Time (_A_Date_) :
-    """Models a time-valued attribute of an object."""
+    """Time value."""
 
     example        = u"06:42"
     typ            = _ ("Time")
@@ -1917,7 +1913,7 @@ class A_Time (_A_Date_) :
 # end class A_Time
 
 class A_Url (_A_String_) :
-    """Models an url-valued attribute of an object."""
+    """URL (including local file name)."""
 
     example        = u"/bar"
     typ            = _ ("Url")
@@ -1927,14 +1923,14 @@ class A_Url (_A_String_) :
 # end class A_Url
 
 class A_Url_X (A_Url) :
-    """Models an url-valued attribute of an object."""
+    """External URL."""
 
     check          = ("""value.startswith (("http://", "https://"))""", )
 
 # end class A_Url_X
 
 class A_Year (A_Int) :
-    """Models a year-valued attribute of an object."""
+    """Year value."""
 
     example        = "2000"
     typ            = _ ("Year")

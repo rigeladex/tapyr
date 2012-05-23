@@ -29,6 +29,7 @@
 #     6-Mar-2012 (CT) Creation
 #    22-May-2012 (RS) Add `A_IP6_Address`, `A_IP6_Network` and common
 #                     ancestor `A_IP_Address`, extend syntax checks
+#    23-May-2012 (RS) Rename `A_IP6_Address` -> `_A_IP_Address_`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ from   _TFL.Regexp           import Regexp, re
 
 import _GTW._OMP._NET
 
-class A_IP_Address (Syntax_Re_Mixin, A_String) :
+class _A_IP_Address_ (Syntax_Re_Mixin, A_String) :
     """Model abstract address of IP network."""
 
     def check_syntax (self, obj, val) :
@@ -61,9 +62,9 @@ class A_IP_Address (Syntax_Re_Mixin, A_String) :
             raise MOM.Error.Attribute_Syntax (obj, self, val)
     # end def check_netmask
 
-# end class A_IP_Address
+# end class _A_IP_Address_
 
-class A_IP4_Address (A_IP_Address) :
+class A_IP4_Address (_A_IP_Address_) :
     """Models an address in a IP4 network."""
 
     _bits             = 32
@@ -113,7 +114,7 @@ class A_IP4_Network (A_IP4_Address) :
 
 # end class A_IP4_Network
 
-class A_IP6_Address (A_IP_Address) :
+class A_IP6_Address (_A_IP_Address_) :
     """Models an address in a IP6 network."""
 
     _bits             = 128
