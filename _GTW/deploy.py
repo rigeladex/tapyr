@@ -29,6 +29,7 @@
 # Revision Dates
 #    22-May-2012 (CT) Creation
 #    23-May-2012 (CT) Continue creation
+#    24-May-2012 (CT) Factor `_app_cmd`, add `print` to `_handle_...` methods
 #    ««revision-date»»···
 #--
 
@@ -208,6 +209,13 @@ class GTWD_Command (_Command_) :
         return local
     # end def pbl
 
+    def _app_cmd (self, cmd) :
+        result = self.pbc.python [cmd.app_module]
+        if cmd.app_config :
+            result = result ["-config", ":".join (cmd.app_config)]
+        return result
+    # end def _app_cmd
+
     def _handle_babel_compile (self, cmd) :
         P       = self._P (cmd)
         cwd     = self.pbl.cwd
@@ -234,7 +242,7 @@ class GTWD_Command (_Command_) :
                 if not cmd.dry_run :
                     if not sos.path.isdir (l_dir) :
                         sos.makedirs (l_dir)
-                    self.pbc.python (* l_args)
+                    print (self.pbc.python (* l_args))
     # end def _handle_babel_compile
 
     def _handle_babel_extract (self, cmd) :
@@ -260,8 +268,8 @@ class GTWD_Command (_Command_) :
             print ("python", " ".join (extr_args))
             print ("python", " ".join (lang_args))
         if not cmd.dry_run :
-            self.pbc.python (* extr_args)
-            self.pbc.python (* lang_args)
+            print (self.pbc.python (* extr_args))
+            print (self.pbc.python (* lang_args))
     # end def _handle_babel_extract
 
     def _handle_info (self, cmd) :
@@ -318,10 +326,13 @@ class GTWD_Command (_Command_) :
         with cwd (root) :
             for d in cmd.app_dir, cmd.lib_dir :
                 with cwd (d) :
+                    p = self.pbl.path ()
                     if cmd.verbose or cmd.dry_run :
-                        print ("cd", self.pbl.path (), ";", upd)
+                        print ("cd", p, ";", upd)
                     if not cmd.dry_run :
-                        upd ()
+                        if not cmd.verbose :
+                            print ("*" * 3, p, "*" * 20)
+                        print (upd ())
     # end def _handle_update
 
     def _handle_vc (self, cmd) :
@@ -332,11 +343,14 @@ class GTWD_Command (_Command_) :
         with cwd (root) :
             for d in cmd.app_dir, cmd.lib_dir :
                 with cwd (d) :
+                    p = self.pbl.path ()
                     if cmd.verbose or cmd.dry_run :
-                        print ("cd", self.pbl.path ())
+                        print ("cd", p)
                         print (vcs, " ".join (args))
                     if not cmd.dry_run :
-                        vcs (* args)
+                        if not cmd.verbose :
+                            print ("*" * 3, p, "*" * 20)
+                        print (vcs (* args))
     # end def _handle_vc
 
     def _P (self, cmd) :

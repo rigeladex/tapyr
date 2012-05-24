@@ -28,25 +28,50 @@
 #
 # Revision Dates
 #    23-May-2012 (CT) Creation
+#    24-May-2012 (CT) Add sub-command `setup_cache`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function #, unicode_literals
 
 from   _GTW                   import GTW
+from   _TFL                   import TFL
+
 import _GTW.deploy
+
+class _GT2W_Sub_Command_ (GTW.deploy._Sub_Command_) :
+
+    _rn_prefix = "_GT2W"
+
+_Sub_Command_ = _GT2W_Sub_Command_ # end class
 
 class GT2W_Command (GTW.deploy.Command) :
     """Manage deployment applications based on GTW.Werkzeug."""
 
     _rn_prefix              = "GT2W"
 
-    class _GT2W_Babel_ (GTW.deploy.Command._Babel_) :
+    class _GT2W_Babel_ (_Sub_Command_, GTW.deploy.Command._Babel_) :
 
-        _rn_prefix          = "_GT2W"
         _package_dirs       = [ "_JNJ", "_ReST"]
 
     _Babel_ = _GT2W_Babel_ # end class
+
+    class _GT2W_Setup_Cache_ (_Sub_Command_) :
+        """Setup the cache of the application."""
+
+    _Setup_Cache_ = _GT2W_Setup_Cache_ # end class
+
+    def _handle_setup_cache (self, cmd) :
+        P      = self._P (cmd)
+        cwd    = self.pbl.cwd
+        app    = self._app_cmd (cmd)
+        with cwd (P.root / cmd.apply_to_version / cmd.app_dir) :
+            if cmd.verbose or cmd.dry_run :
+                print ("cd", self.pbl.path ())
+                print (app, "setup_cache")
+            if not cmd.dry_run :
+                app ("setup_cache")
+    # end def _handle_setup_cache
 
 Command = GT2W_Command # end class
 

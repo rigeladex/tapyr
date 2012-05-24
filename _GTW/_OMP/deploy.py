@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    23-May-2012 (CT) Creation
+#    24-May-2012 (CT) Factor `_app_cmd`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ from   _TFL                   import TFL
 
 import _GTW.deploy
 
-class _GTW_OMP_Sub_Command_ (TFL.Sub_Command) :
+class _GTW_OMP_Sub_Command_ (GTW.deploy._Sub_Command_) :
 
     _rn_prefix = "_GTW_OMP"
 
@@ -81,8 +82,7 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         pyc    = self.pbc.python
         db_url = "hps://" + cmd.db_name
         args   = ("-overwrite", "-verbose")
-        if cmd.app_config :
-            args += ("-config", ":".join (cmd.app_config))
+        app    = self._app_cmd (cmd)
         def _do (path, migration_cmd) :
             with cwd (P.root / path / cmd.app_dir) :
                 if cmd.verbose or cmd.dry_run :
@@ -91,16 +91,9 @@ class GTW_OMP_Command (GTW.deploy.Command) :
                 if not cmd.dry_run :
                     migration_cmd (* args)
         if cmd.Active :
-            cmd_a = pyc \
-                [cmd.app_module, "@mig1", "-target_db_url", db_url, "-readonly"]
-            _do ( P.active
-                , pyc
-                    [ cmd.app_module, "@mig1", "-target_db_url", db_url
-                    , "-readonly"
-                    ]
-                )
+            _do (P.active, app ["@mig1", "-target_db_url", db_url, "-readonly"])
         if cmd.Passive :
-            _do ( P.passive, pyc [cmd.app_module, "@mig2", "-db_url", db_url])
+            _do (P.passive, app ["@mig2", "-db_url", db_url])
     # end def _handle_migrate
 
 Command = GTW_OMP_Command # end class

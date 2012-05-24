@@ -30,6 +30,7 @@
 #    17-May-2012 (CT) Creation
 #    22-May-2012 (CT) Add `Sub_Command`, `app_dir`, and `app_path`
 #    23-May-2012 (CT) Add `lib_dir`, `Sub_Command._handler_prefix`
+#    24-May-2012 (CT) Add `_..._to_combine` to `_lists_to_combine`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,10 @@ class TFL_Command (TFL.Meta.Object) :
     _rn_prefix              = "TFL"
 
     _dicts_to_combine       = ("_defaults", )
-    _lists_to_combine       = ("_args", "_buns", "_opts")
+    _lists_to_combine       = \
+        ( "_args", "_buns", "_opts"
+        , "_dicts_to_combine", "_lists_to_combine", "_sets_to_combine"
+        )
     _sets_to_combine        = ("_sub_commands", )
 
     cmd_choice_name         = _ ("command")
