@@ -281,6 +281,7 @@ class GTWD_Command (_Command_) :
         print (fmt % ("prefix",         P.prefix))
         print (fmt % ("python",         self.pbc.python))
         print (fmt % ("python-library", self.lib_dir))
+        print (fmt % ("PYTHONPATH",     sys.path))
         print (fmt % ("app-dir",        app_dir))
     # end def _handle_info
 
