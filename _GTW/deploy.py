@@ -214,6 +214,8 @@ class GTWD_Command (_Command_) :
         result = self.pbc.python [cmd.app_module]
         if cmd.app_config :
             result = result ["-config", ":".join (cmd.app_config)]
+        if cmd.verbose :
+            result = result ["-verbose"]
         return result
     # end def _app_cmd
 
