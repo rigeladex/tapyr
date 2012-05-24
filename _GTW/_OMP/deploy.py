@@ -29,6 +29,7 @@
 # Revision Dates
 #    23-May-2012 (CT) Creation
 #    24-May-2012 (CT) Factor `_app_cmd`
+#    24-May-2012 (CT) Set correct `PYTHONPATH` for `Active` and `Passive`
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,11 @@ from   _GTW                   import GTW
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
+from   _TFL                   import sos
+
 import _GTW.deploy
+
+pjoin = sos.path.join
 
 class _GTW_OMP_Sub_Command_ (GTW.deploy._Sub_Command_) :
 
@@ -84,12 +89,15 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         args   = ("-overwrite", "-verbose")
         app    = self._app_cmd (cmd)
         def _do (path, migration_cmd) :
+            pp = sos.path.abspath (pjoin (path, cmd.lib_dir))
             with cwd (P.root / path / cmd.app_dir) :
                 if cmd.verbose or cmd.dry_run :
                     print ("cd", self.pbl.path ())
+                    print ("PYTHONPATH =", pp)
                     print (migration_cmd, " ".join (args))
                 if not cmd.dry_run :
-                    migration_cmd (* args)
+                    with self.pbl.env (PYTHONPATH = pp) :
+                        migration_cmd (* args)
         if cmd.Active :
             _do (P.active, app ["@mig1", "-target_db_url", db_url, "-readonly"])
         if cmd.Passive :
