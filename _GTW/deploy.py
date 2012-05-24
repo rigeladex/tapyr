@@ -30,6 +30,7 @@
 #    22-May-2012 (CT) Creation
 #    23-May-2012 (CT) Continue creation
 #    24-May-2012 (CT) Factor `_app_cmd`, add `print` to `_handle_...` methods
+#    24-May-2012 (CT) Add `PYTHONPATH` to `.pbl.env`
 #    ««revision-date»»···
 #--
 
@@ -278,11 +279,19 @@ class GTWD_Command (_Command_) :
         app_dir = pjoin (cmd.root_path, cmd.apply_to_version, cmd.app_dir)
         print (fmt % (cmd.active_name,  P.active))
         print (fmt % (cmd.passive_name, P.passive))
+        print (fmt % ("selected",       P.selected))
         print (fmt % ("prefix",         P.prefix))
+        print (fmt % ("app-dir",        app_dir))
         print (fmt % ("python",         self.pbc.python))
         print (fmt % ("python-library", self.lib_dir))
+        print (fmt % ("nested-library", P.lib_dir))
         print (fmt % ("PYTHONPATH",     sys.path))
-        print (fmt % ("app-dir",        app_dir))
+        print \
+            ( fmt
+            % ( "NESTEDPATH"
+              , self.pbc.python ("-c", "import sys; print sys.path")
+              )
+            )
     # end def _handle_info
 
     def _handle_pycompile (self, cmd) :
@@ -362,12 +371,16 @@ class GTWD_Command (_Command_) :
         if prefix :
             active     = active  [len (prefix):].lstrip ("/")
             passive    = passive [len (prefix):].lstrip ("/")
-        return TFL.Record \
+        result = TFL.Record \
             ( active   = active
             , passive  = passive
             , prefix   = prefix
             , root     = self.pbl.path (root)
             )
+        result.selected = getattr (result, cmd.apply_to_version)
+        result.lib_dir  = self.pbl.env ["PYTHONPATH"] = sos.path.abspath \
+            (pjoin (result.selected, cmd.lib_dir))
+        return result
     # end def _P
 
 Command = GTWD_Command # end class
