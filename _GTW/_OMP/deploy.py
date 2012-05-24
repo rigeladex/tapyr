@@ -30,6 +30,7 @@
 #    23-May-2012 (CT) Creation
 #    24-May-2012 (CT) Factor `_app_cmd`
 #    24-May-2012 (CT) Set correct `PYTHONPATH` for `Active` and `Passive`
+#    24-May-2012 (CT) Use `migrate` instead of `@mig1`, `@mig2`; print
 #    ««revision-date»»···
 #--
 
@@ -86,7 +87,7 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         cwd    = self.pbl.cwd
         pyc    = self.pbc.python
         db_url = "hps://" + cmd.db_name
-        args   = ("-overwrite", "-verbose")
+        args   = ("-overwrite", )
         app    = self._app_cmd (cmd)
         def _do (path, migration_cmd) :
             pp = sos.path.abspath (pjoin (path, cmd.lib_dir))
@@ -97,11 +98,11 @@ class GTW_OMP_Command (GTW.deploy.Command) :
                     print (migration_cmd, " ".join (args))
                 if not cmd.dry_run :
                     with self.pbl.env (PYTHONPATH = pp) :
-                        migration_cmd (* args)
+                        print (migration_cmd (* args))
         if cmd.Active :
-            _do (P.active, app ["@mig1", "-target_db_url", db_url, "-readonly"])
+            _do (P.active, app ["migrate", "-target_db_url", db_url, "-readonly"])
         if cmd.Passive :
-            _do (P.passive, app ["@mig2", "-db_url", db_url])
+            _do (P.passive, app ["migrate", "-db_url", db_url])
     # end def _handle_migrate
 
 Command = GTW_OMP_Command # end class
