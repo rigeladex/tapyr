@@ -31,6 +31,7 @@
 #    22-May-2012 (CT) Add `Sub_Command`, `app_dir`, and `app_path`
 #    23-May-2012 (CT) Add `lib_dir`, `Sub_Command._handler_prefix`
 #    24-May-2012 (CT) Add `_..._to_combine` to `_lists_to_combine`
+#    25-May-2012 (CT) Add `sc_map` and `__getitem__`; add `_parent`
 #    ««revision-date»»···
 #--
 
@@ -98,14 +99,17 @@ class TFL_Command (TFL.Meta.Object) :
     _description            = ""
     _name                   = None
     _opts                   = ()
+    _root                   = None
     _sub_commands           = set ()
 
-    def __init__ (self, _name = None, _top_cmd = None, ** kw) :
+    def __init__ (self, _name = None, _parent = None, ** kw) :
         if _name is not None :
             self._name      = _name
         self._init_kw       = kw
-        self._top_cmd       = _top_cmd
-        self.cmd            = TFL.CAO.Cmd \
+        self._parent        = _parent
+        if _parent is not None :
+            self._root      = _parent._root or _parent
+        self._cmd           = TFL.CAO.Cmd \
             ( args          = self.args
             , buns          = self.buns
             , defaults      = self.defaults
@@ -122,7 +126,7 @@ class TFL_Command (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, _argv = None, ** _kw) :
-        return self.cmd (_argv, ** _kw)
+        return self._cmd (_argv, ** _kw)
     # end def __call__
 
     @TFL.Meta.Once_Property
@@ -143,7 +147,7 @@ class TFL_Command (TFL.Meta.Object) :
                 , (self._args, self._sub_commands)
                 )
             name = _T (self.cmd_choice_name)
-            scs  = tuple (sc.cmd for sc in self.sub_commands)
+            scs  = tuple (sc._cmd for sc in self.sub_commands)
             return (TFL.CAO.Cmd_Choice (name, * scs), )
         else :
             return self._args
@@ -174,7 +178,7 @@ class TFL_Command (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def name (self) :
-        if self._top_cmd :
+        if self._root :
             return self._name or self.__class__.__name__.strip ("_")
         else :
             return self.app_path
@@ -186,15 +190,19 @@ class TFL_Command (TFL.Meta.Object) :
     # end def opts
 
     @TFL.Meta.Once_Property
+    def sc_map (self) :
+        return dict ((sc.name, sc) for sc in self.sub_commands)
+    # end def sc_map
+
+    @TFL.Meta.Once_Property
     def sub_commands (self) :
         def _gen (self) :
-            defaults   = self.defaults
-            _top_cmd   = self._top_cmd or self
+            defaults = self.defaults
             for sc in self._sub_commands :
                 if isinstance (sc, basestring) :
                     sc = getattr  (self, sc)
                 if not isinstance (sc, TFL.CAO.Cmd) :
-                    sc = sc (_top_cmd = _top_cmd, ** defaults)
+                    sc = sc (_parent = self, ** defaults)
                 yield sc
         return tuple (_gen (self))
     # end def sub_commands
@@ -202,6 +210,16 @@ class TFL_Command (TFL.Meta.Object) :
     def dynamic_defaults (self, defaults) :
         return {}
     # end def dynamic_defaults
+
+    def __getitem__ (self, key) :
+        if " " in key :
+            result = self.sc_map
+            for k in key.split (" ") :
+                result = result [k]
+        else :
+            result = self.sc_map [key]
+        return result
+    # end def __getitem__
 
 Command = TFL_Command # end class
 
@@ -218,7 +236,7 @@ class TFL_Sub_Command (Command) :
     @TFL.Meta.Once_Property
     def _handler (self) :
         handler_name = "".join (("_handle_", self._handler_prefix, self.name))
-        return getattr (self._top_cmd, handler_name)
+        return getattr (self._root, handler_name)
     # end def _handler
 
 Sub_Command = TFL_Sub_Command # end class
