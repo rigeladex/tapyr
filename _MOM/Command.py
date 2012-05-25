@@ -306,10 +306,10 @@ class MOM_Command (TFL.Command) :
     def _handle_migrate (self, cmd) :
         apt_s, url_s = self.app_type_and_url (cmd.db_url, cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
-        db_man_s     = self.DB_Man.connect   (apt_s, url_s)
         if cmd.verbose :
             print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
             print "   ", cmd.db_url, cmd.db_name, "-->", cmd.target_db_url
+        db_man_s = self.DB_Man.connect (apt_s, url_s)
         if cmd.readonly :
             with self._cro_context (db_man_s, True) :
                 self._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)

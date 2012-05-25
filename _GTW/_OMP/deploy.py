@@ -87,22 +87,20 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         cwd    = self.pbl.cwd
         pyc    = self.pbc.python
         db_url = "hps://" + cmd.db_name
-        args   = ("-overwrite", )
-        app    = self._app_cmd (cmd)
-        def _do (path, migration_cmd) :
-            pp = sos.path.abspath (pjoin (path, cmd.lib_dir))
-            with cwd (P.root / path / cmd.app_dir) :
-                if cmd.verbose or cmd.dry_run :
-                    print ("cd", self.pbl.path ())
-                    print ("PYTHONPATH =", pp)
-                    print (migration_cmd, " ".join (args))
-                if not cmd.dry_run :
-                    with self.pbl.env (PYTHONPATH = pp) :
-                        print (migration_cmd (* args))
+        def _do (path, args) :
+            app  = self._app_cmd (cmd, P, path)
+            pp   = sos.path.abspath (pjoin (path, cmd.lib_dir))
+            args = ("migrate", "-overwrite") + args
+            if cmd.verbose or cmd.dry_run :
+                print ("PYTHONPATH =", pp)
+                print (app, " ".join (args))
+            if not cmd.dry_run :
+                with self.pbl.env (PYTHONPATH = pp) :
+                    print (app (* args))
         if cmd.Active :
-            _do (P.active, app ["migrate", "-target_db_url", db_url, "-readonly"])
+            _do (P.active,  ("-target_db_url", db_url, "-readonly"))
         if cmd.Passive :
-            _do (P.passive, app ["migrate", "-db_url", db_url])
+            _do (P.passive, ("-db_url",        db_url))
     # end def _handle_migrate
 
 Command = GTW_OMP_Command # end class

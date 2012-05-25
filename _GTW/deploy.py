@@ -31,6 +31,8 @@
 #    23-May-2012 (CT) Continue creation
 #    24-May-2012 (CT) Factor `_app_cmd`, add `print` to `_handle_...` methods
 #    24-May-2012 (CT) Add `PYTHONPATH` to `.pbl.env`
+#    25-May-2012 (CT) Add sub-command `shell`
+#    25-May-2012 (CT) Add `path` to `_app_cmd`
 #    ««revision-date»»···
 #--
 
@@ -181,6 +183,17 @@ class GTWD_Command (_Command_) :
 
     _Pycompile_ = _GTWD_Pycompile_ # end class
 
+    class _GTWD_Shell_ (_Sub_Command_) :
+        """Open interactive python shell."""
+
+        def handler (self, cmd) :
+            import _TFL.Environment
+            command = self._root
+            TFL.Environment.py_shell ()
+        # end def handler
+
+    _Shell_ = _GTWD_Shell_ # end class
+
     class _GTWD_Switch_ (_Sub_Command_) :
         """Switch links to active and passive version."""
 
@@ -210,8 +223,10 @@ class GTWD_Command (_Command_) :
         return local
     # end def pbl
 
-    def _app_cmd (self, cmd) :
-        result = self.pbc.python [cmd.app_module]
+    def _app_cmd (self, cmd, P, path = None) :
+        if path is None :
+            path = cmd.apply_to_version
+        result = self.pbc.python [P.root / path / cmd.app_dir / cmd.app_module]
         if cmd.app_config :
             result = result ["-config", ":".join (cmd.app_config)]
         if cmd.verbose :

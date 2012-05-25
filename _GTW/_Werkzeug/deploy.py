@@ -64,7 +64,7 @@ class GT2W_Command (GTW.deploy.Command) :
     def _handle_setup_cache (self, cmd) :
         P      = self._P (cmd)
         cwd    = self.pbl.cwd
-        app    = self._app_cmd (cmd)
+        app    = self._app_cmd (cmd, P, cmd.apply_to_version)
         with cwd (P.root / cmd.apply_to_version / cmd.app_dir) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", self.pbl.path ())
