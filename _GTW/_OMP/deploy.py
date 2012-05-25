@@ -31,6 +31,7 @@
 #    24-May-2012 (CT) Factor `_app_cmd`
 #    24-May-2012 (CT) Set correct `PYTHONPATH` for `Active` and `Passive`
 #    24-May-2012 (CT) Use `migrate` instead of `@mig1`, `@mig2`; print
+#    25-May-2012 (CT) Fix `db_url` in `migrate` (needs `///`)
 #    ««revision-date»»···
 #--
 
@@ -86,7 +87,7 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         P      = self._P (cmd)
         cwd    = self.pbl.cwd
         pyc    = self.pbc.python
-        db_url = "hps://" + cmd.db_name
+        db_url = "hps:///" + cmd.db_name
         def _do (path, args) :
             app  = self._app_cmd (cmd, P, path)
             pp   = sos.path.abspath (pjoin (path, cmd.lib_dir))
