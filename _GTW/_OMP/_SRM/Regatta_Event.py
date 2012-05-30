@@ -37,7 +37,8 @@
 #     9-Nov-2011 (CT) Change `computed` methods to use `FO`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Correct `club.description`
-#    ««revision-date»»···
+#    30-May-2012 (CT) Add attribute `is_cancelled`
+##    ««revision-date»»···
 #--
 
 from   __future__            import unicode_literals
@@ -102,6 +103,14 @@ class Regatta_Event (_Ancestor_Essence) :
             completer          = Attr.Completer_Spec  (1)
 
         # end class desc
+
+        class is_cancelled (A_Boolean) :
+            """Indicates that the regatta is cancelled"""
+
+            kind               = Attr.Optional
+            default            = False
+
+        # end class is_cancelled
 
         class perma_name (A_String) :
             """Name used for perma-link."""

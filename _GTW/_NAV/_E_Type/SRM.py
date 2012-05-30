@@ -56,6 +56,7 @@
 #    30-Apr-2012 (CT) Add and use `_register_submit_callback`
 #     7-May-2012 (CT) Change `Regatta._get_objects` to DRY
 #     7-May-2012 (CT) Add attribute `bir_admin` to `Regatta`
+#    30-May-2012 (CT) Change `href_register` to honor `is_cancelled`
 #    ««revision-date»»···
 #--
 
@@ -110,12 +111,13 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     # end def __init__
 
     def href_register (self) :
-        if not self.obj.is_team_race :
-            start = self.obj.event.date.start
-            now   = self.obj.event.__class__.date.start.now ()
-            if now < start :
-                return pjoin (self.abs_href, "admin", "create")
-        ### XXX implement registration for team race, too
+        if not self.obj.is_cancelled :
+            if not self.obj.is_team_race :
+                start = self.obj.event.date.start
+                now   = self.obj.event.__class__.date.start.now ()
+                if now < start :
+                    return pjoin (self.abs_href, "admin", "create")
+            ### XXX implement registration for team race, too
     # end def href_register
 
     def _get_child (self, child, * grandchildren) :

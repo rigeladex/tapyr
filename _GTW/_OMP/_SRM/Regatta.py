@@ -45,6 +45,7 @@
 #    19-Mar-2012 (CT) Factor `boat_class` to `Regatta`, reify `SRM.Handicap`
 #    20-Apr-2012 (CT) Add `Regatta_H.handicap` to fix jinja template that
 #                     depends on it
+#    30-May-2012 (CT) Add attribute `is_cancelled`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,18 @@ class Regatta (_Ancestor_Essence) :
             min_value          = 0
 
         # end class discards
+
+        class is_cancelled (A_Boolean) :
+            """Indicates that the regatta is cancelled"""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Mixin, )
+
+            def computed (self, obj) :
+                return obj.event.is_cancelled
+            # end def computed
+
+        # end class is_cancelled
 
         class kind (A_String) :
             """Kind of regatta."""
