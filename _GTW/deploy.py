@@ -33,6 +33,9 @@
 #    24-May-2012 (CT) Add `PYTHONPATH` to `.pbl.env`
 #    25-May-2012 (CT) Add sub-command `shell`
 #    25-May-2012 (CT) Add `path` to `_app_cmd`
+#    30-May-2012 (CT) Add sub-command `app`
+#    31-May-2012 (CT) Factor `-config` option to `TFL.Command`
+#    31-May-2012 (CT) Change `_handle_app` to allow multiple arguments
 #    ««revision-date»»···
 #--
 
@@ -85,12 +88,10 @@ class GTWD_Command (_Command_) :
 
     _opts                   = \
         ( "-active_name:S?Name of symbolic link for active version"
-        , "-app_config:P:?Config file(s) for application"
         , "-app_dir:S?Name of directory holding the application"
         , "-app_module:S=app.py?Name of main module of application"
         , "-apply_to_version:S?Name of version to apply command to"
         , "-bugs_address:S?Email address to send bug reports to"
-        , "-config:C:?File(s) specifying defaults for options"
         , "-copyright_holder:S?Name of copyright holders"
         , "-dry_run:B?Don't run the command, just print what would be done"
         , "-lib_dir:S"
@@ -110,6 +111,13 @@ class GTWD_Command (_Command_) :
         , hg                = "pull"
         , svn               = "update"
         )
+
+    class _GTWD_App_ (_Sub_Command_) :
+        """Run a command of the web application"""
+
+        min_args            = 1
+
+    _App_ = _GTWD_App_ # end class
 
     class _GTWD_Babel_ (_Command_) :
         """Extract or compile translations"""
@@ -227,12 +235,24 @@ class GTWD_Command (_Command_) :
         if path is None :
             path = cmd.apply_to_version
         result = self.pbc.python [P.root / path / cmd.app_dir / cmd.app_module]
-        if cmd.app_config :
-            result = result ["-config", ":".join (cmd.app_config)]
         if cmd.verbose :
             result = result ["-verbose"]
         return result
     # end def _app_cmd
+
+    def _handle_app (self, cmd, * args) :
+        P   = self._P (cmd)
+        cwd = self.pbl.cwd
+        app = self._app_cmd (cmd, P, cmd.apply_to_version)
+        if not args :
+            args = cmd.argv
+        with cwd (P.root / cmd.apply_to_version / cmd.app_dir) :
+            if cmd.verbose or cmd.dry_run :
+                print ("cd", self.pbl.path ())
+                print (app, " ".join (args))
+            if not cmd.dry_run :
+                print (app (* args))
+    # end def _handle_app
 
     def _handle_babel_compile (self, cmd) :
         P       = self._P (cmd)
