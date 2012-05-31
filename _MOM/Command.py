@@ -50,6 +50,7 @@
 #    22-May-2012 (CT) Remove unused imports
 #    22-May-2012 (CT) Factor `app_path` to `TFL.Command.app_dir`
 #    22-May-2012 (CT) Factor `TFL.Sub_Command`
+#    31-May-2012 (CT) Factor `-config` option to `TFL.Command`
 #    ««revision-date»»···
 #--
 
@@ -127,8 +128,7 @@ class MOM_Command (TFL.Command) :
         ( copyright_start   = 2010
         )
     _opts                   = \
-        ( "-config:C:?File specifying defaults for options"
-        , "-copyright_start:I?Start of copyright for this application"
+        ( "-copyright_start:I?Start of copyright for this application"
         , TFL.CAO.Abs_Path
             ( name        = "db_name"
             , description = "Default name of database"

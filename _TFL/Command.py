@@ -32,6 +32,7 @@
 #    23-May-2012 (CT) Add `lib_dir`, `Sub_Command._handler_prefix`
 #    24-May-2012 (CT) Add `_..._to_combine` to `_lists_to_combine`
 #    25-May-2012 (CT) Add `sc_map` and `__getitem__`; add `_parent`
+#    31-May-2012 (CT) Add `config_defaults`, define `Config` option in `opts`
 #    ««revision-date»»···
 #--
 
@@ -80,12 +81,15 @@ class TFL_Command (TFL.Meta.Object) :
 
     _dicts_to_combine       = ("_defaults", )
     _lists_to_combine       = \
-        ( "_args", "_buns", "_opts"
+        ( "_args", "_buns", "_config_defaults", "_opts"
         , "_dicts_to_combine", "_lists_to_combine", "_sets_to_combine"
         )
     _sets_to_combine        = ("_sub_commands", )
 
     cmd_choice_name         = _ ("command")
+    config_opt_help         = _ ("File(s) specifying defaults for options")
+    config_opt_name         = "config"
+    config_opt_sep          = ":"
     do_keywords             = False
     handler                 = None
     helper                  = None
@@ -95,6 +99,7 @@ class TFL_Command (TFL.Meta.Object) :
 
     _args                   = ()
     _buns                   = ()
+    _config_defaults        = ()
     _defaults               = {}
     _description            = ""
     _name                   = None
@@ -159,6 +164,11 @@ class TFL_Command (TFL.Meta.Object) :
     # end def buns
 
     @TFL.Meta.Once_Property
+    def config_defaults (self) :
+        return self.config_opt_sep.join (self._config_defaults)
+    # end def config_defaults
+
+    @TFL.Meta.Once_Property
     def defaults (self) :
         result = dict (self._defaults)
         result.update (self.dynamic_defaults (result))
@@ -186,7 +196,19 @@ class TFL_Command (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def opts (self) :
-        return self._opts
+        result = []
+        if self.config_defaults is not None :
+            result.append \
+                ( TFL.CAO.Config
+                    ( name         = self.config_opt_name
+                    , default      = self.config_defaults
+                    , description  = self.config_opt_help
+                    , auto_split   = self.config_opt_sep
+                    , _base_dir    = self.app_dir
+                    )
+                )
+        result.extend (self._opts)
+        return tuple (result)
     # end def opts
 
     @TFL.Meta.Once_Property
