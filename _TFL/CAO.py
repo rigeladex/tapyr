@@ -87,6 +87,8 @@
 #                     `Abs_Path._resolve_range`;
 #    31-May-2012 (CT) Add `Rel_Path`;
 #                     derive `Config` from `Rel_Path`, not `Abs_Path`
+#    31-May-2012 (CT) Add `check_bun` to `CAO._handle_arg`,
+#                     don't `check_bun` after `--`
 #    ««revision-date»»···
 #--
 
@@ -1323,10 +1325,10 @@ class CAO (TFL.Meta.Object) :
         return result
     # end def _cooked
 
-    def _handle_arg (self, arg, argv_it) :
+    def _handle_arg (self, arg, argv_it, check_bun = True) :
         bd  = self._bun_dict
         pat = self._bun_pat
-        if pat.match (arg) :
+        if check_bun and pat.match (arg) :
             name = pat.name
             if name in bd :
                 spec = bd [name]
@@ -1396,7 +1398,7 @@ class CAO (TFL.Meta.Object) :
         for arg in argv_it :
             if arg == "--" :
                 for arg in argv_it :
-                    self._handle_arg (arg, argv_it)
+                    self._handle_arg (arg, argv_it, check_bun = False)
             elif arg.startswith ("-") :
                 self._handle_opt (arg, argv_it)
             else :
