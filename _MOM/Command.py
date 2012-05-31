@@ -51,6 +51,7 @@
 #    22-May-2012 (CT) Factor `app_path` to `TFL.Command.app_dir`
 #    22-May-2012 (CT) Factor `TFL.Sub_Command`
 #    31-May-2012 (CT) Factor `-config` option to `TFL.Command`
+#    31-May-2012 (CT) Call `scope.ems.compact` in `_handle_create`
 #    ««revision-date»»···
 #--
 
@@ -282,7 +283,9 @@ class MOM_Command (TFL.Command) :
     def _handle_create (self, cmd) :
         scope = self.scope \
             (cmd.db_url, cmd.db_name, create = True, verbose = cmd.verbose)
-        scope.destroy ()
+        scope.commit      ()
+        scope.ems.compact ()
+        scope.destroy     ()
     # end def _handle_create
 
     def _handle_delete (self, cmd) :
@@ -304,11 +307,13 @@ class MOM_Command (TFL.Command) :
     # end def _handle_load
 
     def _handle_migrate (self, cmd) :
+        if cmd.verbose :
+            print "Migrating scope", cmd.db_url, cmd.db_name, \
+                "-->", cmd.target_db_url
         apt_s, url_s = self.app_type_and_url (cmd.db_url, cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
         if cmd.verbose :
-            print "Migrating scope", apt_s, url_s, "to", apt_t, url_t
-            print "   ", cmd.db_url, cmd.db_name, "-->", cmd.target_db_url
+            print "   ", apt_s, url_s, "to", apt_t, url_t
         db_man_s = self.DB_Man.connect (apt_s, url_s)
         if cmd.readonly :
             with self._cro_context (db_man_s, True) :
