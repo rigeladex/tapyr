@@ -80,12 +80,20 @@
 #    14-Mar-2012 (CT) Add empty `__builtins__` to `_safe_eval`
 #    15-May-2012 (CT) Allow abbreviations for `Cmd_Choice`
 #    17-May-2012 (CT) Add optional argument `defaults` to `Cmd`
+#    25-May-2012 (CT) Change `Path._resolve_range` to apply `expanded_path`
+#    31-May-2012 (CT) Add `** kw` to `_Spec_.__init__`
+#    31-May-2012 (CT) Change `Path._resolve_range` to call `_resolve_range_1`;
+#                     redefine `Abs_Path._resolve_range_1` instead of
+#                     `Abs_Path._resolve_range`;
+#    31-May-2012 (CT) Add `Rel_Path`;
+#                     derive `Config` from `Rel_Path`, not `Abs_Path`
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 
-from   _TFL               import pyk
+from   _TFL               import pyk, sos
+from   _TFL.I18N          import _, _T, _Tn
 from   _TFL.Regexp        import Regexp, re
 from   _TFL.Trie          import Word_Trie as Trie
 
@@ -96,7 +104,6 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.predicate
-import _TFL.sos
 
 from   itertools          import chain as ichain
 
@@ -206,13 +213,12 @@ class _Spec_ (TFL.Meta.Object) :
             , range_delta   = 1
             , cook          = None
             , rank          = 0
+            , ** kw
             ) :
         self.name           = name
         self.default        = default
         self.description    = description
-        if auto_split is None :
-            auto_split      = self.auto_split
-        else :
+        if auto_split is not None :
             self.auto_split = auto_split
         if max_number is None :
             max_number      = self._auto_max_number (self.auto_split)
@@ -222,6 +228,7 @@ class _Spec_ (TFL.Meta.Object) :
         self.rank           = rank
         if cook is not None :
             self.cook       = cook
+        self.__dict__.update (kw)
     # end def __init__
 
     def combine (self, values) :
@@ -286,13 +293,13 @@ class _Spec_ (TFL.Meta.Object) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                for v in self._resolve_range_1 (value, pat, cao) :
+                for v in self._resolve_range_1 (value, cao, pat) :
                     yield v
             else :
                 yield value
     # end def _resolve_range
 
-    def _resolve_range_1 (self, value, pat, cao) :
+    def _resolve_range_1 (self, value, cao, pat = None) :
         yield value
     # end def _resolve_range_1
 
@@ -375,7 +382,7 @@ class _Number_ (_Spec_) :
         return self._cook (value)
     # end def cook
 
-    def _resolve_range_1 (self, value, pat, cao) :
+    def _resolve_range_1 (self, value, cao, pat) :
         cook  = self.cook
         head  = cook (pat.head, cao)
         tail  = cook (pat.tail, cao) + 1
@@ -545,7 +552,7 @@ class Help (_Spec_O_) :
     def __init__ (self) :
         self.__super.__init__ \
             ( name          = "help"
-            , description   = "Display help about command"
+            , description   = _ ("Display help about command")
             )
     # end def __init__
 
@@ -865,13 +872,19 @@ class Path (_Spec_) :
     type_abbr     = "P"
 
     def cook (self, value, cao = None) :
+        ### Need to redefine `cook` because instances without `auto_split`
+        ### don't go through `_resolve_range`
         if value :
-            value = TFL.sos.expanded_path (value)
+            value = sos.expanded_path (value)
         return value
     # end def cook
 
     def _resolve_range (self, values, cao) :
-        for v in TFL.sos.expanded_globs (* values) :
+        def _gen (values, cao) :
+            for value in sos.expanded_globs (* values) :
+                for v in self._resolve_range_1 (sos.expanded_path (value), cao):
+                    yield v
+        for v in TFL.uniq (_gen (values, cao)) :
             yield v
     # end def _resolve_range
 
@@ -883,20 +896,66 @@ class Abs_Path (Path) :
     type_abbr     = "Q"
 
     def cook (self, value, cao = None) :
+        ### Need to redefine `cook` because instances without `auto_split`
+        ### don't go through `_resolve_range`
         result = self.__super.cook (value, cao)
         if result :
-            result = TFL.sos.path.abspath (result)
+            result = sos.path.abspath (result)
         return result
     # end def cook
 
-    def _resolve_range (self, value, cao) :
-        for v in self.__super._resolve_range (value, cao) :
-            yield TFL.sos.path.abspath (v)
-    # end def _resolve_range
+    def _resolve_range_1 (self, value, cao) :
+        yield sos.path.abspath (value)
+    # end def _resolve_range_1
 
 # end class Abs_Path
 
-class Config (_Config_, Abs_Path) :
+class Rel_Path (Path) :
+    """Path that can be relative to a specific base directory."""
+
+    type_abbr     = "R"
+
+    single_match  = False
+    _base_dir     = None
+    _base_dirs    = ()
+
+    @TFL.Meta.Once_Property
+    def base_dirs (self) :
+        def _gen (bds) :
+            for bd in bds :
+                if TFL.callable (bd) :
+                    bd = bd ()
+                if bd is not None :
+                    yield bd
+        return tuple (_gen (self._base_dirs or (self._base_dir, )))
+    # end def base_dirs
+
+    def _resolve_range_1 (self, value, cao) :
+        base_dirs = self.base_dirs
+        if base_dirs :
+            if not sos.path.isabs (value) :
+                def _gen (value, base_dirs, single_match) :
+                    not_existing = None
+                    for bd in base_dirs :
+                        v = sos.path.join (bd, value)
+                        if sos.path.exists (v) :
+                            not_existing = False
+                            yield v
+                            if single_match :
+                                break
+                        elif not_existing is None :
+                            not_existing = v
+                    if not_existing :
+                        yield not_existing
+                for v in _gen (value, base_dirs, self.single_match) :
+                    yield sos.path.abspath (v)
+                return
+        yield sos.path.abspath (value)
+    # end def _resolve_range_1
+
+# end class Rel_Path
+
+class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
 
     type_abbr     = "C"
@@ -1365,7 +1424,7 @@ class CAO (TFL.Meta.Object) :
     def _set_keys (self, kw) :
         self._key_values.update (kw)
         if self._put_keywords :
-           TFL.sos.environ.update (kw)
+           sos.environ.update (kw)
     # end def _set_keys
 
     def _set_opt (self, spec, value) :
