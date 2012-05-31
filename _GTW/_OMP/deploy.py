@@ -32,6 +32,8 @@
 #    24-May-2012 (CT) Set correct `PYTHONPATH` for `Active` and `Passive`
 #    24-May-2012 (CT) Use `migrate` instead of `@mig1`, `@mig2`; print
 #    25-May-2012 (CT) Fix `db_url` in `migrate` (needs `///`)
+#    31-May-2012 (CT) Change default of `_Migrate_.db_name` to `/tmp/migrate`
+#    31-May-2012 (CT) Use `cwd` in `_handle_migrate` (again!)
 #    ««revision-date»»···
 #--
 
@@ -78,7 +80,7 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         _opts                   = \
             ( "-Active:B?Migrate database from `active_name`"
             , "-Passive:B?Migrate database to `passive_name`"
-            , "-db_name:Q=migration?Name of migration database"
+            , "-db_name:Q=/tmp/migration?Name of migration database"
             )
 
     _Migrate_ = _GTW_OMP_Migrate_ # end class
@@ -92,12 +94,14 @@ class GTW_OMP_Command (GTW.deploy.Command) :
             app  = self._app_cmd (cmd, P, path)
             pp   = sos.path.abspath (pjoin (path, cmd.lib_dir))
             args = ("migrate", "-overwrite") + args
-            if cmd.verbose or cmd.dry_run :
-                print ("PYTHONPATH =", pp)
-                print (app, " ".join (args))
-            if not cmd.dry_run :
-                with self.pbl.env (PYTHONPATH = pp) :
-                    print (app (* args))
+            with cwd (P.root / path / cmd.app_dir) :
+                if cmd.verbose or cmd.dry_run :
+                    print ("cd", self.pbl.path ())
+                    print ("PYTHONPATH =", pp)
+                    print (app, " ".join (args))
+                if not cmd.dry_run :
+                    with self.pbl.env (PYTHONPATH = pp) :
+                        print (app (* args))
         if cmd.Active :
             _do (P.active,  ("-target_db_url", db_url, "-readonly"))
         if cmd.Passive :
