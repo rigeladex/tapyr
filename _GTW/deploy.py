@@ -72,6 +72,7 @@ class _GTWD_Sub_Command_ (TFL.Sub_Command) :
 
     _defaults               = dict \
         ( apply_to_version  = "passive"
+        , py_options        = "-O"
         )
     _opts                   = \
         ( "-apply_to_version:S?Name of version to apply command to"
