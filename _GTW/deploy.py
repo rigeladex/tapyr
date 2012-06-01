@@ -129,14 +129,14 @@ class GTWD_Command (_Command_) :
         )
 
     class _GTWD_App_ (_Sub_Command_) :
-        """Run a command of the web application"""
+        """Run a command of the web application."""
 
         min_args            = 1
 
     _App_ = _GTWD_App_ # end class
 
     class _GTWD_Babel_ (_Command_) :
-        """Extract or compile translations"""
+        """Extract or compile translations."""
 
         _lists_to_combine   = ("_package_dirs", )
 
@@ -166,12 +166,12 @@ class GTWD_Command (_Command_) :
         _Babel_Sub_Command_ = _GTWD_Babel_Sub_Command_ # end class
 
         class _GTWD_Extract_ (_Babel_Sub_Command_) :
-            """Extract strings to translate"""
+            """Extract strings to translate."""
 
         _Extract_ = _GTWD_Extract_ # end class
 
         class _GTWD_Compile_ (_Babel_Sub_Command_) :
-            """Compile translations"""
+            """Compile translations."""
 
         _Compile_ = _GTWD_Compile_ # end class
 
@@ -227,7 +227,7 @@ class GTWD_Command (_Command_) :
     _Update_ = _GTWD_Update_ # end class
 
     class _GTWD_VC_ (_Sub_Command_) :
-        """Run a command of the version control system"""
+        """Run a command of the version control system."""
 
         min_args            = 1
 
