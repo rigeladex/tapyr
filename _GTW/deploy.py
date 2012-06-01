@@ -36,6 +36,10 @@
 #    30-May-2012 (CT) Add sub-command `app`
 #    31-May-2012 (CT) Factor `-config` option to `TFL.Command`
 #    31-May-2012 (CT) Change `_handle_app` to allow multiple arguments
+#     1-Jun-2012 (CT) Move `-apply_to_version` to `_Sub_Command_` to allow
+#                     sub-command specific defaults
+#     1-Jun-2012 (CT) Factor `_app_call`
+#     1-Jun-2012 (CT) Factor `P.app_dir`
 #    ««revision-date»»···
 #--
 
@@ -61,7 +65,15 @@ _Command_ = _GTWD_Command_ # end class
 
 class _GTWD_Sub_Command_ (TFL.Sub_Command) :
 
-    _rn_prefix = "_GTWD"
+    _rn_prefix              = "_GTWD"
+
+    _defaults               = dict \
+        ( apply_to_version  = "passive"
+        )
+    _opts                   = \
+        ( "-apply_to_version:S?Name of version to apply command to"
+        ,
+        )
 
 _Sub_Command_ = _GTWD_Sub_Command_ # end class
 
@@ -75,7 +87,6 @@ class GTWD_Command (_Command_) :
     _defaults               = dict \
         ( active_name       = "active"
         , app_dir           = "app"
-        , apply_to_version  = "passive"
         , bugs_address      = "tanzer@swing.co.at,martin@mangari.org"
         , copyright_holder  = "Mag. Christian Tanzer, Martin Glück"
         , lib_dir           = "lib"
@@ -90,7 +101,6 @@ class GTWD_Command (_Command_) :
         ( "-active_name:S?Name of symbolic link for active version"
         , "-app_dir:S?Name of directory holding the application"
         , "-app_module:S=app.py?Name of main module of application"
-        , "-apply_to_version:S?Name of version to apply command to"
         , "-bugs_address:S?Email address to send bug reports to"
         , "-copyright_holder:S?Name of copyright holders"
         , "-dry_run:B?Don't run the command, just print what would be done"
@@ -231,10 +241,27 @@ class GTWD_Command (_Command_) :
         return local
     # end def pbl
 
-    def _app_cmd (self, cmd, P, path = None) :
-        if path is None :
-            path = cmd.apply_to_version
-        result = self.pbc.python [P.root / path / cmd.app_dir / cmd.app_module]
+    def _app_call (self, cmd, P, app, args = (), app_dir = None) :
+        pbl = self.pbl
+        cwd = pbl.cwd
+        if not args :
+            args = cmd.argv
+        if app_dir is None :
+            app_dir = P.app_dir
+        with cwd (app_dir) :
+            if cmd.verbose or cmd.dry_run :
+                print ("cd", pbl.path ())
+                print ("PYTHONPATH =", pbl.env.get ("PYTHONPATH"))
+                print (app, " ".join (args))
+            if not cmd.dry_run :
+                print (app (* args))
+    # end def _app_call
+
+    def _app_cmd (self, cmd, P, version = None) :
+        if version is None :
+            version = cmd.apply_to_version
+        result = self.pbc.python \
+            [P.root / version / cmd.app_dir / cmd.app_module]
         if cmd.verbose :
             result = result ["-verbose"]
         return result
@@ -242,16 +269,8 @@ class GTWD_Command (_Command_) :
 
     def _handle_app (self, cmd, * args) :
         P   = self._P (cmd)
-        cwd = self.pbl.cwd
-        app = self._app_cmd (cmd, P, cmd.apply_to_version)
-        if not args :
-            args = cmd.argv
-        with cwd (P.root / cmd.apply_to_version / cmd.app_dir) :
-            if cmd.verbose or cmd.dry_run :
-                print ("cd", self.pbl.path ())
-                print (app, " ".join (args))
-            if not cmd.dry_run :
-                print (app (* args))
+        app = self._app_cmd (cmd, P)
+        self._app_call (cmd, P, app, args)
     # end def _handle_app
 
     def _handle_babel_compile (self, cmd) :
@@ -263,9 +282,7 @@ class GTWD_Command (_Command_) :
              , "-import_file",     cmd.app_module
              , "-use_fuzzy"
              )
-        app_dir = pjoin \
-            (cmd.root_path, cmd.apply_to_version, cmd.app_dir)
-        with cwd (app_dir) :
+        with cwd (P.app_dir) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", app_dir)
             for l in cmd.languages :
@@ -313,12 +330,11 @@ class GTWD_Command (_Command_) :
     def _handle_info (self, cmd) :
         P       = self._P (cmd)
         fmt     = "%-15s : %s"
-        app_dir = pjoin (cmd.root_path, cmd.apply_to_version, cmd.app_dir)
         print (fmt % (cmd.active_name,  P.active))
         print (fmt % (cmd.passive_name, P.passive))
         print (fmt % ("selected",       P.selected))
         print (fmt % ("prefix",         P.prefix))
-        print (fmt % ("app-dir",        app_dir))
+        print (fmt % ("app-dir",        P.app_dir))
         print (fmt % ("python",         self.pbc.python))
         print (fmt % ("python-library", self.lib_dir))
         print (fmt % ("nested-library", P.lib_dir))
@@ -366,38 +382,36 @@ class GTWD_Command (_Command_) :
     # end def _handle_switch
 
     def _handle_update (self, cmd) :
+        P    = self._P (cmd)
         cwd  = self.pbl.cwd
-        root = pjoin (cmd.root_path, cmd.apply_to_version)
         vcs  = cmd.vcs
         upd  = self.pbl [vcs] [self._vcs_update_map [vcs]]
-        with cwd (root) :
-            for d in cmd.app_dir, cmd.lib_dir :
-                with cwd (d) :
-                    p = self.pbl.path ()
-                    if cmd.verbose or cmd.dry_run :
-                        print ("cd", p, ";", upd)
-                    if not cmd.dry_run :
-                        if not cmd.verbose :
-                            print ("*" * 3, p, "*" * 20)
-                        print (upd ())
+        for d in P.app_dir, P.lib_dir :
+            with cwd (d) :
+                p = self.pbl.path ()
+                if cmd.verbose or cmd.dry_run :
+                    print ("cd", p, ";", upd)
+                if not cmd.dry_run :
+                    if not cmd.verbose :
+                        print ("*" * 3, p, "*" * 20)
+                    print (upd ())
     # end def _handle_update
 
     def _handle_vc (self, cmd) :
+        P    = self._P (cmd)
         cwd  = self.pbl.cwd
-        root = pjoin (cmd.root_path, cmd.apply_to_version)
         vcs  = self.pbl [cmd.vcs]
         args = cmd.argv
-        with cwd (root) :
-            for d in cmd.app_dir, cmd.lib_dir :
-                with cwd (d) :
-                    p = self.pbl.path ()
-                    if cmd.verbose or cmd.dry_run :
-                        print ("cd", p)
-                        print (vcs, " ".join (args))
-                    if not cmd.dry_run :
-                        if not cmd.verbose :
-                            print ("*" * 3, p, "*" * 20)
-                        print (vcs (* args))
+        for d in P.app_dir, P.lib_dir :
+            with cwd (d) :
+                p = self.pbl.path ()
+                if cmd.verbose or cmd.dry_run :
+                    print ("cd", p)
+                    print (vcs, " ".join (args))
+                if not cmd.dry_run :
+                    if not cmd.verbose :
+                        print ("*" * 3, p, "*" * 20)
+                    print (vcs (* args))
     # end def _handle_vc
 
     def _P (self, cmd) :
@@ -415,6 +429,8 @@ class GTWD_Command (_Command_) :
             , root     = self.pbl.path (root)
             )
         result.selected = getattr (result, cmd.apply_to_version)
+        result.app_dir  = sos.path.abspath \
+            (pjoin (result.selected, cmd.app_dir))
         result.lib_dir  = self.pbl.env ["PYTHONPATH"] = sos.path.abspath \
             (pjoin (result.selected, cmd.lib_dir))
         return result

@@ -34,6 +34,7 @@
 #    25-May-2012 (CT) Fix `db_url` in `migrate` (needs `///`)
 #    31-May-2012 (CT) Change default of `_Migrate_.db_name` to `/tmp/migrate`
 #    31-May-2012 (CT) Use `cwd` in `_handle_migrate` (again!)
+#     1-Jun-2012 (CT) Factor `_app_call` from `_handle_migrate`
 #    ««revision-date»»···
 #--
 
@@ -87,21 +88,13 @@ class GTW_OMP_Command (GTW.deploy.Command) :
 
     def _handle_migrate (self, cmd) :
         P      = self._P (cmd)
-        cwd    = self.pbl.cwd
-        pyc    = self.pbc.python
         db_url = "hps:///" + cmd.db_name
-        def _do (path, args) :
-            app  = self._app_cmd (cmd, P, path)
-            pp   = sos.path.abspath (pjoin (path, cmd.lib_dir))
+        def _do (version, args) :
+            app  = self._app_cmd (cmd, P, version)
             args = ("migrate", "-overwrite") + args
-            with cwd (P.root / path / cmd.app_dir) :
-                if cmd.verbose or cmd.dry_run :
-                    print ("cd", self.pbl.path ())
-                    print ("PYTHONPATH =", pp)
-                    print (app, " ".join (args))
-                if not cmd.dry_run :
-                    with self.pbl.env (PYTHONPATH = pp) :
-                        print (app (* args))
+            with self.pbl.env (PYTHONPATH = P.root / version / cmd.lib_dir) :
+                self._app_call \
+                    (cmd, P, app, args, P.root / version / cmd.app_dir)
         if cmd.Active :
             _do (P.active,  ("-target_db_url", db_url, "-readonly"))
         if cmd.Passive :

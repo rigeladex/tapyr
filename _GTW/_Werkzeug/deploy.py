@@ -29,6 +29,8 @@
 # Revision Dates
 #    23-May-2012 (CT) Creation
 #    24-May-2012 (CT) Add sub-command `setup_cache`
+#     1-Jun-2012 (CT) Factor `_app_call` from `setup_cache`
+#     1-Jun-2012 (CT) Add sub-command `fcgi`
 #    ««revision-date»»···
 #--
 
@@ -56,21 +58,32 @@ class GT2W_Command (GTW.deploy.Command) :
 
     _Babel_ = _GT2W_Babel_ # end class
 
+    class _GT2W_FCGI_ (_Sub_Command_) :
+        """Run application as a FastCGI server."""
+
+        _defaults               = dict \
+            ( apply_to_version  = "active"
+            )
+
+    _FCGI_ = _GT2W_FCGI_ # end class
+
     class _GT2W_Setup_Cache_ (_Sub_Command_) :
         """Setup the cache of the application."""
 
     _Setup_Cache_ = _GT2W_Setup_Cache_ # end class
 
+    def _handle_fcgi (self, cmd) :
+        P    = self._P (cmd)
+        app  = self._app_cmd (cmd, P)
+        args = ("fcgi", ) + cmd.argv
+        self._app_call (cmd, P, app, args)
+    # end def _handle_fcgi
+
     def _handle_setup_cache (self, cmd) :
-        P      = self._P (cmd)
-        cwd    = self.pbl.cwd
-        app    = self._app_cmd (cmd, P, cmd.apply_to_version)
-        with cwd (P.root / cmd.apply_to_version / cmd.app_dir) :
-            if cmd.verbose or cmd.dry_run :
-                print ("cd", self.pbl.path ())
-                print (app, "setup_cache")
-            if not cmd.dry_run :
-                app ("setup_cache")
+        P    = self._P (cmd)
+        app  = self._app_cmd (cmd, P)
+        args = ("setup_cache", ) + cmd.argv
+        self._app_call (cmd, P, app, args)
     # end def _handle_setup_cache
 
 Command = GT2W_Command # end class
