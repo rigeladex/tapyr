@@ -303,8 +303,7 @@ class TFL_Sub_Command_Combiner (Command) :
         opts   = self._std_opts (cmd)
         parent = self._parent
         for sc in self.sub_command_seq :
-            print (sc + opts)
-            #parent (sc + opts)
+            parent (sc + opts)
     # end def handler
 
     def _std_opts (self, cmd) :
