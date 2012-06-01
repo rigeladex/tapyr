@@ -32,6 +32,8 @@
 #     1-Jun-2012 (CT) Factor `_app_call` from `setup_cache`
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
 #     1-Jun-2012 (CT) Add `py_options` to `_FCGI_._defaults`
+#     1-Jun-2012 (CT) Derive from `GTW.OMP.deploy`, not `GTW.deploy`
+#     1-Jun-2012 (CT) Add sub-command `ubycms`
 #    ««revision-date»»···
 #--
 
@@ -40,20 +42,22 @@ from   __future__  import absolute_import, division, print_function #, unicode_l
 from   _GTW                   import GTW
 from   _TFL                   import TFL
 
-import _GTW.deploy
+import _GTW._OMP.deploy
 
-class _GT2W_Sub_Command_ (GTW.deploy._Sub_Command_) :
+class _GT2W_Sub_Command_ (GTW.OMP.deploy._Sub_Command_) :
 
     _rn_prefix = "_GT2W"
 
 _Sub_Command_ = _GT2W_Sub_Command_ # end class
 
-class GT2W_Command (GTW.deploy.Command) :
+_Ancestor = GTW.OMP.deploy.Command
+
+class GT2W_Command (_Ancestor) :
     """Manage deployment applications based on GTW.Werkzeug."""
 
     _rn_prefix              = "GT2W"
 
-    class _GT2W_Babel_ (_Sub_Command_, GTW.deploy.Command._Babel_) :
+    class _GT2W_Babel_ (_Sub_Command_, _Ancestor._Babel_) :
 
         _package_dirs       = [ "_JNJ", "_ReST"]
 
@@ -64,7 +68,6 @@ class GT2W_Command (GTW.deploy.Command) :
 
         _defaults               = dict \
             ( apply_to_version  = "active"
-            , py_options        = "-O"
             )
 
     _FCGI_ = _GT2W_FCGI_ # end class
@@ -73,6 +76,22 @@ class GT2W_Command (GTW.deploy.Command) :
         """Setup the cache of the application."""
 
     _Setup_Cache_ = _GT2W_Setup_Cache_ # end class
+
+    class _GT2W_UBYCMS_ (TFL.Sub_Command_Combiner) :
+        """Update, Babel compile, pYcompile, setup Cache, Migrate, Switch."""
+
+        _rn_prefix       = "_GT2W"
+
+        _sub_command_seq = \
+            [ "update"
+            , ["babel", "compile"]
+            , "pycompile"
+            , "setup_cache"
+            , ["migrate", "-Active", "-Passive"]
+            , "switch"
+            ]
+
+    _UBYCMS_ = _GT2W_UBYCMS_ # end class
 
     def _handle_fcgi (self, cmd) :
         P    = self._P (cmd)
