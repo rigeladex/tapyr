@@ -40,6 +40,7 @@
 #                     rename from `Scaffold` to `Command`
 #    22-May-2012 (CT) Remove unused imports
 #    22-May-2012 (CT) Use `app_dir`, not `app_path`
+#     1-Jun-2012 (CT) Add sub-command `fcgi`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,10 @@ class GT2W_Command (GTW.OMP.Command) :
             )
 
     _Run_Server_ = _GT2W_Run_Server_ # end class
+
+    class _GT2W_FCGI_ (_GT2W_Server_Base_, GTW.OMP.Command._FCGI_) :
+        pass
+    _FCGI_ = _GT2W_FCGI_ # end class
 
     class _GT2W_Setup_Cache_ (_GT2W_Server_Base_, GTW.OMP.Command._Setup_Cache_) :
         pass

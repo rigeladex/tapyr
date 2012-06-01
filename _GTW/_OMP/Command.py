@@ -44,6 +44,7 @@
 #    15-May-2012 (CT) Add sub-command `setup_cache`
 #    17-May-2012 (CT) Derive from `MOM.Command` instead of `MOM.Scaffold`,
 #                     rename from `Scaffold` to `Command`
+#     1-Jun-2012 (CT) Add sub-command `fcgi`
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,11 @@ class GTW_Command (MOM.Command) :
 
     _Server_Base_ = _GTW_Server_Base_ # end class
 
+    class _GTW_FCGI_ (_GTW_Server_Base_) :
+        """Run as a FastCGI server."""
+
+    _FCGI_ = _GTW_FCGI_ # end class
+
     class _GTW_Run_Server_ (_GTW_Server_Base_) :
         """Run as application server."""
 
@@ -171,6 +177,11 @@ class GTW_Command (MOM.Command) :
         """Run as wsgi application."""
 
     _WSGI_ = _GTW_WSGI_ # end class
+
+    def _handle_fcgi (self, cmd) :
+        from flup.server.fcgi import WSGIServer
+        return WSGIServer (self._handle_wsgi (cmd)).run ()
+    # end def _handle_fcgi
 
     def _handle_run_server (self, cmd) :
         raise NotImplementedError
