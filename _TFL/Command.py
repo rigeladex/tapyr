@@ -33,6 +33,7 @@
 #    24-May-2012 (CT) Add `_..._to_combine` to `_lists_to_combine`
 #    25-May-2012 (CT) Add `sc_map` and `__getitem__`; add `_parent`
 #    31-May-2012 (CT) Add `config_defaults`, define `Config` option in `opts`
+#     1-Jun-2012 (CT) Fix `__doc__` in `_M_Command_.__new__`
 #    ««revision-date»»···
 #--
 
@@ -67,13 +68,27 @@ class _M_Command_ (TFL.Meta.M_Auto_Combine) :
             (  v.__name__ for v in dct.itervalues ()
             if isinstance (v, _M_Command_) and not getattr (v, "is_partial", 0)
             )
+        if not dct.get ("__doc__") :
+            ### Find the right base to inherit doc-string from
+            ### * must be an instance of `_M_Command_`
+            ### * must contain a non-empty doc-string in its __dict__
+            try :
+                dct ["__doc__"] = first \
+                    (  d for d in
+                           (  b.__dict__.get ("__doc__") for b in bases
+                           if isinstance (b, _M_Command_)
+                           )
+                    if d
+                    )
+            except LookupError :
+                pass
         return super (_M_Command_, mcls).__new__ (mcls, name, bases, dct)
     # end def __new__
 
 # end class _M_Command_
 
 class TFL_Command (TFL.Meta.Object) :
-    """Base class for interactive commands."""
+    ### Base class for interactive commands.
 
     __metaclass__           = _M_Command_
     _real_name              = "Command"
@@ -246,7 +261,7 @@ class TFL_Command (TFL.Meta.Object) :
 Command = TFL_Command # end class
 
 class TFL_Sub_Command (Command) :
-    """Base class for sub-commands."""
+    ### Base class for sub-commands
 
     _real_name              = "Sub_Command"
     _handler_prefix         = ""
