@@ -40,6 +40,7 @@
 #                     sub-command specific defaults
 #     1-Jun-2012 (CT) Factor `_app_call`
 #     1-Jun-2012 (CT) Factor `P.app_dir`
+#     1-Jun-2012 (CT) Add option `-python`; factor `P.python`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,7 @@ class GTWD_Command (_Command_) :
         , lib_dir           = "lib"
         , output_encoding   = "utf-8"
         , passive_name      = "passive"
+        , python            = "python"
         , root_path         = "./"
         , skip_modules      = "_pyk3.py"
         , vcs               = "git"
@@ -108,6 +110,7 @@ class GTWD_Command (_Command_) :
             "?Name of directory with the library used by the application"
         , "-passive_name:S?Name of symbolic link for passive version"
         , "-project_name:S?Name of project"
+        , "-python:P?Path for nested python interpreter"
         , "-root_path:P?Root path of application versioning"
         , "-verbose:B"
         , "-vcs:S?Name of version control system used"
@@ -260,7 +263,7 @@ class GTWD_Command (_Command_) :
     def _app_cmd (self, cmd, P, version = None) :
         if version is None :
             version = cmd.apply_to_version
-        result = self.pbc.python \
+        result = P.python \
             [P.root / version / cmd.app_dir / cmd.app_module]
         if cmd.verbose :
             result = result ["-verbose"]
@@ -297,7 +300,7 @@ class GTWD_Command (_Command_) :
                 if not cmd.dry_run :
                     if not sos.path.isdir (l_dir) :
                         sos.makedirs (l_dir)
-                    print (self.pbc.python (* l_args))
+                    print (P.python (* l_args))
     # end def _handle_babel_compile
 
     def _handle_babel_extract (self, cmd) :
@@ -323,8 +326,8 @@ class GTWD_Command (_Command_) :
             print ("python", " ".join (extr_args))
             print ("python", " ".join (lang_args))
         if not cmd.dry_run :
-            print (self.pbc.python (* extr_args))
-            print (self.pbc.python (* lang_args))
+            print (P.python (* extr_args))
+            print (P.python (* lang_args))
     # end def _handle_babel_extract
 
     def _handle_info (self, cmd) :
@@ -335,19 +338,20 @@ class GTWD_Command (_Command_) :
         print (fmt % ("selected",       P.selected))
         print (fmt % ("prefix",         P.prefix))
         print (fmt % ("app-dir",        P.app_dir))
-        print (fmt % ("python",         self.pbc.python))
+        print (fmt % ("python",         P.python))
         print (fmt % ("python-library", self.lib_dir))
         print (fmt % ("nested-library", P.lib_dir))
         print (fmt % ("PYTHONPATH",     sys.path))
         print \
             ( fmt
             % ( "NESTEDPATH"
-              , self.pbc.python ("-c", "import sys; print sys.path")
+              , P.python ("-c", "import sys; print sys.path")
               )
             )
     # end def _handle_info
 
     def _handle_pycompile (self, cmd) :
+        P    = self._P (cmd)
         cwd  = self.pbl.cwd
         root = pjoin (cmd.root_path, cmd.apply_to_version)
         args = tuple \
@@ -364,7 +368,7 @@ class GTWD_Command (_Command_) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", root, "; python", " ".join (args))
             if not cmd.dry_run :
-                self.pbc.python (* args)
+                P.python (* args)
     # end def _handle_pycompile
 
     def _handle_switch (self, cmd) :
@@ -415,6 +419,7 @@ class GTWD_Command (_Command_) :
     # end def _handle_vc
 
     def _P (self, cmd) :
+        pbl     = self.pbl
         active  = sos.path.realpath     (cmd.active_name)
         passive = sos.path.realpath     (cmd.passive_name)
         root    = sos.path.realpath     (cmd.root_path)
@@ -426,12 +431,13 @@ class GTWD_Command (_Command_) :
             ( active   = active
             , passive  = passive
             , prefix   = prefix
-            , root     = self.pbl.path (root)
+            , python   = pbl [cmd.python]
+            , root     = pbl.path (root)
             )
         result.selected = getattr (result, cmd.apply_to_version)
         result.app_dir  = sos.path.abspath \
             (pjoin (result.selected, cmd.app_dir))
-        result.lib_dir  = self.pbl.env ["PYTHONPATH"] = sos.path.abspath \
+        result.lib_dir  = pbl.env ["PYTHONPATH"] = sos.path.abspath \
             (pjoin (result.selected, cmd.lib_dir))
         return result
     # end def _P
