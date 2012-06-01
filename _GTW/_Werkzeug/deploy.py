@@ -75,14 +75,14 @@ class GT2W_Command (GTW.deploy.Command) :
     def _handle_fcgi (self, cmd) :
         P    = self._P (cmd)
         app  = self._app_cmd (cmd, P)
-        args = ("fcgi", ) + cmd.argv
+        args = ("fcgi", ) + tuple (cmd.argv)
         self._app_call (cmd, P, app, args)
     # end def _handle_fcgi
 
     def _handle_setup_cache (self, cmd) :
         P    = self._P (cmd)
         app  = self._app_cmd (cmd, P)
-        args = ("setup_cache", ) + cmd.argv
+        args = ("setup_cache", ) + tuple (cmd.argv)
         self._app_call (cmd, P, app, args)
     # end def _handle_setup_cache
 

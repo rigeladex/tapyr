@@ -245,7 +245,7 @@ class GTWD_Command (_Command_) :
         pbl = self.pbl
         cwd = pbl.cwd
         if not args :
-            args = cmd.argv
+            args = tuple (cmd.argv)
         if app_dir is None :
             app_dir = P.app_dir
         with cwd (app_dir) :
@@ -401,7 +401,7 @@ class GTWD_Command (_Command_) :
         P    = self._P (cmd)
         cwd  = self.pbl.cwd
         vcs  = self.pbl [cmd.vcs]
-        args = cmd.argv
+        args = tuple (cmd.argv)
         for d in P.app_dir, P.lib_dir :
             with cwd (d) :
                 p = self.pbl.path ()
