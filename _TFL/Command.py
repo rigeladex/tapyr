@@ -34,6 +34,7 @@
 #    25-May-2012 (CT) Add `sc_map` and `__getitem__`; add `_parent`
 #    31-May-2012 (CT) Add `config_defaults`, define `Config` option in `opts`
 #     1-Jun-2012 (CT) Fix `__doc__` in `_M_Command_.__new__`
+#     1-Jun-2012 (CT) Add `Sub_Command_Combiner`
 #    ««revision-date»»···
 #--
 
@@ -277,6 +278,51 @@ class TFL_Sub_Command (Command) :
     # end def _handler
 
 Sub_Command = TFL_Sub_Command # end class
+
+class TFL_Sub_Command_Combiner (Command) :
+    ### Base class for sub-commands that combine a number of other sub-commands
+
+    _real_name              = "Sub_Command_Combiner"
+
+    ### `_sub_command_seq` can't be auto-combined because a descendent might
+    ### want a different sequence
+    _sub_command_seq        = []
+
+    @TFL.Meta.Once_Property
+    def sub_command_seq (self) :
+        def _gen (self) :
+            for sc in self._sub_command_seq :
+                if isinstance (sc, basestring) :
+                    yield [sc]
+                else :
+                    yield sc
+        return tuple (_gen (self))
+    # end def sub_command_seq
+
+    def handler (self, cmd) :
+        opts   = self._std_opts (cmd)
+        parent = self._parent
+        for sc in self.sub_command_seq :
+            print (sc + opts)
+            #parent (sc + opts)
+    # end def handler
+
+    def _std_opts (self, cmd) :
+        result = []
+        raws   = cmd._raw
+        opts   = cmd._opt_dict
+        for k, v in cmd._map.iteritems () :
+            opt = opts.get (k)
+            if opt :
+                mk = "-" + k
+                if k in raws :
+                    result.extend ((mk, opt.auto_split.join (raws [k])))
+                elif v and (not isinstance (v, list) or any (v)) :
+                    result.append (mk)
+        return result
+    # end def _std_opts
+
+Sub_Command_Combiner = TFL_Sub_Command_Combiner # end class
 
 if __name__ != "__main__" :
     TFL._Export ("*")
