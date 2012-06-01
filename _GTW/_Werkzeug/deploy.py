@@ -31,6 +31,7 @@
 #    24-May-2012 (CT) Add sub-command `setup_cache`
 #     1-Jun-2012 (CT) Factor `_app_call` from `setup_cache`
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
+#     1-Jun-2012 (CT) Add `py_options` to `_FCGI_._defaults`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,7 @@ class GT2W_Command (GTW.deploy.Command) :
 
         _defaults               = dict \
             ( apply_to_version  = "active"
+            , py_options        = "-O"
             )
 
     _FCGI_ = _GT2W_FCGI_ # end class

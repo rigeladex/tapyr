@@ -40,7 +40,9 @@
 #                     sub-command specific defaults
 #     1-Jun-2012 (CT) Factor `_app_call`
 #     1-Jun-2012 (CT) Factor `P.app_dir`
-#     1-Jun-2012 (CT) Add option `-python`; factor `P.python`
+#     1-Jun-2012 (CT) Add option `-py_path`; factor `P.python`
+#     1-Jun-2012 (CT) Add `-py_options` to `_Sub_Command_`,
+#                     remove `-python_options` from `_Pycompile_`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +75,7 @@ class _GTWD_Sub_Command_ (TFL.Sub_Command) :
         )
     _opts                   = \
         ( "-apply_to_version:S?Name of version to apply command to"
-        ,
+        , "-py_options:T ?Options passed to python interpreter, e.g., -O"
         )
 
 _Sub_Command_ = _GTWD_Sub_Command_ # end class
@@ -93,7 +95,7 @@ class GTWD_Command (_Command_) :
         , lib_dir           = "lib"
         , output_encoding   = "utf-8"
         , passive_name      = "passive"
-        , python            = "python"
+        , py_path           = sys.executable
         , root_path         = "./"
         , skip_modules      = "_pyk3.py"
         , vcs               = "git"
@@ -110,7 +112,7 @@ class GTWD_Command (_Command_) :
             "?Name of directory with the library used by the application"
         , "-passive_name:S?Name of symbolic link for passive version"
         , "-project_name:S?Name of project"
-        , "-python:P?Path for nested python interpreter"
+        , "-py_path:P?Path for nested python interpreter"
         , "-root_path:P?Root path of application versioning"
         , "-verbose:B"
         , "-vcs:S?Name of version control system used"
@@ -197,8 +199,6 @@ class GTWD_Command (_Command_) :
 
         _opts               = \
             ( "-compile_options:S,?Options passed to compileall, e.g., -q"
-            , "-python_options:S,"
-                "?Options passed to python interpreter, e.g., -O"
             , "-skip_modules:S,?Python modules to skip compilation for"
             )
 
@@ -254,7 +254,6 @@ class GTWD_Command (_Command_) :
         with cwd (app_dir) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", pbl.path ())
-                print ("PYTHONPATH =", pbl.env.get ("PYTHONPATH"))
                 print (app, " ".join (args))
             if not cmd.dry_run :
                 print (app (* args))
@@ -356,9 +355,7 @@ class GTWD_Command (_Command_) :
         root = pjoin (cmd.root_path, cmd.apply_to_version)
         args = tuple \
             ( ichain
-                ( ["-m"]
-                , cmd.python_options
-                , ["compileall"]
+                ( ["-m", "compileall"]
                 , cmd.compile_options
                 , ((["-x"] + cmd.skip_modules) if cmd.skip_modules else [])
                 , [cmd.app_dir, cmd.lib_dir]
@@ -366,7 +363,8 @@ class GTWD_Command (_Command_) :
             )
         with cwd (root) :
             if cmd.verbose or cmd.dry_run :
-                print ("cd", root, "; python", " ".join (args))
+                print ("cd", root)
+                print (P.python, " ".join (args))
             if not cmd.dry_run :
                 P.python (* args)
     # end def _handle_pycompile
@@ -431,7 +429,8 @@ class GTWD_Command (_Command_) :
             ( active   = active
             , passive  = passive
             , prefix   = prefix
-            , python   = pbl [cmd.python]
+            , python   = pbl [cmd.py_path]
+                [tuple (o for o in cmd.py_options if o)]
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, cmd.apply_to_version)
