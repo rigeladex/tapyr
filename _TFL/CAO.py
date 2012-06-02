@@ -89,6 +89,7 @@
 #                     derive `Config` from `Rel_Path`, not `Abs_Path`
 #    31-May-2012 (CT) Add `check_bun` to `CAO._handle_arg`,
 #                     don't `check_bun` after `--`
+#     2-Jun-2012 (CT) Streamline `Arg.from_string`
 #    ««revision-date»»···
 #--
 
@@ -161,9 +162,9 @@ class Arg (TFL.Meta.M_Class) :
                 , re.VERBOSE | re.DOTALL
                 )
         if pat.match (string) :
-            Spec = cls.Table [pat.type or "B"]
-            kw   = pat.last_match.groupdict ()
-            kw.pop ("type", None)
+            kw     = pat.last_match.groupdict ()
+            type   = kw.pop ("type", "B")
+            Spec   = cls.Table [type]
             result = Spec (** kw)
         else :
             raise Err ("Invalid argument or option specification `%s`" % string)
