@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Jan-2012 (CT) Creation
+#     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #    ««revision-date»»···
 #--
 
@@ -209,10 +210,10 @@ __test__ = dict \
 
 cmd = Scaffold.cmd.parse \
     ( [ "wsgi"
-      , "-db_url", "hps://"
-      , "-db_name", "test"
-      , "-debug", "yes"
-      , "-suppress_translation_loading", "yes"
+      , "-db_url",    "hps://"
+      , "-db_name",   "test"
+      , "-debug",     "yes"
+      , "-load_I18N", "no"
       ]
     )
 app = cmd ()

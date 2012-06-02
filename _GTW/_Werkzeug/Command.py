@@ -41,6 +41,7 @@
 #    22-May-2012 (CT) Remove unused imports
 #    22-May-2012 (CT) Use `app_dir`, not `app_path`
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
+#     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #    ««revision-date»»···
 #--
 
@@ -82,8 +83,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "suppress_translation_loading:B"
-                "?Don't load the the translation files during startup"
+            ( "load_I18N:B=yes"
+                "?Load the translation files during startup"
             ,
             )
 
@@ -193,7 +194,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
     def _wsgi_app (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
-        if not cmd.suppress_translation_loading :
+        translations = None
+        if cmd.load_I18N :
             try :
                 ldir = sos.path.join (self.app_dir, "locale")
                 translations = TFL.I18N.load \
@@ -203,7 +205,7 @@ class GT2W_Command (GTW.OMP.Command) :
                     , locale_dir = ldir
                     )
             except ImportError :
-                translations = None
+                pass
         TFL.user_config.set_defaults \
             (time_zone = TFL.user_config.get_tz (cmd.time_zone))
         self._setup_cache ()
