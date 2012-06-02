@@ -91,13 +91,13 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
 # end class SA_WE_Opt
 
-class _MOM_Command_ (TFL.Sub_Command) :
+class _MOM_Command_ (TFL.Command.Sub_Command) :
 
     _rn_prefix              = "_MOM"
 
 _Command_ = _MOM_Command_ # end class
 
-class MOM_Command (TFL.Command) :
+class MOM_Command (TFL.Command.Command) :
     "" ### """Extendable Command for applications based on MOM"""
 
     _rn_prefix              = "MOM"

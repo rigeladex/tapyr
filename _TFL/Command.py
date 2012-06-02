@@ -35,6 +35,7 @@
 #    31-May-2012 (CT) Add `config_defaults`, define `Config` option in `opts`
 #     1-Jun-2012 (CT) Fix `__doc__` in `_M_Command_.__new__`
 #     1-Jun-2012 (CT) Add `Sub_Command_Combiner`
+#     2-Jun-2012 (CT) Use `_TFL._Export_Module`, not `_TFL._Export`
 #    ««revision-date»»···
 #--
 
@@ -324,5 +325,5 @@ class TFL_Sub_Command_Combiner (Command) :
 Sub_Command_Combiner = TFL_Sub_Command_Combiner # end class
 
 if __name__ != "__main__" :
-    TFL._Export ("*")
+    TFL._Export_Module ()
 ### __END__ TFL.Command

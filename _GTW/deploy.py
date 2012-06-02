@@ -60,13 +60,13 @@ import sys
 
 pjoin = sos.path.join
 
-class _GTWD_Command_ (TFL.Command) :
+class _GTWD_Command_ (TFL.Command.Command) :
 
     _rn_prefix = "_GTWD"
 
 _Command_ = _GTWD_Command_ # end class
 
-class _GTWD_Sub_Command_ (TFL.Sub_Command) :
+class _GTWD_Sub_Command_ (TFL.Command.Sub_Command) :
 
     _rn_prefix              = "_GTWD"
 

@@ -77,7 +77,7 @@ class GT2W_Command (_Ancestor) :
 
     _Setup_Cache_ = _GT2W_Setup_Cache_ # end class
 
-    class _GT2W_UBYCMS_ (TFL.Sub_Command_Combiner) :
+    class _GT2W_UBYCMS_ (TFL.Command.Sub_Command_Combiner) :
         """Update, Babel compile, pYcompile, setup Cache, Migrate, Switch."""
 
         _rn_prefix       = "_GT2W"
