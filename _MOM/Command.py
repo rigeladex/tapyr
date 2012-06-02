@@ -52,6 +52,7 @@
 #    22-May-2012 (CT) Factor `TFL.Sub_Command`
 #    31-May-2012 (CT) Factor `-config` option to `TFL.Command`
 #    31-May-2012 (CT) Call `scope.ems.compact` in `_handle_create`
+#     2-Jun-2012 (CT) Add `Config` derived from `Config_Option`
 #    ««revision-date»»···
 #--
 
@@ -140,6 +141,12 @@ class MOM_Command (TFL.Command.Command) :
         , SA_WE_Opt ()
         , "-verbose:B"
         )
+
+    class MOM_Config (TFL.Command.Config_Option) :
+
+        _rn_prefix              = "MOM_"
+
+    Config = MOM_Config # end class
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`

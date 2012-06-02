@@ -128,6 +128,12 @@ class GTWD_Command (_Command_) :
         , svn               = "update"
         )
 
+    class GTWD_Config (TFL.Command.Config_Option) :
+
+        _rn_prefix              = "GTWD_"
+
+    Config = GTWD_Config # end class
+
     class _GTWD_App_ (_Sub_Command_) :
         """Run a command of the web application."""
 

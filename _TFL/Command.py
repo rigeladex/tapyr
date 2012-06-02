@@ -36,6 +36,8 @@
 #     1-Jun-2012 (CT) Fix `__doc__` in `_M_Command_.__new__`
 #     1-Jun-2012 (CT) Add `Sub_Command_Combiner`
 #     2-Jun-2012 (CT) Use `_TFL._Export_Module`, not `_TFL._Export`
+#     2-Jun-2012 (CT) Factor `_Meta_Base_`, add `Option`
+#     2-Jun-2012 (CT) Add `Config_Option`, remove `config_defaults`
 #    ««revision-date»»···
 #--
 
@@ -54,8 +56,7 @@ import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
-class _M_Command_ (TFL.Meta.M_Auto_Combine) :
-    """Meta class for `Command`"""
+class _Meta_Base_ (TFL.Meta.M_Auto_Combine) :
 
     def __new__ (mcls, name, bases, dct) :
         prefix = dct.get ("_rn_prefix") or first \
@@ -65,27 +66,164 @@ class _M_Command_ (TFL.Meta.M_Auto_Combine) :
         if "_name" not in dct :
             dct ["_name"] = dct.get ("_real_name", name).strip ("_").lower ()
         dct.setdefault ("is_partial", False)
-        dct ["_sub_commands"] = _scs = set (dct.get ("_sub_commands", ()))
-        _scs.update \
-            (  v.__name__ for v in dct.itervalues ()
-            if isinstance (v, _M_Command_) and not getattr (v, "is_partial", 0)
-            )
         if not dct.get ("__doc__") :
             ### Find the right base to inherit doc-string from
-            ### * must be an instance of `_M_Command_`
+            ### * must be an instance of `_Meta_Base_`
             ### * must contain a non-empty doc-string in its __dict__
             try :
                 dct ["__doc__"] = first \
                     (  d for d in
                            (  b.__dict__.get ("__doc__") for b in bases
-                           if isinstance (b, _M_Command_)
+                           if isinstance (b, _Meta_Base_)
                            )
                     if d
                     )
             except LookupError :
                 pass
+        return super (_Meta_Base_, mcls).__new__ (mcls, name, bases, dct)
+    # end def __new__
+
+# end class _Meta_Base_
+
+class _M_Option_ (_Meta_Base_) :
+    ### Meta class for `Option`.
+
+    pass
+
+# end class _M_Option_
+
+class TFL_Option (TFL.Meta.Object) :
+    ### Base class for options of interactive commands.
+
+    __metaclass__           = _M_Option_
+    _real_name              = "Option"
+    _rn_prefix              = "TFL"
+
+    cook              = None
+    hide              = False
+    max_number        = None
+    range_delta       = 1
+    rank              = 0
+    type              = None
+
+    _auto_split       = None
+    _default          = None
+    _defaults         = ()
+    _name             = None
+
+    _lists_to_combine = ("_defaults", )
+
+    def __init__ (self, cmd) :
+        assert self.type, "%s::%s must define `type`" % \
+            (cmd, self.__class__.__name__)
+        type = self.type
+        if isinstance (type, basestring) :
+            try :
+                type = self.type = TFL.CAO.Opt.Table [type]
+            except KeyError :
+                type = self.type = getattr (TFL.CAO, type)
+        self.cmd = cmd
+    # end def __init__
+
+    def __call__ (self) :
+        result = self.type (** self.kw)
+        return result
+    # end def __call__
+
+    @TFL.Meta.Once_Property
+    def auto_split (self) :
+        result = self._auto_split
+        if result is None :
+            result = self.type.auto_split
+        return result
+    # end def auto_split
+
+    @TFL.Meta.Once_Property
+    def default (self) :
+        result = self._default
+        if result is None and self._defaults :
+            if self.auto_split :
+                result = self.auto_split.join (self._defaults)
+            else :
+                raise TypeError \
+                    ( "%s::%s hs multiple defaults %s, but no `auto_split`"
+                    % (cmd, self.__class__.__name__, self._defaults)
+                    )
+        return result
+    # end def default
+
+    @TFL.Meta.Once_Property
+    def kw (self) :
+        return dict \
+            ( name            = self.name
+            , default         = self.default
+            , description     = self.__doc__
+            , auto_split      = self.auto_split
+            , max_number      = self.max_number
+            , hide            = self.hide
+            , range_delta     = self.range_delta
+            , cook            = self.cook
+            , rank            = self.rank
+            )
+    # end def kw
+
+    @TFL.Meta.Once_Property
+    def name (self) :
+        return self._name or self.__class__.__name__.strip ("_").lower ()
+    # end def name
+
+Option = TFL_Option # end class
+
+class TFL_Config_Option (Option) :
+    """File(s) specifying defaults for options"""
+
+    auto_split              = ":"
+    single_match            = False
+    type                    = TFL.CAO.Config
+
+    _base_dir               = None
+    _base_dirs              = ("$app_dir", )
+
+    @TFL.Meta.Once_Property
+    def base_dirs (self) :
+        def _gen (self, bds) :
+            for bd in bds :
+                if isinstance (bd, basestring) and bd.startswith ("$") :
+                    bd = getattr (self.cmd, bd [1:])
+                if bd is not None :
+                    yield bd
+        return tuple (_gen (self, self._base_dirs or (self._base_dir, )))
+    # end def base_dirs
+
+    @TFL.Meta.Once_Property
+    def kw (self) :
+        result = self.__super.kw
+        if self.base_dirs :
+            result ["_base_dirs"] = self.base_dirs
+        result ["single_match"] = self.single_match
+        return result
+    # end def kw
+
+Config_Option = TFL_Config_Option # end class
+
+
+class _M_Command_ (_Meta_Base_) :
+    ### Meta class for `Command`
+
+    def __new__ (mcls, name, bases, dct) :
+        mcls._update_set (dct, _M_Command_, "_sub_commands")
+        mcls._update_set (dct, _M_Option_,  "_opts_reified")
         return super (_M_Command_, mcls).__new__ (mcls, name, bases, dct)
     # end def __new__
+
+    @classmethod
+    def _update_set (cls, dct, T, name) :
+        dct [name] = _set = set (dct.get (name, ()))
+        _set.update \
+            (  v.__name__ for v in dct.itervalues ()
+            if isinstance (v, T) and not getattr (v, "is_partial", 0)
+            )
+    # end def _update_set
 
 # end class _M_Command_
 
@@ -93,20 +231,16 @@ class TFL_Command (TFL.Meta.Object) :
     ### Base class for interactive commands.
 
     __metaclass__           = _M_Command_
-    _real_name              = "Command"
     _rn_prefix              = "TFL"
 
     _dicts_to_combine       = ("_defaults", )
     _lists_to_combine       = \
-        ( "_args", "_buns", "_config_defaults", "_opts"
+        ( "_args", "_buns", "_opts"
         , "_dicts_to_combine", "_lists_to_combine", "_sets_to_combine"
         )
-    _sets_to_combine        = ("_sub_commands", )
+    _sets_to_combine        = ("_opts_reified", "_sub_commands")
 
     cmd_choice_name         = _ ("command")
-    config_opt_help         = _ ("File(s) specifying defaults for options")
-    config_opt_name         = "config"
-    config_opt_sep          = ":"
     do_keywords             = False
     handler                 = None
     helper                  = None
@@ -116,11 +250,11 @@ class TFL_Command (TFL.Meta.Object) :
 
     _args                   = ()
     _buns                   = ()
-    _config_defaults        = ()
     _defaults               = {}
     _description            = ""
     _name                   = None
     _opts                   = ()
+    _opts_reified           = set ()
     _root                   = None
     _sub_commands           = set ()
 
@@ -181,11 +315,6 @@ class TFL_Command (TFL.Meta.Object) :
     # end def buns
 
     @TFL.Meta.Once_Property
-    def config_defaults (self) :
-        return self.config_opt_sep.join (self._config_defaults)
-    # end def config_defaults
-
-    @TFL.Meta.Once_Property
     def defaults (self) :
         result = dict (self._defaults)
         result.update (self.dynamic_defaults (result))
@@ -206,24 +335,18 @@ class TFL_Command (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def name (self) :
         if self._root :
-            return self._name or self.__class__.__name__.strip ("_")
+            return self._name or self.__class__.__name__.strip ("_").lower ()
         else :
             return self.app_path
     # end def name
 
     @TFL.Meta.Once_Property
     def opts (self) :
-        result = []
-        if self.config_defaults is not None :
-            result.append \
-                ( TFL.CAO.Config
-                    ( name         = self.config_opt_name
-                    , default      = self.config_defaults
-                    , description  = self.config_opt_help
-                    , auto_split   = self.config_opt_sep
-                    , _base_dir    = self.app_dir
-                    )
-                )
+        def _gen (self) :
+            for k in self._opts_reified :
+                o = getattr (self, k)
+                yield o (self) ()
+        result = list (_gen (self))
         result.extend (self._opts)
         return tuple (result)
     # end def opts
