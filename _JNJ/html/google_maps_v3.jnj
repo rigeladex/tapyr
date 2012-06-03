@@ -84,7 +84,7 @@
           var mrkx;
           {% if page.map.pan -%}
             map.panBy ({{ page.map.pan.dx }}, {{ page.map.pan.dy }});
-          {% endif -%}
+          {% endif %}
           {%- for marker in page.map.markers %}
               mrkx = new $G.Marker (
                 { map      : map
