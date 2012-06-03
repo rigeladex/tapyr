@@ -38,6 +38,9 @@
 #     2-Jun-2012 (CT) Use `_TFL._Export_Module`, not `_TFL._Export`
 #     2-Jun-2012 (CT) Factor `_Meta_Base_`, add `Option`
 #     2-Jun-2012 (CT) Add `Config_Option`, remove `config_defaults`
+#     3-Jun-2012 (CT) Sort `_opts_reified` by `rank`, fill `_opt_map`
+#     3-Jun-2012 (CT) Factor `Rel_Path_Option`, add `Config_Dirs_Option`
+#     3-Jun-2012 (CT) Add `Root_Command`
 #    ««revision-date»»···
 #--
 
@@ -49,8 +52,9 @@ from   _TFL                   import pyk
 from   _TFL                   import sos
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.object_globals    import object_module
-from   _TFL.predicate         import first
+from   _TFL.predicate         import first, uniq
 
+import _TFL.Accessor
 import _TFL.CAO
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
@@ -97,7 +101,7 @@ class TFL_Option (TFL.Meta.Object) :
 
     __metaclass__           = _M_Option_
     _real_name              = "Option"
-    _rn_prefix              = "TFL"
+    _rn_prefix              = "TFL_"
 
     cook              = None
     hide              = False
@@ -174,12 +178,11 @@ class TFL_Option (TFL.Meta.Object) :
 
 Option = TFL_Option # end class
 
-class TFL_Config_Option (Option) :
-    """File(s) specifying defaults for options"""
+class TFL_Rel_Path_Option (Option) :
 
     auto_split              = ":"
     single_match            = False
-    type                    = TFL.CAO.Config
+    type                    = TFL.CAO.Rel_Path
 
     _base_dir               = None
     _base_dirs              = ("$app_dir", )
@@ -204,8 +207,62 @@ class TFL_Config_Option (Option) :
         return result
     # end def kw
 
-Config_Option = TFL_Config_Option # end class
+Rel_Path_Option = TFL_Rel_Path_Option # end class
 
+class TFL_Config_Dirs_Option (Rel_Path_Option) :
+    """Directories(s) considered for option files"""
+
+    rank                    = -100
+
+Config_Dirs_Option = TFL_Config_Dirs_Option # end class
+
+class TFL_Config_Option (Rel_Path_Option) :
+    """File(s) specifying defaults for options"""
+
+    rank                    = -90
+
+    type                    = TFL.CAO.Config
+
+    _config_dirs_name       = "config_dirs"
+
+    @TFL.Meta.Once_Property
+    def base_dirs (self) :
+        result  = self.__super.base_dirs
+        opt_map = self.cmd._opt_map
+        cdo     = opt_map.get (self._config_dirs_name)
+        if cdo and cdo.base_dirs :
+            result = cdo.base_dirs + result
+        return tuple (uniq (result))
+    # end def base_dirs
+
+    @TFL.Meta.Once_Property
+    def default (self) :
+        as_join      = self.auto_split.join
+        cdo          = self.cmd._opt_map.get (self._config_dirs_name)
+        cdo_defaults = None
+        if cdo and cdo.default :
+            cdo_defaults = tuple \
+                ( cdo.default.split (cdo.auto_split)
+                    if cdo.auto_split else (cdo.default, )
+                )
+        result = self._default
+        if result is not None :
+            if cdo_defaults :
+                result = as_join \
+                    (sos.path.join (d, result) for d in cdo_defaults)
+        elif self._defaults :
+            _defaults = self._defaults
+            if cdo_defaults :
+                _defaults = \
+                    (   sos.path.join (d, c)
+                    for c in _defaults
+                        for d in cdo_defaults
+                    )
+            result = as_join (_defaults)
+        return result
+    # end def default
+
+Config_Option = TFL_Config_Option # end class
 
 class _M_Command_ (_Meta_Base_) :
     ### Meta class for `Command`
@@ -231,7 +288,7 @@ class TFL_Command (TFL.Meta.Object) :
     ### Base class for interactive commands.
 
     __metaclass__           = _M_Command_
-    _rn_prefix              = "TFL"
+    _rn_prefix              = "TFL_"
 
     _dicts_to_combine       = ("_defaults", )
     _lists_to_combine       = \
@@ -343,12 +400,20 @@ class TFL_Command (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def opts (self) :
         def _gen (self) :
-            for k in self._opts_reified :
-                o = getattr (self, k)
-                yield o (self) ()
+            self._opt_map = map = {}
+            for oc in sorted \
+                    ( (  oc for oc in
+                           (getattr (self, k) for k in self._opts_reified)
+                      if oc is not None
+                      )
+                    , key = TFL.Getter.rank
+                    ) :
+                o = oc (self)
+                map [o.name] = o
+                yield o ()
         result = list (_gen (self))
         result.extend (self._opts)
-        return tuple (result)
+        return tuple  (result)
     # end def opts
 
     @TFL.Meta.Once_Property
@@ -446,6 +511,21 @@ class TFL_Sub_Command_Combiner (Command) :
     # end def _std_opts
 
 Sub_Command_Combiner = TFL_Sub_Command_Combiner # end class
+
+class TFL_Root_Command (Command) :
+    ### Base class for root commands
+
+    class TFL_Config_Dirs (Config_Dirs_Option) :
+        """Directories(s) considered for option files."""
+
+    Config_Dirs = TFL_Config_Dirs # end class
+
+    class TFL_Config (Config_Option) :
+        """File(s) specifying defaults for options."""
+
+    Config = TFL_Config # end class
+
+Root_Command = TFL_Root_Command # end class
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

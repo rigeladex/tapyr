@@ -89,11 +89,11 @@ class HTTP_Opt (TFL.CAO._Spec_) :
 
 # end class HTTP_Opt
 
-class _GTW_Command_ (MOM._Command_) :
+class _GTW_Sub_Command_ (MOM._Sub_Command_) :
 
     _rn_prefix              = "_GTW"
 
-_Command_ = _GTW_Command_ # end class
+_Sub_Command_ = _GTW_Sub_Command_ # end class
 
 class GTW_Command (MOM.Command) :
 
@@ -114,7 +114,7 @@ class GTW_Command (MOM.Command) :
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
-    class _GTW_Server_Base_ (_Command_) :
+    class _GTW_Server_Base_ (_Sub_Command_) :
         ### Base for server-related commands
 
         is_partial              = True
@@ -209,5 +209,5 @@ class GTW_Command (MOM.Command) :
 Command = GTW_Command # end class
 
 if __name__ != "__main__" :
-    GTW.OMP._Export ("*", "_Command_")
+    GTW.OMP._Export ("*", "_Sub_Command_")
 ### __END__ GTW.OMP.Command

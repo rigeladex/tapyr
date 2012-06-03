@@ -61,11 +61,11 @@ import _JNJ.Templateer
 from   _TFL                import sos
 import _TFL.SMTP
 
-class _GT2W_Command_ (GTW.OMP._Command_) :
+class _GT2W_Sub_Command_ (GTW.OMP._Sub_Command_) :
 
     _rn_prefix              = "_GT2W"
 
-_Command_ = _GT2W_Command_ # end class
+_Sub_Command_ = _GT2W_Sub_Command_ # end class
 
 class GT2W_Command (GTW.OMP.Command) :
 
@@ -78,7 +78,7 @@ class GT2W_Command (GTW.OMP.Command) :
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
-    class _GT2W_Server_Base_ (_Command_, GTW.OMP.Command._Server_Base_) :
+    class _GT2W_Server_Base_ (_Sub_Command_, GTW.OMP.Command._Server_Base_) :
         ### Base for server-related commands
 
         is_partial              = True

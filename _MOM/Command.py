@@ -53,6 +53,7 @@
 #    31-May-2012 (CT) Factor `-config` option to `TFL.Command`
 #    31-May-2012 (CT) Call `scope.ems.compact` in `_handle_create`
 #     2-Jun-2012 (CT) Add `Config` derived from `Config_Option`
+#     3-Jun-2012 (CT) Factor `Config` to `Root_Command`
 #    ««revision-date»»···
 #--
 
@@ -92,16 +93,16 @@ class SA_WE_Opt (TFL.CAO.Bool) :
 
 # end class SA_WE_Opt
 
-class _MOM_Command_ (TFL.Command.Sub_Command) :
+class _MOM_Sub_Command_ (TFL.Command.Sub_Command) :
 
     _rn_prefix              = "_MOM"
 
-_Command_ = _MOM_Command_ # end class
+_Sub_Command_ = _MOM_Sub_Command_ # end class
 
-class MOM_Command (TFL.Command.Command) :
+class MOM_Command (TFL.Command.Root_Command) :
     "" ### """Extendable Command for applications based on MOM"""
 
-    _rn_prefix              = "MOM"
+    _rn_prefix              = "MOM_"
 
     ANS                     = None
     DB_Man                  = MOM.DB_Man
@@ -142,35 +143,29 @@ class MOM_Command (TFL.Command.Command) :
         , "-verbose:B"
         )
 
-    class MOM_Config (TFL.Command.Config_Option) :
-
-        _rn_prefix              = "MOM_"
-
-    Config = MOM_Config # end class
-
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
-    class _MOM_Create_ (_Command_) :
+    class _MOM_Create_ (_Sub_Command_) :
         """Create database specified by `-db_url`."""
 
     _Create_ = _MOM_Create_ # end class
 
-    class _MOM_Delete_ (_Command_) :
+    class _MOM_Delete_ (_Sub_Command_) :
         """Delete database specified by `-db_url`."""
 
     _Delete_ = _MOM_Delete_ # end class
 
-    class _MOM_Info_ (_Command_) :
+    class _MOM_Info_ (_Sub_Command_) :
         """Display info about database specified by `-db_url`."""
 
     _Info_ = _MOM_Info_ # end class
 
-    class _MOM_Load_ (_Command_) :
+    class _MOM_Load_ (_Sub_Command_) :
         """Load database specified by `-db_url`."""
 
     _Load_ = _MOM_Load_ # end class
 
-    class _MOM_Migrate_ (_Command_) :
+    class _MOM_Migrate_ (_Sub_Command_) :
         """Migrate database specified by `-db_url` to `-target_db_url`."""
 
         _opts                   = \
@@ -182,7 +177,7 @@ class MOM_Command (TFL.Command.Command) :
 
     _Migrate_ = _MOM_Migrate_ # end class
 
-    class _MOM_Readonly_ (_Command_) :
+    class _MOM_Readonly_ (_Sub_Command_) :
         """Change readonly-state of database."""
 
         _args                   = \
@@ -198,7 +193,7 @@ class MOM_Command (TFL.Command.Command) :
 
     _Readonly_ = _MOM_Readonly_ # end class
 
-    class _MOM_Shell_ (_Command_) :
+    class _MOM_Shell_ (_Sub_Command_) :
         """Open interactive python shell."""
 
     _Shell_ = _MOM_Shell_ # end class
@@ -359,5 +354,5 @@ class MOM_Command (TFL.Command.Command) :
 Command = MOM_Command # end class
 
 if __name__ != "__main__" :
-    MOM._Export ("Command", "_Command_")
+    MOM._Export ("Command", "_Sub_Command_")
 ### __END__ MOM.Command

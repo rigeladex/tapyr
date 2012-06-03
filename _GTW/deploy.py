@@ -43,6 +43,8 @@
 #     1-Jun-2012 (CT) Add option `-py_path`; factor `P.python`
 #     1-Jun-2012 (CT) Add `-py_options` to `_Sub_Command_`,
 #                     remove `-python_options` from `_Pycompile_`
+#     3-Jun-2012 (CT) Factor `Config` to `Root_Command`
+#     3-Jun-2012 (CT) Add optional `_args` to `_app_cmd`
 #    ««revision-date»»···
 #--
 
@@ -81,7 +83,7 @@ class _GTWD_Sub_Command_ (TFL.Command.Sub_Command) :
 
 _Sub_Command_ = _GTWD_Sub_Command_ # end class
 
-class GTWD_Command (_Command_) :
+class GTWD_Command (TFL.Command.Root_Command) :
     """Extendable deployment command for applications based on GTW"""
 
     _rn_prefix              = "GTWD_"
@@ -127,12 +129,6 @@ class GTWD_Command (_Command_) :
         , hg                = "pull"
         , svn               = "update"
         )
-
-    class GTWD_Config (TFL.Command.Config_Option) :
-
-        _rn_prefix              = "GTWD_"
-
-    Config = GTWD_Config # end class
 
     class _GTWD_App_ (_Sub_Command_) :
         """Run a command of the web application."""
@@ -266,13 +262,15 @@ class GTWD_Command (_Command_) :
                 print (app (* args))
     # end def _app_call
 
-    def _app_cmd (self, cmd, P, version = None) :
+    def _app_cmd (self, cmd, P, version = None, args = ()) :
         if version is None :
             version = cmd.apply_to_version
         result = P.python \
             [P.root / version / cmd.app_dir / cmd.app_module]
         if cmd.verbose :
             result = result ["-verbose"]
+        if args :
+            result = result [args]
         return result
     # end def _app_cmd
 
