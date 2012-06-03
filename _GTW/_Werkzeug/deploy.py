@@ -34,6 +34,7 @@
 #     1-Jun-2012 (CT) Add `py_options` to `_FCGI_._defaults`
 #     1-Jun-2012 (CT) Derive from `GTW.OMP.deploy`, not `GTW.deploy`
 #     1-Jun-2012 (CT) Add sub-command `ubycms`
+#     3-Jun-2012 (CT) Add sub-command `fcgi_script`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,11 @@ class GT2W_Command (_Ancestor) :
 
     _FCGI_ = _GT2W_FCGI_ # end class
 
+    class _GT2W_FCGI_Script_ (_FCGI_) :
+        """Create script for running the application as a FastCGI server."""
+
+    _FCGI_Script_ = _GT2W_FCGI_Script_ # end class
+
     class _GT2W_Setup_Cache_ (_Sub_Command_) :
         """Setup the cache of the application."""
 
@@ -99,6 +105,16 @@ class GT2W_Command (_Ancestor) :
         args = ("fcgi", ) + tuple (cmd.argv)
         self._app_call (cmd, P, app, args)
     # end def _handle_fcgi
+
+    def _handle_fcgi_script (self, cmd) :
+        P      = self._P (cmd)
+        config = self.App_Config.auto_split.join (cmd.app_config)
+        args   = ("fcgi", "-config", config) + tuple (cmd.argv)
+        app    = self._app_cmd (cmd, P, args = args)
+        print  ("#!/bin/sh")
+        print  ("export PYTHONPATH=%s" % P.lib_dir)
+        print  (app)
+    # end def _handle_fcgi_script
 
     def _handle_setup_cache (self, cmd) :
         P    = self._P (cmd)
