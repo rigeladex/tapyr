@@ -35,6 +35,8 @@
 #     1-Jun-2012 (CT) Derive from `GTW.OMP.deploy`, not `GTW.deploy`
 #     1-Jun-2012 (CT) Add sub-command `ubycms`
 #     3-Jun-2012 (CT) Add sub-command `fcgi_script`
+#     3-Jun-2012 (CT) Use `self.lib_dir`, not `P.lib_dir`, in
+#                     `_handle_fcgi_script`
 #    ««revision-date»»···
 #--
 
@@ -112,7 +114,7 @@ class GT2W_Command (_Ancestor) :
         args   = ("fcgi", "-config", config) + tuple (cmd.argv)
         app    = self._app_cmd (cmd, P, args = args)
         print  ("#!/bin/sh")
-        print  ("export PYTHONPATH=%s" % P.lib_dir)
+        print  ("export PYTHONPATH=%s" % self.lib_dir)
         print  (app)
     # end def _handle_fcgi_script
 
