@@ -67,8 +67,7 @@
               , mapTypeControl        : true
               , mapTypeControlOptions :
                   { style : $G.MapTypeControlStyle.DEFAULT }
-              , mapTypeId             : $G.MapTypeId
-                  [{{ page.map.type|default("ROADMAP") }}]
+              , mapTypeId             : $G.MapTypeId [{{ page.map.type|default('"ROADMAP"') }}]
               , overviewMapControl    : true
               , panControl            : true
               , scaleControl          : true
@@ -83,6 +82,9 @@
           var mark = new $G.Marker
               ({ position : pnt, map : map, title : "{{ page.map.title }}" });
           var mrkx;
+          {% if page.map.pan -%}
+            map.panBy ({{ page.map.pan.dx }}, {{ page.map.pan.dy }});
+          {% endif -%}
           {%- for marker in page.map.markers %}
               mrkx = new $G.Marker (
                 { map      : map
