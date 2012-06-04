@@ -35,6 +35,7 @@
 #    30-Apr-2012 (MG) Allow none existing `Auth`
 #     3-May-2012 (CT) Pass `languages` to `HTTP.Application`
 #     4-May-2012 (CT) Use `nav.login_url` instead of home-grown code
+#     4-Jun-2012 (MG) `do_run_server` support for `host` added
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,7 @@ class _GTW_Werkzeug_Scaffold_ (GTW.OMP.Scaffold) :
     @classmethod
     def do_run_server (cls, cmd) :
         app = cls._wsgi_app (cmd)
-        kw  = dict (port = cmd.port)
+        kw  = dict (port = cmd.port, host = getattr (cmd, "host", "localhost"))
         if cmd.watch_media_files :
             kw ["reload_extra_files"] = getattr \
                 (GTW.NAV.Root.top, "Media_Filenames", ())

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -158,6 +158,8 @@
 #    14-Apr-2010 (CT) `T_Account.add` changed not to consider `minderung`,
 #                     i.e., to always call `_add_ausgabe` for `-`,
 #                     `_add_einnahme` for `+`
+#     4-Jun-2012 (MG) `_ATAX_Command_._add_files` support for glob patterns
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -178,6 +180,7 @@ import _TGL.load_config_file
 import math
 import sys
 from   UserDict          import UserDict
+import glob
 
 ignor_pat              = Regexp ( r"^\s*[«%#]")
 empty_pat              = Regexp ( r"^\s*$")
@@ -1375,8 +1378,9 @@ class _ATAX_Command_ (TFL.Meta.Object) :
             assert cmd.argn == 0
             account.add_lines    (sys.stdin, categories, source_currency)
         else :
-            for file_name in cmd.argv :
-                account.add_file (file_name, categories, source_currency)
+            for f_or_p in cmd.argv :
+                for file_name in glob.glob (f_or_p) :
+                    account.add_file (file_name, categories, source_currency)
     # end def _add_files
 
     def _arg_spec (self) :

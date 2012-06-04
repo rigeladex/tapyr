@@ -105,6 +105,7 @@
 #    27-Apr-2012 (MG) `_Session_.close` try to close the connection added
 #                     (this is required for Sqlite to make sure that the file
 #                     is really closed)
+#    06-May-2012 (MG) `_close_connection`: call to `expunge` added
 #    ««revision-date»»···
 #--
 
