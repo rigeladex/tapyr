@@ -72,7 +72,6 @@ if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
     PNS_Dict = dict (EVT = GTW.OMP.EVT)
 else :
     PNS_Dict = dict ()
-    print "Ignore _GTW._OMP._EVT.import_EVT"
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM

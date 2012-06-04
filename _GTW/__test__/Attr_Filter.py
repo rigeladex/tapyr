@@ -285,9 +285,11 @@ _test_code = """
           name                3
           long_name           3
         desc                3
+        is_cancelled        1
       boat_class          2
         name                3
       discards            0
+      is_cancelled        1
       kind                3
       races               0
       result              None
@@ -349,8 +351,10 @@ _test_code = """
         String `name` right.left.club.name
         String `long_name` right.left.club.long_name
         String `desc` right.left.desc
+        Boolean `is_cancelled` right.left.is_cancelled
         String `name` right.boat_class.name
         Int `discards` right.discards
+        Boolean `is_cancelled` right.is_cancelled
         String `kind` right.kind
         Int `races` right.races
         Date-Time `date` right.result.date
@@ -362,6 +366,7 @@ _test_code = """
         Date `finish` left.date.finish
         String `name` boat_class.name
         Int `discards` discards
+        Boolean `is_cancelled` is_cancelled
         String `kind` kind
         Int `races` races
         Date-Time `date` result.date

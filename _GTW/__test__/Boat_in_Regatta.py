@@ -139,7 +139,7 @@ _test_code = r"""
     <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
 
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
-    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
+    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
 
     >>> scope.commit ()
 

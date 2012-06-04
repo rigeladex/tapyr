@@ -113,9 +113,9 @@ _basic = r"""
         <Modify GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'GTW.OMP.SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '22'}, new-values = {'date' : (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'last_cid' : '26'}>
         <Modify/C GTW.OMP.SRM.Regatta_Event.date (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'GTW.OMP.SRM.Regatta_Event'), old-values = {'finish' : u'2010/05/14', 'last_cid' : '26'}, new-values = {'finish' : u'2010/05/13', 'last_cid' : '28'}>
     <Change Summary for pid 11: newborn>
-        <Create GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), new-values = {'last_cid' : '12', 'perma_name' : u'optimist'}>
+        <Create GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '12', 'perma_name' : u'optimist'}>
     <Change Summary for pid 12: newborn>
-        <Create GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Yardstick', 'GTW.OMP.SRM.Handicap'), 'GTW.OMP.SRM.Regatta_H'), new-values = {'last_cid' : '13', 'perma_name' : u'yardstick'}>
+        <Create GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Yardstick', 'GTW.OMP.SRM.Handicap'), 'GTW.OMP.SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '13', 'perma_name' : u'yardstick'}>
     <Change Summary for pid 13: newborn>
         <Create GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', u'', 'GTW.OMP.SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
     <Change Summary for pid 14: newborn, 1 change>
@@ -149,8 +149,8 @@ _basic = r"""
     8 [('last_cid', (old = None, new = '24')), ('salutation', (old = u'', new = u'Dear L.')), ('title', (old = u'', new = u'Mr.'))]
     9 [('last_cid', (old = None, new = '10'))]
     10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '28')), ('perma_name', (old = None, new = u'himmelfahrt'))]
-    11 [('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
-    12 [('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
+    11 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
+    12 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
     13 [('last_cid', (old = None, new = '14')), ('skipper', (old = None, new = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'))]
     14 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '25')), ('points', (old = None, new = u'8'))]
     15 [('last_cid', (old = None, new = '16')), ('points', (old = None, new = u'4'))]
