@@ -45,6 +45,8 @@
 #                     remove `-python_options` from `_Pycompile_`
 #     3-Jun-2012 (CT) Factor `Config` to `Root_Command`
 #     3-Jun-2012 (CT) Add optional `_args` to `_app_cmd`
+#     4-Jun-2012 (CT) Fix `app_dir` in `_handle_babel_compile`
+#     4-Jun-2012 (CT) Change `Shell.handler` to `_handle_shell`
 #    ««revision-date»»···
 #--
 
@@ -210,12 +212,6 @@ class GTWD_Command (TFL.Command.Root_Command) :
     class _GTWD_Shell_ (_Sub_Command_) :
         """Open interactive python shell."""
 
-        def handler (self, cmd) :
-            import _TFL.Environment
-            command = self._root
-            TFL.Environment.py_shell ()
-        # end def handler
-
     _Shell_ = _GTWD_Shell_ # end class
 
     class _GTWD_Switch_ (_Sub_Command_) :
@@ -289,9 +285,10 @@ class GTWD_Command (TFL.Command.Root_Command) :
              , "-import_file",     cmd.app_module
              , "-use_fuzzy"
              )
-        with cwd (P.app_dir) :
+        app_dir = sos.path.dirname (sos.path.join (P.app_dir, cmd.app_module))
+        with cwd (app_dir) :
             if cmd.verbose or cmd.dry_run :
-                print ("cd", app_dir)
+                print ("cd", pbl.path ())
             for l in cmd.languages :
                 l_dir  = pjoin ("locale", l, "LC_MESSAGES")
                 l_args = args + \
@@ -373,6 +370,13 @@ class GTWD_Command (TFL.Command.Root_Command) :
             if not cmd.dry_run :
                 P.python (* args)
     # end def _handle_pycompile
+
+    def _handle_shell (self, cmd) :
+        import _TFL.Environment
+        P       = self._P (cmd)
+        command = self._root
+        TFL.Environment.py_shell ()
+    # end def _handle_shell
 
     def _handle_switch (self, cmd) :
         P    = self._P (cmd)

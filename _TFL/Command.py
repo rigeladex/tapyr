@@ -41,6 +41,7 @@
 #     3-Jun-2012 (CT) Sort `_opts_reified` by `rank`, fill `_opt_map`
 #     3-Jun-2012 (CT) Factor `Rel_Path_Option`, add `Config_Dirs_Option`
 #     3-Jun-2012 (CT) Add `Root_Command`
+#     4-Jun-2012 (CT) Change `app_path` to use `root`
 #    ««revision-date»»···
 #--
 
@@ -349,7 +350,8 @@ class TFL_Command (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def app_path (self) :
-        return object_module (self).__file__
+        root = self._root or self
+        return object_module (root).__file__
     # end def app_path
 
     @TFL.Meta.Once_Property
