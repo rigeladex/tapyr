@@ -47,6 +47,7 @@
 #     3-Jun-2012 (CT) Add optional `_args` to `_app_cmd`
 #     4-Jun-2012 (CT) Fix `app_dir` in `_handle_babel_compile`
 #     4-Jun-2012 (CT) Change `Shell.handler` to `_handle_shell`
+#     4-Jun-2012 (CT) Rewrite `_handle_update` to use `_handle_vc`
 #    ««revision-date»»···
 #--
 
@@ -288,7 +289,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         app_dir = sos.path.dirname (sos.path.join (P.app_dir, cmd.app_module))
         with cwd (app_dir) :
             if cmd.verbose or cmd.dry_run :
-                print ("cd", pbl.path ())
+                print ("cd", self.pbl.path ())
             for l in cmd.languages :
                 l_dir  = pjoin ("locale", l, "LC_MESSAGES")
                 l_args = args + \
@@ -365,7 +366,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
             )
         with cwd (root) :
             if cmd.verbose or cmd.dry_run :
-                print ("cd", root)
+                print ("cd", self.pbl.path ())
                 print (P.python, " ".join (args))
             if not cmd.dry_run :
                 P.python (* args)
@@ -393,36 +394,24 @@ class GTWD_Command (TFL.Command.Root_Command) :
     # end def _handle_switch
 
     def _handle_update (self, cmd) :
-        P    = self._P (cmd)
-        cwd  = self.pbl.cwd
-        vcs  = cmd.vcs
-        upd  = self.pbl [vcs] [self._vcs_update_map [vcs]]
-        for d in P.app_dir, P.lib_dir :
-            with cwd (d) :
-                p = self.pbl.path ()
-                if cmd.verbose or cmd.dry_run :
-                    print ("cd", p, ";", upd)
-                if not cmd.dry_run :
-                    if not cmd.verbose :
-                        print ("*" * 3, p, "*" * 20)
-                    print (upd ())
+        return self._handle_vc (cmd, self._vcs_update_map [cmd.vcs])
     # end def _handle_update
 
-    def _handle_vc (self, cmd) :
+    def _handle_vc (self, cmd, * args) :
         P    = self._P (cmd)
         cwd  = self.pbl.cwd
-        vcs  = self.pbl [cmd.vcs]
-        args = tuple (cmd.argv)
+        vcs  = self.pbl [cmd.vcs] [args]
+        argv = tuple (cmd.argv)
         for d in P.app_dir, P.lib_dir :
             with cwd (d) :
                 p = self.pbl.path ()
                 if cmd.verbose or cmd.dry_run :
                     print ("cd", p)
-                    print (vcs, " ".join (args))
+                    print (vcs, " ".join (argv))
                 if not cmd.dry_run :
                     if not cmd.verbose :
                         print ("*" * 3, p, "*" * 20)
-                    print (vcs (* args))
+                    print (vcs (* argv))
     # end def _handle_vc
 
     def _P (self, cmd) :
