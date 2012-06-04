@@ -62,6 +62,8 @@
 #    10-May-2012 (CT) Change `_handle_request` to call `_send_error_email`,
 #                     don't return `Error_500` if `wants_json`
 #    11-May-2012 (CT) Add `remote_addr`, `path` to debug info in `content_type`
+#     4-Jun-2012 (CT) Encode argument for `logging.warning`
+#     4-Jun-2012 (CT) Use `log_level` instead of `__debug__` to guard `logging`
 #    ««revision-date»»···
 #--
 
@@ -115,22 +117,24 @@ class _Request_Handler_ (object) :
                 self._content_encoding = t.strip ()
                 if not self._content_encoding :
                     dce = self.default_content_encoding
-                    if __debug__ :
+                    if self.log_level :
                         if self.body :
-                            from _TFL.Formatter import formatted_1
-                            logging.warning \
+                            from _TFL.Formatter import formatted_1, formatted
+                            message = \
                                 ( "Use fallback default content encoding %s"
                                   "\n    [%s] %s --> %s"
                                   "\n    Headers: %s"
-                                  "\n    Body: %s"
+                                  "\n    Body: "
+                                  "\n      %s"
                                 % ( dce
                                   , datetime.datetime.now ().replace
                                       (microsecond = 0)
                                   , request.remote_addr, request.path
                                   , formatted_1 (headers)
-                                  , self.body
+                                  , formatted (self.body, level = 3)
                                   )
-                                )
+                                ).encode (dce, "replace")
+                            logging.warning (message)
                     self._content_encoding = dce
         return self._content_type
     # end def content_type
@@ -154,6 +158,11 @@ class _Request_Handler_ (object) :
         assert codes
         return codes
     # end def locale_codes
+
+    @Once_Property
+    def log_level (self) :
+        return self.settings.get ("log_level", 0)
+    # end def log_level
 
     @Once_Property
     def session (self) :

@@ -42,6 +42,7 @@
 #    22-May-2012 (CT) Use `app_dir`, not `app_path`
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
+#     4-Jun-2012 (CT) Add `-log_level`, pass to `HTTP.Application`
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,7 @@ class GT2W_Command (GTW.OMP.Command) :
         _opts                   = \
             ( "load_I18N:B=yes"
                 "?Load the translation files during startup"
-            ,
+            , "log_level:I=1?Verbosity of logging"
             )
 
     # end class _GT2W_Server_Base_
@@ -228,6 +229,7 @@ class GT2W_Command (GTW.OMP.Command) :
             , i18n                = True
             , languages           = set (cmd.languages)
             , login_url           = nav.login_url
+            , log_level           = cmd.log_level
             , session_id          = bytes ("SESSION_ID")
             , static_handler      = static_handler
             , user_session_ttl    = cmd.user_session_ttl.date_time_delta
