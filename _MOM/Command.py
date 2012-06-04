@@ -54,6 +54,7 @@
 #    31-May-2012 (CT) Call `scope.ems.compact` in `_handle_create`
 #     2-Jun-2012 (CT) Add `Config` derived from `Config_Option`
 #     3-Jun-2012 (CT) Factor `Config` to `Root_Command`
+#     4-Jun-2012 (CT) Add `default` "yes" to `_Readonly_.state`
 #    ««revision-date»»···
 #--
 
@@ -187,6 +188,7 @@ class MOM_Command (TFL.Command.Root_Command) :
                     ( yes       = True
                     , no        = False
                     )
+                , default       = "yes"
                 )
             ,
             )
