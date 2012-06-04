@@ -129,6 +129,7 @@
 #    31-Jan-2012 (CT) Add `epk_sig_root` to `M_E_Type_Id._m_setup_children`
 #    29-Mar-2012 (CT) Change `link_map` to exclude partial E_Types
 #    14-May-2012 (CT) Remove `children_iter`, use `children.itervalues` instead
+#     4-Jun-2012 (CT) Add guard for `et.epk_sig` to `_m_setup_sorted_by`
 #    ««revision-date»»···
 #--
 
@@ -801,18 +802,17 @@ class M_E_Type_Id (M_E_Type) :
     # end def _m_setup_children
 
     def _m_setup_sorted_by (cls) :
-        sbs = []
+        sbs        = []
         sb_default = [cls.sort_key]
         if cls.epk_sig :
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
                 if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
                     et = pka.P_Type
-                    if et :
-                        sbs.extend \
-                            ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
+                    if et and et.epk_sig :
+                        it = iter (et.sorted_by_epk)
+                        sbs.extend ("%s.%s" % (pka.name, x) for x in it)
                     else :
-                        ### Class is too abstract: need to use `cls.sort_key_pm`
-                        sbs = sb_default
+                        ### Class is too abstract: need to use `cls.sort_key`
                         break
                 elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
                     sbs.extend \
