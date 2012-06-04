@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -43,6 +43,7 @@
 #    28-Sep-2010 (CT) `_Entity_Summary_` factored from `Pid`
 #    28-Sep-2010 (CT) `Attr_C_Summary.check_conflict` and `.check_ini_vs_cur`
 #                     added
+#     7-May-2012 (CT) Add `entities_transitive`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
 import _TFL.defaultdict
+import _TFL.predicate
 import _TFL.Undef
 
 import itertools
@@ -401,6 +403,17 @@ class Summary (TFL.Meta.Object) :
             if not csp.is_dead :
                 yield ems.pid_query (pid)
     # end def entities
+
+    def entities_transitive (self, ems) :
+        def _gen (self, ems) :
+            for e in self.entities (ems) :
+                yield e
+                for iea in e.id_entity_attr :
+                    v = iea.get_value (e)
+                    if v is not None :
+                        yield v
+        return TFL.uniq (_gen (self, ems))
+    # end def entities_transitive
 
     def _add_to_by_pid (self, changes) :
         by_pid = self._by_pid

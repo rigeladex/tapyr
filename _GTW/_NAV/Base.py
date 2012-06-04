@@ -293,6 +293,10 @@
 #     3-May-2012 (CT) Add default for `Root.language`
 #     4-May-2012 (CT) Rename `login_page` to `login_url`
 #     4-May-2012 (CT) Add logging to `Stopper._view`
+#    10-May-2012 (CT) Add `_send_error_email`, `error_email_template`, `Raiser`
+#    10-May-2012 (CT) Defaults for `_login_required` and `_permission` moved
+#                     to class level
+#     4-Jun-2012 (CT) Add `handler.body` to `message` of `_send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -304,6 +308,7 @@ import _GTW._NAV
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
+from   _TFL.Formatter           import formatted
 from   _TFL.predicate           import uniq
 from   _TFL.pyk                 import pickle
 from   _TFL.Record              import Record
@@ -372,6 +377,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     __metaclass__              = _Meta_
 
     anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
+    error_email_template       = "error_email"
     hidden                     = False
     href                       = ""
     implicit                   = False
@@ -388,6 +394,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     _dump_type                 = "dict"
     _email                     = None   ### default from address
+    _login_required            = False
+    _permission                = None
     _template                  = None
 
     _Media                     = GTW.Media ()
@@ -408,8 +416,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if "Media" in kw :
             self._Media = kw.pop ("Media")
         self._exclude_robots = kw.pop ("exclude_robots", False)
-        self._login_required = kw.pop ("login_required", False)
-        self._permission     = kw.pop ("permission",     None)
+        if "login_required" in kw :
+            self._login_required = kw.pop ("login_required")
+        if "permission" in kw :
+            self._permission     = kw.pop ("permission")
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
@@ -650,6 +660,34 @@ class _Site_Entity_ (TFL.Meta.Object) :
             print "*** Cannot send email because `smtp` is undefined ***"
             print text
     # end def send_email
+
+    def _send_error_email (self, handler, exc, tbi) :
+        email     = self.email
+        request   = handler.request
+        headers   = request.headers
+        message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
+            ( "\n    ".join
+                ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
+            , formatted (handler.body)
+            , tbi
+            )
+        if self.DEBUG :
+            print "Exception:", exc
+            print "Request path", request.path
+            print message
+            print handler.body
+        else :
+            self.send_email \
+                ( self.error_email_template
+                , email_from    = email
+                , email_to      = email
+                , email_subject = ("Error: %s") % (exc, )
+                , message       = message
+                , NAV           = self.top
+                , page          = self
+                , request       = request
+                )
+    # end def _send_error_email
 
     @property
     def template (self) :
@@ -1483,7 +1521,7 @@ class Stopper (Page) :
     """Page that stops the running process if a sentinel file is found."""
 
     delay            = 1
-    exclude_robots   = False ### don't want this to appear in `robots.txt`
+    exclude_robots   = True ### don't want this to appear in `robots.txt`
     sentinel_name    = "time_to_die"
 
     def __init__ (self, * args, ** kw) :
@@ -1505,6 +1543,18 @@ class Stopper (Page) :
                 % sos.path.abspath (self.sentinel_name)
                 )
             raise HTTP.Error_404 ()
+    # end def _view
+
+# end class Stopper
+
+class Raiser (Page) :
+    """Page that raises an error 500."""
+
+    exclude_robots   = True ### don't want this to appear in `robots.txt`
+    hidden           = True
+
+    def _view (self, handler) :
+        raise self.top.HTTP.Error_500 ("Wilful raisement")
     # end def _view
 
 # end class Stopper

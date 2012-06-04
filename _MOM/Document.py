@@ -78,7 +78,7 @@ class Document (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 160
-            ui_name            = "Description"»
+            ui_name            = "Description"
 
         # end class description
 

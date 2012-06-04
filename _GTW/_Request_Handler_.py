@@ -57,6 +57,13 @@
 #     5-Apr-2012 (CT) Remove `current_user`; move `_get_user` to `GTW.NAV`
 #     3-May-2012 (CT) Change `get_browser_locale_codes` to consider
 #                     `supported; `use `en`, not `en_US`, as last resort
+#     9-May-2012 (CT) Add `headers` and `body` to debug info in `content_type`
+#     9-May-2012 (CT) Add handler for `Exception` to `_handle_request`
+#    10-May-2012 (CT) Change `_handle_request` to call `_send_error_email`,
+#                     don't return `Error_500` if `wants_json`
+#    11-May-2012 (CT) Add `remote_addr`, `path` to debug info in `content_type`
+#     4-Jun-2012 (CT) Encode argument for `logging.warning`
+#     4-Jun-2012 (CT) Use `log_level` instead of `__debug__` to guard `logging`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +78,7 @@ import base64
 import datetime
 import hashlib
 import json
+import logging
 import sys
 
 class _Request_Handler_ (object) :
@@ -100,18 +108,34 @@ class _Request_Handler_ (object) :
     @property
     def content_type (self) :
         if self._content_type is None :
-            headers   = self.request.headers
+            request   = self.request
+            headers   = request.headers
             ct, _, ce = split_hst (headers.get ("content-type", ""), ";")
             self._content_type = ct.strip ()
             if not self._content_encoding :
                 h, s, t = split_hst (ce, "=")
                 self._content_encoding = t.strip ()
                 if not self._content_encoding :
-                    if __debug__ :
+                    dce = self.default_content_encoding
+                    if self.log_level :
                         if self.body :
-                            print "Use Fallback default content encoding %s" % \
-                                (self.default_content_encoding, )
-                    self._content_encoding = self.default_content_encoding
+                            from _TFL.Formatter import formatted_1, formatted
+                            message = \
+                                ( "Use fallback default content encoding %s"
+                                  "\n    [%s] %s --> %s"
+                                  "\n    Headers: %s"
+                                  "\n    Body: "
+                                  "\n      %s"
+                                % ( dce
+                                  , datetime.datetime.now ().replace
+                                      (microsecond = 0)
+                                  , request.remote_addr, request.path
+                                  , formatted_1 (headers)
+                                  , formatted (self.body, level = 3)
+                                  )
+                                ).encode (dce, "replace")
+                            logging.warning (message)
+                    self._content_encoding = dce
         return self._content_type
     # end def content_type
 
@@ -134,6 +158,11 @@ class _Request_Handler_ (object) :
         assert codes
         return codes
     # end def locale_codes
+
+    @Once_Property
+    def log_level (self) :
+        return self.settings.get ("log_level", 0)
+    # end def log_level
 
     @Once_Property
     def session (self) :
@@ -276,19 +305,37 @@ class _NAV_Request_Handler_ (_Request_Handler_) :
         if self.settings.get ("i18n", False) :
             I18N.use (* self.locale_codes)
         top    = self.nav_root
+        HTTP   = top.HTTP
         scope  = getattr (top, "scope", None)
         FEs    = getattr (scope, "Fatal_Exceptions", ())
         result = (None, None)
         try :
             try :
                 top.universal_view (self)
-            except top.HTTP._Redirect_ as redirect :
+            except HTTP._Redirect_ as redirect :
                 result = redirect, top
             self.finish_request (scope)
         except FEs :
-            result = top.HTTP.Error_503 (), top
-        except top.HTTP.Error_503 as exc:
+            result = HTTP.Error_503 (), top
+        except HTTP.Error_503 as exc :
             result = exc, top
+        except Exception as exc :
+            is_500 = isinstance (exc, HTTP.Error_500)
+            if isinstance (exc, HTTP._Error_) and not is_500 :
+                raise
+            import traceback
+            tb = traceback.format_exc ()
+            try :
+                top._send_error_email (self, exc, tb)
+            except Exception as exc :
+                print tb
+                print "*" * 70
+                traceback.print_exc ()
+            if not self.wants_json :
+                if is_500 :
+                    result = exc, top
+                else :
+                    result = top.HTTP.Error_500 (str (exc)), top
         return result
     # end def _handle_request
 

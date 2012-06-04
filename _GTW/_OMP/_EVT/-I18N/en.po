@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
-"PO-Revision-Date: 2011-05-19 11:36+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
+"PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 0.9.4\n"
 
 #: _GTW._OMP._EVT.Calendar:0 _GTW._OMP._EVT.Event:0
 msgid "Calendar"
@@ -32,7 +32,7 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
 msgid "Daily"
 msgstr ""
 
@@ -63,7 +63,6 @@ msgid "Dates included in the recurrence rule set."
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-#, fuzzy
 msgid "Detail"
 msgstr ""
 
@@ -71,8 +70,7 @@ msgstr ""
 msgid "Easter offset"
 msgstr ""
 
-#: _GTW._OMP._EVT.Event:0 _GTW._OMP._EVT.Recurrence_Spec:0
-#, fuzzy
+#: _GTW._OMP._EVT.Recurrence_Spec:0 _GTW._OMP._EVT.Event:0
 msgid "Event"
 msgid_plural "Events"
 msgstr[0] ""
@@ -87,9 +85,8 @@ msgid "Event that recurs"
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-#, fuzzy
 msgid "Event_occurs"
-msgid_plural "Event_occurses"
+msgid_plural "Events_occur"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -129,7 +126,7 @@ msgstr ""
 msgid "Month day"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
 msgid "Monthly"
 msgstr ""
 
@@ -242,11 +239,6 @@ msgid ""
 msgstr ""
 
 #: _GTW._OMP._EVT.Event:0
-#, fuzzy
-msgid "Time"
-msgstr ""
-
-#: _GTW._OMP._EVT.Event:0
 msgid "Time (interval) of occurrence"
 msgstr ""
 
@@ -272,7 +264,7 @@ msgstr ""
 msgid "Week day"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
 msgid "Weekly"
 msgstr ""
 
@@ -280,7 +272,7 @@ msgstr ""
 msgid "Year day"
 msgstr ""
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:391
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
 msgid "Yearly"
 msgstr ""
 

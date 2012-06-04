@@ -94,6 +94,11 @@
 //    23-Apr-2012 (CT) Use `.concat` instead of `.push` to extend array
 //    27-Apr-2012 (CT) Change `_display_error` to not display `attrs[0]`
 //                     before `head`
+//     9-May-2012 (CT) Add `ev.preventDefault` to `submit_cb`
+//     9-May-2012 (CT) Disable `submit` to avoid IE posting the form after
+//                     `submit_cb`
+//     9-May-2012 (CT) Change `submit_cb` to write to `window.location.href`,
+//                     use `setTimeout` to appease IE
 //    ««revision-date»»···
 //--
 
@@ -990,6 +995,9 @@
             var pvs          = $AFS_E.root.packed_values ();
             var json_data    = { cargo : pvs };
             json_data [name] = true;
+            if (ev && "preventDefault" in ev) {
+                ev.preventDefault ();
+            };
             $.gtw_ajax_2json
                 ( { url         : document.URL
                   , data        : json_data
@@ -997,24 +1005,23 @@
                         if (! answer ["error"]) {
                             if (answer ["conflicts"]) {
                                 // XXX
-                                console.error ("Conflicts", answer);
-                                alert ("Submit conflicts: more info in console");
+                                alert ("Submit conflicts");
                             } else if (answer ["errors"]) {
-                                console.error ("Errors", answer);
                                 _display_error_map (answer.errors);
                             } else if (answer ["expired"]) {
                                 // XXX display re-authorization form
                                 alert ("Expired: " + answer.expired);
                             } else {
-                                console.info
-                                    ( name + " of form " + document.URL
-                                    + " was successful!"
+                                // Need timeout here for IE
+                                setTimeout
+                                    ( function () {
+                                        window.location.href = options.url.next;
+                                      }
+                                    , 0
                                     );
-                                window.location = options.url.next;
                             };
                         } else {
-                            console.error ("Submit error", answer, json_data);
-                            alert ("Submit error: more info in console");
+                            alert ("Submit error: " + answer ["error"]);
                         };
                     }
                   }
@@ -1023,7 +1030,11 @@
             return false;
         };
         options.form$ = this;
+        // bind `submit_cb` to `click` of submit buttons (need button name)
+        // disable `submit` event for form to avoid IE to do normal form
+        // submit after running `submit_cb`
         this.delegate (selectors.submit, "click", submit_cb);
+        this.submit   (function (ev) { return false; });
         _setup_callbacks (this);
         return this;
     };

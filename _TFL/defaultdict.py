@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #    20-Jun-2007 (CT) Adapted to Python 2.5
 #    20-Jun-2007 (CT) `defaultdict_kd` added
 #    29-Aug-2008 (CT) s/super(...)/__super/
+#    30-May-2012 (CT) Add `defaultdict_nested`
 #    ««revision-date»»···
 #--
 
@@ -140,7 +141,55 @@ class defaultdict_kd (_defaultdict_kd_) :
 
 # end class defaultdict_kd
 
+def defaultdict_nested (depth = 1, leaf = dict) :
+    """Return a `defaultdict` nested to `depth` with leaves of type `leaf`.
+
+    >>> from _TFL.Formatter import formatted
+    >>> ddn_1 = defaultdict_nested (1, int)
+    >>> ddn_1
+    defaultdict(<type 'int'>, {})
+    >>> ddn_2 = defaultdict_nested (2, int)
+    >>> ddn_1 ["foo"] += 1
+    >>> ddn_1 ["foo"] += 1
+    >>> ddn_1
+    defaultdict(<type 'int'>, {'foo': 2})
+    >>> ddn_2 ["foo"] ["bar"] += 42
+    >>> print formatted (ddn_1)
+    { 'foo' : 2 }
+    >>> print formatted (ddn_2)
+    { 'foo' :
+        { 'bar' : 42 }
+    }
+    >>> ddn_7 = defaultdict_nested (7, int)
+    >>> ddn_7 [1] [2] [3] [4] [5] [6] [7] = "foo"
+    >>> print formatted (ddn_7)
+    { 1 :
+        { 2 :
+            { 3 :
+                { 4 :
+                    { 5 :
+                        { 6 :
+                            { 7 : 'foo' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    >>> ddn_7 [0] [1] [2] [3] [4] [5] [6] [7] = "bar"
+    Traceback (most recent call last):
+      ...
+    TypeError: 'int' object does not support item assignment
+    """
+    result = defaultdict (leaf)
+    for i in range (depth - 1) :
+        result = defaultdict (lambda r = result : r)
+    return result
+# end def defaultdict_nested
+
 if __name__ != "__main__" :
     TFL._Export \
-        ("defaultdict", "defaultdict_kd", "_defaultdict_", "_defaultdict_kd_")
+        ( "defaultdict", "defaultdict_kd", "defaultdict_nested"
+        , "_defaultdict_", "_defaultdict_kd_"
+        )
 ### __END__ TFL.defaultdict

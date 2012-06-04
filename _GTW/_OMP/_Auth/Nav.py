@@ -33,6 +33,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
 #                     i.e., stuff related to non-AFS forms
+#    22-May-2012 (CT) Fix typo (`Account_P = dict`, not `Account = dict`)
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ from   _GTW._NAV.Permission     import Is_Superuser
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    Account          = dict \
+    Account_P        = dict \
         ( ETM        = "GTW.OMP.Auth.Account_P"
         , permission = Is_Superuser ()
         )

@@ -32,6 +32,7 @@
 #     2-Dec-2011 (CT) Creation continued...
 #    13-Dec-2011 (CT) Creation continued.... (`.Atoms`)
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    14-May-2012 (CT) Add test showing `P_Type` of `scope.attribute_types`
 #    ««revision-date»»···
 #--
 
@@ -284,9 +285,11 @@ _test_code = """
           name                3
           long_name           3
         desc                3
+        is_cancelled        1
       boat_class          2
         name                3
       discards            0
+      is_cancelled        1
       kind                3
       races               0
       result              None
@@ -348,8 +351,10 @@ _test_code = """
         String `name` right.left.club.name
         String `long_name` right.left.club.long_name
         String `desc` right.left.desc
+        Boolean `is_cancelled` right.left.is_cancelled
         String `name` right.boat_class.name
         Int `discards` right.discards
+        Boolean `is_cancelled` right.is_cancelled
         String `kind` right.kind
         Int `races` right.races
         Date-Time `date` right.result.date
@@ -361,6 +366,7 @@ _test_code = """
         Date `finish` left.date.finish
         String `name` boat_class.name
         Int `discards` discards
+        Boolean `is_cancelled` is_cancelled
         String `kind` kind
         Int `races` races
         Date-Time `date` result.date
@@ -476,6 +482,36 @@ _test_code = """
     LT           <Attr.Filter LT [<]>
     NE           <Attr.Filter NE [!=]>
     STARTSWITH   <Attr.Filter STARTSWITH [starts-with]>
+
+    >>> seen = set ()
+    >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
+    ...     k = at.typ
+    ...     if k not in seen and not isinstance (at, MOM.Attr._A_Entity_):
+    ...         print "%%-20s %%-20s %%s" %% (at.typ, at, at.P_Type or "-"*10)
+    ...         seen.add (k)
+    Boolean              discarded            <type 'bool'>
+    Date                 date                 <type 'datetime.date'>
+    Date-Slug            perma_name           <type 'unicode'>
+    Date-Time            date                 <type 'datetime.datetime'>
+    Date_List            date_exceptions      <class '_MOM._Attr.Coll.List'>
+    Directory            directory            <type 'str'>
+    Email                address              <type 'unicode'>
+    Float                beam                 <type 'float'>
+    Format               format               ----------
+    Int                  count                <type 'int'>
+    Int_List             easter_offset        <class '_MOM._Attr.Coll.List'>
+    Name                 name                 <type 'unicode'>
+    Nation               nation               <type 'unicode'>
+    Numeric_String       area_code            <type 'unicode'>
+    Sex                  sex                  <type 'unicode'>
+    String               city                 <type 'unicode'>
+    Text                 abstract             <type 'unicode'>
+    Time                 finish               <type 'datetime.time'>
+    Unit                 unit                 <type 'int'>
+    Url                  link_to              <type 'unicode'>
+    Weekday_RR_List      week_day             <class '_MOM._Attr.Coll.List'>
+    X                    width                <type 'int'>
+    Y                    height               <type 'int'>
 
     >>> scope.destroy ()
 

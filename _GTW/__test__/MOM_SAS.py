@@ -35,8 +35,10 @@ This is just to make sure that run_doctest considers this file as a file with
 doctests
     >>> Print
 """
+from   __future__           import unicode_literals
 from _MOM._DBW._SAS.__doc__ import \
      __doc__, __test__, MOM, BMT, show, NL, sos, remove, formatted, formatted1
+from   _MOM.inspect               import show_children
 
 if __name__ == "__main__" :
     import doctest

@@ -65,6 +65,9 @@
 #    27-Apr-2012 (CT) Change `_Invariant_.bindings` to apply `unicode` to values
 #    27-Apr-2012 (CT) Add and use `Invariants._flattened`
 #    30-Apr-2012 (CT) Add `Duplicate_Link.__init__`
+#    11-May-2012 (CT) Add message to `assert` in `Ambiguous_Epk.__init__`
+#    11-May-2012 (CT) Change `Attribute_Syntax` to use
+#                     `self.attribute.name`, not `self.attribute`, for json
 #    ««revision-date»»···
 #--
 
@@ -280,7 +283,8 @@ class Ambiguous_Epk (_Invariant_) :
     raw            = False
 
     def __init__ (self, e_type, epk, kw, count, * matches) :
-        assert 1 < count <= len (matches)
+        assert 1 < count <= len (matches), \
+            "count = %s, matches = %s" % (count, matches)
         self.e_type     = e_type
         self.epk        = tuple (repr (x) for x in epk)
         self.kw         = kw
@@ -398,7 +402,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         self.args         = (obj, attr, val, exc_str)
         self.obj          = obj
         self.attribute    = attr
-        self.attributes   = (attr, )
+        self.attributes   = (attr.name, )
         self.is_required  = attr.is_required
         self.value        = val
         self.exc_str      = exc_str
@@ -423,14 +427,14 @@ class Attribute_Syntax (_Invariant_, ValueError) :
 
     @Once_Property
     def bindings (self) :
-        return ((self.attribute, self.value), )
+        return ((self.attribute.name, self.value), )
     # end def bindings
 
     @Once_Property
     def head (self) :
         return \
             ( _T ("Syntax error: \n  expected type `%s`\n  got value `%s`")
-            % (self.attribute.typ, self.value)
+            % (_T (self.attribute.typ), self.value)
             )
     # end def head
 

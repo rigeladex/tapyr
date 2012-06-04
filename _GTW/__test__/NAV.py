@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Jan-2012 (CT) Creation
+#     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,7 @@ _test_code = """
     video
 
     >>> for owl in nav_root.own_links_transitive :
+    ...   if not owl.hidden:
     ...     print owl.href, owl.template.name
     Admin/ html/static.jnj
     Admin/Benutzerverwaltung/ html/static.jnj
@@ -143,8 +145,6 @@ _test_code = """
     Admin/Webseitenverwaltung/Gallery/ e_type_admin
     Admin/Webseitenverwaltung/Page/ e_type_admin
     Admin/Webseitenverwaltung/Picture/ e_type_admin
-    Auth/ html/static.jnj
-    L10N/ html/static.jnj
 
     >>> php = nav_root.page_from_href ("Admin/Personenverwaltung/Person_has_Phone/change")
     >>> print php.href, php.template.name
@@ -207,14 +207,13 @@ __test__ = dict \
     ( NAV_test = _test_code
     )
 
-cmd = Scaffold.cmd.parse \
+app = Scaffold \
     ( [ "wsgi"
-      , "-db_url", "hps://"
-      , "-db_name", "test"
-      , "-debug", "yes"
-      , "-suppress_translation_loading", "yes"
+      , "-db_url",    "hps://"
+      , "-db_name",   "test"
+      , "-debug",     "yes"
+      , "-load_I18N", "no"
       ]
     )
-app = cmd ()
 
 ### __END__ GTW.__test__.NAV

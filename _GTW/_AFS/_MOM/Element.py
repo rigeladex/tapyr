@@ -104,6 +104,7 @@
 #    23-Apr-2012 (CT) Change `_MOM_Entity_MI_._create_instance` to use
 #                     `query_s` and `ETM ()` instead of `ETM.instance_or_new`
 #                     (to protect against ambiguous input)
+#    22-May-2012 (CT) Remove `Form.cache_rank` (belongs to `Form_Cache`)
 #    ««revision-date»»···
 #--
 
@@ -584,8 +585,6 @@ class _MOM_Form_ (AE.Form) :
     """Model a MOM-specific AJAX-enhanced form."""
 
     _real_name = "Form"
-
-    cache_rank = -500
 
     def _call_iter (self, * args, ** kw) :
         if len (self.children) == 1 and len (args) <= 2 :

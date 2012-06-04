@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -177,6 +177,7 @@
 #    21-Dec-2010 (CT) `h_title` changed (no `title junk` (TM))
 #    21-Dec-2010 (CT) `Root.home` added
 #    23-May-2011 (CT) `copyright_url` added
+#     2-Jun-2012 (CT) Add `DJO` to `context` in `from_nav_list_file`
 #    ««revision-date»»···
 #--
 
@@ -559,7 +560,7 @@ class _Dir_ (_Site_Entity_) :
         """Return a new `Dir` filled with information read from the file
            `navigation.list` in `src_dir`.
         """
-        context = dict (nav_context)
+        context = dict (nav_context, DJO = DJO)
         nl      = pjoin (src_dir, "navigation.list")
         result  = cls   (src_dir, parent = parent, ** kw)
         execfile        (nl, DJO.NAV.__dict__, context)

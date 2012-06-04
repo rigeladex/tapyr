@@ -8,17 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
-"PO-Revision-Date: 2011-05-19 11:36+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
+"PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Error.py:776
+#: _MOM/Error.py:780
 #, python-format
 msgid "%s needs the %s attribute: %s"
 msgid_plural "%s needs the %s attributes: %s"
@@ -30,7 +30,7 @@ msgstr[1] ""
 msgid "%s needs the arguments %s, got %s instead"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1808
+#: _MOM/_Attr/Type.py:1831
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -44,16 +44,19 @@ msgstr ""
 msgid "All object invariants must be satisfied."
 msgstr ""
 
-#: _MOM/Error.py:801
+#: _MOM/Error.py:805
 msgid "All required attributes must be supplied"
 msgstr ""
 
 #: _MOM.Entity:0
-#, fuzzy
 msgid "An_Entity"
-msgid_plural "An_Entitys"
+msgid_plural "Entities"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _MOM/_Attr/Type.py:1381
+msgid "Angle"
+msgstr ""
 
 #: _MOM/_Attr/Kind.py:1260
 #, python-format
@@ -62,26 +65,42 @@ msgid ""
 " once!"
 msgstr ""
 
-#: _MOM/Error.py:307
+#: _MOM/Error.py:311
 #, python-format
 msgid "Attributes given: (%s)"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1399
+msgid "Blob"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1409
+msgid "Boolean"
 msgstr ""
 
 #: _MOM/_Attr/Filter.py:253
 msgid "CONTAINS"
 msgstr ""
 
-#: _MOM/_Meta/M_Entity.py:183
+#: _MOM/_Attr/Type.py:1446
+msgid "Cached_Role"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1466
+msgid "Cached_Role_Set"
+msgstr ""
+
+#: _MOM/_Meta/M_Entity.py:184
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 
-#: _MOM/Error.py:361
+#: _MOM/Error.py:365
 #, python-format
 msgid "Can't set %s attribute %s.%s to `%r`"
 msgstr ""
 
-#: _MOM/Error.py:834
+#: _MOM/Error.py:838
 #, python-format
 msgid "Cannot create more than %d objects of %s"
 msgstr ""
@@ -91,12 +110,16 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
+#: _MOM/_Attr/Type.py:1475
+msgid "Character"
+msgstr ""
+
 #: _MOM/_Attr/Kind.py:1194
 #, python-format
 msgid "Computed attribute `%s.%s` cannot be assigned"
 msgstr ""
 
-#: _MOM/Error.py:526
+#: _MOM/Error.py:530
 msgid "Condition"
 msgstr ""
 
@@ -105,39 +128,72 @@ msgstr ""
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
 
+#: _MOM/_Attr/Type.py:1485
+msgid "Date"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1527
+msgid "Date-Slug"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1547
+msgid "Date-Time"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1580 _MOM/_Attr/Type.py:1582
+#, python-format
+msgid "Date/time expected, got %r"
+msgstr ""
+
 #: _MOM._Attr.Date_Interval:0
-#, fuzzy
 msgid "Date_Interval"
 msgid_plural "Date_Intervals"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _MOM._Attr.Date_Interval:0
-#, fuzzy
 msgid "Date_Interval_C"
-msgid_plural "Date_Interval_Cs"
+msgid_plural "Date_Intervals_C"
 msgstr[0] ""
 msgstr[1] ""
 
 #: _MOM._Attr.Date_Interval:0
-#, fuzzy
 msgid "Date_Interval_N"
-msgid_plural "Date_Interval_Ns"
+msgid_plural "Date_Intervals_N"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _MOM/_Attr/Type.py:1517
+msgid "Date_List"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1603
+msgid "Date_Time_List"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:851 _MOM/_Attr/Type.py:1668
+msgid "Decimal"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1638
+msgid "Directory"
+msgstr ""
 
 #: _MOM/_Attr/Filter.py:264
 msgid "ENDSWITH"
 msgstr ""
 
-#: _MOM.Entity:0
-#, fuzzy
+#: _MOM/_Attr/Type.py:1658
+msgid "Email"
+msgstr ""
+
+#: _MOM.Entity:0 _MOM/_Attr/Type.py:1861
 msgid "Entity"
-msgid_plural "Entitys"
+msgid_plural "Entities"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/Error.py:446
+#: _MOM/Error.py:450
 msgid "Exception"
 msgstr ""
 
@@ -145,8 +201,11 @@ msgstr ""
 msgid "FR"
 msgstr ""
 
-#: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
-#, fuzzy
+#: _MOM/_Attr/Type.py:1708
+msgid "Filename"
+msgstr ""
+
+#: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "Finish"
 msgstr ""
 
@@ -158,15 +217,21 @@ msgstr ""
 msgid "Finish time of interval"
 msgstr ""
 
+#: _MOM/_Attr/Type.py:865
+msgid "Float"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1728
+msgid "Frequency"
+msgstr ""
+
 #: _MOM/_Attr/Filter.py:309
-#, fuzzy
 msgid "IN"
 msgstr ""
 
 #: _MOM.Entity:0
-#, fuzzy
 msgid "Id_Entity"
-msgid_plural "Id_Entitys"
+msgid_plural "Id_Entities"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -177,22 +242,41 @@ msgid ""
 "object creation"
 msgstr ""
 
-#: _MOM/Error.py:787
+#: _MOM/Error.py:791
 #, python-format
 msgid "Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1363
+#: _MOM/_Attr/Type.py:873
+msgid "Int"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1747
+msgid "Int_List"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1370
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
 
-#: _MOM/Error.py:245
+#: _MOM/Error.py:248
 msgid "Invariant error"
 msgstr ""
 
+#: _MOM/_Attr/Type.py:894
+msgid "L_Middle"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:884
+msgid "Left"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1755
+msgid "Length"
+msgstr ""
+
 #: _MOM.Link:0
-#, fuzzy
 msgid "Link"
 msgid_plural "Links"
 msgstr[0] ""
@@ -230,14 +314,18 @@ msgstr[1] ""
 msgid "MO"
 msgstr ""
 
-#: _MOM/Error.py:342
+#: _MOM/Error.py:346
 #, python-format
 msgid "Matching entities: %s%s"
 msgstr ""
 
-#: _MOM/Error.py:642
+#: _MOM/Error.py:646
 #, python-format
 msgid "Maximum number of links for %s is %d %s"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:904
+msgid "Middle"
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
@@ -256,13 +344,11 @@ msgstr ""
 msgid "Model a time interval (start, finish)"
 msgstr ""
 
-#: _MOM.Object:0
-#, fuzzy
+#: _MOM.Object:0 _MOM/_Attr/Type.py:1827
 msgid "Name"
 msgstr ""
 
 #: _MOM.Object:0
-#, fuzzy
 msgid "Named_Object"
 msgid_plural "Named_Objects"
 msgstr[0] ""
@@ -273,17 +359,20 @@ msgstr[1] ""
 msgid "Necessary attribute %s is not defined"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1045
+#: _MOM/_Attr/Type.py:1052
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr ""
 
-#: _MOM/Error.py:267
+#: _MOM/Error.py:270
 msgid "None"
 msgstr ""
 
+#: _MOM/_Attr/Type.py:1842
+msgid "Numeric_String"
+msgstr ""
+
 #: _MOM.Object:0
-#, fuzzy
 msgid "Object"
 msgid_plural "Objects"
 msgstr[0] ""
@@ -302,6 +391,14 @@ msgstr ""
 #: _MOM/_Attr/Kind.py:926
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:914
+msgid "R_Middle"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:924
+msgid "Right"
 msgstr ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:73
@@ -363,7 +460,6 @@ msgid "Select entities where the attribute value starts with the specified value
 msgstr ""
 
 #: _MOM.Link:0
-#, fuzzy
 msgid "Seq no"
 msgstr ""
 
@@ -372,7 +468,6 @@ msgid "Sequence number of a link in an ordered association."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
-#, fuzzy
 msgid "Start"
 msgstr ""
 
@@ -384,15 +479,19 @@ msgstr ""
 msgid "Start time of interval"
 msgstr ""
 
-#: _MOM/Error.py:440
+#: _MOM/_Attr/Type.py:1869
+msgid "String"
+msgstr ""
+
+#: _MOM/Error.py:444
 msgid "Syntax"
 msgstr ""
 
-#: _MOM/Error.py:415
+#: _MOM/Error.py:419
 msgid "Syntax error"
 msgstr ""
 
-#: _MOM/Error.py:432
+#: _MOM/Error.py:436
 #, python-format
 msgid ""
 "Syntax error: \n"
@@ -408,6 +507,10 @@ msgstr ""
 msgid "TU"
 msgstr ""
 
+#: _MOM/_Attr/Type.py:1878
+msgid "Text"
+msgstr ""
+
 #: _MOM._Attr.Date_Interval:0
 msgid "The finish date must be later than the start date"
 msgstr ""
@@ -416,13 +519,21 @@ msgstr ""
 msgid "The finish time must be later than the start time"
 msgstr ""
 
-#: _MOM/Error.py:483
+#: _MOM/Error.py:487
 #, python-format
 msgid "There already exists a link: %s %s"
 msgstr ""
 
+#: _MOM/_Attr/Type.py:1887
+msgid "Time"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:1902 _MOM/_Attr/Type.py:1904
+#, python-format
+msgid "Time expected, got %r"
+msgstr ""
+
 #: _MOM._Attr.Time_Interval:0
-#, fuzzy
 msgid "Time_Interval"
 msgid_plural "Time_Intervals"
 msgstr[0] ""
@@ -437,6 +548,10 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
+#: _MOM/_Attr/Type.py:1919
+msgid "Url"
+msgstr ""
+
 #: _MOM/_Attr/Kind.py:917
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
@@ -446,7 +561,7 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:641
+#: _MOM/_Attr/Recurrence_Rule.py:113 _MOM/_Attr/Type.py:646
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -455,7 +570,11 @@ msgstr ""
 msgid "WE"
 msgstr ""
 
-#: _MOM/Error.py:411
+#: _MOM/_Attr/Type.py:1936
+msgid "Year"
+msgstr ""
+
+#: _MOM/Error.py:415
 #, python-format
 msgid ""
 "`%s` for : `%r`\n"
@@ -468,7 +587,6 @@ msgid "cached"
 msgstr ""
 
 #: _MOM.Entity:0
-#, fuzzy
 msgid "completely_defined"
 msgstr ""
 
@@ -480,23 +598,19 @@ msgstr ""
 msgid "constant"
 msgstr ""
 
-#: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
-#, fuzzy
+#: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
 msgid "finish_after_start"
 msgstr ""
 
 #: _MOM/_Attr/Kind.py:1038
-#, fuzzy
 msgid "internal"
 msgstr ""
 
 #: _MOM.Link:0
-#, fuzzy
 msgid "left"
 msgstr ""
 
 #: _MOM.Link:0
-#, fuzzy
 msgid "middle"
 msgstr ""
 
@@ -504,23 +618,21 @@ msgstr ""
 msgid "necessary"
 msgstr ""
 
-#: _MOM/Error.py:666
+#: _MOM/Error.py:670
 #, python-format
 msgid "new definition of %s %s clashes with existing %s %s"
 msgstr ""
 
-#: _MOM/Error.py:667
-#, fuzzy
+#: _MOM/Error.py:671
 msgid "object"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1040
+#: _MOM/_Attr/Type.py:1047
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""
 
 #: _MOM.Entity:0
-#, fuzzy
 msgid "object_correct"
 msgstr ""
 
@@ -536,12 +648,11 @@ msgstr ""
 msgid "query"
 msgstr ""
 
-#: _MOM/Error.py:750 _MOM/_Attr/Kind.py:1004
+#: _MOM/Error.py:754 _MOM/_Attr/Kind.py:1004
 msgid "required"
 msgstr ""
 
 #: _MOM.Link:0
-#, fuzzy
 msgid "right"
 msgstr ""
 

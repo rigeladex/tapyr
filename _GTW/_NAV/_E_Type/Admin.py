@@ -167,6 +167,14 @@
 #    27-Apr-2012 (CT) Change `Change._post_handler` to `commit` and
 #                     to call `fv.record_errors` if commit fails
 #    30-Apr-2012 (CT) Add `submit_callback` to `Admin.Changer._post_handler`
+#     9-May-2012 (CT) Fix `referrer` in `Changer.rendered` (mustn't be `"None"`)
+#     9-May-2012 (CT) Don't raise `NotImplementedError` in
+#                     `Changer._post_handler`, use `logging.warning` instead
+#    10-May-2012 (CT) Factor `_Changer_`, add `Creator`,
+#                     add `Changer._login_required` and
+#                     `Deleter._login_required`
+#    11-May-2012 (CT) Add exception handler around call of `.write_json` to
+#                     `_Changer_._post_handler` to email `result`
 #    ««revision-date»»···
 #--
 
@@ -198,6 +206,8 @@ from   _TFL.predicate           import uniq
 
 from   itertools                import chain as ichain
 from   posixpath                import join  as pjoin
+
+import logging
 
 class JSON_Error (Exception) :
 
@@ -517,12 +527,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class _Cmd_Json_
 
-    class Changer (_Cmd_) :
+    class _Changer_ (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
            of a etype with an AFS form.
         """
 
-        name            = "create"
         args            = (None, )
         template_name   = "e_type_afs"
 
@@ -558,7 +567,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 form = self.form \
                     ( obj
                     , referrer        = "%s%s" %
-                        ( request.referrer
+                        ( request.referrer or ""
                         , "#pk-%s" % (obj.pid, ) if obj else ""
                         )
                     , _sid            = sid
@@ -579,8 +588,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request    = handler.request
             result     = {}
             if json is None :
-                raise NotImplementedError \
-                    ("AFS form post requests without content-type json")
+                from _TFL.Formatter import formatted_1
+                logging.warning \
+                    ( "AFS form post requests without content-type json"
+                      "\n    Headers: %s"                      "\n    Body: %s"
+                    % (formatted_1 (request.headers), handler.body)
+                    )
+                return handler.write_json (result)
             try :
                 if json.get ("cancel") :
                     ### the user has clicked on the cancel button and not on
@@ -628,10 +642,24 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                                     (handler, scope, fv, result)
                             except Exception as exc :
                                 import traceback; traceback.print_exc ()
-                return handler.write_json (result)
+                try :
+                    return handler.write_json (result)
+                except Exception as exc :
+                    from _TFL.Formatter import formatted
+                    self._send_error_email (handler, exc, formatted (result))
+                    raise
             except JSON_Error as exc :
                 return exc (handler)
         # end def _post_handler
+
+    # end class _Changer_
+
+    class Changer (_Changer_) :
+        """Model an admin page for changing an existing instance
+           of a etype with an AFS form."""
+
+        name            = "change"
+        _login_required = True
 
     # end class Changer
 
@@ -714,12 +742,23 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Completer
 
+    class Creator (_Changer_) :
+        """Model an admin page for creating a new instance
+           of a etype with an AFS form.
+        """
+
+        name            = "create"
+
+    # end class Creator
+
     class Deleter (_Cmd_) :
         """Model an admin action for deleting a specific instance of a etype."""
 
         name              = "delete"
         template_name     = "e_type_delete"
         SUPPORTED_METHODS = set (("POST", ))
+
+        _login_required   = True
 
         def _post_handler_args (self, handler) :
             ETM        = self.ETM
@@ -1128,7 +1167,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def changer_injected_templates (self) :
-        renderers = set (self.Form.renderer_iter ())
+        renderers = set (self.Form.renderer_iter () if self.Form else ())
         return tuple (self.top.Templateer.get_template (r) for r in renderers)
     # end def changer_injected_templates
 
@@ -1144,7 +1183,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def Form (self) :
-        return AFS_Form [self.form_id]
+        try :
+            result = AFS_Form [self.form_id]
+        except Exception as exc :
+            print exc, self.href, self.E_Type, self.form_id
+            raise
+        else :
+            return result
     # end def Form
 
     @property
@@ -1355,7 +1400,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         ( change         = (Changer,                 "args",  None)
         , complete       = (Completer,               "args",  None)
         , completed      = (Completed,               "args",  None)
-        , create         = (Changer,                 "args",  0)
+        , create         = (Creator,                 "args",  0)
         , delete         = (Deleter,                 "args",  None)
         , expand         = (Expander,                "args",  0)
         )

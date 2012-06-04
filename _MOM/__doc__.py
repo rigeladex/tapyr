@@ -59,26 +59,34 @@
 #    18-Nov-2011 (CT) Add `formatted1` to get rid of `u` prefixes
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
+#    14-May-2012 (CT) Add `Supertrap.weights` to test `A_Float_Interval`
+#    14-May-2012 (CT) Factor function `show_children` to module `MOM.inspect`
+#    14-May-2012 (CT) Remove prefix `u` from strings,
+#                     import `unicode_literals` from `__future__` instead
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM          import *
-from   _MOM._Attr.Date_Interval import *
-from   _MOM.Product_Version     import Product_Version, IV_Number
-from   _TFL.Package_Namespace   import Derived_Package_Namespace
-from   _TFL                     import sos
+from   __future__  import unicode_literals
+
+from   _MOM.import_MOM            import *
+from   _MOM._Attr.Date_Interval   import *
+from   _MOM._Attr.Number_Interval import A_Float_Interval
+from   _MOM.inspect               import show_children
+from   _MOM.Product_Version       import Product_Version, IV_Number
+from   _TFL.Package_Namespace     import Derived_Package_Namespace
+from   _TFL                       import sos
 
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
 Version = Product_Version \
-    ( productid           = u"Better Mouse Trap"
-    , productnick         = u"BMT"
-    , productdesc         = u"Example application for MOM meta object model"
+    ( productid           = "Better Mouse Trap"
+    , productnick         = "BMT"
+    , productdesc         = "Example application for MOM meta object model"
     , date                = "18-Dec-2009"
     , major               = 0
     , minor               = 5
     , patchlevel          = 42
-    , author              = u"Christian Tanzer, Martin Glück"
+    , author              = "Christian Tanzer, Martin Glück"
     , copyright_start     = 2009
     , db_version          = IV_Number
         ( "db_version"
@@ -319,6 +327,20 @@ _Ancestor_Essence = Trap
 
 class Supertrap (_Ancestor_Essence) :
     """An enormously improved Trap."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class weights (A_Float_Interval) :
+            """Range of weights this trap can safely hold"""
+
+            kind               = Attr.Necessary
+
+        # end class weights
+
+    # end class _Attributes
+
 # end class Supertrap
 
 _Ancestor_Essence = MOM.Link1
@@ -568,7 +590,11 @@ defined:
 
     >>> %(import_EMS)s as EMS
     >>> %(import_DBW)s as DBW
-    >>> apt = MOM.App_Type (u"BMT", BMT).Derived (EMS, DBW)
+    >>> try :
+    ...   apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
+    ... except Exception as exc :
+    ...   import traceback; traceback.print_exc ()
+    ...   import os; os.abort ()
 
 Creating a derived app-type replaces the specification of the
 essential classes with bare essential classes:
@@ -585,14 +611,15 @@ essential classes with bare essential classes:
 and derives an app-type specific entity-type for each of the essential
 classes:
 
-    >>> ET_Id_Entity = apt.entity_type (u"MOM.Id_Entity")
-    >>> ET_Named_Obj = apt.entity_type (u"MOM.Named_Object")
-    >>> ET_Person    = apt.entity_type (u"BMT.Person")
-    >>> ET_Mouse     = apt [u"BMT.Mouse"]
-    >>> ET_Rat       = apt [u"BMT.Rat"]
-    >>> ET_Rodent    = apt [u"BMT.Rodent"]
-    >>> ET_Trap      = apt [u"BMT.Trap"]
-    >>> ET_Supertrap = apt [u"BMT.Supertrap"]
+    >>> ET_Entity    = apt.entity_type ("MOM.Entity")
+    >>> ET_Id_Entity = apt.entity_type ("MOM.Id_Entity")
+    >>> ET_Named_Obj = apt.entity_type ("MOM.Named_Object")
+    >>> ET_Person    = apt.entity_type ("BMT.Person")
+    >>> ET_Mouse     = apt ["BMT.Mouse"]
+    >>> ET_Rat       = apt ["BMT.Rat"]
+    >>> ET_Rodent    = apt ["BMT.Rodent"]
+    >>> ET_Trap      = apt ["BMT.Trap"]
+    >>> ET_Supertrap = apt ["BMT.Supertrap"]
 
 For each `entity_type` with a unique :attr:`epk_sig`, the meta
 machinery automatically creates methods `epkified_ckd` and
@@ -601,8 +628,8 @@ are used by `__init__` to ensure that the required parameters are
 passed for the :ref:`essential primary keys<essential-primary-keys>`.
 
     >>> for et in apt._T_Extension :
-    ...   if et.epk_sig and u"epkified_ckd" in et.__dict__ :
-    ...     print u"***", et.type_name, u"***", et.epk_sig
+    ...   if et.epk_sig and "epkified_ckd" in et.__dict__ :
+    ...     print "***", et.type_name, "***", et.epk_sig
     ...     print et.epkified_ckd.source_code.rstrip ()
     ...     print et.epkified_raw.source_code.rstrip ()
     ...
@@ -745,15 +772,15 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Trap._Attributes._own_names)
     ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q']
     >>> sorted (ET_Supertrap._Attributes._own_names)
-    ['ui_display']
+    ['ui_display', 'weights']
     >>> sorted (ET_Trap._Attributes._names)
     ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
     [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
 
     >>> print formatted1 (sorted (ET_Id_Entity.relevant_roots))
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -774,11 +801,11 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> print formatted1 (sorted (apt.etypes))
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Freqency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
     >>> print formatted1 ([t.type_name for t in apt._T_Extension])
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Freqency_Interval', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
-    ...     print u"%%-35s %%s" %% (t.type_name, t.epk_sig)
+    ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
     MOM.Link                            ('left',)
     MOM.Link1                           ('left',)
@@ -791,6 +818,9 @@ The app-type specific entity-types are ready to be used by
     MOM.Date_Interval                   ()
     MOM.Date_Interval_C                 ()
     MOM.Date_Interval_N                 ()
+    MOM._Interval_                      ()
+    MOM.Float_Interval                  ()
+    MOM.Freqency_Interval               ()
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -806,7 +836,7 @@ The app-type specific entity-types are ready to be used by
     BMT.Person_sets_Trap_at_Location    ('left', 'middle', 'right')
 
     >>> for t in apt._T_Extension [2:] :
-    ...     print u"%%s%%s    %%s" %% (t.type_name, NL, t.sorted_by.criteria)
+    ...     print "%%s%%s    %%s" %% (t.type_name, NL, t.sorted_by.criteria)
     MOM.Id_Entity
         (<bound method M_E_Type_Id.sort_key of <class 'MOM.Id_Entity' [BMT__Hash__HPS]>>,)
     MOM.Link
@@ -831,6 +861,12 @@ The app-type specific entity-types are ready to be used by
         ('start', 'finish')
     MOM.Date_Interval_N
         ('start', 'finish')
+    MOM._Interval_
+        ('lower', 'upper')
+    MOM.Float_Interval
+        (u'lower', u'upper')
+    MOM.Freqency_Interval
+        (u'lower', u'upper')
     BMT.Location
         ('lon', 'lat')
     BMT.Person
@@ -872,34 +908,37 @@ The app-type specific entity-types are ready to be used by
     ...     print et.type_name, et.polymorphic_epk, et.polymorphic_epks
 
 
-    >>> def show_children (T, level = 0) :
-    ...     print "  " * level, T.type_name
-    ...     l1 = level + 1
-    ...     for c in sorted (T.children.itervalues (), key = TFL.Getter.i_rank) :
-    ...         show_children (c, l1)
-    >>> show_children (apt._T_Extension [2])
-     MOM.Id_Entity
-       MOM.Link
-         MOM.Link1
-           BMT.Rodent_is_sick
-         MOM._MOM_Link_n_
-           MOM.Link2
-             MOM.Link2_Ordered
-             BMT.Rodent_in_Trap
-             BMT.Person_owns_Trap
-           MOM.Link3
-             BMT.Person_sets_Trap_at_Location
-       MOM.Object
-         MOM.Named_Object
-           BMT.Rodent
-             BMT.Mouse
-               BMT.Beaver
-                 BMT.Otter
-             BMT.Rat
-           BMT.Trap
-             BMT.Supertrap
-         BMT.Location
-         BMT.Person
+    >>> show_children (ET_Entity)
+    MOM.Entity
+      MOM.An_Entity
+        MOM.Date_Interval
+          MOM.Date_Interval_C
+          MOM.Date_Interval_N
+        MOM._Interval_
+          MOM.Float_Interval
+          MOM.Freqency_Interval
+      MOM.Id_Entity
+        MOM.Link
+          MOM.Link1
+            BMT.Rodent_is_sick
+          MOM._MOM_Link_n_
+            MOM.Link2
+              MOM.Link2_Ordered
+              BMT.Rodent_in_Trap
+              BMT.Person_owns_Trap
+            MOM.Link3
+              BMT.Person_sets_Trap_at_Location
+        MOM.Object
+          MOM.Named_Object
+            BMT.Rodent
+              BMT.Mouse
+                BMT.Beaver
+                  BMT.Otter
+              BMT.Rat
+            BMT.Trap
+              BMT.Supertrap
+          BMT.Location
+          BMT.Person
 
 Scope
 -----
@@ -980,7 +1019,7 @@ Object and link creation
 One creates objects or links by calling the etype manager of the
 appropriate class:
 
-    >>> scope.MOM.Named_Object (u"foo")
+    >>> scope.MOM.Named_Object ("foo")
     Traceback (most recent call last):
       ...
     Partial_Type: Named_Object
@@ -988,18 +1027,18 @@ appropriate class:
     >>> p     = scope.BMT.Person     ("luke", "lucky")
     >>> p
     BMT.Person (u'luke', u'lucky', u'')
-    >>> q     = scope.BMT.Person     (u"dog",  u"snoopy")
+    >>> q     = scope.BMT.Person     ("dog",  "snoopy")
     >>> l1    = scope.BMT.Location   (-16.268799, 48.189956)
     >>> l2    = scope.BMT.Location   (-16.740770, 48.463313)
-    >>> m     = scope.BMT.Mouse      (u"mighty_mouse")
-    >>> b     = scope.BMT.Beaver     (u"toothy_beaver")
-    >>> r     = scope.BMT.Rat        (u"rutty_rat")
-    >>> axel  = scope.BMT.Rat        (u"axel")
+    >>> m     = scope.BMT.Mouse      ("mighty_mouse")
+    >>> b     = scope.BMT.Beaver     ("toothy_beaver")
+    >>> r     = scope.BMT.Rat        ("rutty_rat")
+    >>> axel  = scope.BMT.Rat        ("axel")
     >>> t1    = scope.BMT.Trap       ("x", 1)
-    >>> t2    = scope.BMT.Trap       (u"x", 2)
-    >>> t3    = scope.BMT.Trap       (u"y", 1)
-    >>> t4    = scope.BMT.Trap       (u"y", 2)
-    >>> t5    = scope.BMT.Trap       (u"z", 3)
+    >>> t2    = scope.BMT.Trap       ("x", 2)
+    >>> t3    = scope.BMT.Trap       ("y", 1)
+    >>> t4    = scope.BMT.Trap       ("y", 2)
+    >>> t5    = scope.BMT.Trap       ("z", 3)
 
     >>> Ris   = scope.BMT.Rodent_is_sick
     >>> RiT   = scope.BMT.Rodent_in_Trap
@@ -1033,7 +1072,7 @@ appropriate class:
     BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2))
     >>> PoT (q, t3)
     BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1))
-    >>> PoT ((u"tin", u"tin"), t4)
+    >>> PoT (("tin", "tin"), t4)
     BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))
 
 Creating a link will automatically set `auto_cached` attributes of the objects
@@ -1074,7 +1113,7 @@ The query :meth:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
 only be applied to `E_Type_Managers` for essential types that are, or
 inherit from, a `relevant_root`:
 
-    >>> scope.MOM.Object.instance (u"mighty_mouse")
+    >>> scope.MOM.Object.instance ("mighty_mouse")
     Traceback (most recent call last):
       ...
     TypeError: Object needs the arguments (), got (u'mighty_mouse',) instead
@@ -1084,7 +1123,7 @@ inherit from, a `relevant_root`:
     TypeError: Cannot query `instance` of non-root type `Named_Object`.
     Use one of the types BMT.Rodent, BMT.Trap instead.
 
-    >>> scope.BMT.Rodent.instance (u"mighty_mouse")
+    >>> scope.BMT.Rodent.instance ("mighty_mouse")
     BMT.Mouse (u'mighty_mouse')
     >>> print scope.BMT.Rat.instance ("mighty_mouse")
     None
@@ -1094,23 +1133,23 @@ inherit from, a `relevant_root`:
     >>> PoT.instance ((u'dog', u'snoopy'), (u'y', 1))
     BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1))
     >>> PoT.instance ((u'dog', u'snoopy', u''), (u'x', 2))
-    >>> print PoT.instance (("Man", u"tin"), t4)
+    >>> print PoT.instance (("Man", "tin"), t4)
     None
 
 The query :meth:`exists<_MOM.E_Type_Manager.E_Type_Manager.exists>`
 returns a list of all `E_Type_Managers` for which an object or link
 with the specified `epk` exists:
 
-    >>> scope.MOM.Named_Object.exists (u"mighty_mouse")
+    >>> scope.MOM.Named_Object.exists ("mighty_mouse")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.BMT.Mouse.exists ("mighty_mouse")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
-    >>> scope.BMT.Rat.exists (u"mighty_mouse")
+    >>> scope.BMT.Rat.exists ("mighty_mouse")
     []
 
     >>> PoT.exists ((u'dog', u'snoopy'), (u'y', 1))
     [<E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__HPS>]
-    >>> PoT.exists (("Man", u"tin"), t4)
+    >>> PoT.exists (("Man", "tin"), t4)
     []
 
 The queries :attr:`~_MOM.E_Type_Manager.E_Type_Manager.count`,
@@ -1216,9 +1255,9 @@ etype:
 
     >>> show (RiT.r_query_s (right = t1, strict = True))
     [((u'mighty_mouse', ), (u'x', 1))]
-    >>> show (RiT.r_query_s (trap = (u"x", 2)))
+    >>> show (RiT.r_query_s (trap = ("x", 2)))
     [((u'axel', ), (u'x', 2))]
-    >>> show (RiT.r_query_s (trap = (u"y", "1"), strict = True))
+    >>> show (RiT.r_query_s (trap = ("y", "1"), strict = True))
     [((u'rutty_rat', ), (u'y', 1))]
     >>> show (RiT.r_query_s (right = m))
     []
@@ -1227,9 +1266,9 @@ etype:
 
     >>> show (RiT.r_query_s (left = m))
     [((u'mighty_mouse', ), (u'x', 1))]
-    >>> show (RiT.r_query_s (rodent = u"rutty_rat"))
+    >>> show (RiT.r_query_s (rodent = "rutty_rat"))
     [((u'rutty_rat', ), (u'y', 1))]
-    >>> show (RiT.r_query_s (left = (u"axel", ), strict = True))
+    >>> show (RiT.r_query_s (left = ("axel", ), strict = True))
     [((u'axel', ), (u'x', 2))]
     >>> show (RiT.r_query_s (left = "Jimmy", strict = True))
     []
@@ -1238,16 +1277,16 @@ etype:
     4
     >>> show (PoT.r_query_s (left = p))
     [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 2))]
-    >>> show (PoT.r_query_s (person = (u"dog",  u"snoopy")))
+    >>> show (PoT.r_query_s (person = ("dog",  "snoopy")))
     [((u'dog', u'snoopy', u''), (u'y', 1))]
 
     >>> PTL.count_transitive
     3
     >>> show (PTL.r_query_s (left = p, trap = t1))
     [((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956))]
-    >>> show (PTL.r_query_s (person = p, middle = (u"x", 2)))
+    >>> show (PTL.r_query_s (person = p, middle = ("x", 2)))
     [((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query_s (person = ("luke", u"lucky"), trap = t3, strict = True))
+    >>> show (PTL.r_query_s (person = ("luke", "lucky"), trap = t3, strict = True))
     [((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (left = q, middle = t1))
     []
@@ -1256,7 +1295,7 @@ etype:
     [((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (location = (-16.74077, 48.463313)))
     [((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query_s (trap = (u"y", "1")))
+    >>> show (PTL.r_query_s (trap = ("y", "1")))
     [((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (person = ("Tan", "Tan")))
     []
@@ -1300,7 +1339,7 @@ Changing objects and links
     >>> old_id = axel.pid
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap ((u'axel', ), (u'x', 2))]
-    >>> axel.name = u"betty"
+    >>> axel.name = "betty"
     Traceback (most recent call last):
       ...
     AttributeError: Primary attribute `Rat.name` cannot be assigned.
@@ -1357,7 +1396,7 @@ Changing objects and links
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...
-    Attribute_Value: Can't set necessary attribute Mouse.weight to `'one ton'`
+    Attribute_Value: Can't set necessary attribute Mouse.weight to `u'one ton'`
         `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`
@@ -1556,9 +1595,9 @@ Scope queries
 
     >>> for e in scope.g_incorrect () :
     ...     print list (str (x).replace (NL, " ") for x in e.errors)
-    ['Condition `completely_defined` : All necessary attributes must be defined.      Necessary attribute Float `weight` is not defined']
-    ['Condition `completely_defined` : All necessary attributes must be defined.      Necessary attribute Float `weight` is not defined']
-    ['Condition `completely_defined` : All necessary attributes must be defined.      Necessary attribute Float `weight` is not defined']
+    [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
+    [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
+    [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
 
     >>> len (scope.uncommitted_changes)
     37
@@ -1653,10 +1692,10 @@ Replaying changes
     >>> t3.destroy ()
     >>> for diff in sorted (scop2.user_diff (scope, ignore = ["last_cid"]).iteritems ()) :
     ...     print diff
-    (('BMT.Person_owns_Trap', ((u'dog', u'snoopy', u'', 'BMT.Person'), (u'y', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
-    (('BMT.Person_sets_Trap_at_Location', ((u'luke', u'lucky', u'', 'BMT.Person'), (u'y', u'1', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location')), 'Present in Scope <hps://>, missing in Scope <hps://>')
-    (('BMT.Rodent_in_Trap', ((u'rutty_rat', 'BMT.Rat'), (u'y', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
-    (('BMT.Trap', (u'y', u'1', 'BMT.Trap')), 'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Person_owns_Trap', ((u'dog', u'snoopy', u'', 'BMT.Person'), (u'y', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap')), u'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Person_sets_Trap_at_Location', ((u'luke', u'lucky', u'', 'BMT.Person'), (u'y', u'1', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location')), u'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Rodent_in_Trap', ((u'rutty_rat', 'BMT.Rat'), (u'y', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap')), u'Present in Scope <hps://>, missing in Scope <hps://>')
+    (('BMT.Trap', (u'y', u'1', 'BMT.Trap')), u'Present in Scope <hps://>, missing in Scope <hps://>')
     >>> scope.user_equal (scop2)
     False
 

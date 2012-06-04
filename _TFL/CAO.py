@@ -78,12 +78,27 @@
 #                     instead of `TFL.I18N.Config`
 #    30-Jan-2012 (CT) Add `CAO.GET`
 #    14-Mar-2012 (CT) Add empty `__builtins__` to `_safe_eval`
+#    15-May-2012 (CT) Allow abbreviations for `Cmd_Choice`
+#    17-May-2012 (CT) Add optional argument `defaults` to `Cmd`
+#    25-May-2012 (CT) Change `Path._resolve_range` to apply `expanded_path`
+#    31-May-2012 (CT) Add `** kw` to `_Spec_.__init__`
+#    31-May-2012 (CT) Change `Path._resolve_range` to call `_resolve_range_1`;
+#                     redefine `Abs_Path._resolve_range_1` instead of
+#                     `Abs_Path._resolve_range`;
+#    31-May-2012 (CT) Add `Rel_Path`;
+#                     derive `Config` from `Rel_Path`, not `Abs_Path`
+#    31-May-2012 (CT) Add `check_bun` to `CAO._handle_arg`,
+#                     don't `check_bun` after `--`
+#     2-Jun-2012 (CT) Streamline `Arg.from_string`
+#     4-Jun-2012 (CT) Add `vals` to `Help.topics`
+#     4-Jun-2012 (CT) Improve output of `Help`
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 
-from   _TFL               import pyk
+from   _TFL               import pyk, sos
+from   _TFL.I18N          import _, _T, _Tn
 from   _TFL.Regexp        import Regexp, re
 from   _TFL.Trie          import Word_Trie as Trie
 
@@ -94,7 +109,6 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.predicate
-import _TFL.sos
 
 from   itertools          import chain as ichain
 
@@ -150,9 +164,9 @@ class Arg (TFL.Meta.M_Class) :
                 , re.VERBOSE | re.DOTALL
                 )
         if pat.match (string) :
-            Spec = cls.Table [pat.type or "B"]
-            kw   = pat.last_match.groupdict ()
-            kw.pop ("type", None)
+            kw     = pat.last_match.groupdict ()
+            type   = kw.pop ("type", "B")
+            Spec   = cls.Table [type]
             result = Spec (** kw)
         else :
             raise Err ("Invalid argument or option specification `%s`" % string)
@@ -204,13 +218,12 @@ class _Spec_ (TFL.Meta.Object) :
             , range_delta   = 1
             , cook          = None
             , rank          = 0
+            , ** kw
             ) :
         self.name           = name
         self.default        = default
         self.description    = description
-        if auto_split is None :
-            auto_split      = self.auto_split
-        else :
+        if auto_split is not None :
             self.auto_split = auto_split
         if max_number is None :
             max_number      = self._auto_max_number (self.auto_split)
@@ -220,6 +233,7 @@ class _Spec_ (TFL.Meta.Object) :
         self.rank           = rank
         if cook is not None :
             self.cook       = cook
+        self.__dict__.update (kw)
     # end def __init__
 
     def combine (self, values) :
@@ -284,13 +298,13 @@ class _Spec_ (TFL.Meta.Object) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                for v in self._resolve_range_1 (value, pat, cao) :
+                for v in self._resolve_range_1 (value, cao, pat) :
                     yield v
             else :
                 yield value
     # end def _resolve_range
 
-    def _resolve_range_1 (self, value, pat, cao) :
+    def _resolve_range_1 (self, value, cao, pat = None) :
         yield value
     # end def _resolve_range_1
 
@@ -373,7 +387,7 @@ class _Number_ (_Spec_) :
         return self._cook (value)
     # end def cook
 
-    def _resolve_range_1 (self, value, pat, cao) :
+    def _resolve_range_1 (self, value, cao, pat) :
         cook  = self.cook
         head  = cook (pat.head, cao)
         tail  = cook (pat.tail, cao) + 1
@@ -436,19 +450,16 @@ class Cmd_Choice (TFL.Meta.Object) :
     def __init__ (self, name, * cmds, ** kw) :
         self.name        = name
         self.sub_cmds    = dict   ((c._name, c) for c in cmds)
+        self.sub_abbr    = Trie   (self.sub_cmds)
         self.description = kw.pop ("description", "")
         assert not kw
     # end def __init__
 
     def __call__ (self, value, cao) :
-        try :
-            cao._cmd = sc = self.sub_cmds [value]
-        except KeyError :
-            raise Err \
-                ( "Unkown sub-command `%s`, specify one of: (%s)"
-                % (value, ", ".join (sorted (self.sub_cmds)))
-                )
+        cao._cmd     = sc = self._get_sub_cmd (value)
         cao._name         = " ".join ([cao._name, sc._name])
+        cao._min_args     = sc._min_args
+        cao._max_args     = sc._max_args
         cao._arg_list [:] = sc._arg_list
         cao._arg_dict.clear   ()
         cao._arg_dict.update  (sc._arg_dict)
@@ -457,8 +468,6 @@ class Cmd_Choice (TFL.Meta.Object) :
         cao._opt_abbr.update  (sc._opt_dict, sc._opt_alias)
         cao._opt_alias.update (sc._opt_alias)
         cao._opt_conf.extend  (sc._opt_conf)
-        cao._min_args = sc._min_args
-        cao._max_args = sc._max_args
     # end def __call__
 
     @property
@@ -474,6 +483,25 @@ class Cmd_Choice (TFL.Meta.Object) :
     def max_name_length (self) :
         return max (sc.max_name_length for sc in self.sub_cmds.itervalues ())
     # end def max_name_length
+
+    def _get_sub_cmd (self, name) :
+        sub_abbr = self.sub_abbr
+        sub_cmds = self.sub_cmds
+        matches, unique = sub_abbr.completions (name)
+        if unique :
+            return sub_cmds [unique]
+        else :
+            if matches :
+                raise Err \
+                    ( "Ambiguous sub-command `%s`, matches any of %s"
+                    % (name, matches)
+                    )
+            else :
+                raise Err \
+                    ( "Unkown sub-command `%s`, specify one of: (%s)"
+                    % (name, ", ".join (sorted (sub_cmds)))
+                    )
+    # end def _get_sub_cmd
 
     def __getattr__ (self, name) :
         return self.sub_cmds [name]
@@ -523,13 +551,13 @@ class Help (_Spec_O_) :
     alias          = "?"
     auto_split     = ","
     needs_value    = False
-    topics         = set (["args", "buns", "cmds", "opts", "summary"])
+    topics         = set (["args", "buns", "cmds", "opts", "summary", "vals"])
     default_topics = set (["args", "buns", "opts", "summary"])
 
     def __init__ (self) :
         self.__super.__init__ \
             ( name          = "help"
-            , description   = "Display help about command"
+            , description   = _ ("Display help about command")
             )
     # end def __init__
 
@@ -552,12 +580,17 @@ class Help (_Spec_O_) :
             topics = self.topics
             wanted = set (v for v in getattr (cao, self.name) if v)
             most_p = False
-            if wanted in (set (["all"]), set (["*"])) :
+            if wanted.issubset (set (["all", "*"])) :
                 wanted = topics
                 most_p = True
-            elif wanted == set ([True]) or not wanted.intersection (topics) :
+            elif wanted == set ([True]) :
                 wanted = self.default_topics
                 most_p = True
+            elif not wanted.issubset (topics) :
+                pyk.fprint \
+                    ( "Possible help topics:\n    "
+                    , ", ".join (sorted (ichain (topics, ("all", "help"))))
+                    )
             if "summary" in wanted :
                 nl.next ()
                 self._help_summary (cao, indent)
@@ -577,6 +610,9 @@ class Help (_Spec_O_) :
             if "buns" in wanted and cao._bun_dict :
                 nl.next ()
                 self._help_buns (cao, indent + (4 * most_p))
+            if "vals" in wanted :
+                nl.next ()
+                self._help_values (cao, indent + (4 * most_p))
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
@@ -588,10 +624,8 @@ class Help (_Spec_O_) :
         except KeyError :
             v = ""
         pyk.fprint \
-            ( "%s%s%-*s  : %s = %s <default: %s>"
-            % ( head, prefix, max_l, name, ao.__class__.__name__, v
-              , ao.raw_default
-              )
+            ( "%s%s%-*s  : %s"
+            % (head, prefix, max_l, name, ao.__class__.__name__)
             )
         if ao.description :
             pyk.fprint (head, ao.description, sep = "    ")
@@ -700,6 +734,53 @@ class Help (_Spec_O_) :
         if max_args < 0 or max_args > len (cmd._arg_list) :
             yield "..."
     # end def _help_summary_args
+
+    def _help_value (self, ao, cao, head, max_l, prefix = "") :
+        if ao.hide :
+            return
+        name = ao.name
+        raw_default = unicode (ao.raw_default)
+        try :
+            raw = cao ["%s:raw" % name]
+        except KeyError :
+            raw = None
+        if raw is None or raw == []:
+            raw = raw_default
+        if raw == "" :
+            raw = None
+        try :
+            cooked = cao [name]
+        except KeyError :
+            cooked = None
+        if cooked is None or (isinstance (cooked, list) and cooked == []) :
+            cooked = ao.default
+        if ao.max_number == 1 and isinstance (cooked, list) :
+            cooked = cooked [0]
+        pyk.fprint \
+            ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
+        if unicode (cooked) != unicode (raw) :
+            if isinstance (cooked, (list, dict)) :
+                from _TFL.Formatter import formatted_1, formatted
+                pyk.fprint \
+                    (formatted (cooked, level = (len (head) // 4 + 1) * 2))
+            else :
+                pyk.fprint ("%s    %s" % (head, cooked))
+    # end def _help_value
+
+    def _help_values (self, cao, indent) :
+        pyk.fprint \
+            ( "%sActual option and argument values of %s"
+            % (" " * indent, cao._name)
+            )
+        indent += 4
+        head    = " " * indent
+        max_l   = cao.max_name_length
+        for name, opt in sorted (cao._opt_dict.iteritems ()) :
+            self._help_value (opt, cao, head, max_l, "-")
+        max_l  += 1
+        for arg in cao._arg_list :
+            self._help_value (arg, cao, head, max_l)
+    # end def _help_values
 
     def _nl_gen (self) :
         while True :
@@ -849,13 +930,19 @@ class Path (_Spec_) :
     type_abbr     = "P"
 
     def cook (self, value, cao = None) :
+        ### Need to redefine `cook` because instances without `auto_split`
+        ### don't go through `_resolve_range`
         if value :
-            value = TFL.sos.expanded_path (value)
+            value = sos.expanded_path (value)
         return value
     # end def cook
 
     def _resolve_range (self, values, cao) :
-        for v in TFL.sos.expanded_globs (* values) :
+        def _gen (values, cao) :
+            for value in sos.expanded_globs (* values) :
+                for v in self._resolve_range_1 (sos.expanded_path (value), cao):
+                    yield v
+        for v in TFL.uniq (_gen (values, cao)) :
             yield v
     # end def _resolve_range
 
@@ -867,20 +954,66 @@ class Abs_Path (Path) :
     type_abbr     = "Q"
 
     def cook (self, value, cao = None) :
+        ### Need to redefine `cook` because instances without `auto_split`
+        ### don't go through `_resolve_range`
         result = self.__super.cook (value, cao)
         if result :
-            result = TFL.sos.path.abspath (result)
+            result = sos.path.abspath (result)
         return result
     # end def cook
 
-    def _resolve_range (self, value, cao) :
-        for v in self.__super._resolve_range (value, cao) :
-            yield TFL.sos.path.abspath (v)
-    # end def _resolve_range
+    def _resolve_range_1 (self, value, cao) :
+        yield sos.path.abspath (value)
+    # end def _resolve_range_1
 
 # end class Abs_Path
 
-class Config (_Config_, Abs_Path) :
+class Rel_Path (Path) :
+    """Path that can be relative to a specific base directory."""
+
+    type_abbr     = "R"
+
+    single_match  = False
+    _base_dir     = None
+    _base_dirs    = ()
+
+    @TFL.Meta.Once_Property
+    def base_dirs (self) :
+        def _gen (bds) :
+            for bd in bds :
+                if TFL.callable (bd) :
+                    bd = bd ()
+                if bd is not None :
+                    yield bd
+        return tuple (_gen (self._base_dirs or (self._base_dir, )))
+    # end def base_dirs
+
+    def _resolve_range_1 (self, value, cao) :
+        base_dirs = self.base_dirs
+        if base_dirs :
+            if not sos.path.isabs (value) :
+                def _gen (value, base_dirs, single_match) :
+                    not_existing = None
+                    for bd in base_dirs :
+                        v = sos.path.join (bd, value)
+                        if sos.path.exists (v) :
+                            not_existing = False
+                            yield v
+                            if single_match :
+                                break
+                        elif not_existing is None :
+                            not_existing = v
+                    if not_existing :
+                        yield not_existing
+                for v in _gen (value, base_dirs, self.single_match) :
+                    yield sos.path.abspath (v)
+                return
+        yield sos.path.abspath (value)
+    # end def _resolve_range_1
+
+# end class Rel_Path
+
+class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
 
     type_abbr     = "C"
@@ -969,6 +1102,7 @@ class Cmd (TFL.Meta.Object) :
             , do_keywords   = False
             , put_keywords  = False
             , helper        = None
+            , defaults      = {}
             ) :
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
@@ -987,7 +1121,8 @@ class Cmd (TFL.Meta.Object) :
         self._put_keywords  = put_keywords
         if helper is not None :
             self._helper    = helper
-        self._setup_opts (opts)
+        self.defaults       = dict (defaults)
+        self._setup_opts (opts, self.defaults)
         self._setup_args (args)
         self._setup_buns (buns)
     # end def __init__
@@ -1092,15 +1227,17 @@ class Cmd (TFL.Meta.Object) :
         self._bun_dict = dict ((b._name, b) for b in buns)
     # end def _setup_buns
 
-    def _setup_opt  (self, opt, od, al, index) :
-        od [opt.name] = opt
-        opt.kind      = "option"
-        opt.index     = index
+    def _setup_opt  (self, opt, od, al, index, default = None) :
+        od [opt.name]   = opt
+        opt.kind        = "option"
+        opt.index       = index
+        if default is not None :
+            opt.default = default
         if opt.alias :
             al [opt.alias] = opt.name
     # end def _setup_opt
 
-    def _setup_opts (self, opts) :
+    def _setup_opts (self, opts, defaults) :
         self._opt_dict  = od = {}
         self._opt_alias = al = {}
         self._opt_conf  = oc = []
@@ -1109,7 +1246,7 @@ class Cmd (TFL.Meta.Object) :
                 o = Arg.from_string (o.lstrip ("-"))
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
-            self._setup_opt (o, od, al, i)
+            self._setup_opt (o, od, al, i, defaults.get (o.name))
             if isinstance (o, _Config_) :
                 oc.append (o)
         oc.sort (key = TFL.Getter.rank)
@@ -1244,10 +1381,10 @@ class CAO (TFL.Meta.Object) :
         return result
     # end def _cooked
 
-    def _handle_arg (self, arg, argv_it) :
+    def _handle_arg (self, arg, argv_it, check_bun = True) :
         bd  = self._bun_dict
         pat = self._bun_pat
-        if pat.match (arg) :
+        if check_bun and pat.match (arg) :
             name = pat.name
             if name in bd :
                 spec = bd [name]
@@ -1317,7 +1454,7 @@ class CAO (TFL.Meta.Object) :
         for arg in argv_it :
             if arg == "--" :
                 for arg in argv_it :
-                    self._handle_arg (arg, argv_it)
+                    self._handle_arg (arg, argv_it, check_bun = False)
             elif arg.startswith ("-") :
                 self._handle_opt (arg, argv_it)
             else :
@@ -1345,7 +1482,7 @@ class CAO (TFL.Meta.Object) :
     def _set_keys (self, kw) :
         self._key_values.update (kw)
         if self._put_keywords :
-           TFL.sos.environ.update (kw)
+           sos.environ.update (kw)
     # end def _set_keys
 
     def _set_opt (self, spec, value) :
@@ -1710,38 +1847,38 @@ values passed to it.
     >>> _ = coc (["-help"])
     Comp [sub] ...
     <BLANKLINE>
-        sub       : Cmd_Choice = None <default: None>
+        sub       : Cmd_Choice
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = [] <default: []>
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
+        -strict   : Bool
+        -verbose  : Bool
     >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
-        aaa       : Str = None <default: None>
-        bbb       : Str = None <default: None>
+        aaa       : Str
+        bbb       : Str
     <BLANKLINE>
-        -Z        : Bool = None <default: False>
-        -help     : Help = [] <default: []>
+        -Z        : Bool
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
-        -y        : Int = None <default: None>
+        -strict   : Bool
+        -verbose  : Bool
+        -y        : Int
     >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
     <BLANKLINE>
-        ccc       : Int = None <default: 3>
-        ddd       : Str_AS = None <default: D>
+        ccc       : Int
+        ddd       : Str_AS
     <BLANKLINE>
         argv      : [3, 'D']
     <BLANKLINE>
-        -help     : Help = [] <default: []>
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -struct   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
+        -strict   : Bool
+        -struct   : Bool
+        -verbose  : Bool
     >>> _ = coc (["-help=cmds"])
     Sub commands of Comp
         one :
@@ -1825,13 +1962,13 @@ values passed to it.
     <BLANKLINE>
         Possible bundles: @c1b, @c2b
     <BLANKLINE>
-        sub       : Cmd_Choice = None <default: None>
+        sub       : Cmd_Choice
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = [] <default: []>
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
+        -strict   : Bool
+        -verbose  : Bool
     <BLANKLINE>
         Argument/option bundles of Comp
             @c1b

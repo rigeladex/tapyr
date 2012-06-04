@@ -34,6 +34,9 @@
 #    22-Dec-2011 (CT) Add `query`, change `_Selector_.__call__` to allow
 #                     composite/entity attributes for `E_Type`
 #     4-Apr-2012 (CT) Use `TFL.Getter.is_required` instead of home-grown lambda
+#     7-May-2012 (CT) Add `editable`
+#     7-May-2012 (CT) Change `Pred`, `Not_Pred`, and `_Pred_Selection_` to
+#                     take a selector, not `kind` as second argument
 #    ««revision-date»»···
 #--
 
@@ -159,14 +162,14 @@ class _Pred_Selection_ (_Selection_) :
 
     def __init__ (self, spec, E_Type, anchor = None) :
         self.__super.__init__ (E_Type, anchor)
-        self.kind = spec.kind
+        self.sel  = spec.sel (E_Type, anchor)
         self.pred = spec.pred
     # end def __init__
 
     @TFL.Meta.Once_Property
     def attrs (self) :
         pred = self.pred
-        return tuple (a for a in getattr (self.E_Type, self.kind) if pred (a))
+        return tuple (a for a in self.sel if pred (a))
     # end def attrs
 
     def __contains__ (self, item) :
@@ -272,9 +275,9 @@ class Pred (_Selector_) :
 
     Type = _Pred_Selection_
 
-    def __init__ (self, pred, kind = "user_attr") :
+    def __init__ (self, pred, sel = None) :
         self.pred = pred
-        self.kind = kind
+        self.sel  = sel if sel is not None else user
     # end def __init__
 
 # end class Pred
@@ -282,8 +285,8 @@ class Pred (_Selector_) :
 class Not_Pred (Pred) :
     """Selector for attributes not satisfying a predicate."""
 
-    def __init__ (self, pred, kind = "user_attr") :
-        self.__super.__init__ ((lambda x : not pred (x)), kind)
+    def __init__ (self, pred, sel = None) :
+        self.__super.__init__ ((lambda x : not pred (x)), sel)
     # end def __init__
 
 # end class Not_Pred
@@ -308,9 +311,10 @@ sig         = Kind ("sig_attr")
 user        = Kind ("user_attr")
 
 all         = List (primary, user, query)
+editable    = List (primary, user)
 
-P_optional  = Not_Pred (TFL.Getter.is_required, "user_attr")
-P_required  = Pred     (TFL.Getter.is_required, "user_attr")
+P_optional  = Not_Pred (TFL.Getter.is_required, user)
+P_required  = Pred     (TFL.Getter.is_required, user)
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()

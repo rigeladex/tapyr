@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
-"PO-Revision-Date: 2011-05-19 11:36+0200\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
+"PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 0.9.4\n"
 
 #: _GTW._OMP._SWP.Clip:0
 #, fuzzy
@@ -48,16 +48,6 @@ msgid "D2_Value_Int"
 msgid_plural "D2_Value_Ints"
 msgstr[0] ""
 msgstr[1] ""
-
-#: _GTW._OMP._SWP.Entity:0
-#, fuzzy
-msgid "Date"
-msgstr ""
-
-#: _GTW._OMP._SWP.Gallery:0
-#, fuzzy
-msgid "Directory"
-msgstr ""
 
 #: _GTW._OMP._SWP.Gallery:0
 msgid "Directory where pictures of gallery are stored."
@@ -97,12 +87,12 @@ msgid ""
 "%s"
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 #, fuzzy
 msgid "Head line"
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Head line of the web page"
 msgstr ""
 
@@ -114,7 +104,7 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Higher prio sorts before lower prio."
 msgstr ""
 
@@ -219,7 +209,7 @@ msgstr[1] ""
 msgid "Picture."
 msgstr ""
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 #, fuzzy
 msgid "Prio"
 msgstr ""
@@ -242,11 +232,6 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Short title (used in navigation)."
-msgstr ""
-
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Page:0
-#, fuzzy
-msgid "Text"
 msgstr ""
 
 #: _GTW._OMP._SWP.Clip:0
@@ -308,11 +293,6 @@ msgstr ""
 #: _MOM._Attr.A_2D:0
 #, fuzzy
 msgid "Y"
-msgstr ""
-
-#: _GTW._OMP._SWP.Page:0
-#, fuzzy
-msgid "Year"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0

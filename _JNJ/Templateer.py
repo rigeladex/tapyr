@@ -69,6 +69,7 @@
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    15-Apr-2012 (CT) Apply `sorted` to `injected` in `Templateer.get_template`
 #    30-Apr-2012 (CT) Add `regatta_register_email`
+#    10-May-2012 (CT) Add `error_email`
 #    ««revision-date»»···
 #--
 
@@ -541,6 +542,7 @@ Template ("calendar_week",                "html/cal_week.jnj")
 Template ("console",                      "html/console.jnj")
 Template ("default",                      "html/error.jnj")
 Template ("dynamic_form",                 "html/dynamic_form.jnj")
+Template ("error_email",                  "email/error.jnj")
 Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
 Template ("e_type_afs",                   "html/e_type_afs.jnj")

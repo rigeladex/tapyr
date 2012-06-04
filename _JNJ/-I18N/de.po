@@ -8,17 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-04 10:49+0200\n"
-"PO-Revision-Date: 2011-11-24 11:29+0100\n"
+"POT-Creation-Date: 2012-05-11 17:51+0200\n"
+"PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 0.9.4\n"
 
-#: _JNJ/html/e_type_afs.jnj:87
+#: _JNJ/html/e_type_afs.jnj:89
 msgid "Accept changes"
 msgstr "Akzeptiere Änderungen"
 
@@ -27,7 +27,7 @@ msgid "Activation for"
 msgstr "Aktivierung für"
 
 #: _JNJ/html/e_type.m.jnj:147 _JNJ/html/e_type.m.jnj:257
-#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:69
+#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:71
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr "Erzeuge"
@@ -89,7 +89,7 @@ msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
 #: _JNJ/html/e_type.m.jnj:97 _JNJ/html/e_type.m.jnj:137
-#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:70
+#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:72
 #: _JNJ/html/form.jnj:164 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -106,7 +106,7 @@ msgstr "Ändern"
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/e_type_afs.jnj:88
+#: _JNJ/html/e_type_afs.jnj:90
 msgid "Change attributes of this object"
 msgstr "Ändere Attribute des Objekts"
 
@@ -157,12 +157,12 @@ msgstr "Konfiguriere"
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/e_type_afs.jnj:71
+#: _JNJ/html/e_type_afs.jnj:73
 msgid "Copy"
 msgstr "Kopiere"
 
 #: _JNJ/html/e_type.m.jnj:343 _JNJ/html/e_type.m.jnj:347
-#: _JNJ/html/e_type_afs.jnj:83
+#: _JNJ/html/e_type_afs.jnj:85
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
 
@@ -175,7 +175,7 @@ msgstr "Gegenwärtig ausgewählter Tag"
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/e_type_afs.jnj:72
+#: _JNJ/html/e_type_afs.jnj:74
 msgid "Delete"
 msgstr "Lösche"
 
@@ -183,7 +183,7 @@ msgstr "Lösche"
 msgid "Delete object"
 msgstr "Lösche Objekt"
 
-#: _JNJ/html/e_type_afs.jnj:86
+#: _JNJ/html/e_type_afs.jnj:88
 msgid "Delete this object"
 msgstr "Lösche dieses Objekt"
 
@@ -212,7 +212,7 @@ msgstr "Verwerfen aller Änderungen im Sub-Formular"
 msgid "Discard all changes made and leave popup-form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Sub-Formulars"
 
-#: _JNJ/html/e_type_afs.jnj:84
+#: _JNJ/html/e_type_afs.jnj:86
 msgid "Discard changes"
 msgstr "Verwerfen aller Änderungen"
 
@@ -252,7 +252,7 @@ msgstr "Stelle Objekte in absteigender Reihenfolge bezogen auf das Attribut dar"
 msgid "Display previous batch of objects matching the restriction"
 msgstr "Stelle vorige Seite dar"
 
-#: _JNJ/html/e_type_afs.jnj:73
+#: _JNJ/html/e_type_afs.jnj:75
 msgid "Done"
 msgstr "Fertig"
 
@@ -268,7 +268,7 @@ msgstr ""
 "Ziehe die Ordnungskriterien mit der Maus an eine andere Position um die "
 "Priorität zu ändern"
 
-#: _JNJ/html/e_type_afs.jnj:74 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:76 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr "Ändere"
 
@@ -311,7 +311,7 @@ msgstr "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem %s."
 msgid "Javascript is needed to fully use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
-#: _JNJ/html/e_type_afs.jnj:58
+#: _JNJ/html/e_type_afs.jnj:60
 msgid "Javascript is needed to use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
@@ -384,7 +384,7 @@ msgstr "Anmeldung erforderlich"
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
-#: _JNJ/html/e_type_afs.jnj:85
+#: _JNJ/html/e_type_afs.jnj:87
 msgid "Make a copy of this object"
 msgstr "Kopiere dieses Objekt"
 
@@ -449,7 +449,7 @@ msgstr "Dauerhafter Verweis"
 msgid "Play"
 msgstr "Lauf"
 
-#: _JNJ/html/e_type_afs.jnj:80
+#: _JNJ/html/e_type_afs.jnj:82
 msgid "Please change the fields that have errors"
 msgstr "Bitte ändern sie die fehlerbehafteten Eingabefelder"
 
@@ -501,7 +501,7 @@ msgstr "Registrieren eines neuen Benutzerkontos für "
 msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
-#: _JNJ/html/e_type_afs.jnj:75 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
+#: _JNJ/html/e_type_afs.jnj:77 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
 #: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -510,7 +510,7 @@ msgstr "Zurücksetzen"
 msgid "Reset fields"
 msgstr "Lösche Eingabefelder"
 
-#: _JNJ/html/e_type_afs.jnj:89
+#: _JNJ/html/e_type_afs.jnj:91
 msgid "Reset fields to start values"
 msgstr "Setze Eingabefelder auf Startwerte zurück"
 
@@ -527,11 +527,11 @@ msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/e_type_afs.jnj:77 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:79 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr "Sichern"
 
-#: _JNJ/html/e_type_afs.jnj:91
+#: _JNJ/html/e_type_afs.jnj:93
 msgid "Save the attribute values as displayed in form fields"
 msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 
@@ -544,11 +544,11 @@ msgstr "Sicher alle Werte in den Formularfeldern"
 msgid "Scroll by %s weeks to anchor %s."
 msgstr "Verschiebe Ansicht um %s Wochen auf Anker-Datum %s."
 
-#: _JNJ/html/e_type_afs.jnj:76
+#: _JNJ/html/e_type_afs.jnj:78
 msgid "Select"
 msgstr "Wähle aus"
 
-#: _JNJ/html/e_type_afs.jnj:90
+#: _JNJ/html/e_type_afs.jnj:92
 msgid "Select an object as value for this field"
 msgstr "Wähle ein Objekt als Wert dieses Felds aus"
 
@@ -658,8 +658,8 @@ msgid ""
 "We apologize for the inconvenience and hope to fix the problem as soon as"
 " possible. "
 msgstr ""
-"Wir entschuldigen uns für die Unannehmlichkeit und hoffen, das\"\n"
-"\" Problem ehebaldigst zu beheben. "
+"Wir entschuldigen uns für die Unannehmlichkeit und hoffen, das Problem "
+"ehebaldigst zu beheben. "
 
 #: _JNJ/html/cal/day.jnj:40 _JNJ/html/cal/wr_body.jnj:95
 msgid "Week"

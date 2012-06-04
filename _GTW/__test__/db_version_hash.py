@@ -76,7 +76,7 @@ _real_db_test = r"""
     >>> env = dict (os.environ, GTW_FULL_OBJECT_MODEL = "False")
     >>> cmd = subprocess.Popen \
     ...     ( [ sys.executable, "-c"
-    ...       , "from _GTW.__test__.model import *; scope = Scaffold.scope (%(p1)s, %(n1)s,create = True)"
+    ...       , "from _GTW.__test__.model import *; print; scope = Scaffold.scope (%(p1)s, %(n1)s, create = True)"
     ...       ]
     ...     , stdout = subprocess.PIPE
     ...     , stderr = subprocess.PIPE

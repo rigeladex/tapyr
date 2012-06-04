@@ -113,9 +113,9 @@ _basic = r"""
         <Modify GTW.OMP.SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'GTW.OMP.SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '22'}, new-values = {'date' : (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'last_cid' : '26'}>
         <Modify/C GTW.OMP.SRM.Regatta_Event.date (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'GTW.OMP.SRM.Regatta_Event'), old-values = {'finish' : u'2010/05/14', 'last_cid' : '26'}, new-values = {'finish' : u'2010/05/13', 'last_cid' : '28'}>
     <Change Summary for pid 11: newborn>
-        <Create GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), new-values = {'last_cid' : '12', 'perma_name' : u'optimist'}>
+        <Create GTW.OMP.SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '12', 'perma_name' : u'optimist'}>
     <Change Summary for pid 12: newborn>
-        <Create GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Yardstick', 'GTW.OMP.SRM.Handicap'), 'GTW.OMP.SRM.Regatta_H'), new-values = {'last_cid' : '13', 'perma_name' : u'yardstick'}>
+        <Create GTW.OMP.SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Yardstick', 'GTW.OMP.SRM.Handicap'), 'GTW.OMP.SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '13', 'perma_name' : u'yardstick'}>
     <Change Summary for pid 13: newborn>
         <Create GTW.OMP.SRM.Boat_in_Regatta (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', u'', 'GTW.OMP.SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
     <Change Summary for pid 14: newborn, 1 change>
@@ -149,8 +149,8 @@ _basic = r"""
     8 [('last_cid', (old = None, new = '24')), ('salutation', (old = u'', new = u'Dear L.')), ('title', (old = u'', new = u'Mr.'))]
     9 [('last_cid', (old = None, new = '10'))]
     10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '28')), ('perma_name', (old = None, new = u'himmelfahrt'))]
-    11 [('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
-    12 [('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
+    11 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
+    12 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
     13 [('last_cid', (old = None, new = '14')), ('skipper', (old = None, new = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'))]
     14 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '25')), ('points', (old = None, new = u'8'))]
     15 [('last_cid', (old = None, new = '16')), ('points', (old = None, new = u'4'))]
@@ -346,76 +346,3 @@ __test__ = dict \
     )
 
 ### __END__ GTW.__test__.SCM_Summary
-
-"""
-scope = Scope ('sqlite://')
-
-from   __future__            import unicode_literals
-import datetime
-scope = Scope ()
-
-PAP   = scope.PAP
-SRM   = scope.SRM
-EVT   = scope.EVT
-SWP   = scope.SWP
-RR    = EVT.Recurrence_Rule
-RS    = EVT.Recurrence_Spec
-bc    = SRM.Boat_Class (u"Optimist",          max_crew = 1)
-_     = SRM.Boat_Class (u"420er",             max_crew = 2)
-_     = SRM.Boat_Class (u"Laser",             max_crew = 1)
-x     = SRM.Boat_Class (u"Seascape 18",       max_crew = 4)
-b     = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
-c     = b.copy (b.left, b.nation, sail_number = "1134")
-p     = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
-s     = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
-rev   = SRM.Regatta_Event (dict (start = u"20080501", raw = True), u"Himmelfahrt", raw = True)
-reg   = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
-reh   = SRM.Regatta_H (rev.epk_raw, handicap = u"Yardstick",  raw = True)
-bir   = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
-r1    = SRM.Race_Result (bir, 1, points = 8)
-r2    = SRM.Race_Result (bir, 2, points = 4)
-p1    = SWP.Page ("event-1-text", text = "Text for the 1. event")
-p2    = SWP.Page ("event-2-text", text = "Text for the 2. event")
-e1    = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
-rs1   = RS (e1, date_exceptions = ["2010/08/15"])
-rr1   = RR (rs1.epk_raw, start = "20100801", count = 7, unit = "Weekly", raw = True)
-
-_     = rev.date.set (start = "2010/05/13", finish = "2010/05/13")
-_     = bc.set (loa = 2.43)
-_     = p.set_raw (title = "Mr.", salutation = "Dear L.")
-_     = r1.set (discarded = True)
-_     = rev.date.set (finish = "2010/05/14")
-x.destroy ()
-rev.date.finish = datetime.date (2010, 05, 13)
-rs1.dates.append (datetime.datetime (2010, 9, 8, 0, 0))
-rs1.dates.append (datetime.datetime (2010, 10, 8, 0, 0))
-
-ucc = scope.uncommitted_changes
-for pid, csp in sorted (ucc.by_pid.iteritems ()) :
-    print csp
-
-for pid, csp in sorted (ucc.by_pid.iteritems ()) :
-    print csp.pid, sorted (csp.attribute_changes.iteritems ())
-
-scope.commit ()
-
-TFL.Environment.exec_python_startup ()
-
-print rs1.attr_as_code()
-rs1.set (date_exceptions = None)
-rs1.event.date.set (finish = datetime.date (2010, 8, 19), start = datetime.date (2010, 8, 13))
-rs1.dates.pop ()
-
-ucc = scope.uncommitted_changes
-for pid, csp in sorted (ucc.by_pid.iteritems ()) :
-    print csp
-
-for pid, csp in sorted (ucc.by_pid.iteritems ()) :
-    print csp.pid, sorted (csp.attribute_changes.iteritems ())
-
-scope.commit ()
-
-_ = p.lifetime.set (start = "1997/11/16")
-_ = p.lifetime.set (finish = "2077/11/30")
-
-"""

@@ -62,8 +62,7 @@ from   _TFL.Formatter           import Formatter, formatted_1
 
 formatted = Formatter (width = 240)
 
-import _GTW._OMP.Scaffold
-import _GTW._Werkzeug.Scaffold
+import _GTW._Werkzeug.Command
 
 import _GTW._OMP._Auth.import_Auth
 
@@ -73,7 +72,6 @@ if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
     PNS_Dict = dict (EVT = GTW.OMP.EVT)
 else :
     PNS_Dict = dict ()
-    print "Ignore _GTW._OMP._EVT.import_EVT"
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
@@ -123,9 +121,9 @@ GTW.Version = Product_Version \
         )
     )
 
-class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
+class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
 
-    _real_name            = "Scaffold"
+    _rn_prefix            = "_GTW_Test"
 
     ANS                   = GTW
     nick                  = u"MOMT"
@@ -137,21 +135,14 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
         , SWP             = GTW.OMP.SWP
         , ** PNS_Dict
         )
+
     SALT                  = bytes \
         ( "ohQueiro7theG4vai9shi4oi9iedeethaeshooqu7oThi9Eecephaj")
 
-    cmd__base__opts_x     = \
-        ( "-config:C=~/.gtw-test.config?File specifying defaults for options"
-        ,
+    _defaults               = dict \
+        ( config            = "~/.gtw-test.config"
         )
-    cmd__create__opts     = \
-        ( "fixtures:B?Run the fixtures after the scope has been created"
-        ,
-        )
-    cmd__wsgi__opts       = \
-        ( "create:B=Create a new scope during WSGI application careation"
-        , "fixtures:B?Run the fixtures after the scope has been created"
-        )
+
     Backend_Parameters    = dict \
         ( HPS             = "'hps://'"
         , SQL             = "'sqlite://'"
@@ -162,20 +153,36 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
     Backend_Default_Path  = dict \
         ( (k, None) for k in Backend_Parameters)
 
-    @classmethod
-    def combiner (cls, backends, bpt) :
+    class _Create_ (GTW.Werkzeug.Command._Create_) :
+
+        _opts             = \
+            ( "fixtures:B?Run the fixtures after the scope has been created"
+            ,
+            )
+
+    # end class _Create_
+
+    class _WSGI_ (GTW.Werkzeug.Command._WSGI_) :
+
+        _opts             = \
+            ( "create:B=Create a new scope during WSGI application creation"
+            , "fixtures:B?Run the fixtures after the scope has been created"
+            )
+
+    # end class _WSGI_
+
+    def combiner (self, backends, bpt) :
         if bpt > 1 :
             backends = backends + [backends [0]]
         return TFL.window_wise (backends, bpt)
     # end def combiner
 
-    @classmethod
-    def create_nav (cls, cmd, app_type, db_url, ** kw) :
+    def create_nav (self, cmd, app_type, db_url, ** kw) :
         from _JNJ.Media_Defaults import Media_Defaults
         Media_Parameters = Media_Defaults ()
         home_url_root  = "http://localhost:9042"
         site_prefix    = pjoin (home_url_root, "")
-        template_dirs  = [cls.jnj_src]
+        template_dirs  = [self.jnj_src]
         result = GTW.NAV.Root \
             ( auto_delegate     = False
             , DB_Url            = db_url
@@ -189,7 +196,7 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
             , permissive        = False
             , site_url          = home_url_root
             , site_prefix       = site_prefix
-            , src_dir           = cls.web_src_root
+            , src_dir           = self.web_src_root
             , template_name     = cmd.template_file
             , version           = "html/5.jnj"
             , Templateer        = JNJ.Templateer
@@ -214,25 +221,25 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
                   , login_required  = True
                   , Type            = GTW.NAV.E_Type.Site_Admin
                   , entries         =
-                      [ cls.nav_admin_group
+                      [ self.nav_admin_group
                           ( "Personenverwaltung"
                           , "Verwaltung von Personen und ihren Eigenschaften"
                           , "GTW.OMP.PAP"
                           )
-                      , cls.nav_admin_group
+                      , self.nav_admin_group
                           ( "Benutzerverwaltung"
                           , "Verwaltung von Benutzer-Konten und Gruppen"
                           , "GTW.OMP.Auth"
                           , permission = GTW.NAV.Is_Superuser ()
                           )
-                      , cls.nav_admin_group
+                      , self.nav_admin_group
                           ( "Regattaverwaltung"
                           , "Verwaltung von Regatten, Booten, "
                             "Teilnehmern und Ergebnissen"
                           , "GTW.OMP.SRM"
                           , show_aliases = True
                           )
-                      , cls.nav_admin_group
+                      , self.nav_admin_group
                           ( "Webseitenverwaltung"
                           , "Verwaltung der Webseiten"
                           , "GTW.OMP.SWP", "GTW.OMP.EVT"
@@ -262,8 +269,7 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
         return result
     # end def create_nav
 
-    @classmethod
-    def create_test_dict ( cls, test_spec
+    def create_test_dict ( self, test_spec
                          , backends = None
                          , bpt      = 1
                          , combiner = None
@@ -273,11 +279,11 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
         if backends is None :
             backends = sos.environ.get ("GTW_test_backends", ("HPS:SQL"))
             if backends == "*" :
-                backends = sorted (cls.Backend_Parameters)
+                backends = sorted (self.Backend_Parameters)
             else :
                 backends = list (p.strip () for p in backends.split (":"))
         if combiner is None :
-            combiner = cls.combiner
+            combiner = self.combiner
         if isinstance (ignore, basestring) :
             ignore   = set ((ignore, ))
         elif not isinstance (ignore, set) :
@@ -287,68 +293,57 @@ class _GTW__test__Scaffold_ (GTW.Werkzeug.Scaffold) :
         for w in combiner ((b for b in backends if b not in ignore), bpt) :
             for name, code in test_spec.iteritems () :
                 key = "_".join (p for p in (name, ) + w if p)
-                result [key] = code % dict (cls._backend_spec (w))
+                result [key] = code % dict (self._backend_spec (w))
         return result
     # end def create_test_dict
 
-    @classmethod
-    def do_create (cls, cmd) :
-        scope = cls.scope (cmd.db_url, cmd.db_name, create = True)
-        cls.fixtures  (scope)
+    def do_create (self, cmd) :
+        scope = self.scope (cmd.db_url, cmd.db_name, create = True)
+        self.fixtures  (scope)
         scope.destroy ()
     # end def do_create
 
-    @classmethod
-    def fixtures (cls, scope) :
+    def fixtures (self, scope) :
         if sos.environ.get ("GTW_FIXTURES") :
             from _GTW.__test__.form_app import fixtures
             fixtures (scope)
     # end def fixtures
 
-    @Class_Property
     @Once_Property
-    def jnj_src (cls) :
+    def jnj_src (self) :
         return "/tmp/test"
     # end def jnj_src
 
-    @classmethod
-    def scope (cls, * args, ** kw) :
+    def scope (self, * args, ** kw) :
         verbose = kw.pop ("verbose", True)
-        return super (Scaffold, cls).scope (* args, verbose = verbose, ** kw)
+        return self.__super.scope (* args, verbose = verbose, ** kw)
     # end def scope
 
-    @Class_Property
     @Once_Property
-    def web_src_root (cls) :
+    def web_src_root (self) :
         return "/tmp/test"
     # end def web_src_root
 
-    @classmethod
-    def _backend_spec (cls, backends) :
+    def _backend_spec (self, backends) :
         i = 0
         for b in backends :
             i += 1
-            path = cls.Backend_Default_Path [b]
+            path = self.Backend_Default_Path [b]
             for k, v in zip \
                     ( ("p",                        "n",  "BN")
-                    , (cls.Backend_Parameters [b], path, repr (b))
+                    , (self.Backend_Parameters [b], path, repr (b))
                     ) :
                 yield ("%s%d" % (k, i), v)
     # end def _backend_spec
 
-    @classmethod
-    def _wsgi_app (cls, cmd) :
-        cls.do_create (cmd)
-        result = super (Scaffold, cls)._wsgi_app (cmd)
+    def _wsgi_app (self, cmd) :
+        self._handle_create (cmd)
+        result = self.__super._wsgi_app (cmd)
         return result
     # end def _wsgi_app
 
-Scaffold = _GTW__test__Scaffold_ # end class
+_Command_  = _GTW_Test_Command_ # end class
+Scaffold   = _Command_ ()
+Scope      = Scaffold.scope
 
-Scope = Scaffold.scope
-
-_Command = Scaffold.cmd
-
-if __name__ == "__main__" :
-    _Command ()
 ### __END__ GTW.__test__.model

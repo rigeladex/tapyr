@@ -54,6 +54,9 @@
 #    24-Apr-2012 (CT) Change `Regatta_Event._get_objects` to determine
 #                     sequence according to `today > date.start`
 #    30-Apr-2012 (CT) Add and use `_register_submit_callback`
+#     7-May-2012 (CT) Change `Regatta._get_objects` to DRY
+#     7-May-2012 (CT) Add attribute `bir_admin` to `Regatta`
+#    30-May-2012 (CT) Change `href_register` to honor `is_cancelled`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +73,7 @@ import _GTW._NAV._E_Type.Mixin
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
+from   _TFL                     import pyk
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 from   posixpath                import join  as pjoin
@@ -79,6 +83,7 @@ import datetime
 class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     """Navigation directory for a single regatta."""
 
+    bir_admin               = None
     register_email_template = "regatta_register_email"
 
     class Registration (GTW.NAV.Page) :
@@ -106,12 +111,13 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
     # end def __init__
 
     def href_register (self) :
-        if not self.obj.is_team_race :
-            start = self.obj.event.date.start
-            now   = self.obj.event.__class__.date.start.now ()
-            if now < start :
-                return pjoin (self.abs_href, "admin", "create")
-        ### XXX implement registration for team race, too
+        if not self.obj.is_cancelled :
+            if not self.obj.is_team_race :
+                start = self.obj.event.date.start
+                now   = self.obj.event.__class__.date.start.now ()
+                if now < start :
+                    return pjoin (self.abs_href, "admin", "create")
+            ### XXX implement registration for team race, too
     # end def href_register
 
     def _get_child (self, child, * grandchildren) :
@@ -135,32 +141,26 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
         scope  = self.scope
         sk     = TFL.Sorted_By \
             ("skipper.person.last_name", "skipper.person.first_name")
+        Result_Type = None
         if obj.is_team_race :
             if first (obj.teams).place :
-                result.append \
-                    ( self.Result_Teamrace
-                        ( self
-                        , name        = u"%s.html" % (nr.lower (), )
-                        , short_title = nr
-                        , title       = u"%s %s" %
-                            ( _T (u"Results for"), self.short_title)
-                        , regatta     = obj
-                        )
-                    )
+                Result_Type = self.Result_Teamrace
         else :
             obj.boats = scope.SRM.Boat_in_Regatta.r_query \
                 (right = obj).order_by (sk).all ()
             if obj.races :
-                result.append \
-                    ( self.Result
-                        ( self
-                        , name        = u"%s.html" % (nr.lower (), )
-                        , short_title = nr
-                        , title       = u"%s %s" %
-                            ( _T (u"Results for"), self.short_title)
-                        , regatta     = obj
-                        )
+                Result_Type = self.Result
+        if Result_Type :
+            result.append \
+                ( Result_Type
+                    ( self
+                    , name        = u"%s.html" % (nr.lower (), )
+                    , short_title = nr
+                    , title       = u"%s %s" %
+                        ( _T (u"Results for"), self.short_title)
+                    , regatta     = obj
                     )
+                )
         head = _T (u"List of participants for")
         result.append \
             ( self.Registration
@@ -195,9 +195,10 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                         ( max_links   = obj.boat_class.max_crew - 1
                         )
                     )
-            bir_admin = bir.admin
+            bir.admin = bir.admin
             kw = dict \
-                ( bir_admin._orig_kw
+                ( bir.admin._orig_kw
+                , default_qr_kw   = dict (right___EQ = obj.pid)
                 , form_id         = "AF_BiR"
                 , form_parameters = dict (form_kw = form_kw)
                 , implicit        = True
@@ -205,7 +206,8 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , parent          = self
                 , submit_callback = self._register_submit_callback
                 )
-            result.append (bir_admin.__class__ (** kw))
+            self.bir_admin = ba = bir.admin.__class__ (** kw)
+            result.append (ba)
         return result
     # end def _get_objects
 
@@ -239,12 +241,12 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
                 , request       = handler.request
                 )
         except Exception as exc :
-            print \
+            pyk.fprint \
                 ( "Sending regatta registration email to %r failed "
                   "with exception %s"
                 % (email, exc)
                 )
-            print message
+            pyk.fprint (message)
     # end def _register_submit_callback
 
 # end class Regatta

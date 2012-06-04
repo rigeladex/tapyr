@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Mar-2009 (CT) Creation
+#     1-Jun-2012 (CT) Add `import` of `traceback` to `open_to_replace`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ def open_to_replace (file_name, mode = "w", buffering = -1, backup_name = None) 
                 sos.rename (file_name, backup_name)
             except sos.error, exc :
                 if exc.args [0] != errno.ENOENT :
+                    import traceback
                     traceback.print_exc ()
         sos.rename (temp_name, file_name)
 # end def open_to_replace

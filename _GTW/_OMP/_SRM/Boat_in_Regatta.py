@@ -37,6 +37,8 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    26-Jan-2012 (CT) Set `Boat_in_Regatta.left.ui_allow_new`
 #    27-Apr-2012 (CT) Add predicate `skipper_not_multiplexed`
+#     7-May-2012 (CT) Add predicate `crew_number_valid`, change
+#                     `crew` from `Cached, Computed_Set_Mixin` to `Computed`
 #    ««revision-date»»···
 #--
 
@@ -83,9 +85,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         class crew (A_Blob) :
 
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("_crew", )
+            kind               = Attr.Computed
 
             def computed (self, obj) :
                 scope = obj.home_scope
@@ -163,6 +163,20 @@ class Boat_in_Regatta (_Ancestor_Essence) :
     class _Predicates (_Ancestor_Essence._Predicates) :
 
         _Ancestor = _Ancestor_Essence._Predicates
+
+        class crew_number_valid (Pred.Condition) :
+            """The number of crew members must be less than
+               `boat.b_class.max_crew`.
+            """
+
+            kind                 = Pred.Region
+            assertion            = "number_of_crew < boat.b_class.max_crew"
+            attributes           = ("boat.b_class.max_crew", "crew")
+            bindings             = dict \
+                ( number_of_crew = "len (this.crew)"
+                )
+
+        # end class crew_number_valid
 
         class skipper_not_multiplexed (Pred.Condition) :
             """A sailor can't be skipper of more than one boat in a single

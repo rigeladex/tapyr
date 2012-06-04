@@ -27,10 +27,14 @@
 #
 # Revision Dates
 #     6-Mar-2012 (CT) Creation
+#    22-May-2012 (RS) Add `A_IP6_Address`, `A_IP6_Network` and common
+#                     ancestor `A_IP_Address`, extend syntax checks
+#    23-May-2012 (RS) Rename `A_IP_Address` -> `_A_IP_Address_`
+#    23-May-2012 (RS) Add `_syntax_re` for `_A_IP_Address_`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import, division, unicode_literals
 
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
@@ -42,46 +46,152 @@ from   _TFL.Regexp           import Regexp, re
 
 import _GTW._OMP._NET
 
-class A_IP4_Address (Syntax_Re_Mixin, A_String) :
+class _A_IP_Address_ (Syntax_Re_Mixin, A_String) :
+    """Model abstract address of IP network."""
+
+    def check_syntax (self, obj, val) :
+        self.__super.check_syntax (obj, val)
+        if val :
+            v = val.split ('/')
+            self.check_address (obj, v [0])
+            if len (v) > 1 :
+                self.check_netmask (obj, v [-1])
+    # end def check_syntax
+
+    def check_netmask (self, obj, val) :
+        if int (val) > self._bits :
+            raise MOM.Error.Attribute_Syntax (obj, self, val)
+    # end def check_netmask
+
+    _syntax_re = Regexp (r"^[0-9a-fA-F.:/]+$")
+
+# end class _A_IP_Address_
+
+class A_IP4_Address (_A_IP_Address_) :
     """Models an address in a IP4 network."""
 
+    _bits             = 32
     example           = "192.168.42.137"
     typ               = "IP4-address"
     max_length        = 15
     P_Type            = str
     syntax            = _ \
-        ( u"A IP4 address must contain 4 decimal octets separated by `.`."
+        ( u"IP4 address must contain 4 decimal octets separated by `.`."
         )
 
-    _ip4_pat          = "(?: \d{1,3}\.){3} \d{1,3}"
+    _pattern          = "(?: \d{1,3}\.){3} \d{1,3}"
     _syntax_re        = Regexp \
-        ( r"^" + _ip4_pat + "$"
+        ( r"^" + _pattern + "$"
         , re.VERBOSE
         )
 
+    def check_address (self, obj, val) :
+        if val :
+            for octet in val.split ('.') :
+                if int (octet) > 255 :
+                    raise MOM.Error.Attribute_Syntax (obj, self, val)
+    # end def check_address
+
 # end class A_IP4_Address
 
-class A_IP4_Network (Syntax_Re_Mixin, A_String) :
+class A_IP4_Network (A_IP4_Address) :
     """Model a IP4 network in CIDRR notation."""
 
+    _adr_type         = A_IP4_Address
+    _mask_len         = len (str (_adr_type._bits - 1))
     example           = "192.168.42.0/28"
     typ               = "IP4-network"
-    max_length        = 18
+    max_length        = _adr_type.max_length + _mask_len + 1
     P_Type            = str
     syntax            = _ \
-        ( u"A IP4 network must contain 4 decimal octets separated by `.`, "
+        ( u"IP4 network must contain 4 decimal octets separated by `.`, "
           "optionally followed by `/` and a number between 0 and 32."
         )
-
     _syntax_re        = Regexp \
         ( "^"
-        + A_IP4_Address._ip4_pat
-        + r"(?: / \d{1,2})?"
+        + _adr_type._pattern
+        + r"(?: / \d{1,%s})?" % _mask_len
         + "$"
         , re.VERBOSE
         )
 
 # end class A_IP4_Network
+
+class A_IP6_Address (_A_IP_Address_) :
+    """Models an address in a IP6 network."""
+
+    _bits             = 128
+    example           = "2001:db8:85a3::8a2e:370:7334"
+    typ               = "IP6-address"
+    max_length        = 39
+    P_Type            = str
+    syntax            = _ \
+        ( u"IP6 address must contain up to 8 hexadecimal "
+          u"numbers with up to 4 digits separated by `:`. "
+          u"A single empty group `::` can be used."
+        )
+
+    _pattern          = "(?: [0-9A-Fa-f]{0,4} :){2,7} [0-9A-Fa-f]{0,4}"
+    _syntax_re        = Regexp \
+        ( r"^" + _pattern + "$"
+        , re.VERBOSE
+        )
+
+    def check_address (self, obj, val) :
+        """ First check regular expression, then do some more checks on
+            the IPv6 Address -- doing it all with a regex will produce
+            an unmaintainable regex, see for example
+            https://rt.cpan.org/Public/Bug/Display.html?id=50693
+            Many Test-cases stolen from link above.
+            Note that we currently don't allow mixed ':' and '.' notation.
+        """
+        if val :
+            empty_count = 0
+            if val.startswith (':') :
+                if not val.startswith ('::') :
+                    raise MOM.Error.Attribute_Syntax (obj, self, val)
+                if val != '::' and val.endswith (':') :
+                    raise MOM.Error.Attribute_Syntax (obj, self, val)
+                empty_count = 1
+            elif val.endswith (':') :
+                if not val.endswith ('::') :
+                    raise MOM.Error.Attribute_Syntax (obj, self, val)
+                empty_count = 1
+            numbers = val.strip (':') or []
+            if numbers :
+                numbers = numbers.split (':')
+            for v in numbers :
+                if not v :
+                    if empty_count :
+                        raise MOM.Error.Attribute_Syntax (obj, self, val)
+                    empty_count += 1
+            if not empty_count and len (numbers) != 8 :
+                raise MOM.Error.Attribute_Syntax (obj, self, val)
+    # end def check_address
+
+# end class A_IP6_Address
+
+class A_IP6_Network (A_IP6_Address) :
+    """Model a IP6 network in CIDRR notation."""
+
+    _adr_type         = A_IP6_Address
+    _mask_len         = len (str (_adr_type._bits - 1))
+    example           = "2001:db8::/32"
+    typ               = "IP6-network"
+    max_length        = _adr_type.max_length + _mask_len + 1
+    P_Type            = str
+    syntax            = _ \
+        ( _adr_type.syntax
+        + u" This is optionally followed by `/` and a number between 0 and 128."
+        )
+    _syntax_re        = Regexp \
+        ( "^"
+        + _adr_type._pattern
+        + r"(?: / \d{1,%s})?" % _mask_len
+        + "$"
+        , re.VERBOSE
+        )
+# end class A_IP6_Network
 
 class A_MAC_Address (Syntax_Re_Mixin, A_String) :
     """Model a MAC address."""
