@@ -90,7 +90,8 @@
 #    31-May-2012 (CT) Add `check_bun` to `CAO._handle_arg`,
 #                     don't `check_bun` after `--`
 #     2-Jun-2012 (CT) Streamline `Arg.from_string`
-#     4-Jun-2012 (CT) Add `values` to `Help.topics`
+#     4-Jun-2012 (CT) Add `vals` to `Help.topics`
+#     4-Jun-2012 (CT) Improve output of `Help`
 #    ««revision-date»»···
 #--
 
@@ -550,7 +551,7 @@ class Help (_Spec_O_) :
     alias          = "?"
     auto_split     = ","
     needs_value    = False
-    topics         = set (["args", "buns", "cmds", "opts", "summary", "values"])
+    topics         = set (["args", "buns", "cmds", "opts", "summary", "vals"])
     default_topics = set (["args", "buns", "opts", "summary"])
 
     def __init__ (self) :
@@ -579,12 +580,17 @@ class Help (_Spec_O_) :
             topics = self.topics
             wanted = set (v for v in getattr (cao, self.name) if v)
             most_p = False
-            if wanted in (set (["all"]), set (["*"])) :
+            if wanted.issubset (set (["all", "*"])) :
                 wanted = topics
                 most_p = True
-            elif wanted == set ([True]) or not wanted.intersection (topics) :
+            elif wanted == set ([True]) :
                 wanted = self.default_topics
                 most_p = True
+            elif not wanted.issubset (topics) :
+                pyk.fprint \
+                    ( "Possible help topics:\n    "
+                    , ", ".join (sorted (ichain (topics, ("all", "help"))))
+                    )
             if "summary" in wanted :
                 nl.next ()
                 self._help_summary (cao, indent)
@@ -604,9 +610,9 @@ class Help (_Spec_O_) :
             if "buns" in wanted and cao._bun_dict :
                 nl.next ()
                 self._help_buns (cao, indent + (4 * most_p))
-            if "values" in wanted :
+            if "vals" in wanted :
                 nl.next ()
-                self._help_values (cao, indent, heading = not most_p)
+                self._help_values (cao, indent + (4 * most_p))
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
@@ -618,10 +624,8 @@ class Help (_Spec_O_) :
         except KeyError :
             v = ""
         pyk.fprint \
-            ( "%s%s%-*s  : %s = %s <default: %s>"
-            % ( head, prefix, max_l, name, ao.__class__.__name__, v
-              , ao.raw_default
-              )
+            ( "%s%s%-*s  : %s"
+            % (head, prefix, max_l, name, ao.__class__.__name__)
             )
         if ao.description :
             pyk.fprint (head, ao.description, sep = "    ")
@@ -742,9 +746,6 @@ class Help (_Spec_O_) :
             raw = None
         if raw is None or raw == []:
             raw = raw_default
-        tail = ""
-        if raw == raw_default :
-            tail = " <default>"
         if raw == "" :
             raw = None
         try :
@@ -756,21 +757,21 @@ class Help (_Spec_O_) :
         if ao.max_number == 1 and isinstance (cooked, list) :
             cooked = cooked [0]
         pyk.fprint \
-            ("%s%s%-*s  = %s%s" % (head, prefix, max_l, name, raw, tail))
+            ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
         if unicode (cooked) != unicode (raw) :
             if isinstance (cooked, (list, dict)) :
                 from _TFL.Formatter import formatted_1, formatted
-                pyk.fprint (formatted (cooked, level = 4))
-            elif not tail :
+                pyk.fprint \
+                    (formatted (cooked, level = (len (head) // 4 + 1) * 2))
+            else :
                 pyk.fprint ("%s    %s" % (head, cooked))
     # end def _help_value
 
-    def _help_values (self, cao, indent, heading) :
-        if heading :
-            pyk.fprint \
-                ( "%sOption and argument values of %s"
-                % (" " * indent, cao._name)
-                )
+    def _help_values (self, cao, indent) :
+        pyk.fprint \
+            ( "%sActual option and argument values of %s"
+            % (" " * indent, cao._name)
+            )
         indent += 4
         head    = " " * indent
         max_l   = cao.max_name_length
@@ -1846,38 +1847,38 @@ values passed to it.
     >>> _ = coc (["-help"])
     Comp [sub] ...
     <BLANKLINE>
-        sub       : Cmd_Choice = None <default: None>
+        sub       : Cmd_Choice
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = [] <default: []>
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
+        -strict   : Bool
+        -verbose  : Bool
     >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
-        aaa       : Str = None <default: None>
-        bbb       : Str = None <default: None>
+        aaa       : Str
+        bbb       : Str
     <BLANKLINE>
-        -Z        : Bool = None <default: False>
-        -help     : Help = [] <default: []>
+        -Z        : Bool
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
-        -y        : Int = None <default: None>
+        -strict   : Bool
+        -verbose  : Bool
+        -y        : Int
     >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
     <BLANKLINE>
-        ccc       : Int = None <default: 3>
-        ddd       : Str_AS = None <default: D>
+        ccc       : Int
+        ddd       : Str_AS
     <BLANKLINE>
         argv      : [3, 'D']
     <BLANKLINE>
-        -help     : Help = [] <default: []>
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -struct   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
+        -strict   : Bool
+        -struct   : Bool
+        -verbose  : Bool
     >>> _ = coc (["-help=cmds"])
     Sub commands of Comp
         one :
@@ -1961,13 +1962,13 @@ values passed to it.
     <BLANKLINE>
         Possible bundles: @c1b, @c2b
     <BLANKLINE>
-        sub       : Cmd_Choice = None <default: None>
+        sub       : Cmd_Choice
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = [] <default: []>
+        -help     : Help
             Display help about command
-        -strict   : Bool = None <default: False>
-        -verbose  : Bool = None <default: False>
+        -strict   : Bool
+        -verbose  : Bool
     <BLANKLINE>
         Argument/option bundles of Comp
             @c1b
