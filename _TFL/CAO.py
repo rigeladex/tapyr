@@ -90,6 +90,7 @@
 #    31-May-2012 (CT) Add `check_bun` to `CAO._handle_arg`,
 #                     don't `check_bun` after `--`
 #     2-Jun-2012 (CT) Streamline `Arg.from_string`
+#     4-Jun-2012 (CT) Add `values` to `Help.topics`
 #    ««revision-date»»···
 #--
 
@@ -549,7 +550,7 @@ class Help (_Spec_O_) :
     alias          = "?"
     auto_split     = ","
     needs_value    = False
-    topics         = set (["args", "buns", "cmds", "opts", "summary"])
+    topics         = set (["args", "buns", "cmds", "opts", "summary", "values"])
     default_topics = set (["args", "buns", "opts", "summary"])
 
     def __init__ (self) :
@@ -603,6 +604,9 @@ class Help (_Spec_O_) :
             if "buns" in wanted and cao._bun_dict :
                 nl.next ()
                 self._help_buns (cao, indent + (4 * most_p))
+            if "values" in wanted :
+                nl.next ()
+                self._help_values (cao, indent, heading = not most_p)
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
@@ -726,6 +730,56 @@ class Help (_Spec_O_) :
         if max_args < 0 or max_args > len (cmd._arg_list) :
             yield "..."
     # end def _help_summary_args
+
+    def _help_value (self, ao, cao, head, max_l, prefix = "") :
+        if ao.hide :
+            return
+        name = ao.name
+        raw_default = unicode (ao.raw_default)
+        try :
+            raw = cao ["%s:raw" % name]
+        except KeyError :
+            raw = None
+        if raw is None or raw == []:
+            raw = raw_default
+        tail = ""
+        if raw == raw_default :
+            tail = " <default>"
+        if raw == "" :
+            raw = None
+        try :
+            cooked = cao [name]
+        except KeyError :
+            cooked = None
+        if cooked is None or (isinstance (cooked, list) and cooked == []) :
+            cooked = ao.default
+        if ao.max_number == 1 and isinstance (cooked, list) :
+            cooked = cooked [0]
+        pyk.fprint \
+            ("%s%s%-*s  = %s%s" % (head, prefix, max_l, name, raw, tail))
+        if unicode (cooked) != unicode (raw) :
+            if isinstance (cooked, (list, dict)) :
+                from _TFL.Formatter import formatted_1, formatted
+                pyk.fprint (formatted (cooked, level = 4))
+            elif not tail :
+                pyk.fprint ("%s    %s" % (head, cooked))
+    # end def _help_value
+
+    def _help_values (self, cao, indent, heading) :
+        if heading :
+            pyk.fprint \
+                ( "%sOption and argument values of %s"
+                % (" " * indent, cao._name)
+                )
+        indent += 4
+        head    = " " * indent
+        max_l   = cao.max_name_length
+        for name, opt in sorted (cao._opt_dict.iteritems ()) :
+            self._help_value (opt, cao, head, max_l, "-")
+        max_l  += 1
+        for arg in cao._arg_list :
+            self._help_value (arg, cao, head, max_l)
+    # end def _help_values
 
     def _nl_gen (self) :
         while True :
