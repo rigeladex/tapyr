@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Oct-2010 (MG) Creation
 #    29-Mar-2012 (CT) Add test for `link_map`
+#     4-Jun-2012 (MG) Test for query with order_by added
 #    ««revision-date»»···
 #--
 
@@ -289,8 +290,9 @@ test_code = r"""
     GTW.OMP.SRM.Team_has_Boat_in_Regatta
     [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
 
-
-"""
+    >>> q = scope.PAP.Entity_created_by_Person.query ()
+    >>> q.order_by (Q.pid).all ()
+    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]"""
 
 from   _GTW.__test__.model      import *
 from   _TFL.Formatter           import Formatter
