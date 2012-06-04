@@ -43,6 +43,7 @@
 #     1-Feb-2012 (CT) Add `Extra` "AF_BiR" to `Form_Cache`
 #     2-Feb-2012 (CT) Add `attr_spec` parameters to `AF_BiR`
 #    27-Feb-2012 (CT) Add `GTW.OMP.SRM.Club.GTW.afs_kw` (`collapsed = False`)
+#     4-Jun-2012 (CT) Rename `handicap` to `boat_class`
 #    ««revision-date»»···
 #--
 
@@ -90,8 +91,8 @@ class Admin (object) :
 
     Regatta_H          = dict \
         ( ETM          = "GTW.OMP.SRM.Regatta_H"
-        , sort_key     = TFL.Sorted_By ("-event.date.start", "handicap")
-        , list_display = ("event", "handicap", "kind")
+        , sort_key     = TFL.Sorted_By ("-event.date.start", "boat_class.name")
+        , list_display = ("event", "boat_class", "kind")
         )
 
     Regatta_Event      = dict \
