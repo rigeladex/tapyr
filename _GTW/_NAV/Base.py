@@ -296,6 +296,7 @@
 #    10-May-2012 (CT) Add `_send_error_email`, `error_email_template`, `Raiser`
 #    10-May-2012 (CT) Defaults for `_login_required` and `_permission` moved
 #                     to class level
+#     4-Jun-2012 (CT) Add `handler.body` to `message` of `_send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -307,6 +308,7 @@ import _GTW._NAV
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
+from   _TFL.Formatter           import formatted
 from   _TFL.predicate           import uniq
 from   _TFL.pyk                 import pickle
 from   _TFL.Record              import Record
@@ -663,9 +665,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
         email     = self.email
         request   = handler.request
         headers   = request.headers
-        message   = "Headers:\n    %s\n\n%s" % \
+        message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
             ( "\n    ".join
                 ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
+            , formatted (handler.body)
             , tbi
             )
         if self.DEBUG :
