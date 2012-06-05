@@ -45,6 +45,7 @@
 #    17-May-2012 (CT) Derive from `MOM.Command` instead of `MOM.Scaffold`,
 #                     rename from `Scaffold` to `Command`
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
+#     5-Jun-2012 (CT) Add logging to `_handle_fcgi`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,8 @@ import _MOM.Command
 
 import _TFL.CAO
 import _TFL._Meta.Once_Property
+
+import datetime
 
 class HTTP_Opt (TFL.CAO._Spec_) :
     """Select HTTP server framework to use."""
@@ -178,9 +181,25 @@ class GTW_Command (MOM.Command) :
 
     _WSGI_ = _GTW_WSGI_ # end class
 
+    @property
+    def now (self) :
+        return datetime.datetime.now ().replace (microsecond = 0)
+    # end def now
+
     def _handle_fcgi (self, cmd) :
         from flup.server.fcgi import WSGIServer
-        return WSGIServer (self._handle_wsgi (cmd)).run ()
+        start = self.now
+        if cmd.log_level :
+            logging.warning \
+                ("[%s] Starting %s %s" % (start, sys.executable, fcgi))
+        try :
+            return WSGIServer (self._handle_wsgi (cmd)).run ()
+        finally :
+            if cmd.log_level :
+                logging.warning \
+                    ( "[%s <-- %s] Finished %s %s"
+                    % (self.now, start, sys.executable, fcgi)
+                    )
     # end def _handle_fcgi
 
     def _handle_run_server (self, cmd) :

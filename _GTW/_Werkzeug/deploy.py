@@ -38,7 +38,6 @@
 #     3-Jun-2012 (CT) Use `self.lib_dir`, not `P.lib_dir`, in
 #                     `_handle_fcgi_script`
 #     5-Jun-2012 (CT) Add `exec` to output of `_handle_fcgi_script`
-#     5-Jun-2012 (CT) Add logging to `_handle_fcgi`
 #    ««revision-date»»···
 #--
 
@@ -48,8 +47,6 @@ from   _GTW                   import GTW
 from   _TFL                   import TFL
 
 import _GTW._OMP.deploy
-
-import datetime
 
 class _GT2W_Sub_Command_ (GTW.OMP.deploy._Sub_Command_) :
 
@@ -105,27 +102,11 @@ class GT2W_Command (_Ancestor) :
 
     _UBYCMS_ = _GT2W_UBYCMS_ # end class
 
-    @property
-    def now (self) :
-        return datetime.datetime.now ().replace (microsecond = 0)
-    # end def now
-
     def _handle_fcgi (self, cmd) :
         P     = self._P (cmd)
         app   = self._app_cmd (cmd, P)
         args  = ("fcgi", ) + tuple (cmd.argv)
-        start = self.now
-        if cmd.log_level :
-            logging.warning \
-                ("[%s] Starting %s %s" % (start, app, " ".join (args)))
-        try :
-            self._app_call (cmd, P, app, args)
-        finally :
-            if cmd.log_level :
-                logging.warning \
-                    ( "[%s <-- %s] Finished %s %s"
-                    % (self.now, start, app, " ".join (args))
-                    )
+        self._app_call (cmd, P, app, args)
     # end def _handle_fcgi
 
     def _handle_fcgi_script (self, cmd) :
