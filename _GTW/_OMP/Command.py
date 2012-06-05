@@ -60,6 +60,8 @@ import _GTW._OMP.MOM_injector
 
 import _MOM.Command
 
+from   _TFL                   import sos
+
 import _TFL.CAO
 import _TFL._Meta.Once_Property
 
@@ -189,17 +191,15 @@ class GTW_Command (MOM.Command) :
     def _handle_fcgi (self, cmd) :
         from flup.server.fcgi import WSGIServer
         start = self.now
+        exe   = "%s fcgi" % sos.path.abspath (self.app_path)
         if cmd.log_level :
-            logging.warning \
-                ("[%s] Starting %s %s" % (start, sys.executable, "fcgi"))
+            logging.warning ("[%s] Starting %s" % (start, exe))
         try :
             return WSGIServer (self._handle_wsgi (cmd)).run ()
         finally :
             if cmd.log_level :
                 logging.warning \
-                    ( "[%s <-- %s] Finished %s %s"
-                    % (self.now, start, sys.executable, "fcgi")
-                    )
+                    ("[%s <-- %s] Finished %s" % (self.now, start, exe))
     # end def _handle_fcgi
 
     def _handle_run_server (self, cmd) :
