@@ -63,7 +63,7 @@ import _MOM.Command
 import _TFL.CAO
 import _TFL._Meta.Once_Property
 
-import datetime
+import datetime, logging
 
 class HTTP_Opt (TFL.CAO._Spec_) :
     """Select HTTP server framework to use."""
