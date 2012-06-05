@@ -191,14 +191,14 @@ class GTW_Command (MOM.Command) :
         start = self.now
         if cmd.log_level :
             logging.warning \
-                ("[%s] Starting %s %s" % (start, sys.executable, fcgi))
+                ("[%s] Starting %s %s" % (start, sys.executable, "fcgi"))
         try :
             return WSGIServer (self._handle_wsgi (cmd)).run ()
         finally :
             if cmd.log_level :
                 logging.warning \
                     ( "[%s <-- %s] Finished %s %s"
-                    % (self.now, start, sys.executable, fcgi)
+                    % (self.now, start, sys.executable, "fcgi")
                     )
     # end def _handle_fcgi
 
