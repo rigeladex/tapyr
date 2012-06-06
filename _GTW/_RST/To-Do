@@ -1,0 +1,88 @@
+To-Do for package GTW.RST
+=========================
+
+- Versioning
+
+  ? Root: one per API version ?
+
+- Statelessness questions
+
+  * `last_cid` cannot be sent by client, changes with every `PUT` or `POST`
+
+    + how does client the changed last_cid? does the client need to `GET`
+      after each `PUT`
+
+  * strict statelessness would mean that for `PUT` to an existing instance
+    all attribute values need to be sent, even those that haven't changed
+
+- Representation
+
+  * representation specific URIs (see RiR07)
+
+    + language
+
+    + data foramat
+
+- Resource.py
+
+  * class hierarchy::
+
+      _Base_
+          Leaf
+          _Node_
+              Node
+              Root
+
+- MOM
+
+  * App_Type ?
+
+  * Scope ?
+
+  * Package_Namespace ???
+
+  * E_Type
+
+- E_Type
+
+- URI structure for E_Type, example: Auth.Account
+
+  * ? .../Auth/Account/ vs. .../Auth.Account/
+
+  * ...Account/attribute
+
+    GET     list of attribute names
+
+  * ...Account/attribute/<name>
+
+    GET     list of all unique values for the attribute of `name`
+
+  * ...Account/instance
+
+    GET      list (of pids) of instances
+
+    POST     pid of newly created instance
+
+  * ...Account/instance/pid: one Account instance with `pid`
+
+    + Alias for another, canonical, URI .../<scope>/pid
+
+    GET      returns attribute values, last_cid
+
+    HEAD     returns last_cid, anything else ???
+
+    PUT    ? change object (what about last_cid???)
+
+    POST     change object
+
+    DELETE   delete object
+
+  * ...Account/instance/pid/<name>
+
+    GET      value of attribute `name` of instance `pid`
+
+    PUT      change value of attribute `name` of instance `pid`
+
+    DELETE   reset value of attribute `name` of instance `pid`, if possible
+
+### __END__ _GTW/_RST/To-Do
