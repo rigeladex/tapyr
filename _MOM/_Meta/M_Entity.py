@@ -130,6 +130,7 @@
 #    29-Mar-2012 (CT) Change `link_map` to exclude partial E_Types
 #    14-May-2012 (CT) Remove `children_iter`, use `children.itervalues` instead
 #     4-Jun-2012 (CT) Add guard for `et.epk_sig` to `_m_setup_sorted_by`
+#     6-Jun-2012 (CT) Use `tn_pid`, not `sort_key`, as default sort-key
 #    ««revision-date»»···
 #--
 
@@ -803,20 +804,21 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_setup_sorted_by (cls) :
         sbs        = []
-        sb_default = [cls.sort_key]
+        sb_default = ["tn_pid"]
         if cls.epk_sig :
+            def _pka_sorted_by (name, et) :
+                return tuple ("%s.%s" % (name, s) for s in et.sorted_by)
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
-                if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
-                    et = pka.P_Type
-                    if et and et.epk_sig :
-                        it = iter (et.sorted_by_epk)
-                        sbs.extend ("%s.%s" % (pka.name, x) for x in it)
-                    else :
-                        ### Class is too abstract: need to use `cls.sort_key`
-                        break
-                elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
-                    sbs.extend \
-                        ("%s.%s" % (pka.name, x) for x in pka.P_Type.sorted_by)
+                if pka.E_Type :
+                    pka_sb = _pka_sorted_by (pka.name, pka.E_Type)
+                    if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
+                        if pka_sb :
+                            sbs.extend (pka_sb)
+                        else :
+                            ### Class is too abstract: need to use `tn_pid`
+                            sbs.append ("%s.tn_pid" % (pka.name, ))
+                    elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
+                        sbs.extend (pka_sb)
                 else :
                     sbs.append (pka.name)
         sb = TFL.Sorted_By (* (sbs or sb_default))

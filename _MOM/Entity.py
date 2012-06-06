@@ -195,6 +195,8 @@
 #    22-Apr-2012 (CT) Rename argument `kind` of `is_correct` and
 #                     `_kw_check_required` to `_kind` to avoid possible name
 #                     clash with an attribute with name `kind`
+#     6-Jun-2012 (CT) Add `tn_pid`
+#     6-Jun-2012 (CT) Set `_A_Id_Entity_.P_Type = Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -1045,6 +1047,11 @@ class Id_Entity (Entity) :
     # end def SCM_Change_Attr
 
     @property
+    def tn_pid (self) :
+        return (self.type_name, self.pid)
+    # end def tn_pid
+
+    @property
     def ui_display_format (self) :
         return self.ui_display_sep.join \
             ( "%%(%s)s" % a.name for (a, v) in zip (self.primary, self.epk)
@@ -1388,6 +1395,8 @@ class Id_Entity (Entity) :
     # end def __unicode__
 
 # end class Id_Entity
+
+_A_Id_Entity_.P_Type = Id_Entity
 
 __doc__  = """
 Class `MOM.Id_Entity`

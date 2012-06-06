@@ -229,6 +229,7 @@
 #                     if `_call_eval` fails
 #    14-May-2012 (CT) Add `_A_Filename_.P_Type`
 #    23-May-2012 (RS) Make docstrings useable for end-user
+#     6-Jun-2012 (CT) Change `_A_Entity_.E_Type` to `Alias_Property`
 #    ««revision-date»»···
 #--
 
@@ -579,13 +580,9 @@ class _A_Entity_ (A_Attr_Type) :
     ### Type of composite attribute
     ###     (derived from MOM.An_Entity or MOM.Id_Entity)
     P_Type            = None
+    E_Type            = TFL.Meta.Alias_Property ("P_Type")
 
     needs_raw_value   = False
-
-    @property
-    def E_Type (self) :
-        return self.P_Type
-    # end def E_Type
 
     def _fix_P_Type (self, e_type) :
         P_Type = self.P_Type

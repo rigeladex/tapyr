@@ -145,15 +145,15 @@ _test_code = r"""
     GTW.OMP.Auth.Account_Password_Reset            True   False  False
     GTW.OMP.EVT.Entity                             False  False  False
     GTW.OMP.EVT.Object                             False  False  False
-    GTW.OMP.EVT.Link1                              False  False  False
-    GTW.OMP.EVT.Link2                              False  False  False
+    GTW.OMP.EVT.Link1                              False  False  True
+    GTW.OMP.EVT.Link2                              False  False  True
     GTW.OMP.EVT.Calendar                           True   False  False
     GTW.OMP.PAP.Entity                             False  False  False
     GTW.OMP.PAP.Subject                            False  False  False
     GTW.OMP.PAP.Person                             True   False  False
     GTW.OMP.SWP.Entity                             False  False  False
-    GTW.OMP.SWP.Link1                              False  False  False
-    GTW.OMP.SWP.Link2                              False  False  False
+    GTW.OMP.SWP.Link1                              False  False  True
+    GTW.OMP.SWP.Link2                              False  False  True
     GTW.OMP.SWP.Object                             False  False  False
     GTW.OMP.SWP.Object_PN                          False  False  False
     GTW.OMP.SWP.Page_Mixin                         False  False  False
@@ -161,7 +161,7 @@ _test_code = r"""
     GTW.OMP.SWP.Page_Y                             True   True   True
     GTW.OMP.EVT.Event                              True   False  True
     GTW.OMP.EVT.Event_occurs                       True   False  True
-    GTW.OMP.EVT._Recurrence_Mixin_                 False  False  False
+    GTW.OMP.EVT._Recurrence_Mixin_                 False  False  True
     GTW.OMP.EVT.Recurrence_Spec                    True   False  True
     GTW.OMP.EVT.Recurrence_Rule                    True   False  True
     GTW.OMP.PAP.Address                            True   False  False
@@ -181,8 +181,8 @@ _test_code = r"""
     GTW.OMP.PAP.Person_has_Phone                   True   False  False
     GTW.OMP.SRM.Regatta_Result                     False  False  False
     GTW.OMP.SRM.Entity                             False  False  False
-    GTW.OMP.SRM.Link1                              False  False  False
-    GTW.OMP.SRM.Link2                              False  False  False
+    GTW.OMP.SRM.Link1                              False  False  True
+    GTW.OMP.SRM.Link2                              False  False  True
     GTW.OMP.SRM.Object                             False  False  False
     GTW.OMP.SRM._Boat_Class_                       True   False  False
     GTW.OMP.SRM.Boat_Class                         True   False  False

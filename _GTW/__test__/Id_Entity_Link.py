@@ -29,6 +29,7 @@
 #    27-Oct-2010 (MG) Creation
 #    29-Mar-2012 (CT) Add test for `link_map`
 #     4-Jun-2012 (MG) Test for query with order_by added
+#     6-Jun-2012 (CT) Add test for `Entity_created_by_Person.sort_key`
 #    ««revision-date»»···
 #--
 
@@ -41,10 +42,15 @@ test_code = r"""
     >>> per = PAP.Person           ("ln", "fn")
     >>> pa1 = SWP.Page             ("title_1", text = "text 1")
     >>> pa2 = SWP.Page             ("title_2", text = "text 2")
+    >>> pa3 = SWP.Page             ("title_3", text = "text 3")
     >>> scope.commit               ()
 
     >>> PAP.Entity_created_by_Person (pa1, per)
     GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u''))
+    >>> scope.commit ()
+
+    >>> PAP.Entity_created_by_Person (pa3, per)
+    GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))
     >>> scope.commit ()
 
     >>> PAP.Entity_created_by_Person (pa2.epk_raw, per.epk_raw, raw = True)
@@ -290,9 +296,23 @@ test_code = r"""
     GTW.OMP.SRM.Team_has_Boat_in_Regatta
     [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
 
-    >>> q = scope.PAP.Entity_created_by_Person.query ()
+    >>> EcP = scope.PAP.Entity_created_by_Person
+    >>> q  = EcP.query   ()
+    >>> qs = EcP.query_s ()
     >>> q.order_by (Q.pid).all ()
-    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]"""
+    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
+    >>> q.order_by (TFL.Sorted_By ("pid")).all ()
+    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
+
+    >>> q.order_by (EcP.sorted_by).all ()
+    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+    >>> q.order_by (EcP.sort_key).all ()
+    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+
+    >>> qs.all ()
+    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+
+"""
 
 from   _GTW.__test__.model      import *
 from   _TFL.Formatter           import Formatter

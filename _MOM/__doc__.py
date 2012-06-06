@@ -838,21 +838,21 @@ The app-type specific entity-types are ready to be used by
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%s%%s    %%s" %% (t.type_name, NL, t.sorted_by.criteria)
     MOM.Id_Entity
-        (<bound method M_E_Type_Id.sort_key of <class 'MOM.Id_Entity' [BMT__Hash__HPS]>>,)
+        ('tn_pid',)
     MOM.Link
-        (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__HPS]>>,)
+        ('left.tn_pid',)
     MOM.Link1
-        (<bound method M_E_Type_Link1.sort_key of <class 'MOM.Link1' [BMT__Hash__HPS]>>,)
+        ('left.tn_pid',)
     MOM._MOM_Link_n_
-        (<bound method M_E_Type_Link.sort_key of <class 'MOM._MOM_Link_n_' [BMT__Hash__HPS]>>,)
+        ('left.tn_pid', 'right.tn_pid')
     MOM.Link2
-        (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2' [BMT__Hash__HPS]>>,)
+        ('left.tn_pid', 'right.tn_pid')
     MOM.Link2_Ordered
-        (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2_Ordered' [BMT__Hash__HPS]>>,)
+        ('left.tn_pid', 'right.tn_pid', 'seq_no')
     MOM.Link3
-        (<bound method M_E_Type_Link3.sort_key of <class 'MOM.Link3' [BMT__Hash__HPS]>>,)
+        ('left.tn_pid', 'middle.tn_pid', 'right.tn_pid')
     MOM.Object
-        (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__HPS]>>,)
+        ('tn_pid',)
     MOM.Named_Object
         ('name',)
     MOM.Date_Interval
@@ -906,7 +906,12 @@ The app-type specific entity-types are ready to be used by
     >>> for et in apt._T_Extension :
     ...   if et.polymorphic_epks or et.polymorphic_epk :
     ...     print et.type_name, et.polymorphic_epk, et.polymorphic_epks
-
+    MOM.Link False True
+    MOM.Link1 False True
+    MOM._MOM_Link_n_ False True
+    MOM.Link2 False True
+    MOM.Link2_Ordered False True
+    MOM.Link3 False True
 
     >>> show_children (ET_Entity)
     MOM.Entity
