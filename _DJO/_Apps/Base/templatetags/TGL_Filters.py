@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2009 Martin Glück All rights reserved
+# Copyright (C) 2008-2012 Martin Glück All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
 #    15-May-2009 (CT) Alphabetic sequence
 #    15-May-2009 (CT) `tel_uri` added
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -113,6 +114,7 @@ from   _TFL.Decorator              import Attributed
 from   django.template             import defaultfilters
 from   django                      import template
 import operator
+from   _TFL.r_eval                 import r_eval
 
 register = template.Library ()
 
@@ -131,7 +133,7 @@ def sequence_filter (sequence, filter_spec) :
         if ":" in filter_spec :
             attr, condition = (p.strip () for p in filter_spec.split (":", 1))
             try :
-                condition = eval (condition, {})
+                condition = r_eval (condition)
             except :
                 pass
         return (e for e in sequence if getattr (e, attr, False) == condition)

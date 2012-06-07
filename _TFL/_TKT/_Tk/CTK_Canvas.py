@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #                     `canvas` for coordinate transform)
 #    16-Mar-2006 (CT) Style
 #     7-Nov-2007 (CT) Moved into package _TFL._TKT._Tk
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _TFL._D2          import D2
 import _TFL._D2.Point
 import _TFL._D2.Line
 import _TFL._D2.Rect
+import _TFL.r_eval
 
 class Canvas_Object (CTK.CT_TK_mixin) :
     """Base class for special canvas-object classes."""
@@ -58,7 +60,7 @@ class Canvas_Object (CTK.CT_TK_mixin) :
         font_item = font.split (None, 2)
         if len (font_item) > 1 :
             font_item [1] = repr \
-                (self.scaled_font_size (eval (font_item [1], {}, {}), scale))
+                (self.scaled_font_size (TFL.r_eval (font_item [1]), scale))
         else :
             font_item.append (repr (self.scaled_font_size (12, scale)))
         return " ".join (font_item)

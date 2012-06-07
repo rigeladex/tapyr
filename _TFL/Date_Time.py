@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -71,6 +71,7 @@
 #     4-Jan-2008 (CT) `_sanitized_year` changed to add `2000` for `values < 40`
 #    24-Sep-2009 (CT) Use `in` operator instead of `has_key` method
 #     6-Dec-2009 (CT) 3-compatibility
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,8 @@
 from   _TFL        import TFL
 from   _TFL.Regexp import *
 from   time        import *
+
+import _TFL.r_eval
 
 class Time_Tuple :
     """Encapsulate a time tuple as used by time.gmtime, time.mktime, and
@@ -164,7 +167,7 @@ class Time_Tuple :
         if isinstance (value, str) :
             if value [0] == "0" :
                 value = value [1:]
-            value = eval (value, {}, {})
+            value = TFL.r_eval (value)
         return int (value)
     # end def _sanitized_field
 

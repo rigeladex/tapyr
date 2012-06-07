@@ -230,6 +230,7 @@
 #    14-May-2012 (CT) Add `_A_Filename_.P_Type`
 #    23-May-2012 (RS) Make docstrings useable for end-user
 #     6-Jun-2012 (CT) Change `_A_Entity_.E_Type` to `Alias_Property`
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -245,6 +246,7 @@ import _MOM._Attr.Coll
 import _MOM._Attr.Completer
 import _MOM._Attr.Kind
 import _MOM._Attr.Querier
+import _TFL.r_eval
 import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
 
@@ -431,8 +433,8 @@ class A_Attr_Type (TFL.Meta.Object) :
     # end def from_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _call_eval (soc, s, glob, locl) :
-        return eval (s, glob, locl.copy ())
+    def _call_eval (soc, s, ** kw) :
+        return TFL.r_eval (s, ** kw)
     # end def _call_eval
 
     def _checkers (self, e_type, kind) :
@@ -472,7 +474,7 @@ class Eval_Mixin (TFL.Meta.Object) :
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if value is not None :
-            result = eval (value, {"__builtins__" : {}}, {})
+            result = TFL.r_eval (value)
             return super (Eval_Mixin, soc).cooked (result)
         return value
     # end def cooked
@@ -654,7 +656,7 @@ class _A_Composite_ (_A_Entity_) :
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         t = s or {}
         if isinstance (t, basestring) :
-            t = self._call_eval (t, {}, {})
+            t = self._call_eval (t)
         if isinstance (t, tuple) :
             t = dict (t)
         t.setdefault ("raw", True)
@@ -782,6 +784,14 @@ class _A_Named_Value_ (A_Attr_Type) :
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
 
+    math_dict         = dict \
+        ( dict
+            (  (k, v) for k, v in math.__dict__.iteritems ()
+            if not k.startswith ("_")
+            )
+        , Decimal = decimal.Decimal
+        )
+
     min_value         = None
     max_value         = None
 
@@ -829,14 +839,9 @@ class _A_Number_ (A_Attr_Type) :
                 return soc.P_Type (value)
             except (ValueError, TypeError) as exc :
                 val = soc._string_fixer (value) if soc._string_fixer else value
-                g = dict \
-                    ( math.__dict__
-                    , Decimal      = decimal.Decimal
-                    , __builtins__ = {}
-                    )
                 try :
-                    return soc._call_eval (val, g, {})
-                except (NameError, ValueError, TypeError) :
+                    return soc._call_eval (val, ** soc.math_dict)
+                except (NameError, ValueError, TypeError, SyntaxError) :
                     raise ValueError
     # end def _from_string
 
@@ -997,7 +1002,7 @@ class _A_Id_Entity_ (_A_Entity_) :
                 t = s
             else :
                 try :
-                    t = self._call_eval (s, {}, {})
+                    t = self._call_eval (s)
                 except (NameError, SyntaxError) :
                     t = (s, )
             return self._get_object  (obj, t, raw = True)

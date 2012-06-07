@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #    21-Feb-2008 (CT) `-year` processing changed to consider `after` and
 #                     `before` (and display the [corrected] `vacation`)
 #     4-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.CAO
 import _TFL.Environment
+import _TFL.r_eval
 
 import _CAL.Date
 import _CAL.Year
@@ -248,7 +250,7 @@ def _main (cmd) :
             (year, d_range, workdays, holidays, vacation, workdays * cmd.hpd)
     if cmd.zeiterfassung :
         with open (cmd.zeiterfassung) as f :
-            entries = eval (f.read ())
+            entries = TFL.r_eval (f.read ())
         splitter = TFL.Getter.date.month
         if cmd.Weekly :
             splitter = TFL.Getter.date.week

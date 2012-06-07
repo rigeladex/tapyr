@@ -1402,7 +1402,7 @@ Changing objects and links
     Traceback (most recent call last):
       ...
     Attribute_Value: Can't set necessary attribute Mouse.weight to `u'one ton'`
-        `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
+        `Syntax error` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`
     >>> m.set_raw (color = "yellow", weight = "6*7")

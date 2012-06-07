@@ -32,6 +32,7 @@
 #    10-Oct-2011 (CT) `__getattr__` added (needed by `self.catalog.update` to
 #                     access `creation_date`)
 #    11-May-2012 (CT) Print `pkg` in case of `ImportError`
+#     7-Jun-2012 (CT) Add `verbose` to `combined`
 #    ««revision-date»»···
 #--
 
@@ -82,11 +83,15 @@ class PO_File (TFL.Meta.Object) :
     @classmethod
     def combined (cls, * file_names, ** kw) :
         result = cls.load (file_names [0], ** kw)
-        print "Combine translations from", file_names [0],
+        verbose = kw.get ("verbose")
+        if verbose :
+            print "Combine translations from", file_names [0],
         for file in file_names [1:] :
-            print file
+            if verbose :
+                print file
             result.merge (file)
-        print
+        if verbose :
+            print
         return result
     # end def combined
 

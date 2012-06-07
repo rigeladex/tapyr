@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -166,6 +166,7 @@
 #    30-Jun-2008 (CT) `Opt_L.__init__` added
 #    30-Jun-2008 (CT) `Opt_D` added
 #     8-Jan-2009 (CT) `raw_value` added
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -191,6 +192,7 @@ import _TFL.Abbr_Key_Dict
 import _TFL.Environment
 import _TFL.PL_Dict
 import _TFL.PL_List
+import _TFL.r_eval
 import _TFL.sos
 import _TFL._Meta.Object
 
@@ -239,12 +241,8 @@ class _List_Selection_ (TFL.Meta.Object):
 
 # end class _List_Selection_
 
-def _safe_eval (value) :
-    return eval (value, {}, {})
-# end def _safe_eval
-
 def _cook_F (value) :
-    return float (_safe_eval (value))
+    return float (TFL.r_eval (value))
 # end def _cook_F
 
 def _cook_X (value) :
@@ -274,7 +272,7 @@ class Arg (TFL.Meta.Object) :
         ( B      = bool
         , F      = _cook_F
         , I      = int
-        , L      = _safe_eval
+        , L      = TFL.r_eval
         , P      = TFL.sos.expanded_path
         , S      = identity
         , T      = identity
@@ -320,7 +318,7 @@ class Arg (TFL.Meta.Object) :
                     value = cook (value)
                 except ValueError :
                     ### `eval' handles expressions
-                    value = cook (_safe_eval (value))
+                    value = cook (TFL.r_eval (value))
             except StandardError, exc :
                 print exc
                 raise Cmd_Error \

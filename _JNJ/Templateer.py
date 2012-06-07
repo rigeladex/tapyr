@@ -70,6 +70,7 @@
 #    15-Apr-2012 (CT) Apply `sorted` to `injected` in `Templateer.get_template`
 #    30-Apr-2012 (CT) Add `regatta_register_email`
 #    10-May-2012 (CT) Add `error_email`
+#     7-Jun-2012 (CT) Use `TFL.r_eval`, factor `env_globals`
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,7 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.multimap
 import _TFL.predicate
+import _TFL.r_eval
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL._Meta.totally_ordered import totally_ordered
@@ -202,13 +204,21 @@ class Template_E (_Template_) :
     # end def css_links
 
     @Once_Property
+    def env_globals (self) :
+        return dict \
+            (  (k, v) for k, v in self.env.globals.iteritems ()
+            if not k.startswith ("_")
+            )
+    # end def env_globals
+
+    @Once_Property
     def extends (self) :
         env    = self.env
         pat    = self._extend_pat
         source = self.source
         if source and pat.search (source) :
             try :
-                path = eval (pat.name.strip (), env.globals, {})
+                path = TFL.r_eval (pat.name.strip (), ** self.env_globals)
             except Exception :
                 pass
             else :
@@ -225,7 +235,7 @@ class Template_E (_Template_) :
                 for match in pat.search_iter (source) :
                     try:
                         name   = match.group ("name").strip ()
-                        pathes = eval (name, env.globals, {})
+                        pathes = TFL.r_eval  (name, ** self.env_globals)
                     except Exception :
                         pass
                     else :

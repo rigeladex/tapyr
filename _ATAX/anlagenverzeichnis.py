@@ -51,13 +51,16 @@
 #                     allow line-specific date (for `Abgang`)
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Feb-2011 (CT) `cat` and `total_per_cat` added
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
 from   _ATAX.accounting import *
 from   _ATAX.accounting import _Entry_
 from   _TFL.Regexp      import *
+
 import _TFL.CAO
+import _TFL.r_eval
 
 class _Base_ (TFL.Meta.Object) :
 
@@ -170,7 +173,7 @@ class Anlagen_Entry (_Base_, _Entry_) :
         else :
             self.zero        = source_currency     (1.0)
         self.source_currency = source_currency
-        self.birth_value     = source_currency     (eval (a_value, {}, {}))
+        self.birth_value     = source_currency     (TFL.r_eval (a_value))
         self.new_value       = source_currency     (0.0)
         self.out_value       = source_currency     (0.0)
         if "G" in self.flags :
@@ -235,8 +238,8 @@ class Anlagen_Entry (_Base_, _Entry_) :
                 raise ValueError, \
                       "%s doesn't match a depreciation rate" % (r, )
             y = Time_Tuple (later_rate_pat.year).year
-            later_rates.append ((y, eval (later_rate_pat.rate, {}, {}) * 1.0))
-        y_rate  = self.base_rate = eval (first_rate_pat.rate, {}, {}) * 1.0
+            later_rates.append ((y, TFL.r_eval (later_rate_pat.rate) * 1.0))
+        y_rate  = self.base_rate = TFL.r_eval (first_rate_pat.rate) * 1.0
         if later_rates :
             later_rates.append ((self.target_year, later_rates [-1] [1]))
         else :
@@ -333,7 +336,7 @@ class Anlagenverzeichnis (_Base_) :
         name       = match.var
         expression = match.value.replace \
                          ("$target_year", str (self.target_year))
-        value      = eval (expression, {}, {})
+        value      = TFL.r_eval (expression)
         if name == "source_currency" :
             value  = EUC.Table [value]
         setattr (self, name, value)

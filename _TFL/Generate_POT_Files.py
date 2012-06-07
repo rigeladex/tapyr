@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Oct-2009 (MG) Creation
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 """This is the module doc string which, as a test is long enough to span at
@@ -41,6 +42,7 @@ import  datetime
 import  re
 from   _TFL.I18N             import _, _T
 from   _TFL.predicate        import any_true
+import _TFL.r_eval
 
 class Test :
     """This is a class docstring"""
@@ -189,7 +191,7 @@ msgstr ""
     # end def _check_token
 
     def _eval (self, tokval) :
-        return eval (tokval, {"__builtins__" : {}}, {}).strip ()
+        return TFL.r_eval (tokval).strip ()
     # end def _eval
 
     def _filenames (self, file_or_package_names) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -83,6 +83,7 @@
 #    13-Sep-2007 (MZO) [24618] inheritance fixed
 #     7-Nov-2007 (CT)  Moved into package _TFL._TKT._Tk
 #     1-Feb-2008 (MG)  `Change_Record.__nonzero__` factored to `Record`
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,7 @@ from   _TFL._TKT._Tk.CT_TK  import *
 from   _TFL.Filename        import *
 from   _TFL.Record          import Record
 from   _TFL.d_dict          import d_dict
+import _TFL.r_eval
 
 class Dialog (CT_TK_mixin, C_Toplevel) :
     """Base class for dialogs"""
@@ -282,7 +284,7 @@ class Boolean_Entry (_Entry_Mixin_, C_Checkbutton_Entry) :
     error_message = ""
 
     def convert (self) :
-        return eval (self.__Ancestor.get (self) or "0")
+        return TFL.r_eval (self.__Ancestor.get (self) or "0")
     # end def convert
 
 # end class Boolean_Entry

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -463,6 +463,7 @@
 #                      Zipped_Bitmap_Mgr`removed (wrong design, uses
 #                      deprecated `sos.tmpnam`)
 #    13-Nov-2009 (CT)  Don't use `map`, `apply`, and `has_key` (3-compatibility)
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -482,6 +483,7 @@ from   _TFL             import Environment
 from   _TFL             import sos
 from   _TFL             import TFL
 import _TFL._Meta.Object
+import _TFL.r_eval
 
 import tkMessageBox
 
@@ -813,7 +815,7 @@ class CT_TK_mixin :
     def num_opt_val (self, name, default, className = None, widget = None) :
         result = self.option_value (name, default, className, widget)
         if isinstance (result, (str, unicode)) :
-            result = eval (result, {}, {})
+            result = TFL.r_eval (result)
         return result
     # end def num_opt_val
 

@@ -61,8 +61,6 @@ class Config_File (TFL.Meta.Object) :
 
     >>> file = cStringIO.StringIO (source)
     >>> cfg = Config_File (file)
-    Combine translations from /swing/Project/Python/_MOM/-I18N/template.pot /swing/Project/Python/_GTW/-I18N/template.pot
-    <BLANKLINE>
 
     >>> print formatted_1 (cfg.defaults)
     {'load_translations' : '_MOM, _GTW', 'loaded_translations' : <PO_File MOM/GTW/JNJ>}

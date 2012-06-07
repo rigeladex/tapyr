@@ -160,6 +160,7 @@
 #                     `_add_einnahme` for `+`
 #     4-Jun-2012 (MG) `_ATAX_Command_._add_files` support for glob patterns
 #                     added
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -173,6 +174,7 @@ from   _TFL.Regexp       import *
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.CAO
+import _TFL.r_eval
 
 from   _TGL              import TGL
 import _TGL.load_config_file
@@ -267,7 +269,7 @@ class Account_Entry (_Entry_) :
         ### otherwise `1/2' evaluates to `0.0' :-(
         gross      = gross.replace   ("/", "*1.0/")
         ###
-        self.gross = source_currency (eval (gross, {}, {}))
+        self.gross = source_currency (TFL.r_eval (gross))
         self.netto = source_currency (self.gross)
         if   "s" in self.cat :
             self.gross = - self.gross
@@ -277,7 +279,7 @@ class Account_Entry (_Entry_) :
             self.flag  = "k"
         else :
             self.flag  = " "
-        self.vat_p = (eval (self.vat_txt or "0", {}, {}) / 100.0) + 1.0
+        self.vat_p = (TFL.r_eval (self.vat_txt or "0") / 100.0) + 1.0
         if   "n" == self.g_or_n :
             self.gross = self.netto * self.vat_p
         elif "b" == self.g_or_n :

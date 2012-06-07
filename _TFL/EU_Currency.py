@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -551,22 +551,30 @@ This module extends TFL.CAO with three argument types:
 These can be used like this:
 
     >>> cmd = TFL.CAO.Cmd (name = "Test", args = (TFL.CAO.Arg.EUC (name = "amount"), ), opts = (TFL.CAO.Opt.EUC_Source (), TFL.CAO.Opt.EUC_Target ()))
-    >>> cao = cmd (["-help=args"])
-    Arguments of Test
-        amount            : EUC = None <default: None>
-    <BLANKLINE>
-    >>> cao = cmd (["-help=args", "100"])
-    Arguments of Test
-        amount            : EUC = 100 <default: None>
-    <BLANKLINE>
-        argv              : [Euro ("100.00")]
-    <BLANKLINE>
-    >>> cao = cmd (["-help=args", "-source=ATS", "100.00"])
-    Arguments of Test
-        amount            : EUC = 100.00 <default: None>
-    <BLANKLINE>
-        argv              : [EU_Currency ("7.26728341679")]
-    <BLANKLINE>
+    >>> cao = cmd (["-help=vals"])
+    Actual option and argument values of Test
+        -help              = ['vals']
+        -source_currency   = EUR
+        -target_currency   = EUR
+        amount             = None
+            ()
+
+    >>> cao = cmd (["-help=vals", "100"])
+    Actual option and argument values of Test
+        -help              = ['vals']
+        -source_currency   = EUR
+        -target_currency   = EUR
+        amount             = 100
+            100.00 EUR
+
+    >>> cao = cmd (["-help=vals", "-source=ATS", "100.00"])
+    Actual option and argument values of Test
+        -help              = ['vals']
+        -source_currency   = ATS
+        -target_currency   = EUR
+        amount             = 100.00
+            7.27 EUR
+
     >>> pyk.fprint (cao.amount)
     7.27 EUR
 

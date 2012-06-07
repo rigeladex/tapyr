@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -218,7 +218,7 @@ def safe_eval (value, encoding = None) :
     # https://sourceforge.net/tracker/?func=detail&atid=355470&aid=617979&group_id=5470
     if encoding :
         value = "# coding=%s\n%s" % (encoding, value)
-    result = eval (value, dict (__builtins__ = {}), {})
+    result = TFL.r_eval (value)
     return result
 # end def safe_eval
 

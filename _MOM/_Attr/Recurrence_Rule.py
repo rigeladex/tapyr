@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -47,6 +47,7 @@
 #                     _A_Composite_Collection_)
 #    13-Oct-2010 (CT) `example` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,8 @@ from   _MOM.import_MOM import \
      )
 
 from   _TFL.I18N       import _, _T, _Tn
+
+import _TFL.r_eval
 
 import datetime
 import dateutil.rrule
@@ -118,7 +121,7 @@ class A_Weekday_RR (A_Attr_Type) :
 
     def _from_string (self, s, obj, glob, locl) :
         if s :
-            return self.cooked (self._call_eval (s, self.Table, {}))
+            return self.cooked (self._call_eval (s, ** self.Table))
     # end def _from_string
 
 # end class A_Weekday_RR

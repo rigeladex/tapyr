@@ -92,6 +92,7 @@
 #     2-Jun-2012 (CT) Streamline `Arg.from_string`
 #     4-Jun-2012 (CT) Add `vals` to `Help.topics`
 #     4-Jun-2012 (CT) Improve output of `Help`
+#     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,7 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.predicate
+import _TFL.r_eval
 
 from   itertools          import chain as ichain
 
@@ -311,7 +313,7 @@ class _Spec_ (TFL.Meta.Object) :
     def _safe_eval (self, value) :
         if value :
             try :
-                return eval (value, {"__builtins__" : {}}, {})
+                return TFL.r_eval (value)
             except Exception :
                 raise Err ("Invalid value `%s` for %s" % (value, self))
     # end def _safe_eval
