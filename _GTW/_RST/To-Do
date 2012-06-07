@@ -3,9 +3,9 @@ To-Do for package GTW.RST
 
 - Versioning
 
-  ? Root: one per API version ?
+  * Root: one per API version
 
-- Statelessness questions
+- Statelessness
 
   * `last_cid` cannot be sent by client, changes with every `PUT` or `POST`
 
@@ -39,45 +39,45 @@ To-Do for package GTW.RST
 
   * Scope ?
 
-  * Package_Namespace ???
-
   * E_Type
 
 - E_Type
 
 - URI structure for E_Type, example: Auth.Account
 
-  * ? .../Auth/Account/ vs. .../Auth.Account/
+  * .../Meta/Auth.Account/attribute
 
-  * ...Account/attribute
+    GET     list of attribute descriptions
 
-    GET     list of attribute names
+  * .../Meta/Auth.Account/doc
 
-  * ...Account/attribute/<name>
+    GET     documentation for E_Type
 
-    GET     list of all unique values for the attribute of `name`
-
-  * ...Account/instance
+  * .../Auth.Account/
 
     GET      list (of pids) of instances
 
     POST     pid of newly created instance
 
-  * ...Account/instance/pid: one Account instance with `pid`
+  * ...Auth.Account/?attribute=name
 
-    + Alias for another, canonical, URI .../<scope>/pid
+    GET     list of all unique values for the attribute `name`
+
+  * ...Auth.Account/pid one Account instance with `pid`
+
+    + Alias for another, canonical, URI .../<scope>/nnn
 
     GET      returns attribute values, last_cid
 
     HEAD     returns last_cid, anything else ???
 
-    PUT    ? change object (what about last_cid???)
+    PUT      change object
 
     POST     change object
 
     DELETE   delete object
 
-  * ...Account/instance/pid/<name>
+  * ...Auth.Account/pid/<name>
 
     GET      value of attribute `name` of instance `pid`
 
