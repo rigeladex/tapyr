@@ -63,6 +63,7 @@
 #    14-May-2012 (CT) Factor function `show_children` to module `MOM.inspect`
 #    14-May-2012 (CT) Remove prefix `u` from strings,
 #                     import `unicode_literals` from `__future__` instead
+#     8-Jun-2012 (CT) Add test for `query_changes` of `type_name`
 #    ««revision-date»»···
 #--
 
@@ -1469,6 +1470,24 @@ Changing objects and links
     >>> pot.price = float ("1.20")
     >>> print pot.as_code ()
     BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1), price = 1.2)
+
+    ### XXX remove DBW-specific once this is supported by SAS, too
+
+    .. ### DBW-specific start
+
+    >>> lcp = scope.query_changes (type_name = "BMT.Person").order_by (TFL.Sorted_By ("-cid")).first ()
+    >>> lcp.cid, lcp.epk
+    (20, (u'tin', u'tin', u'', 'BMT.Person'))
+    >>> lcp
+    <Create BMT.Person (u'tin', u'tin', u'', 'BMT.Person'), new-values = {'last_cid' : '20'}>
+
+    >>> lct = scope.query_changes (type_name = "BMT.Trap").order_by (TFL.Sorted_By ("-cid")).first ()
+    >>> lct.cid, lct.epk
+    (33, (u'x', u'1', 'BMT.Trap'))
+    >>> lct
+    <Modify BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '9', 'max_weight' : u''}, new-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
+
+    .. ### DBW-specific finish
 
 Attribute queries
 ------------------
