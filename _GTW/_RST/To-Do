@@ -33,6 +33,12 @@ To-Do for package GTW.RST
               Node
               Root
 
+  * permissions:
+
+    + read_permission
+
+    + write_permission
+
 - MOM
 
   * App_Type ?
@@ -43,31 +49,57 @@ To-Do for package GTW.RST
 
 - E_Type
 
-- URI structure for E_Type, example: Auth.Account
+- URI structure for E_Type
 
-  * .../Meta/Auth.Account/attribute
+  * .../Meta
+
+    GET     list of E_Types
+
+  * .../Meta/{type_name}
 
     GET     list of attribute descriptions
 
-  * .../Meta/Auth.Account/doc
+  * .../Meta/{type_name}/doc
 
     GET     documentation for E_Type
 
-  * .../Auth.Account/
+  * .../pid
+
+    GET     last pid used
+
+  * .../{type_name}
 
     GET      list (of pids) of instances
 
-    POST     pid of newly created instance
+    POST     create new instance, return its pid
 
-  * ...Auth.Account/?attribute=name
+  * .../{type_name}?key=value&...
 
-    GET     list of all unique values for the attribute `name`
+    GET     list of all matches for the query
 
-  * ...Auth.Account/pid one Account instance with `pid`
+    ??? attribute query syntax. alternatives:
 
-    + Alias for another, canonical, URI .../<scope>/nnn
+    + attr_name__query_op=value
 
-    GET      returns attribute values, last_cid
+      e.g.::
+
+        .../{type_name}?last_name___STARTSWITH=tan&lifetime__start___GE=1997
+
+    + AQ=name,op,value
+
+        .../{type_name}?AQ=last_name,STARTS_WITH,tan&AQ=lifetime.start,GE,1997
+
+    + use URI, not query
+
+      .../{type_name}/{name1},{op1},{value1};{name2},{op2},{value2};...
+
+      e.g.::
+
+        /v1/PAP.Person/last_name,STARTS_WITH,tan;lifetime.start,GE,1997
+
+  * .../pid/{pid} one Account instance with `pid`
+
+    GET      returns instance `pid` (pid, attribute values, last_cid)
 
     HEAD     returns last_cid, anything else ???
 
@@ -77,12 +109,112 @@ To-Do for package GTW.RST
 
     DELETE   delete object
 
-  * ...Auth.Account/pid/<name>
+  * .../pid/{pid}/{name}
 
     GET      value of attribute `name` of instance `pid`
 
     PUT      change value of attribute `name` of instance `pid`
 
     DELETE   reset value of attribute `name` of instance `pid`, if possible
+
+  * .../{type_name}/{epk*}
+
+    GET      returns instance matching `epk` (pid, attribute values, last_cid)
+
+    HEAD     returns last_cid, anything else ???
+
+    PUT      change object
+
+    POST     change object
+
+    DELETE   delete object
+
+- HTTP
+
+  * Request headers
+
+    + Accept
+
+    + Accept-Encoding
+
+    + Authorization
+
+    + Date
+
+    + Host
+
+    + If-Match                [use ETag value]
+
+    + If-Modified-Since       [use Last-Modified value]
+
+    + If-None-Match           [use ETag value]
+
+    + If-Unmodified-Since     [use Last-Modified value]
+
+  * Response headers
+
+    + Allow
+
+    + Content-Encoding
+
+    + Content-Length
+
+    + Content-Location
+
+    + Content-Type
+
+    + Date
+
+    + ETag
+
+    + Expires
+
+    + Last-Modified
+
+    + Location
+
+    + Vary                    [lists request headers that change representation]
+
+    + WWW-Authenticate        [401]
+
+  * Response codes
+
+    + 200 OK
+
+    + 201 Created             [`Location` response header required]
+
+    + 202 Accepted ??? triggers asynchronous action
+
+    + 204 No content          [no body allowed]
+
+    + 205 Reset content       [no body allowed]
+
+    + 301 Moved permanently
+
+    + 303 See other
+
+    + 304 Not modified
+
+    + 307 Temporary redirect
+
+    + 400 Bad request
+
+    + 401 Unauthorized        [`WWW-Authenticate` response header required]
+
+    + 404 Not found
+
+    + 405 Method not allowed  [`Allow` response header required]
+
+    + 409 Conflict
+
+    + 410 Gone
+
+    + 412 Precondition failed [e.g., request header If-Unmodified-Since]
+
+    + 415 Unsupported media type
+
+    + 500 Internal server error
+
+    + 503 Service unavailable
 
 ### __END__ _GTW/_RST/To-Do
