@@ -298,6 +298,7 @@
 #                     to class level
 #     4-Jun-2012 (CT) Add `handler.body` to `message` of `_send_error_email`
 #     8-Jun-2012 (CT) Add `charset=<encoding>` to `Robot_Excluder.view`
+#     8-Jun-2012 (CT) Remove unused imports, import `signal` in `Stopper`
 #    ««revision-date»»···
 #--
 
@@ -325,10 +326,7 @@ import _TFL.multimap
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
-import base64
-import hashlib
 import logging
-import signal
 import sys
 import time
 import uuid
@@ -1535,6 +1533,7 @@ class Stopper (Page) :
     # end def __init__
 
     def _view (self, handler) :
+        import signal
         HTTP    = self.top.HTTP
         request = handler.request
         if sos.path.exists (self.sentinel_name) :
