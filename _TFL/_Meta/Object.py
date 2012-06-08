@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #     9-Dec-2009 (CT) Context manager `LET` added
 #    10-Dec-2009 (CT) `LET` defined as alias for `TFL.Context.attr_let`
 #    16-Feb-2011 (CT) `pop_to_self` added
+#     8-Jun-2012 (CT) Add `opts.get ("prefix")` to `pop_to_self`
 #    ««revision-date»»···
 #--
 
@@ -190,11 +191,12 @@ class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
 
     LET = TFL.Meta.Class_and_Instance_Method (TFL.Context.attr_let)
 
-    def pop_to_self (self, kw, * names) :
+    def pop_to_self (self, kw, * names, ** opts) :
         """Pop each name in `names` from `kw` and store its value in `self`."""
+        prefix = opts.get ("prefix", "")
         for name in names :
             if name in kw :
-                setattr (self, name, kw.pop (name))
+                setattr (self, prefix + name, kw.pop (name))
     # end def pop_to_self
 
 Object = _TFL_Meta_Object_ # end class
