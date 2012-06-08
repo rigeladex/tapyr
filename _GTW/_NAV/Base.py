@@ -297,6 +297,7 @@
 #    10-May-2012 (CT) Defaults for `_login_required` and `_permission` moved
 #                     to class level
 #     4-Jun-2012 (CT) Add `handler.body` to `message` of `_send_error_email`
+#     8-Jun-2012 (CT) Add `charset=<encoding>` to `Robot_Excluder.view`
 #    ««revision-date»»···
 #--
 
@@ -1511,7 +1512,8 @@ class Robot_Excluder (Page) :
     # end def contents
 
     def _view (self, handler) :
-        handler.set_header ("Content-Type", "text/plain")
+        handler.set_header \
+            ("Content-Type", "text/plain; charset=%s" % (self.encoding, ))
         handler.write      (self.contents)
     # end def _view
 

@@ -42,6 +42,7 @@
 #     2-May-2011 (CT) `secure_cookie` and `set_secure_cookie` improved
 #    10-May-2011 (MG) `cookie` added
 #    26-Jan-2012 (CT) Add `path_x` and `referrer` to `Request_Class`
+#     8-Jun-2012 (CT) Add `charset=<encoding>` to `NAV_Request_Handler.__call__`
 #    ««revision-date»»···
 #--
 
@@ -234,7 +235,9 @@ class NAV_Request_Handler (GTW._NAV_Request_Handler_, Request_Handler) :
     # end def __init__
 
     def __call__ (self, environ, start_response) :
-        self.set_header ("Content-Type", "text/html")
+        nav = self.nav_root
+        self.set_header \
+            ("Content-Type", "text/html; charset=%s" % (nav.encoding, ))
         redirect, top = self._handle_request ()
         if redirect :
             raise redirect
