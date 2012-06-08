@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -29,6 +29,7 @@
 #    16-Jan-2010 (CT) Creation
 #    18-Jan-2010 (CT) `In_Page_Group` removed
 #    26-Feb-2010 (CT) `Is_Superuser` added
+#     8-Jun-2012 (CT) Add `Login_Required`, add guards for `user`
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,7 @@ class In_Group (_Permission_) :
     # end def group
 
     def predicate (self, user, page, * args, ** kw) :
-        return self.group in user.groups
+        return user and self.group in user.groups
     # end def predicate
 
 # end class In_Group
@@ -74,7 +75,7 @@ class Is_Creator (_Permission_) :
     # end def __init__
 
     def predicate (self, user, page, * args, ** kw) :
-        return user == getattr (page.obj, self.attr_name, None)
+        return user and user == getattr (page.obj, self.attr_name, None)
     # end def predicate
 
 # end class Is_Creator
@@ -82,10 +83,18 @@ class Is_Creator (_Permission_) :
 class Is_Superuser (_Permission_) :
 
     def predicate (self, user, page, * args, ** kw) :
-        return user.superuser
+        return user and user.superuser
     # end def predicate
 
 # end class Is_Superuser
+
+class Login_Required (_Permission_) :
+
+    def predicate (self, user, page, * args, ** kw) :
+        return user and user.authenticated and user.active
+    # end def predicate
+
+# end class Login_Required
 
 if __name__ != "__main__":
     GTW.NAV._Export ("*")
