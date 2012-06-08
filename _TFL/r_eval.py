@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Jun-2012 (CT) Creation
+#     8-Jun-2012 (CT) Add `\s*` to `_eval_restrict_pat`
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,7 @@ from   _TFL        import TFL
 import re
 
 _eval_restrict_pat = re.compile \
-    ( r"(?: (?: ^|\W)(?: lambda)(?: \W|$))|\.__|(?: ^|\W)inspect\."
+    ( r"(?: (?: ^|\W)(?: lambda)(?: \W|$))|\.\s*__|(?: ^|\W)inspect\."
     , re.VERBOSE
     )
 
@@ -65,6 +66,9 @@ def r_eval (source, ** kw) :
     Traceback (most recent call last):
     ...
     ValueError: Cannot safely evaluate u'().__class__'
+    >>> r_eval ("((). __class__)")
+    Traceback (most recent call last):
+    ValueError: Cannot safely evaluate u'((). __class__)'
     """
     if source :
         if _eval_restrict_pat.search (source) :
