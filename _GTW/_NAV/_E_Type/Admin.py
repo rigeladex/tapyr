@@ -175,6 +175,7 @@
 #                     `Deleter._login_required`
 #    11-May-2012 (CT) Add exception handler around call of `.write_json` to
 #                     `_Changer_._post_handler` to email `result`
+#    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `prefix`
 #    ««revision-date»»···
 #--
 
@@ -1159,7 +1160,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             (args = kw.pop ("Form_args", ()), kw = kw.pop ("Form_kw", {}))
         kw ["_list_display"] = kw.pop ("list_display", None)
         self.__super.__init__ (parent, ** kw)
-        self.prefix     = pjoin (parent.prefix, self.name)
+        self.prefix     = pjoin (parent.prefix, self.name, "")
         self._field_map = {}
         if not self.implicit :
             self.top.ET_Map [self.E_Type.type_name].admin = self
@@ -1224,7 +1225,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def href (self) :
-        return pjoin (self.prefix, u"")
+        return self.prefix.rstrip ("/")
     # end def href
 
     @property

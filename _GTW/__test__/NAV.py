@@ -111,40 +111,40 @@ _test_code = """
     >>> for owl in nav_root.own_links_transitive :
     ...   if not owl.hidden:
     ...     print owl.href, owl.template.name
-    Admin/ html/static.jnj
-    Admin/Benutzerverwaltung/ html/static.jnj
-    Admin/Personenverwaltung/ html/static.jnj
-    Admin/Personenverwaltung/Address/ e_type_admin
-    Admin/Personenverwaltung/Company/ e_type_admin
-    Admin/Personenverwaltung/Company_has_Address/ e_type_admin
-    Admin/Personenverwaltung/Company_has_Email/ e_type_admin
-    Admin/Personenverwaltung/Company_has_Phone/ e_type_admin
-    Admin/Personenverwaltung/Email/ e_type_admin
-    Admin/Personenverwaltung/Entity_created_by_Person/ e_type_admin
-    Admin/Personenverwaltung/Person/ e_type_admin
-    Admin/Personenverwaltung/Person_has_Address/ e_type_admin
-    Admin/Personenverwaltung/Person_has_Email/ e_type_admin
-    Admin/Personenverwaltung/Person_has_Phone/ e_type_admin
-    Admin/Personenverwaltung/Phone/ e_type_admin
-    Admin/Regattaverwaltung/ html/static.jnj
-    Admin/Regattaverwaltung/Boat/ e_type_admin
-    Admin/Regattaverwaltung/Boat_Class/ e_type_admin
-    Admin/Regattaverwaltung/Boat_in_Regatta/ e_type_admin
-    Admin/Regattaverwaltung/Club/ e_type_admin
-    Admin/Regattaverwaltung/Regatta_C/ e_type_admin
-    Admin/Regattaverwaltung/Regatta_Event/ e_type_admin
-    Admin/Regattaverwaltung/Regatta_H/ e_type_admin
-    Admin/Regattaverwaltung/Regatta_Page/ e_type_admin
-    Admin/Regattaverwaltung/Sailor/ e_type_admin
-    Admin/Regattaverwaltung/Team/ e_type_admin
-    Admin/Regattaverwaltung/Team_has_Boat_in_Regatta/ e_type_admin
-    Admin/Webseitenverwaltung/ html/static.jnj
-    Admin/Webseitenverwaltung/Calendar/ e_type_admin
-    Admin/Webseitenverwaltung/Clip_X/ e_type_admin
-    Admin/Webseitenverwaltung/Event/ e_type_admin
-    Admin/Webseitenverwaltung/Gallery/ e_type_admin
-    Admin/Webseitenverwaltung/Page/ e_type_admin
-    Admin/Webseitenverwaltung/Picture/ e_type_admin
+    Admin html/static.jnj
+    Admin/Benutzerverwaltung html/static.jnj
+    Admin/Personenverwaltung html/static.jnj
+    Admin/Personenverwaltung/Address e_type_admin
+    Admin/Personenverwaltung/Company e_type_admin
+    Admin/Personenverwaltung/Company_has_Address e_type_admin
+    Admin/Personenverwaltung/Company_has_Email e_type_admin
+    Admin/Personenverwaltung/Company_has_Phone e_type_admin
+    Admin/Personenverwaltung/Email e_type_admin
+    Admin/Personenverwaltung/Entity_created_by_Person e_type_admin
+    Admin/Personenverwaltung/Person e_type_admin
+    Admin/Personenverwaltung/Person_has_Address e_type_admin
+    Admin/Personenverwaltung/Person_has_Email e_type_admin
+    Admin/Personenverwaltung/Person_has_Phone e_type_admin
+    Admin/Personenverwaltung/Phone e_type_admin
+    Admin/Regattaverwaltung html/static.jnj
+    Admin/Regattaverwaltung/Boat e_type_admin
+    Admin/Regattaverwaltung/Boat_Class e_type_admin
+    Admin/Regattaverwaltung/Boat_in_Regatta e_type_admin
+    Admin/Regattaverwaltung/Club e_type_admin
+    Admin/Regattaverwaltung/Regatta_C e_type_admin
+    Admin/Regattaverwaltung/Regatta_Event e_type_admin
+    Admin/Regattaverwaltung/Regatta_H e_type_admin
+    Admin/Regattaverwaltung/Regatta_Page e_type_admin
+    Admin/Regattaverwaltung/Sailor e_type_admin
+    Admin/Regattaverwaltung/Team e_type_admin
+    Admin/Regattaverwaltung/Team_has_Boat_in_Regatta e_type_admin
+    Admin/Webseitenverwaltung html/static.jnj
+    Admin/Webseitenverwaltung/Calendar e_type_admin
+    Admin/Webseitenverwaltung/Clip_X e_type_admin
+    Admin/Webseitenverwaltung/Event e_type_admin
+    Admin/Webseitenverwaltung/Gallery e_type_admin
+    Admin/Webseitenverwaltung/Page e_type_admin
+    Admin/Webseitenverwaltung/Picture e_type_admin
 
     >>> php = nav_root.page_from_href ("Admin/Personenverwaltung/Person_has_Phone/change")
     >>> print php.href, php.template.name

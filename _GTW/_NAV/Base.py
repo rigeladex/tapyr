@@ -299,6 +299,7 @@
 #     4-Jun-2012 (CT) Add `handler.body` to `message` of `_send_error_email`
 #     8-Jun-2012 (CT) Add `charset=<encoding>` to `Robot_Excluder.view`
 #     8-Jun-2012 (CT) Remove unused imports, import `signal` in `Stopper`
+#    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `_Dir_.prefix`
 #    ««revision-date»»···
 #--
 
@@ -1060,7 +1061,7 @@ class _Dir_ (_Site_Entity_) :
                 return first (self.own_links).href
             except IndexError :
                 pass
-        return pjoin (self.prefix, u"")
+        return self.prefix.rstrip ("/")
     # end def href
 
     def is_current_dir (self, nav_page) :
@@ -1201,7 +1202,7 @@ class Dir (_Dir_) :
         self.level   = parent.level + 1
         self.parents = parent.parents + [parent]
         self.prefix  = pjoin \
-            (* [p for p in (parent.prefix, sub_dir) if p is not None])
+            (* [p for p in (parent.prefix, sub_dir, "") if p is not None])
         self.src_dir  = src_dir
         self.__super.__init__ (parent = parent, ** kw)
     # end def __init__
@@ -1349,8 +1350,6 @@ class Root (_Dir_) :
         redirects  = top.redirects
         if href in Table :
             result = Table [href]
-        elif href_s in Table :
-            result = Table [href_s]
         else :
             head = href
             tail = []
@@ -1359,7 +1358,7 @@ class Root (_Dir_) :
                 if head :
                     tail.append (_)
                     try :
-                        d = Table [pjoin (head, u"")]
+                        d = Table [head]
                     except KeyError :
                         pass
                     else :

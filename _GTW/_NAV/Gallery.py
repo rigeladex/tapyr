@@ -162,6 +162,7 @@
 #    17-Aug-2010 (CT) `template` corrected
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #     3-Jan-2011 (CT) Introduce `template_name`
+#    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `prefix`
 #    ««revision-date»»···
 #--
 
@@ -189,7 +190,7 @@ class Gallery (GTW.NAV.Page) :
         base          = Filename (pic_dir).base
         self.name     = pjoin (base, u"")
         self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
-        self.src_dir  = self.prefix = pjoin (parent.prefix, base)
+        self.src_dir  = self.prefix = pjoin (parent.prefix, self.name)
     # end def __init__
 
     @property
@@ -199,11 +200,7 @@ class Gallery (GTW.NAV.Page) :
 
     @Once_Property
     def href (self) :
-        result = ""
-        href   = pjoin (self.parent.prefix, self.name)
-        if href :
-            result = pjoin (pnorm (href), "")
-        return result
+        return self.prefix.rstrip ("/")
     # end def href
 
     @property

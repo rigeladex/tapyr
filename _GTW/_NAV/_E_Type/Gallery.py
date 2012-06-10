@@ -34,6 +34,7 @@
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #     7-Oct-2010 (CT) `max_height_photo` and friends added
 #     3-Jan-2011 (CT) Introduce `template_name`
+#    10-Jun-2012 (CT) Remove redefinition of `permalink`
 #    ««revision-date»»···
 #--
 
@@ -151,11 +152,6 @@ class Gallery (GTW.NAV.E_Type.Instance) :
     def max_width_thumb (self) :
         return max (p.thumb.width for p in self.pictures)
     # end def max_width_thumb
-
-    @Once_Property
-    def permalink (self) :
-        return pjoin (self.__super.permalink, "")
-    # end def permalink
 
     def _get_child (self, child, * grandchildren) :
         if not grandchildren :
