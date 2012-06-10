@@ -35,6 +35,7 @@
 #     7-Oct-2010 (CT) `max_height_photo` and friends added
 #     3-Jan-2011 (CT) Introduce `template_name`
 #    10-Jun-2012 (CT) Remove redefinition of `permalink`
+#    10-Jun-2012 (CT) Add guard for `self.pictures`
 #    ««revision-date»»···
 #--
 
@@ -135,22 +136,30 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     @Once_Property
     def max_height_photo (self) :
-        return max (p.photo.height for p in self.pictures)
+        if self.pictures :
+            return max (p.photo.height for p in self.pictures)
+        return 0
     # end def max_height_photo
 
     @Once_Property
     def max_height_thumb (self) :
-        return max (p.thumb.height for p in self.pictures)
+        if self.pictures :
+            return max (p.thumb.height for p in self.pictures)
+        return 0
     # end def max_height_thumb
 
     @Once_Property
     def max_width_photo (self) :
-        return max (p.photo.width for p in self.pictures)
+        if self.pictures :
+            return max (p.photo.width for p in self.pictures)
+        return 0
     # end def max_width_photo
 
     @Once_Property
     def max_width_thumb (self) :
-        return max (p.thumb.width for p in self.pictures)
+        if self.pictures :
+            return max (p.thumb.width for p in self.pictures)
+        return 0
     # end def max_width_thumb
 
     def _get_child (self, child, * grandchildren) :
