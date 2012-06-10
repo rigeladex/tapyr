@@ -56,9 +56,10 @@
 #    24-Jan-2012 (MG) `Join_Query.__call__` fixed
 #    24-Jan-2012 (MG) `Join_Query.__call__` order of joins fixed (sqlite does
 #                     not mapper, but other database do)
-#    14-May-2012 (CT) Print exception info in `MOM_Composite_Query, __init__`
+#    14-May-2012 (CT) Print exception info in `MOM_Composite_Query.__init__`
 #    14-May-2012 (MG) `MOM_Composite_Query.__init__` query attribute handling
 #                     fixed
+#    10-Jun-2012 (MG) `Join_Query` Support for `tn_pid` added
 #    ««revision-date»»···
 #--
 
@@ -311,33 +312,47 @@ class Join_Query (_MOM_Query_) :
         try :
             o_SAQ      = column.mom_kind.P_Type._SAQ
         except AttributeError :
-            type_name  = column.mom_kind.P_Type.type_name
-            raise TypeError \
-                ( "Cannot query attribute `%s` of type `%s`.\n"
-                  "If you need this query consider making `%s` relevant."
-                % (sub_attr, type_name, type_name)
-                )
-        sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
-        joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
-        for b in o_SAQ._E_TYPE [1] :
-            j_SAQ = b._SAQ
+            if sub_attr == "tn_pid" :
+                ### special handling of tn_pid queries
+                pid_Table = MOM.DBW.SAS.Manager.sa_pid
+                joins = ( ( column.table
+                          , pid_Table
+                          , column == pid_Table.c.pid
+                          , False
+                          )
+                        ,
+                        )
+                oc    = (pid_Table.c.Type_Name, column)
+            else :
+                type_name  = column.mom_kind.P_Type.type_name
+                raise TypeError \
+                    ( "Cannot query attribute `%s` of type `%s`.\n"
+                      "If you need this query consider making `%s` relevant."
+                    % (sub_attr, type_name, type_name)
+                    )
+        else :
+            sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
+            joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
+            for b in o_SAQ._E_TYPE [1] :
+                j_SAQ = b._SAQ
+                joins.append \
+                    ( ( j_SAQ._SA_TABLE
+                      , o_SAQ._SA_TABLE
+                      ,    j_SAQ.pid
+                        == o_SAQ._SA_TABLE.columns [o_SAQ._E_TYPE [0]._sa_pk_name]
+                      , False
+                      )
+                    )
             joins.append \
-                ( ( j_SAQ._SA_TABLE
-                  , o_SAQ._SA_TABLE
-                  , j_SAQ.pid == o_SAQ._SA_TABLE.columns [o_SAQ._E_TYPE [0]._sa_pk_name]
-                  , False
+                ( ( self.source._SA_TABLE
+                  , o_SAQ.pid.table
+                  , column == o_SAQ.pid
+                  , not isinstance
+                        ( column.mom_kind
+                        , (MOM.Attr.Primary, MOM.Attr.Necessary)
+                        )
                   )
                 )
-        joins.append \
-            ( ( self.source._SA_TABLE
-              , o_SAQ.pid.table
-              , column == o_SAQ.pid
-              , not isinstance
-                    ( column.mom_kind
-                    , (MOM.Attr.Primary, MOM.Attr.Necessary)
-                    )
-              )
-            )
         return joins, oc
     # end def __call__
 
