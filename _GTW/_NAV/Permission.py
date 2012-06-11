@@ -30,6 +30,7 @@
 #    18-Jan-2010 (CT) `In_Page_Group` removed
 #    26-Feb-2010 (CT) `Is_Superuser` added
 #     8-Jun-2012 (CT) Add `Login_Required`, add guards for `user`
+#    11-Jun-2012 (CT) Add `rank`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ import _TFL.Filter
 
 class _Permission_ (TFL._.Filter._Filter_S_) :
 
-    pass
+    rank = 0
 
 # end class _Permission_
 
@@ -89,6 +90,8 @@ class Is_Superuser (_Permission_) :
 # end class Is_Superuser
 
 class Login_Required (_Permission_) :
+
+    rank = -100
 
     def predicate (self, user, page, * args, ** kw) :
         return user and user.authenticated and user.active
