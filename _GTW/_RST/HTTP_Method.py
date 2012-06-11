@@ -48,7 +48,8 @@ class _Meta_ (TFL.Meta.M_Class) :
         cls.__m_super.__init__ (name, bases, dct)
         if name != "HTTP_Method" :
             cls.name = name = cls.__name__
-            cls.Table [name] = cls
+            if name not in cls.Table :
+                cls.Table [name] = cls
     # end def __init__
 
 # end class _Meta_

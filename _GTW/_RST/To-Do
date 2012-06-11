@@ -79,17 +79,11 @@ To-Do for package GTW.RST
 
     ??? attribute query syntax. alternatives:
 
-    + attr_name__query_op=value
-
-      e.g.::
-
-        .../{type_name}?last_name___STARTSWITH=tan&lifetime__start___GE=1997
-
     + AQ=name,op,value
 
         .../{type_name}?AQ=last_name,STARTS_WITH,tan&AQ=lifetime.start,GE,1997
 
-    + use URI, not query
+  * query URI
 
       .../{type_name}/{name1},{op1},{value1};{name2},{op2},{value2};...
 
@@ -118,6 +112,8 @@ To-Do for package GTW.RST
     DELETE   reset value of attribute `name` of instance `pid`, if possible
 
   * .../{type_name}/{epk*}
+
+    * simple epks only (A_Entity attributes don't work)
 
     GET      returns instance matching `epk` (pid, attribute values, last_cid)
 
@@ -201,6 +197,8 @@ To-Do for package GTW.RST
 
     + 401 Unauthorized        [`WWW-Authenticate` response header required]
 
+    + 403 Forbidden
+
     + 404 Not found
 
     + 405 Method not allowed  [`Allow` response header required]
@@ -215,6 +213,8 @@ To-Do for package GTW.RST
 
     + 500 Internal server error
 
-    + 503 Service unavailable
+    + 501 Not Implemented
+
+    + 503 Service unavailable [`Retry-After` response header would be nice]
 
 ### __END__ _GTW/_RST/To-Do

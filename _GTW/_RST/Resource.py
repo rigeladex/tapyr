@@ -47,8 +47,12 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Context
 import _TFL.Environment
+import _TFL.Record
+
+from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import logging
+import time
 
 class _RST_Meta_ (TFL.Meta.M_Class) :
 
@@ -62,12 +66,18 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
+        if cls._needs_parent and kw.get ("parent") is None :
+            return (cls, args, kw)
         result = cls.__m_super.__call__ (* args, ** kw)
+        kw.pop ("parent", None)
         result._orig_kw = dict (kw)
         if not result.implicit :
             href = result.href
             pid  = result.pid
-            top  = result.top
+            try :
+                top  = result.top
+            except AttributeError :
+                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
             if href is not None :
                 Table = top.Table
                 Table [href] = result
@@ -92,18 +102,13 @@ class _RST_Base_ (TFL.Meta.Object) :
     __metaclass__              = _RST_Meta_
     _real_name                 = "_Base_"
 
-    error_email_template       = "error_email"
     hidden                     = False
-    href                       = ""
     implicit                   = False
     input_encoding             = "iso-8859-15"
-    nick                       = ""
-    parent                     = None
     pid                        = None
-    top                        = None
 
-    _email                     = None   ### default from address
     _exclude_robots            = True
+    _needs_parent              = True
     _r_permission              = None   ### read permission
     _w_permission              = None   ### write permission
 
@@ -114,34 +119,51 @@ class _RST_Base_ (TFL.Meta.Object) :
     POST                       = None
     PUT                        = None
 
-    class OPTIONS (GTW.RST.OPTIONS) :
+    class RST_GET (GTW.RST.GET) :
 
-        def __call__ (self, page, handler) :
+        _real_name             = "GET"
+
+        def __call__ (self, resource, handler) :
+            raise NotImplementedError \
+                ( "%s.GET needs to be implemented"
+                % (resource.__class__.__name__, )
+                )
+        # end def __call__
+
+    GET = RST_GET # end class
+
+    class RST_OPTIONS (GTW.RST.OPTIONS) :
+
+        _real_name             = "OPTIONS"
+
+        def __call__ (self, resource, handler) :
             methods = sorted \
-                (  k for k, m in page.SUPPORTED_METHODS.iteritems ()
-                if page.allow_method (m, handler.request)
+                (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
+                if resource.allow_method (m, handler.request)
                 )
             handler.set_header ("Allow", ", ".join (methods))
             return ""
         # end def __call__
 
-    # end class OPTIONS
+    OPTIONS = RST_OPTIONS # end class
 
-    def __init__ (self, parent = None, ** kw) :
+    def __init__ (self, ** kw) :
+        self.parent = parent = kw.pop ("parent", None)
         self._kw    = dict (kw)
-        self.parent = parent
-        self.pop_to_self (kw, "r_permissions", "w_permissions", prefix = "_")
-        if "input_encoding" in kw :
-            encoding = kw ["input_encoding"]
-        else :
-            encoding = getattr (parent, "input_encoding", self.input_encoding)
+        self.pop_to_self \
+            ( kw
+            , "exclude_robots", "r_permissions", "w_permissions"
+            , prefix = "_"
+            )
+        encoding = kw.get ("input_encoding") or \
+            getattr (parent, "input_encoding", self.input_encoding)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
-                v = unicode (v, encoding, "replace")
+                v = unicode (v, encoding)
             try :
                 setattr (self, k, v)
             except AttributeError, exc :
-                print (self.href or "Navigation.Root", k, v, "\n   ", exc)
+                print (self.href or "/{ROOT}", k, v, "\n   ", exc)
         if self.implicit :
             self.hidden = True
     # end def __init__
@@ -166,23 +188,6 @@ class _RST_Base_ (TFL.Meta.Object) :
         return Filename (self.name).base
     # end def base
 
-    @property
-    def email (self) :
-        result = self._email
-        if result is None :
-            result = self.webmaster
-            if isinstance (result, tuple) :
-                result = "%s <%s>" % (result [1], result [0])
-            self._email = result
-        return result
-    # end def email
-
-    @email.setter
-    def email (self, value) :
-        self._email = value
-    # end def email
-
-    @Once_Property
     def exclude_robots (self) :
         return self.r_permissions or self.hidden or self._exclude_robots
     # end def exclude_robots
@@ -207,12 +212,14 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @Once_Property
     def r_permissions (self) :
-        return tuple (self._get_permissions ("r_permission"))
+        return sorted \
+            (self._get_permissions ("r_permission"), key = TFL.Getter.rank)
     # end def r_permissions
 
     @Once_Property
     def w_permissions (self) :
-        return tuple (self._get_permissions ("w_permission"))
+        return sorted \
+            (self._get_permissions ("w_permission"), key = TFL.Getter.rank)
     # end def w_permissions
 
     @property
@@ -225,15 +232,14 @@ class _RST_Base_ (TFL.Meta.Object) :
         return self
     # end def _effective
 
-    def allow_method (self, method, request) :
-        """Returns True if `self` allows `method` for `request.user`"""
-        user = request.user
+    def allow_method (self, method, user) :
+        """Returns True if `self` allows `method` for `user`."""
+        if isinstance (method, basestring) :
+            method = GTW.RST.HTTP_Method.Table [method]
         if not user.superuser :
             pn = method.mode + "_permissions"
             permissions = getattr (self, pn)
-            for p in self.permissions () :
-                if not p (user, self) :
-                    return False
+            return all (p (user, self) for p in self.permissions ())
         return True
     # end def allow_method
 
@@ -242,19 +248,6 @@ class _RST_Base_ (TFL.Meta.Object) :
         if etn :
             return self.top.ET_Map [etn].manager
     # end def etype
-
-    def send_email (self, template, ** context) :
-        email_from = context.get ("email_from")
-        if not email_from :
-            context ["email_from"] = self.email
-        if self.smtp :
-            text = self.top.Templateer.render (template, context).encode \
-                (self.encoding, "replace")
-            self.smtp (text)
-        else :
-            print ("*** Cannot send email because `smtp` is undefined ***")
-            print (text)
-    # end def send_email
 
     def _get_permissions (self, name) :
         p = getattr (self, "_" + name, None)
@@ -266,7 +259,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def _get_permissions
 
     def _get_user (self, username) :
-        result = self.anonymous_account
+        result = None
         if username :
             try :
                 result = self.account_manager.query (name = username).one ()
@@ -282,34 +275,6 @@ class _RST_Base_ (TFL.Meta.Object) :
         return result
     # end def _get_user
 
-    def _send_error_email (self, handler, exc, tbi) :
-        email     = self.email
-        request   = handler.request
-        headers   = request.headers
-        message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
-            ( "\n    ".join
-                ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
-            , formatted (handler.body)
-            , tbi
-            )
-        if self.DEBUG :
-            print ("Exception:", exc)
-            print ("Request path", request.path)
-            print (message)
-            print (handler.body)
-        else :
-            self.send_email \
-                ( self.error_email_template
-                , email_from    = email
-                , email_to      = email
-                , email_subject = ("Error: %s") % (exc, )
-                , message       = message
-                , NAV           = self.top
-                , page          = self
-                , request       = request
-                )
-    # end def _send_error_email
-
     def __getattr__ (self, name) :
         if self.parent is not None :
             return getattr (self.parent, name)
@@ -317,16 +282,179 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def __getattr__
 
     def __repr__ (self) :
-        return "<%s %s    %s>" % (self.Type, self.name, self.abs_href)
+        return "<%s %s: %s>" % (self.Type, self.name, self.abs_href)
     # end def __repr__
 
 _Base_ = _RST_Base_ # end class
 
+class RST_Leaf (_Base_) :
+    """Base class for RESTful leaves."""
+
+    _real_name                 = "Leaf"
+
+Leaf = RST_Leaf # end class
+
+class _RST_Node_ (_Base_) :
+    """Base class for RESTful nodes (resources with children)."""
+
+    _real_name                 = "_Node_"
+
+    def __init__ (self, ** kw) :
+        entries = kw.pop ("entries", [])
+        self.__super.__init__ (** kw)
+        self._entries = []
+        if entries :
+            self._init_add_entries (entries)
+    # end def __init__
+
+    def add_entries (self, * entries) :
+        self._entries.extend (entries)
+    # end def add_entries
+
+    def _init_add_entries (self, entries) :
+        self.add_entries \
+            ( * (   cls (* args, ** dict (kw, parent = self))
+                for cls, args, kw in entries
+                )
+            )
+    # end def _init_add_entries
+
+_Node_ = _RST_Node_ # end class
+
+class RST_Node (_Node_) :
+    """Base class for RESTful nodes (resources with children)."""
+
+    _real_name                 = "Node"
+
+    def __init__ (self, ** kw) :
+        parent      = kw      ["parent"]
+        self.name   = kw.pop  ("name")
+        self.prefix = pjoin   (parent.prefix, self.name, "")
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    @Once_Property
+    def href (self) :
+        return self.prefix.rstrip ("/")
+    # end def href
+
+Node = RST_Node # end class
+
+class RST_Root (_Node_) :
+    """Root of tree of RESTful nodes."""
+
+    _real_name                 = "Root"
+
+    Create_Scope               = None
+    DEBUG                      = False
+    name                       = ""
+    prefix                     = ""
+
+    _needs_parent              = False
+
+    def __init__ (self, HTTP, ** kw) :
+        if "copyright_start" not in kw :
+            kw ["copyright_start"] = time.localtime ().tm_year
+        self.HTTP           = HTTP
+        self.redirects      = dict (kw.pop ("redirects",     {}))
+        self.Run_on_Launch  = list (kw.pop ("Run_on_Launch", []))
+        self.SC             = TFL.Record ()
+        self.Table          = {}
+        self.top            = self
+        self.pop_to_self      ("name", "prefix")
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    @Once_Property
+    def scope (self) :
+        CS = self.Create_Scope
+        if CS is not None :
+            result = CS (self.App_Type, self.DB_Url)
+            if self.DEBUG :
+                print ("Loaded", result)
+            return result
+    # end def scope
+
+    def allow (self, resource, user, method = "GET") :
+        if isinstance (resource, basestring) :
+            resource = self.resource_from_href (resource)
+        if resource :
+            try :
+                allow_method = resource.allow_method
+            except Exception :
+                return True
+            else :
+                return allow_method (method, user)
+    # end def allow
+
+    def handle_request (self, handler) :
+        HTTP    = self.HTTP
+        request = handler.request
+        href    = request.path
+        rsrc    = self.resource_from_href (href)
+        if rsrc :
+            user    = request.user = self._get_user (handler.username)
+            auth    = user and user.authenticated
+            rsrc    = rsrc._effective
+            hrm     = request.method
+            if hrm not in rsrc.SUPPORTED_METHODS :
+                raise HTTP.Error_405 (valid_methods = rsrc.SUPPORTED_METHODS)
+            method  = getattr (rsrc, hrm) ()
+            if rsrc.allow_method (user, method) :
+                if rsrc.DEBUG :
+                    fmt = "[%s] %s %s: execution time = %%s" % \
+                        ( time.strftime
+                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
+                        , method.name, href
+                        )
+                    with TFL.Context.time_block (fmt, sys.stderr) :
+                        return method (rsrc, handler)
+                else :
+                    return method (rsrc, handler)
+            else :
+                Exc = HTTP.Error_403 if auth else HTTP.Error_401
+                raise Exc ()
+        raise HTTP.Error_404 ()
+    # end def handle_request
+
+    def resource_from_href (self, href) :
+        href       = href.strip (u"/")
+        result     = None
+        Table      = self.Table
+        redirects  = self.redirects
+        if redirects :
+            try :
+                result = redirects [href]
+            except KeyError :
+                pass
+            else :
+                raise self.HTTP.Redirect_302 (result)
+        if href in Table :
+            result = Table [href]
+        else :
+            head = href
+            tail = []
+            while head :
+                head, _ = sos.path.split (head)
+                if head :
+                    tail.append (_)
+                    try :
+                        d = Table [head]
+                    except KeyError :
+                        pass
+                    else :
+                        result = d._get_child (* reversed (tail))
+                if result :
+                    break
+        return result
+    # end def resource_from_href
+
+Root = RST_Root # end class
 
 __doc__ = """
 Each supported http method is defined by a separate class of the same name
 (in upper case). To disable support in a descendent class, set the
-appropriate name to `None`::
+appropriate name to `None`, e.g., ::
 
     PUT = None
 
