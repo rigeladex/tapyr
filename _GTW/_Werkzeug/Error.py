@@ -37,6 +37,7 @@
 #    27-May-2011 (CT) `return_response` factored and redefined in `Error_405`
 #     5-Apr-2012 (CT) Remove assignment to `handler.request.user`
 #    10-May-2012 (CT) Add `__str__`
+#    11-Jun-2012 (CT) Add `Error_410`, `_412`, `_415`, and `_501`
 #    ««revision-date»»···
 #--
 
@@ -268,10 +269,30 @@ class Error_409 (_Error_) :
     response = exceptions.Conflict
 # end class Error_409
 
+class Error_410 (_Error_) :
+    """Gone."""
+    response = exceptions.Gone
+# end class Error_410
+
+class Error_412 (_Error_) :
+    """Precondition failed."""
+    response = exceptions.PreconditionFailed
+# end class Error_412
+
+class Error_415 (_Error_) :
+    """Unsupported media type."""
+    response = exceptions.UnsupportedMediaType
+# end class Error_415
+
 class Error_500 (_Error_) :
     """Internal Server Error."""
     response = exceptions.InternalServerError
 # end class Error_500
+
+class Error_501 (_Error_) :
+    """Not Implemented."""
+    response = exceptions.NotImplemented
+# end class Error_501
 
 class Error_503 (_Error_) :
     """Service Unavailable."""
