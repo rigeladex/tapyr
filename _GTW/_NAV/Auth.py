@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.Auth.
@@ -52,6 +52,7 @@
 #    15-Dec-2010 (CT) `Request_Reset_Password` implemented
 #     3-Jan-2011 (CT) Introduce `template_name`
 #    11-Mar-2011 (CT) Moved `username` from cookie to `session`
+#    11-Jun-2012 (CT) Remove trailing `/` from `href`
 #    ««revision-date»»···
 #--
 
@@ -389,7 +390,7 @@ class Auth (GTW.NAV.Dir) :
 
     @Once_Property
     def href (self) :
-        return pjoin (self.prefix, "")
+        return self.prefix.rstrip ("/")
     # end def href
 
     def href_action (self, obj, token, request) :
