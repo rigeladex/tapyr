@@ -86,6 +86,8 @@
 #    29-Mar-2012 (MG) `_cached_role` handling fixed
 #    30-Mar-2012 (MG) Use `Case_Sensitive_String` as column type for raw
 #                     values
+#    11-Jun-2012 (MG) `_create_SCM_table` new columns `type_name` and `kind`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -314,7 +316,14 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def _create_SCM_table (cls, metadata) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
             ( "change_history", metadata
-            , schema.Column ("cid",  types.Integer,     primary_key = True)
+            , schema.Column
+                  ("cid",        types.Integer,     primary_key = True)
+            , schema.Column
+                  ("pid",        types.Integer,     nullable    = True)
+            , schema.Column
+                  ("type_name", Type_Name_Type)
+            , schema.Column
+                  ("kind",      types.String (30))
             , schema.Column ("pid",  types.Integer,     nullable    = True)
             , schema.Column ("data", types.LargeBinary, nullable    = True)
             , schema.Column

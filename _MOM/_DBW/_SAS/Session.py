@@ -106,6 +106,7 @@
 #                     (this is required for Sqlite to make sure that the file
 #                     is really closed)
 #    06-May-2012 (MG) `_close_connection`: call to `expunge` added
+#    11-Jun-2012 (MG) `add_change` set new attributes of change record
 #    ««revision-date»»···
 #--
 
@@ -543,6 +544,8 @@ class Session_S (_Session_) :
                 ( table.insert
                     ( values = dict
                         ( pid       = change.pid
+                        , type_name = getattr (change, "type_name", "")
+                        , kind      = change.kind
                         , data      = change.as_pickle ()
                         )
                     )
