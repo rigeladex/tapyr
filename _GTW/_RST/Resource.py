@@ -109,7 +109,6 @@ class _RST_Base_ (TFL.Meta.Object) :
     input_encoding             = "iso-8859-15"
     pid                        = None
 
-    _change_info               = None
     _exclude_robots            = True
     _needs_parent              = True
     _r_permission              = None             ### read permission
@@ -163,6 +162,13 @@ class _RST_Base_ (TFL.Meta.Object) :
         return Filename (self.name).base
     # end def base
 
+    @property
+    def change_info (self) :
+        ### Redefine as necessary
+        pass
+    # end def change_info
+
+    @Once_Property
     def exclude_robots (self) :
         return self.r_permissions or self.hidden or self._exclude_robots
     # end def exclude_robots
@@ -257,7 +263,7 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     def _prepare_handle_method (self, method, handler) :
         ### Redefine to setup context for handling `method` for `handler`,
-        ### for instance, `self._change_info`
+        ### for instance, `self.change_info`
         pass
     # end def _prepare_handle_method
 

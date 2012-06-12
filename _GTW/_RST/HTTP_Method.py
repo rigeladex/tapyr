@@ -74,7 +74,7 @@ class HTTP_Method (TFL.Meta.Object) :
 
     def _do_change_info (self, resource, handler) :
         result = True
-        ci     = resource._change_info
+        ci     = resource.change_info
         if ci is not None :
             etag = getattr (ci, "etag", None)
             last = getattr (ci, "last_modified", None)
@@ -103,41 +103,6 @@ class HTTP_Method (TFL.Meta.Object) :
 
 # end class HTTP_Method
 
-class _HTTP_Method_C_ (HTTP_Method) :
-    """Base class for HTTP methods that change the resource."""
-
-    mode                       = "w"
-
-    def _check_etag (self, resource, handler, etag) :
-        result  = True
-        headers = handler.request.headers
-        value   = str (etag)
-        match   = headers.get ("If-Match")
-        if match is not None :
-            result = etag == match
-        handler.set_header ("ETag", value)
-        return True
-    # end def _check_etag
-
-    def _check_modified (self, resource, handler, last_modified) :
-        result  = True
-        value   = TFL.RFC2822.as_string (last_modified)
-        ums     = self._get_date_header (handler, "If-Unmodified-Since")
-        if ums is not None :
-            result = last_modified == ums
-        handler.set_header ("Last-Modified", value)
-        return result
-    # end def _check_modified
-
-    def _do_change_info (self, resource, handler) :
-        result = self.__super._do_change_info (resource, handler)
-        if not result :
-            handler.set_status (412)
-        return result
-    # end def _do_change_info
-
-# end class _HTTP_Method_C_
-
 class _HTTP_Method_R_ (HTTP_Method) :
     """Base class for HTTP methods that don't change the resource.."""
 
@@ -151,7 +116,7 @@ class _HTTP_Method_R_ (HTTP_Method) :
         if n_match is not None :
             result = etag != n_match
         handler.set_header ("ETag", value)
-        return True
+        return result
     # end def _check_etag
 
     def _check_modified (self, resource, handler, last_modified) :
@@ -173,7 +138,42 @@ class _HTTP_Method_R_ (HTTP_Method) :
 
 # end class _HTTP_Method_R_
 
-class _HTTP_DELETE_ (_HTTP_Method_C_) :
+class _HTTP_Method_W_ (HTTP_Method) :
+    """Base class for HTTP methods that change the resource."""
+
+    mode                       = "w"
+
+    def _check_etag (self, resource, handler, etag) :
+        result  = True
+        headers = handler.request.headers
+        value   = str (etag)
+        match   = headers.get ("If-Match")
+        if match is not None :
+            result = etag == match
+        handler.set_header ("ETag", value)
+        return result
+    # end def _check_etag
+
+    def _check_modified (self, resource, handler, last_modified) :
+        result  = True
+        value   = TFL.RFC2822.as_string (last_modified)
+        ums     = self._get_date_header (handler, "If-Unmodified-Since")
+        if ums is not None :
+            result = last_modified == ums
+        handler.set_header ("Last-Modified", value)
+        return result
+    # end def _check_modified
+
+    def _do_change_info (self, resource, handler) :
+        result = self.__super._do_change_info (resource, handler)
+        if not result :
+            handler.set_status (412)
+        return result
+    # end def _do_change_info
+
+# end class _HTTP_Method_W_
+
+class _HTTP_DELETE_ (_HTTP_Method_W_) :
     """Implement HTTP method DELETE."""
 
     _real_name                 = "DELETE"
@@ -214,14 +214,14 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
 
 OPTIONS = _HTTP_OPTIONS_ # end class
 
-class _HTTP_POST_ (_HTTP_Method_C_) :
+class _HTTP_POST_ (_HTTP_Method_W_) :
     """Implement HTTP method POST."""
 
     _real_name                 = "POST"
 
 POST = _HTTP_POST_ # end class
 
-class _HTTP_PUT_ (_HTTP_Method_C_) :
+class _HTTP_PUT_ (_HTTP_Method_W_) :
     """Implement HTTP method PUT."""
 
     _real_name                 = "PUT"
