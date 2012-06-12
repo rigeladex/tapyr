@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -36,6 +36,7 @@
 #    25-Oct-2011 (CT) `_repr` changed to chop off trailing the `L` from longs
 #    18-Nov-2011 (CT) Add optional argument `sep`
 #    18-Nov-2011 (CT) Add formatting of `TFL.Record`
+#    12-Jun-2012 (CT) Don't show `Recursion` on empty `things`
 #    ««revision-date»»···
 #--
 
@@ -137,12 +138,12 @@ class Formatter (TFL.Meta.Object) :
     def format_iter (self, thing, level = 0, seen = None, leader = "", nl_r = False) :
         if seen is None :
             seen = set ()
-        tid  = id (thing)
-        wd   = self.width
-        ws   = " " * self.indent * level
-        f, a = self.formatter (thing)
+        tid      = id (thing)
+        wd       = self.width
+        ws       = " " * self.indent * level
+        f, a     = self.formatter (thing)
         recurses = getattr (f, "recurses", False)
-        if recurses and tid in seen :
+        if recurses and thing and tid in seen :
             yield "%s<Recursion on %s...>" % (leader, thing.__class__.__name__)
         else :
             seen.add (tid)
