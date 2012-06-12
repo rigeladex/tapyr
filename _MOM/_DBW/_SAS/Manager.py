@@ -88,6 +88,7 @@
 #                     values
 #    11-Jun-2012 (MG) `_create_SCM_table` new columns `type_name` and `kind`
 #                     added
+#    12-Jun-2012 (CT) Remove duplicate `pid` from `_create_SCM_table`
 #    ««revision-date»»···
 #--
 
@@ -317,15 +318,15 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
             ( "change_history", metadata
             , schema.Column
-                  ("cid",        types.Integer,     primary_key = True)
+                  ( "cid",       types.Integer,     primary_key = True)
             , schema.Column
-                  ("pid",        types.Integer,     nullable    = True)
+                  ( "pid",       types.Integer,     nullable    = True)
             , schema.Column
-                  ("type_name", Type_Name_Type)
+                  ( "type_name", Type_Name_Type)
             , schema.Column
-                  ("kind",      types.String (30))
-            , schema.Column ("pid",  types.Integer,     nullable    = True)
-            , schema.Column ("data", types.LargeBinary, nullable    = True)
+                  ( "kind",      types.String (30))
+            , schema.Column
+                  ( "data",      types.LargeBinary, nullable    = True)
             , schema.Column
                   ( "parent_cid"
                   , types.Integer
