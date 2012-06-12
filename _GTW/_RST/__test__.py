@@ -38,6 +38,18 @@ from   _TFL.Formatter           import Formatter, formatted_1
 
 formatted = Formatter (width = 240)
 
+def show_1 (resource, level) :
+    p = resource.parent.abs_href if resource.parent else "-"
+    t = resource.top.abs_href
+    print ("%s%s parent = %s, top = %s" % ("  " * level, resource, p, t))
+# end def show_1
+
+def show (resource, level = 0) :
+    show_1 (resource, level)
+    for e in resource.entries :
+        show (e, level + 1)
+# end def show
+
 __doc__ = """
 
     >>> e_types = ( Node
@@ -79,7 +91,7 @@ __doc__ = """
       )
     ,
       ( <class '_GTW._RST.Resource.Node'>
-      , <Recursion on tuple...>
+      , ()
       , { 'description' : 'Natural person'
         , 'name' : 'PAP.Person'
         }
@@ -87,18 +99,32 @@ __doc__ = """
     )
     >>> root
     <Root : />
-    >>> root._entries
-    [<Leaf about: /about>, <Node v1: /v1>]
-    >>> root._entries [1]
+    >>> root.entries
+    (<Leaf about: /about>, <Node v1: /v1>)
+
+    >>> ets = tuple (root.entries_transitive)
+    >>> ets
+    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>)
+
+    >>> root.entries [1]
     <Node v1: /v1>
-    >>> root._entries [1]._entries
-    [<Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>]
+
+    >>> root.entries [1].entries
+    (<Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>)
+
     >>> c = root.resource_from_href("/v1/PAP.Company")
     >>> c
     <Node PAP.Company: /v1/PAP.Company>
     >>> sorted (c.SUPPORTED_METHODS)
-    ['GET', 'OPTIONS']
+    ['GET', 'HEAD', 'OPTIONS']
 
+    >>> show (root)
+    <Root : /> parent = -, top = /
+      <Leaf about: /about> parent = /, top = /
+      <Node v1: /v1> parent = /, top = /
+        <Node Meta: /v1/Meta> parent = /v1, top = /
+        <Node PAP.Company: /v1/PAP.Company> parent = /v1, top = /
+        <Node PAP.Person: /v1/PAP.Person> parent = /v1, top = /
 
 """
 

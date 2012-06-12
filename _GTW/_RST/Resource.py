@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
+#    11-Jun-2012 (CT) Continue creation
+#    12-Jun-2012 (CT) Continue creation..
 #    ««revision-date»»···
 #--
 
@@ -107,45 +109,18 @@ class _RST_Base_ (TFL.Meta.Object) :
     input_encoding             = "iso-8859-15"
     pid                        = None
 
+    _change_info               = None
     _exclude_robots            = True
     _needs_parent              = True
-    _r_permission              = None   ### read permission
-    _w_permission              = None   ### write permission
+    _r_permission              = None             ### read permission
+    _w_permission              = None             ### write permission
 
     DELETE                     = None
-    GET                        = None
-    HEAD                       = None
-    OPTIONS                    = None
+    GET                        = GTW.RST.GET      ### needs    to be redefined
+    HEAD                       = GTW.RST.HEAD     ### needs    to be redefined
+    OPTIONS                    = GTW.RST.OPTIONS  ### unlikely to be redefined
     POST                       = None
     PUT                        = None
-
-    class RST_GET (GTW.RST.GET) :
-
-        _real_name             = "GET"
-
-        def __call__ (self, resource, handler) :
-            raise NotImplementedError \
-                ( "%s.GET needs to be implemented"
-                % (resource.__class__.__name__, )
-                )
-        # end def __call__
-
-    GET = RST_GET # end class
-
-    class RST_OPTIONS (GTW.RST.OPTIONS) :
-
-        _real_name             = "OPTIONS"
-
-        def __call__ (self, resource, handler) :
-            methods = sorted \
-                (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
-                if resource.allow_method (m, handler.request)
-                )
-            handler.set_header ("Allow", ", ".join (methods))
-            return ""
-        # end def __call__
-
-    OPTIONS = RST_OPTIONS # end class
 
     def __init__ (self, ** kw) :
         self.parent = parent = kw.pop ("parent", None)
@@ -275,6 +250,17 @@ class _RST_Base_ (TFL.Meta.Object) :
         return result
     # end def _get_user
 
+    def _handle_method (self, method, handler) :
+        self._prepare_handle_method (method, handler)
+        return method (self, handler)
+    # end def _handle_method
+
+    def _prepare_handle_method (self, method, handler) :
+        ### Redefine to setup context for handling `method` for `handler`,
+        ### for instance, `self._change_info`
+        pass
+    # end def _prepare_handle_method
+
     def __getattr__ (self, name) :
         if self.parent is not None :
             return getattr (self.parent, name)
@@ -292,12 +278,34 @@ class RST_Leaf (_Base_) :
 
     _real_name                 = "Leaf"
 
+    @property
+    def entries (self) :
+        return ()
+    # end def entries
+
 Leaf = RST_Leaf # end class
 
 class _RST_Node_ (_Base_) :
     """Base class for RESTful nodes (resources with children)."""
 
     _real_name                 = "_Node_"
+
+    class RST__Node__GET (_Base_.GET) :
+
+        _real_name             = "GET"
+
+        def _response (self, resource, handler) :
+            entries = []
+            result  = dict \
+                ( entries      = entries
+                , url_template = "%s/{entry}"
+                )
+            for e in resource.entries :
+                entries.append (e.name)
+            return result
+        # end def _response
+
+    GET = RST__Node__GET # end class
 
     def __init__ (self, ** kw) :
         entries = kw.pop ("entries", [])
@@ -306,6 +314,20 @@ class _RST_Node_ (_Base_) :
         if entries :
             self._init_add_entries (entries)
     # end def __init__
+
+    @property
+    def entries (self) :
+        return tuple (self._entries)
+    # end def entries
+
+    @property
+    def entries_transitive (self) :
+        for e in self.entries :
+            yield e
+            if isinstance (e, _Node_) :
+                for d in e.entries_transitive :
+                    yield d
+    # end def entries_transitive
 
     def add_entries (self, * entries) :
         self._entries.extend (entries)
@@ -408,9 +430,9 @@ class RST_Root (_Node_) :
                         , method.name, href
                         )
                     with TFL.Context.time_block (fmt, sys.stderr) :
-                        return method (rsrc, handler)
+                        return rsrc._handle_method (method , handler)
                 else :
-                    return method (rsrc, handler)
+                    return rsrc._handle_method (method , handler)
             else :
                 Exc = HTTP.Error_403 if auth else HTTP.Error_401
                 raise Exc ()
