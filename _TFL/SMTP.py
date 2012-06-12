@@ -32,6 +32,7 @@
 #    27-Dec-2010 (CT) Optional init-arguments added,
 #                     `open` and `close` factored and extended (`use_tls`)
 #                     `connection` added and used
+#    12-Jun-2012 (CT) Import `email.utils`, not `email.Utils` (<= Python 2.4)
 #    19-Jun-2012 (CT) Add `header` and apply it in `send_message`
 #    ««revision-date»»···
 #--
@@ -45,7 +46,7 @@ import _TFL.Context
 
 from   email                   import message, message_from_string
 from   email.header            import Header, decode_header, make_header
-from   email.Utils             import formatdate
+from   email.utils             import formatdate
 
 import smtplib
 import socket
