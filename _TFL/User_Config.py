@@ -32,7 +32,7 @@
 #                     `ImportError` by `dateutil`
 #    21-Jun-2012 (CT) Handle `time_zone` properly in `set_default`
 #    21-Jun-2012 (CT) Autoconvert `time_zone` values passed as string
-#    22-Jun-2012 (MG) `set_defaults` fixed
+#    21-Jun-2012 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -53,7 +53,7 @@ import sys
 class User_Config (threading.local) :
     """Provide thread-local user configuration."""
 
-    _initialzed          = False
+    _initialized         = False
 
     file_system_encoding = sys.getfilesystemencoding ()
     input_encoding       = locale.getpreferredencoding ()
@@ -64,20 +64,22 @@ class User_Config (threading.local) :
     _time_zone           = None
 
     def __init__ (self, ** kw) :
-        if self._initialzed :
+        if self._initialized :
             raise SystemError \
                 ( "TFL.User_Config must not be called more than "
                   "once per thread"
                 )
-        self._initialzed = True
+        self._initialized = True
         self.__dict__.update (kw)
     # end def __init__
 
     @property
     def time_zone (self) :
-        if self._time_zone is None :
-            if self.tz is not None :
+        if self.tz is not None :
+            if self._time_zone is None :
                 self._time_zone = self.tz.tzutc ()
+            elif isinstance (self._time_zone, basestring) :
+                self._time_zone = self.get_tz (self._time_zone)
         return self._time_zone
     # end def time_zone
 
@@ -114,8 +116,8 @@ class User_Config (threading.local) :
 
     def set_default (self, name, value) :
         """Set default of attribute `name` to `value`."""
-        if name == "_initialzed" :
-            raise AttributeError ("Cannot set default for _initialzed")
+        if name == "_initialized" :
+            raise AttributeError ("Cannot set default for _initialized")
         if name == "time_zone" :
             name = "_time_zone"
             if isinstance (value, basestring) :
@@ -125,9 +127,8 @@ class User_Config (threading.local) :
     # end def set_default
 
     def set_defaults (self, ** kw) :
-        cls = self.__class__
         for k, v in kw.iteritems () :
-            self.set_default      (k, v)
+            self.set_default (k, v)
     # end def set_defaults
 
 # end class User_Config
