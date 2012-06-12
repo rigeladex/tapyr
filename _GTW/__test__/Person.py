@@ -34,6 +34,7 @@
 #    21-Jul-2011 (CT) Test for `Q.RAW` improved
 #    22-Jul-2011 (CT) Completer tests adapted to changes in `MOM.Attr.Completer`
 #    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
+#    12-Jun-2012 (CT) Add test for `.attrs ("pid", "type_name")`
 #    ««revision-date»»···
 #--
 
@@ -151,6 +152,9 @@ _test_code = """
 
     >>> PAP.Person.query ().order_by (TFL.Sorted_By ("-first_name")).count ()
     5
+
+    >>> PAP.Person.query_s (last_name = "tanzer").attrs ("pid", "type_name").all ()
+    [(1, 'GTW.OMP.PAP.Person'), (2, 'GTW.OMP.PAP.Person'), (4, 'GTW.OMP.PAP.Person'), (5, 'GTW.OMP.PAP.Person'), (3, 'GTW.OMP.PAP.Person')]
 
     >>> scope.destroy ()
 

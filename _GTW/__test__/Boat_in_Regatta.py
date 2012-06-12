@@ -35,6 +35,7 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    27-Apr-2012 (CT) Add test for `skipper_not_multiplexed`
 #     7-May-2012 (CT) Add test for `crew_number_valid`
+#    12-Jun-2012 (CT) Add tests for `tn_pid`, `.attrs ("type_name")`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,14 @@ _test_code = r"""
     >>> unicode (reg.FO.result)
     u'2009/05/26 10:20:00, calculated with REGATTA.yellow8.com, final'
     >>> scope.commit ()
+
+    >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("pid")).attrs ("pid", "type_name").all ()
+    [(1, 'GTW.OMP.SRM.Boat_Class'), (2, 'GTW.OMP.SRM.Handicap'), (3, 'GTW.OMP.SRM.Boat'), (4, 'GTW.OMP.PAP.Person'), (5, 'GTW.OMP.SRM.Sailor'), (6, 'GTW.OMP.SRM.Regatta_Event'), (7, 'GTW.OMP.SRM.Regatta_C'), (8, 'GTW.OMP.SRM.Regatta_H')]
+    >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("pid")).attrs ("tn_pid").all ()
+    [(('GTW.OMP.SRM.Boat_Class', 1),), (('GTW.OMP.SRM.Handicap', 2),), (('GTW.OMP.SRM.Boat', 3),), (('GTW.OMP.PAP.Person', 4),), (('GTW.OMP.SRM.Sailor', 5),), (('GTW.OMP.SRM.Regatta_Event', 6),), (('GTW.OMP.SRM.Regatta_C', 7),), (('GTW.OMP.SRM.Regatta_H', 8),)]
+
+    >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("tn_pid")).attrs ("pid", "type_name").all ()
+    [(4, 'GTW.OMP.PAP.Person'), (3, 'GTW.OMP.SRM.Boat'), (1, 'GTW.OMP.SRM.Boat_Class'), (2, 'GTW.OMP.SRM.Handicap'), (7, 'GTW.OMP.SRM.Regatta_C'), (6, 'GTW.OMP.SRM.Regatta_Event'), (8, 'GTW.OMP.SRM.Regatta_H'), (5, 'GTW.OMP.SRM.Sailor')]
 
     >>> rev.epk_raw
     (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
