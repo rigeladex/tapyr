@@ -48,6 +48,8 @@
 #                         object.__init__() takes no parameters`
 #    30-Jan-2012 (CT) Add `_Attr_.__nonzero__`, `__int__`, `.__float__`;
 #                     define all `_Attr_` comparison operators explicitly
+#    12-Jun-2012 (MG) `Q_Result_Composite._fill_cache`: check for
+#                     `self._order_by` fixed
 #    ««revision-date»»···
 #--
 
@@ -687,7 +689,7 @@ class Q_Result_Composite (_Q_Result_) :
     # end def slice
 
     def _fill_cache (self) :
-        if self._order_by :
+        if self._order_by is not None :
             iterable = self.iterable
             if self._distinct :
                 iterable = self._distinct (iterable)

@@ -319,6 +319,8 @@ test_code = r"""
     <Create GTW.OMP.SWP.Page (u'title_2', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '3', 'text' : u'text 2'}>
     <Create GTW.OMP.SWP.Page (u'title_3', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
 
+    >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("tn_pid").all ()
+    [(('GTW.OMP.PAP.Person', 1),), (('GTW.OMP.SWP.Page', 2),), (('GTW.OMP.SWP.Page', 3),), (('GTW.OMP.SWP.Page', 4),), (('GTW.OMP.PAP.Entity_created_by_Person', 5),), (('GTW.OMP.PAP.Entity_created_by_Person', 6),), (('GTW.OMP.PAP.Entity_created_by_Person', 7),)]
 """
 
 from   _GTW.__test__.model      import *
