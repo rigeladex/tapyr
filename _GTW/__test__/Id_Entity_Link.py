@@ -30,6 +30,7 @@
 #    29-Mar-2012 (CT) Add test for `link_map`
 #     4-Jun-2012 (MG) Test for query with order_by added
 #     6-Jun-2012 (CT) Add test for `Entity_created_by_Person.sort_key`
+#    12-Jun-2012 (CT) Add `date` to get deterministic output
 #    ««revision-date»»···
 #--
 
@@ -37,13 +38,14 @@ test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> PAP = scope.PAP
-    >>> SWP = scope.SWP
-    >>> per = PAP.Person           ("ln", "fn")
-    >>> pa1 = SWP.Page             ("title_1", text = "text 1")
-    >>> pa2 = SWP.Page             ("title_2", text = "text 2")
-    >>> pa3 = SWP.Page             ("title_3", text = "text 3")
-    >>> scope.commit               ()
+    >>> date = (("start", "2012/06/10"), )
+    >>> PAP  = scope.PAP
+    >>> SWP  = scope.SWP
+    >>> per  = PAP.Person ("ln", "fn")
+    >>> pa1  = SWP.Page   ("title_1", text = "text 1", date = date, raw = True)
+    >>> pa2  = SWP.Page   ("title_2", text = "text 2", date = date, raw = True)
+    >>> pa3  = SWP.Page   ("title_3", text = "text 3", date = date, raw = True)
+    >>> scope.commit     ()
 
     >>> PAP.Entity_created_by_Person (pa1, per)
     GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u''))
@@ -311,16 +313,15 @@ test_code = r"""
     [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
 
     >>> q = scope.query_changes (type_name = "GTW.OMP.SWP.Page").order_by (Q.cid)
-    >>> for c in q.all () : print c
+    >>> for c in q.all () :
+    ...     print c
     <Create GTW.OMP.SWP.Page (u'title_1', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 1</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '2', 'text' : u'text 1'}>
     <Create GTW.OMP.SWP.Page (u'title_2', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '3', 'text' : u'text 2'}>
     <Create GTW.OMP.SWP.Page (u'title_3', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
-    """
+
+"""
 
 from   _GTW.__test__.model      import *
-from   _TFL.Formatter           import Formatter
-
-formatted = Formatter (width = 240)
 
 __test__ = Scaffold.create_test_dict (test_code)
 
