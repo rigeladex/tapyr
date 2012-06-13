@@ -29,6 +29,7 @@
 #     8-Jun-2012 (CT) Creation
 #    11-Jun-2012 (CT) Continue creation
 #    12-Jun-2012 (CT) Continue creation..
+#    13-Jun-2012 (CT) Continue creation...
 #    ««revision-date»»···
 #--
 
@@ -76,10 +77,7 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
         if not result.implicit :
             href = result.href
             pid  = result.pid
-            try :
-                top  = result.top
-            except AttributeError :
-                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
+            top  = result.top
             if href is not None :
                 Table = top.Table
                 Table [href] = result
@@ -256,13 +254,13 @@ class _RST_Base_ (TFL.Meta.Object) :
         return result
     # end def _get_user
 
-    def _handle_method (self, method, handler) :
-        self._prepare_handle_method (method, handler)
-        return method (self, handler)
+    def _handle_method (self, method, request) :
+        self._prepare_handle_method (method, request)
+        return method (self, request)
     # end def _handle_method
 
-    def _prepare_handle_method (self, method, handler) :
-        ### Redefine to setup context for handling `method` for `handler`,
+    def _prepare_handle_method (self, method, request) :
+        ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
         pass
     # end def _prepare_handle_method
@@ -300,7 +298,7 @@ class _RST_Node_ (_Base_) :
 
         _real_name             = "GET"
 
-        def _response (self, resource, handler) :
+        def _response (self, resource, request) :
             entries = []
             result  = dict \
                 ( entries      = entries
@@ -415,35 +413,9 @@ class RST_Root (_Node_) :
                 return allow_method (method, user)
     # end def allow
 
-    def handle_request (self, handler) :
-        HTTP    = self.HTTP
-        request = handler.request
-        href    = request.path
-        rsrc    = self.resource_from_href (href)
-        if rsrc :
-            user    = request.user = self._get_user (handler.username)
-            auth    = user and user.authenticated
-            rsrc    = rsrc._effective
-            hrm     = request.method
-            if hrm not in rsrc.SUPPORTED_METHODS :
-                raise HTTP.Error_405 (valid_methods = rsrc.SUPPORTED_METHODS)
-            method  = getattr (rsrc, hrm) ()
-            if rsrc.allow_method (user, method) :
-                if rsrc.DEBUG :
-                    fmt = "[%s] %s %s: execution time = %%s" % \
-                        ( time.strftime
-                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
-                        , method.name, href
-                        )
-                    with TFL.Context.time_block (fmt, sys.stderr) :
-                        return rsrc._handle_method (method , handler)
-                else :
-                    return rsrc._handle_method (method , handler)
-            else :
-                Exc = HTTP.Error_403 if auth else HTTP.Error_401
-                raise Exc ()
-        raise HTTP.Error_404 ()
-    # end def handle_request
+    def Request (self, environ) :
+        result = self.HTTP.Request (self, environ)
+    # end def Request
 
     def resource_from_href (self, href) :
         href       = href.strip (u"/")
@@ -476,6 +448,59 @@ class RST_Root (_Node_) :
                     break
         return result
     # end def resource_from_href
+
+    def wsgi_app (self, environ, start_response) :
+        """WSGI application responding to http[s] requests."""
+        HTTP    = self.HTTP
+        request = self.Request (environ)
+        try :
+            result = self._http_response (request)
+        except HTTP.Status as status :
+            result = status (request)
+        except HTTP.HTTP_Exception as exc :
+            ### works for werkzeug.exceptions.HTTPException
+            return exc
+        except Exception as exc :
+            result = self._http_response_error (request, exc)
+        if not result :
+            result = self._http_response_error \
+                (request, ValueError ("No result"))
+        return result (environ, start_response)
+    # end def wsgi_app
+
+    def _http_response (self, request) :
+        HTTP         = self.HTTP
+        href         = request.path
+        resource     = self.resource_from_href (href)
+        if resource  :
+            user     = request.user = self._get_user (request.username)
+            auth     = user and user.authenticated
+            resource = resource._effective
+            hrm      = request.method
+            if hrm not in resource.SUPPORTED_METHODS :
+                raise HTTP.Error_405 \
+                    (valid_methods = resource.SUPPORTED_METHODS)
+            method   = getattr (resource, hrm) ()
+            if resource.allow_method (user, method) :
+                if resource.DEBUG :
+                    fmt = "[%s] %s %s: execution time = %%s" % \
+                        ( time.strftime
+                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
+                        , method.name, href
+                        )
+                    with TFL.Context.time_block (fmt, sys.stderr) :
+                        return resource._handle_method (method, request)
+                else :
+                    return resource._handle_method (method, request)
+            else :
+                raise (HTTP.Error_403 if auth else HTTP.Error_401)
+        raise HTTP.Error_404
+    # end def _http_response
+
+    def _http_response_error (self, request, exc) :
+        pass ### XXX
+    # end def _http_response_error
+
 
 Root = RST_Root # end class
 

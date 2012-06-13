@@ -28,6 +28,7 @@
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
 #    12-Jun-2012 (CT) Continue creation
+#    13-Jun-2012 (CT) Continue creation..
 #    ««revision-date»»···
 #--
 
@@ -62,44 +63,37 @@ class HTTP_Method (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
-    def __call__ (self, resource, handler) :
-        result = ""
-        if self._do_change_info (resource, handler) :
-            result = self._response (resource, handler)
-            if result :
+    def __call__ (self, resource, request) :
+        response = resource.HTTP.Response ()
+        if self._do_change_info (resource, request, response) :
+            body = self._response_body (resource, request, response)
+            if body :
                 ### XXX support other representations
-                result = handler.write_json (result)
-        return result
+                response.data = json.dumps (result)
+        return response
     # end def __call__
 
-    def _do_change_info (self, resource, handler) :
+    def _do_change_info (self, resource, request, response) :
         result = True
         ci     = resource.change_info
         if ci is not None :
             etag = getattr (ci, "etag", None)
             last = getattr (ci, "last_modified", None)
             if last :
-                result = self._check_modified (resource, handler, last)
+                result = self._check_modified \
+                    (resource, request, response, last)
             if etag :
-                result = self._check_etag     (resource, handler, etag)
+                result = self._check_etag \
+                    (resource, request, response, etag)
         return result
     # end def _do_change_info
 
-    def _response (self, resource, handler) :
+    def _response_body (self, resource, request, response) :
         raise NotImplementedError \
-            ( "%s.%s._response needs to be implemented"
+            ( "%s.%s._response_body needs to be implemented"
             % (resource.__class__.__name__, self.__class__.__name__)
             )
-    # end def _response
-
-    def _get_date_header (self, handler, name) :
-        header = handler.request.headers.get (name)
-        if header is not None :
-            try :
-                return TFL.RFC2822.from_string (header)
-            except ValueError :
-                pass
-    # end def _get_date_header
+    # end def _response_body
 
 # end class HTTP_Method
 
@@ -108,31 +102,30 @@ class _HTTP_Method_R_ (HTTP_Method) :
 
     mode                       = "r"
 
-    def _check_etag (self, resource, handler, etag) :
+    def _check_etag (self, resource, request, response, etag) :
         result  = True
-        headers = handler.request.headers
         value   = str (etag)
-        n_match = headers.get ("If-None-Match")
+        n_match = request.headers.get ("If-None-Match")
         if n_match is not None :
             result = etag != n_match
-        handler.set_header ("ETag", value)
+        response.set_header ("ETag", value)
         return result
     # end def _check_etag
 
-    def _check_modified (self, resource, handler, last_modified) :
+    def _check_modified (self, resource, request, response, last_modified) :
         result  = True
         value   = TFL.RFC2822.as_string (last_modified)
-        ims     = self._get_date_header (handler, "If-Modified-Since")
+        ims     = request.headers.get   ("If-Modified-Since")
         if ims is not None :
             result = last_modified > ims
-        handler.set_header ("Last-Modified", value)
+        response.set_header ("Last-Modified", value)
         return result
     # end def _check_modified
 
-    def _do_change_info (self, resource, handler) :
-        result = self.__super._do_change_info (resource, handler)
+    def _do_change_info (self, resource, request, response) :
+        result = self.__super._do_change_info (resource, request, response)
         if not result :
-            handler.set_status (304)
+            response.set_status (304)
         return result
     # end def _do_change_info
 
@@ -143,31 +136,30 @@ class _HTTP_Method_W_ (HTTP_Method) :
 
     mode                       = "w"
 
-    def _check_etag (self, resource, handler, etag) :
+    def _check_etag (self, resource, request, response, etag) :
         result  = True
-        headers = handler.request.headers
         value   = str (etag)
-        match   = headers.get ("If-Match")
+        match   = request.headers.get ("If-Match")
         if match is not None :
             result = etag == match
-        handler.set_header ("ETag", value)
+        response.set_header ("ETag", value)
         return result
     # end def _check_etag
 
-    def _check_modified (self, resource, handler, last_modified) :
+    def _check_modified (self, resource, request, response, last_modified) :
         result  = True
         value   = TFL.RFC2822.as_string (last_modified)
-        ums     = self._get_date_header (handler, "If-Unmodified-Since")
+        ums     = request.headers.get   ("If-Unmodified-Since")
         if ums is not None :
             result = last_modified == ums
-        handler.set_header ("Last-Modified", value)
+        response.set_header ("Last-Modified", value)
         return result
     # end def _check_modified
 
-    def _do_change_info (self, resource, handler) :
-        result = self.__super._do_change_info (resource, handler)
+    def _do_change_info (self, resource, request, response) :
+        result = self.__super._do_change_info (resource, request, response)
         if not result :
-            handler.set_status (412)
+            response.set_status (412)
         return result
     # end def _do_change_info
 
@@ -185,9 +177,9 @@ class _HTTP_HEAD_ (_HTTP_Method_R_) :
 
     _real_name                 = "HEAD"
 
-    def _response (self, resource, handler) :
-        return ""
-    # end def _response
+    def _response_body (self, resource, request, response) :
+        return None
+    # end def _response_body
 
 HEAD = _HTTP_HEAD_ # end class
 
@@ -203,13 +195,14 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
 
     _real_name                 = "OPTIONS"
 
-    def __call__ (self, resource, handler) :
+    def __call__ (self, resource, request) :
+        response = resource.HTTP.Response ()
         methods = sorted \
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
-            if resource.allow_method (m, handler.request)
+            if resource.allow_method (m, request)
             )
-        handler.set_header ("Allow", ", ".join (methods))
-        return ""
+        response.set_header ("Allow", ", ".join (methods))
+        return response
     # end def __call__
 
 OPTIONS = _HTTP_OPTIONS_ # end class

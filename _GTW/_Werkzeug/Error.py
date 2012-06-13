@@ -38,6 +38,7 @@
 #     5-Apr-2012 (CT) Remove assignment to `handler.request.user`
 #    10-May-2012 (CT) Add `__str__`
 #    11-Jun-2012 (CT) Add `Error_410`, `_412`, `_415`, and `_501`
+#    13-Jun-2012 (CT) Export `HTTP_Exception`
 #    13-Jun-2012 (CT) Import `Response` from `werkzeug.wrappers`, not `werkzeug`
 #    ««revision-date»»···
 #--
@@ -51,6 +52,8 @@ import _TFL._Meta.Object
 from    werkzeug            import exceptions
 from    werkzeug.wrappers   import Response
 from    werkzeug.utils      import redirect
+
+HTTP_Exception = exceptions.HTTPException
 
 class M_Status (TFL.Meta.Object.__class__) :
     """Meta class for Status"""
@@ -302,5 +305,5 @@ class Error_503 (_Error_) :
 # end class Error_500
 
 if __name__ != "__main__" :
-    GTW.Werkzeug._Export ("*", "_Error_", "_Redirect_")
+    GTW.Werkzeug._Export ("*", "_Error_", "_Redirect_", "HTTP_Exception")
 ### __END__ GTW.Werkzeug.Error

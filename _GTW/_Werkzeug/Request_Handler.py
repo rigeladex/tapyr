@@ -43,6 +43,7 @@
 #    10-May-2011 (MG) `cookie` added
 #    26-Jan-2012 (CT) Add `path_x` and `referrer` to `Request_Class`
 #     8-Jun-2012 (CT) Add `charset=<encoding>` to `NAV_Request_Handler.__call__`
+#    13-Jun-2012 (CT) Derive `Request_Class` from `Request`, not `BaseRequest`
 #    13-Jun-2012 (CT) Import `Response` from `werkzeug.wrappers`, not `werkzeug`
 #    ««revision-date»»···
 #--
@@ -87,7 +88,7 @@ class Request_Handler (GTW._Request_Handler_) :
     get_secure_cookie         = TFL.Meta.Alias_Property ("secure_cookie")
     cookie_encoding           = "utf-8"
 
-    class Request_Class (BaseRequest) :
+    class Request_Class (Request) :
 
         max_content_length   = 1024 * 1024 * 4
         max_form_memory_size = 1024 * 1024 * 2
