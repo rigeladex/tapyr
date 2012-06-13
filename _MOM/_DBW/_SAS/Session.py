@@ -796,5 +796,3 @@ class Session_PC (_Session_) :
 if __name__ != "__main__" :
     MOM.DBW.SAS._Export ("*", "_Session_")
 ### __END__ MOM.DBW.SAS.Session
-
-

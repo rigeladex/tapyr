@@ -197,6 +197,7 @@
 #                     clash with an attribute with name `kind`
 #     6-Jun-2012 (CT) Add `tn_pid`
 #     6-Jun-2012 (CT) Set `_A_Id_Entity_.P_Type = Id_Entity`
+#    13-Jun-2012 (CT) Add `reload_from_pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -490,6 +491,14 @@ class Entity (TFL.Meta.Object) :
         if kw and self._home_scope and not self.electric :
             self.home_scope.record_change (self.SCM_Change_Attr, self, kw)
     # end def record_attr_change
+
+    def reload_from_pickle_cargo (self, cargo) :
+        self.init_finished  = False
+        self._init_pending  = []
+        self._init_attributes ()
+        self.set_pickle_cargo (cargo)
+        self.._finish__init__ ()
+    # end def reload_from_pickle_cargo
 
     def reset_syncable (self) :
         self._attr_man.reset_syncable ()
