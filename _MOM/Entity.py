@@ -497,7 +497,7 @@ class Entity (TFL.Meta.Object) :
         self._init_pending  = []
         self._init_attributes ()
         self.set_pickle_cargo (cargo)
-        self.._finish__init__ ()
+        self._finish__init__  ()
     # end def reload_from_pickle_cargo
 
     def reset_syncable (self) :
