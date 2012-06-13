@@ -46,6 +46,7 @@
 #                     `werkzeug.serving.make_server` to run
 #                     `GTW.NAV.Root.top.Run_on_Launch`
 #     3-Jan-2012 (CT) Factor `Url_Handler`
+#    13-Jun-2012 (CT) Import explicitly from `werkzeug` modules
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ import _GTW._Werkzeug.Static_File_Handler
 import _GTW._Werkzeug.Upload_Handler
 import _GTW._Werkzeug.Url_Handler
 
-from    werkzeug          import ClosingIterator
+from    werkzeug.wsgi     import ClosingIterator
 from    werkzeug.wrappers import BaseRequest, BaseResponse
 
 import  datetime
@@ -106,17 +107,17 @@ class _Werkzeug_Application_ (GTW._Application_) :
                 return uha (environ, start_response, match)
     # end def __call__
 
-    def run_development_server ( self
-                               , port                 = 8080
-                               , host                 = "localhost"
-                               , use_profiler         = False
-                               , profile_log_files    = ()
-                               , profile_sort_by      = ('time', 'calls')
-                               , profile_restrictions = ()
-                               , profile_delete_logs  = False
-                               , reload_extra_files   = None
-                               ) :
-        from werkzeug import run_simple
+    def run_development_server \
+            ( self
+            , port                 = 8080
+            , host                 = "localhost"
+            , use_profiler         = False
+            , profile_log_files    = ()
+            , profile_sort_by      = ('time', 'calls')
+            , profile_restrictions = ()
+            , profile_delete_logs  = False
+            , reload_extra_files   = None
+            ) :
         from werkzeug import serving
         make_server = serving.make_server
         def _make_server (* msargs, ** mskw) :
@@ -154,7 +155,7 @@ class _Werkzeug_Application_ (GTW._Application_) :
             app    = ProfilerMiddleware \
                 (app, stream, profile_sort_by, profile_restrictions)
             use_reloader = use_debugger = False
-        run_simple \
+        serving.run_simple \
             ( host, port, app
             , use_reloader = use_reloader
             , use_debugger = use_debugger

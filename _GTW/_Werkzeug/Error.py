@@ -38,6 +38,7 @@
 #     5-Apr-2012 (CT) Remove assignment to `handler.request.user`
 #    10-May-2012 (CT) Add `__str__`
 #    11-Jun-2012 (CT) Add `Error_410`, `_412`, `_415`, and `_501`
+#    13-Jun-2012 (CT) Import `Response` from `werkzeug.wrappers`, not `werkzeug`
 #    ««revision-date»»···
 #--
 
@@ -46,8 +47,9 @@ from   _TFL                 import TFL
 
 import _GTW._Werkzeug
 import _TFL._Meta.Object
+
 from    werkzeug            import exceptions
-from    werkzeug            import Response
+from    werkzeug.wrappers   import Response
 from    werkzeug.utils      import redirect
 
 class M_Status (TFL.Meta.Object.__class__) :
