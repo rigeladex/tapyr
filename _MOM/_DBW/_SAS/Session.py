@@ -107,6 +107,7 @@
 #                     is really closed)
 #    06-May-2012 (MG) `_close_connection`: call to `expunge` added
 #    11-Jun-2012 (MG) `add_change` set new attributes of change record
+#    13-Jun-2012 (CT) Add call of `_finish__init__` to `reconstruct`
 #    ««revision-date»»···
 #--
 
@@ -277,6 +278,7 @@ class SAS_Interface (TFL.Meta.Object) :
         entity       = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
         entity.pid   = row [self.e_type._SAQ.pid]
         entity.r_last_cid = entity.last_cid
+        entity._finish__init__ ()
         return entity
     # end def reconstruct
 

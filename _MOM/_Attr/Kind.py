@@ -172,6 +172,8 @@
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
 #     4-May-2012 (CT) Add I18N marker `_` to `kind = <kind>` statements
+#    13-Jun-2012 (CT) Add call of `_finish__init__` to
+#                     `_Composite_Mixin_.from_pickle_cargo`
 #    ««revision-date»»···
 #--
 
@@ -623,7 +625,9 @@ class _Composite_Mixin_ (_Co_Base_) :
 
     def from_pickle_cargo (self, scope, cargo) :
         if cargo and cargo [0] :
-            return self.attr.P_Type.from_attr_pickle_cargo (scope, cargo [0])
+            result = self.attr.P_Type.from_attr_pickle_cargo (scope, cargo [0])
+            result._finish__init__ ()
+            return result
     # end def from_pickle_cargo
 
     def get_hash (self, obj, value = None) :
