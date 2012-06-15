@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Jun-2012 (CT) Creation
+#    15-Jun-2012 (CT) Continue creation
 #    ««revision-date»»···
 #--
 
@@ -126,9 +127,33 @@ __doc__ = """
         <Node PAP.Company: /v1/PAP.Company> parent = /v1, top = /
         <Node PAP.Person: /v1/PAP.Person> parent = /v1, top = /
 
+    >>> print (formatted_1 (root.GET.render_man.by_extension))
+    {'json' : [<class '_GTW._RST.Mime_Type.JSON'>]}
+    >>> print (formatted_1 (root.GET.render_man.by_mime_type))
+    {'application/json' : [<class '_GTW._RST.Mime_Type.JSON'>]}
+
+    >>> GTW.RST.Mime_Type.JSON
+    <class '_GTW._RST.Mime_Type.JSON'>
+    >>> GTW.RST.Mime_Type.JSON.extensions
+    ('json',)
+    >>> GTW.RST.Mime_Type.JSON.mime_types
+    (u'application/json',)
+
+    >>> for n, r in sorted (GTW.RST.Mime_Type.JSON.Table.iteritems ()) :
+    ...     print (r.name, r.extensions, r.mime_types)
+    ATOM ('atom',) (u'application/atom+xml',)
+    CSV ('csv',) (u'text/csv',)
+    HTML (u'html', u'htm') (u'text/html',)
+    HTML_T (u'html', u'htm') (u'text/html',)
+    JSON ('json',) (u'application/json',)
+    XHTML ('xhtml',) (u'application/xhtml+xml',)
+    XML ('xml',) (u'text/xml', u'application/xml')
+
 """
 
 interactive_code = """
+
+from _GTW._RST.Resource import *
 
 e_types = \
     ( Node

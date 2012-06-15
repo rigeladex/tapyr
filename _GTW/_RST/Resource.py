@@ -30,6 +30,7 @@
 #    11-Jun-2012 (CT) Continue creation
 #    12-Jun-2012 (CT) Continue creation..
 #    13-Jun-2012 (CT) Continue creation...
+#    15-Jun-2012 (CT) Continue creation....
 #    ««revision-date»»···
 #--
 
@@ -72,25 +73,7 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
         if cls._needs_parent and kw.get ("parent") is None :
             return (cls, args, kw)
         result = cls.__m_super.__call__ (* args, ** kw)
-        kw.pop ("parent", None)
-        result._orig_kw = dict (kw)
-        if not result.implicit :
-            href = result.href
-            pid  = result.pid
-            top  = result.top
-            if href is not None :
-                Table = top.Table
-                Table [href] = result
-                try :
-                    perma = result.permalink.lstrip ("/")
-                except Exception :
-                    pass
-                else :
-                    if perma != href :
-                        if perma not in Table or Table [perma].href == href :
-                            Table [perma] = result
-            if pid is not None :
-                setattr (top.SC, pid, result)
+        result._after__init__ (kw)
         return result
     # end def __call__
 
@@ -103,6 +86,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     _real_name                 = "_Base_"
 
     hidden                     = False
+    ignore_picky_accept        = False            ### redefine if necessary
     implicit                   = False
     input_encoding             = "iso-8859-15"
     pid                        = None
@@ -139,6 +123,30 @@ class _RST_Base_ (TFL.Meta.Object) :
         if self.implicit :
             self.hidden = True
     # end def __init__
+
+    def _after__init__ (self, kw) :
+        ### called by meta class after `__init__` has finished
+        ### redefine as necessary
+        kw.pop ("parent", None)
+        self._orig_kw = dict (kw)
+        if not self.implicit :
+            href = self.href
+            pid  = self.pid
+            top  = self.top
+            if href is not None :
+                Table = top.Table
+                Table [href] = self
+                try :
+                    perma = self.permalink.lstrip ("/")
+                except Exception :
+                    pass
+                else :
+                    if perma != href :
+                        if perma not in Table or Table [perma].href == href :
+                            Table [perma] = self
+            if pid is not None :
+                setattr (top.SC, pid, self)
+    # end def _after__init__
 
     @Once_Property
     def abs_href (self) :
@@ -469,18 +477,18 @@ class RST_Root (_Node_) :
     # end def wsgi_app
 
     def _http_response (self, request) :
-        HTTP         = self.HTTP
-        href         = request.path
-        resource     = self.resource_from_href (href)
+        HTTP     = self.HTTP
+        href     = request.path
+        resource = self.resource_from_href (href)
         if resource  :
-            user     = request.user = self._get_user (request.username)
-            auth     = user and user.authenticated
-            resource = resource._effective
-            hrm      = request.method
-            if hrm not in resource.SUPPORTED_METHODS :
+            user       = request.user = self._get_user (request.username)
+            auth       = user and user.authenticated
+            resource   = resource._effective
+            meth_name  = request.method
+            if meth_name not in resource.SUPPORTED_METHODS :
                 raise HTTP.Error_405 \
                     (valid_methods = resource.SUPPORTED_METHODS)
-            method   = getattr (resource, hrm) ()
+            method   = getattr (resource, meth_name) ()
             if resource.allow_method (user, method) :
                 if resource.DEBUG :
                     fmt = "[%s] %s %s: execution time = %%s" % \

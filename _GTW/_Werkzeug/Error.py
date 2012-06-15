@@ -39,6 +39,7 @@
 #    10-May-2012 (CT) Add `__str__`
 #    11-Jun-2012 (CT) Add `Error_410`, `_412`, `_415`, and `_501`
 #    13-Jun-2012 (CT) Export `HTTP_Exception`
+#    15-Jun-2012 (CT) Add `Error_406`
 #    13-Jun-2012 (CT) Import `Response` from `werkzeug.wrappers`, not `werkzeug`
 #    ««revision-date»»···
 #--
@@ -244,6 +245,11 @@ class Error_405 (_Error_) :
     # end def return_response
 
 # end class Error_405
+
+class Error_406 (_Error_) :
+    """Not Acceptable."""
+    response    = exceptions.NotAcceptable
+# end class Error_406
 
 class Error_408 (_Error_) :
     """Request Timeout."""

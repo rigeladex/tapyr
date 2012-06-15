@@ -29,6 +29,7 @@
 #     8-Jun-2012 (CT) Creation
 #    12-Jun-2012 (CT) Continue creation
 #    13-Jun-2012 (CT) Continue creation..
+#    15-Jun-2012 (CT) Continue creation...
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-import _GTW._RST
+import _GTW._RST.Mime_Type
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -45,7 +46,8 @@ import _TFL.RFC2822_date
 
 class _Meta_ (TFL.Meta.M_Class) :
 
-    Table = {}
+    render_man = None
+    Table      = {}
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
@@ -54,6 +56,9 @@ class _Meta_ (TFL.Meta.M_Class) :
             cls.name = name
             if name not in cls.Table :
                 cls.Table [name] = cls
+        renderers = dct.get ("_renderers")
+        if renderers :
+            cls.render_man = GTW.RST.Mime_Type.Render_Man (renderers)
     # end def __init__
 
 # end class _Meta_
@@ -63,13 +68,18 @@ class HTTP_Method (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
+    needs_body                 = True
+
+    _renderers                 = (GTW.RST.Mime_Type.JSON, )
+
     def __call__ (self, resource, request) :
         response = resource.HTTP.Response ()
         if self._do_change_info (resource, request, response) :
             body = self._response_body (resource, request, response)
-            if body :
-                ### XXX support other representations
-                response.data = json.dumps (result)
+            if body is not None :
+                render = self._get_renderer (resource, request, response)
+                if render is not None :
+                    render (request, response, body)
         return response
     # end def __call__
 
@@ -87,6 +97,14 @@ class HTTP_Method (TFL.Meta.Object) :
                     (resource, request, response, etag)
         return result
     # end def _do_change_info
+
+    def _get_renderer (self, resource, request, response) :
+        result = self.render_man (self, resource, request)
+        if result is None and self.needs_body :
+            response.status_code = 406
+            ### XXX send back list of available representations
+        return result
+    # end def _get_renderer
 
     def _response_body (self, resource, request, response) :
         raise NotImplementedError \
@@ -176,6 +194,7 @@ class _HTTP_HEAD_ (_HTTP_Method_R_) :
     """Implement HTTP method HEAD."""
 
     _real_name                 = "HEAD"
+    needs_body                 = False
 
     def _response_body (self, resource, request, response) :
         return None
@@ -194,6 +213,8 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
     """Implement HTTP method OPTIONS."""
 
     _real_name                 = "OPTIONS"
+
+    needs_body                 = False
 
     def __call__ (self, resource, request) :
         response = resource.HTTP.Response ()
