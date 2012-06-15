@@ -89,6 +89,7 @@
 #    11-Jun-2012 (MG) `_create_SCM_table` new columns `type_name` and `kind`
 #                     added
 #    12-Jun-2012 (CT) Remove duplicate `pid` from `_create_SCM_table`
+#    15-Jun-2012 (MG) `_Reload_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,38 @@ class _Type_Name_Type_ (types.TypeDecorator) :
     # end def copy
 
 # end class _Type_Name_Type_
+
+class _Reload_Mixin_ (object) :
+    """Mixin which triggers a reload of an entity from the database on any
+       attribute access
+    """
+
+    def __getattribute__ (self, name) :
+        if name == "__class__" :
+            return object.__getattribute__ (self, name)
+        #import pdb; pdb.set_trace ()
+        e_type = self.__class__.__bases__ [1]
+        self.__class__ = e_type
+        MOM.DBW.SAS.Q_Result_Reload \
+            (e_type, self, self.home_scope.ems.session)
+        return getattr           (self, name)
+    # end def __getattribute__
+
+    @classmethod
+    def define_e_type (cls, e_type) :
+        b_attr = type (e_type._Attributes)
+        b_pred = type (e_type._Predicates)
+        Attr   = type (b_attr) ("_Attributes", (b_attr, ), {})
+        Pred   = type (b_pred) ("_Predicates", (b_pred, ), {})
+        e_type._RELOAD_E_TYPE = e_type.New \
+            ( "_reload"
+            , head_mixins = (_Reload_Mixin_, )
+            , _Attributes = Attr
+            , _Predicates = Pred
+            )
+    # end def define_e_type
+
+# end class _Reload_Mixin_
 
 Type_Name_Type = _Type_Name_Type_ (length = 60)
 
@@ -246,6 +279,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             e_type._SAS.finish        ()
             if unique is not None and not e_type.polymorphic_epk :
                 sa_table.append_constraint (unique)
+            _Reload_Mixin_.define_e_type (e_type)
         for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
             if cr.attr_name in e_type._Attributes._own_names :
                 ### setup cached role only for the etype first defining the

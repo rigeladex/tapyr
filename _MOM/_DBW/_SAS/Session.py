@@ -108,6 +108,7 @@
 #    06-May-2012 (MG) `_close_connection`: call to `expunge` added
 #    11-Jun-2012 (MG) `add_change` set new attributes of change record
 #    13-Jun-2012 (CT) Add call of `_finish__init__` to `reconstruct`
+#    15-Jun-2012 (MG) `SAS_Interface.reload` added
 #    ««revision-date»»···
 #--
 
@@ -281,6 +282,13 @@ class SAS_Interface (TFL.Meta.Object) :
         entity._finish__init__ ()
         return entity
     # end def reconstruct
+
+    def reload (self, entity, row) :
+        pickle_cargo      = self.pickle_cargo (row)
+        entity.reload_from_pickle_cargo (pickle_cargo)
+        entity.r_last_cid = entity.last_cid
+        return entity
+    # end def reload
 
     def _setup_columns (self, e_type, e_type_columns, prefix = "") :
         cm = self.column_map
@@ -557,10 +565,11 @@ class Session_S (_Session_) :
 
     def commit (self) :
         try :
-            self.flush                  ()
-            self.__super.commit         ()
-            self._flushed_changes = set ()
+            self.flush                      ()
+            self.__super.commit             ()
+            self._flushed_changes = set     ()
             del self._saved
+            self._mark_entities_for_reload  ()
         except self.engine.Commit_Conflict_Exception, exc:
             self.scope.rollback             ()
             raise MOM.Error.Commit_Conflict ()
@@ -640,6 +649,12 @@ class Session_S (_Session_) :
     def query (self, Type) :
         return Type.select ()
     # end def query
+
+    def _mark_entities_for_reload (self) :
+        for e in self._pid_map.itervalues () :
+            e.__class__ = e.__class__._RELOAD_E_TYPE
+    # end def _mark_entities_for_reload
+
 
     def recreate_change (self, row) :
         cid = row.cid

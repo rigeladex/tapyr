@@ -321,6 +321,8 @@ _test_code = """
 
 from _GTW.__test__.model import *
 
+_Ancestor_Essence = GTW.OMP.SRM.Boat
+
 __test__ = Scaffold.create_test_dict (_test_code)
 
 ### __END__ GTW.__test__.Boat

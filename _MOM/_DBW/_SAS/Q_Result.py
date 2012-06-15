@@ -63,6 +63,7 @@
 #                     and ID entity attributes added
 #    23-Apr-2012 (MG) `__bool__` added
 #    23-Apr-2012 (CT) Rename `__bool__` to `__nonzero__`
+#    15-Jun-2012 (MG) `Q_Result_Reload` added
 #    ««revision-date»»···
 #--
 
@@ -71,7 +72,7 @@ import _TFL.Decorator
 import _TFL.Accessor
 import _TFL._Meta.Object
 
-from   _MOM                 import MOM
+from   _MOM.import_MOM      import MOM, Q
 import _MOM._DBW._SAS.Filter
 import _MOM._DBW._SAS.Sorted_By
 
@@ -342,6 +343,25 @@ class Q_Result (_Q_Result_) :
     # end def _from_row
 
 # end class Q_Result
+
+class Q_Result_Reload (_Q_Result_) :
+    """Reload an entity from the database."""
+
+    def __init__ (self, e_type, entity, session) :
+        self.entity = entity
+        self.__super.__init__ (e_type, session)
+        for c in Q.pid == entity.pid, Q.last_cid > entity.last_cid :
+            ajoins, aclause = c._sa_filter (e_type._SAQ)
+            self._joins .extend            (ajoins)
+            self._filter.extend            (aclause)
+        self.all                           ()
+    # end def __init__
+
+    def _from_row (self, row) :
+        self.entity._SAS.reload (self.entity, row)
+    # end def _from_row
+
+# end class Q_Result_Reload
 
 @TFL.Add_New_Method (_Q_Result_)
 class _Q_Result_Attrs_ (_Q_Result_) :
