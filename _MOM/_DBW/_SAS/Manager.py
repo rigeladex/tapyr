@@ -90,6 +90,7 @@
 #                     added
 #    12-Jun-2012 (CT) Remove duplicate `pid` from `_create_SCM_table`
 #    15-Jun-2012 (MG) `_Reload_Mixin_` added
+#    15-Jun-2012 (MG) `_RESTORE_CLASS` factored
 #    ««revision-date»»···
 #--
 
@@ -148,14 +149,19 @@ class _Reload_Mixin_ (object) :
 
     def __getattribute__ (self, name) :
         if name == "__class__" :
-            return object.__getattribute__ (self, name)
-        #import pdb; pdb.set_trace ()
-        e_type = self.__class__.__bases__ [1]
-        self.__class__ = e_type
+            return object.__getattribute__     (self, name)
+        e_type = self.__class__._RESTORE_CLASS (self)
         MOM.DBW.SAS.Q_Result_Reload \
             (e_type, self, self.home_scope.ems.session)
         return getattr           (self, name)
     # end def __getattribute__
+
+    @staticmethod
+    def _RESTORE_CLASS (self) :
+        e_type = self.__class__.__bases__ [1]
+        self.__class__ = e_type
+        return e_type
+    # end def _RESTORE_CLASS
 
     @classmethod
     def define_e_type (cls, e_type) :
@@ -474,5 +480,5 @@ class Manager (MOM.DBW._Manager_) :
 # end class Manager
 
 if __name__ != '__main__':
-    MOM.DBW.SAS._Export ("*")
+    MOM.DBW.SAS._Export ("*", "_Reload_Mixin_")
 ### __END__ MOM.DBW.Manager

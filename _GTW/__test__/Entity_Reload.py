@@ -41,13 +41,18 @@ _test_code = """
     >>> b1    = SRM.Boat (u'Optimist', u"AUT", u"1107", raw = True) ### 1
     >>> b2    = SRM.Boat (u"Laser", None, "42", "OE", raw = True)
 
-    >>> laser.max_crew
+    >>> laser.max_crew ### before commit
     1
     >>> scope.commit  ()
     >>> modify_scope (%(p1)s, %(n1)s)
 
-    >>> laser.max_crew
+    >>> laser.max_crew ### after change
     2
+    >>> b3 = scope.SRM.Boat.query (nation = u"AUT").one ()
+    >>> b3 is b1
+    True
+    >>> b1.name
+    u'My Boat'
     >>> scope.destroy ()
 
 """
@@ -59,9 +64,11 @@ _Ancestor_Essence = GTW.OMP.SRM.Boat
 Scaffold.Backend_Parameters ["SQL"] = "'sqlite:///test.sqlite'"
 
 def _modify_scope (* args) :
-    scope = Scaffold.scope (* args, create = False, verbose = False)
-    laser = scope.SRM.Boat_Class.query (name = u"laser").one ()
+    scope          = Scaffold.scope (* args, create = False, verbose = False)
+    laser          = scope.SRM.Boat_Class.query (name = u"laser").one ()
     laser.max_crew = 2
+    boat           = scope.SRM.Boat.query (nation = u"AUT").one ()
+    boat.name      = "My Boat"
     scope.commit  ()
     scope.destroy ()
 # end def _modify_scope

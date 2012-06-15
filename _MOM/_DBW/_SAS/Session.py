@@ -109,6 +109,8 @@
 #    11-Jun-2012 (MG) `add_change` set new attributes of change record
 #    13-Jun-2012 (CT) Add call of `_finish__init__` to `reconstruct`
 #    15-Jun-2012 (MG) `SAS_Interface.reload` added
+#    15-Jun-2012 (MG) `Session_S.instance_from_row` support for entity
+#                     reloading added
 #    ««revision-date»»···
 #--
 
@@ -626,10 +628,17 @@ class Session_S (_Session_) :
         e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
         pid    = row [e_type._SAQ.pid]
         pim    = self._pid_map
-        if pid not in pim :
+        entity = pim.get (pid, None)
+        if entity is None :
             entity    = e_type._SAS.reconstruct (self, row)
             pim [pid] = entity
-        return pim [pid]
+        elif isinstance (entity, MOM.DBW.SAS._Reload_Mixin_) :
+            ### the object is already in the cache and has not been reloaded
+            ### and we have the wohle information needed for reloading ->
+            ### reload it
+            entity.__class__._RESTORE_CLASS (entity)
+            e_type._SAS.reload              (entity, row)
+        return entity
     # end def instance_from_row
 
     def load_root (self, scope) :
