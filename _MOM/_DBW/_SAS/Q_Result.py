@@ -64,6 +64,7 @@
 #    23-Apr-2012 (MG) `__bool__` added
 #    23-Apr-2012 (CT) Rename `__bool__` to `__nonzero__`
 #    15-Jun-2012 (MG) `Q_Result_Reload` added
+#    18-Jun-2012 (MG) `Q_Result_Reload`: caching added
 #    ««revision-date»»···
 #--
 
@@ -344,18 +345,38 @@ class Q_Result (_Q_Result_) :
 
 # end class Q_Result
 
+class M_Q_Result_Reload (_Q_Result_.__class__) :
+    """Meta class caching the base query for gathering allattributes of an
+       e_type
+    """
+
+    Cache = {}
+
+    def __call__ (cls, e_type, session) :
+        if e_type.type_name not in cls.Cache :
+            cls.Cache [e_type.type_name]= cls.__m_super.__call__ \
+                (e_type, session)
+        return cls.Cache [e_type.type_name]
+    # end def __call__
+
+# end class M_Q_Result_Reload
+
 class Q_Result_Reload (_Q_Result_) :
     """Reload an entity from the database."""
 
-    def __init__ (self, e_type, entity, session) :
-        self.entity = entity
+    __metaclass__= M_Q_Result_Reload
+
+    def __init__ (self, e_type, session) :
         self.__super.__init__ (e_type, session)
-        for c in Q.pid == entity.pid, Q.last_cid > entity.last_cid :
-            ajoins, aclause = c._sa_filter (e_type._SAQ)
-            self._joins .extend            (ajoins)
-            self._filter.extend            (aclause)
-        self.all                           ()
+        self.sa_query         ()
     # end def __init__
+
+    def reload (self, entity) :
+        sa_query     = self._sa_query
+        for c in Q.pid == entity.pid, Q.last_cid > entity.last_cid :
+            sa_query = sa_query.where (c._sa_filter (self.e_type._SAQ) [1] [0])
+        self._query_rows (sa_query)
+    # end def reload
 
     def _from_row (self, row) :
         self.entity._SAS.reload (self.entity, row)
