@@ -46,6 +46,7 @@
 #                     rename from `Scaffold` to `Command`
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
 #     5-Jun-2012 (CT) Add logging to `_handle_fcgi`
+#    18-Jun-2012 (CT) Add option `-email_from` to `_GTW_Server_Base_._opts`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,9 @@ class GTW_Command (MOM.Command) :
                   "?Autoload of werkzeug, only works with no sqlite db"
             , "-Break:B?Enter debugger before starting tornado/werkzeug"
             , "-debug:B=no"
+            , "-email_from:S"
+                "?Email address to use as from-address for emails sent "
+                "by the app"
             , "-languages:T,?Languages for which to load translations"
             , "-locale_code:S?Code of locale to use"
             , "-port:I=8090?Server port"

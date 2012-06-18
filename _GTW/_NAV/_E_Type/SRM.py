@@ -57,6 +57,7 @@
 #     7-May-2012 (CT) Change `Regatta._get_objects` to DRY
 #     7-May-2012 (CT) Add attribute `bir_admin` to `Regatta`
 #    30-May-2012 (CT) Change `href_register` to honor `is_cancelled`
+#    18-Jun-2012 (CT) Rename `email` to `email_from`
 #    ««revision-date»»···
 #--
 
@@ -228,7 +229,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
             for t, a in _gen (scope, fv.results)
             )
         try :
-            email = self.email
+            email = self.email_from
             self.send_email \
                 ( self.register_email_template
                 , email_from    = email

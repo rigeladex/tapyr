@@ -300,6 +300,7 @@
 #     8-Jun-2012 (CT) Add `charset=<encoding>` to `Robot_Excluder.view`
 #     8-Jun-2012 (CT) Remove unused imports, import `signal` in `Stopper`
 #    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `_Dir_.prefix`
+#    18-Jun-2012 (CT) Rename `email` to `email_from`
 #    ««revision-date»»···
 #--
 
@@ -393,7 +394,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     top                        = None
 
     _dump_type                 = "dict"
-    _email                     = None   ### default from address
+    _email_from                = None   ### default from address
     _login_required            = False
     _permission                = None
     _template                  = None
@@ -508,20 +509,20 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def dump
 
     @property
-    def email (self) :
-        result = self._email
+    def email_from (self) :
+        result = self._email_from
         if result is None :
             result = self.webmaster
             if isinstance (result, tuple) :
                 result = "%s <%s>" % (result [1], result [0])
-            self._email = result
+            self._email_from = result
         return result
-    # end def email
+    # end def email_from
 
-    @email.setter
-    def email (self, value) :
-        self._email = value
-    # end def email
+    @email_from.setter
+    def email_from (self, value) :
+        self._email_from = value
+    # end def email_from
 
     def etype_manager (self, obj) :
         etn = getattr (obj, "type_name", None)
@@ -651,7 +652,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def send_email (self, template, ** context) :
         email_from = context.get ("email_from")
         if not email_from :
-            context ["email_from"] = self.email
+            context ["email_from"] = self.email_from
         if self.smtp :
             text = self.top.Templateer.render (template, context).encode \
                 (self.encoding, "replace")
@@ -662,7 +663,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def send_email
 
     def _send_error_email (self, handler, exc, tbi) :
-        email     = self.email
+        email     = self.email_from
         request   = handler.request
         headers   = request.headers
         message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
@@ -674,6 +675,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if self.DEBUG :
             print "Exception:", exc
             print "Request path", request.path
+            print "Email", email
             print message
             print handler.body
         else :

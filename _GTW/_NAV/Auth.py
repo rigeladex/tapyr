@@ -53,6 +53,7 @@
 #     3-Jan-2011 (CT) Introduce `template_name`
 #    11-Mar-2011 (CT) Moved `username` from cookie to `session`
 #    11-Jun-2012 (CT) Remove trailing `/` from `href`
+#    18-Jun-2012 (CT) Rename `email` to `email_from`
 #    ««revision-date»»···
 #--
 
@@ -175,7 +176,7 @@ class Auth (GTW.NAV.Dir) :
                             , email_to      = form.new_email
                             , email_subject =
                                 _T ("Email confirmation for %s") % (host, )
-                            , email_from    = self.email
+                            , email_from    = self.email_from
                             , link          = link
                             , NAV           = self.top
                             , page          = self
@@ -313,7 +314,7 @@ class Auth (GTW.NAV.Dir) :
                             , email_to      = form.username
                             , email_subject =
                                 _T ("Email confirmation for %s") % (host, )
-                            , email_from    = self.email
+                            , email_from    = self.email_from
                             , link          = link
                             , NAV           = self.top
                             , page          = self
@@ -368,7 +369,7 @@ class Auth (GTW.NAV.Dir) :
                             ( _T ("Password reset for user %s on website %s")
                             % (form.username, host)
                             )
-                        , email_from    = self.email
+                        , email_from    = self.email_from
                         , new_password  = passwd
                         , link          = link
                         , NAV           = self.top
