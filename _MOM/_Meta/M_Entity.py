@@ -131,6 +131,7 @@
 #    14-May-2012 (CT) Remove `children_iter`, use `children.itervalues` instead
 #     4-Jun-2012 (CT) Add guard for `et.epk_sig` to `_m_setup_sorted_by`
 #     6-Jun-2012 (CT) Use `tn_pid`, not `sort_key`, as default sort-key
+#    18-Jun-2012 (CT) Add `M_E_Type_Id_Reload`
 #    ««revision-date»»···
 #--
 
@@ -836,6 +837,23 @@ class M_E_Type_Id (M_E_Type) :
     # end def _m_setup_relevant_roots
 
 # end class M_E_Type_Id
+
+class M_E_Type_Id_Reload (M_E_Mixin) :
+    """Meta class for MOM._Id_Entity_Reload_Mixin_."""
+
+    def __init__ (cls, name, bases, dct) :
+        type.__init__ (cls, name, bases, dct)
+    # end def __init__
+
+    def __call__ (cls, * args, ** kw) :
+        raise TypeError ("%s cannot be instantiated." % (cls, ))
+    # end def __call__
+
+    def __repr__ (cls) :
+        return type.__repr__ (cls)
+    # end def __repr__
+
+# end class M_E_Type_Id_Reload
 
 __doc__ = """
 Class `MOM.Meta.M_Entity`

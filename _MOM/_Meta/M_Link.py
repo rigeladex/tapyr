@@ -69,6 +69,7 @@
 #                     (i.e., for descendent classes)
 #    24-Mar-2012 (CT) Change `_m_setup_etype_auto_props` to not overwrite
 #                     `auto_cache` (don't rewrite ancestor's `auto_cache`)
+#    18-Jun-2012 (CT) Add `M_E_Type_Link[123]_Reload`
 #    ««revision-date»»···
 #--
 
@@ -242,6 +243,21 @@ class M_E_Type_Link3 (M_E_Type_Link2) :
     Manager = MOM.E_Type_Manager.Link3
 
 # end class M_E_Type_Link3
+
+class M_E_Type_Link1_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Link1) :
+    """Meta class for `_Reload` classes of descendents of MOM.Link1."""
+
+# end class M_E_Type_Link1_Reload
+
+class M_E_Type_Link2_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Link2) :
+    """Meta class for `_Reload` classes of descendents of MOM.Link2."""
+
+# end class M_E_Type_Link2_Reload
+
+class M_E_Type_Link3_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Link3) :
+    """Meta class for `_Reload` classes of descendents of MOM.Link3."""
+
+# end class M_E_Type_Link3_Reload
 
 __doc__ = """
 Class `MOM.Meta.M_Link`

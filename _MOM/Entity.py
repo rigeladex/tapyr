@@ -198,6 +198,7 @@
 #     6-Jun-2012 (CT) Add `tn_pid`
 #     6-Jun-2012 (CT) Set `_A_Id_Entity_.P_Type = Id_Entity`
 #    13-Jun-2012 (CT) Add `reload_from_pickle_cargo`
+#    18-Jun-2012 (CT) Add `_Id_Entity_Reload_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -1407,6 +1408,48 @@ class Id_Entity (Entity) :
 
 _A_Id_Entity_.P_Type = Id_Entity
 
+class _Id_Entity_Reload_Mixin_ (object) :
+    """Mixin triggering a reload from the database on any attribute access."""
+
+    def __getattribute__ (self, name) :
+        if name in ("__class__", "__repr__") :
+            return object.__getattribute__ (self, name)
+        else :
+            cls    = object.__getattribute__ (self, "__class__")
+            reload = cls._RELOAD_INSTANCE
+            e_type = cls._RESTORE_CLASS (self)
+            reload (self, e_type)
+            return getattr (self, name)
+    # end def __getattribute__
+
+    @classmethod
+    def _RELOAD_INSTANCE (cls, self, e_type) :
+        raise TypeError \
+            ( "%s needs to implement _RELOAD_INSTANCE"
+            % self.__class__.__bases__ [0]
+            )
+    # end def _RELOAD_INSTANCE
+
+    @classmethod
+    def _RESTORE_CLASS (cls, self) :
+        result = self.__class__ = cls.__bases__ [2]
+        return result
+    # end def _RESTORE_CLASS
+
+    @classmethod
+    def define_e_type (cls, e_type, mixin) :
+        e_type._RELOAD_E_TYPE = e_type.New \
+            ( "_Reload"
+            , head_mixins = (mixin, cls)
+            )
+    # end def define_e_type
+
+    def __repr__ (self) :
+        return str (self.__class__)
+    # end def __repr__
+
+# end class _Id_Entity_Reload_Mixin_
+
 __doc__  = """
 Class `MOM.Id_Entity`
 =====================
@@ -1605,5 +1648,5 @@ you redefine one of these methods, you'll normally need to call the
 """
 
 if __name__ != "__main__" :
-    MOM._Export ("*")
+    MOM._Export ("*", "_Id_Entity_Reload_Mixin_")
 ### __END__ MOM.Entity

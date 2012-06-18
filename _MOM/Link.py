@@ -60,6 +60,7 @@
 #    23-Mar-2012 (CT) Add `copy`, `copy_args`, and `link_type_name`
 #    24-Mar-2012 (CT) Add `__repr__` to `_Cacher_`
 #    29-Mar-2012 (CT) Change `_Cacher_._setup_attr` to not redefine `cr_attr`
+#    18-Jun-2012 (CT) Add `_Reload_Mixin_` for `Link1`, `Link2`, `Link3`
 #    ««revision-date»»···
 #--
 
@@ -216,6 +217,30 @@ class Link3 (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Link3
+
+@TFL.Add_To_Class ("_Reload_Mixin_", Link1)
+class _Link1_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
+    """Mixin triggering a reload from the database on any attribute access."""
+
+    __metaclass__ = MOM.Meta.M_E_Type_Link1_Reload
+
+# end class _Link1_Reload_Mixin_
+
+@TFL.Add_To_Class ("_Reload_Mixin_", Link2)
+class _Link2_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
+    """Mixin triggering a reload from the database on any attribute access."""
+
+    __metaclass__ = MOM.Meta.M_E_Type_Link2_Reload
+
+# end class _Link2_Reload_Mixin_
+
+@TFL.Add_To_Class ("_Reload_Mixin_", Link3)
+class _Link3_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
+    """Mixin triggering a reload from the database on any attribute access."""
+
+    __metaclass__ = MOM.Meta.M_E_Type_Link3_Reload
+
+# end class _Link3_Reload_Mixin_
 
 class _Cacher_ (TFL.Meta.Object) :
 

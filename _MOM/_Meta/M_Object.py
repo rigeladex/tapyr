@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,7 @@
 #    24-Nov-2009 (CT) `link_map` added
 #    12-Mar-2010 (CT) `link_map` moved to `M_E_Type_Id`
 #     9-Jun-2011 (MG) `epk_split_pat` added
+#    18-Jun-2012 (CT) Add `M_E_Type_Object_Reload`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,11 @@ class M_E_Type_Object (MOM.Meta.M_E_Type_Id) :
     Manager = MOM.E_Type_Manager.Object
 
 # end class M_E_Type_Object
+
+class M_E_Type_Object_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Object) :
+    """Meta class for `_Reload` classes of descendents of MOM.Object."""
+
+# end class M_E_Type_Object_Reload
 
 __doc__ = """
 Class `MOM.Meta.M_Object`

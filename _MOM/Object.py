@@ -37,6 +37,7 @@
 #     2-Dec-2009 (CT) `all_links` changed to use `ems.role_query`
 #     9-Jun-2011 (MG) `epk_*` added
 #    29-Mar-2012 (CT) Factor `all_links` to `MOM.Id_Entity`
+#    18-Jun-2012 (CT) Add `_Object_Reload_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,14 @@ class _MOM_Object_ (MOM.Id_Entity) :
     # end def epk_splitter
 
 Object = _MOM_Object_ # end class
+
+@TFL.Add_To_Class ("_Reload_Mixin_", Object)
+class _Object_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
+    """Mixin triggering a reload from the database on any attribute access."""
+
+    __metaclass__ = MOM.Meta.M_E_Type_Object_Reload
+
+# end class _Object_Reload_Mixin_
 
 class Named_Object (Object) :
     """Root class for named object-types of MOM meta object model."""
