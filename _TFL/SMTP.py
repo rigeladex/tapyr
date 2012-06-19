@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -32,6 +32,7 @@
 #    27-Dec-2010 (CT) Optional init-arguments added,
 #                     `open` and `close` factored and extended (`use_tls`)
 #                     `connection` added and used
+#    19-Jun-2012 (CT) Add `header` and apply it in `send_message`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ import _TFL._Meta.Object
 import _TFL.Context
 
 from   email                   import message, message_from_string
+from   email.header            import Header, decode_header, make_header
 from   email.Utils             import formatdate
 
 import smtplib
@@ -51,6 +53,7 @@ import socket
 class SMTP (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
+    charset        = "iso-8859-15"
     local_hostname = None
     mail_host      = "localhost"
     mail_port      = None
@@ -58,7 +61,16 @@ class SMTP (TFL.Meta.Object) :
     user           = None
     use_tls        = False
 
-    def __init__ (self, mail_host = None, mail_port = None, local_hostname = None, user = None, password = None, use_tls = None) :
+    def __init__ \
+            ( self
+            , mail_host      = None
+            , mail_port      = None
+            , local_hostname = None
+            , user           = None
+            , password       = None
+            , use_tls        = None
+            , charset        = None
+            ) :
         if mail_host is not None :
             self.mail_host = mail_host
         if mail_port is not None :
@@ -71,6 +83,8 @@ class SMTP (TFL.Meta.Object) :
             self.password = password
         if use_tls is not None :
             self.use_tls = use_tls
+        if charset is not None :
+            self.charset = charset
         self.server = None
     # end def __init__
 
@@ -102,6 +116,39 @@ class SMTP (TFL.Meta.Object) :
             if close_p :
                 self.close ()
     # end def connection
+
+    def header (self, s, charset = None, ** kw) :
+        """Wrap `s` in `email.header.Header` if necessary.
+
+           Wrapping is done only if `s` contains non-ASCII characters;
+           applying `Header` to pure ASCII strings adds stupid line noise to
+           email addresses!
+
+        >>> from email.header import Header
+        >>> print Header ("christian.tanzer@swing.co.at", charset = "utf-8")
+        =?utf-8?q?christian=2Etanzer=40swing=2Eco=2Eat?=
+        """
+        if charset is None :
+            charset = self.charset
+        result = s
+        if isinstance (result, str) :
+            decoded = decode_header (result)
+            if any (c for ds, c in decoded) :
+                result = make_header \
+                    (list ((ds, c or charset) for ds, c in decoded), ** kw)
+        if not isinstance (result, Header) :
+            if isinstance (result, str) :
+                try :
+                    result  = result.decode (charset)
+                except UnicodeError :
+                    charset = "utf-8"
+                    result  = result.decode (charset)
+            try :
+                result.encode ("ascii")
+            except UnicodeError :
+                result = Header (s, charset = charset, ** kw)
+        return result
+    # end def header
 
     def open (self) :
         if self.server is None :
@@ -135,7 +182,17 @@ class SMTP (TFL.Meta.Object) :
         if "Date" not in email :
             email ["Date"] = formatdate ()
         if "Content-type" not in email :
-            email ["Content-type"] = """text/plain; charset="iso-8859-1" """
+            charset = self.charset
+            email ["Content-type"] = \
+                """text/plain; charset="%s" """ % (charset, )
+        else :
+            charset = email.get_charset ()
+        for k in "Subject", "To", "From", "CC", "BCC" :
+            vs = email.get_all (k)
+            if vs :
+                del email [k]
+                for v in vs :
+                    email [k] = self.header (v, charset, header_name = k)
         self.send \
             ( envelope ["From"], list (to), email.as_string ()
             , mail_opts, rcpt_opts
