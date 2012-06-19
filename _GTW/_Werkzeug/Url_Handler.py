@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Jan-2012 (CT) Creation
+#    19-Jun-2012 (CT) Fix `__repr__`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ class Url_Handler (TFL.Meta.Object) :
     # end def matching_path
 
     def __repr__ (self) :
-        return repr ((self.pat, self.handler, self.kw))
+        return repr ((self.pat, self.type, self.kw))
     # end def __repr__
 
 # end class Url_Handler
