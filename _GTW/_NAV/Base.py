@@ -301,6 +301,9 @@
 #     8-Jun-2012 (CT) Remove unused imports, import `signal` in `Stopper`
 #    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `_Dir_.prefix`
 #    18-Jun-2012 (CT) Rename `email` to `email_from`
+#    19-Jun-2012 (CT) Add exception handling to `send_email`
+#    19-Jun-2012 (CT) Move default for `_email_from` to `Root`,
+#                     ditto for some other defaults
 #    ««revision-date»»···
 #--
 
@@ -377,24 +380,18 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     __metaclass__              = _Meta_
 
-    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
-    error_email_template       = "error_email"
     hidden                     = False
     href                       = ""
     implicit                   = False
-    input_encoding             = "iso-8859-15"
     nick                       = ""
     parent                     = None
     pid                        = None
-    q_prefix                   = "q"
-    qx_prefix                  = "qx"
     rank                       = 10
     short_title                = ""
     title                      = ""
     top                        = None
 
     _dump_type                 = "dict"
-    _email_from                = None   ### default from address
     _login_required            = False
     _permission                = None
     _template                  = None
@@ -405,7 +402,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     injected_templates         = ()
 
     ### ("GET", "HEAD", "POST", "DELETE", "PUT")
-    SUPPORTED_METHODS   = set (("GET", ))
+    SUPPORTED_METHODS          = set (("GET", ))
 
     def __init__ (self, parent = None, ** kw) :
         self._kw    = dict (kw)
@@ -413,7 +410,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if "input_encoding" in kw :
             encoding = kw ["input_encoding"]
         else :
-            encoding = getattr (parent, "input_encoding", self.input_encoding)
+            encoding = getattr (parent, "input_encoding", Root.input_encoding)
         if "Media" in kw :
             self._Media = kw.pop ("Media")
         self._exclude_robots = kw.pop ("exclude_robots", False)
@@ -652,11 +649,37 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def send_email (self, template, ** context) :
         email_from = context.get ("email_from")
         if not email_from :
-            context ["email_from"] = self.email_from
-        if self.smtp :
+            context ["email_from"] = email_from = self.email_from
+        smtp = self.smtp
+        if smtp :
+            smtp.charset = self.encoding
             text = self.top.Templateer.render (template, context).encode \
                 (self.encoding, "replace")
-            self.smtp (text)
+            try :
+                smtp (text)
+            except Exception as exc :
+                print "Exception:", exc
+                print \
+                    ( "When trying to send email from", email_from
+                    , "to", context.get ("email_to", "<Unkown>")
+                    )
+                print text
+                try :
+                    kw = dict \
+                        ( context
+                        , email_from    = self.email_from
+                        , email_to      = self.email_from
+                        , email_subject =
+                            ( "Error when trying to send email from %s: %s"
+                            % (email_from, exc)
+                            )
+                        , message       = text
+                        , NAV           = self.top
+                        , page          = self
+                        )
+                    self.send_email (self.error_email_template, ** kw)
+                except Exception :
+                    pass
         else :
             print "*** Cannot send email because `smtp` is undefined ***"
             print text
@@ -1213,27 +1236,33 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
-    auto_delegate           = False  ### useful if not served by web-app
-    Cache_Pickler           = set ()
-    copyright_start         = None
-    copyright_url           = None
-    Create_Scope            = None
-    DEBUG                   = False
-    language                = "en"
-    Media_Parameters        = None
-    name                    = "/"
-    owner                   = None
-    redirects               = {}
-    Run_on_Launch           = []
-    smtp                    = None
-    src_root                = ""
-    target                  = None
-    translator              = None
+    anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
+    auto_delegate              = False  ### useful if not served by web-app
+    error_email_template       = "error_email"
+    Cache_Pickler              = set ()
+    copyright_start            = None
+    copyright_url              = None
+    Create_Scope               = None
+    DEBUG                      = False
+    input_encoding             = "iso-8859-15"
+    language                   = "en"
+    Media_Parameters           = None
+    name                       = "/"
+    owner                      = None
+    q_prefix                   = "q"
+    qx_prefix                  = "qx"
+    redirects                  = {}
+    Run_on_Launch              = []
+    smtp                       = None
+    src_root                   = ""
+    target                     = None
+    translator                 = None
 
-    _dump_type              = "GTW.NAV.Root.from_dict_list \\"
-    _login_required         = False
-    _permission             = None
-    _webmaster              = None
+    _dump_type                 = "GTW.NAV.Root.from_dict_list \\"
+    _email_from                = None   ### default from address
+    _login_required            = False
+    _permission                = None
+    _webmaster                 = None
 
     class E_Type_Desc (TFL.Meta.Object) :
 
