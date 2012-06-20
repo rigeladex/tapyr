@@ -86,7 +86,10 @@ class _Base_ (TFL.Meta.Object) :
 
     def __call__ (self, request, response, body) :
         self.set_mime_type (request, response, body)
-        response.data = self.rendered (request, response, body)
+        result = self.rendered (request, response, body)
+        if result :
+            response.write (result)
+        return result
     # end def __call__
 
     @property

@@ -27,9 +27,6 @@
 #
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
-#    12-Jun-2012 (CT) Continue creation
-#    13-Jun-2012 (CT) Continue creation..
-#    15-Jun-2012 (CT) Continue creation...
 #    ««revision-date»»···
 #--
 
@@ -73,7 +70,7 @@ class HTTP_Method (TFL.Meta.Object) :
     _renderers                 = (GTW.RST.Mime_Type.JSON, )
 
     def __call__ (self, resource, request) :
-        response = resource.HTTP.Response ()
+        response = resource.Response (request)
         if self._do_change_info (resource, request, response) :
             body = self._response_body (resource, request, response)
             if body is not None :
@@ -217,7 +214,7 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
     needs_body                 = False
 
     def __call__ (self, resource, request) :
-        response = resource.HTTP.Response ()
+        response = resource.Response (request)
         methods = sorted \
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
             if resource.allow_method (m, request)

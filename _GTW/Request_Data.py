@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -28,7 +28,7 @@
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
-#    20-Jan-2010 (MG) Check's added to make sure te values in the original
+#    20-Jan-2010 (MG) Check's added to make sure the values in the original
 #                     data dict contains exactly one element
 #    20-Jan-2010 (MG) Support dict's which don't have lists as value's
 #    29-Jan-2010 (MG) `__getitem__` and `get` fixed
@@ -40,6 +40,7 @@
 #    14-Nov-2011 (CT) Change `iteritems` to `_convert_element`
 #    14-Nov-2011 (CT) Add `__nonzero__`
 #    21-Nov-2011 (CT) Change `_convert_element` to `logging` instead of `assert`
+#    20-Jun-2012 (CT) Add `Request_Data_List`; factor/rewrite `_normalized`
 #    ««revision-date»»···
 #--
 
@@ -59,23 +60,6 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
         self.data = data
     # end def __init__
 
-    def _convert_element (self, key, value) :
-        if isinstance (value, (list, tuple)) :
-            if len (value) != 1 :
-                logging.warning \
-                    ( "Got multiple values for '%s', using '%s', ignoring: %s"
-                    , key, value [0], value [1:]
-                    )
-            value = value [0]
-        if value is not None and not isinstance (value, unicode) :
-            return unicode (value, "utf8", "replace")
-        return value
-    # end def _convert_element
-
-    def __getitem__ (self, key) :
-        return self._convert_element (key, self.data [key])
-    # end def __getitem__
-
     def get (self, key, default = None) :
         return self._convert_element (key, self.data.get (key, default))
     # end def get
@@ -94,9 +78,30 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
         return self._convert_element (key, self.data.pop (key, default))
     # end def pop
 
+    def _convert_element (self, key, value) :
+        if isinstance (value, (list, tuple)) :
+            if len (value) != 1 :
+                logging.warning \
+                    ( "Got multiple values for '%s', using '%s', ignoring: %s"
+                    , key, value [0], value [1:]
+                    )
+            value = value [0]
+        return self._normalized (value)
+    # end def _convert_element
+
+    def _normalized (self, value) :
+        if isinstance (value, (str, bytes)) :
+            return unicode (value, "utf8", "replace")
+        return value
+    # end def _normalized
+
     def __contains__ (self, item) :
         return item in self.data
     # end def __contains__
+
+    def __getitem__ (self, key) :
+        return self._convert_element (key, self.data [key])
+    # end def __getitem__
 
     def __iter__ (self) :
         return iter (self.data)
@@ -111,6 +116,20 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     # end def __repr__
 
 Request_Data = _GTW_Request_Data_ # end class
+
+class _GTW_Request_Data_List_ (_GTW_Request_Data_) :
+    """Convert all values into lists during access."""
+
+    _real_name = "Request_Data_List"
+
+    def _convert_element (self, key, value) :
+        normalized = self._normalized
+        if isinstance (value, (list, tuple)) :
+            return list (normalized (x) for x in value)
+        return [normalized (value)]
+    # end def _convert_element
+
+Request_Data_List = _GTW_Request_Data_List_ # end class
 
 if __name__ != "__main__" :
     GTW._Export ("*")

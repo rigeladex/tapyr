@@ -47,6 +47,7 @@
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
 #     5-Jun-2012 (CT) Add logging to `_handle_fcgi`
 #    18-Jun-2012 (CT) Add option `-email_from` to `_GTW_Server_Base_._opts`
+#    20-Jun-2012 (CT) Add option `-UTP`, factor `_Pkg_Selector_Opt_`
 #    21-Jun-2012 (CT) Use `TFL.CAO.Opt.Time_Zone`, not home-grown code
 #    21-Jun-2012 (CT) Add option `-serve_static_files`
 #    ««revision-date»»···
@@ -70,12 +71,15 @@ import _TFL._Meta.Once_Property
 
 import datetime, logging, sys
 
-class HTTP_Opt (TFL.CAO._Spec_) :
-    """Select HTTP server framework to use."""
+class _Pkg_Selector_Opt_ (TFL.CAO._Spec_) :
+    ### Base class for options selecting a specific GTW package
+
+    _name    = None ### redefine
+    _default = None ### redefine
 
     def __init__ (self, ** kw) :
         assert "name" not in kw
-        kw ["name"] = "HTTP"
+        kw ["name"] = self._name
         if "description" not in kw :
             kw ["description"] = self.__class__.__doc__
         self.__super.__init__ (max_number = 1, ** kw)
@@ -83,19 +87,48 @@ class HTTP_Opt (TFL.CAO._Spec_) :
 
     def cook (self, value, cao = None) :
         if not value :
-            value = "Werkzeug"
+            value = self._default
         m = GTW._Import_Module ("_" + value)
         result = getattr (m, value)
-        result._Import_Module ("Application")
         return result
     # end def cook
 
     def _set_default (self, default) :
-        ### Make `Werkzeug` sticky
-        self.__super._set_default (default or "Werkzeug")
+        ### Make `cls._default` sticky
+        self.__super._set_default (default or self._default)
     # end def _set_default
 
+# end class _Pkg_Selector_Opt_
+
+class HTTP_Opt (_Pkg_Selector_Opt_) :
+    """Select HTTP server framework to use."""
+
+    _name    = "HTTP"
+    _default = "Werkzeug"
+
+    def cook (self, value, cao = None) :
+        result = self.__super.cook (value, cao)
+        result._Import_Module ("Application")
+        return result
+    # end def cook
+
 # end class HTTP_Opt
+
+class UTP_Opt (_Pkg_Selector_Opt_) :
+    """Select Url Tree Package to use, e.g., NAV or RST."""
+
+    _name    = "UTP"
+    _default = "RST"
+
+    def cook (self, value, cao = None) :
+        result = self.__super.cook (value, cao)
+        if not value :
+            value = self._default
+        result._Import_Module ("import_" + value)
+        return result
+    # end def cook
+
+# end class UTP_Opt
 
 class _GTW_Sub_Command_ (MOM._Sub_Command_) :
 
@@ -141,6 +174,7 @@ class GTW_Command (MOM.Command) :
             , "-template_file:S"
             , "-TEST:B"
             , HTTP_Opt (default = "Werkzeug")
+            , UTP_Opt  (default = "NAV")
             , TFL.CAO.Opt.Date_Time_Delta
                 ( name          = "edit_session_ttl"
                 , description   = "Time to live for edit session"
@@ -228,7 +262,7 @@ class GTW_Command (MOM.Command) :
         scope = self._handle_load (cmd)
         if cmd.wsgi :
             wsgi = self._handle_wsgi (cmd)
-            top  = GTW.NAV.Root.top
+            top  = getattr (cmd.UTP.Root, "top", None)
         TFL.Environment.py_shell ()
     # end def _handle_shell
 

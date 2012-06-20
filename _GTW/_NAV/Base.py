@@ -304,6 +304,7 @@
 #    19-Jun-2012 (CT) Add exception handling to `send_email`
 #    19-Jun-2012 (CT) Move default for `_email_from` to `Root`,
 #                     ditto for some other defaults
+#    20-Jun-2012 (CT) Restrain `__repr__`, remove `__str__`, add `formatted`
 #    ««revision-date»»···
 #--
 
@@ -536,6 +537,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def file_stem (self) :
         return pnorm (pjoin (self.prefix, self.base))
     # end def file_stem
+
+    def formatted (self, sep = "\n    ") :
+        kvs = ("%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
+        return "<%s %s\n    %s\n  >" % (self.Type, self.name, sep.join (kvs))
+    # end def formatted
 
     @property
     def has_children (self) :
@@ -856,14 +862,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def __getattr__
 
     def __repr__ (self) :
-        return "<%s %s\n    %s\n  >" % \
-            (self.Type, self.name, str (self).replace (", ", "\n    "))
+        return "<%s %s: %s>" % (self.Type, self.name, self.abs_href)
     # end def __repr__
-
-    def __str__ (self) :
-        return ", ".join \
-            ( "%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
-    # end def __str__
 
     ###
     def active_page (self, page, level = 0) :

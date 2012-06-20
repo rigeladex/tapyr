@@ -27,11 +27,6 @@
 #
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
-#    11-Jun-2012 (CT) Continue creation
-#    12-Jun-2012 (CT) Continue creation..
-#    13-Jun-2012 (CT) Continue creation...
-#    15-Jun-2012 (CT) Continue creation....
-#    19-Jun-2012 (CT) Continue creation.....
 #    ««revision-date»»···
 #--
 
@@ -95,12 +90,12 @@ class _RST_Base_ (TFL.Meta.Object) :
     _r_permission              = None             ### read permission
     _w_permission              = None             ### write permission
 
-    DELETE                     = None
+    DELETE                     = None             ### redefine if necessary
     GET                        = GTW.RST.GET      ### needs    to be redefined
     HEAD                       = GTW.RST.HEAD     ### needs    to be redefined
     OPTIONS                    = GTW.RST.OPTIONS  ### unlikely to be redefined
-    POST                       = None
-    PUT                        = None
+    POST                       = None             ### redefine if necessary
+    PUT                        = None             ### redefine if necessary
 
     def __init__ (self, ** kw) :
         self.parent = parent = kw.pop ("parent", None)
@@ -381,13 +376,17 @@ class RST_Root (_Node_) :
     Create_Scope               = None
     DEBUG                      = False
     default_locale_code        = "en"
-    ignore_picky_accept        = False            ### redefine if necessary
+    encoding                   = "utf-8"          ### output encoding
+    ignore_picky_accept        = False
     input_encoding             = "iso-8859-15"
     languages                  = set (("en", ))
     name                       = ""
     prefix                     = ""
 
     _needs_parent              = False
+
+    from _GTW._RST.Request  import Request  as Request_Type
+    from _GTW._RST.Response import Response as Response_Type
 
     def __init__ (self, HTTP, ** kw) :
         if "copyright_start" not in kw :
@@ -405,17 +404,6 @@ class RST_Root (_Node_) :
     def __call__ (self, environ, start_response) :
         return self.wsgi_app (environ, start_response)
     # end def __call__
-
-    @Once_Property
-    def Request_Type (self) :
-        import _GTW._RST.Request
-        return GTW.RST.Request
-    # end def Request_Type
-
-    @Once_Property
-    def Response_Type (self) :
-        return self.HTTP.Response
-    # end def Response_Type
 
     @Once_Property
     def scope (self) :
@@ -440,11 +428,15 @@ class RST_Root (_Node_) :
     # end def allow
 
     def Request (self, environ) :
-        return self.Request_Type  (self, environ)
+        result = self.Request_Type  (self, environ)
+        result.charset = self.encoding
+        return result
     # end def Request
 
-    def Response (self, * args, ** kw) :
-        return self.Response_Type (* args, ** kw)
+    def Response (self, request, * args, ** kw) :
+        result = self.Response_Type (self, request, * args, ** kw)
+        result.charset = self.encoding
+        return result
     # end def Response
 
     def resource_from_href (self, href) :
@@ -530,7 +522,6 @@ class RST_Root (_Node_) :
     def _http_response_error (self, request, exc) :
         pass ### XXX
     # end def _http_response_error
-
 
 Root = RST_Root # end class
 

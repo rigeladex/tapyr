@@ -47,6 +47,7 @@
 #                     `GTW.NAV.Root.top.Run_on_Launch`
 #     3-Jan-2012 (CT) Factor `Url_Handler`
 #    13-Jun-2012 (CT) Import explicitly from `werkzeug` modules
+#    20-Jun-2012 (CT) Factor `GTW.Werkzeug.Profiler`
 #    ««revision-date»»···
 #--
 
@@ -109,39 +110,19 @@ class _Werkzeug_Application_ (GTW._Application_) :
 
     def run_development_server \
             ( self
-            , port                 = 8080
             , host                 = "localhost"
-            , use_profiler         = False
-            , profile_log_files    = ()
-            , profile_sort_by      = ('time', 'calls')
-            , profile_restrictions = ()
-            , profile_delete_logs  = False
+            , port                 = 8080
+            , profiler             = None
             , reload_extra_files   = None
             ) :
         from werkzeug import serving
-        app = self
-        use_debugger = self._server_opts.get ("debug",       False)
-        use_reloader = self._server_opts.get ("auto_reload", False)
-        if use_profiler :
-            from werkzeug.contrib.profiler import \
-                ProfilerMiddleware, MergeStream
-            import os, sys
-            stream       = None
-            file_handles = []
-            for fn in profile_log_files :
-                if hasattr (fn, "write") :
-                    file_handles.append (fn)
-                elif fn == "stderr" :
-                    file_handles.append (sys.stderr)
-                else :
-                    if profile_delete_logs and os.path.isfile (fn) :
-                        os.unlink (fn)
-                    file_handles.append (open (fn, "w"))
-            if file_handles :
-                stream = MergeStream (* file_handles)
-            app    = ProfilerMiddleware \
-                (app, stream, profile_sort_by, profile_restrictions)
+        if profiler is not None :
+            app          = profiler (self)
             use_reloader = use_debugger = False
+        else :
+            app          = self
+            use_debugger = self._server_opts.get ("debug",       False)
+            use_reloader = self._server_opts.get ("auto_reload", False)
         serving.run_simple \
             ( host, port, app
             , use_reloader = use_reloader

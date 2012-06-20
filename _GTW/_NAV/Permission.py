@@ -31,6 +31,7 @@
 #    26-Feb-2010 (CT) `Is_Superuser` added
 #     8-Jun-2012 (CT) Add `Login_Required`, add guards for `user`
 #    11-Jun-2012 (CT) Add `rank`
+#    20-Jun-2012 (CT) Remove dependency on `GTW.NAV.Root.top`
 #    ««revision-date»»···
 #--
 
@@ -56,15 +57,16 @@ class In_Group (_Permission_) :
         self.name = name
     # end def __init__
 
-    @property
-    def group (self) :
-        scope = GTW.NAV.Root.top.scope
+    def group (self, page) :
+        scope = page.top.scope
         Group = scope ["Auth.Group"]
         return Group.instance (self.name)
     # end def group
 
     def predicate (self, user, page, * args, ** kw) :
-        return user and self.group in user.groups
+        if user :
+            group = self.group (page)
+            return group in user.groups
     # end def predicate
 
 # end class In_Group

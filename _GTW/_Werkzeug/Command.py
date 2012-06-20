@@ -44,6 +44,7 @@
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #     4-Jun-2012 (CT) Add `-log_level`, pass to `HTTP.Application`
 #     4-Jun-2012 (MG) `_handle_run_server` support for `host` added
+#    20-Jun-2012 (CT) Use `cmd.UTP` instead of hard-coded `GTW.NAV`
 #    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
 #    28-Jun-2012 (CT) Call `init_app_cache` unconditionally
 #    17-Jul-2012 (MG) `_wsgi_app` move `Break` after the generation of the
@@ -57,8 +58,6 @@ from   _TFL                import TFL
 from   _GTW                import GTW
 
 import _GTW._AFS._MOM.Form_Cache
-import _GTW._NAV.Template_Media_Cache
-import _GTW._NAV._E_Type.Site_Admin
 import _GTW._OMP.Command
 import _GTW._Werkzeug
 
@@ -133,16 +132,16 @@ class GT2W_Command (GTW.OMP.Command) :
         pass
     # end def fixtures
 
-    def init_app_cache (self, nav) :
+    def init_app_cache (self, root) :
         cache_path = self.cache_path ()
         def load_cache () :
             try :
-                nav.load_cache  (cache_path)
+                root.load_cache  (cache_path)
             except IOError :
                 pass
-        if nav.DEBUG :
+        if root.DEBUG :
             try :
-                nav.store_cache (cache_path)
+                root.store_cache (cache_path)
             except EnvironmentError as exc :
                 print "***", exc, cache_path
                 load_cache ()
@@ -151,6 +150,7 @@ class GT2W_Command (GTW.OMP.Command) :
     # end def init_app_cache
 
     def nav_admin_group (self, name, title, * pnss, ** kw) :
+        import _GTW._NAV._E_Type.Site_Admin
         return dict \
             ( sub_dir        = name
             , short_title    = kw.pop ("short_title", name)
@@ -167,15 +167,15 @@ class GT2W_Command (GTW.OMP.Command) :
         kw  = dict (port = cmd.port, host = getattr (cmd, "host", "localhost"))
         if cmd.watch_media_files :
             kw ["reload_extra_files"] = getattr \
-                (GTW.NAV.Root.top, "Media_Filenames", ())
+                (cmd.UTP.Root.top, "Media_Filenames", ())
         app.run_development_server (** kw)
     # end def _handle_run_server
 
     def _handle_setup_cache (self, cmd) :
-        app = self._wsgi_app (cmd)
-        nav = GTW.NAV.Root.top
-        if not nav.DEBUG :
-            nav.store_cache (self.cache_path ())
+        app  = self._wsgi_app (cmd)
+        root = cmd.UTP.Root.top
+        if not root.DEBUG :
+            root.store_cache (self.cache_path ())
     # end def _handle_setup_cache
 
     def _handle_wsgi (self, cmd) :
@@ -203,14 +203,16 @@ class GT2W_Command (GTW.OMP.Command) :
         return result
     # end def _load_I18N
 
-    def _setup_cache (self) :
+    def _setup_cache (self, cmd) :
         if not self._setup_cache_p :
-            CP = GTW.NAV.Root.Cache_Pickler
-            mc_fix = "media/v"
-            mc_dir = sos.path.join (self.web_src_root, mc_fix)
-            CP.add (GTW.AFS.MOM.Form_Cache)
-            CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
-            self._setup_cache_p = True
+            CP = getattr (cmd.UTP.Root, "Cache_Pickler", None)
+            if CP is not None :
+                import _GTW._NAV.Template_Media_Cache
+                mc_fix = "media/v"
+                mc_dir = sos.path.join (self.web_src_root, mc_fix)
+                CP.add (GTW.AFS.MOM.Form_Cache)
+                CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
+        self._setup_cache_p = True
     # end def _setup_cache
 
     def _static_handler (self, cmd) :
@@ -224,7 +226,7 @@ class GT2W_Command (GTW.OMP.Command) :
     def _wsgi_app (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N   (cmd)
-        self._setup_cache ()
+        self._setup_cache (cmd)
         HTTP           = cmd.HTTP
         nav            = self.create_nav \
             (cmd, apt, url, Create_Scope = self._load_scope)
