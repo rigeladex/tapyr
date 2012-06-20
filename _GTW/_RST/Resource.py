@@ -31,6 +31,7 @@
 #    12-Jun-2012 (CT) Continue creation..
 #    13-Jun-2012 (CT) Continue creation...
 #    15-Jun-2012 (CT) Continue creation....
+#    19-Jun-2012 (CT) Continue creation.....
 #    ««revision-date»»···
 #--
 
@@ -86,9 +87,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     _real_name                 = "_Base_"
 
     hidden                     = False
-    ignore_picky_accept        = False            ### redefine if necessary
     implicit                   = False
-    input_encoding             = "iso-8859-15"
     pid                        = None
 
     _exclude_robots            = True
@@ -112,7 +111,7 @@ class _RST_Base_ (TFL.Meta.Object) :
             , prefix = "_"
             )
         encoding = kw.get ("input_encoding") or \
-            getattr (parent, "input_encoding", self.input_encoding)
+            getattr (parent, "input_encoding", Root.input_encoding)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding)
@@ -381,6 +380,10 @@ class RST_Root (_Node_) :
 
     Create_Scope               = None
     DEBUG                      = False
+    default_locale_code        = "en"
+    ignore_picky_accept        = False            ### redefine if necessary
+    input_encoding             = "iso-8859-15"
+    languages                  = set (("en", ))
     name                       = ""
     prefix                     = ""
 
@@ -398,6 +401,21 @@ class RST_Root (_Node_) :
         self.pop_to_self      ("name", "prefix")
         self.__super.__init__ (** kw)
     # end def __init__
+
+    def __call__ (self, environ, start_response) :
+        return self.wsgi_app (environ, start_response)
+    # end def __call__
+
+    @Once_Property
+    def Request_Type (self) :
+        import _GTW._RST.Request
+        return GTW.RST.Request
+    # end def Request_Type
+
+    @Once_Property
+    def Response_Type (self) :
+        return self.HTTP.Response
+    # end def Response_Type
 
     @Once_Property
     def scope (self) :
@@ -422,8 +440,12 @@ class RST_Root (_Node_) :
     # end def allow
 
     def Request (self, environ) :
-        result = self.HTTP.Request (self, environ)
+        return self.Request_Type  (self, environ)
     # end def Request
+
+    def Response (self, * args, ** kw) :
+        return self.Response_Type (* args, ** kw)
+    # end def Response
 
     def resource_from_href (self, href) :
         href       = href.strip (u"/")
