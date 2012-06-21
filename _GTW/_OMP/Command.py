@@ -47,6 +47,8 @@
 #     1-Jun-2012 (CT) Add sub-command `fcgi`
 #     5-Jun-2012 (CT) Add logging to `_handle_fcgi`
 #    18-Jun-2012 (CT) Add option `-email_from` to `_GTW_Server_Base_._opts`
+#    21-Jun-2012 (CT) Use `TFL.CAO.Opt.Time_Zone`, not home-grown code
+#    21-Jun-2012 (CT) Add option `-serve_static_files`
 #    ««revision-date»»···
 #--
 
@@ -114,7 +116,6 @@ class GTW_Command (MOM.Command) :
         , local_code        = "en_US"
         , output_encoding   = "utf-8"
         , template_file     = "html/static.jnj"
-        , time_zone         = "UTC"
         , user_session_ttl  = CAL.Date_Time_Delta (days = 3)
         )
 
@@ -125,9 +126,9 @@ class GTW_Command (MOM.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "-auto_reload:B=yes"
+            ( "-auto_reload:B"
                   "?Autoload of werkzeug, only works with no sqlite db"
-            , "-Break:B?Enter debugger before starting tornado/werkzeug"
+            , "-Break:B?Enter debugger right after creating wsgi app"
             , "-debug:B=no"
             , "-email_from:S"
                 "?Email address to use as from-address for emails sent "
@@ -135,10 +136,10 @@ class GTW_Command (MOM.Command) :
             , "-languages:T,?Languages for which to load translations"
             , "-locale_code:S?Code of locale to use"
             , "-port:I=8090?Server port"
+            , "-serve_static_files:B?Serve static files"
             , "-smtp_server:S=localhost?SMTP server used to send emails"
             , "-template_file:S"
             , "-TEST:B"
-            , "-time_zone:S?Time zone to use"
             , HTTP_Opt (default = "Werkzeug")
             , TFL.CAO.Opt.Date_Time_Delta
                 ( name          = "edit_session_ttl"
@@ -150,6 +151,7 @@ class GTW_Command (MOM.Command) :
             , TFL.CAO.Opt.Output_Encoding
                 ( description   = "Default encoding for generated html"
                 )
+            , TFL.CAO.Opt.Time_Zone ()
             , TFL.CAO.Opt.Date_Time_Delta
                 ( name          = "user_session_ttl"
                 , description   = "Time to live for user session (cookie)"
@@ -165,6 +167,11 @@ class GTW_Command (MOM.Command) :
 
     class _GTW_Run_Server_ (_GTW_Server_Base_) :
         """Run as application server."""
+
+        _defaults           = dict \
+            ( auto_reload        = True
+            , serve_static_files = True
+            )
 
     _Run_Server_ = _GTW_Run_Server_ # end class
 

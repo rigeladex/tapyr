@@ -44,6 +44,7 @@
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #     4-Jun-2012 (CT) Add `-log_level`, pass to `HTTP.Application`
 #     4-Jun-2012 (MG) `_handle_run_server` support for `host` added
+#    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
 #    ««revision-date»»···
 #--
 
@@ -184,6 +185,21 @@ class GT2W_Command (GTW.OMP.Command) :
         return result
     # end def _create_scope
 
+    def _load_I18N (self, cmd) :
+        result = None
+        if cmd.load_I18N :
+            try :
+                result = TFL.I18N.load \
+                    ( * cmd.languages
+                    , domains    = ("messages", )
+                    , use        = cmd.locale_code or "en"
+                    , locale_dir = sos.path.join (self.app_dir, "locale")
+                    )
+            except ImportError :
+                pass
+        return result
+    # end def _load_I18N
+
     def _setup_cache (self) :
         if not self._setup_cache_p :
             CP = GTW.NAV.Root.Cache_Pickler
@@ -194,30 +210,22 @@ class GT2W_Command (GTW.OMP.Command) :
             self._setup_cache_p = True
     # end def _setup_cache
 
+    def _static_handler (self, cmd) :
+        if cmd.serve_static_files :
+            prefix         = "media"
+            media_dir      = sos.path.join (self.web_src_root, "media")
+            return cmd.HTTP.Static_File_Handler \
+                (prefix, media_dir, GTW.static_file_map)
+    # end def _static_handler
+
     def _wsgi_app (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
-        translations = None
-        if cmd.load_I18N :
-            try :
-                ldir = sos.path.join (self.app_dir, "locale")
-                translations = TFL.I18N.load \
-                    ( * cmd.languages
-                    , domains    = ("messages", )
-                    , use        = cmd.locale_code or "en"
-                    , locale_dir = ldir
-                    )
-            except ImportError :
-                pass
-        TFL.user_config.set_defaults \
-            (time_zone = TFL.user_config.get_tz (cmd.time_zone))
+        self._load_I18N   (cmd)
         self._setup_cache ()
-        prefix         = "media"
-        media_dir      = sos.path.join (self.web_src_root, "media")
+        HTTP           = cmd.HTTP
         nav            = self.create_nav \
             (cmd, apt, url, Create_Scope = self._load_scope)
-        HTTP           = nav.HTTP
-        static_handler = HTTP.Static_File_Handler \
-            (prefix, media_dir, GTW.static_file_map)
+        static_handler = self._static_handler (cmd)
         app            = HTTP.Application \
             ( ("", HTTP.NAV_Request_Handler, dict (nav_root = nav))
             , Session_Class       = GTW.File_Session
