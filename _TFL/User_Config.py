@@ -30,6 +30,8 @@
 #    20-Jul-2011 (CT) `get_tz` and `set_defaults` added
 #    30-Apr-2012 (CT) Convert `tz` to lazy `Once_Property`, allow
 #                     `ImportError` by `dateutil`
+#    21-Jun-2012 (CT) Handle `time_zone` properly in `set_default`
+#    21-Jun-2012 (CT) Autoconvert `time_zone` values passed as string
 #    ««revision-date»»···
 #--
 
@@ -80,6 +82,8 @@ class User_Config (threading.local) :
 
     @time_zone.setter
     def time_zone (self, value) :
+        if isinstance (value, basestring) :
+            value = self.get_tz (value)
         self._time_zone = value
     # end def time_zone
 
@@ -109,13 +113,20 @@ class User_Config (threading.local) :
 
     def set_default (self, name, value) :
         """Set default of attribute `name` to `value`."""
+        if name == "_initialzed" :
+            raise AttributeError ("Cannot set default for _initialzed")
+        if name == "time_zone" :
+            name = "_time_zone"
+            if isinstance (value, basestring) :
+                value = self.get_tz (value)
         setattr (self.__class__, name, value)
+        return value
     # end def set_default
 
     def set_defaults (self, ** kw) :
         cls = self.__class__
         for k, v in kw.iteritems () :
-            setattr (cls, k, v)
+            self.set_defaults (k, v)
     # end def set_defaults
 
 # end class User_Config
