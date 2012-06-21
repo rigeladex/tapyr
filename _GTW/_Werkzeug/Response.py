@@ -35,6 +35,8 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
+import _GTW._Werkzeug
+
 from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL._Meta.M_Class
