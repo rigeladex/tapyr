@@ -93,6 +93,9 @@
 #     4-Jun-2012 (CT) Add `vals` to `Help.topics`
 #     4-Jun-2012 (CT) Improve output of `Help`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#    21-Jun-2012 (CT) Add `Time_Zone`; factor `_User_Config_Entry_`, `cook_o`
+#    21-Jun-2012 (CT) Add and use `implied_value` to fix help output for `Bool`
+#    21-Jun-2012 (CT) Change `CAO.__getattr__` to cache results
 #    ««revision-date»»···
 #--
 
@@ -109,6 +112,7 @@ import _TFL.Environment
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL._Meta.Property
 import _TFL.predicate
 import _TFL.r_eval
 
@@ -192,6 +196,7 @@ class _Spec_ (TFL.Meta.Object) :
     alias         = None
     auto_split    = None
     choices       = None
+    implied_value = None
     needs_value   = True
 
     prefix        = ""
@@ -246,9 +251,12 @@ class _Spec_ (TFL.Meta.Object) :
         return value
     # end def cook
 
+    ### `cook_o` can be redefined to act on the result of `cook`
+    cook_o = TFL.Meta.Alias_Property ("cook")
+
     def cooked (self, value, cao = None) :
         auto_split = self.auto_split
-        cook       = self.cook
+        cook       = self.cook_o
         if auto_split and value and auto_split in value :
             values = value.split (auto_split)
         else :
@@ -351,13 +359,12 @@ class _Config_ (_Spec_O_) :
 
 # end class _Config_
 
-class _Encoding_ (_Spec_O_) :
-    """Base class for encoding option types"""
+class _User_Config_Entry_ (_Spec_O_) :
+    """Mixin for options that go into TFL.user_config."""
 
     def __init__ (self, ** kw) :
-        assert "name" not in kw
-        kw ["name"] = name = self.__class__.__name__.lower ()
-        self.abbr   = name.rsplit ("_", 1) [0]
+        if "name" not in kw :
+            kw ["name"] = self.__class__.__name__.lower ()
         if "default" not in kw :
             kw ["default"] = self._get_default ()
         if "description" not in kw :
@@ -365,13 +372,34 @@ class _Encoding_ (_Spec_O_) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    def cook (self, value, cao = None) :
-        result = self.__super.cook (value, cao)
+    @property
+    def name_in_user_config (self) :
+        return self.name
+    # end def name_in_user_config
+
+    def cook_o (self, value, cao = None) :
+        result = self.__super.cook_o (value, cao)
         if result :
             from _TFL.User_Config import user_config
-            user_config.set_default (self.name, result)
+            result = user_config.set_default (self.name_in_user_config, result)
         return result
-    # end def cook
+    # end def cook_o
+
+    def _get_default (self) :
+        return None
+    # end def _get_default
+
+# end class _User_Config_Entry_
+
+class _Encoding_ (_User_Config_Entry_) :
+    """Base class for encoding option types"""
+
+    def __init__ (self, ** kw) :
+        assert "name" not in kw
+        kw ["name"] = name = self.__class__.__name__.lower ()
+        self.abbr   = name.rsplit ("_", 1) [0]
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     def _get_default (self) :
         import locale
@@ -403,6 +431,7 @@ class _Number_ (_Spec_) :
 class Bool (_Spec_O_) :
     """Option with a boolean value"""
 
+    implied_value = "True"
     needs_value   = False
     type_abbr     = "B"
 
@@ -891,40 +920,6 @@ class Output_Encoding (_Encoding_) :
     """Default encoding for output."""
 # end class Output_Encoding
 
-class Set (_Spec_) :
-    """Argument or option that specifies one element of a set of choices"""
-
-    def __init__ (self, choices, ** kw) :
-        self.choices = set (choices)
-        self.__super.__init__ (** kw)
-    # end def __init__
-
-    def cook (self, value, cao = None) :
-        if value and value not in self.choices :
-            raise Err \
-                ( "Unkown value `%s` for %s\n    Specify one of: %s"
-                % (value, self, sorted (self.choices))
-                )
-        return value
-    # end def cook
-
-# end class Set
-
-class Str (_Spec_) :
-    """Argument or option with a string value"""
-
-    type_abbr     = "S"
-
-# end class Str
-
-class Str_AS (_Spec_) :
-    """Argument or option with a string value, auto-splitting"""
-
-    auto_split    = ","
-    type_abbr     = "T"
-
-# end class Str
-
 class Path (_Spec_) :
     """Argument or option with a filename or directory name as value"""
 
@@ -1031,6 +1026,49 @@ class Config (_Config_, Rel_Path) :
     # end def cook
 
 # end class Config
+
+class Set (_Spec_) :
+    """Argument or option that specifies one element of a set of choices"""
+
+    def __init__ (self, choices, ** kw) :
+        self.choices = set (choices)
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        if value and value not in self.choices :
+            raise Err \
+                ( "Unkown value `%s` for %s\n    Specify one of: %s"
+                % (value, self, sorted (self.choices))
+                )
+        return value
+    # end def cook
+
+# end class Set
+
+class Str (_Spec_) :
+    """Argument or option with a string value"""
+
+    type_abbr     = "S"
+
+# end class Str
+
+class Str_AS (_Spec_) :
+    """Argument or option with a string value, auto-splitting"""
+
+    auto_split    = ","
+    type_abbr     = "T"
+
+# end class Str
+
+class Time_Zone (_User_Config_Entry_) :
+    """Time zone to use."""
+
+    def _get_default (self) :
+        return "UTC"
+    # end def _get_default
+
+# end class Time_Zone
 
 class Bundle (TFL.Meta.Object) :
     """Model a bundle of values for arguments and options.
@@ -1342,9 +1380,9 @@ class CAO (TFL.Meta.Object) :
             return self._key_values [name]
         else :
             raise AttributeError (name)
-        result  = map [name]
+        result = map [name]
         if result is self._pending :
-            result = self._cooked (ao)
+            result = map [name] = self._cooked (ao)
         if ao.max_number == 1:
             if result :
                 result = result [0]
@@ -1383,6 +1421,37 @@ class CAO (TFL.Meta.Object) :
         return result
     # end def _cooked
 
+    def _finish_setup (self) :
+        sc = self._cmd._sub_cmd_choice
+        for co in self._opt_conf :
+            ckds = self._cooked (co)
+            for ckd in ckds :
+                if sc and sc.name in ckd :
+                    self._set_arg (sc, ckd.pop (sc.name))
+                for k, v in ckd.iteritems () :
+                    ao = None
+                    if k in self._opt_dict :
+                        ao = self._opt_dict [k]
+                        ao.default = v
+                    elif k in self._arg_dict :
+                        ao = self._arg_dict [k]
+                        ao.default = (v, )
+                    elif k not in self._key_values :
+                        self._key_values [k] = v
+        map = self._map
+        pending = self._pending
+        for k in self._opt_dict :
+            if k not in map or map [k] is pending :
+                ### pre-cook un-evaluated options to trigger side effects
+                ### if necessary (like _User_Config_Entry_)
+                getattr (self, k)
+        argv = self.argv
+        for spec in self._arg_list :
+            ckd = self._cooked (spec)
+            if ckd is not None :
+                argv.extend (ckd)
+    # end def _finish_setup
+
     def _handle_arg (self, arg, argv_it, check_bun = True) :
         bd  = self._bun_dict
         pat = self._bun_pat
@@ -1411,11 +1480,14 @@ class CAO (TFL.Meta.Object) :
             if unique :
                 n = self._opt_alias.get (unique, unique)
                 spec = self._opt_dict [n]
-                if spec.needs_value and v is None :
-                    try :
-                        v = argv_it.next ()
-                    except StopIteration :
-                        raise Err ("Option `%s` needs a value" % n)
+                if v is None :
+                    if spec.needs_value :
+                        try :
+                            v = argv_it.next ()
+                        except StopIteration :
+                            raise Err ("Option `%s` needs a value" % n)
+                    else :
+                        v = spec.implied_value
                 self._set_opt  (spec, v)
             else :
                 if matches :
@@ -1426,30 +1498,6 @@ class CAO (TFL.Meta.Object) :
                 else :
                     raise Err ("Unknown option `%s`" % (arg, ))
     # end def _handle_opt
-
-    def _finish_setup (self) :
-        sc = self._cmd._sub_cmd_choice
-        for co in self._opt_conf :
-            ckds = self._cooked (co)
-            for ckd in ckds :
-                if sc and sc.name in ckd :
-                    self._set_arg (sc, ckd.pop (sc.name))
-                for k, v in ckd.iteritems () :
-                    ao = None
-                    if k in self._opt_dict :
-                        ao = self._opt_dict [k]
-                        ao.default = v
-                    elif k in self._arg_dict :
-                        ao = self._arg_dict [k]
-                        ao.default = (v, )
-                    elif k not in self._key_values :
-                        self._key_values [k] = v
-        argv = self.argv
-        for spec in self._arg_list :
-            ckd = self._cooked (spec)
-            if ckd is not None :
-                argv.extend (ckd)
-    # end def _finish_setup
 
     def _parse_args (self, argv) :
         argv_it = iter (argv)
@@ -1527,7 +1575,9 @@ class CAO (TFL.Meta.Object) :
 
     def __getattr__ (self, name) :
         try :
-            return self._attribute_value (name)
+            result = self._attribute_value (name)
+            setattr (self, name, result)
+            return result
         except AttributeError :
             if name == "argn" :
                 return len (self.argv)
