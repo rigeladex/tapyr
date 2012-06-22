@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
+#    22-Jun-2012 (CT) Set `parent` in `_RST_Meta_.__call__` before `.__init__`
+#    22-Jun-2012 (CT) Refactor `RST__Node__GET._response`
 #    ««revision-date»»···
 #--
 
@@ -66,10 +68,15 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        if cls._needs_parent and kw.get ("parent") is None :
+        parent = kw.get ("parent")
+        if cls._needs_parent and parent is None :
             return (cls, args, kw)
-        result = cls.__m_super.__call__ (* args, ** kw)
-        result._after__init__ (kw)
+        ### set `result.parent` before calling `result.__init__` so
+        ### that `result.__getattr__` can use it right from the beginning
+        result = cls.__new__   (cls, * args, ** kw)
+        result.parent = kw.pop ("parent", None)
+        result.__init__        (* args, ** kw)
+        result._after__init__  (kw)
         return result
     # end def __call__
 
@@ -98,8 +105,8 @@ class _RST_Base_ (TFL.Meta.Object) :
     PUT                        = None             ### redefine if necessary
 
     def __init__ (self, ** kw) :
-        self.parent = parent = kw.pop ("parent", None)
-        self._kw    = dict (kw)
+        parent   = self.parent                    ### set by meta class
+        self._kw = dict (kw)
         self.pop_to_self \
             ( kw
             , "exclude_robots", "r_permissions", "w_permissions"
@@ -121,7 +128,6 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _after__init__ (self, kw) :
         ### called by meta class after `__init__` has finished
         ### redefine as necessary
-        kw.pop ("parent", None)
         self._orig_kw = dict (kw)
         if not self.implicit :
             href = self.href
@@ -306,10 +312,24 @@ class _RST_Node_ (_Base_) :
                 ( entries      = entries
                 , url_template = "%s/{entry}"
                 )
-            for e in resource.entries :
+            for e in self._resource_entries (resource, request) :
                 entries.append (e.name)
             return result
         # end def _response
+
+        def _response_dict_top (self, resource, request) :
+            return dict \
+                ( url_template = "%s/{entry}"
+                )
+        # end def _response_dict_top
+
+        def _response_entry (self, resource, request, entry) :
+            return entry.name
+        # end def _response_entry
+
+        def _resource_entries (self, resource, request) :
+            return resource.entries
+        # end def _resource_entries
 
     GET = RST__Node__GET # end class
 
@@ -323,7 +343,7 @@ class _RST_Node_ (_Base_) :
 
     @property
     def entries (self) :
-        return tuple (self._entries)
+        return self._entries
     # end def entries
 
     @property
@@ -355,9 +375,8 @@ class RST_Node (_Node_) :
     _real_name                 = "Node"
 
     def __init__ (self, ** kw) :
-        parent      = kw      ["parent"]
         self.name   = kw.pop  ("name")
-        self.prefix = pjoin   (parent.prefix, self.name, "")
+        self.prefix = pjoin   (self.parent.prefix, self.name, "")
         self.__super.__init__ (** kw)
     # end def __init__
 
