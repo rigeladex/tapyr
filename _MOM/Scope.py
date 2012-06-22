@@ -95,6 +95,7 @@
 #    27-Apr-2012 (CT) Add call to `.rollback` to `commit` in case of errors
 #    27-Apr-2012 (CT) Add exception handler around `rollback` to `commit`
 #     7-May-2012 (CT) Pass `ucc.entities_transitive` to `r_incorrect` (`commit`)
+#    22-Jun-2012 (MG) `close_connections` added
 #    ««revision-date»»···
 #--
 
@@ -384,6 +385,10 @@ class Scope (TFL.Meta.Object) :
     def count_change (self) :
         self.historian.count_change ()
     # end def count_change
+
+    def close_connections (self) :
+        self.ems.session.close_connections ()
+    # end def close_connections
 
     def destroy (self) :
         self.ems.close ()

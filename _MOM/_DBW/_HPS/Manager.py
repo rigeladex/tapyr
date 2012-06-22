@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -41,6 +41,7 @@
 #    30-Jun-2010 (CT) `change_readonly` added
 #    30-Jun-2010 (CT) `pcm` added
 #     1-Jul-2010 (CT) `compact` added
+#    22-Jun-2012 (MG) `close_connections` added
 #    ««revision-date»»···
 #--
 
@@ -125,6 +126,10 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.close ()
     # end def close
+
+    def close_connections (self) :
+        pass
+    # end def close_connections
 
     def commit (self) :
         if self.store is not None :

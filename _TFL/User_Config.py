@@ -32,6 +32,7 @@
 #                     `ImportError` by `dateutil`
 #    21-Jun-2012 (CT) Handle `time_zone` properly in `set_default`
 #    21-Jun-2012 (CT) Autoconvert `time_zone` values passed as string
+#    22-Jun-2012 (MG) `set_defaults` fixed
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,7 @@ class User_Config (threading.local) :
     def set_defaults (self, ** kw) :
         cls = self.__class__
         for k, v in kw.iteritems () :
-            self.set_defaults (k, v)
+            self.set_default      (k, v)
     # end def set_defaults
 
 # end class User_Config

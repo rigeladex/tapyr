@@ -111,6 +111,7 @@
 #    15-Jun-2012 (MG) `SAS_Interface.reload` added
 #    15-Jun-2012 (MG) `Session_S.instance_from_row` support for entity
 #                     reloading added
+#    22-Jun-2012 (MG) `close_connections` added
 #    ««revision-date»»···
 #--
 
@@ -431,18 +432,24 @@ class _Session_ (TFL.Meta.Object) :
         self.commit  ()
     # end def change_readonly
 
-    def close (self) :
+    def close (self, delete_engine = True) :
         self.rollback            ()
         self.scope.ems.pm.close  ()
         ### close all connections inside the pool
         ### import pdb; pdb.set_trace ()
-        self.engine.close         ()
         try :
             self.connection.close ()
+            del self.connection
         except :
             pass
-        self.engine = None
+        self.engine.close         (delete_engine)
+        if delete_engine :
+            self.engine = None
     # end def close
+
+    def close_connections (self) :
+        self.close (False)
+    # end def close_connections
 
     def _close_connection (self, method) :
         if self.transaction :

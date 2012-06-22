@@ -55,6 +55,7 @@
 #                     (SQLError doesn't exist in SQLAlchemy 0.7)
 #    27-Apr-2012 (MG) `reserve_cid` implemented for Postgresql, `reserve_pid`
 #                     changed
+#    22-Jun-2012 (MG) `close` parameter `delete_engine` added
 #    ««revision-date»»···
 #--
 
@@ -90,9 +91,10 @@ class _SAS_DBS_ (MOM.DBW._DBS_) :
         connection.close   ()
     # end def commit
 
-    def close (self) :
+    def close (self, delete_engine = True) :
         self._sa_engine.pool.dispose ()
-        self._sa_engine = None
+        if delete_engine :
+            self._sa_engine = None
     # end def close
 
     @classmethod

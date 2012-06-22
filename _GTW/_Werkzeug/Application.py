@@ -119,19 +119,6 @@ class _Werkzeug_Application_ (GTW._Application_) :
             , reload_extra_files   = None
             ) :
         from werkzeug import serving
-        make_server = serving.make_server
-        def _make_server (* msargs, ** mskw) :
-            try :
-                from _GTW._NAV.Base import Root
-            except ImportError :
-                pass
-            else :
-                while Root.top.Run_on_Launch :
-                    fct, args = Root.top.Run_on_Launch.pop (0)
-                    fct (args)
-            return make_server (* msargs, ** mskw)
-        # end def _make_server
-        serving.make_server = _make_server
         app = self
         use_debugger = self._server_opts.get ("debug",       False)
         use_reloader = self._server_opts.get ("auto_reload", False)
