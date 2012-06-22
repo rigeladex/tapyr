@@ -64,9 +64,10 @@ class Url_Handler (TFL.Meta.Object) :
     # end def __call__
 
     def get_path (self, req_path) :
-        match = self.matching_path (req_path)
-        if match :
-            return self.type.get_path (match, self.kw ["maps"])
+        if hasattr (self.type, "get_path") :
+            match = self.matching_path (req_path)
+            if match :
+                return self.type.get_path (match, self.kw ["maps"])
     # end def get_path
 
     def match (self, path) :
