@@ -71,6 +71,7 @@
 #    30-Apr-2012 (CT) Add `regatta_register_email`
 #    10-May-2012 (CT) Add `error_email`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`, factor `env_globals`
+#    22-Jun-2012 (CT) Use `static_handler.get_path` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -253,20 +254,18 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <script>
            element.
         """
-        media    = self._Media_R
-        sh       = self.env.static_handler
         encoding = self.env.encoding
-        maps     = sh.kw ["maps"]
-        if media and sh and maps :
-            def _gen (scripts) :
+        handler  = self.env.static_handler
+        media    = self._Media_R
+        if handler and media :
+            def _gen (handler, encoding, scripts) :
                 for s in sorted (scripts, key = TFL.Getter.rank) :
-                    match = sh.matching_path (s.src)
-                    if match :
-                        p = sh.type.get_path (match, maps)
-                        if p :
-                            with open (p, "rb") as file :
-                                yield file.read ().decode (encoding)
-            result = "\n\n".join (TFL.uniq (_gen (self.scripts_c)))
+                    p = handler.get_path (s.src)
+                    if p :
+                        with open (p, "rb") as file :
+                            yield file.read ().decode (encoding)
+            result = "\n\n".join \
+                (TFL.uniq (_gen (handler, encoding, self.scripts_c)))
             return result
     # end def js
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-Jan-2012 (CT) Creation
 #    19-Jun-2012 (CT) Fix `__repr__`
+#    22-Jun-2012 (CT) Add `get_path`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,12 @@ class Url_Handler (TFL.Meta.Object) :
                 return response (environ, start_response)
             raise
     # end def __call__
+
+    def get_path (self, req_path) :
+        match = self.matching_path (req_path)
+        if match :
+            return self.type.get_path (match, self.kw ["maps"])
+    # end def get_path
 
     def match (self, path) :
         return self.pat.match (path)

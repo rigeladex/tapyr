@@ -26,7 +26,7 @@
 #    WSGI application serving static files
 #
 # Revision Dates
-#    21-Jun-2012 (CT) Creation
+#    22-Jun-2012 (CT) Creation
 #    ««revision-date»»···
 #--
 
@@ -41,86 +41,165 @@ import _GTW._Werkzeug
 import _GTW._Werkzeug.Request
 import _GTW._Werkzeug.Response
 
+from   _TFL._Meta.Once_Property   import Once_Property
+
 import _TFL._Meta.Object
 import _TFL.Record
+import _TFL.User_Config
+
+from   datetime            import datetime
 
 from   werkzeug            import exceptions
 from   werkzeug.wsgi       import wrap_file
 from   werkzeug.http       import is_resource_modified
 
-import datetime
-import mimetype
+import mimetypes
 import os
+import stat
 import zlib
 
 class Static_File_App (TFL.Meta.Object) :
     """WSGI application serving static files."""
 
+    supported_methods = ("HEAD", "GET")
+
     def __init__ \
-            ( self, * prefix_maps
-            , fallback_mimetype = "text/plain"
-            , top_prefix        = ""
+            ( self, dir_map
+            , default_charset   = "utf-8"
+            , default_mimetype  = "text/plain"
+            , prefix            = ""
             , wrap              = exceptions.NotFound
             ) :
-        self.prefix_maps = prefix_maps
-        self.mimetype    = fallback_mimetype
-        self.top_prefix  = top_prefix
-        self.wrap        = wrap
+        self._dir_map           = dir_map
+        self.default_charset    = default_charset
+        self.default_mimetype   = default_mimetype
+        self.prefix             = prefix.lstrip ("/")
+        self.wrap               = wrap
     # end def __init__
 
     def __call__ (self, environ, start_response) :
-        request   = GTW.Werkzeug.Request (environ)
-        file_name = self.get_path (request.path)
-        if file_name :
-            result = self._file_response (environ, request, file_name)
+        request    = GTW.Werkzeug.Request (environ)
+        file_name  = self.get_path (request.path)
+        if file_name and request.method in self.supported_methods :
+            result = self._response (environ, request, file_name)
         else :
-            result = self.wrap
+            result = self.wrap ()
         return result (environ, start_response)
     # end def __call__
 
+    @Once_Property
+    def dir_map (self) :
+        result  = []
+        add     = result.append
+        _dm     = self._dir_map
+        prefix  = self.prefix
+        if isinstance (_dm, dict) :
+            _dm = sorted (_dm.iteritems (), reverse = True)
+        for k, v in _dm :
+            add (("/".join ((prefix, k)).lstrip ("/"), v))
+        return tuple (result)
+    # end def dir_map
+
+    def file_info (self, file_name) :
+        stat_result    = os.stat (file_name)
+        mtime          = stat_result [stat.ST_MTIME]
+        size           = stat_result [stat.ST_SIZE]
+        last_modified  = datetime.fromtimestamp (mtime)
+        offset         = TFL.user_config.time_zone.utcoffset (last_modified)
+        last_modified -= offset
+        fn_hash        = zlib.adler32 (file_name) & 0xffffffff
+        return TFL.Record \
+            ( etag           = "sf-%s-%s-%s" % (mtime, size, fn_hash)
+            , last_modified  = last_modified
+            , content_length = size
+            )
+    # end def file_info
+
     def get_path (self, req_path) :
         req_path = req_path.lstrip ("/")
-        for map in self.maps :
-            file_name = map.get (req_path)
-            if file_name :
-                return file_name
+        for prefix, directory in self.dir_map :
+            if (not prefix) or req_path.startswith (prefix) :
+                path   = req_path [len (prefix): ]
+                result = os.path.abspath (os.path.join (directory, path))
+                if os.path.isfile (result) :
+                    return result
+                elif os.path.isdir (result) :
+                    result = os.path.join (result, "index.html")
+                    if os.path.isfile (result) :
+                        return result
     # end def get_path
 
-    def _file_info (self, file_name) :
-        stat_result = os.stat (file_name)
-        mtime       = stat_result [stat.ST_MTIME]
-        size        = stat_result [stat.ST_SIZE]
-        fn_hash     = zlib.adler32 (file_name) & 0xffffffff
-        return TFL.Record \
-            ( etag  = "sf-%s-%s-%s" % (mtime, size, fn_hash)
-            , mtime = datetime.fromtimestamp (mtime)
-            , size  = size
+    def mimetype (self, file_name) :
+        mimetype, encoding = mimetypes.guess_type (file_name)
+        return \
+            ( mimetype or self.default_mimetype
+            , encoding or self.default_charset
             )
-    # end def _file_info
+    # end def mimetype
 
-    def _file_response (self, environ, request, file_name) :
-        info         = self._file_info (file_name)
+    def _response (self, environ, request, file_name) :
+        info         = self.file_info (file_name)
         has_changed  = is_resource_modified \
-            (environ, info.etag, last_modified = info.mtime)
+            (environ, info.etag, last_modified = info.last_modified)
         if has_changed :
-            mime_type, encoding = mimetypes.guess_type (file_name)
+            mimetype, encoding = self.mimetype (file_name)
             response = GTW.Werkzeug.Response \
                 ( wrap_file (environ, open (file_name, "rb"))
-                , mimetype           = mimetype or self.mimetype
                 , direct_passthrough = True
+                , mimetype           = mimetype
                 )
-            response.content_length  = info.size
-            response.etag            = info.etag
-            response.last_modified   = info.mtime
+            response.set_etag (info.etag)
+            response.content_length  = info.content_length
+            response.last_modified   = info.last_modified
             if encoding :
                 response.charset     = encoding
         else :
             response = GTW.Werkzeug.Response (status = 304)
         return response
-    # end def _file_response
+    # end def _response
+
+    def __repr__ (self) :
+        map = "; ".join ("%s -> %s" % (p or "/", d) for p, d in self.dir_map)
+        return "<%s: %s>" % (self.__class__.__name__, map)
+    # end def __repr__
 
 # end class Static_File_App
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")
+if __name__ == "__main__" :
+    import _TFL.CAO
+
+    def dir_map (cmd) :
+        from _TFL.predicate import rsplit_hst
+        for d in cmd.argv :
+            p, _, v = rsplit_hst (d, "=")
+            yield p, v
+    # end def dir_map
+
+    def _main (cmd) :
+        import werkzeug.serving
+        app = Static_File_App (tuple (dir_map (cmd)), prefix = cmd.prefix or "")
+        print ("Starting", app)
+        werkzeug.serving.run_simple (cmd.hostname, cmd.port, app)
+    # end def _main
+
+    _Command = TFL.CAO.Cmd \
+        ( handler       = _main
+        , args          =
+            ( "directory:S?Directory/ies to serve"
+            ,
+            )
+        , opts          =
+            ( "-hostname:S=localhost?Host for the application"
+            , "-port:I=8888?Port to run the server on"
+            , "-prefix:S?URL prefix of server"
+            , TFL.CAO.Opt.Time_Zone ()
+            )
+        , min_args      = 1
+        , description   =
+            "Run a server on `-port` serving the files in `directory`"
+        )
+
+    _Command ()
 ### __END__ GTW.Werkzeug.Static_File_App
