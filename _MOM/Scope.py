@@ -95,7 +95,8 @@
 #    27-Apr-2012 (CT) Add call to `.rollback` to `commit` in case of errors
 #    27-Apr-2012 (CT) Add exception handler around `rollback` to `commit`
 #     7-May-2012 (CT) Pass `ucc.entities_transitive` to `r_incorrect` (`commit`)
-#    22-Jun-2012 (MG) `close_connections` added
+#    22-Jun-2012 (MG) Add `close_connections`
+#    26-Jun-2012 (CT) Add and use `T_Extension`
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ class Scope (TFL.Meta.Object) :
     Fatal_Exceptions       = property (TFL.Getter.ems.pm.dbs.Fatal_Exceptions)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
+    T_Extension            = property (TFL.Getter.app_type._T_Extension)
     uncommitted_changes    = property (TFL.Getter.ems.uncommitted_changes)
 
     PNS_Proxy              = None
@@ -337,7 +339,7 @@ class Scope (TFL.Meta.Object) :
         with self.as_active () :
             sk = TFL.Sorted_By ("rank", "id")
             gauge.reset ("Compute default internal attributes")
-            for et in sorted (self.etypes.itervalues (), key = TFL.Getter.rank) :
+            for et in sorted (self.T_Extension, key = TFL.Getter.rank) :
                 et.compute_type_defaults_internal ()
             for e in self.entity_iter_gauge \
                     (gauge, label = "Reset syncable attributes") :

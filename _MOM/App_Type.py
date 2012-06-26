@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -39,6 +39,7 @@
 #    30-Jun-2010 (CT) `Once_Property` for `Version` added
 #    22-Dec-2010 (CT) `etypes_by_pns` addded
 #    18-Nov-2011 (CT) Add `attribute_types`
+#    26-Jun-2012 (CT) Add `PNS_Aliases_R`
 #    ««revision-date»»···
 #--
 
@@ -167,6 +168,11 @@ class _App_Type_D_ (_App_Type_) :
         self.kill_callback    = TFL.Ordered_Set ()
         self.PNS_Map          = parent.PNS_Map
         self.PNS_Aliases      = parent.PNS_Aliases
+        self.PNS_Aliases_R    = dict \
+            (   (v._Package_Namespace__qname, k)
+            for k, v in self.PNS_Aliases.iteritems ()
+            )
+        assert len (self.PNS_Aliases) == len (self.PNS_Aliases_R)
         self.finalized        = False
         import _MOM.Entity
         MOM.Entity.m_setup_etypes (self)
@@ -178,7 +184,8 @@ class _App_Type_D_ (_App_Type_) :
         pns = etype.PNS
         qn  = pns._Package_Namespace__qname
         self.PNS_Map [qn]                      = pns
-        self.etypes  [etype.Essence.type_name] = etype
+        self.etypes  [etype.Essence.type_name] = \
+            self.etypes [etype.type_name]      = etype
         self.etypes_by_pns [qn].append (etype)
         self._T_Extension.append       (etype)
     # end def add_type
@@ -221,8 +228,8 @@ class App_Type (_App_Type_) :
     DBW              = None
     EMS              = None
     etypes           = None
-    _T_Extension     = None
     parent           = None
+    _T_Extension     = None
 
     def __init__ (self, name, ANS, Root_Type_Name = None, PNS_Aliases = None) :
         assert bool (name)

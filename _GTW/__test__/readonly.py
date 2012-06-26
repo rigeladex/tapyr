@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -64,7 +64,7 @@ _test_code = r"""
     Readonly_DB
 
     >>> scope.PAP.Person.query ().all () ### without title
-    [GTW.OMP.PAP.Person (u'ln', u'fn', u'', u'')]
+    [PAP.Person (u'ln', u'fn', u'', u'')]
 
     >>> scope.destroy ()
 

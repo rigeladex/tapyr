@@ -48,15 +48,15 @@ test_code = r"""
     >>> scope.commit     ()
 
     >>> PAP.Entity_created_by_Person (pa1, per)
-    GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u''))
+    PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u''))
     >>> scope.commit ()
 
     >>> PAP.Entity_created_by_Person (pa3, per)
-    GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))
+    PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))
     >>> scope.commit ()
 
     >>> PAP.Entity_created_by_Person (pa2.epk_raw, per.epk_raw, raw = True)
-    GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))
+    PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))
     >>> scope.commit ()
 
     >>> for T in scope.app_type._T_Extension :
@@ -64,263 +64,263 @@ test_code = r"""
     ...     print T.type_name
     ...     print (formatted (sorted (c.type_name for c in T.link_map), level = 1))
     MOM.Id_Entity
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Link
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Link1
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM._MOM_Link_n_
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Link2
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Link2_Ordered
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Link3
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Object
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    [ 'PAP.Entity_created_by_Person' ]
     MOM.Named_Object
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth.Object
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth.Account
-      [ 'GTW.OMP.Auth.Account_Activation'
-      , 'GTW.OMP.Auth.Account_EMail_Verification'
-      , 'GTW.OMP.Auth.Account_Password_Change_Required'
-      , 'GTW.OMP.Auth.Account_Password_Reset'
-      , 'GTW.OMP.Auth.Account_in_Group'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth.Object
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth.Account
+      [ 'Auth.Account_Activation'
+      , 'Auth.Account_EMail_Verification'
+      , 'Auth.Account_Password_Change_Required'
+      , 'Auth.Account_Password_Reset'
+      , 'Auth.Account_in_Group'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.Auth.Account_Anonymous
-      [ 'GTW.OMP.Auth.Account_Activation'
-      , 'GTW.OMP.Auth.Account_EMail_Verification'
-      , 'GTW.OMP.Auth.Account_Password_Change_Required'
-      , 'GTW.OMP.Auth.Account_Password_Reset'
-      , 'GTW.OMP.Auth.Account_in_Group'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    Auth.Account_Anonymous
+      [ 'Auth.Account_Activation'
+      , 'Auth.Account_EMail_Verification'
+      , 'Auth.Account_Password_Change_Required'
+      , 'Auth.Account_Password_Reset'
+      , 'Auth.Account_in_Group'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.Auth.Account_P
-      [ 'GTW.OMP.Auth.Account_Activation'
-      , 'GTW.OMP.Auth.Account_EMail_Verification'
-      , 'GTW.OMP.Auth.Account_Password_Change_Required'
-      , 'GTW.OMP.Auth.Account_Password_Reset'
-      , 'GTW.OMP.Auth.Account_in_Group'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    Auth.Account_P
+      [ 'Auth.Account_Activation'
+      , 'Auth.Account_EMail_Verification'
+      , 'Auth.Account_Password_Change_Required'
+      , 'Auth.Account_Password_Reset'
+      , 'Auth.Account_in_Group'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.Auth.Group
-      [ 'GTW.OMP.Auth.Account_in_Group'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    Auth.Group
+      [ 'Auth.Account_in_Group'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.Auth.Account_in_Group
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth._Account_Action_
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth.Account_Activation
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth.Account_Password_Change_Required
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth._Account_Token_Action_
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth.Account_EMail_Verification
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.Auth.Account_Password_Reset
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.EVT.Object
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.EVT.Link1
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.EVT.Link2
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.EVT.Calendar
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Subject
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Person
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.PAP.Person_has_Address'
-      , 'GTW.OMP.PAP.Person_has_Email'
-      , 'GTW.OMP.PAP.Person_has_Phone'
-      , 'GTW.OMP.SRM.Sailor'
+    Auth.Account_in_Group
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth._Account_Action_
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth.Account_Activation
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth.Account_Password_Change_Required
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth._Account_Token_Action_
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth.Account_EMail_Verification
+    [ 'PAP.Entity_created_by_Person' ]
+    Auth.Account_Password_Reset
+    [ 'PAP.Entity_created_by_Person' ]
+    EVT.Object
+    [ 'PAP.Entity_created_by_Person' ]
+    EVT.Link1
+    [ 'PAP.Entity_created_by_Person' ]
+    EVT.Link2
+    [ 'PAP.Entity_created_by_Person' ]
+    EVT.Calendar
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Subject
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Person
+      [ 'PAP.Entity_created_by_Person'
+      , 'PAP.Person_has_Address'
+      , 'PAP.Person_has_Email'
+      , 'PAP.Person_has_Phone'
+      , 'SRM.Sailor'
       ]
-    GTW.OMP.SWP.Link1
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SWP.Link2
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SWP.Object
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SWP.Object_PN
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SWP.Clip_O'
+    SWP.Link1
+    [ 'PAP.Entity_created_by_Person' ]
+    SWP.Link2
+    [ 'PAP.Entity_created_by_Person' ]
+    SWP.Object
+    [ 'PAP.Entity_created_by_Person' ]
+    SWP.Object_PN
+      [ 'PAP.Entity_created_by_Person'
+      , 'SWP.Clip_O'
       ]
-    GTW.OMP.SWP.Page
-      [ 'GTW.OMP.EVT.Event'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SWP.Clip_O'
+    SWP.Page
+      [ 'EVT.Event'
+      , 'PAP.Entity_created_by_Person'
+      , 'SWP.Clip_O'
       ]
-    GTW.OMP.SWP.Page_Y
-      [ 'GTW.OMP.EVT.Event'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SWP.Clip_O'
+    SWP.Page_Y
+      [ 'EVT.Event'
+      , 'PAP.Entity_created_by_Person'
+      , 'SWP.Clip_O'
       ]
-    GTW.OMP.EVT.Event
-      [ 'GTW.OMP.EVT.Event_occurs'
-      , 'GTW.OMP.EVT.Recurrence_Spec'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    EVT.Event
+      [ 'EVT.Event_occurs'
+      , 'EVT.Recurrence_Spec'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.EVT.Event_occurs
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.EVT._Recurrence_Mixin_
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.EVT.Recurrence_Spec
-      [ 'GTW.OMP.EVT.Recurrence_Rule'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    EVT.Event_occurs
+    [ 'PAP.Entity_created_by_Person' ]
+    EVT._Recurrence_Mixin_
+    [ 'PAP.Entity_created_by_Person' ]
+    EVT.Recurrence_Spec
+      [ 'EVT.Recurrence_Rule'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.EVT.Recurrence_Rule
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Address
-      [ 'GTW.OMP.PAP.Company_has_Address'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.PAP.Person_has_Address'
+    EVT.Recurrence_Rule
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Address
+      [ 'PAP.Company_has_Address'
+      , 'PAP.Entity_created_by_Person'
+      , 'PAP.Person_has_Address'
       ]
-    GTW.OMP.PAP.Company
-      [ 'GTW.OMP.PAP.Company_has_Address'
-      , 'GTW.OMP.PAP.Company_has_Email'
-      , 'GTW.OMP.PAP.Company_has_Phone'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
+    PAP.Company
+      [ 'PAP.Company_has_Address'
+      , 'PAP.Company_has_Email'
+      , 'PAP.Company_has_Phone'
+      , 'PAP.Entity_created_by_Person'
       ]
-    GTW.OMP.PAP.Email
-      [ 'GTW.OMP.PAP.Company_has_Email'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.PAP.Person_has_Email'
+    PAP.Email
+      [ 'PAP.Company_has_Email'
+      , 'PAP.Entity_created_by_Person'
+      , 'PAP.Person_has_Email'
       ]
-    GTW.OMP.PAP.Phone
-      [ 'GTW.OMP.PAP.Company_has_Phone'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.PAP.Person_has_Phone'
+    PAP.Phone
+      [ 'PAP.Company_has_Phone'
+      , 'PAP.Entity_created_by_Person'
+      , 'PAP.Person_has_Phone'
       ]
-    GTW.OMP.PAP.Subject_has_Property
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Subject_has_Address
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Company_has_Address
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Subject_has_Email
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Company_has_Email
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Subject_has_Phone
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Company_has_Phone
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Entity_created_by_Person
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Person_has_Address
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Person_has_Email
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.PAP.Person_has_Phone
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Link1
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Link2
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Object
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM._Boat_Class_
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Boat_Class
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Boat'
+    PAP.Subject_has_Property
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Subject_has_Address
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Company_has_Address
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Subject_has_Email
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Company_has_Email
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Subject_has_Phone
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Company_has_Phone
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Entity_created_by_Person
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Person_has_Address
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Person_has_Email
+    [ 'PAP.Entity_created_by_Person' ]
+    PAP.Person_has_Phone
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Link1
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Link2
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Object
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM._Boat_Class_
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Boat_Class
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Boat'
       ]
-    GTW.OMP.SRM.Handicap
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Boat
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Boat_in_Regatta'
+    SRM.Handicap
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Boat
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Boat_in_Regatta'
       ]
-    GTW.OMP.SRM.Club
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Regatta_Event
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Regatta_C'
-      , 'GTW.OMP.SRM.Regatta_H'
+    SRM.Club
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Regatta_Event
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Regatta_C'
+      , 'SRM.Regatta_H'
       ]
-    GTW.OMP.SWP.Clip_O
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SWP.Clip_X
-      [ 'GTW.OMP.EVT.Event'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SWP.Clip_O'
+    SWP.Clip_O
+    [ 'PAP.Entity_created_by_Person' ]
+    SWP.Clip_X
+      [ 'EVT.Event'
+      , 'PAP.Entity_created_by_Person'
+      , 'SWP.Clip_O'
       ]
-    GTW.OMP.SWP.Gallery
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SWP.Clip_O'
-      , 'GTW.OMP.SWP.Picture'
+    SWP.Gallery
+      [ 'PAP.Entity_created_by_Person'
+      , 'SWP.Clip_O'
+      , 'SWP.Picture'
       ]
-    GTW.OMP.SWP.Picture
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Page
-      [ 'GTW.OMP.EVT.Event'
-      , 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SWP.Clip_O'
+    SWP.Picture
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Page
+      [ 'EVT.Event'
+      , 'PAP.Entity_created_by_Person'
+      , 'SWP.Clip_O'
       ]
-    GTW.OMP.SRM.Regatta
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Boat_in_Regatta'
+    SRM.Regatta
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Boat_in_Regatta'
       ]
-    GTW.OMP.SRM.Regatta_C
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Boat_in_Regatta'
-      , 'GTW.OMP.SRM.Team'
+    SRM.Regatta_C
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Boat_in_Regatta'
+      , 'SRM.Team'
       ]
-    GTW.OMP.SRM.Regatta_H
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Boat_in_Regatta'
+    SRM.Regatta_H
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Boat_in_Regatta'
       ]
-    GTW.OMP.SRM.Sailor
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Crew_Member'
+    SRM.Sailor
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Crew_Member'
       ]
-    GTW.OMP.SRM.Boat_in_Regatta
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Crew_Member'
-      , 'GTW.OMP.SRM.Race_Result'
-      , 'GTW.OMP.SRM.Team_has_Boat_in_Regatta'
+    SRM.Boat_in_Regatta
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Crew_Member'
+      , 'SRM.Race_Result'
+      , 'SRM.Team_has_Boat_in_Regatta'
       ]
-    GTW.OMP.SRM.Race_Result
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Team
-      [ 'GTW.OMP.PAP.Entity_created_by_Person'
-      , 'GTW.OMP.SRM.Team_has_Boat_in_Regatta'
+    SRM.Race_Result
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Team
+      [ 'PAP.Entity_created_by_Person'
+      , 'SRM.Team_has_Boat_in_Regatta'
       ]
-    GTW.OMP.SRM.Crew_Member
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
-    GTW.OMP.SRM.Team_has_Boat_in_Regatta
-    [ 'GTW.OMP.PAP.Entity_created_by_Person' ]
+    SRM.Crew_Member
+    [ 'PAP.Entity_created_by_Person' ]
+    SRM.Team_has_Boat_in_Regatta
+    [ 'PAP.Entity_created_by_Person' ]
 
     >>> EcP = scope.PAP.Entity_created_by_Person
     >>> q  = EcP.query   ()
     >>> qs = EcP.query_s ()
     >>> q.order_by (Q.pid).all ()
-    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
+    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
     >>> q.order_by (TFL.Sorted_By ("pid")).all ()
-    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
+    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
 
     >>> q.order_by (EcP.sorted_by).all ()
-    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
 
     >>> qs.all ()
-    [GTW.OMP.PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), GTW.OMP.PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
 
-    >>> q = scope.query_changes (type_name = "GTW.OMP.SWP.Page").order_by (Q.cid)
+    >>> q = scope.query_changes (type_name = "SWP.Page").order_by (Q.cid)
     >>> for c in q.all () :
     ...     print c
-    <Create GTW.OMP.SWP.Page (u'title_1', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 1</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '2', 'text' : u'text 1'}>
-    <Create GTW.OMP.SWP.Page (u'title_2', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '3', 'text' : u'text 2'}>
-    <Create GTW.OMP.SWP.Page (u'title_3', 'GTW.OMP.SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
+    <Create SWP.Page (u'title_1', 'SWP.Page'), new-values = {'contents' : u'<p>text 1</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '2', 'text' : u'text 1'}>
+    <Create SWP.Page (u'title_2', 'SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '3', 'text' : u'text 2'}>
+    <Create SWP.Page (u'title_3', 'SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
 
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("tn_pid").all ()
-    [(('GTW.OMP.PAP.Person', 1),), (('GTW.OMP.SWP.Page', 2),), (('GTW.OMP.SWP.Page', 3),), (('GTW.OMP.SWP.Page', 4),), (('GTW.OMP.PAP.Entity_created_by_Person', 5),), (('GTW.OMP.PAP.Entity_created_by_Person', 6),), (('GTW.OMP.PAP.Entity_created_by_Person', 7),)]
+    [(('PAP.Person', 1),), (('SWP.Page', 2),), (('SWP.Page', 3),), (('SWP.Page', 4),), (('PAP.Entity_created_by_Person', 5),), (('PAP.Entity_created_by_Person', 6),), (('PAP.Entity_created_by_Person', 7),)]
 """
 
 from   _GTW.__test__.model      import *

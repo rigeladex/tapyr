@@ -96,14 +96,14 @@ _q_result = r"""
     [(u'fn 1', MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01))]
 
     >>> sorted (PAP.Person_has_Address.query ().attr ("person"))
-    [GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    [PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> sorted (PAP.Person_has_Address.query ().attrs ("person", "address"))
-    [(GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Address (u's', u'c', u'z', u'c'))]
+    [(PAP.Person (u'ln 3', u'fn 3', u'', u''), PAP.Address (u's', u'c', u'z', u'c'))]
 
     >>> PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln"))
     (5, None)
     >>> PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 1"))
-    (1, GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''))
+    (1, PAP.Person (u'ln 1', u'fn 1', u'', u''))
     >>> PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 42"))
     (0, None)
 
@@ -150,7 +150,7 @@ _q_result = r"""
     [(u'DI',)]
 
     >>> sorted (q0.all (), key = PAP.Person.sort_key)
-    [GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'di'), GTW.OMP.PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
+    [PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), PAP.Person (u'ln 4', u'fn 4', u'', u'di'), PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
     >>> print sorted ((t, int (c)) for (t, c) in q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title))
     [(u'di', 2), (u'dr.', 1)]
 
@@ -236,18 +236,18 @@ _raw_query = """
 
 
     >>> scope.PAP.Person.query (Q.RAW.last_cid == "1").all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.pid == "1").all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.last_name == "LN 1").all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.lifetime.start == "2010/01/01").all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
 
     >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("LN")).order_by (Q.last_name).all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 2', u'fn 2', u'', u''), PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("Ln")).order_by (Q.last_name).all ()
-    [GTW.OMP.PAP.Person (u'lname 4', u'fn 3', u'', u'')]
+    [PAP.Person (u'lname 4', u'fn 3', u'', u'')]
 
     >>> scope.destroy ()
 

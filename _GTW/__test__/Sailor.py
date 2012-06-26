@@ -39,33 +39,33 @@ _test_code = """
     >>> SRM = scope.SRM
     >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> p
-    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> s = SRM.Sailor.instance_or_new (p, nation = "AUT", raw = True) ### 1
     >>> s
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', None, u'')
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', None, u'')
 
     >>> _ = s.set (mna_number = 29676)
     >>> s
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> SRM.Sailor.instance (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, s.nation, s.mna_number)
-    GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
 
     >>> SRM.Sailor.query (left = p).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (left = p.pid).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left == p).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left == p.pid).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left.pid == p.pid).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
     >>> SRM.Sailor.query (Q.left.pid == p).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
 
 """
 

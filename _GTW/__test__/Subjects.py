@@ -23,7 +23,7 @@
 #    GTW.__test__.Subjects
 #
 # Purpose
-#    Test GTW.OMP.PAP.Subject subclasses and links
+#    Test PAP.Subject subclasses and links
 #
 # Revision Dates
 #    24-Mar-2012 (CT) Creation
@@ -52,11 +52,11 @@ _test_code = """
     5 2 3
 
     >>> PAP.Subject.query_s ().all ()
-    [GTW.OMP.PAP.Person (u'glueck', u'martin', u'', u''), GTW.OMP.PAP.Company (u'lucky software'), GTW.OMP.PAP.Company (u'open source consulting'), GTW.OMP.PAP.Person (u'schlatterbeck', u'ralf', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Company (u'lucky software'), PAP.Company (u'open source consulting'), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
     >>> PAP.Company.query_s ().all ()
-    [GTW.OMP.PAP.Company (u'lucky software'), GTW.OMP.PAP.Company (u'open source consulting')]
+    [PAP.Company (u'lucky software'), PAP.Company (u'open source consulting')]
     >>> PAP.Person.query_s ().all ()
-    [GTW.OMP.PAP.Person (u'glueck', u'martin', u'', u''), GTW.OMP.PAP.Person (u'schlatterbeck', u'ralf', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
 
     >>> _ = PAP.Person_has_Email (pg, PAP.Email ("martin@mangari.org"))
     >>> _ = PAP.Person_has_Email (ps, PAP.Email ("ralf@runtux.com"))
@@ -67,40 +67,40 @@ _test_code = """
     >>> _ = PAP.Company_has_Email (co, PAP.Email ("office@runtux.com"))
 
     >>> PAP.Subject_has_Email.query_s ().all ()
-    [GTW.OMP.PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), GTW.OMP.PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), GTW.OMP.PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), GTW.OMP.PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
     >>> PAP.Company_has_Email.query_s ().all ()
-    [GTW.OMP.PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), GTW.OMP.PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', ))]
+    [PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', ))]
     >>> PAP.Person_has_Email.query_s ().all ()
-    [GTW.OMP.PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), GTW.OMP.PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
     >>> PAP.Subject_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ()
-    [GTW.OMP.PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), GTW.OMP.PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', ))]
+    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', ))]
     >>> PAP.Subject_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ()
-    [GTW.OMP.PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), GTW.OMP.PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
     >>> PAP.Person_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ()
-    [GTW.OMP.PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', ))]
+    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', ))]
     >>> PAP.Person_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ()
-    [GTW.OMP.PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), GTW.OMP.PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
     >>> sorted (pg.emails, key = PAP.Email.sorted_by)
-    [GTW.OMP.PAP.Email (u'martin@mangari.org')]
+    [PAP.Email (u'martin@mangari.org')]
     >>> sorted (ps.emails, key = PAP.Email.sorted_by)
-    [GTW.OMP.PAP.Email (u'ralf@runtux.com')]
+    [PAP.Email (u'ralf@runtux.com')]
     >>> sorted (pt.emails, key = PAP.Email.sorted_by)
-    [GTW.OMP.PAP.Email (u'tanzer@gg32.com'), GTW.OMP.PAP.Email (u'tanzer@swing.co.at')]
+    [PAP.Email (u'tanzer@gg32.com'), PAP.Email (u'tanzer@swing.co.at')]
 
     >>> _ = PAP.Company_has_Email (co, "ralf@runtux.com")
 
     >>> sorted (cl.emails, key = PAP.Email.sorted_by)
-    [GTW.OMP.PAP.Email (u'lucky@mangari.org')]
+    [PAP.Email (u'lucky@mangari.org')]
     >>> sorted (co.emails, key = PAP.Email.sorted_by)
-    [GTW.OMP.PAP.Email (u'office@runtux.com'), GTW.OMP.PAP.Email (u'ralf@runtux.com')]
+    [PAP.Email (u'office@runtux.com'), PAP.Email (u'ralf@runtux.com')]
 
     >>> rr = PAP.Email.instance ("ralf@runtux.com")
     >>> sorted (rr.persons, key = PAP.Person.sorted_by)
-    [GTW.OMP.PAP.Person (u'schlatterbeck', u'ralf', u'', u'')]
+    [PAP.Person (u'schlatterbeck', u'ralf', u'', u'')]
     >>> sorted (rr.companies, key = PAP.Company.sorted_by)
-    [GTW.OMP.PAP.Company (u'open source consulting')]
+    [PAP.Company (u'open source consulting')]
 
     >>> PAP.Subject_has_Email.acr_map.get ("left", False)
     False

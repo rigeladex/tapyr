@@ -46,16 +46,16 @@ _test_code = """
     >>> print PAP.Person.count
     0
     >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 1
-    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> print PAP.Person.count
     1
     >>> PAP.Person.instance ("Tanzer", "Christian")
-    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> PAP.Person.query_s ().all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'')]
 
     >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 2
-    GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')
+    PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> print PAP.Person.count
     1
 
@@ -146,15 +146,15 @@ _test_code = """
     >>> PAP.Person.query_s (Q.last_name == "Tanzer").all ()
     []
     >>> PAP.Person.query_s (Q.RAW.last_name == "Tanzer").all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
+    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Person (u'tanzer', u'egon', u'', u''), PAP.Person (u'tanzer', u'martin', u'', u''), PAP.Person (u'tanzer', u'michael', u'', u''), PAP.Person (u'tanzer', u'walter', u'', u'')]
     >>> PAP.Person.query_s (Q.RAW.last_name.STARTSWITH ("Ta")).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'martin', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'michael', u'', u''), GTW.OMP.PAP.Person (u'tanzer', u'walter', u'', u'')]
+    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Person (u'tanzer', u'egon', u'', u''), PAP.Person (u'tanzer', u'martin', u'', u''), PAP.Person (u'tanzer', u'michael', u'', u''), PAP.Person (u'tanzer', u'walter', u'', u'')]
 
     >>> PAP.Person.query ().order_by (TFL.Sorted_By ("-first_name")).count ()
     5
 
     >>> PAP.Person.query_s (last_name = "tanzer").attrs ("pid", "type_name").all ()
-    [(1, 'GTW.OMP.PAP.Person'), (2, 'GTW.OMP.PAP.Person'), (4, 'GTW.OMP.PAP.Person'), (5, 'GTW.OMP.PAP.Person'), (3, 'GTW.OMP.PAP.Person')]
+    [(1, 'PAP.Person'), (2, 'PAP.Person'), (4, 'PAP.Person'), (5, 'PAP.Person'), (3, 'PAP.Person')]
 
     >>> scope.destroy ()
 

@@ -63,29 +63,29 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("pid")).attrs ("pid", "type_name").all ()
-    [(1, 'GTW.OMP.SRM.Boat_Class'), (2, 'GTW.OMP.SRM.Handicap'), (3, 'GTW.OMP.SRM.Boat'), (4, 'GTW.OMP.PAP.Person'), (5, 'GTW.OMP.SRM.Sailor'), (6, 'GTW.OMP.SRM.Regatta_Event'), (7, 'GTW.OMP.SRM.Regatta_C'), (8, 'GTW.OMP.SRM.Regatta_H')]
+    [(1, 'SRM.Boat_Class'), (2, 'SRM.Handicap'), (3, 'SRM.Boat'), (4, 'PAP.Person'), (5, 'SRM.Sailor'), (6, 'SRM.Regatta_Event'), (7, 'SRM.Regatta_C'), (8, 'SRM.Regatta_H')]
     >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("pid")).attrs ("tn_pid").all ()
-    [(('GTW.OMP.SRM.Boat_Class', 1),), (('GTW.OMP.SRM.Handicap', 2),), (('GTW.OMP.SRM.Boat', 3),), (('GTW.OMP.PAP.Person', 4),), (('GTW.OMP.SRM.Sailor', 5),), (('GTW.OMP.SRM.Regatta_Event', 6),), (('GTW.OMP.SRM.Regatta_C', 7),), (('GTW.OMP.SRM.Regatta_H', 8),)]
+    [(('SRM.Boat_Class', 1),), (('SRM.Handicap', 2),), (('SRM.Boat', 3),), (('PAP.Person', 4),), (('SRM.Sailor', 5),), (('SRM.Regatta_Event', 6),), (('SRM.Regatta_C', 7),), (('SRM.Regatta_H', 8),)]
 
     >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("tn_pid")).attrs ("pid", "type_name").all ()
-    [(4, 'GTW.OMP.PAP.Person'), (3, 'GTW.OMP.SRM.Boat'), (1, 'GTW.OMP.SRM.Boat_Class'), (2, 'GTW.OMP.SRM.Handicap'), (7, 'GTW.OMP.SRM.Regatta_C'), (6, 'GTW.OMP.SRM.Regatta_Event'), (8, 'GTW.OMP.SRM.Regatta_H'), (5, 'GTW.OMP.SRM.Sailor')]
+    [(4, 'PAP.Person'), (3, 'SRM.Boat'), (1, 'SRM.Boat_Class'), (2, 'SRM.Handicap'), (7, 'SRM.Regatta_C'), (6, 'SRM.Regatta_Event'), (8, 'SRM.Regatta_H'), (5, 'SRM.Sailor')]
 
     >>> rev.epk_raw
-    (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event')
+    (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event')
     >>> reg.epk_raw
-    ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C')
+    ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
+    SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
     >>> SRM.Regatta.instance (* reg.epk)
-    GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
+    SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
-    GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
+    SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
 
     >>> bir = BiR (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
     >>> bir.epk_raw
-    (((u'Optimist', 'GTW.OMP.SRM.Boat_Class'), u'AUT', u'1107', u'', 'GTW.OMP.SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'GTW.OMP.SRM.Regatta_Event'), (u'Optimist', 'GTW.OMP.SRM.Boat_Class'), 'GTW.OMP.SRM.Regatta_C'), 'GTW.OMP.SRM.Boat_in_Regatta')
+    (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     >>> BiR.instance (* bir.epk_raw, raw = True)
-    GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
+    SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
 
     >>> sort_key = TFL.Sorted_By ("-regatta.event.date.start", "skipper.person.last_name", "skipper.person.first_name")
 
@@ -95,9 +95,9 @@ _test_code = r"""
     <Sorted_By: Getter function for `.relevant_root.type_name`, <Sorted_By: Descending-Getter function for `.regatta.event.date.start`, Getter function for `.skipper.person.last_name`, Getter function for `.skipper.person.first_name`>>
 
     >>> list (BiR.query (sort_key = sort_key))
-    [GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
     >>> list (BiR.query_s (sort_key = sort_key))
-    [GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
 
     >>> df = SRM.Regatta.AQ.event.date.start.EQ ("2008")
     >>> df
@@ -111,7 +111,7 @@ _test_code = r"""
     >>> fst = ('left', )
 
     >>> AQ
-    <Attr.Type.Querier.E_Type for GTW.OMP.SRM.Boat_in_Regatta>
+    <Attr.Type.Querier.E_Type for SRM.Boat_in_Regatta>
     >>> AQ._attr_selector
     <MOM.Attr.Selector.Kind sig_attr>
     >>> AQ.left._attr_selector
@@ -123,7 +123,7 @@ _test_code = r"""
     (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish, Q.boat_class.__raw_name)
 
     >>> list (q)
-    [GTW.OMP.SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )), GTW.OMP.SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'yardstick', ))]
+    [SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'yardstick', ))]
 
     >>> list (q.attrs (* fs))
     [(u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1), u'Optimist'), (u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1), u'Yardstick')]
@@ -135,11 +135,11 @@ _test_code = r"""
     [(u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01)), (u'Himmelfahrt', MOM.Date_Interval_C (finish = 2008/05/01, start = 2008/05/01))]
 
     >>> list (q.attrs (* fst))
-    [(GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),), (GTW.OMP.SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),)]
+    [(SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),), (SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')),)]
 
     >>> AQ  = BiR.AQ.Select (MOM.Attr.Selector.all)
     >>> AQ
-    <Attr.Type.Querier.E_Type for GTW.OMP.SRM.Boat_in_Regatta>
+    <Attr.Type.Querier.E_Type for SRM.Boat_in_Regatta>
     >>> AQ._attr_selector
     <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
     >>> AQ.left._attr_selector
@@ -155,7 +155,7 @@ _test_code = r"""
     >>> b8   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1108", raw = True)
     >>> bir8 = BiR (b8, reg, skipper = s)
     >>> bir8.other_boots_skippered.all ()
-    [GTW.OMP.SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
     >>> scope.commit ()
     Traceback (most recent call last):
     ...
@@ -182,7 +182,7 @@ _test_code = r"""
     `boat.b_class.max_crew`. (number_of_crew < boat.b_class.max_crew)
         boat = Optimist, AUT 1107
         boat.b_class.max_crew = 1
-        crew = [GTW.OMP.SRM.Sailor ((u'tanzer', u'laurens', u'', u''), u'AUT', None, u'')]
+        crew = [SRM.Sailor ((u'tanzer', u'laurens', u'', u''), u'AUT', None, u'')]
         number_of_crew = 1 << len (crew)
 
     >>> show_ora (bir)         ### before destroy

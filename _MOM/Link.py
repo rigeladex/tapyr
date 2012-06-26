@@ -61,6 +61,7 @@
 #    24-Mar-2012 (CT) Add `__repr__` to `_Cacher_`
 #    29-Mar-2012 (CT) Change `_Cacher_._setup_attr` to not redefine `cr_attr`
 #    18-Jun-2012 (CT) Add `_Reload_Mixin_` for `Link1`, `Link2`, `Link3`
+#    26-Jun-2012 (CT) Add `if cache` to `Role_Cacher_n.__call__`
 #    ««revision-date»»···
 #--
 
@@ -454,12 +455,13 @@ class Role_Cacher_n (Role_Cacher) :
         assert self.role_name is not None
         o = getattr (link, self.other_role.name)
         if o is not None :
-            cache = getattr (o,    self.attr_name)
-            value = getattr (link, self.role_name)
-            if no_value :
-                cache.discard (value)
-            else :
-                cache.add     (value)
+            cache = getattr (o, self.attr_name)
+            if cache is not None :
+                value = getattr (link, self.role_name)
+                if no_value :
+                    cache.discard (value)
+                else :
+                    cache.add     (value)
     # end def __call__
 
 # end class Role_Cacher_n

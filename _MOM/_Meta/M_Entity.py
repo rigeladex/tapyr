@@ -132,6 +132,7 @@
 #     4-Jun-2012 (CT) Add guard for `et.epk_sig` to `_m_setup_sorted_by`
 #     6-Jun-2012 (CT) Use `tn_pid`, not `sort_key`, as default sort-key
 #    18-Jun-2012 (CT) Add `M_E_Type_Id_Reload`
+#    26-Jun-2012 (CT) Use `app_type.PNS_Aliases_R` in `pns_qualified`
 #    ««revision-date»»···
 #--
 
@@ -236,7 +237,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         """
         pkg_ns = getattr (cls, "PNS", None)
         if pkg_ns :
-            result = ".".join ((pkg_ns._Package_Namespace__qname, name))
+            app_type = getattr (cls, "app_type", None)
+            qn       = pkg_ns._Package_Namespace__qname
+            if app_type is not None and qn in app_type.PNS_Aliases_R :
+                qn = app_type.PNS_Aliases_R [qn]
+            result = ".".join ((qn, name))
         else :
             result = name
         return unicode (result)

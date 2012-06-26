@@ -45,7 +45,7 @@ _test_code = """
     >>> SRM = scope.SRM
 
     >>> SRM.Boat_Class ("Optimist", max_crew = 1)
-    GTW.OMP.SRM.Boat_Class (u'optimist')
+    SRM.Boat_Class (u'optimist')
     >>> print scope.SRM.Boat_Class.count ### 1
     1
     >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
@@ -53,23 +53,23 @@ _test_code = """
     2
 
     >>> scope.SRM.Boat_Class.query (name = u'optimist').all ()
-    [GTW.OMP.SRM.Boat_Class (u'optimist')]
+    [SRM.Boat_Class (u'optimist')]
     >>> scope.SRM.Boat_Class.instance (u'Optimist')
-    GTW.OMP.SRM.Boat_Class (u'optimist')
+    SRM.Boat_Class (u'optimist')
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 1
-    GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
+    SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
     >>> print scope.SRM.Boat.count ### 3
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> scope.commit ()
 
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 2
-    GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
+    SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
     >>> print scope.SRM.Boat.count ### 4
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> b = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 3
     >>> c = SRM.Boat (u"Optimist", None, "42", "OE", raw = True)
@@ -77,7 +77,7 @@ _test_code = """
     >>> print scope.SRM.Boat.count ### 5
     2
     >>> scope.SRM.Boat.query_s ().all ()
-    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print (c.sail_number, c.sail_number_head, c.sail_number_tail)
     (42, u'OE', u'42')
@@ -89,9 +89,9 @@ _test_code = """
     >>> s1 = TFL.Sorted_By ("name")
     >>> s2 = TFL.Sorted_By ("-name")
     >>> SRM.Boat_Class.query ().order_by (s1).all ()
-    [GTW.OMP.SRM.Boat_Class (u'laser'), GTW.OMP.SRM.Boat_Class (u'optimist')]
+    [SRM.Boat_Class (u'laser'), SRM.Boat_Class (u'optimist')]
     >>> SRM.Boat_Class.query ().order_by (s1).order_by (s2).all ()
-    [GTW.OMP.SRM.Boat_Class (u'optimist'), GTW.OMP.SRM.Boat_Class (u'laser')]
+    [SRM.Boat_Class (u'optimist'), SRM.Boat_Class (u'laser')]
 
     >>> print SRM.Boat.sail_number.Q_Raw.EQ
     <Attr.Equal __raw_sail_number.EQ [==]>
@@ -107,11 +107,11 @@ _test_code = """
 
     >>> bq = SRM.Boat.query_s ()
     >>> bq.all ()
-    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.EQ ("1107")).all ()
-    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.AC ("11")).all ()
-    [GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print scope.SRM.Boat.count ### 6
     2
@@ -126,7 +126,7 @@ _test_code = """
     >>> scope.commit ()
 
     >>> SRM.Boat.query_s ().all () ### before Name_Clash
-    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> laser.max_crew ### before name clash, before change
     1
@@ -144,7 +144,7 @@ _test_code = """
     2
 
     >>> SRM.Boat.query_s ().all () ### after Name_Clash
-    [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### before invariant errors
     [('object', []), ('region', []), ('system', [])]
@@ -165,17 +165,17 @@ _test_code = """
     Invariants: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 0)`
-    [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [('object', [Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0)]), ('region', []), ('system', [])]
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
     0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 5)`
-    [('object', [Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [('object', [Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5)]), ('region', []), ('system', [])]
     >>> errors
-    [Invariants(Invariant(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [Invariants(Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5),)]
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
@@ -197,7 +197,7 @@ _test_code = """
     Invariants: Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
         max_crew = None
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = None)`
-    [('object', [Required_Empty(GTW.OMP.SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+    [('object', [Required_Empty(SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
         max_crew = None)]), ('region', []), ('system', [])]
 
     >>> b.b_class.max_crew = None
@@ -328,8 +328,6 @@ _test_code = """
 """
 
 from _GTW.__test__.model import *
-
-_Ancestor_Essence = GTW.OMP.SRM.Boat
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

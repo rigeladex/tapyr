@@ -100,21 +100,21 @@ _attr_ac_query = """
     Q.lifetime.finish == 1994-08-04 and Q.lifetime.start == 1907-03-08
 
     >>> PAP.Person.query_s (q1).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
     >>> PAP.Person.query_s (q2).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u'')]
+    [PAP.Person (u'tanzer', u'egon', u'', u'')]
     >>> PAP.Person.query_s (q1 | q3).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.'), GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u'')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'mag.'), PAP.Person (u'tanzer', u'egon', u'', u'')]
     >>> PAP.Person.query_s (q4).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'egon', u'', u'')]
+    [PAP.Person (u'tanzer', u'egon', u'', u'')]
     >>> list (p.ui_display for p in PAP.Person.query_s (q5))
     [u'Glueck Martin', u'Tanzer Christian, Mag.']
 
     >>> PAP.Person.query_s (q6).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
 
     >>> PAP.Person.query_s (q7).all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
 
     >>> q = PAP.Person.AQ.last_name.AC ("Franz")
     >>> print " or ".join (str (p) for p in q.predicates)
@@ -132,9 +132,9 @@ _attr_ac_query = """
     <Filter_Or [Q.left.last_name.startswith (u'tan',), Q.left.last_name.contains (u'-tan',)]>
 
     >>> SRM.Sailor.query_s (qs1).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
     >>> SRM.Sailor.query_s (qs2).all ()
-    [GTW.OMP.SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
+    [SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
 
     >>> a1 = PAP.Address ("Langstrasse 4",    "2244", "Spannberg", "Austria")
     >>> a2 = PAP.Address ("Glasauergasse 32", "1130", "Wien",      "Austria")

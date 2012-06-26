@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -42,10 +42,10 @@ test_code = r"""
     >>> with scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
     ...     _ = per.set_raw (first_name = fn2)
     ...     PAP.Person.query (Q.first_name == fn2).all () ## Nested
-    [GTW.OMP.PAP.Person (u'ln', u'fn2', u'', u'')]
+    [PAP.Person (u'ln', u'fn2', u'', u'')]
 
     >>> PAP.Person.query (Q.first_name == fn2).all () ## outside
-    [GTW.OMP.PAP.Person (u'ln', u'fn2', u'', u'')]
+    [PAP.Person (u'ln', u'fn2', u'', u'')]
 """
 
 from   _GTW.__test__.model                      import *

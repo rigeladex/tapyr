@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -72,6 +72,7 @@
 #    21-Oct-2010 (CT) `_modify_last_cid` factored and redefined for
 #                     `Attr_Composite`
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
+#    26-Jun-2012 (CT) Use `entity.type_name`, not `entity.Essence.type_name`
 #    ««revision-date»»···
 #--
 
@@ -229,7 +230,7 @@ class _Entity_ (Undoable) :
         self.epk          = entity.epk_raw
         self.pid          = getattr (entity, "pid", None)
         self.tool_version = entity.home_scope.Version.id
-        self.type_name    = entity.Essence.type_name
+        self.type_name    = entity.type_name
         self.user         = entity.home_scope.user
         self.old_attr     = {}
         self._new_attr    = {}

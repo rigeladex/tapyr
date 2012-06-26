@@ -197,11 +197,11 @@ _query_attr = r"""
     2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
 
     >>> PAP.Person.query (Q.last_name == "tanzer").all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'')]
     >>> PAP.Person.query (Q.last_name == "Tanzer").all ()
     []
     >>> PAP.Person.query (Q.RAW.last_name == "Tanzer").all ()
-    [GTW.OMP.PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person (u'tanzer', u'christian', u'', u'')]
 
 """
 
@@ -217,13 +217,13 @@ _date_queries = """
     >>> scope.commit ()
 
     >>> print scope.PAP.Person.query_s (Q.lifetime.start.year == 2010).all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 2', u'fn 2', u'', u''), PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> print scope.PAP.Person.query_s (Q.lifetime.start.year <= 2010).all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 2', u'fn 2', u'', u''), PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> print scope.PAP.Person.query_s (Q.lifetime.start.year >= 2010).all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 2', u'fn 2', u'', u''), GTW.OMP.PAP.Person (u'ln 3', u'fn 3', u'', u''), GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 2', u'fn 2', u'', u''), PAP.Person (u'ln 3', u'fn 3', u'', u''), PAP.Person (u'ln 4', u'fn 4', u'', u'')]
     >>> print scope.PAP.Person.query_s (Q.lifetime.start.year >  2010).all ()
-    [GTW.OMP.PAP.Person (u'ln 4', u'fn 4', u'', u'')]
+    [PAP.Person (u'ln 4', u'fn 4', u'', u'')]
 """
 
 from   _GTW.__test__.model import *
