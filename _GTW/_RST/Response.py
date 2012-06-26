@@ -57,9 +57,9 @@ class _RST_Response_ (TFL.Meta.Object) :
     _sets_to_combine  = ("_own_vars", )
 
     def __init__ (self, _root, _request, * args, ** kw) :
-        self.root      = root
+        self.root      = _root
         self._request  = _request
-        self._response = root.HTTP.Response (* args, ** kw)
+        self._response = _root.HTTP.Response (* args, ** kw)
     # end def __init__
 
     def __call__ (self, * args, ** kw) :

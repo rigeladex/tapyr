@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Jun-2012 (CT) Creation
+#    26-Jun-2012 (CT) Fix `__call__`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class Static_File_App (TFL.Meta.Object) :
         if file_name and request.method in self.supported_methods :
             result = self._response (environ, request, file_name)
         else :
-            result = self.wrap ()
+            result = self.wrap
         return result (environ, start_response)
     # end def __call__
 

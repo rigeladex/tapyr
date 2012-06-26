@@ -46,6 +46,8 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Record
 
+import json
+
 class _Meta_ (TFL.Meta.M_Class) :
     """Meta class for mime type renderers."""
 

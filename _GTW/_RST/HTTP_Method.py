@@ -123,24 +123,23 @@ class _HTTP_Method_R_ (HTTP_Method) :
         n_match = request.headers.get ("If-None-Match")
         if n_match is not None :
             result = etag != n_match
-        response.set_header ("ETag", value)
+        response.set_etag (value)
         return result
     # end def _check_etag
 
     def _check_modified (self, resource, request, response, last_modified) :
         result  = True
-        value   = TFL.RFC2822.as_string (last_modified)
         ims     = request.headers.get   ("If-Modified-Since")
         if ims is not None :
             result = last_modified > ims
-        response.set_header ("Last-Modified", value)
+        response.last_modified   = last_modified
         return result
     # end def _check_modified
 
     def _do_change_info (self, resource, request, response) :
         result = self.__super._do_change_info (resource, request, response)
         if not result :
-            response.set_status (304)
+            response.status_code = 304
         return result
     # end def _do_change_info
 
@@ -157,24 +156,23 @@ class _HTTP_Method_W_ (HTTP_Method) :
         match   = request.headers.get ("If-Match")
         if match is not None :
             result = etag == match
-        response.set_header ("ETag", value)
+        response.set_etag (value)
         return result
     # end def _check_etag
 
     def _check_modified (self, resource, request, response, last_modified) :
-        result  = True
-        value   = TFL.RFC2822.as_string (last_modified)
-        ums     = request.headers.get   ("If-Unmodified-Since")
+        result = True
+        ums    = request.headers.get   ("If-Unmodified-Since")
         if ums is not None :
             result = last_modified == ums
-        response.set_header ("Last-Modified", value)
+        response.last_modified   = last_modified
         return result
     # end def _check_modified
 
     def _do_change_info (self, resource, request, response) :
         result = self.__super._do_change_info (resource, request, response)
         if not result :
-            response.set_status (412)
+            response.status_code = 412
         return result
     # end def _do_change_info
 
@@ -219,7 +217,7 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
             if resource.allow_method (m, request)
             )
-        response.set_header ("Allow", ", ".join (methods))
+        response.headers ["Allow"] = ", ".join (methods)
         return response
     # end def __call__
 

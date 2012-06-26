@@ -49,15 +49,10 @@ class RST_E_Type_Mixin (TFL.Meta.Object) :
     _change_info               = None
     _last_change               = None
     _objects                   = []
-    _old_cid_e                 = -1
-    _old_cid_o                 = -1
-    _sort_key_cid_r            = TFL.Sorted_By ("-cid")
+    _old_cid                   = -1
+    _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     objects                    = property (lambda s : s._get_objects ())
-    _entries                   = property \
-        ( lambda s    : s._get_entries ()
-        , lambda s, v : True
-        )
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "ETM", prefix = "_")
@@ -95,7 +90,10 @@ class RST_E_Type_Mixin (TFL.Meta.Object) :
 
     @property
     def change_info (self) :
-        return self._change_info
+        result = self._change_info
+        if result is None :
+            result = self._change_info = self._get_change_info
+        return result
     # end def change_info
 
     @Once_Property
@@ -111,39 +109,73 @@ class RST_E_Type_Mixin (TFL.Meta.Object) :
         return result
     # end def query
 
-    def _get_entries (self) :
-        cid   = self.change_info.cid
-        if self._old_cid_e != cid :
-            self._old_cid_e = cid
-            self.__entries  = list \
-                (self._new_entry (o) for o in self.objects)
-        return self.__entries
-    # end def _get_entries
-
-    def _get_objects (self) :
-        cid = self.change_info.cid
-        if self._old_cid_o != cid :
-            self._old_cid_o = cid
-            self.__objects  = self.query ().all ()
-        return self.__objects
-    # end def _get_objects
-
-    def _prepare_handle_method (self, method, request) :
-        scope = self.top.scope
-        etn   = self.E_Type.type_name
-        lc    = scope.query_changes \
-            (type_name = etn).order_by (self._sort_key_cid_r).first ()
+    def _get_change_info (self) :
+        result = None
+        scope  = self.top.scope
+        etn    = self.E_Type.type_name
+        lc     = scope.query_changes \
+            (type_name = etn).order_by (self._sort_key_cid_reverse).first ()
         if lc is not None :
-            self._change_info   = TFL.Record \
+            result = TFL.Record \
                 ( cid           = lc.cid
                 , etag          = "ET-%s-%s" % (lc.time, lc.cid)
                 , last_modified = lc.time
                 )
+        return result
+    # end def _get_change_info
+
+    def _get_objects (self) :
+        cid = self.change_info.cid
+        if  self._old_cid != cid :
+            self._old_cid  = cid
+            self.__objects = self.query ().all ()
+        return self.__objects
+    # end def _get_objects
+
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request) :
+        ### XXX setup query_restriction if request.req_data specifies any
+        with self.LET (_change_info = self._get_change_info ()) :
+            yield
     # end def _prepare_handle_method
 
 # end class RST_E_Type_Mixin
 
-_Ancestor = GTW.RST.Node
+_Ancestor = GTW.RST.Leaf
+
+class RST_Entity (_Ancestor) :
+    """RESTful node for a specific instance of an essential type."""
+
+    class RST_Entity_GET (_Ancestor.GET) :
+
+        _real_name             = "GET"
+
+        def _response_body (self, resource, request, response) :
+            obj = resource.obj
+            return dict \
+                ( attributes = dict
+                    ((a.name, a.get_raw (obj)) for a in obj.edit_attr)
+                , cid        = obj.last_cid
+                , pid        = obj.pid
+                , type_name  = obj.type_name
+                )
+        # end def _response
+
+    GET = RST_Entity_GET # end class
+
+    def __init__ (self, ** kw) :
+        assert "name" not in kw
+        obj = kw.pop ("obj")
+        if isinstance (obj, int) :
+            obj   = self.ETM.pid_query (obj)
+        self.obj  = obj
+        self.name = str (obj.pid)
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+Entity = RST_Entity # end class
+
+_Ancestor = GTW.RST.Node_V
 
 class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
     """RESTful node for a specific essential type."""
@@ -169,11 +201,42 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
     GET = RST_E_Type_GET # end class
 
+    def _get_child (self, child, * grandchildren) :
+        try :
+            obj = self.ETM.pid_query (child)
+        except LookupError :
+            pass
+        else :
+            result = self._new_entry (obj)
+            if not grandchildren :
+                return result
+            else :
+                return result._get_child (* grandchildren)
+    # end def _get_child
+
     def _new_entry (self, instance) :
-        return Entity (instance = o, parent = self)
+        return Entity (obj = instance, parent = self)
     # end def _new_entry
 
 E_Type = RST_E_Type # end class
+
+_Ancestor = GTW.RST.Node
+
+class RST_Scope (_Ancestor) :
+    """RESTful node for a scope."""
+
+    _real_name                 = "Scope"
+
+    def __init__ (self, ** kw) :
+        if "entries" not in kw :
+            kw ["entries"] = tuple \
+                (   E_Type (ETM = et.type_name)
+                for et in self.top.scope._T_Extension if not et.is_partial
+                )
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+Scope = RST_Scope # end class
 
 if __name__ != "__main__" :
     GTW.RST._Export_Module ()

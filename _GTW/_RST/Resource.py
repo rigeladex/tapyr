@@ -28,7 +28,7 @@
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
 #    22-Jun-2012 (CT) Set `parent` in `_RST_Meta_.__call__` before `.__init__`
-#    22-Jun-2012 (CT) Refactor `RST__Node__GET._response`
+#    26-Jun-2012 (CT) Factor `_Node_Base_`, add `Node_V`
 #    ««revision-date»»···
 #--
 
@@ -174,6 +174,16 @@ class _RST_Base_ (TFL.Meta.Object) :
         pass
     # end def change_info
 
+    @property
+    def entries (self) :
+        return ()
+    # end def entries
+
+    @property
+    def entries_transitive (self) :
+        return ()
+    # end def entries_transitive
+
     @Once_Property
     def exclude_robots (self) :
         return self.r_permissions or self.hidden or self._exclude_robots
@@ -223,10 +233,10 @@ class _RST_Base_ (TFL.Meta.Object) :
         """Returns True if `self` allows `method` for `user`."""
         if isinstance (method, basestring) :
             method = GTW.RST.HTTP_Method.Table [method]
-        if not user.superuser :
+        if not (user and user.superuser) :
             pn = method.mode + "_permissions"
             permissions = getattr (self, pn)
-            return all (p (user, self) for p in self.permissions ())
+            return all (p (user, self) for p in permissions)
         return True
     # end def allow_method
 
@@ -263,15 +273,17 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def _get_user
 
     def _handle_method (self, method, request) :
-        self._prepare_handle_method (method, request)
-        return method (self, request)
+        with self._handle_method_context (method, request) :
+            result = method (self, request)
+            return result
     # end def _handle_method
 
-    def _prepare_handle_method (self, method, request) :
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        pass
-    # end def _prepare_handle_method
+        yield
+    # end def _handle_method_context
 
     def __getattr__ (self, name) :
         if self.parent is not None :
@@ -290,30 +302,27 @@ class RST_Leaf (_Base_) :
 
     _real_name                 = "Leaf"
 
-    @property
-    def entries (self) :
-        return ()
-    # end def entries
-
 Leaf = RST_Leaf # end class
 
-class _RST_Node_ (_Base_) :
+_Ancestor = _Base_
+
+class _RST_Node_Base_ (_Ancestor) :
     """Base class for RESTful nodes (resources with children)."""
 
-    _real_name                 = "_Node_"
+    _real_name                 = "_Node_Base_"
 
-    class RST__Node__GET (_Base_.GET) :
+    class RST__Node_Base__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
 
-        def _response (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             entries = []
             result  = dict \
                 ( entries      = entries
                 , url_template = "%s/{entry}"
                 )
             for e in self._resource_entries (resource, request) :
-                entries.append (e.name)
+                entries.append (self._response_entry (resource, request, e))
             return result
         # end def _response
 
@@ -328,6 +337,25 @@ class _RST_Node_ (_Base_) :
         # end def _response_entry
 
         def _resource_entries (self, resource, request) :
+            raise NotImplementedError
+        # end def _resource_entries
+
+    GET = RST__Node_Base__GET # end class
+
+_Node_Base_ = _RST_Node_Base_ # end class
+
+_Ancestor = _Node_Base_
+
+class _RST_Node_ (_Ancestor) :
+    """Base class for RESTful nodes (resources with children)."""
+
+    _real_name                 = "_Node_"
+
+    class RST__Node__GET (_Ancestor.GET) :
+
+        _real_name             = "GET"
+
+        def _resource_entries (self, resource, request) :
             return resource.entries
         # end def _resource_entries
 
@@ -337,6 +365,7 @@ class _RST_Node_ (_Base_) :
         entries = kw.pop ("entries", [])
         self.__super.__init__ (** kw)
         self._entries = []
+        self._map     = {}
         if entries :
             self._init_add_entries (entries)
     # end def __init__
@@ -357,7 +386,20 @@ class _RST_Node_ (_Base_) :
 
     def add_entries (self, * entries) :
         self._entries.extend (entries)
+        self._map.update ((e.name, e) for e in entries)
     # end def add_entries
+
+    def _get_child (self, child, * grandchildren) :
+        try :
+            result = self._map [child]
+        except KeyError :
+            pass
+        else :
+            if not grandchildren :
+                return result
+            else :
+                return result._get_child (* grandchildren)
+    # end def _get_child
 
     def _init_add_entries (self, entries) :
         self.add_entries \
@@ -369,7 +411,9 @@ class _RST_Node_ (_Base_) :
 
 _Node_ = _RST_Node_ # end class
 
-class RST_Node (_Node_) :
+_Ancestor = _Node_
+
+class RST_Node (_Ancestor) :
     """Base class for RESTful nodes (resources with children)."""
 
     _real_name                 = "Node"
@@ -387,7 +431,18 @@ class RST_Node (_Node_) :
 
 Node = RST_Node # end class
 
-class RST_Root (_Node_) :
+_Ancestor = _Node_Base_
+
+class RST_Node_V (_Ancestor) :
+    """Base class for RESTful volatile nodes (resources with children,
+       without permanent `_entries`).
+    """
+
+Node_V = RST_Node_V # end class
+
+_Ancestor = _Node_
+
+class RST_Root (_Ancestor) :
     """Root of tree of RESTful nodes."""
 
     _real_name                 = "Root"
@@ -522,7 +577,7 @@ class RST_Root (_Node_) :
                 raise HTTP.Error_405 \
                     (valid_methods = resource.SUPPORTED_METHODS)
             method   = getattr (resource, meth_name) ()
-            if resource.allow_method (user, method) :
+            if resource.allow_method (method, user) :
                 if resource.DEBUG :
                     fmt = "[%s] %s %s: execution time = %%s" % \
                         ( time.strftime

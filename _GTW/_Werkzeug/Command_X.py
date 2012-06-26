@@ -267,7 +267,8 @@ class GT2W_Command_X (GTW.OMP.Command) :
         if cmd.serve_static_files :
             sf_app.wrap = root
             result      = sf_app
-        root.Templateer.env.static_handler = sf_app
+        if not cmd.UTP.__name__.endswith ("RST") :
+            root.Templateer.env.static_handler = sf_app
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
         if cmd._name.endswith ("run_server") :

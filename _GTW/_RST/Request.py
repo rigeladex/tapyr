@@ -52,7 +52,9 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        if name != "_request" :
+        if name == "request" : ### XXX remove after porting of GTW.Werkzeug.Error
+            return self._request
+        elif name != "_request" :
             result = getattr (self._request, name)
             setattr (self, name, result)
             return result
