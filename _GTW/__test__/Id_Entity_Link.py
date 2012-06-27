@@ -321,6 +321,7 @@ test_code = r"""
 
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("tn_pid").all ()
     [(('PAP.Person', 1),), (('SWP.Page', 2),), (('SWP.Page', 3),), (('SWP.Page', 4),), (('PAP.Entity_created_by_Person', 5),), (('PAP.Entity_created_by_Person', 6),), (('PAP.Entity_created_by_Person', 7),)]
+
 """
 
 from   _GTW.__test__.model      import *

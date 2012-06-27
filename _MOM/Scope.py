@@ -97,6 +97,7 @@
 #     7-May-2012 (CT) Pass `ucc.entities_transitive` to `r_incorrect` (`commit`)
 #    22-Jun-2012 (MG) Add `close_connections`
 #    26-Jun-2012 (CT) Add and use `T_Extension`
+#    27-Jun-2012 (CT) Rename `_canonical_name` to`canonical_type_name`
 #    ««revision-date»»···
 #--
 
@@ -318,6 +319,10 @@ class Scope (TFL.Meta.Object) :
         return self.ems.async_changes (* filter, ** kw)
     # end def async_changes
 
+    def canonical_type_name (self, type_name) :
+        return self._deprecated_type_names.get (type_name, type_name)
+    # end def canonical_type_name
+
     def commit (self) :
         ems = self.ems
         ucc = ems.uncommitted_changes
@@ -443,8 +448,8 @@ class Scope (TFL.Meta.Object) :
         if isinstance (entity, basestring) :
             name = entity
         else :
-            name = entity.Essence.type_name
-        return self.app_type.entity_type (self._canonical_name (name))
+            name = entity.type_name
+        return self.app_type.entity_type (self.canonical_type_name (name))
     # end def entity_type
 
     @TFL.Meta.Lazy_Method_RLV
@@ -597,10 +602,6 @@ class Scope (TFL.Meta.Object) :
             if n :
                 Scope.Table [n] = self
     # end def _add_to_scopes
-
-    def _canonical_name (self, name) :
-        return self._deprecated_type_names.get (name, name)
-    # end def _canonical_name
 
     def _check_inv (self, gauge, kind, eiter = None) :
         err_result = []

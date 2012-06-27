@@ -129,11 +129,11 @@ _basic = r"""
         <Create SWP.Page (u'event-2-text', 'SWP.Page'), new-values = {'contents' : u'<p>Text for the 2. event</p>\n', 'date' : (('start', u'2010/09/08'),), 'last_cid' : '18', 'text' : u'Text for the 2. event'}>
     <Change Summary for pid 18: newborn>
         <Create EVT.Event ((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), new-values = {'last_cid' : '19'}>
-    <Change Summary for pid 19: newborn, 2 changes>
+    <Change Summary for pid 20: newborn, 2 changes>
         <Create EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), new-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '20'}>
         <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'', 'last_cid' : '20'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '29'}>
         <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08', 'last_cid' : '29'}, new-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '30'}>
-    <Change Summary for pid 20: newborn>
+    <Change Summary for pid 21: newborn>
         <Create EVT.Recurrence_Rule ((((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), u'', u'', 'EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '21', 'start' : u'2010/08/01', 'unit' : u'Weekly'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
@@ -157,8 +157,8 @@ _basic = r"""
     16 [('contents', (old = None, new = u'<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = u'Text for the 1. event'))]
     17 [('contents', (old = None, new = u'<p>Text for the 2. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '18')), ('text', (old = None, new = u'Text for the 2. event'))]
     18 [('last_cid', (old = None, new = '19'))]
-    19 [('date_exceptions', (old = None, new = u'2010/08/15')), ('dates', (old = u'', new = u'2010/09/08,2010/10/08')), ('last_cid', (old = None, new = '30'))]
-    20 [('count', (old = None, new = u'7')), ('last_cid', (old = None, new = '21')), ('start', (old = None, new = u'2010/08/01')), ('unit', (old = None, new = u'Weekly'))]
+    20 [('date_exceptions', (old = None, new = u'2010/08/15')), ('dates', (old = u'', new = u'2010/09/08,2010/10/08')), ('last_cid', (old = None, new = '30'))]
+    21 [('count', (old = None, new = u'7')), ('last_cid', (old = None, new = '21')), ('start', (old = None, new = u'2010/08/01')), ('unit', (old = None, new = u'Weekly'))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
@@ -179,8 +179,8 @@ _basic = r"""
     16 ['last_cid']
     17 ['last_cid']
     18 ['last_cid']
-    19 ['dates', 'last_cid']
-    20 ['last_cid']
+    20 ['dates', 'last_cid']
+    21 ['last_cid']
 
     >>> scope.commit ()
 
@@ -199,7 +199,7 @@ _basic = r"""
     ...
     <Change Summary for pid 18: 1 change>
         <Modify EVT.Event ((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), old-values = {'date' : (('start', u'2010/08/18'),), 'last_cid' : '19'}, new-values = {'date' : (('finish', u'2010/08/19'), ('start', u'2010/08/13')), 'last_cid' : '32'}>
-    <Change Summary for pid 19: 2 changes>
+    <Change Summary for pid 20: 2 changes>
         <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '30'}, new-values = {'date_exceptions' : u'', 'last_cid' : '31'}>
         <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '31'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '33'}>
 
@@ -207,12 +207,12 @@ _basic = r"""
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
     ...
     18 [('date', (old = (('start', u'2010/08/18'),), new = (('finish', u'2010/08/19'), ('start', u'2010/08/13')))), ('last_cid', (old = '19', new = '32'))]
-    19 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '30', new = '33'))]
+    20 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '30', new = '33'))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
     18 ['date', 'last_cid']
-    19 ['date_exceptions', 'dates', 'last_cid']
+    20 ['date_exceptions', 'dates', 'last_cid']
 
     >>> scope.commit ()
 

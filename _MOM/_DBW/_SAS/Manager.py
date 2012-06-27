@@ -93,6 +93,7 @@
 #    15-Jun-2012 (MG) `_RESTORE_CLASS` factored
 #    18-Jun-2012 (CT) Factor most of `_Reload_Mixin_`
 #    18-Jun-2012 (MG) `_RELOAD_INSTANCE` changed to allow caching
+#    27-Jun-2012 (CT) Use `.Essence.type_name` as key for `role_cacher`
 #     2-Jul-2012 (MG) `_RELOAD_INSTANCE` `session` is now a parameter of the
 #                     `reload` method and not of the constructor
 #    ««revision-date»»···
@@ -224,10 +225,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             for cr in e_type.auto_cache_roles :
                 if isinstance (cr, MOM.Link_Cacher) :
                     cr_et = getattr (e_type, cr.role_name).role_type
-                    cls.role_cacher [cr_et.type_name].add ((cr, e_type))
+                    cls.role_cacher [cr_et.Essence.type_name].add ((cr, e_type))
                 else :
                     cls.role_cacher \
-                        [cr.other_role.role_type.type_name].add \
+                        [cr.other_role.role_type.Essence.type_name].add \
                         ((cr, e_type))
             e_type.auto_cache_roles = ()
         ### we need to replace the attribute kinds for all `cached_role`
@@ -266,7 +267,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if unique is not None and not e_type.polymorphic_epk :
                 sa_table.append_constraint (unique)
             e_type._Reload_Mixin_.define_e_type (e_type, _Reload_Mixin_)
-        for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
+        for cr, assoc_et in cls.role_cacher.get (e_type.Essence.type_name, ()) :
             if cr.attr_name in e_type._Attributes._own_names :
                 ### setup cached role only for the etype first defining the
                 ### role attribute, not it's descendents

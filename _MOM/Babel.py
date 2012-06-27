@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -37,6 +37,8 @@
 #                     attributes and names starings with `_` from the
 #                     translation
 #    16-Dec-2010 (CT) Add ``__doc__`` for non-partial e-types
+#    27-Jun-2012 (CT) Use `app_type._T_Extension` instead of
+#                     `.etypes.itervalues ()`
 #    ««revision-date»»···
 #--
 from   _MOM                import MOM
@@ -70,7 +72,7 @@ def Add_Translations (encoding, config, method, app_type) :
             translations.append ((0, "_T", doc_string, [], filename))
     # end def _add_object
 
-    for et in app_type.etypes.itervalues () :
+    for et in app_type._T_Extension :
         filename = et.__module__
         _add_object (et, et.ui_name, not et.is_partial, filename, True)
         for prop_spec, inst_cls in ( (et._Attributes, MOM.Attr._User_)

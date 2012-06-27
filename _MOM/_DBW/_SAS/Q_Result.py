@@ -65,8 +65,11 @@
 #    23-Apr-2012 (CT) Rename `__bool__` to `__nonzero__`
 #    15-Jun-2012 (MG) `Q_Result_Reload` added
 #    18-Jun-2012 (MG) `Q_Result_Reload`: caching added
-#    27-Jun-2012 (MG) `Q_Result_Reload`: fixed
+#    27-Jun-2012 (CT) Use `.Essence.type_name` as key for
+#                     `Q_Result_Reload.Cache`
+#    27-Jun-2012 (MG) Fix `Q_Result_Reload`
 #     2-Jul-2012 (MG) `Q_Result_Reload`: not cache the `session` object
+#    18-Jul-2012 (MG) Export `_Q_Result_`
 #    ««revision-date»»···
 #--
 
@@ -348,16 +351,17 @@ class Q_Result (_Q_Result_) :
 # end class Q_Result
 
 class M_Q_Result_Reload (_Q_Result_.__class__) :
-    """Meta class caching the base query for gathering allattributes of an
-       e_type
+    """Meta class caching the base query for gathering all attributes of an
+       e_type.
     """
 
     Cache = {}
 
     def __call__ (cls, e_type) :
-        if e_type.type_name not in cls.Cache :
-            cls.Cache [e_type.type_name]= cls.__m_super.__call__ (e_type)
-        return cls.Cache [e_type.type_name]
+        type_name = e_type.Essence.type_name
+        if type_name not in cls.Cache :
+            cls.Cache [type_name]= cls.__m_super.__call__ (e_type)
+        return cls.Cache [type_name]
     # end def __call__
 
 # end class M_Q_Result_Reload
@@ -523,5 +527,5 @@ class Q_Result_Changes (_Q_Result_) :
 # end class Q_Result_Changes
 
 if __name__ != "__main__" :
-    MOM.DBW.SAS._Export ("*")
+    MOM.DBW.SAS._Export ("*", "_Q_Result_")
 ### __END__ MOM.DBW.SAS.Q_Result

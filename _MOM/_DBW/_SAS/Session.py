@@ -724,7 +724,7 @@ class Session_S (_Session_) :
 # end class Session_S
 
 class Session_PC (_Session_) :
-    """A session bound to a DB manager deailing with pickle cargos"""
+    """A session bound to a DB manager dealing with pickle cargos"""
 
     def change_query (self, ** kw) :
         query = MOM.DBW.SAS.Q_Result_Changes (MOM.SCM.Change._Change_, self)

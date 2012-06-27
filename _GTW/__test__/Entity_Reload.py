@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    15-Jun-2012 (MG) Creation
+#    27-Jun-2012 (CT) Test `b1.name` before querying for `b3`
 #    ««revision-date»»···
 #--
 
@@ -43,16 +44,21 @@ _test_code = """
 
     >>> laser.max_crew ### before commit
     1
+    >>> b1.name ### before commit
+    u''
+
     >>> scope.commit  ()
     >>> modify_scope (%(p1)s, %(n1)s)
 
     >>> laser.max_crew ### after change
     2
+    >>> b1.name ### after change
+    u'My Boat'
+
     >>> b3 = scope.SRM.Boat.query (nation = u"AUT").one ()
     >>> b3 is b1
     True
-    >>> b1.name
-    u'My Boat'
+
     >>> scope.destroy ()
 
 """

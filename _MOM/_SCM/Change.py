@@ -73,6 +73,7 @@
 #                     `Attr_Composite`
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    26-Jun-2012 (CT) Use `entity.type_name`, not `entity.Essence.type_name`
+#    27-Jun-2012 (CT) Change `do_callbacks` to use `Essence.type_name`
 #    ««revision-date»»···
 #--
 
@@ -252,8 +253,10 @@ class _Entity_ (Undoable) :
 
     def do_callbacks (self, scope) :
         callbacks = self.callbacks
-        if callbacks and self.type_name in callbacks :
-            callbacks [self.type_name] (scope, self)
+        etype     = scope.entity_type (self.type_name)
+        type_name = etype.Essence.type_name
+        if callbacks and type_name in callbacks :
+            callbacks [type_name] (scope, self)
     # end def do_callbacks
 
     def entity (self, scope) :
@@ -287,10 +290,11 @@ class _Entity_ (Undoable) :
     @classmethod
     def remove_callback (cls, etype) :
         if cls.callbacks is not None :
-            try :
-                del cls.callbacks [etype.type_name]
-            except KeyError :
-                pass
+            for type_name in etype.type_name, etype.Essence.type_name :
+                try :
+                    del cls.callbacks [type_name]
+                except KeyError :
+                    pass
     # end def remove_callback
 
     def restore (self, scope) :
