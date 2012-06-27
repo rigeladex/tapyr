@@ -38,19 +38,59 @@ from   _TFL                     import TFL
 import _GTW._RST.Resource
 import _GTW._RST.HTTP_Method
 
+from   _MOM.import_MOM          import *
+
 from   _TFL._Meta.Once_Property import Once_Property
 
-class RST_E_Type_Mixin (TFL.Meta.Object) :
+class RST_Mixin (TFL.Meta.Object) :
+    """Mixin for MOM-specific RST classes."""
+
+    _change_info               = None
+    _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
+
+    @property
+    def change_info (self) :
+        result = self._change_info
+        if result is None :
+            result = self._change_info = self._get_change_info ()
+        return result
+    # end def change_info
+
+    def query_changes (self) :
+        scope = self.top.scope
+        cqf   = self.change_query_filter
+        return scope.query_changes (cqf).order_by (self._sort_key_cid_reverse)
+    # end def query_changes
+
+    def _get_change_info (self) :
+        result = None
+        lc     = self.query_changes ().first ()
+        if lc is not None :
+            result = TFL.Record \
+                ( cid           = lc.cid
+                , etag          = "ET-%s-%s" % (lc.time, lc.cid)
+                , last_modified = lc.time.replace (microsecond = 0)
+                )
+        return result
+    # end def _get_change_info
+
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request) :
+        with self.LET (_change_info = self._get_change_info ()) :
+            yield
+    # end def _prepare_handle_method
+
+# end class RST_Mixin
+
+class RST_E_Type_Mixin (RST_Mixin) :
     """Mixin for classes of E_Type classes."""
 
     query_restriction          = None
     sort_key                   = None
 
-    _change_info               = None
     _last_change               = None
     _objects                   = []
     _old_cid                   = -1
-    _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     objects                    = property (lambda s : s._get_objects ())
 
@@ -88,13 +128,15 @@ class RST_E_Type_Mixin (TFL.Meta.Object) :
         return result
     # end def ETM
 
-    @property
-    def change_info (self) :
-        result = self._change_info
-        if result is None :
-            result = self._change_info = self._get_change_info
+    @Once_Property
+    def change_query_filter (self) :
+        E_Type = self.E_Type
+        if E_Type.is_partial :
+            result = Q.OR (* ((Q.type_name == ctn) for ctn in E_Type.children))
+        else :
+            result = Q.type_name == E_Type.type_name
         return result
-    # end def change_info
+    # end def change_query_filter
 
     @Once_Property
     def query_filters (self) :
@@ -109,33 +151,19 @@ class RST_E_Type_Mixin (TFL.Meta.Object) :
         return result
     # end def query
 
-    def _get_change_info (self) :
-        result = None
-        scope  = self.top.scope
-        etn    = self.E_Type.type_name
-        lc     = scope.query_changes \
-            (type_name = etn).order_by (self._sort_key_cid_reverse).first ()
-        if lc is not None :
-            result = TFL.Record \
-                ( cid           = lc.cid
-                , etag          = "ET-%s-%s" % (lc.time, lc.cid)
-                , last_modified = lc.time
-                )
-        return result
-    # end def _get_change_info
-
     def _get_objects (self) :
-        cid = self.change_info.cid
+        change_info = self.change_info
+        cid = change_info and change_info.cid
         if  self._old_cid != cid :
             self._old_cid  = cid
-            self.__objects = self.query ().all ()
-        return self.__objects
+            self._objects = self.query ().all ()
+        return self._objects
     # end def _get_objects
 
     @TFL.Contextmanager
     def _handle_method_context (self, method, request) :
-        ### XXX setup query_restriction if request.req_data specifies any
-        with self.LET (_change_info = self._get_change_info ()) :
+        with self.__super._handle_method_context (method, request) :
+            ### XXX setup query_restriction if request.req_data specifies any
             yield
     # end def _prepare_handle_method
 
@@ -143,7 +171,7 @@ class RST_E_Type_Mixin (TFL.Meta.Object) :
 
 _Ancestor = GTW.RST.Leaf
 
-class RST_Entity (_Ancestor) :
+class RST_Entity (RST_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
 
     class RST_Entity_GET (_Ancestor.GET) :
@@ -154,7 +182,10 @@ class RST_Entity (_Ancestor) :
             obj = resource.obj
             return dict \
                 ( attributes = dict
-                    ((a.name, a.get_raw (obj)) for a in obj.edit_attr)
+                    (   (a.name, a.get_raw (obj))
+                    for a in obj.edit_attr
+                    if  a.to_save (obj)
+                    )
                 , cid        = obj.last_cid
                 , pid        = obj.pid
                 , type_name  = obj.type_name
@@ -172,6 +203,11 @@ class RST_Entity (_Ancestor) :
         self.name = str (obj.pid)
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @property
+    def change_query_filter (self) :
+        return Q.pid == self.obj.pid
+    # end def change_query_filter
 
 Entity = RST_Entity # end class
 
@@ -196,7 +232,8 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
         # end def _response_entry
 
         def _resource_entries (self, resource, request) :
-            return resource.objects
+            result = resource.objects
+            return sorted (result, key = Q.pid)
         # end def _resource_entries
 
     GET = RST_E_Type_GET # end class
@@ -204,7 +241,7 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
     def _get_child (self, child, * grandchildren) :
         try :
             obj = self.ETM.pid_query (child)
-        except LookupError :
+        except (LookupError, TypeError) :
             pass
         else :
             result = self._new_entry (obj)
@@ -231,7 +268,8 @@ class RST_Scope (_Ancestor) :
         if "entries" not in kw :
             kw ["entries"] = tuple \
                 (   E_Type (ETM = et.type_name)
-                for et in self.top.scope._T_Extension if not et.is_partial
+                for et in self.top.scope._T_Extension
+                if  issubclass (et, MOM.Id_Entity)
                 )
         self.__super.__init__ (** kw)
     # end def __init__

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
+#    27-Jun-2012 (CT) Fix `_check_etag` and `_check_modified`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class HTTP_Method (TFL.Meta.Object) :
                 result = self._check_modified \
                     (resource, request, response, last)
             if etag :
-                result = self._check_etag \
+                result = result and self._check_etag \
                     (resource, request, response, etag)
         return result
     # end def _do_change_info
@@ -118,21 +119,16 @@ class _HTTP_Method_R_ (HTTP_Method) :
     mode                       = "r"
 
     def _check_etag (self, resource, request, response, etag) :
-        result  = True
-        value   = str (etag)
-        n_match = request.headers.get ("If-None-Match")
-        if n_match is not None :
-            result = etag != n_match
-        response.set_etag (value)
+        n_match = request.if_none_match
+        result  = n_match is None or not n_match.contains (etag)
+        response.set_etag (etag)
         return result
     # end def _check_etag
 
     def _check_modified (self, resource, request, response, last_modified) :
-        result  = True
-        ims     = request.headers.get   ("If-Modified-Since")
-        if ims is not None :
-            result = last_modified > ims
-        response.last_modified   = last_modified
+        ims    = request.if_modified_since
+        result = ims is None or last_modified > ims
+        response.last_modified = last_modified
         return result
     # end def _check_modified
 
@@ -151,21 +147,16 @@ class _HTTP_Method_W_ (HTTP_Method) :
     mode                       = "w"
 
     def _check_etag (self, resource, request, response, etag) :
-        result  = True
-        value   = str (etag)
-        match   = request.headers.get ("If-Match")
-        if match is not None :
-            result = etag == match
-        response.set_etag (value)
+        match  = request.if_match
+        result = match is not None and match.contains (etag)
+        response.set_etag (etag)
         return result
     # end def _check_etag
 
     def _check_modified (self, resource, request, response, last_modified) :
-        result = True
-        ums    = request.headers.get   ("If-Unmodified-Since")
-        if ums is not None :
-            result = last_modified == ums
-        response.last_modified   = last_modified
+        ums    = request.if_unmodified_since
+        result = ums is not None and last_modified == ums
+        response.last_modified = last_modified
         return result
     # end def _check_modified
 

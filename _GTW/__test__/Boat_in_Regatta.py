@@ -36,6 +36,7 @@
 #    27-Apr-2012 (CT) Add test for `skipper_not_multiplexed`
 #     7-May-2012 (CT) Add test for `crew_number_valid`
 #    12-Jun-2012 (CT) Add tests for `tn_pid`, `.attrs ("type_name")`
+#    27-Jun-2012 (CT) Add tests for `query_changes` for `type_name`
 #    ««revision-date»»···
 #--
 
@@ -149,6 +150,21 @@ _test_code = r"""
 
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
     (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
+
+    >>> scope.query_changes (type_name = "SRM.Regatta").order_by (Q.cid).first ()
+    >>> scope.query_changes (type_name = "SRM.Regatta_C").order_by (Q.cid).first ()
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
+    >>> scope.query_changes (Q.type_name == "SRM.Regatta_H").order_by (Q.cid).first ()
+    <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '8', 'perma_name' : u'yardstick'}>
+
+    >>> scope.query_changes ((Q.type_name == "SRM.Regatta_C") | (Q.type_name == "SRM.Regatta_H")).order_by (Q.cid).first ()
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
+
+    >>> scope.query_changes (Q.OR (Q.type_name == "SRM.Regatta_C", Q.type_name == "SRM.Regatta_H")).order_by (Q.cid).first ()
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
+
+    >>> scope.query_changes (Q.type_name.IN (('SRM.Regatta', 'SRM.Regatta_H', 'SRM.Regatta_C'))).order_by (Q.cid).first ()
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
 
     >>> scope.commit ()
 

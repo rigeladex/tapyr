@@ -29,6 +29,7 @@
 #     8-Jun-2012 (CT) Creation
 #    22-Jun-2012 (CT) Set `parent` in `_RST_Meta_.__call__` before `.__init__`
 #    26-Jun-2012 (CT) Factor `_Node_Base_`, add `Node_V`
+#    27-Jun-2012 (CT) Add empty `Leaf._get_child`
 #    ««revision-date»»···
 #--
 
@@ -302,6 +303,10 @@ class RST_Leaf (_Base_) :
 
     _real_name                 = "Leaf"
 
+    def _get_child (self, child, * grandchildren) :
+        pass
+    # end def _get_child
+
 Leaf = RST_Leaf # end class
 
 _Ancestor = _Base_
@@ -557,6 +562,8 @@ class RST_Root (_Ancestor) :
             ### works for werkzeug.exceptions.HTTPException
             return exc
         except Exception as exc :
+            if self.DEBUG :
+                import traceback; print (traceback.print_exc ())
             result = self._http_response_error (request, exc)
         if not result :
             result = self._http_response_error \
@@ -594,7 +601,7 @@ class RST_Root (_Ancestor) :
     # end def _http_response
 
     def _http_response_error (self, request, exc) :
-        pass ### XXX
+        return self.HTTP.Error_500 (exc) (request)
     # end def _http_response_error
 
 Root = RST_Root # end class
