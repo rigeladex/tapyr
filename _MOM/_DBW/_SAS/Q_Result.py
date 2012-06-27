@@ -65,6 +65,7 @@
 #    23-Apr-2012 (CT) Rename `__bool__` to `__nonzero__`
 #    15-Jun-2012 (MG) `Q_Result_Reload` added
 #    18-Jun-2012 (MG) `Q_Result_Reload`: caching added
+#    27-Jun-2012 (MG) `Q_Result_Reload`: fixed
 #    ««revision-date»»···
 #--
 
@@ -375,12 +376,11 @@ class Q_Result_Reload (_Q_Result_) :
         sa_query     = self._sa_query
         for c in Q.pid == entity.pid, Q.last_cid > entity.last_cid :
             sa_query = sa_query.where (c._sa_filter (self.e_type._SAQ) [1] [0])
-        self._query_rows (sa_query)
+        result       = self.session.connection.execute (sa_query)
+        for row in result :
+            entity._SAS.reload (entity, row)
+        result.close ()
     # end def reload
-
-    def _from_row (self, row) :
-        self.entity._SAS.reload (self.entity, row)
-    # end def _from_row
 
 # end class Q_Result_Reload
 

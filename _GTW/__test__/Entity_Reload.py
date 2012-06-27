@@ -69,6 +69,7 @@ def _modify_scope (* args) :
     laser.max_crew = 2
     boat           = scope.SRM.Boat.query (nation = u"AUT").one ()
     boat.name      = "My Boat"
+    ### print (laser.max_crew, boat.name)
     scope.commit  ()
     scope.destroy ()
 # end def _modify_scope
