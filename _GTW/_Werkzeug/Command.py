@@ -45,6 +45,7 @@
 #     4-Jun-2012 (CT) Add `-log_level`, pass to `HTTP.Application`
 #     4-Jun-2012 (MG) `_handle_run_server` support for `host` added
 #    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
+#    28-Jun-2012 (CT) Call `init_app_cache` unconditionally
 #    ««revision-date»»···
 #--
 
@@ -246,10 +247,7 @@ class GT2W_Command (GTW.OMP.Command) :
         nav.Templateer.env.static_handler = app.handlers [0]
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
-        if cmd._name.endswith ("run_server") :
-            nav.Run_on_Launch.append ((self.init_app_cache, nav))
-        else :
-            self.init_app_cache (nav)
+        self.init_app_cache (nav)
         return app
     # end def _wsgi_app
 
