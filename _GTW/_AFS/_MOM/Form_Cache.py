@@ -85,20 +85,25 @@ class _Form_Cache_ (TFL.Meta.Object) :
         self._extras = []
     # end def __init__
 
+    def __call__ (self, * args, ** kw) :
+        """Just for compatibility with other cachers"""
+        pass
+    # end def __call__
+
     def add (self, * extras) :
         self._extras.extend (extras)
     # end def add
 
-    def as_pickle_cargo (self, nav_root) :
+    def as_pickle_cargo (self, root) :
         if not Form.Table :
             ### mustn't do this more than once
-            app_type = nav_root.App_Type
+            app_type = root.App_Type
             self._create_auto_forms  (app_type)
             self._create_extra_forms (app_type)
         return dict (AFS_Form_Table = Form.Table)
     # end def as_pickle_cargo
 
-    def from_pickle_cargo (self, nav_root, cargo) :
+    def from_pickle_cargo (self, root, cargo) :
         table = cargo.get ("AFS_Form_Table", {})
         table.update      (Form.Table)
         ### We want to set `Table` for `GTW.AFS.Element.Form`, not for a

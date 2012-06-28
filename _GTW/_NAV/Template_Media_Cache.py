@@ -30,9 +30,9 @@
 #    21-Oct-2011 (MG) `_create_css_cache` creating of directory added
 #    21-Oct-2011 (CT) Esthetics
 #    22-Nov-2011 (MG) Use `sos.mkdir_p` instead of `sos.mkdir`
-#    25-Nov-2011 (CT) Use `nav_root.template_iter` (major surgery)
+#    25-Nov-2011 (CT) Use `root.template_iter` (major surgery)
 #     5-Jan-2012 (CT) Add caching for `js`, call `t.get_cached_media` (SURGERY)
-#     9-Jan-2012 (CT) Add `minifier`, cache `js` only `if not nav_root.TEST`
+#     9-Jan-2012 (CT) Add `minifier`, cache `js` only `if not root.TEST`
 #    19-Jan-2012 (CT) s/rank/cache_rank/
 #    ««revision-date»»···
 #--
@@ -64,14 +64,14 @@ class Template_Media_Cache (TFL.Meta.Object) :
         self.clear_dir = clear_dir
     # end def __init__
 
-    def as_pickle_cargo (self, nav_root) :
+    def as_pickle_cargo (self, root) :
         if self.clear_dir :
             self._clear_dir ()
         css_map = {}
         js_map  = {}
-        TEST    = nav_root.TEST
-        TT      = nav_root.Templateer.Template_Type
-        for t in TFL.uniq (nav_root.template_iter ()) :
+        TEST    = root.TEST
+        TT      = root.Templateer.Template_Type
+        for t in TFL.uniq (root.template_iter ()) :
             css_href = self._add_to_map (t, "CSS", css_map)
             js_href  = None if TEST else self._add_to_map (t, "js", js_map)
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
@@ -125,7 +125,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def _create_cache
 
     @classmethod
-    def Media_Filenames (cls, nav_root, include_templates = True) :
+    def Media_Filenames (cls, root, include_templates = True) :
         result = set ()
         def _add (ts) :
             for t in ts :
@@ -133,13 +133,13 @@ class Template_Media_Cache (TFL.Meta.Object) :
                     result.add (t.source_path)
                 if t.media_path is not None :
                     result.add (t.media_path)
-        for t in nav_root.template_iter () :
+        for t in root.template_iter () :
             _add (t.templates)
         return result
     # end def Media_Filenames
 
-    def from_pickle_cargo (self, nav_root, cargo) :
-        TT              = nav_root.Templateer.Template_Type
+    def from_pickle_cargo (self, root, cargo) :
+        TT              = root.Templateer.Template_Type
         TT.css_href_map = cargo.get ("css_href_map", {})
         TT.Media_Map    = cargo.get ("Media_Map",    {})
     # end def from_pickle_cargo
