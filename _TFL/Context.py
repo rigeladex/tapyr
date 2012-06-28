@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #    10-Dec-2009 (CT) `attr_let` changed to accept `** kw` instead of a
 #                     single name and value
 #    17-Dec-2010 (CT) `time_block` added
+#    28-Jun-2012 (CT) Add `relaxed`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,12 @@ def list_push (list, item) :
         assert list [-1] is item
         list.pop ()
 # end def list_push
+
+@TFL.Contextmanager
+def relaxed (* args, ** kw) :
+    """Context manager doing nothing."""
+    yield None
+# end def relaxed
 
 @TFL.Contextmanager
 def time_block (fmt = "Execution time: %s", out = None, cb = None) :
