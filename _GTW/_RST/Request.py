@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jun-2012 (CT) Creation
+#    28-Jun-2012 (CT) Add `verbose`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,14 @@ class _RST_Request_ (TFL.Meta.Object) :
         auth = self.authorization
         return auth and auth.username
     # end def username
+
+    @Once_Property
+    def verbose (self) :
+        result = self.req_data.get ("verbose")
+        if result == "" :
+            result = True
+        return result
+    # end def verbose
 
     def get_browser_locale_codes (self) :
         """Determines the user's locale from Accept-Language header."""

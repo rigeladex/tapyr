@@ -204,9 +204,9 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
 
     def __call__ (self, resource, request) :
         response = resource.Response (request)
-        methods = sorted \
+        methods  = sorted \
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
-            if resource.allow_method (m, request)
+            if resource.allow_method (m, request.user)
             )
         response.headers ["Allow"] = ", ".join (methods)
         return response

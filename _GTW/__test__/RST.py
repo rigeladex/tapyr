@@ -88,6 +88,7 @@ class _GTW_Test_Command_ (_Ancestor) :
     PNS_Aliases           = dict \
         ( PAP             = GTW.OMP.PAP
         , SRM             = GTW.OMP.SRM
+        , SWP             = GTW.OMP.SWP
         )
 
     SALT                  = bytes \
@@ -119,9 +120,10 @@ class _GTW_Test_Command_ (_Ancestor) :
 
     def create_rst (self, cmd, app_type, db_url, ** kw) :
         from _GTW._RST import MOM as R_MOM
-        return GTW.RST.Root \
+        result = GTW.RST.Root \
             ( App_Type          = app_type
             , DB_Url            = db_url
+            , DEBUG             = True
             , encoding          = cmd.output_encoding
             , HTTP              = cmd.HTTP
             , input_encoding    = cmd.input_encoding
@@ -129,6 +131,9 @@ class _GTW_Test_Command_ (_Ancestor) :
             , entries           = [R_MOM.Scope (name = "v1")]
             , ** kw
             )
+        if cmd.log_level :
+            print (formatted (result.Table))
+        return result
     # end def create_rst
 
     def create_test_dict ( self, test_spec
@@ -217,31 +222,45 @@ _Command_  = _GTW_Test_Command_ # end class
 Scaffold   = _Command_ ()
 Scope      = Scaffold.scope
 
-import logging
+from   posixpath import join as pjoin
+
 import multiprocessing
 import requests
+import subprocess
 import sys
 import time
-
-logger = multiprocessing.log_to_stderr ()
 
 def _run_server (* args) :
     result = Scaffold (server_args)
     return result
 # end def run_server
 
-def run_server (* args) :
+def run_server_mp (* args) :
     p = multiprocessing.Process (target = _run_server, args = args)
     p.start    ()
     time.sleep (2)
     return p
-# end def run_server
+# end def run_server_mp
+
+def run_server_sb (* args) :
+    import tempfile
+    p = subprocess.Popen \
+        ( [ sys.executable, "-m", "_GTW.__test__.RST"]
+        , stderr = tempfile.TemporaryFile ()
+        )
+    time.sleep (2)
+    return p
+# end def run_server_sb
+
+run_server = run_server_sb
 
 def _normal (k, v) :
     if k in ("date", "last-modified") :
         v = "<datetime instance>"
     elif k in ("etag",) :
         v = "ETag value"
+    elif k == "content-length" :
+        v = "<length>"
     return k, v
 # end def _normal
 
@@ -252,11 +271,26 @@ def show (r) :
                 (_normal (k, v) for k, v in r.headers.iteritems ())
             , json    = r.json if r.content else None
             , status  = r.status_code
+            , url     = r.url
             )
         )
     print (output)
     return r
 # end def show
+
+def traverse (url, level = 0) :
+    rg    = requests.get     (url)
+    ro    = requests.options (url)
+    path  = requests.utils.urlparse (url).path or "/"
+    if ro.ok :
+        print (path, ":", ro.headers ["allow"], )
+    else :
+        print (path, ":", ro.status_code, r.content)
+    if rg.ok and rg.content and rg.json :
+        l = level + 1
+        for e in rg.json.get ("entries", ()) :
+            traverse (pjoin (url, str (e)), l)
+# end def traverse
 
 server_args = \
     [ "run_server"
@@ -266,29 +300,72 @@ server_args = \
     , "-db_name=test"
     , "-debug=yes"
     , "-load_I18N=no"
+    , "-log_level=0"
     , "-port=9999"
     ]
+
+### «text» ### The doctest follows::
 
 _test_code = """
     >>> server = run_server ()
 
+    >>> r = show (requests.options ("http://localhost:9999"))
+    { 'headers' :
+        { 'allow' : 'GET, HEAD, OPTIONS'
+        , 'content-length' : '<length>'
+        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' : None
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/'
+    }
+
+    >>> r = show (requests.head ("http://localhost:9999"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' : None
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/'
+    }
+
     >>> r = show (requests.get ("http://localhost:9999"))
     { 'headers' :
-        { 'content-length' : '49'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
     , 'json' :
         { 'entries' : [ 'v1' ]
-        , 'url_template' : '%s/{entry}'
+        , 'url_template' : '/{entry}'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/'
+    }
+
+    >>> r = show (requests.get ("http://localhost:9999?verbose"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' : [ '/v1' ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/?verbose'
     }
 
     >>> r = show (requests.get ("http://localhost:9999/v1"))
     { 'headers' :
-        { 'content-length' : '1099'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
@@ -300,10 +377,7 @@ _test_code = """
             , 'MOM.Link1'
             , 'MOM._MOM_Link_n_'
             , 'MOM.Link2'
-            , 'MOM.Link2_Ordered'
-            , 'MOM.Link3'
             , 'MOM.Object'
-            , 'MOM.Named_Object'
             , 'PAP.Address'
             , 'PAP.Subject'
             , 'PAP.Company'
@@ -330,16 +404,15 @@ _test_code = """
             , 'SRM.Boat'
             , 'SRM.Club'
             , 'SRM.Regatta_Event'
-            , 'GTW.OMP.SWP.Link1'
-            , 'GTW.OMP.SWP.Link2'
-            , 'GTW.OMP.SWP.Object'
-            , 'GTW.OMP.SWP.Object_PN'
-            , 'GTW.OMP.SWP.Page'
-            , 'GTW.OMP.SWP.Page_Y'
-            , 'GTW.OMP.SWP.Clip_O'
-            , 'GTW.OMP.SWP.Clip_X'
-            , 'GTW.OMP.SWP.Gallery'
-            , 'GTW.OMP.SWP.Picture'
+            , 'SWP.Link1'
+            , 'SWP.Object'
+            , 'SWP.Object_PN'
+            , 'SWP.Page'
+            , 'SWP.Page_Y'
+            , 'SWP.Clip_O'
+            , 'SWP.Clip_X'
+            , 'SWP.Gallery'
+            , 'SWP.Picture'
             , 'SRM.Page'
             , 'SRM.Regatta'
             , 'SRM.Regatta_C'
@@ -351,14 +424,15 @@ _test_code = """
             , 'SRM.Crew_Member'
             , 'SRM.Team_has_Boat_in_Regatta'
             ]
-        , 'url_template' : '%s/{entry}'
+        , 'url_template' : '/v1/{entry}'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/PAP.Person"))
+    >>> rp = show (requests.get ("http://localhost:9999/v1/PAP.Person"))
     { 'headers' :
-        { 'content-length' : '52'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -371,15 +445,63 @@ _test_code = """
             , 2
             , 3
             ]
-        , 'url_template' : '%s/{entry}'
+        , 'url_template' : '/v1/PAP.Person/{entry}'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person'
     }
 
-    >>> for pid in r.json ["entries"] :
-    ...     _ = show (requests.get ("http://localhost:9999/v1/PAP.Person/%s" % pid))
+    >>> _ = show (requests.get ("http://localhost:9999/v1/PAP.Person?verbose"))
     { 'headers' :
-        { 'content-length' : '145'
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ { 'attributes' :
+                  { 'first_name' : 'Christian'
+                  , 'last_name' : 'Tanzer'
+                  , 'middle_name' : ''
+                  , 'title' : ''
+                  }
+              , 'cid' : 1
+              , 'pid' : 1
+              , 'type_name' : 'PAP.Person'
+              }
+            , { 'attributes' :
+                  { 'first_name' : 'Laurens'
+                  , 'last_name' : 'Tanzer'
+                  , 'middle_name' : 'William'
+                  , 'title' : ''
+                  }
+              , 'cid' : 2
+              , 'pid' : 2
+              , 'type_name' : 'PAP.Person'
+              }
+            , { 'attributes' :
+                  { 'first_name' : 'Clarissa'
+                  , 'last_name' : 'Tanzer'
+                  , 'middle_name' : 'Anna'
+                  , 'title' : ''
+                  }
+              , 'cid' : 3
+              , 'pid' : 3
+              , 'type_name' : 'PAP.Person'
+              }
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person?verbose'
+    }
+
+    >>> for pid in rp.json ["entries"] :
+    ...     _ = show (requests.get (pjoin (rp.url, str (pid))))
+    { 'headers' :
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -398,9 +520,10 @@ _test_code = """
         , 'type_name' : 'PAP.Person'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
     }
     { 'headers' :
-        { 'content-length' : '150'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -419,9 +542,10 @@ _test_code = """
         , 'type_name' : 'PAP.Person'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/2'
     }
     { 'headers' :
-        { 'content-length' : '148'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -440,11 +564,26 @@ _test_code = """
         , 'type_name' : 'PAP.Person'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/3'
+    }
+
+    >>> r = show (requests.head ("http://localhost:9999/v1/PAP.Person/1"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' : None
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
     }
 
     >>> r = show (requests.get ("http://localhost:9999/v1/PAP.Person/1"))
     { 'headers' :
-        { 'content-length' : '145'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -463,6 +602,7 @@ _test_code = """
         , 'type_name' : 'PAP.Person'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
     }
 
     >>> last_modified = r.headers ["last-modified"]
@@ -475,6 +615,7 @@ _test_code = """
         }
     , 'json' : None
     , 'status' : 304
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
     }
 
     >>> r = show (requests.get ("http://localhost:9999/v1/PAP.Person/1", headers = { "If-None-Match" : last_etag }))
@@ -486,11 +627,12 @@ _test_code = """
         }
     , 'json' : None
     , 'status' : 304
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
     }
 
     >>> r = show (requests.get ("http://localhost:9999/v1/SRM.Regatta"))
     { 'headers' :
-        { 'content-length' : '51'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -502,14 +644,62 @@ _test_code = """
             [ 11
             , 12
             ]
-        , 'url_template' : '%s/{entry}'
+        , 'url_template' : '/v1/SRM.Regatta/{entry}'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/SRM.Regatta'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/SRM.Regatta?verbose"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ { 'attributes' :
+                  { 'boat_class' :
+                      [ 'SRM.Boat_Class'
+                      , 7
+                      ]
+                  , 'is_cancelled' : 'no'
+                  , 'left' :
+                      [ 'SRM.Regatta_Event'
+                      , 10
+                      ]
+                  }
+              , 'cid' : 11
+              , 'pid' : 11
+              , 'type_name' : 'SRM.Regatta_C'
+              }
+            , { 'attributes' :
+                  { 'boat_class' :
+                      [ 'SRM.Handicap'
+                      , 9
+                      ]
+                  , 'is_cancelled' : 'no'
+                  , 'left' :
+                      [ 'SRM.Regatta_Event'
+                      , 10
+                      ]
+                  }
+              , 'cid' : 12
+              , 'pid' : 12
+              , 'type_name' : 'SRM.Regatta_H'
+              }
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/SRM.Regatta?verbose'
     }
 
     >>> r = show (requests.get ("http://localhost:9999/v1/SRM.Regatta_C"))
     { 'headers' :
-        { 'content-length' : '47'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -518,14 +708,15 @@ _test_code = """
         }
     , 'json' :
         { 'entries' : [ 11 ]
-        , 'url_template' : '%s/{entry}'
+        , 'url_template' : '/v1/SRM.Regatta_C/{entry}'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/SRM.Regatta_C'
     }
 
     >>> r = show (requests.get ("http://localhost:9999/v1/SRM.Regatta_H"))
     { 'headers' :
-        { 'content-length' : '47'
+        { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -534,9 +725,201 @@ _test_code = """
         }
     , 'json' :
         { 'entries' : [ 12 ]
-        , 'url_template' : '%s/{entry}'
+        , 'url_template' : '/v1/SRM.Regatta_H/{entry}'
         }
     , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/SRM.Regatta_H'
+    }
+
+    >>> r = show (requests.get ("http://localhost:9999/v1/MOM.Object?verbose"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ { 'attributes' :
+                  { 'first_name' : 'Christian'
+                  , 'last_name' : 'Tanzer'
+                  , 'middle_name' : ''
+                  , 'title' : ''
+                  }
+              , 'cid' : 1
+              , 'pid' : 1
+              , 'type_name' : 'PAP.Person'
+              }
+            , { 'attributes' :
+                  { 'first_name' : 'Laurens'
+                  , 'last_name' : 'Tanzer'
+                  , 'middle_name' : 'William'
+                  , 'title' : ''
+                  }
+              , 'cid' : 2
+              , 'pid' : 2
+              , 'type_name' : 'PAP.Person'
+              }
+            , { 'attributes' :
+                  { 'first_name' : 'Clarissa'
+                  , 'last_name' : 'Tanzer'
+                  , 'middle_name' : 'Anna'
+                  , 'title' : ''
+                  }
+              , 'cid' : 3
+              , 'pid' : 3
+              , 'type_name' : 'PAP.Person'
+              }
+            , { 'attributes' :
+                  { 'max_crew' : '1'
+                  , 'name' : 'Optimist'
+                  }
+              , 'cid' : 7
+              , 'pid' : 7
+              , 'type_name' : 'SRM.Boat_Class'
+              }
+            , { 'attributes' :
+                  { 'name' : 'Yardstick' }
+              , 'cid' : 9
+              , 'pid' : 9
+              , 'type_name' : 'SRM.Handicap'
+              }
+            , { 'attributes' :
+                  { 'date' :
+                      [
+                        [ 'finish'
+                        , '2008/05/01'
+                        ]
+                      ,
+                        [ 'start'
+                        , '2008/05/01'
+                        ]
+                      ]
+                  , 'name' : 'Himmelfahrt'
+                  }
+              , 'cid' : 10
+              , 'pid' : 10
+              , 'type_name' : 'SRM.Regatta_Event'
+              }
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/MOM.Object?verbose'
+    }
+
+    >>> r = show (requests.get ("http://localhost:9999/v1/MOM.Link?verbose"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ { 'attributes' :
+                  { 'club' : None
+                  , 'left' :
+                      [ 'PAP.Person'
+                      , 1
+                      ]
+                  , 'mna_number' : '29676'
+                  , 'nation' : 'AUT'
+                  }
+              , 'cid' : 4
+              , 'pid' : 4
+              , 'type_name' : 'SRM.Sailor'
+              }
+            , { 'attributes' :
+                  { 'club' : None
+                  , 'left' :
+                      [ 'PAP.Person'
+                      , 2
+                      ]
+                  , 'mna_number' : ''
+                  , 'nation' : 'AUT'
+                  }
+              , 'cid' : 5
+              , 'pid' : 5
+              , 'type_name' : 'SRM.Sailor'
+              }
+            , { 'attributes' :
+                  { 'club' : None
+                  , 'left' :
+                      [ 'PAP.Person'
+                      , 3
+                      ]
+                  , 'mna_number' : ''
+                  , 'nation' : 'AUT'
+                  }
+              , 'cid' : 6
+              , 'pid' : 6
+              , 'type_name' : 'SRM.Sailor'
+              }
+            , { 'attributes' :
+                  { 'left' :
+                      [ 'SRM.Boat_Class'
+                      , 7
+                      ]
+                  , 'nation' : 'AUT'
+                  , 'sail_number' : '1107'
+                  , 'sail_number_x' : ''
+                  }
+              , 'cid' : 8
+              , 'pid' : 8
+              , 'type_name' : 'SRM.Boat'
+              }
+            , { 'attributes' :
+                  { 'boat_class' :
+                      [ 'SRM.Boat_Class'
+                      , 7
+                      ]
+                  , 'is_cancelled' : 'no'
+                  , 'left' :
+                      [ 'SRM.Regatta_Event'
+                      , 10
+                      ]
+                  }
+              , 'cid' : 11
+              , 'pid' : 11
+              , 'type_name' : 'SRM.Regatta_C'
+              }
+            , { 'attributes' :
+                  { 'boat_class' :
+                      [ 'SRM.Handicap'
+                      , 9
+                      ]
+                  , 'is_cancelled' : 'no'
+                  , 'left' :
+                      [ 'SRM.Regatta_Event'
+                      , 10
+                      ]
+                  }
+              , 'cid' : 12
+              , 'pid' : 12
+              , 'type_name' : 'SRM.Regatta_H'
+              }
+            , { 'attributes' :
+                  { 'left' :
+                      [ 'SRM.Boat'
+                      , 8
+                      ]
+                  , 'right' :
+                      [ 'SRM.Regatta_C'
+                      , 11
+                      ]
+                  , 'skipper' :
+                      [ 'SRM.Sailor'
+                      , 5
+                      ]
+                  }
+              , 'cid' : 13
+              , 'pid' : 13
+              , 'type_name' : 'SRM.Boat_in_Regatta'
+              }
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/MOM.Link?verbose'
     }
 
     >>> server.terminate ()

@@ -59,18 +59,22 @@ class RST_Mixin (TFL.Meta.Object) :
     def query_changes (self) :
         scope = self.top.scope
         cqf   = self.change_query_filter
-        return scope.query_changes (cqf).order_by (self._sort_key_cid_reverse)
+        if cqf is not None :
+            return scope.query_changes \
+                (cqf).order_by (self._sort_key_cid_reverse)
     # end def query_changes
 
     def _get_change_info (self) :
         result = None
-        lc     = self.query_changes ().first ()
-        if lc is not None :
-            result = TFL.Record \
-                ( cid           = lc.cid
-                , etag          = "ET-%s-%s" % (lc.time, lc.cid)
-                , last_modified = lc.time.replace (microsecond = 0)
-                )
+        qc     = self.query_changes ()
+        if qc is not None :
+            lc = qc.first ()
+            if lc is not None :
+                result = TFL.Record \
+                    ( cid           = lc.cid
+                    , etag          = "ET-%s-%s" % (lc.time, lc.cid)
+                    , last_modified = lc.time.replace (microsecond = 0)
+                    )
         return result
     # end def _get_change_info
 
@@ -130,9 +134,12 @@ class RST_E_Type_Mixin (RST_Mixin) :
 
     @Once_Property
     def change_query_filter (self) :
+        result = None
         E_Type = self.E_Type
         if E_Type.is_partial :
-            result = Q.OR (* ((Q.type_name == ctn) for ctn in E_Type.children))
+            children = tuple ((Q.type_name == ctn) for ctn in E_Type.children)
+            if children :
+                result = Q.OR (* children)
         else :
             result = Q.type_name == E_Type.type_name
         return result
@@ -178,11 +185,23 @@ class RST_Entity (RST_Mixin, _Ancestor) :
 
         _real_name             = "GET"
 
+        def _response_attr (self, resource, request, response, obj, attr) :
+            k = attr.name
+            if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
+                v = attr.get_value (obj)
+                if v is not None :
+                    v = (v.type_name, v.pid)
+            else :
+                v = attr.get_raw (obj)
+            return k, v
+        # end def _response_attr
+
         def _response_body (self, resource, request, response) :
             obj = resource.obj
             return dict \
                 ( attributes = dict
-                    (   (a.name, a.get_raw (obj))
+                    (   self._response_attr
+                            (resource, request, response, obj, a)
                     for a in obj.edit_attr
                     if  a.to_save (obj)
                     )
@@ -227,11 +246,20 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
         ### XXX redefine _response_dict_top and _response_entry to regard
         ###     query parameters (full vs. bare bone answer...)
 
-        def _response_entry (self, resource, request, entry) :
+        def _response_entry (self, resource, request, entry, response) :
             return entry.pid
         # end def _response_entry
 
-        def _resource_entries (self, resource, request) :
+        def _response_entry (self, resource, request, response, entry) :
+            if request.verbose :
+                e = resource._new_entry (entry.pid)
+                result = e.GET ()._response_body (e, request, response)
+            else :
+                result = entry.pid
+            return result
+        # end def _response_entry
+
+        def _resource_entries (self, resource, request, response) :
             result = resource.objects
             return sorted (result, key = Q.pid)
         # end def _resource_entries
@@ -270,6 +298,7 @@ class RST_Scope (_Ancestor) :
                 (   E_Type (ETM = et.type_name)
                 for et in self.top.scope._T_Extension
                 if  issubclass (et, MOM.Id_Entity)
+                        and (et.children or not et.is_partial)
                 )
         self.__super.__init__ (** kw)
     # end def __init__

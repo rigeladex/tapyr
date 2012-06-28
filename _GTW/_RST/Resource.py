@@ -30,6 +30,8 @@
 #    22-Jun-2012 (CT) Set `parent` in `_RST_Meta_.__call__` before `.__init__`
 #    26-Jun-2012 (CT) Factor `_Node_Base_`, add `Node_V`
 #    27-Jun-2012 (CT) Add empty `Leaf._get_child`
+#    28-Jun-2012 (CT) Fix `url_template`, use `_response_dict`
+#    28-Jun-2012 (CT) Use `request.verbose`
 #    ««revision-date»»···
 #--
 
@@ -54,7 +56,7 @@ import _TFL.Record
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
-import logging
+import sys
 import time
 
 class _RST_Meta_ (TFL.Meta.M_Class) :
@@ -321,27 +323,36 @@ class _RST_Node_Base_ (_Ancestor) :
         _real_name             = "GET"
 
         def _response_body (self, resource, request, response) :
-            entries = []
-            result  = dict \
-                ( entries      = entries
-                , url_template = "%s/{entry}"
-                )
-            for e in self._resource_entries (resource, request) :
-                entries.append (self._response_entry (resource, request, e))
+            result = self._response_dict (resource, request, response)
+            add    = result ["entries"].append
+            for e in self._resource_entries (resource, request, response) :
+                add (self._response_entry (resource, request, response, e))
             return result
         # end def _response
 
-        def _response_dict_top (self, resource, request) :
-            return dict \
-                ( url_template = "%s/{entry}"
+        def _response_dict (self, resource, request, response, ** kw) :
+            result = dict \
+                ( entries      = []
+                , ** kw
                 )
-        # end def _response_dict_top
+            if not request.verbose :
+                result ["url_template"] = pjoin (resource.abs_href, "{entry}")
+            return result
+        # end def _response_dict
 
-        def _response_entry (self, resource, request, entry) :
+        def _response_entry (self, resource, request, response, entry) :
             return entry.name
         # end def _response_entry
 
-        def _resource_entries (self, resource, request) :
+        def _response_entry (self, resource, request, response, entry) :
+            if request.verbose :
+                result = pjoin (resource.abs_href, entry.name)
+            else :
+                result = entry.name
+            return result
+        # end def _response_entry
+
+        def _resource_entries (self, resource, request, response) :
             raise NotImplementedError
         # end def _resource_entries
 
@@ -360,7 +371,7 @@ class _RST_Node_ (_Ancestor) :
 
         _real_name             = "GET"
 
-        def _resource_entries (self, resource, request) :
+        def _resource_entries (self, resource, request, response) :
             return resource.entries
         # end def _resource_entries
 
