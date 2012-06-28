@@ -199,7 +199,8 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @Once_Property
     def href (self) :
-        href = pjoin (self.prefix, self.name)
+        pp = self.parent.href if self.parent else self.prefix
+        href = pjoin (pp, self.name)
         if href :
             return pnorm (href)
         return ""
@@ -435,8 +436,7 @@ class RST_Node (_Ancestor) :
     _real_name                 = "Node"
 
     def __init__ (self, ** kw) :
-        self.name   = kw.pop  ("name")
-        self.prefix = pjoin   (self.parent.prefix, self.name, "")
+        self.prefix = pjoin   (self.parent.prefix, kw ["name"], "")
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -463,10 +463,11 @@ class RST_Root (_Ancestor) :
 
     _real_name                 = "Root"
 
+    Cacher                     = None       ### define if anything needs caching
     Create_Scope               = None
     DEBUG                      = False
     default_locale_code        = "en"
-    encoding                   = "utf-8"          ### output encoding
+    encoding                   = "utf-8"    ### output encoding
     ignore_picky_accept        = False
     input_encoding             = "iso-8859-15"
     languages                  = set (("en", ))
@@ -481,13 +482,12 @@ class RST_Root (_Ancestor) :
     def __init__ (self, HTTP, ** kw) :
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
+        self.pop_to_self      ("name", "prefix")
         self.HTTP           = HTTP
         self.redirects      = dict (kw.pop ("redirects",     {}))
-        self.Run_on_Launch  = list (kw.pop ("Run_on_Launch", []))
         self.SC             = TFL.Record ()
         self.Table          = {}
         self.top            = self
-        self.pop_to_self      ("name", "prefix")
         self.__super.__init__ (** kw)
     # end def __init__
 

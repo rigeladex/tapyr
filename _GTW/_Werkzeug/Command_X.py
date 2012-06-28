@@ -48,21 +48,25 @@
 #    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
 #    22-Jun-2012 (CT) Remove dependency on `HTTP.Application`,
 #                     use `Static_File_App`, not `Static_File_Handler`
+#    28-Jun-2012 (CT) Factor `App_Cache`, `_get_root`
 #    ««revision-date»»···
 #--
 
-from   __future__          import unicode_literals
+from   __future__ import unicode_literals
 
-from   _TFL                import TFL
-from   _GTW                import GTW
+from   _TFL                     import TFL
+from   _GTW                     import GTW
 
 import _GTW._AFS._MOM.Form_Cache
 import _GTW._OMP.Command
+import _GTW._Werkzeug.App_Cache
 import _GTW._Werkzeug.Static_File_App
 
 import _JNJ.Templateer
 
-from   _TFL                import sos
+from   _TFL                     import sos
+from   _TFL._Meta.Once_Property import Once_Property
+
 import _TFL.SMTP
 
 class _GT2W_Sub_Command_ (GTW.OMP._Sub_Command_) :
@@ -79,6 +83,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
         ("Needs to defined uniquely for each application")
 
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
+    root                    = None
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
@@ -122,8 +127,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
         pass
     _WSGI_ = _GT2W_WSGI_ # end class
 
-    _setup_cache_p          = False
-
+    @Once_Property
     def cache_path (self) :
         return sos.path.join (self.jnj_src, "app_cache.pck")
     # end def cache_path
@@ -132,18 +136,16 @@ class GT2W_Command_X (GTW.OMP.Command) :
         pass
     # end def fixtures
 
-    def init_app_cache (self, root) :
-        cache_path = self.cache_path ()
+    def init_app_cache (self) :
         def load_cache () :
             try :
-                root.load_cache  (cache_path)
+                self.cacher.load ()
             except IOError :
                 pass
-        if root.DEBUG :
+        if self.cacher.DEBUG :
             try :
-                root.store_cache (cache_path)
+                self.cacher.store ()
             except EnvironmentError as exc :
-                print "***", exc, cache_path
                 load_cache ()
         else :
             load_cache ()
@@ -161,6 +163,55 @@ class GT2W_Command_X (GTW.OMP.Command) :
             , ** kw
             )
     # end def nav_admin_group
+
+    def _create_scope (self, apt, url, verbose = False) :
+        result = self.__super._create_scope (apt, url, verbose)
+        self.fixtures (result)
+        return result
+    # end def _create_scope
+
+    def _get_root (self, cmd, apt, url) :
+        result = self.root
+        if result is None :
+            cookie_salt = cmd.GET ("cookie_salt", self.SALT)
+            if cookie_salt == Command_X.SALT :
+                warnings.warn \
+                    ( "Cookie salt should be specified for every application! "
+                      "Using default `cookie_salt`!"
+                    , UserWarning
+                    )
+            if cmd.UTP.__name__.endswith ("RST") :
+                cachers = []
+                create  = self.create_rst
+            else :
+                cachers = [GTW.AFS.MOM.Form_Cache]
+                create  = self.create_nav
+            result = self.root = create \
+                ( cmd, apt, url
+                , Create_Scope        = self._load_scope
+                , Session_Class       = GTW.File_Session
+                , cookie_salt         = cookie_salt
+                , debug               = cmd.debug
+                , default_locale_code = cmd.locale_code
+                , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
+                , i18n                = True
+                , languages           = set (cmd.languages)
+                , log_level           = cmd.log_level
+                , session_id          = bytes ("SESSION_ID")
+                , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+                )
+            if result.Cacher :
+                mc_fix = "media/v"
+                mc_dir = sos.path.join (self.web_src_root, mc_fix)
+                cachers.append (result.Cacher (mc_dir, mc_fix))
+            self.cacher = GTW.Werkzeug.App_Cache \
+                ( self.cache_path
+                , * cachers
+                , root  = result
+                , DEBUG = result.DEBUG
+                )
+        return result
+    # end def _get_root
 
     def _handle_run_server (self, cmd) :
         import werkzeug.serving
@@ -183,18 +234,12 @@ class GT2W_Command_X (GTW.OMP.Command) :
         app  = self._wsgi_app (cmd)
         root = cmd.UTP.Root.top
         if not root.DEBUG :
-            root.store_cache (self.cache_path ())
+            self.cacher.store ()
     # end def _handle_setup_cache
 
     def _handle_wsgi (self, cmd) :
         return self._wsgi_app (cmd)
     # end def _handle_wsgi
-
-    def _create_scope (self, apt, url, verbose = False) :
-        result = self.__super._create_scope (apt, url, verbose)
-        self.fixtures (result)
-        return result
-    # end def _create_scope
 
     def _load_I18N (self, cmd) :
         result = None
@@ -211,18 +256,6 @@ class GT2W_Command_X (GTW.OMP.Command) :
         return result
     # end def _load_I18N
 
-    def _setup_cache (self, cmd) :
-        if not self._setup_cache_p :
-            CP = getattr (cmd.UTP.Root, "Cache_Pickler", None)
-            if CP is not None :
-                import _GTW._NAV.Template_Media_Cache
-                mc_fix = "media/v"
-                mc_dir = sos.path.join (self.web_src_root, mc_fix)
-                CP.add (GTW.AFS.MOM.Form_Cache)
-                CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
-        self._setup_cache_p = True
-    # end def _setup_cache
-
     def _static_file_app (self, cmd) :
         prefix = "media"
         return cmd.HTTP.Static_File_App \
@@ -234,36 +267,10 @@ class GT2W_Command_X (GTW.OMP.Command) :
     # end def _static_file_app
 
     def _wsgi_app (self, cmd) :
-        HTTP     = cmd.HTTP
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N   (cmd)
-        self._setup_cache (cmd)
-        cookie_salt = cmd.GET ("cookie_salt", self.SALT)
-        if cookie_salt == Command_X.SALT :
-            warnings.warn \
-                ( "Cookie salt should be specified for every application! "
-                  "Using default `cookie_salt`!"
-                , UserWarning
-                )
-        if cmd.UTP.__name__.endswith ("RST") :
-            create = self.create_rst
-        else :
-            create = self.create_nav
         sf_app = self._static_file_app (cmd)
-        result = root = create \
-            ( cmd, apt, url
-            , Create_Scope        = self._load_scope
-            , Session_Class       = GTW.File_Session
-            , cookie_salt         = cookie_salt
-            , debug               = cmd.debug
-            , default_locale_code = cmd.locale_code
-            , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
-            , i18n                = True
-            , languages           = set (cmd.languages)
-            , log_level           = cmd.log_level
-            , session_id          = bytes ("SESSION_ID")
-            , user_session_ttl    = cmd.user_session_ttl.date_time_delta
-            )
+        result = root = self._get_root (cmd, apt, url)
         if cmd.serve_static_files :
             sf_app.wrap = root
             result      = sf_app
@@ -271,10 +278,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
             root.Templateer.env.static_handler = sf_app
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
-        if cmd._name.endswith ("run_server") :
-            root.Run_on_Launch.append ((self.init_app_cache, root))
-        else :
-            self.init_app_cache (root)
+        self.init_app_cache ()
         return result
     # end def _wsgi_app
 

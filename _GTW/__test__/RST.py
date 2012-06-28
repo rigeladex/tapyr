@@ -922,6 +922,59 @@ _test_code = """
     , 'url' : 'http://localhost:9999/v1/MOM.Link?verbose'
     }
 
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid/"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ 1
+            , 2
+            , 3
+            , 4
+            , 5
+            , 6
+            , 7
+            , 8
+            , 9
+            , 10
+            , 11
+            , 12
+            , 13
+            ]
+        , 'url_template' : '/v1/MOM.Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid/'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid/1"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'pid' : 1
+        , 'type_name' : 'PAP.Person'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid/1'
+    }
+
     >>> server.terminate ()
 
 """

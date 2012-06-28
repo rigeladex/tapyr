@@ -30,7 +30,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -47,6 +47,24 @@ class RST_Mixin (TFL.Meta.Object) :
 
     _change_info               = None
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
+
+    @Once_Property
+    def E_Type (self) :
+        ETM = self._ETM
+        if isinstance (ETM, basestring) :
+            result = self.top.App_Type [ETM]
+        else :
+            result = ETM.E_Type
+        return result
+    # end def E_Type
+
+    @Once_Property
+    def ETM (self) :
+        result = self._ETM
+        if isinstance (result, basestring) :
+            result = self.top.scope [result]
+        return result
+    # end def ETM
 
     @property
     def change_info (self) :
@@ -115,24 +133,6 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def count
 
     @Once_Property
-    def E_Type (self) :
-        ETM = self._ETM
-        if isinstance (ETM, basestring) :
-            result = self.top.App_Type [ETM]
-        else :
-            result = ETM.E_Type
-        return result
-    # end def E_Type
-
-    @Once_Property
-    def ETM (self) :
-        result = self._ETM
-        if isinstance (result, basestring) :
-            result = self.top.scope [result]
-        return result
-    # end def ETM
-
-    @Once_Property
     def change_query_filter (self) :
         result = None
         E_Type = self.E_Type
@@ -181,6 +181,8 @@ _Ancestor = GTW.RST.Leaf
 class RST_Entity (RST_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
 
+    implicit = True
+
     class RST_Entity_GET (_Ancestor.GET) :
 
         _real_name             = "GET"
@@ -215,6 +217,7 @@ class RST_Entity (RST_Mixin, _Ancestor) :
 
     def __init__ (self, ** kw) :
         assert "name" not in kw
+        self.pop_to_self (kw, "ETM", prefix = "_")
         obj = kw.pop ("obj")
         if isinstance (obj, int) :
             obj   = self.ETM.pid_query (obj)
@@ -243,7 +246,7 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
         _real_name             = "GET"
 
-        ### XXX redefine _response_dict_top and _response_entry to regard
+        ### XXX redefine _response_dict and _response_entry to regard
         ###     query parameters (full vs. bare bone answer...)
 
         def _response_entry (self, resource, request, entry, response) :
@@ -302,6 +305,12 @@ class RST_Scope (_Ancestor) :
                 )
         self.__super.__init__ (** kw)
     # end def __init__
+
+    def _get_child (self, child, * grandchildren) :
+        if child == "pid" :
+            child = "MOM.Id_Entity"
+        return self.__super._get_child (child, * grandchildren)
+    # end def _get_child
 
 Scope = RST_Scope # end class
 

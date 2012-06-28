@@ -313,6 +313,7 @@ from   _TFL                     import TFL
 
 import _GTW.Media
 import _GTW._NAV
+import _GTW._NAV.Template_Media_Cache
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -1239,7 +1240,8 @@ class Root (_Dir_) :
     anonymous_account_etm_name = "GTW.OMP.Auth.Account_Anonymous"
     auto_delegate              = False  ### useful if not served by web-app
     error_email_template       = "error_email"
-    Cache_Pickler              = set ()
+    Cache_Pickler              = set ()                       ### old
+    Cacher                     = GTW.NAV.Template_Media_Cache ### new
     copyright_start            = None
     copyright_url              = None
     Create_Scope               = None

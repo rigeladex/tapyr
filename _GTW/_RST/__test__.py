@@ -27,11 +27,10 @@
 #
 # Revision Dates
 #    11-Jun-2012 (CT) Creation
-#    15-Jun-2012 (CT) Continue creation
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _GTW._RST.Resource       import *
 
@@ -56,6 +55,10 @@ __doc__ = """
     >>> e_types = ( Node
     ...         ( name          = "PAP.Company"
     ...         , description   = "Legal person"
+    ...         , entries       =
+    ...             ( Leaf (name = "1")
+    ...             ,
+    ...             )
     ...         )
     ...     , Node
     ...         ( name          = "PAP.Person"
@@ -87,6 +90,13 @@ __doc__ = """
       ( <class '_GTW._RST.Resource.Node'>
       , ()
       , { 'description' : 'Legal person'
+        , 'entries' :
+            (
+              ( <class '_GTW._RST.Resource.Leaf'>
+              , ()
+                , { 'name' : '1' }
+              )
+            )
         , 'name' : 'PAP.Company'
         }
       )
@@ -101,17 +111,22 @@ __doc__ = """
     >>> root
     <Root : />
     >>> root.entries
-    (<Leaf about: /about>, <Node v1: /v1>)
+    [<Leaf about: /about>, <Node v1: /v1>]
 
     >>> ets = tuple (root.entries_transitive)
     >>> ets
-    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>)
+    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Leaf 1: /v1/PAP.Company/1>, <Node PAP.Person: /v1/PAP.Person>)
+
+    >>> [e.name for e in ets]
+    [u'about', u'v1', u'Meta', u'PAP.Company', u'1', u'PAP.Person']
+    >>> [e.href for e in ets]
+    [u'about', u'v1', u'v1/Meta', u'v1/PAP.Company', u'v1/PAP.Company/1', u'v1/PAP.Person']
 
     >>> root.entries [1]
     <Node v1: /v1>
 
     >>> root.entries [1].entries
-    (<Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>)
+    [<Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>]
 
     >>> c = root.resource_from_href("/v1/PAP.Company")
     >>> c
@@ -125,6 +140,7 @@ __doc__ = """
       <Node v1: /v1> parent = /, top = /
         <Node Meta: /v1/Meta> parent = /v1, top = /
         <Node PAP.Company: /v1/PAP.Company> parent = /v1, top = /
+          <Leaf 1: /v1/PAP.Company/1> parent = /v1/PAP.Company, top = /
         <Node PAP.Person: /v1/PAP.Person> parent = /v1, top = /
 
     >>> print (formatted_1 (root.GET.render_man.by_extension))
