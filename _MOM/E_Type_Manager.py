@@ -108,6 +108,9 @@
 #    20-Apr-2012 (CT) Change `Link.__call__` and `instance_or_new` to let
 #                     `MOM.Entity` handle `MOM.Error.Required_Missing`
 #    30-Apr-2012 (CT) Add `epk, kw` to call of `Duplicate_Link`
+#    29-Jun-2012 (CT) Rename `count` to `count_strict`,
+#                     rename `count_transitive` to `count`
+#                     (to make it consistent with `query`)
 #    ««revision-date»»···
 #--
 
@@ -202,16 +205,17 @@ class Id_Entity (Entity) :
 
     @property
     def count (self) :
-        """Return the strict count of objects or links."""
-        return self.ems.count (self._etype, strict = True)
+        """Return the transitive count of objects or links."""
+        return self.ems.count (self._etype, strict = False)
     # end def count
 
     @property
-    def count_transitive (self) :
-        """Return the transitive count of objects or links."""
-        #import pdb; pdb.set_trace ()
-        return self.ems.count (self._etype, strict = False)
-    # end def count_transitive
+    def count_strict (self) :
+        """Return the strict count of objects or links."""
+        result = self.ems.count (self._etype, strict = True)
+        assert (not self.E_Type.is_partial) or result == 0
+        return result
+    # end def count_strict
 
     @property
     def ems (self) :

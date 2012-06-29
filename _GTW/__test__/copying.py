@@ -87,7 +87,7 @@ _test_code = r"""
     >>> rr2 = SRM.Race_Result (bir, 2, points = 4)
 
     >>> scope.commit ()
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     36
     >>> int (scope.query_changes ().count ())
     36
@@ -102,7 +102,7 @@ _test_code = r"""
     3
     >>> scope.commit ()
 
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     36
     >>> int (scope.query_changes ().count ())
     39
@@ -119,7 +119,7 @@ _test_code = r"""
     >>> if sos.path.exists (db_path) : sos.unlink (db_path)
     >>> apt, url = Scaffold.app_type_and_url (db_url)
     >>> scop2 = scope.copy (apt, url)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop2))
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
     True
@@ -134,7 +134,7 @@ _test_code = r"""
     >>> scop2.destroy ()
 
     >>> scop3 = MOM.Scope.load (apt, db_url)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop3))
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop3))
     True
@@ -153,7 +153,7 @@ _test_code = r"""
     ...    apt.delete_database (db_url)
     >>> scop4 = scop3.copy (apt, db_url)
 
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scop3, scop4))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scop3, scop4))
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scop3, scop4))
     True

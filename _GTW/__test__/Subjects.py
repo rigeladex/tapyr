@@ -37,18 +37,18 @@ _test_code = """
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
 
-    >>> print (PAP.Subject.count_transitive, PAP.Company.count, PAP.Person.count)
+    >>> print (PAP.Subject.count, PAP.Company.count_strict, PAP.Person.count_strict)
     0 0 0
 
     >>> pg = PAP.Person ("Glueck", "Martin")
     >>> ps = PAP.Person ("Schlatterbeck", "Ralf")
     >>> pt = PAP.Person ("Tanzer", "Christian")
-    >>> print (PAP.Subject.count_transitive, PAP.Company.count, PAP.Person.count)
+    >>> print (PAP.Subject.count, PAP.Company.count_strict, PAP.Person.count_strict)
     3 0 3
 
     >>> cl = PAP.Company ("Lucky Software", short_name = "LS")
     >>> co = PAP.Company ("Open Source Consulting", short_name = "OSC")
-    >>> print (PAP.Subject.count_transitive, PAP.Company.count, PAP.Person.count)
+    >>> print (PAP.Subject.count, PAP.Company.count_strict, PAP.Person.count_strict)
     5 2 3
 
     >>> PAP.Subject.query_s ().all ()

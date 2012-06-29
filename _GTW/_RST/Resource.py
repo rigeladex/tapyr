@@ -329,7 +329,7 @@ class _RST_Node_Base_ (_Ancestor) :
             for e in self._resource_entries (resource, request, response) :
                 add (self._response_entry (resource, request, response, e))
             return result
-        # end def _response
+        # end def _response_body
 
         def _response_dict (self, resource, request, response, ** kw) :
             result = dict \

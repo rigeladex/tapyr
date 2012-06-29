@@ -112,7 +112,7 @@ _test_code = r"""
     >>> rr2 = SRM.Race_Result (bir, 2, points = 4)
 
     >>> scope.commit ()
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     36
     >>> int (scope.query_changes (parent = None).count ())
     36
@@ -129,7 +129,7 @@ _test_code = r"""
     3
     >>> scope.commit ()
 
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     36
     >>> int (scope.query_changes ().count ())
     40
@@ -180,7 +180,7 @@ _test_code = r"""
     >>> scope_t = Scaffold.scope (url_t, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
 
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_s, scope_t))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope_s, scope_t))
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_s, scope_t))
     True
@@ -208,7 +208,7 @@ _test_code = r"""
     >>> scope_u = Scaffold.scope (url_s, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
 
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_t, scope_u))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope_t, scope_u))
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope_t, scope_u))
     True

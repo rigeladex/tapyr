@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -60,9 +60,9 @@ class _Query_Mixin_ (GTW.NAV.E_Type.Mixin) :
     @property
     def count (self) :
         if self.query_filters :
-            result = self.query ().count_transitive ()
+            result = self.query ().count ()
         else :
-            result = self.ETM.count_transitive
+            result = self.ETM.count
         return result
     # end def count
 

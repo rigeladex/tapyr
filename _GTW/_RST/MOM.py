@@ -126,9 +126,9 @@ class RST_E_Type_Mixin (RST_Mixin) :
     @property
     def count (self) :
         if self.query_filters :
-            result = self.query ().count_transitive ()
+            result = self.query ().count ()
         else :
-            result = self.ETM.count_transitive
+            result = self.ETM.count
         return result
     # end def count
 
@@ -277,6 +277,20 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
         ### XXX redefine _response_dict and _response_entry to regard
         ###     query parameters (full vs. bare bone answer...)
+
+        def _response_body (self, resource, request, response) :
+            if "count" in request.req_data :
+                ETM = resource.ETM
+                if "strict" in request.req_data :
+                    qr = ETM.count_strict
+                else :
+                    qr = ETM.count
+                result = dict (count = qr)
+            else :
+                result = self.__super._response_body \
+                    (resource, request, response)
+            return result
+        # end def _response_body
 
         def _response_entry (self, resource, request, response, entry) :
             if request.verbose :

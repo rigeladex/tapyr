@@ -414,6 +414,21 @@ _test_delete = """
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=2'
     }
 
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid?count"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'count' : 13 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count'
+    }
+
     >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1", params = dict (cid = 1)))
     { 'headers' :
         { 'content-length' : '<length>'
@@ -437,6 +452,21 @@ _test_delete = """
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid?count"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'count' : 11 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
     >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1", params = dict (cid = 1)))

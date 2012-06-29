@@ -1225,72 +1225,72 @@ with the specified `epk` exists:
     >>> PoT.exists (("Man", "tin"), t4)
     []
 
-The queries :attr:`~_MOM.E_Type_Manager.E_Type_Manager.count`,
-:attr:`~_MOM.E_Type_Manager.E_Type_Manager.count_transitive`,
+The queries :attr:`~_MOM.E_Type_Manager.E_Type_Manager.count_strict`,
+:attr:`~_MOM.E_Type_Manager.E_Type_Manager.count`,
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.query`, and
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.r_query` return the
 number, or list, of instances of the specified
 etype:
 
-    >>> scope.BMT.Mouse.count
+    >>> scope.BMT.Mouse.count_strict
     1
     >>> list (scope.BMT.Mouse.query_s (strict = True))
     [BMT.Mouse (u'mighty_mouse')]
-    >>> scope.BMT.Mouse.count_transitive
+    >>> scope.BMT.Mouse.count
     2
     >>> list (scope.BMT.Mouse.query_s ())
     [BMT.Mouse (u'mighty_mouse'), BMT.Beaver (u'toothy_beaver')]
 
-    >>> scope.BMT.Rat.count
+    >>> scope.BMT.Rat.count_strict
     2
     >>> list (scope.BMT.Rat.query_s (strict = True))
     [BMT.Rat (u'axel'), BMT.Rat (u'rutty_rat')]
-    >>> scope.BMT.Rat.count_transitive
+    >>> scope.BMT.Rat.count
     2
     >>> list (scope.BMT.Rat.query_s ())
     [BMT.Rat (u'axel'), BMT.Rat (u'rutty_rat')]
 
-    >>> scope.BMT.Rodent.count
+    >>> scope.BMT.Rodent.count_strict
     0
     >>> list (scope.BMT.Rodent.query_s (strict = True))
     []
-    >>> scope.BMT.Rodent.count_transitive
+    >>> scope.BMT.Rodent.count
     4
     >>> list (scope.BMT.Rodent.query_s ())
     [BMT.Rat (u'axel'), BMT.Mouse (u'mighty_mouse'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver')]
 
-    >>> scope.MOM.Named_Object.count_transitive
+    >>> scope.MOM.Named_Object.count
     9
     >>> list (scope.MOM.Named_Object.query_s ())
     [BMT.Rat (u'axel'), BMT.Mouse (u'mighty_mouse'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver'), BMT.Trap (u'x', 1), BMT.Trap (u'x', 2), BMT.Trap (u'y', 1), BMT.Trap (u'y', 2), BMT.Trap (u'z', 3)]
-    >>> scope.MOM.Object.count_transitive
+    >>> scope.MOM.Object.count
     14
     >>> list (scope.MOM.Object.query_s ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Rat (u'axel'), BMT.Person (u'dog', u'snoopy', u''), BMT.Person (u'luke', u'lucky', u''), BMT.Mouse (u'mighty_mouse'), BMT.Rat (u'rutty_rat'), BMT.Person (u'tin', u'tin', u''), BMT.Beaver (u'toothy_beaver'), BMT.Trap (u'x', 1), BMT.Trap (u'x', 2), BMT.Trap (u'y', 1), BMT.Trap (u'y', 2), BMT.Trap (u'z', 3)]
 
     >>> list (scope.MOM.Id_Entity.query_s ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Rat (u'axel'), BMT.Rodent_in_Trap ((u'axel', ), (u'x', 2)), BMT.Person (u'dog', u'snoopy', u''), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person (u'luke', u'lucky', u''), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Mouse (u'mighty_mouse'), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rat (u'rutty_rat'), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person (u'tin', u'tin', u''), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2)), BMT.Beaver (u'toothy_beaver'), BMT.Trap (u'x', 1), BMT.Trap (u'x', 2), BMT.Trap (u'y', 1), BMT.Trap (u'y', 2), BMT.Trap (u'z', 3)]
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     24
 
-    >>> scope.MOM.Link.count_transitive
+    >>> scope.MOM.Link.count
     10
     >>> list (scope.MOM.Link.query_s ())
     [BMT.Rodent_in_Trap ((u'axel', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
-    >>> scope.MOM.Link2.count_transitive
+    >>> scope.MOM.Link2.count
     7
     >>> list (scope.MOM.Link2.query_s ())
     [BMT.Rodent_in_Trap ((u'axel', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
-    >>> scope.MOM.Link3.count_transitive
+    >>> scope.MOM.Link3.count
     3
     >>> list (scope.MOM.Link3.query_s ())
     [BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313))]
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
     >>> sk_right_left_pm = TFL.Sorted_By (RiT.right.sort_key_pm, RiT.left.sort_key_pm)
-    >>> RiT.count_transitive
+    >>> RiT.count
     3
     >>> show (RiT.query_s ())
     [((u'axel', ), (u'x', 2)), ((u'mighty_mouse', ), (u'x', 1)), ((u'rutty_rat', ), (u'y', 1))]
@@ -1346,14 +1346,14 @@ etype:
     >>> show (RiT.r_query_s (left = "Jimmy", strict = True))
     []
 
-    >>> PoT.count_transitive
+    >>> PoT.count
     4
     >>> show (PoT.r_query_s (left = p))
     [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 2))]
     >>> show (PoT.r_query_s (person = ("dog",  "snoopy")))
     [((u'dog', u'snoopy', u''), (u'y', 1))]
 
-    >>> PTL.count_transitive
+    >>> PTL.count
     3
     >>> show (PTL.r_query_s (left = p, trap = t1))
     [((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956))]
@@ -1758,11 +1758,11 @@ Replaying changes
 -----------------
 
     >>> scop2 = MOM.Scope.new (apt, %(db_scheme)s)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop2))
     (16, 0)
     >>> for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
     ...     c.redo (scop2)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop2))
     (16, 16)
     >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
     []
@@ -1795,10 +1795,10 @@ Saving and re-loading changes from a database
     >>> if sos.path.exists (db_path_x) :
     ...     sos.rmdir (db_path_x, deletefiles = True)
 
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     12
     >>> scop3 = scope.copy (apt, db_url)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop3))
     (12, 12)
     >>> sorted (scop3.user_diff (scope).iteritems ())
     []
@@ -1807,7 +1807,7 @@ Saving and re-loading changes from a database
     >>> scop3.destroy ()
 
     >>> scop4 = MOM.Scope.load (apt, db_url)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop4))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop4))
     (12, 12)
     >>> sorted (scope.user_diff (scop4).iteritems ())
     []
@@ -1820,12 +1820,12 @@ Saving and re-loading changes from a database
 Migrating all entities and the complete change history
 ------------------------------------------------------
 
-    >>> scope.MOM.Id_Entity.count_transitive
+    >>> scope.MOM.Id_Entity.count
     12
     >>> scope.query_changes ().count ()
     50
     >>> scop5 = scope.copy (apt, %(db_scheme)s)
-    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop5))
+    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop5))
     (12, 12)
     >>> tuple (s.query_changes ().count () for s in (scope, scop5))
     (50, 50)

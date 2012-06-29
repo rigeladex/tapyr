@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Martin Glueck All rights reserved
+# Copyright (C) 2009-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -107,7 +107,7 @@ again to perform the migration
 Now we load the load and the new SAS based scopes and compare them
 >>> scope_1 = MOM.Scope.load         (apt_sas, "sqlite:///%s" % (db_path_old, ))
 >>> scope_3 = MOM.Scope.load         (apt_sas, "sqlite:///%s" % (db_path_new, ))
->>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope_1, scope_3))
+>>> tuple (s.MOM.Id_Entity.count for s in (scope_1, scope_3))
 (12, 12)
 >>> sorted (scope_1.user_diff (scope_3, ignore = ["last_cid"]).iteritems ())
 []
