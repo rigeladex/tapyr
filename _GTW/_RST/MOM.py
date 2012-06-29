@@ -308,6 +308,43 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
     GET = RST_E_Type_GET # end class
 
+    class RST_E_Type_POST (GTW.RST.POST) :
+
+        _real_name                 = "POST"
+
+        def _response_body (self, resource, request, response) :
+            ETM    = resource.ETM
+            result = {}
+            try :
+                attr_kw = request.json ["attributes"]
+            except KeyError :
+                response.status_code = 400 ### Bad request
+                result ["error"] = \
+                    ("""You need to send the attributes defining """
+                     """the object with the request """
+                     """(content-type "application/json")"""
+                    )
+            else :
+                try :
+                    obj = ETM (raw = True, ** attr_kw)
+                except Exception as exc :
+                    response.status_code = 400 ### Bad request
+                    result ["error"] = str (exc)
+                else :
+                    e      = resource._new_entry (obj.pid)
+                    result = e.GET ()._response_body (e, request, response)
+                    response.status_code = 201 ### Created
+            return result
+        # end def _response_body
+
+    POST = RST_E_Type_POST # end class
+
+    def allow_method (self, method, user) :
+        if method.name == "POST" and self.ETM.is_partial :
+            return False
+        return self.__super.allow_method (method, user)
+    # end def allow_method
+
     def _get_child (self, child, * grandchildren) :
         try :
             obj = self.ETM.pid_query (child)

@@ -55,6 +55,7 @@ import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 
 import datetime
+import json
 
 GTW.Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
@@ -374,7 +375,6 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
-        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -400,7 +400,6 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
-        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -442,7 +441,6 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
-        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -1230,9 +1228,129 @@ _test_get = """
 
 """
 
+_test_options = """
+    >>> server = run_server ()
+
+    >>> _ = traverse ("http://localhost:9999/")
+
+    >>> server.terminate ()
+
+"""
+
+_test_post = """
+    >>> server = run_server ()
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid?count"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
+        }
+    , 'json' :
+        { 'count' : 13 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count'
+    }
+
+    >>> cargo = json.dumps (
+    ...   dict
+    ...     ( attributes = dict
+    ...         ( last_name   = "Dog"
+    ...         , first_name  = "Snoopy"
+    ...         , middle_name = "the"
+    ...         , lifetime    = dict (start = "20001122")
+    ...         )
+    ...     )
+    ... )
+    >>> headers = { "Content-Type": "application/json" }
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", headers=headers))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    }
+
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    }
+
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo, headers=headers))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Snoopy'
+            , 'last_name' : 'Dog'
+            , 'lifetime' :
+                [
+                  [ 'start'
+                  , '2000/11/22'
+                  ]
+                ]
+            , 'middle_name' : 'the'
+            , 'title' : ''
+            }
+        , 'cid' : 14
+        , 'pid' : 14
+        , 'type_name' : 'PAP.Person'
+        }
+    , 'status' : 201
+    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    }
+
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo, headers=headers))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'error' : "new definition of Person (u'dog', u'snoopy', u'the', u'') clashes with existing Person (u'dog', u'snoopy', u'the', u'')" }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    }
+
+    >>> server.terminate ()
+
+"""
+
 __test__ = dict \
-    ( test_delete = _test_delete
-    , test_get    = _test_get
+    ( test_delete   = _test_delete
+    , test_get      = _test_get
+    #, test_options  = _test_options
+    , test_post     = _test_post
     )
 
 if __name__ == "__main__" :

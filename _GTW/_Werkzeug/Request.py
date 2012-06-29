@@ -27,10 +27,11 @@
 #
 # Revision Dates
 #    19-Jun-2012 (CT) Creation
+#    29-Jun-2012 (CT) Redefine `json` to add exception handler
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
@@ -42,10 +43,12 @@ from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL._Meta.M_Class
 
-from    werkzeug.contrib.wrappers     import \
-            JSONRequestMixin, DynamicCharsetRequestMixin
-from    werkzeug.security             import safe_str_cmp
-from    werkzeug.wrappers             import Request
+from   werkzeug.contrib.wrappers     import \
+           JSONRequestMixin, DynamicCharsetRequestMixin
+from   werkzeug.security             import safe_str_cmp
+from   werkzeug.wrappers             import Request
+
+import json
 
 class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
     """Extend werkzeug's Request class."""
@@ -71,6 +74,14 @@ class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
             result = "%s?%s" % (result, query)
         return result
     # end def path_x
+
+    @property
+    def json (self) :
+        try :
+            return self.__super.json
+        except Exception as exc :
+            return {}
+    # end def json
 
     @Once_Property
     def req_data (self) :
