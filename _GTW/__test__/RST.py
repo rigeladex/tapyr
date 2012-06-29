@@ -183,6 +183,7 @@ class _GTW_Test_Command_ (_Ancestor) :
         reg   = SRM.Regatta_C (rev, opti)
         reh   = SRM.Regatta_H (rev, ys)
         bir   = SRM.Boat_in_Regatta (b, reg, skipper = lt_s)
+        scope.commit ()
     # end def fixtures
 
     @Once_Property
@@ -231,29 +232,45 @@ import subprocess
 import sys
 import time
 
-def _run_server (* args) :
-    result = Scaffold (server_args)
+def _run_server (args = []) :
+    print (server_args + args)
+    result = Scaffold (server_args + args)
     return result
 # end def run_server
 
-def run_server_mp (* args) :
-    p = multiprocessing.Process (target = _run_server, args = args)
-    p.start    ()
-    time.sleep (2)
-    return p
-# end def run_server_mp
-
-def run_server_sb (* args) :
+def run_server (db_url = "hps://", db_name = None) :
     import tempfile
-    p = subprocess.Popen \
-        ( [ sys.executable, "-m", "_GTW.__test__.RST"]
-        , stderr = tempfile.TemporaryFile ()
-        )
-    time.sleep (2)
+    cmd = \
+        [ sys.executable, "-c"
+        , "; ".join
+            ( ( "from _GTW.__test__ import RST"
+              , "RST.Scaffold "
+              + "( "
+              + repr
+                  ( server_args
+                  + ["-db_url", db_url, "-db_name", db_name or "test"]
+                  )
+              + ")"
+              )
+            )
+        ]
+    ### print (cmd)
+    p = subprocess.Popen (cmd, stderr = tempfile.TemporaryFile ())
+    import socket
+    s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+    i = 0
+    while True :
+        try :
+            s.connect (("localhost", 9999))
+        except socket.error :
+            if i < 20 :
+                i += 1
+                time.sleep (1)
+        else :
+            s.close ()
+            break
     return p
-# end def run_server_sb
-
-run_server = run_server_sb
+# end def run_server
 
 def _normal (k, v) :
     if k in ("date", "last-modified") :
@@ -297,8 +314,6 @@ server_args = \
     [ "run_server"
     , "-UTP=RST"
     , "-auto_reload=no"
-    , "-db_url=hps://"
-    , "-db_name=test"
     , "-debug=yes"
     , "-load_I18N=no"
     , "-log_level=0"
@@ -307,8 +322,8 @@ server_args = \
 
 ### «text» ### The doctest follows::
 
-_test_delete = """
-    >>> server = run_server ()
+_test_delete = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
 
     >>> _ = show (requests.get ("http://localhost:9999/v1/pid/"))
     { 'headers' :
@@ -532,8 +547,8 @@ _test_delete = """
 
 """
 
-_test_get = """
-    >>> server = run_server ()
+_test_get = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
 
     >>> r = show (requests.options ("http://localhost:9999"))
     { 'headers' :
@@ -1228,8 +1243,8 @@ _test_get = """
 
 """
 
-_test_options = """
-    >>> server = run_server ()
+_test_options = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
 
     >>> _ = traverse ("http://localhost:9999/")
 
@@ -1237,8 +1252,8 @@ _test_options = """
 
 """
 
-_test_post = """
-    >>> server = run_server ()
+_test_post = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
 
     >>> _ = show (requests.get ("http://localhost:9999/v1/pid?count"))
     { 'headers' :
@@ -1346,13 +1361,18 @@ _test_post = """
 
 """
 
-__test__ = dict \
-    ( test_delete   = _test_delete
-    , test_get      = _test_get
-    #, test_options  = _test_options
-    , test_post     = _test_post
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_delete   = _test_delete
+        , test_get      = _test_get
+        #, test_options  = _test_options
+        , test_post     = _test_post
+        )
     )
 
 if __name__ == "__main__" :
-    Scaffold (server_args)
+    backend = sos.environ.get \
+        ("GTW_test_backends", ("HPS")).split (":") [0].strip ()
+    db_url = Scaffold.Backend_Parameters.get (backend, "hps://").strip ("'")
+    _run_server (["-db_url", db_url, "-db_name", "test"])
 ### __END__ GTW.__test__.RST
