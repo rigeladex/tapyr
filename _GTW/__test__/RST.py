@@ -306,7 +306,197 @@ server_args = \
 
 ### «text» ### The doctest follows::
 
-_test_code = """
+_test_delete = """
+    >>> server = run_server ()
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid/"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ 1
+            , 2
+            , 3
+            , 4
+            , 5
+            , 6
+            , 7
+            , 8
+            , 9
+            , 10
+            , 11
+            , 12
+            , 13
+            ]
+        , 'url_template' : '/v1/MOM.Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid/'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid/1"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'pid' : 1
+        , 'type_name' : 'PAP.Person'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid/1'
+    }
+
+    >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'error' : "You need to send the object's `cid` with the request"
+        , 'pid' : 1
+        , 'type_name' : 'PAP.Person'
+        }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/pid/1'
+    }
+
+    >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1", params = dict (cid = 2)))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'error' : 'Cid mismatch: requested cid = 2, current cid = 1'
+        , 'pid' : 1
+        , 'type_name' : 'PAP.Person'
+        }
+    , 'status' : 409
+    , 'url' : 'http://localhost:9999/v1/pid/1?cid=2'
+    }
+
+    >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1", params = dict (cid = 1)))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'pid' : 1
+        , 'status' : 'Object with pid None successfully deleted'
+        , 'type_name' : 'PAP.Person'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
+    }
+
+    >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1", params = dict (cid = 1)))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'text/html'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' : None
+    , 'status' : 404
+    , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid/1"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'text/html'
+        , 'date' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' : None
+    , 'status' : 404
+    , 'url' : 'http://localhost:9999/v1/pid/1'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'entries' :
+            [ 2
+            , 3
+            , 5
+            , 6
+            , 7
+            , 8
+            , 9
+            , 10
+            , 11
+            , 12
+            , 13
+            ]
+        , 'url_template' : '/v1/MOM.Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid'
+    }
+
+    >>> server.terminate ()
+
+"""
+
+_test_get = """
     >>> server = run_server ()
 
     >>> r = show (requests.options ("http://localhost:9999"))
@@ -927,6 +1117,8 @@ _test_code = """
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
     , 'json' :
@@ -980,7 +1172,8 @@ _test_code = """
 """
 
 __test__ = dict \
-    ( RST_test = _test_code
+    ( test_delete = _test_delete
+    #, test_get    = _test_get
     )
 
 if __name__ == "__main__" :

@@ -137,7 +137,8 @@ class RST_E_Type_Mixin (RST_Mixin) :
         result = None
         E_Type = self.E_Type
         if E_Type.is_partial :
-            children = tuple ((Q.type_name == ctn) for ctn in E_Type.children)
+            children = tuple \
+                ((Q.type_name == ctn) for ctn in E_Type.children_np)
             if children :
                 result = Q.OR (* children)
         else :
@@ -182,6 +183,34 @@ class RST_Entity (RST_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
 
     implicit = True
+
+    class RST_Entity_DELETE (GTW.RST.DELETE) :
+
+        _real_name             = "DELETE"
+
+        def _response_body (self, resource, request, response) :
+            obj    = resource.obj
+            cid_c  = request.req_data.get ("cid")
+            cid_s  = resource.change_info and resource.change_info.cid
+            result = resource.GET ()._response_body \
+                (resource, request, response)
+            if cid_c is None :
+                response.status_code = 400 ### Bad request
+                result ["error"] = "You need to send the object's `cid` with the request"
+            elif int (cid_c) != cid_s :
+                response.status_code = 409 ### Conflict
+                result ["error"] = \
+                    ( "Cid mismatch: requested cid = %s, current cid = %s"
+                    % (cid_c, cid_s)
+                    )
+            else :
+                obj.destroy ()
+                result ["status"] = \
+                    ("Object with pid %s successfully deleted" % obj.pid)
+            return result
+        # end def _response_body
+
+    DELETE = RST_Entity_DELETE # end class
 
     class RST_Entity_GET (_Ancestor.GET) :
 
@@ -248,10 +277,6 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
         ### XXX redefine _response_dict and _response_entry to regard
         ###     query parameters (full vs. bare bone answer...)
-
-        def _response_entry (self, resource, request, entry, response) :
-            return entry.pid
-        # end def _response_entry
 
         def _response_entry (self, resource, request, response, entry) :
             if request.verbose :
