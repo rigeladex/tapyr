@@ -27,7 +27,8 @@
 #
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
-#    27-Jun-2012 (CT) Fix `_check_etag` and `_check_modified`
+#    27-Jun-2012 (CT) Fix `_HTTP_Method_R_._check_etag` and `._check_modified`
+#    29-Jun-2012 (CT) Fix `_HTTP_Method_W_._check_etag` and `._check_modified`
 #    ««revision-date»»···
 #--
 
@@ -148,14 +149,14 @@ class _HTTP_Method_W_ (HTTP_Method) :
 
     def _check_etag (self, resource, request, response, etag) :
         match  = request.if_match
-        result = match is not None and match.contains (etag)
+        result = match is None or not match.contains (etag)
         response.set_etag (etag)
         return result
     # end def _check_etag
 
     def _check_modified (self, resource, request, response, last_modified) :
         ums    = request.if_unmodified_since
-        result = ums is not None and last_modified == ums
+        result = ums is None or last_modified != ums
         response.last_modified = last_modified
         return result
     # end def _check_modified
