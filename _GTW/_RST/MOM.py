@@ -328,9 +328,11 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
                 try :
                     obj = ETM (raw = True, ** attr_kw)
                 except Exception as exc :
+                    resource.scope.rollback ()
                     response.status_code = 400 ### Bad request
                     result ["error"] = str (exc)
                 else :
+                    resource.scope.commit ()
                     e      = resource._new_entry (obj.pid)
                     result = e.GET ()._response_body (e, request, response)
                     response.status_code = 201 ### Created
