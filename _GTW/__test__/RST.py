@@ -317,6 +317,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
         }
     , 'json' :
         { 'entries' :
@@ -348,6 +349,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -372,6 +374,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -397,6 +400,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -422,6 +426,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
         }
     , 'json' :
         { 'count' : 13 }
@@ -437,6 +442,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -462,6 +468,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '15'
         }
     , 'json' :
         { 'count' : 11 }
@@ -501,6 +508,7 @@ _test_delete = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '15'
         }
     , 'json' :
         { 'entries' :
@@ -658,6 +666,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '3'
         }
     , 'json' :
         { 'entries' :
@@ -679,6 +688,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '3'
         }
     , 'json' :
         { 'entries' :
@@ -727,6 +737,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -749,6 +760,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '2'
         }
     , 'json' :
         { 'attributes' :
@@ -771,6 +783,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '3'
         }
     , 'json' :
         { 'attributes' :
@@ -795,6 +808,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' : None
     , 'status' : 200
@@ -809,6 +823,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -832,6 +847,7 @@ _test_get = """
         { 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' : None
     , 'status' : 304
@@ -844,6 +860,7 @@ _test_get = """
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' : None
     , 'status' : 304
@@ -858,6 +875,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '12'
         }
     , 'json' :
         { 'entries' :
@@ -878,6 +896,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '12'
         }
     , 'json' :
         { 'entries' :
@@ -925,6 +944,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '11'
         }
     , 'json' :
         { 'entries' : [ 11 ]
@@ -942,6 +962,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '12'
         }
     , 'json' :
         { 'entries' : [ 12 ]
@@ -956,7 +977,10 @@ _test_get = """
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '10'
         }
     , 'json' :
         { 'entries' :
@@ -1032,7 +1056,10 @@ _test_get = """
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
         }
     , 'json' :
         { 'entries' :
@@ -1150,6 +1177,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
         }
     , 'json' :
         { 'entries' :
@@ -1181,6 +1209,7 @@ _test_get = """
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '1'
         }
     , 'json' :
         { 'attributes' :
@@ -1203,7 +1232,7 @@ _test_get = """
 
 __test__ = dict \
     ( test_delete = _test_delete
-    #, test_get    = _test_get
+    , test_get    = _test_get
     )
 
 if __name__ == "__main__" :

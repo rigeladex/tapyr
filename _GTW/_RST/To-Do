@@ -95,7 +95,7 @@ To-Do for package GTW.RST
 
     GET      returns instance `pid` (pid, attribute values, last_cid)
 
-    HEAD     returns last_cid, anything else ???
+    HEAD     returns header X-last-cid
 
     PUT      change object
 

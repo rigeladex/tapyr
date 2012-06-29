@@ -29,6 +29,7 @@
 #     8-Jun-2012 (CT) Creation
 #    27-Jun-2012 (CT) Fix `_HTTP_Method_R_._check_etag` and `._check_modified`
 #    29-Jun-2012 (CT) Fix `_HTTP_Method_W_._check_etag` and `._check_modified`
+#    29-Jun-2012 (CT) Add response header `X-last-cid`
 #    ««revision-date»»···
 #--
 
@@ -135,6 +136,11 @@ class _HTTP_Method_R_ (HTTP_Method) :
 
     def _do_change_info (self, resource, request, response) :
         result = self.__super._do_change_info (resource, request, response)
+        ci     = resource.change_info
+        if ci is not None :
+            cid  = getattr (ci, "cid", None)
+            if cid is not None :
+                response.headers ["X-last-cid"] = cid
         if not result :
             response.status_code = 304
         return result
