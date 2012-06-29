@@ -60,6 +60,7 @@
 #    14-May-2012 (MG) `MOM_Composite_Query.__init__` query attribute handling
 #                     fixed
 #    10-Jun-2012 (MG) `Join_Query` Support for `tn_pid` added
+#    29-Jun-2012 (MG) `Query.__init__` map `type_name` to `Type_Name`
 #    ««revision-date»»···
 #--
 
@@ -86,6 +87,8 @@ class Query (TFL.Meta.Object) :
         columns               = sa_table.columns
         for col in columns :
             setattr (self, col.name, col)
+            if col.name == "type_name" :
+                self.Type_Name = col
         for syn, attr in attr_map.iteritems () :
             setattr (self, syn, getattr (self, attr))
     # end def __init__
