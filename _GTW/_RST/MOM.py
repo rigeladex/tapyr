@@ -349,7 +349,13 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
         try :
             obj = self.ETM.pid_query (child)
         except (LookupError, TypeError) :
-            pass
+            try :
+                pid = int (child)
+            except (ValueError, TypeError) :
+                pass
+            else :
+                if 0 < pid <= self.top.scope.max_pid :
+                    raise self.HTTP.Error_410
         else :
             result = self._new_entry (obj)
             if not grandchildren :

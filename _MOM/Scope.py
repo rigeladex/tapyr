@@ -98,6 +98,7 @@
 #    22-Jun-2012 (MG) Add `close_connections`
 #    26-Jun-2012 (CT) Add and use `T_Extension`
 #    27-Jun-2012 (CT) Rename `_canonical_name` to`canonical_type_name`
+#    29-Jun-2012 (CT) Add `max_pid`
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ class Scope (TFL.Meta.Object) :
     db_meta_data           = property (TFL.Getter.ems.db_meta_data)
     etypes                 = property (TFL.Getter.app_type.etypes)
     Fatal_Exceptions       = property (TFL.Getter.ems.pm.dbs.Fatal_Exceptions)
+    max_pid                = property (TFL.Getter.ems.max_pid)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
     T_Extension            = property (TFL.Getter.app_type._T_Extension)

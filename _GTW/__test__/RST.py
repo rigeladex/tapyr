@@ -482,7 +482,7 @@ _test_delete = """
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
     , 'json' : None
-    , 'status' : 404
+    , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
 
@@ -494,7 +494,7 @@ _test_delete = """
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
     , 'json' : None
-    , 'status' : 404
+    , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
 
