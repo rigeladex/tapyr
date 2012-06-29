@@ -735,6 +735,73 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     def epkified_raw (cls, left, middle, right, ** kw) :
         return (left, middle, right), kw
 
+Each entity_type knows about its children:
+
+    >>> for et in apt._T_Extension :
+    ...   if et.children :
+    ...     print et.type_name
+    ...     print "   ", sorted (et.children)
+    MOM.Entity
+        ['MOM.An_Entity', 'MOM.Id_Entity']
+    MOM.An_Entity
+        ['MOM.Date_Interval', 'MOM._Interval_']
+    MOM.Id_Entity
+        ['MOM.Link', 'MOM.Object']
+    MOM.Link
+        ['MOM.Link1', 'MOM._MOM_Link_n_']
+    MOM.Link1
+        ['BMT.Rodent_is_sick']
+    MOM._MOM_Link_n_
+        ['MOM.Link2', 'MOM.Link3']
+    MOM.Link2
+        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap', 'MOM.Link2_Ordered']
+    MOM.Link3
+        ['BMT.Person_sets_Trap_at_Location']
+    MOM.Object
+        ['BMT.Location', 'BMT.Person', 'MOM.Named_Object']
+    MOM.Named_Object
+        ['BMT.Rodent', 'BMT.Trap']
+    MOM.Date_Interval
+        ['MOM.Date_Interval_C', 'MOM.Date_Interval_N']
+    MOM._Interval_
+        ['MOM.Float_Interval', 'MOM.Freqency_Interval']
+    BMT.Rodent
+        ['BMT.Mouse', 'BMT.Rat']
+    BMT.Mouse
+        ['BMT.Beaver']
+    BMT.Beaver
+        ['BMT.Otter']
+    BMT.Trap
+        ['BMT.Supertrap']
+
+    >>> for et in apt._T_Extension :
+    ...   if et.children and et.children != et.children_np :
+    ...     print et.type_name
+    ...     print "   ", sorted (et.children)
+    ...     print "   ", sorted (et.children_np)
+    MOM.Entity
+        ['MOM.An_Entity', 'MOM.Id_Entity']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM._Interval_']
+    MOM.Id_Entity
+        ['MOM.Link', 'MOM.Object']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
+    MOM.Link
+        ['MOM.Link1', 'MOM._MOM_Link_n_']
+        ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick']
+    MOM._MOM_Link_n_
+        ['MOM.Link2', 'MOM.Link3']
+        ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
+    MOM.Link2
+        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap', 'MOM.Link2_Ordered']
+        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap']
+    MOM.Object
+        ['BMT.Location', 'BMT.Person', 'MOM.Named_Object']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Rat', 'BMT.Trap']
+    MOM.Named_Object
+        ['BMT.Rodent', 'BMT.Trap']
+        ['BMT.Mouse', 'BMT.Rat', 'BMT.Trap']
+
+
 The app-type specific entity-types are ready to be used by
 :class:`scopes<_MOM.Scope.Scope>` and their
 :mod:`etype managers<_MOM.E_Type_Manager>`:

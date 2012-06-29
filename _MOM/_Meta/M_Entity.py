@@ -133,6 +133,7 @@
 #     6-Jun-2012 (CT) Use `tn_pid`, not `sort_key`, as default sort-key
 #    18-Jun-2012 (CT) Add `M_E_Type_Id_Reload`
 #    26-Jun-2012 (CT) Use `app_type.PNS_Aliases_R` in `pns_qualified`
+#    29-Jun-2012 (CT) Add `children_np`
 #    ««revision-date»»···
 #--
 
@@ -324,6 +325,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
             , _real_name    = str (cls.type_base_name)     ### M_Autorename
+            , _children_np  = None
             , ** kw
             )
     # end def _m_new_e_type_dict
@@ -552,6 +554,22 @@ class M_E_Type (M_E_Mixin) :
     app_type    = None
 
     _Class_Kind = "Essence"
+
+    @property
+    def children_np (cls) :
+        """Closest non-partial descendents of `cls`."""
+        result = cls._children_np
+        if result is None :
+            def _gen (cls) :
+                for k, c in cls.children.iteritems () :
+                    if c.is_partial :
+                        for knp, cnp in c.children_np.iteritems () :
+                            yield knp, cnp
+                    else :
+                        yield k, c
+            result = cls._children_np = dict (_gen (cls))
+        return result
+    # end def children_np
 
     @TFL.Meta.Once_Property
     def db_sig (cls) :
