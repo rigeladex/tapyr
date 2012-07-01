@@ -76,10 +76,10 @@ class RST_Mixin (TFL.Meta.Object) :
 
     def query_changes (self) :
         scope = self.top.scope
-        cqf   = self.change_query_filter
-        if cqf is not None :
+        cqfs   = self.change_query_filters
+        if cqfs is not None :
             return scope.query_changes \
-                (cqf).order_by (self._sort_key_cid_reverse)
+                (* cqfs).order_by (self._sort_key_cid_reverse)
     # end def query_changes
 
     def _get_change_info (self) :
@@ -133,18 +133,16 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def count
 
     @Once_Property
-    def change_query_filter (self) :
-        result = None
+    def change_query_filters (self) :
+        result = ()
         E_Type = self.E_Type
         if E_Type.is_partial :
-            children = tuple \
-                ((Q.type_name == ctn) for ctn in E_Type.children_np)
-            if children :
-                result = Q.OR (* children)
+            if E_Type.type_name != "MOM.Id_Entity" :
+                result = (Q.type_name.IN (sorted (E_Type.children_np)), )
         else :
-            result = Q.type_name == E_Type.type_name
+            result = (Q.type_name == E_Type.type_name, )
         return result
-    # end def change_query_filter
+    # end def change_query_filters
 
     @Once_Property
     def query_filters (self) :
@@ -256,9 +254,9 @@ class RST_Entity (RST_Mixin, _Ancestor) :
     # end def __init__
 
     @property
-    def change_query_filter (self) :
-        return Q.pid == self.obj.pid
-    # end def change_query_filter
+    def change_query_filters (self) :
+        return (Q.pid == self.obj.pid, )
+    # end def change_query_filters
 
 Entity = RST_Entity # end class
 

@@ -233,8 +233,8 @@ import sys
 import time
 
 def _run_server (args = []) :
-    print (server_args + args)
-    result = Scaffold (server_args + args)
+    print (["run_server"] + server_args + args)
+    result = Scaffold (["run_server"] + server_args + args)
     return result
 # end def run_server
 
@@ -247,7 +247,8 @@ def run_server (db_url = "hps://", db_name = None) :
               , "RST.Scaffold "
               + "( "
               + repr
-                  ( server_args
+                  ( ["run_server"]
+                  + server_args
                   + ["-db_url", db_url, "-db_name", db_name or "test"]
                   )
               + ")"
@@ -311,8 +312,7 @@ def traverse (url, level = 0) :
 # end def traverse
 
 server_args = \
-    [ "run_server"
-    , "-UTP=RST"
+    [ "-UTP=RST"
     , "-auto_reload=no"
     , "-debug=yes"
     , "-load_I18N=no"
@@ -321,6 +321,119 @@ server_args = \
     ]
 
 ### «text» ### The doctest follows::
+
+_test_cqf = r"""
+    >>> server = Scaffold (["wsgi"] + server_args + ["-db_url", %(p1)s, "-db_name", %(n1)s or "test"]) # doctest:+ELLIPSIS
+    Loaded Scope...
+    >>> root   = Scaffold.root
+    >>> v1     = root.resource_from_href ("v1")
+
+    >>> for e in v1.entries :
+    ...     print ("%%s\n    %%s" %% (e.name, e.change_query_filters))
+    MOM.Id_Entity
+        ()
+    MOM.Link
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
+    MOM.Link1
+        (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
+    MOM._MOM_Link_n_
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+    MOM.Link2
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+    MOM.Object
+        (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
+    PAP.Address
+        (Q.type_name == PAP.Address,)
+    PAP.Subject
+        (Q.type_name.in_ (['PAP.Company', 'PAP.Person'],),)
+    PAP.Company
+        (Q.type_name == PAP.Company,)
+    PAP.Email
+        (Q.type_name == PAP.Email,)
+    PAP.Phone
+        (Q.type_name == PAP.Phone,)
+    PAP.Person
+        (Q.type_name == PAP.Person,)
+    PAP.Subject_has_Property
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone'],),)
+    PAP.Subject_has_Address
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Person_has_Address'],),)
+    PAP.Company_has_Address
+        (Q.type_name == PAP.Company_has_Address,)
+    PAP.Subject_has_Email
+        (Q.type_name.in_ (['PAP.Company_has_Email', 'PAP.Person_has_Email'],),)
+    PAP.Company_has_Email
+        (Q.type_name == PAP.Company_has_Email,)
+    PAP.Subject_has_Phone
+        (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Person_has_Phone'],),)
+    PAP.Company_has_Phone
+        (Q.type_name == PAP.Company_has_Phone,)
+    PAP.Entity_created_by_Person
+        (Q.type_name == PAP.Entity_created_by_Person,)
+    PAP.Person_has_Address
+        (Q.type_name == PAP.Person_has_Address,)
+    PAP.Person_has_Email
+        (Q.type_name == PAP.Person_has_Email,)
+    PAP.Person_has_Phone
+        (Q.type_name == PAP.Person_has_Phone,)
+    SRM.Link1
+        (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team'],),)
+    SRM.Link2
+        (Q.type_name.in_ (['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+    SRM.Object
+        (Q.type_name.in_ (['SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event'],),)
+    SRM._Boat_Class_
+        (Q.type_name.in_ (['SRM.Boat_Class', 'SRM.Handicap'],),)
+    SRM.Boat_Class
+        (Q.type_name == SRM.Boat_Class,)
+    SRM.Handicap
+        (Q.type_name == SRM.Handicap,)
+    SRM.Boat
+        (Q.type_name == SRM.Boat,)
+    SRM.Club
+        (Q.type_name == SRM.Club,)
+    SRM.Regatta_Event
+        (Q.type_name == SRM.Regatta_Event,)
+    SWP.Link1
+        (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Picture'],),)
+    SWP.Object
+        (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page'],),)
+    SWP.Object_PN
+        (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page'],),)
+    SWP.Page
+        (Q.type_name == SWP.Page,)
+    SWP.Page_Y
+        (Q.type_name == SWP.Page_Y,)
+    SWP.Clip_O
+        (Q.type_name == SWP.Clip_O,)
+    SWP.Clip_X
+        (Q.type_name == SWP.Clip_X,)
+    SWP.Gallery
+        (Q.type_name == SWP.Gallery,)
+    SWP.Picture
+        (Q.type_name == SWP.Picture,)
+    SRM.Page
+        (Q.type_name == SRM.Page,)
+    SRM.Regatta
+        (Q.type_name.in_ (['SRM.Regatta_C', 'SRM.Regatta_H'],),)
+    SRM.Regatta_C
+        (Q.type_name == SRM.Regatta_C,)
+    SRM.Regatta_H
+        (Q.type_name == SRM.Regatta_H,)
+    SRM.Sailor
+        (Q.type_name == SRM.Sailor,)
+    SRM.Boat_in_Regatta
+        (Q.type_name == SRM.Boat_in_Regatta,)
+    SRM.Race_Result
+        (Q.type_name == SRM.Race_Result,)
+    SRM.Team
+        (Q.type_name == SRM.Team,)
+    SRM.Crew_Member
+        (Q.type_name == SRM.Crew_Member,)
+    SRM.Team_has_Boat_in_Regatta
+        (Q.type_name == SRM.Team_has_Boat_in_Regatta,)
+
+"""
 
 _test_delete = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
@@ -1363,7 +1476,8 @@ _test_post = r"""
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( test_delete   = _test_delete
+        ( test_cqf      = _test_cqf
+        , test_delete   = _test_delete
         , test_get      = _test_get
         #, test_options  = _test_options
         , test_post     = _test_post
