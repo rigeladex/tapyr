@@ -56,6 +56,7 @@
 #    27-Apr-2012 (MG) `reserve_cid` implemented for Postgresql, `reserve_pid`
 #                     changed
 #    22-Jun-2012 (MG) `close` parameter `delete_engine` added
+#    30-Jun-2012 (MG) `Listeners` replace by new `event` system
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,7 @@ import _MOM._DBW._DBS_
 import contextlib
 import sqlalchemy
 from   sqlalchemy            import engine        as SQL_Engine
-from   sqlalchemy.interfaces import PoolListener
+from   sqlalchemy.events     import event
 
 class _SAS_DBS_ (MOM.DBW._DBS_) :
     """Base class for all databases using sqlalchemy as db interface."""
@@ -244,19 +245,12 @@ class Postgresql (_NFB_) :
     ISOLATION_AUTO_COMMIT  = getattr (PE, "ISOLATION_LEVEL_AUTOCOMMIT",   -1)
     ISOLATION_SERIALIZABLE = getattr (PE, "ISOLATION_LEVEL_SERIALIZABLE", -1)
 
-    class SAS_Pool_Listener (PoolListener) :
-        """Modify newly created connections to update the postgresql
-           isolcation level.
-        """
-        def __init__ (self, isolation_level) :
-            self.isolation_level = isolation_level
-        # end def __init__
 
-        def connect (self, connection, * args) :
-            connection.set_isolation_level (self.isolation_level)
-        # end def connect
-
-    # end class SAS_Pool_Listener
+    @classmethod
+    def connect_change_isolation_level \
+        (cls, connection, con_record, isolation_level) :
+        connection.set_isolation_level (isolation_level)
+    # end def connect_change_isolation_level
 
     class Connection (object) :
 
@@ -265,6 +259,13 @@ class Postgresql (_NFB_) :
                 ( TFL.Url (db_url.scheme_auth + "/postgres")
                 , isolation_level = dbs.ISOLATION_AUTO_COMMIT
                 )
+            #event.listen \
+            #    ( engine
+            #    , "connect"
+            #    , lambda a, b :
+            #        dbs.connect_change_isolation_level
+            #    ,     (a, b, dbs.ISOLATION_AUTO_COMMIT)
+            #    )
             self.engine = engine
             self.conn   = engine.connect ()
         # end def __init__
@@ -306,13 +307,17 @@ class Postgresql (_NFB_) :
     def create_engine (cls, db_url, isolation_level = None) :
         if isolation_level is None :
             isolation_level = cls.ISOLATION_SERIALIZABLE
-        return cls \
+        result = cls \
             ( SQL_Engine.create_engine
-                ( db_url.value or "sqlite:///:memory:"
-                , listeners = (cls.SAS_Pool_Listener (isolation_level), )
-                , ** cls.Engine_Parameter
-                )
+                (db_url.value or "sqlite:///:memory:", ** cls.Engine_Parameter)
             )
+        event.listen \
+            ( result.engine
+            , "connect"
+            , lambda a, b :
+                cls.connect_change_isolation_level (a, b , isolation_level)
+            )
+        return result
     # end def create_engine
 
     @classmethod
@@ -325,7 +330,7 @@ class Postgresql (_NFB_) :
     @classmethod
     def _drop_database_content (cls, engine, meta) :
         super (Postgresql, cls)._drop_database_content (engine, meta)
-        ### now we need to drop everything we created with the
+        ### now we need to drop everything we created without the
         ### knowledge of sqlalchemy
         engine.execute ("DROP SEQUENCE pid_seq")
     # end def _drop_database_content
