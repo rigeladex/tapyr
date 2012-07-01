@@ -180,7 +180,9 @@ _Ancestor = GTW.RST.Leaf
 class RST_Entity (RST_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
 
-    implicit = True
+    _real_name                 = "Entity"
+
+    implicit                   = True
 
     class RST_Entity_DELETE (GTW.RST.DELETE) :
 

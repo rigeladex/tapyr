@@ -56,7 +56,7 @@ __doc__ = """
     ...         ( name          = "PAP.Company"
     ...         , description   = "Legal person"
     ...         , entries       =
-    ...             ( Leaf (name = "1")
+    ...             ( Leaf (name = "1", implicit = True)
     ...             ,
     ...             )
     ...         )
@@ -71,6 +71,7 @@ __doc__ = """
     ...     , entries           =
     ...         ( Leaf
     ...             ( name          = "about"
+    ...             , implicit      = True
     ...             )
     ...         , Node
     ...             ( name          = "v1"
@@ -83,6 +84,9 @@ __doc__ = """
     ...                 ,
     ...                 ) + e_types
     ...             )
+    ...         , Node
+    ...             ( name          = "v2"
+    ...             )
     ...         )
     ...     )
     >>> print (formatted (e_types))
@@ -94,7 +98,9 @@ __doc__ = """
             (
               ( <class '_GTW._RST.Resource.Leaf'>
               , ()
-                , { 'name' : '1' }
+                , { 'implicit' : True
+                  , 'name' : '1'
+                  }
               )
             )
         , 'name' : 'PAP.Company'
@@ -111,16 +117,29 @@ __doc__ = """
     >>> root
     <Root : />
     >>> root.entries
-    [<Leaf about: /about>, <Node v1: /v1>]
+    [<Leaf about: /about>, <Node v1: /v1>, <Node v2: /v2>]
 
     >>> ets = tuple (root.entries_transitive)
     >>> ets
-    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Leaf 1: /v1/PAP.Company/1>, <Node PAP.Person: /v1/PAP.Person>)
+    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Leaf 1: /v1/PAP.Company/1>, <Node PAP.Person: /v1/PAP.Person>, <Node v2: /v2>)
 
     >>> [e.name for e in ets]
-    [u'about', u'v1', u'Meta', u'PAP.Company', u'1', u'PAP.Person']
+    [u'about', u'v1', u'Meta', u'PAP.Company', u'1', u'PAP.Person', u'v2']
     >>> [e.href for e in ets]
-    [u'about', u'v1', u'v1/Meta', u'v1/PAP.Company', u'v1/PAP.Company/1', u'v1/PAP.Person']
+    [u'about', u'v1', u'v1/Meta', u'v1/PAP.Company', u'v1/PAP.Company/1', u'v1/PAP.Person', u'v2']
+
+    >>> print (root.href_pat_frag)
+    v2|v1(?:/(?:PAP\.Person|PAP\.Company|Meta))?
+
+    >>> for e in ets :
+    ...     print (e.href, e.href_pat_frag)
+    about None
+    v1 v1(?:/(?:PAP\.Person|PAP\.Company|Meta))?
+    v1/Meta Meta
+    v1/PAP.Company PAP\.Company
+    v1/PAP.Company/1 None
+    v1/PAP.Person PAP\.Person
+    v2 v2
 
     >>> root.entries [1]
     <Node v1: /v1>
@@ -142,6 +161,7 @@ __doc__ = """
         <Node PAP.Company: /v1/PAP.Company> parent = /v1, top = /
           <Leaf 1: /v1/PAP.Company/1> parent = /v1/PAP.Company, top = /
         <Node PAP.Person: /v1/PAP.Person> parent = /v1, top = /
+      <Node v2: /v2> parent = /, top = /
 
     >>> print (formatted_1 (root.GET.render_man.by_extension))
     {'json' : [<class '_GTW._RST.Mime_Type.JSON'>]}
@@ -165,6 +185,47 @@ __doc__ = """
     XHTML ('xhtml',) (u'application/xhtml+xml',)
     XML ('xml',) (u'text/xml', u'application/xml')
 
+    >>> root2 = Root ( HTTP = None
+    ...     , language          = "en"
+    ...     , entries           =
+    ...         ( Leaf
+    ...             ( name          = "about"
+    ...             , implicit      = True
+    ...             )
+    ...         , Node
+    ...             ( name          = "v1"
+    ...             , description   = "Version 1 of test RESTful api"
+    ...             , entries       =
+    ...                 ( Node
+    ...                     ( name          = "Meta"
+    ...                     , description   = "Meta information about RESTful api"
+    ...                     )
+    ...                 ,
+    ...                 ) + e_types
+    ...             )
+    ...         , Node
+    ...             ( name          = "v2"
+    ...             , entries       = list (e_types)
+    ...             )
+    ...         )
+    ...     )
+    >>> ets2 = tuple (root2.entries_transitive)
+    >>> ets2
+    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Leaf 1: /v1/PAP.Company/1>, <Node PAP.Person: /v1/PAP.Person>, <Node v2: /v2>, <Node PAP.Company: /v2/PAP.Company>, <Leaf 1: /v2/PAP.Company/1>, <Node PAP.Person: /v2/PAP.Person>)
+
+    >>> [e.name for e in ets2]
+    [u'about', u'v1', u'Meta', u'PAP.Company', u'1', u'PAP.Person', u'v2', u'PAP.Company', u'1', u'PAP.Person']
+    >>> [e.href for e in ets2]
+    [u'about', u'v1', u'v1/Meta', u'v1/PAP.Company', u'v1/PAP.Company/1', u'v1/PAP.Person', u'v2', u'v2/PAP.Company', u'v2/PAP.Company/1', u'v2/PAP.Person']
+
+    >>> print (root2.href_pat_frag)
+    v2(?:/(?:PAP\.Person|PAP\.Company))?|v1(?:/(?:PAP\.Person|PAP\.Company|Meta))?
+
+    >>> for e in ets2 :
+    ...     r = root2.resource_from_href (e.href)
+    ...     if r is None :
+    ...         print ("No resource_from_href for", e.href, e)
+
 """
 
 interactive_code = """
@@ -182,12 +243,12 @@ e_types = \
         )
     ,
     )
-root = Root \
-    ( HTTP              = None
+root2 = Root ( HTTP = None
     , language          = "en"
     , entries           =
         ( Leaf
             ( name          = "about"
+            , implicit      = True
             )
         , Node
             ( name          = "v1"
@@ -199,6 +260,10 @@ root = Root \
                     )
                 ,
                 ) + e_types
+            )
+        , Node
+            ( name          = "v2"
+            , entries       = list (e_types)
             )
         )
     )

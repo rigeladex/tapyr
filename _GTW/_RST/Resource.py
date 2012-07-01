@@ -32,6 +32,7 @@
 #    27-Jun-2012 (CT) Add empty `Leaf._get_child`
 #    28-Jun-2012 (CT) Fix `url_template`, use `_response_dict`
 #    28-Jun-2012 (CT) Use `request.verbose`
+#     1-Jul-2012 (CT) Add `href_pat`, use it in `resource_from_href`
 #    ««revision-date»»···
 #--
 
@@ -54,8 +55,10 @@ import _TFL.Context
 import _TFL.Environment
 import _TFL.Record
 
-from   posixpath import join as pjoin, normpath as pnorm, commonprefix
+from   posixpath import \
+    join as pjoin, normpath as pnorm, split as psplit, commonprefix
 
+import re
 import sys
 import time
 
@@ -205,6 +208,11 @@ class _RST_Base_ (TFL.Meta.Object) :
             return pnorm (href)
         return ""
     # end def href
+
+    @property
+    def href_pat_frag (self) :
+        pass ### redefine as necessary
+    # end def href_pat_frag
 
     @Once_Property
     def permalink (self) :
@@ -368,6 +376,8 @@ class _RST_Node_ (_Ancestor) :
 
     _real_name                 = "_Node_"
 
+    _href_pat_frag             = None
+
     class RST__Node__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
@@ -400,6 +410,24 @@ class _RST_Node_ (_Ancestor) :
                 for d in e.entries_transitive :
                     yield d
     # end def entries_transitive
+
+    @property
+    def href_pat_frag (self) :
+        result = self._href_pat_frag
+        if result is None :
+            result  = re.escape (self.name)
+            entries = sorted \
+                (self.entries, key = lambda x : x.name, reverse = True)
+            e_hpfs = tuple (x for x in (e.href_pat_frag for e in entries) if x)
+            if e_hpfs :
+                e_result = "|".join (e_hpfs)
+                if result :
+                    result = "%s(?:/(?:%s))?" % (result, e_result)
+                else :
+                    result = e_result
+            self._href_pat_frag = result
+        return result
+    # end def href_pat_frag
 
     def add_entries (self, * entries) :
         self._entries.extend (entries)
@@ -454,6 +482,14 @@ class RST_Node_V (_Ancestor) :
        without permanent `_entries`).
     """
 
+    @property
+    def href_pat_frag (self) :
+        result = self._href_pat_frag
+        if result is None :
+            result = self._href_pat_frag = re.escape (self.name)
+        return result
+    # end def href_pat_frag
+
 Node_V = RST_Node_V # end class
 
 _Ancestor = _Node_
@@ -474,6 +510,7 @@ class RST_Root (_Ancestor) :
     name                       = ""
     prefix                     = ""
 
+    _href_pat                  = None
     _needs_parent              = False
 
     from _GTW._RST.Request  import Request  as Request_Type
@@ -494,6 +531,19 @@ class RST_Root (_Ancestor) :
     def __call__ (self, environ, start_response) :
         return self.wsgi_app (environ, start_response)
     # end def __call__
+
+    @property
+    def href_pat (self) :
+        result = self._href_pat
+        if result is None :
+            hpf = self.href_pat_frag
+            if hpf :
+                try :
+                    result = self._href_pat = re.compile (hpf)
+                except Exception as exc :
+                    print ("*" * 3, "href_pat", exc)
+        return result
+    # end def href_pat
 
     @Once_Property
     def scope (self) :
@@ -530,10 +580,11 @@ class RST_Root (_Ancestor) :
     # end def Response
 
     def resource_from_href (self, href) :
-        href       = href.strip (u"/")
-        result     = None
         Table      = self.Table
+        href       = href.strip ("/")
+        match      = None
         redirects  = self.redirects
+        result     = None
         if redirects :
             try :
                 result = redirects [href]
@@ -541,20 +592,35 @@ class RST_Root (_Ancestor) :
                 pass
             else :
                 raise self.HTTP.Redirect_302 (result)
-        if href in Table :
-            result = Table [href]
-        else :
+        if result is None :
+            result = Table.get (href)
+        if result is None :
+            href_pat = self.href_pat
+            if href_pat :
+                match = href_pat.match (href)
+                if match :
+                    head = match.group (0)
+                    tail = href [len (head):].lstrip ("/").split ("/")
+                    node = Table.get (head)
+                    if node :
+                        result = node._get_child (* tail)
+        if result is None and not match :
             head = href
             tail = []
             while head :
-                head, _ = sos.path.split (head)
-                if head :
+                head, _ = psplit (head)
+                if head or not tail : ### `not tail` covers root's entries
                     tail.append (_)
                     try :
                         d = Table [head]
                     except KeyError :
                         pass
                     else :
+                        if self.DEBUG :
+                            print \
+                                ( "*" * 3, href, d
+                                , "not in `Table`, not matched by `href_pat`"
+                                )
                         result = d._get_child (* reversed (tail))
                 if result :
                     break
