@@ -79,6 +79,7 @@
 #    16-Apr-2012 (MG) `add` renamed to `_add`
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
+#     2-Jul-2012 (MG) `_add` renamed back to `add`
 #    ««revision-date»»···
 #--
 
@@ -239,7 +240,7 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def r_query
 
-    def _add (self, entity, id = None) :
+    def add (self, entity, id = None) :
         count = self._counts
         hpk   = entity.hpk
         root  = entity.relevant_root
@@ -260,7 +261,7 @@ class Manager (MOM.EMS._Manager_) :
                 else :
                     obj.register_dependency (entity.__class__)
                     r_map [r] [obj.pid].add (entity)
-    # end def _add
+    # end def add
 
     def _load_objects (self, scope = None) :
         self.session.load_objects ()

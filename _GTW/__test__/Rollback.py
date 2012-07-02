@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    20-Oct-2010 (MG) Creation
+#     2-Jul-2012 (MG) Test fixed due to new handling of exceptions (no
+#                     automatic rollback if a Name_Clash occures)
 #    ««revision-date»»···
 #--
 
@@ -60,7 +62,7 @@ create = r"""
     ### the name clash resulted in a rollback of the scope. Therefore only
     ### one Person object should be in the database after the name clash
     >>> PAP.Person.count
-    1
+    2
 
     >>> scope.destroy  ()
 

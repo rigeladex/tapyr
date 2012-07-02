@@ -51,6 +51,8 @@
 #    16-Apr-2012 (MG) `add` renamed to `_add` and rollback in case of
 #                     Name_Clash removed (this is now handled by the
 #                     _Manager_.add) method
+#     2-Jul-2012 (MG) `_add` renamed back to `add`, error handling for
+#                     `Name_Clash` changed
 #    ««revision-date»»···
 #--
 
@@ -119,11 +121,15 @@ class Manager (MOM.EMS._Manager_) :
 
     @property
     def max_cid (self) :
-        id_col     = MOM.SCM.Change._Change_._sa_table.c.cid
-        last = self.session.connection.execute \
-            ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
-            ).fetchone ()
-        return (last and last.cid) or 0
+        try :
+            id_col     = MOM.SCM.Change._Change_._sa_table.c.cid
+            last = self.session.connection.execute \
+                ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
+                ).fetchone ()
+            return (last and last.cid) or 0
+        except self.session.engine.Commit_Conflict_Exception, exc:
+            self.scope.rollback             ()
+            raise MOM.Error.Commit_Conflict ()
     # end def max_cid
 
     @property
@@ -180,7 +186,7 @@ class Manager (MOM.EMS._Manager_) :
         renamer     ()
     # end def rename
 
-    def _add (self, entity, id = None) :
+    def add (self, entity, id = None) :
         ses = self.session
         ses.flush () ### add all pending operations to the database transaction
         if entity.polymorphic_epk :
@@ -203,9 +209,15 @@ class Manager (MOM.EMS._Manager_) :
         try :
             ses.add   (entity, id)
         except SAS_Exception.IntegrityError as exc :
+            ### XXX introduce nested transactions
+            scope   = self.scope
+            changes = tuple (scope.uncommitted_changes.changes)
+            scope.rollback ()
+            for c in changes :
+                c.redo (scope)
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))
-    # end def _add
+    # end def add
 
     def _query_multi_root (self, Type) :
         QR = self.Q_Result

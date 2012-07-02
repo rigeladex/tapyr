@@ -35,6 +35,7 @@
 #    12-Apr-2012 (CT) Add tests for `on_error`
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    17-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
+#     2-Jul-2012 (MG) Additional tests for handling of execptions added
 #    ««revision-date»»···
 #--
 
@@ -127,12 +128,19 @@ _test_code = """
     >>> SRM.Boat.query_s ().all () ### before Name_Clash
     [GTW.OMP.SRM.Boat ((u'optimist', ), '', 42, u'oe'), GTW.OMP.SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
+    >>> laser.max_crew ### before name clash, before change
+    1
+    >>> laser.max_crew = 2
+    >>> laser.max_crew ### before name clash, after change
+    2
     >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Traceback (most recent call last):
       ...
     Name_Clash: new definition of Boat_Class (u'optimist') clashes with existing Boat_Class (u'optimist')
 
     >>> print scope.SRM.Boat.count ### 8
+    2
+    >>> laser.max_crew ### after name clash
     2
 
     >>> SRM.Boat.query_s ().all () ### after Name_Clash
