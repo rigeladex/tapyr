@@ -1559,6 +1559,30 @@ _test_post = r"""
     , 'url' : 'http://localhost:9999/v1/PAP.Person'
     }
 
+    >>> cargo_g = json.dumps (
+    ...   dict
+    ...     ( attributes = dict
+    ...         ( last_name   = "Garfield"
+    ...         , first_name  = "James"
+    ...         , hates       = "mondays"
+    ...         )
+    ...     )
+    ... )
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo_g, headers=headers))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'error' : "Request contains invalid attribute names ('hates',)" }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    }
+
     >>> server.terminate ()
 
 """

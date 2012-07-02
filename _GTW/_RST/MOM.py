@@ -339,30 +339,41 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
         _real_name                 = "POST"
 
-        def _response_body (self, resource, request, response) :
-            ETM    = resource.ETM
-            result = {}
+        def _request_attr (self, resource, request, response) :
             try :
-                attr_kw = request.json ["attributes"]
+                result = request.json ["attributes"]
             except KeyError :
-                response.status_code = 400 ### Bad request
-                result ["error"] = \
+                raise ValueError \
                     ("""You need to send the attributes defining """
                      """the object with the request """
                      """(content-type "application/json")"""
                     )
             else :
-                try :
-                    obj = ETM (raw = True, ** attr_kw)
-                except Exception as exc :
-                    resource.scope.rollback ()
-                    response.status_code = 400 ### Bad request
-                    result ["error"] = str (exc)
-                else :
-                    resource.scope.commit ()
-                    e      = resource._new_entry (obj.pid)
-                    result = e.GET ()._response_body (e, request, response)
-                    response.status_code = 201 ### Created
+                attributes = set   (a.name for a in resource.E_Type.edit_attr)
+                invalids   = tuple (k for k in result if k not in attributes)
+                if invalids :
+                    raise ValueError \
+                        ( "Request contains invalid attribute names "
+                        + repr (invalids)
+                        )
+            return result
+        # end def _request_attr
+
+        def _response_body (self, resource, request, response) :
+            ETM    = resource.ETM
+            result = {}
+            try :
+                attrs = self._request_attr (resource, request, response)
+                obj   = ETM (raw = True, ** attrs)
+            except Exception as exc :
+                resource.scope.rollback ()
+                response.status_code = 400 ### Bad request
+                result ["error"] = str (exc)
+            else :
+                resource.scope.commit ()
+                e      = resource._new_entry (obj.pid)
+                result = e.GET ()._response_body (e, request, response)
+                response.status_code = 201 ### Created
             return result
         # end def _response_body
 
