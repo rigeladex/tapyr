@@ -181,7 +181,7 @@ class RST_E_Type_Mixin (RST_Mixin) :
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "ETM", prefix = "_")
         if "name" not in kw :
-            kw ["name"] = self.E_Type.type_name
+            kw ["name"] = self.E_Type.type_name.replace (".", "-")
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -469,7 +469,10 @@ class RST_Scope (_Ancestor) :
     def __init__ (self, ** kw) :
         if "entries" not in kw :
             kw ["entries"] = tuple \
-                (   E_Type (ETM = et.type_name)
+                (   E_Type
+                      ( ETM  = et.type_name
+                      , name = et.type_name.replace (".", "-")
+                      )
                 for et in self.top.scope._T_Extension
                 if  issubclass (et, MOM.Id_Entity)
                         and (et.children or not et.is_partial)
@@ -479,7 +482,7 @@ class RST_Scope (_Ancestor) :
 
     def _get_child (self, child, * grandchildren) :
         if child == "pid" :
-            child = "MOM.Id_Entity"
+            child = "MOM-Id_Entity"
         return self.__super._get_child (child, * grandchildren)
     # end def _get_child
 

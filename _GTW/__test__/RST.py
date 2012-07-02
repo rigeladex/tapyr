@@ -330,165 +330,165 @@ _test_cqf = r"""
 
     >>> for e in v1.entries :
     ...     print ("%%s\n    %%s" %% (e.name, e.change_query_filters))
-    MOM.Id_Entity
+    MOM-Id_Entity
         ()
-    MOM.Link
+    MOM-Link
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
-    MOM.Link1
+    MOM-Link1
         (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
-    MOM._MOM_Link_n_
+    MOM-_MOM_Link_n_
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
-    MOM.Link2
+    MOM-Link2
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
-    MOM.Object
+    MOM-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
-    PAP.Address
+    PAP-Address
         (Q.type_name == PAP.Address,)
-    PAP.Subject
+    PAP-Subject
         (Q.type_name.in_ (['PAP.Company', 'PAP.Person'],),)
-    PAP.Company
+    PAP-Company
         (Q.type_name == PAP.Company,)
-    PAP.Email
+    PAP-Email
         (Q.type_name == PAP.Email,)
-    PAP.Phone
+    PAP-Phone
         (Q.type_name == PAP.Phone,)
-    PAP.Person
+    PAP-Person
         (Q.type_name == PAP.Person,)
-    PAP.Subject_has_Property
+    PAP-Subject_has_Property
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone'],),)
-    PAP.Subject_has_Address
+    PAP-Subject_has_Address
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Person_has_Address'],),)
-    PAP.Company_has_Address
+    PAP-Company_has_Address
         (Q.type_name == PAP.Company_has_Address,)
-    PAP.Subject_has_Email
+    PAP-Subject_has_Email
         (Q.type_name.in_ (['PAP.Company_has_Email', 'PAP.Person_has_Email'],),)
-    PAP.Company_has_Email
+    PAP-Company_has_Email
         (Q.type_name == PAP.Company_has_Email,)
-    PAP.Subject_has_Phone
+    PAP-Subject_has_Phone
         (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Person_has_Phone'],),)
-    PAP.Company_has_Phone
+    PAP-Company_has_Phone
         (Q.type_name == PAP.Company_has_Phone,)
-    PAP.Entity_created_by_Person
+    PAP-Entity_created_by_Person
         (Q.type_name == PAP.Entity_created_by_Person,)
-    PAP.Person_has_Address
+    PAP-Person_has_Address
         (Q.type_name == PAP.Person_has_Address,)
-    PAP.Person_has_Email
+    PAP-Person_has_Email
         (Q.type_name == PAP.Person_has_Email,)
-    PAP.Person_has_Phone
+    PAP-Person_has_Phone
         (Q.type_name == PAP.Person_has_Phone,)
-    SRM.Link1
+    SRM-Link1
         (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team'],),)
-    SRM.Link2
+    SRM-Link2
         (Q.type_name.in_ (['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
-    SRM.Object
+    SRM-Object
         (Q.type_name.in_ (['SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event'],),)
-    SRM._Boat_Class_
+    SRM-_Boat_Class_
         (Q.type_name.in_ (['SRM.Boat_Class', 'SRM.Handicap'],),)
-    SRM.Boat_Class
+    SRM-Boat_Class
         (Q.type_name == SRM.Boat_Class,)
-    SRM.Handicap
+    SRM-Handicap
         (Q.type_name == SRM.Handicap,)
-    SRM.Boat
+    SRM-Boat
         (Q.type_name == SRM.Boat,)
-    SRM.Club
+    SRM-Club
         (Q.type_name == SRM.Club,)
-    SRM.Regatta_Event
+    SRM-Regatta_Event
         (Q.type_name == SRM.Regatta_Event,)
-    SWP.Link1
+    SWP-Link1
         (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Picture'],),)
-    SWP.Object
+    SWP-Object
         (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page'],),)
-    SWP.Object_PN
+    SWP-Object_PN
         (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page'],),)
-    SWP.Page
+    SWP-Page
         (Q.type_name == SWP.Page,)
-    SWP.Page_Y
+    SWP-Page_Y
         (Q.type_name == SWP.Page_Y,)
-    SWP.Clip_O
+    SWP-Clip_O
         (Q.type_name == SWP.Clip_O,)
-    SWP.Clip_X
+    SWP-Clip_X
         (Q.type_name == SWP.Clip_X,)
-    SWP.Gallery
+    SWP-Gallery
         (Q.type_name == SWP.Gallery,)
-    SWP.Picture
+    SWP-Picture
         (Q.type_name == SWP.Picture,)
-    SRM.Page
+    SRM-Page
         (Q.type_name == SRM.Page,)
-    SRM.Regatta
+    SRM-Regatta
         (Q.type_name.in_ (['SRM.Regatta_C', 'SRM.Regatta_H'],),)
-    SRM.Regatta_C
+    SRM-Regatta_C
         (Q.type_name == SRM.Regatta_C,)
-    SRM.Regatta_H
+    SRM-Regatta_H
         (Q.type_name == SRM.Regatta_H,)
-    SRM.Sailor
+    SRM-Sailor
         (Q.type_name == SRM.Sailor,)
-    SRM.Boat_in_Regatta
+    SRM-Boat_in_Regatta
         (Q.type_name == SRM.Boat_in_Regatta,)
-    SRM.Race_Result
+    SRM-Race_Result
         (Q.type_name == SRM.Race_Result,)
-    SRM.Team
+    SRM-Team
         (Q.type_name == SRM.Team,)
-    SRM.Crew_Member
+    SRM-Crew_Member
         (Q.type_name == SRM.Crew_Member,)
-    SRM.Team_has_Boat_in_Regatta
+    SRM-Team_has_Boat_in_Regatta
         (Q.type_name == SRM.Team_has_Boat_in_Regatta,)
 
     >>> for e in v1.entries :
     ...     print ("%%s    %%s" %% (e.name, e.attributes))
-    MOM.Id_Entity    ()
-    MOM.Link    (Left `left`,)
-    MOM.Link1    (Left `left`,)
-    MOM._MOM_Link_n_    (Left `left`, Right `right`)
-    MOM.Link2    (Left `left`, Right `right`)
-    MOM.Object    ()
-    PAP.Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, Position `position`, String `region`)
-    PAP.Subject    (Date_Interval `lifetime`,)
-    PAP.Company    (String `name`, Date_Interval `lifetime`, String `short_name`)
-    PAP.Email    (Email `address`, String `desc`)
-    PAP.Phone    (Numeric_String `country_code`, Numeric_String `area_code`, Numeric_String `number`, String `desc`)
-    PAP.Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
-    PAP.Subject_has_Property    (Subject `left`, Right `right`, String `desc`)
-    PAP.Subject_has_Address    (Subject `left`, Address `right`, String `desc`)
-    PAP.Company_has_Address    (Company `left`, Address `right`, String `desc`)
-    PAP.Subject_has_Email    (Subject `left`, Email `right`, String `desc`)
-    PAP.Company_has_Email    (Company `left`, Email `right`, String `desc`)
-    PAP.Subject_has_Phone    (Subject `left`, Phone `right`, String `desc`)
-    PAP.Company_has_Phone    (Company `left`, Phone `right`, String `desc`)
-    PAP.Entity_created_by_Person    (Id_Entity `left`, Person `right`)
-    PAP.Person_has_Address    (Person `left`, Address `right`, String `desc`)
-    PAP.Person_has_Email    (Person `left`, Email `right`, String `desc`)
-    PAP.Person_has_Phone    (Person `left`, Phone `right`, Numeric_String `extension`, String `desc`)
-    SRM.Link1    (Left `left`,)
-    SRM.Link2    (Left `left`, Right `right`)
-    SRM.Object    ()
-    SRM._Boat_Class_    (String `name`,)
-    SRM.Boat_Class    (String `name`, Int `max_crew`, Float `beam`, Float `loa`, Float `sail_area`)
-    SRM.Handicap    (String `name`,)
-    SRM.Boat    (Boat_Class `left`, Nation `nation`, Int `sail_number`, String `sail_number_x`, String `name`)
-    SRM.Club    (String `name`, String `long_name`)
-    SRM.Regatta_Event    (String `name`, Date_Interval `date`, Entity `club`, String `desc`, Boolean `is_cancelled`)
-    SWP.Link1    (Left `left`,)
-    SWP.Object    ()
-    SWP.Object_PN    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`)
-    SWP.Page    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`)
-    SWP.Page_Y    (Date-Slug `perma_name`, Int `year`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`)
-    SWP.Clip_O    (Object_PN `left`, Date_Interval `date_x`, Text `abstract`, Int `prio`)
-    SWP.Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, Url `link_to`, String `title`)
-    SWP.Gallery    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`, Directory `directory`)
-    SWP.Picture    (Gallery `left`, Int `number`, Picture `photo`, Thumbnail `thumb`)
-    SRM.Page    (Date-Slug `perma_name`, Entity `event`, Text `text`, Date_Interval `date`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, String `desc`)
-    SRM.Regatta    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`)
-    SRM.Regatta_C    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`, Boolean `is_team_race`)
-    SRM.Regatta_H    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`)
-    SRM.Sailor    (Person `left`, Nation `nation`, Int `mna_number`, Entity `club`)
-    SRM.Boat_in_Regatta    (Boat `left`, Regatta `right`, Entity `skipper`, Int `place`, Int `points`)
-    SRM.Race_Result    (Boat_in_Regatta `left`, Int `race`, Int `points`, String `status`, Boolean `discarded`)
-    SRM.Team    (Regatta_C `left`, String `name`, Entity `club`, String `desc`, Entity `leader`, Int `place`)
-    SRM.Crew_Member    (Boat_in_Regatta `left`, Sailor `right`, Int `key`, String `role`)
-    SRM.Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
+    MOM-Id_Entity    ()
+    MOM-Link    (Left `left`,)
+    MOM-Link1    (Left `left`,)
+    MOM-_MOM_Link_n_    (Left `left`, Right `right`)
+    MOM-Link2    (Left `left`, Right `right`)
+    MOM-Object    ()
+    PAP-Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, Position `position`, String `region`)
+    PAP-Subject    (Date_Interval `lifetime`,)
+    PAP-Company    (String `name`, Date_Interval `lifetime`, String `short_name`)
+    PAP-Email    (Email `address`, String `desc`)
+    PAP-Phone    (Numeric_String `country_code`, Numeric_String `area_code`, Numeric_String `number`, String `desc`)
+    PAP-Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
+    PAP-Subject_has_Property    (Subject `left`, Right `right`, String `desc`)
+    PAP-Subject_has_Address    (Subject `left`, Address `right`, String `desc`)
+    PAP-Company_has_Address    (Company `left`, Address `right`, String `desc`)
+    PAP-Subject_has_Email    (Subject `left`, Email `right`, String `desc`)
+    PAP-Company_has_Email    (Company `left`, Email `right`, String `desc`)
+    PAP-Subject_has_Phone    (Subject `left`, Phone `right`, String `desc`)
+    PAP-Company_has_Phone    (Company `left`, Phone `right`, String `desc`)
+    PAP-Entity_created_by_Person    (Id_Entity `left`, Person `right`)
+    PAP-Person_has_Address    (Person `left`, Address `right`, String `desc`)
+    PAP-Person_has_Email    (Person `left`, Email `right`, String `desc`)
+    PAP-Person_has_Phone    (Person `left`, Phone `right`, Numeric_String `extension`, String `desc`)
+    SRM-Link1    (Left `left`,)
+    SRM-Link2    (Left `left`, Right `right`)
+    SRM-Object    ()
+    SRM-_Boat_Class_    (String `name`,)
+    SRM-Boat_Class    (String `name`, Int `max_crew`, Float `beam`, Float `loa`, Float `sail_area`)
+    SRM-Handicap    (String `name`,)
+    SRM-Boat    (Boat_Class `left`, Nation `nation`, Int `sail_number`, String `sail_number_x`, String `name`)
+    SRM-Club    (String `name`, String `long_name`)
+    SRM-Regatta_Event    (String `name`, Date_Interval `date`, Entity `club`, String `desc`, Boolean `is_cancelled`)
+    SWP-Link1    (Left `left`,)
+    SWP-Object    ()
+    SWP-Object_PN    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`)
+    SWP-Page    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`)
+    SWP-Page_Y    (Date-Slug `perma_name`, Int `year`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`)
+    SWP-Clip_O    (Object_PN `left`, Date_Interval `date_x`, Text `abstract`, Int `prio`)
+    SWP-Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, Url `link_to`, String `title`)
+    SWP-Gallery    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`, Directory `directory`)
+    SWP-Picture    (Gallery `left`, Int `number`, Picture `photo`, Thumbnail `thumb`)
+    SRM-Page    (Date-Slug `perma_name`, Entity `event`, Text `text`, Date_Interval `date`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, String `desc`)
+    SRM-Regatta    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`)
+    SRM-Regatta_C    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`, Boolean `is_team_race`)
+    SRM-Regatta_H    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`)
+    SRM-Sailor    (Person `left`, Nation `nation`, Int `mna_number`, Entity `club`)
+    SRM-Boat_in_Regatta    (Boat `left`, Regatta `right`, Entity `skipper`, Int `place`, Int `points`)
+    SRM-Race_Result    (Boat_in_Regatta `left`, Int `race`, Int `points`, String `status`, Boolean `discarded`)
+    SRM-Team    (Regatta_C `left`, String `name`, Entity `club`, String `desc`, Entity `leader`, Int `place`)
+    SRM-Crew_Member    (Boat_in_Regatta `left`, Sailor `right`, Int `key`, String `role`)
+    SRM-Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\.Picture|SWP\.Page\_Y|SWP\.Page|SWP\.Object\_PN|SWP\.Object|SWP\.Link1|SWP\.Gallery|SWP\.Clip\_X|SWP\.Clip\_O|SRM\.\_Boat\_Class\_|SRM\.Team\_has\_Boat\_in\_Regatta|SRM\.Team|SRM\.Sailor|SRM\.Regatta\_H|SRM\.Regatta\_Event|SRM\.Regatta\_C|SRM\.Regatta|SRM\.Race\_Result|SRM\.Page|SRM\.Object|SRM\.Link2|SRM\.Link1|SRM\.Handicap|SRM\.Crew\_Member|SRM\.Club|SRM\.Boat\_in\_Regatta|SRM\.Boat\_Class|SRM\.Boat|PAP\.Subject\_has\_Property|PAP\.Subject\_has\_Phone|PAP\.Subject\_has\_Email|PAP\.Subject\_has\_Address|PAP\.Subject|PAP\.Phone|PAP\.Person\_has\_Phone|PAP\.Person\_has\_Email|PAP\.Person\_has\_Address|PAP\.Person|PAP\.Entity\_created\_by\_Person|PAP\.Email|PAP\.Company\_has\_Phone|PAP\.Company\_has\_Email|PAP\.Company\_has\_Address|PAP\.Company|PAP\.Address|MOM\.\_MOM\_Link\_n\_|MOM\.Object|MOM\.Link2|MOM\.Link1|MOM\.Link|MOM\.Id\_Entity))?
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?
 
 """
 
@@ -521,7 +521,7 @@ _test_delete = r"""
             , 12
             , 13
             ]
-        , 'url_template' : '/v1/MOM.Id_Entity/{entry}'
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/'
@@ -547,7 +547,7 @@ _test_delete = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/MOM.Id_Entity/1'
+        , 'url' : '/v1/MOM-Id_Entity/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -573,7 +573,7 @@ _test_delete = r"""
         , 'error' : "You need to send the object's `cid` with the request"
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/MOM.Id_Entity/1'
+        , 'url' : '/v1/MOM-Id_Entity/1'
         }
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -599,7 +599,7 @@ _test_delete = r"""
         , 'error' : 'Cid mismatch: requested cid = 2, current cid = 1'
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/MOM.Id_Entity/1'
+        , 'url' : '/v1/MOM-Id_Entity/1'
         }
     , 'status' : 409
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=2'
@@ -641,7 +641,7 @@ _test_delete = r"""
         , 'pid' : 1
         , 'status' : 'Object with pid 1 successfully deleted'
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/MOM.Id_Entity/1'
+        , 'url' : '/v1/MOM-Id_Entity/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
@@ -711,7 +711,7 @@ _test_delete = r"""
             , 12
             , 13
             ]
-        , 'url_template' : '/v1/MOM.Id_Entity/{entry}'
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid'
@@ -787,57 +787,57 @@ _test_get = r"""
         }
     , 'json' :
         { 'entries' :
-            [ 'MOM.Id_Entity'
-            , 'MOM.Link'
-            , 'MOM.Link1'
-            , 'MOM._MOM_Link_n_'
-            , 'MOM.Link2'
-            , 'MOM.Object'
-            , 'PAP.Address'
-            , 'PAP.Subject'
-            , 'PAP.Company'
-            , 'PAP.Email'
-            , 'PAP.Phone'
-            , 'PAP.Person'
-            , 'PAP.Subject_has_Property'
-            , 'PAP.Subject_has_Address'
-            , 'PAP.Company_has_Address'
-            , 'PAP.Subject_has_Email'
-            , 'PAP.Company_has_Email'
-            , 'PAP.Subject_has_Phone'
-            , 'PAP.Company_has_Phone'
-            , 'PAP.Entity_created_by_Person'
-            , 'PAP.Person_has_Address'
-            , 'PAP.Person_has_Email'
-            , 'PAP.Person_has_Phone'
-            , 'SRM.Link1'
-            , 'SRM.Link2'
-            , 'SRM.Object'
-            , 'SRM._Boat_Class_'
-            , 'SRM.Boat_Class'
-            , 'SRM.Handicap'
-            , 'SRM.Boat'
-            , 'SRM.Club'
-            , 'SRM.Regatta_Event'
-            , 'SWP.Link1'
-            , 'SWP.Object'
-            , 'SWP.Object_PN'
-            , 'SWP.Page'
-            , 'SWP.Page_Y'
-            , 'SWP.Clip_O'
-            , 'SWP.Clip_X'
-            , 'SWP.Gallery'
-            , 'SWP.Picture'
-            , 'SRM.Page'
-            , 'SRM.Regatta'
-            , 'SRM.Regatta_C'
-            , 'SRM.Regatta_H'
-            , 'SRM.Sailor'
-            , 'SRM.Boat_in_Regatta'
-            , 'SRM.Race_Result'
-            , 'SRM.Team'
-            , 'SRM.Crew_Member'
-            , 'SRM.Team_has_Boat_in_Regatta'
+            [ 'MOM-Id_Entity'
+            , 'MOM-Link'
+            , 'MOM-Link1'
+            , 'MOM-_MOM_Link_n_'
+            , 'MOM-Link2'
+            , 'MOM-Object'
+            , 'PAP-Address'
+            , 'PAP-Subject'
+            , 'PAP-Company'
+            , 'PAP-Email'
+            , 'PAP-Phone'
+            , 'PAP-Person'
+            , 'PAP-Subject_has_Property'
+            , 'PAP-Subject_has_Address'
+            , 'PAP-Company_has_Address'
+            , 'PAP-Subject_has_Email'
+            , 'PAP-Company_has_Email'
+            , 'PAP-Subject_has_Phone'
+            , 'PAP-Company_has_Phone'
+            , 'PAP-Entity_created_by_Person'
+            , 'PAP-Person_has_Address'
+            , 'PAP-Person_has_Email'
+            , 'PAP-Person_has_Phone'
+            , 'SRM-Link1'
+            , 'SRM-Link2'
+            , 'SRM-Object'
+            , 'SRM-_Boat_Class_'
+            , 'SRM-Boat_Class'
+            , 'SRM-Handicap'
+            , 'SRM-Boat'
+            , 'SRM-Club'
+            , 'SRM-Regatta_Event'
+            , 'SWP-Link1'
+            , 'SWP-Object'
+            , 'SWP-Object_PN'
+            , 'SWP-Page'
+            , 'SWP-Page_Y'
+            , 'SWP-Clip_O'
+            , 'SWP-Clip_X'
+            , 'SWP-Gallery'
+            , 'SWP-Picture'
+            , 'SRM-Page'
+            , 'SRM-Regatta'
+            , 'SRM-Regatta_C'
+            , 'SRM-Regatta_H'
+            , 'SRM-Sailor'
+            , 'SRM-Boat_in_Regatta'
+            , 'SRM-Race_Result'
+            , 'SRM-Team'
+            , 'SRM-Crew_Member'
+            , 'SRM-Team_has_Boat_in_Regatta'
             ]
         , 'url_template' : '/v1/{entry}'
         }
@@ -845,7 +845,7 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1'
     }
 
-    >>> rp = show (requests.get ("http://localhost:9999/v1/PAP.Person"))
+    >>> rp = show (requests.get ("http://localhost:9999/v1/PAP-Person"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -861,13 +861,13 @@ _test_get = r"""
             , 2
             , 3
             ]
-        , 'url_template' : '/v1/PAP.Person/{entry}'
+        , 'url_template' : '/v1/PAP-Person/{entry}'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> _ = show (requests.get ("http://localhost:9999/v1/PAP.Person?verbose"))
+    >>> _ = show (requests.get ("http://localhost:9999/v1/PAP-Person?verbose"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -897,7 +897,7 @@ _test_get = r"""
               , 'cid' : 1
               , 'pid' : 1
               , 'type_name' : 'PAP.Person'
-              , 'url' : '/v1/PAP.Person/1'
+              , 'url' : '/v1/PAP-Person/1'
               }
             , { 'attributes' :
                   { 'first_name' : 'Laurens'
@@ -908,7 +908,7 @@ _test_get = r"""
               , 'cid' : 2
               , 'pid' : 2
               , 'type_name' : 'PAP.Person'
-              , 'url' : '/v1/PAP.Person/2'
+              , 'url' : '/v1/PAP-Person/2'
               }
             , { 'attributes' :
                   { 'first_name' : 'Clarissa'
@@ -919,12 +919,12 @@ _test_get = r"""
               , 'cid' : 3
               , 'pid' : 3
               , 'type_name' : 'PAP.Person'
-              , 'url' : '/v1/PAP.Person/3'
+              , 'url' : '/v1/PAP-Person/3'
               }
             ]
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person?verbose'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person?verbose'
     }
 
     >>> for pid in rp.json ["entries"] :
@@ -948,10 +948,10 @@ _test_get = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP.Person/1'
+        , 'url' : '/v1/PAP-Person/1'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
     { 'headers' :
         { 'content-length' : '<length>'
@@ -972,10 +972,10 @@ _test_get = r"""
         , 'cid' : 2
         , 'pid' : 2
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP.Person/2'
+        , 'url' : '/v1/PAP-Person/2'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/2'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/2'
     }
     { 'headers' :
         { 'content-length' : '<length>'
@@ -996,13 +996,13 @@ _test_get = r"""
         , 'cid' : 3
         , 'pid' : 3
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP.Person/3'
+        , 'url' : '/v1/PAP-Person/3'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/3'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/3'
     }
 
-    >>> r = show (requests.head ("http://localhost:9999/v1/PAP.Person/1"))
+    >>> r = show (requests.head ("http://localhost:9999/v1/PAP-Person/1"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'text/plain; charset=utf-8'
@@ -1014,10 +1014,10 @@ _test_get = r"""
         }
     , 'json' : None
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/PAP.Person/1"))
+    >>> r = show (requests.get ("http://localhost:9999/v1/PAP-Person/1"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1037,15 +1037,15 @@ _test_get = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP.Person/1'
+        , 'url' : '/v1/PAP-Person/1'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
 
     >>> last_modified = r.headers ["last-modified"]
     >>> last_etag     = r.headers ["etag"]
-    >>> r = show (requests.get ("http://localhost:9999/v1/PAP.Person/1", headers = { "If-Modified-Since" : last_modified }))
+    >>> r = show (requests.get ("http://localhost:9999/v1/PAP-Person/1", headers = { "If-Modified-Since" : last_modified }))
     { 'headers' :
         { 'connection' : 'close'
         , 'date' : '<datetime instance>'
@@ -1054,10 +1054,10 @@ _test_get = r"""
         }
     , 'json' : None
     , 'status' : 304
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/PAP.Person/1", headers = { "If-None-Match" : last_etag }))
+    >>> r = show (requests.get ("http://localhost:9999/v1/PAP-Person/1", headers = { "If-None-Match" : last_etag }))
     { 'headers' :
         { 'connection' : 'close'
         , 'date' : '<datetime instance>'
@@ -1067,10 +1067,10 @@ _test_get = r"""
         }
     , 'json' : None
     , 'status' : 304
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/SRM.Regatta"))
+    >>> r = show (requests.get ("http://localhost:9999/v1/SRM-Regatta"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1085,13 +1085,13 @@ _test_get = r"""
             [ 11
             , 12
             ]
-        , 'url_template' : '/v1/SRM.Regatta/{entry}'
+        , 'url_template' : '/v1/SRM-Regatta/{entry}'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/SRM.Regatta'
+    , 'url' : 'http://localhost:9999/v1/SRM-Regatta'
     }
 
-    >>> _ = show (requests.get ("http://localhost:9999/v1/SRM.Regatta?verbose"))
+    >>> _ = show (requests.get ("http://localhost:9999/v1/SRM-Regatta?verbose"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1126,7 +1126,7 @@ _test_get = r"""
               , 'cid' : 11
               , 'pid' : 11
               , 'type_name' : 'SRM.Regatta_C'
-              , 'url' : '/v1/SRM.Regatta/11'
+              , 'url' : '/v1/SRM-Regatta/11'
               }
             , { 'attributes' :
                   { 'boat_class' :
@@ -1142,15 +1142,15 @@ _test_get = r"""
               , 'cid' : 12
               , 'pid' : 12
               , 'type_name' : 'SRM.Regatta_H'
-              , 'url' : '/v1/SRM.Regatta/12'
+              , 'url' : '/v1/SRM-Regatta/12'
               }
             ]
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/SRM.Regatta?verbose'
+    , 'url' : 'http://localhost:9999/v1/SRM-Regatta?verbose'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/SRM.Regatta_C"))
+    >>> r = show (requests.get ("http://localhost:9999/v1/SRM-Regatta_C"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1162,13 +1162,13 @@ _test_get = r"""
         }
     , 'json' :
         { 'entries' : [ 11 ]
-        , 'url_template' : '/v1/SRM.Regatta_C/{entry}'
+        , 'url_template' : '/v1/SRM-Regatta_C/{entry}'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/SRM.Regatta_C'
+    , 'url' : 'http://localhost:9999/v1/SRM-Regatta_C'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/SRM.Regatta_H"))
+    >>> r = show (requests.get ("http://localhost:9999/v1/SRM-Regatta_H"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1180,13 +1180,13 @@ _test_get = r"""
         }
     , 'json' :
         { 'entries' : [ 12 ]
-        , 'url_template' : '/v1/SRM.Regatta_H/{entry}'
+        , 'url_template' : '/v1/SRM-Regatta_H/{entry}'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/SRM.Regatta_H'
+    , 'url' : 'http://localhost:9999/v1/SRM-Regatta_H'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/MOM.Object?verbose"))
+    >>> r = show (requests.get ("http://localhost:9999/v1/MOM-Object?verbose"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1209,7 +1209,7 @@ _test_get = r"""
               , 'cid' : 1
               , 'pid' : 1
               , 'type_name' : 'PAP.Person'
-              , 'url' : '/v1/MOM.Object/1'
+              , 'url' : '/v1/MOM-Object/1'
               }
             , { 'attributes' :
                   { 'first_name' : 'Laurens'
@@ -1220,7 +1220,7 @@ _test_get = r"""
               , 'cid' : 2
               , 'pid' : 2
               , 'type_name' : 'PAP.Person'
-              , 'url' : '/v1/MOM.Object/2'
+              , 'url' : '/v1/MOM-Object/2'
               }
             , { 'attributes' :
                   { 'first_name' : 'Clarissa'
@@ -1231,7 +1231,7 @@ _test_get = r"""
               , 'cid' : 3
               , 'pid' : 3
               , 'type_name' : 'PAP.Person'
-              , 'url' : '/v1/MOM.Object/3'
+              , 'url' : '/v1/MOM-Object/3'
               }
             , { 'attributes' :
                   { 'max_crew' : '1'
@@ -1240,14 +1240,14 @@ _test_get = r"""
               , 'cid' : 7
               , 'pid' : 7
               , 'type_name' : 'SRM.Boat_Class'
-              , 'url' : '/v1/MOM.Object/7'
+              , 'url' : '/v1/MOM-Object/7'
               }
             , { 'attributes' :
                   { 'name' : 'Yardstick' }
               , 'cid' : 9
               , 'pid' : 9
               , 'type_name' : 'SRM.Handicap'
-              , 'url' : '/v1/MOM.Object/9'
+              , 'url' : '/v1/MOM-Object/9'
               }
             , { 'attributes' :
                   { 'date' :
@@ -1265,15 +1265,15 @@ _test_get = r"""
               , 'cid' : 10
               , 'pid' : 10
               , 'type_name' : 'SRM.Regatta_Event'
-              , 'url' : '/v1/MOM.Object/10'
+              , 'url' : '/v1/MOM-Object/10'
               }
             ]
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/MOM.Object?verbose'
+    , 'url' : 'http://localhost:9999/v1/MOM-Object?verbose'
     }
 
-    >>> r = show (requests.get ("http://localhost:9999/v1/MOM.Link?verbose"))
+    >>> r = show (requests.get ("http://localhost:9999/v1/MOM-Link?verbose"))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1299,7 +1299,7 @@ _test_get = r"""
               , 'cid' : 4
               , 'pid' : 4
               , 'type_name' : 'SRM.Sailor'
-              , 'url' : '/v1/MOM.Link/4'
+              , 'url' : '/v1/MOM-Link/4'
               }
             , { 'attributes' :
                   { 'club' : None
@@ -1313,7 +1313,7 @@ _test_get = r"""
               , 'cid' : 5
               , 'pid' : 5
               , 'type_name' : 'SRM.Sailor'
-              , 'url' : '/v1/MOM.Link/5'
+              , 'url' : '/v1/MOM-Link/5'
               }
             , { 'attributes' :
                   { 'club' : None
@@ -1327,7 +1327,7 @@ _test_get = r"""
               , 'cid' : 6
               , 'pid' : 6
               , 'type_name' : 'SRM.Sailor'
-              , 'url' : '/v1/MOM.Link/6'
+              , 'url' : '/v1/MOM-Link/6'
               }
             , { 'attributes' :
                   { 'left' :
@@ -1341,7 +1341,7 @@ _test_get = r"""
               , 'cid' : 8
               , 'pid' : 8
               , 'type_name' : 'SRM.Boat'
-              , 'url' : '/v1/MOM.Link/8'
+              , 'url' : '/v1/MOM-Link/8'
               }
             , { 'attributes' :
                   { 'boat_class' :
@@ -1357,7 +1357,7 @@ _test_get = r"""
               , 'cid' : 11
               , 'pid' : 11
               , 'type_name' : 'SRM.Regatta_C'
-              , 'url' : '/v1/MOM.Link/11'
+              , 'url' : '/v1/MOM-Link/11'
               }
             , { 'attributes' :
                   { 'boat_class' :
@@ -1373,7 +1373,7 @@ _test_get = r"""
               , 'cid' : 12
               , 'pid' : 12
               , 'type_name' : 'SRM.Regatta_H'
-              , 'url' : '/v1/MOM.Link/12'
+              , 'url' : '/v1/MOM-Link/12'
               }
             , { 'attributes' :
                   { 'left' :
@@ -1392,12 +1392,12 @@ _test_get = r"""
               , 'cid' : 13
               , 'pid' : 13
               , 'type_name' : 'SRM.Boat_in_Regatta'
-              , 'url' : '/v1/MOM.Link/13'
+              , 'url' : '/v1/MOM-Link/13'
               }
             ]
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/MOM.Link?verbose'
+    , 'url' : 'http://localhost:9999/v1/MOM-Link?verbose'
     }
 
     >>> _ = show (requests.get ("http://localhost:9999/v1/pid/"))
@@ -1426,7 +1426,7 @@ _test_get = r"""
             , 12
             , 13
             ]
-        , 'url_template' : '/v1/MOM.Id_Entity/{entry}'
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/'
@@ -1452,7 +1452,7 @@ _test_get = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/MOM.Id_Entity/1'
+        , 'url' : '/v1/MOM-Id_Entity/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -1533,7 +1533,7 @@ _test_post = r"""
     ...     )
     ... )
     >>> headers = { "Content-Type": "application/json" }
-    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", headers=headers))
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP-Person", headers=headers))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1545,10 +1545,10 @@ _test_post = r"""
     , 'json' :
         { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
     , 'status' : 400
-    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo))
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP-Person", data=cargo))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1560,10 +1560,10 @@ _test_post = r"""
     , 'json' :
         { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
     , 'status' : 400
-    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> r = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo, headers=headers))
+    >>> r = show (requests.post ("http://localhost:9999/v1/PAP-Person", data=cargo, headers=headers))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1588,13 +1588,13 @@ _test_post = r"""
         , 'cid' : 14
         , 'pid' : 14
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP.Person/14'
+        , 'url' : '/v1/PAP-Person/14'
         }
     , 'status' : 201
-    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo, headers=headers))
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP-Person", data=cargo, headers=headers))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1606,7 +1606,7 @@ _test_post = r"""
     , 'json' :
         { 'error' : "new definition of Person (u'dog', u'snoopy', u'the', u'') clashes with existing Person (u'dog', u'snoopy', u'the', u'')" }
     , 'status' : 400
-    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
     >>> cargo_c = json.dumps (
@@ -1646,10 +1646,10 @@ _test_post = r"""
         , 'cid' : 15
         , 'pid' : 14
         , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP.Person/14'
+        , 'url' : '/v1/PAP-Person/14'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/14'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/14'
     }
 
     >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
@@ -1664,7 +1664,7 @@ _test_post = r"""
     , 'json' :
         { 'error' : 'Cid mismatch: requested cid = 14, current cid = 15' }
     , 'status' : 409
-    , 'url' : 'http://localhost:9999/v1/PAP.Person/14'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/14'
     }
 
     >>> cargo_g = json.dumps (
@@ -1676,7 +1676,7 @@ _test_post = r"""
     ...         )
     ...     )
     ... )
-    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo_g, headers=headers))
+    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP-Person", data=cargo_g, headers=headers))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1688,7 +1688,7 @@ _test_post = r"""
     , 'json' :
         { 'error' : "Request contains invalid attribute names ('hates',)" }
     , 'status' : 400
-    , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
     >>> server.terminate ()
