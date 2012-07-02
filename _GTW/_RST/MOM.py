@@ -45,6 +45,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 class RST_Mixin (TFL.Meta.Object) :
     """Mixin for MOM-specific RST classes."""
 
+    _attributes                = None
     _change_info               = None
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
@@ -65,6 +66,25 @@ class RST_Mixin (TFL.Meta.Object) :
             result = self.top.scope [result]
         return result
     # end def ETM
+
+    @property
+    def attributes (self) :
+        result = self._attributes
+        if result is None :
+            result = self._attributes = self.E_Type.edit_attr
+        return result
+    # end def attributes
+
+    @attributes.setter
+    def attributes (self, value) :
+        def _gen (vs) :
+            E_Type = self.E_Type
+            for v in vs :
+                if isinstance (v, basestring) :
+                    v = getattr (E_Type, v)
+                yield v
+        self._attributes = tuple (_gen (value)) if value is not None else None
+    # end def attributes
 
     @property
     def change_info (self) :
@@ -228,12 +248,13 @@ class RST_Entity (RST_Mixin, _Ancestor) :
         # end def _response_attr
 
         def _response_body (self, resource, request, response) :
-            obj = resource.obj
+            obj   = resource.obj
+            attrs = resource.attributes
             return dict \
                 ( attributes = dict
                     (   self._response_attr
                             (resource, request, response, obj, a)
-                    for a in obj.edit_attr
+                    for a in attrs
                     if  a.to_save (obj)
                     )
                 , cid        = obj.last_cid
@@ -252,8 +273,14 @@ class RST_Entity (RST_Mixin, _Ancestor) :
             obj   = self.ETM.pid_query (obj)
         self.obj  = obj
         self.name = str (obj.pid)
+        self.pop_to_self (kw, "attributes")
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @Once_Property
+    def E_Type (self) :
+        return self.obj.__class__
+    # end def E_Type
 
     @property
     def change_query_filters (self) :
@@ -366,8 +393,8 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
                 return result._get_child (* grandchildren)
     # end def _get_child
 
-    def _new_entry (self, instance) :
-        return Entity (obj = instance, parent = self)
+    def _new_entry (self, instance, ** kw) :
+        return Entity (obj = instance, parent = self, ** kw)
     # end def _new_entry
 
 E_Type = RST_E_Type # end class
