@@ -47,6 +47,7 @@ import _TFL.Accessor
 import _TFL.Record
 
 import json
+from   posixpath import splitext as pp_splitext
 
 class _Meta_ (TFL.Meta.M_Class) :
     """Meta class for mime type renderers."""
@@ -79,8 +80,11 @@ class _Base_ (TFL.Meta.Object) :
     force_charset              = None
     mime_types                 = ()
 
-    def __init__ (self, method, resource, mime_type) :
-        assert mime_type in self.mime_types, (mime_type, mime_types)
+    def __init__ (self, method, resource, mime_type = None) :
+        if mime_type is None :
+            mime_type = self.mime_types [0]
+        else :
+            assert mime_type in self.mime_types, (mime_type, mime_types)
         self.method    = method
         self.resource  = resource
         self.mime_type = mime_type
@@ -250,13 +254,13 @@ class Render_Man (TFL.Meta.Object) :
 
     def __call__ (self, method, resource, request) :
         result = None
-        _, ext = sos.path.split (request.path)
-        ext.strip (".")
+        _, ext = pp_splitext (request.path)
+        ext    = ext.strip (".")
         if ext :
             rs = self.by_extension [ext]
             if rs :
                 result    = rs [0]
-                mime_type = result.mime_types [0]
+                mime_type = None
         if result is None :
             matches = sorted \
                 ( self._matches (request.accept_mimetypes)
@@ -269,10 +273,29 @@ class Render_Man (TFL.Meta.Object) :
                 mime_type = match.mime_type
         if result is None and resource.ignore_picky_accept and self.renderers :
             result    = self.renderers [0]
-            mime_type = result.mime_types [0]
+            mime_type = None
         if result is not None :
             return result (method, resource, mime_type)
     # end def __call__
+
+    def render_acceptable (self, method, resource, request, response) :
+        l = []
+        body = dict (accept_mimetypes = l)
+        urlb, ext = pp_splitext (request.url)
+        for r in self.renderers :
+            url = ".".join (urlb, r.extensions [0]) if r.extensions else urlb
+            l.append \
+                ( dict
+                    ( extensions = r.extensions
+                    , mime_types = r.mime_types
+                    , url        = ".".join (urlb, r.extensions [0])
+                    )
+                )
+        renderer = getattr (method, "accept_mimetypes_renderer", JSON) \
+            (method, resource)
+        response.status_code = 406
+        renderer (request, response, body)
+    # end def render_acceptable
 
     def _matches (self, accept) :
         for r in self.renderers :

@@ -284,13 +284,19 @@ def _normal (k, v) :
 # end def _normal
 
 def show (r) :
+    kw   = {}
+    json = r.json if r.content else None
+    if json is not None :
+        kw ["json"] = json
+    elif r.content :
+        kw ["content"] = r.content
     output = formatted \
         ( dict
             ( headers = dict
                 (_normal (k, v) for k, v in r.headers.iteritems ())
-            , json    = r.json if r.content else None
             , status  = r.status_code
             , url     = r.url
+            , ** kw
             )
         )
     print (output)
@@ -670,7 +676,6 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
-    , 'json' : None
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
@@ -682,7 +687,6 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
-    , 'json' : None
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
@@ -732,7 +736,6 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
-    , 'json' : None
     , 'status' : 200
     , 'url' : 'http://localhost:9999/'
     }
@@ -744,7 +747,6 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         }
-    , 'json' : None
     , 'status' : 200
     , 'url' : 'http://localhost:9999/'
     }
@@ -927,6 +929,21 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/PAP-Person?verbose'
     }
 
+    >>> _ = show (requests.get ("http://localhost:9999/v1/PAP-Person.csv?verbose"))
+    { 'content' : 'Tanzer,Christian,,,,,\r\nTanzer,Laurens,William,,,,\r\nTanzer,Clarissa,Anna,,,,\r\n'
+    , 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'text/csv; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '3'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person.csv?verbose'
+    }
+
     >>> for pid in rp.json ["entries"] :
     ...     _ = show (requests.get (pjoin (rp.url, str (pid))))
     { 'headers' :
@@ -1012,7 +1029,6 @@ _test_get = r"""
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         , 'x-last-cid' : '1'
         }
-    , 'json' : None
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
@@ -1052,7 +1068,6 @@ _test_get = r"""
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         , 'x-last-cid' : '1'
         }
-    , 'json' : None
     , 'status' : 304
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
@@ -1065,7 +1080,6 @@ _test_get = r"""
         , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
         , 'x-last-cid' : '1'
         }
-    , 'json' : None
     , 'status' : 304
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }

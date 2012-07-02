@@ -42,6 +42,21 @@ from   _MOM.import_MOM          import *
 
 from   _TFL._Meta.Once_Property import Once_Property
 
+class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
+
+    _real_name                 = "CSV"
+
+    def rendered (self, request, response, body) :
+        import csv
+        from   StringIO import StringIO
+        f  = StringIO ()
+        dw = csv.DictWriter (f, body ["attribute_names"])
+        dw.writerows (list (e ["attributes"] for e in body ["entries"]))
+        return f.getvalue ()
+    # end def rendered
+
+# end class _E_Type_CSV_
+
 class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
 
     failure_code = 400 ### Bad request
@@ -374,6 +389,8 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
     class RST_E_Type_GET (_Ancestor.GET) :
 
         _real_name             = "GET"
+
+        _renderers             = _Ancestor.GET._renderers + (_E_Type_CSV_, )
 
         ### XXX redefine _response_dict and _response_entry to regard
         ###     query parameters (full vs. bare bone answer...)

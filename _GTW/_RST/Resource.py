@@ -33,6 +33,8 @@
 #    28-Jun-2012 (CT) Fix `url_template`, use `_response_dict`
 #    28-Jun-2012 (CT) Use `request.verbose`
 #     1-Jul-2012 (CT) Add `href_pat`, use it in `resource_from_href`
+#     2-Jul-2012 (CT) Refactor `href_pat_frag`
+#     2-Jul-2012 (CT) Change `resource_from_href` to ignore extension
 #    ««revision-date»»···
 #--
 
@@ -56,7 +58,12 @@ import _TFL.Environment
 import _TFL.Record
 
 from   posixpath import \
-    join as pjoin, normpath as pnorm, split as psplit, commonprefix
+    ( join          as pp_join
+    , normpath      as pp_norm
+    , split         as pp_split
+    , splitext      as pp_splitext
+    , commonprefix
+    )
 
 import re
 import sys
@@ -197,15 +204,15 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @Once_Property
     def file_stem (self) :
-        return pnorm (pjoin (self.prefix, self.base))
+        return pp_norm (pp_join (self.prefix, self.base))
     # end def file_stem
 
     @Once_Property
     def href (self) :
-        pp = self.parent.href if self.parent else self.prefix
-        href = pjoin (pp, self.name)
+        pp   = self.parent.href if self.parent else self.prefix
+        href = pp_join (pp, self.base)
         if href :
-            return pnorm (href)
+            return pp_norm (href)
         return ""
     # end def href
 
@@ -327,6 +334,8 @@ class _RST_Node_Base_ (_Ancestor) :
 
     _real_name                 = "_Node_Base_"
 
+    _href_pat_frag             = None
+
     class RST__Node_Base__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
@@ -345,7 +354,7 @@ class _RST_Node_Base_ (_Ancestor) :
                 , ** kw
                 )
             if not request.verbose :
-                result ["url_template"] = pjoin (resource.abs_href, "{entry}")
+                result ["url_template"] = pp_join (resource.abs_href, "{entry}")
             return result
         # end def _response_dict
 
@@ -355,7 +364,7 @@ class _RST_Node_Base_ (_Ancestor) :
 
         def _response_entry (self, resource, request, response, entry) :
             if request.verbose :
-                result = pjoin (resource.abs_href, entry.name)
+                result = pp_join (resource.abs_href, entry.name)
             else :
                 result = entry.name
             return result
@@ -367,6 +376,15 @@ class _RST_Node_Base_ (_Ancestor) :
 
     GET = RST__Node_Base__GET # end class
 
+    @property
+    def href_pat_frag (self) :
+        result = self._href_pat_frag
+        if result is None :
+            result = self._href_pat_frag = self._add_href_pat_frag_tail \
+                (re.escape (self.base))
+        return result
+    # end def href_pat_frag
+
 _Node_Base_ = _RST_Node_Base_ # end class
 
 _Ancestor = _Node_Base_
@@ -375,8 +393,6 @@ class _RST_Node_ (_Ancestor) :
     """Base class for RESTful nodes (resources with children)."""
 
     _real_name                 = "_Node_"
-
-    _href_pat_frag             = None
 
     class RST__Node__GET (_Ancestor.GET) :
 
@@ -411,28 +427,24 @@ class _RST_Node_ (_Ancestor) :
                     yield d
     # end def entries_transitive
 
-    @property
-    def href_pat_frag (self) :
-        result = self._href_pat_frag
-        if result is None :
-            result  = re.escape (self.name)
-            entries = sorted \
-                (self.entries, key = lambda x : x.name, reverse = True)
-            e_hpfs = tuple (x for x in (e.href_pat_frag for e in entries) if x)
-            if e_hpfs :
-                e_result = "|".join (e_hpfs)
-                if result :
-                    result = "%s(?:/(?:%s))?" % (result, e_result)
-                else :
-                    result = e_result
-            self._href_pat_frag = result
-        return result
-    # end def href_pat_frag
-
     def add_entries (self, * entries) :
         self._entries.extend (entries)
         self._map.update ((e.name, e) for e in entries)
     # end def add_entries
+
+    def _add_href_pat_frag_tail \
+            (self, head, getter = TFL.Getter.href_pat_frag) :
+        entries = sorted \
+            (self.entries, key = lambda x : x.name, reverse = True)
+        e_hpfs = tuple (x for x in (getter (e) for e in entries) if x)
+        if e_hpfs :
+            e_result   = "|".join (e_hpfs)
+            if head :
+                result = "%s(?:/(?:%s))?" % (head, e_result)
+            else :
+                result = e_result
+        return result
+    # end def _add_href_pat_frag_tail
 
     def _get_child (self, child, * grandchildren) :
         try :
@@ -464,7 +476,7 @@ class RST_Node (_Ancestor) :
     _real_name                 = "Node"
 
     def __init__ (self, ** kw) :
-        self.prefix = pjoin   (self.parent.prefix, kw ["name"], "")
+        self.prefix = pp_join (self.parent.prefix, kw ["name"], "")
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -482,13 +494,9 @@ class RST_Node_V (_Ancestor) :
        without permanent `_entries`).
     """
 
-    @property
-    def href_pat_frag (self) :
-        result = self._href_pat_frag
-        if result is None :
-            result = self._href_pat_frag = re.escape (self.name)
-        return result
-    # end def href_pat_frag
+    def _add_href_pat_frag_tail (self, head, getter = None) :
+        return head
+    # end def _add_href_pat_frag_tail
 
 Node_V = RST_Node_V # end class
 
@@ -579,12 +587,13 @@ class RST_Root (_Ancestor) :
         return result
     # end def Response
 
-    def resource_from_href (self, href) :
-        Table      = self.Table
-        href       = href.strip ("/")
-        match      = None
-        redirects  = self.redirects
-        result     = None
+    def resource_from_href (self, req_href) :
+        Table        = self.Table
+        req_href     = req_href.strip ("/")
+        href, ext    = pp_splitext (req_href)
+        match        = None
+        redirects    = self.redirects
+        result       = None
         if redirects :
             try :
                 result = redirects [href]
@@ -608,7 +617,7 @@ class RST_Root (_Ancestor) :
             head = href
             tail = []
             while head :
-                head, _ = psplit (head)
+                head, _ = pp_split (head)
                 if head or not tail : ### `not tail` covers root's entries
                     tail.append (_)
                     try :

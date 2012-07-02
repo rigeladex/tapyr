@@ -101,8 +101,8 @@ class HTTP_Method (TFL.Meta.Object) :
     def _get_renderer (self, resource, request, response) :
         result = self.render_man (self, resource, request)
         if result is None and self.needs_body :
-            response.status_code = 406
-            ### XXX send back list of available representations
+            self.render_man.render_acceptable \
+                (self, resource, request, response)
         return result
     # end def _get_renderer
 
