@@ -209,6 +209,7 @@ class Id_Entity (Entity) :
     @property
     def count_transitive (self) :
         """Return the transitive count of objects or links."""
+        #import pdb; pdb.set_trace ()
         return self.ems.count (self._etype, strict = False)
     # end def count_transitive
 

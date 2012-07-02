@@ -93,6 +93,8 @@
 #    15-Jun-2012 (MG) `_RESTORE_CLASS` factored
 #    18-Jun-2012 (CT) Factor most of `_Reload_Mixin_`
 #    18-Jun-2012 (MG) `_RELOAD_INSTANCE` changed to allow caching
+#     2-Jul-2012 (MG) `_RELOAD_INSTANCE` `session` is now a parameter of the
+#                     `reload` method and not of the constructor
 #    ««revision-date»»···
 #--
 
@@ -154,7 +156,7 @@ class _Reload_Mixin_ (object) :
     @classmethod
     def _RELOAD_INSTANCE (cls, self, e_type) :
         session = self.home_scope.ems.session
-        MOM.DBW.SAS.Q_Result_Reload (e_type, session).reload (self)
+        MOM.DBW.SAS.Q_Result_Reload (e_type).reload (self, session)
     # end def _RELOAD_INSTANCE
 
 # end class _Reload_Mixin_
