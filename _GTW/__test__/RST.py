@@ -878,7 +878,16 @@ _test_get = r"""
         , 'x-last-cid' : '3'
         }
     , 'json' :
-        { 'entries' :
+        { 'attribute_names' :
+            [ 'last_name'
+            , 'first_name'
+            , 'middle_name'
+            , 'title'
+            , 'lifetime'
+            , 'salutation'
+            , 'sex'
+            ]
+        , 'entries' :
             [ { 'attributes' :
                   { 'first_name' : 'Christian'
                   , 'last_name' : 'Tanzer'
@@ -1093,7 +1102,16 @@ _test_get = r"""
         , 'x-last-cid' : '12'
         }
     , 'json' :
-        { 'entries' :
+        { 'attribute_names' :
+            [ 'left'
+            , 'boat_class'
+            , 'discards'
+            , 'is_cancelled'
+            , 'kind'
+            , 'races'
+            , 'result'
+            ]
+        , 'entries' :
             [ { 'attributes' :
                   { 'boat_class' :
                       [ 'SRM.Boat_Class'
@@ -1179,7 +1197,9 @@ _test_get = r"""
         , 'x-last-cid' : '10'
         }
     , 'json' :
-        { 'entries' :
+        { 'attribute_names' :
+            []
+        , 'entries' :
             [ { 'attributes' :
                   { 'first_name' : 'Christian'
                   , 'last_name' : 'Tanzer'
@@ -1264,7 +1284,9 @@ _test_get = r"""
         , 'x-last-cid' : '13'
         }
     , 'json' :
-        { 'entries' :
+        { 'attribute_names' :
+    [ 'left' ]
+        , 'entries' :
             [ { 'attributes' :
                   { 'club' : None
                   , 'left' :

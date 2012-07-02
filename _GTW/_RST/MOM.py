@@ -392,6 +392,14 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
             return result
         # end def _response_body
 
+        def _response_dict (self, resource, request, response, ** kw) :
+            if request.verbose :
+                attr_names = tuple (a.name for a in resource.attributes)
+                kw ["attribute_names"] = attr_names
+            return self.__super._response_dict \
+                (resource, request, response, ** kw)
+        # end def _response_dict
+
         def _response_entry (self, resource, request, response, entry) :
             if request.verbose :
                 e = resource._new_entry (entry.pid)
