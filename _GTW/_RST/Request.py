@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jun-2012 (CT) Creation
 #    28-Jun-2012 (CT) Add `verbose`
+#     2-Jul-2012 (CT) Factor `has_option` to `GTW.Request_Data`
 #    ««revision-date»»···
 #--
 
@@ -81,10 +82,7 @@ class _RST_Request_ (TFL.Meta.Object) :
 
     @Once_Property
     def verbose (self) :
-        result = self.req_data.get ("verbose")
-        if result == "" :
-            result = True
-        return result
+        return self.req_data.has_option ("verbose")
     # end def verbose
 
     def get_browser_locale_codes (self) :

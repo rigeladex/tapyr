@@ -41,6 +41,7 @@
 #    14-Nov-2011 (CT) Add `__nonzero__`
 #    21-Nov-2011 (CT) Change `_convert_element` to `logging` instead of `assert`
 #    20-Jun-2012 (CT) Add `Request_Data_List`; factor/rewrite `_normalized`
+#     2-Jul-2012 (CT) Add `has_option`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,18 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     def get (self, key, default = None) :
         return self._convert_element (key, self.data.get (key, default))
     # end def get
+
+    def has_option (self, key) :
+        """Return value of `key` or True, if `key` was specified with empty
+           value.
+        """
+        result = self.get (key)
+        if result == "" :
+            result = True
+        elif result and result.lower () in ("no", "false", "0") :
+            result = False
+        return result
+    # end def has_option
 
     def iteritems (self) :
         convert = self._convert_element

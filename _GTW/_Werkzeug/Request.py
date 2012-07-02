@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jun-2012 (CT) Creation
 #    29-Jun-2012 (CT) Redefine `json` to add exception handler
+#     2-Jul-2012 (CT) Add `has_option`
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,10 @@ class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
         result.files = self.files
         return result
     # end def req_data_list
+
+    def has_option (self, key) :
+        return self.req_data.has_option (key)
+    # end def get
 
 Request = _WZG_Request_ # end class
 

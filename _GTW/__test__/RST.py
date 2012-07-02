@@ -1409,6 +1409,38 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
 
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid?count&strict"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
+        }
+    , 'json' :
+        { 'count' : 0 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count&strict'
+    }
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid?count"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'x-last-cid' : '13'
+        }
+    , 'json' :
+        { 'count' : 13 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count'
+    }
+
     >>> server.terminate ()
 
 """

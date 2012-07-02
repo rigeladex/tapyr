@@ -306,9 +306,9 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
         ###     query parameters (full vs. bare bone answer...)
 
         def _response_body (self, resource, request, response) :
-            if "count" in request.req_data :
+            if request.has_option ("count") :
                 ETM = resource.ETM
-                if "strict" in request.req_data :
+                if request.has_option ("strict") :
                     qr = ETM.count_strict
                 else :
                     qr = ETM.count
