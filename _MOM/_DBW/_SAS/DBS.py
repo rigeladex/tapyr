@@ -259,13 +259,6 @@ class Postgresql (_NFB_) :
                 ( TFL.Url (db_url.scheme_auth + "/postgres")
                 , isolation_level = dbs.ISOLATION_AUTO_COMMIT
                 )
-            #event.listen \
-            #    ( engine
-            #    , "connect"
-            #    , lambda a, b :
-            #        dbs.connect_change_isolation_level
-            #    ,     (a, b, dbs.ISOLATION_AUTO_COMMIT)
-            #    )
             self.engine = engine
             self.conn   = engine.connect ()
         # end def __init__
