@@ -547,6 +547,7 @@ _test_delete = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/MOM.Id_Entity/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -572,6 +573,7 @@ _test_delete = r"""
         , 'error' : "You need to send the object's `cid` with the request"
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/MOM.Id_Entity/1'
         }
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -597,6 +599,7 @@ _test_delete = r"""
         , 'error' : 'Cid mismatch: requested cid = 2, current cid = 1'
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/MOM.Id_Entity/1'
         }
     , 'status' : 409
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=2'
@@ -636,8 +639,9 @@ _test_delete = r"""
             }
         , 'cid' : 1
         , 'pid' : 1
-        , 'status' : 'Object with pid None successfully deleted'
+        , 'status' : 'Object with pid 1 successfully deleted'
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/MOM.Id_Entity/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
@@ -884,6 +888,7 @@ _test_get = r"""
               , 'cid' : 1
               , 'pid' : 1
               , 'type_name' : 'PAP.Person'
+              , 'url' : '/v1/PAP.Person/1'
               }
             , { 'attributes' :
                   { 'first_name' : 'Laurens'
@@ -894,6 +899,7 @@ _test_get = r"""
               , 'cid' : 2
               , 'pid' : 2
               , 'type_name' : 'PAP.Person'
+              , 'url' : '/v1/PAP.Person/2'
               }
             , { 'attributes' :
                   { 'first_name' : 'Clarissa'
@@ -904,6 +910,7 @@ _test_get = r"""
               , 'cid' : 3
               , 'pid' : 3
               , 'type_name' : 'PAP.Person'
+              , 'url' : '/v1/PAP.Person/3'
               }
             ]
         }
@@ -932,6 +939,7 @@ _test_get = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP.Person/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
@@ -955,6 +963,7 @@ _test_get = r"""
         , 'cid' : 2
         , 'pid' : 2
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP.Person/2'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP.Person/2'
@@ -978,6 +987,7 @@ _test_get = r"""
         , 'cid' : 3
         , 'pid' : 3
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP.Person/3'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP.Person/3'
@@ -1018,6 +1028,7 @@ _test_get = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP.Person/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP.Person/1'
@@ -1097,6 +1108,7 @@ _test_get = r"""
               , 'cid' : 11
               , 'pid' : 11
               , 'type_name' : 'SRM.Regatta_C'
+              , 'url' : '/v1/SRM.Regatta/11'
               }
             , { 'attributes' :
                   { 'boat_class' :
@@ -1112,6 +1124,7 @@ _test_get = r"""
               , 'cid' : 12
               , 'pid' : 12
               , 'type_name' : 'SRM.Regatta_H'
+              , 'url' : '/v1/SRM.Regatta/12'
               }
             ]
         }
@@ -1176,6 +1189,7 @@ _test_get = r"""
               , 'cid' : 1
               , 'pid' : 1
               , 'type_name' : 'PAP.Person'
+              , 'url' : '/v1/MOM.Object/1'
               }
             , { 'attributes' :
                   { 'first_name' : 'Laurens'
@@ -1186,6 +1200,7 @@ _test_get = r"""
               , 'cid' : 2
               , 'pid' : 2
               , 'type_name' : 'PAP.Person'
+              , 'url' : '/v1/MOM.Object/2'
               }
             , { 'attributes' :
                   { 'first_name' : 'Clarissa'
@@ -1196,6 +1211,7 @@ _test_get = r"""
               , 'cid' : 3
               , 'pid' : 3
               , 'type_name' : 'PAP.Person'
+              , 'url' : '/v1/MOM.Object/3'
               }
             , { 'attributes' :
                   { 'max_crew' : '1'
@@ -1204,12 +1220,14 @@ _test_get = r"""
               , 'cid' : 7
               , 'pid' : 7
               , 'type_name' : 'SRM.Boat_Class'
+              , 'url' : '/v1/MOM.Object/7'
               }
             , { 'attributes' :
                   { 'name' : 'Yardstick' }
               , 'cid' : 9
               , 'pid' : 9
               , 'type_name' : 'SRM.Handicap'
+              , 'url' : '/v1/MOM.Object/9'
               }
             , { 'attributes' :
                   { 'date' :
@@ -1227,6 +1245,7 @@ _test_get = r"""
               , 'cid' : 10
               , 'pid' : 10
               , 'type_name' : 'SRM.Regatta_Event'
+              , 'url' : '/v1/MOM.Object/10'
               }
             ]
         }
@@ -1258,6 +1277,7 @@ _test_get = r"""
               , 'cid' : 4
               , 'pid' : 4
               , 'type_name' : 'SRM.Sailor'
+              , 'url' : '/v1/MOM.Link/4'
               }
             , { 'attributes' :
                   { 'club' : None
@@ -1271,6 +1291,7 @@ _test_get = r"""
               , 'cid' : 5
               , 'pid' : 5
               , 'type_name' : 'SRM.Sailor'
+              , 'url' : '/v1/MOM.Link/5'
               }
             , { 'attributes' :
                   { 'club' : None
@@ -1284,6 +1305,7 @@ _test_get = r"""
               , 'cid' : 6
               , 'pid' : 6
               , 'type_name' : 'SRM.Sailor'
+              , 'url' : '/v1/MOM.Link/6'
               }
             , { 'attributes' :
                   { 'left' :
@@ -1297,6 +1319,7 @@ _test_get = r"""
               , 'cid' : 8
               , 'pid' : 8
               , 'type_name' : 'SRM.Boat'
+              , 'url' : '/v1/MOM.Link/8'
               }
             , { 'attributes' :
                   { 'boat_class' :
@@ -1312,6 +1335,7 @@ _test_get = r"""
               , 'cid' : 11
               , 'pid' : 11
               , 'type_name' : 'SRM.Regatta_C'
+              , 'url' : '/v1/MOM.Link/11'
               }
             , { 'attributes' :
                   { 'boat_class' :
@@ -1327,6 +1351,7 @@ _test_get = r"""
               , 'cid' : 12
               , 'pid' : 12
               , 'type_name' : 'SRM.Regatta_H'
+              , 'url' : '/v1/MOM.Link/12'
               }
             , { 'attributes' :
                   { 'left' :
@@ -1345,6 +1370,7 @@ _test_get = r"""
               , 'cid' : 13
               , 'pid' : 13
               , 'type_name' : 'SRM.Boat_in_Regatta'
+              , 'url' : '/v1/MOM.Link/13'
               }
             ]
         }
@@ -1404,6 +1430,7 @@ _test_get = r"""
         , 'cid' : 1
         , 'pid' : 1
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/MOM.Id_Entity/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -1514,7 +1541,7 @@ _test_post = r"""
     , 'url' : 'http://localhost:9999/v1/PAP.Person'
     }
 
-    >>> _ = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo, headers=headers))
+    >>> r = show (requests.post ("http://localhost:9999/v1/PAP.Person", data=cargo, headers=headers))
     { 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
@@ -1539,6 +1566,7 @@ _test_post = r"""
         , 'cid' : 14
         , 'pid' : 14
         , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP.Person/14'
         }
     , 'status' : 201
     , 'url' : 'http://localhost:9999/v1/PAP.Person'
@@ -1557,6 +1585,64 @@ _test_post = r"""
         { 'error' : "new definition of Person (u'dog', u'snoopy', u'the', u'') clashes with existing Person (u'dog', u'snoopy', u'the', u'')" }
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP.Person'
+    }
+
+    >>> cargo_c = json.dumps (
+    ...   dict
+    ...     ( attributes = dict
+    ...         ( last_name   = "Tin"
+    ...         , first_name  = "Rin"
+    ...         , middle_name = "Tin"
+    ...         )
+    ...     , cid = r.json ["cid"]
+    ...     )
+    ... )
+    >>> ru = requests.utils.urlparse (r.url)
+    >>> p  = "%%s://%%s%%s" %% (ru.scheme, ru.netloc, r.json ["url"])
+    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Rin'
+            , 'last_name' : 'Tin'
+            , 'lifetime' :
+                [
+                  [ 'start'
+                  , '2000/11/22'
+                  ]
+                ]
+            , 'middle_name' : 'Tin'
+            , 'title' : ''
+            }
+        , 'cid' : 15
+        , 'pid' : 14
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP.Person/14'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/14'
+    }
+
+    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        }
+    , 'json' :
+        { 'error' : 'Cid mismatch: requested cid = 14, current cid = 15' }
+    , 'status' : 409
+    , 'url' : 'http://localhost:9999/v1/PAP.Person/14'
     }
 
     >>> cargo_g = json.dumps (

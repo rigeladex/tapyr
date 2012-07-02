@@ -42,6 +42,48 @@ from   _MOM.import_MOM          import *
 
 from   _TFL._Meta.Once_Property import Once_Property
 
+class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
+
+    failure_code = 400 ### Bad request
+
+    def _request_attr (self, resource, request, response) :
+        try :
+            result = request.json ["attributes"]
+        except KeyError :
+            raise ValueError \
+                ("""You need to send the attributes defining """
+                 """the object with the request """
+                 """(content-type "application/json")"""
+                )
+        else :
+            attributes = set   (a.name for a in resource.E_Type.edit_attr)
+            invalids   = tuple (k for k in result if k not in attributes)
+            if invalids :
+                raise ValueError \
+                    ( "Request contains invalid attribute names "
+                    + repr (invalids)
+                    )
+        return result
+    # end def _request_attr
+
+    def _response_body (self, resource, request, response) :
+        try :
+            attrs = self._request_attr (resource, request, response)
+            obj   = self._apply_attrs  (resource, request, response, attrs)
+        except Exception as exc :
+            resource.scope.rollback ()
+            response.status_code = self.failure_code
+            result               = dict (error = str (exc))
+        else :
+            resource.scope.commit ()
+            response.status_code = self.success_code
+            e      = resource._new_entry (obj.pid)
+            result = e.GET ()._response_body (e, request, response)
+        return result
+    # end def _response_body
+
+# end class _PUT_POST_Mixin_
+
 class RST_Mixin (TFL.Meta.Object) :
     """Mixin for MOM-specific RST classes."""
 
@@ -209,24 +251,14 @@ class RST_Entity (RST_Mixin, _Ancestor) :
         _real_name             = "DELETE"
 
         def _response_body (self, resource, request, response) :
-            obj    = resource.obj
-            cid_c  = request.req_data.get ("cid")
-            cid_s  = resource.change_info and resource.change_info.cid
             result = resource.GET ()._response_body \
                 (resource, request, response)
-            if cid_c is None :
-                response.status_code = 400 ### Bad request
-                result ["error"] = "You need to send the object's `cid` with the request"
-            elif int (cid_c) != cid_s :
-                response.status_code = 409 ### Conflict
-                result ["error"] = \
-                    ( "Cid mismatch: requested cid = %s, current cid = %s"
-                    % (cid_c, cid_s)
-                    )
-            else :
+            if resource._check_cid (request, response, result) :
+                obj = resource.obj
+                pid = obj.pid
                 obj.destroy ()
                 result ["status"] = \
-                    ("Object with pid %s successfully deleted" % obj.pid)
+                    ("Object with pid %s successfully deleted" % pid)
             return result
         # end def _response_body
 
@@ -260,10 +292,30 @@ class RST_Entity (RST_Mixin, _Ancestor) :
                 , cid        = obj.last_cid
                 , pid        = obj.pid
                 , type_name  = obj.type_name
+                , url        = resource.abs_href
                 )
         # end def _response
 
     GET = RST_Entity_GET # end class
+
+    class RST_Entity_PUT (_PUT_POST_Mixin_, GTW.RST.PUT) :
+
+        _real_name                 = "PUT"
+
+        success_code               = 200
+
+        def _apply_attrs (self, resource, request, response, attrs) :
+            obj  = resource.obj
+            body = {}
+            if resource._check_cid (request, response, body) :
+                obj.set_raw (** attrs)
+            else :
+                self.failure_code = response.status_code
+                raise ValueError (body ["error"])
+            return obj
+        # end def _apply_attrs
+
+    PUT = RST_Entity_PUT # end class
 
     def __init__ (self, ** kw) :
         assert "name" not in kw
@@ -286,6 +338,27 @@ class RST_Entity (RST_Mixin, _Ancestor) :
     def change_query_filters (self) :
         return (Q.pid == self.obj.pid, )
     # end def change_query_filters
+
+    def _check_cid (self, request, response, result) :
+        cid_c  = request.req_data.get ("cid")
+        if cid_c is None :
+            cid_c = request.json.get ("cid")
+        cid_s  = self.change_info and self.change_info.cid
+        error  = None
+        if cid_c is None :
+            code  = 400 ### Bad request
+            error = "You need to send the object's `cid` with the request"
+        elif int (cid_c) != cid_s :
+            code  = 409 ### Conflict
+            error = \
+                ( "Cid mismatch: requested cid = %s, current cid = %s"
+                % (cid_c, cid_s)
+                )
+        if error is not None :
+            result ["error"] = error
+            response.status_code = code
+        return not error
+    # end def _check_cid
 
 Entity = RST_Entity # end class
 
@@ -335,47 +408,15 @@ class RST_E_Type (RST_E_Type_Mixin, _Ancestor) :
 
     GET = RST_E_Type_GET # end class
 
-    class RST_E_Type_POST (GTW.RST.POST) :
+    class RST_E_Type_POST (_PUT_POST_Mixin_, GTW.RST.POST) :
 
         _real_name                 = "POST"
 
-        def _request_attr (self, resource, request, response) :
-            try :
-                result = request.json ["attributes"]
-            except KeyError :
-                raise ValueError \
-                    ("""You need to send the attributes defining """
-                     """the object with the request """
-                     """(content-type "application/json")"""
-                    )
-            else :
-                attributes = set   (a.name for a in resource.E_Type.edit_attr)
-                invalids   = tuple (k for k in result if k not in attributes)
-                if invalids :
-                    raise ValueError \
-                        ( "Request contains invalid attribute names "
-                        + repr (invalids)
-                        )
-            return result
-        # end def _request_attr
+        success_code               = 201
 
-        def _response_body (self, resource, request, response) :
-            ETM    = resource.ETM
-            result = {}
-            try :
-                attrs = self._request_attr (resource, request, response)
-                obj   = ETM (raw = True, ** attrs)
-            except Exception as exc :
-                resource.scope.rollback ()
-                response.status_code = 400 ### Bad request
-                result ["error"] = str (exc)
-            else :
-                resource.scope.commit ()
-                e      = resource._new_entry (obj.pid)
-                result = e.GET ()._response_body (e, request, response)
-                response.status_code = 201 ### Created
-            return result
-        # end def _response_body
+        def _apply_attrs (self, resource, request, response, attrs) :
+            return resource.ETM (raw = True, ** attrs)
+        # end def _apply_attrs
 
     POST = RST_E_Type_POST # end class
 
