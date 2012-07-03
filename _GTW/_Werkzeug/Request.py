@@ -29,6 +29,7 @@
 #    19-Jun-2012 (CT) Creation
 #    29-Jun-2012 (CT) Redefine `json` to add exception handler
 #     2-Jul-2012 (CT) Add `has_option`
+#     3-Jul-2012 (CT) Redefine `values` to conditionally return `json`
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,14 @@ class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
         result.files = self.files
         return result
     # end def req_data_list
+
+    @Once_Property
+    def values (self) :
+        result = self.__super.values
+        if not result :
+            result = self.json
+        return result
+    # end def values
 
     def has_option (self, key) :
         return self.req_data.has_option (key)
