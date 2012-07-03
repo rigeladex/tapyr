@@ -40,7 +40,7 @@ import _GTW._RST.Resource
 import _GTW._RST.HTTP_Method
 import _GTW._RST._MOM.Mixin
 
-from   _MOM.import_MOM          import *
+from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object

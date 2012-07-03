@@ -39,7 +39,7 @@ from   _TFL                     import TFL
 import _GTW._RST.Resource
 import _GTW._RST._MOM.E_Type
 
-from   _MOM.import_MOM          import *
+from   _MOM.import_MOM          import MOM, Q
 
 _Ancestor = GTW.RST.Node
 

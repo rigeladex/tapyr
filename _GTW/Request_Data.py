@@ -42,6 +42,7 @@
 #    21-Nov-2011 (CT) Change `_convert_element` to `logging` instead of `assert`
 #    20-Jun-2012 (CT) Add `Request_Data_List`; factor/rewrite `_normalized`
 #     2-Jul-2012 (CT) Add `has_option`
+#     3-Jul-2012 (CT) Redefine `Request_Data_List.get` to fix `default`
 #    ««revision-date»»···
 #--
 
@@ -134,6 +135,10 @@ class _GTW_Request_Data_List_ (_GTW_Request_Data_) :
     """Convert all values into lists during access."""
 
     _real_name = "Request_Data_List"
+
+    def get (self, key, default = []) :
+        return self.__super.get (key, default)
+    # end def get
 
     def _convert_element (self, key, value) :
         normalized = self._normalized

@@ -1758,6 +1758,59 @@ _test_post = r"""
 
 """
 
+_test_query = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
+
+    >>> _ = show (requests.get ("http://localhost:9999/v1/pid/"))
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : '<server>'
+        , 'x-last-cid' : '13'
+        }
+    , 'json' :
+        { 'entries' :
+            [ 1
+            , 2
+            , 3
+            , 4
+            , 5
+            , 6
+            , 7
+            , 8
+            , 9
+            , 10
+            , 11
+            , 12
+            , 13
+            ]
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid/'
+    }
+
+    >>> for i in range (10) :
+    ...     r = requests.get ("http://localhost:9999/v1/pid?order_by=pid&limit=4&offset=" + str (i))
+    ...     print (i, ":", formatted_1 (r.json))
+    0 : {'entries' : [1, 2, 3, 4], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    1 : {'entries' : [2, 3, 4, 5], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    2 : {'entries' : [3, 4, 5, 6], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    3 : {'entries' : [4, 5, 6, 7], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    4 : {'entries' : [5, 6, 7, 8], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    5 : {'entries' : [6, 7, 8, 9], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    6 : {'entries' : [7, 8, 9, 10], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    7 : {'entries' : [8, 9, 10, 11], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    8 : {'entries' : [9, 10, 11, 12], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+    9 : {'entries' : [10, 11, 12, 13], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
+
+    >>> server.terminate ()
+
+"""
+
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( test_cqf      = _test_cqf
@@ -1765,6 +1818,7 @@ __test__ = Scaffold.create_test_dict \
         , test_get      = _test_get
         , test_options  = _test_options
         , test_post     = _test_post
+        , test_query    = _test_query
         )
     )
 

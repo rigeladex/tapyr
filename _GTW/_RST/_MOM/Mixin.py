@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Jun-2012 (CT) Creation
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
+#     3-Jul-2012 (CT) Add support for `Query_Restriction`
 #    ««revision-date»»···
 #--
 
@@ -38,9 +39,9 @@ from   _TFL                     import TFL
 
 import _GTW._RST.Resource
 import _GTW._RST.HTTP_Method
-import _GTW._RST._MOM
+import _GTW._RST._MOM.Query_Restriction
 
-from   _MOM.import_MOM          import *
+from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
@@ -173,6 +174,9 @@ class RST_Mixin (TFL.Meta.Object) :
 class RST_E_Type_Mixin (RST_Mixin) :
     """Mixin for classes of E_Type classes."""
 
+    QR                         = GTW.RST.MOM.Query_Restriction
+
+    default_qr_kw              = dict ()
     query_restriction          = None
     sort_key                   = None
 
@@ -235,8 +239,16 @@ class RST_E_Type_Mixin (RST_Mixin) :
     @TFL.Contextmanager
     def _handle_method_context (self, method, request) :
         with self.__super._handle_method_context (method, request) :
-            ### XXX setup query_restriction if request.req_data specifies any
-            yield
+            qr = self.QR.from_request \
+                (self.E_Type, request, ** self.default_qr_kw)
+            kw = dict (query_restriction = qr)
+            if qr :
+                if qr.attributes :
+                    kw ["attributes"] = qr.attributes
+                ### temporarily invalidate cache
+                kw.update (_old_cid = object (), _objects = [])
+            with self.LET (** kw) :
+                yield
     # end def _prepare_handle_method
 
 # end class RST_E_Type_Mixin

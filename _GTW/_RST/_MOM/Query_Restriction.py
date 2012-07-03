@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.NAV.E_Type.
+# This module is part of the package GTW.RST.MOM.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,42 +20,22 @@
 #
 #++
 # Name
-#    GTW.NAV.E_Type.Query_Restriction
+#    GTW.RST.MOM.Query_Restriction
 #
 # Purpose
-#    Model a query restriction as specified by `req_data` of a `GET` request
+#    Provide query restriction for RESTful MOM resources
 #
 # Revision Dates
-#    14-Nov-2011 (CT) Creation
-#    16-Nov-2011 (CT) Creation continued (order_by, ...)
-#    17-Nov-2011 (CT) Creation continued (NEXT, PREV, ...)
-#    19-Nov-2011 (CT) Creation continued (FIRST, LAST)
-#    21-Nov-2011 (CT) Creation continued (order_by_names, order_by_ui_names)
-#    22-Nov-2011 (CT) Creation continued (Query_Restriction_Spec)
-#    23-Nov-2011 (CT) Creation continued (fix `offset_f`, add `op_map`)
-#    25-Nov-2011 (CT) Creation continued (restrict `offset_f` to `total_f`)
-#    26-Nov-2011 (CT) Creation continued (fix `offset` and `offset_f`)
-#     2-Dec-2011 (CT) Creation continued (guard `sig_map` for `f`...)
-#     4-Dec-2011 (CT) Creation continued (`MOM.Attr.Querier`, `.AQ`)
-#     5-Dec-2011 (CT) Creation continued (add `label` to `op_map`)
-#     6-Dec-2011 (CT) Creation continued (filter `None` in `_setup_filters`)
-#     7-Dec-2011 (CT) Creation continued (classmethod `Filter`)
-#    13-Dec-2011 (CT) Creation continued (classmethod `Filter_Atoms`)
-#    20-Dec-2011 (CT) Creation continued (factor to `MOM.Attr.Querier.E_Type`)
-#    22-Dec-2011 (CT) Creation continued (make `field_names` optional)
-#    23-Dec-2011 (CT) Creation continued (use `Styler_Safe`, not `Styler`)
-#    16-Jan-2012 (CT) Creation continued (add `fields` and `_setup_fields`)
-#    24-Feb-2012 (CT) Add `kw` to `from_request_data`
+#     3-Jul-2012 (CT) Creation (factored from GTW.NAV.E_Type.Query_Restriction)
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-from   _GTW.HTML                import Styler_Safe
-import _GTW._NAV._E_Type
+import _GTW._RST._MOM
 
 from   _MOM.import_MOM          import MOM, Q
 
@@ -71,31 +51,32 @@ from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
 
-class Query_Restriction (TFL.Meta.Object) :
-    """Model a query restriction as specified by `req_data` of a `GET` request."""
+class RST_Query_Restriction (TFL.Meta.Object) :
+    """Query restriction for RESTful MOM resources."""
 
-    fields      = ()
+    _real_name  = "Query_Restriction"
+
+    attributes  = ()
     filters     = ()
     filters_q   = ()
     limit       = 0
-    name_sep    = MOM.Attr.Querier.id_sep
     offset      = 0
-    op_sep      = MOM.Attr.Querier.op_sep
     order_by    = ()
     order_by_q  = ()
     query_b     = None
     query_f     = None
-    ui_sep      = MOM.Attr.Querier.ui_sep
 
     _name_p     = r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
+    _name_sep   = MOM.Attr.Querier.id_sep
     _op_p       = r"(?P<op> [A-Z]+)"
+    _op_sep     = MOM.Attr.Querier.op_sep
     _a_pat      = Regexp \
-        ( "".join ((_name_p, op_sep, _op_p, r"$"))
+        ( "".join ((_name_p, _op_sep, _op_p, r"$"))
         , re.VERBOSE
         )
 
     _a_pat_opt  = Regexp \
-        ( "".join ((_name_p, r"(?:", op_sep, _op_p, r")?", r"$"))
+        ( "".join ((_name_p, r"(?:", _op_sep, _op_p, r")?", r"$"))
         , re.VERBOSE
         )
 
@@ -103,7 +84,7 @@ class Query_Restriction (TFL.Meta.Object) :
     def Filter (cls, E_Type, key, value = None, default_op = "AC") :
         pat = cls._a_pat_opt
         if pat.match (key) :
-            result, _ = cls._setup_attr (E_Type, pat, key, value, default_op)
+            result, _ = cls._setup_attr_match (E_Type, pat, key, value, default_op)
             return result
     # end def Filter
 
@@ -115,30 +96,29 @@ class Query_Restriction (TFL.Meta.Object) :
     # end def Filter_Atoms
 
     @classmethod
-    def from_request_data (cls, E_Type, req_data, ** kw) :
-        data   = dict (kw, ** dict (req_data.iteritems ()))
+    def from_request (cls, E_Type, request, ** kw) :
+        data   = dict (kw, ** dict (request.req_data.iteritems ()))
         result = cls \
-            ( limit           = data.pop ("limit",  None)
-            , offset          = data.pop ("offset", None)
-            , other_req_data  = data
+            ( limit    = data.pop ("limit",  0)
+            , offset   = data.pop ("offset", 0)
             )
-        limit = result.limit
+        limit  = result.limit
         if limit :
             if "LAST" in data :
-                result.offset = - limit
+                result.offset  = - limit
             elif "FIRST" in data :
-                result.offset = 0
+                result.offset  = 0
             elif "NEXT" in data :
                 result.offset += limit
             elif "PREV" in data :
-                result.offset  = result.offset - limit
+                result.offset -= limit
         elif "FIRST" in data or "PREV" in data :
             result.offset = 0
-        result._setup_fields   (E_Type, data)
-        result._setup_filters  (E_Type, data)
-        result._setup_order_by (E_Type, data)
+        result._setup_attributes (E_Type, request, data)
+        result._setup_filters    (E_Type, request, data)
+        result._setup_order_by   (E_Type, request, data)
         return result
-    # end def from_request_data
+    # end def from_request
 
     def __init__ (self, limit = None, offset = None, ** kw) :
         if limit :
@@ -152,12 +132,12 @@ class Query_Restriction (TFL.Meta.Object) :
         self.query_b = base_query
         result = base_query
         if self.filters_q :
-            result = result.filter (* self.filters_q)
+            result = result.filter   (* self.filters_q)
         if self.order_by_q :
             result = result.order_by (self.order_by_q)
         self.query_f = result
         offset = self.offset_f
-        if offset :
+        if offset is not None :
             result = result.offset   (offset)
         if self.limit :
             result = result.limit    (self.limit)
@@ -227,24 +207,17 @@ class Query_Restriction (TFL.Meta.Object) :
     def _qop_desc (soc, qop) :
         return TFL.Record \
             ( desc   = _T (qop.desc)
-            , label  = Styler_Safe (_T (qop.op_sym))
+            , label  = _T (qop.op_sym)
             )
     # end def _qop_desc
 
     @TFL.Meta.Class_and_Instance_Method
-    def _setup_attr (soc, E_Type, pat, k, value, default_op = "EQ") :
-        op     = pat.op
-        if not op :
-            op = default_op
-            k  = soc.op_sep.join ((k, default_op))
-        names  = pat.name.split ("__")
-        name   = ".".join (names)
+    def _setup_attr (soc, E_Type, k, name, op, value) :
         q      = getattr (E_Type.AQ, name)
         qop    = getattr (q, op)
-        ate    = q.As_Template_Elem
         fq     = qop (value)
         f      = dict \
-            ( ate._kw
+            ( q.As_Template_Elem._kw
             , attr   = q._attr
             , edit   = value
             , id     = k
@@ -256,48 +229,75 @@ class Query_Restriction (TFL.Meta.Object) :
         return TFL.Record (** f), fq
     # end def _setup_attr
 
-    def _setup_fields (self, E_Type, data) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _setup_attr_aq (soc, E_Type, aq) :
+        if aq :
+            name, op, value = aq.split (",", 3)
+            k = soc.op_sep.join (("__".join ((name.split ("."))), op))
+            return soc._setup_attr (E_Type, k, name, op, value)
+        return None, None
+    # end def _setup_attr_aq
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _setup_attr_match (soc, E_Type, pat, k, value, default_op = "EQ") :
+        op     = pat.op
+        if not op :
+            op = default_op
+            k  = soc.op_sep.join ((k, default_op))
+        names  = pat.name.split  ("__")
+        return soc._setup_attr   (E_Type, k, ".".join (names), op, value)
+    # end def _setup_attr_match
+
+    def _setup_attributes (self, E_Type, request, data) :
         def _gen (fs) :
             for f in fs :
                 r = f.strip ()
                 if r :
                     yield r
-        self.fields = tuple \
-            (_gen (data.pop ("fields", "").strip ().split (",")))
-    # end def _setup_fields
+        self.attributes = tuple (_gen (data.pop ("fields", "").split (",")))
+    # end def _setup_attributes
 
-    def _setup_filters (self, E_Type, data) :
+    def _setup_filters (self, E_Type, request, data) :
         matches = \
-            (   self._setup_attr (E_Type, pat, k, data.pop (k))
+            (   self._setup_attr_match (E_Type, pat, k, data.pop (k))
             for k, pat in self._filter_matches (data, self._a_pat)
             )
-        matches = tuple ((f, fq) for f, fq in matches if fq is not None)
-        if matches :
-            self.filters, self.filters_q = zip (* matches)
+        aqs     = \
+            (   self._setup_attr_aq (E_Type, aq)
+            for aq in request.req_data_list.get ("AQ")
+            )
+        f_fq_s  = tuple \
+            ((f, fq) for f, fq in ichain (matches, aqs) if fq is not None)
+        if f_fq_s :
+            self.filters, self.filters_q = zip (* f_fq_s)
     # end def _setup_filters
 
     def _setup_order_by_1 (self, E_Type, s) :
         s     = s.strip ()
         sign  = "-" if s.startswith ("-") else ""
         name  = s [bool (sign): ]
-        q     = getattr (E_Type.AQ, name)
-        ET    = getattr (q._attr, "E_Type", None)
-        if ET :
-            keys = tuple ("%s%s.%s" % (sign, name, k) for k in ET.sorted_by)
-        else :
+        if name == "pid" : ### XXX move into MOM.Attr.Querier
             keys = (s, )
-        ate   = q.As_Template_Elem
-        f     = dict \
-            ( ate._kw
-            , attr     = q._attr
-            , name     = s
-            , sign     = sign
-            , ui_name  = "%s%s" % (sign, ate.ui_name)
-            )
+            f    = dict (attr = None, name = s, sign = sign, ui_name = s)
+        else :
+            q     = getattr (E_Type.AQ, name)
+            ET    = getattr (q._attr, "E_Type", None)
+            if ET :
+                keys = tuple ("%s%s.%s" % (sign, name, k) for k in ET.sorted_by)
+            else :
+                keys = (s, )
+            ate   = q.As_Template_Elem
+            f     = dict \
+                ( ate._kw
+                , attr     = q._attr
+                , name     = s
+                , sign     = sign
+                , ui_name  = "%s%s" % (sign, ate.ui_name)
+                )
         return TFL.Record (** f), keys
     # end def _setup_order_by_1
 
-    def _setup_order_by (self, E_Type, data) :
+    def _setup_order_by (self, E_Type, request, data) :
         s = data.pop ("order_by", "").strip ()
         if s :
             def _gen (ns) :
@@ -308,36 +308,19 @@ class Query_Restriction (TFL.Meta.Object) :
                         pass
                     else :
                         yield r
-            order_by = _gen (s.split (","))
-            self.order_by, criteria = zip (* order_by)
-            self.order_by_q = TFL.Sorted_By (* ichain (* criteria))
+            order_by = tuple (_gen (s.split (",")))
+            if order_by :
+                self.order_by, criteria = zip (* order_by)
+                self.order_by_q = TFL.Sorted_By (* ichain (* criteria))
     # end def _setup_order_by
 
     def __nonzero__ (self) :
-        return bool (self.fields or self.limit or self.offset or self.filters_q)
+        return bool \
+            (self.attributes or self.limit or self.offset or self.filters_q)
     # end def __nonzero__
 
-# end class Query_Restriction
-
-class Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
-    """Query restriction spec for a GTW.NAV.E_Type page."""
-
-    def __init__ (self, E_Type, field_names = None) :
-        sel = MOM.Attr.Selector.Name (* field_names) if field_names else None
-        self.__super.__init__ (E_Type, sel)
-    # end def __init__
-
-    @property
-    def As_Json_Cargo (self) :
-        result = self.__super.As_Json_Cargo
-        op_map = result ["op_map"]
-        for k, v in op_map.iteritems () :
-            v ["label"] = Styler_Safe (v ["sym"])
-        return result
-    # end def As_Json_Cargo
-
-# end class Query_Restriction_Spec
+Query_Restriction = RST_Query_Restriction # end class
 
 if __name__ != "__main__" :
-    GTW.NAV.E_Type._Export ("*")
-### __END__ GTW.NAV.E_Type.Query_Restriction
+    GTW.RST.MOM._Export ("*")
+### __END__ GTW.RST.MOM.Query_Restriction

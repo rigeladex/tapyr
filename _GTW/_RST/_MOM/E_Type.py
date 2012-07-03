@@ -42,7 +42,7 @@ import _GTW._RST.Mime_Type
 import _GTW._RST._MOM.Mixin
 import _GTW._RST._MOM.Entity
 
-from   _MOM.import_MOM          import *
+from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
