@@ -305,18 +305,23 @@ def show (r) :
     return r
 # end def show
 
-def traverse (url, level = 0) :
+def traverse (url, level = 0, seen = None) :
+    if seen is None :
+        seen = set ()
     rg    = requests.get     (url)
     ro    = requests.options (url)
     path  = requests.utils.urlparse (url).path or "/"
     if ro.ok :
-        print (path, ":", ro.headers ["allow"], )
+        allow = ro.headers ["allow"]
+        if allow not in seen :
+            print (path, ":", allow)
+            seen .add (allow)
     else :
         print (path, ":", ro.status_code, r.content)
     if rg.ok and rg.content and rg.json :
         l = level + 1
         for e in rg.json.get ("entries", ()) :
-            traverse (pjoin (url, str (e)), l)
+            traverse (pjoin (url, str (e)), l, seen)
 # end def traverse
 
 server_args = \
@@ -1553,6 +1558,9 @@ _test_options = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
     >>> _ = traverse ("http://localhost:9999/")
+    / : GET, HEAD, OPTIONS
+    /v1/MOM-Id_Entity/1 : DELETE, GET, HEAD, OPTIONS, PUT
+    /v1/PAP-Address : GET, HEAD, OPTIONS, POST
 
     >>> server.terminate ()
 
@@ -1755,7 +1763,7 @@ __test__ = Scaffold.create_test_dict \
         ( test_cqf      = _test_cqf
         , test_delete   = _test_delete
         , test_get      = _test_get
-        #, test_options  = _test_options
+        , test_options  = _test_options
         , test_post     = _test_post
         )
     )
@@ -1764,5 +1772,5 @@ if __name__ == "__main__" :
     backend = sos.environ.get \
         ("GTW_test_backends", ("HPS")).split (":") [0].strip ()
     db_url = Scaffold.Backend_Parameters.get (backend, "hps://").strip ("'")
-    _run_server (["-db_url", db_url, "-db_name", "test"])
+    _run_server (["-db_url", db_url, "-db_name", "test", "-debug"])
 ### __END__ GTW.__test__.RST
