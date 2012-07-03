@@ -120,7 +120,7 @@ class _GTW_Test_Command_ (_Ancestor) :
     # end def combiner
 
     def create_rst (self, cmd, app_type, db_url, ** kw) :
-        from _GTW._RST import MOM as R_MOM
+        import _GTW._RST._MOM.Scope
         result = GTW.RST.Root \
             ( App_Type          = app_type
             , DB_Url            = db_url
@@ -129,7 +129,7 @@ class _GTW_Test_Command_ (_Ancestor) :
             , HTTP              = cmd.HTTP
             , input_encoding    = cmd.input_encoding
             , language          = "de"
-            , entries           = [R_MOM.Scope (name = "v1")]
+            , entries           = [GTW.RST.MOM.Scope (name = "v1")]
             , ** kw
             )
         if cmd.log_level :
