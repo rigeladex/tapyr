@@ -35,6 +35,7 @@
 #     1-Jul-2012 (CT) Add `href_pat`, use it in `resource_from_href`
 #     2-Jul-2012 (CT) Refactor `href_pat_frag`
 #     2-Jul-2012 (CT) Change `resource_from_href` to ignore extension
+#     3-Jul-2012 (CT) Use `TFL.Context.relaxed` as alternative to `.time_block`
 #    ««revision-date»»···
 #--
 
@@ -672,14 +673,16 @@ class RST_Root (_Ancestor) :
             method   = getattr (resource, meth_name) ()
             if resource.allow_method (method, user) :
                 if resource.DEBUG :
-                    fmt = "[%s] %s %s: execution time = %%s" % \
+                    context = TFL.Context.time_block
+                    fmt     = "[%s] %s %s: execution time = %%s" % \
                         ( time.strftime
                             ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
                         , method.name, href
                         )
-                    with TFL.Context.time_block (fmt, sys.stderr) :
-                        return resource._handle_method (method, request)
                 else :
+                    context = TFL.Context.relaxed
+                    fmt     = None
+                with context (fmt, sys.stderr) :
                     return resource._handle_method (method, request)
             else :
                 raise (HTTP.Error_403 if auth else HTTP.Error_401)
