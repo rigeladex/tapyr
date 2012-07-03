@@ -91,7 +91,7 @@ To-Do for package GTW.RST
 
         /v1/PAP.Person/last_name,STARTS_WITH,tan;lifetime.start,GE,1997
 
-  * .../pid/{pid} one Account instance with `pid`
+  * .../{type_name}/{pid} one Account instance with `pid`
 
     GET      returns instance `pid` (pid, attribute values, last_cid)
 
@@ -103,27 +103,13 @@ To-Do for package GTW.RST
 
     DELETE   delete object
 
-  * .../pid/{pid}/{name}
+  * .../{type_name}/{pid}/{name}
 
     GET      value of attribute `name` of instance `pid`
 
     PUT      change value of attribute `name` of instance `pid`
 
     DELETE   reset value of attribute `name` of instance `pid`, if possible
-
-  * .../{type_name}/{epk*}
-
-    * simple epks only (A_Entity attributes don't work)
-
-    GET      returns instance matching `epk` (pid, attribute values, last_cid)
-
-    HEAD     returns last_cid, anything else ???
-
-    PUT      change object
-
-    POST     change object
-
-    DELETE   delete object
 
 - HTTP
 

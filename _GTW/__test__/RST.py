@@ -278,7 +278,7 @@ def _normal (k, v) :
         v = "<datetime instance>"
     elif k in ("etag",) :
         v = "ETag value"
-    elif k == "content-length" :
+    elif k == "content-length" and int (v) != 0 :
         v = "<length>"
     elif k == "server" :
         v = "<server>"
@@ -673,7 +673,7 @@ _test_delete = r"""
 
     >>> _ = show (requests.delete ("http://localhost:9999/v1/pid/1", params = dict (cid = 1)))
     { 'headers' :
-        { 'content-length' : '<length>'
+        { 'content-length' : '0'
         , 'content-type' : 'text/html'
         , 'date' : '<datetime instance>'
         , 'server' : '<server>'
@@ -684,7 +684,7 @@ _test_delete = r"""
 
     >>> _ = show (requests.get ("http://localhost:9999/v1/pid/1"))
     { 'headers' :
-        { 'content-length' : '<length>'
+        { 'content-length' : '0'
         , 'content-type' : 'text/html'
         , 'date' : '<datetime instance>'
         , 'server' : '<server>'
@@ -733,7 +733,7 @@ _test_get = r"""
     >>> r = show (requests.options ("http://localhost:9999"))
     { 'headers' :
         { 'allow' : 'GET, HEAD, OPTIONS'
-        , 'content-length' : '<length>'
+        , 'content-length' : '0'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
         , 'server' : '<server>'
@@ -744,7 +744,7 @@ _test_get = r"""
 
     >>> r = show (requests.head ("http://localhost:9999"))
     { 'headers' :
-        { 'content-length' : '<length>'
+        { 'content-length' : '0'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
         , 'server' : '<server>'
@@ -951,6 +951,19 @@ _test_get = r"""
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person.csv?verbose'
     }
+    >>> _ = show (requests.get ("http://localhost:9999/v1/PAP-Person.csv"))
+    { 'headers' :
+        { 'content-length' : '0'
+        , 'content-type' : 'text/csv; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : '<server>'
+        , 'x-last-cid' : '3'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person.csv'
+    }
 
     >>> for pid in rp.json ["entries"] :
     ...     _ = show (requests.get (pjoin (rp.url, str (pid))))
@@ -1029,7 +1042,7 @@ _test_get = r"""
 
     >>> r = show (requests.head ("http://localhost:9999/v1/PAP-Person/1"))
     { 'headers' :
-        { 'content-length' : '<length>'
+        { 'content-length' : '0'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
