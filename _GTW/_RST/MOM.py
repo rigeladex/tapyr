@@ -179,8 +179,9 @@ class RST_Mixin (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def _handle_method_context (self, method, request) :
-        with self.LET (_change_info = self._get_change_info ()) :
-            yield
+        with self.__super._handle_method_context (method, request) :
+            with self.LET (_change_info = self._get_change_info ()) :
+                yield
     # end def _prepare_handle_method
 
 # end class RST_Mixin
