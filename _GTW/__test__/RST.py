@@ -280,6 +280,8 @@ def _normal (k, v) :
         v = "ETag value"
     elif k == "content-length" :
         v = "<length>"
+    elif k == "server" :
+        v = "<server>"
     return k, v
 # end def _normal
 
@@ -289,7 +291,7 @@ def show (r) :
     if json is not None :
         kw ["json"] = json
     elif r.content :
-        kw ["content"] = r.content
+        kw ["content"] = r.content.replace ("\r", "").split ("\n")
     output = formatted \
         ( dict
             ( headers = dict
@@ -508,7 +510,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -540,7 +542,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'json' :
@@ -566,7 +568,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'attributes' :
@@ -592,7 +594,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'attributes' :
@@ -618,7 +620,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -634,7 +636,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'attributes' :
@@ -660,7 +662,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '15'
         }
     , 'json' :
@@ -674,7 +676,7 @@ _test_delete = r"""
         { 'content-length' : '<length>'
         , 'content-type' : 'text/html'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
@@ -685,7 +687,7 @@ _test_delete = r"""
         { 'content-length' : '<length>'
         , 'content-type' : 'text/html'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1'
@@ -698,7 +700,7 @@ _test_delete = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '15'
         }
     , 'json' :
@@ -734,7 +736,7 @@ _test_get = r"""
         , 'content-length' : '<length>'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/'
@@ -745,7 +747,7 @@ _test_get = r"""
         { 'content-length' : '<length>'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/'
@@ -756,7 +758,7 @@ _test_get = r"""
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'entries' : [ 'v1' ]
@@ -771,7 +773,7 @@ _test_get = r"""
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'entries' : [ '/v1' ]
@@ -785,7 +787,7 @@ _test_get = r"""
         { 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'entries' :
@@ -854,7 +856,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '3'
         }
     , 'json' :
@@ -876,7 +878,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '3'
         }
     , 'json' :
@@ -930,14 +932,20 @@ _test_get = r"""
     }
 
     >>> _ = show (requests.get ("http://localhost:9999/v1/PAP-Person.csv?verbose"))
-    { 'content' : 'Tanzer,Christian,,,,,\r\nTanzer,Laurens,William,,,,\r\nTanzer,Clarissa,Anna,,,,\r\n'
+    { 'content' :
+        [ 'last_name,first_name,middle_name,title,lifetime,salutation,sex'
+        , 'Tanzer,Christian,,,,,'
+        , 'Tanzer,Laurens,William,,,,'
+        , 'Tanzer,Clarissa,Anna,,,,'
+        , ''
+        ]
     , 'headers' :
         { 'content-length' : '<length>'
         , 'content-type' : 'text/csv; charset=utf-8'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '3'
         }
     , 'status' : 200
@@ -952,7 +960,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'json' :
@@ -976,7 +984,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '2'
         }
     , 'json' :
@@ -1000,7 +1008,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '3'
         }
     , 'json' :
@@ -1026,7 +1034,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'status' : 200
@@ -1040,7 +1048,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'json' :
@@ -1065,7 +1073,7 @@ _test_get = r"""
     { 'headers' :
         { 'connection' : 'close'
         , 'date' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'status' : 304
@@ -1077,7 +1085,7 @@ _test_get = r"""
         { 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'status' : 304
@@ -1091,7 +1099,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '12'
         }
     , 'json' :
@@ -1112,7 +1120,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '12'
         }
     , 'json' :
@@ -1164,6 +1172,26 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/SRM-Regatta?verbose'
     }
 
+    >>> _ = show (requests.get ("http://localhost:9999/v1/SRM-Regatta.csv?verbose"))
+    { 'content' :
+        [ 'left,boat_class,discards,is_cancelled,kind,races,result'
+        , '"(\'SRM.Regatta_Event\', 10)","(\'SRM.Boat_Class\', 7)",,no,,,'
+        , '"(\'SRM.Regatta_Event\', 10)","(\'SRM.Handicap\', 9)",,no,,,'
+        , ''
+        ]
+    , 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'text/csv; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'server' : '<server>'
+        , 'x-last-cid' : '12'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose'
+    }
+
     >>> r = show (requests.get ("http://localhost:9999/v1/SRM-Regatta_C"))
     { 'headers' :
         { 'content-length' : '<length>'
@@ -1171,7 +1199,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '11'
         }
     , 'json' :
@@ -1189,7 +1217,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '12'
         }
     , 'json' :
@@ -1207,7 +1235,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '10'
         }
     , 'json' :
@@ -1294,7 +1322,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -1421,7 +1449,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -1453,7 +1481,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
     , 'json' :
@@ -1479,7 +1507,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -1495,7 +1523,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -1527,7 +1555,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         , 'x-last-cid' : '13'
         }
     , 'json' :
@@ -1554,7 +1582,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
@@ -1569,7 +1597,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
@@ -1584,7 +1612,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'attributes' :
@@ -1615,7 +1643,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'error' : "new definition of Person (u'dog', u'snoopy', u'the', u'') clashes with existing Person (u'dog', u'snoopy', u'the', u'')" }
@@ -1642,7 +1670,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'attributes' :
@@ -1673,7 +1701,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'error' : 'Cid mismatch: requested cid = 14, current cid = 15' }
@@ -1697,7 +1725,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'server' : 'Werkzeug/0.8.3 Python/2.7.3'
+        , 'server' : '<server>'
         }
     , 'json' :
         { 'error' : "Request contains invalid attribute names ('hates',)" }

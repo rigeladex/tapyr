@@ -49,10 +49,11 @@ class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
     def rendered (self, request, response, body) :
         import csv
         from   StringIO import StringIO
-        f  = StringIO ()
+        f  = StringIO       ()
         dw = csv.DictWriter (f, body ["attribute_names"])
-        dw.writerows (list (e ["attributes"] for e in body ["entries"]))
-        return f.getvalue ()
+        dw.writeheader      ()
+        dw.writerows        (list (e ["attributes"] for e in body ["entries"]))
+        return f.getvalue   ()
     # end def rendered
 
 # end class _E_Type_CSV_
