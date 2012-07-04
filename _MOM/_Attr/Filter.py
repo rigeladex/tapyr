@@ -56,6 +56,8 @@
 #    19-Dec-2011 (CT) Fix `In.cooker`
 #    15-Apr-2012 (CT) Add `sorted` to `_Composite_.__call__._gen` to ensure
 #                     deterministic order of dict iteration (`PYTHONHASHSEED`)
+#     4-Jul-2012 (CT) Add `_Filter_.__repr__`
+#     4-Jul-2012 (CT) Convert string `value` to `int` in `_Id_Entity_.__call__`
 #    ««revision-date»»···
 #--
 
@@ -75,7 +77,7 @@ from   _TFL.Regexp           import Regexp, re
 import _TFL._Meta.Object
 import _TFL.Filter
 
-Q      = TFL.Attr_Query ()
+Q = TFL.Attr_Query ()
 
 class _M_Filter_ (TFL.Meta.Object.__class__) :
     """Meta class for Filter classes."""
@@ -156,6 +158,10 @@ class _Filter_ (TFL.Meta.Object) :
         return q (value)
     # end def query
 
+    def __repr__ (self) :
+        return str (self)
+    # end def __repr__
+
     def __str__ (self) :
         return "<Attr.%s %s.%s [%s]>" % \
             (self.__class__.__name__, self.attr_name, self.op_key, self.op_sym)
@@ -229,6 +235,8 @@ class _Id_Entity_ (_Composite_) :
         if isinstance (value, dict) :
             return self.__super.__call__ (value)
         else :
+            if isinstance (value, basestring) :
+                value = int (value)
             return self.query (value)
     # end def __call__
 
