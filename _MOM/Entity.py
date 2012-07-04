@@ -199,6 +199,8 @@
 #     6-Jun-2012 (CT) Set `_A_Id_Entity_.P_Type = Id_Entity`
 #    13-Jun-2012 (CT) Add `reload_from_pickle_cargo`
 #    18-Jun-2012 (CT) Add `_Id_Entity_Reload_Mixin_`
+#     4-Jul-2012 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
+#                     support queries against strings (interpreted as `pid`)
 #    ««revision-date»»···
 #--
 
@@ -1383,6 +1385,13 @@ class Id_Entity (Entity) :
     def __eq__ (self, rhs) :
         if isinstance (rhs, int) :
             return self.pid == rhs
+        elif isinstance (rhs, basestring) :
+            try :
+                pid = int (rhs)
+            except (ValueError, TypeError) :
+                return False
+            else :
+                return self.pid == pid
         else :
             try :
                 rhs = (rhs.pid, rhs.home_scope.guid)
