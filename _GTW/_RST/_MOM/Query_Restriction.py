@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Jul-2012 (CT) Creation (factored from GTW.NAV.E_Type.Query_Restriction)
+#     4-Jul-2012 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,6 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     query_f     = None
 
     _name_p     = r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
-    _name_sep   = MOM.Attr.Querier.id_sep
     _op_p       = r"(?P<op> [A-Z]+)"
     _op_sep     = MOM.Attr.Querier.op_sep
     _a_pat      = Regexp \
@@ -233,8 +233,9 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     def _setup_attr_aq (soc, E_Type, aq) :
         if aq :
             name, op, value = aq.split (",", 3)
-            k = soc.op_sep.join (("__".join ((name.split ("."))), op))
-            return soc._setup_attr (E_Type, k, name, op, value)
+            k = soc._op_sep.join (("__".join ((name.split ("."))), op))
+            result = soc._setup_attr (E_Type, k, name, op, value)
+            return result
         return None, None
     # end def _setup_attr_aq
 
@@ -243,7 +244,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         op     = pat.op
         if not op :
             op = default_op
-            k  = soc.op_sep.join ((k, default_op))
+            k  = soc._op_sep.join ((k, default_op))
         names  = pat.name.split  ("__")
         return soc._setup_attr   (E_Type, k, ".".join (names), op, value)
     # end def _setup_attr_match

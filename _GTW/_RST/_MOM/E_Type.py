@@ -28,6 +28,8 @@
 # Revision Dates
 #    22-Jun-2012 (CT) Creation
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
+#     4-Jul-2012 (CT) Run `entry.pid` through `int`
+#                     (mySQL gives `long` which messes up the test output)
 #    ««revision-date»»···
 #--
 
@@ -109,11 +111,12 @@ class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
         # end def _response_dict
 
         def _response_entry (self, resource, request, response, entry) :
+            pid = int (entry.pid)
             if request.verbose :
-                e = resource._new_entry (entry.pid)
+                e = resource._new_entry (pid)
                 result = e.GET ()._response_body (e, request, response)
             else :
-                result = entry.pid
+                result = pid
             return result
         # end def _response_entry
 

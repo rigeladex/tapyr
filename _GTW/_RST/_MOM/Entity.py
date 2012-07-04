@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Jun-2012 (CT) Creation
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
+#     4-Jul-2012 (CT) Use `pid_query` for `long`, `basestring` pids, too
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
             if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
                 v = attr.get_value (obj)
                 if v is not None :
-                    v = (v.type_name, v.pid)
+                    v = (v.type_name, int (v.pid))
             else :
                 v = attr.get_raw (obj)
             return k, v
@@ -129,7 +130,7 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
         assert "name" not in kw
         self.pop_to_self (kw, "ETM", prefix = "_")
         obj = kw.pop ("obj")
-        if isinstance (obj, int) :
+        if isinstance (obj, (int, long, basestring)) :
             obj   = self.ETM.pid_query (obj)
         self.obj  = obj
         self.name = str (obj.pid)
