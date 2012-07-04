@@ -82,7 +82,7 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
             if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
                 v = attr.get_value (obj)
                 if v is not None :
-                    v = (v.type_name, int (v.pid))
+                    v = int (v.pid)
             else :
                 v = attr.get_raw (obj)
             return k, v
