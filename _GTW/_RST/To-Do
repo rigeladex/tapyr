@@ -5,16 +5,6 @@ To-Do for package GTW.RST
 
   * Root: one per API version
 
-- Statelessness
-
-  * `last_cid` cannot be sent by client, changes with every `PUT` or `POST`
-
-    + how does client the changed last_cid? does the client need to `GET`
-      after each `PUT`
-
-  * strict statelessness would mean that for `PUT` to an existing instance
-    all attribute values need to be sent, even those that haven't changed
-
 - Representation
 
   * representation specific URIs (see RiR07)
@@ -23,49 +13,11 @@ To-Do for package GTW.RST
 
     + data foramat
 
-- Resource.py
-
-  * class hierarchy::
-
-      _Base_
-          Leaf
-          _Node_
-              Node
-              Root
-
-  * permissions:
-
-    + read_permission
-
-    + write_permission
-
-- MOM
-
-  * App_Type ?
-
-  * Scope ?
-
-  * E_Type
-
-- E_Type
-
 - URI structure for E_Type
 
-  * .../Meta
+  * .../
 
     GET     list of E_Types
-
-  * .../Meta/{type_name}
-
-    GET     list of attribute descriptions
-
-  * .../Meta/{type_name}/doc
-
-    GET     documentation for E_Type
-
-  * .../pid
-
-    GET     last pid used
 
   * .../{type_name}
 
@@ -77,19 +29,9 @@ To-Do for package GTW.RST
 
     GET     list of all matches for the query
 
-    ??? attribute query syntax. alternatives:
-
-    + AQ=name,op,value
+    + attribute query syntax: AQ=name,op,value
 
         .../{type_name}?AQ=last_name,STARTS_WITH,tan&AQ=lifetime.start,GE,1997
-
-  * query URI
-
-      .../{type_name}/{name1},{op1},{value1};{name2},{op2},{value2};...
-
-      e.g.::
-
-        /v1/PAP.Person/last_name,STARTS_WITH,tan;lifetime.start,GE,1997
 
   * .../{type_name}/{pid} one Account instance with `pid`
 
@@ -103,13 +45,21 @@ To-Do for package GTW.RST
 
     DELETE   delete object
 
-  * .../{type_name}/{pid}/{name}
+  ? .../{type_name}/{pid}/{name}
 
     GET      value of attribute `name` of instance `pid`
 
     PUT      change value of attribute `name` of instance `pid`
 
     DELETE   reset value of attribute `name` of instance `pid`, if possible
+
+  ? .../Meta/{type_name}
+
+    GET     list of attribute descriptions
+
+  ? .../Meta/{type_name}/doc
+
+    GET     documentation for E_Type
 
 - HTTP
 

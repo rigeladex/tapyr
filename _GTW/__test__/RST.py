@@ -2076,6 +2076,24 @@ _test_query = r"""
     , 'url' : 'http://localhost:9999/v1/pid/'
     }
 
+    >>> _ = show (R.get ("/v1/pid?order_by=pid&FIRST&limit=1"))
+    { 'json' :
+        { 'entries' : [ 1 ]
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?order_by=pid&FIRST&limit=1'
+    }
+
+    >>> _ = show (R.get ("/v1/pid?order_by=pid&LAST&limit=1"))
+    { 'json' :
+        { 'entries' : [ 16 ]
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?order_by=pid&LAST&limit=1'
+    }
+
     >>> for i in range (10) :
     ...     r = R.get ("/v1/pid?order_by=pid&limit=4&offset=" + str (i))
     ...     print (i, ":", formatted_1 (r.json))
@@ -2253,6 +2271,11 @@ __test__ = Scaffold.create_test_dict \
         , test_post     = _test_post
         , test_query    = _test_query
         , test_qr_local = _test_qr_local
+        )
+    )
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_query    = _test_query
         )
     )
 
