@@ -29,6 +29,7 @@
 #    22-Jun-2012 (CT) Creation
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
 #     4-Jul-2012 (CT) Use `pid_query` for `long`, `basestring` pids, too
+#     5-Jul-2012 (CT) Add support for `closure`, factor `_response_obj_attrs`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,11 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
             if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
                 v = attr.get_value (obj)
                 if v is not None :
-                    v = int (v.pid)
+                    if request.has_option ("closure") :
+                        v = self._response_obj \
+                            (resource, request, response, v, v.primary)
+                    else :
+                        v = int (v.pid)
             else :
                 v = attr.get_raw (obj)
             return k, v
@@ -91,19 +96,33 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
         def _response_body (self, resource, request, response) :
             obj   = resource.obj
             attrs = resource.attributes
+            return self._response_obj \
+                ( resource, request, response, obj, attrs
+                , url = resource.abs_href
+                )
+        # end def _response
+
+        def _response_obj \
+                (self, resource, request, response, obj, attrs, ** kw) :
             return dict \
-                ( attributes = dict
-                    (   self._response_attr
-                            (resource, request, response, obj, a)
-                    for a in attrs
-                    if  a.to_save (obj)
-                    )
+                ( attributes = self._response_obj_attrs
+                    (resource, request, response, obj, attrs)
                 , cid        = obj.last_cid
                 , pid        = obj.pid
                 , type_name  = obj.type_name
-                , url        = resource.abs_href
+                , ** kw
                 )
-        # end def _response
+        # end def _response_obj
+
+        def _response_obj_attrs \
+                (self, resource, request, response, obj, attrs) :
+            return dict \
+                (   self._response_attr
+                        (resource, request, response, obj, a)
+                for a in attrs
+                if  a.to_save (obj)
+                )
+        # end def _response_obj_attrs
 
     GET = RST_Entity_GET # end class
 

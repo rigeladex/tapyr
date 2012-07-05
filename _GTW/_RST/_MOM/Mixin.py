@@ -29,6 +29,9 @@
 #    22-Jun-2012 (CT) Creation
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
 #     3-Jul-2012 (CT) Add support for `Query_Restriction`
+#     5-Jul-2012 (CT) Add support for nested entities to `_PUT_POST_Mixin_`
+#                     * factor `_resolve_request_attrs`
+#                     * add and use `_resolve_nested_request_attrs`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +53,7 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
 
     failure_code = 400 ### Bad request
 
-    def _request_attr (self, resource, request, response) :
+    def _request_attrs (self, resource, request, response) :
         try :
             result = request.json ["attributes"]
         except KeyError :
@@ -60,20 +63,54 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
                  """(content-type "application/json")"""
                 )
         else :
-            attributes = set   (a.name for a in resource.E_Type.edit_attr)
-            invalids   = tuple (k for k in result if k not in attributes)
-            if invalids :
-                raise ValueError \
-                    ( "Request contains invalid attribute names "
-                    + repr (invalids)
-                    )
+            self._resolve_request_attrs \
+                (resource, request, response, resource.E_Type, result)
         return result
-    # end def _request_attr
+    # end def _request_attrs
+
+    def _resolve_nested_request_attrs \
+            (self, resource, request, response, E_Type, attrs) :
+        ieas  = E_Type.id_entity_attr
+        scope = resource.scope
+        for iea in ieas :
+            k = iea.name
+            if k in attrs :
+                etn = iea.E_Type.type_name
+                ETM = scope [etn]
+                v   = attrs [k]
+                if isinstance (v, dict) :         ### attribute dictionary
+                    self._resolve_request_attrs \
+                        (resource, request, response, iea.E_Type, v)
+                    v = ETM.instance_or_new (raw = True, ** v)
+                elif isinstance (v, int) :        ### pid
+                    v = scope.pid_query (v)
+                elif isinstance (v, basestring) : ### single epk argument
+                    v = ETM.instance_or_new (v, raw = True)
+                elif isinstance (v, list) :       ### list of epk arguments
+                    v = ETM.instance_or_new (* v, raw = True)
+                else :
+                    raise ValueError \
+                        ("Invalid value %r for %s" % (v, etn))
+                attrs [k] = v
+    # end def _resolve_nested_request_attrs
+
+    def _resolve_request_attrs \
+            (self, resource, request, response, E_Type, attrs) :
+        allowed  = set   (a.name for a in E_Type.edit_attr)
+        invalids = tuple (k for k in attrs if k not in allowed)
+        if invalids :
+            raise ValueError \
+                ( "Request contains invalid attribute names "
+                + repr (invalids)
+                )
+        self._resolve_nested_request_attrs \
+            (resource, request, response, E_Type, attrs)
+    # end def _resolve_request_attrs
 
     def _response_body (self, resource, request, response) :
         try :
-            attrs = self._request_attr (resource, request, response)
-            obj   = self._apply_attrs  (resource, request, response, attrs)
+            attrs = self._request_attrs (resource, request, response)
+            obj   = self._apply_attrs   (resource, request, response, attrs)
         except Exception as exc :
             resource.scope.rollback ()
             response.status_code = self.failure_code
