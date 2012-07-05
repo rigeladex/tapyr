@@ -2273,11 +2273,6 @@ __test__ = Scaffold.create_test_dict \
         , test_qr_local = _test_qr_local
         )
     )
-__test__ = Scaffold.create_test_dict \
-    ( dict
-        ( test_query    = _test_query
-        )
-    )
 
 if __name__ == "__main__" :
     backend = sos.environ.get \
