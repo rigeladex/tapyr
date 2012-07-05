@@ -36,6 +36,7 @@
 #     2-Jul-2012 (CT) Refactor `href_pat_frag`
 #     2-Jul-2012 (CT) Change `resource_from_href` to ignore extension
 #     3-Jul-2012 (CT) Use `TFL.Context.relaxed` as alternative to `.time_block`
+#     5-Jul-2012 (CT) Add `_m_after__init__`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,11 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
             v = getattr (cls, k, None)
             if callable (v) :
                 sms [k] = v
+        cls._m_after__init__ (name, bases, dct)
+        for k in ("template_name", "dir_template_name") :
+            tn = dct.get (k)
+            if tn :
+                cls._template_names.add (tn)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -110,6 +116,8 @@ class _RST_Base_ (TFL.Meta.Object) :
     _needs_parent              = True
     _r_permission              = None             ### read permission
     _w_permission              = None             ### write permission
+    _template                  = None
+    _template_names            = set ()
 
     DELETE                     = None             ### redefine if necessary
     GET                        = GTW.RST.GET      ### needs    to be redefined
@@ -143,10 +151,10 @@ class _RST_Base_ (TFL.Meta.Object) :
         ### called by meta class after `__init__` has finished
         ### redefine as necessary
         self._orig_kw = dict (kw)
+        top = self.top
         if not self.implicit :
             href = self.href
             pid  = self.pid
-            top  = self.top
             if href is not None :
                 Table = top.Table
                 Table [href] = self
@@ -160,7 +168,17 @@ class _RST_Base_ (TFL.Meta.Object) :
                             Table [perma] = self
             if pid is not None :
                 setattr (top.SC, pid, self)
+        for k in ("template_name", "dir_template_name") :
+            tn = getattr (self, k, None)
+            if tn :
+                top._template_names.add (tn)
     # end def _after__init__
+
+    @classmethod
+    def _m_after__init__ (cls, name, bases, dct) :
+        """Called by metaclass's __init__: redefine as necessary."""
+        pass
+    # end def _m_after__init__
 
     @Once_Property
     def abs_href (self) :
@@ -187,6 +205,22 @@ class _RST_Base_ (TFL.Meta.Object) :
         ### Redefine as necessary
         pass
     # end def change_info
+
+    @property
+    def email_from (self) :
+        result = self._email_from
+        if result is None :
+            result = self.webmaster
+            if isinstance (result, tuple) :
+                result = "%s <%s>" % (result [1], result [0])
+            self._email_from = result
+        return result
+    # end def email_from
+
+    @email_from.setter
+    def email_from (self, value) :
+        self._email_from = value
+    # end def email_from
 
     @property
     def entries (self) :
@@ -223,6 +257,12 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def href_pat_frag
 
     @Once_Property
+    def injected_templates (self) :
+        ### redefine as necessary
+        return set ()
+    # end def injected_templates
+
+    @Once_Property
     def permalink (self) :
         return self.abs_href
     # end def permalink
@@ -233,16 +273,38 @@ class _RST_Base_ (TFL.Meta.Object) :
             (self._get_permissions ("r_permission"), key = TFL.Getter.rank)
     # end def r_permissions
 
-    @Once_Property
-    def w_permissions (self) :
-        return sorted \
-            (self._get_permissions ("w_permission"), key = TFL.Getter.rank)
-    # end def w_permissions
+    @property
+    def template (self) :
+        if self._template is None :
+            t_name = getattr (self, "template_name", None)
+            if t_name :
+                self._template = self.Templateer.get_template \
+                    (t_name, self.injected_templates)
+        return self._template
+    # end def template
+
+    @template.setter
+    def template (self, value) :
+        self._template = None
+        if isinstance (value, basestring) :
+            self.template_name = value
+        elif not isinstance (value, self.Templateer.Template_Type) :
+            self.template_name = value.name
+        else :
+            self.template_name = value.name
+            self._template     = value
+    # end def template
 
     @property
     def Type (self) :
         return self.__class__.__name__
     # end def Type
+
+    @Once_Property
+    def w_permissions (self) :
+        return sorted \
+            (self._get_permissions ("w_permission"), key = TFL.Getter.rank)
+    # end def w_permissions
 
     @Once_Property
     def _effective (self) :
@@ -260,11 +322,82 @@ class _RST_Base_ (TFL.Meta.Object) :
         return True
     # end def allow_method
 
-    def etype_manager (self, obj) :
-        etn = getattr (obj, "type_name", None)
-        if etn :
-            return self.top.ET_Map [etn].manager
-    # end def etype
+    def allow_user (self, user) :
+        return self.allow_method ("GET", user)
+    # end def allow_user
+
+    def send_error_email (self, request, exc, tbi) :
+        email     = self.email_from
+        headers   = request.headers
+        message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
+            ( "\n    ".join
+                ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
+            , formatted (request.data)
+            , tbi
+            )
+        if self.DEBUG :
+            print ("Exception:", exc)
+            print ("Request path", request.path)
+            print ("Email", email)
+            print (message)
+            print (request.data)
+        else :
+            self.send_email \
+                ( self.error_email_template
+                , email_from    = email
+                , email_to      = email
+                , email_subject = ("Error: %s") % (exc, )
+                , message       = message
+                , NAV           = self.top
+                , page          = self
+                , request       = request
+                )
+    # end def send_error_email
+
+    def send_email (self, template, ** context) :
+        email_from = context.get ("email_from")
+        if not email_from :
+            context ["email_from"] = email_from = self.email_from
+        smtp = self.smtp
+        if smtp :
+            smtp.charset = self.encoding
+            text = self.top.Templateer.render (template, context).encode \
+                (self.encoding, "replace")
+            try :
+                smtp (text)
+            except Exception as exc :
+                print ("Exception:", exc)
+                print \
+                    ( "When trying to send email from", email_from
+                    , "to", context.get ("email_to", "<Unkown>")
+                    )
+                print (text)
+                try :
+                    kw = dict \
+                        ( context
+                        , email_from    = self.email_from
+                        , email_to      = self.email_from
+                        , email_subject =
+                            ( "Error when trying to send email from %s: %s"
+                            % (email_from, exc)
+                            )
+                        , message       = text
+                        , NAV           = self.top
+                        , page          = self
+                        )
+                    self.send_email (self.error_email_template, ** kw)
+                except Exception :
+                    pass
+        else :
+            print ("*** Cannot send email because `smtp` is undefined ***")
+            print (text)
+    # end def send_email
+
+    def template_iter (self) :
+        t = self.template
+        if t :
+            yield t
+    # end def template_iter
 
     def _get_permissions (self, name) :
         p = getattr (self, "_" + name, None)
@@ -508,19 +641,29 @@ class RST_Root (_Ancestor) :
 
     _real_name                 = "Root"
 
-    Cacher                     = None       ### define if anything needs caching
+    Cacher                     = None # XXX GTW.RST.Template_Media_Cache
     Create_Scope               = None
     DEBUG                      = False
+    Templateer                 = None
+
     default_locale_code        = "en"
+    domain                     = ""
     encoding                   = "utf-8"    ### output encoding
+    error_email_template       = "error_email"
     ignore_picky_accept        = False
     input_encoding             = "iso-8859-15"
+    language                   = "en"
     languages                  = set (("en", ))
     name                       = ""
     prefix                     = ""
+    site_url                   = ""
+    smtp                       = None
 
     _href_pat                  = None
     _needs_parent              = False
+
+    _email_from                = None   ### default from address
+    _webmaster                 = None
 
     from _GTW._RST.Request  import Request  as Request_Type
     from _GTW._RST.Response import Response as Response_Type
@@ -530,7 +673,7 @@ class RST_Root (_Ancestor) :
             kw ["copyright_start"] = time.localtime ().tm_year
         self.pop_to_self      ("name", "prefix")
         self.HTTP           = HTTP
-        self.redirects      = dict (kw.pop ("redirects",     {}))
+        self.redirects      = dict (kw.pop ("redirects", {}))
         self.SC             = TFL.Record ()
         self.Table          = {}
         self.top            = self
@@ -563,6 +706,22 @@ class RST_Root (_Ancestor) :
                 print ("Loaded", result)
             return result
     # end def scope
+
+    @property
+    def webmaster (self) :
+        result = self._webmaster
+        if result is None :
+            domain = self.domain or self.site_url
+            if domain.startswith ("www.") :
+                domain = domain [4:]
+            result = self._webmaster = "webmaster@%s" % (domain, )
+        return result
+    # end def webmaster
+
+    @webmaster.setter
+    def webmaster (self, value) :
+        self._webmaster = value
+    # end def webmaster
 
     def allow (self, resource, user, method = "GET") :
         if isinstance (resource, basestring) :
@@ -637,6 +796,22 @@ class RST_Root (_Ancestor) :
         return result
     # end def resource_from_href
 
+    def template_iter (self) :
+        seen = set ()
+        gett = self.Templateer.get_template
+        def _gen () :
+            for tn in self.template_names :
+                yield gett (tn)
+            for tn in self.Templateer.error_template_names :
+                yield gett (tn)
+            for t in self.__super.template_iter () :
+                yield t
+        for t in _gen () :
+            if t.id not in seen :
+                yield t
+                seen.add (t.id)
+    # end def template_iter
+
     def wsgi_app (self, environ, start_response) :
         """WSGI application responding to http[s] requests."""
         HTTP    = self.HTTP
@@ -705,5 +880,5 @@ appropriate name to `None`, e.g., ::
 """
 
 if __name__ != "__main__" :
-    GTW.RST._Export ("*")
+    GTW.RST._Export ("*", "_Base_", "_Node_Base_", "_Node_")
 ### __END__ GTW.RST.Resource
