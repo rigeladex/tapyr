@@ -68,7 +68,7 @@ class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
 
 # end class _E_Type_CSV_
 
-_Ancestor = GTW.RST.Node_V
+_Ancestor = GTW.RST.Dir_V
 
 class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
     """RESTful node for a specific essential type."""

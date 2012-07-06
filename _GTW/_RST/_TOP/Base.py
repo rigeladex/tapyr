@@ -36,24 +36,54 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW.Media
+import _GTW._RST.Mime_Type
 import _GTW._RST.Resource
 import _GTW._RST._TOP
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
+from   _TFL.predicate           import uniq
+
+import _TFL.I18N
 
 _Ancestor = GTW.RST._Base_
+
+class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
+
+    _renderers             = (GTW.RST.Mime_Type.HTML, )
+
+    def _render_context (self, resource, request, response, ** kw) :
+        return dict (request = request, ** kw)
+    # end def _render_context
+
+    def _response_body (self, resource, request, response) :
+        context = resource.render_context \
+            (** self._render_context (resource, request, response))
+        result = resource.rendered (context)
+        if result is None :
+            raise resource.HTTP.Error_404 ()
+        return result
+    # end def _response_body
+
+# end class HTTP_Method_Mixin
 
 class _TOP_Base_ (_Ancestor) :
     """Base class for TOP."""
 
     _real_name                 = "_Base_"
 
+    own_links                  = []
     short_title                = ""
     title                      = ""
 
     _login_required            = False
     _Media                     = GTW.Media ()
+
+    class _TOP_Base_GET_ (HTTP_Method_Mixin, _Ancestor.GET) :
+
+        _real_name             = "GET"
+
+    GET = _TOP_Base_GET_ # end class
 
     def __init__ (self, ** kw) :
         self.pop_to_self \
@@ -170,9 +200,11 @@ class _TOP_Base_ (_Ancestor) :
 
     def render_context (self, nav_page = None, ** kw) :
         return self.top.Templateer.Context \
-            ( NAV       = self.top
-            , nav_page  = nav_page or self
-            , page      = self
+            ( NAV           = self.top
+            , lang          = "_".join (uniq (TFL.I18N.Config.choice))
+            , nav_page      = nav_page or self
+            , notifications = self.session.notifications
+            , page          = self
             , ** kw
             )
     # end def render_context

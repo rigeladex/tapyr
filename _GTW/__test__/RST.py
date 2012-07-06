@@ -124,12 +124,15 @@ class _GTW_Test_Command_ (_Ancestor) :
         result = GTW.RST.Root \
             ( App_Type          = app_type
             , DB_Url            = db_url
-            , DEBUG             = True
+            , DEBUG             = cmd.debug
             , encoding          = cmd.output_encoding
             , HTTP              = cmd.HTTP
             , input_encoding    = cmd.input_encoding
             , language          = "de"
-            , entries           = [GTW.RST.MOM.Scope (name = "v1")]
+            , entries           =
+                [ GTW.RST.MOM.Scope (name = "v1")
+                , GTW.RST.Raiser    (name = "RAISE")
+                ]
             , ** kw
             )
         if cmd.log_level :
@@ -713,7 +716,10 @@ _test_get = r"""
 
     >>> r = show (R.get (""))
     { 'json' :
-        { 'entries' : [ 'v1' ]
+        { 'entries' :
+            [ 'v1'
+            , 'RAISE'
+            ]
         , 'url_template' : '/{entry}'
         }
     , 'status' : 200
@@ -722,7 +728,10 @@ _test_get = r"""
 
     >>> r = show (R.get ("?verbose"))
     { 'json' :
-        { 'entries' : [ '/v1' ]
+        { 'entries' :
+            [ '/v1'
+            , '/RAISE'
+            ]
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/?verbose'
@@ -1772,6 +1781,13 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
+    >>> _ = show (R.get ("/RAISE"))
+    { 'content' :
+    [ 'Wilful raisement' ]
+    , 'status' : 500
+    , 'url' : 'http://localhost:9999/RAISE'
+    }
+
     >>> server.terminate ()
 
 """
@@ -2260,5 +2276,5 @@ if __name__ == "__main__" :
     backend = sos.environ.get \
         ("GTW_test_backends", ("HPS")).split (":") [0].strip ()
     db_url = Scaffold.Backend_Parameters.get (backend, "hps://").strip ("'")
-    _run_server (["-db_url", db_url, "-db_name", "test", "-debug"])
+    _run_server (["-db_url", db_url, "-db_name", "test", "-debug", "no"])
 ### __END__ GTW.__test__.RST

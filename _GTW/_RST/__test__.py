@@ -52,16 +52,16 @@ def show (resource, level = 0) :
 
 __doc__ = """
 
-    >>> e_types = ( Node
-    ...         ( name          = "PAP.Company"
+    >>> e_types = ( Dir
+    ...         ( name          = "PAP-Company"
     ...         , description   = "Legal person"
     ...         , entries       =
     ...             ( Leaf (name = "1", implicit = True)
     ...             ,
     ...             )
     ...         )
-    ...     , Node
-    ...         ( name          = "PAP.Person"
+    ...     , Dir
+    ...         ( name          = "PAP-Person"
     ...         , description   = "Natural person"
     ...         )
     ...     ,
@@ -73,25 +73,25 @@ __doc__ = """
     ...             ( name          = "about"
     ...             , implicit      = True
     ...             )
-    ...         , Node
+    ...         , Dir
     ...             ( name          = "v1"
     ...             , description   = "Version 1 of test RESTful api"
     ...             , entries       =
-    ...                 ( Node
+    ...                 ( Dir
     ...                     ( name          = "Meta"
     ...                     , description   = "Meta information about RESTful api"
     ...                     )
     ...                 ,
     ...                 ) + e_types
     ...             )
-    ...         , Node
+    ...         , Dir
     ...             ( name          = "v2"
     ...             )
     ...         )
     ...     )
     >>> print (formatted (e_types))
     (
-      ( <class '_GTW._RST.Resource.Node'>
+      ( <class '_GTW._RST.Resource.Dir'>
       , ()
       , { 'description' : 'Legal person'
         , 'entries' :
@@ -103,65 +103,65 @@ __doc__ = """
                   }
               )
             )
-        , 'name' : 'PAP.Company'
+        , 'name' : 'PAP-Company'
         }
       )
     ,
-      ( <class '_GTW._RST.Resource.Node'>
+      ( <class '_GTW._RST.Resource.Dir'>
       , ()
       , { 'description' : 'Natural person'
-        , 'name' : 'PAP.Person'
+        , 'name' : 'PAP-Person'
         }
       )
     )
     >>> root
     <Root : />
     >>> root.entries
-    [<Leaf about: /about>, <Node v1: /v1>, <Node v2: /v2>]
+    [<Leaf about: /about>, <Dir v1: /v1>, <Dir v2: /v2>]
 
     >>> ets = tuple (root.entries_transitive)
     >>> ets
-    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Leaf 1: /v1/PAP.Company/1>, <Node PAP.Person: /v1/PAP.Person>, <Node v2: /v2>)
+    (<Leaf about: /about>, <Dir v1: /v1>, <Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Leaf 1: /v1/PAP-Company/1>, <Dir PAP-Person: /v1/PAP-Person>, <Dir v2: /v2>)
 
     >>> [e.name for e in ets]
-    [u'about', u'v1', u'Meta', u'PAP.Company', u'1', u'PAP.Person', u'v2']
+    [u'about', u'v1', u'Meta', u'PAP-Company', u'1', u'PAP-Person', u'v2']
     >>> [e.href for e in ets]
-    [u'about', u'v1', u'v1/Meta', u'v1/PAP.Company', u'v1/PAP.Company/1', u'v1/PAP.Person', u'v2']
+    [u'about', u'v1', u'v1/Meta', u'v1/PAP-Company', u'v1/PAP-Company/1', u'v1/PAP-Person', u'v2']
 
     >>> print (root.href_pat_frag)
-    v2|v1(?:/(?:PAP\.Person|PAP\.Company|Meta))?
+    v2|v1(?:/(?:PAP\-Person|PAP\-Company|Meta))?
 
     >>> for e in ets :
     ...     print (e.href, e.href_pat_frag)
     about None
-    v1 v1(?:/(?:PAP\.Person|PAP\.Company|Meta))?
+    v1 v1(?:/(?:PAP\-Person|PAP\-Company|Meta))?
     v1/Meta Meta
-    v1/PAP.Company PAP\.Company
-    v1/PAP.Company/1 None
-    v1/PAP.Person PAP\.Person
+    v1/PAP-Company PAP\-Company
+    v1/PAP-Company/1 None
+    v1/PAP-Person PAP\-Person
     v2 v2
 
     >>> root.entries [1]
-    <Node v1: /v1>
+    <Dir v1: /v1>
 
     >>> root.entries [1].entries
-    [<Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Node PAP.Person: /v1/PAP.Person>]
+    [<Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Dir PAP-Person: /v1/PAP-Person>]
 
-    >>> c = root.resource_from_href("/v1/PAP.Company")
+    >>> c = root.resource_from_href("/v1/PAP-Company")
     >>> c
-    <Node PAP.Company: /v1/PAP.Company>
+    <Dir PAP-Company: /v1/PAP-Company>
     >>> sorted (c.SUPPORTED_METHODS)
     ['GET', 'HEAD', 'OPTIONS']
 
     >>> show (root)
     <Root : /> parent = -, top = /
       <Leaf about: /about> parent = /, top = /
-      <Node v1: /v1> parent = /, top = /
-        <Node Meta: /v1/Meta> parent = /v1, top = /
-        <Node PAP.Company: /v1/PAP.Company> parent = /v1, top = /
-          <Leaf 1: /v1/PAP.Company/1> parent = /v1/PAP.Company, top = /
-        <Node PAP.Person: /v1/PAP.Person> parent = /v1, top = /
-      <Node v2: /v2> parent = /, top = /
+      <Dir v1: /v1> parent = /, top = /
+        <Dir Meta: /v1/Meta> parent = /v1, top = /
+        <Dir PAP-Company: /v1/PAP-Company> parent = /v1, top = /
+          <Leaf 1: /v1/PAP-Company/1> parent = /v1/PAP-Company, top = /
+        <Dir PAP-Person: /v1/PAP-Person> parent = /v1, top = /
+      <Dir v2: /v2> parent = /, top = /
 
     >>> print (formatted_1 (root.GET.render_man.by_extension))
     {'json' : [<class '_GTW._RST.Mime_Type.JSON'>]}
@@ -192,18 +192,18 @@ __doc__ = """
     ...             ( name          = "about"
     ...             , implicit      = True
     ...             )
-    ...         , Node
+    ...         , Dir
     ...             ( name          = "v1"
     ...             , description   = "Version 1 of test RESTful api"
     ...             , entries       =
-    ...                 ( Node
+    ...                 ( Dir
     ...                     ( name          = "Meta"
     ...                     , description   = "Meta information about RESTful api"
     ...                     )
     ...                 ,
     ...                 ) + e_types
     ...             )
-    ...         , Node
+    ...         , Dir
     ...             ( name          = "v2"
     ...             , entries       = list (e_types)
     ...             )
@@ -211,15 +211,15 @@ __doc__ = """
     ...     )
     >>> ets2 = tuple (root2.entries_transitive)
     >>> ets2
-    (<Leaf about: /about>, <Node v1: /v1>, <Node Meta: /v1/Meta>, <Node PAP.Company: /v1/PAP.Company>, <Leaf 1: /v1/PAP.Company/1>, <Node PAP.Person: /v1/PAP.Person>, <Node v2: /v2>, <Node PAP.Company: /v2/PAP.Company>, <Leaf 1: /v2/PAP.Company/1>, <Node PAP.Person: /v2/PAP.Person>)
+    (<Leaf about: /about>, <Dir v1: /v1>, <Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Leaf 1: /v1/PAP-Company/1>, <Dir PAP-Person: /v1/PAP-Person>, <Dir v2: /v2>, <Dir PAP-Company: /v2/PAP-Company>, <Leaf 1: /v2/PAP-Company/1>, <Dir PAP-Person: /v2/PAP-Person>)
 
     >>> [e.name for e in ets2]
-    [u'about', u'v1', u'Meta', u'PAP.Company', u'1', u'PAP.Person', u'v2', u'PAP.Company', u'1', u'PAP.Person']
+    [u'about', u'v1', u'Meta', u'PAP-Company', u'1', u'PAP-Person', u'v2', u'PAP-Company', u'1', u'PAP-Person']
     >>> [e.href for e in ets2]
-    [u'about', u'v1', u'v1/Meta', u'v1/PAP.Company', u'v1/PAP.Company/1', u'v1/PAP.Person', u'v2', u'v2/PAP.Company', u'v2/PAP.Company/1', u'v2/PAP.Person']
+    [u'about', u'v1', u'v1/Meta', u'v1/PAP-Company', u'v1/PAP-Company/1', u'v1/PAP-Person', u'v2', u'v2/PAP-Company', u'v2/PAP-Company/1', u'v2/PAP-Person']
 
     >>> print (root2.href_pat_frag)
-    v2(?:/(?:PAP\.Person|PAP\.Company))?|v1(?:/(?:PAP\.Person|PAP\.Company|Meta))?
+    v2(?:/(?:PAP\-Person|PAP\-Company))?|v1(?:/(?:PAP\-Person|PAP\-Company|Meta))?
 
     >>> for e in ets2 :
     ...     r = root2.resource_from_href (e.href)
@@ -233,12 +233,12 @@ interactive_code = """
 from _GTW._RST.Resource import *
 
 e_types = \
-    ( Node
-        ( name          = "PAP.Company"
+    ( Dir
+        ( name          = "PAP-Company"
         , description   = "Legal person"
         )
-    , Node
-        ( name          = "PAP.Person"
+    , Dir
+        ( name          = "PAP-Person"
         , description   = "Natural person"
         )
     ,
@@ -250,18 +250,18 @@ root2 = Root ( HTTP = None
             ( name          = "about"
             , implicit      = True
             )
-        , Node
+        , Dir
             ( name          = "v1"
             , description   = "Version 1 of test RESTful api"
             , entries       =
-                ( Node
+                ( Dir
                     ( name          = "Meta"
                     , description   = "Meta information about RESTful api"
                     )
                 ,
                 ) + e_types
             )
-        , Node
+        , Dir
             ( name          = "v2"
             , entries       = list (e_types)
             )

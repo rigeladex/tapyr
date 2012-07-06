@@ -130,6 +130,7 @@ class RST_Mixin (TFL.Meta.Object) :
 
     _attributes                = None
     _change_info               = None
+    _exclude_robots            = True
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     @Once_Property

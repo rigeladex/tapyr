@@ -36,7 +36,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.Resource
-import _GTW._RST._TOP.Base
+import _GTW._RST._TOP.Dir
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -45,7 +45,7 @@ import _TFL.defaultdict
 
 import time
 
-class TOP_Root (GTW.RST.TOP._Base_, GTW.RST.Root) :
+class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     """Root of tree of pages."""
 
     _real_name                 = "Root"
@@ -59,6 +59,7 @@ class TOP_Root (GTW.RST.TOP._Base_, GTW.RST.Root) :
     qx_prefix                  = "qx"
     translator                 = None
 
+    _exclude_robots            = False
     _login_required            = False
 
     class E_Type_Desc (TFL.Meta.Object) :

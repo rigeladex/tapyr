@@ -45,8 +45,7 @@ class TOP_Page (GTW.RST.TOP._Base_, GTW.RST.Leaf) :
 
     _real_name                 = "Page"
 
-    dir_template_name    = None
-    own_links            = []
+    dir_template_name          = None
 
 Page = TOP_Page # end class
 

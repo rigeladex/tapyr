@@ -28,7 +28,7 @@
 # Revision Dates
 #     8-Jun-2012 (CT) Creation
 #    22-Jun-2012 (CT) Set `parent` in `_RST_Meta_.__call__` before `.__init__`
-#    26-Jun-2012 (CT) Factor `_Node_Base_`, add `Node_V`
+#    26-Jun-2012 (CT) Factor `_Dir_Base_`, add `Dir_V`
 #    27-Jun-2012 (CT) Add empty `Leaf._get_child`
 #    28-Jun-2012 (CT) Fix `url_template`, use `_response_dict`
 #    28-Jun-2012 (CT) Use `request.verbose`
@@ -48,7 +48,6 @@ from   _TFL                     import TFL
 import _GTW._RST.HTTP_Method
 
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL                     import pyk, sos
 from   _TFL.Filename            import Filename
 from   _TFL.predicate           import callable
 
@@ -67,9 +66,11 @@ from   posixpath import \
     , commonprefix
     )
 
+import logging
 import re
 import sys
 import time
+import traceback
 
 class _RST_Meta_ (TFL.Meta.M_Class) :
 
@@ -112,7 +113,6 @@ class _RST_Base_ (TFL.Meta.Object) :
     implicit                   = False
     pid                        = None
 
-    _exclude_robots            = True
     _needs_parent              = True
     _r_permission              = None             ### read permission
     _w_permission              = None             ### write permission
@@ -327,6 +327,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def allow_user
 
     def send_error_email (self, request, exc, tbi) :
+        from _TFL.Formatter import formatted
         email     = self.email_from
         headers   = request.headers
         message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
@@ -335,13 +336,17 @@ class _RST_Base_ (TFL.Meta.Object) :
             , formatted (request.data)
             , tbi
             )
-        if self.DEBUG :
+        if not self.Templateer :
             print ("Exception:", exc)
             print ("Request path", request.path)
             print ("Email", email)
             print (message)
             print (request.data)
         else :
+            kw = {}
+            if self.DEBUG :
+                from _TFL.SMTP import SMTP_Logger
+                kw = dict (smtp = SMTP_Logger ())
             self.send_email \
                 ( self.error_email_template
                 , email_from    = email
@@ -351,6 +356,7 @@ class _RST_Base_ (TFL.Meta.Object) :
                 , NAV           = self.top
                 , page          = self
                 , request       = request
+                , ** kw
                 )
     # end def send_error_email
 
@@ -358,39 +364,37 @@ class _RST_Base_ (TFL.Meta.Object) :
         email_from = context.get ("email_from")
         if not email_from :
             context ["email_from"] = email_from = self.email_from
-        smtp = self.smtp
-        if smtp :
-            smtp.charset = self.encoding
-            text = self.top.Templateer.render (template, context).encode \
-                (self.encoding, "replace")
+        smtp = context.pop ("smtp", self.smtp)
+        smtp.charset = self.encoding
+        text = self.top.Templateer.render (template, context).encode \
+            (self.encoding, "replace")
+        try :
+            smtp (text)
+        except Exception as exc :
+            logging.error \
+                ( "Exception: %s"
+                  "\n  When trying to send email from %s to %s"
+                  "\n  %s"
+                , exc
+                , email_from, context.get ("email_to", "<Unkown>")
+                , text
+                )
             try :
-                smtp (text)
-            except Exception as exc :
-                print ("Exception:", exc)
-                print \
-                    ( "When trying to send email from", email_from
-                    , "to", context.get ("email_to", "<Unkown>")
-                    )
-                print (text)
-                try :
-                    kw = dict \
-                        ( context
-                        , email_from    = self.email_from
-                        , email_to      = self.email_from
-                        , email_subject =
-                            ( "Error when trying to send email from %s: %s"
-                            % (email_from, exc)
-                            )
-                        , message       = text
-                        , NAV           = self.top
-                        , page          = self
+                kw = dict \
+                    ( context
+                    , email_from    = self.email_from
+                    , email_to      = self.email_from
+                    , email_subject =
+                        ( "Error when trying to send email from %s: %s"
+                        % (email_from, exc)
                         )
-                    self.send_email (self.error_email_template, ** kw)
-                except Exception :
-                    pass
-        else :
-            print ("*** Cannot send email because `smtp` is undefined ***")
-            print (text)
+                    , message       = text
+                    , NAV           = self.top
+                    , page          = self
+                    )
+                self.send_email (self.error_email_template, ** kw)
+            except Exception :
+                pass
     # end def send_email
 
     def template_iter (self) :
@@ -416,11 +420,9 @@ class _RST_Base_ (TFL.Meta.Object) :
             except IndexError :
                 pass
             except Exception as exc :
-                pyk.fprint \
-                    ( ">>> Exception"
+                logging.error \
+                    ( "Exception %s when trying to determine the user"
                     , exc
-                    , "when trying to determine the user"
-                    , file = sys.stderr
                     )
         return result
     # end def _get_user
@@ -463,14 +465,15 @@ Leaf = RST_Leaf # end class
 
 _Ancestor = _Base_
 
-class _RST_Node_Base_ (_Ancestor) :
-    """Base class for RESTful nodes (resources with children)."""
+class _RST_Dir_Base_ (_Ancestor) :
+    """Base class for RESTful directories (resources with children)."""
 
-    _real_name                 = "_Node_Base_"
+    _real_name                 = "_Dir_Base_"
 
+    _dir_template              = None
     _href_pat_frag             = None
 
-    class RST__Node_Base__GET (_Ancestor.GET) :
+    class RST__Dir_Base__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
 
@@ -484,7 +487,7 @@ class _RST_Node_Base_ (_Ancestor) :
 
         def _response_dict (self, resource, request, response, ** kw) :
             result = dict \
-                ( entries      = []
+                ( entries = []
                 , ** kw
                 )
             if not request.verbose :
@@ -508,7 +511,29 @@ class _RST_Node_Base_ (_Ancestor) :
             raise NotImplementedError
         # end def _resource_entries
 
-    GET = RST__Node_Base__GET # end class
+    GET = RST__Dir_Base__GET # end class
+
+    @property
+    def dir_template (self) :
+        if self._dir_template is None :
+            t_name = getattr (self, "dir_template_name", None)
+            if t_name :
+                self._dir_template = self.Templateer.get_template \
+                    (t_name, self.injected_dir_templates)
+        return self._dir_template
+    # end def dir_template
+
+    @dir_template.setter
+    def dir_template (self, value) :
+        self._dir_template = None
+        if isinstance (value, basestring) :
+            self.dir_template_name = value
+        elif not isinstance (value, self.Templateer.Template_Type) :
+            self.dir_template_name = value.name
+        else :
+            self.dir_template_name = value.name
+            self._dir_template     = value
+    # end def dir_template
 
     @property
     def href_pat_frag (self) :
@@ -519,16 +544,30 @@ class _RST_Node_Base_ (_Ancestor) :
         return result
     # end def href_pat_frag
 
-_Node_Base_ = _RST_Node_Base_ # end class
+    @Once_Property
+    def injected_dir_templates (self) :
+        ### redefine as necessary
+        return set ()
+    # end def injected_dir_templates
 
-_Ancestor = _Node_Base_
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        t = self.dir_template
+        if t :
+            yield t
+    # end def template_iter
 
-class _RST_Node_ (_Ancestor) :
-    """Base class for RESTful nodes (resources with children)."""
+_Dir_Base_ = _RST_Dir_Base_ # end class
 
-    _real_name                 = "_Node_"
+_Ancestor = _Dir_Base_
 
-    class RST__Node__GET (_Ancestor.GET) :
+class _RST_Dir_ (_Ancestor) :
+    """Base class for RESTful directories (resources with children)."""
+
+    _real_name                 = "_Dir_"
+
+    class RST__Dir__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
 
@@ -536,7 +575,7 @@ class _RST_Node_ (_Ancestor) :
             return resource.entries
         # end def _resource_entries
 
-    GET = RST__Node__GET # end class
+    GET = RST__Dir__GET # end class
 
     def __init__ (self, ** kw) :
         entries = kw.pop ("entries", [])
@@ -556,7 +595,7 @@ class _RST_Node_ (_Ancestor) :
     def entries_transitive (self) :
         for e in self.entries :
             yield e
-            if isinstance (e, _Node_) :
+            if isinstance (e, _Dir_) :
                 for d in e.entries_transitive :
                     yield d
     # end def entries_transitive
@@ -566,8 +605,27 @@ class _RST_Node_ (_Ancestor) :
         self._map.update ((e.name, e) for e in entries)
     # end def add_entries
 
+    def sub_dir_iter (self) :
+        for owl in self.entries :
+            if isinstance (owl, _Dir_) :
+                yield owl
+    # end def sub_dir_iter
+
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        eff = self._effective
+        if eff is not self :
+            for t in eff.template_iter () :
+                yield t
+        for d in self.sub_dir_iter () :
+            for t in d.template_iter () :
+                yield t
+    # end def template_iter
+
     def _add_href_pat_frag_tail \
             (self, head, getter = TFL.Getter.href_pat_frag) :
+        result  = head
         entries = sorted \
             (self.entries, key = lambda x : x.name, reverse = True)
         e_hpfs = tuple (x for x in (getter (e) for e in entries) if x)
@@ -600,14 +658,14 @@ class _RST_Node_ (_Ancestor) :
             )
     # end def _init_add_entries
 
-_Node_ = _RST_Node_ # end class
+_Dir_ = _RST_Dir_ # end class
 
-_Ancestor = _Node_
+_Ancestor = _Dir_
 
-class RST_Node (_Ancestor) :
-    """Base class for RESTful nodes (resources with children)."""
+class RST_Dir (_Ancestor) :
+    """Base class for RESTful directories (resources with children)."""
 
-    _real_name                 = "Node"
+    _real_name                 = "Dir"
 
     def __init__ (self, ** kw) :
         self.prefix = pp_join (self.parent.prefix, kw ["name"], "")
@@ -619,12 +677,12 @@ class RST_Node (_Ancestor) :
         return self.prefix.rstrip ("/")
     # end def href
 
-Node = RST_Node # end class
+Dir = RST_Dir # end class
 
-_Ancestor = _Node_Base_
+_Ancestor = _Dir_Base_
 
-class RST_Node_V (_Ancestor) :
-    """Base class for RESTful volatile nodes (resources with children,
+class RST_Dir_V (_Ancestor) :
+    """Base class for RESTful volatile directories (resources with children,
        without permanent `_entries`).
     """
 
@@ -632,12 +690,33 @@ class RST_Node_V (_Ancestor) :
         return head
     # end def _add_href_pat_frag_tail
 
-Node_V = RST_Node_V # end class
+Dir_V = RST_Dir_V # end class
 
-_Ancestor = _Node_
+_Ancestor = Leaf
+
+class RST_Raiser (_Ancestor) :
+    """Resource that raises an error 500."""
+
+    _real_name                 = "Raiser"
+
+    hidden                     = True
+
+    class RST_Raiser_GET (_Ancestor.GET) :
+
+        _real_name             = "GET"
+
+        def _response_body (self, resource, request, response) :
+            raise RuntimeError ("Wilful raisement")
+        # end def _response_body
+
+    GET = RST_Raiser_GET # end class
+
+Raiser = RST_Raiser # end class
+
+_Ancestor = _Dir_
 
 class RST_Root (_Ancestor) :
-    """Root of tree of RESTful nodes."""
+    """Root of tree of RESTful resources."""
 
     _real_name                 = "Root"
 
@@ -657,12 +736,13 @@ class RST_Root (_Ancestor) :
     name                       = ""
     prefix                     = ""
     site_url                   = ""
-    smtp                       = None
 
+    _exclude_robots            = True
     _href_pat                  = None
     _needs_parent              = False
 
     _email_from                = None   ### default from address
+    _smtp                      = None
     _webmaster                 = None
 
     from _GTW._RST.Request  import Request  as Request_Type
@@ -671,7 +751,8 @@ class RST_Root (_Ancestor) :
     def __init__ (self, HTTP, ** kw) :
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
-        self.pop_to_self      ("name", "prefix")
+        self.pop_to_self      (kw, "name", "prefix")
+        self.pop_to_self      (kw, "smtp", prefix = "_")
         self.HTTP           = HTTP
         self.redirects      = dict (kw.pop ("redirects", {}))
         self.SC             = TFL.Record ()
@@ -693,9 +774,18 @@ class RST_Root (_Ancestor) :
                 try :
                     result = self._href_pat = re.compile (hpf)
                 except Exception as exc :
-                    print ("*" * 3, "href_pat", exc)
+                    logging.error \
+                        ("Exception in href_pat for %s: %s", self, exc)
         return result
     # end def href_pat
+
+    @property
+    def smtp (self) :
+        if self._smtp is None :
+            from _TFL.SMTP import SMTP_Logger
+            self._smtp = SMTP_Logger ()
+        return self._smtp
+    # end def smtp
 
     @Once_Property
     def scope (self) :
@@ -770,9 +860,9 @@ class RST_Root (_Ancestor) :
                 if match :
                     head = match.group (0)
                     tail = href [len (head):].lstrip ("/").split ("/")
-                    node = Table.get (head)
-                    if node :
-                        result = node._get_child (* tail)
+                    resource = Table.get (head)
+                    if resource :
+                        result = resource._get_child (* tail)
         if result is None and not match :
             head = href
             tail = []
@@ -824,9 +914,8 @@ class RST_Root (_Ancestor) :
             ### works for werkzeug.exceptions.HTTPException
             return exc
         except Exception as exc :
-            if self.DEBUG :
-                import traceback; print (traceback.print_exc ())
-            result = self._http_response_error (request, exc)
+            tbi    = traceback.format_exc ()
+            result = self._http_response_error (request, exc, tbi)
         if not result :
             result = self._http_response_error \
                 (request, ValueError ("No result"))
@@ -864,7 +953,8 @@ class RST_Root (_Ancestor) :
         raise HTTP.Error_404
     # end def _http_response
 
-    def _http_response_error (self, request, exc) :
+    def _http_response_error (self, request, exc, tbi = None) :
+        self.send_error_email (request, exc, tbi)
         return self.HTTP.Error_500 (exc) (request)
     # end def _http_response_error
 
@@ -880,5 +970,5 @@ appropriate name to `None`, e.g., ::
 """
 
 if __name__ != "__main__" :
-    GTW.RST._Export ("*", "_Base_", "_Node_Base_", "_Node_")
+    GTW.RST._Export ("*", "_Base_", "_Dir_Base_", "_Dir_")
 ### __END__ GTW.RST.Resource

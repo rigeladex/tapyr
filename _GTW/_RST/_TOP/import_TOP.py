@@ -20,57 +20,21 @@
 #
 #++
 # Name
-#    GTW.RST.TOP.__test__
+#    GTW.RST.TOP.import_TOP
 #
 # Purpose
-#    Doctest for package GTW.RST.TOP
+#    Import modules of package GTW.RST.TOP
 #
 # Revision Dates
-#     5-Jul-2012 (CT) Creation
+#     6-Jul-2012 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _GTW._RST._TOP.import_TOP import *
+from _GTW._RST._TOP.Base import *
+from _GTW._RST._TOP.Dir  import *
+from _GTW._RST._TOP.Page import *
+from _GTW._RST._TOP.Root import *
 
-from   _TFL.Formatter            import Formatter, formatted_1
-
-formatted = Formatter (width = 240)
-
-__doc__ = """
-
-    >>> root = Root (HTTP = None)
-    >>> root
-    <Root : />
-    >>> root.entries
-    []
-
-    >>> root = Root (HTTP = None
-    ...     , language          = "en"
-    ...     , entries           =
-    ...         ( Page
-    ...             ( name          = "about"
-    ...             )
-    ...         , Dir
-    ...             ( name          = "news"
-    ...             , entries       =
-    ...                 ( Page
-    ...                     ( name  = "Sensation"
-    ...                     )
-    ...                 ,
-    ...                 )
-    ...             )
-    ...         )
-    ...     )
-    >>> root
-    <Root : />
-    >>> root.entries
-    [<Page about: /about>, <Dir news: /news>]
-    >>> ets = tuple (root.entries_transitive)
-    >>> ets
-    (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>)
-
-"""
-
-### __END__ GTW.RST.TOP.__test__
+### __END__ GTW.RST.TOP.import_TOP

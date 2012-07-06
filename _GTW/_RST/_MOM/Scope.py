@@ -41,7 +41,7 @@ import _GTW._RST._MOM.E_Type
 
 from   _MOM.import_MOM          import MOM, Q
 
-_Ancestor = GTW.RST.Node
+_Ancestor = GTW.RST.Dir
 
 class RST_Scope (_Ancestor) :
     """RESTful node for a scope."""

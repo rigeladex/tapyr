@@ -305,6 +305,7 @@
 #    19-Jun-2012 (CT) Move default for `_email_from` to `Root`,
 #                     ditto for some other defaults
 #    20-Jun-2012 (CT) Restrain `__repr__`, remove `__str__`, add `formatted`
+#     6-Jul-2012 (CT) Use `SMTP_Logger`, not `print`
 #    ««revision-date»»···
 #--
 
@@ -657,7 +658,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         email_from = context.get ("email_from")
         if not email_from :
             context ["email_from"] = email_from = self.email_from
-        smtp = self.smtp
+        smtp = context.pop ("smtp", self.smtp)
         if smtp :
             smtp.charset = self.encoding
             text = self.top.Templateer.render (template, context).encode \
@@ -702,23 +703,21 @@ class _Site_Entity_ (TFL.Meta.Object) :
             , formatted (handler.body)
             , tbi
             )
+        kw = {}
         if self.DEBUG :
-            print "Exception:", exc
-            print "Request path", request.path
-            print "Email", email
-            print message
-            print handler.body
-        else :
-            self.send_email \
-                ( self.error_email_template
-                , email_from    = email
-                , email_to      = email
-                , email_subject = ("Error: %s") % (exc, )
-                , message       = message
-                , NAV           = self.top
-                , page          = self
-                , request       = request
-                )
+            from _TFL.SMTP import SMTP_Logger
+            kw = dict (smtp = SMTP_Logger ())
+        self.send_email \
+            ( self.error_email_template
+            , email_from    = email
+            , email_to      = email
+            , email_subject = ("Error: %s") % (exc, )
+            , message       = message
+            , NAV           = self.top
+            , page          = self
+            , request       = request
+            , ** kw
+            )
     # end def _send_error_email
 
     @property
