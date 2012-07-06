@@ -34,6 +34,7 @@
 #                     `connection` added and used
 #    12-Jun-2012 (CT) Import `email.utils`, not `email.Utils` (<= Python 2.4)
 #    19-Jun-2012 (CT) Add `header` and apply it in `send_message`
+#     6-Jul-2012 (CT) Add `SMTP_Logger`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,8 @@ from   email                   import message, message_from_string
 from   email.header            import Header, decode_header, make_header
 from   email.utils             import formatdate
 
+import datetime
+import logging
 import smtplib
 import socket
 
@@ -201,6 +204,32 @@ class SMTP (TFL.Meta.Object) :
     # end def send_message
 
 # end class SMTP
+
+class SMTP_Logger (SMTP) :
+    """Log email using `logging` instead of connecting to SMTP server."""
+
+    level = "error"
+
+    def __init__ (self, * args, ** kw) :
+        self.pop_to_self      (kw, "level")
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
+        self._log \
+            ( "[%s] Email via %s from %s to %s\n    %s"
+            , datetime.datetime.now ().replace (microsecond = 0)
+            , self.mail_host, from_addr, to_addrs
+            , "\n    ".join (msg.split ("\n"))
+            )
+    # end def send
+
+    @property
+    def _log (self) :
+        return getattr (logging, self.level, logging.error)
+    # end def _log
+
+# end class SMTP_Logger
 
 class SMTP_Tester (SMTP) :
     """Tester writing to stdout instead of connecting to SMTP server."""

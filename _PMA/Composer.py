@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,6 +50,7 @@
 #    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
 #    27-Dec-2010 (CT) Options for mail sending added and passed to `PMA.Sender`
 #    27-Dec-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#     6-Jul-2012 (CT) Remove stale import of `smtplib.SMTP`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,6 @@ from   _TFL.predicate          import callable
 from   _TFL.Regexp             import *
 import _TFL.sos
 
-from   smtplib                 import SMTP
 try :
     import subprocess
 except ImportError :
