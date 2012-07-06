@@ -30,6 +30,8 @@
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
 #     4-Jul-2012 (CT) Use `pid_query` for `long`, `basestring` pids, too
 #     5-Jul-2012 (CT) Add support for `closure`, factor `_response_obj_attrs`
+#     6-Jul-2012 (CT) Change `Entity.GET` to use `seen` to show each entity
+#                     once only
 #    ««revision-date»»···
 #--
 
@@ -78,14 +80,15 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
 
         _real_name             = "GET"
 
-        def _response_attr (self, resource, request, response, obj, attr) :
+        def _response_attr \
+                (self, resource, request, response, obj, attr, seen) :
             k = attr.name
             if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
                 v = attr.get_value (obj)
                 if v is not None :
-                    if request.has_option ("closure") :
+                    if request.has_option ("closure") and v.pid not in seen :
                         v = self._response_obj \
-                            (resource, request, response, v, v.primary)
+                            (resource, request, response, v, v.primary, seen)
                     else :
                         v = int (v.pid)
             else :
@@ -94,19 +97,21 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
         # end def _response_attr
 
         def _response_body (self, resource, request, response) :
-            obj   = resource.obj
             attrs = resource.attributes
+            obj   = resource.obj
+            seen  = set ()
             return self._response_obj \
-                ( resource, request, response, obj, attrs
+                ( resource, request, response, obj, attrs, seen
                 , url = resource.abs_href
                 )
         # end def _response
 
         def _response_obj \
-                (self, resource, request, response, obj, attrs, ** kw) :
+                (self, resource, request, response, obj, attrs, seen, ** kw) :
+            seen.add (obj.pid)
             return dict \
                 ( attributes = self._response_obj_attrs
-                    (resource, request, response, obj, attrs)
+                    (resource, request, response, obj, attrs, seen)
                 , cid        = obj.last_cid
                 , pid        = obj.pid
                 , type_name  = obj.type_name
@@ -115,10 +120,10 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
         # end def _response_obj
 
         def _response_obj_attrs \
-                (self, resource, request, response, obj, attrs) :
+                (self, resource, request, response, obj, attrs, seen) :
             return dict \
                 (   self._response_attr
-                        (resource, request, response, obj, a)
+                        (resource, request, response, obj, a, seen)
                 for a in attrs
                 if  a.to_save (obj)
                 )

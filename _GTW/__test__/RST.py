@@ -1587,13 +1587,7 @@ _test_get = r"""
                       }
                   , 'right' :
                       { 'attributes' :
-                          { 'boat_class' :
-                              { 'attributes' :
-                                  { 'name' : 'Optimist' }
-                              , 'cid' : 7
-                              , 'pid' : 7
-                              , 'type_name' : 'SRM.Boat_Class'
-                              }
+                          { 'boat_class' : 7
                           , 'left' :
                               { 'attributes' :
                                   { 'date' :
@@ -1664,13 +1658,7 @@ _test_get = r"""
                       }
                   , 'right' :
                       { 'attributes' :
-                          { 'boat_class' :
-                              { 'attributes' :
-                                  { 'name' : 'Optimist' }
-                              , 'cid' : 7
-                              , 'pid' : 7
-                              , 'type_name' : 'SRM.Boat_Class'
-                              }
+                          { 'boat_class' : 7
                           , 'left' :
                               { 'attributes' :
                                   { 'date' :
@@ -1969,13 +1957,7 @@ _test_post = r"""
                 }
             , 'right' :
                 { 'attributes' :
-                    { 'boat_class' :
-                        { 'attributes' :
-                            { 'name' : 'Optimist' }
-                        , 'cid' : 7
-                        , 'pid' : 7
-                        , 'type_name' : 'SRM.Boat_Class'
-                        }
+                    { 'boat_class' : 7
                     , 'left' :
                         { 'attributes' :
                             { 'date' :
