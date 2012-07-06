@@ -41,8 +41,6 @@ from   _GTW                     import GTW
 
 import _GTW._RST
 
-from   _TFL._Meta.Once_Property import Once_Property
-
 import _TFL.Filter
 
 class _Permission_ (TFL._.Filter._Filter_S_) :

@@ -704,13 +704,26 @@ _test_delete = r"""
 _test_get = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
-    >>> r = show (R.options (""))
-    { 'status' : 200
+    >>> r = showf (R.options (""))
+    { 'headers' :
+        { 'allow' : 'GET, HEAD, OPTIONS'
+        , 'content-length' : '0'
+        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'server' : '<server>'
+        }
+    , 'status' : 200
     , 'url' : 'http://localhost:9999/'
     }
 
-    >>> r = show (R.head (""))
-    { 'status' : 200
+    >>> r = showf (R.head (""))
+    { 'headers' :
+        { 'content-length' : '0'
+        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'server' : '<server>'
+        }
+    , 'status' : 200
     , 'url' : 'http://localhost:9999/'
     }
 
