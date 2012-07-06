@@ -53,7 +53,11 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
     _renderers             = (GTW.RST.Mime_Type.HTML, )
 
     def _render_context (self, resource, request, response, ** kw) :
-        return dict (request = request, ** kw)
+        return dict \
+            ( request       = request
+            , notifications = response.session.notifications
+            , ** kw
+            )
     # end def _render_context
 
     def _response_body (self, resource, request, response) :
@@ -203,7 +207,6 @@ class _TOP_Base_ (_Ancestor) :
             ( NAV           = self.top
             , lang          = "_".join (uniq (TFL.I18N.Config.choice))
             , nav_page      = nav_page or self
-            , notifications = self.session.notifications
             , page          = self
             , ** kw
             )
@@ -234,27 +237,16 @@ class _TOP_Base_ (_Ancestor) :
         return self._Media
     # end def _get_media
 
-    def _get_edit_session (self, sid) :
-        ### XXX ???
-        return self.session.edit_session (sid)
-    # end def _get_edit_session
-
     def _new_edit_session (self, request, ttl = None) :
-        ### XXX ???
         dbmd = self.top.scope.db_meta_data
         user = request.user
-        if user == self.anonymous_account :
+        if user is None :
             u_hash = request.username = uuid.uuid1 ().hex
         else :
             u_hash = user.password
-        return self.session.new_edit_session \
+        return request.session.new_edit_session \
             ((u_hash, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
     # end def _new_edit_session
-
-    def _pop_edit_session (self, sid) :
-        ### XXX ???
-        return self.session.pop_edit_session (sid)
-    # end def _pop_edit_session
 
 _Base_ = _TOP_Base_ # end class
 

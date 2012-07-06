@@ -30,11 +30,14 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from _GTW._RST._TOP.Base import *
-from _GTW._RST._TOP.Dir  import *
-from _GTW._RST._TOP.Page import *
-from _GTW._RST._TOP.Root import *
+from   _GTW._RST._TOP.Base import *
+from   _GTW._RST._TOP.Dir  import *
+from   _GTW._RST._TOP.Page import *
+from   _GTW._RST._TOP.Root import *
+
+import _GTW._RST._TOP.Request
+import _GTW._RST._TOP.Response
 
 ### __END__ GTW.RST.TOP.import_TOP

@@ -62,6 +62,9 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     _exclude_robots            = False
     _login_required            = False
 
+    from _GTW._RST._TOP.Request  import Request  as Request_Type
+    from _GTW._RST._TOP.Response import Response as Response_Type
+
     class E_Type_Desc (TFL.Meta.Object) :
 
         _admin   = None
