@@ -39,7 +39,6 @@ import _GTW._RST.Resource
 import _GTW._RST._TOP.Base
 
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL._Meta.Property      import Alias_Property
 
 class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
 

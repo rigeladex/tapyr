@@ -37,6 +37,8 @@
 #     2-Jul-2012 (CT) Change `resource_from_href` to ignore extension
 #     3-Jul-2012 (CT) Use `TFL.Context.relaxed` as alternative to `.time_block`
 #     5-Jul-2012 (CT) Add `_m_after__init__`
+#     8-Jul-2012 (CT) Rename `template` to `page_template`,
+#                     add Alias_Property `template`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +50,7 @@ from   _TFL                     import TFL
 import _GTW._RST.HTTP_Method
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Filename            import Filename
 from   _TFL.predicate           import callable
 
@@ -82,7 +85,7 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
             if callable (v) :
                 sms [k] = v
         cls._m_after__init__ (name, bases, dct)
-        for k in ("template_name", "dir_template_name") :
+        for k in ("page_template_name", "dir_template_name") :
             tn = dct.get (k)
             if tn :
                 cls._template_names.add (tn)
@@ -112,11 +115,13 @@ class _RST_Base_ (TFL.Meta.Object) :
     hidden                     = False
     implicit                   = False
     pid                        = None
+    template                   = Alias_Property ("page_template")
+    template_name              = Alias_Property ("page_template_name")
 
     _needs_parent              = True
     _r_permission              = None             ### read permission
     _w_permission              = None             ### write permission
-    _template                  = None
+    _page_template             = None
     _template_names            = set ()
 
     DELETE                     = None             ### redefine if necessary
@@ -168,7 +173,7 @@ class _RST_Base_ (TFL.Meta.Object) :
                             Table [perma] = self
             if pid is not None :
                 setattr (top.SC, pid, self)
-        for k in ("template_name", "dir_template_name") :
+        for k in ("page_template_name", "dir_template_name") :
             tn = getattr (self, k, None)
             if tn :
                 top._template_names.add (tn)
@@ -262,6 +267,28 @@ class _RST_Base_ (TFL.Meta.Object) :
         return set ()
     # end def injected_templates
 
+    @property
+    def page_template (self) :
+        if self._page_template is None :
+            t_name = getattr (self, "page_template_name", None)
+            if t_name :
+                self._page_template = self.Templateer.get_template \
+                    (t_name, self.injected_templates)
+        return self._page_template
+    # end def page_template
+
+    @page_template.setter
+    def page_template (self, value) :
+        self._page_template = None
+        if isinstance (value, basestring) :
+            self.page_template_name = value
+        elif not isinstance (value, self.Templateer.Template_Type) :
+            self.page_template_name = value.name
+        else :
+            self.page_template_name = value.name
+            self._page_template     = value
+    # end def page_template
+
     @Once_Property
     def permalink (self) :
         return self.abs_href
@@ -272,28 +299,6 @@ class _RST_Base_ (TFL.Meta.Object) :
         return sorted \
             (self._get_permissions ("r_permission"), key = TFL.Getter.rank)
     # end def r_permissions
-
-    @property
-    def template (self) :
-        if self._template is None :
-            t_name = getattr (self, "template_name", None)
-            if t_name :
-                self._template = self.Templateer.get_template \
-                    (t_name, self.injected_templates)
-        return self._template
-    # end def template
-
-    @template.setter
-    def template (self, value) :
-        self._template = None
-        if isinstance (value, basestring) :
-            self.template_name = value
-        elif not isinstance (value, self.Templateer.Template_Type) :
-            self.template_name = value.name
-        else :
-            self.template_name = value.name
-            self._template     = value
-    # end def template
 
     @property
     def Type (self) :
@@ -398,7 +403,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def send_email
 
     def template_iter (self) :
-        t = self.template
+        t = self.page_template
         if t :
             yield t
     # end def template_iter
@@ -473,6 +478,9 @@ class _RST_Dir_Base_ (_Ancestor) :
     _dir_template              = None
     _href_pat_frag             = None
 
+    template                   = Alias_Property ("dir_template")
+    template_name              = Alias_Property ("dir_template_name")
+
     class RST__Dir_Base__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
@@ -512,6 +520,13 @@ class _RST_Dir_Base_ (_Ancestor) :
         # end def _resource_entries
 
     GET = RST__Dir_Base__GET # end class
+
+    def __init__ (self, ** kw) :
+        for k in ("template", "template_name") :
+            if k in kw :
+                kw ["page_" + k] = kw.pop (k)
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     @property
     def dir_template (self) :
