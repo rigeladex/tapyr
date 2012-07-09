@@ -28,6 +28,7 @@
 # Revision Dates
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #     9-Jul-2012 (CT) Add and use `HTTP_Method_Mixin.template_name`
+#     9-Jul-2012 (CT) Add `RST_TOP_HTML`, define `.rendered`
 #    ««revision-date»»···
 #--
 
@@ -49,9 +50,20 @@ import _TFL.I18N
 
 _Ancestor = GTW.RST._Base_
 
+class RST_TOP_HTML (GTW.RST.Mime_Type.HTML) :
+
+    _real_name                 = "HTML"
+
+    def rendered (self, request, response, body) :
+        ### `body` is already rendered as HTML
+        return body
+    # end def rendered
+
+HTML = RST_TOP_HTML # end class
+
 class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
 
-    _renderers             = (GTW.RST.Mime_Type.HTML, )
+    _renderers             = (HTML, )
 
     template_name          = None
 

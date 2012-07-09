@@ -200,7 +200,8 @@ class RST_JSON (_Base_) :
     mime_types                 = ("application/json", )
 
     def rendered (self, request, response, body) :
-        return json.dumps (body)
+        if isinstance (body, (dict, list, tuple)) :
+            return json.dumps (body)
     # end def rendered
 
 JSON = RST_JSON # end class
