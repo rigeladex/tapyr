@@ -36,6 +36,10 @@ from   _GTW._RST._TOP.import_TOP import *
 
 from   _TFL.Formatter            import Formatter, formatted_1
 
+import _TFL.I18N
+
+TFL.I18N.load ("en", "de")
+
 formatted = Formatter (width = 240)
 
 __doc__ = """
@@ -76,18 +80,18 @@ __doc__ = """
     ...     , language = "en"
     ...     , entries  = entries +
     ...         ( GTW.RST.TOP.Auth (name = "Auth")
-    ...         ,
+    ...         , GTW.RST.TOP.L10N (name = "L10N", country_map = {"de" : "AT"})
     ...         )
     ...     )
 
     >>> root3
     <Root : />
     >>> root3.entries
-    [<Page about: /about>, <Dir news: /news>, <Auth Auth: /Auth>]
+    [<Page about: /about>, <Dir news: /news>, <Auth Auth: /Auth>, <L10N L10N: /L10N>]
 
     >>> ets = tuple (root3.entries_transitive)
     >>> ets
-    (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>)
+    (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
     >>> sorted (root3._template_names)
     [u'account_activate', u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'login']
@@ -109,6 +113,12 @@ __doc__ = """
     <_Activate_ activate: /Auth/activate>
     >>> sorted (auth._entry_map)
     [u'activate', u'login', u'register']
+
+    >>> l10n = root3.SC.L10N
+    >>> sorted (l10n._entry_map)
+    [u'de', u'en']
+    >>> sorted (l10n._entry_map.items ())
+    [(u'de', <_Language_ de: /L10N/de>), (u'en', <_Language_ en: /L10N/en>)]
 
 """
 

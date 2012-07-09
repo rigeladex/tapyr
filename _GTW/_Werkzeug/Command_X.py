@@ -49,6 +49,7 @@
 #    22-Jun-2012 (CT) Remove dependency on `HTTP.Application`,
 #                     use `Static_File_App`, not `Static_File_Handler`
 #    28-Jun-2012 (CT) Factor `App_Cache`, `_get_root`
+#     9-Jul-2012 (CT) Pass `static_handler` to `_get_root`
 #    ««revision-date»»···
 #--
 
@@ -170,7 +171,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
         return result
     # end def _create_scope
 
-    def _get_root (self, cmd, apt, url) :
+    def _get_root (self, cmd, apt, url, ** kw) :
         result = self.root
         if result is None :
             cookie_salt = cmd.GET ("cookie_salt", self.SALT)
@@ -199,6 +200,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
                 , log_level           = cmd.log_level
                 , session_id          = bytes ("SESSION_ID")
                 , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+                , ** kw
                 )
             if result.Cacher :
                 mc_fix = "media/v"
@@ -270,7 +272,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N   (cmd)
         sf_app = self._static_file_app (cmd)
-        result = root = self._get_root (cmd, apt, url)
+        result = root = self._get_root (cmd, apt, url, static_handler = sf_app)
         if cmd.serve_static_files :
             sf_app.wrap = root
             result      = sf_app

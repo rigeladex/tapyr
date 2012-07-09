@@ -37,7 +37,7 @@ from   _TFL                     import TFL
 
 import _GTW.Notification
 import _GTW._Form.Auth
-import _GTW._RST.Resource
+import _GTW._RST.HTTP_Method
 import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
 

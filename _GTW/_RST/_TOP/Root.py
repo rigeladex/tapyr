@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
+#     9-Jul-2012 (CT) Add `static_handler`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
 
     _exclude_robots            = False
     _login_required            = False
+    _static_handler            = None
 
     from _GTW._RST._TOP.Request  import Request  as Request_Type
     from _GTW._RST._TOP.Response import Response as Response_Type
@@ -95,6 +97,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     # end class E_Type_Desc
 
     def __init__ (self, HTTP, ** kw) :
+        self.pop_to_self (kw, "static_handler", prefix = "_")
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
         self.ET_Map = TFL.defaultdict (self.E_Type_Desc)
@@ -131,6 +134,16 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
         if "Auth" in self.SC :
             return self.SC.Auth.href_login
     # end def login_url
+
+    @Once_Property
+    def static_handler (self) :
+        result = self._static_handler
+        if result is None :
+            p = sos.path.normpath \
+                (sos.path.join (sos.path.dirname (__file__), "../..", "media"))
+            result = self._static_handler = self.HTTP.Static_File_App ("GTW", p)
+        return result
+    # end def static_handler
 
 Root = TOP_Root # end class
 
