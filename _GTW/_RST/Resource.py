@@ -40,6 +40,8 @@
 #     8-Jul-2012 (CT) Rename `template` to `page_template`,
 #                     add Alias_Property `template`
 #     9-Jul-2012 (CT) Factor `get_template`, add `HTTP_Method.template_name`
+#     9-Jul-2012 (CT) Factor `_Dir_._get_child` to `_Dir_Base_`
+#     9-Jul-2012 (CT) Add `Dir_V._get_child`, use `Dir_V._entry_type_map`
 #    ««revision-date»»···
 #--
 
@@ -531,6 +533,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     GET = RST__Dir_Base__GET # end class
 
     def __init__ (self, ** kw) :
+        self._entry_map = {}
         for k in ("template", "template_name") :
             if k in kw :
                 kw ["page_" + k] = kw.pop (k)
@@ -582,6 +585,18 @@ class _RST_Dir_Base_ (_Ancestor) :
             yield t
     # end def template_iter
 
+    def _get_child (self, child, * grandchildren) :
+        try :
+            result = self._entry_map [child]
+        except KeyError :
+            pass
+        else :
+            if not grandchildren :
+                return result
+            else :
+                return result._get_child (* grandchildren)
+    # end def _get_child
+
 _Dir_Base_ = _RST_Dir_Base_ # end class
 
 _Ancestor = _Dir_Base_
@@ -604,8 +619,7 @@ class _RST_Dir_ (_Ancestor) :
     def __init__ (self, ** kw) :
         entries = kw.pop ("entries", [])
         self.__super.__init__ (** kw)
-        self._entries = []
-        self._map     = {}
+        self._entries   = []
         if entries :
             self._init_add_entries (entries)
     # end def __init__
@@ -626,7 +640,7 @@ class _RST_Dir_ (_Ancestor) :
 
     def add_entries (self, * entries) :
         self._entries.extend (entries)
-        self._map.update ((e.name, e) for e in entries)
+        self._entry_map.update ((e.name, e) for e in entries)
     # end def add_entries
 
     def sub_dir_iter (self) :
@@ -661,18 +675,6 @@ class _RST_Dir_ (_Ancestor) :
                 result = e_result
         return result
     # end def _add_href_pat_frag_tail
-
-    def _get_child (self, child, * grandchildren) :
-        try :
-            result = self._map [child]
-        except KeyError :
-            pass
-        else :
-            if not grandchildren :
-                return result
-            else :
-                return result._get_child (* grandchildren)
-    # end def _get_child
 
     def _init_add_entries (self, entries) :
         self.add_entries \
@@ -710,9 +712,30 @@ class RST_Dir_V (_Ancestor) :
        without permanent `_entries`).
     """
 
+    _entry_type_map = None
+
     def _add_href_pat_frag_tail (self, head, getter = None) :
         return head
     # end def _add_href_pat_frag_tail
+
+    def _get_child (self, child, * grandchildren) :
+        result = self.__super._get_child (child, * grandchildren)
+        if result is None and self._entry_type_map :
+            try :
+                T = self._entry_type_map [child]
+            except KeyError :
+                pass
+            else :
+                return self._new_child (T, child, grandchildren)
+    # end def _get_child
+
+    def _new_child (self, T, child, grandchildren) :
+        result = T (name = child, parent = self)
+        if not grandchildren :
+            return result
+        else :
+            return result._get_child (* grandchildren)
+    # end def _new_child
 
 Dir_V = RST_Dir_V # end class
 
