@@ -48,8 +48,6 @@ from   _TFL.predicate           import uniq
 
 import _TFL.I18N
 
-_Ancestor = GTW.RST._Base_
-
 class RST_TOP_HTML (GTW.RST.Mime_Type.HTML) :
 
     _real_name                 = "HTML"
@@ -88,6 +86,8 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
     # end def _response_body
 
 # end class HTTP_Method_Mixin
+
+_Ancestor = GTW.RST._Base_
 
 class _TOP_Base_ (_Ancestor) :
     """Base class for TOP."""

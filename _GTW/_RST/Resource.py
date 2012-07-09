@@ -43,6 +43,7 @@
 #     9-Jul-2012 (CT) Factor `_Dir_._get_child` to `_Dir_Base_`
 #     9-Jul-2012 (CT) Add `Dir_V._get_child`, use `Dir_V._entry_type_map`
 #     9-Jul-2012 (CT) Add `Dir_V.template_iter`
+#     9-Jul-2012 (CT) Add and use `Dir_V._greet_entry`
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,8 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
         result.parent = kw.pop ("parent", None)
         result.__init__        (* args, ** kw)
         result._after__init__  (kw)
+        if parent and parent._greet_entry :
+            parent._greet_entry (result)
         return result
     # end def __call__
 
@@ -125,6 +128,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     template                   = Alias_Property ("page_template")
     template_name              = Alias_Property ("page_template_name")
 
+    _greet_entry               = None
     _needs_parent              = True
     _r_permission              = None             ### read permission
     _w_permission              = None             ### write permission
@@ -739,6 +743,10 @@ class RST_Dir_V (_Ancestor) :
                 return self._new_child (T, child, grandchildren)
     # end def _get_child
 
+    def _greet_entry (self, entry) :
+        self._entry_map [entry.name] = entry
+    # end def _greet_entry
+
     def _new_child (self, T, child, grandchildren) :
         result = T (name = child, parent = self)
         if not grandchildren :
@@ -947,10 +955,11 @@ class RST_Root (_Ancestor) :
         seen = set ()
         gett = self.get_template
         def _gen () :
-            for tn in self.template_names :
+            for tn in self._template_names :
                 yield gett (tn)
-            for tn in self.Templateer.error_template_names :
-                yield gett (tn)
+            if self.Templateer :
+                for tn in self.Templateer.error_template_names :
+                    yield gett (tn)
             for t in self.__super.template_iter () :
                 yield t
         for t in _gen () :

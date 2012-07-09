@@ -40,16 +40,7 @@ formatted = Formatter (width = 240)
 
 __doc__ = """
 
-    >>> root = Root (HTTP = None)
-    >>> root
-    <Root : />
-    >>> root.entries
-    []
-
-    >>> root = Root (HTTP = None
-    ...     , language          = "en"
-    ...     , entries           =
-    ...         ( Page
+    >>> entries = ( Page
     ...             ( name          = "about"
     ...             )
     ...         , Dir
@@ -62,14 +53,62 @@ __doc__ = """
     ...                 )
     ...             )
     ...         )
-    ...     )
-    >>> root
+
+    >>> root1 = Root (HTTP = None)
+    >>> root1
     <Root : />
-    >>> root.entries
+    >>> root1.entries
+    []
+
+    >>> root2 = Root (HTTP = None
+    ...     , language = "en"
+    ...     , entries  = entries
+    ...     )
+    >>> root2
+    <Root : />
+    >>> root2.entries
     [<Page about: /about>, <Dir news: /news>]
-    >>> ets = tuple (root.entries_transitive)
+    >>> ets = tuple (root2.entries_transitive)
     >>> ets
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>)
+
+    >>> root3 = Root (HTTP = None
+    ...     , language = "en"
+    ...     , entries  = entries +
+    ...         ( GTW.RST.TOP.Auth (name = "Auth")
+    ...         ,
+    ...         )
+    ...     )
+
+    >>> root3
+    <Root : />
+    >>> root3.entries
+    [<Page about: /about>, <Dir news: /news>, <Auth Auth: /Auth>]
+
+    >>> ets = tuple (root3.entries_transitive)
+    >>> ets
+    (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>)
+
+    >>> sorted (root3._template_names)
+    [u'account_activate', u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'login']
+
+    >>> auth = root3.SC.Auth
+    >>> auth
+    <Auth Auth: /Auth>
+    >>> sorted (auth._entry_map)
+    []
+    >>> auth._get_child ("login")
+    <_Login_ login: /Auth/login>
+    >>> sorted (auth._entry_map)
+    [u'login']
+    >>> auth._get_child ("register")
+    <_Register_ register: /Auth/register>
+    >>> sorted (auth._entry_map)
+    [u'login', u'register']
+    >>> auth._get_child ("activate")
+    <_Activate_ activate: /Auth/activate>
+    >>> sorted (auth._entry_map)
+    [u'activate', u'login', u'register']
 
 """
 

@@ -104,7 +104,7 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
                 ( resource, request, response, obj, attrs, seen
                 , url = resource.abs_href
                 )
-        # end def _response
+        # end def _response_body
 
         def _response_obj \
                 (self, resource, request, response, obj, attrs, seen, ** kw) :

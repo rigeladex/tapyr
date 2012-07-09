@@ -37,6 +37,7 @@ from   _GTW._RST._TOP.Dir  import *
 from   _GTW._RST._TOP.Page import *
 from   _GTW._RST._TOP.Root import *
 
+import _GTW._RST._TOP.Auth
 import _GTW._RST._TOP.Request
 import _GTW._RST._TOP.Response
 
