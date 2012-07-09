@@ -42,6 +42,7 @@
 #     9-Jul-2012 (CT) Factor `get_template`, add `HTTP_Method.template_name`
 #     9-Jul-2012 (CT) Factor `_Dir_._get_child` to `_Dir_Base_`
 #     9-Jul-2012 (CT) Add `Dir_V._get_child`, use `Dir_V._entry_type_map`
+#     9-Jul-2012 (CT) Add `Dir_V.template_iter`
 #    ««revision-date»»···
 #--
 
@@ -713,6 +714,15 @@ class RST_Dir_V (_Ancestor) :
     """
 
     _entry_type_map = None
+
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        if self._entry_type_map :
+            for e in self._entry_type_map.itervalues () :
+                for t in e.template_iter () :
+                    yield t
+    # end def template_iter
 
     def _add_href_pat_frag_tail (self, head, getter = None) :
         return head
