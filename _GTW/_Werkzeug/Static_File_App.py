@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Jun-2012 (CT) Creation
 #    26-Jun-2012 (CT) Fix `__call__`
+#     9-Jul-2012 (CT) Fix `get_path`
 #    ««revision-date»»···
 #--
 
@@ -120,7 +121,7 @@ class Static_File_App (TFL.Meta.Object) :
         req_path = req_path.lstrip ("/")
         for prefix, directory in self.dir_map :
             if (not prefix) or req_path.startswith (prefix) :
-                path   = req_path [len (prefix): ]
+                path   = req_path [len (prefix): ].lstrip ("/")
                 result = os.path.abspath (os.path.join (directory, path))
                 if os.path.isfile (result) :
                     return result
@@ -168,7 +169,7 @@ class Static_File_App (TFL.Meta.Object) :
 
 if __name__ != "__main__" :
     GTW.Werkzeug._Export ("*")
-if __name__ == "__main__" :
+else :
     import _TFL.CAO
 
     def dir_map (cmd) :
