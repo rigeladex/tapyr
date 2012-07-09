@@ -26,7 +26,7 @@
 #    Model a leaf in tree of pages
 #
 # Revision Dates
-#     5-Jul-2012 (CT) Creation
+#     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #    ««revision-date»»···
 #--
 

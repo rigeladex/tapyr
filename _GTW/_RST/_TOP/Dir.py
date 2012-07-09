@@ -26,7 +26,7 @@
 #    Model a directory in a tree of pages
 #
 # Revision Dates
-#     6-Jul-2012 (CT) Creation
+#     6-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #    ««revision-date»»···
 #--
 
@@ -47,10 +47,6 @@ class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
     def is_current_dir (self, page) :
         return page.prefix.startswith (self.prefix)
     # end def is_current_dir
-
-    def rendered (self, handler, template = None) :
-        return self.__super.rendered (handler, template or self.dir_template)
-    # end def rendered
 
 _Dir_Base_ = _TOP_Dir_Base_ # end class
 

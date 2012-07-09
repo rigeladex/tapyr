@@ -26,7 +26,8 @@
 #    Basic classes for Tree-of-Page framework
 #
 # Revision Dates
-#     5-Jul-2012 (CT) Creation
+#     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
+#     9-Jul-2012 (CT) Add and use `HTTP_Method_Mixin.template_name`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,8 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
 
     _renderers             = (GTW.RST.Mime_Type.HTML, )
 
+    template_name          = None
+
     def _render_context (self, resource, request, response, ** kw) :
         return dict \
             ( request       = request
@@ -61,9 +64,12 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
     # end def _render_context
 
     def _response_body (self, resource, request, response) :
-        context = resource.render_context \
+        template = None
+        if self.template_name :
+            template = resource.get_template (self.template_name)
+        context  = resource.render_context \
             (** self._render_context (resource, request, response))
-        result = resource.rendered (context)
+        result = resource.rendered (context, template = template)
         if result is None :
             raise resource.HTTP.Error_404 ()
         return result

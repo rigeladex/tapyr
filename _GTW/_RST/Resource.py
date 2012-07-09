@@ -39,6 +39,7 @@
 #     5-Jul-2012 (CT) Add `_m_after__init__`
 #     8-Jul-2012 (CT) Rename `template` to `page_template`,
 #                     add Alias_Property `template`
+#     9-Jul-2012 (CT) Factor `get_template`, add `HTTP_Method.template_name`
 #    ««revision-date»»···
 #--
 
@@ -84,11 +85,14 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
             v = getattr (cls, k, None)
             if callable (v) :
                 sms [k] = v
-        cls._m_after__init__ (name, bases, dct)
+                tn = getattr (v, "template_name", None)
+                if tn :
+                    cls._template_names.add (tn)
         for k in ("page_template_name", "dir_template_name") :
             tn = dct.get (k)
             if tn :
                 cls._template_names.add (tn)
+        cls._m_after__init__ (name, bases, dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -272,7 +276,7 @@ class _RST_Base_ (TFL.Meta.Object) :
         if self._page_template is None :
             t_name = getattr (self, "page_template_name", None)
             if t_name :
-                self._page_template = self.Templateer.get_template \
+                self._page_template = self.get_template \
                     (t_name, self.injected_templates)
         return self._page_template
     # end def page_template
@@ -330,6 +334,11 @@ class _RST_Base_ (TFL.Meta.Object) :
     def allow_user (self, user) :
         return self.allow_method ("GET", user)
     # end def allow_user
+
+    def get_template (self, template_name) :
+        if self.Templateer is not None :
+            return self.Templateer.get_template (template_name)
+    # end def get_template
 
     def send_error_email (self, request, exc, tbi) :
         from _TFL.Formatter import formatted
@@ -533,7 +542,7 @@ class _RST_Dir_Base_ (_Ancestor) :
         if self._dir_template is None :
             t_name = getattr (self, "dir_template_name", None)
             if t_name :
-                self._dir_template = self.Templateer.get_template \
+                self._dir_template = self.get_template \
                     (t_name, self.injected_dir_templates)
         return self._dir_template
     # end def dir_template
@@ -903,7 +912,7 @@ class RST_Root (_Ancestor) :
 
     def template_iter (self) :
         seen = set ()
-        gett = self.Templateer.get_template
+        gett = self.get_template
         def _gen () :
             for tn in self.template_names :
                 yield gett (tn)
