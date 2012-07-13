@@ -30,6 +30,7 @@
 #    27-Jun-2012 (CT) Fix `_HTTP_Method_R_._check_etag` and `._check_modified`
 #    29-Jun-2012 (CT) Fix `_HTTP_Method_W_._check_etag` and `._check_modified`
 #    29-Jun-2012 (CT) Add response header `X-last-cid`
+#    13-Jul-2012 (CT) Add `_do_change_info_skip`
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,10 @@ class HTTP_Method (TFL.Meta.Object) :
                     (resource, request, response, etag)
         return result
     # end def _do_change_info
+
+    def _do_change_info_skip (self, resource, request, response) :
+        return True
+    # end def _do_change_info_skip
 
     def _get_renderer (self, resource, request, response) :
         result = self.render_man (self, resource, request)

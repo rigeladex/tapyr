@@ -66,6 +66,8 @@ class _Form_Cmd_ (_Cmd_) :
 
         _rc_form_name          = "form"
 
+        _do_change_info        = _Ancestor.GET._do_change_info_skip
+
         def _render_context (self, resource, request, response, ** kw) :
             kw [self._rc_form_name] = resource.form
             return self.__super._render_context \
@@ -77,6 +79,8 @@ class _Form_Cmd_ (_Cmd_) :
     class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.POST) :
 
         _real_name             = "POST"
+
+        _do_change_info        = GTW.RST.POST._do_change_info_skip
 
     POST = _Form_Cmd__POST_ # end class
 
@@ -99,9 +103,8 @@ class _Action_ (_Ancestor) :
 
         _real_name             = "GET"
 
-        def __call__ (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             req_data  = request.req_data
-            response  = resource.Response (request)
             top       = resource.top
             HTTP      = top.HTTP
             ETM       = top.account_manager
@@ -121,7 +124,7 @@ class _Action_ (_Ancestor) :
                     top.scope.commit     ()
                     raise HTTP.Error_404 ()
             raise HTTP.Error_404 ()
-        # end def __call__
+        # end def _response_body
 
     GET = _Action__GET_ # end class
 
@@ -137,9 +140,8 @@ class _Activate_ (_Ancestor) :
 
         _real_name             = "POST"
 
-        def __call__ (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             req_data = request.req_data
-            response  = resource.Response (request)
             top       = resource.top
             HTTP      = top.HTTP
             form      = resource.form
@@ -156,7 +158,7 @@ class _Activate_ (_Ancestor) :
                 response.add_notification \
                     (GTW.Notification (_T ("Activation successful.")))
                 raise HTTP.Redirect_302   (next)
-        # end def __call__
+        # end def _response_body
 
     POST = _Activate__POST_ # end class
 
@@ -174,9 +176,8 @@ class _Change_Email_ (_Ancestor) :
 
         _real_name             = "POST"
 
-        def __call__ (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             req_data  = request.req_data
-            response  = resource.Response (request)
             top       = resource.top
             HTTP      = top.HTTP
             ETM       = top.account_manager
@@ -215,7 +216,7 @@ class _Change_Email_ (_Ancestor) :
             result = resource.GET ()._response_body \
                 (resource, request, response)
             return result
-        # end def __call__
+        # end def _response_body
 
     POST = _Change_Email__POST_ # end class
 
@@ -231,9 +232,8 @@ class _Change_Password_ (_Ancestor) :
 
         _real_name             = "POST"
 
-        def __call__ (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             req_data  = request.req_data
-            response  = resource.Response (request)
             top       = resource.top
             HTTP      = top.HTTP
             ETM       = top.account_manager
@@ -251,6 +251,8 @@ class _Change_Password_ (_Ancestor) :
                 response.add_notification \
                     (GTW.Notification (_T ("The password has been changed.")))
                 raise HTTP.Redirect_302   (next)
+        # end def _response_body
+
     # end class _Change_Password__POST_
 
 # end class _Change_Password_
@@ -323,8 +325,7 @@ class _Logout_ (_Ancestor) :
 
         _real_name             = "POST"
 
-        def __call__ (self, resource, request) :
-            response  = resource.Response (request)
+        def _response_body (self, resource, request, response) :
             top       = resource.top
             next      = request.referrer or "/"
             next_page = top.resource_from_href (urlparse.urlsplit (next).path)
@@ -333,7 +334,7 @@ class _Logout_ (_Ancestor) :
             response.username = None
             response.add_notification (_T ("Logout successful."))
             raise top.HTTP.Redirect_302 (next)
-        # end def __call__
+        # end def _response_body
 
     POST = _Logout__POST_ # end class
 
@@ -350,9 +351,8 @@ class _Register_ (_Ancestor) :
 
         _real_name             = "POST"
 
-        def __call__ (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             req_data  = request.req_data
-            response  = resource.Response (request)
             top       = resource.top
             form      = resource.form
             errors    = form (req_data)
@@ -388,7 +388,7 @@ class _Register_ (_Ancestor) :
             result = resource.GET ()._response_body \
                 (resource, request, response)
             return result
-        # end def __call__
+        # end def _response_body
 
     POST = _Register__POST_ # end class
 
@@ -405,9 +405,8 @@ class _Request_Reset_Password_ (_Ancestor) :
 
         _real_name             = "POST"
 
-        def __call__ (self, resource, request) :
+        def _response_body (self, resource, request, response) :
             req_data  = request.req_data
-            response  = resource.Response (request)
             top       = resource.top
             form      = resource.form
             errors    = form (req_data)
@@ -445,6 +444,8 @@ class _Request_Reset_Password_ (_Ancestor) :
                         )
                     )
                 raise HTTP.Redirect_302 (next)
+        # end def _response_body
+
     POST = _Request_Reset_Password__POST_ # end class
 
 # end class _Request_Reset_Password_
