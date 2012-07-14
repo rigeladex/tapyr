@@ -811,6 +811,66 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1'
     }
 
+    >>> r = show (R.get ("/v1?verbose"))
+    { 'json' :
+        { 'entries' :
+            [ '/v1/MOM-Id_Entity'
+            , '/v1/MOM-Link'
+            , '/v1/MOM-Link1'
+            , '/v1/MOM-_MOM_Link_n_'
+            , '/v1/MOM-Link2'
+            , '/v1/MOM-Object'
+            , '/v1/PAP-Address'
+            , '/v1/PAP-Subject'
+            , '/v1/PAP-Company'
+            , '/v1/PAP-Email'
+            , '/v1/PAP-Phone'
+            , '/v1/PAP-Person'
+            , '/v1/PAP-Subject_has_Property'
+            , '/v1/PAP-Subject_has_Address'
+            , '/v1/PAP-Company_has_Address'
+            , '/v1/PAP-Subject_has_Email'
+            , '/v1/PAP-Company_has_Email'
+            , '/v1/PAP-Subject_has_Phone'
+            , '/v1/PAP-Company_has_Phone'
+            , '/v1/PAP-Entity_created_by_Person'
+            , '/v1/PAP-Person_has_Address'
+            , '/v1/PAP-Person_has_Email'
+            , '/v1/PAP-Person_has_Phone'
+            , '/v1/SRM-Link1'
+            , '/v1/SRM-Link2'
+            , '/v1/SRM-Object'
+            , '/v1/SRM-_Boat_Class_'
+            , '/v1/SRM-Boat_Class'
+            , '/v1/SRM-Handicap'
+            , '/v1/SRM-Boat'
+            , '/v1/SRM-Club'
+            , '/v1/SRM-Regatta_Event'
+            , '/v1/SWP-Link1'
+            , '/v1/SWP-Object'
+            , '/v1/SWP-Object_PN'
+            , '/v1/SWP-Page'
+            , '/v1/SWP-Page_Y'
+            , '/v1/SWP-Clip_O'
+            , '/v1/SWP-Clip_X'
+            , '/v1/SWP-Gallery'
+            , '/v1/SWP-Picture'
+            , '/v1/SRM-Page'
+            , '/v1/SRM-Regatta'
+            , '/v1/SRM-Regatta_C'
+            , '/v1/SRM-Regatta_H'
+            , '/v1/SRM-Sailor'
+            , '/v1/SRM-Boat_in_Regatta'
+            , '/v1/SRM-Race_Result'
+            , '/v1/SRM-Team'
+            , '/v1/SRM-Crew_Member'
+            , '/v1/SRM-Team_has_Boat_in_Regatta'
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1?verbose'
+    }
+
     >>> rp = show (R.get ("/v1/PAP-Person"))
     { 'json' :
         { 'entries' :
