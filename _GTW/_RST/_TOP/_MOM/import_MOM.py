@@ -2,7 +2,7 @@
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.RST.TOP.
+# This module is part of the package GTW.RST.TOP.MOM.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,29 +20,19 @@
 #
 #++
 # Name
-#    GTW.RST.TOP.import_TOP
+#    GTW.RST.TOP.MOM.import_MOM
 #
 # Purpose
-#    Import modules of package GTW.RST.TOP
+#    Import modules of package GTW.RST.TOP.MOM
 #
 # Revision Dates
-#     6-Jul-2012 (CT) Creation
+#    15-Jul-2012 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from   _GTW._RST._TOP.Base import *
-from   _GTW._RST._TOP.Dir  import *
-from   _GTW._RST._TOP.Page import *
-from   _GTW._RST._TOP.Root import *
+import _GTW._RST._TOP._MOM.Display
+import _GTW._RST._TOP._MOM.Mixin
 
-import _GTW._RST._TOP.Auth
-import _GTW._RST._TOP.Console
-import _GTW._RST._TOP.L10N
-import _GTW._RST._TOP.Request
-import _GTW._RST._TOP.Response
-
-import _GTW._RST._TOP._MOM.import_MOM
-
-### __END__ GTW.RST.TOP.import_TOP
+### __END__ GTW.RST.TOP.MOM.import_MOM

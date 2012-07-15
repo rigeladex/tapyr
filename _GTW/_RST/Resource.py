@@ -596,10 +596,9 @@ class _RST_Dir_Base_ (_Ancestor) :
         except KeyError :
             pass
         else :
-            if not grandchildren :
-                return result
-            else :
-                return result._get_child (* grandchildren)
+            if grandchildren :
+                result = result._get_child (* grandchildren)
+            return result
     # end def _get_child
 
 _Dir_Base_ = _RST_Dir_Base_ # end class
@@ -624,7 +623,7 @@ class _RST_Dir_ (_Ancestor) :
     def __init__ (self, ** kw) :
         entries = kw.pop ("entries", [])
         self.__super.__init__ (** kw)
-        self._entries   = []
+        self._entries = []
         if entries :
             self._init_add_entries (entries)
     # end def __init__

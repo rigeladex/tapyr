@@ -95,7 +95,7 @@ class L10N (GTW.RST.TOP.Dir) :
             (self.country_map, ** kw.pop ("country_map", {}))
         kw ["entries"] = tuple \
             (   _Language_ (language = l, name = l)
-            for l in TFL.I18N.Config.Languages if l
+            for l in sorted (TFL.I18N.Config.Languages) if l
             )
         self.__super.__init__ (** kw)
     # end def __init__

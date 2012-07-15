@@ -178,6 +178,11 @@ class RST_Mixin (TFL.Meta.Object) :
         return result
     # end def change_info
 
+    @Once_Property
+    def type_name (self) :
+        return self.E_Type.type_name
+    # end def type_name
+
     def query_changes (self) :
         scope = self.top.scope
         cqfs   = self.change_query_filters
@@ -227,7 +232,7 @@ class RST_E_Type_Mixin (RST_Mixin) :
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "ETM", prefix = "_")
         if "name" not in kw :
-            kw ["name"] = self.E_Type.type_name.replace (".", "-")
+            kw ["name"] = self.type_name.replace (".", "-")
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -265,6 +270,30 @@ class RST_E_Type_Mixin (RST_Mixin) :
         return result
     # end def query
 
+    def _get_child (self, child, * grandchildren) :
+        obj = self._get_child_query (child)
+        if obj is not None :
+            result = self._new_entry (obj)
+            if grandchildren :
+                result = result._get_child (* grandchildren)
+            return result
+        else :
+            return self.__super._get_child (child, * grandchildren)
+    # end def _get_child
+
+    def _get_child_query (self, child) :
+        try :
+            return self.ETM.pid_query (child)
+        except (LookupError, TypeError, ValueError) :
+            try :
+                pid = int (child)
+            except (ValueError, TypeError) :
+                pass
+            else :
+                if 0 < pid <= self.top.scope.max_pid :
+                    raise self.HTTP.Error_410
+    # end def _get_child_query
+
     def _get_objects (self) :
         change_info = self.change_info
         cid = change_info and change_info.cid
@@ -288,6 +317,10 @@ class RST_E_Type_Mixin (RST_Mixin) :
             with self.LET (** kw) :
                 yield
     # end def _prepare_handle_method
+
+    def _new_entry (self, instance, ** kw) :
+        return self.Entity (obj = instance, parent = self, ** kw)
+    # end def _new_entry
 
 # end class RST_E_Type_Mixin
 

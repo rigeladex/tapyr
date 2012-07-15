@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -55,11 +55,8 @@ class FO (TFL.Meta.Object) :
             for n in name.split (".") :
                 obj = getattr (obj, n)
             FO = getattr (obj, "FO", None)
-            if FO is not None :
-                result = unicode (FO)
-            else :
-                result = unicode (obj)
-            self.__cache [name] = result
+            self.__cache [name] = result = unicode \
+                (FO if FO is not None else obj)
         return result
     # end def _get_nested
 

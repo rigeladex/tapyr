@@ -108,11 +108,7 @@ class _TOP_Base_ (_Ancestor) :
     GET = _TOP_Base_GET_ # end class
 
     def __init__ (self, ** kw) :
-        self.pop_to_self \
-            ( kw
-            , "login_required", "Media"
-            , prefix = "_"
-            )
+        self.pop_to_self (kw, "login_required", "Media", prefix = "_")
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -208,16 +204,9 @@ class _TOP_Base_ (_Ancestor) :
     # end def obj_href
 
     def page_from_obj (self, obj) :
-        result = None
-        href   = self.obj_href (obj)
-        if href :
-            top    = self.top
-            result = top.Table.get (href)
-            if result is None :
-                man = self.etype_manager (obj)
-                if man :
-                    result = man.page_from_obj (obj)
-        return result
+        man = self.etype_manager (obj)
+        if man :
+            return man.page_from_obj (obj)
     # end def page_from_obj
 
     def render_context (self, nav_page = None, ** kw) :

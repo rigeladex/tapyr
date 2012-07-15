@@ -34,11 +34,12 @@
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _GTW                     import GTW
+from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 import _GTW._RST._MOM
 
-from   _MOM.import_MOM          import MOM, Q
+from   _MOM.import_MOM          import Q
 
 import _TFL._Meta.Object
 import _TFL._Meta.Property

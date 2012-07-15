@@ -145,29 +145,6 @@ class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
         return self.__super.allow_method (method, user)
     # end def allow_method
 
-    def _get_child (self, child, * grandchildren) :
-        try :
-            obj = self.ETM.pid_query (child)
-        except (LookupError, TypeError) :
-            try :
-                pid = int (child)
-            except (ValueError, TypeError) :
-                pass
-            else :
-                if 0 < pid <= self.top.scope.max_pid :
-                    raise self.HTTP.Error_410
-        else :
-            result = self._new_entry (obj)
-            if not grandchildren :
-                return result
-            else :
-                return result._get_child (* grandchildren)
-    # end def _get_child
-
-    def _new_entry (self, instance, ** kw) :
-        return self.Entity (obj = instance, parent = self, ** kw)
-    # end def _new_entry
-
 E_Type = RST_E_Type # end class
 
 if __name__ != "__main__" :
