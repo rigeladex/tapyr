@@ -99,6 +99,7 @@
 #    26-Jun-2012 (CT) Add and use `T_Extension`
 #    27-Jun-2012 (CT) Rename `_canonical_name` to`canonical_type_name`
 #    29-Jun-2012 (CT) Add `max_pid`
+#    16-Jul-2012 (CT) Add and register `_atexit`
 #    ««revision-date»»···
 #--
 
@@ -121,9 +122,19 @@ import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
+import atexit
 import itertools
 import traceback
 import uuid
+
+@atexit.register
+def _atexit () :
+    for s in list (Scope.Table.itervalues ()) :
+        try :
+            s.destroy ()
+        except Exception :
+            pass
+# end def _atexit
 
 class Scope (TFL.Meta.Object) :
 
