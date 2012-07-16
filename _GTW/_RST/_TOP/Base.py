@@ -48,6 +48,8 @@ from   _TFL.predicate           import uniq
 
 import _TFL.I18N
 
+import time
+
 class RST_TOP_HTML (GTW.RST.Mime_Type.HTML) :
 
     _real_name                 = "HTML"
@@ -81,7 +83,7 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
             (** self._render_context (resource, request, response))
         result = resource.rendered (context, template = template)
         if result is None :
-            raise resource.HTTP.Error_404 ()
+            raise resource.Status.Not_Found ()
         return result
     # end def _response_body
 

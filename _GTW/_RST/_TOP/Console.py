@@ -313,8 +313,8 @@ _Ancestor = GTW.RST.TOP.Page
 class Console (_Ancestor) :
     """Interactive console running in web page."""
 
-    template_name     = "console"
-    completion_cutoff = None
+    page_template_name         = "console"
+    completion_cutoff          = None
 
     class Console_GET (_Ancestor.GET) :
 
@@ -327,7 +327,7 @@ class Console (_Ancestor) :
             cmd      = req_data.get ("cmd")
             complete = req_data.get ("complete")
             if cmd or complete :
-                return GTW.RST.Mime_Type.JSON (self, resource, request)
+                return GTW.RST.Mime_Type.JSON (self, resource)
             else :
                 return self.__super._get_renderer (resource, request, response)
         # end def _get_renderer
@@ -384,7 +384,7 @@ class Console (_Ancestor) :
                 return self.__super._response_body (resource, request, response)
         # end def _response_body
 
-    # end class Console_GET
+    GET = Console_GET # end class
 
 
     @Once_Property

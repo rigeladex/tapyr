@@ -94,7 +94,7 @@ __doc__ = """
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
     >>> sorted (root3._template_names)
-    [u'account_activate', u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'login']
+    [u'account_activate', u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'console', u'login']
 
     >>> auth = root3.SC.Auth
     >>> auth
@@ -119,6 +119,48 @@ __doc__ = """
     [u'de', u'en']
     >>> sorted (l10n._entry_map.items ())
     [(u'de', <_Language_ de: /L10N/de>), (u'en', <_Language_ en: /L10N/en>)]
+
+    >>> for k, v in sorted (root3.Status.Status.Table.iteritems ()) :
+    ...     print (v)
+    <HTTP status 100: Continue>
+    <HTTP status 101: Switching protocols>
+    <HTTP status 200: Ok>
+    <HTTP status 201: Created>
+    <HTTP status 202: Accepted>
+    <HTTP status 203: Non authoritative information>
+    <HTTP status 204: No content>
+    <HTTP status 205: Reset content>
+    <HTTP status 206: Partial content>
+    <HTTP status 300: Multiple choices>
+    <HTTP status 301: Moved permanently>
+    <HTTP status 302: Found (moved temporarily)>
+    <HTTP status 303: See other>
+    <HTTP status 304: Not modified>
+    <HTTP status 305: Use proxy>
+    <HTTP status 307: Temporary redirect>
+    <HTTP status 400: Bad request>
+    <HTTP status 401: Unauthorized>
+    <HTTP status 403: Forbidden>
+    <HTTP status 404: Not found>
+    <HTTP status 405: Method not allowed>
+    <HTTP status 406: Not acceptable>
+    <HTTP status 407: Proxy authentication required>
+    <HTTP status 408: Request timeout>
+    <HTTP status 409: Conflict>
+    <HTTP status 410: Gone>
+    <HTTP status 411: Lengthrequired>
+    <HTTP status 412: Precondition failed>
+    <HTTP status 413: Request entity too large>
+    <HTTP status 414: Request uri too long>
+    <HTTP status 415: Unsupported media type>
+    <HTTP status 416: Requested range not satisfiable>
+    <HTTP status 417: Expectation failed>
+    <HTTP status 500: Internal server error>
+    <HTTP status 501: Not implemented>
+    <HTTP status 502: Bad gateway>
+    <HTTP status 503: Service unavailable>
+    <HTTP status 504: Gateway timeout>
+    <HTTP status 505: Http version not supported>
 
 """
 

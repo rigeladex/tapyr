@@ -291,7 +291,7 @@ class RST_E_Type_Mixin (RST_Mixin) :
                 pass
             else :
                 if 0 < pid <= self.top.scope.max_pid :
-                    raise self.HTTP.Error_410
+                    raise self.Status.Gone
     # end def _get_child_query
 
     def _get_objects (self) :

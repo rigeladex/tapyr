@@ -104,12 +104,12 @@ class _Action_ (_Ancestor) :
         _real_name             = "GET"
 
         def _response_body (self, resource, request, response) :
-            req_data  = request.req_data
-            top       = resource.top
-            HTTP      = top.HTTP
-            ETM       = top.account_manager
-            account   = ETM.pid_query (req_data ["p"])
-            action    = top.scope.GTW.OMP.Auth._Account_Token_Action_.query \
+            req_data     = request.req_data
+            top          = resource.top
+            HTTP_Status  = top.Status
+            ETM          = top.account_manager
+            account      = ETM.pid_query (req_data ["p"])
+            action       = top.scope.GTW.OMP.Auth._Account_Token_Action_.query \
                 (account = account, token = req_data ["t"]).first ()
             if action :
                 try :
@@ -118,12 +118,11 @@ class _Action_ (_Ancestor) :
                         ( GTW.Notification
                             (_T ("Email verification successful."))
                         )
-                    raise HTTP.Redirect_302 (next)
+                    raise HTTP_Status.Found (next)
                 except GTW.OMP.Auth.Action_Exipred :
-                    action.destroy       ()
-                    top.scope.commit     ()
-                    raise HTTP.Error_404 ()
-            raise HTTP.Error_404 ()
+                    action.destroy      ()
+                    top.scope.commit    ()
+            raise HTTP_Status.Not_Found ()
         # end def _response_body
 
     GET = _Action__GET_ # end class
@@ -141,11 +140,11 @@ class _Activate_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            req_data = request.req_data
-            top       = resource.top
-            HTTP      = top.HTTP
-            form      = resource.form
-            errors    = form (req_data)
+            req_data    = request.req_data
+            top         = resource.top
+            HTTP_Status = top.Status
+            form        = resource.form
+            errors      = form (req_data)
             if errors :
                 result  = resource.GET ()._response_body \
                     (resource, request, response)
@@ -157,7 +156,7 @@ class _Activate_ (_Ancestor) :
                 response.username = account.name
                 response.add_notification \
                     (GTW.Notification (_T ("Activation successful.")))
-                raise HTTP.Redirect_302   (next)
+                raise HTTP_Status.Found (next)
         # end def _response_body
 
     POST = _Activate__POST_ # end class
@@ -177,13 +176,13 @@ class _Change_Email_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            req_data  = request.req_data
-            top       = resource.top
-            HTTP      = top.HTTP
-            ETM       = top.account_manager
-            account   = ETM.pid_query (req_data ["p"])
-            form      = resource.form
-            errors    = form (req_data)
+            req_data    = request.req_data
+            top         = resource.top
+            HTTP_Status = top.Status
+            ETM         = top.account_manager
+            account     = ETM.pid_query (req_data ["p"])
+            form        = resource.form
+            errors      = form (req_data)
             if not errors :
                 next  = req_data.get ("next", "/")
                 host  = request.host
@@ -212,7 +211,7 @@ class _Change_Email_ (_Ancestor) :
                             )
                         )
                     ### XXX Send info email to old email
-                    raise HTTP.Redirect_302 (next)
+                    raise HTTP_Status.Found (next)
             result = resource.GET ()._response_body \
                 (resource, request, response)
             return result
@@ -233,13 +232,13 @@ class _Change_Password_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            req_data  = request.req_data
-            top       = resource.top
-            HTTP      = top.HTTP
-            ETM       = top.account_manager
-            account   = ETM.pid_query (req_data ["p"])
-            form      = resource.form
-            errors    = form (req_data)
+            req_data    = request.req_data
+            top         = resource.top
+            HTTP_Status = top.Status
+            ETM         = top.account_manager
+            account     = ETM.pid_query (req_data ["p"])
+            form        = resource.form
+            errors      = form (req_data)
             if errors :
                 result  = resource.GET ()._response_body \
                     (resource, request, response)
@@ -250,7 +249,7 @@ class _Change_Password_ (_Ancestor) :
                 response.username = account.name
                 response.add_notification \
                     (GTW.Notification (_T ("The password has been changed.")))
-                raise HTTP.Redirect_302   (next)
+                raise HTTP_Status.Found (next)
         # end def _response_body
 
     # end class _Change_Password__POST_
@@ -308,7 +307,7 @@ class _Login_ (_Ancestor) :
                         response.username = username = req_data ["username"]
                         response.add_notification \
                             (_T ("Welcome %s.") % (username, ))
-                    raise HTTP.Redirect_302 (next)
+                    raise resource.Status.Found (next)
         # end def _response_body
 
     POST = _Login__POST_ # end class
@@ -333,7 +332,7 @@ class _Logout_ (_Ancestor) :
                 next = "/"
             response.username = None
             response.add_notification (_T ("Logout successful."))
-            raise top.HTTP.Redirect_302 (next)
+            raise top.Status.Found (next)
         # end def _response_body
 
     POST = _Logout__POST_ # end class
@@ -383,7 +382,7 @@ class _Register_ (_Ancestor) :
                               "address."
                             )
                         )
-                    raise HTTP.Redirect_302 (next)
+                    raise top.Status.Found (next)
             response.username = None
             result = resource.GET ()._response_body \
                 (resource, request, response)
@@ -443,7 +442,7 @@ class _Request_Reset_Password_ (_Ancestor) :
                             )
                         )
                     )
-                raise HTTP.Redirect_302 (next)
+                raise top.Status.Found (next)
         # end def _response_body
 
     POST = _Request_Reset_Password__POST_ # end class

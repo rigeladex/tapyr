@@ -39,8 +39,12 @@ import _GTW._RST._TOP._MOM.Mixin
 import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
 
+from   _MOM.import_MOM          import MOM, Q
+
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
+
+from   posixpath                import join as pp_join
 
 import datetime
 
@@ -101,7 +105,7 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         if self._old_objects is not objects :
             self._entry_map = {}
             self._entries   = []
-            self.add_entries (* (self._new_entry (o) for o in objects))
+            self.add_entries (* tuple (self._new_entry (o) for o in objects))
             if self._admin :
                 self.add_entries (self._admin)
             self._old_objects = objects
@@ -128,7 +132,7 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def href_change
 
     def href_display (self, obj) :
-        return pjoin \
+        return pp_join \
             (self.abs_href, getattr (obj, "perma_name", str (obj.pid)))
     # end def href_display
 
@@ -182,6 +186,7 @@ class TOP_MOM_E_Type (_E_Type_) :
     # end def __init__
 
     def _admin_page (self, admin_args, parent = None) :
+        return ### XXX remove this after implementing GTW.RST.TOP.MOM.Admin.E_Type
         m_kw = admin_args.copy ()
         if parent is None :
             parent = self
@@ -239,14 +244,15 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
             self._entry_map = {}
             self._entries   = []
             self.add_entries \
-                ( * ( self.Year
-                        ( name       = str (y)
-                        , parent     = self
-                        , year       = y
-                        )
-                    for y in xrange
-                        (self.year + 1, self.top.copyright_start - 1, -1)
-                    )
+                ( * tuple
+                      ( self.Year
+                          ( name       = str (y)
+                          , parent     = self
+                          , year       = y
+                          )
+                      for y in xrange
+                          (self.year + 1, self.top.copyright_start - 1, -1)
+                      )
                 )
             if self._admin :
                 self.add_entries (self._admin)
@@ -280,7 +286,7 @@ class TOP_MOM_E_Type_Archive_Y (_E_Type_Archive_) :
     _real_name = "E_Type_Archive_Y"
 
     def href_display (self, obj) :
-        return pjoin (self.abs_href, str (obj.year), obj.perma_name)
+        return pp_join (self.abs_href, str (obj.year), obj.perma_name)
     # end def href_display
 
     def _year_filter (self, y) :

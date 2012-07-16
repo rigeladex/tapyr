@@ -46,6 +46,8 @@ from   _TFL.I18N                import _, _T, _Tn
 
 from   posixpath                import join  as pp_join
 
+import itertools
+
 _Ancestor = GTW.RST.TOP.Page
 
 class _Language_ (_Ancestor) :
@@ -57,7 +59,7 @@ class _Language_ (_Ancestor) :
         _real_name             = "GET"
 
         def __call__ (self, resource, request) :
-            HTTP      = resource.top.HTTP
+            HTTP_Status = resource.Status
             language  = self.language
             next      = request.req_data.get ("next", "/")
             response  = resource.Response (request)
@@ -69,8 +71,8 @@ class _Language_ (_Ancestor) :
                         ( GTW.Notification
                             (_T (u"Language %s selected") % language)
                         )
-                raise HTTP.Redirect_307 (next)
-            raise HTTP.Error_404 ()
+                raise HTTP_Status.Temporary_Redirect (next)
+            raise HTTP_Status.Not_Found ()
         # end def __call__
 
     GET = _Language__GET_ # end class _Language__GET_
@@ -106,7 +108,8 @@ class L10N (GTW.RST.TOP.Dir) :
     # end def languages
 
     def flag (self, lang) :
-        result = self._flag_map.get (lang)
+        key    = tuple (lang)
+        result = self._flag_map.get (key)
         if result is None :
             if isinstance (lang, basestring) :
                 lang = lang.split ("_")
@@ -118,7 +121,7 @@ class L10N (GTW.RST.TOP.Dir) :
                 if k :
                     r = pp_join (prefix, "%s.png" % (k, ))
                     if check (r) :
-                        result = self._flag_map [lang] = r
+                        result = self._flag_map [key] = r
                         break
         return result
     # end def flag

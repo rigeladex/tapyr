@@ -52,7 +52,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-import _GTW._RST.HTTP_Method
+import _GTW._RST.import_RST
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
@@ -109,8 +109,14 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
         result.parent = kw.pop ("parent", None)
         result.__init__        (* args, ** kw)
         result._after__init__  (kw)
-        if parent and parent._greet_entry :
-            parent._greet_entry (result)
+        if parent :
+            try :
+                greet = parent._greet_entry
+            except AttributeError :
+                pass
+            else :
+                if greet is not None :
+                    greet (result)
         return result
     # end def __call__
 
@@ -121,6 +127,8 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     __metaclass__              = _RST_Meta_
     _real_name                 = "_Base_"
+
+    Status                     = GTW.RST.HTTP_Status
 
     hidden                     = False
     implicit                   = False
@@ -283,8 +291,7 @@ class _RST_Base_ (TFL.Meta.Object) :
         if self._page_template is None :
             t_name = getattr (self, "page_template_name", None)
             if t_name :
-                self._page_template = self.get_template \
-                    (t_name, self.injected_templates)
+                self._page_template = self.get_template (t_name)
         return self._page_template
     # end def page_template
 
@@ -344,7 +351,8 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     def get_template (self, template_name) :
         if self.Templateer is not None :
-            return self.Templateer.get_template (template_name)
+            return self.Templateer.get_template \
+                (template_name, self.injected_templates)
     # end def get_template
 
     def send_error_email (self, request, exc, tbi) :
@@ -625,7 +633,7 @@ class _RST_Dir_ (_Ancestor) :
         self.__super.__init__ (** kw)
         self._entries = []
         if entries :
-            self._init_add_entries (entries)
+            self.add_entries (* entries)
     # end def __init__
 
     @property
@@ -643,8 +651,14 @@ class _RST_Dir_ (_Ancestor) :
     # end def entries_transitive
 
     def add_entries (self, * entries) :
-        self._entries.extend (entries)
-        self._entry_map.update ((e.name, e) for e in entries)
+        add = self._entries.append
+        map = self._entry_map
+        for e in entries :
+            if isinstance (e, tuple) :
+                cls, args, kw = e
+                e             = cls (* args, ** dict (kw, parent = self))
+            add (e)
+            map [e.name] = e
     # end def add_entries
 
     def sub_dir_iter (self) :
@@ -679,14 +693,6 @@ class _RST_Dir_ (_Ancestor) :
                 result = e_result
         return result
     # end def _add_href_pat_frag_tail
-
-    def _init_add_entries (self, entries) :
-        self.add_entries \
-            ( * (   cls (* args, ** dict (kw, parent = self))
-                for cls, args, kw in entries
-                )
-            )
-    # end def _init_add_entries
 
 _Dir_ = _RST_Dir_ # end class
 
@@ -914,7 +920,7 @@ class RST_Root (_Ancestor) :
             except KeyError :
                 pass
             else :
-                raise self.HTTP.Redirect_302 (result)
+                raise self.Status.Found (result)
         if result is None :
             result = Table.get (href)
         if result is None :
@@ -969,37 +975,39 @@ class RST_Root (_Ancestor) :
 
     def wsgi_app (self, environ, start_response) :
         """WSGI application responding to http[s] requests."""
-        HTTP    = self.HTTP
-        request = self.Request (environ)
+        HTTP_Status = self.Status.Status
+        HTTP        = self.HTTP
+        request     = self.Request (environ)
         try :
-            result = self._http_response (request)
-        except HTTP.Status as status :
-            result = status (request)
+            result  = self._http_response (request)
+        except HTTP_Status as status :
+            result  = status (self, request)
         except HTTP.HTTP_Exception as exc :
             ### works for werkzeug.exceptions.HTTPException
             return exc
         except Exception as exc :
-            tbi    = traceback.format_exc ()
-            result = self._http_response_error (request, exc, tbi)
+            tbi     = traceback.format_exc ()
+            result  = self._http_response_error (request, exc, tbi)
         if not result :
-            result = self._http_response_error \
+            result  = self._http_response_error \
                 (request, ValueError ("No result"))
         return result (environ, start_response)
     # end def wsgi_app
 
     def _http_response (self, request) :
-        HTTP     = self.HTTP
-        href     = request.path
-        resource = self.resource_from_href (href)
-        if resource  :
-            user       = request.user = self._get_user (request.username)
+        HTTP        = self.HTTP
+        Status      = self.Status
+        href        = request.path
+        resource    = self.resource_from_href (href)
+        if resource :
+            user       = request.user
             auth       = user and user.authenticated
             resource   = resource._effective
             meth_name  = request.method
             if meth_name not in resource.SUPPORTED_METHODS :
-                raise HTTP.Error_405 \
+                raise Status.Method_Not_Allowed \
                     (valid_methods = resource.SUPPORTED_METHODS)
-            method   = getattr (resource, meth_name) ()
+            method  = getattr (resource, meth_name) ()
             if resource.allow_method (method, user) :
                 if resource.DEBUG :
                     context = TFL.Context.time_block
@@ -1014,13 +1022,13 @@ class RST_Root (_Ancestor) :
                 with context (fmt, sys.stderr) :
                     return resource._handle_method (method, request)
             else :
-                raise (HTTP.Error_403 if auth else HTTP.Error_401)
-        raise HTTP.Error_404
+                raise (Status.Forbidden if auth else Status.Unauthorized) ()
+        raise Status.Not_Found ()
     # end def _http_response
 
     def _http_response_error (self, request, exc, tbi = None) :
         self.send_error_email (request, exc, tbi)
-        return self.HTTP.Error_500 (exc) (request)
+        return self.Status.Internal_Server_Error (exc) (self, request)
     # end def _http_response_error
 
 Root = RST_Root # end class

@@ -102,7 +102,10 @@ class TOP_MOM_E_Type_Mixin (GTW.RST.MOM.RST_E_Type_Mixin) :
         self.pop_to_self (kw, "ETM", prefix = "_")
         E_Type      = self.E_Type
         name        = kw.pop  ("name",        E_Type.ui_name)
-        short_title = kw.pop  ("short_title", _T (name))
+        short_title = kw.pop  \
+            ( "short_title"
+            , _T (name.capitalize () if name [0] >= "a" else name)
+            )
         title       = kw.pop  ("title",       _T (E_Type.__doc__))
         self.__super.__init__ \
             ( name          = TFL.Ascii.sanitized_filename (unicode (name))
