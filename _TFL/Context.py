@@ -31,6 +31,7 @@
 #                     single name and value
 #    17-Dec-2010 (CT) `time_block` added
 #    28-Jun-2012 (CT) Add `relaxed`
+#    17-Jul-2012 (CT) Augment `AttributeError` info in `attr_let`
 #    ««revision-date»»···
 #--
 
@@ -51,14 +52,20 @@ def attr_let (obj, ** kw) :
         store [k] = getattr (obj, k, undef)
     try :
         for k, v in kw.iteritems () :
-            setattr (obj, k, v)
+            try :
+                setattr (obj, k, v)
+            except AttributeError as exc :
+                raise AttributeError ("%s: [%s = %r]" % (exc, k, v))
         yield
     finally :
         for k, v in store.iteritems () :
             if v is undef :
                 delattr (obj, k)
             else :
-                setattr (obj, k, v)
+                try :
+                    setattr (obj, k, v)
+                except AttributeError as exc :
+                    raise AttributeError ("%s: [%s = %r]" % (exc, k, v))
 # end def attr_let
 
 @TFL.Contextmanager
