@@ -46,6 +46,8 @@
 #     4-Jun-2012 (MG) `_handle_run_server` support for `host` added
 #    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
 #    28-Jun-2012 (CT) Call `init_app_cache` unconditionally
+#    17-Jul-2012 (MG) `_wsgi_app` move `Break` after the generation of the
+#                     app cache
 #    ««revision-date»»···
 #--
 
@@ -245,9 +247,9 @@ class GT2W_Command (GTW.OMP.Command) :
             , user_session_ttl    = cmd.user_session_ttl.date_time_delta
             )
         nav.Templateer.env.static_handler = app.handlers [0]
+        self.init_app_cache (nav)
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
-        self.init_app_cache (nav)
         return app
     # end def _wsgi_app
 
