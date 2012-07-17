@@ -235,7 +235,7 @@ class Instance (_Base_) :
         if result is None :
             result = self.init
         return result
-    # end def init
+    # end def edit
 
     @property
     def init (self) :

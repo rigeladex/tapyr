@@ -56,6 +56,7 @@
 #    27-Jan-2012 (CT) Change `email_uri` to allow tuple argument for `email`
 #    22-Feb-2012 (CT) Add `vimeo_video` and `youtube_video`
 #     4-May-2012 (CT) Change `email_uri` to allow email-tuple and `text` passed
+#    16-Jul-2012 (MG) `log_stdout` enhanced
 #    ««revision-date»»···
 #--
 
@@ -178,7 +179,7 @@ class GTW (TFL.Meta.Object) :
     list       = staticmethod (list)
 
     def log_stdout (self, * text) :
-        print " ".join (text)
+        print " ".join (str (l) for l in text)
         return ""
     # end def log_stdout
 
