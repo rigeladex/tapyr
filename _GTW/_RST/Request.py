@@ -29,6 +29,7 @@
 #    19-Jun-2012 (CT) Creation
 #    28-Jun-2012 (CT) Add `verbose`
 #     2-Jul-2012 (CT) Factor `has_option` to `GTW.Request_Data`
+#    17-Jul-2012 (CT) Add property `user`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     """Wrap and extend wsgi-specific Request class."""
 
     _real_name = "Request"
+    _user      = None
 
     def __init__ (self, root, environ) :
         self.root     = root
@@ -73,6 +75,19 @@ class _RST_Request_ (TFL.Meta.Object) :
     def settings (self) :
         return self.root._kw
     # end def settings
+
+    @property
+    def user (self) :
+        result = self._user
+        if result is None and self.username :
+            self._user = self.root._get_user (self.username)
+        return self._user
+    # end def user
+
+    @user.setter
+    def user (self, value) :
+        self._user = value
+    # end def user
 
     @Once_Property
     def username (self) :

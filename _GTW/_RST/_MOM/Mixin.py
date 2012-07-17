@@ -32,6 +32,8 @@
 #     5-Jul-2012 (CT) Add support for nested entities to `_PUT_POST_Mixin_`
 #                     * factor `_resolve_request_attrs`
 #                     * add and use `_resolve_nested_request_attrs`
+#    17-Jul-2012 (CT) Factor `_changed_cid`
+#    17-Jul-2012 (CT) Include `_change_info` in `_handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -270,6 +272,13 @@ class RST_E_Type_Mixin (RST_Mixin) :
         return result
     # end def query
 
+    def _changed_cid (self) :
+        change_info = self.change_info
+        cid         = change_info and change_info.cid
+        if self._old_cid != cid :
+            return cid
+    # end def _changed_cid
+
     def _get_child (self, child, * grandchildren) :
         obj = self._get_child_query (child)
         if obj is not None :
@@ -295,10 +304,9 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def _get_child_query
 
     def _get_objects (self) :
-        change_info = self.change_info
-        cid = change_info and change_info.cid
-        if  self._old_cid != cid :
-            self._old_cid  = cid
+        cid = self._changed_cid ()
+        if cid is not None :
+            self._old_cid = cid
             self._objects = self.query ().all ()
         return self._objects
     # end def _get_objects
@@ -313,7 +321,11 @@ class RST_E_Type_Mixin (RST_Mixin) :
                 if qr.attributes :
                     kw ["attributes"] = qr.attributes
                 ### temporarily invalidate cache
-                kw.update (_old_cid = object (), _objects = [])
+                kw.update \
+                    ( _change_info = None
+                    , _objects     = []
+                    , _old_cid     = object ()
+                    )
             with self.LET (** kw) :
                 yield
     # end def _prepare_handle_method

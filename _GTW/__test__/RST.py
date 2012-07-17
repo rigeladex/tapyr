@@ -371,7 +371,7 @@ R = Requester ("http://localhost:9999")
 server_args = \
     [ "-UTP=RST"
     , "-auto_reload=no"
-    , "-debug=yes"
+    , "-debug=no"
     , "-load_I18N=no"
     , "-log_level=0"
     , "-port=9999"
@@ -381,7 +381,7 @@ server_args = \
 
 _test_cqf = r"""
     >>> server = Scaffold (["wsgi"] + server_args + ["-db_url", %(p1)s, "-db_name", %(n1)s or "test"]) # doctest:+ELLIPSIS
-    Loaded Scope...
+    ...
     >>> root   = Scaffold.root
     >>> v1     = root.resource_from_href ("v1")
 
@@ -664,12 +664,16 @@ _test_delete = r"""
     }
 
     >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1)))
-    { 'status' : 410
+    { 'json' :
+        { 'description' : 'Gone' }
+    , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
 
     >>> _ = show (R.get ("/v1/pid/1"))
-    { 'status' : 410
+    { 'json' :
+        { 'description' : 'Gone' }
+    , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
 
@@ -1855,8 +1859,10 @@ _test_get = r"""
     }
 
     >>> _ = show (R.get ("/RAISE"))
-    { 'content' :
-    [ 'Wilful raisement' ]
+    { 'json' :
+        { 'content' : 'Wilful raisement'
+        , 'description' : 'Internal server error'
+        }
     , 'status' : 500
     , 'url' : 'http://localhost:9999/RAISE'
     }

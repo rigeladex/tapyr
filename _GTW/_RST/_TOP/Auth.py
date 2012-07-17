@@ -118,7 +118,7 @@ class _Action_ (_Ancestor) :
                         ( GTW.Notification
                             (_T ("Email verification successful."))
                         )
-                    raise HTTP_Status.Found (next)
+                    raise HTTP_Status.See_Other (next)
                 except GTW.OMP.Auth.Action_Exipred :
                     action.destroy      ()
                     top.scope.commit    ()
@@ -156,7 +156,7 @@ class _Activate_ (_Ancestor) :
                 response.username = account.name
                 response.add_notification \
                     (GTW.Notification (_T ("Activation successful.")))
-                raise HTTP_Status.Found (next)
+                raise HTTP_Status.See_Other (next)
         # end def _response_body
 
     POST = _Activate__POST_ # end class
@@ -211,7 +211,7 @@ class _Change_Email_ (_Ancestor) :
                             )
                         )
                     ### XXX Send info email to old email
-                    raise HTTP_Status.Found (next)
+                    raise HTTP_Status.See_Other (next)
             result = resource.GET ()._response_body \
                 (resource, request, response)
             return result
@@ -249,7 +249,7 @@ class _Change_Password_ (_Ancestor) :
                 response.username = account.name
                 response.add_notification \
                     (GTW.Notification (_T ("The password has been changed.")))
-                raise HTTP_Status.Found (next)
+                raise HTTP_Status.See_Other (next)
         # end def _response_body
 
     # end class _Change_Password__POST_
@@ -307,7 +307,7 @@ class _Login_ (_Ancestor) :
                         response.username = username = req_data ["username"]
                         response.add_notification \
                             (_T ("Welcome %s.") % (username, ))
-                    raise resource.Status.Found (next)
+                    raise resource.Status.See_Other (next)
         # end def _response_body
 
     POST = _Login__POST_ # end class
@@ -332,7 +332,7 @@ class _Logout_ (_Ancestor) :
                 next = "/"
             response.username = None
             response.add_notification (_T ("Logout successful."))
-            raise top.Status.Found (next)
+            raise top.Status.See_Other (next)
         # end def _response_body
 
     POST = _Logout__POST_ # end class
@@ -382,7 +382,7 @@ class _Register_ (_Ancestor) :
                               "address."
                             )
                         )
-                    raise top.Status.Found (next)
+                    raise top.Status.See_Other (next)
             response.username = None
             result = resource.GET ()._response_body \
                 (resource, request, response)
@@ -442,7 +442,7 @@ class _Request_Reset_Password_ (_Ancestor) :
                             )
                         )
                     )
-                raise top.Status.Found (next)
+                raise top.Status.See_Other (next)
         # end def _response_body
 
     POST = _Request_Reset_Password__POST_ # end class

@@ -200,6 +200,7 @@ class GT2W_Command_X (GTW.OMP.Command) :
                 , log_level           = cmd.log_level
                 , session_id          = bytes ("SESSION_ID")
                 , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+                , use_www_debugger    = cmd.debug
                 , ** kw
                 )
             if result.Cacher :

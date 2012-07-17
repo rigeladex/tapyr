@@ -57,7 +57,7 @@ import _GTW._RST.import_RST
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Filename            import Filename
-from   _TFL.predicate           import callable
+from   _TFL.predicate           import callable, first
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -650,6 +650,12 @@ class _RST_Dir_ (_Ancestor) :
                     yield d
     # end def entries_transitive
 
+    @property
+    def template (self) :
+        eff = self._effective
+        result = self.dir_template if eff is self else eff.template
+    # end def template
+
     def add_entries (self, * entries) :
         add = self._entries.append
         map = self._entry_map
@@ -776,7 +782,9 @@ class RST_Raiser (_Ancestor) :
         _real_name             = "GET"
 
         def _response_body (self, resource, request, response) :
-            raise RuntimeError ("Wilful raisement")
+            content = "Wilful raisement"
+            raise resource.Status.Internal_Server_Error \
+                (RuntimeError (content), content = content)
         # end def _response_body
 
     GET = RST_Raiser_GET # end class
@@ -806,6 +814,7 @@ class RST_Root (_Ancestor) :
     name                       = ""
     prefix                     = ""
     site_url                   = ""
+    use_www_debugger           = False
 
     _exclude_robots            = True
     _href_pat                  = None
@@ -916,11 +925,15 @@ class RST_Root (_Ancestor) :
         result       = None
         if redirects :
             try :
-                result = redirects [href]
+                redirect = redirects [href]
             except KeyError :
                 pass
             else :
-                raise self.Status.Found (result)
+                if isinstance (redirect, tuple) :
+                    status, result = redirect
+                else :
+                    status, result = 302, redirect
+                raise self.Status.Status [status] (result)
         if result is None :
             result = Table.get (href)
         if result is None :
@@ -928,11 +941,15 @@ class RST_Root (_Ancestor) :
             if href_pat :
                 match = href_pat.match (href)
                 if match :
-                    head = match.group (0)
-                    tail = href [len (head):].lstrip ("/").split ("/")
+                    head     = match.group (0)
                     resource = Table.get (head)
                     if resource :
-                        result = resource._get_child (* tail)
+                        tail = href [len (head):].lstrip ("/")
+                        if tail :
+                            tail   = tail.split ("/")
+                            result = resource._get_child (* tail)
+                        else :
+                            result = resource
         if result is None and not match :
             head = href
             tail = []
@@ -986,11 +1003,15 @@ class RST_Root (_Ancestor) :
             ### works for werkzeug.exceptions.HTTPException
             return exc
         except Exception as exc :
+            if self.use_www_debugger :
+                raise
             tbi     = traceback.format_exc ()
             result  = self._http_response_error (request, exc, tbi)
         if not result :
-            result  = self._http_response_error \
-                (request, ValueError ("No result"))
+            exc     = ValueError ("No result")
+            if self.use_www_debugger :
+                raise exc
+            result  = self._http_response_error (request, exc)
         return result (environ, start_response)
     # end def wsgi_app
 

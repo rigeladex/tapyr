@@ -108,7 +108,8 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             self.add_entries (* tuple (self._new_entry (o) for o in objects))
             if self._admin :
                 self.add_entries (self._admin)
-            self._old_objects = objects
+            if objects :
+                self._old_objects = objects
         return self._entries
     # end def entries
 
@@ -225,7 +226,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
         @Once_Property
         def query_filters (self) :
             return \
-                ( (self.parent._year_filter (self.year), )
+                ( self.parent._year_filter (self.year)
                 + self.__super.query_filters
                 )
         # end def query_filters
@@ -240,20 +241,20 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
 
     @property
     def entries (self) :
-        if self._old_year != self.year :
+        if self._old_year != self.year or self._changed_cid () is not None :
             self._entry_map = {}
             self._entries   = []
-            self.add_entries \
-                ( * tuple
-                      ( self.Year
-                          ( name       = str (y)
-                          , parent     = self
-                          , year       = y
-                          )
-                      for y in xrange
-                          (self.year + 1, self.top.copyright_start - 1, -1)
-                      )
-                )
+            def _years (self) :
+                for y in xrange \
+                        (self.year + 1, self.top.copyright_start - 1, -1) :
+                    year = self.Year\
+                        ( name       = str (y)
+                        , parent     = self
+                        , year       = y
+                        )
+                    if year.count :
+                        yield year
+            self.add_entries (* tuple (_years (self)))
             if self._admin :
                 self.add_entries (self._admin)
             self._old_year = self.year

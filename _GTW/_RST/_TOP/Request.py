@@ -28,7 +28,6 @@
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
 #    16-Jul-2012 (CT) Pass `bytes ("~@")` to `b64decode`
-#    16-Jul-2012 (CT) Add property `user`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +56,6 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     """Extend GTW.RST.Request with session handling."""
 
     _real_name = "Request"
-    _user      = None
 
     @Once_Property
     def cookie_encoding (self) :
@@ -87,19 +85,6 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     def session_cookie_name (self) :
         return self.settings.get ("session_id",  "SESSION_ID")
     # end def session_cookie_name
-
-    @property
-    def user (self) :
-        result = self._user
-        if result is None and self.username :
-            self._user = self.root._get_user (self.username)
-        return self._user
-    # end def user
-
-    @user.setter
-    def user (self, value) :
-        self._user = value
-    # end def user
 
     @property
     def username (self) :
