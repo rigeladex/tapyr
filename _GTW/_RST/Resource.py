@@ -44,6 +44,7 @@
 #     9-Jul-2012 (CT) Add `Dir_V._get_child`, use `Dir_V._entry_type_map`
 #     9-Jul-2012 (CT) Add `Dir_V.template_iter`
 #     9-Jul-2012 (CT) Add and use `Dir_V._greet_entry`
+#    17-Jul-2012 (CT) Fix `Root.href_pat`, `.resource_from_href`
 #    ««revision-date»»···
 #--
 
@@ -848,7 +849,7 @@ class RST_Root (_Ancestor) :
     def href_pat (self) :
         result = self._href_pat
         if result is None :
-            hpf = self.href_pat_frag
+            hpf = "(?:%s)(?:/|$)" % (self.href_pat_frag, )
             if hpf :
                 try :
                     result = self._href_pat = re.compile (hpf)
@@ -941,10 +942,10 @@ class RST_Root (_Ancestor) :
             if href_pat :
                 match = href_pat.match (href)
                 if match :
-                    head     = match.group (0)
+                    head     = match.group (0).rstrip ("/")
                     resource = Table.get (head)
                     if resource :
-                        tail = href [len (head):].lstrip ("/")
+                        tail = href [len (head):].strip ("/")
                         if tail :
                             tail   = tail.split ("/")
                             result = resource._get_child (* tail)

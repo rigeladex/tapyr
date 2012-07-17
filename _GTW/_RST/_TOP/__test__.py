@@ -94,7 +94,7 @@ __doc__ = """
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
     >>> sorted (root3._template_names)
-    [u'account_activate', u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'console', u'login']
+    [u'account_activate', u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'console', u'e_type_aggregator', u'login']
 
     >>> auth = root3.SC.Auth
     >>> auth

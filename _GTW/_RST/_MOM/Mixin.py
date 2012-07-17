@@ -130,9 +130,13 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
 class RST_Mixin (TFL.Meta.Object) :
     """Mixin for MOM-specific RST classes."""
 
+    objects                    = property (lambda s : s._get_objects ())
+
     _attributes                = None
     _change_info               = None
     _exclude_robots            = True
+    _objects                   = []
+    _old_cid                   = -1
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     @Once_Property
@@ -193,6 +197,13 @@ class RST_Mixin (TFL.Meta.Object) :
                 (* cqfs).order_by (self._sort_key_cid_reverse)
     # end def query_changes
 
+    def _changed_cid (self) :
+        change_info = self.change_info
+        cid         = change_info and change_info.cid
+        if self._old_cid != cid :
+            return cid
+    # end def _changed_cid
+
     def _get_change_info (self) :
         result = None
         qc     = self.query_changes ()
@@ -206,6 +217,14 @@ class RST_Mixin (TFL.Meta.Object) :
                     )
         return result
     # end def _get_change_info
+
+    def _get_objects (self) :
+        cid = self._changed_cid ()
+        if cid is not None :
+            self._old_cid = cid
+            self._objects = self.query ().all ()
+        return self._objects
+    # end def _get_objects
 
     @TFL.Contextmanager
     def _handle_method_context (self, method, request) :
@@ -224,12 +243,6 @@ class RST_E_Type_Mixin (RST_Mixin) :
     default_qr_kw              = dict ()
     query_restriction          = None
     sort_key                   = None
-
-    _last_change               = None
-    _objects                   = []
-    _old_cid                   = -1
-
-    objects                    = property (lambda s : s._get_objects ())
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "ETM", prefix = "_")
@@ -272,13 +285,6 @@ class RST_E_Type_Mixin (RST_Mixin) :
         return result
     # end def query
 
-    def _changed_cid (self) :
-        change_info = self.change_info
-        cid         = change_info and change_info.cid
-        if self._old_cid != cid :
-            return cid
-    # end def _changed_cid
-
     def _get_child (self, child, * grandchildren) :
         obj = self._get_child_query (child)
         if obj is not None :
@@ -302,14 +308,6 @@ class RST_E_Type_Mixin (RST_Mixin) :
                 if 0 < pid <= self.top.scope.max_pid :
                     raise self.Status.Gone
     # end def _get_child_query
-
-    def _get_objects (self) :
-        cid = self._changed_cid ()
-        if cid is not None :
-            self._old_cid = cid
-            self._objects = self.query ().all ()
-        return self._objects
-    # end def _get_objects
 
     @TFL.Contextmanager
     def _handle_method_context (self, method, request) :
