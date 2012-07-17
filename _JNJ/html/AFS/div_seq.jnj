@@ -47,6 +47,7 @@
 ##    23-Feb-2012 (CT) Factor `do_description` and `do_label` to `afs.jnj`
 ##     8-Mar-2012 (CT) Change `Field_Entity` to show `elem.display` if
 ##                     `not elem.children`
+##    17-Jul-2012 (MG) `Hidden` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -105,6 +106,10 @@
     {{ GTW.call_macro (elem.input_widget, elem) }}
   {% endcall %} {# do_element #}
 {%- endmacro -%} {#- Field -#}
+
+{%- macro Hidden (form, elem, renderer) -%}
+  {{ GTW.call_macro ("hidden", elem, templ_name = "html/AFS/input.jnj") }}
+{%- endmacro -%} {#- Hidden -#}
 
 {%- macro Field_Composite (form, elem, renderer) -%}
   {% call GTW.call_macro ("do_element", form, elem, renderer, show_desc = False, templ_name = renderer) -%}
