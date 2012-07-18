@@ -40,6 +40,8 @@ from   _TFL                     import TFL
 import _GTW._RST._MOM.Mixin
 import _GTW._RST._TOP._MOM
 
+from   _MOM.import_MOM          import Q
+
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 
@@ -58,20 +60,27 @@ class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Mixin) :
     def __init__ (self, ** kw) :
         obj = kw ["obj"]
         if "name" not in kw :
-            name = getattr (obj, "name", None)
+            name = unicode (getattr (obj, "perma_name", None))
             if name is None :
-                name = unicode (getattr (obj, "perma_name", obj.pid))
+                name = getattr (obj, "name", obj.pid)
             kw ["name"] = TFL.Ascii.sanitized_filename (name)
         self.__super.__init__ (** kw)
         ### Get `short_title` and `title` from `obj`
-        self.short_title = self.__getattr__ ("short_title")
-        self.title       = self.__getattr__ ("title")
+        if "short_title" not in kw :
+            self.short_title = self.__getattr__ ("short_title")
+        if "title" not in kw :
+            self.title       = self.__getattr__ ("title")
     # end def __init__
 
     @Once_Property
     def FO (self) :
         return GTW.FO (self.obj, self.top.encoding)
     # end def FO
+
+    @Once_Property
+    def change_query_filters (self) :
+        return (Q.pid == self.obj.pid, )
+    # end def change_query_filters
 
     def __getattr__ (self, name) :
         if self.attr_mapper :
@@ -224,6 +233,7 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
     # end def _get_child_query
 
     def _new_entry (self, instance, ** kw) :
+        kw.setdefault ("ETM", instance.ETM)
         return self.__super._new_entry \
             (instance, ** dict (self.page_args, ** kw))
     # end def _new_entry

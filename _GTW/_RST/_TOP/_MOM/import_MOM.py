@@ -36,5 +36,6 @@ import _GTW._RST._TOP._MOM.Aggregator
 import _GTW._RST._TOP._MOM.Display
 import _GTW._RST._TOP._MOM.Gallery
 import _GTW._RST._TOP._MOM.Mixin
+import _GTW._RST._TOP._MOM.SRM
 
 ### __END__ GTW.RST.TOP.MOM.import_MOM

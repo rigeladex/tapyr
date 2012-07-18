@@ -288,6 +288,7 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def query
 
     def _get_child (self, child, * grandchildren) :
+        ### XXX Try `__super._get_child` first, then `_get_child_query`
         obj = self._get_child_query (child)
         if obj is not None :
             result = self._new_entry (obj)

@@ -29,6 +29,7 @@
 #     6-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #    18-Jul-2012 (CT) Redefine `add_entries` to set `Index`
 #    18-Jul-2012 (CT) Move `add_entries` from `_Dir_` to `_Dir_Base_`
+#    18-Jul-2012 (CT) Redefine `_Dir_._get_child` to handle "index"
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,12 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
                 return page._effective
         return self
     # end def _effective
+
+    def _get_child (self, child, * grandchildren) :
+        result = self.__super._get_child (child, * grandchildren)
+        if result is None and child == "index" and not grandchildren :
+            return self
+    # end def _get_child
 
 _Dir_ = _TOP_Dir_ # end class
 

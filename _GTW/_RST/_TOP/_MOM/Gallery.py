@@ -108,10 +108,9 @@ class Gallery \
 
     @Once_Property
     def change_query_filters (self) :
-        result = \
-            ( Q.pid.IN (self.ETM.query (Q.left == self.obj.pid).attr ("pid"))
-            ,
-            )
+        pid    = self.obj.pid
+        rq     = self.ETM.query (Q.left == pid).attr ("pid")
+        result = (Q.OR (Q.pid.IN (rq), Q.pid == pid), )
         return result
     # end def change_query_filters
 
@@ -163,7 +162,7 @@ class Gallery \
     def _get_child (self, child, * grandchildren) :
         self.entries ### trigger load from database
         result = self.__super._get_child (child, * grandchildren)
-        if result and result.name in self._entry_map :
+        if result and result.name in self._entry_map and not grandchildren :
             ### make sure to use result from `_entry_map`
             ### that allows `1`, `01`, `001`, `0001`, ...
             result = self._entry_map [result.name]
@@ -186,7 +185,7 @@ class Gallery \
 
 _Ancestor = GTW.RST.TOP.MOM.Display.E_Type_Archive_DSY
 
-class Gallery_Archive (_Ancestor) :
+class Archive (_Ancestor) :
     """Archive of galleries organized by year."""
 
     class _Gallery_Year_ (_Ancestor.Year) :
@@ -197,8 +196,8 @@ class Gallery_Archive (_Ancestor) :
 
     Year = _Gallery_Year_ # end class
 
-# end class Gallery_Archive
+# end class Archive
 
 if __name__ != "__main__" :
-    GTW.RST.TOP.MOM._Export ("*")
+    GTW.RST.TOP.MOM._Export_Module ()
 ### __END__ GTW.RST.TOP.MOM.Gallery

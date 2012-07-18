@@ -667,6 +667,7 @@ class _RST_Dir_ (_Ancestor) :
     def template (self) :
         eff = self._effective
         result = self.dir_template if eff is self else eff.template
+        return result
     # end def template
 
     def sub_dir_iter (self) :

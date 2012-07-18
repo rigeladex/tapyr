@@ -157,12 +157,6 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
                 )
         # end def query_filters
 
-        def _get_child (self, child, * grandchildren) :
-            result = self.__super._get_child (child, * grandchildren)
-            if result is None and child == "index.html" and not grandchildren :
-                return self
-        # end def _get_child
-
     # end class Year
 
     @property
