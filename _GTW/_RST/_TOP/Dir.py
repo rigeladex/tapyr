@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
+#    18-Jul-2012 (CT) Redefine `add_entries` to set `Index`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ import _GTW._RST.Resource
 import _GTW._RST._TOP.Base
 
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.predicate           import first
+from   _TFL.predicate           import enumerate_slice, first
 
 class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
 
@@ -93,6 +94,14 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
                 return page._effective
         return self
     # end def _effective
+
+    def add_entries (self, * entries) :
+        l = len (self._entries)
+        self.__super.add_entries (* entries)
+        Index = self.Index_Type
+        for i, e in enumerate_slice (self._entries, l) :
+            e._index = (Index (i))
+    # end def add_entries
 
 _Dir_ = _TOP_Dir_ # end class
 

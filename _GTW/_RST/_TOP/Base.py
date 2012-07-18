@@ -29,6 +29,7 @@
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #     9-Jul-2012 (CT) Add and use `HTTP_Method_Mixin.template_name`
 #     9-Jul-2012 (CT) Add `RST_TOP_HTML`, define `.rendered`
+#    18-Jul-2012 (CT) Add `Index`, `next`, and `prev`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,7 @@ class _TOP_Base_ (_Ancestor) :
     short_title                = ""
     title                      = ""
 
+    _index                     = None
     _login_required            = False
     _Media                     = GTW.Media ()
 
@@ -108,6 +110,45 @@ class _TOP_Base_ (_Ancestor) :
         _real_name             = "GET"
 
     GET = _TOP_Base_GET_ # end class
+
+    class Index (TFL.Meta.Object) :
+
+        wrap = False
+
+        def __init__ (self, number) :
+            self.number = number
+        # end def __init__
+
+        def next (self, resource) :
+            i = self.number + 1
+            entries = resource.parent.entries
+            if i >= len (entries) and self.wrap :
+                i = 0
+            try :
+                return entries [i]
+            except IndexError :
+                pass
+        # end def next
+
+        def prev (self, resource) :
+            i = self.number - 1
+            entries = resource.parent.entries
+            if i >= 0 or self.wrap :
+                try :
+                    return entries [i]
+                except IndexError :
+                    pass
+        # end def prev
+
+    # end class Index
+
+    class Index_W (Index) :
+
+        wrap = True
+
+    # end class Index_W
+
+    Index_Type = Index
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "login_required", "Media", prefix = "_")
@@ -159,10 +200,24 @@ class _TOP_Base_ (_Ancestor) :
         return self._get_media ()
     # end def Media
 
+    @property
+    def next (self) :
+        index = self._index
+        if index is not None :
+            return index.next (self)
+    # end def next
+
     @Once_Property
     def permalink (self) :
         return self.abs_href
     # end def permalink
+
+    @property
+    def prev (self) :
+        index = self._index
+        if index is not None :
+            return index.prev (self)
+    # end def prev
 
     @property
     def q_href (self) :
