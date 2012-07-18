@@ -249,7 +249,7 @@ _sub_query = """
     >>> q2 = scope.PAP.Person.query (last_name = "ln 2").attr ("pid")
     >>> q  = scope.PAP.Person.query (Q.pid.IN (q1))
     >>> print q.all ()
-    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 1', u'fn 2', u'', u'')]
+    [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 1', u'fn 2', u'', u'')]
 """
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
