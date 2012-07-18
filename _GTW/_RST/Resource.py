@@ -45,6 +45,7 @@
 #     9-Jul-2012 (CT) Add `Dir_V.template_iter`
 #     9-Jul-2012 (CT) Add and use `Dir_V._greet_entry`
 #    17-Jul-2012 (CT) Fix `Root.href_pat`, `.resource_from_href`
+#    18-Jul-2012 (CT) Move `add_entries` from `_Dir_` to `_Dir_Base_`
 #    ««revision-date»»···
 #--
 
@@ -350,10 +351,11 @@ class _RST_Base_ (TFL.Meta.Object) :
         return self.allow_method ("GET", user)
     # end def allow_user
 
-    def get_template (self, template_name) :
+    def get_template (self, template_name, injected = None) :
         if self.Templateer is not None :
-            return self.Templateer.get_template \
-                (template_name, self.injected_templates)
+            if injected is None :
+                injected = self.injected_templates
+            return self.Templateer.get_template (template_name, injected)
     # end def get_template
 
     def send_error_email (self, request, exc, tbi) :
@@ -559,8 +561,7 @@ class _RST_Dir_Base_ (_Ancestor) :
         if self._dir_template is None :
             t_name = getattr (self, "dir_template_name", None)
             if t_name :
-                self._dir_template = self.get_template \
-                    (t_name, self.injected_dir_templates)
+                self._dir_template = self.get_template (t_name)
         return self._dir_template
     # end def dir_template
 
@@ -590,6 +591,17 @@ class _RST_Dir_Base_ (_Ancestor) :
         ### redefine as necessary
         return set ()
     # end def injected_dir_templates
+
+    def add_entries (self, * entries) :
+        add = self._entries.append
+        map = self._entry_map
+        for e in entries :
+            if isinstance (e, tuple) :
+                cls, args, kw = e
+                e             = cls (* args, ** dict (kw, parent = self))
+            add (e)
+            map [e.name] = e
+    # end def add_entries
 
     def template_iter (self) :
         for t in self.__super.template_iter () :
@@ -656,17 +668,6 @@ class _RST_Dir_ (_Ancestor) :
         eff = self._effective
         result = self.dir_template if eff is self else eff.template
     # end def template
-
-    def add_entries (self, * entries) :
-        add = self._entries.append
-        map = self._entry_map
-        for e in entries :
-            if isinstance (e, tuple) :
-                cls, args, kw = e
-                e             = cls (* args, ** dict (kw, parent = self))
-            add (e)
-            map [e.name] = e
-    # end def add_entries
 
     def sub_dir_iter (self) :
         for owl in self.entries :
@@ -753,6 +754,7 @@ class RST_Dir_V (_Ancestor) :
                 pass
             else :
                 return self._new_child (T, child, grandchildren)
+        return result
     # end def _get_child
 
     def _greet_entry (self, entry) :
@@ -849,10 +851,11 @@ class RST_Root (_Ancestor) :
     def href_pat (self) :
         result = self._href_pat
         if result is None :
-            hpf = "(?:%s)(?:/|$)" % (self.href_pat_frag, )
+            hpf = self.href_pat_frag
             if hpf :
                 try :
-                    result = self._href_pat = re.compile (hpf)
+                    result = self._href_pat = re.compile \
+                        ("(?:%s)(?:/|$)" % (hpf, ))
                 except Exception as exc :
                     logging.error \
                         ("Exception in href_pat for %s: %s", self, exc)
@@ -982,7 +985,7 @@ class RST_Root (_Ancestor) :
                 yield gett (tn)
             if self.Templateer :
                 for tn in self.Templateer.error_template_names :
-                    yield gett (tn)
+                    yield gett (tn, [])
             for t in self.__super.template_iter () :
                 yield t
         for t in _gen () :

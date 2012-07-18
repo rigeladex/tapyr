@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    15-Jul-2012 (CT) Creation
+#    18-Jul-2012 (CT) Factor `Entity_Mixin_Base`, `E_Type_Mixin_Base`
+#    18-Jul-2012 (CT) Factor from `Display._E_Type_` to `E_Type_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -44,10 +46,12 @@ from   _TFL.I18N                import _, _T, _Tn
 import _TFL.Ascii
 import _TFL.Attr_Mapper
 
-class TOP_MOM_Entity_Mixin (GTW.RST.MOM.RST_Mixin) :
-    """Mixin for RST.TOP classes displaying MOM instances."""
+from   posixpath                import join as pp_join
 
-    _real_name      = "Entity_Mixin"
+class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Mixin) :
+    """Base mixin for RST.TOP classes displaying MOM instances."""
+
+    _real_name      = "Entity_Mixin_Base"
 
     attr_mapper     = TFL.Attr_Mapper ()
 
@@ -58,28 +62,16 @@ class TOP_MOM_Entity_Mixin (GTW.RST.MOM.RST_Mixin) :
             if name is None :
                 name = unicode (getattr (obj, "perma_name", obj.pid))
             kw ["name"] = TFL.Ascii.sanitized_filename (name)
-        kw.setdefault ("manager", self.parent)
-        kw.setdefault ("hidden",  getattr (obj, "hidden", False))
         self.__super.__init__ (** kw)
         ### Get `short_title` and `title` from `obj`
         self.short_title = self.__getattr__ ("short_title")
         self.title       = self.__getattr__ ("title")
     # end def __init__
 
-    @property
-    def admin (self) :
-        return self.manager.admin
-    # end def admin
-
     @Once_Property
     def FO (self) :
         return GTW.FO (self.obj, self.top.encoding)
     # end def FO
-
-    @Once_Property
-    def permalink (self) :
-        return self.manager.href_display (self.obj)
-    # end def permalink
 
     def __getattr__ (self, name) :
         if self.attr_mapper :
@@ -90,23 +82,49 @@ class TOP_MOM_Entity_Mixin (GTW.RST.MOM.RST_Mixin) :
         return self.__super.__getattr__  (name)
     # end def __getattr__
 
+Entity_Mixin_Base = TOP_MOM_Entity_Mixin_Base # end class
+
+class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
+    """Mixin for RST.TOP classes displaying MOM instances."""
+
+    _real_name      = "Entity_Mixin"
+
+    def __init__ (self, ** kw) :
+        obj = kw ["obj"]
+        kw.setdefault ("manager", self.parent)
+        kw.setdefault ("hidden",  getattr (obj, "hidden", False))
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    @property
+    def admin (self) :
+        return self.manager.admin
+    # end def admin
+
+    @Once_Property
+    def permalink (self) :
+        return self.manager.href_display (self.obj)
+    # end def permalink
+
 Entity_Mixin = TOP_MOM_Entity_Mixin # end class
 
-class TOP_MOM_E_Type_Mixin (GTW.RST.MOM.RST_E_Type_Mixin) :
+class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.RST_E_Type_Mixin) :
 
-    _real_name      = "E_Type_Mixin"
+    _real_name      = "E_Type_Mixin_Base"
 
     attr_mapper     = None
 
     def __init__ (self, ** kw) :
+        ### Set `self.top` early because it's needed before initialized properly
+        self.top = self.parent.top
         self.pop_to_self (kw, "ETM", prefix = "_")
         E_Type      = self.E_Type
-        name        = kw.pop  ("name",        E_Type.ui_name)
+        name        = kw.pop  ("name",  E_Type.ui_name)
+        title       = kw.pop  ("title", _T (E_Type.__doc__))
         short_title = kw.pop  \
             ( "short_title"
             , _T (name.capitalize () if name [0] >= "a" else name)
             )
-        title       = kw.pop  ("title",       _T (E_Type.__doc__))
         self.__super.__init__ \
             ( name          = TFL.Ascii.sanitized_filename (unicode (name))
             , short_title   = short_title
@@ -123,6 +141,92 @@ class TOP_MOM_E_Type_Mixin (GTW.RST.MOM.RST_E_Type_Mixin) :
                 pass
         return self.__super.__getattr__  (name)
     # end def __getattr__
+
+E_Type_Mixin_Base = TOP_MOM_E_Type_Mixin_Base # end class
+
+class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
+
+    _real_name      = "E_Type_Mixin"
+
+    disp_filter     = None
+
+    _old_objects    = None
+
+    @Once_Property
+    def admin (self) :
+        return self.top.ET_Map [self.type_name].admin
+    # end def admin
+
+    @property
+    def entries (self) :
+        objects = self.objects
+        if self._old_objects is not objects :
+            self._entry_map = {}
+            self._entries   = []
+            entries         = tuple (self._new_entry (o) for o in objects)
+            self.add_entries (* entries)
+            if self._admin :
+                self.add_entries (self._admin)
+            if objects :
+                self._old_objects = objects
+        return self._entries
+    # end def entries
+
+    @property
+    def has_children (self) :
+        return self.count > 0
+    # end def has_children
+
+    @Once_Property
+    def query_filters (self) :
+        result = list (self.__super.query_filters)
+        if self.disp_filter is not None :
+            result.append (self.disp_filter)
+        return tuple (result)
+    # end def query_filters
+
+    def href_create (self) :
+        admin = self.admin
+        if admin :
+            return admin.href_create ()
+    # end def href_change
+
+    def href_display (self, obj) :
+        return pp_join \
+            (self.abs_href, getattr (obj, "perma_name", str (obj.pid)))
+    # end def href_display
+
+    def page_from_obj (self, obj) :
+        href   = self.href_display  (obj)
+        result = self.top.Table.get (href.strip ("/"))
+        if result is None :
+            result = self._new_entry (obj)
+        return result
+    # end def page_from_obj
+
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        if self._admin :
+            for t in self._admin.template_iter () :
+                yield t
+    # end def template_iter
+
+    def _get_child_query (self, child) :
+        try :
+            n, result = self.ETM.query_1 \
+                (perma_name = child, * self.query_filters)
+        except Exception :
+            result = None
+        if result is None :
+            result = self.__super._get_child_query (child)
+        return result
+    # end def _get_child_query
+
+    def _new_entry (self, instance, ** kw) :
+        return self.__super._new_entry \
+            (instance, ** dict (self.page_args, ** kw))
+    # end def _new_entry
 
 E_Type_Mixin = TOP_MOM_E_Type_Mixin # end class
 

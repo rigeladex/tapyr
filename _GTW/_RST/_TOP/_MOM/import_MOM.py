@@ -34,6 +34,7 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 import _GTW._RST._TOP._MOM.Aggregator
 import _GTW._RST._TOP._MOM.Display
+import _GTW._RST._TOP._MOM.Gallery
 import _GTW._RST._TOP._MOM.Mixin
 
 ### __END__ GTW.RST.TOP.MOM.import_MOM

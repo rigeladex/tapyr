@@ -34,6 +34,8 @@
 #                     * add and use `_resolve_nested_request_attrs`
 #    17-Jul-2012 (CT) Factor `_changed_cid`
 #    17-Jul-2012 (CT) Include `_change_info` in `_handle_method_context`
+#    18-Jul-2012 (CT) Use `scope.pid_query`, not `ETM.pid_query`, in
+#                     `_get_child_query` (don't want `Gone` for type mismatch)
 #    ««revision-date»»···
 #--
 
@@ -297,16 +299,20 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def _get_child
 
     def _get_child_query (self, child) :
+        scope = self.top.scope
         try :
-            return self.ETM.pid_query (child)
+            result = scope.pid_query (child)
         except (LookupError, TypeError, ValueError) :
             try :
                 pid = int (child)
             except (ValueError, TypeError) :
                 pass
             else :
-                if 0 < pid <= self.top.scope.max_pid :
+                if 0 < pid <= scope.max_pid :
                     raise self.Status.Gone
+        else :
+            if isinstance (result, self.E_Type) :
+                return result
     # end def _get_child_query
 
     @TFL.Contextmanager

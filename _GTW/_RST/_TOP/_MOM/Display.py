@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Jul-2012 (CT) Creation
+#    18-Jul-2012 (CT) Factor properties from `_E_Type_` to `E_Type_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -89,81 +90,6 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     _real_name      = "_E_Type_"
 
     Entity          = Entity
-
-    disp_filter     = None
-
-    _old_objects    = None
-
-    @Once_Property
-    def admin (self) :
-        return self.top.ET_Map [self.type_name].admin
-    # end def admin
-
-    @property
-    def entries (self) :
-        objects = self.objects
-        if self._old_objects is not objects :
-            self._entry_map = {}
-            self._entries   = []
-            self.add_entries (* tuple (self._new_entry (o) for o in objects))
-            if self._admin :
-                self.add_entries (self._admin)
-            if objects :
-                self._old_objects = objects
-        return self._entries
-    # end def entries
-
-    @property
-    def has_children (self) :
-        return self.count > 0
-    # end def has_children
-
-    @Once_Property
-    def query_filters (self) :
-        result = list (self.__super.query_filters)
-        if self.disp_filter is not None :
-            result.append (self.disp_filter)
-        return tuple (result)
-    # end def query_filters
-
-    def href_create (self) :
-        admin = self.admin
-        if admin :
-            return admin.href_create ()
-    # end def href_change
-
-    def href_display (self, obj) :
-        return pp_join \
-            (self.abs_href, getattr (obj, "perma_name", str (obj.pid)))
-    # end def href_display
-
-    def page_from_obj (self, obj) :
-        href   = self.href_display  (obj)
-        result = self.top.Table.get (href.strip ("/"))
-        if result is None :
-            result = self._new_entry (obj)
-        return result
-    # end def page_from_obj
-
-    def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
-        if self._admin :
-            for t in self._admin.template_iter () :
-                yield t
-    # end def template_iter
-
-    def _get_child_query (self, child) :
-        n, result = self.ETM.query_1 (perma_name = child)
-        if result is None :
-            result = self.__super._get_child_query (child)
-        return result
-    # end def _get_child_query
-
-    def _new_entry (self, instance, ** kw) :
-        return self.__super._new_entry \
-            (instance, ** dict (self.page_args, ** kw))
-    # end def _new_entry
 
 _E_Type_ = _TOP_MOM_E_Type_ # end class
 
