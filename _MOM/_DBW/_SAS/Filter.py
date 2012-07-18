@@ -44,6 +44,8 @@
 #                     added to `joins` list
 #    16-Dec-2011 (MG) `TFL.Q_Exp._Get_._sa_filter` support for
 #                     `MOM_Composite_Query` added
+#    18-Jul-2012 (MG) `TFL.Attr_Query._Call_._sa_filter` Support subqueries
+#                     for `in_` operator
 #    ««revision-date»»···
 #--
 
@@ -109,6 +111,8 @@ def _sa_filter (self, SAQ) :
 def _sa_filter (self, SAQ) :
     joins, clause = self.lhs._sa_filter (SAQ)
     op            = self.op.__name__.lower ()
+    if op == "in_" and isinstance (self.args [0], MOM.DBW.SAS._Q_Result_) :
+        self.args = (self.args [0].sa_query (), )
     return joins, (getattr (clause [0], op) (* self.args), )
 # end def _sa_filter
 

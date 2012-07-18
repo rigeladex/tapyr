@@ -76,6 +76,8 @@ _composite = r"""
     >>> q = EVT.Event.query ().filter (left = p1)
     >>> for e in show (q) : print e ### filtered 3
     ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
+
+    >>> scope.destroy ()
 """
 
 _link1_role = r"""
@@ -118,6 +120,8 @@ _link1_role = r"""
     ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
     ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')
     ((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u'')
+
+    >>> scope.destroy ()
 """
 
 _link2_link1 = r"""
@@ -163,6 +167,7 @@ _link2_link1 = r"""
     >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
     (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
 
+    >>> scope.destroy ()
 """
 
 _query_attr = r"""
@@ -203,6 +208,7 @@ _query_attr = r"""
     >>> PAP.Person.query (Q.RAW.last_name == "Tanzer").all ()
     [PAP.Person (u'tanzer', u'christian', u'', u'')]
 
+    >>> scope.destroy ()
 """
 
 _date_queries = """
@@ -224,19 +230,44 @@ _date_queries = """
     [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 2', u'fn 2', u'', u''), PAP.Person (u'ln 3', u'fn 3', u'', u''), PAP.Person (u'ln 4', u'fn 4', u'', u'')]
     >>> print scope.PAP.Person.query_s (Q.lifetime.start.year >  2010).all ()
     [PAP.Person (u'ln 4', u'fn 4', u'', u'')]
+
+    >>> scope.destroy ()
 """
 
+_sub_query = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = DI ("2010/01/03"))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = DI ("2010/02/01"))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 4", lifetime = DI ("2011/01/03"))
+    >>> scope.commit ()
+
+    >>> q1 = scope.PAP.Person.query (last_name = "ln 1").attr ("pid")
+    >>> q2 = scope.PAP.Person.query (last_name = "ln 2").attr ("pid")
+    >>> q  = scope.PAP.Person.query (Q.pid.IN (q1))
+    >>> print q.all ()
+    [GTW.OMP.PAP.Person (u'ln 1', u'fn 1', u'', u''), GTW.OMP.PAP.Person (u'ln 1', u'fn 2', u'', u'')]
+"""
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 import  datetime
 
-_date_queries = Scaffold.create_test_dict (_date_queries)
+_tests = Scaffold.create_test_dict \
+    ( dict
+        ( date_queries = _date_queries
+        , sub_query    = _sub_query
+        )
+    )
+
 
 __test__ = dict \
     ( composite    = _composite
     , link1_role   = _link1_role
     , link2_link1  = _link2_link1
     , query_attr   = _query_attr
-    , ** _date_queries
+    , ** _tests
     )
 ### __END__ GTW.__test__.SAS_Filter
