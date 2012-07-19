@@ -825,7 +825,7 @@ class Gone (Client_Error) :
 
 # end class Gone
 
-class LengthRequired (Client_Error) :
+class Length_Required (Client_Error) :
     """The server refuses to accept the request without a defined
        Content-Length.
     """
@@ -838,7 +838,7 @@ class LengthRequired (Client_Error) :
             message-body in the request message.
         """
 
-# end class LengthRequired
+# end class Length_Required
 
 class Precondition_Failed (Client_Error) :
     """The precondition given in one or more of the request-header fields
@@ -1013,7 +1013,8 @@ class Service_Unavailable (Server_Error) :
         else :
             if isinstance (retry_after, CAL.Date_Time_Delta) :
                 retry_after = CAL.Date_Time ().as_utc + retry_after
-            response.headers ["Retry-After"] = retry_after
+            if retry_after is not None :
+                response.headers ["Retry-After"] = retry_after
     # end def _add_response_headers
 
 # end class Service_Unavailable

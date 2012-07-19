@@ -148,7 +148,7 @@ __doc__ = """
     <HTTP status 408: Request timeout>
     <HTTP status 409: Conflict>
     <HTTP status 410: Gone>
-    <HTTP status 411: Lengthrequired>
+    <HTTP status 411: Length required>
     <HTTP status 412: Precondition failed>
     <HTTP status 413: Request entity too large>
     <HTTP status 414: Request uri too long>

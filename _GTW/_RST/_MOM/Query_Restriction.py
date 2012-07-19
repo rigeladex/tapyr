@@ -29,6 +29,8 @@
 #     3-Jul-2012 (CT) Creation (factored from GTW.NAV.E_Type.Query_Restriction)
 #     4-Jul-2012 (CT) Fix typo
 #    19-Jul-2012 (CT) Add and use `default_limit` and `default_offset`
+#    19-Jul-2012 (CT) Add `Query_Restriction_Spec`
+#                     (factored from GTW.NAV.E_Type.Query_Restriction)
 #    ««revision-date»»···
 #--
 
@@ -37,6 +39,8 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
+
+from   _GTW.HTML                import Styler_Safe
 
 import _GTW._RST._MOM
 
@@ -328,6 +332,27 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     # end def __nonzero__
 
 Query_Restriction = RST_Query_Restriction # end class
+
+class RST_Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
+    """Query restriction spec for a GTW.NAV.E_Type page."""
+
+    _real_name = "Query_Restriction_Spec"
+
+    def __init__ (self, E_Type, field_names = None) :
+        sel = MOM.Attr.Selector.Name (* field_names) if field_names else None
+        self.__super.__init__ (E_Type, sel)
+    # end def __init__
+
+    @property
+    def As_Json_Cargo (self) :
+        result = self.__super.As_Json_Cargo
+        op_map = result ["op_map"]
+        for k, v in op_map.iteritems () :
+            v ["label"] = Styler_Safe (v ["sym"])
+        return result
+    # end def As_Json_Cargo
+
+Query_Restriction_Spec = RST_Query_Restriction_Spec # end class
 
 if __name__ != "__main__" :
     GTW.RST.MOM._Export ("*")
