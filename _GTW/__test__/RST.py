@@ -552,7 +552,7 @@ _test_cqf = r"""
 _test_delete = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
-    >>> _ = show (R.get ("/v1/pid/"))
+    >>> _ = show (R.get ("/v1/pid/")) ### 1
     { 'json' :
         { 'entries' :
             [ 1
@@ -578,7 +578,7 @@ _test_delete = r"""
     , 'url' : 'http://localhost:9999/v1/pid/'
     }
 
-    >>> _ = show (R.get ("/v1/pid/1"))
+    >>> _ = show (R.get ("/v1/pid/1"))  ### 2
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'Christian'
@@ -595,7 +595,7 @@ _test_delete = r"""
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
 
-    >>> _ = show (R.delete ("/v1/pid/1"))
+    >>> _ = show (R.delete ("/v1/pid/1")) ### 3
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'Christian'
@@ -613,7 +613,7 @@ _test_delete = r"""
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
 
-    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 2)))
+    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 2))) ### 4
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'Christian'
@@ -631,14 +631,14 @@ _test_delete = r"""
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=2'
     }
 
-    >>> _ = show (R.get ("/v1/pid?count"))
+    >>> _ = show (R.get ("/v1/pid?count")) ### 5
     { 'json' :
         { 'count' : 16 }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
-    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1)))
+    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1))) ### 6
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'Christian'
@@ -656,28 +656,28 @@ _test_delete = r"""
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
 
-    >>> _ = show (R.get ("/v1/pid?count"))
+    >>> _ = show (R.get ("/v1/pid?count")) ### 7
     { 'json' :
         { 'count' : 14 }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
-    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1)))
+    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1))) ### 8
     { 'json' :
         { 'description' : 'Gone' }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
 
-    >>> _ = show (R.get ("/v1/pid/1"))
+    >>> _ = show (R.get ("/v1/pid/1")) ### 9
     { 'json' :
         { 'description' : 'Gone' }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
 
-    >>> _ = show (R.get ("/v1/pid"))
+    >>> _ = show (R.get ("/v1/pid")) ### 10
     { 'json' :
         { 'entries' :
             [ 2

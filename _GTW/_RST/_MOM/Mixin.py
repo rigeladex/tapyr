@@ -36,6 +36,10 @@
 #    17-Jul-2012 (CT) Include `_change_info` in `_handle_method_context`
 #    18-Jul-2012 (CT) Use `scope.pid_query`, not `ETM.pid_query`, in
 #                     `_get_child_query` (don't want `Gone` for type mismatch)
+#    19-Jul-2012 (CT) Add `RST_Entity_Mixin`: factored from `GTW.RST.MOM.Entity`
+#    19-Jul-2012 (CT) Change `RST_E_Type_Mixin._get_child` to call
+#                     `__super._get_child` before, not after, `_get_child_query`
+#    19-Jul-2012 (CT) Turn `_change_info` into property, use `top._change_infos`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +139,6 @@ class RST_Mixin (TFL.Meta.Object) :
     objects                    = property (lambda s : s._get_objects ())
 
     _attributes                = None
-    _change_info               = None
     _exclude_robots            = True
     _objects                   = []
     _old_cid                   = -1
@@ -191,6 +194,16 @@ class RST_Mixin (TFL.Meta.Object) :
         return self.E_Type.type_name
     # end def type_name
 
+    @property
+    def _change_info (self) :
+        return self.top._change_infos.get (self.href)
+    # end def _change_info
+
+    @_change_info.setter
+    def _change_info (self, value) :
+        self.top._change_infos [self.href] = value
+    # end def _change_info
+
     def query_changes (self) :
         scope = self.top.scope
         cqfs   = self.change_query_filters
@@ -237,8 +250,18 @@ class RST_Mixin (TFL.Meta.Object) :
 
 # end class RST_Mixin
 
+class RST_Entity_Mixin (RST_Mixin) :
+    """Mixin for classes of handling E_Type instances."""
+
+    @Once_Property
+    def change_query_filters (self) :
+        return (Q.pid == self.obj.pid, )
+    # end def change_query_filters
+
+# end class RST_Entity_Mixin
+
 class RST_E_Type_Mixin (RST_Mixin) :
-    """Mixin for classes of E_Type classes."""
+    """Mixin for classes of handling E_Types."""
 
     QR                         = GTW.RST.MOM.Query_Restriction
 
@@ -288,15 +311,16 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def query
 
     def _get_child (self, child, * grandchildren) :
-        ### XXX Try `__super._get_child` first, then `_get_child_query`
-        obj = self._get_child_query (child)
-        if obj is not None :
-            result = self._new_entry (obj)
-            if grandchildren :
-                result = result._get_child (* grandchildren)
-            return result
-        else :
-            return self.__super._get_child (child, * grandchildren)
+        self.objects ### trigger recomputation/load-from-db, if necessary
+        result = self.__super._get_child (child, * grandchildren)
+        if result is None :
+            obj = self._get_child_query (child)
+            if obj is not None :
+                result = self._new_entry (obj)
+                if grandchildren :
+                    result = result._get_child (* grandchildren)
+                return result
+        return result
     # end def _get_child
 
     def _get_child_query (self, child) :
@@ -316,18 +340,32 @@ class RST_E_Type_Mixin (RST_Mixin) :
                 return result
     # end def _get_child_query
 
+    def _get_objects (self) :
+        _old_objects = self._objects
+        result       = self.__super._get_objects ()
+        if result is not _old_objects :
+            ### invalidate `_entry_map`, `_entries`
+            self._entry_map = {}
+            self._entries   = []
+        return result
+    # end def _get_objects
+
     @TFL.Contextmanager
     def _handle_method_context (self, method, request) :
         with self.__super._handle_method_context (method, request) :
             qr = self.QR.from_request \
                 (self.E_Type, request, ** self.default_qr_kw)
             kw = dict (query_restriction = qr)
+            if qr.attributes :
+                kw ["attributes"] = qr.attributes
             if qr :
-                if qr.attributes :
-                    kw ["attributes"] = qr.attributes
-                ### temporarily invalidate cache
+                ### temporarily invalidate cached information to trigger
+                ### reload with `query_restriction`
+                ### old caches will be restored after `_handle_method` completes
                 kw.update \
                     ( _change_info = None
+                    , _entries     = []
+                    , _entry_map   = {}
                     , _objects     = []
                     , _old_cid     = object ()
                     )

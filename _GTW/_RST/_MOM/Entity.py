@@ -32,6 +32,7 @@
 #     5-Jul-2012 (CT) Add support for `closure`, factor `_response_obj_attrs`
 #     6-Jul-2012 (CT) Change `Entity.GET` to use `seen` to show each entity
 #                     once only
+#    19-Jul-2012 (CT) Factor `RST_Entity_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ import _TFL._Meta.Object
 
 _Ancestor = GTW.RST.Leaf
 
-class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
+class RST_Entity (GTW.RST.MOM.RST_Entity_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
 
     _real_name                 = "Entity"
@@ -109,7 +110,7 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
         def _response_obj \
                 (self, resource, request, response, obj, attrs, seen, ** kw) :
             seen.add (obj.pid)
-            return dict \
+            result = dict \
                 ( attributes = self._response_obj_attrs
                     (resource, request, response, obj, attrs, seen)
                 , cid        = obj.last_cid
@@ -117,6 +118,7 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
                 , type_name  = obj.type_name
                 , ** kw
                 )
+            return result
         # end def _response_obj
 
         def _response_obj_attrs \
@@ -166,11 +168,6 @@ class RST_Entity (GTW.RST.MOM.RST_Mixin, _Ancestor) :
     def E_Type (self) :
         return self.obj.__class__
     # end def E_Type
-
-    @property
-    def change_query_filters (self) :
-        return (Q.pid == self.obj.pid, )
-    # end def change_query_filters
 
     def _check_cid (self, request, response, result) :
         cid_c  = request.req_data.get ("cid")

@@ -109,6 +109,7 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
         result = self.__super._get_child (child, * grandchildren)
         if result is None and child == "index" and not grandchildren :
             return self
+        return result
     # end def _get_child
 
 _Dir_ = _TOP_Dir_ # end class

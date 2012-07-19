@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-Jul-2012 (CT) Creation (factored from GTW.NAV.E_Type.Query_Restriction)
 #     4-Jul-2012 (CT) Fix typo
+#    19-Jul-2012 (CT) Add and use `default_limit` and `default_offset`
 #    ««revision-date»»···
 #--
 
@@ -61,8 +62,8 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     attributes  = ()
     filters     = ()
     filters_q   = ()
-    limit       = 0
-    offset      = 0
+    limit       = default_limit  = 0
+    offset      = default_offset = 0
     order_by    = ()
     order_by_q  = ()
     query_b     = None
@@ -100,8 +101,10 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     def from_request (cls, E_Type, request, ** kw) :
         data   = dict (kw, ** dict (request.req_data.iteritems ()))
         result = cls \
-            ( limit    = data.pop ("limit",  0)
-            , offset   = data.pop ("offset", 0)
+            ( limit          = data.pop ("limit",  0)
+            , offset         = data.pop ("offset", 0)
+            , default_limit  = kw.get   ("limit",  cls.default_limit)
+            , default_offset = kw.get   ("offset", cls.default_offset)
             )
         limit  = result.limit
         if limit :
@@ -318,7 +321,10 @@ class RST_Query_Restriction (TFL.Meta.Object) :
 
     def __nonzero__ (self) :
         return bool \
-            (self.attributes or self.limit or self.offset or self.filters_q)
+            (  self.limit  != self.default_limit
+            or self.offset != self.default_offset
+            or self.filters_q
+            )
     # end def __nonzero__
 
 Query_Restriction = RST_Query_Restriction # end class

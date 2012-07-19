@@ -50,7 +50,7 @@ import _TFL.Attr_Mapper
 
 from   posixpath                import join as pp_join
 
-class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Mixin) :
+class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Entity_Mixin) :
     """Base mixin for RST.TOP classes displaying MOM instances."""
 
     _real_name      = "Entity_Mixin_Base"
@@ -77,11 +77,6 @@ class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Mixin) :
         return GTW.FO (self.obj, self.top.encoding)
     # end def FO
 
-    @Once_Property
-    def change_query_filters (self) :
-        return (Q.pid == self.obj.pid, )
-    # end def change_query_filters
-
     def __getattr__ (self, name) :
         if self.attr_mapper :
             try :
@@ -104,6 +99,11 @@ class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
         kw.setdefault ("hidden",  getattr (obj, "hidden", False))
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @Once_Property
+    def E_Type (self) :
+        return self.obj.__class__
+    # end def E_Type
 
     @property
     def admin (self) :

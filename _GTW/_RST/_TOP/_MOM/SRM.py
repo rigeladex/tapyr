@@ -91,8 +91,8 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     @property
     def entries (self) :
         cid = self._changed_cid ()
-        if cid is not None :
-            self._old_cid  = cid
+        if cid is not None or not self._entries :
+            self._old_cid   = cid
             self._entries   = []
             self._entry_map = {}
             pages = self._get_pages ()
@@ -133,7 +133,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
             result.append \
                 ( Result_Type
                     ( ETM         = obj.ETM
-                    , name        = u"%s.html" % (nr.lower (), )
+                    , name        = nr.lower ()
                     , obj         = obj
                     , parent      = self
                     , regatta     = obj
@@ -150,7 +150,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                     ( _T (u"Registration list"), obj.name
                     , obj.event.FO.short_title, obj.event.ui_date
                     )
-                , name        = u"%s.html" % (np.lower (), )
+                , name        = np.lower ()
                 , obj         = obj
                 , parent      = self
                 , regatta     = obj
@@ -287,7 +287,7 @@ class Regatta_Event \
             self._entry_map = {}
             self._old_date  = today
         result = self.__super.entries
-        if result is not _old_entries :
+        if result is not _old_entries or not result :
             pages = self._get_pages ()
             if today >= self.obj.date.start :
                 self.add_entries (* pages)

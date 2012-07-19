@@ -106,6 +106,11 @@ class Gallery \
 
     _greet_entry        = None
 
+    def __init__ (self, ** kw) :
+        kw ["ETM"] = "SWP.Picture"
+        self.__super.__init__ (** kw)
+    # end def __init__
+
     @Once_Property
     def change_query_filters (self) :
         pid    = self.obj.pid
@@ -160,7 +165,6 @@ class Gallery \
     # end def is_current_page
 
     def _get_child (self, child, * grandchildren) :
-        self.entries ### trigger load from database
         result = self.__super._get_child (child, * grandchildren)
         if result and result.name in self._entry_map and not grandchildren :
             ### make sure to use result from `_entry_map`

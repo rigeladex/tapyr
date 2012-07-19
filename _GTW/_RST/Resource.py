@@ -46,6 +46,9 @@
 #     9-Jul-2012 (CT) Add and use `Dir_V._greet_entry`
 #    17-Jul-2012 (CT) Fix `Root.href_pat`, `.resource_from_href`
 #    18-Jul-2012 (CT) Move `add_entries` from `_Dir_` to `_Dir_Base_`
+#    19-Jul-2012 (CT) Add `self.entries` to `_Dir_Base_._get_child` to
+#                     trigger necessary updates
+#    19-Jul-2012 (CT) Add `_change_infos`, `LET` it in `wsgi_app`
 #    ««revision-date»»···
 #--
 
@@ -612,6 +615,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     # end def template_iter
 
     def _get_child (self, child, * grandchildren) :
+        self.entries ### trigger recomputation/load-from-db, if necessary
         try :
             result = self._entry_map [child]
         except KeyError :
@@ -840,6 +844,7 @@ class RST_Root (_Ancestor) :
         self.redirects      = dict (kw.pop ("redirects", {}))
         self.SC             = TFL.Record ()
         self.Table          = {}
+        self._change_infos  = {}
         self.top            = self
         self.__super.__init__ (** kw)
     # end def __init__
@@ -1000,24 +1005,25 @@ class RST_Root (_Ancestor) :
         HTTP_Status = self.Status.Status
         HTTP        = self.HTTP
         request     = self.Request (environ)
-        try :
-            result  = self._http_response (request)
-        except HTTP_Status as status :
-            result  = status (self, request)
-        except HTTP.HTTP_Exception as exc :
-            ### works for werkzeug.exceptions.HTTPException
-            return exc
-        except Exception as exc :
-            if self.use_www_debugger :
-                raise
-            tbi     = traceback.format_exc ()
-            result  = self._http_response_error (request, exc, tbi)
-        if not result :
-            exc     = ValueError ("No result")
-            if self.use_www_debugger :
-                raise exc
-            result  = self._http_response_error (request, exc)
-        return result (environ, start_response)
+        with self.LET (_change_infos = {}) :
+            try :
+                result  = self._http_response (request)
+            except HTTP_Status as status :
+                result  = status (self, request)
+            except HTTP.HTTP_Exception as exc :
+                ### works for werkzeug.exceptions.HTTPException
+                return exc
+            except Exception as exc :
+                if self.use_www_debugger :
+                    raise
+                tbi     = traceback.format_exc ()
+                result  = self._http_response_error (request, exc, tbi)
+            if not result :
+                exc     = ValueError ("No result")
+                if self.use_www_debugger :
+                    raise exc
+                result  = self._http_response_error (request, exc)
+            return result (environ, start_response)
     # end def wsgi_app
 
     def _http_response (self, request) :
