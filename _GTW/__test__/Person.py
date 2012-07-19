@@ -45,7 +45,8 @@ _test_code = """
 
     >>> print PAP.Person.count
     0
-    >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 1
+    >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian") ### 1
+    >>> p
     PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> print PAP.Person.count
     1
@@ -58,6 +59,18 @@ _test_code = """
     PAP.Person (u'tanzer', u'christian', u'', u'')
     >>> print PAP.Person.count
     1
+
+    >>> p.edit_attr
+    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
+    >>> for a in p.edit_attr :
+    ...     a.name, a.P_Type.__name__, a.get_value (p), a.get_raw (p)
+    ('last_name', 'unicode', u'tanzer', u'Tanzer')
+    ('first_name', 'unicode', u'christian', u'Christian')
+    ('middle_name', 'unicode', u'', u'')
+    ('title', 'unicode', u'', u'')
+    ('lifetime', 'Date_Interval', MOM.Date_Interval (), u'')
+    ('salutation', 'unicode', u'', u'')
+    ('sex', 'unicode', None, u'')
 
     >>> _ = PAP.Person ("Tanzer", "Egon")
     >>> _ = PAP.Person ("Tanzer", "Walter")
