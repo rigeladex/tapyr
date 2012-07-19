@@ -33,6 +33,7 @@
 #    19-May-2011 (CT) Description for `lat` and `lon` improved
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    19-Jul-2012 (RS) Use `A_Angle` instead of `A_Float` for `lat`, `lon`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class Position (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class lat (A_Float) :
+        class lat (A_Angle) :
             """Geographical latitude"""
 
             kind               = Attr.Necessary
@@ -70,7 +71,7 @@ class Position (_Ancestor_Essence) :
 
         # end class lat
 
-        class lon (A_Float) :
+        class lon (A_Angle) :
             """Geographical longitude"""
 
             kind               = Attr.Necessary

@@ -231,6 +231,8 @@
 #    23-May-2012 (RS) Make docstrings useable for end-user
 #     6-Jun-2012 (CT) Change `_A_Entity_.E_Type` to `Alias_Property`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#    19-Jul-2012 (RS) factor `plain_number_pat`
+#                     add degree/minute/second parsing to `A_Angle`
 #    ««revision-date»»···
 #--
 
@@ -263,6 +265,8 @@ import decimal
 import itertools
 import math
 import time
+
+plain_number_pat = r"\d+ (?: \.\d*)? (?: [eE]\d+)? \s*"
 
 class A_Attr_Type (TFL.Meta.Object) :
     """Root class for attribute types for the MOM meta object model."""
@@ -1333,9 +1337,9 @@ class _A_Unit_ (A_Attr_Type) :
     _default_unit  = None ### set by meta class
     _unit_dict     = {}
     _unit_pattern  = Regexp \
-        ( r"(?: "
-              r"^ \d+ (?: \.\d*)? (?: [eE]\d+)? \s*" ### plain number
-          r"|"
+        ( r"(?: ^"
+        + plain_number_pat
+        + r"|"
               r"[])a-zA-Z_0-9] \s+" ### expression followed by whitespace(s)
           r")"
           r"(?P<unit> [a-zA-Z]+ (?: / [a-zA-Z]+)?)"
@@ -1384,11 +1388,31 @@ class A_Angle (_A_Float_) :
     max_value        = 360
     min_value        = 0
 
+    _dms_pattern     = Regexp \
+        ( r"^\s*"
+          r"(?P<sign> [-+])?"
+          r"(?:(?P<degrees> \d+) \s* d \s*)?"
+          r"(?:(?P<minutes> \d+) \s* m \s*)?"
+          r"(?:(?P<seconds> " + plain_number_pat + ") \s* s \s*)?"
+          r"$"
+        , re.VERBOSE
+        )
+
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if value is not None :
-            value = super (A_Angle, soc).cooked (value)
-            if value == 360 :
+            pat = soc._dms_pattern
+            if not value or not soc._dms_pattern.search (value) :
+                value = super (A_Angle, soc).cooked (value)
+            else :
+                value = \
+                    ( (float (pat.degrees or 0.))
+                    + (float (pat.minutes or 0.)) /   60.
+                    + (float (pat.seconds or 0.)) / 3600.
+                    )
+                if pat.sign == '-' :
+                    value = -value
+            if soc.max_value == value == 360 and soc.min_value <= 0 :
                 value -= 360
         return value
     # end def cooked
