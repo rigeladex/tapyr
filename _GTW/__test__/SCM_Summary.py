@@ -75,7 +75,15 @@ _basic = r"""
     >>> _     = p.set_raw (title = "Mr.", salutation = "Dear L.")
     >>> _     = r1.set (discarded = True)
     >>> _     = rev.date.set (finish = "2010/05/14")
+
+    >>> x
+    SRM.Boat_Class (u'seascape 18')
+    >>> scope.query_changes (Q.type_name == x.type_name).order_by (TFL.Sorted_By ("-cid")).first().cid
+    23
     >>> x.destroy ()
+    >>> scope.query_changes (Q.type_name == x.type_name).order_by (TFL.Sorted_By ("-cid")).first().cid
+    27
+
     >>> rev.date.finish = datetime.date (2010, 05, 13)
     >>> rs1.dates.append (datetime.datetime (2010, 9, 8, 0, 0))
     >>> rs1.dates.append (datetime.datetime (2010, 10, 8, 0, 0))
