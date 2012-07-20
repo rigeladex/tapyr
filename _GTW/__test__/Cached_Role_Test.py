@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Apr-2010 (MG) Creation
+#    20-Jul-2012 (RS) Add several left-sides (more than one `PAP.Person`)
 #    ««revision-date»»···
 #--
 
@@ -35,8 +36,13 @@ _test_code = """
     Creating new scope MOMT__...
     >>> PAP      = scope.PAP
     >>> person   = PAP.Person  (u"Test", u"Person")
+    >>> person2  = PAP.Person  (u"Another", u"Person")
     >>> address1 = PAP.Address (u"Street 1", u"Zip", u"City", u"Country")
     >>> address2 = PAP.Address (u"Street 2", u"Zip", u"City", u"Country")
+    >>> email1   = PAP.Email   (u"person@example.com")
+    >>> email2   = PAP.Email   (u"person2@example.com")
+    >>> elink1   = PAP.Person_has_Email (person, email1)
+    >>> elink2   = PAP.Person_has_Email (person2, email2)
     >>> sorted (person.addresses) #1
     []
     >>> link = PAP.Person_has_Address (person, address1)
@@ -54,6 +60,10 @@ _test_code = """
     [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country'))]
     >>> link.set_raw (right = address1.epk_raw)
     1
+    >>> [e.address for e in person.emails]
+    [u'person@example.com']
+    >>> [e.address for e in person2.emails]
+    [u'person2@example.com']
 """
 
 from _GTW.__test__.model import *
