@@ -61,7 +61,6 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     translator                 = None
 
     _exclude_robots            = False
-    _login_required            = False
     _static_handler            = None
 
     from _GTW._RST._TOP.Request  import Request  as Request_Type

@@ -207,8 +207,9 @@ class RST_Mixin (TFL.Meta.Object) :
         self.top._change_infos [self.href] = value
     # end def _change_info
 
-    def pid_query_request (self, pid, raise_not_found = True) :
-        E_Type = self.E_Type
+    def pid_query_request (self, pid, E_Type = None, raise_not_found = True) :
+        if E_Type is None :
+            E_Type = self.E_Type
         scope  = self.top.scope
         Status = self.Status
         try :
