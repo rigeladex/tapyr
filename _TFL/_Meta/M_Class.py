@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,7 @@
 #    30-Aug-2010 (CT) `M_Autorename.__name__` changed to pass `name` through
 #                     `str` (`unicode` gives `type()` a sissy-fit)
 #    10-Feb-2011 (CT) `_m_combine_nested_class` added to `M_Base`
+#    20-Jul-2012 (CT) Add debug output to `M_Autorename.__new__`
 #    ««revision-date»»···
 #--
 
@@ -228,7 +229,14 @@ class M_Autorename (M_Base) :
             name = str (dict ["_real_name"])
             del dict ["_real_name"]
         dict ["__real_name"] = real_name
-        return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
+        try :
+            return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
+        except TypeError as exc :
+            print "*" * 3, meta, name
+            for b in bases :
+                print " " * 3, b
+                print " " * 6, "\n       ".join (str (c) for c in b.mro ()[1:])
+            raise
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
