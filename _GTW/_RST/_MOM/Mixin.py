@@ -40,6 +40,7 @@
 #    19-Jul-2012 (CT) Change `RST_E_Type_Mixin._get_child` to call
 #                     `__super._get_child` before, not after, `_get_child_query`
 #    19-Jul-2012 (CT) Turn `_change_info` into property, use `top._change_infos`
+#    20-Jul-2012 (CT) Factor `pid_query_request`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ import _GTW._RST._MOM.Query_Restriction
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.I18N                import _, _T, _Tn
+
 import _TFL._Meta.Object
 
 class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
@@ -204,6 +207,38 @@ class RST_Mixin (TFL.Meta.Object) :
         self.top._change_infos [self.href] = value
     # end def _change_info
 
+    def pid_query_request (self, pid, raise_not_found = True) :
+        E_Type = self.E_Type
+        scope  = self.top.scope
+        Status = self.Status
+        try :
+            ipid = int (pid)
+        except (ValueError, TypeError) :
+            pass
+        else :
+            try :
+                result = scope.pid_query (ipid)
+            except LookupError as exc :
+                if 0 < ipid <= scope.max_pid :
+                    error = \
+                        (  _T ("%s `%s` doesn't exist anymore!")
+                        % (_T (E_Type.ui_name), pid)
+                        )
+                    raise Status.Gone
+            else :
+                if isinstance (result, E_Type) :
+                    return result
+                elif raise_not_found :
+                    error = \
+                        (  _T ("`%s` refers to %s, not %s")
+                        % (pid, _T (result.E_Type.ui_name), _T (E_Type.ui_name))
+                        )
+                    raise Status.Bad_Request (error)
+        if raise_not_found :
+            error = (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), pid))
+            raise Status.Not_Found (error)
+    # end def pid_query_request
+
     def query_changes (self) :
         scope = self.top.scope
         cqfs   = self.change_query_filters
@@ -324,20 +359,7 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def _get_child
 
     def _get_child_query (self, child) :
-        scope = self.top.scope
-        try :
-            result = scope.pid_query (child)
-        except (LookupError, TypeError, ValueError) :
-            try :
-                pid = int (child)
-            except (ValueError, TypeError) :
-                pass
-            else :
-                if 0 < pid <= scope.max_pid :
-                    raise self.Status.Gone
-        else :
-            if isinstance (result, self.E_Type) :
-                return result
+        return self.pid_query_request (child, raise_not_found = False)
     # end def _get_child_query
 
     def _get_objects (self) :

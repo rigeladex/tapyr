@@ -386,7 +386,6 @@ class Console (_Ancestor) :
 
     GET = Console_GET # end class
 
-
     @Once_Property
     def console (self) :
         top = self.top
