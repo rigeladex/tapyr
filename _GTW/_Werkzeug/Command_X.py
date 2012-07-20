@@ -50,6 +50,7 @@
 #                     use `Static_File_App`, not `Static_File_Handler`
 #    28-Jun-2012 (CT) Factor `App_Cache`, `_get_root`
 #     9-Jul-2012 (CT) Pass `static_handler` to `_get_root`
+#    20-Jul-2012 (CT) Change `nav_admin_group` to use `GTW.RST`, not `GTW.NAV`
 #    ««revision-date»»···
 #--
 
@@ -153,14 +154,12 @@ class GT2W_Command_X (GTW.OMP.Command) :
     # end def init_app_cache
 
     def nav_admin_group (self, name, title, * pnss, ** kw) :
-        import _GTW._NAV._E_Type.Site_Admin
-        return dict \
-            ( sub_dir        = name
+        return GTW.RST.TOP.MOM.Admin.Group \
+            ( name           = name
             , short_title    = kw.pop ("short_title", name)
             , title          = title
             , head_line      = kw.pop ("head_line", title)
             , PNSs           = pnss
-            , Type           = kw.pop ("Type", GTW.NAV.E_Type.Admin_Group)
             , ** kw
             )
     # end def nav_admin_group

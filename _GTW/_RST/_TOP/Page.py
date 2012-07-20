@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
+#    20-Jul-2012 (CT) Add `Alias`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,18 @@ class Page_P (_Page_O_) :
     # end def obj
 
 # end class Page_P
+
+class TOP_Alias (GTW.RST.Alias) :
+    """Alias page delegating to a target page."""
+
+    _real_name                 = "Alias"
+
+    @Once_Property
+    def login_required (self) :
+        return (not self.target) or self.target.login_required
+    # end def login_required
+
+Alias = TOP_Alias # end class
 
 if __name__ != "__main__" :
     GTW.RST.TOP._Export ("*")

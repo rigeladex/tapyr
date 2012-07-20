@@ -49,6 +49,7 @@
 #    19-Jul-2012 (CT) Add `self.entries` to `_Dir_Base_._get_child` to
 #                     trigger necessary updates
 #    19-Jul-2012 (CT) Add `_change_infos`, `LET` it in `wsgi_app`
+#    20-Jul-2012 (CT) Add `Alias`, factor `_get_method`
 #    ««revision-date»»···
 #--
 
@@ -438,6 +439,10 @@ class _RST_Base_ (TFL.Meta.Object) :
             yield t
     # end def template_iter
 
+    def _get_method (self, name) :
+        return getattr (self, name)
+    # end def _get_method
+
     def _get_permissions (self, name) :
         p = getattr (self, "_" + name, None)
         if p is not None :
@@ -497,6 +502,72 @@ class RST_Leaf (_Base_) :
     # end def _get_child
 
 Leaf = RST_Leaf # end class
+
+_Ancestor = Leaf
+
+class RST_Alias (_Ancestor) :
+    """Alias for another RESTful resource"""
+
+    _real_name                 = "Alias"
+
+    _target_href               = None
+    _target_page               = None
+    _parent_attr               = set (("prefix", ))
+
+    def __init__ (self, ** kw) :
+        self.target = kw.pop  ("target")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    @property
+    def target (self) :
+        result = self._target_page
+        t_href = self._target_href
+        if result is None :
+            if t_href :
+                result = self._target_page = self.top.resource_from_href \
+                    (t_href)
+        if result is not None and t_href is None :
+            self._target_href = result.href
+        return result
+    # end def target
+
+    @target.setter
+    def target (self, value) :
+        if isinstance (value, basestring) :
+            self._target_href = value
+            self._target_page = None
+        else :
+            self._target_href = value.href
+            self._target_page = value
+    # end def target
+
+    def allow_method (self, method, user) :
+        return (not self.target) or self.target.allow_method (method, user)
+    # end def allow_method
+
+    def _get_method (self, name) :
+        target = self.target
+        if target :
+            return target._get_method (name)
+    # end def _get_method
+
+    def _handle_method (self, method, request) :
+        target = self.target
+        if target :
+            request.original_resource = self
+            return target._handle_method (method, request)
+    # end def _handle_method
+
+    def __getattr__ (self, name) :
+        if name not in self._parent_attr :
+            target = self.target
+            if target is not None :
+                return getattr (target, name)
+        return self.__super.__getattr__ (name)
+    # end def __getattr__
+
+Alias = RST_Alias # end class
 
 _Ancestor = _Base_
 
@@ -1039,22 +1110,26 @@ class RST_Root (_Ancestor) :
             if meth_name not in resource.SUPPORTED_METHODS :
                 raise Status.Method_Not_Allowed \
                     (valid_methods = resource.SUPPORTED_METHODS)
-            method  = getattr (resource, meth_name) ()
-            if resource.allow_method (method, user) :
-                if resource.DEBUG :
-                    context = TFL.Context.time_block
-                    fmt     = "[%s] %s %s: execution time = %%s" % \
-                        ( time.strftime
-                            ("%d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
-                        , method.name, href
-                        )
+            Method = resource._get_method (meth_name)
+            if Method is not None :
+                method = Method ()
+                if resource.allow_method (method, user) :
+                    if resource.DEBUG :
+                        context = TFL.Context.time_block
+                        fmt     = "[%s] %s %s: execution time = %%s" % \
+                            ( time.strftime
+                                ( "%d-%b-%Y %H:%M:%S"
+                                , time.localtime (time.time ())
+                                )
+                            , method.name, href
+                            )
+                    else :
+                        context = TFL.Context.relaxed
+                        fmt     = None
+                    with context (fmt, sys.stderr) :
+                        return resource._handle_method (method, request)
                 else :
-                    context = TFL.Context.relaxed
-                    fmt     = None
-                with context (fmt, sys.stderr) :
-                    return resource._handle_method (method, request)
-            else :
-                raise (Status.Forbidden if auth else Status.Unauthorized) ()
+                    raise (Status.Forbidden if auth else Status.Unauthorized) ()
         raise Status.Not_Found ()
     # end def _http_response
 

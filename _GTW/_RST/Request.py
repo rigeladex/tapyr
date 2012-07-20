@@ -50,6 +50,8 @@ class _RST_Request_ (TFL.Meta.Object) :
     _real_name = "Request"
     _user      = None
 
+    original_resource = None
+
     def __init__ (self, root, environ) :
         self.root     = root
         self._request = root.HTTP.Request (environ)

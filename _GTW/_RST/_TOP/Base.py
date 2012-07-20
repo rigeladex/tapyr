@@ -30,6 +30,7 @@
 #     9-Jul-2012 (CT) Add and use `HTTP_Method_Mixin.template_name`
 #     9-Jul-2012 (CT) Add `RST_TOP_HTML`, define `.rendered`
 #    18-Jul-2012 (CT) Add `Index`, `next`, and `prev`
+#    20-Jul-2012 (CT) Add `request.original_resource`
 #    ««revision-date»»···
 #--
 
@@ -69,11 +70,14 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
     template_name          = None
 
     def _render_context (self, resource, request, response, ** kw) :
-        return dict \
+        result = dict \
             ( request       = request
             , notifications = response.session.notifications
             , ** kw
             )
+        if request.original_resource is not None :
+            result.setdefault ("nav_page", request.original_resource)
+        return result
     # end def _render_context
 
     def _response_body (self, resource, request, response) :

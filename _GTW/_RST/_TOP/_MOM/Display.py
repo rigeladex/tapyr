@@ -45,7 +45,7 @@ from   _MOM.import_MOM          import MOM, Q
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 
-from   posixpath                import join as pp_join
+from   posixpath                import join  as pp_join
 
 import datetime
 

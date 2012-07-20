@@ -30,6 +30,7 @@
 #    18-Jul-2012 (CT) Redefine `add_entries` to set `Index`
 #    18-Jul-2012 (CT) Move `add_entries` from `_Dir_` to `_Dir_Base_`
 #    18-Jul-2012 (CT) Redefine `_Dir_._get_child` to handle "index"
+#    20-Jul-2012 (CT) Factor `_add_index`
 #    ««revision-date»»···
 #--
 
@@ -51,14 +52,18 @@ class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
     def add_entries (self, * entries) :
         l = len (self._entries)
         self.__super.add_entries (* entries)
-        Index = self.Index_Type
-        for i, e in enumerate_slice (self._entries, l) :
-            e._index = (Index (i))
+        self._add_index (l)
     # end def add_entries
 
     def is_current_dir (self, page) :
         return page.prefix.startswith (self.prefix)
     # end def is_current_dir
+
+    def _add_index (self, l) :
+        Index = self.Index_Type
+        for i, e in enumerate_slice (self._entries, l) :
+            e._index = (Index (i))
+    # end def _add_index
 
 _Dir_Base_ = _TOP_Dir_Base_ # end class
 
