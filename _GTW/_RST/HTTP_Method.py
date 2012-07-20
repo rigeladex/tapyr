@@ -31,6 +31,7 @@
 #    29-Jun-2012 (CT) Fix `_HTTP_Method_W_._check_etag` and `._check_modified`
 #    29-Jun-2012 (CT) Add response header `X-last-cid`
 #    13-Jul-2012 (CT) Add `_do_change_info_skip`
+#    20-Jul-2012 (CT) Add `try/except` around `render` to `send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,17 @@ class HTTP_Method (TFL.Meta.Object) :
             if body is not None :
                 render = self._get_renderer (resource, request, response)
                 if render is not None :
-                    render (request, response, body)
+                    try :
+                        render (request, response, body)
+                    except Exception as exc :
+                        from _TFL.Formatter import formatted
+                        import traceback
+                        tb = traceback.format_exc ()
+                        resource.send_error_email \
+                            ( request, exc
+                            , "\n\n".join (formatted (body), tb)
+                            )
+                        raise
         return response
     # end def __call__
 
