@@ -177,11 +177,16 @@ class RST_Mixin (TFL.Meta.Object) :
     @attributes.setter
     def attributes (self, value) :
         def _gen (vs) :
-            E_Type = self.E_Type
+            AQ = self.E_Type.AQ
             for v in vs :
                 if isinstance (v, basestring) :
-                    v = getattr (E_Type, v)
-                yield v
+                    try :
+                        v = getattr (AQ, v)._attr
+                    except AttributeError as exc :
+                        print ("*" * 4, exc, E_Type, v)
+                        pass
+                    else :
+                        yield v
         self._attributes = tuple (_gen (value)) if value is not None else None
     # end def attributes
 

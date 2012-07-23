@@ -580,6 +580,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     _real_name                 = "_Dir_Base_"
 
     _dir_template              = None
+    _entries                   = ()
     _href_pat_frag             = None
 
     template                   = Alias_Property ("dir_template")
@@ -810,6 +811,11 @@ class RST_Dir_V (_Ancestor) :
     """
 
     _entry_type_map = None
+
+    @property
+    def entries (self) :
+        return ()
+    # end def entries
 
     def template_iter (self) :
         for t in self.__super.template_iter () :
@@ -1076,14 +1082,14 @@ class RST_Root (_Ancestor) :
 
     def wsgi_app (self, environ, start_response) :
         """WSGI application responding to http[s] requests."""
-        HTTP_Status = self.Status.Status
-        HTTP        = self.HTTP
-        request     = self.Request  (environ)
-        response    = self.Response (request)
+        Status   = self.Status.Status
+        HTTP     = self.HTTP
+        request  = self.Request  (environ)
+        response = self.Response (request)
         with self.LET (_change_infos = {}) :
             try :
                 result  = self._http_response (request, response)
-            except HTTP_Status as status :
+            except Status as status :
                 result  = status (self, request, response)
             except HTTP.HTTP_Exception as exc :
                 ### works for werkzeug.exceptions.HTTPException
@@ -1103,7 +1109,6 @@ class RST_Root (_Ancestor) :
     # end def wsgi_app
 
     def _http_response (self, request, response) :
-        HTTP        = self.HTTP
         Status      = self.Status
         href        = request.path
         resource    = self.resource_from_href (href)

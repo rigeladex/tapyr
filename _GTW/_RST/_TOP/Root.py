@@ -148,7 +148,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     def _http_response (self, request, response) :
         Status = self.Status
         try :
-            return self.__super._http_response (request, response)
+            result = self.__super._http_response (request, response)
         except (Status.Informational, Status.Redirection, Status.Successful) :
             self._http_response_finish (request, response)
             raise
@@ -157,6 +157,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
             raise
         else :
             self._http_response_finish (request, response)
+            return result
     # end def _http_response
 
     def _http_response_finish (self, request, response) :

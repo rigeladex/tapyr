@@ -294,11 +294,11 @@ class _TOP_Base_ (_Ancestor) :
         template = getattr (self, "template")
         if head is not None :
             medias.append (head)
-        if self._Media is not _Site_Entity_._Media :
+        if self._Media is not _TOP_Base_._Media :
             medias.append (self._Media)
         if getattr (template, "Media", None) :
             medias.append (template.Media)
-        if parent and parent.Media is not _Site_Entity_._Media :
+        if parent and parent.Media is not _TOP_Base_._Media :
             medias.append (parent.Media)
         if medias :
             return GTW.Media (children = medias)

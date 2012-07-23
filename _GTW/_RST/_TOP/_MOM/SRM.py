@@ -59,7 +59,13 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     register_email_template = "regatta_register_email"
 
     class _Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
-        pass
+
+        class _SRM_Page_GET_ (GTW.RST.TOP.Page.GET) :
+
+            _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
+
+        GET = _SRM_Page_GET_ # end class _SRM_Page_GET_
+
     # end class _Page_
 
     class Registration (_Page_) :
@@ -125,8 +131,6 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
             if first (obj.teams).place :
                 Result_Type = self.Result_Teamrace
         else :
-            obj.boats = scope.SRM.Boat_in_Regatta.r_query \
-                (right = obj).order_by (sk).all ()
             if obj.races :
                 Result_Type = self.Result
         if Result_Type :
@@ -194,7 +198,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
         return result
     # end def _get_pages
 
-    def _register_submit_callback (self, handler, scope, fv, result) :
+    def _register_submit_callback (self, request, response, scope, fv, result) :
         def _gen (scope, results) :
             from _MOM._Attr import Selector as S
             AQ = S.List (S.primary, S.user)
@@ -221,7 +225,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                 , message       = message
                 , NAV           = self.top
                 , page          = self
-                , request       = handler.request
+                , request       = request
                 )
         except Exception as exc :
             pyk.fprint \

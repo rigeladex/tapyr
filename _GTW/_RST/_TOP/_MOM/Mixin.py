@@ -194,7 +194,7 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
         admin = self.admin
         if admin :
             return admin.href_create ()
-    # end def href_change
+    # end def href_create
 
     def href_display (self, obj) :
         return pp_join \

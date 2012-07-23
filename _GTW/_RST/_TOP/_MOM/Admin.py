@@ -67,7 +67,7 @@ import logging
 
 _Ancestor = GTW.RST.TOP.Page
 
-class _Action_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
+class _Action_ (_Ancestor) :
 
     args              = (None, )
     implicit          = True
@@ -100,7 +100,7 @@ class _Action_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     @property
     def obj (self) :
         ETM = self.ETM
-        pid = self.args and self.args [0]
+        pid = self.args [0] if self.args else None
         if pid is not None :
             return ETM.pid_query (pid)
     # end def obj
@@ -366,13 +366,14 @@ class _Changer_ (_HTML_Action_) :
     # end def injected_templates
 
     def rendered (self, context, template = None) :
-        self._check_readonly (request)
         Status   = self.top.Status
         obj      = context ["instance"] = None
         request  = context ["request"]
         req_data = request.req_data
-        pid      = req_data.get ("pid") or self.args [0]
+        pid      = req_data.get ("pid") or \
+            (self.args [0] if self.args else None)
         scope    = self.top.scope
+        self._check_readonly (request)
         if pid == "null" :
             pid = None
         if pid is not None :
@@ -387,8 +388,7 @@ class _Changer_ (_HTML_Action_) :
             , _sid            = sid
             , _session_secret = session_secret
             )
-        self.Media = self._get_media \
-            (head = getattr (form, "Media", None))
+        self.Media = self._get_media (head = getattr (form, "Media", None))
         context.update (form = form)
         try :
             self.last_changed = obj.FO.last_changed
@@ -399,6 +399,7 @@ class _Changer_ (_HTML_Action_) :
 
     def _rendered_post (self, request, response) :
         json   = request.json
+        scope  = self.top.scope
         result = {}
         if json.get ("cancel") :
             ### the user has clicked on the cancel button and not on
@@ -565,7 +566,7 @@ class Deleter (_JSON_Action_PO_) :
         if self.args and self.args [0] :
             E_Type         = self.E_Type
             sra            = self._set_result_args
-            pid            = args
+            pid            = args [0]
             form, elem     = None, None
         else :
             sra            = self._set_result_json
@@ -575,6 +576,7 @@ class Deleter (_JSON_Action_PO_) :
             sid            = json.get ("sid")
             session_secret = self.session_secret (request, sid)
             form, elem     = self.form_element   (fid)
+            scope          = self.top.scope
             ETM            = scope [elem.type_name]
             E_Type         = ETM.E_Type
         if pid is not None and pid != "null" :
@@ -787,6 +789,8 @@ _Ancestor = GTW.RST.TOP.Dir_V
 
 class _QX_Dispatcher_ (_NC_Mixin_, _Ancestor) :
 
+    name                  = "qx"
+
     _entry_type_map       = dict \
         (  (c.name, c)
         for c in
@@ -820,8 +824,10 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     submit_callback       = None
 
     _entry_type_map       = dict \
-        (  (c.name, c)
-        for c in (Changer, Completed, Completer, Creator, Deleter, Expander)
+        ((c.name, c) for c in
+            ( Changer, Completed, Completer, Creator, Deleter, Expander
+            , _QX_Dispatcher_
+            )
         )
 
     _greet_entry          = None
@@ -831,10 +837,11 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     class _E_Type_GET_ (_Ancestor.GET) :
 
-        _renderers        = \
+        _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
+        _renderers             = \
             _Ancestor.GET._renderers + (GTW.RST.Mime_Type.JSON, )
 
-    # end class _E_Type_GET_
+    GET = _E_Type_GET_ # end class
 
     class Entity (TFL.Meta.Object) :
         """Wrap a specific instance in the context of an admin page for one
@@ -1078,7 +1085,9 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         self._fix_filters (qr.filters)
         fields = self._fields (qr.attributes or self.list_display)
         with self.LET (fields = fields, query_restriction = qr) :
-            objects = self.objects
+            Entity  = self.Entity
+            objects = tuple \
+                (Entity (obj = o, parent = self) for o in self.objects)
             next_p  = qr.next_p
             prev_p  = qr.prev_p
             button_types = dict \
@@ -1092,11 +1101,9 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                      ( query_size   = len (objects)
                      , button_types = button_types
                      ) :
-                Entity = self.Entity
                 context.update \
                     ( fields            = fields
-                    , objects           = tuple
-                        (Entity (obj = o, parent = self) for o in objects)
+                    , objects           = objects
                     , query_restriction = self.query_restriction
                     )
                 if request.renderer.name == "JSON" :
