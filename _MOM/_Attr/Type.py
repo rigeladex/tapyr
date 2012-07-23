@@ -1801,6 +1801,7 @@ class A_Link_Role (_A_Id_Entity_) :
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
 
     auto_cache        = False
+    Cacher_Type       = None
     dfc_synthesizer   = None
     kind              = MOM.Attr.Link_Role
     max_links         = -1

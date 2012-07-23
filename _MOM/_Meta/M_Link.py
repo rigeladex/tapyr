@@ -70,6 +70,8 @@
 #    24-Mar-2012 (CT) Change `_m_setup_etype_auto_props` to not overwrite
 #                     `auto_cache` (don't rewrite ancestor's `auto_cache`)
 #    18-Jun-2012 (CT) Add `M_E_Type_Link[123]_Reload`
+#    23-Jul-2012 (CT) Change `M_Link._m_setup_etype_auto_props` to consider
+#                     `a.Cacher_Type`
 #    ««revision-date»»···
 #--
 
@@ -113,9 +115,10 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         for a in roles :
             rc = acr_map.get (a.name) or a.auto_cache
             if not isinstance (rc, MOM._.Link._Cacher_) :
-                rc = cls.Cacher (a.auto_cache)
+                Cacher = a.Cacher_Type or cls.Cacher
+                rc     = Cacher (a.auto_cache)
             if rc.link_type_name is None :
-                rc.setup     (cls, a)
+                rc.setup (cls, a)
             elif cls.type_name != rc.link_type_name :
                 rc = rc.copy (cls, a)
             acr_map [a.name] = rc

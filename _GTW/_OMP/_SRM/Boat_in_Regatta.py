@@ -39,6 +39,7 @@
 #    27-Apr-2012 (CT) Add predicate `skipper_not_multiplexed`
 #     7-May-2012 (CT) Add predicate `crew_number_valid`, change
 #                     `crew` from `Cached, Computed_Set_Mixin` to `Computed`
+#    23-Jul-2012 (CT) Use `Link_Cacher` for auto-cached `boats`
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,6 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Boat
             ui_allow_new       = True
-            auto_cache         = True
 
         # end class left
 
@@ -78,6 +78,8 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Regatta a boat races in."""
 
             role_type          = GTW.OMP.SRM.Regatta
+            auto_cache         = "boats"
+            Cacher_Type        = MOM.Link_Cacher
 
         # end class right
 
