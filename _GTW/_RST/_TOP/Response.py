@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
+#    23-Jul-2012 (CT) Add `username` to `_own_vars`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,8 @@ import time
 class _RST_TOP_Response_ (GTW.RST.Response) :
     """Extend GTW.RST.Response with session handling."""
 
+    _own_vars = ("username", )
+
     @Once_Property
     def session (self) :
         return self._request.session
@@ -59,8 +62,9 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     @username.setter
     def username (self, value) :
         if value != self.username :
-            self.session.username = value
-            self._set_session_cookie (self.session.renew_session_id ())
+            session = self.session
+            session.username = value
+            self._set_session_cookie ()
     # end def username
 
     def add_notification (self, noti) :
@@ -82,21 +86,22 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     # end def set_cookie
 
     def set_secure_cookie (self, name, data, ** kw) :
-        requ      = self._request
+        request   = self._request
         timestamp = str (int (time.time ()))
         if isinstance (data, unicode) :
-            data  = data.encode (requ.cookie_encoding)
-        data      = base64.b64encode       (data)
-        signature = requ._cookie_signature (data, timestamp)
-        cookie    = "|".join               ((data, timestamp, signature))
+            data  = data.encode (request.cookie_encoding)
+        data      = base64.b64encode (data)
+        signature = request._cookie_signature (data, timestamp)
+        cookie    = "|".join ((data, timestamp, signature))
         self.set_cookie (name, cookie, ** kw)
     # end def set_secure_cookie
 
-    def _set_session_cookie (self, session) :
-        requ        = self._request
-        cookie_name = requ.session_cookie_name
+    def _set_session_cookie (self) :
+        request     = self._request
+        session     = self.session
+        cookie_name = request.session_cookie_name
         self.set_secure_cookie \
-            (cookie_name, session.sid, max_age = requ.user_session_ttl)
+            (cookie_name, session.sid, max_age = request.user_session_ttl)
         GTW.Notification_Collection (session)
     # end def _set_session_cookie
 

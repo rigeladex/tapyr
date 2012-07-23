@@ -41,6 +41,7 @@
 #                     `__super._get_child` before, not after, `_get_child_query`
 #    19-Jul-2012 (CT) Turn `_change_info` into property, use `top._change_infos`
 #    20-Jul-2012 (CT) Factor `pid_query_request`
+#    23-Jul-2012 (CT) Add argument `response` to `_handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -278,8 +279,8 @@ class RST_Mixin (TFL.Meta.Object) :
     # end def _get_objects
 
     @TFL.Contextmanager
-    def _handle_method_context (self, method, request) :
-        with self.__super._handle_method_context (method, request) :
+    def _handle_method_context (self, method, request, response) :
+        with self.__super._handle_method_context (method, request, response) :
             with self.LET (_change_info = self._get_change_info ()) :
                 yield
     # end def _prepare_handle_method
@@ -374,8 +375,8 @@ class RST_E_Type_Mixin (RST_Mixin) :
     # end def _get_objects
 
     @TFL.Contextmanager
-    def _handle_method_context (self, method, request) :
-        with self.__super._handle_method_context (method, request) :
+    def _handle_method_context (self, method, request, response) :
+        with self.__super._handle_method_context (method, request, response) :
             qr = self.QR.from_request \
                 (self.E_Type, request, ** self.default_qr_kw)
             kw = dict (query_restriction = qr)

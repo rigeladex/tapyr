@@ -304,7 +304,8 @@ class _Login_ (_Ancestor) :
                         ### that page
                         next = resource.href_change_pass (form.account)
                     else :
-                        response.username = username = req_data ["username"]
+                        username          = req_data ["username"]
+                        response.username = username
                         response.add_notification \
                             (_T ("Welcome %s.") % (username, ))
                     raise resource.Status.See_Other (next)

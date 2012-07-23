@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Jul-2012 (CT) Creation
+#    23-Jul-2012 (CT) Add argument `response` to `_Language_.GET.__call__`
 #    ««revision-date»»···
 #--
 
@@ -58,11 +59,10 @@ class _Language_ (_Ancestor) :
 
         _real_name             = "GET"
 
-        def __call__ (self, resource, request) :
+        def __call__ (self, resource, request, response) :
             HTTP_Status = resource.Status
             language  = self.language
             next      = request.req_data.get ("next", "/")
-            response  = resource.Response (request)
             with TFL.I18N.context (language) :
                 choice = TFL.I18N.Config.choice
                 if language.startswith (choice [0]) :

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Jul-2012 (CT) Creation
+#    23-Jul-2012 (CT) Add argument `response` to `__call__`
 #    ««revision-date»»···
 #--
 
@@ -101,8 +102,7 @@ class Status (StandardError, TFL.Meta.Object) :
         self._kw  = kw
     # end def __init__
 
-    def __call__ (self, resource, request) :
-        response = resource.Response (request)
+    def __call__ (self, resource, request, response) :
         response.status_code = self.status_code
         self._add_response_body    (resource, request, response)
         self._add_response_headers (resource, request, response)

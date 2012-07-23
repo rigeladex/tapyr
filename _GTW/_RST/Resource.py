@@ -50,6 +50,9 @@
 #                     trigger necessary updates
 #    19-Jul-2012 (CT) Add `_change_infos`, `LET` it in `wsgi_app`
 #    20-Jul-2012 (CT) Add `Alias`, factor `_get_method`
+#    23-Jul-2012 (CT) Add argument `response` to `_handle_method`,
+#                     `_handle_method_context`, `_http_response`, and
+#                     `_http_response_error`
 #    ««revision-date»»···
 #--
 
@@ -467,14 +470,14 @@ class _RST_Base_ (TFL.Meta.Object) :
         return result
     # end def _get_user
 
-    def _handle_method (self, method, request) :
-        with self._handle_method_context (method, request) :
-            result = method (self, request)
+    def _handle_method (self, method, request, response) :
+        with self._handle_method_context (method, request, response) :
+            result = method (self, request, response)
             return result
     # end def _handle_method
 
     @TFL.Contextmanager
-    def _handle_method_context (self, method, request) :
+    def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
         yield
@@ -552,11 +555,11 @@ class RST_Alias (_Ancestor) :
             return target._get_method (name)
     # end def _get_method
 
-    def _handle_method (self, method, request) :
+    def _handle_method (self, method, request, response) :
         target = self.target
         if target :
             request.original_resource = self
-            return target._handle_method (method, request)
+            return target._handle_method (method, request, response)
     # end def _handle_method
 
     def __getattr__ (self, name) :
@@ -1075,12 +1078,13 @@ class RST_Root (_Ancestor) :
         """WSGI application responding to http[s] requests."""
         HTTP_Status = self.Status.Status
         HTTP        = self.HTTP
-        request     = self.Request (environ)
+        request     = self.Request  (environ)
+        response    = self.Response (request)
         with self.LET (_change_infos = {}) :
             try :
-                result  = self._http_response (request)
+                result  = self._http_response (request, response)
             except HTTP_Status as status :
-                result  = status (self, request)
+                result  = status (self, request, response)
             except HTTP.HTTP_Exception as exc :
                 ### works for werkzeug.exceptions.HTTPException
                 return exc
@@ -1088,16 +1092,17 @@ class RST_Root (_Ancestor) :
                 if self.use_www_debugger :
                     raise
                 tbi     = traceback.format_exc ()
-                result  = self._http_response_error (request, exc, tbi)
+                result  = self._http_response_error \
+                    (request, response, exc, tbi)
             if not result :
                 exc     = ValueError ("No result")
                 if self.use_www_debugger :
                     raise exc
-                result  = self._http_response_error (request, exc)
+                result  = self._http_response_error (request, response, exc)
             return result (environ, start_response)
     # end def wsgi_app
 
-    def _http_response (self, request) :
+    def _http_response (self, request, response) :
         HTTP        = self.HTTP
         Status      = self.Status
         href        = request.path
@@ -1127,15 +1132,16 @@ class RST_Root (_Ancestor) :
                         context = TFL.Context.relaxed
                         fmt     = None
                     with context (fmt, sys.stderr) :
-                        return resource._handle_method (method, request)
+                        return resource._handle_method \
+                            (method, request, response)
                 else :
                     raise (Status.Forbidden if auth else Status.Unauthorized) ()
         raise Status.Not_Found ()
     # end def _http_response
 
-    def _http_response_error (self, request, exc, tbi = None) :
+    def _http_response_error (self, request, response, exc, tbi = None) :
         self.send_error_email (request, exc, tbi)
-        return self.Status.Internal_Server_Error (exc) (self, request)
+        return self.Status.Internal_Server_Error (exc) (self, request, response)
     # end def _http_response_error
 
 Root = RST_Root # end class

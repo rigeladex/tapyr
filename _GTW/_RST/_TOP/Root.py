@@ -28,6 +28,7 @@
 # Revision Dates
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #     9-Jul-2012 (CT) Add `static_handler`
+#    23-Jul-2012 (CT) Redefine `_http_response` to call `_http_response_finish`
 #    ««revision-date»»···
 #--
 
@@ -143,6 +144,36 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
             result = self._static_handler = self.HTTP.Static_File_App ("GTW", p)
         return result
     # end def static_handler
+
+    def _http_response (self, request, response) :
+        Status = self.Status
+        try :
+            return self.__super._http_response (request, response)
+        except (Status.Informational, Status.Redirection, Status.Successful) :
+            self._http_response_finish (request, response)
+            raise
+        except Exception :
+            self._http_response_finish_error (request, response)
+            raise
+        else :
+            self._http_response_finish (request, response)
+    # end def _http_response
+
+    def _http_response_finish (self, request, response) :
+        response.session.save ()
+        scope = self.scope
+        if scope :
+            scope.commit ()
+    # end def _http_response_finish
+
+    def _http_response_finish_error (self, request, response) :
+        scope = self.scope
+        if scope :
+            try :
+                scope.rollback ()
+            except Exception :
+                pass
+    # end def _http_response_finish_error
 
 Root = TOP_Root # end class
 

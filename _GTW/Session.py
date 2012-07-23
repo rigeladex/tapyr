@@ -44,6 +44,7 @@
 #     5-Apr-2012 (CT) Add stubs for `remove` and `save`
 #     5-Apr-2012 (CT) Rename `Login` to `User`
 #    26-Apr-2012 (CT) Change `_date` to create `User()` if `._load` returns `{}`
+#    23-Jul-2012 (CT) Call `renew_session_id` in `username.setter`
 #    ««revision-date»»···
 #--
 
@@ -150,6 +151,7 @@ class Session (TFL.Meta.Object) :
     @username.setter
     def username (self, value) :
         self._change_user (self.user, value)
+        self.renew_session_id ()
     # end def username
 
     @property

@@ -32,6 +32,7 @@
 #    29-Jun-2012 (CT) Add response header `X-last-cid`
 #    13-Jul-2012 (CT) Add `_do_change_info_skip`
 #    20-Jul-2012 (CT) Add `try/except` around `render` to `send_error_email`
+#    23-Jul-2012 (CT) Add argument `response` to `__call__`
 #    ««revision-date»»···
 #--
 
@@ -74,8 +75,7 @@ class HTTP_Method (TFL.Meta.Object) :
 
     _renderers                 = (GTW.RST.Mime_Type.JSON, )
 
-    def __call__ (self, resource, request) :
-        response = resource.Response (request)
+    def __call__ (self, resource, request, response) :
         if self._do_change_info (resource, request, response) :
             body = self._response_body (resource, request, response)
             if body is not None :
@@ -225,8 +225,7 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
 
     needs_body                 = False
 
-    def __call__ (self, resource, request) :
-        response = resource.Response (request)
+    def __call__ (self, resource, request, response) :
         methods  = sorted \
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
             if resource.allow_method (m, request.user)
