@@ -31,6 +31,7 @@
 #    18-Jul-2012 (CT) Move `add_entries` from `_Dir_` to `_Dir_Base_`
 #    18-Jul-2012 (CT) Redefine `_Dir_._get_child` to handle "index"
 #    20-Jul-2012 (CT) Factor `_add_index`
+#    23-Jul-2012 (CT) Redefine `Dir_V.has_children`
 #    ««revision-date»»···
 #--
 
@@ -132,6 +133,11 @@ class TOP_Dir_V (_Dir_Base_, GTW.RST.Dir_V) :
     """
 
     _real_name                 = "Dir_V"
+
+    @property
+    def has_children (self) :
+        return False
+    # end def has_children
 
 Dir_V = TOP_Dir_V # end class
 

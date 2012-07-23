@@ -60,7 +60,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import uniq
 
-from   itertools                import chain as ichain
+from   itertools                import chain as iter_chain
 from   posixpath                import join  as pp_join
 
 import logging
@@ -701,13 +701,13 @@ class QX_Completer (_JSON_Action_PO_) :
         at     = QR.Filter  (ET, json.trigger)
         names  = tuple \
             ( uniq
-                ( ichain
+                ( iter_chain
                     ( (at.AQ._full_name, )
                     , tuple (f._full_name for f in ET.AQ.Atoms)
                     )
                 )
             )
-        qr     = QR.from_request_data (ET, request)
+        qr     = QR.from_request (ET, request)
         ETM    = self.top.scope [ET.type_name]
         query  = qr (ETM.query_s ()).distinct ()
         entity_p = getattr (json, "entity_p", False)
@@ -826,7 +826,15 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     _greet_entry          = None
     _form_id              = None
+    _list_display         = None
     _sort_key             = None
+
+    class _E_Type_GET_ (_Ancestor.GET) :
+
+        _renderers        = \
+            _Ancestor.GET._renderers + (GTW.RST.Mime_Type.JSON, )
+
+    # end class _E_Type_GET_
 
     class Entity (TFL.Meta.Object) :
         """Wrap a specific instance in the context of an admin page for one
@@ -1003,25 +1011,25 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def changer
 
     def href_create (self) :
-        return pjoin (self.abs_href, "create")
+        return pp_join (self.abs_href, "create")
     # end def href_create
 
     def href_change (self, obj) :
-        return pjoin (self.abs_href, "change", str (obj.pid))
+        return pp_join (self.abs_href, "change", str (obj.pid))
     # end def href_change
 
     def href_complete (self) :
-        return pjoin (self.abs_href, "complete")
+        return pp_join (self.abs_href, "complete")
     # end def href_complete
 
     def href_completed (self) :
-        return pjoin (self.abs_href, "completed")
+        return pp_join (self.abs_href, "completed")
     # end def href_completed
 
     def href_delete (self, obj = None) :
-        result = pjoin (self.abs_href, "delete")
+        result = pp_join (self.abs_href, "delete")
         if obj is not None :
-            result = pjoin (result, str (obj.pid))
+            result = pp_join (result, str (obj.pid))
         return result
     # end def href_delete
 
@@ -1032,37 +1040,87 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def href_display
 
     def href_expand (self) :
-        return pjoin (self.abs_href, "expand")
+        return pp_join (self.abs_href, "expand")
     # end def href_delete
 
     def href_qx_af_html (self) :
-        return pjoin (self.abs_href, self.qx_prefix, "af_html")
+        return pp_join (self.abs_href, self.qx_prefix, "af_html")
     # end def href_qx_af_html
 
     def href_qx_asf (self) :
-        return pjoin (self.abs_href, self.qx_prefix, "asf")
+        return pp_join (self.abs_href, self.qx_prefix, "asf")
     # end def href_qx_asf
 
     def href_qx_esf_completed (self) :
-        return pjoin (self.abs_href, self.qx_prefix, "esf_completed")
+        return pp_join (self.abs_href, self.qx_prefix, "esf_completed")
     # end def href_qx_esf_completed
 
     def href_qx_esf_completer (self) :
-        return pjoin (self.abs_href, self.qx_prefix, "esf_completer")
+        return pp_join (self.abs_href, self.qx_prefix, "esf_completer")
     # end def href_qx_esf_completer
 
     def href_qx_esf (self) :
-        return pjoin (self.abs_href, self.qx_prefix, "esf")
+        return pp_join (self.abs_href, self.qx_prefix, "esf")
     # end def href_qx_esf
 
     def href_qx_obf (self) :
-        return pjoin (self.abs_href, self.qx_prefix, "obf")
+        return pp_join (self.abs_href, self.qx_prefix, "obf")
     # end def href_qx_obf
 
     def is_current_dir (self, page) :
         p = page.href
         return p.startswith (self.href) and p != self.href
     # end def is_current_dir
+
+    def rendered (self, context, template = None) :
+        request  = context ["request"]
+        qr = QR.from_request (self.ETM.E_Type, request, ** self.default_qr_kw)
+        self._fix_filters (qr.filters)
+        fields = self._fields (qr.attributes or self.list_display)
+        with self.LET (fields = fields, query_restriction = qr) :
+            objects = self.objects
+            next_p  = qr.next_p
+            prev_p  = qr.prev_p
+            button_types = dict \
+                ( self.button_types
+                , FIRST  = "submit" if prev_p else "button"
+                , LAST   = "submit" if next_p else "button"
+                , NEXT   = "submit" if next_p else "button"
+                , PREV   = "submit" if prev_p else "button"
+                )
+            with self.LET \
+                     ( query_size   = len (objects)
+                     , button_types = button_types
+                     ) :
+                Entity = self.Entity
+                context.update \
+                    ( fields            = fields
+                    , objects           = tuple
+                        (Entity (obj = o, parent = self) for o in objects)
+                    , query_restriction = self.query_restriction
+                    )
+                if request.renderer.name == "JSON" :
+                    template   = self.top.Templateer.get_template ("e_type")
+                    call_macro = template.call_macro
+                    buttons    = dict \
+                        ( FIRST = call_macro ("qr_button_first", self, qr)
+                        , LAST  = call_macro ("qr_button_last",  self, qr)
+                        , NEXT  = call_macro ("qr_button_next",  self, qr)
+                        , PREV  = call_macro ("qr_button_prev",  self, qr)
+                        )
+                    result = dict \
+                        ( buttons          = buttons
+                        , callbacks        = ["setup_obj_list"]
+                        , head_line        = self.head_line
+                        , limit            = qr.limit
+                        , object_container = call_macro
+                            ("admin_table", self, fields, objects)
+                        , offset           = qr.offset
+                        )
+                else :
+                    result = self.__super.rendered (context, template)
+            return result
+    # end def rendered
 
     def template_iter (self) :
         T = self.top.Templateer
@@ -1162,7 +1220,7 @@ class Group (_Ancestor) :
 
     def _filter_etype_entries (self, * args) :
         seen = set ()
-        for e in ichain (* args) :
+        for e in iter_chain (* args) :
             if isinstance (e, tuple) :
                 cls, args, kw = e
                 e             = cls (* args, ** dict (kw, parent = self))

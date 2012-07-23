@@ -29,6 +29,7 @@
 #    15-Jul-2012 (CT) Creation
 #    18-Jul-2012 (CT) Factor `Entity_Mixin_Base`, `E_Type_Mixin_Base`
 #    18-Jul-2012 (CT) Factor from `Display._E_Type_` to `E_Type_Mixin`
+#    23-Jul-2012 (CT) Remove `has_children`
 #    ««revision-date»»···
 #--
 
@@ -180,11 +181,6 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
                 self._old_objects = objects
         return self._entries
     # end def entries
-
-    @property
-    def has_children (self) :
-        return self.count > 0
-    # end def has_children
 
     @Once_Property
     def query_filters (self) :

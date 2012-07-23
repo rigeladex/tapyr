@@ -33,6 +33,7 @@
 #    13-Jul-2012 (CT) Add `_do_change_info_skip`
 #    20-Jul-2012 (CT) Add `try/except` around `render` to `send_error_email`
 #    23-Jul-2012 (CT) Add argument `response` to `__call__`
+#    23-Jul-2012 (CT) Put `renderer` into `request`
 #    ««revision-date»»···
 #--
 
@@ -77,21 +78,21 @@ class HTTP_Method (TFL.Meta.Object) :
 
     def __call__ (self, resource, request, response) :
         if self._do_change_info (resource, request, response) :
+            renderer = request.renderer = \
+                self._get_renderer (resource, request, response)
             body = self._response_body (resource, request, response)
-            if body is not None :
-                render = self._get_renderer (resource, request, response)
-                if render is not None :
-                    try :
-                        render (request, response, body)
-                    except Exception as exc :
-                        from _TFL.Formatter import formatted
-                        import traceback
-                        tb = traceback.format_exc ()
-                        resource.send_error_email \
-                            ( request, exc
-                            , "\n\n".join (formatted (body), tb)
-                            )
-                        raise
+            if body is not None and renderer is not None :
+                try :
+                    renderer (request, response, body)
+                except Exception as exc :
+                    from _TFL.Formatter import formatted
+                    import traceback
+                    tb = traceback.format_exc ()
+                    resource.send_error_email \
+                        ( request, exc
+                        , "\n\n".join (formatted (body), tb)
+                        )
+                    raise
         return response
     # end def __call__
 
