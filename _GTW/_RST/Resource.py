@@ -109,13 +109,13 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        parent = kw.get ("parent")
+        parent = kw.pop ("parent", None)
         if cls._needs_parent and parent is None :
             return (cls, args, kw)
         ### set `result.parent` before calling `result.__init__` so
         ### that `result.__getattr__` can use it right from the beginning
         result = cls.__new__   (cls, * args, ** kw)
-        result.parent = kw.pop ("parent", None)
+        result.parent = parent
         result.__init__        (* args, ** kw)
         result._after__init__  (kw)
         if parent :

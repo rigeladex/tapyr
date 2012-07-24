@@ -57,6 +57,7 @@ class Aggregator (GTW.RST.MOM.RST_Mixin, _Ancestor) :
     sort_key              = TFL.Sorted_By ("-date.start", "-prio")
     page_template_name    = "e_type_aggregator"
 
+    _exclude_robots       = False
     _old_objects          = None
 
     class Aggregator_GET (_Ancestor.GET) :

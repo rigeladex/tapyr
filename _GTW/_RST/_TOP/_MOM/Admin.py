@@ -72,6 +72,8 @@ class _Action_ (_Ancestor) :
     args              = (None, )
     implicit          = True
 
+    _exclude_robots   = True
+
     class _Action_Method_ (GTW.RST.HTTP_Method) :
 
         _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
@@ -830,6 +832,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             )
         )
 
+    _exclude_robots       = True
     _greet_entry          = None
     _form_id              = None
     _list_display         = None
@@ -1174,15 +1177,17 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
 class E_Type_Alias (GTW.RST.TOP.Alias) :
 
-    short_title = property \
-        ( lambda s    : s.target.manager.short_title
-        , lambda s, v : None
+    short_title           = property \
+        ( lambda s        : s.target.manager.short_title
+        , lambda s, v     : None
         )
 
-    title = property \
-        ( lambda s    : s.target.title
-        , lambda s, v : None
+    title                 = property \
+        ( lambda s        : s.target.title
+        , lambda s, v     : None
         )
+
+    _exclude_robots       = True
 
 # end class Admin_Alias
 
@@ -1191,12 +1196,14 @@ _Ancestor = GTW.RST.TOP.Dir
 class Group (_Ancestor) :
     """Directory displaying a group of E_Type admin pages."""
 
-    _etypes = []
-    _PNSs   = []
+    _etypes               = []
+    _PNSs                 = []
 
-    css_group         = "Group"
-    dir_template_name = "site_admin"
-    show_aliases      = False
+    css_group             = "Group"
+    dir_template_name     = "site_admin"
+    show_aliases          = False
+
+    _exclude_robots       = True
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "etypes", "PNSs", prefix = "_")
@@ -1261,6 +1268,8 @@ class Group (_Ancestor) :
 
 class Site (Group) :
     """Directory displaying admin Groups."""
+
+    _exclude_robots       = True
 
     def _auto_entries (self) :
         for et in self.top.ET_Map.itervalues () :

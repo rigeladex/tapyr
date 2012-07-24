@@ -182,6 +182,7 @@ __doc__ = """
     HTML (u'html', u'htm') (u'text/html',)
     HTML_T (u'html', u'htm') (u'text/html',)
     JSON ('json',) (u'application/json',)
+    TXT ('txt',) (u'text/plain',)
     XHTML ('xhtml',) (u'application/xhtml+xml',)
     XML ('xml',) (u'text/xml', u'application/xml')
 

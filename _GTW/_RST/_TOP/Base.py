@@ -105,6 +105,7 @@ class _TOP_Base_ (_Ancestor) :
     short_title                = ""
     title                      = ""
 
+    _exclude_robots            = False
     _index                     = None
     _login_required            = False
     _Media                     = GTW.Media ()

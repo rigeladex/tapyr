@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Jun-2012 (CT) Creation
+#    24-Jul-2012 (CT) Add `TXT`
 #    ««revision-date»»···
 #--
 
@@ -205,6 +206,25 @@ class RST_JSON (_Base_) :
     # end def rendered
 
 JSON = RST_JSON # end class
+
+class RST_TXT (_Base_) :
+    """Renderer for mime type text."""
+
+    _real_name                 = "TXT"
+    mime_types                 = ("text/plain", )
+
+    def rendered (self, request, response, body) :
+        if isinstance (body, dict) :
+            body = ["%s = %r" % (k, v) for k, v in sorted (body.iteritems ())]
+        if isinstance (body, (list, tuple)) :
+            body = "\n".join (body)
+        elif not isinstance (body, basestring) :
+            raise TypeError \
+                ("Expected string, list, or dict; got: %r" % (body, ))
+        return body
+    # end def rendered
+
+TXT = RST_TXT # end class RST_TXT
 
 class RST_XHTML (_Base_) :
     """Renderer for mime type XHTML.

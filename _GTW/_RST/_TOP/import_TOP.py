@@ -42,6 +42,7 @@ import _GTW._RST._TOP.Console
 import _GTW._RST._TOP.L10N
 import _GTW._RST._TOP.Request
 import _GTW._RST._TOP.Response
+import _GTW._RST._TOP.Robot_Excluder
 
 import _GTW._RST._TOP._MOM.import_MOM
 

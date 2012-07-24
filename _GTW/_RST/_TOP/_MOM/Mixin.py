@@ -58,6 +58,8 @@ class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Entity_Mixin) :
 
     attr_mapper     = TFL.Attr_Mapper ()
 
+    _exclude_robots = False
+
     def __init__ (self, ** kw) :
         obj = kw ["obj"]
         if "name" not in kw :
@@ -123,6 +125,8 @@ class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.RST_E_Type_Mixin) :
     _real_name      = "E_Type_Mixin_Base"
 
     attr_mapper     = None
+
+    _exclude_robots = False
 
     def __init__ (self, ** kw) :
         ### Set `self.top` early because it's needed before initialized properly
