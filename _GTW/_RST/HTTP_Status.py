@@ -115,9 +115,9 @@ class Status (StandardError, TFL.Meta.Object) :
         if render.name == "HTML" :
             root        = resource.top
             Templateer  = root.Templateer
-            if self.status_code in Templateer.Template_Map :
-                template    = Templateer.get_template (self.status_code)
-                context     = Templateer.Context \
+            if Templateer and self.status_code in Templateer.Template_Map :
+                template = Templateer.get_template (self.status_code)
+                context  = Templateer.Context \
                     ( exception       = self
                     , fatal_exception =
                         self if self.status_code >= 500 else None

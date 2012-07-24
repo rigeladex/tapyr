@@ -754,6 +754,13 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/?verbose'
     }
 
+    >>> r = show (R.get ("/v0"))
+    { 'json' :
+        { 'description' : 'Not found' }
+    , 'status' : 404
+    , 'url' : 'http://localhost:9999/v0'
+    }
+
     >>> r = show (R.get ("/v1"))
     { 'json' :
         { 'entries' :
