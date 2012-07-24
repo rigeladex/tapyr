@@ -53,6 +53,7 @@
 #    23-Jul-2012 (CT) Add argument `response` to `_handle_method`,
 #                     `_handle_method_context`, `_http_response`, and
 #                     `_http_response_error`
+#    24-Jul-2012 (CT) Add `Root.Cacher`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.import_RST
+import _GTW._RST.Template_Media_Cache
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
@@ -886,7 +888,42 @@ class RST_Root (_Ancestor) :
 
     _real_name                 = "Root"
 
-    Cacher                     = None # XXX GTW.RST.Template_Media_Cache
+    class RST_Root_Cacher (TFL.Meta.Object) :
+
+        def __init__ (self, * args, ** kw) :
+            self._args = args
+            self._kw   = kw
+        # end def __init__
+
+        @Once_Property
+        def cache_rank (self) :
+            return GTW.RST.Template_Media_Cache.cache_rank
+        # end def cache_rank
+
+        @Once_Property
+        def tmc (self) :
+            return GTW.RST.Template_Media_Cache (* self._args, ** self._kw)
+        # end def tmc
+
+        def as_pickle_cargo (self, root) :
+            result = dict (href_pat_frag = root.href_pat_frag)
+            if root.Templateer :
+                result ["tmc"] = self.tmc.as_pickle_cargo (root)
+            return result
+        # end def as_pickle_cargo
+
+        def from_pickle_cargo (self, root, cargo) :
+            root._href_pat_frag = cargo.get ("href_pat_frag")
+            if root._href_pat_frag :
+                root._href_pat = None ### trigger recalculation
+            if root.Templateer :
+                tmc_cargo = cargo.get ("tmc")
+                if tmc_cargo :
+                    self.tmc.from_pickle_cargo (root, tmc_cargo)
+        # end def from_pickle_cargo
+
+    Cacher = RST_Root_Cacher # end class
+
     Create_Scope               = None
     DEBUG                      = False
     Templateer                 = None

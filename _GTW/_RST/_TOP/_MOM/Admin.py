@@ -808,6 +808,9 @@ _Ancestor = GTW.RST.TOP.Dir_V
 class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     """Directory displaying the instances of one E_Type."""
 
+    Changer               = Changer
+    Deleter               = Deleter
+
     button_types          = dict \
         ( ADD             = "button"
         , APPLY           = "submit"
