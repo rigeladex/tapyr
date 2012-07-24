@@ -54,6 +54,7 @@
 #                     `_handle_method_context`, `_http_response`, and
 #                     `_http_response_error`
 #    24-Jul-2012 (CT) Add `Root.Cacher`
+#    24-Jul-2012 (CT) Add `lang_pat`, `_request_href`
 #    ««revision-date»»···
 #--
 
@@ -932,6 +933,7 @@ class RST_Root (_Ancestor) :
     domain                     = ""
     encoding                   = "utf-8"    ### output encoding
     error_email_template       = "error_email"
+    i18n                       = False
     ignore_picky_accept        = False
     input_encoding             = "iso-8859-15"
     language                   = "en"
@@ -984,6 +986,13 @@ class RST_Root (_Ancestor) :
                         ("Exception in href_pat for %s: %s", self, exc)
         return result
     # end def href_pat
+
+    @Once_Property
+    def lang_pat (self) :
+        if self.i18n and "L10N" in self.SC :
+            return re.compile \
+                (r"(?:/?(?:%s)(?:/|$))" % ("|".join (sorted (self.languages))))
+    # end def lang_pat
 
     @property
     def smtp (self) :
@@ -1043,9 +1052,9 @@ class RST_Root (_Ancestor) :
         return result
     # end def Response
 
-    def resource_from_href (self, req_href) :
+    def resource_from_href (self, req_href, request = None) :
         Table        = self.Table
-        req_href     = req_href.strip ("/")
+        req_href     = self._request_href (req_href, request)
         href, ext    = pp_splitext (req_href)
         match        = None
         redirects    = self.redirects
@@ -1146,14 +1155,14 @@ class RST_Root (_Ancestor) :
     # end def wsgi_app
 
     def _http_response (self, request, response) :
-        Status      = self.Status
-        href        = request.path
-        resource    = self.resource_from_href (href)
+        Status   = self.Status
+        href     = request.path
+        resource = self.resource_from_href (href, request)
         if resource :
-            user       = request.user
-            auth       = user and user.authenticated
-            resource   = resource._effective
-            meth_name  = request.method
+            user      = request.user
+            auth      = user and user.authenticated
+            resource  = resource._effective
+            meth_name = request.method
             if meth_name not in resource.SUPPORTED_METHODS :
                 raise Status.Method_Not_Allowed \
                     (valid_methods = resource.SUPPORTED_METHODS)
@@ -1185,6 +1194,21 @@ class RST_Root (_Ancestor) :
         self.send_error_email (request, exc, tbi)
         return self.Status.Internal_Server_Error (exc) (self, request, response)
     # end def _http_response_error
+
+    def _request_href (self, href, request) :
+        result = href.strip ("/")
+        l_pat  = self.lang_pat
+        if l_pat is not None :
+            langs = None
+            match = l_pat.match (result)
+            if match :
+                prefix = match.group (0)
+                langs  = (prefix.strip ("/"), )
+                result = result [len (prefix):]
+            if request is not None :
+                request.use_language (langs or request.locale_codes)
+        return result
+    # end def _request_href
 
 Root = RST_Root # end class
 

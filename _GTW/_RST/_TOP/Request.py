@@ -28,6 +28,8 @@
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
 #    16-Jul-2012 (CT) Pass `bytes ("~@")` to `b64decode`
+#    24-Jul-2012 (CT) Fix `locale_codes`
+#    24-Jul-2012 (CT) Add `use_language`
 #    ««revision-date»»···
 #--
 
@@ -67,8 +69,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
         """The locale-code for the current session."""
         codes = self.get_user_locale_codes ()
         if not codes :
-            codes = self.__super.locale_codes ()
-        assert codes
+            codes = self.__super.locale_codes
         return codes
     # end def locale_codes
 
@@ -140,6 +141,12 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
         except Exception :
             return None
     # end def secure_cookie
+
+    def use_language (self, langs) :
+        self.__super.use_language (langs)
+        self.session ["language"] = langs
+        self.session.save ()
+    # end def use_language
 
     def _cookie_signature (self, * parts):
         hash = hmac.new\

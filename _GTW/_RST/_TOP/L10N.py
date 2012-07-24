@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Jul-2012 (CT) Creation
 #    23-Jul-2012 (CT) Add argument `response` to `_Language_.GET.__call__`
+#    24-Jul-2012 (CT) Fix `_Language_.GET.__call__`
 #    ««revision-date»»···
 #--
 
@@ -60,9 +61,9 @@ class _Language_ (_Ancestor) :
         _real_name             = "GET"
 
         def __call__ (self, resource, request, response) :
-            HTTP_Status = resource.Status
-            language  = self.language
-            next      = request.req_data.get ("next", "/")
+            Status   = resource.Status
+            language = resource.language
+            next     = request.req_data.get ("next", request.referrer)
             with TFL.I18N.context (language) :
                 choice = TFL.I18N.Config.choice
                 if language.startswith (choice [0]) :
@@ -71,8 +72,8 @@ class _Language_ (_Ancestor) :
                         ( GTW.Notification
                             (_T (u"Language %s selected") % language)
                         )
-                raise HTTP_Status.Temporary_Redirect (next)
-            raise HTTP_Status.Not_Found ()
+                raise Status.Temporary_Redirect (next)
+            raise Status.Not_Found ()
         # end def __call__
 
     GET = _Language__GET_ # end class _Language__GET_

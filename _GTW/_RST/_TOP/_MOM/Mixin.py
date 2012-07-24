@@ -125,6 +125,7 @@ class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.RST_E_Type_Mixin) :
     _real_name      = "E_Type_Mixin_Base"
 
     attr_mapper     = None
+    page_args       = {}
 
     _exclude_robots = False
 

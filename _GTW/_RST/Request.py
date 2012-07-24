@@ -30,6 +30,7 @@
 #    28-Jun-2012 (CT) Add `verbose`
 #     2-Jul-2012 (CT) Factor `has_option` to `GTW.Request_Data`
 #    17-Jul-2012 (CT) Add property `user`
+#    24-Jul-2012 (CT) Add `use_language`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _TFL                     import TFL
 
 import _GTW._RST
 
+from   _TFL                     import I18N
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL._Meta.Object
@@ -112,6 +114,10 @@ class _RST_Request_ (TFL.Meta.Object) :
                 return locales
         return getattr (self.root, "default_locale_code", "en")
     # end def get_browser_locale_codes
+
+    def use_language (self, langs) :
+        I18N.use (* langs)
+    # end def use_language
 
 Request = _RST_Request_ # end class
 
