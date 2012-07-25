@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jul-2012 (CT) Creation
+#    25-Jul-2012 (CT) Fix `Alias`: delegate `ETM` to `target`
 #    ««revision-date»»···
 #--
 
@@ -929,7 +930,8 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         self._field_map = {}
         self.__super.__init__ (** kw)
         if not self.implicit :
-            self.top.ET_Map [self.type_name].admin = self
+            et_desc = self.top.ET_Map [self.type_name]
+            et_desc.admin = self
     # end def __init__
 
     @Once_Property
@@ -1180,8 +1182,13 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
 class E_Type_Alias (GTW.RST.TOP.Alias) :
 
+    ETM                   = property \
+        ( lambda s        : s.target.ETM
+        , lambda s, v     : None
+        )
+
     short_title           = property \
-        ( lambda s        : s.target.manager.short_title
+        ( lambda s        : s.target.short_title
         , lambda s, v     : None
         )
 
@@ -1240,7 +1247,7 @@ class Group (_Ancestor) :
         for e in iter_chain (* args) :
             if isinstance (e, tuple) :
                 cls, args, kw = e
-                e             = cls (* args, ** dict (kw, parent = self))
+                e = cls (* args, ** dict (kw, parent = self))
             etn = e.ETM.type_name
             if etn not in seen :
                 seen.add (etn)
@@ -1297,7 +1304,7 @@ class Site (Group) :
 
     def _filter_etype_entries (self, * args) :
         return self.__super._filter_etype_entries \
-            (* (args + (self._auto_entries (), )))
+            (self._auto_entries (), * args)
     # end def _filter_etype_entries
 
 # end class Site

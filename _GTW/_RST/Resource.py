@@ -55,6 +55,9 @@
 #                     `_http_response_error`
 #    24-Jul-2012 (CT) Add `Root.Cacher`
 #    24-Jul-2012 (CT) Add `lang_pat`, `_request_href`
+#    25-Jul-2012 (CT) Remove obsolete `base` and `file_stem`
+#    25-Jul-2012 (CT) Fix `Alias`: delegate `page_template_name`,
+#                     `template_name` to `target`
 #    ««revision-date»»···
 #--
 
@@ -102,11 +105,11 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
             if callable (v) :
                 sms [k] = v
                 tn = getattr (v, "template_name", None)
-                if tn :
+                if isinstance (tn, basestring) : ### beware of `property`
                     cls._template_names.add (tn)
         for k in ("page_template_name", "dir_template_name") :
             tn = dct.get (k)
-            if tn :
+            if isinstance (tn, basestring) : ### beware of `property`
                 cls._template_names.add (tn)
         cls._m_after__init__ (name, bases, dct)
     # end def __init__
@@ -231,11 +234,6 @@ class _RST_Base_ (TFL.Meta.Object) :
             return scope.GTW.OMP.Auth.Account
     # end def account_manager
 
-    @Once_Property
-    def base (self) :
-        return Filename (self.name).base
-    # end def base
-
     @property
     def change_info (self) :
         ### Redefine as necessary
@@ -274,14 +272,9 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def exclude_robots
 
     @Once_Property
-    def file_stem (self) :
-        return pp_norm (pp_join (self.prefix, self.base))
-    # end def file_stem
-
-    @Once_Property
     def href (self) :
         pp   = self.parent.href if self.parent else self.prefix
-        href = pp_join (pp, self.base)
+        href = pp_join (pp, self.name)
         if href :
             return pp_norm (href)
         return ""
@@ -520,9 +513,18 @@ class RST_Alias (_Ancestor) :
     _target_page               = None
     _parent_attr               = set (("prefix", ))
 
+    page_template_name         = property \
+        ( lambda s    : s.target.page_template_name
+        , lambda s, v : setattr (s.target, "page_template_name", v)
+        )
+    template_name              = property \
+        ( lambda s    : s.target.template_name
+        , lambda s, v : setattr (s.target, "template_name", v)
+        )
+
     def __init__ (self, ** kw) :
         self.target = kw.pop  ("target")
-        self.__super.__init__ (* args, ** kw)
+        self.__super.__init__ (** kw)
     # end def __init__
 
     @property
@@ -663,7 +665,7 @@ class _RST_Dir_Base_ (_Ancestor) :
         result = self._href_pat_frag
         if result is None :
             result = self._href_pat_frag = self._add_href_pat_frag_tail \
-                (re.escape (self.base))
+                (re.escape (self.name))
         return result
     # end def href_pat_frag
 

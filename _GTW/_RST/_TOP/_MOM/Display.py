@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Jul-2012 (CT) Creation
 #    18-Jul-2012 (CT) Factor properties from `_E_Type_` to `E_Type_Mixin`
+#    25-Jul-2012 (CT) Simplify `_admin_page`
 #    ««revision-date»»···
 #--
 
@@ -112,24 +113,18 @@ class TOP_MOM_E_Type (_E_Type_) :
             self._admin = self._admin_page (self.admin_args)
     # end def __init__
 
-    def _admin_page (self, admin_args, parent = None) :
-        return ### XXX remove this after implementing GTW.RST.TOP.MOM.Admin.E_Type
-        m_kw = admin_args.copy ()
-        if parent is None :
-            parent = self
-        if parent is self :
-            short_title = _T ("Admin")
-        else :
-            short_title = m_kw.pop ("short_title", self.short_title)
-        title = m_kw.pop \
+    def _admin_page (self, admin_args) :
+        m_kw        = admin_args.copy ()
+        short_title = _T ("Admin")
+        title       = m_kw.pop \
             ( "title"
             , "%s: %s" % (self.title.rstrip ("."), _T ("Administration"))
             )
         ETM   = m_kw.pop ("ETM", self.ETM)
         Type  = m_kw.pop ("Type", GTW.RST.TOP.MOM.Admin.E_Type)
         return Type \
-            ( parent      = parent
-            , name        = self.name
+            ( name        = "admin"
+            , parent      = self
             , short_title = short_title
             , title       = title
             , ETM         = ETM
@@ -169,6 +164,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
                         (self.year + 1, self.top.copyright_start - 1, -1) :
                     year = self.Year\
                         ( name       = str (y)
+                        , page_args  = self.page_args
                         , parent     = self
                         , year       = y
                         )
