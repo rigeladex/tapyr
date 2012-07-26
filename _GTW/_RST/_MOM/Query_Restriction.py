@@ -334,7 +334,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
 Query_Restriction = RST_Query_Restriction # end class
 
 class RST_Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
-    """Query restriction spec for a GTW.NAV.E_Type page."""
+    """Query restriction spec for a E_Type-specific page."""
 
     _real_name = "Query_Restriction_Spec"
 

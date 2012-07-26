@@ -50,6 +50,8 @@
 #    20-Jun-2012 (CT) Add option `-UTP`, factor `_Pkg_Selector_Opt_`
 #    21-Jun-2012 (CT) Use `TFL.CAO.Opt.Time_Zone`, not home-grown code
 #    21-Jun-2012 (CT) Add option `-serve_static_files`
+#    26-Jul-2012 (CT) Remove option `-UTP`
+#    26-Jul-2012 (CT) Add local variables `Q` and `root` to `_handle_shell`
 #    ««revision-date»»···
 #--
 
@@ -114,22 +116,6 @@ class HTTP_Opt (_Pkg_Selector_Opt_) :
 
 # end class HTTP_Opt
 
-class UTP_Opt (_Pkg_Selector_Opt_) :
-    """Select Url Tree Package to use, e.g., NAV or RST."""
-
-    _name    = "UTP"
-    _default = "RST"
-
-    def cook (self, value, cao = None) :
-        result = self.__super.cook (value, cao)
-        if not value :
-            value = self._default
-        result._Import_Module ("import_" + value)
-        return result
-    # end def cook
-
-# end class UTP_Opt
-
 class _GTW_Sub_Command_ (MOM._Sub_Command_) :
 
     _rn_prefix              = "_GTW"
@@ -174,7 +160,6 @@ class GTW_Command (MOM.Command) :
             , "-template_file:S"
             , "-TEST:B"
             , HTTP_Opt (default = "Werkzeug")
-            , UTP_Opt  (default = "NAV")
             , TFL.CAO.Opt.Date_Time_Delta
                 ( name          = "edit_session_ttl"
                 , description   = "Time to live for edit session"
@@ -259,10 +244,11 @@ class GTW_Command (MOM.Command) :
         if cmd.echo :
             from _MOM._DBW._SAS.DBS import Postgresql
             Postgresql.Engine_Parameter ["echo"] = True
+        from _MOM.import_MOM import Q
         scope = self._handle_load (cmd)
         if cmd.wsgi :
             wsgi = self._handle_wsgi (cmd)
-            top  = getattr (cmd.UTP.Root, "top", None)
+            root = top = self.root
         TFL.Environment.py_shell ()
     # end def _handle_shell
 

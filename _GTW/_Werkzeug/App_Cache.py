@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jun-2012 (CT) Creation
+#    26-Jul-2012 (CT) Add and use `_stored_p`
 #    ««revision-date»»···
 #--
 
@@ -51,8 +52,9 @@ class App_Cache (TFL.Meta.Object) :
     def __init__ (self, cache_path, * cachers, ** kw) :
         self.cache_path = cache_path
         self.cachers    = set (cachers)
-        self.kw         = kw
         self.DEBUG      = kw.pop ("DEBUG", False)
+        self.kw         = kw
+        self._stored_p  = False
     # end def __init__
 
     def add (self, * cachers) :
@@ -80,7 +82,7 @@ class App_Cache (TFL.Meta.Object) :
     # end def load
 
     def store (self) :
-        if not self.cachers :
+        if self._stored_p or not self.cachers :
             return
         cargo   = dict ()
         context = TFL.Context.time_block if self.DEBUG else TFL.Context.relaxed
@@ -88,6 +90,7 @@ class App_Cache (TFL.Meta.Object) :
         path    = self.cache_path
         fmt     = "*** Cache %s rebuilt in %%ss" % (path)
         with context (fmt) :
+            self._stored_p = True
             for cp in self._gen_cachers ("Pickling") :
                 cargo.update (cp.as_pickle_cargo (** kw))
             try :
@@ -99,7 +102,7 @@ class App_Cache (TFL.Meta.Object) :
                     % (path, exc)
                     )
                 raise
-    # end def store_cache
+    # end def store
 
     def _gen_cachers (self, msg_head, msg_tail = "") :
         for cp in sorted (self.cachers, key = TFL.Getter.cache_rank) :
