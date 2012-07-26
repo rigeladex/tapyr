@@ -119,16 +119,10 @@ class _GTW_Test_Command_ (_Ancestor) :
         return TFL.window_wise (backends, bpt)
     # end def combiner
 
-    def create_rst (self, cmd, app_type, db_url, ** kw) :
+    def create_rst (self, cmd, ** kw) :
         import _GTW._RST._MOM.Scope
         result = GTW.RST.Root \
-            ( App_Type          = app_type
-            , DB_Url            = db_url
-            , DEBUG             = cmd.debug
-            , encoding          = cmd.output_encoding
-            , HTTP              = cmd.HTTP
-            , input_encoding    = cmd.input_encoding
-            , language          = "de"
+            ( language          = "de"
             , entries           =
                 [ GTW.RST.MOM.Scope (name = "v1")
                 , GTW.RST.Raiser    (name = "RAISE")

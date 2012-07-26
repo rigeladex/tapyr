@@ -168,46 +168,33 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
 
     # end class _WSGI_
 
+    @Once_Property
+    def jnj_src (self) :
+        return "/tmp/test"
+    # end def jnj_src
+
+    @Once_Property
+    def web_src_root (self) :
+        return "/tmp/test"
+    # end def web_src_root
+
     def combiner (self, backends, bpt) :
         if bpt > 1 :
             backends = backends + [backends [0]]
         return TFL.window_wise (backends, bpt)
     # end def combiner
 
-    def create_top (self, cmd, app_type, db_url, ** kw) :
-        from _JNJ.Media_Defaults import Media_Defaults
+    def create_top (self, cmd, ** kw) :
         RST = GTW.RST
         TOP = RST.TOP
-        Media_Parameters = Media_Defaults ()
         home_url_root  = "http://localhost:9042"
         site_prefix    = pjoin (home_url_root, "")
-        template_dirs  = [self.jnj_src]
-        result = TOP.Root \
-            ( auto_delegate     = False
-            , DB_Url            = db_url
-            , App_Type          = app_type
-            , Media_Parameters  = Media_Parameters
-            , DEBUG             = cmd.debug
-            , encoding          = cmd.output_encoding
-            , HTTP              = cmd.HTTP
-            , input_encoding    = cmd.input_encoding
-            , language          = "de"
-            , permissive        = False
-            , site_url          = home_url_root
-            , site_prefix       = site_prefix
-            , src_dir           = self.web_src_root
-            , template_name     = cmd.template_file
-            , version           = "html/5.jnj"
-            , Templateer        = JNJ.Templateer
-                ( encoding          = cmd.input_encoding
-                , globals           = dict (site_base = cmd.template_file)
-                , i18n              = True
-                , load_path         = template_dirs
-                , trim_blocks       = True
-                , version           = "html/5.jnj"
-                , Media_Parameters  = Media_Parameters
-                )
-            , TEST              = cmd.TEST
+        result         = TOP.Root \
+            ( language            = "de"
+            , site_url            = home_url_root
+            , site_prefix         = site_prefix
+            , src_dir             = self.web_src_root
+            , TEST                = cmd.TEST
             , ** kw
             )
         result.add_entries \
@@ -301,20 +288,10 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
             fixtures (scope)
     # end def fixtures
 
-    @Once_Property
-    def jnj_src (self) :
-        return "/tmp/test"
-    # end def jnj_src
-
     def scope (self, * args, ** kw) :
         verbose = kw.pop ("verbose", True)
         return self.__super.scope (* args, verbose = verbose, ** kw)
     # end def scope
-
-    @Once_Property
-    def web_src_root (self) :
-        return "/tmp/test"
-    # end def web_src_root
 
     def _backend_spec (self, backends) :
         i = 0
@@ -327,6 +304,11 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
                     ) :
                 yield ("%s%d" % (k, i), v)
     # end def _backend_spec
+
+    def _create_templateer (self, cmd, ** kw) :
+        return self.__super._create_templateer \
+            (cmd, load_path = [self.jnj_src], ** kw)
+    # end def _create_templateer
 
     def _wsgi_app (self, cmd) :
         self._handle_create (cmd)

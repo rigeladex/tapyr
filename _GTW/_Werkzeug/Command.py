@@ -74,7 +74,8 @@ import _TFL.SMTP
 
 class RST_App (TFL.Meta.Object) :
 
-    cache_prefix = "rst_"
+    cache_prefix   = "rst_"
+    use_templateer = False
 
     def cachers (self, command, cmd) :
         return []
@@ -84,11 +85,12 @@ class RST_App (TFL.Meta.Object) :
         return command.create_rst (cmd, * args, ** kw)
     # end def create
 
-    def do_import (self, command, cmd) :
+    def do_import (self) :
         import _GTW._RST.import_RST
     # end def do_import
 
     def __repr__ (self) :
+        self.do_import ()
         return repr (GTW.RST)
     # end def __repr__
 
@@ -96,7 +98,8 @@ class RST_App (TFL.Meta.Object) :
 
 class TOP_App (TFL.Meta.Object) :
 
-    cache_prefix = ""
+    cache_prefix   = ""
+    use_templateer = True
 
     def cachers (self, command, cmd) :
         import _GTW._AFS._MOM.Form_Cache
@@ -107,11 +110,12 @@ class TOP_App (TFL.Meta.Object) :
         return command.create_top (cmd, * args, ** kw)
     # end def create
 
-    def do_import (self, command, cmd) :
+    def do_import (self) :
         import _GTW._RST._TOP._MOM.import_MOM
     # end def do_import
 
     def __repr__ (self) :
+        self.do_import ()
         return repr (GTW.RST.TOP)
     # end def __repr__
 
@@ -184,9 +188,8 @@ class GT2W_Command (GTW.OMP.Command) :
         pass
     _WSGI_ = _GT2W_WSGI_ # end class
 
-    @Once_Property
-    def cache_path (self) :
-        return sos.path.join (self.jnj_src, "app_cache.pck")
+    def cache_path (self, UTP) :
+        return sos.path.join (self.jnj_src, UTP.cache_prefix + "app_cache.pck")
     # end def cache_path
 
     def fixtures (self, scope) :
@@ -225,6 +228,26 @@ class GT2W_Command (GTW.OMP.Command) :
         return result
     # end def _create_scope
 
+    def _create_templateer \
+            (self, cmd, trim_blocks = True, version = "html/5.jnj", ** kw) :
+        if cmd.UTP.use_templateer :
+            from   _JNJ import JNJ
+            import _JNJ.Templateer
+            from _JNJ.Media_Defaults import Media_Defaults
+            globs = kw.pop ("globals", {})
+            media = kw.get ("Media_Parameters", None)
+            if media is None :
+                kw ["Media_Parameters"] = Media_Defaults ()
+            return JNJ.Templateer \
+                ( encoding    = cmd.input_encoding
+                , globals     = dict (site_base = cmd.template_file, ** globs)
+                , i18n        = cmd.load_I18N
+                , trim_blocks = trim_blocks
+                , version     = version
+                , ** kw
+                )
+    # end def _create_templateer
+
     def _get_root (self, cmd, apt, url, ** kw) :
         result = self.root
         if result is None :
@@ -236,22 +259,33 @@ class GT2W_Command (GTW.OMP.Command) :
                     , UserWarning
                     )
             UTP     = cmd.UTP
+            UTP.do_import ()
             cachers = UTP.cachers (self, cmd)
             result  = self.root = UTP.create \
                 ( self, cmd
-                , apt, url
+                , App_Type            = apt
                 , Create_Scope        = self._load_scope
+                , DB_Url              = url
+                , DEBUG               = cmd.debug
+                , HTTP                = cmd.HTTP
                 , Session_Class       = GTW.File_Session
+                , Templateer          = self._create_templateer (cmd)
                 , cookie_salt         = cookie_salt
-                , debug               = cmd.debug
+                , copyright_start     = cmd.copyright_start
                 , default_locale_code = cmd.locale_code
                 , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
-                , i18n                = True
+                , email_from          = cmd.email_from or None
+                , encoding            = cmd.output_encoding
+                , i18n                = cmd.load_I18N
+                , input_encoding      = cmd.input_encoding
                 , languages           = set (cmd.languages)
                 , log_level           = cmd.log_level
+                , page_template_name  = cmd.template_file
                 , session_id          = bytes ("SESSION_ID")
-                , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+                , smtp                =
+                    TFL.SMTP (cmd.smtp_server) if cmd.smtp_server else None
                 , use_www_debugger    = cmd.debug
+                , user_session_ttl    = cmd.user_session_ttl.date_time_delta
                 , ** kw
                 )
             if result.Cacher :
@@ -259,7 +293,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 mc_dir = sos.path.join (self.web_src_root, mc_fix)
                 cachers.append (result.Cacher (mc_dir, mc_fix))
             self.cacher = GTW.Werkzeug.App_Cache \
-                ( UTP.cache_prefix + self.cache_path
+                ( self.cache_path (UTP)
                 , * cachers
                 , root  = result
                 , DEBUG = result.DEBUG
