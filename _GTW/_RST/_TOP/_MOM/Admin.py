@@ -621,6 +621,7 @@ class Expander (_JSON_Action_) :
 
     def rendered (self, context, template = None) :
         obj            = context ["instance"] = None
+        request        = context ["request"]
         req_data       = request.req_data
         fid            = req_data.get ("fid")
         pid            = req_data.get ("pid")
