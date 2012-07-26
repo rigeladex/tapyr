@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,7 @@
 #     2-Feb-2010 (CT) `updates_pending` added
 #     8-Feb-2010 (CT) `snapshot` removed
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    26-Jul-2012 (CT) Add debug info to `do_updates_pending`
 #    ««revision-date»»···
 #--
 
@@ -66,7 +67,13 @@ class Manager (TFL.Meta.Object) :
     def do_updates_pending (self, obj) :
         if self.updates_pending :
             for a in TFL.uniq (self.updates_pending) :
-                a.update (obj)
+                try :
+                    a.update (obj)
+                except Exception as exc :
+                    import traceback; traceback.print_exc ()
+                    print "Error in `update` of attribute %s for %r" % (a, obj)
+                    print "   ", repr (a.get_raw (obj))
+                    raise
             self.reset_updates_pending ()
     # end def do_updates_pending
 
