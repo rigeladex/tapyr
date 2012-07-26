@@ -28,18 +28,18 @@
 # Revision Dates
 #    27-Jan-2012 (CT) Creation
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
+#    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
 
 _test_code = """
-    >>> nav_root = GTW.NAV.Root.top
+
+    >>> nav_root = app
     >>> TTT      = nav_root.Templateer.Template_Type
-    >>> print nav_root.name
+    >>> print nav_root.abs_href
     /
-    >>> scope = nav_root.scope # doctest:+ELLIPSIS
-    Loaded Scope...
 
     >>> for t in sorted (nav_root.template_iter ()) :
     ...    print t.name
@@ -56,9 +56,6 @@ _test_code = """
     account_change_password
     account_register
     account_reset_password
-    calendar
-    calendar_day
-    calendar_qx
     console
     e_type_admin
     e_type_afs
@@ -76,7 +73,6 @@ _test_code = """
     regatta_result
     regatta_result_teamrace
     site_admin
-    video
 
     >>> for k in sorted (TTT.css_href_map) :
     ...    print k
@@ -93,9 +89,6 @@ _test_code = """
     account_change_password
     account_register
     account_reset_password
-    calendar
-    calendar_day
-    calendar_qx
     console
     e_type_admin
     e_type_afs
@@ -106,14 +99,13 @@ _test_code = """
     login
     photo
     site_admin
-    video
 
     >>> for owl in nav_root.own_links_transitive :
     ...   if not owl.hidden:
     ...     print owl.href, owl.template.name
-    Admin html/static.jnj
-    Admin/Benutzerverwaltung html/static.jnj
-    Admin/Personenverwaltung html/static.jnj
+    Admin site_admin
+    Admin/Benutzerverwaltung site_admin
+    Admin/Personenverwaltung site_admin
     Admin/Personenverwaltung/Address e_type_admin
     Admin/Personenverwaltung/Company e_type_admin
     Admin/Personenverwaltung/Company_has_Address e_type_admin
@@ -126,7 +118,7 @@ _test_code = """
     Admin/Personenverwaltung/Person_has_Email e_type_admin
     Admin/Personenverwaltung/Person_has_Phone e_type_admin
     Admin/Personenverwaltung/Phone e_type_admin
-    Admin/Regattaverwaltung html/static.jnj
+    Admin/Regattaverwaltung site_admin
     Admin/Regattaverwaltung/Boat e_type_admin
     Admin/Regattaverwaltung/Boat_Class e_type_admin
     Admin/Regattaverwaltung/Boat_in_Regatta e_type_admin
@@ -138,7 +130,7 @@ _test_code = """
     Admin/Regattaverwaltung/Sailor e_type_admin
     Admin/Regattaverwaltung/Team e_type_admin
     Admin/Regattaverwaltung/Team_has_Boat_in_Regatta e_type_admin
-    Admin/Webseitenverwaltung html/static.jnj
+    Admin/Webseitenverwaltung site_admin
     Admin/Webseitenverwaltung/Calendar e_type_admin
     Admin/Webseitenverwaltung/Clip_X e_type_admin
     Admin/Webseitenverwaltung/Event e_type_admin
@@ -146,9 +138,9 @@ _test_code = """
     Admin/Webseitenverwaltung/Page e_type_admin
     Admin/Webseitenverwaltung/Picture e_type_admin
 
-    >>> php = nav_root.page_from_href ("Admin/Personenverwaltung/Person_has_Phone/change")
+    >>> php = nav_root.resource_from_href ("Admin/Personenverwaltung/Person_has_Phone/create")
     >>> print php.href, php.template.name
-    Admin/Personenverwaltung/Person_has_Phone/change e_type_afs|afs_div_seq
+    Admin/Personenverwaltung/Person_has_Phone/create e_type_afs|afs_div_seq
 
     >>> css_map = TFL.defaultdict (list)
     >>> for k, v in TTT.css_href_map.iteritems () :
@@ -169,13 +161,9 @@ _test_code = """
       , 'account_change_password'
       , 'account_register'
       , 'account_reset_password'
-      , 'calendar'
-      , 'calendar_day'
       , 'html/static.jnj'
       , 'login'
-      , 'video'
       ]
-    , [ 'calendar_qx' ]
     , [ 'console' ]
     , [ 'e_type_admin' ]
     ,

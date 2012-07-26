@@ -42,6 +42,7 @@
 #     9-Sep-2011 (CT) `from import_MOM import *` added
 #    27-Jan-2012 (CT) Derive from `GTW.Werkzeug.Scaffold`
 #    17-Apr-2012 (CT) Add `formatted`, `formatted_1`
+#    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
 #    ««revision-date»»···
 #--
 
@@ -81,12 +82,8 @@ import _GTW._OMP._PAP.Nav
 import _GTW._OMP._SRM.Nav
 import _GTW._OMP._SWP.Nav
 
-import _GTW._NAV.import_NAV
-import _GTW._NAV.Calendar
-import _GTW._NAV.Console
-import _GTW._NAV._E_Type.Gallery
-import _GTW._NAV._E_Type.SRM
-
+import _GTW._RST._TOP.import_TOP
+import _GTW._RST._TOP._MOM.import_MOM
 import _JNJ.Templateer
 
 import _TFL.Filename
@@ -177,13 +174,15 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
         return TFL.window_wise (backends, bpt)
     # end def combiner
 
-    def create_nav (self, cmd, app_type, db_url, ** kw) :
+    def create_top (self, cmd, app_type, db_url, ** kw) :
         from _JNJ.Media_Defaults import Media_Defaults
+        RST = GTW.RST
+        TOP = RST.TOP
         Media_Parameters = Media_Defaults ()
         home_url_root  = "http://localhost:9042"
         site_prefix    = pjoin (home_url_root, "")
         template_dirs  = [self.jnj_src]
-        result = GTW.NAV.Root \
+        result = TOP.Root \
             ( auto_delegate     = False
             , DB_Url            = db_url
             , App_Type          = app_type
@@ -212,62 +211,55 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
             , ** kw
             )
         result.add_entries \
-            ( [ dict
-                  ( sub_dir         = "Admin"
-                  , short_title     = "Admin"
-                  , pid             = "Admin"
-                  , title           = u"Verwaltung der Homepage"
-                  , head_line       = u"Administration der Homepage"
-                  , login_required  = True
-                  , Type            = GTW.NAV.E_Type.Site_Admin
-                  , entries         =
-                      [ self.nav_admin_group
-                          ( "Personenverwaltung"
-                          , "Verwaltung von Personen und ihren Eigenschaften"
-                          , "GTW.OMP.PAP"
-                          )
-                      , self.nav_admin_group
-                          ( "Benutzerverwaltung"
-                          , "Verwaltung von Benutzer-Konten und Gruppen"
-                          , "GTW.OMP.Auth"
-                          , permission = GTW.NAV.Is_Superuser ()
-                          )
-                      , self.nav_admin_group
-                          ( "Regattaverwaltung"
-                          , "Verwaltung von Regatten, Booten, "
-                            "Teilnehmern und Ergebnissen"
-                          , "GTW.OMP.SRM"
-                          , show_aliases = True
-                          )
-                      , self.nav_admin_group
-                          ( "Webseitenverwaltung"
-                          , "Verwaltung der Webseiten"
-                          , "GTW.OMP.SWP", "GTW.OMP.EVT"
-                          , show_aliases = True
-                          )
-                      ]
-                  )
-              , dict
-                  ( src_dir         = _ ("Auth")
-                  , pid             = "Auth"
-                  , prefix          = "Auth"
-                  , short_title     = _ (u"Authorization and Account handling")
-                  , Type            = GTW.NAV.Auth
-                  , hidden          = True
-                  )
-              , dict
-                  ( src_dir         = _ ("L10N")
-                  , prefix          = "L10N"
-                  , short_title     =
-                    _ (u"Choice of language used for localization")
-                  , Type            = GTW.NAV.L10N
-                  , country_map     = dict \
-                      ( de          = "AT")
-                  )
-              ]
+            ( TOP.MOM.Admin.Site
+                ( name            = "Admin"
+                , short_title     = "Admin"
+                , pid             = "Admin"
+                , title           = u"Verwaltung der Homepage"
+                , head_line       = u"Administration der Homepage"
+                , login_required  = True
+                , entries         =
+                    [ self.nav_admin_group
+                        ( "Personenverwaltung"
+                        , "Verwaltung von Personen und ihren Eigenschaften"
+                        , "GTW.OMP.PAP"
+                        )
+                    , self.nav_admin_group
+                        ( "Benutzerverwaltung"
+                        , "Verwaltung von Benutzer-Konten und Gruppen"
+                        , "GTW.OMP.Auth"
+                        , permission = RST.Is_Superuser ()
+                        )
+                    , self.nav_admin_group
+                        ( "Regattaverwaltung"
+                        , "Verwaltung von Regatten, Booten, "
+                          "Teilnehmern und Ergebnissen"
+                        , "GTW.OMP.SRM"
+                        , show_aliases = True
+                        )
+                    , self.nav_admin_group
+                        ( "Webseitenverwaltung"
+                        , "Verwaltung der Webseiten"
+                        , "GTW.OMP.SWP", "GTW.OMP.EVT"
+                        , show_aliases = True
+                        )
+                    ]
+                )
+            , TOP.Auth
+                ( name            = _ ("Auth")
+                , pid             = "Auth"
+                , short_title     = _ ("Authorization and Account handling")
+                , hidden          = True
+                )
+            , TOP.L10N
+                ( name            = _ ("L10N")
+                , short_title     =
+                    _ ("Choice of language used for localization")
+                , country_map     = dict (de = "AT")
+                )
             )
         return result
-    # end def create_nav
+    # end def create_top
 
     def create_test_dict ( self, test_spec
                          , backends = None

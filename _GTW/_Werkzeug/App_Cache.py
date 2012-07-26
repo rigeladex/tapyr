@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Jun-2012 (CT) Creation
 #    26-Jul-2012 (CT) Add and use `_stored_p`
+#    26-Jul-2012 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ class App_Cache (TFL.Meta.Object) :
         except StandardError as exc :
             logging.warning \
                 ( "Loading pickle dump %s failed with exception: %s"
-                % (self.path, exc)
+                % (path, exc)
                 )
             raise
         else :

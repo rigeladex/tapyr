@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jul-2012 (CT) Creation
+#    26-Jul-2012 (CT) Add `Archive.Year.regattas`
 #    ««revision-date»»···
 #--
 
@@ -337,6 +338,15 @@ class Archive (_Ancestor) :
 
         dir_template_name = "regatta_calendar"
         Entity            = Regatta_Event
+
+        @property
+        def regattas (self) :
+            result = self.entries
+            if result and result is self._admin :
+                result = result [:-1]
+            return result
+        # end def regattas
+
 
     Year = _SRM_Year_ # end class
 

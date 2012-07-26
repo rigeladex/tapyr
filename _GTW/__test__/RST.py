@@ -49,7 +49,7 @@ from   _TFL.Formatter           import Formatter, formatted_1
 
 formatted = Formatter (width = 240)
 
-import _GTW._Werkzeug.Command_X
+import _GTW._Werkzeug.Command
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
@@ -77,7 +77,7 @@ GTW.Version = Product_Version \
         )
     )
 
-_Ancestor = GTW.Werkzeug.Command_X
+_Ancestor = GTW.Werkzeug.Command
 
 class _GTW_Test_Command_ (_Ancestor) :
 

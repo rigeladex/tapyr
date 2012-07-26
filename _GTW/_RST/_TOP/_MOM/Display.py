@@ -171,9 +171,10 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
                     if year.count :
                         yield year
             self.add_entries (* tuple (_years (self)))
-            if self._admin :
-                self.add_entries (self._admin)
-            self._old_year = self.year
+            if self._entries :
+                if self._admin :
+                    self.add_entries (self._admin)
+                self._old_year = self.year
         return self._entries
     # end def entries
 

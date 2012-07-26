@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jul-2012 (CT) Creation
+#    26-Jul-2012 (CT) Remove `_admin` from `pictures`
 #    ««revision-date»»···
 #--
 
@@ -101,7 +102,6 @@ class Gallery \
 
     dir_template_name   = "gallery"
     page_template_name  = "photo"
-    pictures            = Alias_Property ("entries")
     sort_key            = TFL.Sorted_By  ("number")
 
     _greet_entry        = None
@@ -146,6 +146,14 @@ class Gallery \
             return max (p.thumb.width for p in self.pictures)
         return 0
     # end def max_width_thumb
+
+    @property
+    def pictures (self) :
+        result = self.entries
+        if result and result [-1] is self._admin :
+            result = result [:-1]
+        return result
+    # end def pictures
 
     @Once_Property
     def query_filters (self) :

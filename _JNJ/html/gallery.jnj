@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: gallery.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -67,12 +67,14 @@
     <div class="thumbnails">
       <div class="box">
         {%- for pic in page.pictures %}
-          <a href="{{ pic.permalink }}">
-           <img alt="{{ pic.title }}" title="{{ pic.title }}"
-                src="{{ "/" + pic.thumb.path }}"
-                height="{{ pic.thumb.height }}" width="{{ pic.thumb.width }}"
-           />
-          </a>
+          {%- if pic.obj %}
+            <a href="{{ pic.permalink }}">
+             <img alt="{{ pic.title }}" title="{{ pic.title }}"
+                  src="{{ "/" + pic.thumb.path }}"
+                  height="{{ pic.thumb.height }}" width="{{ pic.thumb.width }}"
+             />
+            </a>
+          {% endif -%}
         {% endfor -%}
       </div>
     </div>

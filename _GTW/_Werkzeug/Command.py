@@ -46,25 +46,76 @@
 #     4-Jun-2012 (MG) `_handle_run_server` support for `host` added
 #    20-Jun-2012 (CT) Use `cmd.UTP` instead of hard-coded `GTW.NAV`
 #    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
-#    28-Jun-2012 (CT) Call `init_app_cache` unconditionally
-#    17-Jul-2012 (MG) `_wsgi_app` move `Break` after the generation of the
-#                     app cache
+#    22-Jun-2012 (CT) Remove dependency on `HTTP.Application`,
+#                     use `Static_File_App`, not `Static_File_Handler`
+#    28-Jun-2012 (CT) Factor `App_Cache`, `_get_root`
+#     9-Jul-2012 (CT) Pass `static_handler` to `_get_root`
+#    17-Jul-2012 (MG) Change `_wsgi_app` to `Break` after `init_app_cache`
+#    20-Jul-2012 (CT) Change `nav_admin_group` to use `GTW.RST`, not `GTW.NAV`
+#    26-Jul-2012 (CT) Redefine `-UTP` as `Opt.Key` for `RST_App`, `TOP_App`
 #    ««revision-date»»···
 #--
 
-from   __future__          import unicode_literals
+from   __future__ import unicode_literals
 
-from   _TFL                import TFL
-from   _GTW                import GTW
+from   _TFL                     import TFL
+from   _GTW                     import GTW
 
-import _GTW._AFS._MOM.Form_Cache
 import _GTW._OMP.Command
-import _GTW._Werkzeug
+import _GTW._Werkzeug.App_Cache
+import _GTW._Werkzeug.Static_File_App
 
 import _JNJ.Templateer
 
-from   _TFL                import sos
+from   _TFL                     import sos
+from   _TFL._Meta.Once_Property import Once_Property
+
 import _TFL.SMTP
+
+class RST_App (TFL.Meta.Object) :
+
+    cache_prefix = "rst_"
+
+    def cachers (self, command, cmd) :
+        return []
+    # end def cachers
+
+    def create (self, command, cmd, * args, ** kw) :
+        return command.create_rst (cmd, * args, ** kw)
+    # end def create
+
+    def do_import (self, command, cmd) :
+        import _GTW._RST.import_RST
+    # end def do_import
+
+    def __repr__ (self) :
+        return repr (GTW.RST)
+    # end def __repr__
+
+# end class RST_App
+
+class TOP_App (TFL.Meta.Object) :
+
+    cache_prefix = ""
+
+    def cachers (self, command, cmd) :
+        import _GTW._AFS._MOM.Form_Cache
+        return [GTW.AFS.MOM.Form_Cache]
+    # end def cachers
+
+    def create (self, command, cmd, * args, ** kw) :
+        return command.create_top (cmd, * args, ** kw)
+    # end def create
+
+    def do_import (self, command, cmd) :
+        import _GTW._RST._TOP._MOM.import_MOM
+    # end def do_import
+
+    def __repr__ (self) :
+        return repr (GTW.RST.TOP)
+    # end def __repr__
+
+# end class TOP_App
 
 class _GT2W_Sub_Command_ (GTW.OMP._Sub_Command_) :
 
@@ -80,6 +131,7 @@ class GT2W_Command (GTW.OMP.Command) :
         ("Needs to defined uniquely for each application")
 
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
+    root                    = None
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
@@ -88,9 +140,18 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "load_I18N:B=yes"
+            ( "-load_I18N:B=yes"
                 "?Load the translation files during startup"
-            , "log_level:I=1?Verbosity of logging"
+            , "-log_level:I=1?Verbosity of logging"
+            , TFL.CAO.Opt.Key
+                ( name        = "UTP"
+                , dct         = dict
+                    ( RST     = RST_App ()
+                    , TOP     = TOP_App ()
+                    )
+                , default     = "TOP"
+                , description = "Select Url Tree Package to use."
+                )
             )
 
     # end class _GT2W_Server_Base_
@@ -98,7 +159,8 @@ class GT2W_Command (GTW.OMP.Command) :
     class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
 
         _opts                   = \
-            ( "watch_media_files:B"
+            ( "-host:S=localhost?Host for the application"
+            , "watch_media_files:B"
                 "?Add the .media files to list files watched by "
                 "automatic reloader"
             ,
@@ -122,8 +184,7 @@ class GT2W_Command (GTW.OMP.Command) :
         pass
     _WSGI_ = _GT2W_WSGI_ # end class
 
-    _setup_cache_p          = False
-
+    @Once_Property
     def cache_path (self) :
         return sos.path.join (self.jnj_src, "app_cache.pck")
     # end def cache_path
@@ -132,61 +193,104 @@ class GT2W_Command (GTW.OMP.Command) :
         pass
     # end def fixtures
 
-    def init_app_cache (self, root) :
-        cache_path = self.cache_path ()
+    def init_app_cache (self) :
         def load_cache () :
             try :
-                root.load_cache  (cache_path)
+                self.cacher.load ()
             except IOError :
                 pass
-        if root.DEBUG :
+        if self.cacher.DEBUG :
             try :
-                root.store_cache (cache_path)
+                self.cacher.store ()
             except EnvironmentError as exc :
-                print "***", exc, cache_path
                 load_cache ()
         else :
             load_cache ()
     # end def init_app_cache
 
     def nav_admin_group (self, name, title, * pnss, ** kw) :
-        import _GTW._NAV._E_Type.Site_Admin
-        return dict \
-            ( sub_dir        = name
+        return GTW.RST.TOP.MOM.Admin.Group \
+            ( name           = name
             , short_title    = kw.pop ("short_title", name)
             , title          = title
             , head_line      = kw.pop ("head_line", title)
             , PNSs           = pnss
-            , Type           = kw.pop ("Type", GTW.NAV.E_Type.Admin_Group)
             , ** kw
             )
     # end def nav_admin_group
-
-    def _handle_run_server (self, cmd) :
-        app = self._wsgi_app (cmd)
-        kw  = dict (port = cmd.port, host = getattr (cmd, "host", "localhost"))
-        if cmd.watch_media_files :
-            kw ["reload_extra_files"] = getattr \
-                (cmd.UTP.Root.top, "Media_Filenames", ())
-        app.run_development_server (** kw)
-    # end def _handle_run_server
-
-    def _handle_setup_cache (self, cmd) :
-        app  = self._wsgi_app (cmd)
-        root = cmd.UTP.Root.top
-        if not root.DEBUG :
-            root.store_cache (self.cache_path ())
-    # end def _handle_setup_cache
-
-    def _handle_wsgi (self, cmd) :
-        return self._wsgi_app (cmd)
-    # end def _handle_wsgi
 
     def _create_scope (self, apt, url, verbose = False) :
         result = self.__super._create_scope (apt, url, verbose)
         self.fixtures (result)
         return result
     # end def _create_scope
+
+    def _get_root (self, cmd, apt, url, ** kw) :
+        result = self.root
+        if result is None :
+            cookie_salt = cmd.GET ("cookie_salt", self.SALT)
+            if cookie_salt == Command.SALT :
+                warnings.warn \
+                    ( "Cookie salt should be specified for every application! "
+                      "Using default `cookie_salt`!"
+                    , UserWarning
+                    )
+            UTP     = cmd.UTP
+            cachers = UTP.cachers (self, cmd)
+            result  = self.root = UTP.create \
+                ( self, cmd
+                , apt, url
+                , Create_Scope        = self._load_scope
+                , Session_Class       = GTW.File_Session
+                , cookie_salt         = cookie_salt
+                , debug               = cmd.debug
+                , default_locale_code = cmd.locale_code
+                , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
+                , i18n                = True
+                , languages           = set (cmd.languages)
+                , log_level           = cmd.log_level
+                , session_id          = bytes ("SESSION_ID")
+                , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+                , use_www_debugger    = cmd.debug
+                , ** kw
+                )
+            if result.Cacher :
+                mc_fix = "media/v"
+                mc_dir = sos.path.join (self.web_src_root, mc_fix)
+                cachers.append (result.Cacher (mc_dir, mc_fix))
+            self.cacher = GTW.Werkzeug.App_Cache \
+                ( UTP.cache_prefix + self.cache_path
+                , * cachers
+                , root  = result
+                , DEBUG = result.DEBUG
+                )
+        return result
+    # end def _get_root
+
+    def _handle_run_server (self, cmd) :
+        import werkzeug.serving
+        app = self._wsgi_app (cmd)
+        kw  = dict \
+            ( application  = app
+            , hostname     = cmd.host
+            , port         = cmd.port
+            , use_debugger = cmd.debug
+            , use_reloader = cmd.auto_reload
+            )
+        if cmd.watch_media_files :
+            kw ["extra_files"] = getattr (self.root, "Media_Filenames", ())
+        ### XXX MG: monkey-patch werkzeug.serving.make_server ???
+        werkzeug.serving.run_simple (** kw)
+    # end def _handle_run_server
+
+    def _handle_setup_cache (self, cmd) :
+        self._wsgi_app    (cmd)
+        self.cacher.store ()
+    # end def _handle_setup_cache
+
+    def _handle_wsgi (self, cmd) :
+        return self._wsgi_app (cmd)
+    # end def _handle_wsgi
 
     def _load_I18N (self, cmd) :
         result = None
@@ -203,56 +307,30 @@ class GT2W_Command (GTW.OMP.Command) :
         return result
     # end def _load_I18N
 
-    def _setup_cache (self, cmd) :
-        if not self._setup_cache_p :
-            CP = getattr (cmd.UTP.Root, "Cache_Pickler", None)
-            if CP is not None :
-                import _GTW._NAV.Template_Media_Cache
-                mc_fix = "media/v"
-                mc_dir = sos.path.join (self.web_src_root, mc_fix)
-                CP.add (GTW.AFS.MOM.Form_Cache)
-                CP.add (GTW.NAV.Template_Media_Cache (mc_dir, mc_fix))
-        self._setup_cache_p = True
-    # end def _setup_cache
-
-    def _static_handler (self, cmd) :
-        if cmd.serve_static_files :
-            prefix         = "media"
-            media_dir      = sos.path.join (self.web_src_root, "media")
-            return cmd.HTTP.Static_File_Handler \
-                (prefix, media_dir, GTW.static_file_map)
-    # end def _static_handler
+    def _static_file_app (self, cmd) :
+        prefix = "media"
+        return GTW.Werkzeug.Static_File_App \
+            ( ( ("GTW", sos.path.join (self.lib_dir, "_GTW", prefix))
+              , ("",    sos.path.join (self.web_src_root, prefix))
+              )
+            , prefix = prefix
+            )
+    # end def _static_file_app
 
     def _wsgi_app (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
-        self._load_I18N   (cmd)
-        self._setup_cache (cmd)
-        HTTP           = cmd.HTTP
-        nav            = self.create_nav \
-            (cmd, apt, url, Create_Scope = self._load_scope)
-        static_handler = self._static_handler (cmd)
-        app            = HTTP.Application \
-            ( ("", HTTP.NAV_Request_Handler, dict (nav_root = nav))
-            , Session_Class       = GTW.File_Session
-            , auto_reload         = cmd.auto_reload
-            , cookie_salt         = cmd.GET ("cookie_salt", self.SALT)
-            , default_locale_code = cmd.locale_code
-            , debug               = cmd.debug
-            , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
-            , encoding            = nav.encoding
-            , i18n                = True
-            , languages           = set (cmd.languages)
-            , login_url           = nav.login_url
-            , log_level           = cmd.log_level
-            , session_id          = bytes ("SESSION_ID")
-            , static_handler      = static_handler
-            , user_session_ttl    = cmd.user_session_ttl.date_time_delta
-            )
-        nav.Templateer.env.static_handler = app.handlers [0]
-        self.init_app_cache (nav)
+        self._load_I18N (cmd)
+        sf_app = self._static_file_app (cmd)
+        result = root = self._get_root (cmd, apt, url, static_handler = sf_app)
+        if cmd.serve_static_files :
+            sf_app.wrap = root
+            result      = sf_app
+        if root.Templateer is not None :
+            root.Templateer.env.static_handler = sf_app
+        self.init_app_cache ()
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
-        return app
+        return result
     # end def _wsgi_app
 
 Command = GT2W_Command # end class

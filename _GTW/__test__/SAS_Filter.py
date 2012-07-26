@@ -247,7 +247,7 @@ _sub_query = """
 
     >>> q1 = scope.PAP.Person.query (last_name = "ln 1").attr ("pid")
     >>> q2 = scope.PAP.Person.query (last_name = "ln 2").attr ("pid")
-    >>> q  = scope.PAP.Person.query (Q.pid.IN (q1))
+    >>> q  = scope.PAP.Person.query_s (Q.pid.IN (q1))
     >>> print q.all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 1', u'fn 2', u'', u'')]
 """
