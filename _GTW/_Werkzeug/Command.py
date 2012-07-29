@@ -189,7 +189,7 @@ class GT2W_Command (GTW.OMP.Command) :
     _WSGI_ = _GT2W_WSGI_ # end class
 
     def cache_path (self, UTP) :
-        return sos.path.join (self.jnj_src, UTP.cache_prefix + "app_cache.pck")
+        return sos.path.join (self.src_dir, UTP.cache_prefix + "app_cache.pck")
     # end def cache_path
 
     def fixtures (self, scope) :
@@ -270,6 +270,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , HTTP                = cmd.HTTP
                 , Session_Class       = GTW.File_Session
                 , Templateer          = self._create_templateer (cmd)
+                , TEST                = cmd.TEST
                 , cookie_salt         = cookie_salt
                 , copyright_start     = cmd.copyright_start
                 , default_locale_code = cmd.locale_code

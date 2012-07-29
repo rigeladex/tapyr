@@ -188,13 +188,8 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
         RST = GTW.RST
         TOP = RST.TOP
         home_url_root  = "http://localhost:9042"
-        site_prefix    = pjoin (home_url_root, "")
         result         = TOP.Root \
-            ( language            = "de"
-            , site_url            = home_url_root
-            , site_prefix         = site_prefix
-            , src_dir             = self.web_src_root
-            , TEST                = cmd.TEST
+            ( language = "de"
             , ** kw
             )
         result.add_entries \
