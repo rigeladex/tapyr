@@ -135,7 +135,10 @@ class GT2W_Command (GTW.OMP.Command) :
         ("Needs to defined uniquely for each application")
 
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
+    _defaults               = dict \
     root                    = None
+        ( host              = "localhost"
+        )
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
@@ -163,11 +166,12 @@ class GT2W_Command (GTW.OMP.Command) :
     class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
 
         _opts                   = \
-            ( "-host:S=localhost?Host for the application"
+            ( "external_media_path:P?Path where the /media/X url should be "
+                "bound to"
+            , "host:S?Host name or IP-Address the server should be bound to"
             , "watch_media_files:B"
                 "?Add the .media files to list files watched by "
                 "automatic reloader"
-            ,
             )
 
     _Run_Server_ = _GT2W_Run_Server_ # end class

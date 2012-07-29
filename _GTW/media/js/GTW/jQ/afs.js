@@ -99,6 +99,7 @@
 //                     `submit_cb`
 //     9-May-2012 (CT) Change `submit_cb` to write to `window.location.href`,
 //                     use `setTimeout` to appease IE
+//    17-Jul-2012 (MG) Add support for the WYSIWYG editor CKEditor
 //    ««revision-date»»···
 //--
 
@@ -678,6 +679,25 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
+                        if (inp$.hasClass ("wysiwyg-editor")) {
+                            /* hide the element to avoid showing the RAW HTML
+                            ** code until the javascript for the editor has
+                            ** been loaded
+                            */
+                            inp$.hide ();
+                            window.CKEDITOR_BASEPATH =
+                                "/media/X/js/ckeditor/";
+                            $.getScript
+                                ( window.CKEDITOR_BASEPATH + "ckeditor.js"
+                                , function () {
+                                    CKEDITOR.replace (
+                                        id
+                                      , { filebrowserBrowseUrl:
+                                            '/media/ext/js/filemanager/index.html'
+                                        }
+                                     );}
+                                );
+                        };
                     };
                   }
                 );
@@ -990,6 +1010,13 @@
             }
         };
         var submit_cb = function submit_cb (ev) {
+            if (typeof (CKEDITOR) !== "undefined") {
+                for (var name in CKEDITOR.instances) {
+                    var editor = CKEDITOR.instances [name];
+                    $(editor.element.$).val     (editor.getData ())
+                                       .trigger ("change");
+                }
+            };
             var target$      = $(ev.target);
             var name         = target$.attr ("name");
             var pvs          = $AFS_E.root.packed_values ();
