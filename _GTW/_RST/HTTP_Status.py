@@ -59,8 +59,8 @@ class _Meta_ (TFL.Meta.M_Class) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if cls.status_code is not None :
-            assert cls.status_code not in cls.Table, cls
-            cls.Table [cls.status_code] = cls
+            if cls.status_code not in cls.Table :
+                cls.Table [cls.status_code] = cls
             if "description" not in dct :
                 cls.description = cls.__name__.capitalize ().replace ("_", " ")
     # end def __init__
