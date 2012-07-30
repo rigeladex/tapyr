@@ -28,7 +28,9 @@
 # Revision Dates
 #    20-Oct-2010 (MG) Creation
 #     2-Jul-2012 (MG) Test fixed due to new handling of exceptions (no
-#                     automatic rollback if a Name_Clash occures)
+#                     automatic rollback if a Name_Clash occurs)
+#    30-Jul-2012 (CT) Replace obsolete comment by tests showing `count`,
+#                     `query_s`, and length of `uncommitted_changes`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +43,8 @@ simple = r"""
     >>> per.lifetime.start = datetime.date (2010, 1, 1)
     >>> scope.commit                       ()
 
+    >>> per
+    PAP.Person (u'ln', u'fn', u'', u'')
     >>> per.lifetime.finish = datetime.date (2010, 2, 1)
     >>> scope.rollback ()
     >>> scope.destroy  ()
@@ -54,15 +58,34 @@ create = r"""
     >>> per = PAP.Person                   ("ln", "fn")
     >>> scope.commit                       ()
     >>> p   = PAP.Person                   ("ln", "fn1")
+
+    >>> PAP.Person.count
+    2
+    >>> PAP.Person.query_s ().all ()
+    [PAP.Person (u'ln', u'fn', u'', u''), PAP.Person (u'ln', u'fn1', u'', u'')]
+    >>> len (scope.uncommitted_changes)
+    1
+
     >>> per = PAP.Person                   ("ln", "fn")
     Traceback (most recent call last):
     ...
     Name_Clash: new definition of Person (u'ln', u'fn', u'', u'') clashes with existing Person (u'ln', u'fn', u'', u'')
 
-    ### the name clash resulted in a rollback of the scope. Therefore only
-    ### one Person object should be in the database after the name clash
     >>> PAP.Person.count
     2
+    >>> PAP.Person.query_s ().all ()
+    [PAP.Person (u'ln', u'fn', u'', u''), PAP.Person (u'ln', u'fn1', u'', u'')]
+    >>> len (scope.uncommitted_changes)
+    1
+
+    >>> scope.commit                       ()
+
+    >>> PAP.Person.count
+    2
+    >>> PAP.Person.query_s ().all ()
+    [PAP.Person (u'ln', u'fn', u'', u''), PAP.Person (u'ln', u'fn1', u'', u'')]
+    >>> len (scope.uncommitted_changes)
+    0
 
     >>> scope.destroy  ()
 

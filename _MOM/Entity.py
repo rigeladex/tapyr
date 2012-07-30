@@ -201,6 +201,7 @@
 #    18-Jun-2012 (CT) Add `_Id_Entity_Reload_Mixin_`
 #     4-Jul-2012 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
 #                     support queries against strings (interpreted as `pid`)
+#    30-Jul-2012 (CT) Change `_Id_Entity_Reload_Mixin_` to delegate `__repr__`
 #    ««revision-date»»···
 #--
 
@@ -1421,7 +1422,7 @@ class _Id_Entity_Reload_Mixin_ (object) :
     """Mixin triggering a reload from the database on any attribute access."""
 
     def __getattribute__ (self, name) :
-        if name in ("__class__", "__repr__") :
+        if name in ("__class__", ) :
             return object.__getattribute__ (self, name)
         else :
             cls    = object.__getattribute__ (self, "__class__")
@@ -1452,10 +1453,6 @@ class _Id_Entity_Reload_Mixin_ (object) :
             , head_mixins = (mixin, cls)
             )
     # end def define_e_type
-
-    def __repr__ (self) :
-        return str (self.__class__)
-    # end def __repr__
 
 # end class _Id_Entity_Reload_Mixin_
 
