@@ -29,6 +29,7 @@
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #     9-Jul-2012 (CT) Add `static_handler`
 #    23-Jul-2012 (CT) Redefine `_http_response` to call `_http_response_finish`
+#    30-Jul-2012 (CT) Redefine `Auth_Required`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
 
     _real_name                 = "Root"
 
+    Auth_Required              = GTW.RST.HTTP_Status.Login_Required
     Media_Parameters           = None
 
     copyright_start            = None

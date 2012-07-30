@@ -169,9 +169,9 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
     # end class _WSGI_
 
     @Once_Property
-    def jnj_src (self) :
+    def src_dir (self) :
         return "/tmp/test"
-    # end def jnj_src
+    # end def src_dir
 
     @Once_Property
     def web_src_root (self) :
@@ -302,7 +302,7 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
 
     def _create_templateer (self, cmd, ** kw) :
         return self.__super._create_templateer \
-            (cmd, load_path = [self.jnj_src], ** kw)
+            (cmd, load_path = [self.src_dir], ** kw)
     # end def _create_templateer
 
     def _wsgi_app (self, cmd) :

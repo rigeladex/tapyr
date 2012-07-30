@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Jul-2012 (CT) Creation
 #    23-Jul-2012 (CT) Add argument `response` to `__call__`
+#    30-Jul-2012 (CT) Add `template_name`, `Login_Required`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,11 @@ class Status (StandardError, TFL.Meta.Object) :
             ((GTW.RST.Mime_Type.JSON, GTW.RST.TOP.HTML))
     # end def render_man
 
+    @property
+    def template_name (self) :
+        return self.status_code
+    # end def template_name
+
     def __init__ (self, msg = None, ** kw) :
         assert self.status_code, self
         self.__dict__.update  (kw)
@@ -115,8 +121,9 @@ class Status (StandardError, TFL.Meta.Object) :
         if render.name == "HTML" :
             root        = resource.top
             Templateer  = root.Templateer
-            if Templateer and self.status_code in Templateer.Template_Map :
-                template = Templateer.get_template (self.status_code)
+            t_name      = self.template_name
+            if Templateer and t_name in Templateer.Template_Map :
+                template = Templateer.get_template (t_name)
                 context  = Templateer.Context \
                     ( exception       = self
                     , fatal_exception =
@@ -620,6 +627,20 @@ class Bad_Request (Client_Error) :
 
 # end class Bad_Request
 
+class Login_Required (Client_Error) :
+    """The request requires user authentication. You need to login."""
+
+    ### Sending back status code `401` to a browser results in the browser
+    ### displaying its own ugly authorization dialog
+    ###
+    ### To avoid this we send back a `400` status code and a login form
+    ### (for hysterical raisins, `template_name` is still 401)
+
+    status_code   = 400
+    template_name = 401
+
+# end class Login_Required
+
 class Unauthorized (Client_Error) :
     """The request requires user authentication."""
 
@@ -643,6 +664,7 @@ class Unauthorized (Client_Error) :
         """
 
     def _add_response_headers (self, resource, request, response) :
+        self.__super._add_response_headers (resource, request, response)
         try :
             auth = self.auth
         except AttributeError :
@@ -699,6 +721,7 @@ class Method_Not_Allowed (Client_Error) :
         """
 
     def _add_response_headers (self, resource, request, response) :
+        self.__super._add_response_headers (resource, request, response)
         try :
             valid_methods = self.valid_methods
         except AttributeError :
@@ -873,6 +896,7 @@ class Request_Entity_Too_Large (Client_Error) :
         """
 
     def _add_response_headers (self, resource, request, response) :
+        self.__super._add_response_headers (resource, request, response)
         try :
             retry_after = self.retry_after
         except AttributeError :
@@ -1006,6 +1030,7 @@ class Service_Unavailable (Server_Error) :
         """
 
     def _add_response_headers (self, resource, request, response) :
+        self.__super._add_response_headers (resource, request, response)
         try :
             retry_after = self.retry_after
         except AttributeError :

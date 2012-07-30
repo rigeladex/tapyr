@@ -188,9 +188,9 @@ class _GTW_Test_Command_ (_Ancestor) :
     # end def fixtures
 
     @Once_Property
-    def jnj_src (self) :
+    def src_dir (self) :
         return "/tmp/test"
-    # end def jnj_src
+    # end def src_dir
 
     def scope (self, * args, ** kw) :
         verbose = kw.pop ("verbose", True)

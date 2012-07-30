@@ -58,6 +58,8 @@
 #    25-Jul-2012 (CT) Remove obsolete `base` and `file_stem`
 #    25-Jul-2012 (CT) Fix `Alias`: delegate `page_template_name`,
 #                     `template_name` to `target`
+#    30-Jul-2012 (CT) Add properties `Auth_Required` and `permission`,
+#                     factor `_http_response_need_auth`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +74,7 @@ import _GTW._RST.Template_Media_Cache
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Filename            import Filename
-from   _TFL.predicate           import callable, first
+from   _TFL.predicate           import callable, first, uniq
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -144,6 +146,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     _real_name                 = "_Base_"
 
     Status                     = GTW.RST.HTTP_Status
+    Auth_Required              = Status.Unauthorized
 
     hidden                     = False
     implicit                   = False
@@ -317,6 +320,19 @@ class _RST_Base_ (TFL.Meta.Object) :
         return self.abs_href
     # end def permalink
 
+    @property
+    def permission (self) :
+        if self._r_permission :
+            return self._r_permission
+        else :
+            return self._w_permission
+    # end def permission
+
+    @permission.setter
+    def permission (self, value) :
+        self._r_permission = self._w_permission = value
+    # end def permission
+
     @Once_Property
     def r_permissions (self) :
         return sorted \
@@ -443,12 +459,14 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def _get_method
 
     def _get_permissions (self, name) :
-        p = getattr (self, "_" + name, None)
-        if p is not None :
-            yield p
-        if self.parent :
-            for p in getattr (self.parent, name + "s", ()) :
+        def _gen (self, name) :
+            p = getattr (self, "_" + name, None)
+            if p is not None :
                 yield p
+            if self.parent :
+                for p in getattr (self.parent, name + "s", ()) :
+                    yield p
+        return uniq (_gen (self, name))
     # end def _get_permissions
 
     def _get_user (self, username) :
@@ -1188,7 +1206,8 @@ class RST_Root (_Ancestor) :
                         return resource._handle_method \
                             (method, request, response)
                 else :
-                    raise (Status.Forbidden if auth else Status.Unauthorized) ()
+                    self._http_response_need_auth \
+                        (resource, request, response, auth)
         raise Status.Not_Found ()
     # end def _http_response
 
@@ -1196,6 +1215,10 @@ class RST_Root (_Ancestor) :
         self.send_error_email (request, exc, tbi)
         return self.Status.Internal_Server_Error (exc) (self, request, response)
     # end def _http_response_error
+
+    def _http_response_need_auth (self, resource, request, response, auth) :
+        raise (Status.Forbidden if auth else self.Auth_Required) ()
+    # end def _http_response_need_auth
 
     def _request_href (self, href, request) :
         result = href.strip ("/")
