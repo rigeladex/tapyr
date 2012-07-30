@@ -42,7 +42,7 @@ import _CAL.Delta
 from   _GTW._AFS._MOM.Element   import Form  as AFS_Form
 from   _GTW._AFS.Value          import Value as AFS_Value
 
-from   _GTW._RST._MOM.Query_Restriction import  \
+from   _GTW._RST._TOP._MOM.Query_Restriction import  \
      ( Query_Restriction      as QR
      , Query_Restriction_Spec as QRS
      )

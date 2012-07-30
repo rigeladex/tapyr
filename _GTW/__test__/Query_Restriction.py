@@ -23,16 +23,27 @@
 #    GTW.__test__.Query_Restriction
 #
 # Purpose
-#    Test cases for GTW.NAV.E_Type.Query_Restriction
+#    Test cases for GTW.RST.TOP.MOM.Query_Restriction
 #
 # Revision Dates
 #    14-Nov-2011 (CT) Creation
 #     2-Dec-2011 (CT) Creation continued..
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    30-Jul-2012 (CT) Change to test `GTW.RST.TOP.MOM` instead of `GTW.NAV`
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
+
+import _GTW.Request_Data
+
+from   _TFL.Record      import Record
+
+def f_req (** kw) :
+    return Record \
+        ( req_data      = GTW.Request_Data      (kw)
+        , req_data_list = GTW.Request_Data_List (kw)
+        )
 
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -40,13 +51,13 @@ _test_code = """
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
 
-    >>> qe = QR.from_request_data (PAP.Person.E_Type, dict (qux = "42", qix = "Miles"))
-    >>> print qe.limit, qe.offset, qe.filters, formatted_1 (sorted (qe.other_req_data.items ()))
-    0 0 () [('qix', 'Miles'), ('qux', '42')]
+    >>> qe = QR.from_request (PAP.Person.E_Type, f_req (qux = "42", qix = "Miles"))
+    >>> print qe.limit, qe.offset, qe.filters
+    0 0 ()
 
-    >>> rd = dict (
+    >>> rd = f_req (
     ...   limit = 24, last_name___GE = "Lee", lifetime__start___EQ = "2008", foo = "bar")
-    >>> qr = QR.from_request_data (PAP.Person.E_Type, rd)
+    >>> qr = QR.from_request (PAP.Person.E_Type, rd)
     >>> print qr.limit, qr.offset
     24 0
 
@@ -118,12 +129,8 @@ _test_code = """
 
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
-    >>> print formatted_1 (sorted (qr.other_req_data.items ()))
-    [('foo', 'bar')]
-    >>> print sorted (rd)
-    ['foo', 'last_name___GE', 'lifetime__start___EQ', 'limit']
 
-    >>> qo = QR.from_request_data (PAP.Person.E_Type, dict (order_by = "-lifetime,last_name"))
+    >>> qo = QR.from_request (PAP.Person.E_Type, f_req (order_by = "-lifetime,last_name"))
     >>> print formatted (qo.order_by)
     ( Record
       ( attr = Date_Interval `lifetime`
@@ -691,12 +698,12 @@ _test_code = """
 
 """
 
-from   _GTW.__test__.model                 import *
-from   _GTW._NAV._E_Type.Query_Restriction import \
+from   _GTW.__test__.model                   import *
+from   _GTW._RST._TOP._MOM.Query_Restriction import \
      ( Query_Restriction      as QR
      , Query_Restriction_Spec as QRS
      )
-from   _TFL.Formatter                      import Formatter, formatted_1
+from   _TFL.Formatter                        import Formatter, formatted_1
 formatted = Formatter (width = 240)
 
 __test__ = Scaffold.create_test_dict (_test_code)

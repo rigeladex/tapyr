@@ -30,6 +30,7 @@
 #    18-Jul-2012 (CT) Factor `Entity_Mixin_Base`, `E_Type_Mixin_Base`
 #    18-Jul-2012 (CT) Factor from `Display._E_Type_` to `E_Type_Mixin`
 #    23-Jul-2012 (CT) Remove `has_children`
+#    30-Jul-2012 (CT) Redefine `E_Type_Mixin_Base.QR`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST._MOM.Mixin
-import _GTW._RST._TOP._MOM
+import _GTW._RST._TOP._MOM.Query_Restriction
 
 from   _MOM.import_MOM          import Q
 
@@ -123,6 +124,8 @@ Entity_Mixin = TOP_MOM_Entity_Mixin # end class
 class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.RST_E_Type_Mixin) :
 
     _real_name      = "E_Type_Mixin_Base"
+
+    QR              = GTW.RST.TOP.MOM.Query_Restriction
 
     attr_mapper     = None
     page_args       = {}
