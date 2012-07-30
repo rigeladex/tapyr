@@ -53,6 +53,7 @@
 #    26-Jul-2012 (CT) Remove option `-UTP`
 #    26-Jul-2012 (CT) Add local variables `Q` and `root` to `_handle_shell`
 #    30-Jul-2012 (CT) Remove import of `HTTP.Application`
+#    30-Jul-2012 (CT) Remove option `-port`
 #    ««revision-date»»···
 #--
 
@@ -149,7 +150,6 @@ class GTW_Command (MOM.Command) :
                 "by the app"
             , "-languages:T,?Languages for which to load translations"
             , "-locale_code:S?Code of locale to use"
-            , "-port:I=8090?Server port"
             , "-serve_static_files:B?Serve static files"
             , "-smtp_server:S=localhost?SMTP server used to send emails"
             , "-template_file:S"

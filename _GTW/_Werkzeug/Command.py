@@ -53,6 +53,9 @@
 #    17-Jul-2012 (MG) Change `_wsgi_app` to `Break` after `init_app_cache`
 #    20-Jul-2012 (CT) Change `nav_admin_group` to use `GTW.RST`, not `GTW.NAV`
 #    26-Jul-2012 (CT) Redefine `-UTP` as `Opt.Key` for `RST_App`, `TOP_App`
+#    29-Jul-2012 (MG) Add and use `external_media_path`
+#    30-Jul-2012 (CT) Move defaults to `_defaults`, merge `external_media_path`
+#    30-Jul-2012 (CT) Add option `-port` (was in GTW.OMP.Command)
 #    ««revision-date»»···
 #--
 
@@ -136,9 +139,13 @@ class GT2W_Command (GTW.OMP.Command) :
         ("Needs to defined uniquely for each application")
 
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
-    _defaults               = dict \
     root                    = None
+
+    _defaults               = dict \
         ( host              = "localhost"
+        , load_I18N         = "yes"
+        , log_level         = 1
+        , port              = 8090
         )
 
     ### Sub-commands defined as class attributes to allow redefinition by
@@ -148,9 +155,13 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "-load_I18N:B=yes"
+            ( "-external_media_path:P"
+                "?Path where the /media/X url should be bound to"
+            , "-host:S?Host name or IP-Address the server should be bound to"
+            , "-load_I18N:B"
                 "?Load the translation files during startup"
-            , "-log_level:I=1?Verbosity of logging"
+            , "-log_level:I?Verbosity of logging"
+            , "-port:I?Port the server should use"
             , TFL.CAO.Opt.Key
                 ( name        = "UTP"
                 , dct         = dict
@@ -167,12 +178,10 @@ class GT2W_Command (GTW.OMP.Command) :
     class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
 
         _opts                   = \
-            ( "external_media_path:P?Path where the /media/X url should be "
-                "bound to"
-            , "host:S?Host name or IP-Address the server should be bound to"
-            , "watch_media_files:B"
+            ( "-watch_media_files:B"
                 "?Add the .media files to list files watched by "
                 "automatic reloader"
+            ,
             )
 
     _Run_Server_ = _GT2W_Run_Server_ # end class
@@ -348,13 +357,17 @@ class GT2W_Command (GTW.OMP.Command) :
     # end def _load_I18N
 
     def _static_file_app (self, cmd) :
-        prefix = "media"
-        return GTW.Werkzeug.Static_File_App \
-            ( ( ("GTW", sos.path.join (self.lib_dir, "_GTW", prefix))
-              , ("",    sos.path.join (self.web_src_root, prefix))
+        prefix  = "media"
+        dir_map = []
+        if cmd.external_media_path :
+            dir_map.append \
+                ( ("X",   sos.path.abspath (cmd.external_media_path)))
+        dir_map.extend \
+            ( (   ("GTW", sos.path.join (self.lib_dir,      "_GTW", prefix))
+              ,   ("",    sos.path.join (self.web_src_root,         prefix))
               )
-            , prefix = prefix
             )
+        return GTW.Werkzeug.Static_File_App (dir_map, prefix = prefix)
     # end def _static_file_app
 
     def _wsgi_app (self, cmd) :
