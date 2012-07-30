@@ -37,8 +37,6 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
-import _GTW.Static_File_Map
-
 import _GTW._Werkzeug
 import _GTW._Werkzeug.Request
 import _GTW._Werkzeug.Response

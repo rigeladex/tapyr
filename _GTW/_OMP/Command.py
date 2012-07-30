@@ -52,6 +52,7 @@
 #    21-Jun-2012 (CT) Add option `-serve_static_files`
 #    26-Jul-2012 (CT) Remove option `-UTP`
 #    26-Jul-2012 (CT) Add local variables `Q` and `root` to `_handle_shell`
+#    30-Jul-2012 (CT) Remove import of `HTTP.Application`
 #    ««revision-date»»···
 #--
 
@@ -107,12 +108,6 @@ class HTTP_Opt (_Pkg_Selector_Opt_) :
 
     _name    = "HTTP"
     _default = "Werkzeug"
-
-    def cook (self, value, cao = None) :
-        result = self.__super.cook (value, cao)
-        result._Import_Module ("Application")
-        return result
-    # end def cook
 
 # end class HTTP_Opt
 

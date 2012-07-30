@@ -61,6 +61,7 @@ from   __future__ import unicode_literals
 from   _TFL                     import TFL
 from   _GTW                     import GTW
 
+import _GTW.File_Session
 import _GTW._OMP.Command
 import _GTW._Werkzeug.App_Cache
 import _GTW._Werkzeug.Static_File_App
