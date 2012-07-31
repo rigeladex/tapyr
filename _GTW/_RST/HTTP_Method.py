@@ -34,6 +34,7 @@
 #    20-Jul-2012 (CT) Add `try/except` around `render` to `send_error_email`
 #    23-Jul-2012 (CT) Add argument `response` to `__call__`
 #    23-Jul-2012 (CT) Put `renderer` into `request`
+#    31-Jul-2012 (CT) Fix `join` call in `HTTP_Method.__call__`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class HTTP_Method (TFL.Meta.Object) :
                     tb = traceback.format_exc ()
                     resource.send_error_email \
                         ( request, exc
-                        , "\n\n".join (formatted (body), tb)
+                        , "\n\n".join ((formatted (body), tb))
                         )
                     raise
         return response
