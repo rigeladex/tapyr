@@ -248,7 +248,7 @@ class RST_Mixin (TFL.Meta.Object) :
 
     def query_changes (self) :
         scope = self.top.scope
-        cqfs   = self.change_query_filters
+        cqfs  = self.change_query_filters
         if cqfs is not None :
             return scope.query_changes \
                 (* cqfs).order_by (self._sort_key_cid_reverse)
