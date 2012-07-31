@@ -33,6 +33,7 @@
 #    13-Dec-2011 (CT) Creation continued.... (`.Atoms`)
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    14-May-2012 (CT) Add test showing `P_Type` of `scope.attribute_types`
+#    31-Jul-2012 (CT) Add `Angle` to test output
 #    ««revision-date»»···
 #--
 
@@ -411,6 +412,7 @@ _test_code = """
     ...         seen.add (k)
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Angle <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Boat <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
@@ -489,6 +491,7 @@ _test_code = """
     ...     if k not in seen and not isinstance (at, MOM.Attr._A_Entity_):
     ...         print "%%-20s %%-20s %%s" %% (at.typ, at, at.P_Type or "-"*10)
     ...         seen.add (k)
+    Angle                lat                  <type 'float'>
     Boolean              discarded            <type 'bool'>
     Date                 date                 <type 'datetime.date'>
     Date-Slug            perma_name           <type 'unicode'>
