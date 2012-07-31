@@ -30,6 +30,7 @@
 #    29-Jun-2012 (CT) Redefine `json` to add exception handler
 #     2-Jul-2012 (CT) Add `has_option`
 #     3-Jul-2012 (CT) Redefine `values` to conditionally return `json`
+#    31-Jul-2012 (CT) Add `HTTP_Exception`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ import _TFL._Meta.M_Class
 
 from   werkzeug.contrib.wrappers     import \
            JSONRequestMixin, DynamicCharsetRequestMixin
+from   werkzeug.exceptions           import HTTPException as HTTP_Exception
 from   werkzeug.security             import safe_str_cmp
 from   werkzeug.wrappers             import Request
 
@@ -114,5 +116,5 @@ class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
 Request = _WZG_Request_ # end class
 
 if __name__ != "__main__" :
-    GTW.Werkzeug._Export ("Request", "safe_str_cmp")
+    GTW.Werkzeug._Export ("Request", "safe_str_cmp", "HTTP_Exception")
 ### __END__ GTW.Werkzeug.Request
