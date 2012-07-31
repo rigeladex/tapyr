@@ -42,6 +42,7 @@
 #    19-Jul-2012 (CT) Turn `_change_info` into property, use `top._change_infos`
 #    20-Jul-2012 (CT) Factor `pid_query_request`
 #    23-Jul-2012 (CT) Add argument `response` to `_handle_method_context`
+#    31-Jul-2012 (CT) Use `formatted_1`, not `repr`, in `_resolve_request_attrs`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ import _GTW._RST._MOM.Query_Restriction
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Formatter           import formatted_1
 from   _TFL.I18N                import _, _T, _Tn
 
 import _TFL._Meta.Object
@@ -113,7 +115,7 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
         if invalids :
             raise ValueError \
                 ( "Request contains invalid attribute names "
-                + repr (invalids)
+                + formatted_1 (invalids)
                 )
         self._resolve_nested_request_attrs \
             (resource, request, response, E_Type, attrs)
