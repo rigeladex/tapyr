@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This modify is part of the package GTW.OMP.SRM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Sep-2011 (CT) Creation
+#    31-Jul-2012 (CT) Redefine `Club.name.cooked` to filter non-letters
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,7 @@ from   _MOM.import_MOM          import *
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.Regexp              import Re_Replacer, re
 
 _Ancestor_Essence = GTW.OMP.SRM.Object
 
@@ -58,6 +60,15 @@ class Club (_Ancestor_Essence) :
             ignore_case        = True
             max_length         = 8
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+
+            _clean             = Re_Replacer (r"\W+", "", re.UNICODE)
+
+            @TFL.Meta.Class_and_Instance_Method
+            def cooked (soc, value) :
+                if value is not None :
+                    return self._clean (unicode (value))
+                return value
+            # end def cooked
 
         # end class name
 
