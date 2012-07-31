@@ -57,6 +57,7 @@
 #                     changed
 #    22-Jun-2012 (MG) `close` parameter `delete_engine` added
 #    30-Jun-2012 (MG) `Listeners` replace by new `event` system
+#    31-Jul-2012 (CT) Restore compatibility to sqlalchemy 0.6.x (no `events`)
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,6 @@ import _MOM._DBW._DBS_
 import contextlib
 import sqlalchemy
 from   sqlalchemy            import engine        as SQL_Engine
-from   sqlalchemy.events     import event
 
 class _SAS_DBS_ (MOM.DBW._DBS_) :
     """Base class for all databases using sqlalchemy as db interface."""
@@ -245,12 +245,65 @@ class Postgresql (_NFB_) :
     ISOLATION_AUTO_COMMIT  = getattr (PE, "ISOLATION_LEVEL_AUTOCOMMIT",   -1)
     ISOLATION_SERIALIZABLE = getattr (PE, "ISOLATION_LEVEL_SERIALIZABLE", -1)
 
+    ### cross-version compatibility ###########################################
+    try :
+        import sqlalchemy.events
+    except ImportError :
+        ### ancient sqlalchemy
+        from sqlalchemy.interfaces import PoolListener
+        class SAS_Pool_Listener (PoolListener) :
+            """Modify newly created connections to update the postgresql
+               isolcation level.
+            """
 
-    @classmethod
-    def connect_change_isolation_level \
-        (cls, connection, con_record, isolation_level) :
-        connection.set_isolation_level (isolation_level)
-    # end def connect_change_isolation_level
+            def __init__ (self, isolation_level) :
+                self.isolation_level = isolation_level
+            # end def __init__
+
+            def connect (self, connection, * args) :
+                connection.set_isolation_level (self.isolation_level)
+            # end def connect
+
+        # end class SAS_Pool_Listener
+
+        @classmethod
+        def create_engine (cls, db_url, isolation_level = None) :
+            if isolation_level is None :
+                isolation_level = cls.ISOLATION_SERIALIZABLE
+            return cls \
+                ( SQL_Engine.create_engine
+                    ( db_url.value or "sqlite:///:memory:"
+                    , listeners = (cls.SAS_Pool_Listener (isolation_level), )
+                    , ** cls.Engine_Parameter
+                    )
+                )
+        # end def create_engine
+    else :
+        ### modern sqlalchemy
+        @classmethod
+        def connect_change_isolation_level \
+                (cls, connection, con_record, isolation_level) :
+            connection.set_isolation_level (isolation_level)
+        # end def connect_change_isolation_level
+
+        @classmethod
+        def create_engine (cls, db_url, isolation_level = None) :
+            if isolation_level is None :
+                isolation_level = cls.ISOLATION_SERIALIZABLE
+            result = cls \
+                ( SQL_Engine.create_engine
+                    ( db_url.value or "sqlite:///:memory:"
+                    , ** cls.Engine_Parameter
+                    )
+                )
+            sqlalchemy.events.event.listen \
+                ( result.engine, "connect"
+                , lambda a, b :
+                    cls.connect_change_isolation_level (a, b, isolation_level)
+                )
+            return result
+        # end def create_engine
+    ### cross-version compatibility ###########################################
 
     class Connection (object) :
 
@@ -295,23 +348,6 @@ class Postgresql (_NFB_) :
                     % (str (db_url.path), encoding, template)
                     )
     # end def create_database
-
-    @classmethod
-    def create_engine (cls, db_url, isolation_level = None) :
-        if isolation_level is None :
-            isolation_level = cls.ISOLATION_SERIALIZABLE
-        result = cls \
-            ( SQL_Engine.create_engine
-                (db_url.value or "sqlite:///:memory:", ** cls.Engine_Parameter)
-            )
-        event.listen \
-            ( result.engine
-            , "connect"
-            , lambda a, b :
-                cls.connect_change_isolation_level (a, b , isolation_level)
-            )
-        return result
-    # end def create_engine
 
     @classmethod
     def _drop_database (cls, db_url, manager) :
