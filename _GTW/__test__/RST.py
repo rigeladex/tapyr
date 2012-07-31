@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Jun-2012 (CT) Creation
+#    31-Jul-2012 (CT) Add `settimeout` to `run_server`, fix `except` clause
 #    ««revision-date»»···
 #--
 
@@ -262,17 +263,24 @@ def run_server (db_url = "hps://", db_name = None) :
     p = subprocess.Popen (cmd, stderr = tf, stdout = tf)
     import socket
     s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
-    i = 0
+    s.settimeout (1.0)
+    i   = 0
     while True :
         try :
             s.connect (("localhost", 9999))
-        except socket.error :
+        except socket.error as exc :
             if i < 20 :
                 i += 1
                 time.sleep (1)
+            else :
+                break
         else :
-            s.close ()
+            exc = None
             break
+    s.close ()
+    if exc is not None :
+        print  ("Socket connect gave exception:", exc)
+        p.kill ()
     return p
 # end def run_server
 
