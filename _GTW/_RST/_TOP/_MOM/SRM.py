@@ -129,8 +129,13 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
             ("skipper.person.last_name", "skipper.person.first_name")
         Result_Type = None
         if obj.is_team_race :
-            if first (obj.teams).place :
-                Result_Type = self.Result_Teamrace
+            try :
+                place = first (obj.teams).place
+            except IndexError :
+                pass
+            else :
+                if place :
+                    Result_Type = self.Result_Teamrace
         else :
             if obj.races :
                 Result_Type = self.Result
