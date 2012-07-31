@@ -30,6 +30,8 @@
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
 #     4-Jul-2012 (CT) Run `entry.pid` through `int`
 #                     (mySQL gives `long` which messes up the test output)
+#    31-Jul-2012 (CT) Use `dw.writerow`, not `dw.writeheader`: 2.6 compatibility
+#    31-Jul-2012 (CT) Add `_E_Type_CSV_.mime_type_parameters`
 #    ««revision-date»»···
 #--
 
@@ -52,16 +54,18 @@ import _TFL._Meta.Object
 class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
 
     _real_name                 = "CSV"
+    mime_type_parameters       = ("header=present", )
 
     def rendered (self, request, response, body) :
         import csv
         from   StringIO import StringIO
         names = body.get ("attribute_names")
         if names :
+            nm = dict           ((n, n) for n in names)
             rs = list           (e ["attributes"] for e in body ["entries"])
             f  = StringIO       ()
             dw = csv.DictWriter (f, names)
-            dw.writeheader      ()
+            dw.writerow         (nm)
             dw.writerows        (rs)
             return f.getvalue   ()
     # end def rendered

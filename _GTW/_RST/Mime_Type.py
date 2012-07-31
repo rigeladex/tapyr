@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Jun-2012 (CT) Creation
 #    24-Jul-2012 (CT) Add `TXT`
+#    31-Jul-2012 (CT) Add and use `mime_type_parameters`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ class _Base_ (TFL.Meta.Object) :
     extensions                 = ()
     force_charset              = None
     mime_types                 = ()
+    mime_type_parameters       = ()
 
     def __init__ (self, method, resource, mime_type = None) :
         if mime_type is None :
@@ -118,8 +120,12 @@ class _Base_ (TFL.Meta.Object) :
     # end def rendered
 
     def set_mime_type (self, request, response, body) :
+        mime_type = self.mime_type
+        if self.mime_type_parameters :
+            mime_type = "; ".join \
+                ((mime_type, ) + tuple (self.mime_type_parameters))
         response.charset  = self.charset
-        response.mimetype = self.mime_type
+        response.mimetype = mime_type
     # end def set_mime_type
 
 # end class _Base_
