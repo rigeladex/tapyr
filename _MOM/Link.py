@@ -62,6 +62,7 @@
 #    29-Mar-2012 (CT) Change `_Cacher_._setup_attr` to not redefine `cr_attr`
 #    18-Jun-2012 (CT) Add `_Reload_Mixin_` for `Link1`, `Link2`, `Link3`
 #    26-Jun-2012 (CT) Add `if cache` to `Role_Cacher_n.__call__`
+#     1-Aug-2012 (CT) Add `_Link[123]_Destroyed_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -218,6 +219,36 @@ class Link3 (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Link3
+
+@TFL.Add_To_Class ("_Destroyed_Mixin_", Link1)
+class _Link1_Destroyed_Mixin_ (MOM._Id_Entity_Destroyed_Mixin_) :
+    """Mixin triggering an exception on any attribute access to a
+       destroyed Link1.
+    """
+
+    __metaclass__ = MOM.Meta.M_E_Type_Link1_Destroyed
+
+# end class _Link1_Destroyed_Mixin_
+
+@TFL.Add_To_Class ("_Destroyed_Mixin_", Link2)
+class _Link2_Destroyed_Mixin_ (MOM._Id_Entity_Destroyed_Mixin_) :
+    """Mixin triggering an exception on any attribute access to a
+       destroyed Link2.
+    """
+
+    __metaclass__ = MOM.Meta.M_E_Type_Link2_Destroyed
+
+# end class _Link2_Destroyed_Mixin_
+
+@TFL.Add_To_Class ("_Destroyed_Mixin_", Link3)
+class _Link3_Destroyed_Mixin_ (MOM._Id_Entity_Destroyed_Mixin_) :
+    """Mixin triggering an exception on any attribute access to a
+       destroyed Link3.
+    """
+
+    __metaclass__ = MOM.Meta.M_E_Type_Link3_Destroyed
+
+# end class _Link3_Destroyed_Mixin_
 
 @TFL.Add_To_Class ("_Reload_Mixin_", Link1)
 class _Link1_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :

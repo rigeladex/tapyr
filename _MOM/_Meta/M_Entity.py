@@ -134,6 +134,8 @@
 #    18-Jun-2012 (CT) Add `M_E_Type_Id_Reload`
 #    26-Jun-2012 (CT) Use `app_type.PNS_Aliases_R` in `pns_qualified`
 #    29-Jun-2012 (CT) Add `children_np`
+#     1-Aug-2012 (CT) Add `M_E_Type_Id_Destroyed`
+#     1-Aug-2012 (CT) Use `MOM._Id_Entity_Destroyed_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -584,10 +586,13 @@ class M_E_Type (M_E_Mixin) :
     # end def m_recordable_attrs
 
     def __init__ (cls, name, bases, dct) :
-        cls.P_Type = cls
-        cls.__m_super.__init__  (name, bases, dct)
-        cls._m_setup_children   (bases, dct)
-        cls._m_setup_attributes (bases, dct)
+        if issubclass (cls, MOM._Id_Entity_Destroyed_Mixin_) :
+            type.__init__ (cls, name, bases, dct)
+        else :
+            cls.P_Type = cls
+            cls.__m_super.__init__  (name, bases, dct)
+            cls._m_setup_children   (bases, dct)
+            cls._m_setup_attributes (bases, dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -765,7 +770,7 @@ class M_E_Type_An (M_E_Type) :
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
 
-    Manager     = MOM.E_Type_Manager.Id_Entity
+    Manager        = MOM.E_Type_Manager.Id_Entity
 
     @property
     def link_map (cls) :
@@ -809,6 +814,7 @@ class M_E_Type_Id (M_E_Type) :
         cls.show_in_ui  = \
             (cls.record_changes and cls.show_in_ui and not cls.is_partial)
         cls.sig_attr = cls.primary
+        MOM._Id_Entity_Destroyed_Mixin_.define_e_type (cls)
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :
@@ -861,8 +867,8 @@ class M_E_Type_Id (M_E_Type) :
 
 # end class M_E_Type_Id
 
-class M_E_Type_Id_Reload (M_E_Mixin) :
-    """Meta class for MOM._Id_Entity_Reload_Mixin_."""
+class _M_E_Type_Id_RC_ (M_E_Mixin) :
+    """Meta class for destroyed classes."""
 
     def __init__ (cls, name, bases, dct) :
         type.__init__ (cls, name, bases, dct)
@@ -875,6 +881,16 @@ class M_E_Type_Id_Reload (M_E_Mixin) :
     def __repr__ (cls) :
         return type.__repr__ (cls)
     # end def __repr__
+
+# end class _M_E_Type_Id_RC_
+
+class M_E_Type_Id_Destroyed (_M_E_Type_Id_RC_) :
+    """Meta class for destroyed classes."""
+
+# end class M_E_Type_Id_Destroyed
+
+class M_E_Type_Id_Reload (_M_E_Type_Id_RC_) :
+    """Meta class for reload classes."""
 
 # end class M_E_Type_Id_Reload
 

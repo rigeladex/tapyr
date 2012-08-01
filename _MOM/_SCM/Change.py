@@ -283,7 +283,7 @@ class _Entity_ (Undoable) :
                 entity = None
         else :
             entity = _entity ()
-        if entity is not None :
+        if entity :
             entity.last_cid = self.cid
     # end def register
 

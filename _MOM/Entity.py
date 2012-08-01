@@ -202,6 +202,9 @@
 #     4-Jul-2012 (CT) `Id_Entity.__eq__` (& `__hash__`) redefined to cheaply
 #                     support queries against strings (interpreted as `pid`)
 #    30-Jul-2012 (CT) Change `_Id_Entity_Reload_Mixin_` to delegate `__repr__`
+#     1-Aug-2012 (CT) Change `destroy_dependency` to consider
+#                     `attr.is_required` and `attr.is_primary`, record changes
+#     1-Aug-2012 (CT) Add `_Id_Entity_Destroyed_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -1146,8 +1149,18 @@ class Id_Entity (Entity) :
 
     def destroy_dependency (self, other) :
         for attr in self.object_referring_attributes.pop (other, ()) :
-            attr.reset (self)
-        if other in self.dependencies :
+            if attr.is_required :
+                self.destroy ()
+            elif attr.is_primary :
+                ### resetting a primary attribute means a rename operation
+                self.set (** {attr.name : None})
+            else :
+                old = attr.get_value (self)
+                raw = attr.get_raw   (self)
+                attr.reset (self)
+                if old != attr.get_value (self) :
+                    self.record_attr_change ({attr.name : raw})
+        if self and other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
 
@@ -1456,6 +1469,42 @@ class _Id_Entity_Reload_Mixin_ (object) :
 
 # end class _Id_Entity_Reload_Mixin_
 
+class _Id_Entity_Destroyed_Mixin_ (object) :
+    """Mixin indicating an entity that was already destroyed."""
+
+    def __getattribute__ (self, name) :
+        if name in ("__class__", "__nonzero__", "pid", "__repr__", "type_name"):
+            return object.__getattribute__ (self, name)
+        else :
+            raise MOM.Error.Destroyed_Entity \
+                ( "%r: access to attribute %r not allowed"
+                % (self, name)
+                )
+    # end def __getattribute__
+
+    @classmethod
+    def define_e_type (cls, e_type) :
+        e_type._DESTROYED_E_TYPE = type (cls) \
+            (str (e_type.type_base_name + "_Destroyed"), (cls, e_type), {})
+    # end def define_e_type
+
+    def __nonzero__ (self) :
+        return False
+    # end def __nonzero__
+
+    def __repr__ (self) :
+        ### Need to reset `self.__class__` temporarily to get proper `__repr__`
+        try :
+            cls = self.__class__
+            self.__class__ = cls.__bases__ [1]
+            result = "<Destroyed entity %s>" % (self.__repr__ (), )
+        finally :
+            self.__class__ = cls
+        return result
+    # end def __repr__
+
+# end class _Id_Entity_Destroyed_Mixin_
+
 __doc__  = """
 Class `MOM.Id_Entity`
 =====================
@@ -1654,5 +1703,5 @@ you redefine one of these methods, you'll normally need to call the
 """
 
 if __name__ != "__main__" :
-    MOM._Export ("*", "_Id_Entity_Reload_Mixin_")
+    MOM._Export ("*", "_Id_Entity_Reload_Mixin_", "_Id_Entity_Destroyed_Mixin_")
 ### __END__ MOM.Entity

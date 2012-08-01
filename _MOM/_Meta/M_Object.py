@@ -34,6 +34,7 @@
 #    12-Mar-2010 (CT) `link_map` moved to `M_E_Type_Id`
 #     9-Jun-2011 (MG) `epk_split_pat` added
 #    18-Jun-2012 (CT) Add `M_E_Type_Object_Reload`
+#     1-Aug-2012 (CT) Add `M_E_Type_Object_Destroyed`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,11 @@ class M_E_Type_Object (MOM.Meta.M_E_Type_Id) :
     Manager = MOM.E_Type_Manager.Object
 
 # end class M_E_Type_Object
+
+class M_E_Type_Object_Destroyed (MOM.Meta.M_E_Type_Id_Destroyed, M_E_Type_Object) :
+    """Meta class for `_Destroyed` classes of descendents of MOM.Object."""
+
+# end class M_E_Type_Object_Destroyed
 
 class M_E_Type_Object_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Object) :
     """Meta class for `_Reload` classes of descendents of MOM.Object."""

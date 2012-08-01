@@ -68,6 +68,7 @@
 #    11-May-2012 (CT) Add message to `assert` in `Ambiguous_Epk.__init__`
 #    11-May-2012 (CT) Change `Attribute_Syntax` to use
 #                     `self.attribute.name`, not `self.attribute`, for json
+#     1-Aug-2012 (CT) Add `Destroyed_Entity`
 #    ««revision-date»»···
 #--
 
@@ -478,6 +479,10 @@ class DB (Error) :
 class Commit_Conflict (DB) :
     """Conflict during commit of database."""
 # end class Commit_Conflict
+
+class Destroyed_Entity (Error) :
+    """The entity was already destroyed and cannot be used anymore."""
+# end class Destroyed_Entity
 
 class Duplicate_Link (Error) :
     """Raised when a link is added to an association more than once."""

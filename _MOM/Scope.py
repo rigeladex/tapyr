@@ -100,6 +100,8 @@
 #    27-Jun-2012 (CT) Rename `_canonical_name` to`canonical_type_name`
 #    29-Jun-2012 (CT) Add `max_pid`
 #    16-Jul-2012 (CT) Add and register `_atexit`
+#     1-Aug-2012 (CT) Change `remove` to set __class__ to `._DESTROYED_E_TYPE`
+#     1-Aug-2012 (CT) Remove call to `.ems.rollback` from `commit`
 #    ««revision-date»»···
 #--
 
@@ -158,6 +160,7 @@ class Scope (TFL.Meta.Object) :
     db_meta_data           = property (TFL.Getter.ems.db_meta_data)
     etypes                 = property (TFL.Getter.app_type.etypes)
     Fatal_Exceptions       = property (TFL.Getter.ems.pm.dbs.Fatal_Exceptions)
+    max_cid                = property (TFL.Getter.ems.max_cid)
     max_pid                = property (TFL.Getter.ems.max_pid)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
@@ -343,10 +346,6 @@ class Scope (TFL.Meta.Object) :
             errs = self.r_incorrect (eiter = ucc.entities_transitive (ems))
             if errs :
                 exc = MOM.Error.Invariants (errs.errors)
-                try :
-                    self.ems.rollback ()
-                except Exception as rexc :
-                    print rexc
                 raise exc
         self.ems.commit ()
     # end def commit
@@ -541,6 +540,7 @@ class Scope (TFL.Meta.Object) :
         def remove () :
             entity._destroy ()
             self.ems.remove (entity)
+            entity.__class__ = entity.__class__._DESTROYED_E_TYPE
         if entity.electric :
             remove ()
         else :

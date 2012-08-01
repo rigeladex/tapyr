@@ -78,10 +78,12 @@ _basic = r"""
 
     >>> x
     SRM.Boat_Class (u'seascape 18')
-    >>> scope.query_changes (Q.type_name == x.type_name).order_by (TFL.Sorted_By ("-cid")).first().cid
+    >>> xtn = x.type_name
+    >>> sort_by_cid = TFL.Sorted_By ("-cid")
+    >>> scope.query_changes (Q.type_name == xtn).order_by (sort_by_cid).first().cid ### before x.destroy ()
     23
     >>> x.destroy ()
-    >>> scope.query_changes (Q.type_name == x.type_name).order_by (TFL.Sorted_By ("-cid")).first().cid
+    >>> scope.query_changes (Q.type_name == xtn).order_by (sort_by_cid).first().cid ### after x.destroy ()
     27
 
     >>> rev.date.finish = datetime.date (2010, 05, 13)

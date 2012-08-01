@@ -37,6 +37,7 @@
 #     7-May-2012 (CT) Add test for `crew_number_valid`
 #    12-Jun-2012 (CT) Add tests for `tn_pid`, `.attrs ("type_name")`
 #    27-Jun-2012 (CT) Add tests for `query_changes` for `type_name`
+#     1-Aug-2012 (CT) Add `_test_referential_integrity`
 #    ««revision-date»»···
 #--
 
@@ -218,13 +219,15 @@ _test_code = r"""
     >>> show_dep (s)    ### after destroy
     ---
     >>> print bir.skipper
-    None
+    Traceback (most recent call last):
+      ...
+    Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
     >>> scope.destroy ()
 
 """
 
-_delayed  = r"""
+_test_delayed  = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
@@ -273,7 +276,104 @@ _delayed  = r"""
     >>> show_dep (s)    ### after destroy
     ---
     >>> print bir.skipper
+    Traceback (most recent call last):
+      ...
+    Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
+
+    >>> scope.destroy ()
+
+"""
+
+_test_referential_integrity = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
+    >>> BiR = SRM.Boat_in_Regatta
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> cl  = SRM.Club (u"SC-AMS")
+    >>> b   = SRM.Boat (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person (u"Tanzer", u"Christian")
+    >>> s   = SRM.Sailor (p, nation = u"AUT", mna_number = u"29676", club = cl, raw = True) ### 1
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
+    >>> reg = SRM.Regatta_C (rev.epk_raw, bc.epk_raw, raw = True)
+    >>> bir = BiR (b, reg, skipper = s)
+
+    >>> bir                                           ### before s.destroy ()
+    SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
+    >>> print bir.pid                                 ### before s.destroy ()
+    8
+    >>> print s.pid                                   ### before s.destroy ()
+    5
+    >>> print bir.skipper                             ### before s.destroy () 1
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))
+    >>> bir.last_cid                                  ### before s.destroy ()
+    8
+    >>> scope.MOM.Id_Entity.query_s ().count ()       ### before s.destroy ()
+    8
+    >>> scope.MOM.Id_Entity.query_s ().all ()         ### before s.destroy ()
+    [SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )), SRM.Boat_Class (u'optimist'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u''), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))), SRM.Club (u'sc-ams'), PAP.Person (u'tanzer', u'christian', u'', u''), SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))]
+
+    >>> bir.skipper = None
+    Traceback (most recent call last):
+      ...
+    Required_Empty: Condition `skipper_not_empty` : skipper is not None and skipper != ''
+        skipper = None
+    >>> bir.set (skipper = None)
+    Traceback (most recent call last):
+      ...
+    Invariants: Condition `skipper_not_empty` : skipper is not None and skipper != ''
+        skipper = None
+    >>> print bir.skipper                             ### before s.destroy () 2
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))
+
+    >>> scope.max_cid                                 ### before s.destroy ()
+    8
+
+    >>> print s.club                                  ### before s.destroy ()
+    (u'sc-ams')
+
+    >>> cl.destroy ()
+
+    >>> print s.club                                  ### after cl.destroy ()
     None
+
+    >>> scope.max_cid                                 ### after cl.destroy ()
+    10
+    >>> bir.last_cid                                  ### after cl.destroy ()
+    8
+    >>> print bir.pid                                 ### after cl.destroy ()
+    8
+    >>> print s.pid                                   ### after cl.destroy ()
+    5
+    >>> print bir.skipper                             ### after cl.destroy ()
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+
+    >>> scope.pid_query (s.pid)
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+
+    >>> s.destroy ()
+
+    >>> scope.max_cid                                 ### after s.destroy ()
+    12
+
+    >>> bir.last_cid                                  ### after s.destroy ()
+    Traceback (most recent call last):
+      ...
+    Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>: access to attribute 'last_cid' not allowed
+    >>> scope.MOM.Id_Entity.query_s ().count ()       ### after s.destroy ()
+    5
+    >>> scope.MOM.Id_Entity.query_s ().all ()         ### after s.destroy ()
+    [SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )), SRM.Boat_Class (u'optimist'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
+
+    >>> print bir.pid                                 ### after s.destroy ()
+    None
+    >>> bir                                           ### after s.destroy ()
+     <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>
+    >>> print bir.skipper                             ### after s.destroy ()
+    Traceback (most recent call last):
+      ...
+    Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
     >>> scope.destroy ()
 
@@ -283,22 +383,23 @@ from _GTW.__test__.model import *
 from _TFL.predicate      import first
 
 def show_ora (x) :
-    if x.object_referring_attributes :
+    if x and x.object_referring_attributes :
         for k, vs in sorted (x.object_referring_attributes.iteritems ()) :
             print k, ":", ", ".join (str (v) for v in vs)
     else :
-            print "---"
+        print "---"
 def show_dep (x) :
-    if x.dependencies :
+    if x and x.dependencies :
         for k, v in sorted (x.dependencies.iteritems ()) :
             print k, ":", v
     else :
-            print "---"
+        print "---"
 
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( normal  = _test_code
-        , delayed = _delayed
+        , delayed = _test_delayed
+        , ref_int = _test_referential_integrity
         )
     )
 
