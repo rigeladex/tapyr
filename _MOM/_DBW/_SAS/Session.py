@@ -112,6 +112,7 @@
 #    15-Jun-2012 (MG) `Session_S.instance_from_row` support for entity
 #                     reloading added
 #    22-Jun-2012 (MG) `close_connections` added
+#     1-Aug-2012 (MG) `_consume_change_iter` Set `type_name` and `kind` 
 #    ««revision-date»»···
 #--
 
@@ -761,6 +762,8 @@ class Session_PC (_Session_) :
                     ( values = dict
                         ( cid        = cid
                         , pid        = chg_dct.get ("pid", None)
+                        , kind       = chg_cls.kind
+                        , type_name  = chg_dct.get ("type_name", "")
                         , data       = Pickle.dumps
                               ((chg_cls, chg_dct, []), Pickle.HIGHEST_PROTOCOL)
                         , parent_cid = parent_cid
