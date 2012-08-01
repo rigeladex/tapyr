@@ -60,6 +60,7 @@
 #                     `template_name` to `target`
 #    30-Jul-2012 (CT) Add properties `Auth_Required` and `permission`,
 #                     factor `_http_response_need_auth`
+#     1-Aug-2012 (CT) Fix cold-start behavior of `Root.resource_from_href`
 #    ««revision-date»»···
 #--
 
@@ -1106,7 +1107,7 @@ class RST_Root (_Ancestor) :
                             result = resource._get_child (* tail)
                         else :
                             result = resource
-        if result is None and not match :
+        if result is None :
             head = href
             tail = []
             while head :
