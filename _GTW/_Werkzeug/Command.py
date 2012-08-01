@@ -56,6 +56,7 @@
 #    29-Jul-2012 (MG) Add and use `external_media_path`
 #    30-Jul-2012 (CT) Move defaults to `_defaults`, merge `external_media_path`
 #    30-Jul-2012 (CT) Add option `-port` (was in GTW.OMP.Command)
+#     2-Aug-2012 (MG) Close database connections before starting the server
 #    ««revision-date»»···
 #--
 
@@ -381,6 +382,9 @@ class GT2W_Command (GTW.OMP.Command) :
         if root.Templateer is not None :
             root.Templateer.env.static_handler = sf_app
         self.init_app_cache ()
+        scope = getattr (root, "scope", None)
+        if scope is not None :
+            scope.close_connections ()
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
         return result
