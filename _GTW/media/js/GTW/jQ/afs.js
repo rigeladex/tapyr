@@ -100,6 +100,7 @@
 //     9-May-2012 (CT) Change `submit_cb` to write to `window.location.href`,
 //                     use `setTimeout` to appease IE
 //    17-Jul-2012 (MG) Add support for the WYSIWYG editor CKEditor
+//     2-Aug-2012 (MG) Change handling of CKEditor
 //    ««revision-date»»···
 //--
 
@@ -679,24 +680,17 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        if (inp$.hasClass ("wysiwyg-editor")) {
+                        if (elem.ckeditor !== undefined) {
                             /* hide the element to avoid showing the RAW HTML
                             ** code until the javascript for the editor has
                             ** been loaded
                             */
                             inp$.hide ();
-                            window.CKEDITOR_BASEPATH =
-                                "/media/X/js/ckeditor/";
+                            window.CKEDITOR_BASEPATH = options.url.ckedior;
                             $.getScript
                                 ( window.CKEDITOR_BASEPATH + "ckeditor.js"
                                 , function () {
-                                    CKEDITOR.replace (
-                                        id
-                                      , { filebrowserBrowseUrl:
-                                            '/media/ext/js/filemanager/index.html'
-                                        }
-                                     );}
-                                );
+                                    CKEDITOR.replace (id, elem.ckeditor);});
                         };
                     };
                   }
