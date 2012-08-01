@@ -39,6 +39,7 @@
 #    14-Jun-2011 (MG) `MYST` added to `Backend_Parameters`
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#     1-Aug-2012 (MG) Add test type name change queries
 #    ««revision-date»»···
 #--
 
@@ -158,7 +159,9 @@ _test_code = r"""
     []
     >>> sum ((not s.last_cid) for s in scope), sum (bool (s.last_cid) for s in scope)  ### after expunge
     (0, 36)
-
+    >>> scope.query_changes (type_name = "SRM.Boat_Class").count ()
+    26
+    
     Save contents of scope to database and destroy scope:
 
     >>> scope.ems.compact ()
@@ -190,7 +193,9 @@ _test_code = r"""
     2
     >>> [s for (s, t) in zip (scope_s, scope_t) if s.last_cid != t.last_cid or not s.last_cid]
     []
-
+    >>> [s.query_changes (type_name = "SRM.Boat_Class").count () for s in scope_t, scope_s]
+    [26, 26]
+    
     Now we delete the original database and then migrate back into the
     original app-type/backend. Again, all entities, changes, cids,
     and pids should still be identical:
@@ -230,6 +235,8 @@ _test_code = r"""
     1
     >>> int (c.cid), int (c.children [0].cid)
     (7, 6)
+    >>> scope_u.query_changes (type_name = "SRM.Boat_Class").count ()
+    26
 
     Lets clean up::
 
