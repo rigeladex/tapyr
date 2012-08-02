@@ -30,6 +30,7 @@
 #    31-Jul-2012 (CT) Add `settimeout` to `run_server`, fix `except` clause
 #     2-Aug-2012 (CT) Change sequence of tests in `test_post` (Postgresql
 #                     wastes pids for a Name_Clash)
+#     2-Aug-2012 (CT) Add `change_query_filters` for entities to `test_cqf`
 #    ««revision-date»»···
 #--
 
@@ -335,7 +336,7 @@ def traverse (url, level = 0, seen = None) :
             print (path, ":", allow)
             seen .add (allow)
     else :
-        print (path, ":", ro.status_code, r.content)
+        print (path, ":", ro.status_code, ro.content)
     if rg.ok and rg.content and rg.json :
         l = level + 1
         for e in rg.json.get ("entries", ()) :
@@ -388,6 +389,12 @@ _test_cqf = r"""
     ...
     >>> root   = Scaffold.root
     >>> v1     = root.resource_from_href ("v1")
+    >>> pids   = root.resource_from_href ("v1/pid")
+
+    >>> v1
+    <Scope v1: /v1>
+    >>> pids
+    <E_Type MOM-Id_Entity: /v1/MOM-Id_Entity>
 
     >>> for e in v1.entries :
     ...     print ("%%s\n    %%s" %% (e.name, e.change_query_filters))
@@ -550,6 +557,42 @@ _test_cqf = r"""
 
     >>> print (root.href_pat_frag)
     v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?
+
+    >>> for o in sorted (pids.objects, key = Q.pid) :
+    ...     e = pids._new_entry (o.pid)
+    ...     print ("%%s %%r\n    %%s" %% (e.E_Type.type_name, o.ui_display, e.change_query_filters))
+    PAP.Person u'Tanzer Christian'
+        (Q.pid == 1,)
+    PAP.Person u'Tanzer Laurens William'
+        (Q.pid == 2,)
+    PAP.Person u'Tanzer Clarissa Anna'
+        (Q.pid == 3,)
+    SRM.Sailor u'Tanzer Christian, AUT, 29676'
+        (Q.pid.in_ ((4, 1),),)
+    SRM.Sailor u'Tanzer Laurens William, AUT'
+        (Q.pid.in_ ((5, 2),),)
+    SRM.Sailor u'Tanzer Clarissa Anna, AUT'
+        (Q.pid.in_ ((6, 3),),)
+    SRM.Boat_Class u'Optimist'
+        (Q.pid == 7,)
+    SRM.Boat u'Optimist, AUT 1107'
+        (Q.pid.in_ ((8, 7),),)
+    SRM.Handicap u'Yardstick'
+        (Q.pid == 9,)
+    SRM.Regatta_Event u'Himmelfahrt 2008/05/01'
+        (Q.pid == 10,)
+    SRM.Regatta_C u'Himmelfahrt 2008/05/01, Optimist'
+        (Q.pid.in_ ((11, 10, 7),),)
+    SRM.Regatta_H u'Himmelfahrt 2008/05/01, Yardstick'
+        (Q.pid.in_ ((12, 10, 9),),)
+    SRM.Regatta_Event u'Guggenberger 2008/06/20 - 2008/06/21'
+        (Q.pid == 13,)
+    SRM.Regatta_C u'Guggenberger 2008/06/20 - 2008/06/21, Optimist'
+        (Q.pid.in_ ((14, 13, 7),),)
+    SRM.Boat_in_Regatta u'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist'
+        (Q.pid.in_ ((15, 8, 11, 5),),)
+    SRM.Boat_in_Regatta u'Optimist, AUT 1107, Guggenberger 2008/06/20 - 2008/06/21, Optimist'
+        (Q.pid.in_ ((16, 8, 14, 5),),)
 
 """
 
@@ -2316,7 +2359,7 @@ _test_qr_local = """
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
-    >>> b4    = SRM.Boat ("Optimist", "AUT", "1134", raw = True)
+    >>> b4  = SRM.Boat ("Optimist", "AUT", "1134", raw = True)
     >>> print (b4.pid, b4)
     17 ((u'optimist', ), u'AUT', 1134, u'')
 

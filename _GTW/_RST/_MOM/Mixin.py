@@ -43,6 +43,8 @@
 #    20-Jul-2012 (CT) Factor `pid_query_request`
 #    23-Jul-2012 (CT) Add argument `response` to `_handle_method_context`
 #    31-Jul-2012 (CT) Use `formatted_1`, not `repr`, in `_resolve_request_attrs`
+#     2-Aug-2012 (CT) Use `id_entity_attr` in
+#                     `RST_Entity_Mixin.change_query_filters`
 #    ««revision-date»»···
 #--
 
@@ -299,7 +301,22 @@ class RST_Entity_Mixin (RST_Mixin) :
 
     @Once_Property
     def change_query_filters (self) :
-        return (Q.pid == self.obj.pid, )
+        result = ()
+        obj    = self.obj
+        if obj :
+            result = (Q.pid == obj.pid, )
+            E_Type = obj.__class__
+            if E_Type.id_entity_attr :
+                def _gen (self, E_Type) :
+                    yield obj.pid
+                    for iea in E_Type.id_entity_attr :
+                        v = iea.get_value (obj)
+                        if v and v.pid :
+                            yield v.pid
+                pids = tuple (_gen (self, E_Type))
+                if len (pids) > 1 :
+                    result = (Q.pid.IN (pids), )
+        return result
     # end def change_query_filters
 
 # end class RST_Entity_Mixin
