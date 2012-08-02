@@ -57,6 +57,7 @@
 #    30-Jul-2012 (CT) Move defaults to `_defaults`, merge `external_media_path`
 #    30-Jul-2012 (CT) Add option `-port` (was in GTW.OMP.Command)
 #     2-Aug-2012 (MG) Close database connections before starting the server
+#     2-Aug-2012 (CT) Change `_wsgi_app` to avoid loading of `scope`
 #    ««revision-date»»···
 #--
 
@@ -329,7 +330,6 @@ class GT2W_Command (GTW.OMP.Command) :
             )
         if cmd.watch_media_files :
             kw ["extra_files"] = getattr (self.root, "Media_Filenames", ())
-        ### XXX MG: monkey-patch werkzeug.serving.make_server ???
         werkzeug.serving.run_simple (** kw)
     # end def _handle_run_server
 
@@ -382,7 +382,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if root.Templateer is not None :
             root.Templateer.env.static_handler = sf_app
         self.init_app_cache ()
-        scope = getattr (root, "scope", None)
+        scope = root.__dict__.get ("scope")
         if scope is not None :
             scope.close_connections ()
         if cmd.Break :
