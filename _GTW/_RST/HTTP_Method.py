@@ -35,6 +35,7 @@
 #    23-Jul-2012 (CT) Add argument `response` to `__call__`
 #    23-Jul-2012 (CT) Put `renderer` into `request`
 #    31-Jul-2012 (CT) Fix `join` call in `HTTP_Method.__call__`
+#     2-Aug-2012 (CT) Change `HTTP_Method.__call__` to use `response.renderer`
 #    ««revision-date»»···
 #--
 
@@ -79,12 +80,11 @@ class HTTP_Method (TFL.Meta.Object) :
 
     def __call__ (self, resource, request, response) :
         if self._do_change_info (resource, request, response) :
-            renderer = request.renderer = \
-                self._get_renderer (resource, request, response)
+            response.renderer = self._get_renderer (resource, request, response)
             body = self._response_body (resource, request, response)
-            if body is not None and renderer is not None :
+            if body is not None and response.renderer is not None :
                 try :
-                    renderer (request, response, body)
+                    response.renderer (request, response, body)
                 except Exception as exc :
                     from _TFL.Formatter import formatted
                     import traceback

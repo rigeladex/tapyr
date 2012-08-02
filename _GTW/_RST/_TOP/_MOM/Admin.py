@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jul-2012 (CT) Creation
 #    25-Jul-2012 (CT) Fix `Alias`: delegate `ETM` to `target`
+#     2-Aug-2012 (CT) Use `response.renderer`, not `request.renderer`
 #    ««revision-date»»···
 #--
 
@@ -1090,6 +1091,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     def rendered (self, context, template = None) :
         request  = context ["request"]
+        response = context ["response"]
         qr = QR.from_request (self.ETM.E_Type, request, ** self.default_qr_kw)
         self._fix_filters (qr.filters)
         fields = self._fields (qr.attributes or self.list_display)
@@ -1115,7 +1117,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                     , objects           = objects
                     , query_restriction = self.query_restriction
                     )
-                if request.renderer.name == "JSON" :
+                if response.renderer.name == "JSON" :
                     template   = self.top.Templateer.get_template ("e_type")
                     call_macro = template.call_macro
                     buttons    = dict \

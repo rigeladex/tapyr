@@ -31,6 +31,7 @@
 #     9-Jul-2012 (CT) Add `RST_TOP_HTML`, define `.rendered`
 #    18-Jul-2012 (CT) Add `Index`, `next`, and `prev`
 #    20-Jul-2012 (CT) Add `request.original_resource`
+#     2-Aug-2012 (CT) Add `response` to result of `_render_context`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
     def _render_context (self, resource, request, response, ** kw) :
         result = dict \
             ( request       = request
+            , response      = response
             , notifications = response.session.notifications
             , ** kw
             )

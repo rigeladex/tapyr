@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jul-2012 (CT) Creation (based on GTW.NAV.Console)
+#     2-Aug-2012 (CT) Set `response.renderer`, remove `_get_renderer`
 #    ««revision-date»»···
 #--
 
@@ -322,21 +323,13 @@ class Console (_Ancestor) :
         _renderers             = \
             _Ancestor.GET._renderers + (GTW.RST.Mime_Type.JSON, )
 
-        def _get_renderer (self, resource, request, response) :
-            req_data = request.req_data
-            cmd      = req_data.get ("cmd")
-            complete = req_data.get ("complete")
-            if cmd or complete :
-                return GTW.RST.Mime_Type.JSON (self, resource)
-            else :
-                return self.__super._get_renderer (resource, request, response)
-        # end def _get_renderer
-
         def _response_body (self, resource, request, response) :
             req_data = request.req_data
             cmd      = req_data.get ("cmd")
             complete = req_data.get ("complete")
             console  = resource.console
+            if cmd or complete :
+                response.renderer = GTW.RST.Mime_Type.JSON (self, resource)
             if complete :
                 input, cands = TFL.complete_command \
                     (complete, console.globals, console.locals)
@@ -394,7 +387,9 @@ class Console (_Ancestor) :
                 ( getattr (top, "console_context", {})
                 , NAV   = top
                 , page  = self
+                , root  = top
                 , scope = top.scope
+                , self  = page
                 )
             )
     # end def console
