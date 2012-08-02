@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     2-Aug-2012 (CT) Creation (based on GTW.NAV.Calendar)
+#     2-Aug-2012 (CT) Redefine `Calendar.Day.rendered` to handle `qx`
 #    ««revision-date»»···
 #--
 
@@ -72,20 +73,14 @@ _Ancestor = GTW.RST.TOP.Page
 
 class _Cal_Page_ (_Ancestor) :
 
-    args              = (None, )
-    implicit          = True
+    args               = (None, )
+    implicit           = True
 
-    _exclude_robots   = True
+    _exclude_robots    = True
 
     class _Cal_Page_GET_ (_Cal_Method_, _Ancestor.GET) :
 
         _real_name             = "GET"
-
-        def _response_body (self, resource, request, response) :
-            TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
-            result = self.__super._response_body (resource, request, response)
-            return result
-        # end def _response_body
 
     GET = _Cal_Page_GET_ # end class
 
@@ -94,9 +89,19 @@ class _Cal_Page_ (_Ancestor) :
 class _Day_ (_Cal_Page_) :
     """Page displaying calendary events for a specific day."""
 
-    name                   = "day"
-    page_template_name     = "calendar_day"
-    page_template_qx_name  = "calendar_day_qx"
+    page_template_name = "calendar_day"
+    template_qx_name   = "calendar_day_qx"
+
+    def rendered (self, context, template = None) :
+        if self.qx_p :
+            T          = self.top.Templateer
+            template   = T.get_template (self.template_qx_name)
+            call_macro = template.call_macro
+            result     = call_macro ("day", self, self.day)
+        else :
+            result = self.__super.rendered (context, template)
+        return result
+    # end def rendered
 
 # end class _Day_
 
@@ -104,8 +109,6 @@ _Ancestor = GTW.RST.TOP.Dir_V
 
 class _Year_ (_Cal_Page_) :
     """Page displaying calendar for a specific year."""
-
-    name                   = "year"
 
     @property
     def anchor (self) :
@@ -226,15 +229,12 @@ class Calendar (_Mixin_, _Ancestor) :
                             pass
                         else :
                             Day = self.Day
-                            ptn = Day.page_template_qx_name \
-                                if qx_p else Day.page_template_name
                             return Day \
-                                ( day                = day
-                                , name               = str (day)
-                                , page_template_name = ptn
-                                , parent             = self
-                                , qx_p               = qx_p
-                                , year               = year
+                                ( day    = day
+                                , name   = str (day)
+                                , parent = self
+                                , qx_p   = qx_p
+                                , year   = year
                                 )
         return result
     # end def _get_child
