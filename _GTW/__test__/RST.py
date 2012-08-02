@@ -28,6 +28,8 @@
 # Revision Dates
 #    27-Jun-2012 (CT) Creation
 #    31-Jul-2012 (CT) Add `settimeout` to `run_server`, fix `except` clause
+#     2-Aug-2012 (CT) Change sequence of tests in `test_post` (Postgresql
+#                     wastes pids for a Name_Clash)
 #    ««revision-date»»···
 #--
 
@@ -1902,7 +1904,7 @@ _test_post = r"""
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
-    >>> cargo = json.dumps (
+    >>> snoopy_cargo = json.dumps (
     ...   dict
     ...     ( attributes = dict
     ...         ( last_name   = "Dog"
@@ -1920,14 +1922,14 @@ _test_post = r"""
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> _ = show (R.post ("/v1/PAP-Person", data=cargo, headers = {}))
+    >>> _ = show (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers = {}))
     { 'json' :
         { 'error' : 'You need to send the attributes defining the object with the request (content-type "application/json")' }
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> r = show (R.post ("/v1/PAP-Person", data=cargo, headers=headers))
+    >>> r = show (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers=headers))
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'Snoopy'
@@ -1948,78 +1950,6 @@ _test_post = r"""
         }
     , 'status' : 201
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
-    }
-
-    >>> _ = show (R.post ("/v1/PAP-Person", data=cargo, headers=headers))
-    { 'json' :
-        { 'error' : "new definition of Person (u'dog', u'snoopy', u'the', u'') clashes with existing Person (u'dog', u'snoopy', u'the', u'')" }
-    , 'status' : 400
-    , 'url' : 'http://localhost:9999/v1/PAP-Person'
-    }
-
-    >>> cargo_c = json.dumps (
-    ...   dict
-    ...     ( attributes = dict
-    ...         ( last_name   = "Tin"
-    ...         , first_name  = "Rin"
-    ...         , middle_name = "Tin"
-    ...         )
-    ...     , cid = r.json ["cid"]
-    ...     )
-    ... )
-    >>> ru = requests.utils.urlparse (r.url)
-    >>> p  = "%%s://%%s%%s" %% (ru.scheme, ru.netloc, r.json ["url"])
-    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
-    { 'json' :
-        { 'attributes' :
-            { 'first_name' : 'Rin'
-            , 'last_name' : 'Tin'
-            , 'lifetime' :
-                [
-                  [ 'start'
-                  , '2000/11/22'
-                  ]
-                ]
-            , 'middle_name' : 'Tin'
-            , 'title' : ''
-            }
-        , 'cid' : 18
-        , 'pid' : 17
-        , 'type_name' : 'PAP.Person'
-        , 'url' : '/v1/PAP-Person/17'
-        }
-    , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP-Person/17'
-    }
-
-    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
-    { 'json' :
-        { 'error' : 'Cid mismatch: requested cid = 17, current cid = 18' }
-    , 'status' : 409
-    , 'url' : 'http://localhost:9999/v1/PAP-Person/17'
-    }
-
-    >>> cargo_g = json.dumps (
-    ...   dict
-    ...     ( attributes = dict
-    ...         ( last_name   = "Garfield"
-    ...         , first_name  = "James"
-    ...         , hates       = "mondays"
-    ...         )
-    ...     )
-    ... )
-    >>> _ = show (R.post ("/v1/PAP-Person", data=cargo_g, headers=headers))
-    { 'json' :
-        { 'error' : "Request contains invalid attribute names ('hates',)" }
-    , 'status' : 400
-    , 'url' : 'http://localhost:9999/v1/PAP-Person'
-    }
-
-    >>> _ = show (R.get ("/v1/pid?count"))
-    { 'json' :
-        { 'count' : 17 }
-    , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
     >>> cargo_bir = json.dumps (
@@ -2055,7 +1985,7 @@ _test_post = r"""
                     , 'sail_number' : '1134'
                     , 'sail_number_x' : ''
                     }
-                , 'cid' : 19
+                , 'cid' : 18
                 , 'pid' : 18
                 , 'type_name' : 'SRM.Boat'
                 }
@@ -2090,7 +2020,7 @@ _test_post = r"""
                     { 'club' :
                         { 'attributes' :
                             { 'name' : 'SC-AMS' }
-                        , 'cid' : 20
+                        , 'cid' : 19
                         , 'pid' : 19
                         , 'type_name' : 'SRM.Club'
                         }
@@ -2108,18 +2038,97 @@ _test_post = r"""
                     , 'mna_number' : ''
                     , 'nation' : 'AUT'
                     }
-                , 'cid' : 21
+                , 'cid' : 20
                 , 'pid' : 20
                 , 'type_name' : 'SRM.Sailor'
                 }
             }
-        , 'cid' : 22
+        , 'cid' : 21
         , 'pid' : 21
         , 'type_name' : 'SRM.Boat_in_Regatta'
         , 'url' : '/v1/SRM-Boat_in_Regatta/21'
         }
     , 'status' : 201
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta?verbose&closure'
+    }
+
+    >>> _ = show (R.get ("/v1/pid?count"))
+    { 'json' :
+        { 'count' : 21 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count'
+    }
+
+    >>> _ = show (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers=headers))
+    { 'json' :
+        { 'error' : "new definition of Person (u'dog', u'snoopy', u'the', u'') clashes with existing Person (u'dog', u'snoopy', u'the', u'')" }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
+    }
+
+    >>> cargo_c = json.dumps (
+    ...   dict
+    ...     ( attributes = dict
+    ...         ( last_name   = "Tin"
+    ...         , first_name  = "Rin"
+    ...         , middle_name = "Tin"
+    ...         )
+    ...     , cid = r.json ["cid"]
+    ...     )
+    ... )
+    >>> ru = requests.utils.urlparse (r.url)
+    >>> p  = "%%s://%%s%%s" %% (ru.scheme, ru.netloc, r.json ["url"])
+    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
+    { 'json' :
+        { 'attributes' :
+            { 'first_name' : 'Rin'
+            , 'last_name' : 'Tin'
+            , 'lifetime' :
+                [
+                  [ 'start'
+                  , '2000/11/22'
+                  ]
+                ]
+            , 'middle_name' : 'Tin'
+            , 'title' : ''
+            }
+        , 'cid' : 22
+        , 'pid' : 17
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/17'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/17'
+    }
+
+    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
+    { 'json' :
+        { 'error' : 'Cid mismatch: requested cid = 17, current cid = 22' }
+    , 'status' : 409
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/17'
+    }
+
+    >>> _ = show (R.get ("/v1/pid?count"))
+    { 'json' :
+        { 'count' : 21 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?count'
+    }
+
+    >>> cargo_g = json.dumps (
+    ...   dict
+    ...     ( attributes = dict
+    ...         ( last_name   = "Garfield"
+    ...         , first_name  = "James"
+    ...         , hates       = "mondays"
+    ...         )
+    ...     )
+    ... )
+    >>> _ = show (R.post ("/v1/PAP-Person", data=cargo_g, headers=headers))
+    { 'json' :
+        { 'error' : "Request contains invalid attribute names ('hates',)" }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
     >>> _ = show (R.get ("/v1/pid?count"))
