@@ -112,7 +112,7 @@
 #    15-Jun-2012 (MG) `Session_S.instance_from_row` support for entity
 #                     reloading added
 #    22-Jun-2012 (MG) `close_connections` added
-#     1-Aug-2012 (MG) `_consume_change_iter` Set `type_name` and `kind` 
+#     1-Aug-2012 (MG) `_consume_change_iter` Set `type_name` and `kind`
 #    ««revision-date»»···
 #--
 
