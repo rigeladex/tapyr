@@ -53,6 +53,7 @@
 #                     _Manager_.add) method
 #     2-Jul-2012 (MG) `_add` renamed back to `add`, error handling for
 #                     `Name_Clash` changed
+#     2-Aug-2012 (CT) Add `dependent_attrs` to `Change_Summary.add_pending`
 #    ««revision-date»»···
 #--
 
@@ -76,10 +77,16 @@ from   sqlalchemy  import sql
 
 class Change_Summary (MOM.SCM.Summary) :
 
-    def add_pending (self, c) :
+    def add_pending (self, c, scope) :
         mo = c.modified_attrs
         if mo :
-            self.pending_attr_changes [c.pid].update (mo)
+            ET   = scope [c.type_name]
+            pacs = set (mo)
+            for an in mo :
+                a = getattr (ET, an, None)
+                if a is not None :
+                    pacs.update (d.name for d in a.dependent_attrs)
+            self.pending_attr_changes [c.pid].update (pacs)
     # end def add_pending
 
     def _clear (self) :
@@ -166,7 +173,7 @@ class Manager (MOM.EMS._Manager_) :
         uncommitted_changes = self.uncommitted_changes
         self.scope.db_cid   = change.cid
         self.__super.register_change    (change)
-        uncommitted_changes.add_pending (change)
+        uncommitted_changes.add_pending (change, self.scope)
         self.session.update_change      (change)
     # end def register_change
 
