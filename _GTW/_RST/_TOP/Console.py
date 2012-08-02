@@ -389,7 +389,7 @@ class Console (_Ancestor) :
                 , page  = self
                 , root  = top
                 , scope = top.scope
-                , self  = page
+                , self  = self
                 )
             )
     # end def console
