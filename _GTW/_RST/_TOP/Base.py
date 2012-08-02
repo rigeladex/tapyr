@@ -32,6 +32,7 @@
 #    18-Jul-2012 (CT) Add `Index`, `next`, and `prev`
 #    20-Jul-2012 (CT) Add `request.original_resource`
 #     2-Aug-2012 (CT) Add `response` to result of `_render_context`
+#     2-Aug-2012 (CT) Add missing import, fix typo
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,8 @@ from   _TFL                     import sos
 from   _TFL.predicate           import uniq
 
 import _TFL.I18N
+
+from   posixpath                import join as pp_join
 
 import time
 
@@ -228,7 +231,7 @@ class _TOP_Base_ (_Ancestor) :
 
     @property
     def q_href (self) :
-        return pjoin (self.abs_href, self.q_prefix)
+        return pp_join (self.abs_href, self.q_prefix)
     # end def q_href
 
     def allow_method (self, method, user) :

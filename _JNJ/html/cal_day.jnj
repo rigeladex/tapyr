@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: cal_day.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,12 +29,16 @@
 ##
 ## Revision Dates
 ##    12-Mar-2010 (CT) Creation (factored from html/cal/day.jnj)
+##     2-Aug-2012 (CT) Import, not include, "html/cal/day.jnj"
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block document -%}
-  {%- include "html/cal/day.jnj" with context %}
+  {%- import "html/cal/day.jnj" as C %}
+
+  {{- C.day (page, page.day) -}}
+
 {%- endblock document -%}
 
 {#- __END__ jinja template: cal_day.jnj -#}

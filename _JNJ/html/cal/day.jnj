@@ -1,6 +1,6 @@
 {#- jinja template: day.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    12-Mar-2010 (CT) Creation
 ##    17-Nov-2010 (CT) `html/cal_day.jnj` factored out
+##     2-Aug-2012 (CT) Remove auto-executing code
 ##    ««revision-date»»···
 ##--
 #}
@@ -58,10 +59,5 @@
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- day -#}
-
-{#- If included with context, the follwing code will be executed -#}
-{%- if page %}
-  {{ day (page, page.day) -}}
-{% endif -%}
 
 {#- __END__ jinja template: day.jnj -#}
