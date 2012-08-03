@@ -31,8 +31,10 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos, formatted, formatted1
-from   _TFL.Regexp import Dict_Replacer, re
+from   _MOM.__doc__ import \
+    dt_form, MOM, BMT, show, NL, sos, formatted, formatted1
+from   _MOM.inspect import show_ref_map, show_ref_maps
+from   _TFL.Regexp  import Dict_Replacer, re
 
 filter_dbw_pat = re.compile \
     (  "\#\#\#\sDBW-specific\sstart.+?\#\#\#\sDBW-specific\sfinish"

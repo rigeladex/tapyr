@@ -231,8 +231,10 @@
 #    23-May-2012 (RS) Make docstrings useable for end-user
 #     6-Jun-2012 (CT) Change `_A_Entity_.E_Type` to `Alias_Property`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    19-Jul-2012 (RS) factor `plain_number_pat`
-#                     add degree/minute/second parsing to `A_Angle`
+#    19-Jul-2012 (RS) Factor `plain_number_pat`
+#                     Add degree/minute/second parsing to `A_Angle`
+#     3-Aug-2012 (CT) Redefine `A_Link_Role.E_Type` and `.P_Type` as aliases
+#                     for `role_type`
 #    ««revision-date»»···
 #--
 
@@ -1807,6 +1809,7 @@ class A_Link_Role (_A_Id_Entity_) :
     max_links         = -1
     role_name         = None
     role_type         = None
+    E_Type = P_Type   = TFL.Meta.Alias_Property ("role_type")
     ### don't allow creation of new object for this attribute
     ui_allow_new      = False
     ui_name           = TFL.Meta.Once_Property \

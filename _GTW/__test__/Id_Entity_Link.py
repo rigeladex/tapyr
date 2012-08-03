@@ -31,6 +31,8 @@
 #     4-Jun-2012 (MG) Test for query with order_by added
 #     6-Jun-2012 (CT) Add test for `Entity_created_by_Person.sort_key`
 #    12-Jun-2012 (CT) Add `date` to get deterministic output
+#     3-Aug-2012 (CT) Add tests for `Ref_Req_Map` and `Ref_Opt_Map`
+#     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    ««revision-date»»···
 #--
 
@@ -59,245 +61,6 @@ test_code = r"""
     PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))
     >>> scope.commit ()
 
-    >>> for T in scope.app_type._T_Extension :
-    ...   if hasattr (T, "link_map") :
-    ...     print T.type_name
-    ...     print (formatted (sorted (c.type_name for c in T.link_map), level = 1))
-    MOM.Id_Entity
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Link
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Link1
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM._MOM_Link_n_
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Link2
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Link2_Ordered
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Link3
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Object
-    [ 'PAP.Entity_created_by_Person' ]
-    MOM.Named_Object
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth.Object
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth.Account
-      [ 'Auth.Account_Activation'
-      , 'Auth.Account_EMail_Verification'
-      , 'Auth.Account_Password_Change_Required'
-      , 'Auth.Account_Password_Reset'
-      , 'Auth.Account_in_Group'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    Auth.Account_Anonymous
-      [ 'Auth.Account_Activation'
-      , 'Auth.Account_EMail_Verification'
-      , 'Auth.Account_Password_Change_Required'
-      , 'Auth.Account_Password_Reset'
-      , 'Auth.Account_in_Group'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    Auth.Account_P
-      [ 'Auth.Account_Activation'
-      , 'Auth.Account_EMail_Verification'
-      , 'Auth.Account_Password_Change_Required'
-      , 'Auth.Account_Password_Reset'
-      , 'Auth.Account_in_Group'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    Auth.Group
-      [ 'Auth.Account_in_Group'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    Auth.Account_in_Group
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth._Account_Action_
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth.Account_Activation
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth.Account_Password_Change_Required
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth._Account_Token_Action_
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth.Account_EMail_Verification
-    [ 'PAP.Entity_created_by_Person' ]
-    Auth.Account_Password_Reset
-    [ 'PAP.Entity_created_by_Person' ]
-    EVT.Object
-    [ 'PAP.Entity_created_by_Person' ]
-    EVT.Link1
-    [ 'PAP.Entity_created_by_Person' ]
-    EVT.Link2
-    [ 'PAP.Entity_created_by_Person' ]
-    EVT.Calendar
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Subject
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Person
-      [ 'PAP.Entity_created_by_Person'
-      , 'PAP.Person_has_Address'
-      , 'PAP.Person_has_Email'
-      , 'PAP.Person_has_Phone'
-      , 'SRM.Sailor'
-      ]
-    SWP.Link1
-    [ 'PAP.Entity_created_by_Person' ]
-    SWP.Link2
-    [ 'PAP.Entity_created_by_Person' ]
-    SWP.Object
-    [ 'PAP.Entity_created_by_Person' ]
-    SWP.Object_PN
-      [ 'PAP.Entity_created_by_Person'
-      , 'SWP.Clip_O'
-      ]
-    SWP.Page
-      [ 'EVT.Event'
-      , 'PAP.Entity_created_by_Person'
-      , 'SWP.Clip_O'
-      ]
-    SWP.Page_Y
-      [ 'EVT.Event'
-      , 'PAP.Entity_created_by_Person'
-      , 'SWP.Clip_O'
-      ]
-    EVT.Event
-      [ 'EVT.Event_occurs'
-      , 'EVT.Recurrence_Spec'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    EVT.Event_occurs
-    [ 'PAP.Entity_created_by_Person' ]
-    EVT._Recurrence_Mixin_
-    [ 'PAP.Entity_created_by_Person' ]
-    EVT.Recurrence_Spec
-      [ 'EVT.Recurrence_Rule'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    EVT.Recurrence_Rule
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Address
-      [ 'PAP.Company_has_Address'
-      , 'PAP.Entity_created_by_Person'
-      , 'PAP.Person_has_Address'
-      ]
-    PAP.Company
-      [ 'PAP.Company_has_Address'
-      , 'PAP.Company_has_Email'
-      , 'PAP.Company_has_Phone'
-      , 'PAP.Entity_created_by_Person'
-      ]
-    PAP.Email
-      [ 'PAP.Company_has_Email'
-      , 'PAP.Entity_created_by_Person'
-      , 'PAP.Person_has_Email'
-      ]
-    PAP.Phone
-      [ 'PAP.Company_has_Phone'
-      , 'PAP.Entity_created_by_Person'
-      , 'PAP.Person_has_Phone'
-      ]
-    PAP.Subject_has_Property
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Subject_has_Address
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Company_has_Address
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Subject_has_Email
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Company_has_Email
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Subject_has_Phone
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Company_has_Phone
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Entity_created_by_Person
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Person_has_Address
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Person_has_Email
-    [ 'PAP.Entity_created_by_Person' ]
-    PAP.Person_has_Phone
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Link1
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Link2
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Object
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM._Boat_Class_
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Boat_Class
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Boat'
-      ]
-    SRM.Handicap
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Boat
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Boat_in_Regatta'
-      ]
-    SRM.Club
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Regatta_Event
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Regatta_C'
-      , 'SRM.Regatta_H'
-      ]
-    SWP.Clip_O
-    [ 'PAP.Entity_created_by_Person' ]
-    SWP.Clip_X
-      [ 'EVT.Event'
-      , 'PAP.Entity_created_by_Person'
-      , 'SWP.Clip_O'
-      ]
-    SWP.Gallery
-      [ 'PAP.Entity_created_by_Person'
-      , 'SWP.Clip_O'
-      , 'SWP.Picture'
-      ]
-    SWP.Picture
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Page
-      [ 'EVT.Event'
-      , 'PAP.Entity_created_by_Person'
-      , 'SWP.Clip_O'
-      ]
-    SRM.Regatta
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Boat_in_Regatta'
-      ]
-    SRM.Regatta_C
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Boat_in_Regatta'
-      , 'SRM.Team'
-      ]
-    SRM.Regatta_H
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Boat_in_Regatta'
-      ]
-    SRM.Sailor
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Crew_Member'
-      ]
-    SRM.Boat_in_Regatta
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Crew_Member'
-      , 'SRM.Race_Result'
-      , 'SRM.Team_has_Boat_in_Regatta'
-      ]
-    SRM.Race_Result
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Team
-      [ 'PAP.Entity_created_by_Person'
-      , 'SRM.Team_has_Boat_in_Regatta'
-      ]
-    SRM.Crew_Member
-    [ 'PAP.Entity_created_by_Person' ]
-    SRM.Team_has_Boat_in_Regatta
-    [ 'PAP.Entity_created_by_Person' ]
-
     >>> EcP = scope.PAP.Entity_created_by_Person
     >>> q  = EcP.query   ()
     >>> qs = EcP.query_s ()
@@ -322,9 +85,234 @@ test_code = r"""
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("tn_pid").all ()
     [(('PAP.Person', 1),), (('SWP.Page', 2),), (('SWP.Page', 3),), (('SWP.Page', 4),), (('PAP.Entity_created_by_Person', 5),), (('PAP.Entity_created_by_Person', 6),), (('PAP.Entity_created_by_Person', 7),)]
 
+    >>> show_ref_maps (scope, "Ref_Req_Map")
+    MOM.Id_Entity
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Link
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Link1
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM._MOM_Link_n_
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Link2
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Link2_Ordered
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Link3
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    MOM.Named_Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account
+        ('Auth.Account_Activation', ['left'])
+        ('Auth.Account_EMail_Verification', ['left'])
+        ('Auth.Account_Password_Change_Required', ['left'])
+        ('Auth.Account_Password_Reset', ['left'])
+        ('Auth.Account_in_Group', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_Anonymous
+        ('Auth.Account_Activation', ['left'])
+        ('Auth.Account_EMail_Verification', ['left'])
+        ('Auth.Account_Password_Change_Required', ['left'])
+        ('Auth.Account_Password_Reset', ['left'])
+        ('Auth.Account_in_Group', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_P
+        ('Auth.Account_Activation', ['left'])
+        ('Auth.Account_EMail_Verification', ['left'])
+        ('Auth.Account_Password_Change_Required', ['left'])
+        ('Auth.Account_Password_Reset', ['left'])
+        ('Auth.Account_in_Group', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Group
+        ('Auth.Account_in_Group', ['right'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_in_Group
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth._Account_Action_
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_Activation
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_Password_Change_Required
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth._Account_Token_Action_
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_EMail_Verification
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Account_Password_Reset
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Link1
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Link2
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Calendar
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Subject
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person
+        ('PAP.Entity_created_by_Person', ['left', 'right'])
+        ('PAP.Person_has_Address', ['left'])
+        ('PAP.Person_has_Email', ['left'])
+        ('PAP.Person_has_Phone', ['left'])
+        ('SRM.Sailor', ['left'])
+    SWP.Link1
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Link2
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Object_PN
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SWP.Clip_O', ['left'])
+    SWP.Page
+        ('EVT.Event', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SWP.Clip_O', ['left'])
+    SWP.Page_Y
+        ('EVT.Event', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SWP.Clip_O', ['left'])
+    EVT.Event
+        ('EVT.Event_occurs', ['left'])
+        ('EVT.Recurrence_Spec', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Event_occurs
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT._Recurrence_Mixin_
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Recurrence_Spec
+        ('EVT.Recurrence_Rule', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Recurrence_Rule
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Address
+        ('PAP.Company_has_Address', ['right'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('PAP.Person_has_Address', ['right'])
+    PAP.Company
+        ('PAP.Company_has_Address', ['left'])
+        ('PAP.Company_has_Email', ['left'])
+        ('PAP.Company_has_Phone', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Email
+        ('PAP.Company_has_Email', ['right'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('PAP.Person_has_Email', ['right'])
+    PAP.Phone
+        ('PAP.Company_has_Phone', ['right'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('PAP.Person_has_Phone', ['right'])
+    PAP.Subject_has_Property
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Subject_has_Address
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Address
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Subject_has_Email
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Email
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Subject_has_Phone
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Phone
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Entity_created_by_Person
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Address
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Email
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Phone
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Link1
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Link2
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM._Boat_Class_
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Boat_Class
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Boat', ['left'])
+        ('SRM.Regatta_C', ['boat_class'])
+    SRM.Handicap
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Regatta_H', ['boat_class'])
+    SRM.Boat
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Boat_in_Regatta', ['left'])
+    SRM.Club
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Regatta_Event
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Page', ['event'])
+        ('SRM.Regatta_C', ['left'])
+        ('SRM.Regatta_H', ['left'])
+    SWP.Clip_O
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Clip_X
+        ('EVT.Event', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SWP.Clip_O', ['left'])
+    SWP.Gallery
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SWP.Clip_O', ['left'])
+        ('SWP.Picture', ['left'])
+    SWP.Picture
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Page
+        ('EVT.Event', ['left'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SWP.Clip_O', ['left'])
+    SRM.Regatta
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Boat_in_Regatta', ['right'])
+    SRM.Regatta_C
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Boat_in_Regatta', ['right'])
+        ('SRM.Team', ['left'])
+    SRM.Regatta_H
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Boat_in_Regatta', ['right'])
+    SRM.Sailor
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Boat_in_Regatta', ['skipper'])
+        ('SRM.Crew_Member', ['right'])
+    SRM.Boat_in_Regatta
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Crew_Member', ['left'])
+        ('SRM.Race_Result', ['left'])
+        ('SRM.Team_has_Boat_in_Regatta', ['right'])
+    SRM.Race_Result
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Team
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('SRM.Team_has_Boat_in_Regatta', ['left'])
+    SRM.Crew_Member
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Team_has_Boat_in_Regatta
+        ('PAP.Entity_created_by_Person', ['left'])
+
+    >>> show_ref_maps (scope, "Ref_Opt_Map")
+    EVT.Calendar
+        ('EVT.Event', ['calendar'])
+    PAP.Person
+        ('SRM.Team', ['leader'])
+    SRM.Club
+        ('SRM.Regatta_Event', ['club'])
+        ('SRM.Sailor', ['club'])
+        ('SRM.Team', ['club'])
+
 """
 
 from   _GTW.__test__.model      import *
+from   _TFL.Formatter           import formatted_1
 
 __test__ = Scaffold.create_test_dict (test_code)
 

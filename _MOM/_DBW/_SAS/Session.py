@@ -112,7 +112,8 @@
 #    15-Jun-2012 (MG) `Session_S.instance_from_row` support for entity
 #                     reloading added
 #    22-Jun-2012 (MG) `close_connections` added
-#     1-Aug-2012 (MG) `_consume_change_iter` Set `type_name` and `kind` 
+#     1-Aug-2012 (MG) `_consume_change_iter` Set `type_name` and `kind`
+#     3-Aug-2012 (CT) Use `Ref_Req_Map` instead of `link_map`
 #    ««revision-date»»···
 #--
 
@@ -595,21 +596,19 @@ class Session_S (_Session_) :
     # end def connection
 
     def delete (self, entity) :
-        self.flush                   ()
-        self._pid_map.pop            (entity.pid)
+        self.flush        ()
+        self._pid_map.pop (entity.pid)
         if not self._in_rollback :
             execute = self.connection.execute
-            link_map = getattr (entity.__class__, "link_map", {})
-            for assoc, roles in link_map.iteritems () :
-                if not assoc.is_partial :
-                    role = tuple (roles) [0]
-                    for row in execute \
-                            ( assoc._SAS.select.where
-                                (   getattr (assoc._SAQ, role.attr.name)
-                                 == entity.pid
-                                )
-                            ) :
-                        self.instance_from_row (assoc, row).destroy ()
+            ref_map = getattr (entity.__class__, "Ref_Req_Map", {})
+            for ET, attrs in ref_map.iteritems () :
+                if not ET.is_partial :
+                    for attr in attrs :
+                        for row in execute \
+                                ( ET._SAS.select.where
+                                    (getattr (ET._SAQ, attr) == entity.pid)
+                                ) :
+                            self.instance_from_row (ET, row).destroy ()
             entity.__class__._SAS.delete (self, entity)
         entity.pid = None
     # end def delete

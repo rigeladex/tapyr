@@ -64,6 +64,7 @@
 #    14-May-2012 (CT) Remove prefix `u` from strings,
 #                     import `unicode_literals` from `__future__` instead
 #     8-Jun-2012 (CT) Add test for `query_changes` of `type_name`
+#     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    ««revision-date»»···
 #--
 
@@ -908,17 +909,17 @@ The app-type specific entity-types are ready to be used by
     MOM.Id_Entity
         ('tn_pid',)
     MOM.Link
-        ('left.tn_pid',)
+        ('left',)
     MOM.Link1
-        ('left.tn_pid',)
+        ('left',)
     MOM._MOM_Link_n_
-        ('left.tn_pid', 'right.tn_pid')
+        ('left', 'right')
     MOM.Link2
-        ('left.tn_pid', 'right.tn_pid')
+        ('left', 'right')
     MOM.Link2_Ordered
-        ('left.tn_pid', 'right.tn_pid', 'seq_no')
+        ('left', 'right', 'seq_no')
     MOM.Link3
-        ('left.tn_pid', 'middle.tn_pid', 'right.tn_pid')
+        ('left', 'middle', 'right')
     MOM.Object
         ('tn_pid',)
     MOM.Named_Object
@@ -962,24 +963,18 @@ The app-type specific entity-types are ready to be used by
     BMT.Person_sets_Trap_at_Location
         ('left.last_name', 'left.first_name', 'left.middle_name', 'middle.name', 'middle.serial_no', 'right.lon', 'right.lat')
 
-    >>> sorted (ET_Person.link_map, key = TFL.Getter.type_name)
-    [<class 'BMT.Person_owns_Trap' [BMT__Hash__HPS]>,\
- <class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__HPS]>]
-    >>> sorted (ET_Trap.link_map.iteritems (), key = TFL.Getter [0].type_name)
-    [(<class 'BMT.Person_owns_Trap' [BMT__Hash__HPS]>, set([Trap `right`])),\
- (<class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__HPS]>,\
- set([Trap `middle`])), (<class 'BMT.Rodent_in_Trap' [BMT__Hash__HPS]>,\
- set([Trap `right`]))]
+    >>> show_ref_map (ET_Person, "Ref_Req_Map")
+    BMT.Person
+        ('BMT.Person_owns_Trap', ['left'])
+        ('BMT.Person_sets_Trap_at_Location', ['left'])
+    >>> show_ref_map (ET_Trap,   "Ref_Req_Map")
+    BMT.Trap
+        ('BMT.Person_owns_Trap', ['right'])
+        ('BMT.Person_sets_Trap_at_Location', ['middle'])
+        ('BMT.Rodent_in_Trap', ['right'])
 
-    >>> for et in apt._T_Extension :
-    ...   if et.polymorphic_epks or et.polymorphic_epk :
-    ...     print et.type_name, et.polymorphic_epk, et.polymorphic_epks
-    MOM.Link False True
-    MOM.Link1 False True
-    MOM._MOM_Link_n_ False True
-    MOM.Link2 False True
-    MOM.Link2_Ordered False True
-    MOM.Link3 False True
+    >>> show_ref_map (ET_Person, "Ref_Opt_Map")
+    >>> show_ref_map (ET_Trap,   "Ref_Opt_Map")
 
     >>> show_children (ET_Entity)
     MOM.Entity
@@ -1970,6 +1965,8 @@ Setting attribute values with Queries
 
 from   _TFL.Formatter           import Formatter, formatted_1 as formatted1
 formatted  = Formatter (width = 240)
+
+from   _MOM.inspect             import show_ref_map, show_ref_maps
 
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"

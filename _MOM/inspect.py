@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-May-2012 (CT) Creation
+#     3-Aug-2012 (CT) Add `show_ref_map` and `show_ref_maps`
 #    ««revision-date»»···
 #--
 
@@ -35,8 +36,15 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _MOM import MOM
 from   _TFL import TFL
 
+from   _TFL.Formatter           import formatted_1
+
 import _MOM._Meta.M_Entity
 import _TFL.Accessor
+
+def parents (T) :
+    """Return the essential parents of essential type `T`."""
+    return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
+# end def parents
 
 def show_children (T, bi = "  ", level = 0, seen = None) :
     """Display tree of children of essential type `T`."""
@@ -50,10 +58,25 @@ def show_children (T, bi = "  ", level = 0, seen = None) :
             seen.add (c)
 # end def show_children
 
-def parents (T) :
-    """Return the essential parents of essential type `T`."""
-    return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
-# end def parents
+def show_ref_map (T, name) :
+    map = getattr (T, name, None)
+    if map :
+        print (T.type_name)
+        print \
+            ( "   "
+            , "\n    ".join
+                ( sorted
+                    (   formatted_1 ((c.type_name, sorted (eias)))
+                    for c, eias in map.iteritems ()
+                    )
+                )
+            )
+# end def show_ref_map
+
+def show_ref_maps (scope, name = "Ref_Req_Map") :
+    for T in scope.app_type._T_Extension :
+        show_ref_map (T, name)
+# end def show_ref_maps
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

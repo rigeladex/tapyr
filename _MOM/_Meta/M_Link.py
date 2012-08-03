@@ -198,18 +198,15 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             cls.role_map        = role_map = {}
             for i, r in enumerate (Roles) :
                 r.role_index = i
-                if r.role_type :
-                    ### Replace by app-type specific e-type
-                    r.attr.assoc     = r.assoc       = cls
-                    r.attr.role_type = r.attr.P_Type = rt = \
-                        cls.app_type.entity_type (r.role_type)
-                    r.attr.typ       = rt.type_base_name
-                    rt._own_link_map [cls].add (r)
-                    ac      = cls.acr_map.get (r.attr.name)
-                    cr_attr = ac and ac.cr_attr
-                    if cr_attr and cr_attr.P_Type :
-                        cr_attr.P_Type = cls.app_type.entity_type \
-                            (cr_attr.P_Type)
+                ### Replace by app-type specific e-type
+                r.attr.assoc     = r.assoc       = cls
+                r.attr.role_type = r.attr.P_Type = rt = \
+                    cls.app_type.entity_type (r.role_type)
+                r.attr.typ       = rt.type_base_name
+                ac      = cls.acr_map.get (r.attr.name)
+                cr_attr = ac and ac.cr_attr
+                if cr_attr and cr_attr.P_Type :
+                    cr_attr.P_Type = cls.app_type.entity_type (cr_attr.P_Type)
                 if r.role_name != r.generic_role_name :
                     setattr \
                         ( cls, r.role_name

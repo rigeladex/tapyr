@@ -136,6 +136,7 @@
 #    29-Jun-2012 (CT) Add `children_np`
 #     1-Aug-2012 (CT) Add `M_E_Type_Id_Destroyed`
 #     1-Aug-2012 (CT) Use `MOM._Id_Entity_Destroyed_Mixin_`
+#     3-Aug-2012 (CT) Add `Ref_Opt_Map` and `Ref_Req_Map`, remove `link_map`
 #    ««revision-date»»···
 #--
 
@@ -290,7 +291,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             t._m_setup_sorted_by ()
         for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
-            ### `link_map` that are only available after *all* etypes have
+            ### `Ref_Req_Map` that are only available after *all* etypes have
             ### already been created
             e_update (t, app_type)
     # end def _m_create_e_types
@@ -530,14 +531,16 @@ class M_Id_Entity (M_Entity) :
         d_raw     = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
         r_kw = dict \
-            ( epk_sig         = epk_sig
-            , epkified_ckd    = cls._m_auto_epkified
+            ( epk_sig          = epk_sig
+            , epkified_ckd     = cls._m_auto_epkified
                 (epk_sig, a_ckd, d_ckd, "ckd")
-            , epkified_raw    = cls._m_auto_epkified
+            , epkified_raw     = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
-            , is_relevant     = cls.is_relevant or (not cls.is_partial)
-            , _all_link_map   = None
-            , _own_link_map   = TFL.defaultdict (set)
+            , is_relevant      = cls.is_relevant or (not cls.is_partial)
+            , _all_ref_opt_map = None
+            , _all_ref_req_map = None
+            , _own_ref_opt_map = TFL.defaultdict (set)
+            , _own_ref_req_map = TFL.defaultdict (set)
             , ** kw
             )
         if pol_epk :
@@ -773,20 +776,22 @@ class M_E_Type_Id (M_E_Type) :
     Manager        = MOM.E_Type_Manager.Id_Entity
 
     @property
-    def link_map (cls) :
-        result = cls._all_link_map
+    def Ref_Opt_Map (cls) :
+        result = cls._all_ref_opt_map
         if result is None :
-            result = cls._all_link_map = TFL.defaultdict (set)
-            refuse = cls.refuse_links
-            for b in cls.__bases__ :
-                for k, v in getattr (b, "link_map", {}).iteritems () :
-                    if k not in refuse :
-                        result [k].update (v)
-            for k, v in cls._own_link_map.iteritems () :
-                if not k.is_partial :
-                    result [k].update (v)
+            result = cls._all_ref_opt_map = cls._calc_ref_map \
+                ("Ref_Opt_Map", "_own_ref_opt_map")
         return result
-    # end def link_map
+    # end def Ref_Opt_Map
+
+    @property
+    def Ref_Req_Map (cls) :
+        result = cls._all_ref_req_map
+        if result is None :
+            result = cls._all_ref_req_map = cls._calc_ref_map \
+                ("Ref_Req_Map", "_own_ref_req_map", cls.refuse_links)
+        return result
+    # end def Ref_Req_Map
 
     def sort_key_pm (cls, sort_key = None) :
         return TFL.Sorted_By \
@@ -808,6 +813,24 @@ class M_E_Type_Id (M_E_Type) :
         return entity.sorted_by (entity)
     # end def sort_key
 
+    def _calc_ref_map (cls, name, _name, refuse = None) :
+        result = TFL.defaultdict (set)
+        for b in cls.__bases__ :
+            for k, v in getattr (b, name, {}).iteritems () :
+                if refuse and k in refuse :
+                    def _filter (k, v):
+                        for n in v :
+                            a = getattr (k, n, None)
+                            if not isinstance (a, MOM.Attr.Link_Role) :
+                                yield a
+                    v = _filter (k, v)
+                result [k].update (v)
+        for k, v in getattr (cls, _name).iteritems () :
+            if not k.is_partial :
+                result [k].update (v)
+        return result
+    # end def _calc_ref_map
+
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
         cls.is_editable = (not cls.electric.default) and cls.user_attr
@@ -815,6 +838,7 @@ class M_E_Type_Id (M_E_Type) :
             (cls.record_changes and cls.show_in_ui and not cls.is_partial)
         cls.sig_attr = cls.primary
         MOM._Id_Entity_Destroyed_Mixin_.define_e_type (cls)
+        cls._m_setup_ref_maps (bases, dct)
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :
@@ -854,6 +878,15 @@ class M_E_Type_Id (M_E_Type) :
         sb = TFL.Sorted_By (* (sbs or sb_default))
         cls.sorted_by_epk = sb
     # end def _m_setup_sorted_by
+
+    def _m_setup_ref_maps (cls, bases, dct) :
+        for eia in cls.id_entity_attr :
+            ET = eia.E_Type
+            if ET :
+                map = ET._own_ref_req_map \
+                    if eia.is_required else ET._own_ref_opt_map
+                map [cls].add (eia.name)
+    # end def _m_setup_ref_maps
 
     def _m_setup_relevant_roots (cls) :
         if not cls.relevant_root :

@@ -56,6 +56,8 @@ _test_code = """
     account_change_password
     account_register
     account_reset_password
+    calendar
+    calendar_day
     console
     e_type_admin
     e_type_afs
@@ -89,6 +91,8 @@ _test_code = """
     account_change_password
     account_register
     account_reset_password
+    calendar
+    calendar_day
     console
     e_type_admin
     e_type_afs
@@ -161,6 +165,8 @@ _test_code = """
       , 'account_change_password'
       , 'account_register'
       , 'account_reset_password'
+      , 'calendar'
+      , 'calendar_day'
       , 'html/static.jnj'
       , 'login'
       ]

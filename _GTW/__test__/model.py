@@ -52,6 +52,7 @@ from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 from   _MOM.import_MOM          import *
+from   _MOM.inspect             import show_ref_map, show_ref_maps
 from   _MOM.Product_Version     import Product_Version, IV_Number
 
 from   _TFL                     import sos
@@ -312,6 +313,7 @@ class _GTW_Test_Command_ (GTW.Werkzeug.Command) :
     # end def _wsgi_app
 
 _Command_  = _GTW_Test_Command_ # end class
+
 Scaffold   = _Command_ ()
 Scope      = Scaffold.scope
 

@@ -205,6 +205,7 @@
 #     1-Aug-2012 (CT) Change `destroy_dependency` to consider
 #                     `attr.is_required` and `attr.is_primary`, record changes
 #     1-Aug-2012 (CT) Add `_Id_Entity_Destroyed_Mixin_`
+#     3-Aug-2012 (CT) Add `all_referrers`, rewrite `all_links` to use it
 #    ««revision-date»»···
 #--
 
@@ -1076,13 +1077,26 @@ class Id_Entity (Entity) :
     # end def ui_display_format
 
     def all_links (self) :
-        result  = set ()
-        scope   = self.home_scope
-        r_query = scope.ems.r_query
-        for r in itertools.chain (* self.__class__.link_map.itervalues ()) :
-            result.update (r_query (r.assoc, {r.name : self}, strict = True))
-        return sorted (result, key = scope.MOM.Id_Entity.sort_key_pm ())
+        return sorted \
+            ( self.all_referrers ()
+            , key = self.home_scope.MOM.Id_Entity.sort_key_pm ()
+            )
     # end def all_links
+
+    def all_referrers (self) :
+        """Return query set of all entities that refer to `self`."""
+        scope = self.home_scope
+        def _gen (self, ref_map, scope) :
+            pid = self.pid
+            for ET, attrs in ref_map.iteritems () :
+                qfs = tuple ((getattr (Q, a) == pid) for a in attrs)
+                ETM = scope [ET.type_name]
+                yield ETM.query (Q.OR (* qfs)).distinct ()
+        return scope.ems.Q_Result_Composite \
+            ( tuple (_gen (self, self.__class__.Ref_Req_Map, scope))
+            + tuple (_gen (self, self.__class__.Ref_Opt_Map, scope))
+            )
+    # end def all_referrers
 
     def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)
