@@ -38,6 +38,7 @@
 #    12-Jun-2012 (CT) Add tests for `tn_pid`, `.attrs ("type_name")`
 #    27-Jun-2012 (CT) Add tests for `query_changes` for `type_name`
 #     1-Aug-2012 (CT) Add `_test_referential_integrity`
+#     3-Aug-2012 (MG) Improve `_test_referential_integrity`
 #    ««revision-date»»···
 #--
 
@@ -303,6 +304,8 @@ _test_referential_integrity = r"""
     SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
     >>> print bir.pid                                 ### before s.destroy ()
     8
+    >>> print cl.pid                                  ### before s.destroy ()
+    2
     >>> print s.pid                                   ### before s.destroy ()
     5
     >>> print bir.skipper                             ### before s.destroy () 1
@@ -333,8 +336,8 @@ _test_referential_integrity = r"""
     >>> print s.club                                  ### before s.destroy ()
     (u'sc-ams')
 
+    >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
     >>> cl.destroy ()
-
     >>> print s.club                                  ### after cl.destroy ()
     None
 
@@ -375,6 +378,15 @@ _test_referential_integrity = r"""
       ...
     Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
+    >>> for c in reversed (scope.uncommitted_changes [-2:]) :
+    ...     print (c)
+    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : u'(u"(u\'tanzer\', u\'christian\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : u"(u'sc-ams',)", 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
+
+    >>> for c in reversed (scope.uncommitted_changes [-2:]) :
+    ...     pass ### XXX c.undo (scope)
     >>> scope.destroy ()
 
 """

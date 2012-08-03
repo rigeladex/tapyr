@@ -114,6 +114,8 @@
 #    22-Jun-2012 (MG) `close_connections` added
 #     1-Aug-2012 (MG) `_consume_change_iter` Set `type_name` and `kind`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map` instead of `link_map`
+#     3-Aug-2012 (MG) Enhance `expunge`
+#     3-Aug-2012 (MG) Consider new `Ref_Opt_Map` in delete
 #    ««revision-date»»···
 #--
 
@@ -548,6 +550,8 @@ class Session_S (_Session_) :
 
     def __init__ (self, scope, engine) :
         self.__super.__init__ (scope, engine)
+        self._pid_map = {}
+        self._cid_map = {}
         self.expunge  ()
         self._in_rollback = 0
     # end def __init__
@@ -599,24 +603,32 @@ class Session_S (_Session_) :
         self.flush        ()
         self._pid_map.pop (entity.pid)
         if not self._in_rollback :
-            execute = self.connection.execute
+            def _find_entites (ref_map) :
+                for ET, attrs in ref_map.iteritems () :
+                    if not ET.is_partial :
+                        ETM        = self.scope [ET.type_name]
+                        query_args = TFL.Filter_Or \
+                            (* (getattr (MOM.Q, a) == entity for a in attrs))
+                        for e in self.scope [ET.type_name].query (query_args) :
+                            yield e, attrs
+            # end def _find_entites
+            pid_map = self._pid_map.copy ()
             ref_map = getattr (entity.__class__, "Ref_Req_Map", {})
-            for ET, attrs in ref_map.iteritems () :
-                if not ET.is_partial :
-                    for attr in attrs :
-                        for row in execute \
-                                ( ET._SAS.select.where
-                                    (getattr (ET._SAQ, attr) == entity.pid)
-                                ) :
-                            self.instance_from_row (ET, row).destroy ()
+            for e, _ in _find_entites (ref_map) :
+                e.destroy ()
+            ref_map = getattr (entity.__class__, "Ref_Opt_Map", {})
+            for e, attrs in _find_entites (ref_map) :
+                e.set (** dict ((a, None) for a in attrs))
+            self._pid_map = pid_map
             entity.__class__._SAS.delete (self, entity)
         entity.pid = None
     # end def delete
 
-    def expunge (self) :
-        self._pid_map = {}
-        ### only used during loading of changes from the database
-        self._cid_map = {}
+    def expunge (self, clear_change = False) :
+        self._mark_entities_for_reload (True)
+        if clear_change :
+            self._pid_map = {}
+            self._cid_map = {}
     # end def expunge
 
     def flush (self) :
@@ -666,8 +678,10 @@ class Session_S (_Session_) :
         return Type.select ()
     # end def query
 
-    def _mark_entities_for_reload (self) :
+    def _mark_entities_for_reload (self, force_reload = False) :
         for e in self._pid_map.itervalues () :
+            if force_reload :
+                setattr (e, e.__class__.last_cid.ckd_name, -1)
             e.__class__ = e.__class__._RELOAD_E_TYPE
     # end def _mark_entities_for_reload
 
