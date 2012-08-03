@@ -29,6 +29,7 @@
 #    30-Jan-2012 (CT) Creation
 #    19-Mar-2012 (CT) Adapt to factoring of `PAP.Subject`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#     2-Aug-2012 (MG) New test for `auto_up_depends` attributes added
 #    ««revision-date»»···
 #--
 
@@ -353,6 +354,28 @@ _test_code = r"""
 
 """
 
+_auto_update = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> SWP = scope.SWP
+
+    >>> p = SWP.Page (perma_name = "p1", text = "First text")
+    >>> p.text, p.contents
+    (u'First text', u'<p>First text</p>\n')
+
+    >>> p.set (text = "New Text")
+    2
+    >>> p.text, p.contents
+    (u'New Text', u'<p>New Text</p>\n')
+
+    >>> scope.commit ()
+
+    >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
+    >>> p = SWP.Page.query ().first ()
+    >>> p.text, p.contents
+    (u'New Text', u'<p>New Text</p>\n')
+"""
+
 from _GTW.__test__.model import *
 from   _TFL.predicate    import any_true
 
@@ -374,7 +397,8 @@ class Page_V (_Ancestor_Essence) :
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( normal  = _test_code
+        ( normal      = _test_code
+        , auto_update = _auto_update
         )
     )
 

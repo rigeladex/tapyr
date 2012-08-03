@@ -72,6 +72,7 @@
 #    10-May-2012 (CT) Add `error_email`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`, factor `env_globals`
 #    22-Jun-2012 (CT) Use `static_handler.get_path` instead of home-grown code
+#     2-Aug-2012 (MG) Add `Media_Filenames`
 #    ««revision-date»»···
 #--
 
@@ -618,6 +619,19 @@ class Templateer (TFL.Meta.Object) :
     def render_string (self, template_string, context) :
         return self.env.from_string (template_string).render (context)
     # end def render_string
+
+    def Media_Filenames (self, root) :
+        result = set ()
+        def _add_template_media (t) :
+            if t.media_path :
+                result.add (t.media_path)
+            for it in t.templates_i :
+                _add_template_media (it)
+        # end def _add_template_media
+        for t in root.template_iter () :
+            _add_template_media (t)
+        return tuple (result)
+    # end def Media_Filenames
 
 # end class Templateer
 

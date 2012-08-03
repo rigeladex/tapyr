@@ -58,6 +58,7 @@
 #    30-Jul-2012 (CT) Add option `-port` (was in GTW.OMP.Command)
 #     2-Aug-2012 (MG) Close database connections before starting the server
 #     2-Aug-2012 (CT) Change `_wsgi_app` to avoid loading of `scope`
+#     2-Aug-2012 (MG) Correct implementation of `watch_media_files`
 #    ««revision-date»»···
 #--
 
@@ -329,7 +330,9 @@ class GT2W_Command (GTW.OMP.Command) :
             , use_reloader = cmd.auto_reload
             )
         if cmd.watch_media_files :
-            kw ["extra_files"] = getattr (self.root, "Media_Filenames", ())
+            fct = getattr (self.root.Templateer, "Media_Filenames", None)
+            if fct :
+                kw ["extra_files"] = fct (self.root)
         werkzeug.serving.run_simple (** kw)
     # end def _handle_run_server
 
