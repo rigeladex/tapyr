@@ -174,6 +174,9 @@
 #     4-May-2012 (CT) Add I18N marker `_` to `kind = <kind>` statements
 #    13-Jun-2012 (CT) Add call of `_finish__init__` to
 #                     `_Composite_Mixin_.from_pickle_cargo`
+#     4-Aug-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
+#                     only append to `obj._init_pending` if not `init_finished`
+#                     (I don't know what I'd smoked on 11-Apr-2012 :-( )
 #    ««revision-date»»···
 #--
 
@@ -1355,8 +1358,11 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
                 self._unregister (obj, old_value)
             self.__super._set_cooked_value (obj, value, changed)
             if value :
-                obj._init_pending.append \
-                    (TFL.Functor (self._register, obj, value))
+                if obj.init_finished :
+                    self._register (obj, value)
+                else :
+                    obj._init_pending.append \
+                        (TFL.Functor (self._register, obj, value))
     # end def _set_cooked_value
 
 # end class Id_Entity_Reference_Mixin
