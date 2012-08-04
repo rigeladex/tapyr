@@ -32,6 +32,7 @@
 #    18-Jul-2012 (CT) Redefine `_Dir_._get_child` to handle "index"
 #    20-Jul-2012 (CT) Factor `_add_index`
 #    23-Jul-2012 (CT) Redefine `Dir_V.has_children`
+#     3-Aug-2012 (CT) Change `is_current_dir` to use `href`, not `prefix`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
     # end def add_entries
 
     def is_current_dir (self, page) :
-        return page.prefix.startswith (self.prefix)
+        return page.href.startswith (self.href)
     # end def is_current_dir
 
     def _add_index (self, l) :

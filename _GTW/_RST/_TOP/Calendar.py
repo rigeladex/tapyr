@@ -28,6 +28,7 @@
 # Revision Dates
 #     2-Aug-2012 (CT) Creation (based on GTW.NAV.Calendar)
 #     2-Aug-2012 (CT) Redefine `Calendar.Day.rendered` to handle `qx`
+#     3-Aug-2012 (CT) Factor `_render_macro`, add `Calendar.Q`
 #    ««revision-date»»···
 #--
 
@@ -84,26 +85,114 @@ class _Cal_Page_ (_Ancestor) :
 
     GET = _Cal_Page_GET_ # end class
 
+    def is_current_dir (self, page) :
+        return page.href.startswith (self.calendar.href)
+    # end def is_current_dir
+
+    def _render_macro (self, t_name, m_name, * args) :
+        T          = self.top.Templateer
+        template   = T.get_template (t_name)
+        call_macro = template.call_macro
+        result     = call_macro (m_name, self, * args)
+        return result
+    # end def _render_macro
+
 # end class _Cal_Page_
 
 class _Day_ (_Cal_Page_) :
     """Page displaying calendary events for a specific day."""
 
+    macro_name         = "day"
     page_template_name = "calendar_day"
     template_qx_name   = "calendar_day_qx"
 
     def rendered (self, context, template = None) :
         if self.qx_p :
-            T          = self.top.Templateer
-            template   = T.get_template (self.template_qx_name)
-            call_macro = template.call_macro
-            result     = call_macro ("day", self, self.day)
+            result = self._render_macro \
+                (self.template_qx_name, self.macro_name, self.day)
         else :
             result = self.__super.rendered (context, template)
         return result
     # end def rendered
 
 # end class _Day_
+
+class _Q_ (_Mixin_, _Cal_Page_) :
+    """Pseudo page handling queries."""
+
+    args               = 0
+    macro_name         = "week_roller_body"
+    page_template_name = "calendar"
+    template_qx_name   = "calendar_qx"
+
+    def rendered (self, context, template = None) :
+        anchor   = self.anchor
+        method   = context ["http_method"]
+        request  = context ["request"]
+        response = context ["response"]
+        try :
+            qa   = self._q_args (anchor, request)
+        except Exception, exc :
+            raise self.Status.Not_Found (exc)
+        if qa.anchor == self.anchor :
+            this = self
+        else :
+            this = context ["page"] = self.__class__ \
+                ( parent = self
+                , anchor = q_args.anchor
+                )
+        with this.LET (week_roller_size = qa.week_roller_size) :
+            if this.qx_p :
+                response.renderer = GTW.RST.Mime_Type.JSON (method, this)
+                result = dict \
+                    ( calendar = this._render_macro
+                        (this.template_qx_name, this.macro_name, this.weeks)
+                    , day      = anchor.day
+                    , month    = anchor.month
+                    , weeks    = this.week_roller_size
+                    , year     = anchor.year
+                    )
+            else :
+                result = this.__super.rendered (context, template)
+        return result
+    # end def rendered
+
+    def _q_args (self, anchor, request) :
+        req_data   = handler.request.req_data
+        if req_data.get ("Today") :
+            anchor = self.today
+        else :
+            y      = int (req_data.get ("year")  or anchor.year)
+            m      = int (req_data.get ("month") or anchor.month)
+            d      = int (req_data.get ("day")   or anchor.day)
+            anchor = self._cal.day ["%4.4d/%2.2d/%2.2d" % (y, m, d)]
+            if req_data.get ("delta") :
+                delta  = self._q_delta (req_data)
+                anchor = self._cal.day [(anchor.date + delta).ordinal]
+        wrs = int (req_data.get ("weeks") or self.week_roller_size)
+        return TFL.Record \
+            ( anchor           = anchor
+            , week_roller_size = wrs
+            )
+    # end def _q_args
+
+    def _q_delta (self, req_data) :
+        number = int (req_data.get ("delta"))
+        unit   = req_data.get ("delta_unit", "week").rstrip ("s")
+        if unit in ("month", "year") :
+            DT = CAL.Month_Delta
+            if unit == "year" :
+                number *= 12
+        elif unit in ("week", "day") :
+            DT = CAL.Date_Delta
+            if unit == "week" :
+                number *= 7
+        else :
+            raise ValueError (unit)
+        return DT (number)
+    # end def _q_delta
+
+# end class _Q_
 
 _Ancestor = GTW.RST.TOP.Dir_V
 
@@ -123,6 +212,7 @@ class Calendar (_Mixin_, _Ancestor) :
     """Page displaying a calendar."""
 
     Day                = _Day_
+    Q                  = _Q_
     Year               = _Year_
 
     dir_template_name  = "calendar"
@@ -163,6 +253,7 @@ class Calendar (_Mixin_, _Ancestor) :
     GET = _Calender_GET_ # end class
 
     def __init__ (self, ** kw) :
+        self.calendar = self
         self.__super.__init__ (** kw)
         if self._cal is None :
             self.__class__._cal   = CAL.Calendar   ()
@@ -204,11 +295,11 @@ class Calendar (_Mixin_, _Ancestor) :
     # end def year
 
     def _get_child (self, child, * grandchildren) :
+        qx_p = child == self.qx_prefix
         if child in (self.q_prefix, self.qx_prefix) and not grandchildren :
-            result = getattr (self, child.upper ()) (parent = self)
+            result = self.Q (name = child, parent = self, qx_p = qx_p)
         else :
             result = None
-            qx_p   = child == self.qx_prefix
             if qx_p :
                 child, grandchildren = grandchildren [0], grandchildren [1:]
             try :
