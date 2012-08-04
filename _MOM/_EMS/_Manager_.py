@@ -96,6 +96,16 @@ class _Manager_ (TFL.Meta.Object) :
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
 
+    @property
+    def db_meta_data (self) :
+        return self.session.db_meta_data
+    # end def db_meta_data
+
+    @property
+    def pcm (self) :
+        return self.session.pcm
+    # end def pcm
+
     @classmethod
     def connect (cls, scope, db_url) :
         self         = cls (scope, db_url)
@@ -154,11 +164,6 @@ class _Manager_ (TFL.Meta.Object) :
         return self.query (Type, strict = strict).count ()
     # end def count
 
-    @property
-    def db_meta_data (self) :
-        return self.session.db_meta_data
-    # end def db_meta_data
-
     def exists (self, Type, epk) :
         epk_dict = dict (zip (Type.epk_sig, epk))
         entities = self.query (Type).filter (** epk_dict)
@@ -193,11 +198,6 @@ class _Manager_ (TFL.Meta.Object) :
         """Redefine to load `guid`, `pid`, and `root` of scope from database."""
         raise NotImplementedError
     # end def load_root
-
-    @property
-    def pcm (self) :
-        return self.session.pcm
-    # end def pcm
 
     def pid_query (self, pid, Type = None) :
         result = self.pm.query (int (pid))

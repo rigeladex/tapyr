@@ -105,27 +105,6 @@ class Manager (MOM.EMS._Manager_) :
 
     Q_Result           = MOM.DBW.SAS.Q_Result
 
-    def commit (self) :
-        self.__super.commit ()
-        if not self.uncommitted_changes :
-            ### there was no commit -> we have to issue a rollback to the
-            ### session to enure that the db resources will be released
-            ### properly
-            self.session.rollback ()
-    # end def commit
-
-    def changes (self, * filter, ** eq_kw) :
-        query = MOM.DBW.SAS.Q_Result_Changes \
-            (MOM.SCM.Change._Change_, self.session).filter (* filter, ** eq_kw)
-        return query
-    # end def changes
-
-    def load_root (self) :
-        result            = self.session.load_root (self.scope)
-        self.scope.db_cid = self.max_cid
-        return result
-    # end def load_root
-
     @property
     def max_cid (self) :
         try :
@@ -148,6 +127,60 @@ class Manager (MOM.EMS._Manager_) :
     def pcm (self) :
         return self.session
     # end def pcm
+
+    def add (self, entity, pid = None) :
+        ses = self.session
+        ses.flush () ### add all pending operations to the database transaction
+        if entity.polymorphic_epk :
+            ### since we have a polymorphic epk the database layer cannot
+            ### check the name clash -> therefore we need to make an extra
+            ### query for this.
+            epk_sig_root          = entity.epk_sig_root
+            epk_sig_root_epk_dict = dict \
+                ((a, getattr (entity, a)) for a in epk_sig_root.epk_sig)
+            try :
+                existing = self.query (epk_sig_root).filter \
+                    (** epk_sig_root_epk_dict).one ()
+                raise MOM.Error.Name_Clash (entity, existing)
+            except IndexError :
+                pass ### If the index error is raised the object does not
+                     ### exist -> we can create a new object with this epk
+        max_c = entity.max_count
+        if max_c and max_c <= self.query (entity.__class__).count () :
+            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
+        try :
+            ses.add   (entity, pid)
+        except SAS_Exception.IntegrityError as exc :
+            ### XXX introduce nested transactions
+            scope   = self.scope
+            changes = tuple (scope.uncommitted_changes.changes)
+            scope.rollback ()
+            for c in changes :
+                c.redo (scope)
+            raise MOM.Error.Name_Clash \
+                (entity, self.instance (entity.__class__, entity.epk))
+    # end def add
+
+    def changes (self, * filter, ** eq_kw) :
+        query = MOM.DBW.SAS.Q_Result_Changes \
+            (MOM.SCM.Change._Change_, self.session).filter (* filter, ** eq_kw)
+        return query
+    # end def changes
+
+    def commit (self) :
+        self.__super.commit ()
+        if not self.uncommitted_changes :
+            ### there was no commit -> we have to issue a rollback to the
+            ### session to enure that the db resources will be released
+            ### properly
+            self.session.rollback ()
+    # end def commit
+
+    def load_root (self) :
+        result            = self.session.load_root (self.scope)
+        self.scope.db_cid = self.max_cid
+        return result
+    # end def load_root
 
     def pid_query (self, pid, Type = None) :
         pid        = int (pid)
@@ -192,39 +225,6 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Name_Clash (entity, old_entity)
         renamer     ()
     # end def rename
-
-    def add (self, entity, pid = None) :
-        ses = self.session
-        ses.flush () ### add all pending operations to the database transaction
-        if entity.polymorphic_epk :
-            ### since we have a polymorphic epk the database layer cannot
-            ### check the name clash -> therefore we need to make an extra
-            ### query for this.
-            epk_sig_root          = entity.epk_sig_root
-            epk_sig_root_epk_dict = dict \
-                ((a, getattr (entity, a)) for a in epk_sig_root.epk_sig)
-            try :
-                existing = self.query (epk_sig_root).filter \
-                    (** epk_sig_root_epk_dict).one ()
-                raise MOM.Error.Name_Clash (entity, existing)
-            except IndexError :
-                pass ### If the index error is raised the object does not
-                     ### exist -> we can create a new object with this epk
-        max_c = entity.max_count
-        if max_c and max_c <= self.query (entity.__class__).count () :
-            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        try :
-            ses.add   (entity, pid)
-        except SAS_Exception.IntegrityError as exc :
-            ### XXX introduce nested transactions
-            scope   = self.scope
-            changes = tuple (scope.uncommitted_changes.changes)
-            scope.rollback ()
-            for c in changes :
-                c.redo (scope)
-            raise MOM.Error.Name_Clash \
-                (entity, self.instance (entity.__class__, entity.epk))
-    # end def add
 
     def _query_multi_root (self, Type) :
         QR = self.Q_Result

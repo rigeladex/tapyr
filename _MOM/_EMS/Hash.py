@@ -118,6 +118,29 @@ class Manager (MOM.EMS._Manager_) :
         self._tables  = TFL.defaultdict (dict)
     # end def __init__
 
+    def add (self, entity, pid = None) :
+        count = self._counts
+        hpk   = entity.hpk
+        root  = entity.relevant_root
+        table = self._tables [root.type_name]
+        if hpk in table :
+            raise MOM.Error.Name_Clash (entity, table [hpk])
+        if entity.max_count and entity.max_count <= count [entity.type_name] :
+            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
+        self.pm (entity, pid)
+        count [entity.type_name] += 1
+        table [hpk] = entity
+        if entity.Roles :
+            r_map = self._r_map
+            for r in entity.Roles :
+                obj = r.get_role (entity)
+                if obj is None :
+                    print entity.type_name, entity, "role", r, "is_empty"
+                else :
+                    obj.register_dependency (entity.__class__)
+                    r_map [r] [obj.pid].add (entity)
+    # end def add
+
     def all_links (self, obj_id) :
         r_map  = self._r_map
         result = sorted \
@@ -239,29 +262,6 @@ class Manager (MOM.EMS._Manager_) :
         result = self.Q_Result (intersection_n (* queries), * filters, ** kw)
         return result
     # end def r_query
-
-    def add (self, entity, pid = None) :
-        count = self._counts
-        hpk   = entity.hpk
-        root  = entity.relevant_root
-        table = self._tables [root.type_name]
-        if hpk in table :
-            raise MOM.Error.Name_Clash (entity, table [hpk])
-        if entity.max_count and entity.max_count <= count [entity.type_name] :
-            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        self.pm (entity, pid)
-        count [entity.type_name] += 1
-        table [hpk] = entity
-        if entity.Roles :
-            r_map = self._r_map
-            for r in entity.Roles :
-                obj = r.get_role (entity)
-                if obj is None :
-                    print entity.type_name, entity, "role", r, "is_empty"
-                else :
-                    obj.register_dependency (entity.__class__)
-                    r_map [r] [obj.pid].add (entity)
-    # end def add
 
     def _load_objects (self, scope = None) :
         self.session.load_objects ()
