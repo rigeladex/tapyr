@@ -193,7 +193,7 @@ class Manager (MOM.EMS._Manager_) :
         renamer     ()
     # end def rename
 
-    def add (self, entity, id = None) :
+    def add (self, entity, pid = None) :
         ses = self.session
         ses.flush () ### add all pending operations to the database transaction
         if entity.polymorphic_epk :
@@ -214,7 +214,7 @@ class Manager (MOM.EMS._Manager_) :
         if max_c and max_c <= self.query (entity.__class__).count () :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         try :
-            ses.add   (entity, id)
+            ses.add   (entity, pid)
         except SAS_Exception.IntegrityError as exc :
             ### XXX introduce nested transactions
             scope   = self.scope

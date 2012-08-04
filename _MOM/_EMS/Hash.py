@@ -240,7 +240,7 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def r_query
 
-    def add (self, entity, id = None) :
+    def add (self, entity, pid = None) :
         count = self._counts
         hpk   = entity.hpk
         root  = entity.relevant_root
@@ -249,7 +249,7 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Name_Clash (entity, table [hpk])
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        self.pm (entity, id)
+        self.pm (entity, pid)
         count [entity.type_name] += 1
         table [hpk] = entity
         if entity.Roles :

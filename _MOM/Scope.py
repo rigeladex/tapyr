@@ -273,11 +273,11 @@ class Scope (TFL.Meta.Object) :
 
     ### Scope methods
 
-    def add (self, entity) :
+    def add (self, entity, pid = None) :
         """Adds `entity` to scope `self`."""
         if entity._home_scope is None :
             entity.home_scope = self
-        self.ems.add (entity)
+        self.ems.add (entity, pid = pid)
         if not entity.init_finished :
             entity._finish__init__ ()
         if not entity.electric :
@@ -298,7 +298,7 @@ class Scope (TFL.Meta.Object) :
                 print "   Couldn't restore %s %s %s (app-type %s)" % \
                     (type_name, pid, cargo, self.app_type)
             else :
-                self.ems.add (result, id = pid)
+                self.ems.add (result, pid = pid)
                 if not result.init_finished :
                     result._finish__init__ ()
                 return result

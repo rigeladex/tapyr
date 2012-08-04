@@ -556,8 +556,8 @@ class Session_S (_Session_) :
         self._in_rollback = 0
     # end def __init__
 
-    def add (self, entity, id = None) :
-        with self.scope.ems.pm.context (entity, id) :
+    def add (self, entity, pid = None) :
+        with self.scope.ems.pm.context (entity, pid) :
             entity.__class__._SAS.insert  (self, entity)
         self._pid_map [entity.pid] = entity
     # end def add
