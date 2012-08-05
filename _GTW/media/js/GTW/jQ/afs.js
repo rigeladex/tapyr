@@ -101,6 +101,7 @@
 //                     use `setTimeout` to appease IE
 //    17-Jul-2012 (MG) Add support for the WYSIWYG editor CKEditor
 //     2-Aug-2012 (MG) Change handling of CKEditor
+//     5-Aug-2012 (MG) Support for `afs-media-button` added
 //    ««revision-date»»···
 //--
 
@@ -695,6 +696,15 @@
                     };
                   }
                 );
+            $(".afs-media-button", context).click (function (ev) {
+                var this$ = $(this);
+                window.SetUrl = function (url) {
+                    var   id = this$.attr ("id").split ("::") [1];
+                    id       = id.replace (/([:-])/g,"\\$1");
+                    $("#" + id).val (url).trigger ("change");
+                };
+                window.open (options.url.filemanager, "_blank");
+            });
             $(".cmd-button", context).each
                 ( function (n) {
                     _setup_cmd_buttons ($(this));

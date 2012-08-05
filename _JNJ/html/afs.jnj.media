@@ -47,6 +47,7 @@
 #     7-Mar-2012 (CT) Add child rule `i:before` to `.AFS h2`
 #    19-Apr-2012 (CT) Add rules for `.bad`, `.entity-errors` and `.focusable`
 #     7-May-2012 (CT) Add rule for `.no-js` to hide form if no javascript
+#     5-Aug-2012 (MG) Add rules for media button/url
 #    ««revision-date»»···
 #--
 
@@ -333,6 +334,14 @@ style_sheet = Style_Sheet \
                 )
             ]
         )
+    , Rule
+       ( ".AFS .Field button.afs-media-button"
+       , padding                  = TRBL (Em (0.2), Em (1))
+       )
+    , Rule
+       ( ".AFS .Field input.afs-media-url"
+       , width                    = Em (30)
+       )
     , Rule
         ( ".no-js"
         , children           =
