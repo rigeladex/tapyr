@@ -111,6 +111,7 @@
 #    29-Jun-2012 (CT) Rename `count` to `count_strict`,
 #                     rename `count_transitive` to `count`
 #                     (to make it consistent with `query`)
+#     4-Aug-2012 (CT) Add `pid` to `Id_Entity.__call__`
 #    ««revision-date»»···
 #--
 
@@ -198,8 +199,9 @@ class Id_Entity (Entity) :
     """Scope-specific manager for a specific essential object- or link-type."""
 
     def __call__ (self, * args, ** kw) :
+        pid = kw.pop ("__pid", None)
         result = self.__super.__call__ (* args, ** kw)
-        self.home_scope.add (result)
+        self.home_scope.add (result, pid = pid)
         return result
     # end def __call__
 

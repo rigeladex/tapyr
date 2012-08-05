@@ -74,6 +74,8 @@
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    26-Jun-2012 (CT) Use `entity.type_name`, not `entity.Essence.type_name`
 #    27-Jun-2012 (CT) Change `do_callbacks` to use `Essence.type_name`
+#     4-Aug-2012 (CT) Change `Destroy.undo` to use `ems.restored`
+#     4-Aug-2012 (CT) Change `_create` to use `entity.restore` if applicable
 #    ««revision-date»»···
 #--
 
@@ -158,7 +160,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     def redo (self, scope) :
         for c in self.children :
             c.redo (scope)
-    # end def undo
+    # end def redo
 
     def register (self, scope) :
         pass
@@ -261,7 +263,10 @@ class _Entity_ (Undoable) :
 
     def entity (self, scope) :
         etm = scope [self.type_name]
-        return etm.pid_query (self.pid)
+        try :
+            return etm.pid_query (self.pid)
+        except LookupError :
+            pass
     # end def entity
 
     @property
@@ -307,9 +312,14 @@ class _Entity_ (Undoable) :
         return self.type_name
     # end def type_repr
 
-    def _create (self, scope, attr) :
-        etm = scope [self.type_name]
-        result = etm (* self.epk, raw = True, ** attr)
+    def _create (self, scope, attr, entity = None) :
+        kw = dict (attr, raw = True)
+        if entity is None :
+            etm          = scope [self.type_name]
+            kw ["__pid"] = self.pid
+            result       = etm            (* self.epk, ** kw)
+        else :
+            result       = entity.restore (* self.epk, ** kw)
         return result
     # end def _create
 
@@ -404,7 +414,7 @@ class Create (_Entity_) :
     def redo (self, scope) :
         self._create      (scope, self.new_attr)
         self.__super.redo (scope)
-    # end def undo
+    # end def redo
 
     def undo (self, scope) :
         self.__super.undo (scope)
@@ -455,10 +465,11 @@ class Destroy (_Entity_) :
     def redo (self, scope) :
         self.__super.redo (scope)
         self._restore     (scope)
-    # end def undo
+    # end def redo
 
     def undo (self, scope) :
-        self._create      (scope, self.old_attr)
+        entity = scope.ems.restored (self.pid)
+        self._create      (scope, self.old_attr, entity = entity)
         self.__super.undo (scope)
     # end def undo
 

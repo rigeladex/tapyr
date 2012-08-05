@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-May-2010 (CT) Creation
+#     4-Aug-2012 (CT) Remove `uncommitted_changes` from `rollback`
 #    ««revision-date»»···
 #--
 
@@ -58,12 +59,9 @@ class Change_Manager (TFL.Meta.Object) :
         table [cid] = change
     # end def add
 
-    def rollback (self, scope, session, uncommitted_changes) :
+    def rollback (self, session) :
         info  = session.info
         table = self.table
-        for c in reversed (uncommitted_changes) :
-            if c.undoable :
-                c.undo (scope)
         for cid in range (info.max_cid + 1, self.max_cid + 1) :
             table.pop (cid, None)
         self.max_cid = info.max_cid

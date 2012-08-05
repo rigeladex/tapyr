@@ -54,6 +54,7 @@
 #     2-Jul-2012 (MG) `_add` renamed back to `add`, error handling for
 #                     `Name_Clash` changed
 #     2-Aug-2012 (CT) Add `dependent_attrs` to `Change_Summary.add_pending`
+#     4-Aug-2012 (CT) Rename `remove` to `_remove`
 #    ««revision-date»»···
 #--
 
@@ -215,15 +216,11 @@ class Manager (MOM.EMS._Manager_) :
         self.session.register_scope (self.scope)
     # end def register_scope
 
-    def remove (self, entity) :
-        self.session.delete (entity)
-    # end def remove
-
     def rename (self, entity, new_epk, renamer) :
         old_entity = self.instance (entity.__class__, new_epk)
         if old_entity :
             raise MOM.Error.Name_Clash (entity, old_entity)
-        renamer     ()
+        renamer ()
     # end def rename
 
     def _query_multi_root (self, Type) :
@@ -237,6 +234,10 @@ class Manager (MOM.EMS._Manager_) :
         Type = getattr (Type, "_etype", Type)
         return self.Q_Result (Type, self.session)
     # end def _query_single_root
+
+    def _remove (self, entity) :
+        self.session.delete (entity)
+    # end def _remove
 
 # end class Manager
 

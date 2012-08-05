@@ -137,6 +137,7 @@
 #     1-Aug-2012 (CT) Add `M_E_Type_Id_Destroyed`
 #     1-Aug-2012 (CT) Use `MOM._Id_Entity_Destroyed_Mixin_`
 #     3-Aug-2012 (CT) Add `Ref_Opt_Map` and `Ref_Req_Map`, remove `link_map`
+#     4-Aug-2012 (CT) Add `E_Type` to `M_E_Type` instances
 #    ««revision-date»»···
 #--
 
@@ -592,7 +593,7 @@ class M_E_Type (M_E_Mixin) :
         if issubclass (cls, MOM._Id_Entity_Destroyed_Mixin_) :
             type.__init__ (cls, name, bases, dct)
         else :
-            cls.P_Type = cls
+            cls.E_Type = cls.P_Type = cls
             cls.__m_super.__init__  (name, bases, dct)
             cls._m_setup_children   (bases, dct)
             cls._m_setup_attributes (bases, dct)

@@ -102,6 +102,7 @@
 #    16-Jul-2012 (CT) Add and register `_atexit`
 #     1-Aug-2012 (CT) Change `remove` to set __class__ to `._DESTROYED_E_TYPE`
 #     1-Aug-2012 (CT) Remove call to `.ems.rollback` from `commit`
+#     4-Aug-2012 (CT) Move `_DESTROYED_E_TYPE` to `.ems.remove`
 #    ««revision-date»»···
 #--
 
@@ -540,7 +541,6 @@ class Scope (TFL.Meta.Object) :
         def remove () :
             entity._destroy ()
             self.ems.remove (entity)
-            entity.__class__ = entity.__class__._DESTROYED_E_TYPE
         if entity.electric :
             remove ()
         else :

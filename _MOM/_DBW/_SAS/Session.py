@@ -116,6 +116,8 @@
 #     3-Aug-2012 (CT) Use `Ref_Req_Map` instead of `link_map`
 #     3-Aug-2012 (MG) Enhance `expunge`
 #     3-Aug-2012 (MG) Consider new `Ref_Opt_Map` in delete
+#     4-Aug-2012 (CT) Factor `_rollback_uncommitted_changes` to `EMS`
+#     4-Aug-2012 (CT) Change `delete` not to set `entity.pid` to None
 #    ««revision-date»»···
 #--
 
@@ -621,7 +623,6 @@ class Session_S (_Session_) :
                 e.set (** dict ((a, None) for a in attrs))
             self._pid_map = pid_map
             entity.__class__._SAS.delete (self, entity)
-        entity.pid = None
     # end def delete
 
     def expunge (self, clear_change = False) :
@@ -707,9 +708,7 @@ class Session_S (_Session_) :
             self._in_rollback += 1
             scope              = self.scope
             with scope.historian.temp_recorder (MOM.SCM.Ignorer) :
-                for c in reversed (scope.ems.uncommitted_changes) :
-                    if c.undoable :
-                        c.undo (scope)
+                scope.ems._rollback_uncommitted_changes ()
             self.__super.rollback ()
             self._in_rollback -= 1
             self._pid_map      = self._saved ["pid_map"]

@@ -206,6 +206,7 @@
 #                     `attr.is_required` and `attr.is_primary`, record changes
 #     1-Aug-2012 (CT) Add `_Id_Entity_Destroyed_Mixin_`
 #     3-Aug-2012 (CT) Add `all_referrers`, rewrite `all_links` to use it
+#     4-Aug-2012 (CT) Add `Id_Entity.restore`
 #    ««revision-date»»···
 #--
 
@@ -1246,6 +1247,18 @@ class Id_Entity (Entity) :
         self.dependencies [other] += 1
     # end def register_dependency
 
+    def restore (self, * epk, ** kw) :
+        """Restore an object that was destroyed before but not committed."""
+        if not (self.pid and self.home_scope) :
+            raise TypeError \
+                ("%r: pid %r, scope %r" % (self, self.pid, self.home_scope))
+        self.init_finished  = False
+        self._init_pending  = []
+        self.__init__         (* epk, ** kw)
+        self.home_scope.add   (self, pid = self.pid)
+        return self
+    # end def restore
+
     def unregister_dependency (self, other) :
         """Unregister dependency of `other` on `self`"""
         deps = self.dependencies
@@ -1487,7 +1500,10 @@ class _Id_Entity_Destroyed_Mixin_ (object) :
     """Mixin indicating an entity that was already destroyed."""
 
     def __getattribute__ (self, name) :
-        if name in ("__class__", "__nonzero__", "pid", "__repr__", "type_name"):
+        if name in \
+                ( "E_Type", "pid", "type_name"
+                , "__class__", "__nonzero__", "__repr__"
+                ) :
             return object.__getattribute__ (self, name)
         else :
             raise MOM.Error.Destroyed_Entity \

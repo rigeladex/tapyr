@@ -69,6 +69,8 @@
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
 #     2-Jul-2012 (MG) `add` removed again
+#     4-Aug-2012 (CT) Add `remove` and `restored`, factor `_reset_transaction`
+#     4-Aug-2012 (CT) Add `_rollback_uncommitted_changes`
 #    ««revision-date»»···
 #--
 
@@ -121,11 +123,11 @@ class _Manager_ (TFL.Meta.Object) :
     # end def new
 
     def __init__ (self, scope, db_url) :
-        self.scope               = scope
-        self.db_url              = db_url
-        self.DBW = DBW           = scope.app_type.DBW
-        self.pm                  = DBW.Pid_Manager (self, db_url)
-        self.uncommitted_changes = self.Change_Summary ()
+        self.scope  = scope
+        self.db_url = db_url
+        self.DBW    = DBW = scope.app_type.DBW
+        self.pm     = DBW.Pid_Manager (self, db_url)
+        self._reset_transaction ()
     # end def __init__
 
     def async_changes (self, * filters, ** kw) :
@@ -150,8 +152,8 @@ class _Manager_ (TFL.Meta.Object) :
     def commit (self) :
         if self.uncommitted_changes :
             self.scope.db_cid = self.max_cid
-            self.session.commit ()
-            self.uncommitted_changes = self.Change_Summary ()
+            self.session.commit     ()
+            self._reset_transaction ()
     # end def commit
 
     def compact (self) :
@@ -238,10 +240,24 @@ class _Manager_ (TFL.Meta.Object) :
         pass
     # end def register_scope
 
+    def remove (self, entity) :
+        self._removed_entities [entity.pid] = entity
+        self._remove   (entity)
+        self.pm.retire (entity)
+        entity.__class__ = entity.__class__._DESTROYED_E_TYPE
+    # end def remove
+
+    def restored (self, pid) :
+        result = self._removed_entities.pop (pid, None)
+        if result is not None :
+            result.__class__ = result.E_Type
+        return result
+    # end def restored
+
     def rollback (self) :
         with self.scope.temp_change_recorder (MOM.SCM.Ignorer) :
             self._rollback ()
-        self.uncommitted_changes = self.Change_Summary ()
+        self._reset_transaction ()
     # end def rollback
 
     def _query_multi_root (self, Type) :
@@ -254,9 +270,26 @@ class _Manager_ (TFL.Meta.Object) :
             ("%s needs to define %s" % (self.__class__, "_query_single_root"))
     # end def _query_single_root
 
+    def _remove (self, entity) :
+        raise NotImplementedError \
+            ("%s needs to define %s" % (self.__class__, "_remove"))
+    # end def _remove
+
+    def _reset_transaction (self) :
+        self.uncommitted_changes = self.Change_Summary ()
+        self._removed_entities   = {}
+    # end def _reset_transaction
+
     def _rollback (self) :
         self.session.rollback ()
     # end def _rollback
+
+    def _rollback_uncommitted_changes  (self) :
+        scope = self.scope
+        for c in reversed (self.uncommitted_changes) :
+            if c.undoable :
+                c.undo (scope)
+    # end def _rollback_uncommitted_changes
 
     def __iter__ (self) :
         sk = TFL.Sorted_By ("pid")

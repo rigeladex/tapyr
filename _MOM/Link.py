@@ -63,6 +63,7 @@
 #    18-Jun-2012 (CT) Add `_Reload_Mixin_` for `Link1`, `Link2`, `Link3`
 #    26-Jun-2012 (CT) Add `if cache` to `Role_Cacher_n.__call__`
 #     1-Aug-2012 (CT) Add `_Link[123]_Destroyed_Mixin_`
+#     4-Aug-2012 (CT) Guard `cache.remove` in `Link_Cacher_n.__call__`
 #    ««revision-date»»···
 #--
 
@@ -396,9 +397,12 @@ class Link_Cacher_n (Link_Cacher) :
             cache = getattr (o, self.attr_name)
             value = link
             if no_value :
-                cache.remove (value)
+                try :
+                    cache.remove (value)
+                except LookupError :
+                    pass
             else :
-                cache.add    (value)
+                cache.add (value)
     # end def __call__
 
 # end class Link_Cacher_n

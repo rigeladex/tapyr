@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.
@@ -30,6 +30,7 @@
 #    11-May-2010 (MG) `__init__` added
 #    12-May-2010 (CT) `retire` added
 #    17-May-2010 (MG) `kw` added to `__call__`
+#     4-Aug-2012 (CT) Remove implementation of `retire`
 #    ««revision-date»»···
 #--
 
@@ -78,7 +79,7 @@ class _Pid_Manager_ (TFL.Meta.Object) :
         """Retire any resources held for `entity` (but `entity.pid` won't get
            reused, ever).
         """
-        entity.pid = None
+        raise NotImplementedError
     # end def retire
 
 Pid_Manager = _Pid_Manager_ # end class
