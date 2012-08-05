@@ -61,6 +61,7 @@
 #    30-Jul-2012 (CT) Add properties `Auth_Required` and `permission`,
 #                     factor `_http_response_need_auth`
 #     1-Aug-2012 (CT) Fix cold-start behavior of `Root.resource_from_href`
+#     4-Aug-2012 (MG) `Alias`: add `top` to the `_parent_attr` set
 #    ««revision-date»»···
 #--
 
@@ -530,7 +531,7 @@ class RST_Alias (_Ancestor) :
 
     _target_href               = None
     _target_page               = None
-    _parent_attr               = set (("prefix", ))
+    _parent_attr               = set (("prefix", "top"))
 
     page_template_name         = property \
         ( lambda s    : s.target.page_template_name
