@@ -80,6 +80,8 @@
 #    19-Apr-2012 (CT) Use translated `.ui_name` instead of `.type_name` for
 #                     exceptions
 #     2-Jul-2012 (MG) `_add` renamed back to `add`
+#     4-Aug-2012 (CT) Factor `remove` to `MOM.EMS._Manager_`
+#     4-Aug-2012 (CT) Call `_rollback_uncommitted_changes`
 #    ««revision-date»»···
 #--
 
@@ -222,11 +224,6 @@ class Manager (MOM.EMS._Manager_) :
         self.__super.register_change (change)
     # end def register_change
 
-    def remove (self, entity) :
-        self._remove   (entity)
-        self.pm.retire (entity)
-    # end def remove
-
     def rename (self, entity, new_epk, renamer) :
         new_hpk = entity.epk_to_hpk (* new_epk)
         root    = entity.relevant_root
@@ -316,7 +313,8 @@ class Manager (MOM.EMS._Manager_) :
     # end def _remove
 
     def _rollback (self) :
-        self.cm.rollback (self.scope, self.session, self.uncommitted_changes)
+        self._rollback_uncommitted_changes ()
+        self.cm.rollback (self.session)
         self.pm.max_pid = self.session.info.max_pid
         self.__super._rollback ()
     # end def _rollback

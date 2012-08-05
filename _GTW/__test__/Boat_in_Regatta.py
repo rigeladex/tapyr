@@ -39,8 +39,11 @@
 #    27-Jun-2012 (CT) Add tests for `query_changes` for `type_name`
 #     1-Aug-2012 (CT) Add `_test_referential_integrity`
 #     3-Aug-2012 (MG) Improve `_test_referential_integrity`
+#     4-Aug-2012 (CT) Add `_test_undo`, add `raw = True` to entity creation
 #    ««revision-date»»···
 #--
+
+from   __future__  import unicode_literals
 
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -48,10 +51,10 @@ _test_code = r"""
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> BiR = SRM.Boat_in_Regatta
-    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> ys  = SRM.Handicap ("Yardstick")
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1, raw = True)
+    >>> ys  = SRM.Handicap ("Yardstick", raw = True)
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
-    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
+    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian", raw = True)
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
     >>> reg = SRM.Regatta_C (rev.epk_raw, bc.epk_raw, raw = True)
@@ -177,6 +180,16 @@ _test_code = r"""
     >>> bir8 = BiR (b8, reg, skipper = s)
     >>> bir8.other_boots_skippered.all ()
     [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+
+    >>> for c in scope.uncommitted_changes : ### before commit failing `skipper_not_multiplexed`
+    ...     print (c)
+    <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1108', u'', 'SRM.Boat'), new-values = {'last_cid' : '11'}>
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1108', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '12', 'skipper' : u'(u"(u\'tanzer\', u\'christian\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+
+    >>> show_dep (bir.skipper) ### before commit failing `skipper_not_multiplexed`
+    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) : 1
+    (((u'optimist', ), u'AUT', 1108, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) : 1
+
     >>> scope.commit ()
     Traceback (most recent call last):
     ...
@@ -186,11 +199,19 @@ _test_code = r"""
         other_boots_skippered_count = 1 << other_boots_skippered.count ()
         regatta = Himmelfahrt 2008/05/01, Optimist
         skipper = Tanzer Christian, AUT, 29676
+
+    >>> show_dep (bir.skipper) ### after commit failing `skipper_not_multiplexed`
+    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) : 1
+    (((u'optimist', ), u'AUT', 1108, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) : 1
+
     >>> err =  first (bir8.errors)
     >>> print formatted_1 (err.as_json_cargo)
     {'attributes' : ['boat', 'regatta', 'skipper'], 'bindings' : [('boat', 'Optimist, AUT 1108'), ('other_boots_skippered_count', '1 << this.other_boots_skippered.count ()'), ('regatta', 'Himmelfahrt 2008/05/01, Optimist'), ('skipper', 'Tanzer Christian, AUT, 29676')], 'description' : '(other_boots_skippered_count == 0)', 'extra_links' : [(9, 'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist')], 'head' : "A sailor can't be skipper of more than one boat in a single\nregatta event."}
 
     >>> scope.rollback ()
+
+    >>> show_dep (bir.skipper) ### after rollback
+    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) : 1
 
     >>> p2  = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s2  = SRM.Sailor.instance_or_new (p2, nation = u"AUT", raw = True)
@@ -234,14 +255,14 @@ _test_delayed  = r"""
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> BiR = SRM.Boat_in_Regatta
-    >>> bc  = SRM.Boat_Class.E_Type ("Optimist", max_crew = 1)
-    >>> ys  = SRM.Handicap.E_Type ("Yardstick")
+    >>> bc  = SRM.Boat_Class.E_Type ("Optimist", max_crew = 1, raw = True)
+    >>> ys  = SRM.Handicap.E_Type ("Yardstick", raw = True)
     >>> b   = SRM.Boat.E_Type (bc, u"AUT", u"1107", raw = True)
-    >>> p   = PAP.Person.E_Type (u"Tanzer", u"Christian")
+    >>> p   = PAP.Person.E_Type (u"Tanzer", u"Christian", raw = True)
     >>> s   = SRM.Sailor.E_Type (p, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event.E_Type (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
-    >>> reg = SRM.Regatta_C.E_Type (rev, bc, raw = True)
-    >>> reh = SRM.Regatta_H.E_Type (rev, ys, raw = True)
+    >>> reg = SRM.Regatta_C.E_Type (rev, bc)
+    >>> reh = SRM.Regatta_H.E_Type (rev, ys)
     >>> bir = BiR.E_Type (b, reg, skipper = s)
 
     >>> list (r.name for r in sorted (getattr (rev, "regattas", [])))
@@ -291,14 +312,16 @@ _test_referential_integrity = r"""
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> BiR = SRM.Boat_in_Regatta
-    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> cl  = SRM.Club (u"SC-AMS")
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1, raw = True)
+    >>> cl  = SRM.Club (u"SC-AMS", raw = True)
     >>> b   = SRM.Boat (u'Optimist', u"AUT", u"1107", raw = True)
-    >>> p   = PAP.Person (u"Tanzer", u"Christian")
+    >>> p   = PAP.Person (u"Tanzer", u"Christian", raw = True)
     >>> s   = SRM.Sailor (p, nation = u"AUT", mna_number = u"29676", club = cl, raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
     >>> reg = SRM.Regatta_C (rev.epk_raw, bc.epk_raw, raw = True)
     >>> bir = BiR (b, reg, skipper = s)
+
+    >>> scope.commit ()
 
     >>> bir                                           ### before s.destroy ()
     SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
@@ -345,8 +368,8 @@ _test_referential_integrity = r"""
     10
     >>> bir.last_cid                                  ### after cl.destroy ()
     8
-    >>> print bir.pid                                 ### after cl.destroy ()
-    8
+    >>> print bir                                     ### after cl.destroy ()
+    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
     >>> print s.pid                                   ### after cl.destroy ()
     5
     >>> print bir.skipper                             ### after cl.destroy ()
@@ -369,25 +392,146 @@ _test_referential_integrity = r"""
     >>> scope.MOM.Id_Entity.query_s ().all ()         ### after s.destroy ()
     [SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )), SRM.Boat_Class (u'optimist'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
 
-    >>> print bir.pid                                 ### after s.destroy ()
-    None
     >>> bir                                           ### after s.destroy ()
-     <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>
+    <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>
+
     >>> print bir.skipper                             ### after s.destroy ()
     Traceback (most recent call last):
       ...
     Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
-    >>> for c in reversed (scope.uncommitted_changes [-2:]) :
+    >>> for c in scope.uncommitted_changes :
     ...     print (c)
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : u"(u'sc-ams',)", 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
     <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
         <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : u'(u"(u\'tanzer\', u\'christian\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+
+    >>> for c in reversed (scope.uncommitted_changes [-1:]) :
+    ...     c.undo (scope)
+
+    >>> for c in scope.uncommitted_changes :
+    ...     print (c)
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : u"(u'sc-ams',)", 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
+    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : u'(u"(u\'tanzer\', u\'christian\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+    <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '13'}>
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : u'(u"(u\'tanzer\', u\'christian\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+
+    >>> scope.destroy ()
+
+"""
+
+_test_undo = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+    >>> SRM = scope.SRM
+    >>> BiR = SRM.Boat_in_Regatta
+    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1, raw = True)
+    >>> cl  = SRM.Club (u"SC-AMS", raw = True)
+    >>> b   = SRM.Boat (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> p   = PAP.Person (u"Tanzer", u"Christian", raw = True)
+    >>> s   = SRM.Sailor (p, nation = u"AUT", mna_number = u"29676", club = cl, raw = True) ### 1
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
+    >>> reg = SRM.Regatta_C (rev, bc)
+    >>> bir = BiR (b, reg, skipper = s)
+
+    >>> scope.commit ()
+
+    >>> for _e in scope.MOM.Id_Entity.query_s () : ### 1
+    ...    print (_e.pid, _e.as_code ())
+    (6, u"SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'), )")
+    (7, u"SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ), is_cancelled = 'no')")
+    (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
+    (3, u"SRM.Boat ((u'optimist', ), u'AUT', 1107, u'', )")
+    (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), u\'AUT\', 1107, u\'\'), ((u\'himmelfahrt\', dict (start = u\'2008/05/01\', finish = u\'2008/05/01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'sc-ams\'",)))')
+    (2, u"SRM.Club (u'sc-ams', )")
+    (4, u"PAP.Person (u'tanzer', u'christian', u'', u'', )")
+    (5, u"SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ), )")
+
+    >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 2
+    [1, 2, 3, 4, 5, 6, 7, 8]
+
+    >>> cl                  ### before first destroy
+    SRM.Club (u'sc-ams')
+
+    >>> cl.destroy ()
+
+    >>> cl                  ### after first destroy
+    <Destroyed entity SRM.Club (u'sc-ams')>
+
+    >>> for c in scope.uncommitted_changes : ### after first destroy
+    ...     print (c)
     <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
         <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : u"(u'sc-ams',)", 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
 
-    >>> for c in reversed (scope.uncommitted_changes [-2:]) :
-    ...     pass ### XXX c.undo (scope)
+    >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 3
+    [1, 3, 4, 5, 6, 7, 8]
+
+    >>> scope.rollback ()   ### first rollback
+    >>> for c in scope.uncommitted_changes :
+    ...     print (c)
+
+    >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 3.5
+    [1, 2, 3, 4, 5, 6, 7, 8]
+
+    >>> cl                  ### after first rollback
+    SRM.Club (u'sc-ams')
+
+    >>> cl_revived = SRM.Club.instance (u"SC-AMS")
+    >>> cl_revived
+    SRM.Club (u'sc-ams')
+
+    >>> cl_revived.destroy ()
+    >>> s.destroy ()
+
+    >>> cl_revived  ### after second destroy
+    <Destroyed entity SRM.Club (u'sc-ams')>
+    >>> s  ### after second destroy
+    <Destroyed entity SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')>
+
+    >>> for c in scope.uncommitted_changes : ### after first destroy
+    ...     print (c)
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : u"(u'sc-ams',)", 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
+    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : u'(u"(u\'tanzer\', u\'christian\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+
+    >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 4
+    [1, 3, 4, 6, 7]
+
+    >>> scope.rollback ()   ### second rollback
+
+    >>> cl  ### after second rollback
+    SRM.Club (u'sc-ams')
+    >>> s   ### after second rollback
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))
+
+    >>> for c in scope.uncommitted_changes : ### after second rollback
+    ...     print (c)
+
+
+    >>> for _e in scope.MOM.Id_Entity.query_s () : ### 5
+    ...    print (_e.pid, _e.as_code ())
+    (6, u"SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'), )")
+    (7, u"SRM.Regatta_C ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ), is_cancelled = 'no')")
+    (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
+    (3, u"SRM.Boat ((u'optimist', ), u'AUT', 1107, u'', )")
+    (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), u\'AUT\', 1107, u\'\'), ((u\'himmelfahrt\', dict (start = u\'2008/05/01\', finish = u\'2008/05/01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'sc-ams\'",)))')
+    (2, u"SRM.Club (u'sc-ams', )")
+    (4, u"PAP.Person (u'tanzer', u'christian', u'', u'', )")
+    (5, u"SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ), )")
+
+    >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 6
+    [1, 2, 3, 4, 5, 6, 7, 8]
+
     >>> scope.destroy ()
+
+"""
+
+_ADD_to__test_undo = """
 
 """
 
@@ -412,6 +556,7 @@ __test__ = Scaffold.create_test_dict \
         ( normal  = _test_code
         , delayed = _test_delayed
         , ref_int = _test_referential_integrity
+        , undo    = _test_undo
         )
     )
 

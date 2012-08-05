@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -30,6 +30,7 @@
 #    11-May-2010 (MG) `ems` and `db_uri` added
 #    12-May-2010 (CT) `retire` added
 #    12-May-2010 (CT) `reserve` corrected (corner cases)
+#     4-Aug-2012 (CT) Change `retire` not to set `pid` to None
 #    ««revision-date»»···
 #--
 
@@ -88,7 +89,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         if pid in table :
             if table [pid] is not entity :
                 raise ValueError \
-                    ( "Cannot reserve pid %s, already used by object `%r`"
+                    ( "Cannot reserve pid %s, already used by entity `%r`"
                     % (pid, table [pid])
                     )
         else :
@@ -100,9 +101,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def reserve
 
     def retire (self, entity) :
-        if entity.pid in self.table :
-            del self.table [entity.pid]
-        entity.pid = None
+        self.table.pop (entity.pid, None)
     # end def retire
 
 # end class Pid_Manager
