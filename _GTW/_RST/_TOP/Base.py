@@ -34,6 +34,7 @@
 #     2-Aug-2012 (CT) Add `response` to result of `_render_context`
 #     2-Aug-2012 (CT) Add missing import, fix typo
 #     3-Aug-2012 (CT) Add `http_method` to `_render_context`
+#     4-Aug-2012 (MG) Add missing import
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,7 @@ import _TFL.I18N
 from   posixpath                import join as pp_join
 
 import time
+import uuid
 
 class RST_TOP_HTML (GTW.RST.Mime_Type.HTML) :
 

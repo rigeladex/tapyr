@@ -30,6 +30,8 @@
 #    16-Jul-2012 (CT) Pass `bytes ("~@")` to `b64decode`
 #    24-Jul-2012 (CT) Fix `locale_codes`
 #    24-Jul-2012 (CT) Add `use_language`
+#     4-Aug-2012 (MG) Don't save session on language change
+#     4-Aug-2012 (MG) Allow setting of `username`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +94,11 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
         return self.session.username
     # end def username
 
+    @username.setter
+    def username (self, value) :
+        self.session.username = value
+    # end def username
+
     @Once_Property
     def user_session_ttl (self) :
         result = self.settings.get ("user_session_ttl", 31 * 86400)
@@ -145,7 +152,6 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     def use_language (self, langs) :
         self.__super.use_language (langs)
         self.session ["language"] = langs
-        self.session.save ()
     # end def use_language
 
     def _cookie_signature (self, * parts):

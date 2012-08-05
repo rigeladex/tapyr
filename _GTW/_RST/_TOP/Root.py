@@ -30,6 +30,7 @@
 #     9-Jul-2012 (CT) Add `static_handler`
 #    23-Jul-2012 (CT) Redefine `_http_response` to call `_http_response_finish`
 #    30-Jul-2012 (CT) Redefine `Auth_Required`
+#     4-Aug-2012 (MG) Set session cookie before saving the session
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,8 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     # end def _http_response
 
     def _http_response_finish (self, request, response) :
-        response.session.save ()
+        response._set_session_cookie ()
+        response.session.save        ()
         scope = self.scope
         if scope :
             scope.commit ()
