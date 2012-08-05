@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Jul-2012 (CT) Creation (ported from GTW.NAV)
+#     5-Aug-2012 (MG) Cache filenames of media fragments
 #    ««revision-date»»···
 #--
 
@@ -48,12 +49,17 @@ class Template_Media_Cache (TFL.Meta.Object) :
 
     cache_rank = 1000
 
-    def __init__ (self, media_dir, prefix, clear_dir = False) :
+    def __init__ ( self, media_dir, prefix
+                 , clear_dir       = False
+                 , cache_filenames = False
+                 ) :
         if not prefix.startswith ("/") :
-            prefix     = "/%s" % (prefix, )
-        self.media_dir = media_dir
-        self.prefix    = prefix
-        self.clear_dir = clear_dir
+            prefix           = "/%s" % (prefix, )
+        self.media_dir       = media_dir
+        self.prefix          = prefix
+        self.clear_dir       = clear_dir
+        self.cache_filenames = cache_filenames
+        self.filenames       = set ()
     # end def __init__
 
     def as_pickle_cargo (self, root) :
@@ -67,11 +73,20 @@ class Template_Media_Cache (TFL.Meta.Object) :
             css_href = self._add_to_map (t, "CSS", css_map)
             js_href  = None if TEST else self._add_to_map (t, "js", js_map)
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
+            if self.cache_filenames :
+                self._add_filenames (t)
         self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
         if not TEST :
             self._create_cache ("js", js_map, GTW.minified_js)
         return dict (css_href_map = TT.css_href_map, Media_Map = TT.Media_Map)
     # end def as_pickle_cargo
+
+    def _add_filenames (self, template) :
+        if template.media_path :
+            self.filenames.add (template.media_path)
+        for it in template.templates_i :
+            self._add_filenames (it)
+    # end def _add_filenames
 
     def from_pickle_cargo (self, root, cargo) :
         TT              = root.Templateer.Template_Type
