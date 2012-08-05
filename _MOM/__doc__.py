@@ -1717,8 +1717,8 @@ Scope queries
         <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : '30', 'weight' : u''}, new-values = {'color' : u'yellow', 'last_cid' : '31', 'weight' : u'42.0'}>
     <Modify BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '9', 'max_weight' : u''}, new-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
     <Modify BMT.Person_owns_Trap ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '17', 'price' : u'42.0'}, new-values = {'last_cid' : '34', 'price' : u'1.2'}>
-    <Modify BMT.Rodent_in_Trap ((u'toothy_beaver', 'BMT.Beaver'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : u"(u'mighty_mouse',)"}, new-values = {'last_cid' : '35', 'left' : 6}>
-    <Modify BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '35', 'left' : u"(u'toothy_beaver',)"}, new-values = {'last_cid' : '36', 'left' : 5}>
+    <Modify BMT.Rodent_in_Trap ((u'toothy_beaver', 'BMT.Beaver'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : 5}, new-values = {'last_cid' : '35', 'left' : 6}>
+    <Modify BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '35', 'left' : 6}, new-values = {'last_cid' : '36', 'left' : 5}>
     <Destroy BMT.Mouse (u'mighty_mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'last_cid' : '29', 'weight' : u'42.0'}>
         <Destroy BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '36'}>
     <Destroy BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>

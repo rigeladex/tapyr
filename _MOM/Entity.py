@@ -208,6 +208,7 @@
 #     3-Aug-2012 (CT) Add `all_referrers`, rewrite `all_links` to use it
 #     4-Aug-2012 (CT) Add `Id_Entity.restore`
 #     5-Aug-2012 (CT) Add `epk_raw_pid`
+#     5-Aug-2012 (MG) Use `get_raw_pid` if used for changes
 #    ««revision-date»»···
 #--
 
@@ -518,7 +519,7 @@ class Entity (TFL.Meta.Object) :
         """Set attributes specified in `kw` from cooked values"""
         assert "raw" not in kw
         gen = \
-            (   (name, attr.get_raw (self))
+            (   (name, attr.get_raw_pid (self))
             for attr, name, value in self._record_iter (kw)
             if  attr.get_value (self) != value
             )
@@ -1184,7 +1185,8 @@ class Id_Entity (Entity) :
                 raw = attr.get_raw   (self)
                 attr.reset (self)
                 if old != attr.get_value (self) :
-                    self.record_attr_change ({attr.name : raw})
+                    self.record_attr_change \
+                        ({attr.name : attr.get_raw_pid (self)})
         if self and other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
