@@ -127,7 +127,7 @@ _basic = r"""
     <Change Summary for pid 12: newborn>
         <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '13', 'perma_name' : u'yardstick'}>
     <Change Summary for pid 13: newborn>
-        <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'}>
+        <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 9}>
     <Change Summary for pid 14: newborn, 1 change>
         <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), new-values = {'last_cid' : '15', 'points' : u'8'}>
         <Modify SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '15'}, new-values = {'discarded' : u'yes', 'last_cid' : '25'}>
@@ -161,7 +161,7 @@ _basic = r"""
     10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '28')), ('perma_name', (old = None, new = u'himmelfahrt'))]
     11 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
     12 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
-    13 [('last_cid', (old = None, new = '14')), ('skipper', (old = None, new = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'\')", u\'AUT\', u\'29676\', u\'\')'))]
+    13 [('last_cid', (old = None, new = '14')), ('skipper', (old = None, new = 9))]
     14 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '25')), ('points', (old = None, new = u'8'))]
     15 [('last_cid', (old = None, new = '16')), ('points', (old = None, new = u'4'))]
     16 [('contents', (old = None, new = u'<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = u'Text for the 1. event'))]
@@ -235,13 +235,13 @@ _basic = r"""
     ...
     <Change Summary for pid 6: just died>
         <Destroy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), old-values = {'last_cid' : '6'}>
-          <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\', u\'\')'}>
+          <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : 9}>
             <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '25', 'points' : u'8'}>
             <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 7: just died>
         <Destroy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1134', u'', 'SRM.Boat'), old-values = {'last_cid' : '8'}>
     <Change Summary for pid 13: just died>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\', u\'\')'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : 9}>
           <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '25', 'points' : u'8'}>
           <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 14: just died>
@@ -254,7 +254,7 @@ _basic = r"""
     ...
     6 [('last_cid', (old = '6', new = None))]
     7 [('last_cid', (old = '8', new = None))]
-    13 [('last_cid', (old = '14', new = None)), ('skipper', (old = u'(u"(u\'tanzer\', u\'laurens\', u\'\', u\'mr.\')", u\'AUT\', u\'29676\', u\'\')', new = None))]
+    13 [('last_cid', (old = '14', new = None)), ('skipper', (old = 9, new = None))]
     14 [('discarded', (old = u'yes', new = None)), ('last_cid', (old = '25', new = None)), ('points', (old = u'8', new = None))]
     15 [('last_cid', (old = '16', new = None)), ('points', (old = u'4', new = None))]
 

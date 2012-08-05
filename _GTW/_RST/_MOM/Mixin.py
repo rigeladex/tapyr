@@ -45,6 +45,7 @@
 #    31-Jul-2012 (CT) Use `formatted_1`, not `repr`, in `_resolve_request_attrs`
 #     2-Aug-2012 (CT) Use `id_entity_attr` in
 #                     `RST_Entity_Mixin.change_query_filters`
+#     5-Aug-2012 (CT) Change `pid_query_request` to handle `result is None`
 #    ««revision-date»»···
 #--
 
@@ -222,6 +223,13 @@ class RST_Mixin (TFL.Meta.Object) :
             E_Type = self.E_Type
         scope  = self.top.scope
         Status = self.Status
+        def _check_gone (ipid) :
+            if 0 < ipid <= scope.max_pid :
+                error = \
+                    (  _T ("%s `%s` doesn't exist anymore!")
+                    % (_T (E_Type.ui_name), pid)
+                    )
+                raise Status.Gone
         try :
             ipid = int (pid)
         except (ValueError, TypeError) :
@@ -230,14 +238,11 @@ class RST_Mixin (TFL.Meta.Object) :
             try :
                 result = scope.pid_query (ipid)
             except LookupError as exc :
-                if 0 < ipid <= scope.max_pid :
-                    error = \
-                        (  _T ("%s `%s` doesn't exist anymore!")
-                        % (_T (E_Type.ui_name), pid)
-                        )
-                    raise Status.Gone
+                _check_gone (ipid)
             else :
-                if isinstance (result, E_Type) :
+                if result is None :
+                    _check_gone (ipid)
+                elif isinstance (result, E_Type) :
                     return result
                 elif raise_not_found :
                     error = \
