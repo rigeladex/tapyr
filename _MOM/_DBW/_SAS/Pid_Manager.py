@@ -37,6 +37,7 @@
 #    10-Jun-2011 (MG) Handling of database connection changed to allow better
 #                     support for sqlite
 #     4-Aug-2012 (CT) Add stub for `retire`
+#     5-Aug-2012 (MG) Fix `reserve_pid`
 #    ««revision-date»»···
 #--
 
@@ -123,10 +124,19 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         if entity :
             Type_Name  = entity.type_name
             entity.pid = pid
-        sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
-        result = self.connection.execute (sql)
-        if commit :
-            self.commit ()
+        result = self.connection.execute \
+            (self.select.where (self.pid_col == pid)).fetchone ()
+        if result :
+            if Type_Name and result.type_name != Type_Name :
+                raise ValueError \
+                    ( "Try to reverse pid %d with changed type_name %s != %d"
+                    % (pid, result.type_name, Type_Name)
+                    )
+        else :
+            sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
+            result = self.connection.execute (sql)
+            if commit :
+                self.commit ()
         return pid
     # end def reserve
 
