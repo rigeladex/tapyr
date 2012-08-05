@@ -208,7 +208,8 @@
 #     3-Aug-2012 (CT) Add `all_referrers`, rewrite `all_links` to use it
 #     4-Aug-2012 (CT) Add `Id_Entity.restore`
 #     5-Aug-2012 (CT) Add `epk_raw_pid`
-#     5-Aug-2012 (MG) Use `get_raw_pid` if used for changes
+#     5-Aug-2012 (MG) Change `set` to use `get_raw_pid`
+#     5-Aug-2012 (CT) Change `_record_iter_raw` to include `raw_pid`
 #    ««revision-date»»···
 #--
 
@@ -557,8 +558,8 @@ class Entity (TFL.Meta.Object) :
         """Set attributes specified in `kw` from raw values"""
         assert "raw" not in kw
         gen = \
-            (   (name, raw)
-            for attr, name, value, raw in self._record_iter_raw (kw)
+            (   (name, raw_pid)
+            for attr, name, value, raw, raw_pid in self._record_iter_raw (kw)
             if  raw != value
             )
         with self._record_context (gen, self.SCM_Change_Attr) :
@@ -684,8 +685,8 @@ class Entity (TFL.Meta.Object) :
     # end def _record_iter
 
     def _record_iter_raw (self, kw) :
-        for attr, name, value in self._record_iter (kw) :
-            yield attr, name, value, attr.get_raw (self)
+        for a, name, value in self._record_iter (kw) :
+            yield a, name, value, a.get_raw (self), a.get_raw_pid (self)
     # end def _record_iter_raw
 
     def _set_ckd (self, on_error = None, ** kw) :
@@ -1181,12 +1182,11 @@ class Id_Entity (Entity) :
                 ### resetting a primary attribute means a rename operation
                 self.set (** {attr.name : None})
             else :
-                old = attr.get_value (self)
-                raw = attr.get_raw   (self)
+                old = attr.get_value   (self)
+                raw = attr.get_raw_pid (self)
                 attr.reset (self)
                 if old != attr.get_value (self) :
-                    self.record_attr_change \
-                        ({attr.name : attr.get_raw_pid (self)})
+                    self.record_attr_change ({attr.name : raw})
         if self and other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
