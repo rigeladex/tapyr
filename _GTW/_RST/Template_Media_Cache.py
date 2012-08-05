@@ -28,6 +28,8 @@
 # Revision Dates
 #    24-Jul-2012 (CT) Creation (ported from GTW.NAV)
 #     5-Aug-2012 (MG) Cache filenames of media fragments
+#     5-Aug-2012 (MG) Fix filename cache (use `templates` instead of
+#                     `templates_i` )
 #    ««revision-date»»···
 #--
 
@@ -60,6 +62,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
         self.clear_dir       = clear_dir
         self.cache_filenames = cache_filenames
         self.filenames       = set ()
+        self.templates_seen  = set ()
     # end def __init__
 
     def as_pickle_cargo (self, root) :
@@ -82,10 +85,14 @@ class Template_Media_Cache (TFL.Meta.Object) :
     # end def as_pickle_cargo
 
     def _add_filenames (self, template) :
-        if template.media_path :
-            self.filenames.add (template.media_path)
-        for it in template.templates_i :
-            self._add_filenames (it)
+        if template not in self.templates_seen :
+            self.templates_seen.add (template)
+            if template.source_path :
+                self.filenames.add (template.source_path)
+            if template.media_path :
+                self.filenames.add (template.media_path)
+            for it in template.templates :
+                self._add_filenames (it)
     # end def _add_filenames
 
     def from_pickle_cargo (self, root, cargo) :
