@@ -49,7 +49,7 @@ _test_code = """
     >>> from _GTW._AFS._MOM import Spec
     >>> S = Spec.Entity ()
     >>> x = S (scope.PAP.Person.E_Type)
-    >>> print repr (x)
+    >>> print x.formatted ()
     <Entity None 'Person' 'PAP.Person'>
      <Fieldset None 'primary'>
       <Field None 'last_name'>
@@ -66,7 +66,7 @@ _test_code = """
 
     >>> SL = Spec.Entity (include_links = ("addresses", "emails", "phones"))
     >>> xl = SL (scope.PAP.Person.E_Type)
-    >>> print repr (xl)
+    >>> print xl.formatted ()
     <Entity None 'Person' 'PAP.Person'>
      <Fieldset None 'primary'>
       <Field None 'last_name'>
@@ -161,7 +161,7 @@ _test_code = """
     >>> T = Spec.Entity (Spec.Entity_Link ("events",
     ...   Spec.Entity_Link ("recurrence", Spec.Entity_Link ("rules"))))
     >>> y = T (scope.SWP.Page.E_Type)
-    >>> print repr (y)
+    >>> print y.formatted ()
     <Entity None 'Page' 'SWP.Page'>
      <Fieldset None 'primary'>
       <Field None 'perma_name'>
@@ -218,7 +218,7 @@ _test_code = """
            <Field None 'year_day'>
            <Field None 'easter_offset'>
 
-    >>> print repr (Form ("F", children = [y]))
+    >>> print Form ("F", children = [y]).formatted ()
     <Form F>
      <Entity F-0 'Page' 'SWP.Page'>
       <Fieldset F-0:0 'primary'>
@@ -277,7 +277,7 @@ _test_code = """
             <Field F-0:4::p-3:2::p-2:11 'easter_offset'>
 
     >>> f = Form ("X", children = [x, y])
-    >>> print repr (f)
+    >>> print f.formatted ()
     <Form X>
      <Entity X-0 'Person' 'PAP.Person'>
       <Fieldset X-0:0 'primary'>
@@ -350,7 +350,7 @@ _test_code = """
 
     >>> SB = Spec.Entity (Spec.Entity_Link ("SRM.Boat_in_Regatta"))
     >>> fb = Form ("FB", children = [SB (scope.SRM.Boat)])
-    >>> print repr (fb)
+    >>> print fb.formatted ()
     <Form FB>
      <Entity FB-0 'Boat' 'SRM.Boat'>
       <Fieldset FB-0:0 'primary'>
@@ -1417,7 +1417,7 @@ _prefilled_test = """
     ...     )
     >>> fb = Form ("FBR", children = [SB (scope.SRM.Boat_in_Regatta)])
 
-    >>> print repr (fb)
+    >>> print fb.formatted ()
     <Form FBR>
      <Entity FBR-0 'Boat_in_Regatta' 'SRM.Boat_in_Regatta'>
       <Fieldset FBR-0:0 'primary'>
@@ -2274,7 +2274,7 @@ _entity_links_group = """
     >>> from _GTW._AFS._MOM import Spec
     >>> S = Spec.Entity (include_links = ("addresses", ), entity_links_group = "Entity_Links_Group")
     >>> x = S (scope.PAP.Person.E_Type)
-    >>> print repr (x)
+    >>> print x.formatted ()
     <Entity None 'Person' 'PAP.Person'>
      <Fieldset None 'primary'>
       <Field None 'last_name'>
@@ -2300,7 +2300,7 @@ _entity_links_group = """
           <Field None 'country'>
         <Fieldset None 'optional'>
          <Field None 'desc'>
-    >>> print repr (Form ("ELG", children = [x]))
+    >>> print Form ("ELG", children = [x]).formatted ()
     <Form ELG>
      <Entity ELG-0 'Person' 'PAP.Person'>
       <Fieldset ELG-0:0 'primary'>

@@ -110,6 +110,8 @@
 #    29-Feb-2012 (CT) Add `anchor`, `root`, `type_base_name`
 #    29-Feb-2012 (CT) Redefine `_anchor_children` for `Entity_List` (`proto`)
 #     2-Mar-2012 (CT) Remove `instance.init` from `_value_sig`
+#     5-Aug-2012 (CT) Change `__repr__` to single line, add `formatted` with
+#                     the same output as the former `__repr__`
 #    ««revision-date»»···
 #--
 
@@ -293,6 +295,10 @@ class _Element_ (TFL.Meta.Object) :
         return instance._display
     # end def display
 
+    def formatted (self) :
+        return self._formatted ()
+    # end def formatted
+
     def instantiated (self, id, * args, ** kw) :
         kw.setdefault ("form_kw", {})
         new_id_suffix = kw.pop ("new_id_suffix", None)
@@ -409,10 +415,6 @@ class _Element_ (TFL.Meta.Object) :
     # end def __getattr__
 
     def __repr__ (self) :
-        return self._formatted ()
-    # end def __repr__
-
-    def __str__ (self) :
         infos = ["%s" % self.id]
         for k in "name", "type_name" :
             n = self.kw.get (k)
@@ -426,7 +428,7 @@ class _Element_ (TFL.Meta.Object) :
                 if infos [-1] != v :
                     infos.append (v)
         return "<%s %s>" % (self.__class__.__name__, " ".join (infos))
-    # end def __str__
+    # end def __repr__
 
 # end class _Element_
 
