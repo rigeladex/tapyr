@@ -235,6 +235,7 @@
 #                     Add degree/minute/second parsing to `A_Angle`
 #     3-Aug-2012 (CT) Redefine `A_Link_Role.E_Type` and `.P_Type` as aliases
 #                     for `role_type`
+#     5-Aug-2012 (CT) Change `_A_Id_Entity_.from_string` to allow pid
 #    ««revision-date»»···
 #--
 
@@ -1002,6 +1003,9 @@ class _A_Id_Entity_ (_A_Entity_) :
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if isinstance (s, self.P_Type) :
             return s
+        elif isinstance (s, int) :
+            scope = self._get_scope (obj)
+            return scope.pid_query (s)
         elif s :
             assert self.P_Type, "%s needs to define `P_Type`" % self
             if isinstance (s, tuple) :

@@ -207,6 +207,7 @@
 #     1-Aug-2012 (CT) Add `_Id_Entity_Destroyed_Mixin_`
 #     3-Aug-2012 (CT) Add `all_referrers`, rewrite `all_links` to use it
 #     4-Aug-2012 (CT) Add `Id_Entity.restore`
+#     5-Aug-2012 (CT) Add `epk_raw_pid`
 #    ««revision-date»»···
 #--
 
@@ -1040,6 +1041,15 @@ class Id_Entity (Entity) :
         """Essential primary key as raw values"""
         return \
             ( tuple (a.get_raw_epk (self) for a in self.primary)
+            + (self.type_name, )
+            )
+    # end def epk_raw
+
+    @property
+    def epk_raw_pid (self) :
+        """Essential primary key as raw values (pids for Id_Entity attributes)."""
+        return \
+            ( tuple (a.get_raw_pid (self) for a in self.primary)
             + (self.type_name, )
             )
     # end def epk_raw

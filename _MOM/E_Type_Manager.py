@@ -112,6 +112,7 @@
 #                     rename `count_transitive` to `count`
 #                     (to make it consistent with `query`)
 #     4-Aug-2012 (CT) Add `pid` to `Id_Entity.__call__`
+#     5-Aug-2012 (CT) Change `_cooked_role` to accept `int`
 #    ««revision-date»»···
 #--
 
@@ -528,7 +529,7 @@ class Link (Id_Entity) :
     def _cooked_role (self, r, v) :
         result = v
         if not isinstance (result, MOM.Entity) :
-            if not isinstance (v, (tuple, list)) :
+            if not isinstance (v, (tuple, list, int)) :
                 if not (v.startswith ("(") and v.endswith (")")) :
                     v = (v, )
             result = r.from_string (v, None)

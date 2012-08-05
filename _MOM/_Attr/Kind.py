@@ -177,6 +177,7 @@
 #     4-Aug-2012 (CT) Change `Id_Entity_Reference_Mixin._set_cooked_value` to
 #                     only append to `obj._init_pending` if not `init_finished`
 #                     (I don't know what I'd smoked on 11-Apr-2012 :-( )
+#     5-Aug-2012 (CT) Add/use `get_raw_pid`
 #    ««revision-date»»···
 #--
 
@@ -247,11 +248,11 @@ class Kind (MOM.Prop.Kind) :
     # end def __get__
 
     def __set__ (self, obj, value) :
-        old_value = self.get_value (obj)
-        old_raw   = self.get_raw   (obj)
+        old_value = self.get_value   (obj)
+        old_raw   = self.get_raw_pid (obj)
         changed   = old_value != value
-        self.attr.check_invariant  (obj, value)
-        self._set_cooked           (obj, value, changed)
+        self.attr.check_invariant (obj, value)
+        self._set_cooked          (obj, value, changed)
         if changed :
             if self.dependent_attrs :
                 man = obj._attr_man
@@ -317,6 +318,10 @@ class Kind (MOM.Prop.Kind) :
     def get_raw_epk (self, obj) :
         return self.get_raw (obj)
     # end def get_raw_epk
+
+    def get_raw_pid (self, obj) :
+        return self.get_raw (obj)
+    # end def get_raw_pid
 
     def get_value (self, obj) :
         if obj is not None :
@@ -496,6 +501,13 @@ class _EPK_Mixin_ (Kind) :
         return u""
     # end def get_raw_epk
 
+    def get_raw_pid (self, obj) :
+        ref = self.get_value (obj)
+        if ref is not None :
+            return ref.pid
+        return u""
+    # end def get_raw_pid
+
     def from_pickle_cargo (self, scope, cargo) :
         if cargo and cargo [0] :
             ETM = scope [self.attr.P_Type.type_name]
@@ -529,7 +541,7 @@ class _EPK_Mixin_ (Kind) :
         scope = obj.home_scope
         if value is not None and scope != value.home_scope :
             etm = scope [value.type_name]
-            val = etm.instance (* value.epk_raw, raw = True)
+            val = etm.instance (* value.epk_raw_pid, raw = True)
             if val is None :
                 raise MOM.Error.Link_Scope_Mix \
                     (_T (value.ui_name), value, value.home_scope, obj, scope)
@@ -824,7 +836,7 @@ class _Raw_Value_Mixin_ (Kind) :
     # end def _set_raw_inner
 
     def _sync (self, obj) :
-        raw_value = self.get_raw (obj)
+        raw_value = self.get_raw_pid (obj)
         value     = None
         if raw_value :
             try :

@@ -76,6 +76,7 @@
 #    27-Jun-2012 (CT) Change `do_callbacks` to use `Essence.type_name`
 #     4-Aug-2012 (CT) Change `Destroy.undo` to use `ems.restored`
 #     4-Aug-2012 (CT) Change `_create` to use `entity.restore` if applicable
+#     5-Aug-2012 (CT) Use `epk_raw_pid`, `get_raw_pid`
 #    ««revision-date»»···
 #--
 
@@ -231,6 +232,7 @@ class _Entity_ (Undoable) :
     def __init__ (self, entity) :
         self.__super.__init__ ()
         self.epk          = entity.epk_raw
+        self.epk_pid      = entity.epk_raw_pid
         self.pid          = getattr (entity, "pid", None)
         self.tool_version = entity.home_scope.Version.id
         self.type_name    = entity.type_name
@@ -317,9 +319,9 @@ class _Entity_ (Undoable) :
         if entity is None :
             etm          = scope [self.type_name]
             kw ["__pid"] = self.pid
-            result       = etm            (* self.epk, ** kw)
+            result       = etm            (* self.epk_pid, ** kw)
         else :
-            result       = entity.restore (* self.epk, ** kw)
+            result       = entity.restore (* self.epk_pid, ** kw)
         return result
     # end def _create
 
@@ -345,6 +347,7 @@ class _Entity_ (Undoable) :
         return dict \
             ( self.__super._pickle_attrs ()
             , epk           = self.epk
+            , epk_pid       = self.epk_pid
             , _new_attr     = self._new_attr
             , old_attr      = self.old_attr
             , pid           = self.pid
@@ -371,14 +374,14 @@ class _Entity_ (Undoable) :
 
     def _to_change (self, entity, old_attr) :
         return dict \
-            ( (a.name, a.get_raw (entity))
+            ( (a.name, a.get_raw_pid (entity))
             for a in entity.recordable_attrs if a.name in old_attr
             )
     # end def _to_change
 
     def _to_save (self, entity) :
         return dict \
-            ( (a.name, a.get_raw (entity))
+            ( (a.name, a.get_raw_pid (entity))
             for a in entity.recordable_attrs
               if (not a.is_primary) and a.to_save (entity)
             )
