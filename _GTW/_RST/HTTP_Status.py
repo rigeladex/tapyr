@@ -29,6 +29,7 @@
 #    16-Jul-2012 (CT) Creation
 #    23-Jul-2012 (CT) Add argument `response` to `__call__`
 #    30-Jul-2012 (CT) Add `template_name`, `Login_Required`
+#     6-Aug-2012 (CT) Let `blackboard`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ from   _TFL.I18N                import _, _T, _Tn
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
+import _TFL.Record
 
 import json
 
@@ -133,7 +135,8 @@ class Status (StandardError, TFL.Meta.Object) :
                     , NAV             = root
                     , request         = request
                     )
-                body = template.render (context)
+                with Templateer.GTW.LET (blackboard = TFL.Record ()) :
+                    body = template.render (context)
             else :
                 body = _T (self.description)
         else :
