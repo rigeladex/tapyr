@@ -114,13 +114,14 @@ class TOP_Alias (GTW.RST.Alias) :
     # end def login_required
 
     def is_current_page (self, page) :
-        ### ensure that not the is_current_page from the target is called
-        return \
-            (  (self           is page)
-            or (self.target    is page)
-            or (self.permalink == page.permalink)
-            or (self.href      == page.href)
-            )
+        if self.target.hidden :
+            return (  not self.hidden
+                   and (  (self.permalink == page.permalink)
+                       or (self.href      == page.href)
+                       )
+                   )
+        else :
+            return self.target.is_current_page (page)
     # end def is_current_page
 
 Alias = TOP_Alias # end class
