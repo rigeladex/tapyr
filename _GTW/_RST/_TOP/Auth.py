@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Jul-2012 (CT) Creation (based on GTW.NAV.Auth)
+#     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -60,13 +61,13 @@ class _Cmd_ (_Ancestor) :
 
 class _Form_Cmd_ (_Cmd_) :
 
+    skip_etag             = True
+
     class _Form_Cmd__GET_ (_Ancestor.GET) :
 
         _real_name             = "GET"
 
         _rc_form_name          = "form"
-
-        _do_change_info        = _Ancestor.GET._do_change_info_skip
 
         def _render_context (self, resource, request, response, ** kw) :
             kw [self._rc_form_name] = resource.form
@@ -79,8 +80,6 @@ class _Form_Cmd_ (_Cmd_) :
     class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.POST) :
 
         _real_name             = "POST"
-
-        _do_change_info        = GTW.RST.POST._do_change_info_skip
 
     POST = _Form_Cmd__POST_ # end class
 

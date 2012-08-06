@@ -36,6 +36,10 @@
 #    23-Jul-2012 (CT) Put `renderer` into `request`
 #    31-Jul-2012 (CT) Fix `join` call in `HTTP_Method.__call__`
 #     2-Aug-2012 (CT) Change `HTTP_Method.__call__` to use `response.renderer`
+#     6-Aug-2012 (CT) Add `cache_control` to `_do_change_info`
+#     6-Aug-2012 (CT) Change `_do_change_info` to use `resource.get_etag` and
+#                     `.get_last_modified`, not `.change_info`
+#     6-Aug-2012 (CT) Use `resource.skip_etag`, remove `_do_change_info_skip`
 #    ««revision-date»»···
 #--
 
@@ -99,22 +103,19 @@ class HTTP_Method (TFL.Meta.Object) :
 
     def _do_change_info (self, resource, request, response) :
         result = True
-        ci     = resource.change_info
-        if ci is not None :
-            etag = getattr (ci, "etag", None)
-            last = getattr (ci, "last_modified", None)
+        if not resource.skip_etag :
+            etag = resource.get_etag          (request)
+            last = resource.get_last_modified (request)
             if last :
                 result = self._check_modified \
                     (resource, request, response, last)
             if etag :
                 result = result and self._check_etag \
                     (resource, request, response, etag)
+            if last or etag :
+                response.cache_control.no_cache = True
         return result
     # end def _do_change_info
-
-    def _do_change_info_skip (self, resource, request, response) :
-        return True
-    # end def _do_change_info_skip
 
     def _get_renderer (self, resource, request, response) :
         result = self.render_man (self, resource, request)

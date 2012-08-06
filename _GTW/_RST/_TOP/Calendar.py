@@ -29,6 +29,7 @@
 #     2-Aug-2012 (CT) Creation (based on GTW.NAV.Calendar)
 #     2-Aug-2012 (CT) Redefine `Calendar.Day.rendered` to handle `qx`
 #     3-Aug-2012 (CT) Factor `_render_macro`, add `Calendar.Q`
+#     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -53,12 +54,6 @@ from   _TFL._Meta.Once_Property import Once_Property
 import datetime
 from   posixpath                import join  as pp_join
 
-class _Cal_Method_ (GTW.RST.HTTP_Method) :
-
-    _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
-
-# end class _Cal_Method_
-
 class _Mixin_ (GTW.RST.TOP._Base_) :
 
     @property
@@ -76,14 +71,9 @@ class _Cal_Page_ (_Ancestor) :
 
     args               = (None, )
     implicit           = True
+    skip_etag          = True
 
     _exclude_robots    = True
-
-    class _Cal_Page_GET_ (_Cal_Method_, _Ancestor.GET) :
-
-        _real_name             = "GET"
-
-    GET = _Cal_Page_GET_ # end class
 
     def is_current_dir (self, page) :
         return page.href.startswith (self.calendar.href)
@@ -219,6 +209,7 @@ class Calendar (_Mixin_, _Ancestor) :
     event_manager_name = "GTW.OMP.EVT.Event_occurs"
     page_template_name = "calendar"
     pid                = "Cal"
+    skip_etag          = True
     week_roller_size   = 6
     year_window_size   = 3
 
@@ -245,12 +236,6 @@ class Calendar (_Mixin_, _Ancestor) :
         )
 
     anchor             = property (TFL.Getter.today)
-
-    class _Calender_GET_ (_Cal_Method_, _Ancestor.GET) :
-
-        _real_name             = "GET"
-
-    GET = _Calender_GET_ # end class
 
     def __init__ (self, ** kw) :
         self.calendar = self

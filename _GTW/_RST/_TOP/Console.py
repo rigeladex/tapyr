@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Jul-2012 (CT) Creation (based on GTW.NAV.Console)
 #     2-Aug-2012 (CT) Set `response.renderer`, remove `_get_renderer`
+#     6-Aug-2012 (CT) Set `skip_etag` to `True`
 #    ««revision-date»»···
 #--
 
@@ -316,6 +317,7 @@ class Console (_Ancestor) :
 
     page_template_name         = "console"
     completion_cutoff          = None
+    skip_etag                  = True
 
     class Console_GET (_Ancestor.GET) :
 

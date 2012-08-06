@@ -46,6 +46,7 @@
 #     2-Aug-2012 (CT) Use `id_entity_attr` in
 #                     `RST_Entity_Mixin.change_query_filters`
 #     5-Aug-2012 (CT) Change `pid_query_request` to handle `result is None`
+#     6-Aug-2012 (CT) Change `etag` in `_get_change_info`
 #    ««revision-date»»···
 #--
 
@@ -276,9 +277,9 @@ class RST_Mixin (TFL.Meta.Object) :
         if qc is not None :
             lc = qc.first ()
             if lc is not None :
-                result = TFL.Record \
+                result  = TFL.Record \
                     ( cid           = lc.cid
-                    , etag          = "ET-%s-%s" % (lc.time, lc.cid)
+                    , etag          = str (lc.cid)
                     , last_modified = lc.time.replace (microsecond = 0)
                     )
         return result

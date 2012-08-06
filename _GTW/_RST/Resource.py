@@ -63,6 +63,8 @@
 #     1-Aug-2012 (CT) Fix cold-start behavior of `Root.resource_from_href`
 #     4-Aug-2012 (MG) `Alias`: add `top` to the `_parent_attr` set
 #     6-Aug-2012 (CT) Add `blackboard` to `_handle_method_context`
+#     6-Aug-2012 (CT) Add `get_etag`, `get_last_modified`, `rst_etag`, and
+#                     `skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +96,8 @@ from   posixpath import \
     , commonprefix
     )
 
+import base64
+import hashlib
 import logging
 import re
 import sys
@@ -373,6 +377,27 @@ class _RST_Base_ (TFL.Meta.Object) :
     def allow_user (self, user) :
         return self.allow_method ("GET", user)
     # end def allow_user
+
+    def get_etag (self, request) :
+        ci = self.change_info
+        result = list \
+            ( str (x) for x in (self.rst_etag, request.lang, request.username)
+            if x
+            )
+        if ci :
+            ci_etag = getattr (ci, "etag", None)
+            if ci_etag :
+                result.append (ci_etag)
+        if result :
+            h = hashlib.sha1 ("-".join (result)).digest ()
+            return base64.b64encode (h, str ("_-")).rstrip ("=")
+    # end def get_etag
+
+    def get_last_modified (self, request) :
+        ci = self.change_info
+        if ci :
+            return getattr (ci, "last_modified", None)
+    # end def get_last_modified
 
     def get_template (self, template_name, injected = None) :
         if self.Templateer is not None :
@@ -970,6 +995,7 @@ class RST_Root (_Ancestor) :
     name                       = ""
     prefix                     = ""
     site_url                   = ""
+    skip_etag                  = False
     use_www_debugger           = False
 
     _exclude_robots            = True
@@ -1022,6 +1048,15 @@ class RST_Root (_Ancestor) :
             return re.compile \
                 (r"(?:/?(?:%s)(?:/|$))" % ("|".join (sorted (self.languages))))
     # end def lang_pat
+
+    @Once_Property
+    def rst_etag (self) :
+        result = [self.href_pat_frag]
+        T = self.Templateer
+        if T is not None :
+            result.append (T.etag)
+        return "::".join (r for r in result if r)
+    # end def rst_etag
 
     @property
     def smtp (self) :
